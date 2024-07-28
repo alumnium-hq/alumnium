@@ -1,0 +1,4 @@
+{
+    "behave-vsc.featuresPath": "examples/behave/features",
+    "python.analysis.autoImportCompletions": true
+}
