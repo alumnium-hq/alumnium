@@ -1,4 +1,6 @@
 {
     "behave-vsc.featuresPath": "examples/behave/features",
-    "python.analysis.autoImportCompletions": true
+    "python.analysis.autoImportCompletions": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

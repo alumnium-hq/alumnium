@@ -14,10 +14,19 @@ from .aria import ARIA_ROLE_TO_SELECTOR
 
 # TODO: Let Al fail to locate element and attempt to fix.
 def convert_selectors(aria_role: str, selectors: dict) -> dict:
+    pattern = None
     if "text" in selectors:
         pattern = compile(selectors.pop("text"))
+    elif "name" in selectors:
+        pattern = compile(selectors.pop("name"))
+    elif "value" in selectors:
+        pattern = compile(selectors.pop("value"))
+
+    if pattern:
         if aria_role == "checkbox":
             selectors["label"] = pattern
+        elif aria_role == "combobox":
+            selectors["title"] = pattern
         elif aria_role == "textbox":
             selectors["placeholder"] = pattern
         else:
@@ -36,7 +45,7 @@ def convert_selectors(aria_role: str, selectors: dict) -> dict:
 
 
 def click(browser: Browser, aria_role: str, locator: dict = {}, inside: dict = {}):
-    selectors = ARIA_ROLE_TO_SELECTOR[aria_role]
+    selectors = ARIA_ROLE_TO_SELECTOR.get(aria_role, {})
     if locator:
         selectors[locator["key"]] = locator["value"]
 
@@ -44,8 +53,8 @@ def click(browser: Browser, aria_role: str, locator: dict = {}, inside: dict = {
 
     parent = {}
     if inside:
-        parent = ARIA_ROLE_TO_SELECTOR[inside["aria_role"]]
-        if inside["locator"]:
+        parent = ARIA_ROLE_TO_SELECTOR.get(inside["aria_role"], {})
+        if inside.get("locator", {}):
             parent[inside["locator"]["key"]] = inside["locator"]["value"]
         parent = convert_selectors(inside["aria_role"], parent)
 
@@ -61,7 +70,7 @@ def open_url(browser: Browser, url: str):
 
 
 def type(browser: Browser, text: str, aria_role: str, locator: dict = {}, inside: dict = {}):
-    selectors = ARIA_ROLE_TO_SELECTOR[aria_role]
+    selectors = ARIA_ROLE_TO_SELECTOR.get(aria_role, {})
     if locator:
         selectors[locator["key"]] = locator["value"]
 
@@ -69,8 +78,8 @@ def type(browser: Browser, text: str, aria_role: str, locator: dict = {}, inside
 
     parent = {}
     if inside:
-        parent = ARIA_ROLE_TO_SELECTOR[inside["aria_role"]]
-        if inside["locator"]:
+        parent = ARIA_ROLE_TO_SELECTOR.get(inside["aria_role"], {})
+        if inside.get("locator", {}):
             parent[inside["locator"]["key"]] = inside["locator"]["value"]
         parent = convert_selectors(inside["aria_role"], parent)
 
@@ -85,14 +94,14 @@ def submit(browser: Browser):
 
 
 def hover(browser: Browser, aria_role: str, locator: dict = {}, inside: dict = {}):
-    selectors = ARIA_ROLE_TO_SELECTOR[aria_role]
+    selectors = ARIA_ROLE_TO_SELECTOR.get(aria_role, {})
     if locator:
         selectors[locator["key"]] = locator["value"]
 
     parent = {}
     if inside:
-        parent = ARIA_ROLE_TO_SELECTOR[inside["aria_role"]]
-        if inside["locator"]:
+        parent = ARIA_ROLE_TO_SELECTOR.get(inside["aria_role"], {})
+        if inside.get("locator", {}):
             parent[inside["locator"]["key"]] = inside["locator"]["value"]
         parent = convert_selectors(inside["aria_role"], parent)
 

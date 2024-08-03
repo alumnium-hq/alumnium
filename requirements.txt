@@ -63,6 +63,7 @@ httpx==0.27.0
 huggingface-hub==0.23.4
 idna==3.7
 importlib_resources==6.4.0
+iniconfig==2.0.0
 ipython==7.34.0
 jedi==0.19.1
 Jinja2==3.1.4
@@ -131,6 +132,7 @@ pexpect==4.9.0
 pickleshare==0.7.5
 pillow==10.3.0
 playwright==1.44.0
+pluggy==1.5.0
 portalocker==2.10.0
 prompt_toolkit==3.0.47
 proto-plus==1.24.0
@@ -148,6 +150,7 @@ PyJWT==2.8.0
 pyparsing==3.1.2
 pypdf==4.2.0
 PySocks==1.7.1
+pytest==8.3.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-multipart==0.0.9
@@ -178,6 +181,7 @@ tenacity==8.3.0
 tiktoken==0.7.0
 tld==0.13
 tokenizers==0.19.1
+tomli==2.0.1
 tomlkit==0.12.0
 toolz==0.12.1
 tqdm==4.66.4

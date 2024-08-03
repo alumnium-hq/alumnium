@@ -1,14 +1,13 @@
+import logging
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
-from langchain_core.output_parsers import PydanticToolsParser
 from langchain_openai import ChatOpenAI
-
 from nerodia.browser import Browser
-
 from selenium.webdriver.remote.webdriver import WebDriver
-
 from .assertions import AssertionResult
 from .aria import AriaTree
 from .tools import FUNCTIONS, OPENAI_FUNCTIONS
+
+logger = logging.getLogger(__name__)
 
 
 class Alumni:
@@ -28,7 +27,12 @@ class Alumni:
         self.browser.quit()
 
     def act(self, message):
+        logger.info(f"Starting action:")
         aria_tree = AriaTree(self.browser.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})).to_yaml()
+
+        logger.info(f"  -> message: {message}")
+        logger.debug(f"  -> ARIA: {aria_tree}")
+
         message = self.llm_with_tools.invoke(
             [
                 SystemMessage(
@@ -71,6 +75,8 @@ Webpage ARIA tree:
             ],
         )
 
+        logger.info(f"  <- tools: {message.tool_calls}")
+
         for tool in message.tool_calls:
             FUNCTIONS[tool["name"]](browser=self.browser, **tool.get("args", {}))
 
@@ -84,7 +90,12 @@ Webpage ARIA tree:
                     [
                         {
                             "type": "text",
-                            "text": f"Is the following statement true: {message}.",
+                            "text": f"""
+Based on the screenshot and information about the webpage, is the following statement true: {message}.
+
+URL: {self.browser.url}
+Title: {self.browser.title}
+                           """,
                         },
                         {
                             "type": "image_url",
