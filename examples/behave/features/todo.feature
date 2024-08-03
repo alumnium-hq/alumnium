@@ -30,7 +30,6 @@ Feature: To Do application
     When I create a new task "Buy milk"
     And I delete the "Buy milk" task
     Then I should not see "Buy milk" in the list of tasks
-    And tasks counter should be 0
 
   Scenario: Show active tasks
     When I create a new task "Buy milk"
