@@ -1,38 +1,93 @@
 # from enum import Enum
-# from typing import Optional, TypedDict
+from typing import Optional, TypedDict
 
 # from langchain_core.pydantic_v1 import BaseModel, Field
 from re import compile
+from tracemalloc import start
 
-from nerodia.browser import Browser
-from nerodia.exception import UnknownObjectException
+# from nerodia.driver import WebDriver
+# from nerodia.exception import UnknownObjectException
 
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
-from .aria import ARIA_ROLE_TO_SELECTOR
+# Move to Selenium:
+
+from dataclasses import dataclass
+
+
+@dataclass
+class BrowsingContext:
+    id: str
+
+    @classmethod
+    def from_json(cls, json):
+        return cls(
+            id=json["context"],
+        )
+
+
+def browsing_context_get_tree():
+    cmd_dict = {
+        "method": "browsingContext.getTree",
+        "params": {},
+    }
+    r = yield cmd_dict
+    print(r)
+    return [BrowsingContext.from_json(c) for c in r["contexts"]]
+
+
+def browsing_context_create():
+    cmd_dict = {
+        "method": "browsingContext.create",
+        "params": {
+            "type": "tab",
+        },
+    }
+    r = yield cmd_dict
+    return BrowsingContext.from_json(r)
+
+
+def locate_nodes(driver, context, locator={}, start_node=None):
+    cmd_dict = {
+        "method": "browsingContext.locateNodes",
+        "params": {"context": context.id, "locator": locator},
+    }
+    if start_node:
+        cmd_dict["params"]["startNodes"] = [{"sharedId": start_node.id}]
+    r = yield cmd_dict
+    nodes = r.get("nodes", [])
+    return [WebElement(driver, node["sharedId"]) for node in nodes]
+
+
+# END
+
+# from .aria import ARIA_ROLE_TO_SELECTOR
 
 
 # TODO: Let Al fail to locate element and attempt to fix.
-def convert_selectors(aria_role: str, selectors: dict) -> dict:
-    pattern = None
-    if "text" in selectors:
-        pattern = compile(selectors.pop("text"))
-    elif "name" in selectors:
-        pattern = compile(selectors.pop("name"))
-    elif "value" in selectors:
-        pattern = compile(selectors.pop("value"))
+# def convert_selectors(aria_role: str, selectors: dict) -> dict:
+#     pattern = None
+#     if "text" in selectors:
+#         pattern = compile(selectors.pop("text"))
+#     elif "name" in selectors:
+#         pattern = compile(selectors.pop("name"))
+#     elif "value" in selectors:
+#         pattern = compile(selectors.pop("value"))
 
-    if pattern:
-        if aria_role == "checkbox":
-            selectors["label"] = pattern
-        elif aria_role == "combobox":
-            selectors["title"] = pattern
-        elif aria_role == "textbox":
-            selectors["placeholder"] = pattern
-        else:
-            selectors["text"] = pattern
+#     if pattern:
+#         if aria_role == "checkbox":
+#             selectors["label"] = pattern
+#         elif aria_role == "combobox":
+#             selectors["title"] = pattern
+#         elif aria_role == "textbox":
+#             selectors["placeholder"] = pattern
+#         else:
+#             selectors["text"] = pattern
 
-    return selectors
+#     return selectors
 
 
 # The functions needs to be re-written in Pydantic v2 syntax (see below)
@@ -44,71 +99,73 @@ def convert_selectors(aria_role: str, selectors: dict) -> dict:
 # empty if `inside` is used.
 
 
-def click(browser: Browser, aria_role: str, locator: dict = {}, inside: dict = {}):
-    selectors = ARIA_ROLE_TO_SELECTOR.get(aria_role, {})
-    if locator:
-        selectors[locator["key"]] = locator["value"]
-
-    selectors = convert_selectors(aria_role, selectors)
-
-    parent = {}
-    if inside:
-        parent = ARIA_ROLE_TO_SELECTOR.get(inside["aria_role"], {})
-        if inside.get("locator", {}):
-            parent[inside["locator"]["key"]] = inside["locator"]["value"]
-        parent = convert_selectors(inside["aria_role"], parent)
-
-    context = browser
-    if parent:
-        context = browser.element(**parent)
-
-    context.element(**selectors).click()
-
-
-def open_url(browser: Browser, url: str):
-    browser.goto(url)
-
-
-def type(browser: Browser, text: str, aria_role: str, locator: dict = {}, inside: dict = {}):
-    selectors = ARIA_ROLE_TO_SELECTOR.get(aria_role, {})
-    if locator:
-        selectors[locator["key"]] = locator["value"]
-
-    selectors = convert_selectors(aria_role, selectors)
-
-    parent = {}
-    if inside:
-        parent = ARIA_ROLE_TO_SELECTOR.get(inside["aria_role"], {})
-        if inside.get("locator", {}):
-            parent[inside["locator"]["key"]] = inside["locator"]["value"]
-        parent = convert_selectors(inside["aria_role"], parent)
-
-    if parent:
-        browser.element(**parent).element(**selectors).to_subtype().set(text)
+def _find_element(
+    driver: WebDriver, role: str, name: Optional[str] = None, start_node: Optional[WebElement] = None
+) -> WebElement:
+    context = driver._websocket_connection.execute(browsing_context_get_tree())[0]
+    locator = {"type": "accessibility", "value": {}}
+    if name:
+        locator["value"]["name"] = name
+    if role:
+        locator["value"]["role"] = role
+    elements = driver._websocket_connection.execute(locate_nodes(driver, context, locator, start_node))
+    if elements:
+        return elements[0]
     else:
-        browser.element(**selectors).to_subtype().set(text)
+        return None
 
 
-def submit(browser: Browser):
-    browser.send_keys(Keys.RETURN)
+def click(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, inside: dict[str, str] = {}):
+    selectors = {"role": aria_role}
+    if aria_name:
+        selectors["name"] = aria_name
 
-
-def hover(browser: Browser, aria_role: str, locator: dict = {}, inside: dict = {}):
-    selectors = ARIA_ROLE_TO_SELECTOR.get(aria_role, {})
-    if locator:
-        selectors[locator["key"]] = locator["value"]
-
-    parent = {}
     if inside:
-        parent = ARIA_ROLE_TO_SELECTOR.get(inside["aria_role"], {})
-        if inside.get("locator", {}):
-            parent[inside["locator"]["key"]] = inside["locator"]["value"]
-        parent = convert_selectors(inside["aria_role"], parent)
+        parent = {"role": inside["aria_role"]}
+        if inside.get("aria_name", None):
+            selectors["name"] = aria_name
+        selectors["start_node"] = _find_element(driver, **parent)
 
-    if parent:
-        browser.element(**parent).element(**selectors).hover()
-    else:
-        browser.element(**selectors).hover()
+    _find_element(driver, **selectors).click()
+
+
+def open_url(driver: WebDriver, url: str):
+    driver.get(url)
+
+
+def type(driver: WebDriver, text: str, aria_role: str, aria_name: Optional[str] = None, inside: dict[str, str] = {}):
+    selectors = {"role": aria_role}
+    if aria_name:
+        selectors["name"] = aria_name
+
+    if inside:
+        parent = {"role": inside["aria_role"]}
+        if inside.get("aria_name", None):
+            selectors["name"] = aria_name
+        selectors["start_node"] = _find_element(driver, **parent)
+
+    _find_element(driver, **selectors).send_keys(text)
+
+
+def submit(driver: WebDriver):
+    element = driver.switch_to.active_element
+    element.send_keys(Keys.RETURN)
+
+
+def hover(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, inside: dict[str, str] = {}):
+    selectors = {"role": aria_role}
+    if aria_name:
+        selectors["name"] = aria_name
+
+    if inside:
+        parent = {"role": inside["aria_role"]}
+        if inside.get("aria_name", None):
+            selectors["name"] = aria_name
+        selectors["start_node"] = _find_element(driver, **parent)
+
+    actions = ActionChains(driver)
+    actions.move_to_element(_find_element(driver, **selectors))
+    actions.perform()
 
 
 FUNCTIONS = {"click": click, "open_url": open_url, "type": type, "submit": submit, "hover": hover}
@@ -121,18 +178,7 @@ OPENAI_FUNCTIONS = [
             "type": "object",
             "properties": {
                 "aria_role": {"type": "string", "description": "Element ARIA role (checkbox, textbox, button, etc.)"},
-                "locator": {
-                    "type": "object",
-                    "description": "Locator to find element to click. Can be empty if `inside` parameter is used.",
-                    "properties": {
-                        "key": {
-                            "type": "string",
-                            "description": "Locator type (label, text, etc.).",
-                            "enum": ["text"],
-                        },
-                        "value": {"type": "string", "description": "Locator value"},
-                    },
-                },
+                "aria_name": {"type": "string", "description": "Element ARIA name"},
                 "inside": {
                     "type": "object",
                     "description": "Parent element containing the element to click",
@@ -141,17 +187,7 @@ OPENAI_FUNCTIONS = [
                             "type": "string",
                             "description": "Element ARIA role (checkbox, textbox, button, etc.)",
                         },
-                        "locator": {
-                            "type": "object",
-                            "properties": {
-                                "key": {
-                                    "type": "string",
-                                    "description": "Locator type (label, text, etc.).",
-                                    "enum": ["text"],
-                                },
-                                "value": {"type": "string", "description": "Locator value"},
-                            },
-                        },
+                        "aria_name": {"type": "string", "description": "Element ARIA name"},
                     },
                 },
             },
@@ -166,37 +202,16 @@ OPENAI_FUNCTIONS = [
             "properties": {
                 "text": {"type": "string", "description": "Text to type into an element"},
                 "aria_role": {"type": "string", "description": "Element ARIA role (checkbox, textbox, button, etc.)"},
-                "locator": {
-                    "type": "object",
-                    "description": "Locator to find element to type into. Can be empty if `inside` parameter is used.",
-                    "properties": {
-                        "key": {
-                            "type": "string",
-                            "description": "Locator type (label, text, etc.).",
-                            "enum": ["text"],
-                        },
-                        "value": {"type": "string", "description": "Locator value"},
-                    },
-                },
+                "aria_name": {"type": "string", "description": "Element ARIA name"},
                 "inside": {
                     "type": "object",
-                    "description": "Parent element containing the element to type into",
+                    "description": "Parent element containing the element to click",
                     "properties": {
                         "aria_role": {
                             "type": "string",
                             "description": "Element ARIA role (checkbox, textbox, button, etc.)",
                         },
-                        "locator": {
-                            "type": "object",
-                            "properties": {
-                                "key": {
-                                    "type": "string",
-                                    "description": "Locator type (label, text, etc.).",
-                                    "enum": ["text"],
-                                },
-                                "value": {"type": "string", "description": "Locator value"},
-                            },
-                        },
+                        "aria_name": {"type": "string", "description": "Element ARIA name"},
                     },
                 },
             },
@@ -210,7 +225,7 @@ OPENAI_FUNCTIONS = [
     },
     {
         "name": "open_url",
-        "description": "Open a URL in the browser.",
+        "description": "Open a URL in the driver.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -226,37 +241,16 @@ OPENAI_FUNCTIONS = [
             "type": "object",
             "properties": {
                 "aria_role": {"type": "string", "description": "Element ARIA role (checkbox, textbox, button, etc.)"},
-                "locator": {
-                    "type": "object",
-                    "description": "Locator to find element to hover. Can be empty if `inside` parameter is used.",
-                    "properties": {
-                        "key": {
-                            "type": "string",
-                            "description": "Locator type (label, text, etc.).",
-                            "enum": ["text"],
-                        },
-                        "value": {"type": "string", "description": "Locator value"},
-                    },
-                },
+                "aria_name": {"type": "string", "description": "Element ARIA name"},
                 "inside": {
                     "type": "object",
-                    "description": "Parent element containing the element to hover",
+                    "description": "Parent element containing the element to click",
                     "properties": {
                         "aria_role": {
                             "type": "string",
                             "description": "Element ARIA role (checkbox, textbox, button, etc.)",
                         },
-                        "locator": {
-                            "type": "object",
-                            "properties": {
-                                "key": {
-                                    "type": "string",
-                                    "description": "Locator type (label, text, etc.).",
-                                    "enum": ["text"],
-                                },
-                                "value": {"type": "string", "description": "Locator value"},
-                            },
-                        },
+                        "aria_name": {"type": "string", "description": "Element ARIA name"},
                     },
                 },
             },
@@ -296,7 +290,7 @@ OPENAI_FUNCTIONS = [
 #     )
 #     inside: Optional[Element] = Field(default=None, description="Parent element containing the element to click.")
 
-#     def call(self, browser: Browser):
+#     def call(self, driver: WebDriver):
 #         locator = ARIA_ROLE_TO_SELECTOR[self.aria_role]
 #         if self.locator:
 #             locator[self.locator["key"].value] = self.locator["value"]
@@ -308,18 +302,18 @@ OPENAI_FUNCTIONS = [
 #                 parent[self.inside["locator"]["key"].value] = self.inside["locator"]["value"]
 
 #         if parent:
-#             browser.element(**parent).element(**locator).click()
+#             driver.element(**parent).element(**locator).click()
 #         else:
-#             browser.element(**locator).click()
+#             driver.element(**locator).click()
 
 
 # class OpenURLTool(BaseModel):
-#     """Open a URL in the browser."""
+#     """Open a URL in the driver."""
 
 #     url: str = Field(description="URL to open")
 
-#     def call(self, browser: Browser):
-#         browser.goto(self.url)
+#     def call(self, driver: WebDriver):
+#         driver.goto(self.url)
 
 
 # class TypeTool(BaseModel):
@@ -333,7 +327,7 @@ OPENAI_FUNCTIONS = [
 #     )
 #     inside: Optional[Element] = Field(default=None, description="Parent element containing the element to click.")
 
-#     def call(self, browser: Browser):
+#     def call(self, driver: WebDriver):
 #         locator = ARIA_ROLE_TO_SELECTOR[self.aria_role]
 #         if self.locator:
 #             locator[self.locator["key"].value] = self.locator["value"]
@@ -345,16 +339,16 @@ OPENAI_FUNCTIONS = [
 #                 parent[self.inside["locator"]["key"].value] = self.inside["locator"]["value"]
 
 #         if parent:
-#             browser.element(**parent).element(**locator).set(self.text)
+#             driver.element(**parent).element(**locator).set(self.text)
 #         else:
-#             browser.element(**locator).set(self.text)
+#             driver.element(**locator).set(self.text)
 
 
 # class SubmitTool(BaseModel):
 #     """Submit the active form by pressing Enter key. Useful after typing text into a textbox."""
 
-#     def call(self, browser: Browser):
-#         browser.send_keys(Keys.RETURN)
+#     def call(self, driver: WebDriver):
+#         driver.send_keys(Keys.RETURN)
 
 
 # ALL_TOOLS = [ClickTool, OpenURLTool, TypeTool, SubmitTool]

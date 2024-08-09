@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class Alumni:
     def __init__(self, driver: WebDriver):
-        self.browser = Browser(browser=driver)
+        self.driver = driver
 
         llm = ChatOpenAI(
             model="gpt-4o-mini",
@@ -24,11 +24,11 @@ class Alumni:
         self.structured_llm = llm.with_structured_output(AssertionResult)
 
     def quit(self):
-        self.browser.quit()
+        self.driver.quit()
 
     def act(self, message):
         logger.info(f"Starting action:")
-        aria_tree = AriaTree(self.browser.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})).to_yaml()
+        aria_tree = AriaTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})).to_yaml()
 
         logger.info(f"  -> message: {message}")
         logger.debug(f"  -> ARIA: {aria_tree}")
@@ -78,7 +78,7 @@ Webpage ARIA tree:
         logger.info(f"  <- tools: {message.tool_calls}")
 
         for tool in message.tool_calls:
-            FUNCTIONS[tool["name"]](browser=self.browser, **tool.get("args", {}))
+            FUNCTIONS[tool["name"]](driver=self.driver, **tool.get("args", {}))
 
     def assess(self, message):
         assertion = self.structured_llm.invoke(
@@ -93,14 +93,14 @@ Webpage ARIA tree:
                             "text": f"""
 Based on the screenshot and information about the webpage, is the following statement true: {message}.
 
-URL: {self.browser.url}
-Title: {self.browser.title}
+URL: {self.driver.current_url}
+Title: {self.driver.title}
                            """,
                         },
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/png;base64,{self.browser.screenshot.base64()}",
+                                "url": f"data:image/png;base64,{self.driver.get_screenshot_as_base64()}",
                             },
                         },
                     ]
