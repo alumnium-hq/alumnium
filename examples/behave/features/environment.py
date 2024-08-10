@@ -3,7 +3,7 @@ import nerodia
 
 from alumni import Alumni
 from behave import fixture, use_fixture
-from selenium.webdriver import Chrome, ChromeOptions
+from selenium.webdriver import Chrome
 
 
 langchain.debug = True
@@ -12,10 +12,7 @@ nerodia.default_timeout = 5
 
 @fixture
 def chrome_driver(context):
-    options = ChromeOptions()
-    options.web_socket_url = True
-    context.driver = Chrome(options=options)
-    context.driver._start_bidi()
+    context.driver = Chrome()
     yield context.driver
     context.driver.quit()
 

@@ -2,92 +2,16 @@
 from typing import Optional, TypedDict
 
 # from langchain_core.pydantic_v1 import BaseModel, Field
-from re import compile
+from re import I, compile
 from tracemalloc import start
-
-# from nerodia.driver import WebDriver
-# from nerodia.exception import UnknownObjectException
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
-# Move to Selenium:
-
-from dataclasses import dataclass
-
-
-@dataclass
-class BrowsingContext:
-    id: str
-
-    @classmethod
-    def from_json(cls, json):
-        return cls(
-            id=json["context"],
-        )
-
-
-def browsing_context_get_tree():
-    cmd_dict = {
-        "method": "browsingContext.getTree",
-        "params": {},
-    }
-    r = yield cmd_dict
-    print(r)
-    return [BrowsingContext.from_json(c) for c in r["contexts"]]
-
-
-def browsing_context_create():
-    cmd_dict = {
-        "method": "browsingContext.create",
-        "params": {
-            "type": "tab",
-        },
-    }
-    r = yield cmd_dict
-    return BrowsingContext.from_json(r)
-
-
-def locate_nodes(driver, context, locator={}, start_node=None):
-    cmd_dict = {
-        "method": "browsingContext.locateNodes",
-        "params": {"context": context.id, "locator": locator},
-    }
-    if start_node:
-        cmd_dict["params"]["startNodes"] = [{"sharedId": start_node.id}]
-    r = yield cmd_dict
-    nodes = r.get("nodes", [])
-    return [WebElement(driver, node["sharedId"]) for node in nodes]
-
-
-# END
-
-# from .aria import ARIA_ROLE_TO_SELECTOR
-
-
-# TODO: Let Al fail to locate element and attempt to fix.
-# def convert_selectors(aria_role: str, selectors: dict) -> dict:
-#     pattern = None
-#     if "text" in selectors:
-#         pattern = compile(selectors.pop("text"))
-#     elif "name" in selectors:
-#         pattern = compile(selectors.pop("name"))
-#     elif "value" in selectors:
-#         pattern = compile(selectors.pop("value"))
-
-#     if pattern:
-#         if aria_role == "checkbox":
-#             selectors["label"] = pattern
-#         elif aria_role == "combobox":
-#             selectors["title"] = pattern
-#         elif aria_role == "textbox":
-#             selectors["placeholder"] = pattern
-#         else:
-#             selectors["text"] = pattern
-
-#     return selectors
+from .locators import XPath
 
 
 # The functions needs to be re-written in Pydantic v2 syntax (see below)
@@ -102,17 +26,10 @@ def locate_nodes(driver, context, locator={}, start_node=None):
 def _find_element(
     driver: WebDriver, role: str, name: Optional[str] = None, start_node: Optional[WebElement] = None
 ) -> WebElement:
-    context = driver._websocket_connection.execute(browsing_context_get_tree())[0]
-    locator = {"type": "accessibility", "value": {}}
-    if name:
-        locator["value"]["name"] = name
-    if role:
-        locator["value"]["role"] = role
-    elements = driver._websocket_connection.execute(locate_nodes(driver, context, locator, start_node))
-    if elements:
-        return elements[0]
-    else:
-        return None
+    if not start_node:
+        start_node = driver
+
+    return start_node.find_element(By.XPATH, str(XPath(role, name)))
 
 
 def click(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, inside: dict[str, str] = {}):

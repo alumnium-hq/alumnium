@@ -1,19 +1,6 @@
 import yaml
 
 
-# TODO: Handle both tag_name or role attribute
-ARIA_ROLE_TO_SELECTOR = {
-    # "button": {"tag_name": "button"},
-    # "StaticText": {},
-    # "combobox": {"role": "combobox"},
-    # "checkbox": {"tag_name": "input", "type": "checkbox"},
-    # "main": {"tag_name": "main"},
-    # "link": {"tag_name": "a"},
-    # "listitem": {"tag_name": "li"},
-    # "textbox": {"tag_name": "input", "type": "text"},
-}
-
-
 class AriaTree:
     def __init__(self, tree: dict):
         self.tree = {}  # Initialize the result dictionary
