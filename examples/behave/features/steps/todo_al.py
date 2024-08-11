@@ -24,15 +24,12 @@ def step_impl(context, title):
 @when('I delete the "{title}" task')
 def step_impl(context, title):
     context.al.act(f'I hover the "{title}" task')
-    # The button is "×" UTF symbol that cannot be easily located via XPath.
-    context.al.act(f'I delete the "{title}" task by clicking the first button inside the task')
+    context.al.act(f'I delete the "{title}" task')
 
 
 @when("I complete all tasks")
 def step_impl(context):
-    # If we omit "by clicking ..." - Al fail because ARIA name of the checkbox is "❯ Toggle All Input".
-    # Alternatively, we can tell Al to "I check each task one by one".
-    context.al.act("I complete all tasks by clicking a checkbox with 'Toggle All' text")
+    context.al.act("I complete all tasks")
 
 
 @when('I show only "{filter}" tasks')

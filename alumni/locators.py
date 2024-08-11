@@ -10,7 +10,7 @@
 class XPath:
     def __init__(self, role: str, name: str, root: str = "."):
         self.role = role
-        self.name = name
+        self.name = "".join(filter(str.isascii, name or "")).strip()
         self.root = root
 
     def __str__(self):
@@ -44,8 +44,8 @@ class XPath:
             attributes += ["@type='checkbox'"]
             if self.name:
                 attributes += [
-                    f"(contains(@name, '{self.name}') or"
-                    f" contains(@value, '{self.name}') or "
+                    f"(contains(normalize-space(@name), '{self.name}') or"
+                    f" contains(normalize-space(@value), '{self.name}') or "
                     f" contains(normalize-space(), '{self.name}') or"
                     f" @id=//label[contains(normalize-space(), '{self.name}')]/@for or"
                     f" parent::label[contains(normalize-space(), '{self.name}')])"
@@ -54,10 +54,10 @@ class XPath:
             attributes += ["@type='text'"]
             if self.name:
                 attributes += [
-                    f"(contains(@name, '{self.name}') or"
-                    f" contains(@title, '{self.name}') or "
-                    f" contains(@value, '{self.name}') or "
-                    f" contains(@placeholder, '{self.name}') or"
+                    f"(contains(normalize-space(@name), '{self.name}') or"
+                    f" contains(normalize-space(@title), '{self.name}') or "
+                    f" contains(normalize-space(@value), '{self.name}') or "
+                    f" contains(normalize-space(@placeholder), '{self.name}') or"
                     f" contains(normalize-space(), '{self.name}') or"
                     f" @id=//label[contains(normalize-space(), '{self.name}')]/@for or"
                     f" parent::label[contains(normalize-space(), '{self.name}')])"

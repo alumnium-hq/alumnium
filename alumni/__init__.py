@@ -54,12 +54,56 @@ Webpage ARIA tree:
     type({
         "text": "Hello",
         "aria_role": "textbox",
-        "locator": {
-            "key": "text",
-            "value": "New Todo Input"
-        }
+        "aria_name": "New Todo Input"
     }),
     submit({})
+]
+"""
+                ),
+                HumanMessage(
+                    f"""
+Goal: I complete the "There is AI in Al" task.
+Webpage ARIA tree:
+```yaml
+- listitem:
+    ignored: false
+    level: 1
+    name: ''
+    nodes:
+    - none:
+        ignored: true
+        name: ''
+        nodes:
+        - checkbox:
+            checked: 'false'
+            focusable: true
+            ignored: false
+            invalid: 'false'
+            name: ''
+        - LabelText:
+            ignored: false
+            name: ''
+            nodes:
+            - StaticText:
+                ignored: false
+                name: There is AI in Al
+                nodes:
+                - InlineTextBox:
+                    ignored: false
+                    name: ''
+```
+"""
+                ),
+                AIMessage(
+                    """
+[
+    click({
+        "aria_role": "checkbox",
+        "inside": {
+            "aria_role": "listitem",
+            "aria_name": "There is AI in Al"
+        }
+    })
 ]
 """
                 ),

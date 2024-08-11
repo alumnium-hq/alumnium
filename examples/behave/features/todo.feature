@@ -1,8 +1,4 @@
 Feature: To Do application
-  TODO: Order of tests matter!
-  "I complete all tasks" step somehow affects LLM reasoning about "I complete the "{title}" task" step.
-  This causes the latter to start failing, so "Complete all tasks" scenario should be the last one.
-  As if LLM has some kind of memory and it's not reset between scenarios.
 
   Background:
     Given I open "https://todomvc.com/examples/vue/dist/"
@@ -25,6 +21,14 @@ Feature: To Do application
     And I uncomplete the "Buy milk" task
     Then "Buy milk" task should be uncompleted
     And tasks counter should be 1
+
+  Scenario: Complete all tasks
+    When I create a new task "Buy milk"
+    And I create a new task "Buy bread"
+    And I complete all tasks
+    Then "Buy milk" task should be completed
+    And "Buy bread" task should be completed
+    And tasks counter should be 0
 
   Scenario: Delete a task
     When I create a new task "Buy milk"
@@ -54,11 +58,3 @@ Feature: To Do application
     And I clear completed tasks
     Then I should see "Buy bread" in the list of tasks
     But I should not see "Buy milk" in the list of tasks
-
-  Scenario: Complete all tasks
-    When I create a new task "Buy milk"
-    And I create a new task "Buy bread"
-    And I complete all tasks
-    Then "Buy milk" task should be completed
-    And "Buy bread" task should be completed
-    And tasks counter should be 0
