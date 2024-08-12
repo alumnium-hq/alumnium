@@ -31,6 +31,8 @@ class XPath:
             return "button"
         elif self.role in ["checkbox", "textbox"]:
             return "input"
+        elif self.role == "combobox":
+            return "textarea"
         elif self.role == "main":
             return "main"
         elif self.role == "link":

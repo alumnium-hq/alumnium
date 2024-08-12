@@ -51,10 +51,6 @@ Webpage ARIA tree:
                 AIMessage(
                     """
 [
-    click({
-        "aria_role": "textbox",
-        "aria_name": "New Todo Input"
-    }),
     type({
         "text": "Hello",
         "aria_role": "textbox",
