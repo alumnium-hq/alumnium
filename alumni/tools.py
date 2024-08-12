@@ -2,8 +2,6 @@
 from typing import Optional, TypedDict
 
 # from langchain_core.pydantic_v1 import BaseModel, Field
-from re import I, compile
-from tracemalloc import start
 
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -40,7 +38,7 @@ def click(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, in
     if inside:
         parent = {"role": inside["aria_role"]}
         if inside.get("aria_name", None):
-            selectors["name"] = aria_name
+            parent["name"] = aria_name
         selectors["start_node"] = _find_element(driver, **parent)
 
     _find_element(driver, **selectors).click()
@@ -58,7 +56,7 @@ def type(driver: WebDriver, text: str, aria_role: str, aria_name: Optional[str] 
     if inside:
         parent = {"role": inside["aria_role"]}
         if inside.get("aria_name", None):
-            selectors["name"] = aria_name
+            parent["name"] = aria_name
         selectors["start_node"] = _find_element(driver, **parent)
 
     _find_element(driver, **selectors).send_keys(text)
@@ -77,7 +75,7 @@ def hover(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, in
     if inside:
         parent = {"role": inside["aria_role"]}
         if inside.get("aria_name", None):
-            selectors["name"] = aria_name
+            parent["name"] = aria_name
         selectors["start_node"] = _find_element(driver, **parent)
 
     actions = ActionChains(driver)
@@ -85,7 +83,45 @@ def hover(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, in
     actions.perform()
 
 
-FUNCTIONS = {"click": click, "open_url": open_url, "type": type, "submit": submit, "hover": hover}
+def drag_and_drop(driver: WebDriver, from_: dict[str, str], to: dict[str, str]):
+    from_selectors = {"role": from_.get("aria_role")}
+    if from_.get("aria_name", None):
+        from_selectors["name"] = from_["aria_name"]
+
+    from_inside = from_.get("inside", {})
+    if from_inside:
+        parent = {"role": from_inside["aria_role"]}
+        if from_inside.get("aria_name", None):
+            parent["name"] = from_inside["aria_name"]
+        from_selectors["start_node"] = _find_element(driver, **parent)
+
+    to_selectors = {"role": to.get("aria_role")}
+    if to.get("aria_name", None):
+        to_selectors["name"] = to["aria_name"]
+
+    to_inside = to.get("inside", {})
+    if to_inside:
+        parent = {"role": to_inside["aria_role"]}
+        if to_inside.get("aria_name", None):
+            parent["name"] = to_inside["aria_name"]
+        to_selectors["start_node"] = _find_element(driver, **parent)
+
+    actions = ActionChains(driver)
+    actions.move_to_element(_find_element(driver, **from_selectors))
+    actions.click_and_hold()
+    actions.move_to_element(_find_element(driver, **to_selectors))
+    actions.release()
+    actions.perform()
+
+
+FUNCTIONS = {
+    "click": click,
+    "drag_and_drop": drag_and_drop,
+    "hover": hover,
+    "open_url": open_url,
+    "submit": submit,
+    "type": type,
+}
 
 OPENAI_FUNCTIONS = [
     {
@@ -172,6 +208,40 @@ OPENAI_FUNCTIONS = [
                 },
             },
             "required": ["aria_role"],
+        },
+    },
+    {
+        "name": "drag_and_drop",
+        "description": "Drags one element onto another and drops it.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "from_": {
+                    "type": "object",
+                    "description": "Element to drag.",
+                    "properties": {
+                        "aria_role": {
+                            "type": "string",
+                            "description": "Element ARIA role (checkbox, textbox, button, etc.)",
+                        },
+                        "aria_name": {"type": "string", "description": "Element ARIA name"},
+                    },
+                    "required": ["aria_role"],
+                },
+                "to": {
+                    "type": "object",
+                    "description": "Element to drop onto.",
+                    "properties": {
+                        "aria_role": {
+                            "type": "string",
+                            "description": "Element ARIA role (checkbox, textbox, button, etc.)",
+                        },
+                        "aria_name": {"type": "string", "description": "Element ARIA name"},
+                    },
+                    "required": ["aria_role"],
+                },
+            },
+            "required": ["from_", "to"],
         },
     },
 ]

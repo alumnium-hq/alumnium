@@ -1,8 +1,3 @@
-# irb(main):005> browser.text_field(label: 'Edit Todo Input').exists?
-# 2024-08-08 16:28:29 INFO Watir [:logger_info] Details on how to use and modify Selenium logger:
-#   https://selenium.dev/documentation/webdriver/troubleshooting/logging
-
-
 class XPath:
     NON_TEXT_TYPE_ATTRIBUTES = [
         "@type != 'file'",
@@ -42,6 +37,8 @@ class XPath:
             return "a"
         elif self.role == "listitem":
             return "li"
+        elif self.role == "banner":
+            return "header"
         else:
             return "*"
 
