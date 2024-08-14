@@ -1,13 +1,6 @@
-import langchain
-import nerodia
-
 from alumni import Alumni
 from behave import fixture, use_fixture
 from selenium.webdriver import Chrome
-
-
-langchain.debug = True
-nerodia.default_timeout = 5
 
 
 @fixture

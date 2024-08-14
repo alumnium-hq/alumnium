@@ -1,9 +1,6 @@
 import pytest
-import nerodia
 from alumni import Alumni
 from selenium.webdriver import Chrome
-
-nerodia.default_timeout = 5
 
 
 @pytest.fixture(scope="session", autouse=True)
