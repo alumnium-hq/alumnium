@@ -53,10 +53,10 @@ Webpage ARIA tree:
 [
     type({
         "text": "Hello",
+        "submit": true,
         "aria_role": "textbox",
         "aria_name": "New Todo Input"
     }),
-    submit({})
 ]
 """
                 ),

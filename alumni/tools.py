@@ -48,7 +48,14 @@ def open_url(driver: WebDriver, url: str):
     driver.get(url)
 
 
-def type(driver: WebDriver, text: str, aria_role: str, aria_name: Optional[str] = None, inside: dict[str, str] = {}):
+def type(
+    driver: WebDriver,
+    text: str,
+    submit: bool,
+    aria_role: str,
+    aria_name: Optional[str] = None,
+    inside: dict[str, str] = {},
+):
     selectors = {"role": aria_role}
     if aria_name:
         selectors["name"] = aria_name
@@ -59,12 +66,10 @@ def type(driver: WebDriver, text: str, aria_role: str, aria_name: Optional[str] 
             parent["name"] = aria_name
         selectors["start_node"] = _find_element(driver, **parent)
 
-    _find_element(driver, **selectors).send_keys(text)
-
-
-def submit(driver: WebDriver):
-    element = driver.switch_to.active_element
-    element.send_keys(Keys.RETURN)
+    input = [text]
+    if submit:
+        input.append(Keys.RETURN)
+    _find_element(driver, **selectors).send_keys(*input)
 
 
 def hover(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, inside: dict[str, str] = {}):
@@ -119,7 +124,6 @@ FUNCTIONS = {
     "drag_and_drop": drag_and_drop,
     "hover": hover,
     "open_url": open_url,
-    "submit": submit,
     "type": type,
 }
 
@@ -154,6 +158,7 @@ OPENAI_FUNCTIONS = [
             "type": "object",
             "properties": {
                 "text": {"type": "string", "description": "Text to type into an element"},
+                "submit": {"type": "boolean", "description": "Submit after typing text by pressing `Enter` key"},
                 "aria_role": {"type": "string", "description": "Element ARIA role (checkbox, textbox, button, etc.)"},
                 "aria_name": {"type": "string", "description": "Element ARIA name"},
                 "inside": {
@@ -170,11 +175,6 @@ OPENAI_FUNCTIONS = [
             },
             "required": ["text", "aria_role"],
         },
-    },
-    {
-        "name": "submit",
-        "description": "Submit by pressing `Enter` key.",
-        "parameters": {"type": "object", "properties": {}, "required": []},
     },
     {
         "name": "open_url",
