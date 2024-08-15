@@ -1,16 +1,16 @@
-import pytest
+from pytest import fixture
 from alumni import Alumni
 from selenium.webdriver import Chrome
 
 
-@pytest.fixture(scope="session", autouse=True)
+@fixture(scope="session", autouse=True)
 def driver():
     driver = Chrome()
     yield driver
     driver.quit()
 
 
-@pytest.fixture(scope="session", autouse=True)
+@fixture(scope="session", autouse=True)
 def al(driver):
     al = Alumni(driver)
     yield al
