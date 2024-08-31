@@ -1,8 +1,9 @@
 import logging
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
+
 from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from nerodia.browser import Browser
@@ -17,10 +18,10 @@ logger = logging.getLogger(__name__)
 
 
 class Alumni:
-    def __init__(self, driver: WebDriver, model: Model = Model.OPEN_AI):
+    def __init__(self, driver: WebDriver, model: Model = Model.OPENAI):
         self.driver = driver
 
-        if model == Model.OPEN_AI:
+        if model == Model.OPENAI:
             llm = ChatOpenAI(
                 model="gpt-4o-mini",
                 temperature=0,
