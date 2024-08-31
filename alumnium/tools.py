@@ -173,7 +173,7 @@ OPENAI_FUNCTIONS = [
                     },
                 },
             },
-            "required": ["text", "aria_role"],
+            "required": ["text", "submit", "aria_role"],
         },
     },
     {

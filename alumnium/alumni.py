@@ -3,6 +3,8 @@ import logging
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 from nerodia.browser import Browser
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -21,13 +23,19 @@ class Alumni:
         if model == Model.OPEN_AI:
             llm = ChatOpenAI(
                 model="gpt-4o-mini",
-                temperature=0,
+                temperature=1,
                 max_retries=2,
             )
         elif model == Model.ANTHROPIC:
             llm = ChatAnthropic(
                 model="claude-3-5-sonnet-20240620",
-                temperature=0,
+                temperature=1,
+                max_retries=2,
+            )
+        elif model == Model.GOOGLE:
+            llm = ChatGoogleGenerativeAI(
+                model="gemini-1.5-flash",
+                temperature=1,
                 max_retries=2,
             )
 
