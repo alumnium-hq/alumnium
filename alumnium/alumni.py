@@ -1,8 +1,11 @@
 import logging
+
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from nerodia.browser import Browser
 from selenium.webdriver.remote.webdriver import WebDriver
+
 from .assertions import AssertionResult
 from .aria import AriaTree
 from .tools import FUNCTIONS, OPENAI_FUNCTIONS

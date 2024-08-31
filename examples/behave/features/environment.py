@@ -1,6 +1,10 @@
-from alumni import Alumni
+from alumnium import Alumni
 from behave import fixture, use_fixture
 from selenium.webdriver import Chrome
+
+# from langchain.globals import set_debug
+
+# set_debug(True)
 
 
 @fixture

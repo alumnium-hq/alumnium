@@ -1,6 +1,10 @@
 from pytest import fixture
-from alumni import Alumni
+from alumnium import Alumni
 from selenium.webdriver import Chrome
+
+# from langchain.globals import set_debug
+
+# set_debug(True)
 
 
 @fixture(scope="session", autouse=True)
