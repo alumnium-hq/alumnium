@@ -23,19 +23,19 @@ class Alumni:
         if model == Model.OPEN_AI:
             llm = ChatOpenAI(
                 model="gpt-4o-mini",
-                temperature=1,
+                temperature=0,
                 max_retries=2,
             )
         elif model == Model.ANTHROPIC:
             llm = ChatAnthropic(
                 model="claude-3-5-sonnet-20240620",
-                temperature=1,
+                temperature=0,
                 max_retries=2,
             )
         elif model == Model.GOOGLE:
             llm = ChatGoogleGenerativeAI(
                 model="gemini-1.5-flash",
-                temperature=1,
+                temperature=0,
                 max_retries=2,
             )
 
