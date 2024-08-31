@@ -8,20 +8,28 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from .assertions import AssertionResult
 from .aria import AriaTree
+from .models import Model
 from .tools import FUNCTIONS, OPENAI_FUNCTIONS
 
 logger = logging.getLogger(__name__)
 
 
 class Alumni:
-    def __init__(self, driver: WebDriver):
+    def __init__(self, driver: WebDriver, model: Model = Model.OPEN_AI):
         self.driver = driver
 
-        llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0,
-            max_retries=2,
-        )
+        if model == Model.OPEN_AI:
+            llm = ChatOpenAI(
+                model="gpt-4o-mini",
+                temperature=0,
+                max_retries=2,
+            )
+        elif model == Model.ANTHROPIC:
+            llm = ChatAnthropic(
+                model="claude-3-5-sonnet-20240620",
+                temperature=0,
+                max_retries=2,
+            )
 
         self.llm_with_tools = llm.bind_tools(OPENAI_FUNCTIONS)
         self.structured_llm = llm.with_structured_output(AssertionResult)

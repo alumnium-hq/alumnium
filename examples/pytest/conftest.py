@@ -1,5 +1,6 @@
 from pytest import fixture
 from alumnium import Alumni
+from alumnium.models import Model
 from selenium.webdriver import Chrome
 
 # from langchain.globals import set_debug
@@ -16,6 +17,6 @@ def driver():
 
 @fixture(scope="session", autouse=True)
 def al(driver):
-    al = Alumni(driver)
+    al = Alumni(driver, model=Model.OPEN_AI)
     yield al
     al.quit()

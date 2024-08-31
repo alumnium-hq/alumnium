@@ -1,4 +1,5 @@
 from alumnium import Alumni
+from alumnium.models import Model
 from behave import fixture, use_fixture
 from selenium.webdriver import Chrome
 
@@ -16,7 +17,7 @@ def chrome_driver(context):
 
 @fixture
 def alumnium(context):
-    context.al = Alumni(context.driver)
+    context.al = Alumni(context.driver, model=Model.OPEN_AI)
     yield context.al
     context.al.quit()
 
