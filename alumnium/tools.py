@@ -38,7 +38,7 @@ def click(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, in
     if inside:
         parent = {"role": inside["aria_role"]}
         if inside.get("aria_name", None):
-            parent["name"] = aria_name
+            parent["name"] = inside["aria_name"]
         selectors["start_node"] = _find_element(driver, **parent)
 
     _find_element(driver, **selectors).click()
@@ -63,7 +63,7 @@ def type(
     if inside:
         parent = {"role": inside["aria_role"]}
         if inside.get("aria_name", None):
-            parent["name"] = aria_name
+            parent["name"] = inside["aria_name"]
         selectors["start_node"] = _find_element(driver, **parent)
 
     input = [text]
@@ -80,7 +80,7 @@ def hover(driver: WebDriver, aria_role: str, aria_name: Optional[str] = None, in
     if inside:
         parent = {"role": inside["aria_role"]}
         if inside.get("aria_name", None):
-            parent["name"] = aria_name
+            parent["name"] = inside["aria_name"]
         selectors["start_node"] = _find_element(driver, **parent)
 
     actions = ActionChains(driver)

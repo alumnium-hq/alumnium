@@ -29,7 +29,8 @@ def step_impl(context, title):
 
 @when("I complete all tasks")
 def step_impl(context):
-    context.al.act("I complete all tasks")
+    # Avoid attempting to complete tasks one by one.
+    context.al.act("I complete all tasks using 'Toggle All' button")
 
 
 @when('I show only "{filter}" tasks')
