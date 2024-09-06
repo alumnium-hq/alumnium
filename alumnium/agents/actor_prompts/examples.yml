@@ -1,0 +1,52 @@
+- goal: I create a new new task "There is AI in Al"
+  aria: |-
+    - textbox:
+        name: New Todo Input
+  output: |-
+    [
+        type({
+            "text": "Hello",
+            "submit": true,
+            "aria_role": "textbox",
+            "aria_name": "New Todo Input"
+        })
+    ]
+
+- goal: I complete the "There is AI in Al" task
+  aria: |-
+    - listitem:
+        ignored: false
+        level: 1
+        name: ''
+        nodes:
+        - none:
+            ignored: true
+            name: ''
+            nodes:
+            - checkbox:
+                checked: 'false'
+                focusable: true
+                ignored: false
+                invalid: 'false'
+                name: ''
+            - LabelText:
+                ignored: false
+                name: ''
+                nodes:
+                - StaticText:
+                    ignored: false
+                    name: There is AI in Al
+                    nodes:
+                    - InlineTextBox:
+                        ignored: false
+                        name: ''
+  output: |-
+    [
+        click({
+            "aria_role": "checkbox",
+            "inside": {
+                "aria_role": "listitem",
+                "aria_name": "There is AI in Al"
+            }
+        })
+    ]

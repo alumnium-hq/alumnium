@@ -44,24 +44,24 @@ def step_impl(context):
 
 @then('I should see "{title}" in the list of tasks')
 def step_impl(context, title):
-    context.al.assess(f'I should see "{title}" in the list of tasks')
+    context.al.verify(f'I should see "{title}" in the list of tasks')
 
 
 @then('I should not see "{title}" in the list of tasks')
 def step_impl(context, title):
-    context.al.assess(f'I should not see "{title}" in the list of tasks')
+    context.al.verify(f'I should not see "{title}" in the list of tasks')
 
 
 @then('"{title}" task should be uncompleted')
 def step_impl(context, title):
-    context.al.assess(f'"{title}" task is uncompleted')
+    context.al.verify(f'"{title}" task is uncompleted')
 
 
 @then('"{title}" task should be completed')
 def step_impl(context, title):
-    context.al.assess(f'"{title}" task is completed')
+    context.al.verify(f'"{title}" task is completed')
 
 
 @then("tasks counter should be {count}")
 def step_impl(context, count):
-    context.al.assess(f'tasks counter should be {count}")')
+    context.al.verify(f'tasks counter should be {count}")')

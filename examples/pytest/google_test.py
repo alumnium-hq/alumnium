@@ -14,4 +14,4 @@ def test_google_search_sw(driver):
 def test_google_search_al(al):
     al.act("open URL https://www.google.com")
     al.act("search for selenium")
-    al.assess("selenium in page title")
+    al.verify("selenium in page title")
