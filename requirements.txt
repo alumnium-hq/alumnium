@@ -78,7 +78,7 @@ jiter==0.5.0
 joblib==1.4.2
 jsonpatch==1.33
 jsonpointer==2.4
-jsonschema==4.22.0
+jsonschema==4.23.0
 jsonschema-specifications==2023.12.1
 jusText==3.0.1
 kiwisolver==1.4.5
@@ -91,9 +91,6 @@ langchain-google-vertexai==1.0.6
 langchain-openai==0.1.19
 langchain-text-splitters==0.2.2
 langsmith==0.1.82
-lavague-contexts-openai==0.2.0
-lavague-drivers-selenium==0.2.5
-lavague-gradio==0.2.4
 llama-cloud==0.0.6
 llama-index==0.10.50
 llama-index-agent-openai==0.2.7
@@ -102,7 +99,7 @@ llama-index-core==0.10.50
 llama-index-embeddings-openai==0.1.10
 llama-index-indices-managed-llama-cloud==0.2.1
 llama-index-legacy==0.9.48
-llama-index-llms-azure-openai==0.1.8
+llama-index-llms-azure-openai==0.1.10
 llama-index-llms-openai==0.1.23
 llama-index-multi-modal-llms-azure-openai==0.1.4
 llama-index-multi-modal-llms-openai==0.1.6
