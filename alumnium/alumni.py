@@ -1,5 +1,4 @@
 import logging
-import yaml
 
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
@@ -19,7 +18,7 @@ class Alumni:
 
         if model == Model.OPENAI:
             llm = ChatOpenAI(
-                model="gpt-4o-mini",
+                model=model.value,
                 temperature=0,
                 max_retries=2,
             )
@@ -45,5 +44,5 @@ class Alumni:
     def act(self, goal: str):
         self.actor_agent.invoke(goal)
 
-    def verify(self, statement):
+    def verify(self, statement: str):
         self.verifier_agent.invoke(statement)

@@ -49,7 +49,7 @@ class XPath:
                 f"contains(normalize-space(), '{self.name}')",
                 f"contains(normalize-space(@aria-label), '{self.name}')",
                 f"@id=//label[contains(normalize-space(), '{self.name}')]/@for",
-                f"parent::label[contains(normalize-space(), '{self.name}')]",
+                f"parent::*[contains(normalize-space(), '{self.name}')]",
             ]
 
         if self.role == "checkbox":

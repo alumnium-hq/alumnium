@@ -2,10 +2,7 @@ import logging
 import yaml
 
 from langchain_core.language_models import BaseChatModel
-from langchain_core.prompts import (
-    ChatPromptTemplate,
-    FewShotChatMessagePromptTemplate,
-)
+from langchain_core.prompts import ChatPromptTemplate
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -16,8 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class ActorAgent:
-    with open("alumnium/agents/actor_prompts/examples.yml") as f:
-        EXAMPLES = yaml.safe_load(f.read())
     with open("alumnium/agents/actor_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open("alumnium/agents/actor_prompts/user.md") as f:
@@ -27,15 +22,9 @@ class ActorAgent:
         self.driver = driver
         llm = llm.bind_tools(OPENAI_FUNCTIONS)
 
-        example_prompt = ChatPromptTemplate.from_messages([("human", self.USER_MESSAGE), ("ai", "{output}")])
-        few_shot_prompt = FewShotChatMessagePromptTemplate(
-            examples=self.EXAMPLES,
-            example_prompt=example_prompt,
-        )
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", self.SYSTEM_MESSAGE),
-                few_shot_prompt,
                 ("human", self.USER_MESSAGE),
             ]
         )
