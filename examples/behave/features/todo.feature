@@ -1,10 +1,7 @@
 Feature: To Do application
 
   Background:
-    # Also runs on:
-    #   - react (1 failed test)
-    #   - preact (1 failed test)
-    #   - jquery (0 failed tests)
+    # Also passes on react, preact, and jquery!
     Given I open "https://todomvc.com/examples/vue/dist/"
 
   Scenario: Create a task

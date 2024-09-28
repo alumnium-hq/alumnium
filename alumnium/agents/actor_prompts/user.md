@@ -4,6 +4,6 @@
 
 ### Webpage ARIA tree
 
-```yaml
+```xml
 {aria}
 ```

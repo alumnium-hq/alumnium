@@ -1,4 +1,5 @@
-import yaml
+from uuid import uuid4
+from xml.etree.ElementTree import Element, tostring, indent
 
 
 class AriaTree:
@@ -26,36 +27,57 @@ class AriaTree:
                 node.pop("childIds", None)
                 node.pop("parentId", None)
 
-    def to_yaml(self):
-        """Converts the nested tree to YAML format using role.value as keys."""
-        yaml_data = []
+    def to_xml(self):
+        """Converts the nested tree to XML format using role.value as tags."""
 
-        def convert_node(node):
+        def convert_node_to_xml(node, parent=None):
             # Extract the desired information
             role_value = node["role"]["value"]
+            id = node.get("backendDOMNodeId", "")
             ignored = node.get("ignored", False)
             name_value = node.get("name", {}).get("value", "")
             properties = node.get("properties", [])
             children = node.get("nodes", [])
 
-            # Create a dictionary for the YAML entry
-            yaml_entry = {"name": name_value, "ignored": ignored}
+            if role_value == "StaticText":
+                parent.text = name_value
+            elif role_value == "none" or ignored == True:
+                if children:
+                    for child in children:
+                        convert_node_to_xml(child, parent)
+            else:
+                # Create the XML element for the node
+                xml_element = Element(role_value)
+                xml_element.set("name", name_value)
+                xml_element.set("ignored", str(ignored).lower())
 
-            if properties:
-                for property in properties:
-                    yaml_entry[property["name"]] = property.get("value", {}).get("value", "")
+                # Assign a unique ID to the element
+                xml_element.set("id", str(id))
 
-            # Add children recursively
-            if children:
-                yaml_entry["nodes"] = [convert_node(child) for child in children]
+                if properties:
+                    for property in properties:
+                        xml_element.set(property["name"], str(property.get("value", {}).get("value", "")))
 
-            return {role_value: yaml_entry}
+                # Add children recursively
+                if children:
+                    for child in children:
+                        convert_node_to_xml(child, xml_element)
 
-        # Convert each root node
-        for root_id in self.tree:
-            yaml_data.append(convert_node(self.tree[root_id]))
+                if parent is not None:
+                    parent.append(xml_element)
 
-        return yaml.dump(yaml_data, allow_unicode=True)
+                return xml_element
+
+        # Create the root XML element
+        root_elements = [convert_node_to_xml(self.tree[root_id]) for root_id in self.tree]
+
+        # Convert the XML elements to a string
+        xml_string = ""
+        for element in root_elements:
+            indent(element)
+            xml_string += tostring(element, encoding="unicode")
+
+        return xml_string
 
 
 if __name__ == "__main__":
@@ -1281,4 +1303,4 @@ if __name__ == "__main__":
         ]
     }
 
-    print(AriaTree(tree).to_yaml())
+    print(AriaTree(tree).to_xml())

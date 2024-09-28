@@ -1,5 +1,4 @@
 import logging
-import yaml
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
@@ -7,9 +6,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from alumnium.aria import AriaTree
-from alumnium.tools import FUNCTIONS, OPENAI_FUNCTIONS
+from alumnium.tools import ALL_TOOLS
+
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class ActorAgent:
@@ -20,7 +21,7 @@ class ActorAgent:
 
     def __init__(self, driver: WebDriver, llm: BaseChatModel):
         self.driver = driver
-        llm = llm.bind_tools(OPENAI_FUNCTIONS)
+        llm = llm.bind_tools(ALL_TOOLS.values())
 
         prompt = ChatPromptTemplate.from_messages(
             [
@@ -32,7 +33,7 @@ class ActorAgent:
 
     def invoke(self, goal: str):
         logger.info(f"Starting action:")
-        aria_tree = AriaTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})).to_yaml()
+        aria_tree = AriaTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})).to_xml()
 
         logger.info(f"  -> Goal: {goal}")
         logger.debug(f"  -> ARIA: {aria_tree}")
@@ -42,4 +43,4 @@ class ActorAgent:
         logger.info(f"  <- tools: {message.tool_calls}")
 
         for tool in message.tool_calls:
-            FUNCTIONS[tool["name"]](driver=self.driver, **tool.get("args", {}))
+            ALL_TOOLS[tool["name"]](**tool.get("args", {})).invoke(self.driver)
