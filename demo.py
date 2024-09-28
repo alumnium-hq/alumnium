@@ -1,5 +1,4 @@
 from alumnium import Alumni
-from code import InteractiveConsole
 from selenium.webdriver import Chrome
 
 driver = Chrome()
@@ -16,4 +15,3 @@ Use the `al` object to interact with Alumni. For example:
 You can also use the `driver` object to interact with the Selenium directly.
     """
 )
-InteractiveConsole(locals=globals()).interact()

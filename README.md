@@ -23,7 +23,7 @@ export GOOGLE_API_KEY="..."
 To run REPL for demo, use the following command:
 
 ```
-python demo.py
+python -i demo.py
 ```
 
 To run Cucumber examples, use the following command:
