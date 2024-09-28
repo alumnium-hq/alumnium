@@ -17,23 +17,11 @@ class Alumni:
         self.driver = driver
 
         if model == Model.OPENAI:
-            llm = ChatOpenAI(
-                model=model.value,
-                temperature=0,
-                max_retries=2,
-            )
+            llm = ChatOpenAI(model=model.value, temperature=0, max_retries=2, seed=1)
         elif model == Model.ANTHROPIC:
-            llm = ChatAnthropic(
-                model=model.value,
-                temperature=0,
-                max_retries=2,
-            )
+            llm = ChatAnthropic(model=model.value, temperature=0, max_retries=2)
         elif model == Model.GOOGLE:
-            llm = ChatGoogleGenerativeAI(
-                model=model.value,
-                temperature=0,
-                max_retries=2,
-            )
+            llm = ChatGoogleGenerativeAI(model=model.value, temperature=0, max_retries=2)
 
         self.actor_agent = ActorAgent(driver, llm)
         self.verifier_agent = VerifierAgent(driver, llm)
