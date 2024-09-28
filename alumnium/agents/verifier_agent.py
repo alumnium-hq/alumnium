@@ -5,6 +5,7 @@ from langchain_core.language_models import BaseChatModel
 
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from alumnium.aria import AriaTree
 from alumnium.assertions import AssertionResult
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ class VerifierAgent:
         self.chain = llm
 
     def invoke(self, statement: str):
+        aria = AriaTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})).to_xml()
         assertion = self.chain.invoke(
             [
                 SystemMessage(self.SYSTEM_MESSAGE),
@@ -31,7 +33,10 @@ class VerifierAgent:
                         {
                             "type": "text",
                             "text": self.USER_MESSAGE.format(
-                                statement=statement, url=self.driver.current_url, title=self.driver.title
+                                statement=statement,
+                                url=self.driver.current_url,
+                                title=self.driver.title,
+                                aria=aria,
                             ),
                         },
                         {
