@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 #     assert "selenium" in driver.title
 
 
-def test_google_search(al):
-    al.act("open URL https://www.google.com")
+def test_google_search(al, driver):
+    driver.get("https://www.google.com")
     al.act("search for selenium")
     al.verify("selenium in page title")

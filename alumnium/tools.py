@@ -123,7 +123,6 @@ FUNCTIONS = {
     "click": click,
     "drag_and_drop": drag_and_drop,
     "hover": hover,
-    "open_url": open_url,
     "type": type,
 }
 
@@ -174,17 +173,6 @@ OPENAI_FUNCTIONS = [
                 },
             },
             "required": ["text", "submit", "aria_role"],
-        },
-    },
-    {
-        "name": "open_url",
-        "description": "Open a URL in the driver.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "url": {"type": "string", "description": "URL to open"},
-            },
-            "required": ["url"],
         },
     },
     {

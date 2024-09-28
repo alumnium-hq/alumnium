@@ -3,7 +3,7 @@ from behave import *
 
 @given('I open "{url}"')
 def step_impl(context, url):
-    context.al.act(f'I open "{url}"')
+    context.driver.get(url)
 
 
 @when('I create a new task "{title}"')
