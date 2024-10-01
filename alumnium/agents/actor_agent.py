@@ -33,12 +33,12 @@ class ActorAgent:
 
     def invoke(self, goal: str):
         logger.info(f"Starting action:")
-        aria_tree = AriaTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})).to_xml()
+        aria = AriaTree.load(self.driver).to_xml()
 
         logger.info(f"  -> Goal: {goal}")
-        logger.debug(f"  -> ARIA: {aria_tree}")
+        logger.debug(f"  -> ARIA: {aria}")
 
-        message = self.chain.invoke({"goal": goal, "aria": aria_tree})
+        message = self.chain.invoke({"goal": goal, "aria": aria})
 
         logger.info(f"  <- tools: {message.tool_calls}")
 

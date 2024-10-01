@@ -24,7 +24,7 @@ class VerifierAgent:
         self.chain = llm
 
     def invoke(self, statement: str):
-        aria = AriaTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})).to_xml()
+        aria = AriaTree.load(self.driver).to_xml()
         assertion = self.chain.invoke(
             [
                 SystemMessage(self.SYSTEM_MESSAGE),
