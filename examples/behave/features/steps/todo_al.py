@@ -13,12 +13,12 @@ def step_impl(context, title):
 
 @when('I complete the "{title}" task')
 def step_impl(context, title):
-    context.al.act(f'I complete the "{title}" task')
+    context.al.act(f'I mark the "{title}" task as completed')
 
 
 @when('I uncomplete the "{title}" task')
 def step_impl(context, title):
-    context.al.act(f'I uncomplete the "{title}" task')
+    context.al.act(f'I mark the "{title}" task as uncompleted')
 
 
 @when('I delete the "{title}" task')
@@ -30,7 +30,7 @@ def step_impl(context, title):
 @when("I complete all tasks")
 def step_impl(context):
     # Avoid attempting to complete tasks one by one.
-    context.al.act("I complete all tasks using 'Toggle All' button")
+    context.al.act("I mark all tasks completed using 'Toggle All' button")
 
 
 @when('I show only "{filter}" tasks')
@@ -55,12 +55,12 @@ def step_impl(context, title):
 
 @then('"{title}" task should be uncompleted')
 def step_impl(context, title):
-    context.al.verify(f'"{title}" task is uncompleted')
+    context.al.verify(f'"{title}" task is not marked as completed')
 
 
 @then('"{title}" task should be completed')
 def step_impl(context, title):
-    context.al.verify(f'"{title}" task is completed')
+    context.al.verify(f'"{title}" task is marked as completed')
 
 
 @then("tasks counter should be {count}")

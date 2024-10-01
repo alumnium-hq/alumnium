@@ -75,7 +75,7 @@ class TypeTool(BaseModel):
 
     id: int = Field(description="Element identifier (ID)")
     text: str = Field(description="Text to type into an element")
-    submit: bool = Field(description="Press the Enter key")
+    submit: bool = Field(description="Submit after typing text by pressing `Enter` key")
 
     def invoke(self, driver: WebDriver):
         input = [self.text]
