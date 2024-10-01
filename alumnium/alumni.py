@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class Alumni:
-    def __init__(self, driver: WebDriver, model: Model = Model.OPENAI):
+    def __init__(self, driver: WebDriver, model: Model = Model.load()):
         self.driver = driver
 
         if model == Model.OPENAI:

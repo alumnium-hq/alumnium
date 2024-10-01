@@ -37,3 +37,9 @@ To run Pytest test use the following command:
 ```
 pytest
 ```
+
+To change what model is being used, use `ALUMNIUM_MODEL` variable (one of `openai`, `google` or `anthropic`):
+
+```
+ALUMNIUM_MODEL=google pytest
+```

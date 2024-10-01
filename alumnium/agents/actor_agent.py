@@ -21,7 +21,7 @@ class ActorAgent:
 
     def __init__(self, driver: WebDriver, llm: BaseChatModel):
         self.driver = driver
-        llm = llm.bind_tools(ALL_TOOLS.values())
+        llm = llm.bind_tools(list(ALL_TOOLS.values()))
 
         prompt = ChatPromptTemplate.from_messages(
             [

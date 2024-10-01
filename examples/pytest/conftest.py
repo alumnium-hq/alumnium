@@ -17,6 +17,6 @@ def driver():
 
 @fixture(scope="session", autouse=True)
 def al(driver):
-    al = Alumni(driver, model=Model.OPENAI)
+    al = Alumni(driver)
     yield al
     al.quit()

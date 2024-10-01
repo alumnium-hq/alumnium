@@ -17,7 +17,7 @@ def chrome_driver(context):
 
 @fixture
 def alumnium(context):
-    context.al = Alumni(context.driver, model=Model.OPENAI)
+    context.al = Alumni(context.driver)
     yield context.al
     context.al.quit()
 

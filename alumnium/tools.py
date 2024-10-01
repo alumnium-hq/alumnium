@@ -71,20 +71,18 @@ class HoverTool(BaseModel):
 
 
 class TypeTool(BaseModel):
-    """Type text into an element."""
+    """Types text into an element."""
 
     id: int = Field(description="Element identifier (ID)")
     text: str = Field(description="Text to type into an element")
-    submit: bool = Field(
-        description="Submit after typing text by pressing `Enter` key. Set to True when you are asked to perform the action on the page that requires typing text to the form and there is no button on the page to submit the form."
-    )
+    submit: bool = Field(description="Press the Enter key")
 
     def invoke(self, driver: WebDriver):
-        driver.execute_cdp_cmd("DOM.focus", {"backendNodeId": self.id})
         input = [self.text]
         if self.submit:
             input.append(Keys.RETURN)
 
+        driver.execute_cdp_cmd("DOM.focus", {"backendNodeId": self.id})
         element = driver.switch_to.active_element
         element.clear()
         element.send_keys(*input)
