@@ -23,6 +23,7 @@ class ClickTool(BaseModel):
     id: int = Field(description="Element identifier (ID)")
 
     def invoke(self, driver: WebDriver):
+        driver.execute_cdp_cmd("DOM.scrollIntoViewIfNeeded", {"backendNodeId": self.id})
         point = Coordinates.for_element(self.id, driver)
         driver.execute_cdp_cmd(
             "Input.dispatchMouseEvent",
@@ -41,6 +42,8 @@ class DragAndDropTool(BaseModel):
     to_id: int = Field(description="Identifier (ID) of element to drop onto")
 
     def invoke(self, driver: WebDriver):
+        driver.execute_cdp_cmd("DOM.scrollIntoViewIfNeeded", {"backendNodeId": self.id})
+
         drag = Coordinates.for_element(self.from_id, driver)
         drop = Coordinates.for_element(self.to_id, driver)
 
@@ -64,6 +67,7 @@ class HoverTool(BaseModel):
     id: int = Field(description="Element identifier (ID)")
 
     def invoke(self, driver: WebDriver):
+        driver.execute_cdp_cmd("DOM.scrollIntoViewIfNeeded", {"backendNodeId": self.id})
         point = Coordinates.for_element(self.id, driver)
         driver.execute_cdp_cmd(
             "Input.dispatchMouseEvent", {"type": "mouseMoved", "x": point.x, "y": point.y, "button": "left"}
@@ -82,6 +86,7 @@ class TypeTool(BaseModel):
         if self.submit:
             input.append(Keys.RETURN)
 
+        driver.execute_cdp_cmd("DOM.scrollIntoViewIfNeeded", {"backendNodeId": self.id})
         driver.execute_cdp_cmd("DOM.focus", {"backendNodeId": self.id})
         element = driver.switch_to.active_element
         element.clear()
