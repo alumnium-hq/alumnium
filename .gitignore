@@ -1,7 +1,10 @@
-.envrc
-/.venv/
 *.pyc
-__pycache__/
 .pytest_cache/
-reports/
-scratchpad.py
+__pycache__/
+
+/.venv/
+/dist/
+/reports/
+
+/.envrc
+/scratchpad.py

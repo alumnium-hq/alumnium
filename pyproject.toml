@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "alumnium"
+version = "0.1.0"
+description = "Pave the way towards AI-powered test automation."
+authors = ["Alex Rodionov <p0deje@gmail.com>", "Tatiana Shepeleva <tati.shep@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+homepage = "https://alumnium.ai"
+repository = "https://github.com/alumnium/alumnium"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain = "^0.3"
+langchain-anthropic = "^0.2"
+langchain-google-genai = "^2.0"
+langchain-openai = "^0.2"
+retry = "^0.9"
+selenium = "^4.0"
+
+[tool.poetry.group.dev.dependencies]
+behave = "^1.2.6"
+pytest = "^8.3.3"
+pytest-html = "^4.1.1"
+behave-html-pretty-formatter = "^1.12"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
