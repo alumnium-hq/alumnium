@@ -50,9 +50,9 @@ class ActorAgent:
             args = tool.get("args", {}).copy()
             if "id" in args:
                 args["id"] = aria.cached_ids[args["id"]]
-            elif "from_id" in args:
+            if "from_id" in args:
                 args["from_id"] = aria.cached_ids[args["from_id"]]
-            elif "to_id" in args:
+            if "to_id" in args:
                 args["to_id"] = aria.cached_ids[args["to_id"]]
 
             ALL_TOOLS[tool["name"]](**args).invoke(self.driver)
