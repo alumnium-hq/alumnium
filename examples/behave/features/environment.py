@@ -1,5 +1,6 @@
+from datetime import datetime
+
 from alumnium import Alumni
-from alumnium.models import Model
 from behave import fixture, use_fixture
 from selenium.webdriver import Chrome
 
@@ -9,7 +10,7 @@ from selenium.webdriver import Chrome
 
 
 @fixture
-def chrome_driver(context):
+def driver(context):
     context.driver = Chrome()
     yield context.driver
     context.driver.quit()
@@ -23,5 +24,20 @@ def alumnium(context):
 
 
 def before_all(context):
-    use_fixture(chrome_driver, context)
+    use_fixture(driver, context)
     use_fixture(alumnium, context)
+    for formatter in context._runner.formatters:
+        if formatter.name == "html-pretty":
+            context.embed = formatter.embed
+
+
+def after_scenario(context, scenario):
+    for formatter in context._runner.formatters:
+        if formatter.name == "html-pretty":
+            timestamp = datetime.now().strftime("%H-%M-%S")
+            context.driver.save_screenshot(f"reports/screenshot-{timestamp}.png")
+            formatter.embed(
+                mime_type="image/png",
+                data=f"reports/screenshot-{timestamp}.png",
+                caption="Screenshot",
+            )

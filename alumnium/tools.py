@@ -41,7 +41,7 @@ class ClickTool(BaseModel):
 
 
 class DragAndDropTool(BaseModel):
-    """Drag one element onto another and drop it."""
+    """Drag one element onto another and drop it. Don't combine with HoverTool."""
 
     from_id: int = Field(description="Identifier (ID) of element to drag")
     to_id: int = Field(description="Identifier (ID) of element to drop onto")

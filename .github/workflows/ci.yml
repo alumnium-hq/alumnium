@@ -1,0 +1,38 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ALUMNIUM_MODEL: azure_openai
+  AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+  AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
+  AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+  DISPLAY: :99
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: Xvfb ${{ env.DISPLAY }} &
+      - run: behave --format html-pretty --outfile reports/behave.html --format pretty
+      - run: pytest --html=reports/pytest.html
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: reports/

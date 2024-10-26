@@ -42,7 +42,8 @@ class ActorAgent:
 
         message = self.__prompt(goal, aria_xml)
 
-        logger.info(f"  <- tools: {message.tool_calls}")
+        logger.info(f"  <- Tools: {message.tool_calls}")
+        logger.info(f"  <- Usage: {message.usage_metadata}")
 
         # Move to tool itself to avoid hardcoding it's parameters.
         for tool in message.tool_calls:

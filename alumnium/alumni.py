@@ -5,6 +5,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from .agents import ActorAgent, VerifierAgent
@@ -40,6 +41,7 @@ class Alumni:
     def quit(self):
         self.driver.quit()
 
+    @retry(tries=2, delay=0.1)
     def act(self, goal: str):
         self.actor_agent.invoke(goal)
 
