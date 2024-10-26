@@ -1,5 +1,9 @@
+import logging
+
 from selenium.webdriver.remote.webdriver import WebDriver
 from xml.etree.ElementTree import Element, tostring, indent
+
+logger = logging.getLogger(__name__)
 
 
 class AriaTree:
@@ -10,12 +14,19 @@ class AriaTree:
     def __init__(self, tree: dict):
         self.tree = {}  # Initialize the result dictionary
 
+        self.id = 0
+        self.cached_ids = {}
+
         nodes = tree["nodes"]
         # Create a lookup table for nodes by their ID
         node_lookup = {node["nodeId"]: node for node in nodes}
 
         for node_id, node in node_lookup.items():
             parent_id = node.get("parentId")  # Get the parent ID
+
+            self.id += 1
+            self.cached_ids[self.id] = node.get("backendDOMNodeId", "")
+            node["id"] = self.id
 
             # If it's a top-level node, add it directly to the tree
             if parent_id is None:
@@ -31,13 +42,15 @@ class AriaTree:
                 node.pop("childIds", None)
                 node.pop("parentId", None)
 
+        logger.debug(f" Cached IDs: {self.cached_ids}")
+
     def to_xml(self):
         """Converts the nested tree to XML format using role.value as tags."""
 
         def convert_node_to_xml(node, parent=None):
             # Extract the desired information
             role_value = node["role"]["value"]
-            id = node.get("backendDOMNodeId", "")
+            id = node.get("id", "")
             ignored = node.get("ignored", False)
             name_value = node.get("name", {}).get("value", "")
             properties = node.get("properties", [])
