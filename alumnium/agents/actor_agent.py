@@ -9,9 +9,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from alumnium.aria import AriaTree
 from alumnium.tools import ALL_TOOLS
 
-
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 class ActorAgent:
@@ -34,12 +32,10 @@ class ActorAgent:
 
     def invoke(self, goal: str):
         logger.info(f"Starting action:")
+        logger.info(f"  -> Goal: {goal}")
+
         aria = AriaTree.load(self.driver)
         aria_xml = aria.to_xml()
-
-        logger.info(f"  -> Goal: {goal}")
-        logger.debug(f"  -> ARIA: {aria_xml}")
-
         message = self.__prompt(goal, aria_xml)
 
         logger.info(f"  <- Tools: {message.tool_calls}")

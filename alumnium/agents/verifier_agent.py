@@ -24,10 +24,9 @@ class VerifierAgent:
 
     def invoke(self, statement: str, vision: bool = False):
         logger.info(f"Starting verification:")
-        aria = AriaTree.load(self.driver).to_xml()
-
         logger.info(f"  -> Statement: {statement}")
-        logger.debug(f"  -> ARIA: {aria}")
+
+        aria = AriaTree.load(self.driver).to_xml()
 
         human_messsages = [
             {

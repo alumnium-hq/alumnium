@@ -42,3 +42,10 @@ To change what model is being used, use `ALUMNIUM_MODEL` variable (one of `opena
 ```
 ALUMNIUM_MODEL=google poetry run pytest
 ```
+
+## Environment Variables
+
+| Name             | Supported Values                        | Default | Explanation                                  |
+| ---------------- | --------------------------------------- | ------- | -------------------------------------------- |
+| `ALUMNIUM_DEBUG` | 1, 0                                    | 0       | Enable debug logs and print them to stdout.  |
+| `ALUMNIUM_MODEL` | anthropic, azure_openai, google, openai | openai  | Selects AI provider to use.                  |

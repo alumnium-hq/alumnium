@@ -1,5 +1,5 @@
 import logging
-import os
+from os import getenv
 
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
@@ -21,7 +21,7 @@ class Alumni:
         if model == Model.AZURE_OPENAI:
             llm = AzureChatOpenAI(
                 model=model.value,
-                api_version=os.environ.get("AZURE_OPENAI_API_VERSION", ""),
+                api_version=getenv("AZURE_OPENAI_API_VERSION", ""),
                 temperature=0,
                 max_retries=2,
                 seed=1,

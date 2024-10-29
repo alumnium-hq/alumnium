@@ -42,7 +42,7 @@ class AriaTree:
                 node.pop("childIds", None)
                 node.pop("parentId", None)
 
-        logger.debug(f" Cached IDs: {self.cached_ids}")
+        logger.debug(f"  -> ARIA Cached IDs: {self.cached_ids}")
 
     def to_xml(self):
         """Converts the nested tree to XML format using role.value as tags."""
@@ -93,6 +93,8 @@ class AriaTree:
         for element in root_elements:
             indent(element)
             xml_string += tostring(element, encoding="unicode")
+
+        logger.debug(f"  -> ARIA XML: {xml_string}")
 
         return xml_string
 
