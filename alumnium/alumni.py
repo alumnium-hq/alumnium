@@ -45,5 +45,5 @@ class Alumni:
     def act(self, goal: str):
         self.actor_agent.invoke(goal)
 
-    def verify(self, statement: str):
-        self.verifier_agent.invoke(statement)
+    def verify(self, statement: str, vision: bool = False):
+        self.verifier_agent.invoke(statement, vision)

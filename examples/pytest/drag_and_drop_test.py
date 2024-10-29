@@ -1,5 +1,5 @@
 def test_drag_and_drop(al, driver):
     driver.get("https://the-internet.herokuapp.com/drag_and_drop")
-    al.verify("square A is positioned to the left from square B")
+    al.verify("square A is positioned to the left from square B", vision=True)
     al.act("move square A to square B")
-    al.verify("square B is positioned to the left from square A")
+    al.verify("square B is positioned to the left from square A", vision=True)
