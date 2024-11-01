@@ -42,8 +42,8 @@ class Alumni:
         self.driver.quit()
 
     @retry(tries=2, delay=0.1)
-    def act(self, goal: str):
+    def do(self, goal: str):
         self.actor_agent.invoke(goal)
 
-    def verify(self, statement: str, vision: bool = False):
+    def check(self, statement: str, vision: bool = False):
         self.verifier_agent.invoke(statement, vision)

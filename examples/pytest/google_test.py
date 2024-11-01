@@ -13,6 +13,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 def test_google_search(al, driver):
     driver.get("https://www.google.com")
-    al.act("search for selenium")
-    al.verify("selenium in page title")
-    al.verify("selenium.dev is present in the search results")
+    al.do("search for selenium")
+    al.check("selenium in page title")
+    al.check("selenium.dev is present in the search results")
