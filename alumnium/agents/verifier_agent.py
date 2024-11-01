@@ -1,14 +1,22 @@
 import logging
 
 from langchain_core.language_models import BaseChatModel
+from pydantic import BaseModel, Field
 
-from alumnium.assertions import AssertionResult
 from alumnium.drivers import SeleniumDriver
 
 logger = logging.getLogger(__name__)
 
 
+class Verification(BaseModel):
+    """Result of a verification of a statement on a webpaget."""
+
+    result: bool = Field(description="Result of the verification.")
+    explanation: str = Field(description="Reason for the verification result.")
+
+
 class VerifierAgent:
+
     with open("alumnium/agents/verifier_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open("alumnium/agents/verifier_prompts/user.md") as f:
@@ -16,7 +24,7 @@ class VerifierAgent:
 
     def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
         self.driver = driver
-        llm = llm.with_structured_output(AssertionResult, include_raw=True)
+        llm = llm.with_structured_output(Verification, include_raw=True)
 
         self.chain = llm
 
@@ -53,9 +61,9 @@ class VerifierAgent:
             ]
         )
 
-        assertion = message["parsed"]
-        logger.info(f"  <- Result: {assertion.result}")
-        logger.info(f"  <- Reason: {assertion.reason}")
+        verification = message["parsed"]
+        logger.info(f"  <- Result: {verification.result}")
+        logger.info(f"  <- Reason: {verification.explanation}")
         logger.info(f'  <- Usage: {message["raw"].usage_metadata}')
 
-        assert assertion.result, assertion.reason
+        assert verification.result, verification.explanation

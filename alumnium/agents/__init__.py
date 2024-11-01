@@ -1,2 +1,2 @@
-from .actor_agent import *
-from .verifier_agent import *
+from .actor_agent import ActorAgent
+from .verifier_agent import VerifierAgent
