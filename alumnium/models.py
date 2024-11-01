@@ -10,4 +10,4 @@ class Model(Enum):
 
     @classmethod
     def load(cls):
-        return cls[environ.get("ALUMNIUM_MODEL", "google").upper()]
+        return cls[environ.get("ALUMNIUM_MODEL", "openai").upper()]
