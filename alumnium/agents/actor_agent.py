@@ -4,9 +4,7 @@ from functools import lru_cache
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
-from alumnium.aria import AriaTree
+from alumnium.drivers import SeleniumDriver
 from alumnium.tools import ALL_TOOLS
 
 logger = logging.getLogger(__name__)
@@ -18,7 +16,7 @@ class ActorAgent:
     with open("alumnium/agents/actor_prompts/user.md") as f:
         USER_MESSAGE = f.read()
 
-    def __init__(self, driver: WebDriver, llm: BaseChatModel):
+    def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
         self.driver = driver
         llm = llm.bind_tools(list(ALL_TOOLS.values()))
 
@@ -34,7 +32,7 @@ class ActorAgent:
         logger.info(f"Starting action:")
         logger.info(f"  -> Goal: {goal}")
 
-        aria = AriaTree.load(self.driver)
+        aria = self.driver.aria_tree
         aria_xml = aria.to_xml()
         message = self.__prompt(goal, aria_xml)
 

@@ -2,10 +2,8 @@ import logging
 
 from langchain_core.language_models import BaseChatModel
 
-from selenium.webdriver.remote.webdriver import WebDriver
-
-from alumnium.aria import AriaTree
 from alumnium.assertions import AssertionResult
+from alumnium.drivers import SeleniumDriver
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +14,7 @@ class VerifierAgent:
     with open("alumnium/agents/verifier_prompts/user.md") as f:
         USER_MESSAGE = f.read()
 
-    def __init__(self, driver: WebDriver, llm: BaseChatModel):
+    def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
         self.driver = driver
         llm = llm.with_structured_output(AssertionResult, include_raw=True)
 
@@ -26,16 +24,14 @@ class VerifierAgent:
         logger.info(f"Starting verification:")
         logger.info(f"  -> Statement: {statement}")
 
-        aria = AriaTree.load(self.driver).to_xml()
-
         human_messsages = [
             {
                 "type": "text",
                 "text": self.USER_MESSAGE.format(
                     statement=statement,
-                    url=self.driver.current_url,
+                    url=self.driver.url,
                     title=self.driver.title,
-                    aria=aria,
+                    aria=self.driver.aria_tree.to_xml(),
                 ),
             }
         ]
@@ -45,7 +41,7 @@ class VerifierAgent:
                 {
                     "type": "image_url",
                     "image_url": {
-                        "url": f"data:image/png;base64,{self.driver.get_screenshot_as_base64()}",
+                        "url": f"data:image/png;base64,{self.driver.screenshot}",
                     },
                 }
             )

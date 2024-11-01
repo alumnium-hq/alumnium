@@ -1,16 +1,10 @@
 import logging
-
-from selenium.webdriver.remote.webdriver import WebDriver
 from xml.etree.ElementTree import Element, tostring, indent
 
 logger = logging.getLogger(__name__)
 
 
 class AriaTree:
-    @classmethod
-    def load(cls, driver: WebDriver):
-        return cls(driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
-
     def __init__(self, tree: dict):
         self.tree = {}  # Initialize the result dictionary
 
