@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "alumnium"
-version = "0.1.0"
+version = "0.1.1"
 description = "Pave the way towards AI-powered test automation."
 authors = ["Alex Rodionov <p0deje@gmail.com>", "Tatiana Shepeleva <tati.shep@gmail.com>"]
 readme = "README.md"
