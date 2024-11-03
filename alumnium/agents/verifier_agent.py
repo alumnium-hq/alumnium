@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
@@ -16,10 +17,9 @@ class Verification(BaseModel):
 
 
 class VerifierAgent:
-
-    with open("alumnium/agents/verifier_prompts/system.md") as f:
+    with open(Path(__file__).parent / "verifier_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
-    with open("alumnium/agents/verifier_prompts/user.md") as f:
+    with open(Path(__file__).parent / "verifier_prompts/user.md") as f:
         USER_MESSAGE = f.read()
 
     def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):

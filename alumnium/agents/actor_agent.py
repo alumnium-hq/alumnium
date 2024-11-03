@@ -1,5 +1,6 @@
 import logging
 from functools import lru_cache
+from pathlib import Path
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
@@ -11,9 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 class ActorAgent:
-    with open("alumnium/agents/actor_prompts/system.md") as f:
+    with open(Path(__file__).parent / "actor_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
-    with open("alumnium/agents/actor_prompts/user.md") as f:
+    with open(Path(__file__).parent / "actor_prompts/user.md") as f:
         USER_MESSAGE = f.read()
 
     def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
