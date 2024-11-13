@@ -14,7 +14,7 @@ langchain = "^0.3"
 langchain-anthropic = "^0.2"
 langchain-google-genai = "^2.0"
 langchain-openai = "^0.2"
-retry = "^0.9"
+retry2 = "^0.9"
 selenium = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
