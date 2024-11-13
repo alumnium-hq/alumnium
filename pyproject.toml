@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "alumnium"
-version = "0.1.2"
+version = "0.1.3"
 description = "Pave the way towards AI-powered test automation."
 authors = ["Alex Rodionov <p0deje@gmail.com>", "Tatiana Shepeleva <tati.shep@gmail.com>"]
 readme = "README.md"
 license = "MIT"
 homepage = "https://alumnium.ai"
-repository = "https://github.com/alumnium/alumnium"
+repository = "https://github.com/alumnium-hq/alumnium"
 
 [tool.poetry.dependencies]
 python = "^3.10"
