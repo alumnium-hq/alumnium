@@ -56,11 +56,14 @@ class AriaTree:
                 if children:
                     for child in children:
                         convert_node_to_xml(child, parent)
+            elif role_value == "generic" and not children:
+                return None
             else:
                 # Create the XML element for the node
                 xml_element = Element(role_value)
-                xml_element.set("name", name_value)
-                xml_element.set("ignored", str(ignored).lower())
+
+                if name_value:
+                    xml_element.set("name", name_value)
 
                 # Assign a unique ID to the element
                 xml_element.set("id", str(id))
