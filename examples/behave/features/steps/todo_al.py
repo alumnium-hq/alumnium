@@ -8,29 +8,29 @@ def step_impl(context, url):
 
 @when('I create a new task "{title}"')
 def step_impl(context, title):
-    context.al.do(f"I create a new task '{title}'")
+    context.al.do(f"create a new task '{title}'")
 
 
-@when('I complete the "{title}" task')
+@when('I mark the "{title}" task as completed')
 def step_impl(context, title):
-    context.al.do(f'I mark the "{title}" task as completed')
+    context.al.do(f'mark the "{title}" task as completed')
 
 
-@when('I uncomplete the "{title}" task')
+@when('I mark the "{title}" task as uncompleted')
 def step_impl(context, title):
-    context.al.do(f'I mark the "{title}" task as uncompleted')
+    context.al.do(f'mark the "{title}" task as uncompleted')
 
 
 @when('I delete the "{title}" task')
 def step_impl(context, title):
-    context.al.do(f'I hover the "{title}" task')
-    context.al.do(f'I delete the "{title}" task')
+    context.al.do(f'hover the "{title}" task')
+    context.al.do(f'delete the "{title}" task')
 
 
-@when("I complete all tasks")
+@when("I mark all tasks as completed")
 def step_impl(context):
     # Avoid attempting to complete tasks one by one.
-    context.al.do("I mark all tasks completed using 'Toggle All' button")
+    context.al.do("mark all tasks as completed using 'Toggle All' button")
 
 
 @when('I show only "{filter}" tasks')
@@ -40,29 +40,29 @@ def step_impl(context, filter):
 
 @when("I clear completed tasks")
 def step_impl(context):
-    context.al.do("I clear completed tasks")
+    context.al.do("clear completed tasks")
 
 
-@then('I should see "{title}" in the list of tasks')
+@then('"{title}" task is shown in the list of tasks')
 def step_impl(context, title):
-    context.al.check(f'I should see "{title}" in the list of tasks')
+    context.al.check(f'"{title}" task is shown in the list of tasks')
 
 
-@then('I should not see "{title}" in the list of tasks')
+@then('"{title}" task is not shown in the list of tasks')
 def step_impl(context, title):
-    context.al.check(f'I should not see "{title}" in the list of tasks')
+    context.al.check(f'"{title}" task is not shown in the list of tasks')
 
 
-@then('"{title}" task should be uncompleted')
+@then('"{title}" task is not marked as completed')
 def step_impl(context, title):
     context.al.check(f'"{title}" task is not marked as completed')
 
 
-@then('"{title}" task should be completed')
+@then('"{title}" task is marked as completed')
 def step_impl(context, title):
     context.al.check(f'"{title}" task is marked as completed')
 
 
-@then("tasks counter should be {count}")
+@then("tasks counter is {count}")
 def step_impl(context, count):
-    context.al.check(f'tasks counter should be {count}")')
+    context.al.check(f'tasks counter is {count}")')
