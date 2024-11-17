@@ -14,14 +14,14 @@
 #     context.driver.find_element(By.CSS_SELECTOR, ".new-todo").send_keys(title, Keys.RETURN)
 
 
-# @when('I complete the "{title}" task')
+# @when('I mark the "{title}" task as completed')
 # def step_impl(context, title):
 #     tasks = context.driver.find_elements(By.CSS_SELECTOR, "ul.todo-list > li")
 #     task = [x for x in tasks if title in x.text][0]
 #     task.find_element(By.CSS_SELECTOR, ".toggle").click()
 
 
-# @when('I uncomplete the "{title}" task')
+# @when('I mark the "{title}" task as uncompleted')
 # def step_impl(context, title):
 #     tasks = context.driver.find_elements(By.CSS_SELECTOR, "ul.todo-list > li")
 #     task = [x for x in tasks if title in x.text][0]
@@ -37,7 +37,7 @@
 #     task.find_element(By.CSS_SELECTOR, ".destroy").click()
 
 
-# @when("I complete all tasks")
+# @when("I mark all tasks as completed")
 # def step_impl(context):
 #     context.driver.find_element(By.CSS_SELECTOR, "#toggle-all-input").click()
 
@@ -54,7 +54,7 @@
 #     context.driver.find_element(By.CSS_SELECTOR, ".clear-completed").click()
 
 
-# @then('I should see "{title}" in the list of tasks')
+# @then('"{title}" task is shown in the list of tasks')
 # def step_impl(context, title):
 #     tasks = [
 #         x.find_element(By.CSS_SELECTOR, "label").text
@@ -63,7 +63,7 @@
 #     assert title in tasks
 
 
-# @then('I should not see "{title}" in the list of tasks')
+# @then('"{title}" task is not shown in the list of tasks')
 # def step_impl(context, title):
 #     tasks = [
 #         x.find_element(By.CSS_SELECTOR, "label").text
@@ -72,20 +72,20 @@
 #     assert title not in tasks
 
 
-# @then('"{title}" task should be uncompleted')
+# @then('"{title}" task is not marked as completed')
 # def step_impl(context, title):
 #     tasks = context.driver.find_elements(By.CSS_SELECTOR, "ul.todo-list > li")
 #     task = [x for x in tasks if title in x.text][0]
 #     assert "completed" not in task.get_attribute("class")
 
 
-# @then('"{title}" task should be completed')
+# @then('"{title}" task is marked as completed')
 # def step_impl(context, title):
 #     tasks = context.driver.find_elements(By.CSS_SELECTOR, "ul.todo-list > li")
 #     task = [x for x in tasks if title in x.text][0]
 #     assert "completed" in task.get_attribute("class")
 
 
-# @then("tasks counter should be {count}")
+# @then("tasks counter is {count}")
 # def step_impl(context, count):
 #     assert context.driver.find_element(By.CSS_SELECTOR, ".todo-count > strong").text == count
