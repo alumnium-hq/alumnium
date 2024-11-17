@@ -1,16 +1,18 @@
 import logging
 from pathlib import Path
+from time import sleep
 
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
 from alumnium.drivers import SeleniumDriver
+from . import LoadingDetectorAgent
 
 logger = logging.getLogger(__name__)
 
 
 class Verification(BaseModel):
-    """Result of a verification of a statement on a webpaget."""
+    """Result of a verification of a statement on a webpage."""
 
     result: bool = Field(description="Result of the verification.")
     explanation: str = Field(description="Reason for the verification result.")
@@ -24,32 +26,34 @@ class VerifierAgent:
 
     def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
         self.driver = driver
-        llm = llm.with_structured_output(Verification, include_raw=True)
+        self.chain = llm.with_structured_output(Verification, include_raw=True)
 
-        self.chain = llm
+        self.loading_detector_agent = LoadingDetectorAgent(llm)
+        self.retry_count = LoadingDetectorAgent.timeout / LoadingDetectorAgent.delay
 
     def invoke(self, statement: str, vision: bool = False):
         logger.info(f"Starting verification:")
         logger.info(f"  -> Statement: {statement}")
 
-        human_messsages = [
+        aria = self.driver.aria_tree.to_xml()
+        title = self.driver.title
+        url = self.driver.url
+
+        human_messages = [
             {
                 "type": "text",
-                "text": self.USER_MESSAGE.format(
-                    statement=statement,
-                    url=self.driver.url,
-                    title=self.driver.title,
-                    aria=self.driver.aria_tree.to_xml(),
-                ),
+                "text": self.USER_MESSAGE.format(statement=statement, url=url, title=title, aria=aria),
             }
         ]
 
+        screenshot = None
         if vision:
-            human_messsages.append(
+            screenshot = self.driver.screenshot
+            human_messages.append(
                 {
                     "type": "image_url",
                     "image_url": {
-                        "url": f"data:image/png;base64,{self.driver.screenshot}",
+                        "url": f"data:image/png;base64,{screenshot}",
                     },
                 }
             )
@@ -57,7 +61,7 @@ class VerifierAgent:
         message = self.chain.invoke(
             [
                 ("system", self.SYSTEM_MESSAGE),
-                ("human", human_messsages),
+                ("human", human_messages),
             ]
         )
 
@@ -66,4 +70,13 @@ class VerifierAgent:
         logger.info(f"  <- Reason: {verification.explanation}")
         logger.info(f'  <- Usage: {message["raw"].usage_metadata}')
 
-        assert verification.result, verification.explanation
+        try:
+            assert verification.result, verification.explanation
+        except AssertionError as e:
+            loading = self.loading_detector_agent.invoke(aria, title, url, screenshot)
+            if loading and self.retry_count > 0:
+                sleep(LoadingDetectorAgent.delay)
+                self.retry_count -= 1
+                return self.invoke(statement, vision)
+            else:
+                raise e
