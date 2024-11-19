@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ALUMNIUM_MODEL: azure_openai
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
   AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
   AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
   AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
@@ -22,6 +23,14 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    env:
+      ALUMNIUM_MODEL: ${{ matrix.model }}
+    strategy:
+      fail-fast: false
+      matrix:
+        model:
+          - aws_anthropic
+          - azure_openai
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,7 +48,7 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: reports
+          name: reports-${{ matrix.model }}
           path: reports/
 
   release:
