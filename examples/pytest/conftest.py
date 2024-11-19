@@ -4,10 +4,6 @@ from alumnium import Alumni
 from selenium.webdriver import Chrome
 from pytest import fixture, hookimpl
 
-# from langchain.globals import set_debug
-
-# set_debug(True)
-
 
 @fixture(scope="session", autouse=True)
 def driver():

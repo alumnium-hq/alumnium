@@ -92,6 +92,7 @@ Select AI provider to use. Supported values are:
 
 - `anthropic`
 - `azure_openai`
+- `aws_anthropic`
 - `google`
 - `openai`
 

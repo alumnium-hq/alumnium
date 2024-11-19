@@ -16,6 +16,7 @@ langchain-google-genai = "^2.0"
 langchain-openai = "^0.2"
 retry2 = "^0.9"
 selenium = "^4.0"
+langchain-aws = "^0.2.7"
 
 [tool.poetry.group.dev.dependencies]
 behave = "^1.2.6"

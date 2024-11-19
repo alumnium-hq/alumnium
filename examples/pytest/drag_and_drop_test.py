@@ -1,3 +1,8 @@
+from alumnium import Model
+from pytest import mark
+
+
+@mark.xfail(Model.load() == Model.AWS_ANTHROPIC, reason="Bedrock version of Haiku is subpar")
 def test_drag_and_drop(al, driver):
     driver.get("https://the-internet.herokuapp.com/drag_and_drop")
     al.check("square A is positioned to the left of square B", vision=True)
