@@ -12,7 +12,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ALUMNIUM_DEBUG: 1
   ALUMNIUM_MODEL: azure_openai
   AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
   AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}

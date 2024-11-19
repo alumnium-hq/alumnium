@@ -33,6 +33,7 @@ Feature: To Do application
 
   Scenario: Delete a task
     When I create a new task "Buy milk"
+    And I create a new task "Buy bread"
     And I delete the "Buy milk" task
     Then "Buy milk" task is not shown in the list of tasks
 
