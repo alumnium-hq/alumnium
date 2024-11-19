@@ -8,7 +8,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from .agents import ActorAgent, VerifierAgent
+from .agents import ActorAgent, ContradictionCheckerAgent, VerifierAgent
 from .drivers import SeleniumDriver
 from .models import Model
 
@@ -16,7 +16,12 @@ logger = logging.getLogger(__name__)
 
 
 class Alumni:
-    def __init__(self, driver: WebDriver, model: Model = Model.load()):
+    def __init__(
+        self,
+        driver: WebDriver,
+        model: Model = Model.load(),
+        check_contradictions: bool = True,
+    ):
         self.driver = SeleniumDriver(driver)
 
         if model == Model.AZURE_OPENAI:
@@ -39,6 +44,9 @@ class Alumni:
         self.actor_agent = ActorAgent(self.driver, llm)
         self.verifier_agent = VerifierAgent(self.driver, llm)
 
+        self.check_contradictions = check_contradictions
+        self.contradiction_checker_agent = ContradictionCheckerAgent(llm)
+
     def quit(self):
         self.driver.quit()
 
@@ -47,4 +55,14 @@ class Alumni:
         self.actor_agent.invoke(goal)
 
     def check(self, statement: str, vision: bool = False):
-        self.verifier_agent.invoke(statement, vision)
+        try:
+            verification = self.verifier_agent.invoke(statement, vision)
+            assert verification.result, verification.explanation
+        except AssertionError as e:
+            if self.check_contradictions and not self.contradiction_checker_agent.invoke(
+                statement,
+                verification.explanation,
+            ):
+                return
+            else:
+                raise e

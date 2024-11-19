@@ -31,7 +31,7 @@ class VerifierAgent:
         self.loading_detector_agent = LoadingDetectorAgent(llm)
         self.retry_count = LoadingDetectorAgent.timeout / LoadingDetectorAgent.delay
 
-    def invoke(self, statement: str, vision: bool = False):
+    def invoke(self, statement: str, vision: bool = False) -> Verification:
         logger.info(f"Starting verification:")
         logger.info(f"  -> Statement: {statement}")
 
@@ -70,13 +70,11 @@ class VerifierAgent:
         logger.info(f"  <- Reason: {verification.explanation}")
         logger.info(f'  <- Usage: {message["raw"].usage_metadata}')
 
-        try:
-            assert verification.result, verification.explanation
-        except AssertionError as e:
+        if not verification.result:
             loading = self.loading_detector_agent.invoke(aria, title, url, screenshot)
             if loading and self.retry_count > 0:
                 sleep(LoadingDetectorAgent.delay)
                 self.retry_count -= 1
                 return self.invoke(statement, vision)
-            else:
-                raise e
+
+        return verification
