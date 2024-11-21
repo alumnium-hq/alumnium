@@ -41,16 +41,16 @@ class ActorAgent:
         logger.info(f"  <- Usage: {message.usage_metadata}")
 
         # Move to tool itself to avoid hardcoding it's parameters.
-        for tool in message.tool_calls:
-            args = tool.get("args", {}).copy()
-            if "id" in args:
-                args["id"] = aria.cached_ids[args["id"]]
-            if "from_id" in args:
-                args["from_id"] = aria.cached_ids[args["from_id"]]
-            if "to_id" in args:
-                args["to_id"] = aria.cached_ids[args["to_id"]]
+        for tool_call in message.tool_calls:
+            tool = ALL_TOOLS[tool_call["name"]](**tool_call["args"])
+            if "id" in tool.model_fields_set:
+                tool.id = aria.cached_ids[tool.id]
+            if "from_id" in tool.model_fields_set:
+                tool.from_id = aria.cached_ids[tool.from_id]
+            if "to_id" in tool.model_fields_set:
+                tool.to_id = aria.cached_ids[tool.to_id]
 
-            ALL_TOOLS[tool["name"]](**args).invoke(self.driver)
+            tool.invoke(self.driver)
 
     @lru_cache()
     def __prompt(self, goal: str, aria: str):

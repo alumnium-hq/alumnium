@@ -2,7 +2,7 @@ import logging
 from os import getenv
 
 from langchain_anthropic import ChatAnthropic
-from langchain_aws import ChatBedrock
+from langchain_aws import ChatBedrockConverse
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
@@ -35,10 +35,10 @@ class Alumni:
             )
         elif model == Model.ANTHROPIC:
             llm = ChatAnthropic(model=model.value, temperature=0, max_retries=2)
-        elif model == Model.AWS_ANTHROPIC:
-            llm = ChatBedrock(
+        elif model == Model.AWS_ANTHROPIC or model == Model.AWS_META:
+            llm = ChatBedrockConverse(
                 model_id=model.value,
-                model_kwargs={"temperature": 0},
+                temperature=0,
                 aws_access_key_id=getenv("AWS_ACCESS_KEY", ""),
                 aws_secret_access_key=getenv("AWS_SECRET_KEY", ""),
                 region_name=getenv("AWS_REGION_NAME", "us-east-1"),
