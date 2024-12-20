@@ -5,6 +5,7 @@ from time import sleep
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
+from alumnium.delayed_runnable import DelayedRunnable
 from alumnium.drivers import SeleniumDriver
 from . import LoadingDetectorAgent
 
@@ -26,7 +27,7 @@ class VerifierAgent:
 
     def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
         self.driver = driver
-        self.chain = llm.with_structured_output(Verification, include_raw=True)
+        self.chain = DelayedRunnable(llm.with_structured_output(Verification, include_raw=True))
 
         self.loading_detector_agent = LoadingDetectorAgent(llm)
         self.retry_count = LoadingDetectorAgent.timeout / LoadingDetectorAgent.delay
