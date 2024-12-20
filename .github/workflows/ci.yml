@@ -15,6 +15,7 @@ env:
   AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
   AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
   AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+  GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
   DISPLAY: :99
 
 jobs:
@@ -23,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ALUMNIUM_MODEL: ${{ matrix.model }}
+      ALUMNIUM_RPM_LIMIT: ${{ matrix.model == 'google' && '15' || '0' }}
     strategy:
       fail-fast: false
       matrix:
@@ -30,6 +32,7 @@ jobs:
           - aws_anthropic
           - aws_meta
           - azure_openai
+          - google
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,6 +42,7 @@ jobs:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - run: Xvfb ${{ env.DISPLAY }} &
+      - run: echo ALUMNIUM_DEBUG=${{ runner.debug }} >> "$GITHUB_ENV"
       - run: poetry install
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty
       - run: poetry run pytest --html reports/pytest.html
@@ -70,7 +74,7 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
       - run: poetry install
       - run: poetry build
-      - run: echo "version=$(poetry version --short)" >> $GITHUB_OUTPUT
+      - run: echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
         id: version
       - uses: actions/attest-build-provenance@v1
         with:

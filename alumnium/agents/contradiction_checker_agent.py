@@ -4,6 +4,7 @@ from pathlib import Path
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
+from alumnium.delayed_runnable import DelayedRunnable
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class ContradictionCheckerAgent:
         USER_MESSAGE = f.read()
 
     def __init__(self, llm: BaseChatModel):
-        self.chain = llm.with_structured_output(Response, include_raw=True)
+        self.chain = DelayedRunnable(llm.with_structured_output(Response, include_raw=True))
 
     def invoke(self, statement: str, verification_explanation: str) -> bool:
         logger.info(f"Starting contradiction checking:")

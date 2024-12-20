@@ -5,6 +5,7 @@ from pathlib import Path
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
+from alumnium.delayed_runnable import DelayedRunnable
 from alumnium.drivers import SeleniumDriver
 from alumnium.tools import ALL_TOOLS
 
@@ -27,7 +28,7 @@ class ActorAgent:
                 ("human", self.USER_MESSAGE),
             ]
         )
-        self.chain = prompt | llm
+        self.chain = prompt | DelayedRunnable(llm)
 
     def invoke(self, goal: str):
         logger.info(f"Starting action:")
