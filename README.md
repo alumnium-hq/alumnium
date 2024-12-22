@@ -7,7 +7,7 @@ _Pave the way towards AI-powered test automation._
 
 Aluminum is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It aims to simplify interactions with web pages and provide more robust mechanisms for verifying assertions.
 
-Currently in the very early stages of development and not recommended for production use.
+<img src="https://raw.githubusercontent.com/alumnium-hq/alumnium.github.io/ccc7886dcf325d7b34d349facec7393d18812054/src/assets/overview.gif" height="448px" width="620px" />
 
 ## Installation
 
@@ -15,48 +15,14 @@ Currently in the very early stages of development and not recommended for produc
 pip install alumnium
 ```
 
-## Configure AI Provider
-
-Alumnium uses OpenAI by default, but you can change it by following the steps below.
-
-_At the moment of writing, Google AI Studio provides free access to its models, so you can use it for playing around with Alumnium._
-
-### OpenAI (GPT-4o-mini)
-
-1. Get the API key from [OpenAI][1].
-2. Give Alumnium access to the API.
-
-```bash
-export OPENAI_API_KEY="sk-proj-..."
-```
-
-### Anthropic (Claude 3 Haiku)
-
-1. Get the API key from [Anthropic][2].
-2. Tell Alumnium to use Claude and provide access.
-
-```bash
-export ALUMNIUM_MODEL="anthropic"
-export ANTHROPIC_API_KEY="sk-ant-..."
-```
-
-### Google (Gemini 1.5 Flash)
-
-1. Get the API key from [Google AI Studio][3].
-2. Tell Alumnium to use Gemini and provide access.
-
-```bash
-export ALUMNIUM_MODEL="google"
-export GOOGLE_API_KEY="..."
-```
-
-## Run Script
-
-Start Alumnium using your Selenium driver and begin interacting with the webpage and check assertions.
+## Quick Start
 
 ```python
+import os
 from alumnium import Alumni
 from selenium.webdriver import Chrome
+
+os.environ["OPENAI_API_KEY"] = "..."
 
 driver = Chrome()
 driver.get("https://google.com")
@@ -67,34 +33,7 @@ al.check("selenium in page title")
 al.check("selenium.dev is present in the search results")
 ```
 
-Check out more [examples][4]!
-
-## To Do
-
-- Cross-browser support (currently only Chrome and Edge are working).
-- Mobile applications support via Appium.
-- Playwright support.
-- Open LLMs support (currently only Anthropic, Google and OpenAI are proven to work).
-- Automatic handling of flakiness.
-- Improved caching for faster performance.
-- High-level multi-step instructions and verifications (currently the instructions must be very concrete).
-- Other languages support (C#, Java, JavaScript, Ruby, etc.)
-
-## Environment Variables
-
-### `ALUMNIUM_DEBUG`
-
-Set to `1` to enable debug logs and print them to stdout.
-
-### `ALUMNIUM_MODEL`
-
-Select AI provider to use. Supported values are:
-
-- `anthropic`
-- `azure_openai`
-- `aws_anthropic`
-- `google`
-- `openai`
+Check out [documentation][1] and more [examples][2]!
 
 ## Development
 
@@ -105,36 +44,18 @@ pipx install poetry
 poetry install
 ```
 
-Configure access to AI providers:
+Configure access to [AI providers][3] and start hacking!
+
+Useful commands during development:
 
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
-export OPENAI_API_KEY="sk-proj-..."
-export GOOGLE_API_KEY="..."
-```
-
-To run REPL for demo, use the following command:
-
-```
-poetry run python -i demo.py
-```
-
-To run Cucumber examples, use the following command:
-
-```
-poetry run behave
-```
-
-To run the Pytest test use the following command:
-
-```
-poetry run pytest
+poetry run python -i demo.py  # run REPL
+poetry run behave             # run Gherkin examples
+poetry run pytest             # run Pytest examples
 ```
 
 
 
-
-[1]: https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key
-[2]: https://docs.anthropic.com/en/api/getting-started
-[3]: https://aistudio.google.com/app/apikey
-[4]: examples/
+[1]: https://alumnium.ai/docs/
+[2]: examples/
+[3]: https://alumnium.ai/docs/getting-started/configuration/
