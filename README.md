@@ -9,6 +9,8 @@ Aluminum is an experimental project that builds upon the existing test automatio
 
 <img src="https://raw.githubusercontent.com/alumnium-hq/alumnium.github.io/ccc7886dcf325d7b34d349facec7393d18812054/src/assets/overview.gif" height="448px" width="620px" />
 
+Currently in the very early stages of development and not recommended for production use.
+
 ## Installation
 
 ```bash
