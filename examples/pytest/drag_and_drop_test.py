@@ -2,7 +2,6 @@ from alumnium import Model
 from pytest import mark
 
 
-@mark.xfail(Model.load() == Model.AWS_ANTHROPIC, reason="Bedrock version of Haiku is subpar")
 @mark.xfail(Model.load() == Model.AWS_META, reason="https://github.com/langchain-ai/langchain-aws/issues/285")
 def test_drag_and_drop(al, driver):
     driver.get("https://the-internet.herokuapp.com/drag_and_drop")

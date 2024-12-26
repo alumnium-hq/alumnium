@@ -5,9 +5,9 @@ from time import sleep
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
+from alumnium.agents import LoadingDetectorAgent
 from alumnium.delayed_runnable import DelayedRunnable
 from alumnium.drivers import SeleniumDriver
-from . import LoadingDetectorAgent
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +24,8 @@ class VerifierAgent:
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "verifier_prompts/user.md") as f:
         USER_MESSAGE = f.read()
+    with open(Path(__file__).parent / "verifier_prompts/_user_text.md") as f:
+        USER_TEXT_FRAGMENT = f.read()
 
     def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
         self.driver = driver
@@ -40,12 +42,11 @@ class VerifierAgent:
         title = self.driver.title
         url = self.driver.url
 
-        human_messages = [
-            {
-                "type": "text",
-                "text": self.USER_MESSAGE.format(statement=statement, url=url, title=title, aria=aria),
-            }
-        ]
+        prompt = self.USER_MESSAGE.format(statement=statement)
+        if not vision:
+            prompt += self.USER_TEXT_FRAGMENT.format(url=url, title=title, aria=aria)
+
+        human_messages = [{"type": "text", "text": prompt}]
 
         screenshot = None
         if vision:
