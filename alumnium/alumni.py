@@ -63,8 +63,8 @@ class Alumni:
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
         steps = self.planner_agent.invoke(goal)
-        if len(steps) > 0:
-            self.actor_agent.invoke(steps)
+        for step in steps:
+            self.actor_agent.invoke(step)
 
     def check(self, statement: str, vision: bool = False):
         try:

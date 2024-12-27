@@ -33,6 +33,10 @@ class SeleniumDriver:
     def quit(self):
         self.driver.quit()
 
+    def press_key(self, key: str):
+        if key == "Enter":
+            ActionChains(self.driver).send_keys(Keys.RETURN).perform()
+
     @property
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()
@@ -49,14 +53,10 @@ class SeleniumDriver:
     def title(self) -> str:
         return self.driver.title
 
-    def type(self, id: int, text: str, submit: bool):
-        input = [text]
-        if submit:
-            input.append(Keys.RETURN)
-
+    def type(self, id: int, text: str):
         element = self._find_element(id)
         element.clear()
-        element.send_keys(*input)
+        element.send_keys(text)
 
     @property
     def url(self) -> str:

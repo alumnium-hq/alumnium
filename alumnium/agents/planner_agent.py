@@ -2,6 +2,8 @@ import logging
 from functools import lru_cache
 from pathlib import Path
 
+from langchain_core.output_parsers import MarkdownListOutputParser
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
@@ -34,7 +36,7 @@ class PlannerAgent:
                 ("human", self.USER_MESSAGE),
             ]
         )
-        self.chain = prompt | DelayedRunnable(llm.with_structured_output(Plan, include_raw=True))
+        self.chain = prompt | DelayedRunnable(llm)
 
     def invoke(self, goal: str) -> list[str]:
         logger.info(f"Starting planning:")
@@ -44,12 +46,14 @@ class PlannerAgent:
         aria_xml = aria.to_xml()
         message = self.__prompt(goal, aria_xml)
 
-        logger.info(message)
-        result = message["parsed"]
-        logger.info(f"  <- Result: {result}")
-        logger.info(f'  <- Usage: {message["raw"].usage_metadata}')
+        logger.info(f"  <- Result: {message.content}")
+        logger.info(f"  <- Usage: {message.usage_metadata}")
 
-        return result.steps
+        if message.content.upper() == "NOOP":
+            return []
+        else:
+            steps = message.content.split("\n")
+            return [step.removeprefix("- ") for step in steps]
 
     @lru_cache()
     def __prompt(self, goal: str, aria: str):

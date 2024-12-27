@@ -1,6 +1,6 @@
-### Steps
+### Step
 
-{steps}
+{step}
 
 ### Webpage ARIA tree
 
