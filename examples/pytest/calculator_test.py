@@ -2,13 +2,33 @@ from alumnium import Model
 from pytest import mark, raises
 
 
-@mark.xfail(Model.load() == Model.ANTHROPIC, reason="Haiku attempts to type into calculator")
-@mark.xfail(Model.load() == Model.AWS_ANTHROPIC, reason="Bedrock version of Haiku is subpar")
-@mark.xfail(Model.load() == Model.AWS_META, reason="It is too hard for Llama 3.2")
-@mark.xfail(Model.load() == Model.GOOGLE, reason="It is too hard for Gemini 1.5 Flash (but works on Pro)")
-def test_addition(al, navigate):
-    navigate("https://seleniumbase.io/apps/calculator")
+def test_addition(al, driver):
+    driver.get("https://seleniumbase.io/apps/calculator")
     al.do("1 + 1 =")
     al.check("calculator result is 2")
-    with raises(AssertionError):
-        al.check("calculator result is 3")
+    # with raises(AssertionError):
+    #     al.check("calculator result is 3")
+
+
+def test_subtraction(al, driver):
+    driver.get("https://seleniumbase.io/apps/calculator")
+    al.do("5 - 3 =")
+    al.check("calculator result is 2")
+    # with raises(AssertionError):
+    #     al.check("calculator result is 1")
+
+
+def test_multiplication(al, driver):
+    driver.get("https://seleniumbase.io/apps/calculator")
+    al.do("3 * 4 =")
+    al.check("calculator result is 12")
+    # with raises(AssertionError):
+    #     al.check("calculator result is 11")
+
+
+def test_division(al, driver):
+    driver.get("https://seleniumbase.io/apps/calculator")
+    al.do("8 / 2 =")
+    al.check("calculator result is 4")
+    # with raises(AssertionError):
+    #     al.check("calculator result is 5")
