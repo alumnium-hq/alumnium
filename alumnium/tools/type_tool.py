@@ -7,7 +7,6 @@ class TypeTool(BaseModel):
 
     id: int = Field(description="Element identifier (ID)")
     text: str = Field(description="Text to type into an element")
-    submit: bool = Field(description="Submit after typing text by pressing `Enter` key")
 
     def invoke(self, driver: SeleniumDriver):
-        driver.type(self.id, self.text, self.submit)
+        driver.type(self.id, self.text)

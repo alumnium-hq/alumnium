@@ -30,13 +30,16 @@ class ActorAgent:
         )
         self.chain = prompt | DelayedRunnable(llm)
 
-    def invoke(self, steps: list[str]):
-        logger.info(f"Starting actions:")
-        logger.info(f"  -> Steps: {steps}")
+    def invoke(self, step: str):
+        if len(step.strip()) == 0:
+            return
+
+        logger.info(f"Starting action:")
+        logger.info(f"  -> Step: {step}")
 
         aria = self.driver.aria_tree
         aria_xml = aria.to_xml()
-        message = self.__prompt("\n- ".join(steps), aria_xml)
+        message = self.__prompt(step, aria_xml)
 
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
@@ -54,5 +57,5 @@ class ActorAgent:
             tool.invoke(self.driver)
 
     @lru_cache()
-    def __prompt(self, steps: str, aria: str):
-        return self.chain.invoke({"steps": steps, "aria": aria})
+    def __prompt(self, step: str, aria: str):
+        return self.chain.invoke({"step": step, "aria": aria})
