@@ -1,6 +1,6 @@
-### Steps
+### Goal
 
-{steps}
+{goal}
 
 ### Webpage ARIA tree
 
