@@ -9,7 +9,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from .agents import ActorAgent, ContradictionCheckerAgent, VerifierAgent
+from .agents import ActorAgent, ContradictionCheckerAgent, PlannerAgent, VerifierAgent
 from .drivers import SeleniumDriver
 from .models import Model
 
@@ -51,6 +51,7 @@ class Alumni:
             raise NotImplementedError(f"Model {model} not implemented")
 
         self.actor_agent = ActorAgent(self.driver, llm)
+        self.planner_agent = PlannerAgent(self.driver, llm)
         self.verifier_agent = VerifierAgent(self.driver, llm)
 
         self.check_contradictions = check_contradictions
@@ -61,7 +62,9 @@ class Alumni:
 
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
-        self.actor_agent.invoke(goal)
+        steps = self.planner_agent.invoke(goal)
+        if len(steps) > 0:
+            self.actor_agent.invoke(steps)
 
     def check(self, statement: str, vision: bool = False):
         try:
