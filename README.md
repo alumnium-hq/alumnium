@@ -1,9 +1,19 @@
 <h1>
-    <img src="https://github.com/user-attachments/assets/44e63cc3-d0e8-4b79-bfc1-015ce91a92f7" height="48px" />
-    <sup>Alumnium</sup>
+    <p align="center">
+        <img src="https://github.com/user-attachments/assets/44e63cc3-d0e8-4b79-bfc1-015ce91a92f7" height="128" alt="Logo" />
+        <br />
+        Alumnium
+    </p>
 </h1>
-
-_Pave the way towards AI-powered test automation._
+<p align="center">
+    Pave the way towards AI-powered test automation.
+    <br />
+    <a href="#installation">Installation</a>
+    ·
+    <a href="#quick-start">Quick Start</a>
+    ·
+    <a href="https://alumnium.ai/docs/">Documentation</a>
+</p>
 
 Aluminum is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It aims to simplify interactions with web pages and provide more robust mechanisms for verifying assertions.
 
