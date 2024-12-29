@@ -1,5 +1,6 @@
 from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import UnexpectedTagNameException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -36,8 +37,12 @@ class SeleniumDriver:
         return self.driver.get_screenshot_as_base64()
 
     def select(self, id: int, option: str):
-        select = Select(self._find_element(id))
-        select.select_by_visible_text(option)
+        try:
+            select = Select(self._find_element(id))
+            select.select_by_visible_text(option)
+        except UnexpectedTagNameException:
+            # Anthropic chooses to select using option ID, not select ID
+            self.click(id)
 
     @property
     def title(self) -> str:
