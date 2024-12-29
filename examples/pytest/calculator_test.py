@@ -2,6 +2,7 @@ from alumnium import Model
 from pytest import mark, raises
 
 
+@mark.xfail(Model.load() == Model.ANTHROPIC, reason="Haiku attempts to type into calculator")
 @mark.xfail(Model.load() == Model.AWS_ANTHROPIC, reason="Bedrock version of Haiku is subpar")
 @mark.xfail(Model.load() == Model.AWS_META, reason="It is too hard for Llama 3.2")
 @mark.xfail(Model.load() == Model.GOOGLE, reason="It is too hard for Gemini 1.5 Flash (but works on Pro)")
