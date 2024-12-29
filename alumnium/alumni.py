@@ -9,7 +9,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from .agents import ActorAgent, ContradictionCheckerAgent, VerifierAgent
+from .agents import ActorAgent, ConfirmationCheckerAgent, VerifierAgent
 from .drivers import SeleniumDriver
 from .models import Model
 
@@ -17,14 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 class Alumni:
-    def __init__(
-        self,
-        driver: WebDriver,
-        model: Model = Model.load(),
-        check_contradictions: bool = True,
-    ):
+    def __init__(self, driver: WebDriver, model: Model = Model.load()):
         self.driver = SeleniumDriver(driver)
 
+        logger.info(f"Using model: {model}")
         if model == Model.AZURE_OPENAI:
             llm = AzureChatOpenAI(
                 model=model.value,
@@ -52,9 +48,7 @@ class Alumni:
 
         self.actor_agent = ActorAgent(self.driver, llm)
         self.verifier_agent = VerifierAgent(self.driver, llm)
-
-        self.check_contradictions = check_contradictions
-        self.contradiction_checker_agent = ContradictionCheckerAgent(llm)
+        self.confirmation_checker_agent = ConfirmationCheckerAgent(llm)
 
     def quit(self):
         self.driver.quit()
@@ -68,10 +62,7 @@ class Alumni:
             verification = self.verifier_agent.invoke(statement, vision)
             assert verification.result, verification.explanation
         except AssertionError as e:
-            if self.check_contradictions and not self.contradiction_checker_agent.invoke(
-                statement,
-                verification.explanation,
-            ):
-                return
+            if self.confirmation_checker_agent.invoke(statement, verification.explanation):
+                return verification
             else:
                 raise e
