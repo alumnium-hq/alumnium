@@ -10,12 +10,14 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
   AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
   AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
   AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
   GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   DISPLAY: :99
 
 jobs:
@@ -29,10 +31,12 @@ jobs:
       fail-fast: false
       matrix:
         model:
+          - anthropic
           - aws_anthropic
           - aws_meta
           - azure_openai
           - google
+          - openai
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
