@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ALUMNIUM_MODEL: ${{ matrix.model }}
-      ALUMNIUM_RPM_LIMIT: ${{ matrix.model == 'google' && '15' || '0' }}
     strategy:
       fail-fast: false
       matrix:
@@ -47,6 +46,10 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
       - run: Xvfb ${{ env.DISPLAY }} &
       - run: echo ALUMNIUM_DEBUG=${{ runner.debug }} >> "$GITHUB_ENV"
+      - if: matrix.model == 'anthropic'
+        run: echo ALUMNIUM_RPM_LIMIT=50 >> "$GITHUB_ENV"
+      - if: matrix.model == 'google'
+        run: echo ALUMNIUM_RPM_LIMIT=15 >> "$GITHUB_ENV"
       - run: poetry install
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty
       - run: poetry run pytest --html reports/pytest.html
