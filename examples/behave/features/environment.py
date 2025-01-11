@@ -1,19 +1,25 @@
 from datetime import datetime
+from os import getenv
 
 from alumnium import Alumni
 from behave import fixture, use_fixture
+from playwright.sync_api import sync_playwright, Page
 from selenium.webdriver import Chrome
-
-# from langchain.globals import set_debug
-
-# set_debug(True)
 
 
 @fixture
 def driver(context):
-    context.driver = Chrome()
-    yield context.driver
-    context.driver.quit()
+    driver = getenv("ALUMNIUM_DRIVER", "selenium")
+    if driver == "playwright":
+        with sync_playwright() as playwright:
+            context.driver = playwright.chromium.launch(headless=False).new_page()
+            yield context.driver
+    elif driver == "selenium":
+        context.driver = Chrome()
+        yield driver
+        context.driver.quit()
+    else:
+        raise NotImplementedError(f"Driver {driver} not implemented")
 
 
 @fixture
@@ -35,7 +41,10 @@ def after_scenario(context, scenario):
     for formatter in context._runner.formatters:
         if formatter.name == "html-pretty":
             timestamp = datetime.now().strftime("%H-%M-%S")
-            context.driver.save_screenshot(f"reports/screenshot-{timestamp}.png")
+            if isinstance(context.driver, Chrome):
+                context.driver.save_screenshot(f"reports/screenshot-{timestamp}.png")
+            elif isinstance(context.driver, Page):
+                context.driver.screenshot(path=f"reports/screenshot-{timestamp}.png")
             formatter.embed(
                 mime_type="image/png",
                 data=f"reports/screenshot-{timestamp}.png",

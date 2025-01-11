@@ -6,19 +6,25 @@ from langchain_aws import ChatBedrockConverse
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from .agents import ActorAgent, ConfirmationCheckerAgent, VerifierAgent
-from .drivers import SeleniumDriver
+from .drivers import PlaywrightDriver, SeleniumDriver
 from .models import Model
 
 logger = logging.getLogger(__name__)
 
 
 class Alumni:
-    def __init__(self, driver: WebDriver, model: Model = Model.load()):
-        self.driver = SeleniumDriver(driver)
+    def __init__(self, driver: Page | WebDriver, model: Model = Model.load()):
+        if isinstance(driver, WebDriver):
+            self.driver = SeleniumDriver(driver)
+        elif isinstance(driver, Page):
+            self.driver = PlaywrightDriver(driver)
+        else:
+            raise NotImplementedError(f"Driver {driver} not implemented")
 
         logger.info(f"Using model: {model}")
         if model == Model.AZURE_OPENAI:

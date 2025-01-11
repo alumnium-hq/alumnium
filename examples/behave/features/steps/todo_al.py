@@ -1,9 +1,14 @@
 from behave import *
+from selenium.webdriver import Chrome
+from playwright.sync_api import Page
 
 
 @given('I open "{url}"')
 def step_impl(context, url):
-    context.driver.get(url)
+    if isinstance(context.driver, Chrome):
+        context.driver.get(url)
+    elif isinstance(context.driver, Page):
+        context.driver.goto(url)
 
 
 @when('I create a new task "{title}"')

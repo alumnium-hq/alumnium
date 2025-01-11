@@ -25,10 +25,14 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     env:
+      ALUMNIUM_DRIVER: ${{ matrix.driver }}
       ALUMNIUM_MODEL: ${{ matrix.model }}
     strategy:
       fail-fast: false
       matrix:
+        driver:
+          - playwright
+          - selenium
         model:
           - anthropic
           - aws_anthropic
@@ -47,10 +51,12 @@ jobs:
       - run: Xvfb ${{ env.DISPLAY }} &
       - run: echo ALUMNIUM_DEBUG=${{ runner.debug }} >> "$GITHUB_ENV"
       - if: matrix.model == 'anthropic'
-        run: echo ALUMNIUM_RPM_LIMIT=50 >> "$GITHUB_ENV"
+        run: echo ALUMNIUM_RPM_LIMIT=25 >> "$GITHUB_ENV"
       - if: matrix.model == 'google'
-        run: echo ALUMNIUM_RPM_LIMIT=15 >> "$GITHUB_ENV"
+        run: echo ALUMNIUM_RPM_LIMIT=7 >> "$GITHUB_ENV"
       - run: poetry install
+      - if: matrix.driver == 'playwright'
+        run: poetry run playwright install chromium
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty
       - run: poetry run pytest --html reports/pytest.html
       - if: failure() && runner.debug == '1'
@@ -58,7 +64,7 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: reports-${{ matrix.model }}
+          name: reports-${{ matrix.driver }}-${{ matrix.model }}
           path: reports/
 
   release:
