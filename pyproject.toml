@@ -15,12 +15,12 @@ repository = "https://github.com/alumnium-hq/alumnium"
 python = "^3.10"
 langchain = "^0.3"
 langchain-anthropic = "^0.2"
+langchain-aws = "^0.2"
 langchain-google-genai = "^2.0"
 langchain-openai = "^0.2"
 playwright = "^1.49"
 retry2 = "^0.9"
 selenium = "^4.0"
-langchain-aws = "^0.2.7"
 
 [tool.poetry.group.dev.dependencies]
 behave = "^1.2.6"
