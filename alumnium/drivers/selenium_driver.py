@@ -4,6 +4,7 @@ from selenium.common.exceptions import UnexpectedTagNameException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.aria import AriaTree
@@ -61,7 +62,7 @@ class SeleniumDriver:
     def url(self) -> str:
         return self.driver.current_url
 
-    def _find_element(self, id: int):
+    def _find_element(self, id: int) -> WebElement:
         # Beware!
         self.driver.execute_cdp_cmd("DOM.enable", {})
         self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})
