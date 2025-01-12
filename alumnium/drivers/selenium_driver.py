@@ -30,12 +30,12 @@ class SeleniumDriver:
         actions = ActionChains(self.driver)
         actions.move_to_element(self._find_element(id)).perform()
 
-    def quit(self):
-        self.driver.quit()
-
     def press_key(self, key: str):
         if key == "Enter":
             ActionChains(self.driver).send_keys(Keys.RETURN).perform()
+
+    def quit(self):
+        self.driver.quit()
 
     @property
     def screenshot(self) -> str:

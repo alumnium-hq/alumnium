@@ -30,6 +30,10 @@ class PlaywrightDriver:
         with self._find_element(id) as element:
             element.hover()
 
+    def press_key(self, key: str):
+        if key == "Enter":
+            self.page.keyboard.press("Enter")
+
     def quit(self):
         self.page.close()
 
@@ -52,11 +56,9 @@ class PlaywrightDriver:
     def title(self) -> str:
         return self.page.title()
 
-    def type(self, id: int, text: str, submit: bool):
+    def type(self, id: int, text: str):
         with self._find_element(id) as element:
             element.fill(text)
-            if submit:
-                self.page.keyboard.press("Enter")
 
     @property
     def url(self) -> str:
