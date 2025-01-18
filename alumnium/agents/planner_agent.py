@@ -45,7 +45,7 @@ class PlannerAgent(BaseAgent):
             {
                 "goal": goal,
                 "aria": "",
-                "actions": "\n".join([f"- {action}" for action in actions]),
+                "actions": ", ".join(actions),
             }
         )
 
@@ -63,8 +63,7 @@ class PlannerAgent(BaseAgent):
         if message.content.upper() == "NOOP":
             return []
         else:
-            steps = message.content.split("\n")
-            return [step.removeprefix("- ") for step in steps]
+            return [step.strip() for step in message.content.split(",")]
 
     @lru_cache()
     def __prompt(self, goal: str, aria: str):
