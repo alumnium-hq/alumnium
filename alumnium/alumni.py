@@ -60,6 +60,7 @@ class Alumni:
     def quit(self):
         self.driver.quit()
 
+    @retry(tries=2, delay=0.1)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal.
