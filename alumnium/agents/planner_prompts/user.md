@@ -1,9 +1,5 @@
-### Goal
-
-{goal}
-
-### Webpage ARIA tree
-
+Goal: {goal}
+Webpage ARIA tree:
 ```xml
 {aria}
 ```

@@ -70,4 +70,4 @@ def step_impl(context, title):
 
 @then("tasks counter is {count}")
 def step_impl(context, count):
-    context.al.check(f'tasks counter is {count} items left")')
+    context.al.check(f"tasks counter is {count} items left")

@@ -11,6 +11,7 @@ from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from .agents import ActorAgent, ConfirmationCheckerAgent, PlannerAgent, VerifierAgent
+from .agents.verifier_agent import Verification
 from .drivers import PlaywrightDriver, SeleniumDriver
 from .models import Model
 
@@ -62,11 +63,30 @@ class Alumni:
 
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
+        """
+        Executes a series of steps to achieve the given goal.
+
+        Args:
+            goal: The goal to be achieved.
+        """
         steps = self.planner_agent.invoke(goal)
         for step in steps:
             self.actor_agent.invoke(step)
 
-    def check(self, statement: str, vision: bool = False):
+    def check(self, statement: str, vision: bool = False) -> Verification:
+        """
+        Checks a given statement using the verifier.
+
+        Args:
+            statement: The statement to be checked.
+            vision: A flag indicating whether to use a vision-based verification via a screenshot. Defaults to False.
+
+        Returns:
+            The result of the verification process.
+
+        Raises:
+            AssertionError: If the verification fails.
+        """
         try:
             verification = self.verifier_agent.invoke(statement, vision)
             assert verification.result, verification.explanation
@@ -75,3 +95,13 @@ class Alumni:
                 return verification
             else:
                 raise e
+
+    def learn(self, goal: str, actions: list[str]):
+        """
+        Adds a new learning example on what steps should be take to achieve the goal.
+
+        Args:
+            goal: The goal to be achieved. Use same format as in `do`.
+            actions: A list of actions to achieve the goal.
+        """
+        self.planner_agent.add_example(goal, actions)

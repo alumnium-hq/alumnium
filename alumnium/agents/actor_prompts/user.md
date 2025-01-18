@@ -1,9 +1,5 @@
-### Step
-
-{step}
-
-### Webpage ARIA tree
-
+Step: {step}
+Webpage ARIA tree:
 ```xml
 {aria}
 ```
