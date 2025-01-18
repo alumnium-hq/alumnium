@@ -1,13 +1,3 @@
-from os import getenv
-
-from alumnium import Model
-from pytest import mark
-
-
-@mark.xfail(
-    (Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC]) and getenv("ALUMNIUM_DRIVER", "") == "playwright",
-    reason="Playwright has no way to select option itself",
-)
 def test_select_option(al, navigate):
     navigate("https://the-internet.herokuapp.com/dropdown")
     al.check("Option 1 is not selected")
