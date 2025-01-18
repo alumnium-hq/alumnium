@@ -43,14 +43,12 @@ class PlaywrightDriver:
 
     def select(self, id: int, option: str):
         with self._find_element(id) as element:
-            try:
+            tag_name = element.evaluate("el => el.tagName").lower()
+            # Anthropic chooses to select using option ID, not select ID
+            if tag_name == "option":
+                element.locator("xpath=.//parent::select").select_option(option)
+            else:
                 element.select_option(option)
-            except Error as error:
-                # Anthropic chooses to select using option ID, not select ID
-                if self.NOT_SELECTABLE_ERROR in error.message:
-                    element.click()
-                else:
-                    raise error
 
     @property
     def title(self) -> str:
@@ -79,7 +77,7 @@ class PlaywrightDriver:
                 "value": str(id),
             },
         )
-        yield self.page.locator(f"[data-alumnium-id='{id}']")
+        yield self.page.locator(f"css=[data-alumnium-id='{id}']")
         try:
             self.client.send(
                 "DOM.removeAttribute",
