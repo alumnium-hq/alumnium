@@ -50,10 +50,6 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
       - run: Xvfb ${{ env.DISPLAY }} &
       - run: echo ALUMNIUM_DEBUG=${{ runner.debug }} >> "$GITHUB_ENV"
-      - if: matrix.model == 'anthropic'
-        run: echo ALUMNIUM_RPM_LIMIT=25 >> "$GITHUB_ENV"
-      - if: matrix.model == 'google'
-        run: echo ALUMNIUM_RPM_LIMIT=7 >> "$GITHUB_ENV"
       - run: poetry install
       - if: matrix.driver == 'playwright'
         run: poetry run playwright install chromium

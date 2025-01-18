@@ -5,13 +5,13 @@ from pathlib import Path
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
-from alumnium.delayed_runnable import DelayedRunnable
 from alumnium.drivers import SeleniumDriver
+from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
 
 
-class PlannerAgent:
+class PlannerAgent(BaseAgent):
     with open(Path(__file__).parent / "planner_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "planner_prompts/user.md") as f:
@@ -38,7 +38,7 @@ class PlannerAgent:
             ]
         )
 
-        self.chain = final_prompt | DelayedRunnable(llm)
+        self.chain = final_prompt | self._with_rate_limit_retry(llm)
 
     def add_example(self, goal: str, actions: list[str]):
         self.prompt_with_examples.examples.append(
@@ -57,7 +57,7 @@ class PlannerAgent:
         aria_xml = aria.to_xml()
         message = self.__prompt(goal, aria_xml)
 
-        logger.info(f"  <- Result: {message.content}")
+        logger.info(f"  <- Result: {message.content.strip()}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
 
         if message.content.upper() == "NOOP":

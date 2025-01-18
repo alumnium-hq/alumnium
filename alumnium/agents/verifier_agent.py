@@ -6,8 +6,8 @@ from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
 from alumnium.agents import LoadingDetectorAgent
-from alumnium.delayed_runnable import DelayedRunnable
 from alumnium.drivers import SeleniumDriver
+from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class Verification(BaseModel):
     explanation: str = Field(description="Reason for the verification result.")
 
 
-class VerifierAgent:
+class VerifierAgent(BaseAgent):
     with open(Path(__file__).parent / "verifier_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "verifier_prompts/user.md") as f:
@@ -29,7 +29,13 @@ class VerifierAgent:
 
     def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
         self.driver = driver
-        self.chain = DelayedRunnable(llm.with_structured_output(Verification, include_raw=True))
+
+        self.chain = self._with_rate_limit_retry(
+            llm.with_structured_output(
+                Verification,
+                include_raw=True,
+            )
+        )
 
         self.loading_detector_agent = LoadingDetectorAgent(llm)
         self.retry_count = LoadingDetectorAgent.timeout / LoadingDetectorAgent.delay
