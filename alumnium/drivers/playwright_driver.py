@@ -19,7 +19,12 @@ class PlaywrightDriver:
 
     def click(self, id: int):
         with self._find_element(id) as element:
-            element.click()
+            tag_name = element.evaluate("el => el.tagName").lower()
+            # Llama often attempts to click options, not select them.
+            if tag_name == "option":
+                element.locator("xpath=.//parent::select").select_option(element.text_content())
+            else:
+                element.click()
 
     def drag_and_drop(self, from_id: int, to_id: int):
         with self._find_element(from_id) as from_element:
