@@ -5,14 +5,14 @@ from pathlib import Path
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
-from alumnium.delayed_runnable import DelayedRunnable
 from alumnium.drivers import SeleniumDriver
 from alumnium.tools import ALL_TOOLS
+from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
 
 
-class ActorAgent:
+class ActorAgent(BaseAgent):
     with open(Path(__file__).parent / "actor_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "actor_prompts/user.md") as f:
@@ -28,7 +28,8 @@ class ActorAgent:
                 ("human", self.USER_MESSAGE),
             ]
         )
-        self.chain = prompt | DelayedRunnable(llm)
+
+        self.chain = prompt | self._with_rate_limit_retry(llm)
 
     def invoke(self, step: str):
         if len(step.strip()) == 0:

@@ -4,7 +4,7 @@ from pathlib import Path
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
-from alumnium.delayed_runnable import DelayedRunnable
+from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class Loading(BaseModel):
     explanation: str = Field(description="Reason for the result.")
 
 
-class LoadingDetectorAgent:
+class LoadingDetectorAgent(BaseAgent):
     with open(Path(__file__).parent / "loading_detector_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "loading_detector_prompts/user.md") as f:
@@ -26,8 +26,12 @@ class LoadingDetectorAgent:
     timeout = 5
 
     def __init__(self, llm: BaseChatModel):
-        llm = llm.with_structured_output(Loading, include_raw=True)
-        self.chain = DelayedRunnable(llm)
+        self.chain = self._with_rate_limit_retry(
+            llm.with_structured_output(
+                Loading,
+                include_raw=True,
+            )
+        )
 
     def invoke(self, aria: str, title: str, url: str, screenshot: str = ""):
         logger.info("Starting loading detection:")

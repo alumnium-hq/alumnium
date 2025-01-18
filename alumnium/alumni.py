@@ -33,11 +33,10 @@ class Alumni:
                 model=model.value,
                 api_version=getenv("AZURE_OPENAI_API_VERSION", ""),
                 temperature=0,
-                max_retries=2,
                 seed=1,
             )
         elif model == Model.ANTHROPIC:
-            llm = ChatAnthropic(model=model.value, temperature=0, max_retries=2)
+            llm = ChatAnthropic(model=model.value, temperature=0)
         elif model == Model.AWS_ANTHROPIC or model == Model.AWS_META:
             llm = ChatBedrockConverse(
                 model_id=model.value,
@@ -47,9 +46,9 @@ class Alumni:
                 region_name=getenv("AWS_REGION_NAME", "us-east-1"),
             )
         elif model == Model.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=model.value, temperature=0, max_retries=2)
+            llm = ChatGoogleGenerativeAI(model=model.value, temperature=0)
         elif model == Model.OPENAI:
-            llm = ChatOpenAI(model=model.value, temperature=0, max_retries=2, seed=1)
+            llm = ChatOpenAI(model=model.value, temperature=0, seed=1)
         else:
             raise NotImplementedError(f"Model {model} not implemented")
 
@@ -61,7 +60,6 @@ class Alumni:
     def quit(self):
         self.driver.quit()
 
-    @retry(tries=2, delay=0.1)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal.
