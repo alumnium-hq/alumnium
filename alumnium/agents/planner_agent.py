@@ -2,23 +2,13 @@ import logging
 from functools import lru_cache
 from pathlib import Path
 
-from langchain_core.output_parsers import MarkdownListOutputParser
-
 from langchain_core.language_models import BaseChatModel
-from langchain_core.prompts import ChatPromptTemplate
-from pydantic import BaseModel, Field
+from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
 from alumnium.delayed_runnable import DelayedRunnable
 from alumnium.drivers import SeleniumDriver
 
 logger = logging.getLogger(__name__)
-
-
-class Plan(BaseModel):
-    """Plan for achieving a goal."""
-
-    possible: bool = Field(description="Is it possible to achieve the goal?")
-    steps: list[str] = Field(description="A list of steps to be performed if it's possible to achieve the goal.")
 
 
 class PlannerAgent:
@@ -30,13 +20,34 @@ class PlannerAgent:
     def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
         self.driver = driver
 
-        prompt = ChatPromptTemplate.from_messages(
+        example_prompt = ChatPromptTemplate.from_messages(
+            [
+                ("human", self.USER_MESSAGE),
+                ("ai", "{actions}"),
+            ]
+        )
+        self.prompt_with_examples = FewShotChatMessagePromptTemplate(
+            examples=[],
+            example_prompt=example_prompt,
+        )
+        final_prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", self.SYSTEM_MESSAGE),
+                self.prompt_with_examples,
                 ("human", self.USER_MESSAGE),
             ]
         )
-        self.chain = prompt | DelayedRunnable(llm)
+
+        self.chain = final_prompt | DelayedRunnable(llm)
+
+    def add_example(self, goal: str, actions: list[str]):
+        self.prompt_with_examples.examples.append(
+            {
+                "goal": goal,
+                "aria": "",
+                "actions": "\n".join([f"- {action}" for action in actions]),
+            }
+        )
 
     def invoke(self, goal: str) -> list[str]:
         logger.info(f"Starting planning:")

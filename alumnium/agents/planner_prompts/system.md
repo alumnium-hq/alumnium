@@ -4,9 +4,9 @@ Do not include element id in the step.
 Include element tag name in the step.
 Wrap step arguments except tag name in quotes.
 Each step can start with one of the following:
-- Click
-- Drag and drop
-- Hover
-- Press key
-- Select
-- Type
+- click
+- drag and drop
+- hover
+- press key
+- select
+- type

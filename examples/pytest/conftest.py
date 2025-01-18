@@ -1,7 +1,7 @@
 from datetime import datetime
 from os import getenv
 
-from alumnium import Alumni
+from alumnium import Alumni, Model
 from selenium.webdriver import Chrome
 from playwright.sync_api import sync_playwright, Page
 from pytest import fixture, hookimpl
@@ -24,6 +24,31 @@ def driver():
 @fixture(scope="session", autouse=True)
 def al(driver):
     al = Alumni(driver)
+
+    # Llama constantly messes the order of operations.
+    if Model.load() == Model.AWS_META:
+        al.learn(
+            goal="1 + 1 =",
+            actions=[
+                "click button '1'",
+                "click button '+'",
+                "click button '1'",
+                "click button '='",
+            ],
+        )
+
+    # Haiku cannot correlate '/' button to '÷'.
+    if Model.load() in [Model.AWS_ANTHROPIC, Model.ANTHROPIC]:
+        al.learn(
+            goal="4 / 2 =",
+            actions=[
+                "click button '4'",
+                "click button '÷'",
+                "click button '2'",
+                "click button '='",
+            ],
+        )
+
     yield al
     al.quit()
 
