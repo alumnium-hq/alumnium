@@ -1,15 +1,7 @@
-from enum import Enum
-
 from pydantic import BaseModel, Field
 
-from alumnium.drivers import PlaywrightDriver, SeleniumDriver
-
-
-class Key(str, Enum):
-    BACKSPACE = "Backspace"
-    ENTER = "Enter"
-    ESCAPE = "Escape"
-    TAB = "Tab"
+from alumnium.drivers import BaseDriver
+from alumnium.drivers.keys import Key
 
 
 class PressKeyTool(BaseModel):
@@ -17,5 +9,5 @@ class PressKeyTool(BaseModel):
 
     key: Key = Field(description="Key to press.")
 
-    def invoke(self, driver: PlaywrightDriver | SeleniumDriver):
+    def invoke(self, driver: BaseDriver):
         driver.press_key(self.key)

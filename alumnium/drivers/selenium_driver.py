@@ -7,10 +7,11 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.aria import AriaTree
-from alumnium.tools.press_key_tool import Key
+from .keys import Key
+from .base_driver import BaseDriver
 
 
-class SeleniumDriver:
+class SeleniumDriver(BaseDriver):
     def __init__(self, driver: WebDriver):
         self.driver = driver
         self._patch_driver(driver)
