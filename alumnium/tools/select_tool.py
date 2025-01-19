@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-from alumnium.drivers import SeleniumDriver
+
+from alumnium.drivers import PlaywrightDriver, SeleniumDriver
 
 
 class SelectTool(BaseModel):
@@ -8,5 +9,5 @@ class SelectTool(BaseModel):
     id: int = Field(description="Element identifier (ID)")
     option: str = Field(description="Option to select")
 
-    def invoke(self, driver: SeleniumDriver):
+    def invoke(self, driver: PlaywrightDriver | SeleniumDriver):
         driver.select(self.id, self.option)

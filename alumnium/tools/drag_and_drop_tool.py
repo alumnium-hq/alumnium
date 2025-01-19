@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-from alumnium.drivers import SeleniumDriver
+
+from alumnium.drivers import PlaywrightDriver, SeleniumDriver
 
 
 class DragAndDropTool(BaseModel):
@@ -8,5 +9,5 @@ class DragAndDropTool(BaseModel):
     from_id: int = Field(description="Identifier (ID) of element to drag")
     to_id: int = Field(description="Identifier (ID) of element to drop onto")
 
-    def invoke(self, driver: SeleniumDriver):
+    def invoke(self, driver: PlaywrightDriver | SeleniumDriver):
         driver.drag_and_drop(self.from_id, self.to_id)

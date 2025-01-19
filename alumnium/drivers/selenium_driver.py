@@ -7,6 +7,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.aria import AriaTree
+from alumnium.tools.press_key_tool import Key
 
 
 class SeleniumDriver:
@@ -29,9 +30,18 @@ class SeleniumDriver:
         actions = ActionChains(self.driver)
         actions.move_to_element(self._find_element(id)).perform()
 
-    def press_key(self, key: str):
-        if key == "Enter":
-            ActionChains(self.driver).send_keys(Keys.RETURN).perform()
+    def press_key(self, key: Key):
+        keys = []
+        if key == Key.BACKSPACE:
+            keys.append(Keys.BACKSPACE)
+        elif key == Key.ENTER:
+            keys.append(Keys.ENTER)
+        elif key == Key.ESCAPE:
+            keys.append(Keys.ESCAPE)
+        elif key == Key.TAB:
+            keys.append(Keys.TAB)
+
+        ActionChains(self.driver).send_keys(*keys).perform()
 
     def quit(self):
         self.driver.quit()
