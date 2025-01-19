@@ -28,7 +28,6 @@ def step_impl(context, title):
 
 @when('I delete the "{title}" task')
 def step_impl(context, title):
-    context.al.do(f'hover the "{title}" task')
     context.al.do(f'delete the "{title}" task')
 
 

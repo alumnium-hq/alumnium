@@ -34,7 +34,14 @@ def alumnium(context):
     )
     context.al.learn(
         goal='mark the "this is Al" task as completed',
-        actions=['click checkbox near "this is Al" task'],
+        actions=['click checkbox near the "this is Al" task'],
+    )
+    context.al.learn(
+        goal='delete the "this is Al" task',
+        actions=[
+            'hover the "this is Al" task',
+            'click button "x" near the "this is Al" task',
+        ],
     )
     yield context.al
     context.al.quit()
