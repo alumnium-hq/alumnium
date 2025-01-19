@@ -3,6 +3,7 @@ from base64 import b64encode
 from playwright.sync_api import Page, Error
 
 from alumnium.aria import AriaTree
+from alumnium.tools.press_key_tool import Key
 
 
 class PlaywrightDriver:
@@ -35,9 +36,8 @@ class PlaywrightDriver:
         with self._find_element(id) as element:
             element.hover()
 
-    def press_key(self, key: str):
-        if key == "Enter":
-            self.page.keyboard.press("Enter")
+    def press_key(self, key: Key):
+        self.page.keyboard.press(key.value)
 
     def quit(self):
         self.page.close()
