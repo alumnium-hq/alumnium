@@ -3,10 +3,11 @@ from base64 import b64encode
 from playwright.sync_api import Page, Error
 
 from alumnium.aria import AriaTree
-from alumnium.tools.press_key_tool import Key
+from .keys import Key
+from .base_driver import BaseDriver
 
 
-class PlaywrightDriver:
+class PlaywrightDriver(BaseDriver):
     CANNOT_FIND_NODE_ERROR = "Could not find node with given id"
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
 

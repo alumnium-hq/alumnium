@@ -5,7 +5,7 @@ from pathlib import Path
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
-from alumnium.drivers import SeleniumDriver
+from alumnium.drivers import PlaywrightDriver, SeleniumDriver
 from alumnium.tools import ALL_TOOLS
 from .base_agent import BaseAgent
 

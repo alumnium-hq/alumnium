@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from alumnium.drivers import PlaywrightDriver, SeleniumDriver
+from alumnium.drivers import BaseDriver
 
 
 class TypeTool(BaseModel):
@@ -9,5 +9,5 @@ class TypeTool(BaseModel):
     id: int = Field(description="Element identifier (ID)")
     text: str = Field(description="Text to type into an element")
 
-    def invoke(self, driver: PlaywrightDriver | SeleniumDriver):
+    def invoke(self, driver: BaseDriver):
         driver.type(self.id, self.text)
