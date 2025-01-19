@@ -1,5 +1,4 @@
-from alumnium import Model
-from pytest import mark, raises, hookimpl
+from pytest import raises
 
 
 def test_addition(al, navigate):
