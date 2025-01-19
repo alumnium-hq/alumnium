@@ -26,7 +26,7 @@ def driver(context):
 def alumnium(context):
     context.al = Alumni(context.driver)
     context.al.learn(
-        goal='create task "this is Al"',
+        goal='create a new task "this is Al"',
         actions=[
             'type "this is Al" in textbox "what needs to be done"',
             'press key "Enter"',
