@@ -6,7 +6,7 @@ from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
 from alumnium.agents import LoadingDetectorAgent
-from alumnium.drivers import SeleniumDriver
+from alumnium.drivers import BaseDriver
 from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class VerifierAgent(BaseAgent):
     with open(Path(__file__).parent / "verifier_prompts/_user_text.md") as f:
         USER_TEXT_FRAGMENT = f.read()
 
-    def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
+    def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self.driver = driver
 
         self.chain = self._with_rate_limit_retry(

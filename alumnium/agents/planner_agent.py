@@ -5,7 +5,7 @@ from pathlib import Path
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
-from alumnium.drivers import SeleniumDriver
+from alumnium.drivers import BaseDriver
 from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ class PlannerAgent(BaseAgent):
     with open(Path(__file__).parent / "planner_prompts/user.md") as f:
         USER_MESSAGE = f.read()
 
-    def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
+    def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self.driver = driver
 
         example_prompt = ChatPromptTemplate.from_messages(
