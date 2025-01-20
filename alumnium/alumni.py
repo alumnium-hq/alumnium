@@ -96,8 +96,8 @@ class Alumni:
             else:
                 raise e
 
-    def get(self, information: str):
-        return self.extractor_agent.invoke(information)
+    def get(self, information: str, type: type = str, vision: bool = False) -> str:
+        return self.extractor_agent.invoke(information, type, vision)
 
     def learn(self, goal: str, actions: list[str]):
         """
