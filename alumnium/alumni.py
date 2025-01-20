@@ -10,7 +10,7 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from .agents import ActorAgent, ConfirmationCheckerAgent, PlannerAgent, VerifierAgent
+from .agents import *
 from .agents.verifier_agent import Verification
 from .drivers import PlaywrightDriver, SeleniumDriver
 from .models import Model
@@ -56,6 +56,7 @@ class Alumni:
         self.planner_agent = PlannerAgent(self.driver, llm)
         self.verifier_agent = VerifierAgent(self.driver, llm)
         self.confirmation_checker_agent = ConfirmationCheckerAgent(llm)
+        self.extractor_agent = ExtractorAgent(self.driver, llm)
 
     def quit(self):
         self.driver.quit()
@@ -94,6 +95,9 @@ class Alumni:
                 return verification
             else:
                 raise e
+
+    def get(self, information: str):
+        return self.extractor_agent.invoke(information)
 
     def learn(self, goal: str, actions: list[str]):
         """

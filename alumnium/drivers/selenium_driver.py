@@ -7,8 +7,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.aria import AriaTree
-from .keys import Key
 from .base_driver import BaseDriver
+from .keys import Key
 
 
 class SeleniumDriver(BaseDriver):
