@@ -5,7 +5,7 @@ from pathlib import Path
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
-from alumnium.drivers import PlaywrightDriver, SeleniumDriver
+from alumnium.drivers import BaseDriver
 from alumnium.tools import ALL_TOOLS
 from .base_agent import BaseAgent
 
@@ -18,7 +18,7 @@ class ActorAgent(BaseAgent):
     with open(Path(__file__).parent / "actor_prompts/user.md") as f:
         USER_MESSAGE = f.read()
 
-    def __init__(self, driver: SeleniumDriver, llm: BaseChatModel):
+    def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self.driver = driver
         llm = llm.bind_tools(list(ALL_TOOLS.values()))
 
