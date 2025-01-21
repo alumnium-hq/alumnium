@@ -69,4 +69,4 @@ def step_impl(context, title):
 
 @then("tasks counter is {count}")
 def step_impl(context, count):
-    assert context.al.get("left items tasks counter") == count
+    assert context.al.get("left items tasks counter") == int(count)
