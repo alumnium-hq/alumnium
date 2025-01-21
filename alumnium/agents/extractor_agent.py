@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import Union, List
 
 from langchain_core.language_models import BaseChatModel
 
@@ -10,6 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 class ExtractorAgent(BaseAgent):
+    LIST_SEPARATOR = "<|sep|>"
+
     with open(Path(__file__).parent / "extractor_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "extractor_prompts/user.md") as f:
@@ -19,12 +22,11 @@ class ExtractorAgent(BaseAgent):
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self.driver = driver
-        self.llm = llm
+        self.chain = self._with_rate_limit_retry(llm)
 
-    def invoke(self, information: str, type: type, vision: bool) -> str:
+    def invoke(self, information: str, vision: bool) -> str:
         logger.info(f"Starting extraction:")
         logger.info(f"  -> Information: {information}")
-        logger.info(f"  -> Type: {type}")
 
         aria = self.driver.aria_tree.to_xml()
         prompt = self.USER_MESSAGE.format(information=information)
@@ -45,55 +47,28 @@ class ExtractorAgent(BaseAgent):
                 }
             )
 
-        chain = self._with_rate_limit_retry(
-            self.llm.with_structured_output(
-                {
-                    "description": "Data",  # Anthropic needs those.
-                    "properties": {
-                        "value": self.__convert_type_to_json_schema(type)
-                        | {
-                            "description": "Extracted information.",
-                            "title": "Value",
-                        }
-                    },
-                    "required": ["value"],
-                    "title": "Information",
-                    "type": "object",
-                },
-                include_raw=True,
-            )
-        )
-        message = chain.invoke(
+        message = self.chain.invoke(
             [
-                ("system", self.SYSTEM_MESSAGE),
+                ("system", self.SYSTEM_MESSAGE.format(separator=self.LIST_SEPARATOR)),
                 ("human", human_messages),
             ]
         )
 
-        logger.info(f"  <- Result: {message["parsed"]}")
-        logger.info(f"  <- Usage: {message["raw"].usage_metadata}")
+        logger.info(f"  <- Result: {message.content}")
+        logger.info(f"  <- Usage: {message.usage_metadata}")
 
-        response = message["parsed"]
-        if isinstance(response, list):
-            response = response[0] or {}
+        return self.__loosely_typecast(message.content)
 
-        return response.get("value", None) or response.get("args", {}).get("value", None)
-
-    def __convert_type_to_json_schema(self, type: type) -> dict:
-        default = {"description": "Data."}  # Anthropic needs those
-
-        if type.__name__ == "str":
-            return {"type": "string"} | default
-        elif type.__name__ == "int":
-            return {"type": "integer"} | default
-        elif type.__name__ == "float":
-            return {"type": "number"} | default
-        elif type.__name__ == "bool":
-            return {"type": "boolean"} | default
-        elif type.__name__ == "list":
-            return {
-                "type": "array",
-                "items": self.__convert_type_to_json_schema(type.__args__[0]),
-            } | default
+    def __loosely_typecast(self, value: str) -> Union[str, int, float, bool, List[Union[str, int, float, bool]]]:
+        if value.isdigit():
+            return int(value)
+        elif value.replace(".", "", 1).isdigit():
+            return float(value)
+        elif value.lower() == "true":
+            return True
+        elif value.lower() == "false":
+            return False
+        elif self.LIST_SEPARATOR in value:
+            return [self.__loosely_typecast(i) for i in value.split(self.LIST_SEPARATOR) if i != ""]
         else:
-            raise ValueError(f"Type {type} not supported")
+            return value

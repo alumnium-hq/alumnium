@@ -49,12 +49,12 @@ def step_impl(context):
 
 @then('"{title}" task is shown in the list of tasks')
 def step_impl(context, title):
-    assert title in context.al.get("titles of tasks", list[str])
+    assert title in context.al.get("titles of tasks")
 
 
 @then('"{title}" task is not shown in the list of tasks')
 def step_impl(context, title):
-    assert not title in context.al.get("titles of tasks", list[str])
+    assert not title in context.al.get("titles of tasks")
 
 
 @then('"{title}" task is not marked as completed')
@@ -69,4 +69,4 @@ def step_impl(context, title):
 
 @then("tasks counter is {count}")
 def step_impl(context, count):
-    assert count == context.al.get("left items tasks counter")
+    assert context.al.get("left items tasks counter") == count
