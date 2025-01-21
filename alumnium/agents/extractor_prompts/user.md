@@ -1,1 +1,2 @@
-Requested information: {information}
+Text: {text}
+Requested data: {data}

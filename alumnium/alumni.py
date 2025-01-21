@@ -53,10 +53,11 @@ class Alumni:
             raise NotImplementedError(f"Model {model} not implemented")
 
         self.actor_agent = ActorAgent(self.driver, llm)
-        self.planner_agent = PlannerAgent(self.driver, llm)
-        self.verifier_agent = VerifierAgent(self.driver, llm)
         self.confirmation_checker_agent = ConfirmationCheckerAgent(llm)
-        self.extractor_agent = ExtractorAgent(self.driver, llm)
+        self.extractor_agent = ExtractorAgent(llm)
+        self.planner_agent = PlannerAgent(self.driver, llm)
+        self.retrieval_agent = RetrievalAgent(self.driver, llm)
+        self.verifier_agent = VerifierAgent(self.driver, llm)
 
     def quit(self):
         self.driver.quit()
@@ -96,8 +97,9 @@ class Alumni:
             else:
                 raise e
 
-    def get(self, information: str, vision: bool = False) -> str:
-        return self.extractor_agent.invoke(information, vision)
+    def get(self, data: str, vision: bool = False) -> str:
+        information = self.retrieval_agent.invoke(data, vision)
+        return self.extractor_agent.invoke(data, information)
 
     def learn(self, goal: str, actions: list[str]):
         """
