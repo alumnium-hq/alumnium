@@ -60,6 +60,9 @@ class ExtractorAgent(BaseAgent):
         return self.__loosely_typecast(message.content)
 
     def __loosely_typecast(self, value: str) -> Union[str, int, float, bool, List[Union[str, int, float, bool]]]:
+        # LLMs sometimes add separator to the start/end.
+        value = value.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
+
         if value.isdigit():
             return int(value)
         elif value.replace(".", "", 1).isdigit():
