@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class PlannerAgent(BaseAgent):
+    LIST_SEPARATOR = "<|sep|>"
+
     with open(Path(__file__).parent / "planner_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "planner_prompts/user.md") as f:
@@ -32,7 +34,7 @@ class PlannerAgent(BaseAgent):
         )
         final_prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", self.SYSTEM_MESSAGE),
+                ("system", self.SYSTEM_MESSAGE.format(separator=self.LIST_SEPARATOR)),
                 self.prompt_with_examples,
                 ("human", self.USER_MESSAGE),
             ]
@@ -45,7 +47,7 @@ class PlannerAgent(BaseAgent):
             {
                 "goal": goal,
                 "aria": "",
-                "actions": ", ".join(actions),
+                "actions": self.LIST_SEPARATOR.join(actions),
             }
         )
 
@@ -57,13 +59,16 @@ class PlannerAgent(BaseAgent):
         aria_xml = aria.to_xml()
         message = self.__prompt(goal, aria_xml)
 
-        logger.info(f"  <- Result: {message.content.strip()}")
+        logger.info(f"  <- Result: {message.content}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
 
-        if message.content.upper() == "NOOP":
+        response = message.content.strip()
+        response = response.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
+
+        if response.upper() == "NOOP":
             return []
         else:
-            return [step.strip() for step in message.content.split(",")]
+            return [step.strip() for step in message.content.split(self.LIST_SEPARATOR)]
 
     @lru_cache()
     def __prompt(self, goal: str, aria: str):
