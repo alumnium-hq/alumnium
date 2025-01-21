@@ -67,6 +67,6 @@ def step_impl(context, title):
     context.al.check(f'"{title}" task is marked as completed')
 
 
-@then("tasks counter is {count}")
+@then("tasks counter is {count:d}")
 def step_impl(context, count):
-    assert context.al.get("number of left items in a tasks counter") == int(count)
+    assert context.al.get("number of left items in a tasks counter") == count
