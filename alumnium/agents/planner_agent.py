@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class PlannerAgent(BaseAgent):
-    LIST_SEPARATOR = "<|sep|>"
+    LIST_SEPARATOR = "<sep>"
 
     with open(Path(__file__).parent / "planner_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
