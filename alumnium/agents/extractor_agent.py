@@ -9,8 +9,10 @@ from .base_agent import BaseAgent
 logger = logging.getLogger(__name__)
 
 
+Data: TypeAlias = Union[str, int, float, bool, list[Union[str, int, float, bool]]]
+
+
 class ExtractorAgent(BaseAgent):
-    Data: TypeAlias = Union[str, int, float, bool, list[Union[str, int, float, bool]]]
 
     LIST_SEPARATOR = "<|sep|>"
 

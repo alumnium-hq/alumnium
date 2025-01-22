@@ -11,6 +11,7 @@ from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from .agents import *
+from .agents.extractor_agent import Data
 from .agents.verifier_agent import Verification
 from .drivers import PlaywrightDriver, SeleniumDriver
 from .models import Model
@@ -97,7 +98,17 @@ class Alumni:
             else:
                 raise e
 
-    def get(self, data: str, vision: bool = False) -> str:
+    def get(self, data: str, vision: bool = False) -> Data:
+        """
+        Extracts requested data from the page.
+
+        Args:
+            data: The data to extract.
+            vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
+
+        Returns:
+            Data: The extracted data loosely typed to int, float, str, or list of them.
+        """
         information = self.retrieval_agent.invoke(data, vision)
         return self.extractor_agent.invoke(data, information)
 
