@@ -31,16 +31,17 @@ class ActorAgent(BaseAgent):
 
         self.chain = prompt | self._with_rate_limit_retry(llm)
 
-    def invoke(self, step: str):
-        if len(step.strip()) == 0:
+    def invoke(self, goal: str, step: str):
+        if not step.strip():
             return
 
         logger.info(f"Starting action:")
+        logger.info(f"  -> Goal: {goal}")
         logger.info(f"  -> Step: {step}")
 
         aria = self.driver.aria_tree
         aria_xml = aria.to_xml()
-        message = self.__prompt(step, aria_xml)
+        message = self.__prompt(goal, step, aria_xml)
 
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
@@ -58,5 +59,5 @@ class ActorAgent(BaseAgent):
             tool.invoke(self.driver)
 
     @lru_cache()
-    def __prompt(self, step: str, aria: str):
-        return self.chain.invoke({"step": step, "aria": aria})
+    def __prompt(self, goal: str, step: str, aria: str):
+        return self.chain.invoke({"goal": goal, "step": step, "aria": aria})

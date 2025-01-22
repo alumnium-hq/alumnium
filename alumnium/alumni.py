@@ -72,7 +72,7 @@ class Alumni:
         """
         steps = self.planner_agent.invoke(goal)
         for step in steps:
-            self.actor_agent.invoke(step)
+            self.actor_agent.invoke(goal, step)
 
     def check(self, statement: str, vision: bool = False) -> Verification:
         """
