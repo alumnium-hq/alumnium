@@ -1,5 +1,3 @@
-from time import sleep
-
 from alumnium import Model
 from pytest import mark
 
@@ -9,5 +7,4 @@ def test_drag_and_drop(al, navigate):
     navigate("https://the-internet.herokuapp.com/drag_and_drop")
     assert al.get("square titles ordered from left to right", vision=True) == ["A", "B"]
     al.do("move square A to square B")
-    sleep(1)
     assert al.get("square titles ordered from left to right", vision=True) == ["B", "A"]

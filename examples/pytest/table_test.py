@@ -1,12 +1,10 @@
 from alumnium import Model
 from pytest import mark
-from time import sleep
 
 
 @mark.xfail(Model.load() == Model.GOOGLE, reason="Coercion of amounts to floats")
 def test_table_extraction(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
-    sleep(1)
 
     assert al.get("Jason Doe's due amount from example 1 table") == "$100.00"
     assert al.get("Frank Bach's due amount from example 1 table") == "$51.00"
