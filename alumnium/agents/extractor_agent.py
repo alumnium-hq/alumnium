@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from string import whitespace
 from typing import Union, TypeAlias
 
 from langchain_core.language_models import BaseChatModel
@@ -54,4 +55,4 @@ class ExtractorAgent(BaseAgent):
         elif self.LIST_SEPARATOR in value:
             return [self.__loosely_typecast(i) for i in value.split(self.LIST_SEPARATOR) if i != ""]
         else:
-            return value.strip()
+            return value.strip(f"{whitespace}'\"")
