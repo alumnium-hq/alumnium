@@ -2,7 +2,6 @@ from alumnium import Model
 from pytest import mark
 
 
-@mark.xfail(Model.load() == Model.GOOGLE, reason="Coercion of amounts to floats")
 def test_table_extraction(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
 
@@ -12,8 +11,10 @@ def test_table_extraction(al, navigate):
     assert al.get("John Smith's due amount from example 1 table") == "$50.00"
 
 
-@mark.xfail(Model.load() == Model.AWS_META, reason="Needs more work because `do` produces duplicated actions")
-@mark.xfail(Model.load() == Model.GOOGLE, reason="Needs more work because `do` produces duplicated actions")
+@mark.xfail(
+    Model.load() in [Model.AWS_META, Model.GOOGLE],
+    reason="Needs more work because `do` produces duplicated actions",
+)
 def test_table_sorting(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
 
