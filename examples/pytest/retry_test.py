@@ -1,3 +1,6 @@
+import pytest
+
+@pytest.mark.skip("Nothing is changing on the page")
 def test_retries_assertion_on_loading_content(al, navigate):
     navigate("https://the-internet.herokuapp.com/dynamic_controls")
     al.check("text field is disabled")

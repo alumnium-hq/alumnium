@@ -5,7 +5,6 @@ from time import sleep
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
-from alumnium.agents import LoadingDetectorAgent
 from alumnium.drivers import BaseDriver
 from .base_agent import BaseAgent
 
@@ -36,9 +35,6 @@ class VerifierAgent(BaseAgent):
                 include_raw=True,
             )
         )
-
-        self.loading_detector_agent = LoadingDetectorAgent(llm)
-        self.retry_count = LoadingDetectorAgent.timeout / LoadingDetectorAgent.delay
 
     def invoke(self, statement: str, vision: bool = False) -> Verification:
         logger.info(f"Starting verification:")
@@ -77,12 +73,5 @@ class VerifierAgent(BaseAgent):
         logger.info(f"  <- Result: {verification.result}")
         logger.info(f"  <- Reason: {verification.explanation}")
         logger.info(f'  <- Usage: {message["raw"].usage_metadata}')
-
-        if not verification.result:
-            loading = self.loading_detector_agent.invoke(aria, title, url, screenshot)
-            if loading and self.retry_count > 0:
-                sleep(LoadingDetectorAgent.delay)
-                self.retry_count -= 1
-                return self.invoke(statement, vision)
 
         return verification

@@ -1,3 +1,4 @@
+import logging
 from contextlib import contextmanager
 from base64 import b64encode
 from playwright.sync_api import Page, Error
@@ -6,6 +7,7 @@ from alumnium.aria import AriaTree
 from .keys import Key
 from .base_driver import BaseDriver
 
+logger = logging.getLogger(__name__)
 
 class PlaywrightDriver(BaseDriver):
     CANNOT_FIND_NODE_ERROR = "Could not find node with given id"
@@ -17,6 +19,7 @@ class PlaywrightDriver(BaseDriver):
 
     @property
     def aria_tree(self) -> AriaTree:
+        self.wait_for_page_to_load()
         return AriaTree(self.client.send("Accessibility.getFullAXTree"))
 
     def click(self, id: int):
@@ -98,3 +101,15 @@ class PlaywrightDriver(BaseDriver):
                 pass
             else:
                 raise error
+
+    def wait_for_page_to_load(self):
+        logger.info(f"Waiting for page to finish loading")
+        with open("./scripts/waiter.js") as f:
+            waiter_script = f.read()
+        with open("./scripts/waitFor.js") as f:
+            wait_for_script = f"(...scriptArgs) => new Promise((resolve) => {{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
+        self.page.evaluate(f"function() {{ {waiter_script} }}")
+        error = self.page.evaluate(wait_for_script)
+        if error is not None:
+            raise Exception(f"Failed to wait for page to load: {error}")
+        logger.info(f"  -> Wating result: {error}")
