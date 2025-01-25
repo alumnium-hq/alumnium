@@ -1,3 +1,5 @@
+import logging
+from pathlib import Path
 from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -10,6 +12,7 @@ from alumnium.aria import AriaTree
 from .base_driver import BaseDriver
 from .keys import Key
 
+logger = logging.getLogger(__name__)
 
 class SeleniumDriver(BaseDriver):
     def __init__(self, driver: WebDriver):
@@ -18,6 +21,7 @@ class SeleniumDriver(BaseDriver):
 
     @property
     def aria_tree(self) -> AriaTree:
+        self.wait_for_page_to_load()
         return AriaTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
 
     def click(self, id: int):
@@ -104,3 +108,15 @@ class SeleniumDriver(BaseDriver):
                 return self.execute("executeCdpCommand", {"cmd": cmd, "params": cmd_args})["value"]
 
             driver.execute_cdp_cmd = execute_cdp_cmd.__get__(driver)
+
+    def wait_for_page_to_load(self):
+        logger.info(f"Waiting for page to finish loading")
+        with open("./scripts/waiter.js") as f:
+            waiter_script = f.read()
+        with open("./scripts/waitFor.js") as f:
+            wait_for_script = f.read()
+        self.driver.execute_script(waiter_script)
+        error = self.driver.execute_async_script(wait_for_script, {"timeout": 10000})
+        if error is not None:
+            raise Exception(f"Failed to wait for page to load: {error}")
+        logger.info(f"  -> Wating result: {error}")
