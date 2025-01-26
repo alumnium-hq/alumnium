@@ -111,5 +111,4 @@ class PlaywrightDriver(BaseDriver):
         self.page.evaluate(f"function() {{ {waiter_script} }}")
         error = self.page.evaluate(wait_for_script)
         if error is not None:
-            raise Exception(f"Failed to wait for page to load: {error}")
-        logger.info(f"  -> Wating result: {error}")
+            logger.info(f"Failed to wait for page to load: {error}")
