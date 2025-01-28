@@ -15,7 +15,7 @@
     <a href="https://alumnium.ai/docs/">Documentation</a>
 </p>
 
-Aluminum is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It aims to simplify interactions with web pages and provide more robust mechanisms for verifying assertions.
+Alumnium is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It aims to simplify interactions with web pages and provide more robust mechanisms for verifying assertions.
 
 <img src="https://raw.githubusercontent.com/alumnium-hq/alumnium.github.io/ccc7886dcf325d7b34d349facec7393d18812054/src/assets/overview.gif" height="auto" width="620px" />
 
