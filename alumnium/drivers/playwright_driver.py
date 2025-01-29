@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 class PlaywrightDriver(BaseDriver):
     CANNOT_FIND_NODE_ERROR = "Could not find node with given id"
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
+    CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
@@ -109,8 +110,13 @@ class PlaywrightDriver(BaseDriver):
         with open("./scripts/waitFor.js") as f:
             wait_for_script = f"(...scriptArgs) => new Promise((resolve) => {{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
 
-        self.page.wait_for_load_state() # wait for navigation to complete first
-        self.page.evaluate(f"function() {{ {waiter_script} }}")
-        error = self.page.evaluate(wait_for_script)
-        if error is not None:
-            logger.info(f"Failed to wait for page to load: {error}")
+        try:
+            self.page.evaluate(f"function() {{ {waiter_script} }}")
+            error = self.page.evaluate(wait_for_script)
+            if error is not None:
+                logger.info(f"Failed to wait for page to load: {error}")
+        except Error as error:
+            if self.CONTEXT_WAS_DESTROYED_ERROR in error.message:
+                logger.info(f"Failed to wait for page to load: {error}")
+            else:
+                raise error
