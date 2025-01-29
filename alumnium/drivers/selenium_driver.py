@@ -116,6 +116,6 @@ class SeleniumDriver(BaseDriver):
         with open("./scripts/waitFor.js") as f:
             wait_for_script = f.read()
         self.driver.execute_script(waiter_script)
-        error = self.driver.execute_async_script(wait_for_script, {"timeout": 10000})
+        error = self.driver.execute_async_script(wait_for_script)
         if error is not None:
             logger.info(f"Failed to wait for page to load: {error}")
