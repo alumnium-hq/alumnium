@@ -1,6 +1,6 @@
 def test_waiting_for_loading_content(al, navigate):
     navigate("https://the-internet.herokuapp.com/dynamic_content")
-    assert al.get("the number of non-unique image avatars") == 3
+    assert al.get("the total number of profile images") == 3
 
 def test_waiting_for_requests_and_form_updates(al, navigate):
     navigate("https://the-internet.herokuapp.com/forgot_password")
