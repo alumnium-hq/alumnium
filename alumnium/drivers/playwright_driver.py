@@ -108,6 +108,8 @@ class PlaywrightDriver(BaseDriver):
             waiter_script = f.read()
         with open("./scripts/waitFor.js") as f:
             wait_for_script = f"(...scriptArgs) => new Promise((resolve) => {{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
+
+        self.page.wait_for_load_state() # wait for navigation to complete first
         self.page.evaluate(f"function() {{ {waiter_script} }}")
         error = self.page.evaluate(wait_for_script)
         if error is not None:
