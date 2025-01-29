@@ -1,5 +1,6 @@
 import logging
 from os import getenv
+from time import sleep
 
 from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
@@ -12,7 +13,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from .agents import *
 from .agents.extractor_agent import Data
-from .agents.verifier_agent import Verification
 from .drivers import PlaywrightDriver, SeleniumDriver
 from .models import Model
 
@@ -54,8 +54,9 @@ class Alumni:
             raise NotImplementedError(f"Model {model} not implemented")
 
         self.actor_agent = ActorAgent(self.driver, llm)
-        self.confirmation_checker_agent = ConfirmationCheckerAgent(llm)
+        self.asserter_agent = AsserterAgent(llm)
         self.extractor_agent = ExtractorAgent(llm)
+        self.loading_detector_agent = LoadingDetectorAgent(self.driver, llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
         self.retrieval_agent = RetrievalAgent(self.driver, llm)
         self.verifier_agent = VerifierAgent(self.driver, llm)
@@ -75,7 +76,12 @@ class Alumni:
         for step in steps:
             self.actor_agent.invoke(goal, step)
 
-    def check(self, statement: str, vision: bool = False) -> Verification:
+    def check(
+        self,
+        statement: str,
+        vision: bool = False,
+        retries: int = LoadingDetectorAgent.timeout / LoadingDetectorAgent.delay,
+    ) -> str:
         """
         Checks a given statement using the verifier.
 
@@ -91,12 +97,14 @@ class Alumni:
         """
         try:
             verification = self.verifier_agent.invoke(statement, vision)
-            assert verification.result, verification.explanation
-        except AssertionError as e:
-            if self.confirmation_checker_agent.invoke(statement, verification.explanation):
-                return verification
+            assert self.asserter_agent.invoke(statement, verification), verification
+        except AssertionError as error:
+            loading = self.loading_detector_agent.invoke(vision)
+            if loading and retries > 0:
+                sleep(LoadingDetectorAgent.delay)
+                return self.check(statement, vision, retries - 1)
             else:
-                raise e
+                raise error
 
     def get(self, data: str, vision: bool = False) -> Data:
         """
