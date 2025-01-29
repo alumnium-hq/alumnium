@@ -1,5 +1,4 @@
-from alumnium import Model
-from pytest import mark
+from pytest import raises
 
 
 def test_search(al, navigate):
@@ -7,3 +6,5 @@ def test_search(al, navigate):
     al.do("search for selenium")
     al.check("selenium in page title")
     al.check("selenium.dev is present in the search results")
+    with raises(AssertionError):
+        al.check("selenium.dev is not present in the search results")

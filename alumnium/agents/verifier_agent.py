@@ -1,21 +1,12 @@
 import logging
 from pathlib import Path
-from time import sleep
 
 from langchain_core.language_models import BaseChatModel
-from pydantic import BaseModel, Field
 
 from alumnium.drivers import BaseDriver
 from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
-
-
-class Verification(BaseModel):
-    """Result of a verification of a statement on a webpage."""
-
-    result: bool = Field(description="Result of the verification.")
-    explanation: str = Field(description="Reason for the verification result.")
 
 
 class VerifierAgent(BaseAgent):
@@ -28,15 +19,9 @@ class VerifierAgent(BaseAgent):
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self.driver = driver
+        self.chain = self._with_rate_limit_retry(llm)
 
-        self.chain = self._with_rate_limit_retry(
-            llm.with_structured_output(
-                Verification,
-                include_raw=True,
-            )
-        )
-
-    def invoke(self, statement: str, vision: bool = False) -> Verification:
+    def invoke(self, statement: str, vision: bool = False) -> str:
         logger.info(f"Starting verification:")
         logger.info(f"  -> Statement: {statement}")
 
@@ -50,7 +35,6 @@ class VerifierAgent(BaseAgent):
 
         human_messages = [{"type": "text", "text": prompt}]
 
-        screenshot = None
         if vision:
             screenshot = self.driver.screenshot
             human_messages.append(
@@ -69,9 +53,8 @@ class VerifierAgent(BaseAgent):
             ]
         )
 
-        verification = message["parsed"]
-        logger.info(f"  <- Result: {verification.result}")
-        logger.info(f"  <- Reason: {verification.explanation}")
-        logger.info(f'  <- Usage: {message["raw"].usage_metadata}')
+        result = message.content
+        logger.info(f"  <- Result: {result}")
+        logger.info(f"  <- Usage: {message.usage_metadata}")
 
-        return verification
+        return result
