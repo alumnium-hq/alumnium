@@ -117,6 +117,7 @@ class PlaywrightDriver(BaseDriver):
                 logger.info(f"Failed to wait for page to load: {error}")
         except Error as error:
             if self.CONTEXT_WAS_DESTROYED_ERROR in error.message:
-                logger.info(f"Failed to wait for page to load: {error}")
+                logger.info(f"Page context has changed, retrying")
+                self.wait_for_page_to_load()
             else:
                 raise error
