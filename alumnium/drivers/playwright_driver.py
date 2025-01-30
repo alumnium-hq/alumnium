@@ -14,6 +14,12 @@ class PlaywrightDriver(BaseDriver):
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
+    with open("./scripts/waiter.js") as f:
+        WAITER_SCRIPT = f.read()
+    with open("./scripts/waitFor.js") as f:
+        WAIT_FOR_SCRIPT = f"(...scriptArgs) => new Promise((resolve) => {{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
+
+
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
         self.page = page
@@ -105,14 +111,9 @@ class PlaywrightDriver(BaseDriver):
 
     def wait_for_page_to_load(self):
         logger.info(f"Waiting for page to finish loading")
-        with open("./scripts/waiter.js") as f:
-            waiter_script = f.read()
-        with open("./scripts/waitFor.js") as f:
-            wait_for_script = f"(...scriptArgs) => new Promise((resolve) => {{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
-
         try:
-            self.page.evaluate(f"function() {{ {waiter_script} }}")
-            error = self.page.evaluate(wait_for_script)
+            self.page.evaluate(f"function() {{ {self.WAITER_SCRIPT} }}")
+            error = self.page.evaluate(self.WAIT_FOR_SCRIPT)
             if error is not None:
                 logger.info(f"Failed to wait for page to load: {error}")
         except Error as error:
