@@ -10,6 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  ALUMNIUM_LOG_LEVEL: info
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
