@@ -15,6 +15,11 @@ from .keys import Key
 logger = logging.getLogger(__name__)
 
 class SeleniumDriver(BaseDriver):
+    with open("./scripts/waiter.js") as f:
+        WAITER_SCRIPT = f.read()
+    with open("./scripts/waitFor.js") as f:
+        WAIT_FOR_SCRIPT = f.read()
+
     def __init__(self, driver: WebDriver):
         self.driver = driver
         self._patch_driver(driver)
@@ -111,11 +116,7 @@ class SeleniumDriver(BaseDriver):
 
     def wait_for_page_to_load(self):
         logger.info(f"Waiting for page to finish loading")
-        with open("./scripts/waiter.js") as f:
-            waiter_script = f.read()
-        with open("./scripts/waitFor.js") as f:
-            wait_for_script = f.read()
-        self.driver.execute_script(waiter_script)
-        error = self.driver.execute_async_script(wait_for_script)
+        self.driver.execute_script(self.WAITER_SCRIPT)
+        error = self.driver.execute_async_script(self.WAIT_FOR_SCRIPT)
         if error is not None:
             logger.info(f"Failed to wait for page to load: {error}")
