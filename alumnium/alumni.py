@@ -56,7 +56,7 @@ class Alumni:
         self.actor_agent = ActorAgent(self.driver, llm)
         self.asserter_agent = AsserterAgent(llm)
         self.extractor_agent = ExtractorAgent(llm)
-        self.loading_detector_agent = LoadingDetectorAgent(self.driver, llm)
+        self.loading_detector_agent = LoadingDetectorAgent(llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
         self.retrieval_agent = RetrievalAgent(self.driver, llm)
         self.verifier_agent = VerifierAgent(self.driver, llm)
@@ -76,12 +76,7 @@ class Alumni:
         for step in steps:
             self.actor_agent.invoke(goal, step)
 
-    def check(
-        self,
-        statement: str,
-        vision: bool = False,
-        retries: int = LoadingDetectorAgent.timeout / LoadingDetectorAgent.delay,
-    ) -> str:
+    def check(self, statement: str, vision: bool = False, retries: int = LoadingDetectorAgent.retries) -> str:
         """
         Checks a given statement using the verifier.
 
@@ -97,9 +92,14 @@ class Alumni:
         """
         try:
             verification = self.verifier_agent.invoke(statement, vision)
-            assert self.asserter_agent.invoke(statement, verification), verification
+            assert self.asserter_agent.invoke(statement, verification.result), verification.result
         except AssertionError as error:
-            loading = self.loading_detector_agent.invoke(vision)
+            loading = self.loading_detector_agent.invoke(
+                verification.aria,
+                verification.title,
+                verification.url,
+                verification.screenshot,
+            )
             if loading and retries > 0:
                 sleep(LoadingDetectorAgent.delay)
                 return self.check(statement, vision, retries - 1)

@@ -1,5 +1,7 @@
 import logging
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 from langchain_core.language_models import BaseChatModel
 
@@ -7,6 +9,15 @@ from alumnium.drivers import BaseDriver
 from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class Verification:
+    result: str
+    aria: str
+    title: str
+    url: str
+    screenshot: Optional[str]
 
 
 class VerifierAgent(BaseAgent):
@@ -21,7 +32,7 @@ class VerifierAgent(BaseAgent):
         self.driver = driver
         self.chain = self._with_rate_limit_retry(llm)
 
-    def invoke(self, statement: str, vision: bool = False) -> str:
+    def invoke(self, statement: str, vision: bool = False) -> Verification:
         logger.info(f"Starting verification:")
         logger.info(f"  -> Statement: {statement}")
 
@@ -35,6 +46,7 @@ class VerifierAgent(BaseAgent):
 
         human_messages = [{"type": "text", "text": prompt}]
 
+        screenshot = None
         if vision:
             screenshot = self.driver.screenshot
             human_messages.append(
@@ -57,4 +69,4 @@ class VerifierAgent(BaseAgent):
         logger.info(f"  <- Result: {result}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
 
-        return result
+        return Verification(result, aria, title, url, screenshot)
