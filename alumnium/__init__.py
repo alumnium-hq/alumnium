@@ -1,11 +1,17 @@
 import logging
-import os
-import sys
+from os import getenv
+from sys import stdout
 
-if os.getenv("ALUMNIUM_DEBUG", "0") == "1":
-    logger = logging.getLogger(__name__)
-    logger.setLevel(level=logging.DEBUG)
-    logger.addHandler(logging.StreamHandler(sys.stdout))
+
+logger = logging.getLogger(__name__)
+
+level = getenv("ALUMNIUM_LOG_LEVEL", None)
+if getenv("ALUMNIUM_DEBUG", "0") == "1":
+    level = "debug"
+
+if level:
+    logger.setLevel(level.upper())
+    logger.addHandler(logging.StreamHandler(stdout))
 
 
 from .alumni import *
