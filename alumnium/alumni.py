@@ -57,7 +57,7 @@ class Alumni:
         self.extractor_agent = ExtractorAgent(llm)
         self.loading_detector_agent = LoadingDetectorAgent(llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
-        self.retrieval_agent = RetrievalAgent(self.driver, llm)
+        self.retrieval_agent = RetrieverAgent(self.driver, llm)
 
     def quit(self):
         self.driver.quit()
