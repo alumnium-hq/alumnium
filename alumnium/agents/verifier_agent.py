@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Verification:
-    result: str
+    summary: str
     aria: str
     title: str
     url: str

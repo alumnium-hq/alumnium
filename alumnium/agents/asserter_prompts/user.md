@@ -1,2 +1,0 @@
-Statement: {statement}
-Text: {text}
