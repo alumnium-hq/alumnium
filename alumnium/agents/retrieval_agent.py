@@ -28,7 +28,7 @@ class RetrievalAgent(BaseAgent):
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self.driver = driver
-        self.chain = self._with_rate_limit_retry(llm)
+        self.chain = self._with_retry(llm)
 
     def invoke(self, information: str, vision: bool) -> RetrievalResult:
         logger.info(f"Starting retrieval:")
