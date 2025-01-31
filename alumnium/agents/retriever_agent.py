@@ -20,10 +20,10 @@ class RetrievalResult:
     screenshot: Optional[str]
 
 
-class RetrievalAgent(BaseAgent):
-    with open(Path(__file__).parent / "retrieval_prompts/system.md") as f:
+class RetrieverAgent(BaseAgent):
+    with open(Path(__file__).parent / "retriever_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
-    with open(Path(__file__).parent / "retrieval_prompts/_user_text.md") as f:
+    with open(Path(__file__).parent / "retriever_prompts/_user_text.md") as f:
         USER_TEXT_FRAGMENT = f.read()
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
@@ -38,10 +38,11 @@ class RetrievalAgent(BaseAgent):
         title = self.driver.title
         url = self.driver.url
 
-        prompt = information
+        prompt = ""
         if not vision:
-            prompt += "\n"
             prompt += self.USER_TEXT_FRAGMENT.format(aria=aria, title=title, url=url)
+        prompt += "\n"
+        prompt += information
 
         human_messages = [{"type": "text", "text": prompt}]
 
