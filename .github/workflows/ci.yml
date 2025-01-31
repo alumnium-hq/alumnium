@@ -49,11 +49,12 @@ jobs:
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
-      - run: Xvfb ${{ env.DISPLAY }} &
       - run: echo ALUMNIUM_DEBUG=${{ runner.debug }} >> "$GITHUB_ENV"
       - run: poetry install
       - if: matrix.driver == 'playwright'
         run: poetry run playwright install chromium
+      - if: matrix.driver == 'selenium'
+        run: Xvfb ${{ env.DISPLAY }} &
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty
       - run: poetry run pytest --html reports/pytest.html
       - if: failure() && runner.debug == '1'

@@ -12,7 +12,7 @@ def driver():
     driver = getenv("ALUMNIUM_DRIVER", "selenium")
     if driver == "playwright":
         with sync_playwright() as playwright:
-            yield playwright.chromium.launch(headless=False).new_page()
+            yield playwright.chromium.launch().new_page()
     elif driver == "selenium":
         driver = Chrome()
         yield driver
