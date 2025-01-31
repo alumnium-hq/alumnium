@@ -22,7 +22,7 @@ class ExtractorAgent(BaseAgent):
         USER_MESSAGE = f.read()
 
     def __init__(self, llm: BaseChatModel):
-        self.chain = self._with_rate_limit_retry(llm)
+        self.chain = self._with_retry(llm)
 
     def invoke(self, data: str, text: str) -> Data:
         logger.info(f"Starting extraction:")

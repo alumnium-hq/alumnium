@@ -40,7 +40,7 @@ class PlannerAgent(BaseAgent):
             ]
         )
 
-        self.chain = final_prompt | self._with_rate_limit_retry(llm)
+        self.chain = final_prompt | self._with_retry(llm)
 
     def add_example(self, goal: str, actions: list[str]):
         self.prompt_with_examples.examples.append(

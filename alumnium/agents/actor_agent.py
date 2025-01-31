@@ -29,7 +29,7 @@ class ActorAgent(BaseAgent):
             ]
         )
 
-        self.chain = prompt | self._with_rate_limit_retry(llm)
+        self.chain = prompt | self._with_retry(llm)
 
     def invoke(self, goal: str, step: str):
         if not step.strip():
