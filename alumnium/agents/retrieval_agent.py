@@ -1,5 +1,7 @@
 import logging
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 from langchain_core.language_models import BaseChatModel
 
@@ -7,6 +9,15 @@ from alumnium.drivers import BaseDriver
 from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class RetrievalResult:
+    response: str
+    aria: str
+    title: str
+    url: str
+    screenshot: Optional[str]
 
 
 class RetrievalAgent(BaseAgent):
@@ -19,15 +30,18 @@ class RetrievalAgent(BaseAgent):
         self.driver = driver
         self.chain = self._with_rate_limit_retry(llm)
 
-    def invoke(self, information: str, vision: bool) -> str:
+    def invoke(self, information: str, vision: bool) -> RetrievalResult:
         logger.info(f"Starting retrieval:")
         logger.info(f"  -> Information: {information}")
 
         aria = self.driver.aria_tree.to_xml()
+        title = self.driver.title
+        url = self.driver.url
+
         prompt = information
         if not vision:
             prompt += "\n"
-            prompt += self.USER_TEXT_FRAGMENT.format(aria=aria)
+            prompt += self.USER_TEXT_FRAGMENT.format(aria=aria, title=title, url=url)
 
         human_messages = [{"type": "text", "text": prompt}]
 
@@ -50,7 +64,8 @@ class RetrievalAgent(BaseAgent):
             ]
         )
 
-        logger.info(f"  <- Result: {message.content}")
+        response = message.content.strip()
+        logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
 
-        return message.content.strip()
+        return RetrievalResult(response, aria, title, url, screenshot)
