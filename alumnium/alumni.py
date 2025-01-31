@@ -54,7 +54,6 @@ class Alumni:
             raise NotImplementedError(f"Model {model} not implemented")
 
         self.actor_agent = ActorAgent(self.driver, llm)
-        self.asserter_agent = AsserterAgent(llm)
         self.extractor_agent = ExtractorAgent(llm)
         self.loading_detector_agent = LoadingDetectorAgent(llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
@@ -83,16 +82,18 @@ class Alumni:
         Args:
             statement: The statement to be checked.
             vision: A flag indicating whether to use a vision-based verification via a screenshot. Defaults to False.
+            retries: The number of retries to check the statement. Defaults to the value set in the LoadingDetectorAgent.
 
         Returns:
-            The result of the verification process.
+            The summary of verification result.
 
         Raises:
             AssertionError: If the verification fails.
         """
         try:
             verification = self.verifier_agent.invoke(statement, vision)
-            assert self.asserter_agent.invoke(statement, verification.result), verification.result
+            result = self.extractor_agent.invoke("statement is true/false", verification.summary)
+            assert result, verification.summary
         except AssertionError as error:
             loading = self.loading_detector_agent.invoke(
                 verification.aria,
