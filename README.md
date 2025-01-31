@@ -15,7 +15,7 @@
     <a href="https://alumnium.ai/docs/">Documentation</a>
 </p>
 
-Alumnium is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It aims to simplify interactions with web pages and provide more robust mechanisms for verifying assertions.
+Alumnium is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It simplifies interactions with web pages and provide more robust mechanisms for verifying assertions.
 
 <img src="https://raw.githubusercontent.com/alumnium-hq/alumnium.github.io/ccc7886dcf325d7b34d349facec7393d18812054/src/assets/overview.gif" height="auto" width="620px" />
 
@@ -41,8 +41,9 @@ driver.get("https://google.com")
 
 al = Alumni(driver)
 al.do("search for selenium")
-al.check("selenium in page title")
-al.check("selenium.dev is present in the search results")
+al.check("page title contains selenium")
+al.check("search results contain selenium.dev")
+assert al.get("atomic number") == 34
 ```
 
 Check out [documentation][1] and more [examples][2]!
