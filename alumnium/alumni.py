@@ -58,7 +58,6 @@ class Alumni:
         self.loading_detector_agent = LoadingDetectorAgent(llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
         self.retrieval_agent = RetrievalAgent(self.driver, llm)
-        self.verifier_agent = VerifierAgent(self.driver, llm)
 
     def quit(self):
         self.driver.quit()
@@ -91,16 +90,11 @@ class Alumni:
             AssertionError: If the verification fails.
         """
         try:
-            verification = self.verifier_agent.invoke(statement, vision)
-            result = self.extractor_agent.invoke("statement is true/false", verification.summary)
-            assert result, verification.summary
+            result = self.retrieval_agent.invoke(f"Is the following true or false - {statement}", vision)
+            actual = self.extractor_agent.invoke(f"The statement {statement} is true/false", result.response)
+            assert actual, result.response
         except AssertionError as error:
-            loading = self.loading_detector_agent.invoke(
-                verification.aria,
-                verification.title,
-                verification.url,
-                verification.screenshot,
-            )
+            loading = self.loading_detector_agent.invoke(result.aria, result.title, result.url, result.screenshot)
             if loading and retries > 0:
                 sleep(LoadingDetectorAgent.delay)
                 return self.check(statement, vision, retries - 1)
@@ -118,8 +112,8 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        information = self.retrieval_agent.invoke(data, vision)
-        return self.extractor_agent.invoke(data, information)
+        result = self.retrieval_agent.invoke(data, vision)
+        return self.extractor_agent.invoke(data, result.response)
 
     def learn(self, goal: str, actions: list[str]):
         """
