@@ -55,7 +55,6 @@ class Alumni:
 
         self.actor_agent = ActorAgent(self.driver, llm)
         self.extractor_agent = ExtractorAgent(llm)
-        self.loading_detector_agent = LoadingDetectorAgent(llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
         self.retrieval_agent = RetrieverAgent(self.driver, llm)
 
@@ -74,7 +73,7 @@ class Alumni:
         for step in steps:
             self.actor_agent.invoke(goal, step)
 
-    def check(self, statement: str, vision: bool = False, retries: int = LoadingDetectorAgent.retries) -> str:
+    def check(self, statement: str, vision: bool = False) -> str:
         """
         Checks a given statement using the verifier.
 
@@ -89,17 +88,10 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
-        try:
-            result = self.retrieval_agent.invoke(f"Is the following true or false - {statement}", vision)
-            actual = self.extractor_agent.invoke(f"The statement {statement} is true/false", result.response)
-            assert actual, result.response
-        except AssertionError as error:
-            loading = self.loading_detector_agent.invoke(result.aria, result.title, result.url, result.screenshot)
-            if loading and retries > 0:
-                sleep(LoadingDetectorAgent.delay)
-                return self.check(statement, vision, retries - 1)
-            else:
-                raise error
+        result = self.retrieval_agent.invoke(f"Is the following true or false - {statement}", vision)
+        actual = self.extractor_agent.invoke(f"The statement {statement} is true/false", result.response)
+        assert actual, result.response
+        return result.response
 
     def get(self, data: str, vision: bool = False) -> Data:
         """
