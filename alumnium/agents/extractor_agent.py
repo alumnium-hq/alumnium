@@ -14,7 +14,7 @@ Data: TypeAlias = Union[str, int, float, bool, list[Union[str, int, float, bool]
 
 
 class ExtractorAgent(BaseAgent):
-    LIST_SEPARATOR = "<sep>"
+    LIST_SEPARATOR = "%SEP%"
 
     with open(Path(__file__).parent / "extractor_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()

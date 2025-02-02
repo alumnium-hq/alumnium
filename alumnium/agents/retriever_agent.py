@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Optional
 
 from langchain_core.language_models import BaseChatModel
+from pydantic import BaseModel, Field
+
 
 from alumnium.drivers import BaseDriver
 from .base_agent import BaseAgent
@@ -11,9 +13,18 @@ from .base_agent import BaseAgent
 logger = logging.getLogger(__name__)
 
 
+class RetrievedInformation(BaseModel):
+    """Retrieved information."""
+
+    explanation: str = Field(
+        description="Explaination how information was retrieved and why it's related to the request."
+    )
+    value: str = Field(description="The precise retrieved information value without additional data.")
+
+
 @dataclass
 class RetrievalResult:
-    response: str
+    response: RetrievedInformation
     aria: str
     title: str
     url: str
@@ -21,6 +32,8 @@ class RetrievalResult:
 
 
 class RetrieverAgent(BaseAgent):
+    LIST_SEPARATOR = "%SEP%"
+
     with open(Path(__file__).parent / "retriever_prompts/system.md") as f:
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "retriever_prompts/_user_text.md") as f:
@@ -28,7 +41,12 @@ class RetrieverAgent(BaseAgent):
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self.driver = driver
-        self.chain = self._with_retry(llm)
+        self.chain = self._with_retry(
+            llm.with_structured_output(
+                RetrievedInformation,
+                include_raw=True,
+            )
+        )
 
     def invoke(self, information: str, vision: bool) -> RetrievalResult:
         logger.info(f"Starting retrieval:")
@@ -60,13 +78,13 @@ class RetrieverAgent(BaseAgent):
 
         message = self.chain.invoke(
             [
-                ("system", self.SYSTEM_MESSAGE),
+                ("system", self.SYSTEM_MESSAGE.format(separator=self.LIST_SEPARATOR)),
                 ("human", human_messages),
             ]
         )
 
-        response = message.content.strip()
+        response = message["parsed"]
         logger.info(f"  <- Result: {response}")
-        logger.info(f"  <- Usage: {message.usage_metadata}")
+        logger.info(f"  <- Usage: {message["raw"].usage_metadata}")
 
         return RetrievalResult(response, aria, title, url, screenshot)
