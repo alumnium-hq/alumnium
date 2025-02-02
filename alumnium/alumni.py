@@ -89,9 +89,9 @@ class Alumni:
             AssertionError: If the verification fails.
         """
         result = self.retrieval_agent.invoke(f"Is the following true or false - {statement}", vision)
-        actual = self.extractor_agent.invoke(f"The statement {statement} is true/false", result.response)
-        assert actual, result.response
-        return result.response
+        actual = self.extractor_agent.invoke(f"true or false", result.response.value)
+        assert actual, result.response.explanation
+        return result.response.explanation
 
     def get(self, data: str, vision: bool = False) -> Data:
         """
@@ -105,7 +105,8 @@ class Alumni:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
         result = self.retrieval_agent.invoke(data, vision)
-        return self.extractor_agent.invoke(data, result.response)
+        raw = result.response.explanation + f"\n\n{data}: " + result.response.value
+        return self.extractor_agent.invoke(data, raw)
 
     def learn(self, goal: str, actions: list[str]):
         """
