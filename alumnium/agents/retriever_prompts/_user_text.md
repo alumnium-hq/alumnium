@@ -1,6 +1,5 @@
-Webpage title: {title}
-Webpage URL: {url}
-Webpage ARIA tree:
-```xml
+<webpage-title>{title}</webpage-title>
+<webpage-url>{url}</webpage-url>
+<webpage-accessibility-tree>
 {aria}
-```
+</webpage-accessibility-tree>

@@ -41,7 +41,7 @@ class RetrieverAgent(BaseAgent):
         prompt = ""
         if not vision:
             prompt += self.USER_TEXT_FRAGMENT.format(aria=aria, title=title, url=url)
-        prompt += "\n"
+            prompt += "\n"
         prompt += information
 
         human_messages = [{"type": "text", "text": prompt}]
