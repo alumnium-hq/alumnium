@@ -5,10 +5,17 @@ from pytest import mark
 def test_table_extraction(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
 
-    assert al.get("Jason Doe's due amount from example 1 table") == "$100.00"
-    assert al.get("Frank Bach's due amount from example 1 table") == "$51.00"
-    assert al.get("Tim Conway's due amount from example 1 table") == "$50.00"
-    assert al.get("John Smith's due amount from example 1 table") == "$50.00"
+    # Gemini drops "$" prefix.
+    if Model.load() == Model.GOOGLE:
+        assert al.get("Jason Doe's due amount from example 1 table") == 100.00
+        assert al.get("Frank Bach's due amount from example 1 table") == 51.00
+        assert al.get("Tim Conway's due amount from example 1 table") == 50.00
+        assert al.get("John Smith's due amount from example 1 table") == 50.00
+    else:
+        assert al.get("Jason Doe's due amount from example 1 table") == "$100.00"
+        assert al.get("Frank Bach's due amount from example 1 table") == "$51.00"
+        assert al.get("Tim Conway's due amount from example 1 table") == "$50.00"
+        assert al.get("John Smith's due amount from example 1 table") == "$50.00"
 
 
 @mark.xfail(

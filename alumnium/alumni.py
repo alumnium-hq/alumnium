@@ -105,8 +105,8 @@ class Alumni:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
         result = self.retrieval_agent.invoke(data, vision)
-        raw = result.response.explanation + f"\n\n{data}: " + result.response.value
-        return self.extractor_agent.invoke(data, raw)
+        text = f"\n\n{data}: " + result.response.value
+        return self.extractor_agent.invoke(data, text)
 
     def learn(self, goal: str, actions: list[str]):
         """
