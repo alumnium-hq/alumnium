@@ -12,7 +12,7 @@ from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from .agents import *
-from .agents.extractor_agent import Data
+from .agents.retriever_agent import Data
 from .drivers import PlaywrightDriver, SeleniumDriver
 from .models import Model
 
@@ -54,7 +54,6 @@ class Alumni:
             raise NotImplementedError(f"Model {model} not implemented")
 
         self.actor_agent = ActorAgent(self.driver, llm)
-        self.extractor_agent = ExtractorAgent(llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
         self.retrieval_agent = RetrieverAgent(self.driver, llm)
 
@@ -88,9 +87,8 @@ class Alumni:
             AssertionError: If the verification fails.
         """
         result = self.retrieval_agent.invoke(f"Is the following true or false - {statement}", vision)
-        actual = self.extractor_agent.invoke(f"true or false", result.response.value)
-        assert actual, result.response.explanation
-        return result.response.explanation
+        assert result.value, result.explanation
+        return result.explanation
 
     def get(self, data: str, vision: bool = False) -> Data:
         """
@@ -103,9 +101,7 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        result = self.retrieval_agent.invoke(data, vision)
-        text = f"\n\n{data}: " + result.response.value
-        return self.extractor_agent.invoke(data, text)
+        return self.retrieval_agent.invoke(data, vision).value
 
     def learn(self, goal: str, actions: list[str]):
         """
