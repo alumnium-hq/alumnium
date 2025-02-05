@@ -48,7 +48,9 @@ def al(driver):
                 "click button '='",
             ],
         )
-        # Haiku has issues learning how to search
+
+    # Gemini/Haiku have issues learning how to search
+    if Model.load() in [Model.AWS_META, Model.GOOGLE]:
         al.learn(
             goal="search for artificial intelligence",
             actions=[
