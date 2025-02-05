@@ -80,7 +80,6 @@ class Alumni:
         Args:
             statement: The statement to be checked.
             vision: A flag indicating whether to use a vision-based verification via a screenshot. Defaults to False.
-            retries: The number of retries to check the statement. Defaults to the value set in the LoadingDetectorAgent.
 
         Returns:
             The summary of verification result.
