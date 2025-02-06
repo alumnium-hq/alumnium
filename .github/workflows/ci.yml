@@ -10,7 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ALUMNIUM_LOG_LEVEL: info
+  ALUMNIUM_LOG_LEVEL: debug
+  ALUMNIUM_LOG_PATH: alumnium.log
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -50,8 +51,6 @@ jobs:
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
-      - if: runner.debug == '1'
-        run: echo ALUMNIUM_LOG_LEVEL=debug >> "$GITHUB_ENV"
       - run: poetry install
       - if: matrix.driver == 'playwright'
         run: poetry run playwright install chromium
@@ -64,8 +63,10 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: reports-${{ matrix.driver }}-${{ matrix.model }}
-          path: reports/
+          name: ${{ matrix.driver }}-${{ matrix.model }}
+          path: |
+            alumnium.log
+            reports/
 
   release:
     name: Release

@@ -4,6 +4,7 @@ __pycache__/
 
 /.venv/
 /dist/
+/log/
 /reports/
 
 /.envrc
