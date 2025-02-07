@@ -36,3 +36,11 @@ def test_table_sorting(al, navigate):
     # example 1 table is not affected
     assert al.get("first names from example 1 table") == ["Frank", "Tim", "Jason", "John"]
     assert al.get("last names from example 1 table") == ["Bach", "Conway", "Doe", "Smith"]
+
+
+def test_retrieval_of_unavailable_data(al, navigate):
+    navigate("https://the-internet.herokuapp.com/tables")
+
+    # This data is not available on the page.
+    # Even though LLM knows the answer, it should not respond it.
+    assert al.get("atomic number of Selenium") == None

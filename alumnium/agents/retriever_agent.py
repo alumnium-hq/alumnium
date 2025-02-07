@@ -14,7 +14,7 @@ from .base_agent import BaseAgent
 logger = logging.getLogger(__name__)
 
 
-Data: TypeAlias = Union[str, int, float, bool, list[Union[str, int, float, bool]]]
+Data: TypeAlias = Optional[Union[str, int, float, bool, list[Union[str, int, float, bool]]]]
 
 
 class RetrievedInformation(BaseModel):
@@ -23,7 +23,9 @@ class RetrievedInformation(BaseModel):
     explanation: str = Field(
         description="Explanation how information was retrieved and why it's related to the request."
     )
-    value: str = Field(description="The precise retrieved information value without additional data.")
+    value: str = Field(
+        description="The precise retrieved information value without additional data. If the information is not present in context, reply NOOP."
+    )
 
 
 class RetrieverAgent(BaseAgent):
@@ -87,11 +89,13 @@ class RetrieverAgent(BaseAgent):
 
         return response
 
-    def __loosely_typecast(self, value: Data) -> Data:
+    def __loosely_typecast(self, value: str) -> Data:
         # LLMs sometimes add separator to the start/end.
         value = value.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
 
-        if value.isdigit():
+        if value.upper() == "NOOP":
+            return None
+        elif value.isdigit():
             return int(value)
         elif value.replace(".", "", 1).isdigit():
             return float(value)
