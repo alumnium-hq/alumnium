@@ -9,6 +9,7 @@ from .base_driver import BaseDriver
 
 logger = logging.getLogger(__name__)
 
+
 class PlaywrightDriver(BaseDriver):
     CANNOT_FIND_NODE_ERROR = "Could not find node with given id"
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
@@ -18,7 +19,6 @@ class PlaywrightDriver(BaseDriver):
         WAITER_SCRIPT = f.read()
     with open("./scripts/waitFor.js") as f:
         WAIT_FOR_SCRIPT = f"(...scriptArgs) => new Promise((resolve) => {{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
-
 
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
