@@ -14,7 +14,7 @@
 
   const state = {
     pendingRequests: 0,
-    pendingResources: 0,
+    resources: new Set(),
     activeAt: Date.now(),
     initialLoad: false,
   };
@@ -29,14 +29,19 @@
   hookXHR();
   hookFetch();
 
-  window[symbol] = { waitForStability };
+  window[symbol] = {
+    waitForStability,
+    state,
+  };
 
   function waitForStability(options) {
     const idle = options?.idle ?? 500;
     const timeout = options?.timeout ?? 10000;
+    const log = options?.log ?? false;
 
     return new Promise((resolve, reject) => {
       const startTime = Date.now();
+      let lastLogged = startTime;
 
       checkStability();
 
@@ -44,8 +49,13 @@
         const now = Date.now();
 
         const noRequests = !state.pendingRequests;
-        const noResources = !state.pendingResources;
+        const noResources = !state.resources.size;
         const isIdle = now - state.activeAt >= idle;
+
+        if (log && now - lastLogged >= 1000) {
+          console.log("Alumnium waiter state:", state);
+          lastLogged = now;
+        }
 
         if (state.initialLoad && noRequests && noResources && isIdle)
           return resolve();
@@ -68,12 +78,13 @@
     const tag = el.tagName.toLowerCase();
 
     const isLoaded =
+      el.loading === "lazy" || // lazy loading
       el.complete || // img
       el.readyState === "complete" || // media
       (tag === "link" && el.sheet); // CSS
     if (isLoaded) return;
 
-    state.pendingResources++;
+    state.resources.add(el);
     updateActiveAt();
 
     el.addEventListener("load", onDone);
@@ -83,7 +94,7 @@
       el.removeEventListener("load", onDone);
       el.removeEventListener("error", onDone);
 
-      state.pendingResources--;
+      state.resources.delete(el);
       updateActiveAt();
     }
   }
