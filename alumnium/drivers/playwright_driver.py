@@ -2,6 +2,7 @@ import logging
 from contextlib import contextmanager
 from base64 import b64encode
 from playwright.sync_api import Page, Error
+from pathlib import Path
 
 from alumnium.aria import AriaTree
 from .keys import Key
@@ -15,10 +16,13 @@ class PlaywrightDriver(BaseDriver):
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
-    with open("./scripts/waiter.js") as f:
+    with open(Path(__file__).parent / "scripts/waiter.js") as f:
         WAITER_SCRIPT = f.read()
-    with open("./scripts/waitFor.js") as f:
-        WAIT_FOR_SCRIPT = f"(...scriptArgs) => new Promise((resolve) => {{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
+    with open(Path(__file__).parent / "scripts/waitFor.js") as f:
+        WAIT_FOR_SCRIPT = (
+            f"(...scriptArgs) => new Promise((resolve) => "
+            f"{{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
+        )
 
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
