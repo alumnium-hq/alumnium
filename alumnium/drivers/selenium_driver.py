@@ -15,9 +15,9 @@ from .keys import Key
 logger = logging.getLogger(__name__)
 
 class SeleniumDriver(BaseDriver):
-    with open("./scripts/waiter.js") as f:
+    with open(Path(__file__).parent / "scripts/waiter.js") as f:
         WAITER_SCRIPT = f.read()
-    with open("./scripts/waitFor.js") as f:
+    with open(Path(__file__).parent / "scripts/waitFor.js") as f:
         WAIT_FOR_SCRIPT = f.read()
 
     def __init__(self, driver: WebDriver):
