@@ -1,12 +1,14 @@
 import logging
-from contextlib import contextmanager
 from base64 import b64encode
-from playwright.sync_api import Page, Error
+from contextlib import contextmanager
 from pathlib import Path
 
+from playwright.sync_api import Error, Page
+
 from alumnium.aria import AriaTree
-from .keys import Key
+
 from .base_driver import BaseDriver
+from .keys import Key
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +40,8 @@ class PlaywrightDriver(BaseDriver):
             tag_name = element.evaluate("el => el.tagName").lower()
             # Llama often attempts to click options, not select them.
             if tag_name == "option":
-                element.locator("xpath=.//parent::select").select_option(element.text_content())
+                option = element.text_content()
+                element.locator("xpath=.//parent::select").select_option(option)
             else:
                 element.click()
 
@@ -87,7 +90,10 @@ class PlaywrightDriver(BaseDriver):
         # Beware!
         self.client.send("DOM.enable")
         self.client.send("DOM.getFlattenedDocument")
-        node_ids = self.client.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [id]})
+        node_ids = self.client.send(
+            "DOM.pushNodesByBackendIdsToFrontend",
+            {"backendNodeIds": [id]},
+        )
         node_id = node_ids["nodeIds"][0]
         self.client.send(
             "DOM.setAttributeValue",

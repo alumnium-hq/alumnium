@@ -1,3 +1,9 @@
+format:
+	poetry run autoflake .
+	poetry run black .
+	poetry run isort .
+	poetry run pyprojectsort
+
 test:
 	mkdir -p log/
 	poetry run behave

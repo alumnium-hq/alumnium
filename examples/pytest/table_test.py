@@ -1,5 +1,6 @@
-from alumnium import Model
 from pytest import mark
+
+from alumnium import Model
 
 
 def test_table_extraction(al, navigate):

@@ -1,12 +1,10 @@
 import logging
 from os import getenv
-from time import sleep
 
 from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
-from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
-
+from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver

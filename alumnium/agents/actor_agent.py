@@ -7,6 +7,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from alumnium.drivers import BaseDriver
 from alumnium.tools import ALL_TOOLS
+
 from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)

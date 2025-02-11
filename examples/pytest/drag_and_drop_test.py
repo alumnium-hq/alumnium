@@ -1,5 +1,6 @@
-from alumnium import Model
 from pytest import mark
+
+from alumnium import Model
 
 
 @mark.xfail(Model.load() == Model.AWS_META, reason="https://github.com/boto/boto3/issues/4374")

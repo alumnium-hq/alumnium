@@ -1,6 +1,6 @@
 from behave import *
-from selenium.webdriver import Chrome
 from playwright.sync_api import Page
+from selenium.webdriver import Chrome
 
 
 @given('I open "{url}"')

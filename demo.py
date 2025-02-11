@@ -1,5 +1,6 @@
-from alumnium import Alumni
 from selenium.webdriver import Chrome
+
+from alumnium import Alumni
 
 driver = Chrome()
 al = Alumni(driver)

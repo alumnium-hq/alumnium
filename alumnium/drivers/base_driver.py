@@ -1,6 +1,7 @@
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 
 from alumnium.aria import AriaTree
+
 from .keys import Key
 
 

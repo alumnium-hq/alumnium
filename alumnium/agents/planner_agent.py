@@ -6,6 +6,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
 from alumnium.drivers import BaseDriver
+
 from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)

@@ -1,10 +1,11 @@
 from datetime import datetime
 from os import getenv
 
-from alumnium import Alumni, Model
-from selenium.webdriver import Chrome
-from playwright.sync_api import sync_playwright, Page
+from playwright.sync_api import Page, sync_playwright
 from pytest import fixture, hookimpl
+from selenium.webdriver import Chrome
+
+from alumnium import Alumni, Model
 
 
 @fixture(scope="session", autouse=True)

@@ -1,5 +1,4 @@
 import logging
-from dataclasses import dataclass
 from pathlib import Path
 from string import whitespace
 from typing import Optional, TypeAlias, Union
@@ -7,8 +6,8 @@ from typing import Optional, TypeAlias, Union
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
-
 from alumnium.drivers import BaseDriver
+
 from .base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
