@@ -46,6 +46,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        with:
+          python-version-file: pyproject.toml
       - uses: abatilo/actions-poetry@v2
       - uses: actions/cache@v4
         with:
@@ -81,6 +83,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        with:
+          python-version-file: pyproject.toml
       - uses: abatilo/actions-poetry@v2
       - uses: actions/cache@v4
         with:
