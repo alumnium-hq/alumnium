@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+
 from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -9,10 +10,12 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.aria import AriaTree
+
 from .base_driver import BaseDriver
 from .keys import Key
 
 logger = logging.getLogger(__name__)
+
 
 class SeleniumDriver(BaseDriver):
     with open(Path(__file__).parent / "scripts/waiter.js") as f:
@@ -34,7 +37,10 @@ class SeleniumDriver(BaseDriver):
 
     def drag_and_drop(self, from_id: int, to_id: int):
         actions = ActionChains(self.driver)
-        actions.drag_and_drop(self._find_element(from_id), self._find_element(to_id)).perform()
+        actions.drag_and_drop(
+            self._find_element(from_id),
+            self._find_element(to_id),
+        ).perform()
 
     def hover(self, id: int):
         actions = ActionChains(self.driver)

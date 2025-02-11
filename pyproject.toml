@@ -1,33 +1,54 @@
-[tool.poetry]
-name = "alumnium"
-version = "0.7.0"
-description = "Pave the way towards AI-powered test automation."
-authors = [
-  "Alex Rodionov <p0deje@gmail.com>",
-  "Tatiana Shepeleva <tati.shep@gmail.com>",
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = [
+    "poetry-core",
 ]
-readme = "README.md"
-license = "MIT"
+
+[tool.autoflake]
+in-place = true
+recursive = true
+remove-unused-variables = true
+
+[tool.black]
+line-length = 119
+
+[tool.isort]
+profile = "black"
+
+[tool.poetry]
+authors = [
+    "Alex Rodionov <p0deje@gmail.com>",
+    "Tatiana Shepeleva <tati.shep@gmail.com>",
+]
+description = "Pave the way towards AI-powered test automation."
 homepage = "https://alumnium.ai"
+license = "MIT"
+name = "alumnium"
+readme = "README.md"
 repository = "https://github.com/alumnium-hq/alumnium"
+version = "0.7.0"
 
 [tool.poetry.dependencies]
-python = "^3.10"
 langchain = "^0.3"
 langchain-anthropic = "^0.2"
 langchain-aws = "^0.2"
 langchain-google-genai = "^2.0"
 langchain-openai = "^0.2"
 playwright = "^1.49"
+python = "^3.10"
 retry2 = "^0.9"
 selenium = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
+autoflake = "^2.3.1"
 behave = "^1.2.6"
+behave-html-pretty-formatter = "^1.12"
+black = "^25.1.0"
+isort = "^6.0.0"
+pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-html = "^4.1.1"
-behave-html-pretty-formatter = "^1.12"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.pytest.ini_options]
+generate_report_on_test = true
+pythonpath = "."

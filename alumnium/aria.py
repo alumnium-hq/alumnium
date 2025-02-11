@@ -1,5 +1,5 @@
 import logging
-from xml.etree.ElementTree import Element, tostring, indent
+from xml.etree.ElementTree import Element, indent, tostring
 
 logger = logging.getLogger(__name__)
 

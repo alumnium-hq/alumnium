@@ -1,10 +1,11 @@
 from datetime import datetime
 from os import getenv
 
-from alumnium import Alumni
 from behave import fixture, use_fixture
-from playwright.sync_api import sync_playwright, Page
+from playwright.sync_api import Page, sync_playwright
 from selenium.webdriver import Chrome
+
+from alumnium import Alumni
 
 
 @fixture

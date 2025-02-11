@@ -1,5 +1,5 @@
-from os import environ
 from enum import Enum
+from os import environ
 
 
 class Model(Enum):
