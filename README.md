@@ -1,6 +1,6 @@
 <h1>
     <p align="center">
-        <img src="https://github.com/user-attachments/assets/44e63cc3-d0e8-4b79-bfc1-015ce91a92f7" height="128" alt="Logo" />
+        <img src="https://raw.githubusercontent.com/alumnium-hq/alumnium.github.io/efb2afaf0ced7ec07c241445e7b381914281edaf/src/assets/logo.svg" height="128" alt="Logo" />
         <br />
         Alumnium
     </p>
