@@ -26,7 +26,7 @@ license = "MIT"
 name = "alumnium"
 readme = "README.md"
 repository = "https://github.com/alumnium-hq/alumnium"
-version = "0.7.1"
+version = "0.7.2"
 
 [tool.poetry.dependencies]
 langchain = "^0.3"
