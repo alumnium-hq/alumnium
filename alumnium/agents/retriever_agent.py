@@ -81,7 +81,7 @@ class RetrieverAgent(BaseAgent):
 
         response = message["parsed"]
         logger.info(f"  <- Result: {response}")
-        logger.info(f"  <- Usage: {message["raw"].usage_metadata}")
+        logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
         # Remove when we find a way use `Data` in structured output `value`.
         response.value = self.__loosely_typecast(response.value)
