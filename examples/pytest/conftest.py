@@ -76,6 +76,17 @@ def navigate(driver):
     return __navigate
 
 
+@fixture
+def execute_script(driver):
+    def __execute_script(script):
+        if isinstance(driver, Chrome):
+            driver.execute_script(script)
+        elif isinstance(driver, Page):
+            driver.evaluate(script)
+
+    return __execute_script
+
+
 @hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
     timestamp = datetime.now().strftime("%H-%M-%S")
