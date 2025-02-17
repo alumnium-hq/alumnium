@@ -22,6 +22,7 @@ def login(al, driver, execute_script, navigate):
     reason="Need to add proper types in `RetrievedInformation.value`.",
 )
 @mark.xfail(Model.load() == Model.AWS_META, reason="Too hard for Llama")
+@mark.xfail(Model.load() == Model.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734")
 def test_sorting(al):
     products = {
         "Sauce Labs Backpack": 29.99,
