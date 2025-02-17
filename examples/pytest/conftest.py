@@ -25,41 +25,6 @@ def driver():
 @fixture(scope="session", autouse=True)
 def al(driver):
     al = Alumni(driver)
-
-    # Llama constantly messes the order of operations.
-    if Model.load() == Model.AWS_META:
-        al.learn(
-            goal="1 + 1 =",
-            actions=[
-                "click button '1'",
-                "click button '+'",
-                "click button '1'",
-                "click button '='",
-            ],
-        )
-
-    if Model.load() in [Model.AWS_ANTHROPIC, Model.ANTHROPIC]:
-        # Haiku cannot correlate '/' button to '÷'.
-        al.learn(
-            goal="4 / 2 =",
-            actions=[
-                "click button '4'",
-                "click button '÷'",
-                "click button '2'",
-                "click button '='",
-            ],
-        )
-
-    # Gemini/Haiku have issues learning how to search
-    if Model.load() in [Model.AWS_META, Model.GOOGLE]:
-        al.learn(
-            goal="search for artificial intelligence",
-            actions=[
-                "type 'artificial intelligence' into a search field",
-                "press key 'Enter'",
-            ],
-        )
-
     yield al
     al.quit()
 
@@ -73,6 +38,17 @@ def navigate(driver):
             driver.goto(url)
 
     return __navigate
+
+
+@fixture
+def execute_script(driver):
+    def __execute_script(script):
+        if isinstance(driver, Chrome):
+            driver.execute_script(script)
+        elif isinstance(driver, Page):
+            driver.evaluate(script)
+
+    return __execute_script
 
 
 @hookimpl(hookwrapper=True)
