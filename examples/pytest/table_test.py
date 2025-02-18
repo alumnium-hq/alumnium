@@ -1,6 +1,13 @@
-from pytest import mark
+from pytest import fixture, mark
 
 from alumnium import Model
+
+
+@fixture(autouse=True)
+def learn(al):
+    al.learn("sort payments table by amount", ["click header 'Amount' in 'payments' table"])
+    yield
+    al.planner_agent.prompt_with_examples.examples.clear()
 
 
 def test_table_extraction(al, navigate):
