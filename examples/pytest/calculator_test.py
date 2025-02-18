@@ -1,3 +1,27 @@
+from pytest import fixture
+
+from alumnium import Model
+
+
+@fixture(autouse=True)
+def learn(al):
+    if Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC, Model.AWS_META]:
+        # Llama constantly messes the order of operations.
+        # Haiku cannot correlate '/' button to '÷'.
+        al.learn(
+            goal="4 / 2 =",
+            actions=[
+                "click button '4'",
+                "click button '÷'",
+                "click button '2'",
+                "click button '='",
+            ],
+        )
+    yield
+    if Model.load() in [Model.AWS_META, Model.AWS_ANTHROPIC, Model.ANTHROPIC]:
+        al.planner_agent.prompt_with_examples.examples.clear()
+
+
 def test_addition(al, navigate):
     navigate("https://seleniumbase.io/apps/calculator")
     al.do("2 + 2 =")
