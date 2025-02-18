@@ -10,7 +10,7 @@ def login(al, driver, execute_script, navigate):
     al.learn("sort products by lowest shipping cost", ["select 'Shipping (low to high)' in sorting dropdown"])
 
     navigate("https://www.saucedemo.com/")
-    al.do("login as standard_user / secret_sauce")
+    al.do("login with 'standard_user' username and 'secret_sauce' password")
     yield
     execute_script("window.localStorage.clear()")
 
