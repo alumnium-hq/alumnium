@@ -18,8 +18,7 @@ def learn(al):
             ],
         )
     yield
-    if Model.load() in [Model.AWS_META, Model.AWS_ANTHROPIC, Model.ANTHROPIC]:
-        al.planner_agent.prompt_with_examples.examples.clear()
+    al.planner_agent.prompt_with_examples.examples.clear()
 
 
 def test_addition(al, navigate):
