@@ -5,8 +5,8 @@ from alumnium import Model
 
 @fixture(autouse=True)
 def learn(al):
-    # Gemini/Haiku have issues learning how to search
-    if Model.load() in [Model.AWS_META, Model.GOOGLE]:
+    # Claude/Gemini/Llama have issues learning how to search
+    if Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC, Model.AWS_META, Model.GOOGLE]:
         al.learn(
             goal="search for artificial intelligence",
             actions=[
@@ -15,8 +15,7 @@ def learn(al):
             ],
         )
     yield
-    if Model.load() in [Model.AWS_META, Model.GOOGLE]:
-        al.planner_agent.prompt_with_examples.examples.clear()
+    al.planner_agent.prompt_with_examples.examples.clear()
 
 
 def test_search(al, navigate):

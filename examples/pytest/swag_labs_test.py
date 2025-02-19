@@ -4,7 +4,7 @@ from alumnium import Model
 
 
 @fixture(autouse=True)
-def login(al, driver, execute_script, navigate):
+def login(al, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
     al.learn("go to shopping cart", ["click link to the right of 'Swag Labs' header"])
     al.learn("sort products by lowest shipping cost", ["select 'Shipping (low to high)' in sorting dropdown"])
