@@ -16,7 +16,9 @@ def login(al, execute_script, navigate):
     yield
     execute_script("window.localStorage.clear()")
 
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.planner_agent.remove_example("add laptop to cart")
+    al.planner_agent.remove_example("go to shopping cart")
+    al.planner_agent.remove_example("sort products by lowest shipping cost")
 
 
 @mark.xfail(

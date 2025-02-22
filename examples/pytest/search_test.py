@@ -15,7 +15,7 @@ def learn(al):
             ],
         )
     yield
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.planner_agent.remove_example("search for artificial intelligence")
 
 
 def test_search(al, navigate):
