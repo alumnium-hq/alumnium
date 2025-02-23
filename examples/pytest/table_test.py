@@ -7,7 +7,7 @@ from alumnium import Model
 def learn(al):
     al.learn("sort payments table by amount", ["click header 'Amount' in 'payments' table"])
     yield
-    al.planner_agent.remove_example("sort payments table by amount")
+    al.planner_agent.prompt_with_examples.examples.clear()
 
 
 def test_table_extraction(al, navigate):

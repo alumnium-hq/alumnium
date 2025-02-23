@@ -4,7 +4,6 @@ from pathlib import Path
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
-from yaml import safe_load
 
 from alumnium.drivers import BaseDriver
 
@@ -20,8 +19,6 @@ class PlannerAgent(BaseAgent):
         SYSTEM_MESSAGE = f.read()
     with open(Path(__file__).parent / "planner_prompts/user.md") as f:
         USER_MESSAGE = f.read()
-    with open(Path(__file__).parent / "planner_prompts/examples.yml") as f:
-        EXAMPLES = safe_load(f)
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self.driver = driver
@@ -33,10 +30,9 @@ class PlannerAgent(BaseAgent):
             ]
         )
         self.prompt_with_examples = FewShotChatMessagePromptTemplate(
-            examples=self.EXAMPLES,
+            examples=[],
             example_prompt=example_prompt,
         )
-
         final_prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", self.SYSTEM_MESSAGE.format(separator=self.LIST_SEPARATOR)),
@@ -55,11 +51,6 @@ class PlannerAgent(BaseAgent):
                 "actions": self.LIST_SEPARATOR.join(actions),
             }
         )
-
-    def remove_example(self, goal: str):
-        for example in self.prompt_with_examples.examples:
-            if example["goal"] == goal:
-                self.prompt_with_examples.examples.remove(example)
 
     def invoke(self, goal: str) -> list[str]:
         logger.info(f"Starting planning:")
