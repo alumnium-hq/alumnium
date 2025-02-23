@@ -12,6 +12,7 @@ concurrency:
 env:
   ALUMNIUM_LOG_LEVEL: debug
   ALUMNIUM_LOG_PATH: alumnium.log
+  ALUMNIUM_PLAYWRIGHT_HEADLESS: false
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -56,8 +57,7 @@ jobs:
       - run: poetry install
       - if: matrix.driver == 'playwright'
         run: poetry run playwright install chromium
-      - if: matrix.driver == 'selenium'
-        run: Xvfb ${{ env.DISPLAY }} &
+      - run: Xvfb ${{ env.DISPLAY }} &
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty
       - run: poetry run pytest --html reports/pytest.html
       - if: failure() && runner.debug == '1'
