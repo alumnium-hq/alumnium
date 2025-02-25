@@ -1,4 +1,6 @@
-from pytest import fixture, raises
+from os import getenv
+
+from pytest import fixture, mark, raises
 
 from alumnium import Model
 
@@ -18,8 +20,9 @@ def learn(al):
     al.planner_agent.prompt_with_examples.examples.clear()
 
 
+@mark.skipif(getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true", reason="DuckDuckGo blocks headless browsers")
 def test_search(al, navigate):
-    navigate("https://www.duckduckgo.com")  # Google forces reCAPTCHA
+    navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGoA
 
     al.do("search for selenium")
     al.check("page title contains selenium")
