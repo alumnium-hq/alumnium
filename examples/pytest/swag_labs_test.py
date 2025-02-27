@@ -53,6 +53,7 @@ def test_sorting(al):
     assert al.get("prices of products") == sorted(prices, reverse=True)
 
 
+@mark.xfail(Model.load() == Model.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734")
 def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")
