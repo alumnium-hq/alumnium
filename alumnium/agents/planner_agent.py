@@ -66,10 +66,13 @@ class PlannerAgent(BaseAgent):
         response = message.content.strip()
         response = response.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
 
-        if response.upper() == "NOOP":
-            return []
-        else:
-            return [step.strip() for step in message.content.split(self.LIST_SEPARATOR)]
+        steps = []
+        for step in message.content.split(self.LIST_SEPARATOR):
+            step = step.strip()
+            if step and step.upper() != "NOOP":
+                steps.append(step)
+
+        return steps
 
     @lru_cache()
     def __prompt(self, goal: str, aria: str):
