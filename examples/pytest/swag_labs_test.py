@@ -66,7 +66,7 @@ def test_checkout(al):
     assert al.get("item total without tax") == 37.98
     assert al.get("tax amount") == 3.04
     assert al.get("total amount with tax") == round(37.98 + 3.04, 2)
-    assert al.get("shipping information value") == "Free Pony Express Delivery!"
+    assert al.get("shipping details") == "Free Pony Express Delivery!"
 
     al.do("finish checkout")
 
