@@ -20,7 +20,7 @@ class RetrievedInformation(BaseModel):
     """Retrieved information."""
 
     explanation: str = Field(
-        description="Explanation how information was retrieved, why it's related to the request and what is the requested information value."
+        description="Explanation how information was retrieved and why it's related to the requested information. Always include the requested information and its value in the explanation."
     )
     value: str = Field(
         description="The precise retrieved information value without additional data. If the information is not present in context, reply NOOP."
