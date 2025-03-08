@@ -3,6 +3,7 @@ from os import getenv
 
 from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
+from langchain_deepseek import ChatDeepSeek
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from playwright.sync_api import Page
@@ -44,6 +45,8 @@ class Alumni:
                 aws_secret_access_key=getenv("AWS_SECRET_KEY", ""),
                 region_name=getenv("AWS_REGION_NAME", "us-east-1"),
             )
+        elif model == Model.DEEPSEEK:
+            llm = ChatDeepSeek(model=model.value, temperature=0)
         elif model == Model.GOOGLE:
             llm = ChatGoogleGenerativeAI(model=model.value, temperature=0)
         elif model == Model.OPENAI:

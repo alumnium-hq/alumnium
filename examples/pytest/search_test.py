@@ -20,7 +20,10 @@ def learn(al):
     al.planner_agent.prompt_with_examples.examples.clear()
 
 
-@mark.skipif(getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true", reason="DuckDuckGo blocks headless browsers")
+@mark.skipif(
+    getenv("ALUMNIUM_DRIVER", "selenium") == "playwright" and getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true",
+    reason="DuckDuckGo blocks headless browsers",
+)
 def test_search(al, navigate):
     navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGoA
 

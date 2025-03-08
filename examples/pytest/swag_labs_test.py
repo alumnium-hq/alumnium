@@ -71,5 +71,5 @@ def test_checkout(al):
     al.do("finish checkout")
 
     al.check("thank you for the order message is shown")
-    if Model.load() != Model.AWS_META:
+    if Model.load() not in [Model.AWS_META, Model.DEEPSEEK]:
         al.check("big green checkmark is shown", vision=True)

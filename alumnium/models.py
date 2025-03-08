@@ -7,6 +7,7 @@ class Model(Enum):
     ANTHROPIC = "claude-3-haiku-20240307"
     AWS_ANTHROPIC = "anthropic.claude-3-haiku-20240307-v1:0"
     AWS_META = "us.meta.llama3-2-90b-instruct-v1:0"
+    DEEPSEEK = "deepseek-chat"
     GOOGLE = "gemini-2.0-flash-001"
     OPENAI = "gpt-4o-mini-2024-07-18"
 
