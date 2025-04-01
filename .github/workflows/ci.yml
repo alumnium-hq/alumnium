@@ -43,7 +43,8 @@ jobs:
           - aws_anthropic
           - aws_meta
           - azure_openai
-          - deepseek
+          # Official DeepSeek platform times out!
+          # - deepseek
           - google
           - openai
     steps:
