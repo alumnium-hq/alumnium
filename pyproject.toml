@@ -49,7 +49,10 @@ isort = "^6.0.0"
 pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-html = "^4.1.1"
+pytest-retry = "^1.7.0"
 
 [tool.pytest.ini_options]
 generate_report_on_test = true
 pythonpath = "."
+retries = 2
+retry_delay = 0.5
