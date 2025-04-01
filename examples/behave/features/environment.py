@@ -2,6 +2,7 @@ from datetime import datetime
 from os import getenv
 
 from behave import fixture, use_fixture
+from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from playwright.sync_api import Page, sync_playwright
 from selenium.webdriver import Chrome
 
@@ -56,7 +57,12 @@ def before_all(context):
             context.embed = formatter.embed
 
 
-def after_scenario(context, scenario):
+def before_feature(_, feature):
+    for scenario in feature.walk_scenarios():
+        patch_scenario_with_autoretry(scenario, max_attempts=2)
+
+
+def after_scenario(context, _):
     for formatter in context._runner.formatters:
         if formatter.name == "html-pretty":
             timestamp = datetime.now().strftime("%H-%M-%S")
