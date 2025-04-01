@@ -78,3 +78,7 @@ jobs:
     needs: test
     if: github.ref_name == 'main' && startsWith(github.event.head_commit.message, 'release:')
     uses: ./.github/workflows/release.yml
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
