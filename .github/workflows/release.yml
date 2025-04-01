@@ -1,0 +1,62 @@
+name: CI
+on:
+  workflow_call:
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ALUMNIUM_LOG_LEVEL: debug
+  ALUMNIUM_LOG_PATH: alumnium.log
+  ALUMNIUM_PLAYWRIGHT_HEADLESS: false
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+  AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
+  AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+  DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+  GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  DISPLAY: :99
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: pyproject.toml
+      - uses: abatilo/actions-poetry@v2
+      - uses: actions/cache@v4
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - run: poetry install
+      - run: poetry build
+      - run: echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
+        id: version
+      - uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1
+      - run: gh release create ${{ steps.version.outputs.version }} --generate-notes dist/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
