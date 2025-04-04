@@ -51,8 +51,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version-file: pyproject.toml
       - uses: abatilo/actions-poetry@v2
+          python-version-file: .tool-versions
       - uses: actions/cache@v4
         with:
           path: ./.venv
