@@ -34,26 +34,26 @@ class Alumni:
                 model=self.model.value,
                 api_version=getenv("AZURE_OPENAI_API_VERSION", ""),
                 temperature=0,
-                top_p=0.3,
+                top_p=0.1,
                 seed=1,
             )
         elif self.model == Model.ANTHROPIC:
-            llm = ChatAnthropic(model=self.model.value, temperature=0, top_p=0.3)
+            llm = ChatAnthropic(model=self.model.value, temperature=0, top_p=0.1)
         elif self.model == Model.AWS_ANTHROPIC or self.model == Model.AWS_META:
             llm = ChatBedrockConverse(
                 model_id=self.model.value,
                 temperature=0,
-                top_p=0.3,
+                top_p=0.1,
                 aws_access_key_id=getenv("AWS_ACCESS_KEY", ""),
                 aws_secret_access_key=getenv("AWS_SECRET_KEY", ""),
                 region_name=getenv("AWS_REGION_NAME", "us-east-1"),
             )
         elif self.model == Model.DEEPSEEK:
-            llm = ChatDeepSeek(model=self.model.value, temperature=0, top_p=0.3)
+            llm = ChatDeepSeek(model=self.model.value, temperature=0, top_p=0.1)
         elif self.model == Model.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=self.model.value, temperature=0, top_p=0.3)
+            llm = ChatGoogleGenerativeAI(model=self.model.value, temperature=0, top_p=0.1)
         elif self.model == Model.OPENAI:
-            llm = ChatOpenAI(model=self.model.value, temperature=0, seed=1, top_p=0.3)
+            llm = ChatOpenAI(model=self.model.value, temperature=0, seed=1, top_p=0.1)
         else:
             raise NotImplementedError(f"Model {self.model} not implemented")
 
