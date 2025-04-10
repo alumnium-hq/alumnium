@@ -1,16 +1,17 @@
-# Contributing to Aluminium
+# # Contributing to Alumnium
 
 ## Welcome to the Future of Test Automation!
 
-Thank you for your interest in contributing to Aluminium! As an experimental AI-powered test automation framework, we are pioneering new approaches to make testing more intuitive and robust. Your expertise and passion can help shape this emerging technology.
+Thank you for your interest in contributing to Alumnium! As an experimental AI-powered test automation framework, we are pioneering new approaches to make testing more intuitive and robust. Your expertise and passion can help shape this emerging technology.
 
-As a software tester, I have seen how the right tools can transform quality assurance. Aluminium aims to be that transformative tool by leveraging AI to simplify test interactions and assertions.
+As a software tester, I have seen how the right tools can transform quality assurance. Alumnium aims to be that transformative tool by leveraging AI to simplify test interactions and assertions.
+
 
 ## Project Understanding
 
 Before contributing, please review:
 
-- Our [docs](https://alumnium.ai/docs/) and [README.md](https://github.com/alumnium-hq/alumnium) to understand Aluminium's vision: creating higher-level abstractions for test automation that simplify web page interactions and strengthen assertion mechanisms
+- Our [docs](https://alumnium.ai/docs/) and [README.md](https://github.com/alumnium-hq/alumnium) to understand Alumnium's vision: creating higher-level abstractions for test automation that simplify web page interactions and strengthen assertion mechanisms
 - Our experimental status - we're in early development and value innovative approaches
 - The core functionality that uses natural language processing to interpret testing commands
 
@@ -22,7 +23,7 @@ Before contributing, please review:
   - Enhancing documentation and examples  
   - Exploring more natural language prompts for test generation  
   - Reporting usability issues or unexpected test behavior  
-  - Creating sample projects using Aluminium
+  - Creating sample projects using Alumnium
 
 ## Contribution Workflow
 
@@ -30,8 +31,8 @@ Before contributing, please review:
 
 ```bash
 # Fork and clone the repository
-git clone https://github.com/your-username/aluminium.git
-cd aluminium
+git clone https://github.com/your-username/alumnium.git
+cd alumnium
 
 # Set up development environment
 pipx install poetry
@@ -45,7 +46,7 @@ Configure access to AI providers as mentioned in [docs](https://alumnium.ai/docs
 
 ### 3. Development Guidelines
 
-When working on Aluminium:
+When working on Alumnium:
 
 - Follow the existing code style and patterns
 - Ensure compatibility with the Selenium ecosystem
