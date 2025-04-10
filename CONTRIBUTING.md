@@ -105,5 +105,5 @@ Thank you for joining us in paving the road towards AI-powered test automation. 
 [5]: https://www.conventionalcommits.org/en/v1.0.0/
 [6]: ./CODE_OF_CONDUCT.md
 [7]: https://github.com/alumnium-hq/alumnium/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
-[8]: https://discord.gg/VDnPg6Ta
+[8]: https://discord.gg/45hYBf3U
 [9]: https://seleniumhq.slack.com/channels/alumnium
