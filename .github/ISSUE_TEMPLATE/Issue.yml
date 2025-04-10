@@ -1,0 +1,97 @@
+name: 🐛 Issue Report
+description: Create a Issue to help us improve.
+title: "[🐛 Bug]: <title>"
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this New Issue! First, let's get some information about the environment you are using:
+
+  - type: input
+    id: Alumnium-version
+    attributes:
+      label: Alumnium Version
+      description: What version of Alumnium are you running?
+      placeholder: latest(0.8.0)
+    validations:
+      required: true
+
+  - type: input
+    id: Python-version
+    attributes:
+      label: Python Version
+      description: What version of Python are you using?
+      placeholder: latest
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tool-choice
+    attributes:
+      label: Which tool are you using Selenium or Playwright
+      options :
+        - Selenium
+        - Playwright
+    validations:
+        required: true
+      
+  
+  - type: input
+    id: tool-version
+    attributes :
+      label: Selenium or Playwright Version
+      description: What version of Playwright or Selenium you are using currently?
+
+  - type: dropdown
+    id: Browser-choice
+    attributes:
+      label: Which Browser are you using
+      options :
+        - Chrome
+        - Firefox
+        - Edge
+        - Safari
+        - other(Description)
+    validations:
+        required: true
+
+  - type: input
+    id: Browser-version
+    attributes:
+      label: what is the browser version used
+      description : The Browser version on which Test Ran
+
+  - type: dropdown
+    id: LLM-Version
+    attributes:
+      label: which LLM Model are you using 
+      options:
+        - Claude 3 Haiku(Anthropic)
+        - Gemini 2.0 Flash(Google)
+        - DeepSeek 3.0 (Deepseek)
+        - Llama 3.2 90B(Meta)
+        - GPT-4.0 Mini(Open AI)
+      default: 4
+
+  - type: textarea
+    attributes:
+      placeholder: Can you Please provide the HTML DOM of the Page or URL of the Page where test is failing
+      label: HTML DOM or URL 
+    validations:
+      required: true
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  
