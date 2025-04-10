@@ -37,7 +37,7 @@ from selenium.webdriver import Chrome
 os.environ["OPENAI_API_KEY"] = "..."
 
 driver = Chrome()
-driver.get("https://google.com")
+driver.get("https://duckduckgo.com")
 
 al = Alumni(driver)
 al.do("search for selenium")
@@ -48,27 +48,13 @@ assert al.get("atomic number") == 34
 
 Check out [documentation][1] and more [examples][2]!
 
-## Development
+## Contributing
 
-Setup the project:
-
-```bash
-pipx install poetry
-poetry install
-```
-
-Configure access to [AI providers][3] and start hacking!
-
-Useful commands during development:
-
-```bash
-poetry run python -i demo.py  # run REPL
-poetry run behave             # run Gherkin examples
-poetry run pytest             # run Pytest examples
-```
+See the [contributing guidelines][4] for information on how to get involved in the project and develop locally.
 
 
 
 [1]: https://alumnium.ai/docs/
 [2]: examples/
 [3]: https://alumnium.ai/docs/getting-started/configuration/
+[4]: ./CONTRIBUTING.md
