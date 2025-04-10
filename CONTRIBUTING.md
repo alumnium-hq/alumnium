@@ -10,13 +10,13 @@ As a software tester, I have seen how the right tools can transform quality assu
 
 Before contributing, please review:
 
-- Our [README.md](https://github.com/automatealchemist/alumnium#) to understand Aluminium's vision: creating higher-level abstractions for test automation that simplify web page interactions and strengthen assertion mechanisms
+- Our [docs](https://alumnium.ai/docs/) and [README.md](https://github.com/alumnium-hq/alumnium) to understand Aluminium's vision: creating higher-level abstractions for test automation that simplify web page interactions and strengthen assertion mechanisms
 - Our experimental status - we're in early development and value innovative approaches
 - The core functionality that uses natural language processing to interpret testing commands
 
 ## Finding Your Contribution Opportunity
 
-- Explore the [open issues](https://github.com/yourusername/aluminium/) to find tasks matching your interests
+- Explore the [open issues](https://github.com/alumnium-hq/alumnium/issues) to find tasks matching your interests
 - We will be glad if you help us with :
   - Improving test coverage for edge cases  
   - Enhancing documentation and examples  
@@ -37,10 +37,13 @@ cd aluminium
 pipx install poetry
 poetry install
 
-# Configure AI provider access as mentioned in [README.md](https://github.com/automatealchemist/alumnium#)
 ```
 
-### 2. Development Guidelines
+### 2. Configure AI provider access
+Configure access to AI providers as mentioned in [docs](https://alumnium.ai/docs/getting-started/configuration/)
+
+
+### 3. Development Guidelines
 
 When working on Aluminium:
 
@@ -54,7 +57,7 @@ When working on Aluminium:
   poetry run pytest             # Pytest examples
   ```
 
-### 3. Pull Request Process
+### 4. Pull Request Process
 
 1. **Create a focused branch** for your contribution
 2. **Write meaningful commit messages** explaining your changes
@@ -82,7 +85,7 @@ As contributors to an AI-powered testing tool, we value:
 
 If you're new to open-source or AI-powered testing:
 
-1. Try running the demo and experimenting with the Alumni API
+1.  Try running the demo and experimenting with the Alumnium API
 2. Start with documentation improvements or simple bug fixes
 3. Ask questions in discussions or comments
 4. Use the REPL (poetry run python -i demo.py) to explore functionality
