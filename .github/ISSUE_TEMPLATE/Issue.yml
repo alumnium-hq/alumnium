@@ -1,5 +1,5 @@
 name: 🐛 Issue Report
-description: Create a Issue to help us improve.
+description: Create an Issue to help us improve.
 title: "[🐛 Bug]: <title>"
 body:
 
@@ -60,7 +60,7 @@ body:
     id: Browser-version
     attributes:
       label: what is the browser version used
-      description : The Browser version on which Test Ran
+      description: The browser version on which the test ran
 
   - type: dropdown
     id: LLM-Version
@@ -72,26 +72,12 @@ body:
         - DeepSeek 3.0 (Deepseek)
         - Llama 3.2 90B(Meta)
         - GPT-4.0 Mini(Open AI)
+        - other
       default: 4
 
   - type: textarea
     attributes:
-      placeholder: Can you Please provide the HTML DOM of the Page or URL of the Page where test is failing
+      placeholder: Can you please provide the HTML DOM of the page or URL of the page where the test is failing
       label: HTML DOM or URL 
     validations:
       required: true
-
-  
-
-
-
-
-
-
-
-
-
-
-  
-
-  
