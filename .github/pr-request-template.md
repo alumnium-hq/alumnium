@@ -1,7 +1,7 @@
 # Pull Request Template
 
 Thank you for your contribution to Alumnium!
-Please fill out this template completely to help us understand and review your PR efficiently.
+Please fill out this template to help us understand and review your PR efficiently.
 
 ## Summary
 What is this pull request about?
@@ -22,43 +22,13 @@ Closes #
 Mark the relevant options.
 
 - [ ] Bug fix  
-- [ ] New feature  
-- [ ] Documentation update  
-- [ ] Test coverage improvement  
-- [ ] Refactoring  
-- [ ] CI/CD enhancement
-- [ ] Breaking change
-- [ ] Other (please specify):
+- [ ] New feature (non-breaking changes, test coverage, refactoring)
+- [ ] Breaking change (fix, refactoring, or feature that would cause existing functionality to change)
+- [ ] Cleanup (documentation, formatting)
 
 ## Code or UI Demos (if applicable)
 Add screenshots, logs, terminal output, or code snippets that help reviewers understand the change.
 Useful especially for UI changes or error fixes.
-
-## Testing Strategy
-How have you tested your changes?
-Mention tools used, test cases added or updated, and how the change was validated.
-
-## Local Testing
-Describe the environment and steps you used to test these changes locally.
-Include any relevant configuration details or test data.
-
-## Dependencies
-List any new dependencies added or existing ones modified by this PR.
-
-## Performance Considerations
-Describe any performance impacts this change might have, positive or negative.
-Include benchmark results if available.
-
-## Security Considerations
-Outline any security implications of these changes.
-Document how security concerns have been addressed if applicable.
-
-## Deployment Notes
-Include any special instructions required for deploying this change.
-Mention database migrations, environment variables, or other requirements.
-
-## Reviewer Focus Areas
-Highlight specific areas or files where you would like reviewers to focus their attention.
 
 ## Checklist
 Please verify the following before submitting:
