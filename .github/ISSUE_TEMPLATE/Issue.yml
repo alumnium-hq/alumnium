@@ -81,3 +81,17 @@ body:
       label: HTML DOM or URL 
     validations:
       required: true
+
+  - type: textarea
+    attributes:
+      placeholder: Can you please provide the issue which you are facing
+      label: Full Issue Description
+    validations:
+      required: true
+    
+  - type: textarea
+    attributes:
+      placeholder: can you please provide the steps to reproduce
+      label: Detailed outline of steps needed to reproduce the issue
+    validations:
+      required: true
