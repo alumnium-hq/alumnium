@@ -2,7 +2,6 @@ name: 🐛 Issue Report
 description: Create an Issue to help us improve.
 title: "[🐛 Bug]: <title>"
 body:
-
   - type: markdown
     attributes:
       value: |
@@ -13,7 +12,7 @@ body:
     attributes:
       label: Alumnium Version
       description: What version of Alumnium are you running?
-      placeholder: latest(0.8.0)
+      placeholder: latest
     validations:
       required: true
 
@@ -29,14 +28,13 @@ body:
   - type: dropdown
     id: tool-choice
     attributes:
-      label: Which tool are you using Selenium or Playwright
+      label: Which tool are you using Selenium or Playwright?
       options :
         - Selenium
         - Playwright
     validations:
         required: true
       
-  
   - type: input
     id: tool-version
     attributes :
@@ -46,7 +44,7 @@ body:
   - type: dropdown
     id: Browser-choice
     attributes:
-      label: Which Browser are you using
+      label: Which Browser are you using?
       options :
         - Chrome
         - Firefox
@@ -59,13 +57,13 @@ body:
   - type: input
     id: Browser-version
     attributes:
-      label: what is the browser version used
+      label: What is the browser version used?
       description: The browser version on which the test ran
 
   - type: dropdown
     id: LLM-Version
     attributes:
-      label: which LLM Model are you using 
+      label: Which LLM Model are you using?
       options:
         - Claude 3 Haiku(Anthropic)
         - Gemini 2.0 Flash(Google)
@@ -84,14 +82,15 @@ body:
 
   - type: textarea
     attributes:
-      placeholder: Can you please provide the issue which you are facing
+      placeholder: Can you please provide the issue which you are facing?
       label: Full Issue Description
     validations:
       required: true
     
   - type: textarea
     attributes:
-      placeholder: can you please provide the steps to reproduce
+      placeholder: Can you please provide the steps to reproduce?
       label: Detailed outline of steps needed to reproduce the issue
     validations:
       required: true
+      
