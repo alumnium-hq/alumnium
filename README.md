@@ -39,7 +39,6 @@ os.environ["OPENAI_API_KEY"] = "..."
 driver = Chrome()
 driver.get("https://duckduckgo.com")
 
-
 al = Alumni(driver)
 al.do("search for selenium")
 al.check("page title contains selenium")
