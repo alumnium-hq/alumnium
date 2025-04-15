@@ -61,6 +61,8 @@ jobs:
       - if: matrix.driver == 'playwright'
         run: poetry run playwright install chromium
       - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
+      - name: Run formatting Checks
+      - run: make format #This runs all the Linters as Mentioned in Makefile
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty
       - run: poetry run pytest --html reports/pytest.html
       - if: failure() && runner.debug == '1'
