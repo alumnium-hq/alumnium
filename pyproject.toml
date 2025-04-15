@@ -13,7 +13,17 @@ remove-unused-variables = true
 line-length = 119
 
 [tool.flake8]
+ignore = [
+    "E402",
+    "F401",
+    "F403",
+    "F405",
+    "W503",
+]
 max-line-length = 119
+per-file-ignores = [
+    "examples/behave/features/steps/*:F811",
+]
 
 [tool.isort]
 profile = "black"
