@@ -12,6 +12,9 @@ remove-unused-variables = true
 [tool.black]
 line-length = 119
 
+[tool.flake8]
+max-line-length = 119
+
 [tool.isort]
 profile = "black"
 
@@ -45,6 +48,8 @@ autoflake = "^2.3.1"
 behave = "^1.2.6"
 behave-html-pretty-formatter = "^1.12"
 black = "^25.1.0"
+flake8 = "^7.2.0"
+flake8-pyproject = "^1.2.3"
 isort = "^6.0.0"
 pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
