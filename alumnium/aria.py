@@ -52,7 +52,7 @@ class AriaTree:
 
             if role_value == "StaticText":
                 parent.text = name_value
-            elif role_value == "none" or ignored == True:
+            elif role_value == "none" or ignored:
                 if children:
                     for child in children:
                         convert_node_to_xml(child, parent)

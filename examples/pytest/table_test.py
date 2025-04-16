@@ -51,4 +51,4 @@ def test_retrieval_of_unavailable_data(al, navigate):
 
     # This data is not available on the page.
     # Even though LLM knows the answer, it should not respond it.
-    assert al.get("atomic number of Selenium") == None
+    assert al.get("atomic number of Selenium") is None

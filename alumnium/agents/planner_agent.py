@@ -53,7 +53,7 @@ class PlannerAgent(BaseAgent):
         )
 
     def invoke(self, goal: str) -> list[str]:
-        logger.info(f"Starting planning:")
+        logger.info("Starting planning:")
         logger.info(f"  -> Goal: {goal}")
 
         aria = self.driver.aria_tree
