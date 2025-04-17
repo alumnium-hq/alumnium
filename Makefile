@@ -10,6 +10,13 @@ test:
 	poetry run behave
 	poetry run pytest
 
+check-format:
+	poetry run autoflake --check-diff .
+	poetry run black --check --diff .
+	poetry run isort --check .
+	poetry run flake8 .
+	poetry run pyprojectsort --diff
+
 test-anthropic:
 	ALUMNIUM_MODEL=anthropic ALUMNIUM_LOG_PATH=log/anthropic.log make test
 
