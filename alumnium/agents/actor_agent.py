@@ -36,7 +36,7 @@ class ActorAgent(BaseAgent):
         if not step.strip():
             return
 
-        logger.info(f"Starting action:")
+        logger.info("Starting action:")
         logger.info(f"  -> Goal: {goal}")
         logger.info(f"  -> Step: {step}")
 

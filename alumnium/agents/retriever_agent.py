@@ -20,10 +20,12 @@ class RetrievedInformation(BaseModel):
     """Retrieved information."""
 
     explanation: str = Field(
-        description="Explanation how information was retrieved and why it's related to the requested information. Always include the requested information and its value in the explanation."
+        description="Explanation how information was retrieved and why it's related to the requested information."
+        + "Always include the requested information and its value in the explanation."
     )
     value: str = Field(
-        description="The precise retrieved information value without additional data. If the information is not present in context, reply NOOP."
+        description="The precise retrieved information value without additional data. If the information is not"
+        + "present in context, reply NOOP."
     )
 
 
@@ -45,7 +47,7 @@ class RetrieverAgent(BaseAgent):
         )
 
     def invoke(self, information: str, vision: bool) -> RetrievedInformation:
-        logger.info(f"Starting retrieval:")
+        logger.info("Starting retrieval:")
         logger.info(f"  -> Information: {information}")
 
         aria = self.driver.aria_tree.to_xml()

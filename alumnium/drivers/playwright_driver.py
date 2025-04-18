@@ -120,7 +120,7 @@ class PlaywrightDriver(BaseDriver):
                 raise error
 
     def wait_for_page_to_load(self):
-        logger.info(f"Waiting for page to finish loading")
+        logger.info("Waiting for page to finish loading")
         try:
             self.page.evaluate(f"function() {{ {self.WAITER_SCRIPT} }}")
             error = self.page.evaluate(self.WAIT_FOR_SCRIPT)
@@ -128,7 +128,7 @@ class PlaywrightDriver(BaseDriver):
                 logger.info(f"Failed to wait for page to load: {error}")
         except Error as error:
             if self.CONTEXT_WAS_DESTROYED_ERROR in error.message:
-                logger.info(f"Page context has changed, retrying")
+                logger.info("Page context has changed, retrying")
                 self.wait_for_page_to_load()
             else:
                 raise error
