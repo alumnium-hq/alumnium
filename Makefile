@@ -1,3 +1,10 @@
+check-format:
+	poetry run autoflake --check-diff .
+	poetry run black --check --diff .
+	poetry run flake8 alumnium examples
+	poetry run isort --check .
+	poetry run pyprojectsort --diff
+
 format:
 	poetry run autoflake .
 	poetry run black .
@@ -9,13 +16,6 @@ test:
 	mkdir -p log/
 	poetry run behave
 	poetry run pytest
-
-check-format:
-	poetry run autoflake --check-diff .
-	poetry run black --check --diff .
-	poetry run isort --check .
-	poetry run flake8 alumnium examples
-	poetry run pyprojectsort --diff
 
 test-anthropic:
 	ALUMNIUM_MODEL=anthropic ALUMNIUM_LOG_PATH=log/anthropic.log make test

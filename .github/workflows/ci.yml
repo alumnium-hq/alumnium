@@ -26,7 +26,8 @@ env:
 
 jobs:
 
-  Formatchecker:
+  formatchecker:
+    name: Code Style Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +42,7 @@ jobs:
 
 
   test:
-    needs: Formatchecker
+    needs: formatchecker
     if: success()
     name: Test
     runs-on: ubuntu-latest
