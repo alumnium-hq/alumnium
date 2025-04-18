@@ -5,7 +5,7 @@ from playwright.sync_api import Page, sync_playwright
 from pytest import fixture, hookimpl
 from selenium.webdriver import Chrome
 
-from alumnium import Alumni, Model
+from alumnium import Alumni
 
 
 @fixture(scope="session", autouse=True)
