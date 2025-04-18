@@ -37,7 +37,7 @@ jobs:
       - run: poetry install --only format
       - run: make check-format
       - if: failure()
-        run: echo "please run make format on your changes!"
+        run: echo "Please run 'make format' on your changes!"
 
 
   test:

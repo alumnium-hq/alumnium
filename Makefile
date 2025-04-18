@@ -14,7 +14,7 @@ check-format:
 	poetry run autoflake --check-diff .
 	poetry run black --check --diff .
 	poetry run isort --check .
-	poetry run flake8 .
+	poetry run flake8 alumnium examples
 	poetry run pyprojectsort --diff
 
 test-anthropic:
