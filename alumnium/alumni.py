@@ -1,5 +1,14 @@
 import logging
 from os import getenv
+from rich.logging import RichHandler
+
+RichHandler(
+    show_time=True,
+    show_level=True,
+    show_path=False,
+    rich_tracebacks=False,
+    markup=True
+)
 
 from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
@@ -60,7 +69,9 @@ class Alumni:
         self.retrieval_agent = RetrieverAgent(self.driver, llm)
 
     def quit(self):
+        logger.info("Shutting down the driver.")
         self.driver.quit()
+        logger.info("Driver has been shut down.")
 
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
@@ -70,10 +81,12 @@ class Alumni:
         Args:
             goal: The goal to be achieved.
         """
+        logger.info("Do function defined with goal: '%s'", goal)
         steps = self.planner_agent.invoke(goal)
+        logger.info("Steps planned for goal '%s': %s", goal, steps)
         for step in steps:
             self.actor_agent.invoke(goal, step)
-
+        logger.info("Do function completed for goal: '%s'", goal)
     def check(self, statement: str, vision: bool = False) -> str:
         """
         Checks a given statement using the verifier.
@@ -88,8 +101,10 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
+        logger.info("Check function defined with statement: '%s' and vision: %s", statement, vision)
         result = self.retrieval_agent.invoke(f"Is the following true or false - {statement}", vision)
         assert result.value, result.explanation
+        logger.info("Check function completed for statement: '%s'. Explanation: %s", statement, result.explanation)
         return result.explanation
 
     def get(self, data: str, vision: bool = False) -> Data:
@@ -103,8 +118,9 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
+        logger.info("Get function defined with data: '%s' and vision: %s", data, vision)
         return self.retrieval_agent.invoke(data, vision).value
-
+        logger.info("Get function completed. Extracted data: %s", result)
     def learn(self, goal: str, actions: list[str]):
         """
         Adds a new learning example on what steps should be take to achieve the goal.
@@ -113,4 +129,6 @@ class Alumni:
             goal: The goal to be achieved. Use same format as in `do`.
             actions: A list of actions to achieve the goal.
         """
+        logger.info("Learn function defined with goal: '%s' and actions: %s", goal, actions)
         self.planner_agent.add_example(goal, actions)
+        logger.info("Learn function completed for goal: '%s'", goal)
