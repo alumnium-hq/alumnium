@@ -1,7 +1,7 @@
 format:
 	poetry run autoflake .
 	poetry run black .
-	poetry run flake8 alumnium examples
+	poetry run flake8 alumnium examples tests
 	poetry run isort .
 	poetry run pyprojectsort
 
