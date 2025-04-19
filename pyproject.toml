@@ -7,6 +7,7 @@ requires = [
 [tool.autoflake]
 in-place = true
 recursive = true
+remove-duplicate-keys = true
 remove-unused-variables = true
 
 [tool.black]
