@@ -25,7 +25,25 @@ env:
   DISPLAY: :99
 
 jobs:
+
+  formatchecker:
+    name: Code Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .tools-versions
+      - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
+      - run: poetry install --only format
+      - run: make check-format
+      - if: failure()
+        run: echo "Please run 'make format' on your changes!"
+
+
   test:
+    needs: formatchecker
+    if: success()
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 30
