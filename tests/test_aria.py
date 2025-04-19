@@ -1,6 +1,8 @@
 from typing import Any
-import pytest
 from xml.etree.ElementTree import fromstring
+
+import pytest
+
 from alumnium.aria import AriaTree
 
 
