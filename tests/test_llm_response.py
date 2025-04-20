@@ -1,50 +1,47 @@
+from unittest.mock import MagicMock, create_autospec, patch
+
 import pytest
-from unittest.mock import patch, MagicMock, create_autospec
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from alumnium.models import Model
 from alumnium.alumni import Alumni
+from alumnium.models import Model
 
 
 @pytest.mark.parametrize(
-        ("model_class", "model", "expected_params"),
-        [
-            (
-                "alumnium.alumni.AzureChatOpenAI",
-                Model.AZURE_OPENAI,
-                {"model":Model.AZURE_OPENAI.value, "api_version":"", "temperature":0, "seed":1}
-            ),
-            (
-                "alumnium.alumni.ChatAnthropic",
-                Model.ANTHROPIC,
-                {"model":Model.ANTHROPIC.value, "temperature":0}
-            ),
-            (
-                "alumnium.alumni.ChatBedrockConverse",
-                Model.AWS_ANTHROPIC,
-                {"model_id":Model.AWS_ANTHROPIC.value, "temperature":0, "aws_access_key_id":"", "aws_secret_access_key":"", "region_name":"us-east-1"}
-            ),
-            (
-                "alumnium.alumni.ChatBedrockConverse",
-                Model.AWS_META,
-                {"model_id":Model.AWS_META.value, "temperature":0, "aws_access_key_id":"", "aws_secret_access_key":"", "region_name":"us-east-1"}
-            ),
-            (
-                "alumnium.alumni.ChatDeepSeek",
-                Model.DEEPSEEK,
-                {"model":Model.DEEPSEEK.value, "temperature":0}
-            ),
-            (
-                "alumnium.alumni.ChatGoogleGenerativeAI",
-                Model.GOOGLE,
-                {"model":Model.GOOGLE.value, "temperature":0}
-            ),
-            (
-                "alumnium.alumni.ChatOpenAI",
-                None,
-                {"model":Model.OPENAI.value, "temperature":0, "seed":1}
-            ),
-        ]
+    ("model_class", "model", "expected_params"),
+    [
+        (
+            "alumnium.alumni.AzureChatOpenAI",
+            Model.AZURE_OPENAI,
+            {"model": Model.AZURE_OPENAI.value, "api_version": "", "temperature": 0, "seed": 1},
+        ),
+        ("alumnium.alumni.ChatAnthropic", Model.ANTHROPIC, {"model": Model.ANTHROPIC.value, "temperature": 0}),
+        (
+            "alumnium.alumni.ChatBedrockConverse",
+            Model.AWS_ANTHROPIC,
+            {
+                "model_id": Model.AWS_ANTHROPIC.value,
+                "temperature": 0,
+                "aws_access_key_id": "",
+                "aws_secret_access_key": "",
+                "region_name": "us-east-1",
+            },
+        ),
+        (
+            "alumnium.alumni.ChatBedrockConverse",
+            Model.AWS_META,
+            {
+                "model_id": Model.AWS_META.value,
+                "temperature": 0,
+                "aws_access_key_id": "",
+                "aws_secret_access_key": "",
+                "region_name": "us-east-1",
+            },
+        ),
+        ("alumnium.alumni.ChatDeepSeek", Model.DEEPSEEK, {"model": Model.DEEPSEEK.value, "temperature": 0}),
+        ("alumnium.alumni.ChatGoogleGenerativeAI", Model.GOOGLE, {"model": Model.GOOGLE.value, "temperature": 0}),
+        ("alumnium.alumni.ChatOpenAI", None, {"model": Model.OPENAI.value, "temperature": 0, "seed": 1}),
+    ],
 )
 @patch("alumnium.alumni.ActorAgent")
 @patch("alumnium.alumni.PlannerAgent")
