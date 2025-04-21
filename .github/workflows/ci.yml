@@ -25,9 +25,8 @@ env:
   DISPLAY: :99
 
 jobs:
-
-  formatchecker:
-    name: Code Style Check
+  check-format:
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,15 +34,16 @@ jobs:
         with:
           python-version-file: .tool-versions
       - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
-      - run: poetry install --only format
+      - uses: actions/cache@v4
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - run: poetry install
       - run: make check-format
       - if: failure()
         run: echo "Please run 'make format' on your changes!"
 
-
   test:
-    needs: formatchecker
-    if: success()
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -93,7 +93,9 @@ jobs:
 
   release:
     name: Release
-    needs: test
+    needs:
+      - check-format
+      - test
     if: github.ref_name == 'main' && startsWith(github.event.head_commit.message, 'release:')
     uses: ./.github/workflows/release.yml
     permissions:
