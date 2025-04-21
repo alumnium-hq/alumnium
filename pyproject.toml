@@ -14,6 +14,13 @@ remove-unused-variables = true
 line-length = 119
 
 [tool.flake8]
+exclude = [
+    ".git",
+    ".venv",
+    "dist",
+    "log",
+    "reports",
+]
 ignore = [
     "E402",
     "F401",
@@ -66,15 +73,6 @@ pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-html = "^4.1.1"
 pytest-retry = "^1.7.0"
-
-[tools.poetry.group.format.dependencies]
-autoflake = "^2.3.1"
-black = "^25.1.0"
-flake8 = "^7.2.0"
-flake8-pyproject = "^1.2.3"
-isort="^6.0.0"
-pyprojectsort="^0.4.0"
-
 
 [tool.pytest.ini_options]
 generate_report_on_test = true
