@@ -33,7 +33,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version-file: .tools-versions
+          python-version-file: .tool-versions
       - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
       - run: poetry install --only format
       - run: make check-format
