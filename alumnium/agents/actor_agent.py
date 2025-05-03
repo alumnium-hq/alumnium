@@ -6,8 +6,8 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
 from alumnium.drivers import BaseDriver
-from alumnium.tools import ALL_TOOLS
 from alumnium.models import Model
+from alumnium.tools import ALL_TOOLS
 
 from .base_agent import BaseAgent
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class ActorAgent(BaseAgent):
-    
+
     model_name = Model.load()
     prompt_path = Path(__file__).parent / "actor_prompts"
 
@@ -25,7 +25,7 @@ class ActorAgent(BaseAgent):
         prompt_path /= "google"
     elif model_name == Model.DEEPSEEK:
         prompt_path /= "deepseek"
-    elif model_name == Model.META:
+    elif model_name == Model.AWS_META:
         prompt_path /= "meta"
     else:
         prompt_path /= "openai"
