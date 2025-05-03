@@ -1,6 +1,5 @@
 import logging
 from functools import lru_cache
-from pathlib import Path
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
@@ -15,17 +14,13 @@ logger = logging.getLogger(__name__)
 class PlannerAgent(BaseAgent):
     LIST_SEPARATOR = "%SEP%"
 
-    with open(Path(__file__).parent / "planner_prompts/system.md") as f:
-        SYSTEM_MESSAGE = f.read()
-    with open(Path(__file__).parent / "planner_prompts/user.md") as f:
-        USER_MESSAGE = f.read()
-
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
+        self._load_prompts()
         self.driver = driver
 
         example_prompt = ChatPromptTemplate.from_messages(
             [
-                ("human", self.USER_MESSAGE),
+                ("human", self.prompts["user"]),
                 ("ai", "{actions}"),
             ]
         )
@@ -35,9 +30,9 @@ class PlannerAgent(BaseAgent):
         )
         final_prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", self.SYSTEM_MESSAGE.format(separator=self.LIST_SEPARATOR)),
+                ("system", self.prompts["system"].format(separator=self.LIST_SEPARATOR)),
                 self.prompt_with_examples,
-                ("human", self.USER_MESSAGE),
+                ("human", self.prompts["user"]),
             ]
         )
 

@@ -1,12 +1,10 @@
 import logging
 from functools import lru_cache
-from pathlib import Path
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
 from alumnium.drivers import BaseDriver
-from alumnium.models import Model
 from alumnium.tools import ALL_TOOLS
 
 from .base_agent import BaseAgent
@@ -15,40 +13,16 @@ logger = logging.getLogger(__name__)
 
 
 class ActorAgent(BaseAgent):
-
-    model_name = Model.load()
-    prompt_path = Path(__file__).parent / "actor_prompts"
-
-    if model_name == Model.ANTHROPIC:
-        prompt_path /= "anthropic"
-    elif model_name == Model.GOOGLE:
-        prompt_path /= "google"
-    elif model_name == Model.DEEPSEEK:
-        prompt_path /= "deepseek"
-    elif model_name == Model.AWS_META:
-        prompt_path /= "meta"
-    else:
-        prompt_path /= "openai"
-
-    system_prompt_path = prompt_path / "system.md"
-    user_prompt_path = prompt_path / "user.md"
-
-    logger.info("Reading prompts from")
-    logger.info(f"  -> Model: {system_prompt_path}")
-
-    with open(system_prompt_path) as f:
-        SYSTEM_MESSAGE = f.read()
-    with open(user_prompt_path) as f:
-        USER_MESSAGE = f.read()
-
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
+        self._load_prompts()
+
         self.driver = driver
         llm = llm.bind_tools(list(ALL_TOOLS.values()))
 
         prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", self.SYSTEM_MESSAGE),
-                ("human", self.USER_MESSAGE),
+                ("system", self.prompts["system"]),
+                ("human", self.prompts["user"]),
             ]
         )
 
