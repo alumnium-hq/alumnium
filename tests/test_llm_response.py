@@ -13,15 +13,20 @@ from alumnium.models import Model
         (
             "alumnium.alumni.AzureChatOpenAI",
             Model.AZURE_OPENAI,
-            {"model": Model.AZURE_OPENAI.value, "api_version": "", "temperature": 0, "seed": 1},
+            {"model": Model.AZURE_OPENAI.value, "api_version": "", "temperature": 0, "seed": 1, "top_p": 0},
         ),
-        ("alumnium.alumni.ChatAnthropic", Model.ANTHROPIC, {"model": Model.ANTHROPIC.value, "temperature": 0}),
+        (
+            "alumnium.alumni.ChatAnthropic",
+            Model.ANTHROPIC,
+            {"model": Model.ANTHROPIC.value, "temperature": 0, "top_p": 0},
+        ),
         (
             "alumnium.alumni.ChatBedrockConverse",
             Model.AWS_ANTHROPIC,
             {
                 "model_id": Model.AWS_ANTHROPIC.value,
                 "temperature": 0,
+                "top_p": 0,
                 "aws_access_key_id": "",
                 "aws_secret_access_key": "",
                 "region_name": "us-east-1",
@@ -33,14 +38,23 @@ from alumnium.models import Model
             {
                 "model_id": Model.AWS_META.value,
                 "temperature": 0,
+                "top_p": 0,
                 "aws_access_key_id": "",
                 "aws_secret_access_key": "",
                 "region_name": "us-east-1",
             },
         ),
-        ("alumnium.alumni.ChatDeepSeek", Model.DEEPSEEK, {"model": Model.DEEPSEEK.value, "temperature": 0}),
-        ("alumnium.alumni.ChatGoogleGenerativeAI", Model.GOOGLE, {"model": Model.GOOGLE.value, "temperature": 0}),
-        ("alumnium.alumni.ChatOpenAI", None, {"model": Model.OPENAI.value, "temperature": 0, "seed": 1}),
+        (
+            "alumnium.alumni.ChatDeepSeek",
+            Model.DEEPSEEK,
+            {"model": Model.DEEPSEEK.value, "temperature": 0, "top_p": 0},
+        ),
+        (
+            "alumnium.alumni.ChatGoogleGenerativeAI",
+            Model.GOOGLE,
+            {"model": Model.GOOGLE.value, "temperature": 0, "top_p": 0},
+        ),
+        ("alumnium.alumni.ChatOpenAI", None, {"model": Model.OPENAI.value, "temperature": 0, "seed": 1, "top_p": 0}),
     ],
 )
 @patch("alumnium.alumni.ActorAgent")
