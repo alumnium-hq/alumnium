@@ -7,6 +7,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from alumnium.drivers import BaseDriver
 from alumnium.tools import ALL_TOOLS
+from alumnium.models import Model
 
 from .base_agent import BaseAgent
 
@@ -14,9 +15,30 @@ logger = logging.getLogger(__name__)
 
 
 class ActorAgent(BaseAgent):
-    with open(Path(__file__).parent / "actor_prompts/system.md") as f:
+    
+    model_name = Model.load()
+    prompt_path = Path(__file__).parent / "actor_prompts"
+
+    if model_name == Model.ANTHROPIC:
+        prompt_path /= "anthropic"
+    elif model_name == Model.GOOGLE:
+        prompt_path /= "google"
+    elif model_name == Model.DEEPSEEK:
+        prompt_path /= "deepseek"
+    elif model_name == Model.META:
+        prompt_path /= "meta"
+    else:
+        prompt_path /= "openai"
+
+    system_prompt_path = prompt_path / "system.md"
+    user_prompt_path = prompt_path / "user.md"
+
+    logger.info("Reading prompts from")
+    logger.info(f"  -> Model: {system_prompt_path}")
+
+    with open(system_prompt_path) as f:
         SYSTEM_MESSAGE = f.read()
-    with open(Path(__file__).parent / "actor_prompts/user.md") as f:
+    with open(user_prompt_path) as f:
         USER_MESSAGE = f.read()
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
