@@ -73,6 +73,7 @@ pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-html = "^4.1.1"
 pytest-retry = "^1.7.0"
+rich = "^14.0.0"
 
 [tool.pytest.ini_options]
 generate_report_on_test = true

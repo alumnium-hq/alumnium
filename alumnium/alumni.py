@@ -1,6 +1,4 @@
-import logging
 from os import getenv
-
 from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
 from langchain_deepseek import ChatDeepSeek
@@ -9,13 +7,17 @@ from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
+from alumnium.logutils import *
 
 from .agents import *
 from .agents.retriever_agent import Data
 from .drivers import PlaywrightDriver, SeleniumDriver
 from .models import Model
 
-logger = logging.getLogger(__name__)
+if ALUMNIUM_LOG_PATH == "stdout":
+    logger = console_output()
+else:
+    logger = file_output()
 
 
 class Alumni:

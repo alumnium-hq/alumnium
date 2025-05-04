@@ -1,4 +1,3 @@
-import logging
 from functools import lru_cache
 from pathlib import Path
 
@@ -7,10 +6,14 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from alumnium.drivers import BaseDriver
 from alumnium.tools import ALL_TOOLS
+from alumnium.logutils import *
 
 from .base_agent import BaseAgent
 
-logger = logging.getLogger(__name__)
+if ALUMNIUM_LOG_PATH == "stdout":
+    logger = console_output()
+else:
+    logger = file_output()
 
 
 class ActorAgent(BaseAgent):

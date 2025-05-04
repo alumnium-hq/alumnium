@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from string import whitespace
 from typing import Optional, TypeAlias, Union
@@ -7,10 +6,14 @@ from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
 from alumnium.drivers import BaseDriver
+from alumnium.logutils import *
 
 from .base_agent import BaseAgent
 
-logger = logging.getLogger(__name__)
+if ALUMNIUM_LOG_PATH == "stdout":
+    logger = console_output()
+else:
+    logger = file_output()
 
 
 Data: TypeAlias = Optional[Union[str, int, float, bool, list[Union[str, int, float, bool]]]]
