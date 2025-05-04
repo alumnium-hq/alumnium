@@ -22,6 +22,8 @@ class BaseAgent:
             prompt_path /= "deepseek"
         elif model_name == Model.AWS_META:
             prompt_path /= "meta"
+        elif model_name == Model.OLLAMA:
+            prompt_path /= "ollama"
         else:
             prompt_path /= "openai"
 

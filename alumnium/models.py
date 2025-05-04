@@ -9,6 +9,7 @@ class Model(Enum):
     AWS_META = "us.meta.llama3-2-90b-instruct-v1:0"
     DEEPSEEK = "deepseek-chat"
     GOOGLE = "gemini-2.0-flash-001"
+    OLLAMA = "mistral-small3.1"
     OPENAI = "gpt-4o-mini-2024-07-18"
 
     @classmethod

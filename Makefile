@@ -32,7 +32,10 @@ test-azure_openai:
 test-google:
 	ALUMNIUM_MODEL=google ALUMNIUM_LOG_PATH=log/google.log make test
 
+test-ollama:
+	ALUMNIUM_MODEL=ollama ALUMNIUM_LOG_PATH=log/ollama.log make test
+
 test-openai:
 	ALUMNIUM_MODEL=openai ALUMNIUM_LOG_PATH=log/openai.log make test
 
-test-all: test-anthropic test-aws_anthropic test-aws_meta test-azure_openai test-google test-openai
+test-all: test-anthropic test-aws_anthropic test-aws_meta test-azure_openai test-google test-ollama test-openai

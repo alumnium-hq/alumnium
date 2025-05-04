@@ -24,6 +24,7 @@ def login(al, execute_script, navigate):
     reason="Need to add proper types in `RetrievedInformation.value`.",
 )
 @mark.xfail(Model.load() == Model.AWS_META, reason="Too hard for Llama")
+@mark.xfail(Model.load() == Model.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(Model.load() == Model.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734")
 def test_sorting(al):
     products = {
@@ -54,6 +55,7 @@ def test_sorting(al):
 
 
 @mark.xfail(Model.load() == Model.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734")
+@mark.xfail(Model.load() == Model.OLLAMA, reason="Too hard for Mistral")
 def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")

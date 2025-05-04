@@ -1,6 +1,9 @@
-from pytest import raises
+from pytest import mark, raises
+
+from alumnium import Model
 
 
+@mark.xfail(Model.load() == Model.OLLAMA, reason="Poor instruction following")
 def test_select_option(al, navigate):
     navigate("https://the-internet.herokuapp.com/dropdown")
 

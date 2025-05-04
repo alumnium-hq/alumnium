@@ -7,7 +7,7 @@ from alumnium import Model
 
 @fixture(autouse=True)
 def learn(al):
-    # Claude/Gemini/Llama have issues learning how to search
+    # Claude/Gemini/Mistral/Llama have issues learning how to search
     if Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC, Model.AWS_META, Model.GOOGLE]:
         al.learn(
             goal="search for artificial intelligence",
@@ -24,6 +24,7 @@ def learn(al):
     getenv("ALUMNIUM_DRIVER", "selenium") == "playwright" and getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true",
     reason="DuckDuckGo blocks headless browsers",
 )
+@mark.xfail(Model.load() == Model.OLLAMA, reason="Poor instruction following")
 def test_search(al, navigate):
     navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGoA
 
