@@ -25,8 +25,8 @@ env:
   DISPLAY: :99
 
 jobs:
-  check-format:
-    name: Format
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,11 +40,12 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
       - run: poetry install
       - run: make check-format
-      - if: failure()
-        run: echo "Please run 'make format' on your changes!"
+      - run: poetry run pytest tests/
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
 
-  test:
-    name: Test
+  examples:
+    name: Examples
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -80,7 +81,7 @@ jobs:
         run: poetry run playwright install chromium
       - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty
-      - run: poetry run pytest --html reports/pytest.html
+      - run: poetry run pytest --html reports/pytest.html examples/
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
       - if: always()
@@ -94,8 +95,8 @@ jobs:
   release:
     name: Release
     needs:
-      - check-format
       - test
+      - examples
     if: github.ref_name == 'main' && startsWith(github.event.head_commit.message, 'release:')
     uses: ./.github/workflows/release.yml
     permissions:

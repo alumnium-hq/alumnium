@@ -1,4 +1,3 @@
-from pathlib import Path
 from string import whitespace
 from typing import Optional, TypeAlias, Union
 
@@ -35,12 +34,9 @@ class RetrievedInformation(BaseModel):
 class RetrieverAgent(BaseAgent):
     LIST_SEPARATOR = "%SEP%"
 
-    with open(Path(__file__).parent / "retriever_prompts/system.md") as f:
-        SYSTEM_MESSAGE = f.read()
-    with open(Path(__file__).parent / "retriever_prompts/_user_text.md") as f:
-        USER_TEXT_FRAGMENT = f.read()
-
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
+        self._load_prompts()
+
         self.driver = driver
         self.chain = self._with_retry(
             llm.with_structured_output(
@@ -59,7 +55,7 @@ class RetrieverAgent(BaseAgent):
 
         prompt = ""
         if not vision:
-            prompt += self.USER_TEXT_FRAGMENT.format(aria=aria, title=title, url=url)
+            prompt += self.prompts["_user_text"].format(aria=aria, title=title, url=url)
         prompt += "\n"
         prompt += information
 
@@ -79,7 +75,7 @@ class RetrieverAgent(BaseAgent):
 
         message = self.chain.invoke(
             [
-                ("system", self.SYSTEM_MESSAGE.format(separator=self.LIST_SEPARATOR)),
+                ("system", self.prompts["system"].format(separator=self.LIST_SEPARATOR)),
                 ("human", human_messages),
             ]
         )

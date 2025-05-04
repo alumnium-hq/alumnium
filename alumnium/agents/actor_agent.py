@@ -1,5 +1,4 @@
 from functools import lru_cache
-from pathlib import Path
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
@@ -17,19 +16,16 @@ else:
 
 
 class ActorAgent(BaseAgent):
-    with open(Path(__file__).parent / "actor_prompts/system.md") as f:
-        SYSTEM_MESSAGE = f.read()
-    with open(Path(__file__).parent / "actor_prompts/user.md") as f:
-        USER_MESSAGE = f.read()
-
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
+        self._load_prompts()
+
         self.driver = driver
         llm = llm.bind_tools(list(ALL_TOOLS.values()))
 
         prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", self.SYSTEM_MESSAGE),
-                ("human", self.USER_MESSAGE),
+                ("system", self.prompts["system"]),
+                ("human", self.prompts["user"]),
             ]
         )
 
