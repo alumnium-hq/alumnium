@@ -52,9 +52,17 @@ Check out [documentation][1] and more [examples][2]!
 
 See the [contributing guidelines][4] for information on how to get involved in the project and develop locally.
 
+## Acknowledgments
+
+[![LambdaTest](https://www.lambdatest.com/resources/images/logos/logo.svg)][5]
+
+Alumnium is a member of [LambdaTest][5] Open Source Program, which supports the project community and development with
+the necessary tools. Thank you! 💚
+
 
 
 [1]: https://alumnium.ai/docs/
 [2]: examples/
 [3]: https://alumnium.ai/docs/getting-started/configuration/
 [4]: ./CONTRIBUTING.md
+[5]: https://www.lambdatest.com/
