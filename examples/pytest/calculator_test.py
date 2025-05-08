@@ -5,9 +5,10 @@ from alumnium import Model
 
 @fixture(autouse=True)
 def learn(al):
-    if Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC, Model.AWS_META]:
+    if Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC, Model.AWS_META, Model.OLLAMA]:
         # Llama constantly messes the order of operations.
         # Haiku cannot correlate '/' button to '÷'.
+        # Mistral skips '+' button.
         al.learn(
             goal="4 / 2 =",
             actions=[

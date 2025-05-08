@@ -3,11 +3,12 @@ from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
 from langchain_deepseek import ChatDeepSeek
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
-from alumnium.logutils import *
+from logutils import *
 
 from .agents import *
 from .agents.retriever_agent import Data
@@ -52,6 +53,8 @@ class Alumni:
             llm = ChatDeepSeek(model=self.model.value, temperature=0)
         elif self.model == Model.GOOGLE:
             llm = ChatGoogleGenerativeAI(model=self.model.value, temperature=0)
+        elif self.model == Model.OLLAMA:
+            llm = ChatOllama(model=self.model.value, temperature=0)
         elif self.model == Model.OPENAI:
             llm = ChatOpenAI(model=self.model.value, temperature=0, seed=1)
         else:

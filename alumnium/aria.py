@@ -1,5 +1,5 @@
 from xml.etree.ElementTree import Element, indent, tostring
-from alumnium.logutils import *
+from logutils import *
 
 if ALUMNIUM_LOG_PATH == "stdout":
     logger = console_output()
