@@ -1,8 +1,6 @@
 [build-system]
 build-backend = "poetry.core.masonry.api"
-requires = [
-    "poetry-core",
-]
+requires = ["poetry-core"]
 
 [tool.autoflake]
 in-place = true
@@ -14,24 +12,10 @@ remove-unused-variables = true
 line-length = 119
 
 [tool.flake8]
-exclude = [
-    ".git",
-    ".venv",
-    "dist",
-    "log",
-    "reports",
-]
-ignore = [
-    "E402",
-    "F401",
-    "F403",
-    "F405",
-    "W503",
-]
+exclude = [".git", ".venv", "dist", "log", "reports"]
+ignore = ["E402", "F401", "F403", "F405", "W503"]
 max-line-length = 119
-per-file-ignores = [
-    "examples/behave/features/steps/*:F811",
-]
+per-file-ignores = ["examples/behave/features/steps/*:F811"]
 
 [tool.isort]
 profile = "black"
@@ -60,6 +44,7 @@ langchain-openai = "^0.3"
 playwright = "^1.49"
 python = "^3.10"
 retry2 = "^0.9"
+rich = "^14.0.0"
 selenium = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -74,7 +59,6 @@ pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-html = "^4.1.1"
 pytest-retry = "^1.7.0"
-rich = "^14.0.0"
 
 [tool.pytest.ini_options]
 generate_report_on_test = true
