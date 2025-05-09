@@ -11,6 +11,7 @@ from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from alumnium.logutils import ALUMNIUM_LOG_PATH, console_output, file_output
+
 from .agents import *
 from .agents.retriever_agent import Data
 from .drivers import PlaywrightDriver, SeleniumDriver
