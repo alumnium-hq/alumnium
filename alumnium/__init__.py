@@ -1,7 +1,6 @@
 import logging
 from os import getenv
 
-
 logger = logging.getLogger(__name__)
 
 level = getenv("ALUMNIUM_LOG_LEVEL", None)
