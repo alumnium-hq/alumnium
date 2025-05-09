@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
@@ -10,11 +9,15 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.aria import AriaTree
+from alumnium.logutils import *
 
 from .base_driver import BaseDriver
 from .keys import Key
 
-logger = logging.getLogger(__name__)
+if ALUMNIUM_LOG_PATH == "stdout":
+    logger = console_output()
+else:
+    logger = file_output()
 
 
 class SeleniumDriver(BaseDriver):

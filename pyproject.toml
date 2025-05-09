@@ -60,6 +60,7 @@ langchain-openai = "^0.3"
 playwright = "^1.49"
 python = "^3.10"
 retry2 = "^0.9"
+rich = "^14.0.0"
 selenium = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
