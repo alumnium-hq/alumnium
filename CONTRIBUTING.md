@@ -56,8 +56,14 @@ poetry run python -i demo.py  # REPL for quick testing
 poetry run behave             # Gherkin examples
 poetry run pytest             # Pytest examples
 ```
+### 4. Set Up the pre-commit Hooks
+To help maintain code quality, Alumnium uses pre-commit hooks. Please ensure it's installed and configured by running the following command:
 
-### 4. Pull Request Process
+```bash
+poetry run pre-commit install # Installing pre-commit 
+```
+
+### 5. Pull Request Process
 
 1. **Create a focused branch** for your contribution.
 2. **Write meaningful commit messages** explaining your changes. We use [Conventional Commits][5] format.
