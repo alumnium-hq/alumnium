@@ -1,14 +1,17 @@
-import logging
 from functools import lru_cache
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
 from alumnium.drivers import BaseDriver
+from alumnium.logutils import *
 
 from .base_agent import BaseAgent
 
-logger = logging.getLogger(__name__)
+if ALUMNIUM_LOG_PATH == "stdout":
+    logger = console_output()
+else:
+    logger = file_output()
 
 
 class PlannerAgent(BaseAgent):

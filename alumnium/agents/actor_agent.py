@@ -1,15 +1,18 @@
-import logging
 from functools import lru_cache
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
 from alumnium.drivers import BaseDriver
+from alumnium.logutils import *
 from alumnium.tools import ALL_TOOLS
 
 from .base_agent import BaseAgent
 
-logger = logging.getLogger(__name__)
+if ALUMNIUM_LOG_PATH == "stdout":
+    logger = console_output()
+else:
+    logger = file_output()
 
 
 class ActorAgent(BaseAgent):

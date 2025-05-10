@@ -1,7 +1,11 @@
-import logging
 from xml.etree.ElementTree import Element, indent, tostring
 
-logger = logging.getLogger(__name__)
+from .logutils import *
+
+if ALUMNIUM_LOG_PATH == "stdout":
+    logger = console_output()
+else:
+    logger = file_output()
 
 
 class AriaTree:
