@@ -5,14 +5,18 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.theme import Theme
 
-ALUMNIUM_LOG_LEVEL = os.getenv("ALUMNIUM_LOG_LEVEL", "warning")
-ALUMNIUM_LOG_PATH = os.getenv("ALUMNIUM_LOG_PATH")
+# Normalize log level (ensure upper-case)
+ALUMNIUM_LOG_LEVEL_STR = os.getenv("ALUMNIUM_LOG_LEVEL", "WARNING").upper()
+ALUMNIUM_LOG_PATH = os.getenv("ALUMNIUM_LOG_PATH", "stdout")
+
+# Convert string to actual log level constant
+ALUMNIUM_LOG_LEVEL = getattr(logging, ALUMNIUM_LOG_LEVEL_STR, logging.WARNING)
 
 Filelog_Initialized = False
 
 
 def get_Logger():
-    logging.basicConfig(level=ALUMNIUM_LOG_LEVEL.upper())
+    logging.basicConfig(level=ALUMNIUM_LOG_LEVEL)
     return logging.getLogger()
 
 
