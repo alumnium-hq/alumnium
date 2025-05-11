@@ -62,8 +62,18 @@ To help maintain code quality, Alumnium uses pre-commit hooks. Please ensure it'
 ```bash
 poetry run pre-commit install # Installing pre-commit 
 ```
+### 5. Set Up the  Variables
+If you want to customize the logging behavior, you need to create and set the following environment variables.
+## Environment Variables
 
-### 5. Pull Request Process
+| Variable Name          | Description                          | Default Value         |
+|-----------------------|------------------------------------|----------------------|
+| `ALUMNIUM_LOG_PATH`    | Path to the alumnium log directory  | `stdout(logs to console)` |
+| `ALUMNIUM_LOG_VALUE`   | Log level or configuration value   | `WARNING`              |
+
+
+
+### 6. Pull Request Process
 
 1. **Create a focused branch** for your contribution.
 2. **Write meaningful commit messages** explaining your changes. We use [Conventional Commits][5] format.
