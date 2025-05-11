@@ -1,6 +1,6 @@
 name: 🐛 Issue Report
 description: Create an Issue to help us improve.
-title: "[🐛 Bug]: <title>"
+title: "[Bug]:"
 body:
   - type: markdown
     attributes:
@@ -70,6 +70,7 @@ body:
         - DeepSeek 3.0 (Deepseek)
         - Llama 3.2 90B(Meta)
         - GPT-4.0 Mini(Open AI)
+        - Mistral-small 3.1 24B(Ollama)
         - other
       default: 4
 

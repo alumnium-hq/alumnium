@@ -1,4 +1,3 @@
-import logging
 from base64 import b64encode
 from contextlib import contextmanager
 from pathlib import Path
@@ -6,11 +5,15 @@ from pathlib import Path
 from playwright.sync_api import Error, Page
 
 from alumnium.aria import AriaTree
+from alumnium.logutils import *
 
 from .base_driver import BaseDriver
 from .keys import Key
 
-logger = logging.getLogger(__name__)
+if ALUMNIUM_LOG_PATH == "stdout":
+    logger = console_output()
+else:
+    logger = file_output()
 
 
 class PlaywrightDriver(BaseDriver):

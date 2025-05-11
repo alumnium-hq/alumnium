@@ -1,3 +1,4 @@
+
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = [
@@ -60,6 +61,7 @@ langchain-openai = "^0.3"
 playwright = "^1.49"
 python = "^3.10"
 retry2 = "^0.9"
+rich = "^14.0.0"
 selenium = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -70,6 +72,7 @@ black = "^25.1.0"
 flake8 = "^7.2.0"
 flake8-pyproject = "^1.2.3"
 isort = "^6.0.0"
+pre-commit = "^4.2.0"
 pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-html = "^4.1.1"
