@@ -56,12 +56,14 @@ poetry run python -i demo.py  # REPL for quick testing
 poetry run behave             # Gherkin examples
 poetry run pytest             # Pytest examples
 ```
+
 ### 4. Set Up the pre-commit Hooks
 To help maintain code quality, Alumnium uses pre-commit hooks. Please ensure it's installed and configured by running the following command:
 
 ```bash
 poetry run pre-commit install # Installing pre-commit 
 ```
+
 ### 5. Set Up the  Variables
 If you want to customize the logging behavior, you need to create and set the following environment variables.
 ## Environment Variables

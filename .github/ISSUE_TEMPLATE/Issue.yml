@@ -1,6 +1,7 @@
 name: 🐛 Issue Report
 description: Create an Issue to help us improve.
 title: "[Bug]:"
+label: "bug"
 body:
   - type: markdown
     attributes:
@@ -94,4 +95,3 @@ body:
       label: Detailed outline of steps needed to reproduce the issue
     validations:
       required: true
-      
