@@ -95,4 +95,3 @@ body:
       label: Detailed outline of steps needed to reproduce the issue
     validations:
       required: true
-      
