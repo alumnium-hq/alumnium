@@ -1,7 +1,6 @@
 name: 🐛 Issue Report
 description: Create an Issue to help us improve.
 title: "[Bug]:"
-label: "bug"
 body:
   - type: markdown
     attributes:
