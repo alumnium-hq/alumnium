@@ -68,10 +68,10 @@ poetry run pre-commit install # Installing pre-commit
 If you want to customize the logging behavior, you need to create and set the following environment variables.
 ## Environment Variables
 
-| Variable Name          | Description                          | Default Value         |
-|-----------------------|------------------------------------|----------------------|
-| `ALUMNIUM_LOG_PATH`    | Path to the alumnium log directory  | `stdout(logs to console)` |
-| `ALUMNIUM_LOG_VALUE`   | Log level or configuration value   | `WARNING`              |
+| Variable Name          | Description                        | Default Value             |
+|------------------------|------------------------------------|---------------------------|
+| `ALUMNIUM_LOG_PATH`    | Path to the alumnium log directory | `stdout(logs to console)` |
+| `ALUMNIUM_LOG_LEVEL`   | Log level or configuration value   | `WARNING`                 |
 
 
 
