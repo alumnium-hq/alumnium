@@ -4,33 +4,6 @@ requires = [
     "poetry-core",
 ]
 
-[tool.ruff]
-line-length = 119
-extend-exclude = [
-    ".git",
-    ".venv",
-    "dist",
-    "log",
-    "reports",
-]
-
-[tool.ruff.lint]
-select = [
-  "E",
-  "F",
-  "W",
-]
-ignore = [
-    "E402",
-    "F401",
-    "F403",
-    "F405", #W503 is not included in Ruff
-]
-
-[tool.ruff.lint.per-file-ignores]
-"examples/behave/features/steps/*" = ["F811"]
-
-
 [tool.poetry]
 authors = [
     "Alex Rodionov <p0deje@gmail.com>",
@@ -73,3 +46,31 @@ generate_report_on_test = true
 pythonpath = "."
 retries = 2
 retry_delay = 0.5
+
+[tool.ruff]
+extend-exclude = [
+    ".git",
+    ".venv",
+    "dist",
+    "log",
+    "reports",
+]
+line-length = 119
+
+[tool.ruff.lint]
+ignore = [
+    "E402",
+    "F401",
+    "F403",
+    "F405",
+]
+select = [
+    "E",
+    "F",
+    "W",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"examples/behave/features/steps/*" = [
+    "F811",
+]
