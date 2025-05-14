@@ -1,15 +1,9 @@
 check-format:
-	poetry run autoflake --check-diff .
-	poetry run black --check --diff .
-	poetry run flake8
-	poetry run isort --check .
+	poetry run ruff check .
 	poetry run pyprojectsort --diff
 
 format:
-	poetry run autoflake .
-	poetry run black .
-	poetry run flake8
-	poetry run isort .
+	poetry run ruff format .
 	poetry run pyprojectsort
 
 test:
