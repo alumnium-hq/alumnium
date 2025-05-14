@@ -62,7 +62,12 @@ def before_feature(_, feature):
         patch_scenario_with_autoretry(scenario, max_attempts=2)
 
 
-def after_scenario(context, _):
+def after_scenario(context, scenario):
+    if scenario.status == "passed":
+        context.al.cache.save()
+    else:
+        context.al.cache.discard()
+
     for formatter in context._runner.formatters:
         if formatter.name == "html-pretty":
             timestamp = datetime.now().strftime("%H-%M-%S")

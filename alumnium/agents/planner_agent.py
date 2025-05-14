@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
@@ -55,8 +53,7 @@ class PlannerAgent(BaseAgent):
         logger.info(f"  -> Goal: {goal}")
 
         aria = self.driver.aria_tree
-        aria_xml = aria.to_xml()
-        message = self.__prompt(goal, aria_xml)
+        message = self.chain.invoke({"goal": goal, "aria": aria.to_xml()})
 
         logger.info(f"  <- Result: {message.content}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
@@ -71,7 +68,3 @@ class PlannerAgent(BaseAgent):
                 steps.append(step)
 
         return steps
-
-    @lru_cache()
-    def __prompt(self, goal: str, aria: str):
-        return self.chain.invoke({"goal": goal, "aria": aria})
