@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -40,8 +38,7 @@ class ActorAgent(BaseAgent):
         logger.info(f"  -> Step: {step}")
 
         aria = self.driver.aria_tree
-        aria_xml = aria.to_xml()
-        message = self.__prompt(goal, step, aria_xml)
+        message = self.chain.invoke({"goal": goal, "step": step, "aria": aria.to_xml()})
 
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
@@ -57,7 +54,3 @@ class ActorAgent(BaseAgent):
                 tool.to_id = aria.cached_ids[tool.to_id]
 
             tool.invoke(self.driver)
-
-    @lru_cache()
-    def __prompt(self, goal: str, step: str, aria: str):
-        return self.chain.invoke({"goal": goal, "step": step, "aria": aria})

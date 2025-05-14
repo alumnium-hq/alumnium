@@ -11,3 +11,5 @@ __pycache__/
 /scratchpad.py
 
 .env
+
+.alumnium-cache.sqlite

@@ -10,11 +10,11 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from alumnium.logutils import ALUMNIUM_LOG_PATH, console_output, file_output
-
 from .agents import *
 from .agents.retriever_agent import Data
+from .cache import Cache
 from .drivers import PlaywrightDriver, SeleniumDriver
+from .logutils import ALUMNIUM_LOG_PATH, console_output, file_output
 from .models import Model
 
 if ALUMNIUM_LOG_PATH == "stdout":
@@ -61,6 +61,9 @@ class Alumni:
             llm = ChatOpenAI(model=self.model.value, temperature=0, seed=1)
         else:
             raise NotImplementedError(f"Model {self.model} not implemented")
+
+        self.cache = Cache()
+        llm.cache = self.cache
 
         self.actor_agent = ActorAgent(self.driver, llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
