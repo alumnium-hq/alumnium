@@ -4,37 +4,32 @@ requires = [
     "poetry-core",
 ]
 
-[tool.autoflake]
-in-place = true
-recursive = true
-remove-duplicate-keys = true
-remove-unused-variables = true
-
-[tool.black]
+[tool.ruff]
 line-length = 119
-
-[tool.flake8]
-exclude = [
+extend-exclude = [
     ".git",
     ".venv",
     "dist",
     "log",
     "reports",
 ]
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "W",
+]
 ignore = [
     "E402",
     "F401",
     "F403",
-    "F405",
-    "W503",
-]
-max-line-length = 119
-per-file-ignores = [
-    "examples/behave/features/steps/*:F811",
+    "F405", #W503 is not included in Ruff
 ]
 
-[tool.isort]
-profile = "black"
+[tool.ruff.lint.per-file-ignores]
+"examples/behave/features/steps/*" = ["F811"]
+
 
 [tool.poetry]
 authors = [
@@ -64,18 +59,14 @@ rich = "^14.0.0"
 selenium = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
-autoflake = "^2.3.1"
 behave = "^1.2.6"
 behave-html-pretty-formatter = "^1.12"
-black = "^25.1.0"
-flake8 = "^7.2.0"
-flake8-pyproject = "^1.2.3"
-isort = "^6.0.0"
 pre-commit = "^4.2.0"
 pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-html = "^4.1.1"
 pytest-retry = "^1.7.0"
+ruff = "^0.11.9"
 
 [tool.pytest.ini_options]
 generate_report_on_test = true
