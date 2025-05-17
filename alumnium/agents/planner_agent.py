@@ -1,4 +1,5 @@
 from functools import lru_cache
+from collections import Counter
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
@@ -20,6 +21,7 @@ class PlannerAgent(BaseAgent):
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self._load_prompts()
         self.driver = driver
+        self.usage = Counter()
 
         example_prompt = ChatPromptTemplate.from_messages(
             [
@@ -58,6 +60,12 @@ class PlannerAgent(BaseAgent):
         aria_xml = aria.to_xml()
         message = self.__prompt(goal, aria_xml)
 
+        if "input_token_details" in message.usage_metadata:
+            del message.usage_metadata["input_token_details"]      
+
+        plannerAgent_usage = Counter(message.usage_metadata)
+        self.usage += plannerAgent_usage
+    
         logger.info(f"  <- Result: {message.content}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
 
