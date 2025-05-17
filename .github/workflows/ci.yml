@@ -1,6 +1,6 @@
 name: CI
 on:
-  pull_request:
+  pull_request_target:
   push:
     branches:
       - main
@@ -9,27 +9,14 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  ALUMNIUM_LOG_LEVEL: debug
-  ALUMNIUM_LOG_PATH: alumnium.log
-  ALUMNIUM_PLAYWRIGHT_HEADLESS: false
-  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-  AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
-  AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
-  AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
-  DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-  GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  DISPLAY: :99
-
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version-file: .tool-versions
@@ -51,6 +38,19 @@ jobs:
     env:
       ALUMNIUM_DRIVER: ${{ matrix.driver }}
       ALUMNIUM_MODEL: ${{ matrix.model }}
+      ALUMNIUM_LOG_LEVEL: debug
+      ALUMNIUM_LOG_PATH: alumnium.log
+      ALUMNIUM_PLAYWRIGHT_HEADLESS: false
+      DISPLAY: :99
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     strategy:
       fail-fast: false
       matrix:
@@ -67,7 +67,20 @@ jobs:
           - google
           - openai
     steps:
+      - id: check-access
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+      - if: steps.check-access.outputs.require-result == 'false'
+        run: |
+          echo "${{ github.triggering_actor }} does not have permissions on this repo."
+          echo "Current permission level is ${{ steps.check-access.outputs.user-permission }}"
+          echo "Job originally triggered by ${{ github.actor }}"
+          exit 1
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version-file: .tool-versions

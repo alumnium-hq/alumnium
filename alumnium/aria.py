@@ -1,6 +1,6 @@
 from xml.etree.ElementTree import Element, indent, tostring
 
-from .logutils import *
+from .logutils import ALUMNIUM_LOG_PATH, console_output, file_output
 
 if ALUMNIUM_LOG_PATH == "stdout":
     logger = console_output()

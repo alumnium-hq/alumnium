@@ -1,4 +1,3 @@
-from functools import lru_cache
 from collections import Counter
 
 from langchain_core.language_models import BaseChatModel
@@ -57,8 +56,7 @@ class PlannerAgent(BaseAgent):
         logger.info(f"  -> Goal: {goal}")
 
         aria = self.driver.aria_tree
-        aria_xml = aria.to_xml()
-        message = self.__prompt(goal, aria_xml)
+        message = self.chain.invoke({"goal": goal, "aria": aria.to_xml()})
 
         if "input_token_details" in message.usage_metadata:
             del message.usage_metadata["input_token_details"]      
@@ -79,7 +77,3 @@ class PlannerAgent(BaseAgent):
                 steps.append(step)
 
         return steps
-
-    @lru_cache()
-    def __prompt(self, goal: str, aria: str):
-        return self.chain.invoke({"goal": goal, "aria": aria})

@@ -1,4 +1,3 @@
-from functools import lru_cache
 from collections import Counter
 
 from langchain_core.language_models import BaseChatModel
@@ -42,8 +41,7 @@ class ActorAgent(BaseAgent):
         logger.info(f"  -> Step: {step}")
 
         aria = self.driver.aria_tree
-        aria_xml = aria.to_xml()
-        message = self.__prompt(goal, step, aria_xml)
+        message = self.chain.invoke({"goal": goal, "step": step, "aria": aria.to_xml()})
 
         if "input_token_details" in message.usage_metadata:
             del message.usage_metadata["input_token_details"]      
@@ -65,7 +63,3 @@ class ActorAgent(BaseAgent):
                 tool.to_id = aria.cached_ids[tool.to_id]
 
             tool.invoke(self.driver)
-
-    @lru_cache()
-    def __prompt(self, goal: str, step: str, aria: str):
-        return self.chain.invoke({"goal": goal, "step": step, "aria": aria})
