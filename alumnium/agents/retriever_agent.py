@@ -1,5 +1,6 @@
 from string import whitespace
 from typing import Optional, TypeAlias, Union
+from collections import Counter
 
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
@@ -36,6 +37,7 @@ class RetrieverAgent(BaseAgent):
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self._load_prompts()
+        self.usage = Counter()
 
         self.driver = driver
         self.chain = self._with_retry(
@@ -81,6 +83,13 @@ class RetrieverAgent(BaseAgent):
         )
 
         response = message["parsed"]
+
+        if "input_token_details" in message["raw"].usage_metadata:
+            del message["raw"].usage_metadata["input_token_details"]      
+
+        retrieverAgent_usage = Counter(message["raw"].usage_metadata)
+        self.usage += retrieverAgent_usage
+
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
