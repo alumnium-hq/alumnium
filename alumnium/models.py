@@ -14,4 +14,25 @@ class Model(Enum):
 
     @classmethod
     def load(cls):
-        return cls[environ.get("ALUMNIUM_MODEL", "openai").upper()]
+       model_fullname = environ.get("ALUMNIUM_MODEL","openai").upper()
+       if model_fullname in Model.__members__:
+           model = Model[model_fullname]
+           return model
+       else: 
+           custom_model = cls.provider(model_fullname)  
+           return custom_model 
+       
+    @classmethod
+    def provider(cls,model_value:str) ->Enum:
+        index = model_value.find("/")
+        parent_model = model_value[:index]
+        return Model[parent_model]
+    
+    @classmethod
+    def name(cls) ->str:
+        model_fullname = environ.get("ALUMNIUM_MODEL","openai").upper()
+        if model_fullname in Model.__members__:
+           return Model[model_fullname].value
+        else:
+            index = model_fullname.find("/")
+            return model_fullname[index+1:]        
