@@ -25,7 +25,8 @@ else:
 
 class Alumni:
     def __init__(self, driver: Page | WebDriver, model: Model = None):
-        self.model = model or Model.load()
+        self.provider = model or Model.load()
+        self.name = Model.name()
         if isinstance(driver, WebDriver):
             self.driver = SeleniumDriver(driver)
         elif isinstance(driver, Page):
@@ -34,33 +35,33 @@ class Alumni:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
         logger.info(f"Using model: {self.model}")
-        if self.model == Model.AZURE_OPENAI:
+        if self.provider == Model.AZURE_OPENAI:
             llm = AzureChatOpenAI(
-                model=self.model.value,
+                model=self.name,
                 api_version=getenv("AZURE_OPENAI_API_VERSION", ""),
                 temperature=0,
                 seed=1,
             )
-        elif self.model == Model.ANTHROPIC:
-            llm = ChatAnthropic(model=self.model.value, temperature=0)
-        elif self.model == Model.AWS_ANTHROPIC or self.model == Model.AWS_META:
+        elif self.provider == Model.ANTHROPIC:
+            llm = ChatAnthropic(model=self.name, temperature=0)
+        elif self.provider == Model.AWS_ANTHROPIC or self.model == Model.AWS_META:
             llm = ChatBedrockConverse(
-                model_id=self.model.value,
+                model_id=self.name,
                 temperature=0,
                 aws_access_key_id=getenv("AWS_ACCESS_KEY", ""),
                 aws_secret_access_key=getenv("AWS_SECRET_KEY", ""),
                 region_name=getenv("AWS_REGION_NAME", "us-east-1"),
             )
-        elif self.model == Model.DEEPSEEK:
-            llm = ChatDeepSeek(model=self.model.value, temperature=0)
-        elif self.model == Model.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=self.model.value, temperature=0)
-        elif self.model == Model.OLLAMA:
-            llm = ChatOllama(model=self.model.value, temperature=0)
-        elif self.model == Model.OPENAI:
-            llm = ChatOpenAI(model=self.model.value, temperature=0, seed=1)
+        elif self.provider == Model.DEEPSEEK:
+            llm = ChatDeepSeek(model=self.name, temperature=0)
+        elif self.provider == Model.GOOGLE:
+            llm = ChatGoogleGenerativeAI(model=self.name, temperature=0)     
+        elif self.provider == Model.OLLAMA:
+            llm = ChatOllama(model=self.name, temperature=0)
+        elif self.provider == Model.OPENAI:
+            llm = ChatOpenAI(model=self.name, temperature=0, seed=1)
         else:
-            raise NotImplementedError(f"Model {self.model} not implemented")
+            raise NotImplementedError(f"Model {self.provider} not implemented")
 
         self.cache = Cache()
         llm.cache = self.cache
