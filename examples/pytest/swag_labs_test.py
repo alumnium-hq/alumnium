@@ -1,6 +1,6 @@
 from pytest import fixture, mark
 
-from alumnium import Model
+from alumnium import Model, Provider
 
 
 @fixture(autouse=True)
@@ -20,12 +20,14 @@ def login(al, execute_script, navigate):
 
 
 @mark.xfail(
-    Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC],
+    Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC],
     reason="Need to add proper types in `RetrievedInformation.value`.",
 )
-@mark.xfail(Model.load() == Model.AWS_META, reason="Too hard for Llama")
-@mark.xfail(Model.load() == Model.OLLAMA, reason="Too hard for Mistral")
-@mark.xfail(Model.load() == Model.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734")
+@mark.xfail(Model.current.provider == Provider.AWS_META, reason="Too hard for Llama")
+@mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
+@mark.xfail(
+    Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
+)
 def test_sorting(al):
     products = {
         "Sauce Labs Backpack": 29.99,
@@ -54,8 +56,10 @@ def test_sorting(al):
     assert al.get("prices of products") == sorted(prices, reverse=True)
 
 
-@mark.xfail(Model.load() == Model.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734")
-@mark.xfail(Model.load() == Model.OLLAMA, reason="Too hard for Mistral")
+@mark.xfail(
+    Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
+)
+@mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")
@@ -73,5 +77,5 @@ def test_checkout(al):
     al.do("finish checkout")
 
     al.check("thank you for the order message is shown")
-    if Model.load() not in [Model.AWS_META, Model.DEEPSEEK]:
+    if Model.current.provider not in [Provider.AWS_META, Provider.DEEPSEEK]:
         al.check("big green checkmark is shown", vision=True)

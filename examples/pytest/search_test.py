@@ -2,13 +2,13 @@ from os import getenv
 
 from pytest import fixture, mark, raises
 
-from alumnium import Model
+from alumnium import Model, Provider
 
 
 @fixture(autouse=True)
 def learn(al):
     # Claude/Gemini/Mistral/Llama have issues learning how to search
-    if Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC, Model.AWS_META, Model.GOOGLE]:
+    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC, Provider.AWS_META, Provider.GOOGLE]:
         al.learn(
             goal="search for artificial intelligence",
             actions=[
@@ -24,7 +24,7 @@ def learn(al):
     getenv("ALUMNIUM_DRIVER", "selenium") == "playwright" and getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true",
     reason="DuckDuckGo blocks headless browsers",
 )
-@mark.xfail(Model.load() == Model.OLLAMA, reason="Poor instruction following")
+@mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
 def test_search(al, navigate):
     navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGoA
 

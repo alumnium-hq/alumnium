@@ -1,11 +1,11 @@
 from pytest import fixture
 
-from alumnium import Model
+from alumnium import Model, Provider
 
 
 @fixture(autouse=True)
 def learn(al):
-    if Model.load() in [Model.ANTHROPIC, Model.AWS_ANTHROPIC, Model.AWS_META, Model.OLLAMA]:
+    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC, Provider.AWS_META, Provider.OLLAMA]:
         # Llama constantly messes the order of operations.
         # Haiku cannot correlate '/' button to '÷'.
         # Mistral skips '+' button.
