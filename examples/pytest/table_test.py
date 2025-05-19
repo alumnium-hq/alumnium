@@ -1,6 +1,6 @@
 from pytest import fixture, mark
 
-from alumnium import Model
+from alumnium import Model, Provider
 
 
 @fixture(autouse=True)
@@ -20,7 +20,7 @@ def test_table_extraction(al, navigate):
 
 
 @mark.xfail(
-    Model.load() == Model.AWS_META,
+    Model.current.provider == Provider.AWS_META,
     reason="Needs more work because `do` produces duplicated actions",
 )
 def test_table_sorting(al, navigate):

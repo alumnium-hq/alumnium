@@ -15,7 +15,7 @@ from .agents.retriever_agent import Data
 from .cache import Cache
 from .drivers import PlaywrightDriver, SeleniumDriver
 from .logutils import ALUMNIUM_LOG_PATH, console_output, file_output
-from .models import Model
+from .models import Model, Provider
 
 if ALUMNIUM_LOG_PATH == "stdout":
     logger = console_output()
@@ -25,7 +25,8 @@ else:
 
 class Alumni:
     def __init__(self, driver: Page | WebDriver, model: Model = None):
-        self.model = model or Model.load()
+        self.model = model or Model.current
+
         if isinstance(driver, WebDriver):
             self.driver = SeleniumDriver(driver)
         elif isinstance(driver, Page):
@@ -34,33 +35,33 @@ class Alumni:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
         logger.info(f"Using model: {self.model}")
-        if self.model == Model.AZURE_OPENAI:
+        if self.model.provider == Provider.AZURE_OPENAI:
             llm = AzureChatOpenAI(
-                model=self.model.value,
+                model=self.model.name,
                 api_version=getenv("AZURE_OPENAI_API_VERSION", ""),
                 temperature=0,
                 seed=1,
             )
-        elif self.model == Model.ANTHROPIC:
-            llm = ChatAnthropic(model=self.model.value, temperature=0)
-        elif self.model == Model.AWS_ANTHROPIC or self.model == Model.AWS_META:
+        elif self.model.provider == Provider.ANTHROPIC:
+            llm = ChatAnthropic(model=self.model.name, temperature=0)
+        elif self.model.provider == Provider.AWS_ANTHROPIC or self.model.provider == Provider.AWS_META:
             llm = ChatBedrockConverse(
-                model_id=self.model.value,
+                model_id=self.model.name,
                 temperature=0,
                 aws_access_key_id=getenv("AWS_ACCESS_KEY", ""),
                 aws_secret_access_key=getenv("AWS_SECRET_KEY", ""),
                 region_name=getenv("AWS_REGION_NAME", "us-east-1"),
             )
-        elif self.model == Model.DEEPSEEK:
-            llm = ChatDeepSeek(model=self.model.value, temperature=0)
-        elif self.model == Model.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=self.model.value, temperature=0)
-        elif self.model == Model.OLLAMA:
-            llm = ChatOllama(model=self.model.value, temperature=0)
-        elif self.model == Model.OPENAI:
-            llm = ChatOpenAI(model=self.model.value, temperature=0, seed=1)
+        elif self.model.provider == Provider.DEEPSEEK:
+            llm = ChatDeepSeek(model=self.model.name, temperature=0)
+        elif self.model.provider == Provider.GOOGLE:
+            llm = ChatGoogleGenerativeAI(model=self.model.name, temperature=0)
+        elif self.model.provider == Provider.OLLAMA:
+            llm = ChatOllama(model=self.model.name, temperature=0)
+        elif self.model.provider == Provider.OPENAI:
+            llm = ChatOpenAI(model=self.model.name, temperature=0, seed=1)
         else:
-            raise NotImplementedError(f"Model {self.model} not implemented")
+            raise NotImplementedError(f"Model {self.model.provider} not implemented")
 
         self.cache = Cache()
         llm.cache = self.cache
