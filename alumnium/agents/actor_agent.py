@@ -1,5 +1,3 @@
-from collections import Counter
-
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -18,7 +16,7 @@ else:
 class ActorAgent(BaseAgent):
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self._load_prompts()
-        self.usage = Counter()
+        self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
 
         self.driver = driver
         llm = llm.bind_tools(list(ALL_TOOLS.values()))
@@ -42,16 +40,14 @@ class ActorAgent(BaseAgent):
 
         aria = self.driver.aria_tree
         message = self.chain.invoke({"goal": goal, "step": step, "aria": aria.to_xml()})
-
         if "input_token_details" in message.usage_metadata:
-            del message.usage_metadata["input_token_details"]      
-
-        actorAgent_usage = Counter(message.usage_metadata)
-        self.usage += actorAgent_usage
-        
+            message.usage_metadata.pop("input_token_details", "None")
+        self.usage = {
+            tokencounter: self.usage[tokencounter] + message.usage_metadata[tokencounter]
+            for tokencounter in self.usage
+        }
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
-
         # Move to tool itself to avoid hardcoding it's parameters.
         for tool_call in message.tool_calls:
             tool = ALL_TOOLS[tool_call["name"]](**tool_call["args"])
