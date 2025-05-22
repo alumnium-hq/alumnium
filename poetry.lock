@@ -187,6 +187,20 @@ test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypo
 trio = ["trio (>=0.26.1)"]
 
 [[package]]
+name = "appium-python-client"
+version = "5.1.1"
+description = "Python client for Appium"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "appium_python_client-5.1.1.tar.gz", hash = "sha256:3f26e244a09217062e19fe71db9c7390be3fab497dd5e16268e7310fa081b711"},
+]
+
+[package.dependencies]
+selenium = ">=4.26,<5.0"
+
+[[package]]
 name = "async-timeout"
 version = "4.0.3"
 description = "Timeout context manager for asyncio programs"
@@ -3458,4 +3472,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "6478a077f5ca7d60762735c6a23cf3f0f3913dc887df2ada31eb3cd72d57fd92"
+content-hash = "892dafcad763f9e7ae5f069acf3a247a3c0adc16088fd8e18e9934bff5cb4d8a"

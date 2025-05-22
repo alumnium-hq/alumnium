@@ -1,6 +1,9 @@
 from datetime import datetime
 from os import getenv
 
+from appium.webdriver import Remote as Appium
+from appium.webdriver.common.appiumby import AppiumBy
+from appium.options.ios import XCUITestOptions
 from behave import fixture, use_fixture
 from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from playwright.sync_api import Page, sync_playwright
@@ -19,6 +22,19 @@ def driver(context):
     elif driver == "selenium":
         context.driver = Chrome()
         yield driver
+        context.driver.quit()
+    elif driver == "appium":
+        options = XCUITestOptions()
+        options.automation_name = "XCUITest"
+        options.platform_name = "iOS"
+        options.device_name = "iPhone 16"
+        options.platform_version = "18.4"
+        options.app = "/Users/p0deje/Library/Developer/Xcode/DerivedData/ToDoList-frfydflmlleijcgvgyqwolwcmfgu/Build/Products/Debug-iphonesimulator/ToDoList.app"
+        context.driver = Appium(command_executor="http://localhost:4723", options=options)
+        import pdb
+
+        pdb.set_trace()
+        yield context.driver
         context.driver.quit()
     else:
         raise NotImplementedError(f"Driver {driver} not implemented")

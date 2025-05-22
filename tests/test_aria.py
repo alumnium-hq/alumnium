@@ -1,6 +1,6 @@
 import pytest
 
-from alumnium.aria import AriaTree
+from alumnium.aria import AriaTree, XCAriaTree
 
 
 @pytest.fixture
@@ -83,3 +83,8 @@ def test_to_xml(tree: AriaTree):
 
 def test_cached_ids(tree: AriaTree):
     assert tree.cached_ids == {1: 1001, 2: 420, 3: 69}
+
+
+def test_xctree(capsys):
+    with capsys.disabled():
+        print(XCAriaTree(open("appium.xml").read()).to_xml())
