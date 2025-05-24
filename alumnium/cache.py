@@ -8,14 +8,9 @@ from sqlalchemy import Column, String, create_engine, delete, select
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import Session, declarative_base
 
-from .logutils import ALUMNIUM_LOG_PATH, console_output, file_output
+from .logutils import get_logger
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
-
-
+logger = get_logger(__name__)
 Base = declarative_base()
 
 
