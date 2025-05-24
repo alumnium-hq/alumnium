@@ -9,15 +9,12 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.aria import AriaTree
-from alumnium.logutils import *
+from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
 from .keys import Key
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 class SeleniumDriver(BaseDriver):

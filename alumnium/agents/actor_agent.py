@@ -4,13 +4,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from alumnium.drivers import BaseDriver
 from alumnium.logutils import *
 from alumnium.tools import ALL_TOOLS
+from alumnium.logutils import get_logger
 
 from .base_agent import BaseAgent
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 class ActorAgent(BaseAgent):

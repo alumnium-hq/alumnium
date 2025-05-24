@@ -5,15 +5,12 @@ from pathlib import Path
 from playwright.sync_api import Error, Page
 
 from alumnium.aria import AriaTree
-from alumnium.logutils import *
+from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
 from .keys import Key
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 class PlaywrightDriver(BaseDriver):

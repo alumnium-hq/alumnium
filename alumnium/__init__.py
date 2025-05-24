@@ -1,16 +1,11 @@
 import logging
 from os import getenv
 
-logger = logging.getLogger(__name__)
+from .logutils import configure_logging, get_logger
 
-level = getenv("ALUMNIUM_LOG_LEVEL", None)
-if level:
-    logger.setLevel(level.upper())
+logger: logging.Logger = get_logger(__name__)
+logger.addHandler(logging.NullHandler())
 
-path = getenv("ALUMNIUM_LOG_PATH", None)
-if path == "stdout":
-    logger.addHandler(logging.StreamHandler())
-elif path:
-    logger.addHandler(logging.FileHandler(path))
+configure_logging()
 
 from .alumni import *
