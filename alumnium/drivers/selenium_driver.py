@@ -121,8 +121,10 @@ class SeleniumDriver(BaseDriver):
             driver.execute_cdp_cmd = execute_cdp_cmd.__get__(driver)
 
     def wait_for_page_to_load(self):
-        logger.info("Waiting for page to finish loading")
+        logger.debug("Waiting for page to finish loading:")
         self.driver.execute_script(self.WAITER_SCRIPT)
         error = self.driver.execute_async_script(self.WAIT_FOR_SCRIPT)
         if error is not None:
-            logger.info(f"Failed to wait for page to load: {error}")
+            logger.debug(f"  <- Failed to wait for page to load: {error}")
+        else:
+            logger.debug("  <- Page finished loading")
