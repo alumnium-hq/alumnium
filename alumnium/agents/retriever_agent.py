@@ -84,6 +84,10 @@ class RetrieverAgent(BaseAgent):
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
+        if response is None:
+            logger.error(f"  <- Empty response: {message['raw'].content}")
+            return None
+
         # Remove when we find a way use `Data` in structured output `value`.
         response.value = self.__loosely_typecast(response.value)
 
