@@ -106,6 +106,15 @@ class RetrieverAgent(BaseAgent):
             return True
         elif value.lower() == "false":
             return False
+        elif value.startswith("[") and value.endswith("]"):
+            try:
+                # Remove brackets and split by comma
+                inner = value[1:-1].strip()
+                if not inner:
+                    return []
+                return [self.__loosely_typecast(item.strip()) for item in inner.split(",")]
+            except Exception:
+                return value.strip(f"{whitespace}'\"")
         elif self.LIST_SEPARATOR in value:
             return [self.__loosely_typecast(i) for i in value.split(self.LIST_SEPARATOR) if i != ""]
         else:
