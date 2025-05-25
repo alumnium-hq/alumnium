@@ -12,27 +12,22 @@ ALUMNIUM_LOG_PATH = os.getenv("ALUMNIUM_LOG_PATH", "stdout")
 # Convert string to actual log level constant
 ALUMNIUM_LOG_LEVEL = getattr(logging, ALUMNIUM_LOG_LEVEL_STR, logging.WARNING)
 
-Filelog_Initialized = False
+filelog_initialized = False
+
+THEME = Theme(
+    {
+        "logging.level.debug": "dim cyan",
+        "logging.level.info": "green",
+        "logging.level.warning": "yellow bold",
+        "logging.level.error": "bold red",
+        "logging.level.critical": "bold white on red",
+    }
+)
 
 
-def get_Logger():
-    logging.basicConfig(level=ALUMNIUM_LOG_LEVEL)
-    return logging.getLogger()
-
-
-def console_output():
-    theme = Theme(
-        styles={
-            "logging.level.debug": "dim cyan",
-            "logging.level.info": "green",
-            "logging.level.warning": "yellow bold",
-            "logging.level.error": "bold red",
-            "logging.level.critical": "bold white on red",
-        }
-    )
-    console = Console(theme=theme)
-
-    consoleRichHandler = RichHandler(
+def _build_console_handler() -> logging.Handler:
+    console = Console(theme=THEME)
+    return RichHandler(
         level=ALUMNIUM_LOG_LEVEL,
         log_time_format="[%d-%m-%y %H:%M:%S]",
         console=console,
@@ -42,25 +37,35 @@ def console_output():
         show_level=True,
     )
 
-    consoleLog = get_Logger()
-    logging.root.handlers = []
-    consoleLog.addHandler(consoleRichHandler)
 
-    return consoleLog
+def _build_file_handler(path: str) -> logging.Handler:
+    handler = logging.FileHandler(path, mode="w")
+    formatter = logging.Formatter(
+        fmt="%(asctime)s-%(message)s",
+        datefmt="[%d-%m-%y %H:%M:%S]",
+    )
+    handler.setFormatter(formatter)
+    return handler
 
 
-def file_output():
-    global Filelog_Initialized
+def configure_logging() -> logging.Logger:
+    """
+    Configure and return the Alumnium logger.
+    """
+    logger = logging.getLogger("alumnium")
+    logger.setLevel(ALUMNIUM_LOG_LEVEL)
+    logger.propagate = False
 
-    if not Filelog_Initialized and os.path.exists(ALUMNIUM_LOG_PATH):
-        os.remove(ALUMNIUM_LOG_PATH)
-        Filelog_Initialized = True
+    if ALUMNIUM_LOG_PATH in ("stdout", "stderr"):
+        logger.addHandler(_build_console_handler())
+    else:
+        if os.path.dirname(ALUMNIUM_LOG_PATH) != "":
+            os.makedirs(os.path.dirname(ALUMNIUM_LOG_PATH), exist_ok=True)
+        logger.addHandler(_build_file_handler(ALUMNIUM_LOG_PATH))
 
-    file_logger = get_Logger()
-    file_Handler = logging.FileHandler(ALUMNIUM_LOG_PATH)
-    file_Formatter = logging.Formatter(fmt="%(asctime)s-%(message)s", datefmt="[%d-%m-%y %H:%M:%S]")
+    return logger
 
-    logging.root.handlers = []
-    file_Handler.setFormatter(file_Formatter)
-    file_logger.addHandler(file_Handler)
-    return file_logger
+
+def get_logger(name: str | None = None) -> logging.Logger:
+    base = logging.getLogger("alumnium")
+    return base.getChild(name) if name else base

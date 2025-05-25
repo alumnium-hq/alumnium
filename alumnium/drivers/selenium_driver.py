@@ -9,15 +9,12 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.aria import AriaTree
-from alumnium.logutils import *
+from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
 from .keys import Key
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 class SeleniumDriver(BaseDriver):
@@ -124,8 +121,10 @@ class SeleniumDriver(BaseDriver):
             driver.execute_cdp_cmd = execute_cdp_cmd.__get__(driver)
 
     def wait_for_page_to_load(self):
-        logger.info("Waiting for page to finish loading")
+        logger.debug("Waiting for page to finish loading:")
         self.driver.execute_script(self.WAITER_SCRIPT)
         error = self.driver.execute_async_script(self.WAIT_FOR_SCRIPT)
         if error is not None:
-            logger.info(f"Failed to wait for page to load: {error}")
+            logger.debug(f"  <- Failed to wait for page to load: {error}")
+        else:
+            logger.debug("  <- Page finished loading")

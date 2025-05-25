@@ -5,15 +5,12 @@ from pathlib import Path
 from playwright.sync_api import Error, Page
 
 from alumnium.aria import AriaTree
-from alumnium.logutils import *
+from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
 from .keys import Key
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 class PlaywrightDriver(BaseDriver):
@@ -123,15 +120,17 @@ class PlaywrightDriver(BaseDriver):
                 raise error
 
     def wait_for_page_to_load(self):
-        logger.info("Waiting for page to finish loading")
+        logger.debug("Waiting for page to finish loading:")
         try:
             self.page.evaluate(f"function() {{ {self.WAITER_SCRIPT} }}")
             error = self.page.evaluate(self.WAIT_FOR_SCRIPT)
             if error is not None:
-                logger.info(f"Failed to wait for page to load: {error}")
+                logger.debug(f"  <- Failed to wait for page to load: {error}")
+            else:
+                logger.debug("  <- Page finished loading")
         except Error as error:
             if self.CONTEXT_WAS_DESTROYED_ERROR in error.message:
-                logger.info("Page context has changed, retrying")
+                logger.debug("  <- Page context has changed, retrying")
                 self.wait_for_page_to_load()
             else:
                 raise error

@@ -14,13 +14,10 @@ from .agents import *
 from .agents.retriever_agent import Data
 from .cache import Cache
 from .drivers import PlaywrightDriver, SeleniumDriver
-from .logutils import ALUMNIUM_LOG_PATH, console_output, file_output
 from .models import Model, Provider
+from .logutils import get_logger
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 class Alumni:

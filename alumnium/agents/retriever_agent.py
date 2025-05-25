@@ -6,13 +6,11 @@ from pydantic import BaseModel, Field
 
 from alumnium.drivers import BaseDriver
 from alumnium.logutils import *
+from alumnium.logutils import get_logger
 
 from .base_agent import BaseAgent
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 Data: TypeAlias = Optional[Union[str, int, float, bool, list[Union[str, int, float, bool]]]]
