@@ -76,7 +76,7 @@ def after_scenario(context, scenario):
             elif isinstance(context.driver, Page):
                 context.driver.screenshot(path=f"reports/screenshot-{timestamp}.png")
             formatter.embed(
-                mime_type="image/png",
-                data=f"reports/screenshot-{timestamp}.png",
-                caption="Screenshot",
+                mime_type="text/plain",
+                data=str(context.al.stats()),
+                caption="Alumnium stats",
             )

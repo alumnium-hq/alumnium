@@ -16,6 +16,7 @@ class PlannerAgent(BaseAgent):
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
         self._load_prompts()
         self.driver = driver
+        self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
 
         example_prompt = ChatPromptTemplate.from_messages(
             [
@@ -52,6 +53,14 @@ class PlannerAgent(BaseAgent):
 
         aria = self.driver.aria_tree
         message = self.chain.invoke({"goal": goal, "aria": aria.to_xml()})
+
+        if "input_token_details" in message.usage_metadata:
+            message.usage_metadata.pop("input_token_details", None)
+
+        self.usage = {
+            tokencounter: self.usage[tokencounter] + message.usage_metadata[tokencounter]
+            for tokencounter in self.usage
+        }
 
         logger.info(f"  <- Result: {message.content}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
