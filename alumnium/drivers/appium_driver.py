@@ -2,10 +2,10 @@ from pathlib import Path
 
 from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
-from appium.webdriver.common.appiumby import AppiumBy
+from appium.webdriver.common.appiumby import AppiumBy as By
 
-from alumnium.aria import XCAriaTree
-from alumnium.logutils import *
+from alumnium.accessibility import XCUITestAccessibilityTree
+from alumnium.logutils import ALUMNIUM_LOG_PATH, console_output, file_output
 
 from .base_driver import BaseDriver
 from .keys import Key
@@ -21,8 +21,8 @@ class AppiumDriver(BaseDriver):
         self.driver = driver
 
     @property
-    def aria_tree(self) -> XCAriaTree:
-        return XCAriaTree(self.driver.page_source)
+    def aria_tree(self) -> XCUITestAccessibilityTree:
+        return XCUITestAccessibilityTree(self.driver.page_source)
 
     def click(self, id: int):
         self._find_element(id).click()
@@ -77,4 +77,4 @@ class AppiumDriver(BaseDriver):
         elif element["label"]:
             xpath += f"[@label='{element['label']}']"
 
-        return self.driver.find_element(AppiumBy.XPATH, xpath)
+        return self.driver.find_element(By.XPATH, xpath)

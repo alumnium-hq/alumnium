@@ -4,7 +4,7 @@ from pathlib import Path
 
 from playwright.sync_api import Error, Page
 
-from alumnium.aria import AriaTree
+from alumnium.accessibility import ChromiumAccessibilityTree
 from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
@@ -31,9 +31,9 @@ class PlaywrightDriver(BaseDriver):
         self.page = page
 
     @property
-    def aria_tree(self) -> AriaTree:
+    def aria_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
-        return AriaTree(self.client.send("Accessibility.getFullAXTree"))
+        return ChromiumAccessibilityTree(self.client.send("Accessibility.getFullAXTree"))
 
     def click(self, id: int):
         with self._find_element(id) as element:
