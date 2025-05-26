@@ -86,5 +86,8 @@ def test_cached_ids(tree: AriaTree):
 
 
 def test_xctree(capsys):
-    with capsys.disabled():
-        print(XCAriaTree(open("appium.xml").read()).to_xml())
+    # with capsys.disabled():
+    print(XCAriaTree(open("appium.xml").read()).to_xml())
+    import pdb
+
+    pdb.set_trace()

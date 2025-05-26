@@ -1,14 +1,18 @@
+from appium.webdriver.webdriver import WebDriver as Appium
 from behave import *
 from playwright.sync_api import Page
 from selenium.webdriver import Chrome
 
 
-@given('I open "{url}"')
-def step_impl(context, url):
+@given("I open application")
+def step_impl(context):
+    # Also passes on react, preact, and jquery!
     if isinstance(context.driver, Chrome):
-        context.driver.get(url)
+        context.driver.get("https://todomvc.com/examples/vue/dist/")
     elif isinstance(context.driver, Page):
-        context.driver.goto(url)
+        context.driver.goto("https://todomvc.com/examples/vue/dist/")
+    elif isinstance(context.driver, Appium):
+        context.driver.activate_app("com.ayodeji.TodoList")
 
 
 @when('I create a new task "{title}"')
@@ -59,14 +63,27 @@ def step_impl(context, title):
 
 @then('"{title}" task is not marked as completed')
 def step_impl(context, title):
-    context.al.check(f'"{title}" task is not marked as completed')
+    if isinstance(context.driver, Appium):
+        context.al.check(
+            f'"{title}" task is not marked as completed '
+            f"(completion is indicated by a filled checkmark image on the left of the task title)"
+        )
+    else:
+        context.al.check(f'"{title}" task is not marked as completed')
 
 
 @then('"{title}" task is marked as completed')
 def step_impl(context, title):
-    context.al.check(f'"{title}" task is marked as completed')
+    if isinstance(context.driver, Appium):
+        context.al.check(
+            f'"{title}" task is marked as completed '
+            f"(completion is indicated by a filled checkmark image on the left of the task title)"
+        )
+    else:
+        context.al.check(f'"{title}" task is marked as completed')
 
 
 @then("tasks counter is {count:d}")
 def step_impl(context, count):
-    assert context.al.get("number of left items in a tasks counter") == count
+    if not isinstance(context.driver, Appium):
+        assert context.al.get("number of left items in a tasks counter") == count

@@ -1,8 +1,7 @@
 Feature: To Do application
 
   Background:
-    # Also passes on react, preact, and jquery!
-    Given I open "https://todomvc.com/examples/vue/dist/"
+    Given I open application
 
   Scenario: Create a task
     When I create a new task "Buy milk"
@@ -23,6 +22,7 @@ Feature: To Do application
     Then "Buy milk" task is not marked as completed
     And tasks counter is 1
 
+  @web
   Scenario: Complete all tasks
     When I create a new task "Buy milk"
     And I create a new task "Buy bread"
@@ -37,6 +37,7 @@ Feature: To Do application
     And I delete the "Buy milk" task
     Then "Buy milk" task is not shown in the list of tasks
 
+  @web
   Scenario: Show active tasks
     When I create a new task "Buy milk"
     And I create a new task "Buy bread"
@@ -45,6 +46,7 @@ Feature: To Do application
     Then "Buy bread" task is shown in the list of tasks
     But "Buy milk" task is not shown in the list of tasks
 
+  @web
   Scenario: Show completed tasks
     When I create a new task "Buy milk"
     And I create a new task "Buy bread"
@@ -53,6 +55,7 @@ Feature: To Do application
     Then "Buy milk" task is shown in the list of tasks
     But "Buy bread" task is not shown in the list of tasks
 
+  @web
   Scenario: Clear completed tasks
     When I create a new task "Buy milk"
     And I create a new task "Buy bread"

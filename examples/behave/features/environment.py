@@ -1,9 +1,9 @@
 from datetime import datetime
+from pathlib import Path
 from os import getenv
 
-from appium.webdriver import Remote as Appium
-from appium.webdriver.common.appiumby import AppiumBy
 from appium.options.ios import XCUITestOptions
+from appium.webdriver.webdriver import WebDriver as Appium
 from behave import fixture, use_fixture
 from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from playwright.sync_api import Page, sync_playwright
@@ -25,17 +25,16 @@ def driver(context):
         context.driver.quit()
     elif driver == "appium":
         options = XCUITestOptions()
+        # https://github.com/ayodejiayankola/To-Do-App-SwiftUI
+        options.app = f"{Path(__file__).parent}/support/ToDoList.app"
         options.automation_name = "XCUITest"
-        options.platform_name = "iOS"
         options.device_name = "iPhone 16"
+        options.new_command_timeout = 300
+        options.platform_name = "iOS"
         options.platform_version = "18.4"
-        options.app = "/Users/p0deje/Library/Developer/Xcode/DerivedData/ToDoList-frfydflmlleijcgvgyqwolwcmfgu/Build/Products/Debug-iphonesimulator/ToDoList.app"
-        context.driver = Appium(command_executor="http://localhost:4723", options=options)
-        import pdb
 
-        pdb.set_trace()
+        context.driver = Appium(command_executor="http://localhost:4723", options=options)
         yield context.driver
-        context.driver.quit()
     else:
         raise NotImplementedError(f"Driver {driver} not implemented")
 
@@ -43,24 +42,48 @@ def driver(context):
 @fixture
 def alumnium(context):
     context.al = Alumni(context.driver)
-    context.al.learn(
-        goal='create a new task "this is Al"',
-        actions=[
-            'type "this is Al" in textbox "what needs to be done"',
-            'press key "Enter"',
-        ],
-    )
-    context.al.learn(
-        goal='mark the "this is Al" task as completed',
-        actions=['click checkbox near the "this is Al" task'],
-    )
-    context.al.learn(
-        goal='delete the "this is Al" task',
-        actions=[
-            'hover the "this is Al" task',
-            'click button "x" near the "this is Al" task',
-        ],
-    )
+    driver = getenv("ALUMNIUM_DRIVER", "selenium")
+    if driver == "appium":
+        context.al.learn(
+            goal='create a new task "this is Al"',
+            actions=[
+                "click add",
+                'type "this is Al" to a text field',
+                "click save button",
+            ],
+        )
+        context.al.learn(
+            goal='mark the "this is Al" task as completed',
+            actions=['click checkbox near the "this is Al" task'],
+        )
+        context.al.learn(
+            goal='delete the "this is Al" task',
+            actions=[
+                "click edit button",
+                'click button "-" near the "this is Al" task',
+                'click button "Delete" near the "this is Al" task',
+                "click done button",
+            ],
+        )
+    else:
+        context.al.learn(
+            goal='create a new task "this is Al"',
+            actions=[
+                'type "this is Al" in textbox "what needs to be done"',
+                'press key "Enter"',
+            ],
+        )
+        context.al.learn(
+            goal='mark the "this is Al" task as completed',
+            actions=['click checkbox near the "this is Al" task'],
+        )
+        context.al.learn(
+            goal='delete the "this is Al" task',
+            actions=[
+                'hover the "this is Al" task',
+                'click button "x" near the "this is Al" task',
+            ],
+        )
     yield context.al
     context.al.quit()
 
@@ -84,10 +107,16 @@ def after_scenario(context, scenario):
     else:
         context.al.cache.discard()
 
+    driver = getenv("ALUMNIUM_DRIVER", "selenium")
+    if driver == "appium":
+        context.driver.terminate_app("com.ayodeji.TodoList")
+        context.driver.remove_app("com.ayodeji.TodoList")
+        context.driver.install_app(context.driver.capabilities["app"])
+
     for formatter in context._runner.formatters:
         if formatter.name == "html-pretty":
             timestamp = datetime.now().strftime("%H-%M-%S")
-            if isinstance(context.driver, Chrome):
+            if isinstance(context.driver, Chrome) or isinstance(context.driver, Appium):
                 context.driver.save_screenshot(f"reports/screenshot-{timestamp}.png")
             elif isinstance(context.driver, Page):
                 context.driver.screenshot(path=f"reports/screenshot-{timestamp}.png")
