@@ -81,10 +81,9 @@ class RetrieverAgent(BaseAgent):
         response = message["parsed"]
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
-
-        if response is None:
-            logger.error(f"  <- Empty response: {message['raw'].content}")
-            return None
+        if not response:
+            logger.error(f"  <- Empty response: {message['raw']}")
+            return RetrievedInformation(explanation="Empty response from LLM", value=None)
 
         # Remove when we find a way use `Data` in structured output `value`.
         response.value = self.__loosely_typecast(response.value)
