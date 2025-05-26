@@ -33,8 +33,7 @@ class RetrieverAgent(BaseAgent):
     LIST_SEPARATOR = "%SEP%"
 
     def __init__(self, driver: BaseDriver, llm: BaseChatModel):
-        self._load_prompts()
-        self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+        super().__init__()
         self.driver = driver
         self.chain = self._with_retry(
             llm.with_structured_output(
@@ -80,16 +79,9 @@ class RetrieverAgent(BaseAgent):
 
         response = message["parsed"]
 
-        if "input_token_details" in message["raw"].usage_metadata:
-            message["raw"].usage_metadata.pop("input_token_details", None)
-
-        self.usage = {
-            tokencounter: self.usage[tokencounter] + message["raw"].usage_metadata[tokencounter]
-            for tokencounter in self.usage
-        }
-
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
+        self._update_usage(message["raw"].usage_metadata)
 
         # Remove when we find a way use `Data` in structured output `value`.
         response.value = self.__loosely_typecast(response.value)

@@ -12,6 +12,7 @@ class Provider(Enum):
     OLLAMA = "ollama"
     OPENAI = "openai"
 
+
 class Name:
     DEFAULT = {
         Provider.AZURE_OPENAI: "gpt-4o-mini",  # 2024-07-18
@@ -31,6 +32,7 @@ class Model:
     def __init__(self, provider=None, name=None):
         self.provider = Provider(provider or Provider.OPENAI)
         self.name = name or Name.DEFAULT.get(self.provider)
+
 
 provider, *name = environ.get("ALUMNIUM_MODEL", "openai").lower().split("/", maxsplit=1)
 Model.current = Model(provider, name and name[0])

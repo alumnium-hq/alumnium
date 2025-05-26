@@ -123,18 +123,27 @@ class Alumni:
         """
         self.planner_agent.add_example(goal, actions)
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, int]:
         """
-        Extracts the Total number of Input_tokens , Output_tokens , Total_tokens used for test execution.
+        Provides statistics about the usage of tokens.
+
+        Returns:
+            A dictionary containing the number of input tokens, output tokens, and total tokens used by all agents.
         """
         return {
-            "input_tokens": self.planner_agent.usage["input_tokens"]
-            + self.actor_agent.usage["input_tokens"]
-            + self.retrieval_agent.usage["input_tokens"],
-            "output_tokens": self.planner_agent.usage["output_tokens"]
-            + self.actor_agent.usage["output_tokens"]
-            + self.retrieval_agent.usage["output_tokens"],
-            "total_tokens": self.planner_agent.usage["total_tokens"]
-            + self.actor_agent.usage["total_tokens"]
-            + self.retrieval_agent.usage["total_tokens"],
+            "input_tokens": (
+                self.planner_agent.usage["input_tokens"]
+                + self.actor_agent.usage["input_tokens"]
+                + self.retrieval_agent.usage["input_tokens"]
+            ),
+            "output_tokens": (
+                self.planner_agent.usage["output_tokens"]
+                + self.actor_agent.usage["output_tokens"]
+                + self.retrieval_agent.usage["output_tokens"]
+            ),
+            "total_tokens": (
+                self.planner_agent.usage["total_tokens"]
+                + self.actor_agent.usage["total_tokens"]
+                + self.retrieval_agent.usage["total_tokens"]
+            ),
         }

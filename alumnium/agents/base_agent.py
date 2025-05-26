@@ -9,6 +9,10 @@ from alumnium.models import Model, Provider
 
 
 class BaseAgent:
+    def __init__(self):
+        self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+        self._load_prompts()
+
     def _load_prompts(self):
         provider = Model.current.provider
         agent_name = self.__class__.__name__.replace("Agent", "").lower()
@@ -31,6 +35,12 @@ class BaseAgent:
         for prompt_file in prompt_path.glob("*.md"):
             with open(prompt_file) as f:
                 self.prompts[prompt_file.stem] = f.read()
+
+    def _update_usage(self, usage_metadata):
+        if usage_metadata:
+            self.usage["input_tokens"] += usage_metadata.get("input_tokens", 0)
+            self.usage["output_tokens"] += usage_metadata.get("output_tokens", 0)
+            self.usage["total_tokens"] += usage_metadata.get("total_tokens", 0)
 
     def _with_retry(self, llm):
         llm = self.__with_bedrock_retry(llm)
