@@ -66,4 +66,8 @@ class PlannerAgent(BaseAgent):
             if step and step.upper() != "NOOP":
                 steps.append(step)
 
+        if not steps:
+            logger.warning(f"No steps to execute for goal: {goal}")
+            return []
+
         return steps
