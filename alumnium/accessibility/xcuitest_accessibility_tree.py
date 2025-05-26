@@ -1,11 +1,13 @@
-from xml.etree.ElementTree import ElementTree, Element, ParseError, indent, tostring, fromstring
+from xml.etree.ElementTree import Element, ParseError, indent, tostring, fromstring
 
 from alumnium.logutils import get_logger
+from .accessibility_element import AccessibilityElement
+from .base_accessibility_tree import BaseAccessibilityTree
 
 logger = get_logger(__name__)
 
 
-class XCUITestAccessibilityTree:
+class XCUITestAccessibilityTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
         self.tree = None  # Will hold the root node of the processed tree
         self.id_counter = 0
@@ -143,22 +145,11 @@ class XCUITestAccessibilityTree:
                 return found_node
         return None
 
-    def element_by_id(self, element_id_str: str) -> dict | None:
+    def element_by_id(self, id: int) -> AccessibilityElement:
         """Finds an element by its ID and returns its properties (type, name, label, value)."""
-        if not self.tree:
-            # logger.debug("element_by_id called on an empty tree.")
-            return None
-        try:
-            target_id = int(element_id_str)
-        except ValueError:
-            # logger.warning(f"Invalid element ID format: {element_id_str}. Must be an integer string.")
-            return None
+        element = AccessibilityElement(id=id)
 
-        found_node = self._find_node_by_id_recursive(self.tree, target_id)
-
-        if not found_node:
-            # logger.debug(f"Element with ID '{target_id}' not found in the tree.")
-            return None
+        found_node = self._find_node_by_id_recursive(self.tree, id)
 
         # Reconstruct original XCUIElementType
         simplified_role = found_node.get("role", {}).get("value", "generic")
@@ -166,21 +157,19 @@ class XCUITestAccessibilityTree:
             element_type = "XCUIElementTypeOther"
         else:
             element_type = f"XCUIElementType{simplified_role}"
-
-        # Extract desired properties (name_raw, label_raw, value_raw)
-        result = {"type": element_type, "name": None, "label": None, "value": None}
+        element.type = element_type
 
         for prop in found_node.get("properties", []):
             prop_name = prop.get("name")
             prop_value = prop.get("value")
             if prop_name == "name_raw":
-                result["name"] = prop_value
+                element.name = prop_value
             elif prop_name == "label_raw":
-                result["label"] = prop_value
+                element.label = prop_value
             elif prop_name == "value_raw":
-                result["value"] = prop_value
+                element.value = prop_value
 
-        return result
+        return element
 
     def to_xml(self) -> str:
         """Converts the processed tree back to an XML string with filtering."""

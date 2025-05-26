@@ -44,10 +44,10 @@ class ActorAgent(BaseAgent):
         for tool_call in message.tool_calls:
             tool = ALL_TOOLS[tool_call["name"]](**tool_call["args"])
             if "id" in tool.model_fields_set:
-                tool.id = aria.cached_ids[tool.id]
+                tool.id = aria.element_by_id(tool.id).id
             if "from_id" in tool.model_fields_set:
-                tool.from_id = aria.cached_ids[tool.from_id]
+                tool.from_id = aria.element_by_id(tool.from_id).id
             if "to_id" in tool.model_fields_set:
-                tool.to_id = aria.cached_ids[tool.to_id]
+                tool.to_id = aria.element_by_id(tool.to_id).id
 
             tool.invoke(self.driver)

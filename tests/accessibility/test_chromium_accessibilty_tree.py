@@ -69,5 +69,7 @@ def test_to_xml(chromium_tree: ChromiumAccessibilityTree):
     )
 
 
-# def test_cached_ids(chromium_tree: AriaTree):
-#     assert chromium_tree.cached_ids == {1: 1001, 2: 420, 3: 69}
+def test_element_by_id(chromium_tree: ChromiumAccessibilityTree):
+    assert chromium_tree.element_by_id(1).id == 7
+    assert chromium_tree.element_by_id(2).id == 6
+    assert chromium_tree.element_by_id(3).id == 5

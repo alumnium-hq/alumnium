@@ -43,3 +43,10 @@ def test_xctree(xcuitest_tree: XCUITestAccessibilityTree):
 </Application>
     """.strip()
     )
+
+
+def test_element_by_id(xcuitest_tree: XCUITestAccessibilityTree):
+    element = xcuitest_tree.element_by_id(73)
+    assert element.id == 73
+    assert element.name == "Continue"
+    assert element.type == "XCUIElementTypeButton"

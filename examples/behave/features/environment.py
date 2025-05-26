@@ -47,9 +47,8 @@ def alumnium(context):
         context.al.learn(
             goal='create a new task "this is Al"',
             actions=[
-                "click add",
-                'type "this is Al" to a text field',
-                "click save button",
+                "click add button",
+                'type "this is Al" to a text field and click save button',
             ],
         )
         context.al.learn(

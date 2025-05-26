@@ -68,13 +68,13 @@ class AppiumDriver(BaseDriver):
         return "'"
 
     def _find_element(self, id: int) -> WebElement:
-        element = self.aria_tree.element_by_id(str(id))
-        xpath = f"//{element['type']}"
-        if element["name"]:
-            xpath += f"[@name='{element['name']}']"
-        elif element["value"]:
-            xpath += f"[@value='{element['value']}']"
-        elif element["label"]:
-            xpath += f"[@label='{element['label']}']"
+        element = self.aria_tree.element_by_id(id)
+        xpath = f"//{element.type}"
+        if element.name:
+            xpath += f"[@name='{element.name}']"
+        elif element.value:
+            xpath += f"[@value='{element.value}']"
+        elif element.label:
+            xpath += f"[@label='{element.label}']"
 
         return self.driver.find_element(By.XPATH, xpath)

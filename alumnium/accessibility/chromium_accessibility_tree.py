@@ -2,13 +2,16 @@ from xml.etree.ElementTree import Element, indent, tostring
 
 from alumnium.logutils import ALUMNIUM_LOG_PATH, console_output, file_output
 
+from .accessibility_element import AccessibilityElement
+from .base_accessibility_tree import BaseAccessibilityTree
+
 if ALUMNIUM_LOG_PATH == "stdout":
     logger = console_output()
 else:
     logger = file_output()
 
 
-class ChromiumAccessibilityTree:
+class ChromiumAccessibilityTree(BaseAccessibilityTree):
     def __init__(self, tree: dict):
         self.tree = {}  # Initialize the result dictionary
 
@@ -40,7 +43,10 @@ class ChromiumAccessibilityTree:
                 node.pop("childIds", None)
                 node.pop("parentId", None)
 
-        logger.debug(f"  -> ARIA Cached IDs: {self.cached_ids}")
+        logger.debug(f"  -> Cached IDs: {self.cached_ids}")
+
+    def element_by_id(self, id: int) -> AccessibilityElement:
+        return AccessibilityElement(id=self.cached_ids[id])
 
     def to_xml(self):
         """Converts the nested tree to XML format using role.value as tags."""
@@ -95,6 +101,6 @@ class ChromiumAccessibilityTree:
             indent(element)
             xml_string += tostring(element, encoding="unicode")
 
-        logger.debug(f"  -> ARIA XML: {xml_string}")
+        logger.debug(f"  -> XML: {xml_string}")
 
         return xml_string
