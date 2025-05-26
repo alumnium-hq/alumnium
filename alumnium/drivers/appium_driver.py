@@ -50,6 +50,10 @@ class AppiumDriver(BaseDriver):
         # TODO: Implement select functionality
         pass
 
+    def swipe(self, id: int):
+        # TODO: Implement swipe functionality and the tool
+        pass
+
     @property
     def title(self) -> str:
         return ""

@@ -162,9 +162,9 @@ class XCAriaTree:
         raw_type = attributes.get("type", element.tag)
         simplified_role = self._simplify_role(raw_type)
 
-        name_value = attributes.get("label")
+        name_value = attributes.get("name")
         if name_value is None:  # Prefer label
-            name_value = attributes.get("name")
+            name_value = attributes.get("label")
         if name_value is None and simplified_role == "StaticText":  # For StaticText, value is often the content
             name_value = attributes.get("value")
         if name_value is None:  # Fallback if all else fails

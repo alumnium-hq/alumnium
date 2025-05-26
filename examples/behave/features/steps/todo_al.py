@@ -66,7 +66,7 @@ def step_impl(context, title):
     if isinstance(context.driver, Appium):
         context.al.check(
             f'"{title}" task is not marked as completed '
-            f"(completion is indicated by a filled checkmark image on the left of the task title)"
+            f"(completion is indicated by a checkmark image to the left of the task title)"
         )
     else:
         context.al.check(f'"{title}" task is not marked as completed')
@@ -77,7 +77,7 @@ def step_impl(context, title):
     if isinstance(context.driver, Appium):
         context.al.check(
             f'"{title}" task is marked as completed '
-            f"(completion is indicated by a filled checkmark image on the left of the task title)"
+            f"(completion is indicated by a checkmark image to the left of the task title)"
         )
     else:
         context.al.check(f'"{title}" task is marked as completed')
