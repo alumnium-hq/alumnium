@@ -15,14 +15,14 @@ class Provider(Enum):
 
 class Name:
     DEFAULT = {
-        Provider.AZURE_OPENAI: "gpt-4o-mini",  # 2024-07-18
-        Provider.ANTHROPIC: "claude-3-haiku-20240307",
-        Provider.AWS_ANTHROPIC: "anthropic.claude-3-haiku-20240307-v1:0",
-        Provider.AWS_META: "us.meta.llama3-2-90b-instruct-v1:0",
+        Provider.AZURE_OPENAI: "gpt-4.1-nano", #2025-04-14
+        Provider.ANTHROPIC: "claude-3-5-haiku-20241022 ",
+        Provider.AWS_ANTHROPIC: "anthropic.claude-3-5-haiku-20241022-v1:0",
+        Provider.AWS_META: "us.meta.llama4-scout-17b-instruct-v1:0",
         Provider.DEEPSEEK: "deepseek-chat",
         Provider.GOOGLE: "gemini-2.0-flash-001",
         Provider.OLLAMA: "mistral-small3.1",
-        Provider.OPENAI: "gpt-4o-mini-2024-07-18",
+        Provider.OPENAI: "gpt-4.1-nano-2025-04-14",
     }
 
 
