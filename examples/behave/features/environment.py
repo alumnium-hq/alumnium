@@ -106,12 +106,6 @@ def after_scenario(context, scenario):
     else:
         context.al.cache.discard()
 
-    driver = getenv("ALUMNIUM_DRIVER", "selenium")
-    if driver == "appium":
-        context.driver.terminate_app("com.ayodeji.TodoList")
-        context.driver.remove_app("com.ayodeji.TodoList")
-        context.driver.install_app(context.driver.capabilities["app"])
-
     for formatter in context._runner.formatters:
         if formatter.name == "html-pretty":
             timestamp = datetime.now().strftime("%H-%M-%S")
@@ -129,3 +123,8 @@ def after_scenario(context, scenario):
                 data=str(context.al.stats()),
                 caption="Tokens used",
             )
+
+    if isinstance(context.driver, Appium):
+        context.driver.terminate_app("com.ayodeji.TodoList")
+        context.driver.remove_app("com.ayodeji.TodoList")
+        context.driver.install_app(context.driver.capabilities["app"])
