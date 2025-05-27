@@ -28,7 +28,7 @@ def driver(context):
         # https://github.com/ayodejiayankola/To-Do-App-SwiftUI
         options.app = f"{Path(__file__).parent}/support/ToDoList.app"
         options.automation_name = "XCUITest"
-        options.device_name = "iPhone 16"
+        options.device_name = "iPhone 15"
         options.new_command_timeout = 300
         options.platform_name = "iOS"
         options.platform_version = "17.4"
