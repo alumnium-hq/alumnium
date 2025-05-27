@@ -1,14 +1,11 @@
 from xml.etree.ElementTree import Element, indent, tostring
 
-from alumnium.logutils import ALUMNIUM_LOG_PATH, console_output, file_output
+from alumnium.logutils import get_logger
 
 from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 class ChromiumAccessibilityTree(BaseAccessibilityTree):

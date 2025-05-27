@@ -5,15 +5,12 @@ from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
 
 from alumnium.accessibility import XCUITestAccessibilityTree
-from alumnium.logutils import ALUMNIUM_LOG_PATH, console_output, file_output
+from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
 from .keys import Key
 
-if ALUMNIUM_LOG_PATH == "stdout":
-    logger = console_output()
-else:
-    logger = file_output()
+logger = get_logger(__name__)
 
 
 class AppiumDriver(BaseDriver):
