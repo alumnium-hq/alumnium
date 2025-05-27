@@ -34,7 +34,7 @@ class Alumni:
         else:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
-        logger.info(f"Using model: {self.model}")
+        logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
         if self.model.provider == Provider.AZURE_OPENAI:
             llm = AzureChatOpenAI(
                 model=self.model.name,
