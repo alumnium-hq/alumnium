@@ -42,8 +42,7 @@ def driver(context):
 @fixture
 def alumnium(context):
     context.al = Alumni(context.driver)
-    driver = getenv("ALUMNIUM_DRIVER", "selenium")
-    if driver == "appium":
+    if isinstance(context.driver, Appium):
         context.al.learn(
             goal='create a new task "this is Al"',
             actions=[

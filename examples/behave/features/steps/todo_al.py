@@ -3,6 +3,8 @@ from behave import *
 from playwright.sync_api import Page
 from selenium.webdriver import Chrome
 
+from alumnium.models import Provider
+
 
 @given("I open application")
 def step_impl(context):
@@ -17,7 +19,7 @@ def step_impl(context):
 
 @when('I create a new task "{title}"')
 def step_impl(context, title):
-    if isinstance(context.driver, Appium):
+    if isinstance(context.driver, Appium) and context.al.model.provider != Provider.AWS_META:
         context.al.do("click add button")
     context.al.do(f"create a new task '{title}'")
 
