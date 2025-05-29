@@ -12,4 +12,4 @@ __pycache__/
 
 .env
 
-.alumnium-cache.sqlite
+.alumnium-cache.sqlite*
