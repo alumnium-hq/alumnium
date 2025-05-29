@@ -8,7 +8,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
-from alumnium.aria import AriaTree
+from alumnium.accessibility import ChromiumAccessibilityTree
 from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
@@ -28,9 +28,9 @@ class SeleniumDriver(BaseDriver):
         self._patch_driver(driver)
 
     @property
-    def aria_tree(self) -> AriaTree:
+    def aria_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
-        return AriaTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
+        return ChromiumAccessibilityTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
 
     def click(self, id: int):
         self._find_element(id).click()

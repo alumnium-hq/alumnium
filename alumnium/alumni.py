@@ -1,5 +1,6 @@
 from os import getenv
 
+from appium.webdriver.webdriver import WebDriver as Appium
 from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
 from langchain_deepseek import ChatDeepSeek
@@ -13,9 +14,9 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from .agents import *
 from .agents.retriever_agent import Data
 from .cache import Cache
-from .drivers import PlaywrightDriver, SeleniumDriver
-from .models import Model, Provider
+from .drivers import AppiumDriver, PlaywrightDriver, SeleniumDriver
 from .logutils import get_logger
+from .models import Model, Provider
 
 logger = get_logger(__name__)
 
@@ -24,14 +25,16 @@ class Alumni:
     def __init__(self, driver: Page | WebDriver, model: Model = None):
         self.model = model or Model.current
 
-        if isinstance(driver, WebDriver):
-            self.driver = SeleniumDriver(driver)
+        if isinstance(driver, Appium):
+            self.driver = AppiumDriver(driver)
         elif isinstance(driver, Page):
             self.driver = PlaywrightDriver(driver)
+        elif isinstance(driver, WebDriver):
+            self.driver = SeleniumDriver(driver)
         else:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
-        logger.info(f"Using model: {self.model}")
+        logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
         if self.model.provider == Provider.AZURE_OPENAI:
             llm = AzureChatOpenAI(
                 model=self.model.name,
