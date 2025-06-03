@@ -36,6 +36,7 @@ class ActorAgent(BaseAgent):
         logger.info(f"  -> Step: {step}")
 
         aria = self.driver.aria_tree
+        logger.debug(f"  -> Accessibility Tree: {aria.to_xml()}")
         message = self.chain.invoke({"goal": goal, "step": step, "aria": aria.to_xml()})
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
