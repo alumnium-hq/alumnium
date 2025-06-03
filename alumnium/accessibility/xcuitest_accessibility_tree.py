@@ -1,3 +1,5 @@
+from dataclasses import dataclass, field
+from typing import Any, Dict, List
 from xml.etree.ElementTree import Element, ParseError, indent, tostring, fromstring
 
 from alumnium.logutils import get_logger
@@ -5,6 +7,24 @@ from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
 
 logger = get_logger(__name__)
+
+
+@dataclass
+class Node:
+    """A single accessibility node in the parsed hierarchy."""
+
+    id: int
+    role: str
+    name: str
+    ignored: bool
+    properties: List[Dict[str, Any]] = field(default_factory=list)
+    children: List["Node"] = field(default_factory=list)
+
+    def is_visible(self) -> bool:
+        for prop in self.properties:
+            if prop["name"] == "visible":
+                return bool(prop.get("value"))
+        return True
 
 
 class XCUITestAccessibilityTree(BaseAccessibilityTree):
@@ -48,22 +68,16 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         # f"  -> XCUI ARIA Tree processed. Root: {self.tree.get('role', {}).get('value') if self.tree else 'None'}"
         # )
 
-    def _get_next_id(self):
+    def _get_next_id(self) -> int:
         self.id_counter += 1
         return self.id_counter
 
     def _simplify_role(self, xcui_type: str) -> str:
-        if xcui_type.startswith("XCUIElementType"):
-            simplified = xcui_type[len("XCUIElementType") :]
-            # Map "Other" to "generic" to align with potential AriaTree conventions
-            if simplified == "Other":
-                return "generic"
-            return simplified
-        return xcui_type
+        simple = xcui_type.removeprefix("XCUIElementType")
+        return "generic" if simple == "Other" else simple
 
-    def _parse_element(self, element: Element) -> dict:
+    def _parse_element(self, element: Element) -> Node:
         node_id = self._get_next_id()
-        self.cached_ids[node_id] = node_id
         attributes = element.attrib
 
         raw_type = attributes.get("type", element.tag)
@@ -79,7 +93,7 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
 
         # An element is considered "ignored" if it's not accessible.
         # This aligns with ARIA principles where accessibility is key.
-        ignored = attributes.get("ignored", False)
+        ignored = attributes.get("ignored") == "true"
 
         properties = []
         # Attributes to extract into the properties list
@@ -117,51 +131,41 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
                     prop_entry["value"] = attr_value
                 properties.append(prop_entry)
 
-        node_dict = {
-            "id": node_id,
-            "role": {"value": simplified_role},
-            "name": {"value": name_value},
-            "ignored": ignored,
-            "properties": properties,
-            "nodes": [],
-        }
+        node = Node(
+            id=node_id,
+            role=simplified_role,
+            name=name_value,
+            ignored=ignored,
+            properties=properties,
+        )
+        self.cached_ids[node_id] = node
 
         for child_element in element:
-            child_node = self._parse_element(child_element)
-            node_dict["nodes"].append(child_node)
+            node.children.append(self._parse_element(child_element))
 
-        return node_dict
+        return node
 
-    def get_tree(self):
+    def get_tree(self) -> dict:
         return self.tree
-
-    def _find_node_by_id_recursive(self, node_dict: dict, target_id: int) -> dict | None:
-        """Helper to recursively find a node by its integer ID."""
-        if node_dict.get("id") == target_id:
-            return node_dict
-        for child_node in node_dict.get("nodes", []):
-            found_node = self._find_node_by_id_recursive(child_node, target_id)
-            if found_node:
-                return found_node
-        return None
 
     def element_by_id(self, id: int) -> AccessibilityElement:
         """Finds an element by its ID and returns its properties (type, name, label, value)."""
         element = AccessibilityElement(id=id)
 
-        found_node = self._find_node_by_id_recursive(self.tree, id)
+        found_node = self.cached_ids.get(id)
+        if found_node is None:
+            raise KeyError(f"No element with id={id}")
 
         # Reconstruct original XCUIElementType
-        simplified_role = found_node.get("role", {}).get("value", "generic")
+        simplified_role = found_node.role or "generic"
         if simplified_role == "generic":
             element_type = "XCUIElementTypeOther"
         else:
             element_type = f"XCUIElementType{simplified_role}"
         element.type = element_type
 
-        for prop in found_node.get("properties", []):
-            prop_name = prop.get("name")
-            prop_value = prop.get("value")
+        for prop in found_node.properties:
+            prop_name, prop_value = prop.get("name"), prop.get("value")
             if prop_name == "name_raw":
                 element.name = prop_value
             elif prop_name == "label_raw":
@@ -176,36 +180,19 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         if not self.tree:
             return ""
 
-        def convert_dict_to_xml(node_dict: dict) -> Element | None:
-            # Filter out ignored elements
-            if node_dict.get("ignored", False):
-                return None
-
-            # Filter out non-visible elements by checking the 'visible' property
-            is_visible = True  # Assume visible if property not found
-            for prop in node_dict.get("properties", []):
-                if prop.get("name") == "visible":
-                    is_visible = prop.get("value", False)
-                    break
-            if not is_visible:
+        def convert_dict_to_xml(node: Node) -> Element | None:
+            # Filter out ignored or non-visible elements
+            if node.ignored or not node.is_visible():
                 return None
 
             # Use role as the tag name directly
-            tag_name = node_dict.get("role", {}).get("value", "generic")
-            if not tag_name:  # Should not happen if parsing is correct
-                tag_name = "generic"
+            tag_name = node.role or "generic"
 
-            xml_attrs = {}
+            xml_attrs = {"id": str(node.id)}
             # Add name (as 'name' attribute) from the 'name' field if present
-            name_obj = node_dict.get("name", {})
-            name_value = name_obj.get("value")
-            if name_value:
+            name_value = node.name
+            if node.name:
                 xml_attrs["name"] = name_value
-
-            # Add id attribute
-            node_id = node_dict.get("id")
-            if node_id is not None:
-                xml_attrs["id"] = str(node_id)
 
             # Properties to include (excluding those explicitly filtered out)
             # and also excluding those already handled (like 'name', 'id', 'visible', 'ignored')
@@ -213,8 +200,7 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
             # Note: 'value' from properties is different from 'name.value'
             # It usually refers to the 'value' attribute of an XCUIElement
 
-            properties = node_dict.get("properties", [])
-            for prop in properties:
+            for prop in node.properties:
                 prop_name = prop.get("name")
                 if prop_name in allowed_properties:
                     prop_value = prop.get("value")
@@ -227,8 +213,8 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
             element = Element(tag_name, xml_attrs)
 
             # Add children recursively
-            for child_node_dict in node_dict.get("nodes", []):
-                child_element = convert_dict_to_xml(child_node_dict)
+            for child_node in node.children:
+                child_element = convert_dict_to_xml(child_node)
                 if child_element is not None:
                     element.append(child_element)
 
@@ -245,13 +231,14 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
                         del element.attrib["name"]
 
             # Prune empty generic elements
-            if tag_name == "generic":
-                has_significant_attributes = False
-                if element.attrib.get("name") or element.attrib.get("value"):  # Check for name or value attribute
-                    has_significant_attributes = True
-
-                if not has_significant_attributes and not element.text and not list(element):
-                    return None
+            if (
+                tag_name == "generic"
+                and not element.attrib.get("name")
+                and not element.attrib.get("value")
+                and not element.text
+                and not list(element)
+            ):
+                return None
 
             return element
 

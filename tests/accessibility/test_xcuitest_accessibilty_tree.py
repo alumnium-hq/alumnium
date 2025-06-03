@@ -16,7 +16,7 @@ def test_xctree(xcuitest_tree: XCUITestAccessibilityTree):
     assert (
         xcuitest_tree.to_xml()
         == """
-<Application name="ToDoList" id="1">
+<Application id="1" name="ToDoList">
   <Window id="2">
     <generic id="61">
       <generic id="62">
@@ -25,13 +25,13 @@ def test_xctree(xcuitest_tree: XCUITestAccessibilityTree):
             <generic id="67">
               <StaticText id="68">Welcome to ToDoList</StaticText>
             </generic>
-            <Image name="roundedIcon" id="69" />
+            <Image id="69" name="roundedIcon" />
             <StaticText id="70">Start with a quick onboarding</StaticText>
             <generic id="71">
               <generic id="72">
-                <Button name="Continue" id="73">
+                <Button id="73" name="Continue">
                   <StaticText id="74">Continue</StaticText>
-                  <Image name="checkmark.circle" id="75" />
+                  <Image id="75" name="checkmark.circle" />
                 </Button>
               </generic>
             </generic>
