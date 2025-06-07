@@ -264,8 +264,8 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
                     return None
 
             # Get the deepest meaningful node after flattening
-            flattened_node = find_deepest_meaningful_node(node_dict)
-            if flattened_node != node_dict:
+            flattened_node = find_deepest_meaningful_node(node)
+            if flattened_node != node:
                 # If we flattened, process the flattened node instead
                 # We need to re-evaluate the element based on the flattened_node
                 # This is a recursive call, ensure it doesn't lead to infinite loops
