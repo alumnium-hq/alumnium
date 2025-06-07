@@ -181,8 +181,8 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
             return ""
 
         def convert_dict_to_xml(node: Node) -> Element | None:
-            # Filter out ignored or non-visible elements
-            if node.ignored or not node.is_visible():
+            # Filter out ignored elements
+            if node.ignored:
                 return None
 
             # Recursive flattening of deeply nested structures

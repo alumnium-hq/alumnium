@@ -29,6 +29,44 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
         == """
 <Application id="1" name="ToDoList">
   <Window id="2">
+    <generic id="5">
+      <NavigationBar name="BLTNBoard.BulletinView" id="6">
+        <Button name="ToDoList" id="7" />
+        <Button name="settingsIcon" id="8" />
+      </NavigationBar>
+      <generic id="11">
+        <Table id="12">
+          <Cell id="13">
+            <StaticText id="14">0</StaticText>
+            <StaticText id="17">All Tasks</StaticText>
+          </Cell>
+          <Cell id="21">
+            <StaticText id="22">0</StaticText>
+            <StaticText id="25">Today</StaticText>
+          </Cell>
+          <Cell id="28">
+            <StaticText id="29">0</StaticText>
+            <StaticText id="32">Tomorrow</StaticText>
+          </Cell>
+          <Cell id="35">
+            <StaticText id="36">0</StaticText>
+            <StaticText id="39">Next 7 Days</StaticText>
+          </Cell>
+          <Cell id="42">
+            <StaticText id="45">Custom Interval</StaticText>
+          </Cell>
+          <Cell id="48">
+            <StaticText id="49">0</StaticText>
+            <StaticText id="52">Completed</StaticText>
+          </Cell>
+          <generic name="Vertical scroll bar, 1 page" id="56" />
+          <generic name="Horizontal scroll bar, 1 page" id="58" />
+        </Table>
+        <Button name="Add Task" id="59">
+          <StaticText id="60">Add Task</StaticText>
+        </Button>
+      </generic>
+    </generic>
     <generic id="62">
       <generic id="66">
         <generic id="67">
