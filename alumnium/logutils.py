@@ -41,7 +41,7 @@ def _build_console_handler() -> logging.Handler:
 def _build_file_handler(path: str) -> logging.Handler:
     handler = logging.FileHandler(path, mode="w")
     formatter = logging.Formatter(
-        fmt="%(asctime)s-%(message)s",
+        fmt="%(asctime)s %(filename)s:%(lineno)d %(levelname)s\t%(message)s",
         datefmt="[%d-%m-%y %H:%M:%S]",
     )
     handler.setFormatter(formatter)
