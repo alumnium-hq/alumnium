@@ -18,7 +18,7 @@ class AppiumDriver(BaseDriver):
         self.driver = driver
 
     @property
-    def aria_tree(self) -> XCUITestAccessibilityTree:
+    def accessibility_tree(self) -> XCUITestAccessibilityTree:
         return XCUITestAccessibilityTree(self.driver.page_source)
 
     def click(self, id: int):

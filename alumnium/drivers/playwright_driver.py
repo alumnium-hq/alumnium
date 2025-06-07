@@ -31,7 +31,7 @@ class PlaywrightDriver(BaseDriver):
         self.page = page
 
     @property
-    def aria_tree(self) -> ChromiumAccessibilityTree:
+    def accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
         return ChromiumAccessibilityTree(self.client.send("Accessibility.getFullAXTree"))
 
