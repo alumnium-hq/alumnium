@@ -46,13 +46,17 @@ class RetrieverAgent(BaseAgent):
         logger.info("Starting retrieval:")
         logger.info(f"  -> Information: {information}")
 
-        aria = self.driver.aria_tree.to_xml()
+        accessibility_tree = self.driver.accessibility_tree.to_xml()
         title = self.driver.title
         url = self.driver.url
 
+        logger.debug(f"  -> Accessibility tree: {accessibility_tree}")
+        logger.debug(f"  -> Title: {title}")
+        logger.debug(f"  -> URL: {url}")
+
         prompt = ""
         if not vision:
-            prompt += self.prompts["_user_text"].format(aria=aria, title=title, url=url)
+            prompt += self.prompts["_user_text"].format(accessibility_tree=accessibility_tree, title=title, url=url)
         prompt += "\n"
         prompt += information
 

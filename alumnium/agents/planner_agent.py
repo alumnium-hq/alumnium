@@ -41,7 +41,7 @@ class PlannerAgent(BaseAgent):
         self.prompt_with_examples.examples.append(
             {
                 "goal": goal,
-                "aria": "",
+                "accessibility_tree": "",
                 "actions": self.LIST_SEPARATOR.join(actions),
             }
         )
@@ -50,8 +50,9 @@ class PlannerAgent(BaseAgent):
         logger.info("Starting planning:")
         logger.info(f"  -> Goal: {goal}")
 
-        aria = self.driver.aria_tree
-        message = self.chain.invoke({"goal": goal, "aria": aria.to_xml()})
+        accessibility_tree = self.driver.accessibility_tree.to_xml()
+        logger.debug(f"  -> Accessibility tree: {accessibility_tree}")
+        message = self.chain.invoke({"goal": goal, "accessibility_tree": accessibility_tree})
 
         logger.info(f"  <- Result: {message.content}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
