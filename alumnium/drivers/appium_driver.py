@@ -62,16 +62,22 @@ class AppiumDriver(BaseDriver):
 
     @property
     def url(self) -> str:
-        return "'"
+        return ""
 
     def _find_element(self, id: int) -> WebElement:
-        element = self.aria_tree.element_by_id(id)
+        element = self.accessibility_tree.element_by_id(id)
         xpath = f"//{element.type}"
+
+        props = {}
         if element.name:
-            xpath += f"[@name='{element.name}']"
-        elif element.value:
-            xpath += f"[@value='{element.value}']"
-        elif element.label:
-            xpath += f"[@label='{element.label}']"
+            props["name"] = element.name
+        if element.value:
+            props["value"] = element.value
+        if element.label:
+            props["label"] = element.label
+
+        if props:
+            props = [f'@{k}="{v}"' for k, v in props.items()]
+            xpath += f"[{' and '.join(props)}]"
 
         return self.driver.find_element(By.XPATH, xpath)
