@@ -77,8 +77,8 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
         <generic id="72">
           <Button id="73" name="Continue">
             <StaticText id="74">Continue</StaticText>
-            <Image id="75" name="checkmark.circle" />
-            <TextField id="76" name="maskedElement" />
+            <Image id="75" name="checkmark.circle" label="Selected" />
+            <TextField id="76" name="maskedElement" label="Enter Code" value="Entered value" />
           </Button>
         </generic>
       </generic>
@@ -90,7 +90,6 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
 
 
 def test_nested_duplicated_tree(duplicated_tree: XCUITestAccessibilityTree):
-    print(duplicated_tree.to_xml())
     assert (
         duplicated_tree.to_xml()
         == """
@@ -109,7 +108,7 @@ def test_nested_duplicated_tree(duplicated_tree: XCUITestAccessibilityTree):
                 </generic>
               </generic>
               <StaticText id="53">Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today!</StaticText>
-              <generic id="54" name="onboarding-footer-button">
+              <generic id="54" name="onboarding-footer-button" label="Start Now">
                 <Button id="56" name="Start Now" />
               </generic>
             </generic>
