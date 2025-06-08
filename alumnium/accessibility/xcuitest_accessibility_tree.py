@@ -216,27 +216,51 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
 
             xml_attrs = {"id": str(node.id)}
             # Add name (as 'name' attribute) from the 'name' field if present
-            name_value = node.name
-            if node.name:
-                xml_attrs["name"] = name_value
+            name_value = node.name  # Used for StaticText handling later
+            if node.name:  # if node.name is not an empty string
+                xml_attrs["name"] = node.name
 
-            # Add id attribute
-            node_id = node.id
-            if node_id is not None:
-                xml_attrs["id"] = str(node_id)
-
-            # Properties to include
-            allowed_properties = ["enabled", "value", "label"]
+            # Extract raw label, raw value, and enabled status from properties
+            raw_label_val = None
+            raw_value_val = None
+            is_enabled = True  # Assume true unless "enabled: false" is found
 
             for prop in node.properties:
-                prop_name = prop.get("name")
-                if prop_name in allowed_properties:
-                    prop_value = prop.get("value")
-                    if prop_name == "enabled":
-                        if not prop_value:  # Only add enabled="false"
-                            xml_attrs[prop_name] = "false"
-                    elif prop_value is not None:
-                        xml_attrs[prop_name] = str(prop_value)
+                p_name = prop.get("name")
+                p_value = prop.get("value")
+
+                if p_name == "label_raw":
+                    raw_label_val = str(p_value) if p_value is not None else None
+                elif p_name == "value_raw":
+                    raw_value_val = str(p_value) if p_value is not None else None
+                elif p_name == "enabled":
+                    if p_value is False:  # 'enabled' property in Node is boolean
+                        is_enabled = False
+
+            current_name_attr_val = xml_attrs.get("name")
+
+            # Add 'label' attribute if raw_label_val exists and is different from current_name_attr_val
+            if raw_label_val is not None and raw_label_val != current_name_attr_val:
+                xml_attrs["label"] = raw_label_val
+
+            # Add 'value' attribute if raw_value_val exists and is different from:
+            # 1. current_name_attr_val (the name attribute value)
+            # 2. The value of the 'label' attribute (if 'label' was added)
+            if raw_value_val is not None:
+                add_value_attr = True
+                if raw_value_val == current_name_attr_val:
+                    add_value_attr = False
+
+                # Check against the label attribute *if it was added*
+                if "label" in xml_attrs and raw_value_val == xml_attrs.get("label"):
+                    add_value_attr = False
+
+                if add_value_attr:
+                    xml_attrs["value"] = raw_value_val
+
+            # Add 'enabled="false"' if not enabled
+            if not is_enabled:
+                xml_attrs["enabled"] = "false"
 
             element = Element(tag_name, xml_attrs)
 
