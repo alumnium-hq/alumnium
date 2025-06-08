@@ -30,9 +30,9 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
 <Application id="1" name="ToDoList">
   <Window id="2">
     <generic id="5">
-      <NavigationBar name="BLTNBoard.BulletinView" id="6">
-        <Button name="ToDoList" id="7" />
-        <Button name="settingsIcon" id="8" />
+      <NavigationBar id="6" name="BLTNBoard.BulletinView">
+        <Button id="7" name="ToDoList" />
+        <Button id="8" name="settingsIcon" />
       </NavigationBar>
       <generic id="11">
         <Table id="12">
@@ -59,10 +59,10 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
             <StaticText id="49">0</StaticText>
             <StaticText id="52">Completed</StaticText>
           </Cell>
-          <generic name="Vertical scroll bar, 1 page" id="56" />
-          <generic name="Horizontal scroll bar, 1 page" id="58" />
+          <generic id="56" name="Vertical scroll bar, 1 page" />
+          <generic id="58" name="Horizontal scroll bar, 1 page" />
         </Table>
-        <Button name="Add Task" id="59">
+        <Button id="59" name="Add Task">
           <StaticText id="60">Add Task</StaticText>
         </Button>
       </generic>
@@ -72,13 +72,13 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
         <generic id="67">
           <StaticText id="68">Welcome to ToDoList</StaticText>
         </generic>
-        <Image name="roundedIcon" id="69" />
+        <Image id="69" name="roundedIcon" />
         <StaticText id="70">Start with a quick onboarding</StaticText>
         <generic id="72">
-          <Button name="Continue" id="73">
+          <Button id="73" name="Continue">
             <StaticText id="74">Continue</StaticText>
-            <Image name="checkmark.circle" id="75" label="Selected" />
-            <TextField name="maskedElement" id="76" label="Enter Code" value="Entered value" />
+            <Image id="75" name="checkmark.circle" />
+            <TextField id="76" name="maskedElement" />
           </Button>
         </generic>
       </generic>
@@ -94,23 +94,23 @@ def test_nested_duplicated_tree(duplicated_tree: XCUITestAccessibilityTree):
     assert (
         duplicated_tree.to_xml()
         == """
-<Application name="FooBar" id="1">
+<Application id="1" name="FooBar">
   <Window id="2">
     <generic id="5">
-      <generic name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now" id="12">
-        <generic name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now" id="15">
-          <generic name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now" id="28">
-            <generic name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now" id="39">
-              <generic name="Welcome to the new FooBar app! We're happy to have you!" id="40">
-                <generic name="Welcome to the new FooBar app! We're happy to have you!" id="46">
-                  <generic name="IconFooBar" id="49" />
+      <generic id="12" name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now">
+        <generic id="15" name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now">
+          <generic id="28" name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now">
+            <generic id="39" name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now">
+              <generic id="40" name="Welcome to the new FooBar app! We're happy to have you!">
+                <generic id="46" name="Welcome to the new FooBar app! We're happy to have you!">
+                  <generic id="49" name="IconFooBar" />
                   <StaticText id="50">Welcome to the new FooBar app!</StaticText>
                   <StaticText id="51">We're happy to have you!</StaticText>
                 </generic>
               </generic>
               <StaticText id="53">Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today!</StaticText>
-              <generic name="onboarding-footer-button" id="54" label="Start Now">
-                <Button name="Start Now" id="56" />
+              <generic id="54" name="onboarding-footer-button">
+                <Button id="56" name="Start Now" />
               </generic>
             </generic>
           </generic>
