@@ -100,6 +100,7 @@
                   <XCUIElementTypeButton type="XCUIElementTypeButton" name="Continue" label="Continue" enabled="true" visible="true" accessible="true" x="36" y="739" width="321" height="55" index="0">
                     <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Continue" name="Continue" label="Continue" enabled="true" visible="true" accessible="false" x="160" y="754" width="73" height="25" index="0"/>
                     <XCUIElementTypeImage type="XCUIElementTypeImage" name="checkmark.circle" label="Selected" enabled="true" visible="true" accessible="true" x="42" y="180" width="22" height="23" index="0"/>
+                    <XCUIElementTypeTextField type="XCUIElementTypeTextField" value="Entered value" name="maskedElement" label="Enter Code" enabled="true" visible="true" accessible="true" x="34" y="131" width="325" height="42" index="0" placeholderValue="Type..."/>
                   </XCUIElementTypeButton>
                 </XCUIElementTypeOther>
               </XCUIElementTypeOther>

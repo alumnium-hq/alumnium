@@ -176,39 +176,91 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         return element
 
     def to_xml(self) -> str:
-        """Converts the processed tree back to an XML string with filtering."""
+        """Converts the processed tree back to an XML string with filtering and flattening."""
         if not self.tree:
             return ""
 
         def convert_dict_to_xml(node: Node) -> Element | None:
-            # Filter out ignored or non-visible elements
-            if node.ignored or not node.is_visible():
+            # Filter out ignored elements
+            if node.ignored:
                 return None
+
+            # Recursive flattening of deeply nested structures
+            def find_deepest_meaningful_node(current_node):
+                valid_children = [n for n in current_node.children if not n.ignored]
+
+                # If generic with only one child and same name, go deeper
+                if current_node.role == "generic" and len(valid_children) == 1:
+                    child = valid_children[0]
+                    parent_name = current_node.name
+                    child_name = child.name
+
+                    # If names match exactly or parent contains the entire child name
+                    if parent_name == child_name:
+                        return find_deepest_meaningful_node(child)
+                    elif child_name == "":
+                        child.name = parent_name
+                        return find_deepest_meaningful_node(child)
+
+                # Return current node if no more flattening possible
+                return current_node
+
+            # Get the deepest meaningful node after flattening
+            flattened_node = find_deepest_meaningful_node(node)
+            if flattened_node != node:
+                # If we flattened, process the flattened node instead
+                return convert_dict_to_xml(flattened_node)
 
             # Use role as the tag name directly
             tag_name = node.role or "generic"
 
             xml_attrs = {"id": str(node.id)}
             # Add name (as 'name' attribute) from the 'name' field if present
-            name_value = node.name
-            if node.name:
-                xml_attrs["name"] = name_value
+            name_value = node.name  # Used for StaticText handling later
+            if node.name:  # if node.name is not an empty string
+                xml_attrs["name"] = node.name
 
-            # Properties to include (excluding those explicitly filtered out)
-            # and also excluding those already handled (like 'name', 'id', 'visible', 'ignored')
-            allowed_properties = ["enabled", "value"]
-            # Note: 'value' from properties is different from 'name.value'
-            # It usually refers to the 'value' attribute of an XCUIElement
+            # Extract raw label, raw value, and enabled status from properties
+            raw_label_val = None
+            raw_value_val = None
+            is_enabled = True  # Assume true unless "enabled: false" is found
 
             for prop in node.properties:
-                prop_name = prop.get("name")
-                if prop_name in allowed_properties:
-                    prop_value = prop.get("value")
-                    if prop_name == "enabled":
-                        if not prop_value:  # Only add enabled="false"
-                            xml_attrs[prop_name] = "false"
-                    elif prop_value is not None:  # For 'value' and any other allowed props
-                        xml_attrs[prop_name] = str(prop_value)
+                p_name = prop.get("name")
+                p_value = prop.get("value")
+
+                if p_name == "label_raw":
+                    raw_label_val = str(p_value) if p_value is not None else None
+                elif p_name == "value_raw":
+                    raw_value_val = str(p_value) if p_value is not None else None
+                elif p_name == "enabled":
+                    if p_value is False:  # 'enabled' property in Node is boolean
+                        is_enabled = False
+
+            current_name_attr_val = xml_attrs.get("name")
+
+            # Add 'label' attribute if raw_label_val exists and is different from current_name_attr_val
+            if raw_label_val is not None and raw_label_val != current_name_attr_val:
+                xml_attrs["label"] = raw_label_val
+
+            # Add 'value' attribute if raw_value_val exists and is different from:
+            # 1. current_name_attr_val (the name attribute value)
+            # 2. The value of the 'label' attribute (if 'label' was added)
+            if raw_value_val is not None:
+                add_value_attr = True
+                if raw_value_val == current_name_attr_val:
+                    add_value_attr = False
+
+                # Check against the label attribute *if it was added*
+                if "label" in xml_attrs and raw_value_val == xml_attrs.get("label"):
+                    add_value_attr = False
+
+                if add_value_attr:
+                    xml_attrs["value"] = raw_value_val
+
+            # Add 'enabled="false"' if not enabled
+            if not is_enabled:
+                xml_attrs["enabled"] = "false"
 
             element = Element(tag_name, xml_attrs)
 
@@ -218,27 +270,31 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
                 if child_element is not None:
                     element.append(child_element)
 
-            # Handle text content for StaticText, if its name_value is the text.
-            # This is a common pattern for ARIA-like trees.
+            # Handle text content for StaticText
             if tag_name == "StaticText" and name_value and not list(element):
-                # If it's StaticText, has a name, and no children, set its text to name_value.
-                # This assumes name_value is the actual text content for StaticText.
                 element.text = name_value
-                # Remove name attribute if it's now text, to avoid redundancy, unless desired.
+                # Remove name attribute if it's now text, to avoid redundancy
                 if "name" in xml_attrs and xml_attrs["name"] == name_value:
-                    # Element attributes are already set, need to modify 'element' directly
                     if "name" in element.attrib:
                         del element.attrib["name"]
 
             # Prune empty generic elements
-            if (
-                tag_name == "generic"
-                and not element.attrib.get("name")
-                and not element.attrib.get("value")
-                and not element.text
-                and not list(element)
-            ):
-                return None
+            if tag_name == "generic":
+                has_significant_attributes = False
+                if element.attrib.get("name") or element.attrib.get("value"):
+                    has_significant_attributes = True
+
+                if not has_significant_attributes and not element.text and not list(element):
+                    return None
+
+            # Get the deepest meaningful node after flattening
+            flattened_node = find_deepest_meaningful_node(node)
+            if flattened_node != node:
+                # If we flattened, process the flattened node instead
+                # We need to re-evaluate the element based on the flattened_node
+                # This is a recursive call, ensure it doesn't lead to infinite loops
+                # if the flattening logic isn't strictly reductive.
+                return convert_dict_to_xml(flattened_node)
 
             return element
 

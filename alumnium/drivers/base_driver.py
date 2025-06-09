@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from alumnium.accessibility import ChromiumAccessibilityTree, XCUITestAccessibilityTree
+from alumnium.accessibility import BaseAccessibilityTree
 
 from .keys import Key
 
@@ -8,7 +8,7 @@ from .keys import Key
 class BaseDriver(ABC):
     @property
     @abstractmethod
-    def aria_tree(self) -> ChromiumAccessibilityTree | XCUITestAccessibilityTree:
+    def accessibility_tree(self) -> BaseAccessibilityTree:
         pass
 
     @abstractmethod
