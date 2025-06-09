@@ -3,9 +3,9 @@ from pathlib import Path
 from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
-from selenium.webdriver.common.action_chains import ActionChains
+from appium.webdriver.extensions.action_helpers import ActionHelpers
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.select import Select
+
 
 from alumnium.accessibility import XCUITestAccessibilityTree
 from alumnium.logutils import get_logger
@@ -27,22 +27,22 @@ class AppiumDriver(BaseDriver):
     def click(self, id: int):
         self._find_element(id).click()
 
-    def drag_and_drop(self, from_id: int, to_id: int):
-        actions = ActionChains(self.driver)
-        actions.drag_and_drop(
-            self._find_element(from_id),
-            self._find_element(to_id),
-        ).perform()
+    def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
+        action_helper = ActionHelpers()
+        action_helper.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
 
     def press_key(self, key: Key):
-        if key == Keys.BACKSPACE:
-            self.driver.switch_to.active_element.send_keys(Keys.BACKSPACE)
-        elif key == Keys.ENTER:
-            self.driver.switch_to.active_element.send_keys(Keys.ENTER)
-        elif key == Keys.ESCAPE:
-            self.driver.switch_to.active_element.send_keys(Keys.ESCAPE)
-        elif key == Keys.TAB:
-            self.driver.switch_to.active_element.send_keys(Keys.TAB)
+        keys = []
+        if key == Key.BACKSPACE:
+            keys.append(Keys.BACKSPACE)
+        elif key == Key.ENTER:
+            keys.append(Keys.ENTER)
+        elif key == Key.ESCAPE:
+            keys.append(Keys.ESCAPE)
+        elif key == Key.TAB:
+            keys.append(Keys.TAB)
+
+        self.driver.switch_to.active_element.send_keys(*keys).perform()
 
     def quit(self):
         self.driver.quit()
@@ -52,11 +52,8 @@ class AppiumDriver(BaseDriver):
         return self.driver.get_screenshot_as_base64()
 
     def select(self, id: int, option: str):
-        element = self._find_element(id)
-        # Anthropic chooses to select using option ID, not select ID
-        if element.tag_name == "option":
-            element = element.find_element(By.XPATH, ".//parent::select")
-        Select(element).select_by_visible_text(option)
+        # TODO: Implement select functionality and the tool
+        pass
 
     def swipe(self, id: int):
         # TODO: Implement swipe functionality and the tool
