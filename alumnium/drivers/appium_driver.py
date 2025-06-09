@@ -31,6 +31,10 @@ class AppiumDriver(BaseDriver):
         action_helper = ActionHelpers()
         action_helper.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
 
+    def hover(self, id: int):
+        # TODO: Remove hover tool, it's not supported in Appium
+        pass
+
     def press_key(self, key: Key):
         keys = []
         if key == Key.BACKSPACE:
