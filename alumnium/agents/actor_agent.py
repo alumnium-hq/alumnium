@@ -35,9 +35,10 @@ class ActorAgent(BaseAgent):
         logger.info(f"  -> Goal: {goal}")
         logger.info(f"  -> Step: {step}")
 
-        aria = self.driver.aria_tree
-        logger.debug(f"  -> Accessibility Tree: {aria.to_xml()}")
-        message = self.chain.invoke({"goal": goal, "step": step, "aria": aria.to_xml()})
+        accessibility_tree = self.driver.accessibility_tree
+        logger.debug(f"  -> Accessibility tree: {accessibility_tree.to_xml()}")
+        message = self.chain.invoke({"goal": goal, "step": step, "accessibility_tree": accessibility_tree.to_xml()})
+
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
         self._update_usage(message.usage_metadata)
@@ -45,10 +46,10 @@ class ActorAgent(BaseAgent):
         for tool_call in message.tool_calls:
             tool = ALL_TOOLS[tool_call["name"]](**tool_call["args"])
             if "id" in tool.model_fields_set:
-                tool.id = aria.element_by_id(tool.id).id
+                tool.id = accessibility_tree.element_by_id(tool.id).id
             if "from_id" in tool.model_fields_set:
-                tool.from_id = aria.element_by_id(tool.from_id).id
+                tool.from_id = accessibility_tree.element_by_id(tool.from_id).id
             if "to_id" in tool.model_fields_set:
-                tool.to_id = aria.element_by_id(tool.to_id).id
+                tool.to_id = accessibility_tree.element_by_id(tool.to_id).id
 
             tool.invoke(self.driver)
