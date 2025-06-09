@@ -3,6 +3,9 @@ from pathlib import Path
 from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
+from appium.webdriver.extensions.action_helpers import ActionHelpers
+from selenium.webdriver.common.keys import Keys
+
 
 from alumnium.accessibility import XCUITestAccessibilityTree
 from alumnium.logutils import get_logger
@@ -24,17 +27,26 @@ class AppiumDriver(BaseDriver):
     def click(self, id: int):
         self._find_element(id).click()
 
-    def drag_and_drop(self, from_id: int, to_id: int):
-        # TODO: Implement drag and drop functionality
-        pass
+    def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
+        action_helper = ActionHelpers()
+        action_helper.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
 
     def hover(self, id: int):
         # TODO: Remove hover tool, it's not supported in Appium
         pass
 
     def press_key(self, key: Key):
-        # TODO: Implement press key functionality
-        pass
+        keys = []
+        if key == Key.BACKSPACE:
+            keys.append(Keys.BACKSPACE)
+        elif key == Key.ENTER:
+            keys.append(Keys.ENTER)
+        elif key == Key.ESCAPE:
+            keys.append(Keys.ESCAPE)
+        elif key == Key.TAB:
+            keys.append(Keys.TAB)
+
+        self.driver.switch_to.active_element.send_keys(*keys).perform()
 
     def quit(self):
         self.driver.quit()
@@ -44,7 +56,7 @@ class AppiumDriver(BaseDriver):
         return self.driver.get_screenshot_as_base64()
 
     def select(self, id: int, option: str):
-        # TODO: Implement select functionality
+        # TODO: Implement select functionality and the tool
         pass
 
     def swipe(self, id: int):
