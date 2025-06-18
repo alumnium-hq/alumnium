@@ -32,6 +32,7 @@ retry2 = "^0.9"
 rich = "^14.0.0"
 selenium = "^4.0"
 sqlalchemy = "^2.0"
+xxhash = "^3.5.0"
 
 [tool.poetry.group.dev.dependencies]
 behave = "^1.2.6"
