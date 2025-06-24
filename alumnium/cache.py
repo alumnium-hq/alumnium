@@ -19,6 +19,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, declarative_base, relationship
 
+from .models import Model
 from .logutils import get_logger
 
 logger = get_logger(__name__)
@@ -30,9 +31,8 @@ class ModelConfig(Base):
     id = Column(Integer, primary_key=True)
     model_name = Column(String, nullable=False)
     provider = Column(String, nullable=False)
-    temperature = Column(String, nullable=False)
     # Add a unique constraint on the combination of fields that make a config unique
-    __table_args__ = (UniqueConstraint("model_name", "provider", "temperature", name="uix_model_config"),)
+    __table_args__ = (UniqueConstraint("model_name", "provider", name="uix_model_config"),)
 
 
 class CacheEntry(Base):
@@ -55,21 +55,18 @@ class Cache(BaseCache):
         self.session = Session(self.engine)
 
     def _get_or_create_model_config(self, llm_string: str) -> ModelConfig:
-        config = json.loads(llm_string.split("---")[0])
         model_config = (
             self.session.query(ModelConfig)
             .filter_by(
-                model_name=config["kwargs"]["model_name"],
-                provider=config["name"],
-                temperature=str(config["kwargs"]["temperature"]),
+                model_name=Model.current.name,
+                provider=Model.current.provider.value,
             )
             .first()
         )
         if not model_config:
             model_config = ModelConfig(
-                model_name=config["kwargs"]["model_name"],
-                provider=config["name"],
-                temperature=str(config["kwargs"]["temperature"]),
+                model_name=Model.current.name,
+                provider=Model.current.provider.value,
             )
             self.session.add(model_config)
             self.session.flush()
