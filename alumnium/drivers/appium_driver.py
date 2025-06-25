@@ -74,7 +74,15 @@ class AppiumDriver(BaseDriver):
 
     @property
     def url(self) -> str:
-        return ""
+        """Get the current URL of the webview context"""
+        current_context = self.driver.current_context
+        for context in self.driver.contexts:
+            if "WEBVIEW" in context:
+                self.driver.switch_to.context(context)
+                break
+        url = self.driver.current_url
+        self.driver.switch_to.context(current_context)
+        return url
 
     def _find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)

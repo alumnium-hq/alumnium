@@ -1,16 +1,25 @@
+import pytest
+import time
+
 from datetime import datetime
 from os import getenv
 
+from appium import webdriver as AppiumWebdriver
+from appium.options.ios import XCUITestOptions
+from appium.webdriver.appium_service import AppiumService
 from playwright.sync_api import Page, sync_playwright
 from pytest import fixture, hookimpl
 from selenium.webdriver import Chrome
 
 from alumnium import Alumni
 
+# --- Configuration for your Appium Server ---
+APPIUM_HOST = '127.0.0.1' # Or your desired IP
+APPIUM_PORT = 4724        # Or your desired port
 
 @fixture(scope="session", autouse=True)
 def driver():
-    driver = getenv("ALUMNIUM_DRIVER", "selenium")
+    driver = getenv("ALUMNIUM_DRIVER", "appium")
     if driver == "playwright":
         with sync_playwright() as playwright:
             headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true"
@@ -18,7 +27,22 @@ def driver():
     elif driver == "selenium":
         driver = Chrome()
         yield driver
-        driver.quit()
+    elif driver == "appium":
+        options = XCUITestOptions().load_capabilities({
+            'platformName': 'iOS',
+            'platformVersion': '18.3',
+            'deviceName': 'iPhone 14 Pro',
+            'automationName': 'XCUITest',
+            'bundleId': 'com.apple.mobilesafari',
+            'noReset': True, 
+            'newCommandTimeout': 60000,
+            'showXcodeLog': True
+        })
+        driver = AppiumWebdriver.Remote(
+            command_executor=f'http://{APPIUM_HOST}:{APPIUM_PORT}/wd/hub',
+            options=options
+        )
+        yield driver
     else:
         raise NotImplementedError(f"Driver {driver} not implemented")
 
@@ -37,6 +61,8 @@ def navigate(driver):
             driver.get(url)
         elif isinstance(driver, Page):
             driver.goto(url)
+        elif isinstance(driver, AppiumWebdriver.Remote):
+            driver.get(url)
 
     return __navigate
 
@@ -48,6 +74,8 @@ def execute_script(driver):
             driver.execute_script(script)
         elif isinstance(driver, Page):
             driver.evaluate(script)
+        elif isinstance(driver, AppiumWebdriver.Remote):
+            driver.execute_script(script)
 
     return __execute_script
 
@@ -70,6 +98,9 @@ def pytest_runtest_makereport(item):
         elif isinstance(driver, Page):
             driver.screenshot(path=f"reports/screenshot-{timestamp}.png")
             url = driver.url
+        elif isinstance(driver, AppiumWebdriver.Remote):
+            driver.get_screenshot_as_file(f"reports/screenshot-{timestamp}.png")
+            url = al.driver.url
         extras.append(pytest_html.extras.image(f"screenshot-{timestamp}.png"))
         extras.append(pytest_html.extras.json(al.stats()))
         extras.append(pytest_html.extras.url(url))
