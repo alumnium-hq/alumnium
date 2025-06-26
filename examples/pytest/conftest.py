@@ -16,7 +16,7 @@ APPIUM_PORT = 4724        # Or your desired port
 
 @fixture(scope="session", autouse=True)
 def driver():
-    driver = getenv("ALUMNIUM_DRIVER", "appium")
+    driver = getenv("ALUMNIUM_DRIVER", "selenium")
     if driver == "playwright":
         with sync_playwright() as playwright:
             headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true"
