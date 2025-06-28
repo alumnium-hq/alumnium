@@ -4,6 +4,7 @@ from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
+from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.keys import Keys
 
 
@@ -74,7 +75,18 @@ class AppiumDriver(BaseDriver):
 
     @property
     def url(self) -> str:
-        return ""
+        """Get the current URL of the webview context"""
+        try:
+            current_context = self.driver.current_context
+            for context in self.driver.contexts:
+                if "WEBVIEW" in context:
+                    self.driver.switch_to.context(context)
+                    break
+            url = self.driver.current_url
+            self.driver.switch_to.context(current_context)
+            return url
+        except UnknownMethodException:  # WebView context unavailable
+            return ""
 
     def _find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)
