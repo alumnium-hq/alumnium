@@ -4,6 +4,7 @@ from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
+from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.keys import Keys
 
 
@@ -84,7 +85,7 @@ class AppiumDriver(BaseDriver):
             url = self.driver.current_url
             self.driver.switch_to.context(current_context)
             return url
-        except: ## WebView context unavailable
+        except UnknownMethodException:  # WebView context unavailable
             return ""
 
     def _find_element(self, id: int) -> WebElement:

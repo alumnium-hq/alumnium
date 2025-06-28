@@ -10,9 +10,6 @@ from selenium.webdriver import Chrome
 
 from alumnium import Alumni
 
-# --- Configuration for your Appium Server ---
-APPIUM_HOST = '127.0.0.1' # Or your desired IP
-APPIUM_PORT = 4724        # Or your desired port
 
 @fixture(scope="session", autouse=True)
 def driver():
@@ -25,20 +22,19 @@ def driver():
         driver = Chrome()
         yield driver
     elif driver == "appium":
-        options = XCUITestOptions().load_capabilities({
-            'platformName': 'iOS',
-            'platformVersion': '18.3',
-            'deviceName': 'iPhone 14 Pro',
-            'automationName': 'XCUITest',
-            'bundleId': 'com.apple.mobilesafari',
-            'noReset': True, 
-            'newCommandTimeout': 60000,
-            'showXcodeLog': True
-        })
-        driver = AppiumWebdriver.Remote(
-            command_executor=f'http://{APPIUM_HOST}:{APPIUM_PORT}/wd/hub',
-            options=options
+        options = XCUITestOptions().load_capabilities(
+            {
+                "platformName": "iOS",
+                "platformVersion": "18.3",
+                "deviceName": "iPhone 14 Pro",
+                "automationName": "XCUITest",
+                "bundleId": "com.apple.mobilesafari",
+                "noReset": True,
+                "newCommandTimeout": 60000,
+                "showXcodeLog": True,
+            }
         )
+        driver = AppiumWebdriver.Remote(command_executor="http://127.0.0.1:4724/wd/hub", options=options)
         yield driver
     else:
         raise NotImplementedError(f"Driver {driver} not implemented")
