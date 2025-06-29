@@ -13,3 +13,11 @@ ALL_TOOLS = {
     "SelectTool": SelectTool,
     "TypeTool": TypeTool,
 }
+
+ALL_APPIUM_TOOLS = {
+    "ClickTool": ClickTool,
+    "DragAndDropTool": DragAndDropTool,
+    "PressKeyTool": PressKeyTool,
+    "SelectTool": SelectTool,
+    "TypeTool": TypeTool,
+}
