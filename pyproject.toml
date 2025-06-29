@@ -33,6 +33,7 @@ rich = "^14.0.0"
 selenium = "^4.0"
 sqlalchemy = "^2.0"
 xxhash = "^3.5.0"
+python-dotenv = "^1.1.1"
 
 [tool.poetry.group.dev.dependencies]
 behave = "^1.2.6"

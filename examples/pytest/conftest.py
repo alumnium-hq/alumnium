@@ -1,4 +1,5 @@
 from datetime import datetime
+from dotenv import load_dotenv
 from os import getenv
 
 from appium import webdriver as AppiumWebdriver
@@ -10,18 +11,26 @@ from selenium.webdriver import Chrome
 
 from alumnium import Alumni
 
+load_dotenv(override=True)
+
+@fixture()
+def driver_type():
+    return getenv("ALUMNIUM_DRIVER", "selenium")
+
+@fixture()
+def headless():
+    return getenv("ALUMNIUM_HEADLESS", "true")
 
 @fixture(scope="session", autouse=True)
-def driver():
-    driver = getenv("ALUMNIUM_DRIVER", "selenium")
-    if driver == "playwright":
+def driver(driver_type, headless):
+    if driver_type == "playwright":
         with sync_playwright() as playwright:
-            headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true"
-            yield playwright.chromium.launch(headless=headless).new_page()
-    elif driver == "selenium":
+            is_headless = headless.lower() == "true"
+            yield playwright.chromium.launch(headless=is_headless).new_page()
+    elif driver_type == "selenium":
         driver = Chrome()
         yield driver
-    elif driver == "appium":
+    elif driver_type == "appium":
         options = XCUITestOptions().load_capabilities(
             {
                 "platformName": "iOS",
