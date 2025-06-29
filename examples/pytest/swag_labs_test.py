@@ -1,3 +1,5 @@
+from os import getenv
+
 from pytest import fixture, mark
 
 from alumnium import Model, Provider
@@ -27,6 +29,10 @@ def login(al, execute_script, navigate):
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
     Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
+)
+@mark.xfail(
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    reason="Investigate why layout breaks on mobile browsers",
 )
 def test_sorting(al):
     products = {

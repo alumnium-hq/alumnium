@@ -1,9 +1,15 @@
+from os import getenv
+
 from pytest import mark, raises
 
 from alumnium import Model, Provider
 
 
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
+@mark.xfail(
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    reason="Appium doesn't support select tool yet",
+)
 def test_select_option(al, navigate):
     navigate("https://the-internet.herokuapp.com/dropdown")
 

@@ -4,6 +4,8 @@ from pytest import fixture, mark, raises
 
 from alumnium import Model, Provider
 
+alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
+
 
 @fixture(autouse=True)
 def learn(al):
@@ -21,15 +23,18 @@ def learn(al):
 
 
 @mark.skipif(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "playwright" and getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true",
+    alumnium_driver == "playwright" and getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true",
     reason="DuckDuckGo blocks headless browsers",
 )
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
 def test_search(al, navigate):
-    navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGoA
+    navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGo
 
     al.do("search for selenium")
-    al.check("page title contains selenium")
+    if alumnium_driver != "appium":
+        # DuckDuckGo doesn't change title on mobile browser
+        al.check("page title contains selenium")
+
     assert al.get("atomic number") == 34
 
     al.check("search results contain selenium.dev")

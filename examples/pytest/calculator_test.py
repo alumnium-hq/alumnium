@@ -5,19 +5,18 @@ from alumnium import Model, Provider
 
 @fixture(autouse=True)
 def learn(al):
-    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC, Provider.AWS_META, Provider.OLLAMA]:
-        # Llama constantly messes the order of operations.
-        # Haiku cannot correlate '/' button to '÷'.
-        # Mistral skips '+' button.
-        al.learn(
-            goal="4 / 2 =",
-            actions=[
-                "click button '4'",
-                "click button '÷'",
-                "click button '2'",
-                "click button '='",
-            ],
-        )
+    # Llama constantly messes the order of operations.
+    # Haiku cannot correlate '/' button to '÷'.
+    # Mistral skips '+' button.
+    al.learn(
+        goal="4 / 2 =",
+        actions=[
+            "click button '4'",
+            "click button '÷'",
+            "click button '2'",
+            "click button '='",
+        ],
+    )
     yield
     al.planner_agent.prompt_with_examples.examples.clear()
 
