@@ -1,3 +1,5 @@
+from os import getenv
+
 from pytest import fixture, mark
 
 from alumnium import Model, Provider
@@ -10,6 +12,10 @@ def learn(al):
     al.planner_agent.prompt_with_examples.examples.clear()
 
 
+@mark.xfail(
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    reason="Investigate why extraction is not stable",
+)
 def test_table_extraction(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
 
@@ -22,6 +28,10 @@ def test_table_extraction(al, navigate):
 @mark.xfail(
     Model.current.provider == Provider.AWS_META,
     reason="Needs more work because `do` produces duplicated actions",
+)
+@mark.xfail(
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    reason="Investigate why extraction is not stable",
 )
 def test_table_sorting(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")

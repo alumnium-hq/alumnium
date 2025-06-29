@@ -22,7 +22,6 @@ def driver():
         yield driver
     elif driver == "appium":
         options = XCUITestOptions()
-        # https://github.com/ayodejiayankola/To-Do-App-SwiftUI
         options.automation_name = "XCUITest"
         options.bundle_id = "com.apple.mobilesafari"
         options.device_name = "iPhone 15"
@@ -79,13 +78,11 @@ def pytest_runtest_makereport(item):
 
         if isinstance(driver, (Appium, Chrome)):
             driver.save_screenshot(f"reports/screenshot-{timestamp}.png")
-            url = driver.current_url
         elif isinstance(driver, Page):
             driver.screenshot(path=f"reports/screenshot-{timestamp}.png")
-            url = driver.url
         extras.append(pytest_html.extras.image(f"screenshot-{timestamp}.png"))
         extras.append(pytest_html.extras.json(al.stats()))
-        extras.append(pytest_html.extras.url(url))
+        extras.append(pytest_html.extras.url(al.driver.url))
         report.extras = extras
 
         # Process Alumnium cache
