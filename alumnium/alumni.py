@@ -57,7 +57,7 @@ class Alumni:
             llm = ChatDeepSeek(model=self.model.name, temperature=0)
         elif self.model.provider == Provider.GOOGLE:
             llm = ChatGoogleGenerativeAI(model=self.model.name, temperature=0)
-        elif self.model.provider == Provider.MISTRAL_AI:
+        elif self.model.provider == Provider.MISTRALAI:
             llm = ChatMistralAI(model=self.model.name, temperature=0)
         elif self.model.provider == Provider.OLLAMA:
             llm = ChatOllama(model=self.model.name, temperature=0)
