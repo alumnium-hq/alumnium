@@ -5,6 +5,7 @@ from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
 from langchain_deepseek import ChatDeepSeek
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_mistralai import ChatMistralAI
 from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from playwright.sync_api import Page
@@ -56,6 +57,8 @@ class Alumni:
             llm = ChatDeepSeek(model=self.model.name, temperature=0)
         elif self.model.provider == Provider.GOOGLE:
             llm = ChatGoogleGenerativeAI(model=self.model.name, temperature=0)
+        elif self.model.provider == Provider.MISTRALAI:
+            llm = ChatMistralAI(model=self.model.name, temperature=0)
         elif self.model.provider == Provider.OLLAMA:
             llm = ChatOllama(model=self.model.name, temperature=0)
         elif self.model.provider == Provider.OPENAI:

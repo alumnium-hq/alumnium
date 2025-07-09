@@ -9,6 +9,7 @@ class Provider(Enum):
     AWS_META = "aws_meta"
     DEEPSEEK = "deepseek"
     GOOGLE = "google"
+    MISTRALAI = "mistralai"
     OLLAMA = "ollama"
     OPENAI = "openai"
 
@@ -21,6 +22,7 @@ class Name:
         Provider.AWS_META: "us.meta.llama3-2-90b-instruct-v1:0",
         Provider.DEEPSEEK: "deepseek-chat",
         Provider.GOOGLE: "gemini-2.0-flash-001",
+        Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "mistral-small3.1",
         Provider.OPENAI: "gpt-4o-mini-2024-07-18",
     }
