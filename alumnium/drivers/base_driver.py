@@ -20,10 +20,6 @@ class BaseDriver(ABC):
         pass
 
     @abstractmethod
-    def hover(self, id: int):
-        pass
-
-    @abstractmethod
     def press_key(self, key: Key):
         pass
 

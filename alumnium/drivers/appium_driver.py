@@ -1,10 +1,11 @@
-from pathlib import Path
+from contextlib import contextmanager
 
 from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
 from selenium.common.exceptions import UnknownMethodException
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 
@@ -29,12 +30,7 @@ class AppiumDriver(BaseDriver):
         self._find_element(id).click()
 
     def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
-        action_helper = ActionHelpers()
-        action_helper.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
-
-    def hover(self, id: int):
-        # TODO: Remove hover tool, it's not supported in Appium
-        pass
+        self.driver.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
 
     def press_key(self, key: Key):
         keys = []
@@ -47,7 +43,7 @@ class AppiumDriver(BaseDriver):
         elif key == Key.TAB:
             keys.append(Keys.TAB)
 
-        self.driver.switch_to.active_element.send_keys(*keys).perform()
+        ActionChains().send_keys(*keys).perform()
 
     def quit(self):
         self.driver.quit()
@@ -66,7 +62,11 @@ class AppiumDriver(BaseDriver):
 
     @property
     def title(self) -> str:
-        return ""
+        with self.__webview_context() as context:
+            if context:
+                return self.driver.title
+            else:
+                return ""
 
     def type(self, id: int, text: str):
         element = self._find_element(id)
@@ -75,18 +75,11 @@ class AppiumDriver(BaseDriver):
 
     @property
     def url(self) -> str:
-        """Get the current URL of the webview context"""
-        try:
-            current_context = self.driver.current_context
-            for context in self.driver.contexts:
-                if "WEBVIEW" in context:
-                    self.driver.switch_to.context(context)
-                    break
-            url = self.driver.current_url
-            self.driver.switch_to.context(current_context)
-            return url
-        except UnknownMethodException:  # WebView context unavailable
-            return ""
+        with self.__webview_context() as context:
+            if context:
+                return self.driver.current_url
+            else:
+                return ""
 
     def _find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)
@@ -105,3 +98,15 @@ class AppiumDriver(BaseDriver):
             xpath += f"[{' and '.join(props)}]"
 
         return self.driver.find_element(By.XPATH, xpath)
+
+    @contextmanager
+    def __webview_context(self):
+        current_context = self.driver.current_context
+        for context in self.driver.contexts:
+            if "WEBVIEW" in context:
+                self.driver.switch_to.context(context)
+                yield context
+                self.driver.switch_to.context(current_context)
+                return
+
+        yield None

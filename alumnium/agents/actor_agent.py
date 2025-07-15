@@ -1,9 +1,9 @@
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
-from alumnium.drivers import BaseDriver
+from alumnium.drivers import AppiumDriver, BaseDriver
 from alumnium.logutils import *
-from alumnium.tools import ALL_TOOLS
+from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS
 from alumnium.logutils import get_logger
 
 from .base_agent import BaseAgent
@@ -16,8 +16,10 @@ class ActorAgent(BaseAgent):
         super().__init__()
 
         self.driver = driver
-        llm = llm.bind_tools(list(ALL_TOOLS.values()))
-
+        if isinstance(self.driver, AppiumDriver):
+            llm = llm.bind_tools(list(ALL_APPIUM_TOOLS.values()))
+        else:
+            llm = llm.bind_tools(list(ALL_TOOLS.values()))
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", self.prompts["system"]),
