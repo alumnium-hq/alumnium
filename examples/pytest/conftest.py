@@ -18,7 +18,7 @@ def driver_type():
 
 @fixture()
 def headless():
-    return getenv("ALUMNIUM_HEADLESS", "true")
+    return getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 
 @fixture(scope="session", autouse=True)
 def driver(driver_type, headless):
