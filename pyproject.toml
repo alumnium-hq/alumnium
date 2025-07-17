@@ -43,6 +43,7 @@ pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-html = "^4.1.1"
 pytest-retry = "^1.7.0"
+python-dotenv = "^1.1.1"
 ruff = "^0.11.9"
 
 [tool.pytest.ini_options]
