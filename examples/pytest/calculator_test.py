@@ -1,7 +1,5 @@
 from pytest import fixture
 
-from alumnium import Model, Provider
-
 
 @fixture(autouse=True)
 def learn(al):

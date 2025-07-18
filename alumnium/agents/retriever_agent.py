@@ -4,8 +4,8 @@ from typing import Optional, TypeAlias, Union
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
+from alumnium.accessibility import BaseAccessibilityTree
 from alumnium.drivers import BaseDriver
-from alumnium.logutils import *
 from alumnium.logutils import get_logger
 
 from .base_agent import BaseAgent
@@ -42,11 +42,20 @@ class RetrieverAgent(BaseAgent):
             )
         )
 
-    def invoke(self, information: str, vision: bool) -> RetrievedInformation:
+    def invoke(
+        self,
+        information: str,
+        vision: bool,
+        accessibility_tree: Optional[BaseAccessibilityTree] = None,
+    ) -> RetrievedInformation:
         logger.info("Starting retrieval:")
         logger.info(f"  -> Information: {information}")
 
-        accessibility_tree = self.driver.accessibility_tree.to_xml()
+        if accessibility_tree:
+            accessibility_tree = accessibility_tree.to_xml()
+        else:
+            accessibility_tree = self.driver.accessibility_tree.to_xml()
+
         title = self.driver.title
         url = self.driver.url
 

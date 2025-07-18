@@ -1,6 +1,9 @@
+from typing import Optional
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 
+from alumnium.accessibility import BaseAccessibilityTree
 from alumnium.drivers import AppiumDriver, BaseDriver
 from alumnium.logutils import *
 from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS
@@ -29,7 +32,7 @@ class ActorAgent(BaseAgent):
 
         self.chain = prompt | self._with_retry(llm)
 
-    def invoke(self, goal: str, step: str):
+    def invoke(self, goal: str, step: str, accessibility_tree: Optional[BaseAccessibilityTree] = None):
         if not step.strip():
             return
 
@@ -37,9 +40,12 @@ class ActorAgent(BaseAgent):
         logger.info(f"  -> Goal: {goal}")
         logger.info(f"  -> Step: {step}")
 
-        accessibility_tree = self.driver.accessibility_tree
-        logger.debug(f"  -> Accessibility tree: {accessibility_tree.to_xml()}")
-        message = self.chain.invoke({"goal": goal, "step": step, "accessibility_tree": accessibility_tree.to_xml()})
+        if not accessibility_tree:
+            accessibility_tree = self.driver.accessibility_tree
+        accessibility_tree_xml = accessibility_tree.to_xml()
+
+        logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
+        message = self.chain.invoke({"goal": goal, "step": step, "accessibility_tree": accessibility_tree_xml})
 
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
