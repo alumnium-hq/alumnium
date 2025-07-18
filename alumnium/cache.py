@@ -81,10 +81,19 @@ class Cache(BaseCache):
                 system_message = msg["kwargs"]["content"]
             elif msg["kwargs"]["type"] == "human":
                 content = msg["kwargs"]["content"]
-                if isinstance(content, (list, dict)):
-                    human_message = content[0]["text"]
+                if isinstance(content, list):
+                    for content_item in content:
+                        if "text" in content_item:
+                            human_message += content_item["text"]
+                        if "image_url" in content_item:
+                            human_message += content_item["image_url"]["url"]
+                elif isinstance(content, dict):
+                    if "text" in content:
+                        human_message += content["text"]
+                    if "image_url" in content:
+                        human_message += content["image_url"]["url"]
                 else:
-                    human_message = content
+                    human_message += content
         return system_message, human_message
 
     def _hash_request(self, system_message: str, human_message: str) -> str:
