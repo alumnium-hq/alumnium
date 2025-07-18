@@ -7,18 +7,22 @@ from appium.webdriver.webdriver import WebDriver as Appium
 from playwright.sync_api import Page, sync_playwright
 from pytest import fixture, hookimpl
 from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 
 from alumnium import Alumni
 
 load_dotenv(override=True)
 
+
 @fixture()
 def driver_type():
     return getenv("ALUMNIUM_DRIVER", "selenium")
 
+
 @fixture()
 def headless():
     return getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+
 
 @fixture(scope="session", autouse=True)
 def driver(driver_type, headless):
@@ -27,9 +31,18 @@ def driver(driver_type, headless):
             is_headless = headless.lower() == "true"
             yield playwright.chromium.launch(headless=is_headless).new_page()
     elif driver_type == "selenium":
-        driver = Chrome()
+        options = ChromeOptions()
+        options.add_experimental_option(
+            "prefs",
+            {
+                "credentials_enable_service": False,
+                "profile.password_manager_enabled": False,
+                "profile.password_manager_leak_detection": False,
+            },
+        )
+        driver = Chrome(options=options)
         yield driver
-    elif driver == "appium":
+    elif driver_type == "appium":
         options = XCUITestOptions()
         options.automation_name = "XCUITest"
         options.bundle_id = "com.apple.mobilesafari"
