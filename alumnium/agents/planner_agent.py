@@ -1,6 +1,9 @@
+from typing import Optional
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
+from alumnium.accessibility import BaseAccessibilityTree
 from alumnium.drivers import BaseDriver
 from alumnium.logutils import *
 from alumnium.logutils import get_logger
@@ -46,11 +49,15 @@ class PlannerAgent(BaseAgent):
             }
         )
 
-    def invoke(self, goal: str) -> list[str]:
+    def invoke(self, goal: str, accessibility_tree: Optional[BaseAccessibilityTree] = None) -> list[str]:
         logger.info("Starting planning:")
         logger.info(f"  -> Goal: {goal}")
 
-        accessibility_tree = self.driver.accessibility_tree.to_xml()
+        if accessibility_tree:
+            accessibility_tree = accessibility_tree.to_xml()
+        else:
+            accessibility_tree = self.driver.accessibility_tree.to_xml()
+
         logger.debug(f"  -> Accessibility tree: {accessibility_tree}")
         message = self.chain.invoke({"goal": goal, "accessibility_tree": accessibility_tree})
 

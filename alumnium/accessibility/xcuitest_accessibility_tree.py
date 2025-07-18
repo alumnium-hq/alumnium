@@ -68,6 +68,16 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         # f"  -> XCUI ARIA Tree processed. Root: {self.tree.get('role', {}).get('value') if self.tree else 'None'}"
         # )
 
+    def get_area(self, id: int) -> "XCUITestAccessibilityTree":
+        if id not in self.cached_ids:
+            raise KeyError(f"No element with id={id}")
+
+        # Create a new tree for the specific area
+        area_tree = XCUITestAccessibilityTree("<AppiumAUT></AppiumAUT>")
+        area_tree.tree = self.cached_ids[id]
+        area_tree.cached_ids = self.cached_ids.copy()  # Copy cached IDs for this area
+        return area_tree
+
     def _get_next_id(self) -> int:
         self.id_counter += 1
         return self.id_counter
