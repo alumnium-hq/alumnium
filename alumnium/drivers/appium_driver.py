@@ -22,6 +22,7 @@ class AppiumDriver(BaseDriver):
         self.driver = driver
         self.autoswitch_to_webview = True
         self.delay = 0
+        self.hide_keyboard_after_typing = False
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree:
@@ -74,6 +75,8 @@ class AppiumDriver(BaseDriver):
         element = self._find_element(id)
         element.clear()
         element.send_keys(text)
+        if self.hide_keyboard_after_typing:
+            ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
 
     @property
     def url(self) -> str:
