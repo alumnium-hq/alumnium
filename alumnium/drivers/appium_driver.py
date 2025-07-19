@@ -5,10 +5,8 @@ from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
-from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-
 
 from alumnium.accessibility import XCUITestAccessibilityTree
 from alumnium.logutils import get_logger
@@ -22,6 +20,7 @@ logger = get_logger(__name__)
 class AppiumDriver(BaseDriver):
     def __init__(self, driver: Remote):
         self.driver = driver
+        self.autoswitch_to_webview = True
         self.delay = 0
 
     @property
@@ -104,12 +103,13 @@ class AppiumDriver(BaseDriver):
 
     @contextmanager
     def __webview_context(self):
-        current_context = self.driver.current_context
-        for context in self.driver.contexts:
-            if "WEBVIEW" in context:
-                self.driver.switch_to.context(context)
-                yield context
-                self.driver.switch_to.context(current_context)
-                return
+        if self.autoswitch_to_webview:
+            current_context = self.driver.current_context
+            for context in self.driver.contexts:
+                if "WEBVIEW" in context:
+                    self.driver.switch_to.context(context)
+                    yield context
+                    self.driver.switch_to.context(current_context)
+                    return
 
         yield None
