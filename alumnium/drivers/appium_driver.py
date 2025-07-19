@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from time import sleep
 
 from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
@@ -21,9 +22,11 @@ logger = get_logger(__name__)
 class AppiumDriver(BaseDriver):
     def __init__(self, driver: Remote):
         self.driver = driver
+        self.delay = 0
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree:
+        sleep(self.delay)
         return XCUITestAccessibilityTree(self.driver.page_source)
 
     def click(self, id: int):
