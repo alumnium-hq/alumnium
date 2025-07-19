@@ -1,15 +1,6 @@
 from os import getenv
 
-from pytest import fixture, mark
-
-from alumnium import Model, Provider
-
-
-@fixture(autouse=True)
-def learn(al):
-    # al.learn("sort by amount", ["click header 'Amount'"])
-    yield
-    # al.planner_agent.prompt_with_examples.examples.clear()
+from pytest import mark
 
 
 @mark.xfail(
@@ -26,10 +17,6 @@ def test_table_extraction(al, navigate):
     assert area.get("John Smith's due amount") == "$50.00"
 
 
-@mark.xfail(
-    Model.current.provider == Provider.AWS_META,
-    reason="Needs more work because `do` produces duplicated actions",
-)
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
     reason="Investigate why extraction is not stable",
