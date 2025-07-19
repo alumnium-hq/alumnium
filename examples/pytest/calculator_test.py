@@ -1,7 +1,5 @@
 from pytest import fixture
 
-from alumnium import Model, Provider
-
 
 @fixture(autouse=True)
 def learn(al):
@@ -18,7 +16,7 @@ def learn(al):
         ],
     )
     yield
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_examples()
 
 
 def test_addition(al, navigate):

@@ -19,8 +19,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, declarative_base, relationship
 
-from .models import Model
-from .logutils import get_logger
+from .models import SessionModel
+from alumnium.logutils import get_logger
 
 logger = get_logger(__name__)
 Base = declarative_base()
@@ -49,24 +49,28 @@ class CacheEntry(Base):
 
 
 class Cache(BaseCache):
-    def __init__(self, db_path: str = ".alumnium-cache.sqlite"):
+    def __init__(self, model: SessionModel, db_path: str = ".alumnium-cache.sqlite"):
         self.engine = create_engine(f"sqlite:///{getcwd()}/{db_path}")
         Base.metadata.create_all(self.engine)
         self.session = Session(self.engine)
+        self.model = model
 
     def _get_or_create_model_config(self, llm_string: str) -> ModelConfig:
+        model_name = self.model.name
+        provider = self.model.provider.value
+
         model_config = (
             self.session.query(ModelConfig)
             .filter_by(
-                model_name=Model.current.name,
-                provider=Model.current.provider.value,
+                model_name=model_name,
+                provider=provider,
             )
             .first()
         )
         if not model_config:
             model_config = ModelConfig(
-                model_name=Model.current.name,
-                provider=Model.current.provider.value,
+                model_name=model_name,
+                provider=provider,
             )
             self.session.add(model_config)
             self.session.flush()

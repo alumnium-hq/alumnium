@@ -4,7 +4,6 @@ from typing import Optional, TypeAlias, Union
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
-from alumnium.drivers import BaseDriver
 from alumnium.logutils import *
 from alumnium.logutils import get_logger
 
@@ -32,9 +31,8 @@ class RetrievedInformation(BaseModel):
 class RetrieverAgent(BaseAgent):
     LIST_SEPARATOR = "%SEP%"
 
-    def __init__(self, driver: BaseDriver, llm: BaseChatModel):
+    def __init__(self, llm: BaseChatModel):
         super().__init__()
-        self.driver = driver
         self.chain = self._with_retry(
             llm.with_structured_output(
                 RetrievedInformation,
@@ -42,29 +40,33 @@ class RetrieverAgent(BaseAgent):
             )
         )
 
-    def invoke(self, information: str, vision: bool) -> RetrievedInformation:
+    def invoke(
+        self,
+        information: str,
+        vision: bool,
+        accessibility_tree_xml: str,
+        title: str = "",
+        url: str = "",
+        screenshot: str = None,
+    ) -> RetrievedInformation:
         logger.info("Starting retrieval:")
         logger.info(f"  -> Information: {information}")
 
-        accessibility_tree = self.driver.accessibility_tree.to_xml()
-        title = self.driver.title
-        url = self.driver.url
-
-        logger.debug(f"  -> Accessibility tree: {accessibility_tree}")
+        logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
         logger.debug(f"  -> Title: {title}")
         logger.debug(f"  -> URL: {url}")
 
         prompt = ""
         if not vision:
-            prompt += self.prompts["_user_text"].format(accessibility_tree=accessibility_tree, title=title, url=url)
+            prompt += self.prompts["_user_text"].format(
+                accessibility_tree=accessibility_tree_xml, title=title, url=url
+            )
         prompt += "\n"
         prompt += information
 
         human_messages = [{"type": "text", "text": prompt}]
 
-        screenshot = None
-        if vision:
-            screenshot = self.driver.screenshot
+        if vision and screenshot:
             human_messages.append(
                 {
                     "type": "image_url",
@@ -76,7 +78,10 @@ class RetrieverAgent(BaseAgent):
 
         message = self.chain.invoke(
             [
-                ("system", self.prompts["system"].format(separator=self.LIST_SEPARATOR)),
+                (
+                    "system",
+                    self.prompts["system"].format(separator=self.LIST_SEPARATOR),
+                ),
                 ("human", human_messages),
             ]
         )

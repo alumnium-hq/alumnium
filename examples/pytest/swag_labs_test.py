@@ -9,7 +9,10 @@ from alumnium import Model, Provider
 def login(al, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
     al.learn("go to shopping cart", ["click link to the right of 'Swag Labs' header"])
-    al.learn("sort products by lowest shipping cost", ["select 'Shipping (low to high)' in sorting dropdown"])
+    al.learn(
+        "sort products by lowest shipping cost",
+        ["select 'Shipping (low to high)' in sorting dropdown"],
+    )
 
     navigate("https://www.saucedemo.com/")
     al.do("type 'standard_user' into username field")
@@ -18,7 +21,7 @@ def login(al, execute_script, navigate):
     yield
     execute_script("window.localStorage.clear()")
 
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_examples()
 
 
 @mark.xfail(
@@ -28,7 +31,8 @@ def login(al, execute_script, navigate):
 @mark.xfail(Model.current.provider == Provider.AWS_META, reason="Too hard for Llama")
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
-    Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
+    Model.current.provider == Provider.GOOGLE,
+    reason="https://github.com/langchain-ai/langchain-google/issues/734",
 )
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
@@ -63,14 +67,18 @@ def test_sorting(al):
 
 
 @mark.xfail(
-    Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
+    Model.current.provider == Provider.GOOGLE,
+    reason="https://github.com/langchain-ai/langchain-google/issues/734",
 )
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")
     al.do("go to shopping cart")
-    assert al.get("titles of products in cart") == ["Sauce Labs Onesie", "Sauce Labs Backpack"]
+    assert al.get("titles of products in cart") == [
+        "Sauce Labs Onesie",
+        "Sauce Labs Backpack",
+    ]
 
     al.do("go to checkout")
     al.do("continue with first name - Al, last name - Um, ZIP - 95122")

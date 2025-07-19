@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError as BedrockClientError
 from google.api_core.exceptions import ResourceExhausted as GoogleRateLimitError
 from openai import RateLimitError as OpenAIRateLimitError
 
-from alumnium.models import Model, Provider
+from alumnium.server.models import SessionModel, Provider
 
 
 class BaseAgent:
@@ -14,7 +14,7 @@ class BaseAgent:
         self._load_prompts()
 
     def _load_prompts(self):
-        provider = Model.current.provider
+        provider = SessionModel.get_current().provider
         agent_name = self.__class__.__name__.replace("Agent", "").lower()
         prompt_path = Path(__file__).parent / f"{agent_name}_prompts"
 
