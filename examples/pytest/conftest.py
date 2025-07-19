@@ -53,6 +53,8 @@ def driver():
 @fixture(scope="session", autouse=True)
 def al(driver):
     al = Alumni(driver)
+    if driver_type == "appium":
+        al.driver.delay = 0.1
     yield al
     al.quit()
 
