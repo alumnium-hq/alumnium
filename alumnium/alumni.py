@@ -1,4 +1,5 @@
 from os import getenv
+from typing import Optional
 
 from appium.webdriver.webdriver import WebDriver as Appium
 from langchain_anthropic import ChatAnthropic
@@ -14,6 +15,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from .agents import *
 from .agents.retriever_agent import Data
+from .area import Area
 from .cache import Cache
 from .drivers import AppiumDriver, PlaywrightDriver, SeleniumDriver
 from .logutils import get_logger
@@ -72,6 +74,7 @@ class Alumni:
         self.actor_agent = ActorAgent(self.driver, llm)
         self.planner_agent = PlannerAgent(self.driver, llm)
         self.retrieval_agent = RetrieverAgent(self.driver, llm)
+        self.area_agent = AreaAgent(self.driver, llm)
 
     def quit(self):
         self.driver.quit()
@@ -90,7 +93,7 @@ class Alumni:
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
-        Checks a given statement using the verifier.
+        Checks a given statement true or false.
 
         Args:
             statement: The statement to be checked.
@@ -118,6 +121,30 @@ class Alumni:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
         return self.retrieval_agent.invoke(data, vision).value
+
+    def area(self, description: str) -> Area:
+        """
+        Creates an area for the agents to work within.
+        This is useful for narrowing down the context or focus of the agents' actions, checks and data retrievals.
+
+        Note that if the area cannot be found, the topmost area of the accessibility tree will be used,
+        which is equivalent to the whole page.
+
+        Args:
+            description: The description of the area.
+
+        Returns:
+            Area: An instance of the Area class that represents the area of the accessibility tree to use.
+        """
+        response = self.area_agent.invoke(description)
+        return Area(
+            id=response["id"],
+            description=response["explanation"],
+            accessibility_tree=response["accessibility_tree"],
+            actor_agent=self.actor_agent,
+            planner_agent=self.planner_agent,
+            retrieval_agent=self.retrieval_agent,
+        )
 
     def learn(self, goal: str, actions: list[str]):
         """

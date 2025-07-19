@@ -45,6 +45,32 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
     def element_by_id(self, id: int) -> AccessibilityElement:
         return AccessibilityElement(id=self.cached_ids[id])
 
+    def get_area(self, id: int) -> "ChromiumAccessibilityTree":
+        if id not in self.cached_ids:
+            raise KeyError(f"No element with id={id}")
+
+        # Create a new tree for the specific area
+        root_elements = [self.tree[root_id] for root_id in self.tree]
+
+        def find_node_by_id(nodes, target_id):
+            for node in nodes:
+                if node.get("id") == target_id:
+                    return node
+                children = node.get("nodes", [])
+                result = find_node_by_id(children, target_id)
+                if result:
+                    return result
+            return None
+
+        target_node = find_node_by_id(root_elements, id)
+        if not target_node:
+            raise KeyError(f"No node with id={id} found in the tree")
+
+        area_tree = ChromiumAccessibilityTree({"nodes": []})
+        area_tree.tree = {id: target_node}  # Set the target node as the root of the new tree
+        area_tree.cached_ids = self.cached_ids.copy()  # Copy cached IDs for this area
+        return area_tree
+
     def to_xml(self):
         """Converts the nested tree to XML format using role.value as tags."""
 

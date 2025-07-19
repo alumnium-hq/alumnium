@@ -9,7 +9,20 @@ from alumnium import Model, Provider
 def login(al, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
     al.learn("go to shopping cart", ["click link to the right of 'Swag Labs' header"])
-    al.learn("sort products by lowest shipping cost", ["select 'Shipping (low to high)' in sorting dropdown"])
+
+    if getenv("ALUMNIUM_DRIVER", "selenium") == "appium":
+        al.learn(
+            "sort products by lowest shipping cost",
+            [
+                "click sorting dropdown",
+                'click "Shipping (low to high)"',
+            ],
+        )
+    else:
+        al.learn(
+            "sort products by lowest shipping cost",
+            ["select 'Shipping (low to high)' in sorting dropdown"],
+        )
 
     navigate("https://www.saucedemo.com/")
     al.do("type 'standard_user' into username field")
@@ -28,11 +41,8 @@ def login(al, execute_script, navigate):
 @mark.xfail(Model.current.provider == Provider.AWS_META, reason="Too hard for Llama")
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
-    Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
-)
-@mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
-    reason="Investigate why layout breaks on mobile browsers",
+    Model.current.provider == Provider.GOOGLE,
+    reason="https://github.com/langchain-ai/langchain-google/issues/734",
 )
 def test_sorting(al):
     products = {
@@ -66,6 +76,10 @@ def test_sorting(al):
     Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
 )
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
+@mark.xfail(
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    reason="https://github.com/alumnium-hq/alumnium/issues/132",
+)
 def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")
@@ -78,7 +92,7 @@ def test_checkout(al):
     assert al.get("item total without tax") == 37.98
     assert al.get("tax amount") == 3.04
     assert al.get("total amount with tax") == round(37.98 + 3.04, 2)
-    assert al.get("shipping details") == "Free Pony Express Delivery!"
+    assert al.get("shipping information value") == "Free Pony Express Delivery!"
 
     al.do("finish checkout")
 

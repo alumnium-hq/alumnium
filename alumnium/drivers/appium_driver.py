@@ -1,13 +1,12 @@
 from contextlib import contextmanager
+from time import sleep
 
 from appium.webdriver import Remote
 from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
-from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
-
 
 from alumnium.accessibility import XCUITestAccessibilityTree
 from alumnium.logutils import get_logger
@@ -21,9 +20,13 @@ logger = get_logger(__name__)
 class AppiumDriver(BaseDriver):
     def __init__(self, driver: Remote):
         self.driver = driver
+        self.autoswitch_to_webview = True
+        self.delay = 0
+        self.hide_keyboard_after_typing = False
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree:
+        sleep(self.delay)
         return XCUITestAccessibilityTree(self.driver.page_source)
 
     def click(self, id: int):
@@ -43,7 +46,7 @@ class AppiumDriver(BaseDriver):
         elif key == Key.TAB:
             keys.append(Keys.TAB)
 
-        ActionChains().send_keys(*keys).perform()
+        ActionChains(self.driver).send_keys(*keys).perform()
 
     def quit(self):
         self.driver.quit()
@@ -72,6 +75,8 @@ class AppiumDriver(BaseDriver):
         element = self._find_element(id)
         element.clear()
         element.send_keys(text)
+        if self.hide_keyboard_after_typing:
+            ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
 
     @property
     def url(self) -> str:
@@ -101,12 +106,13 @@ class AppiumDriver(BaseDriver):
 
     @contextmanager
     def __webview_context(self):
-        current_context = self.driver.current_context
-        for context in self.driver.contexts:
-            if "WEBVIEW" in context:
-                self.driver.switch_to.context(context)
-                yield context
-                self.driver.switch_to.context(current_context)
-                return
+        if self.autoswitch_to_webview:
+            current_context = self.driver.current_context
+            for context in self.driver.contexts:
+                if "WEBVIEW" in context:
+                    self.driver.switch_to.context(context)
+                    yield context
+                    self.driver.switch_to.context(current_context)
+                    return
 
         yield None
