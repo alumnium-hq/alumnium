@@ -7,9 +7,12 @@ from alumnium import Model, Provider
 
 @fixture(autouse=True)
 def learn(al):
-    al.learn("sort payments table by amount", ["click header 'Amount' in 'payments' table"])
+    al.learn(
+        "sort payments table by amount",
+        ["click header 'Amount' in 'payments' table"],
+    )
     yield
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_examples()
 
 
 @mark.xfail(
@@ -36,24 +39,84 @@ def test_table_extraction(al, navigate):
 def test_table_sorting(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
 
-    assert al.get("first names from example 1 table") == ["John", "Frank", "Jason", "Tim"]
-    assert al.get("last names from example 1 table") == ["Smith", "Bach", "Doe", "Conway"]
-    assert al.get("first names from example 2 table") == ["John", "Frank", "Jason", "Tim"]
-    assert al.get("last names from example 2 table") == ["Smith", "Bach", "Doe", "Conway"]
+    assert al.get("first names from example 1 table") == [
+        "John",
+        "Frank",
+        "Jason",
+        "Tim",
+    ]
+    assert al.get("last names from example 1 table") == [
+        "Smith",
+        "Bach",
+        "Doe",
+        "Conway",
+    ]
+    assert al.get("first names from example 2 table") == [
+        "John",
+        "Frank",
+        "Jason",
+        "Tim",
+    ]
+    assert al.get("last names from example 2 table") == [
+        "Smith",
+        "Bach",
+        "Doe",
+        "Conway",
+    ]
 
     al.do("sort example 1 table by last name")
-    assert al.get("first names from example 1 table") == ["Frank", "Tim", "Jason", "John"]
-    assert al.get("last names from example 1 table") == ["Bach", "Conway", "Doe", "Smith"]
+    assert al.get("first names from example 1 table") == [
+        "Frank",
+        "Tim",
+        "Jason",
+        "John",
+    ]
+    assert al.get("last names from example 1 table") == [
+        "Bach",
+        "Conway",
+        "Doe",
+        "Smith",
+    ]
     # example 2 table is not affected
-    assert al.get("first names from example 2 table") == ["John", "Frank", "Jason", "Tim"]
-    assert al.get("last names from example 2 table") == ["Smith", "Bach", "Doe", "Conway"]
+    assert al.get("first names from example 2 table") == [
+        "John",
+        "Frank",
+        "Jason",
+        "Tim",
+    ]
+    assert al.get("last names from example 2 table") == [
+        "Smith",
+        "Bach",
+        "Doe",
+        "Conway",
+    ]
 
     al.do("sort example 2 table by first name")
-    assert al.get("first names from example 2 table") == ["Frank", "Jason", "John", "Tim"]
-    assert al.get("last names from example 2 table") == ["Bach", "Doe", "Smith", "Conway"]
+    assert al.get("first names from example 2 table") == [
+        "Frank",
+        "Jason",
+        "John",
+        "Tim",
+    ]
+    assert al.get("last names from example 2 table") == [
+        "Bach",
+        "Doe",
+        "Smith",
+        "Conway",
+    ]
     # example 1 table is not affected
-    assert al.get("first names from example 1 table") == ["Frank", "Tim", "Jason", "John"]
-    assert al.get("last names from example 1 table") == ["Bach", "Conway", "Doe", "Smith"]
+    assert al.get("first names from example 1 table") == [
+        "Frank",
+        "Tim",
+        "Jason",
+        "John",
+    ]
+    assert al.get("last names from example 1 table") == [
+        "Bach",
+        "Conway",
+        "Doe",
+        "Smith",
+    ]
 
 
 def test_retrieval_of_unavailable_data(al, navigate):
@@ -62,3 +125,10 @@ def test_retrieval_of_unavailable_data(al, navigate):
     # This data is not available on the page.
     # Even though LLM knows the answer, it should not respond it.
     assert al.get("atomic number of Selenium") is None
+
+
+def test_table_data(al, navigate):
+    navigate("https://seleniumbase.io/apps/table")
+    data = al.get("table data")
+    assert len(data) > 0
+    assert "Name" in str(data)

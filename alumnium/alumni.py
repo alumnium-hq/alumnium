@@ -1,23 +1,16 @@
 from os import getenv
+from typing import Any, Optional
 
 from appium.webdriver.webdriver import WebDriver as Appium
-from langchain_anthropic import ChatAnthropic
-from langchain_aws import ChatBedrockConverse
-from langchain_deepseek import ChatDeepSeek
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_mistralai import ChatMistralAI
-from langchain_ollama import ChatOllama
-from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from .agents import *
-from .agents.retriever_agent import Data
-from .cache import Cache
 from .drivers import AppiumDriver, PlaywrightDriver, SeleniumDriver
 from .logutils import get_logger
-from .models import Model, Provider
+from .models import Model
+from .server_adapter import ServerAdapter
+from .tools import ALL_TOOLS
 
 logger = get_logger(__name__)
 
@@ -36,44 +29,29 @@ class Alumni:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
         logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
-        if self.model.provider == Provider.AZURE_OPENAI:
-            llm = AzureChatOpenAI(
-                model=self.model.name,
-                api_version=getenv("AZURE_OPENAI_API_VERSION", ""),
-                temperature=0,
-                seed=1,
-            )
-        elif self.model.provider == Provider.ANTHROPIC:
-            llm = ChatAnthropic(model=self.model.name, temperature=0)
-        elif self.model.provider == Provider.AWS_ANTHROPIC or self.model.provider == Provider.AWS_META:
-            llm = ChatBedrockConverse(
-                model_id=self.model.name,
-                temperature=0,
-                aws_access_key_id=getenv("AWS_ACCESS_KEY", ""),
-                aws_secret_access_key=getenv("AWS_SECRET_KEY", ""),
-                region_name=getenv("AWS_REGION_NAME", "us-east-1"),
-            )
-        elif self.model.provider == Provider.DEEPSEEK:
-            llm = ChatDeepSeek(model=self.model.name, temperature=0)
-        elif self.model.provider == Provider.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=self.model.name, temperature=0)
-        elif self.model.provider == Provider.MISTRALAI:
-            llm = ChatMistralAI(model=self.model.name, temperature=0)
-        elif self.model.provider == Provider.OLLAMA:
-            llm = ChatOllama(model=self.model.name, temperature=0)
-        elif self.model.provider == Provider.OPENAI:
-            llm = ChatOpenAI(model=self.model.name, temperature=0, seed=1)
-        else:
-            raise NotImplementedError(f"Model {self.model.provider} not implemented")
 
-        self.cache = Cache()
-        llm.cache = self.cache
+        # Create server client and session
+        self.server_client = ServerAdapter()
 
-        self.actor_agent = ActorAgent(self.driver, llm)
-        self.planner_agent = PlannerAgent(self.driver, llm)
-        self.retrieval_agent = RetrieverAgent(self.driver, llm)
+        # Get environment variables for different providers
+        azure_openai_api_version = getenv("AZURE_OPENAI_API_VERSION")
+        aws_access_key = getenv("AWS_ACCESS_KEY")
+        aws_secret_key = getenv("AWS_SECRET_KEY")
+        aws_region_name = getenv("AWS_REGION_NAME", "us-east-1")
+
+        # Create session
+        self.session_id = self.server_client.create_session(
+            provider=self.model.provider.value,
+            name=self.model.name,
+            azure_openai_api_version=azure_openai_api_version,
+            aws_access_key=aws_access_key,
+            aws_secret_key=aws_secret_key,
+            aws_region_name=aws_region_name,
+        )
 
     def quit(self):
+        if hasattr(self, "session_id"):
+            self.server_client.delete_session(self.session_id)
         self.driver.quit()
 
     @retry(tries=2, delay=0.1)
@@ -84,9 +62,27 @@ class Alumni:
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.planner_agent.invoke(goal)
-        for step in steps:
-            self.actor_agent.invoke(goal, step)
+        aria = self._get_aria_xml()
+        url = self._get_current_url()
+        title = self._get_current_title()
+
+        # Plan actions
+        action_response = self.server_client.plan_actions(
+            session_id=self.session_id, goal=goal, aria=aria, url=url, title=title
+        )
+
+        # Execute each action
+        for action in action_response.actions:
+            step_response = self.server_client.execute_step(
+                session_id=self.session_id,
+                goal=goal,
+                step=f"{action.type}: {action.args}",
+                aria=aria,
+            )
+
+            # Execute tool calls
+            for tool_call in step_response.tool_calls:
+                self._execute_tool_call(tool_call)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -98,15 +94,32 @@ class Alumni:
 
         Returns:
             The summary of verification result.
-
-        Raises:
-            AssertionError: If the verification fails.
         """
-        result = self.retrieval_agent.invoke(f"Is the following true or false - {statement}", vision)
-        assert result.value, result.explanation
-        return result.explanation
+        aria = self._get_aria_xml()
+        url = self._get_current_url()
+        title = self._get_current_title()
 
-    def get(self, data: str, vision: bool = False) -> Data:
+        # Capture screenshot if vision is enabled
+        screenshot = None
+        if vision:
+            try:
+                screenshot = self.driver.screenshot
+            except Exception as e:
+                logger.warning(f"Failed to capture screenshot: {e}")
+
+        verification_response = self.server_client.verify_statement(
+            session_id=self.session_id,
+            statement=statement,
+            aria=aria,
+            url=url,
+            title=title,
+            screenshot=screenshot,
+        )
+
+        assert verification_response.result, verification_response.explanation
+        return verification_response.explanation
+
+    def get(self, data: str, vision: bool = False) -> Any:
         """
         Extracts requested data from the page.
 
@@ -115,9 +128,33 @@ class Alumni:
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
 
         Returns:
-            Data: The extracted data loosely typed to int, float, str, or list of them.
+            The extracted data loosely typed to int, float, str, or list of them.
         """
-        return self.retrieval_agent.invoke(data, vision).value
+        aria = self._get_aria_xml()
+        url = self._get_current_url()
+        title = self._get_current_title()
+
+        # Capture screenshot if vision is enabled
+        screenshot = None
+        if vision:
+            try:
+                screenshot = self.driver.screenshot
+            except Exception as e:
+                logger.warning(f"Failed to capture screenshot: {e}")
+
+        # Convert data string to schema format expected by extract_data
+        data_schema = {"description": data}
+
+        data_response = self.server_client.extract_data(
+            session_id=self.session_id,
+            data_schema=data_schema,
+            aria=aria,
+            url=url,
+            title=title,
+            screenshot=screenshot,
+        )
+
+        return data_response.value
 
     def learn(self, goal: str, actions: list[str]):
         """
@@ -127,7 +164,25 @@ class Alumni:
             goal: The goal to be achieved. Use same format as in `do`.
             actions: A list of actions to achieve the goal.
         """
-        self.planner_agent.add_example(goal, actions)
+        self.server_client.learn(session_id=self.session_id, goal=goal, actions=actions)
+
+    def clear_examples(self):
+        """
+        Clears all learning examples from the planner agent.
+        """
+        self.server_client.clear_examples(session_id=self.session_id)
+
+    def save_cache(self):
+        """
+        Saves the cache for the session.
+        """
+        self.server_client.save_cache(session_id=self.session_id)
+
+    def discard_cache(self):
+        """
+        Discards the cache for the session.
+        """
+        self.server_client.discard_cache(session_id=self.session_id)
 
     def stats(self) -> dict[str, int]:
         """
@@ -136,20 +191,53 @@ class Alumni:
         Returns:
             A dictionary containing the number of input tokens, output tokens, and total tokens used by all agents.
         """
-        return {
-            "input_tokens": (
-                self.planner_agent.usage["input_tokens"]
-                + self.actor_agent.usage["input_tokens"]
-                + self.retrieval_agent.usage["input_tokens"]
-            ),
-            "output_tokens": (
-                self.planner_agent.usage["output_tokens"]
-                + self.actor_agent.usage["output_tokens"]
-                + self.retrieval_agent.usage["output_tokens"]
-            ),
-            "total_tokens": (
-                self.planner_agent.usage["total_tokens"]
-                + self.actor_agent.usage["total_tokens"]
-                + self.retrieval_agent.usage["total_tokens"]
-            ),
-        }
+        try:
+            session_stats = self.server_client.get_session_stats(self.session_id)
+            return {
+                "input_tokens": session_stats.get("input_tokens", 0),
+                "output_tokens": session_stats.get("output_tokens", 0),
+                "total_tokens": session_stats.get("total_tokens", 0),
+            }
+        except Exception as e:
+            logger.warning(f"Failed to get session stats: {e}")
+            return {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0,
+            }
+
+    def _get_aria_xml(self) -> str:
+        """Get the current page's ARIA XML representation."""
+        return self.driver.accessibility_tree.to_xml()
+
+    def _get_current_url(self) -> Optional[str]:
+        """Get the current page URL."""
+        try:
+            return self.driver.url
+        except Exception:
+            return None
+
+    def _get_current_title(self) -> Optional[str]:
+        """Get the current page title."""
+        try:
+            return self.driver.title
+        except Exception:
+            return None
+
+    def _execute_tool_call(self, tool_call):
+        """Execute a tool call on the driver."""
+
+        # Create tool instance from ALL_TOOLS
+        tool = ALL_TOOLS[tool_call.name](**tool_call.args)
+
+        # Resolve element IDs using accessibility tree
+        accessibility_tree = self.driver.accessibility_tree
+        if "id" in tool.model_fields_set:
+            tool.id = accessibility_tree.element_by_id(tool.id).id
+        if "from_id" in tool.model_fields_set:
+            tool.from_id = accessibility_tree.element_by_id(tool.from_id).id
+        if "to_id" in tool.model_fields_set:
+            tool.to_id = accessibility_tree.element_by_id(tool.to_id).id
+
+        # Invoke the tool
+        tool.invoke(self.driver)
