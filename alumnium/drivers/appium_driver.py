@@ -46,7 +46,7 @@ class AppiumDriver(BaseDriver):
         elif key == Key.TAB:
             keys.append(Keys.TAB)
 
-        ActionChains().send_keys(*keys).perform()
+        ActionChains(self.driver).send_keys(*keys).perform()
 
     def quit(self):
         self.driver.quit()
