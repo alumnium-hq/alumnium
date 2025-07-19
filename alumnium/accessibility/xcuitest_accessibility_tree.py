@@ -190,6 +190,8 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         if not self.tree:
             return ""
 
+        self._prune_redundant_name(self.tree)
+
         def convert_dict_to_xml(node: Node) -> Element | None:
             # Filter out ignored elements
             if node.ignored:
@@ -240,9 +242,9 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
                 p_value = prop.get("value")
 
                 if p_name == "label_raw":
-                    raw_label_val = str(p_value) if p_value is not None else None
+                    raw_label_val = str(p_value) if p_value else None
                 elif p_name == "value_raw":
-                    raw_value_val = str(p_value) if p_value is not None else None
+                    raw_value_val = str(p_value) if p_value else None
                 elif p_name == "enabled":
                     if p_value is False:  # 'enabled' property in Node is boolean
                         is_enabled = False
@@ -316,3 +318,43 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         indent(root_xml_element)
         xml_string = tostring(root_xml_element, encoding="unicode")
         return xml_string
+
+    def _prune_redundant_name(self, node: Node) -> List[str]:
+        """
+        Recursively traverses the tree, removes redundant name information from parent nodes,
+        and returns a list of all content (names) in the current subtree.
+        """
+        if not node.children:
+            return self._get_texts(node)
+
+        # Recursively process children and gather all descendant content
+        descendant_content = []
+        for child in node.children:
+            descendant_content.extend(self._prune_redundant_name(child))
+
+        # Sort by length, longest first, to handle overlapping substrings correctly
+        descendant_content.sort(key=len, reverse=True)
+
+        for content in descendant_content:
+            node.name = node.name.replace(content, "").strip()
+            for prop in node.properties:
+                if prop["name"] in ["name_raw", "label_raw", "value_raw"]:
+                    prop["value"] = prop["value"].replace(content, "").strip()
+
+        # The content of the current subtree is its own (potentially pruned) name
+        # plus all the content from its descendants.
+        current_subtree_content = descendant_content
+        if node.name:
+            current_subtree_content.extend(self._get_texts(node))
+
+        return current_subtree_content
+
+    def _get_texts(self, node: Node) -> List[str]:
+        texts = set()
+        if node.name:
+            texts.add(node.name)
+        for prop in node.properties:
+            if prop["name"] in ["label_raw", "value_raw", "name_raw"] and prop["value"]:
+                texts.add(prop["value"])
+
+        return list(texts)
