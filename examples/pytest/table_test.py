@@ -5,7 +5,7 @@ from pytest import mark
 
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
-    reason="Investigate why extraction is not stable",
+    reason="Area is not propery extracted from Appium source code.",
 )
 def test_table_extraction(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
@@ -19,7 +19,7 @@ def test_table_extraction(al, navigate):
 
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
-    reason="Investigate why extraction is not stable",
+    reason="Area is not propery extracted from Appium source code.",
 )
 def test_table_sorting(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
