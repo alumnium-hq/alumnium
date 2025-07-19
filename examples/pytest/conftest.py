@@ -73,10 +73,17 @@ def navigate(driver):
 @fixture
 def execute_script(driver):
     def __execute_script(script):
-        if isinstance(driver, (Appium, Chrome)):
+        if isinstance(driver, Chrome):
             driver.execute_script(script)
         elif isinstance(driver, Page):
             driver.evaluate(script)
+        elif isinstance(driver, Appium):
+            current_context = driver.current_context
+            for context in driver.contexts:
+                if "WEBVIEW" in context:
+                    driver.switch_to.context(context)
+                    driver.execute_script(script)
+                    driver.switch_to.context(current_context)
 
     return __execute_script
 
