@@ -1,7 +1,7 @@
 from pathlib import Path
 from pytest import fixture
 
-from alumnium.accessibility.uiautomator2_accessibility_tree import UIAutomator2AccessibiltyTree
+from alumnium.accessibility import UIAutomator2AccessibiltyTree
 
 
 def tree(filename: str) -> UIAutomator2AccessibiltyTree:

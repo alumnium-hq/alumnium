@@ -23,15 +23,11 @@ logger = get_logger(__name__)
 
 
 class Alumni:
-    def __init__(self, driver: Page | WebDriver, model: Model = None, mobile_platform: str = "Android"):
+    def __init__(self, driver: Page | WebDriver, model: Model = None):
         self.model = model or Model.current
 
-        if isinstance(driver, Appium, mobile_platform):
-            if mobile_platform in ["Android", "IOS"]:
-                self.mobile_platform = mobile_platform
-                self.driver = AppiumDriver(driver, mobile_platform)
-            else:
-                raise NotImplementedError(f"Mobile Platform {mobile_platform} not implemented")
+        if isinstance(driver, Appium):
+            self.driver = AppiumDriver(driver)
         elif isinstance(driver, Page):
             self.driver = PlaywrightDriver(driver)
         elif isinstance(driver, WebDriver):

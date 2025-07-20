@@ -10,7 +10,7 @@ from selenium.webdriver.common.keys import Keys
 
 
 from alumnium.accessibility import XCUITestAccessibilityTree
-from alumnium.accessibility.uiautomator2_accessibility_tree import UIAutomator2AccessibiltyTree
+from alumnium.accessibility import UIAutomator2AccessibiltyTree
 from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
@@ -20,13 +20,12 @@ logger = get_logger(__name__)
 
 
 class AppiumDriver(BaseDriver):
-    def __init__(self, driver: Remote, mobile_platfrom: str):
+    def __init__(self, driver: Remote):
         self.driver = driver
-        self.mobile_platform = mobile_platfrom
 
     @property
-    def accessibility_tree(self, mobile_platform) -> XCUITestAccessibilityTree:
-        if mobile_platform == "Android":
+    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
+        if self.driver.capabilities['automationName'] == "uiautomator2":
             return UIAutomator2AccessibiltyTree(self.driver.page_source)
         else:
             return XCUITestAccessibilityTree(self.driver.page_source)
