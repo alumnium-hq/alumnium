@@ -12,13 +12,16 @@ from alumnium import Alumni
 
 load_dotenv(override=True)
 
+
 @fixture()
 def driver_type():
     return getenv("ALUMNIUM_DRIVER", "selenium")
 
+
 @fixture()
 def headless():
     return getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+
 
 @fixture(scope="session", autouse=True)
 def driver(driver_type, headless):

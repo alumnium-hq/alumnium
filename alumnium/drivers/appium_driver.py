@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 
 
 from alumnium.accessibility import XCUITestAccessibilityTree
+from alumnium.accessibility import UIAutomator2AccessibiltyTree
 from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver
@@ -23,8 +24,11 @@ class AppiumDriver(BaseDriver):
         self.driver = driver
 
     @property
-    def accessibility_tree(self) -> XCUITestAccessibilityTree:
-        return XCUITestAccessibilityTree(self.driver.page_source)
+    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
+        if self.driver.capabilities['automationName'] == "uiautomator2":
+            return UIAutomator2AccessibiltyTree(self.driver.page_source)
+        else:
+            return XCUITestAccessibilityTree(self.driver.page_source)
 
     def click(self, id: int):
         self._find_element(id).click()
@@ -92,6 +96,14 @@ class AppiumDriver(BaseDriver):
             props["value"] = element.value
         if element.label:
             props["label"] = element.label
+        if element.androidresourceid:
+            props["resource-id"] = element.androidresourceid
+        if element.androidtext:
+            props["text"] = element.androidtext
+        if element.androidcontentdesc:
+            props["content-desc"] = element.androidcontentdesc
+        if element.androidbounds:
+            props["bounds"] = element.androidbounds
 
         if props:
             props = [f'@{k}="{v}"' for k, v in props.items()]
