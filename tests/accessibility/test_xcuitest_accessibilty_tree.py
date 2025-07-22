@@ -99,9 +99,7 @@ def test_nested_duplicated_tree(duplicated_tree: XCUITestAccessibilityTree):
           <generic id="39">
             <generic id="40">
               <generic id="46">
-                <generic id="48">
-                  <generic id="49" name="IconFooBar" />
-                </generic>
+                <generic id="49" name="IconFooBar" />
                 <StaticText id="50">Welcome to the new FooBar app!</StaticText>
                 <StaticText id="51">We're happy to have you!</StaticText>
               </generic>

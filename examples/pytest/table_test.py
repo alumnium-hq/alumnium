@@ -1,6 +1,20 @@
 from os import getenv
 
-from pytest import mark
+from pytest import fixture, mark
+
+from alumnium import Model, Provider
+
+
+@fixture(autouse=True)
+def learn(al):
+    # Haiku double-clicks to sort
+    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC]:
+        al.learn(
+            goal="sort by web site",
+            actions=["click 'Web Site' header"],
+        )
+    yield
+    al.planner_agent.prompt_with_examples.examples.clear()
 
 
 @mark.xfail(
