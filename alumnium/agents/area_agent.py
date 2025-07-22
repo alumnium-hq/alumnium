@@ -47,7 +47,12 @@ class AreaAgent(BaseAgent):
         response = message["parsed"]
         # Haiku 3 returns tool calls instead of parsed output
         if not response and message["raw"].tool_calls:
-            response = Area(**message["raw"].tool_calls[0]["args"]["properties"])
+            args = message["raw"].tool_calls[0]["args"]
+            if "properties" in args:
+                args = args["properties"]
+            if "explanation" not in args:
+                args["explanation"] = "No explanation provided by the model."
+            response = Area(**args)
 
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")

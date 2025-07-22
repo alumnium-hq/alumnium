@@ -129,8 +129,6 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             indent(element)
             xml_string += tostring(element, encoding="unicode")
 
-        logger.debug(f"  -> XML: {xml_string}")
-
         return xml_string
 
     def _prune_redundant_name(self, node: Element) -> List[str]:
