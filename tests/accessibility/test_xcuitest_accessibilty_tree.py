@@ -88,7 +88,6 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
 
 
 def test_nested_duplicated_tree(duplicated_tree: XCUITestAccessibilityTree):
-    print(duplicated_tree.to_xml())
     assert (
         duplicated_tree.to_xml()
         == """

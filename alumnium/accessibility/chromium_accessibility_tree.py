@@ -1,3 +1,4 @@
+from typing import List
 from xml.etree.ElementTree import Element, indent, tostring
 
 from alumnium.logutils import get_logger
@@ -116,7 +117,11 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
                 return xml_element
 
         # Create the root XML element
-        root_elements = [convert_node_to_xml(self.tree[root_id]) for root_id in self.tree]
+        root_elements = []
+        for root_id in self.tree:
+            element = convert_node_to_xml(self.tree[root_id])
+            root_elements.append(element)
+            self._prune_redundant_name(element)
 
         # Convert the XML elements to a string
         xml_string = ""
@@ -127,3 +132,50 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         logger.debug(f"  -> XML: {xml_string}")
 
         return xml_string
+
+    def _prune_redundant_name(self, node: Element) -> List[str]:
+        """
+        Recursively traverses the tree, removes redundant name information from parent nodes,
+        and returns a list of all content (names) in the current subtree.
+        """
+        # Remove name if it equals text
+        if node.get("name") and node.text and node.get("name") == node.text:
+            del node.attrib["name"]
+
+        if not len(node):
+            return self._get_texts(node)
+
+        # Recursively process children and gather all descendant content
+        descendant_content = []
+        for child in node:
+            descendant_content.extend(self._prune_redundant_name(child))
+
+        # Sort by length, longest first, to handle overlapping substrings correctly
+        descendant_content.sort(key=len, reverse=True)
+
+        for content in descendant_content:
+            if node.get("name"):
+                node.set("name", node.get("name").replace(content, "").strip())
+            if node.get("label"):
+                node.set("label", node.get("label").replace(content, "").strip())
+            if node.text:
+                node.text = node.text.replace(content, "").strip()
+
+        # The content of the current subtree is its own (potentially pruned) name
+        # plus all the content from its descendants.
+        current_subtree_content = descendant_content
+        if node.get("name"):
+            current_subtree_content.extend(self._get_texts(node))
+
+        return current_subtree_content
+
+    def _get_texts(self, node: dict) -> List[str]:
+        texts = set()
+        if node.get("name"):
+            texts.add(node.get("name"))
+        if node.get("label"):
+            texts.add(node.get("label"))
+        if node.text:
+            texts.add(node.text)
+
+        return list(texts)
