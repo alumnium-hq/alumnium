@@ -24,27 +24,31 @@ def test_table_extraction(al, navigate):
 def test_table_sorting(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
 
-    table1 = al.area("example 1 table")
-    assert set(table1.get("first names")) == {"John", "Frank", "Jason", "Tim"}
-    assert set(table1.get("last names")) == {"Smith", "Bach", "Doe", "Conway"}
+    table1 = al.area("example 1 table - return table element")
+    assert table1.get("first names") == ["John", "Frank", "Jason", "Tim"]
+    assert table1.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
 
-    table2 = al.area("example 2 table")
-    assert set(table2.get("first names")) == {"John", "Frank", "Jason", "Tim"}
-    assert set(table2.get("last names")) == {"Smith", "Bach", "Doe", "Conway"}
+    table2 = al.area("example 2 table - return table element")
+    assert table2.get("first names") == ["John", "Frank", "Jason", "Tim"]
+    assert table2.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
 
     table1.do("sort by last name")
-    assert set(table1.get("first names")) == {"Frank", "Tim", "Jason", "John"}
-    assert set(table1.get("last names")) == {"Bach", "Conway", "Doe", "Smith"}
+    table1 = al.area("example 1 table - return table element")  # refresh
+    assert table1.get("first names") == ["Frank", "Tim", "Jason", "John"]
+    assert table1.get("last names") == ["Bach", "Conway", "Doe", "Smith"]
     # example 2 table is not affected
-    assert set(table2.get("first names")) == {"John", "Frank", "Jason", "Tim"}
-    assert set(table2.get("last names")) == {"Smith", "Bach", "Doe", "Conway"}
+    table2 = al.area("example 2 table - return table element")  # refresh
+    assert table2.get("first names") == ["John", "Frank", "Jason", "Tim"]
+    assert table2.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
 
-    table2.do("sort example 2 table by first name")
-    assert set(table2.get("first names")) == {"Frank", "Jason", "John", "Tim"}
-    assert set(table2.get("last names")) == {"Bach", "Doe", "Smith", "Conway"}
+    table2.do("sort by first name")
+    table2 = al.area("example 2 table - return table element")  # refresh
+    assert table2.get("first names") == ["Frank", "Jason", "John", "Tim"]
+    assert table2.get("last names") == ["Bach", "Doe", "Smith", "Conway"]
     # example 1 table is not affected
-    assert set(table1.get("first names")) == {"Frank", "Tim", "Jason", "John"}
-    assert set(table1.get("last names")) == {"Bach", "Conway", "Doe", "Smith"}
+    table1 = al.area("example 1 table - return table element")  # refresh
+    assert table1.get("first names") == ["Frank", "Tim", "Jason", "John"]
+    assert table1.get("last names") == ["Bach", "Conway", "Doe", "Smith"]
 
 
 def test_retrieval_of_unavailable_data(al, navigate):
