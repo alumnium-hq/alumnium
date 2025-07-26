@@ -46,7 +46,7 @@ def test_table_sorting(al, navigate):
     assert table2.get("first names") == ["John", "Frank", "Jason", "Tim"]
     assert table2.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
 
-    table1.do("sort by last name")
+    table1.do("sort by last name once")
     table1 = al.area("example 1 table - return table element")  # refresh
     assert table1.get("first names") == ["Frank", "Tim", "Jason", "John"]
     assert table1.get("last names") == ["Bach", "Conway", "Doe", "Smith"]
@@ -55,7 +55,7 @@ def test_table_sorting(al, navigate):
     assert table2.get("first names") == ["John", "Frank", "Jason", "Tim"]
     assert table2.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
 
-    table2.do("sort by first name")
+    table2.do("sort by first name once")
     table2 = al.area("example 2 table - return table element")  # refresh
     assert table2.get("first names") == ["Frank", "Jason", "John", "Tim"]
     assert table2.get("last names") == ["Bach", "Doe", "Smith", "Conway"]
