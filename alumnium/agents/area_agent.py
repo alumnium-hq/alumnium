@@ -1,6 +1,7 @@
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
+from alumnium.accessibility.base_accessibility_tree import BaseAccessibilityTree
 from alumnium.drivers import BaseDriver
 from alumnium.logutils import get_logger
 
@@ -20,16 +21,13 @@ class Area(BaseModel):
 
 
 class AreaAgent(BaseAgent):
-    def __init__(self, driver: BaseDriver, llm: BaseChatModel):
+    def __init__(self, llm: BaseChatModel):
         super().__init__()
-        self.driver = driver
         self.chain = self._with_retry(llm.with_structured_output(Area, include_raw=True))
 
-    def invoke(self, description: str) -> Area:
+    def invoke(self, description: str, accessibility_tree: BaseAccessibilityTree) -> Area:
         logger.info("Starting area detection:")
         logger.info(f"  -> Description: {description}")
-
-        accessibility_tree = self.driver.accessibility_tree
         logger.debug(f"  -> Accessibility tree: {accessibility_tree.to_xml()}")
 
         message = self.chain.invoke(
@@ -38,7 +36,8 @@ class AreaAgent(BaseAgent):
                 (
                     "human",
                     self.prompts["user"].format(
-                        accessibility_tree=accessibility_tree.to_xml(), description=description
+                        accessibility_tree=accessibility_tree.to_xml(),
+                        description=description,
                     ),
                 ),
             ]
@@ -58,8 +57,4 @@ class AreaAgent(BaseAgent):
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
         self._update_usage(message["raw"].usage_metadata)
 
-        return {
-            "id": response.id,
-            "explanation": response.explanation,
-            "accessibility_tree": self.driver.accessibility_tree.get_area(response.id),
-        }
+        return {"id": response.id, "explanation": response.explanation}
