@@ -8,7 +8,11 @@ from alumnium import Model, Provider
 @fixture(autouse=True)
 def learn(al):
     # Haiku double-clicks to sort
-    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC]:
+    if Model.current.provider in [
+        Provider.ANTHROPIC,
+        Provider.AWS_ANTHROPIC,
+        Provider.GOOGLE,
+    ]:
         al.learn(
             goal="sort by web site",
             actions=["click 'Web Site' header"],
