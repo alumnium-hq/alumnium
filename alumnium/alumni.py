@@ -8,13 +8,11 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
 from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
-from langchain_core.tools import BaseTool
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from alumnium.accessibility.base_accessibility_tree import BaseAccessibilityTree
-from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS
+from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS, BaseTool
 
 from .agents import *
 from .agents.retriever_agent import Data
@@ -102,7 +100,7 @@ class Alumni:
 
             # Execute tool calls
             for tool_call in actor_response:
-                self._execute_tool_call(tool_call, self.tools, accessibility_tree)
+                BaseTool.execute_tool_call(tool_call, self.tools, accessibility_tree, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -161,7 +159,7 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        response = self.area_agent.invoke(description, self.driver.accessibility_tree)
+        response = self.area_agent.invoke(description, self.driver.accessibility_tree.to_xml())
         return Area(
             id=response["id"],
             description=response["explanation"],
@@ -206,21 +204,3 @@ class Alumni:
                 + self.retriever_agent.usage["total_tokens"]
             ),
         }
-
-    def _execute_tool_call(
-        self,
-        tool_call: dict,
-        tools: dict[str, BaseTool],
-        accessibility_tree: BaseAccessibilityTree,
-    ):
-        """Execute a tool call on the driver."""
-        tool = tools[tool_call["name"]](**tool_call["args"])
-
-        if "id" in tool.model_fields_set:
-            tool.id = accessibility_tree.element_by_id(tool.id).id
-        if "from_id" in tool.model_fields_set:
-            tool.from_id = accessibility_tree.element_by_id(tool.from_id).id
-        if "to_id" in tool.model_fields_set:
-            tool.to_id = accessibility_tree.element_by_id(tool.to_id).id
-
-        tool.invoke(self.driver)

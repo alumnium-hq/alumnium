@@ -1,7 +1,7 @@
 from retry import retry
 
 from alumnium.drivers.base_driver import BaseDriver
-from langchain_core.tools import BaseTool
+from alumnium.tools import BaseTool
 
 from .accessibility import BaseAccessibilityTree
 from .agents import ActorAgent, PlannerAgent, RetrieverAgent
@@ -42,7 +42,7 @@ class Area:
 
             # Execute tool calls
             for tool_call in actor_response:
-                self._execute_tool_call(tool_call, self.tools, self.accessibility_tree)
+                BaseTool.execute_tool_call(tool_call, self.tools, self.accessibility_tree, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -86,21 +86,3 @@ class Area:
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         ).value
-
-    def _execute_tool_call(
-        self,
-        tool_call: dict,
-        tools: dict[str, BaseTool],
-        accessibility_tree: BaseAccessibilityTree,
-    ):
-        """Execute a tool call on the driver."""
-        tool = tools[tool_call["name"]](**tool_call["args"])
-
-        if "id" in tool.model_fields_set:
-            tool.id = accessibility_tree.element_by_id(tool.id).id
-        if "from_id" in tool.model_fields_set:
-            tool.from_id = accessibility_tree.element_by_id(tool.from_id).id
-        if "to_id" in tool.model_fields_set:
-            tool.to_id = accessibility_tree.element_by_id(tool.to_id).id
-
-        tool.invoke(self.driver)

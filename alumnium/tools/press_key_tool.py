@@ -1,11 +1,12 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from alumnium.drivers import BaseDriver
 from alumnium.drivers.keys import Key
+from .base_tool import BaseTool
 
 
-class PressKeyTool(BaseModel):
-    """Presses a key on the keyboard."""
+class PressKeyTool(BaseTool):
+    """Press a keyboard key."""
 
     key: Key = Field(description="Key to press.")
 

@@ -1,8 +1,6 @@
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
-from alumnium.accessibility.base_accessibility_tree import BaseAccessibilityTree
-from alumnium.drivers import BaseDriver
 from alumnium.logutils import get_logger
 
 from .base_agent import BaseAgent
@@ -25,10 +23,10 @@ class AreaAgent(BaseAgent):
         super().__init__()
         self.chain = self._with_retry(llm.with_structured_output(Area, include_raw=True))
 
-    def invoke(self, description: str, accessibility_tree: BaseAccessibilityTree) -> Area:
+    def invoke(self, description: str, accessibility_tree_xml: str) -> Area:
         logger.info("Starting area detection:")
         logger.info(f"  -> Description: {description}")
-        logger.debug(f"  -> Accessibility tree: {accessibility_tree.to_xml()}")
+        logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
 
         message = self.chain.invoke(
             [
@@ -36,7 +34,7 @@ class AreaAgent(BaseAgent):
                 (
                     "human",
                     self.prompts["user"].format(
-                        accessibility_tree=accessibility_tree.to_xml(),
+                        accessibility_tree=accessibility_tree_xml,
                         description=description,
                     ),
                 ),

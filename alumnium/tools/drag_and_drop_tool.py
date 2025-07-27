@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from alumnium.drivers import BaseDriver
+from .base_tool import BaseTool
 
 
-class DragAndDropTool(BaseModel):
+class DragAndDropTool(BaseTool):
     """Drag one element onto another and drop it. Don't combine with HoverTool."""
 
     from_id: int = Field(description="Identifier (ID) of element to drag")
