@@ -22,11 +22,12 @@ def learn(al, execute_script, navigate):
 )
 @mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Needs more tuning.")
 @mark.xfail(driver_type == "appium", reason="https://github.com/alumnium-hq/alumnium/issues/132")
-def test_checkout(al, driver):
+def test_checkout(al):
     # Add products to the cart
     al.do("add 'iPhone 12 Pro Max' to cart")
     al.do("add 'iPhone 12 Mini' to cart")
-    assert al.get("titles of products in cart") == ["iPhone 12 Pro Max", "iPhone 12 Mini"]
+    cart = al.area("shopping bag")
+    assert cart.get("titles of products") == ["iPhone 12 Pro Max", "iPhone 12 Mini"]
 
     # Start checkout and login
     al.do("go to checkout")
