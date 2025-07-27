@@ -16,7 +16,7 @@ def login(al, driver, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
     al.learn("go to shopping cart", ["click link between 'Swag Labs' and 'Products'"])
 
-    if getenv("ALUMNIUM_DRIVER", "selenium") == "appium":
+    if driver_type == "appium":
         al.learn(
             "sort products by lowest shipping cost",
             [
