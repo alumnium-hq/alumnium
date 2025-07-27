@@ -18,7 +18,7 @@ class Node:
 
 class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
-        self.tree = None
+        self.tree = []
         self.id_counter = 0
         self.cached_ids = {}
 
@@ -41,7 +41,7 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
         if len(root_element):
             for children in range(0, len(root_element)):
                 app_element = root_element[children]
-                self.tree = self._parse_element(app_element)
+                self.tree.append(self._parse_element(app_element))
 
     def get_tree(self):
         return self.tree
@@ -154,7 +154,7 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
 
             element = Element(node.role)
 
-            attributes_to_include = ["resource-id", "class", "content-desc", "text"]
+            attributes_to_include = ["resource-id", "content-desc", "text"]
 
             for prop in node.properties:
                 if prop["name"] in attributes_to_include:
@@ -168,10 +168,10 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
 
             return element
 
-        root_element = convert_dict_to_xml(self.tree)
-
-        if root_element is not None:
-            indent(root_element)
-            return tostring(root_element, encoding="unicode")
-        else:
-            return ""
+        xml_outputs = []
+        for root_node in self.tree:
+            root_element = convert_dict_to_xml(root_node)
+            if root_node is not None:
+                indent(root_element)
+                xml_outputs.append(tostring(root_element, encoding="unicode"))
+        return "\n".join(xml_outputs)

@@ -25,7 +25,7 @@ class AppiumDriver(BaseDriver):
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
-        if self.driver.capabilities['automationName'] == "uiautomator2":
+        if self.driver.capabilities["automationName"] == "uiautomator2":
             return UIAutomator2AccessibiltyTree(self.driver.page_source)
         else:
             return XCUITestAccessibilityTree(self.driver.page_source)
