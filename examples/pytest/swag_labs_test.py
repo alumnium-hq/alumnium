@@ -16,7 +16,7 @@ def login(al, driver, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
     al.learn("go to shopping cart", ["click link between 'Swag Labs' and 'Products'"])
 
-    if getenv("ALUMNIUM_DRIVER", "selenium") == "appium":
+    if driver_type == "appium":
         al.learn(
             "sort products by lowest shipping cost",
             [
@@ -59,7 +59,6 @@ def login(al, driver, execute_script, navigate):
     Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC],
     reason="Need to add proper types in `RetrievedInformation.value`.",
 )
-@mark.xfail(Model.current.provider == Provider.AWS_META, reason="Too hard for Llama")
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
     Model.current.provider == Provider.GOOGLE,
