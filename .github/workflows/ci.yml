@@ -103,6 +103,11 @@ jobs:
           appium &
       - if: matrix.driver != 'appium'
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
+      - uses: actions/cache@v4
+        with:
+          path: .alumnium-cache.sqlite
+          key: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
+          restore-keys: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}
       - run: poetry run pytest --html reports/pytest.html examples/
       - if: failure() && runner.debug == '1'
