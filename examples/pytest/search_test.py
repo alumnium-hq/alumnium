@@ -9,8 +9,8 @@ alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
 
 @fixture(autouse=True)
 def learn(al):
-    # Claude/Gemini/Mistral/Llama have issues learning how to search
-    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC, Provider.AWS_META, Provider.GOOGLE]:
+    # Claude/Gemini/Mistral have issues learning how to search
+    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC, Provider.GOOGLE]:
         al.learn(
             goal="search for artificial intelligence",
             actions=[

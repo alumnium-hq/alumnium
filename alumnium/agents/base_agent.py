@@ -73,14 +73,7 @@ class BaseAgent:
                 ),
             )
             # AWS Bedrock rate limit errors
-            or (
-                isinstance(error, BedrockClientError)
-                and error.response["Error"]["Code"]
-                in [
-                    "ModelErrorException",  # TODO: Remove if Llama 4 is more stable
-                    "ThrottlingException",
-                ]
-            )
+            or (isinstance(error, BedrockClientError) and error.response["Error"]["Code"] == "ThrottlingException")
             # MistralAI rate limit errors
             or (isinstance(error, HTTPStatusError) and error.response.status_code == 429)
         )

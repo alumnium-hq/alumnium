@@ -59,7 +59,6 @@ def login(al, driver, execute_script, navigate):
     Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC],
     reason="Need to add proper types in `RetrievedInformation.value`.",
 )
-@mark.xfail(Model.current.provider == Provider.AWS_META, reason="Too hard for Llama")
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
     Model.current.provider == Provider.GOOGLE,
@@ -119,5 +118,5 @@ def test_checkout(al):
     al.do("finish checkout")
 
     al.check("thank you for the order message is shown")
-    if Model.current.provider not in [Provider.AWS_META, Provider.DEEPSEEK]:
+    if Model.current.provider != Provider.DEEPSEEK:
         al.check("big green checkmark is shown", vision=True)

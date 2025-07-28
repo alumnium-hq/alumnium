@@ -34,7 +34,7 @@ body:
         - Playwright
     validations:
         required: true
-      
+
   - type: input
     id: tool-version
     attributes :
@@ -63,21 +63,22 @@ body:
   - type: dropdown
     id: LLM-Version
     attributes:
-      label: Which LLM Model are you using?
+      label: Which LLM are you using?
       options:
-        - Claude 3 Haiku(Anthropic)
-        - Gemini 2.0 Flash(Google)
-        - DeepSeek 3.0 (Deepseek)
-        - Llama 3.2 90B(Meta)
-        - GPT-4.0 Mini(Open AI)
-        - Mistral-small 3.1 24B(Ollama)
-        - other
-      default: 4
+        - Claude 3 Haiku (Anthropic)
+        - DeepSeek V3 (DeepSeek)
+        - GPT-4.0 Mini (Open AI)
+        - Gemini 2.0 Flash (Google)
+        - Llama 4.0 Maverick (Meta)
+        - Mistral Medium 3 (MistralAI)
+        - Mistral Small 3.1 24B (Ollama)
+        - Other
+      default: 3
 
   - type: textarea
     attributes:
       placeholder: Can you please provide the HTML DOM of the page or URL of the page where the test is failing
-      label: HTML DOM or URL 
+      label: HTML DOM or URL
     validations:
       required: true
 
@@ -87,7 +88,7 @@ body:
       label: Full Issue Description
     validations:
       required: true
-    
+
   - type: textarea
     attributes:
       placeholder: Can you please provide the steps to reproduce?
