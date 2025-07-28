@@ -35,7 +35,7 @@ jobs:
   examples:
     name: Examples
     runs-on: ${{ matrix.driver == 'appium' && 'macos-latest' || 'ubuntu-latest' }}
-    timeout-minutes: 40
+    timeout-minutes: 60
     env:
       ALUMNIUM_DRIVER: ${{ matrix.driver }}
       ALUMNIUM_MODEL: ${{ matrix.model }}
