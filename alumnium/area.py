@@ -1,5 +1,8 @@
 from retry import retry
 
+from alumnium.drivers.base_driver import BaseDriver
+from alumnium.tools import BaseTool
+
 from .accessibility import BaseAccessibilityTree
 from .agents import ActorAgent, PlannerAgent, RetrieverAgent
 from .agents.retriever_agent import Data
@@ -10,17 +13,20 @@ class Area:
         self,
         id: int,
         description: str,
-        accessibility_tree: BaseAccessibilityTree,
+        driver: BaseDriver,
+        tools: dict[str, BaseTool],
         actor_agent: ActorAgent,
         planner_agent: PlannerAgent,
-        retrieval_agent: RetrieverAgent,
+        retriever_agent: RetrieverAgent,
     ):
         self.id = id
         self.description = description
-        self.accessibility_tree = accessibility_tree
+        self.driver = driver
+        self.accessibility_tree = driver.accessibility_tree.get_area(id)
+        self.tools = tools
         self.actor_agent = actor_agent
         self.planner_agent = planner_agent
-        self.retrieval_agent = retrieval_agent
+        self.retriever_agent = retriever_agent
 
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
@@ -30,9 +36,13 @@ class Area:
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.planner_agent.invoke(goal, self.accessibility_tree)
+        steps = self.planner_agent.invoke(goal, self.accessibility_tree.to_xml())
         for step in steps:
-            self.actor_agent.invoke(goal, step, self.accessibility_tree)
+            actor_response = self.actor_agent.invoke(goal, step, self.accessibility_tree.to_xml())
+
+            # Execute tool calls
+            for tool_call in actor_response:
+                BaseTool.execute_tool_call(tool_call, self.tools, self.accessibility_tree, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -48,10 +58,12 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
-        result = self.retrieval_agent.invoke(
+        result = self.retriever_agent.invoke(
             f"Is the following true or false - {statement}",
-            vision,
-            self.accessibility_tree,
+            self.accessibility_tree.to_xml(),
+            title=self.driver.title,
+            url=self.driver.url,
+            screenshot=self.driver.screenshot if vision else None,
         )
         assert result.value, result.explanation
         return result.explanation
@@ -67,4 +79,10 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        return self.retrieval_agent.invoke(data, vision, self.accessibility_tree).value
+        return self.retriever_agent.invoke(
+            data,
+            self.accessibility_tree.to_xml(),
+            title=self.driver.title,
+            url=self.driver.url,
+            screenshot=self.driver.screenshot if vision else None,
+        ).value

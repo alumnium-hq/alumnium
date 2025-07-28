@@ -1,5 +1,4 @@
 from os import getenv
-from typing import Optional
 
 from appium.webdriver.webdriver import WebDriver as Appium
 from langchain_anthropic import ChatAnthropic
@@ -12,6 +11,8 @@ from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
+
+from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS, BaseTool
 
 from .agents import *
 from .agents.retriever_agent import Data
@@ -30,10 +31,13 @@ class Alumni:
 
         if isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
+            self.tools = ALL_APPIUM_TOOLS
         elif isinstance(driver, Page):
             self.driver = PlaywrightDriver(driver)
+            self.tools = ALL_TOOLS
         elif isinstance(driver, WebDriver):
             self.driver = SeleniumDriver(driver)
+            self.tools = ALL_TOOLS
         else:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
@@ -71,10 +75,10 @@ class Alumni:
         self.cache = Cache()
         llm.cache = self.cache
 
-        self.actor_agent = ActorAgent(self.driver, llm)
-        self.planner_agent = PlannerAgent(self.driver, llm)
-        self.retrieval_agent = RetrieverAgent(self.driver, llm)
-        self.area_agent = AreaAgent(self.driver, llm)
+        self.actor_agent = ActorAgent(llm, self.tools)
+        self.planner_agent = PlannerAgent(llm)
+        self.retriever_agent = RetrieverAgent(llm)
+        self.area_agent = AreaAgent(llm)
 
     def quit(self):
         self.driver.quit()
@@ -87,9 +91,16 @@ class Alumni:
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.planner_agent.invoke(goal)
-        for step in steps:
-            self.actor_agent.invoke(goal, step)
+        initial_accessibility_tree = self.driver.accessibility_tree
+        steps = self.planner_agent.invoke(goal, initial_accessibility_tree.to_xml())
+        for idx, step in enumerate(steps):
+            # If the step is the first step, use the initial accessibility tree.
+            accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
+            actor_response = self.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
+
+            # Execute tool calls
+            for tool_call in actor_response:
+                BaseTool.execute_tool_call(tool_call, self.tools, accessibility_tree, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -105,7 +116,13 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
-        result = self.retrieval_agent.invoke(f"Is the following true or false - {statement}", vision)
+        result = self.retriever_agent.invoke(
+            f"Is the following true or false - {statement}",
+            self.driver.accessibility_tree.to_xml(),
+            title=self.driver.title,
+            url=self.driver.url,
+            screenshot=self.driver.screenshot if vision else None,
+        )
         assert result.value, result.explanation
         return result.explanation
 
@@ -120,7 +137,13 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        return self.retrieval_agent.invoke(data, vision).value
+        return self.retriever_agent.invoke(
+            data,
+            self.driver.accessibility_tree.to_xml(),
+            title=self.driver.title,
+            url=self.driver.url,
+            screenshot=self.driver.screenshot if vision else None,
+        ).value
 
     def area(self, description: str) -> Area:
         """
@@ -136,14 +159,15 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        response = self.area_agent.invoke(description)
+        response = self.area_agent.invoke(description, self.driver.accessibility_tree.to_xml())
         return Area(
             id=response["id"],
             description=response["explanation"],
-            accessibility_tree=response["accessibility_tree"],
+            driver=self.driver,
+            tools=self.tools,
             actor_agent=self.actor_agent,
             planner_agent=self.planner_agent,
-            retrieval_agent=self.retrieval_agent,
+            retriever_agent=self.retriever_agent,
         )
 
     def learn(self, goal: str, actions: list[str]):
@@ -167,16 +191,16 @@ class Alumni:
             "input_tokens": (
                 self.planner_agent.usage["input_tokens"]
                 + self.actor_agent.usage["input_tokens"]
-                + self.retrieval_agent.usage["input_tokens"]
+                + self.retriever_agent.usage["input_tokens"]
             ),
             "output_tokens": (
                 self.planner_agent.usage["output_tokens"]
                 + self.actor_agent.usage["output_tokens"]
-                + self.retrieval_agent.usage["output_tokens"]
+                + self.retriever_agent.usage["output_tokens"]
             ),
             "total_tokens": (
                 self.planner_agent.usage["total_tokens"]
                 + self.actor_agent.usage["total_tokens"]
-                + self.retrieval_agent.usage["total_tokens"]
+                + self.retriever_agent.usage["total_tokens"]
             ),
         }

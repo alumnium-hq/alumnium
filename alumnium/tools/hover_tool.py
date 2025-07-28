@@ -1,10 +1,11 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from alumnium.drivers import BaseDriver
+from .base_tool import BaseTool
 
 
-class HoverTool(BaseModel):
-    """Hover an element."""
+class HoverTool(BaseTool):
+    """Hover over an element."""
 
     id: int = Field(description="Element identifier (ID)")
 
