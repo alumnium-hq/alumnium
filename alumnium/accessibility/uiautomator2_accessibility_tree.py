@@ -148,30 +148,34 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
         if not self.tree:
             return ""
 
-        def convert_dict_to_xml(node: Node) -> Element | None:
-            if node.ignored:
+        def convert_dict_to_xml(ele: Node, parent_element: Element) -> Element | None:
+            if ele.ignored:
                 return None
 
-            element = Element(node.role)
+            for child_element in ele.children:
+                id = child_element.id
+                simplified_role = child_element.role.split(".")[-1]
+                text_content = ""
+                resource_id = ""
 
-            attributes_to_include = ["resource-id", "content-desc", "text"]
+                role = Element(simplified_role)
+                role.set("id", str(id))
 
-            for prop in node.properties:
-                if prop["name"] in attributes_to_include:
-                    element.set(prop["name"], str(prop["value"]))
+                for props in child_element.properties:
+                    if props["name"] == "resource-id" and props["value"]:
+                        resource_id = props["value"]
 
-            # Recursively convert and append children
-            for child_node in node.children:
-                child_element = convert_dict_to_xml(child_node)
-                if child_element is not None:
-                    element.append(child_element)
+                if resource_id:
+                    role.set("resource-id", resource_id)
 
-            return element
+                parent_element.append(role)
+                if child_element.children:
+                    convert_dict_to_xml(child_element, role)
 
-        xml_outputs = []
-        for root_node in self.tree:
-            root_element = convert_dict_to_xml(root_node)
-            if root_node is not None:
-                indent(root_element)
-                xml_outputs.append(tostring(root_element, encoding="unicode"))
-        return "\n".join(xml_outputs)
+        root_xml = Element("hierarchy")
+        for ele in self.tree:
+            convert_dict_to_xml(ele, root_xml)
+
+        indent(root_xml)
+
+        return tostring(root_xml, "unicode")
