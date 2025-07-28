@@ -19,7 +19,7 @@ def step_impl(context):
 
 @when('I create a new task "{title}"')
 def step_impl(context, title):
-    if isinstance(context.driver, Appium) and context.al.model.provider != Provider.AWS_META:
+    if isinstance(context.driver, Appium):
         context.al.do("click add button")
     context.al.do(f"create a new task '{title}'")
 

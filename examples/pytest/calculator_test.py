@@ -9,7 +9,6 @@ alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
 
 @fixture(autouse=True)
 def learn(al):
-    # Llama constantly messes the order of operations.
     # Haiku cannot correlate '/' button to '÷'.
     # Mistral skips '+' button.
     al.learn(
