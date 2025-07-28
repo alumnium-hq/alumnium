@@ -34,11 +34,9 @@ class RetrieverAgent(BaseAgent):
 
     def __init__(self, llm: BaseChatModel):
         super().__init__()
-        self.chain = self._with_retry(
-            llm.with_structured_output(
-                RetrievedInformation,
-                include_raw=True,
-            )
+        self.chain = llm.with_structured_output(
+            RetrievedInformation,
+            include_raw=True,
         )
 
     def invoke(
@@ -76,21 +74,21 @@ class RetrieverAgent(BaseAgent):
                 }
             )
 
-        message = self.chain.invoke(
+        message = self._invoke_chain(
+            self.chain,
             [
                 (
                     "system",
                     self.prompts["system"].format(separator=self.LIST_SEPARATOR),
                 ),
                 ("human", human_messages),
-            ]
+            ],
         )
 
         response = message["parsed"]
 
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
-        self._update_usage(message["raw"].usage_metadata)
 
         # Remove when we find a way use `Data` in structured output `value`.
         response.value = self.__loosely_typecast(response.value)

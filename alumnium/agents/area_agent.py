@@ -21,14 +21,15 @@ class Area(BaseModel):
 class AreaAgent(BaseAgent):
     def __init__(self, llm: BaseChatModel):
         super().__init__()
-        self.chain = self._with_retry(llm.with_structured_output(Area, include_raw=True))
+        self.chain = llm.with_structured_output(Area, include_raw=True)
 
     def invoke(self, description: str, accessibility_tree_xml: str) -> Area:
         logger.info("Starting area detection:")
         logger.info(f"  -> Description: {description}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
 
-        message = self.chain.invoke(
+        message = self._invoke_chain(
+            self.chain,
             [
                 ("system", self.prompts["system"]),
                 (
@@ -38,7 +39,7 @@ class AreaAgent(BaseAgent):
                         description=description,
                     ),
                 ),
-            ]
+            ],
         )
 
         response = message["parsed"]
@@ -53,6 +54,5 @@ class AreaAgent(BaseAgent):
 
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
-        self._update_usage(message["raw"].usage_metadata)
 
         return {"id": response.id, "explanation": response.explanation}
