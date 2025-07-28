@@ -39,7 +39,7 @@ class PlannerAgent(BaseAgent):
             ]
         )
 
-        self.chain = final_prompt | self._with_retry(llm)
+        self.chain = final_prompt | llm
 
     def add_example(self, goal: str, actions: list[str]):
         self.prompt_with_examples.examples.append(
@@ -60,11 +60,14 @@ class PlannerAgent(BaseAgent):
         logger.info("Starting planning:")
         logger.info(f"  -> Goal: {goal}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
-        message = self.chain.invoke({"goal": goal, "accessibility_tree": accessibility_tree_xml})
+
+        message = self._invoke_chain(
+            self.chain,
+            {"goal": goal, "accessibility_tree": accessibility_tree_xml},
+        )
 
         logger.info(f"  <- Result: {message.content}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
-        self._update_usage(message.usage_metadata)
 
         response = message.content.strip()
         response = response.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)

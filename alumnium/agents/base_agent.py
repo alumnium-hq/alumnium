@@ -3,7 +3,10 @@ from pathlib import Path
 from anthropic import RateLimitError as AnthropicRateLimitError
 from botocore.exceptions import ClientError as BedrockClientError
 from google.api_core.exceptions import ResourceExhausted as GoogleRateLimitError
+from httpx import HTTPStatusError
+from langchain_core.runnables import Runnable
 from openai import RateLimitError as OpenAIRateLimitError
+from retry import retry
 
 from alumnium.models import Model, Provider
 
@@ -36,31 +39,48 @@ class BaseAgent:
             with open(prompt_file) as f:
                 self.prompts[prompt_file.stem] = f.read()
 
+    @retry(
+        tries=8,
+        delay=1,
+        backoff=2,
+        on_exception=lambda e: not BaseAgent._should_retry(e),
+    )
+    def _invoke_chain(self, chain: Runnable, *args):
+        result = chain.invoke(*args)
+        if isinstance(result, dict) and "raw" in result:
+            self._update_usage(result["raw"].usage_metadata)
+        else:
+            self._update_usage(result.usage_metadata)
+
+        return result
+
     def _update_usage(self, usage_metadata):
         if usage_metadata:
             self.usage["input_tokens"] += usage_metadata.get("input_tokens", 0)
             self.usage["output_tokens"] += usage_metadata.get("output_tokens", 0)
             self.usage["total_tokens"] += usage_metadata.get("total_tokens", 0)
 
-    def _with_retry(self, llm):
-        llm = self.__with_bedrock_retry(llm)
-        llm = self.__with_rate_limit_retry(llm)
-        return llm
-
-    # Bedrock Llama is quite unstable, we should be retrying
-    # on `ModelErrorException` but it cannot be imported.
-    def __with_bedrock_retry(self, llm):
-        return llm.with_retry(
-            retry_if_exception_type=(BedrockClientError,),
-            stop_after_attempt=3,
-        )
-
-    def __with_rate_limit_retry(self, llm):
-        return llm.with_retry(
-            retry_if_exception_type=(
-                AnthropicRateLimitError,
-                OpenAIRateLimitError,
-                GoogleRateLimitError,
-            ),
-            stop_after_attempt=10,
+    @staticmethod
+    def _should_retry(error):
+        return (
+            # Common API rate limit errors
+            isinstance(
+                error,
+                (
+                    AnthropicRateLimitError,
+                    OpenAIRateLimitError,
+                    GoogleRateLimitError,
+                ),
+            )
+            # AWS Bedrock rate limit errors
+            or (
+                isinstance(error, BedrockClientError)
+                and error.response["Error"]["Code"]
+                in [
+                    "ModelErrorException",  # TODO: Remove if Llama 4 is more stable
+                    "ThrottlingException",
+                ]
+            )
+            # MistralAI rate limit errors
+            or (isinstance(error, HTTPStatusError) and error.response.status_code == 429)
         )
