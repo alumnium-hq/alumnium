@@ -1,7 +1,8 @@
+from typing import Optional
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
-from alumnium.drivers import BaseDriver
 from alumnium.logutils import *
 from alumnium.logutils import get_logger
 
@@ -13,9 +14,9 @@ logger = get_logger(__name__)
 class PlannerAgent(BaseAgent):
     LIST_SEPARATOR = "%SEP%"
 
-    def __init__(self, driver: BaseDriver, llm: BaseChatModel):
+    def __init__(self, llm: BaseChatModel):
         super().__init__()
-        self.driver = driver
+        self.llm = llm
 
         example_prompt = ChatPromptTemplate.from_messages(
             [
@@ -29,7 +30,10 @@ class PlannerAgent(BaseAgent):
         )
         final_prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", self.prompts["system"].format(separator=self.LIST_SEPARATOR)),
+                (
+                    "system",
+                    self.prompts["system"].format(separator=self.LIST_SEPARATOR),
+                ),
                 self.prompt_with_examples,
                 ("human", self.prompts["user"]),
             ]
@@ -46,13 +50,17 @@ class PlannerAgent(BaseAgent):
             }
         )
 
-    def invoke(self, goal: str) -> list[str]:
+    def invoke(self, goal: str, accessibility_tree_xml: str) -> list[str]:
+        """
+        Plan actions to achieve a goal.
+        Args:
+            goal: The goal to achieve
+            accessibility_tree_xml: The accessibility tree XML (required).
+        """
         logger.info("Starting planning:")
         logger.info(f"  -> Goal: {goal}")
-
-        accessibility_tree = self.driver.accessibility_tree.to_xml()
-        logger.debug(f"  -> Accessibility tree: {accessibility_tree}")
-        message = self.chain.invoke({"goal": goal, "accessibility_tree": accessibility_tree})
+        logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
+        message = self.chain.invoke({"goal": goal, "accessibility_tree": accessibility_tree_xml})
 
         logger.info(f"  <- Result: {message.content}")
         logger.info(f"  <- Usage: {message.usage_metadata}")

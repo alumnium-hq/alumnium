@@ -7,53 +7,66 @@ from alumnium import Model, Provider
 
 @fixture(autouse=True)
 def learn(al):
-    al.learn("sort payments table by amount", ["click header 'Amount' in 'payments' table"])
+    # Haiku double-clicks to sort
+    if Model.current.provider in [
+        Provider.ANTHROPIC,
+        Provider.AWS_ANTHROPIC,
+        Provider.GOOGLE,
+    ]:
+        al.learn(
+            goal="sort by web site",
+            actions=["click 'Web Site' header"],
+        )
     yield
     al.planner_agent.prompt_with_examples.examples.clear()
 
 
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
-    reason="Investigate why extraction is not stable",
+    reason="Area is not propery extracted from Appium source code.",
 )
 def test_table_extraction(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
 
-    assert al.get("Jason Doe's due amount from example 1 table") == "$100.00"
-    assert al.get("Frank Bach's due amount from example 1 table") == "$51.00"
-    assert al.get("Tim Conway's due amount from example 1 table") == "$50.00"
-    assert al.get("John Smith's due amount from example 1 table") == "$50.00"
+    area = al.area("example 1 table")
+    assert area.get("Jason Doe's due amount") == "$100.00"
+    assert area.get("Frank Bach's due amount") == "$51.00"
+    assert area.get("Tim Conway's due amount") == "$50.00"
+    assert area.get("John Smith's due amount") == "$50.00"
 
 
-@mark.xfail(
-    Model.current.provider == Provider.AWS_META,
-    reason="Needs more work because `do` produces duplicated actions",
-)
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
-    reason="Investigate why extraction is not stable",
+    reason="Area is not propery extracted from Appium source code.",
 )
 def test_table_sorting(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
 
-    assert al.get("first names from example 1 table") == ["John", "Frank", "Jason", "Tim"]
-    assert al.get("last names from example 1 table") == ["Smith", "Bach", "Doe", "Conway"]
-    assert al.get("first names from example 2 table") == ["John", "Frank", "Jason", "Tim"]
-    assert al.get("last names from example 2 table") == ["Smith", "Bach", "Doe", "Conway"]
+    table1 = al.area("example 1 table - return table element")
+    assert table1.get("first names") == ["John", "Frank", "Jason", "Tim"]
+    assert table1.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
 
-    al.do("sort example 1 table by last name")
-    assert al.get("first names from example 1 table") == ["Frank", "Tim", "Jason", "John"]
-    assert al.get("last names from example 1 table") == ["Bach", "Conway", "Doe", "Smith"]
+    table2 = al.area("example 2 table - return table element")
+    assert table2.get("first names") == ["John", "Frank", "Jason", "Tim"]
+    assert table2.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
+
+    table1.do("sort by last name")
+    table1 = al.area("example 1 table - return table element")  # refresh
+    assert table1.get("first names") == ["Frank", "Tim", "Jason", "John"]
+    assert table1.get("last names") == ["Bach", "Conway", "Doe", "Smith"]
     # example 2 table is not affected
-    assert al.get("first names from example 2 table") == ["John", "Frank", "Jason", "Tim"]
-    assert al.get("last names from example 2 table") == ["Smith", "Bach", "Doe", "Conway"]
+    table2 = al.area("example 2 table - return table element")  # refresh
+    assert table2.get("first names") == ["John", "Frank", "Jason", "Tim"]
+    assert table2.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
 
-    al.do("sort example 2 table by first name")
-    assert al.get("first names from example 2 table") == ["Frank", "Jason", "John", "Tim"]
-    assert al.get("last names from example 2 table") == ["Bach", "Doe", "Smith", "Conway"]
+    table2.do("sort by first name")
+    table2 = al.area("example 2 table - return table element")  # refresh
+    assert table2.get("first names") == ["Frank", "Jason", "John", "Tim"]
+    assert table2.get("last names") == ["Bach", "Doe", "Smith", "Conway"]
     # example 1 table is not affected
-    assert al.get("first names from example 1 table") == ["Frank", "Tim", "Jason", "John"]
-    assert al.get("last names from example 1 table") == ["Bach", "Conway", "Doe", "Smith"]
+    table1 = al.area("example 1 table - return table element")  # refresh
+    assert table1.get("first names") == ["Frank", "Tim", "Jason", "John"]
+    assert table1.get("last names") == ["Bach", "Conway", "Doe", "Smith"]
 
 
 def test_retrieval_of_unavailable_data(al, navigate):

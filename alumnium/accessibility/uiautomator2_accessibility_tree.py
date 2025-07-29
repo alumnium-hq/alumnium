@@ -155,7 +155,6 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
             for child_element in ele.children:
                 id = child_element.id
                 simplified_role = child_element.role.split(".")[-1]
-                text_content = ""
                 resource_id = ""
 
                 role = Element(simplified_role)

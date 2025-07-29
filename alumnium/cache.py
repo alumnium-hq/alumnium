@@ -53,6 +53,7 @@ class Cache(BaseCache):
         self.engine = create_engine(f"sqlite:///{getcwd()}/{db_path}")
         Base.metadata.create_all(self.engine)
         self.session = Session(self.engine)
+        self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
 
     def _get_or_create_model_config(self, llm_string: str) -> ModelConfig:
         model_config = (
@@ -81,10 +82,19 @@ class Cache(BaseCache):
                 system_message = msg["kwargs"]["content"]
             elif msg["kwargs"]["type"] == "human":
                 content = msg["kwargs"]["content"]
-                if isinstance(content, (list, dict)):
-                    human_message = content[0]["text"]
+                if isinstance(content, list):
+                    for content_item in content:
+                        if "text" in content_item:
+                            human_message += content_item["text"]
+                        if "image_url" in content_item:
+                            human_message += content_item["image_url"]["url"]
+                elif isinstance(content, dict):
+                    if "text" in content:
+                        human_message += content["text"]
+                    if "image_url" in content:
+                        human_message += content["image_url"]["url"]
                 else:
-                    human_message = content
+                    human_message += content
         return system_message, human_message
 
     def _hash_request(self, system_message: str, human_message: str) -> str:
@@ -119,7 +129,16 @@ class Cache(BaseCache):
         rows = self.session.execute(lookup_stmt).fetchall()
         if rows:
             logger.debug(f"Cache hit for message: {human_message[:100]}...")
-            return [loads(row[0]) for row in rows]
+            responses = []
+            for row in rows:
+                response = loads(row[0])
+                self.usage["input_tokens"] += response.message.usage_metadata.get("input_tokens", 0)
+                self.usage["output_tokens"] += response.message.usage_metadata.get("output_tokens", 0)
+                self.usage["total_tokens"] += response.message.usage_metadata.get("total_tokens", 0)
+                responses.append(response)
+
+            return responses
+
         return None
 
     def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE) -> None:

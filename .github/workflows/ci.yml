@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.event.pull_request.head.ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
   examples:
     name: Examples
     runs-on: ${{ matrix.driver == 'appium' && 'macos-latest' || 'ubuntu-latest' }}
-    timeout-minutes: 30
+    timeout-minutes: 40
     env:
       ALUMNIUM_DRIVER: ${{ matrix.driver }}
       ALUMNIUM_MODEL: ${{ matrix.model }}
@@ -51,6 +51,7 @@ jobs:
       AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
       DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
       GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     strategy:
       fail-fast: false
@@ -67,6 +68,7 @@ jobs:
           # Official DeepSeek platform times out!
           # - deepseek
           - google
+          - mistralai
           - openai
     steps:
       - id: check-access
@@ -101,6 +103,11 @@ jobs:
           appium &
       - if: matrix.driver != 'appium'
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
+      - uses: actions/cache@v4
+        with:
+          path: .alumnium-cache.sqlite
+          key: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
+          restore-keys: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}
       - run: poetry run pytest --html reports/pytest.html examples/
       - if: failure() && runner.debug == '1'

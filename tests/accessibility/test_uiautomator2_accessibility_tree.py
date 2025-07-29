@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from pathlib import Path
 from pytest import fixture
 

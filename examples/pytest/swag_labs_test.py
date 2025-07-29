@@ -1,20 +1,54 @@
 from os import getenv
 
 from pytest import fixture, mark
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.expected_conditions import presence_of_element_located
+from selenium.webdriver.support.wait import WebDriverWait
 
 from alumnium import Model, Provider
 
 
+driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
+
+
 @fixture(autouse=True)
-def login(al, execute_script, navigate):
+def login(al, driver, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
-    al.learn("go to shopping cart", ["click link to the right of 'Swag Labs' header"])
-    al.learn("sort products by lowest shipping cost", ["select 'Shipping (low to high)' in sorting dropdown"])
+    al.learn("go to shopping cart", ["click link between 'Swag Labs' and 'Products'"])
+
+    if getenv("ALUMNIUM_DRIVER", "selenium") == "appium":
+        al.learn(
+            "sort products by lowest shipping cost",
+            [
+                "click sorting dropdown",
+                'click "Shipping (low to high)"',
+            ],
+        )
+    else:
+        al.learn(
+            "sort products by lowest shipping cost",
+            ["select 'Shipping (low to high)' in sorting dropdown"],
+        )
 
     navigate("https://www.saucedemo.com/")
     al.do("type 'standard_user' into username field")
     al.do("type 'secret_sauce' into password field")
     al.do("click login button")
+    if driver_type == "appium":
+        wait = WebDriverWait(driver, 2)
+        try:
+            button = wait.until(
+                presence_of_element_located(
+                    (
+                        "xpath",
+                        "//XCUIElementTypeButton[@name='Not Now']",
+                    )
+                )
+            )
+            button.click()
+        except TimeoutException:
+            pass
+
     yield
     execute_script("window.localStorage.clear()")
 
@@ -28,11 +62,8 @@ def login(al, execute_script, navigate):
 @mark.xfail(Model.current.provider == Provider.AWS_META, reason="Too hard for Llama")
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
-    Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
-)
-@mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
-    reason="Investigate why layout breaks on mobile browsers",
+    Model.current.provider == Provider.GOOGLE,
+    reason="https://github.com/langchain-ai/langchain-google/issues/734",
 )
 def test_sorting(al):
     products = {
@@ -63,9 +94,14 @@ def test_sorting(al):
 
 
 @mark.xfail(
-    Model.current.provider == Provider.GOOGLE, reason="https://github.com/langchain-ai/langchain-google/issues/734"
+    Model.current.provider == Provider.GOOGLE,
+    reason="https://github.com/langchain-ai/langchain-google/issues/734",
 )
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
+@mark.xfail(
+    driver_type == "appium",
+    reason="https://github.com/alumnium-hq/alumnium/issues/132",
+)
 def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")
@@ -78,7 +114,7 @@ def test_checkout(al):
     assert al.get("item total without tax") == 37.98
     assert al.get("tax amount") == 3.04
     assert al.get("total amount with tax") == round(37.98 + 3.04, 2)
-    assert al.get("shipping details") == "Free Pony Express Delivery!"
+    assert al.get("shipping information value") == "Free Pony Express Delivery!"
 
     al.do("finish checkout")
 

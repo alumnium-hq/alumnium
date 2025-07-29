@@ -27,7 +27,7 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
     assert (
         simple_tree.to_xml()
         == """
-<Application id="1" name="ToDoList">
+<Application id="1">
   <Window id="2">
     <generic id="5">
       <NavigationBar id="6" name="BLTNBoard.BulletinView">
@@ -62,7 +62,7 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
           <generic id="56" name="Vertical scroll bar, 1 page" />
           <generic id="58" name="Horizontal scroll bar, 1 page" />
         </Table>
-        <Button id="59" name="Add Task">
+        <Button id="59">
           <StaticText id="60">Add Task</StaticText>
         </Button>
       </generic>
@@ -74,13 +74,11 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
         </generic>
         <Image id="69" name="roundedIcon" />
         <StaticText id="70">Start with a quick onboarding</StaticText>
-        <generic id="72">
-          <Button id="73" name="Continue">
-            <StaticText id="74">Continue</StaticText>
-            <Image id="75" name="checkmark.circle" label="Selected" />
-            <TextField id="76" name="maskedElement" label="Enter Code" value="Entered value" />
-          </Button>
-        </generic>
+        <Button id="73">
+          <StaticText id="74">Continue</StaticText>
+          <Image id="75" name="checkmark.circle" label="Selected" />
+          <TextField id="76" name="maskedElement" label="Enter Code" value="Entered value" />
+        </Button>
       </generic>
     </generic>
   </Window>
@@ -95,20 +93,22 @@ def test_nested_duplicated_tree(duplicated_tree: XCUITestAccessibilityTree):
         == """
 <Application id="1" name="FooBar">
   <Window id="2">
-    <generic id="5">
-      <generic id="12" name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now">
-        <generic id="15" name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now">
-          <generic id="28" name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now">
-            <generic id="39" name="Welcome to the new FooBar app! We're happy to have you! Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today! Start Now">
-              <generic id="40" name="Welcome to the new FooBar app! We're happy to have you!">
-                <generic id="46" name="Welcome to the new FooBar app! We're happy to have you!">
-                  <generic id="49" name="IconFooBar" />
-                  <StaticText id="50">Welcome to the new FooBar app!</StaticText>
-                  <StaticText id="51">We're happy to have you!</StaticText>
-                </generic>
+    <generic id="12">
+      <generic id="15">
+        <generic id="28">
+          <generic id="39">
+            <generic id="40">
+              <generic id="46">
+                <generic id="49" name="IconFooBar" />
+                <StaticText id="50">Welcome to the new FooBar app!</StaticText>
+                <StaticText id="51">We're happy to have you!</StaticText>
               </generic>
+            </generic>
+            <generic id="52">
               <StaticText id="53">Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today!</StaticText>
-              <generic id="54" name="onboarding-footer-button" label="Start Now">
+            </generic>
+            <generic id="54" name="onboarding-footer-button">
+              <generic id="55">
                 <Button id="56" name="Start Now" />
               </generic>
             </generic>

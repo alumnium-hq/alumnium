@@ -18,10 +18,10 @@ def test_to_xml(chromium_tree: ChromiumAccessibilityTree):
     assert (
         chromium_tree.to_xml()
         == """
-<RootWebArea name="TodoMVC: React" id="1" focusable="True">
+<RootWebArea name=": React" id="1" focusable="True">
   <generic id="4">
     <generic id="6">
-      <heading name="todos" id="12" level="1">todos</heading>
+      <heading id="12" level="1">todos</heading>
       <generic id="13">
         <textbox name="New Todo Input" id="25" invalid="false" focusable="True" editable="plaintext" settable="True" multiline="False" readonly="False" required="False" labelledby="" />
         <LabelText id="26">New Todo Input</LabelText>
@@ -46,22 +46,22 @@ def test_to_xml(chromium_tree: ChromiumAccessibilityTree):
     </main>
     <generic id="8">1 item left!<list id="18">
         <listitem id="31" level="1">
-          <link name="All" id="47" focusable="True">All</link>
+          <link id="47" focusable="True">All</link>
         </listitem>
         <listitem id="32" level="1">
-          <link name="Active" id="48" focusable="True">Active</link>
+          <link id="48" focusable="True">Active</link>
         </listitem>
         <listitem id="33" level="1">
-          <link name="Completed" id="49" focusable="True">Completed</link>
+          <link id="49" focusable="True">Completed</link>
         </listitem>
       </list>
-      <button name="Clear completed" id="19" invalid="false" focusable="True">Clear completed</button>
+      <button id="19" invalid="false" focusable="True">Clear completed</button>
     </generic>
   </generic>
   <contentinfo id="5">
     <paragraph id="9">Double-click to edit a todo</paragraph>
     <paragraph id="10">Created by the TodoMVC Team</paragraph>
-    <paragraph id="11">Part of <link name="TodoMVC" id="23" focusable="True">TodoMVC</link>
+    <paragraph id="11">Part of<link id="23" focusable="True">TodoMVC</link>
     </paragraph>
   </contentinfo>
 </RootWebArea>
