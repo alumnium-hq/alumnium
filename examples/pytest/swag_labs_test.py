@@ -52,7 +52,7 @@ def login(al, driver, execute_script, navigate):
     yield
     execute_script("window.localStorage.clear()")
 
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_learn_examples()
 
 
 @mark.xfail(
@@ -105,7 +105,10 @@ def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")
     al.do("go to shopping cart")
-    assert al.get("titles of products in cart") == ["Sauce Labs Onesie", "Sauce Labs Backpack"]
+    assert al.get("titles of products in cart") == [
+        "Sauce Labs Onesie",
+        "Sauce Labs Backpack",
+    ]
 
     al.do("go to checkout")
     al.do("continue with first name - Al, last name - Um, ZIP - 95122")

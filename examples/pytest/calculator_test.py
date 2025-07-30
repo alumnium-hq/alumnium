@@ -21,7 +21,7 @@ def learn(al):
         ],
     )
     yield
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_learn_examples()
 
 
 def test_addition(al, navigate):

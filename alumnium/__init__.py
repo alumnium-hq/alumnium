@@ -9,3 +9,4 @@ logger.addHandler(logging.NullHandler())
 configure_logging()
 
 from .alumni import *
+from .models import Model, Provider
