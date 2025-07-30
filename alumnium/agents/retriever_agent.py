@@ -4,9 +4,8 @@ from typing import Optional, TypeAlias, Union
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
-from alumnium.accessibility import BaseAccessibilityTree
-from alumnium.drivers import BaseDriver
 from alumnium.logutils import get_logger
+from alumnium.models import Model, Provider
 
 from .base_agent import BaseAgent
 
@@ -30,7 +29,10 @@ class RetrievedInformation(BaseModel):
 
 
 class RetrieverAgent(BaseAgent):
-    LIST_SEPARATOR = "%SEP%"
+    if Model.current.provider == Provider.OPENAI:
+        LIST_SEPARATOR = "{SEP}"
+    else:
+        LIST_SEPARATOR = "%SEP%"
 
     def __init__(self, llm: BaseChatModel):
         super().__init__()

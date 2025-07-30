@@ -170,15 +170,16 @@ class Alumni:
             retriever_agent=self.retriever_agent,
         )
 
-    def learn(self, goal: str, actions: list[str]):
+    def learn(self, goal: str, actions: list[str], accessibility_tree_xml: str = ""):
         """
         Adds a new learning example on what steps should be take to achieve the goal.
 
         Args:
             goal: The goal to be achieved. Use same format as in `do`.
             actions: A list of actions to achieve the goal.
+            accessibility_tree_xml: The XML representation of the accessibility tree at the time of learning.
         """
-        self.planner_agent.add_example(goal, actions)
+        self.planner_agent.add_example(goal, actions, accessibility_tree_xml)
 
     def stats(self) -> dict[str, int]:
         """

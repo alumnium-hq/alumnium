@@ -49,17 +49,20 @@ class PlannerAgent(BaseAgent):
         )
 
         # Use new structured CoT on Llama
-        if Model.current.provider == Provider.AWS_META:
+        if Model.current.provider in [Provider.AWS_META, Provider.OPENAI]:
             self.chain = final_prompt | llm.with_structured_output(Plan, include_raw=True)
         else:
             self.chain = final_prompt | llm
 
-    def add_example(self, goal: str, actions: list[str]):
+    def add_example(self, goal: str, actions: list[str], accessibility_tree_xml: str = ""):
+        if Model.current.provider not in [Provider.AWS_META, Provider.OPENAI]:
+            actions = self.LIST_SEPARATOR.join(actions)
+
         self.prompt_with_examples.examples.append(
             {
                 "goal": goal,
-                "accessibility_tree": "",
-                "actions": self.LIST_SEPARATOR.join(actions),
+                "accessibility_tree": accessibility_tree_xml,
+                "actions": actions,
             }
         )
 
@@ -80,7 +83,7 @@ class PlannerAgent(BaseAgent):
         )
 
         # Use new structured CoT on Llama
-        if Model.current.provider == Provider.AWS_META:
+        if Model.current.provider in [Provider.AWS_META, Provider.OPENAI]:
             response = message["parsed"]
             logger.info(f"  <- Result: {response}")
             logger.info(f"  <- Usage: {message['raw'].usage_metadata}")

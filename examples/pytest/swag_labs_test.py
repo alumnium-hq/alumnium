@@ -14,7 +14,18 @@ driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 @fixture(autouse=True)
 def login(al, driver, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
-    al.learn("go to shopping cart", ["click link between 'Swag Labs' and 'Products'"])
+    al.learn(
+        "go to shopping cart",
+        ["click link after 'Swag Labs'"],
+        """
+<generic id="14">
+  <generic id="32">Swag Labs</generic>
+</generic>
+<generic id="15">
+  <link id="33">2</link>
+</generic>
+    """.strip(),
+    )
 
     if driver_type == "appium":
         al.learn(
@@ -28,6 +39,10 @@ def login(al, driver, execute_script, navigate):
         al.learn(
             "sort products by lowest shipping cost",
             ["select 'Shipping (low to high)' in sorting dropdown"],
+        )
+        al.learn(
+            "sort products by highest shipping cost",
+            ["select 'Shipping (high to low)' in sorting dropdown"],
         )
 
     navigate("https://www.saucedemo.com/")

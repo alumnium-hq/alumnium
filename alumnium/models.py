@@ -24,7 +24,7 @@ class Name:
         Provider.GOOGLE: "gemini-2.0-flash-001",
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "mistral-small3.1",
-        Provider.OPENAI: "gpt-4o-mini-2024-07-18",
+        Provider.OPENAI: "gpt-4.1-mini-2025-04-14",
     }
 
 
