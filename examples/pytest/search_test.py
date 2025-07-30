@@ -10,7 +10,11 @@ alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
 @fixture(autouse=True)
 def learn(al):
     # Claude/Gemini/Mistral have issues learning how to search
-    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC, Provider.GOOGLE]:
+    if Model.current.provider in [
+        Provider.ANTHROPIC,
+        Provider.AWS_ANTHROPIC,
+        Provider.GOOGLE,
+    ]:
         al.learn(
             goal="search for artificial intelligence",
             actions=[
@@ -19,7 +23,7 @@ def learn(al):
             ],
         )
     yield
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_learn_examples()
 
 
 @mark.skipif(

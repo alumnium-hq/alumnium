@@ -18,7 +18,7 @@ def learn(al):
             actions=["click 'Web Site' header"],
         )
     yield
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_learn_examples()
 
 
 @mark.xfail(

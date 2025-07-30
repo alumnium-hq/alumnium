@@ -111,6 +111,6 @@ def pytest_runtest_makereport(item):
 
         # Process Alumnium cache
         if report.passed:
-            al.cache.save()
+            al.save_cache()
         else:
-            al.cache.discard()
+            al.clear_cache()

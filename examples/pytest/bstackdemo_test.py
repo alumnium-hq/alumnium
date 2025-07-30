@@ -13,7 +13,7 @@ def learn(al, execute_script, navigate):
     navigate("https://bstackdemo.com")
     yield
     execute_script("window.localStorage.clear()")
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_learn_examples()
 
 
 @mark.xfail(

@@ -1,10 +1,9 @@
 from retry import retry
 
 from alumnium.drivers.base_driver import BaseDriver
+from alumnium.session import Session, SessionManager
 from alumnium.tools import BaseTool
 
-from .accessibility import BaseAccessibilityTree
-from .agents import ActorAgent, PlannerAgent, RetrieverAgent
 from .agents.retriever_agent import Data
 
 
@@ -15,18 +14,14 @@ class Area:
         description: str,
         driver: BaseDriver,
         tools: dict[str, BaseTool],
-        actor_agent: ActorAgent,
-        planner_agent: PlannerAgent,
-        retriever_agent: RetrieverAgent,
+        session: Session,
     ):
         self.id = id
         self.description = description
         self.driver = driver
         self.accessibility_tree = driver.accessibility_tree.get_area(id)
         self.tools = tools
-        self.actor_agent = actor_agent
-        self.planner_agent = planner_agent
-        self.retriever_agent = retriever_agent
+        self.session = session
 
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
@@ -36,9 +31,9 @@ class Area:
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.planner_agent.invoke(goal, self.accessibility_tree.to_xml())
+        steps = self.session.planner_agent.invoke(goal, self.accessibility_tree.to_xml())
         for step in steps:
-            actor_response = self.actor_agent.invoke(goal, step, self.accessibility_tree.to_xml())
+            actor_response = self.session.actor_agent.invoke(goal, step, self.accessibility_tree.to_xml())
 
             # Execute tool calls
             for tool_call in actor_response:
@@ -58,7 +53,7 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
-        result = self.retriever_agent.invoke(
+        result = self.session.retriever_agent.invoke(
             f"Is the following true or false - {statement}",
             self.accessibility_tree.to_xml(),
             title=self.driver.title,
@@ -79,7 +74,7 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        return self.retriever_agent.invoke(
+        return self.session.retriever_agent.invoke(
             data,
             self.accessibility_tree.to_xml(),
             title=self.driver.title,
