@@ -1,8 +1,9 @@
 # ruff: noqa: E501
 
-from pathlib import Path
-from pytest import fixture
 from json import load
+from pathlib import Path
+
+from pytest import fixture
 
 from alumnium.accessibility import ChromiumAccessibilityTree
 

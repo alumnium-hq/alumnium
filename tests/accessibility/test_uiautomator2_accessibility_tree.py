@@ -1,6 +1,7 @@
 # ruff: noqa: E501
 import unicodedata
 from pathlib import Path
+
 from pytest import fixture
 
 from alumnium.accessibility import UIAutomator2AccessibiltyTree

@@ -6,5 +6,11 @@
     "testing.automaticallyOpenPeekView": "never",
     "cSpell.words": [
         "alumnium"
-    ]
+    ],
+    // https://github.com/astral-sh/ruff-vscode/issues/363#issuecomment-2958936767
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports.ruff": "explicit"
+        }
+    }
 }

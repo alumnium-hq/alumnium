@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-from alumnium.drivers import BaseDriver
 from alumnium.accessibility import BaseAccessibilityTree
+from alumnium.drivers import BaseDriver
 
 
 class BaseTool(BaseModel):
