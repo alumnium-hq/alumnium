@@ -5,25 +5,24 @@ from pytest import fixture, mark, raises
 from alumnium import Model, Provider
 
 alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
+playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 
 
 @fixture(autouse=True)
 def learn(al):
-    # Claude/Gemini/Mistral have issues learning how to search
-    if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC, Provider.GOOGLE]:
-        al.learn(
-            goal="search for artificial intelligence",
-            actions=[
-                "type 'artificial intelligence' into a search field",
-                "press key 'Enter'",
-            ],
-        )
+    al.learn(
+        goal="search for artificial intelligence",
+        actions=[
+            "type 'artificial intelligence' into a search field",
+            "press key 'Enter'",
+        ],
+    )
     yield
     al.planner_agent.prompt_with_examples.examples.clear()
 
 
 @mark.skipif(
-    alumnium_driver == "playwright" and getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true") == "true",
+    alumnium_driver == "playwright" and playwright_headless == "true",
     reason="DuckDuckGo blocks headless browsers",
 )
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
