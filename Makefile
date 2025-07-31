@@ -3,6 +3,7 @@ check-format:
 	poetry run pyprojectsort --diff
 
 format:
+	poetry run ruff check --fix .
 	poetry run ruff format .
 	poetry run pyprojectsort
 

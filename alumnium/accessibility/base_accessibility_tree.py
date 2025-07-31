@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .accessibility_element import AccessibilityElement
 
 

@@ -1,8 +1,8 @@
 from os import getenv
+
 from pytest import fixture, mark
 
 from alumnium import Model, Provider
-
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 
