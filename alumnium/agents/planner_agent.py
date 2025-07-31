@@ -22,6 +22,11 @@ class Plan(BaseModel):
 
 class PlannerAgent(BaseAgent):
     LIST_SEPARATOR = "%SEP%"
+    STRUCTURED_OUTPUT_MODELS = [
+        Provider.AWS_META,
+        Provider.AZURE_OPENAI,
+        Provider.OPENAI,
+    ]
 
     def __init__(self, llm: BaseChatModel):
         super().__init__()
@@ -48,8 +53,7 @@ class PlannerAgent(BaseAgent):
             ]
         )
 
-        # Use new structured CoT on Llama
-        if Model.current.provider == Provider.AWS_META:
+        if Model.current.provider in self.STRUCTURED_OUTPUT_MODELS:
             self.chain = final_prompt | llm.with_structured_output(Plan, include_raw=True)
         else:
             self.chain = final_prompt | llm
@@ -79,8 +83,7 @@ class PlannerAgent(BaseAgent):
             {"goal": goal, "accessibility_tree": accessibility_tree_xml},
         )
 
-        # Use new structured CoT on Llama
-        if Model.current.provider == Provider.AWS_META:
+        if Model.current.provider in self.STRUCTURED_OUTPUT_MODELS:
             response = message["parsed"]
             logger.info(f"  <- Result: {response}")
             logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
