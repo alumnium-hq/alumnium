@@ -91,10 +91,6 @@ def test_sorting(al):
     assert al.get("prices of products") == sorted(prices, reverse=True)
 
 
-@mark.xfail(
-    Model.current.provider == Provider.GOOGLE,
-    reason="https://github.com/langchain-ai/langchain-google/issues/734",
-)
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
     driver_type == "appium",
@@ -109,7 +105,7 @@ def test_checkout(al):
     al.do("go to checkout")
     al.do("continue with first name - Al, last name - Um, ZIP - 95122")
 
-    assert al.get("item total without tax") == 37.98
+    assert al.get("total amount without tax") == 37.98
     assert al.get("tax amount") == 3.04
     assert al.get("total amount with tax") == round(37.98 + 3.04, 2)
     assert al.get("shipping information value") == "Free Pony Express Delivery!"
