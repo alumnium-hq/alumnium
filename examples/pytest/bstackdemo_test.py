@@ -1,15 +1,15 @@
 from os import getenv
+
 from pytest import fixture, mark
 
 from alumnium import Model, Provider
-
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 
 
 @fixture(autouse=True)
 def learn(al, execute_script, navigate):
-    al.learn("add 'Laptop' to cart", ["click button 'Add to cart' next to 'Laptop' product"])
+    al.learn("add 'Laptop' to cart", ["click 'Add to cart' next to 'Laptop' product"])
     navigate("https://bstackdemo.com")
     yield
     execute_script("window.localStorage.clear()")

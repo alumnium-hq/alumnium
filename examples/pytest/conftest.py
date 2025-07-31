@@ -1,9 +1,9 @@
 from datetime import datetime
-from dotenv import load_dotenv
 from os import getenv
 
 from appium.options.ios import XCUITestOptions
 from appium.webdriver.webdriver import WebDriver as Appium
+from dotenv import load_dotenv
 from playwright.sync_api import Page, sync_playwright
 from pytest import fixture, hookimpl
 from selenium.webdriver import Chrome

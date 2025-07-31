@@ -16,4 +16,4 @@ When formulating your actions:
 5. Wrap all action arguments except the tag name in quotes.
 6. Ground the actions in the accessibility tree provided.
 
-If you cannot find a way to achieve the goal based on the given accessibility tree, respond with NOOP in actions.
+If you cannot find a way to achieve the goal based on the given accessibility tree, respond with an empty list of actions.

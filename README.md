@@ -40,7 +40,8 @@ driver = Chrome()
 driver.get("https://duckduckgo.com")
 
 al = Alumni(driver)
-al.do("search for selenium")
+al.do("type 'selenium' into a search box")
+al.do("press key 'Enter'")
 al.check("page title contains selenium")
 al.check("search results contain selenium.dev")
 assert al.get("atomic number") == 34

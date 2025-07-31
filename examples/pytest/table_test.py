@@ -12,6 +12,7 @@ def learn(al):
         Provider.ANTHROPIC,
         Provider.AWS_ANTHROPIC,
         Provider.GOOGLE,
+        Provider.MISTRALAI,
     ]:
         al.learn(
             goal="sort by web site",
