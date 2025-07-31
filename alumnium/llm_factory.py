@@ -4,11 +4,12 @@ from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
 from langchain_deepseek import ChatDeepSeek
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_mistralai import ChatMistralAI
 from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
-from langchain_mistralai import ChatMistralAI
 
 from alumnium.logutils import get_logger
+
 from .models import Model, Provider
 
 logger = get_logger(__name__)

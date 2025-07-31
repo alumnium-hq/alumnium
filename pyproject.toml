@@ -63,6 +63,9 @@ extend-exclude = [
 line-length = 119
 
 [tool.ruff.lint]
+extend-select = [
+    "I",
+]
 ignore = [
     "E402",
     "F401",

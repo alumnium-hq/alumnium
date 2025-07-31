@@ -2,14 +2,13 @@ from contextlib import contextmanager
 from time import sleep
 
 from appium.webdriver import Remote
-from appium.webdriver.webelement import WebElement
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
+from appium.webdriver.webelement import WebElement
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from alumnium.accessibility import UIAutomator2AccessibiltyTree
-from alumnium.accessibility import XCUITestAccessibilityTree
+from alumnium.accessibility import UIAutomator2AccessibiltyTree, XCUITestAccessibilityTree
 from alumnium.logutils import get_logger
 
 from .base_driver import BaseDriver

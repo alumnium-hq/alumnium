@@ -1,4 +1,5 @@
 from os import getenv
+
 from pytest import mark
 
 from alumnium import Model, Provider

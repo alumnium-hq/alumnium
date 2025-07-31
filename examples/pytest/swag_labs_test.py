@@ -7,7 +7,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from alumnium import Model, Provider
 
-
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 
 

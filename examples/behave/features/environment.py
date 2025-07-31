@@ -1,6 +1,6 @@
 from datetime import datetime
-from pathlib import Path
 from os import getenv
+from pathlib import Path
 
 from appium.options.ios import XCUITestOptions
 from appium.webdriver.webdriver import WebDriver as Appium

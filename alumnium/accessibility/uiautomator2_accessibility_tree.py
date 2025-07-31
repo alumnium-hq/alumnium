@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass, field
-from typing import List, Dict, Any
-from xml.etree.ElementTree import fromstring, ParseError, Element, tostring, indent
+from typing import Any, Dict, List
+from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
 from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
