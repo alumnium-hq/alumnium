@@ -63,7 +63,7 @@ class PlaywrightDriver(BaseDriver):
     @property
     def screenshot(self) -> str:
         return b64encode(self.page.screenshot()).decode()
-        
+
     def area_screenshot(self, id: int) -> str:
         with self._find_element(id) as element:
             return b64encode(element.screenshot()).decode()
