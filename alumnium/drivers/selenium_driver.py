@@ -65,6 +65,10 @@ class SeleniumDriver(BaseDriver):
     @property
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()
+        
+    def area_screenshot(self, id: int) -> str:
+        element = self._find_element(id)
+        return element.screenshot_as_base64
 
     def select(self, id: int, option: str):
         element = self._find_element(id)

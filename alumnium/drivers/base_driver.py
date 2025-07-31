@@ -31,6 +31,10 @@ class BaseDriver(ABC):
     @abstractmethod
     def screenshot(self) -> str:
         pass
+        
+    @abstractmethod
+    def area_screenshot(self, id: int) -> str:
+        pass
 
     @abstractmethod
     def select(self, id: int, option: str):
