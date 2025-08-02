@@ -101,9 +101,9 @@ def before_feature(_, feature):
 
 def after_scenario(context, scenario):
     if scenario.status == "passed":
-        context.al.save_cache()
+        context.al.cache.save()
     else:
-        context.al.clear_cache()
+        context.al.cache.discard()
 
     for formatter in context._runner.formatters:
         if formatter.name == "html-pretty":

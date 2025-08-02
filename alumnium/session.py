@@ -22,23 +22,13 @@ class Session:
         session_id: str,
         model: Model,
         tools: dict[str, BaseTool],
-        azure_openai_api_version: str = None,
-        aws_access_key: str = None,
-        aws_secret_key: str = None,
-        aws_region_name: str = "us-east-1",
     ):
         self.session_id = session_id
         self.model = model
         self.cache = Cache()
 
         # Create LLM using the factory
-        self.llm = LLMFactory.create_llm(
-            model=model,
-            azure_openai_api_version=azure_openai_api_version,
-            aws_access_key=aws_access_key,
-            aws_secret_key=aws_secret_key,
-            aws_region_name=aws_region_name,
-        )
+        self.llm = LLMFactory.create_llm(model=model)
         self.llm.cache = self.cache
 
         self.actor_agent = ActorAgent(self.llm, tools)
@@ -80,25 +70,12 @@ class SessionManager:
     def __init__(self):
         self.sessions: dict[str, Session] = {}
 
-    def create_session(
-        self,
-        provider: Provider,
-        name: str,
-        tools: dict[str, BaseTool],
-        azure_openai_api_version: str = None,
-        aws_access_key: str = None,
-        aws_secret_key: str = None,
-        aws_region_name: str = "us-east-1",
-    ) -> str:
+    def create_session(self, provider: Provider, name: str, tools: dict[str, BaseTool]) -> str:
         """Create a new session and return its ID.
         Args:
             provider: The model provider name
             tools: The tools to use in the session
             name: The model name (optional)
-            azure_openai_api_version: Azure OpenAI API version (optional)
-            aws_access_key: AWS access key (optional)
-            aws_secret_key: AWS secret key (optional)
-            aws_region_name: AWS region name (optional)
         Returns:
             Session ID string
         """
@@ -106,15 +83,7 @@ class SessionManager:
 
         model = Model(provider=provider, name=name)
 
-        self.sessions[session_id] = Session(
-            session_id=session_id,
-            model=model,
-            tools=tools,
-            azure_openai_api_version=azure_openai_api_version,
-            aws_access_key=aws_access_key,
-            aws_secret_key=aws_secret_key,
-            aws_region_name=aws_region_name,
-        )
+        self.sessions[session_id] = Session(session_id=session_id, model=model, tools=tools)
         logger.info(f"Created new session: {session_id}")
         return session_id
 

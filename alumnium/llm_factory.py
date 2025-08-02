@@ -1,3 +1,5 @@
+from os import getenv
+
 from langchain_anthropic import ChatAnthropic
 from langchain_aws import ChatBedrockConverse
 from langchain_deepseek import ChatDeepSeek
@@ -16,17 +18,12 @@ class LLMFactory:
     """Factory for creating LLM instances based on model configuration."""
 
     @staticmethod
-    def create_llm(
-        model: Model,
-        azure_openai_api_version: str = None,
-        aws_access_key: str = None,
-        aws_secret_key: str = None,
-        aws_region_name: str = "us-east-1",
-    ):
+    def create_llm(model: Model):
         """Create an LLM instance based on the model configuration."""
         logger.info(f"Creating LLM for model: {model.provider.value}/{model.name}")
 
         if model.provider == Provider.AZURE_OPENAI:
+            azure_openai_api_version = getenv("AZURE_OPENAI_API_VERSION")
             llm = AzureChatOpenAI(
                 model=model.name,
                 api_version=azure_openai_api_version,
@@ -36,6 +33,9 @@ class LLMFactory:
         elif model.provider == Provider.ANTHROPIC:
             llm = ChatAnthropic(model=model.name, temperature=0)
         elif model.provider == Provider.AWS_ANTHROPIC or model.provider == Provider.AWS_META:
+            aws_access_key = getenv("AWS_ACCESS_KEY")
+            aws_secret_key = getenv("AWS_SECRET_KEY")
+            aws_region_name = getenv("AWS_REGION_NAME", "us-east-1")
             llm = ChatBedrockConverse(
                 model_id=model.name,
                 temperature=0,
