@@ -1,11 +1,9 @@
-from os import getenv
-
 from appium.webdriver.webdriver import WebDriver as Appium
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from alumnium.session import SessionManager
+from alumnium.client import Client
 from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS, BaseTool
 
 from .agents import *
@@ -21,7 +19,6 @@ logger = get_logger(__name__)
 class Alumni:
     def __init__(self, driver: Page | WebDriver, model: Model = None):
         self.model = model or Model.current
-        self.session_manager = SessionManager()
 
         if isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
@@ -37,25 +34,11 @@ class Alumni:
 
         logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
 
-        # Get environment variables for different providers
-        azure_openai_api_version = getenv("AZURE_OPENAI_API_VERSION")
-        aws_access_key = getenv("AWS_ACCESS_KEY")
-        aws_secret_key = getenv("AWS_SECRET_KEY")
-        aws_region_name = getenv("AWS_REGION_NAME", "us-east-1")
-
-        # Create session
-        self.session_id = self.session_manager.create_session(
-            provider=self.model.provider,
-            name=self.model.name,
-            tools=self.tools,
-            azure_openai_api_version=azure_openai_api_version,
-            aws_access_key=aws_access_key,
-            aws_secret_key=aws_secret_key,
-            aws_region_name=aws_region_name,
-        )
+        self.client = Client(self.model, self.tools)
+        self.cache = self.client.cache
 
     def quit(self):
-        self.session_manager.delete_session(self.session_id)
+        self.client.quit()
         self.driver.quit()
 
     @retry(tries=2, delay=0.1)
@@ -67,12 +50,11 @@ class Alumni:
             goal: The goal to be achieved.
         """
         initial_accessibility_tree = self.driver.accessibility_tree
-        session = self.session_manager.get_session(self.session_id)
-        steps = session.planner_agent.invoke(goal, initial_accessibility_tree.to_xml())
+        steps = self.client.planner_agent.invoke(goal, initial_accessibility_tree.to_xml())
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            actor_response = session.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
+            actor_response = self.client.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
 
             # Execute tool calls
             for tool_call in actor_response:
@@ -92,8 +74,7 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
-        session = self.session_manager.get_session(self.session_id)
-        result = session.retriever_agent.invoke(
+        result = self.client.retriever_agent.invoke(
             f"Is the following true or false - {statement}",
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
@@ -114,8 +95,7 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        session = self.session_manager.get_session(self.session_id)
-        return session.retriever_agent.invoke(
+        return self.client.retriever_agent.invoke(
             data,
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
@@ -137,14 +117,13 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        session = self.session_manager.get_session(self.session_id)
-        response = session.area_agent.invoke(description, self.driver.accessibility_tree.to_xml())
+        response = self.client.area_agent.invoke(description, self.driver.accessibility_tree.to_xml())
         return Area(
             id=response["id"],
             description=response["explanation"],
             driver=self.driver,
             tools=self.tools,
-            session=session,
+            client=self.client,
         )
 
     def learn(self, goal: str, actions: list[str]):
@@ -155,33 +134,16 @@ class Alumni:
             goal: The goal to be achieved. Use same format as in `do`.
             actions: A list of actions to achieve the goal.
         """
-        session = self.session_manager.get_session(self.session_id)
-        session.planner_agent.add_example(goal, actions)
+        self.client.planner_agent.add_example(goal, actions)
 
     def clear_learn_examples(self):
         """
         Clears the learn examples.
         """
-        session = self.session_manager.get_session(self.session_id)
-        session.planner_agent.prompt_with_examples.examples.clear()
+        self.client.planner_agent.prompt_with_examples.examples.clear()
 
     def stats(self) -> dict[str, int]:
         """
         Returns the stats of the session.
         """
-        session = self.session_manager.get_session(self.session_id)
-        return session.stats()
-
-    def save_cache(self):
-        """
-        Saves the cache.
-        """
-        session = self.session_manager.get_session(self.session_id)
-        session.cache.save()
-
-    def clear_cache(self):
-        """
-        Clears the cache.
-        """
-        session = self.session_manager.get_session(self.session_id)
-        session.cache.discard()
+        return self.client.session.stats()
