@@ -156,6 +156,9 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
                 id = child_element.id
                 simplified_role = child_element.role.split(".")[-1]
                 resource_id = ""
+                content_desc = ""
+                text_desc = ""
+                clickable = ""
 
                 role = Element(simplified_role)
                 role.set("id", str(id))
@@ -163,9 +166,22 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
                 for props in child_element.properties:
                     if props["name"] == "resource-id" and props["value"]:
                         resource_id = props["value"]
+                    if props["name"] == "content-desc" and props["value"]:
+                        content_desc = props["value"]
+                    if simplified_role == "TextView":
+                        if props["name"] == "text" and props["value"]:
+                            text_desc = props["value"]
+                    if props["name"] == "clickable" and props["value"] == "true":
+                        clickable = "true"
 
                 if resource_id:
                     role.set("resource-id", resource_id)
+                if content_desc:
+                    role.set("content-desc", content_desc)
+                if text_desc:
+                    role.set("text", text_desc)
+                if clickable:
+                    role.set("clickable", clickable)
 
                 parent_element.append(role)
                 if child_element.children:

@@ -1,4 +1,5 @@
 # ruff: noqa: E501
+import unicodedata
 from pathlib import Path
 from pytest import fixture
 
@@ -9,6 +10,20 @@ def tree(filename: str) -> UIAutomator2AccessibiltyTree:
     with open(Path(__file__).parent.parent / "fixtures" / f"{filename}.xml", "r") as f:
         xml = f.read()
     return UIAutomator2AccessibiltyTree(xml)
+
+
+def proper_format(actual_output: str) -> str:
+    lines = actual_output.splitlines()
+    modified_lines = []
+    for line in lines:
+        modified_line = line.encode("windows-1252").decode("utf-8")
+        modified_lines.append(modified_line)
+    output = "\n".join(modified_lines)
+    return output
+
+
+def normalize_xml(actual_output: str) -> str:
+    return unicodedata.normalize("NFKC", actual_output.strip()).replace("-", "-")
 
 
 @fixture
@@ -40,10 +55,10 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
                           <FrameLayout id="14">
                             <RecyclerView id="15" resource-id="org.wikipedia.alpha:id/fragment_feed_feed">
                               <FrameLayout id="16">
-                                <LinearLayout id="17" resource-id="org.wikipedia.alpha:id/search_container">
-                                  <ImageView id="18" />
-                                  <TextView id="19" />
-                                  <ImageView id="20" resource-id="org.wikipedia.alpha:id/voice_search_button" />
+                                <LinearLayout id="17" resource-id="org.wikipedia.alpha:id/search_container" clickable="true">
+                                  <ImageView id="18" content-desc="Search Wikipedia" />
+                                  <TextView id="19" text="Search Wikipedia" />
+                                  <ImageView id="20" resource-id="org.wikipedia.alpha:id/voice_search_button" content-desc="Search Wikipedia" clickable="true" />
                                 </LinearLayout>
                               </FrameLayout>
                               <FrameLayout id="21">
@@ -52,25 +67,25 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
                                     <LinearLayout id="24">
                                       <LinearLayout id="25">
                                         <ImageView id="26" resource-id="org.wikipedia.alpha:id/view_card_header_image" />
-                                        <TextView id="27" resource-id="org.wikipedia.alpha:id/view_card_header_title" />
+                                        <TextView id="27" resource-id="org.wikipedia.alpha:id/view_card_header_title" text="In the news" />
                                       </LinearLayout>
                                       <LinearLayout id="28">
-                                        <TextView id="29" resource-id="org.wikipedia.alpha:id/view_card_header_subtitle" />
-                                        <ImageView id="30" resource-id="org.wikipedia.alpha:id/view_list_card_header_menu" />
+                                        <TextView id="29" resource-id="org.wikipedia.alpha:id/view_card_header_subtitle" text="Jun 25, 2025" />
+                                        <ImageView id="30" resource-id="org.wikipedia.alpha:id/view_list_card_header_menu" content-desc="More options" clickable="true" />
                                       </LinearLayout>
                                     </LinearLayout>
                                   </FrameLayout>
                                   <RecyclerView id="31" resource-id="org.wikipedia.alpha:id/view_list_card_list">
-                                    <FrameLayout id="32">
+                                    <FrameLayout id="32" clickable="true">
                                       <LinearLayout id="33">
                                         <ImageView id="34" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_image" />
-                                        <TextView id="35" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_text" />
+                                        <TextView id="35" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_text" text="The Vera C. Rubin Observatory in Chile releases the first light images from its new 8.4-meter (28 ft) telescope." />
                                       </LinearLayout>
                                     </FrameLayout>
-                                    <FrameLayout id="36">
+                                    <FrameLayout id="36" clickable="true">
                                       <LinearLayout id="37">
                                         <ImageView id="38" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_image" />
-                                        <TextView id="39" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_text" />
+                                        <TextView id="39" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_text" text="In basketball, the Oklahoma City Thunder defeat the Indiana Pacers to win the NBA Finals." />
                                       </LinearLayout>
                                     </FrameLayout>
                                   </RecyclerView>
@@ -82,18 +97,18 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
                                     <LinearLayout id="43">
                                       <LinearLayout id="44">
                                         <ImageView id="45" resource-id="org.wikipedia.alpha:id/view_card_header_image" />
-                                        <TextView id="46" resource-id="org.wikipedia.alpha:id/view_card_header_title" />
+                                        <TextView id="46" resource-id="org.wikipedia.alpha:id/view_card_header_title" text="Featured article" />
                                       </LinearLayout>
                                       <LinearLayout id="47">
-                                        <TextView id="48" resource-id="org.wikipedia.alpha:id/view_card_header_subtitle" />
-                                        <ImageView id="49" resource-id="org.wikipedia.alpha:id/view_list_card_header_menu" />
+                                        <TextView id="48" resource-id="org.wikipedia.alpha:id/view_card_header_subtitle" text="Jun 25, 2025" />
+                                        <ImageView id="49" resource-id="org.wikipedia.alpha:id/view_list_card_header_menu" content-desc="More options" clickable="true" />
                                       </LinearLayout>
                                     </LinearLayout>
                                   </FrameLayout>
-                                  <ImageView id="50" resource-id="org.wikipedia.alpha:id/view_featured_article_card_image" />
+                                  <ImageView id="50" resource-id="org.wikipedia.alpha:id/view_featured_article_card_image" clickable="true" />
                                   <View id="51" />
-                                  <LinearLayout id="52" resource-id="org.wikipedia.alpha:id/view_featured_article_card_text_container">
-                                    <TextView id="53" resource-id="org.wikipedia.alpha:id/view_featured_article_card_article_title" />
+                                  <LinearLayout id="52" resource-id="org.wikipedia.alpha:id/view_featured_article_card_text_container" clickable="true">
+                                    <TextView id="53" resource-id="org.wikipedia.alpha:id/view_featured_article_card_article_title" text="History of education in Wales (1701–1870)" />
                                   </LinearLayout>
                                 </LinearLayout>
                               </FrameLayout>
@@ -105,21 +120,21 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
                     </ViewGroup>
                     <FrameLayout id="55" resource-id="org.wikipedia.alpha:id/fragment_main_nav_tab_layout">
                       <ViewGroup id="56">
-                        <FrameLayout id="57">
+                        <FrameLayout id="57" content-desc="Explore" clickable="true">
                           <ViewGroup id="58">
-                            <TextView id="59" resource-id="org.wikipedia.alpha:id/largeLabel" />
+                            <TextView id="59" resource-id="org.wikipedia.alpha:id/largeLabel" text="Explore" />
                           </ViewGroup>
                           <ImageView id="60" resource-id="org.wikipedia.alpha:id/icon" />
                         </FrameLayout>
-                        <FrameLayout id="61">
+                        <FrameLayout id="61" content-desc="My lists" clickable="true">
                           <ViewGroup id="62" />
                           <ImageView id="63" resource-id="org.wikipedia.alpha:id/icon" />
                         </FrameLayout>
-                        <FrameLayout id="64">
+                        <FrameLayout id="64" content-desc="History" clickable="true">
                           <ViewGroup id="65" />
                           <ImageView id="66" resource-id="org.wikipedia.alpha:id/icon" />
                         </FrameLayout>
-                        <FrameLayout id="67">
+                        <FrameLayout id="67" content-desc="Nearby" clickable="true">
                           <ViewGroup id="68" />
                           <ImageView id="69" resource-id="org.wikipedia.alpha:id/icon" />
                         </FrameLayout>
@@ -131,7 +146,7 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
               <ViewGroup id="70" resource-id="org.wikipedia.alpha:id/single_fragment_toolbar">
                 <ImageView id="71" resource-id="org.wikipedia.alpha:id/single_fragment_toolbar_wordmark" />
                 <LinearLayoutCompat id="72">
-                  <TextView id="73" resource-id="org.wikipedia.alpha:id/menu_overflow_button" />
+                  <TextView id="73" resource-id="org.wikipedia.alpha:id/menu_overflow_button" content-desc="More options" clickable="true" />
                 </LinearLayoutCompat>
               </ViewGroup>
             </FrameLayout>
@@ -156,10 +171,10 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
                           <FrameLayout id="88">
                             <RecyclerView id="89" resource-id="org.wikipedia.alpha:id/fragment_feed_feed">
                               <FrameLayout id="90">
-                                <LinearLayout id="91" resource-id="org.wikipedia.alpha:id/search_container">
-                                  <ImageView id="92" />
-                                  <TextView id="93" />
-                                  <ImageView id="94" resource-id="org.wikipedia.alpha:id/voice_search_button" />
+                                <LinearLayout id="91" resource-id="org.wikipedia.alpha:id/search_container" clickable="true">
+                                  <ImageView id="92" content-desc="Search Wikipedia" />
+                                  <TextView id="93" text="Search Wikipedia" />
+                                  <ImageView id="94" resource-id="org.wikipedia.alpha:id/voice_search_button" content-desc="Search Wikipedia" clickable="true" />
                                 </LinearLayout>
                               </FrameLayout>
                               <FrameLayout id="95">
@@ -168,28 +183,28 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
                                     <LinearLayout id="98">
                                       <LinearLayout id="99">
                                         <ImageView id="100" resource-id="org.wikipedia.alpha:id/view_card_header_image" />
-                                        <TextView id="101" resource-id="org.wikipedia.alpha:id/view_card_header_title" />
+                                        <TextView id="101" resource-id="org.wikipedia.alpha:id/view_card_header_title" text="In the news" />
                                       </LinearLayout>
                                       <LinearLayout id="102">
-                                        <TextView id="103" resource-id="org.wikipedia.alpha:id/view_card_header_subtitle" />
-                                        <ImageView id="104" resource-id="org.wikipedia.alpha:id/view_list_card_header_menu" />
+                                        <TextView id="103" resource-id="org.wikipedia.alpha:id/view_card_header_subtitle" text="Jun 25, 2025" />
+                                        <ImageView id="104" resource-id="org.wikipedia.alpha:id/view_list_card_header_menu" content-desc="More options" clickable="true" />
                                       </LinearLayout>
                                     </LinearLayout>
                                   </FrameLayout>
                                   <RecyclerView id="105" resource-id="org.wikipedia.alpha:id/view_list_card_list">
-                                    <FrameLayout id="106">
+                                    <FrameLayout id="106" clickable="true">
                                       <LinearLayout id="107">
                                         <ImageView id="108" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_image" />
-                                        <TextView id="109" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_text" />
+                                        <TextView id="109" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_text" text="The Vera C. Rubin Observatory in Chile releases the first light images from its new 8.4-meter (28 ft) telescope." />
                                       </LinearLayout>
                                     </FrameLayout>
-                                    <FrameLayout id="110">
+                                    <FrameLayout id="110" clickable="true">
                                       <LinearLayout id="111">
                                         <ImageView id="112" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_image" />
-                                        <TextView id="113" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_text" />
+                                        <TextView id="113" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_text" text="In basketball, the Oklahoma City Thunder defeat the Indiana Pacers to win the NBA Finals." />
                                       </LinearLayout>
                                     </FrameLayout>
-                                    <FrameLayout id="114">
+                                    <FrameLayout id="114" clickable="true">
                                       <LinearLayout id="115">
                                         <ImageView id="116" resource-id="org.wikipedia.alpha:id/horizontal_scroll_list_item_image" />
                                       </LinearLayout>
@@ -203,19 +218,19 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
                                     <LinearLayout id="120">
                                       <LinearLayout id="121">
                                         <ImageView id="122" resource-id="org.wikipedia.alpha:id/view_card_header_image" />
-                                        <TextView id="123" resource-id="org.wikipedia.alpha:id/view_card_header_title" />
+                                        <TextView id="123" resource-id="org.wikipedia.alpha:id/view_card_header_title" text="Featured article" />
                                       </LinearLayout>
                                       <LinearLayout id="124">
-                                        <TextView id="125" resource-id="org.wikipedia.alpha:id/view_card_header_subtitle" />
-                                        <ImageView id="126" resource-id="org.wikipedia.alpha:id/view_list_card_header_menu" />
+                                        <TextView id="125" resource-id="org.wikipedia.alpha:id/view_card_header_subtitle" text="Jun 25, 2025" />
+                                        <ImageView id="126" resource-id="org.wikipedia.alpha:id/view_list_card_header_menu" content-desc="More options" clickable="true" />
                                       </LinearLayout>
                                     </LinearLayout>
                                   </FrameLayout>
-                                  <ImageView id="127" resource-id="org.wikipedia.alpha:id/view_featured_article_card_image" />
+                                  <ImageView id="127" resource-id="org.wikipedia.alpha:id/view_featured_article_card_image" clickable="true" />
                                   <View id="128" />
-                                  <LinearLayout id="129" resource-id="org.wikipedia.alpha:id/view_featured_article_card_text_container">
-                                    <TextView id="130" resource-id="org.wikipedia.alpha:id/view_featured_article_card_article_title" />
-                                    <TextView id="131" resource-id="org.wikipedia.alpha:id/view_featured_article_card_extract" />
+                                  <LinearLayout id="129" resource-id="org.wikipedia.alpha:id/view_featured_article_card_text_container" clickable="true">
+                                    <TextView id="130" resource-id="org.wikipedia.alpha:id/view_featured_article_card_article_title" text="History of education in Wales (1701–1870)" />
+                                    <TextView id="131" resource-id="org.wikipedia.alpha:id/view_featured_article_card_extract" text="The period between 1701 and the 1870 Elementary Education Act saw an expansion in access to formal education in Wales, though schooling was not yet universal." />
                                   </LinearLayout>
                                 </LinearLayout>
                               </FrameLayout>
@@ -227,21 +242,21 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
                     </ViewGroup>
                     <FrameLayout id="133" resource-id="org.wikipedia.alpha:id/fragment_main_nav_tab_layout">
                       <ViewGroup id="134">
-                        <FrameLayout id="135">
+                        <FrameLayout id="135" content-desc="Explore" clickable="true">
                           <ViewGroup id="136">
-                            <TextView id="137" resource-id="org.wikipedia.alpha:id/largeLabel" />
+                            <TextView id="137" resource-id="org.wikipedia.alpha:id/largeLabel" text="Explore" />
                           </ViewGroup>
                           <ImageView id="138" resource-id="org.wikipedia.alpha:id/icon" />
                         </FrameLayout>
-                        <FrameLayout id="139">
+                        <FrameLayout id="139" content-desc="My lists" clickable="true">
                           <ViewGroup id="140" />
                           <ImageView id="141" resource-id="org.wikipedia.alpha:id/icon" />
                         </FrameLayout>
-                        <FrameLayout id="142">
+                        <FrameLayout id="142" content-desc="History" clickable="true">
                           <ViewGroup id="143" />
                           <ImageView id="144" resource-id="org.wikipedia.alpha:id/icon" />
                         </FrameLayout>
-                        <FrameLayout id="145">
+                        <FrameLayout id="145" content-desc="Nearby" clickable="true">
                           <ViewGroup id="146" />
                           <ImageView id="147" resource-id="org.wikipedia.alpha:id/icon" />
                         </FrameLayout>
@@ -253,7 +268,7 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
               <ViewGroup id="148" resource-id="org.wikipedia.alpha:id/single_fragment_toolbar">
                 <ImageView id="149" resource-id="org.wikipedia.alpha:id/single_fragment_toolbar_wordmark" />
                 <LinearLayoutCompat id="150">
-                  <TextView id="151" resource-id="org.wikipedia.alpha:id/menu_overflow_button" />
+                  <TextView id="151" resource-id="org.wikipedia.alpha:id/menu_overflow_button" content-desc="More options" clickable="true" />
                 </LinearLayoutCompat>
               </ViewGroup>
             </FrameLayout>
@@ -265,6 +280,7 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
   </FrameLayout>
 </hierarchy>"""
 
-    actual_output = simple_tree.to_xml().strip()
-    expected_output = expected_output.strip()
+    actual_output = normalize_xml(proper_format(simple_tree.to_xml()))
+    expected_output = normalize_xml(expected_output)
+
     assert actual_output == expected_output
