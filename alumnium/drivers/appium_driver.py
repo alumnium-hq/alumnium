@@ -8,6 +8,7 @@ from appium.webdriver.extensions.action_helpers import ActionHelpers
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
+from alumnium.accessibility import UIAutomator2AccessibiltyTree
 from alumnium.accessibility import XCUITestAccessibilityTree
 from alumnium.logutils import get_logger
 
@@ -25,9 +26,13 @@ class AppiumDriver(BaseDriver):
         self.hide_keyboard_after_typing = False
 
     @property
-    def accessibility_tree(self) -> XCUITestAccessibilityTree:
-        sleep(self.delay)
-        return XCUITestAccessibilityTree(self.driver.page_source)
+    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
+        if self.driver.capabilities["automationName"] == "uiautomator2":
+            sleep(self.delay)
+            return UIAutomator2AccessibiltyTree(self.driver.page_source)
+        else:
+            sleep(self.delay)
+            return XCUITestAccessibilityTree(self.driver.page_source)
 
     def click(self, id: int):
         self._find_element(id).click()
@@ -97,6 +102,14 @@ class AppiumDriver(BaseDriver):
             props["value"] = element.value
         if element.label:
             props["label"] = element.label
+        if element.androidresourceid:
+            props["resource-id"] = element.androidresourceid
+        if element.androidtext:
+            props["text"] = element.androidtext
+        if element.androidcontentdesc:
+            props["content-desc"] = element.androidcontentdesc
+        if element.androidbounds:
+            props["bounds"] = element.androidbounds
 
         if props:
             props = [f'@{k}="{v}"' for k, v in props.items()]
