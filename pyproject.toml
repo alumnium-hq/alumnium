@@ -49,7 +49,6 @@ ruff = "^0.11.9"
 [tool.pytest.ini_options]
 generate_report_on_test = true
 pythonpath = "."
-retries = 1
 retry_delay = 0.5
 
 [tool.ruff]
