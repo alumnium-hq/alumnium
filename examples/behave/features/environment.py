@@ -95,8 +95,9 @@ def before_all(context):
 
 
 def before_feature(_, feature):
-    for scenario in feature.walk_scenarios():
-        patch_scenario_with_autoretry(scenario, max_attempts=2)
+    if getenv("CI", "false").lower() == "true":
+        for scenario in feature.walk_scenarios():
+            patch_scenario_with_autoretry(scenario, max_attempts=2)
 
 
 def after_scenario(context, scenario):

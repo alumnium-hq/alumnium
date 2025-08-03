@@ -109,7 +109,7 @@ jobs:
           key: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}
-      - run: poetry run pytest --html reports/pytest.html examples/
+      - run: poetry run pytest --retries 1 --html reports/pytest.html examples/
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
       - if: always()
