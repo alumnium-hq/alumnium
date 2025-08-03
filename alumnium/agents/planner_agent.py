@@ -59,11 +59,14 @@ class PlannerAgent(BaseAgent):
             self.chain = final_prompt | llm
 
     def add_example(self, goal: str, actions: list[str]):
+        if Model.current.provider not in self.STRUCTURED_OUTPUT_MODELS:
+            actions = self.LIST_SEPARATOR.join(actions)
+
         self.prompt_with_examples.examples.append(
             {
                 "goal": goal,
                 "accessibility_tree": "",
-                "actions": self.LIST_SEPARATOR.join(actions),
+                "actions": actions,
             }
         )
 
