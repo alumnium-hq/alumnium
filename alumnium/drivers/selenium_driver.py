@@ -67,7 +67,25 @@ class SeleniumDriver(BaseDriver):
         return self.driver.get_screenshot_as_base64()
 
     def area_screenshot(self, id: int) -> str:
-        element = self._find_element(id)
+        # Get the fresh backend DOM node ID from accessibility tree to handle stale IDs
+        backend_node_id = self.accessibility_tree.cached_ids.get(id)
+        if backend_node_id is None:
+            raise ValueError(f"No element found with id={id}")
+
+        try:
+            element = self._find_element(backend_node_id)
+        except Exception:
+            logger.debug(f"Backend node ID {backend_node_id} is stale, refreshing accessibility tree")
+            # If the backend node ID is stale, refresh the accessibility tree to get updated IDs
+            fresh_tree = ChromiumAccessibilityTree(
+                self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})
+            )
+            fresh_backend_node_id = fresh_tree.cached_ids.get(id)
+            if fresh_backend_node_id is None:
+                raise ValueError(f"No element found with id={id} even after refreshing accessibility tree")
+
+            element = self._find_element(fresh_backend_node_id)
+
         return element.screenshot_as_base64
 
     def select(self, id: int, option: str):
