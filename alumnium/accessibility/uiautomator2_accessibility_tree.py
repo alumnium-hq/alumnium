@@ -171,8 +171,8 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
                     if simplified_role == "TextView":
                         if props["name"] == "text" and props["value"]:
                             text_desc = props["value"]
-                    if props["name"] == "clickable" and props["value"] == "true":
-                        clickable = "true"
+                    if props["name"] == "clickable" and props["value"]:
+                        clickable = True
 
                 if resource_id:
                     role.set("resource-id", resource_id)
@@ -181,7 +181,7 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
                 if text_desc:
                     role.set("text", text_desc)
                 if clickable:
-                    role.set("clickable", clickable)
+                    role.set("clickable", "true")
 
                 parent_element.append(role)
                 if child_element.children:

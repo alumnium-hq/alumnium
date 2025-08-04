@@ -7,23 +7,9 @@ from alumnium.accessibility import UIAutomator2AccessibiltyTree
 
 
 def tree(filename: str) -> UIAutomator2AccessibiltyTree:
-    with open(Path(__file__).parent.parent / "fixtures" / f"{filename}.xml", "r") as f:
-        xml = f.read()
+    with open(Path(__file__).parent.parent / "fixtures" / f"{filename}.xml", "r", encoding="UTF-8") as f:
+        xml = unicodedata.normalize("NFKC", f.read())
     return UIAutomator2AccessibiltyTree(xml)
-
-
-def proper_format(actual_output: str) -> str:
-    lines = actual_output.splitlines()
-    modified_lines = []
-    for line in lines:
-        modified_line = line.encode("windows-1252").decode("utf-8")
-        modified_lines.append(modified_line)
-    output = "\n".join(modified_lines)
-    return output
-
-
-def normalize_xml(actual_output: str) -> str:
-    return unicodedata.normalize("NFKC", actual_output.strip()).replace("-", "-")
 
 
 @fixture
@@ -280,7 +266,6 @@ def test_simple_uitree(simple_tree: UIAutomator2AccessibiltyTree):
   </FrameLayout>
 </hierarchy>"""
 
-    actual_output = normalize_xml(proper_format(simple_tree.to_xml()))
-    expected_output = normalize_xml(expected_output)
-
+    actual_output = (simple_tree.to_xml()).strip()
+    expected_output = expected_output.strip()
     assert actual_output == expected_output
