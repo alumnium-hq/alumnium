@@ -23,7 +23,7 @@ class ActorAgent(BaseAgent):
             ]
         )
 
-        self.chain = prompt | self._with_retry(llm)
+        self.chain = prompt | llm
 
     def invoke(
         self,
@@ -39,11 +39,13 @@ class ActorAgent(BaseAgent):
         logger.info(f"  -> Step: {step}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
 
-        message = self.chain.invoke({"goal": goal, "step": step, "accessibility_tree": accessibility_tree_xml})
+        message = self._invoke_chain(
+            self.chain,
+            {"goal": goal, "step": step, "accessibility_tree": accessibility_tree_xml},
+        )
 
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
-        self._update_usage(message.usage_metadata)
 
         # Return tool calls for the client to execute
         return message.tool_calls

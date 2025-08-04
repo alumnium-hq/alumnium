@@ -16,7 +16,7 @@ def login(al, driver, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
     al.learn("go to shopping cart", ["click link between 'Swag Labs' and 'Products'"])
 
-    if getenv("ALUMNIUM_DRIVER", "selenium") == "appium":
+    if driver_type == "appium":
         al.learn(
             "sort products by lowest shipping cost",
             [
@@ -52,14 +52,13 @@ def login(al, driver, execute_script, navigate):
     yield
     execute_script("window.localStorage.clear()")
 
-    al.planner_agent.prompt_with_examples.examples.clear()
+    al.clear_learn_examples()
 
 
 @mark.xfail(
     Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC],
     reason="Need to add proper types in `RetrievedInformation.value`.",
 )
-@mark.xfail(Model.current.provider == Provider.AWS_META, reason="Too hard for Llama")
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
     Model.current.provider == Provider.GOOGLE,
@@ -106,7 +105,10 @@ def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")
     al.do("go to shopping cart")
-    assert al.get("titles of products in cart") == ["Sauce Labs Onesie", "Sauce Labs Backpack"]
+    assert al.get("titles of products in cart") == [
+        "Sauce Labs Onesie",
+        "Sauce Labs Backpack",
+    ]
 
     al.do("go to checkout")
     al.do("continue with first name - Al, last name - Um, ZIP - 95122")
@@ -119,5 +121,5 @@ def test_checkout(al):
     al.do("finish checkout")
 
     al.check("thank you for the order message is shown")
-    if Model.current.provider not in [Provider.AWS_META, Provider.DEEPSEEK]:
+    if Model.current.provider != Provider.DEEPSEEK:
         al.check("big green checkmark is shown", vision=True)

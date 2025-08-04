@@ -1,14 +1,23 @@
-from typing import Optional
-
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
+from pydantic import BaseModel, Field
 
-from alumnium.logutils import *
 from alumnium.logutils import get_logger
+from alumnium.models import Model, Provider
 
 from .base_agent import BaseAgent
 
 logger = get_logger(__name__)
+
+
+class Plan(BaseModel):
+    """Plan of actions to achieve a goal."""
+
+    explanation: str = Field(
+        description="Explanation how the actions were determined and why they are related to the goal. "
+        + "Always include the goal, actions to achieve it, and their order in the explanation."
+    )
+    actions: list[str] = Field(description="List of actions to achieve the goal.")
 
 
 class PlannerAgent(BaseAgent):
@@ -39,7 +48,11 @@ class PlannerAgent(BaseAgent):
             ]
         )
 
-        self.chain = final_prompt | self._with_retry(llm)
+        # Use new structured CoT on Llama
+        if Model.current.provider == Provider.AWS_META:
+            self.chain = final_prompt | llm.with_structured_output(Plan, include_raw=True)
+        else:
+            self.chain = final_prompt | llm
 
     def add_example(self, goal: str, actions: list[str]):
         self.prompt_with_examples.examples.append(
@@ -60,19 +73,30 @@ class PlannerAgent(BaseAgent):
         logger.info("Starting planning:")
         logger.info(f"  -> Goal: {goal}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
-        message = self.chain.invoke({"goal": goal, "accessibility_tree": accessibility_tree_xml})
 
-        logger.info(f"  <- Result: {message.content}")
-        logger.info(f"  <- Usage: {message.usage_metadata}")
-        self._update_usage(message.usage_metadata)
+        message = self._invoke_chain(
+            self.chain,
+            {"goal": goal, "accessibility_tree": accessibility_tree_xml},
+        )
 
-        response = message.content.strip()
-        response = response.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
+        # Use new structured CoT on Llama
+        if Model.current.provider == Provider.AWS_META:
+            response = message["parsed"]
+            logger.info(f"  <- Result: {response}")
+            logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
-        steps = []
-        for step in message.content.split(self.LIST_SEPARATOR):
-            step = step.strip()
-            if step and step.upper() != "NOOP":
-                steps.append(step)
+            return response.actions
+        else:
+            logger.info(f"  <- Result: {message.content}")
+            logger.info(f"  <- Usage: {message.usage_metadata}")
 
-        return steps
+            response = message.content.strip()
+            response = response.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
+
+            steps = []
+            for step in message.content.split(self.LIST_SEPARATOR):
+                step = step.strip()
+                if step and step.upper() != "NOOP":
+                    steps.append(step)
+
+            return steps
