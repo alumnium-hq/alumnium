@@ -5,6 +5,8 @@ from appium.webdriver import Remote
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
 from appium.webdriver.webelement import WebElement
+from retry import retry
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -20,18 +22,24 @@ logger = get_logger(__name__)
 class AppiumDriver(BaseDriver):
     def __init__(self, driver: Remote):
         self.driver = driver
+        self.tree = None
         self.autoswitch_to_webview = True
         self.delay = 0
         self.hide_keyboard_after_typing = False
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree:
-        sleep(self.delay)
-        return XCUITestAccessibilityTree(self.driver.page_source)
+        if not self.tree:
+            sleep(self.delay)
+            self.tree = XCUITestAccessibilityTree(self.driver.page_source)
 
+        return self.tree
+
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def click(self, id: int):
         self._find_element(id).click()
 
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
         self.driver.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
 
@@ -50,6 +58,9 @@ class AppiumDriver(BaseDriver):
 
     def quit(self):
         self.driver.quit()
+
+    def reset(self):
+        self.tree = None
 
     @property
     def screenshot(self) -> str:
@@ -71,6 +82,7 @@ class AppiumDriver(BaseDriver):
             else:
                 return ""
 
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def type(self, id: int, text: str):
         element = self._find_element(id)
         element.clear()
@@ -87,8 +99,8 @@ class AppiumDriver(BaseDriver):
                 return ""
 
     def _find_element(self, id: int) -> WebElement:
-        element = self.accessibility_tree.element_by_id(id)
-        xpath = f"//{element.type}"
+        element = self.tree.element_by_id(id)
+        predicate = f'type == "{element.type}"'
 
         props = {}
         if element.name:
@@ -99,10 +111,15 @@ class AppiumDriver(BaseDriver):
             props["label"] = element.label
 
         if props:
-            props = [f'@{k}="{v}"' for k, v in props.items()]
-            xpath += f"[{' and '.join(props)}]"
+            props = [f'{k} == "{v}"' for k, v in props.items()]
+            props = " AND ".join(props)
+            predicate += f" AND {props}"
 
-        return self.driver.find_element(By.XPATH, xpath)
+        logger.debug(f"Finding element by predicate: {predicate}")
+        element = self.driver.find_element(By.IOS_PREDICATE, predicate)
+        logger.debug(f"Found: {element}")
+
+        return element
 
     @contextmanager
     def __webview_context(self):

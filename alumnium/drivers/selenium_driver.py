@@ -25,6 +25,7 @@ class SeleniumDriver(BaseDriver):
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
+        self.tree = None
         self._patch_driver(driver)
 
     @property
@@ -61,6 +62,9 @@ class SeleniumDriver(BaseDriver):
 
     def quit(self):
         self.driver.quit()
+
+    def reset(self):
+        self.tree = None
 
     @property
     def screenshot(self) -> str:

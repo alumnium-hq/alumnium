@@ -6,6 +6,9 @@ from alumnium.tools import BaseTool
 from .accessibility import BaseAccessibilityTree
 from .agents import ActorAgent, PlannerAgent, RetrieverAgent
 from .agents.retriever_agent import Data
+from .logutils import get_logger
+
+logger = get_logger(__name__)
 
 
 class Area:
@@ -28,7 +31,7 @@ class Area:
         self.planner_agent = planner_agent
         self.retriever_agent = retriever_agent
 
-    @retry(tries=2, delay=0.1)
+    @retry(tries=2, delay=0.1, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal within the area.
@@ -36,6 +39,7 @@ class Area:
         Args:
             goal: The goal to be achieved.
         """
+        self.driver.tree = self.accessibility_tree
         steps = self.planner_agent.invoke(goal, self.accessibility_tree.to_xml())
         for step in steps:
             actor_response = self.actor_agent.invoke(goal, step, self.accessibility_tree.to_xml())
@@ -58,6 +62,7 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
+        self.driver.tree = self.accessibility_tree
         result = self.retriever_agent.invoke(
             f"Is the following true or false - {statement}",
             self.accessibility_tree.to_xml(),
@@ -79,6 +84,7 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
+        self.driver.tree = self.accessibility_tree
         return self.retriever_agent.invoke(
             data,
             self.accessibility_tree.to_xml(),
