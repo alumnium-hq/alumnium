@@ -118,8 +118,8 @@ class AppiumDriver(BaseDriver):
                 return ""
 
     def _find_element(self, id: int) -> WebElement:
-        element = self.accessibility_tree.element_by_id(id)
-        xpath = f"//{element.type}"
+        element = self.tree.element_by_id(id)
+        predicate = f'type == "{element.type}"'
 
         props = {}
         if element.name:
@@ -138,10 +138,15 @@ class AppiumDriver(BaseDriver):
             props["bounds"] = element.androidbounds
 
         if props:
-            props = [f'@{k}="{v}"' for k, v in props.items()]
-            xpath += f"[{' and '.join(props)}]"
+            props = [f'{k} == "{v}"' for k, v in props.items()]
+            props = " AND ".join(props)
+            predicate += f" AND {props}"
 
-        return self.driver.find_element(By.XPATH, xpath)
+        logger.debug(f"Finding element by predicate: {predicate}")
+        element = self.driver.find_element(By.IOS_PREDICATE, predicate)
+        logger.debug(f"Found: {element}")
+
+        return element
 
     @contextmanager
     def __webview_context(self):
