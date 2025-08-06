@@ -5,6 +5,9 @@ from alumnium.drivers.base_driver import BaseDriver
 from alumnium.tools import BaseTool
 
 from .agents.retriever_agent import Data
+from .logutils import get_logger
+
+logger = get_logger(__name__)
 
 
 class Area:
@@ -23,7 +26,7 @@ class Area:
         self.tools = tools
         self.client = client
 
-    @retry(tries=2, delay=0.1)
+    @retry(tries=2, delay=0.1, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal within the area.

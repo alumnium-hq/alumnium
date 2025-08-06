@@ -8,7 +8,10 @@ from langchain_core.runnables import Runnable
 from openai import RateLimitError as OpenAIRateLimitError
 from retry import retry
 
+from alumnium.logutils import get_logger
 from alumnium.models import Model, Provider
+
+logger = get_logger(__name__)
 
 
 class BaseAgent:
@@ -44,6 +47,7 @@ class BaseAgent:
         delay=1,
         backoff=2,
         on_exception=lambda e: not BaseAgent._should_retry(e),
+        logger=logger,
     )
     def _invoke_chain(self, chain: Runnable, *args):
         result = chain.invoke(*args)
