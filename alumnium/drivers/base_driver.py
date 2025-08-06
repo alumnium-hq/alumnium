@@ -31,6 +31,10 @@ class BaseDriver(ABC):
     def back(self):
         pass
 
+    @abstractmethod
+    def reset(self):
+        pass
+
     @property
     @abstractmethod
     def screenshot(self) -> str:

@@ -33,6 +33,7 @@ class SeleniumDriver(BaseDriver):
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
+        self.tree = None
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -80,6 +81,9 @@ class SeleniumDriver(BaseDriver):
 
     def back(self):
         self.driver.back()
+
+    def reset(self):
+        self.tree = None
 
     @property
     def screenshot(self) -> str:

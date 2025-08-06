@@ -27,6 +27,7 @@ logger = get_logger(__name__)
 class AppiumDriver(BaseDriver):
     def __init__(self, driver: Remote):
         self.driver = driver
+        self.tree = None
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -40,12 +41,15 @@ class AppiumDriver(BaseDriver):
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
-        if self.driver.capabilities["automationName"] == "uiautomator2":
-            sleep(self.delay)
-            return UIAutomator2AccessibiltyTree(self.driver.page_source)
-        else:
-            sleep(self.delay)
-            return XCUITestAccessibilityTree(self.driver.page_source)
+        if not self.tree:
+            if self.driver.capabilities["automationName"] == "uiautomator2":
+                sleep(self.delay)
+                self.tree = UIAutomator2AccessibiltyTree(self.driver.page_source)
+            else:
+                sleep(self.delay)
+                self.tree = XCUITestAccessibilityTree(self.driver.page_source)
+
+        return self.tree
 
     @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def click(self, id: int):
@@ -73,6 +77,9 @@ class AppiumDriver(BaseDriver):
 
     def quit(self):
         self.driver.quit()
+
+    def reset(self):
+        self.tree = None
 
     @property
     def screenshot(self) -> str:

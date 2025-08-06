@@ -43,7 +43,7 @@ class Alumni:
         self.client.quit()
         self.driver.quit()
 
-    @retry(tries=2, delay=0.1, logger=logger)
+    @retry(tries=2, delay=0.5, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal.
@@ -51,17 +51,23 @@ class Alumni:
         Args:
             goal: The goal to be achieved.
         """
-        initial_accessibility_tree = self.driver.accessibility_tree
-        steps = self.client.planner_agent.invoke(goal, initial_accessibility_tree.to_xml())
-        for idx, step in enumerate(steps):
-            # If the step is the first step, use the initial accessibility tree.
-            accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            actor_response = self.client.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
+        self.driver.reset()
+        steps = self.client.planner_agent.invoke(goal, self.driver.accessibility_tree.to_xml())
+        for step in steps:
+            tool_calls = self.client.actor_agent.invoke(
+                goal,
+                step,
+                self.driver.accessibility_tree.to_xml(),
+            )
+            for tool_call in tool_calls:
+                BaseTool.execute_tool_call(
+                    tool_call,
+                    self.tools,
+                    self.driver.accessibility_tree,
+                    self.driver,
+                )
 
-            # Execute tool calls
-            for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, accessibility_tree, self.driver)
-
+    @retry(tries=2, delay=0.5, logger=logger)
     def check(self, statement: str, vision: bool = False) -> str:
         """
         Checks a given statement true or false.
@@ -76,6 +82,7 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
+        self.driver.reset()
         explanation, value = self.client.retriever_agent.invoke(
             f"Is the following true or false - {statement}",
             self.driver.accessibility_tree.to_xml(),
@@ -97,6 +104,7 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
+        self.driver.reset()
         _, value = self.client.retriever_agent.invoke(
             data,
             self.driver.accessibility_tree.to_xml(),
@@ -120,7 +128,11 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        response = self.client.area_agent.invoke(description, self.driver.accessibility_tree.to_xml())
+        self.driver.reset()
+        response = self.client.area_agent.invoke(
+            description,
+            self.driver.accessibility_tree.to_xml(),
+        )
         return Area(
             id=response["id"],
             description=response["explanation"],

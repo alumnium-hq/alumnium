@@ -35,6 +35,7 @@ class PlaywrightDriver(BaseDriver):
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
         self.page = page
+        self.tree = None
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -76,6 +77,9 @@ class PlaywrightDriver(BaseDriver):
 
     def back(self):
         self.page.go_back()
+
+    def reset(self):
+        self.tree = None
 
     @property
     def screenshot(self) -> str:
