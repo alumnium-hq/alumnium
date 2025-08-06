@@ -173,6 +173,8 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
             element_type = "XCUIElementTypeOther"
         else:
             element_type = f"XCUIElementType{simplified_role}"
+
+        element.name = found_node.name
         element.type = element_type
 
         for prop in found_node.properties:
