@@ -22,14 +22,18 @@ logger = get_logger(__name__)
 class AppiumDriver(BaseDriver):
     def __init__(self, driver: Remote):
         self.driver = driver
+        self.tree = None
         self.autoswitch_to_webview = True
         self.delay = 0
         self.hide_keyboard_after_typing = False
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree:
-        sleep(self.delay)
-        return XCUITestAccessibilityTree(self.driver.page_source)
+        if not self.tree:
+            sleep(self.delay)
+            self.tree = XCUITestAccessibilityTree(self.driver.page_source)
+
+        return self.tree
 
     @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def click(self, id: int):
@@ -54,6 +58,9 @@ class AppiumDriver(BaseDriver):
 
     def quit(self):
         self.driver.quit()
+
+    def reset(self):
+        self.tree = None
 
     @property
     def screenshot(self) -> str:
