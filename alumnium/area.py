@@ -6,6 +6,9 @@ from alumnium.tools import BaseTool
 from .accessibility import BaseAccessibilityTree
 from .agents import ActorAgent, PlannerAgent, RetrieverAgent
 from .agents.retriever_agent import Data
+from .logutils import get_logger
+
+logger = get_logger(__name__)
 
 
 class Area:
@@ -28,7 +31,7 @@ class Area:
         self.planner_agent = planner_agent
         self.retriever_agent = retriever_agent
 
-    @retry(tries=2, delay=0.1)
+    @retry(tries=2, delay=0.1, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal within the area.

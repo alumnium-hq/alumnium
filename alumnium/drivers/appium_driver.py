@@ -31,11 +31,11 @@ class AppiumDriver(BaseDriver):
         sleep(self.delay)
         return XCUITestAccessibilityTree(self.driver.page_source)
 
-    @retry(StaleElementReferenceException, tries=2, delay=0.5)
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def click(self, id: int):
         self._find_element(id).click()
 
-    @retry(StaleElementReferenceException, tries=2, delay=0.5)
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
         self.driver.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
 
@@ -75,7 +75,7 @@ class AppiumDriver(BaseDriver):
             else:
                 return ""
 
-    @retry(StaleElementReferenceException, tries=2, delay=0.5)
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def type(self, id: int, text: str):
         element = self._find_element(id)
         element.clear()
