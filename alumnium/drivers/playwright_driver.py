@@ -6,6 +6,7 @@ from playwright.sync_api import Error, Page
 
 from alumnium.accessibility import ChromiumAccessibilityTree
 from alumnium.logutils import get_logger
+from alumnium.screenshot_utils import get_area_screenshot_from_box_model
 
 from .base_driver import BaseDriver
 from .keys import Key
@@ -65,8 +66,45 @@ class PlaywrightDriver(BaseDriver):
         return b64encode(self.page.screenshot()).decode()
 
     def area_screenshot(self, id: int) -> str:
-        with self._find_element(id) as element:
-            return b64encode(element.screenshot()).decode()
+        """
+        Take a screenshot of a specific element by ID.
+
+        Uses the Chrome DevTools Protocol's DOM.getBoxModel method to get precise coordinates
+        of the element, then crops a full page screenshot to those coordinates.
+
+        Args:
+            id: The element ID from the accessibility tree
+
+        Returns:
+            Base64 encoded PNG screenshot of the element area
+        """
+        # Get the backend DOM node ID from accessibility tree
+        backend_node_id = self.accessibility_tree.cached_ids.get(id)
+        if backend_node_id is None:
+            raise ValueError(f"No element found with id={id}")
+
+        try:
+            # Enable the DOM domain and get the box model for the element
+            self.client.send("DOM.enable", {})
+            box_model = self.client.send("DOM.getBoxModel", {"backendNodeId": backend_node_id})
+        except Error as e:
+            logger.debug(f"Error getting box model for ID {id} (backend ID {backend_node_id}): {e}")
+            # If the backend node ID is stale, refresh the accessibility tree
+            logger.debug("Refreshing accessibility tree to get updated IDs")
+            fresh_tree = ChromiumAccessibilityTree(
+                self.client.send("Accessibility.getFullAXTree")
+            )
+            fresh_backend_node_id = fresh_tree.cached_ids.get(id)
+            if fresh_backend_node_id is None:
+                raise ValueError(f"No element found with id={id} even after refreshing accessibility tree")
+
+            # Try again with the fresh backend node ID
+            box_model = self.client.send("DOM.getBoxModel", {"backendNodeId": fresh_backend_node_id})
+
+        # Take a full page screenshot and use utility to crop it
+        full_screenshot = self.page.screenshot()
+        logger.info("Taking full screenshot and cropping to element bounds")
+        return get_area_screenshot_from_box_model(full_screenshot, box_model)
 
     def select(self, id: int, option: str):
         with self._find_element(id) as element:

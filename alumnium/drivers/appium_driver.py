@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 
 from alumnium.accessibility import XCUITestAccessibilityTree
 from alumnium.logutils import get_logger
+from alumnium.screenshot_utils import get_area_screenshot_from_rect
 
 from .base_driver import BaseDriver
 from .keys import Key
@@ -28,6 +29,11 @@ class AppiumDriver(BaseDriver):
     def accessibility_tree(self) -> XCUITestAccessibilityTree:
         sleep(self.delay)
         return XCUITestAccessibilityTree(self.driver.page_source)
+
+    @accessibility_tree.setter
+    def accessibility_tree(self, tree: XCUITestAccessibilityTree):
+        # This allows us to update the tree when needed
+        self._accessibility_tree = tree
 
     def click(self, id: int):
         self._find_element(id).click()
@@ -56,8 +62,63 @@ class AppiumDriver(BaseDriver):
         return self.driver.get_screenshot_as_base64()
 
     def area_screenshot(self, id: int) -> str:
-        element = self._find_element(id)
-        return element.screenshot_as_base64
+        """
+        Take a screenshot of a specific element by ID.
+
+        For Appium, we use the element's location and size to create a rectangle,
+        then crop the full screenshot accordingly.
+
+        Args:
+            id: The element ID from the accessibility tree
+
+        Returns:
+            Base64 encoded PNG screenshot of the element area
+        """
+        try:
+            element = self._find_element(id)
+
+            try:
+                return element.screenshot_as_base64
+            except Exception as e:
+                logger.debug(f"Native element screenshot failed, using cropping: {e}")
+            # Get element's location and size
+            rect = {
+                'x': element.location['x'],
+                'y': element.location['y'],
+                'width': element.size['width'],
+                'height': element.size['height']
+            }
+
+            # Take a full screenshot and crop it
+            full_screenshot = self.driver.get_screenshot_as_png()
+            logger.info("Taking full screenshot and cropping to element bounds")
+            return get_area_screenshot_from_rect(full_screenshot, rect)
+
+        except Exception as e:
+            logger.debug(f"Error getting element screenshot for ID {id}: {e}")
+            # If element identification fails, refresh the accessibility tree
+            logger.debug("Refreshing accessibility tree to get updated element")
+            # Clear any cached data
+            self.accessibility_tree = XCUITestAccessibilityTree(self.driver.page_source)
+
+            # Try again with fresh tree
+            element = self._find_element(id)
+
+            try:
+                return element.screenshot_as_base64
+            except Exception:
+                # Get element's location and size
+                rect = {
+                    'x': element.location['x'],
+                    'y': element.location['y'],
+                    'width': element.size['width'],
+                    'height': element.size['height']
+                }
+
+                # Take a full screenshot and crop it
+                full_screenshot = self.driver.get_screenshot_as_png()
+                logger.info("Taking full screenshot and cropping to element bounds")
+                return get_area_screenshot_from_rect(full_screenshot, rect)
 
     def select(self, id: int, option: str):
         # TODO: Implement select functionality and the tool

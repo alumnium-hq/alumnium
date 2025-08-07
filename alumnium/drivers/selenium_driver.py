@@ -10,6 +10,7 @@ from selenium.webdriver.support.select import Select
 
 from alumnium.accessibility import ChromiumAccessibilityTree
 from alumnium.logutils import get_logger
+from alumnium.screenshot_utils import get_area_screenshot_from_box_model
 
 from .base_driver import BaseDriver
 from .keys import Key
@@ -67,16 +68,32 @@ class SeleniumDriver(BaseDriver):
         return self.driver.get_screenshot_as_base64()
 
     def area_screenshot(self, id: int) -> str:
-        # Get the fresh backend DOM node ID from accessibility tree to handle stale IDs
+        """
+        Take a screenshot of a specific element by ID.
+
+        Uses the Chrome DevTools Protocol's DOM.getBoxModel method to get precise coordinates
+        of the element, then crops a full page screenshot to those coordinates.
+
+        See: https://chromedevtools.github.io/devtools-protocol/tot/DOM/#method-getBoxModel
+
+        Args:
+            id: The element ID from the accessibility tree
+
+        Returns:
+            Base64 encoded PNG screenshot of the element area
+        """
+        # Get the backend DOM node ID from accessibility tree
         backend_node_id = self.accessibility_tree.cached_ids.get(id)
         if backend_node_id is None:
             raise ValueError(f"No element found with id={id}")
 
         try:
-            element = self._find_element(backend_node_id)
-        except Exception:
-            logger.debug(f"Backend node ID {backend_node_id} is stale, refreshing accessibility tree")
-            # If the backend node ID is stale, refresh the accessibility tree to get updated IDs
+            self.driver.execute_cdp_cmd("DOM.enable", {})
+            box_model = self.driver.execute_cdp_cmd("DOM.getBoxModel", {"backendNodeId": backend_node_id})
+        except Exception as e:
+            logger.debug(f"Error getting box model for ID {id} (backend ID {backend_node_id}): {e}")
+            # If the backend node ID is stale, refresh the accessibility tree
+            logger.debug("Refreshing accessibility tree to get updated IDs")
             fresh_tree = ChromiumAccessibilityTree(
                 self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})
             )
@@ -84,9 +101,13 @@ class SeleniumDriver(BaseDriver):
             if fresh_backend_node_id is None:
                 raise ValueError(f"No element found with id={id} even after refreshing accessibility tree")
 
-            element = self._find_element(fresh_backend_node_id)
+            # Try again with the fresh backend node ID
+            box_model = self.driver.execute_cdp_cmd("DOM.getBoxModel", {"backendNodeId": fresh_backend_node_id})
 
-        return element.screenshot_as_base64
+        # Take a full page screenshot and use utility to crop it
+        full_screenshot = self.driver.get_screenshot_as_png()
+        logger.info("Taking full screenshot and cropping to element bounds")
+        return get_area_screenshot_from_box_model(full_screenshot, box_model)
 
     def select(self, id: int, option: str):
         element = self._find_element(id)
