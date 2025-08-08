@@ -1,11 +1,30 @@
 from os import getenv
 
-from pytest import mark, raises
+from pytest import fixture, mark, raises
 
 from alumnium import Model, Provider
 
 alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
 playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+
+
+@fixture(autouse=True)
+def learn(al):
+    # Claude/Gemini/Mistral have issues learning how to search
+    if Model.current.provider in [
+        Provider.ANTHROPIC,
+        Provider.AWS_ANTHROPIC,
+        Provider.GOOGLE,
+    ]:
+        al.learn(
+            goal="search for artificial intelligence",
+            actions=[
+                "type 'artificial intelligence' into a search field",
+                "press key 'Enter'",
+            ],
+        )
+    yield
+    al.clear_learn_examples()
 
 
 @mark.skipif(
@@ -16,7 +35,7 @@ playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 def test_search(al, navigate):
     navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGo
 
-    al.do("type 'selenium' into the search field, then press 'Enter'")
+    al.do("search for selenium")
     if alumnium_driver != "appium":
         # DuckDuckGo doesn't change title on mobile browser
         al.check("page title contains selenium")
