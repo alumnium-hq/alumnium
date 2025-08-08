@@ -25,6 +25,7 @@ class PlannerAgent(BaseAgent):
     STRUCTURED_OUTPUT_MODELS = [
         Provider.AWS_META,
         Provider.AZURE_OPENAI,
+        Provider.GOOGLE,
         Provider.OPENAI,
     ]
 
