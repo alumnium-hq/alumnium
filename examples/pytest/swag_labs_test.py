@@ -92,10 +92,6 @@ def test_sorting(al):
     assert al.get("prices of products") == sorted(prices, reverse=True)
 
 
-@mark.xfail(
-    Model.current.provider == Provider.GOOGLE,
-    reason="https://github.com/langchain-ai/langchain-google/issues/734",
-)
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
     driver_type == "appium",
@@ -119,4 +115,5 @@ def test_checkout(al):
 
     al.check("thank you for the order message is shown")
     if Model.current.provider != Provider.DEEPSEEK:
-        al.check("big green checkmark is shown", vision=True)
+        # Check for the Pony Express image on the success page
+        al.area("Checkout complete page").check("Thank you for your order!", vision=True)
