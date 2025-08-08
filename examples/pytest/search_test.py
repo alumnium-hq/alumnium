@@ -25,4 +25,4 @@ def test_search(al, navigate):
 
     al.check("search results contain selenium.dev")
     with raises(AssertionError):
-        al.check("search results does not contain selenium.dev")
+        al.check("search results do not contain selenium.dev")
