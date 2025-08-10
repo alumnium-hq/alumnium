@@ -27,7 +27,6 @@ logger = get_logger(__name__)
 class AppiumDriver(BaseDriver):
     def __init__(self, driver: Remote):
         self.driver = driver
-        self.tree = None
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -39,21 +38,19 @@ class AppiumDriver(BaseDriver):
         self.delay = 0
         self.hide_keyboard_after_typing = False
 
-    @property
-    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
-        if not self.tree:
-            if self.driver.capabilities["automationName"] == "uiautomator2":
-                sleep(self.delay)
-                self.tree = UIAutomator2AccessibiltyTree(self.driver.page_source)
-            else:
-                sleep(self.delay)
-                self.tree = XCUITestAccessibilityTree(self.driver.page_source)
-
-        return self.tree
+    def _fetch_accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
+        sleep(self.delay)
+        if self.driver.capabilities["automationName"] == "uiautomator2":
+            return UIAutomator2AccessibiltyTree(self.driver.page_source)
+        else:
+            return XCUITestAccessibilityTree(self.driver.page_source)
 
     @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def click(self, id: int):
-        self._find_element(id).click()
+        el = self._find_element(id)
+        logger.debug(f"Clicking element: {el}")
+        el.click()
+        logger.debug(f"Performed click: {el}")
 
     @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
@@ -78,9 +75,6 @@ class AppiumDriver(BaseDriver):
     def quit(self):
         self.driver.quit()
 
-    def reset(self):
-        self.tree = None
-
     @property
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()
@@ -104,10 +98,16 @@ class AppiumDriver(BaseDriver):
     @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def type(self, id: int, text: str):
         element = self._find_element(id)
+        logger.debug(f"Typing to element: {element}.")
         element.clear()
         element.send_keys(text)
+        logger.debug(f"Typed to element: {element}.")
         if self.hide_keyboard_after_typing:
-            ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
+            try:
+                ActionChains(self.driver).move_by_offset(0, -20).click().perform()
+            except Exception as e:
+                logger.warning(f"Failed to close keyboard: {e}")
+        logger.debug("Closed keyboard after typing.")
 
     @property
     def url(self) -> str:
@@ -118,7 +118,7 @@ class AppiumDriver(BaseDriver):
                 return ""
 
     def _find_element(self, id: int) -> WebElement:
-        element = self.tree.element_by_id(id)
+        element = self._accessibility_tree.element_by_id(id)
         predicate = f'type == "{element.type}"'
 
         props = {}

@@ -48,5 +48,6 @@ def test_checkout(al):
         "state": "CA",
         "postal code": 95122,
     }
-    al.do(f"submit with {fields}")
+    al.do(f"fill form with {fields}")
+    al.do("submit form")
     al.check("order is placed message is shown")

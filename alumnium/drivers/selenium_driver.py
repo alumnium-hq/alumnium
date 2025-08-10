@@ -33,7 +33,6 @@ class SeleniumDriver(BaseDriver):
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
-        self.tree = None
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -44,8 +43,7 @@ class SeleniumDriver(BaseDriver):
         }
         self._patch_driver(driver)
 
-    @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def _fetch_accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
         return ChromiumAccessibilityTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
 
@@ -81,9 +79,6 @@ class SeleniumDriver(BaseDriver):
 
     def back(self):
         self.driver.back()
-
-    def reset(self):
-        self.tree = None
 
     @property
     def screenshot(self) -> str:

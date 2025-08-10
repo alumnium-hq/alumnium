@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
+from typing import Iterator
 
 from alumnium.accessibility import BaseAccessibilityTree
 
@@ -6,10 +8,18 @@ from .keys import Key
 
 
 class BaseDriver(ABC):
-    @property
-    @abstractmethod
-    def accessibility_tree(self) -> BaseAccessibilityTree:
-        pass
+    _accessibility_tree: BaseAccessibilityTree
+
+    @contextmanager
+    def capture_accessibility_tree(self, tree: BaseAccessibilityTree = None) -> Iterator[BaseAccessibilityTree]:
+        if tree:
+            self._accessibility_tree = tree
+        else:
+            self._accessibility_tree = self._fetch_accessibility_tree()
+        try:
+            yield self._accessibility_tree
+        finally:
+            self._accessibility_tree = None
 
     @abstractmethod
     def click(self, id: int):
@@ -29,10 +39,6 @@ class BaseDriver(ABC):
 
     @abstractmethod
     def back(self):
-        pass
-
-    @abstractmethod
-    def reset(self):
         pass
 
     @property
@@ -56,4 +62,8 @@ class BaseDriver(ABC):
     @property
     @abstractmethod
     def url(self) -> str:
+        pass
+
+    @abstractmethod
+    def _fetch_accessibility_tree(self) -> BaseAccessibilityTree:
         pass
