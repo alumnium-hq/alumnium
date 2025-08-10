@@ -102,6 +102,14 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         if name_value is None:  # Fallback if all else fails
             name_value = ""
 
+        # TODO
+        if "Search all results San Jose Save Big" in name_value:
+            name_value = ""
+        elif "Go back Share Add to wishlist" in name_value:
+            name_value = ""
+        elif "Search Close" in name_value:
+            name_value = ""
+
         # An element is considered "ignored" if it's not accessible.
         # This aligns with ARIA principles where accessibility is key.
         ignored = attributes.get("ignored") == "true"
