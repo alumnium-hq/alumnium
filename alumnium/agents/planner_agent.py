@@ -26,6 +26,7 @@ class PlannerAgent(BaseAgent):
         Provider.AWS_META,
         Provider.AZURE_OPENAI,
         Provider.GOOGLE,
+        Provider.MISTRALAI,
         Provider.OPENAI,
     ]
 

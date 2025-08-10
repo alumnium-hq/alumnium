@@ -29,6 +29,8 @@ class BaseAgent:
             prompt_path /= "deepseek"
         elif provider == Provider.AWS_META:
             prompt_path /= "meta"
+        elif provider == Provider.MISTRALAI:
+            prompt_path /= "mistralai"
         elif provider == Provider.OLLAMA:
             prompt_path /= "ollama"
         else:
