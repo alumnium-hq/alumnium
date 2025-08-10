@@ -29,10 +29,8 @@ class PlaywrightDriver(BaseDriver):
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
         self.page = page
-        self.tree = None
 
-    @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def _fetch_accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
         return ChromiumAccessibilityTree(self.client.send("Accessibility.getFullAXTree"))
 
@@ -60,9 +58,6 @@ class PlaywrightDriver(BaseDriver):
 
     def quit(self):
         self.page.close()
-
-    def reset(self):
-        self.tree = None
 
     @property
     def screenshot(self) -> str:
