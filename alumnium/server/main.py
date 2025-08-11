@@ -4,12 +4,14 @@ from typing import List
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from .api_models import (
     ActionRequest,
     ActionResponse,
     ActionsResponse,
     ErrorResponse,
+    SessionRequest,
     SessionResponse,
     VerificationRequest,
     VerificationResponse,
@@ -54,10 +56,10 @@ async def health_check():
 
 
 @app.post("/sessions", response_model=SessionResponse)
-async def create_session():
+async def create_session(request: SessionRequest):
     """Create a new session."""
     try:
-        session_id = session_manager.create_session()
+        session_id = session_manager.create_session(request.provider, request.name, request.tools)
         return SessionResponse(sessionId=session_id)
     except Exception as e:
         logger.error(f"Failed to create session: {e}")
@@ -82,10 +84,10 @@ async def list_sessions():
 @app.get("/sessions/{session_id}/stats")
 async def get_session_stats(session_id: str):
     """Get session statistics."""
-    stats = session_manager.get_session_stats(session_id)
-    if stats is None:
+    session = session_manager.get_session(session_id)
+    if session is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
-    return stats
+    return session.stats()
 
 
 @app.post("/sessions/{session_id}/actions", response_model=ActionsResponse)
@@ -155,14 +157,16 @@ async def verify_statement(session_id: str, request: VerificationRequest):
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):
     """Handle HTTP exceptions."""
-    return ErrorResponse(error=exc.detail, detail=str(exc.status_code))
+    error_response = ErrorResponse(error=exc.detail, detail=str(exc.status_code))
+    return JSONResponse(status_code=exc.status_code, content=error_response.model_dump())
 
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
     """Handle general exceptions."""
     logger.error(f"Unhandled exception: {exc}")
-    return ErrorResponse(error="Internal server error", detail=str(exc))
+    error_response = ErrorResponse(error="Internal server error", detail=str(exc))
+    return JSONResponse(status_code=500, content=error_response.model_dump())
 
 
 def main():
