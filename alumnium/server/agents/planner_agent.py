@@ -2,9 +2,8 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 from pydantic import BaseModel, Field
 
-from alumnium.logutils import get_logger
-from alumnium.models import Model, Provider
-
+from ..logutils import get_logger
+from ..models import Model, Provider
 from .base_agent import BaseAgent
 
 logger = get_logger(__name__)

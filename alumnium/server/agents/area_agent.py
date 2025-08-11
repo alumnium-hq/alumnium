@@ -1,8 +1,7 @@
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
-from alumnium.logutils import get_logger
-
+from ..logutils import get_logger
 from .base_agent import BaseAgent
 
 logger = get_logger(__name__)

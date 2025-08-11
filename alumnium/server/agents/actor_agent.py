@@ -2,9 +2,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
 
-from alumnium.logutils import *
-from alumnium.logutils import get_logger
-
+from ..logutils import get_logger
 from .base_agent import BaseAgent
 
 logger = get_logger(__name__)

@@ -4,7 +4,7 @@ from alumnium.client import Client
 from alumnium.drivers.base_driver import BaseDriver
 from alumnium.tools import BaseTool
 
-from .agents.retriever_agent import Data
+from .server.agents.retriever_agent import Data
 
 
 class Area:
