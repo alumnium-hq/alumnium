@@ -7,12 +7,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .api_models import (
-    ActionRequest,
-    ActionResponse,
-    ActionsResponse,
+    AreaRequest,
+    AreaResponse,
     ErrorResponse,
+    PlanRequest,
+    PlanResponse,
     SessionRequest,
     SessionResponse,
+    StepRequest,
+    StepResponse,
     VerificationRequest,
     VerificationResponse,
 )
@@ -90,33 +93,39 @@ async def get_session_stats(session_id: str):
     return session.stats()
 
 
-@app.post("/sessions/{session_id}/actions", response_model=ActionsResponse)
-async def plan_actions(session_id: str, request: ActionRequest):
+@app.post("/sessions/{session_id}/plan", response_model=PlanResponse)
+async def plan_actions(session_id: str, request: PlanRequest):
     """Plan actions to achieve a goal."""
     session = session_manager.get_session(session_id)
     if not session:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        # Get planner steps
-        steps = session.planner_agent.invoke(request.goal, request.aria)
-
-        # Convert steps to actions using actor agent
-        actions = []
-        for step in steps:
-            actor_responses = session.actor_agent.invoke(request.goal, step, request.aria)
-
-            # Convert tool calls to action responses
-            for tool_call in actor_responses:
-                action = ActionResponse(type=tool_call.name, args=tool_call.args)
-                actions.append(action)
-
-        return ActionsResponse(actions=actions)
+        steps = session.planner_agent.invoke(request.goal, request.accessibility_tree)
+        return PlanResponse(steps=steps)
 
     except Exception as e:
         logger.error(f"Failed to plan actions for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to plan actions: {str(e)}"
+        )
+
+
+@app.post("/sessions/{session_id}/step", response_model=StepResponse)
+async def plan_step_actions(session_id: str, request: StepRequest):
+    """Plan exact actions for a step."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        actions = session.actor_agent.invoke(request.goal, request.step, request.accessibility_tree)
+        return StepResponse(actions=actions)
+
+    except Exception as e:
+        logger.error(f"Failed to execute actions for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to execute actions: {str(e)}"
         )
 
 
@@ -138,8 +147,8 @@ async def verify_statement(session_id: str, request: VerificationRequest):
 
         # Use retriever agent to verify the statement
         result = session.retriever_agent.invoke(
-            f"Is the following true or false - {request.statement}",
-            request.aria,
+            request.statement,
+            request.accessibility_tree,
             title=request.title,
             url=request.url,
             screenshot=screenshot_bytes,
@@ -151,6 +160,24 @@ async def verify_statement(session_id: str, request: VerificationRequest):
         logger.error(f"Failed to verify statement for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to verify statement: {str(e)}"
+        )
+
+
+@app.post("/sessions/{session_id}/area", response_model=AreaResponse)
+async def get_area(session_id: str, request: AreaRequest):
+    """Get the accessibility area for a session."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        area = session.area_agent.invoke(request.description, request.accessibility_tree)
+        return AreaResponse(area=area)
+
+    except Exception as e:
+        logger.error(f"Failed to get accessibility area for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to get accessibility area: {str(e)}"
         )
 
 
