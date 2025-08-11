@@ -17,6 +17,7 @@ from sqlalchemy import (
     delete,
     select,
 )
+from sqlalchemy import event
 from sqlalchemy.orm import Session, declarative_base, relationship
 
 from .logutils import get_logger
@@ -51,6 +52,18 @@ class CacheEntry(Base):
 class Cache(BaseCache):
     def __init__(self, db_path: str = ".alumnium-cache.sqlite"):
         self.engine = create_engine(f"sqlite:///{getcwd()}/{db_path}")
+
+        # Ensure SQLite waits on locks (up to 5s) instead of failing immediately
+        def _set_busy_timeout(dbapi_connection, connection_record):
+            try:
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA busy_timeout = 5000")  # milliseconds
+                cursor.close()
+            except Exception as e:
+                logger.debug(f"Could not set SQLite busy_timeout: {e}")
+
+        event.listen(self.engine, "connect", _set_busy_timeout)
+
         Base.metadata.create_all(self.engine)
         self.session = Session(self.engine)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
@@ -166,7 +179,6 @@ class Cache(BaseCache):
     def clear(self, **kwargs: Any) -> None:
         self.session.execute(delete(CacheEntry))
         self.session.execute(delete(ModelConfig))
-
 
 
 
