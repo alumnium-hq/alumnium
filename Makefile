@@ -10,7 +10,7 @@ format:
 test:
 	mkdir -p log/
 	poetry run behave
-	poetry run pytest
+	poetry run pytest examples/pytest
 
 test-anthropic:
 	ALUMNIUM_MODEL=anthropic ALUMNIUM_LOG_PATH=log/anthropic.log make test
@@ -24,8 +24,14 @@ test-aws_meta:
 test-azure_openai:
 	ALUMNIUM_MODEL=azure_openai ALUMNIUM_LOG_PATH=log/azure_openai.log make test
 
+test-deepseek:
+	ALUMNIUM_MODEL=deepseek ALUMNIUM_LOG_PATH=log/deepseek.log make test
+
 test-google:
 	ALUMNIUM_MODEL=google ALUMNIUM_LOG_PATH=log/google.log make test
+
+test-mistralai:
+	ALUMNIUM_MODEL=mistralai ALUMNIUM_LOG_PATH=log/mistralai.log make test
 
 test-ollama:
 	ALUMNIUM_MODEL=ollama ALUMNIUM_LOG_PATH=log/ollama.log make test
