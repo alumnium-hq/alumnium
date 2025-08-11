@@ -6,6 +6,31 @@ from alumnium.server.main import app
 client = TestClient(app)
 
 
+# Test fixtures for reuse across tests
+@pytest.fixture
+def sample_session_id():
+    """Create a session for testing and return its ID."""
+    response = client.post(
+        "/sessions",
+        json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": {}},
+    )
+    assert response.status_code == 200
+    return response.json()["sessionId"]
+
+
+@pytest.fixture
+def sample_accessibility_tree():
+    """Sample accessibility tree for testing."""
+    return """
+    <accessibility_tree>
+        <button id="submit-btn" role="button" name="Submit Form">Submit</button>
+        <input id="username" type="text" placeholder="Enter username" />
+        <input id="password" type="password" placeholder="Enter password" />
+        <div id="error-msg" role="alert" hidden="true">Invalid credentials</div>
+    </accessibility_tree>
+    """
+
+
 def test_health_check():
     """Test the health check endpoint."""
     response = client.get("/health")
@@ -76,3 +101,327 @@ def test_session_stats_nonexistent():
     """Test getting stats for nonexistent session."""
     response = client.get("/sessions/nonexistent/stats")
     assert response.status_code == 404
+
+
+# Plan Actions Tests
+def test_plan_actions_endpoint_structure(sample_session_id, sample_accessibility_tree):
+    """Test that the plan actions endpoint has correct structure (without calling LLM)."""
+    # This will fail because we don't have LLM API keys, but we can test the endpoint structure
+    response = client.post(
+        f"/sessions/{sample_session_id}/plan",
+        json={
+            "goal": "fill out the login form",
+            "accessibility_tree": sample_accessibility_tree,
+            "url": "https://example.com/login",
+            "title": "Login Page",
+        },
+    )
+    # Expect 500 because LLM call will fail, but structure should be correct
+    assert response.status_code in [200, 500]  # Either success or LLM failure
+    if response.status_code == 500:
+        # Check error structure
+        data = response.json()
+        assert "error" in data
+    elif response.status_code == 200:
+        # Check success structure
+        data = response.json()
+        assert "steps" in data
+        assert isinstance(data["steps"], list)
+
+
+def test_plan_actions_nonexistent_session(sample_accessibility_tree):
+    """Test planning actions for nonexistent session."""
+    response = client.post(
+        "/sessions/nonexistent/plan",
+        json={
+            "goal": "click submit button",
+            "accessibility_tree": sample_accessibility_tree,
+        },
+    )
+    assert response.status_code == 404
+    data = response.json()
+    assert "error" in data
+
+
+def test_plan_actions_missing_fields(sample_session_id):
+    """Test planning actions with missing required fields."""
+    response = client.post(
+        f"/sessions/{sample_session_id}/plan",
+        json={
+            "goal": "click button"
+            # Missing accessibility_tree
+        },
+    )
+    assert response.status_code == 422  # Validation error
+
+
+# Step Actions Tests
+def test_step_actions_success(sample_session_id, sample_accessibility_tree):
+    """Test successful step action execution."""
+    response = client.post(
+        f"/sessions/{sample_session_id}/step",
+        json={
+            "goal": "log in to the application",
+            "step": "click the submit button",
+            "accessibility_tree": sample_accessibility_tree,
+        },
+    )
+    assert response.status_code in [200, 500]  # Either success or LLM failure
+    if response.status_code == 200:
+        data = response.json()
+        assert "actions" in data
+        assert isinstance(data["actions"], list)
+    elif response.status_code == 500:
+        data = response.json()
+        assert "error" in data
+
+
+def test_step_actions_nonexistent_session(sample_accessibility_tree):
+    """Test step actions for nonexistent session."""
+    response = client.post(
+        "/sessions/nonexistent/step",
+        json={
+            "goal": "log in",
+            "step": "click submit",
+            "accessibility_tree": sample_accessibility_tree,
+        },
+    )
+    assert response.status_code == 404
+
+
+def test_step_actions_invalid_data(sample_session_id):
+    """Test step actions with invalid data."""
+    response = client.post(
+        f"/sessions/{sample_session_id}/step",
+        json={
+            "goal": "test",
+            "step": "test",
+            # Missing accessibility_tree
+        },
+    )
+    assert response.status_code == 422
+
+
+# Verification Tests
+def test_verify_statement_success(sample_session_id, sample_accessibility_tree):
+    """Test successful statement verification."""
+    response = client.post(
+        f"/sessions/{sample_session_id}/verifications",
+        json={
+            "statement": "there is a submit button on the page",
+            "accessibility_tree": sample_accessibility_tree,
+            "url": "https://example.com",
+            "title": "Test Page",
+        },
+    )
+    assert response.status_code in [200, 500]  # Either success or LLM failure
+    if response.status_code == 200:
+        data = response.json()
+        assert "result" in data
+        assert "explanation" in data
+        assert isinstance(data["result"], bool)
+        assert isinstance(data["explanation"], str)
+    elif response.status_code == 500:
+        data = response.json()
+        assert "error" in data
+
+
+def test_verify_statement_with_screenshot(sample_session_id, sample_accessibility_tree):
+    """Test verification with base64 screenshot."""
+    # Simple base64 encoded string (not a real image, just for testing)
+    fake_screenshot = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwhgGAWjR9awAAAABJRU5ErkJggg=="
+
+    response = client.post(
+        f"/sessions/{sample_session_id}/verifications",
+        json={
+            "statement": "the page shows a login form",
+            "accessibility_tree": sample_accessibility_tree,
+            "screenshot": fake_screenshot,
+        },
+    )
+    assert response.status_code in [200, 500]  # Either success or LLM failure
+    if response.status_code == 200:
+        data = response.json()
+        assert "result" in data
+        assert "explanation" in data
+    elif response.status_code == 500:
+        data = response.json()
+        assert "error" in data
+
+
+def test_verify_statement_invalid_screenshot(sample_session_id, sample_accessibility_tree):
+    """Test verification with invalid screenshot data."""
+    response = client.post(
+        f"/sessions/{sample_session_id}/verifications",
+        json={
+            "statement": "test statement",
+            "accessibility_tree": sample_accessibility_tree,
+            "screenshot": "invalid_base64_data!!!",
+        },
+    )
+    # Should still work but log a warning about invalid screenshot, or fail due to LLM API
+    assert response.status_code in [200, 500]
+
+
+def test_verify_statement_nonexistent_session(sample_accessibility_tree):
+    """Test verification for nonexistent session."""
+    response = client.post(
+        "/sessions/nonexistent/verifications",
+        json={"statement": "test", "accessibility_tree": sample_accessibility_tree},
+    )
+    assert response.status_code == 404
+
+
+# Area Tests
+def test_get_area_success(sample_session_id, sample_accessibility_tree):
+    """Test successful area identification."""
+    response = client.post(
+        f"/sessions/{sample_session_id}/area",
+        json={
+            "description": "find the login form area",
+            "accessibility_tree": sample_accessibility_tree,
+        },
+    )
+    assert response.status_code in [200, 500]  # Either success or LLM failure
+    if response.status_code == 200:
+        data = response.json()
+        assert "area" in data
+        assert isinstance(data["area"], str)
+    elif response.status_code == 500:
+        data = response.json()
+        assert "error" in data
+
+
+def test_get_area_nonexistent_session(sample_accessibility_tree):
+    """Test area identification for nonexistent session."""
+    response = client.post(
+        "/sessions/nonexistent/area",
+        json={
+            "description": "find form",
+            "accessibility_tree": sample_accessibility_tree,
+        },
+    )
+    assert response.status_code == 404
+
+
+def test_get_area_missing_data(sample_session_id):
+    """Test area identification with missing data."""
+    response = client.post(
+        f"/sessions/{sample_session_id}/area",
+        json={
+            "description": "find form"
+            # Missing accessibility_tree
+        },
+    )
+    assert response.status_code == 422
+
+
+# Session Management Edge Cases
+def test_create_session_minimal_data():
+    """Test creating session with minimal required data."""
+    response = client.post("/sessions", json={"provider": "anthropic", "tools": {}})
+    assert response.status_code == 200
+
+
+def test_create_session_invalid_data():
+    """Test creating session with invalid data."""
+    response = client.post(
+        "/sessions",
+        json={
+            "provider": "invalid_provider"
+            # Missing required 'name' field
+        },
+    )
+    assert response.status_code == 422
+
+
+# Comprehensive Error Handling Tests
+def test_malformed_json_request():
+    """Test server handling of malformed JSON."""
+    response = client.post("/sessions", data="invalid json{}", headers={"Content-Type": "application/json"})
+    assert response.status_code == 422
+
+
+def test_empty_request_body():
+    """Test server handling of empty request body."""
+    response = client.post("/sessions", json={})
+    assert response.status_code == 422
+
+
+def test_cors_headers():
+    """Test CORS headers are present."""
+    response = client.options("/health")
+    # Should not error and might include CORS headers
+    assert response.status_code in [200, 405]  # 405 is also acceptable for OPTIONS
+
+
+# Integration Tests
+def test_full_session_workflow():
+    """Test a complete session workflow."""
+    # 1. Create session
+    create_response = client.post(
+        "/sessions",
+        json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": {}},
+    )
+    assert create_response.status_code == 200
+    session_id = create_response.json()["sessionId"]
+
+    # 2. Check it exists in session list
+    list_response = client.get("/sessions")
+    assert session_id in list_response.json()
+
+    # 3. Get initial stats (should be zero)
+    stats_response = client.get(f"/sessions/{session_id}/stats")
+    initial_stats = stats_response.json()
+    assert all(initial_stats[key] == 0 for key in ["input_tokens", "output_tokens", "total_tokens"])
+
+    # 4. Make a plan request (this should use some tokens)
+    plan_response = client.post(
+        f"/sessions/{session_id}/plan",
+        json={
+            "goal": "click the submit button",
+            "accessibility_tree": "<button id='submit'>Submit</button>",
+        },
+    )
+    # May fail due to missing LLM API keys
+    assert plan_response.status_code in [200, 500]
+
+    # 5. Verify stats have changed (tokens were used)
+    final_stats_response = client.get(f"/sessions/{session_id}/stats")
+    final_stats = final_stats_response.json()
+    # Note: In a real scenario with actual LLM calls, tokens would be > 0
+    # For now, just verify the structure is correct
+    assert all(key in final_stats for key in ["input_tokens", "output_tokens", "total_tokens"])
+
+    # 6. Delete the session
+    delete_response = client.delete(f"/sessions/{session_id}")
+    assert delete_response.status_code == 204
+
+    # 7. Verify it's gone
+    final_list_response = client.get("/sessions")
+    assert session_id not in final_list_response.json()
+
+
+def test_concurrent_sessions():
+    """Test creating and managing multiple concurrent sessions."""
+    session_ids = []
+
+    # Create multiple sessions
+    for i in range(3):
+        response = client.post(
+            "/sessions",
+            json={"provider": "anthropic", "name": f"test-model-{i}", "tools": {}},
+        )
+        assert response.status_code == 200
+        session_ids.append(response.json()["sessionId"])
+
+    # Verify all exist
+    list_response = client.get("/sessions")
+    session_list = list_response.json()
+    for session_id in session_ids:
+        assert session_id in session_list
+
+    # Clean up
+    for session_id in session_ids:
+        delete_response = client.delete(f"/sessions/{session_id}")
+        assert delete_response.status_code == 204

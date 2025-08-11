@@ -5,33 +5,38 @@ from pydantic import BaseModel
 
 class SessionRequest(BaseModel):
     provider: str
-    name: str
-    tools: Optional[dict[str, Any]] = None  # Tools can be optional, default to None
+    name: Optional[str] = None
+    tools: dict[str, Any]
 
 
 class SessionResponse(BaseModel):
     sessionId: str
 
 
-class ActionRequest(BaseModel):
+class PlanRequest(BaseModel):
     goal: str
-    aria: str
+    accessibility_tree: str
     url: Optional[str] = None
     title: Optional[str] = None
 
 
-class ActionResponse(BaseModel):
-    type: str
-    args: dict[str, Any]
+class PlanResponse(BaseModel):
+    steps: List[str]
 
 
-class ActionsResponse(BaseModel):
-    actions: List[ActionResponse]
+class StepRequest(BaseModel):
+    goal: str
+    step: str
+    accessibility_tree: str
+
+
+class StepResponse(BaseModel):
+    actions: List[dict[str, Any]]
 
 
 class VerificationRequest(BaseModel):
     statement: str
-    aria: str
+    accessibility_tree: str
     url: Optional[str] = None
     title: Optional[str] = None
     screenshot: Optional[str] = None  # base64 encoded image
@@ -40,6 +45,15 @@ class VerificationRequest(BaseModel):
 class VerificationResponse(BaseModel):
     result: bool
     explanation: str
+
+
+class AreaRequest(BaseModel):
+    description: str
+    accessibility_tree: str
+
+
+class AreaResponse(BaseModel):
+    area: str
 
 
 class ErrorResponse(BaseModel):
