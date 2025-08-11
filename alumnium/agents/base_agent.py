@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError as BedrockClientError
 from google.api_core.exceptions import ResourceExhausted as GoogleRateLimitError
 from httpx import HTTPStatusError
 from langchain_core.runnables import Runnable
+from openai import InternalServerError as OpenAIInternalServerError
 from openai import RateLimitError as OpenAIRateLimitError
 from retry import retry
 
@@ -78,4 +79,6 @@ class BaseAgent:
             or (isinstance(error, BedrockClientError) and error.response["Error"]["Code"] == "ThrottlingException")
             # MistralAI rate limit errors
             or (isinstance(error, HTTPStatusError) and error.response.status_code == 429)
+            # DeepSeek instead throws internal server error
+            or isinstance(error, OpenAIInternalServerError)
         )
