@@ -48,4 +48,4 @@ class Client:
         return self.session.area_agent.invoke(description, accessibility_tree)
 
     def session_stats(self):
-        return self.session_manager.get_total_stats()
+        return self.session.stats()
