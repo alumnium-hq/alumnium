@@ -1,16 +1,11 @@
 import base64
 from contextlib import asynccontextmanager
-from typing import List, Optional
+from typing import List
 
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 
-from alumnium.accessibility.base_accessibility_tree import BaseAccessibilityTree
-from alumnium.agents.retriever_agent import Data
-from alumnium.logutils import get_logger
-from alumnium.models import Model
-
-from .models import (
+from .api_models import (
     ActionRequest,
     ActionResponse,
     ActionsResponse,
@@ -19,12 +14,14 @@ from .models import (
     VerificationRequest,
     VerificationResponse,
 )
-from .session_manager import ServerSessionManager
+from .logutils import get_logger
+from .models import Model
+from .session_manager import SessionManager
 
 logger = get_logger(__name__)
 
 # Global session manager
-session_manager = ServerSessionManager()
+session_manager = SessionManager()
 
 
 @asynccontextmanager

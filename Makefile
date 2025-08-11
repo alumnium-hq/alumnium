@@ -41,36 +41,26 @@ test-openai:
 
 test-all: test-anthropic test-aws_anthropic test-aws_meta test-azure_openai test-google test-ollama test-openai
 
+# Installation commands
+install-client:
+	poetry install --with client,dev
+
+install-server:
+	poetry install --with server,dev
+
+install-all:
+	poetry install --with client,server,dev
+
 # Server commands
-server-install:
-	cd alumnium/server && poetry install
-
-server-format:
-	cd alumnium/server && make format
-
-server-check-format:
-	cd alumnium/server && make check-format
-
-server-test:
-	cd alumnium/server && make test
-
 server-serve:
-	cd alumnium/server && make serve
+	poetry run alumnium-server
 
 server-serve-dev:
-	cd alumnium/server && make serve-dev
+	poetry run uvicorn alumnium.server.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Server tests
+server-test:
+	poetry run pytest alumnium/server/tests/
 
 # Combined commands
-install-all:
-	poetry install
-	make server-install
-
-format-all:
-	make format
-	make server-format
-
-check-format-all:
-	make check-format
-	make server-check-format
-
 test-all-components: test server-test

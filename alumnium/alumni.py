@@ -6,12 +6,11 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from alumnium.client import Client
 from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS, BaseTool
 
-from .agents import *
-from .agents.retriever_agent import Data
 from .area import Area
 from .drivers import AppiumDriver, PlaywrightDriver, SeleniumDriver
 from .logutils import get_logger
 from .models import Model
+from .server.agents.retriever_agent import Data
 
 logger = get_logger(__name__)
 
