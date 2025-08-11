@@ -40,3 +40,37 @@ test-openai:
 	ALUMNIUM_MODEL=openai ALUMNIUM_LOG_PATH=log/openai.log make test
 
 test-all: test-anthropic test-aws_anthropic test-aws_meta test-azure_openai test-google test-ollama test-openai
+
+# Server commands
+server-install:
+	cd alumnium/server && poetry install
+
+server-format:
+	cd alumnium/server && make format
+
+server-check-format:
+	cd alumnium/server && make check-format
+
+server-test:
+	cd alumnium/server && make test
+
+server-serve:
+	cd alumnium/server && make serve
+
+server-serve-dev:
+	cd alumnium/server && make serve-dev
+
+# Combined commands
+install-all:
+	poetry install
+	make server-install
+
+format-all:
+	make format
+	make server-format
+
+check-format-all:
+	make check-format
+	make server-check-format
+
+test-all-components: test server-test
