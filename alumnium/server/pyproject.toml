@@ -1,0 +1,56 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = [
+    "poetry-core",
+]
+
+[tool.poetry]
+authors = [
+    "Alex Rodionov <p0deje@gmail.com>",
+    "Tatiana Shepeleva <tati.shep@gmail.com>",
+]
+description = "Alumnium Server - AI-powered test automation server"
+name = "alumnium-server"
+readme = "README.md"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+alumnium = { path = "../..", develop = true }
+fastapi = "^0.115.0"
+python = "^3.10"
+uvicorn = { extras = ["standard"], version = "^0.32.0" }
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-asyncio = "^0.24.0"
+httpx = "^0.28.0"
+
+[tool.poetry.scripts]
+alumnium-server = "alumnium.server.main:main"
+
+[tool.pytest.ini_options]
+pythonpath = "."
+
+[tool.ruff]
+extend-exclude = [
+    ".git",
+    ".venv",
+    "dist",
+]
+line-length = 119
+
+[tool.ruff.lint]
+extend-select = [
+    "I",
+]
+ignore = [
+    "E402",
+    "F401",
+    "F403",
+    "F405",
+]
+select = [
+    "E",
+    "F",
+    "W",
+]
