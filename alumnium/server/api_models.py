@@ -3,6 +3,12 @@ from typing import Any, List, Optional
 from pydantic import BaseModel
 
 
+class SessionRequest(BaseModel):
+    provider: str
+    name: str
+    tools: Optional[dict[str, Any]] = None  # Tools can be optional, default to None
+
+
 class SessionResponse(BaseModel):
     sessionId: str
 

@@ -18,7 +18,7 @@ def test_health_check():
 
 def test_create_session():
     """Test creating a session."""
-    response = client.post("/sessions")
+    response = client.post("/sessions", json={"provider": "anthropic", "name": "test_name", "tools": {}})
     assert response.status_code == 200
     data = response.json()
     assert "sessionId" in data
