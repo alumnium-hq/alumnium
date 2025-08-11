@@ -9,7 +9,7 @@ from openai import InternalServerError as OpenAIInternalServerError
 from openai import RateLimitError as OpenAIRateLimitError
 from retry import retry
 
-from alumnium.models import Model, Provider
+from ..models import Model, Provider
 
 
 class BaseAgent:

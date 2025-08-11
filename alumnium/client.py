@@ -1,7 +1,7 @@
 from alumnium.tools.base_tool import BaseTool
 
 from .models import Model
-from .session import SessionManager
+from .server.session_manager import SessionManager
 
 
 class Client:
@@ -12,7 +12,7 @@ class Client:
 
         # Create session
         self.session_id = self.session_manager.create_session(
-            provider=self.model.provider, name=self.model.name, tools=self.tools
+            provider=self.model.provider.value, name=self.model.name, tools=self.tools
         )
 
         self.session = self.session_manager.get_session(self.session_id)

@@ -1,32 +1,35 @@
 import uuid
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
-from alumnium.logutils import get_logger
-from alumnium.models import Model
-from alumnium.session import Session
-from alumnium.tools import ALL_TOOLS
+from .logutils import get_logger
+from .models import Model
+from .session import Session
 
 logger = get_logger(__name__)
 
 
-class ServerSessionManager:
-    """Server-side session manager for handling multiple client sessions."""
+class SessionManager:
+    """Manages multiple client sessions."""
 
     def __init__(self):
-        self.sessions: Dict[str, Session] = {}
+        self.sessions: dict[str, Session] = {}
 
-    def create_session(self, model: Optional[Model] = None) -> str:
-        """Create a new session and return its ID."""
+    def create_session(self, provider: str, name: str, tools: dict[str, Any]) -> str:
+        """Create a new session and return its ID.
+        Args:
+            provider: The model provider name
+            tools: The tools to use in the session
+            name: The model name (optional)
+        Returns:
+            Session ID string
+        """
         session_id = str(uuid.uuid4())
 
-        # Use current model if none provided
-        session_model = model or Model.current
+        logger.info(f"Creating session {session_id} with model {provider}/{name}")
+        model = Model(provider=provider, name=name)
 
-        # Create session with tools
-        session = Session(session_id=session_id, model=session_model, tools=ALL_TOOLS)
-
-        self.sessions[session_id] = session
-        logger.info(f"Created server session: {session_id}")
+        self.sessions[session_id] = Session(session_id=session_id, model=model, tools=tools)
+        logger.info(f"Created new session: {session_id}")
         return session_id
 
     def get_session(self, session_id: str) -> Optional[Session]:
@@ -37,7 +40,7 @@ class ServerSessionManager:
         """Delete a session by ID."""
         if session_id in self.sessions:
             del self.sessions[session_id]
-            logger.info(f"Deleted server session: {session_id}")
+            logger.info(f"Deleted session: {session_id}")
             return True
         return False
 
@@ -45,9 +48,11 @@ class ServerSessionManager:
         """List all active session IDs."""
         return list(self.sessions.keys())
 
-    def get_session_stats(self, session_id: str) -> Optional[dict]:
-        """Get stats for a specific session."""
-        session = self.get_session(session_id)
-        if session:
-            return session.stats()
-        return None
+    def get_total_stats(self) -> Dict[str, int]:
+        """Get combined token usage statistics for all sessions."""
+        total_stats = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+        for session in self.sessions.values():
+            session_stats = session.get_stats()
+            for key in total_stats:
+                total_stats[key] += session_stats[key]
+        return total_stats
