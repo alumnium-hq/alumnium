@@ -31,9 +31,9 @@ class Area:
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.client.planner_agent.invoke(goal, self.accessibility_tree.to_xml())
+        steps = self.client.plan_actions(goal, self.accessibility_tree.to_xml())
         for step in steps:
-            actor_response = self.client.actor_agent.invoke(goal, step, self.accessibility_tree.to_xml())
+            actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_xml())
 
             # Execute tool calls
             for tool_call in actor_response:
@@ -53,7 +53,7 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
-        result = self.client.retriever_agent.invoke(
+        result = self.client.retrieve(
             f"Is the following true or false - {statement}",
             self.accessibility_tree.to_xml(),
             title=self.driver.title,
@@ -74,7 +74,7 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        return self.client.retriever_agent.invoke(
+        return self.client.retrieve(
             data,
             self.accessibility_tree.to_xml(),
             title=self.driver.title,

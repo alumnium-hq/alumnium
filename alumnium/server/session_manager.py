@@ -52,7 +52,7 @@ class SessionManager:
         """Get combined token usage statistics for all sessions."""
         total_stats = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
         for session in self.sessions.values():
-            session_stats = session.get_stats()
+            session_stats = session.stats()
             for key in total_stats:
                 total_stats[key] += session_stats[key]
         return total_stats
