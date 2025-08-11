@@ -15,32 +15,37 @@ class Client:
         )
 
         self.session = self.session_manager.get_session(self.session_id)
-        self.planner_agent = self.session.planner_agent
-        self.actor_agent = self.session.actor_agent
-        self.retriever_agent = self.session.retriever_agent
-        self.area_agent = self.session.area_agent
         self.cache = self.session.cache
 
     def quit(self):
         self.session_manager.delete_session(self.session_id)
 
     def plan_actions(self, goal: str, accessibility_tree: str):
-        return self.planner_agent.invoke(goal, accessibility_tree)
+        return self.session.planner_agent.invoke(goal, accessibility_tree)
 
     def add_example(self, goal: str, actions: list[str]):
-        return self.planner_agent.add_example(goal, actions)
+        return self.session.planner_agent.add_example(goal, actions)
 
     def clear_examples(self):
-        self.planner_agent.prompt_with_examples.examples.clear()
+        self.session.planner_agent.prompt_with_examples.examples.clear()
 
     def execute_action(self, goal: str, step: str, accessibility_tree: str):
-        return self.actor_agent.invoke(goal, step, accessibility_tree)
+        return self.session.actor_agent.invoke(goal, step, accessibility_tree)
 
-    def retrieve(self, statement: str, accessibility_tree: str, title: str, url: str, screenshot: str):
-        return self.retriever_agent.invoke(statement, accessibility_tree, title=title, url=url, screenshot=screenshot)
+    def retrieve(
+        self,
+        statement: str,
+        accessibility_tree: str,
+        title: str,
+        url: str,
+        screenshot: str,
+    ):
+        return self.session.retriever_agent.invoke(
+            statement, accessibility_tree, title=title, url=url, screenshot=screenshot
+        )
 
     def find_area(self, description: str, accessibility_tree: str):
-        return self.area_agent.invoke(description, accessibility_tree)
+        return self.session.area_agent.invoke(description, accessibility_tree)
 
     def session_stats(self):
         return self.session_manager.get_total_stats()
