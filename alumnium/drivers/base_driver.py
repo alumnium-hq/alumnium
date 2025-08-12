@@ -27,6 +27,10 @@ class BaseDriver(ABC):
     def quit(self):
         pass
 
+    @abstractmethod
+    def back(self):
+        pass
+
     @property
     @abstractmethod
     def screenshot(self) -> str:
