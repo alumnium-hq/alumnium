@@ -65,7 +65,7 @@ class PlaywrightDriver(BaseDriver):
     def screenshot(self) -> str:
         return b64encode(self.page.screenshot()).decode()
 
-    def area_screenshot(self, id: int) -> str:
+    def area_screenshot(self, id: int = 1) -> str:
         """
         Take a screenshot of a specific element by ID.
 
@@ -73,7 +73,7 @@ class PlaywrightDriver(BaseDriver):
         of the element, then crops a full page screenshot to those coordinates.
 
         Args:
-            id: The element ID from the accessibility tree
+            id: The element ID from the accessibility tree. Default is 1, which is usually the body element.
 
         Returns:
             Base64 encoded PNG screenshot of the element area

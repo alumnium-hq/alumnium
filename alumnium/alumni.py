@@ -121,7 +121,7 @@ class Alumni:
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
             url=self.driver.url,
-            screenshot=self.driver.area_screenshot(self.id) if vision else None,
+            screenshot=self.driver.area_screenshot() if vision else None,
         )
         assert result.value, result.explanation
         return result.explanation

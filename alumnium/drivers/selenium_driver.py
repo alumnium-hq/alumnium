@@ -67,7 +67,7 @@ class SeleniumDriver(BaseDriver):
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()
 
-    def area_screenshot(self, id: int) -> str:
+    def area_screenshot(self, id: int = 1) -> str:
         """
         Take a screenshot of a specific element by ID.
 
@@ -77,7 +77,7 @@ class SeleniumDriver(BaseDriver):
         See: https://chromedevtools.github.io/devtools-protocol/tot/DOM/#method-getBoxModel
 
         Args:
-            id: The element ID from the accessibility tree
+            id: The element ID from the accessibility tree. Default is 1, which is usually the body element.
 
         Returns:
             Base64 encoded PNG screenshot of the element area
