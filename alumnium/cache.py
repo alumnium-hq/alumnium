@@ -3,7 +3,6 @@ import time
 from os import getcwd
 from typing import Any, Optional
 
-import xxhash
 from langchain_core.caches import RETURN_VAL_TYPE, BaseCache
 from langchain_core.load.dump import dumps
 from langchain_core.load.load import loads
@@ -18,6 +17,7 @@ from sqlalchemy import (
     select,
 )
 from sqlalchemy.orm import Session, declarative_base, relationship
+from xxhash import xxh3_128_hexdigest
 
 from .logutils import get_logger
 from .models import Model
@@ -50,7 +50,7 @@ class CacheEntry(Base):
 
 class Cache(BaseCache):
     def __init__(self, db_path: str = ".alumnium-cache.sqlite"):
-        self.engine = create_engine(f"sqlite:///{getcwd()}/{db_path}")
+        self.engine = create_engine(f"sqlite:///{getcwd()}/{db_path}", connect_args={"timeout": 15})
         Base.metadata.create_all(self.engine)
         self.session = Session(self.engine)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
@@ -64,13 +64,19 @@ class Cache(BaseCache):
             )
             .first()
         )
+
         if not model_config:
-            model_config = ModelConfig(
-                model_name=Model.current.name,
-                provider=Model.current.provider.value,
-            )
-            self.session.add(model_config)
-            self.session.flush()
+            try:
+                model_config = ModelConfig(
+                    model_name=Model.current.name,
+                    provider=Model.current.provider.value,
+                )
+                self.session.add(model_config)
+                self.session.flush()
+            except Exception as e:
+                self.session.rollback()
+                logger.error(f"Error creating model config: {e}")
+
         return model_config
 
     def _extract_messages(self, prompt: str) -> tuple[str, str]:
@@ -100,12 +106,13 @@ class Cache(BaseCache):
     def _hash_request(self, system_message: str, human_message: str) -> str:
         # Combine messages and hash them
         combined = f"{system_message}|{human_message}"
-        return xxhash.xxh3_128_hexdigest(combined)
+        return xxh3_128_hexdigest(combined)
 
     def save(self) -> None:
         try:
             self.session.commit()
         except Exception as e:
+            self.session.rollback()
             logger.error(f"Error saving to database: {e}")
 
     def discard(self) -> None:
