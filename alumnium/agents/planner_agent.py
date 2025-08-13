@@ -21,7 +21,7 @@ class Plan(BaseModel):
 
 
 class PlannerAgent(BaseAgent):
-    LIST_SEPARATOR = "%SEP%"
+    LIST_SEPARATOR = "<SEP>"
     STRUCTURED_OUTPUT_MODELS = [
         Provider.AWS_META,
         Provider.AZURE_OPENAI,
@@ -34,6 +34,10 @@ class PlannerAgent(BaseAgent):
     def __init__(self, llm: BaseChatModel):
         super().__init__()
         self.llm = llm
+
+        # Haiku violates the separator convention
+        if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC]:
+            self.LIST_SEPARATOR = "%SEP%"
 
         example_prompt = ChatPromptTemplate.from_messages(
             [

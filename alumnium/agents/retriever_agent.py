@@ -4,9 +4,8 @@ from typing import Optional, TypeAlias, Union
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
-from alumnium.accessibility import BaseAccessibilityTree
-from alumnium.drivers import BaseDriver
 from alumnium.logutils import get_logger
+from alumnium.models import Model, Provider
 
 from .base_agent import BaseAgent
 
@@ -30,10 +29,15 @@ class RetrievedInformation(BaseModel):
 
 
 class RetrieverAgent(BaseAgent):
-    LIST_SEPARATOR = "%SEP%"
+    LIST_SEPARATOR = "<SEP>"
 
     def __init__(self, llm: BaseChatModel):
         super().__init__()
+
+        # Haiku violates the separator convention
+        if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC]:
+            self.LIST_SEPARATOR = "%SEP%"
+
         self.chain = llm.with_structured_output(
             RetrievedInformation,
             include_raw=True,
@@ -98,6 +102,7 @@ class RetrieverAgent(BaseAgent):
     def __loosely_typecast(self, value: str) -> Data:
         # LLMs sometimes add separator to the start/end.
         value = value.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
+        value = value.strip()
 
         if value.upper() == "NOOP":
             return None
