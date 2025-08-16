@@ -30,8 +30,7 @@ class PlaywrightDriver(BaseDriver):
         self.client = page.context.new_cdp_session(page)
         self.page = page
 
-    @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def _fetch_accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
         return ChromiumAccessibilityTree(self.client.send("Accessibility.getFullAXTree"))
 
