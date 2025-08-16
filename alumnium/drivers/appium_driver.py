@@ -52,6 +52,9 @@ class AppiumDriver(BaseDriver):
 
         ActionChains(self.driver).send_keys(*keys).perform()
 
+    def back(self):
+        self.driver.back()
+
     def quit(self):
         self.driver.quit()
 

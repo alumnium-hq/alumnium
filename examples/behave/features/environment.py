@@ -82,6 +82,7 @@ def alumnium(context):
                 'click button "x" near the "this is Al" task',
             ],
         )
+
     yield context.al
     context.al.quit()
 

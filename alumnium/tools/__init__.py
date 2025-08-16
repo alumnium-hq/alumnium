@@ -1,3 +1,4 @@
+from .back_tool import BackTool
 from .base_tool import BaseTool
 from .click_tool import ClickTool
 from .drag_and_drop_tool import DragAndDropTool
@@ -13,6 +14,7 @@ ALL_TOOLS = {
     "PressKeyTool": PressKeyTool,
     "SelectTool": SelectTool,
     "TypeTool": TypeTool,
+    "BackTool": BackTool,
 }
 
 ALL_APPIUM_TOOLS = {
@@ -21,4 +23,5 @@ ALL_APPIUM_TOOLS = {
     "PressKeyTool": PressKeyTool,
     "SelectTool": SelectTool,
     "TypeTool": TypeTool,
+    "BackTool": BackTool,
 }

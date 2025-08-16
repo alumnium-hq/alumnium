@@ -62,6 +62,9 @@ class SeleniumDriver(BaseDriver):
     def quit(self):
         self.driver.quit()
 
+    def back(self):
+        self.driver.back()
+
     @property
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()

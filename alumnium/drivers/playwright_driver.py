@@ -60,6 +60,9 @@ class PlaywrightDriver(BaseDriver):
     def quit(self):
         self.page.close()
 
+    def back(self):
+        self.page.go_back()
+
     @property
     def screenshot(self) -> str:
         return b64encode(self.page.screenshot()).decode()
