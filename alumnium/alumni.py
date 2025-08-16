@@ -7,7 +7,9 @@ from .agents import *
 from .agents.retriever_agent import Data
 from .area import Area
 from .client import Client
-from .drivers import AppiumDriver, PlaywrightDriver, SeleniumDriver
+from .drivers.appium_driver import AppiumDriver
+from .drivers.playwright_driver import PlaywrightDriver
+from .drivers.selenium_driver import SeleniumDriver
 from .logutils import get_logger
 from .models import Model
 from .tools.base_tool import BaseTool
@@ -30,7 +32,10 @@ class Alumni:
 
         logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
 
-        self.tools = self.driver.tools + (extra_tools or [])
+        self.tools = {}
+        for tool in self.driver.supported_tools | set(extra_tools or []):
+            self.tools[tool.__name__] = tool
+
         self.client = Client(self.model, self.tools)
         self.cache = self.client.cache
 
