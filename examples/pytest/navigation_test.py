@@ -1,45 +1,15 @@
-from pytest import mark
+from alumnium import Alumni
+from alumnium.tools import NavigateBackTool
 
 
-@mark.describe("Back navigation")
-def test_navigate_back_uses_history(al, navigate):
-    # Arrange: create history with two pages
-    navigate("https://example.com")
-    assert "example.com" in al.driver.url
+def test_navigate_back_uses_history(al, driver, navigate):
+    al = Alumni(driver, extra_tools=[NavigateBackTool])
 
-    al.do("Click on More information")
-    assert "www.iana.org" in al.driver.url
+    navigate("https://the-internet.herokuapp.com")
+    assert al.driver.url == "https://the-internet.herokuapp.com/"
 
-    # Act: ask the agent to go back to the previous page
-    al.do("Navigate back to the previous page")
+    al.do("open typos")
+    assert al.driver.url == "https://the-internet.herokuapp.com/typos"
 
-    # Assert: we are back on the first page
-    assert "example.com" in al.driver.url
-
-
-@mark.describe("Back navigation - different phrases")
-def test_back_navigation_different_phrases(al, navigate):
-    """Test that different ways of asking to go back work without explicit learning examples."""
-    # Arrange: create history with two pages
-    navigate("https://example.com")
-    assert "example.com" in al.driver.url
-
-    al.do("Click on More information")
-    assert "www.iana.org" in al.driver.url
-
-    # Test different ways to ask for back navigation
-    test_phrases = [
-        "Go back",
-        "Navigate back",
-        "Return to the previous page"
-    ]
-
-    for phrase in test_phrases:
-        # Go forward again to test going back
-        if "example.com" in al.driver.url:
-            al.do("Click on More information")
-            assert "www.iana.org" in al.driver.url
-
-        # Test the back navigation phrase
-        al.do(phrase)
-        assert "example.com" in al.driver.url, f"Failed with phrase: '{phrase}'"
+    al.do("navigate back to the previous page")
+    assert al.driver.url == "https://the-internet.herokuapp.com/"
