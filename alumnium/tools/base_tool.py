@@ -1,21 +1,18 @@
 from pydantic import BaseModel
 
 from alumnium.accessibility import BaseAccessibilityTree
-from alumnium.drivers import BaseDriver
+from alumnium.drivers.base_driver import BaseDriver
 
 
 class BaseTool(BaseModel):
-    """Base class for all tools."""
-
     @classmethod
     def execute_tool_call(
         cls,
         tool_call: dict,
-        tools: dict[str, "BaseTool"],
+        tools: list["BaseTool"],
         accessibility_tree: BaseAccessibilityTree,
         driver: BaseDriver,
     ):
-        """Execute a tool call on the driver."""
         tool = tools[tool_call["name"]](**tool_call["args"])
 
         if "id" in tool.model_fields_set:

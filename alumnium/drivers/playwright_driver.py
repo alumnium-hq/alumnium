@@ -7,6 +7,12 @@ from playwright.sync_api import Error, Page
 from alumnium.accessibility import ChromiumAccessibilityTree
 from alumnium.logutils import get_logger
 
+from ..tools.click_tool import ClickTool
+from ..tools.drag_and_drop_tool import DragAndDropTool
+from ..tools.hover_tool import HoverTool
+from ..tools.press_key_tool import PressKeyTool
+from ..tools.select_tool import SelectTool
+from ..tools.type_tool import TypeTool
 from .base_driver import BaseDriver
 from .keys import Key
 
@@ -29,6 +35,14 @@ class PlaywrightDriver(BaseDriver):
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
         self.page = page
+        self.supported_tools = {
+            ClickTool,
+            DragAndDropTool,
+            HoverTool,
+            PressKeyTool,
+            SelectTool,
+            TypeTool,
+        }
 
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:

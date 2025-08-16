@@ -11,6 +11,11 @@ from selenium.webdriver.common.keys import Keys
 from alumnium.accessibility import UIAutomator2AccessibiltyTree, XCUITestAccessibilityTree
 from alumnium.logutils import get_logger
 
+from ..tools.click_tool import ClickTool
+from ..tools.drag_and_drop_tool import DragAndDropTool
+from ..tools.press_key_tool import PressKeyTool
+from ..tools.select_tool import SelectTool
+from ..tools.type_tool import TypeTool
 from .base_driver import BaseDriver
 from .keys import Key
 
@@ -20,6 +25,13 @@ logger = get_logger(__name__)
 class AppiumDriver(BaseDriver):
     def __init__(self, driver: Remote):
         self.driver = driver
+        self.supported_tools = {
+            ClickTool,
+            DragAndDropTool,
+            PressKeyTool,
+            SelectTool,
+            TypeTool,
+        }
         self.autoswitch_to_webview = True
         self.delay = 0
         self.hide_keyboard_after_typing = False

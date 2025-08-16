@@ -17,7 +17,7 @@ driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 
 
-@fixture(scope="session", autouse=True)
+@fixture(scope="session")
 def driver():
     if driver_type == "playwright":
         with sync_playwright() as playwright:
@@ -50,7 +50,7 @@ def driver():
         raise NotImplementedError(f"Driver {driver} not implemented")
 
 
-@fixture(scope="session", autouse=True)
+@fixture(scope="session")
 def al(driver):
     al = Alumni(driver)
     if driver_type == "appium":
