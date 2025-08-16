@@ -1,9 +1,9 @@
-from alumnium.drivers import BaseDriver
+from alumnium.drivers.base_driver import BaseDriver
 
 from .base_tool import BaseTool
 
 
-class BackTool(BaseTool):
+class NavigateBackTool(BaseTool):
     """Navigate back to the previous page/screen using the browser/app history.
 
     Use this when the user asks to:
