@@ -6,23 +6,33 @@ FastAPI server that centralizes AI-powered test automation logic, enabling multi
 
 The server acts as a bridge between test automation clients (Ruby, JavaScript, Python, etc.) and AI language models. It provides REST endpoints for:
 
-- Session management
-- Action planning (breaking down goals into executable steps)
-- Statement verification (checking assertions against page state)
+- **Session Management**: Create, delete, and manage independent LLM sessions
+- **Action Planning**: Break down high-level goals into executable steps
+- **Action Execution**: Convert steps into specific UI interactions
+- **Statement Verification**: Check assertions against page state with screenshot support
+- **Area Detection**: Identify specific regions of a page
+- **Example Management**: Add and manage training examples for the planner agent
 
 ## Installation
 
-From the server directory:
+From the root directory:
 
 ```bash
-poetry install
+# Install server dependencies
+make install-server
+
+# Or install all dependencies including server
+make install-all
 ```
 
 ## Running the Server
 
 ```bash
-# Using poetry
-poetry run alumnium-server
+# Development mode with auto-reload
+make server-serve-dev
+
+# Production mode
+make server-serve
 
 # Or directly with uvicorn
 poetry run uvicorn alumnium.server.main:app --host 0.0.0.0 --port 8000 --reload
@@ -32,51 +42,89 @@ poetry run uvicorn alumnium.server.main:app --host 0.0.0.0 --port 8000 --reload
 
 ### Session Management
 
-- `POST /sessions` - Create a new session
-- `DELETE /sessions/{sessionId}` - Delete a session  
+- `POST /sessions` - Create a new session with specific provider and model
+- `DELETE /sessions/{sessionId}` - Delete a session
 - `GET /sessions` - List all active sessions
-- `GET /sessions/{sessionId}/stats` - Get session token usage stats
+- `GET /sessions/{sessionId}/stats` - Get session token usage statistics
 
-### Test Automation
+### Planning & Execution
 
-- `POST /sessions/{sessionId}/actions` - Plan actions to achieve a goal
-- `POST /sessions/{sessionId}/verifications` - Verify statements against page state
+- `POST /sessions/{sessionId}/plan` - Plan high-level steps to achieve a goal
+- `POST /sessions/{sessionId}/step` - Generate specific actions for a step
+- `POST /sessions/{sessionId}/statement` - Execute/verify statements against page state
+- `POST /sessions/{sessionId}/area` - Identify specific areas on a page
+
+### Example Management
+
+- `POST /sessions/{sessionId}/examples` - Add training examples to the planner
+- `DELETE /sessions/{sessionId}/examples` - Clear all training examples
 
 ### Health Check
 
-- `GET /health` - Health check and current model info
+- `GET /health` - Health check and current model information
 
 ## Example Usage
 
 ### Create Session
 ```bash
-curl -X POST http://localhost:8000/sessions
+curl -X POST http://localhost:8000/sessions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": "anthropic",
+    "name": "claude-3-haiku-20240307",
+    "tools": {}
+  }'
 # Response: {"sessionId": "uuid-here"}
 ```
 
 ### Plan Actions
 ```bash
-curl -X POST http://localhost:8000/sessions/{sessionId}/actions \
+curl -X POST http://localhost:8000/sessions/{sessionId}/plan \
   -H "Content-Type: application/json" \
   -d '{
-    "goal": "click the login button",
-    "aria": "<accessibility tree XML>",
-    "url": "https://example.com",
-    "title": "Example Page"
+    "goal": "log in to the application",
+    "accessibility_tree": "<accessibility_tree>...</accessibility_tree>",
+    "url": "https://example.com/login",
+    "title": "Login Page"
   }'
-# Response: {"actions": [{"type": "click", "args": {"id": "login-btn"}}]}
+# Response: {"steps": ["Fill username field", "Fill password field", "Click login button"]}
+```
+
+### Execute Step Actions
+```bash
+curl -X POST http://localhost:8000/sessions/{sessionId}/step \
+  -H "Content-Type: application/json" \
+  -d '{
+    "goal": "log in to the application", 
+    "step": "Fill username field",
+    "accessibility_tree": "<accessibility_tree>...</accessibility_tree>"
+  }'
+# Response: {"actions": [{"tool": "type", "args": {"id": "username", "text": "user@example.com"}}]}
 ```
 
 ### Verify Statement
 ```bash
-curl -X POST http://localhost:8000/sessions/{sessionId}/verifications \
+curl -X POST http://localhost:8000/sessions/{sessionId}/statement \
   -H "Content-Type: application/json" \
   -d '{
-    "statement": "user is logged in",
-    "aria": "<accessibility tree XML>",
-    "screenshot": "<base64-encoded-image>"
+    "statement": "user is logged in successfully",
+    "accessibility_tree": "<accessibility_tree>...</accessibility_tree>",
+    "url": "https://example.com/dashboard",
+    "title": "Dashboard",
+    "screenshot": "iVBORw0KGgoAAAANSUhEU..."
   }'
-# Response: {"result": true, "explanation": "Login successful indicator visible"}
+# Response: {"result": "true", "explanation": "Dashboard page is visible with user menu"}
+```
+
+### Add Training Example
+```bash
+curl -X POST http://localhost:8000/sessions/{sessionId}/examples \
+  -H "Content-Type: application/json" \
+  -d '{
+    "goal": "complete user registration",
+    "actions": ["Fill name field", "Fill email field", "Fill password field", "Click register button"]
+  }'
+# Response: {"success": true, "message": "Example added successfully"}
 ```
 
 ## Configuration
