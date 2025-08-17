@@ -17,10 +17,10 @@ from .api_models import (
     PlanResponse,
     SessionRequest,
     SessionResponse,
+    StatementRequest,
+    StatementResponse,
     StepRequest,
     StepResponse,
-    VerificationRequest,
-    VerificationResponse,
 )
 from .logutils import get_logger
 from .models import Model
@@ -132,9 +132,9 @@ async def plan_step_actions(session_id: str, request: StepRequest):
         )
 
 
-@app.post("/sessions/{session_id}/verifications", response_model=VerificationResponse)
-async def verify_statement(session_id: str, request: VerificationRequest):
-    """Verify a statement against the current page state."""
+@app.post("/sessions/{session_id}/statement", response_model=StatementResponse)
+async def execute_statement(session_id: str, request: StatementRequest):
+    """Execute a statement against the current page state."""
     session = session_manager.get_session(session_id)
     if not session:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
@@ -148,7 +148,7 @@ async def verify_statement(session_id: str, request: VerificationRequest):
             except Exception as e:
                 logger.warning(f"Failed to decode screenshot: {e}")
 
-        # Use retriever agent to verify the statement
+        # Use retriever agent to execute the statement
         result = session.retriever_agent.invoke(
             request.statement,
             request.accessibility_tree,
@@ -157,10 +157,10 @@ async def verify_statement(session_id: str, request: VerificationRequest):
             screenshot=screenshot_bytes,
         )
 
-        return VerificationResponse(result=bool(result.value), explanation=result.explanation)
+        return StatementResponse(result=result.value, explanation=result.explanation)
 
     except Exception as e:
-        logger.error(f"Failed to verify statement for session {session_id}: {e}")
+        logger.error(f"Failed to execute statement for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to verify statement: {str(e)}"
         )
@@ -175,7 +175,7 @@ async def get_area(session_id: str, request: AreaRequest):
 
     try:
         area = session.area_agent.invoke(request.description, request.accessibility_tree)
-        return AreaResponse(area=area)
+        return AreaResponse(id=area.id, explanation=area.explanation)
 
     except Exception as e:
         logger.error(f"Failed to get accessibility area for session {session_id}: {e}")

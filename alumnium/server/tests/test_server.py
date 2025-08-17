@@ -1,6 +1,9 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
 from fastapi.testclient import TestClient
 
+from alumnium.server.agents.retriever_agent import RetrievedInformation
 from alumnium.server.main import app
 
 client = TestClient(app)
@@ -29,6 +32,35 @@ def sample_accessibility_tree():
         <div id="error-msg" role="alert" hidden="true">Invalid credentials</div>
     </accessibility_tree>
     """
+
+
+@pytest.fixture(autouse=True)
+def mock_agents():
+    """Mock all agent invoke calls to prevent actual LLM calls."""
+    with (
+        patch("alumnium.server.agents.planner_agent.PlannerAgent.invoke") as mock_planner,
+        patch("alumnium.server.agents.actor_agent.ActorAgent.invoke") as mock_actor,
+        patch("alumnium.server.agents.retriever_agent.RetrieverAgent.invoke") as mock_retriever,
+        patch("alumnium.server.agents.area_agent.AreaAgent.invoke") as mock_area,
+    ):
+        # Mock planner agent to return list of steps
+        mock_planner.return_value = ["Step 1: Click username field", "Step 2: Enter username", "Step 3: Click submit"]
+
+        # Mock actor agent to return list of actions
+        mock_actor.return_value = [
+            {"tool": "click", "args": {"id": "submit-btn"}},
+            {"tool": "type", "args": {"id": "username", "text": "testuser"}},
+        ]
+
+        # Mock retriever agent to return RetrievedInformation
+        mock_retriever.return_value = RetrievedInformation(
+            explanation="Found the requested information in the accessibility tree", value="true"
+        )
+
+        # Mock area agent to return area information
+        mock_area.return_value = MagicMock(id=42, explanation="Found the login form area")
+
+        yield {"planner": mock_planner, "actor": mock_actor, "retriever": mock_retriever, "area": mock_area}
 
 
 def test_health_check():
@@ -116,17 +148,10 @@ def test_plan_actions_endpoint_structure(sample_session_id, sample_accessibility
             "title": "Login Page",
         },
     )
-    # Expect 500 because LLM call will fail, but structure should be correct
-    assert response.status_code in [200, 500]  # Either success or LLM failure
-    if response.status_code == 500:
-        # Check error structure
-        data = response.json()
-        assert "error" in data
-    elif response.status_code == 200:
-        # Check success structure
-        data = response.json()
-        assert "steps" in data
-        assert isinstance(data["steps"], list)
+    assert response.status_code == 200
+    data = response.json()
+    assert "steps" in data
+    assert isinstance(data["steps"], list)
 
 
 def test_plan_actions_nonexistent_session(sample_accessibility_tree):
@@ -166,14 +191,10 @@ def test_step_actions_success(sample_session_id, sample_accessibility_tree):
             "accessibility_tree": sample_accessibility_tree,
         },
     )
-    assert response.status_code in [200, 500]  # Either success or LLM failure
-    if response.status_code == 200:
-        data = response.json()
-        assert "actions" in data
-        assert isinstance(data["actions"], list)
-    elif response.status_code == 500:
-        data = response.json()
-        assert "error" in data
+    assert response.status_code == 200
+    data = response.json()
+    assert "actions" in data
+    assert isinstance(data["actions"], list)
 
 
 def test_step_actions_nonexistent_session(sample_accessibility_tree):
@@ -202,11 +223,11 @@ def test_step_actions_invalid_data(sample_session_id):
     assert response.status_code == 422
 
 
-# Verification Tests
-def test_verify_statement_success(sample_session_id, sample_accessibility_tree):
-    """Test successful statement verification."""
+# Statement Tests
+def test_execute_statement_success(sample_session_id, sample_accessibility_tree):
+    """Test successful statement execution."""
     response = client.post(
-        f"/sessions/{sample_session_id}/verifications",
+        f"/sessions/{sample_session_id}/statement",
         json={
             "statement": "there is a submit button on the page",
             "accessibility_tree": sample_accessibility_tree,
@@ -214,59 +235,55 @@ def test_verify_statement_success(sample_session_id, sample_accessibility_tree):
             "title": "Test Page",
         },
     )
-    assert response.status_code in [200, 500]  # Either success or LLM failure
-    if response.status_code == 200:
-        data = response.json()
-        assert "result" in data
-        assert "explanation" in data
-        assert isinstance(data["result"], bool)
-        assert isinstance(data["explanation"], str)
-    elif response.status_code == 500:
-        data = response.json()
-        assert "error" in data
+    assert response.status_code == 200
+    data = response.json()
+    assert "result" in data
+    assert "explanation" in data
+    assert isinstance(data["result"], str)
+    assert isinstance(data["explanation"], str)
 
 
-def test_verify_statement_with_screenshot(sample_session_id, sample_accessibility_tree):
-    """Test verification with base64 screenshot."""
+def test_execute_statement_with_screenshot(sample_session_id, sample_accessibility_tree):
+    """Test statement execution with base64 screenshot."""
     # Simple base64 encoded string (not a real image, just for testing)
     fake_screenshot = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwhgGAWjR9awAAAABJRU5ErkJggg=="
 
     response = client.post(
-        f"/sessions/{sample_session_id}/verifications",
+        f"/sessions/{sample_session_id}/statement",
         json={
             "statement": "the page shows a login form",
             "accessibility_tree": sample_accessibility_tree,
             "screenshot": fake_screenshot,
         },
     )
-    assert response.status_code in [200, 500]  # Either success or LLM failure
-    if response.status_code == 200:
-        data = response.json()
-        assert "result" in data
-        assert "explanation" in data
-    elif response.status_code == 500:
-        data = response.json()
-        assert "error" in data
+    assert response.status_code == 200
+    data = response.json()
+    assert "result" in data
+    assert "explanation" in data
 
 
-def test_verify_statement_invalid_screenshot(sample_session_id, sample_accessibility_tree):
-    """Test verification with invalid screenshot data."""
+def test_execute_statement_invalid_screenshot(sample_session_id, sample_accessibility_tree):
+    """Test statement execution with invalid screenshot data."""
     response = client.post(
-        f"/sessions/{sample_session_id}/verifications",
+        f"/sessions/{sample_session_id}/statement",
         json={
             "statement": "test statement",
             "accessibility_tree": sample_accessibility_tree,
             "screenshot": "invalid_base64_data!!!",
         },
     )
-    # Should still work but log a warning about invalid screenshot, or fail due to LLM API
-    assert response.status_code in [200, 500]
+    # With mocking, this should still succeed even with invalid base64
+    # The server logs a warning but continues processing
+    assert response.status_code == 200
+    data = response.json()
+    assert "result" in data
+    assert "explanation" in data
 
 
-def test_verify_statement_nonexistent_session(sample_accessibility_tree):
-    """Test verification for nonexistent session."""
+def test_execute_statement_nonexistent_session(sample_accessibility_tree):
+    """Test statement execution for nonexistent session."""
     response = client.post(
-        "/sessions/nonexistent/verifications",
+        "/sessions/nonexistent/statement",
         json={"statement": "test", "accessibility_tree": sample_accessibility_tree},
     )
     assert response.status_code == 404
@@ -282,14 +299,12 @@ def test_get_area_success(sample_session_id, sample_accessibility_tree):
             "accessibility_tree": sample_accessibility_tree,
         },
     )
-    assert response.status_code in [200, 500]  # Either success or LLM failure
-    if response.status_code == 200:
-        data = response.json()
-        assert "area" in data
-        assert isinstance(data["area"], str)
-    elif response.status_code == 500:
-        data = response.json()
-        assert "error" in data
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    assert "explanation" in data
+    assert isinstance(data["id"], int)
+    assert isinstance(data["explanation"], str)
 
 
 def test_get_area_nonexistent_session(sample_accessibility_tree):
@@ -427,6 +442,7 @@ def test_concurrent_sessions():
         assert delete_response.status_code == 204
 
 
+# Example Management Tests
 def test_add_example_success(sample_session_id):
     """Test adding an example successfully."""
     response = client.post(
