@@ -5,8 +5,8 @@ from pathlib import Path
 from playwright.sync_api import Error, Page
 
 from alumnium.accessibility import ChromiumAccessibilityTree
-from alumnium.logutils import get_logger
 
+from ..server.logutils import get_logger
 from .base_driver import BaseDriver
 from .keys import Key
 

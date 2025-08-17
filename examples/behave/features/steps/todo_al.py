@@ -3,8 +3,6 @@ from behave import *
 from playwright.sync_api import Page
 from selenium.webdriver import Chrome
 
-from alumnium.models import Provider
-
 
 @given("I open application")
 def step_impl(context):
