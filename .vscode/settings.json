@@ -12,5 +12,9 @@
         "editor.codeActionsOnSave": {
             "source.organizeImports.ruff": "explicit"
         }
-    }
+    },
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "python.analysis.extraPaths": [
+      "./.venv/lib/python3.10/site-packages"
+    ]
 }

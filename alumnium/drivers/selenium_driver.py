@@ -9,8 +9,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
 from alumnium.accessibility import ChromiumAccessibilityTree
-from alumnium.logutils import get_logger
 
+from ..server.logutils import get_logger
 from .base_driver import BaseDriver
 from .keys import Key
 
