@@ -2,8 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
-from alumnium.logutils import get_logger
-
+from ..server.logutils import get_logger
 from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
 

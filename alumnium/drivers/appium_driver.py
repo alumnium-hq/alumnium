@@ -9,8 +9,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 from alumnium.accessibility import UIAutomator2AccessibiltyTree, XCUITestAccessibilityTree
-from alumnium.logutils import get_logger
 
+from ..server.logutils import get_logger
 from .base_driver import BaseDriver
 from .keys import Key
 

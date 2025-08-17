@@ -8,9 +8,9 @@ from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS, BaseTool
 
 from .area import Area
 from .drivers import AppiumDriver, PlaywrightDriver, SeleniumDriver
-from .logutils import get_logger
-from .models import Model
 from .server.agents.retriever_agent import Data
+from .server.logutils import get_logger
+from .server.models import Model
 
 logger = get_logger(__name__)
 

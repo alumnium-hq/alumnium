@@ -1,6 +1,6 @@
 from alumnium.tools.base_tool import BaseTool
 
-from .models import Model
+from .server.models import Model
 from .server.session_manager import SessionManager
 
 
