@@ -1,6 +1,7 @@
 import json
 import time
 from os import getcwd
+from pathlib import Path
 from typing import Any, Optional
 
 from langchain_core.caches import RETURN_VAL_TYPE, BaseCache
@@ -50,7 +51,8 @@ class CacheEntry(Base):
 
 class Cache(BaseCache):
     def __init__(self, db_path: str = ".alumnium-cache.sqlite"):
-        self.engine = create_engine(f"sqlite:///{getcwd()}/{db_path}", connect_args={"timeout": 15})
+        project_root = Path(__file__).parent.parent.parent
+        self.engine = create_engine(f"sqlite:///{project_root}/{db_path}", connect_args={"timeout": 15})
         Base.metadata.create_all(self.engine)
         self.session = Session(self.engine)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
