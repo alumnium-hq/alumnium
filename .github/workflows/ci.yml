@@ -117,7 +117,7 @@ jobs:
         with:
           name: ${{ matrix.driver }}-${{ matrix.model }}
           path: |
-            alumnium.log
+            *.log
             reports/
 
   release:
