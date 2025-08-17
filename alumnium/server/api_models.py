@@ -56,6 +56,21 @@ class AreaResponse(BaseModel):
     area: str
 
 
+class AddExampleRequest(BaseModel):
+    goal: str
+    actions: List[str]
+
+
+class AddExampleResponse(BaseModel):
+    success: bool
+    message: str
+
+
+class ClearExamplesResponse(BaseModel):
+    success: bool
+    message: str
+
+
 class ErrorResponse(BaseModel):
     error: str
     detail: Optional[str] = None

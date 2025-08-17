@@ -425,3 +425,82 @@ def test_concurrent_sessions():
     for session_id in session_ids:
         delete_response = client.delete(f"/sessions/{session_id}")
         assert delete_response.status_code == 204
+
+
+def test_add_example_success(sample_session_id):
+    """Test adding an example successfully."""
+    response = client.post(
+        f"/sessions/{sample_session_id}/examples",
+        json={"goal": "login to the app", "actions": ["fill username field", "fill password field", "click submit"]},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert "message" in data
+
+
+def test_add_example_nonexistent_session():
+    """Test adding an example to a nonexistent session."""
+    response = client.post(
+        "/sessions/nonexistent-session/examples",
+        json={"goal": "test goal", "actions": ["action1", "action2"]},
+    )
+    assert response.status_code == 404
+    data = response.json()
+    assert data["error"] == "Session not found"
+
+
+def test_add_example_invalid_data(sample_session_id):
+    """Test adding an example with invalid data."""
+    response = client.post(f"/sessions/{sample_session_id}/examples", json={"goal": "test goal"})  # missing actions
+    assert response.status_code == 422  # Validation error
+
+
+def test_clear_examples_success(sample_session_id):
+    """Test clearing examples successfully."""
+    # First add some examples
+    client.post(
+        f"/sessions/{sample_session_id}/examples",
+        json={"goal": "test goal 1", "actions": ["action1"]},
+    )
+    client.post(
+        f"/sessions/{sample_session_id}/examples",
+        json={"goal": "test goal 2", "actions": ["action2"]},
+    )
+
+    # Then clear them
+    response = client.delete(f"/sessions/{sample_session_id}/examples")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert "message" in data
+
+
+def test_clear_examples_nonexistent_session():
+    """Test clearing examples from a nonexistent session."""
+    response = client.delete("/sessions/nonexistent-session/examples")
+    assert response.status_code == 404
+    data = response.json()
+    assert data["error"] == "Session not found"
+
+
+def test_example_management_workflow(sample_session_id):
+    """Test the complete example management workflow."""
+    # Add multiple examples
+    example1 = {"goal": "navigate to homepage", "actions": ["click home button"]}
+    example2 = {"goal": "submit form", "actions": ["fill field", "click submit"]}
+
+    response1 = client.post(f"/sessions/{sample_session_id}/examples", json=example1)
+    assert response1.status_code == 200
+
+    response2 = client.post(f"/sessions/{sample_session_id}/examples", json=example2)
+    assert response2.status_code == 200
+
+    # Clear all examples
+    clear_response = client.delete(f"/sessions/{sample_session_id}/examples")
+    assert clear_response.status_code == 200
+
+    # Add another example after clearing
+    example3 = {"goal": "logout", "actions": ["click logout button"]}
+    response3 = client.post(f"/sessions/{sample_session_id}/examples", json=example3)
+    assert response3.status_code == 200
