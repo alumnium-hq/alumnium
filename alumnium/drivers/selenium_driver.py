@@ -1,9 +1,11 @@
 from pathlib import Path
 
+from retry import retry
 from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.errorhandler import JavascriptException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
@@ -137,6 +139,7 @@ class SeleniumDriver(BaseDriver):
 
             driver.execute_cdp_cmd = execute_cdp_cmd.__get__(driver)
 
+    @retry(JavascriptException, tries=2, delay=0.1, backoff=2)
     def wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         self.driver.execute_script(self.WAITER_SCRIPT)
