@@ -34,7 +34,7 @@ class StepResponse(BaseModel):
     actions: List[dict[str, Any]]
 
 
-class VerificationRequest(BaseModel):
+class StatementRequest(BaseModel):
     statement: str
     accessibility_tree: str
     url: Optional[str] = None
@@ -42,8 +42,8 @@ class VerificationRequest(BaseModel):
     screenshot: Optional[str] = None  # base64 encoded image
 
 
-class VerificationResponse(BaseModel):
-    result: bool
+class StatementResponse(BaseModel):
+    result: str
     explanation: str
 
 
@@ -53,7 +53,8 @@ class AreaRequest(BaseModel):
 
 
 class AreaResponse(BaseModel):
-    area: str
+    id: int
+    explanation: str
 
 
 class AddExampleRequest(BaseModel):
