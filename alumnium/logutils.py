@@ -77,8 +77,10 @@ def get_langchain_callback() -> BaseCallbackHandler:
         if os.path.dirname(ALUMNIUM_LOG_PATH) != "":
             os.makedirs(os.path.dirname(ALUMNIUM_LOG_PATH), exist_ok=True)
         filepath = os.path.splitext(ALUMNIUM_LOG_PATH)[0]
-        return LangChainFileCallbackHandler(filename=f"{filepath}-langchain.log", mode="a")
+        print(filepath)
+        return LangChainFileCallbackHandler(filename=f"{filepath}-langchain.log", mode="w")
     else:
+        print("NULL")
         return LangChainNullCallbackHandler()
 
 
