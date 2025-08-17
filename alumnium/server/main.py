@@ -7,8 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from .api_models import (
+    AddExampleRequest,
+    AddExampleResponse,
     AreaRequest,
     AreaResponse,
+    ClearExamplesResponse,
     ErrorResponse,
     PlanRequest,
     PlanResponse,
@@ -178,6 +181,42 @@ async def get_area(session_id: str, request: AreaRequest):
         logger.error(f"Failed to get accessibility area for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to get accessibility area: {str(e)}"
+        )
+
+
+@app.post("/sessions/{session_id}/examples", response_model=AddExampleResponse)
+async def add_example(session_id: str, request: AddExampleRequest):
+    """Add an example goal and actions to the planner agent."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        session.planner_agent.add_example(request.goal, request.actions)
+        return AddExampleResponse(success=True, message="Example added successfully")
+
+    except Exception as e:
+        logger.error(f"Failed to add example for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to add example: {str(e)}"
+        )
+
+
+@app.delete("/sessions/{session_id}/examples", response_model=ClearExamplesResponse)
+async def clear_examples(session_id: str):
+    """Clear all examples from the planner agent."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        session.planner_agent.prompt_with_examples.examples.clear()
+        return ClearExamplesResponse(success=True, message="All examples cleared successfully")
+
+    except Exception as e:
+        logger.error(f"Failed to clear examples for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to clear examples: {str(e)}"
         )
 
 
