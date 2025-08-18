@@ -8,8 +8,7 @@ from langchain_mistralai import ChatMistralAI
 from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 
-from alumnium.logutils import get_logger
-
+from .logutils import get_langchain_callback, get_logger
 from .models import Model, Provider
 
 logger = get_logger(__name__)
@@ -30,9 +29,10 @@ class LLMFactory:
                 api_version=azure_openai_api_version,
                 temperature=0,
                 seed=1,
+                callbacks=[get_langchain_callback()],
             )
         elif model.provider == Provider.ANTHROPIC:
-            llm = ChatAnthropic(model=model.name, temperature=0)
+            llm = ChatAnthropic(model=model.name, temperature=0, callbacks=[get_langchain_callback()])
         elif model.provider == Provider.AWS_ANTHROPIC or model.provider == Provider.AWS_META:
             aws_access_key = getenv("AWS_ACCESS_KEY")
             aws_secret_key = getenv("AWS_SECRET_KEY")
@@ -43,17 +43,18 @@ class LLMFactory:
                 aws_access_key_id=aws_access_key,
                 aws_secret_access_key=aws_secret_key,
                 region_name=aws_region_name,
+                callbacks=[get_langchain_callback()],
             )
         elif model.provider == Provider.DEEPSEEK:
-            llm = ChatDeepSeek(model=model.name, temperature=0)
+            llm = ChatDeepSeek(model=model.name, temperature=0, callbacks=[get_langchain_callback()])
         elif model.provider == Provider.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=model.name, temperature=0)
+            llm = ChatGoogleGenerativeAI(model=model.name, temperature=0, callbacks=[get_langchain_callback()])
         elif model.provider == Provider.MISTRALAI:
-            llm = ChatMistralAI(model=model.name, temperature=0)
+            llm = ChatMistralAI(model=model.name, temperature=0, callbacks=[get_langchain_callback()])
         elif model.provider == Provider.OLLAMA:
-            llm = ChatOllama(mdel=model.name, temperature=0)
+            llm = ChatOllama(model=model.name, temperature=0, callbacks=[get_langchain_callback()])
         elif model.provider == Provider.OPENAI:
-            llm = ChatOpenAI(model=model.name, temperature=0, seed=1)
+            llm = ChatOpenAI(model=model.name, temperature=0, seed=1, callbacks=[get_langchain_callback()])
         else:
             raise NotImplementedError(f"Model {model.provider} not implemented")
 
