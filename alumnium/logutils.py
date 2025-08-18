@@ -91,6 +91,9 @@ class LangChainFileCallbackHandler(FileCallbackHandler):
     def on_llm_end(self, response, *, run_id, parent_run_id=None, **kwargs):
         self._write(f"\n< [llm/end]({run_id}) {response}", end="\n")
 
+    def on_llm_error(self, error, *, run_id, parent_run_id=None, **kwarg):
+        self._write(f"\n! [llm/error]({run_id}) {error}", end="\n")
+
 
 class LangChainNullCallbackHandler(BaseCallbackHandler):
     pass
