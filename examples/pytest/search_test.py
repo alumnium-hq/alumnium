@@ -14,7 +14,7 @@ playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 )
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
 def test_search(al, navigate):
-    navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGo
+    navigate("https://www.duckduckgo.com")  # Google forces reCAPTCHA, so we use DuckDuckGo
 
     al.do("type 'selenium' into the search field, then press 'Enter'")
     if alumnium_driver != "appium":
@@ -26,3 +26,7 @@ def test_search(al, navigate):
     al.check("search results contain selenium.dev")
     with raises(AssertionError):
         al.check("search results do not contain selenium.dev")
+
+def test_search_it_raises_exception_without_navigation(al):
+    with raises(RuntimeError, match="page is empty"):
+        al.do("type 'selenium' into the search field, then press 'Enter'")

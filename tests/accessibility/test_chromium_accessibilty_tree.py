@@ -9,15 +9,17 @@ from alumnium.accessibility import ChromiumAccessibilityTree
 
 
 @fixture
-def chromium_tree() -> ChromiumAccessibilityTree:
-    with open(Path(__file__).parent.parent / "fixtures/chromium_accessibility_tree.json", "r") as f:
-        json = load(f)
-    return ChromiumAccessibilityTree(json)
+def chromium_tree():
+    def _make_chromium_tree(fixture_path: str) -> ChromiumAccessibilityTree:
+        with open(Path(__file__).parent.parent / f"fixtures/{fixture_path}.json", "r") as f:
+            json = load(f)
+        return ChromiumAccessibilityTree(json)
+    return _make_chromium_tree
 
 
 def test_to_xml(chromium_tree: ChromiumAccessibilityTree):
     assert (
-        chromium_tree.to_xml()
+        chromium_tree('chromium_accessibility_tree').to_xml()
         == """
 <RootWebArea name=": React" id="1" focusable="True">
   <generic id="4">
@@ -71,6 +73,14 @@ def test_to_xml(chromium_tree: ChromiumAccessibilityTree):
 
 
 def test_element_by_id(chromium_tree: ChromiumAccessibilityTree):
-    assert chromium_tree.element_by_id(1).id == 7
-    assert chromium_tree.element_by_id(2).id == 6
-    assert chromium_tree.element_by_id(3).id == 5
+    tree = chromium_tree('chromium_accessibility_tree')
+    assert tree.element_by_id(1).id == 7
+    assert tree.element_by_id(2).id == 6
+    assert tree.element_by_id(3).id == 5
+
+def test_empty_tree(chromium_tree: ChromiumAccessibilityTree):
+    empty_tree = chromium_tree('empty_page')
+    assert empty_tree.is_empty()
+
+    non_empty_tree = chromium_tree('chromium_accessibility_tree')
+    assert not non_empty_tree.is_empty()
