@@ -50,6 +50,8 @@ class Alumni:
             goal: The goal to be achieved.
         """
         initial_accessibility_tree = self.driver.accessibility_tree
+        if initial_accessibility_tree.is_empty():
+            raise RuntimeError("The page is empty. Please, navigate to a valid page before calling `do`.")
         steps = self.client.planner_agent.invoke(goal, initial_accessibility_tree.to_xml())
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.

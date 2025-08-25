@@ -72,6 +72,17 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         area_tree.cached_ids = self.cached_ids.copy()  # Copy cached IDs for this area
         return area_tree
 
+    def is_empty(self) -> bool:
+        """
+        Checks if the accessibility tree is empty or contains only a blank page.
+        It usually looks like <RootWebArea id="1" focusable="True" url="data:," />
+        """
+        if len(self.tree) == 0:
+            return True
+        root_element = list(self.tree.values())[0]
+        url = next((p for p in root_element.get("properties", []) if p["name"] == "url"), {})
+        return url.get("value", {}).get("value", "") == "data:,"
+
     def to_xml(self):
         """Converts the nested tree to XML format using role.value as tags."""
 
