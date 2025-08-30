@@ -20,9 +20,6 @@ From the root directory:
 ```bash
 # Install server dependencies
 make install-server
-
-# Or install all dependencies including server
-make install-all
 ```
 
 ## Running the Server

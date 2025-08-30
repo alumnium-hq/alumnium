@@ -43,13 +43,10 @@ test-all: test-anthropic test-aws_anthropic test-aws_meta test-azure_openai test
 
 # Installation commands
 install-client:
-	poetry install --with client,dev
+	poetry install --with dev
 
 install-server:
 	poetry install --with server,dev
-
-install-all:
-	poetry install --with client,server,dev
 
 # Server commands
 server-serve:

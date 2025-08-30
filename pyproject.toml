@@ -24,11 +24,23 @@ version = "0.12.0"
 python = "^3.10"
 retry2 = "^0.9"
 rich = "^14.0.0"
-
-[tool.poetry.group.client.dependencies]
+# Client dependencies
 appium-python-client = "^5.1.1"
 playwright = "^1.49"
 selenium = "^4.0"
+# Server dependencies
+fastapi = "^0.115.0"
+langchain = "^0.3"
+langchain-anthropic = "^0.2"
+langchain-aws = "^0.2"
+langchain-deepseek = "^0.1.2"
+langchain-google-genai = "^2.0"
+langchain-mistralai = "^0.2.10"
+langchain-ollama = "^0.3"
+langchain-openai = "^0.3"
+pydantic = "^2.10.0"
+sqlalchemy = "^2.0"
+xxhash = "^3.5.0"
 
 [tool.poetry.group.dev.dependencies]
 behave = "^1.2.6"
@@ -42,20 +54,6 @@ pytest-html = "^4.1.1"
 pytest-retry = "^1.7.0"
 python-dotenv = "^1.1.1"
 ruff = "^0.11.9"
-
-[tool.poetry.group.server.dependencies]
-fastapi = "^0.115.0"
-langchain = "^0.3"
-langchain-anthropic = "^0.2"
-langchain-aws = "^0.2"
-langchain-deepseek = "^0.1.2"
-langchain-google-genai = "^2.0"
-langchain-mistralai = "^0.2.10"
-langchain-ollama = "^0.3"
-langchain-openai = "^0.3"
-pydantic = "^2.10.0"
-sqlalchemy = "^2.0"
-xxhash = "^3.5.0"
 
 [tool.poetry.group.server.dependencies.uvicorn]
 extras = [
