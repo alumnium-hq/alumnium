@@ -8,7 +8,7 @@ from alumnium.tools import BaseTool
 from .agents.actor_agent import ActorAgent
 from .agents.planner_agent import PlannerAgent
 from .agents.retriever_agent import RetrieverAgent
-from .cache import Cache
+from .fscache import FSCache
 from .llm_factory import LLMFactory
 from .models import Model, Provider
 
@@ -26,7 +26,7 @@ class Session:
     ):
         self.session_id = session_id
         self.model = model
-        self.cache = Cache()
+        self.cache = FSCache()
 
         # Create LLM using the factory
         self.llm = LLMFactory.create_llm(model=model)
