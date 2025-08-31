@@ -28,11 +28,7 @@ def test_back_navigation_different_phrases(al, navigate):
     assert "www.iana.org" in al.driver.url
 
     # Test different ways to ask for back navigation
-    test_phrases = [
-        "Go back",
-        "Navigate back",
-        "Return to the previous page"
-    ]
+    test_phrases = ["Go back", "Navigate back", "Return to the previous page"]
 
     for phrase in test_phrases:
         # Go forward again to test going back

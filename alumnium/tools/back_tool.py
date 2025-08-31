@@ -18,4 +18,3 @@ class BackTool(BaseTool):
 
     def invoke(self, driver: BaseDriver):
         driver.back()
-

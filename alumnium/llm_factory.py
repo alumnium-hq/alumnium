@@ -51,7 +51,11 @@ class LLMFactory:
         elif model.provider == Provider.MISTRALAI:
             llm = ChatMistralAI(model=model.name, temperature=0)
         elif model.provider == Provider.OLLAMA:
-            llm = ChatOllama(mdel=model.name, temperature=0)
+            if not getenv("ALUMNIUM_OLLAMA_URL"):
+                llm = ChatOllama(model=model.name, temperature=0)
+            else:
+                cloud_endpoint = getenv("ALUMNIUM_OLLAMA_URL")
+                llm = ChatOllama(model=model.name, base_url=cloud_endpoint, temperature=0)
         elif model.provider == Provider.OPENAI:
             llm = ChatOpenAI(model=model.name, temperature=0, seed=1)
         else:
