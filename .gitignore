@@ -12,4 +12,5 @@ __pycache__/
 
 .env
 
+.alumnium/cache/
 .alumnium-cache.sqlite*

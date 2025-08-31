@@ -80,4 +80,4 @@ class Area:
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
-        ).value
+        )[1]
