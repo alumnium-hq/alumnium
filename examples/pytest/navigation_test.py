@@ -2,6 +2,7 @@ from pytest import mark
 
 
 @mark.describe("Back navigation")
+@mark.xfail(reason="https://github.com/alumnium-hq/alumnium/pull/154")
 def test_navigate_back_uses_history(al, navigate):
     # Arrange: create history with two pages
     navigate("https://example.com")
@@ -18,6 +19,7 @@ def test_navigate_back_uses_history(al, navigate):
 
 
 @mark.describe("Back navigation - different phrases")
+@mark.xfail(reason="https://github.com/alumnium-hq/alumnium/pull/154")
 def test_back_navigation_different_phrases(al, navigate):
     """Test that different ways of asking to go back work without explicit learning examples."""
     # Arrange: create history with two pages
