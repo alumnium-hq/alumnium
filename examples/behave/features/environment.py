@@ -31,7 +31,7 @@ def driver(context):
         options.device_name = "iPhone 15"
         options.new_command_timeout = 300
         options.platform_name = "iOS"
-        options.platform_version = "17.4"
+        options.platform_version = "18.4"
 
         context.driver = Appium(command_executor="http://localhost:4723", options=options)
         yield context.driver
