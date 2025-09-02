@@ -43,7 +43,7 @@ def driver():
         options.new_command_timeout = 300
         options.no_reset = True
         options.platform_name = "iOS"
-        options.platform_version = "17.4"
+        options.platform_version = "18.4"
         driver = Appium(command_executor="http://localhost:4723", options=options)
         yield driver
     else:
