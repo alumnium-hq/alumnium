@@ -1,7 +1,6 @@
 import json
 import os
 import shutil
-import time
 from pathlib import Path
 from typing import Any, Optional
 
@@ -10,13 +9,13 @@ from langchain_core.caches import RETURN_VAL_TYPE, BaseCache
 from langchain_core.load import dumps, loads
 from xxhash import xxh3_128_hexdigest
 
-from .logutils import get_logger
-from .models import Model
+from ..logutils import get_logger
+from ..models import Model
 
 logger = get_logger(__name__)
 
 
-class FSCache(BaseCache):
+class FilesystemCache(BaseCache):
     def __init__(self, cache_dir: str = ".alumnium/cache"):
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)

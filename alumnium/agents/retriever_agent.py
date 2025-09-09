@@ -2,7 +2,7 @@ from string import whitespace
 from typing import Optional, TypeAlias, Union
 
 from langchain_core.language_models import BaseChatModel
-from pydantic import BaseModel, Field, SerializeAsAny
+from pydantic import BaseModel, Field
 
 from alumnium.logutils import get_logger
 from alumnium.models import Model, Provider

@@ -74,15 +74,15 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
-        result = self.client.retriever_agent.invoke(
+        explanation, value = self.client.retriever_agent.invoke(
             f"Is the following true or false - {statement}",
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         )
-        assert result[1], result[0]
-        return result[0]
+        assert value, explanation
+        return explanation
 
     def get(self, data: str, vision: bool = False) -> Data:
         """
@@ -95,13 +95,14 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        return self.client.retriever_agent.invoke(
+        _, value = self.client.retriever_agent.invoke(
             data,
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
-        )[1]
+        )
+        return value
 
     def area(self, description: str) -> Area:
         """
