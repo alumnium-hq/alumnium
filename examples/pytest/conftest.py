@@ -106,8 +106,9 @@ def pytest_runtest_makereport(item):
         elif isinstance(driver, Page):
             driver.screenshot(path=f"reports/screenshot-{timestamp}.png")
         extras.append(pytest_html.extras.image(f"screenshot-{timestamp}.png"))
-        extras.append(pytest_html.extras.json(al.stats()))
+        extras.append(pytest_html.extras.text(f"Total: {al.stats()}\nCached: {al.cache.usage}\n"))
         extras.append(pytest_html.extras.url(al.driver.url))
+
         report.extras = extras
 
         # Process Alumnium cache
