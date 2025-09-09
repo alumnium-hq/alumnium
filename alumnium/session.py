@@ -1,5 +1,5 @@
 import uuid
-from typing import Dict, Optional
+from typing import Dict, Literal, Optional
 
 from alumnium.agents.area_agent import AreaAgent
 from alumnium.logutils import get_logger
@@ -8,7 +8,7 @@ from alumnium.tools import BaseTool
 from .agents.actor_agent import ActorAgent
 from .agents.planner_agent import PlannerAgent
 from .agents.retriever_agent import RetrieverAgent
-from .fscache import FSCache
+from .cache_factory import CacheFactory
 from .llm_factory import LLMFactory
 from .models import Model, Provider
 
@@ -26,9 +26,8 @@ class Session:
     ):
         self.session_id = session_id
         self.model = model
-        self.cache = FSCache()
 
-        # Create LLM using the factory
+        self.cache = CacheFactory.create_cache()
         self.llm = LLMFactory.create_llm(model=model)
         self.llm.cache = self.cache
 
