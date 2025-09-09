@@ -96,6 +96,7 @@ def test_sorting(al):
     reason="https://github.com/langchain-ai/langchain-google/issues/734",
 )
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
+@mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Cannot figure out how to open cart")
 @mark.xfail(
     driver_type == "appium",
     reason="https://github.com/alumnium-hq/alumnium/issues/132",
