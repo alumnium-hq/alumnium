@@ -32,6 +32,7 @@ def driver(context):
         options.new_command_timeout = 300
         options.platform_name = "iOS"
         options.platform_version = "18.4"
+        options.wda_launch_timeout = 90_000  # ms
 
         context.driver = Appium(command_executor="http://localhost:4723", options=options)
         yield context.driver
