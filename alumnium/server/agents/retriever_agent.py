@@ -49,7 +49,7 @@ class RetrieverAgent(BaseAgent):
         title: str = "",
         url: str = "",
         screenshot: str = None,
-    ) -> RetrievedInformation:
+    ) -> tuple[str, Data]:
         logger.info("Starting retrieval:")
         logger.info(f"  -> Information: {information}")
 
@@ -93,11 +93,12 @@ class RetrieverAgent(BaseAgent):
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
-        # Remove when we find a way use `Data` in structured output `value`.
-        response.value = self.__loosely_typecast(response.value)
+        return (
+            response.explanation,
+            self.__loosely_typecast(response.value),
+        )
 
-        return response
-
+    # Remove when we find a way use `Data` in structured output `value`.
     def __loosely_typecast(self, value: str) -> Data:
         # LLMs sometimes add separator to the start/end.
         value = value.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)

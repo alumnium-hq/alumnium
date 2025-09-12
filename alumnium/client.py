@@ -1,3 +1,4 @@
+from alumnium.server.agents.retriever_agent import Data
 from alumnium.tools.base_tool import BaseTool
 
 from .server.models import Model
@@ -39,7 +40,7 @@ class Client:
         title: str,
         url: str,
         screenshot: str,
-    ):
+    ) -> tuple[str, Data]:
         return self.session.retriever_agent.invoke(
             statement, accessibility_tree, title=title, url=url, screenshot=screenshot
         )

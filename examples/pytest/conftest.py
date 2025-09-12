@@ -17,7 +17,7 @@ driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 
 
-@fixture(scope="session", autouse=True)
+@fixture(scope="session")
 def driver():
     if driver_type == "playwright":
         with sync_playwright() as playwright:
@@ -43,14 +43,14 @@ def driver():
         options.new_command_timeout = 300
         options.no_reset = True
         options.platform_name = "iOS"
-        options.platform_version = "17.4"
+        options.platform_version = "18.4"
         driver = Appium(command_executor="http://localhost:4723", options=options)
         yield driver
     else:
         raise NotImplementedError(f"Driver {driver} not implemented")
 
 
-@fixture(scope="session", autouse=True)
+@fixture(scope="session")
 def al(driver):
     al = Alumni(driver)
     if driver_type == "appium":
@@ -106,8 +106,9 @@ def pytest_runtest_makereport(item):
         elif isinstance(driver, Page):
             driver.screenshot(path=f"reports/screenshot-{timestamp}.png")
         extras.append(pytest_html.extras.image(f"screenshot-{timestamp}.png"))
-        extras.append(pytest_html.extras.json(al.stats()))
+        extras.append(pytest_html.extras.text(f"Total: {al.stats()}\nCached: {al.cache.usage}\n"))
         extras.append(pytest_html.extras.url(al.driver.url))
+
         report.extras = extras
 
         # Process Alumnium cache

@@ -1,10 +1,9 @@
 from retry import retry
 
-from alumnium.client import Client
-from alumnium.drivers.base_driver import BaseDriver
-from alumnium.tools import BaseTool
-
+from .client import Client
+from .drivers.base_driver import BaseDriver
 from .server.agents.retriever_agent import Data
+from .tools import BaseTool
 
 
 class Area:
@@ -53,15 +52,15 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
-        result = self.client.retrieve(
+        explanation, value = self.client.retriever_agent.invoke(
             f"Is the following true or false - {statement}",
             self.accessibility_tree.to_xml(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         )
-        assert result.value, result.explanation
-        return result.explanation
+        assert value, explanation
+        return explanation
 
     def get(self, data: str, vision: bool = False) -> Data:
         """
@@ -74,10 +73,11 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        return self.client.retrieve(
+        _, value = self.client.retriever_agent.invoke(
             data,
             self.accessibility_tree.to_xml(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
-        ).value
+        )
+        return value

@@ -4,7 +4,7 @@ from .agents.actor_agent import ActorAgent
 from .agents.area_agent import AreaAgent
 from .agents.planner_agent import PlannerAgent
 from .agents.retriever_agent import RetrieverAgent
-from .cache import Cache
+from .cache_factory import CacheFactory
 from .llm_factory import LLMFactory
 from .logutils import get_logger
 from .models import Model
@@ -23,9 +23,8 @@ class Session:
     ):
         self.session_id = session_id
         self.model = model
-        self.cache = Cache()
 
-        # Create LLM using the factory
+        self.cache = CacheFactory.create_cache()
         self.llm = LLMFactory.create_llm(model=model)
         self.llm.cache = self.cache
 

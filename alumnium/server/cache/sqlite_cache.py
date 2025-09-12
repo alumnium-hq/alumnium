@@ -1,6 +1,5 @@
 import json
 import time
-from os import getcwd
 from pathlib import Path
 from typing import Any, Optional
 
@@ -20,8 +19,8 @@ from sqlalchemy import (
 from sqlalchemy.orm import Session, declarative_base, relationship
 from xxhash import xxh3_128_hexdigest
 
-from .logutils import get_logger
-from .models import Model
+from ..logutils import get_logger
+from ..models import Model
 
 logger = get_logger(__name__)
 Base = declarative_base()
@@ -49,7 +48,7 @@ class CacheEntry(Base):
     __table_args__ = (UniqueConstraint("model_config_id", "hashed_request", name="uix_cache_entry"),)
 
 
-class Cache(BaseCache):
+class SQLiteCache(BaseCache):
     def __init__(self, db_path: str = ".alumnium-cache.sqlite"):
         project_root = Path(__file__).parent.parent.parent
         self.engine = create_engine(f"sqlite:///{project_root}/{db_path}", connect_args={"timeout": 15})

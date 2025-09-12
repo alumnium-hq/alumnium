@@ -100,12 +100,14 @@ jobs:
         run: |
           npm install -g appium
           appium driver install xcuitest
-          appium &
+          appium >> appium.log 2>&1 &
       - if: matrix.driver != 'appium'
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - uses: actions/cache@v4
         with:
-          path: .alumnium-cache.sqlite
+          path: |
+            .alumnium-cache.sqlite
+            .alumnium/cache/
           key: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}

@@ -31,7 +31,8 @@ def driver(context):
         options.device_name = "iPhone 15"
         options.new_command_timeout = 300
         options.platform_name = "iOS"
-        options.platform_version = "17.4"
+        options.platform_version = "18.4"
+        options.wda_launch_timeout = 90_000  # ms
 
         context.driver = Appium(command_executor="http://localhost:4723", options=options)
         yield context.driver
@@ -121,7 +122,7 @@ def after_scenario(context, scenario):
             )
             formatter.embed(
                 mime_type="text/plain",
-                data=str(context.al.stats()),
+                data=f"Total: {context.al.stats()}\nCached: {context.al.cache.usage}\n",
                 caption="Tokens used",
             )
 

@@ -3,35 +3,37 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from alumnium.client import Client
-from alumnium.tools import ALL_APPIUM_TOOLS, ALL_TOOLS, BaseTool
-
 from .area import Area
-from .drivers import AppiumDriver, PlaywrightDriver, SeleniumDriver
+from .client import Client
+from .drivers.appium_driver import AppiumDriver
+from .drivers.playwright_driver import PlaywrightDriver
+from .drivers.selenium_driver import SeleniumDriver
 from .server.agents.retriever_agent import Data
 from .server.logutils import get_logger
 from .server.models import Model
+from .tools import BaseTool
 
 logger = get_logger(__name__)
 
 
 class Alumni:
-    def __init__(self, driver: Page | WebDriver, model: Model = None):
+    def __init__(self, driver: Page | WebDriver, model: Model = None, extra_tools: list[BaseTool] = None):
         self.model = model or Model.current
 
         if isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
-            self.tools = ALL_APPIUM_TOOLS
         elif isinstance(driver, Page):
             self.driver = PlaywrightDriver(driver)
-            self.tools = ALL_TOOLS
         elif isinstance(driver, WebDriver):
             self.driver = SeleniumDriver(driver)
-            self.tools = ALL_TOOLS
         else:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
         logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
+
+        self.tools = {}
+        for tool in self.driver.supported_tools | set(extra_tools or []):
+            self.tools[tool.__name__] = tool
 
         self.client = Client(self.model, self.tools)
         self.cache = self.client.cache
@@ -73,15 +75,15 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
-        result = self.client.retrieve(
+        explanation, value = self.client.retriever_agent.invoke(
             f"Is the following true or false - {statement}",
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         )
-        assert result.value, result.explanation
-        return result.explanation
+        assert value, explanation
+        return explanation
 
     def get(self, data: str, vision: bool = False) -> Data:
         """
@@ -94,13 +96,14 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        return self.client.retrieve(
+        _, value = self.client.retrieve(
             data,
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
-        ).value
+        )
+        return value
 
     def area(self, description: str) -> Area:
         """
