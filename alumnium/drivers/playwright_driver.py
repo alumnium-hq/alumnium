@@ -4,9 +4,8 @@ from pathlib import Path
 
 from playwright.sync_api import Error, Page
 
-from alumnium.accessibility import ChromiumAccessibilityTree
-from alumnium.logutils import get_logger
-
+from ..accessibility import ChromiumAccessibilityTree
+from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.hover_tool import HoverTool

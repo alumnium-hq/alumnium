@@ -1,10 +1,9 @@
 from retry import retry
 
-from alumnium.client import Client
-from alumnium.drivers.base_driver import BaseDriver
-from alumnium.tools import BaseTool
-
-from .agents.retriever_agent import Data
+from .client import Client
+from .drivers.base_driver import BaseDriver
+from .server.agents.retriever_agent import Data
+from .tools import BaseTool
 
 
 class Area:
@@ -31,9 +30,9 @@ class Area:
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.client.planner_agent.invoke(goal, self.accessibility_tree.to_xml())
+        steps = self.client.plan_actions(goal, self.accessibility_tree.to_xml())
         for step in steps:
-            actor_response = self.client.actor_agent.invoke(goal, step, self.accessibility_tree.to_xml())
+            actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_xml())
 
             # Execute tool calls
             for tool_call in actor_response:
@@ -53,7 +52,7 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
-        explanation, value = self.client.retriever_agent.invoke(
+        explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
             self.accessibility_tree.to_xml(),
             title=self.driver.title,
@@ -74,7 +73,7 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        _, value = self.client.retriever_agent.invoke(
+        _, value = self.client.retrieve(
             data,
             self.accessibility_tree.to_xml(),
             title=self.driver.title,

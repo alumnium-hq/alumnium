@@ -8,8 +8,7 @@ from langchain_mistralai import ChatMistralAI
 from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 
-from alumnium.logutils import get_logger
-
+from .logutils import get_logger
 from .models import Model, Provider
 
 logger = get_logger(__name__)
