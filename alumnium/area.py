@@ -52,7 +52,7 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
-        explanation, value = self.client.retriever_agent.invoke(
+        explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
             self.accessibility_tree.to_xml(),
             title=self.driver.title,
@@ -73,7 +73,7 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        _, value = self.client.retriever_agent.invoke(
+        _, value = self.client.retrieve(
             data,
             self.accessibility_tree.to_xml(),
             title=self.driver.title,

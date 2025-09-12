@@ -75,7 +75,7 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
-        explanation, value = self.client.retriever_agent.invoke(
+        explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
