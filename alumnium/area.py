@@ -1,10 +1,14 @@
 from retry import retry
 
+from alumnium.accessibility import BaseAccessibilityTree
 from alumnium.client import Client
 from alumnium.drivers.base_driver import BaseDriver
 from alumnium.tools import BaseTool
 
 from .agents.retriever_agent import Data
+from .logutils import get_logger
+
+logger = get_logger(__name__)
 
 
 class Area:
@@ -12,6 +16,7 @@ class Area:
         self,
         id: int,
         description: str,
+        accessibility_tree: BaseAccessibilityTree,
         driver: BaseDriver,
         tools: dict[str, BaseTool],
         client: Client,
@@ -19,11 +24,11 @@ class Area:
         self.id = id
         self.description = description
         self.driver = driver
-        self.accessibility_tree = driver.accessibility_tree.get_area(id)
+        self.accessibility_tree = accessibility_tree
         self.tools = tools
         self.client = client
 
-    @retry(tries=2, delay=0.1)
+    @retry(tries=2, delay=0.1, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal within the area.
@@ -31,13 +36,14 @@ class Area:
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.client.planner_agent.invoke(goal, self.accessibility_tree.to_xml())
-        for step in steps:
-            actor_response = self.client.actor_agent.invoke(goal, step, self.accessibility_tree.to_xml())
+        with self.driver.capture_accessibility_tree(self.accessibility_tree) as tree:
+            steps = self.client.planner_agent.invoke(goal, tree.to_xml())
+            for step in steps:
+                actor_response = self.client.actor_agent.invoke(goal, step, tree.to_xml())
 
-            # Execute tool calls
-            for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, self.accessibility_tree, self.driver)
+                # Execute tool calls
+                for tool_call in actor_response:
+                    BaseTool.execute_tool_call(tool_call, self.tools, tree, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -53,15 +59,16 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
-        explanation, value = self.client.retriever_agent.invoke(
-            f"Is the following true or false - {statement}",
-            self.accessibility_tree.to_xml(),
-            title=self.driver.title,
-            url=self.driver.url,
-            screenshot=self.driver.screenshot if vision else None,
-        )
-        assert value, explanation
-        return explanation
+        with self.driver.capture_accessibility_tree(self.accessibility_tree) as tree:
+            explanation, value = self.client.retriever_agent.invoke(
+                f"Is the following true or false - {statement}",
+                tree.to_xml(),
+                title=self.driver.title,
+                url=self.driver.url,
+                screenshot=self.driver.screenshot if vision else None,
+            )
+            assert value, explanation
+            return explanation
 
     def get(self, data: str, vision: bool = False) -> Data:
         """
@@ -74,11 +81,12 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        _, value = self.client.retriever_agent.invoke(
-            data,
-            self.accessibility_tree.to_xml(),
-            title=self.driver.title,
-            url=self.driver.url,
-            screenshot=self.driver.screenshot if vision else None,
-        )
-        return value
+        with self.driver.capture_accessibility_tree(self.accessibility_tree) as tree:
+            _, value = self.client.retriever_agent.invoke(
+                data,
+                tree.to_xml(),
+                title=self.driver.title,
+                url=self.driver.url,
+                screenshot=self.driver.screenshot if vision else None,
+            )
+            return value

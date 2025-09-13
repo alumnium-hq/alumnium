@@ -5,6 +5,8 @@ from appium.webdriver import Remote
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
 from appium.webdriver.webelement import WebElement
+from retry import retry
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -36,18 +38,21 @@ class AppiumDriver(BaseDriver):
         self.delay = 0
         self.hide_keyboard_after_typing = False
 
-    @property
-    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
+    def _fetch_accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
+        sleep(self.delay)
         if self.driver.capabilities["automationName"] == "uiautomator2":
-            sleep(self.delay)
             return UIAutomator2AccessibiltyTree(self.driver.page_source)
         else:
-            sleep(self.delay)
             return XCUITestAccessibilityTree(self.driver.page_source)
 
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def click(self, id: int):
-        self._find_element(id).click()
+        el = self._find_element(id)
+        logger.debug(f"Clicking element: {el}")
+        el.click()
+        logger.debug(f"Performed click: {el}")
 
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
         self.driver.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
 
@@ -90,12 +95,19 @@ class AppiumDriver(BaseDriver):
             else:
                 return ""
 
+    @retry(StaleElementReferenceException, tries=2, delay=0.5, logger=logger)
     def type(self, id: int, text: str):
         element = self._find_element(id)
+        logger.debug(f"Typing to element: {element}.")
         element.clear()
         element.send_keys(text)
+        logger.debug(f"Typed to element: {element}.")
         if self.hide_keyboard_after_typing:
-            ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
+            try:
+                ActionChains(self.driver).move_by_offset(0, -20).click().perform()
+            except Exception as e:
+                logger.warning(f"Failed to close keyboard: {e}")
+        logger.debug("Closed keyboard after typing.")
 
     @property
     def url(self) -> str:
@@ -106,8 +118,8 @@ class AppiumDriver(BaseDriver):
                 return ""
 
     def _find_element(self, id: int) -> WebElement:
-        element = self.accessibility_tree.element_by_id(id)
-        xpath = f"//{element.type}"
+        element = self._accessibility_tree.element_by_id(id)
+        predicate = f'type == "{element.type}"'
 
         props = {}
         if element.name:
@@ -126,10 +138,15 @@ class AppiumDriver(BaseDriver):
             props["bounds"] = element.androidbounds
 
         if props:
-            props = [f'@{k}="{v}"' for k, v in props.items()]
-            xpath += f"[{' and '.join(props)}]"
+            props = [f'{k} == "{v}"' for k, v in props.items()]
+            props = " AND ".join(props)
+            predicate += f" AND {props}"
 
-        return self.driver.find_element(By.XPATH, xpath)
+        logger.debug(f"Finding element by predicate: {predicate}")
+        element = self.driver.find_element(By.IOS_PREDICATE, predicate)
+        logger.debug(f"Found: {element}")
+
+        return element
 
     @contextmanager
     def __webview_context(self):
