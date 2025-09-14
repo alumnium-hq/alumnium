@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -86,12 +86,10 @@ def mock_agents():
         ]
 
         # Mock retriever agent to return RetrievedInformation
-        mock_retriever.return_value = RetrievedInformation(
-            explanation="Found the requested information in the accessibility tree", value="true"
-        )
+        mock_retriever.return_value = ("Found the requested information in the accessibility tree", "true")
 
         # Mock area agent to return area information
-        mock_area.return_value = MagicMock(id=42, explanation="Found the login form area")
+        mock_area.return_value = {"id": 42, "explanation": "Found the login form area"}
 
         yield {"planner": mock_planner, "actor": mock_actor, "retriever": mock_retriever, "area": mock_area}
 
@@ -159,9 +157,14 @@ def test_session_stats():
     response = client.get(f"/sessions/{session_id}/stats")
     assert response.status_code == 200
     data = response.json()
-    assert "input_tokens" in data
-    assert "output_tokens" in data
-    assert "total_tokens" in data
+    assert "total" in data
+    assert "input_tokens" in data["total"]
+    assert "output_tokens" in data["total"]
+    assert "total_tokens" in data["total"]
+    assert "cache" in data
+    assert "input_tokens" in data["cache"]
+    assert "output_tokens" in data["cache"]
+    assert "total_tokens" in data["cache"]
 
 
 def test_session_stats_nonexistent():
@@ -183,6 +186,7 @@ def test_plan_actions_endpoint_structure(sample_session_id, sample_accessibility
             "title": "Login Page",
         },
     )
+    print(response.json())
     assert response.status_code == 200
     data = response.json()
     assert "steps" in data
@@ -422,7 +426,8 @@ def test_full_session_workflow():
     # 3. Get initial stats (should be zero)
     stats_response = client.get(f"/sessions/{session_id}/stats")
     initial_stats = stats_response.json()
-    assert all(initial_stats[key] == 0 for key in ["input_tokens", "output_tokens", "total_tokens"])
+    assert all(initial_stats["total"][key] == 0 for key in ["input_tokens", "output_tokens", "total_tokens"])
+    assert all(initial_stats["cache"][key] == 0 for key in ["input_tokens", "output_tokens", "total_tokens"])
 
     # 4. Make a plan request (this should use some tokens)
     plan_response = client.post(
@@ -440,7 +445,8 @@ def test_full_session_workflow():
     final_stats = final_stats_response.json()
     # Note: In a real scenario with actual LLM calls, tokens would be > 0
     # For now, just verify the structure is correct
-    assert all(key in final_stats for key in ["input_tokens", "output_tokens", "total_tokens"])
+    assert all(key in final_stats["total"] for key in ["input_tokens", "output_tokens", "total_tokens"])
+    assert all(key in final_stats["cache"] for key in ["input_tokens", "output_tokens", "total_tokens"])
 
     # 6. Delete the session
     delete_response = client.delete(f"/sessions/{session_id}")
