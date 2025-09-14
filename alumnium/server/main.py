@@ -239,7 +239,7 @@ def main():
     """Main entry point for running the server."""
     import uvicorn
 
-    uvicorn.run("alumnium.server.main:app", host="0.0.0.0", port=8000, reload=True, log_level="info")
+    uvicorn.run("alumnium.server.main:app", host="0.0.0.0", port=8013, reload=True, log_level="info")
 
 
 if __name__ == "__main__":
