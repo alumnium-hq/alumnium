@@ -53,7 +53,7 @@ server-serve:
 	poetry run alumnium-server
 
 server-serve-dev:
-	poetry run uvicorn alumnium.server.main:app --host 0.0.0.0 --port 8000 --reload
+	poetry run python -m alumnium.server.main
 
 # Server tests
 server-test:
