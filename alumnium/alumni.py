@@ -144,8 +144,9 @@ class Alumni:
         """
         self.client.clear_examples()
 
-    def stats(self) -> dict[str, int]:
+    @property
+    def stats(self) -> dict[str, dict[str, int]]:
         """
         Returns the stats of the session.
         """
-        return self.client.session_stats()
+        return self.client.stats

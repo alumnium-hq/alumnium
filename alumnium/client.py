@@ -1,11 +1,10 @@
 from typing import Dict, Type
 
-from alumnium.server.agents.retriever_agent import Data
-from alumnium.tools.base_tool import BaseTool
-from alumnium.tools.tool_to_schema_converter import convert_tools_to_schemas
-
+from .server.agents.retriever_agent import Data
 from .server.models import Model
 from .server.session_manager import SessionManager
+from .tools.base_tool import BaseTool
+from .tools.tool_to_schema_converter import convert_tools_to_schemas
 
 
 class Client:
@@ -53,5 +52,6 @@ class Client:
     def find_area(self, description: str, accessibility_tree: str):
         return self.session.area_agent.invoke(description, accessibility_tree)
 
-    def session_stats(self):
-        return self.session.stats()
+    @property
+    def stats(self):
+        return self.session.stats

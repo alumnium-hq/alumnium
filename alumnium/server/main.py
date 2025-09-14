@@ -93,7 +93,7 @@ async def get_session_stats(session_id: str):
     session = session_manager.get_session(session_id)
     if session is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
-    return session.stats()
+    return session.stats
 
 
 @app.post("/sessions/{session_id}/plan", response_model=PlanResponse)

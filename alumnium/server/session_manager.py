@@ -52,11 +52,16 @@ class SessionManager:
         """List all active session IDs."""
         return list(self.sessions.keys())
 
-    def get_total_stats(self) -> Dict[str, int]:
+    def get_total_stats(self) -> Dict[str, Dict[str, int]]:
         """Get combined token usage statistics for all sessions."""
-        total_stats = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+        total_stats = {
+            "total": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0},
+            "cache": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0},
+        }
         for session in self.sessions.values():
-            session_stats = session.stats()
+            session_stats = session.stats
             for key in total_stats:
-                total_stats[key] += session_stats[key]
+                total_stats[key]["input_tokens"] += session_stats[key]["input_tokens"]
+                total_stats[key]["output_tokens"] += session_stats[key]["output_tokens"]
+                total_stats[key]["total_tokens"] += session_stats[key]["total_tokens"]
         return total_stats

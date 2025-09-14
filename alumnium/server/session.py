@@ -35,27 +35,36 @@ class Session:
 
         logger.info(f"Created session {session_id} with model {model.provider.value}/{model.name}")
 
-    def stats(self) -> dict[str, int]:
+    @property
+    def stats(self) -> dict[str, dict[str, int]]:
         """
         Provides statistics about the usage of tokens.
 
         Returns:
-            A dictionary containing the number of input tokens, output tokens, and total tokens used by all agents.
+            Two dictionaries containing the number of input tokens, output tokens, and total tokens used by all agents.
+                - "total" includes the combined usage of all agents
+                - "cache" includes only the usage of cached calls
         """
         return {
-            "input_tokens": (
-                self.planner_agent.usage["input_tokens"]
-                + self.actor_agent.usage["input_tokens"]
-                + self.retriever_agent.usage["input_tokens"]
-            ),
-            "output_tokens": (
-                self.planner_agent.usage["output_tokens"]
-                + self.actor_agent.usage["output_tokens"]
-                + self.retriever_agent.usage["output_tokens"]
-            ),
-            "total_tokens": (
-                self.planner_agent.usage["total_tokens"]
-                + self.actor_agent.usage["total_tokens"]
-                + self.retriever_agent.usage["total_tokens"]
-            ),
+            "total": {
+                "input_tokens": (
+                    self.planner_agent.usage["input_tokens"]
+                    + self.actor_agent.usage["input_tokens"]
+                    + self.retriever_agent.usage["input_tokens"]
+                    + self.area_agent.usage["input_tokens"]
+                ),
+                "output_tokens": (
+                    self.planner_agent.usage["output_tokens"]
+                    + self.actor_agent.usage["output_tokens"]
+                    + self.retriever_agent.usage["output_tokens"]
+                    + self.area_agent.usage["output_tokens"]
+                ),
+                "total_tokens": (
+                    self.planner_agent.usage["total_tokens"]
+                    + self.actor_agent.usage["total_tokens"]
+                    + self.retriever_agent.usage["total_tokens"]
+                    + self.area_agent.usage["total_tokens"]
+                ),
+            },
+            "cache": self.cache.usage,
         }
