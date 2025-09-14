@@ -175,7 +175,7 @@ async def get_area(session_id: str, request: AreaRequest):
 
     try:
         area = session.area_agent.invoke(request.description, request.accessibility_tree)
-        return AreaResponse(id=area.id, explanation=area.explanation)
+        return AreaResponse(**area)
 
     except Exception as e:
         logger.error(f"Failed to get accessibility area for session {session_id}: {e}")
