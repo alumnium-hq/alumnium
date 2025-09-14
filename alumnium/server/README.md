@@ -146,6 +146,7 @@ The server uses the same configuration as the main Alumnium library:
 - `ALUMNIUM_MODEL` - AI model provider (anthropic, openai, google, etc.)
 - `ALUMNIUM_LOG_PATH` - Log file path
 - `ALUMNIUM_LOG_LEVEL` - Logging level
+- `ALUMNIUM_CACHE` - Set cache provider or disable it. Defaults to filesystem
 
 ## Development
 
