@@ -91,13 +91,13 @@ curl -X POST http://localhost:8013/sessions \
 
 ### Plan Actions
 ```bash
-curl -X POST http://localhost:8013/sessions/c2660316-830f-43fc-9546-76cb15f3a8cc/plan \
+curl -X POST http://localhost:8013/sessions/{sessionId}/plan \
   -H "Content-Type: application/json" \
   -d '{
-    "goal": "2 + 2 =",
-    "accessibility_tree": "<RootWebArea name=\"\" id=\"1\" focusable=\"True\" focused=\"True\" url=\"https://seleniumbase.io/apps/calculator\"> <generic id=\"4\"> <generic id=\"5\"> <generic id=\"6\"> <LabelText id=\"29\" /> <link id=\"34\" focusable=\"True\" url=\"https://seleniumbase.io/apps/calculator\">Calculator</link> <link id=\"42\" focusable=\"True\" url=\"https://seleniumbase.io/\">SB</link> </generic> <generic id=\"8\"> <textbox id=\"43\" invalid=\"false\" focusable=\"True\" editable=\"plaintext\" multiline=\"False\" readonly=\"True\" required=\"False\"> <generic id=\"67\">0</generic> </textbox> </generic> <button id=\"9\" invalid=\"false\" focusable=\"True\">C</button> <button id=\"10\" invalid=\"false\" focusable=\"True\">(</button> <button id=\"11\" invalid=\"false\" focusable=\"True\">)</button> <button id=\"12\" invalid=\"false\" focusable=\"True\">÷</button> <button id=\"13\" invalid=\"false\" focusable=\"True\">7</button> <button id=\"14\" invalid=\"false\" focusable=\"True\">8</button> <button id=\"15\" invalid=\"false\" focusable=\"True\">9</button> <button id=\"16\" invalid=\"false\" focusable=\"True\">×</button> <button id=\"17\" invalid=\"false\" focusable=\"True\">4</button> <button id=\"18\" invalid=\"false\" focusable=\"True\">5</button> <button id=\"19\" invalid=\"false\" focusable=\"True\">6</button> <button id=\"20\" invalid=\"false\" focusable=\"True\">-</button> <button id=\"21\" invalid=\"false\" focusable=\"True\">1</button> <button id=\"22\" invalid=\"false\" focusable=\"True\">2</button> <button id=\"23\" invalid=\"false\" focusable=\"True\">3</button> <button id=\"24\" invalid=\"false\" focusable=\"True\">+</button> <button id=\"25\" invalid=\"false\" focusable=\"True\">←</button> <button id=\"26\" invalid=\"false\" focusable=\"True\">0</button> <button id=\"27\" invalid=\"false\" focusable=\"True\">.</button> <button id=\"28\" invalid=\"false\" focusable=\"True\">=</button> </generic> </generic> </RootWebArea>",
-    "url": "https://seleniumbase.io/apps/calculator",
-    "title": "Calculator"
+    "goal": "log in to the application",
+    "accessibility_tree": "<accessibility_tree>...</accessibility_tree>",
+    "url": "https://example.com/login",
+    "title": "Login Page"
   }'
 # Response: {"steps": ["Fill username field", "Fill password field", "Click login button"]}
 ```
@@ -107,9 +107,9 @@ curl -X POST http://localhost:8013/sessions/c2660316-830f-43fc-9546-76cb15f3a8cc
 curl -X POST http://localhost:8013/sessions/{sessionId}/step \
   -H "Content-Type: application/json" \
   -d '{
-    "goal": "2 + 2 =",
-    "step": "click button \"2\"",
-    "accessibility_tree": "<RootWebArea name=\"\" id=\"1\" focusable=\"True\" focused=\"True\" url=\"https://seleniumbase.io/apps/calculator\"> <generic id=\"4\"> <generic id=\"5\"> <generic id=\"6\"> <LabelText id=\"29\" /> <link id=\"34\" focusable=\"True\" url=\"https://seleniumbase.io/apps/calculator\">Calculator</link> <link id=\"42\" focusable=\"True\" url=\"https://seleniumbase.io/\">SB</link> </generic> <generic id=\"8\"> <textbox id=\"43\" invalid=\"false\" focusable=\"True\" editable=\"plaintext\" multiline=\"False\" readonly=\"True\" required=\"False\"> <generic id=\"67\">0</generic> </textbox> </generic> <button id=\"9\" invalid=\"false\" focusable=\"True\">C</button> <button id=\"10\" invalid=\"false\" focusable=\"True\">(</button> <button id=\"11\" invalid=\"false\" focusable=\"True\">)</button> <button id=\"12\" invalid=\"false\" focusable=\"True\">÷</button> <button id=\"13\" invalid=\"false\" focusable=\"True\">7</button> <button id=\"14\" invalid=\"false\" focusable=\"True\">8</button> <button id=\"15\" invalid=\"false\" focusable=\"True\">9</button> <button id=\"16\" invalid=\"false\" focusable=\"True\">×</button> <button id=\"17\" invalid=\"false\" focusable=\"True\">4</button> <button id=\"18\" invalid=\"false\" focusable=\"True\">5</button> <button id=\"19\" invalid=\"false\" focusable=\"True\">6</button> <button id=\"20\" invalid=\"false\" focusable=\"True\">-</button> <button id=\"21\" invalid=\"false\" focusable=\"True\">1</button> <button id=\"22\" invalid=\"false\" focusable=\"True\">2</button> <button id=\"23\" invalid=\"false\" focusable=\"True\">3</button> <button id=\"24\" invalid=\"false\" focusable=\"True\">+</button> <button id=\"25\" invalid=\"false\" focusable=\"True\">←</button> <button id=\"26\" invalid=\"false\" focusable=\"True\">0</button> <button id=\"27\" invalid=\"false\" focusable=\"True\">.</button> <button id=\"28\" invalid=\"false\" focusable=\"True\">=</button> </generic> </generic> </RootWebArea>",
+    "goal": "log in to the application",
+    "step": "Fill username field",
+    "accessibility_tree": "<accessibility_tree>...</accessibility_tree>"
   }'
 # Response: {"actions": [{"tool": "type", "args": {"id": "username", "text": "user@example.com"}}]}
 ```
