@@ -6,7 +6,7 @@ FastAPI server that centralizes AI-powered test automation logic, enabling multi
 
 The server acts as a bridge between test automation clients (Ruby, JavaScript, Python, etc.) and AI language models. It provides REST endpoints for:
 
-- **Session Management**: Create, delete, and manage independent LLM sessions
+- **Session Management**: Create, delete, and manage independent LLM sessions with dynamic tool schemas
 - **Action Planning**: Break down high-level goals into executable steps
 - **Action Execution**: Convert steps into specific UI interactions
 - **Statement Verification**: Check assertions against page state with screenshot support
@@ -62,14 +62,29 @@ poetry run uvicorn alumnium.server.main:app --host 0.0.0.0 --port 8000 --reload
 
 ## Example Usage
 
-### Create Session
+### Create Session with Standard Tools
 ```bash
 curl -X POST http://localhost:8000/sessions \
   -H "Content-Type: application/json" \
   -d '{
     "provider": "anthropic",
     "name": "claude-3-haiku-20240307",
-    "tools": {}
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "ClickTool",
+          "description": "Click an element.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer", "description": "Element identifier (ID)"}
+            },
+            "required": ["id"]
+          }
+        }
+      }
+    ]
   }'
 # Response: {"sessionId": "uuid-here"}
 ```

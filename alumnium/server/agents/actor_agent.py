@@ -1,3 +1,5 @@
+from typing import Dict, Type
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import BaseTool
@@ -9,7 +11,7 @@ logger = get_logger(__name__)
 
 
 class ActorAgent(BaseAgent):
-    def __init__(self, llm: BaseChatModel, tools: dict[str, BaseTool]):
+    def __init__(self, llm: BaseChatModel, tools: Dict[str, Type[BaseTool]]):
         super().__init__()
 
         llm = llm.bind_tools(list(tools.values()))

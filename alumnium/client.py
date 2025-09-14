@@ -1,18 +1,23 @@
+from typing import Dict, Type
+
 from alumnium.server.agents.retriever_agent import Data
 from alumnium.tools.base_tool import BaseTool
+from alumnium.tools.tool_to_schema_converter import convert_tools_to_schemas
 
 from .server.models import Model
 from .server.session_manager import SessionManager
 
 
 class Client:
-    def __init__(self, model: Model, tools: dict[str, BaseTool]):
+    def __init__(self, model: Model, tools: Dict[str, Type[BaseTool]]):
         self.session_manager = SessionManager()
         self.model = model
         self.tools = tools
 
+        # Convert tools to schemas for API
+        tool_schemas = convert_tools_to_schemas(tools)
         self.session_id = self.session_manager.create_session(
-            provider=self.model.provider.value, name=self.model.name, tools=self.tools
+            provider=self.model.provider.value, name=self.model.name, tools=tool_schemas
         )
 
         self.session = self.session_manager.get_session(self.session_id)

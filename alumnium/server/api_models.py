@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class SessionRequest(BaseModel):
     provider: str
     name: Optional[str] = None
-    tools: dict[str, Any]
+    tools: List[dict[str, Any]]
 
 
 class SessionResponse(BaseModel):

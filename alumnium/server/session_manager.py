@@ -1,8 +1,9 @@
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from .logutils import get_logger
 from .models import Model
+from .schema_to_tool_converter import convert_schemas_to_tools
 from .session import Session
 
 logger = get_logger(__name__)
@@ -14,11 +15,11 @@ class SessionManager:
     def __init__(self):
         self.sessions: dict[str, Session] = {}
 
-    def create_session(self, provider: str, name: str, tools: dict[str, Any]) -> str:
+    def create_session(self, provider: str, name: str, tools: List[Dict[str, Any]]) -> str:
         """Create a new session and return its ID.
         Args:
             provider: The model provider name
-            tools: The tools to use in the session
+            tools: List of LangChain tool schemas
             name: The model name (optional)
         Returns:
             Session ID string
@@ -28,7 +29,10 @@ class SessionManager:
         logger.info(f"Creating session {session_id} with model {provider}/{name}")
         model = Model(provider=provider, name=name)
 
-        self.sessions[session_id] = Session(session_id=session_id, model=model, tools=tools)
+        # Convert tool schemas to tool classes
+        tool_classes = convert_schemas_to_tools(tools)
+
+        self.sessions[session_id] = Session(session_id=session_id, model=model, tools=tool_classes)
         logger.info(f"Created new session: {session_id}")
         return session_id
 

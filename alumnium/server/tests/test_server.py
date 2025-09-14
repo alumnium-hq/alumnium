@@ -9,13 +9,46 @@ from alumnium.server.main import app
 client = TestClient(app)
 
 
+def get_sample_tool_schemas():
+    """Get sample tool schemas for testing."""
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": "ClickTool",
+                "description": "Click an element.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"id": {"type": "integer", "description": "Element identifier (ID)"}},
+                    "required": ["id"],
+                },
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "TypeTool",
+                "description": "Type text into an element.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "integer", "description": "Element identifier (ID)"},
+                        "text": {"type": "string", "description": "Text to type into an element"},
+                    },
+                    "required": ["id", "text"],
+                },
+            },
+        },
+    ]
+
+
 # Test fixtures for reuse across tests
 @pytest.fixture
 def sample_session_id():
     """Create a session for testing and return its ID."""
     response = client.post(
         "/sessions",
-        json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": {}},
+        json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": get_sample_tool_schemas()},
     )
     assert response.status_code == 200
     return response.json()["sessionId"]
@@ -75,7 +108,9 @@ def test_health_check():
 
 def test_create_session():
     """Test creating a session."""
-    response = client.post("/sessions", json={"provider": "anthropic", "name": "test_name", "tools": {}})
+    response = client.post(
+        "/sessions", json={"provider": "anthropic", "name": "test_name", "tools": get_sample_tool_schemas()}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "sessionId" in data
@@ -334,7 +369,7 @@ def test_get_area_missing_data(sample_session_id):
 # Session Management Edge Cases
 def test_create_session_minimal_data():
     """Test creating session with minimal required data."""
-    response = client.post("/sessions", json={"provider": "anthropic", "tools": {}})
+    response = client.post("/sessions", json={"provider": "anthropic", "tools": get_sample_tool_schemas()})
     assert response.status_code == 200
 
 
@@ -343,8 +378,7 @@ def test_create_session_invalid_data():
     response = client.post(
         "/sessions",
         json={
-            "provider": "invalid_provider"
-            # Missing required 'name' field
+            "tools": get_sample_tool_schemas(),
         },
     )
     assert response.status_code == 422
@@ -376,7 +410,7 @@ def test_full_session_workflow():
     # 1. Create session
     create_response = client.post(
         "/sessions",
-        json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": {}},
+        json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": get_sample_tool_schemas()},
     )
     assert create_response.status_code == 200
     session_id = create_response.json()["sessionId"]
@@ -425,7 +459,7 @@ def test_concurrent_sessions():
     for i in range(3):
         response = client.post(
             "/sessions",
-            json={"provider": "anthropic", "name": f"test-model-{i}", "tools": {}},
+            json={"provider": "anthropic", "name": f"test-model-{i}", "tools": get_sample_tool_schemas()},
         )
         assert response.status_code == 200
         session_ids.append(response.json()["sessionId"])
@@ -520,3 +554,67 @@ def test_example_management_workflow(sample_session_id):
     example3 = {"goal": "logout", "actions": ["click logout button"]}
     response3 = client.post(f"/sessions/{sample_session_id}/examples", json=example3)
     assert response3.status_code == 200
+
+
+# Tool Schema Tests
+def test_create_session_with_custom_tool_schema():
+    """Test creating session with custom tool schema."""
+    custom_tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "CustomScrollTool",
+                "description": "Scroll the page in a given direction.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "direction": {"type": "string", "description": "Direction to scroll (up/down/left/right)"},
+                        "amount": {"type": "integer", "description": "Amount to scroll in pixels"},
+                    },
+                    "required": ["direction"],
+                },
+            },
+        }
+    ]
+
+    response = client.post(
+        "/sessions", json={"provider": "anthropic", "name": "test-custom-tools", "tools": custom_tools}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "sessionId" in data
+
+    # Clean up
+    session_id = data["sessionId"]
+    client.delete(f"/sessions/{session_id}")
+
+
+def test_create_session_with_empty_tool_list():
+    """Test creating session with empty tool list."""
+    response = client.post("/sessions", json={"provider": "anthropic", "name": "test-no-tools", "tools": []})
+    assert response.status_code == 200
+    data = response.json()
+    assert "sessionId" in data
+
+    # Clean up
+    session_id = data["sessionId"]
+    client.delete(f"/sessions/{session_id}")
+
+
+def test_create_session_with_invalid_tool_schema():
+    """Test creating session with malformed tool schema."""
+    invalid_tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "InvalidTool"
+                # Missing required fields like description and parameters
+            },
+        }
+    ]
+
+    response = client.post(
+        "/sessions", json={"provider": "anthropic", "name": "test-invalid-tools", "tools": invalid_tools}
+    )
+    # Should still succeed as we handle malformed schemas gracefully
+    assert response.status_code == 200

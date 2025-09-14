@@ -21,14 +21,7 @@ repository = "https://github.com/alumnium-hq/alumnium"
 version = "0.13.0"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-retry2 = "^0.9"
-rich = "^14.0.0"
-# Client dependencies
 appium-python-client = "^5.1.1"
-playwright = "^1.49"
-selenium = "^4.0"
-# Server dependencies
 fastapi = "^0.115.0"
 langchain = "^0.3"
 langchain-anthropic = "^0.2"
@@ -38,7 +31,12 @@ langchain-google-genai = "^2.0"
 langchain-mistralai = "^0.2.10"
 langchain-ollama = "^0.3"
 langchain-openai = "^0.3"
+playwright = "^1.49"
 pydantic = "^2.10.0"
+python = "^3.10"
+retry2 = "^0.9"
+rich = "^14.0.0"
+selenium = "^4.0"
 sqlalchemy = "^2.0"
 xxhash = "^3.5.0"
 
