@@ -1,4 +1,5 @@
 import base64
+import importlib.metadata
 from contextlib import asynccontextmanager
 from typing import List
 
@@ -42,7 +43,10 @@ async def lifespan(app: FastAPI):
 
 # FastAPI app
 app = FastAPI(
-    title="Alumnium Server", description="AI-powered test automation server", version="0.13.0", lifespan=lifespan
+    title="Alumnium Server",
+    description="AI-powered test automation server",
+    version=importlib.metadata.version("alumnium"),
+    lifespan=lifespan,
 )
 
 # Add CORS middleware
