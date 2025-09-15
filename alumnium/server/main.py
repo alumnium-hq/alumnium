@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
 
 # FastAPI app
 app = FastAPI(
-    title="Alumnium Server", description="AI-powered test automation server", version="0.1.0", lifespan=lifespan
+    title="Alumnium Server", description="AI-powered test automation server", version="0.13.0", lifespan=lifespan
 )
 
 # Add CORS middleware
