@@ -49,15 +49,15 @@ install-server:
 	poetry install --with server,dev
 
 # Server commands
-server-serve:
+start-server:
 	poetry run alumnium-server
 
-server-serve-dev:
+start-server-dev:
 	poetry run python -m alumnium.server.main
 
 # Server tests
-server-test:
+test-server:
 	poetry run pytest alumnium/server/tests/
 
 # Combined commands
-test-all-components: test server-test
+test-all-components: test-server test
