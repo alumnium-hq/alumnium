@@ -1,5 +1,5 @@
-Given the following XML accessibility tree:
+Goal: {goal}
+Webpage ARIA tree:
 ```xml
 {accessibility_tree}
 ```
-Outline the actions needed to achieve the following goal: {goal}
