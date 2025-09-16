@@ -10,9 +10,8 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
-from alumnium.accessibility import ChromiumAccessibilityTree
-from alumnium.logutils import get_logger
-
+from ..accessibility import ChromiumAccessibilityTree
+from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.hover_tool import HoverTool

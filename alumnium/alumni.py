@@ -3,16 +3,15 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from .agents import *
-from .agents.retriever_agent import Data
 from .area import Area
 from .client import Client
 from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
-from .logutils import get_logger
-from .models import Model
-from .tools.base_tool import BaseTool
+from .server.agents.retriever_agent import Data
+from .server.logutils import get_logger
+from .server.models import Model
+from .tools import BaseTool
 
 logger = get_logger(__name__)
 
@@ -52,11 +51,11 @@ class Alumni:
             goal: The goal to be achieved.
         """
         initial_accessibility_tree = self.driver.accessibility_tree
-        steps = self.client.planner_agent.invoke(goal, initial_accessibility_tree.to_xml())
+        steps = self.client.plan_actions(goal, initial_accessibility_tree.to_xml())
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            actor_response = self.client.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
+            actor_response = self.client.execute_action(goal, step, accessibility_tree.to_xml())
 
             # Execute tool calls
             for tool_call in actor_response:
@@ -76,7 +75,7 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
-        explanation, value = self.client.retriever_agent.invoke(
+        explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
@@ -97,7 +96,7 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        _, value = self.client.retriever_agent.invoke(
+        _, value = self.client.retrieve(
             data,
             self.driver.accessibility_tree.to_xml(),
             title=self.driver.title,
@@ -120,7 +119,7 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        response = self.client.area_agent.invoke(description, self.driver.accessibility_tree.to_xml())
+        response = self.client.find_area(description, self.driver.accessibility_tree.to_xml())
         return Area(
             id=response["id"],
             description=response["explanation"],
@@ -137,16 +136,17 @@ class Alumni:
             goal: The goal to be achieved. Use same format as in `do`.
             actions: A list of actions to achieve the goal.
         """
-        self.client.planner_agent.add_example(goal, actions)
+        self.client.add_example(goal, actions)
 
     def clear_learn_examples(self):
         """
         Clears the learn examples.
         """
-        self.client.planner_agent.prompt_with_examples.examples.clear()
+        self.client.clear_examples()
 
-    def stats(self) -> dict[str, int]:
+    @property
+    def stats(self) -> dict[str, dict[str, int]]:
         """
         Returns the stats of the session.
         """
-        return self.client.session.stats()
+        return self.client.stats

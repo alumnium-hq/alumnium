@@ -40,3 +40,24 @@ test-openai:
 	ALUMNIUM_MODEL=openai ALUMNIUM_LOG_PATH=log/openai.log make test
 
 test-all: test-anthropic test-aws_anthropic test-aws_meta test-azure_openai test-google test-ollama test-openai
+
+# Installation commands
+install-client:
+	poetry install --with dev
+
+install-server:
+	poetry install --with server,dev
+
+# Server commands
+start-server:
+	poetry run alumnium-server
+
+start-server-dev:
+	poetry run python -m alumnium.server.main
+
+# Server tests
+test-server:
+	poetry run pytest alumnium/server/tests/
+
+# Combined commands
+test-all-components: test-server test
