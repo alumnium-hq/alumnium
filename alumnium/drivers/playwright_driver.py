@@ -112,21 +112,9 @@ class PlaywrightDriver(BaseDriver):
                 "value": str(id),
             },
         )
-        yield self.page.locator(f"css=[data-alumnium-id='{id}']")
-        try:
-            self.client.send(
-                "DOM.removeAttribute",
-                {
-                    "nodeId": node_id,
-                    "name": "data-alumnium-id",
-                },
-            )
-        except Error as error:
-            # element can be removed by now
-            if self.CANNOT_FIND_NODE_ERROR in error.message:
-                pass
-            else:
-                raise error
+        # TODO: We need to remove the attribute after we are done with the element,
+        # but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
+        return self.page.locator(f"css=[data-alumnium-id='{id}']")
 
     def wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
