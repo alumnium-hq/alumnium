@@ -2,6 +2,7 @@ from typing import Any
 
 from .agents.actor_agent import ActorAgent
 from .agents.area_agent import AreaAgent
+from .agents.locator_agent import LocatorAgent
 from .agents.planner_agent import PlannerAgent
 from .agents.retriever_agent import RetrieverAgent
 from .cache_factory import CacheFactory
@@ -32,6 +33,7 @@ class Session:
         self.planner_agent = PlannerAgent(self.llm)
         self.retriever_agent = RetrieverAgent(self.llm)
         self.area_agent = AreaAgent(self.llm)
+        self.locator_agent = LocatorAgent(self.llm)
 
         logger.info(f"Created session {session_id} with model {model.provider.value}/{model.name}")
 
@@ -52,18 +54,21 @@ class Session:
                     + self.actor_agent.usage["input_tokens"]
                     + self.retriever_agent.usage["input_tokens"]
                     + self.area_agent.usage["input_tokens"]
+                    + self.locator_agent.usage["input_tokens"]
                 ),
                 "output_tokens": (
                     self.planner_agent.usage["output_tokens"]
                     + self.actor_agent.usage["output_tokens"]
                     + self.retriever_agent.usage["output_tokens"]
                     + self.area_agent.usage["output_tokens"]
+                    + self.locator_agent.usage["output_tokens"]
                 ),
                 "total_tokens": (
                     self.planner_agent.usage["total_tokens"]
                     + self.actor_agent.usage["total_tokens"]
                     + self.retriever_agent.usage["total_tokens"]
                     + self.area_agent.usage["total_tokens"]
+                    + self.locator_agent.usage["total_tokens"]
                 ),
             },
             "cache": self.cache.usage,

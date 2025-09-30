@@ -14,6 +14,8 @@ from .api_models import (
     AreaResponse,
     ClearExamplesResponse,
     ErrorResponse,
+    FindRequest,
+    FindResponse,
     PlanRequest,
     PlanResponse,
     SessionRequest,
@@ -206,6 +208,24 @@ async def add_example(session_id: str, request: AddExampleRequest):
         logger.error(f"Failed to add example for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to add example: {str(e)}"
+        )
+
+
+@v1_router.post("/sessions/{session_id}/elements", response_model=FindResponse)
+async def find_element(session_id: str, request: FindRequest):
+    """Find an element in the accessibility tree."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        elements = session.locator_agent.invoke(request.description, request.accessibility_tree)
+        return FindResponse(elements=elements)
+
+    except Exception as e:
+        logger.error(f"Failed to find element for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to find element: {str(e)}"
         )
 
 

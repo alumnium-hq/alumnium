@@ -1,6 +1,7 @@
 from retry import retry
 
 from .client import Client
+from .drivers import Element
 from .drivers.base_driver import BaseDriver
 from .server.agents.retriever_agent import Data
 from .tools import BaseTool
@@ -81,3 +82,17 @@ class Area:
             screenshot=self.driver.screenshot if vision else None,
         )
         return value
+
+    def find(self, description: str) -> Element:
+        """
+        Finds an element within this area and returns the native driver element.
+
+        Args:
+            description: Natural language description of the element to find.
+
+        Returns:
+            Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
+        """
+        response = self.client.find_element(description, self.accessibility_tree.to_xml())
+        id = self.accessibility_tree.element_by_id(response["id"]).id
+        return self.driver.find_element(id)

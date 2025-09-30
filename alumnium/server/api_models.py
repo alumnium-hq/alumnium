@@ -62,6 +62,15 @@ class AreaResponse(VersionedModel):
     explanation: str
 
 
+class FindRequest(VersionedModel):
+    description: str
+    accessibility_tree: str
+
+
+class FindResponse(VersionedModel):
+    elements: list[dict[str, int | str]]
+
+
 class AddExampleRequest(VersionedModel):
     goal: str
     actions: List[str]

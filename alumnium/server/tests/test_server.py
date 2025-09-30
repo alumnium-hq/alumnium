@@ -74,6 +74,7 @@ def mock_agents():
         patch("alumnium.server.agents.actor_agent.ActorAgent.invoke") as mock_actor,
         patch("alumnium.server.agents.retriever_agent.RetrieverAgent.invoke") as mock_retriever,
         patch("alumnium.server.agents.area_agent.AreaAgent.invoke") as mock_area,
+        patch("alumnium.server.agents.locator_agent.LocatorAgent.invoke") as mock_locator,
     ):
         # Mock planner agent to return list of steps
         mock_planner.return_value = ["Step 1: Click username field", "Step 2: Enter username", "Step 3: Click submit"]
@@ -90,7 +91,16 @@ def mock_agents():
         # Mock area agent to return area information
         mock_area.return_value = {"id": 42, "explanation": "Found the login form area"}
 
-        yield {"planner": mock_planner, "actor": mock_actor, "retriever": mock_retriever, "area": mock_area}
+        # Mock locator agent to return element information (as a list)
+        mock_locator.return_value = [{"id": 123, "explanation": "Found the submit button element"}]
+
+        yield {
+            "planner": mock_planner,
+            "actor": mock_actor,
+            "retriever": mock_retriever,
+            "area": mock_area,
+            "locator": mock_locator,
+        }
 
 
 def test_health_check():
@@ -367,6 +377,64 @@ def test_get_area_missing_data(sample_session_id):
         },
     )
     assert response.status_code == 422
+
+
+# Element Locator Tests
+def test_find_element_success(sample_session_id, sample_accessibility_tree):
+    """Test successful element location."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/elements",
+        json={
+            "description": "submit button",
+            "accessibility_tree": sample_accessibility_tree,
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "elements" in data
+    assert isinstance(data["elements"], list)
+    assert len(data["elements"]) > 0
+    # Check first element
+    element = data["elements"][0]
+    assert element["id"] == 123
+    assert element["explanation"] == "Found the submit button element"
+
+
+def test_find_element_nonexistent_session(sample_accessibility_tree):
+    """Test element location for nonexistent session."""
+    response = client.post(
+        "/v1/sessions/nonexistent/elements",
+        json={
+            "description": "button",
+            "accessibility_tree": sample_accessibility_tree,
+        },
+    )
+    assert response.status_code == 404
+
+
+def test_find_element_missing_data(sample_session_id):
+    """Test element location with missing data."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/elements",
+        json={
+            "description": "button"
+            # Missing accessibility_tree
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_find_element_empty_description(sample_session_id, sample_accessibility_tree):
+    """Test element location with empty description."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/elements",
+        json={
+            "description": "",
+            "accessibility_tree": sample_accessibility_tree,
+        },
+    )
+    # Should succeed but may return root element or handle gracefully
+    assert response.status_code == 200
 
 
 # Session Management Edge Cases

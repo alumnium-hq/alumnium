@@ -89,6 +89,17 @@ def execute_script(driver):
     return __execute_script
 
 
+@fixture
+def type(driver):
+    def __type(element, text):
+        if isinstance(driver, (Appium, Chrome)):
+            element.send_keys(text)
+        elif isinstance(driver, Page):
+            element.fill(text)
+
+    return __type
+
+
 @hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
     timestamp = datetime.now().strftime("%H-%M-%S")

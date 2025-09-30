@@ -45,10 +45,10 @@ class AppiumDriver(BaseDriver):
             return XCUITestAccessibilityTree(self.driver.page_source)
 
     def click(self, id: int):
-        self._find_element(id).click()
+        self.find_element(id).click()
 
     def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
-        self.driver.drag_and_drop(self._find_element(from_id), self._find_element(to_id))
+        self.driver.drag_and_drop(self.find_element(from_id), self.find_element(to_id))
 
     def press_key(self, key: Key):
         keys = []
@@ -90,7 +90,7 @@ class AppiumDriver(BaseDriver):
                 return ""
 
     def type(self, id: int, text: str):
-        element = self._find_element(id)
+        element = self.find_element(id)
         element.clear()
         element.send_keys(text)
         if self.hide_keyboard_after_typing:
@@ -104,7 +104,7 @@ class AppiumDriver(BaseDriver):
             else:
                 return ""
 
-    def _find_element(self, id: int) -> WebElement:
+    def find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)
         xpath = f"//{element.type}"
 
