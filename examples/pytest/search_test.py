@@ -14,8 +14,9 @@ playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 )
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
 def test_search(al, navigate):
-    navigate("https://www.duckduckgo.com")  # Google forces reCAPTCH, so we use DuckDuckGo
+    navigate("https://www.duckduckgo.com")  # Google forces reCAPTCHA, so we use DuckDuckGo
 
+    al.do("dismiss dialog if it appears")  # Switch to AI mode
     al.do("type 'selenium' into the search field, then press 'Enter'")
     if alumnium_driver != "appium":
         # DuckDuckGo doesn't change title on mobile browser
