@@ -52,6 +52,9 @@ class Client:
     def find_area(self, description: str, accessibility_tree: str):
         return self.session.area_agent.invoke(description, accessibility_tree)
 
+    def find_element(self, description: str, accessibility_tree: str):
+        return self.session.locator_agent.invoke(description, accessibility_tree)[0]
+
     @property
     def stats(self):
         return self.session.stats

@@ -5,6 +5,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from .area import Area
 from .client import Client
+from .drivers import Element
 from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
@@ -104,6 +105,21 @@ class Alumni:
             screenshot=self.driver.screenshot if vision else None,
         )
         return value
+
+    def find(self, description: str) -> Element:
+        """
+        Finds an element in the accessibility tree and returns the native driver element.
+
+        Args:
+            description: Natural language description of the element to find.
+
+        Returns:
+            Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
+        """
+        accessibility_tree = self.driver.accessibility_tree
+        response = self.client.find_element(description, accessibility_tree.to_xml())
+        id = accessibility_tree.element_by_id(response["id"]).id
+        return self.driver.find_element(id)
 
     def area(self, description: str) -> Area:
         """

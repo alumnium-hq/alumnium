@@ -48,18 +48,18 @@ class SeleniumDriver(BaseDriver):
         return ChromiumAccessibilityTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
 
     def click(self, id: int):
-        self._find_element(id).click()
+        self.find_element(id).click()
 
     def drag_and_drop(self, from_id: int, to_id: int):
         actions = ActionChains(self.driver)
         actions.drag_and_drop(
-            self._find_element(from_id),
-            self._find_element(to_id),
+            self.find_element(from_id),
+            self.find_element(to_id),
         ).perform()
 
     def hover(self, id: int):
         actions = ActionChains(self.driver)
-        actions.move_to_element(self._find_element(id)).perform()
+        actions.move_to_element(self.find_element(id)).perform()
 
     def press_key(self, key: Key):
         keys = []
@@ -85,7 +85,7 @@ class SeleniumDriver(BaseDriver):
         return self.driver.get_screenshot_as_base64()
 
     def select(self, id: int, option: str):
-        element = self._find_element(id)
+        element = self.find_element(id)
         # Anthropic chooses to select using option ID, not select ID
         if element.tag_name == "option":
             element = element.find_element(By.XPATH, ".//parent::select")
@@ -96,7 +96,7 @@ class SeleniumDriver(BaseDriver):
         return self.driver.title
 
     def type(self, id: int, text: str):
-        element = self._find_element(id)
+        element = self.find_element(id)
         element.clear()
         element.send_keys(text)
 
@@ -104,7 +104,7 @@ class SeleniumDriver(BaseDriver):
     def url(self) -> str:
         return self.driver.current_url
 
-    def _find_element(self, id: int) -> WebElement:
+    def find_element(self, id: int) -> WebElement:
         # Beware!
         self.driver.execute_cdp_cmd("DOM.enable", {})
         self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})
