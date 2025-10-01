@@ -37,7 +37,7 @@ from selenium.webdriver import Chrome
 os.environ["OPENAI_API_KEY"] = "..."
 
 driver = Chrome()
-driver.get("https://duckduckgo.com")
+driver.get("https://search.brave.com")
 
 al = Alumni(driver)
 al.do("type 'selenium' into the search field, then press 'Enter'")
