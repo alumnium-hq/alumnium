@@ -86,6 +86,11 @@ class ClearExamplesResponse(VersionedModel):
     message: str
 
 
+class CacheResponse(VersionedModel):
+    success: bool
+    message: str
+
+
 class ErrorResponse(VersionedModel):
     error: str
     detail: Optional[str] = None
