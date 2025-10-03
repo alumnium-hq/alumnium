@@ -1,14 +1,12 @@
-from typing import Dict, Type
-
-from .server.agents.retriever_agent import Data
-from .server.models import Model
-from .server.session_manager import SessionManager
-from .tools.base_tool import BaseTool
-from .tools.tool_to_schema_converter import convert_tools_to_schemas
+from ..server.agents.retriever_agent import Data
+from ..server.models import Model
+from ..server.session_manager import SessionManager
+from ..tools.base_tool import BaseTool
+from ..tools.tool_to_schema_converter import convert_tools_to_schemas
 
 
-class Client:
-    def __init__(self, model: Model, tools: Dict[str, Type[BaseTool]]):
+class NativeClient:
+    def __init__(self, model: Model, tools: dict[str, type[BaseTool]]):
         self.session_manager = SessionManager()
         self.model = model
         self.tools = tools

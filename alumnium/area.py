@@ -1,6 +1,7 @@
 from retry import retry
 
-from .client import Client
+from .clients.http_client import HttpClient
+from .clients.native_client import NativeClient
 from .drivers import Element
 from .drivers.base_driver import BaseDriver
 from .server.agents.retriever_agent import Data
@@ -14,7 +15,7 @@ class Area:
         description: str,
         driver: BaseDriver,
         tools: dict[str, BaseTool],
-        client: Client,
+        client: HttpClient | NativeClient,
     ):
         self.id = id
         self.description = description
