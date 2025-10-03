@@ -53,6 +53,11 @@ poetry run python -m alumnium.server.main
 - `POST /v1/sessions/{sessionId}/examples` - Add training examples to the planner
 - `DELETE /v1/sessions/{sessionId}/examples` - Clear all training examples
 
+### Cache Management
+
+- `POST /v1/sessions/{session_id}/caches` - Persist the in-memory cache
+- `DELETE /v1/sessions/{session_id}/caches` - Discard the in-memory cache
+
 ### Health Check
 
 - `GET /health` - Health check and current model information

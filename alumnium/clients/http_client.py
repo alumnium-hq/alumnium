@@ -10,7 +10,6 @@ class HttpClient:
     def __init__(self, base_url: str, model: Model, tools: dict[str, type[BaseTool]]):
         self.base_url = base_url.rstrip("/")
         self.session_id = None
-        self.cache = None  # HTTP client doesn't support cache access
 
         tool_schemas = convert_tools_to_schemas(tools)
 
@@ -111,6 +110,20 @@ class HttpClient:
         )
         response.raise_for_status()
         return response.json()["elements"][0]
+
+    def save_cache(self):
+        response = requests.post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/caches",
+            timeout=30,
+        )
+        response.raise_for_status()
+
+    def discard_cache(self):
+        response = requests.delete(
+            f"{self.base_url}/v1/sessions/{self.session_id}/caches",
+            timeout=30,
+        )
+        response.raise_for_status()
 
     @property
     def stats(self):

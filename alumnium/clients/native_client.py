@@ -53,6 +53,12 @@ class NativeClient:
     def find_element(self, description: str, accessibility_tree: str):
         return self.session.locator_agent.invoke(description, accessibility_tree)[0]
 
+    def save_cache(self):
+        self.session.cache.save()
+
+    def discard_cache(self):
+        self.session.cache.discard()
+
     @property
     def stats(self):
         return self.session.stats

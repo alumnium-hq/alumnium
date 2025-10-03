@@ -12,6 +12,7 @@ from .api_models import (
     AddExampleResponse,
     AreaRequest,
     AreaResponse,
+    CacheResponse,
     ClearExamplesResponse,
     ErrorResponse,
     FindRequest,
@@ -244,6 +245,42 @@ async def clear_examples(session_id: str):
         logger.error(f"Failed to clear examples for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to clear examples: {str(e)}"
+        )
+
+
+@v1_router.post("/sessions/{session_id}/caches", response_model=CacheResponse)
+async def save_cache(session_id: str):
+    """Save the session cache to disk."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        session.cache.save()
+        return CacheResponse(success=True, message="Cache saved successfully")
+
+    except Exception as e:
+        logger.error(f"Failed to save cache for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to save cache: {str(e)}"
+        )
+
+
+@v1_router.delete("/sessions/{session_id}/caches", response_model=CacheResponse)
+async def discard_cache(session_id: str):
+    """Discard unsaved cache changes."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        session.cache.discard()
+        return CacheResponse(success=True, message="Cache discarded successfully")
+
+    except Exception as e:
+        logger.error(f"Failed to discard cache for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to discard cache: {str(e)}"
         )
 
 
