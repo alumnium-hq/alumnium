@@ -37,24 +37,26 @@ poetry run python -m alumnium.server.main
 
 ## API Endpoints
 
+**Note**: All API endpoints are versioned with `/v1` prefix. All request and response models include an `api_version` field set to `"v1"`.
+
 ### Session Management
 
-- `POST /sessions` - Create a new session with specific provider and model
-- `DELETE /sessions/{sessionId}` - Delete a session
-- `GET /sessions` - List all active sessions
-- `GET /sessions/{sessionId}/stats` - Get session token usage statistics
+- `POST /v1/sessions` - Create a new session with specific provider and model
+- `DELETE /v1/sessions/{sessionId}` - Delete a session
+- `GET /v1/sessions` - List all active sessions
+- `GET /v1/sessions/{sessionId}/stats` - Get session token usage statistics
 
 ### Planning & Execution
 
-- `POST /sessions/{sessionId}/plan` - Plan high-level steps to achieve a goal
-- `POST /sessions/{sessionId}/step` - Generate specific actions for a step
-- `POST /sessions/{sessionId}/statement` - Execute/verify statements against page state
-- `POST /sessions/{sessionId}/area` - Identify specific areas on a page
+- `POST /v1/sessions/{sessionId}/plans` - Plan high-level steps to achieve a goal
+- `POST /v1/sessions/{sessionId}/steps` - Generate specific actions for a step
+- `POST /v1/sessions/{sessionId}/statements` - Execute/verify statements against page state
+- `POST /v1/sessions/{sessionId}/areas` - Identify specific areas on a page
 
 ### Example Management
 
-- `POST /sessions/{sessionId}/examples` - Add training examples to the planner
-- `DELETE /sessions/{sessionId}/examples` - Clear all training examples
+- `POST /v1/sessions/{sessionId}/examples` - Add training examples to the planner
+- `DELETE /v1/sessions/{sessionId}/examples` - Clear all training examples
 
 ### Health Check
 
@@ -64,7 +66,7 @@ poetry run python -m alumnium.server.main
 
 ### Create Session with Standard Tools
 ```bash
-curl -X POST http://localhost:8013/sessions \
+curl -X POST http://localhost:8013/v1/sessions \
   -H "Content-Type: application/json" \
   -d '{
     "provider": "anthropic",
@@ -86,12 +88,12 @@ curl -X POST http://localhost:8013/sessions \
       }
     ]
   }'
-# Response: {"sessionId": "uuid-here"}
+# Response: {"sessionId": "uuid-here", "api_version": "v1"}
 ```
 
 ### Plan Actions
 ```bash
-curl -X POST http://localhost:8013/sessions/{sessionId}/plan \
+curl -X POST http://localhost:8013/v1/sessions/{sessionId}/plans \
   -H "Content-Type: application/json" \
   -d '{
     "goal": "log in to the application",
@@ -99,24 +101,24 @@ curl -X POST http://localhost:8013/sessions/{sessionId}/plan \
     "url": "https://example.com/login",
     "title": "Login Page"
   }'
-# Response: {"steps": ["Fill username field", "Fill password field", "Click login button"]}
+# Response: {"steps": ["Fill username field", "Fill password field", "Click login button"], "api_version": "v1"}
 ```
 
 ### Execute Step Actions
 ```bash
-curl -X POST http://localhost:8013/sessions/{sessionId}/step \
+curl -X POST http://localhost:8013/v1/sessions/{sessionId}/steps \
   -H "Content-Type: application/json" \
   -d '{
     "goal": "log in to the application",
     "step": "Fill username field",
     "accessibility_tree": "<accessibility_tree>...</accessibility_tree>"
   }'
-# Response: {"actions": [{"tool": "type", "args": {"id": "username", "text": "user@example.com"}}]}
+# Response: {"actions": [{"tool": "type", "args": {"id": "username", "text": "user@example.com"}}], "api_version": "v1"}
 ```
 
 ### Verify Statement
 ```bash
-curl -X POST http://localhost:8013/sessions/{sessionId}/statement \
+curl -X POST http://localhost:8013/v1/sessions/{sessionId}/statements \
   -H "Content-Type: application/json" \
   -d '{
     "statement": "user is logged in successfully",
@@ -125,18 +127,18 @@ curl -X POST http://localhost:8013/sessions/{sessionId}/statement \
     "title": "Dashboard",
     "screenshot": "iVBORw0KGgoAAAANSUhEU..."
   }'
-# Response: {"result": "true", "explanation": "Dashboard page is visible with user menu"}
+# Response: {"result": "true", "explanation": "Dashboard page is visible with user menu", "api_version": "v1"}
 ```
 
 ### Add Training Example
 ```bash
-curl -X POST http://localhost:8013/sessions/{sessionId}/examples \
+curl -X POST http://localhost:8013/v1/sessions/{sessionId}/examples \
   -H "Content-Type: application/json" \
   -d '{
     "goal": "complete user registration",
     "actions": ["Fill name field", "Fill email field", "Fill password field", "Click register button"]
   }'
-# Response: {"success": true, "message": "Example added successfully"}
+# Response: {"success": true, "message": "Example added successfully", "api_version": "v1"}
 ```
 
 ## Configuration

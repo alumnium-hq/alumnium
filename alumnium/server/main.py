@@ -3,7 +3,7 @@ import importlib.metadata
 from contextlib import asynccontextmanager
 from typing import List
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import APIRouter, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -58,6 +58,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Create v1 API router
+v1_router = APIRouter(prefix="/v1")
+
 
 @app.get("/health")
 async def health_check():
@@ -65,7 +68,7 @@ async def health_check():
     return {"status": "healthy", "model": f"{Model.current.provider.value}/{Model.current.name}"}
 
 
-@app.post("/sessions", response_model=SessionResponse)
+@v1_router.post("/sessions", response_model=SessionResponse)
 async def create_session(request: SessionRequest):
     """Create a new session."""
     try:
@@ -78,20 +81,20 @@ async def create_session(request: SessionRequest):
         )
 
 
-@app.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+@v1_router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_session(session_id: str):
     """Delete a session."""
     if not session_manager.delete_session(session_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
 
-@app.get("/sessions", response_model=List[str])
+@v1_router.get("/sessions", response_model=List[str])
 async def list_sessions():
     """List all active sessions."""
     return session_manager.list_sessions()
 
 
-@app.get("/sessions/{session_id}/stats")
+@v1_router.get("/sessions/{session_id}/stats")
 async def get_session_stats(session_id: str):
     """Get session statistics."""
     session = session_manager.get_session(session_id)
@@ -100,7 +103,7 @@ async def get_session_stats(session_id: str):
     return session.stats
 
 
-@app.post("/sessions/{session_id}/plan", response_model=PlanResponse)
+@v1_router.post("/sessions/{session_id}/plans", response_model=PlanResponse)
 async def plan_actions(session_id: str, request: PlanRequest):
     """Plan actions to achieve a goal."""
     session = session_manager.get_session(session_id)
@@ -118,7 +121,7 @@ async def plan_actions(session_id: str, request: PlanRequest):
         )
 
 
-@app.post("/sessions/{session_id}/step", response_model=StepResponse)
+@v1_router.post("/sessions/{session_id}/steps", response_model=StepResponse)
 async def plan_step_actions(session_id: str, request: StepRequest):
     """Plan exact actions for a step."""
     session = session_manager.get_session(session_id)
@@ -136,7 +139,7 @@ async def plan_step_actions(session_id: str, request: StepRequest):
         )
 
 
-@app.post("/sessions/{session_id}/statement", response_model=StatementResponse)
+@v1_router.post("/sessions/{session_id}/statements", response_model=StatementResponse)
 async def execute_statement(session_id: str, request: StatementRequest):
     """Execute a statement against the current page state."""
     session = session_manager.get_session(session_id)
@@ -170,9 +173,9 @@ async def execute_statement(session_id: str, request: StatementRequest):
         )
 
 
-@app.post("/sessions/{session_id}/area", response_model=AreaResponse)
-async def get_area(session_id: str, request: AreaRequest):
-    """Get the accessibility area for a session."""
+@v1_router.post("/sessions/{session_id}/areas", response_model=AreaResponse)
+async def choose_area(session_id: str, request: AreaRequest):
+    """Choose the accessibility area."""
     session = session_manager.get_session(session_id)
     if not session:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
@@ -182,13 +185,13 @@ async def get_area(session_id: str, request: AreaRequest):
         return AreaResponse(**area)
 
     except Exception as e:
-        logger.error(f"Failed to get accessibility area for session {session_id}: {e}")
+        logger.error(f"Failed to choose accessibility area for session {session_id}: {e}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to get accessibility area: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to choose accessibility area: {str(e)}"
         )
 
 
-@app.post("/sessions/{session_id}/examples", response_model=AddExampleResponse)
+@v1_router.post("/sessions/{session_id}/examples", response_model=AddExampleResponse)
 async def add_example(session_id: str, request: AddExampleRequest):
     """Add an example goal and actions to the planner agent."""
     session = session_manager.get_session(session_id)
@@ -206,7 +209,7 @@ async def add_example(session_id: str, request: AddExampleRequest):
         )
 
 
-@app.delete("/sessions/{session_id}/examples", response_model=ClearExamplesResponse)
+@v1_router.delete("/sessions/{session_id}/examples", response_model=ClearExamplesResponse)
 async def clear_examples(session_id: str):
     """Clear all examples from the planner agent."""
     session = session_manager.get_session(session_id)
@@ -227,6 +230,7 @@ async def clear_examples(session_id: str):
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):
     """Handle HTTP exceptions."""
+    _ = request  # Unused parameter
     error_response = ErrorResponse(error=exc.detail, detail=str(exc.status_code))
     return JSONResponse(status_code=exc.status_code, content=error_response.model_dump())
 
@@ -234,9 +238,14 @@ async def http_exception_handler(request, exc):
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
     """Handle general exceptions."""
+    _ = request  # Unused parameter
     logger.error(f"Unhandled exception: {exc}")
     error_response = ErrorResponse(error="Internal server error", detail=str(exc))
     return JSONResponse(status_code=500, content=error_response.model_dump())
+
+
+# Include the v1 router after all routes are defined
+app.include_router(v1_router)
 
 
 def main():

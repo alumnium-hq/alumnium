@@ -1,40 +1,45 @@
 from typing import Any, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class SessionRequest(BaseModel):
+# Base versioned model
+class VersionedModel(BaseModel):
+    api_version: str = Field(default="v1", description="API version")
+
+
+class SessionRequest(VersionedModel):
     provider: str
     name: Optional[str] = None
     tools: List[dict[str, Any]]
 
 
-class SessionResponse(BaseModel):
+class SessionResponse(VersionedModel):
     sessionId: str
 
 
-class PlanRequest(BaseModel):
+class PlanRequest(VersionedModel):
     goal: str
     accessibility_tree: str
     url: Optional[str] = None
     title: Optional[str] = None
 
 
-class PlanResponse(BaseModel):
+class PlanResponse(VersionedModel):
     steps: List[str]
 
 
-class StepRequest(BaseModel):
+class StepRequest(VersionedModel):
     goal: str
     step: str
     accessibility_tree: str
 
 
-class StepResponse(BaseModel):
+class StepResponse(VersionedModel):
     actions: List[dict[str, Any]]
 
 
-class StatementRequest(BaseModel):
+class StatementRequest(VersionedModel):
     statement: str
     accessibility_tree: str
     url: Optional[str] = None
@@ -42,36 +47,36 @@ class StatementRequest(BaseModel):
     screenshot: Optional[str] = None  # base64 encoded image
 
 
-class StatementResponse(BaseModel):
+class StatementResponse(VersionedModel):
     result: str
     explanation: str
 
 
-class AreaRequest(BaseModel):
+class AreaRequest(VersionedModel):
     description: str
     accessibility_tree: str
 
 
-class AreaResponse(BaseModel):
+class AreaResponse(VersionedModel):
     id: int
     explanation: str
 
 
-class AddExampleRequest(BaseModel):
+class AddExampleRequest(VersionedModel):
     goal: str
     actions: List[str]
 
 
-class AddExampleResponse(BaseModel):
+class AddExampleResponse(VersionedModel):
     success: bool
     message: str
 
 
-class ClearExamplesResponse(BaseModel):
+class ClearExamplesResponse(VersionedModel):
     success: bool
     message: str
 
 
-class ErrorResponse(BaseModel):
+class ErrorResponse(VersionedModel):
     error: str
     detail: Optional[str] = None
