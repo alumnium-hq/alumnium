@@ -4,6 +4,7 @@ from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from .area import Area
+from .cache import Cache
 from .clients.http_client import HttpClient
 from .clients.native_client import NativeClient
 from .drivers import Element
@@ -50,7 +51,7 @@ class Alumni:
             logger.info("Using native client")
             self.client = NativeClient(self.model, self.tools)
 
-        self.cache = self.client.cache
+        self.cache = Cache(self.client)
 
     def quit(self):
         self.client.quit()
