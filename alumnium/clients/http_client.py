@@ -70,13 +70,8 @@ class HttpClient:
         accessibility_tree: str,
         title: str,
         url: str,
-        screenshot: bytes | None,
+        screenshot: str | None,
     ) -> tuple[str, Data]:
-        # Encode screenshot to base64 if provided
-        screenshot_b64 = None
-        if screenshot:
-            screenshot_b64 = b64encode(screenshot).decode("utf-8")
-
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/statements",
             json={
@@ -84,7 +79,7 @@ class HttpClient:
                 "accessibility_tree": accessibility_tree,
                 "title": title,
                 "url": url,
-                "screenshot": screenshot_b64,
+                "screenshot": screenshot if screenshot else None,
             },
             timeout=120,
         )
@@ -112,14 +107,14 @@ class HttpClient:
         return response.json()["elements"][0]
 
     def save_cache(self):
-        response = requests.post(
+        response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/caches",
             timeout=30,
         )
         response.raise_for_status()
 
     def discard_cache(self):
-        response = requests.delete(
+        response = delete(
             f"{self.base_url}/v1/sessions/{self.session_id}/caches",
             timeout=30,
         )

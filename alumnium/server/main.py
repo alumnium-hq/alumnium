@@ -1,4 +1,3 @@
-import base64
 import importlib.metadata
 from contextlib import asynccontextmanager
 from typing import List
@@ -150,21 +149,13 @@ async def execute_statement(session_id: str, request: StatementRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        # Decode screenshot if provided
-        screenshot_bytes = None
-        if request.screenshot:
-            try:
-                screenshot_bytes = base64.b64decode(request.screenshot)
-            except Exception as e:
-                logger.warning(f"Failed to decode screenshot: {e}")
-
         # Use retriever agent to execute the statement
         explanation, value = session.retriever_agent.invoke(
             request.statement,
             request.accessibility_tree,
             title=request.title,
             url=request.url,
-            screenshot=screenshot_bytes,
+            screenshot=request.screenshot,
         )
 
         return StatementResponse(result=value, explanation=explanation)

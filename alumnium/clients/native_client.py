@@ -41,7 +41,7 @@ class NativeClient:
         accessibility_tree: str,
         title: str,
         url: str,
-        screenshot: str,
+        screenshot: str | None,
     ) -> tuple[str, Data]:
         return self.session.retriever_agent.invoke(
             statement, accessibility_tree, title=title, url=url, screenshot=screenshot
