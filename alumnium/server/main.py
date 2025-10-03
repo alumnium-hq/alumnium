@@ -167,7 +167,7 @@ async def execute_statement(session_id: str, request: StatementRequest):
             screenshot=screenshot_bytes,
         )
 
-        return StatementResponse(result=str(value), explanation=explanation)
+        return StatementResponse(result=value, explanation=explanation)
 
     except Exception as e:
         logger.error(f"Failed to execute statement for session {session_id}: {e}")
