@@ -7,6 +7,9 @@ format:
 	poetry run ruff format .
 	poetry run pyprojectsort
 
+test-unit:
+	poetry run pytest tests/
+
 test:
 	mkdir -p log/
 	poetry run behave
@@ -54,10 +57,3 @@ start-server:
 
 start-server-dev:
 	poetry run python -m alumnium.server.main
-
-# Server tests
-test-server:
-	poetry run pytest alumnium/server/tests/
-
-# Combined commands
-test-all-components: test-server test
