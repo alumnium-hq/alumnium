@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+# Pytest
+.pytest_cache/
+reports/
+
+# Alumnium
+.alumnium/
+log/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.ropeproject/
+
+# Build artifacts
+dist/
+*.egg-info/
+
+# Ruff
+.ruff_cache/
+
+# CI
+.github/
+
+# Development
+.env
+.envrc
+.DS_Store
+.tool-versions
+.pre-commit-config.yaml
+behave.ini
+demo.py
+examples/
+tests/

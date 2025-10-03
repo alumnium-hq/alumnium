@@ -55,5 +55,12 @@ install-server:
 start-server:
 	poetry run alumnium-server
 
-start-server-dev:
-	poetry run python -m alumnium.server.main
+start-server-docker:
+	docker build -t alumnium-server .
+	docker run -ti --rm -p 8013:8013 \
+		-v $(PWD)/.alumnium/cache:/app/.alumnium/cache \
+		--env-file .env \
+		-e ALUMNIUM_CACHE \
+		-e ALUMNIUM_LOG_PATH=stdout \
+		-e ALUMNIUM_OLLAMA_URL \
+		alumnium-server

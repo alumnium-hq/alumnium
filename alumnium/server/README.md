@@ -25,12 +25,7 @@ make install-server
 ## Running the Server
 
 ```bash
-# Development mode with auto-reload
-make start-server-dev
-
-# Production mode
 make start-server
-
 # Or directly with main.py
 poetry run python -m alumnium.server.main
 ```
