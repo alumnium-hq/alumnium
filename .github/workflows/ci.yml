@@ -30,7 +30,7 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
       - run: poetry install
       - run: make check-format
-      - run: poetry run pytest tests/
+      - run: make test-unit
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
