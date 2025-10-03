@@ -75,13 +75,8 @@ class HttpClient:
         accessibility_tree: str,
         title: str,
         url: str,
-        screenshot: bytes | None,
+        screenshot: str | None,
     ) -> tuple[str, Data]:
-        # Encode screenshot to base64 if provided
-        screenshot_b64 = None
-        if screenshot:
-            screenshot_b64 = b64encode(screenshot).decode("utf-8")
-
         response = requests.post(
             f"{self.base_url}/v1/sessions/{self.session_id}/statements",
             json={
@@ -89,7 +84,7 @@ class HttpClient:
                 "accessibility_tree": accessibility_tree,
                 "title": title,
                 "url": url,
-                "screenshot": screenshot_b64,
+                "screenshot": screenshot if screenshot else None,
             },
             timeout=120,
         )
