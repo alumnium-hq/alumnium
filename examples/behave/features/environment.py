@@ -42,7 +42,7 @@ def driver(context):
 
 @fixture
 def alumnium(context):
-    context.al = Alumni(context.driver)
+    context.al = Alumni(context.driver, url=getenv("ALUMNIUM_SERVER_URL", None))
     if isinstance(context.driver, Appium):
         context.al.learn(
             goal='create a new task "this is Al"',
