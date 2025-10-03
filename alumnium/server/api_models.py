@@ -2,6 +2,8 @@ from typing import Any, List, Optional
 
 from pydantic import BaseModel, Field
 
+from .agents.retriever_agent import Data
+
 
 # Base versioned model
 class VersionedModel(BaseModel):
@@ -48,7 +50,7 @@ class StatementRequest(VersionedModel):
 
 
 class StatementResponse(VersionedModel):
-    result: str
+    result: Data
     explanation: str
 
 
