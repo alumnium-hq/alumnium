@@ -1,5 +1,4 @@
 import logging
-from os import getenv
 
 from .server.logutils import configure_logging, get_logger
 

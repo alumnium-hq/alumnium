@@ -4,7 +4,8 @@ from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from .area import Area
-from .client import Client
+from .clients.http_client import HttpClient
+from .clients.native_client import NativeClient
 from .drivers import Element
 from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_driver import PlaywrightDriver
@@ -18,7 +19,13 @@ logger = get_logger(__name__)
 
 
 class Alumni:
-    def __init__(self, driver: Page | WebDriver, model: Model = None, extra_tools: list[BaseTool] = None):
+    def __init__(
+        self,
+        driver: Page | WebDriver,
+        model: Model = None,
+        extra_tools: list[BaseTool] = None,
+        url: str = None,
+    ):
         self.model = model or Model.current
 
         if isinstance(driver, Appium):
@@ -36,7 +43,13 @@ class Alumni:
         for tool in self.driver.supported_tools | set(extra_tools or []):
             self.tools[tool.__name__] = tool
 
-        self.client = Client(self.model, self.tools)
+        if url:
+            logger.info(f"Using HTTP client with server: {url}")
+            self.client = HttpClient(url, self.model, self.tools)
+        else:
+            logger.info("Using native client")
+            self.client = NativeClient(self.model, self.tools)
+
         self.cache = self.client.cache
 
     def quit(self):
