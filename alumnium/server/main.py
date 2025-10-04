@@ -75,7 +75,7 @@ async def create_session(request: SessionRequest):
     """Create a new session."""
     try:
         session_id = session_manager.create_session(request.provider, request.name, request.tools)
-        return SessionResponse(sessionId=session_id)
+        return SessionResponse(session_id=session_id)
     except Exception as e:
         logger.error(f"Failed to create session: {e}")
         raise HTTPException(

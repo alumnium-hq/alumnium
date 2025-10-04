@@ -17,7 +17,7 @@ class SessionRequest(VersionedModel):
 
 
 class SessionResponse(VersionedModel):
-    sessionId: str
+    session_id: str
 
 
 class PlanRequest(VersionedModel):

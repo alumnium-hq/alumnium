@@ -50,7 +50,7 @@ def sample_session_id():
         json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": get_sample_tool_schemas()},
     )
     assert response.status_code == 200
-    return response.json()["sessionId"]
+    return response.json()["session_id"]
 
 
 @pytest.fixture
@@ -120,9 +120,9 @@ def test_create_session():
     )
     assert response.status_code == 200
     data = response.json()
-    assert "sessionId" in data
-    assert isinstance(data["sessionId"], str)
-    return data["sessionId"]
+    assert "session_id" in data
+    assert isinstance(data["session_id"], str)
+    return data["session_id"]
 
 
 def test_list_sessions():
@@ -484,7 +484,7 @@ def test_full_session_workflow():
         json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": get_sample_tool_schemas()},
     )
     assert create_response.status_code == 200
-    session_id = create_response.json()["sessionId"]
+    session_id = create_response.json()["session_id"]
 
     # 2. Check it exists in session list
     list_response = client.get("/v1/sessions")
@@ -535,7 +535,7 @@ def test_concurrent_sessions():
             json={"provider": "anthropic", "name": f"test-model-{i}", "tools": get_sample_tool_schemas()},
         )
         assert response.status_code == 200
-        session_ids.append(response.json()["sessionId"])
+        session_ids.append(response.json()["session_id"])
 
     # Verify all exist
     list_response = client.get("/v1/sessions")
@@ -655,10 +655,10 @@ def test_create_session_with_custom_tool_schema():
     )
     assert response.status_code == 200
     data = response.json()
-    assert "sessionId" in data
+    assert "session_id" in data
 
     # Clean up
-    session_id = data["sessionId"]
+    session_id = data["session_id"]
     client.delete(f"/v1/sessions/{session_id}")
 
 
@@ -667,10 +667,10 @@ def test_create_session_with_empty_tool_list():
     response = client.post("/v1/sessions", json={"provider": "anthropic", "name": "test-no-tools", "tools": []})
     assert response.status_code == 200
     data = response.json()
-    assert "sessionId" in data
+    assert "session_id" in data
 
     # Clean up
-    session_id = data["sessionId"]
+    session_id = data["session_id"]
     client.delete(f"/v1/sessions/{session_id}")
 
 
