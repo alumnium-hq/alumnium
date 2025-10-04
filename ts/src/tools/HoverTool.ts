@@ -11,7 +11,7 @@ export class HoverTool extends BaseTool {
     this.id = args.id;
   }
 
-  invoke(driver: BaseDriver): void {
-    driver.hover(this.id);
+  async invoke(driver: BaseDriver): Promise<void> {
+    await driver.hover(this.id);
   }
 }

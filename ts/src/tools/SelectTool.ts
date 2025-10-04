@@ -13,7 +13,7 @@ export class SelectTool extends BaseTool {
     this.option = args.option;
   }
 
-  invoke(driver: BaseDriver): void {
-    driver.select(this.id, this.option);
+  async invoke(driver: BaseDriver): Promise<void> {
+    await driver.select(this.id, this.option);
   }
 }

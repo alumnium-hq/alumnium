@@ -9,12 +9,12 @@ export interface ToolCall {
 export abstract class BaseTool {
   abstract invoke(driver: BaseDriver): void | Promise<void>;
 
-  static executeToolCall(
+  static async executeToolCall(
     toolCall: ToolCall,
     tools: Record<string, new (...args: any[]) => BaseTool>,
     accessibilityTree: BaseAccessibilityTree,
     driver: BaseDriver
-  ): void {
+  ): Promise<void> {
     const ToolClass = tools[toolCall.name];
     if (!ToolClass) {
       throw new Error(`Tool ${toolCall.name} not found`);
@@ -34,6 +34,6 @@ export abstract class BaseTool {
       (tool as any).toId = accessibilityTree.elementById(args.to_id).id;
     }
 
-    tool.invoke(driver);
+    await tool.invoke(driver);
   }
 }

@@ -13,7 +13,7 @@ export class DragAndDropTool extends BaseTool {
     this.toId = args.to_id;
   }
 
-  invoke(driver: BaseDriver): void {
-    driver.dragAndDrop(this.fromId, this.toId);
+  async invoke(driver: BaseDriver): Promise<void> {
+    await driver.dragAndDrop(this.fromId, this.toId);
   }
 }

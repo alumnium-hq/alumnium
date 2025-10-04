@@ -73,8 +73,8 @@ export class SeleniumDriver extends BaseDriver {
     this.driver.quit();
   }
 
-  back(): void {
-    this.driver.navigate().back();
+  async back(): Promise<void> {
+    await this.driver.navigate().back();
   }
 
   async screenshot(): Promise<string> {

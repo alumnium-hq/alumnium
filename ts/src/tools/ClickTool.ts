@@ -11,7 +11,7 @@ export class ClickTool extends BaseTool {
     this.id = args.id;
   }
 
-  invoke(driver: BaseDriver): void {
-    driver.click(this.id);
+  async invoke(driver: BaseDriver): Promise<void> {
+    await driver.click(this.id);
   }
 }

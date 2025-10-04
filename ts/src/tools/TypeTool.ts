@@ -13,7 +13,7 @@ export class TypeTool extends BaseTool {
     this.text = args.text;
   }
 
-  invoke(driver: BaseDriver): void {
-    driver.type(this.id, this.text);
+  async invoke(driver: BaseDriver): Promise<void> {
+    await driver.type(this.id, this.text);
   }
 }

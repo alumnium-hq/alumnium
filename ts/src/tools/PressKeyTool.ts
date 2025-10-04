@@ -12,7 +12,7 @@ export class PressKeyTool extends BaseTool {
     this.key = args.key;
   }
 
-  invoke(driver: BaseDriver): void {
-    driver.pressKey(this.key);
+  async invoke(driver: BaseDriver): Promise<void> {
+    await driver.pressKey(this.key);
   }
 }

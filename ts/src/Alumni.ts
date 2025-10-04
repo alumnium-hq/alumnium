@@ -96,7 +96,7 @@ export class Alumni {
 
       // Execute tool calls
       for (const toolCall of actorResponse) {
-        BaseTool.executeToolCall(toolCall as ToolCall, this.tools, accessibilityTree, this.driver);
+        await BaseTool.executeToolCall(toolCall as ToolCall, this.tools, accessibilityTree, this.driver);
       }
     }
   }
