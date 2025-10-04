@@ -29,8 +29,10 @@ import { Builder } from 'selenium-webdriver';
 import { Alumni } from '@alumnium/ts';
 
 const driver = await new Builder().forBrowser('chrome').build();
+
+// Model selection is controlled by the server
 const al = new Alumni(driver, {
-  url: 'http://localhost:8013',
+  url: 'http://localhost:8013',  // Optional, defaults to http://localhost:8013
 });
 
 await driver.get('https://example.com');

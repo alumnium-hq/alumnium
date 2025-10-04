@@ -11,11 +11,11 @@ import { HoverTool } from './tools/HoverTool';
 import { SelectTool } from './tools/SelectTool';
 import { PressKeyTool } from './tools/PressKeyTool';
 import { DragAndDropTool } from './tools/DragAndDropTool';
+import { Model } from './Model';
 
 export interface AlumniOptions {
-  provider?: string;
-  modelName?: string;
   url?: string;
+  model?: Model;
 }
 
 export class Alumni {
@@ -24,14 +24,12 @@ export class Alumni {
   private clientPromise: Promise<HttpClient> | null = null;
   private tools: Record<string, new (...args: any[]) => BaseTool>;
   public cache: Cache | null = null;
-  private options: Required<AlumniOptions>;
+  private url: string;
+  private model: Model;
 
   constructor(driver: WebDriver, options: AlumniOptions = {}) {
-    this.options = {
-      provider: options.provider || 'openai',
-      modelName: options.modelName || 'gpt-4o',
-      url: options.url || 'http://localhost:8013',
-    };
+    this.url = options.url || 'http://localhost:8013';
+    this.model = options.model || Model.current;
 
     // Wrap driver
     if (driver instanceof WebDriver) {
@@ -50,8 +48,8 @@ export class Alumni {
       DragAndDropTool,
     };
 
-    console.log(`Using model: ${this.options.provider}/${this.options.modelName}`);
-    console.log(`Using HTTP client with server: ${this.options.url}`);
+    console.log(`Using model: ${this.model.provider}/${this.model.name}`);
+    console.log(`Using HTTP client with server: ${this.url}`);
   }
 
   private async ensureClient(): Promise<HttpClient> {
@@ -61,9 +59,7 @@ export class Alumni {
 
     if (!this.clientPromise) {
       this.clientPromise = HttpClient.create(
-        this.options.url,
-        this.options.provider,
-        this.options.modelName,
+        this.url,
         this.tools
       ).then(client => {
         this.client = client;

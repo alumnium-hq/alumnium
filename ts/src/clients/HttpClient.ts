@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { BaseTool } from '../tools/BaseTool';
 import { convertToolsToSchemas } from '../tools/toolToSchemaConverter';
+import { Model } from '../Model';
 
 export type Data = number | string | boolean | number[] | string[] | boolean[];
 
@@ -16,8 +17,6 @@ export class HttpClient {
 
   static async create(
     baseUrl: string,
-    provider: string,
-    modelName: string,
     tools: Record<string, new (...args: any[]) => BaseTool>
   ): Promise<HttpClient> {
     const client = new HttpClient(baseUrl);
@@ -25,14 +24,14 @@ export class HttpClient {
     // Convert tools to schemas for API
     const toolSchemas = convertToolsToSchemas(tools);
 
-    // Create session on server
+    // Create session on server with model configuration
     const response = await client.client.post(`${client.baseUrl}/v1/sessions`, {
-      provider,
-      name: modelName,
+      provider: Model.current.provider,
+      name: Model.current.name,
       tools: toolSchemas,
     });
 
-    client.session_id = response.data.session_id;
+    client.session_id = response.data.sessionId;
     return client;
   }
 
