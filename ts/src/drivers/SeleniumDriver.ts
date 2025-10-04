@@ -31,25 +31,30 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   get accessibilityTree(): ChromiumAccessibilityTree {
-    this.waitForPageToLoad();
-    const axTree = this.executeCdpCommand('Accessibility.getFullAXTree', {});
+    throw new Error('accessibilityTree getter is synchronous, use getAccessibilityTree() method instead');
+  }
+
+  async getAccessibilityTree(): Promise<ChromiumAccessibilityTree> {
+    await this.waitForPageToLoad();
+    const axTree = await this.executeCdpCommand('Accessibility.getFullAXTree', {});
     return new ChromiumAccessibilityTree(axTree);
   }
 
-  click(id: number): void {
-    this.findElement(id).click();
+  async click(id: number): Promise<void> {
+    const element = await this.findElement(id);
+    await element.click();
   }
 
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const actions = this.driver.actions({ async: true });
     await actions
-      .dragAndDrop(this.findElement(fromId), this.findElement(toId))
+      .dragAndDrop(await this.findElement(fromId), await this.findElement(toId))
       .perform();
   }
 
   async hover(id: number): Promise<void> {
     const actions = this.driver.actions({ async: true });
-    await actions.move({ origin: this.findElement(id) }).perform();
+    await actions.move({ origin: await this.findElement(id) }).perform();
   }
 
   async pressKey(key: Key): Promise<void> {
@@ -77,7 +82,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async select(id: number, option: string): Promise<void> {
-    const element = this.findElement(id);
+    const element = await this.findElement(id);
     const tagName = await element.getTagName();
 
     // Handle case where option element is selected instead of select element
@@ -101,7 +106,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async type(id: number, text: string): Promise<void> {
-    const element = this.findElement(id);
+    const element = await this.findElement(id);
     await element.clear();
     await element.sendKeys(text);
   }
@@ -110,27 +115,27 @@ export class SeleniumDriver extends BaseDriver {
     return await this.driver.getCurrentUrl();
   }
 
-  findElement(id: number): WebElement {
+  async findElement(id: number): Promise<WebElement> {
     // Use CDP to find element by backend node ID
-    this.executeCdpCommand('DOM.enable', {});
-    this.executeCdpCommand('DOM.getFlattenedDocument', {});
+    await this.executeCdpCommand('DOM.enable', {});
+    await this.executeCdpCommand('DOM.getFlattenedDocument', {});
 
-    const nodeIds = this.executeCdpCommand('DOM.pushNodesByBackendIdsToFrontend', {
+    const nodeIds = await this.executeCdpCommand('DOM.pushNodesByBackendIdsToFrontend', {
       backendNodeIds: [id],
     });
     const nodeId = nodeIds.nodeIds[0];
 
     // Set temporary attribute to locate element
-    this.executeCdpCommand('DOM.setAttributeValue', {
+    await this.executeCdpCommand('DOM.setAttributeValue', {
       nodeId,
       name: 'data-alumnium-id',
       value: String(id),
     });
 
-    const element = this.driver.findElement(By.css(`[data-alumnium-id='${id}']`));
+    const element = await this.driver.findElement(By.css(`[data-alumnium-id='${id}']`));
 
     // Remove temporary attribute
-    this.executeCdpCommand('DOM.removeAttribute', {
+    await this.executeCdpCommand('DOM.removeAttribute', {
       nodeId,
       name: 'data-alumnium-id',
     });
@@ -138,32 +143,43 @@ export class SeleniumDriver extends BaseDriver {
     return element;
   }
 
-  private executeCdpCommand(cmd: string, params: any): any {
-    // Cast driver to any to access executeCdpCmd which may not be in types
+  private async executeCdpCommand(cmd: string, params: any): Promise<any> {
+    // Cast driver to any to access CDP methods
     const driver = this.driver as any;
 
-    if (typeof driver.sendDevToolsCommand === 'function') {
-      return driver.sendDevToolsCommand(cmd, params);
-    } else if (typeof driver.executeCdpCmd === 'function') {
-      return driver.executeCdpCmd(cmd, params);
-    } else {
-      // Fallback: use execute with CDP command
-      return driver.execute('executeCdpCommand', { cmd, params }).then((result: any) => result.value);
+    // Try sendAndGetDevToolsCommand first (ChromeDriver - selenium 4.x) - returns result
+    if (typeof driver.sendAndGetDevToolsCommand === 'function') {
+      return await driver.sendAndGetDevToolsCommand(cmd, params);
     }
+
+    // Try executeCdpCmd (Python-style method name)
+    if (typeof driver.executeCdpCmd === 'function') {
+      return await driver.executeCdpCmd(cmd, params);
+    }
+
+    // Try sendDevToolsCommand (doesn't return result, but fallback)
+    if (typeof driver.sendDevToolsCommand === 'function') {
+      return await driver.sendDevToolsCommand(cmd, params);
+    }
+
+    throw new Error(
+      `CDP commands are not supported by this driver. ` +
+      `Available methods: ${Object.getOwnPropertyNames(Object.getPrototypeOf(driver)).join(', ')}`
+    );
   }
 
-  private waitForPageToLoad(): void {
+  private async waitForPageToLoad(): Promise<void> {
     try {
-      this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
-      const error = this.driver.executeAsyncScript(SeleniumDriver.WAIT_FOR_SCRIPT);
+      await this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
+      const error = await this.driver.executeAsyncScript(SeleniumDriver.WAIT_FOR_SCRIPT);
       if (error) {
         console.warn(`Failed to wait for page to load: ${error}`);
       }
     } catch (e) {
       // Retry once on failure
       try {
-        this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
-        const error = this.driver.executeAsyncScript(SeleniumDriver.WAIT_FOR_SCRIPT);
+        await this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
+        const error = await this.driver.executeAsyncScript(SeleniumDriver.WAIT_FOR_SCRIPT);
         if (error) {
           console.warn(`Failed to wait for page to load: ${error}`);
         }

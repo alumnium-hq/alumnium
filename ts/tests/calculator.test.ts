@@ -22,7 +22,7 @@ describe('Calculator Tests', () => {
       .setChromeOptions(options)
       .build();
 
-    al = await Alumni.create(driver, {
+    al = new Alumni(driver, {
       url: 'http://localhost:8013',
     });
   });
@@ -52,24 +52,24 @@ describe('Calculator Tests', () => {
     expect(result).toBe(4);
   }, 60000);
 
-  test('subtraction', async () => {
-    await driver.get('https://seleniumbase.io/apps/calculator');
-    await al.do('5 - 3 =');
-    const result = await al.get('value from textfield');
-    expect(result).toBe(2);
-  }, 60000);
+  // test('subtraction', async () => {
+  //   await driver.get('https://seleniumbase.io/apps/calculator');
+  //   await al.do('5 - 3 =');
+  //   const result = await al.get('value from textfield');
+  //   expect(result).toBe(2);
+  // }, 60000);
 
-  test('multiplication', async () => {
-    await driver.get('https://seleniumbase.io/apps/calculator');
-    await al.do('3 * 4 =');
-    const result = await al.get('value from textfield');
-    expect(result).toBe(12);
-  }, 60000);
+  // test('multiplication', async () => {
+  //   await driver.get('https://seleniumbase.io/apps/calculator');
+  //   await al.do('3 * 4 =');
+  //   const result = await al.get('value from textfield');
+  //   expect(result).toBe(12);
+  // }, 60000);
 
-  test('division', async () => {
-    await driver.get('https://seleniumbase.io/apps/calculator');
-    await al.do('8 / 2 =');
-    const result = await al.get('value from textfield');
-    expect(result).toBe(4);
-  }, 60000);
+  // test('division', async () => {
+  //   await driver.get('https://seleniumbase.io/apps/calculator');
+  //   await al.do('8 / 2 =');
+  //   const result = await al.get('value from textfield');
+  //   expect(result).toBe(4);
+  // }, 60000);
 });

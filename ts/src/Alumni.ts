@@ -20,32 +20,28 @@ export interface AlumniOptions {
 
 export class Alumni {
   public driver: BaseDriver;
-  private client: HttpClient;
+  private client: HttpClient | null = null;
+  private clientPromise: Promise<HttpClient> | null = null;
   private tools: Record<string, new (...args: any[]) => BaseTool>;
-  public cache: Cache;
+  public cache: Cache | null = null;
+  private options: Required<AlumniOptions>;
 
-  private constructor(driver: BaseDriver, client: HttpClient, tools: Record<string, new (...args: any[]) => BaseTool>) {
-    this.driver = driver;
-    this.client = client;
-    this.tools = tools;
-    this.cache = new Cache(this.client);
-  }
-
-  static async create(driver: WebDriver, options: AlumniOptions = {}): Promise<Alumni> {
-    const provider = options.provider || 'openai';
-    const modelName = options.modelName || 'gpt-4o';
-    const url = options.url || 'http://localhost:8013';
+  constructor(driver: WebDriver, options: AlumniOptions = {}) {
+    this.options = {
+      provider: options.provider || 'openai',
+      modelName: options.modelName || 'gpt-4o',
+      url: options.url || 'http://localhost:8013',
+    };
 
     // Wrap driver
-    let wrappedDriver: BaseDriver;
     if (driver instanceof WebDriver) {
-      wrappedDriver = new SeleniumDriver(driver);
+      this.driver = new SeleniumDriver(driver);
     } else {
       throw new Error('Unsupported driver type');
     }
 
     // Initialize tools
-    const tools = {
+    this.tools = {
       ClickTool,
       TypeTool,
       HoverTool,
@@ -54,30 +50,49 @@ export class Alumni {
       DragAndDropTool,
     };
 
-    // Create HTTP client
-    const client = await HttpClient.create(url, provider, modelName, tools);
+    console.log(`Using model: ${this.options.provider}/${this.options.modelName}`);
+    console.log(`Using HTTP client with server: ${this.options.url}`);
+  }
 
-    console.log(`Using model: ${provider}/${modelName}`);
-    console.log(`Using HTTP client with server: ${url}`);
+  private async ensureClient(): Promise<HttpClient> {
+    if (this.client) {
+      return this.client;
+    }
 
-    return new Alumni(wrappedDriver, client, tools);
+    if (!this.clientPromise) {
+      this.clientPromise = HttpClient.create(
+        this.options.url,
+        this.options.provider,
+        this.options.modelName,
+        this.tools
+      ).then(client => {
+        this.client = client;
+        this.cache = new Cache(client);
+        return client;
+      });
+    }
+
+    return this.clientPromise;
   }
 
   async quit(): Promise<void> {
-    await this.client.quit();
+    if (this.client) {
+      await this.client.quit();
+    }
     this.driver.quit();
   }
 
   async do(goal: string): Promise<void> {
-    const initialAccessibilityTree = this.driver.accessibilityTree;
-    const steps = await this.client.planActions(goal, initialAccessibilityTree.toXml());
+    const client = await this.ensureClient();
+    const initialAccessibilityTree = await this.driver.getAccessibilityTree();
+    const steps = await client.planActions(goal, initialAccessibilityTree.toXml());
 
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
 
       // Use initial tree for first step, fresh tree for subsequent steps
-      const accessibilityTree = idx === 0 ? initialAccessibilityTree : this.driver.accessibilityTree;
-      const actorResponse = await this.client.executeAction(goal, step, accessibilityTree.toXml());
+      const accessibilityTree = idx === 0 ? initialAccessibilityTree : await this.driver.getAccessibilityTree();
+      const actorResponse = await client.executeAction(goal, step, accessibilityTree.toXml());
 
       // Execute tool calls
       for (const toolCall of actorResponse) {
@@ -87,10 +102,12 @@ export class Alumni {
   }
 
   async check(statement: string, vision: boolean = false): Promise<string> {
+    const client = await this.ensureClient();
     const screenshot = vision ? await this.driver.screenshot() : undefined;
-    const [explanation, value] = await this.client.retrieve(
+    const accessibilityTree = await this.driver.getAccessibilityTree();
+    const [explanation, value] = await client.retrieve(
       `Is the following true or false - ${statement}`,
-      this.driver.accessibilityTree.toXml(),
+      accessibilityTree.toXml(),
       await this.driver.title(),
       await this.driver.url(),
       screenshot
@@ -104,10 +121,12 @@ export class Alumni {
   }
 
   async get(data: string, vision: boolean = false): Promise<Data> {
+    const client = await this.ensureClient();
     const screenshot = vision ? await this.driver.screenshot() : undefined;
-    const [_, value] = await this.client.retrieve(
+    const accessibilityTree = await this.driver.getAccessibilityTree();
+    const [_, value] = await client.retrieve(
       data,
-      this.driver.accessibilityTree.toXml(),
+      accessibilityTree.toXml(),
       await this.driver.title(),
       await this.driver.url(),
       screenshot
@@ -117,26 +136,32 @@ export class Alumni {
   }
 
   async find(description: string): Promise<any> {
-    const accessibilityTree = this.driver.accessibilityTree;
-    const response = await this.client.findElement(description, accessibilityTree.toXml());
+    const client = await this.ensureClient();
+    const accessibilityTree = await this.driver.getAccessibilityTree();
+    const response = await client.findElement(description, accessibilityTree.toXml());
     const id = accessibilityTree.elementById(response.id).id;
     return this.driver.findElement(id);
   }
 
   async area(description: string): Promise<Area> {
-    const response = await this.client.findArea(description, this.driver.accessibilityTree.toXml());
-    return new Area(response.id, response.explanation, this.driver, this.tools, this.client);
+    const client = await this.ensureClient();
+    const accessibilityTree = await this.driver.getAccessibilityTree();
+    const response = await client.findArea(description, accessibilityTree.toXml());
+    return new Area(response.id, response.explanation, this.driver, this.tools, client);
   }
 
   async learn(goal: string, actions: string[]): Promise<void> {
-    await this.client.addExample(goal, actions);
+    const client = await this.ensureClient();
+    await client.addExample(goal, actions);
   }
 
   async clearLearnExamples(): Promise<void> {
-    await this.client.clearExamples();
+    const client = await this.ensureClient();
+    await client.clearExamples();
   }
 
   async getStats(): Promise<Record<string, Record<string, number>>> {
-    return await this.client.getStats();
+    const client = await this.ensureClient();
+    return await client.getStats();
   }
 }

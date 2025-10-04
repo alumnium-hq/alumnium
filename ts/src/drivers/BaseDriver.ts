@@ -3,6 +3,7 @@ import { Key } from './keys';
 
 export abstract class BaseDriver {
   abstract get accessibilityTree(): BaseAccessibilityTree;
+  abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
   abstract click(id: number): void | Promise<void>;
   abstract dragAndDrop(fromId: number, toId: number): void | Promise<void>;
   abstract pressKey(key: Key): void | Promise<void>;
@@ -13,6 +14,6 @@ export abstract class BaseDriver {
   abstract title(): string | Promise<string>;
   abstract type(id: number, text: string): void | Promise<void>;
   abstract url(): string | Promise<string>;
-  abstract findElement(id: number): any;
+  abstract findElement(id: number): any | Promise<any>;
   abstract hover(id: number): void | Promise<void>;
 }

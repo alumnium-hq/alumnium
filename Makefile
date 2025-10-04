@@ -53,7 +53,7 @@ install-server:
 
 # Server commands
 start-server:
-	poetry run alumnium-server
+	ALUMNIUM_LOG_PATH=stdout poetry run alumnium-server
 
 start-server-docker:
 	docker build -t alumnium-server .

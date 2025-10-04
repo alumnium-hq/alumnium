@@ -29,7 +29,7 @@ import { Builder } from 'selenium-webdriver';
 import { Alumni } from '@alumnium/ts';
 
 const driver = await new Builder().forBrowser('chrome').build();
-const al = await Alumni.create(driver, {
+const al = new Alumni(driver, {
   url: 'http://localhost:8013',
 });
 
