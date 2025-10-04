@@ -19,7 +19,7 @@ class HttpClient:
             timeout=30,
         )
         response.raise_for_status()
-        self.session_id = response.json()["sessionId"]
+        self.session_id = response.json()["session_id"]
 
     def quit(self):
         if self.session_id:
