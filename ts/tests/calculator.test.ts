@@ -1,12 +1,13 @@
 import { Builder, WebDriver } from 'selenium-webdriver';
 import { Options } from 'selenium-webdriver/chrome';
 import { Alumni } from '../src';
+import assert from 'assert';
 
 describe('Calculator Tests', () => {
   let driver: WebDriver;
   let al: Alumni;
 
-  beforeAll(async () => {
+  before(async () => {
     const options = new Options();
     options.addArguments('--disable-blink-features=AutomationControlled');
     options.setUserPreferences({
@@ -27,11 +28,15 @@ describe('Calculator Tests', () => {
     });
   });
 
-  afterAll(async () => {
-    await al.quit();
+  afterEach(async function() {
+    if (this.currentTest?.state === 'failed') {
+      await al.cache?.discard();
+    } else {
+      await al.cache?.save();
+    }
   });
 
-  beforeEach(async () => {
+  before(async () => {
     // Learn example for division operator mapping
     await al.learn('4 / 2 =', [
       "click button '4'",
@@ -41,35 +46,40 @@ describe('Calculator Tests', () => {
     ]);
   });
 
-  afterEach(async () => {
+  after(async () => {
     await al.clearLearnExamples();
+    await al.quit();
   });
 
-  test('addition', async () => {
+  it('addition', async function() {
+    this.timeout(60000);
     await driver.get('https://seleniumbase.io/apps/calculator');
     await al.do('2 + 2 =');
     const result = await al.get('value from textfield');
-    expect(result).toBe(4);
-  }, 60000);
+    assert.strictEqual(result, 4);
+  });
 
-  test('subtraction', async () => {
+  it('subtraction', async function() {
+    this.timeout(60000);
     await driver.get('https://seleniumbase.io/apps/calculator');
     await al.do('5 - 3 =');
     const result = await al.get('value from textfield');
-    expect(result).toBe(2);
-  }, 60000);
+    assert.strictEqual(result, 2);
+  });
 
-  test('multiplication', async () => {
+  it('multiplication', async function() {
+    this.timeout(60000);
     await driver.get('https://seleniumbase.io/apps/calculator');
     await al.do('3 * 4 =');
     const result = await al.get('value from textfield');
-    expect(result).toBe(12);
-  }, 60000);
+    assert.strictEqual(result, 12);
+  });
 
-  test('division', async () => {
+  it('division', async function() {
+    this.timeout(60000);
     await driver.get('https://seleniumbase.io/apps/calculator');
     await al.do('8 / 2 =');
     const result = await al.get('value from textfield');
-    expect(result).toBe(4);
-  }, 60000);
+    assert.strictEqual(result, 4);
+  });
 });
