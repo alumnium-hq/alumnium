@@ -7,7 +7,7 @@ export type Data = number | string | boolean | number[] | string[] | boolean[];
 
 export class HttpClient {
   private baseUrl: string;
-  private session_id: string | null = null;
+  private sessionId: string | null = null;
   private client: AxiosInstance;
 
   private constructor(baseUrl: string) {
@@ -31,39 +31,39 @@ export class HttpClient {
       tools: toolSchemas,
     });
 
-    client.session_id = response.data.sessionId;
+    client.sessionId = response.data.session_id;
     return client;
   }
 
   async quit(): Promise<void> {
-    if (this.session_id) {
-      await this.client.delete(`${this.baseUrl}/v1/sessions/${this.session_id}`);
-      this.session_id = null;
+    if (this.sessionId) {
+      await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}`);
+      this.sessionId = null;
     }
   }
 
   async planActions(goal: string, accessibilityTree: string): Promise<string[]> {
     const response = await this.client.post(
-      `${this.baseUrl}/v1/sessions/${this.session_id}/plans`,
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/plans`,
       { goal, accessibility_tree: accessibilityTree }
     );
     return response.data.steps;
   }
 
   async addExample(goal: string, actions: string[]): Promise<void> {
-    await this.client.post(`${this.baseUrl}/v1/sessions/${this.session_id}/examples`, {
+    await this.client.post(`${this.baseUrl}/v1/sessions/${this.sessionId}/examples`, {
       goal,
       actions,
     });
   }
 
   async clearExamples(): Promise<void> {
-    await this.client.delete(`${this.baseUrl}/v1/sessions/${this.session_id}/examples`);
+    await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}/examples`);
   }
 
   async executeAction(goal: string, step: string, accessibilityTree: string): Promise<any[]> {
     const response = await this.client.post(
-      `${this.baseUrl}/v1/sessions/${this.session_id}/steps`,
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/steps`,
       { goal, step, accessibility_tree: accessibilityTree }
     );
     return response.data.actions;
@@ -77,7 +77,7 @@ export class HttpClient {
     screenshot?: string
   ): Promise<[string, Data]> {
     const response = await this.client.post(
-      `${this.baseUrl}/v1/sessions/${this.session_id}/statements`,
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/statements`,
       {
         statement,
         accessibility_tree: accessibilityTree,
@@ -91,7 +91,7 @@ export class HttpClient {
 
   async findArea(description: string, accessibilityTree: string): Promise<{ id: number; explanation: string }> {
     const response = await this.client.post(
-      `${this.baseUrl}/v1/sessions/${this.session_id}/areas`,
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/areas`,
       { description, accessibility_tree: accessibilityTree }
     );
     return { id: response.data.id, explanation: response.data.explanation };
@@ -99,22 +99,22 @@ export class HttpClient {
 
   async findElement(description: string, accessibilityTree: string): Promise<any> {
     const response = await this.client.post(
-      `${this.baseUrl}/v1/sessions/${this.session_id}/elements`,
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/elements`,
       { description, accessibility_tree: accessibilityTree }
     );
     return response.data.elements[0];
   }
 
   async saveCache(): Promise<void> {
-    await this.client.post(`${this.baseUrl}/v1/sessions/${this.session_id}/caches`);
+    await this.client.post(`${this.baseUrl}/v1/sessions/${this.sessionId}/caches`);
   }
 
   async discardCache(): Promise<void> {
-    await this.client.delete(`${this.baseUrl}/v1/sessions/${this.session_id}/caches`);
+    await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}/caches`);
   }
 
   async getStats(): Promise<Record<string, Record<string, number>>> {
-    const response = await this.client.get(`${this.baseUrl}/v1/sessions/${this.session_id}/stats`);
+    const response = await this.client.get(`${this.baseUrl}/v1/sessions/${this.sessionId}/stats`);
     return response.data;
   }
 }
