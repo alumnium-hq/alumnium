@@ -32,26 +32,26 @@ poetry run python -m alumnium.server.main
 
 ## API Endpoints
 
-**Note**: All API endpoints are versioned with `/v1` prefix. All request and response models include an `api_version` field set to `"v1"`.
+**Note**: All API endpoints are versioned with `/v1` prefix. All request and response models include an `apiVersion` field set to `"v1"`.
 
 ### Session Management
 
 - `POST /v1/sessions` - Create a new session with specific provider and model
-- `DELETE /v1/sessions/{sessionId}` - Delete a session
+- `DELETE /v1/sessions/{session_id}` - Delete a session
 - `GET /v1/sessions` - List all active sessions
-- `GET /v1/sessions/{sessionId}/stats` - Get session token usage statistics
+- `GET /v1/sessions/{session_id}/stats` - Get session token usage statistics
 
 ### Planning & Execution
 
-- `POST /v1/sessions/{sessionId}/plans` - Plan high-level steps to achieve a goal
-- `POST /v1/sessions/{sessionId}/steps` - Generate specific actions for a step
-- `POST /v1/sessions/{sessionId}/statements` - Execute/verify statements against page state
-- `POST /v1/sessions/{sessionId}/areas` - Identify specific areas on a page
+- `POST /v1/sessions/{session_id}/plans` - Plan high-level steps to achieve a goal
+- `POST /v1/sessions/{session_id}/steps` - Generate specific actions for a step
+- `POST /v1/sessions/{session_id}/statements` - Execute/verify statements against page state
+- `POST /v1/sessions/{session_id}/areas` - Identify specific areas on a page
 
 ### Example Management
 
-- `POST /v1/sessions/{sessionId}/examples` - Add training examples to the planner
-- `DELETE /v1/sessions/{sessionId}/examples` - Clear all training examples
+- `POST /v1/sessions/{session_id}/examples` - Add training examples to the planner
+- `DELETE /v1/sessions/{session_id}/examples` - Clear all training examples
 
 ### Health Check
 
@@ -83,12 +83,12 @@ curl -X POST http://localhost:8013/v1/sessions \
       }
     ]
   }'
-# Response: {"sessionId": "uuid-here", "api_version": "v1"}
+# Response: {"session_id": "uuid-here", "api_version": "v1"}
 ```
 
 ### Plan Actions
 ```bash
-curl -X POST http://localhost:8013/v1/sessions/{sessionId}/plans \
+curl -X POST http://localhost:8013/v1/sessions/{session_id}/plans \
   -H "Content-Type: application/json" \
   -d '{
     "goal": "log in to the application",
@@ -101,7 +101,7 @@ curl -X POST http://localhost:8013/v1/sessions/{sessionId}/plans \
 
 ### Execute Step Actions
 ```bash
-curl -X POST http://localhost:8013/v1/sessions/{sessionId}/steps \
+curl -X POST http://localhost:8013/v1/sessions/{session_id}/steps \
   -H "Content-Type: application/json" \
   -d '{
     "goal": "log in to the application",
@@ -113,7 +113,7 @@ curl -X POST http://localhost:8013/v1/sessions/{sessionId}/steps \
 
 ### Verify Statement
 ```bash
-curl -X POST http://localhost:8013/v1/sessions/{sessionId}/statements \
+curl -X POST http://localhost:8013/v1/sessions/{session_id}/statements \
   -H "Content-Type: application/json" \
   -d '{
     "statement": "user is logged in successfully",
@@ -127,7 +127,7 @@ curl -X POST http://localhost:8013/v1/sessions/{sessionId}/statements \
 
 ### Add Training Example
 ```bash
-curl -X POST http://localhost:8013/v1/sessions/{sessionId}/examples \
+curl -X POST http://localhost:8013/v1/sessions/{session_id}/examples \
   -H "Content-Type: application/json" \
   -d '{
     "goal": "complete user registration",

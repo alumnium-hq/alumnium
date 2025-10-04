@@ -8,14 +8,14 @@ from alumnium import Alumni
 if getenv("ALUMNIUM_DRIVER", "selenium") == "playwright":
     playwright = sync_playwright().start()
     headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true"
-    page = playwright.chromium.launch(headless=headless).new_page()
+    driver = playwright.chromium.launch(headless=headless).new_page()
+    page = driver
     message = "`page` object to interact with Playwright directly"
-    al = Alumni(page)
 else:
     driver = Chrome()
-    al = Alumni(driver)
     message = "`driver` object to interact with Selenium directly"
 
+al = Alumni(driver, url=getenv("ALUMNIUM_SERVER_URL", None))
 
 print(
     f"""

@@ -1,4 +1,3 @@
-import base64
 import importlib.metadata
 from contextlib import asynccontextmanager
 from typing import List
@@ -12,6 +11,7 @@ from .api_models import (
     AddExampleResponse,
     AreaRequest,
     AreaResponse,
+    CacheResponse,
     ClearExamplesResponse,
     ErrorResponse,
     FindRequest,
@@ -75,7 +75,7 @@ async def create_session(request: SessionRequest):
     """Create a new session."""
     try:
         session_id = session_manager.create_session(request.provider, request.name, request.tools)
-        return SessionResponse(sessionId=session_id)
+        return SessionResponse(session_id=session_id)
     except Exception as e:
         logger.error(f"Failed to create session: {e}")
         raise HTTPException(
@@ -149,24 +149,16 @@ async def execute_statement(session_id: str, request: StatementRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        # Decode screenshot if provided
-        screenshot_bytes = None
-        if request.screenshot:
-            try:
-                screenshot_bytes = base64.b64decode(request.screenshot)
-            except Exception as e:
-                logger.warning(f"Failed to decode screenshot: {e}")
-
         # Use retriever agent to execute the statement
         explanation, value = session.retriever_agent.invoke(
             request.statement,
             request.accessibility_tree,
             title=request.title,
             url=request.url,
-            screenshot=screenshot_bytes,
+            screenshot=request.screenshot,
         )
 
-        return StatementResponse(result=str(value), explanation=explanation)
+        return StatementResponse(result=value, explanation=explanation)
 
     except Exception as e:
         logger.error(f"Failed to execute statement for session {session_id}: {e}")
@@ -244,6 +236,42 @@ async def clear_examples(session_id: str):
         logger.error(f"Failed to clear examples for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to clear examples: {str(e)}"
+        )
+
+
+@v1_router.post("/sessions/{session_id}/caches", response_model=CacheResponse)
+async def save_cache(session_id: str):
+    """Save the session cache to disk."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        session.cache.save()
+        return CacheResponse(success=True, message="Cache saved successfully")
+
+    except Exception as e:
+        logger.error(f"Failed to save cache for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to save cache: {str(e)}"
+        )
+
+
+@v1_router.delete("/sessions/{session_id}/caches", response_model=CacheResponse)
+async def discard_cache(session_id: str):
+    """Discard unsaved cache changes."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        session.cache.discard()
+        return CacheResponse(success=True, message="Cache discarded successfully")
+
+    except Exception as e:
+        logger.error(f"Failed to discard cache for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to discard cache: {str(e)}"
         )
 
 

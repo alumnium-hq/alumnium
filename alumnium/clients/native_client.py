@@ -1,13 +1,13 @@
 from typing import Dict, Type
 
-from .server.agents.retriever_agent import Data
-from .server.models import Model
-from .server.session_manager import SessionManager
-from .tools.base_tool import BaseTool
-from .tools.tool_to_schema_converter import convert_tools_to_schemas
+from ..server.agents.retriever_agent import Data
+from ..server.models import Model
+from ..server.session_manager import SessionManager
+from ..tools.base_tool import BaseTool
+from ..tools.tool_to_schema_converter import convert_tools_to_schemas
 
 
-class Client:
+class NativeClient:
     def __init__(self, model: Model, tools: Dict[str, Type[BaseTool]]):
         self.session_manager = SessionManager()
         self.model = model
@@ -43,7 +43,7 @@ class Client:
         accessibility_tree: str,
         title: str,
         url: str,
-        screenshot: str,
+        screenshot: str | None,
     ) -> tuple[str, Data]:
         return self.session.retriever_agent.invoke(
             statement, accessibility_tree, title=title, url=url, screenshot=screenshot
@@ -54,6 +54,12 @@ class Client:
 
     def find_element(self, description: str, accessibility_tree: str):
         return self.session.locator_agent.invoke(description, accessibility_tree)[0]
+
+    def save_cache(self):
+        self.session.cache.save()
+
+    def discard_cache(self):
+        self.session.cache.discard()
 
     @property
     def stats(self):
