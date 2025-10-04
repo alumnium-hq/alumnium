@@ -20,10 +20,9 @@ export interface AlumniOptions {
 
 export class Alumni {
   public driver: BaseDriver;
-  private client: HttpClient | null = null;
-  private clientPromise: Promise<HttpClient> | null = null;
+  private client: HttpClient;
   private tools: Record<string, new (...args: any[]) => BaseTool>;
-  public cache: Cache | null = null;
+  public cache: Cache;
   private url: string;
   private model: Model;
 
@@ -48,47 +47,29 @@ export class Alumni {
       DragAndDropTool,
     };
 
+    // Initialize HTTP client
+    this.client = new HttpClient(this.url, this.tools);
+    this.cache = new Cache(this.client);
+
     console.log(`Using model: ${this.model.provider}/${this.model.name}`);
     console.log(`Using HTTP client with server: ${this.url}`);
   }
 
-  private async ensureClient(): Promise<HttpClient> {
-    if (this.client) {
-      return this.client;
-    }
-
-    if (!this.clientPromise) {
-      this.clientPromise = HttpClient.create(
-        this.url,
-        this.tools
-      ).then(client => {
-        this.client = client;
-        this.cache = new Cache(client);
-        return client;
-      });
-    }
-
-    return this.clientPromise;
-  }
-
   async quit(): Promise<void> {
-    if (this.client) {
-      await this.client.quit();
-    }
+    await this.client.quit();
     this.driver.quit();
   }
 
   async do(goal: string): Promise<void> {
-    const client = await this.ensureClient();
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
-    const steps = await client.planActions(goal, initialAccessibilityTree.toXml());
+    const steps = await this.client.planActions(goal, initialAccessibilityTree.toXml());
 
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
 
       // Use initial tree for first step, fresh tree for subsequent steps
       const accessibilityTree = idx === 0 ? initialAccessibilityTree : await this.driver.getAccessibilityTree();
-      const actorResponse = await client.executeAction(goal, step, accessibilityTree.toXml());
+      const actorResponse = await this.client.executeAction(goal, step, accessibilityTree.toXml());
 
       // Execute tool calls
       for (const toolCall of actorResponse) {
@@ -98,10 +79,9 @@ export class Alumni {
   }
 
   async check(statement: string, vision: boolean = false): Promise<string> {
-    const client = await this.ensureClient();
     const screenshot = vision ? await this.driver.screenshot() : undefined;
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    const [explanation, value] = await client.retrieve(
+    const [explanation, value] = await this.client.retrieve(
       `Is the following true or false - ${statement}`,
       accessibilityTree.toXml(),
       await this.driver.title(),
@@ -117,10 +97,9 @@ export class Alumni {
   }
 
   async get(data: string, vision: boolean = false): Promise<Data> {
-    const client = await this.ensureClient();
     const screenshot = vision ? await this.driver.screenshot() : undefined;
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    const [_, value] = await client.retrieve(
+    const [_, value] = await this.client.retrieve(
       data,
       accessibilityTree.toXml(),
       await this.driver.title(),
@@ -132,32 +111,27 @@ export class Alumni {
   }
 
   async find(description: string): Promise<any> {
-    const client = await this.ensureClient();
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    const response = await client.findElement(description, accessibilityTree.toXml());
+    const response = await this.client.findElement(description, accessibilityTree.toXml());
     const id = accessibilityTree.elementById(response.id).id;
     return this.driver.findElement(id);
   }
 
   async area(description: string): Promise<Area> {
-    const client = await this.ensureClient();
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    const response = await client.findArea(description, accessibilityTree.toXml());
-    return new Area(response.id, response.explanation, this.driver, this.tools, client);
+    const response = await this.client.findArea(description, accessibilityTree.toXml());
+    return new Area(response.id, response.explanation, this.driver, this.tools, this.client);
   }
 
   async learn(goal: string, actions: string[]): Promise<void> {
-    const client = await this.ensureClient();
-    await client.addExample(goal, actions);
+    await this.client.addExample(goal, actions);
   }
 
   async clearLearnExamples(): Promise<void> {
-    const client = await this.ensureClient();
-    await client.clearExamples();
+    await this.client.clearExamples();
   }
 
   async getStats(): Promise<Record<string, Record<string, number>>> {
-    const client = await this.ensureClient();
-    return await client.getStats();
+    return await this.client.getStats();
   }
 }

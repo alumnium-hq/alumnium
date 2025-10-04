@@ -9,30 +9,31 @@ export class HttpClient {
   private baseUrl: string;
   private sessionId: string | null = null;
   private client: AxiosInstance;
+  private sessionPromise: Promise<void> | null = null;
 
-  private constructor(baseUrl: string) {
+  constructor(baseUrl: string, private tools: Record<string, new (...args: any[]) => BaseTool>) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.client = axios.create({ timeout: 120000 });
   }
 
-  static async create(
-    baseUrl: string,
-    tools: Record<string, new (...args: any[]) => BaseTool>
-  ): Promise<HttpClient> {
-    const client = new HttpClient(baseUrl);
+  private async ensureSession(): Promise<void> {
+    if (this.sessionId) {
+      return;
+    }
 
-    // Convert tools to schemas for API
-    const toolSchemas = convertToolsToSchemas(tools);
+    if (!this.sessionPromise) {
+      this.sessionPromise = (async () => {
+        const toolSchemas = convertToolsToSchemas(this.tools);
+        const response = await this.client.post(`${this.baseUrl}/v1/sessions`, {
+          provider: Model.current.provider,
+          name: Model.current.name,
+          tools: toolSchemas,
+        });
+        this.sessionId = response.data.session_id;
+      })();
+    }
 
-    // Create session on server with model configuration
-    const response = await client.client.post(`${client.baseUrl}/v1/sessions`, {
-      provider: Model.current.provider,
-      name: Model.current.name,
-      tools: toolSchemas,
-    });
-
-    client.sessionId = response.data.session_id;
-    return client;
+    await this.sessionPromise;
   }
 
   async quit(): Promise<void> {
@@ -43,6 +44,7 @@ export class HttpClient {
   }
 
   async planActions(goal: string, accessibilityTree: string): Promise<string[]> {
+    await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/plans`,
       { goal, accessibility_tree: accessibilityTree }
@@ -51,6 +53,7 @@ export class HttpClient {
   }
 
   async addExample(goal: string, actions: string[]): Promise<void> {
+    await this.ensureSession();
     await this.client.post(`${this.baseUrl}/v1/sessions/${this.sessionId}/examples`, {
       goal,
       actions,
@@ -58,10 +61,12 @@ export class HttpClient {
   }
 
   async clearExamples(): Promise<void> {
+    await this.ensureSession();
     await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}/examples`);
   }
 
   async executeAction(goal: string, step: string, accessibilityTree: string): Promise<any[]> {
+    await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/steps`,
       { goal, step, accessibility_tree: accessibilityTree }
@@ -76,6 +81,7 @@ export class HttpClient {
     url: string,
     screenshot?: string
   ): Promise<[string, Data]> {
+    await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/statements`,
       {
@@ -90,6 +96,7 @@ export class HttpClient {
   }
 
   async findArea(description: string, accessibilityTree: string): Promise<{ id: number; explanation: string }> {
+    await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/areas`,
       { description, accessibility_tree: accessibilityTree }
@@ -98,6 +105,7 @@ export class HttpClient {
   }
 
   async findElement(description: string, accessibilityTree: string): Promise<any> {
+    await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/elements`,
       { description, accessibility_tree: accessibilityTree }
@@ -106,14 +114,17 @@ export class HttpClient {
   }
 
   async saveCache(): Promise<void> {
+    await this.ensureSession();
     await this.client.post(`${this.baseUrl}/v1/sessions/${this.sessionId}/caches`);
   }
 
   async discardCache(): Promise<void> {
+    await this.ensureSession();
     await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}/caches`);
   }
 
   async getStats(): Promise<Record<string, Record<string, number>>> {
+    await this.ensureSession();
     const response = await this.client.get(`${this.baseUrl}/v1/sessions/${this.sessionId}/stats`);
     return response.data;
   }
