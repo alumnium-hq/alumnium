@@ -1,6 +1,6 @@
-import { BaseTool } from './BaseTool';
-import { BaseDriver } from '../drivers/BaseDriver';
-import { Key } from '../drivers/keys';
+import { BaseTool } from './BaseTool.js';
+import { BaseDriver } from '../drivers/BaseDriver.js';
+import { Key } from '../drivers/keys.js';
 
 export class PressKeyTool extends BaseTool {
   static description = 'Press a keyboard key.';

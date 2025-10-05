@@ -1,5 +1,5 @@
-import { BaseTool } from './BaseTool';
-import { BaseDriver } from '../drivers/BaseDriver';
+import { BaseTool } from './BaseTool.js';
+import { BaseDriver } from '../drivers/BaseDriver.js';
 
 export class HoverTool extends BaseTool {
   static description = 'Hover over an element.';

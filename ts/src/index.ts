@@ -1,8 +1,8 @@
-export { Alumni } from './Alumni';
-export type { AlumniOptions } from './Alumni';
-export { Area } from './Area';
-export { Cache } from './Cache';
-export { SeleniumDriver } from './drivers/SeleniumDriver';
-export { Key } from './drivers/keys';
-export type { Data } from './clients/HttpClient';
-export { Model, Provider, ModelName } from './Model';
+export { Alumni } from './Alumni.js';
+export type { AlumniOptions } from './Alumni.js';
+export { Area } from './Area.js';
+export { Cache } from './Cache.js';
+export { SeleniumDriver } from './drivers/SeleniumDriver.js';
+export { Key } from './drivers/keys.js';
+export type { Data } from './clients/HttpClient.js';
+export { Model, Provider, ModelName } from './Model.js';

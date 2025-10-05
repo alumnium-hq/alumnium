@@ -1,7 +1,8 @@
 {
-  "name": "@alumnium/ts",
-  "version": "1.0.0",
+  "name": "alumnium",
+  "version": "0.14.0",
   "description": "TypeScript client for Alumnium",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -9,15 +10,24 @@
     "test": "mocha --require ts-node/register tests/**/*.test.ts",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["alumnium", "selenium", "automation", "ai"],
-  "author": "",
+  "keywords": [
+    "alumnium",
+    "selenium",
+    "automation",
+    "ai"
+  ],
+  "author": "Alex Rodionov <p0deje@gmail.com>",
+  "contributors": [
+    "Alex Rodionov <p0deje@gmail.com>",
+    "Tatiana Shepeleva <tati.shep@gmail.com>"
+  ],
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.7",
     "selenium-webdriver": "^4.17.0"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.6",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.11.19",
     "@types/selenium-webdriver": "^4.1.21",
     "mocha": "^10.3.0",

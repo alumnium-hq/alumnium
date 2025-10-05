@@ -1,17 +1,17 @@
 import { WebDriver } from 'selenium-webdriver';
-import { SeleniumDriver } from './drivers/SeleniumDriver';
-import { BaseDriver } from './drivers/BaseDriver';
-import { HttpClient, Data } from './clients/HttpClient';
-import { Cache } from './Cache';
-import { Area } from './Area';
-import { BaseTool, ToolCall } from './tools/BaseTool';
-import { ClickTool } from './tools/ClickTool';
-import { TypeTool } from './tools/TypeTool';
-import { HoverTool } from './tools/HoverTool';
-import { SelectTool } from './tools/SelectTool';
-import { PressKeyTool } from './tools/PressKeyTool';
-import { DragAndDropTool } from './tools/DragAndDropTool';
-import { Model } from './Model';
+import { SeleniumDriver } from './drivers/SeleniumDriver.js';
+import { BaseDriver } from './drivers/BaseDriver.js';
+import { HttpClient, Data } from './clients/HttpClient.js';
+import { Cache } from './Cache.js';
+import { Area } from './Area.js';
+import { BaseTool, ToolCall } from './tools/BaseTool.js';
+import { ClickTool } from './tools/ClickTool.js';
+import { TypeTool } from './tools/TypeTool.js';
+import { HoverTool } from './tools/HoverTool.js';
+import { SelectTool } from './tools/SelectTool.js';
+import { PressKeyTool } from './tools/PressKeyTool.js';
+import { DragAndDropTool } from './tools/DragAndDropTool.js';
+import { Model } from './Model.js';
 
 export interface AlumniOptions {
   url?: string;

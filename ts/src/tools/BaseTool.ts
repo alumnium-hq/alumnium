@@ -1,5 +1,5 @@
-import { BaseDriver } from '../drivers/BaseDriver';
-import { BaseAccessibilityTree } from '../accessibility/BaseAccessibilityTree';
+import { BaseDriver } from '../drivers/BaseDriver.js';
+import { BaseAccessibilityTree } from '../accessibility/BaseAccessibilityTree.js';
 
 export interface ToolCall {
   name: string;

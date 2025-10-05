@@ -1,5 +1,5 @@
-import { BaseTool } from './BaseTool';
-import { BaseDriver } from '../drivers/BaseDriver';
+import { BaseTool } from './BaseTool.js';
+import { BaseDriver } from '../drivers/BaseDriver.js';
 
 export class DragAndDropTool extends BaseTool {
   static description = "Drag one element onto another and drop it. Don't combine with HoverTool.";

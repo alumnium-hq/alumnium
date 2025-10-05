@@ -1,5 +1,5 @@
-import { BaseAccessibilityTree } from './BaseAccessibilityTree';
-import { AccessibilityElement } from './AccessibilityElement';
+import { BaseAccessibilityTree } from './BaseAccessibilityTree.js';
+import { AccessibilityElement } from './AccessibilityElement.js';
 
 interface AXNode {
   nodeId: string;

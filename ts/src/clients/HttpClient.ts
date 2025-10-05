@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
-import { BaseTool } from '../tools/BaseTool';
-import { convertToolsToSchemas } from '../tools/toolToSchemaConverter';
-import { Model } from '../Model';
+import { BaseTool } from '../tools/BaseTool.js';
+import { convertToolsToSchemas } from '../tools/toolToSchemaConverter.js';
+import { Model } from '../Model.js';
 
 export type Data = number | string | boolean | number[] | string[] | boolean[];
 

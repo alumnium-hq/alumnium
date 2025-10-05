@@ -1,6 +1,6 @@
 import { Builder, WebDriver } from 'selenium-webdriver';
-import { Options } from 'selenium-webdriver/chrome';
-import { Alumni } from '../src';
+import { Options } from 'selenium-webdriver/chrome.js';
+import { Alumni } from '../src/index.js';
 import assert from 'assert';
 
 describe('Calculator Tests', () => {

@@ -1,11 +1,11 @@
-import { HttpClient, Data } from './clients/HttpClient';
-import { BaseDriver } from './drivers/BaseDriver';
-import { BaseTool, ToolCall } from './tools/BaseTool';
-import { BaseAccessibilityTree } from './accessibility/BaseAccessibilityTree';
+import { HttpClient, Data } from './clients/HttpClient.js';
+import { BaseDriver } from './drivers/BaseDriver.js';
+import { BaseTool, ToolCall } from './tools/BaseTool.js';
+import { BaseAccessibilityTree } from './accessibility/BaseAccessibilityTree.js';
 
 export class Area {
-  private id: number;
-  private description: string;
+  public id: number;
+  public description: string;
   private driver: BaseDriver;
   private accessibilityTree: BaseAccessibilityTree | null = null;
   private accessibilityTreePromise: Promise<BaseAccessibilityTree> | null = null;

@@ -1,4 +1,4 @@
-import { BaseTool } from './BaseTool';
+import { BaseTool } from './BaseTool.js';
 
 interface ToolSchema {
   type: string;

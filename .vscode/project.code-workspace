@@ -1,0 +1,18 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": "../"
+    },
+    {
+      "name": "typescript",
+      "path": "../ts"
+    },
+  ],
+  "settings": {},
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.vscode-typescript-next"
+    ]
+  }
+}

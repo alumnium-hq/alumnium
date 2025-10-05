@@ -1,9 +1,9 @@
 import { WebDriver, WebElement, By, Key as SeleniumKey } from 'selenium-webdriver';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BaseDriver } from './BaseDriver';
-import { ChromiumAccessibilityTree } from '../accessibility/ChromiumAccessibilityTree';
-import { Key } from './keys';
+import { BaseDriver } from './BaseDriver.js';
+import { ChromiumAccessibilityTree } from '../accessibility/ChromiumAccessibilityTree.js';
+import { Key } from './keys.js';
 
 export class SeleniumDriver extends BaseDriver {
   private static WAITER_SCRIPT = fs.readFileSync(

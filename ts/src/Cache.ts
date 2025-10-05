@@ -1,4 +1,4 @@
-import { HttpClient } from './clients/HttpClient';
+import { HttpClient } from './clients/HttpClient.js';
 
 export class Cache {
   private client: HttpClient;

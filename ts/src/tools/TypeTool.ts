@@ -1,5 +1,5 @@
-import { BaseTool } from './BaseTool';
-import { BaseDriver } from '../drivers/BaseDriver';
+import { BaseTool } from './BaseTool.js';
+import { BaseDriver } from '../drivers/BaseDriver.js';
 
 export class TypeTool extends BaseTool {
   static description = 'Type text into an element.';
