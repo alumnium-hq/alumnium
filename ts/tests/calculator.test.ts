@@ -51,32 +51,28 @@ describe('Calculator Tests', () => {
     await al.quit();
   });
 
-  it('addition', async function() {
-    this.timeout(60000);
+  it('addition', async () => {
     await driver.get('https://seleniumbase.io/apps/calculator');
     await al.do('2 + 2 =');
     const result = await al.get('value from textfield');
     assert.strictEqual(result, 4);
   });
 
-  it('subtraction', async function() {
-    this.timeout(60000);
+  it('subtraction', async () => {
     await driver.get('https://seleniumbase.io/apps/calculator');
     await al.do('5 - 3 =');
     const result = await al.get('value from textfield');
     assert.strictEqual(result, 2);
   });
 
-  it('multiplication', async function() {
-    this.timeout(60000);
+  it('multiplication', async () => {
     await driver.get('https://seleniumbase.io/apps/calculator');
     await al.do('3 * 4 =');
     const result = await al.get('value from textfield');
     assert.strictEqual(result, 12);
   });
 
-  it('division', async function() {
-    this.timeout(60000);
+  it('division', async () => {
     await driver.get('https://seleniumbase.io/apps/calculator');
     await al.do('8 / 2 =');
     const result = await al.get('value from textfield');
