@@ -1,9 +1,13 @@
 import { WebDriver, WebElement, By, Key as SeleniumKey } from 'selenium-webdriver';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { BaseDriver } from './BaseDriver.js';
 import { ChromiumAccessibilityTree } from '../accessibility/ChromiumAccessibilityTree.js';
 import { Key } from './keys.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export class SeleniumDriver extends BaseDriver {
   private static WAITER_SCRIPT = fs.readFileSync(

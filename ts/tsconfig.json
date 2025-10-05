@@ -16,6 +16,10 @@
     "emitDecoratorMetadata": true,
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
 }
