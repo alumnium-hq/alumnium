@@ -1,14 +1,13 @@
 from typing import List
 from xml.etree.ElementTree import Element, indent, tostring
 
-from ..server.logutils import get_logger
-from .accessibility_element import AccessibilityElement
+from ..logutils import get_logger
 from .base_accessibility_tree import BaseAccessibilityTree
 
 logger = get_logger(__name__)
 
 
-class ChromiumAccessibilityTree(BaseAccessibilityTree):
+class ServerChromiumTree(BaseAccessibilityTree):
     def __init__(self, tree: dict):
         self.tree = {}  # Initialize the result dictionary
 
@@ -23,7 +22,9 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             parent_id = node.get("parentId")  # Get the parent ID
 
             self.id += 1
-            self.cached_ids[self.id] = node.get("backendDOMNodeId", "")
+            backend_id = node.get("backendDOMNodeId")
+            # Store backend ID, defaulting to the cached ID if not available
+            self.cached_ids[self.id] = backend_id if backend_id is not None else self.id
             node["id"] = self.id
 
             # If it's a top-level node, add it directly to the tree
@@ -42,34 +43,9 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
 
         logger.debug(f"  -> Cached IDs: {self.cached_ids}")
 
-    def element_by_id(self, id: int) -> AccessibilityElement:
-        return AccessibilityElement(id=self.cached_ids[id])
-
-    def get_area(self, id: int) -> "ChromiumAccessibilityTree":
-        if id not in self.cached_ids:
-            raise KeyError(f"No element with id={id}")
-
-        # Create a new tree for the specific area
-        root_elements = [self.tree[root_id] for root_id in self.tree]
-
-        def find_node_by_id(nodes, target_id):
-            for node in nodes:
-                if node.get("id") == target_id:
-                    return node
-                children = node.get("nodes", [])
-                result = find_node_by_id(children, target_id)
-                if result:
-                    return result
-            return None
-
-        target_node = find_node_by_id(root_elements, id)
-        if not target_node:
-            raise KeyError(f"No node with id={id} found in the tree")
-
-        area_tree = ChromiumAccessibilityTree({"nodes": []})
-        area_tree.tree = {id: target_node}  # Set the target node as the root of the new tree
-        area_tree.cached_ids = self.cached_ids.copy()  # Copy cached IDs for this area
-        return area_tree
+    def get_id_mappings(self) -> dict[int, int]:
+        """Returns mapping of cached_id -> backend_id"""
+        return self.cached_ids.copy()
 
     def to_xml(self):
         """Converts the nested tree to XML format using role.value as tags."""
@@ -84,7 +60,9 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             children = node.get("nodes", [])
 
             if role_value == "StaticText":
-                parent.text = name_value
+                if parent is not None:
+                    parent.text = name_value
+                return None
             elif role_value == "none" or ignored:
                 if children:
                     for child in children:
@@ -119,8 +97,9 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         root_elements = []
         for root_id in self.tree:
             element = convert_node_to_xml(self.tree[root_id])
-            root_elements.append(element)
-            self._prune_redundant_name(element)
+            if element is not None:
+                root_elements.append(element)
+                self._prune_redundant_name(element)
 
         # Convert the XML elements to a string
         xml_string = ""

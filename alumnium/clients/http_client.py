@@ -3,6 +3,7 @@ from typing import Dict, Type
 
 import requests
 
+from ..accessibility import AccessibilityElement, RawAccessibilityTree
 from ..server.agents.retriever_agent import Data
 from ..server.models import Model
 from ..tools.base_tool import BaseTool
@@ -13,6 +14,7 @@ class HttpClient:
     def __init__(self, base_url: str, model: Model, tools: Dict[str, Type[BaseTool]]):
         self.base_url = base_url.rstrip("/")
         self.session_id = None
+        self.id_mappings = {}  # Store ID mappings from server
 
         # Convert tools to schemas for API
         tool_schemas = convert_tools_to_schemas(tools)
@@ -35,14 +37,29 @@ class HttpClient:
             response.raise_for_status()
             self.session_id = None
 
-    def plan_actions(self, goal: str, accessibility_tree: str):
+    def element_by_id(self, id: int) -> AccessibilityElement:
+        """Look up element by ID from stored mappings."""
+        if id not in self.id_mappings:
+            raise KeyError(f"No element with id={id}")
+        backend_id = self.id_mappings[id]
+        return AccessibilityElement(id=backend_id)
+
+    def plan_actions(self, goal: str, raw_tree: RawAccessibilityTree):
         response = requests.post(
             f"{self.base_url}/v1/sessions/{self.session_id}/plans",
-            json={"goal": goal, "accessibility_tree": accessibility_tree},
+            json={
+                "goal": goal,
+                "raw_data": raw_tree.raw_data,
+                "automation_type": raw_tree.automation_type,
+            },
             timeout=120,
         )
         response.raise_for_status()
-        return response.json()["steps"]
+        data = response.json()
+        # Store ID mappings if provided
+        if "id_mappings" in data:
+            self.id_mappings = {int(k): v for k, v in data["id_mappings"].items()}
+        return data["steps"]
 
     def add_example(self, goal: str, actions: list[str]):
         response = requests.post(
@@ -60,19 +77,28 @@ class HttpClient:
         )
         response.raise_for_status()
 
-    def execute_action(self, goal: str, step: str, accessibility_tree: str):
+    def execute_action(self, goal: str, step: str, raw_tree: RawAccessibilityTree):
         response = requests.post(
             f"{self.base_url}/v1/sessions/{self.session_id}/steps",
-            json={"goal": goal, "step": step, "accessibility_tree": accessibility_tree},
+            json={
+                "goal": goal,
+                "step": step,
+                "raw_data": raw_tree.raw_data,
+                "automation_type": raw_tree.automation_type,
+            },
             timeout=120,
         )
         response.raise_for_status()
-        return response.json()["actions"]
+        data = response.json()
+        # Store ID mappings if provided
+        if "id_mappings" in data:
+            self.id_mappings = {int(k): v for k, v in data["id_mappings"].items()}
+        return data["actions"]
 
     def retrieve(
         self,
         statement: str,
-        accessibility_tree: str,
+        raw_tree: RawAccessibilityTree,
         title: str,
         url: str,
         screenshot: str | None,
@@ -81,7 +107,8 @@ class HttpClient:
             f"{self.base_url}/v1/sessions/{self.session_id}/statements",
             json={
                 "statement": statement,
-                "accessibility_tree": accessibility_tree,
+                "raw_data": raw_tree.raw_data,
+                "automation_type": raw_tree.automation_type,
                 "title": title,
                 "url": url,
                 "screenshot": screenshot if screenshot else None,
@@ -90,26 +117,44 @@ class HttpClient:
         )
         response.raise_for_status()
         data = response.json()
+        # Store ID mappings if provided
+        if "id_mappings" in data:
+            self.id_mappings = {int(k): v for k, v in data["id_mappings"].items()}
         return data["explanation"], data["result"]
 
-    def find_area(self, description: str, accessibility_tree: str):
+    def find_area(self, description: str, raw_tree: RawAccessibilityTree):
         response = requests.post(
             f"{self.base_url}/v1/sessions/{self.session_id}/areas",
-            json={"description": description, "accessibility_tree": accessibility_tree},
+            json={
+                "description": description,
+                "raw_data": raw_tree.raw_data,
+                "automation_type": raw_tree.automation_type,
+            },
             timeout=60,
         )
         response.raise_for_status()
         data = response.json()
+        # Store ID mappings if provided
+        if "id_mappings" in data:
+            self.id_mappings = {int(k): v for k, v in data["id_mappings"].items()}
         return {"id": data["id"], "explanation": data["explanation"]}
 
-    def find_element(self, description: str, accessibility_tree: str):
+    def find_element(self, description: str, raw_tree: RawAccessibilityTree):
         response = requests.post(
             f"{self.base_url}/v1/sessions/{self.session_id}/elements",
-            json={"description": description, "accessibility_tree": accessibility_tree},
+            json={
+                "description": description,
+                "raw_data": raw_tree.raw_data,
+                "automation_type": raw_tree.automation_type,
+            },
             timeout=60,
         )
         response.raise_for_status()
-        return response.json()["elements"][0]
+        data = response.json()
+        # Store ID mappings if provided
+        if "id_mappings" in data:
+            self.id_mappings = {int(k): v for k, v in data["id_mappings"].items()}
+        return data["elements"][0]
 
     def save_cache(self):
         response = requests.post(

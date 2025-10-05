@@ -2,8 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
-from ..server.logutils import get_logger
-from .accessibility_element import AccessibilityElement
+from ..logutils import get_logger
 from .base_accessibility_tree import BaseAccessibilityTree
 
 logger = get_logger(__name__)
@@ -27,18 +26,15 @@ class Node:
         return True
 
 
-class XCUITestAccessibilityTree(BaseAccessibilityTree):
+class ServerXCUITestTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
         self.tree = None  # Will hold the root node of the processed tree
         self.id_counter = 0
         self.cached_ids = {}
-        # Assuming 'logger' is defined in the global scope of this file, like for AriaTree
-        # global logger
 
         try:
             root_element = fromstring(xml_string)
         except ParseError as e:
-            # logger.error(f"Failed to parse XML string: {e}")
             raise ValueError(f"Invalid XML string: {e}")
 
         app_element = None
@@ -46,37 +42,24 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
             if len(root_element) > 0:
                 app_element = root_element[0]
             else:
-                # logger.warning("AppiumAUT tag found but it's empty.")
                 self.tree = {}
                 return
         elif root_element.tag.startswith("XCUIElementType"):
             app_element = root_element
         else:
-            # logger.warning(
-            # f"Unexpected root tag: {root_element.tag}. Expected AppiumAUT or XCUIElementTypeApplication."
-            # )
             self.tree = {}
             return
 
         if app_element is not None:
             self.tree = self._parse_element(app_element)
         else:
-            # logger.warning("No suitable application element found in XML.")
             self.tree = {}
 
-        # logger.debug(
-        # f"  -> XCUI ARIA Tree processed. Root: {self.tree.get('role', {}).get('value') if self.tree else 'None'}"
-        # )
-
-    def get_area(self, id: int) -> "XCUITestAccessibilityTree":
-        if id not in self.cached_ids:
-            raise KeyError(f"No element with id={id}")
-
-        # Create a new tree for the specific area
-        area_tree = XCUITestAccessibilityTree("<AppiumAUT></AppiumAUT>")
-        area_tree.tree = self.cached_ids[id]
-        area_tree.cached_ids = self.cached_ids.copy()  # Copy cached IDs for this area
-        return area_tree
+    def get_id_mappings(self) -> dict[int, int]:
+        """Returns mapping of cached_id -> backend_id (for XCUITest, we use cached_id as backend_id)"""
+        # For XCUITest, we don't have separate backend IDs like Chromium
+        # So we return identity mapping
+        return {id: id for id in self.cached_ids.keys()}
 
     def _get_next_id(self) -> int:
         self.id_counter += 1
@@ -157,33 +140,6 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
 
     def get_tree(self) -> dict:
         return self.tree
-
-    def element_by_id(self, id: int) -> AccessibilityElement:
-        """Finds an element by its ID and returns its properties (type, name, label, value)."""
-        element = AccessibilityElement(id=id)
-
-        found_node = self.cached_ids.get(id)
-        if found_node is None:
-            raise KeyError(f"No element with id={id}")
-
-        # Reconstruct original XCUIElementType
-        simplified_role = found_node.role or "generic"
-        if simplified_role == "generic":
-            element_type = "XCUIElementTypeOther"
-        else:
-            element_type = f"XCUIElementType{simplified_role}"
-        element.type = element_type
-
-        for prop in found_node.properties:
-            prop_name, prop_value = prop.get("name"), prop.get("value")
-            if prop_name == "name_raw":
-                element.name = prop_value
-            elif prop_name == "label_raw":
-                element.label = prop_value
-            elif prop_name == "value_raw":
-                element.value = prop_value
-
-        return element
 
     def to_xml(self) -> str:
         """Converts the processed tree back to an XML string with filtering and flattening."""

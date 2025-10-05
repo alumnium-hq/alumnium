@@ -3,7 +3,7 @@ from pathlib import Path
 
 from playwright.sync_api import Error, Page
 
-from ..accessibility import ChromiumAccessibilityTree
+from ..accessibility import RawAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -42,9 +42,10 @@ class PlaywrightDriver(BaseDriver):
         }
 
     @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def accessibility_tree(self) -> RawAccessibilityTree:
         self.wait_for_page_to_load()
-        return ChromiumAccessibilityTree(self.client.send("Accessibility.getFullAXTree"))
+        raw_data = self.client.send("Accessibility.getFullAXTree")
+        return RawAccessibilityTree(raw_data, "chromium")
 
     def click(self, id: int):
         element = self.find_element(id)

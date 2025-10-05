@@ -10,7 +10,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
-from ..accessibility import ChromiumAccessibilityTree
+from ..accessibility import RawAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -43,9 +43,10 @@ class SeleniumDriver(BaseDriver):
         self._patch_driver(driver)
 
     @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def accessibility_tree(self) -> RawAccessibilityTree:
         self.wait_for_page_to_load()
-        return ChromiumAccessibilityTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
+        raw_data = self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})
+        return RawAccessibilityTree(raw_data, "chromium")
 
     def click(self, id: int):
         self.find_element(id).click()

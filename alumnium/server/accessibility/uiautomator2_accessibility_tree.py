@@ -3,7 +3,6 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
-from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
 
 
@@ -16,7 +15,7 @@ class Node:
     children: List["Node"] = field(default_factory=list)
 
 
-class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
+class ServerUIAutomator2Tree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
         self.tree = []
         self.id_counter = 0
@@ -42,6 +41,12 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
             for children in range(0, len(root_element)):
                 app_element = root_element[children]
                 self.tree.append(self._parse_element(app_element))
+
+    def get_id_mappings(self) -> dict[int, int]:
+        """Returns mapping of cached_id -> backend_id (for UIAutomator2, we use cached_id as backend_id)"""
+        # For UIAutomator2, we don't have separate backend IDs like Chromium
+        # So we return identity mapping
+        return {id: id for id in self.cached_ids.keys()}
 
     def get_tree(self):
         return self.tree
@@ -126,23 +131,6 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
         for child_element in element:
             node.children.append(self._parse_element(child_element))
         return node
-
-    def element_by_id(self, id) -> AccessibilityElement:
-        element = AccessibilityElement(id=id)
-        found_node = self.cached_ids.get(id)
-        for prop in found_node.properties:
-            prop_name, prop_value = prop.get("name"), prop.get("value")
-            if prop_name == "class":
-                element.type = prop_value
-            elif prop_name == "resource-id":
-                element.androidresourceid = prop_value
-            elif prop_name == "text":
-                element.androidtext = prop_value
-            elif prop_name == "content-desc":
-                element.androidcontentdesc = prop_value
-            elif prop_name == "bounds":
-                element.androidbounds = prop_value
-        return element
 
     def to_xml(self) -> str:
         if not self.tree:

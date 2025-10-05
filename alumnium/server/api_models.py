@@ -22,28 +22,33 @@ class SessionResponse(VersionedModel):
 
 class PlanRequest(VersionedModel):
     goal: str
-    accessibility_tree: str
+    raw_data: dict | str  # CDP dict for Chromium, XML string for XCUITest/UIAutomator2
+    automation_type: str  # "chromium", "xcuitest", or "uiautomator2"
     url: Optional[str] = None
     title: Optional[str] = None
 
 
 class PlanResponse(VersionedModel):
     steps: List[str]
+    id_mappings: Optional[dict[str, int]] = None  # JSON keys must be strings
 
 
 class StepRequest(VersionedModel):
     goal: str
     step: str
-    accessibility_tree: str
+    raw_data: dict | str
+    automation_type: str
 
 
 class StepResponse(VersionedModel):
     actions: List[dict[str, Any]]
+    id_mappings: Optional[dict[str, int]] = None  # JSON keys must be strings
 
 
 class StatementRequest(VersionedModel):
     statement: str
-    accessibility_tree: str
+    raw_data: dict | str
+    automation_type: str
     url: Optional[str] = None
     title: Optional[str] = None
     screenshot: Optional[str] = None  # base64 encoded image
@@ -52,25 +57,30 @@ class StatementRequest(VersionedModel):
 class StatementResponse(VersionedModel):
     result: Data
     explanation: str
+    id_mappings: Optional[dict[str, int]] = None  # JSON keys must be strings
 
 
 class AreaRequest(VersionedModel):
     description: str
-    accessibility_tree: str
+    raw_data: dict | str
+    automation_type: str
 
 
 class AreaResponse(VersionedModel):
     id: int
     explanation: str
+    id_mappings: Optional[dict[str, int]] = None  # JSON keys must be strings
 
 
 class FindRequest(VersionedModel):
     description: str
-    accessibility_tree: str
+    raw_data: dict | str
+    automation_type: str
 
 
 class FindResponse(VersionedModel):
     elements: list[dict[str, int | str]]
+    id_mappings: Optional[dict[str, int]] = None  # JSON keys must be strings
 
 
 class AddExampleRequest(VersionedModel):

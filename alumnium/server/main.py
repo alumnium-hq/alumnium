@@ -113,8 +113,12 @@ async def plan_actions(session_id: str, request: PlanRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        steps = session.planner_agent.invoke(request.goal, request.accessibility_tree)
-        return PlanResponse(steps=steps)
+        # Process raw tree to get XML
+        xml = session.process_raw_tree(request.raw_data, request.automation_type)
+        steps = session.planner_agent.invoke(request.goal, xml)
+        # Convert id_mappings keys to strings for JSON serialization
+        id_mappings_json = {str(k): v for k, v in session.id_mappings.items()}
+        return PlanResponse(steps=steps, id_mappings=id_mappings_json)
 
     except Exception as e:
         logger.error(f"Failed to plan actions for session {session_id}: {e}")
@@ -131,8 +135,12 @@ async def plan_step_actions(session_id: str, request: StepRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        actions = session.actor_agent.invoke(request.goal, request.step, request.accessibility_tree)
-        return StepResponse(actions=actions)
+        # Process raw tree to get XML
+        xml = session.process_raw_tree(request.raw_data, request.automation_type)
+        actions = session.actor_agent.invoke(request.goal, request.step, xml)
+        # Convert id_mappings keys to strings for JSON serialization
+        id_mappings_json = {str(k): v for k, v in session.id_mappings.items()}
+        return StepResponse(actions=actions, id_mappings=id_mappings_json)
 
     except Exception as e:
         logger.error(f"Failed to execute actions for session {session_id}: {e}")
@@ -149,16 +157,21 @@ async def execute_statement(session_id: str, request: StatementRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
+        # Process raw tree to get XML
+        xml = session.process_raw_tree(request.raw_data, request.automation_type)
+
         # Use retriever agent to execute the statement
         explanation, value = session.retriever_agent.invoke(
             request.statement,
-            request.accessibility_tree,
+            xml,
             title=request.title,
             url=request.url,
             screenshot=request.screenshot,
         )
 
-        return StatementResponse(result=value, explanation=explanation)
+        # Convert id_mappings keys to strings for JSON serialization
+        id_mappings_json = {str(k): v for k, v in session.id_mappings.items()}
+        return StatementResponse(result=value, explanation=explanation, id_mappings=id_mappings_json)
 
     except Exception as e:
         logger.error(f"Failed to execute statement for session {session_id}: {e}")
@@ -175,8 +188,12 @@ async def choose_area(session_id: str, request: AreaRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        area = session.area_agent.invoke(request.description, request.accessibility_tree)
-        return AreaResponse(**area)
+        # Process raw tree to get XML
+        xml = session.process_raw_tree(request.raw_data, request.automation_type)
+        area = session.area_agent.invoke(request.description, xml)
+        # Convert id_mappings keys to strings for JSON serialization
+        id_mappings_json = {str(k): v for k, v in session.id_mappings.items()}
+        return AreaResponse(**area, id_mappings=id_mappings_json)
 
     except Exception as e:
         logger.error(f"Failed to choose accessibility area for session {session_id}: {e}")
@@ -211,8 +228,12 @@ async def find_element(session_id: str, request: FindRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        elements = session.locator_agent.invoke(request.description, request.accessibility_tree)
-        return FindResponse(elements=elements)
+        # Process raw tree to get XML
+        xml = session.process_raw_tree(request.raw_data, request.automation_type)
+        elements = session.locator_agent.invoke(request.description, xml)
+        # Convert id_mappings keys to strings for JSON serialization
+        id_mappings_json = {str(k): v for k, v in session.id_mappings.items()}
+        return FindResponse(elements=elements, id_mappings=id_mappings_json)
 
     except Exception as e:
         logger.error(f"Failed to find element for session {session_id}: {e}")

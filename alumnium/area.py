@@ -20,25 +20,30 @@ class Area:
         self.id = id
         self.description = description
         self.driver = driver
-        self.accessibility_tree = driver.accessibility_tree.get_area(id)
         self.tools = tools
         self.client = client
+        # Area filtering will be handled server-side when processing trees
 
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
         """
-        Executes a series of steps to achieve the given goal within the area.
+        Executes a series of steps to achieve the goal within the area.
 
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.client.plan_actions(goal, self.accessibility_tree.to_xml())
+        # For areas, we need to get a filtered tree
+        # For now, use full tree - area filtering will be handled server-side later
+        full_tree = self.driver.accessibility_tree
+        steps = self.client.plan_actions(goal, full_tree)
         for step in steps:
-            actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_xml())
+            full_tree = self.driver.accessibility_tree
+            actor_response = self.client.execute_action(goal, step, full_tree)
 
             # Execute tool calls
+            element_lookup = self.client.session if hasattr(self.client, 'session') else self.client
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, self.accessibility_tree, self.driver)
+                BaseTool.execute_tool_call(tool_call, self.tools, element_lookup, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -56,7 +61,7 @@ class Area:
         """
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
-            self.accessibility_tree.to_xml(),
+            self.driver.accessibility_tree,
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -77,7 +82,7 @@ class Area:
         """
         _, value = self.client.retrieve(
             data,
-            self.accessibility_tree.to_xml(),
+            self.driver.accessibility_tree,
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -94,6 +99,7 @@ class Area:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        response = self.client.find_element(description, self.accessibility_tree.to_xml())
-        id = self.accessibility_tree.element_by_id(response["id"]).id
-        return self.driver.find_element(id)
+        response = self.client.find_element(description, self.driver.accessibility_tree)
+        element_lookup = self.client.session if hasattr(self.client, 'session') else self.client
+        backend_id = element_lookup.element_by_id(response["id"]).id
+        return self.driver.find_element(backend_id)

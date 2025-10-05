@@ -66,15 +66,16 @@ class Alumni:
             goal: The goal to be achieved.
         """
         initial_accessibility_tree = self.driver.accessibility_tree
-        steps = self.client.plan_actions(goal, initial_accessibility_tree.to_xml())
+        steps = self.client.plan_actions(goal, initial_accessibility_tree)
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            actor_response = self.client.execute_action(goal, step, accessibility_tree.to_xml())
+            actor_response = self.client.execute_action(goal, step, accessibility_tree)
 
-            # Execute tool calls
+            # Execute tool calls - use session's element_by_id for NativeClient, or client itself for HttpClient
+            element_lookup = self.client.session if hasattr(self.client, 'session') else self.client
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, accessibility_tree, self.driver)
+                BaseTool.execute_tool_call(tool_call, self.tools, element_lookup, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -92,7 +93,7 @@ class Alumni:
         """
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
-            self.driver.accessibility_tree.to_xml(),
+            self.driver.accessibility_tree,
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -113,7 +114,7 @@ class Alumni:
         """
         _, value = self.client.retrieve(
             data,
-            self.driver.accessibility_tree.to_xml(),
+            self.driver.accessibility_tree,
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -131,9 +132,11 @@ class Alumni:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
         accessibility_tree = self.driver.accessibility_tree
-        response = self.client.find_element(description, accessibility_tree.to_xml())
-        id = accessibility_tree.element_by_id(response["id"]).id
-        return self.driver.find_element(id)
+        response = self.client.find_element(description, accessibility_tree)
+        # Get backend ID from session's element_by_id (NativeClient) or client's element_by_id (HttpClient)
+        element_lookup = self.client.session if hasattr(self.client, 'session') else self.client
+        backend_id = element_lookup.element_by_id(response["id"]).id
+        return self.driver.find_element(backend_id)
 
     def area(self, description: str) -> Area:
         """
@@ -149,7 +152,7 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        response = self.client.find_area(description, self.driver.accessibility_tree.to_xml())
+        response = self.client.find_area(description, self.driver.accessibility_tree)
         return Area(
             id=response["id"],
             description=response["explanation"],

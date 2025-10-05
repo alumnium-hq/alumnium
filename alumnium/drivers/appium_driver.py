@@ -8,7 +8,7 @@ from appium.webdriver.webelement import WebElement
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from ..accessibility import UIAutomator2AccessibiltyTree, XCUITestAccessibilityTree
+from ..accessibility import RawAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -36,13 +36,11 @@ class AppiumDriver(BaseDriver):
         self.hide_keyboard_after_typing = False
 
     @property
-    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
-        if self.driver.capabilities["automationName"] == "uiautomator2":
-            sleep(self.delay)
-            return UIAutomator2AccessibiltyTree(self.driver.page_source)
-        else:
-            sleep(self.delay)
-            return XCUITestAccessibilityTree(self.driver.page_source)
+    def accessibility_tree(self) -> RawAccessibilityTree:
+        sleep(self.delay)
+        raw_data = self.driver.page_source
+        automation_type = "uiautomator2" if self.driver.capabilities["automationName"] == "uiautomator2" else "xcuitest"
+        return RawAccessibilityTree(raw_data, automation_type)
 
     def click(self, id: int):
         self.find_element(id).click()
