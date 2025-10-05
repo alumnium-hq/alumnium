@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { BaseDriver } from './BaseDriver.js';
-import { ChromiumAccessibilityTree } from '../accessibility/ChromiumAccessibilityTree.js';
+import { RawAccessibilityTree } from '../accessibility/RawAccessibilityTree.js';
 import { Key } from './keys.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,14 +34,14 @@ export class SeleniumDriver extends BaseDriver {
     this.driver = driver;
   }
 
-  get accessibilityTree(): ChromiumAccessibilityTree {
+  get accessibilityTree(): RawAccessibilityTree {
     throw new Error('accessibilityTree getter is synchronous, use getAccessibilityTree() method instead');
   }
 
-  async getAccessibilityTree(): Promise<ChromiumAccessibilityTree> {
+  async getAccessibilityTree(): Promise<RawAccessibilityTree> {
     await this.waitForPageToLoad();
-    const axTree = await this.executeCdpCommand('Accessibility.getFullAXTree', {});
-    return new ChromiumAccessibilityTree(axTree);
+    const rawData = await this.executeCdpCommand('Accessibility.getFullAXTree', {});
+    return new RawAccessibilityTree(rawData, 'chromium');
   }
 
   async click(id: number): Promise<void> {

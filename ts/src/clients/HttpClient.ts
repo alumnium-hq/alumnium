@@ -2,6 +2,8 @@ import axios, { AxiosInstance } from 'axios';
 import { BaseTool } from '../tools/BaseTool.js';
 import { convertToolsToSchemas } from '../tools/toolToSchemaConverter.js';
 import { Model } from '../Model.js';
+import { RawAccessibilityTree } from '../accessibility/RawAccessibilityTree.js';
+import { AccessibilityElement } from '../accessibility/AccessibilityElement.js';
 
 export type Data = number | string | boolean | number[] | string[] | boolean[];
 
@@ -10,10 +12,19 @@ export class HttpClient {
   private sessionId: string | null = null;
   private client: AxiosInstance;
   private sessionPromise: Promise<void> | null = null;
+  private idMappings: Record<number, number> = {};
 
   constructor(baseUrl: string, private tools: Record<string, new (...args: any[]) => BaseTool>) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.client = axios.create({ timeout: 120000 });
+  }
+
+  elementById(id: number): AccessibilityElement {
+    if (!(id in this.idMappings)) {
+      throw new Error(`No element with id=${id}`);
+    }
+    const backendId = this.idMappings[id];
+    return new AccessibilityElement(backendId);
   }
 
   private async ensureSession(): Promise<void> {
@@ -43,12 +54,23 @@ export class HttpClient {
     }
   }
 
-  async planActions(goal: string, accessibilityTree: string): Promise<string[]> {
+  async planActions(goal: string, rawTree: RawAccessibilityTree): Promise<string[]> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/plans`,
-      { goal, accessibility_tree: accessibilityTree }
+      {
+        goal,
+        raw_data: rawTree.rawData,
+        automation_type: rawTree.automationType
+      }
     );
+    // Store ID mappings if provided
+    if (response.data.id_mappings) {
+      this.idMappings = {};
+      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+        this.idMappings[parseInt(key)] = value as number;
+      }
+    }
     return response.data.steps;
   }
 
@@ -65,18 +87,30 @@ export class HttpClient {
     await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}/examples`);
   }
 
-  async executeAction(goal: string, step: string, accessibilityTree: string): Promise<any[]> {
+  async executeAction(goal: string, step: string, rawTree: RawAccessibilityTree): Promise<any[]> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/steps`,
-      { goal, step, accessibility_tree: accessibilityTree }
+      {
+        goal,
+        step,
+        raw_data: rawTree.rawData,
+        automation_type: rawTree.automationType
+      }
     );
+    // Store ID mappings if provided
+    if (response.data.id_mappings) {
+      this.idMappings = {};
+      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+        this.idMappings[parseInt(key)] = value as number;
+      }
+    }
     return response.data.actions;
   }
 
   async retrieve(
     statement: string,
-    accessibilityTree: string,
+    rawTree: RawAccessibilityTree,
     title: string,
     url: string,
     screenshot?: string
@@ -86,30 +120,60 @@ export class HttpClient {
       `${this.baseUrl}/v1/sessions/${this.sessionId}/statements`,
       {
         statement,
-        accessibility_tree: accessibilityTree,
+        raw_data: rawTree.rawData,
+        automation_type: rawTree.automationType,
         title,
         url,
         screenshot: screenshot || null,
       }
     );
+    // Store ID mappings if provided
+    if (response.data.id_mappings) {
+      this.idMappings = {};
+      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+        this.idMappings[parseInt(key)] = value as number;
+      }
+    }
     return [response.data.explanation, response.data.result];
   }
 
-  async findArea(description: string, accessibilityTree: string): Promise<{ id: number; explanation: string }> {
+  async findArea(description: string, rawTree: RawAccessibilityTree): Promise<{ id: number; explanation: string }> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/areas`,
-      { description, accessibility_tree: accessibilityTree }
+      {
+        description,
+        raw_data: rawTree.rawData,
+        automation_type: rawTree.automationType
+      }
     );
+    // Store ID mappings if provided
+    if (response.data.id_mappings) {
+      this.idMappings = {};
+      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+        this.idMappings[parseInt(key)] = value as number;
+      }
+    }
     return { id: response.data.id, explanation: response.data.explanation };
   }
 
-  async findElement(description: string, accessibilityTree: string): Promise<any> {
+  async findElement(description: string, rawTree: RawAccessibilityTree): Promise<any> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/elements`,
-      { description, accessibility_tree: accessibilityTree }
+      {
+        description,
+        raw_data: rawTree.rawData,
+        automation_type: rawTree.automationType
+      }
     );
+    // Store ID mappings if provided
+    if (response.data.id_mappings) {
+      this.idMappings = {};
+      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+        this.idMappings[parseInt(key)] = value as number;
+      }
+    }
     return response.data.elements[0];
   }
 

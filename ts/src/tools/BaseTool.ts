@@ -1,5 +1,5 @@
 import { BaseDriver } from '../drivers/BaseDriver.js';
-import { BaseAccessibilityTree } from '../accessibility/BaseAccessibilityTree.js';
+import { HttpClient } from '../clients/HttpClient.js';
 
 export interface ToolCall {
   name: string;
@@ -12,7 +12,7 @@ export abstract class BaseTool {
   static async executeToolCall(
     toolCall: ToolCall,
     tools: Record<string, new (...args: any[]) => BaseTool>,
-    accessibilityTree: BaseAccessibilityTree,
+    client: HttpClient,
     driver: BaseDriver
   ): Promise<void> {
     const ToolClass = tools[toolCall.name];
@@ -25,13 +25,13 @@ export abstract class BaseTool {
     // Map accessibility tree IDs to backend DOM node IDs
     const args = toolCall.args;
     if ('id' in args) {
-      (tool as any).id = accessibilityTree.elementById(args.id).id;
+      (tool as any).id = client.elementById(args.id).id;
     }
     if ('from_id' in args) {
-      (tool as any).fromId = accessibilityTree.elementById(args.from_id).id;
+      (tool as any).fromId = client.elementById(args.from_id).id;
     }
     if ('to_id' in args) {
-      (tool as any).toId = accessibilityTree.elementById(args.to_id).id;
+      (tool as any).toId = client.elementById(args.to_id).id;
     }
 
     await tool.invoke(driver);

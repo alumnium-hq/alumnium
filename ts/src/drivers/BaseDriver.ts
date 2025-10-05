@@ -1,9 +1,9 @@
-import { BaseAccessibilityTree } from '../accessibility/BaseAccessibilityTree.js';
+import { RawAccessibilityTree } from '../accessibility/RawAccessibilityTree.js';
 import { Key } from './keys.js';
 
 export abstract class BaseDriver {
-  abstract get accessibilityTree(): BaseAccessibilityTree;
-  abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
+  abstract get accessibilityTree(): RawAccessibilityTree;
+  abstract getAccessibilityTree(): Promise<RawAccessibilityTree>;
   abstract click(id: number): void | Promise<void>;
   abstract dragAndDrop(fromId: number, toId: number): void | Promise<void>;
   abstract pressKey(key: Key): void | Promise<void>;
