@@ -24,15 +24,18 @@ export class Area {
   }
 
   async do(goal: string): Promise<void> {
-    const initialAccessibilityTree = await this.driver.getAccessibilityTree();
-    const steps = await this.client.planActions(goal, initialAccessibilityTree);
+    // Get full tree and filter it to this area
+    const fullTree = await this.driver.getAccessibilityTree();
+    const areaTree = fullTree.filterToArea(this.id);
+    const steps = await this.client.planActions(goal, areaTree);
 
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
 
-      // Use initial tree for first step, fresh tree for subsequent steps
-      const accessibilityTree = idx === 0 ? initialAccessibilityTree : await this.driver.getAccessibilityTree();
-      const actorResponse = await this.client.executeAction(goal, step, accessibilityTree);
+      // Get fresh tree and filter to area
+      const currentFullTree = await this.driver.getAccessibilityTree();
+      const currentAreaTree = currentFullTree.filterToArea(this.id);
+      const actorResponse = await this.client.executeAction(goal, step, currentAreaTree);
 
       // Execute tool calls - use client for element lookup
       for (const toolCall of actorResponse) {
@@ -43,10 +46,11 @@ export class Area {
 
   async check(statement: string, vision: boolean = false): Promise<string> {
     const screenshot = vision ? await this.driver.screenshot() : undefined;
-    const accessibilityTree = await this.driver.getAccessibilityTree();
+    const fullTree = await this.driver.getAccessibilityTree();
+    const areaTree = fullTree.filterToArea(this.id);
     const [explanation, value] = await this.client.retrieve(
       `Is the following true or false - ${statement}`,
-      accessibilityTree,
+      areaTree,
       await this.driver.title(),
       await this.driver.url(),
       screenshot
@@ -61,10 +65,11 @@ export class Area {
 
   async get(data: string, vision: boolean = false): Promise<Data> {
     const screenshot = vision ? await this.driver.screenshot() : undefined;
-    const accessibilityTree = await this.driver.getAccessibilityTree();
+    const fullTree = await this.driver.getAccessibilityTree();
+    const areaTree = fullTree.filterToArea(this.id);
     const [_, value] = await this.client.retrieve(
       data,
-      accessibilityTree,
+      areaTree,
       await this.driver.title(),
       await this.driver.url(),
       screenshot
@@ -74,8 +79,9 @@ export class Area {
   }
 
   async find(description: string): Promise<any> {
-    const accessibilityTree = await this.driver.getAccessibilityTree();
-    const response = await this.client.findElement(description, accessibilityTree);
+    const fullTree = await this.driver.getAccessibilityTree();
+    const areaTree = fullTree.filterToArea(this.id);
+    const response = await this.client.findElement(description, areaTree);
     const backendId = this.client.elementById(response.id).id;
     return this.driver.findElement(backendId);
   }

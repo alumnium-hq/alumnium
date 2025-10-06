@@ -51,18 +51,14 @@ describe('Table Tests', () => {
 
     let table1 = await al.area('example 1 table - return table element');
     const table1FirstNames = await table1.get('first names');
-    console.log('table1 first names:', table1FirstNames);
     assert.deepStrictEqual(table1FirstNames, ['John', 'Frank', 'Jason', 'Tim']);
     const table1LastNames = await table1.get('last names');
-    console.log('table1 last names:', table1LastNames);
     assert.deepStrictEqual(table1LastNames, ['Smith', 'Bach', 'Doe', 'Conway']);
 
     let table2 = await al.area('example 2 table - return table element');
     const table2FirstNames = await table2.get('first names');
-    console.log('table2 first names:', table2FirstNames);
     assert.deepStrictEqual(table2FirstNames, ['John', 'Frank', 'Jason', 'Tim']);
     const table2LastNames = await table2.get('last names');
-    console.log('table2 last names:', table2LastNames);
     assert.deepStrictEqual(table2LastNames, ['Smith', 'Bach', 'Doe', 'Conway']);
 
     await table1.do('sort by last name');

@@ -2,6 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(curl:*)",
+      "Bash(npm run build:*)",
       "Bash(npm test:*)",
       "Bash(poetry run behave:*)",
       "Bash(poetry run pytest:*)"
