@@ -1,5 +1,5 @@
-import { BaseTool } from './BaseTool.js';
-import { BaseDriver } from '../drivers/BaseDriver.js';
+import { BaseDriver } from "../drivers/BaseDriver.js";
+import { BaseTool } from "./BaseTool.js";
 
 export class NavigateBackTool extends BaseTool {
   static description = `Navigate back to the previous page/screen using the browser/app history.

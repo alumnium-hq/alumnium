@@ -9,10 +9,10 @@
       "path": "../ts"
     },
   ],
-  "settings": {},
-  "extensions": {
-    "recommendations": [
-      "ms-vscode.vscode-typescript-next"
-    ]
+  "settings": {
+    "[jsonc]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "vscode.json-language-features"
+    },
   }
 }

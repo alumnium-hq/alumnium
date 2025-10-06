@@ -1,8 +1,8 @@
-import { BaseTool } from './BaseTool.js';
-import { BaseDriver } from '../drivers/BaseDriver.js';
+import { BaseDriver } from "../drivers/BaseDriver.js";
+import { BaseTool } from "./BaseTool.js";
 
 export class ClickTool extends BaseTool {
-  static description = 'Click an element.';
+  static description = "Click an element.";
 
   id: number;
 

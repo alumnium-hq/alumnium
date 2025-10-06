@@ -1,21 +1,21 @@
-import { WebDriver } from "selenium-webdriver";
 import { Page } from "playwright";
+import { WebDriver } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
-import { SeleniumDriver } from "./drivers/SeleniumDriver.js";
-import { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
+import { Area } from "./Area.js";
+import { Cache } from "./Cache.js";
+import { Data, HttpClient } from "./clients/HttpClient.js";
 import { AppiumDriver } from "./drivers/AppiumDriver.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
-import { HttpClient, Data } from "./clients/HttpClient.js";
-import { Cache } from "./Cache.js";
-import { Area } from "./Area.js";
+import { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
+import { SeleniumDriver } from "./drivers/SeleniumDriver.js";
+import { Model } from "./Model.js";
 import { BaseTool, ToolCall } from "./tools/BaseTool.js";
 import { ClickTool } from "./tools/ClickTool.js";
-import { TypeTool } from "./tools/TypeTool.js";
-import { HoverTool } from "./tools/HoverTool.js";
-import { SelectTool } from "./tools/SelectTool.js";
-import { PressKeyTool } from "./tools/PressKeyTool.js";
 import { DragAndDropTool } from "./tools/DragAndDropTool.js";
-import { Model } from "./Model.js";
+import { HoverTool } from "./tools/HoverTool.js";
+import { PressKeyTool } from "./tools/PressKeyTool.js";
+import { SelectTool } from "./tools/SelectTool.js";
+import { TypeTool } from "./tools/TypeTool.js";
 
 export interface AlumniOptions {
   url?: string;

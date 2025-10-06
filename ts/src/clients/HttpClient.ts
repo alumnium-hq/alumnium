@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios, { AxiosInstance } from "axios";
+import { Model } from "../Model.js";
+import { AccessibilityElement } from "../accessibility/AccessibilityElement.js";
+import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
 import { BaseTool } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
-import { Model } from "../Model.js";
-import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
-import { AccessibilityElement } from "../accessibility/AccessibilityElement.js";
 
 export type Data = number | string | boolean | number[] | string[] | boolean[];
 

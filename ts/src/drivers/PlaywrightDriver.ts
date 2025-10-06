@@ -1,9 +1,9 @@
-import { Page, CDPSession } from "playwright";
 import * as fs from "fs";
 import * as path from "path";
+import { CDPSession, Page } from "playwright";
 import { fileURLToPath } from "url";
-import { BaseDriver } from "./BaseDriver.js";
 import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
+import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
 const __filename = fileURLToPath(import.meta.url);

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { BaseTool } from './BaseTool.js';
+import { BaseTool } from "./BaseTool.js";
 
 interface ToolSchema {
   type: string;
@@ -24,12 +24,12 @@ export function convertToolsToSchemas(
 
     // Extract parameter info from a sample instance
     const schema: ToolSchema = {
-      type: 'function',
+      type: "function",
       function: {
         name,
         description,
         parameters: {
-          type: 'object',
+          type: "object",
           properties: {},
           required: [],
         },
@@ -37,44 +37,45 @@ export function convertToolsToSchemas(
     };
 
     // Define properties based on tool type
-    if (name === 'ClickTool' || name === 'HoverTool') {
-       
+    if (name === "ClickTool" || name === "HoverTool") {
       schema.function.parameters.properties = {
-        id: { type: 'integer', description: 'Element identifier (ID)' },
+        id: { type: "integer", description: "Element identifier (ID)" },
       };
-       
-      schema.function.parameters.required = ['id'];
-    } else if (name === 'TypeTool') {
-       
+
+      schema.function.parameters.required = ["id"];
+    } else if (name === "TypeTool") {
       schema.function.parameters.properties = {
-        id: { type: 'integer', description: 'Element identifier (ID)' },
-        text: { type: 'string', description: 'Text to type into an element' },
+        id: { type: "integer", description: "Element identifier (ID)" },
+        text: { type: "string", description: "Text to type into an element" },
       };
-       
-      schema.function.parameters.required = ['id', 'text'];
-    } else if (name === 'SelectTool') {
-       
+
+      schema.function.parameters.required = ["id", "text"];
+    } else if (name === "SelectTool") {
       schema.function.parameters.properties = {
-        id: { type: 'integer', description: 'Element identifier (ID)' },
-        option: { type: 'string', description: 'Option to select' },
+        id: { type: "integer", description: "Element identifier (ID)" },
+        option: { type: "string", description: "Option to select" },
       };
-       
-      schema.function.parameters.required = ['id', 'option'];
-    } else if (name === 'PressKeyTool') {
-       
+
+      schema.function.parameters.required = ["id", "option"];
+    } else if (name === "PressKeyTool") {
       schema.function.parameters.properties = {
-        key: { type: 'string', description: 'Key to press.' },
+        key: { type: "string", description: "Key to press." },
       };
-       
-      schema.function.parameters.required = ['key'];
-    } else if (name === 'DragAndDropTool') {
-       
+
+      schema.function.parameters.required = ["key"];
+    } else if (name === "DragAndDropTool") {
       schema.function.parameters.properties = {
-        from_id: { type: 'integer', description: 'Identifier (ID) of element to drag' },
-        to_id: { type: 'integer', description: 'Identifier (ID) of element to drop onto' },
+        from_id: {
+          type: "integer",
+          description: "Identifier (ID) of element to drag",
+        },
+        to_id: {
+          type: "integer",
+          description: "Identifier (ID) of element to drop onto",
+        },
       };
-       
-      schema.function.parameters.required = ['from_id', 'to_id'];
+
+      schema.function.parameters.required = ["from_id", "to_id"];
     }
 
     return schema;

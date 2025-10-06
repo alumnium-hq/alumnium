@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Browser, ChainablePromiseElement } from "webdriverio";
 import { Key as SeleniumKey } from "selenium-webdriver";
+import type { Browser, ChainablePromiseElement } from "webdriverio";
 import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";

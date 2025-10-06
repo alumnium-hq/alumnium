@@ -1,7 +1,7 @@
 // @ts-check
 
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -15,6 +15,13 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['dist/', 'node_modules/', 'playwright-report/', 'test-results/', 'src/drivers/scripts/*.js', 'eslint.config.js'],
+    ignores: [
+      "dist/",
+      "node_modules/",
+      "playwright-report/",
+      "test-results/",
+      "src/drivers/scripts/*.js",
+      "eslint.config.js",
+    ],
   }
 );

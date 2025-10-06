@@ -1,8 +1,9 @@
-import { BaseTool } from './BaseTool.js';
-import { BaseDriver } from '../drivers/BaseDriver.js';
+import { BaseDriver } from "../drivers/BaseDriver.js";
+import { BaseTool } from "./BaseTool.js";
 
 export class SelectTool extends BaseTool {
-  static description = 'Selects an option in a dropdown. Only use this tool if the dropdown is a combobox.';
+  static description =
+    "Selects an option in a dropdown. Only use this tool if the dropdown is a combobox.";
 
   id: number;
   option: string;

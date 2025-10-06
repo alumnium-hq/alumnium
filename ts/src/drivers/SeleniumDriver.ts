@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  WebDriver,
-  WebElement,
-  By,
-  Key as SeleniumKey,
-} from "selenium-webdriver";
 import * as fs from "fs";
 import * as path from "path";
+import {
+  By,
+  Key as SeleniumKey,
+  WebDriver,
+  WebElement,
+} from "selenium-webdriver";
 import { fileURLToPath } from "url";
-import { BaseDriver } from "./BaseDriver.js";
 import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
+import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -195,7 +195,7 @@ export class SeleniumDriver extends BaseDriver {
     }
 
     throw new Error(
-      `CDP commands are not supported by this driver. ` +
+      "CDP commands are not supported by this driver. " +
         `Available methods: ${Object.getOwnPropertyNames(
           Object.getPrototypeOf(driver)
         ).join(", ")}`
