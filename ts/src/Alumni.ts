@@ -1,7 +1,9 @@
 import { WebDriver } from 'selenium-webdriver';
 import { Page } from 'playwright';
+import type { Browser } from 'webdriverio';
 import { SeleniumDriver } from './drivers/SeleniumDriver.js';
 import { PlaywrightDriver } from './drivers/PlaywrightDriver.js';
+import { AppiumDriver } from './drivers/AppiumDriver.js';
 import { BaseDriver } from './drivers/BaseDriver.js';
 import { HttpClient, Data } from './clients/HttpClient.js';
 import { Cache } from './Cache.js';
@@ -29,15 +31,18 @@ export class Alumni {
   private url: string;
   private model: Model;
 
-  constructor(driver: WebDriver | Page, options: AlumniOptions = {}) {
+  constructor(driver: WebDriver | Page | Browser, options: AlumniOptions = {}) {
     this.url = options.url || 'http://localhost:8013';
     this.model = options.model || Model.current;
 
-    // Wrap driver
+    // Wrap driver or use directly if already wrapped
     if (driver instanceof WebDriver) {
       this.driver = new SeleniumDriver(driver);
     } else if ((driver as Page).context) {
       this.driver = new PlaywrightDriver(driver as Page);
+    } else if ((driver as Browser).capabilities && (driver as Browser).getPageSource) {
+      // WebdriverIO Browser (Appium)
+      this.driver = new AppiumDriver(driver as Browser);
     } else {
       throw new Error('Unsupported driver type');
     }

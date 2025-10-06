@@ -4,6 +4,7 @@ export { Area } from './Area.js';
 export { Cache } from './Cache.js';
 export { SeleniumDriver } from './drivers/SeleniumDriver.js';
 export { PlaywrightDriver } from './drivers/PlaywrightDriver.js';
+export { AppiumDriver } from './drivers/AppiumDriver.js';
 export { Key } from './drivers/keys.js';
 export type { Data } from './clients/HttpClient.js';
 export { Model, Provider, ModelName } from './Model.js';
