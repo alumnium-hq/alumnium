@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc",
     "test": "node --loader ts-node/esm --no-warnings node_modules/.bin/mocha tests/**/*.test.ts",
+    "lint": "eslint .",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -29,12 +30,16 @@
     "webdriverio": "^9.2.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.37.0",
     "@playwright/test": "^1.55.1",
+    "@types/eslint__js": "^8.42.3",
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.11.19",
     "@types/selenium-webdriver": "^4.1.21",
+    "eslint": "^9.37.0",
     "mocha": "^10.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.45.0"
   }
 }

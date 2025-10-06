@@ -20,12 +20,14 @@ import { Model } from './Model.js';
 export interface AlumniOptions {
   url?: string;
   model?: Model;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extraTools?: (new (...args: any[]) => BaseTool)[];
 }
 
 export class Alumni {
   public driver: BaseDriver;
   private client: HttpClient;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private tools: Record<string, new (...args: any[]) => BaseTool>;
   public cache: Cache;
   private url: string;
@@ -74,7 +76,7 @@ export class Alumni {
 
   async quit(): Promise<void> {
     await this.client.quit();
-    this.driver.quit();
+    void this.driver.quit();
   }
 
   async do(goal: string): Promise<void> {
@@ -116,7 +118,8 @@ export class Alumni {
   async get(data: string, vision: boolean = false): Promise<Data> {
     const screenshot = vision ? await this.driver.screenshot() : undefined;
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    const [_, value] = await this.client.retrieve(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_explanation, value] = await this.client.retrieve(
       data,
       accessibilityTree,
       await this.driver.title(),
@@ -127,10 +130,12 @@ export class Alumni {
     return value;
   }
 
-  async find(description: string): Promise<any> {
+  async find(description: string): Promise<unknown> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const response = await this.client.findElement(description, accessibilityTree);
-    const backendId = this.client.elementById(response.id).id;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const backendId = this.client.elementById(response.id as number).id;
     return this.driver.findElement(backendId);
   }
 

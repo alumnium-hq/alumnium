@@ -1,9 +1,8 @@
-/// <reference path="./globals.d.ts" />
-
 import { Alumni } from '../src/Alumni.js';
 import { NavigateBackTool } from '../src/tools/NavigateBackTool.js';
 import { Model, Provider } from '../src/Model.js';
 import assert from 'assert';
+import './globals.js';
 
 describe('Navigation Tests', () => {
   const shouldSkip = () => {

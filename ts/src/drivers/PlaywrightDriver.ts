@@ -35,7 +35,7 @@ export class PlaywrightDriver extends BaseDriver {
   constructor(page: Page) {
     super();
     this.page = page;
-    this.initCDPSession();
+    void this.initCDPSession();
   }
 
   private async initCDPSession(): Promise<void> {
@@ -54,6 +54,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
     const tagName = (await element.evaluate((el: any) => el.tagName)) as string;
 
     // Llama often attempts to click options, not select them.
@@ -102,6 +103,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   async select(id: number, option: string): Promise<void> {
     const element = await this.findElement(id);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
     const tagName = (await element.evaluate((el: any) => el.tagName)) as string;
 
     // Anthropic chooses to select using option ID, not select ID
@@ -121,8 +123,8 @@ export class PlaywrightDriver extends BaseDriver {
     await element.fill(text);
   }
 
-  async url(): Promise<string> {
-    return this.page.url();
+  url(): Promise<string> {
+    return Promise.resolve(this.page.url());
   }
 
   async findElement(id: number) {
@@ -147,9 +149,10 @@ export class PlaywrightDriver extends BaseDriver {
     console.log('Waiting for page to finish loading:');
     try {
       await this.page.evaluate(`function() { ${PlaywrightDriver.WAITER_SCRIPT} }`);
-      const error = await this.page.evaluate(PlaywrightDriver.WAIT_FOR_SCRIPT);
+      const error: unknown = await this.page.evaluate(PlaywrightDriver.WAIT_FOR_SCRIPT);
       if (error) {
-        console.log(`  <- Failed to wait for page to load: ${error}`);
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+        console.log(`  <- Failed to wait for page to load: ${String(error)}`);
       } else {
         console.log('  <- Page finished loading');
       }

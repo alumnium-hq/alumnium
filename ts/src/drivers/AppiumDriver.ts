@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Browser, ChainablePromiseElement } from 'webdriverio';
 import { Key as SeleniumKey } from 'selenium-webdriver';
 import { RawAccessibilityTree } from '../accessibility/RawAccessibilityTree.js';
@@ -82,11 +86,13 @@ export class AppiumDriver extends BaseDriver {
     return await this.driver.takeScreenshot();
   }
 
-  async select(id: number, option: string): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async select(_id: number, _option: string): Promise<void> {
     // TODO: Implement select functionality and the tool
   }
 
-  async swipe(id: number): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async swipe(_id: number): Promise<void> {
     // TODO: Implement swipe functionality and the tool
   }
 
@@ -165,6 +171,7 @@ export class AppiumDriver extends BaseDriver {
   private getElementFromTree(tree: RawAccessibilityTree, id: number): any {
     // Parse XML and find element by ID
     // This is a simplified implementation - you may need to install an XML parser
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const DOMParser = require('xmldom').DOMParser;
     const doc = new DOMParser().parseFromString(tree.rawData, 'text/xml');
 
@@ -201,7 +208,8 @@ export class AppiumDriver extends BaseDriver {
     return findElement(doc.documentElement);
   }
 
-  async hover(id: number): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
+  async hover(_id: number): Promise<void> {
     // Hover is not typically supported in mobile contexts
     throw new Error('Hover is not supported by AppiumDriver');
   }
@@ -216,7 +224,9 @@ export class AppiumDriver extends BaseDriver {
     for (const context of contexts) {
       const contextStr = typeof context === 'string' ? context : (context as any).id;
       if (contextStr.includes('WEBVIEW')) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         await this.driver.switchContext(contextStr);
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         return { original: String(currentContext), webview: contextStr };
       }
     }

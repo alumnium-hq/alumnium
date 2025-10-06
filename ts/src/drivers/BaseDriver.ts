@@ -14,6 +14,7 @@ export abstract class BaseDriver {
   abstract title(): string | Promise<string>;
   abstract type(id: number, text: string): void | Promise<void>;
   abstract url(): string | Promise<string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
   abstract findElement(id: number): any | Promise<any>;
   abstract hover(id: number): void | Promise<void>;
 }

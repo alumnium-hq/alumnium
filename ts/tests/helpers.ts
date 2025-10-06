@@ -63,7 +63,9 @@ export const mochaHooks = {
     }
 
     // Make available globally
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     (global as any).driver = driver;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     (global as any).al = al;
   },
 

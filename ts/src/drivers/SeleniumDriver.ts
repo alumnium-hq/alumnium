@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { WebDriver, WebElement, By, Key as SeleniumKey } from 'selenium-webdriver';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -40,6 +41,7 @@ export class SeleniumDriver extends BaseDriver {
 
   async getAccessibilityTree(): Promise<RawAccessibilityTree> {
     await this.waitForPageToLoad();
+     
     const rawData = await this.executeCdpCommand('Accessibility.getFullAXTree', {});
     return new RawAccessibilityTree(rawData, 'chromium');
   }
@@ -74,7 +76,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   quit(): void {
-    this.driver.quit();
+    void this.driver.quit();
   }
 
   async back(): Promise<void> {
@@ -124,12 +126,15 @@ export class SeleniumDriver extends BaseDriver {
     await this.executeCdpCommand('DOM.enable', {});
     await this.executeCdpCommand('DOM.getFlattenedDocument', {});
 
+     
     const nodeIds = await this.executeCdpCommand('DOM.pushNodesByBackendIdsToFrontend', {
       backendNodeIds: [id],
     });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const nodeId = nodeIds.nodeIds[0];
 
     // Set temporary attribute to locate element
+     
     await this.executeCdpCommand('DOM.setAttributeValue', {
       nodeId,
       name: 'data-alumnium-id',
@@ -139,6 +144,7 @@ export class SeleniumDriver extends BaseDriver {
     const element = await this.driver.findElement(By.css(`[data-alumnium-id='${id}']`));
 
     // Remove temporary attribute
+     
     await this.executeCdpCommand('DOM.removeAttribute', {
       nodeId,
       name: 'data-alumnium-id',
@@ -147,22 +153,30 @@ export class SeleniumDriver extends BaseDriver {
     return element;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async executeCdpCommand(cmd: string, params: any): Promise<any> {
     // Cast driver to any to access CDP methods
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const driver = this.driver as any;
 
     // Try sendAndGetDevToolsCommand first (ChromeDriver - selenium 4.x) - returns result
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (typeof driver.sendAndGetDevToolsCommand === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       return await driver.sendAndGetDevToolsCommand(cmd, params);
     }
 
     // Try executeCdpCmd (Python-style method name)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (typeof driver.executeCdpCmd === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       return await driver.executeCdpCmd(cmd, params);
     }
 
     // Try sendDevToolsCommand (doesn't return result, but fallback)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (typeof driver.sendDevToolsCommand === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       return await driver.sendDevToolsCommand(cmd, params);
     }
 
@@ -175,20 +189,24 @@ export class SeleniumDriver extends BaseDriver {
   private async waitForPageToLoad(): Promise<void> {
     try {
       await this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
-      const error = await this.driver.executeAsyncScript(SeleniumDriver.WAIT_FOR_SCRIPT);
+      const error: unknown = await this.driver.executeAsyncScript(SeleniumDriver.WAIT_FOR_SCRIPT);
       if (error) {
-        console.warn(`Failed to wait for page to load: ${error}`);
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+        console.warn(`Failed to wait for page to load: ${String(error)}`);
       }
-    } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_e) {
       // Retry once on failure
       try {
         await this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
-        const error = await this.driver.executeAsyncScript(SeleniumDriver.WAIT_FOR_SCRIPT);
+        const error: unknown = await this.driver.executeAsyncScript(SeleniumDriver.WAIT_FOR_SCRIPT);
         if (error) {
-          console.warn(`Failed to wait for page to load: ${error}`);
+          // eslint-disable-next-line @typescript-eslint/no-base-to-string
+          console.warn(`Failed to wait for page to load: ${String(error)}`);
         }
-      } catch (retryError) {
-        console.warn(`Failed to wait for page to load after retry: ${retryError}`);
+      } catch (retryError: unknown) {
+         
+        console.warn(`Failed to wait for page to load after retry: ${String(retryError)}`);
       }
     }
   }

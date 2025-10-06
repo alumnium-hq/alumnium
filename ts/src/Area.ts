@@ -6,6 +6,7 @@ export class Area {
   public id: number;
   public description: string;
   private driver: BaseDriver;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private tools: Record<string, new (...args: any[]) => BaseTool>;
   private client: HttpClient;
 
@@ -13,6 +14,7 @@ export class Area {
     id: number,
     description: string,
     driver: BaseDriver,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tools: Record<string, new (...args: any[]) => BaseTool>,
     client: HttpClient
   ) {
@@ -67,7 +69,8 @@ export class Area {
     const screenshot = vision ? await this.driver.screenshot() : undefined;
     const fullTree = await this.driver.getAccessibilityTree();
     const areaTree = fullTree.filterToArea(this.id);
-    const [_, value] = await this.client.retrieve(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_explanation, value] = await this.client.retrieve(
       data,
       areaTree,
       await this.driver.title(),
@@ -78,11 +81,13 @@ export class Area {
     return value;
   }
 
-  async find(description: string): Promise<any> {
+  async find(description: string): Promise<unknown> {
     const fullTree = await this.driver.getAccessibilityTree();
     const areaTree = fullTree.filterToArea(this.id);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const response = await this.client.findElement(description, areaTree);
-    const backendId = this.client.elementById(response.id).id;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const backendId = this.client.elementById(response.id as number).id;
     return this.driver.findElement(backendId);
   }
 }

@@ -1,6 +1,5 @@
-/// <reference path="./globals.d.ts" />
-
 import assert from 'assert';
+import './globals.js';
 
 describe('Calculator Tests', () => {
   before(async () => {

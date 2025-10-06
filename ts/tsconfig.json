@@ -20,6 +20,6 @@
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "tests/**/*", "e2e/**/*", "*.ts"],
+  "exclude": ["node_modules", "dist", "src/drivers/scripts/*.js"]
 }

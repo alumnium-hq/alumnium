@@ -1,7 +1,6 @@
-/// <reference path="./globals.d.ts" />
-
 import { Model, Provider } from '../src/Model.js';
 import assert from 'assert';
+import './globals.js';
 
 describe('Table Tests', () => {
   before(async () => {

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios, { AxiosInstance } from 'axios';
 import { BaseTool } from '../tools/BaseTool.js';
 import { convertToolsToSchemas } from '../tools/toolToSchemaConverter.js';
@@ -14,6 +16,7 @@ export class HttpClient {
   private sessionPromise: Promise<void> | null = null;
   private idMappings: Record<number, number> = {};
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(baseUrl: string, private tools: Record<string, new (...args: any[]) => BaseTool>) {
     this.baseUrl = baseUrl.replace(/\/$/, '');
     this.client = axios.create({ timeout: 120000 });
@@ -40,6 +43,7 @@ export class HttpClient {
           name: Model.current.name,
           tools: toolSchemas,
         });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.sessionId = response.data.session_id;
       })();
     }
@@ -65,13 +69,18 @@ export class HttpClient {
       }
     );
     // Store ID mappings if provided
-    if (response.data.id_mappings) {
+     
+    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (responseData.id_mappings) {
       this.idMappings = {};
-      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      for (const [key, value] of Object.entries(responseData.id_mappings)) {
         this.idMappings[parseInt(key)] = value as number;
       }
     }
-    return response.data.steps;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return responseData.steps;
   }
 
   async addExample(goal: string, actions: string[]): Promise<void> {
@@ -87,6 +96,7 @@ export class HttpClient {
     await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}/examples`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async executeAction(goal: string, step: string, rawTree: RawAccessibilityTree): Promise<any[]> {
     await this.ensureSession();
     const response = await this.client.post(
@@ -99,13 +109,18 @@ export class HttpClient {
       }
     );
     // Store ID mappings if provided
-    if (response.data.id_mappings) {
+     
+    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (responseData.id_mappings) {
       this.idMappings = {};
-      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      for (const [key, value] of Object.entries(responseData.id_mappings)) {
         this.idMappings[parseInt(key)] = value as number;
       }
     }
-    return response.data.actions;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return responseData.actions;
   }
 
   async retrieve(
@@ -128,13 +143,18 @@ export class HttpClient {
       }
     );
     // Store ID mappings if provided
-    if (response.data.id_mappings) {
+     
+    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (responseData.id_mappings) {
       this.idMappings = {};
-      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      for (const [key, value] of Object.entries(responseData.id_mappings)) {
         this.idMappings[parseInt(key)] = value as number;
       }
     }
-    return [response.data.explanation, response.data.result];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return [responseData.explanation, responseData.result];
   }
 
   async findArea(description: string, rawTree: RawAccessibilityTree): Promise<{ id: number; explanation: string }> {
@@ -148,15 +168,21 @@ export class HttpClient {
       }
     );
     // Store ID mappings if provided
-    if (response.data.id_mappings) {
+     
+    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (responseData.id_mappings) {
       this.idMappings = {};
-      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      for (const [key, value] of Object.entries(responseData.id_mappings)) {
         this.idMappings[parseInt(key)] = value as number;
       }
     }
-    return { id: response.data.id, explanation: response.data.explanation };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return { id: responseData.id, explanation: responseData.explanation };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async findElement(description: string, rawTree: RawAccessibilityTree): Promise<any> {
     await this.ensureSession();
     const response = await this.client.post(
@@ -168,13 +194,18 @@ export class HttpClient {
       }
     );
     // Store ID mappings if provided
-    if (response.data.id_mappings) {
+     
+    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (responseData.id_mappings) {
       this.idMappings = {};
-      for (const [key, value] of Object.entries(response.data.id_mappings)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+      for (const [key, value] of Object.entries(responseData.id_mappings)) {
         this.idMappings[parseInt(key)] = value as number;
       }
     }
-    return response.data.elements[0];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return responseData.elements[0];
   }
 
   async saveCache(): Promise<void> {
