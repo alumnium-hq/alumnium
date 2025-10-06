@@ -1,0 +1,4 @@
+{
+  "require": ["tests/helpers.ts"],
+  "timeout": 60000
+}

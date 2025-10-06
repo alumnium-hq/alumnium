@@ -1,41 +1,8 @@
-import { Builder, WebDriver } from 'selenium-webdriver';
-import { Options } from 'selenium-webdriver/chrome.js';
-import { Alumni } from '../src/Alumni.js';
+/// <reference path="./globals.d.ts" />
+
 import assert from 'assert';
 
 describe('Calculator Tests', () => {
-  let driver: WebDriver;
-  let al: Alumni;
-
-  before(async () => {
-    const options = new Options();
-    options.addArguments('--disable-blink-features=AutomationControlled');
-    options.setUserPreferences({
-      credentials_enable_service: false,
-      profile: {
-        password_manager_enabled: false,
-        password_manager_leak_detection: false,
-      },
-    });
-
-    driver = await new Builder()
-      .forBrowser('chrome')
-      .setChromeOptions(options)
-      .build();
-
-    al = new Alumni(driver, {
-      url: 'http://localhost:8013',
-    });
-  });
-
-  afterEach(async function() {
-    if (this.currentTest?.state === 'failed') {
-      await al.cache?.discard();
-    } else {
-      await al.cache?.save();
-    }
-  });
-
   before(async () => {
     // Learn example for division operator mapping
     await al.learn('4 / 2 =', [
@@ -48,7 +15,6 @@ describe('Calculator Tests', () => {
 
   after(async () => {
     await al.clearLearnExamples();
-    await al.quit();
   });
 
   it('addition', async () => {
