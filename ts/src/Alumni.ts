@@ -16,6 +16,7 @@ import { Model } from './Model.js';
 export interface AlumniOptions {
   url?: string;
   model?: Model;
+  extraTools?: (new (...args: any[]) => BaseTool)[];
 }
 
 export class Alumni {
@@ -46,6 +47,13 @@ export class Alumni {
       PressKeyTool,
       DragAndDropTool,
     };
+
+    // Add extra tools if provided
+    if (options.extraTools) {
+      for (const tool of options.extraTools) {
+        this.tools[tool.name] = tool;
+      }
+    }
 
     // Initialize HTTP client
     this.client = new HttpClient(this.url, this.tools);

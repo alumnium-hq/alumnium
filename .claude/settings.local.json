@@ -1,9 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(poetry run behave:*)",
-      "Bash(poetry run pytest:*)",
       "Bash(curl:*)",
+      "Bash(npm test:*)",
+      "Bash(poetry run behave:*)",
+      "Bash(poetry run pytest:*)"
     ],
     "deny": [],
     "ask": []

@@ -6,3 +6,4 @@ export { SeleniumDriver } from './drivers/SeleniumDriver.js';
 export { Key } from './drivers/keys.js';
 export type { Data } from './clients/HttpClient.js';
 export { Model, Provider, ModelName } from './Model.js';
+export { NavigateBackTool } from './tools/NavigateBackTool.js';
