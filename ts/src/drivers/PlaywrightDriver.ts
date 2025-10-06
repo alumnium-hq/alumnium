@@ -1,0 +1,165 @@
+import { Page, CDPSession } from 'playwright';
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { BaseDriver } from './BaseDriver.js';
+import { RawAccessibilityTree } from '../accessibility/RawAccessibilityTree.js';
+import { Key } from './keys.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export class PlaywrightDriver extends BaseDriver {
+  private static CONTEXT_WAS_DESTROYED_ERROR = 'Execution context was destroyed';
+
+  private static WAITER_SCRIPT = fs.readFileSync(
+    path.join(__dirname, 'scripts/waiter.js'),
+    'utf8'
+  );
+  private static WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${fs.readFileSync(
+    path.join(__dirname, 'scripts/waitFor.js'),
+    'utf8'
+  )} })`;
+
+  private client!: CDPSession;
+  private page: Page;
+  public supportedTools: Set<string> = new Set([
+    'ClickTool',
+    'DragAndDropTool',
+    'HoverTool',
+    'PressKeyTool',
+    'SelectTool',
+    'TypeTool',
+  ]);
+
+  constructor(page: Page) {
+    super();
+    this.page = page;
+    this.initCDPSession();
+  }
+
+  private async initCDPSession(): Promise<void> {
+    this.client = await this.page.context().newCDPSession(this.page);
+  }
+
+  get accessibilityTree(): RawAccessibilityTree {
+    throw new Error('accessibilityTree getter is synchronous, use getAccessibilityTree() method instead');
+  }
+
+  async getAccessibilityTree(): Promise<RawAccessibilityTree> {
+    await this.waitForPageToLoad();
+    const rawData = await this.client.send('Accessibility.getFullAXTree');
+    return new RawAccessibilityTree(rawData, 'chromium');
+  }
+
+  async click(id: number): Promise<void> {
+    const element = await this.findElement(id);
+    const tagName = (await element.evaluate((el: any) => el.tagName)) as string;
+
+    // Llama often attempts to click options, not select them.
+    if (tagName.toLowerCase() === 'option') {
+      const option = await element.textContent();
+      await element.locator('xpath=.//parent::select').selectOption(option || '');
+    } else {
+      await element.click();
+    }
+  }
+
+  async dragAndDrop(fromId: number, toId: number): Promise<void> {
+    const fromElement = await this.findElement(fromId);
+    const toElement = await this.findElement(toId);
+    await fromElement.dragTo(toElement);
+  }
+
+  async hover(id: number): Promise<void> {
+    const element = await this.findElement(id);
+    await element.hover();
+  }
+
+  async pressKey(key: Key): Promise<void> {
+    const keyMap: Record<Key, string> = {
+      [Key.BACKSPACE]: 'Backspace',
+      [Key.ENTER]: 'Enter',
+      [Key.ESCAPE]: 'Escape',
+      [Key.TAB]: 'Tab',
+    };
+
+    await this.page.keyboard.press(keyMap[key]);
+  }
+
+  async quit(): Promise<void> {
+    await this.page.close();
+  }
+
+  async back(): Promise<void> {
+    await this.page.goBack();
+  }
+
+  async screenshot(): Promise<string> {
+    const buffer = await this.page.screenshot();
+    return buffer.toString('base64');
+  }
+
+  async select(id: number, option: string): Promise<void> {
+    const element = await this.findElement(id);
+    const tagName = (await element.evaluate((el: any) => el.tagName)) as string;
+
+    // Anthropic chooses to select using option ID, not select ID
+    if (tagName.toLowerCase() === 'option') {
+      await element.locator('xpath=.//parent::select').selectOption(option);
+    } else {
+      await element.selectOption(option);
+    }
+  }
+
+  async title(): Promise<string> {
+    return await this.page.title();
+  }
+
+  async type(id: number, text: string): Promise<void> {
+    const element = await this.findElement(id);
+    await element.fill(text);
+  }
+
+  async url(): Promise<string> {
+    return this.page.url();
+  }
+
+  async findElement(id: number) {
+    // Beware!
+    await this.client.send('DOM.enable');
+    await this.client.send('DOM.getFlattenedDocument');
+    const nodeIds = await this.client.send('DOM.pushNodesByBackendIdsToFrontend', {
+      backendNodeIds: [id],
+    });
+    const nodeId = nodeIds.nodeIds[0];
+    await this.client.send('DOM.setAttributeValue', {
+      nodeId,
+      name: 'data-alumnium-id',
+      value: String(id),
+    });
+    // TODO: We need to remove the attribute after we are done with the element,
+    // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
+    return this.page.locator(`css=[data-alumnium-id='${id}']`);
+  }
+
+  private async waitForPageToLoad(): Promise<void> {
+    console.log('Waiting for page to finish loading:');
+    try {
+      await this.page.evaluate(`function() { ${PlaywrightDriver.WAITER_SCRIPT} }`);
+      const error = await this.page.evaluate(PlaywrightDriver.WAIT_FOR_SCRIPT);
+      if (error) {
+        console.log(`  <- Failed to wait for page to load: ${error}`);
+      } else {
+        console.log('  <- Page finished loading');
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR)) {
+        console.log('  <- Page context has changed, retrying');
+        await this.waitForPageToLoad();
+      } else {
+        throw error;
+      }
+    }
+  }
+}

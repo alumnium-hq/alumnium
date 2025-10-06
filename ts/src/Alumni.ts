@@ -1,5 +1,7 @@
 import { WebDriver } from 'selenium-webdriver';
+import { Page } from 'playwright';
 import { SeleniumDriver } from './drivers/SeleniumDriver.js';
+import { PlaywrightDriver } from './drivers/PlaywrightDriver.js';
 import { BaseDriver } from './drivers/BaseDriver.js';
 import { HttpClient, Data } from './clients/HttpClient.js';
 import { Cache } from './Cache.js';
@@ -27,13 +29,15 @@ export class Alumni {
   private url: string;
   private model: Model;
 
-  constructor(driver: WebDriver, options: AlumniOptions = {}) {
+  constructor(driver: WebDriver | Page, options: AlumniOptions = {}) {
     this.url = options.url || 'http://localhost:8013';
     this.model = options.model || Model.current;
 
     // Wrap driver
     if (driver instanceof WebDriver) {
       this.driver = new SeleniumDriver(driver);
+    } else if ((driver as Page).context) {
+      this.driver = new PlaywrightDriver(driver as Page);
     } else {
       throw new Error('Unsupported driver type');
     }

@@ -18,7 +18,6 @@ logger = get_logger(__name__)
 
 
 class PlaywrightDriver(BaseDriver):
-    NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
     with open(Path(__file__).parent / "scripts/waiter.js") as f:
