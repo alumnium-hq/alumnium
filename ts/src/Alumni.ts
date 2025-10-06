@@ -1,21 +1,21 @@
-import { WebDriver } from 'selenium-webdriver';
-import { Page } from 'playwright';
-import type { Browser } from 'webdriverio';
-import { SeleniumDriver } from './drivers/SeleniumDriver.js';
-import { PlaywrightDriver } from './drivers/PlaywrightDriver.js';
-import { AppiumDriver } from './drivers/AppiumDriver.js';
-import { BaseDriver } from './drivers/BaseDriver.js';
-import { HttpClient, Data } from './clients/HttpClient.js';
-import { Cache } from './Cache.js';
-import { Area } from './Area.js';
-import { BaseTool, ToolCall } from './tools/BaseTool.js';
-import { ClickTool } from './tools/ClickTool.js';
-import { TypeTool } from './tools/TypeTool.js';
-import { HoverTool } from './tools/HoverTool.js';
-import { SelectTool } from './tools/SelectTool.js';
-import { PressKeyTool } from './tools/PressKeyTool.js';
-import { DragAndDropTool } from './tools/DragAndDropTool.js';
-import { Model } from './Model.js';
+import { WebDriver } from "selenium-webdriver";
+import { Page } from "playwright";
+import type { Browser } from "webdriverio";
+import { SeleniumDriver } from "./drivers/SeleniumDriver.js";
+import { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
+import { AppiumDriver } from "./drivers/AppiumDriver.js";
+import { BaseDriver } from "./drivers/BaseDriver.js";
+import { HttpClient, Data } from "./clients/HttpClient.js";
+import { Cache } from "./Cache.js";
+import { Area } from "./Area.js";
+import { BaseTool, ToolCall } from "./tools/BaseTool.js";
+import { ClickTool } from "./tools/ClickTool.js";
+import { TypeTool } from "./tools/TypeTool.js";
+import { HoverTool } from "./tools/HoverTool.js";
+import { SelectTool } from "./tools/SelectTool.js";
+import { PressKeyTool } from "./tools/PressKeyTool.js";
+import { DragAndDropTool } from "./tools/DragAndDropTool.js";
+import { Model } from "./Model.js";
 
 export interface AlumniOptions {
   url?: string;
@@ -34,7 +34,7 @@ export class Alumni {
   private model: Model;
 
   constructor(driver: WebDriver | Page | Browser, options: AlumniOptions = {}) {
-    this.url = options.url || 'http://localhost:8013';
+    this.url = options.url || "http://localhost:8013";
     this.model = options.model || Model.current;
 
     // Wrap driver or use directly if already wrapped
@@ -42,11 +42,14 @@ export class Alumni {
       this.driver = new SeleniumDriver(driver);
     } else if ((driver as Page).context) {
       this.driver = new PlaywrightDriver(driver as Page);
-    } else if ((driver as Browser).capabilities && (driver as Browser).getPageSource) {
+    } else if (
+      (driver as Browser).capabilities &&
+      (driver as Browser).getPageSource
+    ) {
       // WebdriverIO Browser (Appium)
       this.driver = new AppiumDriver(driver as Browser);
     } else {
-      throw new Error('Unsupported driver type');
+      throw new Error("Unsupported driver type");
     }
 
     // Initialize tools
@@ -87,12 +90,24 @@ export class Alumni {
       const step = steps[idx];
 
       // Use initial tree for first step, fresh tree for subsequent steps
-      const accessibilityTree = idx === 0 ? initialAccessibilityTree : await this.driver.getAccessibilityTree();
-      const actorResponse = await this.client.executeAction(goal, step, accessibilityTree);
+      const accessibilityTree =
+        idx === 0
+          ? initialAccessibilityTree
+          : await this.driver.getAccessibilityTree();
+      const actorResponse = await this.client.executeAction(
+        goal,
+        step,
+        accessibilityTree
+      );
 
       // Execute tool calls - use client for element lookup
       for (const toolCall of actorResponse) {
-        await BaseTool.executeToolCall(toolCall as ToolCall, this.tools, this.client, this.driver);
+        await BaseTool.executeToolCall(
+          toolCall as ToolCall,
+          this.tools,
+          this.client,
+          this.driver
+        );
       }
     }
   }
@@ -133,7 +148,10 @@ export class Alumni {
   async find(description: string): Promise<unknown> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const response = await this.client.findElement(description, accessibilityTree);
+    const response = await this.client.findElement(
+      description,
+      accessibilityTree
+    );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const backendId = this.client.elementById(response.id as number).id;
     return this.driver.findElement(backendId);
@@ -142,7 +160,13 @@ export class Alumni {
   async area(description: string): Promise<Area> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findArea(description, accessibilityTree);
-    return new Area(response.id, response.explanation, this.driver, this.tools, this.client);
+    return new Area(
+      response.id,
+      response.explanation,
+      this.driver,
+      this.tools,
+      this.client
+    );
   }
 
   async learn(goal: string, actions: string[]): Promise<void> {

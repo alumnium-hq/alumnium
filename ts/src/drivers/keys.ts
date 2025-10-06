@@ -1,6 +1,6 @@
 export enum Key {
-  BACKSPACE = 'Backspace',
-  ENTER = 'Enter',
-  ESCAPE = 'Escape',
-  TAB = 'Tab',
+  BACKSPACE = "Backspace",
+  ENTER = "Enter",
+  ESCAPE = "Escape",
+  TAB = "Tab",
 }

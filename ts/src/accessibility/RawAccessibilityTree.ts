@@ -5,10 +5,13 @@
 export class RawAccessibilityTree {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public rawData: any;
-  public automationType: 'chromium' | 'xcuitest' | 'uiautomator2';
+  public automationType: "chromium" | "xcuitest" | "uiautomator2";
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(rawData: any, automationType: 'chromium' | 'xcuitest' | 'uiautomator2') {
+  constructor(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    rawData: any,
+    automationType: "chromium" | "xcuitest" | "uiautomator2"
+  ) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.rawData = rawData;
     this.automationType = automationType;
@@ -21,11 +24,13 @@ export class RawAccessibilityTree {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let filteredData: any;
 
-    if (this.automationType === 'chromium') {
+    if (this.automationType === "chromium") {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       filteredData = this._filterChromiumTree(areaId);
-    } else if (this.automationType === 'xcuitest' || this.automationType === 'uiautomator2') {
-       
+    } else if (
+      this.automationType === "xcuitest" ||
+      this.automationType === "uiautomator2"
+    ) {
       filteredData = this._filterXmlTree(areaId);
     } else {
       // Unknown type, return full tree
@@ -60,7 +65,11 @@ export class RawAccessibilityTree {
       const nodeId = node.nodeId;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       const parentId = node.parentId;
-      if (parentId === undefined || parentId === null || parentId in nodeLookup) {
+      if (
+        parentId === undefined ||
+        parentId === null ||
+        parentId in nodeLookup
+      ) {
         idCounter++;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         idToNodeId[idCounter] = nodeId;
@@ -85,7 +94,6 @@ export class RawAccessibilityTree {
       if (node && node.childIds) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         for (const childId of node.childIds) {
-           
           if (childId in nodeLookup) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             collectNodeIds(childId);
@@ -94,7 +102,6 @@ export class RawAccessibilityTree {
       }
     };
 
-     
     collectNodeIds(areaNodeId);
 
     // Filter nodes to only those in the subtree (make copies to avoid modifying original)

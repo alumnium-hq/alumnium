@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import axios, { AxiosInstance } from 'axios';
-import { BaseTool } from '../tools/BaseTool.js';
-import { convertToolsToSchemas } from '../tools/toolToSchemaConverter.js';
-import { Model } from '../Model.js';
-import { RawAccessibilityTree } from '../accessibility/RawAccessibilityTree.js';
-import { AccessibilityElement } from '../accessibility/AccessibilityElement.js';
+import axios, { AxiosInstance } from "axios";
+import { BaseTool } from "../tools/BaseTool.js";
+import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
+import { Model } from "../Model.js";
+import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
+import { AccessibilityElement } from "../accessibility/AccessibilityElement.js";
 
 export type Data = number | string | boolean | number[] | string[] | boolean[];
 
@@ -16,9 +16,12 @@ export class HttpClient {
   private sessionPromise: Promise<void> | null = null;
   private idMappings: Record<number, number> = {};
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(baseUrl: string, private tools: Record<string, new (...args: any[]) => BaseTool>) {
-    this.baseUrl = baseUrl.replace(/\/$/, '');
+  constructor(
+    baseUrl: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private tools: Record<string, new (...args: any[]) => BaseTool>
+  ) {
+    this.baseUrl = baseUrl.replace(/\/$/, "");
     this.client = axios.create({ timeout: 120000 });
   }
 
@@ -58,18 +61,21 @@ export class HttpClient {
     }
   }
 
-  async planActions(goal: string, rawTree: RawAccessibilityTree): Promise<string[]> {
+  async planActions(
+    goal: string,
+    rawTree: RawAccessibilityTree
+  ): Promise<string[]> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/plans`,
       {
         goal,
         raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType
+        automation_type: rawTree.automationType,
       }
     );
     // Store ID mappings if provided
-     
+
     const responseData = response.data;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (responseData.id_mappings) {
@@ -85,19 +91,28 @@ export class HttpClient {
 
   async addExample(goal: string, actions: string[]): Promise<void> {
     await this.ensureSession();
-    await this.client.post(`${this.baseUrl}/v1/sessions/${this.sessionId}/examples`, {
-      goal,
-      actions,
-    });
+    await this.client.post(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/examples`,
+      {
+        goal,
+        actions,
+      }
+    );
   }
 
   async clearExamples(): Promise<void> {
     await this.ensureSession();
-    await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}/examples`);
+    await this.client.delete(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/examples`
+    );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async executeAction(goal: string, step: string, rawTree: RawAccessibilityTree): Promise<any[]> {
+  async executeAction(
+    goal: string,
+    step: string,
+    rawTree: RawAccessibilityTree
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any[]> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/steps`,
@@ -105,11 +120,11 @@ export class HttpClient {
         goal,
         step,
         raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType
+        automation_type: rawTree.automationType,
       }
     );
     // Store ID mappings if provided
-     
+
     const responseData = response.data;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (responseData.id_mappings) {
@@ -143,7 +158,7 @@ export class HttpClient {
       }
     );
     // Store ID mappings if provided
-     
+
     const responseData = response.data;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (responseData.id_mappings) {
@@ -157,18 +172,21 @@ export class HttpClient {
     return [responseData.explanation, responseData.result];
   }
 
-  async findArea(description: string, rawTree: RawAccessibilityTree): Promise<{ id: number; explanation: string }> {
+  async findArea(
+    description: string,
+    rawTree: RawAccessibilityTree
+  ): Promise<{ id: number; explanation: string }> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/areas`,
       {
         description,
         raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType
+        automation_type: rawTree.automationType,
       }
     );
     // Store ID mappings if provided
-     
+
     const responseData = response.data;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (responseData.id_mappings) {
@@ -182,19 +200,22 @@ export class HttpClient {
     return { id: responseData.id, explanation: responseData.explanation };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async findElement(description: string, rawTree: RawAccessibilityTree): Promise<any> {
+  async findElement(
+    description: string,
+    rawTree: RawAccessibilityTree
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/elements`,
       {
         description,
         raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType
+        automation_type: rawTree.automationType,
       }
     );
     // Store ID mappings if provided
-     
+
     const responseData = response.data;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (responseData.id_mappings) {
@@ -210,17 +231,23 @@ export class HttpClient {
 
   async saveCache(): Promise<void> {
     await this.ensureSession();
-    await this.client.post(`${this.baseUrl}/v1/sessions/${this.sessionId}/caches`);
+    await this.client.post(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`
+    );
   }
 
   async discardCache(): Promise<void> {
     await this.ensureSession();
-    await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}/caches`);
+    await this.client.delete(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`
+    );
   }
 
   async getStats(): Promise<Record<string, Record<string, number>>> {
     await this.ensureSession();
-    const response = await this.client.get(`${this.baseUrl}/v1/sessions/${this.sessionId}/stats`);
+    const response = await this.client.get(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/stats`
+    );
     return response.data;
   }
 }

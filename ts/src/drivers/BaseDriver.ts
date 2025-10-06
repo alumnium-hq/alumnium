@@ -1,5 +1,5 @@
-import { RawAccessibilityTree } from '../accessibility/RawAccessibilityTree.js';
-import { Key } from './keys.js';
+import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
+import { Key } from "./keys.js";
 
 export abstract class BaseDriver {
   abstract get accessibilityTree(): RawAccessibilityTree;

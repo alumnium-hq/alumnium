@@ -1,6 +1,6 @@
-import { HttpClient, Data } from './clients/HttpClient.js';
-import { BaseDriver } from './drivers/BaseDriver.js';
-import { BaseTool, ToolCall } from './tools/BaseTool.js';
+import { HttpClient, Data } from "./clients/HttpClient.js";
+import { BaseDriver } from "./drivers/BaseDriver.js";
+import { BaseTool, ToolCall } from "./tools/BaseTool.js";
 
 export class Area {
   public id: number;
@@ -37,11 +37,20 @@ export class Area {
       // Get fresh tree and filter to area
       const currentFullTree = await this.driver.getAccessibilityTree();
       const currentAreaTree = currentFullTree.filterToArea(this.id);
-      const actorResponse = await this.client.executeAction(goal, step, currentAreaTree);
+      const actorResponse = await this.client.executeAction(
+        goal,
+        step,
+        currentAreaTree
+      );
 
       // Execute tool calls - use client for element lookup
       for (const toolCall of actorResponse) {
-        await BaseTool.executeToolCall(toolCall as ToolCall, this.tools, this.client, this.driver);
+        await BaseTool.executeToolCall(
+          toolCall as ToolCall,
+          this.tools,
+          this.client,
+          this.driver
+        );
       }
     }
   }
