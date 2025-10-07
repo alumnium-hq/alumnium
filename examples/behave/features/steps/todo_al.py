@@ -11,8 +11,6 @@ def step_impl(context):
         context.driver.get("https://todomvc.com/examples/vue/dist/")
     elif isinstance(context.driver, Page):
         context.driver.goto("https://todomvc.com/examples/vue/dist/")
-    elif isinstance(context.driver, Appium):
-        context.driver.activate_app("com.ayodeji.TodoList")
 
 
 @when('I create a new task "{title}"')
