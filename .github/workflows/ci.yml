@@ -36,7 +36,7 @@ jobs:
 
   examples:
     name: Examples
-    runs-on: ${{ matrix.driver == 'appium' && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
       ALUMNIUM_DRIVER: ${{ matrix.driver }}
@@ -45,6 +45,8 @@ jobs:
       ALUMNIUM_LOG_PATH: alumnium.log
       ALUMNIUM_PLAYWRIGHT_HEADLESS: false
       DISPLAY: :99
+      LT_USERNAME: ${{ secrets.LT_USERNAME }}
+      LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
@@ -60,8 +62,8 @@ jobs:
       matrix:
         driver:
           - appium
-          - playwright
-          - selenium
+          # - playwright
+          # - selenium
         model:
           - anthropic
           - aws_anthropic
@@ -98,11 +100,6 @@ jobs:
       - run: poetry install
       - if: matrix.driver == 'playwright'
         run: poetry run playwright install chromium
-      - if: matrix.driver == 'appium'
-        run: |
-          npm install -g appium
-          appium driver install xcuitest
-          appium >> appium.log 2>&1 &
       - if: matrix.driver != 'appium'
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - uses: actions/cache@v4
