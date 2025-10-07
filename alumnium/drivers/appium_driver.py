@@ -5,6 +5,7 @@ from appium.webdriver import Remote
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.extensions.action_helpers import ActionHelpers
 from appium.webdriver.webelement import WebElement
+from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -31,12 +32,13 @@ class AppiumDriver(BaseDriver):
             SelectTool,
             TypeTool,
         }
-        self.autoswitch_to_webview = True
+        self.autoswitch_contexts = True
         self.delay = 0
         self.hide_keyboard_after_typing = False
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
+        self._ensure_native_app_context()
         if self.driver.capabilities["automationName"] == "uiautomator2":
             sleep(self.delay)
             return UIAutomator2AccessibiltyTree(self.driver.page_source)
@@ -45,12 +47,15 @@ class AppiumDriver(BaseDriver):
             return XCUITestAccessibilityTree(self.driver.page_source)
 
     def click(self, id: int):
+        self._ensure_native_app_context()
         self.find_element(id).click()
 
     def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
+        self._ensure_native_app_context()
         self.driver.drag_and_drop(self.find_element(from_id), self.find_element(to_id))
 
     def press_key(self, key: Key):
+        self._ensure_native_app_context()
         keys = []
         if key == Key.BACKSPACE:
             keys.append(Keys.BACKSPACE)
@@ -83,13 +88,14 @@ class AppiumDriver(BaseDriver):
 
     @property
     def title(self) -> str:
-        with self.__webview_context() as context:
-            if context:
-                return self.driver.title
-            else:
-                return ""
+        self._ensure_webview_context()
+        try:
+            return self.driver.title
+        except UnknownMethodException:
+            return ""
 
     def type(self, id: int, text: str):
+        self._ensure_native_app_context()
         element = self.find_element(id)
         element.clear()
         element.send_keys(text)
@@ -98,11 +104,11 @@ class AppiumDriver(BaseDriver):
 
     @property
     def url(self) -> str:
-        with self.__webview_context() as context:
-            if context:
-                return self.driver.current_url
-            else:
-                return ""
+        self._ensure_webview_context()
+        try:
+            return self.driver.current_url
+        except UnknownMethodException:
+            return ""
 
     def find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)
@@ -130,15 +136,19 @@ class AppiumDriver(BaseDriver):
 
         return self.driver.find_element(By.XPATH, xpath)
 
-    @contextmanager
-    def __webview_context(self):
-        if self.autoswitch_to_webview:
-            current_context = self.driver.current_context
+    def _ensure_native_app_context(self):
+        if not self.autoswitch_contexts:
+            return
+
+        if self.driver.current_context != "NATIVE_APP":
+            self.driver.switch_to.context("NATIVE_APP")
+
+    def _ensure_webview_context(self):
+        if not self.autoswitch_contexts:
+            return
+
+        if "WEBVIEW" not in self.driver.current_context:
             for context in self.driver.contexts:
                 if "WEBVIEW" in context:
                     self.driver.switch_to.context(context)
-                    yield context
-                    self.driver.switch_to.context(current_context)
                     return
-
-        yield None

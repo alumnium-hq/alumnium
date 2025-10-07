@@ -62,8 +62,8 @@ jobs:
       matrix:
         driver:
           - appium
-          # - playwright
-          # - selenium
+          - playwright
+          - selenium
         model:
           - anthropic
           - aws_anthropic

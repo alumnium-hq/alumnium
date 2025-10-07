@@ -86,8 +86,8 @@ def driver(context):
 def alumnium(context):
     context.al = Alumni(context.driver, url=getenv("ALUMNIUM_SERVER_URL", None))
     if isinstance(context.driver, Appium):
-        context.al.driver.autoswitch_to_webview = False  # Slow!
-        context.al.driver.delay = 0.1
+        context.al.driver.autoswitch_contexts = False  # Slow!
+        context.al.driver.delay = 0.2
 
         context.al.learn(
             goal='create a new task "this is Al"',
