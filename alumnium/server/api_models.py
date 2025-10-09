@@ -55,6 +55,7 @@ class StatementRequest(VersionedModel):
 
 
 class StatementResponse(VersionedModel):
+    # TODO: Move typecasting to the client
     result: Data
     explanation: str
     id_mappings: Optional[dict[str, int]] = None  # JSON keys must be strings

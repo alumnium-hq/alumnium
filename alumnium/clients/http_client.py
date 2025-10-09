@@ -1,7 +1,4 @@
-from base64 import b64encode
-from typing import Dict, Type
-
-import requests
+from requests import delete, get, post
 
 from ..accessibility import AccessibilityElement, RawAccessibilityTree
 from ..server.agents.retriever_agent import Data
@@ -11,16 +8,14 @@ from ..tools.tool_to_schema_converter import convert_tools_to_schemas
 
 
 class HttpClient:
-    def __init__(self, base_url: str, model: Model, tools: Dict[str, Type[BaseTool]]):
+    def __init__(self, base_url: str, model: Model, tools: dict[str, type[BaseTool]]):
         self.base_url = base_url.rstrip("/")
         self.session_id = None
         self.id_mappings = {}  # Store ID mappings from server
 
-        # Convert tools to schemas for API
         tool_schemas = convert_tools_to_schemas(tools)
 
-        # Create session on server
-        response = requests.post(
+        response = post(
             f"{self.base_url}/v1/sessions",
             json={"provider": model.provider.value, "name": model.name, "tools": tool_schemas},
             timeout=30,
@@ -30,12 +25,30 @@ class HttpClient:
 
     def quit(self):
         if self.session_id:
-            response = requests.delete(
+            response = delete(
                 f"{self.base_url}/v1/sessions/{self.session_id}",
                 timeout=30,
             )
             response.raise_for_status()
             self.session_id = None
+
+    def plan_actions(self, goal: str, accessibility_tree: str):
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/plans",
+            json={"goal": goal, "accessibility_tree": accessibility_tree},
+            timeout=120,
+        )
+        response.raise_for_status()
+        return response.json()["steps"]
+
+    def add_example(self, goal: str, actions: list[str]):
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/examples",
+            json={"goal": goal, "actions": actions},
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json()
 
     def element_by_id(self, id: int) -> AccessibilityElement:
         """Look up element by ID from stored mappings."""
@@ -44,48 +57,17 @@ class HttpClient:
         backend_id = self.id_mappings[id]
         return AccessibilityElement(id=backend_id)
 
-    def plan_actions(self, goal: str, raw_tree: RawAccessibilityTree):
-        response = requests.post(
-            f"{self.base_url}/v1/sessions/{self.session_id}/plans",
-            json={
-                "goal": goal,
-                "raw_data": raw_tree.raw_data,
-                "automation_type": raw_tree.automation_type,
-            },
-            timeout=120,
-        )
-        response.raise_for_status()
-        data = response.json()
-        # Store ID mappings if provided
-        if "id_mappings" in data:
-            self.id_mappings = {int(k): v for k, v in data["id_mappings"].items()}
-        return data["steps"]
-
-    def add_example(self, goal: str, actions: list[str]):
-        response = requests.post(
-            f"{self.base_url}/v1/sessions/{self.session_id}/examples",
-            json={"goal": goal, "actions": actions},
-            timeout=30,
-        )
-        response.raise_for_status()
-        return response.json()
-
     def clear_examples(self):
-        response = requests.delete(
+        response = delete(
             f"{self.base_url}/v1/sessions/{self.session_id}/examples",
             timeout=30,
         )
         response.raise_for_status()
 
-    def execute_action(self, goal: str, step: str, raw_tree: RawAccessibilityTree):
-        response = requests.post(
+    def execute_action(self, goal: str, step: str, accessibility_tree: str):
+        response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/steps",
-            json={
-                "goal": goal,
-                "step": step,
-                "raw_data": raw_tree.raw_data,
-                "automation_type": raw_tree.automation_type,
-            },
+            json={"goal": goal, "step": step, "accessibility_tree": accessibility_tree},
             timeout=120,
         )
         response.raise_for_status()
@@ -103,7 +85,7 @@ class HttpClient:
         url: str,
         screenshot: str | None,
     ) -> tuple[str, Data]:
-        response = requests.post(
+        response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/statements",
             json={
                 "statement": statement,
@@ -123,7 +105,7 @@ class HttpClient:
         return data["explanation"], data["result"]
 
     def find_area(self, description: str, raw_tree: RawAccessibilityTree):
-        response = requests.post(
+        response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/areas",
             json={
                 "description": description,
@@ -140,7 +122,7 @@ class HttpClient:
         return {"id": data["id"], "explanation": data["explanation"]}
 
     def find_element(self, description: str, raw_tree: RawAccessibilityTree):
-        response = requests.post(
+        response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/elements",
             json={
                 "description": description,
@@ -157,14 +139,14 @@ class HttpClient:
         return data["elements"][0]
 
     def save_cache(self):
-        response = requests.post(
+        response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/caches",
             timeout=30,
         )
         response.raise_for_status()
 
     def discard_cache(self):
-        response = requests.delete(
+        response = delete(
             f"{self.base_url}/v1/sessions/{self.session_id}/caches",
             timeout=30,
         )
@@ -172,7 +154,7 @@ class HttpClient:
 
     @property
     def stats(self):
-        response = requests.get(
+        response = get(
             f"{self.base_url}/v1/sessions/{self.session_id}/stats",
             timeout=30,
         )

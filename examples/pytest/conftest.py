@@ -2,6 +2,7 @@ from datetime import datetime
 from os import getenv
 
 from appium.options.ios import XCUITestOptions
+from appium.webdriver.client_config import AppiumClientConfig
 from appium.webdriver.webdriver import WebDriver as Appium
 from dotenv import load_dotenv
 from playwright.sync_api import Page, sync_playwright
@@ -9,9 +10,9 @@ from pytest import fixture, hookimpl
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
-from alumnium import Alumni
+from alumnium import Alumni, Model
 
-load_dotenv(override=True)
+load_dotenv()
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
@@ -38,13 +39,47 @@ def driver():
     elif driver_type == "appium":
         options = XCUITestOptions()
         options.automation_name = "XCUITest"
-        options.bundle_id = "com.apple.mobilesafari"
-        options.device_name = "iPhone 15"
-        options.new_command_timeout = 300
-        options.no_reset = True
+        options.device_name = "iPhone 16"
         options.platform_name = "iOS"
-        options.platform_version = "18.4"
-        driver = Appium(command_executor="http://localhost:4723", options=options)
+        options.no_reset = True
+
+        lt_username = getenv("LT_USERNAME", None)
+        lt_access_key = getenv("LT_ACCESS_KEY", None)
+
+        if lt_username and lt_access_key:
+            options.browser_name = "Safari"
+            options.platform_version = "18"
+            options.set_capability(
+                "lt:options",
+                {
+                    "build": "Python - iOS",
+                    "name": f"Pytest ({Model.current.provider.value}/{Model.current.name}) ",
+                    "isRealMobile": True,
+                    "network": False,
+                    "visual": True,
+                    "video": True,
+                    "w3c": True,
+                },
+            )
+
+            client_config = AppiumClientConfig(
+                username=lt_username,
+                password=lt_access_key,
+                remote_server_addr="https://mobile-hub.lambdatest.com/wd/hub",
+                direct_connection=True,
+            )
+        else:
+            options.bundle_id = "com.apple.mobilesafari"
+            options.platform_version = "18.4"
+            options.new_command_timeout = 300
+
+            client_config = AppiumClientConfig(
+                remote_server_addr="http://localhost:4723/wd/hub",
+                direct_connection=True,
+            )
+
+        driver = Appium(client_config=client_config, options=options)
+
         yield driver
     else:
         raise NotImplementedError(f"Driver {driver} not implemented")
