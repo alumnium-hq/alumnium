@@ -7,11 +7,11 @@ from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
 from .clients.native_client import NativeClient
+from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
-from .server.agents.retriever_agent import Data
 from .server.logutils import get_logger
 from .server.models import Model
 from .tools import BaseTool
