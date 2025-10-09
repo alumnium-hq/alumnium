@@ -20,25 +20,30 @@ class Area:
         self.id = id
         self.description = description
         self.driver = driver
-        self.accessibility_tree = driver.accessibility_tree.get_area(id)
         self.tools = tools
         self.client = client
+        # Note: Server now handles area scoping internally
 
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal within the area.
+        The server maintains the area context from the previous find_area call.
 
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.client.plan_actions(goal, self.accessibility_tree.to_xml())
+        # Server already has the area tree stored from the find_area call
+        # We still send the full tree; server will use its stored area tree
+        raw_tree = self.driver.accessibility_tree
+        steps = self.client.plan_actions(goal, raw_tree.to_raw(), area_id=self.id)
         for step in steps:
-            actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_xml())
+            raw_tree = self.driver.accessibility_tree
+            actor_response = self.client.execute_action(goal, step, raw_tree.to_raw(), area_id=self.id)
 
-            # Execute tool calls
+            # Execute tool calls (contain raw IDs from server)
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, self.accessibility_tree, self.driver)
+                BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -54,12 +59,15 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
+        # Server already has the area tree stored from the find_area call
+        raw_tree = self.driver.accessibility_tree
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
-            self.accessibility_tree.to_xml(),
+            raw_tree.to_raw(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
+            area_id=self.id,
         )
         assert value, explanation
         return explanation
@@ -75,12 +83,15 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
+        # Server already has the area tree stored from the find_area call
+        raw_tree = self.driver.accessibility_tree
         _, value = self.client.retrieve(
             data,
-            self.accessibility_tree.to_xml(),
+            raw_tree.to_raw(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
+            area_id=self.id,
         )
         return value
 
@@ -94,6 +105,8 @@ class Area:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        response = self.client.find_element(description, self.accessibility_tree.to_xml())
-        id = self.accessibility_tree.element_by_id(response["id"]).id
-        return self.driver.find_element(id)
+        # Server already has the area tree stored from the find_area call
+        raw_tree = self.driver.accessibility_tree
+        response = self.client.find_element(description, raw_tree.to_raw(), area_id=self.id)
+        # Response contains raw platform ID from server
+        return self.driver.find_element(response["id"])

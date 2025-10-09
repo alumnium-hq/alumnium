@@ -14,6 +14,7 @@ class SessionRequest(VersionedModel):
     provider: str
     name: Optional[str] = None
     tools: List[dict[str, Any]]
+    platform: str  # chromium, xcuitest, or uiautomator2
 
 
 class SessionResponse(VersionedModel):
@@ -25,6 +26,7 @@ class PlanRequest(VersionedModel):
     accessibility_tree: str
     url: Optional[str] = None
     title: Optional[str] = None
+    area_id: Optional[int] = None  # Optional area ID to scope operations
 
 
 class PlanResponse(VersionedModel):
@@ -35,6 +37,7 @@ class StepRequest(VersionedModel):
     goal: str
     step: str
     accessibility_tree: str
+    area_id: Optional[int] = None  # Optional area ID to scope operations
 
 
 class StepResponse(VersionedModel):
@@ -47,6 +50,7 @@ class StatementRequest(VersionedModel):
     url: Optional[str] = None
     title: Optional[str] = None
     screenshot: Optional[str] = None  # base64 encoded image
+    area_id: Optional[int] = None  # Optional area ID to scope operations
 
 
 class StatementResponse(VersionedModel):
@@ -68,6 +72,7 @@ class AreaResponse(VersionedModel):
 class FindRequest(VersionedModel):
     description: str
     accessibility_tree: str
+    area_id: Optional[int] = None  # Optional area ID to scope operations
 
 
 class FindResponse(VersionedModel):

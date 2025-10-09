@@ -15,24 +15,27 @@ class SessionManager:
     def __init__(self):
         self.sessions: dict[str, Session] = {}
 
-    def create_session(self, provider: str, name: str, tools: List[Dict[str, Any]]) -> str:
+    def create_session(self, provider: str, name: str, tools: List[Dict[str, Any]], platform: str) -> str:
         """Create a new session and return its ID.
         Args:
             provider: The model provider name
-            tools: List of LangChain tool schemas
             name: The model name (optional)
+            tools: List of LangChain tool schemas
+            platform: The platform type (chromium, xcuitest, uiautomator2)
         Returns:
             Session ID string
         """
         session_id = str(uuid.uuid4())
 
-        logger.info(f"Creating session {session_id} with model {provider}/{name}")
+        logger.info(f"Creating session {session_id} with model {provider}/{name} and platform {platform}")
         model = Model(provider=provider, name=name)
 
         # Convert tool schemas to tool classes
         tool_classes = convert_schemas_to_tools(tools)
 
-        self.sessions[session_id] = Session(session_id=session_id, model=model, tools=tool_classes)
+        self.sessions[session_id] = Session(
+            session_id=session_id, model=model, tools=tool_classes, platform=platform
+        )
         logger.info(f"Created new session: {session_id}")
         return session_id
 

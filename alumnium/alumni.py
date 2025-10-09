@@ -46,10 +46,10 @@ class Alumni:
 
         if url:
             logger.info(f"Using HTTP client with server: {url}")
-            self.client = HttpClient(url, self.model, self.tools)
+            self.client = HttpClient(url, self.model, self.tools, self.driver.platform)
         else:
             logger.info("Using native client")
-            self.client = NativeClient(self.model, self.tools)
+            self.client = NativeClient(self.model, self.tools, self.driver.platform)
 
         self.cache = Cache(self.client)
 
@@ -65,16 +65,16 @@ class Alumni:
         Args:
             goal: The goal to be achieved.
         """
-        initial_accessibility_tree = self.driver.accessibility_tree
-        steps = self.client.plan_actions(goal, initial_accessibility_tree.to_xml())
+        initial_raw_tree = self.driver.accessibility_tree
+        steps = self.client.plan_actions(goal, initial_raw_tree.to_raw())
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
-            accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            actor_response = self.client.execute_action(goal, step, accessibility_tree.to_xml())
+            raw_tree = initial_raw_tree if idx == 0 else self.driver.accessibility_tree
+            actor_response = self.client.execute_action(goal, step, raw_tree.to_raw())
 
-            # Execute tool calls
+            # Execute tool calls (now contain raw IDs directly from server)
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, accessibility_tree, self.driver)
+                BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
         """
@@ -92,7 +92,7 @@ class Alumni:
         """
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
-            self.driver.accessibility_tree.to_xml(),
+            self.driver.accessibility_tree.to_raw(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -113,7 +113,7 @@ class Alumni:
         """
         _, value = self.client.retrieve(
             data,
-            self.driver.accessibility_tree.to_xml(),
+            self.driver.accessibility_tree.to_raw(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -130,10 +130,10 @@ class Alumni:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        accessibility_tree = self.driver.accessibility_tree
-        response = self.client.find_element(description, accessibility_tree.to_xml())
-        id = accessibility_tree.element_by_id(response["id"]).id
-        return self.driver.find_element(id)
+        raw_tree = self.driver.accessibility_tree
+        response = self.client.find_element(description, raw_tree.to_raw())
+        # Response now contains raw platform ID directly from server
+        return self.driver.find_element(response["id"])
 
     def area(self, description: str) -> Area:
         """
@@ -149,7 +149,7 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        response = self.client.find_area(description, self.driver.accessibility_tree.to_xml())
+        response = self.client.find_area(description, self.driver.accessibility_tree.to_raw())
         return Area(
             id=response["id"],
             description=response["explanation"],

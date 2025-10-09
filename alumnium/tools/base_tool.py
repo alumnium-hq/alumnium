@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-from alumnium.accessibility import BaseAccessibilityTree
 from alumnium.drivers.base_driver import BaseDriver
 
 
@@ -10,16 +9,15 @@ class BaseTool(BaseModel):
         cls,
         tool_call: dict,
         tools: list["BaseTool"],
-        accessibility_tree: BaseAccessibilityTree,
         driver: BaseDriver,
     ):
+        """
+        Execute a tool call. Tool calls now contain raw platform IDs directly from the server.
+
+        Args:
+            tool_call: Tool call dict with name and args (IDs are already raw platform IDs)
+            tools: Available tool classes
+            driver: Driver to execute the tool on
+        """
         tool = tools[tool_call["name"]](**tool_call["args"])
-
-        if "id" in tool.model_fields_set:
-            tool.id = accessibility_tree.element_by_id(tool.id).id
-        if "from_id" in tool.model_fields_set:
-            tool.from_id = accessibility_tree.element_by_id(tool.from_id).id
-        if "to_id" in tool.model_fields_set:
-            tool.to_id = accessibility_tree.element_by_id(tool.to_id).id
-
         tool.invoke(driver)

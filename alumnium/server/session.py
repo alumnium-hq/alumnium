@@ -1,5 +1,12 @@
-from typing import Any
+import json
+from typing import Any, Optional
 
+from .accessibility import (
+    BaseServerTree,
+    ChromiumServerTree,
+    UIAutomator2ServerTree,
+    XCUITestServerTree,
+)
 from .agents.actor_agent import ActorAgent
 from .agents.area_agent import AreaAgent
 from .agents.locator_agent import LocatorAgent
@@ -21,9 +28,13 @@ class Session:
         session_id: str,
         model: Model,
         tools: dict[str, Any],
+        platform: str,
     ):
         self.session_id = session_id
         self.model = model
+        self.platform = platform
+        self.current_tree: Optional[BaseServerTree] = None
+        self.current_area_id: Optional[int] = None  # Track which area we're working with
 
         self.cache = CacheFactory.create_cache()
         self.llm = LLMFactory.create_llm(model=model)
@@ -35,7 +46,7 @@ class Session:
         self.area_agent = AreaAgent(self.llm)
         self.locator_agent = LocatorAgent(self.llm)
 
-        logger.info(f"Created session {session_id} with model {model.provider.value}/{model.name}")
+        logger.info(f"Created session {session_id} with model {model.provider.value}/{model.name} and platform {platform}")
 
     @property
     def stats(self) -> dict[str, dict[str, int]]:
@@ -73,3 +84,48 @@ class Session:
             },
             "cache": self.cache.usage,
         }
+
+    def update_tree(self, raw_tree_data: str, area_id: Optional[int] = None) -> BaseServerTree:
+        """
+        Update the session's accessibility tree from raw platform data.
+
+        Args:
+            raw_tree_data: Raw tree data as string (JSON string for Chromium, XML for others)
+            area_id: Optional area ID to scope the tree to after processing
+
+        Returns:
+            The created server tree instance (potentially scoped to area)
+        """
+        if self.platform == "chromium":
+            tree_dict = json.loads(raw_tree_data)
+            full_tree = ChromiumServerTree(tree_dict)
+        elif self.platform == "xcuitest":
+            full_tree = XCUITestServerTree(raw_tree_data)
+        elif self.platform == "uiautomator2":
+            full_tree = UIAutomator2ServerTree(raw_tree_data)
+        else:
+            raise ValueError(f"Unknown platform: {self.platform}")
+
+        # If area_id is provided, scope to that area
+        if area_id is not None:
+            self.current_tree = full_tree.get_area(area_id)
+            self.current_area_id = area_id
+            logger.debug(f"Updated tree for session {self.session_id} and scoped to area {area_id}")
+        else:
+            self.current_tree = full_tree
+            self.current_area_id = None
+            logger.debug(f"Updated tree for session {self.session_id}")
+
+        return self.current_tree
+
+    def get_tree(self) -> BaseServerTree:
+        """Get the current accessibility tree."""
+        if self.current_tree is None:
+            raise ValueError("No accessibility tree has been set for this session")
+        return self.current_tree
+
+    def map_tool_calls_to_raw(self, tool_calls: list[dict]) -> list[dict]:
+        """Map simplified IDs in tool calls back to raw platform IDs."""
+        if self.current_tree is None:
+            raise ValueError("No accessibility tree has been set for this session")
+        return self.current_tree.map_tool_calls_to_raw(tool_calls)
