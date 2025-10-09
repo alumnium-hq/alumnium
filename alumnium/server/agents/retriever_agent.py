@@ -1,6 +1,3 @@
-from string import whitespace
-from typing import Optional, TypeAlias, Union
-
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
@@ -9,9 +6,6 @@ from ..models import Model, Provider
 from .base_agent import BaseAgent
 
 logger = get_logger(__name__)
-
-
-Data: TypeAlias = Optional[Union[str, int, float, bool, list[Union[str, int, float, bool]]]]
 
 
 class RetrievedInformation(BaseModel):
@@ -49,7 +43,7 @@ class RetrieverAgent(BaseAgent):
         title: str = "",
         url: str = "",
         screenshot: str = None,
-    ) -> tuple[str, Data]:
+    ) -> tuple[str, str | list[str]]:
         logger.info("Starting retrieval:")
         logger.info(f"  -> Information: {information}")
 
@@ -93,28 +87,13 @@ class RetrieverAgent(BaseAgent):
         logger.info(f"  <- Result: {response}")
         logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
-        return (
-            response.explanation,
-            self.__loosely_typecast(response.value),
-        )
-
-    # Remove when we find a way use `Data` in structured output `value`.
-    def __loosely_typecast(self, value: str) -> Data:
+        value = response.value
         # LLMs sometimes add separator to the start/end.
         value = value.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
         value = value.strip()
 
-        if value.upper() == "NOOP":
-            return None
-        elif value.isdigit():
-            return int(value)
-        elif value.replace(".", "", 1).isdigit():
-            return float(value)
-        elif value.lower() == "true":
-            return True
-        elif value.lower() == "false":
-            return False
-        elif self.LIST_SEPARATOR in value:
-            return [self.__loosely_typecast(i) for i in value.split(self.LIST_SEPARATOR) if i != ""]
+        # Return raw string or list of strings
+        if self.LIST_SEPARATOR in value:
+            return response.explanation, [item.strip() for item in value.split(self.LIST_SEPARATOR) if item]
         else:
-            return value.strip(f"{whitespace}'\"")
+            return response.explanation, value

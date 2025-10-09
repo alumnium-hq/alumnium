@@ -2,9 +2,9 @@ from retry import retry
 
 from .clients.http_client import HttpClient
 from .clients.native_client import NativeClient
+from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.base_driver import BaseDriver
-from .server.agents.retriever_agent import Data
 from .tools import BaseTool
 
 
