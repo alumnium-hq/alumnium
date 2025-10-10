@@ -62,6 +62,7 @@ class HttpClient:
             timeout=120,
         )
         response.raise_for_status()
+        # Server now returns actions with raw IDs already mapped
         return response.json()["actions"]
 
     def retrieve(
@@ -106,6 +107,7 @@ class HttpClient:
             timeout=60,
         )
         response.raise_for_status()
+        # Server now returns element with raw ID already mapped
         return response.json()["elements"][0]
 
     def save_cache(self):

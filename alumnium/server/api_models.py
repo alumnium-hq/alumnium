@@ -26,7 +26,7 @@ class PlanRequest(VersionedModel):
     accessibility_tree: str
     url: Optional[str] = None
     title: Optional[str] = None
-    area_id: Optional[int] = None  # Optional area ID to scope operations
+    area_id: Optional[int] = None
 
 
 class PlanResponse(VersionedModel):
@@ -37,7 +37,7 @@ class StepRequest(VersionedModel):
     goal: str
     step: str
     accessibility_tree: str
-    area_id: Optional[int] = None  # Optional area ID to scope operations
+    area_id: Optional[int] = None
 
 
 class StepResponse(VersionedModel):
@@ -50,7 +50,7 @@ class StatementRequest(VersionedModel):
     url: Optional[str] = None
     title: Optional[str] = None
     screenshot: Optional[str] = None  # base64 encoded image
-    area_id: Optional[int] = None  # Optional area ID to scope operations
+    area_id: Optional[int] = None
 
 
 class StatementResponse(VersionedModel):
@@ -72,7 +72,7 @@ class AreaResponse(VersionedModel):
 class FindRequest(VersionedModel):
     description: str
     accessibility_tree: str
-    area_id: Optional[int] = None  # Optional area ID to scope operations
+    area_id: Optional[int] = None
 
 
 class FindResponse(VersionedModel):

@@ -24,8 +24,15 @@ class NativeClient:
         self.session_manager.delete_session(self.session_id)
 
     def plan_actions(self, goal: str, raw_tree: str, area_id: int = None):
-        # Process raw tree data and update session tree (with optional area scoping)
-        tree = self.session.update_tree(raw_tree, area_id=area_id)
+        # Process raw tree
+        full_tree = self.session.update_tree(raw_tree)
+
+        # Scope to area if area_id provided
+        if area_id is not None:
+            tree = full_tree.get_area(area_id)
+        else:
+            tree = full_tree
+
         tree_xml = tree.to_xml()
         return self.session.planner_agent.invoke(goal, tree_xml)
 
@@ -36,14 +43,20 @@ class NativeClient:
         self.session.planner_agent.prompt_with_examples.examples.clear()
 
     def execute_action(self, goal: str, step: str, raw_tree: str, area_id: int = None):
-        # Process raw tree data and update session tree (with optional area scoping)
-        tree = self.session.update_tree(raw_tree, area_id=area_id)
-        tree_xml = tree.to_xml()
+        # Process raw tree
+        full_tree = self.session.update_tree(raw_tree)
 
+        # Scope to area if area_id provided
+        if area_id is not None:
+            tree = full_tree.get_area(area_id)
+        else:
+            tree = full_tree
+
+        tree_xml = tree.to_xml()
         actions = self.session.actor_agent.invoke(goal, step, tree_xml)
 
-        # Map simplified IDs back to raw platform IDs
-        return self.session.map_tool_calls_to_raw(actions)
+        # Map IDs using the FULL tree (not scoped tree)
+        return full_tree.map_tool_calls_to_raw(actions)
 
     def retrieve(
         self,
@@ -54,37 +67,44 @@ class NativeClient:
         screenshot: str | None,
         area_id: int = None,
     ) -> tuple[str, Data]:
-        # Process raw tree data and update session tree (with optional area scoping)
-        tree = self.session.update_tree(raw_tree, area_id=area_id)
-        tree_xml = tree.to_xml()
+        # Process raw tree
+        full_tree = self.session.update_tree(raw_tree)
 
+        # Scope to area if area_id provided
+        if area_id is not None:
+            tree = full_tree.get_area(area_id)
+        else:
+            tree = full_tree
+
+        tree_xml = tree.to_xml()
         return self.session.retriever_agent.invoke(
             statement, tree_xml, title=title, url=url, screenshot=screenshot
         )
 
     def find_area(self, description: str, raw_tree: str):
-        # Process raw tree data and update session tree
+        # Process raw tree data
         tree = self.session.update_tree(raw_tree)
         tree_xml = tree.to_xml()
 
         area = self.session.area_agent.invoke(description, tree_xml)
 
-        # Get the area subtree and update session tree to this area
-        area_tree = tree.get_area(area["id"])
-        self.session.current_tree = area_tree
-        self.session.current_area_id = area["id"]
-
         return area
 
     def find_element(self, description: str, raw_tree: str, area_id: int = None):
-        # Process raw tree data and update session tree (with optional area scoping)
-        tree = self.session.update_tree(raw_tree, area_id=area_id)
-        tree_xml = tree.to_xml()
+        # Process raw tree
+        full_tree = self.session.update_tree(raw_tree)
 
+        # Scope to area if area_id provided
+        if area_id is not None:
+            tree = full_tree.get_area(area_id)
+        else:
+            tree = full_tree
+
+        tree_xml = tree.to_xml()
         element = self.session.locator_agent.invoke(description, tree_xml)[0]
 
-        # Map simplified ID back to raw platform ID
-        element["id"] = tree.map_id_to_raw(element["id"])
+        # Map ID using the FULL tree (not scoped tree)
+        element["id"] = full_tree.map_id_to_raw(element["id"])
 
         return element
 

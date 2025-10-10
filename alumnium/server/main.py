@@ -113,8 +113,12 @@ async def plan_actions(session_id: str, request: PlanRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        # Process raw tree data and update session tree (with optional area scoping)
-        tree = session.update_tree(request.accessibility_tree, area_id=request.area_id)
+        # Process raw tree data
+        tree = session.update_tree(request.accessibility_tree)
+
+        # Scope to area if area_id provided
+        if request.area_id is not None:
+            tree = tree.get_area(request.area_id)
 
         # Generate XML for agents
         tree_xml = tree.to_xml()
@@ -137,16 +141,22 @@ async def plan_step_actions(session_id: str, request: StepRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        # Process raw tree data and update session tree (with optional area scoping)
-        tree = session.update_tree(request.accessibility_tree, area_id=request.area_id)
+        # Process raw tree data
+        full_tree = session.update_tree(request.accessibility_tree)
+
+        # Scope to area if area_id provided
+        if request.area_id is not None:
+            tree = full_tree.get_area(request.area_id)
+        else:
+            tree = full_tree
 
         # Generate XML for agents
         tree_xml = tree.to_xml()
 
         actions = session.actor_agent.invoke(request.goal, request.step, tree_xml)
 
-        # Map simplified IDs back to raw platform IDs
-        actions_with_raw_ids = session.map_tool_calls_to_raw(actions)
+        # Map simplified IDs to raw IDs using the FULL tree (not scoped tree)
+        actions_with_raw_ids = full_tree.map_tool_calls_to_raw(actions)
 
         return StepResponse(actions=actions_with_raw_ids)
 
@@ -165,8 +175,12 @@ async def execute_statement(session_id: str, request: StatementRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        # Process raw tree data and update session tree (with optional area scoping)
-        tree = session.update_tree(request.accessibility_tree, area_id=request.area_id)
+        # Process raw tree data
+        tree = session.update_tree(request.accessibility_tree)
+
+        # Scope to area if area_id provided
+        if request.area_id is not None:
+            tree = tree.get_area(request.area_id)
 
         # Generate XML for agents
         tree_xml = tree.to_xml()
@@ -205,10 +219,6 @@ async def choose_area(session_id: str, request: AreaRequest):
 
         area = session.area_agent.invoke(request.description, tree_xml)
 
-        # Get the area subtree and update session tree to this area
-        area_tree = tree.get_area(area["id"])
-        session.current_tree = area_tree
-
         return AreaResponse(**area)
 
     except Exception as e:
@@ -244,19 +254,25 @@ async def find_element(session_id: str, request: FindRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        # Process raw tree data and update session tree (with optional area scoping)
-        tree = session.update_tree(request.accessibility_tree, area_id=request.area_id)
+        # Process raw tree data
+        full_tree = session.update_tree(request.accessibility_tree)
+
+        # Scope to area if area_id provided
+        if request.area_id is not None:
+            tree = full_tree.get_area(request.area_id)
+        else:
+            tree = full_tree
 
         # Generate XML for agents
         tree_xml = tree.to_xml()
 
         elements = session.locator_agent.invoke(request.description, tree_xml)
 
-        # Map simplified IDs back to raw platform IDs
+        # Map simplified IDs to raw IDs using the FULL tree (not scoped tree)
         elements_with_raw_ids = []
         for element in elements:
             raw_element = element.copy()
-            raw_element["id"] = tree.map_id_to_raw(element["id"])
+            raw_element["id"] = full_tree.map_id_to_raw(element["id"])
             elements_with_raw_ids.append(raw_element)
 
         return FindResponse(elements=elements_with_raw_ids)

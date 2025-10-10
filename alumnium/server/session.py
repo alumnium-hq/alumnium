@@ -85,47 +85,25 @@ class Session:
             "cache": self.cache.usage,
         }
 
-    def update_tree(self, raw_tree_data: str, area_id: Optional[int] = None) -> BaseServerTree:
+    def update_tree(self, raw_tree_data: str) -> BaseServerTree:
         """
-        Update the session's accessibility tree from raw platform data.
+        Process raw platform data into a server tree.
 
         Args:
             raw_tree_data: Raw tree data as string (JSON string for Chromium, XML for others)
-            area_id: Optional area ID to scope the tree to after processing
 
         Returns:
-            The created server tree instance (potentially scoped to area)
+            The created server tree instance
         """
         if self.platform == "chromium":
             tree_dict = json.loads(raw_tree_data)
-            full_tree = ChromiumServerTree(tree_dict)
+            tree = ChromiumServerTree(tree_dict)
         elif self.platform == "xcuitest":
-            full_tree = XCUITestServerTree(raw_tree_data)
+            tree = XCUITestServerTree(raw_tree_data)
         elif self.platform == "uiautomator2":
-            full_tree = UIAutomator2ServerTree(raw_tree_data)
+            tree = UIAutomator2ServerTree(raw_tree_data)
         else:
             raise ValueError(f"Unknown platform: {self.platform}")
 
-        # If area_id is provided, scope to that area
-        if area_id is not None:
-            self.current_tree = full_tree.get_area(area_id)
-            self.current_area_id = area_id
-            logger.debug(f"Updated tree for session {self.session_id} and scoped to area {area_id}")
-        else:
-            self.current_tree = full_tree
-            self.current_area_id = None
-            logger.debug(f"Updated tree for session {self.session_id}")
-
-        return self.current_tree
-
-    def get_tree(self) -> BaseServerTree:
-        """Get the current accessibility tree."""
-        if self.current_tree is None:
-            raise ValueError("No accessibility tree has been set for this session")
-        return self.current_tree
-
-    def map_tool_calls_to_raw(self, tool_calls: list[dict]) -> list[dict]:
-        """Map simplified IDs in tool calls back to raw platform IDs."""
-        if self.current_tree is None:
-            raise ValueError("No accessibility tree has been set for this session")
-        return self.current_tree.map_tool_calls_to_raw(tool_calls)
+        logger.debug(f"Processed tree for session {self.session_id}")
+        return tree

@@ -65,14 +65,20 @@ class Alumni:
         Args:
             goal: The goal to be achieved.
         """
+        # Get initial raw tree
         initial_raw_tree = self.driver.accessibility_tree
-        steps = self.client.plan_actions(goal, initial_raw_tree.to_raw())
+        raw_tree_str = initial_raw_tree.to_raw()
+
+        # Let server handle processing
+        steps = self.client.plan_actions(goal, raw_tree_str)
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             raw_tree = initial_raw_tree if idx == 0 else self.driver.accessibility_tree
-            actor_response = self.client.execute_action(goal, step, raw_tree.to_raw())
+            raw_tree_str = raw_tree.to_raw()
 
-            # Execute tool calls (now contain raw IDs directly from server)
+            actor_response = self.client.execute_action(goal, step, raw_tree_str)
+
+            # Execute tool calls (contain raw IDs from server/client)
             for tool_call in actor_response:
                 BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
@@ -90,9 +96,14 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
+        # Get raw tree
+        raw_tree = self.driver.accessibility_tree
+        raw_tree_str = raw_tree.to_raw()
+
+        # Let server handle processing
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
-            self.driver.accessibility_tree.to_raw(),
+            raw_tree_str,
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -111,9 +122,14 @@ class Alumni:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
+        # Get raw tree
+        raw_tree = self.driver.accessibility_tree
+        raw_tree_str = raw_tree.to_raw()
+
+        # Let server handle processing
         _, value = self.client.retrieve(
             data,
-            self.driver.accessibility_tree.to_raw(),
+            raw_tree_str,
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -130,9 +146,13 @@ class Alumni:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
+        # Get raw tree
         raw_tree = self.driver.accessibility_tree
-        response = self.client.find_element(description, raw_tree.to_raw())
-        # Response now contains raw platform ID directly from server
+        raw_tree_str = raw_tree.to_raw()
+
+        # Let server handle processing
+        response = self.client.find_element(description, raw_tree_str)
+        # Response contains raw platform ID from server/client
         return self.driver.find_element(response["id"])
 
     def area(self, description: str) -> Area:
