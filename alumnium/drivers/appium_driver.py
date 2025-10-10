@@ -9,7 +9,7 @@ from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from ..accessibility.raw import UIAutomator2RawTree, XCUITestRawTree
+from ..accessibility import UIAutomator2RawTree, XCUITestRawTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool

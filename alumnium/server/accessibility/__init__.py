@@ -1,11 +1,11 @@
-from .base_server_tree import BaseServerTree
-from .chromium_server_tree import ChromiumServerTree
-from .uiautomator2_server_tree import UIAutomator2ServerTree
-from .xcuitest_server_tree import XCUITestServerTree
+from .base_accessibility_tree import BaseAccessibilityTree
+from .chromium_accessibility_tree import ChromiumAccessibilitTree
+from .uiautomator2_accessibility_tree import UIAutomator2AccessibilityTree
+from .xcuitest_accessibility_tree import XCUITestAccessibilityTree
 
 __all__ = [
-    "BaseServerTree",
-    "ChromiumServerTree",
-    "XCUITestServerTree",
-    "UIAutomator2ServerTree",
+    "BaseAccessibilityTree",
+    "ChromiumAccessibilitTree",
+    "XCUITestAccessibilityTree",
+    "UIAutomator2AccessibilityTree",
 ]

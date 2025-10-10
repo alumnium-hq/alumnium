@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 
-class BaseServerTree(ABC):
+class BaseAccessibilityTree(ABC):
     """Base class for server-side accessibility trees that handle ID mapping."""
 
     def __init__(self):
@@ -15,7 +15,7 @@ class BaseServerTree(ABC):
         pass
 
     @abstractmethod
-    def get_area(self, id: int) -> "BaseServerTree":
+    def get_area(self, id: int) -> "BaseAccessibilityTree":
         """Get a subtree starting at the given element ID."""
         pass
 

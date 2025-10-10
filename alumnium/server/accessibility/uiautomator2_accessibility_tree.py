@@ -3,7 +3,6 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
-from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
 
 
@@ -16,11 +15,11 @@ class Node:
     children: List["Node"] = field(default_factory=list)
 
 
-class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
+class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
+        super().__init__()
         self.tree = []
-        self.id_counter = 0
-        self.cached_ids = {}
+        self.id_to_node = {}
 
         # cleaning multiple xml declaration lines from page source
         xml_declaration_pattern = re.compile(r"^\s*<\?xml.*\?>\s*$")
@@ -36,24 +35,30 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
         except ParseError as e:
             raise ValueError(f"Invalid XML string: {e}")
 
-        app_element = None
-
         if len(root_element):
             for children in range(0, len(root_element)):
                 app_element = root_element[children]
                 self.tree.append(self._parse_element(app_element))
 
-    def get_tree(self):
-        return self.tree
+    def get_area(self, id: int) -> "UIAutomator2AccessibilityTree":
+        if id not in self.id_to_node:
+            raise KeyError(f"No element with id={id}")
 
-    def _get_next_id(self) -> int:
-        self.id_counter += 1
-        return self.id_counter
+        # Create a new tree for the specific area
+        area_tree = UIAutomator2AccessibilityTree("")
+        area_tree.tree = [self.id_to_node[id]]
+        area_tree.id_to_node = self.id_to_node.copy()
+        area_tree.simplified_to_raw = self.simplified_to_raw.copy()
+        return area_tree
 
     def _parse_element(self, element: Element) -> Node:
-        node_id = self._get_next_id()
+        simplified_id = self._get_next_id()
         attributes = element.attrib
         raw_type = attributes.get("type", element.tag)
+
+        # For UIAutomator2, the raw ID is just the simplified ID
+        # (we'll use element properties to locate elements)
+        self.simplified_to_raw[simplified_id] = simplified_id
 
         ignored = attributes.get("ignored") == "true"
 
@@ -119,30 +124,13 @@ class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
                     prop_entry["value"] = attributes[xml_attr_name]
                 properties.append(prop_entry)
 
-        node = Node(id=node_id, role=raw_type, ignored=ignored, properties=properties)
+        node = Node(id=simplified_id, role=raw_type, ignored=ignored, properties=properties)
 
-        self.cached_ids[node_id] = node
+        self.id_to_node[simplified_id] = node
 
         for child_element in element:
             node.children.append(self._parse_element(child_element))
         return node
-
-    def element_by_id(self, id) -> AccessibilityElement:
-        element = AccessibilityElement(id=id)
-        found_node = self.cached_ids.get(id)
-        for prop in found_node.properties:
-            prop_name, prop_value = prop.get("name"), prop.get("value")
-            if prop_name == "class":
-                element.type = prop_value
-            elif prop_name == "resource-id":
-                element.androidresourceid = prop_value
-            elif prop_name == "text":
-                element.androidtext = prop_value
-            elif prop_name == "content-desc":
-                element.androidcontentdesc = prop_value
-            elif prop_name == "bounds":
-                element.androidbounds = prop_value
-        return element
 
     def to_xml(self) -> str:
         if not self.tree:

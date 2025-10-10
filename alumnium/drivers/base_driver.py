@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from alumnium.accessibility import BaseAccessibilityTree
+from alumnium.accessibility import BaseRawTree
 
 from .keys import Key
 
@@ -8,7 +8,7 @@ from .keys import Key
 class BaseDriver(ABC):
     @property
     @abstractmethod
-    def accessibility_tree(self) -> BaseAccessibilityTree:
+    def accessibility_tree(self) -> BaseRawTree:
         pass
 
     @abstractmethod

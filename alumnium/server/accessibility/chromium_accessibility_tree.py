@@ -1,19 +1,16 @@
 from typing import List
 from xml.etree.ElementTree import Element, indent, tostring
 
-from ..server.logutils import get_logger
-from .accessibility_element import AccessibilityElement
+from ..logutils import get_logger
 from .base_accessibility_tree import BaseAccessibilityTree
 
 logger = get_logger(__name__)
 
 
-class ChromiumAccessibilityTree(BaseAccessibilityTree):
+class ChromiumAccessibilitTree(BaseAccessibilityTree):
     def __init__(self, tree: dict):
+        super().__init__()
         self.tree = {}  # Initialize the result dictionary
-
-        self.id = 0
-        self.cached_ids = {}
 
         nodes = tree["nodes"]
         # Create a lookup table for nodes by their ID
@@ -22,9 +19,11 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         for node_id, node in node_lookup.items():
             parent_id = node.get("parentId")  # Get the parent ID
 
-            self.id += 1
-            self.cached_ids[self.id] = node.get("backendDOMNodeId", "")
-            node["id"] = self.id
+            # Assign simplified ID and map to raw ID
+            simplified_id = self._get_next_id()
+            raw_id = node.get("backendDOMNodeId", "")
+            self.simplified_to_raw[simplified_id] = raw_id
+            node["id"] = simplified_id
 
             # If it's a top-level node, add it directly to the tree
             if parent_id is None:
@@ -40,13 +39,10 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
                 node.pop("childIds", None)
                 node.pop("parentId", None)
 
-        logger.debug(f"  -> Cached IDs: {self.cached_ids}")
+        logger.debug(f"  -> Simplified to Raw ID mapping: {self.simplified_to_raw}")
 
-    def element_by_id(self, id: int) -> AccessibilityElement:
-        return AccessibilityElement(id=self.cached_ids[id])
-
-    def get_area(self, id: int) -> "ChromiumAccessibilityTree":
-        if id not in self.cached_ids:
+    def get_area(self, id: int) -> "ChromiumAccessibilitTree":
+        if id not in self.simplified_to_raw:
             raise KeyError(f"No element with id={id}")
 
         # Create a new tree for the specific area
@@ -66,9 +62,9 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         if not target_node:
             raise KeyError(f"No node with id={id} found in the tree")
 
-        area_tree = ChromiumAccessibilityTree({"nodes": []})
+        area_tree = ChromiumAccessibilitTree({"nodes": []})
         area_tree.tree = {id: target_node}  # Set the target node as the root of the new tree
-        area_tree.cached_ids = self.cached_ids.copy()  # Copy cached IDs for this area
+        area_tree.simplified_to_raw = self.simplified_to_raw.copy()  # Copy ID mappings for this area
         return area_tree
 
     def to_xml(self):

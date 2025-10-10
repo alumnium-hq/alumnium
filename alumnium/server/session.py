@@ -2,10 +2,10 @@ import json
 from typing import Any, Optional
 
 from .accessibility import (
-    BaseServerTree,
-    ChromiumServerTree,
-    UIAutomator2ServerTree,
-    XCUITestServerTree,
+    BaseAccessibilityTree,
+    ChromiumAccessibilitTree,
+    UIAutomator2AccessibilityTree,
+    XCUITestAccessibilityTree,
 )
 from .agents.actor_agent import ActorAgent
 from .agents.area_agent import AreaAgent
@@ -33,7 +33,7 @@ class Session:
         self.session_id = session_id
         self.model = model
         self.platform = platform
-        self.current_tree: Optional[BaseServerTree] = None
+        self.current_tree: Optional[BaseAccessibilityTree] = None
         self.current_area_id: Optional[int] = None  # Track which area we're working with
 
         self.cache = CacheFactory.create_cache()
@@ -46,7 +46,9 @@ class Session:
         self.area_agent = AreaAgent(self.llm)
         self.locator_agent = LocatorAgent(self.llm)
 
-        logger.info(f"Created session {session_id} with model {model.provider.value}/{model.name} and platform {platform}")
+        logger.info(
+            f"Created session {session_id} with model {model.provider.value}/{model.name} and platform {platform}"
+        )
 
     @property
     def stats(self) -> dict[str, dict[str, int]]:
@@ -85,7 +87,7 @@ class Session:
             "cache": self.cache.usage,
         }
 
-    def update_tree(self, raw_tree_data: str) -> BaseServerTree:
+    def update_tree(self, raw_tree_data: str) -> BaseAccessibilityTree:
         """
         Process raw platform data into a server tree.
 
@@ -97,11 +99,11 @@ class Session:
         """
         if self.platform == "chromium":
             tree_dict = json.loads(raw_tree_data)
-            tree = ChromiumServerTree(tree_dict)
+            tree = ChromiumAccessibilitTree(tree_dict)
         elif self.platform == "xcuitest":
-            tree = XCUITestServerTree(raw_tree_data)
+            tree = XCUITestAccessibilityTree(raw_tree_data)
         elif self.platform == "uiautomator2":
-            tree = UIAutomator2ServerTree(raw_tree_data)
+            tree = UIAutomator2AccessibilityTree(raw_tree_data)
         else:
             raise ValueError(f"Unknown platform: {self.platform}")
 

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from playwright.sync_api import Error, Page
 
-from ..accessibility.raw import ChromiumRawTree
+from ..accessibility import ChromiumRawTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
