@@ -7,7 +7,7 @@ from .base_accessibility_tree import BaseAccessibilityTree
 logger = get_logger(__name__)
 
 
-class ChromiumAccessibilitTree(BaseAccessibilityTree):
+class ChromiumAccessibilityTree(BaseAccessibilityTree):
     def __init__(self, tree: dict):
         super().__init__()
         self.tree = {}  # Initialize the result dictionary
@@ -41,7 +41,7 @@ class ChromiumAccessibilitTree(BaseAccessibilityTree):
 
         logger.debug(f"  -> Simplified to Raw ID mapping: {self.simplified_to_raw}")
 
-    def get_area(self, id: int) -> "ChromiumAccessibilitTree":
+    def get_area(self, id: int) -> "ChromiumAccessibilityTree":
         if id not in self.simplified_to_raw:
             raise KeyError(f"No element with id={id}")
 
@@ -62,7 +62,7 @@ class ChromiumAccessibilitTree(BaseAccessibilityTree):
         if not target_node:
             raise KeyError(f"No node with id={id} found in the tree")
 
-        area_tree = ChromiumAccessibilitTree({"nodes": []})
+        area_tree = ChromiumAccessibilityTree({"nodes": []})
         area_tree.tree = {id: target_node}  # Set the target node as the root of the new tree
         area_tree.simplified_to_raw = self.simplified_to_raw.copy()  # Copy ID mappings for this area
         return area_tree

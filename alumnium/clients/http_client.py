@@ -7,7 +7,7 @@ from ..tools.tool_to_schema_converter import convert_tools_to_schemas
 
 
 class HttpClient:
-    def __init__(self, base_url: str, model: Model, tools: dict[str, type[BaseTool]], platform: str):
+    def __init__(self, base_url: str, model: Model, platform: str, tools: dict[str, type[BaseTool]]):
         self.base_url = base_url.rstrip("/")
         self.session_id = None
 
@@ -15,7 +15,12 @@ class HttpClient:
 
         response = post(
             f"{self.base_url}/v1/sessions",
-            json={"provider": model.provider.value, "name": model.name, "tools": tool_schemas, "platform": platform},
+            json={
+                "provider": model.provider.value,
+                "name": model.name,
+                "tools": tool_schemas,
+                "platform": platform,
+            },
             timeout=30,
         )
         response.raise_for_status()
@@ -30,10 +35,14 @@ class HttpClient:
             response.raise_for_status()
             self.session_id = None
 
-    def plan_actions(self, goal: str, raw_tree: str, area_id: int = None):
+    def plan_actions(self, goal: str, accessibility_tree: str, area_id: int = None):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/plans",
-            json={"goal": goal, "accessibility_tree": raw_tree, "area_id": area_id},
+            json={
+                "goal": goal,
+                "accessibility_tree": accessibility_tree,
+                "area_id": area_id,
+            },
             timeout=120,
         )
         response.raise_for_status()
@@ -55,20 +64,19 @@ class HttpClient:
         )
         response.raise_for_status()
 
-    def execute_action(self, goal: str, step: str, raw_tree: str, area_id: int = None):
+    def execute_action(self, goal: str, step: str, accessibility_tree: str, area_id: int = None):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/steps",
-            json={"goal": goal, "step": step, "accessibility_tree": raw_tree, "area_id": area_id},
+            json={"goal": goal, "step": step, "accessibility_tree": accessibility_tree, "area_id": area_id},
             timeout=120,
         )
         response.raise_for_status()
-        # Server now returns actions with raw IDs already mapped
         return response.json()["actions"]
 
     def retrieve(
         self,
         statement: str,
-        raw_tree: str,
+        accessibility_tree: str,
         title: str,
         url: str,
         screenshot: str | None,
@@ -78,7 +86,7 @@ class HttpClient:
             f"{self.base_url}/v1/sessions/{self.session_id}/statements",
             json={
                 "statement": statement,
-                "accessibility_tree": raw_tree,
+                "accessibility_tree": accessibility_tree,
                 "title": title,
                 "url": url,
                 "screenshot": screenshot if screenshot else None,
@@ -90,24 +98,23 @@ class HttpClient:
         data = response.json()
         return data["explanation"], data["result"]
 
-    def find_area(self, description: str, raw_tree: str):
+    def find_area(self, description: str, accessibility_tree: str):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/areas",
-            json={"description": description, "accessibility_tree": raw_tree},
+            json={"description": description, "accessibility_tree": accessibility_tree},
             timeout=60,
         )
         response.raise_for_status()
         data = response.json()
         return {"id": data["id"], "explanation": data["explanation"]}
 
-    def find_element(self, description: str, raw_tree: str, area_id: int = None):
+    def find_element(self, description: str, accessibility_tree: str, area_id: int = None):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/elements",
-            json={"description": description, "accessibility_tree": raw_tree, "area_id": area_id},
+            json={"description": description, "accessibility_tree": accessibility_tree, "area_id": area_id},
             timeout=60,
         )
         response.raise_for_status()
-        # Server now returns element with raw ID already mapped
         return response.json()["elements"][0]
 
     def save_cache(self):

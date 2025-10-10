@@ -1,9 +1,9 @@
-import json
-from typing import Any, Optional
+from json import loads
+from typing import Any
 
 from .accessibility import (
     BaseAccessibilityTree,
-    ChromiumAccessibilitTree,
+    ChromiumAccessibilityTree,
     UIAutomator2AccessibilityTree,
     XCUITestAccessibilityTree,
 )
@@ -27,14 +27,12 @@ class Session:
         self,
         session_id: str,
         model: Model,
-        tools: dict[str, Any],
         platform: str,
+        tools: dict[str, Any],
     ):
         self.session_id = session_id
         self.model = model
         self.platform = platform
-        self.current_tree: Optional[BaseAccessibilityTree] = None
-        self.current_area_id: Optional[int] = None  # Track which area we're working with
 
         self.cache = CacheFactory.create_cache()
         self.llm = LLMFactory.create_llm(model=model)
@@ -87,7 +85,7 @@ class Session:
             "cache": self.cache.usage,
         }
 
-    def update_tree(self, raw_tree_data: str) -> BaseAccessibilityTree:
+    def process_tree(self, raw_tree_data: str) -> BaseAccessibilityTree:
         """
         Process raw platform data into a server tree.
 
@@ -98,8 +96,8 @@ class Session:
             The created server tree instance
         """
         if self.platform == "chromium":
-            tree_dict = json.loads(raw_tree_data)
-            tree = ChromiumAccessibilitTree(tree_dict)
+            tree_dict = loads(raw_tree_data)
+            tree = ChromiumAccessibilityTree(tree_dict)
         elif self.platform == "xcuitest":
             tree = XCUITestAccessibilityTree(raw_tree_data)
         elif self.platform == "uiautomator2":

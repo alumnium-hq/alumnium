@@ -20,9 +20,9 @@ class Area:
         self.id = id
         self.description = description
         self.driver = driver
+        self.accessibility_tree = driver.accessibility_tree
         self.tools = tools
         self.client = client
-        # Note: Server now handles area scoping internally
 
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
@@ -32,20 +32,11 @@ class Area:
         Args:
             goal: The goal to be achieved.
         """
-        # Get raw tree
-        raw_tree = self.driver.accessibility_tree
-        raw_tree_str = raw_tree.to_raw()
-
-        # Let server handle processing and scoping
-        steps = self.client.plan_actions(goal, raw_tree_str, area_id=self.id)
+        steps = self.client.plan_actions(goal, self.accessibility_tree.to_str(), area_id=self.id)
         for step in steps:
-            # Refresh tree for each step
-            raw_tree = self.driver.accessibility_tree
-            raw_tree_str = raw_tree.to_raw()
+            actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_str(), area_id=self.id)
 
-            actor_response = self.client.execute_action(goal, step, raw_tree_str, area_id=self.id)
-
-            # Execute tool calls (contain raw IDs from server/client)
+            # Execute tool calls
             for tool_call in actor_response:
                 BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
@@ -63,14 +54,9 @@ class Area:
         Raises:
             AssertionError: If the verification fails.
         """
-        # Get raw tree
-        raw_tree = self.driver.accessibility_tree
-        raw_tree_str = raw_tree.to_raw()
-
-        # Let server handle processing and scoping
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
-            raw_tree_str,
+            self.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -90,14 +76,9 @@ class Area:
         Returns:
             Data: The extracted data loosely typed to int, float, str, or list of them.
         """
-        # Get raw tree
-        raw_tree = self.driver.accessibility_tree
-        raw_tree_str = raw_tree.to_raw()
-
-        # Let server handle processing and scoping
         _, value = self.client.retrieve(
             data,
-            raw_tree_str,
+            self.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -115,11 +96,5 @@ class Area:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        # Get raw tree
-        raw_tree = self.driver.accessibility_tree
-        raw_tree_str = raw_tree.to_raw()
-
-        # Let server handle processing and scoping
-        response = self.client.find_element(description, raw_tree_str, area_id=self.id)
-        # Response contains raw platform ID from server/client
+        response = self.client.find_element(description, self.accessibility_tree.to_str(), area_id=self.id)
         return self.driver.find_element(response["id"])

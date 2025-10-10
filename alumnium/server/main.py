@@ -114,7 +114,7 @@ async def plan_actions(session_id: str, request: PlanRequest):
 
     try:
         # Process raw tree data
-        tree = session.update_tree(request.accessibility_tree)
+        tree = session.process_tree(request.accessibility_tree)
 
         # Scope to area if area_id provided
         if request.area_id is not None:
@@ -142,7 +142,7 @@ async def plan_step_actions(session_id: str, request: StepRequest):
 
     try:
         # Process raw tree data
-        full_tree = session.update_tree(request.accessibility_tree)
+        full_tree = session.process_tree(request.accessibility_tree)
 
         # Scope to area if area_id provided
         if request.area_id is not None:
@@ -176,7 +176,7 @@ async def execute_statement(session_id: str, request: StatementRequest):
 
     try:
         # Process raw tree data
-        tree = session.update_tree(request.accessibility_tree)
+        tree = session.process_tree(request.accessibility_tree)
 
         # Scope to area if area_id provided
         if request.area_id is not None:
@@ -212,7 +212,7 @@ async def choose_area(session_id: str, request: AreaRequest):
 
     try:
         # Process raw tree data and update session tree
-        tree = session.update_tree(request.accessibility_tree)
+        tree = session.process_tree(request.accessibility_tree)
 
         # Generate XML for agents
         tree_xml = tree.to_xml()
@@ -255,7 +255,7 @@ async def find_element(session_id: str, request: FindRequest):
 
     try:
         # Process raw tree data
-        full_tree = session.update_tree(request.accessibility_tree)
+        full_tree = session.process_tree(request.accessibility_tree)
 
         # Scope to area if area_id provided
         if request.area_id is not None:
