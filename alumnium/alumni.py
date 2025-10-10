@@ -46,10 +46,10 @@ class Alumni:
 
         if url:
             logger.info(f"Using HTTP client with server: {url}")
-            self.client = HttpClient(url, self.model, self.tools, self.driver.platform)
+            self.client = HttpClient(url, self.model, self.driver.platform, self.tools)
         else:
             logger.info("Using native client")
-            self.client = NativeClient(self.model, self.tools, self.driver.platform)
+            self.client = NativeClient(self.model, self.driver.platform, self.tools)
 
         self.cache = Cache(self.client)
 
