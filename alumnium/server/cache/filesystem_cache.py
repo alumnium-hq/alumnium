@@ -68,8 +68,8 @@ class FilesystemCache(BaseCache):
                         f.write(dumps(return_val[0], pretty=True))
                 finally:
                     # https://github.com/tox-dev/filelock/pull/408
-                    Path.unlink(Path(lock_path))
                     lock.release()
+                    Path.unlink(Path(lock_path))
         self.discard()
 
     def discard(self):
