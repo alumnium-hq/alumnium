@@ -90,14 +90,13 @@ class Session:
         Process raw platform data into a server tree.
 
         Args:
-            raw_tree_data: Raw tree data as string (JSON string for Chromium, XML for others)
+            raw_tree_data: Raw tree data as string (XML for all platforms)
 
         Returns:
             The created server tree instance
         """
         if self.platform == "chromium":
-            tree_dict = loads(raw_tree_data)
-            tree = ChromiumAccessibilityTree(tree_dict)
+            tree = ChromiumAccessibilityTree(raw_tree_data)
         elif self.platform == "xcuitest":
             tree = XCUITestAccessibilityTree(raw_tree_data)
         elif self.platform == "uiautomator2":

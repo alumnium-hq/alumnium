@@ -48,7 +48,7 @@ class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
         area_tree = UIAutomator2AccessibilityTree("")
         area_tree.tree = [self.id_to_node[id]]
         area_tree.id_to_node = self.id_to_node.copy()
-        area_tree.simplified_to_raw = self.simplified_to_raw.copy()
+        area_tree.simplified_to_raw_id = self.simplified_to_raw_id.copy()
         return area_tree
 
     def _parse_element(self, element: Element) -> Node:
@@ -56,9 +56,11 @@ class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
         attributes = element.attrib
         raw_type = attributes.get("type", element.tag)
 
-        # For UIAutomator2, the raw ID is just the simplified ID
-        # (we'll use element properties to locate elements)
-        self.simplified_to_raw[simplified_id] = simplified_id
+        # Extract raw_id attribute
+        raw_id = attributes.get("raw_id", "")
+        if raw_id:
+            raw_id_int = int(raw_id)
+            self.simplified_to_raw_id[simplified_id] = raw_id_int
 
         ignored = attributes.get("ignored") == "true"
 

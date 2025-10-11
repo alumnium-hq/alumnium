@@ -156,7 +156,7 @@ async def plan_step_actions(session_id: str, request: StepRequest):
         actions = session.actor_agent.invoke(request.goal, request.step, tree_xml)
 
         # Map simplified IDs to raw IDs using the FULL tree (not scoped tree)
-        actions_with_raw_ids = full_tree.map_tool_calls_to_raw(actions)
+        actions_with_raw_ids = full_tree.map_tool_calls_to_raw_id(actions)
 
         return StepResponse(actions=actions_with_raw_ids)
 
@@ -219,7 +219,10 @@ async def choose_area(session_id: str, request: AreaRequest):
 
         area = session.area_agent.invoke(request.description, tree_xml)
 
-        return AreaResponse(**area)
+        # Map simplified ID to raw_id (for area scoping)
+        raw_id = tree.map_id_to_raw_id(area["id"])
+
+        return AreaResponse(id=raw_id, explanation=area["explanation"])
 
     except Exception as e:
         logger.error(f"Failed to choose accessibility area for session {session_id}: {e}")
@@ -272,7 +275,7 @@ async def find_element(session_id: str, request: FindRequest):
         elements_with_raw_ids = []
         for element in elements:
             raw_element = element.copy()
-            raw_element["id"] = full_tree.map_id_to_raw(element["id"])
+            raw_element["id"] = full_tree.map_id_to_raw_id(element["id"])
             elements_with_raw_ids.append(raw_element)
 
         return FindResponse(elements=elements_with_raw_ids)

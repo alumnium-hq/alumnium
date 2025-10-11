@@ -7,7 +7,7 @@ class BaseAccessibilityTree(ABC):
 
     def __init__(self):
         self.id_counter = 0
-        self.simplified_to_raw = {}  # Maps simplified IDs to raw platform IDs
+        self.simplified_to_raw_id = {}  # Maps simplified IDs to raw_id
 
     @abstractmethod
     def to_xml(self) -> str:
@@ -19,15 +19,15 @@ class BaseAccessibilityTree(ABC):
         """Get a subtree starting at the given element ID."""
         pass
 
-    def map_id_to_raw(self, simplified_id: int) -> Any:
-        """Map a simplified ID back to the raw platform ID."""
-        if simplified_id not in self.simplified_to_raw:
+    def map_id_to_raw_id(self, simplified_id: int) -> int:
+        """Map a simplified ID back to raw_id."""
+        if simplified_id not in self.simplified_to_raw_id:
             raise KeyError(f"No element with simplified id={simplified_id}")
-        return self.simplified_to_raw[simplified_id]
+        return self.simplified_to_raw_id[simplified_id]
 
-    def map_tool_calls_to_raw(self, tool_calls: list[dict]) -> list[dict]:
+    def map_tool_calls_to_raw_id(self, tool_calls: list[dict]) -> list[dict]:
         """
-        Map simplified IDs in tool calls back to raw platform IDs.
+        Map simplified IDs in tool calls back to raw_id.
 
         Handles id, from_id, and to_id fields in tool call arguments.
         """
@@ -38,11 +38,11 @@ class BaseAccessibilityTree(ABC):
 
             # Map ID fields if present
             if "id" in args:
-                args["id"] = self.map_id_to_raw(args["id"])
+                args["id"] = self.map_id_to_raw_id(args["id"])
             if "from_id" in args:
-                args["from_id"] = self.map_id_to_raw(args["from_id"])
+                args["from_id"] = self.map_id_to_raw_id(args["from_id"])
             if "to_id" in args:
-                args["to_id"] = self.map_id_to_raw(args["to_id"])
+                args["to_id"] = self.map_id_to_raw_id(args["to_id"])
 
             mapped_call["args"] = args
             mapped_calls.append(mapped_call)

@@ -1,3 +1,4 @@
+from ..accessibility.base_raw_tree import BaseRawTree
 from ..server.agents.retriever_agent import Data
 from ..server.models import Model
 from ..server.session_manager import SessionManager
@@ -22,6 +23,19 @@ class NativeClient:
 
     def quit(self):
         self.session_manager.delete_session(self.session_id)
+
+    def scope_to_area(self, raw_xml: str, raw_id: int | str) -> str:
+        """
+        Scope raw XML to an area by raw_id.
+
+        Args:
+            raw_xml: Raw XML string
+            raw_id: The raw_id attribute value to scope to (int or str)
+
+        Returns:
+            Scoped raw XML string
+        """
+        return BaseRawTree.scope_to_area(raw_xml, raw_id)
 
     def plan_actions(self, goal: str, accessibility_tree: str, area_id: int = None):
         # Process raw tree
@@ -56,7 +70,7 @@ class NativeClient:
         actions = self.session.actor_agent.invoke(goal, step, tree_xml)
 
         # Map IDs using the FULL tree (not scoped tree)
-        return full_tree.map_tool_calls_to_raw(actions)
+        return full_tree.map_tool_calls_to_raw_id(actions)
 
     def retrieve(
         self,
@@ -86,7 +100,10 @@ class NativeClient:
 
         area = self.session.area_agent.invoke(description, tree_xml)
 
-        return area
+        # Map simplified ID to raw_id (for area scoping)
+        raw_id = tree.map_id_to_raw_id(area["id"])
+
+        return {"id": raw_id, "explanation": area["explanation"]}
 
     def find_element(self, description: str, accessibility_tree: str, area_id: int = None):
         # Process raw tree
@@ -102,7 +119,7 @@ class NativeClient:
         element = self.session.locator_agent.invoke(description, tree_xml)[0]
 
         # Map ID using the FULL tree (not scoped tree)
-        element["id"] = full_tree.map_id_to_raw(element["id"])
+        element["id"] = full_tree.map_id_to_raw_id(element["id"])
 
         return element
 

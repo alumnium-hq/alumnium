@@ -12,10 +12,10 @@ class BaseTool(BaseModel):
         driver: BaseDriver,
     ):
         """
-        Execute a tool call. Tool calls now contain raw platform IDs directly from the server.
+        Execute a tool call.
 
         Args:
-            tool_call: Tool call dict with name and args (IDs are already raw platform IDs)
+            tool_call: Tool call dict with name and args (IDs should be platform-specific)
             tools: Available tool classes
             driver: Driver to execute the tool on
         """

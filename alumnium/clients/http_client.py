@@ -1,5 +1,6 @@
 from requests import delete, get, post
 
+from ..accessibility.base_raw_tree import BaseRawTree
 from ..server.agents.retriever_agent import Data
 from ..server.models import Model
 from ..tools.base_tool import BaseTool
@@ -34,6 +35,19 @@ class HttpClient:
             )
             response.raise_for_status()
             self.session_id = None
+
+    def scope_to_area(self, raw_xml: str, raw_id: int | str) -> str:
+        """
+        Scope raw XML to an area by raw_id.
+
+        Args:
+            raw_xml: Raw XML string
+            raw_id: The raw_id attribute value to scope to (int or str)
+
+        Returns:
+            Scoped raw XML string
+        """
+        return BaseRawTree.scope_to_area(raw_xml, raw_id)
 
     def plan_actions(self, goal: str, accessibility_tree: str, area_id: int = None):
         response = post(
