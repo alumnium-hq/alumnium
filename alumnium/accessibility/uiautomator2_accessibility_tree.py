@@ -4,7 +4,7 @@ from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
 
 
-class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
+class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
         self.xml_string = xml_string
         self._next_raw_id = 1

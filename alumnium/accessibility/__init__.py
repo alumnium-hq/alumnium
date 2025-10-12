@@ -1,13 +1,13 @@
 from .accessibility_element import AccessibilityElement
-from .base_accessibility_tree import BaseRawTree
-from .chromium_accessibility_tree import ChromiumRawTree
-from .uiautomator2_accessibility_tree import UIAutomator2RawTree
-from .xcuitest_accessibility_tree import XCUITestRawTree
+from .base_accessibility_tree import BaseAccessibilityTree
+from .chromium_accessibility_tree import ChromiumAccessibilityTree
+from .uiautomator2_accessibility_tree import UIAutomator2AccessibilityTree
+from .xcuitest_accessibility_tree import XCUITestAccessibilityTree
 
 __all__ = [
     "AccessibilityElement",
-    "BaseRawTree",
-    "ChromiumRawTree",
-    "UIAutomator2RawTree",
-    "XCUITestRawTree",
+    "BaseAccessibilityTree",
+    "ChromiumAccessibilityTree",
+    "UIAutomator2AccessibilityTree",
+    "XCUITestAccessibilityTree",
 ]
