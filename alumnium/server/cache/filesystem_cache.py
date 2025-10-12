@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from filelock import FileLock
 from langchain_core.caches import RETURN_VAL_TYPE, BaseCache
@@ -24,7 +24,7 @@ class FilesystemCache(BaseCache):
         # as (response, save) where `save` means it should be saved to filesystem.
         self._in_memory_cache: dict[tuple[str, str], tuple[RETURN_VAL_TYPE, bool]] = {}
 
-    def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
+    def lookup(self, prompt: str, llm_string: str) -> RETURN_VAL_TYPE | None:
         try:
             system_message, human_message = self._extract_messages(prompt)
             hashed_request = self._hash_request(system_message, human_message)
@@ -67,9 +67,9 @@ class FilesystemCache(BaseCache):
                     with open(response_file, "w") as f:
                         f.write(dumps(return_val[0], pretty=True))
                 finally:
+                    lock.release()
                     # https://github.com/tox-dev/filelock/pull/408
                     Path.unlink(Path(lock_path))
-                    lock.release()
         self.discard()
 
     def discard(self):
