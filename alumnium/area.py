@@ -35,14 +35,9 @@ class Area:
         """
         steps = self.client.plan_actions(goal, self.scoped_tree)
         for step in steps:
-            # Re-scope tree after each step in case the page changed
-            raw_xml = self.driver.accessibility_tree.to_str()
-            response = self.client.find_area(self.description, raw_xml)
-            scoped_xml = self.client.scope_to_area(raw_xml, response["id"])
+            actor_response = self.client.execute_action(goal, step, self.scoped_tree)
 
-            actor_response = self.client.execute_action(goal, step, scoped_xml)
-
-            # Execute tool calls with raw_ids - driver will convert to platform-specific IDs
+            # Execute tool calls
             for tool_call in actor_response:
                 BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
@@ -101,6 +96,4 @@ class Area:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
         response = self.client.find_element(description, self.scoped_tree)
-
-        # Pass raw_id to driver - it will convert to platform-specific ID
         return self.driver.find_element(response["id"])

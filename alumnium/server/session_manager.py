@@ -20,8 +20,8 @@ class SessionManager:
         Args:
             provider: The model provider name
             name: The model name (optional)
-            tools: List of LangChain tool schemas
             platform: The platform type (chromium, xcuitest, uiautomator2)
+            tools: List of LangChain tool schemas
         Returns:
             Session ID string
         """

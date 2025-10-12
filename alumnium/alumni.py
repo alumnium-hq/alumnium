@@ -70,10 +70,9 @@ class Alumni:
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            raw_xml = accessibility_tree.to_str()
-            actor_response = self.client.execute_action(goal, step, raw_xml)
+            actor_response = self.client.execute_action(goal, step, accessibility_tree.to_str())
 
-            # Execute tool calls with raw_ids - driver will convert to platform-specific IDs
+            # Execute tool calls
             for tool_call in actor_response:
                 BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
@@ -131,10 +130,7 @@ class Alumni:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        raw_xml = self.driver.accessibility_tree.to_str()
-        response = self.client.find_element(description, raw_xml)
-
-        # Pass raw_id to driver - it will convert to platform-specific ID
+        response = self.client.find_element(description, self.driver.accessibility_tree.to_str())
         return self.driver.find_element(response["id"])
 
     def area(self, description: str) -> Area:
@@ -151,13 +147,8 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        # Get full raw tree
         raw_xml = self.driver.accessibility_tree.to_str()
-
-        # Find the area and get its backend ID
         response = self.client.find_area(description, raw_xml)
-
-        # Scope the raw tree to the area using backend ID (returned as id)
         scoped_raw_xml = self.client.scope_to_area(raw_xml, response["id"])
 
         return Area(
