@@ -25,36 +25,6 @@ class Area:
         self.tools = tools
         self.client = client
 
-    def _convert_raw_ids_to_platform_ids(self, tool_calls: list[dict], raw_xml: str) -> list[dict]:
-        """
-        Convert raw_id values in tool calls to platform-specific IDs.
-
-        Args:
-            tool_calls: List of tool call dicts with raw_id values
-            raw_xml: Raw accessibility tree XML
-
-        Returns:
-            List of tool calls with platform-specific IDs
-        """
-        from .accessibility.base_raw_tree import BaseRawTree
-
-        converted_calls = []
-        for call in tool_calls:
-            converted_call = call.copy()
-            args = call.get("args", {}).copy()
-
-            # Convert ID fields from raw_id to platform-specific ID
-            for id_field in ["id", "from_id", "to_id"]:
-                if id_field in args:
-                    raw_id = args[id_field]
-                    platform_id = BaseRawTree.get_platform_id(raw_xml, raw_id, self.driver.platform)
-                    args[id_field] = platform_id
-
-            converted_call["args"] = args
-            converted_calls.append(converted_call)
-
-        return converted_calls
-
     @retry(tries=2, delay=0.1)
     def do(self, goal: str):
         """
@@ -72,11 +42,8 @@ class Area:
 
             actor_response = self.client.execute_action(goal, step, scoped_xml)
 
-            # Convert raw_ids to platform-specific IDs
-            converted_calls = self._convert_raw_ids_to_platform_ids(actor_response, raw_xml)
-
-            # Execute tool calls
-            for tool_call in converted_calls:
+            # Execute tool calls with raw_ids - driver will convert to platform-specific IDs
+            for tool_call in actor_response:
                 BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
     def check(self, statement: str, vision: bool = False) -> str:
@@ -133,14 +100,7 @@ class Area:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        from .accessibility.base_raw_tree import BaseRawTree
-
-        # Use full raw tree for ID conversion (scoped tree may not have backend IDs)
-        raw_xml = self.driver.accessibility_tree.to_str()
         response = self.client.find_element(description, self.scoped_tree)
 
-        # Convert raw_id to platform-specific ID
-        raw_id = response["id"]
-        platform_id = BaseRawTree.get_platform_id(raw_xml, raw_id, self.driver.platform)
-
-        return self.driver.find_element(platform_id)
+        # Pass raw_id to driver - it will convert to platform-specific ID
+        return self.driver.find_element(response["id"])

@@ -110,20 +110,24 @@ class SeleniumDriver(BaseDriver):
         return self.driver.current_url
 
     def find_element(self, id: int) -> WebElement:
-        # Beware!
+        # Get element properties (including backend_node_id) from raw tree
+        element_props = self.accessibility_tree.element_by_id(id)
+        backend_node_id = element_props.backend_node_id
+
+        # Use backend_node_id for CDP commands
         self.driver.execute_cdp_cmd("DOM.enable", {})
         self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})
-        node_ids = self.driver.execute_cdp_cmd("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [id]})
+        node_ids = self.driver.execute_cdp_cmd("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]})
         node_id = node_ids["nodeIds"][0]
         self.driver.execute_cdp_cmd(
             "DOM.setAttributeValue",
             {
                 "nodeId": node_id,
                 "name": "data-alumnium-id",
-                "value": str(id),
+                "value": str(backend_node_id),
             },
         )
-        element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-id='{id}']")
+        element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-id='{backend_node_id}']")
         self.driver.execute_cdp_cmd(
             "DOM.removeAttribute",
             {

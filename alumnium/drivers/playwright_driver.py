@@ -104,22 +104,26 @@ class PlaywrightDriver(BaseDriver):
         return self.page.url
 
     def find_element(self, id: int):
-        # Beware!
+        # Get element properties (including backend_node_id) from raw tree
+        element_props = self.accessibility_tree.element_by_id(id)
+        backend_node_id = element_props.backend_node_id
+
+        # Use backend_node_id for CDP commands
         self.client.send("DOM.enable")
         self.client.send("DOM.getFlattenedDocument")
-        node_ids = self.client.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [id]})
+        node_ids = self.client.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]})
         node_id = node_ids["nodeIds"][0]
         self.client.send(
             "DOM.setAttributeValue",
             {
                 "nodeId": node_id,
                 "name": "data-alumnium-id",
-                "value": str(id),
+                "value": str(backend_node_id),
             },
         )
         # TODO: We need to remove the attribute after we are done with the element,
         # but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
-        return self.page.locator(f"css=[data-alumnium-id='{id}']")
+        return self.page.locator(f"css=[data-alumnium-id='{backend_node_id}']")
 
     def wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")

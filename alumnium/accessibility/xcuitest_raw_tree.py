@@ -6,9 +6,10 @@ from .base_raw_tree import BaseRawTree
 
 @dataclass
 class ElementProperties:
-    """Properties of an element for XPath construction."""
+    """Properties of an element for platform-specific element finding."""
 
     type: str
+    backend_node_id: int | None = None  # For Chromium (Selenium/Playwright)
     name: str | None = None
     value: str | None = None
     label: str | None = None
