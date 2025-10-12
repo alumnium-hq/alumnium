@@ -10,7 +10,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.select import Select
 
-from ..accessibility import ChromiumRawTree
+from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -47,10 +47,10 @@ class SeleniumDriver(BaseDriver):
         return "chromium"
 
     @property
-    def accessibility_tree(self) -> ChromiumRawTree:
+    def accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
         cdp_response = self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})
-        return ChromiumRawTree(cdp_response)
+        return ChromiumAccessibilityTree(cdp_response)
 
     def click(self, id: int):
         self.find_element(id).click()
@@ -117,7 +117,9 @@ class SeleniumDriver(BaseDriver):
         # Use backend_node_id for CDP commands
         self.driver.execute_cdp_cmd("DOM.enable", {})
         self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})
-        node_ids = self.driver.execute_cdp_cmd("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]})
+        node_ids = self.driver.execute_cdp_cmd(
+            "DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]}
+        )
         node_id = node_ids["nodeIds"][0]
         self.driver.execute_cdp_cmd(
             "DOM.setAttributeValue",

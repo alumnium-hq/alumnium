@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
 
-class BaseRawTree(ABC):
+class BaseAccessibilityTree(ABC):
     @abstractmethod
     def to_str(self) -> str:
         pass

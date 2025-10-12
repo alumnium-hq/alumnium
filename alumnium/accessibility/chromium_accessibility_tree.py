@@ -1,10 +1,10 @@
 from xml.etree.ElementTree import Element, SubElement, fromstring, indent, tostring
 
-from .base_raw_tree import BaseRawTree
-from .xcuitest_raw_tree import ElementProperties
+from .accessibility_element import AccessibilityElement
+from .base_accessibility_tree import BaseAccessibilityTree
 
 
-class ChromiumRawTree(BaseRawTree):
+class ChromiumAccessibilityTree(BaseAccessibilityTree):
     def __init__(self, cdp_response: dict):
         self.cdp_response = cdp_response
         self._next_raw_id = 1
@@ -80,7 +80,7 @@ class ChromiumRawTree(BaseRawTree):
 
         return elem
 
-    def element_by_id(self, raw_id: int) -> ElementProperties:
+    def element_by_id(self, raw_id: int) -> AccessibilityElement:
         """
         Find element by raw_id and return its properties for element finding.
 
@@ -88,7 +88,7 @@ class ChromiumRawTree(BaseRawTree):
             raw_id: The raw_id to search for
 
         Returns:
-            ElementProperties with backend_node_id set
+            AccessibilityElement with backend_node_id set
         """
         # Get raw XML with raw_id attributes
         raw_xml = self.to_str()
@@ -113,7 +113,7 @@ class ChromiumRawTree(BaseRawTree):
         if backend_node_id_str is None:
             raise ValueError(f"Element with raw_id={raw_id} has no backendDOMNodeId attribute")
 
-        return ElementProperties(
+        return AccessibilityElement(
             type=element.tag,
             backend_node_id=int(backend_node_id_str),
         )

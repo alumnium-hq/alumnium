@@ -9,7 +9,7 @@ from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from ..accessibility import UIAutomator2RawTree, XCUITestRawTree
+from ..accessibility import UIAutomator2AccessibiltyTree, XCUITestAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -44,15 +44,15 @@ class AppiumDriver(BaseDriver):
             return "xcuitest"
 
     @property
-    def accessibility_tree(self) -> XCUITestRawTree | UIAutomator2RawTree:
+    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
         self._ensure_native_app_context()
         sleep(self.delay)
         xml_string = self.driver.page_source
 
         if self.platform == "uiautomator2":
-            return UIAutomator2RawTree(xml_string)
+            return UIAutomator2AccessibiltyTree(xml_string)
         else:
-            return XCUITestRawTree(xml_string)
+            return XCUITestAccessibilityTree(xml_string)
 
     def click(self, id: int):
         self._ensure_native_app_context()

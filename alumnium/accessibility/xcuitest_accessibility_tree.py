@@ -1,25 +1,10 @@
-from dataclasses import dataclass
 from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
-from .base_raw_tree import BaseRawTree
+from .accessibility_element import AccessibilityElement
+from .base_accessibility_tree import BaseAccessibilityTree
 
 
-@dataclass
-class ElementProperties:
-    """Properties of an element for platform-specific element finding."""
-
-    type: str
-    backend_node_id: int | None = None  # For Chromium (Selenium/Playwright)
-    name: str | None = None
-    value: str | None = None
-    label: str | None = None
-    androidresourceid: str | None = None
-    androidtext: str | None = None
-    androidcontentdesc: str | None = None
-    androidbounds: str | None = None
-
-
-class XCUITestRawTree(BaseRawTree):
+class XCUITestAccessibilityTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
         self.xml_string = xml_string
         self._next_raw_id = 1
@@ -51,7 +36,7 @@ class XCUITestRawTree(BaseRawTree):
         for child in elem:
             self._add_raw_ids(child)
 
-    def element_by_id(self, raw_id: int) -> ElementProperties:
+    def element_by_id(self, raw_id: int) -> AccessibilityElement:
         """
         Find element by raw_id and return its properties for XPath construction.
 
@@ -59,7 +44,7 @@ class XCUITestRawTree(BaseRawTree):
             raw_id: The raw_id to search for
 
         Returns:
-            ElementProperties with type, name, value, label attributes
+            AccessibilityElement with type, name, value, label attributes
         """
         # Get raw XML with raw_id attributes
         raw_xml = self.to_str()
@@ -80,7 +65,7 @@ class XCUITestRawTree(BaseRawTree):
             raise KeyError(f"No element with raw_id={raw_id} found")
 
         # Extract properties for XCUITest
-        return ElementProperties(
+        return AccessibilityElement(
             type=element.tag,
             name=element.get("name"),
             value=element.get("value"),

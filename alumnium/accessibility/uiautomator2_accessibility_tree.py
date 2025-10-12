@@ -1,10 +1,10 @@
 from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
-from .base_raw_tree import BaseRawTree
-from .xcuitest_raw_tree import ElementProperties
+from .accessibility_element import AccessibilityElement
+from .base_accessibility_tree import BaseAccessibilityTree
 
 
-class UIAutomator2RawTree(BaseRawTree):
+class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
         self.xml_string = xml_string
         self._next_raw_id = 1
@@ -36,7 +36,7 @@ class UIAutomator2RawTree(BaseRawTree):
         for child in elem:
             self._add_raw_ids(child)
 
-    def element_by_id(self, raw_id: int) -> ElementProperties:
+    def element_by_id(self, raw_id: int) -> AccessibilityElement:
         """
         Find element by raw_id and return its properties for XPath construction.
 
@@ -44,7 +44,7 @@ class UIAutomator2RawTree(BaseRawTree):
             raw_id: The raw_id to search for
 
         Returns:
-            ElementProperties with type, androidresourceid, androidtext, androidcontentdesc, androidbounds
+            AccessibilityElement with type, androidresourceid, androidtext, androidcontentdesc, androidbounds
         """
         # Get raw XML with raw_id attributes
         raw_xml = self.to_str()
@@ -65,7 +65,7 @@ class UIAutomator2RawTree(BaseRawTree):
             raise KeyError(f"No element with raw_id={raw_id} found")
 
         # Extract properties for UIAutomator2
-        return ElementProperties(
+        return AccessibilityElement(
             type=element.get("class", element.tag),
             androidresourceid=element.get("resource-id"),
             androidtext=element.get("text"),

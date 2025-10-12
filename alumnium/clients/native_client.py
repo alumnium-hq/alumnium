@@ -1,4 +1,4 @@
-from ..accessibility.base_raw_tree import BaseRawTree
+from ..accessibility.base_accessibility_tree import BaseAccessibilityTree
 from ..server.agents.retriever_agent import Data
 from ..server.models import Model
 from ..server.session_manager import SessionManager
@@ -35,7 +35,7 @@ class NativeClient:
         Returns:
             Scoped raw XML string
         """
-        return BaseRawTree.scope_to_area(raw_xml, raw_id)
+        return BaseAccessibilityTree.scope_to_area(raw_xml, raw_id)
 
     def plan_actions(self, goal: str, accessibility_tree: str, area_id: int = None):
         # Process raw tree
