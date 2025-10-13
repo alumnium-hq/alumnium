@@ -7,12 +7,13 @@ from .base_accessibility_tree import BaseAccessibilityTree
 class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
         self.xml_string = xml_string
-        self._next_raw_id = 1
+        self._next_raw_id = 0
+        self._raw = None
 
     def to_str(self) -> str:
         """Parse XML and add raw_id attributes to all elements."""
-        # Reset counter for deterministic raw_id assignment
-        self._next_raw_id = 1
+        if self._raw is not None:
+            return self._raw
 
         # Parse the XML
         root = fromstring(self.xml_string)
@@ -22,17 +23,13 @@ class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
 
         # Serialize back to string
         indent(root)
-        return tostring(root, encoding="unicode")
-
-    def _get_next_raw_id(self) -> int:
-        """Get next sequential raw_id."""
-        raw_id = self._next_raw_id
-        self._next_raw_id += 1
-        return raw_id
+        self._raw = tostring(root, encoding="unicode")
+        return self._raw
 
     def _add_raw_ids(self, elem: Element) -> None:
         """Recursively add raw_id attribute to element and its children."""
-        elem.set("raw_id", str(self._get_next_raw_id()))
+        self._next_raw_id += 1
+        elem.set("raw_id", str(self._next_raw_id))
         for child in elem:
             self._add_raw_ids(child)
 

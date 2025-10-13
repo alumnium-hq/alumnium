@@ -7,19 +7,9 @@ class BaseAccessibilityTree(ABC):
     def to_str(self) -> str:
         pass
 
-    @staticmethod
-    def scope_to_area(raw_xml: str, raw_id: int | str) -> str:
-        """
-        Scope raw XML to a specific area by raw_id.
-        Extracts the subtree rooted at the element with the given raw_id.
+    def scope_to_area(self, raw_id: int) -> str:
+        raw_xml = self.to_str()
 
-        Args:
-            raw_xml: The raw XML string
-            raw_id: The raw_id attribute value to scope to (int or str)
-
-        Returns:
-            Scoped raw XML string containing only the specified subtree
-        """
         # Parse the XML (wrap in root if there are multiple top-level elements)
         try:
             root = fromstring(raw_xml)

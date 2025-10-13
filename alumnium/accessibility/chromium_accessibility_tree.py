@@ -7,12 +7,13 @@ from .base_accessibility_tree import BaseAccessibilityTree
 class ChromiumAccessibilityTree(BaseAccessibilityTree):
     def __init__(self, cdp_response: dict):
         self.cdp_response = cdp_response
-        self._next_raw_id = 1
+        self._next_raw_id = 0
+        self._raw = None
 
     def to_str(self) -> str:
         """Convert CDP response to raw XML format preserving all data."""
-        # Reset counter for deterministic raw_id assignment
-        self._next_raw_id = 1
+        if self._raw is not None:
+            return self._raw
 
         nodes = self.cdp_response["nodes"]
 
@@ -32,13 +33,8 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             indent(root)
             xml_string += tostring(root, encoding="unicode")
 
-        return xml_string
-
-    def _get_next_raw_id(self) -> int:
-        """Get next sequential raw_id."""
-        raw_id = self._next_raw_id
-        self._next_raw_id += 1
-        return raw_id
+        self._raw = xml_string
+        return self._raw
 
     def _node_to_xml(self, node: dict, node_lookup: dict) -> Element:
         """Convert a CDP node to XML element, recursively processing children."""
@@ -47,7 +43,8 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         elem = Element(role)
 
         # Add our own sequential raw_id attribute
-        elem.set("raw_id", str(self._get_next_raw_id()))
+        self._next_raw_id += 1
+        elem.set("raw_id", str(self._next_raw_id))
 
         # Add all node attributes as XML attributes
         if "backendDOMNodeId" in node:
@@ -105,6 +102,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             return None
 
         element = find_element(root, str(raw_id))
+        print(self._raw)
         if element is None:
             raise KeyError(f"No element with raw_id={raw_id} found")
 

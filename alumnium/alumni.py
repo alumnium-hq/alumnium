@@ -148,9 +148,9 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
-        raw_xml = self.driver.accessibility_tree.to_str()
-        response = self.client.find_area(description, raw_xml)
-        scoped_raw_xml = BaseAccessibilityTree.scope_to_area(raw_xml, response["id"])
+        accessibility_tree = self.driver.accessibility_tree
+        response = self.client.find_area(description, accessibility_tree.to_str())
+        scoped_raw_xml = accessibility_tree.scope_to_area(response["id"])
 
         return Area(
             id=response["id"],
