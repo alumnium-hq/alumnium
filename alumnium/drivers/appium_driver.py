@@ -1,4 +1,3 @@
-from contextlib import contextmanager
 from time import sleep
 
 from appium.webdriver import Remote

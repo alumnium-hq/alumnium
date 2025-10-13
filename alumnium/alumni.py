@@ -3,7 +3,6 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from .accessibility.base_accessibility_tree import BaseAccessibilityTree
 from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
