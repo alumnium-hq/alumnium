@@ -39,11 +39,12 @@ class BaseServerAccessibilityTree(ABC):
         self._simplified_id_counter += 1
         return self._simplified_id_counter
 
+    # Gemini returns ids as floats
     # Llama sometimes returns ids as strings or nested dicts
-    def _extract_id(self, id: int | str | dict) -> int:
+    def _extract_id(self, id: int | float | str | dict) -> int:
         if isinstance(id, int):
             return id
-        elif isinstance(id, str):
+        elif isinstance(id, str) or isinstance(id, float):
             return int(id)
         elif isinstance(id, dict) and "value" in id:
             return self._extract_id(id["value"])
