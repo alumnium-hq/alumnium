@@ -10,6 +10,13 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         self._next_raw_id = 0
         self._raw = None
 
+    @classmethod
+    def _from_xml(cls, xml_string: str) -> "ChromiumAccessibilityTree":
+        """Create a ChromiumAccessibilityTree instance from pre-computed XML."""
+        instance = cls(cdp_response={})
+        instance._raw = xml_string
+        return instance
+
     def to_str(self) -> str:
         """Convert CDP response to raw XML format preserving all data."""
         if self._raw is not None:
@@ -114,3 +121,38 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             type=element.tag,
             backend_node_id=int(backend_node_id_str),
         )
+
+    def scope_to_area(self, raw_id: int) -> "ChromiumAccessibilityTree":
+        """Scope the tree to a smaller subtree identified by raw_id."""
+        raw_xml = self.to_str()
+
+        # Parse the XML (wrap in root if there are multiple top-level elements)
+        try:
+            root = fromstring(raw_xml)
+            wrapped = False
+        except Exception:
+            root = fromstring(f"<root>{raw_xml}</root>")
+            wrapped = True
+
+        # Find the element with the matching raw_id
+        def find_element(elem: Element, target_id: str) -> Element | None:
+            if elem.get("raw_id") == target_id:
+                return elem
+            for child in elem:
+                result = find_element(child, target_id)
+                if result is not None:
+                    return result
+            return None
+
+        search_root = root if not wrapped else root
+        target_elem = find_element(search_root, str(raw_id))
+
+        if target_elem is None:
+            # If not found, return original tree
+            return self
+
+        # Convert the scoped element back to XML string
+        indent(target_elem)
+        scoped_xml = tostring(target_elem, encoding="unicode")
+
+        return self._from_xml(scoped_xml)

@@ -69,3 +69,32 @@ class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
             androidcontentdesc=element.get("content-desc"),
             androidbounds=element.get("bounds"),
         )
+
+    def scope_to_area(self, raw_id: int) -> "UIAutomator2AccessibilityTree":
+        """Scope the tree to a smaller subtree identified by raw_id."""
+        raw_xml = self.to_str()
+
+        # Parse the XML
+        root = fromstring(raw_xml)
+
+        # Find the element with the matching raw_id
+        def find_element(elem: Element, target_id: str) -> Element | None:
+            if elem.get("raw_id") == target_id:
+                return elem
+            for child in elem:
+                result = find_element(child, target_id)
+                if result is not None:
+                    return result
+            return None
+
+        target_elem = find_element(root, str(raw_id))
+
+        if target_elem is None:
+            # If not found, return original tree
+            return self
+
+        # Convert the scoped element back to XML string
+        indent(target_elem)
+        scoped_xml = tostring(target_elem, encoding="unicode")
+
+        return UIAutomator2AccessibilityTree(scoped_xml)

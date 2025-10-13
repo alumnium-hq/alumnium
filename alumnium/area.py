@@ -14,8 +14,8 @@ class Area:
         self,
         id: int,
         description: str,
-        accessibility_tree: BaseAccessibilityTree,
         driver: BaseDriver,
+        accessibility_tree: BaseAccessibilityTree,
         tools: dict[str, BaseTool],
         client: HttpClient | NativeClient,
     ):

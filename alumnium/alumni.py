@@ -150,13 +150,11 @@ class Alumni:
         """
         accessibility_tree = self.driver.accessibility_tree
         response = self.client.find_area(description, accessibility_tree.to_str())
-        scoped_raw_xml = accessibility_tree.scope_to_area(response["id"])
-
         return Area(
             id=response["id"],
             description=response["explanation"],
-            scoped_tree=scoped_raw_xml,
             driver=self.driver,
+            accessibility_tree=accessibility_tree.scope_to_area(response["id"]),
             tools=self.tools,
             client=self.client,
         )
