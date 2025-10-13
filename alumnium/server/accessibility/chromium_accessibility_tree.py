@@ -28,7 +28,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             node_id = node.get("backendDOMNodeId", id(node))
             self.tree[node_id] = node
 
-        logger.debug(f"  -> Simplified to Raw ID mapping: {self.simplified_to_raw_id}")
+        logger.debug(f"  -> Simplified to Raw ID mapping: {self._simplified_to_raw_id}")
 
     def _xml_to_node(self, elem: Element) -> dict:
         """Convert XML element to node dict structure with simplified IDs."""
@@ -38,7 +38,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         # Map to raw_id attribute
         raw_id = elem.get("raw_id", "")
         if raw_id:
-            self.simplified_to_raw_id[simplified_id] = int(raw_id)
+            self._simplified_to_raw_id[simplified_id] = int(raw_id)
 
         node = {
             "id": simplified_id,
@@ -71,7 +71,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         return node
 
     def get_area(self, id: int) -> "ChromiumAccessibilityTree":
-        if id not in self.simplified_to_raw_id:
+        if id not in self._simplified_to_raw_id:
             raise KeyError(f"No element with id={id}")
 
         # Create a new tree for the specific area
@@ -93,7 +93,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
 
         area_tree = ChromiumAccessibilityTree("<root></root>")
         area_tree.tree = {id: target_node}  # Set the target node as the root of the new tree
-        area_tree.simplified_to_raw_id = self.simplified_to_raw_id.copy()  # Copy raw_id mappings
+        area_tree._simplified_to_raw_id = self._simplified_to_raw_id.copy()  # Copy raw_id mappings
         return area_tree
 
     def to_xml(self):

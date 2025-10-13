@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -11,10 +11,10 @@ class VersionedModel(BaseModel):
 
 
 class SessionRequest(VersionedModel):
+    platform: Literal["chromium", "uiautomator2", "xcuitest"]
     provider: str
     name: Optional[str] = None
     tools: List[dict[str, Any]]
-    platform: str  # chromium, xcuitest, or uiautomator2
 
 
 class SessionResponse(VersionedModel):
@@ -26,7 +26,6 @@ class PlanRequest(VersionedModel):
     accessibility_tree: str
     url: Optional[str] = None
     title: Optional[str] = None
-    area_id: Optional[int] = None
 
 
 class PlanResponse(VersionedModel):
@@ -37,7 +36,6 @@ class StepRequest(VersionedModel):
     goal: str
     step: str
     accessibility_tree: str
-    area_id: Optional[int] = None
 
 
 class StepResponse(VersionedModel):
@@ -50,7 +48,6 @@ class StatementRequest(VersionedModel):
     url: Optional[str] = None
     title: Optional[str] = None
     screenshot: Optional[str] = None  # base64 encoded image
-    area_id: Optional[int] = None
 
 
 class StatementResponse(VersionedModel):
@@ -72,7 +69,6 @@ class AreaResponse(VersionedModel):
 class FindRequest(VersionedModel):
     description: str
     accessibility_tree: str
-    area_id: Optional[int] = None
 
 
 class FindResponse(VersionedModel):

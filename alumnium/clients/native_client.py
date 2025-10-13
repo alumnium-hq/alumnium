@@ -101,7 +101,7 @@ class NativeClient:
         area = self.session.area_agent.invoke(description, tree_xml)
 
         # Map simplified ID to raw_id (for area scoping)
-        raw_id = tree.map_id_to_raw_id(area["id"])
+        raw_id = tree.get_raw_id(area["id"])
 
         return {"id": raw_id, "explanation": area["explanation"]}
 
@@ -119,7 +119,7 @@ class NativeClient:
         element = self.session.locator_agent.invoke(description, tree_xml)[0]
 
         # Map ID using the FULL tree (not scoped tree)
-        element["id"] = full_tree.map_id_to_raw_id(element["id"])
+        element["id"] = full_tree.get_raw_id(element["id"])
 
         return element
 

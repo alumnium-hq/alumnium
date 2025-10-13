@@ -63,7 +63,7 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         area_tree = XCUITestAccessibilityTree("<AppiumAUT></AppiumAUT>")
         area_tree.tree = self.id_to_node[id]
         area_tree.id_to_node = self.id_to_node.copy()  # Copy node mappings for this area
-        area_tree.simplified_to_raw_id = self.simplified_to_raw_id.copy()  # Copy raw_id mappings
+        area_tree._simplified_to_raw_id = self._simplified_to_raw_id.copy()  # Copy raw_id mappings
         return area_tree
 
     def _simplify_role(self, xcui_type: str) -> str:
@@ -81,7 +81,7 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         raw_id = attributes.get("raw_id", "")
         if raw_id:
             raw_id_int = int(raw_id)
-            self.simplified_to_raw_id[simplified_id] = raw_id_int
+            self._simplified_to_raw_id[simplified_id] = raw_id_int
 
         name_value = attributes.get("name")
         if name_value is None:  # Prefer label
