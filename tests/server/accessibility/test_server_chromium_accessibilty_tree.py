@@ -2,7 +2,6 @@
 
 from json import load
 from pathlib import Path
-from xml.etree.ElementTree import tostring
 
 from pytest import fixture
 

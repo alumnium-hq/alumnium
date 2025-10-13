@@ -1,8 +1,11 @@
+from json import load
+from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 from fastapi.testclient import TestClient
+from pytest import fixture
 
+from alumnium.accessibility.chromium_accessibility_tree import ChromiumAccessibilityTree
 from alumnium.server.main import app
 
 client = TestClient(app)
@@ -42,31 +45,31 @@ def get_sample_tool_schemas():
 
 
 # Test fixtures for reuse across tests
-@pytest.fixture
+@fixture
 def sample_session_id():
     """Create a session for testing and return its ID."""
     response = client.post(
         "/v1/sessions",
-        json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": get_sample_tool_schemas()},
+        json={
+            "provider": "anthropic",
+            "name": "claude-3-haiku-20240307",
+            "platform": "chromium",
+            "tools": get_sample_tool_schemas(),
+        },
     )
     assert response.status_code == 200
     return response.json()["session_id"]
 
 
-@pytest.fixture
+@fixture
 def sample_accessibility_tree():
-    """Sample accessibility tree for testing."""
-    return """
-    <accessibility_tree>
-        <button id="submit-btn" role="button" name="Submit Form">Submit</button>
-        <input id="username" type="text" placeholder="Enter username" />
-        <input id="password" type="password" placeholder="Enter password" />
-        <div id="error-msg" role="alert" hidden="true">Invalid credentials</div>
-    </accessibility_tree>
-    """
+    with open(Path(__file__).parent.parent / "fixtures/chromium_accessibility_tree.json", "r") as f:
+        json = load(f)
+    client_accessibility_tree = ChromiumAccessibilityTree(json)
+    return client_accessibility_tree.to_str()
 
 
-@pytest.fixture(autouse=True)
+@fixture(autouse=True)
 def mock_agents():
     """Mock all agent invoke calls to prevent actual LLM calls."""
     with (
@@ -77,22 +80,26 @@ def mock_agents():
         patch("alumnium.server.agents.locator_agent.LocatorAgent.invoke") as mock_locator,
     ):
         # Mock planner agent to return list of steps
-        mock_planner.return_value = ["Step 1: Click username field", "Step 2: Enter username", "Step 3: Click submit"]
+        mock_planner.return_value = [
+            "Step 1: Click New Todo Input field",
+            "Step 2: Enter 'Buy milk'",
+            "Step 3: Press Enter",
+        ]
 
         # Mock actor agent to return list of actions
         mock_actor.return_value = [
-            {"tool": "click", "args": {"id": "submit-btn"}},
-            {"tool": "type", "args": {"id": "username", "text": "testuser"}},
+            {"tool": "click", "args": {"id": 9}},
+            {"tool": "type", "args": {"id": 9, "text": "Buy milk"}},
         ]
 
         # Mock retriever agent to return RetrievedInformation
         mock_retriever.return_value = ("Found the requested information in the accessibility tree", "true")
 
         # Mock area agent to return area information
-        mock_area.return_value = {"id": 42, "explanation": "Found the login form area"}
+        mock_area.return_value = {"id": 14, "explanation": "Found the TODO list area"}
 
         # Mock locator agent to return element information (as a list)
-        mock_locator.return_value = [{"id": 123, "explanation": "Found the submit button element"}]
+        mock_locator.return_value = [{"id": 16, "explanation": "Found the checkbox element"}]
 
         yield {
             "planner": mock_planner,
@@ -116,40 +123,39 @@ def test_health_check():
 def test_create_session():
     """Test creating a session."""
     response = client.post(
-        "/v1/sessions", json={"provider": "anthropic", "name": "test_name", "tools": get_sample_tool_schemas()}
+        "/v1/sessions",
+        json={
+            "provider": "anthropic",
+            "name": "test_name",
+            "platform": "chromium",
+            "tools": get_sample_tool_schemas(),
+        },
     )
     assert response.status_code == 200
     data = response.json()
     assert "session_id" in data
     assert isinstance(data["session_id"], str)
-    return data["session_id"]
 
 
-def test_list_sessions():
+def test_list_sessions(sample_session_id):
     """Test listing sessions."""
-    # Create a session first
-    session_id = test_create_session()
-
     response = client.get("/v1/sessions")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
-    assert session_id in data
+    assert sample_session_id in data
 
 
-def test_delete_session():
+def test_delete_session(sample_session_id):
     """Test deleting a session."""
-    # Create a session first
-    session_id = test_create_session()
-
     # Delete the session
-    response = client.delete(f"/v1/sessions/{session_id}")
+    response = client.delete(f"/v1/sessions/{sample_session_id}")
     assert response.status_code == 204
 
     # Verify it's gone
     response = client.get("/v1/sessions")
     data = response.json()
-    assert session_id not in data
+    assert sample_session_id not in data
 
 
 def test_delete_nonexistent_session():
@@ -158,12 +164,9 @@ def test_delete_nonexistent_session():
     assert response.status_code == 404
 
 
-def test_session_stats():
+def test_session_stats(sample_session_id):
     """Test getting session stats."""
-    # Create a session first
-    session_id = test_create_session()
-
-    response = client.get(f"/v1/sessions/{session_id}/stats")
+    response = client.get(f"/v1/sessions/{sample_session_id}/stats")
     assert response.status_code == 200
     data = response.json()
     assert "total" in data
@@ -234,8 +237,8 @@ def test_step_actions_success(sample_session_id, sample_accessibility_tree):
     response = client.post(
         f"/v1/sessions/{sample_session_id}/steps",
         json={
-            "goal": "log in to the application",
-            "step": "click the submit button",
+            "goal": "create 'Buy milk' todo item",
+            "step": "click New Todo Input field",
             "accessibility_tree": sample_accessibility_tree,
         },
     )
@@ -396,8 +399,8 @@ def test_find_element_success(sample_session_id, sample_accessibility_tree):
     assert len(data["elements"]) > 0
     # Check first element
     element = data["elements"][0]
-    assert element["id"] == 123
-    assert element["explanation"] == "Found the submit button element"
+    assert element["id"] == 16
+    assert element["explanation"] == "Found the checkbox element"
 
 
 def test_find_element_nonexistent_session(sample_accessibility_tree):
@@ -440,7 +443,9 @@ def test_find_element_empty_description(sample_session_id, sample_accessibility_
 # Session Management Edge Cases
 def test_create_session_minimal_data():
     """Test creating session with minimal required data."""
-    response = client.post("/v1/sessions", json={"provider": "anthropic", "tools": get_sample_tool_schemas()})
+    response = client.post(
+        "/v1/sessions", json={"provider": "anthropic", "platform": "chromium", "tools": get_sample_tool_schemas()}
+    )
     assert response.status_code == 200
 
 
@@ -481,7 +486,12 @@ def test_full_session_workflow():
     # 1. Create session
     create_response = client.post(
         "/v1/sessions",
-        json={"provider": "anthropic", "name": "claude-3-haiku-20240307", "tools": get_sample_tool_schemas()},
+        json={
+            "provider": "anthropic",
+            "name": "claude-3-haiku-20240307",
+            "platform": "chromium",
+            "tools": get_sample_tool_schemas(),
+        },
     )
     assert create_response.status_code == 200
     session_id = create_response.json()["session_id"]
@@ -532,7 +542,12 @@ def test_concurrent_sessions():
     for i in range(3):
         response = client.post(
             "/v1/sessions",
-            json={"provider": "anthropic", "name": f"test-model-{i}", "tools": get_sample_tool_schemas()},
+            json={
+                "provider": "anthropic",
+                "name": f"test-model-{i}",
+                "platform": "chromium",
+                "tools": get_sample_tool_schemas(),
+            },
         )
         assert response.status_code == 200
         session_ids.append(response.json()["session_id"])
@@ -651,7 +666,8 @@ def test_create_session_with_custom_tool_schema():
     ]
 
     response = client.post(
-        "/v1/sessions", json={"provider": "anthropic", "name": "test-custom-tools", "tools": custom_tools}
+        "/v1/sessions",
+        json={"provider": "anthropic", "name": "test-custom-tools", "platform": "chromium", "tools": custom_tools},
     )
     assert response.status_code == 200
     data = response.json()
@@ -664,7 +680,9 @@ def test_create_session_with_custom_tool_schema():
 
 def test_create_session_with_empty_tool_list():
     """Test creating session with empty tool list."""
-    response = client.post("/v1/sessions", json={"provider": "anthropic", "name": "test-no-tools", "tools": []})
+    response = client.post(
+        "/v1/sessions", json={"provider": "anthropic", "name": "test-no-tools", "platform": "chromium", "tools": []}
+    )
     assert response.status_code == 200
     data = response.json()
     assert "session_id" in data
@@ -687,7 +705,8 @@ def test_create_session_with_invalid_tool_schema():
     ]
 
     response = client.post(
-        "/v1/sessions", json={"provider": "anthropic", "name": "test-invalid-tools", "tools": invalid_tools}
+        "/v1/sessions",
+        json={"provider": "anthropic", "name": "test-invalid-tools", "platform": "chromium", "tools": invalid_tools},
     )
     # Should still succeed as we handle malformed schemas gracefully
     assert response.status_code == 200
