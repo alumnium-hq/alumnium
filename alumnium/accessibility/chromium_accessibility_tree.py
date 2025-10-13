@@ -102,7 +102,6 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             return None
 
         element = find_element(root, str(raw_id))
-        print(self._raw)
         if element is None:
             raise KeyError(f"No element with raw_id={raw_id} found")
 

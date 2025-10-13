@@ -1,5 +1,6 @@
 from retry import retry
 
+from .accessibility.base_accessibility_tree import BaseAccessibilityTree
 from .clients.http_client import HttpClient
 from .clients.native_client import NativeClient
 from .drivers import Element
@@ -13,15 +14,15 @@ class Area:
         self,
         id: int,
         description: str,
-        scoped_tree: str,
+        accessibility_tree: BaseAccessibilityTree,
         driver: BaseDriver,
         tools: dict[str, BaseTool],
         client: HttpClient | NativeClient,
     ):
         self.id = id
         self.description = description
-        self.scoped_tree = scoped_tree
         self.driver = driver
+        self.accessibility_tree = accessibility_tree
         self.tools = tools
         self.client = client
 
@@ -33,9 +34,9 @@ class Area:
         Args:
             goal: The goal to be achieved.
         """
-        steps = self.client.plan_actions(goal, self.scoped_tree)
+        steps = self.client.plan_actions(goal, self.accessibility_tree.to_str())
         for step in steps:
-            actor_response = self.client.execute_action(goal, step, self.scoped_tree)
+            actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_str())
 
             # Execute tool calls
             for tool_call in actor_response:
@@ -57,7 +58,7 @@ class Area:
         """
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
-            self.scoped_tree,
+            self.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -78,7 +79,7 @@ class Area:
         """
         _, value = self.client.retrieve(
             data,
-            self.scoped_tree,
+            self.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
@@ -95,5 +96,5 @@ class Area:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        response = self.client.find_element(description, self.scoped_tree)
+        response = self.client.find_element(description, self.accessibility_tree.to_str())
         return self.driver.find_element(response["id"])

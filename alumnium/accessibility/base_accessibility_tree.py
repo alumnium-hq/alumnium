@@ -7,7 +7,7 @@ class BaseAccessibilityTree(ABC):
     def to_str(self) -> str:
         pass
 
-    def scope_to_area(self, raw_id: int) -> str:
+    def scope_to_area(self, raw_id: int) -> "BaseAccessibilityTree":
         raw_xml = self.to_str()
 
         # Parse the XML (wrap in root if there are multiple top-level elements)
