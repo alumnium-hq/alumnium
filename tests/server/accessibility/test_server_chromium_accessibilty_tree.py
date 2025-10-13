@@ -23,48 +23,48 @@ def test_to_xml(chromium_tree: ChromiumAccessibilityTree):
         == """
 <RootWebArea name=": React" id="1" focusable="True">
   <generic id="4">
-    <generic id="6">
-      <heading id="12" level="1">todos</heading>
-      <generic id="13">
-        <textbox name="New Todo Input" id="25" invalid="false" focusable="True" editable="plaintext" settable="True" multiline="False" readonly="False" required="False" labelledby="" />
-        <LabelText id="26">New Todo Input</LabelText>
+    <generic id="5">
+      <heading id="6" level="1">todos</heading>
+      <generic id="8">
+        <textbox name="New Todo Input" id="9" invalid="false" focusable="True" editable="plaintext" settable="True" multiline="False" readonly="False" required="False" labelledby="" />
+        <LabelText id="12">New Todo Input</LabelText>
       </generic>
     </generic>
-    <main id="7">
-      <generic id="14">
-        <checkbox id="27" invalid="false" focusable="True" checked="false" />
-        <LabelText id="28">Toggle All Input<generic id="39">\\u276f</generic>
+    <main id="14">
+      <generic id="15">
+        <checkbox id="16" invalid="false" focusable="True" checked="false" />
+        <LabelText id="17">Toggle All Input<generic id="18">\\u276f</generic>
         </LabelText>
       </generic>
-      <list id="15">
-        <listitem id="29" level="1">
-          <checkbox id="42" invalid="false" focusable="True" focused="True" checked="true" />
-          <LabelText id="43">hello</LabelText>
+      <list id="21">
+        <listitem id="22" level="1">
+          <checkbox id="24" invalid="false" focusable="True" focused="True" checked="true" />
+          <LabelText id="25">hello</LabelText>
         </listitem>
-        <listitem id="30" level="1">
-          <checkbox id="45" invalid="false" focusable="True" checked="false" />
-          <LabelText id="46">he</LabelText>
+        <listitem id="27" level="1">
+          <checkbox id="29" invalid="false" focusable="True" checked="false" />
+          <LabelText id="30">he</LabelText>
         </listitem>
       </list>
     </main>
-    <generic id="8">1 item left!<list id="18">
-        <listitem id="31" level="1">
-          <link id="47" focusable="True">All</link>
+    <generic id="32">1 item left!<list id="35">
+        <listitem id="36" level="1">
+          <link id="37" focusable="True">All</link>
         </listitem>
-        <listitem id="32" level="1">
-          <link id="48" focusable="True">Active</link>
+        <listitem id="39" level="1">
+          <link id="40" focusable="True">Active</link>
         </listitem>
-        <listitem id="33" level="1">
-          <link id="49" focusable="True">Completed</link>
+        <listitem id="42" level="1">
+          <link id="43" focusable="True">Completed</link>
         </listitem>
       </list>
-      <button id="19" invalid="false" focusable="True">Clear completed</button>
+      <button id="45" invalid="false" focusable="True">Clear completed</button>
     </generic>
   </generic>
-  <contentinfo id="5">
-    <paragraph id="9">Double-click to edit a todo</paragraph>
-    <paragraph id="10">Created by the TodoMVC Team</paragraph>
-    <paragraph id="11">Part of<link id="23" focusable="True">TodoMVC</link>
+  <contentinfo id="47">
+    <paragraph id="48">Double-click to edit a todo</paragraph>
+    <paragraph id="50">Created by the TodoMVC Team</paragraph>
+    <paragraph id="52">Part of<link id="54" focusable="True">TodoMVC</link>
     </paragraph>
   </contentinfo>
 </RootWebArea>
