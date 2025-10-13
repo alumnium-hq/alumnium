@@ -3,6 +3,7 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from .accessibility.base_accessibility_tree import BaseAccessibilityTree
 from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
@@ -149,7 +150,7 @@ class Alumni:
         """
         raw_xml = self.driver.accessibility_tree.to_str()
         response = self.client.find_area(description, raw_xml)
-        scoped_raw_xml = self.client.scope_to_area(raw_xml, response["id"])
+        scoped_raw_xml = BaseAccessibilityTree.scope_to_area(raw_xml, response["id"])
 
         return Area(
             id=response["id"],

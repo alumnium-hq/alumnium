@@ -132,7 +132,7 @@ async def plan_step_actions(session_id: str, request: StepRequest):
 
     try:
         accessibility_tree = session.process_tree(request.accessibility_tree)
-        actions = session.actor_agent.invoke(request.goal, request.step, accessibility_tree.to_xml)
+        actions = session.actor_agent.invoke(request.goal, request.step, accessibility_tree.to_xml())
         return StepResponse(actions=accessibility_tree.map_tool_calls_to_raw_id(actions))
 
     except Exception as e:

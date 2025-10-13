@@ -1,4 +1,3 @@
-from ..accessibility.base_accessibility_tree import BaseAccessibilityTree
 from ..server.agents.retriever_agent import Data
 from ..server.models import Model
 from ..server.session_manager import SessionManager
@@ -23,19 +22,6 @@ class NativeClient:
 
     def quit(self):
         self.session_manager.delete_session(self.session_id)
-
-    def scope_to_area(self, raw_xml: str, raw_id: int | str) -> str:
-        """
-        Scope raw XML to an area by raw_id.
-
-        Args:
-            raw_xml: Raw XML string
-            raw_id: The raw_id attribute value to scope to (int or str)
-
-        Returns:
-            Scoped raw XML string
-        """
-        return BaseAccessibilityTree.scope_to_area(raw_xml, raw_id)
 
     def plan_actions(self, goal: str, accessibility_tree: str, area_id: int = None):
         # Process raw tree
