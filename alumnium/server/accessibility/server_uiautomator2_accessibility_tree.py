@@ -1,9 +1,9 @@
-import re
 from dataclasses import dataclass, field
+from re import compile
 from typing import Any, Dict, List
 from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
-from .base_accessibility_tree import BaseAccessibilityTree
+from .base_server_accessibility_tree import BaseServerAccessibilityTree
 
 
 @dataclass
@@ -15,14 +15,14 @@ class Node:
     children: List["Node"] = field(default_factory=list)
 
 
-class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
+class ServerUIAutomator2AccessibilityTree(BaseServerAccessibilityTree):
     def __init__(self, xml_string: str):
         super().__init__()
         self.tree = []
         self.id_to_node = {}
 
         # cleaning multiple xml declaration lines from page source
-        xml_declaration_pattern = re.compile(r"^\s*<\?xml.*\?>\s*$")
+        xml_declaration_pattern = compile(r"^\s*<\?xml.*\?>\s*$")
         lines = xml_string.splitlines()
         cleaned_lines = [line for line in lines if not xml_declaration_pattern.match(line)]
         cleaned_xml_content = "\n".join(cleaned_lines)

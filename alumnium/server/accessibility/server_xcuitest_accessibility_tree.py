@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
 from ..logutils import get_logger
-from .base_accessibility_tree import BaseAccessibilityTree
+from .base_server_accessibility_tree import BaseServerAccessibilityTree
 
 logger = get_logger(__name__)
 
@@ -26,7 +26,7 @@ class Node:
         return True
 
 
-class XCUITestAccessibilityTree(BaseAccessibilityTree):
+class ServerXCUITestAccessibilityTree(BaseServerAccessibilityTree):
     def __init__(self, xml_string: str):
         super().__init__()
         self.tree = None  # Will hold the root node of the processed tree

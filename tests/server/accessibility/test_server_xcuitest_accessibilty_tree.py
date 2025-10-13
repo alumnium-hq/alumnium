@@ -4,26 +4,26 @@ from pathlib import Path
 
 from pytest import fixture
 
-from alumnium.server.accessibility import XCUITestAccessibilityTree
+from alumnium.server.accessibility import ServerXCUITestAccessibilityTree
 
 
-def tree(filename: str) -> XCUITestAccessibilityTree:
+def tree(filename: str) -> ServerXCUITestAccessibilityTree:
     with open(Path(__file__).parent.parent.parent / "fixtures" / f"{filename}.xml", "r") as f:
         xml = f.read()
-    return XCUITestAccessibilityTree(xml)
+    return ServerXCUITestAccessibilityTree(xml)
 
 
 @fixture
-def simple_tree() -> XCUITestAccessibilityTree:
+def simple_tree() -> ServerXCUITestAccessibilityTree:
     return tree("simple_xcuitest_accessibility_tree")
 
 
 @fixture
-def duplicated_tree() -> XCUITestAccessibilityTree:
+def duplicated_tree() -> ServerXCUITestAccessibilityTree:
     return tree("duplicated_xcuitest_accessibility_tree")
 
 
-def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
+def test_simple_xctree(simple_tree: ServerXCUITestAccessibilityTree):
     assert (
         simple_tree.to_xml()
         == """
@@ -87,7 +87,7 @@ def test_simple_xctree(simple_tree: XCUITestAccessibilityTree):
     )
 
 
-def test_nested_duplicated_tree(duplicated_tree: XCUITestAccessibilityTree):
+def test_nested_duplicated_tree(duplicated_tree: ServerXCUITestAccessibilityTree):
     assert (
         duplicated_tree.to_xml()
         == """

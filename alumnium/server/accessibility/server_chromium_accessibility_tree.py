@@ -2,12 +2,12 @@ from typing import List
 from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
 from ..logutils import get_logger
-from .base_accessibility_tree import BaseAccessibilityTree
+from .base_server_accessibility_tree import BaseServerAccessibilityTree
 
 logger = get_logger(__name__)
 
 
-class ChromiumAccessibilityTree(BaseAccessibilityTree):
+class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
     def __init__(self, raw_xml: str):
         super().__init__()
         self.tree = {}  # Initialize the result dictionary

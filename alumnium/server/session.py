@@ -1,10 +1,10 @@
 from typing import Any
 
 from .accessibility import (
-    BaseAccessibilityTree,
-    ChromiumAccessibilityTree,
-    UIAutomator2AccessibilityTree,
-    XCUITestAccessibilityTree,
+    BaseServerAccessibilityTree,
+    ServerChromiumAccessibilityTree,
+    ServerUIAutomator2AccessibilityTree,
+    ServerXCUITestAccessibilityTree,
 )
 from .agents.actor_agent import ActorAgent
 from .agents.area_agent import AreaAgent
@@ -84,7 +84,7 @@ class Session:
             "cache": self.cache.usage,
         }
 
-    def process_tree(self, raw_tree_data: str) -> BaseAccessibilityTree:
+    def process_tree(self, raw_tree_data: str) -> BaseServerAccessibilityTree:
         """
         Process raw platform data into a server tree.
 
@@ -95,11 +95,11 @@ class Session:
             The created server tree instance
         """
         if self.platform == "chromium":
-            tree = ChromiumAccessibilityTree(raw_tree_data)
+            tree = ServerChromiumAccessibilityTree(raw_tree_data)
         elif self.platform == "xcuitest":
-            tree = XCUITestAccessibilityTree(raw_tree_data)
+            tree = ServerXCUITestAccessibilityTree(raw_tree_data)
         elif self.platform == "uiautomator2":
-            tree = UIAutomator2AccessibilityTree(raw_tree_data)
+            tree = ServerUIAutomator2AccessibilityTree(raw_tree_data)
         else:
             raise ValueError(f"Unknown platform: {self.platform}")
 

@@ -4,21 +4,21 @@ from pathlib import Path
 
 from pytest import fixture
 
-from alumnium.server.accessibility import UIAutomator2AccessibilityTree
+from alumnium.server.accessibility import ServerUIAutomator2AccessibilityTree
 
 
-def tree(filename: str) -> UIAutomator2AccessibilityTree:
+def tree(filename: str) -> ServerUIAutomator2AccessibilityTree:
     with open(Path(__file__).parent.parent.parent / "fixtures" / f"{filename}.xml", "r", encoding="UTF-8") as f:
         xml = unicodedata.normalize("NFKC", f.read())
-    return UIAutomator2AccessibilityTree(xml)
+    return ServerUIAutomator2AccessibilityTree(xml)
 
 
 @fixture
-def simple_tree() -> UIAutomator2AccessibilityTree:
+def simple_tree() -> ServerUIAutomator2AccessibilityTree:
     return tree("uiautomator2_accessibility_tree")
 
 
-def test_simple_uitree(simple_tree: UIAutomator2AccessibilityTree):
+def test_simple_uitree(simple_tree: ServerUIAutomator2AccessibilityTree):
     expected_output = """<hierarchy>
   <FrameLayout id="2">
     <LinearLayout id="3">

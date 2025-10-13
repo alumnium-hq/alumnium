@@ -6,18 +6,18 @@ from pathlib import Path
 from pytest import fixture
 
 from alumnium.accessibility import ChromiumAccessibilityTree as ClientChromiumAccessibilityTree
-from alumnium.server.accessibility import ChromiumAccessibilityTree
+from alumnium.server.accessibility import ServerChromiumAccessibilityTree
 
 
 @fixture
-def chromium_tree() -> ChromiumAccessibilityTree:
+def chromium_tree() -> ServerChromiumAccessibilityTree:
     with open(Path(__file__).parent.parent.parent / "fixtures/chromium_accessibility_tree.json", "r") as f:
         json = load(f)
     client_accessibility_tree = ClientChromiumAccessibilityTree(json)
-    return ChromiumAccessibilityTree(client_accessibility_tree.to_str())
+    return ServerChromiumAccessibilityTree(client_accessibility_tree.to_str())
 
 
-def test_to_xml(chromium_tree: ChromiumAccessibilityTree):
+def test_to_xml(chromium_tree: ServerChromiumAccessibilityTree):
     assert (
         chromium_tree.to_xml()
         == """

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BaseAccessibilityTree(ABC):
+class BaseServerAccessibilityTree(ABC):
     def __init__(self):
         self._simplified_id_counter = 0
         self._simplified_to_raw_id = {}
