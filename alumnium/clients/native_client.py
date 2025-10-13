@@ -1,8 +1,8 @@
-from ..server.agents.retriever_agent import Data
 from ..server.models import Model
 from ..server.session_manager import SessionManager
 from ..tools.base_tool import BaseTool
 from ..tools.tool_to_schema_converter import convert_tools_to_schemas
+from .typecasting import Data, loosely_typecast
 
 
 class NativeClient:
@@ -47,9 +47,10 @@ class NativeClient:
         screenshot: str | None,
     ) -> tuple[str, Data]:
         accessibility_tree = self.session.process_tree(accessibility_tree)
-        return self.session.retriever_agent.invoke(
+        explanation, result = self.session.retriever_agent.invoke(
             statement, accessibility_tree.to_xml(), title=title, url=url, screenshot=screenshot
         )
+        return explanation, loosely_typecast(result)
 
     def find_area(self, description: str, accessibility_tree: str):
         accessibility_tree = self.session.process_tree(accessibility_tree)

@@ -1,9 +1,9 @@
 from requests import delete, get, post
 
-from ..server.agents.retriever_agent import Data
 from ..server.models import Model
 from ..tools.base_tool import BaseTool
 from ..tools.tool_to_schema_converter import convert_tools_to_schemas
+from .typecasting import Data, loosely_typecast
 
 
 class HttpClient:
@@ -85,7 +85,7 @@ class HttpClient:
         )
         response.raise_for_status()
         data = response.json()
-        return data["explanation"], data["result"]
+        return data["explanation"], loosely_typecast(data["result"])
 
     def find_area(self, description: str, accessibility_tree: str):
         response = post(
