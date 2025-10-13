@@ -23,18 +23,9 @@ class NativeClient:
     def quit(self):
         self.session_manager.delete_session(self.session_id)
 
-    def plan_actions(self, goal: str, accessibility_tree: str, area_id: int = None):
-        # Process raw tree
-        full_tree = self.session.process_tree(accessibility_tree)
-
-        # Scope to area if area_id provided
-        if area_id is not None:
-            tree = full_tree.get_area(area_id)
-        else:
-            tree = full_tree
-
-        tree_xml = tree.to_xml()
-        return self.session.planner_agent.invoke(goal, tree_xml)
+    def plan_actions(self, goal: str, accessibility_tree: str):
+        accessibility_tree = self.session.process_tree(accessibility_tree)
+        return self.session.planner_agent.invoke(goal, accessibility_tree.to_xml())
 
     def add_example(self, goal: str, actions: list[str]):
         return self.session.planner_agent.add_example(goal, actions)
@@ -42,21 +33,10 @@ class NativeClient:
     def clear_examples(self):
         self.session.planner_agent.prompt_with_examples.examples.clear()
 
-    def execute_action(self, goal: str, step: str, accessibility_tree: str, area_id: int = None):
-        # Process raw tree
-        full_tree = self.session.process_tree(accessibility_tree)
-
-        # Scope to area if area_id provided
-        if area_id is not None:
-            tree = full_tree.get_area(area_id)
-        else:
-            tree = full_tree
-
-        tree_xml = tree.to_xml()
-        actions = self.session.actor_agent.invoke(goal, step, tree_xml)
-
-        # Map IDs using the FULL tree (not scoped tree)
-        return full_tree.map_tool_calls_to_raw_id(actions)
+    def execute_action(self, goal: str, step: str, accessibility_tree: str):
+        accessibility_tree = self.session.process_tree(accessibility_tree)
+        actions = self.session.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
+        return accessibility_tree.map_tool_calls_to_raw_id(actions)
 
     def retrieve(
         self,
@@ -65,48 +45,25 @@ class NativeClient:
         title: str,
         url: str,
         screenshot: str | None,
-        area_id: int = None,
     ) -> tuple[str, Data]:
-        # Process raw tree
-        full_tree = self.session.process_tree(accessibility_tree)
-
-        # Scope to area if area_id provided
-        if area_id is not None:
-            tree = full_tree.get_area(area_id)
-        else:
-            tree = full_tree
-
-        tree_xml = tree.to_xml()
-        return self.session.retriever_agent.invoke(statement, tree_xml, title=title, url=url, screenshot=screenshot)
+        accessibility_tree = self.session.process_tree(accessibility_tree)
+        return self.session.retriever_agent.invoke(
+            statement,
+            accessibility_tree.to_xml(),
+            title=title,
+            url=url,
+            screenshot=screenshot,
+        )
 
     def find_area(self, description: str, accessibility_tree: str):
-        # Process raw tree data
-        tree = self.session.process_tree(accessibility_tree)
-        tree_xml = tree.to_xml()
-
-        area = self.session.area_agent.invoke(description, tree_xml)
-
-        # Map simplified ID to raw_id (for area scoping)
-        raw_id = tree.get_raw_id(area["id"])
-
-        return {"id": raw_id, "explanation": area["explanation"]}
+        accessibility_tree = self.session.process_tree(accessibility_tree)
+        area = self.session.area_agent.invoke(description, accessibility_tree.to_xml())
+        return {"id": accessibility_tree.get_raw_id(area["id"]), "explanation": area["explanation"]}
 
     def find_element(self, description: str, accessibility_tree: str, area_id: int = None):
-        # Process raw tree
-        full_tree = self.session.process_tree(accessibility_tree)
-
-        # Scope to area if area_id provided
-        if area_id is not None:
-            tree = full_tree.get_area(area_id)
-        else:
-            tree = full_tree
-
-        tree_xml = tree.to_xml()
-        element = self.session.locator_agent.invoke(description, tree_xml)[0]
-
-        # Map ID using the FULL tree (not scoped tree)
-        element["id"] = full_tree.get_raw_id(element["id"])
-
+        accessibility_tree = self.session.process_tree(accessibility_tree)
+        element = self.session.locator_agent.invoke(description, accessibility_tree.to_xml())[0]
+        element["id"] = accessibility_tree.get_raw_id(element["id"])
         return element
 
     def save_cache(self):

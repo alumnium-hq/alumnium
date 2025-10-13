@@ -15,12 +15,7 @@ class HttpClient:
 
         response = post(
             f"{self.base_url}/v1/sessions",
-            json={
-                "provider": model.provider.value,
-                "name": model.name,
-                "tools": tool_schemas,
-                "platform": platform,
-            },
+            json={"provider": model.provider.value, "name": model.name, "tools": tool_schemas, "platform": platform},
             timeout=30,
         )
         response.raise_for_status()
@@ -38,10 +33,7 @@ class HttpClient:
     def plan_actions(self, goal: str, accessibility_tree: str):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/plans",
-            json={
-                "goal": goal,
-                "accessibility_tree": accessibility_tree,
-            },
+            json={"goal": goal, "accessibility_tree": accessibility_tree},
             timeout=120,
         )
         response.raise_for_status()

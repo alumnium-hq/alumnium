@@ -113,7 +113,8 @@ async def plan_actions(session_id: str, request: PlanRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        steps = session.planner_agent.invoke(request.goal, request.accessibility_tree)
+        accessibility_tree = session.process_tree(request.accessibility_tree)
+        steps = session.planner_agent.invoke(request.goal, accessibility_tree.to_xml())
         return PlanResponse(steps=steps)
 
     except Exception as e:

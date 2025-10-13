@@ -1,4 +1,3 @@
-from json import loads
 from typing import Any
 
 from .accessibility import (
