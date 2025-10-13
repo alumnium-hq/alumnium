@@ -10,9 +10,8 @@ class BaseServerAccessibilityTree(ABC):
     def to_xml(self) -> str:
         pass
 
-    def get_raw_id(self, simplified_id: int | str) -> int:
-        # Llama sometimes returns ids as strings
-        simplified_id = int(simplified_id)
+    def get_raw_id(self, simplified_id: int | str | dict) -> int:
+        simplified_id = self._extract_id(simplified_id)
         if simplified_id not in self._simplified_to_raw_id:
             raise KeyError(f"No element with simplified id={simplified_id}")
 
@@ -39,3 +38,14 @@ class BaseServerAccessibilityTree(ABC):
     def _get_next_id(self) -> int:
         self._simplified_id_counter += 1
         return self._simplified_id_counter
+
+    # Llama sometimes returns ids as strings or nested dicts
+    def _extract_id(self, id: int | str | dict) -> int:
+        if isinstance(id, int):
+            return id
+        elif isinstance(id, str):
+            return int(id)
+        elif isinstance(id, dict) and "value" in id:
+            return self._extract_id(id["value"])
+        else:
+            raise ValueError(f"Cannot extract id from {id}")
