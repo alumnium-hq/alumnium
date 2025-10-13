@@ -72,6 +72,9 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
                 prop_value = prop.get("value", {})
                 if isinstance(prop_value, dict) and "value" in prop_value:
                     elem.set(prop_name, str(prop_value["value"]))
+                elif isinstance(prop_value, dict):
+                    # Complex property values (like nodeList) are converted to empty string
+                    elem.set(prop_name, "")
                 else:
                     elem.set(prop_name, str(prop_value))
 
