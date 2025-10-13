@@ -25,7 +25,7 @@ def learn(al):
 
 
 def test_addition(al, navigate):
-    navigate("https://seleniumbase.io/apps/calculator")
+    navigate("https://seleniumbase.io/apps/calculattests/accessibility/test_chromium_accessibilty_tree.pyor")
     al.do("2 + 2 =")
     assert al.get("value from textfield") == 4
 

@@ -55,17 +55,6 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         else:
             self.tree = {}
 
-    def get_area(self, id: int) -> "XCUITestAccessibilityTree":
-        if id not in self.id_to_node:
-            raise KeyError(f"No element with id={id}")
-
-        # Create a new tree for the specific area
-        area_tree = XCUITestAccessibilityTree("<AppiumAUT></AppiumAUT>")
-        area_tree.tree = self.id_to_node[id]
-        area_tree.id_to_node = self.id_to_node.copy()  # Copy node mappings for this area
-        area_tree._simplified_to_raw_id = self._simplified_to_raw_id.copy()  # Copy raw_id mappings
-        return area_tree
-
     def _simplify_role(self, xcui_type: str) -> str:
         simple = xcui_type.removeprefix("XCUIElementType")
         return "generic" if simple == "Other" else simple

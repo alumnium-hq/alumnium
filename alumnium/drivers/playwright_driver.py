@@ -48,8 +48,7 @@ class PlaywrightDriver(BaseDriver):
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
-        cdp_response = self.client.send("Accessibility.getFullAXTree")
-        return ChromiumAccessibilityTree(cdp_response)
+        return ChromiumAccessibilityTree(self.client.send("Accessibility.getFullAXTree"))
 
     def click(self, id: int):
         element = self.find_element(id)
@@ -104,11 +103,10 @@ class PlaywrightDriver(BaseDriver):
         return self.page.url
 
     def find_element(self, id: int):
-        # Get element properties (including backend_node_id) from raw tree
-        element_props = self.accessibility_tree.element_by_id(id)
-        backend_node_id = element_props.backend_node_id
+        accessibility_element = self.accessibility_tree.element_by_id(id)
+        backend_node_id = accessibility_element.backend_node_id
 
-        # Use backend_node_id for CDP commands
+        # Beware!
         self.client.send("DOM.enable")
         self.client.send("DOM.getFlattenedDocument")
         node_ids = self.client.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]})

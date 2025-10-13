@@ -40,17 +40,6 @@ class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
                 app_element = root_element[children]
                 self.tree.append(self._parse_element(app_element))
 
-    def get_area(self, id: int) -> "UIAutomator2AccessibilityTree":
-        if id not in self.id_to_node:
-            raise KeyError(f"No element with id={id}")
-
-        # Create a new tree for the specific area
-        area_tree = UIAutomator2AccessibilityTree("")
-        area_tree.tree = [self.id_to_node[id]]
-        area_tree.id_to_node = self.id_to_node.copy()
-        area_tree._simplified_to_raw_id = self._simplified_to_raw_id.copy()
-        return area_tree
-
     def _parse_element(self, element: Element) -> Node:
         simplified_id = self._get_next_id()
         attributes = element.attrib

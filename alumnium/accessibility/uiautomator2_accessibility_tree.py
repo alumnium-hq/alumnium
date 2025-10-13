@@ -1,3 +1,4 @@
+from re import compile
 from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
 from .accessibility_element import AccessibilityElement
@@ -6,7 +7,15 @@ from .base_accessibility_tree import BaseAccessibilityTree
 
 class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
-        self.xml_string = xml_string
+        # cleaning multiple xml declaration lines from page source
+        xml_declaration_pattern = compile(r"^\s*<\?xml.*\?>\s*$")
+        lines = xml_string.splitlines()
+        cleaned_lines = [line for line in lines if not xml_declaration_pattern.match(line)]
+        cleaned_xml_content = "\n".join(cleaned_lines)
+        self.xml_string = (
+            f"<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n <root>\n{cleaned_xml_content}\n</root>"
+        )
+
         self._next_raw_id = 0
         self._raw = None
 
@@ -63,6 +72,7 @@ class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
 
         # Extract properties for UIAutomator2
         return AccessibilityElement(
+            id=raw_id,
             type=element.get("class", element.tag),
             androidresourceid=element.get("resource-id"),
             androidtext=element.get("text"),

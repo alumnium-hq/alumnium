@@ -3,19 +3,14 @@ from abc import ABC, abstractmethod
 
 class BaseAccessibilityTree(ABC):
     def __init__(self):
-        self._id_counter = 0
-        self._simplified_to_raw_id = {}  # Maps simplified IDs to raw_id
+        self._simplified_id_counter = 0
+        self._simplified_to_raw_id = {}
 
     @abstractmethod
     def to_xml(self) -> str:
         pass
 
-    @abstractmethod
-    def get_area(self, id: int) -> "BaseAccessibilityTree":
-        pass
-
     def get_raw_id(self, simplified_id: int) -> int:
-        """Map a simplified ID back to raw_id."""
         if simplified_id not in self._simplified_to_raw_id:
             raise KeyError(f"No element with simplified id={simplified_id}")
 
@@ -40,5 +35,5 @@ class BaseAccessibilityTree(ABC):
         return mapped_calls
 
     def _get_next_id(self) -> int:
-        self._id_counter += 1
-        return self._id_counter
+        self._simplified_id_counter += 1
+        return self._simplified_id_counter

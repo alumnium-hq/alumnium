@@ -49,8 +49,7 @@ class SeleniumDriver(BaseDriver):
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
-        cdp_response = self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {})
-        return ChromiumAccessibilityTree(cdp_response)
+        return ChromiumAccessibilityTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
 
     def click(self, id: int):
         self.find_element(id).click()
@@ -110,11 +109,10 @@ class SeleniumDriver(BaseDriver):
         return self.driver.current_url
 
     def find_element(self, id: int) -> WebElement:
-        # Get element properties (including backend_node_id) from raw tree
-        element_props = self.accessibility_tree.element_by_id(id)
-        backend_node_id = element_props.backend_node_id
+        accessibility_element = self.accessibility_tree.element_by_id(id)
+        backend_node_id = accessibility_element.backend_node_id
 
-        # Use backend_node_id for CDP commands
+        # Beware!
         self.driver.execute_cdp_cmd("DOM.enable", {})
         self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})
         node_ids = self.driver.execute_cdp_cmd(

@@ -63,6 +63,7 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
 
         # Extract properties for XCUITest
         return AccessibilityElement(
+            id=raw_id,
             type=element.tag,
             name=element.get("name"),
             value=element.get("value"),
