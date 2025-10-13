@@ -1,4 +1,4 @@
-from xml.etree.ElementTree import Element, SubElement, fromstring, indent, tostring
+from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
 from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree

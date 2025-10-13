@@ -1,10 +1,15 @@
 from abc import ABC, abstractmethod
-from xml.etree.ElementTree import Element, fromstring, indent, tostring
+
+from .accessibility_element import AccessibilityElement
 
 
 class BaseAccessibilityTree(ABC):
     @abstractmethod
     def to_str(self) -> str:
+        pass
+
+    @abstractmethod
+    def element_by_id(self, id: int) -> AccessibilityElement:
         pass
 
     @abstractmethod
