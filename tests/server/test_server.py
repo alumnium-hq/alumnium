@@ -463,7 +463,7 @@ def test_create_session_invalid_data():
 # Comprehensive Error Handling Tests
 def test_malformed_json_request():
     """Test server handling of malformed JSON."""
-    response = client.post("/v1/sessions", data="invalid json{}", headers={"Content-Type": "application/json"})
+    response = client.post("/v1/sessions", content="invalid json{}", headers={"Content-Type": "application/json"})
     assert response.status_code == 422
 
 
