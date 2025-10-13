@@ -10,7 +10,9 @@ class BaseServerAccessibilityTree(ABC):
     def to_xml(self) -> str:
         pass
 
-    def get_raw_id(self, simplified_id: int) -> int:
+    def get_raw_id(self, simplified_id: int | str) -> int:
+        # Llama sometimes returns ids as strings
+        simplified_id = int(simplified_id)
         if simplified_id not in self._simplified_to_raw_id:
             raise KeyError(f"No element with simplified id={simplified_id}")
 
