@@ -7,6 +7,10 @@
     {
       "name": "packages/python",
       "path": "packages/python",
+    },
+    {
+      "name": "packages/typescript",
+      "path": "packages/typescript",
     }
   ],
   "settings": {
@@ -14,6 +18,11 @@
       "alumnium",
       "Alumnium",
     ],
+    "python.defaultInterpreterPath": "packages/python/.venv/bin/python",
+    "search.exclude": {
+      "**/dist": true,
+      "**/node_modules": true,
+    },
     "testing.automaticallyOpenPeekView": "never",
   }
 }

@@ -1,0 +1,68 @@
+{
+  "name": "alumnium",
+  "version": "0.14.0",
+  "description": "Pave the way towards AI-powered test automation",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist/ && tsc --project tsconfig.build.json",
+    "clean": "rm -rf dist/ log/ playwright-report/ test-results/",
+    "examples:mocha": "ALUMNIUM_DRIVER=selenium mocha",
+    "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
+    "examples:wdio": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
+    "examples": "npm run examples:mocha && npm run examples:playwright && npm run examples:wdio",
+    "check-format": "eslint .",
+    "format": "eslint . --fix",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "ai",
+    "alumnium",
+    "automation",
+    "appium",
+    "playwright",
+    "selenium",
+    "webdriverio"
+  ],
+  "author": "Alex Rodionov <p0deje@gmail.com>",
+  "contributors": [
+    "Alex Rodionov <p0deje@gmail.com>",
+    "Tatiana Shepeleva <tati.shep@gmail.com>"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alumnium-hq/alumnium.git"
+  },
+  "dependencies": {
+    "@logtape/file": "^1.1.1",
+    "@logtape/logtape": "^1.1.1",
+    "playwright": "^1.55.1",
+    "selenium-webdriver": "^4.17.0",
+    "webdriverio": "^9.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.37.0",
+    "@playwright/test": "^1.55.1",
+    "@types/eslint__js": "^8.42.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.11.19",
+    "@types/selenium-webdriver": "^4.1.21",
+    "@wdio/cli": "^9.20.0",
+    "@wdio/local-runner": "^9.20.0",
+    "@wdio/mocha-framework": "^9.20.0",
+    "@wdio/spec-reporter": "^9.20.0",
+    "appium-xcuitest-driver": "^10.2.1",
+    "eslint": "^9.37.0",
+    "mocha": "^10.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.45.0",
+    "wdio-lambdatest-service": "^4.0.0"
+  }
+}

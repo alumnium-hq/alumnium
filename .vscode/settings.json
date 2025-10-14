@@ -1,5 +1,5 @@
 {
   "files.exclude": {
-    "packages/python/": true,
+    "packages/": true,
   },
 }
