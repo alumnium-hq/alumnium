@@ -26,9 +26,9 @@ jobs:
       - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
       - uses: actions/cache@v4
         with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
-      - run: poetry install
+          path: packages/python/.venv
+          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+      - run: make install
       - run: make check-format
       - run: make test-unit
       - if: failure() && runner.debug == '1'
@@ -57,6 +57,9 @@ jobs:
       GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    defaults:
+      run:
+        working-directory: packages/python
     strategy:
       fail-fast: false
       matrix:
@@ -93,10 +96,11 @@ jobs:
         with:
           python-version-file: .tool-versions
       - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
+        working-directory: .
       - uses: actions/cache@v4
         with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
+          path: packages/python/.venv
+          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
       - run: poetry install
       - if: matrix.driver == 'playwright'
         run: poetry run playwright install chromium
@@ -105,10 +109,10 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: |
-            .alumnium-cache.sqlite
-            .alumnium/cache/
-          key: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
-          restore-keys: alumnium-cache-${{ matrix.driver }}-${{ matrix.model }}-
+            packages/python/.alumnium-cache.sqlite
+            packages/python/.alumnium/cache/
+          key: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
+          restore-keys: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-
       - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}
       - run: poetry run pytest --retries 1 --html reports/pytest.html examples/
       - if: failure() && runner.debug == '1'
@@ -118,8 +122,8 @@ jobs:
         with:
           name: ${{ matrix.driver }}-${{ matrix.model }}
           path: |
-            *.log
-            reports/
+            packages/python/*.log
+            packages/python/reports/
 
   release:
     name: Release
