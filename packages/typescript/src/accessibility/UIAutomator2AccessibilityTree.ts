@@ -148,44 +148,49 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     const elements: XMLElement[] = [];
     const stack: XMLElement[] = [];
 
-    const tagRegex = /<([a-zA-Z_][\w:.-]*)((?:\s+[\w:.-]+="[^"]*")*)\s*(\/?)>/g;
-    const closeTagRegex = /<\/([a-zA-Z_][\w:.-]*)>/g;
+    // Combined regex for all XML tokens (opening tags, closing tags, self-closing tags)
+    const tokenRegex = /<\/?([a-zA-Z_][\w:.-]*)((?:\s+[\w:.-]+="[^"]*")*)\s*(\/?)>/g;
     const attrRegex = /([\w:.-]+)="([^"]*)"/g;
 
     let match: RegExpExecArray | null;
 
-    while ((match = tagRegex.exec(xmlString)) !== null) {
+    while ((match = tokenRegex.exec(xmlString)) !== null) {
+      const fullMatch = match[0];
       const tagName = match[1];
       const attrsString = match[2];
       const selfClosing = match[3] === "/";
+      const isClosingTag = fullMatch.startsWith("</");
 
-      const attributes: Record<string, string> = {};
-      let attrMatch: RegExpExecArray | null;
-      while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
-        attributes[attrMatch[1]] = attrMatch[2];
-      }
-
-      const elem: XMLElement = {
-        tag: tagName,
-        attributes,
-        children: [],
-      };
-
-      if (stack.length > 0) {
-        stack[stack.length - 1].children.push(elem);
+      if (isClosingTag) {
+        // Handle closing tag - pop from stack
+        if (stack.length > 0 && stack[stack.length - 1].tag === tagName) {
+          stack.pop();
+        }
       } else {
-        elements.push(elem);
-      }
+        // Handle opening or self-closing tag
+        // Parse attributes
+        const attributes: Record<string, string> = {};
+        let attrMatch: RegExpExecArray | null;
+        attrRegex.lastIndex = 0;
+        while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
+          attributes[attrMatch[1]] = attrMatch[2];
+        }
 
-      if (!selfClosing) {
-        stack.push(elem);
-      }
-    }
+        const elem: XMLElement = {
+          tag: tagName,
+          attributes,
+          children: [],
+        };
 
-    closeTagRegex.lastIndex = 0;
-    while ((match = closeTagRegex.exec(xmlString)) !== null) {
-      if (stack.length > 0) {
-        stack.pop();
+        if (stack.length > 0) {
+          stack[stack.length - 1].children.push(elem);
+        } else {
+          elements.push(elem);
+        }
+
+        if (!selfClosing) {
+          stack.push(elem);
+        }
       }
     }
 
