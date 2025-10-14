@@ -1,0 +1,5 @@
+.vscode/
+examples/
+eslint.config.js
+playwright.config.ts
+wdio.conf.ts

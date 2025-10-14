@@ -1,9 +1,10 @@
 name: CI
 on:
-  pull_request_target:
+  # pull_request: # TODO
   push:
     branches:
       - main
+      - feat/ts
   schedule:
     - cron: 0 0 * * *
   workflow_dispatch:
@@ -13,37 +14,126 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: packages/python
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v5
-        with:
-          python-version-file: .tool-versions
-      - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
-        working-directory: .
-      - uses: actions/cache@v4
-        with:
-          path: packages/python/.venv
-          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-      - run: poetry install
-      - run: poetry poe check-format
-      - run: poetry poe test
-      - if: failure() && runner.debug == '1'
-        uses: mxschmitt/action-tmate@v3
+  # test:
+  #   name: Test
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: packages/python
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha || github.sha }}
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version-file: .tool-versions
+  #     - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
+  #       working-directory: .
+  #     - uses: actions/cache@v4
+  #       with:
+  #         path: packages/python/.venv
+  #         key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+  #     - run: poetry install
+  #     - run: poetry poe check-format
+  #     - run: poetry poe test
+  #     - if: failure() && runner.debug == '1'
+  #       uses: mxschmitt/action-tmate@v3
 
-  examples:
-    name: Examples
+  # examples:
+  #   name: Examples
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 60
+  #   env:
+  #     ALUMNIUM_DRIVER: ${{ matrix.driver }}
+  #     ALUMNIUM_MODEL: ${{ matrix.model }}
+  #     ALUMNIUM_LOG_LEVEL: debug
+  #     ALUMNIUM_LOG_PATH: alumnium.log
+  #     ALUMNIUM_PLAYWRIGHT_HEADLESS: false
+  #     DISPLAY: :99
+  #     LT_USERNAME: ${{ secrets.LT_USERNAME }}
+  #     LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
+  #     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  #     AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+  #     AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  #     AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+  #     AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
+  #     AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+  #     DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+  #     GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+  #     MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+  #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  #   defaults:
+  #     run:
+  #       working-directory: packages/python
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       driver:
+  #         - appium
+  #         - playwright
+  #         - selenium
+  #       model:
+  #         - anthropic
+  #         - aws_anthropic
+  #         - aws_meta
+  #         - azure_openai
+  #         # Official DeepSeek platform times out!
+  #         # - deepseek
+  #         - google
+  #         - mistralai
+  #         - openai
+  #   steps:
+  #     - id: check-access
+  #       uses: actions-cool/check-user-permission@v2
+  #       with:
+  #         require: write
+  #         username: ${{ github.triggering_actor }}
+  #     - if: steps.check-access.outputs.require-result == 'false'
+  #       run: |
+  #         echo "${{ github.triggering_actor }} does not have permissions on this repo - maintainer will re-run this job."
+  #         echo "Current permission level is ${{ steps.check-access.outputs.user-permission }}."
+  #         echo "Job originally triggered by ${{ github.actor }}."
+  #         exit 1
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha || github.sha }}
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version-file: .tool-versions
+  #     - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
+  #       working-directory: .
+  #     - uses: actions/cache@v4
+  #       with:
+  #         path: packages/python/.venv
+  #         key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+  #     - run: poetry install
+  #     - if: matrix.driver == 'playwright'
+  #       run: poetry run playwright install chromium
+  #     - if: matrix.driver != 'appium'
+  #       run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
+  #     - uses: actions/cache@v4
+  #       with:
+  #         path: |
+  #           packages/python/.alumnium-cache.sqlite
+  #           packages/python/.alumnium/cache/
+  #         key: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
+  #         restore-keys: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-
+  #     - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}
+  #     - run: poetry run pytest --retries 1 --html reports/pytest.html examples/
+  #     - if: failure() && runner.debug == '1'
+  #       uses: mxschmitt/action-tmate@v3
+  #     - if: always()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: ${{ matrix.driver }}-${{ matrix.model }}
+  #         path: |
+  #           packages/python/*.log
+  #           packages/python/reports/
+
+  examples-ts:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      ALUMNIUM_DRIVER: ${{ matrix.driver }}
       ALUMNIUM_MODEL: ${{ matrix.model }}
       ALUMNIUM_LOG_LEVEL: debug
       ALUMNIUM_LOG_PATH: alumnium.log
@@ -63,24 +153,22 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     defaults:
       run:
-        working-directory: packages/python
+        working-directory: packages/typescript
     strategy:
       fail-fast: false
       matrix:
-        driver:
-          - appium
-          - playwright
-          - selenium
         model:
           - anthropic
           - aws_anthropic
           - aws_meta
           - azure_openai
-          # Official DeepSeek platform times out!
-          # - deepseek
           - google
           - mistralai
           - openai
+        runner:
+          - mocha
+          - playwright
+          - wdio
     steps:
       - id: check-access
         uses: actions-cool/check-user-permission@v2
@@ -96,47 +184,70 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-node@v6
         with:
-          python-version-file: .tool-versions
-      - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
-        working-directory: .
-      - uses: actions/cache@v4
+          cache: npm
+          cache-dependency-path: packages/typescript/package-lock.json
+          node-version-file: .tool-versions
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
         with:
-          path: packages/python/.venv
-          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-      - run: poetry install
-      - if: matrix.driver == 'playwright'
-        run: poetry run playwright install chromium
-      - if: matrix.driver != 'appium'
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          load: true
+          tags: alumnium-server
+      - if: matrix.runner != 'wdio'
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - uses: actions/cache@v4
         with:
-          path: |
-            packages/python/.alumnium-cache.sqlite
-            packages/python/.alumnium/cache/
-          key: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
-          restore-keys: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-
-      - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}
-      - run: poetry run pytest --retries 1 --html reports/pytest.html examples/
+          path: .alumnium/cache/
+          key: alumnium-cache-typescript-${{ matrix.runner }}-${{ matrix.model }}-${{ github.sha }}
+          restore-keys: alumnium-cache-typescript-${{ matrix.runner }}-${{ matrix.model }}-
+      - run: |
+          docker run --name alumnium-server \
+            --detach \
+            --publish 8013:8013 \
+            --volume ${{ github.workspace }}/.alumnium/cache:/app/.alumnium/cache \
+            --env ALUMNIUM_LOG_LEVEL \
+            --env ALUMNIUM_LOG_PATH=stdout \
+            --env ALUMNIUM_MODEL \
+            --env ANTHROPIC_API_KEY \
+            --env AWS_ACCESS_KEY \
+            --env AWS_SECRET_KEY \
+            --env AZURE_OPENAI_API_KEY \
+            --env AZURE_OPENAI_API_VERSION \
+            --env AZURE_OPENAI_ENDPOINT \
+            --env DEEPSEEK_API_KEY \
+            --env GOOGLE_API_KEY \
+            --env MISTRAL_API_KEY \
+            --env OPENAI_API_KEY \
+            alumnium-server
+      - run: npm install
+      - if: matrix.runner == 'playwright'
+        run: npx playwright install chromium
+      - run: npm run examples:${{ matrix.runner }}
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
       - if: always()
+        run: docker logs alumnium-server > alumnium-server.log
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.driver }}-${{ matrix.model }}
+          name: ${{ matrix.runner }}-${{ matrix.model }}
           path: |
-            packages/python/*.log
-            packages/python/reports/
+            packages/typescript/*.log
+            packages/typescript/playwright-report/
+            packages/typescript/test-results/
 
-  release:
-    name: Release
-    needs:
-      - test
-      - examples
-    if: github.ref_name == 'main' && startsWith(github.event.head_commit.message, 'release:')
-    uses: ./.github/workflows/release.yml
-    permissions:
-      attestations: write
-      contents: write
-      id-token: write
+  # release:
+  #   name: Release
+  #   needs:
+  #     - test
+  #     - examples
+  #   if: github.ref_name == 'main' && startsWith(github.event.head_commit.message, 'release:')
+  #   uses: ./.github/workflows/release.yml
+  #   permissions:
+  #     attestations: write
+  #     contents: write
+  #     id-token: write
