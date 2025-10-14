@@ -1,5 +1,6 @@
 import { BaseAccessibilityTree } from "./accessibility/BaseAccessibilityTree.js";
-import { Data, HttpClient } from "./clients/HttpClient.js";
+import { HttpClient } from "./clients/HttpClient.js";
+import { Data } from "./clients/typecasting.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
 import { BaseTool, ToolCall } from "./tools/BaseTool.js";

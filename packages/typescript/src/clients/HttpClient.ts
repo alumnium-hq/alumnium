@@ -4,8 +4,7 @@ import axios, { AxiosInstance } from "axios";
 import { Model } from "../Model.js";
 import { BaseTool } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
-
-export type Data = number | string | boolean | number[] | string[] | boolean[];
+import { Data, looselyTypecast } from "./typecasting.js";
 
 export class HttpClient {
   private baseUrl: string;
@@ -130,7 +129,7 @@ export class HttpClient {
 
     const responseData = response.data;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    return [responseData.explanation, responseData.result];
+    return [responseData.explanation, looselyTypecast(responseData.result)];
   }
 
   async findArea(
