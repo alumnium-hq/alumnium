@@ -1,0 +1,20 @@
+{
+    "behave-vsc.featuresPath": "examples/behave/features",
+    "files.exclude": {
+        "**/.pytest_cache": true,
+        "**/__pycache__": true,
+    },
+    "python.analysis.autoImportCompletions": false,
+    "python.analysis.extraPaths": [
+        "./.venv/lib/python3.10/site-packages"
+    ],
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    // https://github.com/astral-sh/ruff-vscode/issues/363#issuecomment-2958936767
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports.ruff": "explicit"
+        }
+    },
+}
