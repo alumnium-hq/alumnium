@@ -4,11 +4,14 @@ import { CDPSession, Locator, Page } from "playwright";
 import { fileURLToPath } from "url";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
+import { getLogger } from "../utils/logger.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const logger = getLogger(["driver", "playwright"]);
 
 export class PlaywrightDriver extends BaseDriver {
   private static CONTEXT_WAS_DESTROYED_ERROR =
@@ -160,7 +163,7 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   private async waitForPageToLoad(): Promise<void> {
-    console.log("Waiting for page to finish loading:");
+    logger.debug("Waiting for page to finish loading:");
     try {
       await this.page.evaluate(
         `function() { ${PlaywrightDriver.WAITER_SCRIPT} }`
@@ -170,16 +173,16 @@ export class PlaywrightDriver extends BaseDriver {
       );
       if (error) {
         // eslint-disable-next-line @typescript-eslint/no-base-to-string
-        console.log(`  <- Failed to wait for page to load: ${String(error)}`);
+        logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
       } else {
-        console.log("  <- Page finished loading");
+        logger.debug("  <- Page finished loading");
       }
     } catch (error: unknown) {
       if (
         error instanceof Error &&
         error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR)
       ) {
-        console.log("  <- Page context has changed, retrying");
+        logger.debug("  <- Page context has changed, retrying");
         await this.waitForPageToLoad();
       } else {
         throw error;

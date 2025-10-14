@@ -29,6 +29,8 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@logtape/file": "^1.1.1",
+    "@logtape/logtape": "^1.1.1",
     "axios": "^1.6.7",
     "playwright": "^1.40.0",
     "selenium-webdriver": "^4.17.0",

@@ -18,6 +18,7 @@ import { HoverTool } from "./tools/HoverTool.js";
 import { PressKeyTool } from "./tools/PressKeyTool.js";
 import { SelectTool } from "./tools/SelectTool.js";
 import { TypeTool } from "./tools/TypeTool.js";
+import { getLogger } from "./utils/logger.js";
 
 export interface AlumniOptions {
   url?: string;
@@ -25,6 +26,8 @@ export interface AlumniOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extraTools?: (new (...args: any[]) => BaseTool)[];
 }
+
+const logger = getLogger(["Alumni"]);
 
 export class Alumni {
   public driver: BaseDriver;
@@ -75,8 +78,8 @@ export class Alumni {
     this.client = new HttpClient(this.url, this.driver.platform, this.tools);
     this.cache = new Cache(this.client);
 
-    console.log(`Using model: ${this.model.provider}/${this.model.name}`);
-    console.log(`Using HTTP client with server: ${this.url}`);
+    logger.info(`Using model: ${this.model.provider}/${this.model.name}`);
+    logger.info(`Using HTTP client with server: ${this.url}`);
   }
 
   async quit(): Promise<void> {

@@ -2,7 +2,7 @@ export { Alumni } from "./Alumni.js";
 export type { AlumniOptions } from "./Alumni.js";
 export { Area } from "./Area.js";
 export { Cache } from "./Cache.js";
-export type { Data } from "./clients/HttpClient.js";
+export type { Data } from "./clients/typecasting.js";
 export { AppiumDriver } from "./drivers/AppiumDriver.js";
 export { Key } from "./drivers/keys.js";
 export { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";

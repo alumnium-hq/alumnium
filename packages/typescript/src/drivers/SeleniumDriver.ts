@@ -12,11 +12,14 @@ import { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import { fileURLToPath } from "url";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
+import { getLogger } from "../utils/logger.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const logger = getLogger(["driver", "selenium"]);
 
 export class SeleniumDriver extends BaseDriver {
   private static WAITER_SCRIPT = readFileSync(
@@ -175,10 +178,7 @@ export class SeleniumDriver extends BaseDriver {
     return element;
   }
 
-  private async executeCdpCommand(
-    cmd: string,
-    params: object
-  ): Promise<any> {
+  private async executeCdpCommand(cmd: string, params: object): Promise<any> {
     return await this.driver.sendAndGetDevToolsCommand(cmd, params);
   }
 
@@ -190,7 +190,7 @@ export class SeleniumDriver extends BaseDriver {
       );
       if (error) {
         // eslint-disable-next-line @typescript-eslint/no-base-to-string
-        console.warn(`Failed to wait for page to load: ${String(error)}`);
+        logger.warn(`Failed to wait for page to load: ${String(error)}`);
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_e) {
@@ -202,10 +202,10 @@ export class SeleniumDriver extends BaseDriver {
         );
         if (error) {
           // eslint-disable-next-line @typescript-eslint/no-base-to-string
-          console.warn(`Failed to wait for page to load: ${String(error)}`);
+          logger.warn(`Failed to wait for page to load: ${String(error)}`);
         }
       } catch (retryError: unknown) {
-        console.warn(
+        logger.warn(
           `Failed to wait for page to load after retry: ${String(retryError)}`
         );
       }
