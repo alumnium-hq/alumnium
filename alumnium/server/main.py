@@ -74,7 +74,7 @@ async def health_check():
 async def create_session(request: SessionRequest):
     """Create a new session."""
     try:
-        session_id = session_manager.create_session(request.provider, request.name, request.tools)
+        session_id = session_manager.create_session(request.provider, request.name, request.platform, request.tools)
         return SessionResponse(session_id=session_id)
     except Exception as e:
         logger.error(f"Failed to create session: {e}")
@@ -113,7 +113,8 @@ async def plan_actions(session_id: str, request: PlanRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        steps = session.planner_agent.invoke(request.goal, request.accessibility_tree)
+        accessibility_tree = session.process_tree(request.accessibility_tree)
+        steps = session.planner_agent.invoke(request.goal, accessibility_tree.to_xml())
         return PlanResponse(steps=steps)
 
     except Exception as e:
@@ -131,8 +132,9 @@ async def plan_step_actions(session_id: str, request: StepRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        actions = session.actor_agent.invoke(request.goal, request.step, request.accessibility_tree)
-        return StepResponse(actions=actions)
+        accessibility_tree = session.process_tree(request.accessibility_tree)
+        actions = session.actor_agent.invoke(request.goal, request.step, accessibility_tree.to_xml())
+        return StepResponse(actions=accessibility_tree.map_tool_calls_to_raw_id(actions))
 
     except Exception as e:
         logger.error(f"Failed to execute actions for session {session_id}: {e}")
@@ -149,10 +151,10 @@ async def execute_statement(session_id: str, request: StatementRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        # Use retriever agent to execute the statement
+        accessibility_tree = session.process_tree(request.accessibility_tree)
         explanation, value = session.retriever_agent.invoke(
             request.statement,
-            request.accessibility_tree,
+            accessibility_tree.to_xml(),
             title=request.title,
             url=request.url,
             screenshot=request.screenshot,
@@ -175,8 +177,12 @@ async def choose_area(session_id: str, request: AreaRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        area = session.area_agent.invoke(request.description, request.accessibility_tree)
-        return AreaResponse(**area)
+        accessibility_tree = session.process_tree(request.accessibility_tree)
+        area = session.area_agent.invoke(request.description, accessibility_tree.to_xml())
+        return AreaResponse(
+            id=accessibility_tree.get_raw_id(area["id"]),
+            explanation=area["explanation"],
+        )
 
     except Exception as e:
         logger.error(f"Failed to choose accessibility area for session {session_id}: {e}")
@@ -211,7 +217,11 @@ async def find_element(session_id: str, request: FindRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
-        elements = session.locator_agent.invoke(request.description, request.accessibility_tree)
+        accessibility_tree = session.process_tree(request.accessibility_tree)
+        elements = session.locator_agent.invoke(request.description, accessibility_tree.to_xml())
+        for element in elements:
+            element["id"] = accessibility_tree.get_raw_id(element["id"])
+
         return FindResponse(elements=elements)
 
     except Exception as e:

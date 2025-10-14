@@ -42,6 +42,10 @@ class PlaywrightDriver(BaseDriver):
         }
 
     @property
+    def platform(self) -> str:
+        return "chromium"
+
+    @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
         return ChromiumAccessibilityTree(self.client.send("Accessibility.getFullAXTree"))
@@ -99,22 +103,25 @@ class PlaywrightDriver(BaseDriver):
         return self.page.url
 
     def find_element(self, id: int):
+        accessibility_element = self.accessibility_tree.element_by_id(id)
+        backend_node_id = accessibility_element.backend_node_id
+
         # Beware!
         self.client.send("DOM.enable")
         self.client.send("DOM.getFlattenedDocument")
-        node_ids = self.client.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [id]})
+        node_ids = self.client.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]})
         node_id = node_ids["nodeIds"][0]
         self.client.send(
             "DOM.setAttributeValue",
             {
                 "nodeId": node_id,
                 "name": "data-alumnium-id",
-                "value": str(id),
+                "value": str(backend_node_id),
             },
         )
         # TODO: We need to remove the attribute after we are done with the element,
         # but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
-        return self.page.locator(f"css=[data-alumnium-id='{id}']")
+        return self.page.locator(f"css=[data-alumnium-id='{backend_node_id}']")
 
     def wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")

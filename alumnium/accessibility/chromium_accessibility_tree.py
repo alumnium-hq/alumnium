@@ -1,178 +1,161 @@
-from typing import List
-from xml.etree.ElementTree import Element, indent, tostring
+from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
-from ..server.logutils import get_logger
 from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
 
-logger = get_logger(__name__)
-
 
 class ChromiumAccessibilityTree(BaseAccessibilityTree):
-    def __init__(self, tree: dict):
-        self.tree = {}  # Initialize the result dictionary
+    def __init__(self, cdp_response: dict):
+        self.cdp_response = cdp_response
+        self._next_raw_id = 0
+        self._raw = None
 
-        self.id = 0
-        self.cached_ids = {}
+    @classmethod
+    def _from_xml(cls, xml_string: str) -> "ChromiumAccessibilityTree":
+        """Create a ChromiumAccessibilityTree instance from pre-computed XML."""
+        instance = cls(cdp_response={})
+        instance._raw = xml_string
+        return instance
 
-        nodes = tree["nodes"]
+    def to_str(self) -> str:
+        """Convert CDP response to raw XML format preserving all data."""
+        if self._raw is not None:
+            return self._raw
+
+        nodes = self.cdp_response["nodes"]
+
         # Create a lookup table for nodes by their ID
         node_lookup = {node["nodeId"]: node for node in nodes}
 
-        for node_id, node in node_lookup.items():
-            parent_id = node.get("parentId")  # Get the parent ID
+        # Build tree structure and convert to XML
+        root_nodes = []
+        for node in nodes:
+            if node.get("parentId") is None:
+                xml_node = self._node_to_xml(node, node_lookup)
+                root_nodes.append(xml_node)
 
-            self.id += 1
-            self.cached_ids[self.id] = node.get("backendDOMNodeId", "")
-            node["id"] = self.id
+        # Combine all root nodes into a single XML string
+        xml_string = ""
+        for root in root_nodes:
+            indent(root)
+            xml_string += tostring(root, encoding="unicode")
 
-            # If it's a top-level node, add it directly to the tree
-            if parent_id is None:
-                self.tree[node_id] = node
-            else:
-                # Find the parent node and add the current node as a child
-                parent = node_lookup[parent_id]
+        self._raw = xml_string
+        return self._raw
 
-                # Initialize the "children" list if it doesn't exist
-                parent.setdefault("nodes", []).append(node)
+    def _node_to_xml(self, node: dict, node_lookup: dict) -> Element:
+        """Convert a CDP node to XML element, recursively processing children."""
+        # Create element with role as tag
+        role = node.get("role", {}).get("value", "unknown")
+        elem = Element(role)
 
-                # Remove unneeded attributes
-                node.pop("childIds", None)
-                node.pop("parentId", None)
+        # Add our own sequential raw_id attribute
+        self._next_raw_id += 1
+        elem.set("raw_id", str(self._next_raw_id))
 
-        logger.debug(f"  -> Cached IDs: {self.cached_ids}")
+        # Add all node attributes as XML attributes
+        if "backendDOMNodeId" in node:
+            elem.set("backendDOMNodeId", str(node["backendDOMNodeId"]))
+        if "nodeId" in node:
+            elem.set("nodeId", str(node["nodeId"]))
+        if "ignored" in node:
+            elem.set("ignored", str(node["ignored"]))
 
-    def element_by_id(self, id: int) -> AccessibilityElement:
-        return AccessibilityElement(id=self.cached_ids[id])
+        # Add name as attribute if present
+        if "name" in node and "value" in node["name"]:
+            elem.set("name", node["name"]["value"])
 
-    def get_area(self, id: int) -> "ChromiumAccessibilityTree":
-        if id not in self.cached_ids:
-            raise KeyError(f"No element with id={id}")
+        # Add properties as attributes
+        if "properties" in node:
+            for prop in node["properties"]:
+                prop_name = prop.get("name", "")
+                prop_value = prop.get("value", {})
+                if isinstance(prop_value, dict) and "value" in prop_value:
+                    elem.set(prop_name, str(prop_value["value"]))
+                elif isinstance(prop_value, dict):
+                    # Complex property values (like nodeList) are converted to empty string
+                    elem.set(prop_name, "")
+                else:
+                    elem.set(prop_name, str(prop_value))
 
-        # Create a new tree for the specific area
-        root_elements = [self.tree[root_id] for root_id in self.tree]
+        # Process children recursively
+        if "childIds" in node:
+            for child_id in node["childIds"]:
+                if child_id in node_lookup:
+                    child_elem = self._node_to_xml(node_lookup[child_id], node_lookup)
+                    elem.append(child_elem)
 
-        def find_node_by_id(nodes, target_id):
-            for node in nodes:
-                if node.get("id") == target_id:
-                    return node
-                children = node.get("nodes", [])
-                result = find_node_by_id(children, target_id)
-                if result:
+        return elem
+
+    def element_by_id(self, raw_id: int) -> AccessibilityElement:
+        """
+        Find element by raw_id and return its properties for element finding.
+
+        Args:
+            raw_id: The raw_id to search for
+
+        Returns:
+            AccessibilityElement with backend_node_id set
+        """
+        # Get raw XML with raw_id attributes
+        raw_xml = self.to_str()
+        root = fromstring(f"<root>{raw_xml}</root>")
+
+        # Find element with matching raw_id
+        def find_element(elem: Element, target_id: str) -> Element | None:
+            if elem.get("raw_id") == target_id:
+                return elem
+            for child in elem:
+                result = find_element(child, target_id)
+                if result is not None:
                     return result
             return None
 
-        target_node = find_node_by_id(root_elements, id)
-        if not target_node:
-            raise KeyError(f"No node with id={id} found in the tree")
+        element = find_element(root, str(raw_id))
+        if element is None:
+            raise KeyError(f"No element with raw_id={raw_id} found")
 
-        area_tree = ChromiumAccessibilityTree({"nodes": []})
-        area_tree.tree = {id: target_node}  # Set the target node as the root of the new tree
-        area_tree.cached_ids = self.cached_ids.copy()  # Copy cached IDs for this area
-        return area_tree
+        # Extract backendDOMNodeId for Chromium
+        backend_node_id_str = element.get("backendDOMNodeId")
+        if backend_node_id_str is None:
+            raise ValueError(f"Element with raw_id={raw_id} has no backendDOMNodeId attribute")
 
-    def to_xml(self):
-        """Converts the nested tree to XML format using role.value as tags."""
+        return AccessibilityElement(
+            type=element.tag,
+            backend_node_id=int(backend_node_id_str),
+        )
 
-        def convert_node_to_xml(node, parent=None):
-            # Extract the desired information
-            role_value = node["role"]["value"]
-            id = node.get("id", "")
-            ignored = node.get("ignored", False)
-            name_value = node.get("name", {}).get("value", "")
-            properties = node.get("properties", [])
-            children = node.get("nodes", [])
+    def scope_to_area(self, raw_id: int) -> "ChromiumAccessibilityTree":
+        """Scope the tree to a smaller subtree identified by raw_id."""
+        raw_xml = self.to_str()
 
-            if role_value == "StaticText":
-                parent.text = name_value
-            elif role_value == "none" or ignored:
-                if children:
-                    for child in children:
-                        convert_node_to_xml(child, parent)
-            elif role_value == "generic" and not children:
-                return None
-            else:
-                # Create the XML element for the node
-                xml_element = Element(role_value)
+        # Parse the XML (wrap in root if there are multiple top-level elements)
+        try:
+            root = fromstring(raw_xml)
+            wrapped = False
+        except Exception:
+            root = fromstring(f"<root>{raw_xml}</root>")
+            wrapped = True
 
-                if name_value:
-                    xml_element.set("name", name_value)
+        # Find the element with the matching raw_id
+        def find_element(elem: Element, target_id: str) -> Element | None:
+            if elem.get("raw_id") == target_id:
+                return elem
+            for child in elem:
+                result = find_element(child, target_id)
+                if result is not None:
+                    return result
+            return None
 
-                # Assign a unique ID to the element
-                xml_element.set("id", str(id))
+        search_root = root if not wrapped else root
+        target_elem = find_element(search_root, str(raw_id))
 
-                if properties:
-                    for property in properties:
-                        xml_element.set(property["name"], str(property.get("value", {}).get("value", "")))
+        if target_elem is None:
+            # If not found, return original tree
+            return self
 
-                # Add children recursively
-                if children:
-                    for child in children:
-                        convert_node_to_xml(child, xml_element)
+        # Convert the scoped element back to XML string
+        indent(target_elem)
+        scoped_xml = tostring(target_elem, encoding="unicode")
 
-                if parent is not None:
-                    parent.append(xml_element)
-
-                return xml_element
-
-        # Create the root XML element
-        root_elements = []
-        for root_id in self.tree:
-            element = convert_node_to_xml(self.tree[root_id])
-            root_elements.append(element)
-            self._prune_redundant_name(element)
-
-        # Convert the XML elements to a string
-        xml_string = ""
-        for element in root_elements:
-            indent(element)
-            xml_string += tostring(element, encoding="unicode")
-
-        return xml_string
-
-    def _prune_redundant_name(self, node: Element) -> List[str]:
-        """
-        Recursively traverses the tree, removes redundant name information from parent nodes,
-        and returns a list of all content (names) in the current subtree.
-        """
-        # Remove name if it equals text
-        if node.get("name") and node.text and node.get("name") == node.text:
-            del node.attrib["name"]
-
-        if not len(node):
-            return self._get_texts(node)
-
-        # Recursively process children and gather all descendant content
-        descendant_content = []
-        for child in node:
-            descendant_content.extend(self._prune_redundant_name(child))
-
-        # Sort by length, longest first, to handle overlapping substrings correctly
-        descendant_content.sort(key=len, reverse=True)
-
-        for content in descendant_content:
-            if node.get("name"):
-                node.set("name", node.get("name").replace(content, "").strip())
-            if node.get("label"):
-                node.set("label", node.get("label").replace(content, "").strip())
-            if node.text:
-                node.text = node.text.replace(content, "").strip()
-
-        # The content of the current subtree is its own (potentially pruned) name
-        # plus all the content from its descendants.
-        current_subtree_content = descendant_content
-        if node.get("name"):
-            current_subtree_content.extend(self._get_texts(node))
-
-        return current_subtree_content
-
-    def _get_texts(self, node: dict) -> List[str]:
-        texts = set()
-        if node.get("name"):
-            texts.add(node.get("name"))
-        if node.get("label"):
-            texts.add(node.get("label"))
-        if node.text:
-            texts.add(node.text)
-
-        return list(texts)
+        return self._from_xml(scoped_xml)

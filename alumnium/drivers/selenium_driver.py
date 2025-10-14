@@ -43,6 +43,10 @@ class SeleniumDriver(BaseDriver):
         self._patch_driver(driver)
 
     @property
+    def platform(self) -> str:
+        return "chromium"
+
+    @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
         self.wait_for_page_to_load()
         return ChromiumAccessibilityTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
@@ -105,20 +109,25 @@ class SeleniumDriver(BaseDriver):
         return self.driver.current_url
 
     def find_element(self, id: int) -> WebElement:
+        accessibility_element = self.accessibility_tree.element_by_id(id)
+        backend_node_id = accessibility_element.backend_node_id
+
         # Beware!
         self.driver.execute_cdp_cmd("DOM.enable", {})
         self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})
-        node_ids = self.driver.execute_cdp_cmd("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [id]})
+        node_ids = self.driver.execute_cdp_cmd(
+            "DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]}
+        )
         node_id = node_ids["nodeIds"][0]
         self.driver.execute_cdp_cmd(
             "DOM.setAttributeValue",
             {
                 "nodeId": node_id,
                 "name": "data-alumnium-id",
-                "value": str(id),
+                "value": str(backend_node_id),
             },
         )
-        element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-id='{id}']")
+        element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-id='{backend_node_id}']")
         self.driver.execute_cdp_cmd(
             "DOM.removeAttribute",
             {

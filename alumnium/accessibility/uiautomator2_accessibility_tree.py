@@ -1,196 +1,110 @@
-import re
-from dataclasses import dataclass, field
-from typing import Any, Dict, List
-from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
+from re import compile
+from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
 from .accessibility_element import AccessibilityElement
 from .base_accessibility_tree import BaseAccessibilityTree
 
 
-@dataclass
-class Node:
-    id: int
-    role: str
-    ignored: bool
-    properties: List[Dict[str, Any]] = field(default_factory=list)
-    children: List["Node"] = field(default_factory=list)
-
-
-class UIAutomator2AccessibiltyTree(BaseAccessibilityTree):
+class UIAutomator2AccessibilityTree(BaseAccessibilityTree):
     def __init__(self, xml_string: str):
-        self.tree = []
-        self.id_counter = 0
-        self.cached_ids = {}
-
         # cleaning multiple xml declaration lines from page source
-        xml_declaration_pattern = re.compile(r"^\s*<\?xml.*\?>\s*$")
+        xml_declaration_pattern = compile(r"^\s*<\?xml.*\?>\s*$")
         lines = xml_string.splitlines()
         cleaned_lines = [line for line in lines if not xml_declaration_pattern.match(line)]
         cleaned_xml_content = "\n".join(cleaned_lines)
-        wrapped_xml_string = (
+        self.xml_string = (
             f"<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n <root>\n{cleaned_xml_content}\n</root>"
         )
 
-        try:
-            root_element = fromstring(wrapped_xml_string)
-        except ParseError as e:
-            raise ValueError(f"Invalid XML string: {e}")
+        self._next_raw_id = 0
+        self._raw = None
 
-        app_element = None
+    def to_str(self) -> str:
+        """Parse XML and add raw_id attributes to all elements."""
+        if self._raw is not None:
+            return self._raw
 
-        if len(root_element):
-            for children in range(0, len(root_element)):
-                app_element = root_element[children]
-                self.tree.append(self._parse_element(app_element))
+        # Parse the XML
+        root = fromstring(self.xml_string)
 
-    def get_tree(self):
-        return self.tree
+        # Add raw_id attributes recursively
+        self._add_raw_ids(root)
 
-    def _get_next_id(self) -> int:
-        self.id_counter += 1
-        return self.id_counter
+        # Serialize back to string
+        indent(root)
+        self._raw = tostring(root, encoding="unicode")
+        return self._raw
 
-    def _parse_element(self, element: Element) -> Node:
-        node_id = self._get_next_id()
-        attributes = element.attrib
-        raw_type = attributes.get("type", element.tag)
+    def _add_raw_ids(self, elem: Element) -> None:
+        """Recursively add raw_id attribute to element and its children."""
+        self._next_raw_id += 1
+        elem.set("raw_id", str(self._next_raw_id))
+        for child in elem:
+            self._add_raw_ids(child)
 
-        ignored = attributes.get("ignored") == "true"
+    def element_by_id(self, raw_id: int) -> AccessibilityElement:
+        """
+        Find element by raw_id and return its properties for XPath construction.
 
-        properties = []
+        Args:
+            raw_id: The raw_id to search for
 
-        prop_xml_attributes = [
-            "class",
-            "index",
-            "width",
-            "height",
-            "text",
-            "resource-id",
-            "content-desc",
-            "bounds",
-            "checkable",
-            "checked",
-            "clickable",
-            "displayed",
-            "enabled",
-            "focus",
-            "focused",
-            "focusable",
-            "long-clickable",
-            "password",
-            "selected",
-            "scrollable",
-        ]
+        Returns:
+            AccessibilityElement with type, androidresourceid, androidtext, androidcontentdesc, androidbounds
+        """
+        # Get raw XML with raw_id attributes
+        raw_xml = self.to_str()
+        root = fromstring(raw_xml)
 
-        for xml_attr_name in prop_xml_attributes:
-            if xml_attr_name in attributes:
-                prop_name = f"{xml_attr_name}"
-                prop_entry = {"name": prop_name}
+        # Find element with matching raw_id
+        def find_element(elem: Element, target_id: str) -> Element | None:
+            if elem.get("raw_id") == target_id:
+                return elem
+            for child in elem:
+                result = find_element(child, target_id)
+                if result is not None:
+                    return result
+            return None
 
-                if xml_attr_name in [
-                    "checked",
-                    "checkable",
-                    "clickable",
-                    "displayed",
-                    "enabled",
-                    "focus",
-                    "focused",
-                    "focusable",
-                    "long-clickable",
-                    "password",
-                    "selected",
-                    "scrollable",
-                ]:
-                    prop_entry["value"] = attributes[xml_attr_name] == "true"
+        element = find_element(root, str(raw_id))
+        if element is None:
+            raise KeyError(f"No element with raw_id={raw_id} found")
 
-                elif xml_attr_name in ["index", "width", "height"]:
-                    try:
-                        prop_entry["value"] = int(attributes[xml_attr_name])
-                    except ValueError:
-                        prop_entry["value"] = attributes[xml_attr_name]
+        # Extract properties for UIAutomator2
+        return AccessibilityElement(
+            id=raw_id,
+            type=element.get("class", element.tag),
+            androidresourceid=element.get("resource-id"),
+            androidtext=element.get("text"),
+            androidcontentdesc=element.get("content-desc"),
+            androidbounds=element.get("bounds"),
+        )
 
-                elif xml_attr_name in ["resource-id", "content-desc", "bounds"]:
-                    prop_entry["value"] = attributes[xml_attr_name]
+    def scope_to_area(self, raw_id: int) -> "UIAutomator2AccessibilityTree":
+        """Scope the tree to a smaller subtree identified by raw_id."""
+        raw_xml = self.to_str()
 
-                elif xml_attr_name in ["class", "text"]:
-                    prop_entry["value"] = attributes[xml_attr_name]
+        # Parse the XML
+        root = fromstring(raw_xml)
 
-                else:
-                    prop_entry["value"] = attributes[xml_attr_name]
-                properties.append(prop_entry)
+        # Find the element with the matching raw_id
+        def find_element(elem: Element, target_id: str) -> Element | None:
+            if elem.get("raw_id") == target_id:
+                return elem
+            for child in elem:
+                result = find_element(child, target_id)
+                if result is not None:
+                    return result
+            return None
 
-        node = Node(id=node_id, role=raw_type, ignored=ignored, properties=properties)
+        target_elem = find_element(root, str(raw_id))
 
-        self.cached_ids[node_id] = node
+        if target_elem is None:
+            # If not found, return original tree
+            return self
 
-        for child_element in element:
-            node.children.append(self._parse_element(child_element))
-        return node
+        # Convert the scoped element back to XML string
+        indent(target_elem)
+        scoped_xml = tostring(target_elem, encoding="unicode")
 
-    def element_by_id(self, id) -> AccessibilityElement:
-        element = AccessibilityElement(id=id)
-        found_node = self.cached_ids.get(id)
-        for prop in found_node.properties:
-            prop_name, prop_value = prop.get("name"), prop.get("value")
-            if prop_name == "class":
-                element.type = prop_value
-            elif prop_name == "resource-id":
-                element.androidresourceid = prop_value
-            elif prop_name == "text":
-                element.androidtext = prop_value
-            elif prop_name == "content-desc":
-                element.androidcontentdesc = prop_value
-            elif prop_name == "bounds":
-                element.androidbounds = prop_value
-        return element
-
-    def to_xml(self) -> str:
-        if not self.tree:
-            return ""
-
-        def convert_dict_to_xml(ele: Node, parent_element: Element) -> Element | None:
-            if ele.ignored:
-                return None
-
-            for child_element in ele.children:
-                id = child_element.id
-                simplified_role = child_element.role.split(".")[-1]
-                resource_id = ""
-                content_desc = ""
-                text_desc = ""
-                clickable = ""
-
-                role = Element(simplified_role)
-                role.set("id", str(id))
-
-                for props in child_element.properties:
-                    if props["name"] == "resource-id" and props["value"]:
-                        resource_id = props["value"]
-                    if props["name"] == "content-desc" and props["value"]:
-                        content_desc = props["value"]
-                    if simplified_role == "TextView":
-                        if props["name"] == "text" and props["value"]:
-                            text_desc = props["value"]
-                    if props["name"] == "clickable" and props["value"]:
-                        clickable = True
-
-                if resource_id:
-                    role.set("resource-id", resource_id)
-                if content_desc:
-                    role.set("content-desc", content_desc)
-                if text_desc:
-                    role.set("text", text_desc)
-                if clickable:
-                    role.set("clickable", "true")
-
-                parent_element.append(role)
-                if child_element.children:
-                    convert_dict_to_xml(child_element, role)
-
-        root_xml = Element("hierarchy")
-        for ele in self.tree:
-            convert_dict_to_xml(ele, root_xml)
-
-        indent(root_xml)
-
-        return tostring(root_xml, "unicode")
+        return UIAutomator2AccessibilityTree(scoped_xml)

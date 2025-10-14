@@ -1,4 +1,3 @@
-from contextlib import contextmanager
 from time import sleep
 
 from appium.webdriver import Remote
@@ -9,7 +8,7 @@ from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
-from ..accessibility import UIAutomator2AccessibiltyTree, XCUITestAccessibilityTree
+from ..accessibility import UIAutomator2AccessibilityTree, XCUITestAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -37,14 +36,22 @@ class AppiumDriver(BaseDriver):
         self.hide_keyboard_after_typing = False
 
     @property
-    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibiltyTree:
-        self._ensure_native_app_context()
+    def platform(self) -> str:
         if self.driver.capabilities["automationName"] == "uiautomator2":
-            sleep(self.delay)
-            return UIAutomator2AccessibiltyTree(self.driver.page_source)
+            return "uiautomator2"
         else:
-            sleep(self.delay)
-            return XCUITestAccessibilityTree(self.driver.page_source)
+            return "xcuitest"
+
+    @property
+    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibilityTree:
+        self._ensure_native_app_context()
+        sleep(self.delay)
+        xml_string = self.driver.page_source
+
+        if self.platform == "uiautomator2":
+            return UIAutomator2AccessibilityTree(xml_string)
+        else:
+            return XCUITestAccessibilityTree(xml_string)
 
     def click(self, id: int):
         self._ensure_native_app_context()

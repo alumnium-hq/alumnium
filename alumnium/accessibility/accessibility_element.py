@@ -1,16 +1,16 @@
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
 class AccessibilityElement:
-    id: int
-    name: Optional[str] = None
-    label: Optional[str] = None
-    type: Optional[str] = None
-    value: Optional[str] = None
-    androidresourceid: Optional[str] = None
-    androidclass: Optional[str] = None
-    androidtext: Optional[str] = None
-    androidcontentdesc: Optional[str] = None
-    androidbounds: Optional[str] = None
+    id: int | None = None
+    backend_node_id: int | None = None
+    name: str | None = None
+    label: str | None = None
+    type: str | None = None
+    value: str | None = None
+    androidresourceid: str | None = None
+    androidclass: str | None = None
+    androidtext: str | None = None
+    androidcontentdesc: str | None = None
+    androidbounds: str | None = None

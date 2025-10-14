@@ -1,5 +1,11 @@
 from typing import Any
 
+from .accessibility import (
+    BaseServerAccessibilityTree,
+    ServerChromiumAccessibilityTree,
+    ServerUIAutomator2AccessibilityTree,
+    ServerXCUITestAccessibilityTree,
+)
 from .agents.actor_agent import ActorAgent
 from .agents.area_agent import AreaAgent
 from .agents.locator_agent import LocatorAgent
@@ -20,10 +26,12 @@ class Session:
         self,
         session_id: str,
         model: Model,
+        platform: str,
         tools: dict[str, Any],
     ):
         self.session_id = session_id
         self.model = model
+        self.platform = platform
 
         self.cache = CacheFactory.create_cache()
         self.llm = LLMFactory.create_llm(model=model)
@@ -35,7 +43,9 @@ class Session:
         self.area_agent = AreaAgent(self.llm)
         self.locator_agent = LocatorAgent(self.llm)
 
-        logger.info(f"Created session {session_id} with model {model.provider.value}/{model.name}")
+        logger.info(
+            f"Created session {session_id} with model {model.provider.value}/{model.name} and platform {platform}"
+        )
 
     @property
     def stats(self) -> dict[str, dict[str, int]]:
@@ -73,3 +83,25 @@ class Session:
             },
             "cache": self.cache.usage,
         }
+
+    def process_tree(self, raw_tree_data: str) -> BaseServerAccessibilityTree:
+        """
+        Process raw platform data into a server tree.
+
+        Args:
+            raw_tree_data: Raw tree data as string (XML for all platforms)
+
+        Returns:
+            The created server tree instance
+        """
+        if self.platform == "chromium":
+            tree = ServerChromiumAccessibilityTree(raw_tree_data)
+        elif self.platform == "xcuitest":
+            tree = ServerXCUITestAccessibilityTree(raw_tree_data)
+        elif self.platform == "uiautomator2":
+            tree = ServerUIAutomator2AccessibilityTree(raw_tree_data)
+        else:
+            raise ValueError(f"Unknown platform: {self.platform}")
+
+        logger.debug(f"Processed tree for session {self.session_id}")
+        return tree

@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -9,6 +9,7 @@ class VersionedModel(BaseModel):
 
 
 class SessionRequest(VersionedModel):
+    platform: Literal["chromium", "uiautomator2", "xcuitest"]
     provider: str
     name: Optional[str] = None
     tools: List[dict[str, Any]]
