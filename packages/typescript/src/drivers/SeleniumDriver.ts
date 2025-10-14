@@ -10,7 +10,8 @@ import {
 } from "selenium-webdriver";
 import { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import { fileURLToPath } from "url";
-import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
@@ -43,20 +44,20 @@ export class SeleniumDriver extends BaseDriver {
     this.driver = driver as ChromiumWebDriver;
   }
 
-  get accessibilityTree(): RawAccessibilityTree {
+  get accessibilityTree(): BaseAccessibilityTree {
     throw new Error(
       "accessibilityTree getter is synchronous, use getAccessibilityTree() method instead"
     );
   }
 
-  async getAccessibilityTree(): Promise<RawAccessibilityTree> {
+  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.waitForPageToLoad();
 
     const rawData = await this.executeCdpCommand(
       "Accessibility.getFullAXTree",
       {}
     );
-    return new RawAccessibilityTree(rawData, "chromium");
+    return new ChromiumAccessibilityTree(rawData);
   }
 
   async click(id: number): Promise<void> {
@@ -135,6 +136,10 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async findElement(id: number): Promise<WebElement> {
+    const tree = await this.getAccessibilityTree();
+    const accessibilityElement = tree.elementById(id);
+    const backendNodeId = accessibilityElement.backendNodeId!;
+
     // Use CDP to find element by backend node ID
     await this.executeCdpCommand("DOM.enable", {});
     await this.executeCdpCommand("DOM.getFlattenedDocument", {});
@@ -142,7 +147,7 @@ export class SeleniumDriver extends BaseDriver {
     const nodeIds = await this.executeCdpCommand(
       "DOM.pushNodesByBackendIdsToFrontend",
       {
-        backendNodeIds: [id],
+        backendNodeIds: [backendNodeId],
       }
     );
 
@@ -153,11 +158,11 @@ export class SeleniumDriver extends BaseDriver {
     await this.executeCdpCommand("DOM.setAttributeValue", {
       nodeId,
       name: "data-alumnium-id",
-      value: String(id),
+      value: String(backendNodeId),
     });
 
     const element = await this.driver.findElement(
-      By.css(`[data-alumnium-id='${id}']`)
+      By.css(`[data-alumnium-id='${backendNodeId}']`)
     );
 
     // Remove temporary attribute

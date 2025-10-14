@@ -2,8 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios, { AxiosInstance } from "axios";
 import { Model } from "../Model.js";
-import { AccessibilityElement } from "../accessibility/AccessibilityElement.js";
-import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
 import { BaseTool } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 
@@ -14,7 +12,6 @@ export class HttpClient {
   private sessionId: string | null = null;
   private client: AxiosInstance;
   private sessionPromise: Promise<void> | null = null;
-  private idMappings: Record<number, number> = {};
 
   constructor(
     baseUrl: string,
@@ -24,14 +21,6 @@ export class HttpClient {
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
     this.client = axios.create({ timeout: 120000 });
-  }
-
-  elementById(id: number): AccessibilityElement {
-    if (!(id in this.idMappings)) {
-      throw new Error(`No element with id=${id}`);
-    }
-    const backendId = this.idMappings[id];
-    return new AccessibilityElement(backendId);
   }
 
   private async ensureSession(): Promise<void> {
@@ -65,28 +54,18 @@ export class HttpClient {
 
   async planActions(
     goal: string,
-    rawTree: RawAccessibilityTree
+    accessibilityTree: string
   ): Promise<string[]> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/plans`,
       {
         goal,
-        raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType,
+        accessibility_tree: accessibilityTree,
       }
     );
-    // Store ID mappings if provided
 
     const responseData = response.data;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (responseData.id_mappings) {
-      this.idMappings = {};
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      for (const [key, value] of Object.entries(responseData.id_mappings)) {
-        this.idMappings[parseInt(key)] = value as number;
-      }
-    }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return responseData.steps;
   }
@@ -112,7 +91,7 @@ export class HttpClient {
   async executeAction(
     goal: string,
     step: string,
-    rawTree: RawAccessibilityTree
+    accessibilityTree: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any[]> {
     await this.ensureSession();
@@ -121,28 +100,18 @@ export class HttpClient {
       {
         goal,
         step,
-        raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType,
+        accessibility_tree: accessibilityTree,
       }
     );
-    // Store ID mappings if provided
 
     const responseData = response.data;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (responseData.id_mappings) {
-      this.idMappings = {};
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      for (const [key, value] of Object.entries(responseData.id_mappings)) {
-        this.idMappings[parseInt(key)] = value as number;
-      }
-    }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return responseData.actions;
   }
 
   async retrieve(
     statement: string,
-    rawTree: RawAccessibilityTree,
+    accessibilityTree: string,
     title: string,
     url: string,
     screenshot?: string
@@ -152,59 +121,39 @@ export class HttpClient {
       `${this.baseUrl}/v1/sessions/${this.sessionId}/statements`,
       {
         statement,
-        raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType,
+        accessibility_tree: accessibilityTree,
         title,
         url,
         screenshot: screenshot || null,
       }
     );
-    // Store ID mappings if provided
 
     const responseData = response.data;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (responseData.id_mappings) {
-      this.idMappings = {};
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      for (const [key, value] of Object.entries(responseData.id_mappings)) {
-        this.idMappings[parseInt(key)] = value as number;
-      }
-    }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return [responseData.explanation, responseData.result];
   }
 
   async findArea(
     description: string,
-    rawTree: RawAccessibilityTree
+    accessibilityTree: string
   ): Promise<{ id: number; explanation: string }> {
     await this.ensureSession();
     const response = await this.client.post(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/areas`,
       {
         description,
-        raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType,
+        accessibility_tree: accessibilityTree,
       }
     );
-    // Store ID mappings if provided
 
     const responseData = response.data;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (responseData.id_mappings) {
-      this.idMappings = {};
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      for (const [key, value] of Object.entries(responseData.id_mappings)) {
-        this.idMappings[parseInt(key)] = value as number;
-      }
-    }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return { id: responseData.id, explanation: responseData.explanation };
   }
 
   async findElement(
     description: string,
-    rawTree: RawAccessibilityTree
+    accessibilityTree: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     await this.ensureSession();
@@ -212,21 +161,11 @@ export class HttpClient {
       `${this.baseUrl}/v1/sessions/${this.sessionId}/elements`,
       {
         description,
-        raw_data: rawTree.rawData,
-        automation_type: rawTree.automationType,
+        accessibility_tree: accessibilityTree,
       }
     );
-    // Store ID mappings if provided
 
     const responseData = response.data;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (responseData.id_mappings) {
-      this.idMappings = {};
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-      for (const [key, value] of Object.entries(responseData.id_mappings)) {
-        this.idMappings[parseInt(key)] = value as number;
-      }
-    }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return responseData.elements[0];
   }

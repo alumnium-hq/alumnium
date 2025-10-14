@@ -2,7 +2,8 @@ import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { CDPSession, Locator, Page } from "playwright";
 import { fileURLToPath } from "url";
-import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
@@ -44,16 +45,16 @@ export class PlaywrightDriver extends BaseDriver {
     this.client = await this.page.context().newCDPSession(this.page);
   }
 
-  get accessibilityTree(): RawAccessibilityTree {
+  get accessibilityTree(): BaseAccessibilityTree {
     throw new Error(
       "accessibilityTree getter is synchronous, use getAccessibilityTree() method instead"
     );
   }
 
-  async getAccessibilityTree(): Promise<RawAccessibilityTree> {
+  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.waitForPageToLoad();
     const rawData = await this.client.send("Accessibility.getFullAXTree");
-    return new RawAccessibilityTree(rawData, "chromium");
+    return new ChromiumAccessibilityTree(rawData);
   }
 
   async click(id: number): Promise<void> {
@@ -134,24 +135,28 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   async findElement(id: number): Promise<Locator> {
+    const tree = await this.getAccessibilityTree();
+    const accessibilityElement = tree.elementById(id);
+    const backendNodeId = accessibilityElement.backendNodeId!;
+
     // Beware!
     await this.client.send("DOM.enable");
     await this.client.send("DOM.getFlattenedDocument");
     const nodeIds = await this.client.send(
       "DOM.pushNodesByBackendIdsToFrontend",
       {
-        backendNodeIds: [id],
+        backendNodeIds: [backendNodeId],
       }
     );
     const nodeId = nodeIds.nodeIds[0];
     await this.client.send("DOM.setAttributeValue", {
       nodeId,
       name: "data-alumnium-id",
-      value: String(id),
+      value: String(backendNodeId),
     });
     // TODO: We need to remove the attribute after we are done with the element,
     // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
-    return this.page.locator(`css=[data-alumnium-id='${id}']`);
+    return this.page.locator(`css=[data-alumnium-id='${backendNodeId}']`);
   }
 
   private async waitForPageToLoad(): Promise<void> {

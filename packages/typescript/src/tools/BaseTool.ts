@@ -14,6 +14,7 @@ export abstract class BaseTool {
     toolCall: ToolCall,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tools: Record<string, new (...args: any[]) => BaseTool>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     client: HttpClient,
     driver: BaseDriver
   ): Promise<void> {
@@ -23,22 +24,6 @@ export abstract class BaseTool {
     }
 
     const tool = new ToolClass(toolCall.args);
-
-    // Map accessibility tree IDs to backend DOM node IDs
-    const args = toolCall.args;
-    if ("id" in args) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-      (tool as any).id = client.elementById(args.id).id;
-    }
-    if ("from_id" in args) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-      (tool as any).fromId = client.elementById(args.from_id).id;
-    }
-    if ("to_id" in args) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-      (tool as any).toId = client.elementById(args.to_id).id;
-    }
-
     await tool.invoke(driver);
   }
 }

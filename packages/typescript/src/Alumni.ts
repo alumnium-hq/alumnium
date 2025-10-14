@@ -85,7 +85,10 @@ export class Alumni {
 
   async do(goal: string): Promise<void> {
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
-    const steps = await this.client.planActions(goal, initialAccessibilityTree);
+    const steps = await this.client.planActions(
+      goal,
+      initialAccessibilityTree.toStr()
+    );
 
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
@@ -98,10 +101,10 @@ export class Alumni {
       const actorResponse = await this.client.executeAction(
         goal,
         step,
-        accessibilityTree
+        accessibilityTree.toStr()
       );
 
-      // Execute tool calls - use client for element lookup
+      // Execute tool calls
       for (const toolCall of actorResponse) {
         await BaseTool.executeToolCall(
           toolCall as ToolCall,
@@ -118,7 +121,7 @@ export class Alumni {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const [explanation, value] = await this.client.retrieve(
       `Is the following true or false - ${statement}`,
-      accessibilityTree,
+      accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
       screenshot
@@ -137,7 +140,7 @@ export class Alumni {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_explanation, value] = await this.client.retrieve(
       data,
-      accessibilityTree,
+      accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
       screenshot
@@ -151,19 +154,23 @@ export class Alumni {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const response = await this.client.findElement(
       description,
-      accessibilityTree
+      accessibilityTree.toStr()
     );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const backendId = this.client.elementById(response.id as number).id;
-    return this.driver.findElement(backendId);
+    return this.driver.findElement(response.id as number);
   }
 
   async area(description: string): Promise<Area> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    const response = await this.client.findArea(description, accessibilityTree);
+    const response = await this.client.findArea(
+      description,
+      accessibilityTree.toStr()
+    );
+    const scopedTree = accessibilityTree.scopeToArea(response.id);
     return new Area(
       response.id,
       response.explanation,
+      scopedTree,
       this.driver,
       this.tools,
       this.client

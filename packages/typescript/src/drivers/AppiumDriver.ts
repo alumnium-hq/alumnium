@@ -4,7 +4,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser, ChainablePromiseElement } from "webdriverio";
-import { RawAccessibilityTree } from "../accessibility/RawAccessibilityTree.js";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
+import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
@@ -27,22 +29,27 @@ export class AppiumDriver extends BaseDriver {
     this.driver = driver;
   }
 
-  get accessibilityTree(): RawAccessibilityTree {
+  get accessibilityTree(): BaseAccessibilityTree {
     throw new Error(
       "accessibilityTree getter is synchronous, use getAccessibilityTree() method instead"
     );
   }
 
-  async getAccessibilityTree(): Promise<RawAccessibilityTree> {
+  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     if (this.delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, this.delay));
     }
-    const rawData = await this.driver.getPageSource();
+    const xmlString = await this.driver.getPageSource();
     const automationType =
       (this.driver.capabilities as any).automationName === "uiautomator2"
         ? "uiautomator2"
         : "xcuitest";
-    return new RawAccessibilityTree(rawData, automationType);
+
+    if (automationType === "uiautomator2") {
+      return new UIAutomator2AccessibilityTree(xmlString);
+    } else {
+      return new XCUITestAccessibilityTree(xmlString);
+    }
   }
 
   async click(id: number): Promise<void> {
@@ -153,11 +160,7 @@ export class AppiumDriver extends BaseDriver {
 
   async findElement(id: number): Promise<ChainablePromiseElement> {
     const tree = await this.getAccessibilityTree();
-    const element = this.getElementFromTree(tree, id);
-
-    if (!element) {
-      throw new Error(`Element with id ${id} not found in accessibility tree`);
-    }
+    const element = tree.elementById(id);
 
     let xpath = `//${element.type}`;
 
@@ -165,12 +168,12 @@ export class AppiumDriver extends BaseDriver {
     if (element.name) props["name"] = element.name;
     if (element.value) props["value"] = element.value;
     if (element.label) props["label"] = element.label;
-    if (element.androidresourceid)
-      props["resource-id"] = element.androidresourceid;
-    if (element.androidtext) props["text"] = element.androidtext;
-    if (element.androidcontentdesc)
-      props["content-desc"] = element.androidcontentdesc;
-    if (element.androidbounds) props["bounds"] = element.androidbounds;
+    if (element.androidResourceId)
+      props["resource-id"] = element.androidResourceId;
+    if (element.androidText) props["text"] = element.androidText;
+    if (element.androidContentDesc)
+      props["content-desc"] = element.androidContentDesc;
+    if (element.androidBounds) props["bounds"] = element.androidBounds;
 
     if (Object.keys(props).length > 0) {
       const conditions = Object.entries(props).map(([k, v]) => `@${k}="${v}"`);
@@ -178,54 +181,6 @@ export class AppiumDriver extends BaseDriver {
     }
 
     return this.driver.$(xpath);
-  }
-
-  private getElementFromTree(tree: RawAccessibilityTree, id: number): any {
-    // Parse XML and find element by ID
-    // This is a simplified implementation - you may need to install an XML parser
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const DOMParser = require("xmldom").DOMParser;
-    const doc = new DOMParser().parseFromString(tree.rawData, "text/xml");
-
-    let currentId = 0;
-    const findElement = (node: any): any => {
-      if (node.nodeType === 1) {
-        // Element node
-        currentId++;
-        if (currentId === id) {
-          const element: any = {
-            type: node.tagName,
-          };
-
-          // Extract attributes
-          if (node.getAttribute("name"))
-            element.name = node.getAttribute("name");
-          if (node.getAttribute("value"))
-            element.value = node.getAttribute("value");
-          if (node.getAttribute("label"))
-            element.label = node.getAttribute("label");
-          if (node.getAttribute("resource-id"))
-            element.androidresourceid = node.getAttribute("resource-id");
-          if (node.getAttribute("text"))
-            element.androidtext = node.getAttribute("text");
-          if (node.getAttribute("content-desc"))
-            element.androidcontentdesc = node.getAttribute("content-desc");
-          if (node.getAttribute("bounds"))
-            element.androidbounds = node.getAttribute("bounds");
-
-          return element;
-        }
-
-        // Check children
-        for (let i = 0; i < node.childNodes.length; i++) {
-          const result = findElement(node.childNodes[i]);
-          if (result) return result;
-        }
-      }
-      return null;
-    };
-
-    return findElement(doc.documentElement);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars

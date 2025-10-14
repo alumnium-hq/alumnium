@@ -1,10 +1,13 @@
+import { BaseAccessibilityTree } from "./accessibility/BaseAccessibilityTree.js";
 import { Data, HttpClient } from "./clients/HttpClient.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
+import { Element } from "./drivers/index.js";
 import { BaseTool, ToolCall } from "./tools/BaseTool.js";
 
 export class Area {
   public id: number;
   public description: string;
+  private accessibilityTree: BaseAccessibilityTree;
   private driver: BaseDriver;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private tools: Record<string, new (...args: any[]) => BaseTool>;
@@ -13,6 +16,7 @@ export class Area {
   constructor(
     id: number,
     description: string,
+    accessibilityTree: BaseAccessibilityTree,
     driver: BaseDriver,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tools: Record<string, new (...args: any[]) => BaseTool>,
@@ -20,30 +24,26 @@ export class Area {
   ) {
     this.id = id;
     this.description = description;
+    this.accessibilityTree = accessibilityTree;
     this.driver = driver;
     this.tools = tools;
     this.client = client;
   }
 
   async do(goal: string): Promise<void> {
-    // Get full tree and filter it to this area
-    const fullTree = await this.driver.getAccessibilityTree();
-    const areaTree = fullTree.filterToArea(this.id);
-    const steps = await this.client.planActions(goal, areaTree);
+    const steps = await this.client.planActions(
+      goal,
+      this.accessibilityTree.toStr()
+    );
 
-    for (let idx = 0; idx < steps.length; idx++) {
-      const step = steps[idx];
-
-      // Get fresh tree and filter to area
-      const currentFullTree = await this.driver.getAccessibilityTree();
-      const currentAreaTree = currentFullTree.filterToArea(this.id);
+    for (const step of steps) {
       const actorResponse = await this.client.executeAction(
         goal,
         step,
-        currentAreaTree
+        this.accessibilityTree.toStr()
       );
 
-      // Execute tool calls - use client for element lookup
+      // Execute tool calls
       for (const toolCall of actorResponse) {
         await BaseTool.executeToolCall(
           toolCall as ToolCall,
@@ -57,11 +57,9 @@ export class Area {
 
   async check(statement: string, vision: boolean = false): Promise<string> {
     const screenshot = vision ? await this.driver.screenshot() : undefined;
-    const fullTree = await this.driver.getAccessibilityTree();
-    const areaTree = fullTree.filterToArea(this.id);
     const [explanation, value] = await this.client.retrieve(
       `Is the following true or false - ${statement}`,
-      areaTree,
+      this.accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
       screenshot
@@ -76,12 +74,10 @@ export class Area {
 
   async get(data: string, vision: boolean = false): Promise<Data> {
     const screenshot = vision ? await this.driver.screenshot() : undefined;
-    const fullTree = await this.driver.getAccessibilityTree();
-    const areaTree = fullTree.filterToArea(this.id);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_explanation, value] = await this.client.retrieve(
       data,
-      areaTree,
+      this.accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
       screenshot
@@ -90,13 +86,13 @@ export class Area {
     return value;
   }
 
-  async find(description: string): Promise<unknown> {
-    const fullTree = await this.driver.getAccessibilityTree();
-    const areaTree = fullTree.filterToArea(this.id);
+  async find(description: string): Promise<Element> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const response = await this.client.findElement(description, areaTree);
+    const response = await this.client.findElement(
+      description,
+      this.accessibilityTree.toStr()
+    );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const backendId = this.client.elementById(response.id as number).id;
-    return this.driver.findElement(backendId);
+    return this.driver.findElement(response.id as number);
   }
 }
