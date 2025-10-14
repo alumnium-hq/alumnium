@@ -1,17 +1,16 @@
+# Python
 *.pyc
-.pytest_cache/
-__pycache__/
+**/.pytest_cache/
+**/__pycache__/
+**/.venv/
+**/dist/
+**/log/
+**/reports/
 
-/.venv/
-/dist/
-/log/
-/reports/
-
-/.envrc
-/scratchpad.py
-
+# Environment variables
 .env
 .envrc
 
-.alumnium/cache/
-.alumnium-cache.sqlite*
+# Cache
+**/.alumnium/cache/**/*
+**/.alumnium-cache.sqlite*
