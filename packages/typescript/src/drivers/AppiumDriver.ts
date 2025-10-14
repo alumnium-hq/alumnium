@@ -10,6 +10,7 @@ import { Key } from "./keys.js";
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;
+  public platform: string = "xcuitest"; // TODO: uiautomator2
   public supportedTools: Set<string> = new Set([
     "ClickTool",
     "DragAndDropTool",

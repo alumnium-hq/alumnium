@@ -173,7 +173,7 @@ export class SeleniumDriver extends BaseDriver {
   private async executeCdpCommand(
     cmd: string,
     params: object
-  ): Promise<object> {
+  ): Promise<any> {
     return await this.driver.sendAndGetDevToolsCommand(cmd, params);
   }
 

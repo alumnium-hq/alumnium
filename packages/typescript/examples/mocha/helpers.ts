@@ -56,7 +56,7 @@ export const mochaHooks = {
 
       // Set delay on Appium driver
       if (al.driver.constructor.name === "AppiumDriver") {
-        (al.driver as AppiumDriver).delay = 100; // 0.1 seconds
+        (al.driver as unknown as AppiumDriver).delay = 100; // 0.1 seconds
       }
     } else {
       throw new Error(`Driver type '${driverType}' not implemented`);

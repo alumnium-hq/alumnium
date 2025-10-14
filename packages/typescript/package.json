@@ -7,8 +7,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "examples:mocha": "node --loader ts-node/esm --no-warnings node_modules/.bin/mocha examples/test/**/*.test.ts",
-    "examples:playwright": "npx playwright test",
+    "examples:mocha": "mocha",
+    "examples:playwright": "playwright test",
     "examples": "npm run examples:mocha && npm run examples:playwright",
     "lint": "eslint .",
     "prepublishOnly": "npm run build"
