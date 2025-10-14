@@ -8,7 +8,7 @@ import {
 
 type LogLevel = "debug" | "info" | "warning" | "error" | "fatal";
 
-let configured = false;
+let configurePromise: Promise<void> | null = null;
 
 /**
  * Configure the logging system based on environment variables:
@@ -16,10 +16,6 @@ let configured = false;
  * - ALUMNIUM_LOG_PATH: Output destination ("stdout" or file path) - defaults to "stdout"
  */
 async function configureLogging(): Promise<void> {
-  if (configured) {
-    return;
-  }
-
   const logLevel =
     (process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase() as LogLevel) || "warning";
   const logPath = process.env.ALUMNIUM_LOG_PATH || "stdout";
@@ -40,13 +36,11 @@ async function configureLogging(): Promise<void> {
       },
     ],
   });
-
-  configured = true;
 }
 
 export function getLogger(category: string[]) {
-  if (!configured) {
-    void configureLogging();
+  if (!configurePromise) {
+    configurePromise = configureLogging();
   }
   return _getLogger(["alumnium", ...category]);
 }
