@@ -14,7 +14,7 @@ homepage = "https://alumnium.ai"
 license = "MIT"
 name = "alumnium"
 packages = [
-    { include = "alumnium" },
+    { include = "alumnium", from="src" },
 ]
 readme = "README.md"
 repository = "https://github.com/alumnium-hq/alumnium"
