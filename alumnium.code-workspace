@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": ".",
+    },
+    {
+      "name": "packages/python",
+      "path": "packages/python",
+    }
+  ],
+  "settings": {
+    "cSpell.words": [
+      "alumnium",
+      "Alumnium",
+    ],
+    "testing.automaticallyOpenPeekView": "never",
+  }
+}

@@ -1,20 +1,5 @@
 {
-    "behave-vsc.featuresPath": "examples/behave/features",
-    "python.analysis.autoImportCompletions": false,
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
-    "testing.automaticallyOpenPeekView": "never",
-    "cSpell.words": [
-        "alumnium"
-    ],
-    // https://github.com/astral-sh/ruff-vscode/issues/363#issuecomment-2958936767
-    "[python]": {
-        "editor.codeActionsOnSave": {
-            "source.organizeImports.ruff": "explicit"
-        }
-    },
-    "python.defaultInterpreterPath": "./.venv/bin/python",
-    "python.analysis.extraPaths": [
-      "./.venv/lib/python3.10/site-packages"
-    ]
+  "files.exclude": {
+    "packages/python/": true,
+  },
 }
