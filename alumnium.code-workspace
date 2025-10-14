@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": ".",
+    },
+    {
+      "name": "packages/python",
+      "path": "packages/python",
+    }
+  ],
+  "settings": {
+    "cSpell.words": [
+      "alumnium",
+      "Alumnium",
+    ],
+    "python.defaultInterpreterPath": "packages/python/.venv/bin/python",
+    "testing.automaticallyOpenPeekView": "never",
+  }
+}
