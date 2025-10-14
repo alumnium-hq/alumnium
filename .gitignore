@@ -1,11 +1,18 @@
 # Python
 *.pyc
-**/.pytest_cache/
 **/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
 **/.venv/
 **/dist/
 **/log/
 **/reports/
+
+# Node
+**/dist/
+**/node_modules/
+**/playwright-report/
+**/test-results/
 
 # Environment variables
 .env
