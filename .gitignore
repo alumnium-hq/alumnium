@@ -7,6 +7,12 @@
 **/log/
 **/reports/
 
+# Node
+**/dist/
+**/node_modules/
+**/playwright-report/
+**/test-results/
+
 # Environment variables
 .env
 .envrc

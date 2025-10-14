@@ -4,19 +4,27 @@ clean:
 	rm -rf packages/python/reports/**/*
 
 install:
-	cd packages/python && \
-	poetry install
+	cd packages/python && poetry install
+	cd packages/typescript && npm install
+
+build:
+	cd packages/python && poetry build
+	cd packages/typescript && npm run build
 
 check-format:
 	cd packages/python && \
-	poetry run ruff check . && \
-	poetry run pyprojectsort --diff
+		poetry run ruff check . && \
+		poetry run pyprojectsort --diff
+	cd packages/typescript && \
+		npm run lint
 
 format:
 	cd packages/python && \
-	poetry run ruff check --fix . && \
-	poetry run ruff format . && \
-	poetry run pyprojectsort
+		poetry run ruff check --fix . && \
+		poetry run ruff format . && \
+		poetry run pyprojectsort
+	cd packages/typescript && \
+		npm run lint -- --fix
 
 test-unit:
 	cd packages/python && \
