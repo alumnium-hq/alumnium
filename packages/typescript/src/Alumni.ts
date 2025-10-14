@@ -20,14 +20,14 @@ import { SelectTool } from "./tools/SelectTool.js";
 import { TypeTool } from "./tools/TypeTool.js";
 import { getLogger } from "./utils/logger.js";
 
+const logger = getLogger(["Alumni"]);
+
 export interface AlumniOptions {
   url?: string;
   model?: Model;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extraTools?: (new (...args: any[]) => BaseTool)[];
 }
-
-const logger = getLogger(["Alumni"]);
 
 export class Alumni {
   public driver: BaseDriver;
@@ -84,7 +84,7 @@ export class Alumni {
 
   async quit(): Promise<void> {
     await this.client.quit();
-    void this.driver.quit();
+    await this.driver.quit();
   }
 
   async do(goal: string): Promise<void> {

@@ -12,7 +12,7 @@ import { Key } from "./keys.js";
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;
-  public platform: string = "xcuitest"; // TODO: uiautomator2
+  public platform: string;
   public supportedTools: Set<string> = new Set([
     "ClickTool",
     "DragAndDropTool",
@@ -27,6 +27,11 @@ export class AppiumDriver extends BaseDriver {
   constructor(driver: Browser) {
     super();
     this.driver = driver;
+    if (this.driver.capabilities["appium:automationName"] === "uiautomator2") {
+      this.platform = "uiautomator2";
+    } else {
+      this.platform = "xcuitest";
+    }
   }
 
   get accessibilityTree(): BaseAccessibilityTree {

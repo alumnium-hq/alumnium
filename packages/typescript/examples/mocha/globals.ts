@@ -1,5 +1,9 @@
-/// <reference path="./globals.d.ts" />
+import { WebDriver } from "selenium-webdriver";
+import { Alumni } from "../../src/Alumni.js";
 
-// This file is imported by test files to ensure TypeScript
-// recognizes the global type declarations from globals.d.ts
+declare global {
+  var driver: WebDriver;
+  var al: Alumni;
+}
+
 export {};

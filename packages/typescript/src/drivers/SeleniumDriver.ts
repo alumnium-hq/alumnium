@@ -92,8 +92,8 @@ export class SeleniumDriver extends BaseDriver {
     await actions.sendKeys(keyMap[key]).perform();
   }
 
-  quit(): void {
-    void this.driver.quit();
+  async quit(): Promise<void> {
+    await this.driver.quit();
   }
 
   async back(): Promise<void> {

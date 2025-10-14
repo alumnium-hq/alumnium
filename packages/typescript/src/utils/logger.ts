@@ -21,7 +21,7 @@ async function configureLogging(): Promise<void> {
   }
 
   const logLevel =
-    (process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase() as LogLevel) || "info";
+    (process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase() as LogLevel) || "warning";
   const logPath = process.env.ALUMNIUM_LOG_PATH || "stdout";
 
   const sinkKey = logPath === "stdout" ? "console" : "file";

@@ -4,7 +4,10 @@ import axios, { AxiosInstance } from "axios";
 import { Model } from "../Model.js";
 import { BaseTool } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
+import { getLogger } from "../utils/logger.js";
 import { Data, looselyTypecast } from "./typecasting.js";
+
+const logger = getLogger(["HttpClient"]);
 
 export class HttpClient {
   private baseUrl: string;
@@ -38,6 +41,7 @@ export class HttpClient {
         });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.sessionId = response.data.session_id;
+        logger.debug(`Session initialized with ID: ${this.sessionId}`);
       })();
     }
 

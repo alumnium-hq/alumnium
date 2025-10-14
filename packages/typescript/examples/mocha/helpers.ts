@@ -71,9 +71,9 @@ export const mochaHooks = {
 
   async afterEach(this: Mocha.Context) {
     if (this.currentTest?.state === "failed") {
-      await al.cache?.discard();
+      await al.cache.discard();
     } else {
-      await al.cache?.save();
+      await al.cache.save();
     }
   },
 
