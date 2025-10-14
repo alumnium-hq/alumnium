@@ -10,10 +10,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install poetry
 
-COPY pyproject.toml poetry.lock poetry.toml README.md ./
+COPY packages/python/pyproject.toml packages/python/poetry.lock packages/python/poetry.toml packages/python/README.md ./
 RUN poetry install --no-root --with server --no-interaction --no-ansi
 
-COPY alumnium ./alumnium
+COPY packages/python/alumnium ./alumnium
 RUN poetry install --only-root --no-interaction --no-ansi
 
 ENV PATH="/app/.venv/bin:$PATH"
