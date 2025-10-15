@@ -206,23 +206,24 @@ jobs:
           key: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-
       - run: |
-         docker run --detach --rm -ti -p 8013:8013 \
-           -v $(PWD)/.alumnium/cache:/app/.alumnium/cache \
-           -v $(PWD)/log:/app/log \
-           -e ALUMNIUM_LOG_LEVEL \
-           -e ALUMNIUM_LOG_PATH=alumnium-server.log \
-           -e ALUMNIUM_MODEL \
-           -e ANTHROPIC_API_KEY \
-           -e AWS_ACCESS_KEY \
-           -e AWS_SECRET_KEY \
-           -e AZURE_OPENAI_API_KEY \
-           -e AZURE_OPENAI_API_VERSION \
-           -e AZURE_OPENAI_ENDPOINT \
-           -e DEEPSEEK_API_KEY \
-           -e GOOGLE_API_KEY \
-           -e MISTRAL_API_KEY \
-           -e OPENAI_API_KEY \
-           alumnium-server
+          mkdir -p log &&
+          docker run --detach --rm -ti -p 8013:8013 \
+            -v $(PWD)/.alumnium/cache:/app/.alumnium/cache \
+            -v $(PWD)/log:/app/log \
+            -e ALUMNIUM_LOG_LEVEL \
+            -e ALUMNIUM_LOG_PATH=log/alumnium-server.log \
+            -e ALUMNIUM_MODEL \
+            -e ANTHROPIC_API_KEY \
+            -e AWS_ACCESS_KEY \
+            -e AWS_SECRET_KEY \
+            -e AZURE_OPENAI_API_KEY \
+            -e AZURE_OPENAI_API_VERSION \
+            -e AZURE_OPENAI_ENDPOINT \
+            -e DEEPSEEK_API_KEY \
+            -e GOOGLE_API_KEY \
+            -e MISTRAL_API_KEY \
+            -e OPENAI_API_KEY \
+            alumnium-server
         working-directory: .
       - run: npm install
       - if: matrix.driver == 'playwright'
@@ -235,7 +236,7 @@ jobs:
         with:
           name: ${{ matrix.driver }}-${{ matrix.model }}
           path: |
-            *.log
+            log/*.log
             packages/typescript/*.log
             packages/typescript/playwright-report/
             packages/typescript/test-results/
