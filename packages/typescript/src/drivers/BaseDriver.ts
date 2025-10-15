@@ -4,7 +4,6 @@ import { Key } from "./keys.js";
 
 export abstract class BaseDriver {
   abstract platform: string;
-  abstract get accessibilityTree(): BaseAccessibilityTree;
   abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
   abstract click(id: number): void | Promise<void>;
   abstract dragAndDrop(fromId: number, toId: number): void | Promise<void>;

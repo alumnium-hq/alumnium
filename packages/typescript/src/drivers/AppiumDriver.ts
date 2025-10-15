@@ -30,12 +30,6 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  get accessibilityTree(): BaseAccessibilityTree {
-    throw new Error(
-      "accessibilityTree getter is synchronous, use getAccessibilityTree() method instead"
-    );
-  }
-
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     if (this.delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, this.delay * 1000));
@@ -87,7 +81,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async quit(): Promise<void> {
-    await this.driver.deleteSession();
+    // WebdriverIO handles session termination automatically.
   }
 
   async screenshot(): Promise<string> {
@@ -108,7 +102,7 @@ export class AppiumDriver extends BaseDriver {
     const context = await this.webviewContext();
     if (context) {
       try {
-        return await this.driver.getTitle();
+        return await this.driver.getTitle;
       } finally {
         await this.restoreContext(context.original);
       }

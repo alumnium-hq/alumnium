@@ -47,12 +47,6 @@ export class SeleniumDriver extends BaseDriver {
     this.driver = driver as ChromiumWebDriver;
   }
 
-  get accessibilityTree(): BaseAccessibilityTree {
-    throw new Error(
-      "accessibilityTree getter is synchronous, use getAccessibilityTree() method instead"
-    );
-  }
-
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.waitForPageToLoad();
 

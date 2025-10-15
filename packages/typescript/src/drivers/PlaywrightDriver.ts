@@ -48,12 +48,6 @@ export class PlaywrightDriver extends BaseDriver {
     this.client = await this.page.context().newCDPSession(this.page);
   }
 
-  get accessibilityTree(): BaseAccessibilityTree {
-    throw new Error(
-      "accessibilityTree getter is synchronous, use getAccessibilityTree() method instead"
-    );
-  }
-
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.waitForPageToLoad();
     const rawData = await this.client.send("Accessibility.getFullAXTree");
