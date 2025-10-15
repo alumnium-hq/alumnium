@@ -211,7 +211,7 @@ jobs:
            -v $(PWD)/.alumnium/cache:/app/.alumnium/cache \
            -v $(PWD)/log:/app/log \
            -e ALUMNIUM_LOG_LEVEL \
-           -e ALUMNIUM_LOG_PATH=log/alumnium.log \
+           -e ALUMNIUM_LOG_PATH=log/alumnium-server.log \
            -e ALUMNIUM_MODEL \
            -e ANTHROPIC_API_KEY \
            -e AWS_ACCESS_KEY \
@@ -237,6 +237,7 @@ jobs:
           name: ${{ matrix.driver }}-${{ matrix.model }}
           path: |
             packages/typescript/*.log
+            packages/typescript/log/*.log
             packages/typescript/playwright-report/
             packages/typescript/test-results/
 
