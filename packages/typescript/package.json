@@ -7,8 +7,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "examples:mocha": "mocha",
-    "examples:playwright": "playwright test",
+    "examples:mocha": "ALUMNIUM_DRIVER=selenium mocha",
+    "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:wdio": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
     "examples": "npm run examples:mocha && npm run examples:playwright && npm run examples:wdio",
     "lint": "eslint .",
