@@ -208,7 +208,7 @@ jobs:
       - run: |
           docker run --name alumnium-server \
             --detach \
-            --port 8013:8013 \
+            --publish 8013:8013 \
             --volume ${{ github.workspace }}/.alumnium/cache:/app/.alumnium/cache \
             --env ALUMNIUM_LOG_LEVEL \
             --env ALUMNIUM_LOG_PATH=stdout \
