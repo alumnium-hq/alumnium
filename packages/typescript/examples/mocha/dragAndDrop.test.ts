@@ -3,7 +3,7 @@ import { Model, Provider } from "../../src/Model.js";
 import "./globals.js";
 import { navigate } from "./helpers.js";
 
-describe("Drag and Drop Tests", () => {
+describe("Drag and Drop", () => {
   const shouldSkip = () => {
     // Skip if using DeepSeek (no vision support yet)
     if (Model.current.provider === Provider.DEEPSEEK) {
@@ -19,7 +19,7 @@ describe("Drag and Drop Tests", () => {
     return null;
   };
 
-  it("drag and drop", async function () {
+  it("works", async function () {
     if (shouldSkip()) {
       this.skip();
     }

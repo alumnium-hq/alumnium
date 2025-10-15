@@ -3,8 +3,9 @@ import { Alumni } from "../../src/Alumni.js";
 import { Model, Provider } from "../../src/Model.js";
 import { NavigateBackTool } from "../../src/tools/NavigateBackTool.js";
 import "./globals.js";
+import { navigate } from "./helpers.js";
 
-describe("Navigation Tests", () => {
+describe("Navigation", () => {
   const shouldSkip = () => {
     if (
       Model.current.provider === Provider.ANTHROPIC ||
@@ -27,7 +28,7 @@ describe("Navigation Tests", () => {
       extraTools: [NavigateBackTool],
     });
 
-    await driver.get("https://the-internet.herokuapp.com");
+    await navigate(driver, "https://the-internet.herokuapp.com");
     assert.strictEqual(
       await alWithNavBack.driver.url(),
       "https://the-internet.herokuapp.com/"

@@ -2,7 +2,7 @@ import assert from "assert";
 import "./globals.js";
 import { navigate } from "./helpers.js";
 
-describe("Calculator Tests", () => {
+describe("Calculator", () => {
   before(async () => {
     // Haiku cannot correlate '/' button to '÷'.
     // Mistral skips '+' button.
