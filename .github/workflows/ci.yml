@@ -211,7 +211,7 @@ jobs:
             -v ${{ github.workspace }}/.alumnium/cache:/app/.alumnium/cache \
             -v ${{ github.workspace }}/log:/app/log \
             -e ALUMNIUM_LOG_LEVEL \
-            -e ALUMNIUM_LOG_PATH=log/alumnium-server.log \
+            -e ALUMNIUM_LOG_PATH=/app/log/alumnium-server.log \
             -e ALUMNIUM_MODEL \
             -e ANTHROPIC_API_KEY \
             -e AWS_ACCESS_KEY \
