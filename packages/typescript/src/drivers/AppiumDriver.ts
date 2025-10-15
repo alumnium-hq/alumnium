@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser, ChainablePromiseElement } from "webdriverio";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
@@ -45,12 +41,7 @@ export class AppiumDriver extends BaseDriver {
       await new Promise((resolve) => setTimeout(resolve, this.delay));
     }
     const xmlString = await this.driver.getPageSource();
-    const automationType =
-      (this.driver.capabilities as any).automationName === "uiautomator2"
-        ? "uiautomator2"
-        : "xcuitest";
-
-    if (automationType === "uiautomator2") {
+    if (this.driver.capabilities["appium:automationName"] === "uiautomator2") {
       return new UIAutomator2AccessibilityTree(xmlString);
     } else {
       return new XCUITestAccessibilityTree(xmlString);
@@ -202,17 +193,15 @@ export class AppiumDriver extends BaseDriver {
       return null;
     }
 
-    const currentContext = await this.driver.getContext();
-    const contexts = await this.driver.getContexts();
+    const currentContext = (await this.driver.getAppiumContext()) as string;
+    const contexts = (await this.driver.getAppiumContexts()) as string[];
     for (const context of contexts) {
-      const contextStr =
-        typeof context === "string" ? context : (context as any).id;
-      if (contextStr.includes("WEBVIEW")) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        await this.driver.switchContext(contextStr);
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string
-        return { original: String(currentContext), webview: contextStr };
-      }
+      await this.driver.switchContext(context);
+
+      return {
+        original: currentContext,
+        webview: context.toString(),
+      };
     }
 
     return null;

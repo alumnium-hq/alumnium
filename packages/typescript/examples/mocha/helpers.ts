@@ -1,6 +1,6 @@
 import { Builder, WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { remote, type Browser } from "webdriverio";
+import { type Browser } from "webdriverio";
 import { Alumni } from "../../src/Alumni.js";
 import { AppiumDriver } from "../../src/index.js";
 
@@ -31,33 +31,12 @@ export const mochaHooks = {
         url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013",
       });
     } else if (driverType === "appium") {
-      const capabilities = {
-        platformName: "iOS",
-        "appium:automationName": "XCUITest",
-        "appium:bundleId": "com.apple.mobilesafari",
-        "appium:deviceName": "iPhone 15",
-        "appium:platformVersion": "18.4",
-        "appium:newCommandTimeout": 300,
-        "appium:noReset": true,
-      };
-
-      const wdOpts = {
-        hostname: process.env.APPIUM_HOST || "localhost",
-        port: parseInt(process.env.APPIUM_PORT || "4723", 10),
-        logLevel: "info" as const,
-        capabilities,
-      };
-
-      driver = await remote(wdOpts);
-
+      const { browser } = await import("@wdio/globals");
+      driver = browser as Browser;
       al = new Alumni(driver, {
-        url: process.env.ALUMNIUM_SERVER_URL,
+        url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013",
       });
-
-      // Set delay on Appium driver
-      if (al.driver.constructor.name === "AppiumDriver") {
-        (al.driver as unknown as AppiumDriver).delay = 100; // 0.1 seconds
-      }
+      (al.driver as AppiumDriver).delay = 100; // 0.1 seconds
     } else {
       throw new Error(`Driver type '${driverType}' not implemented`);
     }
@@ -81,3 +60,13 @@ export const mochaHooks = {
     await al.quit();
   },
 };
+
+export function navigate(driver: WebDriver | Browser, url: string) {
+  if (driverType === "appium") {
+    return (driver as Browser).url(url);
+  } else if (driverType === "selenium") {
+    return (driver as WebDriver).get(url);
+  } else {
+    throw new Error(`Driver type '${typeof driver}' not implemented`);
+  }
+}

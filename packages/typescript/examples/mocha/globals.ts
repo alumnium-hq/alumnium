@@ -1,9 +1,8 @@
-import { WebDriver } from "selenium-webdriver";
-import { Alumni } from "../../src/Alumni.js";
+import { type WebDriver } from "selenium-webdriver";
+import { type Browser } from "webdriverio";
+import { type Alumni } from "../../src/Alumni.js";
 
 declare global {
-  var driver: WebDriver;
   var al: Alumni;
+  var driver: WebDriver | Browser;
 }
-
-export {};
