@@ -198,8 +198,6 @@ jobs:
           context: .
           load: true
           tags: alumnium-server
-      - if: matrix.driver == 'playwright'
-        run: npx playwright install chromium
       - if: matrix.driver != 'appium'
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - uses: actions/cache@v4
@@ -227,6 +225,9 @@ jobs:
            -e OPENAI_API_KEY \
            alumnium-server
         working-directory: .
+      - run: npm install
+      - if: matrix.driver == 'playwright'
+        run: npx playwright install chromium
       - run: npm run examples:${{ matrix.driver }}
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
