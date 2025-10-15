@@ -22,7 +22,9 @@ export class HttpClient {
     private tools: Record<string, new (...args: any[]) => BaseTool>
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
-    this.client = axios.create({ timeout: 120000 });
+    this.client = axios.create({
+      timeout: 300_000, // 5 minutes
+    });
   }
 
   private async ensureSession(): Promise<void> {
