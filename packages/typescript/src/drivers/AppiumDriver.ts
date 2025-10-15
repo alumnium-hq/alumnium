@@ -38,7 +38,7 @@ export class AppiumDriver extends BaseDriver {
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     if (this.delay > 0) {
-      await new Promise((resolve) => setTimeout(resolve, this.delay));
+      await new Promise((resolve) => setTimeout(resolve, this.delay * 1000));
     }
     const xmlString = await this.driver.getPageSource();
     if (this.driver.capabilities["appium:automationName"] === "uiautomator2") {

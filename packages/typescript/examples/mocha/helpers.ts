@@ -36,7 +36,7 @@ export const mochaHooks = {
       al = new Alumni(driver, {
         url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013",
       });
-      (al.driver as AppiumDriver).delay = 100; // 0.1 seconds
+      (al.driver as AppiumDriver).delay = 0.1;
     } else {
       throw new Error(`Driver type '${driverType}' not implemented`);
     }
