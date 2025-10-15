@@ -157,8 +157,8 @@ jobs:
       fail-fast: false
       matrix:
         driver:
-          # - mocha
-          - playwright
+          - mocha
+          # - playwright
           # - wdio
         model:
           # - anthropic
