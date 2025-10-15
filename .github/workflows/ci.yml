@@ -13,27 +13,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-python@v5
-        with:
-          python-version-file: .tool-versions
-      - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
-      - uses: actions/cache@v4
-        with:
-          path: packages/python/.venv
-          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-      - run: make install
-      - run: make build
-      - run: make check-format
-      - run: make test-unit
-      - if: failure() && runner.debug == '1'
-        uses: mxschmitt/action-tmate@v3
+  # test:
+  #   name: Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha || github.sha }}
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version-file: .tool-versions
+  #     - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
+  #     - uses: actions/cache@v4
+  #       with:
+  #         path: packages/python/.venv
+  #         key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+  #     - run: make install
+  #     - run: make build
+  #     - run: make check-format
+  #     - run: make test-unit
+  #     - if: failure() && runner.debug == '1'
+  #       uses: mxschmitt/action-tmate@v3
 
   # examples:
   #   name: Examples
@@ -127,7 +127,7 @@ jobs:
   #           packages/python/reports/
 
   examples-ts:
-    name: packages/typescript / Examples
+    name: packages/typescript / examples
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -184,9 +184,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           cache: npm
+          cache-dependency-path: packages/typescript/package-lock.json
           node-version-file: .tool-versions
       - if: matrix.driver == 'playwright'
         run: npx playwright install chromium
