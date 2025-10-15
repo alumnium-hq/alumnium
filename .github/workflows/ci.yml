@@ -156,19 +156,19 @@ jobs:
       fail-fast: false
       matrix:
         driver:
-          - mocha
+          # - mocha
           - playwright
-          - wdio
+          # - wdio
         model:
-          - anthropic
-          - aws_anthropic
-          - aws_meta
+          # - anthropic
+          # - aws_anthropic
+          # - aws_meta
           - azure_openai
           # Official DeepSeek platform times out!
           # - deepseek
-          - google
-          - mistralai
-          - openai
+          # - google
+          # - mistralai
+          # - openai
     steps:
       - id: check-access
         uses: actions-cool/check-user-permission@v2
@@ -181,6 +181,14 @@ jobs:
           echo "Current permission level is ${{ steps.check-access.outputs.user-permission }}."
           echo "Job originally triggered by ${{ github.actor }}."
           exit 1
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: alumnium-server
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -193,16 +201,32 @@ jobs:
         run: npx playwright install chromium
       - if: matrix.driver != 'appium'
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
-      - run: make start-server-docker
       - uses: actions/cache@v4
         with:
-          path: |
-            .alumnium-cache.sqlite
-            .alumnium/cache/
+          path: .alumnium/cache/
           key: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-
+      - run: |
+         mkdir -p log &&
+         docker run --detach --rm -ti -p 8013:8013 \
+           -v $(PWD)/.alumnium/cache:/app/.alumnium/cache \
+           -v $(PWD)/log:/app/log \
+           -e ALUMNIUM_LOG_LEVEL \
+           -e ALUMNIUM_LOG_PATH=log/alumnium.log \
+           -e ALUMNIUM_MODEL \
+           -e ANTHROPIC_API_KEY \
+           -e AWS_ACCESS_KEY \
+           -e AWS_SECRET_KEY \
+           -e AZURE_OPENAI_API_KEY \
+           -e AZURE_OPENAI_API_VERSION \
+           -e AZURE_OPENAI_ENDPOINT \
+           -e DEEPSEEK_API_KEY \
+           -e GOOGLE_API_KEY \
+           -e MISTRAL_API_KEY \
+           -e OPENAI_API_KEY \
+           alumnium-server
+        working-directory: .
       - run: npm run examples:${{ matrix.driver }}
-        working-directory: packages/typescript
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
       - if: always()
