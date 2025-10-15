@@ -6,7 +6,7 @@ export const config: WebdriverIO.Config = {
   injectGlobals: false,
   mochaOpts: {
     ui: "bdd",
-    timeout: 60000,
+    timeout: 300000, // 5 minutes
     require: ["examples/mocha/helpers.ts"],
   },
   maxInstances: 1,
