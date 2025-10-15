@@ -206,25 +206,24 @@ jobs:
           key: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-
       - run: |
-          mkdir -p log &&
-          docker run --detach --rm -ti -p 8013:8013 \
-            -v ${{ github.workspace }}/.alumnium/cache:/app/.alumnium/cache \
-            -v ${{ github.workspace }}/log:/app/log \
-            -e ALUMNIUM_LOG_LEVEL \
-            -e ALUMNIUM_LOG_PATH=/app/log/alumnium-server.log \
-            -e ALUMNIUM_MODEL \
-            -e ANTHROPIC_API_KEY \
-            -e AWS_ACCESS_KEY \
-            -e AWS_SECRET_KEY \
-            -e AZURE_OPENAI_API_KEY \
-            -e AZURE_OPENAI_API_VERSION \
-            -e AZURE_OPENAI_ENDPOINT \
-            -e DEEPSEEK_API_KEY \
-            -e GOOGLE_API_KEY \
-            -e MISTRAL_API_KEY \
-            -e OPENAI_API_KEY \
+          docker run --name alumnium-server
+            --detach \
+            --port 8013:8013 \
+            --volume ${{ github.workspace }}/.alumnium/cache:/app/.alumnium/cache \
+            --env ALUMNIUM_LOG_LEVEL \
+            --env ALUMNIUM_LOG_PATH=stdout \
+            --env ALUMNIUM_MODEL \
+            --env ANTHROPIC_API_KEY \
+            --env AWS_ACCESS_KEY \
+            --env AWS_SECRET_KEY \
+            --env AZURE_OPENAI_API_KEY \
+            --env AZURE_OPENAI_API_VERSION \
+            --env AZURE_OPENAI_ENDPOINT \
+            --env DEEPSEEK_API_KEY \
+            --env GOOGLE_API_KEY \
+            --env MISTRAL_API_KEY \
+            --env OPENAI_API_KEY \
             alumnium-server
-        working-directory: .
       - run: npm install
       - if: matrix.driver == 'playwright'
         run: npx playwright install chromium
@@ -232,11 +231,12 @@ jobs:
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
       - if: always()
+        run: docker logs alumnium-server > alumnium-server.log
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.driver }}-${{ matrix.model }}
           path: |
-            log/*.log
             packages/typescript/*.log
             packages/typescript/playwright-report/
             packages/typescript/test-results/
