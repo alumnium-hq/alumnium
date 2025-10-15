@@ -1,6 +1,7 @@
 import assert from "assert";
 import { Model, Provider } from "../../src/Model.js";
 import "./globals.js";
+import { navigate } from "./helpers.js";
 
 describe("Drag and Drop Tests", () => {
   const shouldSkip = () => {
@@ -23,7 +24,7 @@ describe("Drag and Drop Tests", () => {
       this.skip();
     }
 
-    await driver.get("https://the-internet.herokuapp.com/drag_and_drop");
+    await navigate(driver, "https://the-internet.herokuapp.com/drag_and_drop");
 
     const initialOrder = await al.get(
       "titles of squares ordered from left to right",

@@ -25,24 +25,24 @@ describe("Calculator Tests", () => {
     assert.strictEqual(result, 4);
   });
 
-  // it("subtraction", async () => {
-  //   await driver.get("https://seleniumbase.io/apps/calculator");
-  //   await al.do("5 - 3 =");
-  //   const result = await al.get("value from textfield");
-  //   assert.strictEqual(result, 2);
-  // });
+  it("subtraction", async () => {
+    await navigate(driver, "https://seleniumbase.io/apps/calculator");
+    await al.do("5 - 3 =");
+    const result = await al.get("value from textfield");
+    assert.strictEqual(result, 2);
+  });
 
-  // it("multiplication", async () => {
-  //   await driver.get("https://seleniumbase.io/apps/calculator");
-  //   await al.do("3 * 4 =");
-  //   const result = await al.get("value from textfield");
-  //   assert.strictEqual(result, 12);
-  // });
+  it("multiplication", async () => {
+    await navigate(driver, "https://seleniumbase.io/apps/calculator");
+    await al.do("3 * 4 =");
+    const result = await al.get("value from textfield");
+    assert.strictEqual(result, 12);
+  });
 
-  // it("division", async () => {
-  //   await driver.get("https://seleniumbase.io/apps/calculator");
-  //   await al.do("8 / 2 =");
-  //   const result = await al.get("value from textfield");
-  //   assert.strictEqual(result, 4);
-  // });
+  it("division", async () => {
+    await navigate(driver, "https://seleniumbase.io/apps/calculator");
+    await al.do("8 / 2 =");
+    const result = await al.get("value from textfield");
+    assert.strictEqual(result, 4);
+  });
 });

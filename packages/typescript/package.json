@@ -9,10 +9,10 @@
     "build": "tsc",
     "examples:mocha": "mocha",
     "examples:playwright": "playwright test",
-    "examples": "npm run examples:mocha && npm run examples:playwright",
+    "examples:wdio": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
+    "examples": "npm run examples:mocha && npm run examples:playwright && npm run examples:wdio",
     "lint": "eslint .",
-    "prepublishOnly": "npm run build",
-    "wdio": "wdio run ./wdio.conf.ts"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "ai",

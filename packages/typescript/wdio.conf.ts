@@ -12,8 +12,6 @@ export const config: WebdriverIO.Config = {
   maxInstances: 1,
   capabilities: [
     {
-      // capabilities for local Appium web tests on iOS
-
       platformName: "iOS",
       browserName: "Safari",
       "appium:automationName": "XCUITest",
