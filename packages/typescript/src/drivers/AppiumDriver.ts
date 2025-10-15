@@ -16,7 +16,7 @@ export class AppiumDriver extends BaseDriver {
     "SelectTool",
     "TypeTool",
   ]);
-  public autoswitchToWebview: boolean = true;
+  public autoswitchContexts: boolean = true;
   public delay: number = 0;
   public hideKeyboardAfterTyping: boolean = false;
 
@@ -31,6 +31,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+    await this.ensureNativeAppContext();
     if (this.delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, this.delay * 1000));
     }
@@ -43,11 +44,13 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async click(id: number): Promise<void> {
+    await this.ensureNativeAppContext();
     const element = await this.findElement(id);
     await element.click();
   }
 
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
+    await this.ensureNativeAppContext();
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);
 
@@ -56,6 +59,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async pressKey(key: Key): Promise<void> {
+    await this.ensureNativeAppContext();
     const keyMap: Record<Key, string> = {
       [Key.BACKSPACE]: SeleniumKey.BACK_SPACE,
       [Key.ENTER]: SeleniumKey.ENTER,
@@ -99,18 +103,16 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async title(): Promise<string> {
-    const context = await this.webviewContext();
-    if (context) {
-      try {
-        return await this.driver.getTitle;
-      } finally {
-        await this.restoreContext(context.original);
-      }
+    await this.ensureWebviewContext();
+    try {
+      return await this.driver.getTitle();
+    } catch {
+      return "";
     }
-    return "";
   }
 
   async type(id: number, text: string): Promise<void> {
+    await this.ensureNativeAppContext();
     const element = await this.findElement(id);
     await element.clearValue();
     await element.setValue(text);
@@ -137,15 +139,12 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async url(): Promise<string> {
-    const context = await this.webviewContext();
-    if (context) {
-      try {
-        return await this.driver.getUrl();
-      } finally {
-        await this.restoreContext(context.original);
-      }
+    await this.ensureWebviewContext();
+    try {
+      return await this.driver.getUrl();
+    } catch {
+      return "";
     }
-    return "";
   }
 
   async findElement(id: number): Promise<ChainablePromiseElement> {
@@ -179,29 +178,31 @@ export class AppiumDriver extends BaseDriver {
     throw new Error("Hover is not supported by AppiumDriver");
   }
 
-  private async webviewContext(): Promise<{
-    original: string;
-    webview: string;
-  } | null> {
-    if (!this.autoswitchToWebview) {
-      return null;
+  private async ensureNativeAppContext(): Promise<void> {
+    if (!this.autoswitchContexts) {
+      return;
     }
 
     const currentContext = (await this.driver.getAppiumContext()) as string;
-    const contexts = (await this.driver.getAppiumContexts()) as string[];
-    for (const context of contexts) {
-      await this.driver.switchContext(context);
-
-      return {
-        original: currentContext,
-        webview: context.toString(),
-      };
+    if (currentContext !== "NATIVE_APP") {
+      await this.driver.switchContext("NATIVE_APP");
     }
-
-    return null;
   }
 
-  private async restoreContext(context: string): Promise<void> {
-    await this.driver.switchContext(context);
+  private async ensureWebviewContext(): Promise<void> {
+    if (!this.autoswitchContexts) {
+      return;
+    }
+
+    const currentContext = (await this.driver.getAppiumContext()) as string;
+    if (!currentContext.includes("WEBVIEW")) {
+      const contexts = (await this.driver.getAppiumContexts()) as string[];
+      for (const context of contexts) {
+        if (context.includes("WEBVIEW")) {
+          await this.driver.switchContext(context);
+          return;
+        }
+      }
+    }
   }
 }
