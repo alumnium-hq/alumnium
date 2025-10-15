@@ -156,18 +156,16 @@ jobs:
       fail-fast: false
       matrix:
         model:
-          # - anthropic
-          # - aws_anthropic
-          # - aws_meta
+          - anthropic
+          - aws_anthropic
+          - aws_meta
           - azure_openai
-          # Official DeepSeek platform times out!
-          # - deepseek
-          # - google
-          # - mistralai
-          # - openai
+          - google
+          - mistralai
+          - openai
         runner:
-          # - mocha
-          # - playwright
+          - mocha
+          - playwright
           - wdio
     steps:
       - id: check-access
