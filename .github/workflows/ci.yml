@@ -132,7 +132,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      ALUMNIUM_DRIVER: ${{ matrix.driver }}
       ALUMNIUM_MODEL: ${{ matrix.model }}
       ALUMNIUM_LOG_LEVEL: debug
       ALUMNIUM_LOG_PATH: alumnium.log
@@ -156,10 +155,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        driver:
-          - mocha
-          # - playwright
-          # - wdio
         model:
           # - anthropic
           # - aws_anthropic
@@ -170,6 +165,10 @@ jobs:
           # - google
           # - mistralai
           # - openai
+        runner:
+          # - mocha
+          # - playwright
+          - wdio
     steps:
       - id: check-access
         uses: actions-cool/check-user-permission@v2
@@ -198,13 +197,13 @@ jobs:
           context: .
           load: true
           tags: alumnium-server
-      - if: matrix.driver != 'appium'
+      - if: matrix.runner != 'wdio'
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - uses: actions/cache@v4
         with:
           path: .alumnium/cache/
-          key: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
-          restore-keys: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-
+          key: alumnium-cache-typescript-${{ matrix.runner }}-${{ matrix.model }}-${{ github.sha }}
+          restore-keys: alumnium-cache-typescript-${{ matrix.runner }}-${{ matrix.model }}-
       - run: |
           docker run --name alumnium-server \
             --detach \
@@ -225,9 +224,9 @@ jobs:
             --env OPENAI_API_KEY \
             alumnium-server
       - run: npm install
-      - if: matrix.driver == 'playwright'
+      - if: matrix.runner == 'playwright'
         run: npx playwright install chromium
-      - run: npm run examples:${{ matrix.driver }}
+      - run: npm run examples:${{ matrix.runner }}
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
       - if: always()
@@ -235,7 +234,7 @@ jobs:
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.driver }}-${{ matrix.model }}
+          name: ${{ matrix.runner }}-${{ matrix.model }}
           path: |
             packages/typescript/*.log
             packages/typescript/playwright-report/
