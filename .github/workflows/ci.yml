@@ -197,6 +197,7 @@ jobs:
           cache-to: type=gha,mode=max
           context: .
           labels: ${{ steps.meta.outputs.labels }}
+          load: true
           tags: alumnium-server
       - if: matrix.driver == 'playwright'
         run: npx playwright install chromium
