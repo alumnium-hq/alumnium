@@ -10,6 +10,7 @@ export const config: WebdriverIO.Config = {
     require: ["examples/mocha/helpers.ts"],
   },
   maxInstances: 1,
+  reporters: ["spec"],
   capabilities: [
     {
       platformName: "iOS",
