@@ -206,12 +206,11 @@ jobs:
           key: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-typescript-${{ matrix.driver }}-${{ matrix.model }}-
       - run: |
-         mkdir -p log &&
          docker run --detach --rm -ti -p 8013:8013 \
            -v $(PWD)/.alumnium/cache:/app/.alumnium/cache \
            -v $(PWD)/log:/app/log \
            -e ALUMNIUM_LOG_LEVEL \
-           -e ALUMNIUM_LOG_PATH=log/alumnium-server.log \
+           -e ALUMNIUM_LOG_PATH=alumnium-server.log \
            -e ALUMNIUM_MODEL \
            -e ANTHROPIC_API_KEY \
            -e AWS_ACCESS_KEY \
@@ -236,8 +235,8 @@ jobs:
         with:
           name: ${{ matrix.driver }}-${{ matrix.model }}
           path: |
+            *.log
             packages/typescript/*.log
-            packages/typescript/log/*.log
             packages/typescript/playwright-report/
             packages/typescript/test-results/
 
