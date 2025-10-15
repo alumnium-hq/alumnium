@@ -181,14 +181,6 @@ jobs:
           echo "Current permission level is ${{ steps.check-access.outputs.user-permission }}."
           echo "Job originally triggered by ${{ github.actor }}."
           exit 1
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
-        with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          context: .
-          labels: ${{ steps.meta.outputs.labels }}
-          tags: alumnium-server
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -197,6 +189,14 @@ jobs:
           cache: npm
           cache-dependency-path: packages/typescript/package-lock.json
           node-version-file: .tool-versions
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: alumnium-server
       - if: matrix.driver == 'playwright'
         run: npx playwright install chromium
       - if: matrix.driver != 'appium'
