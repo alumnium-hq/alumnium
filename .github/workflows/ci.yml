@@ -208,8 +208,8 @@ jobs:
       - run: |
           mkdir -p log &&
           docker run --detach --rm -ti -p 8013:8013 \
-            -v .alumnium/cache:/app/.alumnium/cache \
-            -v log:/app/log \
+            -v ${{ github.workspace }}/.alumnium/cache:/app/.alumnium/cache \
+            -v ${{ github.workspace }}/log:/app/log \
             -e ALUMNIUM_LOG_LEVEL \
             -e ALUMNIUM_LOG_PATH=log/alumnium-server.log \
             -e ALUMNIUM_MODEL \
