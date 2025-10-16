@@ -70,7 +70,7 @@ curl -X POST http://localhost:8013/v1/sessions \
   -H "Content-Type: application/json" \
   -d '{
     "provider": "anthropic",
-    "name": "claude-3-haiku-20240307",
+    "name": "claude-haiku-4-5-20251001",
     "tools": [
       {
         "type": "function",

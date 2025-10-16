@@ -65,7 +65,7 @@ body:
     attributes:
       label: Which LLM are you using?
       options:
-        - Claude 3 Haiku (Anthropic)
+        - Claude 4.5 Haiku (Anthropic)
         - DeepSeek V3 (DeepSeek)
         - GPT-4.0 Mini (Open AI)
         - Gemini 2.0 Flash (Google)

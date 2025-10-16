@@ -21,22 +21,13 @@ class Plan(BaseModel):
 
 class PlannerAgent(BaseAgent):
     LIST_SEPARATOR = "<SEP>"
-    STRUCTURED_OUTPUT_MODELS = [
-        Provider.AWS_META,
-        Provider.AZURE_OPENAI,
-        Provider.DEEPSEEK,
-        Provider.GOOGLE,
-        Provider.MISTRALAI,
-        Provider.OPENAI,
+    UNSTRUCTURED_OUTPUT_MODELS = [
+        Provider.OLLAMA,
     ]
 
     def __init__(self, llm: BaseChatModel):
         super().__init__()
         self.llm = llm
-
-        # Haiku violates the separator convention
-        if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC]:
-            self.LIST_SEPARATOR = "%SEP%"
 
         example_prompt = ChatPromptTemplate.from_messages(
             [
@@ -59,13 +50,13 @@ class PlannerAgent(BaseAgent):
             ]
         )
 
-        if Model.current.provider in self.STRUCTURED_OUTPUT_MODELS:
+        if Model.current.provider not in self.UNSTRUCTURED_OUTPUT_MODELS:
             self.chain = final_prompt | llm.with_structured_output(Plan, include_raw=True)
         else:
             self.chain = final_prompt | llm
 
     def add_example(self, goal: str, actions: list[str]):
-        if Model.current.provider not in self.STRUCTURED_OUTPUT_MODELS:
+        if Model.current.provider in self.UNSTRUCTURED_OUTPUT_MODELS:
             actions = self.LIST_SEPARATOR.join(actions)
 
         self.prompt_with_examples.examples.append(
@@ -92,7 +83,7 @@ class PlannerAgent(BaseAgent):
             {"goal": goal, "accessibility_tree": accessibility_tree_xml},
         )
 
-        if Model.current.provider in self.STRUCTURED_OUTPUT_MODELS:
+        if Model.current.provider not in self.UNSTRUCTURED_OUTPUT_MODELS:
             response = message["parsed"]
             logger.info(f"  <- Result: {response}")
             logger.info(f"  <- Usage: {message['raw'].usage_metadata}")

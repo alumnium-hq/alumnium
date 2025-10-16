@@ -9,7 +9,6 @@ alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
 
 @fixture(autouse=True)
 def learn(al):
-    # Haiku cannot correlate '/' button to '÷'.
     # Mistral skips '+' button.
     al.learn(
         goal="4 / 2 =",

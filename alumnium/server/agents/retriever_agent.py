@@ -27,10 +27,6 @@ class RetrieverAgent(BaseAgent):
     def __init__(self, llm: BaseChatModel):
         super().__init__()
 
-        # Haiku violates the separator convention
-        if Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC]:
-            self.LIST_SEPARATOR = "%SEP%"
-
         self.chain = llm.with_structured_output(
             RetrievedInformation,
             include_raw=True,
