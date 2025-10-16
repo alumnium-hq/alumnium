@@ -54,7 +54,7 @@ export class Alumni {
       // WebdriverIO Browser (Appium)
       this.driver = new AppiumDriver(driver as Browser);
     } else {
-      throw new Error("Unsupported driver type");
+      throw new Error(`Unsupported driver type '${typeof driver}'`);
     }
 
     // Initialize tools

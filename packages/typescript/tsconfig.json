@@ -5,7 +5,7 @@
     "lib": ["ES2020"],
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -21,10 +21,7 @@
     "experimentalSpecifierResolution": "node"
   },
   "include": [
-    "examples/**/*",
-    "src/**/*",
-    "playwright.config.ts",
-    "wdio.conf.ts"
+    "src/**/*"
   ],
-  "exclude": ["node_modules", "dist", "src/drivers/scripts/*.js"]
+  "exclude": ["node_modules", "dist"]
 }
