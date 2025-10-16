@@ -54,10 +54,6 @@ def login(al, driver, execute_script, navigate):
     al.clear_learn_examples()
 
 
-@mark.xfail(
-    Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC],
-    reason="Need to add proper types in `RetrievedInformation.value`.",
-)
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(
     Model.current.provider == Provider.GOOGLE,

@@ -52,7 +52,7 @@ def sample_session_id():
         "/v1/sessions",
         json={
             "provider": "anthropic",
-            "name": "claude-3-haiku-20240307",
+            "name": "claude-haiku-4-5-20251001",
             "platform": "chromium",
             "tools": get_sample_tool_schemas(),
         },
@@ -488,7 +488,7 @@ def test_full_session_workflow():
         "/v1/sessions",
         json={
             "provider": "anthropic",
-            "name": "claude-3-haiku-20240307",
+            "name": "claude-haiku-4-5-20251001",
             "platform": "chromium",
             "tools": get_sample_tool_schemas(),
         },
