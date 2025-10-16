@@ -114,6 +114,7 @@ jobs:
           node-version-file: .tool-versions
           registry-url: https://registry.npmjs.org
       - run: npm publish
+        working-directory: packages/typescript
       - uses: actions/upload-artifact@v4
         with:
           name: typescript-dist
