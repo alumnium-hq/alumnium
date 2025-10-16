@@ -104,6 +104,9 @@ jobs:
     name: TypeScript
     runs-on: ubuntu-latest
     environment: release
+    defaults:
+      run:
+        working-directory: packages/typescript
     permissions:
       contents: read
       id-token: write
@@ -117,7 +120,6 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: npm install
       - run: npm publish
-        working-directory: packages/typescript
       - uses: actions/upload-artifact@v4
         with:
           name: typescript-dist
