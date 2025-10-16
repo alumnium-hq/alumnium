@@ -29,6 +29,10 @@
     "Tatiana Shepeleva <tati.shep@gmail.com>"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alumnium-hq/alumnium.git"
+  },
   "dependencies": {
     "@logtape/file": "^1.1.1",
     "@logtape/logtape": "^1.1.1",
