@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import axios, { AxiosInstance } from "axios";
 import { Model } from "../Model.js";
 import { BaseTool } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
@@ -12,8 +11,8 @@ const logger = getLogger(["HttpClient"]);
 export class HttpClient {
   private baseUrl: string;
   private sessionId: string | null = null;
-  private client: AxiosInstance;
   private sessionPromise: Promise<void> | null = null;
+  private timeout: number = 300_000; // 5 minutes
 
   constructor(
     baseUrl: string,
@@ -22,9 +21,29 @@ export class HttpClient {
     private tools: Record<string, new (...args: any[]) => BaseTool>
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
-    this.client = axios.create({
-      timeout: 300_000, // 5 minutes
-    });
+  }
+
+  private async fetchWithTimeout(
+    url: string,
+    options: RequestInit = {}
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return response;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   private async ensureSession(): Promise<void> {
@@ -35,14 +54,25 @@ export class HttpClient {
     if (!this.sessionPromise) {
       this.sessionPromise = (async () => {
         const toolSchemas = convertToolsToSchemas(this.tools);
-        const response = await this.client.post(`${this.baseUrl}/v1/sessions`, {
-          provider: Model.current.provider,
-          name: Model.current.name,
-          platform: this.platform,
-          tools: toolSchemas,
-        });
+        const response = await this.fetchWithTimeout(
+          `${this.baseUrl}/v1/sessions`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              provider: Model.current.provider,
+              name: Model.current.name,
+              platform: this.platform,
+              tools: toolSchemas,
+            }),
+          }
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data: any = await response.json();
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.sessionId = response.data.session_id;
+        this.sessionId = data.session_id;
         logger.debug(`Session initialized with ID: ${this.sessionId}`);
       })();
     }
@@ -52,7 +82,12 @@ export class HttpClient {
 
   async quit(): Promise<void> {
     if (this.sessionId) {
-      await this.client.delete(`${this.baseUrl}/v1/sessions/${this.sessionId}`);
+      await this.fetchWithTimeout(
+        `${this.baseUrl}/v1/sessions/${this.sessionId}`,
+        {
+          method: "DELETE",
+        }
+      );
       this.sessionId = null;
     }
   }
@@ -62,34 +97,50 @@ export class HttpClient {
     accessibilityTree: string
   ): Promise<string[]> {
     await this.ensureSession();
-    const response = await this.client.post(
+    const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/plans`,
       {
-        goal,
-        accessibility_tree: accessibilityTree,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          goal,
+          accessibility_tree: accessibilityTree,
+        }),
       }
     );
 
-    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const responseData: any = await response.json();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return responseData.steps;
   }
 
   async addExample(goal: string, actions: string[]): Promise<void> {
     await this.ensureSession();
-    await this.client.post(
+    await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/examples`,
       {
-        goal,
-        actions,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          goal,
+          actions,
+        }),
       }
     );
   }
 
   async clearExamples(): Promise<void> {
     await this.ensureSession();
-    await this.client.delete(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/examples`
+    await this.fetchWithTimeout(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/examples`,
+      {
+        method: "DELETE",
+      }
     );
   }
 
@@ -100,16 +151,23 @@ export class HttpClient {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any[]> {
     await this.ensureSession();
-    const response = await this.client.post(
+    const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/steps`,
       {
-        goal,
-        step,
-        accessibility_tree: accessibilityTree,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          goal,
+          step,
+          accessibility_tree: accessibilityTree,
+        }),
       }
     );
 
-    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const responseData: any = await response.json();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return responseData.actions;
   }
@@ -122,19 +180,26 @@ export class HttpClient {
     screenshot?: string
   ): Promise<[string, Data]> {
     await this.ensureSession();
-    const response = await this.client.post(
+    const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/statements`,
       {
-        statement,
-        accessibility_tree: accessibilityTree,
-        title,
-        url,
-        screenshot: screenshot || null,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          statement,
+          accessibility_tree: accessibilityTree,
+          title,
+          url,
+          screenshot: screenshot || null,
+        }),
       }
     );
 
-    const responseData = response.data;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const responseData: any = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
     return [responseData.explanation, looselyTypecast(responseData.result)];
   }
 
@@ -143,15 +208,22 @@ export class HttpClient {
     accessibilityTree: string
   ): Promise<{ id: number; explanation: string }> {
     await this.ensureSession();
-    const response = await this.client.post(
+    const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/areas`,
       {
-        description,
-        accessibility_tree: accessibilityTree,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          description,
+          accessibility_tree: accessibilityTree,
+        }),
       }
     );
 
-    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const responseData: any = await response.json();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return { id: responseData.id, explanation: responseData.explanation };
   }
@@ -162,38 +234,55 @@ export class HttpClient {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     await this.ensureSession();
-    const response = await this.client.post(
+    const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/elements`,
       {
-        description,
-        accessibility_tree: accessibilityTree,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          description,
+          accessibility_tree: accessibilityTree,
+        }),
       }
     );
 
-    const responseData = response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const responseData: any = await response.json();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return responseData.elements[0];
   }
 
   async saveCache(): Promise<void> {
     await this.ensureSession();
-    await this.client.post(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`
+    await this.fetchWithTimeout(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`,
+      {
+        method: "POST",
+      }
     );
   }
 
   async discardCache(): Promise<void> {
     await this.ensureSession();
-    await this.client.delete(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`
+    await this.fetchWithTimeout(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`,
+      {
+        method: "DELETE",
+      }
     );
   }
 
   async getStats(): Promise<Record<string, Record<string, number>>> {
     await this.ensureSession();
-    const response = await this.client.get(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/stats`
+    const response = await this.fetchWithTimeout(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/stats`,
+      {
+        method: "GET",
+      }
     );
-    return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return response.json() as any;
   }
 }
