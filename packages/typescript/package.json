@@ -1,12 +1,12 @@
 {
   "name": "alumnium",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "TypeScript client for Alumnium",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist/ && tsc",
     "examples:mocha": "ALUMNIUM_DRIVER=selenium mocha",
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:wdio": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
