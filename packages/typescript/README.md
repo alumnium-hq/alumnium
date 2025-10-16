@@ -29,11 +29,17 @@ npm install alumnium
 
 ## Quick Start
 
+1. Run Alumnium server:
+
+```sh
+docker run --rm -p 8013:8013 -e OPENAI_API_KEY=... alumnium/alumnium
+```
+
+2. Run your tests:
+
 ```javascript
 import { Alumni } from "alumnium";
 import { Builder } from "selenium-webdriver";
-
-process.env.OPENAI_API_KEY = "...";
 
 const driver = await new Builder().forBrowser("chrome").build();
 const al = new Alumni(driver);
