@@ -115,6 +115,7 @@ jobs:
           cache-dependency-path: packages/typescript/package-lock.json
           node-version-file: .tool-versions
           registry-url: https://registry.npmjs.org
+      - run: npm install
       - run: npm publish
         working-directory: packages/typescript
       - uses: actions/upload-artifact@v4
@@ -125,3 +126,10 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
+
+  # gh-release:
+  #   name: GitHub Release
+  #   needs: [python, docker, typescript]
+  #   runs-on: ubuntu-latest
+  #   environment: release
+  #   permissions:
