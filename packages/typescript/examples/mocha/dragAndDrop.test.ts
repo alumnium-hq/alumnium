@@ -28,7 +28,7 @@ describe("Drag and Drop", () => {
 
     const initialOrder = await al.get(
       "titles of squares ordered from left to right",
-      true
+      { vision: true }
     );
     assert.deepStrictEqual(initialOrder, ["A", "B"]);
 
@@ -36,7 +36,7 @@ describe("Drag and Drop", () => {
 
     const finalOrder = await al.get(
       "titles of squares ordered from left to right",
-      true
+      { vision: true }
     );
     assert.deepStrictEqual(finalOrder, ["B", "A"]);
   });

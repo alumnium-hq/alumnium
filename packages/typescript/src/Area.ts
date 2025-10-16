@@ -5,6 +5,14 @@ import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
 import { BaseTool, ToolCall } from "./tools/BaseTool.js";
 
+export interface AreaCheckOptions {
+  vision?: boolean;
+}
+
+export interface AreaGetOptions {
+  vision?: boolean;
+}
+
 export class Area {
   public id: number;
   public description: string;
@@ -56,8 +64,8 @@ export class Area {
     }
   }
 
-  async check(statement: string, vision: boolean = false): Promise<string> {
-    const screenshot = vision ? await this.driver.screenshot() : undefined;
+  async check(statement: string, options: AreaCheckOptions = {}): Promise<string> {
+    const screenshot = options.vision ? await this.driver.screenshot() : undefined;
     const [explanation, value] = await this.client.retrieve(
       `Is the following true or false - ${statement}`,
       this.accessibilityTree.toStr(),
@@ -73,8 +81,8 @@ export class Area {
     return explanation;
   }
 
-  async get(data: string, vision: boolean = false): Promise<Data> {
-    const screenshot = vision ? await this.driver.screenshot() : undefined;
+  async get(data: string, options: AreaGetOptions = {}): Promise<Data> {
+    const screenshot = options.vision ? await this.driver.screenshot() : undefined;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_explanation, value] = await this.client.retrieve(
       data,

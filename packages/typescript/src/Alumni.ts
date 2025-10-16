@@ -29,6 +29,14 @@ export interface AlumniOptions {
   extraTools?: (new (...args: any[]) => BaseTool)[];
 }
 
+export interface CheckOptions {
+  vision?: boolean;
+}
+
+export interface GetOptions {
+  vision?: boolean;
+}
+
 export class Alumni {
   public driver: BaseDriver;
   private client: HttpClient;
@@ -120,8 +128,8 @@ export class Alumni {
     }
   }
 
-  async check(statement: string, vision: boolean = false): Promise<string> {
-    const screenshot = vision ? await this.driver.screenshot() : undefined;
+  async check(statement: string, options: CheckOptions = {}): Promise<string> {
+    const screenshot = options.vision ? await this.driver.screenshot() : undefined;
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const [explanation, value] = await this.client.retrieve(
       `Is the following true or false - ${statement}`,
@@ -138,8 +146,8 @@ export class Alumni {
     return explanation;
   }
 
-  async get(data: string, vision: boolean = false): Promise<Data> {
-    const screenshot = vision ? await this.driver.screenshot() : undefined;
+  async get(data: string, options: GetOptions = {}): Promise<Data> {
+    const screenshot = options.vision ? await this.driver.screenshot() : undefined;
     const accessibilityTree = await this.driver.getAccessibilityTree();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_explanation, value] = await this.client.retrieve(
