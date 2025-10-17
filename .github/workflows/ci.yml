@@ -16,6 +16,9 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/python
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,13 +27,14 @@ jobs:
         with:
           python-version-file: .tool-versions
       - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
+        working-directory: .
       - uses: actions/cache@v4
         with:
           path: packages/python/.venv
           key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-      - run: make install
-      - run: make check-format
-      - run: make test-unit
+      - run: poetry install
+      - run: poetry poe check-format
+      - run: poetry poe test
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 

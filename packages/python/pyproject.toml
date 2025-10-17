@@ -4,6 +4,22 @@ requires = [
     "poetry-core",
 ]
 
+[tool.poe.tasks]
+check-format = [
+    { cmd = "pyprojectsort --diff" },
+    { cmd = "ruff check ." },
+]
+clean = "rm -rf dist log reports .pytest_cache __pycache__ .ruff_cache"
+test = "pytest tests/"
+
+[tool.poe.tasks.format]
+ignore_fail = true
+sequence = [
+    { cmd = "pyprojectsort" },
+    { cmd = "ruff check --fix ." },
+    { cmd = "ruff format ." },
+]
+
 [tool.poetry]
 authors = [
     "Alex Rodionov <p0deje@gmail.com>",
@@ -14,7 +30,7 @@ homepage = "https://alumnium.ai"
 license = "MIT"
 name = "alumnium"
 packages = [
-    { include = "alumnium", from="src" },
+    { from = "src", include = "alumnium" },
 ]
 readme = "README.md"
 repository = "https://github.com/alumnium-hq/alumnium"
@@ -59,9 +75,14 @@ extras = [
 ]
 version = "^0.32.0"
 
+[tool.poetry.requires-plugins.poethepoet]
+extras = [
+    "poetry_plugin",
+]
+version = "~0.35.0"
+
 [tool.poetry.scripts]
-alumnium = "alumnium.cli:main"
-alumnium-server = "alumnium.server.main:main"
+server = "alumnium.server.main:main"
 
 [tool.pytest.ini_options]
 generate_report_on_test = true
