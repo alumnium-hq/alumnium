@@ -18,7 +18,6 @@ describe("Calculator", () => {
   };
 
   before(async () => {
-    // Haiku cannot correlate '/' button to '÷'.
     // Mistral skips '+' button.
     await al.learn("4 / 2 =", [
       "click button '4'",

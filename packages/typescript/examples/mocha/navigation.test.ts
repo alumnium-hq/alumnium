@@ -7,12 +7,6 @@ import { navigate } from "./helpers.js";
 
 describe("Navigation", () => {
   const shouldSkip = () => {
-    if (
-      Model.current.provider === Provider.ANTHROPIC ||
-      Model.current.provider === Provider.AWS_ANTHROPIC
-    ) {
-      return "https://github.com/alumnium-hq/alumnium/issues/106";
-    }
     if (Model.current.provider === Provider.MISTRALAI) {
       return "Needs more work";
     }
