@@ -31,9 +31,10 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   private nextRawId: number = 0;
   private raw: string | null = null;
 
-  constructor(cdpResponse: CDPResponse) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(cdpResponse: any) {
     super();
-    this.cdpResponse = cdpResponse;
+    this.cdpResponse = cdpResponse as CDPResponse;
   }
 
   private static fromXml(xmlString: string): ChromiumAccessibilityTree {

@@ -14,7 +14,7 @@ export abstract class BaseTool {
     toolCall: ToolCall,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tools: Record<string, new (...args: any[]) => BaseTool>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     client: HttpClient,
     driver: BaseDriver
   ): Promise<void> {

@@ -25,7 +25,12 @@
   },
   "include": [
     "examples/**/*",
-    "src/**/*"
+    "src/**/*",
+    "playwright.config.ts",
+    "wdio.conf.ts"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

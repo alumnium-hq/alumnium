@@ -172,6 +172,7 @@ export class SeleniumDriver extends BaseDriver {
     return element;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async executeCdpCommand(cmd: string, params: object): Promise<any> {
     return await this.driver.sendAndGetDevToolsCommand(cmd, params);
   }
