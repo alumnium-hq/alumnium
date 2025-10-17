@@ -5,7 +5,6 @@
     "lib": ["ES2020"],
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,13 +13,18 @@
     "moduleResolution": "node16",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "typeRoots": ["./node_modules/@types", "./node_modules/@wdio/globals/types", "./src/types"]
+    "typeRoots": [
+      "./node_modules/@types",
+      "./node_modules/@wdio/globals/types",
+      "./src/types"
+    ]
   },
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
   "include": [
+    "examples/**/*",
     "src/**/*"
   ],
   "exclude": ["node_modules", "dist"]

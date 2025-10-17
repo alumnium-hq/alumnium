@@ -5,8 +5,12 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
-    "build": "rm -rf dist/ && tsc",
+    "build": "rm -rf dist/ && tsc --project tsconfig.build.json",
     "examples:mocha": "ALUMNIUM_DRIVER=selenium mocha",
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:wdio": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",

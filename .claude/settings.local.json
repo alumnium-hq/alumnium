@@ -5,7 +5,9 @@
       "Bash(curl:*)",
       "Bash(poetry run behave:*)",
       "Bash(poetry run pytest:*)",
-      "Bash(npm run:*)"
+      "Bash(npm pack:*)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

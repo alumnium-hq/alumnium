@@ -10,14 +10,13 @@ interface CDPNode {
   ignored?: boolean;
   properties?: Array<{
     name?: string;
-    value?: { value?: unknown } | unknown;
+    value?: { value?: unknown };
   }>;
   childIds?: string[];
 }
 
 interface CDPResponse {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  nodes: any[];
+  nodes: CDPNode[];
 }
 
 interface XMLElement {
@@ -74,7 +73,10 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     return this.raw;
   }
 
-  private nodeToXml(node: CDPNode, nodeLookup: Record<string, CDPNode>): XMLElement {
+  private nodeToXml(
+    node: CDPNode,
+    nodeLookup: Record<string, CDPNode>
+  ): XMLElement {
     const role = node.role?.value || "unknown";
     const elem: XMLElement = {
       tag: role,
@@ -240,7 +242,8 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     const stack: XMLElement[] = [];
 
     // Combined regex for all XML tokens (opening tags, closing tags, self-closing tags)
-    const tokenRegex = /<\/?([a-zA-Z_][\w:.-]*)((?:\s+[\w:.-]+="[^"]*")*)\s*(\/?)>/g;
+    const tokenRegex =
+      /<\/?([a-zA-Z_][\w:.-]*)((?:\s+[\w:.-]+="[^"]*")*)\s*(\/?)>/g;
     const attrRegex = /([\w:.-]+)="([^"]*)"/g;
 
     let match: RegExpExecArray | null;
