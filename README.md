@@ -17,6 +17,10 @@
 
 Alumnium is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It simplifies interactions with applications and provide more robust mechanisms for verifying assertions. It works with Appium, Playwright, or Selenium.
 
+https://github.com/user-attachments/assets/b1a548c0-f1e1-4ffe-bec9-d814770ba2ae
+
+Currently in the very early stages of development and not recommended for production use.
+
 ## Installation
 
 ```bash
@@ -48,9 +52,17 @@ Check out [documentation][1] and more [examples][2]!
 
 See the [contributing guidelines][4] for information on how to get involved in the project and develop locally.
 
+## Acknowledgments
+
+[![LambdaTest](https://www.lambdatest.com/resources/images/logos/logo.svg)][5]
+
+Alumnium is a member of [LambdaTest][5] Open Source Program, which supports the project community and development with
+the necessary tools. Thank you! 💚
+
+
 
 [1]: https://alumnium.ai/docs/
-[2]: https://github.com/alumnium-hq/alumnium/tree/main/packages/python/examples/
+[2]: packages/python/examples/
 [3]: https://alumnium.ai/docs/getting-started/configuration/
-[4]: https://github.com/alumnium-hq/alumnium/tree/main/CONTRIBUTING.md
+[4]: ./CONTRIBUTING.md
 [5]: https://www.lambdatest.com/
