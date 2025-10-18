@@ -1,0 +1,10 @@
+{
+  "spec": "examples/mocha/**/*.test.ts",
+  "node-option": [
+    "loader=ts-node/esm",
+    "no-warnings"
+  ],
+  "loader": "ts-node/esm",
+  "require": "examples/mocha/helpers.ts",
+  "timeout": 300000
+}
