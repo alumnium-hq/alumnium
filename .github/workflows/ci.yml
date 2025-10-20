@@ -1,10 +1,9 @@
 name: CI
 on:
-  # pull_request: # TODO
+  pull_request: # TODO
   push:
     branches:
       - main
-      - feat/ts
   schedule:
     - cron: 0 0 * * *
   workflow_dispatch:
@@ -14,240 +13,74 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # test:
-  #   name: Test
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: packages/python
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         ref: ${{ github.event.pull_request.head.sha || github.sha }}
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version-file: .tool-versions
-  #     - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
-  #       working-directory: .
-  #     - uses: actions/cache@v4
-  #       with:
-  #         path: packages/python/.venv
-  #         key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-  #     - run: poetry install
-  #     - run: poetry poe check-format
-  #     - run: poetry poe test
-  #     - if: failure() && runner.debug == '1'
-  #       uses: mxschmitt/action-tmate@v3
-
-  # examples:
-  #   name: Examples
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 60
-  #   env:
-  #     ALUMNIUM_DRIVER: ${{ matrix.driver }}
-  #     ALUMNIUM_MODEL: ${{ matrix.model }}
-  #     ALUMNIUM_LOG_LEVEL: debug
-  #     ALUMNIUM_LOG_PATH: alumnium.log
-  #     ALUMNIUM_PLAYWRIGHT_HEADLESS: false
-  #     DISPLAY: :99
-  #     LT_USERNAME: ${{ secrets.LT_USERNAME }}
-  #     LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
-  #     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-  #     AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-  #     AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-  #     AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
-  #     AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
-  #     AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
-  #     DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-  #     GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-  #     MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-  #     OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  #   defaults:
-  #     run:
-  #       working-directory: packages/python
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       driver:
-  #         - appium
-  #         - playwright
-  #         - selenium
-  #       model:
-  #         - anthropic
-  #         - aws_anthropic
-  #         - aws_meta
-  #         - azure_openai
-  #         # Official DeepSeek platform times out!
-  #         # - deepseek
-  #         - google
-  #         - mistralai
-  #         - openai
-  #   steps:
-  #     - id: check-access
-  #       uses: actions-cool/check-user-permission@v2
-  #       with:
-  #         require: write
-  #         username: ${{ github.triggering_actor }}
-  #     - if: steps.check-access.outputs.require-result == 'false'
-  #       run: |
-  #         echo "${{ github.triggering_actor }} does not have permissions on this repo - maintainer will re-run this job."
-  #         echo "Current permission level is ${{ steps.check-access.outputs.user-permission }}."
-  #         echo "Job originally triggered by ${{ github.actor }}."
-  #         exit 1
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         ref: ${{ github.event.pull_request.head.sha || github.sha }}
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version-file: .tool-versions
-  #     - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
-  #       working-directory: .
-  #     - uses: actions/cache@v4
-  #       with:
-  #         path: packages/python/.venv
-  #         key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-  #     - run: poetry install
-  #     - if: matrix.driver == 'playwright'
-  #       run: poetry run playwright install chromium
-  #     - if: matrix.driver != 'appium'
-  #       run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
-  #     - uses: actions/cache@v4
-  #       with:
-  #         path: |
-  #           packages/python/.alumnium-cache.sqlite
-  #           packages/python/.alumnium/cache/
-  #         key: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
-  #         restore-keys: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-
-  #     - run: poetry run behave --format html-pretty --outfile reports/behave.html --format pretty ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}
-  #     - run: poetry run pytest --retries 1 --html reports/pytest.html examples/
-  #     - if: failure() && runner.debug == '1'
-  #       uses: mxschmitt/action-tmate@v3
-  #     - if: always()
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: ${{ matrix.driver }}-${{ matrix.model }}
-  #         path: |
-  #           packages/python/*.log
-  #           packages/python/reports/
-
-  examples-ts:
+  test:
+    name: Test
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    env:
-      ALUMNIUM_MODEL: ${{ matrix.model }}
-      ALUMNIUM_LOG_LEVEL: debug
-      ALUMNIUM_LOG_PATH: alumnium.log
-      ALUMNIUM_PLAYWRIGHT_HEADLESS: false
-      DISPLAY: :99
-      LT_USERNAME: ${{ secrets.LT_USERNAME }}
-      LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
-      AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
-      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
-      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-    defaults:
-      run:
-        working-directory: packages/typescript
-    strategy:
-      fail-fast: false
-      matrix:
-        model:
-          - anthropic
-          - aws_anthropic
-          - aws_meta
-          - azure_openai
-          - google
-          - mistralai
-          - openai
-        runner:
-          - mocha
-          - playwright
-          - wdio
+    outputs:
+      permitted: ${{ steps.check-access.outputs.user-permission == 'true' }}
+      python-changed: ${{ steps.changed-files.outputs.python_any_changed == 'true' }}
+      server-changed: ${{ steps.changed-files.outputs.server_any_changed == 'true' }}
+      typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed == 'true' }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - id: check-access
         uses: actions-cool/check-user-permission@v2
         with:
           require: write
           username: ${{ github.triggering_actor }}
-      - if: steps.check-access.outputs.require-result == 'false'
-        run: |
-          echo "${{ github.triggering_actor }} does not have permissions on this repo - maintainer will re-run this job."
-          echo "Current permission level is ${{ steps.check-access.outputs.user-permission }}."
-          echo "Job originally triggered by ${{ github.actor }}."
-          exit 1
-      - uses: actions/checkout@v4
+      - id: changed-files
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          files_yaml: |
+            python:
+              - packages/python/**
+            server:
+              - Dockerfile
+              - packages/python/**/server/**
+            typescript:
+              - packages/typescript/**
+      - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v6
         with:
           cache: npm
           cache-dependency-path: packages/typescript/package-lock.json
           node-version-file: .tool-versions
-      - uses: docker/setup-buildx-action@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .tool-versions
+      - uses: actions/cache@v4
+        with:
+          path: packages/python/.venv
+          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+      - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
+      - run: make install
+      - run: make build
+      - run: make check-format
+      - run: make test
       - uses: docker/build-push-action@v6
         with:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: .
-          load: true
-          tags: alumnium-server
-      - if: matrix.runner != 'wdio'
-        run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
-      - uses: actions/cache@v4
-        with:
-          path: .alumnium/cache/
-          key: alumnium-cache-typescript-${{ matrix.runner }}-${{ matrix.model }}-${{ github.sha }}
-          restore-keys: alumnium-cache-typescript-${{ matrix.runner }}-${{ matrix.model }}-
-      - run: |
-          docker run --name alumnium-server \
-            --detach \
-            --publish 8013:8013 \
-            --volume ${{ github.workspace }}/.alumnium/cache:/app/.alumnium/cache \
-            --env ALUMNIUM_LOG_LEVEL \
-            --env ALUMNIUM_LOG_PATH=stdout \
-            --env ALUMNIUM_MODEL \
-            --env ANTHROPIC_API_KEY \
-            --env AWS_ACCESS_KEY \
-            --env AWS_SECRET_KEY \
-            --env AZURE_OPENAI_API_KEY \
-            --env AZURE_OPENAI_API_VERSION \
-            --env AZURE_OPENAI_ENDPOINT \
-            --env DEEPSEEK_API_KEY \
-            --env GOOGLE_API_KEY \
-            --env MISTRAL_API_KEY \
-            --env OPENAI_API_KEY \
-            alumnium-server
-      - run: npm install
-      - if: matrix.runner == 'playwright'
-        run: npx playwright install chromium
-      - run: npm run examples:${{ matrix.runner }}
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
-      - if: always()
-        run: docker logs alumnium-server > alumnium-server.log
-      - if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.runner }}-${{ matrix.model }}
-          path: |
-            packages/typescript/*.log
-            packages/typescript/playwright-report/
-            packages/typescript/test-results/
 
-  # release:
-  #   name: Release
-  #   needs:
-  #     - test
-  #     - examples
-  #   if: github.ref_name == 'main' && startsWith(github.event.head_commit.message, 'release:')
-  #   uses: ./.github/workflows/release.yml
-  #   permissions:
-  #     attestations: write
-  #     contents: write
-  #     id-token: write
+  python:
+    name: Python
+    needs: test
+    secrets: inherit
+    if: needs.test.outputs.permitted && needs.test.outputs.python-changed
+    uses: ./.github/workflows/ci-python.yml
+    with:
+      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+  typescript:
+    name: TypeScript
+    needs: test
+    secrets: inherit
+    if: needs.test.outputs.permitted && (needs.test.outputs.server-changed || needs.test.outputs.typescript-changed)
+    uses: ./.github/workflows/ci-typescript.yml
+    with:
+      sha: ${{ github.event.pull_request.head.sha || github.sha }}
