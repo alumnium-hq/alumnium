@@ -12,10 +12,10 @@
   "scripts": {
     "build": "rm -rf dist/ && tsc --project tsconfig.build.json",
     "clean": "rm -rf dist/ log/ playwright-report/ test-results/",
-    "examples:mocha": "ALUMNIUM_DRIVER=selenium mocha",
+    "examples:appium": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
-    "examples:wdio": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
-    "examples": "npm run examples:mocha && npm run examples:playwright && npm run examples:wdio",
+    "examples:selenium": "ALUMNIUM_DRIVER=selenium mocha",
+    "examples": "npm run examples:appium && npm run examples:playwright && npm run examples:selenium",
     "check-format": "eslint .",
     "format": "eslint . --fix",
     "prepublishOnly": "npm run build"

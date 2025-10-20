@@ -8,97 +8,97 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # python:
-  #   name: Python
-  #   runs-on: ubuntu-latest
-  #   environment: release
-  #   defaults:
-  #     run:
-  #       working-directory: packages/python
-  #   outputs:
-  #     version: ${{ steps.version.outputs.version }}
-  #   permissions:
-  #     attestations: write
-  #     contents: write
-  #     id-token: write
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-python@v5
-  #       with:
-  #         python-version-file: packages/python/pyproject.toml
-  #     - run: pip install poetry==$(cat .tool-versions | grep poetry | cut -d" " -f2)
-  #       working-directory: .
-  #     - uses: actions/cache@v4
-  #       with:
-  #         path: packages/python/.venv
-  #         key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-  #     - run: poetry install
-  #     - run: poetry build
-  #     - run: echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
-  #       id: version
-  #     - uses: actions/attest-build-provenance@v3
-  #       with:
-  #         subject-path: packages/python/dist/*
-  #     - uses: pypa/gh-action-pypi-publish@release/v1
-  #     - run: gh release create ${{ steps.version.outputs.version }} --generate-notes dist/*
-  #       env:
-  #         GH_TOKEN: ${{ github.token }}
-  #     - uses: actions/upload-artifact@v4
-  #       with:
-  #         name: python-dist
-  #         path: packages/python/dist/
-  #     - if: failure() && runner.debug == '1'
-  #       uses: mxschmitt/action-tmate@v3
-  #       with:
-  #         limit-access-to-actor: true
+  python:
+    name: Python
+    runs-on: ubuntu-latest
+    environment: release
+    defaults:
+      run:
+        working-directory: packages/python
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: packages/python/pyproject.toml
+      - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
+        working-directory: .
+      - uses: actions/cache@v4
+        with:
+          path: packages/python/.venv
+          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+      - run: poetry install
+      - run: poetry build
+      - run: echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
+        id: version
+      - uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: packages/python/dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1
+      - run: gh release create ${{ steps.version.outputs.version }} --generate-notes dist/*
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: packages/python/dist/
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
 
-  # docker:
-  #   name: Docker
-  #   needs: python
-  #   runs-on: ubuntu-latest
-  #   environment: release
-  #   permissions:
-  #     attestations: write
-  #     contents: write
-  #     id-token: write
-  #   steps:
-  #     - uses: docker/setup-qemu-action@v3
-  #     - uses: docker/setup-buildx-action@v3
-  #     - uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     - uses: actions/checkout@v4
-  #     - uses: docker/metadata-action@v5
-  #       id: meta
-  #       with:
-  #         images: alumnium/alumnium
-  #         tags: |
-  #           type=ref,event=tag
-  #           type=semver,pattern={{major}},value=${{ needs.python.outputs.version }}
-  #           type=semver,pattern={{major}}.{{minor}},value=${{ needs.python.outputs.version }}
-  #           type=semver,pattern={{version}},value=${{ needs.python.outputs.version }}
-  #     - uses: docker/build-push-action@v6
-  #       id: push
-  #       with:
-  #         cache-from: type=gha
-  #         cache-to: type=gha,mode=max
-  #         context: .
-  #         labels: ${{ steps.meta.outputs.labels }}
-  #         platforms: linux/amd64,linux/arm64
-  #         provenance: mode=max
-  #         push: true
-  #         sbom: true
-  #         tags: ${{ steps.meta.outputs.tags }}
-  #     - uses: actions/attest-build-provenance@v3
-  #       with:
-  #         subject-name: index.docker.io/alumnium/alumnium
-  #         subject-digest: ${{ steps.push.outputs.digest }}
-  #         push-to-registry: true
-  #     - if: failure() && runner.debug == '1'
-  #       uses: mxschmitt/action-tmate@v3
-  #       with:
-  #         limit-access-to-actor: true
+  docker:
+    name: Docker
+    needs: python
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+    steps:
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: alumnium/alumnium
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{major}},value=${{ needs.python.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.python.outputs.version }}
+            type=semver,pattern={{version}},value=${{ needs.python.outputs.version }}
+      - uses: docker/build-push-action@v6
+        id: push
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          provenance: mode=max
+          push: true
+          sbom: true
+          tags: ${{ steps.meta.outputs.tags }}
+      - uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: index.docker.io/alumnium/alumnium
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
 
   typescript:
     name: TypeScript
