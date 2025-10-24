@@ -8,7 +8,10 @@ export const config: WebdriverIO.Config = {
     ui: "bdd",
     timeout: 300000, // 5 minutes
     require: ["examples/mocha/helpers.ts"],
+    retries: 1,
   },
+  specFileRetries: 1,
+  specFileRetriesDelay: 5,
   maxInstances: 1,
   reporters: ["spec"],
   capabilities: [

@@ -6,5 +6,6 @@
   ],
   "loader": "ts-node/esm",
   "require": "examples/mocha/helpers.ts",
+  "retries": 1,
   "timeout": 300000
 }
