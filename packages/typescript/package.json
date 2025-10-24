@@ -16,8 +16,8 @@
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:selenium": "ALUMNIUM_DRIVER=selenium mocha",
     "examples": "npm run examples:appium && npm run examples:playwright && npm run examples:selenium",
-    "check-format": "eslint .",
-    "format": "eslint . --fix",
+    "check-format": "prettier --check . && eslint .",
+    "format": "prettier --write . && eslint . --fix",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -60,6 +60,7 @@
     "appium-xcuitest-driver": "^10.2.1",
     "eslint": "^9.37.0",
     "mocha": "^10.3.0",
+    "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
     "typescript-eslint": "^8.45.0",

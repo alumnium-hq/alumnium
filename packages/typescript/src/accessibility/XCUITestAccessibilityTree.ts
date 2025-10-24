@@ -136,7 +136,8 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     const stack: XMLElement[] = [];
 
     // Combined regex for all XML tokens (opening tags, closing tags, self-closing tags)
-    const tokenRegex = /<\/?([a-zA-Z_][\w:.-]*)((?:\s+[\w:.-]+="[^"]*")*)\s*(\/?)>/g;
+    const tokenRegex =
+      /<\/?([a-zA-Z_][\w:.-]*)((?:\s+[\w:.-]+="[^"]*")*)\s*(\/?)>/g;
     const attrRegex = /([\w:.-]+)="([^"]*)"/g;
 
     let match: RegExpExecArray | null;

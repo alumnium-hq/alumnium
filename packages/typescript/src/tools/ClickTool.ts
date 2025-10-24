@@ -5,7 +5,11 @@ import { field, FieldMetadata } from "./Field.js";
 export class ClickTool extends BaseTool {
   static description = "Click an element.";
   static fields: FieldMetadata[] = [
-    field({ name: "id", type: "integer", description: "Element identifier (ID)" }),
+    field({
+      name: "id",
+      type: "integer",
+      description: "Element identifier (ID)",
+    }),
   ];
 
   id: number;

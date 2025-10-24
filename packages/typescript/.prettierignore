@@ -1,0 +1,9 @@
+dist/
+node_modules/
+coverage/
+playwright-report/
+test-results/
+log/
+*.json
+*.md
+*.log
