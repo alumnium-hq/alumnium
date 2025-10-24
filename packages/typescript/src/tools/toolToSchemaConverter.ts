@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { BaseTool } from "./BaseTool.js";
+import { ToolClass } from "./BaseTool.js";
 import { ToolWithFields } from "./Field.js";
 
 interface ToolSchema {
@@ -19,8 +19,7 @@ interface ToolSchema {
 }
 
 export function convertToolsToSchemas(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tools: Record<string, new (...args: any[]) => BaseTool>
+  tools: Record<string, ToolClass>
 ): ToolSchema[] {
   return Object.entries(tools).map(([name, ToolClass]) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access

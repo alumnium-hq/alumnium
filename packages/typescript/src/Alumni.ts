@@ -11,7 +11,7 @@ import { Element } from "./drivers/index.js";
 import { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
 import { SeleniumDriver } from "./drivers/SeleniumDriver.js";
 import { Model } from "./Model.js";
-import { BaseTool, ToolCall } from "./tools/BaseTool.js";
+import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
 import { ClickTool } from "./tools/ClickTool.js";
 import { DragAndDropTool } from "./tools/DragAndDropTool.js";
 import { HoverTool } from "./tools/HoverTool.js";
@@ -25,8 +25,7 @@ const logger = getLogger(["Alumni"]);
 export interface AlumniOptions {
   url?: string;
   model?: Model;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  extraTools?: (new (...args: any[]) => BaseTool)[];
+  extraTools?: ToolClass[];
 }
 
 export interface CheckOptions {
@@ -40,8 +39,8 @@ export interface GetOptions {
 export class Alumni {
   public driver: BaseDriver;
   private client: HttpClient;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private tools: Record<string, new (...args: any[]) => BaseTool>;
+
+  private tools: Record<string, ToolClass>;
   public cache: Cache;
   private url: string;
   private model: Model;

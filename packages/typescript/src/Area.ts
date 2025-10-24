@@ -3,7 +3,7 @@ import { HttpClient } from "./clients/HttpClient.js";
 import { Data } from "./clients/typecasting.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
-import { BaseTool, ToolCall } from "./tools/BaseTool.js";
+import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
 
 export interface AreaCheckOptions {
   vision?: boolean;
@@ -18,8 +18,7 @@ export class Area {
   public description: string;
   private accessibilityTree: BaseAccessibilityTree;
   private driver: BaseDriver;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private tools: Record<string, new (...args: any[]) => BaseTool>;
+  private tools: Record<string, ToolClass>;
   private client: HttpClient;
 
   constructor(
@@ -27,8 +26,7 @@ export class Area {
     description: string,
     accessibilityTree: BaseAccessibilityTree,
     driver: BaseDriver,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tools: Record<string, new (...args: any[]) => BaseTool>,
+    tools: Record<string, ToolClass>,
     client: HttpClient
   ) {
     this.id = id;
