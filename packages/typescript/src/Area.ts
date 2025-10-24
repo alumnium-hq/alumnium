@@ -102,12 +102,11 @@ export class Area {
   }
 
   async find(description: string): Promise<Element> {
-     
     const response = await this.client.findElement(
       description,
       this.accessibilityTree.toStr()
     );
-     
+
     return this.driver.findElement(response.id as number);
   }
 }
