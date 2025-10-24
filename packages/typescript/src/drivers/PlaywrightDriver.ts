@@ -56,8 +56,9 @@ export class PlaywrightDriver extends BaseDriver {
 
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    const tagName = (await element.evaluate((el: any) => el.tagName)) as string;
+    const tagName = await element.evaluate(
+      (el: { tagName: string }) => el.tagName
+    );
 
     // Llama often attempts to click options, not select them.
     if (tagName.toLowerCase() === "option") {
@@ -107,8 +108,9 @@ export class PlaywrightDriver extends BaseDriver {
 
   async select(id: number, option: string): Promise<void> {
     const element = await this.findElement(id);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    const tagName = (await element.evaluate((el: any) => el.tagName)) as string;
+    const tagName = await element.evaluate(
+      (el: { tagName: string }) => el.tagName
+    );
 
     // Anthropic chooses to select using option ID, not select ID
     if (tagName.toLowerCase() === "option") {

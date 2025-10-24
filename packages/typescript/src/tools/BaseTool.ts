@@ -5,8 +5,7 @@ export type ToolClass = new (...args: any[]) => BaseTool;
 
 export interface ToolCall {
   name: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  args: Record<string, any>;
+  args: Record<string, unknown>;
 }
 
 export abstract class BaseTool {
