@@ -1,5 +1,5 @@
 import { Model } from "../Model.js";
-import { BaseTool } from "../tools/BaseTool.js";
+import { ToolClass } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
 import {
@@ -31,8 +31,7 @@ export class HttpClient {
   constructor(
     baseUrl: string,
     private platform: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private tools: Record<string, new (...args: any[]) => BaseTool>
+    private tools: Record<string, ToolClass>
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
   }

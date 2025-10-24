@@ -1,5 +1,8 @@
 import { BaseDriver } from "../drivers/BaseDriver.js";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ToolClass = new (...args: any[]) => BaseTool;
+
 export interface ToolCall {
   name: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,8 +14,7 @@ export abstract class BaseTool {
 
   static async executeToolCall(
     toolCall: ToolCall,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tools: Record<string, new (...args: any[]) => BaseTool>,
+    tools: Record<string, ToolClass>,
     driver: BaseDriver
   ): Promise<void> {
     const ToolClass = tools[toolCall.name];
