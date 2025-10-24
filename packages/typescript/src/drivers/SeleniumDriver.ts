@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import {
@@ -141,14 +139,14 @@ export class SeleniumDriver extends BaseDriver {
     await this.executeCdpCommand("DOM.enable", {});
     await this.executeCdpCommand("DOM.getFlattenedDocument", {});
 
-    const nodeIds = await this.executeCdpCommand(
+    const { nodeIds } = (await this.executeCdpCommand(
       "DOM.pushNodesByBackendIdsToFrontend",
       {
         backendNodeIds: [backendNodeId],
       }
-    );
+    )) as { nodeIds: number[] };
 
-    const nodeId = nodeIds.nodeIds[0];
+    const nodeId = nodeIds[0];
 
     // Set temporary attribute to locate element
 
@@ -172,8 +170,10 @@ export class SeleniumDriver extends BaseDriver {
     return element;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async executeCdpCommand(cmd: string, params: object): Promise<any> {
+  private async executeCdpCommand(
+    cmd: string,
+    params: object
+  ): Promise<unknown> {
     return await this.driver.sendAndGetDevToolsCommand(cmd, params);
   }
 
