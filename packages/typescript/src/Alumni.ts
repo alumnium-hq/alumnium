@@ -166,12 +166,10 @@ export class Alumni {
 
   async find(description: string): Promise<Element> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const response = await this.client.findElement(
       description,
       accessibilityTree.toStr()
     );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.driver.findElement(response.id as number);
   }
 
