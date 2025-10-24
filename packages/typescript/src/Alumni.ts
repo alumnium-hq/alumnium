@@ -28,11 +28,7 @@ export interface AlumniOptions {
   extraTools?: ToolClass[];
 }
 
-export interface CheckOptions {
-  vision?: boolean;
-}
-
-export interface GetOptions {
+export interface VisionOptions {
   vision?: boolean;
 }
 
@@ -126,7 +122,7 @@ export class Alumni {
     }
   }
 
-  async check(statement: string, options: CheckOptions = {}): Promise<string> {
+  async check(statement: string, options: VisionOptions = {}): Promise<string> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
@@ -146,7 +142,7 @@ export class Alumni {
     return explanation;
   }
 
-  async get(data: string, options: GetOptions = {}): Promise<Data> {
+  async get(data: string, options: VisionOptions = {}): Promise<Data> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;

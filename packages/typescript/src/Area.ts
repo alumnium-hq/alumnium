@@ -1,17 +1,10 @@
 import { BaseAccessibilityTree } from "./accessibility/BaseAccessibilityTree.js";
+import { VisionOptions } from "./Alumni.js";
 import { HttpClient } from "./clients/HttpClient.js";
 import { Data } from "./clients/typecasting.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
-
-export interface AreaCheckOptions {
-  vision?: boolean;
-}
-
-export interface AreaGetOptions {
-  vision?: boolean;
-}
 
 export class Area {
   public id: number;
@@ -61,10 +54,7 @@ export class Area {
     }
   }
 
-  async check(
-    statement: string,
-    options: AreaCheckOptions = {}
-  ): Promise<string> {
+  async check(statement: string, options: VisionOptions = {}): Promise<string> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
@@ -83,7 +73,7 @@ export class Area {
     return explanation;
   }
 
-  async get(data: string, options: AreaGetOptions = {}): Promise<Data> {
+  async get(data: string, options: VisionOptions = {}): Promise<Data> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
