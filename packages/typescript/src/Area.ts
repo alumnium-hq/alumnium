@@ -102,12 +102,12 @@ export class Area {
   }
 
   async find(description: string): Promise<Element> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     const response = await this.client.findElement(
       description,
       this.accessibilityTree.toStr()
     );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+     
     return this.driver.findElement(response.id as number);
   }
 }
