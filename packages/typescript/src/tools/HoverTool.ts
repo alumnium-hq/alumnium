@@ -1,8 +1,16 @@
 import { BaseDriver } from "../drivers/BaseDriver.js";
 import { BaseTool } from "./BaseTool.js";
+import { field, FieldMetadata } from "./Field.js";
 
 export class HoverTool extends BaseTool {
   static description = "Hover over an element.";
+  static fields: FieldMetadata[] = [
+    field({
+      name: "id",
+      type: "integer",
+      description: "Element identifier (ID)",
+    }),
+  ];
 
   id: number;
 
