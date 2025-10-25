@@ -1,6 +1,6 @@
 name: CI
 on:
-  pull_request: # TODO
+  pull_request_target:
   push:
     branches:
       - main
