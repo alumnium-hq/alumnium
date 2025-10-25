@@ -51,7 +51,7 @@
     "@playwright/test": "^1.55.1",
     "@types/eslint__js": "^8.42.3",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^20.11.19",
+    "@types/node": "^22.14.0",
     "@types/selenium-webdriver": "^4.1.21",
     "@wdio/cli": "^9.20.0",
     "@wdio/local-runner": "^9.20.0",
