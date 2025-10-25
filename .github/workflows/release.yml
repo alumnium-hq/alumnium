@@ -118,7 +118,7 @@ jobs:
           cache-dependency-path: packages/typescript/package-lock.json
           node-version-file: .tool-versions
           registry-url: https://registry.npmjs.org
-      - run: npm install -g npm@latest # 11.5.1+ requried for Trusted Publishing
+      - run: npm install -g npm@latest # 11.5.1+ required for Trusted Publishing
       - run: npm install
       - run: npm publish
       - uses: actions/upload-artifact@v4
