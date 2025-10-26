@@ -9,7 +9,7 @@ check-format = [
     { cmd = "pyprojectsort --diff" },
     { cmd = "ruff check ." },
 ]
-clean = "rm -rf dist log reports .pytest_cache __pycache__ .ruff_cache"
+clean = "rm -rf .alumnium/cache dist log reports .pytest_cache __pycache__ .ruff_cache"
 test = "pytest tests/"
 
 [tool.poe.tasks.format]

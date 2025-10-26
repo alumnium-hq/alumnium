@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist/ && tsc --project tsconfig.build.json",
-    "clean": "rm -rf dist/ log/ playwright-report/ test-results/",
+    "clean": "rm -rf .alumnium/cache dist/ log/ playwright-report/ test-results/",
     "examples:appium": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:selenium": "ALUMNIUM_DRIVER=selenium mocha",
