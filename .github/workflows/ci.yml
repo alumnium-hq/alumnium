@@ -17,10 +17,10 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     outputs:
-      permitted: ${{ steps.check-access.outputs.user-permission == 'true' }}
-      python-changed: ${{ steps.changed-files.outputs.python_any_changed == 'true' }}
-      server-changed: ${{ steps.changed-files.outputs.server_any_changed == 'true' }}
-      typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed == 'true' }}
+      permitted: ${{ steps.check-access.outputs.check-result }}
+      python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
+      server-changed: ${{ steps.changed-files.outputs.server_any_changed }}
+      typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,12 +41,6 @@ jobs:
               - packages/python/**/server/**
             typescript:
               - packages/typescript/**
-      - uses: actions/github-script@v8
-        with:
-          script: |
-            console.log('Python changed files:', ${{ toJSON(steps.changed-files.outputs.python_all_changed_files) }});
-            console.log('Server changed files:', ${{ toJSON(steps.changed-files.outputs.server_all_changed_files) }});
-            console.log('TypeScript changed files:', ${{ toJSON(steps.changed-files.outputs.typescript_all_changed_files) }});
       - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v6
         with:
@@ -77,7 +71,9 @@ jobs:
     name: Python
     needs: test
     secrets: inherit
-    if: needs.test.outputs.permitted && needs.test.outputs.python-changed
+    if: >
+      needs.test.outputs.permitted == 'true'
+      && needs.test.outputs.python-changed == 'true'
     uses: ./.github/workflows/ci-python.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -86,7 +82,9 @@ jobs:
     name: TypeScript
     needs: test
     secrets: inherit
-    if: needs.test.outputs.permitted && (needs.test.outputs.server-changed || needs.test.outputs.typescript-changed)
+    if: >
+      needs.test.outputs.permitted == 'true'
+        && (needs.test.outputs.server-changed == 'true' || needs.test.outputs.typescript-changed == 'true')
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
