@@ -10,7 +10,7 @@ on:
 
 concurrency:
   group: ci-${{ github.event.pull_request.head.ref || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
 
 jobs:
   test:
