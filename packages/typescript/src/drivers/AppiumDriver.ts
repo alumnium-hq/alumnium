@@ -151,25 +151,48 @@ export class AppiumDriver extends BaseDriver {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);
 
-    let xpath = `//${element.type}`;
+    if (this.platform === "xcuitest") {
+      // Use iOS Predicate locators for XCUITest
+      let predicate = `type == "${element.type}"`;
 
-    const props: Record<string, string> = {};
-    if (element.name) props["name"] = element.name;
-    if (element.value) props["value"] = element.value;
-    if (element.label) props["label"] = element.label;
-    if (element.androidResourceId)
-      props["resource-id"] = element.androidResourceId;
-    if (element.androidText) props["text"] = element.androidText;
-    if (element.androidContentDesc)
-      props["content-desc"] = element.androidContentDesc;
-    if (element.androidBounds) props["bounds"] = element.androidBounds;
+      const props: Record<string, string> = {};
+      if (element.name) props["name"] = element.name;
+      if (element.value) props["value"] = element.value;
+      if (element.label) props["label"] = element.label;
 
-    if (Object.keys(props).length > 0) {
-      const conditions = Object.entries(props).map(([k, v]) => `@${k}="${v}"`);
-      xpath += `[${conditions.join(" and ")}]`;
+      if (Object.keys(props).length > 0) {
+        const conditions = Object.entries(props).map(
+          ([k, v]) => `${k} == "${v}"`
+        );
+        const propsStr = conditions.join(" AND ");
+        predicate += ` AND ${propsStr}`;
+      }
+
+      console.debug(`Finding element by predicate: ${predicate}`);
+      const foundElement = this.driver.$(`-ios predicate string:${predicate}`);
+      console.debug(`Found: ${foundElement}`);
+      return foundElement;
+    } else {
+      // Use XPath for UIAutomator2
+      let xpath = `//${element.type}`;
+
+      const props: Record<string, string> = {};
+      if (element.androidResourceId)
+        props["resource-id"] = element.androidResourceId;
+      if (element.androidText) props["text"] = element.androidText;
+      if (element.androidContentDesc)
+        props["content-desc"] = element.androidContentDesc;
+      if (element.androidBounds) props["bounds"] = element.androidBounds;
+
+      if (Object.keys(props).length > 0) {
+        const conditions = Object.entries(props).map(
+          ([k, v]) => `@${k}="${v}"`
+        );
+        xpath += `[${conditions.join(" and ")}]`;
+      }
+
+      return this.driver.$(xpath);
     }
-
-    return this.driver.$(xpath);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars

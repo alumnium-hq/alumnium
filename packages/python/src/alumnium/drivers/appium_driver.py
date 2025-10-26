@@ -119,29 +119,47 @@ class AppiumDriver(BaseDriver):
 
     def find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)
-        xpath = f"//{element.type}"
 
-        props = {}
-        if element.name:
-            props["name"] = element.name
-        if element.value:
-            props["value"] = element.value
-        if element.label:
-            props["label"] = element.label
-        if element.androidresourceid:
-            props["resource-id"] = element.androidresourceid
-        if element.androidtext:
-            props["text"] = element.androidtext
-        if element.androidcontentdesc:
-            props["content-desc"] = element.androidcontentdesc
-        if element.androidbounds:
-            props["bounds"] = element.androidbounds
+        if self.platform == "xcuitest":
+            # Use iOS Predicate locators for XCUITest
+            predicate = f'type == "{element.type}"'
 
-        if props:
-            props = [f'@{k}="{v}"' for k, v in props.items()]
-            xpath += f"[{' and '.join(props)}]"
+            props = {}
+            if element.name:
+                props["name"] = element.name
+            if element.value:
+                props["value"] = element.value
+            if element.label:
+                props["label"] = element.label
 
-        return self.driver.find_element(By.XPATH, xpath)
+            if props:
+                props = [f'{k} == "{v}"' for k, v in props.items()]
+                props_str = " AND ".join(props)
+                predicate += f" AND {props_str}"
+
+            logger.debug(f"Finding element by predicate: {predicate}")
+            found_element = self.driver.find_element(By.IOS_PREDICATE, predicate)
+            logger.debug(f"Found: {found_element}")
+            return found_element
+        else:
+            # Use XPath for UIAutomator2
+            xpath = f"//{element.type}"
+
+            props = {}
+            if element.androidresourceid:
+                props["resource-id"] = element.androidresourceid
+            if element.androidtext:
+                props["text"] = element.androidtext
+            if element.androidcontentdesc:
+                props["content-desc"] = element.androidcontentdesc
+            if element.androidbounds:
+                props["bounds"] = element.androidbounds
+
+            if props:
+                props = [f'@{k}="{v}"' for k, v in props.items()]
+                xpath += f"[{' and '.join(props)}]"
+
+            return self.driver.find_element(By.XPATH, xpath)
 
     def _ensure_native_app_context(self):
         if not self.autoswitch_contexts:
