@@ -15,6 +15,7 @@ export class ModelName {
     [Provider.AZURE_OPENAI]: "gpt-4o-mini",
     [Provider.ANTHROPIC]: "claude-haiku-4-5-20251001",
     [Provider.AWS_ANTHROPIC]: "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+
     [Provider.AWS_META]: "us.meta.llama4-maverick-17b-instruct-v1:0",
     [Provider.DEEPSEEK]: "deepseek-chat",
     [Provider.GOOGLE]: "gemini-2.0-flash-001",
