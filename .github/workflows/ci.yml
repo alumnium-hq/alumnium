@@ -41,6 +41,12 @@ jobs:
               - packages/python/**/server/**
             typescript:
               - packages/typescript/**
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            console.log('Python changed files:', ${{ toJSON(steps.changed-files.outputs.python_all_changed_files) }});
+            console.log('Server changed files:', ${{ toJSON(steps.changed-files.outputs.server_all_changed_files) }});
+            console.log('TypeScript changed files:', ${{ toJSON(steps.changed-files.outputs.typescript_all_changed_files) }});
       - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v6
         with:
