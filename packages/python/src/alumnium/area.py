@@ -6,7 +6,10 @@ from .clients.native_client import NativeClient
 from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.base_driver import BaseDriver
+from .server.logutils import get_logger
 from .tools import BaseTool
+
+logger = get_logger(__name__)
 
 
 class Area:
@@ -26,7 +29,7 @@ class Area:
         self.tools = tools
         self.client = client
 
-    @retry(tries=2, delay=0.1)
+    @retry(tries=2, delay=0.1, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal within the area.

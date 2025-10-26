@@ -57,7 +57,7 @@ class Alumni:
         self.client.quit()
         self.driver.quit()
 
-    @retry(tries=2, delay=0.1)
+    @retry(tries=2, delay=0.1, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal.
