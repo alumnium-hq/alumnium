@@ -23,11 +23,21 @@ Currently in the very early stages of development and not recommended for produc
 
 ## Installation
 
+### Python
+
 ```bash
 pip install alumnium
 ```
 
+### TypeScript
+
+```bash
+npm install alumnium
+```
+
 ## Quick Start
+
+### Python
 
 ```python
 import os
@@ -46,7 +56,33 @@ al.check("search results contain selenium.dev")
 assert al.get("atomic number") == 34
 ```
 
-Check out [documentation][1] and more [examples][2]!
+### TypeScript
+
+1. Run Alumnium server:
+
+```sh
+docker run --rm -p 8013:8013 -e OPENAI_API_KEY=... alumnium/alumnium
+```
+
+2. Run your tests:
+
+```javascript
+import { Alumni } from "alumnium";
+import { Builder } from "selenium-webdriver";
+
+const driver = await new Builder().forBrowser("chrome").build();
+const al = new Alumni(driver);
+
+await driver.get("https://search.brave.com");
+await al.do("type 'selenium' into the search field, then press 'Enter'");
+await al.check("page title contains selenium");
+await al.check("search results contain selenium.dev");
+console.log("Atomic number:", await al.get("atomic number")); // 34
+
+await al.quit();
+```
+
+Check out [documentation][1] and more [Python][2] and [TypeScript][6] examples!
 
 ## Contributing
 
@@ -66,3 +102,4 @@ the necessary tools. Thank you! 💚
 [3]: https://alumnium.ai/docs/getting-started/configuration/
 [4]: ./CONTRIBUTING.md
 [5]: https://www.lambdatest.com/
+[6]: packages/typescript/examples/
