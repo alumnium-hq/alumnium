@@ -170,7 +170,6 @@ export class AppiumDriver extends BaseDriver {
 
       console.debug(`Finding element by predicate: ${predicate}`);
       const foundElement = this.driver.$(`-ios predicate string:${predicate}`);
-      console.debug(`Found: ${foundElement}`);
       return foundElement;
     } else {
       // Use XPath for UIAutomator2
