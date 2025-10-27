@@ -17,7 +17,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     outputs:
-      permitted: ${{ steps.check-access.outputs.check-result }}
+      permitted: ${{ steps.check-access.outputs.require-result }}
       python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
       server-changed: ${{ steps.changed-files.outputs.server_any_changed }}
       typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
@@ -73,7 +73,7 @@ jobs:
     secrets: inherit
     if: >
       needs.test.outputs.permitted == 'true'
-      && needs.test.outputs.python-changed == 'true'
+        && needs.test.outputs.python-changed == 'true'
     uses: ./.github/workflows/ci-python.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
