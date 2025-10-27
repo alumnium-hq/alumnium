@@ -13,6 +13,7 @@
     "moduleResolution": "node16",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "allowJs": true,
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@wdio/globals/types",
