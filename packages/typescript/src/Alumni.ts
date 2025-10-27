@@ -78,7 +78,12 @@ export class Alumni {
     }
 
     // Initialize HTTP client
-    this.client = new HttpClient(this.url, this.driver.platform, this.tools);
+    this.client = new HttpClient(
+      this.url,
+      this.model,
+      this.driver.platform,
+      this.tools
+    );
     this.cache = new Cache(this.client);
 
     logger.info(`Using model: ${this.model.provider}/${this.model.name}`);

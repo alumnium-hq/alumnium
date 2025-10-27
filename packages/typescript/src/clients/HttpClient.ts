@@ -30,6 +30,7 @@ export class HttpClient {
 
   constructor(
     baseUrl: string,
+    private model: Model,
     private platform: string,
     private tools: Record<string, ToolClass>
   ) {
@@ -61,8 +62,8 @@ export class HttpClient {
       this.sessionPromise = (async () => {
         const toolSchemas = convertToolsToSchemas(this.tools);
         const requestBody: SessionRequest = {
-          provider: Model.current.provider,
-          name: Model.current.name,
+          provider: this.model.provider,
+          name: this.model.name,
           platform: this.platform as SessionRequest["platform"],
           tools: toolSchemas,
         };
