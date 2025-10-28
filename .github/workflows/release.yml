@@ -40,6 +40,8 @@ jobs:
         with:
           subject-path: packages/python/dist/*
       - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: packages/python/dist/
       - run: gh release create ${{ steps.version.outputs.version }} --generate-notes dist/*
         env:
           GH_TOKEN: ${{ github.token }}
