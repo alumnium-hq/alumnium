@@ -34,7 +34,7 @@ packages = [
 ]
 readme = "README.md"
 repository = "https://github.com/alumnium-hq/alumnium"
-version = "0.14.0"
+version = "0.15.0"
 
 [tool.poetry.dependencies]
 appium-python-client = "^5.1.1"
