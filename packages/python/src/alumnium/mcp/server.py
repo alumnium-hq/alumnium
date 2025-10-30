@@ -55,6 +55,15 @@ class AlumniumMCPServer:
                                 "type": "string",
                                 "description": "Optional initial URL to navigate to",
                             },
+                            "server_url": {
+                                "type": "string",
+                                "description": (
+                                    "Optional remote Selenium/Appium server URL. "
+                                    "Examples: 'http://localhost:4723', "
+                                    "'https://mobile-hub.lambdatest.com/wd/hub'. "
+                                    "Defaults to local driver (Chrome) or localhost:4723 (Appium)"
+                                ),
+                            },
                         },
                         "required": ["capabilities"],
                     },
@@ -253,16 +262,17 @@ class AlumniumMCPServer:
 
         platform_name = capabilities["platformName"].lower()
         url = args.get("url")
+        server_url = args.get("server_url")
 
         # Detect platform and create appropriate driver
         if platform_name in ["chrome", "chromium"]:
-            driver = self._create_chromium_driver(capabilities, url)
+            driver = self._create_chromium_driver(capabilities, url, server_url)
             platform_label = "Chromium"
         elif platform_name == "ios":
-            driver = self._create_ios_driver(capabilities, url)
+            driver = self._create_ios_driver(capabilities, url, server_url)
             platform_label = "iOS"
         elif platform_name == "android":
-            driver = self._create_android_driver(capabilities, url)
+            driver = self._create_android_driver(capabilities, url, server_url)
             platform_label = "Android"
         else:
             raise ValueError(
@@ -288,9 +298,8 @@ class AlumniumMCPServer:
             }
         ]
 
-    def _create_chromium_driver(self, capabilities: dict[str, Any], url: str | None) -> Any:
+    def _create_chromium_driver(self, capabilities: dict[str, Any], url: str | None, server_url: str | None) -> Any:
         """Create Selenium Chrome driver from capabilities."""
-        from selenium.webdriver import Chrome
         from selenium.webdriver.chrome.options import Options
 
         options = Options()
@@ -300,12 +309,21 @@ class AlumniumMCPServer:
             if key != "platformName":
                 options.set_capability(key, value)
 
-        driver = Chrome(options=options)
+        # Use Remote driver if server_url provided, otherwise local Chrome
+        if server_url:
+            from selenium.webdriver import Remote
+
+            driver = Remote(command_executor=server_url, options=options)
+        else:
+            from selenium.webdriver import Chrome
+
+            driver = Chrome(options=options)
+
         if url:
             driver.get(url)
         return driver
 
-    def _create_ios_driver(self, capabilities: dict[str, Any], url: str | None) -> Any:
+    def _create_ios_driver(self, capabilities: dict[str, Any], url: str | None, server_url: str | None) -> Any:
         """Create Appium iOS driver from capabilities."""
         from appium.options.ios import XCUITestOptions
         from appium.webdriver.client_config import AppiumClientConfig
@@ -320,17 +338,24 @@ class AlumniumMCPServer:
         if url:
             options.app = url.replace("file://", "")
 
+        # Determine server URL: parameter > env var > default
+        if server_url:
+            remote_server = server_url
+        else:
+            remote_server = os.getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
+
         # Set up Appium client config
-        appium_server = os.getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
         client_config = AppiumClientConfig(
-            remote_server_addr=appium_server,
+            username=os.getenv("LT_USERNAME"),
+            password=os.getenv("LT_ACCESS_KEY"),
+            remote_server_addr=remote_server,
             direct_connection=True,
         )
 
         # Create Appium driver
         return Appium(client_config=client_config, options=options)
 
-    def _create_android_driver(self, capabilities: dict[str, Any], url: str | None) -> Any:
+    def _create_android_driver(self, capabilities: dict[str, Any], url: str | None, server_url: str | None) -> Any:
         """Create Appium Android driver from capabilities."""
         from appium.options.android import UiAutomator2Options
         from appium.webdriver.client_config import AppiumClientConfig
@@ -345,10 +370,17 @@ class AlumniumMCPServer:
         if url:
             options.app = url.replace("file://", "")
 
+        # Determine server URL: parameter > env var > default
+        if server_url:
+            remote_server = server_url
+        else:
+            remote_server = os.getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
+
         # Set up Appium client config
-        appium_server = os.getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
         client_config = AppiumClientConfig(
-            remote_server_addr=appium_server,
+            username=os.getenv("LT_USERNAME"),
+            password=os.getenv("LT_ACCESS_KEY"),
+            remote_server_addr=remote_server,
             direct_connection=True,
         )
 

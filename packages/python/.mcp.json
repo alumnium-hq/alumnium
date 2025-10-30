@@ -11,7 +11,9 @@
         "AZURE_OPENAI_API_KEY": "${AZURE_OPENAI_API_KEY}",
         "AZURE_OPENAI_API_VERSION": "${AZURE_OPENAI_API_VERSION}",
         "AZURE_OPENAI_ENDPOINT": "${AZURE_OPENAI_ENDPOINT}",
-        "ALUMNIUM_MODEL": "azure_openai"
+        "ALUMNIUM_MODEL": "azure_openai",
+        "LT_USERNAME": "${LT_USERNAME}",
+        "LT_ACCESS_KEY": "${LT_ACCESS_KEY}"
       }
     }
   }
