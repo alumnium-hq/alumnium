@@ -32,12 +32,12 @@ class AppiumDriver(BaseDriver):
             TypeTool,
         }
         self.autoswitch_contexts = True
-        self.delay = 0
+        self.delay: float = 0
         self.hide_keyboard_after_typing = False
 
     @property
     def platform(self) -> str:
-        if self.driver.capabilities["automationName"] == "uiautomator2":
+        if self.driver.capabilities.get("automationName", "").lower() == "uiautomator2":
             return "uiautomator2"
         else:
             return "xcuitest"
@@ -107,7 +107,10 @@ class AppiumDriver(BaseDriver):
         element.clear()
         element.send_keys(text)
         if self.hide_keyboard_after_typing:
-            ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
+            if self.platform == "uiautomator2":
+                self.driver.hide_keyboard()
+            else:
+                ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
 
     @property
     def url(self) -> str:

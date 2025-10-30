@@ -8,7 +8,7 @@ import { Key } from "./keys.js";
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;
-  public platform: string;
+  public platform: "xcuitest" | "uiautomator2";
   public supportedTools: Set<string> = new Set([
     "ClickTool",
     "DragAndDropTool",
@@ -18,12 +18,16 @@ export class AppiumDriver extends BaseDriver {
   ]);
   public autoswitchContexts: boolean = true;
   public delay: number = 0;
+  public doubleFetchPageSource: boolean = false;
   public hideKeyboardAfterTyping: boolean = false;
 
   constructor(driver: Browser) {
     super();
     this.driver = driver;
-    if (this.driver.capabilities["appium:automationName"] === "uiautomator2") {
+    if (
+      this.driver.capabilities["appium:automationName"]?.toLowerCase() ===
+      "uiautomator2"
+    ) {
       this.platform = "uiautomator2";
     } else {
       this.platform = "xcuitest";
@@ -35,6 +39,12 @@ export class AppiumDriver extends BaseDriver {
     if (this.delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, this.delay * 1000));
     }
+    // Hacky workaround for cloud providers reporting stale page source.
+    // Intentionally fetch and discard the page source to refresh internal state.
+    if (this.doubleFetchPageSource) {
+      await this.driver.getPageSource();
+    }
+
     const xmlString = await this.driver.getPageSource();
     if (this.driver.capabilities["appium:automationName"] === "uiautomator2") {
       return new UIAutomator2AccessibilityTree(xmlString);
@@ -117,24 +127,28 @@ export class AppiumDriver extends BaseDriver {
     await element.clearValue();
     await element.setValue(text);
     if (this.hideKeyboardAfterTyping) {
-      const location = await element.getLocation();
-      await this.driver.performActions([
-        {
-          type: "pointer",
-          id: "finger1",
-          parameters: { pointerType: "touch" },
-          actions: [
-            {
-              type: "pointerMove",
-              duration: 0,
-              x: location.x,
-              y: location.y - 20,
-            },
-            { type: "pointerDown", button: 0 },
-            { type: "pointerUp", button: 0 },
-          ],
-        },
-      ]);
+      if (this.platform === "uiautomator2") {
+        await this.driver.hideKeyboard();
+      } else {
+        const location = await element.getLocation();
+        await this.driver.performActions([
+          {
+            type: "pointer",
+            id: "finger1",
+            parameters: { pointerType: "touch" },
+            actions: [
+              {
+                type: "pointerMove",
+                duration: 0,
+                x: location.x,
+                y: location.y - 20,
+              },
+              { type: "pointerDown", button: 0 },
+              { type: "pointerUp", button: 0 },
+            ],
+          },
+        ]);
+      }
     }
   }
 
