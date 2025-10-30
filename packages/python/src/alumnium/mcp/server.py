@@ -1,6 +1,7 @@
 """MCP Server for Alumnium - exposes browser automation capabilities to AI coding agents."""
 
 import asyncio
+import json
 import os
 import uuid
 from typing import Any
@@ -33,21 +34,29 @@ class AlumniumMCPServer:
             return [
                 Tool(
                     name="start_driver",
-                    description="Initialize a browser driver for automated testing. Returns a driver_id for use in other calls.",
+                    description=(
+                        "Initialize a browser driver for automated testing. "
+                        "Returns a driver_id for use in other calls."
+                    ),
                     inputSchema={
                         "type": "object",
                         "properties": {
-                            "platform": {
+                            "capabilities": {
                                 "type": "string",
-                                "enum": ["chromium", "android", "ios"],
-                                "description": "Target platform for automation",
+                                "description": (
+                                    "JSON string with Selenium/Appium capabilities. "
+                                    "Must include 'platformName' (e.g., 'chrome', 'iOS', 'Android'). "
+                                    'Example: \'{"platformName": "iOS", '
+                                    '"appium:deviceName": "iPhone 16", '
+                                    '"appium:platformVersion": "18.0"}\''
+                                ),
                             },
                             "url": {
                                 "type": "string",
                                 "description": "Optional initial URL to navigate to",
                             },
                         },
-                        "required": ["platform"],
+                        "required": ["capabilities"],
                     },
                 ),
                 Tool(
@@ -232,52 +241,33 @@ class AlumniumMCPServer:
 
     async def _start_driver(self, args: dict[str, Any]) -> list[dict]:
         """Start a new driver instance."""
-        platform = args["platform"]
+        # Parse capabilities JSON
+        try:
+            capabilities = json.loads(args["capabilities"])
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in capabilities parameter: {e}")
+
+        # Extract and validate platformName
+        if "platformName" not in capabilities:
+            raise ValueError("capabilities must include 'platformName' field")
+
+        platform_name = capabilities["platformName"].lower()
         url = args.get("url")
 
-        # Create appropriate driver based on platform
-        if platform == "chromium":
-            from selenium.webdriver import Chrome
-            from selenium.webdriver.chrome.options import Options
-
-            options = Options()
-            driver = Chrome(options=options)
-            if url:
-                driver.get(url)
-        elif platform == "ios":
-            from appium.options.ios import XCUITestOptions
-            from appium.webdriver.client_config import AppiumClientConfig
-            from appium.webdriver.webdriver import WebDriver as Appium
-
-            # Set up iOS/XCUITest options
-            options = XCUITestOptions()
-            options.automation_name = "XCUITest"
-            options.platform_name = "iOS"
-            options.device_name = os.getenv("ALUMNIUM_IOS_DEVICE_NAME", "iPhone 16")
-            options.platform_version = os.getenv("ALUMNIUM_IOS_PLATFORM_VERSION", "18.4")
-            options.new_command_timeout = 300
-            options.wda_launch_timeout = 90_000  # ms
-
-            # Use url parameter as app path
-            if url:
-                options.app = url.replace("file://", "")
-            else:
-                # If no app path provided, use Safari browser
-                options.bundle_id = "com.apple.mobilesafari"
-
-            # Set up Appium client config
-            appium_server = os.getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
-            client_config = AppiumClientConfig(
-                remote_server_addr=appium_server,
-                direct_connection=True,
-            )
-
-            # Create Appium driver
-            driver = Appium(client_config=client_config, options=options)
-        elif platform == "android":
-            raise NotImplementedError(f"Platform {platform} requires Appium setup. Not yet implemented.")
+        # Detect platform and create appropriate driver
+        if platform_name in ["chrome", "chromium"]:
+            driver = self._create_chromium_driver(capabilities, url)
+            platform_label = "Chromium"
+        elif platform_name == "ios":
+            driver = self._create_ios_driver(capabilities, url)
+            platform_label = "iOS"
+        elif platform_name == "android":
+            driver = self._create_android_driver(capabilities, url)
+            platform_label = "Android"
         else:
-            raise ValueError(f"Unsupported platform: {platform}")
+            raise ValueError(
+                f"Unsupported platformName: {platform_name}. Supported values: chrome, chromium, ios, android"
+            )
 
         # Create Alumni instance with model from environment
         model = Model.current  # Will use ALUMNIUM_MODEL env var or default
@@ -290,9 +280,80 @@ class AlumniumMCPServer:
         return [
             {
                 "type": "text",
-                "text": f"Driver started successfully. driver_id: {driver_id}\nPlatform: {platform}\nModel: {model.provider.value}/{model.name}",
+                "text": (
+                    f"Driver started successfully. driver_id: {driver_id}\n"
+                    f"Platform: {platform_label}\n"
+                    f"Model: {model.provider.value}/{model.name}"
+                ),
             }
         ]
+
+    def _create_chromium_driver(self, capabilities: dict[str, Any], url: str | None) -> Any:
+        """Create Selenium Chrome driver from capabilities."""
+        from selenium.webdriver import Chrome
+        from selenium.webdriver.chrome.options import Options
+
+        options = Options()
+
+        # Apply all capabilities to options
+        for key, value in capabilities.items():
+            if key != "platformName":
+                options.set_capability(key, value)
+
+        driver = Chrome(options=options)
+        if url:
+            driver.get(url)
+        return driver
+
+    def _create_ios_driver(self, capabilities: dict[str, Any], url: str | None) -> Any:
+        """Create Appium iOS driver from capabilities."""
+        from appium.options.ios import XCUITestOptions
+        from appium.webdriver.client_config import AppiumClientConfig
+        from appium.webdriver.webdriver import WebDriver as Appium
+
+        options = XCUITestOptions()
+
+        # Load capabilities into options
+        options.load_capabilities(capabilities)
+
+        # Handle url parameter as app path if provided
+        if url:
+            options.app = url.replace("file://", "")
+
+        # Set up Appium client config
+        appium_server = os.getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
+        client_config = AppiumClientConfig(
+            remote_server_addr=appium_server,
+            direct_connection=True,
+        )
+
+        # Create Appium driver
+        return Appium(client_config=client_config, options=options)
+
+    def _create_android_driver(self, capabilities: dict[str, Any], url: str | None) -> Any:
+        """Create Appium Android driver from capabilities."""
+        from appium.options.android import UiAutomator2Options
+        from appium.webdriver.client_config import AppiumClientConfig
+        from appium.webdriver.webdriver import WebDriver as Appium
+
+        options = UiAutomator2Options()
+
+        # Load capabilities into options
+        options.load_capabilities(capabilities)
+
+        # Handle url parameter as app path if provided
+        if url:
+            options.app = url.replace("file://", "")
+
+        # Set up Appium client config
+        appium_server = os.getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
+        client_config = AppiumClientConfig(
+            remote_server_addr=appium_server,
+            direct_connection=True,
+        )
+
+        # Create Appium driver
+        return Appium(client_config=client_config, options=options)
 
     async def _alumnium_do(self, args: dict[str, Any]) -> list[dict]:
         """Execute Alumni.do()."""
