@@ -56,7 +56,15 @@ class LLMFactory:
                 cloud_endpoint = getenv("ALUMNIUM_OLLAMA_URL")
                 llm = ChatOllama(model=model.name, base_url=cloud_endpoint, temperature=0)
         elif model.provider == Provider.OPENAI:
-            llm = ChatOpenAI(model=model.name, temperature=0, seed=1)
+            if getenv("OPENAI_CUSTOM_URL"):
+                llm = ChatOpenAI(
+                    model=getenv("OPENAI_CUSTOM_MODEL", model.name),
+                    base_url=getenv("OPENAI_CUSTOM_URL", None),
+                    api_key=getenv("OPENAI_API_KEY", None),
+                    temperature=0
+                )
+            else:
+                llm = ChatOpenAI(model=model.name, temperature=0, seed=1)
         else:
             raise NotImplementedError(f"Model {model.provider} not implemented")
 
