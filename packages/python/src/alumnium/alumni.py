@@ -23,9 +23,9 @@ class Alumni:
     def __init__(
         self,
         driver: Page | WebDriver,
-        model: Model = None,
-        extra_tools: list[BaseTool] = None,
-        url: str = None,
+        model: Model | None = None,
+        extra_tools: list[BaseTool] | None = None,
+        url: str | None = None,
     ):
         self.model = model or Model.current
 
