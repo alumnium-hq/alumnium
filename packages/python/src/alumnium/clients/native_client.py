@@ -1,8 +1,11 @@
+from ..server.logutils import get_logger
 from ..server.models import Model
 from ..server.session_manager import SessionManager
 from ..tools.base_tool import BaseTool
 from ..tools.tool_to_schema_converter import convert_tools_to_schemas
 from .typecasting import Data, loosely_typecast
+
+logger = get_logger(__name__)
 
 
 class NativeClient:
@@ -28,6 +31,7 @@ class NativeClient:
         return self.session.planner_agent.invoke(goal, accessibility_tree.to_xml())
 
     def add_example(self, goal: str, actions: list[str]):
+        logger.debug(f"Adding example. Goal: {goal}, Actions: {actions}")
         return self.session.planner_agent.add_example(goal, actions)
 
     def clear_examples(self):

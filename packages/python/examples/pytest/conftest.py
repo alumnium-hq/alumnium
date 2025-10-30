@@ -1,6 +1,7 @@
 from datetime import datetime
 from os import getenv
 
+from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
 from appium.webdriver.client_config import AppiumClientConfig
 from appium.webdriver.webdriver import WebDriver as Appium
@@ -81,6 +82,50 @@ def driver():
         driver = Appium(client_config=client_config, options=options)
 
         yield driver
+    elif driver_type == "appium/android":
+        options = UiAutomator2Options()
+        options.automation_name = "UiAutomator2"
+        options.device_name = "Android Device"
+        options.platform_name = "Android"
+        options.no_reset = True
+
+        lt_username = getenv("LT_USERNAME", None)
+        lt_access_key = getenv("LT_ACCESS_KEY", None)
+
+        if lt_username and lt_access_key:
+            options.browser_name = "Chrome"
+            options.platform_version = "14"
+            options.set_capability(
+                "lt:options",
+                {
+                    "build": "Python - Android",
+                    "name": f"Pytest ({Model.current.provider.value}/{Model.current.name})",
+                    "isRealMobile": True,
+                    "network": False,
+                    "visual": True,
+                    "video": True,
+                    "w3c": True,
+                },
+            )
+
+            client_config = AppiumClientConfig(
+                username=lt_username,
+                password=lt_access_key,
+                remote_server_addr="https://mobile-hub.lambdatest.com/wd/hub",
+                direct_connection=True,
+            )
+        else:
+            options.platform_version = "14.0"
+            options.new_command_timeout = 300
+
+            client_config = AppiumClientConfig(
+                remote_server_addr="http://localhost:4723/wd/hub",
+                direct_connection=True,
+            )
+
+        driver = Appium(client_config=client_config, options=options)
+
+        yield driver
     else:
         raise NotImplementedError(f"Driver {driver} not implemented")
 
@@ -88,7 +133,7 @@ def driver():
 @fixture(scope="session")
 def al(driver):
     al = Alumni(driver, url=getenv("ALUMNIUM_SERVER_URL", None))
-    if driver_type == "appium":
+    if "appium" in driver_type:
         al.driver.delay = 0.1
 
     yield al

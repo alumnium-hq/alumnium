@@ -41,7 +41,8 @@ jobs:
       max-parallel: 3
       matrix:
         driver:
-          - appium
+          - appium/android
+          - appium/ios
           - playwright
           - selenium
         model:
@@ -78,12 +79,12 @@ jobs:
           key: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-
       - run: |
-          poetry run behave \
+          poetry run behave --tags @${{ matrix.driver }} \
             --format html-pretty \
             --outfile reports/behave.html \
             --format pretty \
-            ${{ matrix.driver == 'appium' && '--tags ~@web' || '' }}
-      - run: poetry run pytest --retries 1 --html reports/pytest.html examples/
+      - if: matrix.driver != 'appium/android'
+        run: poetry run pytest --retries 1 --html reports/pytest.html examples/
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
       - if: always()
