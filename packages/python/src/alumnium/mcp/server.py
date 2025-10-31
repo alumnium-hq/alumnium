@@ -15,6 +15,7 @@ from mcp.types import Tool
 
 from alumnium import Alumni, Model
 from alumnium.area import Area
+from alumnium.clients.native_client import NativeClient
 
 # Global state for driver management
 _drivers: dict[str, tuple[Alumni, Any]] = {}  # driver_id -> (Alumni instance, raw driver)
@@ -555,9 +556,11 @@ class AlumniumMCPServer:
 
         al, _ = _drivers[driver_id]
         # Access the internal driver's accessibility tree
-        tree = str(al.driver.accessibility_tree.to_str())
+        # as if it's processed by Alumnium server
+        client: NativeClient = al.client  # type: ignore
+        tree = client.session.process_tree(al.driver.accessibility_tree.to_str())  # type: ignore
 
-        return [{"type": "text", "text": f"Accessibility Tree:\n{tree}"}]
+        return [{"type": "text", "text": f"Accessibility Tree:\n{tree.to_xml()}"}]
 
     async def _quit_driver(self, args: dict[str, Any]) -> list[dict]:
         """Quit driver and cleanup."""
