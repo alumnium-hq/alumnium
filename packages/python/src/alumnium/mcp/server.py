@@ -1,9 +1,12 @@
 """MCP Server for Alumnium - exposes browser automation capabilities to AI coding agents."""
 
 import asyncio
+import base64
 import json
 import os
+import re
 import uuid
+from pathlib import Path
 from typing import Any
 
 from mcp.server import Server
@@ -16,6 +19,8 @@ from alumnium.area import Area
 # Global state for driver management
 _drivers: dict[str, tuple[Alumni, Any]] = {}  # driver_id -> (Alumni instance, raw driver)
 _areas: dict[str, Area] = {}  # area_id -> Area instance
+_screenshot_dirs: dict[str, Path] = {}  # driver_id -> screenshot directory path
+_step_counters: dict[str, int] = {}  # driver_id -> current step number
 
 
 class AlumniumMCPServer:
@@ -248,6 +253,37 @@ class AlumniumMCPServer:
             except Exception as e:
                 return [{"type": "text", "text": f"Error: {str(e)}"}]
 
+    def _save_screenshot(self, driver_id: str, description: str, al: Alumni) -> None:
+        """Save a screenshot with step number prefix and sanitized description."""
+        try:
+            # Get current step number and increment
+            step_num = _step_counters[driver_id]
+            _step_counters[driver_id] += 1
+
+            # Sanitize description for filename
+            # Remove special characters and limit length
+            sanitized = re.sub(r"[^\w\s-]", "", description)
+            sanitized = re.sub(r"\s+", "-", sanitized.strip())
+            sanitized = sanitized[:50]  # Truncate to 50 chars
+
+            # Get screenshot directory
+            screenshot_dir = _screenshot_dirs[driver_id]
+
+            # Create filename with step number prefix
+            filename = f"{step_num:02d}-{sanitized}.png"
+            filepath = screenshot_dir / filename
+
+            # Get base64 screenshot from driver
+            screenshot_b64 = al.driver.screenshot
+
+            # Decode base64 and save as PNG
+            screenshot_bytes = base64.b64decode(screenshot_b64)
+            filepath.write_bytes(screenshot_bytes)
+
+        except Exception as e:
+            # Log error but don't fail the operation
+            print(f"Warning: Failed to save screenshot for driver {driver_id}: {e}")
+
     async def _start_driver(self, args: dict[str, Any]) -> list[dict]:
         """Start a new driver instance."""
         # Parse capabilities JSON
@@ -286,6 +322,12 @@ class AlumniumMCPServer:
         # Generate unique driver ID
         driver_id = str(uuid.uuid4())
         _drivers[driver_id] = (al, driver)
+
+        # Create screenshot directory
+        screenshot_dir = Path("tmp") / "alumnium" / driver_id
+        screenshot_dir.mkdir(parents=True, exist_ok=True)
+        _screenshot_dirs[driver_id] = screenshot_dir
+        _step_counters[driver_id] = 1
 
         return [
             {
@@ -335,7 +377,7 @@ class AlumniumMCPServer:
         options.load_capabilities(capabilities)
 
         # Handle url parameter as app path if provided
-        if url:
+        if url and not url.startswith("http"):
             options.app = url.replace("file://", "")
 
         # Determine server URL: parameter > env var > default
@@ -353,7 +395,12 @@ class AlumniumMCPServer:
         )
 
         # Create Appium driver
-        return Appium(client_config=client_config, options=options)
+        driver = Appium(client_config=client_config, options=options)
+
+        if url and url.startswith("http"):
+            driver.get(url)
+
+        return driver
 
     def _create_android_driver(self, capabilities: dict[str, Any], url: str | None, server_url: str | None) -> Any:
         """Create Appium Android driver from capabilities."""
@@ -398,6 +445,9 @@ class AlumniumMCPServer:
         al, _ = _drivers[driver_id]
         al.do(goal)
 
+        # Save screenshot after successful execution
+        self._save_screenshot(driver_id, goal, al)
+
         return [{"type": "text", "text": f"Successfully executed: {goal}"}]
 
     async def _alumnium_check(self, args: dict[str, Any]) -> list[dict]:
@@ -417,6 +467,9 @@ class AlumniumMCPServer:
             explanation = str(e)
             result = False
 
+        # Save screenshot after check
+        self._save_screenshot(driver_id, f"check {statement}", al)
+
         return [{"type": "text", "text": f"Check finished: {statement}\nResult: {result}\nExplanation: {explanation}"}]
 
     async def _alumnium_get(self, args: dict[str, Any]) -> list[dict]:
@@ -430,6 +483,9 @@ class AlumniumMCPServer:
 
         al, _ = _drivers[driver_id]
         result = al.get(data, vision=vision)
+
+        # Save screenshot after get
+        self._save_screenshot(driver_id, f"get {data}", al)
 
         return [{"type": "text", "text": f"Extracted data: {result}"}]
 
@@ -511,8 +567,12 @@ class AlumniumMCPServer:
             raise ValueError(f"Driver {driver_id} not found.")
 
         al, driver = _drivers[driver_id]
+
+        # Get stats and screenshot directory before cleanup
+        stats = al.stats
+        screenshot_dir = str(_screenshot_dirs[driver_id])
+
         al.quit()
-        driver.quit()
 
         # Clean up areas associated with this driver
         areas_to_remove = [area_id for area_id, area in _areas.items() if area.driver == al.driver]
@@ -520,8 +580,23 @@ class AlumniumMCPServer:
             del _areas[area_id]
 
         del _drivers[driver_id]
+        del _screenshot_dirs[driver_id]
+        del _step_counters[driver_id]
 
-        return [{"type": "text", "text": f"Driver {driver_id} closed successfully"}]
+        # Format stats message with detailed cache breakdown
+        message = (
+            f"Driver {driver_id} closed successfully\n\n"
+            f"Screenshots saved to: {screenshot_dir}\n\n"
+            f"Token Usage Statistics:\n"
+            f"- Total: {stats['total']['total_tokens']} tokens\n"
+            f"  - Input: {stats['total']['input_tokens']}\n"
+            f"  - Output: {stats['total']['output_tokens']}\n"
+            f"- Cached: {stats['cache']['total_tokens']} tokens\n"
+            f"  - Input: {stats['cache']['input_tokens']}\n"
+            f"  - Output: {stats['cache']['output_tokens']}"
+        )
+
+        return [{"type": "text", "text": message}]
 
     async def _save_cache(self, args: dict[str, Any]) -> list[dict]:
         """Save the cache for a driver session."""
