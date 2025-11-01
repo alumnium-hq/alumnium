@@ -82,7 +82,7 @@ def driver():
         driver = Appium(client_config=client_config, options=options)
 
         yield driver
-    elif driver_type == "appium/android":
+    elif driver_type == "appium-android":
         options = UiAutomator2Options()
         options.automation_name = "UiAutomator2"
         options.device_name = "Android Device"

@@ -41,8 +41,8 @@ jobs:
       max-parallel: 3
       matrix:
         driver:
-          - appium/android
-          - appium/ios
+          - appium-android
+          - appium-ios
           - playwright
           - selenium
         model:
@@ -82,7 +82,7 @@ jobs:
             --format html-pretty \
             --outfile reports/behave.html \
             --format pretty \
-      - if: matrix.driver != 'appium/android'
+      - if: matrix.driver != 'appium-android'
         run: poetry run pytest --retries 1 --html reports/pytest.html examples/
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3

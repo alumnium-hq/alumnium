@@ -47,21 +47,21 @@ def step_impl(context):
 
 @when('I show only "{filter}" tasks')
 def step_impl(context, filter):
-    if driver_type == "appium/android":
+    if driver_type == "appium-android":
         context.al.do("open filters")
     context.al.do(f'I show only "{filter}" tasks')
 
 
 @when("I clear completed tasks")
 def step_impl(context):
-    if driver_type == "appium/android":
+    if driver_type == "appium-android":
         context.al.do("open more options")
     context.al.do("clear completed tasks")
 
 
 @then('"{title}" task is shown in the list of tasks')
 def step_impl(context, title):
-    if driver_type == "appium/android":
+    if driver_type == "appium-android":
         assert title in context.al.get("titles of tasks (texts of TextViews with Checkboxes)")
     else:
         assert title in context.al.get("titles of tasks")
@@ -69,7 +69,7 @@ def step_impl(context, title):
 
 @then('"{title}" task is not shown in the list of tasks')
 def step_impl(context, title):
-    if driver_type == "appium/android":
+    if driver_type == "appium-android":
         assert title not in context.al.get("titles of tasks (texts of TextViews with Checkboxes)")
     else:
         assert title not in context.al.get("titles of tasks")
@@ -77,7 +77,7 @@ def step_impl(context, title):
 
 @then('"{title}" task is not marked as completed')
 def step_impl(context, title):
-    if driver_type == "appium/ios":
+    if driver_type == "appium-ios":
         context.al.check(
             f'"{title}" task is not marked as completed '
             f"(completion is indicated by a selected image to the left of the task title)"
@@ -88,7 +88,7 @@ def step_impl(context, title):
 
 @then('"{title}" task is marked as completed')
 def step_impl(context, title):
-    if driver_type == "appium/ios":
+    if driver_type == "appium-ios":
         context.al.check(
             f'"{title}" task is marked as completed '
             f"(completion is indicated by a selected image to the left of the task title)"
