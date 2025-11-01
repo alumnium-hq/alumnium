@@ -28,7 +28,7 @@ def driver(context):
         context.driver = Chrome()
         yield context.driver
         context.driver.quit()
-    elif driver_name == "appium/ios":
+    elif driver_name == "appium-ios":
         options = XCUITestOptions()
         options.automation_name = "XCUITest"
         options.device_name = "iPhone 16"
@@ -82,7 +82,7 @@ def driver(context):
         )
 
         yield context.driver
-    elif driver_name == "appium/android":
+    elif driver_name == "appium-android":
         options = UiAutomator2Options()
         options.automation_name = "UiAutomator2"
         options.device_name = "Android Device"
@@ -146,7 +146,7 @@ def alumnium(context):
         context.al.driver.autoswitch_contexts = False  # Slow!
         context.al.driver.delay = 0.1
 
-        if driver_name == "appium/ios":
+        if driver_name == "appium-ios":
             context.al.learn(
                 goal='create a new task "this is Al"',
                 actions=[
@@ -167,7 +167,7 @@ def alumnium(context):
                     "click done button",
                 ],
             )
-        elif driver_name == "appium/android":
+        elif driver_name == "appium-android":
             context.al.driver.hide_keyboard_after_typing = True
             context.al.driver.delay = 0.5
 
@@ -253,11 +253,11 @@ def after_scenario(context, scenario):
             )
 
     if isinstance(context.driver, Appium):
-        if driver_name == "appium/ios":
+        if driver_name == "appium-ios":
             context.driver.terminate_app("com.ayodeji.TodoList")
             context.driver.remove_app("com.ayodeji.TodoList")
             context.driver.install_app(context.app)
-        elif driver_name == "appium/android":
+        elif driver_name == "appium-android":
             context.driver.terminate_app("com.example.android.architecture.blueprints.main")
             context.driver.remove_app("com.example.android.architecture.blueprints.main")
             context.driver.install_app(context.app)
