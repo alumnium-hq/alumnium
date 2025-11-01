@@ -136,7 +136,7 @@ def driver(context):
 
         yield context.driver
     else:
-        raise NotImplementedError(f"Driver {driver} not implemented")
+        raise NotImplementedError(f"Driver {driver_name} not implemented")
 
 
 @fixture
@@ -170,6 +170,8 @@ def alumnium(context):
         elif driver_name == "appium-android":
             context.al.driver.hide_keyboard_after_typing = True
             context.al.driver.delay = 0.5
+            # Workaround for LambdaTest stale page source issue
+            context.al.driver.double_fetch_page_source = True
 
             context.al.learn(
                 goal='create a new task "this is Al"',

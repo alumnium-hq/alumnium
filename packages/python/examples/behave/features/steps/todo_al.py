@@ -1,3 +1,5 @@
+# pyright: reportRedeclaration=false
+
 from os import getenv
 
 from appium.webdriver.webdriver import WebDriver as Appium
@@ -61,6 +63,7 @@ def step_impl(context):
 
 @then('"{title}" task is shown in the list of tasks')
 def step_impl(context, title):
+    # https://github.com/alumnium-hq/alumnium/issues/110
     if driver_type == "appium-android":
         assert title in context.al.get("titles of tasks (texts of TextViews with Checkboxes)")
     else:
@@ -69,6 +72,7 @@ def step_impl(context, title):
 
 @then('"{title}" task is not shown in the list of tasks')
 def step_impl(context, title):
+    # https://github.com/alumnium-hq/alumnium/issues/110
     if driver_type == "appium-android":
         assert title not in context.al.get("titles of tasks (texts of TextViews with Checkboxes)")
     else:
@@ -77,6 +81,7 @@ def step_impl(context, title):
 
 @then('"{title}" task is not marked as completed')
 def step_impl(context, title):
+    # https://github.com/alumnium-hq/alumnium/issues/110
     if driver_type == "appium-ios":
         context.al.check(
             f'"{title}" task is not marked as completed '
