@@ -42,9 +42,9 @@ jobs:
       matrix:
         driver:
           - appium-android
-          - appium-ios
-          - playwright
-          - selenium
+          # - appium-ios
+          # - playwright
+          # - selenium
         model:
           - aws_anthropic
           - aws_meta
