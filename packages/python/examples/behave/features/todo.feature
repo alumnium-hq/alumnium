@@ -4,21 +4,21 @@ Feature: To Do application
   Background:
     Given I open application
 
-  @appium/android @appium/ios
+  @appium-android @appium-ios
   Scenario: Create a task
     When I create a new task "Buy milk"
     Then "Buy milk" task is shown in the list of tasks
     And "Buy milk" task is not marked as completed
     And tasks counter is 1
 
-  @appium/android @appium/ios
+  @appium-android @appium-ios
   Scenario: Complete a task
     When I create a new task "Buy milk"
     And I mark the "Buy milk" task as completed
     Then "Buy milk" task is marked as completed
     And tasks counter is 0
 
-  @appium/android @appium/ios
+  @appium-android @appium-ios
   Scenario: Uncomplete a task
     When I create a new task "Buy milk"
     And I mark the "Buy milk" task as completed
@@ -35,14 +35,14 @@ Feature: To Do application
     And tasks counter is 0
 
   # Needs more work for Android
-  @appium/ios
+  @appium-ios
   Scenario: Delete a task
     When I create a new task "Buy milk"
     And I create a new task "Buy bread"
     And I delete the "Buy milk" task
     Then "Buy milk" task is not shown in the list of tasks
 
-  @appium/android
+  @appium-android
   Scenario: Show active tasks
     When I create a new task "Buy milk"
     And I create a new task "Buy bread"
@@ -51,7 +51,7 @@ Feature: To Do application
     Then "Buy bread" task is shown in the list of tasks
     But "Buy milk" task is not shown in the list of tasks
 
-  @appium/android
+  @appium-android
   Scenario: Show completed tasks
     When I create a new task "Buy milk"
     And I create a new task "Buy bread"
@@ -60,7 +60,7 @@ Feature: To Do application
     Then "Buy milk" task is shown in the list of tasks
     But "Buy bread" task is not shown in the list of tasks
 
-  @appium/android
+  @appium-android
   Scenario: Clear completed tasks
     When I create a new task "Buy milk"
     And I create a new task "Buy bread"
