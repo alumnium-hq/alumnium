@@ -46,7 +46,6 @@ jobs:
           - playwright
           - selenium
         model:
-          - anthropic
           - aws_anthropic
           - aws_meta
           - azure_openai
