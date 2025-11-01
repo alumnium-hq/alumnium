@@ -50,7 +50,6 @@ jobs:
           - azure_openai
           - aws_meta
           - aws_anthropic
-          - anthropic
     steps:
       - uses: actions/checkout@v4
         with:

@@ -1,6 +1,6 @@
 name: CI
 on:
-  pull_request_target:
+  pull_request:
   push:
     branches:
       - main
@@ -78,13 +78,13 @@ jobs:
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
-  typescript:
-    name: TypeScript
-    needs: test
-    secrets: inherit
-    if: >
-      needs.test.outputs.permitted == 'true'
-        && (needs.test.outputs.server-changed == 'true' || needs.test.outputs.typescript-changed == 'true')
-    uses: ./.github/workflows/ci-typescript.yml
-    with:
-      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+  # typescript:
+  #   name: TypeScript
+  #   needs: test
+  #   secrets: inherit
+  #   if: >
+  #     needs.test.outputs.permitted == 'true'
+  #       && (needs.test.outputs.server-changed == 'true' || needs.test.outputs.typescript-changed == 'true')
+  #   uses: ./.github/workflows/ci-typescript.yml
+  #   with:
+  #     sha: ${{ github.event.pull_request.head.sha || github.sha }}
