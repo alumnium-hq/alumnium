@@ -176,9 +176,9 @@ def alumnium(context):
             context.al.learn(
                 goal='create a new task "this is Al"',
                 actions=[
-                    'type "this is Al" in "Title" text view',
-                    'type "this is Al" in "Enter your task here" text view',
-                    "click save",
+                    'type "this is Al" in "Title" textbox',
+                    'type "this is Al" in "Enter your task here" textbox',
+                    "click button 'Save'",
                 ],
             )
             context.al.learn(
