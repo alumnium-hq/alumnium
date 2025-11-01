@@ -29,7 +29,7 @@ class Name:
 
 
 class Model:
-    current = None
+    current: "Model"
 
     def __init__(self, provider=None, name=None):
         self.provider = Provider(provider or Provider.OPENAI)
