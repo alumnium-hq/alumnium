@@ -61,7 +61,7 @@ class LLMFactory:
             llm = ChatOpenAI(
                 model=getenv("OPENAI_CUSTOM_MODEL", model.name),
                 base_url=getenv("OPENAI_CUSTOM_URL"),
-                seed=getenv("OPENAI_CUSTOM_URL") and None or 1,  # Only OpenAI official API gets a seed
+                seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
                 temperature=0,
             )
         else:
