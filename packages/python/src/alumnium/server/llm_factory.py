@@ -47,6 +47,8 @@ class LLMFactory:
             llm = ChatDeepSeek(model=model.name, temperature=0)
         elif model.provider == Provider.GOOGLE:
             llm = ChatGoogleGenerativeAI(model=model.name, temperature=0)
+        elif model.provider == Provider.GITHUB:
+            llm = ChatOpenAI(model=model.name, base_url="https://models.github.ai/inference", temperature=0)
         elif model.provider == Provider.MISTRALAI:
             llm = ChatMistralAI(model=model.name, temperature=0)
         elif model.provider == Provider.OLLAMA:
@@ -56,15 +58,12 @@ class LLMFactory:
                 cloud_endpoint = getenv("ALUMNIUM_OLLAMA_URL")
                 llm = ChatOllama(model=model.name, base_url=cloud_endpoint, temperature=0)
         elif model.provider == Provider.OPENAI:
-            if getenv("OPENAI_CUSTOM_URL"):
-                llm = ChatOpenAI(
-                    model=getenv("OPENAI_CUSTOM_MODEL", model.name),
-                    base_url=getenv("OPENAI_CUSTOM_URL", None),
-                    api_key=getenv("OPENAI_API_KEY", None),
-                    temperature=0
-                )
-            else:
-                llm = ChatOpenAI(model=model.name, temperature=0, seed=1)
+            llm = ChatOpenAI(
+                model=getenv("OPENAI_CUSTOM_MODEL", model.name),
+                base_url=getenv("OPENAI_CUSTOM_URL"),
+                seed=getenv("OPENAI_CUSTOM_URL") and None or 1,  # Only OpenAI official API gets a seed
+                temperature=0,
+            )
         else:
             raise NotImplementedError(f"Model {model.provider} not implemented")
 
