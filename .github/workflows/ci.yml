@@ -16,6 +16,8 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    env:
+      DISPLAY: :99
     outputs:
       permitted: ${{ steps.check-access.outputs.require-result }}
       python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
@@ -54,11 +56,20 @@ jobs:
         with:
           path: packages/python/.venv
           key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+      - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
       - run: make install
       - run: make build
       - run: make check-format
       - run: make test
+      - run: |
+          poetry run behave \
+            --format html-pretty \
+            --outfile reports/behave.html \
+            --format pretty
+        env:
+          OPENAI_API_KEY: ${{ github.token }}
+        working-directory: packages/python
       - uses: docker/build-push-action@v6
         with:
           cache-from: type=gha
