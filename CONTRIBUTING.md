@@ -133,11 +133,12 @@ make start-server # Start the Alumnium server
 
 ### 4. Set Up Pre-commit Hooks
 
-To help maintain code quality, Alumnium uses pre-commit hooks:
+To help maintain code quality, Alumnium uses pre-commit hooks. After installing the Python package:
 
 ```bash
-# From repository root
-pre-commit install
+# From repository root (requires Python package to be installed)
+cd packages/python
+poetry run pre-commit install
 ```
 
 ### 5. Environment Variables
