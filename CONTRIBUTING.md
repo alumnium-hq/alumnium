@@ -4,7 +4,7 @@
 
 Thank you for your interest in contributing to Alumnium! As an experimental AI-powered test automation solution, we are pioneering new approaches to make testing more intuitive and robust. Your expertise and passion can help shape this emerging technology.
 
-As a software testers, we have seen how the right tools can transform quality assurance. Alumnium aims to be that transformative tool by leveraging AI to simplify test interactions and assertions.
+As software testers, we have seen how the right tools can transform quality assurance. Alumnium aims to be that transformative tool by leveraging AI to simplify test interactions and assertions.
 
 ## Project Understanding
 
@@ -13,6 +13,15 @@ Before contributing, please review:
 - Our [README][1] and [documentation][2] to understand Alumnium's vision of creating higher-level abstractions for test automation that simplify web page interactions and strengthen assertion mechanisms.
 - Our experimental status - we're in early development and value innovative approaches.
 - The core functionality that uses natural language processing to interpret testing commands.
+
+## Monorepo Structure
+
+Alumnium is organized as a monorepo with two main packages:
+
+- **`packages/python/`** - Core Python implementation and AI server
+- **`packages/typescript/`** - TypeScript client implementation
+
+Both packages share the same API and can be developed independently or together.
 
 ## Finding Your Contribution Opportunity
 
@@ -32,13 +41,31 @@ Before contributing, please review:
 # Fork and clone the repository
 git clone https://github.com/your-username/alumnium.git
 cd alumnium
+```
 
-# Set up development environment
+#### Python Package
+
+```bash
+cd packages/python
 pipx install poetry
 poetry install
 ```
 
-### 2. Configure AI provider access
+#### TypeScript Package
+
+```bash
+cd packages/typescript
+npm install
+```
+
+#### Both Packages (Monorepo Root)
+
+```bash
+# Install dependencies for both packages
+make install
+```
+
+### 2. Configure AI Provider Access
 
 Configure access to AI providers as mentioned in [docs][4].
 
@@ -46,34 +73,81 @@ Configure access to AI providers as mentioned in [docs][4].
 
 When working on Alumnium:
 
-- Follow the existing code style and patterns.
-- Ensure compatibility with the Selenium and Playwright.
+- Follow the existing code style and patterns in each package.
+- Ensure compatibility with Appium, Playwright, and Selenium.
 - Document new functionality with clear examples.
-- Test your changes using the provided commands:
+- Test your changes thoroughly in the relevant package.
+
+#### Python Development
 
 ```bash
-poetry run python -i demo.py  # REPL for quick testing
-poetry run behave             # Gherkin examples
-poetry run pytest             # Pytest examples
+cd packages/python
+
+# Quick testing with REPL
+poetry run python -i demo.py
+
+# Run BDD examples
+poetry run behave
+
+# Run pytest examples
+poetry run pytest examples/
+
+# Run unit tests
+poetry poe test
+
+# Format code
+poetry poe format
 ```
 
-### 4. Set Up the pre-commit Hooks
-To help maintain code quality, Alumnium uses pre-commit hooks. Please ensure it's installed and configured by running the following command:
+#### TypeScript Development
 
 ```bash
-poetry run pre-commit install # Installing pre-commit 
+cd packages/typescript
+
+# Build the package
+npm run build
+
+# Run all examples
+npm run examples
+
+# Run specific driver examples
+npm run examples:selenium
+npm run examples:playwright
+npm run examples:appium
+
+# Format code
+npm run format
 ```
 
-### 5. Set Up the  Variables
-If you want to customize the logging behavior, you need to create and set the following environment variables.
-## Environment Variables
+#### Monorepo Commands
+
+From the root directory, you can use Make commands:
+
+```bash
+make format       # Format both packages
+make test         # Run Python tests
+make build        # Build both packages
+make clean        # Clean both packages
+make start-server # Start the Alumnium server
+```
+
+### 4. Set Up Pre-commit Hooks
+
+To help maintain code quality, Alumnium uses pre-commit hooks:
+
+```bash
+# From repository root
+pre-commit install
+```
+
+### 5. Environment Variables
+
+If you want to customize the logging behavior, you can set the following environment variables:
 
 | Variable Name          | Description                        | Default Value             |
 |------------------------|------------------------------------|---------------------------|
 | `ALUMNIUM_LOG_PATH`    | Path to the alumnium log directory | `stdout(logs to console)` |
 | `ALUMNIUM_LOG_LEVEL`   | Log level or configuration value   | `WARNING`                 |
-
-
 
 ### 6. Pull Request Process
 
@@ -81,7 +155,8 @@ If you want to customize the logging behavior, you need to create and set the fo
 2. **Write meaningful commit messages** explaining your changes. We use [Conventional Commits][5] format.
 3. **Include tests** that verify your contribution works as expected.
 4. **Update documentation** if you're adding or changing features.
-5. **Submit your PR** with a clear description of what it accomplishes.
+5. **Maintain API parity** - If adding features to one package, consider implementing in both Python and TypeScript.
+6. **Submit your PR** with a clear description of what it accomplishes.
 
 ## AI-First Testing Philosophy
 
