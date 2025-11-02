@@ -1,10 +1,10 @@
 # Contributing to Alumnium
 
-## Welcome to the Future of Test Automation!
+## Welcome
 
-Thank you for your interest in contributing to Alumnium! As an experimental AI-powered test automation solution, we are pioneering new approaches to make testing more intuitive and robust. Your expertise and passion can help shape this emerging technology.
+Thank you for your interest in contributing to Alumnium!
 
-As software testers, we have seen how the right tools can transform quality assurance. Alumnium aims to be that transformative tool by leveraging AI to simplify test interactions and assertions.
+Alumnium is an experimental AI-powered test automation solution that aims to simplify test interactions and assertions. Your contributions can help improve this project.
 
 ## Project Understanding
 
@@ -131,26 +131,19 @@ make clean        # Clean both packages
 make start-server # Start the Alumnium server
 ```
 
-### 4. Set Up Pre-commit Hooks
+### 4. Environment Variables
 
-To help maintain code quality, Alumnium uses pre-commit hooks. After installing the Python package:
+For local development, you may need to configure the following environment variables:
 
-```bash
-# From repository root (requires Python package to be installed)
-cd packages/python
-poetry run pre-commit install
-```
+| Variable Name          | Description                                          | Default Value             |
+|------------------------|------------------------------------------------------|---------------------------|
+| `ALUMNIUM_DRIVER`      | Driver to use for tests (selenium, playwright, appium) | `selenium`                |
+| `ALUMNIUM_MODEL`       | AI model provider (anthropic, openai, google, etc.)  | `openai`                  |
+| `ALUMNIUM_LOG_PATH`    | Path to the alumnium log directory                   | `stdout(logs to console)` |
+| `ALUMNIUM_LOG_LEVEL`   | Log level or configuration value                     | `WARNING`                 |
+| `ALUMNIUM_CACHE`       | Cache provider or disable it                         | `filesystem`              |
 
-### 5. Environment Variables
-
-If you want to customize the logging behavior, you can set the following environment variables:
-
-| Variable Name          | Description                        | Default Value             |
-|------------------------|------------------------------------|---------------------------|
-| `ALUMNIUM_LOG_PATH`    | Path to the alumnium log directory | `stdout(logs to console)` |
-| `ALUMNIUM_LOG_LEVEL`   | Log level or configuration value   | `WARNING`                 |
-
-### 6. Pull Request Process
+### 5. Pull Request Process
 
 1. **Create a focused branch** for your contribution.
 2. **Write meaningful commit messages** explaining your changes. We use [Conventional Commits][5] format.
