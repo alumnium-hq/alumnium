@@ -1,6 +1,6 @@
 name: CI
 on:
-  pull_request_target:
+  pull_request: # TODO
   push:
     branches:
       - main
@@ -59,6 +59,14 @@ jobs:
       - run: make build
       - run: make check-format
       - run: make test
+      - run: |
+          poetry run behave \
+            --format html-pretty \
+            --outfile reports/behave.html \
+            --format pretty
+        env:
+          OPENAI_API_KEY: ${{ github.token }}
+        working-directory: packages/python
       - uses: docker/build-push-action@v6
         with:
           cache-from: type=gha
