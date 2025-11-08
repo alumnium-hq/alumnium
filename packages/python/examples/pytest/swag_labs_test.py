@@ -15,7 +15,7 @@ def login(al, driver, execute_script, navigate):
     al.learn("add laptop to cart", ["click button 'Add to cart' next to 'laptop' product"])
     al.learn("go to shopping cart", ["click link after 'Swag Labs' with a number text in it"])
 
-    if driver_type == "appium":
+    if driver_type == "appium-ios":
         al.learn(
             "sort products by lowest shipping cost",
             [
@@ -33,7 +33,7 @@ def login(al, driver, execute_script, navigate):
     al.do("type 'standard_user' into username field")
     al.do("type 'secret_sauce' into password field")
     al.do("click login button")
-    if driver_type == "appium":
+    if driver_type == "appium-ios":
         wait = WebDriverWait(driver, 2)
         try:
             button = wait.until(
@@ -94,7 +94,7 @@ def test_sorting(al):
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Cannot figure out how to open cart")
 @mark.xfail(
-    driver_type == "appium",
+    driver_type == "appium-ios",
     reason="https://github.com/alumnium-hq/alumnium/issues/132",
 )
 def test_checkout(al):

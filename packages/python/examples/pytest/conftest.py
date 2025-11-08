@@ -37,7 +37,7 @@ def driver():
         )
         driver = Chrome(options=options)
         yield driver
-    elif driver_type == "appium":
+    elif driver_type == "appium-ios":
         options = XCUITestOptions()
         options.automation_name = "XCUITest"
         options.device_name = "iPhone 16"
@@ -127,7 +127,7 @@ def driver():
 
         yield driver
     else:
-        raise NotImplementedError(f"Driver {driver} not implemented")
+        raise NotImplementedError(f"Driver {driver_type} not implemented")
 
 
 @fixture(scope="session")

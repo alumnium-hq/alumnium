@@ -7,7 +7,7 @@ from alumnium import Model, Provider
 
 @mark.xfail(Model.current.provider == Provider.DEEPSEEK, reason="No vision support yet")
 @mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Example doesn't support drag and drop in mobile browsers",
 )
 def test_drag_and_drop(al, navigate):
