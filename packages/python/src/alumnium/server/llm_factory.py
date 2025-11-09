@@ -7,6 +7,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mistralai import ChatMistralAI
 from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
+from langchain_xai import ChatXAI
 
 from .logutils import get_logger
 from .models import Model, Provider
@@ -64,6 +65,8 @@ class LLMFactory:
                 seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
                 temperature=0,
             )
+        elif model.provider == Provider.XAI:
+            llm = ChatXAI(model=model.name, temperature=0)
         else:
             raise NotImplementedError(f"Model {model.provider} not implemented")
 

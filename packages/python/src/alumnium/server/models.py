@@ -13,6 +13,7 @@ class Provider(Enum):
     MISTRALAI = "mistralai"
     OLLAMA = "ollama"
     OPENAI = "openai"
+    XAI = "xai"
 
 
 class Name:
@@ -27,6 +28,7 @@ class Name:
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "mistral-small3.1",
         Provider.OPENAI: "gpt-4o-mini-2024-07-18",
+        Provider.XAI: "grok-4-fast-non-reasoning",
     }
 
 
@@ -35,7 +37,7 @@ class Model:
 
     def __init__(self, provider=None, name=None):
         self.provider = Provider(provider or Provider.OPENAI)
-        self.name = name or Name.DEFAULT.get(self.provider)
+        self.name = name or Name.DEFAULT.get(self.provider, "")
 
 
 provider, *name = getenv("ALUMNIUM_MODEL", "").lower().split("/", maxsplit=1)

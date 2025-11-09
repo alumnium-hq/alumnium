@@ -9,6 +9,7 @@ export enum Provider {
   MISTRALAI = "mistralai",
   OLLAMA = "ollama",
   OPENAI = "openai",
+  XAI = "xai",
 }
 
 export class ModelName {
@@ -23,6 +24,7 @@ export class ModelName {
     [Provider.MISTRALAI]: "mistral-medium-2505",
     [Provider.OLLAMA]: "mistral-small3.1",
     [Provider.OPENAI]: "gpt-4o-mini-2024-07-18",
+    [Provider.XAI]: "grok-4-fast-non-reasoning",
   };
 }
 

@@ -37,6 +37,8 @@ class BaseAgent:
             prompt_path /= "mistralai"
         elif provider == Provider.OLLAMA:
             prompt_path /= "ollama"
+        elif provider == Provider.XAI:
+            prompt_path /= "xai"
         else:
             prompt_path /= "openai"
 
