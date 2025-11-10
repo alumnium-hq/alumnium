@@ -10,6 +10,7 @@ import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
 import { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
 import { SeleniumDriver } from "./drivers/SeleniumDriver.js";
+import { AssertionError } from "./errors/AssertionError.js";
 import { Model } from "./Model.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
 import { ClickTool } from "./tools/ClickTool.js";
@@ -141,7 +142,7 @@ export class Alumni {
     );
 
     if (!value) {
-      throw new Error(explanation);
+      throw new AssertionError(explanation);
     }
 
     return explanation;

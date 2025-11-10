@@ -4,6 +4,7 @@ import { HttpClient } from "./clients/HttpClient.js";
 import { Data } from "./clients/typecasting.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
+import { AssertionError } from "./errors/AssertionError.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
 
 export class Area {
@@ -67,7 +68,7 @@ export class Area {
     );
 
     if (!value) {
-      throw new Error(explanation);
+      throw new AssertionError(explanation);
     }
 
     return explanation;

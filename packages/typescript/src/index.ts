@@ -7,5 +7,6 @@ export { AppiumDriver } from "./drivers/AppiumDriver.js";
 export { Key } from "./drivers/keys.js";
 export { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
 export { SeleniumDriver } from "./drivers/SeleniumDriver.js";
+export { AssertionError } from "./errors/AssertionError.js";
 export { Model, ModelName, Provider } from "./Model.js";
 export { NavigateBackTool } from "./tools/NavigateBackTool.js";
