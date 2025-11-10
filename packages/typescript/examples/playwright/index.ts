@@ -2,7 +2,7 @@ import { test as base } from "@playwright/test";
 import { Alumni } from "../../src/Alumni.js";
 
 export const test = base.extend<{ al: Alumni }>({
-  al: async ({ page }, use, testInfo) => {
+  al: async ({ page }, use) => {
     const al = new Alumni(page);
 
     await al.learn('create a new task "this is Al"', [
@@ -19,15 +19,17 @@ export const test = base.extend<{ al: Alumni }>({
 
     await use(al);
 
-    if (testInfo.status === testInfo.expectedStatus) {
-      await al.cache.save();
-    } else {
-      await al.cache.discard();
-    }
-
     await al.clearLearnExamples();
     await al.quit();
   },
+});
+
+test.afterEach(async ({ al }, testInfo) => {
+  if (testInfo.status === testInfo.expectedStatus) {
+    await al.cache.save();
+  } else {
+    await al.cache.discard();
+  }
 });
 
 export { expect } from "@playwright/test";
