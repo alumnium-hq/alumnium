@@ -1,4 +1,5 @@
 from os import getenv
+
 from retry import retry
 
 from .accessibility.base_accessibility_tree import BaseAccessibilityTree

@@ -1,5 +1,6 @@
-from appium.webdriver.webdriver import WebDriver as Appium
 from os import getenv
+
+from appium.webdriver.webdriver import WebDriver as Appium
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
