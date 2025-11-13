@@ -1,3 +1,4 @@
+from os import getenv
 from retry import retry
 
 from .accessibility.base_accessibility_tree import BaseAccessibilityTree
@@ -10,6 +11,8 @@ from .server.logutils import get_logger
 from .tools import BaseTool
 
 logger = get_logger(__name__)
+
+RETRIES = getenv("ALUMNIUM_RETRIES", 2),
 
 
 class Area:
@@ -29,7 +32,7 @@ class Area:
         self.tools = tools
         self.client = client
 
-    @retry(tries=2, delay=0.1, logger=logger)
+    @retry(tries=RETRIES, delay=0.5, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal within the area.
@@ -45,6 +48,7 @@ class Area:
             for tool_call in actor_response:
                 BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
+    @retry(tries=RETRIES, delay=0.5, logger=logger)
     def check(self, statement: str, vision: bool = False) -> str:
         """
         Checks a given statement true or false within the area.
@@ -69,6 +73,7 @@ class Area:
         assert value, explanation
         return explanation
 
+    @retry(tries=RETRIES, delay=0.5, logger=logger)
     def get(self, data: str, vision: bool = False) -> Data:
         """
         Extracts requested data from the area.
@@ -89,6 +94,7 @@ class Area:
         )
         return value
 
+    @retry(tries=RETRIES, delay=0.5, logger=logger)
     def find(self, description: str) -> Element:
         """
         Finds an element within this area and returns the native driver element.
