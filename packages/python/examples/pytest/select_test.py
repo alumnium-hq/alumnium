@@ -7,7 +7,7 @@ from alumnium import Model, Provider
 
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
 @mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Appium doesn't support select tool yet",
 )
 def test_select_option(al, navigate):

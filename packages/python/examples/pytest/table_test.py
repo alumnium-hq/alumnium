@@ -23,7 +23,7 @@ def learn(al):
 
 
 @mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Area is not propery extracted from Appium source code.",
 )
 def test_table_extraction(al, navigate):
@@ -37,7 +37,7 @@ def test_table_extraction(al, navigate):
 
 
 @mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Area is not propery extracted from Appium source code.",
 )
 def test_table_sorting(al, navigate):

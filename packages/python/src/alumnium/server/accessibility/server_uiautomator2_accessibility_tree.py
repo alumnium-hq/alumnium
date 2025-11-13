@@ -137,7 +137,8 @@ class ServerUIAutomator2AccessibilityTree(BaseServerAccessibilityTree):
                 resource_id = ""
                 content_desc = ""
                 text_desc = ""
-                clickable = ""
+                clickable = False
+                checked = None
 
                 role = Element(simplified_role)
                 role.set("id", str(id))
@@ -147,11 +148,12 @@ class ServerUIAutomator2AccessibilityTree(BaseServerAccessibilityTree):
                         resource_id = props["value"]
                     if props["name"] == "content-desc" and props["value"]:
                         content_desc = props["value"]
-                    if simplified_role == "TextView":
-                        if props["name"] == "text" and props["value"]:
-                            text_desc = props["value"]
+                    if props["name"] == "text" and props["value"]:
+                        text_desc = props["value"]
                     if props["name"] == "clickable" and props["value"]:
                         clickable = True
+                    if props["name"] == "checked":
+                        checked = props["value"]
 
                 if resource_id:
                     role.set("resource-id", resource_id)
@@ -159,8 +161,10 @@ class ServerUIAutomator2AccessibilityTree(BaseServerAccessibilityTree):
                     role.set("content-desc", content_desc)
                 if text_desc:
                     role.set("text", text_desc)
-                if clickable:
-                    role.set("clickable", "true")
+                if clickable is not None:
+                    role.set("clickable", "true" if clickable else "false")
+                if checked is not None and simplified_role == "CheckBox":
+                    role.set("checked", "true" if checked else "false")
 
                 parent_element.append(role)
                 if child_element.children:

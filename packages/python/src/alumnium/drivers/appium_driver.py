@@ -32,12 +32,13 @@ class AppiumDriver(BaseDriver):
             TypeTool,
         }
         self.autoswitch_contexts = True
-        self.delay = 0
+        self.delay: float = 0
         self.hide_keyboard_after_typing = False
+        self.double_fetch_page_source = False
 
     @property
     def platform(self) -> str:
-        if self.driver.capabilities["automationName"] == "uiautomator2":
+        if self.driver.capabilities.get("automationName", "").lower() == "uiautomator2":
             return "uiautomator2"
         else:
             return "xcuitest"
@@ -46,6 +47,10 @@ class AppiumDriver(BaseDriver):
     def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibilityTree:
         self._ensure_native_app_context()
         sleep(self.delay)
+        # Hacky workaround for cloud providers reporting stale page source.
+        # Intentionally fetch and discard the page source to refresh internal state.
+        if self.double_fetch_page_source:
+            _ = self.driver.page_source
         xml_string = self.driver.page_source
 
         if self.platform == "uiautomator2":
@@ -57,7 +62,7 @@ class AppiumDriver(BaseDriver):
         self._ensure_native_app_context()
         self.find_element(id).click()
 
-    def drag_and_drop(self, from_id: int, to_id: int) -> ActionHelpers:
+    def drag_and_drop(self, from_id: int, to_id: int):
         self._ensure_native_app_context()
         self.driver.drag_and_drop(self.find_element(from_id), self.find_element(to_id))
 
@@ -107,7 +112,10 @@ class AppiumDriver(BaseDriver):
         element.clear()
         element.send_keys(text)
         if self.hide_keyboard_after_typing:
-            ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
+            if self.platform == "uiautomator2":
+                self.driver.hide_keyboard()
+            else:
+                ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
 
     @property
     def url(self) -> str:

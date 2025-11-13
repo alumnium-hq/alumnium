@@ -4,7 +4,7 @@ from pytest import mark
 
 
 @mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Synchrnoization is not implemented in Appium yet",
 )
 def test_waiting_for_loading_content(al, navigate):
@@ -13,7 +13,7 @@ def test_waiting_for_loading_content(al, navigate):
 
 
 @mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "appium",
+    getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Synchrnoization is not implemented in Appium yet",
 )
 def test_waiting_for_requests_and_form_updates(al, navigate):
