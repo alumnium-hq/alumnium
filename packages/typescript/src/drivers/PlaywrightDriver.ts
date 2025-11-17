@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { getLogger } from "../utils/logger.js";
+import { Retry } from "../utils/retry.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
@@ -101,6 +102,12 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.goBack();
   }
 
+  @Retry({
+    maxAttempts: 2,
+    backOff: 500,
+    doRetry: (error: Error) =>
+      error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR),
+  })
   async screenshot(): Promise<string> {
     const buffer = await this.page.screenshot();
     return buffer.toString("base64");
@@ -120,6 +127,12 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
+  @Retry({
+    maxAttempts: 2,
+    backOff: 500,
+    doRetry: (error: Error) =>
+      error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR),
+  })
   async title(): Promise<string> {
     return await this.page.title();
   }
@@ -129,6 +142,12 @@ export class PlaywrightDriver extends BaseDriver {
     await element.fill(text);
   }
 
+  @Retry({
+    maxAttempts: 2,
+    backOff: 500,
+    doRetry: (error: Error) =>
+      error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR),
+  })
   url(): Promise<string> {
     return Promise.resolve(this.page.url());
   }
@@ -158,31 +177,25 @@ export class PlaywrightDriver extends BaseDriver {
     return this.page.locator(`css=[data-alumnium-id='${backendNodeId}']`);
   }
 
+  @Retry({
+    maxAttempts: 2,
+    backOff: 500,
+    doRetry: (error: Error) =>
+      error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR),
+  })
   private async waitForPageToLoad(): Promise<void> {
     logger.debug("Waiting for page to finish loading:");
-    try {
-      await this.page.evaluate(
-        `function() { ${PlaywrightDriver.WAITER_SCRIPT} }`
-      );
-      const error: unknown = await this.page.evaluate(
-        PlaywrightDriver.WAIT_FOR_SCRIPT
-      );
-      if (error) {
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string
-        logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
-      } else {
-        logger.debug("  <- Page finished loading");
-      }
-    } catch (error: unknown) {
-      if (
-        error instanceof Error &&
-        error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR)
-      ) {
-        logger.debug("  <- Page context has changed, retrying");
-        await this.waitForPageToLoad();
-      } else {
-        throw error;
-      }
+    await this.page.evaluate(
+      `function() { ${PlaywrightDriver.WAITER_SCRIPT} }`
+    );
+    const error: unknown = await this.page.evaluate(
+      PlaywrightDriver.WAIT_FOR_SCRIPT
+    );
+    if (error) {
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
+      logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
+    } else {
+      logger.debug("  <- Page finished loading");
     }
   }
 }
