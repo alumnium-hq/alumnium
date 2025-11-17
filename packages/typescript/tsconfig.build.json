@@ -5,5 +5,8 @@
   },
   "include": [
     "src/**/*"
+  ],
+  "exclude": [
+    "src/drivers/scripts/**/*.js"
   ]
 }

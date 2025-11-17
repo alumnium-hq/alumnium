@@ -10,7 +10,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rm -rf dist/ && tsc --project tsconfig.build.json",
+    "build": "rm -rf dist/ && tsc --project tsconfig.build.json && mkdir -p dist/drivers/scripts && cp src/drivers/scripts/*.js dist/drivers/scripts/",
     "clean": "rm -rf .alumnium/cache dist/ log/ playwright-report/ test-results/",
     "examples:appium": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
