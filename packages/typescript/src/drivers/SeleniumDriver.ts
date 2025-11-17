@@ -7,6 +7,7 @@ import {
   WebElement,
 } from "selenium-webdriver";
 import { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
+import { NoSuchSessionError } from "selenium-webdriver/lib/error.js";
 import { fileURLToPath } from "url";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
@@ -85,7 +86,15 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async quit(): Promise<void> {
-    await this.driver.quit();
+    try {
+      await this.driver.quit();
+    } catch (error) {
+      if (error instanceof NoSuchSessionError) {
+        logger.info("Selenium session already closed, ignoring quit error");
+      } else {
+        throw error;
+      }
+    }
   }
 
   async back(): Promise<void> {

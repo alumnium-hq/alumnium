@@ -59,6 +59,9 @@ export const mochaHooks = {
   },
 
   async afterAll() {
+    if (driverType === "selenium") {
+      await (driver as WebDriver).quit();
+    }
     await al.quit();
   },
 };
