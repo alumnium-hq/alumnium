@@ -80,7 +80,6 @@ jobs:
         with:
           python-version-file: .tool-versions
       - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
-        working-directory: packages/python/
       - run: echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
         working-directory: packages/python/
         id: version
