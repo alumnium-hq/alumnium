@@ -1,5 +1,6 @@
 name: Python
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
       sha:
@@ -55,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.sha }}
+          ref: ${{ inputs.sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version-file: .tool-versions
