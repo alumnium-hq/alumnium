@@ -1,10 +1,9 @@
-from os import getenv
-
 from appium.webdriver.webdriver import WebDriver as Appium
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
+from . import DELAY, RETRIES
 from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
@@ -19,8 +18,6 @@ from .server.models import Model
 from .tools import BaseTool
 
 logger = get_logger(__name__)
-
-RETRIES = getenv("ALUMNIUM_RETRIES", 2),
 
 
 class Alumni:
@@ -61,7 +58,7 @@ class Alumni:
         self.client.quit()
         self.driver.quit()
 
-    @retry(tries=RETRIES, delay=0.5, logger=logger)
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal.
@@ -80,7 +77,7 @@ class Alumni:
             for tool_call in actor_response:
                 BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
-    @retry(tries=RETRIES, delay=0.5, logger=logger)
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)
     def check(self, statement: str, vision: bool = False) -> str:
         """
         Checks a given statement true or false.
@@ -105,7 +102,7 @@ class Alumni:
         assert value, explanation
         return explanation
 
-    @retry(tries=RETRIES, delay=0.5, logger=logger)
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)
     def get(self, data: str, vision: bool = False) -> Data:
         """
         Extracts requested data from the page.
@@ -126,7 +123,7 @@ class Alumni:
         )
         return value
 
-    @retry(tries=RETRIES, delay=0.5, logger=logger)
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)
     def find(self, description: str) -> Element:
         """
         Finds an element in the accessibility tree and returns the native driver element.
