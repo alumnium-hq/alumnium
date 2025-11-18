@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version-file: packages/python/pyproject.toml
+          python-version-file: .tool-versions
       - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
         working-directory: .
       - uses: actions/cache@v4
@@ -77,7 +77,7 @@ jobs:
     steps:
       - uses: actions/setup-python@v5
         with:
-          python-version-file: packages/python/pyproject.toml
+          python-version-file: .tool-versions
       - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
         working-directory: packages/python/
       - run: echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
