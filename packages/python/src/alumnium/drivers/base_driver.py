@@ -31,6 +31,10 @@ class BaseDriver(ABC):
     def back(self):
         pass
 
+    @abstractmethod
+    def visit(self, url: str):
+        pass
+
     @property
     @abstractmethod
     def screenshot(self) -> str:

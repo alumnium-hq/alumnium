@@ -6,3 +6,4 @@ from .navigate_back_tool import NavigateBackTool
 from .press_key_tool import PressKeyTool
 from .select_tool import SelectTool
 from .type_tool import TypeTool
+from .navigate_to_url_tool import NavigateToUrlTool
