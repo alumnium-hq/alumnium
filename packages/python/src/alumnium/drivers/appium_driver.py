@@ -1,4 +1,5 @@
 from time import sleep
+from typing import Literal
 
 from appium.webdriver import Remote
 from appium.webdriver.common.appiumby import AppiumBy as By
@@ -37,7 +38,7 @@ class AppiumDriver(BaseDriver):
         self.double_fetch_page_source = False
 
     @property
-    def platform(self) -> str:
+    def platform(self) -> Literal["uiautomator2", "xcuitest"]:
         if self.driver.capabilities.get("automationName", "").lower() == "uiautomator2":
             return "uiautomator2"
         else:
