@@ -14,6 +14,7 @@ export class AppiumDriver extends BaseDriver {
     "DragAndDropTool",
     "NavigateToUrlTool",
     "PressKeyTool",
+    "ScrollTool",
     "SelectTool",
     "TypeTool",
   ]);
@@ -97,6 +98,18 @@ export class AppiumDriver extends BaseDriver {
 
   async visit(url: string): Promise<void> {
     await this.driver.url(url);
+  }
+
+  async scrollTo(id: number): Promise<void> {
+    if (this.platform === "xcuitest") {
+      const element = await this.findElement(id);
+      const elementId = await element.elementId;
+      await this.driver.execute("mobile: scrollToElement", {
+        elementId: elementId,
+      });
+    } else {
+      // TODO: Implement scroll functionality on Android
+    }
   }
 
   async quit(): Promise<void> {

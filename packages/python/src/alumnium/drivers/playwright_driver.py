@@ -85,6 +85,10 @@ class PlaywrightDriver(BaseDriver):
     def screenshot(self) -> str:
         return b64encode(self.page.screenshot()).decode()
 
+    def scroll_to(self, id: int):
+        element = self.find_element(id)
+        element.scroll_into_view_if_needed()
+
     def select(self, id: int, option: str):
         element = self.find_element(id)
         tag_name = element.evaluate("el => el.tagName").lower()
