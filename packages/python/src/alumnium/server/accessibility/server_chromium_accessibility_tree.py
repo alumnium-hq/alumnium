@@ -82,8 +82,11 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
             properties = node.get("properties", [])
             children = node.get("nodes", [])
 
-            if role_value == "StaticText":
-                parent.text = name_value
+            if role_value == "StaticText" and parent is not None:
+                if parent.text:
+                    parent.text += name_value
+                else:
+                    parent.text = name_value
             elif role_value == "none" or ignored:
                 if children:
                     for child in children:
