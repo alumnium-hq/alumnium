@@ -12,6 +12,7 @@ export class AppiumDriver extends BaseDriver {
   public supportedTools: Set<string> = new Set([
     "ClickTool",
     "DragAndDropTool",
+    "NavigateToUrlTool",
     "PressKeyTool",
     "SelectTool",
     "TypeTool",
@@ -92,6 +93,10 @@ export class AppiumDriver extends BaseDriver {
 
   async back(): Promise<void> {
     await this.driver.back();
+  }
+
+  async visit(url: string): Promise<void> {
+    await this.driver.url(url);
   }
 
   async quit(): Promise<void> {

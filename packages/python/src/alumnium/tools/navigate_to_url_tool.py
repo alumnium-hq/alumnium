@@ -6,16 +6,9 @@ from .base_tool import BaseTool
 
 
 class NavigateToUrlTool(BaseTool):
-    """Navigate to a user provided url.
+    """Navigate to or open the URL."""
 
-    Use this when the user asks to:
-    - Open
-    - Go to
-    - Navigate to this page
-    - Visit this page
-    """
-
-    url: str = Field(description="Provided url (str)")
+    url: str = Field(description="URL to navigate to")
 
     def invoke(self, driver: BaseDriver):
         driver.visit(self.url)

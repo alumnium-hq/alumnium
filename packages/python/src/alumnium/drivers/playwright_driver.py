@@ -80,7 +80,6 @@ class PlaywrightDriver(BaseDriver):
 
     def visit(self, url: str):
         self.page.goto(url)
-        self.wait_for_page_to_load()
 
     @property
     def screenshot(self) -> str:

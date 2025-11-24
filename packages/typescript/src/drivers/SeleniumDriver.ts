@@ -36,6 +36,7 @@ export class SeleniumDriver extends BaseDriver {
     "ClickTool",
     "DragAndDropTool",
     "HoverTool",
+    "NavigateToUrlTool",
     "PressKeyTool",
     "SelectTool",
     "TypeTool",
@@ -99,6 +100,10 @@ export class SeleniumDriver extends BaseDriver {
 
   async back(): Promise<void> {
     await this.driver.navigate().back();
+  }
+
+  async visit(url: string): Promise<void> {
+    await this.driver.get(url);
   }
 
   async screenshot(): Promise<string> {

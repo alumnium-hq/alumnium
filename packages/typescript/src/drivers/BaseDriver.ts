@@ -17,4 +17,5 @@ export abstract class BaseDriver {
   abstract url(): string | Promise<string>;
   abstract findElement(id: number): Element | Promise<Element>;
   abstract hover(id: number): void | Promise<void>;
+  abstract visit(url: string): void | Promise<void>;
 }

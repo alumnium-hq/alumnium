@@ -86,7 +86,6 @@ class SeleniumDriver(BaseDriver):
 
     def visit(self, url: str):
         self.driver.get(url)
-        self.wait_for_page_to_load()
 
     @property
     def screenshot(self) -> str:

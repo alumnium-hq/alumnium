@@ -34,6 +34,7 @@ export class PlaywrightDriver extends BaseDriver {
     "ClickTool",
     "DragAndDropTool",
     "HoverTool",
+    "NavigateToUrlTool",
     "PressKeyTool",
     "SelectTool",
     "TypeTool",
@@ -100,6 +101,10 @@ export class PlaywrightDriver extends BaseDriver {
 
   async back(): Promise<void> {
     await this.page.goBack();
+  }
+
+  async visit(url: string): Promise<void> {
+    await this.page.goto(url);
   }
 
   @Retry({
