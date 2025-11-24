@@ -84,6 +84,10 @@ class SeleniumDriver(BaseDriver):
     def back(self):
         self.driver.back()
 
+    def visit(self, url: str):
+        self.driver.get(url)
+        self.wait_for_page_to_load()
+
     @property
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()

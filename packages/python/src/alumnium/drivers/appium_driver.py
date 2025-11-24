@@ -83,6 +83,9 @@ class AppiumDriver(BaseDriver):
     def back(self):
         self.driver.back()
 
+    def visit(self, url: str):
+        self.driver.get(url)
+
     def quit(self):
         self.driver.quit()
 

@@ -78,6 +78,10 @@ class PlaywrightDriver(BaseDriver):
     def back(self):
         self.page.go_back()
 
+    def visit(self, url: str):
+        self.page.goto(url)
+        self.wait_for_page_to_load()
+
     @property
     def screenshot(self) -> str:
         return b64encode(self.page.screenshot()).decode()
