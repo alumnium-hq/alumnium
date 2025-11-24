@@ -26,7 +26,12 @@ class NativeClient:
     def quit(self):
         self.session_manager.delete_session(self.session_id)
 
-    def plan_actions(self, goal: str, accessibility_tree: str):
+    def plan_actions(self, goal: str, accessibility_tree: str) -> tuple[str, list[str]]:
+        """
+        Plan actions to achieve a goal.
+        Returns:
+            A tuple of (explanation, steps).
+        """
         accessibility_tree = self.session.process_tree(accessibility_tree)
         return self.session.planner_agent.invoke(goal, accessibility_tree.to_xml())
 
@@ -61,7 +66,7 @@ class NativeClient:
         area = self.session.area_agent.invoke(description, accessibility_tree.to_xml())
         return {"id": accessibility_tree.get_raw_id(area["id"]), "explanation": area["explanation"]}
 
-    def find_element(self, description: str, accessibility_tree: str, area_id: int = None) -> dict:
+    def find_element(self, description: str, accessibility_tree: str) -> dict:
         accessibility_tree = self.session.process_tree(accessibility_tree)
         element = self.session.locator_agent.invoke(description, accessibility_tree.to_xml())[0]
         element["id"] = accessibility_tree.get_raw_id(element["id"])

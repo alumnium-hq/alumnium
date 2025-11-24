@@ -100,12 +100,15 @@ Actions: ['navigate to "http://foo.bar/baz/123" URL']
             }
         )
 
-    def invoke(self, goal: str, accessibility_tree_xml: str) -> list[str]:
+    def invoke(self, goal: str, accessibility_tree_xml: str) -> tuple[str, list[str]]:
         """
         Plan actions to achieve a goal.
         Args:
             goal: The goal to achieve
             accessibility_tree_xml: The accessibility tree XML (required).
+        Returns:
+            A tuple of (explanation, actions) where explanation describes the reasoning
+            and actions is the list of steps to achieve the goal.
         """
         logger.info("Starting planning:")
         logger.info(f"  -> Goal: {goal}")
@@ -121,7 +124,7 @@ Actions: ['navigate to "http://foo.bar/baz/123" URL']
             logger.info(f"  <- Result: {response}")
             logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
-            return response.actions
+            return (response.explanation, response.actions)
         else:
             logger.info(f"  <- Result: {message.content}")
             logger.info(f"  <- Usage: {message.usage_metadata}")
@@ -135,4 +138,4 @@ Actions: ['navigate to "http://foo.bar/baz/123" URL']
                 if step and step.upper() != "NOOP":
                     steps.append(step)
 
-            return steps
+            return ("", steps)
