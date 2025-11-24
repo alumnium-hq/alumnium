@@ -9,7 +9,7 @@ class BaseAccessibilityTree(ABC):
         pass
 
     @abstractmethod
-    def element_by_id(self, id: int) -> AccessibilityElement:
+    def element_by_id(self, raw_id: int) -> AccessibilityElement:
         pass
 
     @abstractmethod
