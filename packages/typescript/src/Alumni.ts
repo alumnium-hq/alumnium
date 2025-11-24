@@ -12,11 +12,11 @@ import { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
 import { SeleniumDriver } from "./drivers/SeleniumDriver.js";
 import { AssertionError } from "./errors/AssertionError.js";
 import { Model } from "./Model.js";
+import { DoResult, DoStep, GetResult } from "./result.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
 import { ClickTool } from "./tools/ClickTool.js";
 import { DragAndDropTool } from "./tools/DragAndDropTool.js";
 import { HoverTool } from "./tools/HoverTool.js";
-
 import { PressKeyTool } from "./tools/PressKeyTool.js";
 import { SelectTool } from "./tools/SelectTool.js";
 import { TypeTool } from "./tools/TypeTool.js";
@@ -97,13 +97,14 @@ export class Alumni {
     await this.driver.quit();
   }
 
-  async do(goal: string): Promise<void> {
+  async do(goal: string): Promise<DoResult> {
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
-    const steps = await this.client.planActions(
+    const { explanation, steps } = await this.client.planActions(
       goal,
       initialAccessibilityTree.toStr()
     );
 
+    const executedSteps: DoStep[] = [];
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
 
@@ -118,15 +119,20 @@ export class Alumni {
         accessibilityTree.toStr()
       );
 
-      // Execute tool calls
+      const calledTools: string[] = [];
       for (const toolCall of actorResponse) {
-        await BaseTool.executeToolCall(
+        const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
           this.driver
         );
+        calledTools.push(calledTool);
       }
+
+      executedSteps.push({ name: step, tools: calledTools });
     }
+
+    return { explanation, steps: executedSteps };
   }
 
   async check(statement: string, options: VisionOptions = {}): Promise<string> {
@@ -149,13 +155,12 @@ export class Alumni {
     return explanation;
   }
 
-  async get(data: string, options: VisionOptions = {}): Promise<Data> {
+  async get(data: string, options: VisionOptions = {}): Promise<GetResult> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_explanation, value] = await this.client.retrieve(
+    const [explanation, value] = await this.client.retrieve(
       data,
       accessibilityTree.toStr(),
       await this.driver.title(),
@@ -163,7 +168,7 @@ export class Alumni {
       screenshot
     );
 
-    return value;
+    return { explanation, data: value };
   }
 
   async find(description: string): Promise<Element> {

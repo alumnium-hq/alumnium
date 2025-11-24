@@ -10,6 +10,17 @@ class BaseTool(BaseModel):
         tool_call: dict,
         tools: list["BaseTool"],
         driver: BaseDriver,
-    ):
-        tool = tools[tool_call["name"]](**tool_call["args"])
+    ) -> str:
+        """
+        Execute a tool call and return its string representation.
+
+        Returns:
+            Formatted string representation of the tool call (e.g., "ClickTool(id=42)").
+        """
+        tool_name = tool_call.get("name", "")
+        tool_args = tool_call.get("args", {})
+        tool = tools[tool_name](**tool_args)
         tool.invoke(driver)
+
+        args_str = ", ".join(f"{k}={v}" for k, v in tool_args.items())
+        return f"{tool_name}({args_str})"

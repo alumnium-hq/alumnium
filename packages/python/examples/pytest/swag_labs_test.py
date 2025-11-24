@@ -72,19 +72,19 @@ def test_sorting(al):
     prices = list(products.values())
 
     # Default order is A-Z
-    assert al.get("titles of products") == sorted(titles)
+    assert al.get("titles of products").data == sorted(titles)
 
     al.do("sort products in descending alphabetical order")
-    assert al.get("titles of products") == sorted(titles, reverse=True)
+    assert al.get("titles of products").data == sorted(titles, reverse=True)
 
     al.do("sort products in ascending alphabetical order")
-    assert al.get("titles of products") == sorted(titles)
+    assert al.get("titles of products").data == sorted(titles)
 
     al.do("sort products by lowest price")
-    assert al.get("prices of products") == sorted(prices)
+    assert al.get("prices of products").data == sorted(prices)
 
     al.do("sort products by highest price")
-    assert al.get("prices of products") == sorted(prices, reverse=True)
+    assert al.get("prices of products").data == sorted(prices, reverse=True)
 
 
 @mark.xfail(
@@ -101,7 +101,7 @@ def test_checkout(al):
     al.do("add onesie to cart")
     al.do("add backpack to cart")
     al.do("go to shopping cart")
-    assert al.get("titles of products in cart") == [
+    assert al.get("titles of products in cart").data == [
         "Sauce Labs Onesie",
         "Sauce Labs Backpack",
     ]
@@ -109,10 +109,10 @@ def test_checkout(al):
     al.do("go to checkout")
     al.do("continue with first name - Al, last name - Um, ZIP - 95122")
 
-    assert al.get("item total without tax") == 37.98
-    assert al.get("tax amount") == 3.04
-    assert al.get("total amount with tax") == round(37.98 + 3.04, 2)
-    assert al.get("shipping information value") == "Free Pony Express Delivery!"
+    assert al.get("item total without tax").data == 37.98
+    assert al.get("tax amount").data == 3.04
+    assert al.get("total amount with tax").data == round(37.98 + 3.04, 2)
+    assert al.get("shipping information value").data == "Free Pony Express Delivery!"
 
     al.do("finish checkout")
 

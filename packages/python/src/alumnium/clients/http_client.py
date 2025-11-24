@@ -30,14 +30,20 @@ class HttpClient:
             response.raise_for_status()
             self.session_id = None
 
-    def plan_actions(self, goal: str, accessibility_tree: str):
+    def plan_actions(self, goal: str, accessibility_tree: str) -> tuple[str, list[str]]:
+        """
+        Plan actions to achieve a goal.
+        Returns:
+            A tuple of (explanation, steps).
+        """
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/plans",
             json={"goal": goal, "accessibility_tree": accessibility_tree},
             timeout=120,
         )
         response.raise_for_status()
-        return response.json()["steps"]
+        response_data = response.json()
+        return (response_data["explanation"], response_data["steps"])
 
     def add_example(self, goal: str, actions: list[str]):
         response = post(

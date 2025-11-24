@@ -35,14 +35,14 @@ describe("Calculator", () => {
     await navigate(driver, "https://seleniumbase.io/apps/calculator");
     await al.do("2 + 2 =");
     const result = await al.get("value from textfield");
-    assert.strictEqual(result, 4);
+    assert.strictEqual(result.data, 4);
   });
 
   it("subtraction", async () => {
     await navigate(driver, "https://seleniumbase.io/apps/calculator");
     await al.do("5 - 3 =");
     const result = await al.get("value from textfield");
-    assert.strictEqual(result, 2);
+    assert.strictEqual(result.data, 2);
   });
 
   it("multiplication", async function () {
@@ -53,13 +53,13 @@ describe("Calculator", () => {
     await navigate(driver, "https://seleniumbase.io/apps/calculator");
     await al.do("3 * 4 =");
     const result = await al.get("value from textfield");
-    assert.strictEqual(result, 12);
+    assert.strictEqual(result.data, 12);
   });
 
   it("division", async () => {
     await navigate(driver, "https://seleniumbase.io/apps/calculator");
     await al.do("8 / 2 =");
     const result = await al.get("value from textfield");
-    assert.strictEqual(result, 4);
+    assert.strictEqual(result.data, 4);
   });
 });

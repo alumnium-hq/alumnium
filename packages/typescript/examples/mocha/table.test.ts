@@ -36,10 +36,22 @@ describe("Table", () => {
     await navigate(driver, "https://the-internet.herokuapp.com/tables");
 
     const area = await al.area("example 1 table");
-    assert.strictEqual(await area.get("Jason Doe's due amount"), "$100.00");
-    assert.strictEqual(await area.get("Frank Bach's due amount"), "$51.00");
-    assert.strictEqual(await area.get("Tim Conway's due amount"), "$50.00");
-    assert.strictEqual(await area.get("John Smith's due amount"), "$50.00");
+    assert.strictEqual(
+      (await area.get("Jason Doe's due amount")).data,
+      "$100.00"
+    );
+    assert.strictEqual(
+      (await area.get("Frank Bach's due amount")).data,
+      "$51.00"
+    );
+    assert.strictEqual(
+      (await area.get("Tim Conway's due amount")).data,
+      "$50.00"
+    );
+    assert.strictEqual(
+      (await area.get("John Smith's due amount")).data,
+      "$50.00"
+    );
   });
 
   it("supports sorting", async function () {
@@ -51,25 +63,45 @@ describe("Table", () => {
 
     let table1 = await al.area("example 1 table - return table element");
     const table1FirstNames = await table1.get("first names");
-    assert.deepStrictEqual(table1FirstNames, ["John", "Frank", "Jason", "Tim"]);
+    assert.deepStrictEqual(table1FirstNames.data, [
+      "John",
+      "Frank",
+      "Jason",
+      "Tim",
+    ]);
     const table1LastNames = await table1.get("last names");
-    assert.deepStrictEqual(table1LastNames, ["Smith", "Bach", "Doe", "Conway"]);
+    assert.deepStrictEqual(table1LastNames.data, [
+      "Smith",
+      "Bach",
+      "Doe",
+      "Conway",
+    ]);
 
     let table2 = await al.area("example 2 table - return table element");
     const table2FirstNames = await table2.get("first names");
-    assert.deepStrictEqual(table2FirstNames, ["John", "Frank", "Jason", "Tim"]);
+    assert.deepStrictEqual(table2FirstNames.data, [
+      "John",
+      "Frank",
+      "Jason",
+      "Tim",
+    ]);
     const table2LastNames = await table2.get("last names");
-    assert.deepStrictEqual(table2LastNames, ["Smith", "Bach", "Doe", "Conway"]);
+    assert.deepStrictEqual(table2LastNames.data, [
+      "Smith",
+      "Bach",
+      "Doe",
+      "Conway",
+    ]);
 
     await table1.do("sort by last name");
     table1 = await al.area("example 1 table - return table element"); // refresh
-    assert.deepStrictEqual(await table1.get("first names"), [
+    assert.deepStrictEqual((await table1.get("first names")).data, [
       "Frank",
       "Tim",
       "Jason",
       "John",
     ]);
-    assert.deepStrictEqual(await table1.get("last names"), [
+    assert.deepStrictEqual((await table1.get("last names")).data, [
       "Bach",
       "Conway",
       "Doe",
@@ -77,13 +109,13 @@ describe("Table", () => {
     ]);
     // example 2 table is not affected
     table2 = await al.area("example 2 table - return table element"); // refresh
-    assert.deepStrictEqual(await table2.get("first names"), [
+    assert.deepStrictEqual((await table2.get("first names")).data, [
       "John",
       "Frank",
       "Jason",
       "Tim",
     ]);
-    assert.deepStrictEqual(await table2.get("last names"), [
+    assert.deepStrictEqual((await table2.get("last names")).data, [
       "Smith",
       "Bach",
       "Doe",
@@ -92,13 +124,13 @@ describe("Table", () => {
 
     await table2.do("sort by first name");
     table2 = await al.area("example 2 table - return table element"); // refresh
-    assert.deepStrictEqual(await table2.get("first names"), [
+    assert.deepStrictEqual((await table2.get("first names")).data, [
       "Frank",
       "Jason",
       "John",
       "Tim",
     ]);
-    assert.deepStrictEqual(await table2.get("last names"), [
+    assert.deepStrictEqual((await table2.get("last names")).data, [
       "Bach",
       "Doe",
       "Smith",
@@ -106,13 +138,13 @@ describe("Table", () => {
     ]);
     // example 1 table is not affected
     table1 = await al.area("example 1 table - return table element"); // refresh
-    assert.deepStrictEqual(await table1.get("first names"), [
+    assert.deepStrictEqual((await table1.get("first names")).data, [
       "Frank",
       "Tim",
       "Jason",
       "John",
     ]);
-    assert.deepStrictEqual(await table1.get("last names"), [
+    assert.deepStrictEqual((await table1.get("last names")).data, [
       "Bach",
       "Conway",
       "Doe",
@@ -125,6 +157,6 @@ describe("Table", () => {
 
     // This data is not available on the page.
     // Even though LLM knows the answer, it should not respond it.
-    assert.strictEqual(await al.get("atomic number of Selenium"), null);
+    assert.strictEqual((await al.get("atomic number of Selenium")).data, null);
   });
 });

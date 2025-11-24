@@ -9,7 +9,7 @@ from pytest import mark
 )
 def test_waiting_for_loading_content(al, navigate):
     navigate("https://the-internet.herokuapp.com/dynamic_content")
-    assert al.get("the total number of profile images") == 3
+    assert al.get("the total number of profile images").data == 3
 
 
 @mark.xfail(

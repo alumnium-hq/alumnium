@@ -29,7 +29,7 @@ def test_checkout(al):
     al.do("add 'iPhone 12 Pro Max' to cart")
     al.do("add 'iPhone 12 Mini' to cart")
     cart = al.area("shopping bag")
-    assert cart.get("titles of products") == ["iPhone 12 Pro Max", "iPhone 12 Mini"]
+    assert cart.get("titles of products").data == ["iPhone 12 Pro Max", "iPhone 12 Mini"]
 
     # Start checkout and login
     al.do("go to checkout")
@@ -38,9 +38,9 @@ def test_checkout(al):
     al.do("click login button")  # Could be NOOP
 
     # Proceed through checkout
-    assert al.get("iPhone 12 Pro Max price") == 1099
-    assert al.get("iPhone 12 Mini price") == 699
-    assert al.get("total amount") == 1798
+    assert al.get("iPhone 12 Pro Max price").data == 1099
+    assert al.get("iPhone 12 Mini price").data == 699
+    assert al.get("total amount").data == 1798
 
     fields = {
         "first name": "Al",
