@@ -58,7 +58,7 @@ class Alumni:
         self.client.quit()
         self.driver.quit()
 
-    @retry(tries=RETRIES, delay=DELAY, logger=logger)
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def do(self, goal: str):
         """
         Executes a series of steps to achieve the given goal.
@@ -77,7 +77,7 @@ class Alumni:
             for tool_call in actor_response:
                 BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
 
-    @retry(tries=RETRIES, delay=DELAY, logger=logger)
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def check(self, statement: str, vision: bool = False) -> str:
         """
         Checks a given statement true or false.
@@ -102,7 +102,7 @@ class Alumni:
         assert value, explanation
         return explanation
 
-    @retry(tries=RETRIES, delay=DELAY, logger=logger)
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def get(self, data: str, vision: bool = False) -> Data:
         """
         Extracts requested data from the page.
@@ -123,7 +123,7 @@ class Alumni:
         )
         return value
 
-    @retry(tries=RETRIES, delay=DELAY, logger=logger)
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def find(self, description: str) -> Element:
         """
         Finds an element in the accessibility tree and returns the native driver element.

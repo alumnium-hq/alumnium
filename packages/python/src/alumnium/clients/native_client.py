@@ -61,7 +61,7 @@ class NativeClient:
         area = self.session.area_agent.invoke(description, accessibility_tree.to_xml())
         return {"id": accessibility_tree.get_raw_id(area["id"]), "explanation": area["explanation"]}
 
-    def find_element(self, description: str, accessibility_tree: str, area_id: int = None):
+    def find_element(self, description: str, accessibility_tree: str, area_id: int = None) -> dict:
         accessibility_tree = self.session.process_tree(accessibility_tree)
         element = self.session.locator_agent.invoke(description, accessibility_tree.to_xml())[0]
         element["id"] = accessibility_tree.get_raw_id(element["id"])

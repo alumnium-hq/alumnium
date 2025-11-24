@@ -97,7 +97,7 @@ class HttpClient:
         data = response.json()
         return {"id": data["id"], "explanation": data["explanation"]}
 
-    def find_element(self, description: str, accessibility_tree: str):
+    def find_element(self, description: str, accessibility_tree: str) -> dict:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/elements",
             json={"description": description, "accessibility_tree": accessibility_tree},
