@@ -5,5 +5,6 @@ from .hover_tool import HoverTool
 from .navigate_back_tool import NavigateBackTool
 from .navigate_to_url_tool import NavigateToUrlTool
 from .press_key_tool import PressKeyTool
+from .scroll_tool import ScrollTool
 from .select_tool import SelectTool
 from .type_tool import TypeTool

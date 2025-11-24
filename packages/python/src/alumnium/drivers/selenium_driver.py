@@ -91,6 +91,10 @@ class SeleniumDriver(BaseDriver):
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()
 
+    def scroll_to(self, id: int):
+        element = self.find_element(id)
+        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+
     def select(self, id: int, option: str):
         element = self.find_element(id)
         # Anthropic chooses to select using option ID, not select ID

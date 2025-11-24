@@ -38,6 +38,7 @@ export class SeleniumDriver extends BaseDriver {
     "HoverTool",
     "NavigateToUrlTool",
     "PressKeyTool",
+    "ScrollTool",
     "SelectTool",
     "TypeTool",
   ]);
@@ -104,6 +105,11 @@ export class SeleniumDriver extends BaseDriver {
 
   async visit(url: string): Promise<void> {
     await this.driver.get(url);
+  }
+
+  async scrollTo(id: number): Promise<void> {
+    const element = await this.findElement(id);
+    await this.driver.executeScript("arguments[0].scrollIntoView();", element);
   }
 
   async screenshot(): Promise<string> {
