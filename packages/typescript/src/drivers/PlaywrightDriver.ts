@@ -36,6 +36,7 @@ export class PlaywrightDriver extends BaseDriver {
     "HoverTool",
     "NavigateToUrlTool",
     "PressKeyTool",
+    "ScrollTool",
     "SelectTool",
     "TypeTool",
   ]);
@@ -105,6 +106,11 @@ export class PlaywrightDriver extends BaseDriver {
 
   async visit(url: string): Promise<void> {
     await this.page.goto(url);
+  }
+
+  async scrollTo(id: number): Promise<void> {
+    const element = await this.findElement(id);
+    await element.scrollIntoViewIfNeeded();
   }
 
   @Retry({

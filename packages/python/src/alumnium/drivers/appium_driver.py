@@ -94,6 +94,14 @@ class AppiumDriver(BaseDriver):
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()
 
+    def scroll_to(self, id: int):
+        if self.platform == "xcuitest":
+            element = self.find_element(id)
+            self.driver.execute_script("mobile: scrollToElement", {"elementId": element.id})
+        else:
+            # TODO: Implement scroll functionality on Android
+            raise NotImplementedError("scroll_to is not implemented for Android (uiautomator2) yet.")
+
     def select(self, id: int, option: str):
         # TODO: Implement select functionality and the tool
         pass

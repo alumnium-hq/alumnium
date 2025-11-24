@@ -25,7 +25,7 @@ class Alumni:
         self,
         driver: Page | WebDriver,
         model: Model | None = None,
-        extra_tools: list[BaseTool] | None = None,
+        extra_tools: list[type[BaseTool]] | None = None,
         url: str | None = None,
     ):
         self.model = model or Model.current
