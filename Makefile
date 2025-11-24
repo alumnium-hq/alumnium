@@ -33,3 +33,6 @@ start-server-docker:
 		-e ALUMNIUM_LOG_PATH=stdout \
 		-e ALUMNIUM_OLLAMA_URL \
 		alumnium-server
+
+start-mcp:
+	cd packages/python && poetry run mcp
