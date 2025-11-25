@@ -38,7 +38,7 @@ class Session:
         self.llm.cache = self.cache
 
         self.actor_agent = ActorAgent(self.llm, tools)
-        self.planner_agent = PlannerAgent(self.llm)
+        self.planner_agent = PlannerAgent(self.llm, list(tools.keys()))
         self.retriever_agent = RetrieverAgent(self.llm)
         self.area_agent = AreaAgent(self.llm)
         self.locator_agent = LocatorAgent(self.llm)
