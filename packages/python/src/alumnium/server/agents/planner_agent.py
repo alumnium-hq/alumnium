@@ -1,7 +1,10 @@
+from re import sub
+
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 from pydantic import BaseModel, Field
 
+from ...tools.navigate_to_url_tool import NavigateToUrlTool
 from ..logutils import get_logger
 from ..models import Model, Provider
 from .base_agent import BaseAgent
@@ -20,14 +23,30 @@ class Plan(BaseModel):
 
 
 class PlannerAgent(BaseAgent):
+    NAVIGATE_TO_URL_EXAMPLE = """
+Example:
+Input:
+Given the following XML accessibility tree:
+```xml
+<link href="http://foo.bar/baz" />
+```
+Outline the actions needed to achieve the following goal: open 'http://foo.bar/baz/123' URL
+Output:
+Explanation: In order to open URL, I am going to directly navigate to the requested URL.
+Actions: ['navigate to "http://foo.bar/baz/123" URL']
+""".strip()
     LIST_SEPARATOR = "<SEP>"
     UNSTRUCTURED_OUTPUT_MODELS = [
         Provider.OLLAMA,
     ]
 
-    def __init__(self, llm: BaseChatModel):
+    def __init__(self, llm: BaseChatModel, tools: list[str]):
         super().__init__()
         self.llm = llm
+
+        # Convert tool class names to human-readable names
+        # E.g., "NavigateToUrlTool" -> "navigate to url"
+        self.tool_names = [sub(r"(?<!^)(?=[A-Z])", " ", tool).lower().replace(" tool", "") for tool in tools]
 
         example_prompt = ChatPromptTemplate.from_messages(
             [
@@ -39,11 +58,20 @@ class PlannerAgent(BaseAgent):
             examples=[],
             example_prompt=example_prompt,
         )
+
+        extra_examples = ""
+        if NavigateToUrlTool.__name__ in tools:
+            extra_examples = self.NAVIGATE_TO_URL_EXAMPLE
+
         final_prompt = ChatPromptTemplate.from_messages(
             [
                 (
                     "system",
-                    self.prompts["system"].format(separator=self.LIST_SEPARATOR),
+                    self.prompts["system"].format(
+                        separator=self.LIST_SEPARATOR,
+                        tools=", ".join(self.tool_names),
+                        extra_examples=extra_examples,
+                    ),
                 ),
                 self.prompt_with_examples,
                 ("human", self.prompts["user"]),
@@ -57,13 +85,18 @@ class PlannerAgent(BaseAgent):
 
     def add_example(self, goal: str, actions: list[str]):
         if Model.current.provider in self.UNSTRUCTURED_OUTPUT_MODELS:
-            actions = self.LIST_SEPARATOR.join(actions)
+            output = self.LIST_SEPARATOR.join(actions)
+        else:
+            output = actions
+
+        if not self.prompt_with_examples.examples:
+            self.prompt_with_examples.examples = []
 
         self.prompt_with_examples.examples.append(
             {
                 "goal": goal,
                 "accessibility_tree": "",
-                "actions": actions,
+                "actions": output,
             }
         )
 
