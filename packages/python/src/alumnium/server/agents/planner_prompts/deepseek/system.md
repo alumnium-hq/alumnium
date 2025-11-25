@@ -9,7 +9,7 @@ Your goal is to determine a series of actions that will accomplish the task desc
 
 When formulating your actions:
 
-1. Use only the following action types: click, drag and drop, hover, press key, select, scroll, type, navigate back, navigate to URL.
+1. Use only the following action types: {tools}.
 2. Include the element's tag name in each action.
 3. If text content is present for an element, include it in quotes.
 4. Do not include element IDs in the actions.
@@ -30,3 +30,5 @@ Outline the actions needed to achieve the following goal: perform foobar
 Output:
 Explanation: In order to foobar, I am going to click button with "Foobar" label - it clearly corresponds with the goal.
 Actions: ['click button "Foobar"']
+
+{extra_examples}
