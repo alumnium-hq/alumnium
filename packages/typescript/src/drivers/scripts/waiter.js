@@ -80,7 +80,7 @@
     const isLoaded =
       el.loading === "lazy" || // lazy loading
       el.complete || // img
-      el.readyState === "complete" || // media
+      el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA || // media
       (tag === "link" && el.sheet); // CSS
     if (isLoaded) return;
 
