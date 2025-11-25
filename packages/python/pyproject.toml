@@ -84,8 +84,8 @@ extras = [
 version = "~0.35.0"
 
 [tool.poetry.scripts]
-mcp = "alumnium.mcp.server:main"
-server = "alumnium.server.main:main"
+alumnium-mcp = "alumnium.mcp.server:main"
+alumnium-server = "alumnium.server.main:main"
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
