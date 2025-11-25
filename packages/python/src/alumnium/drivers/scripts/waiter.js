@@ -77,11 +77,22 @@
   function trackResource(el) {
     const tag = el.tagName.toLowerCase();
 
-    const isLoaded =
+    let isLoaded =
       el.loading === "lazy" || // lazy loading
       el.complete || // img
       el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA || // media
       (tag === "link" && el.sheet); // CSS
+
+    if (tag == "iframe") {
+      const doc = el.contentDocument;
+      if (doc) {
+        isLoaded = doc.readyState === "complete";
+      } else {
+        // Cross-origin iframe; assume loaded
+        isLoaded = true;
+      }
+    }
+
     if (isLoaded) return;
 
     state.resources.add(el);
@@ -102,10 +113,10 @@
   function trackExistingResources() {
     const selector = [
       ...resourceTags,
-      // [NOTE] Do not track script and iframe tags, as it is not possible to determine if
+      // [NOTE] Do not track script tags, as it is not possible to determine if
       // they are is loaded or not:
-      // "iframe[src]",
       // "script[src]",
+      "iframe[src]",
       'link[rel="stylesheet"][href]',
     ].join(",");
     const resources = document.querySelectorAll(selector);
