@@ -28,8 +28,6 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
             node_id = node.get("backendDOMNodeId", id(node))
             self.tree[node_id] = node
 
-        logger.debug(f"  -> Simplified to Raw ID mapping: {self._simplified_to_raw_id}")
-
     def _xml_to_node(self, elem: Element) -> dict:
         """Convert XML element to node dict structure with simplified IDs."""
         # Assign simplified ID
