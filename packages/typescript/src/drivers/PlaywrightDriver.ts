@@ -190,6 +190,10 @@ export class PlaywrightDriver extends BaseDriver {
     return this.page.locator(`css=[data-alumnium-id='${backendNodeId}']`);
   }
 
+  async executeScript(script: string): Promise<void> {
+    await this.page.evaluate(`() => { ${script} }`);
+  }
+
   @Retry({
     maxAttempts: 2,
     backOff: 500,
