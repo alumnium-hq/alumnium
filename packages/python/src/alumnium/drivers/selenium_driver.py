@@ -14,6 +14,7 @@ from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
+from ..tools.execute_javascript_tool import ExecuteJavascriptTool
 from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
 from ..tools.select_tool import SelectTool
@@ -35,6 +36,7 @@ class SeleniumDriver(BaseDriver):
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
+            ExecuteJavascriptTool,
             HoverTool,
             PressKeyTool,
             SelectTool,
@@ -143,6 +145,9 @@ class SeleniumDriver(BaseDriver):
             },
         )
         return element
+
+    def execute_script(self, script: str) -> str:
+        return self.driver.execute_script(script)
 
     # Remote Chromium instances support CDP commands, but the Python bindings don't expose them.
     # https://github.com/SeleniumHQ/selenium/issues/14799

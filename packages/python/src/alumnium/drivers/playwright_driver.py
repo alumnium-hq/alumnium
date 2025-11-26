@@ -130,6 +130,9 @@ class PlaywrightDriver(BaseDriver):
         # but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
         return self.page.locator(f"css=[data-alumnium-id='{backend_node_id}']")
 
+    def execute_script(self, script: str) -> str:
+        return self.page.evaluate(script)
+
     def wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         try:
