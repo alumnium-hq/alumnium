@@ -234,6 +234,10 @@ export class SeleniumDriver extends BaseDriver {
     return element;
   }
 
+  async executeScript(script: string): Promise<void> {
+    await this.driver.executeScript(script);
+  }
+
   private async executeCdpCommand(
     cmd: string,
     params: object

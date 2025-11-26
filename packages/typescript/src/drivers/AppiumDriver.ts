@@ -229,6 +229,11 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
+  async executeScript(script: string): Promise<void> {
+    await this.ensureWebviewContext();
+    await this.driver.execute(script);
+  }
+
   // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
   async hover(_id: number): Promise<void> {
     // Hover is not typically supported in mobile contexts

@@ -19,4 +19,5 @@ export abstract class BaseDriver {
   abstract hover(id: number): void | Promise<void>;
   abstract visit(url: string): void | Promise<void>;
   abstract scrollTo(id: number): void | Promise<void>;
+  abstract executeScript(script: string): void | Promise<void>;
 }

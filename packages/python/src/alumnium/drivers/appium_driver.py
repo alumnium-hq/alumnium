@@ -180,6 +180,10 @@ class AppiumDriver(BaseDriver):
 
             return self.driver.find_element(By.XPATH, xpath)
 
+    def execute_script(self, script: str):
+        self._ensure_webview_context()
+        self.driver.execute_script(script)
+
     def _ensure_native_app_context(self):
         if not self.autoswitch_contexts:
             return

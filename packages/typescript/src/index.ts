@@ -9,6 +9,7 @@ export { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
 export { SeleniumDriver } from "./drivers/SeleniumDriver.js";
 export { AssertionError } from "./errors/AssertionError.js";
 export { Model, ModelName, Provider } from "./Model.js";
+export { ExecuteJavascriptTool } from "./tools/ExecuteJavascriptTool.js";
 export { NavigateBackTool } from "./tools/NavigateBackTool.js";
 export { NavigateToUrlTool } from "./tools/NavigateToUrlTool.js";
 export { ScrollTool } from "./tools/ScrollTool.js";
