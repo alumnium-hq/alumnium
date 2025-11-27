@@ -176,7 +176,7 @@ class SeleniumDriver(BaseDriver):
     # https://github.com/SeleniumHQ/selenium/issues/14799
     def _patch_driver(self, driver: WebDriver):
         if isinstance(driver.command_executor, ChromiumRemoteConnection) and not hasattr(driver, "execute_cdp_cmd"):
-
+            # Copied from https://github.com/SeleniumHQ/selenium/blob/d6e718d134987d62cd8ffff476821fb3ca1797c2/py/selenium/webdriver/chromium/webdriver.py#L123-L141 # noqa: E501
             def execute_cdp_cmd(self, cmd: str, cmd_args: dict):
                 return self.execute("executeCdpCommand", {"cmd": cmd, "params": cmd_args})["value"]
 
