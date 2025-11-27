@@ -45,6 +45,10 @@ export class PlaywrightDriver extends BaseDriver {
     super();
     this.page = page;
     void this.initCDPSession();
+    // Auto-switch to new tabs
+    this.page.context().on("page", (newPage) => {
+      void this.switchPage(newPage);
+    });
   }
 
   private async initCDPSession(): Promise<void> {
@@ -208,5 +212,13 @@ export class PlaywrightDriver extends BaseDriver {
     } else {
       logger.debug("  <- Page finished loading");
     }
+  }
+
+  private async switchPage(page: Page): Promise<void> {
+    logger.debug(
+      `Auto-switching to new tab ${page.url()} (${await page.title()})`
+    );
+    this.client = await page.context().newCDPSession(page);
+    this.page = page;
   }
 }

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Callable
 
 from retry import retry
 from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
@@ -48,9 +49,35 @@ class SeleniumDriver(BaseDriver):
 
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
-        self.wait_for_page_to_load()
-        return ChromiumAccessibilityTree(self.driver.execute_cdp_cmd("Accessibility.getFullAXTree", {}))
+        self._wait_for_page_to_load()
+        return ChromiumAccessibilityTree(
+            self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "Accessibility.getFullAXTree",
+                {},
+            ),
+        )
 
+    @staticmethod
+    def _autoswitch_to_new_tab(func: Callable) -> Callable:  # type: ignore[reportSelfClsParameterName]
+        """Decorator that automatically switches to new tabs opened during method execution."""
+
+        def wrapper(self: "SeleniumDriver", *args, **kwargs):
+            current_handles = self.driver.window_handles
+            result = func(self, *args, **kwargs)
+            new_handles = self.driver.window_handles
+            new_tabs = set(new_handles) - set(current_handles)
+            if new_tabs:
+                # Only switch to the last new tab opened, as only one tab can be active at a time.
+                # This is intentional and avoids unnecessary context switches.
+                last_handle = list(new_tabs)[-1]
+                if last_handle != self.driver.current_window_handle:
+                    self.driver.switch_to.window(last_handle)
+                    logger.debug(f"Auto-switching to new tab: {self.driver.title} ({self.driver.current_url})")
+            return result
+
+        return wrapper
+
+    @_autoswitch_to_new_tab
     def click(self, id: int):
         self.find_element(id).click()
 
@@ -65,6 +92,7 @@ class SeleniumDriver(BaseDriver):
         actions = ActionChains(self.driver)
         actions.move_to_element(self.find_element(id)).perform()
 
+    @_autoswitch_to_new_tab
     def press_key(self, key: Key):
         keys = []
         if key == Key.BACKSPACE:
@@ -120,13 +148,13 @@ class SeleniumDriver(BaseDriver):
         backend_node_id = accessibility_element.backend_node_id
 
         # Beware!
-        self.driver.execute_cdp_cmd("DOM.enable", {})
-        self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})
-        node_ids = self.driver.execute_cdp_cmd(
+        self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
+        self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})  # type: ignore[attr-defined]
+        node_ids = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
             "DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]}
         )
         node_id = node_ids["nodeIds"][0]
-        self.driver.execute_cdp_cmd(
+        self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
             "DOM.setAttributeValue",
             {
                 "nodeId": node_id,
@@ -135,7 +163,7 @@ class SeleniumDriver(BaseDriver):
             },
         )
         element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-id='{backend_node_id}']")
-        self.driver.execute_cdp_cmd(
+        self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
             "DOM.removeAttribute",
             {
                 "nodeId": node_id,
@@ -152,10 +180,10 @@ class SeleniumDriver(BaseDriver):
             def execute_cdp_cmd(self, cmd: str, cmd_args: dict):
                 return self.execute("executeCdpCommand", {"cmd": cmd, "params": cmd_args})["value"]
 
-            driver.execute_cdp_cmd = execute_cdp_cmd.__get__(driver)
+            driver.execute_cdp_cmd = execute_cdp_cmd.__get__(driver)  # type: ignore[attr-defined]
 
-    @retry(JavascriptException, tries=2, delay=0.1, backoff=2)
-    def wait_for_page_to_load(self):
+    @retry(JavascriptException, tries=2, delay=0.1, backoff=2)  # type: ignore[reportArgumentType]
+    def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         self.driver.execute_script(self.WAITER_SCRIPT)
         error = self.driver.execute_async_script(self.WAIT_FOR_SCRIPT)

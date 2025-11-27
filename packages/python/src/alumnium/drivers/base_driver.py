@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from alumnium.accessibility import BaseAccessibilityTree
-
+from ..accessibility import BaseAccessibilityTree
+from . import Element
 from .keys import Key
 
 
@@ -63,5 +63,5 @@ class BaseDriver(ABC):
         pass
 
     @abstractmethod
-    def find_element(self, id: int):
+    def find_element(self, id: int) -> Element:
         pass
