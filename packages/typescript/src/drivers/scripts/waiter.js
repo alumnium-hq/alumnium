@@ -83,7 +83,7 @@
       el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA || // media
       (tag === "link" && el.sheet); // CSS
 
-    if (tag == "iframe") {
+    if (tag === "iframe") {
       const doc = el.contentDocument;
       if (doc) {
         isLoaded = doc.readyState === "complete";
@@ -114,7 +114,7 @@
     const selector = [
       ...resourceTags,
       // [NOTE] Do not track script tags, as it is not possible to determine if
-      // they are is loaded or not:
+      // they are loaded or not:
       // "script[src]",
       "iframe[src]",
       'link[rel="stylesheet"][href]',
