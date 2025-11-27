@@ -38,9 +38,9 @@ def test_checkout(al):
     al.do("click login button")  # Could be NOOP
 
     # Proceed through checkout
-    assert al.get("iPhone 12 Pro Max price") == 1099
-    assert al.get("iPhone 12 Mini price") == 699
-    assert al.get("total amount") == 1798
+    assert al.get("iPhone 12 Pro Max price (without money sign)") == 1099
+    assert al.get("iPhone 12 Mini price (without money sign)") == 699
+    assert al.get("total amount (without money sign)") == 1798
 
     fields = {
         "first name": "Al",
