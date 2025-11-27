@@ -58,6 +58,7 @@ export class SeleniumDriver extends BaseDriver {
     return new ChromiumAccessibilityTree(rawData);
   }
 
+  @SeleniumDriver.autoswitchToNewTab()
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
     await element.click();
@@ -75,6 +76,7 @@ export class SeleniumDriver extends BaseDriver {
     await actions.move({ origin: await this.findElement(id) }).perform();
   }
 
+  @SeleniumDriver.autoswitchToNewTab()
   async pressKey(key: Key): Promise<void> {
     const keyMap: Record<Key, string> = {
       [Key.BACKSPACE]: SeleniumKey.BACK_SPACE,
@@ -225,5 +227,43 @@ export class SeleniumDriver extends BaseDriver {
         );
       }
     }
+  }
+
+  /**
+   * Decorator factory that returns a decorator to automatically switch to new tabs
+   * opened during method execution.
+   */
+  private static autoswitchToNewTab() {
+    return function (
+      _target: SeleniumDriver,
+      _propertyKey: string,
+      descriptor: PropertyDescriptor
+    ): PropertyDescriptor {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const originalMethod: (...args: unknown[]) => Promise<void> =
+        descriptor.value;
+
+      descriptor.value = async function (
+        this: SeleniumDriver,
+        ...args: unknown[]
+      ): Promise<void> {
+        const currentHandles = await this.driver.getAllWindowHandles();
+        await originalMethod.call(this, ...args);
+        const newHandles = await this.driver.getAllWindowHandles();
+        const newTabs = newHandles.filter((h) => !currentHandles.includes(h));
+        if (newTabs.length > 0) {
+          for (const handle of newTabs) {
+            if (handle !== (await this.driver.getWindowHandle())) {
+              await this.driver.switchTo().window(handle);
+              logger.debug(
+                `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
+              );
+            }
+          }
+        }
+      };
+
+      return descriptor;
+    };
   }
 }

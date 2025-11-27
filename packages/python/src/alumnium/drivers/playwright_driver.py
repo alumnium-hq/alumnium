@@ -1,7 +1,9 @@
 from base64 import b64encode
 from pathlib import Path
+from time import sleep
+from typing import Callable
 
-from playwright.sync_api import Error, Page
+from playwright.sync_api import Error, Locator, Page
 
 from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
@@ -40,6 +42,8 @@ class PlaywrightDriver(BaseDriver):
             SelectTool,
             TypeTool,
         }
+        # Auto-switch to new tabs
+        self.page.context.on("page", self._switch_page)
 
     @property
     def platform(self) -> str:
@@ -109,14 +113,19 @@ class PlaywrightDriver(BaseDriver):
     def url(self) -> str:
         return self.page.url
 
-    def find_element(self, id: int):
+    def find_element(self, id: int) -> Locator:
         accessibility_element = self.accessibility_tree.element_by_id(id)
         backend_node_id = accessibility_element.backend_node_id
 
         # Beware!
         self.client.send("DOM.enable")
         self.client.send("DOM.getFlattenedDocument")
-        node_ids = self.client.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]})
+        node_ids = self.client.send(
+            "DOM.pushNodesByBackendIdsToFrontend",
+            {
+                "backendNodeIds": [backend_node_id],
+            },
+        )
         node_id = node_ids["nodeIds"][0]
         self.client.send(
             "DOM.setAttributeValue",
@@ -145,3 +154,8 @@ class PlaywrightDriver(BaseDriver):
                 self.wait_for_page_to_load()
             else:
                 raise error
+
+    def _switch_page(self, page: Page):
+        logger.debug(f"Auto-switching to new tab {page.title} ({page.url})")
+        self.client = page.context.new_cdp_session(page)
+        self.page = page
