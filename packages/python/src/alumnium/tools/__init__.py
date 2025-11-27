@@ -1,6 +1,7 @@
 from .base_tool import BaseTool
 from .click_tool import ClickTool
 from .drag_and_drop_tool import DragAndDropTool
+from .execute_javascript_tool import ExecuteJavascriptTool
 from .hover_tool import HoverTool
 from .navigate_back_tool import NavigateBackTool
 from .navigate_to_url_tool import NavigateToUrlTool
