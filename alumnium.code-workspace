@@ -24,5 +24,12 @@
       "**/node_modules": true,
     },
     "testing.automaticallyOpenPeekView": "never",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.fixAll": "explicit",
+        },
+    },
   }
 }
