@@ -252,13 +252,13 @@ export class SeleniumDriver extends BaseDriver {
         const newHandles = await this.driver.getAllWindowHandles();
         const newTabs = newHandles.filter((h) => !currentHandles.includes(h));
         if (newTabs.length > 0) {
-          for (const handle of newTabs) {
-            if (handle !== (await this.driver.getWindowHandle())) {
-              await this.driver.switchTo().window(handle);
-              logger.debug(
-                `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
-              );
-            }
+          // Only switch to the last new tab, as only one tab can be active at the end.
+          const lastNewTab = newTabs[newTabs.length - 1];
+          if (lastNewTab !== (await this.driver.getWindowHandle())) {
+            await this.driver.switchTo().window(lastNewTab);
+            logger.debug(
+              `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
+            );
           }
         }
       };

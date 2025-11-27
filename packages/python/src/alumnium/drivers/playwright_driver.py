@@ -1,7 +1,7 @@
 from base64 import b64encode
 from pathlib import Path
-from time import sleep
-from typing import Callable
+
+
 
 from playwright.sync_api import Error, Locator, Page
 
@@ -156,6 +156,6 @@ class PlaywrightDriver(BaseDriver):
                 raise error
 
     def _switch_page(self, page: Page):
-        logger.debug(f"Auto-switching to new tab {page.title} ({page.url})")
+        logger.debug(f"Auto-switching to new tab {page.title()} ({page.url})")
         self.client = page.context.new_cdp_session(page)
         self.page = page

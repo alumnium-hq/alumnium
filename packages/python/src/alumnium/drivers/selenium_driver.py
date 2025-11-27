@@ -57,6 +57,7 @@ class SeleniumDriver(BaseDriver):
             ),
         )
 
+    @staticmethod
     def _autoswitch_to_new_tab(func: Callable) -> Callable:  # type: ignore[reportSelfClsParameterName]
         """Decorator that automatically switches to new tabs opened during method execution."""
 
@@ -66,10 +67,12 @@ class SeleniumDriver(BaseDriver):
             new_handles = self.driver.window_handles
             new_tabs = set(new_handles) - set(current_handles)
             if new_tabs:
-                for handle in new_tabs:
-                    if handle != self.driver.current_window_handle:
-                        self.driver.switch_to.window(handle)
-                        logger.debug(f"Auto-switching to new tab: {self.driver.title} ({self.driver.current_url})")
+                # Only switch to the last new tab opened, as only one tab can be active at a time.
+                # This is intentional and avoids unnecessary context switches.
+                last_handle = list(new_tabs)[-1]
+                if last_handle != self.driver.current_window_handle:
+                    self.driver.switch_to.window(last_handle)
+                    logger.debug(f"Auto-switching to new tab: {self.driver.title} ({self.driver.current_url})")
             return result
 
         return wrapper
