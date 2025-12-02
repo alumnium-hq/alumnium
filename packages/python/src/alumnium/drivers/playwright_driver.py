@@ -1,6 +1,8 @@
 from base64 import b64encode
+from contextlib import contextmanager
 from pathlib import Path
 
+from playwright._impl._errors import TimeoutError
 from playwright.sync_api import Error, Locator, Page
 
 from ..accessibility import ChromiumAccessibilityTree
@@ -18,6 +20,7 @@ logger = get_logger(__name__)
 
 
 class PlaywrightDriver(BaseDriver):
+    NEW_TAB_TIMEOUT = 200
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
@@ -40,8 +43,6 @@ class PlaywrightDriver(BaseDriver):
             SelectTool,
             TypeTool,
         }
-        # Auto-switch to new tabs
-        self.page.context.on("page", self._switch_page)
 
     @property
     def platform(self) -> str:
@@ -60,7 +61,8 @@ class PlaywrightDriver(BaseDriver):
             option = element.text_content()
             element.locator("xpath=.//parent::select").select_option(option)
         else:
-            element.click()
+            with self._autoswitch_to_new_tab():
+                element.click()
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
@@ -72,7 +74,8 @@ class PlaywrightDriver(BaseDriver):
         element.hover()
 
     def press_key(self, key: Key):
-        self.page.keyboard.press(key.value)
+        with self._autoswitch_to_new_tab():
+            self.page.keyboard.press(key.value)
 
     def quit(self):
         self.page.close()
@@ -153,7 +156,14 @@ class PlaywrightDriver(BaseDriver):
             else:
                 raise error
 
-    def _switch_page(self, page: Page):
+    @contextmanager
+    def _autoswitch_to_new_tab(self):
+        try:
+            with self.page.context.expect_page(timeout=self.NEW_TAB_TIMEOUT) as new_page_info:
+                yield
+        except TimeoutError:
+            return
+        page = new_page_info.value
         logger.debug(f"Auto-switching to new tab {page.title()} ({page.url})")
-        self.client = page.context.new_cdp_session(page)
         self.page = page
+        self.client = page.context.new_cdp_session(page)

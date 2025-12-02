@@ -40,15 +40,12 @@ export class PlaywrightDriver extends BaseDriver {
     "SelectTool",
     "TypeTool",
   ]);
+  public newTabTimeout = 200;
 
   constructor(page: Page) {
     super();
     this.page = page;
     void this.initCDPSession();
-    // Auto-switch to new tabs
-    this.page.context().on("page", (newPage) => {
-      void this.switchPage(newPage);
-    });
   }
 
   private async initCDPSession(): Promise<void> {
@@ -73,9 +70,10 @@ export class PlaywrightDriver extends BaseDriver {
       await element
         .locator("xpath=.//parent::select")
         .selectOption(option || "");
-    } else {
-      await element.click();
+      return;
     }
+
+    await this.autoswitchToNewTab(() => element.click());
   }
 
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
@@ -97,7 +95,7 @@ export class PlaywrightDriver extends BaseDriver {
       [Key.TAB]: "Tab",
     };
 
-    await this.page.keyboard.press(keyMap[key]);
+    await this.autoswitchToNewTab(() => this.page.keyboard.press(keyMap[key]));
   }
 
   async quit(): Promise<void> {
@@ -214,11 +212,21 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
-  private async switchPage(page: Page): Promise<void> {
-    logger.debug(
-      `Auto-switching to new tab ${page.url()} (${await page.title()})`
-    );
-    this.client = await page.context().newCDPSession(page);
-    this.page = page;
+  private async autoswitchToNewTab(action: () => Promise<void>): Promise<void> {
+    const [newPage] = await Promise.all([
+      this.page
+        .context()
+        .waitForEvent("page", { timeout: this.newTabTimeout })
+        .catch(() => null),
+      action(),
+    ]);
+
+    if (newPage) {
+      logger.debug(
+        `Auto-switching to new tab ${newPage.url()} (${await newPage.title()})`
+      );
+      this.page = newPage;
+      await this.initCDPSession();
+    }
   }
 }
