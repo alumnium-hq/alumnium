@@ -20,6 +20,48 @@ const __dirname = dirname(__filename);
 
 const logger = getLogger(["driver", "selenium"]);
 
+/**
+ * Decorator that automatically switches to new tabs opened during method execution.
+ */
+function autoswitchToNewTab(
+  _target: unknown,
+  _propertyKey: string | symbol,
+  descriptor?: PropertyDescriptor
+): PropertyDescriptor | void {
+  // Handle both legacy and modern decorator standards
+  if (!descriptor) {
+    // Modern decorator - descriptor is undefined, need to return a new descriptor
+    return;
+  }
+
+  // Legacy decorator - descriptor is provided
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const originalMethod: (...args: unknown[]) => Promise<void> =
+    descriptor.value;
+
+  descriptor.value = async function (
+    this: SeleniumDriver,
+    ...args: unknown[]
+  ): Promise<void> {
+    const currentHandles = await this.driver.getAllWindowHandles();
+    await originalMethod.call(this, ...args);
+    const newHandles = await this.driver.getAllWindowHandles();
+    const newTabs = newHandles.filter((h) => !currentHandles.includes(h));
+    if (newTabs.length > 0) {
+      // Only switch to the last new tab, as only one tab can be active at the end.
+      const lastNewTab = newTabs[newTabs.length - 1];
+      if (lastNewTab !== (await this.driver.getWindowHandle())) {
+        await this.driver.switchTo().window(lastNewTab);
+        logger.debug(
+          `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
+        );
+      }
+    }
+  };
+
+  return descriptor;
+}
+
 export class SeleniumDriver extends BaseDriver {
   private static WAITER_SCRIPT = readFileSync(
     join(__dirname, "scripts/waiter.js"),
@@ -30,7 +72,7 @@ export class SeleniumDriver extends BaseDriver {
     "utf8"
   );
 
-  private driver: ChromiumWebDriver;
+  protected driver: ChromiumWebDriver;
   public platform: string = "chromium";
   public supportedTools: Set<string> = new Set([
     "ClickTool",
@@ -58,6 +100,7 @@ export class SeleniumDriver extends BaseDriver {
     return new ChromiumAccessibilityTree(rawData);
   }
 
+  @autoswitchToNewTab
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
     await element.click();
@@ -75,6 +118,7 @@ export class SeleniumDriver extends BaseDriver {
     await actions.move({ origin: await this.findElement(id) }).perform();
   }
 
+  @autoswitchToNewTab
   async pressKey(key: Key): Promise<void> {
     const keyMap: Record<Key, string> = {
       [Key.BACKSPACE]: SeleniumKey.BACK_SPACE,

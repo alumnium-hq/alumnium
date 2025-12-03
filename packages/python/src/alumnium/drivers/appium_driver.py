@@ -3,7 +3,6 @@ from typing import Literal
 
 from appium.webdriver import Remote
 from appium.webdriver.common.appiumby import AppiumBy as By
-from appium.webdriver.extensions.action_helpers import ActionHelpers
 from appium.webdriver.webelement import WebElement
 from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains

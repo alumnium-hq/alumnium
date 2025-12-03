@@ -1,7 +1,9 @@
 from base64 import b64encode
+from contextlib import contextmanager
 from pathlib import Path
 
-from playwright.sync_api import Error, Page
+from playwright._impl._errors import TimeoutError
+from playwright.sync_api import Error, Locator, Page
 
 from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
@@ -18,6 +20,7 @@ logger = get_logger(__name__)
 
 
 class PlaywrightDriver(BaseDriver):
+    NEW_TAB_TIMEOUT = 200
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
@@ -58,7 +61,8 @@ class PlaywrightDriver(BaseDriver):
             option = element.text_content()
             element.locator("xpath=.//parent::select").select_option(option)
         else:
-            element.click()
+            with self._autoswitch_to_new_tab():
+                element.click()
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
@@ -70,7 +74,8 @@ class PlaywrightDriver(BaseDriver):
         element.hover()
 
     def press_key(self, key: Key):
-        self.page.keyboard.press(key.value)
+        with self._autoswitch_to_new_tab():
+            self.page.keyboard.press(key.value)
 
     def quit(self):
         self.page.close()
@@ -109,14 +114,19 @@ class PlaywrightDriver(BaseDriver):
     def url(self) -> str:
         return self.page.url
 
-    def find_element(self, id: int):
+    def find_element(self, id: int) -> Locator:
         accessibility_element = self.accessibility_tree.element_by_id(id)
         backend_node_id = accessibility_element.backend_node_id
 
         # Beware!
         self.client.send("DOM.enable")
         self.client.send("DOM.getFlattenedDocument")
-        node_ids = self.client.send("DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [backend_node_id]})
+        node_ids = self.client.send(
+            "DOM.pushNodesByBackendIdsToFrontend",
+            {
+                "backendNodeIds": [backend_node_id],
+            },
+        )
         node_id = node_ids["nodeIds"][0]
         self.client.send(
             "DOM.setAttributeValue",
@@ -145,3 +155,15 @@ class PlaywrightDriver(BaseDriver):
                 self.wait_for_page_to_load()
             else:
                 raise error
+
+    @contextmanager
+    def _autoswitch_to_new_tab(self):
+        try:
+            with self.page.context.expect_page(timeout=self.NEW_TAB_TIMEOUT) as new_page_info:
+                yield
+        except TimeoutError:
+            return
+        page = new_page_info.value
+        logger.debug(f"Auto-switching to new tab {page.title()} ({page.url})")
+        self.page = page
+        self.client = page.context.new_cdp_session(page)
