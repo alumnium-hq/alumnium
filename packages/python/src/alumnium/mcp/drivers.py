@@ -90,7 +90,51 @@ def create_android_driver(capabilities: dict[str, Any], server_url: str | None) 
 
 def create_playwright_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
     """Create async Playwright driver from capabilities."""
+    import asyncio
+    from threading import Thread
+
+    from playwright.async_api import async_playwright
+
     from alumnium.drivers.async_playwright_driver import AsyncPlaywrightDriver
 
-    # Create driver - initialization happens in background thread
-    return AsyncPlaywrightDriver(capabilities)
+    # Create event loop in dedicated thread (shared by Playwright and driver)
+    loop = asyncio.new_event_loop()
+    thread = Thread(target=lambda: asyncio.set_event_loop(loop) or loop.run_forever(), daemon=True)
+    thread.start()
+
+    # Create Playwright resources in the shared event loop
+    async def _create_resources():
+        playwright = await async_playwright().start()
+
+        # Get browser type from capabilities
+        browser_type = capabilities.get("browserName", "chromium").lower()
+        headless = capabilities.get("headless", getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true")
+
+        # Launch browser
+        if browser_type == "firefox":
+            browser = await playwright.firefox.launch(headless=headless)
+        elif browser_type == "webkit":
+            browser = await playwright.webkit.launch(headless=headless)
+        else:  # chromium (default)
+            browser = await playwright.chromium.launch(headless=headless)
+
+        # Create context and page
+        context = await browser.new_context()
+        page = await context.new_page()
+
+        return playwright, browser, context, page
+
+    # Run resource creation in the shared loop
+    future = asyncio.run_coroutine_threadsafe(_create_resources(), loop)
+    playwright, browser, context, page = future.result()
+
+    # Create driver with the page and shared loop
+    driver = AsyncPlaywrightDriver(page, loop)
+
+    # Store references for cleanup
+    driver._playwright_instance = playwright
+    driver._browser_instance = browser
+    driver._context_instance = context
+    driver._thread = thread
+
+    return driver

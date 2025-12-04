@@ -42,32 +42,17 @@ class AsyncPlaywrightDriver(BaseDriver):
             f"{{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
         )
 
-    def __init__(
-        self,
-        capabilities: dict[str, Any],
-    ):
+    def __init__(self, page: Page, loop):
         """
         Initialize the async Playwright driver.
 
         Args:
-            capabilities: Browser capabilities including headless, browserName, etc.
+            page: Async Playwright Page instance
+            loop: Event loop where the page was created (shared loop for async operations)
         """
-        self.capabilities = capabilities
-
-        # Create event loop in dedicated thread
-        self._loop = asyncio.new_event_loop()
-        self._thread = Thread(target=self._run_loop, daemon=True)
-        self._thread.start()
-
-        # Initialize playwright, browser, context, page in the background thread
-        self._playwright = None
-        self._browser = None
-        self._context = None
-        self._page = None
-        self._client = None
-
-        # Initialize all async resources in the background thread's event loop
-        self._run_async(self._initialize())
+        self._page = page
+        self._loop = loop
+        self._client = None  # Lazy initialization
 
         self.supported_tools = {
             ClickTool,
@@ -77,11 +62,6 @@ class AsyncPlaywrightDriver(BaseDriver):
             SelectTool,
             TypeTool,
         }
-
-    def _run_loop(self):
-        """Run the event loop in the dedicated thread."""
-        asyncio.set_event_loop(self._loop)
-        self._loop.run_forever()
 
     def _run_async(self, coro):
         """
@@ -96,33 +76,12 @@ class AsyncPlaywrightDriver(BaseDriver):
         future = asyncio.run_coroutine_threadsafe(coro, self._loop)
         return future.result()
 
-    async def _initialize(self):
-        """Initialize all async Playwright resources in the background thread."""
-        from os import getenv
-
-        from playwright.async_api import async_playwright
-
-        # Start playwright
-        self._playwright = await async_playwright().start()
-
-        # Get browser type from capabilities
-        browser_type = self.capabilities.get("browserName", "chromium").lower()
-        headless = self.capabilities.get("headless", getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true")
-
-        # Launch browser
-        if browser_type == "firefox":
-            self._browser = await self._playwright.firefox.launch(headless=headless)
-        elif browser_type == "webkit":
-            self._browser = await self._playwright.webkit.launch(headless=headless)
-        else:  # chromium (default)
-            self._browser = await self._playwright.chromium.launch(headless=headless)
-
-        # Create context and page
-        self._context = await self._browser.new_context()
-        self._page = await self._context.new_page()
-
-        # Initialize CDP session
-        self._client = await self._init_cdp_session()
+    @property
+    def client(self):
+        """Lazy initialization of CDP client."""
+        if self._client is None:
+            self._client = self._run_async(self._init_cdp_session())
+        return self._client
 
     async def _init_cdp_session(self):
         """Initialize Chrome DevTools Protocol session."""
@@ -139,6 +98,9 @@ class AsyncPlaywrightDriver(BaseDriver):
 
     async def _get_accessibility_tree(self) -> ChromiumAccessibilityTree:
         """Get accessibility tree asynchronously."""
+        # Ensure client is initialized
+        if self._client is None:
+            self._client = await self._init_cdp_session()
         ax_tree = await self._client.send("Accessibility.getFullAXTree")
         return ChromiumAccessibilityTree(ax_tree)
 
@@ -184,34 +146,15 @@ class AsyncPlaywrightDriver(BaseDriver):
             await self._page.keyboard.press(key.value)
 
     def quit(self):
-        """Cleanup all resources."""
+        """Cleanup page resource."""
         self._run_async(self._cleanup())
 
-        # Stop event loop
-        self._loop.call_soon_threadsafe(self._loop.stop)
-        self._thread.join(timeout=5)
-
     async def _cleanup(self):
-        """Cleanup playwright resources asynchronously."""
+        """Cleanup page asynchronously."""
         try:
             await self._page.close()
         except Exception as e:
             logger.debug(f"Error closing page: {e}")
-
-        try:
-            await self._context.close()
-        except Exception as e:
-            logger.debug(f"Error closing context: {e}")
-
-        try:
-            await self._browser.close()
-        except Exception as e:
-            logger.debug(f"Error closing browser: {e}")
-
-        try:
-            await self._playwright.stop()
-        except Exception as e:
-            logger.debug(f"Error stopping playwright: {e}")
 
     def back(self):
         self._run_async(self._back())
@@ -294,6 +237,10 @@ class AsyncPlaywrightDriver(BaseDriver):
         accessibility_tree = await self._get_accessibility_tree()
         accessibility_element = accessibility_tree.element_by_id(id)
         backend_node_id = accessibility_element.backend_node_id
+
+        # Ensure client is initialized (should be from _get_accessibility_tree)
+        if self._client is None:
+            self._client = await self._init_cdp_session()
 
         # Enable DOM and get flattened document
         await self._client.send("DOM.enable")
