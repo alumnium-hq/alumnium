@@ -29,6 +29,8 @@ def create_playwright_driver(capabilities: dict[str, Any], server_url: str | Non
         headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true"
         browser = await playwright.chromium.launch(headless=headless)
         context = await browser.new_context()
+
+        await context.tracing.start(screenshots=True, snapshots=True, sources=True)
         page = await context.new_page()
 
         return page

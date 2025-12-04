@@ -30,9 +30,21 @@ def cleanup_driver(driver_id: str) -> tuple[Path, dict[str, Any]]:
     if driver_id not in drivers:
         raise ValueError(f"Driver {driver_id} not found.")
 
-    al, _ = drivers[driver_id]
+    al, driver = drivers[driver_id]
     stats = al.stats
     screenshot_dir = screenshot_dirs[driver_id]
+
+    if isinstance(driver, tuple) and driver[0].__class__.__name__ == "Page":
+        # Playwright driver
+        import asyncio
+
+        page, loop = driver
+
+        async def _stop_tracing():
+            await page.context.tracing.stop(path=str(screenshot_dir / "trace.zip"))
+
+        future = asyncio.run_coroutine_threadsafe(_stop_tracing(), loop)
+        future.result()
 
     al.quit()
 
