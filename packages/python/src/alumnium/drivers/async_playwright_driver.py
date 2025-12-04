@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import AbstractEventLoop, run_coroutine_threadsafe
 from base64 import b64encode
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -40,7 +40,7 @@ class AsyncPlaywrightDriver(BaseDriver):
             f"{{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
         )
 
-    def __init__(self, page: Page, loop):
+    def __init__(self, page: Page, loop: AbstractEventLoop):
         """
         Initialize the async Playwright driver.
 
@@ -71,7 +71,7 @@ class AsyncPlaywrightDriver(BaseDriver):
         Returns:
             Result of the coroutine execution
         """
-        future = asyncio.run_coroutine_threadsafe(coro, self._loop)
+        future = run_coroutine_threadsafe(coro, self._loop)
         return future.result()
 
     @property
