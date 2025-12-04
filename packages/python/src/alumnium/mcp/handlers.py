@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from .. import Alumni
 from ..clients.native_client import NativeClient
-from ..tools import NavigateBackTool, NavigateToUrlTool, ScrollTool
+from ..tools import ExecuteJavascriptTool, NavigateBackTool, NavigateToUrlTool, ScrollTool
 from . import drivers, screenshots, state
 
 
@@ -41,7 +41,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             f"Unsupported platformName: {platform_name}. Supported values: chrome, chromium, playwright, ios, android"
         )
 
-    al = Alumni(driver, extra_tools=[NavigateBackTool, NavigateToUrlTool, ScrollTool])
+    al = Alumni(driver, extra_tools=[ExecuteJavascriptTool, NavigateBackTool, NavigateToUrlTool, ScrollTool])
 
     # Generate unique driver ID
     driver_id = str(uuid4())
