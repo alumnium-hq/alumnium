@@ -172,6 +172,9 @@ class SeleniumDriver(BaseDriver):
         )
         return element
 
+    def execute_script(self, script: str):
+        self.driver.execute_script(script)
+
     # Remote Chromium instances support CDP commands, but the Python bindings don't expose them.
     # https://github.com/SeleniumHQ/selenium/issues/14799
     def _patch_driver(self, driver: WebDriver):

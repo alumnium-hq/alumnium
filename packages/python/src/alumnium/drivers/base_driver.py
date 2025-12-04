@@ -65,3 +65,7 @@ class BaseDriver(ABC):
     @abstractmethod
     def find_element(self, id: int) -> Element:
         pass
+
+    @abstractmethod
+    def execute_script(self, script: str):
+        pass
