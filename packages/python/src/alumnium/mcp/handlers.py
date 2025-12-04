@@ -26,9 +26,16 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
     platform_name = capabilities["platformName"].lower()
     server_url = args.get("server_url")
 
+    # Generate unique driver ID
+    driver_id = str(uuid4())
+
+    # Create screenshot directory
+    screenshot_dir = Path("tmp") / "alumnium" / driver_id
+    screenshot_dir.mkdir(parents=True, exist_ok=True)
+
     # Detect platform and create appropriate driver
     if platform_name in ["chrome", "chromium"]:
-        driver = drivers.create_chrome_driver(capabilities, server_url)
+        driver = drivers.create_chrome_driver(capabilities, server_url, screenshot_dir)
         platform_label = "Chrome"
     elif platform_name == "ios":
         driver = drivers.create_ios_driver(capabilities, server_url)
@@ -41,14 +48,15 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             f"Unsupported platformName: {platform_name}. Supported values: chrome, chromium, playwright, ios, android"
         )
 
-    al = Alumni(driver, extra_tools=[ExecuteJavascriptTool, NavigateBackTool, NavigateToUrlTool, ScrollTool])
-
-    # Generate unique driver ID
-    driver_id = str(uuid4())
-
-    # Create screenshot directory
-    screenshot_dir = Path("tmp") / "alumnium" / driver_id
-    screenshot_dir.mkdir(parents=True, exist_ok=True)
+    al = Alumni(
+        driver,
+        extra_tools=[
+            ExecuteJavascriptTool,
+            NavigateBackTool,
+            NavigateToUrlTool,
+            ScrollTool,
+        ],
+    )
 
     # Register driver in global state
     state.register_driver(driver_id, al, driver, screenshot_dir)

@@ -1,17 +1,18 @@
 """Driver factory functions for different platforms."""
 
 from os import getenv
+from pathlib import Path
 from typing import Any
 
 
-def create_chrome_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
+def create_chrome_driver(capabilities: dict[str, Any], server_url: str | None, screenshot_dir: Path) -> Any:
     if getenv("ALUMNIUM_DRIVER", "selenium").lower() == "playwright":
-        return create_playwright_driver(capabilities, server_url)
+        return create_playwright_driver(screenshot_dir)
     else:
         return create_selenium_driver(capabilities, server_url)
 
 
-def create_playwright_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
+def create_playwright_driver(screenshot_dir: Path) -> Any:
     """Create async Playwright driver from capabilities."""
     import asyncio
     from threading import Thread
@@ -28,7 +29,7 @@ def create_playwright_driver(capabilities: dict[str, Any], server_url: str | Non
         playwright = await async_playwright().start()
         headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true"
         browser = await playwright.chromium.launch(headless=headless)
-        context = await browser.new_context()
+        context = await browser.new_context(record_video_dir=screenshot_dir / "videos")
 
         await context.tracing.start(screenshots=True, snapshots=True, sources=True)
         page = await context.new_page()
