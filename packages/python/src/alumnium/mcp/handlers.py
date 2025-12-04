@@ -30,6 +30,9 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
     if platform_name in ["chrome", "chromium"]:
         driver = drivers.create_chromium_driver(capabilities, server_url)
         platform_label = "Chromium"
+    elif platform_name == "playwright":
+        driver = drivers.create_playwright_driver(capabilities, server_url)
+        platform_label = "Playwright"
     elif platform_name == "ios":
         driver = drivers.create_ios_driver(capabilities, server_url)
         platform_label = "iOS"
@@ -38,7 +41,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
         platform_label = "Android"
     else:
         raise ValueError(
-            f"Unsupported platformName: {platform_name}. Supported values: chrome, chromium, ios, android"
+            f"Unsupported platformName: {platform_name}. Supported values: chrome, chromium, playwright, ios, android"
         )
 
     al = Alumni(driver, extra_tools=[NavigateBackTool, NavigateToUrlTool, ScrollTool])

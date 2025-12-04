@@ -86,3 +86,11 @@ def create_android_driver(capabilities: dict[str, Any], server_url: str | None) 
 
     # Create Appium driver
     return Appium(client_config=client_config, options=options)
+
+
+def create_playwright_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
+    """Create async Playwright driver from capabilities."""
+    from alumnium.drivers.async_playwright_driver import AsyncPlaywrightDriver
+
+    # Create driver - initialization happens in background thread
+    return AsyncPlaywrightDriver(capabilities)

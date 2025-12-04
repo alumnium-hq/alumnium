@@ -30,7 +30,12 @@ class Alumni:
     ):
         self.model = model or Model.current
 
-        if isinstance(driver, Appium):
+        # Check if driver is already a BaseDriver implementation
+        from .drivers.base_driver import BaseDriver
+
+        if isinstance(driver, BaseDriver):
+            self.driver = driver
+        elif isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
         elif isinstance(driver, Page):
             self.driver = PlaywrightDriver(driver)
