@@ -2,8 +2,6 @@ import asyncio
 from base64 import b64encode
 from contextlib import asynccontextmanager
 from pathlib import Path
-from threading import Thread
-from typing import Any
 
 from playwright._impl._errors import TimeoutError
 from playwright.async_api import Error, Locator, Page
