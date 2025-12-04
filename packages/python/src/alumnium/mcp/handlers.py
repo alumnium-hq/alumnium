@@ -28,11 +28,8 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
 
     # Detect platform and create appropriate driver
     if platform_name in ["chrome", "chromium"]:
-        driver = drivers.create_chromium_driver(capabilities, server_url)
-        platform_label = "Chromium"
-    elif platform_name == "playwright":
-        driver = drivers.create_playwright_driver(capabilities, server_url)
-        platform_label = "Playwright"
+        driver = drivers.create_chrome_driver(capabilities, server_url)
+        platform_label = "Chrome"
     elif platform_name == "ios":
         driver = drivers.create_ios_driver(capabilities, server_url)
         platform_label = "iOS"

@@ -4,7 +4,14 @@ from os import getenv
 from typing import Any
 
 
-def create_chromium_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
+def create_chrome_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
+    if getenv("ALUMNIUM_DRIVER", "selenium").lower() == "playwright":
+        return create_playwright_driver(capabilities, server_url)
+    else:
+        return create_selenium_driver(capabilities, server_url)
+
+
+def create_selenium_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
     """Create Selenium Chrome driver from capabilities."""
     from selenium.webdriver.chrome.options import Options
 
@@ -108,7 +115,7 @@ def create_playwright_driver(capabilities: dict[str, Any], server_url: str | Non
 
         # Get browser type from capabilities
         browser_type = capabilities.get("browserName", "chromium").lower()
-        headless = capabilities.get("headless", getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true")
+        headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true"
 
         # Launch browser
         if browser_type == "firefox":
