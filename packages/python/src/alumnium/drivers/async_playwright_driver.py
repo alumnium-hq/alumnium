@@ -218,6 +218,12 @@ class AsyncPlaywrightDriver(BaseDriver):
         # but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
         return self.page.locator(f"css=[data-alumnium-id='{backend_node_id}']")
 
+    def execute_script(self, script: str):
+        self._run_async(self._execute_script(script))
+
+    async def _execute_script(self, script: str):
+        await self.page.evaluate(f"() => {{ {script} }}")
+
     def wait_for_page_to_load(self):
         self._run_async(self._wait_for_page_to_load())
 
@@ -249,7 +255,7 @@ class AsyncPlaywrightDriver(BaseDriver):
         title = await page.title()
         logger.debug(f"Auto-switching to new tab {title} ({page.url})")
         self.page = page
-        self._lient = await self.page.context.new_cdp_session(self.page)
+        self.client = await self.page.context.new_cdp_session(self.page)
 
     async def _send_cdp_command(self, method: str, params: dict | None = None):
         if self.client is None:
