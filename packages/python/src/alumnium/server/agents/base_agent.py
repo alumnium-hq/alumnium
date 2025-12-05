@@ -47,11 +47,34 @@ class BaseAgent:
             with open(prompt_file) as f:
                 self.prompts[prompt_file.stem] = f.read()
 
+    @staticmethod
+    def _should_raise(error) -> bool:
+        if (
+            # Common API rate limit errors
+            isinstance(
+                error,
+                (
+                    AnthropicRateLimitError,
+                    OpenAIRateLimitError,
+                    GoogleRateLimitError,
+                ),
+            )
+            # AWS Bedrock rate limit errors
+            or (isinstance(error, BedrockClientError) and error.response["Error"]["Code"] == "ThrottlingException")
+            # MistralAI rate limit errors
+            or (isinstance(error, HTTPStatusError) and error.response.status_code == 429)
+            # DeepSeek instead throws internal server error
+            or isinstance(error, OpenAIInternalServerError)
+        ):
+            return False  # Retry
+        else:
+            raise error
+
     @retry(
         tries=8,
         delay=1,
         backoff=2,
-        on_exception=lambda e: not BaseAgent._should_retry(e),
+        on_exception=_should_raise,
         logger=logger,
     )
     def _invoke_chain(self, chain: Runnable, *args):
@@ -68,23 +91,3 @@ class BaseAgent:
             self.usage["input_tokens"] += usage_metadata.get("input_tokens", 0)
             self.usage["output_tokens"] += usage_metadata.get("output_tokens", 0)
             self.usage["total_tokens"] += usage_metadata.get("total_tokens", 0)
-
-    @staticmethod
-    def _should_retry(error):
-        return (
-            # Common API rate limit errors
-            isinstance(
-                error,
-                (
-                    AnthropicRateLimitError,
-                    OpenAIRateLimitError,
-                    GoogleRateLimitError,
-                ),
-            )
-            # AWS Bedrock rate limit errors
-            or (isinstance(error, BedrockClientError) and error.response["Error"]["Code"] == "ThrottlingException")
-            # MistralAI rate limit errors
-            or (isinstance(error, HTTPStatusError) and error.response.status_code == 429)
-            # DeepSeek instead throws internal server error
-            or isinstance(error, OpenAIInternalServerError)
-        )
