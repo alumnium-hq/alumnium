@@ -137,6 +137,7 @@ class SeleniumDriver(BaseDriver):
     def type(self, id: int, text: str):
         element = self.find_element(id)
         element.clear()
+        text = self._normalize_input_text(element.get_attribute("type"), text)
         element.send_keys(text)
 
     @property

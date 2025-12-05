@@ -152,7 +152,13 @@ export class PlaywrightDriver extends BaseDriver {
 
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
-    await element.fill(text);
+    const inputType = await element.getAttribute("type");
+    text = this.normalizeInputText(inputType, text);
+    if (inputType === "file") {
+      await element.setInputFiles(text);
+    } else {
+      await element.fill(text);
+    }
   }
 
   @Retry({

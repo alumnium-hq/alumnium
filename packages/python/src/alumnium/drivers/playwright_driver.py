@@ -108,7 +108,13 @@ class PlaywrightDriver(BaseDriver):
         return self.page.title()
 
     def type(self, id: int, text: str):
-        self.find_element(id).fill(text)
+        element = self.find_element(id)
+        input_type = element.get_attribute("type")
+        text = self._normalize_input_text(input_type, text)
+        if input_type == "file":
+            element.set_input_files(text)
+        else:
+            element.fill(text)
 
     @property
     def url(self) -> str:
