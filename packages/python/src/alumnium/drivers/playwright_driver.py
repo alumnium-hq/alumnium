@@ -2,8 +2,7 @@ from base64 import b64encode
 from contextlib import contextmanager
 from pathlib import Path
 
-from playwright._impl._errors import TimeoutError
-from playwright.sync_api import Error, Locator, Page
+from playwright.sync_api import Error, Locator, Page, TimeoutError
 
 from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
@@ -50,8 +49,8 @@ class PlaywrightDriver(BaseDriver):
 
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
-        self.wait_for_page_to_load()
-        return ChromiumAccessibilityTree(self.client.send("Accessibility.getFullAXTree"))
+        self._wait_for_page_to_load()
+        return ChromiumAccessibilityTree(self._send_cdp_command("Accessibility.getFullAXTree"))
 
     def click(self, id: int):
         element = self.find_element(id)
@@ -119,16 +118,16 @@ class PlaywrightDriver(BaseDriver):
         backend_node_id = accessibility_element.backend_node_id
 
         # Beware!
-        self.client.send("DOM.enable")
-        self.client.send("DOM.getFlattenedDocument")
-        node_ids = self.client.send(
+        self._send_cdp_command("DOM.enable")
+        self._send_cdp_command("DOM.getFlattenedDocument")
+        node_ids = self._send_cdp_command(
             "DOM.pushNodesByBackendIdsToFrontend",
             {
                 "backendNodeIds": [backend_node_id],
             },
         )
         node_id = node_ids["nodeIds"][0]
-        self.client.send(
+        self._send_cdp_command(
             "DOM.setAttributeValue",
             {
                 "nodeId": node_id,
@@ -143,7 +142,7 @@ class PlaywrightDriver(BaseDriver):
     def execute_script(self, script: str):
         self.page.evaluate(f"() => {{ {script} }}")
 
-    def wait_for_page_to_load(self):
+    def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         try:
             self.page.evaluate(f"function() {{ {self.WAITER_SCRIPT} }}")
@@ -155,7 +154,7 @@ class PlaywrightDriver(BaseDriver):
         except Error as error:
             if self.CONTEXT_WAS_DESTROYED_ERROR in error.message:
                 logger.debug("  <- Page context has changed, retrying")
-                self.wait_for_page_to_load()
+                self._wait_for_page_to_load()
             else:
                 raise error
 
@@ -170,3 +169,6 @@ class PlaywrightDriver(BaseDriver):
         logger.debug(f"Auto-switching to new tab {page.title()} ({page.url})")
         self.page = page
         self.client = page.context.new_cdp_session(page)
+
+    def _send_cdp_command(self, method: str, params: dict | None = None):
+        return self.client.send(method, params or {})
