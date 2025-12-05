@@ -12,6 +12,7 @@ from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
 from alumnium import Alumni, Model
+from alumnium.drivers.appium_driver import AppiumDriver
 
 load_dotenv()
 
@@ -133,7 +134,7 @@ def driver():
 @fixture(scope="session")
 def al(driver):
     al = Alumni(driver, url=getenv("ALUMNIUM_SERVER_URL", None))
-    if "appium" in driver_type:
+    if isinstance(al.driver, AppiumDriver):
         al.driver.delay = 0.1
 
     yield al
@@ -141,32 +142,13 @@ def al(driver):
 
 
 @fixture
-def navigate(driver):
-    def __navigate(url):
-        if isinstance(driver, (Appium, Chrome)):
-            driver.get(url)
-        elif isinstance(driver, Page):
-            driver.goto(url)
-
-    return __navigate
+def navigate(al):
+    return lambda url: al.driver.visit(url)
 
 
 @fixture
-def execute_script(driver):
-    def __execute_script(script):
-        if isinstance(driver, Chrome):
-            driver.execute_script(script)
-        elif isinstance(driver, Page):
-            driver.evaluate(script)
-        elif isinstance(driver, Appium):
-            current_context = driver.current_context
-            for context in driver.contexts:
-                if "WEBVIEW" in context:
-                    driver.switch_to.context(context)
-                    driver.execute_script(script)
-                    driver.switch_to.context(current_context)
-
-    return __execute_script
+def execute_script(al):
+    return lambda script: al.driver.execute_script(script)
 
 
 @fixture

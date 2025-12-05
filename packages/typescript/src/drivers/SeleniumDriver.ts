@@ -187,6 +187,8 @@ export class SeleniumDriver extends BaseDriver {
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
     await element.clear();
+    const inputType = await element.getAttribute("type");
+    text = this.normalizeInputText(inputType, text);
     await element.sendKeys(text);
   }
 

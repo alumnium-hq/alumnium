@@ -20,4 +20,16 @@ export abstract class BaseDriver {
   abstract visit(url: string): void | Promise<void>;
   abstract scrollTo(id: number): void | Promise<void>;
   abstract executeScript(script: string): void | Promise<void>;
+
+  protected normalizeInputText(
+    inputType: string | null | undefined,
+    text: string
+  ): string {
+    // Planner often attempts to "escape" file paths by adding backslashes
+    if (inputType === "file") {
+      text = text.replace(/\+\//g, "/");
+    }
+
+    return text;
+  }
 }
