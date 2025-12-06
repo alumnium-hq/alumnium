@@ -28,7 +28,7 @@ class Name:
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "mistral-small3.1",
         Provider.OPENAI: "gpt-5-nano-2025-08-07",
-        Provider.XAI: "grok-4-fast-non-reasoning",
+        Provider.XAI: "grok-4-1-fast-reasoning",
     }
 
 
