@@ -7,6 +7,13 @@ from alumnium import Model, Provider
 
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
 @mark.xfail(
+    Model.current.provider in (Provider.DEEPSEEK, Provider.XAI),
+    reason="""
+Requires separate check agent as it prefers to follow
+retriever instructions (return `value` instead of `statement`)
+    """,
+)
+@mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Appium doesn't support select tool yet",
 )
