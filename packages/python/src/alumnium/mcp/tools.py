@@ -9,8 +9,7 @@ def get_tool_definitions() -> list[Tool]:
         Tool(
             name="start_driver",
             description=(
-                "Initialize a browser driver for automated testing. "
-                "Returns a driver_id for use in other calls."
+                "Initialize a browser driver for automated testing. Returns a driver_id for use in other calls."
             ),
             inputSchema={
                 "type": "object",
@@ -18,11 +17,13 @@ def get_tool_definitions() -> list[Tool]:
                     "capabilities": {
                         "type": "string",
                         "description": (
-                            "JSON string with Selenium/Appium capabilities. "
+                            "JSON string with Selenium/Appium/Playwright capabilities. "
                             "Must include 'platformName' (e.g., 'chrome', 'iOS', 'Android'). "
                             'Example: \'{"platformName": "iOS", '
                             '"appium:deviceName": "iPhone 16", '
-                            '"appium:platformVersion": "18.0"}\''
+                            '"appium:platformVersion": "18.0"}\'.'
+                            "You can optionally set extra HTTP headers. "
+                            'Example: \'{"headers": {"Authorization": "Bearer token"}}\'.'
                         ),
                     },
                     "server_url": {
