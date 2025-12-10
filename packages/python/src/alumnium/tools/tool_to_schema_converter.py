@@ -1,27 +1,41 @@
-from typing import Any, Dict, List, Type, get_origin
+from enum import Enum
+from typing import Any, get_origin
 
 from .base_tool import BaseTool
 
 
-def _pydantic_to_json_type(annotation: Type) -> str:
+def _pydantic_to_json_type(annotation: type | None) -> dict[str, str | list[str]]:
     """Convert Pydantic field type to JSON schema type."""
+    if annotation is None:
+        return {"type": "string"}  # Default for missing annotation
+
+    # Check if it's an Enum
+    try:
+        if isinstance(annotation, type) and issubclass(annotation, Enum):
+            # Extract enum values
+            enum_values = [member.value for member in annotation]
+            return {"type": "string", "enum": enum_values}
+    except TypeError:
+        # issubclass raises TypeError for non-class types
+        pass
+
     if annotation is int:
-        return "integer"
+        return {"type": "integer"}
     elif annotation is str:
-        return "string"
+        return {"type": "string"}
     elif annotation is bool:
-        return "boolean"
+        return {"type": "boolean"}
     elif annotation is float:
-        return "number"
+        return {"type": "number"}
     elif get_origin(annotation) is list:
-        return "array"
+        return {"type": "array"}
     elif get_origin(annotation) is dict:
-        return "object"
+        return {"type": "object"}
     else:
-        return "string"  # Default fallback
+        return {"type": "string"}  # Default fallback
 
 
-def convert_tool_to_schema(tool_class: Type[BaseTool]) -> Dict[str, Any]:
+def convert_tool_to_schema(tool_class: type[BaseTool]) -> dict[str, Any]:
     """Convert tool class to LangChain tool schema."""
     return {
         "type": "function",
@@ -32,7 +46,7 @@ def convert_tool_to_schema(tool_class: Type[BaseTool]) -> Dict[str, Any]:
                 "type": "object",
                 "properties": {
                     field_name: {
-                        "type": _pydantic_to_json_type(field_info.annotation),
+                        **_pydantic_to_json_type(field_info.annotation),
                         "description": field_info.description or f"{field_name} parameter",
                     }
                     for field_name, field_info in tool_class.model_fields.items()
@@ -43,6 +57,6 @@ def convert_tool_to_schema(tool_class: Type[BaseTool]) -> Dict[str, Any]:
     }
 
 
-def convert_tools_to_schemas(tools: Dict[str, Type[BaseTool]]) -> List[Dict[str, Any]]:
+def convert_tools_to_schemas(tools: dict[str, type[BaseTool]]) -> list[dict[str, Any]]:
     """Convert tools dict to list of schemas."""
     return [convert_tool_to_schema(tool_class) for tool_class in tools.values()]

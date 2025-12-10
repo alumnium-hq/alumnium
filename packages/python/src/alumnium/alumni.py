@@ -1,7 +1,7 @@
 from asyncio import AbstractEventLoop
 
 from appium.webdriver.webdriver import WebDriver as Appium
-from playwright.async_api import Page as AsyncPage
+from playwright.async_api import Page as PageAsync
 from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -15,6 +15,7 @@ from .drivers import Element
 from .drivers.appium_driver import AppiumDriver
 from .drivers.async_playwright_driver import AsyncPlaywrightDriver
 from .drivers.playwright_driver import PlaywrightDriver
+from .drivers.playwright_driver_async import PlaywrightDriverAsync
 from .drivers.selenium_driver import SeleniumDriver
 from .result import DoResult, DoStep, GetResult
 from .server.logutils import get_logger
@@ -27,7 +28,7 @@ logger = get_logger(__name__)
 class Alumni:
     def __init__(
         self,
-        driver: Page | WebDriver | tuple[AsyncPage, AbstractEventLoop],
+        driver: Page | WebDriver | tuple[PageAsync, AbstractEventLoop],
         model: Model | None = None,
         extra_tools: list[type[BaseTool]] | None = None,
         url: str | None = None,
@@ -39,9 +40,10 @@ class Alumni:
         elif isinstance(driver, Page):
             self.driver = PlaywrightDriver(driver)
         elif (
-            isinstance(driver, tuple) and isinstance(driver[0], AsyncPage) and isinstance(driver[1], AbstractEventLoop)
+            isinstance(driver, tuple) and isinstance(driver[0], PageAsync) and isinstance(driver[1], AbstractEventLoop)
         ):
-            self.driver = AsyncPlaywrightDriver(driver[0], driver[1])
+            # Asynchronous Playwright driver requires a shared event loop
+            self.driver = PlaywrightDriverAsync(driver[0], driver[1])
         elif isinstance(driver, WebDriver):
             self.driver = SeleniumDriver(driver)
         else:
