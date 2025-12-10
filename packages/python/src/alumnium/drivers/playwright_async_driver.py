@@ -1,7 +1,6 @@
 from asyncio import AbstractEventLoop, run_coroutine_threadsafe
 from base64 import b64encode
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from playwright.async_api import Error, Locator, Page, TimeoutError
 
@@ -15,23 +14,12 @@ from ..tools.select_tool import SelectTool
 from ..tools.type_tool import TypeTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .playwright_driver import PlaywrightDriver
 
 logger = get_logger(__name__)
 
 
-class PlaywrightDriverAsync(BaseDriver):
-    NEW_TAB_TIMEOUT = 200
-    NOT_SELECTABLE_ERROR = "Element is not a <select> element"
-    CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
-
-    with open(Path(__file__).parent / "scripts/waiter.js") as f:
-        WAITER_SCRIPT = f.read()
-    with open(Path(__file__).parent / "scripts/waitFor.js") as f:
-        WAIT_FOR_SCRIPT = (
-            f"(...scriptArgs) => new Promise((resolve) => "
-            f"{{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
-        )
-
+class PlaywrightAsyncDriver(BaseDriver):
     def __init__(self, page: Page, loop: AbstractEventLoop):
         self.client = None
         self.page = page
@@ -71,7 +59,7 @@ class PlaywrightDriverAsync(BaseDriver):
             await element.locator("xpath=.//parent::select").select_option(option)
         else:
             async with self._autoswitch_to_new_tab():
-                await element.click()
+                await element.click(force=True)
 
     def drag_and_drop(self, from_id: int, to_id: int):
         self._run_async(self._drag_and_drop(from_id, to_id))
@@ -200,14 +188,14 @@ class PlaywrightDriverAsync(BaseDriver):
     async def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         try:
-            await self.page.evaluate(f"function() {{ {self.WAITER_SCRIPT} }}")
-            error = await self.page.evaluate(self.WAIT_FOR_SCRIPT)
+            await self.page.evaluate(f"function() {{ {PlaywrightDriver.WAITER_SCRIPT} }}")
+            error = await self.page.evaluate(PlaywrightDriver.WAIT_FOR_SCRIPT)
             if error is not None:
                 logger.debug(f"  <- Failed to wait for page to load: {error}")
             else:
                 logger.debug("  <- Page finished loading")
         except Error as error:
-            if self.CONTEXT_WAS_DESTROYED_ERROR in error.message:
+            if PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR in error.message:
                 logger.debug("  <- Page context has changed, retrying")
                 await self._wait_for_page_to_load()
             else:
@@ -216,7 +204,7 @@ class PlaywrightDriverAsync(BaseDriver):
     @asynccontextmanager
     async def _autoswitch_to_new_tab(self):
         try:
-            async with self.page.context.expect_page(timeout=self.NEW_TAB_TIMEOUT) as new_page_info:
+            async with self.page.context.expect_page(timeout=PlaywrightDriver.NEW_TAB_TIMEOUT) as new_page_info:
                 yield
         except TimeoutError:
             return
