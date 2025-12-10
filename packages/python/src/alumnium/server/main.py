@@ -13,6 +13,8 @@ from .api_models import (
     AreaResponse,
     CacheResponse,
     ClearExamplesResponse,
+    DescribeRequest,
+    DescribeResponse,
     ErrorResponse,
     FindRequest,
     FindResponse,
@@ -166,6 +168,31 @@ async def execute_statement(session_id: str, request: StatementRequest):
         logger.error(f"Failed to execute statement for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to verify statement: {str(e)}"
+        )
+
+
+@v1_router.post("/sessions/{session_id}/descriptions", response_model=DescribeResponse)
+async def describe_page(session_id: str, request: DescribeRequest):
+    """Describe the current page state."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        accessibility_tree = session.process_tree(request.accessibility_tree)
+        description = session.description_agent.invoke(
+            accessibility_tree.to_xml(),
+            title=request.title,
+            url=request.url,
+            screenshot=request.screenshot,
+        )
+
+        return DescribeResponse(description=description)
+
+    except Exception as e:
+        logger.error(f"Failed to describe page for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to describe page: {str(e)}"
         )
 
 

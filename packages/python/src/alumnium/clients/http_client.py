@@ -106,6 +106,26 @@ class HttpClient:
         response.raise_for_status()
         return response.json()["elements"][0]
 
+    def describe(
+        self,
+        accessibility_tree: str,
+        title: str,
+        url: str,
+        screenshot: str | None,
+    ) -> str:
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/descriptions",
+            json={
+                "accessibility_tree": accessibility_tree,
+                "title": title,
+                "url": url,
+                "screenshot": screenshot,
+            },
+            timeout=120,
+        )
+        response.raise_for_status()
+        return response.json()["description"]
+
     def save_cache(self):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/caches",

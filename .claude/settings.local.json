@@ -7,7 +7,12 @@
       "Bash(poetry run pytest:*)",
       "Bash(npm pack:*)",
       "Bash(npm run:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(for provider in openai google deepseek meta mistralai ollama xai)",
+      "Bash(do)",
+      "Bash(/Users/p0deje/Development/alumnium/packages/python/src/alumnium/server/agents/description_prompts/$provider/system.md)",
+      "Bash(done)",
+      "Bash(src/alumnium/server/agents/description_prompts/$provider/system.md)"
     ],
     "deny": [],
     "ask": []
