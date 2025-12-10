@@ -15,7 +15,7 @@ from .drivers import Element
 from .drivers.appium_driver import AppiumDriver
 from .drivers.async_playwright_driver import AsyncPlaywrightDriver
 from .drivers.playwright_driver import PlaywrightDriver
-from .drivers.playwright_driver_async import PlaywrightDriverAsync
+from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.selenium_driver import SeleniumDriver
 from .result import DoResult, DoStep, GetResult
 from .server.logutils import get_logger
@@ -43,7 +43,7 @@ class Alumni:
             isinstance(driver, tuple) and isinstance(driver[0], PageAsync) and isinstance(driver[1], AbstractEventLoop)
         ):
             # Asynchronous Playwright driver requires a shared event loop
-            self.driver = PlaywrightDriverAsync(driver[0], driver[1])
+            self.driver = PlaywrightAsyncDriver(driver[0], driver[1])
         elif isinstance(driver, WebDriver):
             self.driver = SeleniumDriver(driver)
         else:
