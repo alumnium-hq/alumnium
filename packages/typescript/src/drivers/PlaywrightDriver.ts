@@ -73,7 +73,7 @@ export class PlaywrightDriver extends BaseDriver {
       return;
     }
 
-    await this.autoswitchToNewTab(() => element.click());
+    await this.autoswitchToNewTab(() => element.click({ force: true }));
   }
 
   async dragAndDrop(fromId: number, toId: number): Promise<void> {

@@ -61,7 +61,7 @@ class PlaywrightDriver(BaseDriver):
             element.locator("xpath=.//parent::select").select_option(option)
         else:
             with self._autoswitch_to_new_tab():
-                element.click()
+                element.click(force=True)
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
