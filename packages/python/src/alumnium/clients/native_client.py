@@ -72,6 +72,21 @@ class NativeClient:
         element["id"] = accessibility_tree.get_raw_id(element["id"])
         return element
 
+    def describe(
+        self,
+        accessibility_tree: str,
+        title: str,
+        url: str,
+        screenshot: str | None,
+    ) -> str:
+        accessibility_tree = self.session.process_tree(accessibility_tree)
+        return self.session.description_agent.invoke(
+            accessibility_tree.to_xml(),
+            title=title,
+            url=url,
+            screenshot=screenshot,
+        )
+
     def save_cache(self):
         self.session.cache.save()
 

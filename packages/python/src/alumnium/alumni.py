@@ -157,6 +157,28 @@ class Alumni:
         response = self.client.find_element(description, self.driver.accessibility_tree.to_str())
         return self.driver.find_element(response["id"])
 
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
+    def describe(self, vision: bool = False) -> str:
+        """
+        Describes the current page state and returns a structured markdown summary.
+
+        This method is useful for understanding page structure and available actions
+        before planning complex interactions. The summary is optimized for consumption
+        by other LLMs.
+
+        Args:
+            vision: Whether to include screenshot analysis. Defaults to False.
+
+        Returns:
+            str: Markdown-formatted description of the page.
+        """
+        return self.client.describe(
+            self.driver.accessibility_tree.to_str(),
+            title=self.driver.title,
+            url=self.driver.url,
+            screenshot=self.driver.screenshot if vision else None,
+        )
+
     def area(self, description: str) -> Area:
         """
         Creates an area for the agents to work within.

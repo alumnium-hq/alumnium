@@ -8,6 +8,7 @@ from .accessibility import (
 )
 from .agents.actor_agent import ActorAgent
 from .agents.area_agent import AreaAgent
+from .agents.description_agent import DescriptionAgent
 from .agents.locator_agent import LocatorAgent
 from .agents.planner_agent import PlannerAgent
 from .agents.retriever_agent import RetrieverAgent
@@ -42,6 +43,7 @@ class Session:
         self.retriever_agent = RetrieverAgent(self.llm)
         self.area_agent = AreaAgent(self.llm)
         self.locator_agent = LocatorAgent(self.llm)
+        self.description_agent = DescriptionAgent(self.llm)
 
         logger.info(
             f"Created session {session_id} with model {model.provider.value}/{model.name} and platform {platform}"
@@ -65,6 +67,7 @@ class Session:
                     + self.retriever_agent.usage["input_tokens"]
                     + self.area_agent.usage["input_tokens"]
                     + self.locator_agent.usage["input_tokens"]
+                    + self.description_agent.usage["input_tokens"]
                 ),
                 "output_tokens": (
                     self.planner_agent.usage["output_tokens"]
@@ -72,6 +75,7 @@ class Session:
                     + self.retriever_agent.usage["output_tokens"]
                     + self.area_agent.usage["output_tokens"]
                     + self.locator_agent.usage["output_tokens"]
+                    + self.description_agent.usage["output_tokens"]
                 ),
                 "total_tokens": (
                     self.planner_agent.usage["total_tokens"]
@@ -79,6 +83,7 @@ class Session:
                     + self.retriever_agent.usage["total_tokens"]
                     + self.area_agent.usage["total_tokens"]
                     + self.locator_agent.usage["total_tokens"]
+                    + self.description_agent.usage["total_tokens"]
                 ),
             },
             "cache": self.cache.usage,

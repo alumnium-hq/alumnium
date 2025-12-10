@@ -54,6 +54,17 @@ class StatementResponse(VersionedModel):
     explanation: str
 
 
+class DescribeRequest(VersionedModel):
+    accessibility_tree: str
+    url: Optional[str] = None
+    title: Optional[str] = None
+    screenshot: Optional[str] = None  # base64 encoded image
+
+
+class DescribeResponse(VersionedModel):
+    description: str
+
+
 class AreaRequest(VersionedModel):
     description: str
     accessibility_tree: str
