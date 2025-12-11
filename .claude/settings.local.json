@@ -13,11 +13,14 @@
       "Bash(do)",
       "Bash(/Users/p0deje/Development/alumnium/packages/python/src/alumnium/server/agents/description_prompts/$provider/system.md)",
       "Bash(done)",
-      "Bash(src/alumnium/server/agents/description_prompts/$provider/system.md)"
+      "Bash(src/alumnium/server/agents/description_prompts/$provider/system.md)",
+      "Bash(do cp anthropic/system.md $provider/system.md)"
     ],
     "deny": [],
     "ask": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": ["alumnium"]
+  "enabledMcpjsonServers": [
+    "alumnium"
+  ]
 }

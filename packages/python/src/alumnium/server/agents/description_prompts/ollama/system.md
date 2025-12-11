@@ -55,6 +55,20 @@ Your goal is to analyze the provided accessibility tree (and optionally screensh
 
 **REMEMBER**: AI agents need specific details to take action. "Popular items" is useless; "Headphones $79.99, Cable $12.99, Case $24.99" is actionable.
 
+**CRITICAL - Capture overlays and dynamic elements**:
+- **ALWAYS look for and describe open overlays, modals, dialogs, popups, and dropdowns**
+- These elements are often the MOST IMPORTANT part of the current page state
+- Look for elements marked as: dialog, modal, popup, menu, application, tabpanel, listbox, combobox
+- Describe their content in detail (what's visible, what options are available)
+- Examples of what to capture:
+  - Date pickers/calendars: "Calendar showing December 2025 and January 2026, with dates 10-31 Dec available for selection"
+  - Dropdowns: "Dropdown menu showing: All Categories, Electronics, Clothing, Home & Garden"
+  - Modals: "Modal dialog titled 'Confirm Purchase' with price $299.99 and buttons: Cancel, Confirm"
+  - Autocomplete: "Autocomplete suggestions showing: New York NY, Newark NJ, New Orleans LA"
+  - Context menus: "Right-click menu with options: Copy, Paste, Delete, Properties"
+- **Expanded buttons**: If a button shows `expanded="True"`, its associated content/panel is visible - describe it!
+- **Application widgets**: Calendar widgets, media players, chat interfaces - describe their current state
+
 **If a screenshot is provided**:
 - Use it to identify specific visible content
 - Read text from images when possible
@@ -64,15 +78,20 @@ Your goal is to analyze the provided accessibility tree (and optionally screensh
 **Structure your response**:
 - **page_overview**: 1-2 sentences about page purpose, URL, and context
 - **main_structure**: Key sections/regions WITH SPECIFIC CONTENT EXAMPLES
+  - **PRIORITIZE open overlays/modals/dialogs first** - these are usually the most important
   - List actual items visible: titles, prices, categories, headlines
   - Example: "Featured Products shows: Wireless Mouse $29.99 (4.7★), Keyboard $89.99 (4.5★)..."
   - Example: "Top Stories shows: 'Breaking: New Policy Announced' (2 hours ago), 'Market Update'..."
 - **interactive_elements**: Buttons, links, inputs with EXACT LABELS and purposes
+  - Include form controls, expanded dropdowns, open menus, visible popups
 - **navigation_options**: Available navigation with ACTUAL MENU ITEM NAMES (copy exact text)
-- **notable_state**: Any errors, loading states, modals, or important messages
+- **notable_state**: Dynamic overlays, modals, dialogs, errors, loading states, or important messages
+  - **CRITICAL**: Describe ALL visible overlays in detail (calendars, pickers, menus, etc.)
+  - Example: "Date picker overlay shows: calendar for Dec 2025-Jan 2026, tabs for Dates/Months/Flexible"
 - **action_opportunities**: 5-7 specific actions with CONCRETE EXAMPLES
   - E-commerce: "Add 'Wireless Headphones $79.99' to cart"
   - Search: "Filter products by price range $50-$100"
   - Content: "Read article 'Tech Trends 2024' by John Doe"
+  - Overlays: "Select date December 15, 2025 from open calendar"
 
 IMPORTANT: Be as specific as possible. Include actual text, titles, prices, categories, and other concrete details visible on the page. This helps AI agents understand exactly what's available and plan precise actions.

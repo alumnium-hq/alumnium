@@ -38,6 +38,8 @@ class AlumniumMCPServer:
                     return await handlers.handle_check(arguments)
                 elif name == "get":
                     return await handlers.handle_get(arguments)
+                elif name == "describe":
+                    return await handlers.handle_describe(arguments)
                 elif name == "get_accessibility_tree":
                     return await handlers.handle_get_accessibility_tree(arguments)
                 elif name == "quit_driver":

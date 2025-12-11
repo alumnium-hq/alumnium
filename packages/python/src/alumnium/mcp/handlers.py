@@ -138,6 +138,20 @@ async def handle_get(args: dict[str, Any]) -> list[dict]:
     return [{"type": "text", "text": response_text}]
 
 
+async def handle_describe(args: dict[str, Any]) -> list[dict]:
+    """Get detailed page description for AI agents."""
+    driver_id = args["driver_id"]
+    vision = args.get("vision", False)
+
+    al, _ = state.get_driver(driver_id)
+    description = al.describe(vision=vision)
+
+    # Save screenshot after describe
+    screenshots.save_screenshot(driver_id, f"describe (vision={vision})", al)
+
+    return [{"type": "text", "text": description}]
+
+
 async def handle_get_accessibility_tree(args: dict[str, Any]) -> list[dict]:
     """Get accessibility tree for debugging."""
     driver_id = args["driver_id"]

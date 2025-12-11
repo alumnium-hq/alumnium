@@ -41,7 +41,12 @@ def get_tool_definitions() -> list[Tool]:
         ),
         Tool(
             name="do",
-            description="Execute a goal using natural language (e.g., 'click login button', 'fill out the form'). Alumnium will plan and execute the necessary steps.",
+            description=(
+                "Execute actions for a goal using natural language "
+                "(e.g., 'click login button', 'type text into search box'). "
+                "Use concrete and explicit instructions without chaining multiple actions together. "
+                "Returns the result and explanation."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -79,7 +84,11 @@ def get_tool_definitions() -> list[Tool]:
         ),
         Tool(
             name="get",
-            description="Extract data from the page (e.g., 'user name', 'product prices', 'item count'). Returns the extracted data and explanation.",
+            description=(
+                "Extract data from the page "
+                "(e.g., 'user name', 'product prices', 'item count'). "
+                "Returns the extracted data and explanation."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -98,8 +107,34 @@ def get_tool_definitions() -> list[Tool]:
             },
         ),
         Tool(
+            name="describe",
+            description=(
+                "Get a detailed markdown description of the current page optimized for AI agents. "
+                "This is the RECOMMENDED way to understand page state. Returns structured information about: "
+                "page purpose, visible content (with specific titles/prices/ratings), interactive elements, "
+                "navigation options, notable states, and possible actions. "
+                "Use this to plan actions or for self-correction when needed."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "driver_id": {"type": "string"},
+                    "vision": {
+                        "type": "boolean",
+                        "description": "Include screenshot analysis for visual context (uses more tokens)",
+                        "default": False,
+                    },
+                },
+                "required": ["driver_id"],
+            },
+        ),
+        Tool(
             name="get_accessibility_tree",
-            description="Get structured representation of current page for debugging. Useful for understanding page structure.",
+            description=(
+                "Get raw structured representation of current page for debugging. "
+                "⚠️ ONLY use this when 'describe' is insufficient or for deep technical debugging. "
+                "For understanding page state and planning actions, prefer 'describe' tool instead."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -121,7 +156,9 @@ def get_tool_definitions() -> list[Tool]:
         ),
         Tool(
             name="save_cache",
-            description="Save the Alumnium cache for a driver session. This persists learned interactions for future use.",
+            description=(
+                "Save the Alumnium cache for a driver session. This persists learned interactions for future use."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {
