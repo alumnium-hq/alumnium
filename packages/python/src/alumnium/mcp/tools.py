@@ -24,6 +24,9 @@ def get_tool_definitions() -> list[Tool]:
                             '"appium:platformVersion": "18.0"}\'.'
                             "You can optionally set extra HTTP headers. "
                             'Example: \'{"headers": {"Authorization": "Bearer token"}}\'.'
+                            "You can optionally set cookies. "
+                            'Example: \'{"cookies": [{"name": "session", "value": "abc123", '
+                            '"domain": ".example.com"}]}\'.'
                         ),
                     },
                     "server_url": {

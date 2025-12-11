@@ -35,6 +35,13 @@ def create_playwright_driver(capabilities: dict[str, Any], screenshot_dir: Path)
         )
 
         await context.tracing.start(screenshots=True, snapshots=True, sources=True)
+
+        cookies = capabilities.get("cookies", [])
+        if cookies:
+            if "path" not in cookies:
+                cookies["path"] = "/"
+            await context.add_cookies(cookies)
+
         page = await context.new_page()
 
         return page
@@ -50,6 +57,7 @@ def create_selenium_driver(capabilities: dict[str, Any], server_url: str | None)
     from selenium.webdriver.chrome.options import Options
 
     headers = capabilities.pop("headers", {})
+    cookies = capabilities.pop("cookies", [])
     options = Options()
 
     # Apply all capabilities to options
@@ -67,9 +75,14 @@ def create_selenium_driver(capabilities: dict[str, Any], server_url: str | None)
 
         driver = Chrome(options=options)
 
-    if headers:
+    if headers or cookies:
         driver.execute_cdp_cmd("Network.enable", {})  # type: ignore[reportAttributeAccessIssue]
+
+    if headers:
         driver.execute_cdp_cmd("Network.setExtraHTTPHeaders", {"headers": headers})  # type: ignore[reportAttributeAccessIssue]
+
+    if cookies:
+        driver.execute_cdp_cmd("Network.setCookies", {"cookies": cookies})  # type: ignore[reportAttributeAccessIssue]
 
     return driver
 
