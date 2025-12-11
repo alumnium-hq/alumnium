@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "mcp__alumnium",
       "Bash(cat:*)",
       "Bash(curl:*)",
       "Bash(poetry run behave:*)",
@@ -11,5 +12,7 @@
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["alumnium"]
 }
