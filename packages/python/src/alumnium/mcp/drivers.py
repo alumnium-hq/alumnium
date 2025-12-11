@@ -4,9 +4,15 @@ from os import getenv
 from pathlib import Path
 from typing import Any
 
+from ..server.logutils import get_logger
+
+logger = get_logger(__name__)
+
 
 def create_chrome_driver(capabilities: dict[str, Any], server_url: str | None, screenshot_dir: Path) -> Any:
-    if getenv("ALUMNIUM_DRIVER", "selenium").lower() == "playwright":
+    driver_type = getenv("ALUMNIUM_DRIVER", "selenium").lower()
+    logger.info(f"Creating Chrome driver using {driver_type}")
+    if driver_type == "playwright":
         return create_playwright_driver(capabilities, screenshot_dir)
     else:
         return create_selenium_driver(capabilities, server_url)
@@ -19,6 +25,9 @@ def create_playwright_driver(capabilities: dict[str, Any], screenshot_dir: Path)
 
     from playwright.async_api import async_playwright
 
+    headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true"
+    logger.info(f"Creating Playwright driver (headless={headless})")
+
     # Create event loop in dedicated thread (shared by Playwright and driver)
     loop = asyncio.new_event_loop()
     thread = Thread(target=lambda: asyncio.set_event_loop(loop) or loop.run_forever(), daemon=True)
@@ -27,17 +36,22 @@ def create_playwright_driver(capabilities: dict[str, Any], screenshot_dir: Path)
     # Create Playwright resources in the shared event loop
     async def _create_resources():
         playwright = await async_playwright().start()
-        headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true"
         browser = await playwright.chromium.launch(headless=headless)
+
+        headers = capabilities.get("headers", {})
+        if headers:
+            logger.debug(f"Setting extra HTTP headers: {headers}")
+
         context = await browser.new_context(
             record_video_dir=screenshot_dir / "videos",
-            extra_http_headers=capabilities.get("headers", {}),
+            extra_http_headers=headers,
         )
 
         await context.tracing.start(screenshots=True, snapshots=True, sources=True)
 
         cookies = capabilities.get("cookies", [])
         if cookies:
+            logger.debug(f"Adding cookies: {cookies}")
             for cookie in cookies:
                 if "path" not in cookie:
                     cookie["path"] = "/"
@@ -50,12 +64,15 @@ def create_playwright_driver(capabilities: dict[str, Any], screenshot_dir: Path)
     # Run resource creation in the shared loop
     future = asyncio.run_coroutine_threadsafe(_create_resources(), loop)
     page = future.result()
+    logger.debug("Playwright driver created successfully")
     return (page, loop)
 
 
 def create_selenium_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
     """Create Selenium Chrome driver from capabilities."""
     from selenium.webdriver.chrome.options import Options
+
+    logger.info(f"Creating Selenium driver (server_url={server_url or 'local'})")
 
     headers = capabilities.pop("headers", {})
     cookies = capabilities.pop("cookies", [])
@@ -80,11 +97,14 @@ def create_selenium_driver(capabilities: dict[str, Any], server_url: str | None)
         driver.execute_cdp_cmd("Network.enable", {})  # type: ignore[reportAttributeAccessIssue]
 
     if headers:
+        logger.debug(f"Setting extra HTTP headers: {list(headers.keys())}")
         driver.execute_cdp_cmd("Network.setExtraHTTPHeaders", {"headers": headers})  # type: ignore[reportAttributeAccessIssue]
 
     if cookies:
+        logger.debug(f"Adding {len(cookies)} cookie(s)")
         driver.execute_cdp_cmd("Network.setCookies", {"cookies": cookies})  # type: ignore[reportAttributeAccessIssue]
 
+    logger.debug("Selenium driver created successfully")
     return driver
 
 
@@ -105,6 +125,8 @@ def create_ios_driver(capabilities: dict[str, Any], server_url: str | None) -> A
     else:
         remote_server = getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
 
+    logger.info(f"Creating iOS driver (server={remote_server})")
+
     # Set up Appium client config
     client_config = AppiumClientConfig(
         username=getenv("LT_USERNAME"),
@@ -116,6 +138,7 @@ def create_ios_driver(capabilities: dict[str, Any], server_url: str | None) -> A
     # Create Appium driver
     driver = Appium(client_config=client_config, options=options)
 
+    logger.debug("iOS driver created successfully")
     return driver
 
 
@@ -136,6 +159,8 @@ def create_android_driver(capabilities: dict[str, Any], server_url: str | None) 
     else:
         remote_server = getenv("ALUMNIUM_APPIUM_SERVER", "http://localhost:4723")
 
+    logger.info(f"Creating Android driver (server={remote_server})")
+
     # Set up Appium client config
     client_config = AppiumClientConfig(
         username=getenv("LT_USERNAME"),
@@ -145,4 +170,7 @@ def create_android_driver(capabilities: dict[str, Any], server_url: str | None) 
     )
 
     # Create Appium driver
-    return Appium(client_config=client_config, options=options)
+    driver = Appium(client_config=client_config, options=options)
+
+    logger.debug("Android driver created successfully")
+    return driver
