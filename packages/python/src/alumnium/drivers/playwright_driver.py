@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 
 
 class PlaywrightDriver(BaseDriver):
-    NEW_TAB_TIMEOUT = 200
+    NEW_TAB_TIMEOUT = 500
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
@@ -61,7 +61,7 @@ class PlaywrightDriver(BaseDriver):
             element.locator("xpath=.//parent::select").select_option(option)
         else:
             with self._autoswitch_to_new_tab():
-                element.click()
+                element.click(force=True)
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
