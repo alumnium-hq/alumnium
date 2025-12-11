@@ -1,10 +1,10 @@
 import { BaseAccessibilityTree } from "./accessibility/BaseAccessibilityTree.js";
 import { VisionOptions } from "./Alumni.js";
 import { HttpClient } from "./clients/HttpClient.js";
-import { Data } from "./clients/typecasting.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
 import { AssertionError } from "./errors/AssertionError.js";
+import { DoResult, DoStep, GetResult } from "./result.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
 
 export class Area {
@@ -31,12 +31,13 @@ export class Area {
     this.client = client;
   }
 
-  async do(goal: string): Promise<void> {
-    const steps = await this.client.planActions(
+  async do(goal: string): Promise<DoResult> {
+    const { explanation, steps } = await this.client.planActions(
       goal,
       this.accessibilityTree.toStr()
     );
 
+    const executedSteps: DoStep[] = [];
     for (const step of steps) {
       const actorResponse = await this.client.executeAction(
         goal,
@@ -44,15 +45,20 @@ export class Area {
         this.accessibilityTree.toStr()
       );
 
-      // Execute tool calls
+      const calledTools: string[] = [];
       for (const toolCall of actorResponse) {
-        await BaseTool.executeToolCall(
+        const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
           this.driver
         );
+        calledTools.push(calledTool);
       }
+
+      executedSteps.push({ name: step, tools: calledTools });
     }
+
+    return { explanation, steps: executedSteps };
   }
 
   async check(statement: string, options: VisionOptions = {}): Promise<string> {
@@ -74,12 +80,11 @@ export class Area {
     return explanation;
   }
 
-  async get(data: string, options: VisionOptions = {}): Promise<Data> {
+  async get(data: string, options: VisionOptions = {}): Promise<GetResult> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_explanation, value] = await this.client.retrieve(
+    const [explanation, value] = await this.client.retrieve(
       data,
       this.accessibilityTree.toStr(),
       await this.driver.title(),
@@ -87,7 +92,7 @@ export class Area {
       screenshot
     );
 
-    return value;
+    return { explanation, data: value };
   }
 
   async find(description: string): Promise<Element> {

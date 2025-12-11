@@ -65,18 +65,18 @@ def step_impl(context):
 def step_impl(context, title):
     # https://github.com/alumnium-hq/alumnium/issues/110
     if driver_type == "appium-android":
-        assert title in context.al.get("titles of tasks (texts of TextViews with Checkboxes)")
+        assert title in context.al.get("titles of tasks (texts of TextViews with Checkboxes)").data
     else:
-        assert title in context.al.get("titles of tasks")
+        assert title in context.al.get("titles of tasks").data
 
 
 @then('"{title}" task is not shown in the list of tasks')
 def step_impl(context, title):
     # https://github.com/alumnium-hq/alumnium/issues/110
     if driver_type == "appium-android":
-        assert title not in context.al.get("titles of tasks (texts of TextViews with Checkboxes)")
+        assert title not in context.al.get("titles of tasks (texts of TextViews with Checkboxes)").data
     else:
-        assert title not in context.al.get("titles of tasks")
+        assert title not in context.al.get("titles of tasks").data
 
 
 @then('"{title}" task is not marked as completed')
@@ -105,4 +105,4 @@ def step_impl(context, title):
 @then("tasks counter is {count:d}")
 def step_impl(context, count):
     if not isinstance(context.driver, Appium):
-        assert context.al.get("number of left items in a tasks counter") == count
+        assert context.al.get("number of left items in a tasks counter").data == count

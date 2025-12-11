@@ -30,7 +30,7 @@ describe("Drag and Drop", () => {
       "titles of squares ordered from left to right",
       { vision: true }
     );
-    assert.deepStrictEqual(initialOrder, ["A", "B"]);
+    assert.deepStrictEqual(initialOrder.data, ["A", "B"]);
 
     await al.do("move square A to square B");
 
@@ -38,6 +38,6 @@ describe("Drag and Drop", () => {
       "titles of squares ordered from left to right",
       { vision: true }
     );
-    assert.deepStrictEqual(finalOrder, ["B", "A"]);
+    assert.deepStrictEqual(finalOrder.data, ["B", "A"]);
   });
 });

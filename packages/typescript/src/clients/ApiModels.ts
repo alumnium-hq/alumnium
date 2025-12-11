@@ -25,6 +25,7 @@ export interface PlanRequest {
 }
 
 export interface PlanResponse {
+  explanation: string;
   steps: string[];
 }
 

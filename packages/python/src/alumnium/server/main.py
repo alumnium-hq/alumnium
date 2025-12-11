@@ -114,8 +114,8 @@ async def plan_actions(session_id: str, request: PlanRequest):
 
     try:
         accessibility_tree = session.process_tree(request.accessibility_tree)
-        steps = session.planner_agent.invoke(request.goal, accessibility_tree.to_xml())
-        return PlanResponse(steps=steps)
+        explanation, steps = session.planner_agent.invoke(request.goal, accessibility_tree.to_xml())
+        return PlanResponse(explanation=explanation, steps=steps)
 
     except Exception as e:
         logger.error(f"Failed to plan actions for session {session_id}: {e}")

@@ -11,12 +11,12 @@ from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
 from .clients.native_client import NativeClient
-from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.playwright_driver_async import PlaywrightDriverAsync
 from .drivers.selenium_driver import SeleniumDriver
+from .result import DoResult, DoStep, GetResult
 from .server.logutils import get_logger
 from .server.models import Model
 from .tools import BaseTool
@@ -68,23 +68,33 @@ class Alumni:
         self.driver.quit()
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def do(self, goal: str):
+    def do(self, goal: str) -> DoResult:
         """
         Executes a series of steps to achieve the given goal.
 
         Args:
             goal: The goal to be achieved.
+
+        Returns:
+            DoResult containing the explanation and executed steps with their actions.
         """
         initial_accessibility_tree = self.driver.accessibility_tree
-        steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str())
+        explanation, steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str())
+
+        executed_steps = []
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
             actor_response = self.client.execute_action(goal, step, accessibility_tree.to_str())
 
-            # Execute tool calls
+            called_tools = []
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tool = BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tools.append(called_tool)
+
+            executed_steps.append(DoStep(name=step, tools=called_tools))
+
+        return DoResult(explanation=explanation, steps=executed_steps)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def check(self, statement: str, vision: bool = False) -> str:
@@ -112,7 +122,7 @@ class Alumni:
         return explanation
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def get(self, data: str, vision: bool = False) -> Data:
+    def get(self, data: str, vision: bool = False) -> GetResult:
         """
         Extracts requested data from the page.
 
@@ -121,16 +131,16 @@ class Alumni:
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
 
         Returns:
-            Data: The extracted data loosely typed to int, float, str, or list of them.
+            GetResult containing the explanation and extracted data.
         """
-        _, value = self.client.retrieve(
+        explanation, value = self.client.retrieve(
             data,
             self.driver.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         )
-        return value
+        return GetResult(explanation=explanation, data=value)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def find(self, description: str) -> Element:

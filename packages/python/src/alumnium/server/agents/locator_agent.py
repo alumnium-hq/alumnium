@@ -22,7 +22,7 @@ class LocatorAgent(BaseAgent):
         super().__init__()
         self.chain = llm.with_structured_output(Locator, include_raw=True)
 
-    def invoke(self, description: str, accessibility_tree_xml: str) -> dict[str, int | str]:
+    def invoke(self, description: str, accessibility_tree_xml: str) -> list[dict[str, int | str]]:
         logger.info("Starting element location:")
         logger.info(f"  -> Description: {description}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")

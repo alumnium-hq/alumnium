@@ -27,6 +27,7 @@ class PlanRequest(VersionedModel):
 
 
 class PlanResponse(VersionedModel):
+    explanation: str
     steps: List[str]
 
 

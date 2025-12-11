@@ -19,7 +19,7 @@ def test_search(al, navigate):
     al.do("type 'selenium' into the search field, then press 'Enter'")
     al.check("page title contains selenium")
 
-    assert al.get("atomic number") == 34
+    assert al.get("atomic number").data == 34
 
     al.check("search results contain selenium.dev")
     with raises(AssertionError):
