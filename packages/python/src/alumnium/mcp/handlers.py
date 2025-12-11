@@ -7,8 +7,11 @@ from uuid import uuid4
 
 from .. import Alumni
 from ..clients.native_client import NativeClient
+from ..server.logutils import get_logger
 from ..tools import ExecuteJavascriptTool, NavigateBackTool, NavigateToUrlTool, ScrollTool
 from . import drivers, screenshots, state
+
+logger = get_logger(__name__)
 
 
 async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
@@ -17,10 +20,12 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
     try:
         capabilities = json.loads(args["capabilities"])
     except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in capabilities parameter: {e}")
         raise ValueError(f"Invalid JSON in capabilities parameter: {e}")
 
     # Extract and validate platformName
     if "platformName" not in capabilities:
+        logger.error("capabilities must include 'platformName' field")
         raise ValueError("capabilities must include 'platformName' field")
 
     platform_name = capabilities["platformName"].lower()
@@ -28,6 +33,8 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
 
     # Generate unique driver ID
     driver_id = str(uuid4())
+
+    logger.info(f"Starting driver {driver_id} for platform: {platform_name}")
 
     # Create screenshot directory
     screenshot_dir = Path("tmp") / "alumnium" / driver_id
@@ -44,6 +51,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
         driver = drivers.create_android_driver(capabilities, server_url)
         platform_label = "Android"
     else:
+        logger.error(f"Unsupported platformName: {platform_name}")
         raise ValueError(
             f"Unsupported platformName: {platform_name}. Supported values: chrome, chromium, ios, android"
         )
@@ -60,6 +68,11 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
 
     # Register driver in global state
     state.register_driver(driver_id, al, driver, screenshot_dir)
+
+    logger.info(
+        f"Driver {driver_id} started successfully. Platform: {platform_label}, "
+        f"Model: {al.model.provider.value}/{al.model.name}"
+    )
 
     return [
         {
@@ -78,8 +91,12 @@ async def handle_do(args: dict[str, Any]) -> list[dict]:
     driver_id = args["driver_id"]
     goal = args["goal"]
 
+    logger.info(f"Driver {driver_id}: Executing do('{goal}')")
+
     al, _ = state.get_driver(driver_id)
     result = al.do(goal)
+
+    logger.debug(f"Driver {driver_id}: do() completed with {len(result.steps)} steps")
 
     # Save screenshot after successful execution
     screenshots.save_screenshot(driver_id, goal, al)
@@ -105,13 +122,17 @@ async def handle_check(args: dict[str, Any]) -> list[dict]:
     statement = args["statement"]
     vision = args.get("vision", False)
 
+    logger.info(f"Driver {driver_id}: Executing check('{statement}', vision={vision})")
+
     al, _ = state.get_driver(driver_id)
     try:
         explanation = al.check(statement, vision=vision)
         result = True
+        logger.debug(f"Driver {driver_id}: check() passed")
     except AssertionError as e:
         explanation = str(e)
         result = False
+        logger.debug(f"Driver {driver_id}: check() failed: {e}")
 
     # Save screenshot after check
     screenshots.save_screenshot(driver_id, f"check {statement}", al)
@@ -125,8 +146,12 @@ async def handle_get(args: dict[str, Any]) -> list[dict]:
     data = args["data"]
     vision = args.get("vision", False)
 
+    logger.info(f"Driver {driver_id}: Executing get('{data}', vision={vision})")
+
     al, _ = state.get_driver(driver_id)
     result = al.get(data, vision=vision)
+
+    logger.debug(f"Driver {driver_id}: get() extracted data: {result.data}")
 
     # Format the result with explanation and steps
     response_text = f"Extracted data: {result.data}\n"
@@ -142,6 +167,8 @@ async def handle_get_accessibility_tree(args: dict[str, Any]) -> list[dict]:
     """Get accessibility tree for debugging."""
     driver_id = args["driver_id"]
 
+    logger.debug(f"Driver {driver_id}: Getting accessibility tree")
+
     al, _ = state.get_driver(driver_id)
     # Access the internal driver's accessibility tree
     # as if it's processed by Alumnium server
@@ -155,8 +182,15 @@ async def handle_quit_driver(args: dict[str, Any]) -> list[dict]:
     """Quit driver and cleanup."""
     driver_id = args["driver_id"]
 
+    logger.info(f"Driver {driver_id}: Quitting driver")
+
     # Cleanup driver and get stats
     screenshot_dir, stats = state.cleanup_driver(driver_id)
+
+    logger.info(
+        f"Driver {driver_id}: Closed. Total tokens: {stats['total']['total_tokens']}, "
+        f"Cached tokens: {stats['cache']['total_tokens']}"
+    )
 
     # Format stats message with detailed cache breakdown
     message = (
@@ -178,7 +212,11 @@ async def handle_save_cache(args: dict[str, Any]) -> list[dict]:
     """Save the cache for a driver session."""
     driver_id = args["driver_id"]
 
+    logger.info(f"Driver {driver_id}: Saving cache")
+
     al, _ = state.get_driver(driver_id)
     al.cache.save()
+
+    logger.debug(f"Driver {driver_id}: Cache saved successfully")
 
     return [{"type": "text", "text": f"Cache saved successfully for driver {driver_id}"}]

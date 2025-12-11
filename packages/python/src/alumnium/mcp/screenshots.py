@@ -5,7 +5,10 @@ from re import sub
 
 from alumnium import Alumni
 
+from ..server.logutils import get_logger
 from .state import screenshot_dirs, step_counters
+
+logger = get_logger(__name__)
 
 
 def save_screenshot(driver_id: str, description: str, al: Alumni) -> None:
@@ -35,6 +38,8 @@ def save_screenshot(driver_id: str, description: str, al: Alumni) -> None:
         screenshot_bytes = base64.b64decode(screenshot_b64)
         filepath.write_bytes(screenshot_bytes)
 
+        logger.debug(f"Driver {driver_id}: Saved screenshot to {filepath}")
+
     except Exception as e:
         # Log error but don't fail the operation
-        print(f"Warning: Failed to save screenshot for driver {driver_id}: {e}")
+        logger.warning(f"Failed to save screenshot for driver {driver_id}: {e}")
