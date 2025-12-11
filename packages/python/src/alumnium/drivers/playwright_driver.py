@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 
 
 class PlaywrightDriver(BaseDriver):
-    NEW_TAB_TIMEOUT = 500
+    NEW_TAB_TIMEOUT = 2000
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
