@@ -17,6 +17,12 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     this.xmlString = xmlString;
   }
 
+  private static fromXml(xmlString: string): XCUITestAccessibilityTree {
+    const instance = new XCUITestAccessibilityTree("");
+    instance.raw = xmlString;
+    return instance;
+  }
+
   toStr(): string {
     if (this.raw !== null) {
       return this.raw;
@@ -75,7 +81,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     }
 
     const scopedXml = this.elementToString(element, 0);
-    return new XCUITestAccessibilityTree(scopedXml);
+    return XCUITestAccessibilityTree.fromXml(scopedXml);
   }
 
   private findElementByRawId(
