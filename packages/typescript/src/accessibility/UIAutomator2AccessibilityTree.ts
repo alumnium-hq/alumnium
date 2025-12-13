@@ -24,6 +24,12 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     this.xmlString = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n<root>\n${cleanedXmlContent}\n</root>`;
   }
 
+  private static fromXml(xmlString: string): UIAutomator2AccessibilityTree {
+    const instance = new UIAutomator2AccessibilityTree("");
+    instance.raw = xmlString;
+    return instance;
+  }
+
   toStr(): string {
     if (this.raw !== null) {
       return this.raw;
@@ -88,7 +94,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     }
 
     const scopedXml = this.elementToString(element, 0);
-    return new UIAutomator2AccessibilityTree(scopedXml);
+    return UIAutomator2AccessibilityTree.fromXml(scopedXml);
   }
 
   private findElementByRawId(

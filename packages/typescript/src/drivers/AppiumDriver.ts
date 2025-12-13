@@ -1,5 +1,5 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
-import type { Browser, ChainablePromiseElement } from "webdriverio";
+import type { Browser } from "webdriverio";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
@@ -48,7 +48,7 @@ export class AppiumDriver extends BaseDriver {
     }
 
     const xmlString = await this.driver.getPageSource();
-    if (this.driver.capabilities["appium:automationName"] === "uiautomator2") {
+    if (this.platform === "uiautomator2") {
       return new UIAutomator2AccessibilityTree(xmlString);
     } else {
       return new XCUITestAccessibilityTree(xmlString);
@@ -103,9 +103,8 @@ export class AppiumDriver extends BaseDriver {
   async scrollTo(id: number): Promise<void> {
     if (this.platform === "xcuitest") {
       const element = await this.findElement(id);
-      const elementId = await element.elementId;
       await this.driver.execute("mobile: scrollToElement", {
-        elementId: elementId,
+        elementId: element.elementId,
       });
     } else {
       // Android scroll functionality is not implemented.
@@ -147,29 +146,8 @@ export class AppiumDriver extends BaseDriver {
     const element = await this.findElement(id);
     await element.clearValue();
     await element.setValue(text);
-    if (this.hideKeyboardAfterTyping) {
-      if (this.platform === "uiautomator2") {
-        await this.driver.hideKeyboard();
-      } else {
-        const location = await element.getLocation();
-        await this.driver.performActions([
-          {
-            type: "pointer",
-            id: "finger1",
-            parameters: { pointerType: "touch" },
-            actions: [
-              {
-                type: "pointerMove",
-                duration: 0,
-                x: location.x,
-                y: location.y - 20,
-              },
-              { type: "pointerDown", button: 0 },
-              { type: "pointerUp", button: 0 },
-            ],
-          },
-        ]);
-      }
+    if (this.hideKeyboardAfterTyping && (await this.driver.isKeyboardShown())) {
+      await this.hideKeyboard();
     }
   }
 
@@ -182,7 +160,7 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  async findElement(id: number): Promise<ChainablePromiseElement> {
+  async findElement(id: number): Promise<WebdriverIO.Element> {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);
 
@@ -204,8 +182,7 @@ export class AppiumDriver extends BaseDriver {
       }
 
       console.debug(`Finding element by predicate: ${predicate}`);
-      const foundElement = this.driver.$(`-ios predicate string:${predicate}`);
-      return foundElement;
+      return this.driver.$(`-ios predicate string:${predicate}`).getElement();
     } else {
       // Use XPath for UIAutomator2
       let xpath = `//${element.type}`;
@@ -225,7 +202,7 @@ export class AppiumDriver extends BaseDriver {
         xpath += `[${conditions.join(" and ")}]`;
       }
 
-      return this.driver.$(xpath);
+      return this.driver.$(xpath).getElement();
     }
   }
 
@@ -265,6 +242,22 @@ export class AppiumDriver extends BaseDriver {
           return;
         }
       }
+    }
+  }
+
+  private async hideKeyboard(): Promise<void> {
+    if (this.platform === "uiautomator2") {
+      await this.driver.hideKeyboard();
+    } else {
+      // Tap to the top left corner of the keyboard to dismiss it
+      const keyboard = this.driver.$(
+        "-ios predicate string:type == 'XCUIElementTypeKeyboard'"
+      );
+      const { width, height } = await keyboard.getSize();
+      await keyboard.click({
+        x: -Math.ceil(width / 2),
+        y: -Math.ceil(height / 2),
+      });
     }
   }
 }
