@@ -38,7 +38,7 @@ class RetrieverAgent(BaseAgent):
         accessibility_tree_xml: str,
         title: str = "",
         url: str = "",
-        screenshot: str = None,
+        screenshot: str | None = None,
     ) -> tuple[str, str | list[str]]:
         logger.info("Starting retrieval:")
         logger.info(f"  -> Information: {information}")
@@ -53,7 +53,7 @@ class RetrieverAgent(BaseAgent):
                 accessibility_tree=accessibility_tree_xml, title=title, url=url
             )
         prompt += "\n"
-        prompt += information
+        prompt += f"Retrieve the following information: {information}"
 
         human_messages = [{"type": "text", "text": prompt}]
 
