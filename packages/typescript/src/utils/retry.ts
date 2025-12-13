@@ -1,6 +1,9 @@
+const DELAY = parseFloat(process.env.ALUMNIUM_DELAY || "0.5") * 1000; // Convert to milliseconds
+const RETRIES = parseInt(process.env.ALUMNIUM_RETRIES || "2", 10);
+
 interface RetryOptions {
-  maxAttempts: number;
-  backOff: number;
+  maxAttempts?: number;
+  backOff?: number;
   doRetry?: (error: Error) => boolean;
 }
 
@@ -8,10 +11,13 @@ function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
   originalMethod: T,
   options: RetryOptions
 ): T {
+  const maxAttempts = options.maxAttempts ?? RETRIES;
+  const backOff = options.backOff ?? DELAY;
+
   return async function (this: unknown, ...args: unknown[]): Promise<unknown> {
     let lastError: Error | undefined;
 
-    for (let attempt = 1; attempt <= options.maxAttempts; attempt++) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         return await originalMethod.apply(this, args);
       } catch (error) {
@@ -19,12 +25,24 @@ function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
 
         // Check if we should retry this error
         if (options.doRetry && !options.doRetry(lastError)) {
+          console.debug(`Not retrying error: ${lastError.message}`, {
+            error: lastError,
+          });
           throw lastError;
         }
 
         // Don't wait after the last attempt
-        if (attempt < options.maxAttempts) {
-          await new Promise((resolve) => setTimeout(resolve, options.backOff));
+        if (attempt < maxAttempts) {
+          console.debug(
+            `Attempt ${attempt}/${maxAttempts} failed, retrying in ${backOff}ms: ${lastError.message}`,
+            { attempt, maxAttempts, backOff, error: lastError }
+          );
+          await new Promise((resolve) => setTimeout(resolve, backOff));
+        } else {
+          console.debug(
+            `Attempt ${attempt}/${maxAttempts} failed, no more retries`,
+            { attempt, maxAttempts, error: lastError }
+          );
         }
       }
     }
@@ -34,7 +52,7 @@ function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
 }
 
 // Support both legacy and stage 3 decorators
-export function Retry(options: RetryOptions): MethodDecorator {
+export function retry(options: RetryOptions = {}): MethodDecorator {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return function (target: any, propertyKey: any, descriptor?: any): any {
     // Stage 3 decorator (receives value and context as first two args)

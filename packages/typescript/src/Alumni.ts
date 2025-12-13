@@ -20,6 +20,7 @@ import { PressKeyTool } from "./tools/PressKeyTool.js";
 import { SelectTool } from "./tools/SelectTool.js";
 import { TypeTool } from "./tools/TypeTool.js";
 import { getLogger } from "./utils/logger.js";
+import { retry } from "./utils/retry.js";
 
 const logger = getLogger(["Alumni"]);
 
@@ -96,6 +97,7 @@ export class Alumni {
     await this.driver.quit();
   }
 
+  @retry()
   async do(goal: string): Promise<void> {
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
     const steps = await this.client.planActions(
@@ -128,6 +130,7 @@ export class Alumni {
     }
   }
 
+  @retry()
   async check(statement: string, options: VisionOptions = {}): Promise<string> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
@@ -148,6 +151,7 @@ export class Alumni {
     return explanation;
   }
 
+  @retry()
   async get(data: string, options: VisionOptions = {}): Promise<Data> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
@@ -165,6 +169,7 @@ export class Alumni {
     return value;
   }
 
+  @retry()
   async find(description: string): Promise<Element> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findElement(
