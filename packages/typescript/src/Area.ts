@@ -6,6 +6,7 @@ import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
 import { AssertionError } from "./errors/AssertionError.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
+import { retry } from "./utils/retry.js";
 
 export class Area {
   public id: number;
@@ -31,6 +32,7 @@ export class Area {
     this.client = client;
   }
 
+  @retry()
   async do(goal: string): Promise<void> {
     const steps = await this.client.planActions(
       goal,
@@ -55,6 +57,7 @@ export class Area {
     }
   }
 
+  @retry()
   async check(statement: string, options: VisionOptions = {}): Promise<string> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
@@ -74,6 +77,7 @@ export class Area {
     return explanation;
   }
 
+  @retry()
   async get(data: string, options: VisionOptions = {}): Promise<Data> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
@@ -90,6 +94,7 @@ export class Area {
     return value;
   }
 
+  @retry()
   async find(description: string): Promise<Element> {
     const response = await this.client.findElement(
       description,
