@@ -1,3 +1,4 @@
+from math import ceil
 from time import sleep
 from typing import Literal
 
@@ -35,13 +36,11 @@ class AppiumDriver(BaseDriver):
         self.delay: float = 0
         self.hide_keyboard_after_typing = False
         self.double_fetch_page_source = False
-
-    @property
-    def platform(self) -> Literal["uiautomator2", "xcuitest"]:
+        self.platform: Literal["uiautomator2", "xcuitest"]
         if self.driver.capabilities.get("automationName", "").lower() == "uiautomator2":
-            return "uiautomator2"
+            self.platform = "uiautomator2"
         else:
-            return "xcuitest"
+            self.platform = "xcuitest"
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibilityTree:
@@ -122,11 +121,8 @@ class AppiumDriver(BaseDriver):
         element = self.find_element(id)
         element.clear()
         element.send_keys(text)
-        if self.hide_keyboard_after_typing:
-            if self.platform == "uiautomator2":
-                self.driver.hide_keyboard()
-            else:
-                ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
+        if self.hide_keyboard_after_typing and self.driver.is_keyboard_shown():
+            self._hide_keyboard()
 
     @property
     def url(self) -> str:
@@ -156,10 +152,7 @@ class AppiumDriver(BaseDriver):
                 props_str = " AND ".join(props)
                 predicate += f" AND {props_str}"
 
-            logger.debug(f"Finding element by predicate: {predicate}")
-            found_element = self.driver.find_element(By.IOS_PREDICATE, predicate)
-            logger.debug(f"Found: {found_element}")
-            return found_element
+            return self.driver.find_element(By.IOS_PREDICATE, predicate)  # type: ignore[reportReturnType]
         else:
             # Use XPath for UIAutomator2
             xpath = f"//{element.type}"
@@ -178,7 +171,7 @@ class AppiumDriver(BaseDriver):
                 props = [f'@{k}="{v}"' for k, v in props.items()]
                 xpath += f"[{' and '.join(props)}]"
 
-            return self.driver.find_element(By.XPATH, xpath)
+            return self.driver.find_element(By.XPATH, xpath)  # type: ignore[reportReturnType]
 
     def execute_script(self, script: str):
         self._ensure_webview_context()
@@ -200,3 +193,16 @@ class AppiumDriver(BaseDriver):
                 if "WEBVIEW" in context:
                     self.driver.switch_to.context(context)
                     return
+
+    def _hide_keyboard(self):
+        if self.platform == "uiautomator2":
+            self.driver.hide_keyboard()
+        else:
+            # Tap to the top left corner of the keyboard to dismiss it
+            keyboard = self.driver.find_element(By.IOS_PREDICATE, 'type == "XCUIElementTypeKeyboard"')
+            size = keyboard.size
+            actions = ActionChains(self.driver)
+            actions.move_to_element(keyboard)
+            actions.move_by_offset(-ceil(size["width"] / 2), -ceil(size["height"] / 2))
+            actions.click()
+            actions.perform()
