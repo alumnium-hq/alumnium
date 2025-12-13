@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { getLogger } from "../utils/logger.js";
-import { Retry } from "../utils/retry.js";
+import { retry } from "../utils/retry.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
@@ -115,7 +115,7 @@ export class PlaywrightDriver extends BaseDriver {
     await element.scrollIntoViewIfNeeded();
   }
 
-  @Retry({
+  @retry({
     maxAttempts: 2,
     backOff: 500,
     doRetry: (error: Error) =>
@@ -140,7 +140,7 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
-  @Retry({
+  @retry({
     maxAttempts: 2,
     backOff: 500,
     doRetry: (error: Error) =>
@@ -161,7 +161,7 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
-  @Retry({
+  @retry({
     maxAttempts: 2,
     backOff: 500,
     doRetry: (error: Error) =>
@@ -200,7 +200,7 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.evaluate(`() => { ${script} }`);
   }
 
-  @Retry({
+  @retry({
     maxAttempts: 2,
     backOff: 500,
     doRetry: (error: Error) =>
