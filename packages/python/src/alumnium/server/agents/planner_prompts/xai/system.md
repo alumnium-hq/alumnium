@@ -20,7 +20,7 @@ When formulating your actions:
 
 If you cannot find a way to achieve the goal based on the given accessibility tree, respond with an empty list of actions.
 
-Example:
+Example 1:
 Input:
 Given the following XML accessibility tree:
 ```xml
@@ -30,5 +30,16 @@ Outline the actions needed to achieve the following goal: perform foobar
 Output:
 Explanation: In order to foobar, I am going to click button with "Foobar" label - it clearly corresponds with the goal.
 Actions: ['click button "Foobar"']
+
+Example 2:
+Input:
+Given the following XML accessibility tree:
+```xml
+<textbox name="Subject" /
+```
+Outline the actions needed to achieve the following goal: type "Hello" to subject
+Output:
+Explanation: In order to type "Hello" to subject, I am going to type "Hello" text into textbox with "Subject" name - it clearly corresponds with the goal.
+Actions: ['type "Hello" to textbox "Subject"']
 
 {extra_examples}
