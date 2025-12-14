@@ -150,12 +150,18 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     let previous: string;
 
     // Keep decoding until no more entities are found (handles double-encoded entities)
+    const MAX_DECODE_ITERATIONS = 10;
+    let iterations = 0;
     do {
       previous = decoded;
       decoded = decoded.replace(
         /&(?:amp|lt|gt|quot|apos);/g,
         (entity) => htmlEntities[entity] || entity
       );
+      iterations++;
+      if (iterations >= MAX_DECODE_ITERATIONS) {
+        break;
+      }
     } while (previous !== decoded);
 
     return decoded;
