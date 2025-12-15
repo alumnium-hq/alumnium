@@ -144,7 +144,6 @@ export class AppiumDriver extends BaseDriver {
   async type(id: number, text: string): Promise<void> {
     await this.ensureNativeAppContext();
     const element = await this.findElement(id);
-    await element.clearValue();
     await element.setValue(text);
     if (this.hideKeyboardAfterTyping && (await this.driver.isKeyboardShown())) {
       await this.hideKeyboard();
