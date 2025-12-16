@@ -1,5 +1,7 @@
 from typing import Any
 
+from langchain_core.language_models import BaseChatModel
+
 from .accessibility import (
     BaseServerAccessibilityTree,
     ServerChromiumAccessibilityTree,
@@ -28,13 +30,17 @@ class Session:
         model: Model,
         platform: str,
         tools: dict[str, Any],
+        llm: BaseChatModel | None = None,
     ):
         self.session_id = session_id
         self.model = model
         self.platform = platform
 
         self.cache = CacheFactory.create_cache()
-        self.llm = LLMFactory.create_llm(model=model)
+        if llm is not None:
+            self.llm = llm
+        else:
+            self.llm = LLMFactory.create_llm(model=model)
         self.llm.cache = self.cache
 
         self.actor_agent = ActorAgent(self.llm, tools)

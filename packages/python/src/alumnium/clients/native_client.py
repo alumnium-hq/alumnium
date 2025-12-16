@@ -1,3 +1,5 @@
+from langchain_core.language_models import BaseChatModel
+
 from ..server.logutils import get_logger
 from ..server.models import Model
 from ..server.session_manager import SessionManager
@@ -9,7 +11,9 @@ logger = get_logger(__name__)
 
 
 class NativeClient:
-    def __init__(self, model: Model, platform: str, tools: dict[str, type[BaseTool]]):
+    def __init__(
+        self, model: Model, platform: str, tools: dict[str, type[BaseTool]], llm: BaseChatModel | None = None
+    ):
         self.session_manager = SessionManager()
         self.model = model
         self.tools = tools
@@ -17,7 +21,11 @@ class NativeClient:
         # Convert tools to schemas for API
         tool_schemas = convert_tools_to_schemas(tools)
         self.session_id = self.session_manager.create_session(
-            provider=self.model.provider.value, name=self.model.name, tools=tool_schemas, platform=platform
+            provider=self.model.provider.value,
+            name=self.model.name,
+            tools=tool_schemas,
+            platform=platform,
+            llm=llm,
         )
 
         self.session = self.session_manager.get_session(self.session_id)

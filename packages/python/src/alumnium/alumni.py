@@ -1,6 +1,7 @@
 from asyncio import AbstractEventLoop
 
 from appium.webdriver.webdriver import WebDriver as Appium
+from langchain_core.language_models import BaseChatModel
 from playwright.async_api import Page as PageAsync
 from playwright.sync_api import Page
 from retry import retry
@@ -29,10 +30,12 @@ class Alumni:
         self,
         driver: Page | WebDriver | tuple[PageAsync, AbstractEventLoop],
         model: Model | None = None,
+        llm: BaseChatModel | None = None,
         extra_tools: list[type[BaseTool]] | None = None,
         url: str | None = None,
     ):
         self.model = model or Model.current
+        self.llm = llm
 
         if isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
@@ -59,7 +62,7 @@ class Alumni:
             self.client = HttpClient(url, self.model, self.driver.platform, self.tools)
         else:
             logger.info("Using native client")
-            self.client = NativeClient(self.model, self.driver.platform, self.tools)
+            self.client = NativeClient(self.model, self.driver.platform, self.tools, llm=self.llm)
 
         self.cache = Cache(self.client)
 
