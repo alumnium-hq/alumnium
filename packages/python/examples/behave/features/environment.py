@@ -39,11 +39,12 @@ def driver(context):
 
         if lt_username and lt_access_key:
             options.platform_version = "18"
+            # https://github.com/ayodejiayankola/To-Do-App-SwiftUI
             # curl -u "USERNAME:PASSWORD" -XPOST \
             #   "https://manual-api.lambdatest.com/app/upload/realDevice" \
             #   -F "appFile=@"/Users/p0deje/Downloads/TodoList/TodoList.ipa"" \
             #   -F "name="TodoList""
-            options.app = "lt://APP10160301591759783837362495"
+            options.app = "lt://APP1016044271766069469983583"
             options.set_capability(
                 "lt:options",
                 {
