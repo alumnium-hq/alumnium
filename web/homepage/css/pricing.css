@@ -1,0 +1,74 @@
+.toggle-button-container {
+  background-color: var(--color-surface);
+  box-shadow: 0 0 0 4px var(--color-surface);
+  border-radius: var(--radius-m);
+  display: inline-block;
+  position: relative;
+}
+
+.toggle-option-button {
+  border: none;
+  padding-top: var(--space-button-s-vertical);
+  padding-bottom: var(--space-button-s-vertical);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-ui-m);
+  text-align: center;
+  background-color: #0000;
+  border-radius: var(--radius-m);
+  min-width: 120px;
+}
+
+.toggle-current-option-marker {
+  z-index: -1;
+  background-color: var(--color-background);
+  box-shadow: 0 0 0 1px var(--color-border-level-2);
+  border-radius: var(--radius-m);
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.price-line {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--color-border-level-3);
+  margin-top: 24px;
+  padding-top: 16px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.justified-vertically {
+  justify-content: space-between;
+  align-items: stretch;
+  height: 100%;
+}
+
+.pricing-table {
+  width: 100%;
+}
+
+.pricing-table-row {
+  display: grid;
+  place-items: center start;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 8px;
+  padding: var(--space-button-m-vertical);
+  padding-bottom: var(--space-button-m-vertical);
+  border-bottom: 1px solid var(--color-border-level-2);
+}

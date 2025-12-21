@@ -1,0 +1,755 @@
+<!doctype html>
+<!-- Try theme-dark -->
+<html lang="en" class="theme-dark">
+  <head>
+    <meta charset="utf-8" />
+    <title>Alumnium - Test Automation with AI</title>
+    <meta
+      content="AI-powered test automation framework using natural language commands. Write maintainable tests for web and mobile apps with Selenium, Playwright, and Appium."
+      name="description"
+    />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Alumnium" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Alumnium - AI for Test Automation" />
+    <meta
+      property="og:description"
+      content="AI-powered test automation framework using natural language commands. Write maintainable tests for web and mobile apps."
+    />
+    <meta property="og:url" content="https://alumnium.dev" />
+    <meta property="og:image" content="https://alumnium.dev/social-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Alumnium - AI for Test Automation" />
+    <meta
+      name="twitter:description"
+      content="AI-powered test automation framework using natural language commands. Write maintainable tests for web and mobile apps."
+    />
+    <meta
+      name="twitter:image"
+      content="https://alumnium.dev/social-image.png"
+    />
+    <meta name="twitter:url" content="https://alumnium.dev" />
+
+    <!-- Favicon and icons -->
+    <link rel="icon" href="images/favicon/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="images/favicon/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="images/favicon/apple-touch-icon.png" />
+
+    <!-- Preload fonts -->
+    <link
+      rel="preload"
+      href="fonts/InterVariable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Styles -->
+    <link href="vendor/font-awesome-6.7.2/css/all.min.css" rel="stylesheet" />
+    <link href="css/index.css" rel="stylesheet" type="text/css" />
+    <link href="css/tablet.css" rel="stylesheet" type="text/css" />
+    <link href="css/mobile.css" rel="stylesheet" type="text/css" />
+    <script src="js/main.js" type="text/javascript" defer></script>
+  </head>
+
+  <body>
+    <div class="background-gradient"></div>
+    <div class="page-container">
+      <header class="nav-container">
+        <a href="index.html" class="nav-brand"
+          ><img
+            src="images/Logo-Template.svg"
+            width="132"
+            height="28"
+            alt="Logo Template"
+        /></a>
+        <nav role="navigation" class="nav-menu" data-navigation>
+          <a href="https://alumnium.ai/blog" class="nav-link">Blog</a>
+          <a href="https://alumnium.ai/docs" class="nav-link">Documentation</a>
+        </nav>
+        <div class="button-group">
+          <a
+            href="https://github.com/alumnium-hq/alumnium"
+            class="button ghost compact hide-on-mobile"
+          >
+            <div class="fa-brands fa-github icon l"></div>
+            <!-- <div class="paragraph s tertiary">42K</div> -->
+          </a>
+          <a
+            href="https://discord.gg/mP29tTtKHg"
+            class="button ghost compact hide-on-mobile"
+          >
+            <div class="fa-brands fa-discord icon l"></div>
+            <!-- <div class="paragraph s tertiary">42K</div> -->
+          </a>
+          <a
+            href="https://seleniumhq.slack.com/channels/alumnium"
+            class="button ghost compact hide-on-mobile"
+          >
+            <div class="fa-brands fa-slack icon l"></div>
+            <!-- <div class="paragraph s tertiary">42K</div> -->
+          </a>
+          <!-- <a href="#" class="button tertiary compact hide-on-mobile">Sign In</a>
+          <a href="#" class="button primary compact">Sign Up</a> -->
+          <button
+            class="button ghost compact nav-hamburger"
+            data-mobile-toggle
+            aria-label="Show menu"
+          >
+            <span class="fa-solid fa-bars icon m"></span>
+          </button>
+        </div>
+      </header>
+      <main>
+        <section>
+          <div class="heading hero centered">
+            <a href="https://alumnium.ai/blog/release-0170" class="eyebrow"
+              >Version 0.17 with MCP and reasoning models released!</a
+            >
+            <h1 class="balanced">Test Automation with AI</h1>
+            <p class="paragraph m secondary balanced">
+              Engineer your automated tests with AI.
+              <br />
+              Open source.
+            </p>
+            <div class="button-group margin-paragraph centered">
+              <a
+                href="https://docs.alumnium.dev/getting-started"
+                class="button primary"
+                >Get Started</a
+              >
+              <a
+                href="https://github.com/alumnium-hq/alumnium"
+                class="button tertiary"
+                >View on GitHub</a
+              >
+            </div>
+          </div>
+          <div class="image-wide">
+            <img
+              src="images/placeholder-main-ui.png"
+              width="100%"
+              style="aspect-ratio: 2356 / 1404"
+              alt="Main screenshot of the product"
+            />
+          </div>
+        </section>
+        <section>
+          <p class="paragraph l bold text-centered">
+            Integrates with your stack
+          </p>
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              margin-top: 2rem;
+            "
+          >
+            <div class="clients-container" style="gap: 2rem">
+              <img
+                src="images/claude.svg"
+                loading="lazy"
+                height="60"
+                alt="Anthropic Claude"
+                title="Anthropic Claude"
+                style="object-fit: contain"
+              /><img
+                src="images/gemini.svg"
+                loading="lazy"
+                height="60"
+                alt="Google Gemini"
+                title="Google Gemini"
+                style="object-fit: contain"
+              /><img
+                src="images/openai.svg"
+                loading="lazy"
+                height="60"
+                alt="OpenAI GPT"
+                title="OpenAI GPT"
+                style="filter: invert(0.9); object-fit: contain"
+              /><img
+                src="images/grok.svg"
+                loading="lazy"
+                height="60"
+                alt="xAI Grok"
+                title="xAI Grok"
+                style="filter: invert(0.9); object-fit: contain"
+              /><img
+                src="images/meta.svg"
+                loading="lazy"
+                height="60"
+                alt="Meta Llama"
+                title="Meta Llama"
+                style="object-fit: contain"
+              /><img
+                src="images/deepseek.svg"
+                loading="lazy"
+                height="60"
+                alt="DeepSeek"
+                title="DeepSeek"
+                style="object-fit: contain"
+              /><img
+                src="images/mistral.svg"
+                loading="lazy"
+                height="60"
+                alt="Mistral"
+                title="Mistral"
+                style="object-fit: contain"
+              /><img
+                src="images/ollama.svg"
+                loading="lazy"
+                height="60"
+                alt="Ollama"
+                title="Ollama"
+                style="filter: invert(0.9); object-fit: contain"
+              />
+            </div>
+            <div
+              style="
+                height: 1px;
+                background-color: rgba(255, 255, 255, 0.1);
+                margin: 2rem 0;
+                width: 100%;
+              "
+            ></div>
+          </div>
+          <div
+            style="display: flex; flex-direction: column; align-items: center"
+          >
+            <div class="clients-container" style="gap: 2rem">
+              <img
+                src="images/selenium.svg"
+                loading="lazy"
+                height="60"
+                alt="Selenium"
+                title="Selenium"
+                style="object-fit: contain"
+              /><img
+                src="images/playwright.svg"
+                loading="lazy"
+                height="60"
+                alt="Playwright"
+                title="Playwright"
+                style="object-fit: contain"
+              /><img
+                src="images/appium.svg"
+                loading="lazy"
+                height="60"
+                alt="Appium"
+                title="Appium"
+                style="object-fit: contain"
+              /><img
+                src="images/robot-white.svg"
+                loading="lazy"
+                height="60"
+                alt="WebdriverIO"
+                title="WebdriverIO"
+                style="filter: invert(0.1); object-fit: contain"
+              />
+            </div>
+            <div
+              style="
+                height: 1px;
+                background-color: rgba(255, 255, 255, 0.1);
+                margin: 2rem 0;
+                width: 100%;
+              "
+            ></div>
+          </div>
+          <div
+            style="display: flex; flex-direction: column; align-items: center"
+          >
+            <div class="clients-container" style="gap: 2rem">
+              <img
+                src="images/python.svg"
+                loading="lazy"
+                height="60"
+                alt="Python"
+                title="Python"
+                style="object-fit: contain"
+              /><img
+                src="images/javascript.svg"
+                loading="lazy"
+                height="60"
+                alt="JavaScript"
+                title="JavaScript"
+                style="object-fit: contain"
+              /><img
+                src="images/typescript.svg"
+                loading="lazy"
+                height="60"
+                alt="TypeScript"
+                title="TypeScript"
+                style="object-fit: contain"
+              />
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="heading">
+            <h2 class="no-top-margin">Write tests in plain English</h2>
+            <p class="paragraph m secondary">
+              Alumnium uses AI to understand your natural language commands and
+              translate them into reliable test actions. No more hunting for CSS
+              selectors or dealing with flaky XPath expressions.
+            </p>
+          </div>
+          <div class="grid">
+            <div class="feature-card">
+              <div class="feature-heading">
+                <h3 class="color-accent no-top-margin">
+                  Natural Language Commands
+                </h3>
+                <p class="paragraph m secondary">
+                  Simply describe what you want to test in plain English. Tell
+                  Alumnium to "click the login button" or "fill out the
+                  registration form" and the AI handles the rest. No need to
+                  write complex selectors or wait for elements.
+                </p>
+              </div>
+              <img
+                src="images/placeholder-feature-16-9.png"
+                loading="lazy"
+                width="100%"
+                alt="Screenshot of a feature 16 by 9"
+              />
+            </div>
+          </div>
+          <div class="grid columns-2">
+            <div class="feature-card">
+              <div class="feature-heading">
+                <h3 class="color-accent no-top-margin">Self-Healing Tests</h3>
+                <p class="paragraph s secondary">
+                  UI changes breaking your tests? Not anymore. Alumnium adapts
+                  to page structure changes automatically, understanding intent
+                  rather than rigid locators. Your tests stay stable even as
+                  your app evolves.
+                </p>
+              </div>
+              <img
+                src="images/placeholder-feature-16-9.png"
+                loading="lazy"
+                width="100%"
+                alt="Screenshot of a feature 16 by 9"
+              />
+            </div>
+            <div class="feature-card">
+              <div class="feature-heading">
+                <h3 class="color-accent no-top-margin">
+                  Multi-Platform Support
+                </h3>
+                <p class="paragraph s secondary">
+                  Test web apps with Selenium or Playwright. Test mobile apps
+                  with Appium. Same intuitive API across all platforms.
+                </p>
+              </div>
+              <img
+                src="images/placeholder-feature-4-3.png"
+                loading="lazy"
+                width="100%"
+                alt="Screenshot of a feature 4 by 3"
+              />
+            </div>
+          </div>
+          <div class="grid columns-3">
+            <div class="feature-card">
+              <div class="feature-heading">
+                <h3 class="color-accent no-top-margin">Python & TypeScript</h3>
+                <p class="paragraph s secondary">
+                  First-class support for both Python and TypeScript. Use the
+                  language your team already knows and loves.
+                </p>
+              </div>
+              <img
+                src="images/placeholder-feature.png"
+                loading="lazy"
+                width="100%"
+                alt="Screenshot of a feature"
+              />
+            </div>
+            <div class="feature-card">
+              <div class="feature-heading">
+                <h3 class="color-accent no-top-margin">
+                  Smart Element Finding
+                </h3>
+                <p class="paragraph s secondary">
+                  Alumnium uses AI to intelligently locate elements based on
+                  context, accessibility attributes, and visual hints. It
+                  understands your UI the way humans do.
+                </p>
+              </div>
+              <img
+                src="images/placeholder-feature-16-9.png"
+                loading="lazy"
+                width="100%"
+                alt="Screenshot of a feature 16 by 9"
+              />
+            </div>
+            <div class="feature-card">
+              <div class="feature-heading">
+                <h3 class="color-accent no-top-margin">Built for Teams</h3>
+                <p class="paragraph s secondary">
+                  Works seamlessly with your existing test frameworks and CI/CD
+                  pipelines. Easy for everyone to read and maintain.
+                </p>
+              </div>
+              <img
+                src="images/placeholder-feature-4-3.png"
+                loading="lazy"
+                width="100%"
+                alt="Screenshot of a feature 4 by 3"
+              />
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="heading centered">
+            <h2 class="no-top-margin">Why Alumnium?</h2>
+            <p class="paragraph m secondary">
+              Traditional test automation is fragile and time-consuming.
+              Alumnium uses AI to make your tests smarter, faster to write, and
+              easier to maintain.
+            </p>
+          </div>
+          <div class="cards-with-icons-container">
+            <div class="card-with-icon horizontal">
+              <div class="fa-regular fa-gem icon xl color-accent"></div>
+              <div class="feature-heading">
+                <p class="paragraph m bold">Reduce Maintenance Burden</p>
+                <p class="paragraph m secondary">
+                  Stop fixing broken tests every time the UI changes. Alumnium's
+                  AI adapts to changes automatically, reducing test maintenance
+                  by up to 60%.
+                </p>
+              </div>
+            </div>
+            <div class="card-with-icon horizontal">
+              <div class="fa-solid fa-heart icon xl color-accent"></div>
+              <div class="feature-heading">
+                <p class="paragraph m bold">Developer-Friendly API</p>
+                <p class="paragraph m secondary">
+                  Simple, intuitive API that feels natural. Write tests that
+                  read like documentation and are easy for anyone on your team
+                  to understand.
+                </p>
+              </div>
+            </div>
+            <div class="card-with-icon horizontal">
+              <div class="fa-regular fa-star icon xl color-accent"></div>
+              <div class="feature-heading">
+                <p class="paragraph m bold">Open Source & Extensible</p>
+                <p class="paragraph m secondary">
+                  Fully open source under Apache 2.0 license. Customize and
+                  extend to fit your specific needs. Active community and
+                  regular updates.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="heading">
+            <h2 class="no-top-margin">See Alumnium in Action</h2>
+            <p class="paragraph m secondary">
+              Watch how Alumnium transforms complex test scenarios into simple,
+              readable commands. From web automation to mobile testing, Alumnium
+              handles it all with natural language.
+            </p>
+            <div class="button-group margin-paragraph">
+              <a
+                href="https://docs.alumnium.dev/examples"
+                class="button secondary"
+                >View Examples</a
+              >
+            </div>
+          </div>
+          <div class="image-wide">
+            <img
+              src="images/placeholder-main-ui.png"
+              loading="lazy"
+              width="100%"
+              alt="Main screenshot of the product"
+            />
+          </div>
+        </section>
+        <section>
+          <div class="grid columns-1/2-1 gap-xl">
+            <div class="heading">
+              <h2 class="no-top-margin">Simple and Powerful</h2>
+              <p class="paragraph m secondary">
+                Write test automation in a way that everyone can understand. No
+                more brittle XPath expressions or complex waits. Just natural
+                language commands that express what you want to test.
+              </p>
+            </div>
+            <div class="card-code-block dark">
+              <pre
+                class="shiki github-dark-default"
+                style="margin: 0px; color: #e6edf3"
+                tabindex="0"
+              ><code><span class="line"><span style="color:#8B949E"># Python example</span></span>
+<span class="line"><span style="color:#FF7B72">from</span><span style="color:#E6EDF3"> alumnium </span><span style="color:#FF7B72">import</span><span style="color:#E6EDF3"> Alumni</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E6EDF3">al </span><span style="color:#FF7B72">=</span><span style="color:#E6EDF3"> Alumni(driver)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#8B949E"># Navigate and interact</span></span>
+<span class="line"><span style="color:#E6EDF3">al.do(</span><span style="color:#A5D6FF">"go to https://example.com"</span><span style="color:#E6EDF3">)</span></span>
+<span class="line"><span style="color:#E6EDF3">al.do(</span><span style="color:#A5D6FF">"click the login button"</span><span style="color:#E6EDF3">)</span></span>
+<span class="line"><span style="color:#E6EDF3">al.do(</span><span style="color:#A5D6FF">"fill out the form with email and password"</span><span style="color:#E6EDF3">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#8B949E"># Verify results</span></span>
+<span class="line"><span style="color:#E6EDF3">al.check(</span><span style="color:#A5D6FF">"dashboard page is visible"</span><span style="color:#E6EDF3">)</span></span>
+<span class="line"><span style="color:#E6EDF3">username </span><span style="color:#FF7B72">=</span><span style="color:#E6EDF3"> al.get(</span><span style="color:#A5D6FF">"user name from header"</span><span style="color:#E6EDF3">)</span></span></code></pre>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="heading centered">
+            <h2 class="no-top-margin">Frequently Asked Questions</h2>
+            <p class="paragraph m secondary">
+              Everything you need to know about Alumnium and how it works
+            </p>
+          </div>
+          <div class="accordion-container">
+            <details class="accordion-item" name="faq">
+              <summary class="accordion-toggle">
+                <p class="paragraph m bold">What is Alumnium?</p>
+                <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  Alumnium is an AI-powered test automation framework that lets
+                  you write tests using natural language commands. Instead of
+                  writing complex selectors and waits, you simply describe what
+                  you want to test in plain English, and Alumnium handles the
+                  rest. It works with popular automation tools like Selenium,
+                  Playwright, and Appium.
+                </p>
+              </div>
+            </details>
+
+            <details class="accordion-item" name="faq">
+              <summary class="accordion-toggle">
+                <p class="paragraph m bold">
+                  Which test frameworks does Alumnium support?
+                </p>
+                <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+              </summary>
+              <div class="accordion-content">
+                <p>Alumnium works with:</p>
+                <ol role="list">
+                  <li>Selenium WebDriver for web automation</li>
+                  <li>Playwright for modern web testing</li>
+                  <li>Appium for iOS and Android mobile testing</li>
+                </ol>
+                <p>
+                  You can use Alumnium with your existing test infrastructure
+                  without any major changes.
+                </p>
+              </div>
+            </details>
+
+            <details class="accordion-item" name="faq">
+              <summary class="accordion-toggle">
+                <p class="paragraph m bold">Do I need an AI API key?</p>
+                <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  Yes, Alumnium uses AI models to understand your natural
+                  language commands and interact with your application. You'll
+                  need an API key from supported providers like OpenAI,
+                  Anthropic, or other compatible AI services. Check our
+                  documentation for the full list of supported providers and
+                  setup instructions.
+                </p>
+              </div>
+            </details>
+
+            <details class="accordion-item" name="faq">
+              <summary class="accordion-toggle">
+                <p class="paragraph m bold">Is Alumnium free to use?</p>
+                <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  Yes, Alumnium is open source and free to use under the Apache
+                  2.0 license. You can use it for both personal and commercial
+                  projects. However, you will need to pay for AI API usage
+                  separately based on your chosen AI provider's pricing.
+                </p>
+              </div>
+            </details>
+
+            <details class="accordion-item" name="faq">
+              <summary class="accordion-toggle">
+                <p class="paragraph m bold">How do I get started?</p>
+                <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+              </summary>
+              <div class="accordion-content">
+                <p>Getting started is easy:</p>
+                <ol role="list">
+                  <li>Install Alumnium via pip (Python) or npm (TypeScript)</li>
+                  <li>Configure your AI provider API key</li>
+                  <li>
+                    Initialize Alumnium with your existing Selenium, Playwright,
+                    or Appium driver
+                  </li>
+                  <li>Start writing tests using natural language commands</li>
+                </ol>
+                <p>
+                  Check out our
+                  <a
+                    href="https://docs.alumnium.dev/getting-started"
+                    target="_blank"
+                    >getting started guide</a
+                  >
+                  for detailed instructions.
+                </p>
+              </div>
+            </details>
+
+            <details class="accordion-item" name="faq">
+              <summary class="accordion-toggle">
+                <p class="paragraph m bold">
+                  Can I use Alumnium with Claude Code?
+                </p>
+                <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  Yes! Alumnium is available as an MCP (Model Context Protocol)
+                  server that integrates seamlessly with Claude Code. This lets
+                  you control browsers and mobile apps directly from your Claude
+                  conversations.
+                </p>
+              </div>
+            </details>
+
+            <details class="accordion-item" name="faq">
+              <summary class="accordion-toggle">
+                <p class="paragraph m bold">
+                  How stable is Alumnium? Can I use it in production?
+                </p>
+                <span class="accordion-chevron fa-solid fa-chevron-down"></span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  Alumnium is currently in early development and experimental.
+                  While it's actively maintained and used by early adopters, we
+                  recommend starting with non-critical test suites and gradually
+                  expanding usage as you gain confidence. Join our community on
+                  Discord or Slack to share feedback and stay updated on new
+                  releases.
+                </p>
+              </div>
+            </details>
+          </div>
+        </section>
+        <section class="promo-cta">
+          <div class="heading centered">
+            <h2>Ready to transform your test automation?</h2>
+            <div class="button-group margin-paragraph centered">
+              <a
+                href="https://docs.alumnium.dev/getting-started"
+                class="button primary"
+                >Get Started</a
+              >
+              <a
+                href="https://github.com/alumnium-hq/alumnium"
+                class="button tertiary"
+                >Star on GitHub</a
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="footer">
+        <div class="footer-menu">
+          <div>
+            <p class="paragraph s">
+              © 2025 Alumnium<br />Open source test automation powered by AI<br />Built
+              with
+              <a href="https://launchkit.evilmartians.io" target="_blank"
+                >LaunchKit</a
+              >
+            </p>
+          </div>
+          <div>
+            <div class="link-list">
+              <a href="https://docs.alumnium.dev" class="ui s" target="_blank"
+                >Documentation ↗</a
+              >
+              <a
+                href="https://docs.alumnium.dev/examples"
+                class="ui s"
+                target="_blank"
+                >Examples ↗</a
+              >
+              <a
+                href="https://github.com/alumnium-hq/alumnium/blob/main/CONTRIBUTING.md"
+                class="ui s"
+                target="_blank"
+                >Contributing ↗</a
+              >
+              <a
+                href="https://github.com/alumnium-hq/alumnium/releases"
+                class="ui s"
+                target="_blank"
+                >Releases ↗</a
+              >
+            </div>
+          </div>
+          <div>
+            <div class="link-list">
+              <a
+                href="https://github.com/alumnium-hq/alumnium"
+                class="icon-link ui s"
+                target="_blank"
+              >
+                <div class="fa-brands fa-github icon m color-accent"></div>
+                <div class="pseudo-link">GitHub</div>
+              </a>
+              <a
+                href="https://discord.gg/mP29tTtKHg"
+                class="icon-link ui s"
+                target="_blank"
+              >
+                <div class="fa-brands fa-discord icon m color-accent"></div>
+                <div class="pseudo-link">Discord</div>
+              </a>
+              <a
+                href="https://seleniumhq.slack.com/channels/alumnium"
+                class="icon-link ui s"
+                target="_blank"
+              >
+                <div class="fa-brands fa-slack icon m color-accent"></div>
+                <div class="pseudo-link">Slack</div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="link-list-horizontal">
+          <a
+            href="https://github.com/alumnium-hq/alumnium/blob/main/LICENSE"
+            class="ui s tertiary"
+            target="_blank"
+            >Apache 2.0 License</a
+          >
+          <a
+            href="https://github.com/alumnium-hq/alumnium/blob/main/CODE_OF_CONDUCT.md"
+            class="ui s tertiary"
+            target="_blank"
+            >Code of Conduct</a
+          >
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

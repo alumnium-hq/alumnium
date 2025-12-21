@@ -1,0 +1,112 @@
+@media screen and (max-width: 767px) {
+  body {
+    /* Font sizes */
+    --font-size-l: 19.25px;
+    --font-size-xl: 33px;
+    --font-size-xxl: 44px;
+
+    /* Font metrics */
+    --line-height-paragraph-l: 24px;
+    --letter-spacing-paragraph-l: -0.2px;
+    --line-height-paragraph-xl: 40px;
+    --letter-spacing-paragraph-xl: -0.5px;
+
+    /* Headers */
+    --line-height-h1: 48px;
+    --letter-spacing-h1: -1.5px;
+    --line-height-h2: 36px;
+    --letter-spacing-h2: -1px;
+    --line-height-h3: 22px;
+    --letter-spacing-h3: -0.75px;
+
+    /* Sizing */
+    --space-section: 24px;
+    --space-button-m-vertical: 8px;
+    --space-card-m: 12px;
+
+    --radius-m: 8px;
+    --radius-l: 12px;
+  }
+
+  .page-container {
+    max-width: none;
+    padding: 0 16px;
+  }
+
+  .navbar {
+    margin-top: 12px;
+    top: 12px;
+  }
+
+  .nav-container {
+    padding: 8px 8px 8px 12px;
+    top: 12px;
+    margin-top: 12px;
+  }
+
+  .footer {
+    margin: 24px 0;
+  }
+
+  .button-group {
+    gap: 8px;
+  }
+
+  .columns-2,
+  .columns-3,
+  .columns-1\/2-1,
+  .cards-with-icons-container {
+    grid-template-columns: 1fr;
+  }
+
+  .card-with-icon {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+
+    & .icon {
+      margin-top: 24px;
+    }
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .page-container {
+    padding: 0 16px;
+  }
+
+  .hide-on-mobile {
+    display: none;
+  }
+
+  .nav-link {
+    display: flex;
+  }
+
+  .nav-menu {
+    padding: 12px;
+  }
+
+  .clients-container {
+    gap: 24px;
+    padding: 12px 0;
+  }
+
+  .clients-container img {
+    height: 40px;
+  }
+
+  .accordion-toggle {
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .footer-menu {
+    grid-template-columns: 2fr;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
+}

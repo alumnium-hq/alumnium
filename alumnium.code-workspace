@@ -16,6 +16,10 @@
       "name": "websites/docs",
       "path": "websites/docs",
     },
+    {
+      "name": "websites/homepage",
+      "path": "websites/homepage",
+    }
   ],
   "settings": {
     "cSpell.flagWords": ["Aluminium", "aluminium", "Aluminum", "aluminum"],

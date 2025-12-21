@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<!-- Try theme-dark -->
+<html lang="en" class="theme-light">
+
+<head>
+  <meta charset="utf-8" />
+  <title>LaunchKit — Pricing page</title>
+  <meta content="Free template for devtool landing pages" name="description" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="LaunchKit — Pricing page" />
+  <meta property="twitter:title" content="LaunchKit — Pricing page" />
+
+  <!-- Favicon and icons -->
+  <link rel="icon" href="images/favicon/favicon.ico" sizes="32x32" />
+  <link rel="icon" href="images/favicon/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="images/favicon/apple-touch-icon.png" />
+
+  <!-- Preload fonts -->
+  <link rel="preload" href="fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin />
+
+  <!-- Styles -->
+  <link href="vendor/font-awesome-6.7.2/css/all.min.css" rel="stylesheet" />
+  <link href="css/index.css" rel="stylesheet" type="text/css" />
+  <link href="css/pricing.css" rel="stylesheet" type="text/css" />
+  <link href="css/tablet.css" rel="stylesheet" type="text/css" />
+  <link href="css/mobile.css" rel="stylesheet" type="text/css" />
+  <script src="js/main.js" type="text/javascript" defer></script>
+  <script src="js/pricing.js" type="text/javascript" defer></script>
+</head>
+
+<body>
+  <div class="background-gradient"></div>
+  <div class="page-container">
+    <header class="nav-container">
+      <a href="index.html" class="nav-brand"><img src="images/Logo-Template.svg" loading="lazy"
+          alt="Logo Template" /></a>
+      <nav role="navigation" class="nav-menu" data-navigation>
+        <a href="pricing.html" class="nav-link">Pricing</a>
+        <a href="https://mintlify.com" class="nav-link">Docs ↗</a>
+        <a href="https://substack.com" class="nav-link">Blog ↗</a>
+        <a href="https://wellfound.com" class="nav-link">Careers ↗</a>
+        <div class="button-group stacked margin-top-l mobile-only">
+          <a href="#" class="button tertiary">Sign In</a>
+          <a href="#" class="button primary">Sign Up</a>
+        </div>
+      </nav>
+      <div class="button-group">
+        <a href="https://github.com" class="button ghost compact hide-on-mobile">
+          <div class="fa-brands fa-github icon l"></div>
+          <div class="paragraph s tertiary">42K</div>
+        </a>
+        <a href="#" class="button tertiary compact hide-on-mobile">Sign In</a>
+        <a href="#" class="button primary compact">Sign Up</a>
+        <button class="button ghost compact nav-hamburger" data-mobile-toggle>
+          <span class="fa-solid fa-bars icon m"></span>
+        </button>
+      </div>
+    </header>
+    <main>
+      <section>
+        <div class="text-centered full-width">
+          <h1>Pricing</h1>
+          <p>Get 20% off with yearly</p>
+          <div class="toggle-button-container">
+            <button class="toggle-option-button" data-pricing-toggle="monthly">
+              Monthly
+            </button>
+            <button class="toggle-option-button" data-pricing-toggle="yearly">
+              Yearly
+            </button>
+            <div class="toggle-current-option-marker" data-pricing-toggle-marker data-pricing-current="yearly"></div>
+          </div>
+        </div>
+        <div class="grid columns-3 margin-top-xl">
+          <div class="feature-card justified-vertically">
+            <div>
+              <div class="feature-heading">
+                <p class="paragraph l bold no-top-margin">Starter</p>
+                <p class="paragraph s secondary">For individuals</p>
+                <div class="price-line">
+                  <div class="paragraph l bold">Free</div>
+                </div>
+              </div>
+              <div class="feature-list">
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Lorem ipsum dolor sit amet</div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Consectetur adipiscing elit</div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                  </div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Ipsum dolor sit amet</div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Dolor sit amet, consectetur adipiscing</div>
+                </div>
+              </div>
+            </div>
+            <a href="#" class="button tertiary full-width margin-top-l">Choose Tier</a>
+          </div>
+          <div class="feature-card justified-vertically">
+            <div>
+              <div class="feature-heading">
+                <p class="paragraph l bold no-top-margin">Startup</p>
+                <p class="paragraph s secondary">For small teams</p>
+                <div class="price-line">
+                  <div class="paragraph l bold" data-pricing-monthly="$60" data-pricing-yearly="$48">
+                    $48
+                  </div>
+                  <div class="paragraph m secondary" data-pricing-monthly="/month, billed monthly"
+                    data-pricing-yearly="/month, billed annually">
+                    /month, billed annually
+                  </div>
+                </div>
+              </div>
+              <div class="feature-list">
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>
+                    Consectetur adipiscing elit. Suspendisse varius enim in eros
+                    elementum tristique
+                  </div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Consectetur adipiscing elit</div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                  </div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Ipsum dolor sit amet</div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Dolor sit amet, consectetur adipiscing</div>
+                </div>
+              </div>
+            </div>
+            <a href="#" class="button primary full-width margin-top-l">Choose Tier</a>
+          </div>
+          <div class="feature-card justified-vertically">
+            <div>
+              <div class="feature-heading">
+                <p class="paragraph l bold no-top-margin">Business</p>
+                <p class="paragraph s secondary">For growing business</p>
+                <div class="price-line">
+                  <div class="paragraph l bold" data-pricing-monthly="$200" data-pricing-yearly="$160">
+                    $160
+                  </div>
+                  <div class="paragraph m secondary" data-pricing-monthly="/month, billed monthly"
+                    data-pricing-yearly="/month, billed annually">
+                    /month, billed annually
+                  </div>
+                </div>
+              </div>
+              <div class="feature-list">
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Lorem ipsum dolor sit amet</div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Consectetur adipiscing elit</div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                  </div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Ipsum dolor sit amet</div>
+                </div>
+                <div class="feature-item paragraph s">
+                  <div class="fa-regular fa-square-check icon m"></div>
+                  <div>Dolor sit amet, consectetur adipiscing</div>
+                </div>
+              </div>
+            </div>
+            <a href="#" class="button tertiary full-width margin-top-l">Choose Tier</a>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-heading">
+            <p class="paragraph l bold no-top-margin">Enterprise</p>
+            <p class="paragraph s secondary">
+              For organizations requiring the highest level of security and
+              control
+            </p>
+          </div>
+          <a href="#" class="button tertiary">Contact Us</a>
+        </div>
+      </section>
+      <section>
+        <table class="pricing-table">
+          <thead>
+            <tr class="pricing-table-row">
+              <th class="paragraph s bold"></th>
+              <th class="paragraph s bold">Starter</th>
+              <th class="paragraph s bold">Startup</th>
+              <th class="paragraph s bold">Business</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="pricing-table-row">
+              <td class="paragraph s">Access on web</td>
+              <td>
+                <div class="fa-regular fa-square-check icon m"></div>
+              </td>
+              <td>
+                <div class="fa-regular fa-square-check icon m"></div>
+              </td>
+              <td>
+                <div class="fa-regular fa-square-check icon m"></div>
+              </td>
+            </tr>
+            <tr class="pricing-table-row">
+              <td class="paragraph s">Chat responses</td>
+              <td class="paragraph s">300</td>
+              <td class="paragraph s">3000</td>
+              <td class="paragraph s">Unlimited</td>
+            </tr>
+            <tr class="pricing-table-row">
+              <td class="paragraph s">Chat history</td>
+              <td></td>
+              <td>
+                <div class="fa-regular fa-square-check icon m"></div>
+              </td>
+              <td>
+                <div class="fa-regular fa-square-check icon m"></div>
+              </td>
+            </tr>
+            <tr class="pricing-table-row">
+              <td class="paragraph s">Custom domain</td>
+              <td></td>
+              <td></td>
+              <td>
+                <div class="fa-regular fa-square-check icon m"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+    <footer class="footer">
+      <div class="footer-menu">
+        <div>
+          <p class="paragraph s">
+            © 2025 LoremIpsumInc<br />By <a href="https://evilmartians.com" target="_blank">Evil Martians</a>, product
+            consulting for
+            developer tools<br />Built with <a href="https://launchkit.evilmartians.io" target="_blank">LaunchKit</a>
+          </p>
+        </div>
+        <div>
+          <div class="link-list">
+            <a href="pricing.html" class="ui s">Pricing</a>
+            <a href="licenses.html" class="ui s">Licenses</a>
+            <a href="https://mintlify.com" class="ui s" target="_blank">Docs ↗</a>
+            <a href="https://substack.com" class="ui s" target="_blank">Blog ↗</a>
+            <a href="https://wellfound.com" class="ui s" target="_blank">Careers ↗</a>
+          </div>
+        </div>
+        <div>
+          <div class="link-list">
+            <a href="https://github.com" class="icon-link ui s" target="_blank">
+              <div class="fa-brands fa-github icon m color-accent"></div>
+              <div class="pseudo-link">GitHub</div>
+            </a>
+            <a href="https://www.linkedin.com" class="icon-link ui s" target="_blank">
+              <div class="fa-brands fa-linkedin icon m color-accent"></div>
+              <div class="pseudo-link">LinkedIn</div>
+            </a>
+            <a href="https://x.com" class="icon-link ui s" target="_blank">
+              <div class="fa-brands fa-x-twitter icon m color-accent"></div>
+              <div class="pseudo-link">X.com</div>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="link-list-horizontal">
+        <a href="#" class="ui s tertiary">Privacy Policy</a>
+        <a href="#" class="ui s tertiary">Terms of Service</a>
+        <a href="#" class="ui s tertiary">Cookie Policy</a>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>

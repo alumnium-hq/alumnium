@@ -1,0 +1,831 @@
+@font-face {
+  font-family: Inter Variable;
+  src: url("../fonts/InterVariable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Inter Variable;
+  src: url("../fonts/InterVariable-Italic.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: JetBrains Mono;
+  src: url("../fonts/JetBrainsMono-VariableFont_wght.ttf") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /** There features 
+  These are values that determine the overall look of the theme.
+  - Saturation controls how much of accent color will be mixed into text, background, and surface colors.
+  - Contrast controls how contrast the text colors will be.
+  */
+  --theme-hue: 255;
+  --theme-saturation: 0.2; /* 0...1 where 0 means grayscale colors; 1 means fully saturated colors */
+  --theme-contrast: 0.8; /* 0...1 where 0 means low contrast; 1 means high contrast, black-n-white in fact */
+
+  /* Fonts */
+  --font-text: "Inter Variable", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", Courier, monospace;
+
+  /* Font sizes */
+  --font-size-s: 13.75px;
+  --font-size-m: 16.5px;
+  --font-size-l: 22px;
+  --font-size-xl: 44px;
+  --font-size-xxl: 66px;
+
+  /* Paragraph */
+  --line-height-paragraph-s: 20px;
+  --line-height-paragraph-m: 24px;
+  --line-height-paragraph-l: 28px;
+  --letter-spacing-paragraph-l: -0.4px;
+  --line-height-paragraph-xl: 52px;
+  --letter-spacing-paragraph-xl: -1px;
+  --line-height-ui-s: 16px;
+  --line-height-ui-m: 22px;
+
+  /* Headers */
+  --line-height-h1: 70px;
+  --letter-spacing-h1: -2px;
+  --line-height-h2: 48px;
+  --letter-spacing-h2: -1.5px;
+  --line-height-h3: 24px;
+  --letter-spacing-h3: -0.75px;
+  --line-height-h4: 18px;
+
+  /* Spacing */
+  --space-default: 12px;
+  --space-button-s-vertical: 8px;
+  --space-button-s-horizontal: 16px;
+  --space-button-m-vertical: 12px;
+  --space-button-m-horizontal: 24px;
+  --space-section: 60px;
+  --space-card-m: 24px;
+
+  --header-font-weight: 600;
+  --ui-button-font-weight: 500;
+
+  /* Border radii */
+  --radius-xs: 4px;
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
+
+  /* Colors */
+  --color-background: white;
+  --color-surface: #99a3ae14;
+  --color-text-primary: #363e48;
+  --color-text-secondary: #757a7f;
+  --color-text-tertiary: #a7acb2;
+  --color-accent: #0081ff;
+  --color-accent-hover: #0088f0d9;
+  --color-accent-b: #0081ff29;
+  --color-accent-b-hover: #0088f033;
+  --color-on-accent: white;
+  --color-border-level-2: #99a3ae29;
+  --color-border-level-3: #99a3ae52;
+  --color-background-blur: #ffffffe6;
+  --color-gradient-bg-start: #0081ff14;
+  --color-gradient-bg-end: #0081ff00;
+  --color-gradient-promo-start: #800069;
+  --color-gradient-promo-end: #005196;
+}
+
+.theme-light {
+  /** Base color
+  By default it's blue ≈ #0289ff
+  Usually it's your brand color. Simply provide your value and the whole theme will be recalculated automatically.
+  Default value is in OKLCH because it produces richer P3 colors, however you can use any color format. 
+  */
+  /* --color-accent: #00bc81; */
+  --color-accent: oklch(0.64 0.21 var(--theme-hue));
+
+  /* Relative colors 
+  These colors are calculated based on the accent color and saturation/contrast values.
+  Feel free to provide exact values if you want to override them.
+  */
+  --color-background-l: calc(0.7 + 0.3 * var(--theme-contrast));
+  --color-background: oklch(
+    from var(--color-accent) var(--color-background-l)
+      calc((1 - var(--color-background-l)) * 0.6 * var(--theme-saturation)) h
+  );
+  --color-background-blur: oklch(from var(--color-background) l c h / 0.8);
+
+  --color-text-primary-l: calc(0.4 - 0.4 * pow(var(--theme-contrast), 10));
+  --color-text-primary: oklch(
+    from var(--color-accent) var(--color-text-primary-l)
+      calc(var(--color-text-primary-l) * 0.3 * var(--theme-saturation)) h
+  );
+
+  --color-text-secondary: oklch(from var(--color-text-primary) l c h / 0.7);
+  --color-text-tertiary: oklch(from var(--color-text-primary) l c h / 0.42);
+  --color-accent-hover: oklch(from var(--color-accent) calc(l - 0.05) c h);
+  --color-accent-b: oklch(from var(--color-accent) l c h / 0.16);
+  --color-accent-b-hover: oklch(from var(--color-accent-b) calc(l - 0.1) c h);
+
+  --color-surface: oklch(from var(--color-text-primary) l c h / 0.04);
+  --color-on-accent: white;
+  --color-border-level-2: oklch(from var(--color-text-primary) l c h / 0.08);
+  --color-border-level-3: oklch(from var(--color-text-primary) l c h / 0.16);
+
+  --color-gradient-bg-start: oklch(
+    from var(--color-accent) l calc(0.3 * pow(var(--theme-saturation), 0.5)) h /
+      calc(0.5 - 0.5 * pow(var(--theme-contrast), 2))
+  );
+  --color-gradient-bg-end: oklch(from var(--color-gradient-bg-start) l c h / 0);
+
+  --color-gradient-promo-start: #ffd2f7;
+  --color-gradient-promo-end: #b9dfff;
+}
+
+.theme-dark {
+  color-scheme: dark;
+
+  /** Base color
+  By default it's blue ≈ #0289ff
+  Usually it's your brand color. Simply provide your value and the whole theme will be recalculated automatically.
+  Default value is in OKLCH because it produces richer P3 colors, however you can use any color format. 
+   */
+  /* --colors-accent: #00bc81; */
+  --color-accent: oklch(0.53 0.22 var(--theme-hue));
+
+  /* Relative colors 
+  These colors are calculated based on the accent color and saturation/contrast values.
+  Feel free to provide exact values if you want to override them.
+  */
+  --color-background-l: calc(0.35 - 0.35 * pow(var(--theme-contrast), 4));
+  --color-background: oklch(
+    from var(--color-accent) var(--color-background-l)
+      calc(var(--color-background-l) * 0.3 * var(--theme-saturation)) h
+  );
+  --color-background-blur: oklch(from var(--color-background) l c h / 0.9);
+
+  --color-text-primary-l: calc(0.7 + 0.3 * pow(var(--theme-contrast), 0.8));
+  --color-text-primary: oklch(
+    from var(--color-accent) var(--color-text-primary-l)
+      calc((1 - var(--color-text-primary-l)) * 0.6 * var(--theme-saturation)) h
+  );
+
+  --color-text-secondary: oklch(from var(--color-text-primary) l c h / 0.7);
+  --color-text-tertiary: oklch(from var(--color-text-primary) l c h / 0.5);
+  --color-accent-hover: oklch(from var(--color-accent) calc(l + 0.05) c h);
+  --color-accent-b: oklch(from var(--color-accent) l c h / 0.16);
+  --color-accent-b-hover: oklch(
+    from var(--color-accent-border) calc(l + 0.1) c h
+  );
+
+  --color-surface: oklch(from var(--color-text-primary) l c h / 0.04);
+  --color-on-accent: white;
+  --color-border-level-2: oklch(from var(--color-text-primary) l c h / 0.08);
+  --color-border-level-3: oklch(from var(--color-text-primary) l c h / 0.16);
+
+  --color-gradient-bg-start: oklch(
+    from var(--color-accent) l calc(0.3 * pow(var(--theme-saturation), 0.5)) h /
+      calc(0.5 - 0.5 * pow(var(--theme-contrast), 2))
+  );
+  --color-gradient-bg-end: oklch(from var(--color-gradient-bg-start) l c h / 0);
+
+  --color-gradient-promo-start: #800069;
+  --color-gradient-promo-end: #005196;
+}
+
+.page-container {
+  max-width: 1008px;
+  min-height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background-color: var(--color-background);
+  font-family: var(--font-text);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-paragraph-m);
+}
+
+/* Headers */
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--header-font-weight);
+  margin: var(--space-default) 0;
+}
+
+h1 {
+  font-size: var(--font-size-xxl);
+  line-height: var(--line-height-h1);
+  letter-spacing: var(--letter-spacing-h1);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-h2);
+  letter-spacing: var(--letter-spacing-h2);
+}
+
+h3 {
+  font-size: var(--font-size-l);
+  line-height: var(--line-height-h3);
+  letter-spacing: var(--letter-spacing-h3);
+}
+
+h4 {
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-h4);
+  letter-spacing: var(--letter-spacing-h4);
+}
+
+p {
+  margin: var(--space-default) 0;
+}
+
+a {
+  color: var(--color-accent);
+  text-underline-offset: 0px;
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-b);
+  text-decoration-skip-ink: none;
+  text-underline-position: under;
+  text-decoration-thickness: 2px;
+
+  &.tertiary {
+    color: var(--color-text-tertiary);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+ul,
+ol {
+  margin: 16px 0;
+  padding-left: 40px;
+}
+
+li {
+  margin: 8px 0;
+}
+
+img {
+  vertical-align: middle;
+  max-width: 100%;
+  display: inline-block;
+}
+
+section {
+  padding: var(--space-section) 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  margin-bottom: var(--space-default);
+  border: 1px solid var(--color-border-level-3);
+  border-radius: var(--radius-l);
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-s);
+  text-align: center;
+  object-fit: fill;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 2px 12px;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+}
+
+.heading {
+  margin-bottom: var(--space-default);
+  flex-direction: column;
+  max-width: 672px;
+  display: flex;
+
+  &.hero {
+    padding-bottom: 36px;
+  }
+
+  &.centered {
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+.no-top-margin {
+  margin-top: 0;
+}
+
+.balanced {
+  text-wrap: balance;
+}
+
+.content {
+  padding: var(--space-section) 0;
+  max-width: 720px;
+}
+
+/* Text */
+
+/* Style used for content */
+
+.paragraph {
+  &.s {
+    font-size: var(--font-size-s);
+    line-height: var(--line-height-paragraph-s);
+  }
+
+  &.m {
+    font-size: var(--font-size-m);
+    line-height: var(--line-height-paragraph-m);
+  }
+
+  &.l {
+    font-size: var(--font-size-l);
+    line-height: var(--line-height-paragraph-l);
+    letter-spacing: var(--letter-spacing-paragraph-l);
+  }
+
+  &.xl {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-paragraph-xl);
+    letter-spacing: var(--letter-spacing-paragraph-xl);
+  }
+
+  &.bold {
+    font-weight: 600;
+  }
+}
+
+/* Styles for UI elements */
+
+.ui {
+  &.s {
+    font-size: var(--font-size-s);
+    line-height: var(--line-height-ui-s) !important;
+  }
+
+  &.m {
+    font-size: var(--font-size-m);
+    line-height: var(--line-height-ui-m) !important;
+  }
+
+  &.pseudo-link,
+  .pseudo-link {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-b);
+    text-decoration-thickness: 2px;
+  }
+}
+
+/* Buttons */
+
+.button {
+  display: flex;
+  gap: 8px;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  background: transparent;
+  padding: var(--space-button-m-vertical) var(--space-button-m-horizontal);
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-ui-m);
+  font-weight: var(--ui-button-font-weight);
+  text-align: center;
+  border-radius: var(--radius-m);
+  justify-content: center;
+  align-items: center;
+
+  &.primary {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+
+    &:hover {
+      background-color: var(--color-accent-hover);
+      color: var(--color-on-accent);
+    }
+  }
+
+  &.secondary {
+    background-color: var(--color-accent-b);
+    color: var(--color-accent);
+
+    &:hover {
+      background-color: var(--color-accent-b-hover);
+    }
+  }
+
+  &.tertiary {
+    box-shadow: inset 0 0 0 1px var(--color-border-level-3);
+    color: var(--color-text-secondary);
+
+    &:hover {
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+    }
+  }
+
+  &.ghost {
+    background: transparent;
+    padding: var(--space-button-m-vertical) var(--space-button-m-horizontal);
+    color: var(--color-text-primary);
+
+    &:hover {
+      background-color: var(--color-border-level-2);
+      color: var(--color-on-accent);
+    }
+
+    &.active {
+      background-color: var(--color-border-level-3);
+    }
+
+    &.compact {
+      padding: var(--space-button-s-vertical) 12px;
+    }
+  }
+
+  &.compact {
+    padding: var(--space-button-s-vertical) var(--space-button-s-horizontal);
+    border-radius: var(--radius-s);
+  }
+}
+
+/* Button groups */
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+
+  &.margin-paragraph {
+    margin: var(--space-default) 0;
+  }
+
+  &.centered {
+    justify-content: center;
+    align-items: center;
+  }
+
+  &.stacked {
+    flex-direction: column;
+    align-items: justify;
+
+    & .button {
+      width: 100%;
+    }
+  }
+}
+
+/* Links */
+
+.icon-link {
+  gap: 6px;
+  color: var(--color-accent);
+  align-items: center;
+  text-decoration: none;
+  display: flex;
+
+  &:hover {
+    color: var(--color-accent-hover);
+  }
+}
+
+.link-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  padding-top: 12px;
+}
+
+.link-list-horizontal {
+  display: flex;
+  gap: var(--space-button-m-horizontal);
+}
+
+/* Icons */
+
+.icon {
+  display: flex !important;
+  align-items: center;
+  line-height: inherit !important;
+  color: var(--color-text-tertiary);
+
+  &.s {
+    font-size: var(--font-size-s);
+  }
+
+  &.m {
+    font-size: var(--font-size-m);
+  }
+
+  &.l {
+    font-size: var(--font-size-l);
+  }
+
+  &.xl {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-paragraph-xl) !important;
+  }
+}
+
+/* Navigation */
+
+.nav-container {
+  position: sticky;
+  margin-top: 24px;
+  inset: 24px 0% auto;
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--color-background-blur);
+  box-shadow: 0 0 0 1px var(--color-border-level-2);
+  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(40px);
+  border-radius: var(--radius-l);
+  max-width: 1008px;
+  padding: 12px 12px 12px 16px;
+  z-index: 1000;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-link {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-ui-m);
+  font-weight: var(--ui-button-font-weight);
+  border-radius: var(--radius-s);
+  padding: 8px 16px;
+  display: inline-block;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+
+  &:active {
+    color: var(--color-text-tertiary);
+  }
+}
+
+.background-gradient {
+  position: absolute;
+  background-image: linear-gradient(
+    180deg,
+    var(--color-gradient-bg-start),
+    var(--color-gradient-bg-end)
+  );
+  width: 100%;
+  height: 80vh;
+  z-index: -10;
+}
+
+.promo-cta {
+  background-image: linear-gradient(
+    135deg,
+    var(--color-gradient-promo-start),
+    var(--color-gradient-promo-end)
+  );
+  border-radius: 16px;
+  margin-bottom: var(--space-section);
+}
+
+.image-wide {
+  margin: var(--space-default) 0;
+  width: 116%;
+  max-width: none;
+  margin-left: -8%;
+}
+
+.mobile-only,
+.nav-hamburger {
+  display: none;
+}
+
+.clients-container {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  place-content: stretch center;
+  align-items: center;
+  padding: 24px 0;
+}
+
+.clients-divider {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.clients-divider-line {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: fit-content;
+}
+
+.text-centered {
+  text-align: center;
+}
+
+.feature-card {
+  padding: var(--space-card-m);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-l);
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.feature-heading {
+  max-width: 672px;
+}
+
+/* Grid */
+
+.grid {
+  display: grid;
+  margin: var(--space-default) 0;
+  gap: 12px;
+  grid-template-rows: auto;
+  grid-auto-columns: 1fr;
+
+  &.gap-l {
+    gap: 24px;
+  }
+
+  &.gap-xl {
+    gap: 60px;
+  }
+}
+
+.columns-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.columns-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.columns-1\/2-1 {
+  grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr);
+}
+
+.card-with-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cards-with-icons-container {
+  margin-top: var(--space-default) 0;
+  gap: 36px;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-auto-columns: 1fr;
+  padding: 24px 0;
+  display: grid;
+}
+
+.card-code-block {
+  padding: var(--space-card-m);
+  border: 1px solid var(--color-border-level-2);
+  border-radius: var(--radius-l);
+  overflow: auto;
+
+  &.dark {
+    background-color: #2b2b2b;
+  }
+}
+
+/* Accordion */
+
+.accordion-container {
+  border-top: 1px solid var(--color-border-level-2);
+  flex-flow: column;
+  display: flex;
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--color-border-level-2);
+  width: 100%;
+  overflow: hidden;
+}
+
+.accordion-toggle {
+  padding: var(--space-card-m);
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+}
+
+.accordion-toggle:hover {
+  color: var(--color-text-secondary);
+}
+
+.accordion-chevron {
+  margin-left: auto;
+  color: var(--color-text-tertiary);
+}
+
+[open] .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding-right: 48px;
+  padding-bottom: var(--space-button-m-vertical);
+  padding-left: var(--space-card-m);
+  background-color: #0000;
+  display: block;
+}
+
+/* Footer */
+
+.footer {
+  border-top: 1px solid var(--color-border-level-2);
+  margin-top: auto;
+  padding-top: 60px;
+  padding-bottom: 24px;
+}
+
+.footer-menu {
+  gap: 16px;
+  grid-template-rows: auto;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-auto-columns: 1fr;
+  margin-bottom: 24px;
+  display: grid;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.margin-top-l {
+  margin-top: 24px;
+}
+
+.margin-top-xl {
+  margin-top: 48px;
+}
+
+.secondary {
+  color: var(--color-text-secondary);
+}
+
+.tertiary {
+  color: var(--color-text-tertiary);
+}
+
+.color-accent {
+  color: var(--color-accent);
+}
+
+.inline-code {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-s);
+  line-height: inherit;
+  background-color: var(--color-surface);
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  color: var(--color-text-secondary);
+}
