@@ -47,17 +47,20 @@ class LLMFactory:
             aws_access_key = getenv("AWS_ACCESS_KEY", "")
             aws_secret_key = getenv("AWS_SECRET_KEY", "")
             aws_region_name = getenv("AWS_REGION_NAME", "us-east-1")
+            additional_model_request_fields = {}
+
+            if model.provider == Provider.AWS_ANTHROPIC:
+                additional_model_request_fields["thinking"] = {
+                    "type": "enabled",
+                    "budget_tokens": 1024,
+                }
+
             llm = ChatBedrockConverse(
                 model=model.name,
                 aws_access_key_id=SecretStr(aws_access_key),
                 aws_secret_access_key=SecretStr(aws_secret_key),
                 region_name=aws_region_name,
-                additional_model_request_fields={
-                    "thinking": {
-                        "type": "enabled",
-                        "budget_tokens": 1024,
-                    },
-                },
+                additional_model_request_fields=additional_model_request_fields,
             )
         elif model.provider == Provider.DEEPSEEK:
             llm = ChatDeepSeek(model=model.name, temperature=0, disabled_params={"tool_choice": None})
@@ -66,7 +69,7 @@ class LLMFactory:
         elif model.provider == Provider.GITHUB:
             llm = ChatOpenAI(model=model.name, base_url="https://models.github.ai/inference", temperature=0)
         elif model.provider == Provider.MISTRALAI:
-            llm = ChatMistralAI(model=model.name, temperature=0)
+            llm = ChatMistralAI(model_name=model.name, temperature=0)
         elif model.provider == Provider.OLLAMA:
             if not getenv("ALUMNIUM_OLLAMA_URL"):
                 llm = ChatOllama(model=model.name, temperature=0)
