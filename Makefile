@@ -22,7 +22,7 @@ test:
 	cd packages/python && poetry poe test
 
 start-server:
-	cd packages/python && poetry run server
+	cd packages/python && poetry run alumnium-server
 
 start-server-docker:
 	docker build -t alumnium-server .
@@ -33,3 +33,6 @@ start-server-docker:
 		-e ALUMNIUM_LOG_PATH=stdout \
 		-e ALUMNIUM_OLLAMA_URL \
 		alumnium-server
+
+start-mcp:
+	cd packages/python && poetry run alumnium-mcp
