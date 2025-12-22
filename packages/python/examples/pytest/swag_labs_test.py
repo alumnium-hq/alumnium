@@ -55,10 +55,6 @@ def login(al, driver, execute_script, navigate):
 
 
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
-@mark.xfail(
-    Model.current.provider == Provider.GOOGLE,
-    reason="https://github.com/langchain-ai/langchain-google/issues/734",
-)
 def test_sorting(al):
     products = {
         "Sauce Labs Backpack": 29.99,
@@ -87,10 +83,6 @@ def test_sorting(al):
     assert al.get("prices of products (without money sign)") == sorted(prices, reverse=True)
 
 
-@mark.xfail(
-    Model.current.provider == Provider.GOOGLE,
-    reason="https://github.com/langchain-ai/langchain-google/issues/734",
-)
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Cannot figure out how to open cart")
 @mark.xfail(
