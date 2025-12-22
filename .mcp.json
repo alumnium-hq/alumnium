@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "alumnium": {
+      "type": "stdio",
+      "trust": true,
+      "command": "make",
+      "args": ["start-mcp"],
+      "env": {
+        "AZURE_OPENAI_API_KEY": "${AZURE_OPENAI_API_KEY}",
+        "AZURE_OPENAI_API_VERSION": "${AZURE_OPENAI_API_VERSION}",
+        "AZURE_OPENAI_ENDPOINT": "${AZURE_OPENAI_ENDPOINT}",
+        "ALUMNIUM_MODEL": "${ALUMNIUM_MODEL}",
+        "LT_USERNAME": "${LT_USERNAME}",
+        "LT_ACCESS_KEY": "${LT_ACCESS_KEY}"
+      }
+    }
+  }
+}
