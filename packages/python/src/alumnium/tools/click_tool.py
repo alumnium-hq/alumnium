@@ -6,7 +6,7 @@ from .select_tool import SelectTool
 
 
 class ClickTool(BaseTool):
-    f"""Click an element. Avoid using this tool for combobox dropdowns; use {SelectTool.__name__} instead."""
+    __doc__ = f"""Click an element. NEVER use ClickTool for combobox dropdowns - use {SelectTool.__name__} instead."""
 
     id: int = Field(description="Element identifier (ID)")
 
