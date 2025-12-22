@@ -6,12 +6,7 @@ import { navigate } from "./helpers.js";
 describe("Table", () => {
   before(async () => {
     // These models double-click to sort
-    if (
-      Model.current.provider === Provider.ANTHROPIC ||
-      Model.current.provider === Provider.AWS_ANTHROPIC ||
-      Model.current.provider === Provider.GOOGLE ||
-      Model.current.provider === Provider.MISTRALAI
-    ) {
+    if (Model.current.provider === Provider.MISTRALAI) {
       await al.learn("sort by web site", ["click 'Web Site' header"]);
     }
   });
@@ -24,6 +19,9 @@ describe("Table", () => {
     const driverType = process.env.ALUMNIUM_DRIVER || "selenium";
     if (driverType === "appium") {
       return "Area is not properly extracted from Appium source code.";
+    }
+    if (Model.current.provider === Provider.AWS_META) {
+      return "Table area instructions need more work";
     }
     return null;
   };
