@@ -25,7 +25,14 @@ def driver():
     if driver_type == "playwright":
         with sync_playwright() as playwright:
             is_headless = headless.lower() == "true"
-            yield playwright.chromium.launch(headless=is_headless).new_page()
+            browser = playwright.chromium.launch(
+                headless=is_headless,
+                traces_dir="reports/traces/",
+            )
+            browser.start_tracing()
+            page = browser.new_page(record_video_dir="reports/videos/")
+            yield page
+            browser.stop_tracing()
     elif driver_type == "selenium":
         options = ChromeOptions()
         options.add_experimental_option(
