@@ -62,7 +62,7 @@ class LLMFactory:
             if model.provider == Provider.AWS_ANTHROPIC:
                 additional_model_request_fields["thinking"] = {
                     "type": "enabled",
-                    "budget_tokens": 1024,
+                    "budget_tokens": 1024,  # Minimum budget for Anthropic thinking
                 }
 
             llm = ChatBedrockConverse(
