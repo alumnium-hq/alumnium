@@ -2,7 +2,7 @@ from pathlib import Path
 
 from anthropic import RateLimitError as AnthropicRateLimitError
 from botocore.exceptions import ClientError as BedrockClientError
-from google.api_core.exceptions import ResourceExhausted as GoogleRateLimitError
+from google.genai.errors import ClientError as GoogleClientError
 from httpx import HTTPStatusError
 from langchain_core.runnables import Runnable
 from openai import InternalServerError as OpenAIInternalServerError
@@ -56,11 +56,12 @@ class BaseAgent:
                 (
                     AnthropicRateLimitError,
                     OpenAIRateLimitError,
-                    GoogleRateLimitError,
                 ),
             )
             # AWS Bedrock rate limit errors
             or (isinstance(error, BedrockClientError) and error.response["Error"]["Code"] == "ThrottlingException")
+            # Google rate limit errors
+            or (isinstance(error, GoogleClientError) and error.code == 429)
             # MistralAI rate limit errors
             or (isinstance(error, HTTPStatusError) and error.response.status_code == 429)
             # DeepSeek instead throws internal server error

@@ -65,7 +65,7 @@ class LLMFactory:
         elif model.provider == Provider.DEEPSEEK:
             llm = ChatDeepSeek(model=model.name, temperature=0, disabled_params={"tool_choice": None})
         elif model.provider == Provider.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=model.name, temperature=0, thinking_budget=512)
+            llm = ChatGoogleGenerativeAI(model=model.name, temperature=0, thinking_level="low")
         elif model.provider == Provider.GITHUB:
             llm = ChatOpenAI(model=model.name, base_url="https://models.github.ai/inference", temperature=0)
         elif model.provider == Provider.MISTRALAI:
