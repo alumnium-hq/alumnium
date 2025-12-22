@@ -94,7 +94,8 @@ class BaseAgent:
             if "reasoning_content" in content[0]:  # Anthropic reasoning
                 logger.info(f"  <- Reasoning: {content[0]['reasoning_content']}")
             elif "summary" in content[0]:  # OpenAI reasoning
-                logger.info(f"  <- Reasoning: {content[0]['summary'][0]['text']}")
+                for summary in content[0]["summary"]:
+                    logger.info(f"  <- Reasoning: {summary['text']}")
             elif "thinking" in content[0]:  # Google reasoning
                 logger.info(f"  <- Reasoning: {content[0]['thinking']}")
 
