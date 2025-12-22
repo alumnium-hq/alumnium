@@ -35,7 +35,7 @@ describe("Table", () => {
 
     await navigate(driver, "https://the-internet.herokuapp.com/tables");
 
-    const area = await al.area("example 1 table");
+    const area = await al.area("first table");
     assert.strictEqual(await area.get("Jason Doe's due amount"), "$100.00");
     assert.strictEqual(await area.get("Frank Bach's due amount"), "$51.00");
     assert.strictEqual(await area.get("Tim Conway's due amount"), "$50.00");
@@ -49,20 +49,20 @@ describe("Table", () => {
 
     await navigate(driver, "https://the-internet.herokuapp.com/tables");
 
-    let table1 = await al.area("example 1 table - return table element");
+    let table1 = await al.area("first table");
     const table1FirstNames = await table1.get("first names");
     assert.deepStrictEqual(table1FirstNames, ["John", "Frank", "Jason", "Tim"]);
     const table1LastNames = await table1.get("last names");
     assert.deepStrictEqual(table1LastNames, ["Smith", "Bach", "Doe", "Conway"]);
 
-    let table2 = await al.area("example 2 table - return table element");
+    let table2 = await al.area("second table");
     const table2FirstNames = await table2.get("first names");
     assert.deepStrictEqual(table2FirstNames, ["John", "Frank", "Jason", "Tim"]);
     const table2LastNames = await table2.get("last names");
     assert.deepStrictEqual(table2LastNames, ["Smith", "Bach", "Doe", "Conway"]);
 
     await table1.do("sort by last name");
-    table1 = await al.area("example 1 table - return table element"); // refresh
+    table1 = await al.area("first table"); // refresh
     assert.deepStrictEqual(await table1.get("first names"), [
       "Frank",
       "Tim",
@@ -76,7 +76,7 @@ describe("Table", () => {
       "Smith",
     ]);
     // example 2 table is not affected
-    table2 = await al.area("example 2 table - return table element"); // refresh
+    table2 = await al.area("second table"); // refresh
     assert.deepStrictEqual(await table2.get("first names"), [
       "John",
       "Frank",
@@ -91,7 +91,7 @@ describe("Table", () => {
     ]);
 
     await table2.do("sort by first name");
-    table2 = await al.area("example 2 table - return table element"); // refresh
+    table2 = await al.area("second table"); // refresh
     assert.deepStrictEqual(await table2.get("first names"), [
       "Frank",
       "Jason",
@@ -105,7 +105,7 @@ describe("Table", () => {
       "Conway",
     ]);
     // example 1 table is not affected
-    table1 = await al.area("example 1 table - return table element"); // refresh
+    table1 = await al.area("first table"); // refresh
     assert.deepStrictEqual(await table1.get("first names"), [
       "Frank",
       "Tim",
