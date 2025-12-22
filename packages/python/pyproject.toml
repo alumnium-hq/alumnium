@@ -27,14 +27,14 @@ sequence = [
 [tool.poe.tasks.examples-appium-ios.env]
 ALUMNIUM_DRIVER = "appium-ios"
 
-[tool.poe.tasks.examples-playwright]
-sequence = [
-    { cmd = "behave -t @playwright -f html-pretty -o reports/behave.html -f pretty" },
-    { cmd = "pytest --retries 1 --tracing on --html reports/pytest.html examples/pytest" },
-]
-
 [tool.poe.tasks.examples-playwright.env]
 ALUMNIUM_DRIVER = "playwright"
+
+[[tool.poe.tasks.examples-playwright.sequence]]
+cmd = "behave -t @playwright -f html-pretty -o reports/behave.html -f pretty"
+
+[[tool.poe.tasks.examples-playwright.sequence]]
+cmd = "pytest --retries 1 --tracing on --output reports --video on --html reports/pytest.html examples/pytest"
 
 [tool.poe.tasks.examples-selenium]
 sequence = [
