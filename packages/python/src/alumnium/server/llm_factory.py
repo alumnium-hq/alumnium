@@ -60,7 +60,7 @@ class LLMFactory:
                 },
             )
         elif model.provider == Provider.DEEPSEEK:
-            llm = ChatDeepSeek(model=model.name, temperature=0)
+            llm = ChatDeepSeek(model=model.name, temperature=0, disabled_params={"tool_choice": None})
         elif model.provider == Provider.GOOGLE:
             llm = ChatGoogleGenerativeAI(model=model.name, temperature=0, thinking_budget=512)
         elif model.provider == Provider.GITHUB:
