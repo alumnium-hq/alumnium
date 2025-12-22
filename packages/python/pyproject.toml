@@ -83,6 +83,7 @@ langchain-mistralai = "^1.1.0"
 langchain-ollama = "^1.0.0"
 langchain-openai = "^1.1.0"
 langchain-xai = "^1.1.0"
+mcp = "^1.2.0"
 playwright = "^1.49"
 pydantic = "^2.10.0"
 python = "^3.10"
@@ -118,7 +119,8 @@ extras = [
 version = "~0.35.0"
 
 [tool.poetry.scripts]
-server = "alumnium.server.main:main"
+alumnium-mcp = "alumnium.mcp.server:main"
+alumnium-server = "alumnium.server.main:main"
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"

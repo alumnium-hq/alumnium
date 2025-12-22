@@ -42,7 +42,8 @@ poetry poe test                   # Run unit tests
 poetry poe format                 # Format
 poetry run behave                 # Run example BDD tests
 poetry run pytest examples/       # Run example Pytest tests, use ALUMNIUM_DRIVER variable to switch drivers
-poetry run server                 # Start Alumnium server
+poetry run alumnium-mcp           # Start Alumnium MCP
+poetry run alumnium-server        # Start Alumnium server
 
 # TypeScript
 cd packages/typescript
