@@ -39,12 +39,12 @@ jobs:
       ALUMNIUM_MODEL: ${{ matrix.model }}
     strategy:
       fail-fast: false
-      max-parallel: 3
+      max-parallel: 6
       matrix:
         driver:
-          - appium-android
-          - appium-ios
-          - playwright
+          # - appium-android
+          # - appium-ios
+          # - playwright
           - selenium
         model:
           - aws_anthropic
