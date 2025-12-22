@@ -1,4 +1,5 @@
 from os import getenv
+from time import sleep
 
 from pytest import fixture, mark
 from selenium.common.exceptions import TimeoutException
@@ -48,6 +49,7 @@ def login(al, driver, execute_script, navigate):
         except TimeoutException:
             pass
 
+    sleep(1)  # https://github.com/alumnium-hq/alumnium/issues/215
     yield
     execute_script("window.localStorage.clear()")
 
@@ -55,10 +57,6 @@ def login(al, driver, execute_script, navigate):
 
 
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
-@mark.xfail(
-    Model.current.provider == Provider.GOOGLE,
-    reason="https://github.com/langchain-ai/langchain-google/issues/734",
-)
 def test_sorting(al):
     products = {
         "Sauce Labs Backpack": 29.99,
@@ -87,10 +85,6 @@ def test_sorting(al):
     assert al.get("prices of products (without money sign)") == sorted(prices, reverse=True)
 
 
-@mark.xfail(
-    Model.current.provider == Provider.GOOGLE,
-    reason="https://github.com/langchain-ai/langchain-google/issues/734",
-)
 @mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 @mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Cannot figure out how to open cart")
 @mark.xfail(

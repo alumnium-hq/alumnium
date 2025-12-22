@@ -2,8 +2,9 @@ from pathlib import Path
 
 from anthropic import RateLimitError as AnthropicRateLimitError
 from botocore.exceptions import ClientError as BedrockClientError
-from google.api_core.exceptions import ResourceExhausted as GoogleRateLimitError
+from google.genai.errors import ClientError as GoogleClientError
 from httpx import HTTPStatusError
+from langchain_core.messages import AIMessage
 from langchain_core.runnables import Runnable
 from openai import InternalServerError as OpenAIInternalServerError
 from openai import RateLimitError as OpenAIRateLimitError
@@ -56,11 +57,12 @@ class BaseAgent:
                 (
                     AnthropicRateLimitError,
                     OpenAIRateLimitError,
-                    GoogleRateLimitError,
                 ),
             )
             # AWS Bedrock rate limit errors
             or (isinstance(error, BedrockClientError) and error.response["Error"]["Code"] == "ThrottlingException")
+            # Google rate limit errors
+            or (isinstance(error, GoogleClientError) and error.code == 429)
             # MistralAI rate limit errors
             or (isinstance(error, HTTPStatusError) and error.response.status_code == 429)
             # DeepSeek instead throws internal server error
@@ -80,9 +82,20 @@ class BaseAgent:
     def _invoke_chain(self, chain: Runnable, *args):
         result = chain.invoke(*args)
         if isinstance(result, dict) and "raw" in result:
+            content = result["raw"].content
             self._update_usage(result["raw"].usage_metadata)
         else:
+            content = result.content
             self._update_usage(result.usage_metadata)
+
+        if isinstance(content, list) and content:
+            if "reasoning_content" in content[0]:  # Anthropic reasoning
+                logger.info(f"  <- Reasoning: {content[0]['reasoning_content']}")
+            elif "summary" in content[0]:  # OpenAI reasoning
+                for summary in content[0]["summary"]:
+                    logger.info(f"  <- Reasoning: {summary['text']}")
+            elif "thinking" in content[0]:  # Google reasoning
+                logger.info(f"  <- Reasoning: {content[0]['thinking']}")
 
         return result
 
