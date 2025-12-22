@@ -2429,24 +2429,25 @@ type = ["mypy (>=1.11.2)"]
 
 [[package]]
 name = "playwright"
-version = "1.49.1"
+version = "1.57.0"
 description = "A high-level API to automate web browsers"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "playwright-1.49.1-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:1041ffb45a0d0bc44d698d3a5aa3ac4b67c9bd03540da43a0b70616ad52592b8"},
-    {file = "playwright-1.49.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:9f38ed3d0c1f4e0a6d1c92e73dd9a61f8855133249d6f0cec28648d38a7137be"},
-    {file = "playwright-1.49.1-py3-none-macosx_11_0_universal2.whl", hash = "sha256:3be48c6d26dc819ca0a26567c1ae36a980a0303dcd4249feb6f59e115aaddfb8"},
-    {file = "playwright-1.49.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:753ca90ee31b4b03d165cfd36e477309ebf2b4381953f2a982ff612d85b147d2"},
-    {file = "playwright-1.49.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cd9bc8dab37aa25198a01f555f0a2e2c3813fe200fef018ac34dfe86b34994b9"},
-    {file = "playwright-1.49.1-py3-none-win32.whl", hash = "sha256:43b304be67f096058e587dac453ece550eff87b8fbed28de30f4f022cc1745bb"},
-    {file = "playwright-1.49.1-py3-none-win_amd64.whl", hash = "sha256:47b23cb346283278f5b4d1e1990bcb6d6302f80c0aa0ca93dd0601a1400191df"},
+    {file = "playwright-1.57.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:9351c1ac3dfd9b3820fe7fc4340d96c0d3736bb68097b9b7a69bd45d25e9370c"},
+    {file = "playwright-1.57.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:a4a9d65027bce48eeba842408bcc1421502dfd7e41e28d207e94260fa93ca67e"},
+    {file = "playwright-1.57.0-py3-none-macosx_11_0_universal2.whl", hash = "sha256:99104771abc4eafee48f47dac2369e0015516dc1ce8c409807d2dd440828b9a4"},
+    {file = "playwright-1.57.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:284ed5a706b7c389a06caa431b2f0ba9ac4130113c3a779767dda758c2497bb1"},
+    {file = "playwright-1.57.0-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:38a1bae6c0a07839cdeaddbc0756b3b2b85e476c07945f64ece08f1f956a86f1"},
+    {file = "playwright-1.57.0-py3-none-win32.whl", hash = "sha256:1dd93b265688da46e91ecb0606d36f777f8eadcf7fbef12f6426b20bf0c9137c"},
+    {file = "playwright-1.57.0-py3-none-win_amd64.whl", hash = "sha256:6caefb08ed2c6f29d33b8088d05d09376946e49a73be19271c8cd5384b82b14c"},
+    {file = "playwright-1.57.0-py3-none-win_arm64.whl", hash = "sha256:5f065f5a133dbc15e6e7c71e7bc04f258195755b1c32a432b792e28338c8335e"},
 ]
 
 [package.dependencies]
-greenlet = "3.1.1"
-pyee = "12.0.0"
+greenlet = ">=3.1.1,<4.0.0"
+pyee = ">=13,<14"
 
 [[package]]
 name = "pluggy"
@@ -2791,21 +2792,21 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
 name = "pyee"
-version = "12.0.0"
+version = "13.0.0"
 description = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "pyee-12.0.0-py3-none-any.whl", hash = "sha256:7b14b74320600049ccc7d0e0b1becd3b4bd0a03c745758225e31a59f4095c990"},
-    {file = "pyee-12.0.0.tar.gz", hash = "sha256:c480603f4aa2927d4766eb41fa82793fe60a82cbfdb8d688e0d08c55a534e145"},
+    {file = "pyee-13.0.0-py3-none-any.whl", hash = "sha256:48195a3cddb3b1515ce0695ed76036b5ccc2ef3a9f963ff9f77aec0139845498"},
+    {file = "pyee-13.0.0.tar.gz", hash = "sha256:b391e3c5a434d1f5118a25615001dbc8f669cf410ab67d04c4d4e07c55481c37"},
 ]
 
 [package.dependencies]
 typing-extensions = "*"
 
 [package.extras]
-dev = ["black", "build", "flake8", "flake8-black", "isort", "jupyter-console", "mkdocs", "mkdocs-include-markdown-plugin", "mkdocstrings[python]", "pytest", "pytest-asyncio ; python_version >= \"3.4\"", "pytest-trio ; python_version >= \"3.7\"", "sphinx", "toml", "tox", "trio", "trio ; python_version > \"3.6\"", "trio-typing ; python_version > \"3.6\"", "twine", "twisted", "validate-pyproject[all]"]
+dev = ["black", "build", "flake8", "flake8-black", "isort", "jupyter-console", "mkdocs", "mkdocs-include-markdown-plugin", "mkdocstrings[python]", "mypy", "pytest", "pytest-asyncio ; python_version >= \"3.4\"", "pytest-trio ; python_version >= \"3.7\"", "sphinx", "toml", "tox", "trio", "trio ; python_version > \"3.6\"", "trio-typing ; python_version > \"3.6\"", "twine", "twisted", "validate-pyproject[all]"]
 
 [[package]]
 name = "pygments"
