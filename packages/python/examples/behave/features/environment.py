@@ -16,14 +16,20 @@ from alumnium import Alumni, Model
 from alumnium.drivers.appium_driver import AppiumDriver
 
 driver_name = getenv("ALUMNIUM_DRIVER", "selenium")
+headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 
 
 @fixture
 def driver(context):
     if driver_name == "playwright":
         with sync_playwright() as playwright:
-            context.driver = playwright.chromium.launch().new_page()
+            is_headless = headless.lower() == "true"
+            browser = playwright.chromium.launch(headless=is_headless)
+            browser_context = browser.new_context(record_video_dir="reports/videos/")
+            browser_context.tracing.start(screenshots=True, snapshots=True)
+            context.driver = browser_context.new_page()
             yield context.driver
+            browser_context.tracing.stop(path="reports/traces/behave.zip")
     elif driver_name == "selenium":
         context.driver = Chrome()
         yield context.driver
