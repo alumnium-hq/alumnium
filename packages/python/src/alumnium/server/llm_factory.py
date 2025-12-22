@@ -101,7 +101,6 @@ class LLMFactory:
                 llm = ChatOpenAI(
                     model=getenv("OPENAI_CUSTOM_MODEL", model.name),
                     base_url=getenv("OPENAI_CUSTOM_URL"),
-                    seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
                     reasoning={
                         "effort": "low",
                         "summary": "auto",
