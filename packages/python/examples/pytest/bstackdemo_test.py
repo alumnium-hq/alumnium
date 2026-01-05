@@ -23,7 +23,8 @@ def test_checkout(al):
     # Add products to the cart
     al.do("add 'iPhone 12 Pro Max' to cart")
     al.do("add 'iPhone 12 Mini' to cart")
-    cart = al.area("shopping bag")
+    # https://github.com/alumnium-hq/alumnium/issues/110
+    cart = al.area("shopping cart including added products")
     assert cart.get("titles of products") == ["iPhone 12 Pro Max", "iPhone 12 Mini"]
     assert cart.get("quantity of iPhone 12 Pro Max") == 1
     assert cart.get("quantity of iPhone 12 Mini") == 1
