@@ -78,7 +78,12 @@ class LLMFactory:
             if "gemini-2.0" in model.name:
                 llm = ChatGoogleGenerativeAI(model=model.name, temperature=0)
             else:
-                llm = ChatGoogleGenerativeAI(model=model.name, temperature=0, thinking_level="low")
+                llm = ChatGoogleGenerativeAI(
+                    model=model.name,
+                    temperature=0,
+                    thinking_level="low",
+                    include_thoughts=True,
+                )
         elif model.provider == Provider.GITHUB:
             llm = ChatOpenAI(model=model.name, base_url="https://models.github.ai/inference", temperature=0)
         elif model.provider == Provider.MISTRALAI:
