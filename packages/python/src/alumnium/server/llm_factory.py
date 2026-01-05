@@ -26,13 +26,22 @@ class LLMFactory:
 
         if model.provider == Provider.AZURE_OPENAI:
             azure_openai_api_version = getenv("AZURE_OPENAI_API_VERSION")
-            llm = AzureChatOpenAI(
-                model=model.name,
-                api_version=azure_openai_api_version,
-                temperature=0,
-                reasoning_effort="low",
-                seed=1,
-            )
+            if "gpt-4o" in model.name:
+                llm = AzureChatOpenAI(
+                    model=model.name,
+                    api_version=azure_openai_api_version,
+                    temperature=0,
+                    reasoning_effort="low",
+                    seed=1,
+                )
+            else:
+                llm = AzureChatOpenAI(
+                    model=model.name,
+                    api_version=azure_openai_api_version,
+                    temperature=0,
+                    reasoning_effort="low",
+                    seed=1,
+                )
         elif model.provider == Provider.ANTHROPIC:
             llm = ChatAnthropic(
                 model_name=model.name,
@@ -65,7 +74,10 @@ class LLMFactory:
         elif model.provider == Provider.DEEPSEEK:
             llm = ChatDeepSeek(model=model.name, temperature=0, disabled_params={"tool_choice": None})
         elif model.provider == Provider.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=model.name, temperature=0, thinking_level="low")
+            if "gemini-2.0" in model.name:
+                llm = ChatGoogleGenerativeAI(model=model.name, temperature=0)
+            else:
+                llm = ChatGoogleGenerativeAI(model=model.name, temperature=0, thinking_level="low")
         elif model.provider == Provider.GITHUB:
             llm = ChatOpenAI(model=model.name, base_url="https://models.github.ai/inference", temperature=0)
         elif model.provider == Provider.MISTRALAI:
@@ -77,13 +89,21 @@ class LLMFactory:
                 cloud_endpoint = getenv("ALUMNIUM_OLLAMA_URL")
                 llm = ChatOllama(model=model.name, base_url=cloud_endpoint, temperature=0)
         elif model.provider == Provider.OPENAI:
-            llm = ChatOpenAI(
-                model=getenv("OPENAI_CUSTOM_MODEL", model.name),
-                base_url=getenv("OPENAI_CUSTOM_URL"),
-                seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
-                reasoning_effort="low",
-                temperature=0,
-            )
+            if "gpt-4o" in model.name:
+                llm = ChatOpenAI(
+                    model=model.name,
+                    base_url=getenv("OPENAI_CUSTOM_URL"),
+                    seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
+                    temperature=0,
+                )
+            else:
+                llm = ChatOpenAI(
+                    model=getenv("OPENAI_CUSTOM_MODEL", model.name),
+                    base_url=getenv("OPENAI_CUSTOM_URL"),
+                    seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
+                    reasoning_effort="low",
+                    temperature=0,
+                )
         elif model.provider == Provider.XAI:
             llm = ChatXAI(model=model.name, temperature=0)
         else:
