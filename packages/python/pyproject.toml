@@ -12,6 +12,39 @@ check-format = [
 clean = "rm -rf .alumnium/cache dist log reports .pytest_cache __pycache__ .ruff_cache"
 test = "pytest tests/"
 
+[tool.poe.tasks.examples-appium-android]
+cmd = "behave -t @appium-android -f html-pretty -o reports/behave.html -f pretty"
+
+[tool.poe.tasks.examples-appium-android.env]
+ALUMNIUM_DRIVER = "appium-android"
+
+[tool.poe.tasks.examples-appium-ios]
+sequence = [
+    { cmd = "behave -t @appium-ios -f html-pretty -o reports/behave.html -f pretty" },
+    { cmd = "pytest --retries 1 --html --tracing on reports/pytest.html examples/pytest" },
+]
+
+[tool.poe.tasks.examples-appium-ios.env]
+ALUMNIUM_DRIVER = "appium-ios"
+
+[tool.poe.tasks.examples-playwright]
+sequence = [
+    { cmd = "behave -t @playwright -f html-pretty -o reports/behave.html -f pretty" },
+    { cmd = "pytest --retries 1 --tracing on --html reports/pytest.html examples/pytest" },
+]
+
+[tool.poe.tasks.examples-playwright.env]
+ALUMNIUM_DRIVER = "playwright"
+
+[tool.poe.tasks.examples-selenium]
+sequence = [
+    { cmd = "behave -t @selenium -f html-pretty -o reports/behave.html -f pretty" },
+    { cmd = "pytest --retries 1 --html reports/pytest.html examples/pytest" },
+]
+
+[tool.poe.tasks.examples-selenium.env]
+ALUMNIUM_DRIVER = "selenium"
+
 [tool.poe.tasks.format]
 ignore_fail = true
 sequence = [
