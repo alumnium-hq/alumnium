@@ -42,6 +42,10 @@ class ActorAgent(BaseAgent):
             {"goal": goal, "step": step, "accessibility_tree": accessibility_tree_xml},
         )
 
+        if isinstance(message.content, list) and message.content:
+            if "summary" in message.content[0]:
+                logger.info(f"  <- Reasoning: {message.content[0]['summary']}")
+
         logger.info(f"  <- Tools: {message.tool_calls}")
         logger.info(f"  <- Usage: {message.usage_metadata}")
 
