@@ -1,5 +1,6 @@
 from base64 import b64encode
 from contextlib import contextmanager
+from os import getenv
 from pathlib import Path
 
 from playwright.sync_api import Error, Locator, Page, TimeoutError
@@ -19,7 +20,7 @@ logger = get_logger(__name__)
 
 
 class PlaywrightDriver(BaseDriver):
-    NEW_TAB_TIMEOUT = 200
+    NEW_TAB_TIMEOUT = int(getenv("ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT", "200"))
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
