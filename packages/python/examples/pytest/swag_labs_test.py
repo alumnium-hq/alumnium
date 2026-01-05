@@ -1,4 +1,5 @@
 from os import getenv
+from time import sleep
 
 from pytest import fixture, mark
 from selenium.common.exceptions import TimeoutException
@@ -48,6 +49,7 @@ def login(al, driver, execute_script, navigate):
         except TimeoutException:
             pass
 
+    sleep(1)  # https://github.com/alumnium-hq/alumnium/issues/215
     yield
     execute_script("window.localStorage.clear()")
 
