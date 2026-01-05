@@ -1,3 +1,5 @@
+from re import sub
+
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
@@ -87,6 +89,8 @@ class RetrieverAgent(BaseAgent):
         # LLMs sometimes add separator to the start/end.
         value = value.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
         value = value.strip()
+        # GPT-5 Nano sometimes replaces closing brace with something else
+        value = sub(rf"{self.LIST_SEPARATOR[:-1]}.", self.LIST_SEPARATOR, value)
 
         # Return raw string or list of strings
         if self.LIST_SEPARATOR in value:
