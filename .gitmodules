@@ -1,0 +1,3 @@
+[submodule "benchmarks/webvoyager"]
+	path = benchmarks/webvoyager
+	url = git@github.com:MinorJerry/WebVoyager.git
