@@ -125,6 +125,9 @@ describe("Table", () => {
 
     // This data is not available on the page.
     // Even though LLM knows the answer, it should not respond it.
-    assert.strictEqual(await al.get("atomic number of Selenium"), null);
+    // When data is unavailable, get() returns an explanation string
+    const result = await al.get("atomic number of Selenium");
+    assert.strictEqual(typeof result, "string");
+    assert.ok((result as string).toLowerCase().includes("not"));
   });
 });

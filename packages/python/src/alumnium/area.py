@@ -7,6 +7,7 @@ from .clients.native_client import NativeClient
 from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.base_driver import BaseDriver
+from .result import DoResult, DoStep
 from .server.logutils import get_logger
 from .tools import BaseTool
 
@@ -91,16 +92,16 @@ class Area:
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
 
         Returns:
-            Data: The extracted data loosely typed to int, float, str, or list of them.
+            The extracted data. If data cannot be extracted, returns the explanation string.
         """
-        _, value = self.client.retrieve(
+        explanation, value = self.client.retrieve(
             data,
             self.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         )
-        return value
+        return explanation if value is None else value
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
     def find(self, description: str) -> Element:

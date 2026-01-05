@@ -89,8 +89,7 @@ export class Area {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_explanation, value] = await this.client.retrieve(
+    const [explanation, value] = await this.client.retrieve(
       data,
       this.accessibilityTree.toStr(),
       await this.driver.title(),
@@ -98,7 +97,7 @@ export class Area {
       screenshot
     );
 
-    return value;
+    return value === null ? explanation : value;
   }
 
   @retry()
