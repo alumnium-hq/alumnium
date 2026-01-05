@@ -164,8 +164,7 @@ export class Alumni {
       ? await this.driver.screenshot()
       : undefined;
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_explanation, value] = await this.client.retrieve(
+    const [explanation, value] = await this.client.retrieve(
       data,
       accessibilityTree.toStr(),
       await this.driver.title(),
@@ -173,7 +172,7 @@ export class Alumni {
       screenshot
     );
 
-    return value;
+    return value === null ? explanation : value;
   }
 
   @retry()

@@ -135,16 +135,16 @@ class Alumni:
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
 
         Returns:
-            Data: The extracted data loosely typed to int, float, str, or list of them.
+            The extracted data. If data cannot be extracted, returns the explanation string.
         """
-        _, value = self.client.retrieve(
+        explanation, value = self.client.retrieve(
             data,
             self.driver.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         )
-        return value
+        return explanation if value is None else value
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def find(self, description: str) -> Element:

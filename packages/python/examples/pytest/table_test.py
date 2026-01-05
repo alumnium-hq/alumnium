@@ -75,4 +75,6 @@ def test_retrieval_of_unavailable_data(al, navigate):
 
     # This data is not available on the page.
     # Even though LLM knows the answer, it should not respond it.
-    assert al.get("atomic number of Selenium") is None
+    # When data is unavailable, get() returns an explanation string
+    result = al.get("atomic number of Selenium")
+    assert isinstance(result, str) and "34" not in result
