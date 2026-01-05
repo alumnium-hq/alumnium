@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Key(str, Enum):
-    BACKSPACE = "Backspace"
-    ENTER = "Enter"
-    ESCAPE = "Escape"
-    TAB = "Tab"
+    BACKSPACE = "backspace"
+    ENTER = "enter"
+    ESCAPE = "escape"
+    TAB = "tab"
