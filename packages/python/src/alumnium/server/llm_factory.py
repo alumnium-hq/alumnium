@@ -31,7 +31,6 @@ class LLMFactory:
                     model=model.name,
                     api_version=azure_openai_api_version,
                     temperature=0,
-                    reasoning_effort="low",
                     seed=1,
                 )
             else:
@@ -39,8 +38,10 @@ class LLMFactory:
                     model=model.name,
                     api_version=azure_openai_api_version,
                     temperature=0,
-                    reasoning_effort="low",
-                    seed=1,
+                    reasoning={
+                        "effort": "low",
+                        "summary": "auto",
+                    },
                 )
         elif model.provider == Provider.ANTHROPIC:
             llm = ChatAnthropic(
@@ -101,7 +102,10 @@ class LLMFactory:
                     model=getenv("OPENAI_CUSTOM_MODEL", model.name),
                     base_url=getenv("OPENAI_CUSTOM_URL"),
                     seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
-                    reasoning_effort="low",
+                    reasoning={
+                        "effort": "low",
+                        "summary": "auto",
+                    },
                     temperature=0,
                 )
         elif model.provider == Provider.XAI:
