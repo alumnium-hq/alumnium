@@ -31,20 +31,30 @@ class Area:
         self.client = client
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
-    def do(self, goal: str):
+    def do(self, goal: str) -> DoResult:
         """
         Executes a series of steps to achieve the given goal within the area.
 
         Args:
             goal: The goal to be achieved.
+
+        Returns:
+            DoResult containing the explanation and executed steps with their actions.
         """
-        steps = self.client.plan_actions(goal, self.accessibility_tree.to_str())
+        explanation, steps = self.client.plan_actions(goal, self.accessibility_tree.to_str())
+
+        executed_steps = []
         for step in steps:
             actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_str())
 
-            # Execute tool calls
+            called_tools = []
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tool = BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tools.append(called_tool)
+
+            executed_steps.append(DoStep(name=step, tools=called_tools))
+
+        return DoResult(explanation=explanation, steps=executed_steps)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
     def check(self, statement: str, vision: bool = False) -> str:

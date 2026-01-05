@@ -18,6 +18,7 @@ from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
+from .result import DoResult, DoStep
 from .server.logutils import get_logger
 from .server.models import Model
 from .tools import BaseTool
@@ -71,23 +72,33 @@ class Alumni:
         self.driver.quit()
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def do(self, goal: str):
+    def do(self, goal: str) -> DoResult:
         """
         Executes a series of steps to achieve the given goal.
 
         Args:
             goal: The goal to be achieved.
+
+        Returns:
+            DoResult containing the explanation and executed steps with their actions.
         """
         initial_accessibility_tree = self.driver.accessibility_tree
-        steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str())
+        explanation, steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str())
+
+        executed_steps = []
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
             actor_response = self.client.execute_action(goal, step, accessibility_tree.to_str())
 
-            # Execute tool calls
+            called_tools = []
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tool = BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tools.append(called_tool)
+
+            executed_steps.append(DoStep(name=step, tools=called_tools))
+
+        return DoResult(explanation=explanation, steps=executed_steps)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def check(self, statement: str, vision: bool = False) -> str:

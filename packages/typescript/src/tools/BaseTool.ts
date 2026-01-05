@@ -15,13 +15,21 @@ export abstract class BaseTool {
     toolCall: ToolCall,
     tools: Record<string, ToolClass>,
     driver: BaseDriver
-  ): Promise<void> {
-    const ToolClass = tools[toolCall.name];
+  ): Promise<string> {
+    const toolName = toolCall.name;
+    const toolArgs = toolCall.args;
+
+    const ToolClass = tools[toolName];
     if (!ToolClass) {
-      throw new Error(`Tool ${toolCall.name} not found`);
+      throw new Error(`Tool ${toolName} not found`);
     }
 
-    const tool = new ToolClass(toolCall.args);
+    const tool = new ToolClass(toolArgs);
     await tool.invoke(driver);
+
+    const argsStr = Object.entries(toolArgs)
+      .map(([k, v]) => `${k}=${String(v)}`)
+      .join(", ");
+    return `${toolName}(${argsStr})`;
   }
 }
