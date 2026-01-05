@@ -20,7 +20,7 @@ export class ModelName {
     [Provider.AWS_META]: "us.meta.llama4-maverick-17b-instruct-v1:0",
     [Provider.DEEPSEEK]: "deepseek-chat",
     [Provider.GITHUB]: "gpt-4o-mini",
-    [Provider.GOOGLE]: "gemini-2.0-flash-001",
+    [Provider.GOOGLE]: "gemini-2.5-flash",
     [Provider.MISTRALAI]: "mistral-medium-2505",
     [Provider.OLLAMA]: "mistral-small3.1",
     [Provider.OPENAI]: "gpt-5-nano-2025-08-07",
