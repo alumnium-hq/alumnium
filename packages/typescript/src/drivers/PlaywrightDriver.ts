@@ -40,7 +40,10 @@ export class PlaywrightDriver extends BaseDriver {
     "SelectTool",
     "TypeTool",
   ]);
-  public newTabTimeout = 200;
+  public newTabTimeout = parseInt(
+    process.env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT || "200",
+    10
+  );
 
   constructor(page: Page) {
     super();
