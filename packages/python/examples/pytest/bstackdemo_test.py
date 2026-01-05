@@ -22,7 +22,6 @@ def learn(al, execute_script, navigate):
 )
 @mark.xfail(Model.current.provider == Provider.AWS_META, reason="Needs more tuning.")
 @mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Needs more tuning.")
-@mark.xfail(Model.current.provider == Provider.XAI, reason="Needs more tuning.")
 @mark.xfail(driver_type == "appium-ios", reason="https://github.com/alumnium-hq/alumnium/issues/132")
 def test_checkout(al):
     # Add products to the cart
