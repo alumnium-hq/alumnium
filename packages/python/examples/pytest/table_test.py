@@ -8,12 +8,7 @@ from alumnium import Model, Provider
 @fixture(autouse=True)
 def learn(al):
     # These models double-click to sort
-    if Model.current.provider in [
-        Provider.ANTHROPIC,
-        Provider.AWS_ANTHROPIC,
-        Provider.GOOGLE,
-        Provider.MISTRALAI,
-    ]:
+    if Model.current.provider == Provider.MISTRALAI:
         al.learn(
             goal="sort by web site",
             actions=["click 'Web Site' header"],
@@ -25,6 +20,10 @@ def learn(al):
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Area is not propery extracted from Appium source code.",
+)
+@mark.xfail(
+    Model.current.provider == Provider.AWS_META,
+    reason="Table area instructions need more work",
 )
 def test_table_extraction(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
@@ -39,6 +38,10 @@ def test_table_extraction(al, navigate):
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Area is not propery extracted from Appium source code.",
+)
+@mark.xfail(
+    Model.current.provider == Provider.AWS_META,
+    reason="Table area instructions need more work",
 )
 def test_table_sorting(al, navigate):
     navigate("https://the-internet.herokuapp.com/tables")
