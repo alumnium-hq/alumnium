@@ -88,8 +88,6 @@ class BaseAgent:
             content = result.content
             self._update_usage(result.usage_metadata)
 
-        logger.debug(f"  <- Response: {content}")
-
         if isinstance(content, list) and content:
             if "reasoning_content" in content[0]:  # Anthropic reasoning
                 logger.info(f"  <- Reasoning: {content[0]['reasoning_content']}")
