@@ -8,6 +8,18 @@ logger = get_logger(__name__)
 
 
 class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
+    SKIPPED_PROPERTIES = {
+        "backendDOMNodeId",
+        "ignored",
+        "name",
+        "nodeId",
+        "raw_id",
+        # We skip 'expanded' because it often leads
+        # to LLM decided to first click comboboxes to expand them,
+        # which is automatically handled by the SelectTool.
+        "expanded",
+    }
+
     def __init__(self, raw_xml: str):
         super().__init__()
         self.tree = {}  # Initialize the result dictionary
@@ -51,7 +63,7 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
         # Add properties from other attributes
         properties = []
         for attr_name, attr_value in elem.attrib.items():
-            if attr_name not in ["backendDOMNodeId", "nodeId", "ignored", "name", "raw_id"]:
+            if attr_name not in self.SKIPPED_PROPERTIES:
                 properties.append({"name": attr_name, "value": {"value": attr_value}})
 
         if properties:
