@@ -29,6 +29,8 @@ def test_checkout(al):
     al.do("add 'iPhone 12 Mini' to cart")
     cart = al.area("shopping bag")
     assert cart.get("titles of products") == ["iPhone 12 Pro Max", "iPhone 12 Mini"]
+    assert cart.get("quantity of iPhone 12 Pro Max") == 1
+    assert cart.get("quantity of iPhone 12 Mini") == 1
 
     # Start checkout and login
     al.do("go to checkout")
