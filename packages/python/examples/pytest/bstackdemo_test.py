@@ -32,9 +32,11 @@ def test_checkout(al):
 
     # Start checkout and login
     al.do("go to checkout")
-    al.do("type 'demouser' into username field and press tab")
-    al.do("type 'testingisfun99' into password field and press enter")
-    al.do("click login button")  # Could be NOOP
+    al.do("type 'demouser' into username field")
+    al.do("click 'demouser' in autocomplete suggestions")
+    al.do("type 'testingisfun99' into password field")
+    al.do("click 'testingisfun99' in autocomplete suggestions")
+    al.do("click login button")
 
     # Proceed through checkout
     assert al.get("iPhone 12 Pro Max price (without money sign)") == 1099
