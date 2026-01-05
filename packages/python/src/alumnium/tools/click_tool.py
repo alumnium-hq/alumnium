@@ -1,12 +1,12 @@
 from pydantic import Field
 
-from alumnium.drivers.base_driver import BaseDriver
-
+from ..drivers.base_driver import BaseDriver
 from .base_tool import BaseTool
+from .select_tool import SelectTool
 
 
 class ClickTool(BaseTool):
-    """Click an element."""
+    f"""Click an element. Avoid using this tool for combobox dropdowns; use {SelectTool.__name__} instead."""
 
     id: int = Field(description="Element identifier (ID)")
 
