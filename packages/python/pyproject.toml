@@ -21,7 +21,7 @@ ALUMNIUM_DRIVER = "appium-android"
 [tool.poe.tasks.examples-appium-ios]
 sequence = [
     { cmd = "behave -t @appium-ios -f html-pretty -o reports/behave.html -f pretty" },
-    { cmd = "pytest --retries 1 --html --tracing on reports/pytest.html examples/pytest" },
+    { cmd = "pytest --retries 1 --html reports/pytest.html examples/pytest" },
 ]
 
 [tool.poe.tasks.examples-appium-ios.env]
@@ -30,7 +30,7 @@ ALUMNIUM_DRIVER = "appium-ios"
 [tool.poe.tasks.examples-playwright]
 sequence = [
     { cmd = "behave -t @playwright -f html-pretty -o reports/behave.html -f pretty" },
-    { cmd = "pytest --retries 1 --tracing on --html reports/pytest.html examples/pytest" },
+    { cmd = "pytest --retries 1 --html reports/pytest.html examples/pytest" },
 ]
 
 [tool.poe.tasks.examples-playwright.env]

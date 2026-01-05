@@ -25,7 +25,12 @@ def driver():
     if driver_type == "playwright":
         with sync_playwright() as playwright:
             is_headless = headless.lower() == "true"
-            yield playwright.chromium.launch(headless=is_headless).new_page()
+            browser = playwright.chromium.launch(headless=is_headless)
+            context = browser.new_context(record_video_dir="reports/videos/")
+            context.tracing.start(screenshots=True, snapshots=True)
+            page = context.new_page()
+            yield page
+            context.tracing.stop(path="reports/traces/pytest.zip")
     elif driver_type == "selenium":
         options = ChromeOptions()
         options.add_experimental_option(

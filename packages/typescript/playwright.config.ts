@@ -9,6 +9,7 @@ export default defineConfig({
   timeout: 300000, // 5 minutes
   use: {
     trace: "on",
+    video: "on",
   },
   projects: [
     {
