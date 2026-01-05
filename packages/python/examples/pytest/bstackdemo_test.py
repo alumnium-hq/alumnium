@@ -31,9 +31,9 @@ def test_checkout(al):
     # Start checkout and login
     al.do("go to checkout")
     al.do("type 'demouser' into username field")
-    al.do("click 'demouser' in autocomplete suggestions")
+    al.do("click 'demouser' in username field suggestions")
     al.do("type 'testingisfun99' into password field")
-    al.do("click 'testingisfun99' in autocomplete suggestions")
+    al.do("click 'testingisfun99' in password field suggestions")
     al.do("click login button")
 
     # Proceed through checkout
