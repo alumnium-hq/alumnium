@@ -1,7 +1,10 @@
 from enum import Enum
 from typing import Any, get_origin
 
+from ..server.logutils import get_logger
 from .base_tool import BaseTool
+
+logger = get_logger(__name__)
 
 
 def _pydantic_to_json_type(annotation: type | None) -> dict[str, str | list[str]]:
@@ -37,6 +40,7 @@ def _pydantic_to_json_type(annotation: type | None) -> dict[str, str | list[str]
 
 def convert_tool_to_schema(tool_class: type[BaseTool]) -> dict[str, Any]:
     """Convert tool class to LangChain tool schema."""
+    logger.debug(f"- {tool_class.__name__} ({tool_class.__doc__})")
     return {
         "type": "function",
         "function": {
@@ -59,4 +63,5 @@ def convert_tool_to_schema(tool_class: type[BaseTool]) -> dict[str, Any]:
 
 def convert_tools_to_schemas(tools: dict[str, type[BaseTool]]) -> list[dict[str, Any]]:
     """Convert tools dict to list of schemas."""
+    logger.debug("Converting tools to schemas:")
     return [convert_tool_to_schema(tool_class) for tool_class in tools.values()]
