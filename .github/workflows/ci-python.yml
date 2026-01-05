@@ -78,13 +78,7 @@ jobs:
             packages/python/.alumnium/cache/
           key: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-
-      - run: |
-          poetry run behave --tags @${{ matrix.driver }} \
-            --format html-pretty \
-            --outfile reports/behave.html \
-            --format pretty \
-      - if: matrix.driver != 'appium-android'
-        run: poetry run pytest --retries 1 --html reports/pytest.html examples/
+      - run: poetry poe examples-${{ matrix.driver }}
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
       - if: always()
@@ -94,3 +88,4 @@ jobs:
           path: |
             packages/python/*.log
             packages/python/reports/
+            packages/python/test-results/
