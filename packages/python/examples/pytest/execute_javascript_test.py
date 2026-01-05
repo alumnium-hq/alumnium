@@ -5,6 +5,13 @@ from alumnium.tools import ExecuteJavascriptTool
 
 
 @mark.xfail(Model.current.provider == Provider.DEEPSEEK, reason="No vision support yet")
+@mark.xfail(
+    Model.current.provider == Provider.XAI,
+    reason="""
+Requires separate check agent as it prefers to follow
+retriever instructions (return `value` instead of `statement`)
+    """,
+)
 def test_execute_javascript_to_scroll(al, driver, navigate):
     al = Alumni(driver, extra_tools=[ExecuteJavascriptTool])
     navigate("https://the-internet.herokuapp.com/large")
