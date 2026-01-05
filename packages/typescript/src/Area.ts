@@ -5,6 +5,7 @@ import { Data } from "./clients/typecasting.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
 import { AssertionError } from "./errors/AssertionError.js";
+import { DoResult, DoStep } from "./result.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
 import { retry } from "./utils/retry.js";
 
@@ -33,12 +34,13 @@ export class Area {
   }
 
   @retry()
-  async do(goal: string): Promise<void> {
-    const steps = await this.client.planActions(
+  async do(goal: string): Promise<DoResult> {
+    const { explanation, steps } = await this.client.planActions(
       goal,
       this.accessibilityTree.toStr()
     );
 
+    const executedSteps: DoStep[] = [];
     for (const step of steps) {
       const actorResponse = await this.client.executeAction(
         goal,
@@ -46,15 +48,20 @@ export class Area {
         this.accessibilityTree.toStr()
       );
 
-      // Execute tool calls
+      const calledTools: string[] = [];
       for (const toolCall of actorResponse) {
-        await BaseTool.executeToolCall(
+        const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
           this.driver
         );
+        calledTools.push(calledTool);
       }
+
+      executedSteps.push({ name: step, tools: calledTools });
     }
+
+    return { explanation, steps: executedSteps };
   }
 
   @retry()

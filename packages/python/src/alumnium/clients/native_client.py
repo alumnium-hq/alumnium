@@ -34,7 +34,12 @@ class NativeClient:
     def quit(self):
         self.session_manager.delete_session(self.session_id)
 
-    def plan_actions(self, goal: str, accessibility_tree: str):
+    def plan_actions(self, goal: str, accessibility_tree: str) -> tuple[str, list[str]]:
+        """
+        Plan actions to achieve a goal.
+        Returns:
+            A tuple of (explanation, steps).
+        """
         accessibility_tree = self.session.process_tree(accessibility_tree)
         return self.session.planner_agent.invoke(goal, accessibility_tree.to_xml())
 

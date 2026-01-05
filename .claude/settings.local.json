@@ -3,6 +3,7 @@
     "allow": [
       "Bash(cat:*)",
       "Bash(curl:*)",
+      "Bash(make:*)",
       "Bash(poetry run behave:*)",
       "Bash(poetry run pytest:*)",
       "Bash(npm pack:*)",

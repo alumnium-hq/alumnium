@@ -12,6 +12,7 @@ import { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
 import { SeleniumDriver } from "./drivers/SeleniumDriver.js";
 import { AssertionError } from "./errors/AssertionError.js";
 import { Model } from "./Model.js";
+import { DoResult, DoStep } from "./result.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
 import { ClickTool } from "./tools/ClickTool.js";
 import { DragAndDropTool } from "./tools/DragAndDropTool.js";
@@ -98,13 +99,14 @@ export class Alumni {
   }
 
   @retry()
-  async do(goal: string): Promise<void> {
+  async do(goal: string): Promise<DoResult> {
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
-    const steps = await this.client.planActions(
+    const { explanation, steps } = await this.client.planActions(
       goal,
       initialAccessibilityTree.toStr()
     );
 
+    const executedSteps: DoStep[] = [];
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
 
@@ -119,15 +121,20 @@ export class Alumni {
         accessibilityTree.toStr()
       );
 
-      // Execute tool calls
+      const calledTools: string[] = [];
       for (const toolCall of actorResponse) {
-        await BaseTool.executeToolCall(
+        const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
           this.driver
         );
+        calledTools.push(calledTool);
       }
+
+      executedSteps.push({ name: step, tools: calledTools });
     }
+
+    return { explanation, steps: executedSteps };
   }
 
   @retry()
