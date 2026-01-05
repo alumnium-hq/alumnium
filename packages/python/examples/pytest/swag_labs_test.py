@@ -101,7 +101,8 @@ def test_checkout(al):
     ]
 
     al.do("go to checkout")
-    al.do("continue with first name - Al, last name - Um, ZIP - 95122")
+    al.do("fill in first name - Al, last name - Um, ZIP - 95122")
+    al.do("continue checkout")
 
     assert al.get("item total without tax (without money sign)") == 37.98
     assert al.get("tax amount (without money sign)") == 3.04
