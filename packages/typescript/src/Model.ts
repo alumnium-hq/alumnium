@@ -18,7 +18,7 @@ export class ModelName {
     [Provider.ANTHROPIC]: "claude-haiku-4-5-20251001",
     [Provider.AWS_ANTHROPIC]: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
     [Provider.AWS_META]: "us.meta.llama4-maverick-17b-instruct-v1:0",
-    [Provider.DEEPSEEK]: "deepseek-chat",
+    [Provider.DEEPSEEK]: "deepseek-reasoner",
     [Provider.GITHUB]: "gpt-4o-mini",
     [Provider.GOOGLE]: "gemini-2.5-flash",
     [Provider.MISTRALAI]: "mistral-medium-2505",
