@@ -1,8 +1,6 @@
 from os import getenv
 
-from pytest import fixture, mark
-
-from alumnium import Model, Provider
+from pytest import fixture
 
 alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
 
@@ -35,10 +33,6 @@ def test_subtraction(al, navigate):
     assert al.get("value from textfield") == 2
 
 
-@mark.xfail(
-    Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC] and alumnium_driver == "appium",
-    reason="Incorrect element is identified ",
-)
 def test_multiplication(al, navigate):
     navigate("https://seleniumbase.io/apps/calculator")
     al.do("3 * 4 =")
