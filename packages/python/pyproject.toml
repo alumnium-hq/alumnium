@@ -12,6 +12,7 @@ check-format = [
 clean = "rm -rf .alumnium/cache dist log reports .pytest_cache __pycache__ .ruff_cache"
 test = "pytest tests/"
 upload-android-app = "curl -u $LT_USERNAME:$LT_ACCESS_KEY -X POST https://manual-api.lambdatest.com/app/upload/realDevice -F appFile=@examples/behave/features/support/TodoList.apk -F name=AndroidToDoApp"
+upload-ios-app = "curl -u $LT_USERNAME:$LT_ACCESS_KEY -X POST https://manual-api.lambdatest.com/app/upload/realDevice -F appFile=@examples/behave/features/support/TodoList.ipa -F name=TodoList"
 
 [tool.poe.tasks.examples-appium-android]
 cmd = "behave -t @appium-android -f html-pretty -o reports/behave.html -f pretty"
