@@ -20,7 +20,7 @@ def login(al, driver, execute_script, navigate):
         al.learn(
             "sort products by lowest shipping cost",
             [
-                "click sorting dropdown",
+                "click generic element after 'Products' text",
                 'click "Shipping (low to high)"',
             ],
         )
