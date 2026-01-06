@@ -100,11 +100,7 @@ def driver(context):
 
         if lt_username and lt_access_key:
             options.platform_version = "16"
-            # curl -u "USERNAME:PASSWORD" -XPOST  \
-            #   "https://manual-api.lambdatest.com/app/upload/realDevice" \
-            #   -F "appFile=@"support/TodoList.apk"" \
-            #   -F "name="AndroidToDoApp""
-            options.app = "lt://APP10160532181761837178894228"
+            options.app = "lt://APP1016054801767715200199672"  # poetry poe upload-android-app
             options.set_capability(
                 "lt:options",
                 {
