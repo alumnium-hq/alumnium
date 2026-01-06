@@ -154,13 +154,13 @@ def alumnium(context):
             )
             context.al.learn(
                 goal='mark the "this is Al" task as completed',
-                actions=['click checkbox near the "this is Al" task'],
+                actions=['click image near the "this is Al" task'],
             )
             context.al.learn(
                 goal='delete the "this is Al" task',
                 actions=[
                     "click edit button",
-                    'click button "-" near the "this is Al" task',
+                    'click image "-" near the "this is Al" task',
                     'click button "Delete" near the "this is Al" task',
                     "click done button",
                 ],
