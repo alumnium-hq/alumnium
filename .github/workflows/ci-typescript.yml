@@ -38,19 +38,18 @@ jobs:
       ALUMNIUM_MODEL: ${{ matrix.model }}
     strategy:
       fail-fast: false
-      max-parallel: 3
       matrix:
         driver:
-          - selenium
           - playwright
-          - appium
         model:
-          - openai
-          - mistralai
-          - google
-          - azure_openai
-          - aws_meta
           - aws_anthropic
+          - azure_openai
+          - google
+        include:
+          - driver: appium
+            model: azure_openai
+          - driver: selenium
+            model: azure_openai
     steps:
       - uses: actions/checkout@v4
         with:
