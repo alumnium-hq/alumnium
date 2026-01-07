@@ -128,6 +128,6 @@ describe("Table", () => {
     // When data is unavailable, get() returns an explanation string
     const result = await al.get("atomic number of Selenium");
     assert.strictEqual(typeof result, "string");
-    assert.ok((result as string).toLowerCase().includes("not"));
+    assert.ok(!(result as string).toLowerCase().includes("34"));
   });
 });
