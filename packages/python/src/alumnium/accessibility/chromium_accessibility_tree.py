@@ -9,12 +9,15 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         self.cdp_response = cdp_response
         self._next_raw_id = 0
         self._raw = None
+        self._frame_map: dict[int, object] = {}  # raw_id -> Frame object for iframe support
 
     @classmethod
-    def _from_xml(cls, xml_string: str) -> "ChromiumAccessibilityTree":
+    def _from_xml(cls, xml_string: str, frame_map: dict[int, object] | None = None) -> "ChromiumAccessibilityTree":
         """Create a ChromiumAccessibilityTree instance from pre-computed XML."""
         instance = cls(cdp_response={})
         instance._raw = xml_string
+        if frame_map:
+            instance._frame_map = frame_map
         return instance
 
     def to_str(self) -> str:
@@ -52,6 +55,10 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         # Add our own sequential raw_id attribute
         self._next_raw_id += 1
         elem.set("raw_id", str(self._next_raw_id))
+
+        # Store frame reference if present (for iframe support)
+        if "_frame" in node:
+            self._frame_map[self._next_raw_id] = node["_frame"]
 
         # Add all node attributes as XML attributes
         if "backendDOMNodeId" in node:
@@ -123,6 +130,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         return AccessibilityElement(
             type=element.tag,
             backend_node_id=int(backend_node_id_str),
+            frame=self._frame_map.get(raw_id),
         )
 
     def scope_to_area(self, raw_id: int) -> "ChromiumAccessibilityTree":
@@ -158,4 +166,4 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         indent(target_elem)
         scoped_xml = tostring(target_elem, encoding="unicode")
 
-        return self._from_xml(scoped_xml)
+        return self._from_xml(scoped_xml, self._frame_map)
