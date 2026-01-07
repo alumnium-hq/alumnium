@@ -1,7 +1,7 @@
 import { Locator } from "playwright";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { ChainablePromiseElement, type Browser } from "webdriverio";
+import { type Browser } from "webdriverio";
 import { Alumni } from "../../src/Alumni.js";
 import { type Element } from "../../src/drivers/index.js";
 import { AppiumDriver } from "../../src/index.js";
@@ -78,11 +78,23 @@ export function navigate(driver: WebDriver | Browser, url: string) {
 
 export function type(element: Element, text: string) {
   if (driverType === "appium") {
-    return (element as ChainablePromiseElement).setValue(text);
+    return (element as WebdriverIO.Element).setValue(text);
   } else if (driverType === "selenium") {
     return (element as WebElement).sendKeys(text);
   } else if (driverType === "playwright") {
     return (element as Locator).fill(text);
+  } else {
+    throw new Error(`Driver type '${typeof driver}' not implemented`);
+  }
+}
+
+export function click(element: Element) {
+  if (driverType === "appium") {
+    return (element as WebdriverIO.Element).click();
+  } else if (driverType === "selenium") {
+    return (element as WebElement).click();
+  } else if (driverType === "playwright") {
+    return (element as Locator).click();
   } else {
     throw new Error(`Driver type '${typeof driver}' not implemented`);
   }

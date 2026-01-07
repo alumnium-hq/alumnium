@@ -1,6 +1,6 @@
 import assert from "assert";
 import "./globals.js";
-import { navigate, type } from "./helpers.js";
+import { click, navigate, type } from "./helpers.js";
 
 describe("Locator", () => {
   it("finds elements", async () => {
@@ -19,6 +19,6 @@ describe("Locator", () => {
 
     const submitButton = await al.find("submit button");
     assert.notStrictEqual(submitButton, null);
-    await submitButton.click();
+    await click(submitButton);
   });
 });
