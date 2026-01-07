@@ -80,11 +80,14 @@ def mock_agents():
         patch("alumnium.server.agents.locator_agent.LocatorAgent.invoke") as mock_locator,
     ):
         # Mock planner agent to return list of steps
-        mock_planner.return_value = [
-            "Step 1: Click New Todo Input field",
-            "Step 2: Enter 'Buy milk'",
-            "Step 3: Press Enter",
-        ]
+        mock_planner.return_value = (
+            "Explanation",
+            [
+                "Step 1: Click New Todo Input field",
+                "Step 2: Enter 'Buy milk'",
+                "Step 3: Press Enter",
+            ],
+        )
 
         # Mock actor agent to return list of actions
         mock_actor.return_value = [
@@ -198,7 +201,6 @@ def test_plan_actions_endpoint_structure(sample_session_id, sample_accessibility
             "title": "Login Page",
         },
     )
-    print(response.json())
     assert response.status_code == 200
     data = response.json()
     assert "steps" in data
