@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
@@ -14,3 +15,4 @@ class AccessibilityElement:
     androidtext: str | None = None
     androidcontentdesc: str | None = None
     androidbounds: str | None = None
+    frame: Any | None = None  # Playwright Frame object for iframe support

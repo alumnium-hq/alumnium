@@ -2,8 +2,9 @@ from base64 import b64encode
 from contextlib import contextmanager
 from os import getenv
 from pathlib import Path
+from urllib.parse import urlparse
 
-from playwright.sync_api import Error, Locator, Page, TimeoutError
+from playwright.sync_api import Error, Frame, Locator, Page, TimeoutError
 
 from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
@@ -51,7 +52,40 @@ class PlaywrightDriver(BaseDriver):
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
         self._wait_for_page_to_load()
-        return ChromiumAccessibilityTree(self._send_cdp_command("Accessibility.getFullAXTree"))
+
+        # Get frame tree from CDP to discover all frames
+        frame_tree = self._send_cdp_command("Page.getFrameTree")
+
+        # Build combined accessibility tree from all same-origin frames
+        all_nodes: list[dict] = []
+
+        def process_frame(frame_info: dict, playwright_frame: Frame | None):
+            frame_id = frame_info["frame"]["id"]
+            frame_url = frame_info["frame"]["url"]
+
+            # Skip cross-origin frames
+            if not self._is_same_origin(frame_url):
+                logger.debug(f"Skipping cross-origin frame: {frame_url}")
+                return
+
+            # Get accessibility tree for this specific frame
+            tree_response = self._send_cdp_command("Accessibility.getFullAXTree", {"frameId": frame_id})
+
+            # Tag all nodes with their Playwright frame reference
+            for node in tree_response.get("nodes", []):
+                node["_frame"] = playwright_frame
+                all_nodes.append(node)
+
+            # Process child frames recursively
+            for child_frame_info in frame_info.get("childFrames", []):
+                child_frame_url = child_frame_info["frame"]["url"]
+                child_pw_frame = self._find_playwright_frame_by_url(child_frame_url)
+                process_frame(child_frame_info, child_pw_frame)
+
+        # Start with main frame
+        process_frame(frame_tree["frameTree"], self.page.main_frame)
+
+        return ChromiumAccessibilityTree({"nodes": all_nodes})
 
     def click(self, id: int):
         element = self.find_element(id)
@@ -123,6 +157,7 @@ class PlaywrightDriver(BaseDriver):
     def find_element(self, id: int) -> Locator:
         accessibility_element = self.accessibility_tree.element_by_id(id)
         backend_node_id = accessibility_element.backend_node_id
+        frame = accessibility_element.frame or self.page.main_frame
 
         # Beware!
         self._send_cdp_command("DOM.enable")
@@ -144,7 +179,7 @@ class PlaywrightDriver(BaseDriver):
         )
         # TODO: We need to remove the attribute after we are done with the element,
         # but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
-        return self.page.locator(f"css=[data-alumnium-id='{backend_node_id}']")
+        return frame.locator(f"css=[data-alumnium-id='{backend_node_id}']")
 
     def execute_script(self, script: str):
         self.page.evaluate(f"() => {{ {script} }}")
@@ -179,3 +214,26 @@ class PlaywrightDriver(BaseDriver):
 
     def _send_cdp_command(self, method: str, params: dict | None = None):
         return self.client.send(method, params or {})
+
+    def _is_same_origin(self, frame_url: str) -> bool:
+        """Check if frame URL is same-origin as main page."""
+        # Handle about:blank and empty URLs as same-origin
+        if not frame_url or frame_url == "about:blank":
+            return True
+
+        main_origin = urlparse(self.page.url).netloc
+        frame_origin = urlparse(frame_url).netloc
+        return main_origin == frame_origin
+
+    def _find_playwright_frame_by_url(self, frame_url: str) -> Frame | None:
+        """Find Playwright Frame object by URL."""
+        for frame in self.page.frames:
+            if frame.url == frame_url:
+                return frame
+        # Fallback: try to find by partial URL match for about:blank frames
+        if frame_url == "about:blank":
+            for frame in self.page.frames:
+                if frame.url == "about:blank" or not frame.url:
+                    return frame
+        logger.debug(f"Could not find Playwright frame for URL: {frame_url}")
+        return None
