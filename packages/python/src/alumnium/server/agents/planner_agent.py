@@ -124,7 +124,7 @@ Actions: ['navigate to "http://foo.bar/baz/123" URL']
             logger.info(f"  <- Result: {response}")
             logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
-            return (response.explanation, response.actions)
+            return (response.explanation, [action for action in response.actions if action])
         else:
             logger.info(f"  <- Result: {message.content}")
             logger.info(f"  <- Usage: {message.usage_metadata}")
