@@ -25,10 +25,7 @@ export class AppiumDriver extends BaseDriver {
   constructor(driver: Browser) {
     super();
     this.driver = driver;
-    if (
-      this.driver.capabilities["appium:automationName"]?.toLowerCase() ===
-      "uiautomator2"
-    ) {
+    if (this.driver.capabilities.platformName?.toLowerCase() === "android") {
       this.platform = "uiautomator2";
     } else {
       this.platform = "xcuitest";
