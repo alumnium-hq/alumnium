@@ -2,7 +2,6 @@ from base64 import b64encode
 from contextlib import contextmanager
 from os import getenv
 from pathlib import Path
-from urllib.parse import urlparse
 
 from playwright.sync_api import Error, Frame, Locator, Page, TimeoutError
 
@@ -58,17 +57,12 @@ class PlaywrightDriver(BaseDriver):
         # Get frame tree from CDP to discover all frames
         frame_tree = self._send_cdp_command("Page.getFrameTree")
 
-        # Build combined accessibility tree from all same-origin frames
+        # Build combined accessibility tree from all frames
         all_nodes: list[dict] = []
 
         def process_frame(frame_info: dict, playwright_frame: Frame | None):
             frame_id = frame_info["frame"]["id"]
             frame_url = frame_info["frame"]["url"]
-
-            # Skip cross-origin frames
-            if not self._is_same_origin(frame_url):
-                logger.debug(f"Skipping cross-origin frame: {frame_url}")
-                return
 
             # Get accessibility tree for this specific frame
             tree_response = self._send_cdp_command("Accessibility.getFullAXTree", {"frameId": frame_id})
@@ -218,16 +212,6 @@ class PlaywrightDriver(BaseDriver):
 
     def _send_cdp_command(self, method: str, params: dict | None = None):
         return self.client.send(method, params or {})
-
-    def _is_same_origin(self, frame_url: str) -> bool:
-        """Check if frame URL is same-origin as main page."""
-        # Handle about:blank and empty URLs as same-origin
-        if not frame_url or frame_url == "about:blank":
-            return True
-
-        main_origin = urlparse(self.page.url).netloc
-        frame_origin = urlparse(frame_url).netloc
-        return main_origin == frame_origin
 
     def _find_playwright_frame_by_url(self, frame_url: str) -> Frame | None:
         """Find Playwright Frame object by URL."""
