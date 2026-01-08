@@ -2,7 +2,7 @@ from asyncio import AbstractEventLoop, run_coroutine_threadsafe
 from base64 import b64encode
 from contextlib import asynccontextmanager
 
-from playwright.async_api import Error, Locator, Page, TimeoutError
+from playwright.async_api import Error, Frame, Locator, Page, TimeoutError
 
 from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
@@ -44,7 +44,44 @@ class PlaywrightAsyncDriver(BaseDriver):
     @property
     async def _accessibility_tree(self) -> ChromiumAccessibilityTree:
         await self._wait_for_page_to_load()
-        return ChromiumAccessibilityTree(await self._send_cdp_command("Accessibility.getFullAXTree"))
+
+        # Get frame tree from CDP to discover all frames
+        frame_tree = await self._send_cdp_command("Page.getFrameTree")
+
+        # Build combined accessibility tree from all frames
+        all_nodes: list[dict] = []
+
+        async def process_frame(frame_info: dict, playwright_frame: Frame | None):
+            frame_id = frame_info["frame"]["id"]
+            frame_url = frame_info["frame"]["url"]
+
+            logger.debug(f"Processing frame: {frame_url}")
+
+            # Get accessibility tree for this specific frame
+            try:
+                tree_response = await self._send_cdp_command("Accessibility.getFullAXTree", {"frameId": frame_id})
+                node_count = len(tree_response.get("nodes", []))
+                logger.debug(f"  -> Got {node_count} nodes, playwright_frame={playwright_frame}")
+            except Exception as e:
+                logger.error(f"  -> Failed to get accessibility tree: {e}")
+                return
+
+            # Tag all nodes with their Playwright frame reference
+            for node in tree_response.get("nodes", []):
+                node["_frame"] = playwright_frame
+                all_nodes.append(node)
+
+            # Process child frames recursively
+            for child_frame_info in frame_info.get("childFrames", []):
+                child_frame_url = child_frame_info["frame"]["url"]
+                child_pw_frame = self._find_playwright_frame_by_url(child_frame_url)
+                logger.debug(f"  -> Processing child frame: {child_frame_url}, found playwright frame: {child_pw_frame is not None}")
+                await process_frame(child_frame_info, child_pw_frame)
+
+        # Start with main frame
+        await process_frame(frame_tree["frameTree"], self.page.main_frame)
+
+        return ChromiumAccessibilityTree({"nodes": all_nodes})
 
     def click(self, id: int):
         self._run_async(self._click(id))
@@ -156,6 +193,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         accessibility_tree = await self._accessibility_tree
         accessibility_element = accessibility_tree.element_by_id(id)
         backend_node_id = accessibility_element.backend_node_id
+        frame = accessibility_element.frame or self.page.main_frame
 
         # Beware!
         await self._send_cdp_command("DOM.enable")
@@ -177,7 +215,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         )
         # TODO: We need to remove the attribute after we are done with the element,
         # but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
-        return self.page.locator(f"css=[data-alumnium-id='{backend_node_id}']")
+        return frame.locator(f"css=[data-alumnium-id='{backend_node_id}']")
 
     def execute_script(self, script: str):
         self._run_async(self._execute_script(script))
@@ -220,6 +258,19 @@ class PlaywrightAsyncDriver(BaseDriver):
             self.client = await self.page.context.new_cdp_session(self.page)
 
         return await self.client.send(method, params or {})
+
+    def _find_playwright_frame_by_url(self, frame_url: str) -> Frame | None:
+        """Find Playwright Frame object by URL."""
+        for frame in self.page.frames:
+            if frame.url == frame_url:
+                return frame
+        # Fallback: try to find by partial URL match for about:blank frames
+        if frame_url == "about:blank":
+            for frame in self.page.frames:
+                if frame.url == "about:blank" or not frame.url:
+                    return frame
+        logger.debug(f"Could not find Playwright frame for URL: {frame_url}")
+        return None
 
     def _run_async(self, coro):
         future = run_coroutine_threadsafe(coro, self.loop)
