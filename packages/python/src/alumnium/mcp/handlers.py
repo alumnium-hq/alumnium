@@ -102,16 +102,13 @@ async def handle_do(args: dict[str, Any]) -> list[dict]:
     screenshots.save_screenshot(driver_id, goal, al)
 
     # Format the result with explanation and steps
-    response_text = f"Explanation: {result.explanation}\n"
+    response_text = f"{result.explanation}\n"
     if not result.steps:
         response_text += "Steps performed: None"
     else:
         response_text += "Steps performed:\n"
         for idx, step in enumerate(result.steps, 1):
-            response_text += f"{idx}. {step.name}\n"
-            if step.tools:
-                for tool in step.tools:
-                    response_text += f"   - {tool}\n"
+            response_text += f"{idx}. {step.name} ({', '.join(step.tools)})\n"
 
     return [{"type": "text", "text": response_text}]
 
@@ -127,17 +124,16 @@ async def handle_check(args: dict[str, Any]) -> list[dict]:
     al, _ = state.get_driver(driver_id)
     try:
         explanation = al.check(statement, vision=vision)
-        result = True
-        logger.debug(f"Driver {driver_id}: check() passed")
+        result = "passed"
+        logger.debug(f"Driver {driver_id}: check() passed: {explanation}")
     except AssertionError as e:
         explanation = str(e)
-        result = False
-        logger.debug(f"Driver {driver_id}: check() failed: {e}")
+        result = "failed"
+        logger.debug(f"Driver {driver_id}: check() failed: {explanation}")
 
-    # Save screenshot after check
     screenshots.save_screenshot(driver_id, f"check {statement}", al)
 
-    return [{"type": "text", "text": f"Result: {result}\nExplanation: {explanation}"}]
+    return [{"type": "text", "text": f"Check {result}! {explanation}"}]
 
 
 async def handle_get(args: dict[str, Any]) -> list[dict]:
@@ -150,17 +146,10 @@ async def handle_get(args: dict[str, Any]) -> list[dict]:
 
     al, _ = state.get_driver(driver_id)
     result = al.get(data, vision=vision)
-
-    logger.debug(f"Driver {driver_id}: get() extracted data: {result.data}")
-
-    # Format the result with explanation and steps
-    response_text = f"Extracted data: {result.data}\n"
-    response_text += f"Explanation: {result.explanation}"
-
-    # Save screenshot after get
+    logger.debug(f"Driver {driver_id}: get() extracted data: {result}")
     screenshots.save_screenshot(driver_id, f"get {data}", al)
 
-    return [{"type": "text", "text": response_text}]
+    return [{"type": "text", "text": str(result)}]
 
 
 async def handle_get_accessibility_tree(args: dict[str, Any]) -> list[dict]:
