@@ -64,8 +64,16 @@ class PlaywrightDriver(BaseDriver):
             frame_id = frame_info["frame"]["id"]
             frame_url = frame_info["frame"]["url"]
 
+            logger.debug(f"Processing frame: {frame_url}")
+
             # Get accessibility tree for this specific frame
-            tree_response = self._send_cdp_command("Accessibility.getFullAXTree", {"frameId": frame_id})
+            try:
+                tree_response = self._send_cdp_command("Accessibility.getFullAXTree", {"frameId": frame_id})
+                node_count = len(tree_response.get("nodes", []))
+                logger.debug(f"  -> Got {node_count} nodes, playwright_frame={playwright_frame}")
+            except Exception as e:
+                logger.error(f"  -> Failed to get accessibility tree: {e}")
+                return
 
             # Tag all nodes with their Playwright frame reference
             for node in tree_response.get("nodes", []):
@@ -76,6 +84,7 @@ class PlaywrightDriver(BaseDriver):
             for child_frame_info in frame_info.get("childFrames", []):
                 child_frame_url = child_frame_info["frame"]["url"]
                 child_pw_frame = self._find_playwright_frame_by_url(child_frame_url)
+                logger.debug(f"  -> Processing child frame: {child_frame_url}, found playwright frame: {child_pw_frame is not None}")
                 process_frame(child_frame_info, child_pw_frame)
 
         # Start with main frame
