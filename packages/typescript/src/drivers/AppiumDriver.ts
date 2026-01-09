@@ -175,9 +175,6 @@ export class AppiumDriver extends BaseDriver {
       const props: Record<string, string> = {};
       if (element.androidResourceId)
         props["resource-id"] = element.androidResourceId;
-      if (element.androidText) props["text"] = element.androidText;
-      if (element.androidContentDesc)
-        props["content-desc"] = element.androidContentDesc;
       if (element.androidBounds) props["bounds"] = element.androidBounds;
 
       if (Object.keys(props).length > 0) {

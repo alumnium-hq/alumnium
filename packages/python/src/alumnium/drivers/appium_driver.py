@@ -150,10 +150,6 @@ class AppiumDriver(BaseDriver):
             props = {}
             if element.androidresourceid:
                 props["resource-id"] = element.androidresourceid
-            if element.androidtext:
-                props["text"] = element.androidtext
-            if element.androidcontentdesc:
-                props["content-desc"] = element.androidcontentdesc
             if element.androidbounds:
                 props["bounds"] = element.androidbounds
 
