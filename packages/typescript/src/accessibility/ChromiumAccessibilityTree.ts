@@ -13,6 +13,10 @@ interface CDPNode {
     value?: { value?: unknown };
   }>;
   childIds?: string[];
+  _playwright_node?: boolean;
+  _locator_info?: Record<string, unknown>;
+  _frame_url?: string;
+  _frame?: object;
 }
 
 interface CDPResponse {
@@ -30,15 +34,22 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   private cdpResponse: CDPResponse;
   private nextRawId: number = 0;
   private raw: string | null = null;
+  private frameMap: Map<number, object> = new Map();
 
   constructor(cdpResponse: unknown) {
     super();
     this.cdpResponse = cdpResponse as CDPResponse;
   }
 
-  private static fromXml(xmlString: string): ChromiumAccessibilityTree {
+  private static fromXml(
+    xmlString: string,
+    frameMap?: Map<number, object>
+  ): ChromiumAccessibilityTree {
     const instance = new ChromiumAccessibilityTree({ nodes: [] });
     instance.raw = xmlString;
+    if (frameMap) {
+      instance.frameMap = frameMap;
+    }
     return instance;
   }
 
@@ -87,6 +98,22 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     // Add our own sequential raw_id attribute
     this.nextRawId++;
     elem.attributes.raw_id = String(this.nextRawId);
+
+    // Store frame reference if present
+    if (node._frame) {
+      this.frameMap.set(this.nextRawId, node._frame);
+    }
+
+    // Store Playwright node metadata
+    if (node._playwright_node) {
+      elem.attributes._playwright_node = "true";
+    }
+    if (node._locator_info) {
+      elem.attributes._locator_info = JSON.stringify(node._locator_info);
+    }
+    if (node._frame_url) {
+      elem.attributes._frame_url = node._frame_url;
+    }
 
     // Add all node attributes as XML attributes
     if (node.backendDOMNodeId !== undefined) {
@@ -181,6 +208,50 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       throw new Error(`No element with raw_id=${rawId} found`);
     }
 
+    // Handle Playwright nodes (cross-origin iframes)
+    if (element.attributes._playwright_node === "true") {
+      // Synthetic frame node
+      if (element.attributes._frame_url) {
+        return new AccessibilityElement(
+          undefined,
+          undefined,
+          undefined,
+          element.tag,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          this.frameMap.get(rawId),
+          { _synthetic_frame: true, _frame_url: element.attributes._frame_url }
+        );
+      }
+
+      // Regular Playwright node with locator info
+      const locatorInfo = element.attributes._locator_info
+        ? JSON.parse(element.attributes._locator_info)
+        : {};
+
+      return new AccessibilityElement(
+        undefined,
+        undefined,
+        undefined,
+        element.tag,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        this.frameMap.get(rawId),
+        locatorInfo
+      );
+    }
+
+    // Existing CDP node logic
     const backendNodeIdStr = element.attributes.backendDOMNodeId;
     if (!backendNodeIdStr) {
       throw new Error(
@@ -207,7 +278,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     }
 
     const scopedXml = this.elementToString(element, 0);
-    return ChromiumAccessibilityTree.fromXml(scopedXml);
+    return ChromiumAccessibilityTree.fromXml(scopedXml, this.frameMap);
   }
 
   private findElementByRawId(

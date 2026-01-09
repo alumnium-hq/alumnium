@@ -10,6 +10,8 @@ export class AccessibilityElement {
   androidText?: string;
   androidContentDesc?: string;
   androidBounds?: string;
+  frame?: object;
+  locatorInfo?: Record<string, unknown>;
 
   constructor(
     id?: number,
@@ -22,7 +24,9 @@ export class AccessibilityElement {
     androidClass?: string,
     androidText?: string,
     androidContentDesc?: string,
-    androidBounds?: string
+    androidBounds?: string,
+    frame?: object,
+    locatorInfo?: Record<string, unknown>
   ) {
     this.id = id;
     this.backendNodeId = backendNodeId;
@@ -35,5 +39,7 @@ export class AccessibilityElement {
     this.androidText = androidText;
     this.androidContentDesc = androidContentDesc;
     this.androidBounds = androidBounds;
+    this.frame = frame;
+    this.locatorInfo = locatorInfo;
   }
 }
