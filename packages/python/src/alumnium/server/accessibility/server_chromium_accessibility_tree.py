@@ -136,8 +136,9 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
         root_elements = []
         for root_id in self.tree:
             element = convert_node_to_xml(self.tree[root_id])
-            root_elements.append(element)
-            self._prune_redundant_name(element)
+            if element is not None:
+                root_elements.append(element)
+                self._prune_redundant_name(element)
 
         # Convert the XML elements to a string
         xml_string = ""
