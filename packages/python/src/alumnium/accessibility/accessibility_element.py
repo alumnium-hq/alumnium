@@ -16,3 +16,4 @@ class AccessibilityElement:
     androidcontentdesc: str | None = None
     androidbounds: str | None = None
     frame: Any | None = None  # Playwright Frame object for iframe support
+    locator_info: dict | None = None  # Locator info for Playwright nodes (cross-origin iframes)
