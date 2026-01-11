@@ -54,6 +54,7 @@ export class AppiumDriver extends BaseDriver {
   async click(id: number): Promise<void> {
     await this.ensureNativeAppContext();
     const element = await this.findElement(id);
+    await this.scrollIntoView(element);
     await element.click();
   }
 
@@ -62,7 +63,7 @@ export class AppiumDriver extends BaseDriver {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);
 
-    // WebdriverIO provides dragAndDrop method on elements
+    await this.scrollIntoView(fromElement);
     await fromElement.dragAndDrop(toElement);
   }
 
@@ -97,17 +98,8 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async scrollTo(id: number): Promise<void> {
-    if (this.platform === "xcuitest") {
-      const element = await this.findElement(id);
-      await this.driver.execute("mobile: scrollToElement", {
-        elementId: element.elementId,
-      });
-    } else {
-      // Android scroll functionality is not implemented.
-      throw new Error(
-        "scrollTo is not implemented for Android (uiautomator2) platform."
-      );
-    }
+    const element = await this.findElement(id);
+    await this.scrollIntoView(element);
   }
 
   async quit(): Promise<void> {
@@ -130,6 +122,7 @@ export class AppiumDriver extends BaseDriver {
   async type(id: number, text: string): Promise<void> {
     await this.ensureNativeAppContext();
     const element = await this.findElement(id);
+    await this.scrollIntoView(element);
     await element.setValue(text);
     if (this.hideKeyboardAfterTyping && (await this.driver.isKeyboardShown())) {
       await this.hideKeyboard();
@@ -184,6 +177,7 @@ export class AppiumDriver extends BaseDriver {
         xpath += `[${conditions.join(" and ")}]`;
       }
 
+      console.debug(`Finding element by xpath: ${xpath}`);
       return this.driver.$(xpath).getElement();
     }
   }
@@ -233,6 +227,16 @@ export class AppiumDriver extends BaseDriver {
       await keyboard.click({
         x: -Math.ceil(width / 2),
         y: -Math.ceil(height / 2),
+      });
+    }
+  }
+
+  private async scrollIntoView(element: WebdriverIO.Element): Promise<void> {
+    if (this.platform === "uiautomator2") {
+      await element.scrollIntoView();
+    } else {
+      await this.driver.execute("mobile: scrollToElement", {
+        elementId: element.elementId,
       });
     }
   }
