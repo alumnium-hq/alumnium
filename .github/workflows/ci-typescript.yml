@@ -39,15 +39,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        driver:
-          - playwright
-        model:
-          - aws_anthropic
-          - azure_openai
-          - google
         include:
           - driver: appium
             model: azure_openai
+          - driver: playwright
+            model: azure_openai
+          - driver: playwright
+            model: google
           - driver: selenium
             model: azure_openai
     steps:
