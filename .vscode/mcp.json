@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "alumnium": {
+      "type": "stdio",
+      "command": "make",
+      "args": ["start-mcp"],
+      "envFile": "${workspaceFolder}/.env"
+    }
+  }
+}

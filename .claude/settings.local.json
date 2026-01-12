@@ -1,9 +1,11 @@
 {
   "permissions": {
     "allow": [
+      "mcp__alumnium",
       "Bash(cat:*)",
       "Bash(curl:*)",
       "Bash(make:*)",
+      "Bash(poetry poe:*)",
       "Bash(poetry run behave:*)",
       "Bash(poetry run pytest:*)",
       "Bash(npm pack:*)",
@@ -12,5 +14,9 @@
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "alumnium"
+  ]
 }
