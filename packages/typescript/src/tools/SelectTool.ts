@@ -1,4 +1,5 @@
-import { BaseDriver } from "../drivers/BaseDriver.js";
+import { PlaywrightDriver } from "../drivers/PlaywrightDriver.js";
+import { SeleniumDriver } from "../drivers/SeleniumDriver.js";
 import { BaseTool } from "./BaseTool.js";
 import { field, FieldMetadata } from "./Field.js";
 
@@ -23,7 +24,7 @@ export class SelectTool extends BaseTool {
     this.option = args.option;
   }
 
-  async invoke(driver: BaseDriver): Promise<void> {
+  async invoke(driver: PlaywrightDriver | SeleniumDriver): Promise<void> {
     await driver.select(this.id, this.option);
   }
 }

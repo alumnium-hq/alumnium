@@ -1,4 +1,5 @@
-import { BaseDriver } from "../drivers/BaseDriver.js";
+import { PlaywrightDriver } from "../drivers/PlaywrightDriver.js";
+import { SeleniumDriver } from "../drivers/SeleniumDriver.js";
 import { BaseTool } from "./BaseTool.js";
 import { field, FieldMetadata } from "./Field.js";
 
@@ -19,7 +20,7 @@ export class HoverTool extends BaseTool {
     this.id = args.id;
   }
 
-  async invoke(driver: BaseDriver): Promise<void> {
+  async invoke(driver: PlaywrightDriver | SeleniumDriver): Promise<void> {
     await driver.hover(this.id);
   }
 }
