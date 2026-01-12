@@ -14,7 +14,6 @@ from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.press_key_tool import PressKeyTool
-from ..tools.select_tool import SelectTool
 from ..tools.type_tool import TypeTool
 from .base_driver import BaseDriver
 from .keys import Key
@@ -29,7 +28,6 @@ class AppiumDriver(BaseDriver):
             ClickTool,
             DragAndDropTool,
             PressKeyTool,
-            SelectTool,
             TypeTool,
         }
         self.autoswitch_contexts = True
@@ -99,14 +97,6 @@ class AppiumDriver(BaseDriver):
         else:
             # TODO: Implement scroll functionality on Android
             raise NotImplementedError("scroll_to is not implemented for Android (uiautomator2) yet.")
-
-    def select(self, id: int, option: str):
-        # TODO: Implement select functionality and the tool
-        pass
-
-    def swipe(self, id: int):
-        # TODO: Implement swipe functionality and the tool
-        pass
 
     @property
     def title(self) -> str:

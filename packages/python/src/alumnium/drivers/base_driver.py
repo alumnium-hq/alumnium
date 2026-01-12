@@ -42,10 +42,6 @@ class BaseDriver(ABC):
         pass
 
     @abstractmethod
-    def select(self, id: int, option: str):
-        pass
-
-    @abstractmethod
     def scroll_to(self, id: int):
         pass
 

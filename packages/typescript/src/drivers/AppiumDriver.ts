@@ -15,7 +15,6 @@ export class AppiumDriver extends BaseDriver {
     "NavigateToUrlTool",
     "PressKeyTool",
     "ScrollTool",
-    "SelectTool",
     "TypeTool",
   ]);
   public autoswitchContexts: boolean = true;
@@ -122,16 +121,6 @@ export class AppiumDriver extends BaseDriver {
     return await this.driver.takeScreenshot();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async select(_id: number, _option: string): Promise<void> {
-    // TODO: Implement select functionality and the tool
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async swipe(_id: number): Promise<void> {
-    // TODO: Implement swipe functionality and the tool
-  }
-
   async title(): Promise<string> {
     await this.ensureWebviewContext();
     try {
@@ -208,12 +197,6 @@ export class AppiumDriver extends BaseDriver {
   async executeScript(script: string): Promise<void> {
     await this.ensureWebviewContext();
     await this.driver.execute(script);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
-  async hover(_id: number): Promise<void> {
-    // Hover is not typically supported in mobile contexts
-    throw new Error("Hover is not supported by AppiumDriver");
   }
 
   private async ensureNativeAppContext(): Promise<void> {
