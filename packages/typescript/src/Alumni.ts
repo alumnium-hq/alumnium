@@ -14,12 +14,6 @@ import { AssertionError } from "./errors/AssertionError.js";
 import { Model } from "./Model.js";
 import { DoResult, DoStep } from "./result.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
-import { ClickTool } from "./tools/ClickTool.js";
-import { DragAndDropTool } from "./tools/DragAndDropTool.js";
-import { HoverTool } from "./tools/HoverTool.js";
-import { PressKeyTool } from "./tools/PressKeyTool.js";
-import { SelectTool } from "./tools/SelectTool.js";
-import { TypeTool } from "./tools/TypeTool.js";
 import { getLogger } from "./utils/logger.js";
 import { retry } from "./utils/retry.js";
 
@@ -39,7 +33,7 @@ export class Alumni {
   public driver: BaseDriver;
   private client: HttpClient;
 
-  private tools: Record<string, ToolClass>;
+  private tools: Record<string, ToolClass> = {};
   public cache: Cache;
   private url: string;
   private model: Model;
@@ -63,21 +57,11 @@ export class Alumni {
       throw new Error(`Unsupported driver type '${typeof driver}'`);
     }
 
-    // Initialize tools
-    this.tools = {
-      ClickTool,
-      TypeTool,
-      HoverTool,
-      SelectTool,
-      PressKeyTool,
-      DragAndDropTool,
-    };
-
-    // Add extra tools if provided
-    if (options.extraTools) {
-      for (const tool of options.extraTools) {
-        this.tools[tool.name] = tool;
-      }
+    for (const tool of new Set([
+      ...this.driver.supportedTools,
+      ...(options.extraTools || []),
+    ])) {
+      this.tools[tool.name] = tool;
     }
 
     // Initialize HTTP client

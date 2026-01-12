@@ -4,6 +4,13 @@ import { CDPSession, Locator, Page } from "playwright";
 import { fileURLToPath } from "url";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
+import { ToolClass } from "../tools/BaseTool.js";
+import { ClickTool } from "../tools/ClickTool.js";
+import { DragAndDropTool } from "../tools/DragAndDropTool.js";
+import { HoverTool } from "../tools/HoverTool.js";
+import { PressKeyTool } from "../tools/PressKeyTool.js";
+import { SelectTool } from "../tools/SelectTool.js";
+import { TypeTool } from "../tools/TypeTool.js";
 import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
 import { BaseDriver } from "./BaseDriver.js";
@@ -30,15 +37,13 @@ export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
   private page: Page;
   public platform: string = "chromium";
-  public supportedTools: Set<string> = new Set([
-    "ClickTool",
-    "DragAndDropTool",
-    "HoverTool",
-    "NavigateToUrlTool",
-    "PressKeyTool",
-    "ScrollTool",
-    "SelectTool",
-    "TypeTool",
+  public supportedTools: Set<ToolClass> = new Set([
+    ClickTool,
+    DragAndDropTool,
+    HoverTool,
+    PressKeyTool,
+    SelectTool,
+    TypeTool,
   ]);
   public newTabTimeout = parseInt(
     process.env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT || "200",

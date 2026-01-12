@@ -1,9 +1,11 @@
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { ToolClass } from "../tools/BaseTool.js";
 import { Element } from "./index.js";
 import { Key } from "./keys.js";
 
 export abstract class BaseDriver {
   abstract platform: string;
+  abstract supportedTools: Set<ToolClass>;
   abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
   abstract click(id: number): void | Promise<void>;
   abstract dragAndDrop(fromId: number, toId: number): void | Promise<void>;
