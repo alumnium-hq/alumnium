@@ -3,19 +3,22 @@ import type { Browser } from "webdriverio";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
+import { ToolClass } from "../tools/BaseTool.js";
+import { ClickTool } from "../tools/ClickTool.js";
+import { DragAndDropTool } from "../tools/DragAndDropTool.js";
+import { PressKeyTool } from "../tools/PressKeyTool.js";
+import { TypeTool } from "../tools/TypeTool.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;
   public platform: "xcuitest" | "uiautomator2";
-  public supportedTools: Set<string> = new Set([
-    "ClickTool",
-    "DragAndDropTool",
-    "NavigateToUrlTool",
-    "PressKeyTool",
-    "ScrollTool",
-    "TypeTool",
+  public supportedTools: Set<ToolClass> = new Set([
+    ClickTool,
+    DragAndDropTool,
+    PressKeyTool,
+    TypeTool,
   ]);
   public autoswitchContexts: boolean = true;
   public delay: number = 0;

@@ -4,6 +4,7 @@
       "mcp__alumnium",
       "Bash(cat:*)",
       "Bash(curl:*)",
+      "Bash(grep:*)",
       "Bash(make:*)",
       "Bash(poetry poe:*)",
       "Bash(poetry run behave:*)",

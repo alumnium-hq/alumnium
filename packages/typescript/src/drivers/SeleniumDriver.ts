@@ -11,6 +11,13 @@ import { NoSuchSessionError } from "selenium-webdriver/lib/error.js";
 import { fileURLToPath } from "url";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
+import { ToolClass } from "../tools/BaseTool.js";
+import { ClickTool } from "../tools/ClickTool.js";
+import { DragAndDropTool } from "../tools/DragAndDropTool.js";
+import { HoverTool } from "../tools/HoverTool.js";
+import { PressKeyTool } from "../tools/PressKeyTool.js";
+import { SelectTool } from "../tools/SelectTool.js";
+import { TypeTool } from "../tools/TypeTool.js";
 import { getLogger } from "../utils/logger.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
@@ -74,15 +81,13 @@ export class SeleniumDriver extends BaseDriver {
 
   protected driver: ChromiumWebDriver;
   public platform: string = "chromium";
-  public supportedTools: Set<string> = new Set([
-    "ClickTool",
-    "DragAndDropTool",
-    "HoverTool",
-    "NavigateToUrlTool",
-    "PressKeyTool",
-    "ScrollTool",
-    "SelectTool",
-    "TypeTool",
+  public supportedTools: Set<ToolClass> = new Set([
+    ClickTool,
+    DragAndDropTool,
+    HoverTool,
+    PressKeyTool,
+    SelectTool,
+    TypeTool,
   ]);
 
   constructor(driver: WebDriver) {
