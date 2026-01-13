@@ -18,13 +18,14 @@ export class UploadTool extends BaseTool {
       type: "array",
       description:
         "Absolute file path(s) to upload. Can be a single path or multiple paths for multi-file upload.",
+      items: { type: "string" },
     }),
   ];
 
   id: number;
   paths: string[];
 
-  constructor(args: { id: number; paths: string | string[] }) {
+  constructor(args: { id: number; paths: string[] }) {
     super();
     this.id = args.id;
     this.paths = this.normalizePaths(args.paths);
@@ -34,13 +35,11 @@ export class UploadTool extends BaseTool {
     await driver.upload(this.id, this.paths);
   }
 
-  private normalizePaths(paths: string | string[]): string[] {
-    const pathArray = Array.isArray(paths) ? paths : [paths];
-
+  private normalizePaths(paths: string[]): string[] {
     // Planner often attempts to "escape" file paths by adding backslashes.
     // It also often surrounds paths with quotes.
-    return pathArray.map((path) => {
-      return path.replace(/\+\//g, "/").replace(/^["']|["']$/g, "");
+    return paths.map((path) => {
+      return path.replace(/\\+\//g, "/").replace(/^["']|["']$/g, "");
     });
   }
 }

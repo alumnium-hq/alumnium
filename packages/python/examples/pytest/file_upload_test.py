@@ -1,7 +1,9 @@
-from os import getenv, unlink
+from os import getenv
 from tempfile import NamedTemporaryFile
 
 from pytest import fixture, mark
+
+from alumnium import Model, Provider
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 
@@ -27,6 +29,7 @@ def test_file_upload(al, file, navigate):
 
 
 @mark.xfail("appium" in driver_type, reason="File upload is not implemented in Appium yet")
+@mark.xfail(Model.current.provider == Provider.AWS_META, reason="Prefers to click on the upload button manually")
 def test_multiple_file_upload(al, file, file2, navigate):
     navigate("multiple_file_upload.html")
     al.do(f"upload files '{file.name}', '{file2.name}'")
@@ -40,6 +43,7 @@ def test_multiple_file_upload(al, file, file2, navigate):
 
 @mark.xfail("appium" in driver_type, reason="File upload is not implemented in Appium yet")
 @mark.xfail(driver_type == "selenium", reason="Hidden file upload inputs are not supported in Selenium")
+@mark.xfail(Model.current.provider == Provider.AWS_META, reason="Prefers to click on the upload button manually")
 def test_hidden_file_upload(al, file, navigate):
     navigate("hidden_file_upload.html")
     al.do(f"upload '{file.name}' to 'Choose Files' button")

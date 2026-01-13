@@ -13,6 +13,7 @@ export interface FieldMetadata {
   description: string;
   required?: boolean; // Defaults to true if not specified
   enum?: string[];
+  items?: { type: JSONSchemaType }; // Type of array elements (for array types)
 }
 
 // Interface for tool classes that use fields
@@ -33,6 +34,7 @@ export function field(options: {
   paramName?: string;
   required?: boolean;
   enum?: string[];
+  items?: { type: JSONSchemaType };
 }): FieldMetadata {
   return {
     name: options.name,
@@ -41,5 +43,6 @@ export function field(options: {
     paramName: options.paramName,
     required: options.required ?? true,
     enum: options.enum,
+    items: options.items,
   };
 }

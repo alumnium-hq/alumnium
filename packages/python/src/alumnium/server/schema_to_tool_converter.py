@@ -1,24 +1,32 @@
-from typing import Any, Dict, List, Type
+from typing import Any
 
 from pydantic import Field
 
 from alumnium.tools.base_tool import BaseTool
 
 
-def _json_type_to_python_type(json_type: str) -> Type:
+def _json_type_to_python_type(field_info: dict[str, Any]) -> type:
     """Convert JSON schema type to Python type."""
+    json_type = field_info.get("type", "string")
+
     type_map = {
         "integer": int,
         "string": str,
         "boolean": bool,
         "number": float,
-        "array": list,
         "object": dict,
     }
+
+    # Handle array types with items
+    if json_type == "array":
+        items = field_info.get("items", {})
+        item_type = _json_type_to_python_type(items)
+        return list[item_type]  # type: ignore[misc]
+
     return type_map.get(json_type, str)
 
 
-def _create_tool_class_from_schema(schema: Dict[str, Any]) -> Type[BaseTool]:
+def _create_tool_class_from_schema(schema: dict[str, Any]) -> type[BaseTool]:
     """Dynamically create a tool class from a schema."""
     function_info = schema["function"]
     tool_name = function_info["name"]
@@ -32,7 +40,7 @@ def _create_tool_class_from_schema(schema: Dict[str, Any]) -> Type[BaseTool]:
     field_defaults = {}
 
     for field_name, field_info in properties.items():
-        field_type = _json_type_to_python_type(field_info.get("type", "string"))
+        field_type = _json_type_to_python_type(field_info)
         field_description = field_info.get("description", f"{field_name} parameter")
 
         # Set type annotation
@@ -56,7 +64,7 @@ def _create_tool_class_from_schema(schema: Dict[str, Any]) -> Type[BaseTool]:
     return type(tool_name, (BaseTool,), class_attrs)
 
 
-def convert_schemas_to_tools(schemas: List[Dict[str, Any]]) -> Dict[str, Type[BaseTool]]:
+def convert_schemas_to_tools(schemas: list[dict[str, Any]]) -> dict[str, type[BaseTool]]:
     """Convert tool schemas to dynamically created tool classes."""
     tools = {}
 
