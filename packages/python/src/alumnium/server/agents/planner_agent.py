@@ -44,10 +44,10 @@ Given the following XML accessibility tree:
 ```xml
 <button name="Choose File" />
 ```
-Outline the actions needed to achieve the following goal: upload '/tmp/test.txt'
+Outline the actions needed to achieve the following goal: upload '/tmp/test.txt', '/tmp/image.png'
 Output:
-Explanation: In order to upload the file, I am going to use the upload action on the file input button.
-Actions: ['upload "/tmp/test.txt" to button "Choose File"']
+Explanation: In order to upload the file, I am going to use the upload action on the file input button. I don't need to click the button first, as the upload action will handle that.
+Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 """.strip()
 
     LIST_SEPARATOR = "<SEP>"

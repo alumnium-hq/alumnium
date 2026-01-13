@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multiple File Upload Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 700px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+
+      .upload-container {
+        border: 2px dashed #4caf50;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        background: #f0f8f0;
+        margin: 20px 0;
+      }
+
+      .instruction {
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      input[type="file"] {
+        display: block;
+        margin: 20px auto;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: white;
+        cursor: pointer;
+      }
+
+      .file-list {
+        margin: 20px 0;
+        text-align: left;
+      }
+
+      .file-list h3 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .file-item {
+        background: white;
+        padding: 12px 15px;
+        margin: 8px 0;
+        border-radius: 4px;
+        border-left: 4px solid #4caf50;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .file-name {
+        font-weight: 500;
+        color: #333;
+      }
+
+      .file-size {
+        color: #666;
+        font-size: 14px;
+      }
+
+      .file-count {
+        background: #4caf50;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin: 10px 0;
+        display: inline-block;
+      }
+
+      .upload-btn {
+        background: #2196f3;
+        color: white;
+        padding: 14px 32px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 20px;
+        transition: background 0.3s;
+      }
+
+      .upload-btn:hover {
+        background: #0b7dda;
+      }
+
+      .upload-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      .success-container {
+        display: none;
+        background: #d4edda;
+        border: 2px solid #4caf50;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .success-container.show {
+        display: block;
+      }
+
+      .success-message {
+        color: #155724;
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .success-count {
+        color: #155724;
+        font-size: 18px;
+      }
+
+      .uploaded-files-list {
+        background: white;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 15px;
+        text-align: left;
+      }
+
+      .uploaded-files-list h4 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .uploaded-file {
+        padding: 8px;
+        margin: 5px 0;
+        background: #f8f9fa;
+        border-radius: 3px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Multiple File Upload Test</h1>
+
+    <div class="upload-container">
+      <h2>📁 Upload Multiple Files</h2>
+      <p class="instruction">
+        Select multiple files to test the upload functionality
+      </p>
+
+      <!-- File input with multiple attribute -->
+      <input
+        type="file"
+        id="fileInput"
+        multiple
+        aria-label="Multiple File Input"
+        accept="*/*"
+      />
+
+      <!-- Display file count -->
+      <div id="fileCountContainer"></div>
+
+      <!-- Display selected files -->
+      <div class="file-list" id="fileList"></div>
+
+      <!-- Upload button -->
+      <button class="upload-btn" id="uploadBtn" disabled>Upload Files</button>
+    </div>
+
+    <!-- Success message -->
+    <div class="success-container" id="successContainer">
+      <div class="success-message">✓ Upload Successful!</div>
+      <div class="success-count" id="successCount"></div>
+      <div class="uploaded-files-list" id="uploadedFilesList"></div>
+    </div>
+
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const fileList = document.getElementById("fileList");
+      const fileCountContainer = document.getElementById("fileCountContainer");
+      const uploadBtn = document.getElementById("uploadBtn");
+      const successContainer = document.getElementById("successContainer");
+      const successCount = document.getElementById("successCount");
+      const uploadedFilesList = document.getElementById("uploadedFilesList");
+
+      let selectedFiles = [];
+
+      // Handle file selection
+      fileInput.addEventListener("change", (e) => {
+        selectedFiles = Array.from(e.target.files);
+        displayFiles(selectedFiles);
+        updateFileCount(selectedFiles.length);
+
+        // Enable upload button if files are selected
+        uploadBtn.disabled = selectedFiles.length === 0;
+      });
+
+      // Display selected files
+      function displayFiles(files) {
+        fileList.innerHTML = "";
+
+        if (files.length === 0) {
+          fileList.innerHTML = "<p>No files selected</p>";
+          return;
+        }
+
+        const heading = document.createElement("h3");
+        heading.textContent = "Selected Files:";
+        fileList.appendChild(heading);
+
+        files.forEach((file, index) => {
+          const fileItem = document.createElement("div");
+          fileItem.className = "file-item";
+
+          const fileName = document.createElement("span");
+          fileName.className = "file-name";
+          fileName.textContent = `${index + 1}. ${file.name}`;
+
+          const fileSize = document.createElement("span");
+          fileSize.className = "file-size";
+          fileSize.textContent = formatBytes(file.size);
+
+          fileItem.appendChild(fileName);
+          fileItem.appendChild(fileSize);
+          fileList.appendChild(fileItem);
+        });
+      }
+
+      // Update file count badge
+      function updateFileCount(count) {
+        if (count === 0) {
+          fileCountContainer.innerHTML = "";
+          return;
+        }
+
+        fileCountContainer.innerHTML = `<div class="file-count">${count} file${
+          count > 1 ? "s" : ""
+        } selected</div>`;
+      }
+
+      // Format file size
+      function formatBytes(bytes) {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return (
+          Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
+        );
+      }
+
+      // Handle upload
+      uploadBtn.addEventListener("click", () => {
+        // Simulate upload process
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = "Uploading...";
+
+        // Simulate delay
+        setTimeout(() => {
+          showSuccess(selectedFiles);
+        }, 500);
+      });
+
+      // Show success message
+      function showSuccess(files) {
+        successContainer.classList.add("show");
+        successCount.textContent = `${files.length} file${
+          files.length > 1 ? "s" : ""
+        } uploaded successfully`;
+
+        // List uploaded files
+        uploadedFilesList.innerHTML = "<h4>Uploaded Files:</h4>";
+        files.forEach((file, index) => {
+          const uploadedFile = document.createElement("div");
+          uploadedFile.className = "uploaded-file";
+          uploadedFile.textContent = `${index + 1}. ${file.name} (${formatBytes(
+            file.size
+          )})`;
+          uploadedFilesList.appendChild(uploadedFile);
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -25,10 +25,11 @@ class UploadTool(BaseTool):
         if isinstance(paths, str):
             paths = [paths]
 
-        # Planner often attempts to "escape" file paths by adding backslashes
+        # Planner often attempts to "escape" file paths by adding backslashes.
+        # It also often surrounds paths with quotes.
         normalized = []
         for path in paths:
-            normalized_path = sub(r"\+/", "/", path)
+            normalized_path = sub(r"\+/", "/", path).strip('"').strip("'")
             normalized.append(normalized_path)
 
         return normalized
