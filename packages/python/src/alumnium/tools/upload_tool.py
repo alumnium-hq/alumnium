@@ -8,7 +8,10 @@ from .base_tool import BaseTool
 
 
 class UploadTool(BaseTool):
-    """Upload one or more files to a file input element."""
+    __doc__ = (
+        "Upload one or more files using a button that opens a file chooser. "
+        "This tool automatically clicks the button, DO NOT use ClickTool for that."
+    )
 
     id: int = Field(description="Element identifier (ID) of the file input")
     paths: list[str] = Field(
