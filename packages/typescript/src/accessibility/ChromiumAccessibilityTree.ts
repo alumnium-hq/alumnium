@@ -230,8 +230,12 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       }
 
       // Regular Playwright node with locator info
-      const locatorInfo = element.attributes._locator_info
-        ? JSON.parse(element.attributes._locator_info)
+      const locatorInfo: Record<string, unknown> = element.attributes
+        ._locator_info
+        ? (JSON.parse(element.attributes._locator_info) as Record<
+            string,
+            unknown
+          >)
         : {};
 
       return new AccessibilityElement(

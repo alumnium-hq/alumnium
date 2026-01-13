@@ -20,6 +20,18 @@ interface CDPNode {
   _frame?: object;
 }
 
+interface CDPFrameInfo {
+  frame: {
+    id: string;
+    url: string;
+  };
+  childFrames?: CDPFrameInfo[];
+}
+
+interface CDPFrameTree {
+  frameTree: CDPFrameInfo;
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -97,7 +109,9 @@ export class PlaywrightDriver extends BaseDriver {
           allNodes.push(node);
         }
       } catch (error) {
-        logger.error(`  -> Failed to get accessibility tree: ${error}`);
+        logger.error(
+          `  -> Failed to get accessibility tree: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
 
@@ -227,7 +241,10 @@ export class PlaywrightDriver extends BaseDriver {
 
     // Handle Playwright nodes (cross-origin iframes) using locator info
     if (accessibilityElement.locatorInfo) {
-      return this.findElementByLocatorInfo(frame, accessibilityElement.locatorInfo);
+      return this.findElementByLocatorInfo(
+        frame,
+        accessibilityElement.locatorInfo
+      );
     }
 
     // Existing CDP node logic
@@ -299,7 +316,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   private async getAccessibilityTreeForFrame(
     frame: Frame,
-    cdpFrameTree: any
+    cdpFrameTree: CDPFrameTree
   ): Promise<{ nodes: CDPNode[] }> {
     // Find matching CDP frame by URL
     const cdpFrameId = this.findCdpFrameIdByUrl(cdpFrameTree, frame.url());
@@ -340,7 +357,8 @@ export class PlaywrightDriver extends BaseDriver {
                 const ariaLabel = await element.getAttribute("aria-label", {
                   timeout: 1000,
                 });
-                const name = ariaLabel || (text ? text.trim().slice(0, 50) : "");
+                const name =
+                  ariaLabel || (text ? text.trim().slice(0, 50) : "");
 
                 if (name) {
                   const syntheticNode: CDPNode = {
@@ -367,7 +385,9 @@ export class PlaywrightDriver extends BaseDriver {
           `  -> Created ${nodes.length} synthetic nodes for ${frame.url().slice(0, 60)}`
         );
       } catch (error) {
-        logger.error(`  -> Failed to query frame content: ${error}`);
+        logger.error(
+          `  -> Failed to query frame content: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
 
       // Always add a frame container node
@@ -389,13 +409,12 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   private findCdpFrameIdByUrl(
-    cdpFrameTree: any,
+    cdpFrameTree: CDPFrameTree,
     targetUrl: string
   ): string | null {
-    const searchFrame = (frameInfo: any): string | null => {
-      const frame = frameInfo.frame;
-      if (frame.url === targetUrl) {
-        return frame.id;
+    const searchFrame = (frameInfo: CDPFrameInfo): string | null => {
+      if (frameInfo.frame.url === targetUrl) {
+        return frameInfo.frame.id;
       }
 
       for (const child of frameInfo.childFrames || []) {
@@ -410,11 +429,14 @@ export class PlaywrightDriver extends BaseDriver {
 
   private findElementByLocatorInfo(
     frame: Frame,
-    locatorInfo: Record<string, any>
+    locatorInfo: Record<string, unknown>
   ): Locator {
     // Handle synthetic frame nodes
     if (locatorInfo._synthetic_frame) {
-      const frameUrl = locatorInfo._frame_url || "";
+      const frameUrl =
+        typeof locatorInfo._frame_url === "string"
+          ? locatorInfo._frame_url
+          : "";
       logger.debug(
         `Synthetic frame node clicked, returning frame locator for: ${frameUrl.slice(0, 80)}`
       );
@@ -422,9 +444,12 @@ export class PlaywrightDriver extends BaseDriver {
     }
 
     // Handle selector+nth-based locators (from queried frame content)
-    if (locatorInfo.selector && typeof locatorInfo.nth === "number") {
-      const selector = locatorInfo.selector as string;
-      const nth = locatorInfo.nth as number;
+    if (
+      typeof locatorInfo.selector === "string" &&
+      typeof locatorInfo.nth === "number"
+    ) {
+      const selector = locatorInfo.selector;
+      const nth = locatorInfo.nth;
       logger.debug(`Finding element by selector: ${selector} (nth=${nth})`);
       return frame.locator(selector).nth(nth);
     }
@@ -432,14 +457,16 @@ export class PlaywrightDriver extends BaseDriver {
     const role = locatorInfo.role;
     const name = locatorInfo.name;
 
-    logger.debug(`Finding element by locator info: role=${role}, name=${name}`);
+    logger.debug(
+      `Finding element by locator info: role=${String(role)}, name=${String(name)}`
+    );
 
     // Use Playwright's getByRole for accessibility-based element finding
-    if (role && name) {
-      return frame.getByRole(role, { name });
-    } else if (role) {
-      return frame.getByRole(role);
-    } else if (name) {
+    if (typeof role === "string" && typeof name === "string") {
+      return frame.getByRole(role as never, { name });
+    } else if (typeof role === "string") {
+      return frame.getByRole(role as never);
+    } else if (typeof name === "string") {
       return frame.getByText(name);
     } else {
       throw new Error(
