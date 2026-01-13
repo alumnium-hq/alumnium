@@ -13,7 +13,7 @@ class UploadTool(BaseTool):
         "This tool automatically clicks the button, DO NOT use ClickTool for that."
     )
 
-    id: int = Field(description="Element identifier (ID) of the file input")
+    id: int = Field(description="Element identifier (ID)")
     paths: list[str] = Field(
         description="Absolute file path(s) to upload. Can be a single path or multiple paths for multi-file upload."
     )

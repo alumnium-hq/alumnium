@@ -2,9 +2,10 @@ import { BaseDriver } from "../drivers/BaseDriver.js";
 import { BaseTool } from "./BaseTool.js";
 import { field, FieldMetadata } from "./Field.js";
 import { SelectTool } from "./SelectTool.js";
+import { UploadTool } from "./UploadTool.js";
 
 export class ClickTool extends BaseTool {
-  static description = `Click an element. NEVER use ClickTool for combobox dropdowns - use ${SelectTool.name} instead.`;
+  static description = `Click an element. NEVER use ClickTool for combobox dropdowns - use ${SelectTool.name} instead. NEVER use ClickTool to upload files - use ${UploadTool.name} instead.`;
   static fields: FieldMetadata[] = [
     field({
       name: "id",

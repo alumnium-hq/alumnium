@@ -11,6 +11,7 @@ import { HoverTool } from "../tools/HoverTool.js";
 import { PressKeyTool } from "../tools/PressKeyTool.js";
 import { SelectTool } from "../tools/SelectTool.js";
 import { TypeTool } from "../tools/TypeTool.js";
+import { UploadTool } from "../tools/UploadTool.js";
 import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
 import { BaseDriver } from "./BaseDriver.js";
@@ -44,6 +45,7 @@ export class PlaywrightDriver extends BaseDriver {
     PressKeyTool,
     SelectTool,
     TypeTool,
+    UploadTool,
   ]);
   public newTabTimeout = parseInt(
     process.env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT || "200",
@@ -160,13 +162,16 @@ export class PlaywrightDriver extends BaseDriver {
 
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
-    const inputType = await element.getAttribute("type");
-    text = this.normalizeInputText(inputType, text);
-    if (inputType === "file") {
-      await element.setInputFiles(text);
-    } else {
-      await element.fill(text);
-    }
+    await element.fill(text);
+  }
+
+  async upload(id: number, paths: string[]): Promise<void> {
+    const element = await this.findElement(id);
+    const [fileChooser] = await Promise.all([
+      this.page.waitForEvent("filechooser", { timeout: 5000 }),
+      element.click({ force: true }),
+    ]);
+    await fileChooser.setFiles(paths);
   }
 
   @retry({
