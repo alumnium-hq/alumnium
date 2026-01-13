@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from re import sub
 
 from ..accessibility import BaseAccessibilityTree
 from . import Element

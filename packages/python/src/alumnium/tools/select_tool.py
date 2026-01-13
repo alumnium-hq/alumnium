@@ -12,4 +12,4 @@ class SelectTool(BaseTool):
     option: str = Field(description="Option to select")
 
     def invoke(self, driver: BaseDriver):
-        driver.select(self.id, self.option)
+        driver.select(self.id, self.option)  # type: ignore[reportAttributeAccessIssue]
