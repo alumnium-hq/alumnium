@@ -16,6 +16,6 @@ def file():
 )
 def test_file_upload(al, file, navigate):
     navigate("https://the-internet.herokuapp.com/upload")
-    al.do(f"type '{file.name}' to 'Choose File' button")
+    al.do(f"upload '{file.name}'")
     al.do("click on 'Upload' button")
     assert al.get("heading") == "File Uploaded!"

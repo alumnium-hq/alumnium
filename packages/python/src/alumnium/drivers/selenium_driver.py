@@ -19,6 +19,7 @@ from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
 from ..tools.select_tool import SelectTool
 from ..tools.type_tool import TypeTool
+from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
 
@@ -40,6 +41,7 @@ class SeleniumDriver(BaseDriver):
             PressKeyTool,
             SelectTool,
             TypeTool,
+            UploadTool,
         }
         self._patch_driver(driver)
 
@@ -137,8 +139,11 @@ class SeleniumDriver(BaseDriver):
     def type(self, id: int, text: str):
         element = self.find_element(id)
         element.clear()
-        text = self._normalize_input_text(element.get_attribute("type"), text)
         element.send_keys(text)
+
+    def upload(self, id: int, paths: list[str]):
+        element = self.find_element(id)
+        element.send_keys("\n".join(paths))
 
     @property
     def url(self) -> str:

@@ -13,6 +13,7 @@ from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
 from ..tools.select_tool import SelectTool
 from ..tools.type_tool import TypeTool
+from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
 
@@ -42,6 +43,7 @@ class PlaywrightDriver(BaseDriver):
             PressKeyTool,
             SelectTool,
             TypeTool,
+            UploadTool,
         }
 
     @property
@@ -109,12 +111,11 @@ class PlaywrightDriver(BaseDriver):
 
     def type(self, id: int, text: str):
         element = self.find_element(id)
-        input_type = element.get_attribute("type")
-        text = self._normalize_input_text(input_type, text)
-        if input_type == "file":
-            element.set_input_files(text)
-        else:
-            element.fill(text)
+        element.fill(text)
+
+    def upload(self, id: int, paths: list[str]):
+        element = self.find_element(id)
+        element.set_input_files(paths)
 
     @property
     def url(self) -> str:

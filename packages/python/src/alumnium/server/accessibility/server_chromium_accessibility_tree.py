@@ -104,11 +104,6 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
             elif role_value == "generic" and not children:
                 return None
             else:
-                # Accessibility tree always represents file input as a button.
-                # This needs to be improved to handle file inputs with custom labels.
-                if role_value == "button" and name_value == "Choose File":
-                    role_value = "textbox"
-
                 # Create the XML element for the node
                 xml_element = Element(role_value)
 

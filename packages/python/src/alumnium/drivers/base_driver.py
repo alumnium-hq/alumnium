@@ -65,10 +65,3 @@ class BaseDriver(ABC):
     @abstractmethod
     def execute_script(self, script: str):
         pass
-
-    def _normalize_input_text(self, input_type: str | None, text: str) -> str:
-        # Planner often attempts to "escape" file paths by adding backslashes
-        if input_type == "file":
-            text = sub(r"\+/", "/", text)
-
-        return text
