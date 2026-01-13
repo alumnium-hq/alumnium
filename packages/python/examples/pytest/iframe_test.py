@@ -5,11 +5,7 @@ from pytest import mark
 
 @mark.xfail(
     "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
-    reason="Iframe support is only implemented for Playwright currently",
-)
-@mark.xfail(
-    getenv("ALUMNIUM_DRIVER", "selenium") == "selenium",
-    reason="Iframe support is only implemented for Playwright currently",
+    reason="Iframe support is only implemented for Playwright and Selenium currently",
 )
 def test_nested_frames(al, navigate):
     """Test that elements inside nested iframes can be accessed transparently."""

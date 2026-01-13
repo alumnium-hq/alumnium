@@ -50,12 +50,34 @@ class SeleniumDriver(BaseDriver):
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
         self._wait_for_page_to_load()
-        return ChromiumAccessibilityTree(
-            self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
-                "Accessibility.getFullAXTree",
-                {},
-            ),
-        )
+
+        # Get frame tree to enumerate all frames
+        frame_tree = self.driver.execute_cdp_cmd("Page.getFrameTree", {})  # type: ignore[attr-defined]
+        frame_ids = self._get_all_frame_ids(frame_tree["frameTree"])
+        logger.debug(f"Found {len(frame_ids)} frames")
+
+        # Aggregate accessibility nodes from all frames
+        all_nodes = []
+        for frame_id in frame_ids:
+            try:
+                response = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                    "Accessibility.getFullAXTree",
+                    {"frameId": frame_id},
+                )
+                nodes = response.get("nodes", [])
+                logger.debug(f"  -> Frame {frame_id[:20]}...: {len(nodes)} nodes")
+                all_nodes.extend(nodes)
+            except Exception as e:
+                logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")
+
+        return ChromiumAccessibilityTree({"nodes": all_nodes})
+
+    def _get_all_frame_ids(self, frame_info: dict) -> list:
+        """Recursively collect all frame IDs from CDP frame tree."""
+        frame_ids = [frame_info["frame"]["id"]]
+        for child in frame_info.get("childFrames", []):
+            frame_ids.extend(self._get_all_frame_ids(child))
+        return frame_ids
 
     @staticmethod
     def _autoswitch_to_new_tab(func: Callable) -> Callable:  # type: ignore[reportSelfClsParameterName]
