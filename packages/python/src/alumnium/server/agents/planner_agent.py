@@ -46,7 +46,8 @@ Given the following XML accessibility tree:
 ```
 Outline the actions needed to achieve the following goal: upload '/tmp/test.txt', '/tmp/image.png'
 Output:
-Explanation: In order to upload the file, I am going to use the upload action on the file input button. I don't need to click the button first, as the upload action will handle that.
+Explanation: In order to upload the file, I am going to use the upload action on the file input button.
+I don't need to click the button first, as the upload action will handle that.
 Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 """.strip()
 
