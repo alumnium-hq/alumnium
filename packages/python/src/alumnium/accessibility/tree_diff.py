@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
-from xml.etree.ElementTree import Element, fromstring
+from typing import Dict, List, Optional
+from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
 
 @dataclass
@@ -41,6 +41,83 @@ class AccessibilityTreeDiff:
             self._changes = self._compute_changes()
             self._computed = True
         return self._changes
+
+    def to_xml_diff(self) -> str:
+        """Return RFC 5261 XML diff format."""
+        if not self._computed:
+            self._changes = self._compute_changes()
+            self._computed = True
+        return self._format_as_xml_diff()
+
+    def _format_as_xml_diff(self) -> str:
+        """Format changes as RFC 5261 XML diff."""
+        root = Element("diff")
+        root.set("xmlns", "urn:ietf:params:xml:ns:pidf-diff")
+
+        for change in self._changes:
+            if change.change_type == "removed":
+                self._add_remove_operation(root, change)
+            elif change.change_type == "added":
+                self._add_add_operation(root, change)
+            elif change.change_type == "modified":
+                self._add_replace_operations(root, change)
+
+        if len(root) == 0:
+            return "<diff xmlns=\"urn:ietf:params:xml:ns:pidf-diff\" />"
+
+        indent(root)
+        return tostring(root, encoding="unicode")
+
+    def _add_remove_operation(self, parent: Element, change: NodeChange) -> None:
+        """Add <remove> element for removed node."""
+        remove = Element("remove")
+        remove.set("sel", self._build_xpath(change))
+        parent.append(remove)
+
+    def _add_add_operation(self, parent: Element, change: NodeChange) -> None:
+        """Add <add> element for added node."""
+        add = Element("add")
+        add.set("sel", "/RootWebArea")
+        add.set("pos", "last")
+        add.append(self._reconstruct_element(change))
+        parent.append(add)
+
+    def _add_replace_operations(self, parent: Element, change: NodeChange) -> None:
+        """Add <replace> elements for modified attributes."""
+        for attr_change in self._parse_details(change.details):
+            replace = Element("replace")
+            replace.set("sel", f"{self._build_xpath(change)}/@{attr_change['name']}")
+            replace.text = attr_change["new_value"]
+            parent.append(replace)
+
+    def _build_xpath(self, change: NodeChange) -> str:
+        """Build XPath selector for a node using backendDOMNodeId."""
+        if change.node_id:
+            return f"//{change.role}[@backendDOMNodeId='{change.node_id}']"
+        elif change.name:
+            return f"//{change.role}[@name='{change.name}']"
+        return f"//{change.role}"
+
+    def _reconstruct_element(self, change: NodeChange) -> Element:
+        """Reconstruct XML Element from NodeChange."""
+        elem = Element(change.role)
+        if change.node_id:
+            elem.set("backendDOMNodeId", change.node_id)
+        if change.name:
+            elem.set("name", change.name)
+        return elem
+
+    def _parse_details(self, details: str) -> List[dict]:
+        """Parse 'attr: old → new, attr2: old → new' into list of dicts."""
+        changes: List[dict] = []
+        if not details:
+            return changes
+        for part in details.split(", "):
+            if "→" in part:
+                name, values = part.split(": ", 1)
+                _, new_val = values.split(" → ")
+                changes.append({"name": name.strip(), "new_value": new_val.strip()})
+        return changes
 
     def _compute_changes(self) -> List[NodeChange]:
         before_nodes = self._parse_to_dict(self.before_xml)
