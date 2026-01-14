@@ -15,6 +15,15 @@ class NodeChange:
 
 
 @dataclass
+class DiffResult:
+    """Structured result containing all diff output formats."""
+
+    patch: str  # Git diff-style output
+    rfc5261: str  # RFC 5261 XML diff
+    verbose: str  # Text summary (LLM-friendly)
+
+
+@dataclass
 class AccessibilityTreeDiff:
     """Computes and formats diff between two accessibility tree XML strings."""
 
@@ -22,6 +31,8 @@ class AccessibilityTreeDiff:
     after_xml: str
     _changes: List[NodeChange] = field(default_factory=list, init=False)
     _computed: bool = field(default=False, init=False)
+    _before_nodes: Dict[str, dict] = field(default_factory=dict, init=False)
+    _after_nodes: Dict[str, dict] = field(default_factory=dict, init=False)
 
     # Attributes that indicate state changes worth tracking
     STATE_ATTRIBUTES = frozenset(
@@ -48,6 +59,81 @@ class AccessibilityTreeDiff:
             self._changes = self._compute_changes()
             self._computed = True
         return self._format_as_xml_diff()
+
+    def to_git_diff(self) -> str:
+        """Return git diff-style format."""
+        if not self._computed:
+            self._changes = self._compute_changes()
+            self._computed = True
+        return self._format_as_git_diff()
+
+    def compute_all(self) -> DiffResult:
+        """Compute all diff formats and return structured result."""
+        if not self._computed:
+            self._changes = self._compute_changes()
+            self._computed = True
+
+        return DiffResult(
+            patch=self._format_as_git_diff(),
+            rfc5261=self._format_as_xml_diff(),
+            verbose=self._format_for_llm(),
+        )
+
+    def _format_as_git_diff(self) -> str:
+        """Format changes as unified diff (like git diff)."""
+        if not self._changes:
+            return ""
+
+        lines: List[str] = [
+            "--- before",
+            "+++ after",
+        ]
+
+        for change in self._changes:
+            if change.change_type == "removed":
+                elem_str = self._element_to_xml_string(change, "before")
+                lines.append(f"-{elem_str}")
+            elif change.change_type == "added":
+                elem_str = self._element_to_xml_string(change, "after")
+                lines.append(f"+{elem_str}")
+            elif change.change_type == "modified":
+                elem_before = self._element_to_xml_string(change, "before")
+                elem_after = self._element_to_xml_string(change, "after")
+                lines.append(f"-{elem_before}")
+                lines.append(f"+{elem_after}")
+
+        return "\n".join(lines)
+
+    def _element_to_xml_string(self, change: NodeChange, version: str) -> str:
+        """Convert NodeChange to compact XML string representation."""
+        node_id = change.node_id
+        if version == "before" and node_id and node_id in self._before_nodes:
+            node_data = self._before_nodes[node_id]
+        elif version == "after" and node_id and node_id in self._after_nodes:
+            node_data = self._after_nodes[node_id]
+        else:
+            node_data = {"role": change.role}
+            if change.name:
+                node_data["name"] = change.name
+            if change.node_id:
+                node_data["backendDOMNodeId"] = change.node_id
+
+        role = node_data.get("role", change.role)
+        attrs = []
+
+        if "name" in node_data and node_data["name"]:
+            attrs.append(f'name="{node_data["name"]}"')
+        if "backendDOMNodeId" in node_data:
+            attrs.append(f'backendDOMNodeId="{node_data["backendDOMNodeId"]}"')
+
+        for attr in self.STATE_ATTRIBUTES:
+            if attr in node_data:
+                attrs.append(f'{attr}="{node_data[attr]}"')
+
+        attr_str = " ".join(attrs)
+        if attr_str:
+            return f"<{role} {attr_str} />"
+        return f"<{role} />"
 
     def _format_as_xml_diff(self) -> str:
         """Format changes as RFC 5261 XML diff."""
@@ -120,14 +206,14 @@ class AccessibilityTreeDiff:
         return changes
 
     def _compute_changes(self) -> List[NodeChange]:
-        before_nodes = self._parse_to_dict(self.before_xml)
-        after_nodes = self._parse_to_dict(self.after_xml)
+        self._before_nodes = self._parse_to_dict(self.before_xml)
+        self._after_nodes = self._parse_to_dict(self.after_xml)
 
         changes: List[NodeChange] = []
 
         # Find removed nodes (in before, not in after)
-        for key, node in before_nodes.items():
-            if key not in after_nodes:
+        for key, node in self._before_nodes.items():
+            if key not in self._after_nodes:
                 changes.append(
                     NodeChange(
                         change_type="removed",
@@ -138,8 +224,8 @@ class AccessibilityTreeDiff:
                 )
 
         # Find added nodes (in after, not in before)
-        for key, node in after_nodes.items():
-            if key not in before_nodes:
+        for key, node in self._after_nodes.items():
+            if key not in self._before_nodes:
                 changes.append(
                     NodeChange(
                         change_type="added",
@@ -150,9 +236,9 @@ class AccessibilityTreeDiff:
                 )
 
         # Find modified nodes (in both, but different state)
-        for key, after_node in after_nodes.items():
-            if key in before_nodes:
-                before_node = before_nodes[key]
+        for key, after_node in self._after_nodes.items():
+            if key in self._before_nodes:
+                before_node = self._before_nodes[key]
                 diff_details = self._get_state_diff(before_node, after_node)
                 if diff_details:
                     changes.append(
