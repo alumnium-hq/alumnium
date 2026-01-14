@@ -1,3 +1,4 @@
+import { join, resolve } from "path";
 import { Locator } from "playwright";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
@@ -66,11 +67,22 @@ export const mochaHooks = {
   },
 };
 
+export function resolveURL(url: string): string {
+  if (url.startsWith("http")) {
+    return url;
+  } else {
+    return (
+      "file://" +
+      resolve(join(process.cwd(), `../python/examples/support/pages`, url))
+    );
+  }
+}
+
 export function navigate(driver: WebDriver | Browser, url: string) {
   if (driverType === "appium") {
-    return (driver as Browser).url(url);
+    return (driver as Browser).url(resolveURL(url));
   } else if (driverType === "selenium") {
-    return (driver as WebDriver).get(url);
+    return (driver as WebDriver).get(resolveURL(url));
   } else {
     throw new Error(`Driver type '${typeof driver}' not implemented`);
   }

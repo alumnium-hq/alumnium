@@ -11,4 +11,4 @@ class HoverTool(BaseTool):
     id: int = Field(description="Element identifier (ID)")
 
     def invoke(self, driver: BaseDriver):
-        driver.hover(self.id)
+        driver.hover(self.id)  # type: ignore[reportAttributeAccessIssue]

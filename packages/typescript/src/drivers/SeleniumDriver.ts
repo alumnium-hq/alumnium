@@ -18,6 +18,7 @@ import { HoverTool } from "../tools/HoverTool.js";
 import { PressKeyTool } from "../tools/PressKeyTool.js";
 import { SelectTool } from "../tools/SelectTool.js";
 import { TypeTool } from "../tools/TypeTool.js";
+import { UploadTool } from "../tools/UploadTool.js";
 import { getLogger } from "../utils/logger.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
@@ -88,6 +89,7 @@ export class SeleniumDriver extends BaseDriver {
     PressKeyTool,
     SelectTool,
     TypeTool,
+    UploadTool,
   ]);
 
   constructor(driver: WebDriver) {
@@ -192,9 +194,12 @@ export class SeleniumDriver extends BaseDriver {
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
     await element.clear();
-    const inputType = await element.getAttribute("type");
-    text = this.normalizeInputText(inputType, text);
     await element.sendKeys(text);
+  }
+
+  async upload(id: number, paths: string[]): Promise<void> {
+    const element = await this.findElement(id);
+    await element.sendKeys(paths.join("\n"));
   }
 
   async url(): Promise<string> {

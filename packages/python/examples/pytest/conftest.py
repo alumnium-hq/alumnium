@@ -1,5 +1,6 @@
 from datetime import datetime
 from os import getenv
+from pathlib import Path
 
 from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
@@ -148,7 +149,13 @@ def al(driver):
 
 @fixture
 def navigate(al):
-    return lambda url: al.driver.visit(url)
+    def __navigate(url: str):
+        if not url.startswith("http"):
+            url = f"file://{Path(__file__).parent.parent}/support/pages/{url}"
+
+        al.driver.visit(url)
+
+    return __navigate
 
 
 @fixture

@@ -12,6 +12,7 @@ from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
 from ..tools.select_tool import SelectTool
 from ..tools.type_tool import TypeTool
+from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
 from .playwright_driver import PlaywrightDriver
@@ -31,6 +32,7 @@ class PlaywrightAsyncDriver(BaseDriver):
             PressKeyTool,
             SelectTool,
             TypeTool,
+            UploadTool,
         }
 
     @property
@@ -144,6 +146,16 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _type(self, id: int, text: str):
         element = await self._find_element(id)
         await element.fill(text)
+
+    def upload(self, id: int, paths: list[str]):
+        self._run_async(self._upload(id, paths))
+
+    async def _upload(self, id: int, paths: list[str]):
+        element = await self._find_element(id)
+        async with self.page.expect_file_chooser(timeout=5000) as fc_info:
+            await element.click(force=True)
+        file_chooser = await fc_info.value
+        await file_chooser.set_files(paths)
 
     @property
     def url(self) -> str:

@@ -11,7 +11,12 @@ interface ToolSchema {
       type: string;
       properties: Record<
         string,
-        { type: string; description: string; enum?: string[] }
+        {
+          type: string;
+          description: string;
+          enum?: string[];
+          items?: { type: string };
+        }
       >;
       required: string[];
     };
@@ -30,7 +35,12 @@ export function convertToolsToSchemas(
 
     const properties: Record<
       string,
-      { type: string; description: string; enum?: string[] }
+      {
+        type: string;
+        description: string;
+        enum?: string[];
+        items?: { type: string };
+      }
     > = {};
     const required: string[] = [];
 
@@ -45,6 +55,10 @@ export function convertToolsToSchemas(
 
       if (metadata.enum) {
         properties[paramName].enum = metadata.enum;
+      }
+
+      if (metadata.items) {
+        properties[paramName].items = metadata.items;
       }
 
       if (metadata.required !== false) {

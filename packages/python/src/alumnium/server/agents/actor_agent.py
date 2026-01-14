@@ -1,7 +1,8 @@
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.tools import BaseTool
 
+from ...tools.base_tool import BaseTool
+from ...tools.tool_to_schema_converter import convert_tools_to_schemas
 from ..logutils import get_logger
 from .base_agent import BaseAgent
 
@@ -12,8 +13,6 @@ class ActorAgent(BaseAgent):
     def __init__(self, llm: BaseChatModel, tools: dict[str, type[BaseTool]]):
         super().__init__()
 
-        llm = llm.bind_tools(list(tools.values()))
-
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", self.prompts["system"]),
@@ -21,7 +20,7 @@ class ActorAgent(BaseAgent):
             ]
         )
 
-        self.chain = prompt | llm
+        self.chain = prompt | llm.bind_tools(convert_tools_to_schemas(tools))
 
     def invoke(
         self,

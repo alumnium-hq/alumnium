@@ -1,4 +1,4 @@
-from alumnium.tools import PressKeyTool, TypeTool
+from alumnium.tools import PressKeyTool, TypeTool, UploadTool
 from alumnium.tools.tool_to_schema_converter import convert_tool_to_schema
 
 
@@ -48,6 +48,40 @@ def test_convert_tool_with_enum():
                     }
                 },
                 "required": ["key"],
+            },
+        },
+    }
+
+
+def test_convert_tool_with_array():
+    schema = convert_tool_to_schema(UploadTool)
+    assert schema == {
+        "type": "function",
+        "function": {
+            "name": "UploadTool",
+            "description": (
+                "Upload one or more files using a button that opens a file chooser. "
+                "This tool automatically clicks the button, DO NOT use ClickTool for that."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Element identifier (ID)",
+                    },
+                    "paths": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                        },
+                        "description": (
+                            "Absolute file path(s) to upload. "
+                            "Can be a single path or multiple paths for multi-file upload."
+                        ),
+                    },
+                },
+                "required": ["id", "paths"],
             },
         },
     }
