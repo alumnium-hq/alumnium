@@ -26,7 +26,7 @@ class UploadTool(BaseTool):
         # It also often surrounds paths with quotes.
         normalized = []
         for path in paths:
-            normalized_path = sub(r"\+/", "/", path).strip('"').strip("'")
+            normalized_path = sub(r"\\+/", "/", path).strip('"').strip("'")
             normalized.append(normalized_path)
 
         return normalized

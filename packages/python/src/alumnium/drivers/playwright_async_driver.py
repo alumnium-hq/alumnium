@@ -153,7 +153,7 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _upload(self, id: int, paths: list[str]):
         element = await self._find_element(id)
         async with self.page.expect_file_chooser(timeout=5000) as fc_info:
-            await element.click()
+            await element.click(force=True)
         file_chooser = await fc_info.value
         await file_chooser.set_files(paths)
 

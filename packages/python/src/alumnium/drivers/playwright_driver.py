@@ -116,7 +116,7 @@ class PlaywrightDriver(BaseDriver):
     def upload(self, id: int, paths: list[str]):
         element = self.find_element(id)
         with self.page.expect_file_chooser(timeout=5000) as fc_info:
-            element.click()
+            element.click(force=True)
         file_chooser = fc_info.value
         file_chooser.set_files(paths)
 
