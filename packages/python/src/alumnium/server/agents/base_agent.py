@@ -24,24 +24,27 @@ class BaseAgent:
     def _load_prompts(self):
         provider = Model.current.provider
         agent_name = self.__class__.__name__.replace("Agent", "").lower()
-        prompt_path = Path(__file__).parent / f"{agent_name}_prompts"
+        base_prompt_path = Path(__file__).parent / f"{agent_name}_prompts"
 
-        if provider == Provider.ANTHROPIC or provider == Provider.AWS_ANTHROPIC:
-            prompt_path /= "anthropic"
-        elif provider == Provider.GOOGLE:
-            prompt_path /= "google"
-        elif provider == Provider.DEEPSEEK:
-            prompt_path /= "deepseek"
-        elif provider == Provider.AWS_META:
-            prompt_path /= "meta"
-        elif provider == Provider.MISTRALAI:
-            prompt_path /= "mistralai"
-        elif provider == Provider.OLLAMA:
-            prompt_path /= "ollama"
-        elif provider == Provider.XAI:
-            prompt_path /= "xai"
-        else:
-            prompt_path /= "openai"
+        # Map provider to prompt directory name
+        provider_map = {
+            Provider.ANTHROPIC: "anthropic",
+            Provider.AWS_ANTHROPIC: "anthropic",
+            Provider.GOOGLE: "google",
+            Provider.DEEPSEEK: "deepseek",
+            Provider.AWS_META: "meta",
+            Provider.MISTRALAI: "mistralai",
+            Provider.OLLAMA: "ollama",
+            Provider.XAI: "xai",
+        }
+
+        # Try provider-specific prompts first, fall back to openai
+        provider_dir = provider_map.get(provider, "openai")
+        prompt_path = base_prompt_path / provider_dir
+
+        # Fall back to openai if provider-specific directory doesn't exist
+        if not prompt_path.exists():
+            prompt_path = base_prompt_path / "openai"
 
         self.prompts = {}
         for prompt_file in prompt_path.glob("*.md"):
