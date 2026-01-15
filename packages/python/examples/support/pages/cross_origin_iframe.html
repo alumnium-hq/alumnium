@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Iframe Test</title>
+</head>
+<body>
+    <h1>Main Page</h1>
+    <p>This is the main page content.</p>
+    <button id="main-button">Main Page Button</button>
+
+    <h2>Cross-Origin Iframe Below:</h2>
+    <!-- Use data: URI to create cross-origin iframe -->
+    <iframe src="data:text/html,%3C!DOCTYPE%20html%3E%0A%3Chtml%3E%0A%3Chead%3E%0A%20%20%3Ctitle%3ECross-Origin%20Content%3C%2Ftitle%3E%0A%3C%2Fhead%3E%0A%3Cbody%3E%0A%20%20%3Ch1%3ECross-Origin%20Iframe%20Content%3C%2Fh1%3E%0A%20%20%3Cbutton%20id%3D%22iframe-button%22%3EClick%20Me%20Inside%20Iframe%3C%2Fbutton%3E%0A%20%20%3Ca%20href%3D%22%23%22%20id%3D%22iframe-link%22%3EIframe%20Link%3C%2Fa%3E%0A%20%20%3Cp%20id%3D%22result%22%3E%3C%2Fp%3E%0A%20%20%3Cscript%3E%0A%20%20%20%20document.getElementById%28%27iframe-button%27%29.addEventListener%28%27click%27%2C%20function%28%29%20%7B%0A%20%20%20%20%20%20document.getElementById%28%27result%27%29.textContent%20%3D%20%27Button%20Clicked%21%27%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20document.getElementById%28%27iframe-link%27%29.addEventListener%28%27click%27%2C%20function%28e%29%20%7B%0A%20%20%20%20%20%20e.preventDefault%28%29%3B%0A%20%20%20%20%20%20document.getElementById%28%27result%27%29.textContent%20%3D%20%27Link%20Clicked%21%27%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%3C%2Fscript%3E%0A%3C%2Fbody%3E%0A%3C%2Fhtml%3E"
+            width="800"
+            height="400"
+            style="border: 2px solid blue;">
+    </iframe>
+</body>
+</html>
