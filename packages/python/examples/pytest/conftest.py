@@ -132,6 +132,14 @@ def driver():
 
         driver = Appium(client_config=client_config, options=options)
 
+        if driver_type == "appium-android":
+            driver.update_settings(
+                {
+                    "allowInvisibleElements": True,
+                    "ignoreUnimportantViews": True,
+                }
+            )
+
         yield driver
     else:
         raise NotImplementedError(f"Driver {driver_type} not implemented")
