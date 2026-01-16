@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from re import compile
-from typing import Any, Dict, List
+from typing import Any
 from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
 from .base_server_accessibility_tree import BaseServerAccessibilityTree
@@ -11,8 +11,8 @@ class Node:
     id: int
     role: str
     ignored: bool
-    properties: List[Dict[str, Any]] = field(default_factory=list)
-    children: List["Node"] = field(default_factory=list)
+    properties: list[dict[str, Any]] = field(default_factory=list)
+    children: list["Node"] = field(default_factory=list)
 
 
 class ServerUIAutomator2AccessibilityTree(BaseServerAccessibilityTree):
@@ -123,9 +123,16 @@ class ServerUIAutomator2AccessibilityTree(BaseServerAccessibilityTree):
             node.children.append(self._parse_element(child_element))
         return node
 
-    def to_xml(self) -> str:
+    def to_xml(self, exclude_attrs: set[str] | None = None) -> str:
+        """Convert tree to XML string.
+
+        Args:
+            exclude_attrs: Optional set of attribute names to exclude from output.
+        """
         if not self.tree:
             return ""
+
+        exclude_attrs = exclude_attrs or set()
 
         def convert_dict_to_xml(ele: Node, parent_element: Element) -> Element | None:
             if ele.ignored:
@@ -141,7 +148,8 @@ class ServerUIAutomator2AccessibilityTree(BaseServerAccessibilityTree):
                 checked = None
 
                 role = Element(simplified_role)
-                role.set("id", str(id))
+                if "id" not in exclude_attrs:
+                    role.set("id", str(id))
 
                 for props in child_element.properties:
                     if props["name"] == "resource-id" and props["value"]:
@@ -155,15 +163,15 @@ class ServerUIAutomator2AccessibilityTree(BaseServerAccessibilityTree):
                     if props["name"] == "checked":
                         checked = props["value"]
 
-                if resource_id:
+                if resource_id and "resource-id" not in exclude_attrs:
                     role.set("resource-id", resource_id)
-                if content_desc:
+                if content_desc and "content-desc" not in exclude_attrs:
                     role.set("content-desc", content_desc)
-                if text_desc:
+                if text_desc and "text" not in exclude_attrs:
                     role.set("text", text_desc)
-                if clickable is not None:
+                if clickable is not None and "clickable" not in exclude_attrs:
                     role.set("clickable", "true" if clickable else "false")
-                if checked is not None and simplified_role == "CheckBox":
+                if checked is not None and simplified_role == "CheckBox" and "checked" not in exclude_attrs:
                     role.set("checked", "true" if checked else "false")
 
                 parent_element.append(role)

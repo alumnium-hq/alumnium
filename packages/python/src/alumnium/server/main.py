@@ -6,12 +6,15 @@ from fastapi import APIRouter, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from .accessibility import AccessibilityTreeDiff
 from .api_models import (
     AddExampleRequest,
     AddExampleResponse,
     AreaRequest,
     AreaResponse,
     CacheResponse,
+    ChangesRequest,
+    ChangesResponse,
     ClearExamplesResponse,
     ErrorResponse,
     FindRequest,
@@ -228,6 +231,39 @@ async def find_element(session_id: str, request: FindRequest):
         logger.error(f"Failed to find element for session {session_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to find element: {str(e)}"
+        )
+
+
+@v1_router.post("/sessions/{session_id}/changes", response_model=ChangesResponse)
+async def analyze_changes(session_id: str, request: ChangesRequest):
+    """Analyze changes based on before/after states."""
+    session = session_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    try:
+        before_tree = session.process_tree(request.before.accessibility_tree)
+        after_tree = session.process_tree(request.after.accessibility_tree)
+        diff = AccessibilityTreeDiff(
+            before_tree.to_xml(exclude_attrs={"id"}),
+            after_tree.to_xml(exclude_attrs={"id"}),
+        )
+
+        analysis = ""
+        if request.before.url and request.after.url:
+            if request.before.url != request.after.url:
+                analysis = f"URL changed to {request.after.url}. "
+            else:
+                analysis = "URL did not change. "
+
+        analysis += session.changes_analyzer_agent.invoke(diff.compute())
+
+        return ChangesResponse(result=analysis)
+
+    except Exception as e:
+        logger.error(f"Failed to analyze change for session {session_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to analyze change: {str(e)}"
         )
 
 

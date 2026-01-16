@@ -1,10 +1,10 @@
+import re
 from pathlib import Path
 
 from anthropic import RateLimitError as AnthropicRateLimitError
 from botocore.exceptions import ClientError as BedrockClientError
 from google.genai.errors import ClientError as GoogleClientError
 from httpx import HTTPStatusError
-from langchain_core.messages import AIMessage
 from langchain_core.runnables import Runnable
 from openai import InternalServerError as OpenAIInternalServerError
 from openai import RateLimitError as OpenAIRateLimitError
@@ -23,7 +23,9 @@ class BaseAgent:
 
     def _load_prompts(self):
         provider = Model.current.provider
-        agent_name = self.__class__.__name__.replace("Agent", "").lower()
+        # Convert CamelCase to snake_case (e.g., ChangesAnalyzer -> changes_analyzer)
+        agent_name = self.__class__.__name__.replace("Agent", "")
+        agent_name = re.sub(r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", "_", agent_name).lower()
         base_prompt_path = Path(__file__).parent / f"{agent_name}_prompts"
 
         # Map provider to prompt directory name

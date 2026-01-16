@@ -1,4 +1,3 @@
-from typing import List
 from xml.etree.ElementTree import Element, fromstring, indent, tostring
 
 from ..logutils import get_logger
@@ -80,8 +79,13 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
 
         return node
 
-    def to_xml(self):
-        """Converts the nested tree to XML format using role.value as tags."""
+    def to_xml(self, exclude_attrs: set[str] | None = None):
+        """Converts the nested tree to XML format using role.value as tags.
+
+        Args:
+            exclude_attrs: Optional set of attribute names to exclude from output.
+        """
+        exclude_attrs = exclude_attrs or set()
 
         def convert_node_to_xml(node, parent=None):
             # Extract the desired information
@@ -107,15 +111,18 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
                 # Create the XML element for the node
                 xml_element = Element(role_value)
 
-                if name_value:
+                if name_value and "name" not in exclude_attrs:
                     xml_element.set("name", name_value)
 
                 # Assign a unique ID to the element
-                xml_element.set("id", str(id))
+                if "id" not in exclude_attrs:
+                    xml_element.set("id", str(id))
 
                 if properties:
                     for property in properties:
-                        xml_element.set(property["name"], str(property.get("value", {}).get("value", "")))
+                        prop_name = property["name"]
+                        if prop_name not in exclude_attrs:
+                            xml_element.set(prop_name, str(property.get("value", {}).get("value", "")))
 
                 # Add children recursively
                 if children:
@@ -143,7 +150,7 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
 
         return xml_string
 
-    def _prune_redundant_name(self, node: Element) -> List[str]:
+    def _prune_redundant_name(self, node: Element) -> list[str]:
         """
         Recursively traverses the tree, removes redundant name information from parent nodes,
         and returns a list of all content (names) in the current subtree.
@@ -179,7 +186,7 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
 
         return current_subtree_content
 
-    def _get_texts(self, node: dict) -> List[str]:
+    def _get_texts(self, node: dict) -> list[str]:
         texts = set()
         if node.get("name"):
             texts.add(node.get("name"))

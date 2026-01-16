@@ -70,3 +70,9 @@ def test_to_xml(chromium_tree: ServerChromiumAccessibilityTree):
 </RootWebArea>
 """.strip()
     )
+
+
+def test_exclude_attrs(chromium_tree: ServerChromiumAccessibilityTree):
+    xml = chromium_tree.to_xml(exclude_attrs={"id", "focusable"})
+    assert " id=" not in xml
+    assert " focusable=" not in xml

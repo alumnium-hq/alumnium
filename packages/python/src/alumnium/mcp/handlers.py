@@ -117,21 +117,39 @@ async def handle_do(args: dict[str, Any]) -> list[dict]:
     logger.info(f"Driver {driver_id}: Executing do('{goal}')")
 
     al, _ = state.get_driver(driver_id)
+    client: NativeClient = al.client  # type: ignore
+    before_tree = al.driver.accessibility_tree.to_str()
+    before_url = al.driver.url
     result = al.do(goal)
 
     logger.debug(f"Driver {driver_id}: do() completed with {len(result.steps)} steps")
     screenshots.save_screenshot(driver_id, goal, al)
 
-    # Format the result with explanation and steps
-    response_text = f"{result.explanation}\n"
-    if not result.steps:
-        response_text += "Steps performed: None"
-    else:
-        response_text += "Steps performed:\n"
-        for idx, step in enumerate(result.steps, 1):
-            response_text += f"{idx}. {step.name} ({', '.join(step.tools)})\n"
+    # Build structured response
+    performed_steps = [{"name": step.name, "tools": step.tools} for step in result.steps]
 
-    return [{"type": "text", "text": response_text}]
+    changes = ""
+    if result.steps:
+        try:
+            after_tree = al.driver.accessibility_tree.to_str()
+            after_url = al.driver.url
+            changes = client.analyze_changes(
+                before_accessibility_tree=before_tree,
+                before_url=before_url,
+                after_accessibility_tree=after_tree,
+                after_url=after_url,
+            )
+        except Exception as e:
+            logger.error(f"Driver {driver_id}: Error analyzing changes: {e}")
+
+    response = {
+        "explanation": result.explanation,
+        "performed_steps": performed_steps,
+    }
+    if changes:
+        response["changes"] = changes
+
+    return [{"type": "text", "text": json.dumps(response, indent=2, ensure_ascii=False)}]
 
 
 async def handle_check(args: dict[str, Any]) -> list[dict]:
