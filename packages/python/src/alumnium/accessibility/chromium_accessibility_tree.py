@@ -25,17 +25,32 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         if self._raw is not None:
             return self._raw
 
-        nodes = self.cdp_response["nodes"]
+        nodes = self.cdp_response.get("nodes", [])
+        if not nodes:
+            self._raw = ""
+            return self._raw
 
         # Create a lookup table for nodes by their ID
         node_lookup = {node["nodeId"]: node for node in nodes}
 
-        # Build tree structure and convert to XML
-        root_nodes = []
+        # Build mapping: backendDOMNodeId -> list of iframe child root nodes
+        # This allows us to inline iframe content inside their parent <Iframe> elements
+        iframe_children: dict[int, list[dict]] = {}
+        true_roots: list[dict] = []
+
         for node in nodes:
             if node.get("parentId") is None:
-                xml_node = self._node_to_xml(node, node_lookup)
-                root_nodes.append(xml_node)
+                parent_iframe_id = node.get("_parent_iframe_backend_node_id")
+                if parent_iframe_id:
+                    iframe_children.setdefault(parent_iframe_id, []).append(node)
+                else:
+                    true_roots.append(node)
+
+        # Build tree structure and convert to XML (only from true roots)
+        root_nodes = []
+        for node in true_roots:
+            xml_node = self._node_to_xml(node, node_lookup, iframe_children)
+            root_nodes.append(xml_node)
 
         # Combine all root nodes into a single XML string
         xml_string = ""
@@ -46,7 +61,9 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         self._raw = xml_string
         return self._raw
 
-    def _node_to_xml(self, node: dict, node_lookup: dict) -> Element:
+    def _node_to_xml(
+        self, node: dict, node_lookup: dict, iframe_children: dict[int, list[dict]]
+    ) -> Element:
         """Convert a CDP node to XML element, recursively processing children."""
         # Create element with role as tag
         role = node.get("role", {}).get("value", "unknown")
@@ -99,8 +116,15 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         if "childIds" in node:
             for child_id in node["childIds"]:
                 if child_id in node_lookup:
-                    child_elem = self._node_to_xml(node_lookup[child_id], node_lookup)
+                    child_elem = self._node_to_xml(node_lookup[child_id], node_lookup, iframe_children)
                     elem.append(child_elem)
+
+        # Inline iframe content: if this element is an iframe, add its child trees
+        backend_node_id = node.get("backendDOMNodeId")
+        if backend_node_id and backend_node_id in iframe_children:
+            for child_root in iframe_children[backend_node_id]:
+                child_elem = self._node_to_xml(child_root, node_lookup, iframe_children)
+                elem.append(child_elem)
 
         return elem
 

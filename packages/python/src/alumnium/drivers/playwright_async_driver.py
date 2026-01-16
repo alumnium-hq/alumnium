@@ -55,6 +55,20 @@ class PlaywrightAsyncDriver(BaseDriver):
         # Get CDP frame tree for mapping frameIds
         cdp_frame_tree = await self._send_cdp_command("Page.getFrameTree")
 
+        # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
+        frame_to_iframe_map: dict[str, int] = {}
+        await self._send_cdp_command("DOM.enable")
+        for frame in playwright_frames:
+            if frame != self.page.main_frame:
+                cdp_frame_id = self._find_cdp_frame_id_by_url(cdp_frame_tree, frame.url)
+                if cdp_frame_id:
+                    try:
+                        owner_info = await self._send_cdp_command("DOM.getFrameOwner", {"frameId": cdp_frame_id})
+                        frame_to_iframe_map[cdp_frame_id] = owner_info["backendNodeId"]
+                        logger.debug(f"Frame {frame.url[:60]} owned by iframe with backendNodeId={owner_info['backendNodeId']}")
+                    except Exception as e:
+                        logger.debug(f"Could not get frame owner for {cdp_frame_id}: {e}")
+
         # Build combined accessibility tree from all frames
         all_nodes: list[dict] = []
 
@@ -64,6 +78,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
             # Get accessibility tree for this frame
             try:
+                cdp_frame_id = self._find_cdp_frame_id_by_url(cdp_frame_tree, frame.url)
                 tree_response = await self._get_accessibility_tree_for_frame(frame, cdp_frame_tree)
                 node_count = len(tree_response.get("nodes", []))
                 logger.debug(f"  -> Got {node_count} nodes")
@@ -71,6 +86,9 @@ class PlaywrightAsyncDriver(BaseDriver):
                 # Tag all nodes with their Playwright frame reference
                 for node in tree_response.get("nodes", []):
                     node["_frame"] = frame
+                    # Tag root nodes with their parent iframe's backendNodeId
+                    if node.get("parentId") is None and cdp_frame_id in frame_to_iframe_map:
+                        node["_parent_iframe_backend_node_id"] = frame_to_iframe_map[cdp_frame_id]
                     all_nodes.append(node)
             except Exception as e:
                 logger.error(f"  -> Failed to get accessibility tree: {e}")

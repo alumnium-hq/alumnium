@@ -19,6 +19,7 @@ import { Key } from "./keys.js";
 
 interface CDPNode {
   nodeId: string;
+  parentId?: string | null;
   role?: { value?: string };
   name?: { value?: string };
   childIds?: string[];
@@ -26,6 +27,7 @@ interface CDPNode {
   _locator_info?: Record<string, unknown>;
   _frame_url?: string;
   _frame?: object;
+  _parent_iframe_backend_node_id?: number;
 }
 
 interface CDPFrameInfo {
@@ -95,6 +97,30 @@ export class PlaywrightDriver extends BaseDriver {
     // Get CDP frame tree for mapping
     const cdpFrameTree = await this.client.send("Page.getFrameTree");
 
+    // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
+    const frameToIframeMap: Map<string, number> = new Map();
+    await this.client.send("DOM.enable");
+    for (const frame of playwrightFrames) {
+      if (frame !== this.page.mainFrame()) {
+        const cdpFrameId = this.findCdpFrameIdByUrl(cdpFrameTree, frame.url());
+        if (cdpFrameId) {
+          try {
+            const ownerInfo = await this.client.send("DOM.getFrameOwner", {
+              frameId: cdpFrameId,
+            });
+            frameToIframeMap.set(cdpFrameId, ownerInfo.backendNodeId);
+            logger.debug(
+              `Frame ${frame.url().slice(0, 60)} owned by iframe backendNodeId=${ownerInfo.backendNodeId}`
+            );
+          } catch (error) {
+            logger.debug(
+              `Could not get frame owner for ${cdpFrameId}: ${error instanceof Error ? error.message : String(error)}`
+            );
+          }
+        }
+      }
+    }
+
     // Build combined accessibility tree from all frames
     const allNodes: CDPNode[] = [];
 
@@ -103,6 +129,7 @@ export class PlaywrightDriver extends BaseDriver {
       logger.debug(`Processing frame: ${frameUrl}`);
 
       try {
+        const cdpFrameId = this.findCdpFrameIdByUrl(cdpFrameTree, frame.url());
         const treeResponse = await this.getAccessibilityTreeForFrame(
           frame,
           cdpFrameTree
@@ -113,6 +140,15 @@ export class PlaywrightDriver extends BaseDriver {
         // Tag all nodes with their Playwright frame reference
         for (const node of treeResponse.nodes || []) {
           node._frame = frame;
+          // Tag root nodes with their parent iframe's backendNodeId
+          if (
+            node.parentId === undefined &&
+            cdpFrameId &&
+            frameToIframeMap.has(cdpFrameId)
+          ) {
+            node._parent_iframe_backend_node_id =
+              frameToIframeMap.get(cdpFrameId);
+          }
           allNodes.push(node);
         }
       } catch (error) {

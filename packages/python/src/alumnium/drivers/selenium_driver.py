@@ -56,7 +56,24 @@ class SeleniumDriver(BaseDriver):
         # Get frame tree to enumerate all frames
         frame_tree = self.driver.execute_cdp_cmd("Page.getFrameTree", {})  # type: ignore[attr-defined]
         frame_ids = self._get_all_frame_ids(frame_tree["frameTree"])
+        main_frame_id = frame_tree["frameTree"]["frame"]["id"]
         logger.debug(f"Found {len(frame_ids)} frames")
+
+        # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
+        frame_to_iframe_map: dict[str, int] = {}
+        self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
+        for frame_id in frame_ids:
+            if frame_id != main_frame_id:
+                try:
+                    owner_info = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                        "DOM.getFrameOwner",
+                        {"frameId": frame_id},
+                    )
+                    backend_node_id = owner_info["backendNodeId"]
+                    frame_to_iframe_map[frame_id] = backend_node_id
+                    logger.debug(f"Frame {frame_id[:20]}... owned by iframe backendNodeId={backend_node_id}")
+                except Exception as e:
+                    logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
 
         # Aggregate accessibility nodes from all frames
         all_nodes = []
@@ -68,6 +85,10 @@ class SeleniumDriver(BaseDriver):
                 )
                 nodes = response.get("nodes", [])
                 logger.debug(f"  -> Frame {frame_id[:20]}...: {len(nodes)} nodes")
+                # Tag root nodes with their parent iframe's backendNodeId
+                for node in nodes:
+                    if node.get("parentId") is None and frame_id in frame_to_iframe_map:
+                        node["_parent_iframe_backend_node_id"] = frame_to_iframe_map[frame_id]
                 all_nodes.extend(nodes)
             except Exception as e:
                 logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")

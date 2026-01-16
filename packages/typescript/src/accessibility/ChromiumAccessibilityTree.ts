@@ -17,6 +17,7 @@ interface CDPNode {
   _locator_info?: Record<string, unknown>;
   _frame_url?: string;
   _frame?: object;
+  _parent_iframe_backend_node_id?: number;
 }
 
 interface CDPResponse {
@@ -59,19 +60,40 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     }
 
     const nodes = this.cdpResponse.nodes;
-    const nodeLookup: Record<string, CDPNode> = {};
+    if (!nodes || nodes.length === 0) {
+      this.raw = "";
+      return this.raw;
+    }
 
+    const nodeLookup: Record<string, CDPNode> = {};
     for (const node of nodes) {
       nodeLookup[node.nodeId] = node;
     }
 
-    // Build tree structure and convert to XML
-    const rootNodes: XMLElement[] = [];
+    // Build mapping: backendDOMNodeId -> list of iframe child root nodes
+    // This allows us to inline iframe content inside their parent <Iframe> elements
+    const iframeChildren: Map<number, CDPNode[]> = new Map();
+    const trueRoots: CDPNode[] = [];
+
     for (const node of nodes) {
       if (!node.parentId) {
-        const xmlNode = this.nodeToXml(node, nodeLookup);
-        rootNodes.push(xmlNode);
+        const parentIframeId = node._parent_iframe_backend_node_id;
+        if (parentIframeId !== undefined) {
+          if (!iframeChildren.has(parentIframeId)) {
+            iframeChildren.set(parentIframeId, []);
+          }
+          iframeChildren.get(parentIframeId)!.push(node);
+        } else {
+          trueRoots.push(node);
+        }
       }
+    }
+
+    // Build tree structure and convert to XML (only from true roots)
+    const rootNodes: XMLElement[] = [];
+    for (const node of trueRoots) {
+      const xmlNode = this.nodeToXml(node, nodeLookup, iframeChildren);
+      rootNodes.push(xmlNode);
     }
 
     // Combine all root nodes into a single XML string
@@ -86,7 +108,8 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
 
   private nodeToXml(
     node: CDPNode,
-    nodeLookup: Record<string, CDPNode>
+    nodeLookup: Record<string, CDPNode>,
+    iframeChildren: Map<number, CDPNode[]>
   ): XMLElement {
     const role = node.role?.value || "unknown";
     const elem: XMLElement = {
@@ -155,9 +178,26 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     if (node.childIds) {
       for (const childId of node.childIds) {
         if (childId in nodeLookup) {
-          const childElem = this.nodeToXml(nodeLookup[childId], nodeLookup);
+          const childElem = this.nodeToXml(
+            nodeLookup[childId],
+            nodeLookup,
+            iframeChildren
+          );
           elem.children.push(childElem);
         }
+      }
+    }
+
+    // Inline iframe content: if this element is an iframe, add its child trees
+    const backendNodeId = node.backendDOMNodeId;
+    if (backendNodeId !== undefined && iframeChildren.has(backendNodeId)) {
+      for (const childRoot of iframeChildren.get(backendNodeId)!) {
+        const childElem = this.nodeToXml(
+          childRoot,
+          nodeLookup,
+          iframeChildren
+        );
+        elem.children.push(childElem);
       }
     }
 

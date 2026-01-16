@@ -23,6 +23,21 @@ import { getLogger } from "../utils/logger.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
+interface CDPNode {
+  nodeId: string;
+  parentId?: string;
+  _parent_iframe_backend_node_id?: number;
+  [key: string]: unknown;
+}
+
+interface CDPFrameInfo {
+  frame: {
+    id: string;
+    url: string;
+  };
+  childFrames?: CDPFrameInfo[];
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -100,11 +115,68 @@ export class SeleniumDriver extends BaseDriver {
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.waitForPageToLoad();
 
-    const rawData = await this.executeCdpCommand(
-      "Accessibility.getFullAXTree",
-      {}
-    );
-    return new ChromiumAccessibilityTree(rawData);
+    // Get frame tree to enumerate all frames
+    const frameTree = (await this.executeCdpCommand("Page.getFrameTree", {})) as {
+      frameTree: CDPFrameInfo;
+    };
+    const frameIds = this.getAllFrameIds(frameTree.frameTree);
+    const mainFrameId = frameTree.frameTree.frame.id;
+    logger.debug(`Found ${frameIds.length} frames`);
+
+    // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
+    const frameToIframeMap: Map<string, number> = new Map();
+    await this.executeCdpCommand("DOM.enable", {});
+    for (const frameId of frameIds) {
+      if (frameId !== mainFrameId) {
+        try {
+          const ownerInfo = (await this.executeCdpCommand("DOM.getFrameOwner", {
+            frameId,
+          })) as { backendNodeId: number };
+          frameToIframeMap.set(frameId, ownerInfo.backendNodeId);
+          logger.debug(
+            `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`
+          );
+        } catch (error) {
+          logger.debug(
+            `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`
+          );
+        }
+      }
+    }
+
+    // Aggregate accessibility nodes from all frames
+    const allNodes: CDPNode[] = [];
+    for (const frameId of frameIds) {
+      try {
+        const response = (await this.executeCdpCommand(
+          "Accessibility.getFullAXTree",
+          { frameId }
+        )) as { nodes: CDPNode[] };
+        const nodes = response.nodes || [];
+        logger.debug(`  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`);
+        // Tag root nodes with their parent iframe's backendNodeId
+        for (const node of nodes) {
+          if (node.parentId === undefined && frameToIframeMap.has(frameId)) {
+            node._parent_iframe_backend_node_id = frameToIframeMap.get(frameId);
+          }
+        }
+        allNodes.push(...nodes);
+      } catch (error) {
+        logger.debug(
+          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`
+        );
+      }
+    }
+
+    return new ChromiumAccessibilityTree({ nodes: allNodes });
+  }
+
+  private getAllFrameIds(frameInfo: CDPFrameInfo): string[] {
+    const frameIds: string[] = [frameInfo.frame.id];
+    for (const child of frameInfo.childFrames || []) {
+      frameIds.push(...this.getAllFrameIds(child));
+    }
+    return frameIds;
   }
 
   @autoswitchToNewTab
