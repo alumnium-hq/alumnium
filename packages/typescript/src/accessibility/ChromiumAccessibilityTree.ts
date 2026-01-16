@@ -18,6 +18,7 @@ interface CDPNode {
   _frame_url?: string;
   _frame?: object;
   _parent_iframe_backend_node_id?: number;
+  _frame_chain?: number[]; // Chain of iframe backendNodeIds from root to this frame
 }
 
 interface CDPResponse {
@@ -36,6 +37,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   private nextRawId: number = 0;
   private raw: string | null = null;
   private frameMap: Map<number, object> = new Map();
+  private frameChainMap: Map<number, number[]> = new Map(); // raw_id -> frame chain
 
   constructor(cdpResponse: unknown) {
     super();
@@ -125,6 +127,11 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     // Store frame reference if present
     if (node._frame) {
       this.frameMap.set(this.nextRawId, node._frame);
+    }
+
+    // Store frame chain if present (for Selenium nested frame switching)
+    if (node._frame_chain) {
+      this.frameChainMap.set(this.nextRawId, node._frame_chain);
     }
 
     // Store Playwright node metadata
@@ -309,7 +316,15 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       undefined,
       element.tag,
       undefined,
-      parseInt(backendNodeIdStr)
+      parseInt(backendNodeIdStr),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      this.frameMap.get(rawId),
+      undefined,
+      this.frameChainMap.get(rawId)
     );
   }
 

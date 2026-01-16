@@ -51,6 +51,8 @@ class SeleniumDriver(BaseDriver):
 
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
+        # Switch to default content to ensure we're at the top level for frame enumeration
+        self.driver.switch_to.default_content()
         self._wait_for_page_to_load()
 
         # Get frame tree to enumerate all frames
@@ -61,19 +63,9 @@ class SeleniumDriver(BaseDriver):
 
         # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
         frame_to_iframe_map: dict[str, int] = {}
-        self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
-        for frame_id in frame_ids:
-            if frame_id != main_frame_id:
-                try:
-                    owner_info = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
-                        "DOM.getFrameOwner",
-                        {"frameId": frame_id},
-                    )
-                    backend_node_id = owner_info["backendNodeId"]
-                    frame_to_iframe_map[frame_id] = backend_node_id
-                    logger.debug(f"Frame {frame_id[:20]}... owned by iframe backendNodeId={backend_node_id}")
-                except Exception as e:
-                    logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
+        # Build mapping: frameId -> parent frameId (for nested frames)
+        frame_parent_map: dict[str, str] = {}
+        self._build_frame_hierarchy(frame_tree["frameTree"], main_frame_id, frame_to_iframe_map, frame_parent_map)
 
         # Aggregate accessibility nodes from all frames
         all_nodes = []
@@ -85,15 +77,70 @@ class SeleniumDriver(BaseDriver):
                 )
                 nodes = response.get("nodes", [])
                 logger.debug(f"  -> Frame {frame_id[:20]}...: {len(nodes)} nodes")
-                # Tag root nodes with their parent iframe's backendNodeId
+                # Tag ALL nodes from child frames with their frame chain (list of iframe backendNodeIds)
+                # This allows us to switch through nested frames when finding elements
+                frame_chain = self._get_frame_chain(frame_id, frame_to_iframe_map, frame_parent_map)
                 for node in nodes:
-                    if node.get("parentId") is None and frame_id in frame_to_iframe_map:
-                        node["_parent_iframe_backend_node_id"] = frame_to_iframe_map[frame_id]
+                    if frame_chain:
+                        node["_frame_chain"] = frame_chain
                 all_nodes.extend(nodes)
             except Exception as e:
                 logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")
 
         return ChromiumAccessibilityTree({"nodes": all_nodes})
+
+    def _build_frame_hierarchy(
+        self,
+        frame_info: dict,
+        main_frame_id: str,
+        frame_to_iframe_map: dict[str, int],
+        frame_parent_map: dict[str, str],
+        parent_frame_id: str | None = None,
+    ):
+        """Build frame hierarchy maps recursively."""
+        frame_id = frame_info["frame"]["id"]
+
+        if frame_id != main_frame_id:
+            # Get the iframe element that owns this frame
+            self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
+            try:
+                owner_info = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                    "DOM.getFrameOwner",
+                    {"frameId": frame_id},
+                )
+                frame_to_iframe_map[frame_id] = owner_info["backendNodeId"]
+                logger.debug(f"Frame {frame_id[:20]}... owned by iframe backendNodeId={owner_info['backendNodeId']}")
+            except Exception as e:
+                logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
+
+            # Track parent frame
+            if parent_frame_id:
+                frame_parent_map[frame_id] = parent_frame_id
+
+        # Process children
+        for child in frame_info.get("childFrames", []):
+            self._build_frame_hierarchy(child, main_frame_id, frame_to_iframe_map, frame_parent_map, frame_id)
+
+    def _get_frame_chain(
+        self,
+        frame_id: str,
+        frame_to_iframe_map: dict[str, int],
+        frame_parent_map: dict[str, str],
+    ) -> list[int]:
+        """Get the chain of iframe backendNodeIds from root to this frame."""
+        chain: list[int] = []
+        current_frame_id = frame_id
+
+        while current_frame_id in frame_to_iframe_map:
+            iframe_backend_node_id = frame_to_iframe_map[current_frame_id]
+            chain.insert(0, iframe_backend_node_id)  # Insert at beginning to build from root
+            # Move to parent frame
+            if current_frame_id in frame_parent_map:
+                current_frame_id = frame_parent_map[current_frame_id]
+            else:
+                break
+
+        return chain
 
     def _get_all_frame_ids(self, frame_info: dict) -> list:
         """Recursively collect all frame IDs from CDP frame tree."""
@@ -195,6 +242,11 @@ class SeleniumDriver(BaseDriver):
     def find_element(self, id: int) -> WebElement:
         accessibility_element = self.accessibility_tree.element_by_id(id)
         backend_node_id = accessibility_element.backend_node_id
+        frame_chain = accessibility_element.frame_chain
+
+        # Switch through the frame chain if element is inside nested iframes
+        if frame_chain:
+            self._switch_to_frame_chain(frame_chain)
 
         # Beware!
         self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
@@ -219,7 +271,48 @@ class SeleniumDriver(BaseDriver):
                 "name": "data-alumnium-id",
             },
         )
+
+        # Note: We don't switch back to default content here because the element
+        # needs to remain in its frame context for subsequent operations (click, type, etc.)
+
         return element
+
+    def _switch_to_frame_chain(self, frame_chain: list[int]):
+        """Switch through a chain of nested iframes."""
+        # First switch to default content to ensure we're at the top level
+        self.driver.switch_to.default_content()
+
+        # Switch through each iframe in the chain
+        for iframe_backend_node_id in frame_chain:
+            self._switch_to_single_frame(iframe_backend_node_id)
+
+    def _switch_to_single_frame(self, iframe_backend_node_id: int):
+        """Switch to a single frame identified by the iframe element's backendNodeId."""
+        # Use CDP to find and switch to the iframe
+        self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
+        self.driver.execute_cdp_cmd("DOM.getFlattenedDocument", {})  # type: ignore[attr-defined]
+        node_ids = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+            "DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [iframe_backend_node_id]}
+        )
+        node_id = node_ids["nodeIds"][0]
+        self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+            "DOM.setAttributeValue",
+            {
+                "nodeId": node_id,
+                "name": "data-alumnium-iframe-id",
+                "value": str(iframe_backend_node_id),
+            },
+        )
+        iframe_element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-iframe-id='{iframe_backend_node_id}']")
+        self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+            "DOM.removeAttribute",
+            {
+                "nodeId": node_id,
+                "name": "data-alumnium-iframe-id",
+            },
+        )
+        self.driver.switch_to.frame(iframe_element)
+        logger.debug(f"Switched to iframe with backendNodeId={iframe_backend_node_id}")
 
     def execute_script(self, script: str):
         self.driver.execute_script(script)

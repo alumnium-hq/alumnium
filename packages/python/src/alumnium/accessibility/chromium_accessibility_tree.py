@@ -10,6 +10,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         self._next_raw_id = 0
         self._raw = None
         self._frame_map: dict[int, object] = {}  # raw_id -> Frame object for iframe support
+        self._frame_chain_map: dict[int, list[int]] = {}  # raw_id -> frame chain (list of iframe backendNodeIds)
 
     @classmethod
     def _from_xml(cls, xml_string: str, frame_map: dict[int, object] | None = None) -> "ChromiumAccessibilityTree":
@@ -76,6 +77,10 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         # Store frame reference if present (for iframe support)
         if "_frame" in node:
             self._frame_map[self._next_raw_id] = node["_frame"]
+
+        # Store frame chain if present (for Selenium nested frame switching)
+        if "_frame_chain" in node:
+            self._frame_chain_map[self._next_raw_id] = node["_frame_chain"]
 
         # Add all node attributes as XML attributes
         if "backendDOMNodeId" in node:
@@ -190,6 +195,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
             type=element.tag,
             backend_node_id=int(backend_node_id_str),
             frame=self._frame_map.get(raw_id),
+            frame_chain=self._frame_chain_map.get(raw_id),
         )
 
     def scope_to_area(self, raw_id: int) -> "ChromiumAccessibilityTree":
