@@ -22,7 +22,7 @@ def test_cross_origin_iframe(al, navigate):
     navigate("cross_origin_iframe.html")
 
     al.check("button 'Main Page Button' is present")
-    al.do("click button 'Click Me Inside Iframe'", vision=True)
+    al.do("click button 'Click Me Inside Iframe'")
     al.check("text 'Button Clicked!' is present")
     al.do("click link 'Iframe Link'")
     al.check("text 'Link Clicked!' is present")
