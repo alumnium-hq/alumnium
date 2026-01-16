@@ -37,6 +37,10 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
     platform_name = capabilities["platformName"].lower()
     server_url = args.get("server_url")
 
+    # Extract alumnium:options for Alumnium driver configuration
+    alumnium_options = capabilities.pop("alumnium:options", {})
+    driver_settings = alumnium_options.get("driverSettings", {})
+
     # Generate driver ID from current directory and timestamp
     cwd_name = os.path.basename(os.getcwd())
     timestamp = int(datetime.now().timestamp())
@@ -73,6 +77,18 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             ScrollTool,
         ],
     )
+
+    # Apply driver options to Alumnium driver
+    if driver_settings:
+        logger.debug(f"Applying driver options: {driver_settings}")
+        for key, value in driver_settings.items():
+            # Convert camelCase to snake_case
+            snake_key = "".join(["_" + c.lower() if c.isupper() else c for c in key]).lstrip("_")
+            if hasattr(al.driver, snake_key):
+                setattr(al.driver, snake_key, value)
+                logger.debug(f"Set driver option {snake_key}={value}")
+            else:
+                logger.warning(f"Unknown driver option: {key}")
 
     # Register driver in global state
     state.register_driver(driver_id, al, driver, artifacts_dir)
