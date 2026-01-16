@@ -114,6 +114,9 @@ def create_ios_driver(capabilities: dict[str, Any], server_url: str | None) -> A
     from appium.webdriver.client_config import AppiumClientConfig
     from appium.webdriver.webdriver import WebDriver as Appium
 
+    # Extract settings before loading capabilities
+    settings = capabilities.pop("appium:settings", {})
+
     options = XCUITestOptions()
 
     # Load capabilities into options
@@ -138,6 +141,11 @@ def create_ios_driver(capabilities: dict[str, Any], server_url: str | None) -> A
     # Create Appium driver
     driver = Appium(client_config=client_config, options=options)
 
+    # Apply settings after driver is created
+    if settings:
+        logger.debug(f"Applying Appium settings: {settings}")
+        driver.update_settings(settings)
+
     logger.debug("iOS driver created successfully")
     return driver
 
@@ -147,6 +155,9 @@ def create_android_driver(capabilities: dict[str, Any], server_url: str | None) 
     from appium.options.android import UiAutomator2Options
     from appium.webdriver.client_config import AppiumClientConfig
     from appium.webdriver.webdriver import WebDriver as Appium
+
+    # Extract settings before loading capabilities
+    settings = capabilities.pop("appium:settings", {})
 
     options = UiAutomator2Options()
 
@@ -171,6 +182,11 @@ def create_android_driver(capabilities: dict[str, Any], server_url: str | None) 
 
     # Create Appium driver
     driver = Appium(client_config=client_config, options=options)
+
+    # Apply settings after driver is created
+    if settings:
+        logger.debug(f"Applying Appium settings: {settings}")
+        driver.update_settings(settings)
 
     logger.debug("Android driver created successfully")
     return driver
