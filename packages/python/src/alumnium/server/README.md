@@ -11,6 +11,7 @@ The server acts as a bridge between test automation clients (Ruby, JavaScript, P
 - **Action Execution**: Convert steps into specific UI interactions
 - **Statement Verification**: Check assertions against page state with screenshot support
 - **Area Detection**: Identify specific regions of a page
+- **Changes Analysis**: Analyze differences between before/after accessibility trees
 - **Example Management**: Add and manage training examples for the planner agent
 
 ## Installation
@@ -47,6 +48,7 @@ poetry run python -m alumnium.server.main
 - `POST /v1/sessions/{session_id}/steps` - Generate specific actions for a step
 - `POST /v1/sessions/{session_id}/statements` - Execute/verify statements against page state
 - `POST /v1/sessions/{session_id}/areas` - Identify specific areas on a page
+- `POST /v1/sessions/{session_id}/changes` - Analyze changes between before/after states
 
 ### Example Management
 
@@ -139,6 +141,23 @@ curl -X POST http://localhost:8013/v1/sessions/{session_id}/examples \
     "actions": ["Fill name field", "Fill email field", "Fill password field", "Click register button"]
   }'
 # Response: {"success": true, "message": "Example added successfully", "api_version": "v1"}
+```
+
+### Analyze Changes
+```bash
+curl -X POST http://localhost:8013/v1/sessions/{session_id}/changes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "before": {
+      "accessibility_tree": "<accessibility_tree>...</accessibility_tree>",
+      "url": "https://example.com/login"
+    },
+    "after": {
+      "accessibility_tree": "<accessibility_tree>...</accessibility_tree>",
+      "url": "https://example.com/dashboard"
+    }
+  }'
+# Response: {"result": "URL changed to https://example.com/dashboard. The page now shows a dashboard with user menu and navigation.", "api_version": "v1"}
 ```
 
 ## Configuration

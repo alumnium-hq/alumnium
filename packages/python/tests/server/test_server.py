@@ -78,6 +78,7 @@ def mock_agents():
         patch("alumnium.server.agents.retriever_agent.RetrieverAgent.invoke") as mock_retriever,
         patch("alumnium.server.agents.area_agent.AreaAgent.invoke") as mock_area,
         patch("alumnium.server.agents.locator_agent.LocatorAgent.invoke") as mock_locator,
+        patch("alumnium.server.agents.changes_analyzer_agent.ChangesAnalyzerAgent.invoke") as mock_changes_analyzer,
     ):
         # Mock planner agent to return list of steps
         mock_planner.return_value = (
@@ -104,12 +105,16 @@ def mock_agents():
         # Mock locator agent to return element information (as a list)
         mock_locator.return_value = [{"id": 16, "explanation": "Found the checkbox element"}]
 
+        # Mock changes analyzer agent to return analysis string
+        mock_changes_analyzer.return_value = "Button text changed from 'Click me' to 'Submit'."
+
         yield {
             "planner": mock_planner,
             "actor": mock_actor,
             "retriever": mock_retriever,
             "area": mock_area,
             "locator": mock_locator,
+            "changes_analyzer": mock_changes_analyzer,
         }
 
 
@@ -440,6 +445,160 @@ def test_find_element_empty_description(sample_session_id, sample_accessibility_
     )
     # Should succeed but may return root element or handle gracefully
     assert response.status_code == 200
+
+
+# Changes Analysis Tests
+def test_analyze_ui_changes_success(sample_session_id, sample_accessibility_tree):
+    """Test successful UI change analysis."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/changes",
+        json={
+            "before": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "https://example.com/page",
+            },
+            "after": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "https://example.com/page",
+            },
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "result" in data
+    assert isinstance(data["result"], str)
+    assert "URL did not change" in data["result"]
+
+
+def test_analyze_ui_changes_with_url_change(sample_session_id, sample_accessibility_tree):
+    """Test UI change analysis when URL changes."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/changes",
+        json={
+            "before": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "https://example.com/page1",
+            },
+            "after": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "https://example.com/page2",
+            },
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "result" in data
+    assert "URL changed to https://example.com/page2" in data["result"]
+
+
+def test_analyze_ui_changes_with_tree_diff(sample_session_id):
+    """Test UI change analysis with different accessibility trees."""
+    before_tree = "<root><button id='1'>Click me</button></root>"
+    after_tree = "<root><button id='1'>Submit</button></root>"
+
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/changes",
+        json={
+            "before": {
+                "accessibility_tree": before_tree,
+                "url": "https://example.com/page",
+            },
+            "after": {
+                "accessibility_tree": after_tree,
+                "url": "https://example.com/page",
+            },
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "result" in data
+    # The mock returns "Button text changed from 'Click me' to 'Submit'."
+    assert "Button text changed" in data["result"]
+
+
+def test_analyze_ui_changes_nonexistent_session(sample_accessibility_tree):
+    """Test UI change analysis for nonexistent session."""
+    response = client.post(
+        "/v1/sessions/nonexistent/changes",
+        json={
+            "before": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "https://example.com/page",
+            },
+            "after": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "https://example.com/page",
+            },
+        },
+    )
+    assert response.status_code == 404
+
+
+def test_analyze_ui_changes_missing_before(sample_session_id, sample_accessibility_tree):
+    """Test UI change analysis with missing 'before' field."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/changes",
+        json={
+            "after": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "https://example.com/page",
+            },
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_analyze_ui_changes_missing_after(sample_session_id, sample_accessibility_tree):
+    """Test UI change analysis with missing 'after' field."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/changes",
+        json={
+            "before": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "https://example.com/page",
+            },
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_analyze_ui_changes_missing_accessibility_tree(sample_session_id):
+    """Test UI change analysis with missing accessibility_tree field."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/changes",
+        json={
+            "before": {
+                "url": "https://example.com/page",
+            },
+            "after": {
+                "accessibility_tree": "<root></root>",
+                "url": "https://example.com/page",
+            },
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_analyze_ui_changes_with_empty_url(sample_session_id, sample_accessibility_tree):
+    """Test UI change analysis with empty URL (e.g., iOS/Android)."""
+    response = client.post(
+        f"/v1/sessions/{sample_session_id}/changes",
+        json={
+            "before": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "",
+            },
+            "after": {
+                "accessibility_tree": sample_accessibility_tree,
+                "url": "",
+            },
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert "result" in data
+    # Should not include URL change info when URLs are not provided
+    assert "URL" not in data["result"]
 
 
 # Session Management Edge Cases

@@ -7,7 +7,8 @@ class BaseServerAccessibilityTree(ABC):
         self._simplified_to_raw_id = {}
 
     @abstractmethod
-    def to_xml(self) -> str:
+    def to_xml(self, exclude_attrs: set[str] | None = None) -> str:
+        """Convert tree to XML string, optionally excluding specified attributes."""
         pass
 
     def get_raw_id(self, simplified_id: int | str | dict) -> int:

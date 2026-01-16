@@ -1,4 +1,4 @@
-from typing import Any, List, Literal, Optional
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -11,8 +11,8 @@ class VersionedModel(BaseModel):
 class SessionRequest(VersionedModel):
     platform: Literal["chromium", "uiautomator2", "xcuitest"]
     provider: str
-    name: Optional[str] = None
-    tools: List[dict[str, Any]]
+    name: str | None = None
+    tools: list[dict[str, Any]]
 
 
 class SessionResponse(VersionedModel):
@@ -22,13 +22,13 @@ class SessionResponse(VersionedModel):
 class PlanRequest(VersionedModel):
     goal: str
     accessibility_tree: str
-    url: Optional[str] = None
-    title: Optional[str] = None
+    url: str | None = None
+    title: str | None = None
 
 
 class PlanResponse(VersionedModel):
     explanation: str
-    steps: List[str]
+    steps: list[str]
 
 
 class StepRequest(VersionedModel):
@@ -38,15 +38,15 @@ class StepRequest(VersionedModel):
 
 
 class StepResponse(VersionedModel):
-    actions: List[dict[str, Any]]
+    actions: list[dict[str, Any]]
 
 
 class StatementRequest(VersionedModel):
     statement: str
     accessibility_tree: str
-    url: Optional[str] = None
-    title: Optional[str] = None
-    screenshot: Optional[str] = None  # base64 encoded image
+    url: str | None = None
+    title: str | None = None
+    screenshot: str | None = None  # base64 encoded image
 
 
 class StatementResponse(VersionedModel):
@@ -75,7 +75,7 @@ class FindResponse(VersionedModel):
 
 class AddExampleRequest(VersionedModel):
     goal: str
-    actions: List[str]
+    actions: list[str]
 
 
 class AddExampleResponse(VersionedModel):
@@ -93,6 +93,20 @@ class CacheResponse(VersionedModel):
     message: str
 
 
+class ChangeState(VersionedModel):
+    accessibility_tree: str
+    url: str
+
+
+class ChangesRequest(VersionedModel):
+    before: ChangeState
+    after: ChangeState
+
+
+class ChangesResponse(VersionedModel):
+    result: str
+
+
 class ErrorResponse(VersionedModel):
     error: str
-    detail: Optional[str] = None
+    detail: str | None = None

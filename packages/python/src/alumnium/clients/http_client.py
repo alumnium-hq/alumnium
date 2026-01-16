@@ -112,6 +112,30 @@ class HttpClient:
         response.raise_for_status()
         return response.json()["elements"][0]
 
+    def analyze_changes(
+        self,
+        before_accessibility_tree: str,
+        before_url: str,
+        after_accessibility_tree: str,
+        after_url: str,
+    ) -> str:
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/changes",
+            json={
+                "before": {
+                    "accessibility_tree": before_accessibility_tree,
+                    "url": before_url,
+                },
+                "after": {
+                    "accessibility_tree": after_accessibility_tree,
+                    "url": after_url,
+                },
+            },
+            timeout=120,
+        )
+        response.raise_for_status()
+        return response.json()["result"]
+
     def save_cache(self):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/caches",

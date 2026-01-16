@@ -10,6 +10,7 @@ from .accessibility import (
 )
 from .agents.actor_agent import ActorAgent
 from .agents.area_agent import AreaAgent
+from .agents.changes_analyzer_agent import ChangesAnalyzerAgent
 from .agents.locator_agent import LocatorAgent
 from .agents.planner_agent import PlannerAgent
 from .agents.retriever_agent import RetrieverAgent
@@ -48,6 +49,7 @@ class Session:
         self.retriever_agent = RetrieverAgent(self.llm)
         self.area_agent = AreaAgent(self.llm)
         self.locator_agent = LocatorAgent(self.llm)
+        self.changes_analyzer_agent = ChangesAnalyzerAgent(self.llm)
 
         logger.info(
             f"Created session {session_id} with model {model.provider.value}/{model.name} and platform {platform}"

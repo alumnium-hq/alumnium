@@ -1,5 +1,6 @@
 from langchain_core.language_models import BaseChatModel
 
+from ..server.accessibility import AccessibilityTreeDiff
 from ..server.logutils import get_logger
 from ..server.models import Model
 from ..server.session_manager import SessionManager
@@ -79,6 +80,31 @@ class NativeClient:
         element = self.session.locator_agent.invoke(description, accessibility_tree.to_xml())[0]
         element["id"] = accessibility_tree.get_raw_id(element["id"])
         return element
+
+    def analyze_changes(
+        self,
+        before_accessibility_tree: str,
+        before_url: str,
+        after_accessibility_tree: str,
+        after_url: str,
+    ) -> str:
+        before_tree = self.session.process_tree(before_accessibility_tree)
+        after_tree = self.session.process_tree(after_accessibility_tree)
+        diff = AccessibilityTreeDiff(
+            before_tree.to_xml(exclude_attrs={"id"}),
+            after_tree.to_xml(exclude_attrs={"id"}),
+        )
+
+        analysis = ""
+        if before_url and after_url:
+            if before_url != after_url:
+                analysis = f"URL changed to {after_url}. "
+            else:
+                analysis = "URL did not change. "
+
+        analysis += self.session.changes_analyzer_agent.invoke(diff.compute())
+
+        return analysis
 
     def save_cache(self):
         self.session.cache.save()

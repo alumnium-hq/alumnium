@@ -9,9 +9,11 @@
       "Bash(poetry poe:*)",
       "Bash(poetry run behave:*)",
       "Bash(poetry run pytest:*)",
+      "Bash(poetry run python:*)",
       "Bash(npm pack:*)",
       "Bash(npm run:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(wc:*)"
     ],
     "deny": [],
     "ask": []

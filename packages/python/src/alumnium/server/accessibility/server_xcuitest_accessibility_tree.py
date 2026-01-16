@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 from xml.etree.ElementTree import Element, ParseError, fromstring, indent, tostring
 
 from ..logutils import get_logger
@@ -16,8 +16,8 @@ class Node:
     role: str
     name: str
     ignored: bool
-    properties: List[Dict[str, Any]] = field(default_factory=list)
-    children: List["Node"] = field(default_factory=list)
+    properties: list[dict[str, Any]] = field(default_factory=list)
+    children: list["Node"] = field(default_factory=list)
 
     def is_visible(self) -> bool:
         for prop in self.properties:
@@ -134,11 +134,16 @@ class ServerXCUITestAccessibilityTree(BaseServerAccessibilityTree):
 
         return node
 
-    def to_xml(self) -> str:
-        """Converts the processed tree back to an XML string with filtering and flattening."""
+    def to_xml(self, exclude_attrs: set[str] | None = None) -> str:
+        """Converts the processed tree back to an XML string with filtering and flattening.
+
+        Args:
+            exclude_attrs: Optional set of attribute names to exclude from output.
+        """
         if not self.tree:
             return ""
 
+        exclude_attrs = exclude_attrs or set()
         self._prune_redundant_name(self.tree)
 
         def convert_dict_to_xml(node: Node) -> Element | None:
@@ -175,10 +180,12 @@ class ServerXCUITestAccessibilityTree(BaseServerAccessibilityTree):
             # Use role as the tag name directly
             tag_name = node.role or "generic"
 
-            xml_attrs = {"id": str(node.id)}
+            xml_attrs = {}
+            if "id" not in exclude_attrs:
+                xml_attrs["id"] = str(node.id)
             # Add name (as 'name' attribute) from the 'name' field if present
             name_value = node.name  # Used for StaticText handling later
-            if node.name:  # if node.name is not an empty string
+            if node.name and "name" not in exclude_attrs:  # if node.name is not an empty string
                 xml_attrs["name"] = node.name
 
             # Extract raw label, raw value, and enabled status from properties
@@ -201,13 +208,13 @@ class ServerXCUITestAccessibilityTree(BaseServerAccessibilityTree):
             current_name_attr_val = xml_attrs.get("name")
 
             # Add 'label' attribute if raw_label_val exists and is different from current_name_attr_val
-            if raw_label_val is not None and raw_label_val != current_name_attr_val:
+            if raw_label_val is not None and raw_label_val != current_name_attr_val and "label" not in exclude_attrs:
                 xml_attrs["label"] = raw_label_val
 
             # Add 'value' attribute if raw_value_val exists and is different from:
             # 1. current_name_attr_val (the name attribute value)
             # 2. The value of the 'label' attribute (if 'label' was added)
-            if raw_value_val is not None:
+            if raw_value_val is not None and "value" not in exclude_attrs:
                 add_value_attr = True
                 if raw_value_val == current_name_attr_val:
                     add_value_attr = False
@@ -220,7 +227,7 @@ class ServerXCUITestAccessibilityTree(BaseServerAccessibilityTree):
                     xml_attrs["value"] = raw_value_val
 
             # Add 'enabled="false"' if not enabled
-            if not is_enabled:
+            if not is_enabled and "enabled" not in exclude_attrs:
                 xml_attrs["enabled"] = "false"
 
             element = Element(tag_name, xml_attrs)
@@ -268,7 +275,7 @@ class ServerXCUITestAccessibilityTree(BaseServerAccessibilityTree):
         xml_string = tostring(root_xml_element, encoding="unicode")
         return xml_string
 
-    def _prune_redundant_name(self, node: Node) -> List[str]:
+    def _prune_redundant_name(self, node: Node) -> list[str]:
         """
         Recursively traverses the tree, removes redundant name information from parent nodes,
         and returns a list of all content (names) in the current subtree.
@@ -298,7 +305,7 @@ class ServerXCUITestAccessibilityTree(BaseServerAccessibilityTree):
 
         return current_subtree_content
 
-    def _get_texts(self, node: Node) -> List[str]:
+    def _get_texts(self, node: Node) -> list[str]:
         texts = set()
         if node.name:
             texts.add(node.name)
