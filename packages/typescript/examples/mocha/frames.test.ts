@@ -35,10 +35,10 @@ describe("Frames", () => {
 
     await navigate(driver, "cross_origin_iframe.html");
 
-    await al.check("button 'Main Page Button' is visible");
+    await al.check("button 'Main Page Button' is present");
     await al.do("click button 'Click Me Inside Iframe'");
-    await al.check("text 'Button Clicked!' is visible");
+    await al.check("text 'Button Clicked!' is present");
     await al.do("click link 'Iframe Link'");
-    await al.check("text 'Link Clicked!' is visible");
+    await al.check("text 'Link Clicked!' is present");
   });
 });

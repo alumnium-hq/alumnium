@@ -34,6 +34,7 @@ class PlaywrightAsyncDriver(BaseDriver):
             TypeTool,
             UploadTool,
         }
+        self._run_async(self._enable_target_auto_attach())
 
     @property
     def platform(self) -> str:
@@ -47,51 +48,87 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _accessibility_tree(self) -> ChromiumAccessibilityTree:
         await self._wait_for_page_to_load()
 
-        # Use Playwright's native frame detection (operates at DOM/JavaScript level)
-        # This should detect cross-origin iframes that CDP's frame tree might miss
-        playwright_frames = list(self.page.frames)
-        logger.debug(f"Playwright detected {len(playwright_frames)} frames")
+        # Get frame tree to enumerate all frames (same approach as Selenium)
+        frame_tree = await self._send_cdp_command("Page.getFrameTree")
+        frame_ids = self._get_all_frame_ids(frame_tree["frameTree"])
+        main_frame_id = frame_tree["frameTree"]["frame"]["id"]
+        logger.debug(f"Found {len(frame_ids)} frames")
 
-        # Get CDP frame tree for mapping frameIds
-        cdp_frame_tree = await self._send_cdp_command("Page.getFrameTree")
+        # Get all targets including OOPIFs (cross-origin iframes)
+        try:
+            targets = await self._send_cdp_command("Target.getTargets")
+            oopif_targets = self._get_oopif_targets(targets, frame_tree)
+            logger.debug(f"Found {len(oopif_targets)} cross-origin iframes")
+        except Exception as e:
+            logger.debug(f"Could not get OOPIF targets: {e}")
+            oopif_targets = []
 
         # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
         frame_to_iframe_map: dict[str, int] = {}
-        await self._send_cdp_command("DOM.enable")
-        for frame in playwright_frames:
-            if frame != self.page.main_frame:
-                cdp_frame_id = self._find_cdp_frame_id_by_url(cdp_frame_tree, frame.url)
-                if cdp_frame_id:
-                    try:
-                        owner_info = await self._send_cdp_command("DOM.getFrameOwner", {"frameId": cdp_frame_id})
-                        frame_to_iframe_map[cdp_frame_id] = owner_info["backendNodeId"]
-                        logger.debug(f"Frame {frame.url[:60]} owned by iframe with backendNodeId={owner_info['backendNodeId']}")
-                    except Exception as e:
-                        logger.debug(f"Could not get frame owner for {cdp_frame_id}: {e}")
+        # Build mapping: frameId -> parent frameId (for nested frames)
+        frame_parent_map: dict[str, str] = {}
+        await self._build_frame_hierarchy(frame_tree["frameTree"], main_frame_id, frame_to_iframe_map, frame_parent_map)
 
-        # Build combined accessibility tree from all frames
+        # Build mapping: frameId -> Playwright Frame object (for element finding)
+        frame_id_to_playwright_frame: dict[str, Frame] = {}
+        for frame in self.page.frames:
+            cdp_frame_id = self._find_cdp_frame_id_by_url(frame_tree, frame.url)
+            if cdp_frame_id:
+                frame_id_to_playwright_frame[cdp_frame_id] = frame
+
+        # Aggregate accessibility nodes from all frames
         all_nodes: list[dict] = []
-
-        for frame in playwright_frames:
-            frame_url = frame.url
-            logger.debug(f"Processing frame: {frame_url}")
-
-            # Get accessibility tree for this frame
+        for frame_id in frame_ids:
             try:
-                cdp_frame_id = self._find_cdp_frame_id_by_url(cdp_frame_tree, frame.url)
-                tree_response = await self._get_accessibility_tree_for_frame(frame, cdp_frame_tree)
-                node_count = len(tree_response.get("nodes", []))
-                logger.debug(f"  -> Got {node_count} nodes")
+                response = await self._send_cdp_command(
+                    "Accessibility.getFullAXTree",
+                    {"frameId": frame_id},
+                )
+                nodes = response.get("nodes", [])
+                logger.debug(f"  -> Frame {frame_id[:20]}...: {len(nodes)} nodes")
 
-                # Tag all nodes with their Playwright frame reference
-                for node in tree_response.get("nodes", []):
-                    node["_frame"] = frame
-                    # Tag root nodes with their parent iframe's backendNodeId
-                    if node.get("parentId") is None and cdp_frame_id in frame_to_iframe_map:
-                        node["_parent_iframe_backend_node_id"] = frame_to_iframe_map[cdp_frame_id]
+                # Calculate frame chain for this frame
+                frame_chain = self._get_frame_chain(frame_id, frame_to_iframe_map, frame_parent_map)
+                # Get Playwright frame reference
+                playwright_frame = frame_id_to_playwright_frame.get(frame_id, self.page.main_frame)
+
+                # Tag ALL nodes from child frames with their frame chain
+                for node in nodes:
+                    if frame_chain:
+                        node["_frame_chain"] = frame_chain
+                    # Also keep frame reference for Playwright-specific element finding
+                    node["_frame"] = playwright_frame
+                    # Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
+                    if node.get("parentId") is None and frame_id in frame_to_iframe_map:
+                        node["_parent_iframe_backend_node_id"] = frame_to_iframe_map[frame_id]
                     all_nodes.append(node)
             except Exception as e:
-                logger.error(f"  -> Failed to get accessibility tree: {e}")
+                logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")
+
+        # Process cross-origin iframes via Playwright query fallback
+        for oopif in oopif_targets:
+            try:
+                nodes = await self._get_cross_origin_frame_nodes(oopif)
+                all_nodes.extend(nodes)
+                logger.debug(f"  -> Cross-origin iframe {oopif.get('url', '')[:40]}...: {len(nodes)} nodes")
+            except Exception as e:
+                logger.debug(f"  -> Cross-origin iframe {oopif.get('url', '')[:40]}...: failed ({e})")
+
+        # Process Playwright frames not in CDP tree (e.g., data: URI iframes)
+        # These may not be detected by CDP or Target API but Playwright can access them
+        cdp_frame_urls = set(self._get_all_frame_urls(frame_tree["frameTree"]))
+        oopif_urls = {oopif.get("url", "") for oopif in oopif_targets}
+        for frame in self.page.frames:
+            if frame.url not in cdp_frame_urls and frame.url not in oopif_urls:
+                logger.debug(f"Processing Playwright-only frame: {frame.url[:60]}")
+                try:
+                    # Get the backendNodeId of the iframe element (if possible)
+                    iframe_backend_node_id = await self._get_iframe_backend_node_id_by_url(frame.url)
+                    nodes = await self._query_frame_interactive_elements(frame, iframe_backend_node_id)
+                    all_nodes.extend(nodes)
+                    logger.debug(f"  -> Playwright-only frame {frame.url[:40]}...: {len(nodes)} nodes")
+                except Exception as e:
+                    logger.debug(f"  -> Playwright-only frame {frame.url[:40]}...: failed ({e})")
 
         return ChromiumAccessibilityTree({"nodes": all_nodes})
 
@@ -335,153 +372,202 @@ class PlaywrightAsyncDriver(BaseDriver):
         logger.debug(f"Could not find Playwright frame for URL: {frame_url}")
         return None
 
-    async def _get_accessibility_tree_for_frame(self, frame: Frame, cdp_frame_tree: dict) -> dict:
-        """Get accessibility tree for a Playwright frame.
-
-        Bridges Playwright Frame → CDP accessibility tree by finding the CDP frameId.
-        """
-        # Find matching CDP frame by URL
-        cdp_frame_id = self._find_cdp_frame_id_by_url(cdp_frame_tree, frame.url)
-
-        if cdp_frame_id:
-            # Use CDP to get accessibility tree with frameId
-            return await self._send_cdp_command(
-                "Accessibility.getFullAXTree",
-                {"frameId": cdp_frame_id}
+    async def _enable_target_auto_attach(self):
+        """Enable auto-attach to OOPIF targets for cross-origin iframe support."""
+        try:
+            await self._send_cdp_command(
+                "Target.setAutoAttach",
+                {
+                    "autoAttach": True,
+                    "waitForDebuggerOnStart": False,
+                    "flatten": True,
+                },
             )
-        else:
-            # Frame not visible to CDP - query frame content directly using Playwright
-            logger.info(f"Frame {frame.url} not in CDP tree, querying interactive elements")
+            logger.debug("Enabled Target.setAutoAttach for OOPIF support")
+        except Exception as e:
+            logger.debug(f"Could not enable Target.setAutoAttach: {e}")
 
-            nodes = []
-            node_id = -1
+    def _get_all_frame_ids(self, frame_info: dict) -> list[str]:
+        """Recursively collect all frame IDs from CDP frame tree."""
+        frame_ids = [frame_info["frame"]["id"]]
+        for child in frame_info.get("childFrames", []):
+            frame_ids.extend(self._get_all_frame_ids(child))
+        return frame_ids
 
+    def _get_all_frame_urls(self, frame_info: dict) -> list[str]:
+        """Recursively collect all frame URLs from CDP frame tree."""
+        urls = [frame_info["frame"].get("url", "")]
+        for child in frame_info.get("childFrames", []):
+            urls.extend(self._get_all_frame_urls(child))
+        return urls
+
+    async def _build_frame_hierarchy(
+        self,
+        frame_info: dict,
+        main_frame_id: str,
+        frame_to_iframe_map: dict[str, int],
+        frame_parent_map: dict[str, str],
+        parent_frame_id: str | None = None,
+    ):
+        """Build frame hierarchy maps recursively."""
+        frame_id = frame_info["frame"]["id"]
+
+        if frame_id != main_frame_id:
+            # Get the iframe element that owns this frame
+            await self._send_cdp_command("DOM.enable")
             try:
-                # Query for interactive elements inside the frame using Playwright
-                # This works for cross-origin iframes because Playwright has browser-level access
-                interactive_selectors = [
-                    ("button", "button"),
-                    ("a", "link"),
-                    ("[role='button']", "button"),
-                    ("[role='link']", "link"),
-                    ("input[type='submit']", "button"),
-                    ("[aria-label]", "generic"),
-                ]
-
-                for selector, role in interactive_selectors:
-                    try:
-                        elements = frame.locator(selector)
-                        count = await elements.count()
-                        for i in range(min(count, 20)):  # Limit to 20 elements per type
-                            element = elements.nth(i)
-                            try:
-                                # Get element text or aria-label
-                                text = await element.text_content(timeout=1000)
-                                aria_label = await element.get_attribute("aria-label", timeout=1000)
-                                name = aria_label or (text.strip()[:50] if text else "")
-
-                                if name:
-                                    synthetic_node = {
-                                        "nodeId": str(node_id),
-                                        "role": {"value": role},
-                                        "name": {"value": name},
-                                        "_playwright_node": True,
-                                        "_locator_info": {"selector": selector, "nth": i},
-                                    }
-                                    nodes.append(synthetic_node)
-                                    node_id -= 1
-                                    logger.debug(f"  -> Found {role}: {name[:40]}")
-                            except Exception:
-                                pass
-                    except Exception:
-                        pass
-
-                logger.debug(f"  -> Created {len(nodes)} synthetic nodes for {frame.url[:60]}")
+                owner_info = await self._send_cdp_command(
+                    "DOM.getFrameOwner",
+                    {"frameId": frame_id},
+                )
+                frame_to_iframe_map[frame_id] = owner_info["backendNodeId"]
+                logger.debug(f"Frame {frame_id[:20]}... owned by iframe backendNodeId={owner_info['backendNodeId']}")
             except Exception as e:
-                logger.error(f"  -> Failed to query frame content: {e}")
+                logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
 
-            # Always add a frame container node
-            frame_node = {
-                "nodeId": str(node_id),
-                "role": {"value": "Iframe"},
-                "name": {"value": f"Cross-origin iframe: {frame.url[:80]}"},
-                "_playwright_node": True,
-                "_frame_url": frame.url,
-                "childIds": [str(i) for i in range(-1, node_id, -1)] if nodes else [],
-            }
-            nodes.append(frame_node)
+            # Track parent frame
+            if parent_frame_id:
+                frame_parent_map[frame_id] = parent_frame_id
 
-            return {"nodes": nodes}
+        # Process children
+        for child in frame_info.get("childFrames", []):
+            await self._build_frame_hierarchy(child, main_frame_id, frame_to_iframe_map, frame_parent_map, frame_id)
 
-    def _convert_playwright_snapshot_to_cdp_nodes(self, snapshot: dict) -> list[dict]:
-        """Convert Playwright accessibility snapshot to CDP node format.
+    def _get_frame_chain(
+        self,
+        frame_id: str,
+        frame_to_iframe_map: dict[str, int],
+        frame_parent_map: dict[str, str],
+    ) -> list[int]:
+        """Get the chain of iframe backendNodeIds from root to this frame."""
+        chain: list[int] = []
+        current_frame_id = frame_id
 
-        Playwright snapshot is a tree structure, CDP expects a flat list of nodes.
-        For nodes from Playwright snapshot, we use negative nodeIds to distinguish them
-        from CDP nodes, and store locator info for finding elements.
-        """
+        while current_frame_id in frame_to_iframe_map:
+            iframe_backend_node_id = frame_to_iframe_map[current_frame_id]
+            chain.insert(0, iframe_backend_node_id)  # Insert at beginning to build from root
+            # Move to parent frame
+            if current_frame_id in frame_parent_map:
+                current_frame_id = frame_parent_map[current_frame_id]
+            else:
+                break
+
+        return chain
+
+    def _get_oopif_targets(self, targets: dict, frame_tree: dict) -> list[dict]:
+        """Identify OOPIF targets that aren't in the main frame tree."""
+        frame_urls = set(self._get_all_frame_urls(frame_tree["frameTree"]))
+        oopif_targets = []
+
+        for target in targets.get("targetInfos", []):
+            if target.get("type") == "iframe":
+                url = target.get("url", "")
+                # If this iframe URL isn't in the same-origin frame tree, it's an OOPIF
+                if url and url not in frame_urls:
+                    oopif_targets.append(target)
+                    logger.debug(f"Detected OOPIF target: {url[:60]}")
+
+        return oopif_targets
+
+    async def _get_cross_origin_frame_nodes(self, oopif_target: dict) -> list[dict]:
+        """Get accessibility nodes from a cross-origin iframe using Playwright query fallback."""
+        url = oopif_target.get("url", "")
+
+        # Find the Playwright frame for this URL
+        frame = self._find_playwright_frame_by_url(url)
+        if not frame:
+            logger.debug(f"Could not find Playwright frame for URL: {url[:60]}")
+            return []
+
+        # Get the backendNodeId of the iframe element for frame chain tracking
+        iframe_backend_node_id = await self._get_iframe_backend_node_id_by_url(url)
+
+        # Query interactive elements using Playwright
+        nodes = await self._query_frame_interactive_elements(frame, iframe_backend_node_id)
+        return nodes
+
+    async def _get_iframe_backend_node_id_by_url(self, url: str) -> int | None:
+        """Get the backendNodeId of an iframe element by its URL."""
+        try:
+            await self._send_cdp_command("DOM.enable")
+            doc = await self._send_cdp_command("DOM.getDocument")
+            result = await self._send_cdp_command(
+                "DOM.querySelectorAll",
+                {
+                    "nodeId": doc["root"]["nodeId"],
+                    "selector": f"iframe[src='{url}']",
+                },
+            )
+
+            if result.get("nodeIds") and len(result["nodeIds"]) > 0:
+                node_id = result["nodeIds"][0]
+                node = await self._send_cdp_command(
+                    "DOM.describeNode",
+                    {"nodeId": node_id},
+                )
+                return node.get("node", {}).get("backendNodeId")
+        except Exception as e:
+            logger.debug(f"Could not get iframe backendNodeId: {e}")
+        return None
+
+    async def _query_frame_interactive_elements(self, frame: Frame, iframe_backend_node_id: int | None) -> list[dict]:
+        """Query interactive elements in a frame using Playwright."""
         nodes = []
-        node_id_counter = [-1]  # Use negative IDs for Playwright nodes
+        node_id = -1
 
-        def process_node(pw_node: dict, parent_id: int | None = None) -> int:
-            # Generate unique node ID (negative to distinguish from CDP nodes)
-            current_id = node_id_counter[0]
-            node_id_counter[0] -= 1
+        try:
+            # Query for interactive elements inside the frame using Playwright
+            interactive_selectors = [
+                ("button", "button"),
+                ("a", "link"),
+                ("[role='button']", "button"),
+                ("[role='link']", "link"),
+                ("input[type='submit']", "button"),
+                ("input:not([type='hidden'])", "textbox"),
+                ("select", "combobox"),
+                ("textarea", "textbox"),
+                ("[aria-label]", "generic"),
+            ]
 
-            # Build CDP-compatible node
-            cdp_node = {
-                "nodeId": str(current_id),
-                "role": {"value": pw_node.get("role", "generic")},
-                "_playwright_node": True,  # Mark as Playwright node
-            }
+            for selector, role in interactive_selectors:
+                try:
+                    elements = frame.locator(selector)
+                    count = await elements.count()
+                    for i in range(min(count, 20)):
+                        element = elements.nth(i)
+                        try:
+                            text = await element.text_content(timeout=1000)
+                            aria_label = await element.get_attribute("aria-label", timeout=1000)
+                            name = aria_label or (text.strip()[:50] if text else "")
 
-            # Build locator strategy for this node
-            role = pw_node.get("role", "generic")
-            name = pw_node.get("name")
+                            if name:
+                                synthetic_node = {
+                                    "nodeId": str(node_id),
+                                    "role": {"value": role},
+                                    "name": {"value": name},
+                                    "_playwright_node": True,
+                                    "_locator_info": {"selector": selector, "nth": i},
+                                }
 
-            # Store locator info - we'll use this in find_element
-            locator_info = {"role": role}
-            if name:
-                locator_info["name"] = name
-                cdp_node["name"] = {"value": name}
+                                # Track which iframe this is in
+                                if iframe_backend_node_id:
+                                    synthetic_node["_frame_chain"] = [iframe_backend_node_id]
 
-            cdp_node["_locator_info"] = locator_info
+                                # Store frame reference for element finding
+                                synthetic_node["_frame"] = frame
 
-            # Add value if present
-            if "value" in pw_node:
-                cdp_node["value"] = {"value": str(pw_node["value"])}
+                                nodes.append(synthetic_node)
+                                node_id -= 1
+                                logger.debug(f"  -> Found {role}: {name[:40]}")
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
 
-            # Add description if present
-            if "description" in pw_node and pw_node["description"]:
-                cdp_node["description"] = {"value": pw_node["description"]}
+            logger.debug(f"  -> Created {len(nodes)} synthetic nodes for cross-origin frame")
+        except Exception as e:
+            logger.error(f"  -> Failed to query frame content: {e}")
 
-            # Add checked state if present
-            if "checked" in pw_node:
-                cdp_node["checked"] = {"value": pw_node["checked"]}
-
-            # Add disabled state if present
-            if "disabled" in pw_node:
-                cdp_node["disabled"] = {"value": pw_node["disabled"]}
-
-            # Link to parent
-            if parent_id is not None:
-                cdp_node["parentId"] = str(parent_id)
-
-            # Collect child IDs
-            child_ids = []
-            if "children" in pw_node:
-                for child in pw_node["children"]:
-                    child_id = process_node(child, current_id)
-                    child_ids.append(str(child_id))
-
-            if child_ids:
-                cdp_node["childIds"] = child_ids
-
-            nodes.append(cdp_node)
-            return current_id
-
-        # Process root node
-        process_node(snapshot)
         return nodes
 
     def _find_cdp_frame_id_by_url(self, cdp_frame_tree: dict, target_url: str) -> str | None:

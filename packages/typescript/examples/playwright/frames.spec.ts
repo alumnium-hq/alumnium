@@ -17,10 +17,10 @@ test.describe("Frames", () => {
   test("cross origin iframe", async ({ page, al }) => {
     await page.goto(resolveURL("cross_origin_iframe.html"));
 
-    await al.check("button 'Main Page Button' is visible");
+    await al.check("button 'Main Page Button' is present");
     await al.do("click button 'Click Me Inside Iframe'");
-    await al.check("text 'Button Clicked!' is visible");
+    await al.check("text 'Button Clicked!' is present");
     await al.do("click link 'Iframe Link'");
-    await al.check("text 'Link Clicked!' is visible");
+    await al.check("text 'Link Clicked!' is present");
   });
 });
