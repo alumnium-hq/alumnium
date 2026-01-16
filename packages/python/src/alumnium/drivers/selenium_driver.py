@@ -44,6 +44,7 @@ class SeleniumDriver(BaseDriver):
             UploadTool,
         }
         self._patch_driver(driver)
+        self._enable_target_auto_attach()
 
     @property
     def platform(self) -> str:
@@ -60,6 +61,15 @@ class SeleniumDriver(BaseDriver):
         frame_ids = self._get_all_frame_ids(frame_tree["frameTree"])
         main_frame_id = frame_tree["frameTree"]["frame"]["id"]
         logger.debug(f"Found {len(frame_ids)} frames")
+
+        # Get all targets including OOPIFs (cross-origin iframes)
+        try:
+            targets = self.driver.execute_cdp_cmd("Target.getTargets", {})  # type: ignore[attr-defined]
+            oopif_targets = self._get_oopif_targets(targets, frame_tree)
+            logger.debug(f"Found {len(oopif_targets)} cross-origin iframes")
+        except Exception as e:
+            logger.debug(f"Could not get OOPIF targets: {e}")
+            oopif_targets = []
 
         # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
         frame_to_iframe_map: dict[str, int] = {}
@@ -86,6 +96,15 @@ class SeleniumDriver(BaseDriver):
                 all_nodes.extend(nodes)
             except Exception as e:
                 logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")
+
+        # Process cross-origin iframes via JavaScript fallback
+        for oopif in oopif_targets:
+            try:
+                nodes = self._get_cross_origin_frame_nodes(oopif)
+                all_nodes.extend(nodes)
+                logger.debug(f"  -> Cross-origin iframe {oopif.get('url', '')[:40]}...: {len(nodes)} nodes")
+            except Exception as e:
+                logger.debug(f"  -> Cross-origin iframe {oopif.get('url', '')[:40]}...: failed ({e})")
 
         return ChromiumAccessibilityTree({"nodes": all_nodes})
 
@@ -148,6 +167,176 @@ class SeleniumDriver(BaseDriver):
         for child in frame_info.get("childFrames", []):
             frame_ids.extend(self._get_all_frame_ids(child))
         return frame_ids
+
+    def _get_all_frame_urls(self, frame_info: dict) -> list[str]:
+        """Recursively collect all frame URLs from CDP frame tree."""
+        urls = [frame_info["frame"].get("url", "")]
+        for child in frame_info.get("childFrames", []):
+            urls.extend(self._get_all_frame_urls(child))
+        return urls
+
+    def _get_oopif_targets(self, targets: dict, frame_tree: dict) -> list[dict]:
+        """Identify OOPIF targets that aren't in the main frame tree."""
+        frame_urls = set(self._get_all_frame_urls(frame_tree["frameTree"]))
+        oopif_targets = []
+
+        for target in targets.get("targetInfos", []):
+            if target.get("type") == "iframe":
+                url = target.get("url", "")
+                # If this iframe URL isn't in the same-origin frame tree, it's an OOPIF
+                if url and url not in frame_urls:
+                    oopif_targets.append(target)
+                    logger.debug(f"Detected OOPIF target: {url[:60]}")
+
+        return oopif_targets
+
+    def _get_cross_origin_frame_nodes(self, oopif_target: dict) -> list[dict]:
+        """Get accessibility nodes from a cross-origin iframe using JavaScript query fallback."""
+        url = oopif_target.get("url", "")
+
+        # Find the iframe element that contains this URL
+        iframe_element = self._find_iframe_by_url(url)
+        if not iframe_element:
+            logger.debug(f"Could not find iframe element for URL: {url[:60]}")
+            return []
+
+        # Get the backendNodeId of the iframe element for frame chain tracking
+        iframe_backend_node_id = self._get_element_backend_node_id(iframe_element)
+
+        # Switch into the cross-origin iframe
+        self.driver.switch_to.frame(iframe_element)
+
+        try:
+            # Query interactive elements using JavaScript
+            nodes = self._query_frame_interactive_elements(iframe_backend_node_id)
+            return nodes
+        finally:
+            # Always switch back to default content
+            self.driver.switch_to.default_content()
+
+    def _find_iframe_by_url(self, url: str) -> WebElement | None:
+        """Find an iframe element by its src URL."""
+        try:
+            iframes = self.driver.find_elements(By.TAG_NAME, "iframe")
+            for iframe in iframes:
+                src = iframe.get_attribute("src")
+                if src == url:
+                    return iframe
+            return None
+        except Exception:
+            return None
+
+    def _get_element_backend_node_id(self, element: WebElement) -> int | None:
+        """Get the backendNodeId for a WebElement using CDP."""
+        try:
+            # Set temporary attribute to identify element
+            unique_id = f"alumnium-temp-{id(element)}"
+            self.driver.execute_script(
+                "arguments[0].setAttribute('data-alumnium-temp', arguments[1])",
+                element,
+                unique_id,
+            )
+
+            # Use CDP to find the node
+            self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
+            doc = self.driver.execute_cdp_cmd("DOM.getDocument", {})  # type: ignore[attr-defined]
+            result = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "DOM.querySelector",
+                {
+                    "nodeId": doc["root"]["nodeId"],
+                    "selector": f"[data-alumnium-temp='{unique_id}']",
+                },
+            )
+
+            if result.get("nodeId"):
+                node = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                    "DOM.describeNode",
+                    {"nodeId": result["nodeId"]},
+                )
+                backend_node_id = node.get("node", {}).get("backendNodeId")
+
+                # Clean up
+                self.driver.execute_script("arguments[0].removeAttribute('data-alumnium-temp')", element)
+
+                return backend_node_id
+        except Exception as e:
+            logger.debug(f"Could not get backendNodeId: {e}")
+        return None
+
+    def _query_frame_interactive_elements(self, iframe_backend_node_id: int | None) -> list[dict]:
+        """Query interactive elements in the current frame using JavaScript."""
+        # JavaScript to find interactive elements
+        js_query = """
+        return Array.from(document.querySelectorAll(
+            'button, a, [role="button"], [role="link"], input[type="submit"], ' +
+            '[aria-label], input:not([type="hidden"]), select, textarea'
+        )).slice(0, 100).map((el, index) => {
+            const rect = el.getBoundingClientRect();
+            return {
+                tagName: el.tagName.toLowerCase(),
+                role: el.getAttribute('role') || el.tagName.toLowerCase(),
+                name: el.getAttribute('aria-label') || el.textContent?.trim()?.slice(0, 100) || '',
+                type: el.getAttribute('type') || '',
+                id: el.id,
+                className: el.className,
+                index: index,
+                visible: rect.width > 0 && rect.height > 0
+            };
+        }).filter(el => el.visible && el.name);
+        """
+
+        elements = self.driver.execute_script(js_query)
+        nodes = []
+        node_id = -1  # Use negative IDs for synthetic nodes
+
+        for el in elements:
+            role = self._map_tag_to_role(el.get("tagName", ""), el.get("role", ""))
+            selector = self._build_element_selector(el)
+
+            synthetic_node = {
+                "nodeId": str(node_id),
+                "role": {"value": role},
+                "name": {"value": el.get("name", "")},
+                "_playwright_node": True,  # Mark as synthetic (reuse existing flag)
+                "_locator_info": {
+                    "selector": selector,
+                    "nth": el.get("index", 0),
+                },
+            }
+
+            # Track which iframe this is in
+            if iframe_backend_node_id:
+                synthetic_node["_frame_chain"] = [iframe_backend_node_id]
+
+            nodes.append(synthetic_node)
+            node_id -= 1
+
+        return nodes
+
+    def _map_tag_to_role(self, tag: str, role: str) -> str:
+        """Map HTML tag/role to accessibility role."""
+        if role and role not in ("", tag):
+            return role
+        tag_role_map = {
+            "a": "link",
+            "button": "button",
+            "input": "textbox",
+            "select": "combobox",
+            "textarea": "textbox",
+        }
+        return tag_role_map.get(tag, tag)
+
+    def _build_element_selector(self, el: dict) -> str:
+        """Build a CSS selector for an element."""
+        tag = el.get("tagName", "")
+        el_id = el.get("id", "")
+        el_type = el.get("type", "")
+
+        if el_id:
+            return f"#{el_id}"
+        if tag == "input" and el_type:
+            return f"input[type='{el_type}']"
+        return tag
 
     @staticmethod
     def _autoswitch_to_new_tab(func: Callable) -> Callable:  # type: ignore[reportSelfClsParameterName]
@@ -241,6 +430,11 @@ class SeleniumDriver(BaseDriver):
 
     def find_element(self, id: int) -> WebElement:
         accessibility_element = self.accessibility_tree.element_by_id(id)
+
+        # Handle synthetic nodes (cross-origin iframe elements)
+        if accessibility_element.locator_info:
+            return self._find_element_by_locator_info(accessibility_element)
+
         backend_node_id = accessibility_element.backend_node_id
         frame_chain = accessibility_element.frame_chain
 
@@ -277,6 +471,24 @@ class SeleniumDriver(BaseDriver):
 
         return element
 
+    def _find_element_by_locator_info(self, accessibility_element) -> WebElement:
+        """Find element using locator info for cross-origin iframe elements."""
+        locator_info = accessibility_element.locator_info
+        frame_chain = accessibility_element.frame_chain
+
+        # Switch to the appropriate frame
+        if frame_chain:
+            self._switch_to_frame_chain(frame_chain)
+
+        selector = locator_info.get("selector", "")
+        nth = locator_info.get("nth", 0)
+
+        elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
+        if nth < len(elements):
+            return elements[nth]
+
+        raise ValueError(f"Could not find element with selector {selector} (nth={nth})")
+
     def _switch_to_frame_chain(self, frame_chain: list[int]):
         """Switch through a chain of nested iframes."""
         # First switch to default content to ensure we're at the top level
@@ -303,7 +515,9 @@ class SeleniumDriver(BaseDriver):
                 "value": str(iframe_backend_node_id),
             },
         )
-        iframe_element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-iframe-id='{iframe_backend_node_id}']")
+        iframe_element = self.driver.find_element(
+            By.CSS_SELECTOR, f"[data-alumnium-iframe-id='{iframe_backend_node_id}']"
+        )
         self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
             "DOM.removeAttribute",
             {
@@ -326,6 +540,21 @@ class SeleniumDriver(BaseDriver):
                 return self.execute("executeCdpCommand", {"cmd": cmd, "params": cmd_args})["value"]
 
             driver.execute_cdp_cmd = execute_cdp_cmd.__get__(driver)  # type: ignore[attr-defined]
+
+    def _enable_target_auto_attach(self):
+        """Enable auto-attach to OOPIF targets for cross-origin iframe support."""
+        try:
+            self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "Target.setAutoAttach",
+                {
+                    "autoAttach": True,
+                    "waitForDebuggerOnStart": False,
+                    "flatten": True,
+                },
+            )
+            logger.debug("Enabled Target.setAutoAttach for OOPIF support")
+        except Exception as e:
+            logger.debug(f"Could not enable Target.setAutoAttach: {e}")
 
     @retry(JavascriptException, tries=2, delay=0.1, backoff=2)  # type: ignore[reportArgumentType]
     def _wait_for_page_to_load(self):
