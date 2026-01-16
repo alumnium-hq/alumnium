@@ -243,6 +243,15 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     return result;
   }
 
+  private unescapeXml(value: string): string {
+    return value
+      .replace(/&apos;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&gt;/g, ">")
+      .replace(/&lt;/g, "<")
+      .replace(/&amp;/g, "&");
+  }
+
   elementById(rawId: number): AccessibilityElement {
     const rawXml = this.toStr();
     const element = this.findElementByRawId(rawXml, rawId);
@@ -394,6 +403,11 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
         attrRegex.lastIndex = 0;
         while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
           attributes[attrMatch[1]] = attrMatch[2];
+        }
+
+        // Unescape XML entities in attribute values
+        for (const key of Object.keys(attributes)) {
+          attributes[key] = this.unescapeXml(attributes[key]);
         }
 
         const elem: XMLElement = {
