@@ -199,11 +199,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     const backendNodeId = node.backendDOMNodeId;
     if (backendNodeId !== undefined && iframeChildren.has(backendNodeId)) {
       for (const childRoot of iframeChildren.get(backendNodeId)!) {
-        const childElem = this.nodeToXml(
-          childRoot,
-          nodeLookup,
-          iframeChildren
-        );
+        const childElem = this.nodeToXml(childRoot, nodeLookup, iframeChildren);
         elem.children.push(childElem);
       }
     }

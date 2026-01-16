@@ -67,7 +67,9 @@ class PlaywrightAsyncDriver(BaseDriver):
         frame_to_iframe_map: dict[str, int] = {}
         # Build mapping: frameId -> parent frameId (for nested frames)
         frame_parent_map: dict[str, str] = {}
-        await self._build_frame_hierarchy(frame_tree["frameTree"], main_frame_id, frame_to_iframe_map, frame_parent_map)
+        await self._build_frame_hierarchy(
+            frame_tree["frameTree"], main_frame_id, frame_to_iframe_map, frame_parent_map
+        )
 
         # Build mapping: frameId -> Playwright Frame object (for element finding)
         frame_id_to_playwright_frame: dict[str, Frame] = {}
@@ -572,6 +574,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     def _find_cdp_frame_id_by_url(self, cdp_frame_tree: dict, target_url: str) -> str | None:
         """Find CDP frameId by matching URL in CDP frame tree."""
+
         def search_frame(frame_info: dict) -> str | None:
             frame = frame_info["frame"]
             if frame["url"] == target_url:

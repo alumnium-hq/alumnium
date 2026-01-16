@@ -62,9 +62,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         self._raw = xml_string
         return self._raw
 
-    def _node_to_xml(
-        self, node: dict, node_lookup: dict, iframe_children: dict[int, list[dict]]
-    ) -> Element:
+    def _node_to_xml(self, node: dict, node_lookup: dict, iframe_children: dict[int, list[dict]]) -> Element:
         """Convert a CDP node to XML element, recursively processing children."""
         # Create element with role as tag
         role = node.get("role", {}).get("value", "unknown")
@@ -96,6 +94,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         if "_locator_info" in node:
             # Store as JSON-like string for later parsing
             import json
+
             elem.set("_locator_info", json.dumps(node["_locator_info"]))
         if "_frame_url" in node:
             elem.set("_frame_url", node["_frame_url"])
@@ -176,6 +175,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
 
             # Regular Playwright node with locator info
             import json
+
             locator_info_str = element.get("_locator_info")
             locator_info = json.loads(locator_info_str) if locator_info_str else {}
 

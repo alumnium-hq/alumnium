@@ -119,7 +119,10 @@ export class SeleniumDriver extends BaseDriver {
     await this.waitForPageToLoad();
 
     // Get frame tree to enumerate all frames
-    const frameTree = (await this.executeCdpCommand("Page.getFrameTree", {})) as {
+    const frameTree = (await this.executeCdpCommand(
+      "Page.getFrameTree",
+      {}
+    )) as {
       frameTree: CDPFrameInfo;
     };
     const frameIds = this.getAllFrameIds(frameTree.frameTree);
@@ -146,7 +149,9 @@ export class SeleniumDriver extends BaseDriver {
           { frameId }
         )) as { nodes: CDPNode[] };
         const nodes = response.nodes || [];
-        logger.debug(`  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`);
+        logger.debug(
+          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`
+        );
         // Tag ALL nodes from child frames with their frame chain (list of iframe backendNodeIds)
         // This allows us to switch through nested frames when finding elements
         const frameChain = this.getFrameChain(
@@ -400,7 +405,9 @@ export class SeleniumDriver extends BaseDriver {
     }
   }
 
-  private async switchToSingleFrame(iframeBackendNodeId: number): Promise<void> {
+  private async switchToSingleFrame(
+    iframeBackendNodeId: number
+  ): Promise<void> {
     // Use CDP to find and switch to the iframe
     await this.executeCdpCommand("DOM.enable", {});
     await this.executeCdpCommand("DOM.getFlattenedDocument", {});
@@ -430,7 +437,9 @@ export class SeleniumDriver extends BaseDriver {
     });
 
     await this.driver.switchTo().frame(iframeElement);
-    logger.debug(`Switched to iframe with backendNodeId=${iframeBackendNodeId}`);
+    logger.debug(
+      `Switched to iframe with backendNodeId=${iframeBackendNodeId}`
+    );
   }
 
   async executeScript(script: string): Promise<void> {

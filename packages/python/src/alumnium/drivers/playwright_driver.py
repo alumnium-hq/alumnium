@@ -521,6 +521,7 @@ class PlaywrightDriver(BaseDriver):
 
     def _find_cdp_frame_id_by_url(self, cdp_frame_tree: dict, target_url: str) -> str | None:
         """Find CDP frameId by matching URL in CDP frame tree."""
+
         def search_frame(frame_info: dict) -> str | None:
             frame = frame_info["frame"]
             if frame["url"] == target_url:

@@ -108,7 +108,9 @@ export class PlaywrightDriver extends BaseDriver {
     await this.waitForPageToLoad();
 
     // Get frame tree to enumerate all frames (same approach as Selenium)
-    const frameTree = (await this.client.send("Page.getFrameTree")) as CDPFrameTree;
+    const frameTree = (await this.client.send(
+      "Page.getFrameTree"
+    )) as CDPFrameTree;
     const frameIds = this.getAllFrameIds(frameTree.frameTree);
     const mainFrameId = frameTree.frameTree.frame.id;
     logger.debug(`Found ${frameIds.length} frames`);
@@ -149,16 +151,26 @@ export class PlaywrightDriver extends BaseDriver {
     const allNodes: CDPNode[] = [];
     for (const frameId of frameIds) {
       try {
-        const response = (await this.client.send("Accessibility.getFullAXTree", {
-          frameId,
-        })) as { nodes: CDPNode[] };
+        const response = (await this.client.send(
+          "Accessibility.getFullAXTree",
+          {
+            frameId,
+          }
+        )) as { nodes: CDPNode[] };
         const nodes = response.nodes || [];
-        logger.debug(`  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`);
+        logger.debug(
+          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`
+        );
 
         // Calculate frame chain for this frame
-        const frameChain = this.getFrameChain(frameId, frameToIframeMap, frameParentMap);
+        const frameChain = this.getFrameChain(
+          frameId,
+          frameToIframeMap,
+          frameParentMap
+        );
         // Get Playwright frame reference
-        const playwrightFrame = frameIdToPlaywrightFrame.get(frameId) || this.page.mainFrame();
+        const playwrightFrame =
+          frameIdToPlaywrightFrame.get(frameId) || this.page.mainFrame();
 
         // Tag ALL nodes from child frames with their frame chain
         for (const node of nodes) {
@@ -201,10 +213,16 @@ export class PlaywrightDriver extends BaseDriver {
     for (const frame of this.page.frames()) {
       const frameUrl = frame.url();
       if (!cdpFrameUrls.has(frameUrl) && !oopifUrls.has(frameUrl)) {
-        logger.debug(`Processing Playwright-only frame: ${frameUrl.slice(0, 60)}`);
+        logger.debug(
+          `Processing Playwright-only frame: ${frameUrl.slice(0, 60)}`
+        );
         try {
-          const iframeBackendNodeId = await this.getIframeBackendNodeIdByUrl(frameUrl);
-          const nodes = await this.queryFrameInteractiveElements(frame, iframeBackendNodeId);
+          const iframeBackendNodeId =
+            await this.getIframeBackendNodeIdByUrl(frameUrl);
+          const nodes = await this.queryFrameInteractiveElements(
+            frame,
+            iframeBackendNodeId
+          );
           allNodes.push(...nodes);
           logger.debug(
             `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: ${nodes.length} nodes`
@@ -517,14 +535,16 @@ export class PlaywrightDriver extends BaseDriver {
     return oopifTargets;
   }
 
-  private async getCrossOriginFrameNodes(
-    oopifTarget: { url?: string }
-  ): Promise<CDPNode[]> {
+  private async getCrossOriginFrameNodes(oopifTarget: {
+    url?: string;
+  }): Promise<CDPNode[]> {
     const url = oopifTarget.url || "";
 
     const frame = this.findPlaywrightFrameByUrl(url);
     if (!frame) {
-      logger.debug(`Could not find Playwright frame for URL: ${url.slice(0, 60)}`);
+      logger.debug(
+        `Could not find Playwright frame for URL: ${url.slice(0, 60)}`
+      );
       return [];
     }
 
@@ -549,7 +569,9 @@ export class PlaywrightDriver extends BaseDriver {
     return null;
   }
 
-  private async getIframeBackendNodeIdByUrl(url: string): Promise<number | null> {
+  private async getIframeBackendNodeIdByUrl(
+    url: string
+  ): Promise<number | null> {
     try {
       await this.client.send("DOM.enable");
       const doc = await this.client.send("DOM.getDocument");
