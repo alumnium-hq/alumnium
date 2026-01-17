@@ -4,6 +4,7 @@ from os import getenv
 
 class Provider(Enum):
     AZURE_OPENAI = "azure_openai"
+    AZURE_FOUNDRY = "azure_foundry"
     ANTHROPIC = "anthropic"
     AWS_ANTHROPIC = "aws_anthropic"
     AWS_META = "aws_meta"
@@ -19,6 +20,7 @@ class Provider(Enum):
 class Name:
     DEFAULT = {
         Provider.AZURE_OPENAI: "gpt-4o-mini",  # 2024-07-18
+        Provider.AZURE_FOUNDRY: "gpt-4o-mini",
         Provider.ANTHROPIC: "claude-haiku-4-5-20251001",
         Provider.AWS_ANTHROPIC: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
         Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
@@ -41,6 +43,7 @@ class Model:
 
 
 provider, *name = getenv("ALUMNIUM_MODEL", "").lower().split("/", maxsplit=1)
+
 name = name[0] if name else None
 if not provider and getenv("GITHUB_ACTIONS"):
     provider = "github"

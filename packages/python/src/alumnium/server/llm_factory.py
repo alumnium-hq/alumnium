@@ -31,6 +31,18 @@ class LLMFactory:
                 temperature=0,
                 seed=1,
             )
+        elif model.provider == Provider.AZURE_FOUNDRY:
+            azure_foundry_endpoint = getenv("AZURE_FOUNDRY_ENDPOINT")
+            azure_foundry_api_key = getenv("AZURE_FOUNDRY_API_KEY")
+            azure_foundry_deployment_name = getenv("AZURE_FOUNDRY_DEPLOYMENT_NAME", model.name)
+            azure_foundry_api_version = getenv("AZURE_FOUNDRY_API_VERSION")
+            llm = AzureChatOpenAI(
+                azure_endpoint=azure_foundry_endpoint,
+                api_key=azure_foundry_api_key,
+                azure_deployment=azure_foundry_deployment_name,
+                api_version=azure_foundry_api_version,
+                temperature=0,
+            )
         elif model.provider == Provider.ANTHROPIC:
             llm = ChatAnthropic(model=model.name, temperature=0)
         elif model.provider == Provider.AWS_ANTHROPIC or model.provider == Provider.AWS_META:
