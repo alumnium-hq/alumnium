@@ -149,7 +149,7 @@ class AccessibilityTreeDiff:
                 self._add_replace_operations(root, change)
 
         if len(root) == 0:
-            return "<diff xmlns=\"urn:ietf:params:xml:ns:pidf-diff\" />"
+            return '<diff xmlns="urn:ietf:params:xml:ns:pidf-diff" />'
 
         indent(root)
         return tostring(root, encoding="unicode")

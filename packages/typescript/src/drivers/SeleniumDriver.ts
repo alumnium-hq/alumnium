@@ -23,6 +23,22 @@ import { getLogger } from "../utils/logger.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
+interface CDPNode {
+  nodeId: string;
+  parentId?: string;
+  _parent_iframe_backend_node_id?: number;
+  _frame_chain?: number[];
+  [key: string]: unknown;
+}
+
+interface CDPFrameInfo {
+  frame: {
+    id: string;
+    url: string;
+  };
+  childFrames?: CDPFrameInfo[];
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -98,13 +114,139 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+    // Switch to default content to ensure we're at the top level for frame enumeration
+    await this.driver.switchTo().defaultContent();
     await this.waitForPageToLoad();
 
-    const rawData = await this.executeCdpCommand(
-      "Accessibility.getFullAXTree",
+    // Get frame tree to enumerate all frames
+    const frameTree = (await this.executeCdpCommand(
+      "Page.getFrameTree",
       {}
+    )) as {
+      frameTree: CDPFrameInfo;
+    };
+    const frameIds = this.getAllFrameIds(frameTree.frameTree);
+    const mainFrameId = frameTree.frameTree.frame.id;
+    logger.debug(`Found ${frameIds.length} frames`);
+
+    // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
+    const frameToIframeMap: Map<string, number> = new Map();
+    // Build mapping: frameId -> parent frameId (for nested frames)
+    const frameParentMap: Map<string, string> = new Map();
+    await this.buildFrameHierarchy(
+      frameTree.frameTree,
+      mainFrameId,
+      frameToIframeMap,
+      frameParentMap
     );
-    return new ChromiumAccessibilityTree(rawData);
+
+    // Aggregate accessibility nodes from all frames
+    const allNodes: CDPNode[] = [];
+    for (const frameId of frameIds) {
+      try {
+        const response = (await this.executeCdpCommand(
+          "Accessibility.getFullAXTree",
+          { frameId }
+        )) as { nodes: CDPNode[] };
+        const nodes = response.nodes || [];
+        logger.debug(
+          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`
+        );
+        // Tag ALL nodes from child frames with their frame chain (list of iframe backendNodeIds)
+        // This allows us to switch through nested frames when finding elements
+        const frameChain = this.getFrameChain(
+          frameId,
+          frameToIframeMap,
+          frameParentMap
+        );
+        for (const node of nodes) {
+          if (frameChain.length > 0) {
+            node._frame_chain = frameChain;
+          }
+        }
+        allNodes.push(...nodes);
+      } catch (error) {
+        logger.debug(
+          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`
+        );
+      }
+    }
+
+    return new ChromiumAccessibilityTree({ nodes: allNodes });
+  }
+
+  private async buildFrameHierarchy(
+    frameInfo: CDPFrameInfo,
+    mainFrameId: string,
+    frameToIframeMap: Map<string, number>,
+    frameParentMap: Map<string, string>,
+    parentFrameId?: string
+  ): Promise<void> {
+    const frameId = frameInfo.frame.id;
+
+    if (frameId !== mainFrameId) {
+      // Get the iframe element that owns this frame
+      await this.executeCdpCommand("DOM.enable", {});
+      try {
+        const ownerInfo = (await this.executeCdpCommand("DOM.getFrameOwner", {
+          frameId,
+        })) as { backendNodeId: number };
+        frameToIframeMap.set(frameId, ownerInfo.backendNodeId);
+        logger.debug(
+          `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`
+        );
+      } catch (error) {
+        logger.debug(
+          `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+
+      // Track parent frame
+      if (parentFrameId) {
+        frameParentMap.set(frameId, parentFrameId);
+      }
+    }
+
+    // Process children
+    for (const child of frameInfo.childFrames || []) {
+      await this.buildFrameHierarchy(
+        child,
+        mainFrameId,
+        frameToIframeMap,
+        frameParentMap,
+        frameId
+      );
+    }
+  }
+
+  private getFrameChain(
+    frameId: string,
+    frameToIframeMap: Map<string, number>,
+    frameParentMap: Map<string, string>
+  ): number[] {
+    const chain: number[] = [];
+    let currentFrameId = frameId;
+
+    while (frameToIframeMap.has(currentFrameId)) {
+      const iframeBackendNodeId = frameToIframeMap.get(currentFrameId)!;
+      chain.unshift(iframeBackendNodeId); // Insert at beginning to build from root
+      // Move to parent frame
+      if (frameParentMap.has(currentFrameId)) {
+        currentFrameId = frameParentMap.get(currentFrameId)!;
+      } else {
+        break;
+      }
+    }
+
+    return chain;
+  }
+
+  private getAllFrameIds(frameInfo: CDPFrameInfo): string[] {
+    const frameIds: string[] = [frameInfo.frame.id];
+    for (const child of frameInfo.childFrames || []) {
+      frameIds.push(...this.getAllFrameIds(child));
+    }
+    return frameIds;
   }
 
   @autoswitchToNewTab
@@ -210,6 +352,12 @@ export class SeleniumDriver extends BaseDriver {
     const tree = await this.getAccessibilityTree();
     const accessibilityElement = tree.elementById(id);
     const backendNodeId = accessibilityElement.backendNodeId!;
+    const frameChain = accessibilityElement.frameChain;
+
+    // Switch through the frame chain if element is inside nested iframes
+    if (frameChain && frameChain.length > 0) {
+      await this.switchToFrameChain(frameChain);
+    }
 
     // Use CDP to find element by backend node ID
     await this.executeCdpCommand("DOM.enable", {});
@@ -225,7 +373,6 @@ export class SeleniumDriver extends BaseDriver {
     const nodeId = nodeIds[0];
 
     // Set temporary attribute to locate element
-
     await this.executeCdpCommand("DOM.setAttributeValue", {
       nodeId,
       name: "data-alumnium-id",
@@ -237,13 +384,62 @@ export class SeleniumDriver extends BaseDriver {
     );
 
     // Remove temporary attribute
-
     await this.executeCdpCommand("DOM.removeAttribute", {
       nodeId,
       name: "data-alumnium-id",
     });
 
+    // Note: We don't switch back to default content here because the element
+    // needs to remain in its frame context for subsequent operations (click, type, etc.)
+
     return element;
+  }
+
+  private async switchToFrameChain(frameChain: number[]): Promise<void> {
+    // First switch to default content to ensure we're at the top level
+    await this.driver.switchTo().defaultContent();
+
+    // Switch through each iframe in the chain
+    for (const iframeBackendNodeId of frameChain) {
+      await this.switchToSingleFrame(iframeBackendNodeId);
+    }
+  }
+
+  private async switchToSingleFrame(
+    iframeBackendNodeId: number
+  ): Promise<void> {
+    // Use CDP to find and switch to the iframe
+    await this.executeCdpCommand("DOM.enable", {});
+    await this.executeCdpCommand("DOM.getFlattenedDocument", {});
+
+    const { nodeIds } = (await this.executeCdpCommand(
+      "DOM.pushNodesByBackendIdsToFrontend",
+      {
+        backendNodeIds: [iframeBackendNodeId],
+      }
+    )) as { nodeIds: number[] };
+
+    const nodeId = nodeIds[0];
+
+    await this.executeCdpCommand("DOM.setAttributeValue", {
+      nodeId,
+      name: "data-alumnium-iframe-id",
+      value: String(iframeBackendNodeId),
+    });
+
+    const iframeElement = await this.driver.findElement(
+      By.css(`[data-alumnium-iframe-id='${iframeBackendNodeId}']`)
+    );
+
+    await this.executeCdpCommand("DOM.removeAttribute", {
+      nodeId,
+      name: "data-alumnium-iframe-id",
+    });
+
+    await this.driver.switchTo().frame(iframeElement);
+    logger.debug(
+      `Switched to iframe with backendNodeId=${iframeBackendNodeId}`
+    );
   }
 
   async executeScript(script: string): Promise<void> {
