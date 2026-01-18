@@ -102,7 +102,7 @@ export class HttpClient {
   async planActions(
     goal: string,
     accessibilityTree: string
-  ): Promise<string[]> {
+  ): Promise<{ explanation: string; steps: string[] }> {
     await this.ensureSession();
     const requestBody: PlanRequest = {
       goal,
@@ -120,7 +120,7 @@ export class HttpClient {
     );
 
     const responseData = (await response.json()) as PlanResponse;
-    return responseData.steps;
+    return { explanation: responseData.explanation, steps: responseData.steps };
   }
 
   async addExample(goal: string, actions: string[]): Promise<void> {

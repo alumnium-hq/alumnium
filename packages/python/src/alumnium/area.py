@@ -7,6 +7,7 @@ from .clients.native_client import NativeClient
 from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.base_driver import BaseDriver
+from .result import DoResult, DoStep
 from .server.logutils import get_logger
 from .tools import BaseTool
 
@@ -31,20 +32,30 @@ class Area:
         self.client = client
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
-    def do(self, goal: str):
+    def do(self, goal: str) -> DoResult:
         """
         Executes a series of steps to achieve the given goal within the area.
 
         Args:
             goal: The goal to be achieved.
+
+        Returns:
+            DoResult containing the explanation and executed steps with their actions.
         """
-        steps = self.client.plan_actions(goal, self.accessibility_tree.to_str())
+        explanation, steps = self.client.plan_actions(goal, self.accessibility_tree.to_str())
+
+        executed_steps = []
         for step in steps:
             actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_str())
 
-            # Execute tool calls
+            called_tools = []
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tool = BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tools.append(called_tool)
+
+            executed_steps.append(DoStep(name=step, tools=called_tools))
+
+        return DoResult(explanation=explanation, steps=executed_steps)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
     def check(self, statement: str, vision: bool = False) -> str:
@@ -81,16 +92,16 @@ class Area:
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
 
         Returns:
-            Data: The extracted data loosely typed to int, float, str, or list of them.
+            The extracted data. If data cannot be extracted, returns the explanation string.
         """
-        _, value = self.client.retrieve(
+        explanation, value = self.client.retrieve(
             data,
             self.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         )
-        return value
+        return explanation if value is None else value
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
     def find(self, description: str) -> Element:

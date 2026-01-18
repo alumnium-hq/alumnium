@@ -8,6 +8,18 @@ logger = get_logger(__name__)
 
 
 class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
+    SKIPPED_PROPERTIES = {
+        "backendDOMNodeId",
+        "ignored",
+        "name",
+        "nodeId",
+        "raw_id",
+        # We skip 'expanded' because it often leads
+        # to LLM decided to first click comboboxes to expand them,
+        # which is automatically handled by the SelectTool.
+        "expanded",
+    }
+
     def __init__(self, raw_xml: str):
         super().__init__()
         self.tree = {}  # Initialize the result dictionary
@@ -51,7 +63,7 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
         # Add properties from other attributes
         properties = []
         for attr_name, attr_value in elem.attrib.items():
-            if attr_name not in ["backendDOMNodeId", "nodeId", "ignored", "name", "raw_id"]:
+            if attr_name not in self.SKIPPED_PROPERTIES:
                 properties.append({"name": attr_name, "value": {"value": attr_value}})
 
         if properties:
@@ -92,11 +104,6 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
             elif role_value == "generic" and not children:
                 return None
             else:
-                # Accessibility tree always represents file input as a button.
-                # This needs to be improved to handle file inputs with custom labels.
-                if role_value == "button" and name_value == "Choose File":
-                    role_value = "textbox"
-
                 # Create the XML element for the node
                 xml_element = Element(role_value)
 
@@ -124,8 +131,9 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
         root_elements = []
         for root_id in self.tree:
             element = convert_node_to_xml(self.tree[root_id])
-            root_elements.append(element)
-            self._prune_redundant_name(element)
+            if element is not None:
+                root_elements.append(element)
+                self._prune_redundant_name(element)
 
         # Convert the XML elements to a string
         xml_string = ""

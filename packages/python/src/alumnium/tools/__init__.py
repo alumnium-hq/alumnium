@@ -9,3 +9,19 @@ from .press_key_tool import PressKeyTool
 from .scroll_tool import ScrollTool
 from .select_tool import SelectTool
 from .type_tool import TypeTool
+from .upload_tool import UploadTool
+
+__all__ = [
+    "BaseTool",
+    "ClickTool",
+    "DragAndDropTool",
+    "ExecuteJavascriptTool",
+    "HoverTool",
+    "NavigateBackTool",
+    "NavigateToUrlTool",
+    "PressKeyTool",
+    "ScrollTool",
+    "SelectTool",
+    "TypeTool",
+    "UploadTool",
+]

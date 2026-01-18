@@ -1,6 +1,7 @@
 from asyncio import AbstractEventLoop
 
 from appium.webdriver.webdriver import WebDriver as Appium
+from langchain_core.language_models import BaseChatModel
 from playwright.async_api import Page as PageAsync
 from playwright.sync_api import Page
 from retry import retry
@@ -14,9 +15,10 @@ from .clients.native_client import NativeClient
 from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.appium_driver import AppiumDriver
+from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
-from .drivers.playwright_driver_async import PlaywrightDriverAsync
 from .drivers.selenium_driver import SeleniumDriver
+from .result import DoResult, DoStep
 from .server.logutils import get_logger
 from .server.models import Model
 from .tools import BaseTool
@@ -29,10 +31,12 @@ class Alumni:
         self,
         driver: Page | WebDriver | tuple[PageAsync, AbstractEventLoop],
         model: Model | None = None,
+        llm: BaseChatModel | None = None,
         extra_tools: list[type[BaseTool]] | None = None,
         url: str | None = None,
     ):
         self.model = model or Model.current
+        self.llm = llm
 
         if isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
@@ -42,7 +46,7 @@ class Alumni:
             isinstance(driver, tuple) and isinstance(driver[0], PageAsync) and isinstance(driver[1], AbstractEventLoop)
         ):
             # Asynchronous Playwright driver requires a shared event loop
-            self.driver = PlaywrightDriverAsync(driver[0], driver[1])
+            self.driver = PlaywrightAsyncDriver(driver[0], driver[1])
         elif isinstance(driver, WebDriver):
             self.driver = SeleniumDriver(driver)
         else:
@@ -59,7 +63,7 @@ class Alumni:
             self.client = HttpClient(url, self.model, self.driver.platform, self.tools)
         else:
             logger.info("Using native client")
-            self.client = NativeClient(self.model, self.driver.platform, self.tools)
+            self.client = NativeClient(self.model, self.driver.platform, self.tools, llm=self.llm)
 
         self.cache = Cache(self.client)
 
@@ -68,23 +72,33 @@ class Alumni:
         self.driver.quit()
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def do(self, goal: str):
+    def do(self, goal: str) -> DoResult:
         """
         Executes a series of steps to achieve the given goal.
 
         Args:
             goal: The goal to be achieved.
+
+        Returns:
+            DoResult containing the explanation and executed steps with their actions.
         """
         initial_accessibility_tree = self.driver.accessibility_tree
-        steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str())
+        explanation, steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str())
+
+        executed_steps = []
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
             actor_response = self.client.execute_action(goal, step, accessibility_tree.to_str())
 
-            # Execute tool calls
+            called_tools = []
             for tool_call in actor_response:
-                BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tool = BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
+                called_tools.append(called_tool)
+
+            executed_steps.append(DoStep(name=step, tools=called_tools))
+
+        return DoResult(explanation=explanation, steps=executed_steps)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def check(self, statement: str, vision: bool = False) -> str:
@@ -121,16 +135,16 @@ class Alumni:
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
 
         Returns:
-            Data: The extracted data loosely typed to int, float, str, or list of them.
+            The extracted data. If data cannot be extracted, returns the explanation string.
         """
-        _, value = self.client.retrieve(
+        explanation, value = self.client.retrieve(
             data,
             self.driver.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
         )
-        return value
+        return explanation if value is None else value
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def find(self, description: str) -> Element:

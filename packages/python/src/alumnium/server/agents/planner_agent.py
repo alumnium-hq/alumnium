@@ -5,6 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptT
 from pydantic import BaseModel, Field
 
 from ...tools.navigate_to_url_tool import NavigateToUrlTool
+from ...tools.upload_tool import UploadTool
 from ..logutils import get_logger
 from ..models import Model, Provider
 from .base_agent import BaseAgent
@@ -35,6 +36,21 @@ Output:
 Explanation: In order to open URL, I am going to directly navigate to the requested URL.
 Actions: ['navigate to "http://foo.bar/baz/123" URL']
 """.strip()
+
+    UPLOAD_EXAMPLE = """
+Example:
+Input:
+Given the following XML accessibility tree:
+```xml
+<button name="Choose File" />
+```
+Outline the actions needed to achieve the following goal: upload '/tmp/test.txt', '/tmp/image.png'
+Output:
+Explanation: In order to upload the file, I am going to use the upload action on the file input button.
+I don't need to click the button first, as the upload action will handle that.
+Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
+""".strip()
+
     LIST_SEPARATOR = "<SEP>"
     UNSTRUCTURED_OUTPUT_MODELS = [
         Provider.OLLAMA,
@@ -61,7 +77,9 @@ Actions: ['navigate to "http://foo.bar/baz/123" URL']
 
         extra_examples = ""
         if NavigateToUrlTool.__name__ in tools:
-            extra_examples = self.NAVIGATE_TO_URL_EXAMPLE
+            extra_examples += f"\n\n{self.NAVIGATE_TO_URL_EXAMPLE}"
+        if UploadTool.__name__ in tools:
+            extra_examples += f"\n\n{self.UPLOAD_EXAMPLE}"
 
         final_prompt = ChatPromptTemplate.from_messages(
             [
@@ -100,12 +118,15 @@ Actions: ['navigate to "http://foo.bar/baz/123" URL']
             }
         )
 
-    def invoke(self, goal: str, accessibility_tree_xml: str) -> list[str]:
+    def invoke(self, goal: str, accessibility_tree_xml: str) -> tuple[str, list[str]]:
         """
         Plan actions to achieve a goal.
         Args:
             goal: The goal to achieve
             accessibility_tree_xml: The accessibility tree XML (required).
+        Returns:
+            A tuple of (explanation, actions) where explanation describes the reasoning
+            and actions is the list of steps to achieve the goal.
         """
         logger.info("Starting planning:")
         logger.info(f"  -> Goal: {goal}")
@@ -121,7 +142,7 @@ Actions: ['navigate to "http://foo.bar/baz/123" URL']
             logger.info(f"  <- Result: {response}")
             logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
-            return response.actions
+            return (response.explanation, [action for action in response.actions if action])
         else:
             logger.info(f"  <- Result: {message.content}")
             logger.info(f"  <- Usage: {message.usage_metadata}")
@@ -135,4 +156,4 @@ Actions: ['navigate to "http://foo.bar/baz/123" URL']
                 if step and step.upper() != "NOOP":
                     steps.append(step)
 
-            return steps
+            return ("", steps)

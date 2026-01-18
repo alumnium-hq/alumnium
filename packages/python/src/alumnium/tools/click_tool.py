@@ -1,12 +1,17 @@
 from pydantic import Field
 
-from alumnium.drivers.base_driver import BaseDriver
-
+from ..drivers.base_driver import BaseDriver
 from .base_tool import BaseTool
+from .select_tool import SelectTool
+from .upload_tool import UploadTool
 
 
 class ClickTool(BaseTool):
-    """Click an element."""
+    __doc__ = (
+        "Click an element. "
+        f"NEVER open comboboxes with ClickTool - use {SelectTool.__name__} instead. "
+        f"NEVER use ClickTool to upload files - use {UploadTool.__name__} instead."
+    )
 
     id: int = Field(description="Element identifier (ID)")
 

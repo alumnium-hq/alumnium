@@ -8,6 +8,7 @@ from langchain_mistralai import ChatMistralAI
 from langchain_ollama import ChatOllama
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langchain_xai import ChatXAI
+from pydantic import SecretStr
 
 from .logutils import get_logger
 from .models import Model, Provider
@@ -23,47 +24,93 @@ class LLMFactory:
         """Create an LLM instance based on the model configuration."""
         logger.info(f"Creating LLM for model: {model.provider.value}/{model.name}")
 
-        if model.provider == Provider.AZURE_OPENAI:
-            azure_openai_api_version = getenv("AZURE_OPENAI_API_VERSION")
-            llm = AzureChatOpenAI(
-                model=model.name,
-                api_version=azure_openai_api_version,
-                temperature=0,
-                seed=1,
-            )
-        elif model.provider == Provider.AZURE_FOUNDRY:
+        if model.provider == Provider.AZURE_FOUNDRY:
             azure_foundry_target_uri = getenv("AZURE_FOUNDRY_TARGET_URI")
             azure_foundry_api_key = getenv("AZURE_FOUNDRY_API_KEY")
-            azure_foundry_deployment_name = getenv("AZURE_FOUNDRY_DEPLOYMENT_NAME", model.name)
             azure_foundry_api_version = getenv("AZURE_FOUNDRY_API_VERSION")
-            llm = AzureChatOpenAI(
-                azure_endpoint=azure_foundry_target_uri,
-                api_key=azure_foundry_api_key,
-                azure_deployment=azure_foundry_deployment_name,
-                api_version=azure_foundry_api_version,
-                temperature=0,
-            )
+            if "gpt-4o" in model.name:
+                llm = AzureChatOpenAI(
+                    azure_endpoint=azure_foundry_target_uri,
+                    azure_deployment=model.name,
+                    api_key=azure_foundry_api_key,
+                    api_version=azure_foundry_api_version,
+                    temperature=0,
+                )
+            else:
+                llm = AzureChatOpenAI(
+                    azure_endpoint=azure_foundry_target_uri,
+                    azure_deployment=model.name,
+                    api_key=azure_foundry_api_key,
+                    api_version=azure_foundry_api_version,
+                    temperature=0,
+                    reasoning={
+                        "effort": "low",
+                        "summary": "auto",
+                    },
+                )
+        elif model.provider == Provider.AZURE_OPENAI:
+            azure_openai_api_version = getenv("AZURE_OPENAI_API_VERSION")
+            if "gpt-4o" in model.name:
+                llm = AzureChatOpenAI(
+                    model=model.name,
+                    api_version=azure_openai_api_version,
+                    temperature=0,
+                )
+            else:
+                llm = AzureChatOpenAI(
+                    model=model.name,
+                    api_version=azure_openai_api_version,
+                    temperature=0,
+                    reasoning={
+                        "effort": "low",
+                        "summary": "auto",
+                    },
+                )
         elif model.provider == Provider.ANTHROPIC:
-            llm = ChatAnthropic(model=model.name, temperature=0)
+            llm = ChatAnthropic(
+                model_name=model.name,
+                stop=None,
+                timeout=None,
+                thinking={
+                    "type": "enabled",
+                    "budget_tokens": 1024,
+                },
+            )
         elif model.provider == Provider.AWS_ANTHROPIC or model.provider == Provider.AWS_META:
-            aws_access_key = getenv("AWS_ACCESS_KEY")
-            aws_secret_key = getenv("AWS_SECRET_KEY")
+            aws_access_key = getenv("AWS_ACCESS_KEY", "")
+            aws_secret_key = getenv("AWS_SECRET_KEY", "")
             aws_region_name = getenv("AWS_REGION_NAME", "us-east-1")
+            additional_model_request_fields = {}
+
+            if model.provider == Provider.AWS_ANTHROPIC:
+                additional_model_request_fields["thinking"] = {
+                    "type": "enabled",
+                    "budget_tokens": 1024,  # Minimum budget for Anthropic thinking
+                }
+
             llm = ChatBedrockConverse(
-                model_id=model.name,
-                temperature=0,
-                aws_access_key_id=aws_access_key,
-                aws_secret_access_key=aws_secret_key,
+                model=model.name,
+                aws_access_key_id=SecretStr(aws_access_key),
+                aws_secret_access_key=SecretStr(aws_secret_key),
                 region_name=aws_region_name,
+                additional_model_request_fields=additional_model_request_fields,
             )
         elif model.provider == Provider.DEEPSEEK:
-            llm = ChatDeepSeek(model=model.name, temperature=0)
+            llm = ChatDeepSeek(model=model.name, temperature=0, disabled_params={"tool_choice": None})
         elif model.provider == Provider.GOOGLE:
-            llm = ChatGoogleGenerativeAI(model=model.name, temperature=0)
+            if "gemini-2.0" in model.name:
+                llm = ChatGoogleGenerativeAI(model=model.name, temperature=0)
+            else:
+                llm = ChatGoogleGenerativeAI(
+                    model=model.name,
+                    temperature=0,
+                    thinking_level="low",
+                    include_thoughts=True,
+                )
         elif model.provider == Provider.GITHUB:
             llm = ChatOpenAI(model=model.name, base_url="https://models.github.ai/inference", temperature=0)
         elif model.provider == Provider.MISTRALAI:
-            llm = ChatMistralAI(model=model.name, temperature=0)
+            llm = ChatMistralAI(model_name=model.name, temperature=0)
         elif model.provider == Provider.OLLAMA:
             if not getenv("ALUMNIUM_OLLAMA_URL"):
                 llm = ChatOllama(model=model.name, temperature=0)
@@ -71,12 +118,23 @@ class LLMFactory:
                 cloud_endpoint = getenv("ALUMNIUM_OLLAMA_URL")
                 llm = ChatOllama(model=model.name, base_url=cloud_endpoint, temperature=0)
         elif model.provider == Provider.OPENAI:
-            llm = ChatOpenAI(
-                model=getenv("OPENAI_CUSTOM_MODEL", model.name),
-                base_url=getenv("OPENAI_CUSTOM_URL"),
-                seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
-                temperature=0,
-            )
+            if "gpt-4o" in model.name:
+                llm = ChatOpenAI(
+                    model=model.name,
+                    base_url=getenv("OPENAI_CUSTOM_URL"),
+                    seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
+                    temperature=0,
+                )
+            else:
+                llm = ChatOpenAI(
+                    model=getenv("OPENAI_CUSTOM_MODEL", model.name),
+                    base_url=getenv("OPENAI_CUSTOM_URL"),
+                    reasoning={
+                        "effort": "low",
+                        "summary": "auto",
+                    },
+                    temperature=0,
+                )
         elif model.provider == Provider.XAI:
             llm = ChatXAI(model=model.name, temperature=0)
         else:

@@ -17,6 +17,12 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     this.xmlString = xmlString;
   }
 
+  private static fromXml(xmlString: string): XCUITestAccessibilityTree {
+    const instance = new XCUITestAccessibilityTree("");
+    instance.raw = xmlString;
+    return instance;
+  }
+
   toStr(): string {
     if (this.raw !== null) {
       return this.raw;
@@ -75,7 +81,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     }
 
     const scopedXml = this.elementToString(element, 0);
-    return new XCUITestAccessibilityTree(scopedXml);
+    return XCUITestAccessibilityTree.fromXml(scopedXml);
   }
 
   private findElementByRawId(
@@ -131,6 +137,36 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     return result;
   }
 
+  private decodeHtmlEntities(str: string): string {
+    const htmlEntities: Record<string, string> = {
+      "&amp;": "&",
+      "&lt;": "<",
+      "&gt;": ">",
+      "&quot;": '"',
+      "&apos;": "'",
+    };
+
+    let decoded = str;
+    let previous: string;
+
+    // Keep decoding until no more entities are found (handles double-encoded entities)
+    const MAX_DECODE_ITERATIONS = 10;
+    let iterations = 0;
+    do {
+      previous = decoded;
+      decoded = decoded.replace(
+        /&(?:amp|lt|gt|quot|apos);/g,
+        (entity) => htmlEntities[entity] || entity
+      );
+      iterations++;
+      if (iterations >= MAX_DECODE_ITERATIONS) {
+        break;
+      }
+    } while (previous !== decoded);
+
+    return decoded;
+  }
+
   private parseSimpleXml(xmlString: string): XMLElement[] {
     const elements: XMLElement[] = [];
     const stack: XMLElement[] = [];
@@ -161,7 +197,8 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
         let attrMatch: RegExpExecArray | null;
         attrRegex.lastIndex = 0;
         while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
-          attributes[attrMatch[1]] = attrMatch[2];
+          // Decode HTML entities in attribute values
+          attributes[attrMatch[1]] = this.decodeHtmlEntities(attrMatch[2]);
         }
 
         const elem: XMLElement = {

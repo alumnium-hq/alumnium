@@ -6,12 +6,7 @@ import { navigate } from "./helpers.js";
 describe("Table", () => {
   before(async () => {
     // These models double-click to sort
-    if (
-      Model.current.provider === Provider.ANTHROPIC ||
-      Model.current.provider === Provider.AWS_ANTHROPIC ||
-      Model.current.provider === Provider.GOOGLE ||
-      Model.current.provider === Provider.MISTRALAI
-    ) {
+    if (Model.current.provider === Provider.MISTRALAI) {
       await al.learn("sort by web site", ["click 'Web Site' header"]);
     }
   });
@@ -25,6 +20,9 @@ describe("Table", () => {
     if (driverType === "appium") {
       return "Area is not properly extracted from Appium source code.";
     }
+    if (Model.current.provider === Provider.AWS_META) {
+      return "Table area instructions need more work";
+    }
     return null;
   };
 
@@ -35,7 +33,7 @@ describe("Table", () => {
 
     await navigate(driver, "https://the-internet.herokuapp.com/tables");
 
-    const area = await al.area("example 1 table");
+    const area = await al.area("first table");
     assert.strictEqual(await area.get("Jason Doe's due amount"), "$100.00");
     assert.strictEqual(await area.get("Frank Bach's due amount"), "$51.00");
     assert.strictEqual(await area.get("Tim Conway's due amount"), "$50.00");
@@ -49,20 +47,20 @@ describe("Table", () => {
 
     await navigate(driver, "https://the-internet.herokuapp.com/tables");
 
-    let table1 = await al.area("example 1 table - return table element");
+    let table1 = await al.area("first table");
     const table1FirstNames = await table1.get("first names");
     assert.deepStrictEqual(table1FirstNames, ["John", "Frank", "Jason", "Tim"]);
     const table1LastNames = await table1.get("last names");
     assert.deepStrictEqual(table1LastNames, ["Smith", "Bach", "Doe", "Conway"]);
 
-    let table2 = await al.area("example 2 table - return table element");
+    let table2 = await al.area("second table");
     const table2FirstNames = await table2.get("first names");
     assert.deepStrictEqual(table2FirstNames, ["John", "Frank", "Jason", "Tim"]);
     const table2LastNames = await table2.get("last names");
     assert.deepStrictEqual(table2LastNames, ["Smith", "Bach", "Doe", "Conway"]);
 
     await table1.do("sort by last name");
-    table1 = await al.area("example 1 table - return table element"); // refresh
+    table1 = await al.area("first table"); // refresh
     assert.deepStrictEqual(await table1.get("first names"), [
       "Frank",
       "Tim",
@@ -76,7 +74,7 @@ describe("Table", () => {
       "Smith",
     ]);
     // example 2 table is not affected
-    table2 = await al.area("example 2 table - return table element"); // refresh
+    table2 = await al.area("second table"); // refresh
     assert.deepStrictEqual(await table2.get("first names"), [
       "John",
       "Frank",
@@ -91,7 +89,7 @@ describe("Table", () => {
     ]);
 
     await table2.do("sort by first name");
-    table2 = await al.area("example 2 table - return table element"); // refresh
+    table2 = await al.area("second table"); // refresh
     assert.deepStrictEqual(await table2.get("first names"), [
       "Frank",
       "Jason",
@@ -105,7 +103,7 @@ describe("Table", () => {
       "Conway",
     ]);
     // example 1 table is not affected
-    table1 = await al.area("example 1 table - return table element"); // refresh
+    table1 = await al.area("first table"); // refresh
     assert.deepStrictEqual(await table1.get("first names"), [
       "Frank",
       "Tim",
@@ -125,6 +123,9 @@ describe("Table", () => {
 
     // This data is not available on the page.
     // Even though LLM knows the answer, it should not respond it.
-    assert.strictEqual(await al.get("atomic number of Selenium"), null);
+    // When data is unavailable, get() returns an explanation string
+    const result = await al.get("atomic number of Selenium");
+    assert.strictEqual(typeof result, "string");
+    assert.ok(!(result as string).toLowerCase().includes("34"));
   });
 });

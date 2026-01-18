@@ -12,30 +12,30 @@ def learn(al, execute_script, navigate):
     al.learn("add 'Laptop' to cart", ["click button 'Add to cart' next to 'Laptop' product"])
     navigate("https://bstackdemo.com")
     yield
-    execute_script("window.localStorage.clear()")
+    execute_script("window.sessionStorage.clear()")
     al.clear_learn_examples()
 
 
-@mark.xfail(
-    Model.current.provider in [Provider.ANTHROPIC, Provider.AWS_ANTHROPIC],
-    reason="Actor agent hallucinates element IDs.",
-)
 @mark.xfail(Model.current.provider == Provider.AWS_META, reason="Needs more tuning.")
 @mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Needs more tuning.")
-@mark.xfail(Model.current.provider == Provider.XAI, reason="Needs more tuning.")
 @mark.xfail(driver_type == "appium-ios", reason="https://github.com/alumnium-hq/alumnium/issues/132")
 def test_checkout(al):
     # Add products to the cart
     al.do("add 'iPhone 12 Pro Max' to cart")
     al.do("add 'iPhone 12 Mini' to cart")
-    cart = al.area("shopping bag")
+    # https://github.com/alumnium-hq/alumnium/issues/110
+    cart = al.area("shopping cart including added products")
     assert cart.get("titles of products") == ["iPhone 12 Pro Max", "iPhone 12 Mini"]
+    assert cart.get("quantity of iPhone 12 Pro Max") == 1
+    assert cart.get("quantity of iPhone 12 Mini") == 1
 
     # Start checkout and login
     al.do("go to checkout")
-    al.do("type 'demouser' into username field and press tab")
-    al.do("type 'testingisfun99' into password field and press enter")
-    al.do("click login button")  # Could be NOOP
+    al.do("type 'demouser' into username field")
+    al.do("click 'demouser' in username field suggestions")
+    al.do("type 'testingisfun99' into password field")
+    al.do("click 'testingisfun99' in password field suggestions")
+    al.do("click login button")
 
     # Proceed through checkout
     assert al.get("iPhone 12 Pro Max price (without money sign)") == 1099

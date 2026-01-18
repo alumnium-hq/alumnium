@@ -16,14 +16,20 @@ from alumnium import Alumni, Model
 from alumnium.drivers.appium_driver import AppiumDriver
 
 driver_name = getenv("ALUMNIUM_DRIVER", "selenium")
+headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 
 
 @fixture
 def driver(context):
     if driver_name == "playwright":
         with sync_playwright() as playwright:
-            context.driver = playwright.chromium.launch().new_page()
+            is_headless = headless.lower() == "true"
+            browser = playwright.chromium.launch(headless=is_headless)
+            browser_context = browser.new_context(record_video_dir="reports/videos/")
+            browser_context.tracing.start(screenshots=True, snapshots=True)
+            context.driver = browser_context.new_page()
             yield context.driver
+            browser_context.tracing.stop(path="reports/traces/behave.zip")
     elif driver_name == "selenium":
         context.driver = Chrome()
         yield context.driver
@@ -39,11 +45,7 @@ def driver(context):
 
         if lt_username and lt_access_key:
             options.platform_version = "18"
-            # curl -u "USERNAME:PASSWORD" -XPOST \
-            #   "https://manual-api.lambdatest.com/app/upload/realDevice" \
-            #   -F "appFile=@"/Users/p0deje/Downloads/TodoList/TodoList.ipa"" \
-            #   -F "name="TodoList""
-            options.app = "lt://APP10160301591759783837362495"
+            options.app = "lt://APP1016041721767721056718998"  # poetry poe upload-ios-app
             options.set_capability(
                 "lt:options",
                 {
@@ -93,11 +95,7 @@ def driver(context):
 
         if lt_username and lt_access_key:
             options.platform_version = "16"
-            # curl -u "USERNAME:PASSWORD" -XPOST  \
-            #   "https://manual-api.lambdatest.com/app/upload/realDevice" \
-            #   -F "appFile=@"support/TodoList.apk"" \
-            #   -F "name="AndroidToDoApp""
-            options.app = "lt://APP10160532181761837178894228"
+            options.app = "lt://APP1016054801767715200199672"  # poetry poe upload-android-app
             options.set_capability(
                 "lt:options",
                 {
@@ -156,13 +154,13 @@ def alumnium(context):
             )
             context.al.learn(
                 goal='mark the "this is Al" task as completed',
-                actions=['click checkbox near the "this is Al" task'],
+                actions=['click image near the "this is Al" task'],
             )
             context.al.learn(
                 goal='delete the "this is Al" task',
                 actions=[
                     "click edit button",
-                    'click button "-" near the "this is Al" task',
+                    'click image "-" near the "this is Al" task',
                     'click button "Delete" near the "this is Al" task',
                     "click done button",
                 ],

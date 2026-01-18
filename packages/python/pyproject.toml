@@ -11,6 +11,41 @@ check-format = [
 ]
 clean = "rm -rf .alumnium/cache dist log reports .pytest_cache __pycache__ .ruff_cache"
 test = "pytest tests/"
+upload-android-app = "curl -u $LT_USERNAME:$LT_ACCESS_KEY -X POST https://manual-api.lambdatest.com/app/upload/realDevice -F appFile=@examples/behave/features/support/TodoList.apk -F name=AndroidToDoApp"
+upload-ios-app = "curl -u $LT_USERNAME:$LT_ACCESS_KEY -X POST https://manual-api.lambdatest.com/app/upload/realDevice -F appFile=@examples/behave/features/support/TodoList.ipa -F name=TodoList"
+
+[tool.poe.tasks.examples-appium-android]
+cmd = "behave -t @appium-android -f html-pretty -o reports/behave.html -f pretty"
+
+[tool.poe.tasks.examples-appium-android.env]
+ALUMNIUM_DRIVER = "appium-android"
+
+[tool.poe.tasks.examples-appium-ios]
+sequence = [
+    { cmd = "behave -t @appium-ios -f html-pretty -o reports/behave.html -f pretty" },
+    { cmd = "pytest --retries 1 --html reports/pytest.html examples/pytest" },
+]
+
+[tool.poe.tasks.examples-appium-ios.env]
+ALUMNIUM_DRIVER = "appium-ios"
+
+[tool.poe.tasks.examples-playwright]
+sequence = [
+    { cmd = "behave -t @playwright -f html-pretty -o reports/behave.html -f pretty" },
+    { cmd = "pytest --retries 1 --html reports/pytest.html examples/pytest" },
+]
+
+[tool.poe.tasks.examples-playwright.env]
+ALUMNIUM_DRIVER = "playwright"
+
+[tool.poe.tasks.examples-selenium]
+sequence = [
+    { cmd = "behave -t @selenium -f html-pretty -o reports/behave.html -f pretty" },
+    { cmd = "pytest --retries 1 --html reports/pytest.html examples/pytest" },
+]
+
+[tool.poe.tasks.examples-selenium.env]
+ALUMNIUM_DRIVER = "selenium"
 
 [tool.poe.tasks.format]
 ignore_fail = true
@@ -34,20 +69,21 @@ packages = [
 ]
 readme = "README.md"
 repository = "https://github.com/alumnium-hq/alumnium"
-version = "0.16.0"
+version = "0.17.0"
 
 [tool.poetry.dependencies]
 appium-python-client = "^5.1.1"
-fastapi = "^0.115.0"
+fastapi = "^0.127"
 langchain = "^1.1.0"
 langchain-anthropic = "^1.2.0"
 langchain-aws = "^1.1.0"
 langchain-deepseek = "^1.0.1"
-langchain-google-genai = "^3.2.0"
+langchain-google-genai = "^4.2.0"
 langchain-mistralai = "^1.1.0"
 langchain-ollama = "^1.0.0"
 langchain-openai = "^1.1.0"
 langchain-xai = "^1.1.0"
+mcp = "^1.2.0"
 playwright = "^1.49"
 pydantic = "^2.10.0"
 python = "^3.10"
@@ -83,7 +119,8 @@ extras = [
 version = "~0.35.0"
 
 [tool.poetry.scripts]
-server = "alumnium.server.main:main"
+alumnium-mcp = "alumnium.mcp.server:main"
+alumnium-server = "alumnium.server.main:main"
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"

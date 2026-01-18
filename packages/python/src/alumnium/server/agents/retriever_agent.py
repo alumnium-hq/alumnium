@@ -1,3 +1,5 @@
+from re import sub
+
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel, Field
 
@@ -38,7 +40,7 @@ class RetrieverAgent(BaseAgent):
         accessibility_tree_xml: str,
         title: str = "",
         url: str = "",
-        screenshot: str = None,
+        screenshot: str | None = None,
     ) -> tuple[str, str | list[str]]:
         logger.info("Starting retrieval:")
         logger.info(f"  -> Information: {information}")
@@ -53,7 +55,7 @@ class RetrieverAgent(BaseAgent):
                 accessibility_tree=accessibility_tree_xml, title=title, url=url
             )
         prompt += "\n"
-        prompt += information
+        prompt += f"Retrieve the following information: {information}"
 
         human_messages = [{"type": "text", "text": prompt}]
 
@@ -87,6 +89,8 @@ class RetrieverAgent(BaseAgent):
         # LLMs sometimes add separator to the start/end.
         value = value.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
         value = value.strip()
+        # GPT-5 Nano sometimes replaces closing brace with something else
+        value = sub(rf"{self.LIST_SEPARATOR[:-1]}.", self.LIST_SEPARATOR, value)
 
         # Return raw string or list of strings
         if self.LIST_SEPARATOR in value:

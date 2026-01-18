@@ -12,14 +12,10 @@ import { PlaywrightDriver } from "./drivers/PlaywrightDriver.js";
 import { SeleniumDriver } from "./drivers/SeleniumDriver.js";
 import { AssertionError } from "./errors/AssertionError.js";
 import { Model } from "./Model.js";
+import { DoResult, DoStep } from "./result.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
-import { ClickTool } from "./tools/ClickTool.js";
-import { DragAndDropTool } from "./tools/DragAndDropTool.js";
-import { HoverTool } from "./tools/HoverTool.js";
-import { PressKeyTool } from "./tools/PressKeyTool.js";
-import { SelectTool } from "./tools/SelectTool.js";
-import { TypeTool } from "./tools/TypeTool.js";
 import { getLogger } from "./utils/logger.js";
+import { retry } from "./utils/retry.js";
 
 const logger = getLogger(["Alumni"]);
 
@@ -37,7 +33,7 @@ export class Alumni {
   public driver: BaseDriver;
   private client: HttpClient;
 
-  private tools: Record<string, ToolClass>;
+  private tools: Record<string, ToolClass> = {};
   public cache: Cache;
   private url: string;
   private model: Model;
@@ -61,21 +57,11 @@ export class Alumni {
       throw new Error(`Unsupported driver type '${typeof driver}'`);
     }
 
-    // Initialize tools
-    this.tools = {
-      ClickTool,
-      TypeTool,
-      HoverTool,
-      SelectTool,
-      PressKeyTool,
-      DragAndDropTool,
-    };
-
-    // Add extra tools if provided
-    if (options.extraTools) {
-      for (const tool of options.extraTools) {
-        this.tools[tool.name] = tool;
-      }
+    for (const tool of new Set([
+      ...this.driver.supportedTools,
+      ...(options.extraTools || []),
+    ])) {
+      this.tools[tool.name] = tool;
     }
 
     // Initialize HTTP client
@@ -96,13 +82,15 @@ export class Alumni {
     await this.driver.quit();
   }
 
-  async do(goal: string): Promise<void> {
+  @retry()
+  async do(goal: string): Promise<DoResult> {
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
-    const steps = await this.client.planActions(
+    const { explanation, steps } = await this.client.planActions(
       goal,
       initialAccessibilityTree.toStr()
     );
 
+    const executedSteps: DoStep[] = [];
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
 
@@ -117,17 +105,23 @@ export class Alumni {
         accessibilityTree.toStr()
       );
 
-      // Execute tool calls
+      const calledTools: string[] = [];
       for (const toolCall of actorResponse) {
-        await BaseTool.executeToolCall(
+        const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
           this.driver
         );
+        calledTools.push(calledTool);
       }
+
+      executedSteps.push({ name: step, tools: calledTools });
     }
+
+    return { explanation, steps: executedSteps };
   }
 
+  @retry()
   async check(statement: string, options: VisionOptions = {}): Promise<string> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
@@ -148,13 +142,13 @@ export class Alumni {
     return explanation;
   }
 
+  @retry()
   async get(data: string, options: VisionOptions = {}): Promise<Data> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_explanation, value] = await this.client.retrieve(
+    const [explanation, value] = await this.client.retrieve(
       data,
       accessibilityTree.toStr(),
       await this.driver.title(),
@@ -162,9 +156,10 @@ export class Alumni {
       screenshot
     );
 
-    return value;
+    return value === null ? explanation : value;
   }
 
+  @retry()
   async find(description: string): Promise<Element> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findElement(

@@ -1,3 +1,4 @@
+from math import ceil
 from time import sleep
 from typing import Literal
 
@@ -13,7 +14,6 @@ from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.press_key_tool import PressKeyTool
-from ..tools.select_tool import SelectTool
 from ..tools.type_tool import TypeTool
 from .base_driver import BaseDriver
 from .keys import Key
@@ -28,20 +28,17 @@ class AppiumDriver(BaseDriver):
             ClickTool,
             DragAndDropTool,
             PressKeyTool,
-            SelectTool,
             TypeTool,
         }
         self.autoswitch_contexts = True
         self.delay: float = 0
         self.hide_keyboard_after_typing = False
         self.double_fetch_page_source = False
-
-    @property
-    def platform(self) -> Literal["uiautomator2", "xcuitest"]:
+        self.platform: Literal["uiautomator2", "xcuitest"]
         if self.driver.capabilities.get("automationName", "").lower() == "uiautomator2":
-            return "uiautomator2"
+            self.platform = "uiautomator2"
         else:
-            return "xcuitest"
+            self.platform = "xcuitest"
 
     @property
     def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibilityTree:
@@ -60,11 +57,16 @@ class AppiumDriver(BaseDriver):
 
     def click(self, id: int):
         self._ensure_native_app_context()
-        self.find_element(id).click()
+        element = self.find_element(id)
+        self._scroll_into_view(element)
+        element.click()
 
     def drag_and_drop(self, from_id: int, to_id: int):
         self._ensure_native_app_context()
-        self.driver.drag_and_drop(self.find_element(from_id), self.find_element(to_id))
+        from_element = self.find_element(from_id)
+        to_element = self.find_element(to_id)
+        self._scroll_into_view(from_element)
+        self.driver.drag_and_drop(from_element, to_element)
 
     def press_key(self, key: Key):
         self._ensure_native_app_context()
@@ -94,20 +96,8 @@ class AppiumDriver(BaseDriver):
         return self.driver.get_screenshot_as_base64()
 
     def scroll_to(self, id: int):
-        if self.platform == "xcuitest":
-            element = self.find_element(id)
-            self.driver.execute_script("mobile: scrollToElement", {"elementId": element.id})
-        else:
-            # TODO: Implement scroll functionality on Android
-            raise NotImplementedError("scroll_to is not implemented for Android (uiautomator2) yet.")
-
-    def select(self, id: int, option: str):
-        # TODO: Implement select functionality and the tool
-        pass
-
-    def swipe(self, id: int):
-        # TODO: Implement swipe functionality and the tool
-        pass
+        element = self.find_element(id)
+        self._scroll_into_view(element)
 
     @property
     def title(self) -> str:
@@ -120,13 +110,11 @@ class AppiumDriver(BaseDriver):
     def type(self, id: int, text: str):
         self._ensure_native_app_context()
         element = self.find_element(id)
+        self._scroll_into_view(element)
         element.clear()
         element.send_keys(text)
-        if self.hide_keyboard_after_typing:
-            if self.platform == "uiautomator2":
-                self.driver.hide_keyboard()
-            else:
-                ActionChains(self.driver).move_to_element(element).move_by_offset(0, -20).click().perform()
+        if self.hide_keyboard_after_typing and self.driver.is_keyboard_shown():
+            self._hide_keyboard()
 
     @property
     def url(self) -> str:
@@ -157,9 +145,7 @@ class AppiumDriver(BaseDriver):
                 predicate += f" AND {props_str}"
 
             logger.debug(f"Finding element by predicate: {predicate}")
-            found_element = self.driver.find_element(By.IOS_PREDICATE, predicate)
-            logger.debug(f"Found: {found_element}")
-            return found_element
+            return self.driver.find_element(By.IOS_PREDICATE, predicate)  # type: ignore[reportReturnType]
         else:
             # Use XPath for UIAutomator2
             xpath = f"//{element.type}"
@@ -167,10 +153,6 @@ class AppiumDriver(BaseDriver):
             props = {}
             if element.androidresourceid:
                 props["resource-id"] = element.androidresourceid
-            if element.androidtext:
-                props["text"] = element.androidtext
-            if element.androidcontentdesc:
-                props["content-desc"] = element.androidcontentdesc
             if element.androidbounds:
                 props["bounds"] = element.androidbounds
 
@@ -178,7 +160,8 @@ class AppiumDriver(BaseDriver):
                 props = [f'@{k}="{v}"' for k, v in props.items()]
                 xpath += f"[{' and '.join(props)}]"
 
-            return self.driver.find_element(By.XPATH, xpath)
+            logger.debug(f"Finding element by xpath: {xpath}")
+            return self.driver.find_element(By.XPATH, xpath)  # type: ignore[reportReturnType]
 
     def execute_script(self, script: str):
         self._ensure_webview_context()
@@ -200,3 +183,63 @@ class AppiumDriver(BaseDriver):
                 if "WEBVIEW" in context:
                     self.driver.switch_to.context(context)
                     return
+
+    def _hide_keyboard(self):
+        if self.platform == "uiautomator2":
+            self.driver.hide_keyboard()
+        else:
+            # Tap to the top left corner of the keyboard to dismiss it
+            keyboard = self.driver.find_element(By.IOS_PREDICATE, 'type == "XCUIElementTypeKeyboard"')
+            size = keyboard.size
+            actions = ActionChains(self.driver)
+            actions.move_to_element(keyboard)
+            actions.move_by_offset(-ceil(size["width"] / 2), -ceil(size["height"] / 2))
+            actions.click()
+            actions.perform()
+
+    def _scroll_into_view(self, element: WebElement):
+        if self.platform == "uiautomator2":
+            self._scroll_into_view_android(element)
+        else:
+            self.driver.execute_script("mobile: scrollToElement", {"elementId": element.id})
+
+    def _scroll_into_view_android(self, element: WebElement, max_scrolls: int = 10, direction: str = "up"):
+        """
+        Scroll to element on Android using swipe gestures.
+        Implementation based on WebDriverIO's scrollIntoView for native mobile apps.
+
+        Args:
+            element: The WebElement to scroll to
+            max_scrolls: Maximum number of swipe attempts (default: 10)
+            direction: Scroll direction - "up" scrolls content down, "down" scrolls content up (default: "up")
+        """
+        if element.is_displayed():
+            return
+
+        # Calculate swipe coordinates based on direction
+        window_size = self.driver.get_window_size()
+        width = window_size["width"]
+        height = window_size["height"]
+        # Use center horizontal position and 20% to 80% vertical range
+        center_x = width // 2
+        start_y = int(height * 0.8) if direction == "up" else int(height * 0.2)
+        end_y = int(height * 0.2) if direction == "up" else int(height * 0.8)
+
+        for scroll_count in range(max_scrolls):
+            try:
+                if element.is_displayed():
+                    logger.debug(f"Element scrolled into view after {scroll_count} swipes")
+                    return
+            except Exception as e:
+                # Element might be stale, continue scrolling
+                logger.debug(f"Element check failed: {e}")
+
+            logger.debug(f"Performing swipe {scroll_count + 1}/{max_scrolls} in direction '{direction}'")
+            self.driver.swipe(center_x, start_y, center_x, end_y, duration=300)
+            sleep(0.1)
+
+        # Element still not visible after max scrolls
+        logger.warning(
+            f"Element not visible after {max_scrolls} scrolls. "
+            f"Try adjusting the scroll direction or increase max_scrolls."
+        )

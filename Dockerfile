@@ -20,4 +20,4 @@ ENV PATH="/app/.venv/bin:$PATH"
 EXPOSE 8013
 VOLUME ["/app/.alumnium/cache"]
 
-CMD ["server"]
+CMD ["alumnium-server"]

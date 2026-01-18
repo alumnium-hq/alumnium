@@ -19,18 +19,18 @@ class Provider(Enum):
 
 class Name:
     DEFAULT = {
-        Provider.AZURE_OPENAI: "gpt-4o-mini",  # 2024-07-18
-        Provider.AZURE_FOUNDRY: "gpt-4o-mini",
+        Provider.AZURE_FOUNDRY: "gpt-5-nano",  # 2025-08-07
+        Provider.AZURE_OPENAI: "gpt-5-nano",  # 2025-08-07
         Provider.ANTHROPIC: "claude-haiku-4-5-20251001",
         Provider.AWS_ANTHROPIC: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
         Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
-        Provider.DEEPSEEK: "deepseek-chat",
+        Provider.DEEPSEEK: "deepseek-reasoner",
         Provider.GITHUB: "gpt-4o-mini",
-        Provider.GOOGLE: "gemini-2.0-flash-001",
+        Provider.GOOGLE: "gemini-3-flash-preview",
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "mistral-small3.1",
-        Provider.OPENAI: "gpt-4o-mini-2024-07-18",
-        Provider.XAI: "grok-4-fast-non-reasoning",
+        Provider.OPENAI: "gpt-5-nano-2025-08-07",
+        Provider.XAI: "grok-4-1-fast-reasoning",
     }
 
 

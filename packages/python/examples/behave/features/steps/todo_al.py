@@ -1,4 +1,4 @@
-# pyright: reportRedeclaration=false
+# type: ignore[reportRedeclaration]
 
 from os import getenv
 
@@ -85,7 +85,7 @@ def step_impl(context, title):
     if driver_type == "appium-ios":
         context.al.check(
             f'"{title}" task is not marked as completed '
-            f"(completion is indicated by a selected image to the left of the task title)"
+            f"(uncompleted task has a circle image to the left of the task title)"
         )
     else:
         context.al.check(f'"{title}" task is not marked as completed')
@@ -96,7 +96,7 @@ def step_impl(context, title):
     if driver_type == "appium-ios":
         context.al.check(
             f'"{title}" task is marked as completed '
-            f"(completion is indicated by a selected image to the left of the task title)"
+            f"(completed task has a checkmark circle image to the left of the task title)"
         )
     else:
         context.al.check(f'"{title}" task is marked as completed')

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hidden File Upload Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+
+      .upload-container {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        background: #f9f9f9;
+      }
+
+      input[type="file"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        display: none;
+      }
+
+      .custom-upload-btn {
+        background: #4caf50;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px 0;
+      }
+
+      .custom-upload-btn:hover {
+        background: #45a049;
+      }
+
+      .file-list {
+        margin-top: 20px;
+        text-align: left;
+      }
+
+      .file-item {
+        background: white;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+      }
+
+      .submit-btn {
+        background: #2196f3;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+
+      .submit-btn:hover {
+        background: #0b7dda;
+      }
+
+      .submit-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      .success-message {
+        color: #4caf50;
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>File Upload Test</h1>
+
+    <div class="upload-container">
+      <h2>Upload Files</h2>
+      <p>Click the button below to select files</p>
+
+      <!-- Hidden file input (supports multiple files) -->
+      <input type="file" id="fileInput" multiple aria-label="File Input" />
+
+      <!-- Visible custom button that triggers the hidden input -->
+      <button class="custom-upload-btn" id="chooseFileBtn">Choose Files</button>
+
+      <!-- Display selected files -->
+      <div class="file-list" id="fileList"></div>
+
+      <!-- Submit button -->
+      <button class="submit-btn" id="submitBtn" disabled>Upload Files</button>
+
+      <!-- Success message -->
+      <div class="success-message" id="successMessage" style="display: none">
+        Files Uploaded Successfully!
+      </div>
+    </div>
+
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const chooseFileBtn = document.getElementById("chooseFileBtn");
+      const fileList = document.getElementById("fileList");
+      const submitBtn = document.getElementById("submitBtn");
+      const successMessage = document.getElementById("successMessage");
+
+      // Trigger file input when custom button is clicked
+      chooseFileBtn.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      // Handle file selection
+      fileInput.addEventListener("change", (e) => {
+        const files = e.target.files;
+        displayFiles(files);
+
+        // Enable submit button if files are selected
+        submitBtn.disabled = files.length === 0;
+      });
+
+      // Display selected files
+      function displayFiles(files) {
+        fileList.innerHTML = "";
+        if (files.length === 0) {
+          fileList.innerHTML = "<p>No files selected</p>";
+          return;
+        }
+
+        Array.from(files).forEach((file) => {
+          const fileItem = document.createElement("div");
+          fileItem.className = "file-item";
+          fileItem.textContent = `📄 ${file.name} (${formatBytes(file.size)})`;
+          fileList.appendChild(fileItem);
+        });
+      }
+
+      // Format file size
+      function formatBytes(bytes) {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return (
+          Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i]
+        );
+      }
+
+      // Handle form submission
+      submitBtn.addEventListener("click", () => {
+        // Simulate upload
+        successMessage.style.display = "block";
+        submitBtn.disabled = true;
+      });
+    </script>
+  </body>
+</html>

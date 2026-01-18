@@ -1,22 +1,24 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
-import type { Browser, ChainablePromiseElement } from "webdriverio";
+import type { Browser } from "webdriverio";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
+import { ToolClass } from "../tools/BaseTool.js";
+import { ClickTool } from "../tools/ClickTool.js";
+import { DragAndDropTool } from "../tools/DragAndDropTool.js";
+import { PressKeyTool } from "../tools/PressKeyTool.js";
+import { TypeTool } from "../tools/TypeTool.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;
   public platform: "xcuitest" | "uiautomator2";
-  public supportedTools: Set<string> = new Set([
-    "ClickTool",
-    "DragAndDropTool",
-    "NavigateToUrlTool",
-    "PressKeyTool",
-    "ScrollTool",
-    "SelectTool",
-    "TypeTool",
+  public supportedTools: Set<ToolClass> = new Set([
+    ClickTool,
+    DragAndDropTool,
+    PressKeyTool,
+    TypeTool,
   ]);
   public autoswitchContexts: boolean = true;
   public delay: number = 0;
@@ -26,10 +28,7 @@ export class AppiumDriver extends BaseDriver {
   constructor(driver: Browser) {
     super();
     this.driver = driver;
-    if (
-      this.driver.capabilities["appium:automationName"]?.toLowerCase() ===
-      "uiautomator2"
-    ) {
+    if (this.driver.capabilities.platformName?.toLowerCase() === "android") {
       this.platform = "uiautomator2";
     } else {
       this.platform = "xcuitest";
@@ -48,7 +47,7 @@ export class AppiumDriver extends BaseDriver {
     }
 
     const xmlString = await this.driver.getPageSource();
-    if (this.driver.capabilities["appium:automationName"] === "uiautomator2") {
+    if (this.platform === "uiautomator2") {
       return new UIAutomator2AccessibilityTree(xmlString);
     } else {
       return new XCUITestAccessibilityTree(xmlString);
@@ -58,6 +57,7 @@ export class AppiumDriver extends BaseDriver {
   async click(id: number): Promise<void> {
     await this.ensureNativeAppContext();
     const element = await this.findElement(id);
+    await this.scrollIntoView(element);
     await element.click();
   }
 
@@ -66,7 +66,7 @@ export class AppiumDriver extends BaseDriver {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);
 
-    // WebdriverIO provides dragAndDrop method on elements
+    await this.scrollIntoView(fromElement);
     await fromElement.dragAndDrop(toElement);
   }
 
@@ -101,18 +101,8 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async scrollTo(id: number): Promise<void> {
-    if (this.platform === "xcuitest") {
-      const element = await this.findElement(id);
-      const elementId = await element.elementId;
-      await this.driver.execute("mobile: scrollToElement", {
-        elementId: elementId,
-      });
-    } else {
-      // Android scroll functionality is not implemented.
-      throw new Error(
-        "scrollTo is not implemented for Android (uiautomator2) platform."
-      );
-    }
+    const element = await this.findElement(id);
+    await this.scrollIntoView(element);
   }
 
   async quit(): Promise<void> {
@@ -121,16 +111,6 @@ export class AppiumDriver extends BaseDriver {
 
   async screenshot(): Promise<string> {
     return await this.driver.takeScreenshot();
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async select(_id: number, _option: string): Promise<void> {
-    // TODO: Implement select functionality and the tool
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async swipe(_id: number): Promise<void> {
-    // TODO: Implement swipe functionality and the tool
   }
 
   async title(): Promise<string> {
@@ -145,31 +125,10 @@ export class AppiumDriver extends BaseDriver {
   async type(id: number, text: string): Promise<void> {
     await this.ensureNativeAppContext();
     const element = await this.findElement(id);
-    await element.clearValue();
+    await this.scrollIntoView(element);
     await element.setValue(text);
-    if (this.hideKeyboardAfterTyping) {
-      if (this.platform === "uiautomator2") {
-        await this.driver.hideKeyboard();
-      } else {
-        const location = await element.getLocation();
-        await this.driver.performActions([
-          {
-            type: "pointer",
-            id: "finger1",
-            parameters: { pointerType: "touch" },
-            actions: [
-              {
-                type: "pointerMove",
-                duration: 0,
-                x: location.x,
-                y: location.y - 20,
-              },
-              { type: "pointerDown", button: 0 },
-              { type: "pointerUp", button: 0 },
-            ],
-          },
-        ]);
-      }
+    if (this.hideKeyboardAfterTyping && (await this.driver.isKeyboardShown())) {
+      await this.hideKeyboard();
     }
   }
 
@@ -182,7 +141,7 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  async findElement(id: number): Promise<ChainablePromiseElement> {
+  async findElement(id: number): Promise<WebdriverIO.Element> {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);
 
@@ -204,8 +163,7 @@ export class AppiumDriver extends BaseDriver {
       }
 
       console.debug(`Finding element by predicate: ${predicate}`);
-      const foundElement = this.driver.$(`-ios predicate string:${predicate}`);
-      return foundElement;
+      return this.driver.$(`-ios predicate string:${predicate}`).getElement();
     } else {
       // Use XPath for UIAutomator2
       let xpath = `//${element.type}`;
@@ -213,9 +171,6 @@ export class AppiumDriver extends BaseDriver {
       const props: Record<string, string> = {};
       if (element.androidResourceId)
         props["resource-id"] = element.androidResourceId;
-      if (element.androidText) props["text"] = element.androidText;
-      if (element.androidContentDesc)
-        props["content-desc"] = element.androidContentDesc;
       if (element.androidBounds) props["bounds"] = element.androidBounds;
 
       if (Object.keys(props).length > 0) {
@@ -225,19 +180,14 @@ export class AppiumDriver extends BaseDriver {
         xpath += `[${conditions.join(" and ")}]`;
       }
 
-      return this.driver.$(xpath);
+      console.debug(`Finding element by xpath: ${xpath}`);
+      return this.driver.$(xpath).getElement();
     }
   }
 
   async executeScript(script: string): Promise<void> {
     await this.ensureWebviewContext();
     await this.driver.execute(script);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
-  async hover(_id: number): Promise<void> {
-    // Hover is not typically supported in mobile contexts
-    throw new Error("Hover is not supported by AppiumDriver");
   }
 
   private async ensureNativeAppContext(): Promise<void> {
@@ -265,6 +215,32 @@ export class AppiumDriver extends BaseDriver {
           return;
         }
       }
+    }
+  }
+
+  private async hideKeyboard(): Promise<void> {
+    if (this.platform === "uiautomator2") {
+      await this.driver.hideKeyboard();
+    } else {
+      // Tap to the top left corner of the keyboard to dismiss it
+      const keyboard = this.driver.$(
+        "-ios predicate string:type == 'XCUIElementTypeKeyboard'"
+      );
+      const { width, height } = await keyboard.getSize();
+      await keyboard.click({
+        x: -Math.ceil(width / 2),
+        y: -Math.ceil(height / 2),
+      });
+    }
+  }
+
+  private async scrollIntoView(element: WebdriverIO.Element): Promise<void> {
+    if (this.platform === "uiautomator2") {
+      await element.scrollIntoView();
+    } else {
+      await this.driver.execute("mobile: scrollToElement", {
+        elementId: element.elementId,
+      });
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "alumnium",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Pave the way towards AI-powered test automation",
   "type": "module",
   "main": "dist/index.js",

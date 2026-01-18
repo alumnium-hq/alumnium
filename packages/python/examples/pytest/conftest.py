@@ -1,5 +1,6 @@
 from datetime import datetime
 from os import getenv
+from pathlib import Path
 
 from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
@@ -25,7 +26,12 @@ def driver():
     if driver_type == "playwright":
         with sync_playwright() as playwright:
             is_headless = headless.lower() == "true"
-            yield playwright.chromium.launch(headless=is_headless).new_page()
+            browser = playwright.chromium.launch(headless=is_headless)
+            context = browser.new_context(record_video_dir="reports/videos/")
+            context.tracing.start(screenshots=True, snapshots=True)
+            page = context.new_page()
+            yield page
+            context.tracing.stop(path="reports/traces/pytest.zip")
     elif driver_type == "selenium":
         options = ChromeOptions()
         options.add_experimental_option(
@@ -126,6 +132,14 @@ def driver():
 
         driver = Appium(client_config=client_config, options=options)
 
+        if driver_type == "appium-android":
+            driver.update_settings(
+                {
+                    "allowInvisibleElements": True,
+                    "ignoreUnimportantViews": True,
+                }
+            )
+
         yield driver
     else:
         raise NotImplementedError(f"Driver {driver_type} not implemented")
@@ -143,7 +157,13 @@ def al(driver):
 
 @fixture
 def navigate(al):
-    return lambda url: al.driver.visit(url)
+    def __navigate(url: str):
+        if not url.startswith("http"):
+            url = f"file://{Path(__file__).parent.parent}/support/pages/{url}"
+
+        al.driver.visit(url)
+
+    return __navigate
 
 
 @fixture

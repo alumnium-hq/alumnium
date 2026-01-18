@@ -5,7 +5,9 @@ import { Data } from "./clients/typecasting.js";
 import { BaseDriver } from "./drivers/BaseDriver.js";
 import { Element } from "./drivers/index.js";
 import { AssertionError } from "./errors/AssertionError.js";
+import { DoResult, DoStep } from "./result.js";
 import { BaseTool, ToolCall, ToolClass } from "./tools/BaseTool.js";
+import { retry } from "./utils/retry.js";
 
 export class Area {
   public id: number;
@@ -31,12 +33,14 @@ export class Area {
     this.client = client;
   }
 
-  async do(goal: string): Promise<void> {
-    const steps = await this.client.planActions(
+  @retry()
+  async do(goal: string): Promise<DoResult> {
+    const { explanation, steps } = await this.client.planActions(
       goal,
       this.accessibilityTree.toStr()
     );
 
+    const executedSteps: DoStep[] = [];
     for (const step of steps) {
       const actorResponse = await this.client.executeAction(
         goal,
@@ -44,17 +48,23 @@ export class Area {
         this.accessibilityTree.toStr()
       );
 
-      // Execute tool calls
+      const calledTools: string[] = [];
       for (const toolCall of actorResponse) {
-        await BaseTool.executeToolCall(
+        const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
           this.driver
         );
+        calledTools.push(calledTool);
       }
+
+      executedSteps.push({ name: step, tools: calledTools });
     }
+
+    return { explanation, steps: executedSteps };
   }
 
+  @retry()
   async check(statement: string, options: VisionOptions = {}): Promise<string> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
@@ -74,12 +84,12 @@ export class Area {
     return explanation;
   }
 
+  @retry()
   async get(data: string, options: VisionOptions = {}): Promise<Data> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_explanation, value] = await this.client.retrieve(
+    const [explanation, value] = await this.client.retrieve(
       data,
       this.accessibilityTree.toStr(),
       await this.driver.title(),
@@ -87,9 +97,10 @@ export class Area {
       screenshot
     );
 
-    return value;
+    return value === null ? explanation : value;
   }
 
+  @retry()
   async find(description: string): Promise<Element> {
     const response = await this.client.findElement(
       description,
