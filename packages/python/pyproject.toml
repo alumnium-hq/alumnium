@@ -9,8 +9,9 @@ check-format = [
     { cmd = "pyprojectsort --diff" },
     { cmd = "ruff check ." },
 ]
-clean = "rm -rf .alumnium/cache dist log reports .pytest_cache __pycache__ .ruff_cache"
+clean = "rm -rf .alumnium/cache dist log reports .pytest_cache __pycache__ .ruff_cache htmlcov .coverage coverage.xml"
 test = "pytest tests/"
+test-cov = "pytest tests/ --cov=alumnium --cov-report=term-missing --cov-report=html --cov-report=xml"
 upload-android-app = "curl -u $LT_USERNAME:$LT_ACCESS_KEY -X POST https://manual-api.lambdatest.com/app/upload/realDevice -F appFile=@examples/behave/features/support/TodoList.apk -F name=AndroidToDoApp"
 upload-ios-app = "curl -u $LT_USERNAME:$LT_ACCESS_KEY -X POST https://manual-api.lambdatest.com/app/upload/realDevice -F appFile=@examples/behave/features/support/TodoList.ipa -F name=TodoList"
 
@@ -101,6 +102,7 @@ pre-commit = "^4.2.0"
 pyprojectsort = "^0.4.0"
 pytest = "^8.3.3"
 pytest-asyncio = "^0.24.0"
+pytest-cov = "^6.0.0"
 pytest-html = "^4.1.1"
 pytest-retry = "^1.7.0"
 python-dotenv = "^1.1.1"
@@ -127,6 +129,34 @@ asyncio_default_fixture_loop_scope = "function"
 generate_report_on_test = true
 pythonpath = "."
 retry_delay = 0.5
+addopts = "-v"
+
+[tool.coverage.run]
+source = ["src/alumnium"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/server/poetry.lock",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+fail_under = 0
+show_missing = true
+skip_covered = false
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
 
 [tool.ruff]
 extend-exclude = [

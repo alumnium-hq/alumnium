@@ -62,7 +62,18 @@ jobs:
       - run: make install
       - run: make build
       - run: make check-format
-      - run: make test
+      - name: Run tests with coverage
+        run: |
+          cd packages/python && poetry poe test-cov
+      - name: Upload Python coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-coverage-report
+          path: |
+            packages/python/htmlcov/
+            packages/python/coverage.xml
+          retention-days: 14
       - run: |
           poetry run behave \
             --format html-pretty \

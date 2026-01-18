@@ -95,6 +95,9 @@ poetry run pytest examples/
 # Run unit tests
 poetry poe test
 
+# Run unit tests with coverage
+poetry poe test-cov
+
 # Format code
 poetry poe format
 ```
@@ -115,6 +118,12 @@ npm run examples:selenium
 npm run examples:playwright
 npm run examples:appium
 
+# Run tests
+npm run test
+
+# Run tests with coverage
+npm run test:cov
+
 # Format code
 npm run format
 ```
@@ -126,6 +135,7 @@ From the root directory, you can use Make commands:
 ```bash
 make format       # Format both packages
 make test         # Run Python tests
+make test-cov     # Run tests with coverage for both packages
 make build        # Build both packages
 make clean        # Clean both packages
 make start-server # Start the Alumnium server
