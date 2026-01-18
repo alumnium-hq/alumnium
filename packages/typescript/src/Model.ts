@@ -1,4 +1,5 @@
 export enum Provider {
+  AZURE_FOUNDRY = "azure_foundry",
   AZURE_OPENAI = "azure_openai",
   ANTHROPIC = "anthropic",
   AWS_ANTHROPIC = "aws_anthropic",
@@ -14,6 +15,7 @@ export enum Provider {
 
 export class ModelName {
   static readonly DEFAULT: Record<Provider, string> = {
+    [Provider.AZURE_FOUNDRY]: "gpt-5-nano",
     [Provider.AZURE_OPENAI]: "gpt-5-nano",
     [Provider.ANTHROPIC]: "claude-haiku-4-5-20251001",
     [Provider.AWS_ANTHROPIC]: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
