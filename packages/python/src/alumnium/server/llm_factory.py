@@ -24,14 +24,37 @@ class LLMFactory:
         """Create an LLM instance based on the model configuration."""
         logger.info(f"Creating LLM for model: {model.provider.value}/{model.name}")
 
-        if model.provider == Provider.AZURE_OPENAI:
+        if model.provider == Provider.AZURE_FOUNDRY:
+            azure_foundry_target_uri = getenv("AZURE_FOUNDRY_TARGET_URI")
+            azure_foundry_api_key = getenv("AZURE_FOUNDRY_API_KEY")
+            azure_foundry_api_version = getenv("AZURE_FOUNDRY_API_VERSION")
+            if "gpt-4o" in model.name:
+                llm = AzureChatOpenAI(
+                    azure_endpoint=azure_foundry_target_uri,
+                    azure_deployment=model.name,
+                    api_key=azure_foundry_api_key,
+                    api_version=azure_foundry_api_version,
+                    temperature=0,
+                )
+            else:
+                llm = AzureChatOpenAI(
+                    azure_endpoint=azure_foundry_target_uri,
+                    azure_deployment=model.name,
+                    api_key=azure_foundry_api_key,
+                    api_version=azure_foundry_api_version,
+                    temperature=0,
+                    reasoning={
+                        "effort": "low",
+                        "summary": "auto",
+                    },
+                )
+        elif model.provider == Provider.AZURE_OPENAI:
             azure_openai_api_version = getenv("AZURE_OPENAI_API_VERSION")
             if "gpt-4o" in model.name:
                 llm = AzureChatOpenAI(
                     model=model.name,
                     api_version=azure_openai_api_version,
                     temperature=0,
-                    seed=1,
                 )
             else:
                 llm = AzureChatOpenAI(
