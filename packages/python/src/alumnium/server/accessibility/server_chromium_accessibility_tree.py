@@ -155,6 +155,13 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
         Recursively traverses the tree, removes redundant name information from parent nodes,
         and returns a list of all content (names) in the current subtree.
         """
+        # RootWebArea should remain untouched - only process children
+        if node.tag == "RootWebArea":
+            descendant_content = []
+            for child in node:
+                descendant_content.extend(self._prune_redundant_name(child))
+            return self._get_texts(node) + descendant_content
+
         # Remove name if it equals text
         if node.get("name") and node.text and node.get("name") == node.text:
             del node.attrib["name"]

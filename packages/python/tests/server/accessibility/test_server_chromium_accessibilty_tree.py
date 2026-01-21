@@ -21,7 +21,7 @@ def test_to_xml(chromium_tree: ServerChromiumAccessibilityTree):
     assert (
         chromium_tree.to_xml()
         == """
-<RootWebArea name=": React" id="1" focusable="True">
+<RootWebArea name="TodoMVC: React" id="1" focusable="True">
   <generic id="4">
     <generic id="5">
       <heading id="6" level="1">todos</heading>
