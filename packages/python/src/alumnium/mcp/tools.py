@@ -1,6 +1,49 @@
 """Tool definitions for MCP server."""
 
+import re
+
 from mcp.types import Tool
+
+from ..tools import (
+    ClickTool,
+    DragAndDropTool,
+    ExecuteJavascriptTool,
+    HoverTool,
+    NavigateBackTool,
+    NavigateToUrlTool,
+    PressKeyTool,
+    ScrollTool,
+    SelectTool,
+    TypeTool,
+    UploadTool,
+)
+
+# Tools available to the `do` command (matches handlers.py extra_tools + common driver tools)
+_DO_TOOLS = [
+    ClickTool,
+    DragAndDropTool,
+    ExecuteJavascriptTool,
+    HoverTool,
+    NavigateBackTool,
+    NavigateToUrlTool,
+    PressKeyTool,
+    ScrollTool,
+    SelectTool,
+    TypeTool,
+    UploadTool,
+]
+
+
+def _get_do_tool_actions() -> str:
+    """Generate comma-separated action list from tool class names."""
+    actions = []
+    for tool in _DO_TOOLS:
+        # Convert ClickTool -> click, NavigateToUrlTool -> navigate to url
+        name = tool.__name__.replace("Tool", "")
+        # Insert spaces before capital letters and lowercase
+        action = re.sub(r"([A-Z])", r" \1", name).strip().lower()
+        actions.append(action)
+    return ", ".join(actions)
 
 
 def get_tool_definitions() -> list[Tool]:
@@ -65,7 +108,11 @@ def get_tool_definitions() -> list[Tool]:
             name="do",
             description=(
                 "Execute a goal using natural language (e.g., 'click login button', 'fill out the form'). "
-                "Alumnium will plan and execute the necessary steps."
+                "Alumnium will plan and execute the necessary steps. "
+                f"Supported actions: {_get_do_tool_actions()}. "
+                "IMPORTANT: Each call operates on the CURRENT PAGE state only. "
+                "For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', "
+                "then 'search for X' as a separate call after page loads)."
             ),
             inputSchema={
                 "type": "object",
@@ -76,7 +123,10 @@ def get_tool_definitions() -> list[Tool]:
                     },
                     "goal": {
                         "type": "string",
-                        "description": "Natural language description of what to do",
+                        "description": (
+                            "Natural language description of what to do on the current page. "
+                            "Do NOT combine actions that span multiple pages in a single goal."
+                        ),
                     },
                 },
                 "required": ["driver_id", "goal"],
