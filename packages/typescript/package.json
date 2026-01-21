@@ -11,13 +11,11 @@
   ],
   "scripts": {
     "build": "rm -rf dist/ && tsc --project tsconfig.build.json && mkdir -p dist/drivers/scripts && cp src/drivers/scripts/*.js dist/drivers/scripts/",
-    "clean": "rm -rf .alumnium/cache dist/ log/ playwright-report/ test-results/ coverage/ .nyc_output/",
+    "clean": "rm -rf .alumnium/cache dist/ log/ playwright-report/ test-results/",
     "examples:appium": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:selenium": "ALUMNIUM_DRIVER=selenium mocha",
     "examples": "npm run examples:appium && npm run examples:playwright && npm run examples:selenium",
-    "test": "mocha",
-    "test:cov": "c8 --reporter=text --reporter=html --reporter=lcov mocha",
     "check-format": "prettier --check . && eslint .",
     "format": "prettier --write . && eslint . --fix",
     "prepublishOnly": "npm run build"
@@ -60,7 +58,6 @@
     "@wdio/mocha-framework": "^9.20.0",
     "@wdio/spec-reporter": "^9.20.0",
     "appium-xcuitest-driver": "^10.2.1",
-    "c8": "^10.1.3",
     "eslint": "^9.37.0",
     "mocha": "^10.3.0",
     "prettier": "^3.6.2",

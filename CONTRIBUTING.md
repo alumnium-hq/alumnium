@@ -95,9 +95,6 @@ poetry run pytest examples/
 # Run unit tests
 poetry poe test
 
-# Run unit tests with coverage
-poetry poe test-cov
-
 # Format code
 poetry poe format
 ```
@@ -117,12 +114,6 @@ npm run examples
 npm run examples:selenium
 npm run examples:playwright
 npm run examples:appium
-
-# Run tests
-npm run test
-
-# Run tests with coverage
-npm run test:cov
 
 # Format code
 npm run format

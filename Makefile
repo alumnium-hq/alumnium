@@ -20,7 +20,6 @@ format:
 
 test:
 	cd packages/python && poetry poe test
-	cd packages/typescript && npm run test:cov
 
 start-server:
 	cd packages/python && poetry run alumnium-server
