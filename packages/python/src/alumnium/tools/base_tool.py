@@ -23,7 +23,7 @@ class BaseTool(ABC, BaseModel):
         tool_args = tool_call.get("args", {})
         tool = tools[tool_name](**tool_args)
         tool.invoke(driver)
-        args_str = ", ".join(f"{k}={v}" for k, v in tool_args.items())
+        args_str = ", ".join(f"{k}='{v}'" for k, v in tool_args.items())
         return f"{tool_name}({args_str})"
 
     @abstractmethod
