@@ -126,7 +126,6 @@ From the root directory, you can use Make commands:
 ```bash
 make format       # Format both packages
 make test         # Run Python tests
-make test-cov     # Run tests with coverage for both packages
 make build        # Build both packages
 make clean        # Clean both packages
 make start-server # Start the Alumnium server
