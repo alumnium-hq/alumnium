@@ -19,10 +19,7 @@ format:
 	cd packages/typescript && npm run format
 
 test:
-	cd packages/python && poetry poe test-cov
-
-test-cov:
-	cd packages/python && poetry poe test-cov
+	cd packages/python && poetry poe test
 	cd packages/typescript && npm run test:cov
 
 start-server:
