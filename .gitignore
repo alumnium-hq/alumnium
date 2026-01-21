@@ -14,6 +14,14 @@
 **/playwright-report/
 **/test-results/
 
+# Coverage
+**/htmlcov/
+**/coverage/
+**/.nyc_output/
+**/.coverage
+**/coverage.xml
+*.lcov
+
 # Environment variables
 .env
 .envrc

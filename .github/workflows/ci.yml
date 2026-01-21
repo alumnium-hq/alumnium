@@ -76,6 +76,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: .
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-coverage-report
+          path: |
+            packages/python/htmlcov/
+            packages/python/coverage.xml
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
