@@ -28,7 +28,7 @@ export abstract class BaseTool {
     await tool.invoke(driver);
 
     const argsStr = Object.entries(toolArgs)
-      .map(([k, v]) => `${k}=${String(v)}`)
+      .map(([k, v]) => `${k}='${String(v)}'`)
       .join(", ");
     return `${toolName}(${argsStr})`;
   }
