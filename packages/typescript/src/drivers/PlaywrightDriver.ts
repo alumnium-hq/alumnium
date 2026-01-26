@@ -405,11 +405,9 @@ export class PlaywrightDriver extends BaseDriver {
   })
   private async waitForPageToLoad(): Promise<void> {
     logger.debug("Waiting for page to finish loading:");
-    await this.page.evaluate(
-      `function() { ${PlaywrightDriver.WAITER_SCRIPT} }`
-    );
+    await this.page.evaluate(PlaywrightDriver.WAITER_SCRIPT);
     const error: unknown = await this.page.evaluate(
-      PlaywrightDriver.WAIT_FOR_SCRIPT
+      `(${PlaywrightDriver.WAIT_FOR_SCRIPT})(${options})`
     );
     if (error) {
       // eslint-disable-next-line @typescript-eslint/no-base-to-string
