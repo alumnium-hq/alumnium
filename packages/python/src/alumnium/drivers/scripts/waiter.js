@@ -76,6 +76,11 @@
 
   function trackResource(el) {
     const tag = el.tagName.toLowerCase();
+    const src = el.src || el.href || "";
+
+    if ((tag === "video" || tag === "audio") && !src) {
+      return;
+    }
 
     let isLoaded =
       el.loading === "lazy" || // lazy loading
