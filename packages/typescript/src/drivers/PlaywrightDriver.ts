@@ -48,10 +48,9 @@ const __dirname = dirname(__filename);
 
 const logger = getLogger(["driver", "playwright"]);
 
-export class PlaywrightDriver extends BaseDriver {
-  private static CONTEXT_WAS_DESTROYED_ERROR =
-    "Execution context was destroyed";
+const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
+export class PlaywrightDriver extends BaseDriver {
   private static WAITER_SCRIPT = readFileSync(
     join(__dirname, "scripts/waiter.js"),
     "utf8"
@@ -299,7 +298,7 @@ export class PlaywrightDriver extends BaseDriver {
     maxAttempts: 2,
     backOff: 500,
     doRetry: (error: Error) =>
-      error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR),
+      error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   async screenshot(): Promise<string> {
     const buffer = await this.page.screenshot();
@@ -324,7 +323,7 @@ export class PlaywrightDriver extends BaseDriver {
     maxAttempts: 2,
     backOff: 500,
     doRetry: (error: Error) =>
-      error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR),
+      error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   async title(): Promise<string> {
     return await this.page.title();
@@ -348,7 +347,7 @@ export class PlaywrightDriver extends BaseDriver {
     maxAttempts: 2,
     backOff: 500,
     doRetry: (error: Error) =>
-      error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR),
+      error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   url(): Promise<string> {
     return Promise.resolve(this.page.url());
@@ -401,7 +400,7 @@ export class PlaywrightDriver extends BaseDriver {
     maxAttempts: 2,
     backOff: 500,
     doRetry: (error: Error) =>
-      error.message.includes(PlaywrightDriver.CONTEXT_WAS_DESTROYED_ERROR),
+      error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   private async waitForPageToLoad(): Promise<void> {
     logger.debug("Waiting for page to finish loading:");
