@@ -328,8 +328,8 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         try:
-            await self.page.evaluate(f"function() {{ {PlaywrightDriver.WAITER_SCRIPT} }}")
-            error = await self.page.evaluate(PlaywrightDriver.WAIT_FOR_SCRIPT)
+            await self.page.evaluate(PlaywrightDriver.WAITER_SCRIPT)
+            error = await self.page.evaluate(f"({PlaywrightDriver.WAIT_FOR_SCRIPT})()")
             if error is not None:
                 logger.debug(f"  <- Failed to wait for page to load: {error}")
             else:
