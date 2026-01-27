@@ -18,6 +18,8 @@
     resources: new Set(),
     activeAt: Date.now(),
     initialLoad: false,
+    mutationIdle: true,
+    mutationDebounceTimer: null,
   };
 
   // Logging settings - can be enabled via options
@@ -36,6 +38,7 @@
 
   trackInitialLoad();
   observeResources();
+  observeBodyMutations();
   trackExistingResources();
   hookXHR();
   hookFetch();
@@ -64,6 +67,7 @@
 
         const noRequests = !state.pendingRequests;
         const noResources = !state.resources.size;
+        const noMutations = state.mutationIdle;
         const idleTime = now - state.activeAt;
         const isIdle = idleTime >= idle;
 
@@ -83,13 +87,14 @@
             pendingUrls: pendingUrlsInfo,
             resourcesCount: state.resources.size,
             resources: resourceInfo.slice(0, 5),
+            mutationIdle: state.mutationIdle,
             idleTime: `${idleTime}ms`,
             isIdle,
           });
           lastLogged = now;
         }
 
-        if (state.initialLoad && noRequests && noResources && isIdle) {
+        if (state.initialLoad && noRequests && noResources && noMutations && isIdle) {
           log("page stable", { elapsed: `${elapsed}ms` });
           return resolve();
         }
@@ -107,13 +112,14 @@
             pendingUrls: pendingUrlsInfo,
             resourcesCount: state.resources.size,
             resources: resourceInfo,
+            mutationIdle: state.mutationIdle,
             initialLoad: state.initialLoad,
           });
 
           return reject(
             new Error(
               `Timed out waiting for page to stabilize after ${timeout}ms. ` +
-              `pendingRequests=${state.pendingRequests}, resources=${state.resources.size}`
+              `pendingRequests=${state.pendingRequests}, resources=${state.resources.size}, mutationIdle=${state.mutationIdle}`
             )
           );
         }
@@ -205,6 +211,53 @@
       characterData: true,
       subtree: true,
     });
+  }
+
+  //#endregion
+
+  //#region Mutations
+
+  function observeBodyMutations() {
+    const mutationDebounceMs = 400;
+
+    // Skip if body is not available (e.g., about:blank or non-HTML document)
+    if (!(document.body instanceof Node)) {
+      log("body mutation observer skipped (no body)");
+      return;
+    }
+
+    const observer = new MutationObserver((mutationList) => {
+      if (mutationList.length === 0) return;
+
+      // Mark mutations as active
+      if (state.mutationIdle) {
+        state.mutationIdle = false;
+        log("DOM mutations started");
+      }
+
+      // Clear existing debounce timer
+      if (state.mutationDebounceTimer) {
+        clearTimeout(state.mutationDebounceTimer);
+      }
+
+      // Set a new debounce timer to mark mutations as idle
+      state.mutationDebounceTimer = setTimeout(() => {
+        state.mutationIdle = true;
+        state.mutationDebounceTimer = null;
+        log("DOM mutations settled");
+        updateActiveAt();
+      }, mutationDebounceMs);
+
+      updateActiveAt();
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+    log("body mutation observer started");
   }
 
   function trackInitialLoad() {
