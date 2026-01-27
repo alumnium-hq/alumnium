@@ -39,7 +39,10 @@ export class UploadTool extends BaseTool {
     // Planner often attempts to "escape" file paths by adding backslashes.
     // It also often surrounds paths with quotes.
     return paths.map((path) => {
-      return path.replace(/\\+\//g, "/").replace(/^["']|["']$/g, "");
+      return path
+        .replace(/\\+\//g, "/")
+        .replace(/^["']|["']$/g, "")
+        .trim();
     });
   }
 }
