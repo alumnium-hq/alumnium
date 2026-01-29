@@ -259,7 +259,7 @@ async def handle_list_tabs(args: dict[str, Any]) -> list[dict]:
 
     # Check if this is a Playwright driver
     if not (isinstance(raw_driver, tuple) and raw_driver[0].__class__.__name__ == "Page"):
-        return [{"type": "text", "text": "Tab switching is only supported for Playwright drivers"}]
+        return [{"type": "text", "text": "Tab management is currently only supported for Playwright drivers"}]
 
     page, loop = raw_driver
 
@@ -305,7 +305,7 @@ async def handle_switch_tab(args: dict[str, Any]) -> list[dict]:
 
     # Check if this is a Playwright driver
     if not (isinstance(raw_driver, tuple) and raw_driver[0].__class__.__name__ == "Page"):
-        return [{"type": "text", "text": "Tab switching is only supported for Playwright drivers"}]
+        return [{"type": "text", "text": "Tab management is currently only supported for Playwright drivers"}]
 
     page, loop = raw_driver
 
@@ -361,7 +361,7 @@ async def handle_wait_for_element(args: dict[str, Any]) -> list[dict]:
 
     # Check if this is a Playwright driver
     if not (isinstance(raw_driver, tuple) and raw_driver[0].__class__.__name__ == "Page"):
-        return [{"type": "text", "text": "wait_for_element is only supported for Playwright drivers"}]
+        return [{"type": "text", "text": "wait_for_element is currently only supported for Playwright drivers"}]
 
     page, loop = raw_driver
 
