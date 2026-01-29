@@ -1,4 +1,4 @@
-"""Integration tests for MCP tab management handlers using real Playwright browser."""
+"""Integration tests for tab switching in PlaywrightAsyncDriver."""
 
 import asyncio
 from pathlib import Path
@@ -6,7 +6,7 @@ from threading import Thread
 
 import pytest
 
-from alumnium.mcp import handlers, state
+from alumnium.mcp import state
 
 
 @pytest.fixture
@@ -88,172 +88,154 @@ def registered_driver(mock_alumnium):
         del state.step_counters[driver_id]
 
 
-class TestListTabsIntegration:
-    """Integration tests for list_tabs with real browser."""
+class TestSwitchToNextTabIntegration:
+    """Integration tests for switch_to_next_tab with real browser."""
 
     @pytest.mark.asyncio
-    async def test_list_single_tab(self, registered_driver):
-        """Test listing tabs when only one tab is open."""
-        driver_id, mock_al, page, loop = registered_driver
-
-        # Navigate to a page
-        async def _navigate():
-            await page.goto("data:text/html,<h1>Test Page</h1>")
-
-        future = asyncio.run_coroutine_threadsafe(_navigate(), loop)
-        future.result(timeout=10)
-
-        result = await handlers.handle_list_tabs({"driver_id": driver_id})
-
-        assert len(result) == 1
-        assert "1 open tab" in result[0]["text"]
-        assert "(active)" in result[0]["text"]
-
-    @pytest.mark.asyncio
-    async def test_list_multiple_tabs(self, registered_driver):
-        """Test listing tabs when multiple tabs are open."""
-        driver_id, mock_al, page, loop = registered_driver
-
-        async def _setup_tabs():
-            # Navigate first tab
-            await page.goto("data:text/html,<title>Tab 1</title><h1>First Tab</h1>")
-            # Open second tab
-            context = page.context
-            page2 = await context.new_page()
-            await page2.goto("data:text/html,<title>Tab 2</title><h1>Second Tab</h1>")
-            return page2
-
-        future = asyncio.run_coroutine_threadsafe(_setup_tabs(), loop)
-        future.result(timeout=10)
-
-        result = await handlers.handle_list_tabs({"driver_id": driver_id})
-
-        assert len(result) == 1
-        assert "2 open tab" in result[0]["text"]
-        assert "Tab 1" in result[0]["text"]
-        assert "Tab 2" in result[0]["text"]
-
-
-class TestSwitchTabIntegration:
-    """Integration tests for switch_tab with real browser."""
-
-    @pytest.mark.asyncio
-    async def test_switch_to_second_tab(self, registered_driver):
+    async def test_switch_to_next_tab_basic(self, registered_driver):
         """Test switching from first tab to second tab."""
         driver_id, mock_al, page, loop = registered_driver
 
         async def _setup_tabs():
-            await page.goto("data:text/html,<title>Tab 1</title><h1>First Tab</h1>")
+            await page.goto("data:text/html,<title>Tab 1</title>")
             context = page.context
             page2 = await context.new_page()
-            await page2.goto("data:text/html,<title>Tab 2</title><h1>Second Tab</h1>")
-            return page2
-
-        future = asyncio.run_coroutine_threadsafe(_setup_tabs(), loop)
-        page2 = future.result(timeout=10)
-
-        # Switch to tab 1 (second tab, 0-indexed)
-        result = await handlers.handle_switch_tab({"driver_id": driver_id, "tab_index": 1})
-
-        assert "Switched to tab [1]" in result[0]["text"]
-        assert "Tab 2" in result[0]["text"]
-        # Verify the driver's page was updated
-        assert mock_al.driver.page == page2
-
-    @pytest.mark.asyncio
-    async def test_switch_back_to_first_tab(self, registered_driver):
-        """Test switching back to the first tab."""
-        driver_id, mock_al, page, loop = registered_driver
-
-        async def _setup_tabs():
-            await page.goto("data:text/html,<title>Tab 1</title><h1>First Tab</h1>")
-            context = page.context
-            page2 = await context.new_page()
-            await page2.goto("data:text/html,<title>Tab 2</title><h1>Second Tab</h1>")
-            # Start on second tab
-            mock_al.driver.page = page2
+            await page2.goto("data:text/html,<title>Tab 2</title>")
+            # Start on first tab
+            mock_al.driver.page = page
             return page, page2
 
         future = asyncio.run_coroutine_threadsafe(_setup_tabs(), loop)
         page1, page2 = future.result(timeout=10)
 
-        # Switch back to tab 0 (first tab)
-        result = await handlers.handle_switch_tab({"driver_id": driver_id, "tab_index": 0})
+        # Create a real PlaywrightAsyncDriver for testing
+        from alumnium.drivers.playwright_async_driver import PlaywrightAsyncDriver
 
-        assert "Switched to tab [0]" in result[0]["text"]
-        assert "Tab 1" in result[0]["text"]
+        driver = PlaywrightAsyncDriver(page1, loop)
 
+        driver.switch_to_next_tab()
 
-class TestWaitForElementIntegration:
-    """Integration tests for wait_for_element with real browser."""
+        # Verify switched to second tab
+        assert driver.page == page2
 
     @pytest.mark.asyncio
-    async def test_wait_for_existing_element(self, registered_driver):
-        """Test waiting for an element that already exists."""
+    async def test_switch_to_next_tab_wraps_to_first(self, registered_driver):
+        """Test that switching next on last tab wraps to first."""
+        driver_id, mock_al, page, loop = registered_driver
+
+        async def _setup_tabs():
+            await page.goto("data:text/html,<title>Tab 1</title>")
+            context = page.context
+            page2 = await context.new_page()
+            await page2.goto("data:text/html,<title>Tab 2</title>")
+            return page, page2
+
+        future = asyncio.run_coroutine_threadsafe(_setup_tabs(), loop)
+        page1, page2 = future.result(timeout=10)
+
+        # Create a real PlaywrightAsyncDriver starting on LAST tab (second)
+        from alumnium.drivers.playwright_async_driver import PlaywrightAsyncDriver
+
+        driver = PlaywrightAsyncDriver(page2, loop)
+
+        # Switch to next - should wrap to first
+        driver.switch_to_next_tab()
+
+        assert driver.page == page1
+
+    @pytest.mark.asyncio
+    async def test_switch_to_next_tab_single_tab_noop(self, registered_driver):
+        """Test that switching next with only one tab is a no-op."""
         driver_id, mock_al, page, loop = registered_driver
 
         async def _navigate():
-            await page.goto("data:text/html,<div id='target'>Hello</div>")
+            await page.goto("data:text/html,<title>Only Tab</title>")
 
         future = asyncio.run_coroutine_threadsafe(_navigate(), loop)
         future.result(timeout=10)
 
-        result = await handlers.handle_wait_for_element({
-            "driver_id": driver_id,
-            "selector": "#target",
-            "timeout": 5,
-        })
+        from alumnium.drivers.playwright_async_driver import PlaywrightAsyncDriver
 
-        assert "Element found" in result[0]["text"]
+        driver = PlaywrightAsyncDriver(page, loop)
+        original_page = driver.page
+
+        driver.switch_to_next_tab()
+
+        # Should still be on same page
+        assert driver.page == original_page
+
+
+class TestSwitchToPreviousTabIntegration:
+    """Integration tests for switch_to_previous_tab with real browser."""
 
     @pytest.mark.asyncio
-    async def test_wait_for_delayed_element(self, registered_driver):
-        """Test waiting for an element that appears after a delay."""
+    async def test_switch_to_previous_tab_basic(self, registered_driver):
+        """Test switching from second tab to first tab."""
         driver_id, mock_al, page, loop = registered_driver
 
-        html = """
-        <script>
-            setTimeout(function() {
-                var div = document.createElement('div');
-                div.id = 'delayed';
-                div.textContent = 'Appeared!';
-                document.body.appendChild(div);
-            }, 500);
-        </script>
-        """
+        async def _setup_tabs():
+            await page.goto("data:text/html,<title>Tab 1</title>")
+            context = page.context
+            page2 = await context.new_page()
+            await page2.goto("data:text/html,<title>Tab 2</title>")
+            return page, page2
+
+        future = asyncio.run_coroutine_threadsafe(_setup_tabs(), loop)
+        page1, page2 = future.result(timeout=10)
+
+        # Create a real PlaywrightAsyncDriver starting on second tab
+        from alumnium.drivers.playwright_async_driver import PlaywrightAsyncDriver
+
+        driver = PlaywrightAsyncDriver(page2, loop)
+
+        driver.switch_to_previous_tab()
+
+        assert driver.page == page1
+
+    @pytest.mark.asyncio
+    async def test_switch_to_previous_tab_wraps_to_last(self, registered_driver):
+        """Test that switching previous on first tab wraps to last."""
+        driver_id, mock_al, page, loop = registered_driver
+
+        async def _setup_tabs():
+            await page.goto("data:text/html,<title>Tab 1</title>")
+            context = page.context
+            page2 = await context.new_page()
+            await page2.goto("data:text/html,<title>Tab 2</title>")
+            return page, page2
+
+        future = asyncio.run_coroutine_threadsafe(_setup_tabs(), loop)
+        page1, page2 = future.result(timeout=10)
+
+        # Create a real PlaywrightAsyncDriver starting on FIRST tab
+        from alumnium.drivers.playwright_async_driver import PlaywrightAsyncDriver
+
+        driver = PlaywrightAsyncDriver(page1, loop)
+
+        driver.switch_to_previous_tab()
+
+        # Should wrap to last tab
+        assert driver.page == page2
+
+    @pytest.mark.asyncio
+    async def test_switch_to_previous_tab_single_tab_noop(self, registered_driver):
+        """Test that switching previous with only one tab is a no-op."""
+        driver_id, mock_al, page, loop = registered_driver
 
         async def _navigate():
-            await page.goto(f"data:text/html,{html}")
+            await page.goto("data:text/html,<title>Only Tab</title>")
 
         future = asyncio.run_coroutine_threadsafe(_navigate(), loop)
         future.result(timeout=10)
 
-        result = await handlers.handle_wait_for_element({
-            "driver_id": driver_id,
-            "selector": "#delayed",
-            "timeout": 5,
-        })
+        from alumnium.drivers.playwright_async_driver import PlaywrightAsyncDriver
 
-        assert "Element found" in result[0]["text"]
+        driver = PlaywrightAsyncDriver(page, loop)
+        original_page = driver.page
 
-    @pytest.mark.asyncio
-    async def test_wait_for_nonexistent_element_times_out(self, registered_driver):
-        """Test that waiting for a nonexistent element times out."""
-        driver_id, mock_al, page, loop = registered_driver
+        driver.switch_to_previous_tab()
 
-        async def _navigate():
-            await page.goto("data:text/html,<div>No target here</div>")
-
-        future = asyncio.run_coroutine_threadsafe(_navigate(), loop)
-        future.result(timeout=10)
-
-        result = await handlers.handle_wait_for_element({
-            "driver_id": driver_id,
-            "selector": "#nonexistent",
-            "timeout": 1,  # Short timeout for faster test
-        })
-
-        assert "Timeout" in result[0]["text"]
+        assert driver.page == original_page
 
 
 # Note: autoswitch_to_new_tab behavior is tested in unit tests (test_handlers.py)
