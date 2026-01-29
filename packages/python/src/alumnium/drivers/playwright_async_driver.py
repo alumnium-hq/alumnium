@@ -10,7 +10,6 @@ from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
-from ..tools.select_tool import SelectTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
@@ -30,7 +29,6 @@ class PlaywrightAsyncDriver(BaseDriver):
             DragAndDropTool,
             HoverTool,
             PressKeyTool,
-            SelectTool,
             TypeTool,
             UploadTool,
         }
@@ -139,12 +137,11 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     async def _click(self, id: int):
         element = await self._find_element(id)
-        tag_name = (await element.evaluate("el => el.tagName")).lower()
-
-        # Llama often attempts to click options, not select them.
-        if tag_name == "option":
-            option = await element.text_content()
-            await element.locator("xpath=.//parent::select").select_option(option)
+        tag_name = await element.evaluate("el => el.tagName")
+        if tag_name.lower() == "option":
+            value = await element.evaluate("el => el.value")
+            async with self._autoswitch_to_new_tab():
+                await element.locator("xpath=parent::select").select_option(value)
         else:
             async with self._autoswitch_to_new_tab():
                 await element.click(force=True)
@@ -204,19 +201,6 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _scroll_to(self, id: int):
         element = await self._find_element(id)
         await element.scroll_into_view_if_needed()
-
-    def select(self, id: int, option: str):
-        self._run_async(self._select(id, option))
-
-    async def _select(self, id: int, option: str):
-        element = await self._find_element(id)
-        tag_name = (await element.evaluate("el => el.tagName")).lower()
-
-        # Anthropic chooses to select using option ID, not select ID
-        if tag_name == "option":
-            await element.locator("xpath=.//parent::select").select_option(option)
-        else:
-            await element.select_option(option)
 
     @property
     def title(self) -> str:

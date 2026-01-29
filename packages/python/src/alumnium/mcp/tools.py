@@ -13,7 +13,6 @@ from ..tools import (
     NavigateToUrlTool,
     PressKeyTool,
     ScrollTool,
-    SelectTool,
     TypeTool,
     UploadTool,
 )
@@ -28,7 +27,6 @@ _DO_TOOLS = [
     NavigateToUrlTool,
     PressKeyTool,
     ScrollTool,
-    SelectTool,
     TypeTool,
     UploadTool,
 ]
