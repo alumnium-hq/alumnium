@@ -578,6 +578,34 @@ class PlaywrightAsyncDriver(BaseDriver):
 
         return search_frame(cdp_frame_tree["frameTree"])
 
+    def switch_to_next_tab(self):
+        self._run_async(self._switch_to_next_tab())
+
+    async def _switch_to_next_tab(self):
+        pages = self.page.context.pages
+        if len(pages) <= 1:
+            return  # Only one tab, nothing to switch
+
+        current_index = pages.index(self.page)
+        next_index = (current_index + 1) % len(pages)  # Wrap to first
+
+        self.page = pages[next_index]
+        self.client = None  # Reset CDP client for new page
+
+    def switch_to_previous_tab(self):
+        self._run_async(self._switch_to_previous_tab())
+
+    async def _switch_to_previous_tab(self):
+        pages = self.page.context.pages
+        if len(pages) <= 1:
+            return  # Only one tab, nothing to switch
+
+        current_index = pages.index(self.page)
+        prev_index = (current_index - 1) % len(pages)  # Wrap to last
+
+        self.page = pages[prev_index]
+        self.client = None  # Reset CDP client for new page
+
     def _run_async(self, coro):
         future = run_coroutine_threadsafe(coro, self.loop)
         return future.result()

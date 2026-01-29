@@ -523,3 +523,25 @@ class PlaywrightDriver(BaseDriver):
             return None
 
         return search_frame(cdp_frame_tree["frameTree"])
+
+    def switch_to_next_tab(self):
+        pages = self.page.context.pages
+        if len(pages) <= 1:
+            return  # Only one tab, nothing to switch
+
+        current_index = pages.index(self.page)
+        next_index = (current_index + 1) % len(pages)  # Wrap to first
+
+        self.page = pages[next_index]
+        self.client = self.page.context.new_cdp_session(self.page)
+
+    def switch_to_previous_tab(self):
+        pages = self.page.context.pages
+        if len(pages) <= 1:
+            return  # Only one tab, nothing to switch
+
+        current_index = pages.index(self.page)
+        prev_index = (current_index - 1) % len(pages)  # Wrap to last
+
+        self.page = pages[prev_index]
+        self.client = self.page.context.new_cdp_session(self.page)

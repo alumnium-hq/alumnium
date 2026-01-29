@@ -555,3 +555,9 @@ class SeleniumDriver(BaseDriver):
             logger.debug(f"  <- Failed to wait for page to load: {error}")
         else:
             logger.debug("  <- Page finished loading")
+
+    def switch_to_next_tab(self):
+        raise NotImplementedError("Tab switching not supported for this driver")
+
+    def switch_to_previous_tab(self):
+        raise NotImplementedError("Tab switching not supported for this driver")

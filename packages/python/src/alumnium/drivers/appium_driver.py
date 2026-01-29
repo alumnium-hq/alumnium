@@ -242,3 +242,9 @@ class AppiumDriver(BaseDriver):
             f"Element not visible after {max_scrolls} scrolls. "
             f"Try adjusting the scroll direction or increase max_scrolls."
         )
+
+    def switch_to_next_tab(self):
+        raise NotImplementedError("Tab switching not supported for this driver")
+
+    def switch_to_previous_tab(self):
+        raise NotImplementedError("Tab switching not supported for this driver")

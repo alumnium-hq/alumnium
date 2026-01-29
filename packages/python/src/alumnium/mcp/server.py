@@ -44,14 +44,8 @@ class Server:
                     return await handlers.handle_get(arguments)
                 elif name == "fetch_accessibility_tree":
                     return await handlers.handle_fetch_accessibility_tree(arguments)
-                elif name == "list_tabs":
-                    return await handlers.handle_list_tabs(arguments)
-                elif name == "switch_tab":
-                    return await handlers.handle_switch_tab(arguments)
                 elif name == "wait":
                     return await handlers.handle_wait(arguments)
-                elif name == "wait_for_element":
-                    return await handlers.handle_wait_for_element(arguments)
                 elif name == "stop_driver":
                     return await handlers.handle_stop_driver(arguments)
                 else:
