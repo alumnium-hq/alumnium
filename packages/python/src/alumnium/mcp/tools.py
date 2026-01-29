@@ -187,4 +187,72 @@ def get_tool_definitions() -> list[Tool]:
                 "required": ["driver_id"],
             },
         ),
+        Tool(
+            name="list_tabs",
+            description="List all open browser tabs/windows with their index, title, and URL.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "driver_id": {"type": "string", "description": "Driver ID from start_driver"},
+                },
+                "required": ["driver_id"],
+            },
+        ),
+        Tool(
+            name="switch_tab",
+            description=(
+                "Switch to a different browser tab/window by index. "
+                "Use list_tabs first to see available tabs and their indices."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "driver_id": {"type": "string", "description": "Driver ID from start_driver"},
+                    "tab_index": {
+                        "type": "integer",
+                        "description": "Index of the tab to switch to (0-based, from list_tabs)",
+                    },
+                },
+                "required": ["driver_id", "tab_index"],
+            },
+        ),
+        Tool(
+            name="wait",
+            description=(
+                "Wait for a specified number of seconds. "
+                "Use this to wait for popups, animations, or async operations to complete."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "seconds": {
+                        "type": "number",
+                        "description": "Number of seconds to wait (1-30)",
+                        "minimum": 1,
+                        "maximum": 30,
+                    },
+                },
+                "required": ["seconds"],
+            },
+        ),
+        Tool(
+            name="wait_for_element",
+            description=(
+                "Wait for an element matching a CSS selector to appear on the page. "
+                "Returns when element is found or throws error on timeout."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "driver_id": {"type": "string", "description": "Driver ID from start_driver"},
+                    "selector": {"type": "string", "description": "CSS selector to wait for"},
+                    "timeout": {
+                        "type": "integer",
+                        "description": "Max seconds to wait (default: 10)",
+                        "default": 10,
+                    },
+                },
+                "required": ["driver_id", "selector"],
+            },
+        ),
     ]
