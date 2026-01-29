@@ -25,6 +25,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         self.client = None
         self.page = page
         self.loop = loop
+        self.autoswitch_to_new_tab = True  # Can be disabled via alumnium:options
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -343,6 +344,11 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     @asynccontextmanager
     async def _autoswitch_to_new_tab(self):
+        # If auto-switch is disabled, just yield without waiting for new pages
+        if not self.autoswitch_to_new_tab:
+            yield
+            return
+
         try:
             async with self.page.context.expect_page(timeout=PlaywrightDriver.NEW_TAB_TIMEOUT) as new_page_info:
                 yield

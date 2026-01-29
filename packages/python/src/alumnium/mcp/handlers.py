@@ -245,3 +245,137 @@ async def handle_stop_driver(args: dict[str, Any]) -> list[dict]:
     )
 
     return [{"type": "text", "text": message}]
+
+
+async def handle_list_tabs(args: dict[str, Any]) -> list[dict]:
+    """List all open browser tabs/windows."""
+    import asyncio
+
+    driver_id = args["driver_id"]
+
+    logger.debug(f"Driver {driver_id}: Listing tabs")
+
+    al, raw_driver = state.get_driver(driver_id)
+
+    # Check if this is a Playwright driver
+    if not (isinstance(raw_driver, tuple) and raw_driver[0].__class__.__name__ == "Page"):
+        return [{"type": "text", "text": "Tab switching is only supported for Playwright drivers"}]
+
+    page, loop = raw_driver
+
+    async def _list_pages():
+        context = page.context
+        pages = context.pages
+        tabs = []
+        for i, p in enumerate(pages):
+            title = await p.title()
+            tabs.append({
+                "index": i,
+                "title": title,
+                "url": p.url,
+                "is_active": p == al.driver.page,
+            })
+        return tabs
+
+    future = asyncio.run_coroutine_threadsafe(_list_pages(), loop)
+    tabs = future.result()
+
+    logger.info(f"Driver {driver_id}: Found {len(tabs)} tabs")
+
+    # Format as readable text
+    lines = [f"Found {len(tabs)} open tab(s):"]
+    for tab in tabs:
+        active = " (active)" if tab["is_active"] else ""
+        lines.append(f"  [{tab['index']}] {tab['title']}{active}")
+        lines.append(f"      URL: {tab['url']}")
+
+    return [{"type": "text", "text": "\n".join(lines)}]
+
+
+async def handle_switch_tab(args: dict[str, Any]) -> list[dict]:
+    """Switch to a different browser tab/window."""
+    import asyncio
+
+    driver_id = args["driver_id"]
+    tab_index = args["tab_index"]
+
+    logger.info(f"Driver {driver_id}: Switching to tab {tab_index}")
+
+    al, raw_driver = state.get_driver(driver_id)
+
+    # Check if this is a Playwright driver
+    if not (isinstance(raw_driver, tuple) and raw_driver[0].__class__.__name__ == "Page"):
+        return [{"type": "text", "text": "Tab switching is only supported for Playwright drivers"}]
+
+    page, loop = raw_driver
+
+    async def _switch_tab():
+        context = page.context
+        pages = context.pages
+
+        if tab_index < 0 or tab_index >= len(pages):
+            raise ValueError(f"Invalid tab index {tab_index}. Available: 0-{len(pages)-1}")
+
+        target_page = pages[tab_index]
+        al.driver.page = target_page
+        # Reset CDP client for new page
+        al.driver.client = None
+
+        title = await target_page.title()
+        return title, target_page.url
+
+    future = asyncio.run_coroutine_threadsafe(_switch_tab(), loop)
+    title, url = future.result()
+
+    logger.info(f"Driver {driver_id}: Switched to tab {tab_index}: {title}")
+
+    return [{"type": "text", "text": f"Switched to tab [{tab_index}]: {title}\nURL: {url}"}]
+
+
+async def handle_wait(args: dict[str, Any]) -> list[dict]:
+    """Wait for a specified number of seconds."""
+    import asyncio
+
+    seconds = args["seconds"]
+
+    # Clamp to valid range
+    seconds = max(1, min(30, seconds))
+
+    logger.info(f"Waiting for {seconds} seconds")
+    await asyncio.sleep(seconds)
+
+    return [{"type": "text", "text": f"Waited {seconds} seconds"}]
+
+
+async def handle_wait_for_element(args: dict[str, Any]) -> list[dict]:
+    """Wait for an element to appear on the page."""
+    import asyncio
+
+    driver_id = args["driver_id"]
+    selector = args["selector"]
+    timeout = args.get("timeout", 10)
+
+    logger.info(f"Driver {driver_id}: Waiting for element '{selector}' (timeout={timeout}s)")
+
+    al, raw_driver = state.get_driver(driver_id)
+
+    # Check if this is a Playwright driver
+    if not (isinstance(raw_driver, tuple) and raw_driver[0].__class__.__name__ == "Page"):
+        return [{"type": "text", "text": "wait_for_element is only supported for Playwright drivers"}]
+
+    page, loop = raw_driver
+
+    async def _wait_for_element():
+        # Use the current page from the driver (in case it was switched)
+        current_page = al.driver.page
+        await current_page.wait_for_selector(selector, timeout=timeout * 1000)
+        return True
+
+    try:
+        future = asyncio.run_coroutine_threadsafe(_wait_for_element(), loop)
+        future.result()
+        logger.info(f"Driver {driver_id}: Element '{selector}' found")
+        return [{"type": "text", "text": f"Element found: {selector}"}]
+    except Exception as e:
+        logger.warning(f"Driver {driver_id}: Timeout waiting for '{selector}': {e}")
+        return [{"type": "text", "text": f"Timeout after {timeout}s waiting for: {selector}"}]
