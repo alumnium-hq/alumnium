@@ -27,7 +27,7 @@ class FilesystemCache(BaseCache):
     def lookup(self, prompt: str, llm_string: str) -> RETURN_VAL_TYPE | None:
         try:
             system_message, human_message = self._extract_messages(prompt)
-            hashed_request = self._hash_request(system_message, human_message)
+            hashed_request = self._hash_request(system_message, human_message, llm_string)
 
             if (llm_string, hashed_request) in self._in_memory_cache:
                 logger.debug(f"Cache hit (in-memory) for message: {human_message[:100]}...")
@@ -51,7 +51,7 @@ class FilesystemCache(BaseCache):
 
     def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE):
         system_message, human_message = self._extract_messages(prompt)
-        hashed_request = self._hash_request(system_message, human_message)
+        hashed_request = self._hash_request(system_message, human_message, llm_string)
         self._in_memory_cache[(llm_string, hashed_request)] = (return_val, True)
 
     def save(self):
@@ -108,8 +108,8 @@ class FilesystemCache(BaseCache):
 
         return system_message, human_message
 
-    def _hash_request(self, system_message: str, human_message: str) -> str:
-        combined = f"{system_message}|{human_message}"
+    def _hash_request(self, system_message: str, human_message: str, llm_string: str) -> str:
+        combined = f"{system_message}|{human_message}|{llm_string}"
         return xxh3_128_hexdigest(combined)
 
     def _get_cache_path(self, hashed_request: str) -> Path:
