@@ -18,6 +18,8 @@
     resources: new Set(),
     activeAt: Date.now(),
     initialLoad: false,
+    mutationIdle: true,
+    mutationDebounceTimer: null,
   };
 
   // Logging settings - can be enabled via options
@@ -35,7 +37,7 @@
   }
 
   trackInitialLoad();
-  observeResources();
+  observeDom();
   trackExistingResources();
   hookXHR();
   hookFetch();
@@ -49,6 +51,9 @@
     const idle = options?.idle ?? 500;
     const timeout = options?.timeout ?? 10000;
     logEnabled = options?.log ?? false;
+
+    // Reset the idle timer to ensure we wait at least the idle period from now
+    updateActiveAt();
 
     log("waitForStability started", { idle, timeout });
 
@@ -64,6 +69,7 @@
 
         const noRequests = !state.pendingRequests;
         const noResources = !state.resources.size;
+        const noMutations = state.mutationIdle;
         const idleTime = now - state.activeAt;
         const isIdle = idleTime >= idle;
 
@@ -83,13 +89,14 @@
             pendingUrls: pendingUrlsInfo,
             resourcesCount: state.resources.size,
             resources: resourceInfo.slice(0, 5),
+            mutationIdle: state.mutationIdle,
             idleTime: `${idleTime}ms`,
             isIdle,
           });
           lastLogged = now;
         }
 
-        if (state.initialLoad && noRequests && noResources && isIdle) {
+        if (state.initialLoad && noRequests && noResources && noMutations && isIdle) {
           log("page stable", { elapsed: `${elapsed}ms` });
           return resolve();
         }
@@ -107,13 +114,14 @@
             pendingUrls: pendingUrlsInfo,
             resourcesCount: state.resources.size,
             resources: resourceInfo,
+            mutationIdle: state.mutationIdle,
             initialLoad: state.initialLoad,
           });
 
           return reject(
             new Error(
               `Timed out waiting for page to stabilize after ${timeout}ms. ` +
-              `pendingRequests=${state.pendingRequests}, resources=${state.resources.size}`
+              `pendingRequests=${state.pendingRequests}, resources=${state.resources.size}, mutationIdle=${state.mutationIdle}`
             )
           );
         }
@@ -181,8 +189,18 @@
     resources.forEach(trackResource);
   }
 
-  function observeResources() {
+  function observeDom() {
+    const mutationDebounceMs = 400;
+
+    // Skip if documentElement is not available (e.g., about:blank)
+    if (!(document.documentElement instanceof Node)) {
+      return;
+    }
+
     const observer = new MutationObserver((mutationList) => {
+      if (mutationList.length === 0) return;
+
+      // Track new resources
       for (const mutation of mutationList) {
         for (const node of mutation.addedNodes) {
           if (node.nodeType !== Node.ELEMENT_NODE) continue;
@@ -195,6 +213,23 @@
           if (isResource) trackResource(node);
         }
       }
+
+      // Track mutation idle state with debouncing
+      if (state.mutationIdle) {
+        state.mutationIdle = false;
+        log("DOM mutations started");
+      }
+
+      if (state.mutationDebounceTimer) {
+        clearTimeout(state.mutationDebounceTimer);
+      }
+
+      state.mutationDebounceTimer = setTimeout(() => {
+        state.mutationIdle = true;
+        state.mutationDebounceTimer = null;
+        log("DOM mutations settled");
+        updateActiveAt();
+      }, mutationDebounceMs);
 
       updateActiveAt();
     });
