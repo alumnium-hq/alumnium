@@ -212,7 +212,7 @@ def get_tool_definitions() -> list[Tool]:
                     },
                     "timeout": {
                         "type": "integer",
-                        "description": "Max seconds to wait for condition (default: 10, only used with string conditions)",
+                        "description": "Max seconds to wait for condition (default: 10, string only)",
                         "default": 10,
                     },
                 },
