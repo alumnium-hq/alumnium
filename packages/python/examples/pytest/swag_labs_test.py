@@ -27,7 +27,10 @@ def login(al, driver, execute_script, navigate):
     else:
         al.learn(
             "sort products by lowest shipping cost",
-            ["select 'Shipping (low to high)' in sorting dropdown"],
+            [
+                "click combobox with options",
+                'click option "Shipping (low to high)"',
+            ],
         )
 
     navigate("https://www.saucedemo.com/")

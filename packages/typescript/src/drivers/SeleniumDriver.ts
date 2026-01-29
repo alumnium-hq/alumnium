@@ -16,7 +16,6 @@ import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
 import { HoverTool } from "../tools/HoverTool.js";
 import { PressKeyTool } from "../tools/PressKeyTool.js";
-import { SelectTool } from "../tools/SelectTool.js";
 import { TypeTool } from "../tools/TypeTool.js";
 import { UploadTool } from "../tools/UploadTool.js";
 import { getLogger } from "../utils/logger.js";
@@ -103,7 +102,6 @@ export class SeleniumDriver extends BaseDriver {
     DragAndDropTool,
     HoverTool,
     PressKeyTool,
-    SelectTool,
     TypeTool,
     UploadTool,
   ]);
@@ -307,26 +305,6 @@ export class SeleniumDriver extends BaseDriver {
 
   async screenshot(): Promise<string> {
     return await this.driver.takeScreenshot();
-  }
-
-  async select(id: number, option: string): Promise<void> {
-    const element = await this.findElement(id);
-    const tagName = await element.getTagName();
-
-    // Handle case where option element is selected instead of select element
-    let selectElement = element;
-    if (tagName === "option") {
-      selectElement = await element.findElement(By.xpath(".//parent::select"));
-    }
-
-    const options = await selectElement.findElements(By.tagName("option"));
-    for (const opt of options) {
-      const text = await opt.getText();
-      if (text === option) {
-        await opt.click();
-        return;
-      }
-    }
   }
 
   async title(): Promise<string> {
