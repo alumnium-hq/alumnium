@@ -65,3 +65,11 @@ class BaseDriver(ABC):
     @abstractmethod
     def execute_script(self, script: str):
         pass
+
+    @abstractmethod
+    def switch_to_next_tab(self):
+        pass
+
+    @abstractmethod
+    def switch_to_previous_tab(self):
+        pass

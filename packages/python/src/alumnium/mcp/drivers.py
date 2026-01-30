@@ -57,6 +57,11 @@ def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path) 
                     cookie["path"] = "/"
             await context.add_cookies(cookies)
 
+        permissions = capabilities.get("permissions", [])
+        if permissions:
+            logger.debug(f"Granting permissions: {permissions}")
+            await context.grant_permissions(permissions)
+
         page = await context.new_page()
 
         return page

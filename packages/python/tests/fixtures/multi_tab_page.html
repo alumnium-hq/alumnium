@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multi-Tab Test Page</title>
+</head>
+<body>
+    <h1>Multi-Tab Test Page</h1>
+    <p>This page is used to test tab management functionality.</p>
+
+    <button id="open-tab-btn" onclick="window.open('about:blank', '_blank')">
+        Open New Tab
+    </button>
+
+    <button id="open-popup-btn" onclick="openPopup()">
+        Open Popup (auto-closes)
+    </button>
+
+    <div id="delayed-element" style="display: none;">
+        Delayed Element Appeared!
+    </div>
+
+    <button id="show-delayed-btn" onclick="showDelayed()">
+        Show Delayed Element
+    </button>
+
+    <script>
+        function openPopup() {
+            var popup = window.open('', 'popup', 'width=400,height=300');
+            popup.document.write('<html><head><title>Popup Window</title></head>');
+            popup.document.write('<body><h1>Popup Content</h1>');
+            popup.document.write('<p>This popup will close in 2 seconds...</p></body></html>');
+            setTimeout(function() { popup.close(); }, 2000);
+        }
+
+        function showDelayed() {
+            setTimeout(function() {
+                document.getElementById('delayed-element').style.display = 'block';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

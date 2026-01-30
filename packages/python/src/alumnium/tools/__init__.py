@@ -8,6 +8,8 @@ from .navigate_to_url_tool import NavigateToUrlTool
 from .press_key_tool import PressKeyTool
 from .scroll_tool import ScrollTool
 from .select_tool import SelectTool
+from .switch_to_next_tab_tool import SwitchToNextTabTool
+from .switch_to_previous_tab_tool import SwitchToPreviousTabTool
 from .type_tool import TypeTool
 from .upload_tool import UploadTool
 
@@ -22,6 +24,8 @@ __all__ = [
     "PressKeyTool",
     "ScrollTool",
     "SelectTool",
+    "SwitchToNextTabTool",
+    "SwitchToPreviousTabTool",
     "TypeTool",
     "UploadTool",
 ]
