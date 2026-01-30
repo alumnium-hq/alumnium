@@ -44,11 +44,13 @@ class TestHandleWait:
         mock_al.check.return_value = "The condition is satisfied"
 
         with patch.object(handlers.state, "get_driver", return_value=(mock_al, MagicMock())):
-            result = await handlers.handle_wait({
-                "driver_id": "test-123",
-                "for": "user is logged in",
-                "timeout": 10,
-            })
+            result = await handlers.handle_wait(
+                {
+                    "driver_id": "test-123",
+                    "for": "user is logged in",
+                    "timeout": 10,
+                }
+            )
 
         assert len(result) == 1
         assert result[0]["type"] == "text"
@@ -67,11 +69,13 @@ class TestHandleWait:
         ]
 
         with patch.object(handlers.state, "get_driver", return_value=(mock_al, MagicMock())):
-            result = await handlers.handle_wait({
-                "driver_id": "test-123",
-                "for": "page loaded",
-                "timeout": 10,
-            })
+            result = await handlers.handle_wait(
+                {
+                    "driver_id": "test-123",
+                    "for": "page loaded",
+                    "timeout": 10,
+                }
+            )
 
         assert len(result) == 1
         assert "Condition met" in result[0]["text"]
@@ -84,11 +88,13 @@ class TestHandleWait:
         mock_al.check.side_effect = AssertionError("Condition not satisfied")
 
         with patch.object(handlers.state, "get_driver", return_value=(mock_al, MagicMock())):
-            result = await handlers.handle_wait({
-                "driver_id": "test-123",
-                "for": "element visible",
-                "timeout": 0.3,
-            })
+            result = await handlers.handle_wait(
+                {
+                    "driver_id": "test-123",
+                    "for": "element visible",
+                    "timeout": 0.3,
+                }
+            )
 
         assert len(result) == 1
         assert "Timeout" in result[0]["text"]
@@ -102,11 +108,11 @@ class TestHandleWait:
         mock_al.check.return_value = "OK"
 
         with patch.object(handlers.state, "get_driver", return_value=(mock_al, MagicMock())):
-            result = await handlers.handle_wait({
-                "driver_id": "test-123",
-                "for": "test condition",
-            })
+            result = await handlers.handle_wait(
+                {
+                    "driver_id": "test-123",
+                    "for": "test condition",
+                }
+            )
 
         assert "Condition met" in result[0]["text"]
-
-

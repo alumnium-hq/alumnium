@@ -428,12 +428,32 @@ export class SeleniumDriver extends BaseDriver {
     await this.driver.executeScript(script);
   }
 
-  switchToNextTab(): void {
-    throw new Error("Tab switching not supported for this driver");
+  async switchToNextTab(): Promise<void> {
+    const handles = await this.driver.getAllWindowHandles();
+    if (handles.length <= 1) return;
+
+    const current = await this.driver.getWindowHandle();
+    const currentIndex = handles.indexOf(current);
+    const nextIndex = (currentIndex + 1) % handles.length;
+
+    await this.driver.switchTo().window(handles[nextIndex]);
+    logger.debug(
+      `Switched to next tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
+    );
   }
 
-  switchToPreviousTab(): void {
-    throw new Error("Tab switching not supported for this driver");
+  async switchToPreviousTab(): Promise<void> {
+    const handles = await this.driver.getAllWindowHandles();
+    if (handles.length <= 1) return;
+
+    const current = await this.driver.getWindowHandle();
+    const currentIndex = handles.indexOf(current);
+    const prevIndex = (currentIndex - 1 + handles.length) % handles.length;
+
+    await this.driver.switchTo().window(handles[prevIndex]);
+    logger.debug(
+      `Switched to previous tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
+    );
   }
 
   async wait(seconds: number): Promise<void> {

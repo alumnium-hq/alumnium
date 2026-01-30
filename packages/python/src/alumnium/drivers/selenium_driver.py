@@ -557,7 +557,19 @@ class SeleniumDriver(BaseDriver):
             logger.debug("  <- Page finished loading")
 
     def switch_to_next_tab(self):
-        raise NotImplementedError("Tab switching not supported for this driver")
+        handles = self.driver.window_handles
+        if len(handles) <= 1:
+            return
+        current_index = handles.index(self.driver.current_window_handle)
+        next_index = (current_index + 1) % len(handles)
+        self.driver.switch_to.window(handles[next_index])
+        logger.debug(f"Switched to next tab: {self.driver.title} ({self.driver.current_url})")
 
     def switch_to_previous_tab(self):
-        raise NotImplementedError("Tab switching not supported for this driver")
+        handles = self.driver.window_handles
+        if len(handles) <= 1:
+            return
+        current_index = handles.index(self.driver.current_window_handle)
+        prev_index = (current_index - 1) % len(handles)
+        self.driver.switch_to.window(handles[prev_index])
+        logger.debug(f"Switched to previous tab: {self.driver.title} ({self.driver.current_url})")
