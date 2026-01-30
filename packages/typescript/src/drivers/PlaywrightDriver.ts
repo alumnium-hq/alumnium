@@ -9,7 +9,6 @@ import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
 import { HoverTool } from "../tools/HoverTool.js";
 import { PressKeyTool } from "../tools/PressKeyTool.js";
-import { SelectTool } from "../tools/SelectTool.js";
 import { TypeTool } from "../tools/TypeTool.js";
 import { UploadTool } from "../tools/UploadTool.js";
 import { getLogger } from "../utils/logger.js";
@@ -68,7 +67,6 @@ export class PlaywrightDriver extends BaseDriver {
     DragAndDropTool,
     HoverTool,
     PressKeyTool,
-    SelectTool,
     TypeTool,
     UploadTool,
   ]);
@@ -242,17 +240,16 @@ export class PlaywrightDriver extends BaseDriver {
     const tagName = await element.evaluate(
       (el: { tagName: string }) => el.tagName
     );
-
-    // Llama often attempts to click options, not select them.
-    if (tagName.toLowerCase() === "option") {
-      const option = await element.textContent();
-      await element
-        .locator("xpath=.//parent::select")
-        .selectOption(option || "");
-      return;
+    if (tagName?.toLowerCase() === "option") {
+      const value = await element.evaluate((el: { value: string }) => el.value);
+      await this.autoswitchToNewTab(async () => {
+        await element.locator("xpath=parent::select").selectOption(value);
+      });
+    } else {
+      await this.autoswitchToNewTab(async () => {
+        await element.click({ force: true });
+      });
     }
-
-    await this.autoswitchToNewTab(() => element.click({ force: true }));
   }
 
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
@@ -303,20 +300,6 @@ export class PlaywrightDriver extends BaseDriver {
   async screenshot(): Promise<string> {
     const buffer = await this.page.screenshot();
     return buffer.toString("base64");
-  }
-
-  async select(id: number, option: string): Promise<void> {
-    const element = await this.findElement(id);
-    const tagName = await element.evaluate(
-      (el: { tagName: string }) => el.tagName
-    );
-
-    // Anthropic chooses to select using option ID, not select ID
-    if (tagName.toLowerCase() === "option") {
-      await element.locator("xpath=.//parent::select").selectOption(option);
-    } else {
-      await element.selectOption(option);
-    }
   }
 
   @retry({

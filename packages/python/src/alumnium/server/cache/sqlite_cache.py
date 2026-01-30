@@ -103,9 +103,9 @@ class SQLiteCache(BaseCache):
                     human_message += content
         return system_message, human_message
 
-    def _hash_request(self, system_message: str, human_message: str) -> str:
-        # Combine messages and hash them
-        combined = f"{system_message}|{human_message}"
+    def _hash_request(self, system_message: str, human_message: str, llm_string: str) -> str:
+        # Combine messages and llm configuration (including tools) and hash them
+        combined = f"{system_message}|{human_message}|{llm_string}"
         return xxh3_128_hexdigest(combined)
 
     def save(self) -> None:
@@ -124,7 +124,7 @@ class SQLiteCache(BaseCache):
     def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
         system_message, human_message = self._extract_messages(prompt)
         model_config = self._get_or_create_model_config(llm_string)
-        hashed_request = self._hash_request(system_message, human_message)
+        hashed_request = self._hash_request(system_message, human_message, llm_string)
 
         lookup_stmt = (
             select(CacheEntry.response)
@@ -151,7 +151,7 @@ class SQLiteCache(BaseCache):
     def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE) -> None:
         system_message, human_message = self._extract_messages(prompt)
         model_config = self._get_or_create_model_config(llm_string)
-        hashed_request = self._hash_request(system_message, human_message)
+        hashed_request = self._hash_request(system_message, human_message, llm_string)
 
         # Remove old cache entries
         delete_stmt = (

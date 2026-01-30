@@ -9,7 +9,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.errorhandler import JavascriptException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.select import Select
 
 from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
@@ -17,7 +16,6 @@ from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
-from ..tools.select_tool import SelectTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
@@ -39,7 +37,6 @@ class SeleniumDriver(BaseDriver):
             DragAndDropTool,
             HoverTool,
             PressKeyTool,
-            SelectTool,
             TypeTool,
             UploadTool,
         }
@@ -403,13 +400,6 @@ class SeleniumDriver(BaseDriver):
     def scroll_to(self, id: int):
         element = self.find_element(id)
         self.driver.execute_script("arguments[0].scrollIntoView();", element)
-
-    def select(self, id: int, option: str):
-        element = self.find_element(id)
-        # Anthropic chooses to select using option ID, not select ID
-        if element.tag_name == "option":
-            element = element.find_element(By.XPATH, ".//parent::select")
-        Select(element).select_by_visible_text(option)
 
     @property
     def title(self) -> str:
