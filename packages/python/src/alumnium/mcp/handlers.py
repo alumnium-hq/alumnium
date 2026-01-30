@@ -10,7 +10,14 @@ from typing import Any
 from .. import Alumni
 from ..clients.native_client import NativeClient
 from ..server.logutils import get_logger
-from ..tools import ExecuteJavascriptTool, NavigateBackTool, NavigateToUrlTool, ScrollTool
+from ..tools import (
+    ExecuteJavascriptTool,
+    NavigateBackTool,
+    NavigateToUrlTool,
+    ScrollTool,
+    SwitchToNextTabTool,
+    SwitchToPreviousTabTool,
+)
 from . import drivers, screenshots, state
 
 logger = get_logger(__name__)
@@ -75,6 +82,8 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             NavigateBackTool,
             NavigateToUrlTool,
             ScrollTool,
+            SwitchToNextTabTool,
+            SwitchToPreviousTabTool,
         ],
     )
 
