@@ -1,7 +1,9 @@
 import { readFileSync } from "fs";
 import { dirname, join } from "path";
-import { CDPSession, Frame, Locator, Page } from "playwright";
 import { fileURLToPath } from "url";
+
+import { CDPSession, Frame, Locator, Page } from "playwright";
+
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { ToolClass } from "../tools/BaseTool.js";
@@ -74,6 +76,7 @@ export class PlaywrightDriver extends BaseDriver {
     process.env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT || "200",
     10
   );
+  public autoswitchToNewTab: boolean = true;
 
   constructor(page: Page) {
     super();
@@ -271,7 +274,9 @@ export class PlaywrightDriver extends BaseDriver {
       [Key.TAB]: "Tab",
     };
 
-    await this.autoswitchToNewTab(() => this.page.keyboard.press(keyMap[key]));
+    await this.autoswitchToNewTabAction(() =>
+      this.page.keyboard.press(keyMap[key])
+    );
   }
 
   async quit(): Promise<void> {
@@ -379,6 +384,49 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.evaluate(`() => { ${script} }`);
   }
 
+  async switchToNextTab(): Promise<void> {
+    const pages = this.page.context().pages();
+    if (pages.length <= 1) {
+      return; // Only one tab, nothing to switch
+    }
+
+    const currentIndex = pages.indexOf(this.page);
+    const nextIndex = (currentIndex + 1) % pages.length; // Wrap to first
+
+    this.page = pages[nextIndex];
+    await this.initCDPSession();
+  }
+
+  async switchToPreviousTab(): Promise<void> {
+    const pages = this.page.context().pages();
+    if (pages.length <= 1) {
+      return; // Only one tab, nothing to switch
+    }
+
+    const currentIndex = pages.indexOf(this.page);
+    const prevIndex = (currentIndex - 1 + pages.length) % pages.length; // Wrap to last
+
+    this.page = pages[prevIndex];
+    await this.initCDPSession();
+  }
+
+  async wait(seconds: number): Promise<void> {
+    const clampedSeconds = Math.max(1, Math.min(30, seconds));
+    await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
+  }
+
+  async waitForSelector(selector: string, timeout?: number): Promise<void> {
+    const timeoutMs = (timeout ?? 10) * 1000;
+    await this.page.waitForSelector(selector, {
+      state: "visible",
+      timeout: timeoutMs,
+    });
+  }
+
+  async grantPermissions(permissions: string[]): Promise<void> {
+    await this.page.context().grantPermissions(permissions);
+  }
+
   @retry({
     maxAttempts: 2,
     backOff: 500,
@@ -399,7 +447,14 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
-  private async autoswitchToNewTab(action: () => Promise<void>): Promise<void> {
+  private async autoswitchToNewTabAction(
+    action: () => Promise<void>
+  ): Promise<void> {
+    if (!this.autoswitchToNewTab) {
+      await action();
+      return;
+    }
+
     const [newPage] = await Promise.all([
       this.page
         .context()

@@ -20,4 +20,11 @@ export abstract class BaseDriver {
   abstract visit(url: string): void | Promise<void>;
   abstract scrollTo(id: number): void | Promise<void>;
   abstract executeScript(script: string): void | Promise<void>;
+  abstract switchToNextTab(): void | Promise<void>;
+  abstract switchToPreviousTab(): void | Promise<void>;
+  abstract wait(seconds: number): void | Promise<void>;
+  abstract waitForSelector(
+    selector: string,
+    timeout?: number
+  ): void | Promise<void>;
 }

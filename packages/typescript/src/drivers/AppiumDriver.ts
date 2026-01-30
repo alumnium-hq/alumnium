@@ -1,5 +1,6 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
+
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
@@ -188,6 +189,23 @@ export class AppiumDriver extends BaseDriver {
   async executeScript(script: string): Promise<void> {
     await this.ensureWebviewContext();
     await this.driver.execute(script);
+  }
+
+  switchToNextTab(): void {
+    throw new Error("Tab switching not supported for this driver");
+  }
+
+  switchToPreviousTab(): void {
+    throw new Error("Tab switching not supported for this driver");
+  }
+
+  async wait(seconds: number): Promise<void> {
+    const clampedSeconds = Math.max(1, Math.min(30, seconds));
+    await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
+  }
+
+  waitForSelector(): void {
+    throw new Error("waitForSelector not supported for this driver");
   }
 
   private async ensureNativeAppContext(): Promise<void> {

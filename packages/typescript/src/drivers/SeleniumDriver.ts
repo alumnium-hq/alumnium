@@ -1,5 +1,7 @@
 import { readFileSync } from "fs";
 import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+
 import {
   By,
   Key as SeleniumKey,
@@ -8,7 +10,7 @@ import {
 } from "selenium-webdriver";
 import { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import { NoSuchSessionError } from "selenium-webdriver/lib/error.js";
-import { fileURLToPath } from "url";
+
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { ToolClass } from "../tools/BaseTool.js";
@@ -144,7 +146,9 @@ export class SeleniumDriver extends BaseDriver {
       try {
         const response = (await this.executeCdpCommand(
           "Accessibility.getFullAXTree",
-          { frameId }
+          {
+            frameId,
+          }
         )) as { nodes: CDPNode[] };
         const nodes = response.nodes || [];
         logger.debug(
@@ -422,6 +426,23 @@ export class SeleniumDriver extends BaseDriver {
 
   async executeScript(script: string): Promise<void> {
     await this.driver.executeScript(script);
+  }
+
+  switchToNextTab(): void {
+    throw new Error("Tab switching not supported for this driver");
+  }
+
+  switchToPreviousTab(): void {
+    throw new Error("Tab switching not supported for this driver");
+  }
+
+  async wait(seconds: number): Promise<void> {
+    const clampedSeconds = Math.max(1, Math.min(30, seconds));
+    await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
+  }
+
+  waitForSelector(): void {
+    throw new Error("waitForSelector not supported for this driver");
   }
 
   private async executeCdpCommand(
