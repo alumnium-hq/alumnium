@@ -206,14 +206,11 @@ export class AppiumDriver extends BaseDriver {
       return;
     }
 
-    const currentContext = (await this.driver.getAppiumContext()) as string;
-    if (!currentContext.includes("WEBVIEW")) {
-      const contexts = (await this.driver.getAppiumContexts()) as string[];
-      for (const context of contexts) {
-        if (context.includes("WEBVIEW")) {
-          await this.driver.switchContext(context);
-          return;
-        }
+    const contexts = (await this.driver.getAppiumContexts()) as string[];
+    for (const context of contexts.reverse()) {
+      if (context.includes("WEBVIEW")) {
+        await this.driver.switchContext(context);
+        return;
       }
     }
   }
