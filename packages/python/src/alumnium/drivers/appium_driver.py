@@ -178,11 +178,10 @@ class AppiumDriver(BaseDriver):
         if not self.autoswitch_contexts:
             return
 
-        if "WEBVIEW" not in self.driver.current_context:
-            for context in self.driver.contexts:
-                if "WEBVIEW" in context:
-                    self.driver.switch_to.context(context)
-                    return
+        for context in reversed(self.driver.contexts):
+            if "WEBVIEW" in context:
+                self.driver.switch_to.context(context)
+                return
 
     def _hide_keyboard(self):
         if self.platform == "uiautomator2":
