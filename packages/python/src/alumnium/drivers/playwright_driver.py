@@ -44,6 +44,7 @@ class PlaywrightDriver(BaseDriver):
             UploadTool,
         }
         self._enable_target_auto_attach()
+        self._setup_page_tracking(page)
 
     @property
     def platform(self) -> str:
@@ -325,6 +326,29 @@ class PlaywrightDriver(BaseDriver):
         except Exception as e:
             logger.debug(f"Could not enable Target.setAutoAttach: {e}")
 
+    def _setup_page_tracking(self, initial_page: Page):
+        """Set up tracking for all pages in the context."""
+        self._pages: list[Page] = [initial_page]
+        self._attach_page_listeners(initial_page)
+
+    def _attach_page_listeners(self, page: Page):
+        """Attach popup and close listeners to a page."""
+        page.on("popup", self._on_popup)
+        page.on("close", lambda: self._on_page_close(page))
+
+    def _on_popup(self, popup: Page):
+        """Handle new popup/tab opened from a page."""
+        popup.wait_for_load_state()
+        logger.debug(f"New popup opened: {popup.url}")
+        self._pages.append(popup)
+        self._attach_page_listeners(popup)  # Chain: new page also listens for popups
+
+    def _on_page_close(self, page: Page):
+        """Handle page closed."""
+        if page in self._pages:
+            logger.debug(f"Page closed: {page.url}")
+            self._pages.remove(page)
+
     def _get_all_frame_ids(self, frame_info: dict) -> list[str]:
         """Recursively collect all frame IDs from CDP frame tree."""
         frame_ids = [frame_info["frame"]["id"]]
@@ -525,23 +549,25 @@ class PlaywrightDriver(BaseDriver):
         return search_frame(cdp_frame_tree["frameTree"])
 
     def switch_to_next_tab(self):
-        pages = self.page.context.pages
-        if len(pages) <= 1:
+        # Brief wait to allow popup handlers to complete
+        self.page.wait_for_timeout(100)
+        if len(self._pages) <= 1:
             return  # Only one tab, nothing to switch
 
-        current_index = pages.index(self.page)
-        next_index = (current_index + 1) % len(pages)  # Wrap to first
+        current_index = self._pages.index(self.page)
+        next_index = (current_index + 1) % len(self._pages)  # Wrap to first
 
-        self.page = pages[next_index]
+        self.page = self._pages[next_index]
         self.client = self.page.context.new_cdp_session(self.page)
 
     def switch_to_previous_tab(self):
-        pages = self.page.context.pages
-        if len(pages) <= 1:
+        # Brief wait to allow popup handlers to complete
+        self.page.wait_for_timeout(100)
+        if len(self._pages) <= 1:
             return  # Only one tab, nothing to switch
 
-        current_index = pages.index(self.page)
-        prev_index = (current_index - 1) % len(pages)  # Wrap to last
+        current_index = self._pages.index(self.page)
+        prev_index = (current_index - 1) % len(self._pages)  # Wrap to last
 
-        self.page = pages[prev_index]
+        self.page = self._pages[prev_index]
         self.client = self.page.context.new_cdp_session(self.page)

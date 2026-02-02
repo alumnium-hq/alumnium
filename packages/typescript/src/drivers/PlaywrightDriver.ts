@@ -63,6 +63,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   private client!: CDPSession;
   private page: Page;
+  private _pages: Page[] = [];
   public platform: string = "chromium";
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
@@ -81,7 +82,33 @@ export class PlaywrightDriver extends BaseDriver {
   constructor(page: Page) {
     super();
     this.page = page;
+    this.setupPageTracking(page);
     void this.initCDPSession();
+  }
+
+  private setupPageTracking(initialPage: Page): void {
+    this._pages = [initialPage];
+    this.attachPageListeners(initialPage);
+  }
+
+  private attachPageListeners(page: Page): void {
+    page.on("popup", (popup) => this.onPopup(popup));
+    page.on("close", () => this.onPageClose(page));
+  }
+
+  private async onPopup(popup: Page): Promise<void> {
+    await popup.waitForLoadState();
+    logger.debug(`New popup opened: ${popup.url()}`);
+    this._pages.push(popup);
+    this.attachPageListeners(popup); // Chain: new page also listens for popups
+  }
+
+  private onPageClose(page: Page): void {
+    const index = this._pages.indexOf(page);
+    if (index !== -1) {
+      logger.debug(`Page closed: ${page.url()}`);
+      this._pages.splice(index, 1);
+    }
   }
 
   private async initCDPSession(): Promise<void> {
@@ -245,11 +272,11 @@ export class PlaywrightDriver extends BaseDriver {
     );
     if (tagName?.toLowerCase() === "option") {
       const value = await element.evaluate((el: { value: string }) => el.value);
-      await this.autoswitchToNewTab(async () => {
+      await this.autoswitchToNewTabAction(async () => {
         await element.locator("xpath=parent::select").selectOption(value);
       });
     } else {
-      await this.autoswitchToNewTab(async () => {
+      await this.autoswitchToNewTabAction(async () => {
         await element.click({ force: true });
       });
     }
@@ -385,28 +412,31 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   async switchToNextTab(): Promise<void> {
-    const pages = this.page.context().pages();
-    if (pages.length <= 1) {
+    // Brief wait to allow popup handlers to complete
+    await this.page.waitForTimeout(100);
+    if (this._pages.length <= 1) {
       return; // Only one tab, nothing to switch
     }
 
-    const currentIndex = pages.indexOf(this.page);
-    const nextIndex = (currentIndex + 1) % pages.length; // Wrap to first
+    const currentIndex = this._pages.indexOf(this.page);
+    const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
 
-    this.page = pages[nextIndex];
+    this.page = this._pages[nextIndex];
     await this.initCDPSession();
   }
 
   async switchToPreviousTab(): Promise<void> {
-    const pages = this.page.context().pages();
-    if (pages.length <= 1) {
+    // Brief wait to allow popup handlers to complete
+    await this.page.waitForTimeout(100);
+    if (this._pages.length <= 1) {
       return; // Only one tab, nothing to switch
     }
 
-    const currentIndex = pages.indexOf(this.page);
-    const prevIndex = (currentIndex - 1 + pages.length) % pages.length; // Wrap to last
+    const currentIndex = this._pages.indexOf(this.page);
+    const prevIndex =
+      (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
 
-    this.page = pages[prevIndex];
+    this.page = this._pages[prevIndex];
     await this.initCDPSession();
   }
 
