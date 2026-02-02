@@ -338,7 +338,6 @@ class PlaywrightDriver(BaseDriver):
 
     def _on_popup(self, popup: Page):
         """Handle new popup/tab opened from a page."""
-        popup.wait_for_load_state()
         logger.debug(f"New popup opened: {popup.url}")
         self._pages.append(popup)
         self._attach_page_listeners(popup)  # Chain: new page also listens for popups

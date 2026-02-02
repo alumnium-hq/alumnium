@@ -96,8 +96,7 @@ export class PlaywrightDriver extends BaseDriver {
     page.on("close", () => this.onPageClose(page));
   }
 
-  private async onPopup(popup: Page): Promise<void> {
-    await popup.waitForLoadState();
+  private onPopup(popup: Page): void {
     logger.debug(`New popup opened: ${popup.url()}`);
     this._pages.push(popup);
     this.attachPageListeners(popup); // Chain: new page also listens for popups
