@@ -45,7 +45,6 @@ jobs:
         model:
           - azure_openai
           - google
-          - mistralai
         include:
           - driver: appium-android
             model: azure_openai
