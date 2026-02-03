@@ -10,7 +10,14 @@ from typing import Any
 from .. import Alumni
 from ..clients.native_client import NativeClient
 from ..server.logutils import get_logger
-from ..tools import ExecuteJavascriptTool, NavigateBackTool, NavigateToUrlTool, ScrollTool
+from ..tools import (
+    ExecuteJavascriptTool,
+    NavigateBackTool,
+    NavigateToUrlTool,
+    ScrollTool,
+    SwitchToNextTabTool,
+    SwitchToPreviousTabTool,
+)
 from . import drivers, screenshots, state
 
 logger = get_logger(__name__)
@@ -75,6 +82,8 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             NavigateBackTool,
             NavigateToUrlTool,
             ScrollTool,
+            SwitchToNextTabTool,
+            SwitchToPreviousTabTool,
         ],
     )
 
@@ -245,3 +254,49 @@ async def handle_stop_driver(args: dict[str, Any]) -> list[dict]:
     )
 
     return [{"type": "text", "text": message}]
+
+
+async def handle_wait(args: dict[str, Any]) -> list[dict]:
+    """Wait for seconds or a natural language condition."""
+    import asyncio
+    import time
+
+    wait_for = args["for"]
+
+    # If it's a number, wait that many seconds
+    if isinstance(wait_for, (int, float)):
+        seconds = max(1, min(30, int(wait_for)))
+        logger.info(f"Waiting for {seconds} seconds")
+        await asyncio.sleep(seconds)
+        return [{"type": "text", "text": f"Waited {seconds} seconds"}]
+
+    # Otherwise, treat as natural language condition
+    condition = str(wait_for)
+    driver_id = args.get("driver_id")
+    if not driver_id:
+        return [{"type": "text", "text": "driver_id is required when waiting for a condition"}]
+
+    timeout = args.get("timeout", 10)
+    poll_interval = 1.0
+
+    logger.info(f"Driver {driver_id}: Waiting for '{condition}' (timeout={timeout}s)")
+
+    al, _ = state.get_driver(driver_id)
+
+    start_time = time.time()
+    last_error = None
+    attempts = 0
+
+    while time.time() - start_time < timeout:
+        attempts += 1
+        try:
+            explanation = al.check(condition)
+            logger.info(f"Driver {driver_id}: Condition met after {attempts} attempt(s)")
+            return [{"type": "text", "text": f"Condition met: {condition}\n{explanation}"}]
+        except AssertionError as e:
+            last_error = str(e)
+            logger.debug(f"Driver {driver_id}: Condition not met (attempt {attempts})")
+            await asyncio.sleep(poll_interval)
+
+    logger.warning(f"Driver {driver_id}: Timeout waiting for '{condition}'")
+    return [{"type": "text", "text": f"Timeout after {timeout}s waiting for: {condition}\nLast check: {last_error}"}]

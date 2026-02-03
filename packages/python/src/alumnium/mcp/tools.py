@@ -187,4 +187,36 @@ def get_tool_definitions() -> list[Tool]:
                 "required": ["driver_id"],
             },
         ),
+        Tool(
+            name="wait",
+            description=(
+                "Wait for a specified duration or until a condition is met. "
+                "Pass a number to wait that many seconds (1-30). "
+                "Pass a string to wait for a natural language condition "
+                "(e.g., 'My Account text', 'user is logged in', 'page shows success'). "
+                "Uses AI-powered verification to check conditions."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "driver_id": {
+                        "type": "string",
+                        "description": "Driver ID from start_driver (required for condition-based waiting)",
+                    },
+                    "for": {
+                        "oneOf": [
+                            {"type": "number", "description": "Seconds to wait (1-30)"},
+                            {"type": "string", "description": "Natural language condition to wait for"},
+                        ],
+                        "description": "Duration in seconds OR condition to wait for",
+                    },
+                    "timeout": {
+                        "type": "integer",
+                        "description": "Max seconds to wait for condition (default: 10, string only)",
+                        "default": 10,
+                    },
+                },
+                "required": ["for"],
+            },
+        ),
     ]

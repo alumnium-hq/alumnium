@@ -24,6 +24,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         self.client = None
         self.page = page
         self.loop = loop
+        self.autoswitch_to_new_tab = True  # Can be disabled via alumnium:options
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -33,6 +34,7 @@ class PlaywrightAsyncDriver(BaseDriver):
             UploadTool,
         }
         self._run_async(self._enable_target_auto_attach())
+        self._run_async(self._setup_page_tracking(page))
 
     @property
     def platform(self) -> str:
@@ -327,6 +329,11 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     @asynccontextmanager
     async def _autoswitch_to_new_tab(self):
+        # If auto-switch is disabled, just yield without waiting for new pages
+        if not self.autoswitch_to_new_tab:
+            yield
+            return
+
         try:
             async with self.page.context.expect_page(timeout=PlaywrightDriver.NEW_TAB_TIMEOUT) as new_page_info:
                 yield
@@ -372,6 +379,29 @@ class PlaywrightAsyncDriver(BaseDriver):
             logger.debug("Enabled Target.setAutoAttach for OOPIF support")
         except Exception as e:
             logger.debug(f"Could not enable Target.setAutoAttach: {e}")
+
+    async def _setup_page_tracking(self, initial_page: Page):
+        """Set up tracking for all pages in the context."""
+        self._pages: list[Page] = [initial_page]
+        self._attach_page_listeners(initial_page)
+
+    def _attach_page_listeners(self, page: Page):
+        """Attach popup and close listeners to a page."""
+        # Use sync handler to avoid deadlock - async handler would block via _run_async
+        page.on("popup", self._on_popup_sync)
+        page.on("close", self._on_page_close)
+
+    def _on_popup_sync(self, popup: Page):
+        """Handle new popup/tab opened from a page (sync to avoid deadlock)."""
+        logger.debug(f"New popup opened: {popup.url}")
+        self._pages.append(popup)
+        self._attach_page_listeners(popup)  # Chain: new page also listens for popups
+
+    def _on_page_close(self, popup: Page):
+        """Handle page closed."""
+        if popup in self._pages:
+            logger.debug(f"Page closed: {popup.url}")
+            self._pages.remove(popup)
 
     def _get_all_frame_ids(self, frame_info: dict) -> list[str]:
         """Recursively collect all frame IDs from CDP frame tree."""
@@ -571,6 +601,40 @@ class PlaywrightAsyncDriver(BaseDriver):
             return None
 
         return search_frame(cdp_frame_tree["frameTree"])
+
+    def switch_to_next_tab(self):
+        self._run_async(self._switch_to_next_tab())
+
+    async def _switch_to_next_tab(self):
+        # Brief wait to allow popup handlers to complete
+        await self.page.wait_for_timeout(100)
+        if len(self._pages) <= 1:
+            return  # Only one tab, nothing to switch
+
+        current_index = self._pages.index(self.page)
+        next_index = (current_index + 1) % len(self._pages)  # Wrap to first
+
+        self.page = self._pages[next_index]
+        self.client = None  # Reset CDP client for new page
+        await self.page.wait_for_load_state()
+        logger.debug(f"Switched to next tab: {self.page.url}")
+
+    def switch_to_previous_tab(self):
+        self._run_async(self._switch_to_previous_tab())
+
+    async def _switch_to_previous_tab(self):
+        # Brief wait to allow popup handlers to complete
+        await self.page.wait_for_timeout(100)
+        if len(self._pages) <= 1:
+            return  # Only one tab, nothing to switch
+
+        current_index = self._pages.index(self.page)
+        prev_index = (current_index - 1) % len(self._pages)  # Wrap to last
+
+        self.page = self._pages[prev_index]
+        self.client = None  # Reset CDP client for new page
+        await self.page.wait_for_load_state()
+        logger.debug(f"Switched to previous tab: {self.page.url}")
 
     def _run_async(self, coro):
         future = run_coroutine_threadsafe(coro, self.loop)
