@@ -389,7 +389,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         """Attach popup and close listeners to a page."""
         # Use sync handler to avoid deadlock - async handler would block via _run_async
         page.on("popup", self._on_popup_sync)
-        page.on("close", lambda: self._on_page_close(page))
+        page.on("close", self._on_page_close)
 
     def _on_popup_sync(self, popup: Page):
         """Handle new popup/tab opened from a page (sync to avoid deadlock)."""
@@ -397,11 +397,11 @@ class PlaywrightAsyncDriver(BaseDriver):
         self._pages.append(popup)
         self._attach_page_listeners(popup)  # Chain: new page also listens for popups
 
-    def _on_page_close(self, page: Page):
+    def _on_page_close(self, popup: Page):
         """Handle page closed."""
-        if page in self._pages:
-            logger.debug(f"Page closed: {page.url}")
-            self._pages.remove(page)
+        if popup in self._pages:
+            logger.debug(f"Page closed: {popup.url}")
+            self._pages.remove(popup)
 
     def _get_all_frame_ids(self, frame_info: dict) -> list[str]:
         """Recursively collect all frame IDs from CDP frame tree."""
@@ -616,6 +616,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
         self.page = self._pages[next_index]
         self.client = None  # Reset CDP client for new page
+        await self.page.wait_for_load_state()
         logger.debug(f"Switched to next tab: {self.page.url}")
 
     def switch_to_previous_tab(self):
@@ -632,6 +633,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
         self.page = self._pages[prev_index]
         self.client = None  # Reset CDP client for new page
+        await self.page.wait_for_load_state()
         logger.debug(f"Switched to previous tab: {self.page.url}")
 
     def _run_async(self, coro):

@@ -334,7 +334,7 @@ class PlaywrightDriver(BaseDriver):
     def _attach_page_listeners(self, page: Page):
         """Attach popup and close listeners to a page."""
         page.on("popup", self._on_popup)
-        page.on("close", lambda: self._on_page_close(page))
+        page.on("close", self._on_page_close)
 
     def _on_popup(self, popup: Page):
         """Handle new popup/tab opened from a page."""
@@ -342,11 +342,11 @@ class PlaywrightDriver(BaseDriver):
         self._pages.append(popup)
         self._attach_page_listeners(popup)  # Chain: new page also listens for popups
 
-    def _on_page_close(self, page: Page):
+    def _on_page_close(self, popup: Page):
         """Handle page closed."""
-        if page in self._pages:
-            logger.debug(f"Page closed: {page.url}")
-            self._pages.remove(page)
+        if popup in self._pages:
+            logger.debug(f"Page closed: {popup.url}")
+            self._pages.remove(popup)
 
     def _get_all_frame_ids(self, frame_info: dict) -> list[str]:
         """Recursively collect all frame IDs from CDP frame tree."""
@@ -558,6 +558,7 @@ class PlaywrightDriver(BaseDriver):
 
         self.page = self._pages[next_index]
         self.client = self.page.context.new_cdp_session(self.page)
+        self.page.wait_for_load_state()
 
     def switch_to_previous_tab(self):
         # Brief wait to allow popup handlers to complete
@@ -570,3 +571,4 @@ class PlaywrightDriver(BaseDriver):
 
         self.page = self._pages[prev_index]
         self.client = self.page.context.new_cdp_session(self.page)
+        self.page.wait_for_load_state()

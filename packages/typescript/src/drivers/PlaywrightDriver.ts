@@ -93,10 +93,10 @@ export class PlaywrightDriver extends BaseDriver {
 
   private attachPageListeners(page: Page): void {
     page.on("popup", (popup) => this.onPopup(popup));
-    page.on("close", () => this.onPageClose(page));
+    page.on("close", (popup) => this.onPageClose(popup));
   }
 
-  private onPopup(popup: Page): void {
+  private onPopup(popup: Page) {
     logger.debug(`New popup opened: ${popup.url()}`);
     this._pages.push(popup);
     this.attachPageListeners(popup); // Chain: new page also listens for popups
@@ -422,6 +422,7 @@ export class PlaywrightDriver extends BaseDriver {
 
     this.page = this._pages[nextIndex];
     await this.initCDPSession();
+    await this.page.waitForLoadState();
   }
 
   async switchToPreviousTab(): Promise<void> {
@@ -437,6 +438,7 @@ export class PlaywrightDriver extends BaseDriver {
 
     this.page = this._pages[prevIndex];
     await this.initCDPSession();
+    await this.page.waitForLoadState();
   }
 
   async wait(seconds: number): Promise<void> {
