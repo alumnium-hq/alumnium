@@ -387,11 +387,12 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     def _attach_page_listeners(self, page: Page):
         """Attach popup and close listeners to a page."""
-        page.on("popup", lambda popup: self._run_async(self._on_popup(popup)))
+        # Use sync handler to avoid deadlock - async handler would block via _run_async
+        page.on("popup", self._on_popup_sync)
         page.on("close", lambda: self._on_page_close(page))
 
-    async def _on_popup(self, popup: Page):
-        """Handle new popup/tab opened from a page."""
+    def _on_popup_sync(self, popup: Page):
+        """Handle new popup/tab opened from a page (sync to avoid deadlock)."""
         logger.debug(f"New popup opened: {popup.url}")
         self._pages.append(popup)
         self._attach_page_listeners(popup)  # Chain: new page also listens for popups
@@ -615,6 +616,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
         self.page = self._pages[next_index]
         self.client = None  # Reset CDP client for new page
+        logger.debug(f"Switched to next tab: {self.page.url}")
 
     def switch_to_previous_tab(self):
         self._run_async(self._switch_to_previous_tab())
@@ -630,6 +632,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
         self.page = self._pages[prev_index]
         self.client = None  # Reset CDP client for new page
+        logger.debug(f"Switched to previous tab: {self.page.url}")
 
     def _run_async(self, coro):
         future = run_coroutine_threadsafe(coro, self.loop)
