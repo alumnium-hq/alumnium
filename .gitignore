@@ -29,3 +29,6 @@
 # Cache
 **/.alumnium/cache/**/*
 **/.alumnium-cache.sqlite*
+
+# Benchmarks results
+benchmarks/results/

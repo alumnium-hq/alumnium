@@ -220,11 +220,13 @@ async def handle_stop_driver(args: dict[str, Any]) -> list[dict]:
     driver_id = args["driver_id"]
     save_cache = args.get("save_cache", False)
 
-    logger.info(f"Driver {driver_id}: Stopping driver (save_cache={save_cache})")
+    logger.info(f"Driver {driver_id}: Stopping driver (save_cache={save_cache}")
+
+    al, _ = state.get_driver(driver_id)
+    screenshots.save_screenshot(driver_id, "final", al)
 
     # Save cache if requested
     if save_cache:
-        al, _ = state.get_driver(driver_id)
         al.cache.save()
         logger.info(f"Driver {driver_id}: Cache saved")
 

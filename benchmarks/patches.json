@@ -1,0 +1,554 @@
+{
+    "Apple--4": {
+        "reason": "The M3 Max chip, current in March 2024, will be superseded by June 2025. To maintain the task's focus on a high-end, current-generation product, the chip is updated to its plausible successor, the M4 Max.",
+        "prev": "How much does it cost to buy a Macbook pro, 16-inch, Apple M3 Max chip with 16-core CPU, 40-core GPU, 64GB unified memory, 1TB SSD.",
+        "new": "How much does it cost to buy a Macbook pro, 16-inch, Apple M4 Max chip with 16-core CPU, 40-core GPU, 64GB unified memory, 1TB SSD."
+    },
+    "Apple--22": {
+        "reason": "The original task (Mar 2024) queries the trade-in for a ~2.5-year-old phone (iPhone 13 Pro Max). To preserve this relative age, the task is updated to query the iPhone 15 Pro Max, which will be a similarly aged model in 2026.",
+        "prev": "Find out the trade-in value for an iPhone 13 Pro Max in good condition on the Apple website.",
+        "new": "Find out the trade-in value for an iPhone 15 Pro Max in good condition on the Apple website."
+    },
+    "Apple--32": {
+        "reason": "The original task (Mar 2024) queries the trade-in for a ~4.5-year-old phone (iPhone 11 Pro Max). To preserve this relative age, the task is updated to query the iPhone 13 Pro Max, which will be a similarly aged model in 2026.",
+        "prev": "Investigate the trade-in value for an iPhone 11 Pro Max on Apple's website.",
+        "new": "Investigate the trade-in value for an iPhone 13 Pro Max on Apple's website."
+    },
+    "Booking--5": {
+        "reason": "The booking date 'Jan 1 to Jan 4, 2024' is explicitly in the past, making the task impossible. The year is updated to make it feasible.",
+        "prev": "Search a hotel with free WiFi and air conditioning in Bali from Jan 1 to Jan 4, 2024.",
+        "new": "Search a hotel with free WiFi and air conditioning in Bali from Jan 1 to Jan 4, 2027."
+    },
+    "Booking--8": {
+        "reason": "The booking date '20/12/2023' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Get the hotel with highest review score and free cancelation in Chennai for 20/12/2023 - 21/12/2023.",
+        "new": "Get the hotel with highest review score and free cancelation in Chennai for 20/12/2026 - 21/12/2026."
+    },
+    "Booking--10": {
+        "reason": "The booking date 'February 14-21, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a well-reviewed hotel in Paris with available bookings suitable for a couple (2 adults) on Valentine's Day week, February 14-21, 2024, that offers free cancellation options.",
+        "new": "Find a well-reviewed hotel in Paris with available bookings suitable for a couple (2 adults) on Valentine's Day week, February 14-21, 2027, that offers free cancellation options."
+    },
+    "Booking--12": {
+        "reason": "The booking date 'January 5th, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a hotel in Paris with a customer review score of 8 or higher, free Wi-Fi, and available for a 5-night stay starting on January 5th, 2024.",
+        "new": "Find a hotel in Paris with a customer review score of 8 or higher, free Wi-Fi, and available for a 5-night stay starting on January 5th, 2027."
+    },
+    "Booking--15": {
+        "reason": "The booking dates 'January 10, 2024, to January 20, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find the highest-rated luxury hotel in Rome available for booking from January 10, 2024, to January 20, 2024, for 2 adults. Include the cost, amenities offered, and customer rating.",
+        "new": "Find the highest-rated luxury hotel in Rome available for booking from January 10, 2027, to January 20, 2027, for 2 adults. Include the cost, amenities offered, and customer rating."
+    },
+    "Booking--16": {
+        "reason": "The booking date 'January 15, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Look for a hotel in Paris with a user rating of 9 or higher and available for a 5-night stay starting January 15, 2024. The hotel should also offer free Wi-Fi and breakfast included in the price. Provide the name, location, and price per night.",
+        "new": "Look for a hotel in Paris with a user rating of 9 or higher and available for a 5-night stay starting January 15, 2027. The hotel should also offer free Wi-Fi and breakfast included in the price. Provide the name, location, and price per night."
+    },
+    "Booking--17": {
+        "reason": "The booking date 'February 14, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a hotel in Paris with a fitness center and a rating of 8 or higher available for a 5-night stay starting from February 14, 2024, and sort the results by best reviewed.",
+        "new": "Find a hotel in Paris with a fitness center and a rating of 8 or higher available for a 5-night stay starting from February 14, 2027, and sort the results by best reviewed."
+    },
+    "Booking--18": {
+        "reason": "The booking dates 'February 14th, 2024, and February 21st, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search a hotel in London with a user rating of 8 or higher for a stay between February 14th, 2024, and February 21st, 2024, suitable for a couple. Provide the name and a short description of the hotel.",
+        "new": "Search a hotel in London with a user rating of 8 or higher for a stay between February 14th, 2027, and February 21st, 2027, suitable for a couple. Provide the name and a short description of the hotel."
+    },
+    "Booking--19": {
+        "reason": "The booking dates 'March 18, 2024, to March 20, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Look for a hotel with customer ratings above an 8.0 in Paris, France for a weekend stay from March 18, 2024, to March 20, 2024, and list top three suggestions based on user reviews.",
+        "new": "Look for a hotel with customer ratings above an 8.0 in Paris, France for a weekend stay from March 18, 2026, to March 20, 2026, and list top three suggestions based on user reviews."
+    },
+    "Booking--20": {
+        "reason": "The booking dates 'February 28 to March 2, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Locate a hotel in Rome with a good rating (7 or above) that offers free cancellation and breakfast included, for a three-night stay from February 28 to March 2, 2024, for two adults.",
+        "new": "Locate a hotel in Rome with a good rating (7 or above) that offers free cancellation and breakfast included, for a three-night stay from February 28 to March 2, 2027, for two adults."
+    },
+    "Booking--21": {
+        "reason": "The booking date 'March 10, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a hotel in Sydney with a rating of 8 or higher, providing free Wi-Fi and parking, available for a four-night stay starting on March 10, 2024.",
+        "new": "Find a hotel in Sydney with a rating of 8 or higher, providing free Wi-Fi and parking, available for a four-night stay starting on March 10, 2026."
+    },
+    "Booking--22": {
+        "reason": "The booking dates 'March 15 to March 22, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for a hotel in Amsterdam with a customer review score of 9 or higher, offering bicycle rentals, for a week-long stay from March 15 to March 22, 2024, for two adults.",
+        "new": "Search for a hotel in Amsterdam with a customer review score of 9 or higher, offering bicycle rentals, for a week-long stay from March 15 to March 22, 2026, for two adults."
+    },
+    "Booking--23": {
+        "reason": "The booking date 'February 20, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Identify a hotel in Tokyo with a spa and wellness center, rated 9 or above, with availability for a five-night stay starting on February 20, 2024. Check if free cancellation is offered.",
+        "new": "Identify a hotel in Tokyo with a spa and wellness center, rated 9 or above, with availability for a five-night stay starting on February 20, 2027. Check if free cancellation is offered."
+    },
+    "Booking--24": {
+        "reason": "The booking dates 'February 25-28, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a hotel in Barcelona for a stay from February 25-28, 2024. Please sort the results by distance from the beach and make sure they offer free Wi-Fi and breakfast.",
+        "new": "Find a hotel in Barcelona for a stay from February 25-28, 2027. Please sort the results by distance from the beach and make sure they offer free Wi-Fi and breakfast."
+    },
+    "Booking--25": {
+        "reason": "The booking dates 'March 1 to March 7, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for a hotel in Lisbon with airport shuttle, rated 8.5 or above, available for a six-night stay from March 1 to March 7, 2024, for two adults, breakfast included.",
+        "new": "Search for a hotel in Lisbon with airport shuttle, rated 8.5 or above, available for a six-night stay from March 1 to March 7, 2026, for two adults, breakfast included."
+    },
+    "Booking--26": {
+        "reason": "The booking dates 'February 20-23, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Check Booking.com for a 3-star hotel or higher in Paris with a guest rating above 8.0 and available parking for dates February 20-23, 2024.",
+        "new": "Check Booking.com for a 3-star hotel or higher in Paris with a guest rating above 8.0 and available parking for dates February 20-23, 2027."
+    },
+    "Booking--27": {
+        "reason": "The booking dates 'February 28 to March 4, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Locate a hotel in Melbourne offering free parking and free WiFi, for a stay from February 28 to March 4, 2024.",
+        "new": "Locate a hotel in Melbourne offering free parking and free WiFi, for a stay from February 28 to March 4, 2027."
+    },
+    "Booking--28": {
+        "reason": "The booking date 'February 22 to February 29, 2024' is in the past. The year is updated to 2028 (a leap year) to preserve the Feb 29 date.",
+        "prev": "Find a hotel in Dubai with a swimming pool, for a week-long stay from February 22 to February 29, 2024.",
+        "new": "Find a hotel in Dubai with a swimming pool, for a week-long stay from February 22 to February 29, 2028."
+    },
+    "Booking--29": {
+        "reason": "The booking dates 'March 5 to March 7, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for a hotel in Toronto with a fitness center and a rating of 8+, available for a two-night stay from March 5 to March 7, 2024.",
+        "new": "Search for a hotel in Toronto with a fitness center and a rating of 8+, available for a two-night stay from March 5 to March 7, 2026."
+    },
+    "Booking--30": {
+        "reason": "The booking dates 'March 20 to March 23, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for hotels in London from March 20 to March 23, 2024, on Booking. How many hotels are left after applying the Breakfast included and Fitness center filters?",
+        "new": "Search for hotels in London from March 20 to March 23, 2026, on Booking. How many hotels are left after applying the Breakfast included and Fitness center filters?"
+    },
+    "Booking--31": {
+        "reason": "The booking dates 'March 1-7, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for hotels in Rio de Janeiro from March 1-7, 2024, check the Brands filter to see which brand has the most hotels and which brand has the fewest.",
+        "new": "Search for hotels in Rio de Janeiro from March 1-7, 2026, check the Brands filter to see which brand has the most hotels and which brand has the fewest."
+    },
+    "Booking--32": {
+        "reason": "The booking dates 'February 24 to February 27, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Look for hotels in Sydney from February 24 to February 27, 2024, on Booking. Once the Swimming Pool and Airport Shuttle filters are applied, what is the total number of hotels available?",
+        "new": "Look for hotels in Sydney from February 24 to February 27, 2027, on Booking. Once the Swimming Pool and Airport Shuttle filters are applied, what is the total number of hotels available?"
+    },
+    "Booking--34": {
+        "reason": "The booking dates 'March 15 to March 18, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for a hotel in Berlin available for a three-night stay from March 15 to March 18, 2024, for one adult. Tell me the price in USD and CNY for the three-night stay.",
+        "new": "Search for a hotel in Berlin available for a three-night stay from March 15 to March 18, 2026, for one adult. Tell me the price in USD and CNY for the three-night stay."
+    },
+    "Booking--36": {
+        "reason": "The booking dates 'March 20 to March 23, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for a budget hotel in Rome under $100 per night for one adult from March 20 to March 23, 2024. Sort the results by price, identify if any of top three results offer breakfast.",
+        "new": "Search for a budget hotel in Rome under $100 per night for one adult from March 20 to March 23, 2026. Sort the results by price, identify if any of top three results offer breakfast."
+    },
+    "Booking--37": {
+        "reason": "The booking dates 'March 20, 2024, and March 25, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for a resort (not hotel) in Bali, detailing the available dates between March 20, 2024, and March 25, 2024, and checking any provided tour or cultural experiences.",
+        "new": "Search for a resort (not hotel) in Bali, detailing the available dates between March 20, 2026, and March 25, 2026, and checking any provided tour or cultural experiences."
+    },
+    "Booking--38": {
+        "reason": "The booking dates 'February 28 to March 4, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Look up Vienna hotel options with availability for a 4-night stay from February 28 to March 4, 2024, with amenities that include a Parking, breakfast included, and a rating of 8+ on Booking.com.",
+        "new": "Look up Vienna hotel options with availability for a 4-night stay from February 28 to March 4, 2027, with amenities that include a Parking, breakfast included, and a rating of 8+ on Booking.com."
+    },
+    "Booking--39": {
+        "reason": "The booking dates 'February 24-26, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a pet-friendly hotel with parking available in downtown Toronto for the stay of February 24-26, 2024.",
+        "new": "Find a pet-friendly hotel with parking available in downtown Toronto for the stay of February 24-26, 2027."
+    },
+    "Booking--40": {
+        "reason": "The booking dates '6 March to 8 March 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "I need to choose a hotel in Shenzhen, please select date (6 March to 8 March 2024) and click the search button. How much it costs when convert the price to Chinese Yuan on the page.",
+        "new": "I need to choose a hotel in Shenzhen, please select date (6 March to 8 March 2026) and click the search button. How much it costs when convert the price to Chinese Yuan on the page."
+    },
+    "Booking--42": {
+        "reason": "The booking dates 'March 1 to March 7, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for a hotel in Hokkaido for the period March 1 to March 7, 2024, with a rating of 9+, check out its user reviews, which categories are greater than 9 and which are less than 9?",
+        "new": "Search for a hotel in Hokkaido for the period March 1 to March 7, 2026, with a rating of 9+, check out its user reviews, which categories are greater than 9 and which are less than 9?"
+    },
+    "ESPN--17": {
+        "reason": "The '2023-24' season is over. To find current-season information as intended, the season is updated to '2025-26'.",
+        "prev": "Check out the NBA Basketball Power Index 2023-24 to see which teams are in first place and which are in last place.",
+        "new": "Check out the NBA Basketball Power Index 2025-26 to see which teams are in first place and which are in last place."
+    },
+    "ESPN--30": {
+        "reason": "The '2023-24' season is over. To find current-season information as intended, the season is updated to '2025-26'.",
+        "prev": "Check out the NHL Standings 2023-24 on ESPN to see which teams are at the top and which are at the bottom in Eastern and Western Conference. What about the situation in Division.",
+        "new": "Check out the NHL Standings 2025-26 on ESPN to see which teams are at the top and which are at the bottom in Eastern and Western Conference. What about the situation in Division."
+    },
+    "ESPN--31": {
+        "reason": "The '2023-24' season is over. The year is updated to '2026' to query the current season's roster.",
+        "prev": "Who has the heaviest weight among infielders in the New York Yankees Roster 2023-24?",
+        "new": "Who has the heaviest weight among infielders in the New York Yankees Roster 2026?"
+    },
+    "ESPN--33": {
+        "reason": "The '2023 season' is over. The year is updated to '2025' to find candidates for the most recently completed season.",
+        "prev": "Locate the latest ESPN articles discussing potential MVP candidates in the NFL for 2023 season.",
+        "new": "Locate the latest ESPN articles discussing potential MVP candidates in the NFL for 2025 season."
+    },
+    "Google Flights--1": {
+        "reason": "The flight date 'February 17, 2024' is explicitly in the past, making the task impossible. The year is updated to make it feasible.",
+        "prev": "Show me the list of one-way flights today (February 17, 2024) from Chicago to Paris.",
+        "new": "Show me the list of one-way flights on February 17, 2027 from Chicago to Paris."
+    },
+    "Google Flights--10": {
+        "reason": "The flight dates 'January 25, 2024, and returning on February 15, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Locate the cheapest round-trip flights from New York to Tokyo leaving on January 25, 2024, and returning on February 15, 2024.",
+        "new": "Locate the cheapest round-trip flights from New York to Tokyo leaving on January 25, 2027, and returning on February 15, 2027."
+    },
+    "Google Flights--11": {
+        "reason": "The flight dates 'February 10, 2024, and a return on February 24, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Compare the prices for round-trip flights from New York to Tokyo for a departure on February 10, 2024, and a return on February 24, 2024, and select the option with the least number of stops.",
+        "new": "Compare the prices for round-trip flights from New York to Tokyo for a departure on February 10, 2027, and a return on February 24, 2027, and select the option with the least number of stops."
+    },
+    "Google Flights--12": {
+        "reason": "The flight dates 'December 25, 2023' and 'January 5, 2024' are explicitly in the past. The years are updated to make the task feasible.",
+        "prev": "Find the best-priced round-trip flight from New York to London leaving on December 25, 2023, and returning on January 5, 2024, with one stop or fewer.",
+        "new": "Find the best-priced round-trip flight from New York to London leaving on December 25, 2026, and returning on January 5, 2027, with one stop or fewer."
+    },
+    "Google Flights--13": {
+        "reason": "The flight dates 'January 10, 2024, and a return on January 24, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find the cheapest round-trip flight option from New York City to Tokyo for a departure on January 10, 2024, and a return on January 24, 2024.",
+        "new": "Find the cheapest round-trip flight option from New York City to Tokyo for a departure on January 10, 2027, and a return on January 24, 2027."
+    },
+    "Google Flights--14": {
+        "reason": "The flight dates 'January 10, 2024, and returning on January 17, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Compare flight options and find the lowest round trip fare from New York to London departing on January 10, 2024, and returning on January 17, 2024.",
+        "new": "Compare flight options and find the lowest round trip fare from New York to London departing on January 10, 2027, and returning on January 17, 2027."
+    },
+    "Google Flights--15": {
+        "reason": "The flight dates 'February 12th, 2024, and returning on February 26th, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Compare the prices and total duration of non-stop flights from New York to Tokyo Narita Airport departing on February 12th, 2024, and returning on February 26th, 2024.",
+        "new": "Compare the prices and total duration of non-stop flights from New York to Tokyo Narita Airport departing on February 12th, 2027, and returning on February 26th, 2027."
+    },
+    "Google Flights--16": {
+        "reason": "The flight date 'January 15, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find the cheapest one-way flight from New York to Tokyo departing on January 15, 2024, and provide the airline and total flight duration.",
+        "new": "Find the cheapest one-way flight from New York to Tokyo departing on January 15, 2027, and provide the airline and total flight duration."
+    },
+    "Google Flights--17": {
+        "reason": "The flight dates 'December 27, 2023, and returning on January 10, 2024' are explicitly in the past. The years are updated to make the task feasible.",
+        "prev": "Find the cheapest round-trip flight from New York to Paris leaving on December 27, 2023, and returning on January 10, 2024.",
+        "new": "Find the cheapest round-trip flight from New York to Paris leaving on December 27, 2026, and returning on January 10, 2027."
+    },
+    "Google Flights--18": {
+        "reason": "The flight dates 'January 25, 2024, and returning on February 15, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Compare flight options from New York to Tokyo for a round trip leaving on January 25, 2024, and returning on February 15, 2024, for one adult. Prioritize the comparisons by the shortest travel time.",
+        "new": "Compare flight options from New York to Tokyo for a round trip leaving on January 25, 2027, and returning on February 15, 2027, for one adult. Prioritize the comparisons by the shortest travel time."
+    },
+    "Google Flights--19": {
+        "reason": "The flight date 'January 25, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find the cheapest one-way flight from London to Paris, departing on January 25, 2024. Include the airline, total travel time, and layovers for the chosen flight.",
+        "new": "Find the cheapest one-way flight from London to Paris, departing on January 25, 2027. Include the airline, total travel time, and layovers for the chosen flight."
+    },
+    "Google Flights--21": {
+        "reason": "The flight date 'February 25, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Locate the lowest-priced one-way flight from Tokyo to Sydney for an adult, departing on February 25, 2024, and include the flight duration and number of layovers.",
+        "new": "Locate the lowest-priced one-way flight from Tokyo to Sydney for an adult, departing on February 25, 2027, and include the flight duration and number of layovers."
+    },
+    "Google Flights--22": {
+        "reason": "The flight dates 'March 15, 2024, and returning on March 22, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a round-trip flight from Rio de Janeiro to Los Angeles, leaving on March 15, 2024, and returning on March 22, 2024, and select the option with the least carbon dioxide emissions.",
+        "new": "Find a round-trip flight from Rio de Janeiro to Los Angeles, leaving on March 15, 2026, and returning on March 22, 2026, and select the option with the least carbon dioxide emissions."
+    },
+    "Google Flights--23": {
+        "reason": "The flight date 'February 28, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for a one-way flight from Mumbai to Vancouver on February 28, 2024, filtering the results to show only 1-stop flights.",
+        "new": "Search for a one-way flight from Mumbai to Vancouver on February 28, 2027, filtering the results to show only 1-stop flights."
+    },
+    "Google Flights--24": {
+        "reason": "The flight dates 'March 1, 2024, and returning on March 8, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Compare prices for economy class round-trip flights from Dubai to Rome, departing on March 1, 2024, and returning on March 8, 2024, and select the option with the fewest stops.",
+        "new": "Compare prices for economy class round-trip flights from Dubai to Rome, departing on March 1, 2026, and returning on March 8, 2026, and select the option with the fewest stops."
+    },
+    "Google Flights--25": {
+        "reason": "The flight date 'March 10, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a one-way business class flight from Buenos Aires to Amsterdam on March 10, 2024, and provide the details of the flight with the shortest duration.",
+        "new": "Find a one-way business class flight from Buenos Aires to Amsterdam on March 10, 2026, and provide the details of the flight with the shortest duration."
+    },
+    "Google Flights--26": {
+        "reason": "The flight dates 'February 26, 2024, and returning on February 28, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for the cheapest round-trip flights from Bangkok to Madrid, leaving on February 26, 2024, and returning on February 28, 2024, and provide options under $1000.",
+        "new": "Search for the cheapest round-trip flights from Bangkok to Madrid, leaving on February 26, 2027, and returning on February 28, 2027, and provide options under $1000."
+    },
+    "Google Flights--27": {
+        "reason": "The flight date 'March 30, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Locate a one-way flight from Johannesburg to Toronto on March 30, 2024, for one adult, and analyze the price trends for the following month.",
+        "new": "Locate a one-way flight from Johannesburg to Toronto on March 30, 2026, for one adult, and analyze the price trends for the following month."
+    },
+    "Google Flights--28": {
+        "reason": "The flight dates 'February 27, 2024, and returning on March 1, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find the best-priced round-trip flight from Seattle to Paris, departing on February 27, 2024, and returning on March 1, 2024, with a maximum of one stop.",
+        "new": "Find the best-priced round-trip flight from Seattle to Paris, departing on February 27, 2027, and returning on March 1, 2027, with a maximum of one stop."
+    },
+    "Google Flights--29": {
+        "reason": "The flight dates 'March 5, 2024, and returning on March 15, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Compare the prices and total travel time of non-stop flights from Mexico City to Frankfurt, departing on March 5, 2024, and returning on March 15, 2024.",
+        "new": "Compare the prices and total travel time of non-stop flights from Mexico City to Frankfurt, departing on March 5, 2026, and returning on March 15, 2026."
+    },
+    "Google Flights--30": {
+        "reason": "The flight date 'March 20, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find the most affordable one-way flight from Cape Town to Singapore, departing on March 20, 2024, and include the airline and total number of layovers.",
+        "new": "Find the most affordable one-way flight from Cape Town to Singapore, departing on March 20, 2026, and include the airline and total number of layovers."
+    },
+    "Google Flights--31": {
+        "reason": "The flight date 'March 25, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a one-way economy flight from Auckland to Honolulu on March 25, 2024, browse the full page and display a flight option with the most stops.",
+        "new": "Find a one-way economy flight from Auckland to Honolulu on March 25, 2026, browse the full page and display a flight option with the most stops."
+    },
+    "Google Flights--32": {
+        "reason": "The flight dates 'March 3, 2024, and returning on March 10, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for round-trip flights from Stockholm to Toronto, departing on March 3, 2024, and returning on March 10, 2024, and sort the results to find the shortest total travel time.",
+        "new": "Search for round-trip flights from Stockholm to Toronto, departing on March 3, 2026, and returning on March 10, 2026, and sort the results to find the shortest total travel time."
+    },
+    "Google Flights--33": {
+        "reason": "The flight date 'February 27, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a one-way flight from Shanghai to Vancouver on February 27, 2024, and compare the options based on carbon dioxide emissions.",
+        "new": "Find a one-way flight from Shanghai to Vancouver on February 27, 2027, and compare the options based on carbon dioxide emissions."
+    },
+    "Google Flights--34": {
+        "reason": "The flight date 'March 15, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Compare business class flight options from Lisbon to Singapore for a one-way trip on March 15, 2024, select one of the flights and see which websites offer its booking options. Which one is the cheapest.",
+        "new": "Compare business class flight options from Lisbon to Singapore for a one-way trip on March 15, 2026, select one of the flights and see which websites offer its booking options. Which one is the cheapest."
+    },
+    "Google Flights--35": {
+        "reason": "The flight date 'February 21, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find the lowest-priced one-way flight from Cairo to Montreal on February 21, 2024, including the total travel time and number of stops.",
+        "new": "Find the lowest-priced one-way flight from Cairo to Montreal on February 21, 2027, including the total travel time and number of stops."
+    },
+    "Google Flights--36": {
+        "reason": "The flight dates 'March 28, 2024, and returning on April 4, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Search for round-trip flights from Helsinki to New Delhi, departing on March 28, 2024, and returning on April 4, 2024, and filter the results to show only flights under $1000.",
+        "new": "Search for round-trip flights from Helsinki to New Delhi, departing on March 28, 2026, and returning on April 4, 2026, and filter the results to show only flights under $1000."
+    },
+    "Google Flights--37": {
+        "reason": "The flight dates 'February 28, 2024, and returning on March 3, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Locate a round-trip flight from Buenos Aires to Beijing, leaving on February 28, 2024, and returning on March 3, 2024, check out one of the options and tell me if the airline for my return flight is the same as my departure flight.",
+        "new": "Locate a round-trip flight from Buenos Aires to Beijing, leaving on February 28, 2027, and returning on March 3, 2027, check out one of the options and tell me if the airline for my return flight is the same as my departure flight."
+    },
+    "Google Flights--38": {
+        "reason": "The flight date 'March 8, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Compare the prices and flight durations for economy class flights from Oslo to Dubai, departing on March 8, 2024, and show the options with no more than two layovers.",
+        "new": "Compare the prices and flight durations for economy class flights from Oslo to Dubai, departing on March 8, 2026, and show the options with no more than two layovers."
+    },
+    "Google Flights--39": {
+        "reason": "The flight date 'March 20, 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Find a one-way flight from Prague to a city in Japan on March 20, 2024, which city in Japan is cheaper to go to, Tokyo or a certain city in Hokkaido?",
+        "new": "Find a one-way flight from Prague to a city in Japan on March 20, 2026, which city in Japan is cheaper to go to, Tokyo or a certain city in Hokkaido?"
+    },
+    "Google Flights--41": {
+        "reason": "The flight date '8 March 2024' is explicitly in the past. The year is updated to make the task feasible.",
+        "prev": "Choose one way business class ticket from Hong Kong to Glacier National Park on 8 March 2024, offering a 1 stop ticket.",
+        "new": "Choose one way business class ticket from Hong Kong to Glacier National Park on 8 March 2026, offering a 1 stop ticket."
+    },
+    "Google Search--39": {
+        "reason": "Asking for '2024' travel trends is a historical query in 2026. The year is updated to '2026' to preserve the original intent of finding current/future trends.",
+        "prev": "Identify the top-10 trending travel destination for 2024 through a blog, how many of them are in Asian.",
+        "new": "Identify the top-10 trending travel destination for 2026 through a blog, how many of them are in Asian."
+    },
+    "Allrecipes--16": {
+        "reason": "DNE",
+        "remove": true
+    },
+    "Allrecipes--19": {
+        "reason": "DNE",
+        "remove": true
+    },
+    "Allrecipes--23": {
+        "reason": "DNE",
+        "remove": true
+    },
+    "Allrecipes--3": {
+        "reason": "DNE",
+        "remove": true
+    },
+    "Allrecipes--30": {
+        "reason": "DNE",
+        "remove": true
+    },
+    "Amazon--6": {
+        "reason": "No stroller meeting all requirements exists",
+        "remove": true
+    },
+    "Amazon--19": {
+        "reason": "No books on this topic being released within a month",
+        "remove": true
+    },
+    "Amazon--4": {
+        "reason": "Can't filter by 'Used - Good' from the search results page, only once you click into a specific item",
+        "remove": true
+    },
+    "Apple--1": {
+        "reason": "No reasonable way to find this information, no search queries on support page even return it",
+        "remove": true
+    },
+    "Apple--14": {
+        "reason": "Ambiguous task, multiple M4 chip models exist, and also no concept of 'base' model on the site",
+        "remove": true
+    },
+    "Apple--16": {
+        "reason": "3rd generation airpods are buried in the compare page and don't even list price",
+        "remove": true
+    },
+    "Apple--2": {
+        "reason": "These phones are no longer sold and don't have prices listed anymore, can't even compare 15 pro to 16 pro to modernize the example",
+        "remove": true
+    },
+    "Apple--20": {
+        "reason": "This phone is no longer sold",
+        "remove": true
+    },
+    "Apple--41": {
+        "reason": "These are no longer sold with 64GB of storage, 128 GB is the minimum",
+        "remove": true
+    },
+    "Apple--42": {
+        "reason": "It's very ambiguous what 'updates' means here",
+        "remove": true
+    },
+    "Apple--7": {
+        "reason": "It's already released",
+        "remove": true
+    },
+    "Apple--9": {
+        "reason": "Cannot schedule actual, in-store pickup",
+        "remove": true
+    },
+    "ArXiv--11": {
+        "reason": "No way to specifically filter for non-english submissions, even in advanced search",
+        "remove": true
+    },
+    "BBC News--14": {
+        "reason": "There are no recent tech industry layoffs in the news",
+        "remove": true
+    },
+    "BBC News--16": {
+        "reason": "Brexit already happened, it's not in the news",
+        "remove": true
+    },
+    "BBC News--18": {
+        "reason": "There's no way to get the 'best' podcasts of the year",
+        "remove": true
+    },
+    "BBC News--2": {
+        "reason": "There are no articles regarding the environmental impacts of deforestation published within the last two days",
+        "remove": true
+    },
+    "BBC News--21": {
+        "reason": "There no longer seems to be an explicit 'World News' section",
+        "remove": true
+    },
+    "BBC News--29": {
+        "reason": "No 'New Releases' section",
+        "remove": true
+    },
+    "BBC News--33": {
+        "reason": "There no longer seems to be an explicit 'World News' section",
+        "remove": true
+    },
+    "BBC News--37": {
+        "reason": "There are no book reviews featured in the Culture section",
+        "remove": true
+    },
+    "Booking--6": {
+        "reason": "Cannot actually reserve a hotel",
+        "remove": true
+    },
+    "Booking--11": {
+        "reason": "Cannot actually reserve a hotel",
+        "remove": true
+    },
+    "Booking--13": {
+        "reason": "Cannot actually reserve a hotel",
+        "remove": true
+    },
+    "Booking--14": {
+        "reason": "Cannot actually reserve a hotel",
+        "remove": true
+    },
+    "Coursera--17": {
+        "reason": "There's no 'Credit Eligible' filter",
+        "remove": true
+    },
+    "Coursera--28": {
+        "reason": "There are no 'guided projects' related to 'astrophysics'",
+        "remove": true
+    },
+    "ESPN--2": {
+        "reason": "It is not the NBA season, there is no Bucks game in the last 2 days",
+        "remove": true
+    },
+    "ESPN--21": {
+        "reason": "It is not the NBA season, there is no Nuggets game in the last 3 days",
+        "remove": true
+    },
+    "ESPN--26": {
+        "reason": "It is not the NBA season, there were no matchups yesterday (also what the heck is a loser high and a winner high)",
+        "remove": true
+    },
+    "GitHub--22": {
+        "reason": "There are no repos that are focused on natural language processing in Ruby updated within the last week",
+        "remove": true
+    },
+    "GitHub--29": {
+        "reason": "GitHub Pro does not exist anymore - only teams",
+        "remove": true
+    },
+    "Google Flights--0": {
+        "reason": "Cannot book an actual flight",
+        "remove": true
+    },
+    "Google Flights--20": {
+        "reason": "Cannot book an actual flight",
+        "remove": true
+    },
+    "Google Flights--7": {
+        "reason": "There are no flights from Phoenix to Miami (Dec. 25th - Dec. 28th) that have first class tickets for under $1320",
+        "remove": true
+    },
+    "Google Map--13": {
+        "reason": "Cannot book a ride",
+        "remove": true
+    },
+    "Google Map--18": {
+        "reason": "Cannot actually print something",
+        "remove": true
+    },
+    "Google Map--26": {
+        "reason": "Cannot actually print something",
+        "remove": true
+    },
+    "Google Search--6": {
+        "reason": "Not possible to filter trends by monthly, 7 days is maximum",
+        "remove": true
+    },
+    "Google Search--15": {
+        "reason": "Wtf",
+        "remove": true
+    },
+    "Google Search--22": {
+        "reason": "How are you supposed to discern what the 'top three trending topics this month in New York City' are from a google search",
+        "remove": true
+    },
+    "Huggingface--10": {
+        "reason": "argilla/notux-chat-ui no longer exists",
+        "remove": true
+    },
+    "Huggingface--20": {
+        "reason": "No NER model last updated in 2022 with 1M+ downloads",
+        "remove": true
+    },
+    "Huggingface--21": {
+        "reason": "No longer exists in docs",
+        "remove": true
+    },
+    "Huggingface--22": {
+        "reason": "Does not exist in docs",
+        "remove": true
+    },
+    "Huggingface--23": {
+        "reason": "Extremely vague and hard to judge",
+        "remove": true
+    },
+    "Huggingface--32": {
+        "reason": "No settings area",
+        "remove": true
+    },
+    "Huggingface--6": {
+        "reason": "Need at least 3 sentences to try the inference demo",
+        "remove": true
+    }
+}
