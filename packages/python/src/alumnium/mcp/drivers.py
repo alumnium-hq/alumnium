@@ -82,7 +82,6 @@ def create_selenium_driver(capabilities: dict[str, Any], server_url: str | None)
     headers = capabilities.pop("headers", {})
     cookies = capabilities.pop("cookies", [])
     options = Options()
-    options.add_argument("--disable-notifications")
 
     # Apply all capabilities to options
     for key, value in capabilities.items():
