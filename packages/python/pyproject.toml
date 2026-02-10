@@ -101,6 +101,7 @@ repository = "https://github.com/alumnium-hq/alumnium"
 version = "0.17.0"
 
 [tool.poetry.dependencies]
+Pillow = "^11.0.0"
 appium-python-client = "^5.1.1"
 fastapi = "^0.127"
 langchain = "^1.1.0"
