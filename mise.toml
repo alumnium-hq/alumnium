@@ -1,2 +1,2 @@
 [settings]
-idiomatic_version_file_enable_tools = ["node", "potery", "python"]
+idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
