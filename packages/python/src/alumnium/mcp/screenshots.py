@@ -29,13 +29,13 @@ def save_screenshot(driver_id: str, description: str, al: Alumni) -> None:
         screenshot_dir.mkdir(parents=True, exist_ok=True)
 
         # Create filename with step number prefix
-        filename = f"{step_num:02d}-{sanitized}.png"
+        filename = f"{step_num:02d}-{sanitized}.jpg"
         filepath = screenshot_dir / filename
 
         # Get base64 screenshot from driver
         screenshot_b64 = al.driver.screenshot
 
-        # Decode base64 and save as PNG
+        # Decode base64 and save as JPG
         screenshot_bytes = base64.b64decode(screenshot_b64)
         filepath.write_bytes(screenshot_bytes)
 

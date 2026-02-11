@@ -14,10 +14,25 @@
         "prev": "Investigate the trade-in value for an iPhone 11 Pro Max on Apple's website.",
         "new": "Investigate the trade-in value for an iPhone 13 Pro Max on Apple's website."
     },
+    "Booking--0": {
+        "reason": "The booking date 'December 25-26' misses a year and is likely intended to be in the future. The year is updated to make the task feasible.",
+        "prev": "Find a Mexico hotel with deals for December 25-26.",
+        "new": "Find a Mexico hotel with deals for December 25-26, 2026."
+    },
+    "Booking--1": {
+        "reason": "The booking date 'Jan 1st' is vague depending on the current date. The date is updated to make the task feasible.",
+        "prev": "Find the cheapest available hotel room for a three night stay from 1st Jan in Jakarta. The room is for 2 adults, just answer the cheapest hotel room and the price.",
+        "new": "Find the cheapest available hotel room for a three night stay from 1st Jun in Jakarta. The room is for 2 adults, just answer the cheapest hotel room and the price."
+    },
+    "Booking--2": {
+        "reason": "The booking date 'December 20th to December 23th' misses the year, making evaluation ambiguous. The year is updated to make the task feasible.",
+        "prev": "Find a hotel in Ohio From December 20th to December 23th for 3 adults and 2 rooms.",
+        "new": "Find a hotel in Ohio From December 20th to December 23th, 2026 for 3 adults and 2 rooms."
+    },
     "Booking--5": {
-        "reason": "The booking date 'Jan 1 to Jan 4, 2024' is explicitly in the past, making the task impossible. The year is updated to make it feasible.",
+        "reason": "The booking date 'Jan 1 to Jan 4, 2024' is explicitly in the past, making the task impossible. The date is updated to make it feasible.",
         "prev": "Search a hotel with free WiFi and air conditioning in Bali from Jan 1 to Jan 4, 2024.",
-        "new": "Search a hotel with free WiFi and air conditioning in Bali from Jan 1 to Jan 4, 2027."
+        "new": "Search a hotel with free WiFi and air conditioning in Bali from Jun 1 to Jun 4, 2026."
     },
     "Booking--8": {
         "reason": "The booking date '20/12/2023' is explicitly in the past. The year is updated to make the task feasible.",
@@ -180,14 +195,19 @@
         "new": "Locate the latest ESPN articles discussing potential MVP candidates in the NFL for 2025 season."
     },
     "Google Flights--1": {
-        "reason": "The flight date 'February 17, 2024' is explicitly in the past, making the task impossible. The year is updated to make it feasible.",
+        "reason": "The flight date 'February 17, 2024' is explicitly in the past, making the task impossible. The date is updated to make it feasible.",
         "prev": "Show me the list of one-way flights today (February 17, 2024) from Chicago to Paris.",
-        "new": "Show me the list of one-way flights on February 17, 2027 from Chicago to Paris."
+        "new": "Show me the list of one-way flights on June 17, 2026 from Chicago to Paris."
+    },
+    "Google Flights--2": {
+        "reason": "The flight date 'Jan. 22' is too far in the future. The date is updated to make the task feasible while still being in the future.",
+        "prev": "Find the lowest fare from all eligible one-way flights for 1 adult from JFK to Heathrow on Jan. 22.",
+        "new": "Find the lowest fare from all eligible one-way flights for 1 adult from JFK to Heathrow on Jun. 22."
     },
     "Google Flights--10": {
-        "reason": "The flight dates 'January 25, 2024, and returning on February 15, 2024' are explicitly in the past. The year is updated to make the task feasible.",
+        "reason": "The flight dates 'January 25, 2024, and returning on February 15, 2024' are explicitly in the past. The dates are updated to make the task feasible.",
         "prev": "Locate the cheapest round-trip flights from New York to Tokyo leaving on January 25, 2024, and returning on February 15, 2024.",
-        "new": "Locate the cheapest round-trip flights from New York to Tokyo leaving on January 25, 2027, and returning on February 15, 2027."
+        "new": "Locate the cheapest round-trip flights from New York to Tokyo leaving on April 25, 2026, and returning on May 15, 2026."
     },
     "Google Flights--11": {
         "reason": "The flight dates 'February 10, 2024, and a return on February 24, 2024' are explicitly in the past. The year is updated to make the task feasible.",

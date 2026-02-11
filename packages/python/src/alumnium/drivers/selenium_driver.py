@@ -395,7 +395,14 @@ class SeleniumDriver(BaseDriver):
 
     @property
     def screenshot(self) -> str:
-        return self.driver.get_screenshot_as_base64()
+        return self.driver.execute_cdp_cmd(
+            "Page.captureScreenshot",
+            {
+                "format": "jpeg",
+                "captureBeyondViewport": True,
+                "quality": 50,
+            },
+        )["data"]  # type: ignore[attr-defined]
 
     def scroll_to(self, id: int):
         element = self.find_element(id)

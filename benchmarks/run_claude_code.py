@@ -17,7 +17,10 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
+
+from collect_artifacts import collect_artifacts
 
 SCRIPT_DIR = Path(__file__).parent  # benchmarks/
 DATA_FILE = SCRIPT_DIR / "webvoyager" / "data" / "WebVoyager_data.jsonl"
@@ -54,6 +57,21 @@ def load_task(task_id: str) -> dict:
     raise ValueError(f"Task '{task_id}' not found in dataset")
 
 
+def load_all_task_ids(web_filter: str | None = None) -> list[str]:
+    """Load task IDs from the dataset, taking first per_group tasks from each website."""
+    group_counts: dict[str, int] = {}
+    task_ids = []
+    with open(DATA_FILE) as f:
+        for line in f:
+            task = json.loads(line)
+            if web_filter and task["web_name"].lower() != web_filter.lower():
+                continue
+            web_name = task["web_name"]
+            group_counts[web_name] = group_counts.get(web_name, 0) + 1
+            task_ids.append(task["id"])
+    return task_ids
+
+
 def list_tasks(web_filter: str | None = None) -> None:
     """List all available tasks."""
     with open(DATA_FILE) as f:
@@ -68,7 +86,7 @@ def list_tasks(web_filter: str | None = None) -> None:
             print(f"{task['id']}: {question}")
 
 
-def run_task(task_id: str, timeout: int = 600) -> dict | None:
+def run_task(task_id: str, timeout: int = 1200) -> dict | None:
     """Run a single WebVoyager task with Claude Code."""
     import shutil
 
@@ -129,6 +147,7 @@ def run_task(task_id: str, timeout: int = 600) -> dict | None:
 
     # Run Claude Code from benchmarks/ directory
     # This ensures .claude/settings.json hooks are picked up
+    start_time = time.time()
     try:
         result = subprocess.run(
             cmd,
@@ -143,19 +162,27 @@ def run_task(task_id: str, timeout: int = 600) -> dict | None:
         print(f"\nTask timed out after {timeout} seconds")
     except KeyboardInterrupt:
         print("\nTask interrupted by user")
+    end_time = time.time()
 
     print("-" * 60)
 
-    # Results are collected by SessionEnd hook
-    metadata_file = output_dir / "metadata.json"
-    if metadata_file.exists():
-        metadata = json.loads(metadata_file.read_text())
+    # Collect artifacts and generate report
+    metadata = collect_artifacts(
+        task_id=task_id,
+        output_dir=output_dir,
+        question=task["ques"],
+        url=task["web"],
+        start_time=start_time,
+        end_time=end_time,
+    )
+
+    if metadata:
         print(f"\nResults:")
         print(f"  Final Answer: {metadata.get('final_answer', 'N/A')}")
         print(f"  Duration: {metadata.get('duration_seconds', 'N/A')}s")
         return metadata
     else:
-        print("\nNo results collected (hooks may not have run)")
+        print("\nNo results collected")
         return None
 
 
@@ -167,6 +194,10 @@ def main():
 Examples:
   python run_claude_code.py Allrecipes--0
   python run_claude_code.py Allrecipes--0 Allrecipes--1 Allrecipes--2
+  python run_claude_code.py --all
+  python run_claude_code.py --all --web Amazon
+  python run_claude_code.py --all --task_from_id 4 --task_to_id 6
+  python run_claude_code.py --all --exclude "Google Search" "Apple"
   python run_claude_code.py --list-tasks
   python run_claude_code.py --list-tasks --web Amazon
         """,
@@ -179,8 +210,13 @@ Examples:
     parser.add_argument(
         "--timeout",
         type=int,
-        default=600,
-        help="Timeout in seconds (default: 600)",
+        default=1200,
+        help="Timeout in seconds (default: 1200)",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Run all tasks (can be combined with --web to filter by website)",
     )
     parser.add_argument(
         "--list-tasks",
@@ -192,6 +228,22 @@ Examples:
         type=str,
         help="Filter tasks by website name (used with --list-tasks)",
     )
+    parser.add_argument(
+        "--exclude",
+        nargs="+",
+        type=str,
+        help="Exclude tasks by website name (e.g., --exclude 'Google Search' Apple)",
+    )
+    parser.add_argument(
+        "--task_from_id",
+        type=int,
+        help="Only include tasks with numeric suffix >= this value (e.g., --task_from_id 4 includes --4, --5, ...)",
+    )
+    parser.add_argument(
+        "--task_to_id",
+        type=int,
+        help="Only include tasks with numeric suffix <= this value (e.g., --task_to_id 6 includes ..., --5, --6)",
+    )
 
     args = parser.parse_args()
 
@@ -199,8 +251,85 @@ Examples:
         list_tasks(args.web)
         return
 
+    if args.all:
+        args.task_ids = load_all_task_ids(args.web)
+        if not args.task_ids:
+            print("No tasks found matching the filter.", file=sys.stderr)
+            return
+
+    # Exclude tasks by website name
+    if args.exclude:
+        exclude_lower = [name.lower() for name in args.exclude]
+        args.task_ids = [
+            tid
+            for tid in args.task_ids
+            if tid.rsplit("--", 1)[0].lower() not in exclude_lower
+        ]
+        if not args.task_ids:
+            print("No tasks remaining after --exclude filter.", file=sys.stderr)
+            return
+
+    # Filter by numeric suffix range
+    if args.task_from_id is not None or args.task_to_id is not None:
+
+        def task_suffix(task_id: str) -> int:
+            return int(task_id.rsplit("--", 1)[1])
+
+        filtered = []
+        for tid in args.task_ids:
+            suffix = task_suffix(tid)
+            if args.task_from_id is not None and suffix < args.task_from_id:
+                continue
+            if args.task_to_id is not None and suffix > args.task_to_id:
+                continue
+            filtered.append(tid)
+        args.task_ids = filtered
+        if not args.task_ids:
+            print("No tasks found matching the ID range filter.", file=sys.stderr)
+            return
+
     if not args.task_ids:
-        parser.error("task_id(s) required (or use --list-tasks)")
+        parser.error("task_id(s) required (or use --all / --list-tasks)")
+
+    # Validate task IDs and detect shell word-splitting issues
+    valid_task_ids = set()
+    with open(DATA_FILE) as f:
+        for line in f:
+            task = json.loads(line)
+            valid_task_ids.add(task["id"])
+
+    invalid_ids = [tid for tid in args.task_ids if tid not in valid_task_ids]
+    if invalid_ids:
+        # Check if these look like they were split from a task ID with spaces
+        # e.g., ["BBC", "News--0"] should have been ["BBC News--0"]
+        might_be_split = []
+        for i, tid in enumerate(invalid_ids):
+            # Check if combining with next invalid ID forms a valid task
+            if i + 1 < len(invalid_ids):
+                combined = f"{tid} {invalid_ids[i + 1]}"
+                if combined in valid_task_ids:
+                    might_be_split.append(combined)
+
+        if might_be_split:
+            print(
+                f"Error: Task IDs appear to have been split by shell word expansion.",
+                file=sys.stderr,
+            )
+            print(
+                f"Task IDs with spaces must be quoted. For example:",
+                file=sys.stderr,
+            )
+            for tid in might_be_split[:3]:  # Show up to 3 examples
+                print(f'  python run_claude_code.py "{tid}"', file=sys.stderr)
+            print(
+                f"\nOr use --all to run all tasks from the dataset.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        else:
+            print(f"Error: Unknown task ID(s): {invalid_ids}", file=sys.stderr)
+            print(f"Use --list-tasks to see available task IDs.", file=sys.stderr)
+            sys.exit(1)
 
     # Run tasks sequentially
     results = []
