@@ -128,32 +128,34 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
             A tuple of (explanation, actions) where explanation describes the reasoning
             and actions is the list of steps to achieve the goal.
         """
-        logger.info("Starting planning:")
-        logger.info(f"  -> Goal: {goal}")
-        logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
+        return ("Proceeding straight to execution without a separate planning step.", [goal])
 
-        message = self._invoke_chain(
-            self.chain,
-            {"goal": goal, "accessibility_tree": accessibility_tree_xml},
-        )
+        # logger.info("Starting planning:")
+        # logger.info(f"  -> Goal: {goal}")
+        # logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
 
-        if Model.current.provider not in self.UNSTRUCTURED_OUTPUT_MODELS:
-            response = message["parsed"]
-            logger.info(f"  <- Result: {response}")
-            logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
+        # message = self._invoke_chain(
+        #     self.chain,
+        #     {"goal": goal, "accessibility_tree": accessibility_tree_xml},
+        # )
 
-            return (response.explanation, [action for action in response.actions if action])
-        else:
-            logger.info(f"  <- Result: {message.content}")
-            logger.info(f"  <- Usage: {message.usage_metadata}")
+        # if Model.current.provider not in self.UNSTRUCTURED_OUTPUT_MODELS:
+        #     response = message["parsed"]
+        #     logger.info(f"  <- Result: {response}")
+        #     logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
 
-            response = message.content.strip()
-            response = response.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
+        #     return (response.explanation, [action for action in response.actions if action])
+        # else:
+        #     logger.info(f"  <- Result: {message.content}")
+        #     logger.info(f"  <- Usage: {message.usage_metadata}")
 
-            steps = []
-            for step in message.content.split(self.LIST_SEPARATOR):
-                step = step.strip()
-                if step and step.upper() != "NOOP":
-                    steps.append(step)
+        #     response = message.content.strip()
+        #     response = response.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
 
-            return ("", steps)
+        #     steps = []
+        #     for step in message.content.split(self.LIST_SEPARATOR):
+        #         step = step.strip()
+        #         if step and step.upper() != "NOOP":
+        #             steps.append(step)
+
+        #     return ("", steps)

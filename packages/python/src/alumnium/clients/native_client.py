@@ -51,9 +51,9 @@ class NativeClient:
     def clear_examples(self):
         self.session.planner_agent.prompt_with_examples.examples.clear()
 
-    def execute_action(self, goal: str, step: str, accessibility_tree: str):
+    def execute_action(self, goal: str, accessibility_tree: str):
         accessibility_tree = self.session.process_tree(accessibility_tree)
-        actions = self.session.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
+        actions = self.session.actor_agent.invoke(goal, accessibility_tree.to_xml())
         return accessibility_tree.map_tool_calls_to_raw_id(actions)
 
     def retrieve(

@@ -61,10 +61,10 @@ class HttpClient:
         )
         response.raise_for_status()
 
-    def execute_action(self, goal: str, step: str, accessibility_tree: str):
+    def execute_action(self, goal: str, accessibility_tree: str):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/steps",
-            json={"goal": goal, "step": step, "accessibility_tree": accessibility_tree},
+            json={"goal": goal, "accessibility_tree": accessibility_tree},
             timeout=120,
         )
         response.raise_for_status()

@@ -25,20 +25,20 @@ class ActorAgent(BaseAgent):
     def invoke(
         self,
         goal: str,
-        step: str,
+        # step: str,
         accessibility_tree_xml: str,
     ):
-        if not step.strip():
+        if not goal.strip():
             return
 
         logger.info("Starting action:")
         logger.info(f"  -> Goal: {goal}")
-        logger.info(f"  -> Step: {step}")
+        # logger.info(f"  -> Step: {step}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
 
         message = self._invoke_chain(
             self.chain,
-            {"goal": goal, "step": step, "accessibility_tree": accessibility_tree_xml},
+            {"goal": goal, "accessibility_tree": accessibility_tree_xml},
         )
 
         logger.info(f"  <- Tools: {message.tool_calls}")

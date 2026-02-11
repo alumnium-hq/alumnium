@@ -89,7 +89,7 @@ class Alumni:
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            actor_response = self.client.execute_action(goal, step, accessibility_tree.to_str())
+            actor_response = self.client.execute_action(goal, accessibility_tree.to_str())
 
             called_tools = []
             for tool_call in actor_response:
