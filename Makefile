@@ -21,6 +21,9 @@ format:
 test:
 	cd packages/python && poetry poe test
 
+demo:
+	cd packages/python && poetry run python -i demo.py
+
 start-server:
 	cd packages/python && poetry run alumnium-server
 
