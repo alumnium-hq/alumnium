@@ -13,7 +13,8 @@ class ChangesAnalyzerAgent(BaseAgent):
 
     def invoke(self, diff: str) -> str:
         logger.info("Starting changes analysis:")
-        logger.debug(f"  -> Diff: {diff}")
+        indented_diff = "\n".join(f"  {line}" for line in diff.splitlines())
+        logger.debug(f"  -> Diff:\n{indented_diff}")
 
         message = self._invoke_chain(  # type: ignore[assignment]
             self.llm,
