@@ -17,6 +17,7 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
         # to LLM decided to first click comboboxes to expand them,
         # which is automatically handled by the SelectTool.
         "expanded",
+        "url",
     }
 
     def __init__(self, raw_xml: str):
