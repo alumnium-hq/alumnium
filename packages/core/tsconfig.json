@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Base",
+  "include": ["./*.ts", "./src/**/*.ts", "./scripts/**/*.ts"],
+  "compilerOptions": {
+    // Resolve
+    "rootDir": "./src",
+    "paths": {},
+    // Output
+    "target": "esnext",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./.ts/tsconfig.tsbuildinfo",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    // Modules
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "isolatedModules": true,
+    "moduleDetection": "force", // Stop treating files without imports/exports as single global scripts
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    // Env
+    "lib": ["ESNext"],
+    "types": ["bun"],
+    // Checks
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    // Build
+    "incremental": true
+  }
+}
