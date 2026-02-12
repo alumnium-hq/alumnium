@@ -1,3 +1,4 @@
+import { cors } from "@elysiajs/cors";
 import { Context, Elysia } from "elysia";
 import { parseArgs } from "util";
 import { z } from "zod";
@@ -38,8 +39,8 @@ console.log(`🟡 Proxying to legacy server at ${LEGACY_BASE_URL}`);
 const ToolSchema = z.object({
   type: z.literal("function"),
   function: z.object({
-    name: z.string().min(1),
-    description: z.string().min(1),
+    name: z.string(),
+    description: z.string(),
     parameters: z.object({
       type: z.literal("object"),
       properties: z.record(z.any(), z.any()),
@@ -50,54 +51,54 @@ const ToolSchema = z.object({
 
 const CreateSessionBody = z.object({
   platform: z.enum(["chromium", "uiautomator2", "xcuitest"]),
-  provider: z.string().min(1),
-  name: z.string().min(1).optional(),
-  tools: z.array(ToolSchema).min(1),
+  provider: z.string(),
+  name: z.string().optional(),
+  tools: z.array(ToolSchema),
 });
 
 const SessionParams = z.object({
-  session_id: z.string().min(1),
+  session_id: z.string(),
 });
 
 const PlanActionsBody = z.object({
-  goal: z.string().min(1),
-  accessibility_tree: z.string().min(1),
-  url: z.string().min(1).optional(),
-  title: z.string().min(1).optional(),
+  goal: z.string(),
+  accessibility_tree: z.string(),
+  url: z.string().optional(),
+  title: z.string().optional(),
 });
 
 const PlanStepActionsBody = z.object({
-  goal: z.string().min(1),
-  step: z.string().min(1),
-  accessibility_tree: z.string().min(1),
+  goal: z.string(),
+  step: z.string(),
+  accessibility_tree: z.string(),
 });
 
 const ExecuteStatementBody = z.object({
-  statement: z.string().min(1),
-  accessibility_tree: z.string().min(1),
-  url: z.string().min(1).optional(),
-  title: z.string().min(1).optional(),
-  screenshot: z.string().min(1).nullable().optional(),
+  statement: z.string(),
+  accessibility_tree: z.string(),
+  url: z.string().optional(),
+  title: z.string().optional(),
+  screenshot: z.string().nullable().optional(),
 });
 
 const ChooseAreaBody = z.object({
-  description: z.string().min(1),
-  accessibility_tree: z.string().min(1),
+  description: z.string(),
+  accessibility_tree: z.string(),
 });
 
 const FindElementBody = z.object({
-  description: z.string().min(1),
-  accessibility_tree: z.string().min(1),
+  description: z.string(),
+  accessibility_tree: z.string(),
 });
 
 const AddExampleBody = z.object({
-  goal: z.string().min(1),
-  actions: z.array(z.string().min(1)).min(1),
+  goal: z.string(),
+  actions: z.array(z.string()),
 });
 
 const ChangeStateSchema = z.object({
-  accessibility_tree: z.string().min(1),
-  url: z.string().min(1),
+  accessibility_tree: z.string(),
+  url: z.string(),
 });
 
 const AnalyzeChangesBody = z.object({
@@ -110,6 +111,7 @@ const AnalyzeChangesBody = z.object({
 //#region Routes
 
 const app = new Elysia()
+  .use(cors())
   .get("/health", proxyRequest)
   .get("/v1/sessions", proxyRequest)
   .post("/v1/sessions", proxyRequest, {
@@ -174,13 +176,14 @@ async function proxyRequest(context: Context): Promise<Response> {
 
   try {
     const headers = new Headers(request.headers);
-    const requestBody = body ? JSON.stringify(body) : null;
 
-    const response = await fetch(targetUrl, {
+    const reqInit: RequestInit = {
       method: request.method,
       headers,
-      body: requestBody,
-    });
+      body: body ? JSON.stringify(body) : undefined,
+    };
+
+    const response = await fetch(targetUrl, reqInit);
 
     const responseBody = await response.blob();
 
