@@ -1,64 +1,11 @@
 import { cors } from "@elysiajs/cors";
-import { Context, Elysia } from "elysia";
+import { Elysia } from "elysia";
 import { parseArgs } from "util";
 import { z } from "zod";
-
-//#region CLI
-
-const args = parseArgs({
-  args: Bun.argv,
-  options: {
-    port: {
-      type: "string",
-      default: "8013",
-    },
-    "legacy-port": {
-      type: "string",
-      default: "8014",
-    },
-    "legacy-image": {
-      type: "string",
-    },
-  },
-  strict: true,
-  allowPositionals: true,
-});
-
-const PORT = parseInt(args.values.port || "8013");
-const LEGACY_PORT = parseInt(args.values["legacy-port"] || "8014");
-const LEGACY_ORIGIN = `localhost:${LEGACY_PORT}`;
-const LEGACY_BASE_URL = `http://${LEGACY_ORIGIN}`;
-
-console.log(`Starting at http://localhost:${PORT}`);
-console.log(`🟡 Proxying to legacy server at ${LEGACY_BASE_URL}`);
-
-//#endregion
+import { LEGACY_BASE_URL, legacyProxy } from "./legacy.ts";
+import { SessionParams, sessionRoutes } from "./session/routes.ts";
 
 //#region Types
-
-const ToolSchema = z.object({
-  type: z.literal("function"),
-  function: z.object({
-    name: z.string(),
-    description: z.string(),
-    parameters: z.object({
-      type: z.literal("object"),
-      properties: z.record(z.any(), z.any()),
-      required: z.array(z.string()).optional(),
-    }),
-  }),
-});
-
-const CreateSessionBody = z.object({
-  platform: z.enum(["chromium", "uiautomator2", "xcuitest"]),
-  provider: z.string(),
-  name: z.string().optional(),
-  tools: z.array(ToolSchema),
-});
-
-const SessionParams = z.object({
-  session_id: z.string(),
-});
 
 const PlanActionsBody = z.object({
   goal: z.string(),
@@ -112,97 +59,77 @@ const AnalyzeChangesBody = z.object({
 
 const app = new Elysia()
   .use(cors())
-  .get("/health", proxyRequest)
-  .get("/v1/sessions", proxyRequest)
-  .post("/v1/sessions", proxyRequest, {
-    body: CreateSessionBody,
-  })
-  .delete("/v1/sessions/:session_id", proxyRequest, {
+  .get("/health", legacyProxy)
+  .use(sessionRoutes)
+  .get("/v1/sessions/:session_id/stats", legacyProxy, {
     params: SessionParams,
   })
-  .get("/v1/sessions/:session_id/stats", proxyRequest, {
-    params: SessionParams,
-  })
-  .post("/v1/sessions/:session_id/plans", proxyRequest, {
+  .post("/v1/sessions/:session_id/plans", legacyProxy, {
     params: SessionParams,
     body: PlanActionsBody,
   })
-  .post("/v1/sessions/:session_id/steps", proxyRequest, {
+  .post("/v1/sessions/:session_id/steps", legacyProxy, {
     params: SessionParams,
     body: PlanStepActionsBody,
   })
-  .post("/v1/sessions/:session_id/statements", proxyRequest, {
+  .post("/v1/sessions/:session_id/statements", legacyProxy, {
     params: SessionParams,
     body: ExecuteStatementBody,
   })
-  .post("/v1/sessions/:session_id/areas", proxyRequest, {
+  .post("/v1/sessions/:session_id/areas", legacyProxy, {
     params: SessionParams,
     body: ChooseAreaBody,
   })
-  .post("/v1/sessions/:session_id/elements", proxyRequest, {
+  .post("/v1/sessions/:session_id/elements", legacyProxy, {
     params: SessionParams,
     body: FindElementBody,
   })
-  .post("/v1/sessions/:session_id/examples", proxyRequest, {
+  .post("/v1/sessions/:session_id/examples", legacyProxy, {
     params: SessionParams,
     body: AddExampleBody,
   })
-  .delete("/v1/sessions/:session_id/examples", proxyRequest, {
+  .delete("/v1/sessions/:session_id/examples", legacyProxy, {
     params: SessionParams,
   })
-  .post("/v1/sessions/:session_id/changes", proxyRequest, {
+  .post("/v1/sessions/:session_id/changes", legacyProxy, {
     params: SessionParams,
     body: AnalyzeChangesBody,
   })
-  .post("/v1/sessions/:session_id/caches", proxyRequest, {
+  .post("/v1/sessions/:session_id/caches", legacyProxy, {
     params: SessionParams,
   })
-  .delete("/v1/sessions/:session_id/caches", proxyRequest, {
+  .delete("/v1/sessions/:session_id/caches", legacyProxy, {
     params: SessionParams,
   });
 
-app.listen(PORT);
-
 //#endregion
 
-//#region Proxy
+//#region CLI
 
-async function proxyRequest(context: Context): Promise<Response> {
-  const { request, body } = context;
-  const url = new URL(request.url);
-  const targetUrl = `${LEGACY_BASE_URL}${url.pathname}${url.search}`;
+const args = parseArgs({
+  args: Bun.argv,
+  options: {
+    port: {
+      type: "string",
+      default: "8013",
+    },
+    "legacy-port": {
+      type: "string",
+      default: "8014",
+    },
+    "legacy-image": {
+      type: "string",
+    },
+  },
+  strict: true,
+  allowPositionals: true,
+});
 
-  console.log(`Proxying ${request.method} ${url.pathname} -> ${targetUrl}`);
+const PORT = parseInt(args.values.port || "8013");
 
-  try {
-    const headers = new Headers(request.headers);
+console.log(`Starting at http://localhost:${PORT}`);
+console.log(`🟡 Proxying to legacy server at ${LEGACY_BASE_URL}`);
 
-    const reqInit: RequestInit = {
-      method: request.method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    };
-
-    const response = await fetch(targetUrl, reqInit);
-
-    const responseBody = await response.blob();
-
-    return new Response(responseBody, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: response.headers,
-    });
-  } catch (err) {
-    console.error("Proxy error:", err);
-
-    return new Response(
-      JSON.stringify({ error: "Proxy failed", detail: String(err) }),
-      {
-        status: 502,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
-}
+app.listen(PORT);
 
 //#endregion
