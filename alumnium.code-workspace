@@ -5,6 +5,10 @@
       "path": ".",
     },
     {
+      "name": "packages/core",
+      "path": "packages/core",
+    },
+    {
       "name": "packages/python",
       "path": "packages/python",
     },
