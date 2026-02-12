@@ -1,0 +1,19 @@
+{
+  "name": "@alumnium/core",
+  "module": "src/cli.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "./scripts/build.ts",
+    "clean": "node -e \"console.log('TODO')\"",
+    "check-format": "node -e \"console.log('TODO')\"",
+    "format": "node -e \"console.log('TODO')\"",
+    "test": "node -e \"console.log('TODO')\""
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.9"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
