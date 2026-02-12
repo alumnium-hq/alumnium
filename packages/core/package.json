@@ -16,5 +16,8 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "elysia": "^1.4.24"
   }
 }

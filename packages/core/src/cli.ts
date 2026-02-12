@@ -1,3 +1,4 @@
+import { Context, Elysia } from "elysia";
 import { parseArgs } from "util";
 import { z } from "zod";
 
@@ -37,8 +38,8 @@ console.log(`🟡 Proxying to legacy server at ${LEGACY_BASE_URL}`);
 const ToolSchema = z.object({
   type: z.literal("function"),
   function: z.object({
-    name: z.string(),
-    description: z.string(),
+    name: z.string().min(1),
+    description: z.string().min(1),
     parameters: z.object({
       type: z.literal("object"),
       properties: z.record(z.any(), z.any()),
@@ -47,55 +48,59 @@ const ToolSchema = z.object({
   }),
 });
 
-const SessionRequestSchema = z.object({
+const CreateSessionBody = z.object({
   platform: z.enum(["chromium", "uiautomator2", "xcuitest"]),
-  provider: z.string(),
-  name: z.string().optional(),
-  tools: z.array(ToolSchema),
+  provider: z.string().min(1),
+  name: z.string().min(1).optional(),
+  tools: z.array(ToolSchema).min(1),
 });
 
-const PlanRequestSchema = z.object({
-  goal: z.string(),
-  accessibility_tree: z.string(),
-  url: z.string().optional(),
-  title: z.string().optional(),
+const SessionParams = z.object({
+  session_id: z.string().min(1),
 });
 
-const StepRequestSchema = z.object({
-  goal: z.string(),
-  step: z.string(),
-  accessibility_tree: z.string(),
+const PlanActionsBody = z.object({
+  goal: z.string().min(1),
+  accessibility_tree: z.string().min(1),
+  url: z.string().min(1).optional(),
+  title: z.string().min(1).optional(),
 });
 
-const StatementRequestSchema = z.object({
-  statement: z.string(),
-  accessibility_tree: z.string(),
-  url: z.string().optional(),
-  title: z.string().optional(),
-  screenshot: z.string().nullable().optional(),
+const PlanStepActionsBody = z.object({
+  goal: z.string().min(1),
+  step: z.string().min(1),
+  accessibility_tree: z.string().min(1),
 });
 
-const AreaRequestSchema = z.object({
-  description: z.string(),
-  accessibility_tree: z.string(),
+const ExecuteStatementBody = z.object({
+  statement: z.string().min(1),
+  accessibility_tree: z.string().min(1),
+  url: z.string().min(1).optional(),
+  title: z.string().min(1).optional(),
+  screenshot: z.string().min(1).nullable().optional(),
 });
 
-const FindRequestSchema = z.object({
-  description: z.string(),
-  accessibility_tree: z.string(),
+const ChooseAreaBody = z.object({
+  description: z.string().min(1),
+  accessibility_tree: z.string().min(1),
 });
 
-const AddExampleRequestSchema = z.object({
-  goal: z.string(),
-  actions: z.array(z.string()),
+const FindElementBody = z.object({
+  description: z.string().min(1),
+  accessibility_tree: z.string().min(1),
+});
+
+const AddExampleBody = z.object({
+  goal: z.string().min(1),
+  actions: z.array(z.string().min(1)).min(1),
 });
 
 const ChangeStateSchema = z.object({
-  accessibility_tree: z.string(),
-  url: z.string(),
+  accessibility_tree: z.string().min(1),
+  url: z.string().min(1),
 });
 
-const ChangesRequestSchema = z.object({
+const AnalyzeChangesBody = z.object({
   before: ChangeStateSchema,
   after: ChangeStateSchema,
 });
@@ -104,121 +109,82 @@ const ChangesRequestSchema = z.object({
 
 //#region Routes
 
-Bun.serve({
-  port: PORT,
-  routes: {
-    "/health": {
-      GET(req) {
-        return proxyRequest(req, {});
-      },
-    },
+const app = new Elysia()
+  .get("/health", proxyRequest)
+  .get("/v1/sessions", proxyRequest)
+  .post("/v1/sessions", proxyRequest, {
+    body: CreateSessionBody,
+  })
+  .delete("/v1/sessions/:session_id", proxyRequest, {
+    params: SessionParams,
+  })
+  .get("/v1/sessions/:session_id/stats", proxyRequest, {
+    params: SessionParams,
+  })
+  .post("/v1/sessions/:session_id/plans", proxyRequest, {
+    params: SessionParams,
+    body: PlanActionsBody,
+  })
+  .post("/v1/sessions/:session_id/steps", proxyRequest, {
+    params: SessionParams,
+    body: PlanStepActionsBody,
+  })
+  .post("/v1/sessions/:session_id/statements", proxyRequest, {
+    params: SessionParams,
+    body: ExecuteStatementBody,
+  })
+  .post("/v1/sessions/:session_id/areas", proxyRequest, {
+    params: SessionParams,
+    body: ChooseAreaBody,
+  })
+  .post("/v1/sessions/:session_id/elements", proxyRequest, {
+    params: SessionParams,
+    body: FindElementBody,
+  })
+  .post("/v1/sessions/:session_id/examples", proxyRequest, {
+    params: SessionParams,
+    body: AddExampleBody,
+  })
+  .delete("/v1/sessions/:session_id/examples", proxyRequest, {
+    params: SessionParams,
+  })
+  .post("/v1/sessions/:session_id/changes", proxyRequest, {
+    params: SessionParams,
+    body: AnalyzeChangesBody,
+  })
+  .post("/v1/sessions/:session_id/caches", proxyRequest, {
+    params: SessionParams,
+  })
+  .delete("/v1/sessions/:session_id/caches", proxyRequest, {
+    params: SessionParams,
+  });
 
-    "/v1/sessions": {
-      GET(req) {
-        return proxyRequest(req, {});
-      },
-
-      POST(req) {
-        return validateAndProxy(req, SessionRequestSchema, {});
-      },
-    },
-
-    "/v1/sessions/:session_id": {
-      DELETE(req) {
-        return proxyRequest(req, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/stats": {
-      GET(req) {
-        return proxyRequest(req, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/plans": {
-      POST(req) {
-        return validateAndProxy(req, PlanRequestSchema, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/steps": {
-      POST(req) {
-        return validateAndProxy(req, StepRequestSchema, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/statements": {
-      POST(req) {
-        return validateAndProxy(req, StatementRequestSchema, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/areas": {
-      POST(req) {
-        return validateAndProxy(req, AreaRequestSchema, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/elements": {
-      POST(req) {
-        return validateAndProxy(req, FindRequestSchema, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/examples": {
-      POST(req) {
-        return validateAndProxy(req, AddExampleRequestSchema, req.params);
-      },
-
-      DELETE(req) {
-        return proxyRequest(req, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/changes": {
-      POST(req) {
-        return validateAndProxy(req, ChangesRequestSchema, req.params);
-      },
-    },
-
-    "/v1/sessions/:session_id/caches": {
-      POST(req) {
-        return proxyRequest(req, req.params);
-      },
-
-      DELETE(req) {
-        return proxyRequest(req, req.params);
-      },
-    },
-  },
-});
+app.listen(PORT);
 
 //#endregion
 
 //#region Proxy
 
-async function proxyRequest(
-  req: Request,
-  _pathParams: Record<string, string>,
-  targetMethod?: string,
-): Promise<Response> {
-  const url = new URL(req.url);
+async function proxyRequest(context: Context): Promise<Response> {
+  const { request, body } = context;
+  const url = new URL(request.url);
   const targetUrl = `${LEGACY_BASE_URL}${url.pathname}${url.search}`;
 
-  console.log(`Proxying ${req.method} ${url.pathname} -> ${targetUrl}`);
+  console.log(`Proxying ${request.method} ${url.pathname} -> ${targetUrl}`);
 
   try {
-    const headers = new Headers(req.headers);
+    const headers = new Headers(request.headers);
+    const requestBody = body ? JSON.stringify(body) : null;
 
     const response = await fetch(targetUrl, {
-      method: targetMethod || req.method,
-      headers: headers,
-      body: req.body,
+      method: request.method,
+      headers,
+      body: requestBody,
     });
 
-    const body = await response.blob();
+    const responseBody = await response.blob();
 
-    return new Response(body, {
+    return new Response(responseBody, {
       status: response.status,
       statusText: response.statusText,
       headers: response.headers,
@@ -234,21 +200,6 @@ async function proxyRequest(
       },
     );
   }
-}
-
-async function validateAndProxy(
-  req: Request,
-  schema: z.ZodSchema,
-  params: Record<string, string>,
-) {
-  try {
-    const clone = req.clone();
-    const body = await clone.json();
-    schema.parse(body);
-  } catch (err) {
-    console.warn(`Validation failed for ${req.method} ${req.url}`, err);
-  }
-  return proxyRequest(req, params);
 }
 
 //#endregion
