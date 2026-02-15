@@ -7,20 +7,18 @@ export const LEGACY_BASE_URL = `http://${LEGACY_ORIGIN}`;
 export async function legacyProxy(context: Context): Promise<Response> {
   const { request, body } = context;
   const url = new URL(request.url);
-  const targetUrl = `${LEGACY_BASE_URL}${url.pathname}${url.search}`;
+  const path = `${url.pathname}${url.search}`;
 
-  console.log(`Proxying ${request.method} ${url.pathname} -> ${targetUrl}`);
+  console.log(`Proxying ${request.method} ${path} -> ${legacyUrl(path)}`);
 
   try {
     const headers = new Headers(request.headers);
 
-    const reqInit: RequestInit = {
+    const response = await legacyFetch(path, {
       method: request.method,
       headers,
       body: body ? JSON.stringify(body) : undefined,
-    };
-
-    const response = await fetch(targetUrl, reqInit);
+    });
 
     const responseBody = await response.blob();
 
@@ -40,4 +38,12 @@ export async function legacyProxy(context: Context): Promise<Response> {
       },
     );
   }
+}
+
+export async function legacyFetch(path: string, init: RequestInit) {
+  return fetch(legacyUrl(path), init);
+}
+
+export function legacyUrl(path: string) {
+  return `${LEGACY_BASE_URL}${path}`;
 }
