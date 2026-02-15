@@ -1,4 +1,5 @@
 from re import sub
+from typing import Any
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
@@ -156,3 +157,13 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
                     steps.append(step)
 
             return ("", steps)
+
+    def to_state(self) -> dict[str, Any]:
+        state = super().to_state()
+        examples = self.prompt_with_examples.examples
+        state["examples"] = examples if examples else []
+        return state
+
+    def apply_state(self, state: dict[str, Any]) -> None:
+        super().apply_state(state)
+        self.prompt_with_examples.examples = state["examples"]
