@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 
 class CacheFactory:
     @staticmethod
-    def create_cache() -> Optional[FilesystemCache | SQLiteCache]:
+    def create_cache() -> FilesystemCache | SQLiteCache | NullCache:
         cache_provider = getenv("ALUMNIUM_CACHE", "filesystem").lower()
 
         if cache_provider == "sqlite":

@@ -1,6 +1,6 @@
 import importlib.metadata
 from contextlib import asynccontextmanager
-from typing import List
+from typing import Any, List
 
 from fastapi import APIRouter, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -106,6 +106,21 @@ async def get_session_stats(session_id: str):
     if session is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
     return session.stats
+
+
+@v1_router.get("/sessions/{session_id}/state")
+async def get_session_state(session_id: str):
+    """Get session state snapshot."""
+    session = session_manager.get_session(session_id)
+    if session is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+    return session.to_state()
+
+
+@v1_router.post("/sessions/state")
+async def apply_session_state(session_state: dict[str, Any]):
+    """Apply session state snapshot."""
+    session_manager.apply_session_state(session_state)
 
 
 @v1_router.post("/sessions/{session_id}/plans", response_model=PlanResponse)
