@@ -18,6 +18,7 @@ from .cache_factory import CacheFactory
 from .llm_factory import LLMFactory
 from .logutils import get_logger
 from .models import Model
+from .schema_to_tool_converter import convert_schemas_to_tools
 
 logger = get_logger(__name__)
 
@@ -30,7 +31,7 @@ class Session:
         session_id: str,
         model: Model,
         platform: str,
-        tools: dict[str, Any],
+        tool_schemas: list[dict[str, Any]],
         llm: BaseChatModel | None = None,
         planner: bool = True,
         excluded_attributes: set[str] | None = None,
@@ -39,17 +40,19 @@ class Session:
         self.model = model
         self.platform = platform
         self.planner = planner
+        self.tool_schemas = tool_schemas
+        self.tools = convert_schemas_to_tools(self.tool_schemas)
         self.excluded_attributes = excluded_attributes or set()
 
         self.cache = CacheFactory.create_cache()
         if llm is not None:
             self.llm = llm
         else:
-            self.llm = LLMFactory.create_llm(model=model)
+            self.llm = LLMFactory.create_llm(model=self.model)
         self.llm.cache = self.cache
 
-        self.actor_agent = ActorAgent(self.llm, tools)
-        self.planner_agent = PlannerAgent(self.llm, list(tools.keys()))
+        self.actor_agent = ActorAgent(self.llm, self.tools)
+        self.planner_agent = PlannerAgent(self.llm, list(self.tools.keys()))
         self.retriever_agent = RetrieverAgent(self.llm)
         self.area_agent = AreaAgent(self.llm)
         self.locator_agent = LocatorAgent(self.llm)
@@ -117,3 +120,41 @@ class Session:
 
         logger.debug(f"Processed tree for session {self.session_id}")
         return tree
+
+    def to_state(self) -> dict[str, Any]:
+        state = {
+            "session_id": self.session_id,
+            "model": self.model.to_state(),
+            "platform": self.platform,
+            "tool_schemas": self.tool_schemas,
+            # "llm" is omitted even though it is passed in the constructor, as
+            # 1) it's external and may not be serializable, and 2) in HTTP API
+            # where sessions are exchanged, llm is never passed as a param.
+            "actor_agent": self.actor_agent.to_state(),
+            "planner_agent": self.planner_agent.to_state(),
+            "retriever_agent": self.retriever_agent.to_state(),
+            "area_agent": self.area_agent.to_state(),
+            "locator_agent": self.locator_agent.to_state(),
+            "changes_analyzer_agent": self.changes_analyzer_agent.to_state(),
+        }
+        return state
+
+
+    @classmethod
+    def from_state(cls, state: dict[str, Any]) -> "Session":
+        session = cls(
+            session_id=state["session_id"],
+            model=Model.from_state(state["model"]),
+            platform=state["platform"],
+            tool_schemas=state["tool_schemas"],
+            # llm is not never in state, see note in to_state.
+        )
+
+        session.actor_agent.apply_state(state["actor_agent"])
+        session.planner_agent.apply_state(state["planner_agent"])
+        session.retriever_agent.apply_state(state["retriever_agent"])
+        session.area_agent.apply_state(state["area_agent"])
+        session.locator_agent.apply_state(state["locator_agent"])
+        session.changes_analyzer_agent.apply_state(state["changes_analyzer_agent"])
+
+        return session
