@@ -4,7 +4,7 @@ import { ApiVersioned } from "../api/response.ts";
 import { legacyFetch, legacyProxy } from "../legacy.ts";
 import { ensureModelName, providers } from "../model/model.ts";
 import { ToolSchema } from "../tool/tool.ts";
-import { SessionPlatform } from "./session.ts";
+import { Session, SessionPlatform } from "./session.ts";
 import {
   createSessionStateBaseAgent,
   createSessionStatePlannerAgent,
@@ -12,7 +12,7 @@ import {
 } from "./state.ts";
 
 export const SessionParams = z.object({
-  session_id: z.string(),
+  session_id: Session.Id,
 });
 
 export const CreateSessionBody = ApiVersioned.extend({
@@ -23,10 +23,10 @@ export const CreateSessionBody = ApiVersioned.extend({
 });
 
 export const CreateSessionResponse = ApiVersioned.extend({
-  session_id: z.string(),
+  session_id: Session.Id,
 });
 
-const sessionStates: Record<string, SessionState> = {};
+const sessionStates: Record<Session.Id, SessionState> = {};
 
 export const sessionRoutes = new Elysia()
   .get("/v1/sessions", legacyProxy)
@@ -35,7 +35,7 @@ export const sessionRoutes = new Elysia()
     async (context) => {
       const { platform, tools: tool_schemas } = context.body;
       const state: SessionState = {
-        session_id: crypto.randomUUID(),
+        session_id: Session.createId(),
         model: ensureModelName(context.body),
         platform,
         tool_schemas,
