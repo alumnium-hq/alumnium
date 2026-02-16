@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
-    "elysia": "^1.4.24"
+    "ai": "^6.0.86",
+    "elysia": "^1.4.24",
+    "smollog": "^0.2.0"
   }
 }
