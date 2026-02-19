@@ -1,4 +1,4 @@
-import { BaseServerAccessibilityTree } from "./base.ts";
+import { BaseServerAccessibilityTree } from "./baseServerAccessibilityTree.ts";
 
 // TODO:
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
