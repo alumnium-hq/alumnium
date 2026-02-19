@@ -1,0 +1,52 @@
+[[tools.bun]]
+version = "1.3.9"
+backend = "core:bun"
+"platforms.linux-arm64" = { checksum = "sha256:a2c2862bcc1fd1c0b3a8dcdc8c7efb5e2acd871eb20ed2f17617884ede81c844", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-linux-aarch64.zip"}
+"platforms.linux-arm64-musl" = { checksum = "sha256:412e9b2732d148cb127a753d63899b0333c4f4f1bd8dde79316ecfb7ef170270", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-linux-aarch64-musl.zip"}
+"platforms.linux-x64" = { checksum = "sha256:4680e80e44e32aa718560ceae85d22ecfbf2efb8f3641782e35e4b7efd65a1aa", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-linux-x64.zip"}
+"platforms.linux-x64-baseline" = { checksum = "sha256:104d4d037f4b35e10215c0507e1779691f39c57bd91ddeefe11cad781e3fc4b9", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-linux-x64-baseline.zip"}
+"platforms.linux-x64-musl" = { checksum = "sha256:04b7184318937623d317de6b25e82bef7bf5cce0b241501c5d0499513201c72d", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-linux-x64-musl.zip"}
+"platforms.linux-x64-musl-baseline" = { checksum = "sha256:40ea1b2b209d393a07e06299d2d19a31710f1e55d15811a193bfa7c9dd757e01", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-linux-x64-musl-baseline.zip"}
+"platforms.macos-arm64" = { checksum = "sha256:cde6a4edf19cf64909158fa5a464a12026fd7f0d79a4a950c10cf0af04266d85", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-darwin-aarch64.zip"}
+"platforms.macos-x64" = { checksum = "sha256:588f4a48740b9a0c366a00f878810ab3ab5e6734d29b7c3cbdd9484b74a007de", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-darwin-x64.zip"}
+"platforms.macos-x64-baseline" = { checksum = "sha256:a6e15821aa60795f541ce18fce16bca9f2a94e193068b77f6f33330f4d0a3ad5", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-darwin-x64-baseline.zip"}
+"platforms.windows-x64" = { checksum = "sha256:f4c1cf3549f6af986dc6535c40b4785ff1a7e7805e59637ec450fc11adb0c874", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-windows-x64.zip"}
+"platforms.windows-x64-baseline" = { checksum = "sha256:cc22962b3dcc51f279f13bf843675e052479e64a323f85eb29442066cf3942fe", url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.9/bun-windows-x64-baseline.zip"}
+
+[[tools.fnox]]
+version = "1.12.1"
+backend = "github:jdx/fnox"
+"platforms.linux-arm64" = { checksum = "sha256:158195c758d05684ae6e3a7c553edf4f163ac13c4466556742810220ee3866c8", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-aarch64-unknown-linux-gnu.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421839"}
+"platforms.linux-arm64-musl" = { checksum = "sha256:158195c758d05684ae6e3a7c553edf4f163ac13c4466556742810220ee3866c8", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-aarch64-unknown-linux-gnu.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421839"}
+"platforms.linux-x64" = { checksum = "sha256:0a28ae0b36584c077dfb4fe0f924246bd3787e58504732f3c7a5dbf3785e738c", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-x86_64-unknown-linux-gnu.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421846"}
+"platforms.linux-x64-baseline" = { checksum = "sha256:0a28ae0b36584c077dfb4fe0f924246bd3787e58504732f3c7a5dbf3785e738c", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-x86_64-unknown-linux-gnu.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421846"}
+"platforms.linux-x64-musl" = { checksum = "sha256:0a28ae0b36584c077dfb4fe0f924246bd3787e58504732f3c7a5dbf3785e738c", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-x86_64-unknown-linux-gnu.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421846"}
+"platforms.linux-x64-musl-baseline" = { checksum = "sha256:0a28ae0b36584c077dfb4fe0f924246bd3787e58504732f3c7a5dbf3785e738c", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-x86_64-unknown-linux-gnu.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421846"}
+"platforms.macos-arm64" = { checksum = "sha256:8dc93b9e53b81f61be5e013d6163ed40062217f69221e7cca28a45cac94797c6", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-aarch64-apple-darwin.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421842"}
+"platforms.macos-x64" = { checksum = "sha256:8a4409be660a8a7d62baf43b7d34ab43c53c1cf47ad296bd90b5d35cc968d9a1", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-x86_64-apple-darwin.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421841"}
+"platforms.macos-x64-baseline" = { checksum = "sha256:8a4409be660a8a7d62baf43b7d34ab43c53c1cf47ad296bd90b5d35cc968d9a1", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-x86_64-apple-darwin.tar.gz", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421841"}
+"platforms.windows-x64" = { checksum = "sha256:2e9cf3f4852d635f757f4216a132b32c568ebfe6af44eb3af3d326f730c721d5", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-x86_64-pc-windows-msvc.zip", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421843"}
+"platforms.windows-x64-baseline" = { checksum = "sha256:2e9cf3f4852d635f757f4216a132b32c568ebfe6af44eb3af3d326f730c721d5", url = "https://github.com/jdx/fnox/releases/download/v1.12.1/fnox-x86_64-pc-windows-msvc.zip", url_api = "https://api.github.com/repos/jdx/fnox/releases/assets/353421843"}
+
+[[tools.node]]
+version = "22.14.0"
+backend = "core:node"
+"platforms.linux-arm64" = { checksum = "sha256:8cf30ff7250f9463b53c18f89c6c606dfda70378215b2c905d0a9a8b08bd45e0", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-arm64.tar.gz"}
+"platforms.linux-arm64-musl" = { checksum = "sha256:8cf30ff7250f9463b53c18f89c6c606dfda70378215b2c905d0a9a8b08bd45e0", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-arm64.tar.gz"}
+"platforms.linux-x64" = { checksum = "sha256:9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz"}
+"platforms.linux-x64-baseline" = { checksum = "sha256:9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz"}
+"platforms.linux-x64-musl" = { checksum = "sha256:9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz"}
+"platforms.linux-x64-musl-baseline" = { checksum = "sha256:9d942932535988091034dc94cc5f42b6dc8784d6366df3a36c4c9ccb3996f0c2", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux-x64.tar.gz"}
+"platforms.macos-arm64" = { checksum = "sha256:e9404633bc02a5162c5c573b1e2490f5fb44648345d64a958b17e325729a5e42", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-darwin-arm64.tar.gz"}
+"platforms.macos-x64" = { checksum = "sha256:6698587713ab565a94a360e091df9f6d91c8fadda6d00f0cf6526e9b40bed250", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-darwin-x64.tar.gz"}
+"platforms.macos-x64-baseline" = { checksum = "sha256:6698587713ab565a94a360e091df9f6d91c8fadda6d00f0cf6526e9b40bed250", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-darwin-x64.tar.gz"}
+"platforms.windows-x64" = { checksum = "sha256:55b639295920b219bb2acbcfa00f90393a2789095b7323f79475c9f34795f217", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-win-x64.zip"}
+"platforms.windows-x64-baseline" = { checksum = "sha256:55b639295920b219bb2acbcfa00f90393a2789095b7323f79475c9f34795f217", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-win-x64.zip"}
+
+[[tools.poetry]]
+version = "2.1.1"
+backend = "vfox:mise-plugins/vfox-poetry"
+
+[[tools.python]]
+version = "3.10.11"
+backend = "core:python"
