@@ -8,7 +8,8 @@
     "clean": "node -e \"console.log('TODO')\"",
     "check-format": "node -e \"console.log('TODO')\"",
     "format": "node -e \"console.log('TODO')\"",
-    "test": "node -e \"console.log('TODO')\""
+    "test": "node -e \"console.log('TODO')\"",
+    "types": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/bun": "^1.3.9",
