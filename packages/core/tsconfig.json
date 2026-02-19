@@ -1,7 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Base",
-  "include": ["./*.ts", "./src/**/*.ts", "./scripts/**/*.ts"],
+  "include": [
+    "./*.ts",
+    "./src/**/*.ts",
+    "./scripts/**/*.ts",
+    "./tests/**/*.ts"
+  ],
   "compilerOptions": {
     // Resolve
     "rootDir": ".",
