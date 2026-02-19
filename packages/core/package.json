@@ -8,7 +8,7 @@
     "clean": "node -e \"console.log('TODO')\"",
     "check-format": "node -e \"console.log('TODO')\"",
     "format": "node -e \"console.log('TODO')\"",
-    "test": "node -e \"console.log('TODO')\"",
+    "test": "bun test --preload ./tests/py2ts.ts",
     "types": "tsc --noEmit"
   },
   "devDependencies": {
