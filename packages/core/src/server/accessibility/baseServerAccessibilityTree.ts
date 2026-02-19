@@ -7,16 +7,16 @@ export interface ToolCall {
 export abstract class BaseServerAccessibilityTree {
   #simplifiedIdCounter = 0;
 
-  #simplifiedToRawId: Record<string, number> = {};
+  protected simplifiedToRawId: Record<string, number> = {};
 
   /**
    * Convert tree to XML string, optionally excluding specified attributes.
    */
-  abstract toXml(excludeAttrs?: Set<string> | null): string;
+  abstract toXml(excludeAttrs?: Set<string> | undefined): string;
 
   getRawId(simplifiedIdArg: unknown): number {
     const simplifiedId = this.#extractId(simplifiedIdArg);
-    const rawId = this.#simplifiedToRawId[simplifiedId];
+    const rawId = this.simplifiedToRawId[simplifiedId];
     if (typeof rawId !== "number") {
       throw new Error(`No element with simplified id=${simplifiedId}`);
     }
