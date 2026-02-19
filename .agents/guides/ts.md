@@ -10,6 +10,16 @@
 
 - Use `#privateName` for private fields and methods in classes instead of the `private` modifier. Don't add the `public` modifier to public fields or methods, as they are public by default.
 
+- Prefer using plain objects `{}` for string/number-to-value mappings instead of `Map` unless you need the specific features of `Map` (e.g., ordered keys, non-string keys).
+
+- Prefer using simple checks like `obj[key]` or `key in obj` rather than `Object.hasOwn(obj, key)`. Use the simplest/generic way appropriate for the context.
+
+### Defensiveness
+
+- Don't add explicit conversions, i.e., `String(number)` when using in a context where conversion is implicit, e.g., `${number}` or `obj[number]`.
+
+- Rely on TypeScript type checking and Zod parsing rather than adding extra runtime checks or conversions.
+
 ### Types
 
 - Avoid using `any` and `as` for type assertions unless absolutely necessary. Always prefer more specific types.
