@@ -1,7 +1,7 @@
-import { BaseServerAccessibilityTree } from "./base.ts";
+import { BaseServerAccessibilityTree } from "./baseServerAccessibilityTree.ts";
 
 // TODO:
-export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibilityTree {
+export class ServerXcuiTestAccessibilityTree extends BaseServerAccessibilityTree {
   // TODO:
   constructor(xml: string) {
     super();
