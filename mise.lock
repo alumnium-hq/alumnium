@@ -43,6 +43,11 @@ backend = "core:node"
 "platforms.windows-x64" = { checksum = "sha256:55b639295920b219bb2acbcfa00f90393a2789095b7323f79475c9f34795f217", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-win-x64.zip"}
 "platforms.windows-x64-baseline" = { checksum = "sha256:55b639295920b219bb2acbcfa00f90393a2789095b7323f79475c9f34795f217", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-win-x64.zip"}
 
+[[tools.opencode]]
+version = "1.2.6"
+backend = "aqua:anomalyco/opencode"
+"platforms.linux-x64" = { checksum = "sha256:1299d49d1c9e8b07217d92cea14050650c0b5a81c2ac380d6ec0d1d26abbe61a", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.6/opencode-linux-x64.tar.gz"}
+
 [[tools.poetry]]
 version = "2.1.1"
 backend = "vfox:mise-plugins/vfox-poetry"
