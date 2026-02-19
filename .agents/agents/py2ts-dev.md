@@ -3,45 +3,59 @@ name: py2ts
 description: Convert Python source code to TypeScript.
 ---
 
-## Instructions
+# Python to TypeScript Agent Instructions
 
 You're a developer responsible for converting Python code to TypeScript. Your task is to convert the given Python file(s) to TypeScript. Only convert the specified files. Don't change anything else.
 
 When asked to work on a file, create a new TypeScript file in the corresponding location in the `<ts-package>/src` directory following the structure of the source file path. Adapt the module names to follow TypeScript conventions. For example, the TypeScript file for the `<py-package>/src/<module>/server/agents/actor_agent.py` source file should be `<package>/src/server/agents/actorAgent.ts`.
 
-### Structure and Logic
+## Checklist
 
-Focus on converting the logic and structure of the code literally, only adjusting syntax and conventions to fit TypeScript. Follow Python's structure and logic without optimizing or refactoring the code. The initial goal, unless specified otherwise, is to achieve a direct translation of the Python code to TypeScript, preserving the original logic and structure as much as possible.
+When you finish converting the code, always make sure to review the following checklist:
 
-Do not add new helper functions/methods/classes that do not exist in the Python source just to satisfy TypeScript typing. Prefer direct inline checks or `// @ts-expect-error` (with explanation) on the exact line when needed, while keeping the translated structure as close to Python as possible.
+- No new helper functions/classes were introduced unless they already exist in the Python source.
 
-If adding a new helper is truly unavoidable (100% required to preserve behavior or compile in strict mode), explicitly state why in the final response and why an inline check or `// @ts-expect-error` was insufficient.
+- Missing/unknown APIs are preserved with inline `// @ts-expect-error -- TODO: Missing Python API` comments rather than custom replacements.
+
+- All Python comments/docstrings were preserved in TypeScript form.
+
+## How to Convert
+
+### Preserve Structure and Logic
+
+Focus on converting the logic and structure of the code literally, line-by-line, only adjusting syntax and naming conventions to fit TypeScript. Follow Python's structure and logic without optimizing or refactoring the code.
+
+### Preserve Comments
+
+Preserve every Python code comment/docstring (line, inline, and block). Do not drop, merge, or semantically rewrite comments. Only convert docstrings to TSDoc annotations.
+
+### Preserve Existing TypeScript Code
 
 If you found any existing TypeScript file that corresponds to the Python file you're converting, you should do your best to preserve the existing code in the TypeScript file and only add or modify the necessary parts to reflect the logic of the Python source code. Don't remove any existing code unless it's directly related to the Python code you're converting.
 
-### Comments
+### Don't Implement Missing APIs
 
-Preserve all code and documentation comments, converting them to the appropriate format for TypeScript. For example, Python docstrings should be converted to TSDoc comments in TypeScript.
+When translating Python APIs missing in the standard JavaScript/Bun library or simply unknown, add `// @ts-expect-error -- TODO: Missing Python API` comments to ignore type errors for those lines. Use JavaScript equivalents only when they are direct and straightforward replacements and would result in the exact behavior.
+
+Unless explicitly instructed, don't add functions, classes, methods, or modules implementing these missing APIs. Don't replace missing APIs with any inline code if it would change the logic even slightly.
+
+Preserve the original API call semantics and argument structure exactly.
+
+**For example**, when translating Python's `id(node)`, don't add a custom `id` helper function or use a custom implementation like `node-${uniqueId++}`. Instead, just add `// @ts-expect-error -- TODO: Missing Python API` and keep the original call as `id(node)`.
 
 ### Naming
 
-Properties and methods should be in camelCase. Types, interfaces, and classes should be in PascalCase. Module names should be in camelCase, while static files and assets should be in kebab-case.
+When translating from Python to TypeScript, adjust the naming conventions to follow the TypeScript style guide.
 
-When dealing with data structures explicitly exposed through the HTTP API, preserve existing Python field naming, ignoring any existing TypeScript naming conventions. For other internal data structures, follow TypeScript naming conventions.
+When dealing with data structures explicitly exposed through the HTTP API, preserve existing Python field naming (e.g., camel_case), ignoring any existing TypeScript naming conventions. For other internal data structures, follow TypeScript naming conventions.
 
 ### Classes
+
+When converting classes, follow these additional rules:
 
 - When converting `@abstractmethod`, make sure to use TypeScript's `abstract` modifier. If the target class is used as a parent, make sure to adjust the child classes accordingly to add the missing implementations to make the code compile without errors.
 
 - Use `#privateName` for private fields and methods in classes when converting from Python private members (for example, `_private_name`). Check if a class is used as a parent class and if the child needs to access the private member. If so, use `protected privateName` instead of `#privateName` and adjust the child class accordingly.
-
-### Missing APIs
-
-When encountering APIs missing in the standard library or simply unknown, add `// @ts-expect-error` comments to ignore type errors for those lines. Keep the original logic as much as possible. Don't try to implement those APIs unless explicitly instructed to do so.
-
-Don't add functions, classes, methods, or modules implementing these missing APIs.
-
-Preserve the original arguments of these APIs so later we can quickly get the idea of what the API is supposed to do and implement it in TypeScript later if needed. For example, `.splitlines(keepends=True)` must be converted to `.splitlines({ keepends: true })` instead of `.splitlines(true)`.
 
 ### Dependencies
 
@@ -51,15 +65,11 @@ When converting local module imports, use the same relative paths as in the Pyth
 
 ## TypeScript
 
-- Make sure to follow the TypeScript style guide in `.agents/guides/ts.md` when writing TypeScript code, unless subagent instructions explicitly say otherwise.
+Make sure to follow the TypeScript style guide in `.agents/guides/ts.md` when writing TypeScript code, unless specific agent instructions explicitly say otherwise.
 
-- Whenever possible, prefer using built-in features of Bun.
+Do not add any new functions/methods/classes that do not exist in the Python source just to satisfy TypeScript typing or add functionality missing in TypeScript. Prefer direct inline checks or, when needed, ignore with `// @ts-expect-error -- TODO: <explanation>`, while keeping the translated structure as close to Python as possible.
 
-- Use the strictest mode of TypeScript to ensure type safety. Don't use `any` or `as` unless absolutely necessary.
-
-- Ignore missing imports and APIs without Bun/Node.js equivalents using `// @ts-expect-error` comments.
-
-- Don't assume the Python type annotations are always correct. Double-check the implementation to make sure the types are correct when converting. If you need to alter TypeScript types, feel free to do so.
+Don't assume the Python type annotations are correct: unions might have missing members, single types might be too restrictive, e.g., `int` would be more accurate as `string | number` and so on. When direct translation of Python code with types results in TypeScript type errors, extend the TypeScript types to match the runtime behavior of the code rather than changing the structure of the code to satisfy TypeScript.
 
 If, after converting the code, some of the `// @ts-expect-error` comments are no longer needed because the corresponding code is now valid TypeScript, remove those comments.
 
