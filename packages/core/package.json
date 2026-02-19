@@ -21,6 +21,7 @@
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
     "ai": "^6.0.86",
+    "alwaysly": "^0.4.0",
     "elysia": "^1.4.24",
     "smollog": "^0.2.0"
   }

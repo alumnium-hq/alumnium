@@ -20,6 +20,12 @@
 
 - Rely on TypeScript type checking and Zod parsing rather than adding extra runtime checks or conversions.
 
+### Verbosity
+
+Be concise and avoid unnecessary verbosity. Never assume that code runs on legacy runtimes. For example, `Number.parseInt(rawId, 10)` is unnecessary in JavaScript/TypeScript, as `parseInt(rawId)` is as sufficient.
+
+Don't be unnecessarily explicit or add redundant code that doesn't add value. For example, instead of `if (properties.length > 0)` write it as `if (properties.length)`.
+
 ### Types
 
 - Avoid using `any` and `as` for type assertions unless absolutely necessary. Always prefer more specific types.
@@ -45,3 +51,7 @@ Utilize JavaScript's hoisting behavior and prefer defining private/helper functi
 Always run the type checker after writing or modifying TypeScript code to ensure that there are no type errors. If you encounter type errors that you cannot resolve, use `// @ts-expect-error` comments to ignore those specific errors, and provide an explanation for why the error is expected or ignored.
 
 To run the type checker, use `bun types` in the corresponding package directory.
+
+## Standard Library
+
+Prefer using built-in features of Bun and the standard JavaScript library whenever possible. Don't add dependencies or helper functions for functionality that can be achieved with built-in features, unless the built-in features are not sufficient for the task at hand.

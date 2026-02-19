@@ -7,6 +7,7 @@
       "dependencies": {
         "@elysiajs/cors": "^1.4.1",
         "ai": "^6.0.86",
+        "alwaysly": "^0.4.0",
         "elysia": "^1.4.24",
         "smollog": "^0.2.0",
       },
@@ -47,6 +48,8 @@
     "@vercel/oidc": ["@vercel/oidc@3.1.0", "", {}, "sha512-Fw28YZpRnA3cAHHDlkt7xQHiJ0fcL+NRcIqsocZQUSmbzeIKRpwttJjik5ZGanXP+vlA4SbTg+AbA3bP363l+w=="],
 
     "ai": ["ai@6.0.86", "", { "dependencies": { "@ai-sdk/gateway": "3.0.46", "@ai-sdk/provider": "3.0.8", "@ai-sdk/provider-utils": "4.0.15", "@opentelemetry/api": "1.9.0" }, "peerDependencies": { "zod": "^3.25.76 || ^4.1.8" } }, "sha512-U2W2LBCHA/pr0Ui7vmmsjBiLEzBbZF3yVHNy7Rbzn7IX+SvoQPFM5rN74hhfVzZoE8zBuGD4nLLk+j0elGacvQ=="],
+
+    "alwaysly": ["alwaysly@0.4.0", "", {}, "sha512-psU0mobMsrpoVRgjq9M08ASYFRdgbbdH/QpXlcbXQqQjmCk4vsl/8JlesXIQnKOkc43LjP/uk/uGInJNfY6kLA=="],
 
     "bun-types": ["bun-types@1.3.9", "", { "dependencies": { "@types/node": "*" } }, "sha512-+UBWWOakIP4Tswh0Bt0QD0alpTY8cb5hvgiYeWCMet9YukHbzuruIEeXC2D7nMJPB12kbh8C7XJykSexEqGKJg=="],
 
