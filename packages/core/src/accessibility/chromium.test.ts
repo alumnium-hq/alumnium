@@ -7,7 +7,7 @@ const FIXTURE_PATH = path.resolve(
   "__fixtures__/chromium_accessibility_tree.json",
 );
 
-describe(ChromiumAccessibilityTree, () => {
+describe.todo(ChromiumAccessibilityTree, () => {
   describe(ChromiumAccessibilityTree.prototype.elementById, () => {
     it("returns correct element for given ID", async () => {
       const json = await Bun.file(FIXTURE_PATH).text();

@@ -13,6 +13,10 @@ When asked to work on a file, create a new TypeScript file in the corresponding 
 
 Focus on converting the logic and structure of the code literally, only adjusting syntax and conventions to fit TypeScript. Follow Python's structure and logic without optimizing or refactoring the code. The initial goal, unless specified otherwise, is to achieve a direct translation of the Python code to TypeScript, preserving the original logic and structure as much as possible.
 
+Do not add new helper functions/methods/classes that do not exist in the Python source just to satisfy TypeScript typing. Prefer direct inline checks or `// @ts-expect-error` (with explanation) on the exact line when needed, while keeping the translated structure as close to Python as possible.
+
+If adding a new helper is truly unavoidable (100% required to preserve behavior or compile in strict mode), explicitly state why in the final response and why an inline check or `// @ts-expect-error` was insufficient.
+
 If you found any existing TypeScript file that corresponds to the Python file you're converting, you should do your best to preserve the existing code in the TypeScript file and only add or modify the necessary parts to reflect the logic of the Python source code. Don't remove any existing code unless it's directly related to the Python code you're converting.
 
 ### Comments
@@ -24,6 +28,12 @@ Preserve all code and documentation comments, converting them to the appropriate
 Properties and methods should be in camelCase. Types, interfaces, and classes should be in PascalCase. Module names should be in camelCase, while static files and assets should be in kebab-case.
 
 When dealing with data structures explicitly exposed through the HTTP API, preserve existing Python field naming, ignoring any existing TypeScript naming conventions. For other internal data structures, follow TypeScript naming conventions.
+
+### Classes
+
+- When converting `@abstractmethod`, make sure to use TypeScript's `abstract` modifier. If the target class is used as a parent, make sure to adjust the child classes accordingly to add the missing implementations to make the code compile without errors.
+
+- Use `#privateName` for private fields and methods in classes when converting from Python private members (for example, `_private_name`). Check if a class is used as a parent class and if the child needs to access the private member. If so, use `protected privateName` instead of `#privateName` and adjust the child class accordingly.
 
 ### Missing APIs
 
@@ -48,6 +58,10 @@ When converting local module imports, use the same relative paths as in the Pyth
 - Use the strictest mode of TypeScript to ensure type safety. Don't use `any` or `as` unless absolutely necessary.
 
 - Ignore missing imports and APIs without Bun/Node.js equivalents using `// @ts-expect-error` comments.
+
+- Don't assume the Python type annotations are always correct. Double-check the implementation to make sure the types are correct when converting. If you need to alter TypeScript types, feel free to do so.
+
+If, after converting the code, some of the `// @ts-expect-error` comments are no longer needed because the corresponding code is now valid TypeScript, remove those comments.
 
 ## Tests
 
