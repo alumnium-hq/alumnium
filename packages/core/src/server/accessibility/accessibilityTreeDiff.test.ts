@@ -16,7 +16,6 @@ async function accessibilityTreeBefore(): Promise<string> {
   const xml = await Bun.file(ACCESSIBILITY_TREE_DIFF_1_PATH).text();
   const tree = new ServerChromiumAccessibilityTree(xml);
 
-  // @ts-expect-error -- Python API parity is assumed for the in-progress conversion.
   return tree.toXml();
 }
 
@@ -24,7 +23,6 @@ async function accessibilityTreeAfter(): Promise<string> {
   const xml = await Bun.file(ACCESSIBILITY_TREE_DIFF_2_PATH).text();
   const tree = new ServerChromiumAccessibilityTree(xml);
 
-  // @ts-expect-error -- Python API parity is assumed for the in-progress conversion.
   return tree.toXml();
 }
 

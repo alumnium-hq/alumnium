@@ -1,1 +1,1 @@
-export class BaseServerAccessibilityTree {}
+export { BaseServerAccessibilityTree } from "./baseServerAccessibilityTree.ts";
