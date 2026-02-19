@@ -1,5 +1,6 @@
 [tools]
 fnox = "latest"
+opencode = "latest"
 
 [env]
 _.source = "scripts/env.sh"
