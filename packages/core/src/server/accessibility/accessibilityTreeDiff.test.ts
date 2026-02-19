@@ -3,12 +3,12 @@ import { AccessibilityTreeDiff } from "./accessibilityTreeDiff.ts";
 import { ServerChromiumAccessibilityTree } from "./serverChromiumAccessibilityTree.ts";
 
 const ACCESSIBILITY_TREE_DIFF_1_PATH = new URL(
-  "__fixtures__/accessibility_tree_diff_1.xml",
-  import.meta.dir,
+  "./__fixtures__/accessibility_tree_diff_1.xml",
+  import.meta.url,
 );
 const ACCESSIBILITY_TREE_DIFF_2_PATH = new URL(
-  "__fixtures__/accessibility_tree_diff_2.xml",
-  import.meta.dir,
+  "./__fixtures__/accessibility_tree_diff_2.xml",
+  import.meta.url,
 );
 
 async function accessibilityTreeBefore(): Promise<string> {

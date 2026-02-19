@@ -267,6 +267,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
 //#region Scaffold Types
 
+// TODO: Get rid of these in favor of the XML library types
+
 interface ChromiumNodeProperty {
   name: string;
   value: {
