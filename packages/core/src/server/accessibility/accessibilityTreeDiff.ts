@@ -1,4 +1,4 @@
-// @ts-expect-error -- Python difflib equivalent is assumed available in TS runtime.
+// @ts-expect-error -- TODO: Missing Python API
 import { unifiedDiff } from "difflib";
 
 export class AccessibilityTreeDiff {
@@ -20,9 +20,9 @@ export class AccessibilityTreeDiff {
   }
 
   #formatAsGitDiff(): string {
-    // @ts-expect-error -- Python-style splitlines API is assumed available in TS runtime.
+    // @ts-expect-error -- TODO: Missing Python API
     const beforeLines = this.beforeXml.splitlines({ keepends: true });
-    // @ts-expect-error -- Python-style splitlines API is assumed available in TS runtime.
+    // @ts-expect-error -- TODO: Missing Python API
     const afterLines = this.afterXml.splitlines({ keepends: true });
 
     // Ensure last lines have newlines for consistent diff output
