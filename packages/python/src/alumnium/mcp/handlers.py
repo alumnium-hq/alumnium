@@ -85,6 +85,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             SwitchToNextTabTool,
             SwitchToPreviousTabTool,
         ],
+        planner=alumnium_options.get("planner", True),
     )
 
     # Apply driver options to Alumnium driver

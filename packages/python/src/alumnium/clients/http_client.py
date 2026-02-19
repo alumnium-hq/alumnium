@@ -7,7 +7,14 @@ from .typecasting import Data, loosely_typecast
 
 
 class HttpClient:
-    def __init__(self, base_url: str, model: Model, platform: str, tools: dict[str, type[BaseTool]]):
+    def __init__(
+        self,
+        base_url: str,
+        model: Model,
+        platform: str,
+        tools: dict[str, type[BaseTool]],
+        planner: bool = True,
+    ):
         self.base_url = base_url.rstrip("/")
         self.session_id = None
 
@@ -15,7 +22,13 @@ class HttpClient:
 
         response = post(
             f"{self.base_url}/v1/sessions",
-            json={"provider": model.provider.value, "name": model.name, "tools": tool_schemas, "platform": platform},
+            json={
+                "provider": model.provider.value,
+                "name": model.name,
+                "tools": tool_schemas,
+                "platform": platform,
+                "planner": planner,
+            },
             timeout=30,
         )
         response.raise_for_status()

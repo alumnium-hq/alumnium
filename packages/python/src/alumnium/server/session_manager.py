@@ -24,6 +24,7 @@ class SessionManager:
         platform: str,
         tools: List[Dict[str, Any]],
         llm: BaseChatModel | None = None,
+        planner: bool = True,
     ) -> str:
         """Create a new session and return its ID.
         Args:
@@ -44,7 +45,7 @@ class SessionManager:
         tool_classes = convert_schemas_to_tools(tools)
 
         self.sessions[session_id] = Session(
-            session_id=session_id, model=model, platform=platform, tools=tool_classes, llm=llm
+            session_id=session_id, model=model, platform=platform, tools=tool_classes, llm=llm, planner=planner
         )
         logger.info(f"Created new session: {session_id}")
         return session_id

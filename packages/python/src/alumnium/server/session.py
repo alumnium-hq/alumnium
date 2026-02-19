@@ -32,10 +32,12 @@ class Session:
         platform: str,
         tools: dict[str, Any],
         llm: BaseChatModel | None = None,
+        planner: bool = True,
     ):
         self.session_id = session_id
         self.model = model
         self.platform = platform
+        self.planner = planner
 
         self.cache = CacheFactory.create_cache()
         if llm is not None:

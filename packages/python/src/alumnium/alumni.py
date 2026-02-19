@@ -7,7 +7,7 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from . import DELAY, RETRIES
+from . import DELAY, PLANNER, RETRIES
 from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
@@ -34,7 +34,10 @@ class Alumni:
         llm: BaseChatModel | None = None,
         extra_tools: list[type[BaseTool]] | None = None,
         url: str | None = None,
+        planner: bool | None = None,
     ):
+        planner = planner if planner is not None else PLANNER
+
         self.model = model or Model.current
         self.llm = llm
 
@@ -60,10 +63,10 @@ class Alumni:
 
         if url:
             logger.info(f"Using HTTP client with server: {url}")
-            self.client = HttpClient(url, self.model, self.driver.platform, self.tools)
+            self.client = HttpClient(url, self.model, self.driver.platform, self.tools, planner)
         else:
             logger.info("Using native client")
-            self.client = NativeClient(self.model, self.driver.platform, self.tools, llm=self.llm)
+            self.client = NativeClient(self.model, self.driver.platform, self.tools, self.llm, planner)
 
         self.cache = Cache(self.client)
 

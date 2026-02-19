@@ -77,7 +77,9 @@ async def health_check():
 async def create_session(request: SessionRequest):
     """Create a new session."""
     try:
-        session_id = session_manager.create_session(request.provider, request.name, request.platform, request.tools)
+        session_id = session_manager.create_session(
+            request.provider, request.name, request.platform, request.tools, planner=request.planner
+        )
         return SessionResponse(session_id=session_id)
     except Exception as e:
         logger.error(f"Failed to create session: {e}")
@@ -116,6 +118,8 @@ async def plan_actions(session_id: str, request: PlanRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
+        if not session.planner:
+            return PlanResponse(explanation=request.goal, steps=[request.goal])
         accessibility_tree = session.process_tree(request.accessibility_tree)
         explanation, steps = session.planner_agent.invoke(request.goal, accessibility_tree.to_xml())
         return PlanResponse(explanation=explanation, steps=steps)

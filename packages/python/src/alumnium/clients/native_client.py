@@ -13,7 +13,12 @@ logger = get_logger(__name__)
 
 class NativeClient:
     def __init__(
-        self, model: Model, platform: str, tools: dict[str, type[BaseTool]], llm: BaseChatModel | None = None
+        self,
+        model: Model,
+        platform: str,
+        tools: dict[str, type[BaseTool]],
+        llm: BaseChatModel | None = None,
+        planner: bool = True,
     ):
         self.session_manager = SessionManager()
         self.model = model
@@ -27,6 +32,7 @@ class NativeClient:
             tools=tool_schemas,
             platform=platform,
             llm=llm,
+            planner=planner,
         )
 
         self.session = self.session_manager.get_session(self.session_id)
@@ -41,6 +47,8 @@ class NativeClient:
         Returns:
             A tuple of (explanation, steps).
         """
+        if not self.session.planner:
+            return (goal, [goal])
         accessibility_tree = self.session.process_tree(accessibility_tree)
         return self.session.planner_agent.invoke(goal, accessibility_tree.to_xml())
 

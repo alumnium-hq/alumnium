@@ -18,11 +18,14 @@ import { getLogger } from "./utils/logger.js";
 import { retry } from "./utils/retry.js";
 
 const logger = getLogger(["Alumni"]);
+const planner =
+  (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
 
 export interface AlumniOptions {
   url?: string;
   model?: Model;
   extraTools?: ToolClass[];
+  planner?: boolean;
 }
 
 export interface VisionOptions {
@@ -69,7 +72,8 @@ export class Alumni {
       this.url,
       this.model,
       this.driver.platform,
-      this.tools
+      this.tools,
+      options.planner ?? planner
     );
     this.cache = new Cache(this.client);
 

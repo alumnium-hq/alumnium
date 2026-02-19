@@ -32,7 +32,8 @@ export class HttpClient {
     baseUrl: string,
     private model: Model,
     private platform: string,
-    private tools: Record<string, ToolClass>
+    private tools: Record<string, ToolClass>,
+    private planner: boolean = true
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
   }
@@ -66,6 +67,7 @@ export class HttpClient {
           name: this.model.name,
           platform: this.platform as SessionRequest["platform"],
           tools: toolSchemas,
+          planner: this.planner,
         };
         const response = await this.fetchWithTimeout(
           `${this.baseUrl}/v1/sessions`,
