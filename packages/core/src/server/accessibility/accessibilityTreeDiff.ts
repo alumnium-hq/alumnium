@@ -1,5 +1,7 @@
-// @ts-expect-error -- TODO: Missing Python API
-import { unifiedDiff } from "difflib";
+import { createTwoFilesPatch } from "diff";
+
+// TODO: This is a direct translation of the Python implementation. An idiomatic TypeScript would be
+// a simple function `computeTreeDiff`. Consider refactoring it.
 
 export class AccessibilityTreeDiff {
   beforeXml: string;
@@ -20,10 +22,14 @@ export class AccessibilityTreeDiff {
   }
 
   #formatAsGitDiff(): string {
-    // @ts-expect-error -- TODO: Missing Python API
-    const beforeLines = this.beforeXml.splitlines({ keepends: true });
-    // @ts-expect-error -- TODO: Missing Python API
-    const afterLines = this.afterXml.splitlines({ keepends: true });
+    // NOTE: The original Python implementation used difflib that returns an empty string
+    // if the inputs are identical.
+    if (this.beforeXml === this.afterXml) {
+      return "";
+    }
+
+    const beforeLines = splitLinesKeepEnds(this.beforeXml);
+    const afterLines = splitLinesKeepEnds(this.afterXml);
 
     // Ensure last lines have newlines for consistent diff output
     const beforeLastIndex = beforeLines.length - 1;
@@ -41,11 +47,27 @@ export class AccessibilityTreeDiff {
       }
     }
 
-    const diff = unifiedDiff(beforeLines, afterLines, {
-      fromfile: "before",
-      tofile: "after",
-    });
+    const diff = createTwoFilesPatch(
+      "before",
+      "after",
+      beforeLines.join(""),
+      afterLines.join(""),
+      undefined,
+      undefined,
+      {
+        headerOptions: {
+          includeUnderline: false,
+          includeIndex: true,
+          includeFileHeaders: true,
+        },
+      },
+    );
 
-    return diff.join("").replace(/\n$/, "");
+    return diff.replace(/\n$/, "");
   }
+}
+
+// NOTE: This is a direct translation of the original Python implementation `str.splitlines(keepends=True)`
+function splitLinesKeepEnds(str: string): string[] {
+  return str.match(/.*(?:\r\n|\r|\n)|.+$/g) ?? [];
 }

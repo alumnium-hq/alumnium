@@ -14,9 +14,11 @@
 
 - Prefer using simple checks like `obj[key]` or `key in obj` rather than `Object.hasOwn(obj, key)`. Use the simplest/generic way appropriate for the context.
 
+- Prefer `String(value)` over `${value}` for converting values to strings when the value is not being embedded in a larger string.
+
 ### Defensiveness
 
-- Don't add explicit conversions, i.e., `String(number)` when using in a context where conversion is implicit, e.g., `${number}` or `obj[number]`.
+- Don't add explicit conversions, i.e., `String(number)` when using in a context where conversion is implicit, e.g., `${number} users` or `obj[number]`.
 
 - Rely on TypeScript type checking and Zod parsing rather than adding extra runtime checks or conversions.
 
