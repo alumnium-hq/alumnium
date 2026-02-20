@@ -132,26 +132,25 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
         logger.info(f"  -> Goal: {goal}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
 
-        message = self._invoke_chain(
+        response = self._invoke_chain(
             self.chain,
             {"goal": goal, "accessibility_tree": accessibility_tree_xml},
         )
 
         if Model.current.provider not in self.UNSTRUCTURED_OUTPUT_MODELS:
-            response = message["parsed"]
-            logger.info(f"  <- Result: {response}")
-            logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
+            logger.info(f"  <- Result: {response.structured}")
+            logger.info(f"  <- Usage: {response.usage}")
 
-            return (response.explanation, [action for action in response.actions if action])
+            return (response.structured.explanation, [action for action in response.structured.actions if action])
         else:
-            logger.info(f"  <- Result: {message.content}")
-            logger.info(f"  <- Usage: {message.usage_metadata}")
+            logger.info(f"  <- Result: {response.content}")
+            logger.info(f"  <- Usage: {response.usage}")
 
-            response = message.content.strip()
-            response = response.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
+            content = response.content.strip()
+            content = content.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
 
             steps = []
-            for step in message.content.split(self.LIST_SEPARATOR):
+            for step in content.split(self.LIST_SEPARATOR):
                 step = step.strip()
                 if step and step.upper() != "NOOP":
                     steps.append(step)

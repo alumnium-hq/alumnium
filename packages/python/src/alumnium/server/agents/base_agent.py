@@ -1,5 +1,7 @@
 import re
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from anthropic import RateLimitError as AnthropicRateLimitError
 from botocore.exceptions import ClientError as BedrockClientError
@@ -14,6 +16,22 @@ from ..logutils import get_logger
 from ..models import Model, Provider
 
 logger = get_logger(__name__)
+
+
+@dataclass
+class Response:
+    """
+    Common interface for LLM chain responses.
+
+    Normalizes responses across providers (Anthropic, OpenAI, Google, etc.)
+    into a single structure with content, reasoning, structured output, and tool calls.
+    """
+
+    content: str = ""
+    reasoning: str | None = None
+    structured: Any = None
+    tool_calls: list[dict] = field(default_factory=list)
+    usage: dict[str, int] = field(default_factory=dict)
 
 
 class BaseAgent:
@@ -84,28 +102,68 @@ class BaseAgent:
         on_exception=_should_raise,
         logger=logger,
     )
-    def _invoke_chain(self, chain: Runnable, *args):
+    def _invoke_chain(self, chain: Runnable, *args) -> Response:
         result = chain.invoke(*args)
+
         if isinstance(result, dict) and "raw" in result:
-            content = result["raw"].content
-            self._update_usage(result["raw"].usage_metadata)
+            message = result["raw"]
+            structured = result.get("parsed")
         else:
-            content = result.content
-            self._update_usage(result.usage_metadata)
+            message = result
+            structured = None
 
-        if isinstance(content, list) and content:
-            if "reasoning_content" in content[0]:  # Anthropic reasoning
-                logger.info(f"  <- Reasoning: {content[0]['reasoning_content']}")
-            elif "summary" in content[0]:  # OpenAI reasoning
-                for summary in content[0]["summary"]:
-                    logger.info(f"  <- Reasoning: {summary['text']}")
-            elif "thinking" in content[0]:  # Google reasoning
-                logger.info(f"  <- Reasoning: {content[0]['thinking']}")
+        reasoning = self._extract_reasoning(message.content)
+        if reasoning:
+            logger.info(f"  <- Reasoning: {reasoning}")
 
-        return result
+        usage = {}
+        if message.usage_metadata:
+            self._update_usage(message.usage_metadata)
+            usage["input_tokens"] = message.usage_metadata.get("input_tokens", 0)
+            usage["output_tokens"] = message.usage_metadata.get("output_tokens", 0)
+            usage["total_tokens"] = message.usage_metadata.get("total_tokens", 0)
+
+        return Response(
+            content=self._extract_text(message.content),
+            reasoning=reasoning,
+            structured=structured,
+            tool_calls=getattr(message, "tool_calls", None) or [],
+            usage=usage,
+        )
+
+    def _extract_reasoning(self, content) -> str | None:
+        if not isinstance(content, list) or not content:
+            return None
+
+        first = content[0]
+        if not isinstance(first, dict):
+            return None
+
+        if "reasoning_content" in first:  # Anthropic
+            return first["reasoning_content"]
+        elif "summary" in first:  # OpenAI
+            return " ".join(s["text"] for s in first["summary"])
+        elif "thinking" in first:  # Google
+            return first["thinking"]
+
+        return None
+
+    def _extract_text(self, content) -> str:
+        if isinstance(content, str):
+            return content
+
+        if isinstance(content, list):
+            texts = []
+            for block in content:
+                if isinstance(block, str):
+                    texts.append(block)
+                elif isinstance(block, dict) and block.get("type") == "text":
+                    texts.append(block.get("text", ""))
+            return "".join(texts)
+
+        return str(content)
 
     def _update_usage(self, usage_metadata):
-        if usage_metadata:
-            self.usage["input_tokens"] += usage_metadata.get("input_tokens", 0)
-            self.usage["output_tokens"] += usage_metadata.get("output_tokens", 0)
-            self.usage["total_tokens"] += usage_metadata.get("total_tokens", 0)
+        self.usage["input_tokens"] += usage_metadata.get("input_tokens", 0)
+        self.usage["output_tokens"] += usage_metadata.get("output_tokens", 0)
+        self.usage["total_tokens"] += usage_metadata.get("total_tokens", 0)

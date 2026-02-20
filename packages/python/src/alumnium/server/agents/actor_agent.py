@@ -27,22 +27,21 @@ class ActorAgent(BaseAgent):
         goal: str,
         step: str,
         accessibility_tree_xml: str,
-    ):
+    ) -> tuple[str, list[dict]]:
         if not step.strip():
-            return
+            return "", []
 
         logger.info("Starting action:")
         logger.info(f"  -> Goal: {goal}")
         logger.info(f"  -> Step: {step}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
 
-        message = self._invoke_chain(
+        response = self._invoke_chain(
             self.chain,
             {"goal": goal, "step": step, "accessibility_tree": accessibility_tree_xml},
         )
 
-        logger.info(f"  <- Tools: {message.tool_calls}")
-        logger.info(f"  <- Usage: {message.usage_metadata}")
+        logger.info(f"  <- Tools: {response.tool_calls}")
+        logger.info(f"  <- Usage: {response.usage}")
 
-        # Return tool calls for the client to execute
-        return message.tool_calls
+        return (response.reasoning or "", response.tool_calls)

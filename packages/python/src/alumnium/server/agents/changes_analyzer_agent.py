@@ -15,7 +15,7 @@ class ChangesAnalyzerAgent(BaseAgent):
         logger.info("Starting changes analysis:")
         logger.debug(f"  -> Diff: {diff}")
 
-        message = self._invoke_chain(  # type: ignore[assignment]
+        response = self._invoke_chain(
             self.llm,
             [
                 ("system", self.prompts["system"]),
@@ -23,8 +23,8 @@ class ChangesAnalyzerAgent(BaseAgent):
             ],
         )
 
-        content = message.text.replace("\n\n", " ")  # type: ignore[reportAttributeAccessIssue]
+        content = response.content.replace("\n\n", " ")
         logger.info(f"  <- Result: {content}")
-        logger.info(f"  <- Usage: {message.usage_metadata}")  # type: ignore[reportAttributeAccessIssue]
+        logger.info(f"  <- Usage: {response.usage}")
 
         return content

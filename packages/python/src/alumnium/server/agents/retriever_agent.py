@@ -69,7 +69,7 @@ class RetrieverAgent(BaseAgent):
                 }
             )
 
-        message = self._invoke_chain(
+        response = self._invoke_chain(
             self.chain,
             [
                 (
@@ -80,12 +80,10 @@ class RetrieverAgent(BaseAgent):
             ],
         )
 
-        response = message["parsed"]
+        logger.info(f"  <- Result: {response.structured}")
+        logger.info(f"  <- Usage: {response.usage}")
 
-        logger.info(f"  <- Result: {response}")
-        logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
-
-        value = response.value
+        value = response.structured.value
         # LLMs sometimes add separator to the start/end.
         value = value.removeprefix(self.LIST_SEPARATOR).removesuffix(self.LIST_SEPARATOR)
         value = value.strip()
@@ -94,6 +92,6 @@ class RetrieverAgent(BaseAgent):
 
         # Return raw string or list of strings
         if self.LIST_SEPARATOR in value:
-            return response.explanation, [item.strip() for item in value.split(self.LIST_SEPARATOR) if item]
+            return response.structured.explanation, [item.strip() for item in value.split(self.LIST_SEPARATOR) if item]
         else:
-            return response.explanation, value
+            return response.structured.explanation, value

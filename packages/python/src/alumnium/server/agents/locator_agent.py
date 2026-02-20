@@ -27,7 +27,7 @@ class LocatorAgent(BaseAgent):
         logger.info(f"  -> Description: {description}")
         logger.debug(f"  -> Accessibility tree: {accessibility_tree_xml}")
 
-        message = self._invoke_chain(
+        response = self._invoke_chain(
             self.chain,
             [
                 ("system", self.prompts["system"]),
@@ -41,9 +41,7 @@ class LocatorAgent(BaseAgent):
             ],
         )
 
-        response = message["parsed"]
+        logger.info(f"  <- Result: {response.structured}")
+        logger.info(f"  <- Usage: {response.usage}")
 
-        logger.info(f"  <- Result: {response}")
-        logger.info(f"  <- Usage: {message['raw'].usage_metadata}")
-
-        return [{"id": response.id, "explanation": response.explanation}]
+        return [{"id": response.structured.id, "explanation": response.structured.explanation}]
