@@ -94,6 +94,7 @@ export class Alumni {
       initialAccessibilityTree.toStr()
     );
 
+    let finalExplanation = explanation;
     const executedSteps: DoStep[] = [];
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
@@ -103,14 +104,17 @@ export class Alumni {
         idx === 0
           ? initialAccessibilityTree
           : await this.driver.getAccessibilityTree();
-      const actorResponse = await this.client.executeAction(
-        goal,
-        step,
-        accessibilityTree.toStr()
-      );
+      const { explanation: actorExplanation, actions } =
+        await this.client.executeAction(goal, step, accessibilityTree.toStr());
+
+      // When planner is off, explanation is just the goal — replace with actor's reasoning.
+      if (finalExplanation === goal) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        finalExplanation = actorExplanation;
+      }
 
       const calledTools: string[] = [];
-      for (const toolCall of actorResponse) {
+      for (const toolCall of actions) {
         const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
@@ -122,7 +126,7 @@ export class Alumni {
       executedSteps.push({ name: step, tools: calledTools });
     }
 
-    return { explanation, steps: executedSteps };
+    return { explanation: finalExplanation, steps: executedSteps };
   }
 
   @retry()

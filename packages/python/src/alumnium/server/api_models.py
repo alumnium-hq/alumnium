@@ -39,6 +39,7 @@ class StepRequest(VersionedModel):
 
 
 class StepResponse(VersionedModel):
+    explanation: str
     actions: list[dict[str, Any]]
 
 

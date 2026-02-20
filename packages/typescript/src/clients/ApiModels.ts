@@ -37,6 +37,7 @@ export interface StepRequest {
 }
 
 export interface StepResponse {
+  explanation: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actions: { [key: string]: any }[];
 }

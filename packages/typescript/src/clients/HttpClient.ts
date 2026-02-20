@@ -157,7 +157,7 @@ export class HttpClient {
     goal: string,
     step: string,
     accessibilityTree: string
-  ): Promise<StepResponse["actions"]> {
+  ): Promise<{ explanation: string; actions: StepResponse["actions"] }> {
     await this.ensureSession();
     const requestBody: StepRequest = {
       goal,
@@ -176,7 +176,10 @@ export class HttpClient {
     );
 
     const responseData = (await response.json()) as StepResponse;
-    return responseData.actions;
+    return {
+      explanation: responseData.explanation,
+      actions: responseData.actions,
+    };
   }
 
   async retrieve(

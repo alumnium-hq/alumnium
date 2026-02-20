@@ -90,11 +90,14 @@ def mock_agents():
             ],
         )
 
-        # Mock actor agent to return list of actions
-        mock_actor.return_value = [
-            {"tool": "click", "args": {"id": 9}},
-            {"tool": "type", "args": {"id": 9, "text": "Buy milk"}},
-        ]
+        # Mock actor agent to return (explanation, actions) tuple
+        mock_actor.return_value = (
+            "Clicking the element and typing text",
+            [
+                {"tool": "click", "args": {"id": 9}},
+                {"tool": "type", "args": {"id": 9, "text": "Buy milk"}},
+            ],
+        )
 
         # Mock retriever agent to return RetrievedInformation
         mock_retriever.return_value = ("Found the requested information in the accessibility tree", "true")

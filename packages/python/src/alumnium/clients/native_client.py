@@ -49,6 +49,7 @@ class NativeClient:
         """
         if not self.session.planner:
             return (goal, [goal])
+
         accessibility_tree = self.session.process_tree(accessibility_tree)
         return self.session.planner_agent.invoke(goal, accessibility_tree.to_xml())
 
@@ -59,10 +60,10 @@ class NativeClient:
     def clear_examples(self):
         self.session.planner_agent.prompt_with_examples.examples.clear()
 
-    def execute_action(self, goal: str, step: str, accessibility_tree: str):
+    def execute_action(self, goal: str, step: str, accessibility_tree: str) -> tuple[str, list[dict]]:
         accessibility_tree = self.session.process_tree(accessibility_tree)
-        actions = self.session.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
-        return accessibility_tree.map_tool_calls_to_raw_id(actions)
+        explanation, actions = self.session.actor_agent.invoke(goal, step, accessibility_tree.to_xml())
+        return explanation, accessibility_tree.map_tool_calls_to_raw_id(actions)
 
     def retrieve(
         self,

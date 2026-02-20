@@ -46,10 +46,14 @@ class Area:
 
         executed_steps = []
         for step in steps:
-            actor_response = self.client.execute_action(goal, step, self.accessibility_tree.to_str())
+            actor_explanation, actions = self.client.execute_action(goal, step, self.accessibility_tree.to_str())
+
+            # When planner is off, explanation is just the goal — replace with actor's reasoning.
+            if explanation == goal:
+                explanation = actor_explanation
 
             called_tools = []
-            for tool_call in actor_response:
+            for tool_call in actions:
                 called_tool = BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
                 called_tools.append(called_tool)
 

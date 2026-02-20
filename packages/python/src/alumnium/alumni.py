@@ -92,10 +92,14 @@ class Alumni:
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            actor_response = self.client.execute_action(goal, step, accessibility_tree.to_str())
+            actor_explanation, actions = self.client.execute_action(goal, step, accessibility_tree.to_str())
+
+            # When planner is off, explanation is just the goal — replace with actor's reasoning.
+            if explanation == goal:
+                explanation = actor_explanation
 
             called_tools = []
-            for tool_call in actor_response:
+            for tool_call in actions:
                 called_tool = BaseTool.execute_tool_call(tool_call, self.tools, self.driver)
                 called_tools.append(called_tool)
 
