@@ -29,6 +29,12 @@ Focus on converting the logic and structure of the code literally, line-by-line,
 
 Preserve every Python code comment/docstring (line, inline, and block). Do not drop, merge, or semantically rewrite comments. Only convert docstrings to TSDoc annotations.
 
+Skip Ruff comments like `// ruff: noqa: E501` entirely, as they are not relevant in TypeScript.
+
+### Spacing
+
+Make the best effort to preserve the original Python spacing inside the module, function, class, and so on. Remove spacing from the import section, and whenever the Prettier style with default settings would not allow it.
+
 ### Preserve Existing TypeScript Code
 
 If you found any existing TypeScript file that corresponds to the Python file you're converting, you should do your best to preserve the existing code in the TypeScript file and only add or modify the necessary parts to reflect the logic of the Python source code. Don't remove any existing code unless it's directly related to the Python code you're converting.
