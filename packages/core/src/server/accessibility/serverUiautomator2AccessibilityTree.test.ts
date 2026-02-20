@@ -1,6 +1,4 @@
-// ruff: noqa: E501
 import { describe, expect, it } from "bun:test";
-
 import { ServerUiAutomator2AccessibilityTree } from "./serverUiautomator2AccessibilityTree.ts";
 
 async function tree(
