@@ -257,6 +257,12 @@ export class SeleniumDriver extends BaseDriver {
     await element.click();
   }
 
+  async drag(id: number, offsetX: number, offsetY: number): Promise<void> {
+    const element = await this.findElement(id);
+    const actions = this.driver.actions({ async: true });
+    await actions.dragAndDrop(element, { x: offsetX, y: offsetY }).perform();
+  }
+
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const actions = this.driver.actions({ async: true });
     await actions

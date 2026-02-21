@@ -149,6 +149,18 @@ class PlaywrightDriver(BaseDriver):
             with self._autoswitch_to_new_tab():
                 element.click(force=True)
 
+    def drag(self, id: int, offset_x: int, offset_y: int):
+        element = self.find_element(id)
+        box = element.bounding_box()
+        if box is None:
+            raise ValueError(f"Element {id} has no bounding box")
+        start_x = box["x"] + box["width"] / 2
+        start_y = box["y"] + box["height"] / 2
+        self.page.mouse.move(start_x, start_y)
+        self.page.mouse.down()
+        self.page.mouse.move(start_x + offset_x, start_y + offset_y)
+        self.page.mouse.up()
+
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
         to_element = self.find_element(to_id)

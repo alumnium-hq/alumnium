@@ -16,6 +16,10 @@ class BaseDriver(ABC):
         pass
 
     @abstractmethod
+    def drag(self, id: int, offset_x: int, offset_y: int):
+        pass
+
+    @abstractmethod
     def drag_and_drop(self, from_id: int, to_id: int):
         pass
 

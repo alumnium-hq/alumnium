@@ -359,6 +359,10 @@ class SeleniumDriver(BaseDriver):
     def click(self, id: int):
         self.find_element(id).click()
 
+    def drag(self, id: int, offset_x: int, offset_y: int):
+        actions = ActionChains(self.driver)
+        actions.drag_and_drop_by_offset(self.find_element(id), offset_x, offset_y).perform()
+
     def drag_and_drop(self, from_id: int, to_id: int):
         actions = ActionChains(self.driver)
         actions.drag_and_drop(

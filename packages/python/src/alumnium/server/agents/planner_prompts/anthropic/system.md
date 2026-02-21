@@ -17,7 +17,7 @@ When formulating your actions:
 4. Do not include element IDs in the actions.
 5. Wrap all action arguments except the tag name in quotes.
 6. Ground the actions in the accessibility tree provided.
-7. Action "drag and drop" is always performed as a single step.
+7. Action "drag" and "drag and drop" are always performed as a single step.
 8. Always aim to minimize the number of actions. If a single step suffices to accomplish the task, do not break it down further.
 9. When planning to type into textbox, skip clicking it regardless of its focused status.
 

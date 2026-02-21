@@ -62,6 +62,12 @@ export class AppiumDriver extends BaseDriver {
     await element.click();
   }
 
+  async drag(id: number, offsetX: number, offsetY: number): Promise<void> {
+    await this.ensureNativeAppContext();
+    const element = await this.findElement(id);
+    await element.dragAndDrop({ x: offsetX, y: offsetY });
+  }
+
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     await this.ensureNativeAppContext();
     const fromElement = await this.findElement(fromId);

@@ -1,6 +1,7 @@
 from .base_tool import BaseTool
 from .click_tool import ClickTool
 from .drag_and_drop_tool import DragAndDropTool
+from .drag_tool import DragTool
 from .execute_javascript_tool import ExecuteJavascriptTool
 from .hover_tool import HoverTool
 from .navigate_back_tool import NavigateBackTool
@@ -16,6 +17,7 @@ __all__ = [
     "BaseTool",
     "ClickTool",
     "DragAndDropTool",
+    "DragTool",
     "ExecuteJavascriptTool",
     "HoverTool",
     "NavigateBackTool",

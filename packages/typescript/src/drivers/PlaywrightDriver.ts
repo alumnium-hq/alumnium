@@ -281,6 +281,20 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
+  async drag(id: number, offsetX: number, offsetY: number): Promise<void> {
+    const element = await this.findElement(id);
+    const box = await element.boundingBox();
+    if (!box) {
+      throw new Error(`Element ${id} has no bounding box`);
+    }
+    const startX = box.x + box.width / 2;
+    const startY = box.y + box.height / 2;
+    await this.page.mouse.move(startX, startY);
+    await this.page.mouse.down();
+    await this.page.mouse.move(startX + offsetX, startY + offsetY);
+    await this.page.mouse.up();
+  }
+
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);

@@ -148,6 +148,21 @@ class PlaywrightAsyncDriver(BaseDriver):
             async with self._autoswitch_to_new_tab():
                 await element.click(force=True)
 
+    def drag(self, id: int, offset_x: int, offset_y: int):
+        self._run_async(self._drag(id, offset_x, offset_y))
+
+    async def _drag(self, id: int, offset_x: int, offset_y: int):
+        element = await self._find_element(id)
+        box = await element.bounding_box()
+        if box is None:
+            raise ValueError(f"Element {id} has no bounding box")
+        start_x = box["x"] + box["width"] / 2
+        start_y = box["y"] + box["height"] / 2
+        await self.page.mouse.move(start_x, start_y)
+        await self.page.mouse.down()
+        await self.page.mouse.move(start_x + offset_x, start_y + offset_y)
+        await self.page.mouse.up()
+
     def drag_and_drop(self, from_id: int, to_id: int):
         self._run_async(self._drag_and_drop(from_id, to_id))
 
