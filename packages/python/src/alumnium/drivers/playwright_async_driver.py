@@ -149,6 +149,13 @@ class PlaywrightAsyncDriver(BaseDriver):
             async with self._autoswitch_to_new_tab():
                 await element.click(force=True)
 
+    def drag_slider(self, id: int, value: float):
+        self._run_async(self._drag_slider(id, value))
+
+    async def _drag_slider(self, id: int, value: float):
+        element = await self._find_element(id)
+        await element.fill(f"{value:g}")
+
     def drag_and_drop(self, from_id: int, to_id: int):
         self._run_async(self._drag_and_drop(from_id, to_id))
 

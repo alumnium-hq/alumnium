@@ -16,6 +16,10 @@ class BaseDriver(ABC):
         pass
 
     @abstractmethod
+    def drag_slider(self, id: int, value: float):
+        pass
+
+    @abstractmethod
     def drag_and_drop(self, from_id: int, to_id: int):
         pass
 
