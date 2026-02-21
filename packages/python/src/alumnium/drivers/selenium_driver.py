@@ -360,6 +360,16 @@ class SeleniumDriver(BaseDriver):
     def click(self, id: int):
         self.find_element(id).click()
 
+    def drag_slider(self, id: int, value: float):
+        element = self.find_element(id)
+        self.driver.execute_script(
+            "arguments[0].value = arguments[1];"
+            "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));"
+            "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
+            element,
+            str(value),
+        )
+
     def drag_and_drop(self, from_id: int, to_id: int):
         actions = ActionChains(self.driver)
         actions.drag_and_drop(

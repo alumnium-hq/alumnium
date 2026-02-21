@@ -11,6 +11,7 @@ from .. import Alumni
 from ..clients.native_client import NativeClient
 from ..server.logutils import get_logger
 from ..tools import (
+    DragSliderTool,
     ExecuteJavascriptTool,
     NavigateBackTool,
     NavigateToUrlTool,
@@ -79,6 +80,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
     al = Alumni(
         driver,
         extra_tools=[
+            DragSliderTool,
             ExecuteJavascriptTool,
             NavigateBackTool,
             NavigateToUrlTool,

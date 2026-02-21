@@ -281,6 +281,11 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
+  async dragSlider(id: number, value: number): Promise<void> {
+    const element = await this.findElement(id);
+    await element.fill(String(value));
+  }
+
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);

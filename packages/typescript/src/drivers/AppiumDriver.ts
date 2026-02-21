@@ -62,6 +62,10 @@ export class AppiumDriver extends BaseDriver {
     await element.click();
   }
 
+  dragSlider(): void {
+    throw new Error("Dragging slider is not supported for this driver");
+  }
+
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     await this.ensureNativeAppContext();
     const fromElement = await this.findElement(fromId);

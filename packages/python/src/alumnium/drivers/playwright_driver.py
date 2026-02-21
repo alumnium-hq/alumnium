@@ -150,6 +150,10 @@ class PlaywrightDriver(BaseDriver):
             with self._autoswitch_to_new_tab():
                 element.click(force=True)
 
+    def drag_slider(self, id: int, value: float):
+        element = self.find_element(id)
+        element.fill(f"{value:g}")
+
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
         to_element = self.find_element(to_id)

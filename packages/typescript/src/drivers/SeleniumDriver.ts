@@ -257,6 +257,17 @@ export class SeleniumDriver extends BaseDriver {
     await element.click();
   }
 
+  async dragSlider(id: number, value: number): Promise<void> {
+    const element = await this.findElement(id);
+    await this.driver.executeScript(
+      "arguments[0].value = arguments[1];" +
+        "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));" +
+        "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
+      element,
+      String(value)
+    );
+  }
+
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const actions = this.driver.actions({ async: true });
     await actions
