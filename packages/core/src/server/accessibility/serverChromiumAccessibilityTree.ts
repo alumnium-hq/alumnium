@@ -1,6 +1,23 @@
 import { always } from "alwaysly";
-import { id } from "zod/v4/locales";
+import { render } from "dom-serializer";
+import {
+  ChildNode,
+  Element,
+  hasChildren,
+  isTag,
+  isText,
+  Node,
+  NodeWithChildren,
+  Text,
+} from "domhandler";
+import { textContent } from "domutils";
+import { parseDocument } from "htmlparser2";
+import { "default" as xmlFormatter } from "xml-formatter";
+import { pythonicId } from "../../pythonic/pythonicId.ts";
 import { BaseServerAccessibilityTree } from "./baseServerAccessibilityTree.ts";
+
+// NOTE: xml-formatter has busted types, so we need to cast it manually.
+const xmlFormat: (typeof xmlFormatter)["default"] = xmlFormatter as any;
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
   readonly SKIPPED_PROPERTIES = new Set([
@@ -22,56 +39,60 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     this.tree = {}; // Initialize the result dictionary
 
     // Parse the raw XML
-    let roots: ElementLike[];
+    let roots: Node[];
     try {
-      // @ts-expect-error -- TODO: Missing Python API
-      const root: ElementLike = fromstring(rawXml);
-      roots = [root];
+      const root = parseDocument(rawXml.trim(), { xmlMode: true });
+      roots = root.children;
     } catch {
       // Multiple root elements
-      // @ts-expect-error -- TODO: Missing Python API
-      const wrapper: ElementLike = fromstring(`<root>${rawXml}</root>`);
-      roots = Array.from(wrapper);
+      const wrapper = parseDocument(`<root>${rawXml.trim()}</root>`, {
+        xmlMode: true,
+      });
+      roots = wrapper.children;
     }
 
     // Process each root element
     for (const rootElem of roots) {
       const node = this.#xmlToNode(rootElem);
       // Use backendDOMNodeId as the key
-      const nodeId =
-        node.backendDOMNodeId ??
-        // @ts-expect-error -- TODO: Missing Python API
-        id(node);
+      const nodeId = node.backendDOMNodeId ?? pythonicId(node);
       this.tree[`${nodeId}`] = node;
     }
   }
 
   /** Convert XML element to node dict structure with simplified IDs. */
-  #xmlToNode(elem: ElementLike): ChromiumNode {
+  #xmlToNode(node: Node): ChromiumNode {
+    const elem = asTag(node);
+    const text = asText(node);
+
     // Assign simplified ID
-    const simplifiedId = this.getNextId();
+    const simplifiedId = elem ? this.getNextId() : -1;
 
     // Map to raw_id attribute
-    const rawId = elem.get("raw_id", "");
+    const rawId = elem?.attribs["raw_id"] ?? "";
     if (rawId) {
       this.simplifiedToRawId[simplifiedId] = parseInt(rawId);
     }
 
-    const node: ChromiumNode = {
+    const role = elem?.tagName ?? (text ? "StaticText" : undefined);
+    always(role);
+
+    const chromiumNode: ChromiumNode = {
       id: simplifiedId,
-      role: { value: elem.tag },
-      // TODO: Check if "ignored" attribute is actually "True"/"False" or "true"/"false" in practice and adjust accordingly.
-      ignored: elem.get("ignored", "False") === "True",
+      role: { value: role },
+      // NOTE: In Python implementation we had "True"/"False" strings, so we use
+      // case-insensitive comparison here to be safe.
+      ignored: elem?.attribs["ignored"]?.toLowerCase() === "true",
     };
 
     // Add name if present
-    if (elem.get("name")) {
-      node.name = { value: elem.get("name") };
+    if (elem?.attribs["name"]) {
+      chromiumNode.name = { value: elem.attribs["name"] };
     }
 
     // Add properties from other attributes
     const properties: ChromiumNodeProperty[] = [];
-    for (const [attrName, attrValue] of Object.entries(elem.attrib)) {
+    for (const [attrName, attrValue] of Object.entries(elem?.attribs || {})) {
       if (!this.SKIPPED_PROPERTIES.has(attrName)) {
         properties.push({
           name: attrName,
@@ -81,21 +102,22 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     if (properties.length) {
-      node.properties = properties;
+      chromiumNode.properties = properties;
     }
 
     // Process children recursively
+    const nodeChildren = asNodeWithChildren(node)?.children || [];
     const children: ChromiumNode[] = [];
-    for (const childElem of elem) {
+    for (const childElem of nodeChildren) {
       const childNode = this.#xmlToNode(childElem);
       children.push(childNode);
     }
 
     if (children.length) {
-      node.nodes = children;
+      chromiumNode.nodes = children;
     }
 
-    return node;
+    return chromiumNode;
   }
 
   /**
@@ -106,8 +128,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
   override toXml(excludeAttrs: Set<string> = new Set()): string {
     function convertNodeToXml(
       node: ChromiumNode,
-      parent: ElementLike | null = null,
-    ): ElementLike | null {
+      parent: Element | null = null,
+    ): Element | null {
       // Extract the desired information
       const roleValue = node.role.value;
       const nodeId = node.id ?? "";
@@ -117,13 +139,9 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
       const children = node.nodes ?? [];
 
       if (roleValue === "StaticText" && parent) {
-        if (parent.text) {
-          parent.text += nameValue;
-        } else {
-          parent.text = nameValue;
-        }
+        parent.children.push(new Text(nameValue));
       } else if (roleValue === "none" || ignored) {
-        if (children.length > 0) {
+        if (children.length) {
           for (const child of children) {
             convertNodeToXml(child, parent);
           }
@@ -132,38 +150,31 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
         return null;
       } else {
         // Create the XML element for the node
-        // @ts-expect-error -- TODO: Missing Python API
-        const xmlElement: ElementLike = Element(roleValue);
+        const xmlElement = new Element(roleValue, {});
 
         if (nameValue && !excludeAttrs.has("name")) {
-          xmlElement.set("name", nameValue);
+          xmlElement.attribs.name = nameValue;
         }
 
         // Assign a unique ID to the element
         if (!excludeAttrs.has("id")) {
-          xmlElement.set("id", String(nodeId));
+          xmlElement.attribs.id = String(nodeId);
         }
 
-        // TODO: Redundant check
-        if (properties.length) {
-          for (const property of properties) {
-            const propName = property.name;
-            if (!excludeAttrs.has(propName)) {
-              xmlElement.set(propName, property.value.value ?? "");
-            }
+        for (const property of properties) {
+          const propName = property.name;
+          if (!excludeAttrs.has(propName)) {
+            xmlElement.attribs[propName] = property.value.value ?? "";
           }
         }
 
         // Add children recursively
-        // TODO: Redundant check
-        if (children.length) {
-          for (const child of children) {
-            convertNodeToXml(child, xmlElement);
-          }
+        for (const child of children) {
+          convertNodeToXml(child, xmlElement);
         }
 
         if (parent) {
-          parent.append(xmlElement);
+          parent.children.push(xmlElement);
         }
 
         return xmlElement;
@@ -173,7 +184,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     // Create the root XML element
-    const rootElements: ElementLike[] = [];
+    const rootElements: Element[] = [];
     for (const rootId of Object.keys(this.tree)) {
       always(this.tree[rootId]);
       const element = convertNodeToXml(this.tree[rootId]);
@@ -186,10 +197,19 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     // Convert the XML elements to a string
     let xmlString = "";
     for (const element of rootElements) {
-      // @ts-expect-error -- TODO: Missing Python API
-      indent(element);
-      // @ts-expect-error -- TODO: Missing Python API
-      xmlString += tostring(element, { encoding: "unicode" });
+      xmlString += xmlFormat(
+        render(element, {
+          xmlMode: true,
+          encodeEntities: "utf8",
+          emptyAttrs: true,
+          selfClosingTags: true,
+        }),
+        {
+          indentation: "  ",
+          forceSelfClosingEmptyTag: true,
+          lineSeparator: "\n",
+        },
+      );
     }
 
     return xmlString;
@@ -199,28 +219,31 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
    * Recursively traverses the tree, removes redundant name information from parent nodes,
    * and returns a list of all content (names) in the current subtree.
    */
-  #pruneRedundantName(node: ElementLike): string[] {
+  #pruneRedundantName(node: ChildNode): string[] {
+    const elem = asTag(node);
+    const text = asText(node);
     // RootWebArea should remain untouched - only process children
-    if (node.tag === "RootWebArea") {
+    if (elem?.tagName === "RootWebArea") {
       const descendantContent: string[] = [];
-      for (const child of node) {
+      for (const child of elem.children) {
         descendantContent.push(...this.#pruneRedundantName(child));
       }
-      return this.#getTexts(node).concat(descendantContent);
+      return this.#getTexts(elem).concat(descendantContent);
     }
 
     // Remove name if it equals text
-    if (node.get("name") && node.text && node.get("name") === node.text) {
-      delete node.attrib.name;
+    const nodeText = textContent(node);
+    if (elem?.attribs.name && nodeText && elem.attribs.name === nodeText) {
+      delete elem.attribs.name;
     }
 
-    if (!Array.from(node).length) {
+    if (!(elem?.children || []).length) {
       return this.#getTexts(node);
     }
 
     // Recursively process children and gather all descendant content
     const descendantContent: string[] = [];
-    for (const child of node) {
+    for (const child of elem?.children || []) {
       descendantContent.push(...this.#pruneRedundantName(child));
     }
 
@@ -228,46 +251,70 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     descendantContent.sort((left, right) => right.length - left.length);
 
     for (const content of descendantContent) {
-      if (node.get("name")) {
-        node.set("name", node.get("name").replace(content, "").trim());
+      if (elem?.attribs.name) {
+        elem.attribs.name = elem.attribs.name.replace(content, "").trim();
       }
-      if (node.get("label")) {
-        node.set("label", node.get("label").replace(content, "").trim());
+      if (elem?.attribs.label) {
+        elem.attribs.label = elem.attribs.label.replace(content, "").trim();
       }
-      if (node.text) {
-        node.text = node.text.replace(content, "").trim();
-      }
+      // TODO: Figure out how to handle that properly, trimming text nodes in
+      // the middle of children list can lead to removing spaces and merging
+      // words together. It is unclear what problem this solved in Python,
+      // so it might as well be not needed at all.
+      //     if node.text:
+      //        node.text = node.text.replace(content, "").strip()
     }
 
     // The content of the current subtree is its own (potentially pruned) name
     // plus all the content from its descendants.
     const currentSubtreeContent = descendantContent;
-    if (node.get("name")) {
+    if (elem?.attribs.name) {
       currentSubtreeContent.push(...this.#getTexts(node));
     }
 
     return currentSubtreeContent;
   }
 
-  #getTexts(node: ElementLike): string[] {
+  #getTexts(node: ChildNode): string[] {
+    const elem = asTag(node);
+    const text = asText(node);
     const texts = new Set<string>();
-    if (node.get("name")) {
-      texts.add(node.get("name"));
+    if (elem?.attribs.name) {
+      texts.add(elem.attribs.name);
     }
-    if (node.get("label")) {
-      texts.add(node.get("label"));
+    if (elem?.attribs.label) {
+      texts.add(elem.attribs.label);
     }
-    if (node.text) {
-      texts.add(node.text);
+    if (text) {
+      texts.add(text.data);
     }
 
     return Array.from(texts);
   }
 }
 
-//#region Scaffold Types
+function asTag(node: Node): Element | undefined {
+  if (isTag(node)) {
+    return node;
+  }
+}
 
-// TODO: Get rid of these in favor of the XML library types
+function asNodeWithChildren(node: Node): NodeWithChildren | undefined {
+  if (hasChildren(node)) {
+    return node;
+  }
+}
+
+function asText(node: Node): Text | undefined {
+  if (isText(node)) {
+    return node;
+  }
+}
+
+//#region Types
+
+// TODO: Find a place for these types, as they might be shared between different
+// modules or even defined in an external library.
 
 interface ChromiumNodeProperty {
   name: string;
@@ -288,16 +335,6 @@ interface ChromiumNode {
   properties?: ChromiumNodeProperty[];
   nodes?: ChromiumNode[];
   backendDOMNodeId?: string | number;
-}
-
-interface ElementLike {
-  tag: string;
-  attrib: Record<string, string>;
-  text?: string;
-  get(name: string, defaultValue?: string): string;
-  set(name: string, value: string): void;
-  append(child: ElementLike): void;
-  [Symbol.iterator](): Iterator<ElementLike>;
 }
 
 //#endregion

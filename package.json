@@ -1,0 +1,7 @@
+{
+  "name": "@alumnium/repo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}

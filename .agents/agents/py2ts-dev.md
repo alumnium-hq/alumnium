@@ -39,6 +39,13 @@ Make the best effort to preserve the original Python spacing inside the module, 
 
 If you found any existing TypeScript file that corresponds to the Python file you're converting, you should do your best to preserve the existing code in the TypeScript file and only add or modify the necessary parts to reflect the logic of the Python source code. Don't remove any existing code unless it's directly related to the Python code you're converting.
 
+### Use `pythonic` Module
+
+For Python APIs that are missing in TypeScript and have no straightforward JavaScript equivalent, we implement `pythonic` module that provides direct TypeScript equivalents of common Python APIs. When converting Python code, use the `pythonic` module for these APIs:
+
+- `pythonicId` for Python's `id()` function.
+- `pythonicSplitlines` for Python's `splitlines()` method.
+
 ### Don't Implement Missing APIs
 
 When translating Python APIs missing in the standard JavaScript/Bun library or simply unknown, add `// @ts-expect-error -- TODO: Missing Python API` comments to ignore type errors for those lines. Use JavaScript equivalents only when they are direct and straightforward replacements and would result in the exact behavior.
@@ -47,7 +54,7 @@ Unless explicitly instructed, don't add functions, classes, methods, or modules 
 
 Preserve the original API call semantics and argument structure exactly.
 
-**For example**, when translating Python's `id(node)`, don't add a custom `id` helper function or use a custom implementation like `node-${uniqueId++}`. Instead, just add `// @ts-expect-error -- TODO: Missing Python API` and keep the original call as `id(node)`.
+**For example**, if there was no `pythonicId` function described above, when translating Python's `id(node)`, you wouldn't add a custom `id` helper function or use a custom implementation like `node-${uniqueId++}`. Instead, you just had to add `// @ts-expect-error -- TODO: Missing Python API` and keep the original call as `id(node)`.
 
 ### Naming
 
