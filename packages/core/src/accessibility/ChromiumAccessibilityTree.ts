@@ -39,14 +39,14 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   private frameMap: Map<number, object> = new Map();
   private frameChainMap: Map<number, number[]> = new Map(); // raw_id -> frame chain
 
-  constructor(cdpResponse: unknown) {
+  constructor(cdpResponse: CDPResponse) {
     super();
-    this.cdpResponse = cdpResponse as CDPResponse;
+    this.cdpResponse = cdpResponse;
   }
 
   private static fromXml(
     xmlString: string,
-    frameMap?: Map<number, object>
+    frameMap?: Map<number, object>,
   ): ChromiumAccessibilityTree {
     const instance = new ChromiumAccessibilityTree({ nodes: [] });
     instance.raw = xmlString;
@@ -111,7 +111,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   private nodeToXml(
     node: CDPNode,
     nodeLookup: Record<string, CDPNode>,
-    iframeChildren: Map<number, CDPNode[]>
+    iframeChildren: Map<number, CDPNode[]>,
   ): XMLElement {
     const role = node.role?.value || "unknown";
     const elem: XMLElement = {
@@ -188,7 +188,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
           const childElem = this.nodeToXml(
             nodeLookup[childId],
             nodeLookup,
-            iframeChildren
+            iframeChildren,
           );
           elem.children.push(childElem);
         }
@@ -277,7 +277,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
           undefined,
           undefined,
           this.frameMap.get(rawId),
-          { _synthetic_frame: true, _frame_url: element.attributes._frame_url }
+          { _synthetic_frame: true, _frame_url: element.attributes._frame_url },
         );
       }
 
@@ -303,7 +303,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
         undefined,
         undefined,
         this.frameMap.get(rawId),
-        locatorInfo
+        locatorInfo,
       );
     }
 
@@ -311,7 +311,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     const backendNodeIdStr = element.attributes.backendDOMNodeId;
     if (!backendNodeIdStr) {
       throw new Error(
-        `Element with raw_id=${rawId} has no backendDOMNodeId attribute`
+        `Element with raw_id=${rawId} has no backendDOMNodeId attribute`,
       );
     }
 
@@ -329,7 +329,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       undefined,
       this.frameMap.get(rawId),
       undefined,
-      this.frameChainMap.get(rawId)
+      this.frameChainMap.get(rawId),
     );
   }
 
@@ -347,7 +347,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
 
   private findElementByRawId(
     xmlString: string,
-    targetRawId: number
+    targetRawId: number,
   ): XMLElement | null {
     // Parse the XML string to find the element
     // This is a simple XML parser for our specific use case

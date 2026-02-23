@@ -1,4 +1,4 @@
-import { BaseAccessibilityTree } from "./accessibility/BaseAccessibilityTree.js";
+import { BaseAccessibilityTree } from "@alumnium/core";
 import { VisionOptions } from "./Alumni.js";
 import { HttpClient } from "./clients/HttpClient.js";
 import { Data } from "./clients/typecasting.js";
