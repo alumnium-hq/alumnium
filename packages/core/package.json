@@ -1,8 +1,15 @@
 {
   "name": "@alumnium/core",
-  "module": "src/cli.ts",
-  "type": "module",
   "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "overrides": {
+    "exports": {
+      ".": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "./scripts/build.ts",
     "clean": "node -e \"console.log('TODO')\"",
