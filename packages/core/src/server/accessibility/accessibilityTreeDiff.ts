@@ -1,4 +1,5 @@
 import { createTwoFilesPatch } from "diff";
+import { pythonicSplitlines } from "../../pythonic/pythonicSplitlines.ts";
 
 // TODO: This is a direct translation of the Python implementation. An idiomatic TypeScript would be
 // a simple function `computeTreeDiff`. Consider refactoring it.
@@ -28,8 +29,8 @@ export class AccessibilityTreeDiff {
       return "";
     }
 
-    const beforeLines = splitLinesKeepEnds(this.beforeXml);
-    const afterLines = splitLinesKeepEnds(this.afterXml);
+    const beforeLines = pythonicSplitlines(this.beforeXml, true);
+    const afterLines = pythonicSplitlines(this.afterXml, true);
 
     // Ensure last lines have newlines for consistent diff output
     const beforeLastIndex = beforeLines.length - 1;
@@ -65,9 +66,4 @@ export class AccessibilityTreeDiff {
 
     return diff.replace(/\n$/, "");
   }
-}
-
-// NOTE: This is a direct translation of the original Python implementation `str.splitlines(keepends=True)`
-function splitLinesKeepEnds(str: string): string[] {
-  return str.match(/.*(?:\r\n|\r|\n)|.+$/g) ?? [];
 }

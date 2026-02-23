@@ -16,6 +16,7 @@
     "check-format": "node -e \"console.log('TODO')\"",
     "format": "node -e \"console.log('TODO')\"",
     "test": "bun test --preload ./tests/py2ts.ts",
+    "test:watch": "bun test --preload ./tests/py2ts.ts --watch",
     "types": "tsc --noEmit"
   },
   "devDependencies": {
@@ -30,7 +31,11 @@
     "ai": "^6.0.86",
     "alwaysly": "^0.4.0",
     "diff": "^8.0.3",
+    "dom-serializer": "^2.0.0",
+    "domhandler": "^5.0.3",
     "elysia": "^1.4.24",
-    "smollog": "^0.2.0"
+    "htmlparser2": "^10.1.0",
+    "smollog": "^0.2.0",
+    "xml-formatter": "^3.6.7"
   }
 }
