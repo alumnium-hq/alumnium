@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { AccessibilityTreeDiff } from "./accessibilityTreeDiff.ts";
-import { ServerChromiumAccessibilityTree } from "./serverChromiumAccessibilityTree.ts";
+import { AccessibilityTreeDiff } from "./AccessibilityTreeDiff.ts";
+import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
 
 const ACCESSIBILITY_TREE_DIFF_1_PATH = new URL(
   "./__fixtures__/accessibility_tree_diff_1.xml",

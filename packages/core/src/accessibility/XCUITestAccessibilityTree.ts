@@ -1,224 +1,142 @@
+import { always } from "alwaysly";
+import { Element } from "domhandler";
+import { XML } from "../xml/index.ts";
 import { AccessibilityElement } from "./AccessibilityElement.js";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
 
-interface XMLElement {
-  tag: string;
-  attributes: Record<string, string>;
-  children: XMLElement[];
-}
-
 export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
-  private xmlString: string;
-  private nextRawId: number = 0;
-  private raw: string | null = null;
+  #xmlString: string;
+  #nextRawId: number = 0;
+  #raw: string | null = null;
 
   constructor(xmlString: string) {
     super();
-    this.xmlString = xmlString;
+    this.#xmlString = xmlString;
   }
 
-  private static fromXml(xmlString: string): XCUITestAccessibilityTree {
-    const instance = new XCUITestAccessibilityTree("");
-    instance.raw = xmlString;
-    return instance;
-  }
-
+  /** Parse XML and add raw_id attributes to all elements. */
   toStr(): string {
-    if (this.raw !== null) {
-      return this.raw;
+    if (this.#raw !== null) {
+      return this.#raw;
     }
 
     // Parse the XML
-    const elements = this.parseSimpleXml(this.xmlString);
+    const root = this.#parseRoot(this.#xmlString);
 
     // Add raw_id attributes recursively
-    for (const elem of elements) {
-      this.addRawIds(elem);
-    }
+    this.#addRawIds(root);
 
     // Serialize back to string
-    let result = "";
-    for (const elem of elements) {
-      result += this.elementToString(elem, 0);
-    }
-
-    this.raw = result;
-    return this.raw;
+    this.#raw = XML.format([root]);
+    return this.#raw;
   }
 
-  private addRawIds(elem: XMLElement): void {
-    this.nextRawId++;
-    elem.attributes.raw_id = String(this.nextRawId);
+  /** Recursively add raw_id attribute to element and its children. */
+  #addRawIds(elem: Element): void {
+    this.#nextRawId += 1;
+    elem.attribs["raw_id"] = String(this.#nextRawId);
     for (const child of elem.children) {
-      this.addRawIds(child);
+      const childEl = XML.nodeAsTag(child);
+      if (!childEl) {
+        continue;
+      }
+      this.#addRawIds(childEl);
     }
   }
 
+  /**
+   * Find element by raw_id and return its properties for XPath construction.
+   *
+   * @param rawId The raw_id to search for
+   * @returns AccessibilityElement with type, name, value, label attributes
+   */
   elementById(rawId: number): AccessibilityElement {
+    // Get raw XML with raw_id attributes
     const rawXml = this.toStr();
-    const element = this.findElementByRawId(rawXml, rawId);
+    const root = this.#parseRoot(rawXml);
 
-    if (!element) {
-      throw new Error(`No element with raw_id=${rawId} found`);
-    }
-
-    // Extract properties for XCUITest
-    return new AccessibilityElement(
-      rawId,
-      element.attributes.name,
-      element.attributes.label,
-      element.tag,
-      element.attributes.value
-    );
-  }
-
-  scopeToArea(rawId: number): XCUITestAccessibilityTree {
-    const rawXml = this.toStr();
-    const element = this.findElementByRawId(rawXml, rawId);
-
-    if (!element) {
-      return this;
-    }
-
-    const scopedXml = this.elementToString(element, 0);
-    return XCUITestAccessibilityTree.fromXml(scopedXml);
-  }
-
-  private findElementByRawId(
-    xmlString: string,
-    targetRawId: number
-  ): XMLElement | null {
-    const elements = this.parseSimpleXml(xmlString);
-
-    const search = (elem: XMLElement): XMLElement | null => {
-      if (elem.attributes.raw_id === String(targetRawId)) {
+    // Find element with matching raw_id
+    const findElement = (elem: Element, targetId: string): Element | null => {
+      if (elem.attribs["raw_id"] === targetId) {
         return elem;
       }
       for (const child of elem.children) {
-        const result = search(child);
-        if (result) return result;
+        const childEl = XML.nodeAsTag(child);
+        if (!childEl) {
+          continue;
+        }
+        const result = findElement(childEl, targetId);
+        if (result !== null) {
+          return result;
+        }
       }
       return null;
     };
 
-    for (const elem of elements) {
-      const result = search(elem);
-      if (result) return result;
+    const element = findElement(root, String(rawId));
+    if (element === null) {
+      throw new Error(`No element with raw_id=${rawId} found`);
     }
 
-    return null;
+    // Extract properties for XCUITest
+    return {
+      id: rawId,
+      type: element.tagName,
+      name: element.attribs["name"],
+      value: element.attribs["value"],
+      label: element.attribs["label"],
+    };
   }
 
-  private elementToString(elem: XMLElement, indent: number): string {
-    const indentStr = "  ".repeat(indent);
-    let result = `${indentStr}<${elem.tag}`;
+  /** Scope the tree to a smaller subtree identified by raw_id. */
+  scopeToArea(rawId: number): XCUITestAccessibilityTree {
+    const rawXml = this.toStr();
 
-    // Add attributes
-    for (const [key, value] of Object.entries(elem.attributes)) {
-      const escapedValue = value
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;");
-      result += ` ${key}="${escapedValue}"`;
-    }
+    // Parse the XML
+    const root = this.#parseRoot(rawXml);
 
-    if (elem.children.length === 0) {
-      result += " />\n";
-    } else {
-      result += ">\n";
-      for (const child of elem.children) {
-        result += this.elementToString(child, indent + 1);
+    // Find the element with the matching raw_id
+    const findElement = (elem: Element, targetId: string): Element | null => {
+      if (elem.attribs["raw_id"] === targetId) {
+        return elem;
       }
-      result += `${indentStr}</${elem.tag}>\n`;
-    }
-
-    return result;
-  }
-
-  private decodeHtmlEntities(str: string): string {
-    const htmlEntities: Record<string, string> = {
-      "&amp;": "&",
-      "&lt;": "<",
-      "&gt;": ">",
-      "&quot;": '"',
-      "&apos;": "'",
+      for (const child of elem.children) {
+        const childEl = XML.nodeAsTag(child);
+        if (!childEl) {
+          continue;
+        }
+        const result = findElement(childEl, targetId);
+        if (result !== null) {
+          return result;
+        }
+      }
+      return null;
     };
 
-    let decoded = str;
-    let previous: string;
+    const targetElem = findElement(root, String(rawId));
 
-    // Keep decoding until no more entities are found (handles double-encoded entities)
-    const MAX_DECODE_ITERATIONS = 10;
-    let iterations = 0;
-    do {
-      previous = decoded;
-      decoded = decoded.replace(
-        /&(?:amp|lt|gt|quot|apos);/g,
-        (entity) => htmlEntities[entity] || entity
-      );
-      iterations++;
-      if (iterations >= MAX_DECODE_ITERATIONS) {
-        break;
-      }
-    } while (previous !== decoded);
-
-    return decoded;
-  }
-
-  private parseSimpleXml(xmlString: string): XMLElement[] {
-    const elements: XMLElement[] = [];
-    const stack: XMLElement[] = [];
-
-    // Combined regex for all XML tokens (opening tags, closing tags, self-closing tags)
-    const tokenRegex =
-      /<\/?([a-zA-Z_][\w:.-]*)((?:\s+[\w:.-]+="[^"]*")*)\s*(\/?)>/g;
-    const attrRegex = /([\w:.-]+)="([^"]*)"/g;
-
-    let match: RegExpExecArray | null;
-
-    while ((match = tokenRegex.exec(xmlString)) !== null) {
-      const fullMatch = match[0];
-      const tagName = match[1];
-      const attrsString = match[2];
-      const selfClosing = match[3] === "/";
-      const isClosingTag = fullMatch.startsWith("</");
-
-      if (isClosingTag) {
-        // Handle closing tag - pop from stack
-        if (stack.length > 0 && stack[stack.length - 1].tag === tagName) {
-          stack.pop();
-        }
-      } else {
-        // Handle opening or self-closing tag
-        // Parse attributes
-        const attributes: Record<string, string> = {};
-        let attrMatch: RegExpExecArray | null;
-        attrRegex.lastIndex = 0;
-        while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
-          // Decode HTML entities in attribute values
-          attributes[attrMatch[1]] = this.decodeHtmlEntities(attrMatch[2]);
-        }
-
-        const elem: XMLElement = {
-          tag: tagName,
-          attributes,
-          children: [],
-        };
-
-        if (stack.length > 0) {
-          stack[stack.length - 1].children.push(elem);
-        } else {
-          elements.push(elem);
-        }
-
-        if (!selfClosing) {
-          stack.push(elem);
-        }
-      }
+    if (targetElem === null) {
+      // If not found, return original tree
+      return this;
     }
 
-    return elements;
+    // Convert the scoped element back to XML string
+    const scopedXml = XML.format([targetElem]);
+
+    return new XCUITestAccessibilityTree(scopedXml);
+  }
+
+  #parseRoot(xml: string): Element {
+    const roots = XML.parseRootChildren(xml);
+    let root: Element | null = null;
+    for (const node of roots) {
+      const el = XML.nodeAsTag(node);
+      if (el) {
+        root = el;
+        break;
+      }
+    }
+    always(root);
+    return root;
   }
 }
