@@ -1,4 +1,4 @@
-import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { BaseAccessibilityTree } from "@alumnium/core";
 import { ToolClass } from "../tools/BaseTool.js";
 import { Element } from "./index.js";
 import { Key } from "./keys.js";
