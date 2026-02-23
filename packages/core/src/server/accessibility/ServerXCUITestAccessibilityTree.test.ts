@@ -1,26 +1,26 @@
 import { describe, expect, it } from "bun:test";
-import { ServerXcuitestAccessibilityTree } from "./serverXcuitestAccessibilityTree.ts";
+import { ServerXCUITestAccessibilityTree } from "./ServerXCUITestAccessibilityTree.ts";
 
 async function tree(
   filename: string,
-): Promise<ServerXcuitestAccessibilityTree> {
+): Promise<ServerXCUITestAccessibilityTree> {
   const fixturePath = new URL(
     `./__fixtures__/${filename}.xml`,
     import.meta.url,
   );
   const xml = await Bun.file(fixturePath).text();
-  return new ServerXcuitestAccessibilityTree(xml);
+  return new ServerXCUITestAccessibilityTree(xml);
 }
 
-function simpleTree(): Promise<ServerXcuitestAccessibilityTree> {
+function simpleTree(): Promise<ServerXCUITestAccessibilityTree> {
   return tree("simple_xcuitest_accessibility_tree");
 }
 
-function duplicatedTree(): Promise<ServerXcuitestAccessibilityTree> {
+function duplicatedTree(): Promise<ServerXCUITestAccessibilityTree> {
   return tree("duplicated_xcuitest_accessibility_tree");
 }
 
-describe.todo(ServerXcuitestAccessibilityTree, () => {
+describe.todo(ServerXCUITestAccessibilityTree, () => {
   it("toXml converts simple xcuitest tree", async () => {
     expect((await simpleTree()).toXml()).toBe(
       `

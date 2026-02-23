@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { ServerUiAutomator2AccessibilityTree } from "./serverUiautomator2AccessibilityTree.ts";
+import { ServerUIAutomator2AccessibilityTree } from "./ServerUIAutomator2AccessibilityTree.ts";
 
 async function tree(
   filename: string,
-): Promise<ServerUiAutomator2AccessibilityTree> {
+): Promise<ServerUIAutomator2AccessibilityTree> {
   const fixturePath = new URL(
     `./__fixtures__/${filename}.xml`,
     import.meta.url,
@@ -11,15 +11,15 @@ async function tree(
   const xml = await Bun.file(fixturePath).text();
   // TODO: Missing Python API
   const normalizedXml = xml.normalize("NFKC");
-  return new ServerUiAutomator2AccessibilityTree(normalizedXml);
+  return new ServerUIAutomator2AccessibilityTree(normalizedXml);
 }
 
 // TODO: Redundant wrapper?
-function simpleTree(): Promise<ServerUiAutomator2AccessibilityTree> {
+function simpleTree(): Promise<ServerUIAutomator2AccessibilityTree> {
   return tree("uiautomator2_accessibility_tree");
 }
 
-describe.todo(ServerUiAutomator2AccessibilityTree, () => {
+describe.todo(ServerUIAutomator2AccessibilityTree, () => {
   it("toXml converts tree to expected XML", async () => {
     const expectedOutput = `<hierarchy>
   <FrameLayout id="2" clickable="false">

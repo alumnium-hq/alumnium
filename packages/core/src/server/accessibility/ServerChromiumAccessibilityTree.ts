@@ -14,7 +14,7 @@ import { textContent } from "domutils";
 import { parseDocument } from "htmlparser2";
 import { "default" as xmlFormatter } from "xml-formatter";
 import { pythonicId } from "../../pythonic/pythonicId.ts";
-import { BaseServerAccessibilityTree } from "./baseServerAccessibilityTree.ts";
+import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 
 // NOTE: xml-formatter has busted types, so we need to cast it manually.
 const xmlFormat: (typeof xmlFormatter)["default"] = xmlFormatter as any;
