@@ -1,9 +1,11 @@
 import { always } from "alwaysly";
-import { BaseServerAccessibilityTree } from "./baseServerAccessibilityTree.ts";
+import { Element, Node } from "domhandler";
+import { XML } from "../../xml/index.ts";
+import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 
-export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibilityTree {
-  #tree: Node[];
-  #idToNode: Record<number, Node>;
+export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibilityTree {
+  #tree: InternalNode[];
+  #idToNode: Record<number, InternalNode>;
 
   constructor(xmlString: string) {
     super();
@@ -18,37 +20,45 @@ export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibility
       (line) => !xmlDeclarationPattern.test(line),
     );
     const cleanedXmlContent = cleanedLines.join("\n");
-    const wrappedXmlString = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n <root>\n${cleanedXmlContent}\n</root>`;
 
-    let rootElement: XmlDocument;
+    let roots: Node[];
     try {
-      // @ts-expect-error -- TODO: Missing Python API
-      rootElement = fromstring(wrappedXmlString, "application/xml");
+      roots = XML.parseMultirootChildren(cleanedXmlContent);
     } catch (error) {
       throw new Error(`Invalid XML string: ${error}`);
     }
 
-    if (Array.from(rootElement.children).length) {
-      for (const appElement of rootElement.children) {
-        this.#tree.push(this.#parseElement(appElement));
+    for (const root of roots) {
+      const rootEl = XML.nodeAsTag(root);
+      always(rootEl);
+      for (const appElement of rootEl.children) {
+        const internalNode = this.#parseElement(appElement);
+        if (internalNode) {
+          this.#tree.push(internalNode);
+        }
       }
     }
   }
 
-  #parseElement(element: XmlElement): Node {
+  #parseElement(nodeArg: XML.Node): InternalNode | null {
+    const element = XML.nodeAsTag(nodeArg);
+    // NOTE: In Python's XML implementation, non-element nodes (like text nodes)
+    // aren't available as children of an element, so simply ignoring them here.
+    if (!element) return null;
+
     const simplifiedId = this.getNextId();
-    const rawType = element.get("type") ?? element.tag;
+    const rawType = element.attribs.type ?? element.tagName;
 
     // Extract raw_id attribute
-    const rawId = element.get("raw_id") ?? "";
+    const rawId = element.attribs["raw_id"] ?? "";
     if (rawId) {
       const rawIdInt = parseInt(rawId);
       this.simplifiedToRawId[simplifiedId] = rawIdInt;
     }
 
-    const ignored = element.get("ignored") === "true";
+    const ignored = element.attribs.ignored === "true";
 
-    const properties: NodeProperty[] = [];
+    const properties: InternalNodeProperty[] = [];
 
     const propXmlAttributes = [
       "class",
@@ -74,9 +84,9 @@ export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibility
     ];
 
     for (const xmlAttrName of propXmlAttributes) {
-      if (element.get(xmlAttrName)) {
-        const propEntry: NodeProperty = { name: xmlAttrName };
-        const attrValue = element.get(xmlAttrName) ?? "";
+      if (element.attribs[xmlAttrName]) {
+        const propEntry: InternalNodeProperty = { name: xmlAttrName };
+        const attrValue = element.attribs[xmlAttrName];
 
         if (
           [
@@ -115,7 +125,7 @@ export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibility
       }
     }
 
-    const node: Node = {
+    const internalNode: InternalNode = {
       id: simplifiedId,
       role: rawType,
       ignored,
@@ -123,12 +133,15 @@ export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibility
       children: [],
     };
 
-    this.#idToNode[simplifiedId] = node;
+    this.#idToNode[simplifiedId] = internalNode;
 
     for (const childElement of element.children) {
-      node.children.push(this.#parseElement(childElement));
+      const childNode = this.#parseElement(childElement);
+      if (childNode) {
+        internalNode.children.push(childNode);
+      }
     }
-    return node;
+    return internalNode;
   }
 
   /**
@@ -142,9 +155,9 @@ export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibility
     }
 
     function convertDictToXml(
-      ele: Node,
-      parentElement: XmlElement,
-    ): XmlElement | null {
+      ele: InternalNode,
+      parentElement: Element,
+    ): Element | null {
       if (ele.ignored) {
         return null;
       }
@@ -159,10 +172,9 @@ export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibility
         let clickable = false;
         let checked: string | number | boolean | undefined;
 
-        // @ts-expect-error -- TODO: Missing Python API
-        const role = Element(simplifiedRole);
+        const role = new Element(simplifiedRole, {});
         if (!excludeAttrs.has("id")) {
-          role.set("id", String(id));
+          role.attribs.id = String(id);
         }
 
         for (const props of childElement.properties) {
@@ -184,26 +196,26 @@ export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibility
         }
 
         if (resourceId && !excludeAttrs.has("resource-id")) {
-          role.set("resource-id", resourceId);
+          role.attribs["resource-id"] = String(resourceId);
         }
         if (contentDesc && !excludeAttrs.has("content-desc")) {
-          role.set("content-desc", contentDesc);
+          role.attribs["content-desc"] = String(contentDesc);
         }
         if (textDesc && !excludeAttrs.has("text")) {
-          role.set("text", textDesc);
+          role.attribs.text = String(textDesc);
         }
         if (clickable !== null && !excludeAttrs.has("clickable")) {
-          role.set("clickable", clickable ? "true" : "false");
+          role.attribs.clickable = clickable ? "true" : "false";
         }
         if (
           checked != null &&
           simplifiedRole === "CheckBox" &&
           !excludeAttrs.has("checked")
         ) {
-          role.set("checked", checked ? "true" : "false");
+          role.attribs.checked = checked ? "true" : "false";
         }
 
-        parentElement.append(role);
+        parentElement.children.push(role);
         if (childElement.children.length) {
           convertDictToXml(childElement, role);
         }
@@ -212,57 +224,31 @@ export class ServerUiAutomator2AccessibilityTree extends BaseServerAccessibility
       return parentElement;
     }
 
-    // @ts-expect-error -- TODO: Missing Python API
-    const rootXml = Element("hierarchy");
+    const rootXml = new Element("hierarchy", {});
     for (const ele of this.#tree) {
       convertDictToXml(ele, rootXml);
     }
 
-    // @ts-expect-error -- TODO: Missing Python API
-    indent(rootXml);
-
-    // @ts-expect-error -- TODO: Missing Python API
-    return tostring(rootXml, "unicode");
+    return XML.format([rootXml]);
   }
 }
 
-//#region Scaffold Types
+//#region Types
 
-// TODO: Get rid of these in favor of the XML library types
+// TODO: Find a place for these types, as they might be shared between different
+// modules or even defined in an external library.
 
-interface NodeProperty {
+interface InternalNodeProperty {
   name: string;
   value?: string | number | boolean;
 }
 
-interface Node {
+interface InternalNode {
   id: number;
   role: string;
   ignored: boolean;
-  properties: NodeProperty[];
-  children: Node[];
-}
-
-interface XmlElement {
-  attributes: {
-    getNamedItem(name: string): unknown;
-  };
-  children: Iterable<XmlElement> & {
-    length: number;
-  };
-  ownerDocument: {
-    createElement(name: string): XmlElement;
-  };
-  tag: string;
-  get(name: string): string | null;
-  set(name: string, value: string): void;
-  append(child: XmlElement): void;
-}
-
-interface XmlDocument {
-  documentElement: XmlElement;
-  querySelector(selector: string): { textContent: string | null } | null;
-  children: Iterable<XmlElement>;
+  properties: InternalNodeProperty[];
+  children: InternalNode[];
 }
 
 //#endregion
