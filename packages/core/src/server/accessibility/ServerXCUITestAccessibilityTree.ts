@@ -1,7 +1,7 @@
 import { always } from "alwaysly";
-import { BaseServerAccessibilityTree } from "./baseServerAccessibilityTree.ts";
+import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 
-export class ServerXcuitestAccessibilityTree extends BaseServerAccessibilityTree {
+export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree {
   #tree: Node | null;
   #idToNode: Record<number, Node>;
 
