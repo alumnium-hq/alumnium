@@ -232,6 +232,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     // Remove name if it equals text
+    // TODO: This is incorrect, Python's `node.text` gives only direct text nodes,
+    // while `textContent(node)` gives all descendant text.
     const nodeText = textContent(node);
     if (elem?.attribs.name && nodeText && elem.attribs.name === nodeText) {
       delete elem.attribs.name;
