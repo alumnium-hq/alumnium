@@ -1,19 +1,9 @@
 import { always } from "alwaysly";
-import { render } from "dom-serializer";
-import {
-  ChildNode,
-  Element,
-  hasChildren,
-  isTag,
-  isText,
-  Node,
-  NodeWithChildren,
-  Text,
-} from "domhandler";
+import { ChildNode, Element, Node, Text } from "domhandler";
 import { textContent } from "domutils";
-import { parseDocument } from "htmlparser2";
 import { "default" as xmlFormatter } from "xml-formatter";
 import { pythonicId } from "../../pythonic/pythonicId.ts";
+import { XML } from "../../xml/index.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 
 // NOTE: xml-formatter has busted types, so we need to cast it manually.
@@ -34,22 +24,12 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
   tree: Record<string, ChromiumNode>;
 
-  constructor(rawXml: string) {
+  constructor(xml: string) {
     super();
     this.tree = {}; // Initialize the result dictionary
 
     // Parse the raw XML
-    let roots: Node[];
-    try {
-      const root = parseDocument(rawXml.trim(), { xmlMode: true });
-      roots = root.children;
-    } catch {
-      // Multiple root elements
-      const wrapper = parseDocument(`<root>${rawXml.trim()}</root>`, {
-        xmlMode: true,
-      });
-      roots = wrapper.children;
-    }
+    const roots = XML.parseAny(xml);
 
     // Process each root element
     for (const rootElem of roots) {
@@ -62,8 +42,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
   /** Convert XML element to node dict structure with simplified IDs. */
   #xmlToNode(node: Node): ChromiumNode {
-    const elem = asTag(node);
-    const text = asText(node);
+    const elem = XML.nodeAsTag(node);
+    const text = XML.nodeAsText(node);
 
     // Assign simplified ID
     const simplifiedId = elem ? this.getNextId() : -1;
@@ -106,7 +86,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     // Process children recursively
-    const nodeChildren = asNodeWithChildren(node)?.children || [];
+    const nodeChildren = XML.nodeAsNodeWithChildren(node)?.children || [];
     const children: ChromiumNode[] = [];
     for (const childElem of nodeChildren) {
       const childNode = this.#xmlToNode(childElem);
@@ -195,22 +175,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     // Convert the XML elements to a string
-    let xmlString = "";
-    for (const element of rootElements) {
-      xmlString += xmlFormat(
-        render(element, {
-          xmlMode: true,
-          encodeEntities: "utf8",
-          emptyAttrs: true,
-          selfClosingTags: true,
-        }),
-        {
-          indentation: "  ",
-          forceSelfClosingEmptyTag: true,
-          lineSeparator: "\n",
-        },
-      );
-    }
+    const xmlString = XML.format(rootElements);
 
     return xmlString;
   }
@@ -220,8 +185,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
    * and returns a list of all content (names) in the current subtree.
    */
   #pruneRedundantName(node: ChildNode): string[] {
-    const elem = asTag(node);
-    const text = asText(node);
+    const elem = XML.nodeAsTag(node);
+    const text = XML.nodeAsText(node);
     // RootWebArea should remain untouched - only process children
     if (elem?.tagName === "RootWebArea") {
       const descendantContent: string[] = [];
@@ -278,8 +243,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
   }
 
   #getTexts(node: ChildNode): string[] {
-    const elem = asTag(node);
-    const text = asText(node);
+    const elem = XML.nodeAsTag(node);
+    const text = XML.nodeAsText(node);
     const texts = new Set<string>();
     if (elem?.attribs.name) {
       texts.add(elem.attribs.name);
@@ -292,24 +257,6 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     return Array.from(texts);
-  }
-}
-
-function asTag(node: Node): Element | undefined {
-  if (isTag(node)) {
-    return node;
-  }
-}
-
-function asNodeWithChildren(node: Node): NodeWithChildren | undefined {
-  if (hasChildren(node)) {
-    return node;
-  }
-}
-
-function asText(node: Node): Text | undefined {
-  if (isText(node)) {
-    return node;
   }
 }
 
