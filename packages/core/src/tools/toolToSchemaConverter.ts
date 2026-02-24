@@ -24,7 +24,7 @@ interface ToolSchema {
 }
 
 export function convertToolsToSchemas(
-  tools: Record<string, ToolClass>
+  tools: Record<string, ToolClass>,
 ): ToolSchema[] {
   return Object.entries(tools).map(([name, ToolClass]) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
