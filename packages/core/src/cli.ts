@@ -2,8 +2,8 @@ import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import { parseArgs } from "util";
 import { z } from "zod";
-import { LEGACY_BASE_URL, legacyProxy } from "./legacy.ts";
-import { SessionParams, sessionRoutes } from "./session/routes.ts";
+import { LEGACY_BASE_URL, legacyProxy } from "./legacy.js";
+import { SessionParams, sessionRoutes } from "./session/routes.js";
 
 //#region Types
 

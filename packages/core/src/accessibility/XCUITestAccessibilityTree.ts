@@ -1,6 +1,6 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
-import { XML } from "../xml/index.ts";
+import { XML } from "../xml/index.js";
 import { AccessibilityElement } from "./AccessibilityElement.js";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
 

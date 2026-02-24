@@ -2,9 +2,9 @@ import { always } from "alwaysly";
 import { ChildNode, Element, Node, Text } from "domhandler";
 import { textContent } from "domutils";
 import { "default" as xmlFormatter } from "xml-formatter";
-import { pythonicId } from "../../pythonic/pythonicId.ts";
-import { XML } from "../../xml/index.ts";
-import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
+import { pythonicId } from "../../pythonic/pythonicId.js";
+import { XML } from "../../xml/index.js";
+import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.js";
 
 // NOTE: xml-formatter has busted types, so we need to cast it manually.
 const xmlFormat: (typeof xmlFormatter)["default"] = xmlFormatter as any;

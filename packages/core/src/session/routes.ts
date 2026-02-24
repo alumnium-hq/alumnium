@@ -1,15 +1,15 @@
 import { Elysia } from "elysia";
 import { z } from "zod";
-import { ApiVersioned } from "../api/response.ts";
-import { legacyFetch, legacyProxy } from "../legacy.ts";
-import { ensureModelName, providers } from "../model/model.ts";
-import { ToolSchema } from "../tool/tool.ts";
-import { Session, SessionPlatform } from "./session.ts";
+import { ApiVersioned } from "../api/response.js";
+import { legacyFetch, legacyProxy } from "../legacy.js";
+import { ensureModelName, providers } from "../model/model.js";
+import { ToolSchema } from "../tool/tool.js";
+import { Session, SessionPlatform } from "./session.js";
 import {
   createSessionStateBaseAgent,
   createSessionStatePlannerAgent,
   SessionState,
-} from "./state.ts";
+} from "./state.js";
 
 export const SessionParams = z.object({
   session_id: Session.Id,

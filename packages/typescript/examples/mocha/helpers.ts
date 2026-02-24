@@ -3,9 +3,7 @@ import { Locator } from "playwright";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { type Browser } from "webdriverio";
-import { Alumni } from "../../src/Alumni.js";
-import { type Element } from "../../src/drivers/index.js";
-import { AppiumDriver } from "../../src/index.js";
+import { Alumni, AppiumDriver, type Element } from "../../src/index.js";
 
 let driver: WebDriver | Browser;
 let al: Alumni;

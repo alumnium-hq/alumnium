@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { ServerUIAutomator2AccessibilityTree } from "./ServerUIAutomator2AccessibilityTree.ts";
+import { ServerUIAutomator2AccessibilityTree } from "./ServerUIAutomator2AccessibilityTree.js";
 
 async function tree(
   filename: string,
