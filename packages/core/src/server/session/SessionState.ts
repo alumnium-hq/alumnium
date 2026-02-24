@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { Model } from "../model/model.js";
-import { AgentUsage } from "../server/agents/agent.js";
-import { ToolSchema } from "../tool/tool.js";
-import { Session } from "./session.js";
+import { Model } from "../../model/model.js";
+import { ToolSchema } from "../../tool/tool.js";
+import { AgentUsage } from "../agents/agent.js";
+import { Session } from "./Session.js";
 
 export const SessionStateBaseAgent = z.object({
   usage: AgentUsage,
