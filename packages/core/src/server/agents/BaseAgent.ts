@@ -1,4 +1,4 @@
-import { AgentUsage } from "./agent.ts";
+import { AgentUsage } from "./agent.js";
 
 export class BaseAgent {
   usage: AgentUsage;

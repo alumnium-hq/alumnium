@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Model, Provider } from "../../src/Model.js";
+import { Model, Provider } from "../../src/index.js";
 import "./globals.js";
 import { navigate } from "./helpers.js";
 
