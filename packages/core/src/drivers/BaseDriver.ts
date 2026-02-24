@@ -26,6 +26,6 @@ export abstract class BaseDriver {
   abstract wait(seconds: number): void | Promise<void>;
   abstract waitForSelector(
     selector: string,
-    timeout?: number
+    timeout?: number,
   ): void | Promise<void>;
 }

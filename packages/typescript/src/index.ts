@@ -1,6 +1,5 @@
 export {
   AppiumDriver,
-  Element,
   ExecuteJavascriptTool,
   Key,
   Model,
@@ -11,6 +10,7 @@ export {
   Provider,
   ScrollTool,
   SeleniumDriver,
+  type Element,
 } from "@alumnium/core";
 export type { Data } from "@alumnium/core";
 export * from "@alumnium/core/tools";
