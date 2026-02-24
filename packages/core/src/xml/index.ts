@@ -43,8 +43,8 @@ export namespace XML {
       xml += xmlFormat(
         render(element, {
           xmlMode: true,
-          encodeEntities: "utf8",
-          emptyAttrs: true,
+          encodeEntities: false, // Skip encoding unicode text content, e.g., `1701–1870` -> `1701&#x2013;1870`.
+          emptyAttrs: true, // Preserve empty attributes as-is, e.g., `value=""`.
           selfClosingTags: true,
         }),
         {
