@@ -27,7 +27,7 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
       if (el.tagName === "AppiumAUT") {
         for (const child of el.children) {
           const childEl = XML.nodeAsTag(child);
-          if (childEl && childEl.tagName === "XCUIElementTypeApplication") {
+          if (childEl && childEl.tagName.startsWith("XCUIElementType")) {
             appElement = childEl;
             break;
           }
