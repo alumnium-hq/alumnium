@@ -1,14 +1,14 @@
 import { LanguageModel } from "ai";
 import { log } from "smollog";
 import { z } from "zod";
-import { Model } from "../model/model.js";
-import { ActorAgent } from "../server/agents/ActorAgent.js";
-import { AreaAgent } from "../server/agents/AreaAgent.js";
-import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.js";
-import { LocatorAgent } from "../server/agents/LocatorAgent.js";
-import { PlannerAgent } from "../server/agents/PlannerAgent.js";
-import { RetrieverAgent } from "../server/agents/RetrieverAgent.js";
-import { ToolSchema } from "../tool/tool.js";
+import { Model } from "../../model/model.js";
+import { ToolSchema } from "../../tool/tool.js";
+import { ActorAgent } from "../agents/ActorAgent.js";
+import { AreaAgent } from "../agents/AreaAgent.js";
+import { ChangesAnalyzerAgent } from "../agents/ChangesAnalyzerAgent.js";
+import { LocatorAgent } from "../agents/LocatorAgent.js";
+import { PlannerAgent } from "../agents/PlannerAgent.js";
+import { RetrieverAgent } from "../agents/RetrieverAgent.js";
 
 // TODO: Find a better place for platform consts and types
 
