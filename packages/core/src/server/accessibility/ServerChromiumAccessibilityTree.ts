@@ -29,7 +29,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     this.tree = {}; // Initialize the result dictionary
 
     // Parse the raw XML
-    const roots = XML.parseAny(xml);
+    const roots = XML.parseAnyRootChildren(xml);
 
     // Process each root element
     for (const rootElem of roots) {

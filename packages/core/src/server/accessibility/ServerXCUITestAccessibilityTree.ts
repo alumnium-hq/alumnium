@@ -15,7 +15,7 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
 
     let roots: XML.Node[];
     try {
-      roots = XML.parse(xmlString);
+      roots = XML.parseRootChildren(xmlString);
     } catch (error) {
       throw new Error(`Invalid XML string: ${error}`);
     }

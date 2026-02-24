@@ -34,7 +34,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     // Parse the XML
     // TODO: Simplify after figuring out multiroot shenanigans.
     // Also refactor duplicate roots -> root code below.
-    const root = this.#parseRoot(this.#xmlString);
+    const root = XML.parseRoot(this.#xmlString);
 
     // Add raw_id attributes recursively
     this.#addRawIds(root);
@@ -59,13 +59,12 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
    * Find element by raw_id and return its properties for XPath construction.
    *
    * @param rawId The raw_id to search for
-   *
    * @returns AccessibilityElement with type, androidresourceid, androidtext, androidcontentdesc, androidbounds
    */
   elementById(rawId: number): AccessibilityElement {
     // Get raw XML with raw_id attributes
     const rawXml = this.toStr();
-    const root = this.#parseRoot(rawXml);
+    const root = XML.parseRoot(rawXml);
 
     // Find element with matching raw_id
     function findElement(elem: Element, targetId: string): Element | null {
@@ -107,7 +106,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     const rawXml = this.toStr();
 
     // Parse the XML
-    const root = this.#parseRoot(rawXml);
+    const root = XML.parseRoot(rawXml);
 
     // Find the element with the matching raw_id
     function findElement(elem: Element, targetId: string): Element | null {
@@ -136,19 +135,5 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     const scopedXml = XML.format([targetElem]);
 
     return new UIAutomator2AccessibilityTree(scopedXml);
-  }
-
-  #parseRoot(xml: string): Element {
-    const roots = XML.parse(xml);
-    let root: Element | null = null;
-    for (const node of roots) {
-      const el = XML.nodeAsTag(node);
-      if (el && el.tagName === "root") {
-        root = el;
-        break;
-      }
-    }
-    always(root);
-    return root;
   }
 }

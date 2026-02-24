@@ -23,7 +23,7 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
 
     let roots: Node[];
     try {
-      roots = XML.parseMultiroot(cleanedXmlContent);
+      roots = XML.parseMultirootChildren(cleanedXmlContent);
     } catch (error) {
       throw new Error(`Invalid XML string: ${error}`);
     }
