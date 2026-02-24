@@ -1,7 +1,11 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
 
-import { BaseAccessibilityTree, UIAutomator2AccessibilityTree, XCUITestAccessibilityTree } from "@alumnium/core";
+import {
+  BaseAccessibilityTree,
+  UIAutomator2AccessibilityTree,
+  XCUITestAccessibilityTree,
+} from "@alumnium/core";
 import { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
@@ -155,7 +159,7 @@ export class AppiumDriver extends BaseDriver {
 
       if (Object.keys(props).length > 0) {
         const conditions = Object.entries(props).map(
-          ([k, v]) => `${k} == "${v}"`
+          ([k, v]) => `${k} == "${v}"`,
         );
         const propsStr = conditions.join(" AND ");
         predicate += ` AND ${propsStr}`;
@@ -174,7 +178,7 @@ export class AppiumDriver extends BaseDriver {
 
       if (Object.keys(props).length > 0) {
         const conditions = Object.entries(props).map(
-          ([k, v]) => `@${k}="${v}"`
+          ([k, v]) => `@${k}="${v}"`,
         );
         xpath += `[${conditions.join(" and ")}]`;
       }
@@ -237,7 +241,7 @@ export class AppiumDriver extends BaseDriver {
     } else {
       // Tap to the top left corner of the keyboard to dismiss it
       const keyboard = this.driver.$(
-        "-ios predicate string:type == 'XCUIElementTypeKeyboard'"
+        "-ios predicate string:type == 'XCUIElementTypeKeyboard'",
       );
       const { width, height } = await keyboard.getSize();
       await keyboard.click({

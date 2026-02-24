@@ -32,14 +32,14 @@ export class HttpClient {
     baseUrl: string,
     private model: Model,
     private platform: string,
-    private tools: Record<string, ToolClass>
+    private tools: Record<string, ToolClass>,
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
   }
 
   private async fetchWithTimeout(
     url: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<Response> {
     const response = await fetch(url, {
       ...options,
@@ -75,7 +75,7 @@ export class HttpClient {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(requestBody),
-          }
+          },
         );
 
         const data = (await response.json()) as SessionResponse;
@@ -93,7 +93,7 @@ export class HttpClient {
         `${this.baseUrl}/v1/sessions/${this.sessionId}`,
         {
           method: "DELETE",
-        }
+        },
       );
       this.sessionId = null;
     }
@@ -101,7 +101,7 @@ export class HttpClient {
 
   async planActions(
     goal: string,
-    accessibilityTree: string
+    accessibilityTree: string,
   ): Promise<{ explanation: string; steps: string[] }> {
     await this.ensureSession();
     const requestBody: PlanRequest = {
@@ -116,7 +116,7 @@ export class HttpClient {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
-      }
+      },
     );
 
     const responseData = (await response.json()) as PlanResponse;
@@ -137,7 +137,7 @@ export class HttpClient {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
-      }
+      },
     );
   }
 
@@ -147,14 +147,14 @@ export class HttpClient {
       `${this.baseUrl}/v1/sessions/${this.sessionId}/examples`,
       {
         method: "DELETE",
-      }
+      },
     );
   }
 
   async executeAction(
     goal: string,
     step: string,
-    accessibilityTree: string
+    accessibilityTree: string,
   ): Promise<StepResponse["actions"]> {
     await this.ensureSession();
     const requestBody: StepRequest = {
@@ -170,7 +170,7 @@ export class HttpClient {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
-      }
+      },
     );
 
     const responseData = (await response.json()) as StepResponse;
@@ -182,7 +182,7 @@ export class HttpClient {
     accessibilityTree: string,
     title: string,
     url: string,
-    screenshot?: string
+    screenshot?: string,
   ): Promise<[string, Data]> {
     await this.ensureSession();
     const requestBody: StatementRequest = {
@@ -200,7 +200,7 @@ export class HttpClient {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
-      }
+      },
     );
 
     const responseData = (await response.json()) as StatementResponse;
@@ -209,7 +209,7 @@ export class HttpClient {
 
   async findArea(
     description: string,
-    accessibilityTree: string
+    accessibilityTree: string,
   ): Promise<{ id: number; explanation: string }> {
     await this.ensureSession();
     const requestBody: AreaRequest = {
@@ -224,7 +224,7 @@ export class HttpClient {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
-      }
+      },
     );
 
     const responseData = (await response.json()) as AreaResponse;
@@ -233,7 +233,7 @@ export class HttpClient {
 
   async findElement(
     description: string,
-    accessibilityTree: string
+    accessibilityTree: string,
   ): Promise<FindResponse["elements"][0]> {
     await this.ensureSession();
     const requestBody: FindRequest = {
@@ -248,10 +248,11 @@ export class HttpClient {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
-      }
+      },
     );
 
     const responseData = (await response.json()) as FindResponse;
+    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
     return responseData.elements[0];
   }
 
@@ -261,7 +262,7 @@ export class HttpClient {
       `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`,
       {
         method: "POST",
-      }
+      },
     );
   }
 
@@ -271,7 +272,7 @@ export class HttpClient {
       `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`,
       {
         method: "DELETE",
-      }
+      },
     );
   }
 
@@ -281,7 +282,7 @@ export class HttpClient {
       `${this.baseUrl}/v1/sessions/${this.sessionId}/stats`,
       {
         method: "GET",
-      }
+      },
     );
     return (await response.json()) as StatsResponse;
   }

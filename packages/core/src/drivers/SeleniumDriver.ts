@@ -11,7 +11,10 @@ import {
 import { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import { NoSuchSessionError } from "selenium-webdriver/lib/error.js";
 
-import { BaseAccessibilityTree, ChromiumAccessibilityTree } from "@alumnium/core";
+import {
+  BaseAccessibilityTree,
+  ChromiumAccessibilityTree,
+} from "@alumnium/core";
 import { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
@@ -50,7 +53,7 @@ const logger = getLogger(["driver", "selenium"]);
 function autoswitchToNewTab(
   _target: unknown,
   _propertyKey: string | symbol,
-  descriptor?: PropertyDescriptor
+  descriptor?: PropertyDescriptor,
 ): PropertyDescriptor | void {
   // Handle both legacy and modern decorator standards
   if (!descriptor) {
@@ -75,9 +78,10 @@ function autoswitchToNewTab(
       // Only switch to the last new tab, as only one tab can be active at the end.
       const lastNewTab = newTabs[newTabs.length - 1];
       if (lastNewTab !== (await this.driver.getWindowHandle())) {
+        // @ts-expect-error -- TODO: Fix types after making TS setup stricter
         await this.driver.switchTo().window(lastNewTab);
         logger.debug(
-          `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
+          `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
         );
       }
     }
@@ -89,11 +93,11 @@ function autoswitchToNewTab(
 export class SeleniumDriver extends BaseDriver {
   private static WAITER_SCRIPT = readFileSync(
     join(__dirname, "scripts/waiter.js"),
-    "utf8"
+    "utf8",
   );
   private static WAIT_FOR_SCRIPT = readFileSync(
     join(__dirname, "scripts/waitFor.js"),
-    "utf8"
+    "utf8",
   );
 
   protected driver: ChromiumWebDriver;
@@ -120,7 +124,7 @@ export class SeleniumDriver extends BaseDriver {
     // Get frame tree to enumerate all frames
     const frameTree = (await this.executeCdpCommand(
       "Page.getFrameTree",
-      {}
+      {},
     )) as {
       frameTree: CDPFrameInfo;
     };
@@ -136,7 +140,7 @@ export class SeleniumDriver extends BaseDriver {
       frameTree.frameTree,
       mainFrameId,
       frameToIframeMap,
-      frameParentMap
+      frameParentMap,
     );
 
     // Aggregate accessibility nodes from all frames
@@ -147,18 +151,18 @@ export class SeleniumDriver extends BaseDriver {
           "Accessibility.getFullAXTree",
           {
             frameId,
-          }
+          },
         )) as { nodes: CDPNode[] };
         const nodes = response.nodes || [];
         logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`
+          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
         );
         // Tag ALL nodes from child frames with their frame chain (list of iframe backendNodeIds)
         // This allows us to switch through nested frames when finding elements
         const frameChain = this.getFrameChain(
           frameId,
           frameToIframeMap,
-          frameParentMap
+          frameParentMap,
         );
         for (const node of nodes) {
           if (frameChain.length > 0) {
@@ -168,7 +172,7 @@ export class SeleniumDriver extends BaseDriver {
         allNodes.push(...nodes);
       } catch (error) {
         logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`
+          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
         );
       }
     }
@@ -181,7 +185,7 @@ export class SeleniumDriver extends BaseDriver {
     mainFrameId: string,
     frameToIframeMap: Map<string, number>,
     frameParentMap: Map<string, string>,
-    parentFrameId?: string
+    parentFrameId?: string,
   ): Promise<void> {
     const frameId = frameInfo.frame.id;
 
@@ -194,11 +198,11 @@ export class SeleniumDriver extends BaseDriver {
         })) as { backendNodeId: number };
         frameToIframeMap.set(frameId, ownerInfo.backendNodeId);
         logger.debug(
-          `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`
+          `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`,
         );
       } catch (error) {
         logger.debug(
-          `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`
+          `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
 
@@ -215,7 +219,7 @@ export class SeleniumDriver extends BaseDriver {
         mainFrameId,
         frameToIframeMap,
         frameParentMap,
-        frameId
+        frameId,
       );
     }
   }
@@ -223,7 +227,7 @@ export class SeleniumDriver extends BaseDriver {
   private getFrameChain(
     frameId: string,
     frameToIframeMap: Map<string, number>,
-    frameParentMap: Map<string, string>
+    frameParentMap: Map<string, string>,
   ): number[] {
     const chain: number[] = [];
     let currentFrameId = frameId;
@@ -250,6 +254,7 @@ export class SeleniumDriver extends BaseDriver {
     return frameIds;
   }
 
+  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @autoswitchToNewTab
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
@@ -268,6 +273,7 @@ export class SeleniumDriver extends BaseDriver {
     await actions.move({ origin: await this.findElement(id) }).perform();
   }
 
+  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @autoswitchToNewTab
   async pressKey(key: Key): Promise<void> {
     const keyMap: Record<Key, string> = {
@@ -348,7 +354,7 @@ export class SeleniumDriver extends BaseDriver {
       "DOM.pushNodesByBackendIdsToFrontend",
       {
         backendNodeIds: [backendNodeId],
-      }
+      },
     )) as { nodeIds: number[] };
 
     const nodeId = nodeIds[0];
@@ -361,7 +367,7 @@ export class SeleniumDriver extends BaseDriver {
     });
 
     const element = await this.driver.findElement(
-      By.css(`[data-alumnium-id='${backendNodeId}']`)
+      By.css(`[data-alumnium-id='${backendNodeId}']`),
     );
 
     // Remove temporary attribute
@@ -387,7 +393,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   private async switchToSingleFrame(
-    iframeBackendNodeId: number
+    iframeBackendNodeId: number,
   ): Promise<void> {
     // Use CDP to find and switch to the iframe
     await this.executeCdpCommand("DOM.enable", {});
@@ -397,7 +403,7 @@ export class SeleniumDriver extends BaseDriver {
       "DOM.pushNodesByBackendIdsToFrontend",
       {
         backendNodeIds: [iframeBackendNodeId],
-      }
+      },
     )) as { nodeIds: number[] };
 
     const nodeId = nodeIds[0];
@@ -409,7 +415,7 @@ export class SeleniumDriver extends BaseDriver {
     });
 
     const iframeElement = await this.driver.findElement(
-      By.css(`[data-alumnium-iframe-id='${iframeBackendNodeId}']`)
+      By.css(`[data-alumnium-iframe-id='${iframeBackendNodeId}']`),
     );
 
     await this.executeCdpCommand("DOM.removeAttribute", {
@@ -419,7 +425,7 @@ export class SeleniumDriver extends BaseDriver {
 
     await this.driver.switchTo().frame(iframeElement);
     logger.debug(
-      `Switched to iframe with backendNodeId=${iframeBackendNodeId}`
+      `Switched to iframe with backendNodeId=${iframeBackendNodeId}`,
     );
   }
 
@@ -435,9 +441,10 @@ export class SeleniumDriver extends BaseDriver {
     const currentIndex = handles.indexOf(current);
     const nextIndex = (currentIndex + 1) % handles.length;
 
+    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
     await this.driver.switchTo().window(handles[nextIndex]);
     logger.debug(
-      `Switched to next tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
+      `Switched to next tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
     );
   }
 
@@ -449,9 +456,10 @@ export class SeleniumDriver extends BaseDriver {
     const currentIndex = handles.indexOf(current);
     const prevIndex = (currentIndex - 1 + handles.length) % handles.length;
 
+    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
     await this.driver.switchTo().window(handles[prevIndex]);
     logger.debug(
-      `Switched to previous tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`
+      `Switched to previous tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
     );
   }
 
@@ -466,7 +474,7 @@ export class SeleniumDriver extends BaseDriver {
 
   private async executeCdpCommand(
     cmd: string,
-    params: object
+    params: object,
   ): Promise<unknown> {
     return await this.driver.sendAndGetDevToolsCommand(cmd, params);
   }
@@ -475,7 +483,7 @@ export class SeleniumDriver extends BaseDriver {
     try {
       await this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
       const error: unknown = await this.driver.executeAsyncScript(
-        SeleniumDriver.WAIT_FOR_SCRIPT
+        SeleniumDriver.WAIT_FOR_SCRIPT,
       );
       if (error) {
         // eslint-disable-next-line @typescript-eslint/no-base-to-string
@@ -487,7 +495,7 @@ export class SeleniumDriver extends BaseDriver {
       try {
         await this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
         const error: unknown = await this.driver.executeAsyncScript(
-          SeleniumDriver.WAIT_FOR_SCRIPT
+          SeleniumDriver.WAIT_FOR_SCRIPT,
         );
         if (error) {
           // eslint-disable-next-line @typescript-eslint/no-base-to-string
@@ -495,7 +503,7 @@ export class SeleniumDriver extends BaseDriver {
         }
       } catch (retryError: unknown) {
         logger.warn(
-          `Failed to wait for page to load after retry: ${String(retryError)}`
+          `Failed to wait for page to load after retry: ${String(retryError)}`,
         );
       }
     }

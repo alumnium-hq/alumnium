@@ -14,7 +14,7 @@ export abstract class BaseTool {
   static async executeToolCall(
     toolCall: ToolCall,
     tools: Record<string, ToolClass>,
-    driver: BaseDriver
+    driver: BaseDriver,
   ): Promise<string> {
     const toolName = toolCall.name;
     const toolArgs = toolCall.args;
