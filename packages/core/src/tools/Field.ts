@@ -8,12 +8,12 @@ export type JSONSchemaType =
 
 export interface FieldMetadata {
   name: string;
-  paramName?: string; // Custom parameter name for schema (defaults to name)
+  paramName?: string | undefined; // Custom parameter name for schema (defaults to name)
   type: JSONSchemaType;
   description: string;
-  required?: boolean; // Defaults to true if not specified
-  enum?: string[];
-  items?: { type: JSONSchemaType }; // Type of array elements (for array types)
+  required?: boolean | undefined; // Defaults to true if not specified
+  enum?: string[] | undefined;
+  items?: { type: JSONSchemaType } | undefined; // Type of array elements (for array types)
 }
 
 // Interface for tool classes that use fields
