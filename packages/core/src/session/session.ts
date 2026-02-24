@@ -1,13 +1,13 @@
 import { LanguageModel } from "ai";
 import { log } from "smollog";
 import { z } from "zod";
-import { ActorAgent } from "../agent/actor.ts";
-import { AreaAgent } from "../agent/area.ts";
-import { ChangesAnalyzerAgent } from "../agent/changesAnalyzer.ts";
-import { LocatorAgent } from "../agent/locator.ts";
-import { PlannerAgent } from "../agent/planner.ts";
-import { RetrieverAgent } from "../agent/retriever.ts";
 import { Model } from "../model/model.ts";
+import { ActorAgent } from "../server/agents/ActorAgent.ts";
+import { AreaAgent } from "../server/agents/AreaAgent.ts";
+import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.ts";
+import { LocatorAgent } from "../server/agents/LocatorAgent.ts";
+import { PlannerAgent } from "../server/agents/PlannerAgent.ts";
+import { RetrieverAgent } from "../server/agents/RetrieverAgent.ts";
 import { ToolSchema } from "../tool/tool.ts";
 
 // TODO: Find a better place for platform consts and types
