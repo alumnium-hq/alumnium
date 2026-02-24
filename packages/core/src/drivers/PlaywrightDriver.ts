@@ -4,7 +4,10 @@ import { fileURLToPath } from "url";
 
 import { CDPSession, Frame, Locator, Page } from "playwright";
 
-import { BaseAccessibilityTree, ChromiumAccessibilityTree } from "@alumnium/core";
+import {
+  BaseAccessibilityTree,
+  ChromiumAccessibilityTree,
+} from "@alumnium/core";
 import { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
@@ -53,11 +56,11 @@ const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 export class PlaywrightDriver extends BaseDriver {
   private static WAITER_SCRIPT = readFileSync(
     join(__dirname, "scripts/waiter.js"),
-    "utf8"
+    "utf8",
   );
   private static WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${readFileSync(
     join(__dirname, "scripts/waitFor.js"),
-    "utf8"
+    "utf8",
   )} })`;
 
   private client!: CDPSession;
@@ -74,7 +77,7 @@ export class PlaywrightDriver extends BaseDriver {
   ]);
   public newTabTimeout = parseInt(
     process.env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT || "200",
-    10
+    10,
   );
   public autoswitchToNewTab: boolean = true;
 
@@ -124,7 +127,7 @@ export class PlaywrightDriver extends BaseDriver {
       logger.debug("Enabled Target.setAutoAttach for OOPIF support");
     } catch (error) {
       logger.debug(
-        `Could not enable Target.setAutoAttach: ${error instanceof Error ? error.message : String(error)}`
+        `Could not enable Target.setAutoAttach: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -134,7 +137,7 @@ export class PlaywrightDriver extends BaseDriver {
 
     // Get frame tree to enumerate all frames (same approach as Selenium)
     const frameTree = (await this.client.send(
-      "Page.getFrameTree"
+      "Page.getFrameTree",
     )) as CDPFrameTree;
     const frameIds = this.getAllFrameIds(frameTree.frameTree);
     const mainFrameId = frameTree.frameTree.frame.id;
@@ -148,7 +151,7 @@ export class PlaywrightDriver extends BaseDriver {
       logger.debug(`Found ${oopifTargets.length} cross-origin iframes`);
     } catch (error) {
       logger.debug(
-        `Could not get OOPIF targets: ${error instanceof Error ? error.message : String(error)}`
+        `Could not get OOPIF targets: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 
@@ -160,7 +163,7 @@ export class PlaywrightDriver extends BaseDriver {
       frameTree.frameTree,
       mainFrameId,
       frameToIframeMap,
-      frameParentMap
+      frameParentMap,
     );
 
     // Build mapping: frameId -> Playwright Frame object (for element finding)
@@ -180,18 +183,18 @@ export class PlaywrightDriver extends BaseDriver {
           "Accessibility.getFullAXTree",
           {
             frameId,
-          }
+          },
         )) as { nodes: CDPNode[] };
         const nodes = response.nodes || [];
         logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`
+          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
         );
 
         // Calculate frame chain for this frame
         const frameChain = this.getFrameChain(
           frameId,
           frameToIframeMap,
-          frameParentMap
+          frameParentMap,
         );
         // Get Playwright frame reference
         const playwrightFrame =
@@ -206,13 +209,14 @@ export class PlaywrightDriver extends BaseDriver {
           node._frame = playwrightFrame;
           // Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
           if (node.parentId === undefined && frameToIframeMap.has(frameId)) {
+            // @ts-expect-error -- TODO: Fix types after making TS setup stricter
             node._parent_iframe_backend_node_id = frameToIframeMap.get(frameId);
           }
           allNodes.push(node);
         }
       } catch (error) {
         logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`
+          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
         );
       }
     }
@@ -223,11 +227,11 @@ export class PlaywrightDriver extends BaseDriver {
         const nodes = await this.getCrossOriginFrameNodes(oopif);
         allNodes.push(...nodes);
         logger.debug(
-          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: ${nodes.length} nodes`
+          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: ${nodes.length} nodes`,
         );
       } catch (error) {
         logger.debug(
-          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`
+          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
         );
       }
     }
@@ -239,22 +243,22 @@ export class PlaywrightDriver extends BaseDriver {
       const frameUrl = frame.url();
       if (!cdpFrameUrls.has(frameUrl) && !oopifUrls.has(frameUrl)) {
         logger.debug(
-          `Processing Playwright-only frame: ${frameUrl.slice(0, 60)}`
+          `Processing Playwright-only frame: ${frameUrl.slice(0, 60)}`,
         );
         try {
           const iframeBackendNodeId =
             await this.getIframeBackendNodeIdByUrl(frameUrl);
           const nodes = await this.queryFrameInteractiveElements(
             frame,
-            iframeBackendNodeId
+            iframeBackendNodeId,
           );
           allNodes.push(...nodes);
           logger.debug(
-            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: ${nodes.length} nodes`
+            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: ${nodes.length} nodes`,
           );
         } catch (error) {
           logger.debug(
-            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`
+            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
           );
         }
       }
@@ -266,7 +270,7 @@ export class PlaywrightDriver extends BaseDriver {
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
     const tagName = await element.evaluate(
-      (el: { tagName: string }) => el.tagName
+      (el: { tagName: string }) => el.tagName,
     );
     if (tagName?.toLowerCase() === "option") {
       const value = await element.evaluate((el: { value: string }) => el.value);
@@ -300,7 +304,7 @@ export class PlaywrightDriver extends BaseDriver {
     };
 
     await this.autoswitchToNewTabAction(() =>
-      this.page.keyboard.press(keyMap[key])
+      this.page.keyboard.press(keyMap[key]),
     );
   }
 
@@ -321,6 +325,7 @@ export class PlaywrightDriver extends BaseDriver {
     await element.scrollIntoViewIfNeeded();
   }
 
+  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @retry({
     maxAttempts: 2,
     backOff: 500,
@@ -332,6 +337,7 @@ export class PlaywrightDriver extends BaseDriver {
     return buffer.toString("base64");
   }
 
+  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @retry({
     maxAttempts: 2,
     backOff: 500,
@@ -356,6 +362,7 @@ export class PlaywrightDriver extends BaseDriver {
     await fileChooser.setFiles(paths);
   }
 
+  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @retry({
     maxAttempts: 2,
     backOff: 500,
@@ -386,7 +393,7 @@ export class PlaywrightDriver extends BaseDriver {
     if (accessibilityElement.locatorInfo) {
       return this.findElementByLocatorInfo(
         frame,
-        accessibilityElement.locatorInfo
+        accessibilityElement.locatorInfo,
       );
     }
 
@@ -400,10 +407,11 @@ export class PlaywrightDriver extends BaseDriver {
       "DOM.pushNodesByBackendIdsToFrontend",
       {
         backendNodeIds: [backendNodeId],
-      }
+      },
     );
     const nodeId = nodeIds.nodeIds[0];
     await this.client.send("DOM.setAttributeValue", {
+      // @ts-expect-error -- TODO: Fix types after making TS setup stricter
       nodeId,
       name: "data-alumnium-id",
       value: String(backendNodeId),
@@ -427,6 +435,7 @@ export class PlaywrightDriver extends BaseDriver {
     const currentIndex = this._pages.indexOf(this.page);
     const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
 
+    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
     this.page = this._pages[nextIndex];
     await this.initCDPSession();
     await this.page.waitForLoadState();
@@ -443,6 +452,7 @@ export class PlaywrightDriver extends BaseDriver {
     const prevIndex =
       (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
 
+    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
     this.page = this._pages[prevIndex];
     await this.initCDPSession();
     await this.page.waitForLoadState();
@@ -465,6 +475,7 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.context().grantPermissions(permissions);
   }
 
+  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @retry({
     maxAttempts: 2,
     backOff: 500,
@@ -475,7 +486,7 @@ export class PlaywrightDriver extends BaseDriver {
     logger.debug("Waiting for page to finish loading:");
     await this.page.evaluate(PlaywrightDriver.WAITER_SCRIPT);
     const error: unknown = await this.page.evaluate(
-      `(${PlaywrightDriver.WAIT_FOR_SCRIPT})()`
+      `(${PlaywrightDriver.WAIT_FOR_SCRIPT})()`,
     );
     if (error) {
       // eslint-disable-next-line @typescript-eslint/no-base-to-string
@@ -486,7 +497,7 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   private async autoswitchToNewTabAction(
-    action: () => Promise<void>
+    action: () => Promise<void>,
   ): Promise<void> {
     if (!this.autoswitchToNewTab) {
       await action();
@@ -503,7 +514,7 @@ export class PlaywrightDriver extends BaseDriver {
 
     if (newPage) {
       logger.debug(
-        `Auto-switching to new tab ${newPage.url()} (${await newPage.title()})`
+        `Auto-switching to new tab ${newPage.url()} (${await newPage.title()})`,
       );
       this.page = newPage;
       await this.initCDPSession();
@@ -531,7 +542,7 @@ export class PlaywrightDriver extends BaseDriver {
     mainFrameId: string,
     frameToIframeMap: Map<string, number>,
     frameParentMap: Map<string, string>,
-    parentFrameId?: string
+    parentFrameId?: string,
   ): Promise<void> {
     const frameId = frameInfo.frame.id;
 
@@ -543,11 +554,11 @@ export class PlaywrightDriver extends BaseDriver {
         });
         frameToIframeMap.set(frameId, ownerInfo.backendNodeId);
         logger.debug(
-          `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`
+          `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`,
         );
       } catch (error) {
         logger.debug(
-          `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`
+          `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
 
@@ -562,7 +573,7 @@ export class PlaywrightDriver extends BaseDriver {
         mainFrameId,
         frameToIframeMap,
         frameParentMap,
-        frameId
+        frameId,
       );
     }
   }
@@ -570,7 +581,7 @@ export class PlaywrightDriver extends BaseDriver {
   private getFrameChain(
     frameId: string,
     frameToIframeMap: Map<string, number>,
-    frameParentMap: Map<string, string>
+    frameParentMap: Map<string, string>,
   ): number[] {
     const chain: number[] = [];
     let currentFrameId = frameId;
@@ -590,7 +601,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   private getOopifTargets(
     targets: { targetInfos?: Array<{ type?: string; url?: string }> },
-    frameTree: CDPFrameTree
+    frameTree: CDPFrameTree,
   ): Array<{ url?: string; type?: string }> {
     const frameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree));
     const oopifTargets: Array<{ url?: string; type?: string }> = [];
@@ -616,7 +627,7 @@ export class PlaywrightDriver extends BaseDriver {
     const frame = this.findPlaywrightFrameByUrl(url);
     if (!frame) {
       logger.debug(
-        `Could not find Playwright frame for URL: ${url.slice(0, 60)}`
+        `Could not find Playwright frame for URL: ${url.slice(0, 60)}`,
       );
       return [];
     }
@@ -643,7 +654,7 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   private async getIframeBackendNodeIdByUrl(
-    url: string
+    url: string,
   ): Promise<number | null> {
     try {
       await this.client.send("DOM.enable");
@@ -655,12 +666,13 @@ export class PlaywrightDriver extends BaseDriver {
 
       if (result.nodeIds && result.nodeIds.length > 0) {
         const nodeId = result.nodeIds[0];
+        // @ts-expect-error -- TODO: Fix types after making TS setup stricter
         const node = await this.client.send("DOM.describeNode", { nodeId });
         return node.node?.backendNodeId ?? null;
       }
     } catch (error) {
       logger.debug(
-        `Could not get iframe backendNodeId: ${error instanceof Error ? error.message : String(error)}`
+        `Could not get iframe backendNodeId: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
     return null;
@@ -668,7 +680,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   private async queryFrameInteractiveElements(
     frame: Frame,
-    iframeBackendNodeId: number | null
+    iframeBackendNodeId: number | null,
   ): Promise<CDPNode[]> {
     const nodes: CDPNode[] = [];
     let nodeId = -1;
@@ -727,11 +739,11 @@ export class PlaywrightDriver extends BaseDriver {
       }
 
       logger.debug(
-        `  -> Created ${nodes.length} synthetic nodes for cross-origin frame`
+        `  -> Created ${nodes.length} synthetic nodes for cross-origin frame`,
       );
     } catch (error) {
       logger.error(
-        `  -> Failed to query frame content: ${error instanceof Error ? error.message : String(error)}`
+        `  -> Failed to query frame content: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
 
@@ -740,7 +752,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   private findCdpFrameIdByUrl(
     cdpFrameTree: CDPFrameTree,
-    targetUrl: string
+    targetUrl: string,
   ): string | null {
     const searchFrame = (frameInfo: CDPFrameInfo): string | null => {
       if (frameInfo.frame.url === targetUrl) {
@@ -759,7 +771,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   private findElementByLocatorInfo(
     frame: Frame,
-    locatorInfo: Record<string, unknown>
+    locatorInfo: Record<string, unknown>,
   ): Locator {
     // Handle synthetic frame nodes
     if (locatorInfo._synthetic_frame) {
@@ -768,7 +780,7 @@ export class PlaywrightDriver extends BaseDriver {
           ? locatorInfo._frame_url
           : "";
       logger.debug(
-        `Synthetic frame node clicked, returning frame locator for: ${frameUrl.slice(0, 80)}`
+        `Synthetic frame node clicked, returning frame locator for: ${frameUrl.slice(0, 80)}`,
       );
       return frame.locator("body");
     }
@@ -788,7 +800,7 @@ export class PlaywrightDriver extends BaseDriver {
     const name = locatorInfo.name;
 
     logger.debug(
-      `Finding element by locator info: role=${String(role)}, name=${String(name)}`
+      `Finding element by locator info: role=${String(role)}, name=${String(name)}`,
     );
 
     // Use Playwright's getByRole for accessibility-based element finding
@@ -800,7 +812,7 @@ export class PlaywrightDriver extends BaseDriver {
       return frame.getByText(name);
     } else {
       throw new Error(
-        `Cannot find element: no role or name in locator_info: ${JSON.stringify(locatorInfo)}`
+        `Cannot find element: no role or name in locator_info: ${JSON.stringify(locatorInfo)}`,
       );
     }
   }
