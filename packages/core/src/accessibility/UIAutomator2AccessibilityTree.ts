@@ -18,7 +18,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     const xmlDeclarationPattern = /^\s*<\?xml.*\?>\s*$/gm;
     const lines = xmlString.split("\n");
     const cleanedLines = lines.filter(
-      (line) => !xmlDeclarationPattern.test(line)
+      (line) => !xmlDeclarationPattern.test(line),
     );
     const cleanedXmlContent = cleanedLines.join("\n");
     this.xmlString = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n<root>\n${cleanedXmlContent}\n</root>`;
@@ -81,7 +81,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
       undefined,
       element.attributes.text,
       element.attributes["content-desc"],
-      element.attributes.bounds
+      element.attributes.bounds,
     );
   }
 
@@ -99,7 +99,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
 
   private findElementByRawId(
     xmlString: string,
-    targetRawId: number
+    targetRawId: number,
   ): XMLElement | null {
     const elements = this.parseSimpleXml(xmlString);
 
@@ -170,6 +170,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
 
       if (isClosingTag) {
         // Handle closing tag - pop from stack
+        // @ts-expect-error -- TODO: Legacy TypeScript config
         if (stack.length > 0 && stack[stack.length - 1].tag === tagName) {
           stack.pop();
         }
@@ -179,17 +180,21 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
         const attributes: Record<string, string> = {};
         let attrMatch: RegExpExecArray | null;
         attrRegex.lastIndex = 0;
+        // @ts-expect-error -- TODO: Legacy TypeScript config
         while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
+          // @ts-expect-error -- TODO: Legacy TypeScript config
           attributes[attrMatch[1]] = attrMatch[2];
         }
 
         const elem: XMLElement = {
+          // @ts-expect-error -- TODO: Legacy TypeScript config
           tag: tagName,
           attributes,
           children: [],
         };
 
         if (stack.length > 0) {
+          // @ts-expect-error -- TODO: Legacy TypeScript config
           stack[stack.length - 1].children.push(elem);
         } else {
           elements.push(elem);

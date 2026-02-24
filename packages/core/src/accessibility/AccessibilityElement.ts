@@ -1,18 +1,18 @@
 export class AccessibilityElement {
-  id?: number;
-  backendNodeId?: number;
-  name?: string;
-  label?: string;
-  type?: string;
-  value?: string;
-  androidResourceId?: string;
-  androidClass?: string;
-  androidText?: string;
-  androidContentDesc?: string;
-  androidBounds?: string;
-  frame?: object;
-  locatorInfo?: Record<string, unknown>;
-  frameChain?: number[]; // For Selenium: chain of iframe backendNodeIds from root to element's frame
+  id?: number | undefined;
+  backendNodeId?: number | undefined;
+  name?: string | undefined;
+  label?: string | undefined;
+  type?: string | undefined;
+  value?: string | undefined;
+  androidResourceId?: string | undefined;
+  androidClass?: string | undefined;
+  androidText?: string | undefined;
+  androidContentDesc?: string | undefined;
+  androidBounds?: string | undefined;
+  frame?: object | undefined;
+  locatorInfo?: Record<string, unknown> | undefined;
+  frameChain?: number[] | undefined; // For Selenium: chain of iframe backendNodeIds from root to element's frame
 
   constructor(
     id?: number,
@@ -28,7 +28,7 @@ export class AccessibilityElement {
     androidBounds?: string,
     frame?: object,
     locatorInfo?: Record<string, unknown>,
-    frameChain?: number[]
+    frameChain?: number[],
   ) {
     this.id = id;
     this.backendNodeId = backendNodeId;

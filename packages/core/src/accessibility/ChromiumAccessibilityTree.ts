@@ -186,6 +186,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       for (const childId of node.childIds) {
         if (childId in nodeLookup) {
           const childElem = this.nodeToXml(
+            // @ts-expect-error -- TODO: Legacy TypeScript config
             nodeLookup[childId],
             nodeLookup,
             iframeChildren,
@@ -392,6 +393,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
 
       if (isClosingTag) {
         // Handle closing tag - pop from stack
+        // @ts-expect-error -- TODO: Legacy TypeScript config
         if (stack.length > 0 && stack[stack.length - 1].tag === tagName) {
           stack.pop();
         }
@@ -401,22 +403,27 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
         const attributes: Record<string, string> = {};
         let attrMatch: RegExpExecArray | null;
         attrRegex.lastIndex = 0;
+        // @ts-expect-error -- TODO: Legacy TypeScript config
         while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
+          // @ts-expect-error -- TODO: Legacy TypeScript config
           attributes[attrMatch[1]] = attrMatch[2];
         }
 
         // Unescape XML entities in attribute values
         for (const key of Object.keys(attributes)) {
+          // @ts-expect-error -- TODO: Legacy TypeScript config
           attributes[key] = this.unescapeXml(attributes[key]);
         }
 
         const elem: XMLElement = {
+          // @ts-expect-error -- TODO: Legacy TypeScript config
           tag: tagName,
           attributes,
           children: [],
         };
 
         if (stack.length > 0) {
+          // @ts-expect-error -- TODO: Legacy TypeScript config
           stack[stack.length - 1].children.push(elem);
         } else {
           elements.push(elem);
