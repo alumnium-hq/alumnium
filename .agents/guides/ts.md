@@ -42,7 +42,9 @@ Don't be unnecessarily explicit or add redundant code that doesn't add value. Fo
 
 - Constant values should be in UPPER_SNAKE_CASE.
 
-- Module names should be in camelCase, while static files and assets should be in kebab-case.
+- Module names should match the exports. For example, if the main module exports is `ActorAgent`, the file should be named `ActorAgent.ts`. If the module exports a bunch of functions, it should be in camelCase.
+
+- Static files and assets should be in kebab-case.
 
 ### Structure
 
