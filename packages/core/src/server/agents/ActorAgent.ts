@@ -1,3 +1,3 @@
-import { BaseAgent } from "./base.ts";
+import { BaseAgent } from "./BaseAgent.ts";
 
 export class ActorAgent extends BaseAgent {}
