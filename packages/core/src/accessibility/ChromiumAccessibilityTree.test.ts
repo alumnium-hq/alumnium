@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { ChromiumAccessibilityTree } from "./ChromiumAccessibilityTree.ts";
+import { ChromiumAccessibilityTree } from "./ChromiumAccessibilityTree.js";
 
 const FIXTURE_PATH = path.resolve(
   import.meta.dir,

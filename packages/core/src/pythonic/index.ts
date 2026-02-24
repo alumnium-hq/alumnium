@@ -1,1 +1,1 @@
-export * from "./pythonicId.ts";
+export * from "./pythonicId.js";
