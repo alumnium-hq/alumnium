@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { ChromiumAccessibilityTree as ClientChromiumAccessibilityTree } from "../../accessibility/ChromiumAccessibilityTree.ts";
-import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
+import { ChromiumAccessibilityTree as ClientChromiumAccessibilityTree } from "../../accessibility/ChromiumAccessibilityTree.js";
+import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.js";
 
 const FIXTURE_PATH = new URL(
   "./__fixtures__/chromium_accessibility_tree.json",

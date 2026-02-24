@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { UIAutomator2AccessibilityTree } from "./UIAutomator2AccessibilityTree.ts";
+import { UIAutomator2AccessibilityTree } from "./UIAutomator2AccessibilityTree.js";
 
 const FIXTURE_PATH = path.resolve(
   import.meta.dir,

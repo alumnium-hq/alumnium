@@ -1,8 +1,8 @@
 import { LanguageModel } from "ai";
 import { log } from "smollog";
-import { ensureModelName, Provider } from "../model/model.ts";
-import { ToolSchema } from "../tool/tool.ts";
-import { Session, SessionPlatform } from "./session.ts";
+import { ensureModelName, Provider } from "../model/model.js";
+import { ToolSchema } from "../tool/tool.js";
+import { Session, SessionPlatform } from "./session.js";
 
 export class SessionManager {
   sessions: Record<Session.Id, Session> = {};

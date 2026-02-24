@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./tools": "./src/tools/index.ts"
   },
   "overrides": {
     "exports": {
@@ -17,10 +18,12 @@
     "format": "node -e \"console.log('TODO')\"",
     "test": "bun test --preload ./tests/py2ts.ts",
     "test:watch": "bun test --preload ./tests/py2ts.ts --watch",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "types:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
     "@types/bun": "^1.3.9",
+    "@types/selenium-webdriver": "^4.35.5",
     "zod": "^4.3.6"
   },
   "peerDependencies": {
@@ -28,6 +31,8 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
+    "@logtape/file": "^2.0.2",
+    "@logtape/logtape": "^2.0.2",
     "ai": "^6.0.86",
     "alwaysly": "^0.4.0",
     "diff": "^8.0.3",
@@ -35,7 +40,10 @@
     "domhandler": "^5.0.3",
     "elysia": "^1.4.24",
     "htmlparser2": "^10.1.0",
+    "playwright": "^1.58.2",
+    "selenium-webdriver": "^4.41.0",
     "smollog": "^0.2.0",
+    "webdriverio": "^9.24.0",
     "xml-formatter": "^3.6.7"
   }
 }
