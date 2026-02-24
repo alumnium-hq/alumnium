@@ -88,15 +88,14 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Extract properties for UIAutomator2
-    const accessibilityElement = new AccessibilityElement();
-    accessibilityElement.id = rawId;
-    accessibilityElement.type = element.attribs["class"] ?? element.tagName;
-    accessibilityElement.androidResourceId =
-      element.attribs["resource-id"] ?? undefined;
-    accessibilityElement.androidText = element.attribs["text"] ?? undefined;
-    accessibilityElement.androidContentDesc =
-      element.attribs["content-desc"] ?? undefined;
-    accessibilityElement.androidBounds = element.attribs["bounds"] ?? undefined;
+    const accessibilityElement: AccessibilityElement = {
+      id: rawId,
+      type: element.attribs["class"] ?? element.tagName,
+      androidResourceId: element.attribs["resource-id"] ?? undefined,
+      androidText: element.attribs["text"] ?? undefined,
+      androidContentDesc: element.attribs["content-desc"] ?? undefined,
+      androidBounds: element.attribs["bounds"] ?? undefined,
+    };
 
     return accessibilityElement;
   }

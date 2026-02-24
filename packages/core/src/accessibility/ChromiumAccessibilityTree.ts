@@ -260,21 +260,11 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       const frameUrl = element.attribs["_frame_url"];
       if (frameUrl) {
         // Synthetic iframe node - no locator info, use frame reference
-        return new AccessibilityElement(
-          undefined,
-          undefined,
-          undefined,
-          element.tagName,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          this.#frameMap[rawId],
-          { _synthetic_frame: true, _frame_url: frameUrl },
-        );
+        return {
+          type: element.tagName,
+          frame: this.#frameMap[rawId],
+          locatorInfo: { _synthetic_frame: true, _frame_url: frameUrl },
+        };
       }
 
       // Regular Playwright node with locator info
@@ -283,21 +273,11 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
         ? (JSON.parse(locatorInfoStr) as Record<string, unknown>)
         : {};
 
-      return new AccessibilityElement(
-        undefined,
-        undefined,
-        undefined,
-        element.tagName,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        this.#frameMap[rawId],
+      return {
+        type: element.tagName,
+        frame: this.#frameMap[rawId],
         locatorInfo,
-      );
+      };
     }
 
     // Extract backendDOMNodeId for Chromium CDP nodes
@@ -308,22 +288,12 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       );
     }
 
-    return new AccessibilityElement(
-      undefined,
-      undefined,
-      undefined,
-      element.tagName,
-      undefined,
-      Number.parseInt(backendNodeIdStr),
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      this.#frameMap[rawId],
-      undefined,
-      this.#frameChainMap[rawId],
-    );
+    return {
+      type: element.tagName,
+      backendNodeId: parseInt(backendNodeIdStr),
+      frame: this.#frameMap[rawId],
+      frameChain: this.#frameChainMap[rawId],
+    };
   }
 
   /** Scope the tree to a smaller subtree identified by raw_id. */

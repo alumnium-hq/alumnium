@@ -63,13 +63,13 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Extract properties for XCUITest
-    return new AccessibilityElement(
-      rawId,
-      element.attributes.name,
-      element.attributes.label,
-      element.tag,
-      element.attributes.value,
-    );
+    return {
+      id: rawId,
+      name: element.attributes.name,
+      label: element.attributes.label,
+      type: element.tag,
+      value: element.attributes.value,
+    };
   }
 
   scopeToArea(rawId: number): XCUITestAccessibilityTree {
