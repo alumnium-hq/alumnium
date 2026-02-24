@@ -1,3 +1,4 @@
+import { always } from "alwaysly";
 import { render } from "dom-serializer";
 import {
   Node as DOMHandlerNode,
@@ -19,22 +20,36 @@ export namespace XML {
   // NOTE: xml-formatter has busted types, so we need to cast it manually.
   const xmlFormat: (typeof xmlFormatter)["default"] = xmlFormatter as any;
 
-  export function parse(xml: string): Node[] {
+  export function parseRootChildren(xml: string): Node[] {
     const root = parseDocument(xml.trim(), { xmlMode: true });
     return root.children;
   }
 
-  export function parseMultiroot(xml: string): Node[] {
+  export function parseMultirootChildren(xml: string): Node[] {
     const wrappedXml = `<root>${xml.trim()}</root>`;
-    return parse(wrappedXml);
+    return parseRootChildren(wrappedXml);
   }
 
-  export function parseAny(xml: string): Node[] {
+  export function parseAnyRootChildren(xml: string): Node[] {
     try {
-      return parse(xml);
+      return parseRootChildren(xml);
     } catch {
-      return parseMultiroot(xml);
+      return parseMultirootChildren(xml);
     }
+  }
+
+  export function parseRoot(xml: string): Element {
+    const roots = XML.parseRootChildren(xml);
+    let root: Element | null = null;
+    for (const node of roots) {
+      const el = XML.nodeAsTag(node);
+      if (el && el.tagName === "root") {
+        root = el;
+        break;
+      }
+    }
+    always(root);
+    return root;
   }
 
   export function format(els: AnyElement[]): string {
