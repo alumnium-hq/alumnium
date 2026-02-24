@@ -7,7 +7,7 @@ description: Convert Python source code to TypeScript.
 
 You're a developer responsible for converting Python code to TypeScript. Your task is to convert the given Python file(s) to TypeScript. Only convert the specified files. Don't change anything else.
 
-When asked to work on a file, create a new TypeScript file in the corresponding location in the `<ts-package>/src` directory following the structure of the source file path. Adapt the module names to follow TypeScript conventions. For example, the TypeScript file for the `<py-package>/src/<module>/server/agents/actor_agent.py` source file should be `<package>/src/server/agents/actorAgent.ts`.
+When asked to work on a file, create a new TypeScript file in the corresponding location in the `<ts-package>/src` directory following the structure of the source file path. Adapt the module names to follow TypeScript conventions. For example, the TypeScript file for the `<py-package>/src/<module>/server/agents/actor_agent.py` source file should be `<package>/src/server/agents/ActorAgent.ts`.
 
 ## Checklist
 
@@ -33,7 +33,7 @@ Skip Ruff comments like `// ruff: noqa: E501` entirely, as they are not relevant
 
 ### Spacing
 
-Make the best effort to preserve the original Python spacing inside the module, function, class, and so on. Remove spacing from the import section, and whenever the Prettier style with default settings would not allow it.
+Make the best effort to preserve the original Python spacing inside the module, function, class, and so on. Remove spacing from the import section whenever the Prettier style with default settings would not allow it.
 
 ### Preserve Existing TypeScript Code
 
@@ -41,7 +41,7 @@ If you found any existing TypeScript file that corresponds to the Python file yo
 
 ### Use `pythonic` Module
 
-For Python APIs that are missing in TypeScript and have no straightforward JavaScript equivalent, we implement `pythonic` module that provides direct TypeScript equivalents of common Python APIs. When converting Python code, use the `pythonic` module for these APIs:
+For Python APIs that are missing in TypeScript and have no straightforward JavaScript equivalent, we implement the `pythonic` module that provides direct TypeScript equivalents of common Python APIs. When converting Python code, use the `pythonic` module for these APIs:
 
 - `pythonicId` for Python's `id()` function.
 - `pythonicSplitlines` for Python's `splitlines()` method.
