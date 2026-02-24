@@ -35,5 +35,8 @@
             "source.fixAll": "explicit",
         },
     },
-  }
+    "files.exclude": {
+      "packages/": true,
+    },
+  },
 }
