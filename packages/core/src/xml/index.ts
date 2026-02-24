@@ -37,7 +37,7 @@ export namespace XML {
     }
   }
 
-  export function format(els: Element[]): string {
+  export function format(els: AnyElement[]): string {
     let xml = "";
     for (const element of els) {
       xml += xmlFormat(
@@ -57,23 +57,24 @@ export namespace XML {
     return xml;
   }
 
-  export function nodeAsTag(node: Node): Element | undefined {
+  export function nodeAsTag(node: Node): Element | null {
     if (isTag(node)) {
       return node;
     }
+    return null;
   }
 
-  export function nodeAsNodeWithChildren(
-    node: Node,
-  ): NodeWithChildren | undefined {
+  export function nodeAsNodeWithChildren(node: Node): NodeWithChildren | null {
     if (hasChildren(node)) {
       return node;
     }
+    return null;
   }
 
-  export function nodeAsText(node: Node): Text | undefined {
+  export function nodeAsText(node: Node): Text | null {
     if (isText(node)) {
       return node;
     }
+    return null;
   }
 }
