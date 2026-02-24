@@ -20,7 +20,7 @@ function duplicatedTree(): Promise<ServerXCUITestAccessibilityTree> {
   return tree("duplicated_xcuitest_accessibility_tree");
 }
 
-describe.todo(ServerXCUITestAccessibilityTree, () => {
+describe(ServerXCUITestAccessibilityTree, () => {
   it("toXml converts simple xcuitest tree", async () => {
     expect((await simpleTree()).toXml()).toBe(
       `
@@ -28,53 +28,83 @@ describe.todo(ServerXCUITestAccessibilityTree, () => {
   <Window id="2">
     <generic id="5">
       <NavigationBar id="6" name="BLTNBoard.BulletinView">
-        <Button id="7" name="ToDoList" />
-        <Button id="8" name="settingsIcon" />
+        <Button id="7" name="ToDoList"/>
+        <Button id="8" name="settingsIcon"/>
       </NavigationBar>
       <generic id="11">
         <Table id="12">
           <Cell id="13">
-            <StaticText id="14">0</StaticText>
-            <StaticText id="17">All Tasks</StaticText>
+            <StaticText id="14">
+              0
+            </StaticText>
+            <StaticText id="17">
+              All Tasks
+            </StaticText>
           </Cell>
           <Cell id="21">
-            <StaticText id="22">0</StaticText>
-            <StaticText id="25">Today</StaticText>
+            <StaticText id="22">
+              0
+            </StaticText>
+            <StaticText id="25">
+              Today
+            </StaticText>
           </Cell>
           <Cell id="28">
-            <StaticText id="29">0</StaticText>
-            <StaticText id="32">Tomorrow</StaticText>
+            <StaticText id="29">
+              0
+            </StaticText>
+            <StaticText id="32">
+              Tomorrow
+            </StaticText>
           </Cell>
           <Cell id="35">
-            <StaticText id="36">0</StaticText>
-            <StaticText id="39">Next 7 Days</StaticText>
+            <StaticText id="36">
+              0
+            </StaticText>
+            <StaticText id="39">
+              Next 7 Days
+            </StaticText>
           </Cell>
           <Cell id="42">
-            <StaticText id="45">Custom Interval</StaticText>
+            <StaticText id="45">
+              Custom Interval
+            </StaticText>
           </Cell>
           <Cell id="48">
-            <StaticText id="49">0</StaticText>
-            <StaticText id="52">Completed</StaticText>
+            <StaticText id="49">
+              0
+            </StaticText>
+            <StaticText id="52">
+              Completed
+            </StaticText>
           </Cell>
-          <generic id="56" name="Vertical scroll bar, 1 page" />
-          <generic id="58" name="Horizontal scroll bar, 1 page" />
+          <generic id="56" name="Vertical scroll bar, 1 page"/>
+          <generic id="58" name="Horizontal scroll bar, 1 page"/>
         </Table>
         <Button id="59">
-          <StaticText id="60">Add Task</StaticText>
+          <StaticText id="60">
+            Add Task
+          </StaticText>
         </Button>
       </generic>
     </generic>
     <generic id="62">
       <generic id="66">
         <generic id="67">
-          <StaticText id="68">Welcome to ToDoList</StaticText>
+          <StaticText id="68">
+            Welcome to ToDoList
+          </StaticText>
         </generic>
-        <Image id="69" name="roundedIcon" />
-        <StaticText id="70">Start with a quick onboarding</StaticText>
+        <Image id="69" name="roundedIcon"/>
+        <StaticText id="70">
+          Start with a quick onboarding
+        </StaticText>
         <Button id="73">
-          <StaticText id="74">Continue</StaticText>
-          <Image id="75" name="checkmark.circle" label="Selected" />
-          <TextField id="76" name="maskedElement" label="Enter Code" value="Entered value" />
+          <StaticText id="74">
+            Continue
+          </StaticText>
+          <Image id="75" name="checkmark.circle" label="Selected"/>
+          <TextField id="76" name="maskedElement" label="Enter Code" value="Entered value"/>
         </Button>
       </generic>
     </generic>
@@ -95,17 +125,23 @@ describe.todo(ServerXCUITestAccessibilityTree, () => {
           <generic id="39">
             <generic id="40">
               <generic id="46">
-                <generic id="49" name="IconFooBar" />
-                <StaticText id="50">Welcome to the new FooBar app!</StaticText>
-                <StaticText id="51">We're happy to have you!</StaticText>
+                <generic id="49" name="IconFooBar"/>
+                <StaticText id="50">
+                  Welcome to the new FooBar app!
+                </StaticText>
+                <StaticText id="51">
+                  We're happy to have you!
+                </StaticText>
               </generic>
             </generic>
             <generic id="52">
-              <StaticText id="53">Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today!</StaticText>
+              <StaticText id="53">
+                Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today!
+              </StaticText>
             </generic>
             <generic id="54" name="onboarding-footer-button">
               <generic id="55">
-                <Button id="56" name="Start Now" />
+                <Button id="56" name="Start Now"/>
               </generic>
             </generic>
           </generic>

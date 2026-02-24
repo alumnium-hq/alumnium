@@ -46,7 +46,7 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
     // aren't available as children of an element, so simply ignoring them here.
     if (!element) return null;
 
-    const simplifiedId = element ? this.getNextId() : -1;
+    const simplifiedId = this.getNextId();
     const rawType = element.attribs.type ?? element.tagName;
 
     // Extract raw_id attribute
@@ -135,7 +135,7 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
 
     this.#idToNode[simplifiedId] = internalNode;
 
-    for (const childElement of element.children || []) {
+    for (const childElement of element.children) {
       const childNode = this.#parseElement(childElement);
       if (childNode) {
         internalNode.children.push(childNode);
