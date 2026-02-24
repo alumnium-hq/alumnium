@@ -1,7 +1,7 @@
 import { always } from "alwaysly";
 import { Element, Text } from "domhandler";
-import { XML } from "../../xml/index.ts";
-import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
+import { XML } from "../../xml/index.js";
+import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.js";
 
 export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree {
   #tree: InternalNode | null;

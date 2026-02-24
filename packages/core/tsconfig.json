@@ -22,7 +22,7 @@
     "moduleResolution": "nodenext",
     "isolatedModules": true,
     "moduleDetection": "force", // Stop treating files without imports/exports as single global scripts
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false, // Don't allow importing .ts files, as we need to enable emitting.
     "resolveJsonModule": true,
     // Env
     "lib": ["ESNext"],

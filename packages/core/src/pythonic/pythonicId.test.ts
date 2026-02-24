@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { pythonicId } from "./pythonicId.ts";
+import { pythonicId } from "./pythonicId.js";
 
 describe(pythonicId, () => {
   it("returns the same id for the same object", () => {

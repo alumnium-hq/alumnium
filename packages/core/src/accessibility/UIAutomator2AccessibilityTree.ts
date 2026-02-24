@@ -1,7 +1,7 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
-import { pythonicSplitlines } from "../pythonic/pythonicSplitlines.ts";
-import { XML } from "../xml/index.ts";
+import { pythonicSplitlines } from "../pythonic/pythonicSplitlines.js";
+import { XML } from "../xml/index.js";
 import { AccessibilityElement } from "./AccessibilityElement.js";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
 

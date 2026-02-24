@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { ServerXCUITestAccessibilityTree } from "./ServerXCUITestAccessibilityTree.ts";
+import { ServerXCUITestAccessibilityTree } from "./ServerXCUITestAccessibilityTree.js";
 
 async function tree(
   filename: string,
