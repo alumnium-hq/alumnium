@@ -1,211 +1,154 @@
+import { always } from "alwaysly";
+import { Element } from "domhandler";
+import { pythonicSplitlines } from "../pythonic/pythonicSplitlines.ts";
+import { XML } from "../xml/index.ts";
 import { AccessibilityElement } from "./AccessibilityElement.js";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
 
-interface XMLElement {
-  tag: string;
-  attributes: Record<string, string>;
-  children: XMLElement[];
-}
-
 export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
-  private xmlString: string;
-  private nextRawId: number = 0;
-  private raw: string | null = null;
+  #xmlString: string;
+  #nextRawId: number;
+  #raw: string | null;
 
   constructor(xmlString: string) {
     super();
-    // Clean multiple XML declaration lines from page source
-    const xmlDeclarationPattern = /^\s*<\?xml.*\?>\s*$/gm;
-    const lines = xmlString.split("\n");
+    // cleaning multiple xml declaration lines from page source
+    const xmlDeclarationPattern = /^\s*<\?xml.*\?>\s*$/;
+    const lines = pythonicSplitlines(xmlString);
     const cleanedLines = lines.filter(
       (line) => !xmlDeclarationPattern.test(line),
     );
     const cleanedXmlContent = cleanedLines.join("\n");
-    this.xmlString = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n<root>\n${cleanedXmlContent}\n</root>`;
+    this.#xmlString = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n <root>\n${cleanedXmlContent}\n</root>`;
+
+    this.#nextRawId = 0;
+    this.#raw = null;
   }
 
-  private static fromXml(xmlString: string): UIAutomator2AccessibilityTree {
-    const instance = new UIAutomator2AccessibilityTree("");
-    instance.raw = xmlString;
-    return instance;
-  }
-
+  /** Parse XML and add raw_id attributes to all elements. */
   toStr(): string {
-    if (this.raw !== null) {
-      return this.raw;
+    if (this.#raw !== null) {
+      return this.#raw;
     }
 
     // Parse the XML
-    const elements = this.parseSimpleXml(this.xmlString);
+    // TODO: Simplify after figuring out multiroot shenanigans.
+    // Also refactor duplicate roots -> root code below.
+    const root = this.#parseRoot(this.#xmlString);
 
     // Add raw_id attributes recursively
-    for (const elem of elements) {
-      this.addRawIds(elem);
-    }
+    this.#addRawIds(root);
 
     // Serialize back to string
-    let result = "";
-    for (const elem of elements) {
-      result += this.elementToString(elem, 0);
-    }
-
-    this.raw = result;
-    return this.raw;
+    this.#raw = XML.format([root]);
+    return this.#raw;
   }
 
-  private addRawIds(elem: XMLElement): void {
-    this.nextRawId++;
-    elem.attributes.raw_id = String(this.nextRawId);
+  /** Recursively add raw_id attribute to element and its children. */
+  #addRawIds(elem: Element): void {
+    this.#nextRawId += 1;
+    elem.attribs["raw_id"] = String(this.#nextRawId);
     for (const child of elem.children) {
-      this.addRawIds(child);
+      const el = XML.nodeAsTag(child);
+      if (!el) continue; // Skip non-element nodes, e.g., text nodes
+      this.#addRawIds(el);
     }
   }
 
+  /**
+   * Find element by raw_id and return its properties for XPath construction.
+   *
+   * @param rawId The raw_id to search for
+   *
+   * @returns AccessibilityElement with type, androidresourceid, androidtext, androidcontentdesc, androidbounds
+   */
   elementById(rawId: number): AccessibilityElement {
+    // Get raw XML with raw_id attributes
     const rawXml = this.toStr();
-    const element = this.findElementByRawId(rawXml, rawId);
+    const root = this.#parseRoot(rawXml);
 
-    if (!element) {
+    // Find element with matching raw_id
+    function findElement(elem: Element, targetId: string): Element | null {
+      if (elem.attribs["raw_id"] === targetId) {
+        return elem;
+      }
+      for (const child of Array.from(elem.children)) {
+        const childEl = XML.nodeAsTag(child);
+        if (!childEl) continue; // Skip non-element nodes, e.g., text nodes
+        const result = findElement(childEl, targetId);
+        if (result !== null) {
+          return result;
+        }
+      }
+      return null;
+    }
+
+    const element = findElement(root, String(rawId));
+    if (element === null) {
       throw new Error(`No element with raw_id=${rawId} found`);
     }
 
     // Extract properties for UIAutomator2
-    return new AccessibilityElement(
-      rawId,
-      undefined,
-      undefined,
-      element.attributes.class || element.tag,
-      undefined,
-      undefined,
-      element.attributes["resource-id"],
-      undefined,
-      element.attributes.text,
-      element.attributes["content-desc"],
-      element.attributes.bounds,
-    );
+    const accessibilityElement = new AccessibilityElement();
+    accessibilityElement.id = rawId;
+    accessibilityElement.type = element.attribs["class"] ?? element.tagName;
+    accessibilityElement.androidResourceId =
+      element.attribs["resource-id"] ?? undefined;
+    accessibilityElement.androidText = element.attribs["text"] ?? undefined;
+    accessibilityElement.androidContentDesc =
+      element.attribs["content-desc"] ?? undefined;
+    accessibilityElement.androidBounds = element.attribs["bounds"] ?? undefined;
+
+    return accessibilityElement;
   }
 
+  /** Scope the tree to a smaller subtree identified by raw_id. */
   scopeToArea(rawId: number): UIAutomator2AccessibilityTree {
     const rawXml = this.toStr();
-    const element = this.findElementByRawId(rawXml, rawId);
 
-    if (!element) {
+    // Parse the XML
+    const root = this.#parseRoot(rawXml);
+
+    // Find the element with the matching raw_id
+    function findElement(elem: Element, targetId: string): Element | null {
+      if (elem.attribs["raw_id"] === targetId) {
+        return elem;
+      }
+      for (const child of Array.from(elem.children)) {
+        const childEl = XML.nodeAsTag(child);
+        always(childEl);
+        const result = findElement(childEl, targetId);
+        if (result !== null) {
+          return result;
+        }
+      }
+      return null;
+    }
+
+    const targetElem = findElement(root, String(rawId));
+
+    if (targetElem === null) {
+      // If not found, return original tree
       return this;
     }
 
-    const scopedXml = this.elementToString(element, 0);
-    return UIAutomator2AccessibilityTree.fromXml(scopedXml);
+    // Convert the scoped element back to XML string
+    const scopedXml = XML.format([targetElem]);
+
+    return new UIAutomator2AccessibilityTree(scopedXml);
   }
 
-  private findElementByRawId(
-    xmlString: string,
-    targetRawId: number,
-  ): XMLElement | null {
-    const elements = this.parseSimpleXml(xmlString);
-
-    const search = (elem: XMLElement): XMLElement | null => {
-      if (elem.attributes.raw_id === String(targetRawId)) {
-        return elem;
-      }
-      for (const child of elem.children) {
-        const result = search(child);
-        if (result) return result;
-      }
-      return null;
-    };
-
-    for (const elem of elements) {
-      const result = search(elem);
-      if (result) return result;
-    }
-
-    return null;
-  }
-
-  private elementToString(elem: XMLElement, indent: number): string {
-    const indentStr = "  ".repeat(indent);
-    let result = `${indentStr}<${elem.tag}`;
-
-    // Add attributes
-    for (const [key, value] of Object.entries(elem.attributes)) {
-      const escapedValue = value
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;");
-      result += ` ${key}="${escapedValue}"`;
-    }
-
-    if (elem.children.length === 0) {
-      result += " />\n";
-    } else {
-      result += ">\n";
-      for (const child of elem.children) {
-        result += this.elementToString(child, indent + 1);
-      }
-      result += `${indentStr}</${elem.tag}>\n`;
-    }
-
-    return result;
-  }
-
-  private parseSimpleXml(xmlString: string): XMLElement[] {
-    const elements: XMLElement[] = [];
-    const stack: XMLElement[] = [];
-
-    // Combined regex for all XML tokens (opening tags, closing tags, self-closing tags)
-    const tokenRegex =
-      /<\/?([a-zA-Z_][\w:.-]*)((?:\s+[\w:.-]+="[^"]*")*)\s*(\/?)>/g;
-    const attrRegex = /([\w:.-]+)="([^"]*)"/g;
-
-    let match: RegExpExecArray | null;
-
-    while ((match = tokenRegex.exec(xmlString)) !== null) {
-      const fullMatch = match[0];
-      const tagName = match[1];
-      const attrsString = match[2];
-      const selfClosing = match[3] === "/";
-      const isClosingTag = fullMatch.startsWith("</");
-
-      if (isClosingTag) {
-        // Handle closing tag - pop from stack
-        // @ts-expect-error -- TODO: Legacy TypeScript config
-        if (stack.length > 0 && stack[stack.length - 1].tag === tagName) {
-          stack.pop();
-        }
-      } else {
-        // Handle opening or self-closing tag
-        // Parse attributes
-        const attributes: Record<string, string> = {};
-        let attrMatch: RegExpExecArray | null;
-        attrRegex.lastIndex = 0;
-        // @ts-expect-error -- TODO: Legacy TypeScript config
-        while ((attrMatch = attrRegex.exec(attrsString)) !== null) {
-          // @ts-expect-error -- TODO: Legacy TypeScript config
-          attributes[attrMatch[1]] = attrMatch[2];
-        }
-
-        const elem: XMLElement = {
-          // @ts-expect-error -- TODO: Legacy TypeScript config
-          tag: tagName,
-          attributes,
-          children: [],
-        };
-
-        if (stack.length > 0) {
-          // @ts-expect-error -- TODO: Legacy TypeScript config
-          stack[stack.length - 1].children.push(elem);
-        } else {
-          elements.push(elem);
-        }
-
-        if (!selfClosing) {
-          stack.push(elem);
-        }
+  #parseRoot(xml: string): Element {
+    const roots = XML.parse(xml);
+    let root: Element | null = null;
+    for (const node of roots) {
+      const el = XML.nodeAsTag(node);
+      if (el && el.tagName === "root") {
+        root = el;
+        break;
       }
     }
-
-    return elements;
+    always(root);
+    return root;
   }
 }
