@@ -171,6 +171,19 @@ class TestElementExtraction:
         assert elem_attrs is not None
         assert "text" not in elem_attrs
 
+    def test_extract_element_attrs_text_from_children(self, elements_cache):
+        """Test that text is collected from descendant nodes when direct text is empty."""
+        tree_xml = """
+        <root>
+            <button name="" id="1" focusable="True">
+                <generic id="2">Search</generic>
+            </button>
+        </root>
+        """
+        elem_attrs = elements_cache._extract_element_attrs(tree_xml, 1)
+        assert elem_attrs is not None
+        assert elem_attrs["text"] == "Search"
+
     def test_extract_element_attrs_with_text_index(self, elements_cache):
         """Test that text content is used to distinguish otherwise identical elements."""
         tree_xml = """
@@ -299,6 +312,26 @@ class TestElementExtraction:
         result = elements_cache._resolve_elements(elements, tree_xml)
         assert result is not None
         assert result == {0: 200}
+
+    def test_resolve_elements_with_nested_text(self, elements_cache):
+        """Test resolution works when text lives in a child node (with surrounding whitespace)."""
+        elements = [
+            {"role": "button", "index": 0, "name": "", "text": "Search"},
+        ]
+        tree_xml = """
+        <root>
+            <button name="" id="10" focusable="True">
+                <generic id="11">Search</generic>
+            </button>
+            <button name="" id="20" focusable="True">
+                <generic id="21">Cancel</generic>
+            </button>
+        </root>
+        """
+
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is not None
+        assert result == {0: 10}
 
     def test_resolve_elements_missing(self, elements_cache):
         """Test element resolution when element is missing."""

@@ -377,18 +377,21 @@ class ElementsCache(BaseCache):
             # Collect all attributes except id as raw strings
             attrs = {key: value for key, value in element.attrib.items() if key != "id"}
 
-            # Also capture text content if present
-            text = (element.text or "").strip()
+            # Also capture text content (including all descendant text nodes) if present
+            text = " ".join("".join(element.itertext()).split())
             if text:
                 attrs["text"] = text
 
-            # Build XPath to find all elements with same role and same properties
+            # Build XPath from XML attributes (text is matched separately via itertext)
             xpath = f".//{element.tag}"
             for key, value in attrs.items():
-                xpath += f"[.='{value}']" if key == "text" else f"[@{key}='{value}']"
+                if key != "text":
+                    xpath += f"[@{key}='{value}']"
 
-            # Find all matching elements and determine this element's position
+            # Find all matching elements, then filter by text content if present
             matches = root.findall(xpath)
+            if text:
+                matches = [m for m in matches if " ".join("".join(m.itertext()).split()) == text]
             index = 0
             for i, match in enumerate(matches):
                 if match.get("id") == str(element_id):
@@ -429,14 +432,18 @@ class ElementsCache(BaseCache):
                 role = element.get("role")
                 idx = element.get("index", 0)
 
-                # Build XPath from all properties (excluding role and index)
+                # Build XPath from XML attributes (text is matched separately via itertext)
                 props = {k: v for k, v in element.items() if k not in ("role", "index")}
+                text_value = props.pop("text", None)
 
                 xpath = f".//{role}"
                 for key, value in props.items():
-                    xpath += f"[.='{value}']" if key == "text" else f"[@{key}='{value}']"
+                    xpath += f"[@{key}='{value}']"
 
+                # Find candidates, then filter by text content if present
                 matches = root.findall(xpath)
+                if text_value:
+                    matches = [m for m in matches if " ".join("".join(m.itertext()).split()) == text_value]
                 if idx >= len(matches):
                     logger.debug(f"Element index {idx} out of range (found {len(matches)} matches for {role})")
                     return None
