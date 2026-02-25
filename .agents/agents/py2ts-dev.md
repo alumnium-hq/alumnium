@@ -17,7 +17,7 @@ When you finish converting the code, always make sure to review the following ch
 
 - Missing/unknown APIs are preserved with inline `// @ts-expect-error -- TODO: Missing Python API` comments rather than custom replacements.
 
-- All Python comments/docstrings were preserved in TypeScript form.
+- All Python comments/docstrings were preserved and converted into TSDoc annotations.
 
 ## How to Convert
 
@@ -43,8 +43,32 @@ If you found any existing TypeScript file that corresponds to the Python file yo
 
 For Python APIs that are missing in TypeScript and have no straightforward JavaScript equivalent, we implement the `pythonic` module that provides direct TypeScript equivalents of common Python APIs. When converting Python code, use the `pythonic` module for these APIs:
 
-- `pythonicId` for Python's `id()` function.
-- `pythonicSplitlines` for Python's `splitlines()` method.
+- `id` -> `pythonicId`
+- `splitlines` -> `pythonicSplitlines`
+
+### Use LangChain JS SDK
+
+Replace Python's LangChain with the official LangChain JS SDK that follows the same structure and patterns.
+
+Module mappings:
+
+- `langchain_core` -> `@langchain/core`.
+
+Most submodules map directly, e.g., `langchain_core.prompts` -> `@langchain/core/prompts`, but some have different structures, e.g., `langchain_core.language_models.BaseChatModel` is exported from `@langchain/core/language_models/chat_models`. Make sure to properly translate imports (see https://reference.langchain.com/javascript/langchain-core).
+
+#### Python Pipes in LangChain
+
+Use the `.pipe` method when translating the `|` operator, for example:
+
+```python
+self.chain = prompt | llm.bind_tools(convert_tools_to_schemas(tools))
+```
+
+...should be translated to:
+
+```typescript
+this.chain = prompt.pipe(llm.bindTools(convertToolsToSchemas(tools)));
+```
 
 ### Don't Implement Missing APIs
 
