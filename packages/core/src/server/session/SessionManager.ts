@@ -2,7 +2,7 @@ import { LanguageModel } from "ai";
 import { log } from "smollog";
 import { ensureModelName, Provider } from "../../model/model.js";
 import { ToolSchema } from "../../tool/tool.js";
-import { Session, SessionPlatform } from "./Session.js";
+import { Session } from "./Session.js";
 
 export class SessionManager {
   sessions: Record<Session.Id, Session> = {};
@@ -47,7 +47,7 @@ export namespace SessionManager {
   export interface CreateSessionProps {
     provider: Provider;
     name?: string | undefined;
-    platform: SessionPlatform;
+    platform: Session.Platform;
     toolSchemas: ToolSchema[];
     llm?: LanguageModel | undefined;
     sessionId?: Session.Id | undefined;
