@@ -3,20 +3,17 @@ import { z } from "zod";
 import { ApiVersioned } from "../../api/response.js";
 import { ensureModelName, providers } from "../../model/model.js";
 import { ToolSchema } from "../../tool/tool.js";
+import { Agent } from "../agents/Agent.js";
+import { PlannerAgent } from "../agents/PlannerAgent.js";
 import { legacyFetch, legacyProxy } from "../legacy.js";
-import { Session, SessionPlatform } from "./Session.js";
-import {
-  createSessionStateBaseAgent,
-  createSessionStatePlannerAgent,
-  SessionState,
-} from "./SessionState.js";
+import { Session } from "./Session.js";
 
 export const SessionParams = z.object({
   session_id: Session.Id,
 });
 
 export const CreateSessionBody = ApiVersioned.extend({
-  platform: SessionPlatform,
+  platform: Session.Platform,
   provider: z.enum(providers),
   name: z.string().optional(),
   tools: z.array(ToolSchema),
@@ -26,7 +23,7 @@ export const CreateSessionResponse = ApiVersioned.extend({
   session_id: Session.Id,
 });
 
-const sessionStates: Record<Session.Id, SessionState> = {};
+const sessionStates: Record<Session.Id, Session.State> = {};
 
 export const sessionRoutes = new Elysia()
   .get("/v1/sessions", legacyProxy)
@@ -34,17 +31,17 @@ export const sessionRoutes = new Elysia()
     "/v1/sessions",
     async (context) => {
       const { platform, tools: tool_schemas } = context.body;
-      const state: SessionState = {
+      const state: Session.State = {
         session_id: Session.createId(),
         model: ensureModelName(context.body),
         platform,
         tool_schemas,
-        actor_agent: createSessionStateBaseAgent(),
-        planner_agent: createSessionStatePlannerAgent(),
-        retriever_agent: createSessionStateBaseAgent(),
-        area_agent: createSessionStateBaseAgent(),
-        locator_agent: createSessionStateBaseAgent(),
-        changes_analyzer_agent: createSessionStateBaseAgent(),
+        actor_agent: Agent.createState(),
+        planner_agent: PlannerAgent.createState(),
+        retriever_agent: Agent.createState(),
+        area_agent: Agent.createState(),
+        locator_agent: Agent.createState(),
+        changes_analyzer_agent: Agent.createState(),
       };
       sessionStates[state.session_id] = state;
       await legacyFetch("/v1/sessions/state", {

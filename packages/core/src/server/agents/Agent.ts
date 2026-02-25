@@ -10,7 +10,19 @@ export namespace Agent {
 
   export type Usage = z.infer<typeof Usage>;
 
-  export interface State {
-    usage: Usage;
+  export const State = z.object({
+    usage: Usage,
+  });
+
+  export type State = z.infer<typeof State>;
+
+  export function createState(): State {
+    return {
+      usage: {
+        input_tokens: 0,
+        output_tokens: 0,
+        total_tokens: 0,
+      },
+    };
   }
 }
