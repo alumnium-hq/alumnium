@@ -76,6 +76,12 @@ When converting, don't try to find dependencies or modules. Assume that all nece
 
 When converting local module imports, use the same relative paths as in the Python code, but adjust the file extensions to `.ts` and follow TypeScript naming conventions.
 
+## Divergence
+
+The following are the cases when you must diverge from the Python code structure or logic and use existing TypeScript solutions instead of direct translations:
+
+- **Logging**: The logger module is located in `packages/core/src/utils/logger.ts` and exports the `getLogger` function. It wraps the LogTape module (`@logtape/logtape`). Always use `getLogger(import.meta.path)` without changing the argument. It later gets processed by a Bun plugin during the build to inline the module name instead of `import.meta.path`.
+
 ## TypeScript
 
 Make sure to follow the TypeScript style guide in `.agents/guides/ts.md` when writing TypeScript code, unless specific agent instructions explicitly say otherwise.
