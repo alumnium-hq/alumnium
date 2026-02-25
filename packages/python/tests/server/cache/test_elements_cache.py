@@ -145,10 +145,10 @@ class TestElementsCacheBasics:
 
 
 class TestElementExtraction:
-    """Test element extraction and validation."""
+    """Test element extraction and resolution."""
 
     def test_extract_element_attrs(self, elements_cache):
-        """Test extracting element attributes by id."""
+        """Test extracting element attributes by id returns index instead of id."""
         tree_xml = """
         <root>
             <button id="1" name="Login">Click me</button>
@@ -158,9 +158,64 @@ class TestElementExtraction:
 
         elem_attrs = elements_cache._extract_element_attrs(tree_xml, 1)
         assert elem_attrs is not None
-        assert elem_attrs["id"] == 1
+        assert "id" not in elem_attrs
+        assert elem_attrs["index"] == 0
         assert elem_attrs["name"] == "Login"
         assert elem_attrs["role"] == "button"
+        assert elem_attrs["text"] == "Click me"
+
+    def test_extract_element_attrs_no_text(self, elements_cache):
+        """Test that elements without text content have no 'text' key."""
+        tree_xml = "<button id='1' name='Login'/>"
+        elem_attrs = elements_cache._extract_element_attrs(tree_xml, 1)
+        assert elem_attrs is not None
+        assert "text" not in elem_attrs
+
+    def test_extract_element_attrs_with_text_index(self, elements_cache):
+        """Test that text content is used to distinguish otherwise identical elements."""
+        tree_xml = """
+        <root>
+            <columnheader id="1" readonly="False" required="False">First Name</columnheader>
+            <columnheader id="2" readonly="False" required="False">Last Name</columnheader>
+            <columnheader id="3" readonly="False" required="False">Email</columnheader>
+        </root>
+        """
+
+        elem0 = elements_cache._extract_element_attrs(tree_xml, 1)
+        elem1 = elements_cache._extract_element_attrs(tree_xml, 2)
+        elem2 = elements_cache._extract_element_attrs(tree_xml, 3)
+
+        # Each gets index 0 because text makes each unique
+        assert elem0["index"] == 0
+        assert elem0["text"] == "First Name"
+        assert elem1["index"] == 0
+        assert elem1["text"] == "Last Name"
+        assert elem2["index"] == 0
+        assert elem2["text"] == "Email"
+
+    def test_extract_element_attrs_index_among_duplicates(self, elements_cache):
+        """Test that index correctly identifies position among matching elements."""
+        tree_xml = """
+        <root>
+            <button id="1" name="Action" class="btn"/>
+            <button id="2" name="Action" class="btn"/>
+            <button id="3" name="Action" class="btn"/>
+        </root>
+        """
+
+        elem0 = elements_cache._extract_element_attrs(tree_xml, 1)
+        elem1 = elements_cache._extract_element_attrs(tree_xml, 2)
+        elem2 = elements_cache._extract_element_attrs(tree_xml, 3)
+
+        assert elem0["index"] == 0
+        assert elem1["index"] == 1
+        assert elem2["index"] == 2
+
+        # All should have same role and name
+        for elem in [elem0, elem1, elem2]:
+            assert elem["role"] == "button"
+            assert elem["name"] == "Action"
+            assert "id" not in elem
 
     def test_extract_element_attrs_not_found(self, elements_cache):
         """Test extracting non-existent element."""
@@ -169,7 +224,7 @@ class TestElementExtraction:
         assert elem_attrs is None
 
     def test_extract_element_ids_from_tool_calls(self, elements_cache):
-        """Test extracting element IDs from tool calls."""
+        """Test extracting element IDs from tool calls returns ordered list."""
         tool_calls = [
             {"name": "ClickTool", "args": {"id": 1}},
             {"name": "TypeTool", "args": {"id": 2, "text": "hello"}},
@@ -178,13 +233,25 @@ class TestElementExtraction:
         response = create_response("", tool_calls)
 
         ids = elements_cache._extract_element_ids(response)
-        assert ids == {1, 2, 3, 4}
+        assert ids == [1, 2, 3, 4]
 
-    def test_validate_elements_all_present(self, elements_cache):
-        """Test element validation when all elements are present."""
+    def test_extract_element_ids_deduplicates(self, elements_cache):
+        """Test that duplicate IDs are deduplicated preserving first-appearance order."""
+        tool_calls = [
+            {"name": "ClickTool", "args": {"id": 3}},
+            {"name": "TypeTool", "args": {"id": 1}},
+            {"name": "ClickTool", "args": {"id": 3}},
+        ]
+        response = create_response("", tool_calls)
+
+        ids = elements_cache._extract_element_ids(response)
+        assert ids == [3, 1]
+
+    def test_resolve_elements_all_present(self, elements_cache):
+        """Test element resolution when all elements are present."""
         elements = [
-            {"role": "button", "id": 1, "name": "Login"},
-            {"role": "input", "id": 2, "name": "username"},
+            {"role": "button", "index": 0, "name": "Login"},
+            {"role": "input", "index": 0, "name": "username"},
         ]
         tree_xml = """
         <root>
@@ -194,27 +261,256 @@ class TestElementExtraction:
         </root>
         """
 
-        assert elements_cache._validate_elements(elements, tree_xml) is True
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is not None
+        assert result == {0: 1, 1: 2}
 
-    def test_validate_elements_missing(self, elements_cache):
-        """Test element validation when element is missing."""
-        elements = [{"role": "button", "id": 1, "name": "Logout"}]
+    def test_resolve_elements_with_changed_ids(self, elements_cache):
+        """Test resolution succeeds when element IDs change but attributes stay the same."""
+        elements = [
+            {"role": "button", "index": 0, "name": "Login"},
+            {"role": "input", "index": 0, "name": "username"},
+        ]
+        # Same elements but with different IDs
+        tree_xml = """
+        <root>
+            <button id="10" name="Login"/>
+            <input id="20" name="username"/>
+        </root>
+        """
+
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is not None
+        assert result == {0: 10, 1: 20}
+
+    def test_resolve_elements_with_text(self, elements_cache):
+        """Test resolution using text content to distinguish elements with same attributes."""
+        elements = [
+            {"role": "columnheader", "index": 0, "readonly": "False", "required": "False", "text": "Last Name"},
+        ]
+        tree_xml = """
+        <root>
+            <columnheader id="100" readonly="False" required="False">First Name</columnheader>
+            <columnheader id="200" readonly="False" required="False">Last Name</columnheader>
+            <columnheader id="300" readonly="False" required="False">Email</columnheader>
+        </root>
+        """
+
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is not None
+        assert result == {0: 200}
+
+    def test_resolve_elements_missing(self, elements_cache):
+        """Test element resolution when element is missing."""
+        elements = [{"role": "button", "index": 0, "name": "Logout"}]
         tree_xml = '<button id="1" name="Login"/>'
 
-        assert elements_cache._validate_elements(elements, tree_xml) is False
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is None
 
-    def test_validate_elements_attribute_order_independent(self, elements_cache):
-        """Test element validation is independent of attribute order."""
-        # Element with attributes in one order
-        elements = [{"role": "button", "name": "Login", "id": 1, "focusable": True}]
-        # Tree with attributes in different order
+    def test_resolve_elements_index_out_of_range(self, elements_cache):
+        """Test resolution fails when index exceeds available matches."""
+        elements = [{"role": "button", "index": 5, "name": "Action"}]
+        tree_xml = '<button id="1" name="Action"/><button id="2" name="Action"/>'
+
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is None
+
+    def test_resolve_elements_empty_list(self, elements_cache):
+        """Test resolving empty elements list returns empty dict."""
+        result = elements_cache._resolve_elements([], "<tree/>")
+        assert result == {}
+
+    def test_resolve_elements_attribute_order_independent(self, elements_cache):
+        """Test element resolution is independent of attribute order."""
+        elements = [{"role": "button", "name": "Login", "index": 0, "focusable": "true"}]
         tree_xml = '<root><button id="1" focusable="true" name="Login"/></root>'
 
-        assert elements_cache._validate_elements(elements, tree_xml) is True
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is not None
+        assert result == {0: 1}
 
-    def test_validate_elements_empty_list(self, elements_cache):
-        """Test validating empty elements list."""
-        assert elements_cache._validate_elements([], "<tree/>") is True
+
+class TestMaskUnmask:
+    """Test response masking and unmasking."""
+
+    def test_mask_response_tool_calls(self, elements_cache):
+        """Test masking element IDs in tool_calls args."""
+        response_json = json.dumps({
+            "kwargs": {
+                "message": {
+                    "kwargs": {
+                        "tool_calls": [
+                            {"name": "ClickTool", "args": {"id": 5}},
+                            {"name": "DragAndDropTool", "args": {"from_id": 10, "to_id": 5}},
+                        ],
+                        "content": [],
+                    }
+                }
+            }
+        })
+
+        masked = elements_cache._mask_response(response_json, [5, 10])
+        data = json.loads(masked)
+        tool_calls = data["kwargs"]["message"]["kwargs"]["tool_calls"]
+
+        assert tool_calls[0]["args"]["id"] == "<MASKED_0>"
+        assert tool_calls[1]["args"]["from_id"] == "<MASKED_1>"
+        assert tool_calls[1]["args"]["to_id"] == "<MASKED_0>"
+
+    def test_mask_response_content_function_call(self, elements_cache):
+        """Test masking element IDs in content function_call arguments."""
+        response_json = json.dumps({
+            "kwargs": {
+                "message": {
+                    "kwargs": {
+                        "tool_calls": [],
+                        "content": [
+                            {
+                                "type": "function_call",
+                                "arguments": json.dumps({"id": 7, "text": "hello"}),
+                            }
+                        ],
+                    }
+                }
+            }
+        })
+
+        masked = elements_cache._mask_response(response_json, [7])
+        data = json.loads(masked)
+        content_args = json.loads(data["kwargs"]["message"]["kwargs"]["content"][0]["arguments"])
+
+        assert content_args["id"] == "<MASKED_0>"
+        assert content_args["text"] == "hello"
+
+    def test_mask_response_additional_kwargs(self, elements_cache):
+        """Test masking element IDs in additional_kwargs tool_calls."""
+        response_json = json.dumps({
+            "kwargs": {
+                "message": {
+                    "kwargs": {
+                        "tool_calls": [],
+                        "content": [],
+                        "additional_kwargs": {
+                            "tool_calls": [
+                                {
+                                    "function": {
+                                        "arguments": json.dumps({"id": 3}),
+                                    }
+                                }
+                            ]
+                        },
+                    }
+                }
+            }
+        })
+
+        masked = elements_cache._mask_response(response_json, [3])
+        data = json.loads(masked)
+        func_args = json.loads(
+            data["kwargs"]["message"]["kwargs"]["additional_kwargs"]["tool_calls"][0]["function"]["arguments"]
+        )
+
+        assert func_args["id"] == "<MASKED_0>"
+
+    def test_mask_response_empty_ids(self, elements_cache):
+        """Test masking with empty element IDs is a no-op."""
+        response_json = '{"kwargs": {"message": {"kwargs": {"tool_calls": [{"args": {"id": 1}}]}}}}'
+        assert elements_cache._mask_response(response_json, []) == response_json
+
+    def test_unmask_response_tool_calls(self, elements_cache):
+        """Test unmasking element IDs in tool_calls args."""
+        masked_json = json.dumps({
+            "kwargs": {
+                "message": {
+                    "kwargs": {
+                        "tool_calls": [
+                            {"name": "ClickTool", "args": {"id": "<MASKED_0>"}},
+                            {"name": "DragAndDropTool", "args": {"from_id": "<MASKED_1>", "to_id": "<MASKED_0>"}},
+                        ],
+                        "content": [],
+                    }
+                }
+            }
+        })
+
+        unmasked = elements_cache._unmask_response(masked_json, {0: 42, 1: 99})
+        data = json.loads(unmasked)
+        tool_calls = data["kwargs"]["message"]["kwargs"]["tool_calls"]
+
+        assert tool_calls[0]["args"]["id"] == 42
+        assert tool_calls[1]["args"]["from_id"] == 99
+        assert tool_calls[1]["args"]["to_id"] == 42
+
+    def test_unmask_response_empty_mapping(self, elements_cache):
+        """Test unmasking with empty mapping is a no-op."""
+        masked_json = '{"kwargs": {"message": {"kwargs": {"tool_calls": []}}}}'
+        assert elements_cache._unmask_response(masked_json, {}) == masked_json
+
+    def test_mask_unmask_roundtrip(self, elements_cache):
+        """Test that masking then unmasking with same IDs produces original data."""
+        original_json = json.dumps({
+            "kwargs": {
+                "message": {
+                    "kwargs": {
+                        "tool_calls": [
+                            {"name": "ClickTool", "args": {"id": 5}},
+                            {"name": "TypeTool", "args": {"id": 10, "text": "hello"}},
+                            {"name": "DragAndDropTool", "args": {"from_id": 5, "to_id": 10}},
+                        ],
+                        "content": [
+                            {
+                                "type": "function_call",
+                                "arguments": json.dumps({"id": 5}),
+                            }
+                        ],
+                    }
+                }
+            }
+        })
+
+        element_ids = [5, 10]
+
+        # Mask
+        masked = elements_cache._mask_response(original_json, element_ids)
+        # Verify masking happened
+        masked_data = json.loads(masked)
+        assert masked_data["kwargs"]["message"]["kwargs"]["tool_calls"][0]["args"]["id"] == "<MASKED_0>"
+
+        # Unmask with same IDs (position 0 -> 5, position 1 -> 10)
+        unmasked = elements_cache._unmask_response(masked, {0: 5, 1: 10})
+        unmasked_data = json.loads(unmasked)
+        original_data = json.loads(original_json)
+
+        # Verify roundtrip: tool_calls args match
+        for i in range(3):
+            assert (
+                unmasked_data["kwargs"]["message"]["kwargs"]["tool_calls"][i]["args"]
+                == original_data["kwargs"]["message"]["kwargs"]["tool_calls"][i]["args"]
+            )
+
+    def test_mask_unmask_with_remapped_ids(self, elements_cache):
+        """Test masking with old IDs and unmasking with new IDs."""
+        original_json = json.dumps({
+            "kwargs": {
+                "message": {
+                    "kwargs": {
+                        "tool_calls": [
+                            {"name": "ClickTool", "args": {"id": 5}},
+                        ],
+                        "content": [],
+                    }
+                }
+            }
+        })
+
+        # Mask with original IDs
+        masked = elements_cache._mask_response(original_json, [5])
+
+        # Unmask with different (remapped) IDs
+        unmasked = elements_cache._unmask_response(masked, {0: 42})
+        data = json.loads(unmasked)
+        assert data["kwargs"]["message"]["kwargs"]["tool_calls"][0]["args"]["id"] == 42
 
 
 class TestPlannerCache:
@@ -236,30 +532,33 @@ class TestPlannerCache:
         mem_key = ("llm_string", goal_hash)
         assert mem_key in elements_cache._in_memory_cache
 
-        return_val, elements, agent_type, app, instruction, should_save = elements_cache._in_memory_cache[mem_key]
+        masked_json, elements, agent_type, app, instruction, should_save = elements_cache._in_memory_cache[mem_key]
         assert elements == []
         assert agent_type == "plans"
         assert should_save is True
         assert instruction == {"goal": goal}
+        assert isinstance(masked_json, str)
 
     def test_planner_lookup_with_valid_elements(self, elements_cache, setup_model):
-        """Test planner validation succeeds when elements are valid."""
-        # Test the validation logic directly
+        """Test planner resolution succeeds when elements are valid."""
+        # Test the resolution logic directly
         tree_xml = '<root><button id="1" name="Login" /></root>'
-        elements = [{"role": "button", "id": 1, "name": "Login"}]
+        elements = [{"role": "button", "index": 0, "name": "Login"}]
 
-        # Elements present in tree should validate
-        assert elements_cache._validate_elements(elements, tree_xml) is True
+        # Elements present in tree should resolve
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is not None
+        assert result == {0: 1}
 
         # Test with empty elements (planner initial state)
-        assert elements_cache._validate_elements([], tree_xml) is True
+        result = elements_cache._resolve_elements([], tree_xml)
+        assert result == {}
 
     def test_planner_lookup_fails_with_invalid_elements(self, elements_cache, setup_model):
         """Test planner lookup fails when elements are invalid."""
         goal = "click login"
         tree = "<button id='1' name='Logout'/>"  # Different button
         prompt = create_planner_prompt(goal, tree)
-        response = create_response("step1")
 
         # Create cache with elements that won't match
         from xxhash import xxh3_128_hexdigest
@@ -270,11 +569,12 @@ class TestPlannerCache:
 
         from langchain_core.load import dumps
 
+        response = create_response("step1")
         with open(cache_path / "response.json", "w") as f:
             f.write(dumps(response[0], pretty=True))
 
         # Save elements that won't match current tree (different name)
-        elements = [{"role": "button", "id": 1, "name": "Login"}]
+        elements = [{"role": "button", "index": 0, "name": "Login"}]
         with open(cache_path / "elements.json", "w") as f:
             json.dump(elements, f)
 
@@ -287,7 +587,7 @@ class TestActorCache:
     """Test actor cache behavior."""
 
     def test_actor_update_extracts_elements(self, elements_cache, setup_model):
-        """Test actor update extracts element elements."""
+        """Test actor update extracts element elements with index instead of id."""
         goal = "login to app"
         step = "click login button"
         tree = """<button id="1" name="Login"/>
@@ -306,13 +606,15 @@ class TestActorCache:
         mem_key = ("llm_string", step_hash)
         assert mem_key in elements_cache._in_memory_cache
 
-        return_val, elements, agent_type, app, instruction, should_save = elements_cache._in_memory_cache[mem_key]
+        masked_json, elements, agent_type, app, instruction, should_save = elements_cache._in_memory_cache[mem_key]
         assert len(elements) == 1
-        assert elements[0]["id"] == 1
+        assert "id" not in elements[0]
+        assert elements[0]["index"] == 0
         assert elements[0]["name"] == "Login"
         assert elements[0]["role"] == "button"
         assert agent_type == "actions"
         assert instruction == {"goal": goal, "step": step}
+        assert isinstance(masked_json, str)
 
     def test_actor_update_updates_planner_elements(self, elements_cache, setup_model):
         """Test actor update adds elements to planner cache."""
@@ -343,12 +645,12 @@ class TestActorCache:
             planner_elements = json.load(f)
 
         assert len(planner_elements) == 1
-        assert planner_elements[0]["id"] == 1
+        assert "id" not in planner_elements[0]
+        assert planner_elements[0]["index"] == 0
         assert planner_elements[0]["name"] == "Login"
 
     def test_actor_lookup_with_valid_elements(self, elements_cache, setup_model):
-        """Test actor validation succeeds when elements are valid."""
-        # Test the validation and element extraction logic
+        """Test actor resolution succeeds when elements are valid."""
         goal = "login to app"
         step = "click login button"
         tree = '<root><button id="1" name="Login" /></root>'
@@ -369,12 +671,21 @@ class TestActorCache:
 
         _, elements, _, _, _, _ = elements_cache._in_memory_cache[mem_key]
         assert len(elements) > 0
-        assert elements[0]["id"] == 1
+        assert "id" not in elements[0]
+        assert elements[0]["index"] == 0
         assert elements[0]["name"] == "Login"
 
-        # Test validation with those elements in a similar tree
+        # Test resolution with those elements in a similar tree
         similar_tree = '<root><div><button id="1" name="Login" /></div></root>'
-        assert elements_cache._validate_elements(elements, similar_tree) is True
+        result = elements_cache._resolve_elements(elements, similar_tree)
+        assert result is not None
+        assert result == {0: 1}
+
+        # Test resolution with changed IDs
+        changed_tree = '<root><div><button id="99" name="Login" /></div></root>'
+        result = elements_cache._resolve_elements(elements, changed_tree)
+        assert result is not None
+        assert result == {0: 99}
 
 
 class TestCachePersistence:
@@ -435,11 +746,12 @@ class TestCachePersistence:
         assert (cache_path / "elements.json").exists()
         assert (cache_path / "instruction.json").exists()
 
-        # Verify elements were extracted
+        # Verify elements were extracted with index (no id)
         with open(cache_path / "elements.json", "r") as f:
             elements = json.load(f)
         assert len(elements) > 0
-        assert elements[0]["id"] == 1
+        assert "id" not in elements[0]
+        assert elements[0]["index"] == 0
         assert elements[0]["name"] == "Login"
 
         # Verify instruction file has goal and step
@@ -554,6 +866,25 @@ class TestEdgeCases:
         else:
             # If lookup failed, usage should not change
             assert elements_cache.usage == initial_usage
+
+
+class TestElementDedupKey:
+    """Test element deduplication key computation."""
+
+    def test_dedup_key_excludes_index(self, elements_cache):
+        """Test that dedup key excludes index but includes all other fields."""
+        elem1 = {"role": "button", "index": 0, "name": "Login"}
+        elem2 = {"role": "button", "index": 1, "name": "Login"}
+
+        # Same element at different positions should have same dedup key
+        assert elements_cache._element_dedup_key(elem1) == elements_cache._element_dedup_key(elem2)
+
+    def test_dedup_key_different_attrs(self, elements_cache):
+        """Test that elements with different attributes have different dedup keys."""
+        elem1 = {"role": "button", "index": 0, "name": "Login"}
+        elem2 = {"role": "button", "index": 0, "name": "Logout"}
+
+        assert elements_cache._element_dedup_key(elem1) != elements_cache._element_dedup_key(elem2)
 
 
 class TestCachePathConstruction:

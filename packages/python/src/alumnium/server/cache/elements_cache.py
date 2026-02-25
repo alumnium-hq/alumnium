@@ -21,9 +21,11 @@ class ElementsCache(BaseCache):
     - For planner: plan steps + union of all actor elements
     - For actor: tool calls + element XMLs referenced
 
-    On lookup, validates that all cached element elements still exist in the
-    current accessibility tree before returning cached responses.
+    On lookup, resolves cached elements to current IDs in the accessibility tree
+    and unmasks the cached response before returning it.
     """
+
+    _ID_FIELDS = ("id", "from_id", "to_id")
 
     def __init__(self, cache_dir: str = ".alumnium/cache"):
         """Initialize elements cache.
@@ -35,8 +37,8 @@ class ElementsCache(BaseCache):
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
         self._app: str = "unknown"
-        # In-memory cache: (llm_string, cache_hash) -> (response, elements, agent_type, app, instruction, should_save)
-        self._in_memory_cache: dict[tuple[str, str], tuple[RETURN_VAL_TYPE, list[dict], str, str, dict, bool]] = {}
+        # In-memory cache: (llm_string, cache_hash) -> (masked_json, elements, agent_type, app, instruction, should_save)
+        self._in_memory_cache: dict[tuple[str, str], tuple[str, list[dict], str, str, dict, bool]] = {}
 
     @property
     def app(self) -> str:
@@ -47,22 +49,22 @@ class ElementsCache(BaseCache):
         self._app = value
 
     def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
-        """Look up cached response if fragments are still valid.
+        """Look up cached response if elements are still valid.
 
         Process:
         1. Parse prompt to extract goal/step and accessibility_tree
         2. Determine agent type (planner vs actor)
         3. Hash goal/step to get cache key
         4. Load elements.json
-        5. Validate all elements exist in current tree
-        6. If valid, return cached response
+        5. Resolve all elements to current IDs in tree
+        6. If valid, unmask and return cached response
 
         Args:
             prompt: The prompt string (JSON-encoded messages)
             llm_string: The LLM identifier string
 
         Returns:
-            Cached response if fragments are valid, None otherwise
+            Cached response if elements are valid, None otherwise
         """
         try:
             # Parse prompt to extract key components
@@ -89,11 +91,14 @@ class ElementsCache(BaseCache):
             # Check in-memory cache first
             mem_key = (llm_string, cache_hash)
             if mem_key in self._in_memory_cache:
-                return_val, elements, _, _, _, _ = self._in_memory_cache[mem_key]
-                if self._validate_elements(elements, tree_xml):
+                masked_json, elements, _, _, _, _ = self._in_memory_cache[mem_key]
+                mask_to_id = self._resolve_elements(elements, tree_xml)
+                if mask_to_id is not None:
+                    unmasked_json = self._unmask_response(masked_json, mask_to_id)
+                    response = loads(unmasked_json)
                     logger.debug(f"Elements cache hit (in-memory) for {agent_type}: {cache_key[:50]}...")
-                    self._update_usage(return_val[0].message.usage_metadata)
-                    return return_val
+                    self._update_usage(response.message.usage_metadata)
+                    return [response]
 
             # Check filesystem cache
             cache_path = self._get_cache_path(agent_type, cache_hash)
@@ -103,21 +108,25 @@ class ElementsCache(BaseCache):
             if not elements_file.exists() or not response_file.exists():
                 return None
 
-            # Load elements and validate
+            # Load elements and resolve
             with open(elements_file, "r") as f:
                 elements = json.load(f)
 
-            if not self._validate_elements(elements, tree_xml):
-                logger.debug(f"Elements cache miss (validation failed) for {agent_type}: {cache_key[:50]}...")
+            mask_to_id = self._resolve_elements(elements, tree_xml)
+            if mask_to_id is None:
+                logger.debug(f"Elements cache miss (resolution failed) for {agent_type}: {cache_key[:50]}...")
                 return None
 
             # Load and return cached response
             with open(response_file, "r") as f:
-                response = loads(f.read())
-                self._in_memory_cache[mem_key] = ([response], elements, agent_type, self._app, {}, False)
-                logger.debug(f"Elements cache hit (file) for {agent_type}: {cache_key[:50]}...")
-                self._update_usage(response.message.usage_metadata)
-                return [response]
+                masked_json = f.read()
+
+            unmasked_json = self._unmask_response(masked_json, mask_to_id)
+            response = loads(unmasked_json)
+            self._in_memory_cache[mem_key] = (masked_json, elements, agent_type, self._app, {}, False)
+            logger.debug(f"Elements cache hit (file) for {agent_type}: {cache_key[:50]}...")
+            self._update_usage(response.message.usage_metadata)
+            return [response]
 
         except Exception as e:
             logger.debug(f"Error in fragments cache lookup: {e}")
@@ -131,7 +140,7 @@ class ElementsCache(BaseCache):
         2. Determine agent type
         3. Extract element IDs from return_val
         4. Extract element XMLs from accessibility_tree
-        5. Save elements and response
+        5. Mask response IDs and store
         6. If actor: also update planner's elements
 
         Args:
@@ -166,8 +175,9 @@ class ElementsCache(BaseCache):
                 # For planner, create empty elements file (will be populated by actor updates)
                 elements = []
                 instruction = {"goal": goal}
+                response_json = dumps(return_val[0], pretty=True)
                 self._in_memory_cache[(llm_string, cache_hash)] = (
-                    return_val,
+                    response_json,
                     elements,
                     agent_type,
                     self._app,
@@ -186,9 +196,12 @@ class ElementsCache(BaseCache):
                     except Exception as e:
                         logger.debug(f"Failed to extract element {elem_id}: {e}")
 
+                response_json = dumps(return_val[0], pretty=True)
+                masked_json = self._mask_response(response_json, element_ids)
+
                 instruction = {"goal": goal, "step": step}
                 self._in_memory_cache[(llm_string, cache_hash)] = (
-                    return_val,
+                    masked_json,
                     elements,
                     agent_type,
                     self._app,
@@ -205,7 +218,7 @@ class ElementsCache(BaseCache):
 
     def save(self):
         """Flush in-memory cache to disk."""
-        for (_, cache_hash), (return_val, elements, agent_type, app, instruction, should_save) in self._in_memory_cache.items():
+        for (_, cache_hash), (masked_json, elements, agent_type, app, instruction, should_save) in self._in_memory_cache.items():
             if should_save:
                 try:
                     cache_path = self._get_cache_path(agent_type, cache_hash, app=app)
@@ -222,10 +235,10 @@ class ElementsCache(BaseCache):
                         with open(instruction_file, "w") as f:
                             json.dump(instruction, f, indent=2)
 
-                        # Save response
+                        # Save response (already a JSON string)
                         response_file = cache_path / "response.json"
                         with open(response_file, "w") as f:
-                            f.write(dumps(return_val[0], pretty=True))
+                            f.write(masked_json)
 
                         # Save elements
                         elements_file = cache_path / "elements.json"
@@ -343,14 +356,17 @@ class ElementsCache(BaseCache):
         return "goal" in parsed and "step" not in parsed
 
     def _extract_element_attrs(self, tree_xml: str, element_id: int) -> Optional[dict]:
-        """Extract element attributes as a normalized dictionary.
+        """Extract element attributes as a dictionary with positional index.
+
+        Finds the element by id, collects all attributes except id as raw strings,
+        then computes the element's positional index among all same-role/same-property elements.
 
         Args:
             tree_xml: Full accessibility tree XML
             element_id: The id of the element
 
         Returns:
-            Dict of element attributes with normalized types, or None if not found
+            Dict with 'role', 'index', optional 'text', and other attributes as raw strings (no 'id'), or None if not found
         """
         try:
             root = fromstring(f"<root>{tree_xml}</root>")
@@ -358,98 +374,242 @@ class ElementsCache(BaseCache):
             if element is None:
                 return None
 
-            # Convert XML element to normalized dict
-            attrs = {"role": element.tag}
-            for key, value in element.attrib.items():
-                # Normalize boolean values
-                if value.lower() in ("true", "false"):
-                    attrs[key] = value.lower() == "true"
-                # Normalize numeric values
-                elif value.isdigit():
-                    attrs[key] = int(value)
-                # Keep as string
-                else:
-                    attrs[key] = value
+            # Collect all attributes except id as raw strings
+            attrs = {key: value for key, value in element.attrib.items() if key != "id"}
 
-            return attrs
+            # Also capture text content if present
+            text = (element.text or "").strip()
+            if text:
+                attrs["text"] = text
+
+            # Build XPath to find all elements with same role and same properties
+            xpath = f".//{element.tag}"
+            for key, value in attrs.items():
+                xpath += f"[.='{value}']" if key == "text" else f"[@{key}='{value}']"
+
+            # Find all matching elements and determine this element's position
+            matches = root.findall(xpath)
+            index = 0
+            for i, match in enumerate(matches):
+                if match.get("id") == str(element_id):
+                    index = i
+                    break
+
+            result = {"role": element.tag, "index": index}
+            result.update(attrs)
+            return result
 
         except Exception as e:
             logger.debug(f"Error extracting element attrs for id {element_id}: {e}")
             return None
 
-    def _validate_elements(self, elements: list[dict], tree_xml: str) -> bool:
-        """Check if all element elements exist in current tree.
+    def _resolve_elements(self, elements: list[dict], tree_xml: str) -> Optional[dict[int, int]]:
+        """Resolve cached elements to current element IDs in the tree.
 
-        Validates by comparing element attributes (order-independent).
+        For each cached element, finds the matching element in the current tree
+        by role and properties, then uses the positional index to select the correct
+        one among duplicates.
 
         Args:
-            elements: List of element attribute dicts
+            elements: List of element attribute dicts (with 'index')
             tree_xml: Current accessibility tree XML
 
         Returns:
-            True if all elements found with matching attributes, False otherwise
+            Dict mapping element list position to current element id, or None on failure
         """
         if not elements:
             # Empty elements list means no elements were used (e.g., planner not yet executed)
-            # This is valid for initial cache creation
-            return True
+            return {}
 
         try:
             root = fromstring(f"<root>{tree_xml}</root>")
+            result = {}
 
-            for element in elements:
-                # Find element by id
-                element_id = element.get("id")
-                if element_id is None:
-                    logger.debug("Element missing 'id' attribute")
-                    return False
+            for list_pos, element in enumerate(elements):
+                role = element.get("role")
+                idx = element.get("index", 0)
 
-                tree_element = root.find(f".//*[@id='{element_id}']")
-                if tree_element is None:
-                    logger.debug(f"Element with id={element_id} not found in tree")
-                    return False
+                # Build XPath from all properties (excluding role and index)
+                props = {k: v for k, v in element.items() if k not in ("role", "index")}
 
-                # Verify element tag matches role
-                if tree_element.tag != element.get("role"):
-                    logger.debug(f"Element role mismatch: expected {element.get('role')}, got {tree_element.tag}")
-                    return False
+                xpath = f".//{role}"
+                for key, value in props.items():
+                    xpath += f"[.='{value}']" if key == "text" else f"[@{key}='{value}']"
 
-                # Check all attributes match
-                for key, expected_value in element.items():
-                    if key == "role":
-                        continue
+                matches = root.findall(xpath)
+                if idx >= len(matches):
+                    logger.debug(f"Element index {idx} out of range (found {len(matches)} matches for {role})")
+                    return None
 
-                    actual_value = tree_element.attrib.get(key)
-                    if actual_value is None:
-                        logger.debug(f"Attribute '{key}' missing from element id={element_id}")
-                        return False
+                target = matches[idx]
+                current_id = target.get("id")
+                if current_id is None:
+                    logger.debug(f"Resolved element has no id attribute")
+                    return None
+                result[list_pos] = int(current_id)
 
-                    # Normalize for comparison
-                    if isinstance(expected_value, bool):
-                        actual_value = actual_value.lower() == "true"
-                    elif isinstance(expected_value, int):
-                        actual_value = int(actual_value) if actual_value.isdigit() else actual_value
-
-                    if actual_value != expected_value:
-                        logger.debug(f"Attribute '{key}' mismatch: expected {expected_value}, got {actual_value}")
-                        return False
-
-            return True
+            return result
 
         except Exception as e:
-            logger.debug(f"Error validating elements: {e}")
-            return False
+            logger.debug(f"Error resolving elements: {e}")
+            return None
 
-    def _extract_element_ids(self, return_val: RETURN_VAL_TYPE) -> set[int]:
-        """Extract element IDs from tool calls.
+    def _mask_response(self, response_json: str, element_ids: list[int]) -> str:
+        """Replace element IDs with <MASKED_N> placeholders in serialized response.
+
+        Masks IDs in:
+        - kwargs.message.kwargs.tool_calls[].args (id, from_id, to_id)
+        - kwargs.message.kwargs.content[] function_call arguments
+        - kwargs.message.kwargs.additional_kwargs.tool_calls[].function.arguments
+
+        Args:
+            response_json: Serialized LangChain response JSON
+            element_ids: Ordered list of element IDs (position N maps to <MASKED_N>)
+
+        Returns:
+            Masked JSON string
+        """
+        if not element_ids:
+            return response_json
+
+        try:
+            data = json.loads(response_json)
+            id_to_mask = {eid: i for i, eid in enumerate(element_ids)}
+
+            msg_kwargs = data.get("kwargs", {}).get("message", {}).get("kwargs", {})
+
+            # Mask tool_calls args
+            for tc in msg_kwargs.get("tool_calls", []):
+                args = tc.get("args", {})
+                for field in self._ID_FIELDS:
+                    if field in args and args[field] in id_to_mask:
+                        args[field] = f"<MASKED_{id_to_mask[args[field]]}>"
+
+            # Mask content function_call arguments
+            for item in msg_kwargs.get("content", []):
+                if isinstance(item, dict) and item.get("type") == "function_call":
+                    try:
+                        args = json.loads(item.get("arguments", "{}"))
+                        changed = False
+                        for field in self._ID_FIELDS:
+                            if field in args and args[field] in id_to_mask:
+                                args[field] = f"<MASKED_{id_to_mask[args[field]]}>"
+                                changed = True
+                        if changed:
+                            item["arguments"] = json.dumps(args)
+                    except Exception:
+                        pass
+
+            # Mask additional_kwargs tool_calls
+            additional = msg_kwargs.get("additional_kwargs", {})
+            for tc in additional.get("tool_calls", []):
+                func = tc.get("function", {})
+                try:
+                    args = json.loads(func.get("arguments", "{}"))
+                    changed = False
+                    for field in self._ID_FIELDS:
+                        if field in args and args[field] in id_to_mask:
+                            args[field] = f"<MASKED_{id_to_mask[args[field]]}>"
+                            changed = True
+                    if changed:
+                        func["arguments"] = json.dumps(args)
+                except Exception:
+                    pass
+
+            return json.dumps(data)
+
+        except Exception as e:
+            logger.debug(f"Error masking response: {e}")
+            return response_json
+
+    def _unmask_response(self, masked_json: str, mask_to_id: dict[int, int]) -> str:
+        """Replace <MASKED_N> placeholders with actual element IDs.
+
+        Inverse of _mask_response. Replaces placeholders in the same locations.
+
+        Args:
+            masked_json: JSON string with <MASKED_N> placeholders
+            mask_to_id: Dict mapping mask index (N) to current element ID
+
+        Returns:
+            Unmasked JSON string with actual IDs
+        """
+        if not mask_to_id:
+            return masked_json
+
+        try:
+            data = json.loads(masked_json)
+
+            def unmask(value):
+                if isinstance(value, str) and value.startswith("<MASKED_") and value.endswith(">"):
+                    try:
+                        n = int(value[8:-1])
+                        return mask_to_id.get(n, value)
+                    except ValueError:
+                        return value
+                return value
+
+            msg_kwargs = data.get("kwargs", {}).get("message", {}).get("kwargs", {})
+
+            # Unmask tool_calls args
+            for tc in msg_kwargs.get("tool_calls", []):
+                args = tc.get("args", {})
+                for field in self._ID_FIELDS:
+                    if field in args:
+                        args[field] = unmask(args[field])
+
+            # Unmask content function_call arguments
+            for item in msg_kwargs.get("content", []):
+                if isinstance(item, dict) and item.get("type") == "function_call":
+                    try:
+                        args = json.loads(item.get("arguments", "{}"))
+                        changed = False
+                        for field in self._ID_FIELDS:
+                            if field in args:
+                                new_val = unmask(args[field])
+                                if new_val != args[field]:
+                                    args[field] = new_val
+                                    changed = True
+                        if changed:
+                            item["arguments"] = json.dumps(args)
+                    except Exception:
+                        pass
+
+            # Unmask additional_kwargs tool_calls
+            additional = msg_kwargs.get("additional_kwargs", {})
+            for tc in additional.get("tool_calls", []):
+                func = tc.get("function", {})
+                try:
+                    args = json.loads(func.get("arguments", "{}"))
+                    changed = False
+                    for field in self._ID_FIELDS:
+                        if field in args:
+                            new_val = unmask(args[field])
+                            if new_val != args[field]:
+                                args[field] = new_val
+                                changed = True
+                    if changed:
+                        func["arguments"] = json.dumps(args)
+                except Exception:
+                    pass
+
+            return json.dumps(data)
+
+        except Exception as e:
+            logger.debug(f"Error unmasking response: {e}")
+            return masked_json
+
+    def _extract_element_ids(self, return_val: RETURN_VAL_TYPE) -> list[int]:
+        """Extract element IDs from tool calls in first-appearance order.
 
         Args:
             return_val: LLM response containing tool calls
 
         Returns:
-            Set of element IDs used in tool calls
+            Ordered list of unique element IDs used in tool calls
         """
-        ids = set()
+        ids: list[int] = []
+        seen: set[int] = set()
         try:
             if not return_val or len(return_val) == 0:
                 return ids
@@ -462,12 +622,12 @@ class ElementsCache(BaseCache):
 
             for tool_call in message.tool_calls:
                 args = tool_call.get("args", {})
-                if "id" in args:
-                    ids.add(args["id"])
-                if "from_id" in args:
-                    ids.add(args["from_id"])
-                if "to_id" in args:
-                    ids.add(args["to_id"])
+                for field in self._ID_FIELDS:
+                    if field in args:
+                        eid = args[field]
+                        if eid not in seen:
+                            ids.append(eid)
+                            seen.add(eid)
 
         except Exception as e:
             logger.debug(f"Error extracting element IDs: {e}")
@@ -502,8 +662,15 @@ class ElementsCache(BaseCache):
         model_name = Model.current.name
         return self.cache_dir / (app or self._app) / provider / model_name / "elements"
 
+    @staticmethod
+    def _element_dedup_key(elem: dict) -> tuple:
+        """Compute deduplication key for an element (all properties except index)."""
+        return tuple(sorted((k, v) for k, v in elem.items() if k != "index"))
+
     def _update_planner_elements(self, goal: str, new_elements: list[dict]):
         """Append elements to planner's in-memory cache entry.
+
+        Deduplicates by (role, sorted properties excluding index).
 
         Args:
             goal: The goal string for the planner
@@ -515,26 +682,29 @@ class ElementsCache(BaseCache):
             # Find and update the planner entry in in-memory cache
             # The planner entry key is (llm_string, goal_hash)
             # We need to find it by goal_hash since we don't have llm_string here
-            for (llm_string, cache_hash), (return_val, elements, agent_type, app, instruction, should_save) in list(
+            for (llm_string, cache_hash), (masked_json, elements, agent_type, app, instruction, should_save) in list(
                 self._in_memory_cache.items()
             ):
                 if cache_hash == goal_hash and agent_type == "plans":
-                    # Update planner elements with new actor elements (deduplicate by element id)
-                    # Build dict of id -> element for deduplication
-                    elements_by_id = {elem["id"]: elem for elem in elements}
+                    # Deduplicate by (role, sorted properties excluding index)
+                    existing_keys = {self._element_dedup_key(elem) for elem in elements}
+                    merged = list(elements)
                     for new_elem in new_elements:
-                        elements_by_id[new_elem["id"]] = new_elem
+                        key = self._element_dedup_key(new_elem)
+                        if key not in existing_keys:
+                            merged.append(new_elem)
+                            existing_keys.add(key)
 
                     # Update in-memory cache entry
                     self._in_memory_cache[(llm_string, cache_hash)] = (
-                        return_val,
-                        list(elements_by_id.values()),
+                        masked_json,
+                        merged,
                         agent_type,
                         app,
                         instruction,
                         should_save,
                     )
-                    logger.debug(f"Updated planner elements: {len(elements_by_id)} total elements")
+                    logger.debug(f"Updated planner elements: {len(merged)} total elements")
                     break
 
         except Exception as e:
