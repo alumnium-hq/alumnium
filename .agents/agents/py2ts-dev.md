@@ -100,6 +100,18 @@ When converting, don't try to find dependencies or modules. Assume that all nece
 
 When converting local module imports, use the same relative paths as in the Python code, but adjust the file extensions to `.ts` and follow TypeScript naming conventions.
 
+### Agent Classes
+
+When converting agent classes, look up already translated agent classes to use the same patterns and structures:
+
+- `BaseAgent`: `packages/core/src/server/agents/BaseAgent.ts`
+- `ActorAgent`: `packages/core/src/server/agents/ActorAgent.ts`
+- `ChangesAnalyzerAgent`: `packages/core/src/server/agents/ChangesAnalyzerAgent.ts`
+
+### Pydantic Models
+
+When converting Pydantic models, use the `zod` library to define the schema. Follow the same structure and field definitions as in the Python code, but adjust the syntax to fit TypeScript and Zod conventions.
+
 ## Divergence
 
 The following are the cases when you must diverge from the Python code structure or logic and use existing TypeScript solutions instead of direct translations:
