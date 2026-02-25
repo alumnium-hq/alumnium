@@ -15,3 +15,4 @@ class DoResult:
 
     explanation: str
     steps: list[DoStep]
+    changes: str = ""

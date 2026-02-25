@@ -18,6 +18,8 @@ import { getLogger } from "./utils/logger.js";
 import { retry } from "./utils/retry.js";
 
 const logger = getLogger(["Alumni"]);
+const changeAnalysis =
+  (process.env.ALUMNIUM_CHANGE_ANALYSIS || "false").toLowerCase() === "true";
 const planner =
   (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
 
@@ -26,6 +28,7 @@ export interface AlumniOptions {
   model?: Model;
   extraTools?: ToolClass[];
   planner?: boolean;
+  changeAnalysis?: boolean;
 }
 
 export interface VisionOptions {
@@ -40,10 +43,12 @@ export class Alumni {
   public cache: Cache;
   private url: string;
   private model: Model;
+  private changeAnalysis: boolean;
 
   constructor(driver: WebDriver | Page | Browser, options: AlumniOptions = {}) {
     this.url = options.url || "http://localhost:8013";
     this.model = options.model || Model.current;
+    this.changeAnalysis = options.changeAnalysis ?? changeAnalysis;
 
     // Wrap driver or use directly if already wrapped
     if (driver instanceof WebDriver) {
@@ -89,6 +94,10 @@ export class Alumni {
   @retry()
   async do(goal: string): Promise<DoResult> {
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
+    const beforeTree = this.changeAnalysis
+      ? initialAccessibilityTree.toStr()
+      : null;
+    const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
     const { explanation, steps } = await this.client.planActions(
       goal,
       initialAccessibilityTree.toStr()
@@ -109,7 +118,6 @@ export class Alumni {
 
       // When planner is off, explanation is just the goal — replace with actor's reasoning.
       if (finalExplanation === goal) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         finalExplanation = actorExplanation;
       }
 
@@ -126,7 +134,17 @@ export class Alumni {
       executedSteps.push({ name: step, tools: calledTools });
     }
 
-    return { explanation: finalExplanation, steps: executedSteps };
+    let changes = "";
+    if (this.changeAnalysis && executedSteps.length > 0) {
+      changes = await this.client.analyzeChanges(
+        beforeTree!,
+        beforeUrl!,
+        (await this.driver.getAccessibilityTree()).toStr(),
+        await this.driver.url()
+      );
+    }
+
+    return { explanation: finalExplanation, steps: executedSteps, changes };
   }
 
   @retry()

@@ -52,7 +52,6 @@ export class Area {
 
       // When planner is off, explanation is just the goal — replace with actor's reasoning.
       if (finalExplanation === goal) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         finalExplanation = actorExplanation;
       }
 
@@ -69,7 +68,7 @@ export class Area {
       executedSteps.push({ name: step, tools: calledTools });
     }
 
-    return { explanation: finalExplanation, steps: executedSteps };
+    return { explanation: finalExplanation, steps: executedSteps, changes: "" };
   }
 
   @retry()

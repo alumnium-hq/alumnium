@@ -79,6 +79,20 @@ export interface AddExampleRequest {
   actions: string[];
 }
 
+export interface ChangeState {
+  accessibility_tree: string;
+  url: string;
+}
+
+export interface ChangesRequest {
+  before: ChangeState;
+  after: ChangeState;
+}
+
+export interface ChangesResponse {
+  result: string;
+}
+
 export interface StatsResponse {
   [key: string]: {
     [key: string]: number;

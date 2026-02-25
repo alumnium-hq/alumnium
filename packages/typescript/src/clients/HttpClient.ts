@@ -6,6 +6,8 @@ import {
   AddExampleRequest,
   AreaRequest,
   AreaResponse,
+  ChangesRequest,
+  ChangesResponse,
   FindRequest,
   FindResponse,
   PlanRequest,
@@ -258,6 +260,32 @@ export class HttpClient {
 
     const responseData = (await response.json()) as FindResponse;
     return responseData.elements[0];
+  }
+
+  async analyzeChanges(
+    beforeAccessibilityTree: string,
+    beforeUrl: string,
+    afterAccessibilityTree: string,
+    afterUrl: string
+  ): Promise<string> {
+    await this.ensureSession();
+    const requestBody: ChangesRequest = {
+      before: { accessibility_tree: beforeAccessibilityTree, url: beforeUrl },
+      after: { accessibility_tree: afterAccessibilityTree, url: afterUrl },
+    };
+    const response = await this.fetchWithTimeout(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/changes`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+
+    const responseData = (await response.json()) as ChangesResponse;
+    return responseData.result;
   }
 
   async saveCache(): Promise<void> {

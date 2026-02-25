@@ -127,9 +127,6 @@ async def handle_do(args: dict[str, Any]) -> list[dict]:
     logger.info(f"Driver {driver_id}: Executing do('{goal}')")
 
     al, _ = state.get_driver(driver_id)
-    client: NativeClient = al.client  # type: ignore
-    before_tree = al.driver.accessibility_tree.to_str()
-    before_url = al.driver.url
     result = al.do(goal)
 
     logger.debug(f"Driver {driver_id}: do() completed with {len(result.steps)} steps")
@@ -138,26 +135,12 @@ async def handle_do(args: dict[str, Any]) -> list[dict]:
     # Build structured response
     performed_steps = [{"name": step.name, "tools": step.tools} for step in result.steps]
 
-    changes = ""
-    if result.steps:
-        try:
-            after_tree = al.driver.accessibility_tree.to_str()
-            after_url = al.driver.url
-            changes = client.analyze_changes(
-                before_accessibility_tree=before_tree,
-                before_url=before_url,
-                after_accessibility_tree=after_tree,
-                after_url=after_url,
-            )
-        except Exception as e:
-            logger.error(f"Driver {driver_id}: Error analyzing changes: {e}")
-
     response = {
         "explanation": result.explanation,
         "performed_steps": performed_steps,
     }
-    if changes:
-        response["changes"] = changes
+    if result.changes:
+        response["changes"] = result.changes
 
     return [{"type": "text", "text": json.dumps(response, indent=2, ensure_ascii=False)}]
 

@@ -7,7 +7,7 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from . import DELAY, PLANNER, RETRIES
+from . import CHANGE_ANALYSIS, DELAY, PLANNER, RETRIES
 from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
@@ -35,8 +35,10 @@ class Alumni:
         extra_tools: list[type[BaseTool]] | None = None,
         url: str | None = None,
         planner: bool | None = None,
+        change_analysis: bool | None = None,
     ):
         planner = planner if planner is not None else PLANNER
+        self.change_analysis = change_analysis if change_analysis is not None else CHANGE_ANALYSIS
 
         self.model = model or Model.current
         self.llm = llm
@@ -86,6 +88,8 @@ class Alumni:
             DoResult containing the explanation and executed steps with their actions.
         """
         initial_accessibility_tree = self.driver.accessibility_tree
+        before_tree = initial_accessibility_tree.to_str() if self.change_analysis else None
+        before_url = self.driver.url if self.change_analysis else None
         explanation, steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str())
 
         executed_steps = []
@@ -105,7 +109,19 @@ class Alumni:
 
             executed_steps.append(DoStep(name=step, tools=called_tools))
 
-        return DoResult(explanation=explanation, steps=executed_steps)
+        changes = ""
+        if self.change_analysis and executed_steps:
+            try:
+                changes = self.client.analyze_changes(
+                    before_accessibility_tree=before_tree,
+                    before_url=before_url,
+                    after_accessibility_tree=self.driver.accessibility_tree.to_str(),
+                    after_url=self.driver.url,
+                )
+            except Exception as e:
+                logger.error(f"Error analyzing changes: {e}")
+
+        return DoResult(explanation=explanation, steps=executed_steps, changes=changes)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def check(self, statement: str, vision: bool = False) -> str:

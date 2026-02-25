@@ -6,6 +6,7 @@ from .server.logutils import configure_logging, get_logger
 logger: logging.Logger = get_logger(__name__)
 logger.addHandler(logging.NullHandler())
 
+CHANGE_ANALYSIS = getenv("ALUMNIUM_CHANGE_ANALYSIS", "false").lower() == "true"
 DELAY = float(getenv("ALUMNIUM_DELAY", 0.5))
 PLANNER = getenv("ALUMNIUM_PLANNER", "true").lower() == "true"
 RETRIES = int(getenv("ALUMNIUM_RETRIES", 2))
