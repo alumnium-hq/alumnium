@@ -49,7 +49,7 @@ interface CDPFrameTree {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const logger = getLogger(["driver", "playwright"]);
+const logger = getLogger(import.meta.path);
 
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
