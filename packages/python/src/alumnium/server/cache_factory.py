@@ -21,7 +21,8 @@ class CacheFactory:
         if cache_provider == "sqlite":
             return SQLiteCache()
         elif cache_provider == "filesystem":
-            return ChainedCache([ResponseCache(), ElementsCache()])
+            cache_path = getenv("ALUMNIUM_CACHE_PATH", ".alumnium/cache")
+            return ChainedCache([ResponseCache(cache_path), ElementsCache(cache_path)])
         elif cache_provider in ("false", "0", "none", "null"):
             return NullCache()
         else:
