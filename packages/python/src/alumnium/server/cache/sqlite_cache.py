@@ -54,6 +54,7 @@ class SQLiteCache(BaseCache):
         Base.metadata.create_all(self.engine)
         self.session = Session(self.engine)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+        self.app = ""
 
     def _get_or_create_model_config(self, llm_string: str) -> ModelConfig:
         model_config = (

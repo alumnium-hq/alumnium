@@ -43,7 +43,7 @@ class HttpClient:
             response.raise_for_status()
             self.session_id = None
 
-    def plan_actions(self, goal: str, accessibility_tree: str) -> tuple[str, list[str]]:
+    def plan_actions(self, goal: str, accessibility_tree: str, app: str = "unknown") -> tuple[str, list[str]]:
         """
         Plan actions to achieve a goal.
         Returns:
@@ -51,7 +51,7 @@ class HttpClient:
         """
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/plans",
-            json={"goal": goal, "accessibility_tree": accessibility_tree},
+            json={"goal": goal, "accessibility_tree": accessibility_tree, "app": app},
             timeout=120,
         )
         response.raise_for_status()
@@ -74,10 +74,12 @@ class HttpClient:
         )
         response.raise_for_status()
 
-    def execute_action(self, goal: str, step: str, accessibility_tree: str) -> tuple[str, list[dict]]:
+    def execute_action(
+        self, goal: str, step: str, accessibility_tree: str, app: str = "unknown"
+    ) -> tuple[str, list[dict]]:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/steps",
-            json={"goal": goal, "step": step, "accessibility_tree": accessibility_tree},
+            json={"goal": goal, "step": step, "accessibility_tree": accessibility_tree, "app": app},
             timeout=120,
         )
         response.raise_for_status()
@@ -91,6 +93,7 @@ class HttpClient:
         title: str,
         url: str,
         screenshot: str | None,
+        app: str = "unknown",
     ) -> tuple[str, Data]:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/statements",
@@ -100,6 +103,7 @@ class HttpClient:
                 "title": title,
                 "url": url,
                 "screenshot": screenshot if screenshot else None,
+                "app": app,
             },
             timeout=120,
         )
@@ -107,20 +111,20 @@ class HttpClient:
         data = response.json()
         return data["explanation"], loosely_typecast(data["result"])
 
-    def find_area(self, description: str, accessibility_tree: str):
+    def find_area(self, description: str, accessibility_tree: str, app: str = "unknown"):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/areas",
-            json={"description": description, "accessibility_tree": accessibility_tree},
+            json={"description": description, "accessibility_tree": accessibility_tree, "app": app},
             timeout=60,
         )
         response.raise_for_status()
         data = response.json()
         return {"id": data["id"], "explanation": data["explanation"]}
 
-    def find_element(self, description: str, accessibility_tree: str) -> dict:
+    def find_element(self, description: str, accessibility_tree: str, app: str = "unknown") -> dict:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/elements",
-            json={"description": description, "accessibility_tree": accessibility_tree},
+            json={"description": description, "accessibility_tree": accessibility_tree, "app": app},
             timeout=60,
         )
         response.raise_for_status()
@@ -132,6 +136,7 @@ class HttpClient:
         before_url: str,
         after_accessibility_tree: str,
         after_url: str,
+        app: str = "unknown",
     ) -> str:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/changes",
@@ -144,6 +149,7 @@ class HttpClient:
                     "accessibility_tree": after_accessibility_tree,
                     "url": after_url,
                 },
+                "app": app,
             },
             timeout=120,
         )

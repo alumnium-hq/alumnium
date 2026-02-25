@@ -1,6 +1,7 @@
 from asyncio import AbstractEventLoop, run_coroutine_threadsafe
 from base64 import b64encode
 from contextlib import asynccontextmanager
+from urllib.parse import urlparse
 
 from playwright.async_api import Error, Frame, Locator, Page, TimeoutError
 
@@ -232,6 +233,10 @@ class PlaywrightAsyncDriver(BaseDriver):
     @property
     def url(self) -> str:
         return self.page.url
+
+    @property
+    def app(self) -> str:
+        return urlparse(self.page.url).hostname or "unknown"
 
     def find_element(self, id: int) -> Locator:
         return self._run_async(self._find_element(id))

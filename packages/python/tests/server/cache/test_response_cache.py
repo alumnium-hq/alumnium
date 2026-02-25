@@ -1,13 +1,16 @@
+import json
 from json import dumps
 from pathlib import Path
 from shutil import rmtree
 from tempfile import mkdtemp
+from unittest.mock import Mock
 
 from langchain_core.messages import AIMessage
 from langchain_core.outputs import ChatGeneration
 from pytest import fixture
 
-from alumnium.server.cache.filesystem_cache import FilesystemCache
+from alumnium.server.cache.response_cache import ResponseCache
+from alumnium.server.models import Model
 
 
 @fixture
@@ -17,8 +20,19 @@ def temp_cache_dir():
     rmtree(temp_dir, ignore_errors=True)
 
 
+@fixture(autouse=True)
+def setup_model():
+    original = Model.current
+    Model.current = Mock()
+    Model.current.provider = Mock()
+    Model.current.provider.value = "test_provider"
+    Model.current.name = "test_model"
+    yield
+    Model.current = original
+
+
 def test_cache_save_and_lookup(temp_cache_dir):
-    cache = FilesystemCache(cache_dir=temp_cache_dir)
+    cache = ResponseCache(cache_dir=temp_cache_dir)
 
     prompt = dumps(
         [
@@ -45,11 +59,19 @@ def test_cache_save_and_lookup(temp_cache_dir):
 
     response_files = list(Path(temp_cache_dir).rglob("response.json"))
     assert len(response_files) == 1, "Response file should be created"
+    assert "responses" in str(response_files[0]), "Cache path should include 'responses' prefix"
+
+    request_files = list(Path(temp_cache_dir).rglob("request.json"))
+    assert len(request_files) == 1, "Request file should be created"
+    with open(request_files[0]) as f:
+        request_data = json.load(f)
+    assert request_data["system"] == "You are a helpful assistant"
+    assert request_data["human"] == "Hello, world!"
 
 
 def test_cache_concurrent_saves(temp_cache_dir):
-    cache1 = FilesystemCache(cache_dir=temp_cache_dir)
-    cache2 = FilesystemCache(cache_dir=temp_cache_dir)
+    cache1 = ResponseCache(cache_dir=temp_cache_dir)
+    cache2 = ResponseCache(cache_dir=temp_cache_dir)
 
     prompt1 = dumps(
         [
@@ -88,4 +110,7 @@ def test_cache_concurrent_saves(temp_cache_dir):
     assert len(lock_files) == 0, f"Lock files should be cleaned up after both saves, but found: {lock_files}"
 
     response_files = list(Path(temp_cache_dir).rglob("response.json"))
-    assert len(response_files) == 2, "Response file should be created"
+    assert len(response_files) == 2, "Response files should be created"
+
+    request_files = list(Path(temp_cache_dir).rglob("request.json"))
+    assert len(request_files) == 2, "Request files should be created"

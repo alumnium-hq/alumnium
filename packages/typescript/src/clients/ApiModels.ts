@@ -23,6 +23,7 @@ export interface PlanRequest {
   accessibility_tree: string;
   url?: string;
   title?: string;
+  app?: string;
 }
 
 export interface PlanResponse {
@@ -34,6 +35,7 @@ export interface StepRequest {
   goal: string;
   step: string;
   accessibility_tree: string;
+  app?: string;
 }
 
 export interface StepResponse {
@@ -48,6 +50,7 @@ export interface StatementRequest {
   url?: string;
   title?: string;
   screenshot?: string | null;
+  app?: string;
 }
 
 export interface StatementResponse {
@@ -58,6 +61,7 @@ export interface StatementResponse {
 export interface AreaRequest {
   description: string;
   accessibility_tree: string;
+  app?: string;
 }
 
 export interface AreaResponse {
@@ -68,6 +72,7 @@ export interface AreaResponse {
 export interface FindRequest {
   description: string;
   accessibility_tree: string;
+  app?: string;
 }
 
 export interface FindResponse {

@@ -1,4 +1,4 @@
-"""Integration tests for FragmentsCache with real browser automation.
+"""Integration tests for ElementsCache with real browser automation.
 
 These tests verify that the cache works end-to-end with actual Alumni instances
 and browser drivers.
@@ -13,8 +13,8 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 
 from alumnium import Alumni
 from alumnium.server.cache.chained_cache import ChainedCache
-from alumnium.server.cache.filesystem_cache import FilesystemCache
-from alumnium.server.cache.fragments_cache import FragmentsCache
+from alumnium.server.cache.elements_cache import ElementsCache
+from alumnium.server.cache.response_cache import ResponseCache
 from alumnium.server.models import Model
 
 
@@ -46,7 +46,7 @@ def al_with_cache(headless_chrome):
 
         # Replace the underlying LangChain cache with one using temp directory
         # Must update both session.cache and llm.cache
-        chained_cache = ChainedCache([FilesystemCache(temp_dir), FragmentsCache(temp_dir)])
+        chained_cache = ChainedCache([ResponseCache(temp_dir), ElementsCache(temp_dir)])
         al.client.session.cache = chained_cache
         al.client.session.llm.cache = chained_cache
         al.client.cache = chained_cache
@@ -66,8 +66,8 @@ def simple_page(headless_chrome):
     not Model.current or Model.current.provider.value == "ollama",
     reason="Requires LLM provider configured (not ollama)",
 )
-class TestFragmentsCacheIntegration:
-    """Integration tests for FragmentsCache functionality."""
+class TestElementsCacheIntegration:
+    """Integration tests for ElementsCache functionality."""
 
     def test_cache_hit_on_repeated_command(self, al_with_cache, simple_page):
         """Test that repeating the same command uses cache."""
@@ -137,14 +137,14 @@ class TestFragmentsCacheIntegration:
             pass
 
     def test_both_caches_in_chain(self, al_with_cache, simple_page):
-        """Test that both FilesystemCache and FragmentsCache work in chain."""
+        """Test that both ResponseCache and ElementsCache work in chain."""
         al = al_with_cache
 
         # Verify we have ChainedCache with both caches
         assert isinstance(al.client.cache, ChainedCache)
         assert len(al.cache.caches) == 2
-        assert isinstance(al.cache.caches[0], FilesystemCache)
-        assert isinstance(al.cache.caches[1], FragmentsCache)
+        assert isinstance(al.cache.caches[0], ResponseCache)
+        assert isinstance(al.cache.caches[1], ElementsCache)
 
         # First execution
         simple_page.get("https://the-internet.herokuapp.com/login")
@@ -156,7 +156,7 @@ class TestFragmentsCacheIntegration:
         al.do("click the Login button")
 
         # Should have cached response
-        # (FilesystemCache will hit first if exact match, FragmentsCache as fallback)
+        # (ResponseCache will hit first if exact match, ElementsCache as fallback)
         assert al.cache.usage["total_tokens"] > 0
 
     def test_cache_persists_across_sessions(self, headless_chrome, simple_page):
@@ -164,7 +164,7 @@ class TestFragmentsCacheIntegration:
         with tempfile.TemporaryDirectory() as temp_dir:
             # First session
             al1 = Alumni(headless_chrome, url=None)
-            cache1 = ChainedCache([FilesystemCache(temp_dir), FragmentsCache(temp_dir)])
+            cache1 = ChainedCache([ResponseCache(temp_dir), ElementsCache(temp_dir)])
             al1.client.session.cache = cache1
             al1.client.session.llm.cache = cache1
             al1.client.cache = cache1
@@ -179,7 +179,7 @@ class TestFragmentsCacheIntegration:
 
             # Second session with new Alumni instance
             al2 = Alumni(headless_chrome, url=None)
-            cache2 = ChainedCache([FilesystemCache(temp_dir), FragmentsCache(temp_dir)])
+            cache2 = ChainedCache([ResponseCache(temp_dir), ElementsCache(temp_dir)])
             al2.client.session.cache = cache2
             al2.client.session.llm.cache = cache2
             al2.client.cache = cache2
@@ -190,29 +190,27 @@ class TestFragmentsCacheIntegration:
             # Should have used cached response
             assert al2.cache.usage["total_tokens"] > 0
 
-    def test_fragments_cache_validates_elements(self, al_with_cache, simple_page):
-        """Test FragmentsCache validates element presence."""
+    def test_elements_cache_validates_elements(self, al_with_cache, simple_page):
+        """Test ElementsCache validates element presence."""
         al = al_with_cache
 
-        # Access FragmentsCache directly
-        fragments_cache = al.cache.caches[1]
-        assert isinstance(fragments_cache, FragmentsCache)
+        # Access ElementsCache directly
+        elements_cache = al.cache.caches[1]
+        assert isinstance(elements_cache, ElementsCache)
 
         # First execution
         simple_page.get("https://the-internet.herokuapp.com/login")
         al.do("click the Login button")
         al.cache.save()
 
-        # Verify fragments were saved
-        fragments_base_dir = fragments_cache._get_fragments_base_dir()
-        if fragments_base_dir.exists():
-            # Check that fragment files were created
-            plan_dirs = list((fragments_base_dir / "plans").glob("*")) if (
-                fragments_base_dir / "plans"
-            ).exists() else []
-            action_dirs = list((fragments_base_dir / "actions").glob("*")) if (
-                fragments_base_dir / "actions"
-            ).exists() else []
+        # Verify elements were saved
+        elements_base_dir = elements_cache._get_elements_base_dir()
+        if elements_base_dir.exists():
+            # Check that element files were created
+            plan_dirs = list((elements_base_dir / "plans").glob("*")) if (elements_base_dir / "plans").exists() else []
+            action_dirs = (
+                list((elements_base_dir / "actions").glob("*")) if (elements_base_dir / "actions").exists() else []
+            )
 
             # Should have at least some cache entries
             assert len(plan_dirs) > 0 or len(action_dirs) > 0

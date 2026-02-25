@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from typing import Any, Optional
-from xml.etree.ElementTree import Element, fromstring, tostring
+from xml.etree.ElementTree import fromstring
 
 from filelock import FileLock
 from langchain_core.caches import RETURN_VAL_TYPE, BaseCache
@@ -14,19 +14,19 @@ from ..models import Model
 logger = get_logger(__name__)
 
 
-class FragmentsCache(BaseCache):
+class ElementsCache(BaseCache):
     """Cache that validates UI element presence before returning cached responses.
 
     This cache stores:
-    - For planner: plan steps + union of all actor fragments
+    - For planner: plan steps + union of all actor elements
     - For actor: tool calls + element XMLs referenced
 
-    On lookup, validates that all cached element fragments still exist in the
+    On lookup, validates that all cached element elements still exist in the
     current accessibility tree before returning cached responses.
     """
 
     def __init__(self, cache_dir: str = ".alumnium/cache"):
-        """Initialize fragments cache.
+        """Initialize elements cache.
 
         Args:
             cache_dir: Base directory for cache storage
@@ -34,10 +34,17 @@ class FragmentsCache(BaseCache):
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
-        # In-memory cache: (llm_string, cache_hash) -> (response, fragments, agent_type, should_save)
-        self._in_memory_cache: dict[
-            tuple[str, str], tuple[RETURN_VAL_TYPE, list[dict], str, bool]
-        ] = {}
+        self._app: str = "unknown"
+        # In-memory cache: (llm_string, cache_hash) -> (response, elements, agent_type, app, instruction, should_save)
+        self._in_memory_cache: dict[tuple[str, str], tuple[RETURN_VAL_TYPE, list[dict], str, str, dict, bool]] = {}
+
+    @property
+    def app(self) -> str:
+        return self._app
+
+    @app.setter
+    def app(self, value: str) -> None:
+        self._app = value
 
     def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
         """Look up cached response if fragments are still valid.
@@ -46,8 +53,8 @@ class FragmentsCache(BaseCache):
         1. Parse prompt to extract goal/step and accessibility_tree
         2. Determine agent type (planner vs actor)
         3. Hash goal/step to get cache key
-        4. Load fragments.json
-        5. Validate all fragments exist in current tree
+        4. Load elements.json
+        5. Validate all elements exist in current tree
         6. If valid, return cached response
 
         Args:
@@ -82,37 +89,33 @@ class FragmentsCache(BaseCache):
             # Check in-memory cache first
             mem_key = (llm_string, cache_hash)
             if mem_key in self._in_memory_cache:
-                return_val, fragments, _, _ = self._in_memory_cache[mem_key]
-                if self._validate_fragments(fragments, tree_xml):
-                    logger.debug(
-                        f"Fragments cache hit (in-memory) for {agent_type}: {cache_key[:50]}..."
-                    )
+                return_val, elements, _, _, _, _ = self._in_memory_cache[mem_key]
+                if self._validate_elements(elements, tree_xml):
+                    logger.debug(f"Elements cache hit (in-memory) for {agent_type}: {cache_key[:50]}...")
                     self._update_usage(return_val[0].message.usage_metadata)
                     return return_val
 
             # Check filesystem cache
             cache_path = self._get_cache_path(agent_type, cache_hash)
-            fragments_file = cache_path / "fragments.json"
+            elements_file = cache_path / "elements.json"
             response_file = cache_path / "response.json"
 
-            if not fragments_file.exists() or not response_file.exists():
+            if not elements_file.exists() or not response_file.exists():
                 return None
 
-            # Load fragments and validate
-            with open(fragments_file, "r") as f:
-                fragments = json.load(f)
+            # Load elements and validate
+            with open(elements_file, "r") as f:
+                elements = json.load(f)
 
-            if not self._validate_fragments(fragments, tree_xml):
-                logger.debug(
-                    f"Fragments cache miss (validation failed) for {agent_type}: {cache_key[:50]}..."
-                )
+            if not self._validate_elements(elements, tree_xml):
+                logger.debug(f"Elements cache miss (validation failed) for {agent_type}: {cache_key[:50]}...")
                 return None
 
             # Load and return cached response
             with open(response_file, "r") as f:
                 response = loads(f.read())
-                self._in_memory_cache[mem_key] = ([response], fragments, agent_type, False)
-                logger.debug(f"Fragments cache hit (file) for {agent_type}: {cache_key[:50]}...")
+                self._in_memory_cache[mem_key] = ([response], elements, agent_type, self._app, {}, False)
+                logger.debug(f"Elements cache hit (file) for {agent_type}: {cache_key[:50]}...")
                 self._update_usage(response.message.usage_metadata)
                 return [response]
 
@@ -128,8 +131,8 @@ class FragmentsCache(BaseCache):
         2. Determine agent type
         3. Extract element IDs from return_val
         4. Extract element XMLs from accessibility_tree
-        5. Save fragments and response
-        6. If actor: also update planner's fragments
+        5. Save elements and response
+        6. If actor: also update planner's elements
 
         Args:
             prompt: The prompt string (JSON-encoded messages)
@@ -160,46 +163,52 @@ class FragmentsCache(BaseCache):
             agent_type = "plans" if is_planner else "actions"
 
             if is_planner:
-                # For planner, create empty fragments file (will be populated by actor updates)
-                fragments = []
+                # For planner, create empty elements file (will be populated by actor updates)
+                elements = []
+                instruction = {"goal": goal}
                 self._in_memory_cache[(llm_string, cache_hash)] = (
                     return_val,
-                    fragments,
+                    elements,
                     agent_type,
+                    self._app,
+                    instruction,
                     True,
                 )
             else:
-                # For actor, extract element fragments
+                # For actor, extract element elements
                 element_ids = self._extract_element_ids(return_val)
-                fragments = []
+                elements = []
                 for elem_id in element_ids:
                     try:
                         elem_attrs = self._extract_element_attrs(tree_xml, elem_id)
                         if elem_attrs:
-                            fragments.append(elem_attrs)
+                            elements.append(elem_attrs)
                     except Exception as e:
                         logger.debug(f"Failed to extract element {elem_id}: {e}")
 
+                instruction = {"goal": goal, "step": step}
                 self._in_memory_cache[(llm_string, cache_hash)] = (
                     return_val,
-                    fragments,
+                    elements,
                     agent_type,
+                    self._app,
+                    instruction,
                     True,
                 )
 
-                # Also update planner's fragments with these elements
+                # Also update planner's elements with these elements
                 if goal:
-                    self._update_planner_fragments(goal, fragments)
+                    self._update_planner_elements(goal, elements)
 
         except Exception as e:
             logger.debug(f"Error in fragments cache update: {e}")
 
     def save(self):
         """Flush in-memory cache to disk."""
-        for (_, cache_hash), (return_val, fragments, agent_type, should_save) in self._in_memory_cache.items():
+        for (_, cache_hash), (return_val, elements, agent_type, app, instruction, should_save) in self._in_memory_cache.items():
             if should_save:
                 try:
-                    cache_path = self._get_cache_path(agent_type, cache_hash)
+                    cache_path = self._get_cache_path(agent_type, cache_hash, app=app)
                     cache_path.mkdir(parents=True, exist_ok=True)
 
                     lock_path = f"{cache_path}.lock"
@@ -208,22 +217,27 @@ class FragmentsCache(BaseCache):
                     try:
                         lock.acquire()
 
+                        # Save instruction (the goal/step used to compute the hash)
+                        instruction_file = cache_path / "instruction.json"
+                        with open(instruction_file, "w") as f:
+                            json.dump(instruction, f, indent=2)
+
                         # Save response
                         response_file = cache_path / "response.json"
                         with open(response_file, "w") as f:
                             f.write(dumps(return_val[0], pretty=True))
 
-                        # Save fragments
-                        fragments_file = cache_path / "fragments.json"
-                        with open(fragments_file, "w") as f:
-                            json.dump(fragments, f, indent=2)
+                        # Save elements
+                        elements_file = cache_path / "elements.json"
+                        with open(elements_file, "w") as f:
+                            json.dump(elements, f, indent=2)
 
                     finally:
                         lock.release()
                         Path.unlink(Path(lock_path))
 
                 except Exception as e:
-                    logger.debug(f"Error saving fragments cache: {e}")
+                    logger.debug(f"Error saving elements cache: {e}")
 
         self.discard()
 
@@ -232,16 +246,16 @@ class FragmentsCache(BaseCache):
         self._in_memory_cache.clear()
 
     def clear(self, **kwargs: Any):
-        """Delete all cached fragments.
+        """Delete all cached elements.
 
         Args:
             **kwargs: Additional arguments (unused)
         """
-        fragments_dir = self._get_fragments_base_dir()
-        if fragments_dir.exists():
+        elements_dir = self._get_elements_base_dir()
+        if elements_dir.exists():
             import shutil
 
-            shutil.rmtree(fragments_dir)
+            shutil.rmtree(elements_dir)
         self.discard()
 
     def _parse_prompt(self, prompt: str) -> Optional[dict]:
@@ -363,51 +377,49 @@ class FragmentsCache(BaseCache):
             logger.debug(f"Error extracting element attrs for id {element_id}: {e}")
             return None
 
-    def _validate_fragments(self, fragments: list[dict], tree_xml: str) -> bool:
-        """Check if all fragment elements exist in current tree.
+    def _validate_elements(self, elements: list[dict], tree_xml: str) -> bool:
+        """Check if all element elements exist in current tree.
 
         Validates by comparing element attributes (order-independent).
 
         Args:
-            fragments: List of element attribute dicts
+            elements: List of element attribute dicts
             tree_xml: Current accessibility tree XML
 
         Returns:
-            True if all fragments found with matching attributes, False otherwise
+            True if all elements found with matching attributes, False otherwise
         """
-        if not fragments:
-            # Empty fragments list means no elements were used (e.g., planner not yet executed)
+        if not elements:
+            # Empty elements list means no elements were used (e.g., planner not yet executed)
             # This is valid for initial cache creation
             return True
 
         try:
             root = fromstring(f"<root>{tree_xml}</root>")
 
-            for fragment in fragments:
+            for element in elements:
                 # Find element by id
-                element_id = fragment.get("id")
+                element_id = element.get("id")
                 if element_id is None:
-                    logger.debug("Fragment missing 'id' attribute")
+                    logger.debug("Element missing 'id' attribute")
                     return False
 
-                element = root.find(f".//*[@id='{element_id}']")
-                if element is None:
+                tree_element = root.find(f".//*[@id='{element_id}']")
+                if tree_element is None:
                     logger.debug(f"Element with id={element_id} not found in tree")
                     return False
 
                 # Verify element tag matches role
-                if element.tag != fragment.get("role"):
-                    logger.debug(
-                        f"Element role mismatch: expected {fragment.get('role')}, got {element.tag}"
-                    )
+                if tree_element.tag != element.get("role"):
+                    logger.debug(f"Element role mismatch: expected {element.get('role')}, got {tree_element.tag}")
                     return False
 
                 # Check all attributes match
-                for key, expected_value in fragment.items():
+                for key, expected_value in element.items():
                     if key == "role":
                         continue
 
-                    actual_value = element.attrib.get(key)
+                    actual_value = tree_element.attrib.get(key)
                     if actual_value is None:
                         logger.debug(f"Attribute '{key}' missing from element id={element_id}")
                         return False
@@ -419,15 +431,13 @@ class FragmentsCache(BaseCache):
                         actual_value = int(actual_value) if actual_value.isdigit() else actual_value
 
                     if actual_value != expected_value:
-                        logger.debug(
-                            f"Attribute '{key}' mismatch: expected {expected_value}, got {actual_value}"
-                        )
+                        logger.debug(f"Attribute '{key}' mismatch: expected {expected_value}, got {actual_value}")
                         return False
 
             return True
 
         except Exception as e:
-            logger.debug(f"Error validating fragments: {e}")
+            logger.debug(f"Error validating elements: {e}")
             return False
 
     def _extract_element_ids(self, return_val: RETURN_VAL_TYPE) -> set[int]:
@@ -464,36 +474,40 @@ class FragmentsCache(BaseCache):
 
         return ids
 
-    def _get_cache_path(self, agent_type: str, cache_hash: str) -> Path:
+    def _get_cache_path(self, agent_type: str, cache_hash: str, app: str | None = None) -> Path:
         """Get cache directory path for agent type and hash.
 
         Args:
             agent_type: "plans" or "actions"
             cache_hash: Hash of the goal/step
+            app: App namespace override; falls back to self._app
 
         Returns:
             Path to cache directory
         """
         provider = Model.current.provider.value
         model_name = Model.current.name
-        return self.cache_dir / provider / model_name / "fragments" / agent_type / cache_hash
+        return self.cache_dir / (app or self._app) / provider / model_name / "elements" / agent_type / cache_hash
 
-    def _get_fragments_base_dir(self) -> Path:
-        """Get base directory for fragments cache.
+    def _get_elements_base_dir(self, app: str | None = None) -> Path:
+        """Get base directory for elements cache.
+
+        Args:
+            app: App namespace override; falls back to self._app
 
         Returns:
-            Path to fragments base directory
+            Path to elements base directory
         """
         provider = Model.current.provider.value
         model_name = Model.current.name
-        return self.cache_dir / provider / model_name / "fragments"
+        return self.cache_dir / (app or self._app) / provider / model_name / "elements"
 
-    def _update_planner_fragments(self, goal: str, new_fragments: list[dict]):
-        """Append fragments to planner's in-memory cache entry.
+    def _update_planner_elements(self, goal: str, new_elements: list[dict]):
+        """Append elements to planner's in-memory cache entry.
 
         Args:
             goal: The goal string for the planner
-            new_fragments: New element attribute dicts to add
+            new_elements: New element attribute dicts to add
         """
         try:
             goal_hash = xxh3_128_hexdigest(goal)
@@ -501,28 +515,30 @@ class FragmentsCache(BaseCache):
             # Find and update the planner entry in in-memory cache
             # The planner entry key is (llm_string, goal_hash)
             # We need to find it by goal_hash since we don't have llm_string here
-            for (llm_string, cache_hash), (return_val, fragments, agent_type, should_save) in list(
+            for (llm_string, cache_hash), (return_val, elements, agent_type, app, instruction, should_save) in list(
                 self._in_memory_cache.items()
             ):
                 if cache_hash == goal_hash and agent_type == "plans":
-                    # Update planner fragments with new actor fragments (deduplicate by element id)
-                    # Build dict of id -> fragment for deduplication
-                    fragments_by_id = {frag["id"]: frag for frag in fragments}
-                    for new_frag in new_fragments:
-                        fragments_by_id[new_frag["id"]] = new_frag
+                    # Update planner elements with new actor elements (deduplicate by element id)
+                    # Build dict of id -> element for deduplication
+                    elements_by_id = {elem["id"]: elem for elem in elements}
+                    for new_elem in new_elements:
+                        elements_by_id[new_elem["id"]] = new_elem
 
                     # Update in-memory cache entry
                     self._in_memory_cache[(llm_string, cache_hash)] = (
                         return_val,
-                        list(fragments_by_id.values()),
+                        list(elements_by_id.values()),
                         agent_type,
+                        app,
+                        instruction,
                         should_save,
                     )
-                    logger.debug(f"Updated planner fragments: {len(fragments_by_id)} total fragments")
+                    logger.debug(f"Updated planner elements: {len(elements_by_id)} total elements")
                     break
 
         except Exception as e:
-            logger.debug(f"Error updating planner fragments: {e}")
+            logger.debug(f"Error updating planner elements: {e}")
 
     def _update_usage(self, usage_metadata: dict):
         """Update usage statistics.

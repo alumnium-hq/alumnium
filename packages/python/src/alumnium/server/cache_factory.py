@@ -4,9 +4,9 @@ from typing import Optional
 from langchain_core.caches import BaseCache
 
 from .cache.chained_cache import ChainedCache
-from .cache.filesystem_cache import FilesystemCache
-from .cache.fragments_cache import FragmentsCache
+from .cache.elements_cache import ElementsCache
 from .cache.null_cache import NullCache
+from .cache.response_cache import ResponseCache
 from .cache.sqlite_cache import SQLiteCache
 from .logutils import get_logger
 
@@ -21,8 +21,7 @@ class CacheFactory:
         if cache_provider == "sqlite":
             return SQLiteCache()
         elif cache_provider == "filesystem":
-            # Default: chain FilesystemCache (exact match) + FragmentsCache (semantic match)
-            return ChainedCache([FilesystemCache(), FragmentsCache()])
+            return ChainedCache([ResponseCache(), ElementsCache()])
         elif cache_provider in ("false", "0", "none", "null"):
             return NullCache()
         else:

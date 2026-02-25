@@ -268,35 +268,35 @@ class TestChainedCacheOrdering:
 class TestChainedCacheIntegration:
     """Integration tests with real cache behavior."""
 
-    def test_filesystem_then_fragments_pattern(self):
-        """Test typical usage pattern: FilesystemCache → FragmentsCache."""
-        # Create two mock caches simulating filesystem and fragments
-        filesystem_cache = Mock()
-        fragments_cache = Mock()
+    def test_response_then_elements_pattern(self):
+        """Test typical usage pattern: ResponseCache → ElementsCache."""
+        # Create two mock caches simulating response and elements
+        response_cache = Mock()
+        elements_cache = Mock()
 
-        filesystem_cache.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
-        fragments_cache.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+        response_cache.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+        elements_cache.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
 
-        # Filesystem miss, fragments hit
+        # Response miss, elements hit
         response = create_mock_response()
-        filesystem_cache.lookup.return_value = None
-        fragments_cache.lookup.return_value = response
-        fragments_cache.usage = {"input_tokens": 100, "output_tokens": 50, "total_tokens": 150}
+        response_cache.lookup.return_value = None
+        elements_cache.lookup.return_value = response
+        elements_cache.usage = {"input_tokens": 100, "output_tokens": 50, "total_tokens": 150}
 
-        chained = ChainedCache([filesystem_cache, fragments_cache])
+        chained = ChainedCache([response_cache, elements_cache])
 
-        # First call - fragments hit
+        # First call - elements hit
         result = chained.lookup("prompt", "llm_string")
         assert result == response
-        filesystem_cache.lookup.assert_called_once()
-        fragments_cache.lookup.assert_called_once()
+        response_cache.lookup.assert_called_once()
+        elements_cache.lookup.assert_called_once()
 
         # Update should go to both
         chained.update("new_prompt", "llm_string", response)
-        filesystem_cache.update.assert_called_once()
-        fragments_cache.update.assert_called_once()
+        response_cache.update.assert_called_once()
+        elements_cache.update.assert_called_once()
 
         # Save should affect both
         chained.save()
-        filesystem_cache.save.assert_called_once()
-        fragments_cache.save.assert_called_once()
+        response_cache.save.assert_called_once()
+        elements_cache.save.assert_called_once()

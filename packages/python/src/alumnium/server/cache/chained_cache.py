@@ -11,8 +11,8 @@ class ChainedCache(BaseCache):
     """Cache that tries multiple caches in order until a hit is found.
 
     This allows combining multiple caching strategies, e.g.:
-    - FilesystemCache for exact prompt matches
-    - FragmentsCache for semantic element-based matches
+    - ResponseCache for exact prompt matches
+    - ElementsCache for semantic element-based matches
     """
 
     def __init__(self, caches: list[BaseCache]):
@@ -23,6 +23,19 @@ class ChainedCache(BaseCache):
         """
         self.caches = caches
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+
+    @property
+    def app(self) -> str:
+        for cache in self.caches:
+            if hasattr(cache, "app"):
+                return cache.app
+        return "unknown"
+
+    @app.setter
+    def app(self, value: str) -> None:
+        for cache in self.caches:
+            if hasattr(cache, "app"):
+                cache.app = value
 
     def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
         """Try each cache in order until a hit is found.
