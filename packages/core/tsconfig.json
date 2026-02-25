@@ -27,6 +27,7 @@
     // Env
     "lib": ["ESNext"],
     "types": ["bun"],
+    "experimentalDecorators": true, // Enable experimental decorators
     // Checks
     "skipLibCheck": true,
     "strict": true,

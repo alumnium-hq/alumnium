@@ -62,5 +62,18 @@ export class Model {
   }
 }
 
+export type Dev = (typeof DEVS)[number];
+
+export const DEVS = [
+  "anthropic",
+  "google",
+  "deepseek",
+  "meta",
+  "mistralai",
+  "ollama",
+  "xai",
+  "openai",
+] as const;
+
 // Initialize on module load
 Model.initialize();

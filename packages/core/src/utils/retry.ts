@@ -9,7 +9,7 @@ interface RetryOptions {
 
 function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
   originalMethod: T,
-  options: RetryOptions
+  options: RetryOptions,
 ): T {
   const maxAttempts = options.maxAttempts ?? RETRIES;
   const backOff = options.backOff ?? DELAY;
@@ -35,13 +35,13 @@ function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
         if (attempt < maxAttempts) {
           console.debug(
             `Attempt ${attempt}/${maxAttempts} failed, retrying in ${backOff}ms: ${lastError.message}`,
-            { attempt, maxAttempts, backOff, error: lastError }
+            { attempt, maxAttempts, backOff, error: lastError },
           );
           await new Promise((resolve) => setTimeout(resolve, backOff));
         } else {
           console.debug(
             `Attempt ${attempt}/${maxAttempts} failed, no more retries`,
-            { attempt, maxAttempts, error: lastError }
+            { attempt, maxAttempts, error: lastError },
           );
         }
       }

@@ -254,7 +254,6 @@ export class SeleniumDriver extends BaseDriver {
     return frameIds;
   }
 
-  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @autoswitchToNewTab
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
@@ -273,7 +272,6 @@ export class SeleniumDriver extends BaseDriver {
     await actions.move({ origin: await this.findElement(id) }).perform();
   }
 
-  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @autoswitchToNewTab
   async pressKey(key: Key): Promise<void> {
     const keyMap: Record<Key, string> = {

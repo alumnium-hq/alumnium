@@ -1,31 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { BindToolsInput } from "@langchain/core/language_models/chat_models";
 import { ToolClass } from "./BaseTool.js";
 import { ToolWithFields } from "./Field.js";
 
-interface ToolSchema {
-  type: string;
-  function: {
-    name: string;
-    description: string;
-    parameters: {
-      type: string;
-      properties: Record<
-        string,
-        {
-          type: string;
-          description: string;
-          enum?: string[];
-          items?: { type: string };
-        }
-      >;
-      required: string[];
-    };
-  };
-}
-
 export function convertToolsToSchemas(
   tools: Record<string, ToolClass>,
-): ToolSchema[] {
+): BindToolsInput[] {
   return Object.entries(tools).map(([name, ToolClass]) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     const description = (ToolClass as any).description || `Execute ${name}`;
