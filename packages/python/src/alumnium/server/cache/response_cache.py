@@ -79,7 +79,7 @@ class ResponseCache(BaseCache):
                 finally:
                     lock.release()
                     # https://github.com/tox-dev/filelock/pull/408
-                    Path.unlink(Path(lock_path))
+                    Path(lock_path).unlink(missing_ok=True)
         self.discard()
 
     def discard(self):

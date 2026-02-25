@@ -247,7 +247,7 @@ class ElementsCache(BaseCache):
 
                     finally:
                         lock.release()
-                        Path.unlink(Path(lock_path))
+                        Path(lock_path).unlink(missing_ok=True)
 
                 except Exception as e:
                     logger.debug(f"Error saving elements cache: {e}")
