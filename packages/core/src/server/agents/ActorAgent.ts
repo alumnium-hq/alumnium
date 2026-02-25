@@ -1,9 +1,5 @@
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import {
-  AIMessageChunk,
-  MessageStructure,
-  MessageToolSet,
-} from "@langchain/core/messages";
+import { AIMessageChunk, MessageStructure } from "@langchain/core/messages";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
@@ -15,17 +11,17 @@ import { BaseAgent } from "./BaseAgent.js";
 const logger = getLogger(import.meta.path);
 
 export namespace ActorAgent {
-  export type Input = {
+  export interface ChainInput {
     goal: string;
     step: string;
     accessibility_tree: string;
-  };
+  }
 
-  export type Output = AIMessageChunk<MessageStructure<MessageToolSet>>;
+  export type ChainOutput = AIMessageChunk<MessageStructure>;
 }
 
 export class ActorAgent extends BaseAgent {
-  chain: Runnable<ActorAgent.Input, ActorAgent.Output>;
+  chain: Runnable<ActorAgent.ChainInput, ActorAgent.ChainOutput>;
 
   constructor(llm: BaseChatModel, tools: Record<string, ToolClass>) {
     super();
@@ -38,7 +34,7 @@ export class ActorAgent extends BaseAgent {
     // TODO: Figure out when bindTools aren't available and maybe throw a proper
     // error or replace this comment with a NOTE comment instead.
     always(llm.bindTools);
-    this.chain = prompt.pipe(llm.bindTools!(convertToolsToSchemas(tools)));
+    this.chain = prompt.pipe(llm.bindTools(convertToolsToSchemas(tools)));
   }
 
   async invoke(goal: string, step: string, accessibilityTreeXml: string) {
@@ -47,9 +43,11 @@ export class ActorAgent extends BaseAgent {
     }
 
     logger.info("Starting action:");
-    logger.info(`  -> Goal: ${goal}`);
-    logger.info(`  -> Step: ${step}`);
-    logger.debug(`  -> Accessibility tree: ${accessibilityTreeXml}`);
+    this.logData(logger, "in", {
+      Goal: goal,
+      Step: step,
+      "Accessibility tree": this.debugLogValue(accessibilityTreeXml),
+    });
 
     const message = await this.invokeChain(this.chain, {
       goal,
@@ -57,8 +55,10 @@ export class ActorAgent extends BaseAgent {
       accessibility_tree: accessibilityTreeXml,
     });
 
-    logger.info(`  <- Tools: ${message.tool_calls}`);
-    logger.info(`  <- Usage: ${message.usage_metadata}`);
+    this.logData(logger, "out", {
+      Tools: message.tool_calls,
+      Usage: message.usage_metadata,
+    });
 
     // Return tool calls for the client to execute
     return message.tool_calls;

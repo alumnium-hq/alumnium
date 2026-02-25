@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { Model } from "../../model/model.js";
 import { ToolSchema } from "../../tool/tool.js";
-import { AgentUsage } from "../agents/agent.js";
+import { Agent } from "../agents/Agent.js";
 import { Session } from "./Session.js";
 
 export const SessionStateBaseAgent = z.object({
-  usage: AgentUsage,
+  usage: Agent.Usage,
 });
 
 export type SessionStateBaseAgent = z.infer<typeof SessionStateBaseAgent>;

@@ -55,11 +55,17 @@ export class Session {
     // TODO: Create llm
     this.llm = {} as any;
 
-    this.actorAgent = new ActorAgent(); // TODO!
-    this.plannerAgent = new PlannerAgent(); // TODO!
-    this.retrieverAgent = new RetrieverAgent(); // TODO!
-    this.areaAgent = new AreaAgent(); // TODO!
-    this.locatorAgent = new LocatorAgent(); // TODO!
+    // @ts-expect-error -- TODO!
+    this.actorAgent = new ActorAgent();
+    // @ts-expect-error -- TODO!
+    this.plannerAgent = new PlannerAgent();
+    // @ts-expect-error -- TODO!
+    this.retrieverAgent = new RetrieverAgent();
+    // @ts-expect-error -- TODO!
+    this.areaAgent = new AreaAgent();
+    // @ts-expect-error -- TODO!
+    this.locatorAgent = new LocatorAgent();
+    // @ts-expect-error -- TODO!
     this.changesAnalyzerAgent = new ChangesAnalyzerAgent(); // TODO!
 
     log.info(

@@ -15,18 +15,19 @@ export class ChangesAnalyzerAgent extends BaseAgent {
 
   async invoke(diff: string): Promise<string> {
     logger.info("Starting changes analysis:");
-    logger.debug(`  -> Diff: ${diff}`);
+    logger.debug(this.formatLog("in", "Diff", diff));
 
     const message = await this.invokeChain(this.llm, [
-      ["system", this.prompts["system"]],
+      ["system", this.prompts.system],
       ["human", pythonicFormat(this.prompts.user, { diff })],
     ]);
 
     const content = message.text.replace("\n\n", " ");
-    logger.info(`  <- Result: ${content}`);
-    logger.info(
-      `  <- Usage: ${(message as { usage_metadata: unknown }).usage_metadata}`,
-    );
+
+    this.logData(logger, "out", {
+      Result: content,
+      Usage: BaseAgent.getMessageUsage(message),
+    });
 
     return content;
   }
