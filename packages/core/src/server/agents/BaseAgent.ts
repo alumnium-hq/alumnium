@@ -1,9 +1,11 @@
+import { BaseMessage } from "@langchain/core/messages";
 import { Runnable, RunnableConfig } from "@langchain/core/runnables";
+import { Logger } from "@logtape/logtape";
 import { always } from "alwaysly";
 import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
 import { retry } from "../../utils/retry.js";
-import { AgentState, AgentUsage } from "./agent.js";
+import { Agent } from "./Agent.js";
 import {
   loadAgentPrompts,
   PROVIDER_TO_PROMPTS_DEV,
@@ -17,8 +19,20 @@ const logger = getLogger(import.meta.path);
 
 const agentPrompts = await loadAgentPrompts();
 
+export class BaseAgentDebugLogValue {
+  constructor(public value: unknown) {}
+}
+
+export namespace BaseAgent {
+  export type LogDir = "in" | "out";
+
+  export type LogData = Record<string, LogDataValue>;
+
+  export type LogDataValue = BaseAgentDebugLogValue | unknown;
+}
+
 export class BaseAgent {
-  #usage: AgentUsage = {
+  #usage: Agent.Usage = {
     input_tokens: 0,
     output_tokens: 0,
     total_tokens: 0,
@@ -123,22 +137,53 @@ export class BaseAgent {
     return result;
   }
 
-  #updateUsage(usage: Partial<AgentUsage> | undefined | null) {
+  #updateUsage(usage: Partial<Agent.Usage> | undefined | null) {
     if (!usage) return;
     this.#usage.input_tokens += usage.input_tokens ?? 0;
     this.#usage.output_tokens += usage.output_tokens ?? 0;
     this.#usage.total_tokens += usage.total_tokens ?? 0;
   }
 
+  protected static getMessageUsage(message: BaseMessage) {
+    return "usage_metadata" in message && message.usage_metadata;
+  }
+
+  protected formatLog(dir: BaseAgent.LogDir, topic: string, value: unknown) {
+    const detailsStr =
+      value instanceof BaseAgentDebugLogValue
+        ? JSON.stringify(value.value)
+        : typeof value === "object" && value
+          ? JSON.stringify(value)
+          : String(value);
+    return `  ${dir === "in" ? "->" : "<-"} ${topic}: ${detailsStr}`;
+  }
+
+  protected logData(
+    logger: Logger,
+    dir: BaseAgent.LogDir,
+    data: BaseAgent.LogData,
+  ) {
+    for (const [key, value] of Object.entries(data)) {
+      const message = this.formatLog(dir, key, value);
+      logger[value instanceof BaseAgentDebugLogValue ? "debug" : "info"](
+        message,
+      );
+    }
+  }
+
+  protected debugLogValue(value: unknown): BaseAgentDebugLogValue {
+    return new BaseAgentDebugLogValue(value);
+  }
+
   //#region Agent state
 
-  toState(): AgentState {
+  toState(): Agent.State {
     // Note that most of the agents don't have any internal state beyond usage,
     // except for the planner agent which has examples.
     return { usage: this.#usage };
   }
 
-  applyState(state: AgentState): void {
+  applyState(state: Agent.State): void {
     this.#usage = state.usage;
   }
 
