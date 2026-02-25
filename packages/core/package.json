@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
+    "@langchain/core": "^1.1.28",
     "@logtape/file": "^2.0.2",
     "@logtape/logtape": "^2.0.2",
     "ai": "^6.0.86",
