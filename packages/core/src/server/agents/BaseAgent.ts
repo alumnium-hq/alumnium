@@ -85,7 +85,7 @@ export class BaseAgent {
   })
   // TODO: This function is infested with bad types, figure out a better way
   // or simply replace LangChain with AI SDK or custom code.
-  protected invokeChain<
+  protected async invokeChain<
     RunInput = any,
     RunOutput = any,
     CallOptions extends RunnableConfig = RunnableConfig,
@@ -94,7 +94,7 @@ export class BaseAgent {
     input: RunInput,
     options?: Partial<CallOptions>,
   ) {
-    const result = chain.invoke(input, options);
+    const result = await chain.invoke(input, options);
     let content: unknown;
     if (typeof result === "object" && result && "raw" in result) {
       const raw = result.raw as any;
