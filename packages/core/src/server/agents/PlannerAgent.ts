@@ -20,56 +20,6 @@ import { BaseAgent } from "./BaseAgent.js";
 
 const logger = getLogger(import.meta.path);
 
-/**
- * Plan of actions to achieve a goal.
- */
-export const Plan = z.object({
-  explanation: z
-    .string()
-    .describe(
-      "Explanation how the actions were determined and why they are related to the goal. " +
-        "Always include the goal, actions to achieve it, and their order in the explanation.",
-    ),
-  actions: z.array(z.string()).describe("List of actions to achieve the goal."),
-});
-
-export type Plan = z.infer<typeof Plan>;
-
-export const PlanExample = z.object({
-  goal: z.string().describe("The goal to achieve."),
-  accessibility_tree: z
-    .string()
-    .describe("The accessibility tree XML used for planning."),
-  actions: z
-    .array(z.string())
-    .or(z.string())
-    .describe(
-      "The list of actions to achieve the goal. Can be a single string with actions separated by a special separator.",
-    ),
-});
-
-export type PlanExample = z.infer<typeof PlanExample>;
-
-export namespace PlannerAgent {
-  export interface ChainInput {
-    goal: string;
-    accessibility_tree: string;
-  }
-
-  export type ChainOutput = ChainOutputStructured | ChainOutputUnstructured;
-
-  export interface ChainOutputStructured {
-    raw: BaseMessage;
-    parsed: Plan;
-  }
-
-  export type ChainOutputUnstructured = AIMessageChunk<MessageStructure>;
-
-  export interface State extends Agent.State {
-    examples: PlanExample[];
-  }
-}
-
 export class PlannerAgent extends BaseAgent {
   static readonly #NAVIGATE_TO_URL_EXAMPLE = `
 Example:
@@ -103,7 +53,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 
   llm: BaseChatModel;
   toolNames: string[];
-  promptWithExamples: FewShotChatMessagePromptTemplate<PlanExample>;
+  promptWithExamples: FewShotChatMessagePromptTemplate<PlannerAgent.Example>;
   chain: Runnable<PlannerAgent.ChainInput, PlannerAgent.ChainOutput>;
 
   constructor(llm: BaseChatModel, tools: string[]) {
@@ -126,7 +76,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     this.promptWithExamples = new FewShotChatMessagePromptTemplate({
       examples: [],
       examplePrompt,
-      inputVariables: PlanExample.keyof().options,
+      inputVariables: PlannerAgent.Example.keyof().options,
     });
 
     let extraExamples = "";
@@ -157,7 +107,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
       !PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)
     ) {
       this.chain = finalPrompt.pipe(
-        llm.withStructuredOutput(Plan, { includeRaw: true }),
+        llm.withStructuredOutput(PlannerAgent.Plan, { includeRaw: true }),
       );
     } else {
       this.chain = finalPrompt.pipe(llm);
@@ -260,6 +210,13 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 
   //#region State
 
+  static createState(): PlannerAgent.State {
+    return {
+      ...Agent.createState(),
+      examples: [],
+    };
+  }
+
   toState(): PlannerAgent.State {
     const state = super.toState();
     const examples = this.promptWithExamples.examples;
@@ -268,7 +225,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
       examples: examples
         ? // NOTE: LangChain has broken generic types for examples, so they
           // never resolve properly.
-          (examples as PlanExample[])
+          (examples as PlannerAgent.Example[])
         : [],
     };
   }
@@ -279,4 +236,55 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   }
 
   //#endregion
+}
+
+export namespace PlannerAgent {
+  export interface ChainInput {
+    goal: string;
+    accessibility_tree: string;
+  }
+
+  export type ChainOutput = ChainOutputStructured | ChainOutputUnstructured;
+
+  export interface ChainOutputStructured {
+    raw: BaseMessage;
+    parsed: Plan;
+  }
+
+  export type ChainOutputUnstructured = AIMessageChunk<MessageStructure>;
+
+  export const Example = z.object({
+    goal: z.string().describe("The goal to achieve."),
+    accessibility_tree: z
+      .string()
+      .describe("The accessibility tree XML used for planning."),
+    actions: z
+      .array(z.string())
+      .or(z.string())
+      .describe(
+        "The list of actions to achieve the goal. Can be a single string with actions separated by a special separator.",
+      ),
+  });
+
+  export type Example = z.infer<typeof PlannerAgent.Example>;
+
+  export const State = Agent.State.extend({
+    examples: z.array(PlannerAgent.Example),
+  });
+
+  export type State = z.infer<typeof PlannerAgent.State>;
+
+  export const Plan = z.object({
+    explanation: z
+      .string()
+      .describe(
+        "Explanation how the actions were determined and why they are related to the goal. " +
+          "Always include the goal, actions to achieve it, and their order in the explanation.",
+      ),
+    actions: z
+      .array(z.string())
+      .describe("List of actions to achieve the goal."),
+  });
+
+  export type Plan = z.infer<typeof PlannerAgent.Plan>;
 }
