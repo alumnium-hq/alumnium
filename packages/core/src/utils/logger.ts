@@ -1,14 +1,14 @@
 import { getFileSink } from "@logtape/file";
 import {
-  getLogger as _getLogger,
   configure,
   getConsoleSink,
+  LogLevel,
+  getLogger as logtapeGetLogger,
   type Sink,
 } from "@logtape/logtape";
+import { always } from "alwaysly";
 import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
-
-type LogLevel = "debug" | "info" | "warning" | "error" | "fatal";
 
 let configurePromise: Promise<void> | null = null;
 
@@ -46,9 +46,18 @@ async function configureLogging(): Promise<void> {
   });
 }
 
-export function getLogger(category: string[]) {
+export function getLogger(modulePath: string) {
   if (!configurePromise) {
     configurePromise = configureLogging();
   }
-  return _getLogger(["alumnium", ...category]);
+  return logtapeGetLogger(modulePathToLoggerCategory(modulePath));
+}
+
+const MODULE_PATH_RE = /(src|dist)\/(.+)\.ts/;
+
+export function modulePathToLoggerCategory(modulePath: string): string {
+  const normalizedPath = modulePath.replaceAll("\\", "/");
+  const matches = normalizedPath.match(MODULE_PATH_RE);
+  always(matches?.[2]);
+  return matches[2];
 }

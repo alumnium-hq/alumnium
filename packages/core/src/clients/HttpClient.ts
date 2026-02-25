@@ -20,7 +20,7 @@ import {
 } from "./ApiModels.js";
 import { Data, looselyTypecast } from "./typecasting.js";
 
-const logger = getLogger(["HttpClient"]);
+const logger = getLogger(import.meta.path);
 
 export class HttpClient {
   private baseUrl: string;
