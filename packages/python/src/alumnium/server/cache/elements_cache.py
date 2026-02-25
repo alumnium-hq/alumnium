@@ -172,6 +172,13 @@ class ElementsCache(BaseCache):
             agent_type = "plans" if is_planner else "actions"
 
             if is_planner:
+                # Don't cache empty plans — content must be non-empty
+                plan_msg = getattr(return_val[0], "message", return_val[0])
+                plan_content = getattr(plan_msg, "content", None)
+                if not plan_content:
+                    logger.debug(f"Skipping planner cache update: empty plan content for goal: {goal[:50]}...")
+                    return
+
                 # For planner, create empty elements file (will be populated by actor updates)
                 elements = []
                 instruction = {"goal": goal}
@@ -185,6 +192,12 @@ class ElementsCache(BaseCache):
                     True,
                 )
             else:
+                # Don't cache empty actions — actor must have returned tool calls
+                actor_msg = getattr(return_val[0], "message", return_val[0])
+                if not getattr(actor_msg, "tool_calls", None):
+                    logger.debug(f"Skipping actor cache update: no tool calls for step: {step[:50]}...")
+                    return
+
                 # For actor, extract element elements
                 element_ids = self._extract_element_ids(return_val)
                 elements = []
@@ -195,6 +208,10 @@ class ElementsCache(BaseCache):
                             elements.append(elem_attrs)
                     except Exception as e:
                         logger.debug(f"Failed to extract element {elem_id}: {e}")
+
+                if not elements:
+                    logger.debug(f"Skipping actor cache update: no elements extracted for step: {step[:50]}...")
+                    return
 
                 response_json = dumps(return_val[0], pretty=True)
                 masked_json = self._mask_response(response_json, element_ids)

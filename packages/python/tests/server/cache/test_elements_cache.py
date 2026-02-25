@@ -967,3 +967,72 @@ class TestCachePathConstruction:
         assert "staging.airbnb.com" in str(path)
         assert "test_provider" in str(path)
         assert "test_model" in str(path)
+
+
+class TestEmptyResponseGuards:
+    """Test guards against caching/returning empty plans and actions."""
+
+    def test_planner_update_skips_empty_content(self, elements_cache, setup_model):
+        """Test that planner with empty content is not cached."""
+        goal = "login to app"
+        tree = "<button id='1'>Login</button>"
+        prompt = create_planner_prompt(goal, tree)
+        response = create_response("")  # Empty content
+
+        elements_cache.update(prompt, "llm_string", response)
+
+        # Should not be in in-memory cache
+        assert len(elements_cache._in_memory_cache) == 0
+
+    def test_planner_update_skips_none_content(self, elements_cache, setup_model):
+        """Test that planner with None content is not cached."""
+        goal = "login to app"
+        tree = "<button id='1'>Login</button>"
+        prompt = create_planner_prompt(goal, tree)
+        response = create_response("")
+        # Simulate None content
+        response[0].message.content = None
+
+        elements_cache.update(prompt, "llm_string", response)
+
+        assert len(elements_cache._in_memory_cache) == 0
+
+    def test_actor_update_skips_no_tool_calls(self, elements_cache, setup_model):
+        """Test that actor with no tool calls is not cached."""
+        goal = "login to app"
+        step = "click login button"
+        tree = '<button id="1" name="Login"/>'
+        prompt = create_actor_prompt(goal, step, tree)
+        response = create_response("")  # No tool calls
+
+        elements_cache.update(prompt, "llm_string", response)
+
+        # Should not be in in-memory cache
+        assert len(elements_cache._in_memory_cache) == 0
+
+    def test_actor_update_skips_empty_tool_calls_list(self, elements_cache, setup_model):
+        """Test that actor with explicitly empty tool_calls list is not cached."""
+        goal = "login to app"
+        step = "click login button"
+        tree = '<button id="1" name="Login"/>'
+        prompt = create_actor_prompt(goal, step, tree)
+        response = create_response("", [])  # Explicitly empty tool calls
+
+        elements_cache.update(prompt, "llm_string", response)
+
+        assert len(elements_cache._in_memory_cache) == 0
+
+    def test_actor_update_skips_tool_calls_with_no_element_ids(self, elements_cache, setup_model):
+        """Test that actor with tool calls but no element IDs (e.g. NavigateBackTool) is not cached."""
+        goal = "go back"
+        step = "navigate back"
+        tree = '<button id="1" name="Login"/>'
+        prompt = create_actor_prompt(goal, step, tree)
+        # NavigateBackTool has no id/from_id/to_id fields
+        tool_calls = [{"name": "NavigateBackTool", "args": {}}]
+        response = create_response("", tool_calls)
+
+        elements_cache.update(prompt, "llm_string", response)
+
+        assert len(elements_cache._in_memory_cache) == 0
+
