@@ -333,12 +333,10 @@ export class PlaywrightDriver extends BaseDriver {
     await element.scrollIntoViewIfNeeded();
   }
 
-  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @retry({
     maxAttempts: 2,
     backOff: 500,
-    doRetry: (error: Error) =>
-      error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
+    doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   async screenshot(): Promise<string> {
     const buffer = await this.page.screenshot({
@@ -347,12 +345,10 @@ export class PlaywrightDriver extends BaseDriver {
     return buffer.toString("base64");
   }
 
-  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @retry({
     maxAttempts: 2,
     backOff: 500,
-    doRetry: (error: Error) =>
-      error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
+    doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   async title(): Promise<string> {
     return await this.page.title();
@@ -372,12 +368,10 @@ export class PlaywrightDriver extends BaseDriver {
     await fileChooser.setFiles(paths);
   }
 
-  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @retry({
     maxAttempts: 2,
     backOff: 500,
-    doRetry: (error: Error) =>
-      error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
+    doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   url(): Promise<string> {
     return Promise.resolve(this.page.url());
@@ -489,12 +483,10 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.context().grantPermissions(permissions);
   }
 
-  // @ts-expect-error -- TODO: Fix types after making TS setup stricter
   @retry({
     maxAttempts: 2,
     backOff: 500,
-    doRetry: (error: Error) =>
-      error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
+    doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   private async waitForPageToLoad(): Promise<void> {
     logger.debug("Waiting for page to finish loading:");
