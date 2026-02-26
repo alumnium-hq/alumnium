@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "server#dev",
+      "program": "src/cli.ts",
+      "cwd": "${workspaceFolder}/packages/core"
+    },
+    {
+      "type": "bun",
+      "request": "launch",
+      "name": "server#dev:debug",
+      "program": "src/cli.ts",
+      "cwd": "${workspaceFolder}/packages/core",
+      "stopOnEntry": true
+    }
+  ]
+}
