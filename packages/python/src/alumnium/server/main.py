@@ -23,6 +23,7 @@ from .api_models import (
     PlanResponse,
     SessionRequest,
     SessionResponse,
+    SessionStateRequest,
     StatementRequest,
     StatementResponse,
     StepRequest,
@@ -125,9 +126,9 @@ async def get_session_state(session_id: str):
 
 
 @v1_router.post("/sessions/state")
-async def apply_session_state(session_state: dict[str, Any]):
+async def apply_session_state(request: SessionStateRequest):
     """Apply session state snapshot."""
-    session_manager.apply_session_state(session_state)
+    session_manager.apply_session_state(request.state)
 
 
 @v1_router.post("/sessions/{session_id}/plans", response_model=PlanResponse)

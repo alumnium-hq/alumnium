@@ -1,4 +1,5 @@
 import { Model } from "../Model.js";
+import { ErrorResponse } from "../server/serverSchema.js";
 import { ToolClass } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
@@ -51,7 +52,14 @@ export class HttpClient {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      let detail;
+
+      try {
+        const errorData = ErrorResponse.parse(errorText);
+        detail = errorData.message;
+      } catch {}
+      throw new Error(`${response.status} ${response.statusText}`);
     }
 
     return response;

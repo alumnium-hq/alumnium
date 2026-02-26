@@ -1,16 +1,19 @@
 import { Context } from "elysia";
+import { getLogger } from "../utils/logger.js";
 import { Session } from "./session/Session.js";
+
+const logger = getLogger(import.meta.url);
 
 export const LEGACY_PORT = 8014;
 export const LEGACY_ORIGIN = `localhost:${LEGACY_PORT}`;
 export const LEGACY_BASE_URL = `http://${LEGACY_ORIGIN}`;
 
-export async function legacyProxy(ctx: Context): Promise<Response> {
+export async function legacyProxy(ctx: Context) {
   const { request, body } = ctx;
   const url = new URL(request.url);
   const path = `${url.pathname}${url.search}`;
 
-  console.log(`Proxying ${request.method} ${path} -> ${legacyUrl(path)}`);
+  logger.info(`Proxying ${request.method} ${path} -> ${legacyUrl(path)}`);
 
   try {
     const headers = new Headers(request.headers);
@@ -21,7 +24,13 @@ export async function legacyProxy(ctx: Context): Promise<Response> {
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    const responseBody = await response.blob();
+    let responseBody: Blob | undefined = undefined;
+    try {
+      responseBody = await response.blob();
+    } catch (err) {
+      // NOTE: Some methods respond with no body
+      logger.debug(`Failed to read response body as blob: ${err}`);
+    }
 
     return new Response(responseBody, {
       status: response.status,
@@ -29,15 +38,9 @@ export async function legacyProxy(ctx: Context): Promise<Response> {
       headers: response.headers,
     });
   } catch (err) {
-    console.error("Proxy error:", err);
+    logger.error("Proxy error: {err}", { err });
 
-    return new Response(
-      JSON.stringify({ error: "Proxy failed", detail: String(err) }),
-      {
-        status: 502,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    return ctx.status(502, { error: "Proxy failed", detail: String(err) });
   }
 }
 
@@ -54,10 +57,12 @@ const sessionStates: Record<Session.Id, Session.State> = {};
 export async function pushLegacyState(session: Session) {
   const state = session.toState();
   sessionStates[session.sessionId] = state;
+  logger.info(`Pushing legacy state for session ${session.sessionId}`);
+  logger.debug(`State: {state}`, { state });
   await legacyFetch("/v1/sessions/state", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(state),
+    body: JSON.stringify({ state }),
   });
 }
 
@@ -68,15 +73,28 @@ export namespace pushLegacyStateHook {
 }
 
 export function pushLegacyStateHook(ctx: pushLegacyStateHook.Context) {
-  const { session } = ctx;
-  return pushLegacyState(session);
+  return pushLegacyState(ctx.session);
 }
 
 export async function deleteLegacyState(sessionId: Session.Id) {
   delete sessionStates[sessionId];
-  await legacyFetch(`/v1/sessions/state/${sessionId}`, {
+  await legacyFetch(`/v1/sessions/${sessionId}`, {
     method: "DELETE",
   });
+}
+
+export namespace deleteLegacyStateHook {
+  export interface Context {
+    params: Params;
+  }
+
+  export interface Params {
+    session_id: Session.Id;
+  }
+}
+
+export function deleteLegacyStateHook(ctx: deleteLegacyStateHook.Context) {
+  return deleteLegacyState(ctx.params.session_id);
 }
 
 export async function pullLegacyState(sessionId: Session.Id) {
@@ -89,15 +107,14 @@ export async function pullLegacyState(sessionId: Session.Id) {
 
 export namespace pullLegacyStateHook {
   export interface Context {
-    params: SessionParams;
+    params: Params;
   }
 
-  export interface SessionParams {
+  export interface Params {
     session_id: Session.Id;
   }
 }
 
 export function pullLegacyStateHook(ctx: pullLegacyStateHook.Context) {
-  const { params } = ctx;
-  return pullLegacyState(params.session_id);
+  return pullLegacyState(ctx.params.session_id);
 }
