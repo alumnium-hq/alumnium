@@ -129,9 +129,9 @@ export class Session {
   toState(): Session.State {
     const state: Session.State = {
       session_id: this.sessionId,
-      model: this.model,
+      model: this.model.toState(),
       platform: this.platform,
-      tool_schemas: this.tools,
+      tools: this.tools,
       // "llm" is omitted even though it is passed in the constructor, as
       // 1) it's external and may not be serializable, and 2) in HTTP API
       // where sessions are exchanged, llm is never passed as a param.
@@ -150,7 +150,7 @@ export class Session {
       sessionId: state["session_id"],
       model: Model.fromState(state["model"]),
       platform: state["platform"],
-      tools: state["tool_schemas"],
+      tools: state["tools"],
       // llm is not never in state, see note in to_state.
     });
 
@@ -199,7 +199,7 @@ export namespace Session {
     session_id: Session.Id,
     model: Model.Schema,
     platform: Session.Platform,
-    tool_schemas: z.array(z.custom<ToolDefinition>()),
+    tools: z.array(z.custom<ToolDefinition>()),
     actor_agent: Agent.State,
     planner_agent: PlannerAgent.State,
     retriever_agent: Agent.State,
