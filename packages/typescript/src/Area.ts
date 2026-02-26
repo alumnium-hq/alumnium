@@ -9,7 +9,7 @@ import {
   ToolClass,
   retry,
 } from "@alumnium/core";
-import { VisionOptions } from "./Alumni.js";
+import { type VisionOptions } from "./Alumni.js";
 import { AssertionError } from "./errors/AssertionError.js";
 import { DoResult, DoStep } from "./result.js";
 
@@ -123,7 +123,7 @@ export class Area {
       this.accessibilityTree.toStr(),
       await this.driver.app()
     );
-
-    return response && this.driver.findElement(+response.id);
+    if (response?.id == null) return;
+    return this.driver.findElement(+response.id);
   }
 }

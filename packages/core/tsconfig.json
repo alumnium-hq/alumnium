@@ -28,6 +28,8 @@
     "lib": ["ESNext"],
     "types": ["bun"],
     "experimentalDecorators": true, // Enable experimental decorators
+    // TODO: See packages/typescript/tsconfig.json
+    "emitDecoratorMetadata": true,
     // Checks
     "skipLibCheck": true,
     "strict": true,
