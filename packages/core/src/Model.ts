@@ -62,6 +62,21 @@ export class Model {
 
     Model.current = new Model(provider, name);
   }
+
+  //#region State
+
+  toState(): Model.Schema {
+    return {
+      provider: this.provider,
+      name: this.name,
+    };
+  }
+
+  static fromState(state: Model.Schema): Model {
+    return new Model(state.provider, state.name);
+  }
+
+  //#endregion
 }
 
 export namespace Model {

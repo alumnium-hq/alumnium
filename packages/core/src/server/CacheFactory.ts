@@ -1,7 +1,7 @@
 import { getLogger } from "../utils/logger.js";
 import { NullCache } from "./cache/NullCache.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 export class CacheFactory {
   static createCache(): NullCache {

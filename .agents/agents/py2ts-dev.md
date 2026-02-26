@@ -116,7 +116,7 @@ When converting Pydantic models, use the `zod` library to define the schema. Fol
 
 The following are the cases when you must diverge from the Python code structure or logic and use existing TypeScript solutions instead of direct translations:
 
-- **Logging**: The logger module is located in `packages/core/src/utils/logger.ts` and exports the `getLogger` function. It wraps the LogTape module (`@logtape/logtape`). Always use `getLogger(import.meta.path)` without changing the argument. It later gets processed by a Bun plugin during the build to inline the module name instead of `import.meta.path`.
+- **Logging**: The logger module is located in `packages/core/src/utils/logger.ts` and exports the `getLogger` function. It wraps the LogTape module (`@logtape/logtape`). Always use `getLogger(import.meta.url)` without changing the argument. It later gets processed by a Bun plugin during the build to inline the module name instead of `import.meta.url`.
 
 ## TypeScript
 

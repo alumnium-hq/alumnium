@@ -1,21 +1,16 @@
 import { describe, expect, it } from "bun:test";
-import { modulePathToLoggerCategory } from "./logger.js";
+import { moduleUrlToLoggerCategory } from "./logger.js";
 
-describe(modulePathToLoggerCategory, () => {
+describe(moduleUrlToLoggerCategory, () => {
   it("should convert module URL to logger category", () => {
     expect(
-      modulePathToLoggerCategory(
-        "/home/koss/code/alumnium/packages/core/src/cli.ts",
+      moduleUrlToLoggerCategory(
+        "file:///home/koss/code/alumnium/packages/core/src/cli.ts",
       ),
     ).toBe("cli");
     expect(
-      modulePathToLoggerCategory(
-        "/home/koss/code/alumnium/packages/core/src/server/agents/AreaAgent.ts",
-      ),
-    ).toBe("server/agents/AreaAgent");
-    expect(
-      modulePathToLoggerCategory(
-        "C:\\Users\\koss\\code\\alumnium\\packages\\core\\src\\server\\agents\\AreaAgent.ts",
+      moduleUrlToLoggerCategory(
+        "file:///home/koss/code/alumnium/packages/core/src/server/agents/AreaAgent.ts",
       ),
     ).toBe("server/agents/AreaAgent");
   });

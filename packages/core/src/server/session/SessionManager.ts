@@ -6,7 +6,7 @@ import { getLogger } from "../../utils/logger.js";
 import { Agent } from "../agents/Agent.js";
 import { Session } from "./Session.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 /**
  * Manages multiple client sessions.
@@ -103,10 +103,10 @@ export class SessionManager {
 
 export namespace SessionManager {
   export interface CreateSessionProps {
+    platform: Session.Platform;
     provider: Provider;
     name?: string | undefined;
-    platform: Session.Platform;
-    toolSchemas: ToolDefinition[];
+    tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
     sessionId?: Session.Id | undefined;
   }

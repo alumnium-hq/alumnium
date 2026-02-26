@@ -19,7 +19,7 @@ const loggerPathPlugin: BunPlugin = {
     build.onLoad({ filter: /\.ts$/, namespace: "file" }, async (args) => {
       const input = await Bun.file(args.path).text();
 
-      if (!input.includes("getLogger(import.meta.path)")) {
+      if (!input.includes("getLogger(import.meta.url)")) {
         return;
       }
 
@@ -27,7 +27,7 @@ const loggerPathPlugin: BunPlugin = {
         ...args,
         // TODO: Replace the absolute path part so paths the same on different machines.
         contents: input.replaceAll(
-          "getLogger(import.meta.path)",
+          "getLogger(import.meta.url)",
           `getLogger(${JSON.stringify(args.path)})`,
         ),
       };
