@@ -168,8 +168,14 @@ export class Session {
 }
 
 export namespace Session {
-  export type Id = string & { [idBrand]: true };
-  declare const idBrand: unique symbol;
+  // TODO: Figure out if symbol brand can be restored after solving this:
+  //     > Exported variable 'serverApp' has or is using name 'idBrand' from
+  //     > external module ".../session/Session" but cannot be named.ts(4023)
+  export type Id = string & { __brand: "Session.Id" };
+  export declare const idBrand: unique symbol;
+
+  // export type Id = string & { [idBrand]: true };
+  // export declare const idBrand: unique symbol;
 
   export const PLATFORMS = ["chromium", "uiautomator2", "xcuitest"] as const;
 
