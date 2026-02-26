@@ -45,7 +45,7 @@ export class ActorAgent extends BaseAgent {
     this.logData(logger, "in", {
       Goal: goal,
       Step: step,
-      "Accessibility tree": this.debugLogValue(accessibilityTreeXml),
+      "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
     });
 
     const message = await this.invokeChain(this.chain, {

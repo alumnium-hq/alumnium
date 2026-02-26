@@ -15,7 +15,7 @@ export class ChangesAnalyzerAgent extends BaseAgent {
 
   async invoke(diff: string): Promise<string> {
     logger.info("Starting changes analysis:");
-    logger.debug(this.formatLog("in", "Diff", diff));
+    logger.debug(this.formatLog("in", "Diff"), { detail: diff });
 
     const message = await this.invokeChain(this.llm, [
       ["system", this.prompts.system],
