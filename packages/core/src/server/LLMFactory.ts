@@ -80,9 +80,9 @@ export class LLMFactory {
     model: Model,
     defaults: Partial<AzureChatOpenAIFields>,
   ): AzureChatOpenAIFields {
-    const azureOpenAIEndpoint = import.meta.env.AZURE_FOUNDRY_TARGET_URI;
-    const apiKey = import.meta.env.AZURE_FOUNDRY_API_KEY;
-    const openAIApiVersion = import.meta.env.AZURE_FOUNDRY_API_VERSION;
+    const azureOpenAIEndpoint = process.env.AZURE_FOUNDRY_TARGET_URI;
+    const apiKey = process.env.AZURE_FOUNDRY_API_KEY;
+    const openAIApiVersion = process.env.AZURE_FOUNDRY_API_VERSION;
     if (!azureOpenAIEndpoint) {
       throw new Error(
         "AZURE_FOUNDRY_TARGET_URI environment variable is required for Azure Foundry models",
@@ -106,7 +106,7 @@ export class LLMFactory {
     model: Model,
     defaults: Partial<AzureChatOpenAIFields>,
   ): AzureChatOpenAIFields {
-    const openAIApiVersion = import.meta.env.AZURE_OPENAI_API_VERSION;
+    const openAIApiVersion = process.env.AZURE_OPENAI_API_VERSION;
     if (!openAIApiVersion) {
       throw new Error(
         "AZURE_OPENAI_API_VERSION environment variable is required for Azure OpenAI models",
@@ -133,9 +133,9 @@ export class LLMFactory {
   }
 
   static createAwsLlm(model: Model): BaseChatModel {
-    const accessKeyId = import.meta.env.AWS_ACCESS_KEY ?? "";
-    const secretAccessKey = import.meta.env.AWS_SECRET_KEY ?? "";
-    const region = import.meta.env.AWS_REGION_NAME ?? "us-east-1";
+    const accessKeyId = process.env.AWS_ACCESS_KEY ?? "";
+    const secretAccessKey = process.env.AWS_SECRET_KEY ?? "";
+    const region = process.env.AWS_REGION_NAME ?? "us-east-1";
     const additionalModelRequestFields: DocumentType = {};
 
     if (model.provider === Provider.AWS_ANTHROPIC) {
@@ -196,7 +196,7 @@ export class LLMFactory {
   }
 
   static createOllamaLlm(model: Model): BaseChatModel {
-    const baseUrl = import.meta.env.ALUMNIUM_OLLAMA_URL;
+    const baseUrl = process.env.ALUMNIUM_OLLAMA_URL;
     if (baseUrl) {
       return new ChatOllama({
         model: model.name,
@@ -214,12 +214,12 @@ export class LLMFactory {
   static createOpenAiLlm(model: Model): BaseChatModel {
     const fields: ChatOpenAIFields = {
       model: model.name,
-      configuration: { baseURL: import.meta.env.OPENAI_CUSTOM_URL },
+      configuration: { baseURL: process.env.OPENAI_CUSTOM_URL },
       temperature: 0,
     };
 
     if (model.name.includes("gpt-4o")) {
-      if (!import.meta.env.OPENAI_CUSTOM_URL) {
+      if (!process.env.OPENAI_CUSTOM_URL) {
         // @ts-expect-error -- TODO: JS SDK has no seed parameter, however
         // Python SDK does. Figure out if types are incorrect or if we need to
         // set seed in a different way for JS SDK.

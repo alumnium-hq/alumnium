@@ -13,6 +13,7 @@ import {
   getLogger,
   retry,
 } from "@alumnium/core";
+import { always } from "alwaysly";
 import { Page } from "playwright";
 import { WebDriver } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
@@ -97,6 +98,7 @@ export class Alumni {
     const executedSteps: DoStep[] = [];
     for (let idx = 0; idx < steps.length; idx++) {
       const step = steps[idx];
+      always(step);
 
       // Use initial tree for first step, fresh tree for subsequent steps
       const accessibilityTree =
@@ -170,7 +172,8 @@ export class Alumni {
       description,
       accessibilityTree.toStr()
     );
-    return response && this.driver.findElement(+response.id);
+    if (response?.id == null) return;
+    return this.driver.findElement(+response.id);
   }
 
   async area(description: string): Promise<Area> {

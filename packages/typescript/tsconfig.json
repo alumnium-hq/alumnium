@@ -1,24 +1,40 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
-    "module": "Node16",
-    "lib": ["ES2021"],
-    "declaration": true,
+    // Output
+    "target": "esnext",
     "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "tsBuildInfoFile": "./.ts/tsconfig.tsbuildinfo",
+    "declaration": true,
+    // Modules
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "isolatedModules": true,
+    "moduleDetection": "force", // Stop treating files without imports/exports as single global scripts
+    "allowImportingTsExtensions": false, // Don't allow importing .ts files, as we need to enable emitting.
     "resolveJsonModule": true,
-    "moduleResolution": "node16",
-    "experimentalDecorators": true,
+    // TODO: Enable?
+    // "allowJs": true,
+    // TODO: Enable?
+    // "esModuleInterop": true,
+    // Env
+    "lib": ["ESNext"],
+    "experimentalDecorators": true, // Enable experimental decorators
+    // TODO: Figure out why it is needed
     "emitDecoratorMetadata": true,
-    "allowJs": true,
+    // TODO: Bad config
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@wdio/globals/types",
       "./src/types"
-    ]
+    ],
+    // Checks
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    // Build
+    "incremental": true,
   },
   "ts-node": {
     "esm": true,
