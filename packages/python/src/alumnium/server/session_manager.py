@@ -60,6 +60,7 @@ class SessionManager:
         session_state: dict[str, Any],
     ) -> None:
         logger.info(f"Applying session state for session {session_state['session_id']}")
+        logger.debug(f"Session state: {session_state}")
         session = Session.from_state(session_state)
         self.sessions[session.session_id] = session
         logger.info(f"Applied session state: {session.session_id}")
