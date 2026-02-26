@@ -18,6 +18,7 @@ export const ApiVersioned = z.object({
 
 export const ErrorResponse = ApiVersioned.extend({
   message: z.string(),
+  stack: z.string().optional(),
 });
 
 export const PlanActionsBody = z.object({
