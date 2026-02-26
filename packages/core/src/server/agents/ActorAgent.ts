@@ -1,10 +1,9 @@
+import { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { AIMessageChunk, MessageStructure } from "@langchain/core/messages";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
-import { ToolClass } from "../../tools/BaseTool.js";
-import { convertToolsToSchemas } from "../../tools/toolToSchemaConverter.js";
 import { getLogger } from "../../utils/logger.js";
 import { BaseAgent } from "./BaseAgent.js";
 
@@ -23,7 +22,7 @@ export namespace ActorAgent {
 export class ActorAgent extends BaseAgent {
   chain: Runnable<ActorAgent.ChainInput, ActorAgent.ChainOutput>;
 
-  constructor(llm: BaseChatModel, tools: Record<string, ToolClass>) {
+  constructor(llm: BaseChatModel, toolSchemas: ToolDefinition[]) {
     super();
 
     const prompt = ChatPromptTemplate.fromMessages([
@@ -34,7 +33,7 @@ export class ActorAgent extends BaseAgent {
     // TODO: Figure out when bindTools aren't available and maybe throw a proper
     // error or replace this comment with a NOTE comment instead.
     always(llm.bindTools);
-    this.chain = prompt.pipe(llm.bindTools(convertToolsToSchemas(tools)));
+    this.chain = prompt.pipe(llm.bindTools(toolSchemas));
   }
 
   async invoke(goal: string, step: string, accessibilityTreeXml: string) {

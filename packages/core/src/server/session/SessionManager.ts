@@ -1,46 +1,104 @@
-import { LanguageModel } from "ai";
-import { log } from "smollog";
-import { ensureModelName, Provider } from "../../model/model.js";
-import { ToolSchema } from "../../tool/tool.js";
+import { ToolDefinition } from "@langchain/core/language_models/base";
+import { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import z from "zod";
+import { Model, Provider } from "../../Model.js";
+import { getLogger } from "../../utils/logger.js";
+import { Agent } from "../agents/Agent.js";
 import { Session } from "./Session.js";
 
+const logger = getLogger(import.meta.path);
+
+/**
+ * Manages multiple client sessions.
+ */
 export class SessionManager {
   sessions: Record<Session.Id, Session> = {};
 
   constructor() {}
 
-  createSession(props: SessionManager.CreateSessionProps) {
+  /**
+   * Create a new session and return its ID.
+   *
+   * @param props Session creation properties
+   * @returns Session ID string
+   */
+  createSession(props: SessionManager.CreateSessionProps): Session.Id {
     const sessionId = props.sessionId || Session.createId();
 
-    // TODO: Class?
-    const model = ensureModelName(props);
-    log.info(
-      `Creating session ${sessionId} with model ${model.provider}/${model.name} and platform ${props.platform}`,
+    logger.info(
+      `Creating session ${sessionId} with model ${props.provider}/${props.name} and platform ${props.platform}`,
     );
+    const { provider, name: modelName, ...restProps } = props;
+    const model = new Model(provider, modelName);
 
     this.sessions[sessionId] = new Session({
-      ...props,
+      ...restProps,
       sessionId,
       model,
     });
-    log.info(`Created new session: ${sessionId}`);
+    logger.info(`Created new session: ${sessionId}`);
     return sessionId;
   }
 
-  // TODO:
-  applySessionState() {}
+  applySessionState(sessionState: Session.State): void {
+    logger.info(
+      `Applying session state for session ${sessionState["session_id"]}`,
+    );
+    const session = Session.fromState(sessionState);
+    this.sessions[session.sessionId] = session;
+    logger.info(`Applied session state: ${session.sessionId}`);
+  }
 
-  // TODO:
-  getSession() {}
+  /**
+   * Get a session by ID.
+   */
+  getSession(sessionId: Session.Id): Session | undefined {
+    return this.sessions[sessionId];
+  }
 
-  // TODO:
-  deleteSession() {}
+  /**
+   * Delete a session by ID.
+   */
+  deleteSession(sessionId: Session.Id): boolean {
+    if (sessionId in this.sessions) {
+      delete this.sessions[sessionId];
+      logger.info(`Deleted session: ${sessionId}`);
+      return true;
+    }
+    return false;
+  }
 
-  // TODO:
-  listSessions() {}
+  /**
+   * List all active session IDs.
+   */
+  listSessions(): Session.Id[] {
+    return Object.keys(this.sessions) as Session.Id[];
+  }
 
-  // TODO:
-  getTotalStats() {}
+  /**
+   * Get combined token usage statistics for all sessions.
+   */
+  getTotalStats(): SessionManager.UsageStats {
+    const totalStats = SessionManager.createTotalStats();
+    for (const session of Object.values(this.sessions)) {
+      const sessionStats = session.stats;
+      for (const key of Object.keys(
+        totalStats,
+      ) as (keyof SessionManager.UsageStats)[]) {
+        totalStats[key].input_tokens += sessionStats[key].input_tokens;
+        totalStats[key].output_tokens += sessionStats[key].output_tokens;
+        totalStats[key].total_tokens += sessionStats[key].total_tokens;
+      }
+    }
+    return totalStats;
+  }
+
+  static createTotalStats(): SessionManager.UsageStats {
+    return {
+      total: Agent.createUsage(),
+      cache: Agent.createUsage(),
+    };
+  }
 }
 
 export namespace SessionManager {
@@ -48,8 +106,15 @@ export namespace SessionManager {
     provider: Provider;
     name?: string | undefined;
     platform: Session.Platform;
-    toolSchemas: ToolSchema[];
-    llm?: LanguageModel | undefined;
+    toolSchemas: ToolDefinition[];
+    llm?: BaseChatModel | undefined;
     sessionId?: Session.Id | undefined;
   }
+
+  export const UsageStats = z.object({
+    total: Agent.Usage,
+    cache: Agent.Usage,
+  });
+
+  export type UsageStats = z.infer<typeof UsageStats>;
 }

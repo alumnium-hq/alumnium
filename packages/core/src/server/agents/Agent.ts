@@ -1,4 +1,4 @@
-import { z } from "zod";
+import z from "zod";
 
 export namespace Agent {
   // TODO: Find a better place for this
@@ -18,11 +18,15 @@ export namespace Agent {
 
   export function createState(): State {
     return {
-      usage: {
-        input_tokens: 0,
-        output_tokens: 0,
-        total_tokens: 0,
-      },
+      usage: createUsage(),
+    };
+  }
+
+  export function createUsage(): Usage {
+    return {
+      input_tokens: 0,
+      output_tokens: 0,
+      total_tokens: 0,
     };
   }
 }

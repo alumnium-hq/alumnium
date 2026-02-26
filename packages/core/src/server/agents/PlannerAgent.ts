@@ -9,7 +9,7 @@ import {
   FewShotChatMessagePromptTemplate,
 } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
-import { z } from "zod";
+import z from "zod";
 import { Model, Provider } from "../../Model.js";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.js";
@@ -56,13 +56,13 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   promptWithExamples: FewShotChatMessagePromptTemplate<PlannerAgent.Example>;
   chain: Runnable<PlannerAgent.ChainInput, PlannerAgent.ChainOutput>;
 
-  constructor(llm: BaseChatModel, tools: string[]) {
+  constructor(llm: BaseChatModel, toolNames: string[]) {
     super();
     this.llm = llm;
 
     // Convert tool class names to human-readable names
     // E.g., "NavigateToUrlTool" -> "navigate to url"
-    this.toolNames = tools.map((tool) =>
+    this.toolNames = toolNames.map((tool) =>
       tool
         .replace(/(?<!^)(?=[A-Z])/g, " ")
         .toLowerCase()
@@ -80,10 +80,10 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     });
 
     let extraExamples = "";
-    if (tools.includes(NavigateToUrlTool.name)) {
+    if (toolNames.includes(NavigateToUrlTool.name)) {
       extraExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
     }
-    if (tools.includes(UploadTool.name)) {
+    if (toolNames.includes(UploadTool.name)) {
       extraExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
     }
 
