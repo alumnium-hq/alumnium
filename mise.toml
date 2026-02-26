@@ -13,7 +13,7 @@ lockfile = true
 idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
 
 [tasks.tsify-py-server]
-run = 'docker run --rm -p 8014:8013 -e AZURE_OPENAI_API_KEY="$(fnox get AZURE_OPENAI_API_KEY)" -e AZURE_OPENAI_ENDPOINT="$(fnox get AZURE_OPENAI_ENDPOINT)" -e AZURE_OPENAI_API_VERSION="$AZURE_OPENAI_API_VERSION" -e ALUMNIUM_MODEL="$ALUMNIUM_MODEL" alumnium-server'
+run = 'docker build -t alumnium-server . && docker run --rm -p 8014:8013 -e AZURE_OPENAI_API_KEY="$(fnox get AZURE_OPENAI_API_KEY)" -e AZURE_OPENAI_ENDPOINT="$(fnox get AZURE_OPENAI_ENDPOINT)" -e AZURE_OPENAI_API_VERSION="$AZURE_OPENAI_API_VERSION" -e ALUMNIUM_MODEL="$ALUMNIUM_MODEL" -e ALUMNIUM_LOG_LEVEL="$ALUMNIUM_LOG_LEVEL" alumnium-server'
 
 [tasks.tsify-ts-server]
 run = "cd packages/core && fnox exec -- bun ./src/cli.ts"
