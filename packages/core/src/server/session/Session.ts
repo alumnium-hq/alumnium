@@ -1,8 +1,12 @@
+import { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { z } from "zod";
-import { Model } from "../../model/model.js";
-import { ToolSchema } from "../../tool/tool.js";
+import z from "zod";
+import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
+import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.js";
+import { ServerChromiumAccessibilityTree } from "../accessibility/ServerChromiumAccessibilityTree.js";
+import { ServerUIAutomator2AccessibilityTree } from "../accessibility/ServerUIAutomator2AccessibilityTree.js";
+import { ServerXCUITestAccessibilityTree } from "../accessibility/ServerXCUITestAccessibilityTree.js";
 import { ActorAgent } from "../agents/ActorAgent.js";
 import { Agent } from "../agents/Agent.js";
 import { AreaAgent } from "../agents/AreaAgent.js";
@@ -10,8 +14,11 @@ import { ChangesAnalyzerAgent } from "../agents/ChangesAnalyzerAgent.js";
 import { LocatorAgent } from "../agents/LocatorAgent.js";
 import { PlannerAgent } from "../agents/PlannerAgent.js";
 import { RetrieverAgent } from "../agents/RetrieverAgent.js";
+import { NullCache } from "../cache/NullCache.js";
+import { CacheFactory } from "../CacheFactory.js";
+import { LLMFactory } from "../LLMFactory.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 /**
  * Represents a client session with its own agent instances.
@@ -20,12 +27,9 @@ export class Session {
   sessionId: Session.Id;
   model: Model;
   platform: Session.Platform;
-  toolSchemas: ToolSchema[];
-  tools: unknown[];
-  llm: LanguageModel;
-
-  // TODO:
-  #cache: unknown;
+  tools: ToolDefinition[];
+  llm: BaseChatModel;
+  cache: NullCache;
 
   actorAgent: ActorAgent;
   plannerAgent: PlannerAgent;
@@ -35,51 +39,86 @@ export class Session {
   changesAnalyzerAgent: ChangesAnalyzerAgent;
 
   constructor(props: Session.ConstructorProps) {
-    const { sessionId, model, platform, toolSchemas, llm } = props;
+    const { sessionId, model, platform, tools: tools } = props;
     this.sessionId = sessionId;
     this.model = model;
     this.platform = platform;
-    this.toolSchemas = toolSchemas;
-    // TODO: Convert toolSchemas to tools
-    this.tools = {} as any;
+    this.tools = tools;
 
-    // TODO: Create cache
-    this.#cache = {} as any;
+    this.cache = CacheFactory.createCache();
+    this.llm = props.llm ?? LLMFactory.createLlm(this.model);
+    this.llm.cache = this.cache;
 
-    // TODO: Create llm
-    this.llm = {} as any;
-
-    // @ts-expect-error -- TODO!
-    this.actorAgent = new ActorAgent();
-    // @ts-expect-error -- TODO!
-    this.plannerAgent = new PlannerAgent();
-    // @ts-expect-error -- TODO!
-    this.retrieverAgent = new RetrieverAgent();
-    // @ts-expect-error -- TODO!
-    this.areaAgent = new AreaAgent();
-    // @ts-expect-error -- TODO!
-    this.locatorAgent = new LocatorAgent();
-    // @ts-expect-error -- TODO!
-    this.changesAnalyzerAgent = new ChangesAnalyzerAgent(); // TODO!
+    this.actorAgent = new ActorAgent(this.llm, this.tools);
+    this.plannerAgent = new PlannerAgent(
+      this.llm,
+      this.tools.map((schema) => schema.function.name),
+    );
+    this.retrieverAgent = new RetrieverAgent(this.llm);
+    this.areaAgent = new AreaAgent(this.llm);
+    this.locatorAgent = new LocatorAgent(this.llm);
+    this.changesAnalyzerAgent = new ChangesAnalyzerAgent(this.llm);
 
     logger.info(
       `Created session ${sessionId} with model ${model.provider}/${model.name} and platform ${platform}`,
     );
   }
 
-  // TODO:
-  get stats(): unknown {
-    return {} as any;
+  /**
+   * Provides statistics about the usage of tokens.
+   *
+   * @returns Two objects containing the number of input tokens, output tokens,
+   *   and total tokens used by all agents.
+   *     - "total" includes the combined usage of all agents
+   *     - "cache" includes only the usage of cached calls
+   */
+  get stats(): { total: Agent.Usage; cache: Agent.Usage } {
+    return {
+      total: {
+        input_tokens:
+          this.plannerAgent.toState().usage.input_tokens +
+          this.actorAgent.toState().usage.input_tokens +
+          this.retrieverAgent.toState().usage.input_tokens +
+          this.areaAgent.toState().usage.input_tokens +
+          this.locatorAgent.toState().usage.input_tokens,
+        output_tokens:
+          this.plannerAgent.toState().usage.output_tokens +
+          this.actorAgent.toState().usage.output_tokens +
+          this.retrieverAgent.toState().usage.output_tokens +
+          this.areaAgent.toState().usage.output_tokens +
+          this.locatorAgent.toState().usage.output_tokens,
+        total_tokens:
+          this.plannerAgent.toState().usage.total_tokens +
+          this.actorAgent.toState().usage.total_tokens +
+          this.retrieverAgent.toState().usage.total_tokens +
+          this.areaAgent.toState().usage.total_tokens +
+          this.locatorAgent.toState().usage.total_tokens,
+      },
+      cache: this.cache.usage,
+    };
   }
 
-  // TODO:
-  processTree() {}
+  /**
+   * Process raw platform data into a server tree.
+   *
+   * @param rawTreeData Raw tree data as string (XML for all platforms)
+   * @returns The created server tree instance
+   */
+  processTree(rawTreeData: string): BaseServerAccessibilityTree {
+    let tree: BaseServerAccessibilityTree;
+    if (this.platform === "chromium") {
+      tree = new ServerChromiumAccessibilityTree(rawTreeData);
+    } else if (this.platform === "xcuitest") {
+      tree = new ServerXCUITestAccessibilityTree(rawTreeData);
+    } else if (this.platform === "uiautomator2") {
+      tree = new ServerUIAutomator2AccessibilityTree(rawTreeData);
+    } else {
+      throw new Error(`Unknown platform: ${this.platform}`);
+    }
 
-  // TODO:
-  toState() {}
-
-  // TODO:
-  static fromState() {}
+    logger.debug(`Processed tree for session ${this.sessionId}`);
+    return tree;
+  }
 
   static createId(): Session.Id {
     return crypto.randomUUID() as Session.Id;
@@ -92,7 +131,7 @@ export class Session {
       session_id: this.sessionId,
       model: this.model,
       platform: this.platform,
-      tool_schemas: this.toolSchemas,
+      tool_schemas: this.tools,
       // "llm" is omitted even though it is passed in the constructor, as
       // 1) it's external and may not be serializable, and 2) in HTTP API
       // where sessions are exchanged, llm is never passed as a param.
@@ -109,9 +148,9 @@ export class Session {
   static fromState(state: Session.State): Session {
     const session = new Session({
       sessionId: state["session_id"],
-      model: state["model"],
+      model: Model.fromState(state["model"]),
       platform: state["platform"],
-      toolSchemas: state["tool_schemas"],
+      tools: state["tool_schemas"],
       // llm is not never in state, see note in to_state.
     });
 
@@ -142,7 +181,7 @@ export namespace Session {
     sessionId: Id;
     model: Model;
     platform: Platform;
-    toolSchemas: ToolSchema[];
+    tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
   }
 
@@ -152,9 +191,9 @@ export namespace Session {
 
   export const State = z.object({
     session_id: Session.Id,
-    model: Model,
+    model: Model.Schema,
     platform: Session.Platform,
-    tool_schemas: z.array(ToolSchema),
+    tool_schemas: z.array(z.custom<ToolDefinition>()),
     actor_agent: Agent.State,
     planner_agent: PlannerAgent.State,
     retriever_agent: Agent.State,

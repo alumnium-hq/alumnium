@@ -50,14 +50,13 @@ export function getLogger(modulePath: string) {
   if (!configurePromise) {
     configurePromise = configureLogging();
   }
-  return logtapeGetLogger(modulePathToLoggerCategory(modulePath));
+  return logtapeGetLogger(moduleUrlToLoggerCategory(modulePath));
 }
 
 const MODULE_PATH_RE = /(src|dist)\/(.+)\.ts/;
 
-export function modulePathToLoggerCategory(modulePath: string): string {
-  const normalizedPath = modulePath.replaceAll("\\", "/");
-  const matches = normalizedPath.match(MODULE_PATH_RE);
+export function moduleUrlToLoggerCategory(moduleUrl: string): string {
+  const matches = moduleUrl.match(MODULE_PATH_RE);
   always(matches?.[2]);
   return matches[2];
 }
