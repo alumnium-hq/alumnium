@@ -1,5 +1,6 @@
 import { Context } from "elysia";
 import { getLogger } from "../utils/logger.js";
+import { SessionId } from "./serverSchema.js";
 import { Session } from "./session/Session.js";
 
 const logger = getLogger(import.meta.url);
@@ -52,7 +53,7 @@ export function legacyUrl(path: string) {
   return `${LEGACY_BASE_URL}${path}`;
 }
 
-const sessionStates: Record<Session.Id, Session.State> = {};
+const sessionStates: Record<SessionId, Session.State> = {};
 
 export async function pushLegacyState(session: Session) {
   const state = session.toState();
@@ -76,7 +77,7 @@ export function pushLegacyStateHook(ctx: pushLegacyStateHook.Context) {
   return pushLegacyState(ctx.session);
 }
 
-export async function deleteLegacyState(sessionId: Session.Id) {
+export async function deleteLegacyState(sessionId: SessionId) {
   delete sessionStates[sessionId];
   await legacyFetch(`/v1/sessions/${sessionId}`, {
     method: "DELETE",
@@ -89,7 +90,7 @@ export namespace deleteLegacyStateHook {
   }
 
   export interface Params {
-    session_id: Session.Id;
+    session_id: SessionId;
   }
 }
 
@@ -97,7 +98,7 @@ export function deleteLegacyStateHook(ctx: deleteLegacyStateHook.Context) {
   return deleteLegacyState(ctx.params.session_id);
 }
 
-export async function pullLegacyState(sessionId: Session.Id) {
+export async function pullLegacyState(sessionId: SessionId) {
   const response = await legacyFetch(`/v1/sessions/${sessionId}/state`, {
     method: "GET",
   });
@@ -111,7 +112,7 @@ export namespace pullLegacyStateHook {
   }
 
   export interface Params {
-    session_id: Session.Id;
+    session_id: SessionId;
   }
 }
 
