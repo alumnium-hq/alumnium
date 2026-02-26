@@ -1,3 +1,7 @@
+import { getLogger } from "./logger.js";
+
+const logger = getLogger(import.meta.url);
+
 const DELAY = parseFloat(process.env.ALUMNIUM_DELAY || "0.5") * 1000; // Convert to milliseconds
 const RETRIES = parseInt(process.env.ALUMNIUM_RETRIES || "2", 10);
 
@@ -28,6 +32,14 @@ function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
           console.debug(`Not retrying error: ${lastError.message}`, {
             error: lastError,
           });
+          throw lastError;
+        }
+
+        if (process.env.ALUMNIUM_NO_RETRY) {
+          logger.info(
+            "ALUMNIUM_NO_RETRY is set, not retrying after error: {error}",
+            { error: lastError },
+          );
           throw lastError;
         }
 

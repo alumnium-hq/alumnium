@@ -53,13 +53,23 @@ export class HttpClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      let detail;
+      let detail = "";
+      let stack = "";
 
       try {
-        const errorData = ErrorResponse.parse(errorText);
+        const errorData = ErrorResponse.parse(JSON.parse(errorText));
         detail = errorData.message;
-      } catch {}
-      throw new Error(`${response.status} ${response.statusText}`);
+        stack = `\n${errorData.stack}`;
+      } catch (err) {
+        logger.warn("Failed to parse error response as JSON: {err}{stack}", {
+          err,
+          stack,
+        });
+        detail = errorText;
+      }
+      throw new Error(
+        `${options.method || "GET"} ${url} responded with ${response.status} ${response.statusText}: ${detail}`,
+      );
     }
 
     return response;
