@@ -1,56 +1,62 @@
 import { getFileSink } from "@logtape/file";
 import {
-  configure,
+  ansiColorFormatter,
+  configureSync,
   getConsoleSink,
   LogLevel,
   getLogger as logtapeGetLogger,
-  type Sink,
 } from "@logtape/logtape";
 import { always } from "alwaysly";
-import { mkdir } from "node:fs/promises";
-import { dirname } from "node:path";
+import * as fs from "fs";
+import * as path from "node:path";
 
 let configurePromise: Promise<void> | null = null;
+let configured = false;
 
 /**
  * Configure the logging system based on environment variables:
  * - ALUMNIUM_LOG_LEVEL: Log level (debug, info, warning, error, fatal) - defaults to "info"
  * - ALUMNIUM_LOG_PATH: Output destination ("stdout" or file path) - defaults to "stdout"
  */
-async function configureLogging(): Promise<void> {
-  const logLevel =
+function configureLogging(): void {
+  // TODO: Parse with Zod and warn if invalid.
+  const lowestLevel =
     (process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase() as LogLevel) || "warning";
-  const logPath = process.env.ALUMNIUM_LOG_PATH || "stdout";
 
-  const sinks: Record<string, Sink> = {};
-  let sinkKey: string;
-  if (logPath === "stdout") {
-    sinkKey = "console";
-    sinks[sinkKey] = getConsoleSink();
-  } else {
-    await mkdir(dirname(logPath), { recursive: true });
-    sinkKey = "file";
-    sinks[sinkKey] = getFileSink(logPath);
+  const logPath = process.env.ALUMNIUM_LOG_PATH;
+  if (logPath) {
+    fs.mkdirSync(path.dirname(logPath), { recursive: true });
   }
 
-  await configure({
-    sinks,
+  const console = getConsoleSink({ formatter: ansiColorFormatter });
+
+  configureSync({
+    sinks: {
+      console,
+      main: logPath ? getFileSink(logPath) : console,
+    },
     filters: {},
     loggers: [
       {
+        category: ["logtape", "meta"],
+        lowestLevel: "warning",
+        sinks: ["console"],
+      },
+      {
         category: ["alumnium"],
-        lowestLevel: logLevel,
-        sinks: [sinkKey],
+        lowestLevel,
+        sinks: ["main"],
       },
     ],
   });
 }
 
 export function getLogger(modulePath: string) {
-  if (!configurePromise) {
-    configurePromise = configureLogging();
+  if (!configured) {
+    configureLogging();
+    configured = true;
   }
-  return logtapeGetLogger(moduleUrlToLoggerCategory(modulePath));
+  return logtapeGetLogger(["alumnium", moduleUrlToLoggerCategory(modulePath)]);
 }
 
 const MODULE_PATH_RE = /(src|dist)\/(.+)\.ts/;

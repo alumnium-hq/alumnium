@@ -150,7 +150,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     logger.info("Starting planning:");
     this.logData(logger, "in", {
       Goal: goal,
-      "Accessibility tree": this.debugLogValue(accessibilityTreeXml),
+      "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
     });
 
     const message = await this.invokeChain(this.chain, {

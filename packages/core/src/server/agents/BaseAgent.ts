@@ -17,8 +17,8 @@ const logger = getLogger(import.meta.url);
 
 const agentPrompts = await loadAgentPrompts();
 
-export class BaseAgentDebugLogValue {
-  constructor(public value: unknown) {}
+export class BaseAgentDebugLogDetail {
+  constructor(public payload: unknown) {}
 }
 
 export namespace BaseAgent {
@@ -26,7 +26,7 @@ export namespace BaseAgent {
 
   export type LogData = Record<string, LogDataValue>;
 
-  export type LogDataValue = BaseAgentDebugLogValue | unknown;
+  export type LogDataValue = BaseAgentDebugLogDetail | unknown;
 }
 
 export class BaseAgent {
@@ -146,14 +146,8 @@ export class BaseAgent {
     return "usage_metadata" in message && message.usage_metadata;
   }
 
-  protected formatLog(dir: BaseAgent.LogDir, topic: string, value: unknown) {
-    const detailsStr =
-      value instanceof BaseAgentDebugLogValue
-        ? JSON.stringify(value.value)
-        : typeof value === "object" && value
-          ? JSON.stringify(value)
-          : String(value);
-    return `  ${dir === "in" ? "->" : "<-"} ${topic}: ${detailsStr}`;
+  protected formatLog(dir: BaseAgent.LogDir, topic: string) {
+    return `  ${dir === "in" ? "->" : "<-"} ${topic}: {detail}`;
   }
 
   protected logData(
@@ -162,15 +156,16 @@ export class BaseAgent {
     data: BaseAgent.LogData,
   ) {
     for (const [key, value] of Object.entries(data)) {
-      const message = this.formatLog(dir, key, value);
-      logger[value instanceof BaseAgentDebugLogValue ? "debug" : "info"](
-        message,
-      );
+      const message = this.formatLog(dir, key);
+      const level = value instanceof BaseAgentDebugLogDetail ? "debug" : "info";
+      const detail =
+        value instanceof BaseAgentDebugLogDetail ? value.payload : value;
+      logger[level](message, { detail });
     }
   }
 
-  protected debugLogValue(value: unknown): BaseAgentDebugLogValue {
-    return new BaseAgentDebugLogValue(value);
+  protected debugLogDetail(value: unknown): BaseAgentDebugLogDetail {
+    return new BaseAgentDebugLogDetail(value);
   }
 
   //#region Agent state
