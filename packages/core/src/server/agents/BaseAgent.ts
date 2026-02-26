@@ -13,7 +13,7 @@ import {
   PROVIDER_TO_PROMPTS_DEV,
 } from "./prompts/prompts.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 const agentPrompts = await loadAgentPrompts();
 

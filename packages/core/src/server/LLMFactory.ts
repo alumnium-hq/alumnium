@@ -17,7 +17,7 @@ import { never } from "alwaysly";
 import { Model, Provider } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 /**
  * Factory for creating LLM instances based on model configuration.

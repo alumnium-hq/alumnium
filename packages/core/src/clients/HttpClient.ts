@@ -20,7 +20,7 @@ import {
 } from "./ApiModels.js";
 import { Data, looselyTypecast } from "./typecasting.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 export class HttpClient {
   private baseUrl: string;
@@ -234,7 +234,7 @@ export class HttpClient {
   async findElement(
     description: string,
     accessibilityTree: string,
-  ): Promise<FindResponse["elements"][0]> {
+  ): Promise<FindResponse["elements"][number] | undefined> {
     await this.ensureSession();
     const requestBody: FindRequest = {
       description,
@@ -252,7 +252,6 @@ export class HttpClient {
     );
 
     const responseData = (await response.json()) as FindResponse;
-    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
     return responseData.elements[0];
   }
 

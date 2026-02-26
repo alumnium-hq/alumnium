@@ -7,7 +7,7 @@ import { always } from "alwaysly";
 import { getLogger } from "../../utils/logger.js";
 import { BaseAgent } from "./BaseAgent.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 export namespace ActorAgent {
   export interface ChainInput {

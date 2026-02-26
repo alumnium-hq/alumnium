@@ -18,7 +18,7 @@ import { NullCache } from "../cache/NullCache.js";
 import { CacheFactory } from "../CacheFactory.js";
 import { LLMFactory } from "../LLMFactory.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 /**
  * Represents a client session with its own agent instances.
@@ -27,7 +27,7 @@ export class Session {
   sessionId: Session.Id;
   model: Model;
   platform: Session.Platform;
-  toolSchemas: ToolDefinition[];
+  tools: ToolDefinition[];
   llm: BaseChatModel;
   cache: NullCache;
 
@@ -39,20 +39,20 @@ export class Session {
   changesAnalyzerAgent: ChangesAnalyzerAgent;
 
   constructor(props: Session.ConstructorProps) {
-    const { sessionId, model, platform, toolSchemas } = props;
+    const { sessionId, model, platform, tools: tools } = props;
     this.sessionId = sessionId;
     this.model = model;
     this.platform = platform;
-    this.toolSchemas = toolSchemas;
+    this.tools = tools;
 
     this.cache = CacheFactory.createCache();
     this.llm = props.llm ?? LLMFactory.createLlm(this.model);
     this.llm.cache = this.cache;
 
-    this.actorAgent = new ActorAgent(this.llm, this.toolSchemas);
+    this.actorAgent = new ActorAgent(this.llm, this.tools);
     this.plannerAgent = new PlannerAgent(
       this.llm,
-      this.toolSchemas.map((schema) => schema.function.name),
+      this.tools.map((schema) => schema.function.name),
     );
     this.retrieverAgent = new RetrieverAgent(this.llm);
     this.areaAgent = new AreaAgent(this.llm);
@@ -131,7 +131,7 @@ export class Session {
       session_id: this.sessionId,
       model: this.model,
       platform: this.platform,
-      tool_schemas: this.toolSchemas,
+      tool_schemas: this.tools,
       // "llm" is omitted even though it is passed in the constructor, as
       // 1) it's external and may not be serializable, and 2) in HTTP API
       // where sessions are exchanged, llm is never passed as a param.
@@ -148,9 +148,9 @@ export class Session {
   static fromState(state: Session.State): Session {
     const session = new Session({
       sessionId: state["session_id"],
-      model: state["model"],
+      model: Model.fromState(state["model"]),
       platform: state["platform"],
-      toolSchemas: state["tool_schemas"],
+      tools: state["tool_schemas"],
       // llm is not never in state, see note in to_state.
     });
 
@@ -181,7 +181,7 @@ export namespace Session {
     sessionId: Id;
     model: Model;
     platform: Platform;
-    toolSchemas: ToolDefinition[];
+    tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
   }
 

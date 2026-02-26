@@ -21,7 +21,7 @@ import { Cache } from "./Cache.js";
 import { AssertionError } from "./errors/AssertionError.js";
 import { DoResult, DoStep } from "./result.js";
 
-const logger = getLogger(["Alumni"]);
+const logger = getLogger(import.meta.url);
 
 export interface AlumniOptions {
   url?: string;
@@ -164,13 +164,13 @@ export class Alumni {
   }
 
   @retry()
-  async find(description: string): Promise<Element> {
+  async find(description: string): Promise<Element | undefined> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findElement(
       description,
       accessibilityTree.toStr()
     );
-    return this.driver.findElement(response.id as number);
+    return response && this.driver.findElement(+response.id);
   }
 
   async area(description: string): Promise<Area> {

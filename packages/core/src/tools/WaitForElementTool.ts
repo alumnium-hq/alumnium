@@ -27,12 +27,11 @@ This is preferred over fixed waits (WaitTool) when you know what element you're 
   ];
 
   selector: string;
-  timeout?: number;
+  timeout?: number | undefined;
 
   constructor(args: { selector: string; timeout?: number }) {
     super();
     this.selector = args.selector;
-    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
     this.timeout = args.timeout;
   }
 

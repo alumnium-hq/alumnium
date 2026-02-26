@@ -105,12 +105,12 @@ export class Area {
   }
 
   @retry()
-  async find(description: string): Promise<Element> {
+  async find(description: string): Promise<Element | undefined> {
     const response = await this.client.findElement(
       description,
       this.accessibilityTree.toStr()
     );
 
-    return this.driver.findElement(response.id as number);
+    return response && this.driver.findElement(+response.id);
   }
 }

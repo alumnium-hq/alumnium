@@ -18,7 +18,7 @@ import { getLogger } from "../../utils/logger.js";
 import { Agent } from "./Agent.js";
 import { BaseAgent } from "./BaseAgent.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 export class PlannerAgent extends BaseAgent {
   static readonly #NAVIGATE_TO_URL_EXAMPLE = `

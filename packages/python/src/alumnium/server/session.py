@@ -122,7 +122,7 @@ class Session:
             "session_id": self.session_id,
             "model": self.model.to_state(),
             "platform": self.platform,
-            "tool_schemas": self.tool_schemas,
+            "tools": self.tool_schemas,
             # "llm" is omitted even though it is passed in the constructor, as
             # 1) it's external and may not be serializable, and 2) in HTTP API
             # where sessions are exchanged, llm is never passed as a param.
@@ -142,7 +142,7 @@ class Session:
             session_id=state["session_id"],
             model=Model.from_state(state["model"]),
             platform=state["platform"],
-            tool_schemas=state["tool_schemas"],
+            tool_schemas=state["tools"],
             # llm is not never in state, see note in to_state.
         )
 
