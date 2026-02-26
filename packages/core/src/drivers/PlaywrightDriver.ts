@@ -8,6 +8,7 @@ import {
   BaseAccessibilityTree,
   ChromiumAccessibilityTree,
 } from "@alumnium/core";
+import { always, ensure } from "alwaysly";
 import { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
@@ -31,7 +32,7 @@ interface CDPNode {
   _frame_url?: string;
   _frame?: object;
   _frame_chain?: number[];
-  _parent_iframe_backend_node_id?: number;
+  _parent_iframe_backend_node_id?: number | undefined;
 }
 
 interface CDPFrameInfo {
@@ -49,7 +50,7 @@ interface CDPFrameTree {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
@@ -212,7 +213,6 @@ export class PlaywrightDriver extends BaseDriver {
           node._frame = playwrightFrame;
           // Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
           if (node.parentId === undefined && frameToIframeMap.has(frameId)) {
-            // @ts-expect-error -- TODO: Fix types after making TS setup stricter
             node._parent_iframe_backend_node_id = frameToIframeMap.get(frameId);
           }
           allNodes.push(node);
@@ -414,8 +414,8 @@ export class PlaywrightDriver extends BaseDriver {
       },
     );
     const nodeId = nodeIds.nodeIds[0];
+    ensure(nodeId);
     await this.client.send("DOM.setAttributeValue", {
-      // @ts-expect-error -- TODO: Fix types after making TS setup stricter
       nodeId,
       name: "data-alumnium-id",
       value: String(backendNodeId),
@@ -443,7 +443,7 @@ export class PlaywrightDriver extends BaseDriver {
     const currentIndex = this._pages.indexOf(this.page);
     const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
 
-    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
+    always(this._pages[nextIndex]);
     this.page = this._pages[nextIndex];
     await this.initCDPSession();
     await this.page.waitForLoadState();
@@ -460,7 +460,7 @@ export class PlaywrightDriver extends BaseDriver {
     const prevIndex =
       (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
 
-    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
+    always(this._pages[prevIndex]);
     this.page = this._pages[prevIndex];
     await this.initCDPSession();
     await this.page.waitForLoadState();
@@ -670,9 +670,8 @@ export class PlaywrightDriver extends BaseDriver {
         selector: `iframe[src='${url}']`,
       });
 
-      if (result.nodeIds && result.nodeIds.length > 0) {
+      if (result.nodeIds && typeof result.nodeIds[0] === "number") {
         const nodeId = result.nodeIds[0];
-        // @ts-expect-error -- TODO: Fix types after making TS setup stricter
         const node = await this.client.send("DOM.describeNode", { nodeId });
         return node.node?.backendNodeId ?? null;
       }

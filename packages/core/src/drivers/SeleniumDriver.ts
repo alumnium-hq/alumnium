@@ -19,6 +19,7 @@ import {
   BaseAccessibilityTree,
   ChromiumAccessibilityTree,
 } from "@alumnium/core";
+import { always } from "alwaysly";
 import { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
@@ -49,7 +50,7 @@ interface CDPFrameInfo {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 /**
  * Decorator that automatically switches to new tabs opened during method execution.
@@ -83,11 +84,11 @@ function autoswitchToNewTab(
     await originalMethod.call(this, ...args);
     const newHandles = await this.driver.getAllWindowHandles();
     const newTabs = newHandles.filter((h) => !currentHandles.includes(h));
-    if (newTabs.length > 0) {
+    if (newTabs.length) {
       // Only switch to the last new tab, as only one tab can be active at the end.
       const lastNewTab = newTabs[newTabs.length - 1];
+      always(lastNewTab);
       if (lastNewTab !== (await this.driver.getWindowHandle())) {
-        // @ts-expect-error -- TODO: Fix types after making TS setup stricter
         await this.driver.switchTo().window(lastNewTab);
         logger.debug(
           `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
@@ -497,7 +498,7 @@ export class SeleniumDriver extends BaseDriver {
     const currentIndex = handles.indexOf(current);
     const nextIndex = (currentIndex + 1) % handles.length;
 
-    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
+    always(handles[nextIndex]);
     await this.driver.switchTo().window(handles[nextIndex]);
     logger.debug(
       `Switched to next tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
@@ -512,7 +513,7 @@ export class SeleniumDriver extends BaseDriver {
     const currentIndex = handles.indexOf(current);
     const prevIndex = (currentIndex - 1 + handles.length) % handles.length;
 
-    // @ts-expect-error -- TODO: Fix types after making TS setup stricter
+    always(handles[prevIndex]);
     await this.driver.switchTo().window(handles[prevIndex]);
     logger.debug(
       `Switched to previous tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,

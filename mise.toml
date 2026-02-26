@@ -13,10 +13,10 @@ lockfile = true
 idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
 
 [tasks.tsify-py-server]
-run = 'fnox exec -- docker run --rm -p 8014:8013 -e AZURE_OPENAI_API_KEY="$(fnox get AZURE_OPENAI_API_KEY)" -e AZURE_OPENAI_ENDPOINT="$(fnox get AZURE_OPENAI_ENDPOINT)" -e AZURE_OPENAI_API_VERSION="$AZURE_OPENAI_API_VERSION" -e ALUMNIUM_MODEL="$ALUMNIUM_MODEL" alumnium-server'
+run = 'docker run --rm -p 8014:8013 -e AZURE_OPENAI_API_KEY="$(fnox get AZURE_OPENAI_API_KEY)" -e AZURE_OPENAI_ENDPOINT="$(fnox get AZURE_OPENAI_ENDPOINT)" -e AZURE_OPENAI_API_VERSION="$AZURE_OPENAI_API_VERSION" -e ALUMNIUM_MODEL="$ALUMNIUM_MODEL" alumnium-server'
 
 [tasks.tsify-ts-server]
-run = "cd packages/core && bun ./src/cli.ts"
+run = "cd packages/core && fnox exec -- bun ./src/cli.ts"
 
 [tasks.tsify-test-playwright]
 run = "cd packages/typescript && bun run examples:playwright"

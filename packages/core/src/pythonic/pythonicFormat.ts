@@ -5,6 +5,7 @@ export function pythonicFormat(
   let output = template;
 
   for (const [key, value] of Object.entries(values)) {
+    // TODO: Stringify objects
     output = output.replaceAll(`{${key}}`, String(value));
   }
 

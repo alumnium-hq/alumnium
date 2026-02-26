@@ -1,12 +1,12 @@
+import { ToolDefinition } from "@langchain/core/language_models/base";
+import { always } from "alwaysly";
 import { Elysia } from "elysia";
-import { z } from "zod";
+import z from "zod";
 import { ApiVersioned } from "../../api/response.js";
-import { ensureModelName, providers } from "../../model/model.js";
-import { ToolSchema } from "../../tool/tool.js";
-import { Agent } from "../agents/Agent.js";
-import { PlannerAgent } from "../agents/PlannerAgent.js";
+import { Provider } from "../../Model.js";
 import { legacyFetch, legacyProxy } from "../legacy.js";
 import { Session } from "./Session.js";
+import { SessionManager } from "./SessionManager.js";
 
 export const SessionParams = z.object({
   session_id: Session.Id,
@@ -14,9 +14,9 @@ export const SessionParams = z.object({
 
 export const CreateSessionBody = ApiVersioned.extend({
   platform: Session.Platform,
-  provider: z.enum(providers),
+  provider: z.enum(Provider),
   name: z.string().optional(),
-  tools: z.array(ToolSchema),
+  tools: z.array(z.custom<ToolDefinition>()),
 });
 
 export const CreateSessionResponse = ApiVersioned.extend({
@@ -24,36 +24,32 @@ export const CreateSessionResponse = ApiVersioned.extend({
 });
 
 const sessionStates: Record<Session.Id, Session.State> = {};
+const sessionManager = new SessionManager();
 
 export const sessionRoutes = new Elysia()
   .get("/v1/sessions", legacyProxy)
   .post(
     "/v1/sessions",
     async (context) => {
-      const { platform, tools: tool_schemas } = context.body;
-      const state: Session.State = {
-        session_id: Session.createId(),
-        model: ensureModelName(context.body),
-        platform,
-        tool_schemas,
-        actor_agent: Agent.createState(),
-        planner_agent: PlannerAgent.createState(),
-        retriever_agent: Agent.createState(),
-        area_agent: Agent.createState(),
-        locator_agent: Agent.createState(),
-        changes_analyzer_agent: Agent.createState(),
-      };
-      sessionStates[state.session_id] = state;
+      const sessionId = sessionManager.createSession(context.body);
+
+      //#region Legacy
+      const session = sessionManager.getSession(sessionId);
+      always(session);
+      const state = session.toState();
+      sessionStates[sessionId] = state;
       await legacyFetch("/v1/sessions/state", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(state),
       });
+      //#endregion
+
       return {
         // TODO: Figure out how to make all responses versioned without having
         // to manually include api_version in each response type.
         api_version: "1",
-        session_id: state.session_id,
+        session_id: sessionId,
       };
     },
     { body: CreateSessionBody, response: CreateSessionResponse },
