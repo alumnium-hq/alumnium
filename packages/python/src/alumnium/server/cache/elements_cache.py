@@ -6,12 +6,15 @@ from xml.etree.ElementTree import fromstring
 from filelock import FileLock
 from langchain_core.caches import RETURN_VAL_TYPE, BaseCache
 from langchain_core.load import dumps, loads
+from rapidfuzz import fuzz
 from xxhash import xxh3_128_hexdigest
 
 from ..logutils import get_logger
 from ..models import Model
 
 logger = get_logger(__name__)
+
+FUZZY_MATCH_THRESHOLD = 95
 
 
 class ElementsCache(BaseCache):
@@ -88,8 +91,13 @@ class ElementsCache(BaseCache):
             cache_hash = xxh3_128_hexdigest(cache_key)
             agent_type = "plans" if is_planner else "actions"
 
-            # Check in-memory cache first
+            # Check in-memory cache — exact match first, then fuzzy
             mem_key = (llm_string, cache_hash)
+            if mem_key not in self._in_memory_cache:
+                fuzzy_mem_key = self._fuzzy_memory_lookup(cache_key, agent_type)
+                if fuzzy_mem_key is not None:
+                    mem_key = fuzzy_mem_key
+
             if mem_key in self._in_memory_cache:
                 masked_json, elements, _, _, _, _ = self._in_memory_cache[mem_key]
                 mask_to_id = self._resolve_elements(elements, tree_xml)
@@ -106,7 +114,14 @@ class ElementsCache(BaseCache):
             response_file = cache_path / "response.json"
 
             if not elements_file.exists() or not response_file.exists():
-                return None
+                fuzzy_hash = self._fuzzy_lookup_hash(cache_key, agent_type)
+                if fuzzy_hash is None:
+                    return None
+                cache_path = self._get_cache_path(agent_type, fuzzy_hash)
+                elements_file = cache_path / "elements.json"
+                response_file = cache_path / "response.json"
+                if not elements_file.exists() or not response_file.exists():
+                    return None
 
             # Load elements and resolve
             with open(elements_file, "r") as f:
@@ -685,6 +700,88 @@ class ElementsCache(BaseCache):
         provider = Model.current.provider.value
         model_name = Model.current.name
         return self.cache_dir / (app or self._app) / provider / model_name / "elements"
+
+    def _fuzzy_memory_lookup(self, cache_key: str, agent_type: str) -> Optional[tuple[str, str]]:
+        """Find the best fuzzy-matching entry in the in-memory cache.
+
+        Scans all in-memory entries for the given agent_type and returns the
+        (llm_string, cache_hash) key of the entry whose stored instruction best
+        matches cache_key, provided the similarity is at or above FUZZY_MATCH_THRESHOLD.
+
+        Note: entries loaded from the filesystem have an empty instruction dict and
+        are skipped; only entries populated via update() carry the instruction text.
+
+        Args:
+            cache_key: The goal (planner) or step (actor) to match against.
+            agent_type: "plans" or "actions".
+
+        Returns:
+            The matching (llm_string, cache_hash) tuple, or None if no match exceeds the threshold.
+        """
+        key_field = "goal" if agent_type == "plans" else "step"
+        best_key: Optional[tuple[str, str]] = None
+        best_score = 0
+
+        for (llm_str, cache_hash), (_, _, entry_agent_type, _, instruction, _) in self._in_memory_cache.items():
+            if entry_agent_type != agent_type:
+                continue
+            cached_key = instruction.get(key_field, "")
+            if not cached_key:
+                continue
+            score = max(fuzz.token_sort_ratio(cache_key, cached_key), fuzz.token_set_ratio(cache_key, cached_key))
+            if score > best_score:
+                best_score = score
+                best_key = (llm_str, cache_hash)
+
+        if best_score >= FUZZY_MATCH_THRESHOLD:
+            logger.debug(f"Fuzzy cache match (in-memory, {best_score:.0f}%) for {agent_type}: {cache_key[:50]}...")
+            return best_key
+        return None
+
+    def _fuzzy_lookup_hash(self, cache_key: str, agent_type: str) -> Optional[str]:
+        """Find the hash of the best fuzzy-matching cached instruction.
+
+        Scans all instruction.json files in the agent_type directory and returns
+        the hash whose stored instruction best matches cache_key, provided the
+        similarity is at or above FUZZY_MATCH_THRESHOLD.
+
+        Uses max(token_sort_ratio, token_set_ratio) to handle both word reordering
+        and subset/modifier-word variations (e.g. 'click where field' matches
+        'click where text field') while rejecting same-length different-target pairs.
+
+        Args:
+            cache_key: The goal (planner) or step (actor) to match against.
+            agent_type: "plans" or "actions".
+
+        Returns:
+            The matching cache hash string, or None if no match exceeds the threshold.
+        """
+        agent_dir = self._get_elements_base_dir() / agent_type
+        if not agent_dir.exists():
+            return None
+
+        key_field = "goal" if agent_type == "plans" else "step"
+        best_hash: Optional[str] = None
+        best_score = 0
+
+        for instr_file in agent_dir.glob("*/instruction.json"):
+            try:
+                cached_key = json.loads(instr_file.read_text()).get(key_field, "")
+                if not cached_key:
+                    continue
+                score = max(fuzz.token_sort_ratio(cache_key, cached_key), fuzz.token_set_ratio(cache_key, cached_key))
+                if score > best_score:
+                    best_score = score
+                    best_hash = instr_file.parent.name
+            except Exception:
+                continue
+
+        if best_score >= FUZZY_MATCH_THRESHOLD:
+            logger.debug(f"Fuzzy cache match ({best_score:.0f}%) for {agent_type}: {cache_key[:50]}...")
+            return best_hash
+
+        logger.debug(f"No fuzzy cache match above threshold for {agent_type}: {cache_key[:50]} (best score: {best_score:.0f}%)")
+        return None
 
     @staticmethod
     def _element_dedup_key(elem: dict) -> tuple:

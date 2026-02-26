@@ -1036,3 +1036,168 @@ class TestEmptyResponseGuards:
 
         assert len(elements_cache._in_memory_cache) == 0
 
+
+class TestFuzzyLookup:
+    """Test fuzzy instruction matching for cache lookup (elements_cache)."""
+
+    def _make_actor_cache_entry(self, cache, goal, step, tree, element_id, llm_string="llm_string"):
+        from langchain_core.messages import AIMessage
+        from langchain_core.outputs import ChatGeneration
+
+        prompt = create_actor_prompt(goal, step, tree)
+        ai_msg = AIMessage(
+            content="",
+            tool_calls=[{"name": "ClickTool", "args": {"id": element_id}, "id": "call_1", "type": "tool_call"}],
+            usage_metadata={"input_tokens": 10, "output_tokens": 5, "total_tokens": 15},
+        )
+        cache.update(prompt, llm_string, [ChatGeneration(message=ai_msg)])
+        cache.save()
+
+    # --- hits ---
+
+    def test_fuzzy_hit_article_insertion(self, elements_cache, setup_model):
+        """'Click the "Submit" button' hits cache populated with 'Click "Submit" button'."""
+        tree = '<button id="1" name="Submit"/>'
+        self._make_actor_cache_entry(elements_cache, "submit form", 'Click "Submit" button', tree, 1)
+
+        prompt = create_actor_prompt("submit form", 'Click the "Submit" button', tree)
+        assert elements_cache.lookup(prompt, "llm_string") is not None
+
+    def test_fuzzy_hit_word_order(self, elements_cache, setup_model):
+        """'Click the "Help" link or button' hits cache for '... button or link' (same words, different order)."""
+        tree = '<link id="1" name="Help"/>'
+        self._make_actor_cache_entry(
+            elements_cache,
+            "get help",
+            'Click the "Help" button or link',
+            tree,
+            1,
+        )
+
+        prompt = create_actor_prompt("get help", 'Click the "Help" link or button', tree)
+        assert elements_cache.lookup(prompt, "llm_string") is not None
+
+    def test_fuzzy_hit_modifier_word(self, elements_cache, setup_model):
+        """'click where field' hits cache for 'click where text field' (modifier word removal)."""
+        tree = '<input id="1" name="where"/>'
+        self._make_actor_cache_entry(elements_cache, "search", "click where text field", tree, 1)
+
+        prompt = create_actor_prompt("search", "click where field", tree)
+        assert elements_cache.lookup(prompt, "llm_string") is not None
+
+    def test_fuzzy_hit_article_with_qualifier(self, elements_cache, setup_model):
+        """'Click the "Settings" toggle or button' hits cache for 'Click "Settings" toggle or button'."""
+        tree = '<button id="1" name="Settings"/>'
+        self._make_actor_cache_entry(elements_cache, "open settings", 'Click "Settings" toggle or button', tree, 1)
+
+        prompt = create_actor_prompt("open settings", 'Click the "Settings" toggle or button', tree)
+        assert elements_cache.lookup(prompt, "llm_string") is not None
+
+    # --- misses ---
+
+    def test_fuzzy_miss_completely_different(self, elements_cache, setup_model):
+        """A step for a different action does not produce a fuzzy hit."""
+        tree = '<button id="1" name="Save"/>'
+        self._make_actor_cache_entry(elements_cache, "save", 'Click the "Save" button', tree, 1)
+
+        prompt = create_actor_prompt("save", 'Type "hello" into the search field', tree)
+        assert elements_cache.lookup(prompt, "llm_string") is None
+
+    def test_fuzzy_miss_different_target(self, elements_cache, setup_model):
+        """'add a blue item' does not hit a cache entry for 'add a red item' (different target, below threshold)."""
+        tree = '<button id="1" name="+"/>'
+        self._make_actor_cache_entry(
+            elements_cache,
+            "manage items",
+            'Click the "+" button to add a red item',
+            tree,
+            1,
+        )
+
+        prompt = create_actor_prompt(
+            "manage items",
+            'Click the "+" button to add a blue item',
+            tree,
+        )
+        assert elements_cache.lookup(prompt, "llm_string") is None
+
+    def test_fuzzy_miss_no_cache(self, elements_cache, setup_model):
+        """Returns None when no instructions are cached at all."""
+        tree = '<button id="1" name="Next"/>'
+        prompt = create_actor_prompt("proceed", 'Click "Next" button', tree)
+        assert elements_cache.lookup(prompt, "llm_string") is None
+
+    # --- _fuzzy_lookup_hash directly ---
+
+    def test_fuzzy_lookup_hash_returns_none_when_empty(self, elements_cache, setup_model):
+        result = elements_cache._fuzzy_lookup_hash("click next", "actions")
+        assert result is None
+
+    def test_fuzzy_lookup_hash_returns_hash_on_near_match(self, elements_cache, setup_model):
+        tree = '<button id="1" name="Submit"/>'
+        self._make_actor_cache_entry(elements_cache, "submit form", 'Click "Submit" button', tree, 1)
+
+        result = elements_cache._fuzzy_lookup_hash('Click the "Submit" button', "actions")
+        assert result is not None
+
+    def test_fuzzy_lookup_hash_returns_none_below_threshold(self, elements_cache, setup_model):
+        tree = '<button id="1" name="Next"/>'
+        self._make_actor_cache_entry(elements_cache, "proceed", 'Click "Next" button', tree, 1)
+
+        result = elements_cache._fuzzy_lookup_hash('Type "hello" into the search field', "actions")
+        assert result is None
+
+    # --- regression: exact match still works ---
+
+    def test_exact_match_unaffected(self, elements_cache, setup_model):
+        """Exact-match lookup is not broken by the fuzzy path."""
+        step = 'Click "Next" button'
+        tree = '<button id="1" name="Next"/>'
+        self._make_actor_cache_entry(elements_cache, "proceed", step, tree, 1)
+
+        prompt = create_actor_prompt("proceed", step, tree)
+        assert elements_cache.lookup(prompt, "llm_string") is not None
+
+    # --- in-memory fuzzy (no save) ---
+
+    def _populate_in_memory(self, cache, goal, step, tree, element_id, llm_string="llm_string"):
+        """Populate in-memory cache only, without persisting to disk."""
+        from langchain_core.messages import AIMessage
+        from langchain_core.outputs import ChatGeneration
+
+        prompt = create_actor_prompt(goal, step, tree)
+        ai_msg = AIMessage(
+            content="",
+            tool_calls=[{"name": "ClickTool", "args": {"id": element_id}, "id": "call_1", "type": "tool_call"}],
+            usage_metadata={"input_tokens": 10, "output_tokens": 5, "total_tokens": 15},
+        )
+        cache.update(prompt, llm_string, [ChatGeneration(message=ai_msg)])
+
+    def test_fuzzy_hit_in_memory(self, elements_cache, setup_model):
+        """Fuzzy match works against entries that are only in memory (not yet saved)."""
+        tree = '<button id="1" name="Submit"/>'
+        self._populate_in_memory(elements_cache, "submit form", 'Click "Submit" button', tree, 1)
+
+        prompt = create_actor_prompt("submit form", 'Click the "Submit" button', tree)
+        assert elements_cache.lookup(prompt, "llm_string") is not None
+
+    def test_fuzzy_miss_in_memory_different_target(self, elements_cache, setup_model):
+        """Different-target step does not fuzzy-match an in-memory entry."""
+        tree = '<button id="1" name="Submit"/>'
+        self._populate_in_memory(elements_cache, "submit form", 'Click "Submit" button', tree, 1)
+
+        prompt = create_actor_prompt("submit form", 'Type "hello" into the search field', tree)
+        assert elements_cache.lookup(prompt, "llm_string") is None
+
+    def test_fuzzy_memory_lookup_returns_none_when_empty(self, elements_cache, setup_model):
+        """_fuzzy_memory_lookup returns None when the in-memory cache is empty."""
+        result = elements_cache._fuzzy_memory_lookup('Click "Submit" button', "actions")
+        assert result is None
+
+    def test_fuzzy_memory_lookup_returns_key_on_near_match(self, elements_cache, setup_model):
+        """_fuzzy_memory_lookup returns the cache key for a near-match entry."""
+        tree = '<button id="1" name="Submit"/>'
+        self._populate_in_memory(elements_cache, "submit form", 'Click "Submit" button', tree, 1)
+
+        result = elements_cache._fuzzy_memory_lookup('Click the "Submit" button', "actions")
+        assert result is not None
