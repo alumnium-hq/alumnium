@@ -4,7 +4,9 @@ import z from "zod";
 import { Model, Provider } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
 import { Agent } from "../agents/Agent.js";
+import { Platform } from "../Platform.js";
 import { Session } from "./Session.js";
+import { SessionId } from "./SessionId.js";
 
 const logger = getLogger(import.meta.url);
 
@@ -12,7 +14,7 @@ const logger = getLogger(import.meta.url);
  * Manages multiple client sessions.
  */
 export class SessionManager {
-  sessions: Record<Session.Id, Session> = {};
+  sessions: Record<SessionId, Session> = {};
 
   constructor() {}
 
@@ -22,7 +24,7 @@ export class SessionManager {
    * @param props Session creation properties
    * @returns Session ID string
    */
-  createSession(props: SessionManager.CreateSessionProps): Session.Id {
+  createSession(props: SessionManager.CreateSessionProps): SessionId {
     const sessionId = props.sessionId || Session.createId();
 
     logger.info(
@@ -52,14 +54,14 @@ export class SessionManager {
   /**
    * Get a session by ID.
    */
-  getSession(sessionId: Session.Id): Session | undefined {
+  getSession(sessionId: SessionId): Session | undefined {
     return this.sessions[sessionId];
   }
 
   /**
    * Delete a session by ID.
    */
-  deleteSession(sessionId: Session.Id): boolean {
+  deleteSession(sessionId: SessionId): boolean {
     if (sessionId in this.sessions) {
       delete this.sessions[sessionId];
       logger.info(`Deleted session: ${sessionId}`);
@@ -71,8 +73,8 @@ export class SessionManager {
   /**
    * List all active session IDs.
    */
-  listSessions(): Session.Id[] {
-    return Object.keys(this.sessions) as Session.Id[];
+  listSessions(): SessionId[] {
+    return Object.keys(this.sessions) as SessionId[];
   }
 
   /**
@@ -103,12 +105,12 @@ export class SessionManager {
 
 export namespace SessionManager {
   export interface CreateSessionProps {
-    platform: Session.Platform;
+    platform: Platform;
     provider: Provider;
     name?: string | undefined;
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
-    sessionId?: Session.Id | undefined;
+    sessionId?: SessionId | undefined;
   }
 
   export const UsageStats = z.object({
