@@ -1,8 +1,8 @@
+import { ToolDefinition } from "@langchain/core/language_models/base";
 import { Elysia } from "elysia";
-import { z } from "zod";
+import z from "zod";
 import { ApiVersioned } from "../../api/response.js";
-import { ensureModelName, providers } from "../../model/model.js";
-import { ToolSchema } from "../../tool/tool.js";
+import { Model, Provider } from "../../Model.js";
 import { Agent } from "../agents/Agent.js";
 import { PlannerAgent } from "../agents/PlannerAgent.js";
 import { legacyFetch, legacyProxy } from "../legacy.js";
@@ -14,9 +14,9 @@ export const SessionParams = z.object({
 
 export const CreateSessionBody = ApiVersioned.extend({
   platform: Session.Platform,
-  provider: z.enum(providers),
+  provider: z.enum(Provider),
   name: z.string().optional(),
-  tools: z.array(ToolSchema),
+  tools: z.array(z.custom<ToolDefinition>()),
 });
 
 export const CreateSessionResponse = ApiVersioned.extend({
@@ -30,10 +30,10 @@ export const sessionRoutes = new Elysia()
   .post(
     "/v1/sessions",
     async (context) => {
-      const { platform, tools: tool_schemas } = context.body;
+      const { platform, name: modelName, tools: tool_schemas } = context.body;
       const state: Session.State = {
         session_id: Session.createId(),
-        model: ensureModelName(context.body),
+        model: new Model(platform, modelName),
         platform,
         tool_schemas,
         actor_agent: Agent.createState(),

@@ -25,6 +25,7 @@ const loggerPathPlugin: BunPlugin = {
 
       return {
         ...args,
+        // TODO: Replace the absolute path part so paths the same on different machines.
         contents: input.replaceAll(
           "getLogger(import.meta.path)",
           `getLogger(${JSON.stringify(args.path)})`,
