@@ -1,3 +1,5 @@
+import z from "zod";
+
 export enum Provider {
   AZURE_FOUNDRY = "azure_foundry",
   AZURE_OPENAI = "azure_openai",
@@ -60,6 +62,30 @@ export class Model {
 
     Model.current = new Model(provider, name);
   }
+
+  //#region State
+
+  toState(): Model.Schema {
+    return {
+      provider: this.provider,
+      name: this.name,
+    };
+  }
+
+  static fromState(state: Model.Schema): Model {
+    return new Model(state.provider, state.name);
+  }
+
+  //#endregion
+}
+
+export namespace Model {
+  export const Schema = z.object({
+    provider: z.enum(Provider),
+    name: z.string(),
+  });
+
+  export type Schema = z.infer<typeof Schema>;
 }
 
 export type Dev = (typeof DEVS)[number];

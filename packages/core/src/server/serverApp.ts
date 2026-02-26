@@ -1,6 +1,6 @@
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
-import { z } from "zod";
+import z from "zod";
 import { legacyProxy } from "./legacy.js";
 import { SessionParams, sessionRoutes } from "./session/sessionRoutes.js";
 

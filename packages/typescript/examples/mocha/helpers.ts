@@ -86,7 +86,7 @@ export function navigate(driver: WebDriver | Browser, url: string) {
   }
 }
 
-export function type(element: Element, text: string) {
+export function type(element: Element | undefined, text: string) {
   if (driverType === "appium") {
     return (element as WebdriverIO.Element).setValue(text);
   } else if (driverType === "selenium") {
@@ -98,7 +98,7 @@ export function type(element: Element, text: string) {
   }
 }
 
-export function click(element: Element) {
+export function click(element: Element | undefined) {
   if (driverType === "appium") {
     return (element as WebdriverIO.Element).click();
   } else if (driverType === "selenium") {

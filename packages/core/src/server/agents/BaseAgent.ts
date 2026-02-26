@@ -6,16 +6,14 @@ import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
 import { retry } from "../../utils/retry.js";
 import { Agent } from "./Agent.js";
-import {
-  loadAgentPrompts,
-  PROVIDER_TO_PROMPTS_DEV,
-} from "./prompts/prompts.js" with { type: "macro" };
+import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
 import {
   type AgentPrompts,
   agentClassNameToPromptsAgentId,
+  PROVIDER_TO_PROMPTS_DEV,
 } from "./prompts/prompts.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 const agentPrompts = await loadAgentPrompts();
 

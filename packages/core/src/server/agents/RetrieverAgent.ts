@@ -1,11 +1,11 @@
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { MessageContent } from "@langchain/core/messages";
-import { z } from "zod";
+import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
 import { getLogger } from "../../utils/logger.js";
 import { BaseAgent } from "./BaseAgent.js";
 
-const logger = getLogger(import.meta.path);
+const logger = getLogger(import.meta.url);
 
 /**
  * Retrieved information.
