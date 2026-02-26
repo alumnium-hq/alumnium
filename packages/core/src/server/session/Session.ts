@@ -17,6 +17,8 @@ import { RetrieverAgent } from "../agents/RetrieverAgent.js";
 import { NullCache } from "../cache/NullCache.js";
 import { CacheFactory } from "../CacheFactory.js";
 import { LLMFactory } from "../LLMFactory.js";
+import { Platform } from "../Platform.js";
+import { SessionId } from "./SessionId.js";
 
 const logger = getLogger(import.meta.url);
 
@@ -24,9 +26,9 @@ const logger = getLogger(import.meta.url);
  * Represents a client session with its own agent instances.
  */
 export class Session {
-  sessionId: Session.Id;
+  sessionId: SessionId;
   model: Model;
-  platform: Session.Platform;
+  platform: Platform;
   tools: ToolDefinition[];
   llm: BaseChatModel;
   cache: NullCache;
@@ -120,8 +122,8 @@ export class Session {
     return tree;
   }
 
-  static createId(): Session.Id {
-    return crypto.randomUUID() as Session.Id;
+  static createId(): SessionId {
+    return crypto.randomUUID() as SessionId;
   }
 
   //#region State
@@ -168,37 +170,22 @@ export class Session {
 }
 
 export namespace Session {
-  // TODO: Figure out if symbol brand can be restored after solving this:
-  //     > Exported variable 'serverApp' has or is using name 'idBrand' from
-  //     > external module ".../session/Session" but cannot be named.ts(4023)
-  export type Id = string & { __brand: "Session.Id" };
-  export declare const idBrand: unique symbol;
-
-  // export type Id = string & { [idBrand]: true };
-  // export declare const idBrand: unique symbol;
-
-  export const PLATFORMS = ["chromium", "uiautomator2", "xcuitest"] as const;
-
-  export const Platform = z.enum(PLATFORMS);
-
-  export type Platform = z.infer<typeof Platform>;
-
   export interface ConstructorProps {
-    sessionId: Id;
+    sessionId: SessionId;
     model: Model;
     platform: Platform;
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
   }
 
-  export const Id = z.custom<Session.Id>((val) => typeof val === "string", {
+  export const Id = z.custom<SessionId>((val) => typeof val === "string", {
     message: "Invalid session ID",
   });
 
   export const State = z.object({
-    session_id: Session.Id,
+    session_id: SessionId,
     model: Model.Schema,
-    platform: Session.Platform,
+    platform: Platform,
     tools: z.array(z.custom<ToolDefinition>()),
     actor_agent: Agent.State,
     planner_agent: PlannerAgent.State,

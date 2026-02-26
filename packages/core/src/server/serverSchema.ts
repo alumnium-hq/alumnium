@@ -1,7 +1,16 @@
 import { ToolDefinition } from "@langchain/core/language_models/base";
 import z from "zod";
 import { Provider } from "../Model.js";
-import { Session } from "./session/Session.js";
+
+export const PLATFORMS = ["chromium", "uiautomator2", "xcuitest"] as const;
+
+export const Platform = z.enum(PLATFORMS);
+
+export type Platform = z.infer<typeof Platform>;
+
+export const SessionId = z.string().brand<"SessionId">();
+
+export type SessionId = z.infer<typeof SessionId>;
 
 export const ApiVersioned = z.object({
   api_version: z.string().default("v1").describe("API version"),
@@ -63,16 +72,16 @@ export const AnalyzeChangesBody = z.object({
 });
 
 export const CreateSessionBody = ApiVersioned.extend({
-  platform: Session.Platform,
+  platform: Platform,
   provider: z.enum(Provider),
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),
 });
 
 export const CreateSessionResponse = ApiVersioned.extend({
-  session_id: Session.Id,
+  session_id: SessionId,
 });
 
 export const SessionParams = z.object({
-  session_id: Session.Id,
+  session_id: SessionId,
 });
