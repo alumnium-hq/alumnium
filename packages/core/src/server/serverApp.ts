@@ -22,6 +22,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
     ctx.status(500, {
       api_version: "1",
       message: ctx.error.toString(),
+      // TODO: Figure out how to pass the stack
+      stack: "stack" in ctx.error ? ctx.error.stack : undefined,
     }),
   )
   .state("sessions", new SessionManager())
