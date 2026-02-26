@@ -54,9 +54,9 @@ export class RetrieverAgent extends BaseAgent {
     logger.info("Starting retrieval:");
     this.logData(logger, "in", {
       Information: information,
-      "Accessibility tree": this.debugLogValue(accessibilityTreeXml),
-      Title: this.debugLogValue(title),
-      URL: this.debugLogValue(url),
+      "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
+      Title: this.debugLogDetail(title),
+      URL: this.debugLogDetail(url),
     });
 
     let prompt = "";
