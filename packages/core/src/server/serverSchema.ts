@@ -29,6 +29,11 @@ export const UsageStats = z.object({
 
 export type UsageStats = z.infer<typeof UsageStats>;
 
+export const Change = z.object({
+  accessibility_tree: z.string(),
+  url: z.string(),
+});
+
 //#endregion
 
 //#region Common server schemas
@@ -110,6 +115,23 @@ export const PlanStepActionsResponse = ApiVersioned.extend({
 
 //#endregion
 
+//#region Add example //////////////////////////////////////////////////////////
+
+export const AddExampleBody = z.object({
+  goal: z.string(),
+  actions: z.array(z.string()),
+});
+
+//#endregion
+
+//#region Clear examples ///////////////////////////////////////////////////////
+
+// TODO
+
+//#endregion
+
+//#region Execute statement ////////////////////////////////////////////////////
+
 export const ExecuteStatementBody = z.object({
   statement: z.string(),
   accessibility_tree: z.string(),
@@ -118,27 +140,43 @@ export const ExecuteStatementBody = z.object({
   screenshot: z.string().nullable().optional(),
 });
 
+//#endregion
+
+//#region Choose area //////////////////////////////////////////////////////////
+
 export const ChooseAreaBody = z.object({
   description: z.string(),
   accessibility_tree: z.string(),
 });
+
+//#endregion
+
+//#region Find element /////////////////////////////////////////////////////////
 
 export const FindElementBody = z.object({
   description: z.string(),
   accessibility_tree: z.string(),
 });
 
-export const AddExampleBody = z.object({
-  goal: z.string(),
-  actions: z.array(z.string()),
-});
+//#endregion
 
-export const ChangeStateSchema = z.object({
-  accessibility_tree: z.string(),
-  url: z.string(),
-});
+//#region Analyze changes //////////////////////////////////////////////////////
 
 export const AnalyzeChangesBody = z.object({
-  before: ChangeStateSchema,
-  after: ChangeStateSchema,
+  before: Change,
+  after: Change,
 });
+
+//#endregion
+
+//#region Save session cache ///////////////////////////////////////////////////
+
+// TODO
+
+//#endregion
+
+//#region Discard unsaved cache changes ////////////////////////////////////////
+
+// TODO
+
+//#endregion
