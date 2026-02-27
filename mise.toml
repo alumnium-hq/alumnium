@@ -4,8 +4,10 @@ opencode = "latest"
 
 [env]
 _.source = "scripts/env.sh"
-ALUMNIUM_MODEL = "azure_openai"
-AZURE_OPENAI_API_VERSION = "2025-03-01-preview"
+# TODO: Use Azure when configuration issues are resolved
+ALUMNIUM_MODEL = "openai/gpt-5-nano"
+# ALUMNIUM_MODEL = "azure_openai"
+# AZURE_OPENAI_API_VERSION = "2025-03-01-preview"
 OPENCODE_CONFIG_DIR = "./.agents"
 
 [settings]
@@ -13,10 +15,12 @@ lockfile = true
 idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
 
 [tasks.tsify-py-server]
-run = 'docker build -t alumnium-server . && docker run --rm -p 8014:8013 -e AZURE_OPENAI_API_KEY="$(fnox get AZURE_OPENAI_API_KEY)" -e AZURE_OPENAI_ENDPOINT="$(fnox get AZURE_OPENAI_ENDPOINT)" -e AZURE_OPENAI_API_VERSION="$AZURE_OPENAI_API_VERSION" -e ALUMNIUM_MODEL="$ALUMNIUM_MODEL" -e ALUMNIUM_LOG_LEVEL="$ALUMNIUM_LOG_LEVEL" alumnium-server'
+# TODO: Use Azure when configuration issues are resolved
+run = 'docker build -t alumnium-server . && docker run --rm -p 8014:8013 -e OPENAI_API_KEY="$(fnox get OPENAI_API_KEY)" -e ALUMNIUM_MODEL="$ALUMNIUM_MODEL" -e ALUMNIUM_LOG_LEVEL="$ALUMNIUM_LOG_LEVEL" alumnium-server'
+# run = 'docker build -t alumnium-server . && docker run --rm -p 8014:8013 -e AZURE_OPENAI_API_KEY="$(fnox get AZURE_OPENAI_API_KEY)" -e AZURE_OPENAI_ENDPOINT="$(fnox get AZURE_OPENAI_ENDPOINT)" -e AZURE_OPENAI_API_VERSION="$AZURE_OPENAI_API_VERSION" -e ALUMNIUM_MODEL="$ALUMNIUM_MODEL" -e ALUMNIUM_LOG_LEVEL="$ALUMNIUM_LOG_LEVEL" alumnium-server'
 
 [tasks.tsify-ts-server]
-run = "cd packages/core && fnox exec -- bun ./src/cli.ts"
+run = "cd packages/core && fnox exec -- bun --watch ./src/cli.ts"
 
 [tasks.tsify-test-playwright]
 run = "cd packages/typescript && bun run examples:playwright"

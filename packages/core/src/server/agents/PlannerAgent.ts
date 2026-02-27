@@ -76,7 +76,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     this.promptWithExamples = new FewShotChatMessagePromptTemplate({
       examples: [],
       examplePrompt,
-      inputVariables: PlannerAgent.Example.keyof().options,
+      inputVariables: [],
     });
 
     let extraExamples = "";

@@ -18,6 +18,7 @@ import { NullCache } from "../cache/NullCache.js";
 import { CacheFactory } from "../CacheFactory.js";
 import { LLMFactory } from "../LLMFactory.js";
 import { Platform } from "../Platform.js";
+import { UsageStats } from "../serverSchema.js";
 import { SessionId } from "./SessionId.js";
 
 const logger = getLogger(import.meta.url);
@@ -69,12 +70,9 @@ export class Session {
   /**
    * Provides statistics about the usage of tokens.
    *
-   * @returns Two objects containing the number of input tokens, output tokens,
-   *   and total tokens used by all agents.
-   *     - "total" includes the combined usage of all agents
-   *     - "cache" includes only the usage of cached calls
+   * @returns Session usage statistics.
    */
-  get stats(): { total: Agent.Usage; cache: Agent.Usage } {
+  get stats(): UsageStats {
     return {
       total: {
         input_tokens:
