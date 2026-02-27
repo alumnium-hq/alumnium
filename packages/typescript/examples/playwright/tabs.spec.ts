@@ -1,8 +1,4 @@
-import {
-  Alumni,
-  SwitchToNextTabTool,
-  SwitchToPreviousTabTool,
-} from "../../src/index.js";
+import { Alumni, SwitchToNextTabTool, SwitchToPreviousTabTool } from "alumnium";
 import { resolveURL } from "../mocha/helpers.js";
 import { expect, test } from "./index.js";
 

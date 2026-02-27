@@ -1,9 +1,5 @@
+import { Alumni, SwitchToNextTabTool, SwitchToPreviousTabTool } from "alumnium";
 import assert from "assert";
-import {
-  Alumni,
-  SwitchToNextTabTool,
-  SwitchToPreviousTabTool,
-} from "../../src/index.js";
 import "./globals.js";
 import { navigate } from "./helpers.js";
 

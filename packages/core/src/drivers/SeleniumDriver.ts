@@ -15,11 +15,9 @@ import {
   NoSuchSessionError,
 } from "selenium-webdriver/lib/error.js";
 
-import {
-  BaseAccessibilityTree,
-  ChromiumAccessibilityTree,
-} from "@alumnium/core";
 import { always } from "alwaysly";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";

@@ -1,14 +1,9 @@
-import {
-  BaseAccessibilityTree,
-  BaseDriver,
-  BaseTool,
-  Data,
-  Element,
-  HttpClient,
-  ToolCall,
-  ToolClass,
-  retry,
-} from "@alumnium/core";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { HttpClient } from "../clients/HttpClient.js";
+import { Data } from "../clients/typecasting.js";
+import { BaseDriver, Element } from "../drivers/index.js";
+import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
+import { retry } from "../utils/retry.js";
 import { type VisionOptions } from "./Alumni.js";
 import { AssertionError } from "./errors/AssertionError.js";
 import { DoResult, DoStep } from "./result.js";
@@ -27,7 +22,7 @@ export class Area {
     accessibilityTree: BaseAccessibilityTree,
     driver: BaseDriver,
     tools: Record<string, ToolClass>,
-    client: HttpClient
+    client: HttpClient,
   ) {
     this.id = id;
     this.description = description;
@@ -43,7 +38,7 @@ export class Area {
     const { explanation, steps } = await this.client.planActions(
       goal,
       this.accessibilityTree.toStr(),
-      app
+      app,
     );
 
     let finalExplanation = explanation;
@@ -54,7 +49,7 @@ export class Area {
           goal,
           step,
           this.accessibilityTree.toStr(),
-          app
+          app,
         );
 
       // When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -67,7 +62,7 @@ export class Area {
         const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
-          this.driver
+          this.driver,
         );
         calledTools.push(calledTool);
       }
@@ -89,7 +84,7 @@ export class Area {
       await this.driver.title(),
       await this.driver.url(),
       screenshot,
-      await this.driver.app()
+      await this.driver.app(),
     );
 
     if (!value) {
@@ -110,7 +105,7 @@ export class Area {
       await this.driver.title(),
       await this.driver.url(),
       screenshot,
-      await this.driver.app()
+      await this.driver.app(),
     );
 
     return value === null ? explanation : value;
@@ -121,7 +116,7 @@ export class Area {
     const response = await this.client.findElement(
       description,
       this.accessibilityTree.toStr(),
-      await this.driver.app()
+      await this.driver.app(),
     );
     if (response?.id == null) return;
     return this.driver.findElement(+response.id);
