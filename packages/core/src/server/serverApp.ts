@@ -4,11 +4,6 @@ import { Elysia } from "elysia";
 import { Model } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
 import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.js";
-import {
-  deleteLegacyStateHook,
-  pushLegacyState,
-  pushLegacyStateHook,
-} from "./legacy.js";
 import * as s from "./serverSchema.js";
 import { SessionManager } from "./session/SessionManager.js";
 
@@ -76,12 +71,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
         {
           body: s.CreateSessionBody,
           response: s.CreateSessionResponse,
-          afterHandle: async (ctx) => {
-            const { sessions } = ctx.store;
-            const session = sessions.getSession(ctx.responseValue.session_id);
-            always(session);
-            await pushLegacyState(session);
-          },
         },
       )
 
@@ -107,10 +96,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#region Delete session ///////////////////////////////////////////
 
-            .delete(
-              "/",
-              (ctx) => ctx.store.sessions.deleteSession(ctx.params.session_id),
-              { afterHandle: deleteLegacyStateHook },
+            .delete("/", (ctx) =>
+              ctx.store.sessions.deleteSession(ctx.params.session_id),
             )
 
             //#endregion
@@ -158,7 +145,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   200: s.CreatePlanResponse,
                   500: s.ErrorResponse,
                 },
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -189,7 +175,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.PlanStepActionsBody,
                 response: s.PlanStepActionsResponse,
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -214,7 +199,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.AddExampleBody,
                 response: s.SuccessResponse,
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -235,7 +219,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               },
               {
                 response: s.SuccessResponse,
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -267,7 +250,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.ExecuteStatementBody,
                 response: s.ExecuteStatementResponse,
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -295,7 +277,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.ChooseAreaBody,
                 response: s.ChooseAreaResponse,
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -322,7 +303,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.FindElementBody,
                 response: s.FindElementResponse,
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -368,7 +348,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.AnalyzeChangesBody,
                 response: s.AnalyzeChangesResponse,
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -387,7 +366,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               },
               {
                 response: s.SuccessResponse,
-                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -408,7 +386,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               },
               {
                 response: s.SuccessResponse,
-                afterHandle: pushLegacyStateHook,
               },
             ),
 
