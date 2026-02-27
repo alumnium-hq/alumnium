@@ -129,12 +129,6 @@ export const AddExampleBody = VersionedObject.extend({
 
 //#endregion
 
-//#region Clear examples ///////////////////////////////////////////////////////
-
-// TODO
-
-//#endregion
-
 //#region Execute statement ////////////////////////////////////////////////////
 
 export const ExecuteStatementBody = z.object({
@@ -143,6 +137,11 @@ export const ExecuteStatementBody = z.object({
   url: z.string().optional(),
   title: z.string().optional(),
   screenshot: z.string().nullable().optional(),
+});
+
+export const ExecuteStatementResponse = VersionedObject.extend({
+  result: z.union([z.string(), z.array(z.string())]),
+  explanation: z.string(),
 });
 
 //#endregion
@@ -154,6 +153,11 @@ export const ChooseAreaBody = z.object({
   accessibility_tree: z.string(),
 });
 
+export const ChooseAreaResponse = VersionedObject.extend({
+  id: z.number(),
+  explanation: z.string(),
+});
+
 //#endregion
 
 //#region Find element /////////////////////////////////////////////////////////
@@ -161,6 +165,10 @@ export const ChooseAreaBody = z.object({
 export const FindElementBody = z.object({
   description: z.string(),
   accessibility_tree: z.string(),
+});
+
+export const FindElementResponse = VersionedObject.extend({
+  elements: z.array(z.record(z.string(), z.union([z.string(), z.number()]))),
 });
 
 //#endregion
@@ -172,16 +180,8 @@ export const AnalyzeChangesBody = z.object({
   after: Change,
 });
 
-//#endregion
-
-//#region Save session cache ///////////////////////////////////////////////////
-
-// TODO
-
-//#endregion
-
-//#region Discard unsaved cache changes ////////////////////////////////////////
-
-// TODO
+export const AnalyzeChangesResponse = VersionedObject.extend({
+  result: z.string(),
+});
 
 //#endregion
