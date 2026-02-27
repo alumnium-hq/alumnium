@@ -1,6 +1,7 @@
 import { cors } from "@elysiajs/cors";
 import { always } from "alwaysly";
 import { Elysia } from "elysia";
+import { Model } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
 import {
   deleteLegacyStateHook,
@@ -36,18 +37,30 @@ export const serverApp = new Elysia({ prefix: "/v1" })
     });
   })
   .state("sessions", new SessionManager())
-  // Health check //////////////////////////////////////////////////////////////
-  .get("/health", legacyProxy)
+
+  //#region Health check ///////////////////////////////////////////////////////
+  .get(
+    "/health",
+    (_) => ({
+      status: "healthy",
+      model: Model.current.toString(),
+    }),
+    { response: s.HealthCheckResponse },
+  )
+  //#endregion
 
   .group("/sessions", (app) =>
     app
-      // Get sessions list /////////////////////////////////////////////////////
-      .get("/", legacyProxy)
+      //#region Get sessions list //////////////////////////////////////////////
+      .get("/", (ctx) => ctx.store.sessions.listSessions(), {
+        response: s.GetSessionsResponse,
+      })
+      //#endregion
 
-      // Create session ////////////////////////////////////////////////////////
+      //#region Create session /////////////////////////////////////////////////
       .post(
         "/",
-        async (ctx) => {
+        (ctx) => {
           const sessionId = ctx.store.sessions.createSession(ctx.body);
           return {
             // TODO: Figure out how to make all responses versioned without
@@ -67,6 +80,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
           },
         },
       )
+      //#endregion
+
       .group("/:session_id", { params: s.SessionParams }, (app) =>
         app
           .resolve((ctx) => {
@@ -82,17 +97,21 @@ export const serverApp = new Elysia({ prefix: "/v1" })
             return { session };
           })
 
-          // Delete session ////////////////////////////////////////////////////
+          //#region Delete session /////////////////////////////////////////////
           .delete(
             "/",
             (ctx) => ctx.store.sessions.deleteSession(ctx.params.session_id),
             { afterHandle: deleteLegacyStateHook },
           )
+          //#endregion
 
-          // Get session stats /////////////////////////////////////////////////
-          .get("/stats", (ctx) => ctx.session.stats)
+          //#region Get session stats //////////////////////////////////////////
+          .get("/stats", (ctx) => ctx.session.stats, {
+            response: s.UsageStats,
+          })
+          //#endregion
 
-          // Create plan ///////////////////////////////////////////////////////
+          //#region Create plan ////////////////////////////////////////////////
           .post(
             "/plans",
             async (ctx) => {
@@ -120,20 +139,44 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               }
             },
             {
-              body: s.PlanActionsBody,
+              body: s.CreatePlanBody,
               response: {
-                200: s.PlanActionsResponse,
+                200: s.CreatePlanResponse,
                 500: s.ErrorResponse,
               },
               afterHandle: pushLegacyStateHook,
             },
           )
+          //#endregion
 
-          // Plan step actions /////////////////////////////////////////////////
-          .post("/steps", legacyProxy, {
-            body: s.PlanStepActionsBody,
-            afterHandle: pullLegacyStateHook,
-          })
+          //#region Plan step actions //////////////////////////////////////////
+          .post(
+            "/steps",
+            async (ctx) => {
+              const { session } = ctx;
+              const accessibilityTree = await session.processTree(
+                ctx.body.accessibility_tree,
+              );
+              const actions = await session.actorAgent.invoke(
+                ctx.body.goal,
+                ctx.body.step,
+                accessibilityTree.toXml(),
+              );
+              // TODO: Since invoke can return undefined, we need to assert.
+              // It might be solved with proper agent types in the future.
+              always(actions);
+              return {
+                api_version: "1",
+                actions,
+              };
+            },
+            {
+              body: s.PlanStepActionsBody,
+              response: s.PlanStepActionsResponse,
+              afterHandle: pushLegacyStateHook,
+            },
+          )
+          //#endregion
 
           // Add example ///////////////////////////////////////////////////////
           .post("/examples", legacyProxy, {

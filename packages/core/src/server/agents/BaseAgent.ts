@@ -5,6 +5,7 @@ import { always } from "alwaysly";
 import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
 import { retry } from "../../utils/retry.js";
+import { Usage } from "../serverSchema.js";
 import { Agent } from "./Agent.js";
 import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
 import {
@@ -30,11 +31,7 @@ export namespace BaseAgent {
 }
 
 export class BaseAgent {
-  #usage: Agent.Usage = {
-    input_tokens: 0,
-    output_tokens: 0,
-    total_tokens: 0,
-  };
+  #usage: Usage = Agent.createUsage();
   protected prompts: AgentPrompts.RolePrompts;
 
   constructor() {
@@ -117,7 +114,7 @@ export class BaseAgent {
       this.#updateUsage((result as any).usage_metadata);
     }
 
-    if (Array.isArray(content)) {
+    if (Array.isArray(content) && content[0]) {
       if ("reasoning_content" in content[0]) {
         // Anthropic reasoning
         logger.info(`  <- Reasoning: ${content[0]["reasoning_content"]}`);
@@ -135,7 +132,7 @@ export class BaseAgent {
     return result;
   }
 
-  #updateUsage(usage: Partial<Agent.Usage> | undefined | null) {
+  #updateUsage(usage: Partial<Usage> | undefined | null) {
     if (!usage) return;
     this.#usage.input_tokens += usage.input_tokens ?? 0;
     this.#usage.output_tokens += usage.output_tokens ?? 0;

@@ -63,6 +63,10 @@ export class Model {
     Model.current = new Model(provider, name);
   }
 
+  toString() {
+    return `${this.provider}/${this.name}`;
+  }
+
   //#region State
 
   toState(): Model.Schema {

@@ -1,20 +1,14 @@
 import z from "zod";
+import { Usage } from "../serverSchema.js";
 
 export namespace Agent {
-  // TODO: Find a better place for this
-  export const Usage = z.object({
-    input_tokens: z.number(),
-    output_tokens: z.number(),
-    total_tokens: z.number(),
-  });
-
-  export type Usage = z.infer<typeof Usage>;
-
   export const State = z.object({
     usage: Usage,
   });
 
   export type State = z.infer<typeof State>;
+
+  // TODO: Find better place
 
   export function createState(): State {
     return {
