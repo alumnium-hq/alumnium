@@ -1,6 +1,6 @@
+import { type Alumni } from "alumnium";
 import { type WebDriver } from "selenium-webdriver";
 import { type Browser } from "webdriverio";
-import { type Alumni } from "../../src/Alumni.js";
 
 declare global {
   var al: Alumni;

@@ -1,9 +1,9 @@
+import { Alumni, AppiumDriver, type Element } from "alumnium";
 import { join, resolve } from "path";
 import { Locator } from "playwright";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { type Browser } from "webdriverio";
-import { Alumni, AppiumDriver, type Element } from "../../src/index.js";
 
 let driver: WebDriver | Browser;
 let al: Alumni;

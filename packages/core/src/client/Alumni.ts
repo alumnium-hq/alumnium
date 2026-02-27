@@ -1,22 +1,20 @@
-import {
-  AppiumDriver,
-  BaseDriver,
-  BaseTool,
-  Data,
-  Element,
-  HttpClient,
-  Model,
-  PlaywrightDriver,
-  SeleniumDriver,
-  ToolCall,
-  ToolClass,
-  getLogger,
-  retry,
-} from "@alumnium/core";
 import { always } from "alwaysly";
 import { Page } from "playwright";
 import { WebDriver } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
+import { HttpClient } from "../clients/HttpClient.js";
+import { Data } from "../clients/typecasting.js";
+import {
+  AppiumDriver,
+  BaseDriver,
+  Element,
+  PlaywrightDriver,
+  SeleniumDriver,
+} from "../drivers/index.js";
+import { Model } from "../Model.js";
+import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
+import { getLogger } from "../utils/logger.js";
+import { retry } from "../utils/retry.js";
 import { Area } from "./Area.js";
 import { Cache } from "./Cache.js";
 import { AssertionError } from "./errors/AssertionError.js";
@@ -74,7 +72,7 @@ export class Alumni {
       this.url,
       this.model,
       this.driver.platform,
-      this.tools
+      this.tools,
     );
     this.cache = new Cache(this.client);
 
@@ -92,7 +90,7 @@ export class Alumni {
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
     const { explanation, steps } = await this.client.planActions(
       goal,
-      initialAccessibilityTree.toStr()
+      initialAccessibilityTree.toStr(),
     );
 
     const executedSteps: DoStep[] = [];
@@ -108,7 +106,7 @@ export class Alumni {
       const actorResponse = await this.client.executeAction(
         goal,
         step,
-        accessibilityTree.toStr()
+        accessibilityTree.toStr(),
       );
 
       const calledTools: string[] = [];
@@ -116,7 +114,7 @@ export class Alumni {
         const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
-          this.driver
+          this.driver,
         );
         calledTools.push(calledTool);
       }
@@ -138,7 +136,7 @@ export class Alumni {
       accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
     );
 
     if (!value) {
@@ -159,7 +157,7 @@ export class Alumni {
       accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
     );
 
     return value === null ? explanation : value;
@@ -170,7 +168,7 @@ export class Alumni {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findElement(
       description,
-      accessibilityTree.toStr()
+      accessibilityTree.toStr(),
     );
     if (response?.id == null) return;
     return this.driver.findElement(+response.id);
@@ -180,7 +178,7 @@ export class Alumni {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findArea(
       description,
-      accessibilityTree.toStr()
+      accessibilityTree.toStr(),
     );
     const scopedTree = accessibilityTree.scopeToArea(response.id);
     return new Area(
@@ -189,7 +187,7 @@ export class Alumni {
       scopedTree,
       this.driver,
       this.tools,
-      this.client
+      this.client,
     );
   }
 

@@ -1,14 +1,9 @@
-import {
-  BaseAccessibilityTree,
-  BaseDriver,
-  BaseTool,
-  Data,
-  Element,
-  HttpClient,
-  ToolCall,
-  ToolClass,
-  retry,
-} from "@alumnium/core";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { HttpClient } from "../clients/HttpClient.js";
+import { Data } from "../clients/typecasting.js";
+import { BaseDriver, Element } from "../drivers/index.js";
+import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
+import { retry } from "../utils/retry.js";
 import { type VisionOptions } from "./Alumni.js";
 import { AssertionError } from "./errors/AssertionError.js";
 import { DoResult, DoStep } from "./result.js";
@@ -27,7 +22,7 @@ export class Area {
     accessibilityTree: BaseAccessibilityTree,
     driver: BaseDriver,
     tools: Record<string, ToolClass>,
-    client: HttpClient
+    client: HttpClient,
   ) {
     this.id = id;
     this.description = description;
@@ -41,7 +36,7 @@ export class Area {
   async do(goal: string): Promise<DoResult> {
     const { explanation, steps } = await this.client.planActions(
       goal,
-      this.accessibilityTree.toStr()
+      this.accessibilityTree.toStr(),
     );
 
     const executedSteps: DoStep[] = [];
@@ -49,7 +44,7 @@ export class Area {
       const actorResponse = await this.client.executeAction(
         goal,
         step,
-        this.accessibilityTree.toStr()
+        this.accessibilityTree.toStr(),
       );
 
       const calledTools: string[] = [];
@@ -57,7 +52,7 @@ export class Area {
         const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
-          this.driver
+          this.driver,
         );
         calledTools.push(calledTool);
       }
@@ -78,7 +73,7 @@ export class Area {
       this.accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
     );
 
     if (!value) {
@@ -98,7 +93,7 @@ export class Area {
       this.accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
     );
 
     return value === null ? explanation : value;
@@ -108,7 +103,7 @@ export class Area {
   async find(description: string): Promise<Element | undefined> {
     const response = await this.client.findElement(
       description,
-      this.accessibilityTree.toStr()
+      this.accessibilityTree.toStr(),
     );
     if (response?.id == null) return;
     return this.driver.findElement(+response.id);

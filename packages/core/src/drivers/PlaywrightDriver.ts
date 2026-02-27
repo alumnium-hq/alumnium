@@ -4,11 +4,9 @@ import { fileURLToPath } from "url";
 
 import { CDPSession, Frame, Locator, Page } from "playwright";
 
-import {
-  BaseAccessibilityTree,
-  ChromiumAccessibilityTree,
-} from "@alumnium/core";
 import { always, ensure } from "alwaysly";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";

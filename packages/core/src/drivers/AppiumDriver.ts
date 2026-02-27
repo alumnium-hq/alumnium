@@ -1,11 +1,9 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
 
-import {
-  BaseAccessibilityTree,
-  UIAutomator2AccessibilityTree,
-  XCUITestAccessibilityTree,
-} from "@alumnium/core";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
+import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
 import { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
