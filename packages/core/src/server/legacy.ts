@@ -25,13 +25,7 @@ export async function legacyProxy(ctx: Context) {
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    let responseBody: Blob | undefined = undefined;
-    try {
-      responseBody = await response.blob();
-    } catch (err) {
-      // NOTE: Some methods respond with no body
-      logger.debug(`Failed to read response body as blob: ${err}`);
-    }
+    const responseBody = await response.blob();
 
     return new Response(responseBody, {
       status: response.status,
@@ -102,8 +96,16 @@ export async function pullLegacyState(sessionId: SessionId) {
   const response = await legacyFetch(`/v1/sessions/${sessionId}/state`, {
     method: "GET",
   });
-  const state = Session.State.parse(await response.text());
-  sessionStates[sessionId] = state;
+  try {
+    const state = Session.State.parse(await response.text());
+    sessionStates[sessionId] = state;
+  } catch (err) {
+    logger.error(
+      `Failed to parse legacy state for session ${sessionId}: {err}`,
+      { err },
+    );
+    throw new Error(`Failed to parse legacy state for session ${sessionId}`);
+  }
 }
 
 export namespace pullLegacyStateHook {
