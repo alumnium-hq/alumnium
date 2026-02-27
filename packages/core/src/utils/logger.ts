@@ -1,5 +1,6 @@
 import { getFileSink } from "@logtape/file";
 import {
+  ansiColorFormatter,
   configureSync,
   getConsoleSink,
   LogLevel,
@@ -27,7 +28,7 @@ function configureLogging(): void {
     fs.mkdirSync(path.dirname(logPath), { recursive: true });
   }
 
-  const console = getConsoleSink();
+  const console = getConsoleSink({ formatter: ansiColorFormatter });
 
   configureSync({
     sinks: {
