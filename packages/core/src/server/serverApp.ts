@@ -18,14 +18,23 @@ const logger = getLogger(import.meta.url);
 
 export const serverApp = new Elysia({ prefix: "/v1" })
   .use(cors())
-  .onError((ctx) =>
-    ctx.status(500, {
+  .onError((ctx) => {
+    const { method, url } = ctx.request;
+    logger.warn(`${method} ${url} failed: {error}`, {
+      error: ctx.error,
+    });
+    logger.debug("  -> content-type: {contentType}", {
+      contentType: ctx.request.headers.get("content-type"),
+    });
+    logger.debug("  -> body: {body}", { body: ctx.body });
+
+    return ctx.status(500, {
       api_version: "1",
       message: ctx.error.toString(),
       // TODO: Figure out how to pass the stack
       stack: "stack" in ctx.error ? ctx.error.stack : undefined,
-    }),
-  )
+    });
+  })
   .state("sessions", new SessionManager())
   // Health check //////////////////////////////////////////////////////////////
   .get("/health", legacyProxy)
