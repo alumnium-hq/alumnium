@@ -56,8 +56,12 @@ export class LLMFactory {
   }
 
   static createAzureLlm(model: Model): BaseChatModel {
+    const variant = Provider.AZURE_FOUNDRY ? "Azure Foundry" : "Azure OpenAI";
+    logger.debug(`Creating ${variant} LLM with model ${model.name}`);
+
     const defaultFields: Partial<AzureChatOpenAIFields> = {
-      temperature: 0,
+      // TODO: See the OpenAI LLM function for more info about the issue.
+      // temperature: 0,
     };
     const fields =
       model.provider === Provider.AZURE_FOUNDRY
@@ -93,6 +97,10 @@ export class LLMFactory {
         "AZURE_FOUNDRY_API_VERSION environment variable is required for Azure Foundry models",
       );
     }
+
+    // TODO: Figure out the correct set of params, right now it fails with:
+    //     > azureOpenAIApiInstanceName is required when using azureOpenAIApiKey
+
     return {
       azureOpenAIEndpoint,
       azureOpenAIApiDeploymentName: model.name,
@@ -120,6 +128,8 @@ export class LLMFactory {
   }
 
   static createAnthropicLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating Anthropic LLM with model ${model.name}`);
+
     return new ChatAnthropic({
       model: model.name,
       // TODO: Python implementation also includes fields missing in JS SDK:
@@ -133,6 +143,8 @@ export class LLMFactory {
   }
 
   static createAwsLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating AWS LLM with model ${model.name}`);
+
     const accessKeyId = process.env.AWS_ACCESS_KEY ?? "";
     const secretAccessKey = process.env.AWS_SECRET_KEY ?? "";
     const region = process.env.AWS_REGION_NAME ?? "us-east-1";
@@ -154,6 +166,8 @@ export class LLMFactory {
   }
 
   static createDeepSeekLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating DeepSeek LLM with model ${model.name}`);
+
     return new ChatDeepSeek({
       model: model.name,
       temperature: 0,
@@ -163,6 +177,8 @@ export class LLMFactory {
   }
 
   static createGoogleLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating Google LLM with model ${model.name}`);
+
     if (model.name.includes("gemini-2.0")) {
       return new ChatGoogleGenerativeAI({
         model: model.name,
@@ -181,6 +197,8 @@ export class LLMFactory {
   }
 
   static createGithubLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating Github LLM with model ${model.name}`);
+
     return new ChatOpenAI({
       model: model.name,
       configuration: { baseURL: "https://models.github.ai/inference" },
@@ -189,6 +207,8 @@ export class LLMFactory {
   }
 
   static createMistralAiLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating MistralAI LLM with model ${model.name}`);
+
     return new ChatMistralAI({
       model: model.name,
       temperature: 0,
@@ -196,6 +216,8 @@ export class LLMFactory {
   }
 
   static createOllamaLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating Ollama LLM with model ${model.name}`);
+
     const baseUrl = process.env.ALUMNIUM_OLLAMA_URL;
     if (baseUrl) {
       return new ChatOllama({
@@ -212,18 +234,33 @@ export class LLMFactory {
   }
 
   static createOpenAiLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating OpenAI LLM with model ${model.name}`);
+
     const fields: ChatOpenAIFields = {
       model: model.name,
       configuration: { baseURL: process.env.OPENAI_CUSTOM_URL },
-      temperature: 0,
+      // TODO: Apparently the latest OpenAI models (o1, o3, o4, gpt-5) don't
+      // accept temperature anymore, so we need to either conditionally include
+      // it or figure out the correct way to set it for the new models.
+      //
+      // The error:
+      //     > Unsupported parameter: 'temperature' is not supported with this model.
+      //
+      // See:
+      // - https://community.openai.com/t/gpt-5-models-temperature/1337957
+      // - https://community.openai.com/t/gpt-5-removed-parameters-logprob-top-p-temperature/1345768/2
+      //
+      // temperature: 0,
     };
 
     if (model.name.includes("gpt-4o")) {
       if (!process.env.OPENAI_CUSTOM_URL) {
-        // @ts-expect-error -- TODO: JS SDK has no seed parameter, however
-        // Python SDK does. Figure out if types are incorrect or if we need to
-        // set seed in a different way for JS SDK.
-        fields.seed = 1;
+        // TODO: The seed parameter is deprecated and missing the LangChain
+        // types, so we need to figure out the correct way to move forward.
+        //
+        // See: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
+        //
+        // fields.seed = 1;
       }
     } else {
       fields.reasoning = {
@@ -236,6 +273,8 @@ export class LLMFactory {
   }
 
   static createXAiLlm(model: Model): BaseChatModel {
+    logger.debug(`Creating XAI LLM with model ${model.name}`);
+
     return new ChatXAI({
       model: model.name,
       temperature: 0,
