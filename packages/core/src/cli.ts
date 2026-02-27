@@ -1,5 +1,4 @@
 import { parseArgs } from "util";
-import { LEGACY_BASE_URL } from "./server/legacy.js";
 import { serverApp } from "./server/serverApp.js";
 
 //#region CLI
@@ -26,7 +25,6 @@ const args = parseArgs({
 const PORT = parseInt(args.values.port || "8013");
 
 console.log(`Starting at http://localhost:${PORT}`);
-console.log(`🟡 Proxying to legacy server at ${LEGACY_BASE_URL}`);
 
 serverApp.listen(PORT);
 
