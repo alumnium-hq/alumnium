@@ -1,22 +1,20 @@
-import {
-  AppiumDriver,
-  BaseDriver,
-  BaseTool,
-  Data,
-  Element,
-  HttpClient,
-  Model,
-  PlaywrightDriver,
-  SeleniumDriver,
-  ToolCall,
-  ToolClass,
-  getLogger,
-  retry,
-} from "@alumnium/core";
 import { always } from "alwaysly";
 import { Page } from "playwright";
 import { WebDriver } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
+import { HttpClient } from "../clients/HttpClient.js";
+import { Data } from "../clients/typecasting.js";
+import {
+  AppiumDriver,
+  BaseDriver,
+  Element,
+  PlaywrightDriver,
+  SeleniumDriver,
+} from "../drivers/index.js";
+import { Model } from "../Model.js";
+import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
+import { getLogger } from "../utils/logger.js";
+import { retry } from "../utils/retry.js";
 import { Area } from "./Area.js";
 import { Cache } from "./Cache.js";
 import { AssertionError } from "./errors/AssertionError.js";
@@ -28,7 +26,7 @@ const changeAnalysis =
 const planner =
   (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
 const excludedAttributes = new Set(
-  (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "").split(",").filter(Boolean)
+  (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "").split(",").filter(Boolean),
 );
 
 export interface AlumniOptions {
@@ -88,7 +86,7 @@ export class Alumni {
       this.driver.platform,
       this.tools,
       options.planner ?? planner,
-      options.excludedAttributes ?? excludedAttributes
+      options.excludedAttributes ?? excludedAttributes,
     );
     this.cache = new Cache(this.client);
 
@@ -112,7 +110,7 @@ export class Alumni {
     const { explanation, steps } = await this.client.planActions(
       goal,
       initialAccessibilityTree.toStr(),
-      app
+      app,
     );
 
     let finalExplanation = explanation;
@@ -131,7 +129,7 @@ export class Alumni {
           goal,
           step,
           accessibilityTree.toStr(),
-          app
+          app,
         );
 
       // When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -144,7 +142,7 @@ export class Alumni {
         const calledTool = await BaseTool.executeToolCall(
           toolCall as ToolCall,
           this.tools,
-          this.driver
+          this.driver,
         );
         calledTools.push(calledTool);
       }
@@ -158,7 +156,7 @@ export class Alumni {
         beforeTree!,
         beforeUrl!,
         (await this.driver.getAccessibilityTree()).toStr(),
-        await this.driver.url()
+        await this.driver.url(),
       );
     }
 
@@ -177,7 +175,7 @@ export class Alumni {
       await this.driver.title(),
       await this.driver.url(),
       screenshot,
-      await this.driver.app()
+      await this.driver.app(),
     );
 
     if (!value) {
@@ -199,7 +197,7 @@ export class Alumni {
       await this.driver.title(),
       await this.driver.url(),
       screenshot,
-      await this.driver.app()
+      await this.driver.app(),
     );
 
     return value === null ? explanation : value;
@@ -211,7 +209,7 @@ export class Alumni {
     const response = await this.client.findElement(
       description,
       accessibilityTree.toStr(),
-      await this.driver.app()
+      await this.driver.app(),
     );
     if (response?.id == null) return;
     return this.driver.findElement(+response.id);
@@ -222,7 +220,7 @@ export class Alumni {
     const response = await this.client.findArea(
       description,
       accessibilityTree.toStr(),
-      await this.driver.app()
+      await this.driver.app(),
     );
     const scopedTree = accessibilityTree.scopeToArea(response.id);
     return new Area(
@@ -231,7 +229,7 @@ export class Alumni {
       scopedTree,
       this.driver,
       this.tools,
-      this.client
+      this.client,
     );
   }
 
