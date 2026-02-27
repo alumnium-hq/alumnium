@@ -244,32 +244,88 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#region Execute statement ////////////////////////////////////////
 
-            // @ts-expect-error -- TODO
-            .post("/statements", legacyProxy, {
-              body: s.ExecuteStatementBody,
-              response: s.ExecuteStatementResponse,
-              afterHandle: pullLegacyStateHook,
-            })
+            .post(
+              "/statements",
+              async (ctx) => {
+                const { session } = ctx;
+                const accessibilityTree = await session.processTree(
+                  ctx.body.accessibility_tree,
+                );
+                const [explanation, value] =
+                  await session.retrieverAgent.invoke(
+                    ctx.body.statement,
+                    accessibilityTree.toXml(),
+                    ctx.body.title,
+                    ctx.body.url,
+                    ctx.body.screenshot,
+                  );
+                return {
+                  api_version: "1",
+                  result: value,
+                  explanation,
+                };
+              },
+              {
+                body: s.ExecuteStatementBody,
+                response: s.ExecuteStatementResponse,
+                afterHandle: pullLegacyStateHook,
+              },
+            )
 
             //#region Choose area //////////////////////////////////////////////
 
-            // @ts-expect-error -- TODO
-            .post("/areas", legacyProxy, {
-              body: s.ChooseAreaBody,
-              response: s.ChooseAreaResponse,
-              afterHandle: pullLegacyStateHook,
-            })
+            .post(
+              "/areas",
+              async (ctx) => {
+                const { session } = ctx;
+                const accessibilityTree = await session.processTree(
+                  ctx.body.accessibility_tree,
+                );
+                const { id: simplifiedId, explanation } =
+                  await session.areaAgent.invoke(
+                    ctx.body.description,
+                    accessibilityTree.toXml(),
+                  );
+                const id = accessibilityTree.getRawId(simplifiedId);
+                return {
+                  api_version: "1",
+                  id,
+                  explanation,
+                };
+              },
+              {
+                body: s.ChooseAreaBody,
+                response: s.ChooseAreaResponse,
+                afterHandle: pullLegacyStateHook,
+              },
+            )
 
             //#endregion
 
             //#region Find element /////////////////////////////////////////////
 
-            // @ts-expect-error -- TODO
-            .post("/elements", legacyProxy, {
-              body: s.FindElementBody,
-              response: s.FindElementResponse,
-              afterHandle: pullLegacyStateHook,
-            })
+            .post(
+              "/elements",
+              async (ctx) => {
+                const { session } = ctx;
+                const accessibilityTree = await session.processTree(
+                  ctx.body.accessibility_tree,
+                );
+                const elements = await session.locatorAgent.invoke(
+                  ctx.body.description,
+                  accessibilityTree.toXml(),
+                );
+                return {
+                  api_version: "1",
+                  elements,
+                };
+              },
+              {
+                body: s.FindElementBody,
+                response: s.FindElementResponse,
+                afterHandle: pullLegacyStateHook,
+              },
+            )
 
             //#endregion
 
