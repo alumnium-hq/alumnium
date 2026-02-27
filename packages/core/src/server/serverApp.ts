@@ -3,10 +3,9 @@ import { always } from "alwaysly";
 import { Elysia } from "elysia";
 import { Model } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
+import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.js";
 import {
   deleteLegacyStateHook,
-  legacyProxy,
-  pullLegacyStateHook,
   pushLegacyState,
   pushLegacyStateHook,
 } from "./legacy.js";
@@ -268,7 +267,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.ExecuteStatementBody,
                 response: s.ExecuteStatementResponse,
-                afterHandle: pullLegacyStateHook,
+                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -296,7 +295,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.ChooseAreaBody,
                 response: s.ChooseAreaResponse,
-                afterHandle: pullLegacyStateHook,
+                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -323,7 +322,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               {
                 body: s.FindElementBody,
                 response: s.FindElementResponse,
-                afterHandle: pullLegacyStateHook,
+                afterHandle: pushLegacyStateHook,
               },
             )
 
@@ -331,30 +330,87 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#region Analyze changes //////////////////////////////////////////
 
-            // @ts-expect-error -- TODO
-            .post("/changes", legacyProxy, {
-              body: s.AnalyzeChangesBody,
-              response: s.AnalyzeChangesResponse,
-              afterHandle: pullLegacyStateHook,
-            })
+            .post(
+              "/changes",
+              async (ctx) => {
+                const {
+                  session,
+                  body: { before, after },
+                } = ctx;
+                const beforeTree = await session.processTree(
+                  before.accessibility_tree,
+                );
+                const afterTree = await session.processTree(
+                  after.accessibility_tree,
+                );
+                const excludeAttrs = new Set(["id"]);
+                const diff = new AccessibilityTreeDiff(
+                  beforeTree.toXml(excludeAttrs),
+                  afterTree.toXml(excludeAttrs),
+                );
+
+                let analysis = "";
+                if (before.url && after.url) {
+                  if (before.url !== after.url) {
+                    analysis += `URL changed to ${after.url}. `;
+                  } else {
+                    analysis += "URL did not change. ";
+                  }
+                }
+
+                analysis += session.changesAnalyzerAgent.invoke(diff.compute());
+
+                return {
+                  api_version: "1",
+                  result: analysis,
+                };
+              },
+              {
+                body: s.AnalyzeChangesBody,
+                response: s.AnalyzeChangesResponse,
+                afterHandle: pushLegacyStateHook,
+              },
+            )
 
             //#region Save session cache ///////////////////////////////////////
 
-            // @ts-expect-error -- TODO
-            .post("/caches", legacyProxy, {
-              afterHandle: pullLegacyStateHook,
-              response: s.SuccessResponse,
-            })
+            .post(
+              "/caches",
+              async (ctx) => {
+                const { session } = ctx;
+                await session.cache.save();
+                return {
+                  api_version: "1",
+                  success: true,
+                  message: "Cache saved successfully",
+                };
+              },
+              {
+                response: s.SuccessResponse,
+                afterHandle: pushLegacyStateHook,
+              },
+            )
 
             //#endregion
 
             //#region Discard unsaved cache changes ////////////////////////////
 
-            // @ts-expect-error -- TODO
-            .delete("/caches", legacyProxy, {
-              afterHandle: pullLegacyStateHook,
-              response: s.SuccessResponse,
-            }),
+            .delete(
+              "/caches",
+              async (ctx) => {
+                const { session } = ctx;
+                await session.cache.discard();
+                return {
+                  api_version: "1",
+                  success: true,
+                  message: "Cache discarded successfully",
+                };
+              },
+              {
+                response: s.SuccessResponse,
+                afterHandle: pushLegacyStateHook,
+              },
+            ),
 
         //#endregion
       ),
