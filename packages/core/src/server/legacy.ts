@@ -96,8 +96,9 @@ export async function pullLegacyState(sessionId: SessionId) {
   const response = await legacyFetch(`/v1/sessions/${sessionId}/state`, {
     method: "GET",
   });
+  const stateJson = await response.json();
   try {
-    const state = Session.State.parse(await response.text());
+    const state = Session.State.parse(stateJson);
     sessionStates[sessionId] = state;
   } catch (err) {
     logger.error(
