@@ -1,14 +1,9 @@
 {
-  "name": "alumnium",
-  "version": "0.18.0",
-  "description": "Pave the way towards AI-powered test automation",
+  "name": "@alumnium/system-tests",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Temporary? package holding system tests for Alumnium",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "README.md"
-  ],
   "scripts": {
     "build": "rm -rf dist/ && tsc --project tsconfig.build.json && mkdir -p dist/drivers/scripts && cp src/drivers/scripts/*.js dist/drivers/scripts/",
     "clean": "rm -rf .alumnium/cache dist/ log/ playwright-report/ test-results/",
@@ -42,7 +37,7 @@
     "url": "https://github.com/alumnium-hq/alumnium.git"
   },
   "dependencies": {
-    "@alumnium/core": "workspace:*",
+    "alumnium": "workspace:*",
     "@logtape/file": "^1.1.1",
     "@logtape/logtape": "^1.1.1",
     "alwaysly": "^0.4.0",
