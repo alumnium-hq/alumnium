@@ -1,7 +1,7 @@
-import { BaseAccessibilityTree } from "@alumnium/core";
-import { ToolClass } from "../tools/BaseTool.js";
-import { Element } from "./index.js";
-import { Key } from "./keys.js";
+import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import type { ToolClass } from "../tools/BaseTool.js";
+import type { Element } from "./index.js";
+import type { Key } from "./keys.js";
 
 export abstract class BaseDriver {
   abstract platform: string;

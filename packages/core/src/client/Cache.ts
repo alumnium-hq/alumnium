@@ -1,4 +1,4 @@
-import { HttpClient } from "@alumnium/core";
+import { HttpClient } from "../clients/HttpClient.js";
 
 export class Cache {
   private client: HttpClient;
