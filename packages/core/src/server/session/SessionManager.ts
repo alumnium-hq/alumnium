@@ -1,10 +1,10 @@
 import { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import z from "zod";
 import { Model, Provider } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
 import { Agent } from "../agents/Agent.js";
 import { Platform } from "../Platform.js";
+import { UsageStats } from "../serverSchema.js";
 import { Session } from "./Session.js";
 import { SessionId } from "./SessionId.js";
 
@@ -80,13 +80,11 @@ export class SessionManager {
   /**
    * Get combined token usage statistics for all sessions.
    */
-  getTotalStats(): SessionManager.UsageStats {
+  getTotalStats(): UsageStats {
     const totalStats = SessionManager.createTotalStats();
     for (const session of Object.values(this.sessions)) {
       const sessionStats = session.stats;
-      for (const key of Object.keys(
-        totalStats,
-      ) as (keyof SessionManager.UsageStats)[]) {
+      for (const key of Object.keys(totalStats) as (keyof UsageStats)[]) {
         totalStats[key].input_tokens += sessionStats[key].input_tokens;
         totalStats[key].output_tokens += sessionStats[key].output_tokens;
         totalStats[key].total_tokens += sessionStats[key].total_tokens;
@@ -95,7 +93,7 @@ export class SessionManager {
     return totalStats;
   }
 
-  static createTotalStats(): SessionManager.UsageStats {
+  static createTotalStats(): UsageStats {
     return {
       total: Agent.createUsage(),
       cache: Agent.createUsage(),
@@ -112,11 +110,4 @@ export namespace SessionManager {
     llm?: BaseChatModel | undefined;
     sessionId?: SessionId | undefined;
   }
-
-  export const UsageStats = z.object({
-    total: Agent.Usage,
-    cache: Agent.Usage,
-  });
-
-  export type UsageStats = z.infer<typeof UsageStats>;
 }
