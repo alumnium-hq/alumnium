@@ -39,6 +39,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
   .state("sessions", new SessionManager())
 
   //#region Health check ///////////////////////////////////////////////////////
+
   .get(
     "/health",
     (_) => ({
@@ -47,17 +48,21 @@ export const serverApp = new Elysia({ prefix: "/v1" })
     }),
     { response: s.HealthCheckResponse },
   )
+
   //#endregion
 
   .group("/sessions", (app) =>
     app
       //#region Get sessions list //////////////////////////////////////////////
+
       .get("/", (ctx) => ctx.store.sessions.listSessions(), {
         response: s.GetSessionsResponse,
       })
+
       //#endregion
 
       //#region Create session /////////////////////////////////////////////////
+
       .post(
         "/",
         (ctx) => {
@@ -80,148 +85,181 @@ export const serverApp = new Elysia({ prefix: "/v1" })
           },
         },
       )
+
       //#endregion
 
-      .group("/:session_id", { params: s.SessionParams }, (app) =>
-        app
-          .resolve((ctx) => {
-            const session = ctx.store.sessions.getSession(
-              ctx.params.session_id,
-            );
-            if (!session) {
-              return ctx.status(404, {
-                api_version: "1",
-                message: "Session not found",
-              });
-            }
-            return { session };
-          })
-
-          //#region Delete session /////////////////////////////////////////////
-          .delete(
-            "/",
-            (ctx) => ctx.store.sessions.deleteSession(ctx.params.session_id),
-            { afterHandle: deleteLegacyStateHook },
-          )
-          //#endregion
-
-          //#region Get session stats //////////////////////////////////////////
-          .get("/stats", (ctx) => ctx.session.stats, {
-            response: s.UsageStats,
-          })
-          //#endregion
-
-          //#region Create plan ////////////////////////////////////////////////
-          .post(
-            "/plans",
-            async (ctx) => {
-              const { session } = ctx;
-
-              try {
-                const accessibilityTree = session.processTree(
-                  ctx.body.accessibility_tree,
-                );
-                const [explanation, steps] = await session.plannerAgent.invoke(
-                  ctx.body.goal,
-                  accessibilityTree.toXml(),
-                );
-                return {
+      .group(
+        "/:session_id",
+        { params: s.SessionParams },
+        (app) =>
+          app
+            .resolve((ctx) => {
+              const session = ctx.store.sessions.getSession(
+                ctx.params.session_id,
+              );
+              if (!session) {
+                return ctx.status(404, {
                   api_version: "1",
-                  explanation,
-                  steps,
-                };
-              } catch (error) {
-                logger.error(`Error generating plan: ${error}`);
-                return ctx.status(500, {
-                  api_version: "1",
-                  message: `Failed to plan actions: ${error}`,
+                  message: "Session not found",
                 });
               }
-            },
-            {
-              body: s.CreatePlanBody,
-              response: {
-                200: s.CreatePlanResponse,
-                500: s.ErrorResponse,
+              return { session };
+            })
+
+            //#region Delete session ///////////////////////////////////////////
+
+            .delete(
+              "/",
+              (ctx) => ctx.store.sessions.deleteSession(ctx.params.session_id),
+              { afterHandle: deleteLegacyStateHook },
+            )
+
+            //#endregion
+
+            //#region Get session stats ////////////////////////////////////////
+
+            .get("/stats", (ctx) => ctx.session.stats, {
+              response: s.UsageStats,
+            })
+
+            //#endregion
+
+            //#region Create plan //////////////////////////////////////////////
+
+            .post(
+              "/plans",
+              async (ctx) => {
+                const { session } = ctx;
+
+                try {
+                  const accessibilityTree = session.processTree(
+                    ctx.body.accessibility_tree,
+                  );
+                  const [explanation, steps] =
+                    await session.plannerAgent.invoke(
+                      ctx.body.goal,
+                      accessibilityTree.toXml(),
+                    );
+                  return {
+                    api_version: "1",
+                    explanation,
+                    steps,
+                  };
+                } catch (error) {
+                  logger.error(`Error generating plan: ${error}`);
+                  return ctx.status(500, {
+                    api_version: "1",
+                    message: `Failed to plan actions: ${error}`,
+                  });
+                }
               },
-              afterHandle: pushLegacyStateHook,
-            },
-          )
-          //#endregion
+              {
+                body: s.CreatePlanBody,
+                response: {
+                  200: s.CreatePlanResponse,
+                  500: s.ErrorResponse,
+                },
+                afterHandle: pushLegacyStateHook,
+              },
+            )
 
-          //#region Plan step actions //////////////////////////////////////////
-          .post(
-            "/steps",
-            async (ctx) => {
-              const { session } = ctx;
-              const accessibilityTree = await session.processTree(
-                ctx.body.accessibility_tree,
-              );
-              const actions = await session.actorAgent.invoke(
-                ctx.body.goal,
-                ctx.body.step,
-                accessibilityTree.toXml(),
-              );
-              // TODO: Since invoke can return undefined, we need to assert.
-              // It might be solved with proper agent types in the future.
-              always(actions);
-              return {
-                api_version: "1",
-                actions,
-              };
-            },
-            {
-              body: s.PlanStepActionsBody,
-              response: s.PlanStepActionsResponse,
-              afterHandle: pushLegacyStateHook,
-            },
-          )
-          //#endregion
+            //#endregion
 
-          // Add example ///////////////////////////////////////////////////////
-          .post("/examples", legacyProxy, {
-            body: s.AddExampleBody,
-            afterHandle: pullLegacyStateHook,
-          })
+            //#region Plan step actions ////////////////////////////////////////
 
-          // Delete example ////////////////////////////////////////////////////
-          .delete("/examples", legacyProxy, {
-            afterHandle: pullLegacyStateHook,
-          })
+            .post(
+              "/steps",
+              async (ctx) => {
+                const { session } = ctx;
+                const accessibilityTree = await session.processTree(
+                  ctx.body.accessibility_tree,
+                );
+                const actions = await session.actorAgent.invoke(
+                  ctx.body.goal,
+                  ctx.body.step,
+                  accessibilityTree.toXml(),
+                );
+                // TODO: Since invoke can return undefined, we need to assert.
+                // It might be solved with proper agent types in the future.
+                always(actions);
+                return {
+                  api_version: "1",
+                  actions,
+                };
+              },
+              {
+                body: s.PlanStepActionsBody,
+                response: s.PlanStepActionsResponse,
+                afterHandle: pushLegacyStateHook,
+              },
+            )
 
-          // Execute statement /////////////////////////////////////////////////
-          .post("/statements", legacyProxy, {
-            body: s.ExecuteStatementBody,
-            afterHandle: pullLegacyStateHook,
-          })
+            //#endregion
 
-          // Choose area ///////////////////////////////////////////////////////
-          .post("/areas", legacyProxy, {
-            body: s.ChooseAreaBody,
-            afterHandle: pullLegacyStateHook,
-          })
+            //#region Add example //////////////////////////////////////////////
 
-          // Find element //////////////////////////////////////////////////////
-          .post("/elements", legacyProxy, {
-            body: s.FindElementBody,
-            afterHandle: pullLegacyStateHook,
-          })
+            .post("/examples", legacyProxy, {
+              body: s.AddExampleBody,
+              afterHandle: pullLegacyStateHook,
+            })
 
-          // Analyze changes ///////////////////////////////////////////////////
-          .post("/changes", legacyProxy, {
-            body: s.AnalyzeChangesBody,
-            afterHandle: pullLegacyStateHook,
-          })
+            //#endregion
 
-          // Save session cache ////////////////////////////////////////////////
-          .post("/caches", legacyProxy, {
-            afterHandle: pullLegacyStateHook,
-          })
+            //#region Clear examples ///////////////////////////////////////////
 
-          // Discard unsaved cache changes /////////////////////////////////////
-          .delete("/caches", legacyProxy, {
-            afterHandle: pullLegacyStateHook,
-          }),
+            .delete("/examples", legacyProxy, {
+              afterHandle: pullLegacyStateHook,
+            })
+
+            //#endregion
+
+            //#region Execute statement ////////////////////////////////////////
+
+            .post("/statements", legacyProxy, {
+              body: s.ExecuteStatementBody,
+              afterHandle: pullLegacyStateHook,
+            })
+
+            //#region Choose area //////////////////////////////////////////////
+
+            .post("/areas", legacyProxy, {
+              body: s.ChooseAreaBody,
+              afterHandle: pullLegacyStateHook,
+            })
+
+            //#endregion
+
+            //#region Find element /////////////////////////////////////////////
+
+            .post("/elements", legacyProxy, {
+              body: s.FindElementBody,
+              afterHandle: pullLegacyStateHook,
+            })
+
+            //#endregion
+
+            //#region Analyze changes //////////////////////////////////////////
+
+            .post("/changes", legacyProxy, {
+              body: s.AnalyzeChangesBody,
+              afterHandle: pullLegacyStateHook,
+            })
+
+            //#region Save session cache ///////////////////////////////////////
+
+            .post("/caches", legacyProxy, {
+              afterHandle: pullLegacyStateHook,
+            })
+
+            //#endregion
+
+            //#region Discard unsaved cache changes ////////////////////////////
+
+            .delete("/caches", legacyProxy, {
+              afterHandle: pullLegacyStateHook,
+            }),
+
+        //#endregion
       ),
   );
 
