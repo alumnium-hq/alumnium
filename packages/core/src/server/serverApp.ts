@@ -198,18 +198,47 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#region Add example //////////////////////////////////////////////
 
-            .post("/examples", legacyProxy, {
-              body: s.AddExampleBody,
-              afterHandle: pullLegacyStateHook,
-            })
+            .post(
+              "/examples",
+              async (ctx) => {
+                const { session } = ctx;
+                await session.plannerAgent.addExample(
+                  ctx.body.goal,
+                  ctx.body.actions,
+                );
+                return {
+                  api_version: "1",
+                  success: true,
+                  message: "Example added successfully",
+                };
+              },
+              {
+                body: s.AddExampleBody,
+                response: s.SuccessResponse,
+                afterHandle: pushLegacyStateHook,
+              },
+            )
 
             //#endregion
 
             //#region Clear examples ///////////////////////////////////////////
 
-            .delete("/examples", legacyProxy, {
-              afterHandle: pullLegacyStateHook,
-            })
+            .delete(
+              "/examples",
+              (ctx) => {
+                const { session } = ctx;
+                session.plannerAgent.promptWithExamples.examples = [];
+                return {
+                  api_version: "1",
+                  success: true,
+                  message: "All examples cleared successfully",
+                };
+              },
+              {
+                response: s.SuccessResponse,
+                afterHandle: pushLegacyStateHook,
+              },
+            )
 
             //#endregion
 
