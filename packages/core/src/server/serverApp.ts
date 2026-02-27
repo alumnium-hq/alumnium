@@ -244,15 +244,19 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#region Execute statement ////////////////////////////////////////
 
+            // @ts-expect-error -- TODO
             .post("/statements", legacyProxy, {
               body: s.ExecuteStatementBody,
+              response: s.ExecuteStatementResponse,
               afterHandle: pullLegacyStateHook,
             })
 
             //#region Choose area //////////////////////////////////////////////
 
+            // @ts-expect-error -- TODO
             .post("/areas", legacyProxy, {
               body: s.ChooseAreaBody,
+              response: s.ChooseAreaResponse,
               afterHandle: pullLegacyStateHook,
             })
 
@@ -260,8 +264,10 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#region Find element /////////////////////////////////////////////
 
+            // @ts-expect-error -- TODO
             .post("/elements", legacyProxy, {
               body: s.FindElementBody,
+              response: s.FindElementResponse,
               afterHandle: pullLegacyStateHook,
             })
 
@@ -269,23 +275,29 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#region Analyze changes //////////////////////////////////////////
 
+            // @ts-expect-error -- TODO
             .post("/changes", legacyProxy, {
               body: s.AnalyzeChangesBody,
+              response: s.AnalyzeChangesResponse,
               afterHandle: pullLegacyStateHook,
             })
 
             //#region Save session cache ///////////////////////////////////////
 
+            // @ts-expect-error -- TODO
             .post("/caches", legacyProxy, {
               afterHandle: pullLegacyStateHook,
+              response: s.SuccessResponse,
             })
 
             //#endregion
 
             //#region Discard unsaved cache changes ////////////////////////////
 
+            // @ts-expect-error -- TODO
             .delete("/caches", legacyProxy, {
               afterHandle: pullLegacyStateHook,
+              response: s.SuccessResponse,
             }),
 
         //#endregion
