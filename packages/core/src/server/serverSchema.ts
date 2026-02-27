@@ -38,13 +38,18 @@ export const Change = z.object({
 
 //#region Common server schemas
 
-export const ApiVersioned = z.object({
+export const VersionedObject = z.object({
   api_version: z.string().default("v1").describe("API version"),
 });
 
-export const ErrorResponse = ApiVersioned.extend({
+export const ErrorResponse = VersionedObject.extend({
   message: z.string(),
   stack: z.string().optional(),
+});
+
+export const SuccessResponse = VersionedObject.extend({
+  success: z.literal(true),
+  message: z.string(),
 });
 
 //#endregion
@@ -67,14 +72,14 @@ export const GetSessionsResponse = z.array(SessionId);
 
 //#region Create session ///////////////////////////////////////////////////////
 
-export const CreateSessionBody = ApiVersioned.extend({
+export const CreateSessionBody = VersionedObject.extend({
   platform: Platform,
   provider: z.enum(Provider),
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),
 });
 
-export const CreateSessionResponse = ApiVersioned.extend({
+export const CreateSessionResponse = VersionedObject.extend({
   session_id: SessionId,
 });
 
@@ -86,14 +91,14 @@ export const SessionParams = z.object({
 
 //#region Create plan //////////////////////////////////////////////////////////
 
-export const CreatePlanBody = ApiVersioned.extend({
+export const CreatePlanBody = VersionedObject.extend({
   goal: z.string(),
   accessibility_tree: z.string(),
   url: z.string().optional(),
   title: z.string().optional(),
 });
 
-export const CreatePlanResponse = ApiVersioned.extend({
+export const CreatePlanResponse = VersionedObject.extend({
   explanation: z.string(),
   steps: z.array(z.string()),
 });
@@ -102,13 +107,13 @@ export const CreatePlanResponse = ApiVersioned.extend({
 
 //#region Plan step actions ////////////////////////////////////////////////////
 
-export const PlanStepActionsBody = ApiVersioned.extend({
+export const PlanStepActionsBody = VersionedObject.extend({
   goal: z.string(),
   step: z.string(),
   accessibility_tree: z.string(),
 });
 
-export const PlanStepActionsResponse = ApiVersioned.extend({
+export const PlanStepActionsResponse = VersionedObject.extend({
   // TODO: Define proper types
   actions: z.array(z.record(z.string(), z.any())),
 });
@@ -117,7 +122,7 @@ export const PlanStepActionsResponse = ApiVersioned.extend({
 
 //#region Add example //////////////////////////////////////////////////////////
 
-export const AddExampleBody = z.object({
+export const AddExampleBody = VersionedObject.extend({
   goal: z.string(),
   actions: z.array(z.string()),
 });
