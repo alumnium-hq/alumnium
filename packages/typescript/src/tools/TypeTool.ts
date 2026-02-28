@@ -3,7 +3,8 @@ import { BaseTool } from "./BaseTool.js";
 import { field, FieldMetadata } from "./Field.js";
 
 export class TypeTool extends BaseTool {
-  static description = "Type text into an element.";
+  static description =
+    "Type text into an element. Automatically focuses the element and clears it before typing.";
   static fields: FieldMetadata[] = [
     field({
       name: "id",

@@ -6,7 +6,7 @@ from .base_tool import BaseTool
 
 
 class TypeTool(BaseTool):
-    """Type text into an element."""
+    """Type text into an element. Automatically focuses the element and clears it before typing."""
 
     id: int = Field(description="Element identifier (ID)")
     text: str = Field(description="Text to type into an element")

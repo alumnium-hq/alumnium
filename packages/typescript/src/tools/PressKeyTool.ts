@@ -4,7 +4,8 @@ import { BaseTool } from "./BaseTool.js";
 import { field, FieldMetadata } from "./Field.js";
 
 export class PressKeyTool extends BaseTool {
-  static description = "Press a keyboard key.";
+  static description =
+    "Press a keyboard key. Does not require element to be focused.";
   static fields: FieldMetadata[] = [
     field({
       name: "key",

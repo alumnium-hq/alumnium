@@ -7,7 +7,7 @@ from .base_tool import BaseTool
 
 
 class PressKeyTool(BaseTool):
-    """Press a keyboard key."""
+    """Press a keyboard key. Does not require element to be focused."""
 
     key: Key = Field(description="Key to press.")
 

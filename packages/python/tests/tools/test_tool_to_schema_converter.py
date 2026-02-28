@@ -7,7 +7,7 @@ def test_convert_tool_with_primitives():
         "type": "function",
         "function": {
             "name": "TypeTool",
-            "description": "Type text into an element.",
+            "description": "Type text into an element. Automatically focuses the element and clears it before typing.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -32,7 +32,7 @@ def test_convert_tool_with_enum():
         "type": "function",
         "function": {
             "name": "PressKeyTool",
-            "description": "Press a keyboard key.",
+            "description": "Press a keyboard key. Does not require element to be focused.",
             "parameters": {
                 "type": "object",
                 "properties": {
