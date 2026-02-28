@@ -364,7 +364,8 @@ class SeleniumDriver(BaseDriver):
 
     @_autoswitch_to_new_tab
     def click(self, id: int):
-        self.find_element(id).click()
+        element = self.find_element(id)
+        ActionChains(self.driver).move_to_element(element).click().perform()
 
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
