@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import * as path from "node:path";
+import path from "node:path";
 import { XCUITestAccessibilityTree } from "./XCUITestAccessibilityTree.js";
 
 const SIMPLE_FIXTURE_PATH = path.resolve(
