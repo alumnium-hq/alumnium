@@ -26,7 +26,7 @@
     "resolveJsonModule": true,
     // Env
     "lib": ["ESNext"],
-    "types": ["bun"],
+    "types": ["bun", "@wdio/globals/types"],
     "experimentalDecorators": true, // Enable experimental decorators
     // TODO: See packages/typescript/tsconfig.json
     "emitDecoratorMetadata": true,
