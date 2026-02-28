@@ -63,7 +63,7 @@ export class PlaywrightDriver extends BaseDriver {
   )} })`;
 
   private client!: CDPSession;
-  private page: Page;
+  page: Page;
   private _pages: Page[] = [];
   public platform: string = "chromium";
   public supportedTools: Set<ToolClass> = new Set([
