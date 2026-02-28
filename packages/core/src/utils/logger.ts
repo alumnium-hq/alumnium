@@ -8,7 +8,7 @@ import {
 } from "@logtape/logtape";
 import { always } from "alwaysly";
 import * as fs from "fs";
-import * as path from "node:path";
+import path from "node:path";
 
 let configurePromise: Promise<void> | null = null;
 let configured = false;
