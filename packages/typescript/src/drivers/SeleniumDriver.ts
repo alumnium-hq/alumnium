@@ -253,8 +253,11 @@ export class SeleniumDriver extends BaseDriver {
 
   @autoswitchToNewTab
   async click(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    await element.click();
+    const actions = this.driver.actions({ async: true });
+    await actions
+      .move({ origin: await this.findElement(id) })
+      .click()
+      .perform();
   }
 
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
