@@ -84,6 +84,12 @@ await al.quit();
 
 Check out [documentation][1] and more [Python][2] and [TypeScript][6] examples!
 
+## Community Integrations
+
+| Project | Description |
+|---|---|
+| [alumnium-cucumber](https://github.com/iammac2/alumnium-cucumber) | Zero-code Gherkin/BDD adapter for [behave](https://behave.readthedocs.io/) — write plain-English feature files with no step definitions |
+
 ## Contributing
 
 See the [contributing guidelines][4] for information on how to get involved in the project and develop locally.
