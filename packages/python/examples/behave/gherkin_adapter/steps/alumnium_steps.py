@@ -1,5 +1,12 @@
-from adapter import AlumniumGherkinAdapter, GherkinStep  # noqa: F401 (imported for re-export)
-from behave import given, step, then, use_step_matcher, when
+import sys
+from pathlib import Path
+
+# Ensure adapter.py (in the same directory) is importable regardless of how
+# behave resolves sys.path when loading step files from a standalone invocation.
+sys.path.insert(0, str(Path(__file__).parent))
+
+from adapter import AlumniumGherkinAdapter, GherkinStep  # noqa: E402, F401
+from behave import given, step, then, use_step_matcher, when  # noqa: E402
 
 use_step_matcher("re")
 
