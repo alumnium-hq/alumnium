@@ -28,13 +28,13 @@ Feature file → behave → AlumniumGherkinAdapter → Alumni.do() / Alumni.chec
 
 ### Navigation
 
-`PlaywrightDriver` does not include a navigate tool in its supported set, so a dedicated step pattern handles navigation directly:
+Navigation is handled by the LLM via `NavigateToUrlTool`, enabled through
+`Alumni(page, extra_tools=[NavigateToUrlTool])` in `environment.py`. Use a
+standard Given step — no special step definition required:
 
 ```gherkin
 Given navigate to "https://example.com"
 ```
-
-This calls `page.goto(url, wait_until="networkidle")` under the hood. Any other `Given` step is routed to `al.do()` as normal.
 
 ---
 

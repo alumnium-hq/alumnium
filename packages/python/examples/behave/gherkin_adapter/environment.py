@@ -21,6 +21,7 @@ from adapter import AlumniumGherkinAdapter  # noqa: E402
 from playwright.sync_api import sync_playwright  # noqa: E402
 
 from alumnium import Alumni  # noqa: E402
+from alumnium.tools import NavigateToUrlTool  # noqa: E402
 
 
 def before_all(context):
@@ -30,7 +31,7 @@ def before_all(context):
 
 def before_scenario(context, scenario):
     page = context._browser.new_page()
-    context.al = Alumni(page)
+    context.al = Alumni(page, extra_tools=[NavigateToUrlTool])
     context.adapter = AlumniumGherkinAdapter(
         context.al,
         include_doc_string=True,

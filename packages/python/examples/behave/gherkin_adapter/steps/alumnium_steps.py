@@ -5,12 +5,11 @@ from pathlib import Path
 # behave resolves sys.path when loading step files from a standalone invocation.
 sys.path.insert(0, str(Path(__file__).parent))
 
-from adapter import AlumniumGherkinAdapter, GherkinStep  # noqa: E402, F401
+from adapter import GherkinStep  # noqa: E402
 from behave import given, step, then, use_step_matcher, when  # noqa: E402
 
 use_step_matcher("re")
 
-_NAVIGATE = r'navigate to "(?P<url>[^"]+)"'
 _MATCH_ALL = r"(?P<text>.+)"
 
 
@@ -19,16 +18,6 @@ def _step_args(context):
     doc_string = context.text
     data_table = [[str(cell) for cell in row] for row in context.table] if context.table else None
     return doc_string, data_table
-
-
-@given(_NAVIGATE)
-def step_given_navigate(context, url):
-    """Navigate directly via Playwright.
-
-    PlaywrightDriver.supported_tools does not include NavigateToUrlTool, so
-    navigation must bypass the LLM and call page.goto() directly.
-    """
-    context.al.driver.page.goto(url, wait_until="networkidle")
 
 
 @given(_MATCH_ALL)
