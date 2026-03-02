@@ -63,6 +63,7 @@
     "diff": "^8.0.3",
     "dom-serializer": "^2.0.0",
     "domhandler": "^5.0.3",
+    "domutils": "^3.2.2",
     "elysia": "^1.4.26",
     "htmlparser2": "^10.1.0",
     "playwright-core": "^1.58.2",
