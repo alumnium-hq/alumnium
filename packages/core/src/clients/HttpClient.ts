@@ -1,5 +1,5 @@
 import { Model } from "../Model.js";
-import { ErrorResponse } from "../server/serverSchema.js";
+import { ErrorResponse, UsageStats } from "../server/serverSchema.js";
 import { ToolClass } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
@@ -15,7 +15,6 @@ import {
   SessionResponse,
   StatementRequest,
   StatementResponse,
-  StatsResponse,
   StepRequest,
   StepResponse,
 } from "./ApiModels.js";
@@ -293,7 +292,7 @@ export class HttpClient {
     );
   }
 
-  async getStats(): Promise<StatsResponse> {
+  async getStats(): Promise<UsageStats> {
     await this.ensureSession();
     const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/stats`,
@@ -301,6 +300,6 @@ export class HttpClient {
         method: "GET",
       },
     );
-    return (await response.json()) as StatsResponse;
+    return (await response.json()) as UsageStats;
   }
 }
