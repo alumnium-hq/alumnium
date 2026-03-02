@@ -77,6 +77,21 @@ export interface AddExampleRequest {
   actions: string[];
 }
 
+export interface AnalyzeChangesRequest {
+  before: {
+    accessibility_tree: string;
+    url: string;
+  };
+  after: {
+    accessibility_tree: string;
+    url: string;
+  };
+}
+
+export interface AnalyzeChangesResponse {
+  result: string;
+}
+
 export interface StatsResponse {
   [key: string]: {
     [key: string]: number;

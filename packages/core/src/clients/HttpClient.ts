@@ -5,6 +5,8 @@ import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
 import {
   AddExampleRequest,
+  AnalyzeChangesRequest,
+  AnalyzeChangesResponse,
   AreaRequest,
   AreaResponse,
   FindRequest,
@@ -301,5 +303,38 @@ export class HttpClient {
       },
     );
     return (await response.json()) as UsageStats;
+  }
+
+  async analyzeChanges(
+    beforeAccessibilityTree: string,
+    beforeUrl: string,
+    afterAccessibilityTree: string,
+    afterUrl: string,
+  ): Promise<string> {
+    await this.ensureSession();
+    const requestBody: AnalyzeChangesRequest = {
+      before: {
+        accessibility_tree: beforeAccessibilityTree,
+        url: beforeUrl,
+      },
+      after: {
+        accessibility_tree: afterAccessibilityTree,
+        url: afterUrl,
+      },
+    };
+
+    const response = await this.fetchWithTimeout(
+      `${this.baseUrl}/v1/sessions/${this.sessionId}/changes`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      },
+    );
+
+    const responseData = (await response.json()) as AnalyzeChangesResponse;
+    return responseData.result;
   }
 }
