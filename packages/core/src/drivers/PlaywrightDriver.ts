@@ -13,7 +13,14 @@ import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
-import { readScript } from "./scripts/scripts.js" with { type: "macro" };
+// NOTE: While macros work well in Bun, it fails when using Alumium client from
+// Node.js. A solution could be "node:sea" module, but current Bun version
+// doesn't support it. For now, we bundle assets with scripts/generate.ts.
+// import { readScript } from "./scripts/scripts.js" with { type: "macro" };
+import {
+  waiterScriptSource,
+  waitForScriptSource,
+} from "./scripts/bundledScripts.js";
 
 interface CDPNode {
   nodeId: string;
@@ -45,8 +52,8 @@ const logger = getLogger(import.meta.url);
 
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
-const WAITER_SCRIPT = await readScript("waiter.js");
-const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${await readScript("waitFor.js")} })`;
+const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
+const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${waitForScriptSource /* await readScript("waitFor.js") */} })`;
 
 export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
