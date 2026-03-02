@@ -7,7 +7,11 @@ import { getLogger } from "../../utils/logger.js";
 import { retry } from "../../utils/retry.js";
 import { Usage } from "../serverSchema.js";
 import { Agent } from "./Agent.js";
-import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
+// NOTE: While macros work well in Bun, it fails when using Alumium client from
+// Node.js. A solution could be "node:sea" module, but current Bun version
+// doesn't support it. For now, we bundle assets with scripts/generate.ts.
+// import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
+import { agentPrompts } from "./prompts/bundledPrompts.js";
 import {
   type AgentPrompts,
   agentClassNameToPromptsAgentId,
@@ -16,7 +20,8 @@ import {
 
 const logger = getLogger(import.meta.url);
 
-const agentPrompts = await loadAgentPrompts();
+// NOTE: See loadAgentPrompts import NOTE above.
+// const agentPrompts = await loadAgentPrompts();
 
 export class BaseAgentDebugLogDetail {
   constructor(public payload: unknown) {}
