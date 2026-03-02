@@ -28,8 +28,7 @@ test:
 	cd packages/python && poetry poe test
 
 types:
-	cd packages/core && bun run types
-	cd packages/typescript && bun run types
+	bun tsc --build
 
 start-server:
 	cd packages/python && poetry run alumnium-server
