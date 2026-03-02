@@ -30,6 +30,8 @@
     "experimentalDecorators": true, // Enable experimental decorators
     // TODO: See packages/typescript/tsconfig.json
     "emitDecoratorMetadata": true,
+    // TODO: Enable it whenever possible
+    // "erasableSyntaxOnly": true,
     // Checks
     "skipLibCheck": true,
     "strict": true,
