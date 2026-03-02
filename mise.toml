@@ -30,3 +30,6 @@ run = "cd packages/typescript && bun run examples:selenium"
 
 [tasks.tsify-test-appium]
 run = "cd packages/typescript && bun run examples:appium"
+
+[tasks.tsify-mcp-inspect]
+run = "cd packages/core && npx @modelcontextprotocol/inspector env ALUMNIUM_LOG_LEVEL=error bun ./src/mcp/mcpCli.ts --transport stdio"
