@@ -5,7 +5,8 @@
     "./*.ts",
     "./src/**/*.ts",
     "./scripts/**/*.ts",
-    "./tests/**/*.ts"
+    "./tests/**/*.ts",
+    "./package.json"
   ],
   "compilerOptions": {
     // Resolve
@@ -21,7 +22,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "isolatedModules": true,
-    "moduleDetection": "force", // Stop treating files without imports/exports as single global scripts
+    "moduleDetection": "force", // Stop treating files wtypithout imports/exports as single global scripts
     "allowImportingTsExtensions": false, // Don't allow importing .ts files, as we need to enable emitting.
     "resolveJsonModule": true,
     // Env
@@ -39,6 +40,8 @@
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     // Build
-    "incremental": true
+    "incremental": true,
+    // Project references
+    "composite": true
   }
 }
