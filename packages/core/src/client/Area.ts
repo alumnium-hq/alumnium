@@ -1,5 +1,6 @@
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
-import { HttpClient } from "../clients/HttpClient.js";
+import type { HttpClient } from "../clients/HttpClient.js";
+import type { NativeClient } from "../clients/NativeClient.js";
 import { Data } from "../clients/typecasting.js";
 import { BaseDriver, Element } from "../drivers/index.js";
 import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
@@ -14,7 +15,7 @@ export class Area {
   private accessibilityTree: BaseAccessibilityTree;
   private driver: BaseDriver;
   private tools: Record<string, ToolClass>;
-  private client: HttpClient;
+  private client: HttpClient | NativeClient;
 
   constructor(
     id: number,
@@ -22,7 +23,7 @@ export class Area {
     accessibilityTree: BaseAccessibilityTree,
     driver: BaseDriver,
     tools: Record<string, ToolClass>,
-    client: HttpClient,
+    client: HttpClient | NativeClient,
   ) {
     this.id = id;
     this.description = description;
