@@ -1,31 +1,40 @@
-import { parseArgs } from "util";
-import { serverApp } from "./server/serverApp.js";
+import { parseArgs } from "node:util";
+import z from "zod";
+import { mcpCommand } from "./mcp/mcpCommand.js";
+import { serverCommand } from "./server/serverCommand.js";
+import { getLogger } from "./utils/logger.js";
 
-//#region CLI
+const logger = getLogger(import.meta.url);
 
-const args = parseArgs({
+const Command = z.union([z.literal("mcp"), z.literal("server")]);
+
+type Command = z.infer<typeof Command>;
+
+const {
+  positionals: [_, __, commandArg, ...restArgs],
+} = parseArgs({
   args: Bun.argv,
-  options: {
-    port: {
-      type: "string",
-      default: "8013",
-    },
-    "legacy-port": {
-      type: "string",
-      default: "8014",
-    },
-    "legacy-image": {
-      type: "string",
-    },
-  },
-  strict: true,
   allowPositionals: true,
+  strict: false,
 });
 
-const PORT = parseInt(args.values.port || "8013");
+let command: Command;
+try {
+  command = Command.parse(commandArg);
+} catch {
+  logger.error(`Incorrect command, use one of: mcp, server`);
+  process.exit(1);
+}
 
-console.log(`Starting at http://localhost:${PORT}`);
+switch (command) {
+  case "mcp":
+    mcpCommand();
+    break;
 
-serverApp.listen(PORT);
+  case "server":
+    serverCommand();
+    break;
 
-//#endregion
+  default:
+    command satisfies never;
+}
