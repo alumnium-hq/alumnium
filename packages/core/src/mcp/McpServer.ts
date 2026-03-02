@@ -6,7 +6,7 @@
 
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { getAlumniumVersion } from "../macros.js" with { type: "macro" };
+import { ALUMNIUM_VERSION } from "../package.js";
 import { getLogger } from "../utils/logger.js";
 import { checkMcpTool } from "./tools/checkMcpTool.js";
 import { doMcpTool } from "./tools/doMcpTool.js";
@@ -17,10 +17,6 @@ import { stopDriverMcpTool } from "./tools/stopDriverMcpTool.js";
 import { waitMcpTool } from "./tools/waitMcpTool.js";
 
 const logger = getLogger(import.meta.url);
-
-const version = await getAlumniumVersion();
-
-console.log();
 
 const MCP_TOOLS = [
   checkMcpTool,
@@ -39,7 +35,7 @@ export class McpServer {
   #server: Server;
 
   constructor() {
-    this.#server = new Server({ name: "alumnium", version });
+    this.#server = new Server({ name: "alumnium", version: ALUMNIUM_VERSION });
     this.#registerTools();
     logger.info("Server initialized");
   }
