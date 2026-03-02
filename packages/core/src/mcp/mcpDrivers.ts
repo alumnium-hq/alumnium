@@ -1,4 +1,6 @@
-/** Driver factory functions for different platforms. */
+/**
+ * Driver factory functions for different platforms.
+ */
 
 import path from "node:path";
 import {
@@ -9,6 +11,7 @@ import {
 } from "playwright";
 import { Builder, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
+import { never } from "zod";
 import { getLogger } from "../utils/logger.js";
 
 const logger = getLogger(import.meta.url);
@@ -158,13 +161,13 @@ export async function createSeleniumDriver(
 export async function createIosDriver(
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
-): Promise<unknown> {
-  return {};
+): Promise<any> {
+  never();
 }
 
 export async function createAndroidDriver(
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
-): Promise<unknown> {
-  return {};
+): Promise<any> {
+  never();
 }
