@@ -338,7 +338,9 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   }
                 }
 
-                analysis += session.changesAnalyzerAgent.invoke(diff.compute());
+                analysis += await session.changesAnalyzerAgent.invoke(
+                  diff.compute(),
+                );
 
                 return {
                   api_version: "1",

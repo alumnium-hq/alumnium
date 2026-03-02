@@ -1,9 +1,10 @@
-import { HttpClient } from "../clients/HttpClient.js";
+import type { HttpClient } from "../clients/HttpClient.js";
+import type { NativeClient } from "../clients/NativeClient.js";
 
 export class Cache {
-  private client: HttpClient;
+  private client: HttpClient | NativeClient;
 
-  constructor(client: HttpClient) {
+  constructor(client: HttpClient | NativeClient) {
     this.client = client;
   }
 
