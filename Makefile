@@ -1,27 +1,26 @@
 install:
-	cd packages/core && bun install
+	bun install
 	cd packages/python && poetry install
-	cd packages/typescript && npm install
 
 build:
 	cd packages/core && bun run build
 	cd packages/python && poetry build
-	cd packages/typescript && npm run build
+	cd packages/typescript && bun run build
 
 clean:
 	cd packages/core && bun run clean
 	cd packages/python && poetry poe clean
-	cd packages/typescript && npm run clean
+	cd packages/typescript && bun run clean
 
 check-format:
 	cd packages/core && bun run check-format
 	cd packages/python && poetry poe check-format
-	cd packages/typescript && npm run check-format
+	cd packages/typescript && bun run check-format
 
 format:
 	cd packages/core && bun run format
 	cd packages/python && poetry poe format
-	cd packages/typescript && npm run format
+	cd packages/typescript && bun run format
 
 test:
 	cd packages/core && bun run test

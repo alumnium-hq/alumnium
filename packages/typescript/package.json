@@ -10,10 +10,10 @@
     "examples:appium": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:selenium": "ALUMNIUM_DRIVER=selenium mocha",
-    "examples": "npm run examples:appium && npm run examples:playwright && npm run examples:selenium",
+    "examples": "bun run examples:appium && bun run examples:playwright && bun run examples:selenium",
     "check-format": "prettier --check . && eslint .",
     "format": "prettier --write . && eslint . --fix",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "bun run build",
     "types": "tsc --noEmit",
     "types:watch": "tsc --noEmit --watch"
   },
