@@ -18,15 +18,10 @@
     // "esModuleInterop": true,
     // Env
     "lib": ["ESNext"],
+    "types": ["@wdio/globals/types", "mocha"],
     "experimentalDecorators": true, // Enable experimental decorators
     // TODO: Figure out why it is needed
     "emitDecoratorMetadata": true,
-    // TODO: Bad config
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@wdio/globals/types",
-      "./src/types"
-    ],
     // Checks
     "skipLibCheck": true,
     "strict": true,
