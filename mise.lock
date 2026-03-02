@@ -44,19 +44,19 @@ backend = "core:node"
 "platforms.windows-x64-baseline" = { checksum = "sha256:55b639295920b219bb2acbcfa00f90393a2789095b7323f79475c9f34795f217", url = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-win-x64.zip"}
 
 [[tools.opencode]]
-version = "1.2.10"
+version = "1.2.15"
 backend = "aqua:anomalyco/opencode"
-"platforms.linux-arm64" = { checksum = "sha256:d9a9d4f0bc1ed246258c0e8846e80593755a72bf4afd3940c4071d6f0b7b7775", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-linux-arm64.tar.gz"}
-"platforms.linux-arm64-musl" = { checksum = "sha256:d9a9d4f0bc1ed246258c0e8846e80593755a72bf4afd3940c4071d6f0b7b7775", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-linux-arm64.tar.gz"}
-"platforms.linux-x64" = { checksum = "sha256:ebcc24012e8f067b10d7416430c88e9c429115ecfbccf8da9eb59db3b629a358", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-linux-x64.tar.gz"}
-"platforms.linux-x64-baseline" = { checksum = "sha256:ebcc24012e8f067b10d7416430c88e9c429115ecfbccf8da9eb59db3b629a358", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-linux-x64.tar.gz"}
-"platforms.linux-x64-musl" = { checksum = "sha256:ebcc24012e8f067b10d7416430c88e9c429115ecfbccf8da9eb59db3b629a358", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-linux-x64.tar.gz"}
-"platforms.linux-x64-musl-baseline" = { checksum = "sha256:ebcc24012e8f067b10d7416430c88e9c429115ecfbccf8da9eb59db3b629a358", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-linux-x64.tar.gz"}
-"platforms.macos-arm64" = { checksum = "sha256:ad880664b6b012cdaefc4d175a96afef395c481b9328c8eb5db143a8644ad1d9", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-darwin-arm64.zip"}
-"platforms.macos-x64" = { checksum = "sha256:1d94196ef119e965d57192dce212490a819a48d63cf89c90c68159d790ade067", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-darwin-x64.zip"}
-"platforms.macos-x64-baseline" = { checksum = "sha256:1d94196ef119e965d57192dce212490a819a48d63cf89c90c68159d790ade067", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-darwin-x64.zip"}
-"platforms.windows-x64" = { checksum = "sha256:e31d83fc1c2eb54d707f6f36529bcb8b01b1a2ab50c485c478b5c10e64f1cfff", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-windows-x64.zip"}
-"platforms.windows-x64-baseline" = { checksum = "sha256:e31d83fc1c2eb54d707f6f36529bcb8b01b1a2ab50c485c478b5c10e64f1cfff", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.10/opencode-windows-x64.zip"}
+"platforms.linux-arm64" = { checksum = "sha256:dd4ca5764a093f92d8515833d5c58eabc657e72cdc3ef2ba3ac11e0db749b80d", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-linux-arm64.tar.gz"}
+"platforms.linux-arm64-musl" = { checksum = "sha256:dd4ca5764a093f92d8515833d5c58eabc657e72cdc3ef2ba3ac11e0db749b80d", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-linux-arm64.tar.gz"}
+"platforms.linux-x64" = { checksum = "sha256:78b01946464e935c9b79261eda4a48f406621b0787a358fe607b6c71305f320e", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-linux-x64.tar.gz"}
+"platforms.linux-x64-baseline" = { checksum = "sha256:78b01946464e935c9b79261eda4a48f406621b0787a358fe607b6c71305f320e", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-linux-x64.tar.gz"}
+"platforms.linux-x64-musl" = { checksum = "sha256:78b01946464e935c9b79261eda4a48f406621b0787a358fe607b6c71305f320e", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-linux-x64.tar.gz"}
+"platforms.linux-x64-musl-baseline" = { checksum = "sha256:78b01946464e935c9b79261eda4a48f406621b0787a358fe607b6c71305f320e", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-linux-x64.tar.gz"}
+"platforms.macos-arm64" = { checksum = "sha256:4144cdb7ae4d183964d7b23bdd37061ed52761bbde7e55763e0ebd12998c1e5e", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-darwin-arm64.zip"}
+"platforms.macos-x64" = { checksum = "sha256:ba44d38b7c7a15675246d95f25f1fc4f6b6fbf5229c08d47813ab98f3503a7e3", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-darwin-x64.zip"}
+"platforms.macos-x64-baseline" = { checksum = "sha256:ba44d38b7c7a15675246d95f25f1fc4f6b6fbf5229c08d47813ab98f3503a7e3", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-darwin-x64.zip"}
+"platforms.windows-x64" = { checksum = "sha256:ab65f06a01bb3adab6094735ebb9249efce500aaebda7388d5bfd95c8d377e0d", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-windows-x64.zip"}
+"platforms.windows-x64-baseline" = { checksum = "sha256:ab65f06a01bb3adab6094735ebb9249efce500aaebda7388d5bfd95c8d377e0d", url = "https://github.com/anomalyco/opencode/releases/download/v1.2.15/opencode-windows-x64.zip"}
 
 [[tools.poetry]]
 version = "2.1.1"
@@ -65,3 +65,14 @@ backend = "vfox:mise-plugins/vfox-poetry"
 [[tools.python]]
 version = "3.10.11"
 backend = "core:python"
+"platforms.linux-arm64" = { checksum = "sha256:c7573fdb00239f86b22ea0e8e926ca881d24fde5e5890851339911d76110bc35", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-aarch64-unknown-linux-gnu-install_only.tar.gz"}
+"platforms.linux-arm64-musl" = { checksum = "sha256:c7573fdb00239f86b22ea0e8e926ca881d24fde5e5890851339911d76110bc35", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-aarch64-unknown-linux-gnu-install_only.tar.gz"}
+"platforms.linux-x64" = { checksum = "sha256:c5bcaac91bc80bfc29cf510669ecad12d506035ecb3ad85ef213416d54aecd79", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-unknown-linux-gnu-install_only.tar.gz"}
+"platforms.linux-x64-baseline" = { checksum = "sha256:c5bcaac91bc80bfc29cf510669ecad12d506035ecb3ad85ef213416d54aecd79", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-unknown-linux-gnu-install_only.tar.gz"}
+"platforms.linux-x64-musl" = { checksum = "sha256:c5bcaac91bc80bfc29cf510669ecad12d506035ecb3ad85ef213416d54aecd79", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-unknown-linux-gnu-install_only.tar.gz"}
+"platforms.linux-x64-musl-baseline" = { checksum = "sha256:c5bcaac91bc80bfc29cf510669ecad12d506035ecb3ad85ef213416d54aecd79", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-unknown-linux-gnu-install_only.tar.gz"}
+"platforms.macos-arm64" = { checksum = "sha256:8348bc3c2311f94ec63751fb71bd0108174be1c4def002773cf519ee1506f96f", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-aarch64-apple-darwin-install_only.tar.gz"}
+"platforms.macos-x64" = { checksum = "sha256:bd3fc6e4da6f4033ebf19d66704e73b0804c22641ddae10bbe347c48f82374ad", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-apple-darwin-install_only.tar.gz"}
+"platforms.macos-x64-baseline" = { checksum = "sha256:bd3fc6e4da6f4033ebf19d66704e73b0804c22641ddae10bbe347c48f82374ad", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-apple-darwin-install_only.tar.gz"}
+"platforms.windows-x64" = { checksum = "sha256:9c2d3604a06fcd422289df73015cd00e7271d90de28d2c910f0e2309a7f73a68", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-pc-windows-msvc-shared-install_only.tar.gz"}
+"platforms.windows-x64-baseline" = { checksum = "sha256:9c2d3604a06fcd422289df73015cd00e7271d90de28d2c910f0e2309a7f73a68", url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-pc-windows-msvc-shared-install_only.tar.gz"}
