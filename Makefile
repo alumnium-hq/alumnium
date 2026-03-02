@@ -27,6 +27,10 @@ test:
 	cd packages/core && bun run test
 	cd packages/python && poetry poe test
 
+types:
+	cd packages/core && bun run types
+	cd packages/typescript && bun run types
+
 start-server:
 	cd packages/python && poetry run alumnium-server
 
