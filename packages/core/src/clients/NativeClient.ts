@@ -19,7 +19,7 @@ export class NativeClient {
   private model: Model;
   private tools: Record<string, ToolClass>;
   private sessionId: SessionId;
-  private session: Session;
+  session: Session;
 
   constructor(
     model: Model,

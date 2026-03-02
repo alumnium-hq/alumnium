@@ -41,4 +41,4 @@ start-server-docker:
 		alumnium-server
 
 start-mcp:
-	cd packages/python && poetry run alumnium-mcp
+	@cd packages/core && bun ./src/mcp/mcpCli.ts

@@ -14,7 +14,7 @@ import {
   SeleniumDriver,
 } from "../drivers/index.js";
 import { Model } from "../Model.js";
-import type { UsageStats } from "../server/serverSchema.js";
+import { UsageStats } from "../server/serverSchema.js";
 import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
 import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
@@ -48,12 +48,12 @@ export interface VisionOptions {
 
 export class Alumni {
   public driver: BaseDriver;
-  private client: HttpClient | NativeClient;
+  client: HttpClient | NativeClient;
 
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
   private url: string | undefined;
-  private model: Model;
+  model: Model;
   private changeAnalysis: boolean;
   private llm: BaseChatModel | undefined;
 
