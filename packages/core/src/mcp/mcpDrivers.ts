@@ -3,12 +3,8 @@
  */
 
 import path from "node:path";
-import {
-  chromium,
-  type Browser,
-  type BrowserContext,
-  type Page,
-} from "playwright";
+import type { Browser, BrowserContext, Page } from "playwright-core";
+import { chromium } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { never } from "zod";
