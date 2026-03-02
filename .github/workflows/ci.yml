@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      # TODO: Disable before merging the branch
+      - ts
   schedule:
     - cron: 0 0 * * *
   workflow_dispatch:
@@ -43,13 +45,10 @@ jobs:
               - packages/python/**/server/**
             typescript:
               - packages/python/examples/support/pages/**
+              - packages/core/**
               - packages/typescript/**
       - uses: docker/setup-buildx-action@v3
-      - uses: actions/setup-node@v6
-        with:
-          cache: npm
-          cache-dependency-path: packages/typescript/package-lock.json
-          node-version-file: .tool-versions
+      - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-python@v5
         with:
           python-version-file: .tool-versions
@@ -83,6 +82,36 @@ jobs:
           path: |
             packages/python/htmlcov/
             packages/python/coverage.xml
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+
+  types:
+    name: Types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - id: check-access
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+      - id: changed-files
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
+        with:
+          files_yaml: |
+            typescript:
+              - packages/core/**
+              - packages/typescript/**
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: make types
+      - uses: docker/build-push-action@v6
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
