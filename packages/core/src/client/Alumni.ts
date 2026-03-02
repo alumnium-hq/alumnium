@@ -1,8 +1,10 @@
+import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { always } from "alwaysly";
 import { Page } from "playwright";
 import { WebDriver } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
 import { HttpClient } from "../clients/HttpClient.js";
+import { NativeClient } from "../clients/NativeClient.js";
 import { Data } from "../clients/typecasting.js";
 import {
   AppiumDriver,
@@ -12,6 +14,7 @@ import {
   SeleniumDriver,
 } from "../drivers/index.js";
 import { Model } from "../Model.js";
+import type { UsageStats } from "../server/serverSchema.js";
 import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
 import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
@@ -32,6 +35,7 @@ const excludedAttributes = new Set(
 export interface AlumniOptions {
   url?: string;
   model?: Model;
+  llm?: BaseChatModel;
   extraTools?: ToolClass[];
   planner?: boolean;
   changeAnalysis?: boolean;
@@ -44,18 +48,20 @@ export interface VisionOptions {
 
 export class Alumni {
   public driver: BaseDriver;
-  private client: HttpClient;
+  private client: HttpClient | NativeClient;
 
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
-  private url: string;
+  private url: string | undefined;
   private model: Model;
   private changeAnalysis: boolean;
+  private llm: BaseChatModel | undefined;
 
   constructor(driver: WebDriver | Page | Browser, options: AlumniOptions = {}) {
     this.url = options.url || "http://localhost:8013";
     this.model = options.model || Model.current;
     this.changeAnalysis = options.changeAnalysis ?? changeAnalysis;
+    this.llm = options.llm;
 
     // Wrap driver or use directly if already wrapped
     if (driver instanceof WebDriver) {
@@ -79,19 +85,32 @@ export class Alumni {
       this.tools[tool.name] = tool;
     }
 
-    // Initialize HTTP client
-    this.client = new HttpClient(
-      this.url,
-      this.model,
-      this.driver.platform,
-      this.tools,
-      options.planner ?? planner,
-      options.excludedAttributes ?? excludedAttributes,
-    );
+    if (this.url) {
+      logger.info(`Using HTTP client with server: ${this.url}`);
+      this.client = new HttpClient(
+        this.url,
+        this.model,
+        this.driver.platform,
+        this.tools,
+        options.planner ?? planner,
+        options.excludedAttributes ?? excludedAttributes,
+      );
+    } else {
+      logger.info("Using native client");
+      this.client = new NativeClient(
+        this.model,
+        this.driver.platform,
+        this.tools,
+        this.llm,
+        // TODO: Add planner option & excludedAttributes to NativeClient
+        // options.planner ?? planner,
+        // options.excludedAttributes ?? excludedAttributes,
+      );
+    }
+
     this.cache = new Cache(this.client);
 
     logger.info(`Using model: ${this.model.provider}/${this.model.name}`);
-    logger.info(`Using HTTP client with server: ${this.url}`);
   }
 
   async quit(): Promise<void> {
@@ -124,6 +143,8 @@ export class Alumni {
         idx === 0
           ? initialAccessibilityTree
           : await this.driver.getAccessibilityTree();
+      // @ts-expect-error -- TODO: NativeClient lacks plannerless feature
+      // support, port it!
       const { explanation: actorExplanation, actions } =
         await this.client.executeAction(
           goal,
@@ -241,7 +262,7 @@ export class Alumni {
     await this.client.clearExamples();
   }
 
-  async getStats(): Promise<Record<string, Record<string, number>>> {
+  async getStats(): Promise<UsageStats> {
     return await this.client.getStats();
   }
 }

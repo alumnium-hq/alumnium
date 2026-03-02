@@ -1,4 +1,4 @@
-import { Alumni, AppiumDriver, type Element } from "alumnium";
+import { Alumni, AlumniOptions, AppiumDriver, type Element } from "alumnium";
 import { join, resolve } from "path";
 import { Locator } from "playwright";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
@@ -12,6 +12,10 @@ const driverType = process.env.ALUMNIUM_DRIVER || "selenium";
 
 export const mochaHooks = {
   async beforeAll() {
+    const alOptions: AlumniOptions = process.env.ALUMNIUM_TEST_NATIVE_CLIENT
+      ? {}
+      : { url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013" };
+
     if (driverType === "selenium") {
       const options = new Options();
       options.addArguments("--disable-blink-features=AutomationControlled");
@@ -28,15 +32,11 @@ export const mochaHooks = {
         .setChromeOptions(options)
         .build();
 
-      al = new Alumni(driver, {
-        url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013",
-      });
+      al = new Alumni(driver, alOptions);
     } else if (driverType === "appium") {
       const { browser } = await import("@wdio/globals");
       driver = browser as Browser;
-      al = new Alumni(driver, {
-        url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013",
-      });
+      al = new Alumni(driver, alOptions);
       (al.driver as AppiumDriver).delay = 0.1;
     } else {
       throw new Error(`Driver type '${driverType}' not implemented`);
