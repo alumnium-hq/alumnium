@@ -1,7 +1,3 @@
-import { readFileSync } from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
-
 import {
   By,
   Key as SeleniumKey,
@@ -24,6 +20,14 @@ import { UploadTool } from "../tools/UploadTool.js";
 import { getLogger } from "../utils/logger.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
+// NOTE: While macros work well in Bun, it fails when using Alumium client from
+// Node.js. A solution could be "node:sea" module, but current Bun version
+// doesn't support it. For now, we bundle assets with scripts/generate.ts.
+// import { readScript } from "./scripts/scripts.js" with { type: "macro" };
+import {
+  waiterScriptSource,
+  waitForScriptSource,
+} from "./scripts/bundledScripts.js";
 
 interface CDPNode {
   nodeId: string;
@@ -40,9 +44,6 @@ interface CDPFrameInfo {
   };
   childFrames?: CDPFrameInfo[];
 }
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const logger = getLogger(import.meta.url);
 
@@ -89,16 +90,10 @@ function autoswitchToNewTab(
   return descriptor;
 }
 
-export class SeleniumDriver extends BaseDriver {
-  private static WAITER_SCRIPT = readFileSync(
-    join(__dirname, "scripts/waiter.js"),
-    "utf8",
-  );
-  private static WAIT_FOR_SCRIPT = readFileSync(
-    join(__dirname, "scripts/waitFor.js"),
-    "utf8",
-  );
+const WAITER_SCRIPT = waiterScriptSource;
+const WAIT_FOR_SCRIPT = waitForScriptSource;
 
+export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
   public platform: string = "chromium";
   public supportedTools: Set<ToolClass> = new Set([
@@ -487,10 +482,9 @@ export class SeleniumDriver extends BaseDriver {
 
   private async waitForPageToLoad(): Promise<void> {
     try {
-      await this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
-      const error: unknown = await this.driver.executeAsyncScript(
-        SeleniumDriver.WAIT_FOR_SCRIPT,
-      );
+      await this.driver.executeScript(WAITER_SCRIPT);
+      const error: unknown =
+        await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
       if (error) {
         // eslint-disable-next-line @typescript-eslint/no-base-to-string
         logger.warn(`Failed to wait for page to load: ${String(error)}`);
@@ -499,10 +493,9 @@ export class SeleniumDriver extends BaseDriver {
     } catch (_e) {
       // Retry once on failure
       try {
-        await this.driver.executeScript(SeleniumDriver.WAITER_SCRIPT);
-        const error: unknown = await this.driver.executeAsyncScript(
-          SeleniumDriver.WAIT_FOR_SCRIPT,
-        );
+        await this.driver.executeScript(WAITER_SCRIPT);
+        const error: unknown =
+          await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
         if (error) {
           // eslint-disable-next-line @typescript-eslint/no-base-to-string
           logger.warn(`Failed to wait for page to load: ${String(error)}`);

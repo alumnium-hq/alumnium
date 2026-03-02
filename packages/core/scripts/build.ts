@@ -35,6 +35,27 @@ const loggerPathPlugin: BunPlugin = {
   },
 };
 
+const seleniumRequireAtomRe = /requireAtom\('([^']+)'.+$/gm;
+
+const depsPatcherPlugin: BunPlugin = {
+  name: "deps-patcher",
+  setup(build) {
+    build.onLoad(
+      { filter: /selenium-webdriver.+http\.js$/, namespace: "file" },
+      async (args) => {
+        const input = await Bun.file(args.path).text();
+        return {
+          ...args,
+          contents: input.replace(
+            seleniumRequireAtomRe,
+            "require('./atoms/$1')",
+          ),
+        };
+      },
+    );
+  },
+};
+
 await $`rm -rf dist`;
 await $`mkdir -p dist`;
 
@@ -48,7 +69,7 @@ await Promise.all(
         target: `bun-${target}`,
         outfile: `dist/alumnium-${target}`,
       },
-      plugins: [loggerPathPlugin],
+      plugins: [loggerPathPlugin, depsPatcherPlugin],
     });
 
     if (!result.success) {
