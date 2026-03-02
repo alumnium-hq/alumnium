@@ -1,10 +1,5 @@
-import { readFileSync } from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
-
-import { CDPSession, Frame, Locator, Page } from "playwright";
-
 import { always, ensure } from "alwaysly";
+import type { CDPSession, Frame, Locator, Page } from "playwright-core";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
 import { ToolClass } from "../tools/BaseTool.js";
@@ -18,6 +13,7 @@ import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
 import { BaseDriver } from "./BaseDriver.js";
 import { Key } from "./keys.js";
+import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 
 interface CDPNode {
   nodeId: string;
@@ -45,23 +41,14 @@ interface CDPFrameTree {
   frameTree: CDPFrameInfo;
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 const logger = getLogger(import.meta.url);
 
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
-export class PlaywrightDriver extends BaseDriver {
-  private static WAITER_SCRIPT = readFileSync(
-    join(__dirname, "scripts/waiter.js"),
-    "utf8",
-  );
-  private static WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${readFileSync(
-    join(__dirname, "scripts/waitFor.js"),
-    "utf8",
-  )} })`;
+const WAITER_SCRIPT = await readScript("waiter.js");
+const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${await readScript("waitFor.js")} })`;
 
+export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
   page: Page;
   private _pages: Page[] = [];
@@ -474,10 +461,8 @@ export class PlaywrightDriver extends BaseDriver {
   })
   private async waitForPageToLoad(): Promise<void> {
     logger.debug("Waiting for page to finish loading:");
-    await this.page.evaluate(PlaywrightDriver.WAITER_SCRIPT);
-    const error: unknown = await this.page.evaluate(
-      `(${PlaywrightDriver.WAIT_FOR_SCRIPT})()`,
-    );
+    await this.page.evaluate(WAITER_SCRIPT);
+    const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`);
     if (error) {
       // eslint-disable-next-line @typescript-eslint/no-base-to-string
       logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
