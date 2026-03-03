@@ -41,8 +41,8 @@ class ElementsCache(BaseCache):
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
         self._app: str = "unknown"
         # In-memory cache:
-        # (llm_string, cache_hash) -> (masked_json, elements, agent_type, app, instruction, should_save)
-        self._in_memory_cache: dict[tuple[str, str], tuple[str, list[dict], str, str, dict, bool]] = {}
+        # (llm_string, cache_hash, app) -> (masked_json, elements, agent_type, app, instruction, should_save)
+        self._in_memory_cache: dict[tuple[str, str, str], tuple[str, list[dict], str, str, dict, bool]] = {}
 
     @property
     def app(self) -> str:
@@ -93,7 +93,7 @@ class ElementsCache(BaseCache):
             agent_type = "plans" if is_planner else "actions"
 
             # Check in-memory cache — exact match first, then fuzzy
-            mem_key = (llm_string, cache_hash)
+            mem_key = (llm_string, cache_hash, self._app)
             if mem_key not in self._in_memory_cache:
                 fuzzy_mem_key = self._fuzzy_memory_lookup(cache_key, agent_type)
                 if fuzzy_mem_key is not None:
@@ -199,7 +199,7 @@ class ElementsCache(BaseCache):
                 elements = []
                 instruction = {"goal": goal}
                 response_json = dumps(return_val[0], pretty=True)
-                self._in_memory_cache[(llm_string, cache_hash)] = (
+                self._in_memory_cache[(llm_string, cache_hash, self._app)] = (
                     response_json,
                     elements,
                     agent_type,
@@ -233,7 +233,7 @@ class ElementsCache(BaseCache):
                 masked_json = self._mask_response(response_json, element_ids)
 
                 instruction = {"goal": goal, "step": step}
-                self._in_memory_cache[(llm_string, cache_hash)] = (
+                self._in_memory_cache[(llm_string, cache_hash, self._app)] = (
                     masked_json,
                     elements,
                     agent_type,
@@ -251,7 +251,7 @@ class ElementsCache(BaseCache):
 
     def save(self):
         """Flush in-memory cache to disk."""
-        for (_, cache_hash), (
+        for (_, cache_hash, _), (
             masked_json,
             elements,
             agent_type,
@@ -717,11 +717,11 @@ class ElementsCache(BaseCache):
             raise ValueError(f"Cache path escapes cache_dir: {path}")
         return path
 
-    def _fuzzy_memory_lookup(self, cache_key: str, agent_type: str) -> Optional[tuple[str, str]]:
+    def _fuzzy_memory_lookup(self, cache_key: str, agent_type: str) -> Optional[tuple[str, str, str]]:
         """Find the best fuzzy-matching entry in the in-memory cache.
 
-        Scans all in-memory entries for the given agent_type and returns the
-        (llm_string, cache_hash) key of the entry whose stored instruction best
+        Scans all in-memory entries for the given agent_type and current app and returns the
+        (llm_string, cache_hash, app) key of the entry whose stored instruction best
         matches cache_key, provided the similarity is at or above FUZZY_MATCH_THRESHOLD.
 
         Note: entries loaded from the filesystem have an empty instruction dict and
@@ -732,14 +732,14 @@ class ElementsCache(BaseCache):
             agent_type: "plans" or "actions".
 
         Returns:
-            The matching (llm_string, cache_hash) tuple, or None if no match exceeds the threshold.
+            The matching (llm_string, cache_hash, app) tuple, or None if no match exceeds the threshold.
         """
         key_field = "goal" if agent_type == "plans" else "step"
-        best_key: Optional[tuple[str, str]] = None
+        best_key: Optional[tuple[str, str, str]] = None
         best_score = 0
 
-        for (llm_str, cache_hash), (_, _, entry_agent_type, _, instruction, _) in self._in_memory_cache.items():
-            if entry_agent_type != agent_type:
+        for (llm_str, cache_hash, entry_app), (_, _, entry_agent_type, _, instruction, _) in self._in_memory_cache.items():
+            if entry_agent_type != agent_type or entry_app != self._app:
                 continue
             cached_key = instruction.get(key_field, "")
             if not cached_key:
@@ -747,7 +747,7 @@ class ElementsCache(BaseCache):
             score = max(fuzz.token_sort_ratio(cache_key, cached_key), fuzz.token_set_ratio(cache_key, cached_key))
             if score > best_score:
                 best_score = score
-                best_key = (llm_str, cache_hash)
+                best_key = (llm_str, cache_hash, entry_app)
 
         if best_score >= FUZZY_MATCH_THRESHOLD:
             logger.debug(f"Fuzzy cache match (in-memory, {best_score:.0f}%) for {agent_type}: {cache_key[:50]}...")
@@ -819,12 +819,12 @@ class ElementsCache(BaseCache):
             goal_hash = xxh3_128_hexdigest(goal)
 
             # Find and update the planner entry in in-memory cache
-            # The planner entry key is (llm_string, goal_hash)
-            # We need to find it by goal_hash since we don't have llm_string here
-            for (llm_string, cache_hash), (masked_json, elements, agent_type, app, instruction, should_save) in list(
+            # The planner entry key is (llm_string, goal_hash, app)
+            # We need to find it by goal_hash and app since we don't have llm_string here
+            for (llm_string, cache_hash, app), (masked_json, elements, agent_type, _, instruction, should_save) in list(
                 self._in_memory_cache.items()
             ):
-                if cache_hash == goal_hash and agent_type == "plans":
+                if cache_hash == goal_hash and agent_type == "plans" and app == self._app:
                     # Deduplicate by (role, sorted properties excluding index)
                     existing_keys = {self._element_dedup_key(elem) for elem in elements}
                     merged = list(elements)
@@ -835,7 +835,7 @@ class ElementsCache(BaseCache):
                             existing_keys.add(key)
 
                     # Update in-memory cache entry
-                    self._in_memory_cache[(llm_string, cache_hash)] = (
+                    self._in_memory_cache[(llm_string, cache_hash, app)] = (
                         masked_json,
                         merged,
                         agent_type,

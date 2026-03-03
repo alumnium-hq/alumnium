@@ -20,9 +20,9 @@ class ResponseCache(BaseCache):
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
         self._app: str = "unknown"
-        # Each (llm_string, hashed_request) pair is cached in memory
+        # Each (llm_string, hashed_request, app) triple is cached in memory
         # as (response, prompt, app, save) where `save` means it should be saved to filesystem.
-        self._in_memory_cache: dict[tuple[str, str], tuple[RETURN_VAL_TYPE, str, str, bool]] = {}
+        self._in_memory_cache: dict[tuple[str, str, str], tuple[RETURN_VAL_TYPE, str, str, bool]] = {}
 
     @property
     def app(self) -> str:
@@ -37,9 +37,9 @@ class ResponseCache(BaseCache):
             system_message, human_message = self._extract_messages(prompt)
             hashed_request = self._hash_request(system_message, human_message, llm_string)
 
-            if (llm_string, hashed_request) in self._in_memory_cache:
+            if (llm_string, hashed_request, self._app) in self._in_memory_cache:
                 logger.debug(f"Cache hit (in-memory) for message: {human_message[:100]}...")
-                return_val, _, _, _ = self._in_memory_cache[(llm_string, hashed_request)]
+                return_val, _, _, _ = self._in_memory_cache[(llm_string, hashed_request, self._app)]
                 self._update_usage(return_val[0].message.usage_metadata)
                 return return_val
 
@@ -49,7 +49,7 @@ class ResponseCache(BaseCache):
                 logger.debug(f"Cache hit (file) for message: {human_message[:100]}...")
                 with open(response_file, "r") as f:
                     response = loads(f.read())
-                    self._in_memory_cache[(llm_string, hashed_request)] = ([response], "", self._app, False)
+                    self._in_memory_cache[(llm_string, hashed_request, self._app)] = ([response], "", self._app, False)
                     self._update_usage(response.message.usage_metadata)
                     return [response]
         except Exception as e:
@@ -60,10 +60,10 @@ class ResponseCache(BaseCache):
     def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE):
         system_message, human_message = self._extract_messages(prompt)
         hashed_request = self._hash_request(system_message, human_message, llm_string)
-        self._in_memory_cache[(llm_string, hashed_request)] = (return_val, prompt, self._app, True)
+        self._in_memory_cache[(llm_string, hashed_request, self._app)] = (return_val, prompt, self._app, True)
 
     def save(self):
-        for (_, hashed_request), (return_val, prompt, app, save) in self._in_memory_cache.items():
+        for (_, hashed_request, _), (return_val, prompt, app, save) in self._in_memory_cache.items():
             if save:
                 cache_path = self._get_cache_path(hashed_request, app=app)
                 cache_path.mkdir(parents=True, exist_ok=True)
