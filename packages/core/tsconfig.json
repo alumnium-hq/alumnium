@@ -14,10 +14,9 @@
     "paths": {},
     // Output
     "target": "esnext",
-    "outDir": "./dist",
+    "outDir": "./.ts",
     "tsBuildInfoFile": "./.ts/tsconfig.tsbuildinfo",
-    "declaration": true,
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     // Modules
     "module": "nodenext",
     "moduleResolution": "nodenext",

@@ -107,11 +107,6 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: make types
-      - uses: docker/build-push-action@v6
-        with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          context: .
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
@@ -136,3 +131,34 @@ jobs:
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - types
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - id: check-access
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+      - id: changed-files
+        uses: tj-actions/changed-files@24d32ffd492484c1d75e0c0b894501ddb9d30d62 # v47
+        with:
+          files_yaml: |
+            typescript:
+              - packages/core/**
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: cd packages/core && bun run build:binaries
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bin
+          path: packages/core/dist/bin/*
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
