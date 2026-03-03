@@ -25,10 +25,6 @@ env:
   MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-defaults:
-  run:
-    working-directory: packages/python
-
 jobs:
   examples:
     name: Examples
@@ -37,6 +33,7 @@ jobs:
     env:
       ALUMNIUM_DRIVER: ${{ matrix.driver }}
       ALUMNIUM_MODEL: ${{ matrix.model }}
+
     strategy:
       fail-fast: false
       matrix:
@@ -54,32 +51,43 @@ jobs:
             model: azure_openai
           - driver: playwright
             model: google
+
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.sha || github.sha }}
+
       - uses: actions/setup-python@v5
         with:
           python-version-file: .tool-versions
+
       - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
         working-directory: .
+
       - uses: actions/cache@v4
         with:
           path: packages/python/.venv
           key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-      - run: poetry install
+
+      - run: cd packages/python && poetry install
+
       - if: matrix.driver == 'playwright'
-        run: poetry run playwright install chromium
+        run: cd packages/python && poetry run playwright install chromium
+
       - if: startsWith(matrix.driver, 'appium') != true
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
+
       - uses: actions/cache@v4
         with:
           path: packages/python/.alumnium/cache/
           key: alumnium-cache-v2-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-v2-python-${{ matrix.driver }}-${{ matrix.model }}-
-      - run: poetry poe examples-${{ matrix.driver }}
+
+      - run: cd packages/python && poetry poe examples-${{ matrix.driver }}
+
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
+
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -88,3 +96,38 @@ jobs:
             packages/python/*.log
             packages/python/reports/
             packages/python/test-results/
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: examples
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .tool-versions
+
+      - uses: actions/cache@v4
+        with:
+          path: packages/python/.venv
+          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+
+      - name: Install Poetry and plugins
+        run: |
+          pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
+          poetry self add 'poethepoet[poetry_plugin]'
+
+      - name: Build Python package
+        run: cd packages/python && poetry build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: packages/python/dist/*
+
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
