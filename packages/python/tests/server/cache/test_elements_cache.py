@@ -365,6 +365,58 @@ class TestElementExtraction:
         assert result is not None
         assert result == {0: 1}
 
+    def test_extract_element_attrs_single_quote_in_attribute(self, elements_cache):
+        """Test extracting element whose attribute value contains a single quote.
+
+        XPath predicates are built with single-quoted values ([@name='{value}']).
+        A value like "Bob's" produces invalid XPath [@name='Bob's'], causing findall()
+        to raise and returning None instead of the correct attributes.
+        """
+        tree_xml = "<root><button id=\"1\" name=\"Bob's account\"/></root>"
+        elem_attrs = elements_cache._extract_element_attrs(tree_xml, 1)
+        assert elem_attrs is not None
+        assert elem_attrs["role"] == "button"
+        assert elem_attrs["name"] == "Bob's account"
+        assert elem_attrs["index"] == 0
+
+    def test_resolve_elements_single_quote_in_attribute(self, elements_cache):
+        """Test resolving a cached element whose attribute value contains a single quote.
+
+        Same XPath-building bug: [@name='Bob's'] is invalid XPath, so findall()
+        raises and _resolve_elements returns None instead of the correct element id.
+        """
+        elements = [{"role": "button", "index": 0, "name": "Bob's account"}]
+        tree_xml = "<root><button id=\"1\" name=\"Bob's account\"/></root>"
+
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is not None
+        assert result == {0: 1}
+
+    def test_extract_element_attrs_single_quote_in_text(self, elements_cache):
+        """Test extracting element whose text content contains a single quote.
+
+        Text is matched via itertext() comparison, not XPath, so this should work.
+        This test confirms text-path is safe while attribute-path is not.
+        """
+        tree_xml = "<root><button id=\"1\">Bob's button</button></root>"
+        elem_attrs = elements_cache._extract_element_attrs(tree_xml, 1)
+        assert elem_attrs is not None
+        assert elem_attrs["text"] == "Bob's button"
+        assert elem_attrs["index"] == 0
+
+    def test_resolve_elements_single_quote_in_text(self, elements_cache):
+        """Test resolving a cached element whose text content contains a single quote.
+
+        Text matching uses itertext() comparison, not XPath predicates, so this
+        should resolve correctly regardless of the attribute XPath bug.
+        """
+        elements = [{"role": "button", "index": 0, "text": "Bob's button"}]
+        tree_xml = "<root><button id=\"1\">Bob's button</button></root>"
+
+        result = elements_cache._resolve_elements(elements, tree_xml)
+        assert result is not None
+        assert result == {0: 1}
+
 
 class TestMaskUnmask:
     """Test response masking and unmasking."""

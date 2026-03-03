@@ -396,6 +396,29 @@ class ElementsCache(BaseCache):
         """
         return "goal" in parsed and "step" not in parsed
 
+    @staticmethod
+    def _xpath_string_literal(value: str) -> str:
+        """Return a valid XPath 1.0 string literal for value, handling embedded quotes.
+
+        XPath 1.0 has no escape character, so:
+        - values with no single quote: wrap in single quotes
+        - values with no double quote: wrap in double quotes
+        - values with both: use concat() splitting on single quotes
+        """
+        if "'" not in value:
+            return f"'{value}'"
+        if '"' not in value:
+            return f'"{value}"'
+        # Both quote types present: concat() fragments split on single quotes
+        parts = value.split("'")
+        fragments = []
+        for i, part in enumerate(parts):
+            if part:
+                fragments.append(f"'{part}'")
+            if i < len(parts) - 1:
+                fragments.append("\"'\"")
+        return f"concat({', '.join(fragments)})"
+
     def _extract_element_attrs(self, tree_xml: str, element_id: int) -> Optional[dict]:
         """Extract element attributes as a dictionary with positional index.
 
@@ -428,7 +451,7 @@ class ElementsCache(BaseCache):
             xpath = f".//{element.tag}"
             for key, value in attrs.items():
                 if key != "text":
-                    xpath += f"[@{key}='{value}']"
+                    xpath += f"[@{key}={self._xpath_string_literal(value)}]"
 
             # Find all matching elements, then filter by text content if present
             matches = root.findall(xpath)
@@ -480,7 +503,7 @@ class ElementsCache(BaseCache):
 
                 xpath = f".//{role}"
                 for key, value in props.items():
-                    xpath += f"[@{key}='{value}']"
+                    xpath += f"[@{key}={self._xpath_string_literal(value)}]"
 
                 # Find candidates, then filter by text content if present
                 matches = root.findall(xpath)
