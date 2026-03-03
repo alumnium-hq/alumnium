@@ -145,7 +145,7 @@ class ElementsCache(BaseCache):
             return [response]
 
         except Exception as e:
-            logger.debug(f"Error in fragments cache lookup: {e}")
+            logger.debug(f"Error in elements cache lookup: {e}")
             return None
 
     def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE):
@@ -247,7 +247,7 @@ class ElementsCache(BaseCache):
                     self._update_planner_elements(goal, elements)
 
         except Exception as e:
-            logger.debug(f"Error in fragments cache update: {e}")
+            logger.debug(f"Error in elements cache update: {e}")
 
     def save(self):
         """Flush in-memory cache to disk."""
@@ -696,7 +696,10 @@ class ElementsCache(BaseCache):
         """
         provider = Model.current.provider.value
         model_name = Model.current.name
-        return self.cache_dir / (app or self._app) / provider / model_name / "elements" / agent_type / cache_hash
+        path = self.cache_dir / (app or self._app) / provider / model_name / "elements" / agent_type / cache_hash
+        if not path.resolve().is_relative_to(self.cache_dir.resolve()):
+            raise ValueError(f"Cache path escapes cache_dir: {path}")
+        return path
 
     def _get_elements_base_dir(self, app: str | None = None) -> Path:
         """Get base directory for elements cache.
@@ -709,7 +712,10 @@ class ElementsCache(BaseCache):
         """
         provider = Model.current.provider.value
         model_name = Model.current.name
-        return self.cache_dir / (app or self._app) / provider / model_name / "elements"
+        path = self.cache_dir / (app or self._app) / provider / model_name / "elements"
+        if not path.resolve().is_relative_to(self.cache_dir.resolve()):
+            raise ValueError(f"Cache path escapes cache_dir: {path}")
+        return path
 
     def _fuzzy_memory_lookup(self, cache_key: str, agent_type: str) -> Optional[tuple[str, str]]:
         """Find the best fuzzy-matching entry in the in-memory cache.

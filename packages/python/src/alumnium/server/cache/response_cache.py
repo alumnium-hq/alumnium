@@ -89,6 +89,8 @@ class ResponseCache(BaseCache):
         provider = Model.current.provider.value
         model_name = Model.current.name
         responses_dir = self.cache_dir / self._app / provider / model_name / "responses"
+        if not responses_dir.resolve().is_relative_to(self.cache_dir.resolve()):
+            raise ValueError(f"Cache path escapes cache_dir: {responses_dir}")
         if responses_dir.exists():
             shutil.rmtree(responses_dir)
         self.discard()
@@ -125,7 +127,10 @@ class ResponseCache(BaseCache):
     def _get_cache_path(self, hashed_request: str, app: str | None = None) -> Path:
         provider = Model.current.provider.value
         model_name = Model.current.name
-        return self.cache_dir / (app or self._app) / provider / model_name / "responses" / hashed_request
+        path = self.cache_dir / (app or self._app) / provider / model_name / "responses" / hashed_request
+        if not path.resolve().is_relative_to(self.cache_dir.resolve()):
+            raise ValueError(f"Cache path escapes cache_dir: {path}")
+        return path
 
     def _update_usage(self, usage_metadata: dict) -> None:
         self.usage["input_tokens"] += usage_metadata.get("input_tokens", 0)
