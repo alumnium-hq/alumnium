@@ -24,7 +24,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
     logger.debug("  -> body: {body}", { body: ctx.body });
 
     return ctx.status(500, {
-      api_version: "1",
       message: ctx.error.toString(),
       // TODO: Figure out how to pass the stack
       stack: "stack" in ctx.error ? ctx.error.stack : undefined,
@@ -62,9 +61,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
         (ctx) => {
           const sessionId = ctx.store.sessions.createSession(ctx.body);
           return {
-            // TODO: Figure out how to make all responses versioned without
-            // having to manually include api_version in each response type.
-            api_version: "1",
             session_id: sessionId,
           };
         },
@@ -87,11 +83,12 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               );
               if (!session) {
                 return ctx.status(404, {
-                  api_version: "1",
                   message: "Session not found",
                 });
               }
-              return { session };
+              return {
+                session,
+              };
             })
 
             //#region Delete session ///////////////////////////////////////////
@@ -127,14 +124,12 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                       accessibilityTree.toXml(),
                     );
                   return {
-                    api_version: "1",
                     explanation,
                     steps,
                   };
                 } catch (error) {
                   logger.error(`Error generating plan: ${error}`);
                   return ctx.status(500, {
-                    api_version: "1",
                     message: `Failed to plan actions: ${error}`,
                   });
                 }
@@ -168,7 +163,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 // It might be solved with proper agent types in the future.
                 always(actions);
                 return {
-                  api_version: "1",
                   actions,
                 };
               },
@@ -191,7 +185,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   ctx.body.actions,
                 );
                 return {
-                  api_version: "1",
                   success: true,
                   message: "Example added successfully",
                 };
@@ -212,7 +205,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { session } = ctx;
                 session.plannerAgent.promptWithExamples.examples = [];
                 return {
-                  api_version: "1",
                   success: true,
                   message: "All examples cleared successfully",
                 };
@@ -242,7 +234,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                     ctx.body.screenshot,
                   );
                 return {
-                  api_version: "1",
                   result: value,
                   explanation,
                 };
@@ -269,7 +260,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   );
                 const id = accessibilityTree.getRawId(simplifiedId);
                 return {
-                  api_version: "1",
                   id,
                   explanation,
                 };
@@ -296,7 +286,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   accessibilityTree.toXml(),
                 );
                 return {
-                  api_version: "1",
                   elements,
                 };
               },
@@ -343,7 +332,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 );
 
                 return {
-                  api_version: "1",
                   result: analysis,
                 };
               },
@@ -361,7 +349,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { session } = ctx;
                 await session.cache.save();
                 return {
-                  api_version: "1",
                   success: true,
                   message: "Cache saved successfully",
                 };
@@ -381,7 +368,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { session } = ctx;
                 await session.cache.discard();
                 return {
-                  api_version: "1",
                   success: true,
                   message: "Cache discarded successfully",
                 };

@@ -5,7 +5,6 @@ install:
 build:
 	cd packages/core && bun run build
 	cd packages/python && poetry build
-	cd packages/typescript && bun run build
 
 clean:
 	cd packages/core && bun run clean
