@@ -16,7 +16,7 @@
     "target": "esnext",
     "outDir": "./.ts",
     "tsBuildInfoFile": "./.ts/tsconfig.tsbuildinfo",
-    "noEmit": true,
+    "emitDeclarationOnly": true,
     // Modules
     "module": "nodenext",
     "moduleResolution": "nodenext",

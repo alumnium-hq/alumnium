@@ -5,7 +5,7 @@
   "compilerOptions": {
     // Output
     "outDir": "./dist/alumnium",
-    "noEmit": false,
+    "emitDeclarationOnly": false,
     "declaration": true,
     // Build
     "incremental": false, // Always rebuild from scratch as we `rm -rf dist`
