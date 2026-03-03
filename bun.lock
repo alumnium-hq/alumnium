@@ -10,7 +10,7 @@
     },
     "packages/core": {
       "name": "alumnium",
-      "version": "1.0.0",
+      "version": "1.0.0-alpha.0",
       "dependencies": {
         "@elysiajs/cors": "^1.4.1",
         "@langchain/anthropic": "^1.3.20",
@@ -41,6 +41,7 @@
       "devDependencies": {
         "@smithy/types": "^4.13.0",
         "@types/bun": "^1.3.9",
+        "@types/selenium-webdriver": "^4.35.5",
         "@wdio/globals": "^9.23.0",
         "chromium-bidi": "^15.0.0",
         "electron": "^40.6.1",
