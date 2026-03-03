@@ -33,7 +33,8 @@ export class HttpClient {
     private model: Model,
     private platform: string,
     private tools: Record<string, ToolClass>,
-    private planner: boolean = true
+    private planner: boolean = true,
+    private excludedAttributes: Set<string> = new Set()
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
   }
@@ -68,6 +69,7 @@ export class HttpClient {
           platform: this.platform as SessionRequest["platform"],
           tools: toolSchemas,
           planner: this.planner,
+          excluded_attributes: [...this.excludedAttributes],
         };
         const response = await this.fetchWithTimeout(
           `${this.baseUrl}/v1/sessions`,

@@ -7,7 +7,7 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from . import DELAY, PLANNER, RETRIES
+from . import DELAY, EXCLUDED_ATTRIBUTES, PLANNER, RETRIES
 from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
@@ -35,8 +35,10 @@ class Alumni:
         extra_tools: list[type[BaseTool]] | None = None,
         url: str | None = None,
         planner: bool | None = None,
+        excluded_attributes: set[str] | None = None,
     ):
         planner = planner if planner is not None else PLANNER
+        excluded_attributes = excluded_attributes if excluded_attributes is not None else EXCLUDED_ATTRIBUTES
 
         self.model = model or Model.current
         self.llm = llm
@@ -63,10 +65,24 @@ class Alumni:
 
         if url:
             logger.info(f"Using HTTP client with server: {url}")
-            self.client = HttpClient(url, self.model, self.driver.platform, self.tools, planner)
+            self.client = HttpClient(
+                url,
+                self.model,
+                self.driver.platform,
+                self.tools,
+                planner,
+                excluded_attributes,
+            )
         else:
             logger.info("Using native client")
-            self.client = NativeClient(self.model, self.driver.platform, self.tools, self.llm, planner)
+            self.client = NativeClient(
+                self.model,
+                self.driver.platform,
+                self.tools,
+                self.llm,
+                planner,
+                excluded_attributes,
+            )
 
         self.cache = Cache(self.client)
 
