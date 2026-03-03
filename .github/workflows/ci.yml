@@ -23,7 +23,7 @@ jobs:
     outputs:
       permitted: ${{ steps.check-access.outputs.require-result }}
       python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
-      server-changed: ${{ steps.changed-files.outputs.server_any_changed }}
+      core-changed: ${{ steps.changed-files.outputs.core_any_changed }}
       typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
     steps:
       - uses: actions/checkout@v4
@@ -43,9 +43,10 @@ jobs:
             server:
               - Dockerfile
               - packages/python/**/server/**
+            core:
+              - packages/core/**
             typescript:
               - packages/python/examples/support/pages/**
-              - packages/core/**
               - packages/typescript/**
       - uses: docker/setup-buildx-action@v3
       - uses: oven-sh/setup-bun@v2
@@ -114,7 +115,7 @@ jobs:
     secrets: inherit
     if: >
       needs.test.outputs.permitted == 'true'
-        && (needs.test.outputs.server-changed == 'true' || needs.test.outputs.typescript-changed == 'true')
+        && (needs.test.outputs.core-changed == 'true' || needs.test.outputs.typescript-changed == 'true')
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
