@@ -59,7 +59,6 @@ jobs:
       - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
       - run: make install
-      - run: make build
       - run: make check-format
       - run: make test
       - run: |
@@ -154,11 +153,15 @@ jobs:
             typescript:
               - packages/core/**
       - uses: oven-sh/setup-bun@v2
-      - run: bun install
+      - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
+      - run: make install
       - run: cd packages/core && bun run build:binaries
+      - run: cd packages/python && poetry build
       - uses: actions/upload-artifact@v4
         with:
-          name: bin
-          path: packages/core/dist/bin/*
+          name: build
+          path: |
+            packages/core/dist/bin/*
+            packages/python/dist/*
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3

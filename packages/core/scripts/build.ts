@@ -138,7 +138,10 @@ await Promise.all([
 
     const outfile = buildPackages
       ? path.join(dir, npmExecName)
-      : path.resolve(DIST_DIR, `bin/alumnium-${target}${execExt}`);
+      : path.resolve(
+          BIN_DIR,
+          `alumnium-${ALUMNIUM_VERSION}-${target}${execExt}`,
+        );
 
     const result = await Bun.build({
       entrypoints: ["./src/cli.ts"],
