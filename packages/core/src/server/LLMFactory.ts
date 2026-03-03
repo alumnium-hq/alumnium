@@ -98,9 +98,6 @@ export class LLMFactory {
       );
     }
 
-    // TODO: Figure out the correct set of params, right now it fails with:
-    //     > azureOpenAIApiInstanceName is required when using azureOpenAIApiKey
-
     return {
       azureOpenAIEndpoint,
       azureOpenAIApiDeploymentName: model.name,
@@ -120,9 +117,23 @@ export class LLMFactory {
         "AZURE_OPENAI_API_VERSION environment variable is required for Azure OpenAI models",
       );
     }
+    let defaultHeaders: Headers | undefined;
+
+    const envHeaders = process.env.AZURE_OPENAI_DEFAULT_HEADERS;
+    if (envHeaders) {
+      try {
+        defaultHeaders = new Headers(JSON.parse(envHeaders));
+      } catch {
+        logger.warn(
+          "Failed to parse AZURE_OPENAI_DEFAULT_HEADERS, it should be a valid JSON string. Ignoring the variable.",
+        );
+      }
+    }
+
     return {
       model: model.name,
       openAIApiVersion,
+      configuration: { defaultHeaders },
       ...defaults,
     };
   }
