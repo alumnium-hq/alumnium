@@ -30,7 +30,7 @@ class NativeClient:
         self.session_id = self.session_manager.create_session(
             provider=self.model.provider.value,
             name=self.model.name,
-            tools=tool_schemas,
+            tool_schemas=tool_schemas,
             platform=platform,
             llm=llm,
             planner=planner,

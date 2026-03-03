@@ -52,6 +52,7 @@ class Model:
     def from_state(cls, state: dict[str, Any]) -> "Model":
         return Model(state["provider"], state["name"])
 
+
 provider, *name = getenv("ALUMNIUM_MODEL", "").lower().split("/", maxsplit=1)
 
 name = name[0] if name else None

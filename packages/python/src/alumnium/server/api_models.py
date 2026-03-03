@@ -20,8 +20,10 @@ class SessionRequest(VersionedModel):
 class SessionResponse(VersionedModel):
     session_id: str
 
+
 class SessionStateRequest(VersionedModel):
     state: dict[str, Any]
+
 
 class PlanRequest(VersionedModel):
     goal: str
