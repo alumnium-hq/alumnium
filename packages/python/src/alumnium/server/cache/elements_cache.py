@@ -416,7 +416,7 @@ class ElementsCache(BaseCache):
             if part:
                 fragments.append(f"'{part}'")
             if i < len(parts) - 1:
-                fragments.append("\"'\"")
+                fragments.append('"\'"')
         return f"concat({', '.join(fragments)})"
 
     def _extract_element_attrs(self, tree_xml: str, element_id: int) -> Optional[dict]:
@@ -761,7 +761,14 @@ class ElementsCache(BaseCache):
         best_key: Optional[tuple[str, str, str]] = None
         best_score = 0
 
-        for (llm_str, cache_hash, entry_app), (_, _, entry_agent_type, _, instruction, _) in self._in_memory_cache.items():
+        for (llm_str, cache_hash, entry_app), (
+            _,
+            _,
+            entry_agent_type,
+            _,
+            instruction,
+            _,
+        ) in self._in_memory_cache.items():
             if entry_agent_type != agent_type or entry_app != self._app:
                 continue
             cached_key = instruction.get(key_field, "")
@@ -844,9 +851,14 @@ class ElementsCache(BaseCache):
             # Find and update the planner entry in in-memory cache
             # The planner entry key is (llm_string, goal_hash, app)
             # We need to find it by goal_hash and app since we don't have llm_string here
-            for (llm_string, cache_hash, app), (masked_json, elements, agent_type, _, instruction, should_save) in list(
-                self._in_memory_cache.items()
-            ):
+            for (llm_string, cache_hash, app), (
+                masked_json,
+                elements,
+                agent_type,
+                _,
+                instruction,
+                should_save,
+            ) in list(self._in_memory_cache.items()):
                 if cache_hash == goal_hash and agent_type == "plans" and app == self._app:
                     # Deduplicate by (role, sorted properties excluding index)
                     existing_keys = {self._element_dedup_key(elem) for elem in elements}

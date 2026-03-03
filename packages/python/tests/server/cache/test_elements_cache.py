@@ -372,7 +372,7 @@ class TestElementExtraction:
         A value like "Bob's" produces invalid XPath [@name='Bob's'], causing findall()
         to raise and returning None instead of the correct attributes.
         """
-        tree_xml = "<root><button id=\"1\" name=\"Bob's account\"/></root>"
+        tree_xml = '<root><button id="1" name="Bob\'s account"/></root>'
         elem_attrs = elements_cache._extract_element_attrs(tree_xml, 1)
         assert elem_attrs is not None
         assert elem_attrs["role"] == "button"
@@ -386,7 +386,7 @@ class TestElementExtraction:
         raises and _resolve_elements returns None instead of the correct element id.
         """
         elements = [{"role": "button", "index": 0, "name": "Bob's account"}]
-        tree_xml = "<root><button id=\"1\" name=\"Bob's account\"/></root>"
+        tree_xml = '<root><button id="1" name="Bob\'s account"/></root>'
 
         result = elements_cache._resolve_elements(elements, tree_xml)
         assert result is not None
@@ -398,7 +398,7 @@ class TestElementExtraction:
         Text is matched via itertext() comparison, not XPath, so this should work.
         This test confirms text-path is safe while attribute-path is not.
         """
-        tree_xml = "<root><button id=\"1\">Bob's button</button></root>"
+        tree_xml = '<root><button id="1">Bob\'s button</button></root>'
         elem_attrs = elements_cache._extract_element_attrs(tree_xml, 1)
         assert elem_attrs is not None
         assert elem_attrs["text"] == "Bob's button"
@@ -411,7 +411,7 @@ class TestElementExtraction:
         should resolve correctly regardless of the attribute XPath bug.
         """
         elements = [{"role": "button", "index": 0, "text": "Bob's button"}]
-        tree_xml = "<root><button id=\"1\">Bob's button</button></root>"
+        tree_xml = '<root><button id="1">Bob\'s button</button></root>'
 
         result = elements_cache._resolve_elements(elements, tree_xml)
         assert result is not None
