@@ -30,12 +30,13 @@ def elements_cache(temp_cache_dir):
 @pytest.fixture
 def setup_model():
     """Setup Model.current for tests."""
+    original = Model.current
     Model.current = Mock()
     Model.current.provider = Mock()
     Model.current.provider.value = "test_provider"
     Model.current.name = "test_model"
     yield
-    Model.current = None
+    Model.current = original
 
 
 def create_planner_prompt(goal: str, accessibility_tree: str) -> str:
@@ -50,7 +51,8 @@ def create_planner_prompt(goal: str, accessibility_tree: str) -> str:
         {
             "kwargs": {
                 "type": "human",
-                "content": f"Given the following XML accessibility tree:\n```xml\n{accessibility_tree}\n```\nOutline the actions needed to achieve the following goal: {goal}",
+                "content": f"Given the following XML accessibility tree:\n```xml\n{accessibility_tree}\n```\n"
+                f"Outline the actions needed to achieve the following goal: {goal}",
             }
         },
     ]
@@ -369,19 +371,21 @@ class TestMaskUnmask:
 
     def test_mask_response_tool_calls(self, elements_cache):
         """Test masking element IDs in tool_calls args."""
-        response_json = json.dumps({
-            "kwargs": {
-                "message": {
-                    "kwargs": {
-                        "tool_calls": [
-                            {"name": "ClickTool", "args": {"id": 5}},
-                            {"name": "DragAndDropTool", "args": {"from_id": 10, "to_id": 5}},
-                        ],
-                        "content": [],
+        response_json = json.dumps(
+            {
+                "kwargs": {
+                    "message": {
+                        "kwargs": {
+                            "tool_calls": [
+                                {"name": "ClickTool", "args": {"id": 5}},
+                                {"name": "DragAndDropTool", "args": {"from_id": 10, "to_id": 5}},
+                            ],
+                            "content": [],
+                        }
                     }
                 }
             }
-        })
+        )
 
         masked = elements_cache._mask_response(response_json, [5, 10])
         data = json.loads(masked)
@@ -393,21 +397,23 @@ class TestMaskUnmask:
 
     def test_mask_response_content_function_call(self, elements_cache):
         """Test masking element IDs in content function_call arguments."""
-        response_json = json.dumps({
-            "kwargs": {
-                "message": {
-                    "kwargs": {
-                        "tool_calls": [],
-                        "content": [
-                            {
-                                "type": "function_call",
-                                "arguments": json.dumps({"id": 7, "text": "hello"}),
-                            }
-                        ],
+        response_json = json.dumps(
+            {
+                "kwargs": {
+                    "message": {
+                        "kwargs": {
+                            "tool_calls": [],
+                            "content": [
+                                {
+                                    "type": "function_call",
+                                    "arguments": json.dumps({"id": 7, "text": "hello"}),
+                                }
+                            ],
+                        }
                     }
                 }
             }
-        })
+        )
 
         masked = elements_cache._mask_response(response_json, [7])
         data = json.loads(masked)
@@ -418,25 +424,27 @@ class TestMaskUnmask:
 
     def test_mask_response_additional_kwargs(self, elements_cache):
         """Test masking element IDs in additional_kwargs tool_calls."""
-        response_json = json.dumps({
-            "kwargs": {
-                "message": {
-                    "kwargs": {
-                        "tool_calls": [],
-                        "content": [],
-                        "additional_kwargs": {
-                            "tool_calls": [
-                                {
-                                    "function": {
-                                        "arguments": json.dumps({"id": 3}),
+        response_json = json.dumps(
+            {
+                "kwargs": {
+                    "message": {
+                        "kwargs": {
+                            "tool_calls": [],
+                            "content": [],
+                            "additional_kwargs": {
+                                "tool_calls": [
+                                    {
+                                        "function": {
+                                            "arguments": json.dumps({"id": 3}),
+                                        }
                                     }
-                                }
-                            ]
-                        },
+                                ]
+                            },
+                        }
                     }
                 }
             }
-        })
+        )
 
         masked = elements_cache._mask_response(response_json, [3])
         data = json.loads(masked)
@@ -453,19 +461,21 @@ class TestMaskUnmask:
 
     def test_unmask_response_tool_calls(self, elements_cache):
         """Test unmasking element IDs in tool_calls args."""
-        masked_json = json.dumps({
-            "kwargs": {
-                "message": {
-                    "kwargs": {
-                        "tool_calls": [
-                            {"name": "ClickTool", "args": {"id": "<MASKED_0>"}},
-                            {"name": "DragAndDropTool", "args": {"from_id": "<MASKED_1>", "to_id": "<MASKED_0>"}},
-                        ],
-                        "content": [],
+        masked_json = json.dumps(
+            {
+                "kwargs": {
+                    "message": {
+                        "kwargs": {
+                            "tool_calls": [
+                                {"name": "ClickTool", "args": {"id": "<MASKED_0>"}},
+                                {"name": "DragAndDropTool", "args": {"from_id": "<MASKED_1>", "to_id": "<MASKED_0>"}},
+                            ],
+                            "content": [],
+                        }
                     }
                 }
             }
-        })
+        )
 
         unmasked = elements_cache._unmask_response(masked_json, {0: 42, 1: 99})
         data = json.loads(unmasked)
@@ -482,25 +492,27 @@ class TestMaskUnmask:
 
     def test_mask_unmask_roundtrip(self, elements_cache):
         """Test that masking then unmasking with same IDs produces original data."""
-        original_json = json.dumps({
-            "kwargs": {
-                "message": {
-                    "kwargs": {
-                        "tool_calls": [
-                            {"name": "ClickTool", "args": {"id": 5}},
-                            {"name": "TypeTool", "args": {"id": 10, "text": "hello"}},
-                            {"name": "DragAndDropTool", "args": {"from_id": 5, "to_id": 10}},
-                        ],
-                        "content": [
-                            {
-                                "type": "function_call",
-                                "arguments": json.dumps({"id": 5}),
-                            }
-                        ],
+        original_json = json.dumps(
+            {
+                "kwargs": {
+                    "message": {
+                        "kwargs": {
+                            "tool_calls": [
+                                {"name": "ClickTool", "args": {"id": 5}},
+                                {"name": "TypeTool", "args": {"id": 10, "text": "hello"}},
+                                {"name": "DragAndDropTool", "args": {"from_id": 5, "to_id": 10}},
+                            ],
+                            "content": [
+                                {
+                                    "type": "function_call",
+                                    "arguments": json.dumps({"id": 5}),
+                                }
+                            ],
+                        }
                     }
                 }
             }
-        })
+        )
 
         element_ids = [5, 10]
 
@@ -524,18 +536,20 @@ class TestMaskUnmask:
 
     def test_mask_unmask_with_remapped_ids(self, elements_cache):
         """Test masking with old IDs and unmasking with new IDs."""
-        original_json = json.dumps({
-            "kwargs": {
-                "message": {
-                    "kwargs": {
-                        "tool_calls": [
-                            {"name": "ClickTool", "args": {"id": 5}},
-                        ],
-                        "content": [],
+        original_json = json.dumps(
+            {
+                "kwargs": {
+                    "message": {
+                        "kwargs": {
+                            "tool_calls": [
+                                {"name": "ClickTool", "args": {"id": 5}},
+                            ],
+                            "content": [],
+                        }
                     }
                 }
             }
-        })
+        )
 
         # Mask with original IDs
         masked = elements_cache._mask_response(original_json, [5])

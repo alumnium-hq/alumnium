@@ -40,7 +40,8 @@ class ElementsCache(BaseCache):
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
         self._app: str = "unknown"
-        # In-memory cache: (llm_string, cache_hash) -> (masked_json, elements, agent_type, app, instruction, should_save)
+        # In-memory cache:
+        # (llm_string, cache_hash) -> (masked_json, elements, agent_type, app, instruction, should_save)
         self._in_memory_cache: dict[tuple[str, str], tuple[str, list[dict], str, str, dict, bool]] = {}
 
     @property
@@ -250,7 +251,14 @@ class ElementsCache(BaseCache):
 
     def save(self):
         """Flush in-memory cache to disk."""
-        for (_, cache_hash), (masked_json, elements, agent_type, app, instruction, should_save) in self._in_memory_cache.items():
+        for (_, cache_hash), (
+            masked_json,
+            elements,
+            agent_type,
+            app,
+            instruction,
+            should_save,
+        ) in self._in_memory_cache.items():
             if should_save:
                 try:
                     cache_path = self._get_cache_path(agent_type, cache_hash, app=app)
@@ -336,7 +344,8 @@ class ElementsCache(BaseCache):
 
             # Parse the human message to extract goal, step, and accessibility tree
             # Format:
-            # Planner: "Given the following XML accessibility tree:\n```xml\n<tree>\n```\nOutline the actions needed to achieve the following goal: <goal>"
+            # Planner: "Given the following XML accessibility tree:\n```xml\n<tree>\n```\n
+            #           Outline the actions needed to achieve the following goal: <goal>"
             # Actor: "Goal: <goal>\nStep: <step>\nWebpage ARIA tree:\n```xml\n<tree>\n```"
 
             result = {}
@@ -398,7 +407,8 @@ class ElementsCache(BaseCache):
             element_id: The id of the element
 
         Returns:
-            Dict with 'role', 'index', optional 'text', and other attributes as raw strings (no 'id'), or None if not found
+            Dict with 'role', 'index', optional 'text', and other attributes as raw strings (no 'id'),
+            or None if not found
         """
         try:
             root = fromstring(f"<root>{tree_xml}</root>")
@@ -483,7 +493,7 @@ class ElementsCache(BaseCache):
                 target = matches[idx]
                 current_id = target.get("id")
                 if current_id is None:
-                    logger.debug(f"Resolved element has no id attribute")
+                    logger.debug("Resolved element has no id attribute")
                     return None
                 result[list_pos] = int(current_id)
 
@@ -780,7 +790,9 @@ class ElementsCache(BaseCache):
             logger.debug(f"Fuzzy cache match ({best_score:.0f}%) for {agent_type}: {cache_key[:50]}...")
             return best_hash
 
-        logger.debug(f"No fuzzy cache match above threshold for {agent_type}: {cache_key[:50]} (best score: {best_score:.0f}%)")
+        logger.debug(
+            f"No fuzzy cache match above threshold for {agent_type}: {cache_key[:50]} (best score: {best_score:.0f}%)"
+        )
         return None
 
     @staticmethod
