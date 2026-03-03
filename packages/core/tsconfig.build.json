@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig",
+  "include": ["./src/**/*.ts", "./package.json"],
+  "exclude": ["./src/**/*.test.ts"],
+  "compilerOptions": {
+    // Output
+    "outDir": "./dist/alumnium",
+    "emitDeclarationOnly": false,
+    "declaration": true,
+    // Build
+    "incremental": false, // Always rebuild from scratch as we `rm -rf dist`
+    // Project references
+    "composite": false
+  }
+}

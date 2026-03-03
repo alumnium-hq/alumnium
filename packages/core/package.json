@@ -1,7 +1,7 @@
 {
   "name": "alumnium",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "license": "MIT",
   "description": "Pave the way towards AI-powered test automation",
   "keywords": [
@@ -24,19 +24,21 @@
   },
   "type": "module",
   "files": [
-    "dist",
-    "README.md"
+    "src",
+    "README.md",
+    "LICENSE.md"
   ],
   "exports": {
     ".": "./src/client/index.ts"
   },
-  "overrides": {
+  "publishConfig": {
     "exports": {
-      ".": "./dist/client/index.js"
+      ".": "./src/client/index.js"
     }
   },
   "scripts": {
     "build": "./scripts/build.ts",
+    "build:bin": "./scripts/build.ts --bin",
     "clean": "node -e \"console.log('TODO')\"",
     "check-format": "node -e \"console.log('TODO')\"",
     "format": "node -e \"console.log('TODO')\"",
