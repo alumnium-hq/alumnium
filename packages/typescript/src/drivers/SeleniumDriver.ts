@@ -330,6 +330,15 @@ export class SeleniumDriver extends BaseDriver {
     return await this.driver.getCurrentUrl();
   }
 
+  async app(): Promise<string> {
+    try {
+      const currentUrl = await this.driver.getCurrentUrl();
+      return new URL(currentUrl).hostname || "unknown";
+    } catch {
+      return "unknown";
+    }
+  }
+
   async findElement(id: number): Promise<WebElement> {
     const tree = await this.getAccessibilityTree();
     const accessibilityElement = tree.elementById(id);

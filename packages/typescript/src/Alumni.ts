@@ -88,10 +88,12 @@ export class Alumni {
 
   @retry()
   async do(goal: string): Promise<DoResult> {
+    const app = await this.driver.app();
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
     const { explanation, steps } = await this.client.planActions(
       goal,
-      initialAccessibilityTree.toStr()
+      initialAccessibilityTree.toStr(),
+      app
     );
 
     let finalExplanation = explanation;
@@ -105,11 +107,15 @@ export class Alumni {
           ? initialAccessibilityTree
           : await this.driver.getAccessibilityTree();
       const { explanation: actorExplanation, actions } =
-        await this.client.executeAction(goal, step, accessibilityTree.toStr());
+        await this.client.executeAction(
+          goal,
+          step,
+          accessibilityTree.toStr(),
+          app
+        );
 
       // When planner is off, explanation is just the goal — replace with actor's reasoning.
       if (finalExplanation === goal) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         finalExplanation = actorExplanation;
       }
 
@@ -140,7 +146,8 @@ export class Alumni {
       accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
+      await this.driver.app()
     );
 
     if (!value) {
@@ -161,7 +168,8 @@ export class Alumni {
       accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
+      await this.driver.app()
     );
 
     return value === null ? explanation : value;
@@ -172,7 +180,8 @@ export class Alumni {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findElement(
       description,
-      accessibilityTree.toStr()
+      accessibilityTree.toStr(),
+      await this.driver.app()
     );
     return this.driver.findElement(response.id as number);
   }
@@ -181,7 +190,8 @@ export class Alumni {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findArea(
       description,
-      accessibilityTree.toStr()
+      accessibilityTree.toStr(),
+      await this.driver.app()
     );
     const scopedTree = accessibilityTree.scopeToArea(response.id);
     return new Area(

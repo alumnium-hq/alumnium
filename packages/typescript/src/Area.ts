@@ -35,9 +35,11 @@ export class Area {
 
   @retry()
   async do(goal: string): Promise<DoResult> {
+    const app = await this.driver.app();
     const { explanation, steps } = await this.client.planActions(
       goal,
-      this.accessibilityTree.toStr()
+      this.accessibilityTree.toStr(),
+      app
     );
 
     let finalExplanation = explanation;
@@ -47,12 +49,12 @@ export class Area {
         await this.client.executeAction(
           goal,
           step,
-          this.accessibilityTree.toStr()
+          this.accessibilityTree.toStr(),
+          app
         );
 
       // When planner is off, explanation is just the goal — replace with actor's reasoning.
       if (finalExplanation === goal) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         finalExplanation = actorExplanation;
       }
 
@@ -82,7 +84,8 @@ export class Area {
       this.accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
+      await this.driver.app()
     );
 
     if (!value) {
@@ -102,7 +105,8 @@ export class Area {
       this.accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
+      await this.driver.app()
     );
 
     return value === null ? explanation : value;
@@ -112,7 +116,8 @@ export class Area {
   async find(description: string): Promise<Element> {
     const response = await this.client.findElement(
       description,
-      this.accessibilityTree.toStr()
+      this.accessibilityTree.toStr(),
+      await this.driver.app()
     );
 
     return this.driver.findElement(response.id as number);
