@@ -5,15 +5,13 @@
   "description": "Temporary? package holding system tests for Alumnium",
   "type": "module",
   "scripts": {
-    "build": "rm -rf dist/ && tsc --project tsconfig.build.json && mkdir -p dist/drivers/scripts && cp src/drivers/scripts/*.js dist/drivers/scripts/",
-    "clean": "rm -rf .alumnium/cache dist/ log/ playwright-report/ test-results/",
+    "clean": "rm -rf .alumnium/cache log/ playwright-report/ test-results/",
     "examples:appium": "ALUMNIUM_DRIVER=appium wdio run wdio.conf.ts",
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:selenium": "ALUMNIUM_DRIVER=selenium mocha",
     "examples": "bun run examples:appium && bun run examples:playwright && bun run examples:selenium",
     "check-format": "prettier --check . && eslint .",
     "format": "prettier --write . && eslint . --fix",
-    "prepublishOnly": "bun run build",
     "types": "tsc --noEmit",
     "types:watch": "tsc --noEmit --watch"
   },
