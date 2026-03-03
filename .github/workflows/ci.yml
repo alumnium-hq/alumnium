@@ -40,9 +40,6 @@ jobs:
           files_yaml: |
             python:
               - packages/python/**
-            server:
-              - Dockerfile
-              - packages/python/**/server/**
             core:
               - packages/core/**
             typescript:
@@ -111,7 +108,9 @@ jobs:
 
   typescript:
     name: TypeScript
-    needs: test
+    needs:
+      - test
+      - types
     secrets: inherit
     if: >
       needs.test.outputs.permitted == 'true'
@@ -119,27 +118,3 @@ jobs:
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs:
-      - test
-      - types
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-      - uses: oven-sh/setup-bun@v2
-      - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
-      - run: make install
-      - run: cd packages/core && bun run build:binaries
-      - run: cd packages/python && poetry build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: |
-            packages/core/dist/bin/*
-            packages/python/dist/*
-      - if: failure() && runner.debug == '1'
-        uses: mxschmitt/action-tmate@v3
