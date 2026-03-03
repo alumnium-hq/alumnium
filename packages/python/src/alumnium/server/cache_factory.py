@@ -7,7 +7,6 @@ from .cache.chained_cache import ChainedCache
 from .cache.elements_cache import ElementsCache
 from .cache.null_cache import NullCache
 from .cache.response_cache import ResponseCache
-from .cache.sqlite_cache import SQLiteCache
 from .logutils import get_logger
 
 logger = get_logger(__name__)
@@ -18,9 +17,7 @@ class CacheFactory:
     def create_cache() -> Optional[BaseCache]:
         cache_provider = getenv("ALUMNIUM_CACHE", "filesystem").lower()
 
-        if cache_provider == "sqlite":
-            return SQLiteCache()
-        elif cache_provider == "filesystem":
+        if cache_provider == "filesystem":
             cache_path = getenv("ALUMNIUM_CACHE_PATH", ".alumnium/cache")
             return ChainedCache([ResponseCache(cache_path), ElementsCache(cache_path)])
         elif cache_provider in ("false", "0", "none", "null"):
