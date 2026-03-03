@@ -127,7 +127,13 @@ class AppiumDriver(BaseDriver):
     @property
     def app(self) -> str:
         caps = self.driver.capabilities
-        return caps.get("appPackage") or caps.get("bundleId") or "unknown"
+        return (
+            caps.get("appPackage")
+            or caps.get("bundleId")
+            or caps.get("appium:appPackage")
+            or caps.get("appium:bundleId")
+            or "unknown"
+        )
 
     def find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)
