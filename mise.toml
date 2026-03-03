@@ -1,4 +1,5 @@
 [tools]
+bun = "latest"
 fnox = "latest"
 opencode = "latest"
 
