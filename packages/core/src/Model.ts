@@ -40,13 +40,9 @@ export class Model {
 
   constructor(provider?: Provider | string, name?: string) {
     // Convert string to Provider enum if needed
-    if (typeof provider === "string") {
-      this.provider =
-        Provider[provider.toUpperCase() as keyof typeof Provider] ||
-        Provider.OPENAI;
-    } else {
-      this.provider = provider || Provider.OPENAI;
-    }
+    this.provider =
+      (provider && Provider[provider.toUpperCase() as keyof typeof Provider]) ||
+      Provider.OPENAI;
 
     this.name = name || ModelName.DEFAULT[this.provider];
   }
