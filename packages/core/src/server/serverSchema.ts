@@ -38,16 +38,12 @@ export const Change = z.object({
 
 //#region Common server schemas
 
-export const VersionedObject = z.object({
-  api_version: z.string().default("v1").describe("API version"),
-});
-
-export const ErrorResponse = VersionedObject.extend({
+export const ErrorResponse = z.object({
   message: z.string(),
   stack: z.string().optional(),
 });
 
-export const SuccessResponse = VersionedObject.extend({
+export const SuccessResponse = z.object({
   success: z.literal(true),
   message: z.string(),
 });
@@ -72,14 +68,14 @@ export const GetSessionsResponse = z.array(SessionId);
 
 //#region Create session ///////////////////////////////////////////////////////
 
-export const CreateSessionBody = VersionedObject.extend({
+export const CreateSessionBody = z.object({
   platform: Platform,
   provider: z.enum(Provider),
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),
 });
 
-export const CreateSessionResponse = VersionedObject.extend({
+export const CreateSessionResponse = z.object({
   session_id: SessionId,
 });
 
@@ -91,14 +87,14 @@ export const SessionParams = z.object({
 
 //#region Create plan //////////////////////////////////////////////////////////
 
-export const CreatePlanBody = VersionedObject.extend({
+export const CreatePlanBody = z.object({
   goal: z.string(),
   accessibility_tree: z.string(),
   url: z.string().optional(),
   title: z.string().optional(),
 });
 
-export const CreatePlanResponse = VersionedObject.extend({
+export const CreatePlanResponse = z.object({
   explanation: z.string(),
   steps: z.array(z.string()),
 });
@@ -107,13 +103,13 @@ export const CreatePlanResponse = VersionedObject.extend({
 
 //#region Plan step actions ////////////////////////////////////////////////////
 
-export const PlanStepActionsBody = VersionedObject.extend({
+export const PlanStepActionsBody = z.object({
   goal: z.string(),
   step: z.string(),
   accessibility_tree: z.string(),
 });
 
-export const PlanStepActionsResponse = VersionedObject.extend({
+export const PlanStepActionsResponse = z.object({
   // TODO: Define proper types
   actions: z.array(z.record(z.string(), z.any())),
 });
@@ -122,7 +118,7 @@ export const PlanStepActionsResponse = VersionedObject.extend({
 
 //#region Add example //////////////////////////////////////////////////////////
 
-export const AddExampleBody = VersionedObject.extend({
+export const AddExampleBody = z.object({
   goal: z.string(),
   actions: z.array(z.string()),
 });
@@ -139,7 +135,7 @@ export const ExecuteStatementBody = z.object({
   screenshot: z.string().nullable().optional(),
 });
 
-export const ExecuteStatementResponse = VersionedObject.extend({
+export const ExecuteStatementResponse = z.object({
   result: z.union([z.string(), z.array(z.string())]),
   explanation: z.string(),
 });
@@ -153,7 +149,7 @@ export const ChooseAreaBody = z.object({
   accessibility_tree: z.string(),
 });
 
-export const ChooseAreaResponse = VersionedObject.extend({
+export const ChooseAreaResponse = z.object({
   id: z.number(),
   explanation: z.string(),
 });
@@ -167,7 +163,7 @@ export const FindElementBody = z.object({
   accessibility_tree: z.string(),
 });
 
-export const FindElementResponse = VersionedObject.extend({
+export const FindElementResponse = z.object({
   elements: z.array(z.record(z.string(), z.union([z.string(), z.number()]))),
 });
 
@@ -180,7 +176,7 @@ export const AnalyzeChangesBody = z.object({
   after: Change,
 });
 
-export const AnalyzeChangesResponse = VersionedObject.extend({
+export const AnalyzeChangesResponse = z.object({
   result: z.string(),
 });
 
