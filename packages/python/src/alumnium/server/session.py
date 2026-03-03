@@ -139,7 +139,6 @@ class Session:
         }
         return state
 
-
     @classmethod
     def from_state(cls, state: dict[str, Any]) -> "Session":
         session = cls(
