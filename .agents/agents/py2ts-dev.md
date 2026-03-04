@@ -138,7 +138,7 @@ If, after converting the code, some of the `// @ts-expect-error` comments are no
 
 - When converting test files, assume that these will initially fail. So add `.todo` (e.g., `it.todo` or `describe.todo`) to the newly created test cases to indicate that these tests are expected to fail until the corresponding TypeScript code is fully implemented and working.
 
-- When the tested code contains a missing dependency, add it to `<ts-package>/tests/py2ts.ts` that is preloaded before running the tests (using `bun test --preload ./tests/py2ts.ts`). It ensures that the tests can run without errors even if the tested code contains missing dependencies.
+- When the tested code contains a missing dependency, add it to `<ts-package>/tests/py2ts.ts` that is preloaded before running the tests (using `bun test --preload ./tests/preload.ts`). It ensures that the tests can run without errors even if the tested code contains missing dependencies.
 
 After you finish converting the code, run the tests via `bun run test` to check which ones are failing. Don't try to fix the failing tests unless explicitly instructed to do so. The main goal of this task is to convert the code, not to make it fully functional. As instructed, use `.todo` to make all the tests pass.
 

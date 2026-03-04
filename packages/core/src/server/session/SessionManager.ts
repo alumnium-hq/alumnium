@@ -14,7 +14,7 @@ const logger = getLogger(import.meta.url);
  * Manages multiple client sessions.
  */
 export class SessionManager {
-  sessions: Record<SessionId, Session> = {};
+  #sessions: Record<SessionId, Session> = {};
 
   constructor() {}
 
@@ -33,7 +33,7 @@ export class SessionManager {
     const { provider, name: modelName, ...restProps } = props;
     const model = new Model(provider, modelName);
 
-    this.sessions[sessionId] = new Session({
+    this.#sessions[sessionId] = new Session({
       ...restProps,
       sessionId,
       model,
@@ -47,7 +47,7 @@ export class SessionManager {
       `Applying session state for session ${sessionState["session_id"]}`,
     );
     const session = Session.fromState(sessionState);
-    this.sessions[session.sessionId] = session;
+    this.#sessions[session.sessionId] = session;
     logger.info(`Applied session state: ${session.sessionId}`);
   }
 
@@ -55,15 +55,15 @@ export class SessionManager {
    * Get a session by ID.
    */
   getSession(sessionId: SessionId): Session | undefined {
-    return this.sessions[sessionId];
+    return this.#sessions[sessionId];
   }
 
   /**
    * Delete a session by ID.
    */
   deleteSession(sessionId: SessionId): boolean {
-    if (sessionId in this.sessions) {
-      delete this.sessions[sessionId];
+    if (sessionId in this.#sessions) {
+      delete this.#sessions[sessionId];
       logger.info(`Deleted session: ${sessionId}`);
       return true;
     }
@@ -74,7 +74,7 @@ export class SessionManager {
    * List all active session IDs.
    */
   listSessions(): SessionId[] {
-    return Object.keys(this.sessions) as SessionId[];
+    return Object.keys(this.#sessions) as SessionId[];
   }
 
   /**
@@ -82,7 +82,7 @@ export class SessionManager {
    */
   getTotalStats(): UsageStats {
     const totalStats = SessionManager.createTotalStats();
-    for (const session of Object.values(this.sessions)) {
+    for (const session of Object.values(this.#sessions)) {
       const sessionStats = session.stats;
       for (const key of Object.keys(totalStats) as (keyof UsageStats)[]) {
         totalStats[key].input_tokens += sessionStats[key].input_tokens;

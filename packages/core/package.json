@@ -42,8 +42,8 @@
     "clean": "node -e \"console.log('TODO')\"",
     "check-format": "node -e \"console.log('TODO')\"",
     "format": "node -e \"console.log('TODO')\"",
-    "test": "bun test --preload ./tests/py2ts.ts",
-    "test:watch": "bun test --preload ./tests/py2ts.ts --watch",
+    "test": "bun test --preload ./tests/preload.ts",
+    "test:watch": "bun test --preload ./tests/preload.ts --watch",
     "types": "tsc --noEmit",
     "types:watch": "tsc --noEmit --watch"
   },
