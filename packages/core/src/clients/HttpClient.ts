@@ -20,11 +20,14 @@ import {
   StepRequest,
   StepResponse,
 } from "./ApiModels.js";
+import { Client } from "./Client.js";
 import { Data, looselyTypecast } from "./typecasting.js";
 
 const logger = getLogger(import.meta.url);
 
-export class HttpClient {
+export namespace HttpClient {}
+
+export class HttpClient implements Client {
   private baseUrl: string;
   private sessionId: string | null = null;
   private sessionPromise: Promise<void> | null = null;
@@ -126,7 +129,7 @@ export class HttpClient {
     goal: string,
     accessibilityTree: string,
     app: string = "unknown",
-  ): Promise<{ explanation: string; steps: string[] }> {
+  ): Promise<Client.PlanActionsResult> {
     await this.ensureSession();
     const requestBody: PlanRequest = {
       goal,
@@ -181,7 +184,7 @@ export class HttpClient {
     step: string,
     accessibilityTree: string,
     app: string = "unknown",
-  ): Promise<{ explanation: string; actions: StepResponse["actions"] }> {
+  ): Promise<Client.ExecuteActionResult> {
     await this.ensureSession();
     const requestBody: StepRequest = {
       goal,
@@ -200,11 +203,7 @@ export class HttpClient {
       },
     );
 
-    const responseData = (await response.json()) as StepResponse;
-    return {
-      explanation: responseData.explanation,
-      actions: responseData.actions,
-    };
+    return (await response.json()) as StepResponse;
   }
 
   async retrieve(
@@ -243,7 +242,7 @@ export class HttpClient {
     description: string,
     accessibilityTree: string,
     app: string = "unknown",
-  ): Promise<{ id: number; explanation: string }> {
+  ): Promise<Client.FindAreaResult> {
     await this.ensureSession();
     const requestBody: AreaRequest = {
       description,
@@ -269,7 +268,7 @@ export class HttpClient {
     description: string,
     accessibilityTree: string,
     app: string = "unknown",
-  ): Promise<FindResponse["elements"][number] | undefined> {
+  ): Promise<Client.FindElementResult | undefined> {
     await this.ensureSession();
     const requestBody: FindRequest = {
       description,

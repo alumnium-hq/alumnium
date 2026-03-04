@@ -153,52 +153,45 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
       "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
     });
 
-    const message = await this.invokeChain(this.chain, {
+    const response = await this.invokeChain(this.chain, {
       goal,
       accessibility_tree: accessibilityTreeXml,
     });
 
-    if ("parsed" in message) {
-      const response = message.parsed;
+    if (!PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)) {
+      const structured = response.structured as PlannerAgent.Plan;
       this.logData(logger, "out", {
-        Result: response,
-        Usage: BaseAgent.getMessageUsage(message.raw),
+        Result: structured,
+        Usage: response.usage,
       });
 
       return [
-        response.explanation,
-        response.actions.filter((action) => action),
+        structured.explanation,
+        structured.actions.filter((action) => action),
       ];
     }
 
     this.logData(logger, "out", {
-      Result: message.content,
-      Usage: message.usage_metadata,
+      Result: response.content,
+      Usage: response.usage,
     });
 
-    let response = message.content;
+    let content = response.content;
 
     // TODO: Figure out if LangChain JS and Python have different content types
     // or Python simply assumes content is always string. If the latter, we can
     // replace this with an assertion.
-    if (!(typeof response === "string")) {
-      logger.warn(
-        "Received non-string response in unstructured output mode, returning empty plan.",
-      );
-      return ["", []];
-    }
+    content = content.trim();
 
-    response = response.trim();
-
-    if (response.startsWith(PlannerAgent.#LIST_SEPARATOR)) {
-      response = response.slice(PlannerAgent.#LIST_SEPARATOR.length);
+    if (content.startsWith(PlannerAgent.#LIST_SEPARATOR)) {
+      content = content.slice(PlannerAgent.#LIST_SEPARATOR.length);
     }
-    if (response.endsWith(PlannerAgent.#LIST_SEPARATOR)) {
-      response = response.slice(0, -PlannerAgent.#LIST_SEPARATOR.length);
+    if (content.endsWith(PlannerAgent.#LIST_SEPARATOR)) {
+      content = content.slice(0, -PlannerAgent.#LIST_SEPARATOR.length);
     }
 
     const steps: string[] = [];
-    for (let step of response.split(PlannerAgent.#LIST_SEPARATOR)) {
+    for (let step of content.split(PlannerAgent.#LIST_SEPARATOR)) {
       step = step.trim();
       if (step && step.toUpperCase() !== "NOOP") {
         steps.push(step);

@@ -76,6 +76,10 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       (alumniumOptions["driverSettings"] as
         | Record<string, unknown>
         | undefined) || {};
+    const planner =
+      typeof alumniumOptions["planner"] === "boolean"
+        ? alumniumOptions["planner"]
+        : undefined;
 
     // Generate driver ID from current directory and timestamp
     const cwdName = path.basename(process.cwd());
@@ -117,6 +121,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
         SwitchToNextTabTool,
         SwitchToPreviousTabTool,
       ],
+      planner,
     });
 
     // Apply driver options to Alumnium driver

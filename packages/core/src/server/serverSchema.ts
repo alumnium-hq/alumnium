@@ -34,6 +34,13 @@ export const Change = z.object({
   url: z.string(),
 });
 
+export const ElementRef = z.object({
+  id: z.number(),
+  explanation: z.string().optional(),
+});
+
+export type ElementRef = z.infer<typeof ElementRef>;
+
 //#endregion
 
 //#region Common server schemas
@@ -73,6 +80,7 @@ export const CreateSessionBody = z.object({
   provider: z.enum(Provider),
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),
+  planner: z.boolean().default(true),
 });
 
 export const CreateSessionResponse = z.object({
@@ -110,6 +118,7 @@ export const PlanStepActionsBody = z.object({
 });
 
 export const PlanStepActionsResponse = z.object({
+  explanation: z.string(),
   // TODO: Define proper types
   actions: z.array(z.record(z.string(), z.any())),
 });
@@ -164,7 +173,7 @@ export const FindElementBody = z.object({
 });
 
 export const FindElementResponse = z.object({
-  elements: z.array(z.record(z.string(), z.union([z.string(), z.number()]))),
+  elements: z.array(ElementRef),
 });
 
 //#endregion

@@ -2,6 +2,7 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
 import { getLogger } from "../../utils/logger.js";
+import type { ElementRef } from "../serverSchema.js";
 import { BaseAgent } from "./BaseAgent.js";
 
 const logger = getLogger(import.meta.url);
@@ -36,14 +37,14 @@ export class LocatorAgent extends BaseAgent {
   async invoke(
     description: string,
     accessibilityTreeXml: string,
-  ): Promise<Array<{ id: number; explanation: string }>> {
+  ): Promise<Array<ElementRef>> {
     logger.info("Starting element location:");
     this.logData(logger, "in", {
       Description: description,
       "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
     });
 
-    const message = await this.invokeChain(this.chain, [
+    const response = await this.invokeChain(this.chain, [
       ["system", this.prompts["system"]],
       [
         "human",
@@ -55,10 +56,15 @@ export class LocatorAgent extends BaseAgent {
     ]);
 
     this.logData(logger, "out", {
-      Result: message.parsed,
-      Usage: BaseAgent.getMessageUsage(message.raw),
+      Result: response.structured,
+      Usage: response.usage,
     });
 
-    return [message.parsed];
+    return [
+      {
+        id: (response.structured as Locator).id,
+        explanation: (response.structured as Locator).explanation,
+      },
+    ];
   }
 }

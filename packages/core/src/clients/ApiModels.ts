@@ -5,13 +5,16 @@
  * defined in packages/python/src/alumnium/server/api_models.py
  */
 
+import type { ElementRef } from "../server/serverSchema.js";
+import type { ToolCall } from "../tools/BaseTool.js";
+
 export interface SessionRequest {
   platform: "chromium" | "uiautomator2" | "xcuitest";
   provider: string;
   name?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tools: { [key: string]: any }[];
-  planner?: boolean;
+  planner: boolean;
   excluded_attributes?: string[];
 }
 
@@ -41,8 +44,7 @@ export interface StepRequest {
 
 export interface StepResponse {
   explanation: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  actions: { [key: string]: any }[];
+  actions: ToolCall[];
 }
 
 export interface StatementRequest {
@@ -77,7 +79,7 @@ export interface FindRequest {
 }
 
 export interface FindResponse {
-  elements: { [key: string]: number | string }[];
+  elements: ElementRef[];
 }
 
 export interface AddExampleRequest {

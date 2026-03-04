@@ -81,7 +81,7 @@ export class RetrieverAgent extends BaseAgent {
       });
     }
 
-    const message = await this.invokeChain(this.chain, [
+    const response = await this.invokeChain(this.chain, [
       [
         "system",
         pythonicFormat(this.prompts.system, {
@@ -92,11 +92,11 @@ export class RetrieverAgent extends BaseAgent {
     ]);
 
     this.logData(logger, "out", {
-      Result: message.parsed,
-      Usage: BaseAgent.getMessageUsage(message.raw),
+      Result: response.structured,
+      Usage: response.usage,
     });
 
-    let value = message.parsed.value;
+    let value = (response.structured as RetrievedInformation).value;
     // LLMs sometimes add separator to the start/end.
     if (value.startsWith(RetrieverAgent.#LIST_SEPARATOR)) {
       value = value.slice(RetrieverAgent.#LIST_SEPARATOR.length);
@@ -114,14 +114,14 @@ export class RetrieverAgent extends BaseAgent {
     // Return raw string or list of strings
     if (value.includes(RetrieverAgent.#LIST_SEPARATOR)) {
       return [
-        message.parsed.explanation,
+        (response.structured as RetrievedInformation).explanation,
         value
           .split(RetrieverAgent.#LIST_SEPARATOR)
           .map((item) => item.trim())
           .filter((item) => item),
       ];
     } else {
-      return [message.parsed.explanation, value];
+      return [(response.structured as RetrievedInformation).explanation, value];
     }
   }
 }

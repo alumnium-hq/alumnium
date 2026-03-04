@@ -17,16 +17,16 @@ export class ChangesAnalyzerAgent extends BaseAgent {
     logger.info("Starting changes analysis:");
     logger.debug(this.formatLog("in", "Diff"), { detail: diff });
 
-    const message = await this.invokeChain(this.llm, [
+    const response = await this.invokeChain(this.llm, [
       ["system", this.prompts.system],
       ["human", pythonicFormat(this.prompts.user, { diff })],
     ]);
 
-    const content = message.text.replace("\n\n", " ");
+    const content = response.content.replace("\n\n", " ");
 
     this.logData(logger, "out", {
       Result: content,
-      Usage: BaseAgent.getMessageUsage(message),
+      Usage: response.usage,
     });
 
     return content;
