@@ -20,12 +20,16 @@ import { retry } from "./utils/retry.js";
 const logger = getLogger(["Alumni"]);
 const planner =
   (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
+const excludedAttributes = new Set(
+  (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "").split(",").filter(Boolean)
+);
 
 export interface AlumniOptions {
   url?: string;
   model?: Model;
   extraTools?: ToolClass[];
   planner?: boolean;
+  excludedAttributes?: Set<string>;
 }
 
 export interface VisionOptions {
@@ -73,7 +77,8 @@ export class Alumni {
       this.model,
       this.driver.platform,
       this.tools,
-      options.planner ?? planner
+      options.planner ?? planner,
+      options.excludedAttributes ?? excludedAttributes
     );
     this.cache = new Cache(this.client);
 
@@ -109,7 +114,6 @@ export class Alumni {
 
       // When planner is off, explanation is just the goal — replace with actor's reasoning.
       if (finalExplanation === goal) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         finalExplanation = actorExplanation;
       }
 

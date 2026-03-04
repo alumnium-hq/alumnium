@@ -12,6 +12,7 @@ export interface SessionRequest {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tools: { [key: string]: any }[];
   planner?: boolean;
+  excluded_attributes?: string[];
 }
 
 export interface SessionResponse {
