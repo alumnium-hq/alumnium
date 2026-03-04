@@ -39,7 +39,7 @@ class Alumni:
         excluded_attributes: set[str] | None = None,
     ):
         planner = planner if planner is not None else PLANNER
-        change_analysis = change_analysis if change_analysis is not None else CHANGE_ANALYSIS
+        self.change_analysis = change_analysis if change_analysis is not None else CHANGE_ANALYSIS
         excluded_attributes = excluded_attributes if excluded_attributes is not None else EXCLUDED_ATTRIBUTES
 
         self.model = model or Model.current
