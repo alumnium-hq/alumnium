@@ -27,4 +27,4 @@ run = "cd packages/typescript && bun run examples:selenium"
 run = "cd packages/typescript && bun run examples:appium"
 
 [tasks.tsify-mcp-inspect]
-run = "cd packages/core && npx @modelcontextprotocol/inspector bun ./src/cli.ts mcp"
+run = "cd packages/core && bunx @modelcontextprotocol/inspector bun ./src/cli.ts mcp"
