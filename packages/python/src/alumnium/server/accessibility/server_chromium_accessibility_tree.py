@@ -52,7 +52,7 @@ class ServerChromiumAccessibilityTree(BaseServerAccessibilityTree):
         node = {
             "id": simplified_id,
             "role": {"value": elem.tag},
-            "ignored": elem.get("ignored", "False") == "True",
+            "ignored": elem.get("ignored", "false") == "true",
         }
 
         # Add name if present

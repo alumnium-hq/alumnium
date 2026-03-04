@@ -86,7 +86,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         if "nodeId" in node:
             elem.set("nodeId", str(node["nodeId"]))
         if "ignored" in node:
-            elem.set("ignored", str(node["ignored"]))
+            elem.set("ignored", self._to_str(node["ignored"]))
 
         # Store locator info for Playwright nodes (used for cross-origin iframes)
         if "_playwright_node" in node:
@@ -109,12 +109,12 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
                 prop_name = prop.get("name", "")
                 prop_value = prop.get("value", {})
                 if isinstance(prop_value, dict) and "value" in prop_value:
-                    elem.set(prop_name, str(prop_value["value"]))
+                    elem.set(prop_name, self._to_str(prop_value["value"]))
                 elif isinstance(prop_value, dict):
                     # Complex property values (like nodeList) are converted to empty string
                     elem.set(prop_name, "")
                 else:
-                    elem.set(prop_name, str(prop_value))
+                    elem.set(prop_name, self._to_str(prop_value))
 
         # Process children recursively
         if "childIds" in node:
@@ -131,6 +131,12 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
                 elem.append(child_elem)
 
         return elem
+
+    def _to_str(self, value) -> str:
+        """Convert a value to string, normalizing booleans to lowercase."""
+        if isinstance(value, bool):
+            return "true" if value else "false"
+        return str(value)
 
     def element_by_id(self, raw_id: int) -> AccessibilityElement:
         """
