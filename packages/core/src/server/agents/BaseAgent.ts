@@ -1,4 +1,3 @@
-import { BaseMessage } from "@langchain/core/messages";
 import { Runnable, RunnableConfig } from "@langchain/core/runnables";
 import { Logger } from "@logtape/logtape";
 import { always } from "alwaysly";
@@ -25,6 +24,39 @@ const logger = getLogger(import.meta.url);
 
 export class BaseAgentDebugLogDetail {
   constructor(public payload: unknown) {}
+}
+
+export namespace BaseAgentResponse {
+  export interface Props {
+    content: string;
+    reasoning: string | null;
+    structured: unknown;
+    toolCalls: Array<{ name: string; args: Record<string, unknown> }>;
+    usage: Partial<Usage>;
+  }
+}
+
+/**
+ * Common interface for LLM chain responses.
+ *
+ * Normalizes responses across providers (Anthropic, OpenAI, Google, etc.)
+ * into a single structure with content, reasoning, structured output, and
+ * tool calls.
+ */
+export class BaseAgentResponse {
+  content: string;
+  reasoning: string | null;
+  structured: unknown;
+  toolCalls: Array<{ name: string; args: Record<string, unknown> }>;
+  usage: Usage;
+
+  constructor(props: BaseAgentResponse.Props) {
+    this.content = props.content ?? "";
+    this.reasoning = props.reasoning ?? null;
+    this.structured = props.structured ?? null;
+    this.toolCalls = props.toolCalls ?? [];
+    this.usage = { ...Agent.createUsage(), ...props.usage };
+  }
 }
 
 export namespace BaseAgent {
@@ -107,45 +139,102 @@ export class BaseAgent {
     chain: Runnable<RunInput, RunOutput, CallOptions>,
     input: RunInput,
     options?: Partial<CallOptions>,
-  ) {
+  ): Promise<BaseAgentResponse> {
     const result = await chain.invoke(input, options);
-    let content: unknown;
+
+    let message: any;
+    let structured: unknown = null;
     if (typeof result === "object" && result && "raw" in result) {
-      const raw = result.raw as any;
-      content = raw.content;
-      this.#updateUsage(raw.usage_metadata);
+      message = result.raw;
+      structured = (result as any).parsed;
     } else {
-      content = (result as any).content;
-      this.#updateUsage((result as any).usage_metadata);
+      message = result;
     }
 
-    if (Array.isArray(content) && content[0]) {
-      if ("reasoning_content" in content[0]) {
-        // Anthropic reasoning
-        logger.info(`  <- Reasoning: ${content[0]["reasoning_content"]}`);
-      } else if ("summary" in content[0]) {
-        // OpenAI reasoning
-        for (const summary of content[0]["summary"]) {
-          logger.info(`  <- Reasoning: ${summary["text"]}`);
-        }
-      } else if ("thinking" in content[0]) {
-        // Google reasoning
-        logger.info(`  <- Reasoning: ${content[0]["thinking"]}`);
-      }
+    const reasoning = this.#extractReasoning(message.content);
+    if (reasoning) {
+      logger.info(this.formatLog("out", "Reasoning"), { detail: reasoning });
     }
 
-    return result;
+    const usage: Partial<Usage> = {};
+    if (message.usage_metadata) {
+      this.#updateUsage(message.usage_metadata);
+      usage.input_tokens = message.usage_metadata.input_tokens ?? 0;
+      usage.output_tokens = message.usage_metadata.output_tokens ?? 0;
+      usage.total_tokens = message.usage_metadata.total_tokens ?? 0;
+    }
+
+    return new BaseAgentResponse({
+      content: this.#extractText(message.content),
+      reasoning,
+      structured,
+      toolCalls: message.tool_calls ?? [],
+      usage,
+    });
   }
 
-  #updateUsage(usage: Partial<Usage> | undefined | null) {
-    if (!usage) return;
+  #extractReasoning(content: unknown): string | null {
+    if (!Array.isArray(content) || !content.length) {
+      return null;
+    }
+
+    const first = content[0];
+    if (!first || typeof first !== "object") {
+      return null;
+    }
+
+    if ("reasoning_content" in first) {
+      // Anthropic
+      return String(first["reasoning_content"]);
+    } else if ("summary" in first && Array.isArray(first["summary"])) {
+      // OpenAI
+      return first["summary"]
+        .map((entry) => {
+          if (typeof entry === "object" && entry && "text" in entry) {
+            return String(entry["text"]);
+          }
+          return "";
+        })
+        .join(" ");
+    } else if ("thinking" in first) {
+      // Google
+      return String(first["thinking"]);
+    }
+
+    return null;
+  }
+
+  #extractText(content: unknown): string {
+    if (typeof content === "string") {
+      return content;
+    }
+
+    if (Array.isArray(content)) {
+      const texts: string[] = [];
+      for (const block of content) {
+        if (typeof block === "string") {
+          texts.push(block);
+        } else if (
+          typeof block === "object" &&
+          block &&
+          "type" in block &&
+          block.type === "text" &&
+          "text" in block
+        ) {
+          texts.push(String(block.text ?? ""));
+        }
+      }
+
+      return texts.join("");
+    }
+
+    return String(content);
+  }
+
+  #updateUsage(usage: Partial<Usage>) {
     this.#usage.input_tokens += usage.input_tokens ?? 0;
     this.#usage.output_tokens += usage.output_tokens ?? 0;
     this.#usage.total_tokens += usage.total_tokens ?? 0;
-  }
-
-  protected static getMessageUsage(message: BaseMessage) {
-    return "usage_metadata" in message && message.usage_metadata;
   }
 
   protected formatLog(dir: BaseAgent.LogDir, topic: string) {

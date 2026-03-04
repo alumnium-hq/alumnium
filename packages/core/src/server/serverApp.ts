@@ -1,5 +1,4 @@
 import { cors } from "@elysiajs/cors";
-import { always } from "alwaysly";
 import { Elysia } from "elysia";
 import { Model } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
@@ -115,6 +114,13 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { session } = ctx;
 
                 try {
+                  if (!session.planner) {
+                    return {
+                      explanation: ctx.body.goal,
+                      steps: [ctx.body.goal],
+                    };
+                  }
+
                   const accessibilityTree = session.processTree(
                     ctx.body.accessibility_tree,
                   );
@@ -154,16 +160,14 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const accessibilityTree = await session.processTree(
                   ctx.body.accessibility_tree,
                 );
-                const actions = await session.actorAgent.invoke(
+                const [explanation, actions] = await session.actorAgent.invoke(
                   ctx.body.goal,
                   ctx.body.step,
                   accessibilityTree.toXml(),
                 );
-                // TODO: Since invoke can return undefined, we need to assert.
-                // It might be solved with proper agent types in the future.
-                always(actions);
                 return {
-                  actions,
+                  explanation,
+                  actions: accessibilityTree.mapToolCallsToRawId(actions),
                 };
               },
               {

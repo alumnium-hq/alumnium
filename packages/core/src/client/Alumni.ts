@@ -3,6 +3,7 @@ import { always } from "alwaysly";
 import type { Page } from "playwright-core";
 import { WebDriver } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
+import { Client } from "../clients/Client.js";
 import { HttpClient } from "../clients/HttpClient.js";
 import { NativeClient } from "../clients/NativeClient.js";
 import { Data } from "../clients/typecasting.js";
@@ -15,7 +16,7 @@ import {
 } from "../drivers/index.js";
 import { Model } from "../Model.js";
 import { UsageStats } from "../server/serverSchema.js";
-import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
+import { BaseTool, ToolClass } from "../tools/BaseTool.js";
 import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
 import { Area } from "./Area.js";
@@ -26,7 +27,7 @@ import { DoResult, DoStep } from "./result.js";
 const logger = getLogger(import.meta.url);
 const changeAnalysis =
   (process.env.ALUMNIUM_CHANGE_ANALYSIS || "false").toLowerCase() === "true";
-const planner =
+const PLANNER =
   (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
 const excludedAttributes = new Set(
   (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "").split(",").filter(Boolean),
@@ -37,7 +38,7 @@ export interface AlumniOptions {
   model?: Model;
   llm?: BaseChatModel;
   extraTools?: ToolClass[];
-  planner?: boolean;
+  planner?: boolean | undefined;
   changeAnalysis?: boolean;
   excludedAttributes?: Set<string>;
 }
@@ -48,7 +49,7 @@ export interface VisionOptions {
 
 export class Alumni {
   public driver: BaseDriver;
-  client: HttpClient | NativeClient;
+  client: Client;
 
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
@@ -85,6 +86,8 @@ export class Alumni {
       this.tools[tool.name] = tool;
     }
 
+    const planner = options.planner ?? PLANNER;
+
     if (this.url) {
       logger.info(`Using HTTP client with server: ${this.url}`);
       this.client = new HttpClient(
@@ -92,7 +95,7 @@ export class Alumni {
         this.model,
         this.driver.platform,
         this.tools,
-        options.planner ?? planner,
+        planner,
         options.excludedAttributes ?? excludedAttributes,
       );
     } else {
@@ -102,8 +105,8 @@ export class Alumni {
         this.driver.platform,
         this.tools,
         this.llm,
-        // TODO: Add planner option & excludedAttributes to NativeClient
-        // options.planner ?? planner,
+        planner,
+        // TODO: Add  excludedAttributes to NativeClient
         // options.excludedAttributes ?? excludedAttributes,
       );
     }
@@ -143,8 +146,6 @@ export class Alumni {
         idx === 0
           ? initialAccessibilityTree
           : await this.driver.getAccessibilityTree();
-      // @ts-expect-error -- TODO: NativeClient lacks plannerless feature
-      // support, port it!
       const { explanation: actorExplanation, actions } =
         await this.client.executeAction(
           goal,
@@ -161,7 +162,7 @@ export class Alumni {
       const calledTools: string[] = [];
       for (const toolCall of actions) {
         const calledTool = await BaseTool.executeToolCall(
-          toolCall as ToolCall,
+          toolCall,
           this.tools,
           this.driver,
         );

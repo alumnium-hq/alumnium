@@ -130,6 +130,7 @@ class Session:
             # "llm" is omitted even though it is passed in the constructor, as
             # 1) it's external and may not be serializable, and 2) in HTTP API
             # where sessions are exchanged, llm is never passed as a param.
+            "planner": self.planner,
             "actor_agent": self.actor_agent.to_state(),
             "planner_agent": self.planner_agent.to_state(),
             "retriever_agent": self.retriever_agent.to_state(),
@@ -147,6 +148,7 @@ class Session:
             platform=state["platform"],
             tool_schemas=state["tools"],
             # llm is not never in state, see note in to_state.
+            planner=state["planner"],
         )
 
         session.actor_agent.apply_state(state["actor_agent"])

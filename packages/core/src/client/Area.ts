@@ -1,9 +1,8 @@
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
-import type { HttpClient } from "../clients/HttpClient.js";
-import type { NativeClient } from "../clients/NativeClient.js";
+import { Client } from "../clients/Client.js";
 import { Data } from "../clients/typecasting.js";
 import { BaseDriver, Element } from "../drivers/index.js";
-import { BaseTool, ToolCall, ToolClass } from "../tools/BaseTool.js";
+import { BaseTool, ToolClass } from "../tools/BaseTool.js";
 import { retry } from "../utils/retry.js";
 import { type VisionOptions } from "./Alumni.js";
 import { AssertionError } from "./errors/AssertionError.js";
@@ -15,7 +14,7 @@ export class Area {
   private accessibilityTree: BaseAccessibilityTree;
   private driver: BaseDriver;
   private tools: Record<string, ToolClass>;
-  private client: HttpClient | NativeClient;
+  private client: Client;
 
   constructor(
     id: number,
@@ -23,7 +22,7 @@ export class Area {
     accessibilityTree: BaseAccessibilityTree,
     driver: BaseDriver,
     tools: Record<string, ToolClass>,
-    client: HttpClient | NativeClient,
+    client: Client,
   ) {
     this.id = id;
     this.description = description;
@@ -61,7 +60,7 @@ export class Area {
       const calledTools: string[] = [];
       for (const toolCall of actions) {
         const calledTool = await BaseTool.executeToolCall(
-          toolCall as ToolCall,
+          toolCall,
           this.tools,
           this.driver,
         );

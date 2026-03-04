@@ -10,11 +10,12 @@ import { SessionManager } from "../server/session/SessionManager.js";
 import { ToolClass } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
+import { Client } from "./Client.js";
 import { Data, looselyTypecast } from "./typecasting.js";
 
 const logger = getLogger(import.meta.url);
 
-export class NativeClient {
+export class NativeClient implements Client {
   private sessionManager: SessionManager;
   private model: Model;
   private tools: Record<string, ToolClass>;
@@ -26,6 +27,7 @@ export class NativeClient {
     platform: string,
     tools: Record<string, ToolClass>,
     llm?: BaseChatModel,
+    planner: boolean = true,
   ) {
     this.sessionManager = new SessionManager();
     this.model = model;
@@ -39,6 +41,7 @@ export class NativeClient {
       tools: toolSchemas as ToolDefinition[],
       platform: platform as SessionManager.CreateSessionProps["platform"],
       llm,
+      planner,
     });
 
     const session = this.sessionManager.getSession(this.sessionId);
@@ -58,7 +61,11 @@ export class NativeClient {
   async planActions(
     goal: string,
     accessibilityTree: string,
-  ): Promise<{ explanation: string; steps: string[] }> {
+  ): Promise<Client.PlanActionsResult> {
+    if (!this.session.planner) {
+      return { explanation: goal, steps: [goal] };
+    }
+
     const tree = this.session.processTree(accessibilityTree);
     const [explanation, steps] = await this.session.plannerAgent.invoke(
       goal,
@@ -82,15 +89,17 @@ export class NativeClient {
     goal: string,
     step: string,
     accessibilityTree: string,
-  ): Promise<Array<{ name: string; args: Record<string, unknown> }>> {
+  ): Promise<Client.ExecuteActionResult> {
     const tree = this.session.processTree(accessibilityTree);
-    const actions = await this.session.actorAgent.invoke(
+    const [explanation, actions] = await this.session.actorAgent.invoke(
       goal,
       step,
       tree.toXml(),
     );
-    always(actions);
-    return tree.mapToolCallsToRawId(actions);
+    return {
+      explanation,
+      actions: tree.mapToolCallsToRawId(actions),
+    };
   }
 
   async retrieve(
@@ -114,7 +123,7 @@ export class NativeClient {
   async findArea(
     description: string,
     accessibilityTree: string,
-  ): Promise<{ id: number; explanation: string }> {
+  ): Promise<Client.FindAreaResult> {
     const tree = this.session.processTree(accessibilityTree);
     const area = await this.session.areaAgent.invoke(description, tree.toXml());
     return { id: tree.getRawId(area.id), explanation: area.explanation };
@@ -123,7 +132,7 @@ export class NativeClient {
   async findElement(
     description: string,
     accessibilityTree: string,
-  ): Promise<{ id: number; explanation: string } | undefined> {
+  ): Promise<Client.FindElementResult | undefined> {
     const tree = this.session.processTree(accessibilityTree);
     const element = (
       await this.session.locatorAgent.invoke(description, tree.toXml())
