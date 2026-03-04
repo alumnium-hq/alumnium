@@ -30,7 +30,7 @@ export const waitMcpTool = McpTool.define("wait", {
     timeout: z
       .number()
       .int()
-      .default(10)
+      .optional()
       .describe("Max seconds to wait for condition (default: 10, string only)"),
   }),
 
