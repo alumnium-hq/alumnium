@@ -21,7 +21,7 @@ let configured = false;
 function configureLogging(): void {
   // TODO: Parse with Zod and warn if invalid.
   const lowestLevel =
-    (process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase() as LogLevel) || "warning";
+    (process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase() as LogLevel) || "info";
 
   const logPath = process.env.ALUMNIUM_LOG_PATH;
   if (logPath) {
