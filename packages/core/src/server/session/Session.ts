@@ -33,6 +33,7 @@ export class Session {
   tools: ToolDefinition[];
   llm: BaseChatModel;
   cache: NullCache;
+  planner: boolean;
 
   actorAgent: ActorAgent;
   plannerAgent: PlannerAgent;
@@ -47,6 +48,7 @@ export class Session {
     this.model = model;
     this.platform = platform;
     this.tools = tools;
+    this.planner = props.planner ?? true;
 
     this.cache = CacheFactory.createCache();
     this.llm = props.llm ?? LLMFactory.createLlm(this.model);
@@ -132,6 +134,7 @@ export class Session {
       model: this.model.toState(),
       platform: this.platform,
       tools: this.tools,
+      planner: this.planner,
       // "llm" is omitted even though it is passed in the constructor, as
       // 1) it's external and may not be serializable, and 2) in HTTP API
       // where sessions are exchanged, llm is never passed as a param.
@@ -151,6 +154,7 @@ export class Session {
       model: Model.fromState(state["model"]),
       platform: state["platform"],
       tools: state["tools"],
+      planner: state["planner"],
       // llm is not never in state, see note in to_state.
     });
 
@@ -174,6 +178,7 @@ export namespace Session {
     platform: Platform;
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
+    planner?: boolean | undefined;
   }
 
   export const Id = z.custom<SessionId>((val) => typeof val === "string", {
@@ -185,6 +190,7 @@ export namespace Session {
     model: Model.Schema,
     platform: Platform,
     tools: z.array(z.custom<ToolDefinition>()),
+    planner: z.boolean(),
     actor_agent: Agent.State,
     planner_agent: PlannerAgent.State,
     retriever_agent: Agent.State,

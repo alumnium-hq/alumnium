@@ -53,7 +53,6 @@ export class Model {
       Provider.OPENAI;
 
     this.name = name || ModelName.DEFAULT[this.provider];
-    logger.debug(`Using model ${this.provider}/${this.name}`);
   }
 
   private static initialize() {
@@ -65,7 +64,9 @@ export class Model {
       name = ModelName.DEFAULT[Provider.GITHUB];
     }
 
-    return new Model(provider, name);
+    const model = new Model(provider, name);
+    logger.debug(`Initialized current model ${model.provider}/${model.name}`);
+    return model;
   }
 
   toString() {
