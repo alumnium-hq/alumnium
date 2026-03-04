@@ -6,4 +6,5 @@ export interface DoStep {
 export interface DoResult {
   explanation: string;
   steps: DoStep[];
+  changes: string;
 }

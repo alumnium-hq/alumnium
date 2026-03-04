@@ -71,7 +71,7 @@ export class Area {
       executedSteps.push({ name: step, tools: calledTools });
     }
 
-    return { explanation: finalExplanation, steps: executedSteps };
+    return { explanation: finalExplanation, steps: executedSteps, changes: "" };
   }
 
   @retry()
