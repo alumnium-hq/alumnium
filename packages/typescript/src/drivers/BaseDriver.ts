@@ -16,6 +16,7 @@ export abstract class BaseDriver {
   abstract title(): string | Promise<string>;
   abstract type(id: number, text: string): void | Promise<void>;
   abstract url(): string | Promise<string>;
+  abstract app(): string | Promise<string>;
   abstract findElement(id: number): Element | Promise<Element>;
   abstract visit(url: string): void | Promise<void>;
   abstract scrollTo(id: number): void | Promise<void>;

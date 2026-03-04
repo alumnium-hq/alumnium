@@ -105,12 +105,14 @@ export class HttpClient {
 
   async planActions(
     goal: string,
-    accessibilityTree: string
+    accessibilityTree: string,
+    app: string = "unknown"
   ): Promise<{ explanation: string; steps: string[] }> {
     await this.ensureSession();
     const requestBody: PlanRequest = {
       goal,
       accessibility_tree: accessibilityTree,
+      app,
     };
     const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/plans`,
@@ -158,13 +160,15 @@ export class HttpClient {
   async executeAction(
     goal: string,
     step: string,
-    accessibilityTree: string
+    accessibilityTree: string,
+    app: string = "unknown"
   ): Promise<{ explanation: string; actions: StepResponse["actions"] }> {
     await this.ensureSession();
     const requestBody: StepRequest = {
       goal,
       step,
       accessibility_tree: accessibilityTree,
+      app,
     };
     const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/steps`,
@@ -189,7 +193,8 @@ export class HttpClient {
     accessibilityTree: string,
     title: string,
     url: string,
-    screenshot?: string
+    screenshot?: string,
+    app: string = "unknown"
   ): Promise<[string, Data]> {
     await this.ensureSession();
     const requestBody: StatementRequest = {
@@ -198,6 +203,7 @@ export class HttpClient {
       title,
       url,
       screenshot: screenshot || null,
+      app,
     };
     const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/statements`,
@@ -216,12 +222,14 @@ export class HttpClient {
 
   async findArea(
     description: string,
-    accessibilityTree: string
+    accessibilityTree: string,
+    app: string = "unknown"
   ): Promise<{ id: number; explanation: string }> {
     await this.ensureSession();
     const requestBody: AreaRequest = {
       description,
       accessibility_tree: accessibilityTree,
+      app,
     };
     const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/areas`,
@@ -240,12 +248,14 @@ export class HttpClient {
 
   async findElement(
     description: string,
-    accessibilityTree: string
+    accessibilityTree: string,
+    app: string = "unknown"
   ): Promise<FindResponse["elements"][0]> {
     await this.ensureSession();
     const requestBody: FindRequest = {
       description,
       accessibility_tree: accessibilityTree,
+      app,
     };
     const response = await this.fetchWithTimeout(
       `${this.baseUrl}/v1/sessions/${this.sessionId}/elements`,

@@ -2,6 +2,7 @@ from base64 import b64encode
 from contextlib import contextmanager
 from os import getenv
 from pathlib import Path
+from urllib.parse import urlparse
 
 from playwright.sync_api import Error, Frame, Locator, Page, TimeoutError
 
@@ -197,6 +198,10 @@ class PlaywrightDriver(BaseDriver):
     @property
     def url(self) -> str:
         return self.page.url
+
+    @property
+    def app(self) -> str:
+        return urlparse(self.page.url).hostname or "unknown"
 
     def find_element(self, id: int) -> Locator:
         accessibility_element = self.accessibility_tree.element_by_id(id)

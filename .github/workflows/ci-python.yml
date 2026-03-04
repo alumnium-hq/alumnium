@@ -74,11 +74,9 @@ jobs:
         run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - uses: actions/cache@v4
         with:
-          path: |
-            packages/python/.alumnium-cache.sqlite
-            packages/python/.alumnium/cache/
-          key: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
-          restore-keys: alumnium-cache-python-${{ matrix.driver }}-${{ matrix.model }}-
+          path: packages/python/.alumnium/cache/
+          key: alumnium-cache-v2-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
+          restore-keys: alumnium-cache-v2-python-${{ matrix.driver }}-${{ matrix.model }}-
       - run: poetry poe examples-${{ matrix.driver }}
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3

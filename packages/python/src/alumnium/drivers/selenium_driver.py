@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Callable
+from urllib.parse import urlparse
 
 from retry import retry
 from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
@@ -417,6 +418,10 @@ class SeleniumDriver(BaseDriver):
     @property
     def url(self) -> str:
         return self.driver.current_url
+
+    @property
+    def app(self) -> str:
+        return urlparse(self.driver.current_url).hostname or "unknown"
 
     def find_element(self, id: int) -> WebElement:
         accessibility_element = self.accessibility_tree.element_by_id(id)

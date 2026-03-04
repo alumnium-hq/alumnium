@@ -126,6 +126,7 @@ async def plan_actions(session_id: str, request: PlanRequest):
         if not session.planner:
             return PlanResponse(explanation=request.goal, steps=[request.goal])
 
+        session.cache.app = request.app
         accessibility_tree = session.process_tree(request.accessibility_tree)
         explanation, steps = session.planner_agent.invoke(
             request.goal,
@@ -148,6 +149,7 @@ async def plan_step_actions(session_id: str, request: StepRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
+        session.cache.app = request.app
         accessibility_tree = session.process_tree(request.accessibility_tree)
         explanation, actions = session.actor_agent.invoke(
             request.goal, request.step, accessibility_tree.to_xml(exclude_attrs=session.excluded_attributes)
@@ -169,6 +171,7 @@ async def execute_statement(session_id: str, request: StatementRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
+        session.cache.app = request.app
         accessibility_tree = session.process_tree(request.accessibility_tree)
         explanation, value = session.retriever_agent.invoke(
             request.statement,
@@ -197,6 +200,7 @@ async def choose_area(session_id: str, request: AreaRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
+        session.cache.app = request.app
         accessibility_tree = session.process_tree(request.accessibility_tree)
         area = session.area_agent.invoke(
             request.description, accessibility_tree.to_xml(exclude_attrs=session.excluded_attributes)
@@ -239,6 +243,7 @@ async def find_element(session_id: str, request: FindRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
+        session.cache.app = request.app
         accessibility_tree = session.process_tree(request.accessibility_tree)
         elements = session.locator_agent.invoke(
             request.description, accessibility_tree.to_xml(exclude_attrs=session.excluded_attributes)
@@ -263,6 +268,7 @@ async def analyze_changes(session_id: str, request: ChangesRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
     try:
+        session.cache.app = request.app
         before_tree = session.process_tree(request.before.accessibility_tree)
         after_tree = session.process_tree(request.after.accessibility_tree)
         exclude_attrs = session.changes_analyzer_agent.EXCLUDED_ATTRIBUTES | session.excluded_attributes

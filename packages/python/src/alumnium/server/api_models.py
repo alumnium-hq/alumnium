@@ -26,6 +26,7 @@ class PlanRequest(VersionedModel):
     accessibility_tree: str
     url: str | None = None
     title: str | None = None
+    app: str = "unknown"
 
 
 class PlanResponse(VersionedModel):
@@ -37,6 +38,7 @@ class StepRequest(VersionedModel):
     goal: str
     step: str
     accessibility_tree: str
+    app: str = "unknown"
 
 
 class StepResponse(VersionedModel):
@@ -50,6 +52,7 @@ class StatementRequest(VersionedModel):
     url: str | None = None
     title: str | None = None
     screenshot: str | None = None  # base64 encoded image
+    app: str = "unknown"
 
 
 class StatementResponse(VersionedModel):
@@ -60,6 +63,7 @@ class StatementResponse(VersionedModel):
 class AreaRequest(VersionedModel):
     description: str
     accessibility_tree: str
+    app: str = "unknown"
 
 
 class AreaResponse(VersionedModel):
@@ -70,6 +74,7 @@ class AreaResponse(VersionedModel):
 class FindRequest(VersionedModel):
     description: str
     accessibility_tree: str
+    app: str = "unknown"
 
 
 class FindResponse(VersionedModel):
@@ -104,6 +109,7 @@ class ChangeState(VersionedModel):
 class ChangesRequest(VersionedModel):
     before: ChangeState
     after: ChangeState
+    app: str = "unknown"
 
 
 class ChangesResponse(VersionedModel):

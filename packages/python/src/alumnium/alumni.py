@@ -101,14 +101,15 @@ class Alumni:
         Returns:
             DoResult containing the explanation and executed steps with their actions.
         """
+        app = self.driver.app
         initial_accessibility_tree = self.driver.accessibility_tree
-        explanation, steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str())
+        explanation, steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str(), app=app)
 
         executed_steps = []
         for idx, step in enumerate(steps):
             # If the step is the first step, use the initial accessibility tree.
             accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
-            actor_explanation, actions = self.client.execute_action(goal, step, accessibility_tree.to_str())
+            actor_explanation, actions = self.client.execute_action(goal, step, accessibility_tree.to_str(), app=app)
 
             # When planner is off, explanation is just the goal — replace with actor's reasoning.
             if explanation == goal:
@@ -144,6 +145,7 @@ class Alumni:
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
+            app=self.driver.app,
         )
         assert value, explanation
         return explanation
@@ -166,6 +168,7 @@ class Alumni:
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
+            app=self.driver.app,
         )
         return explanation if value is None else value
 
@@ -180,7 +183,7 @@ class Alumni:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        response = self.client.find_element(description, self.driver.accessibility_tree.to_str())
+        response = self.client.find_element(description, self.driver.accessibility_tree.to_str(), app=self.driver.app)
         return self.driver.find_element(response["id"])
 
     def area(self, description: str) -> Area:
@@ -198,7 +201,7 @@ class Alumni:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
         accessibility_tree = self.driver.accessibility_tree
-        response = self.client.find_area(description, accessibility_tree.to_str())
+        response = self.client.find_area(description, accessibility_tree.to_str(), app=self.driver.app)
         return Area(
             id=response["id"],
             description=response["explanation"],

@@ -367,6 +367,14 @@ export class PlaywrightDriver extends BaseDriver {
     return Promise.resolve(this.page.url());
   }
 
+  app(): string {
+    try {
+      return new URL(this.page.url()).hostname || "unknown";
+    } catch {
+      return "unknown";
+    }
+  }
+
   async findElement(id: number): Promise<Locator> {
     const tree = await this.getAccessibilityTree();
     const accessibilityElement = tree.elementById(id);

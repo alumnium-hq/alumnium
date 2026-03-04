@@ -150,6 +150,7 @@ async def handle_do(args: dict[str, Any]) -> list[dict]:
                 before_url=before_url,
                 after_accessibility_tree=after_tree,
                 after_url=after_url,
+                app=al.driver.app,
             )
         except Exception as e:
             logger.error(f"Driver {driver_id}: Error analyzing changes: {e}")
