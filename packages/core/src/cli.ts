@@ -22,7 +22,7 @@ let command: Command;
 try {
   command = Command.parse(commandArg);
 } catch {
-  logger.error(`Incorrect command, use one of: mcp, server`);
+  logger.error(`Incorrect '${commandArg}' command, use one of: mcp, server`);
   process.exit(1);
 }
 
