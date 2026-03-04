@@ -6,6 +6,7 @@ opencode = "latest"
 [env]
 _.source = "scripts/env.sh"
 ALUMNIUM_MODEL = "azure_openai"
+ALUMNIUM_LOG_LEVEL = "debug"
 AZURE_OPENAI_API_VERSION = "2025-03-01-preview"
 OPENCODE_CONFIG_DIR = "./.agents"
 
@@ -14,7 +15,7 @@ lockfile = true
 idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
 
 [tasks.tsify-ts-server]
-run = "cd packages/core && fnox exec -- bun --watch ./src/cli.ts"
+run = "cd packages/core && fnox exec -- bun --watch ./src/cli.ts server"
 
 [tasks.tsify-test-playwright]
 run = "cd packages/typescript && bun run examples:playwright"

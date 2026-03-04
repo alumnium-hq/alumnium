@@ -1,4 +1,7 @@
 import z from "zod";
+import { getLogger } from "./utils/logger.js";
+
+const logger = getLogger(import.meta.url);
 
 export enum Provider {
   AZURE_FOUNDRY = "azure_foundry",
@@ -32,11 +35,16 @@ export class ModelName {
   };
 }
 
+let currentModel: Model | undefined;
+
 export class Model {
   provider: Provider;
   name: string;
 
-  static current: Model;
+  static get current(): Model {
+    if (!currentModel) currentModel = Model.initialize();
+    return currentModel;
+  }
 
   constructor(provider?: Provider | string, name?: string) {
     // Convert string to Provider enum if needed
@@ -45,9 +53,10 @@ export class Model {
       Provider.OPENAI;
 
     this.name = name || ModelName.DEFAULT[this.provider];
+    logger.debug(`Using model ${this.provider}/${this.name}`);
   }
 
-  static initialize() {
+  private static initialize() {
     const alumniumModel = process.env.ALUMNIUM_MODEL || "";
     let [provider, name] = alumniumModel.toLowerCase().split("/");
 
@@ -56,7 +65,7 @@ export class Model {
       name = ModelName.DEFAULT[Provider.GITHUB];
     }
 
-    Model.current = new Model(provider, name);
+    return new Model(provider, name);
   }
 
   toString() {
@@ -100,6 +109,3 @@ export const DEVS = [
   "xai",
   "openai",
 ] as const;
-
-// Initialize on module load
-Model.initialize();
