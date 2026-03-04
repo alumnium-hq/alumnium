@@ -29,3 +29,6 @@
 
 # Cache
 **/.alumnium/cache/**/*
+
+# Temporary files
+tmp/
