@@ -351,12 +351,14 @@ class ElementsCache(BaseCache):
             result = {}
 
             # Extract goal
-            # Actor format: "Goal: <goal>"
+            # Actor format: "Goal: <goal>\nStep: ..."
             if "Goal:" in human_message:
                 goal_start = human_message.find("Goal:") + 5
-                goal_end = human_message.find("\n", goal_start)
-                if goal_end == -1:
-                    goal_end = len(human_message)
+                # Goal may be multi-line; it ends at the next known section header
+                next_section = human_message.find("\nStep:", goal_start)
+                if next_section == -1:
+                    next_section = human_message.find("\nWebpage", goal_start)
+                goal_end = next_section if next_section != -1 else len(human_message)
                 result["goal"] = human_message[goal_start:goal_end].strip()
             # Planner format: "Outline the actions needed to achieve the following goal: <goal>"
             elif "achieve the following goal:" in human_message:
@@ -379,10 +381,13 @@ class ElementsCache(BaseCache):
                 if tree_end != -1:
                     result["accessibility_tree"] = human_message[tree_start:tree_end].strip()
 
-            return result if result else None
+            if not result:
+                logger.warning("Failed to parse prompt: no recognizable fields found. Cache lookup will be skipped.")
+                return None
+            return result
 
         except Exception as e:
-            logger.debug(f"Error parsing prompt: {e}")
+            logger.warning(f"Failed to parse prompt: {e}. Cache lookup will be skipped.")
             return None
 
     def _is_planner_prompt(self, parsed: dict) -> bool:

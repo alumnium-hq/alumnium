@@ -53,7 +53,7 @@ class ResponseCache(BaseCache):
                     self._update_usage(response.message.usage_metadata)
                     return [response]
         except Exception as e:
-            logger.fatal(f"Error occurred while looking up cache: {e}")
+            logger.warning(f"Error occurred while looking up cache: {e}")
 
         return None
 
