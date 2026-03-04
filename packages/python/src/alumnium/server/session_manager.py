@@ -25,6 +25,7 @@ class SessionManager:
         tools: List[Dict[str, Any]],
         llm: BaseChatModel | None = None,
         planner: bool = True,
+        excluded_attributes: set[str] | None = None,
     ) -> str:
         """Create a new session and return its ID.
         Args:
@@ -33,6 +34,7 @@ class SessionManager:
             platform: The platform type (chromium, xcuitest, uiautomator2)
             tools: List of LangChain tool schemas
             llm: Optional custom LangChain Chat model instance
+            excluded_attributes: Optional set of attribute names to exclude from accessibility tree XML
         Returns:
             Session ID string
         """
@@ -45,7 +47,13 @@ class SessionManager:
         tool_classes = convert_schemas_to_tools(tools)
 
         self.sessions[session_id] = Session(
-            session_id=session_id, model=model, platform=platform, tools=tool_classes, llm=llm, planner=planner
+            session_id=session_id,
+            model=model,
+            platform=platform,
+            tools=tool_classes,
+            llm=llm,
+            planner=planner,
+            excluded_attributes=excluded_attributes or set(),
         )
         logger.info(f"Created new session: {session_id}")
         return session_id

@@ -58,6 +58,11 @@ class BaseDriver(ABC):
     def url(self) -> str:
         pass
 
+    @property
+    @abstractmethod
+    def app(self) -> str:
+        pass
+
     @abstractmethod
     def find_element(self, id: int) -> Element:
         pass

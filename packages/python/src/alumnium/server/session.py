@@ -33,11 +33,13 @@ class Session:
         tools: dict[str, Any],
         llm: BaseChatModel | None = None,
         planner: bool = True,
+        excluded_attributes: set[str] | None = None,
     ):
         self.session_id = session_id
         self.model = model
         self.platform = platform
         self.planner = planner
+        self.excluded_attributes = excluded_attributes or set()
 
         self.cache = CacheFactory.create_cache()
         if llm is not None:

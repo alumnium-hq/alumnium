@@ -47,6 +47,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
     # Extract alumnium:options for Alumnium driver configuration
     alumnium_options = capabilities.pop("alumnium:options", {})
     driver_settings = alumnium_options.get("driverSettings", {})
+    excluded_attributes = set(alumnium_options.get("excludedAttributes", []))
 
     # Generate driver ID from current directory and timestamp
     cwd_name = os.path.basename(os.getcwd())
@@ -86,6 +87,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             SwitchToPreviousTabTool,
         ],
         planner=alumnium_options.get("planner", None),
+        excluded_attributes=excluded_attributes or None,
     )
 
     # Apply driver options to Alumnium driver
@@ -196,7 +198,12 @@ async def handle_fetch_accessibility_tree(args: dict[str, Any]) -> list[dict]:
     client: NativeClient = al.client  # type: ignore
     tree = client.session.process_tree(al.driver.accessibility_tree.to_str())  # type: ignore
 
-    return [{"type": "text", "text": f"Accessibility Tree:\n{tree.to_xml()}"}]
+    return [
+        {
+            "type": "text",
+            "text": f"Accessibility Tree:\n{tree.to_xml(exclude_attrs=client.session.excluded_attributes)}",
+        }
+    ]
 
 
 async def handle_stop_driver(args: dict[str, Any]) -> list[dict]:

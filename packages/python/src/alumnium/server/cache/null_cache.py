@@ -10,6 +10,7 @@ logger = get_logger(__name__)
 class NullCache(BaseCache):
     def __init__(self):
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
+        self.app = ""
 
     def lookup(self, prompt: str, llm_string: str) -> Optional[RETURN_VAL_TYPE]:
         return None

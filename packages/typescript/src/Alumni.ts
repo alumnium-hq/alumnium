@@ -22,6 +22,9 @@ const changeAnalysis =
   (process.env.ALUMNIUM_CHANGE_ANALYSIS || "false").toLowerCase() === "true";
 const planner =
   (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
+const excludedAttributes = new Set(
+  (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "").split(",").filter(Boolean)
+);
 
 export interface AlumniOptions {
   url?: string;
@@ -29,6 +32,7 @@ export interface AlumniOptions {
   extraTools?: ToolClass[];
   planner?: boolean;
   changeAnalysis?: boolean;
+  excludedAttributes?: Set<string>;
 }
 
 export interface VisionOptions {
@@ -78,7 +82,8 @@ export class Alumni {
       this.model,
       this.driver.platform,
       this.tools,
-      options.planner ?? planner
+      options.planner ?? planner,
+      options.excludedAttributes ?? excludedAttributes
     );
     this.cache = new Cache(this.client);
 
@@ -93,6 +98,7 @@ export class Alumni {
 
   @retry()
   async do(goal: string): Promise<DoResult> {
+    const app = await this.driver.app();
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
     const beforeTree = this.changeAnalysis
       ? initialAccessibilityTree.toStr()
@@ -100,7 +106,8 @@ export class Alumni {
     const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
     const { explanation, steps } = await this.client.planActions(
       goal,
-      initialAccessibilityTree.toStr()
+      initialAccessibilityTree.toStr(),
+      app
     );
 
     let finalExplanation = explanation;
@@ -114,7 +121,12 @@ export class Alumni {
           ? initialAccessibilityTree
           : await this.driver.getAccessibilityTree();
       const { explanation: actorExplanation, actions } =
-        await this.client.executeAction(goal, step, accessibilityTree.toStr());
+        await this.client.executeAction(
+          goal,
+          step,
+          accessibilityTree.toStr(),
+          app
+        );
 
       // When planner is off, explanation is just the goal — replace with actor's reasoning.
       if (finalExplanation === goal) {
@@ -158,7 +170,8 @@ export class Alumni {
       accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
+      await this.driver.app()
     );
 
     if (!value) {
@@ -179,7 +192,8 @@ export class Alumni {
       accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot
+      screenshot,
+      await this.driver.app()
     );
 
     return value === null ? explanation : value;
@@ -190,7 +204,8 @@ export class Alumni {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findElement(
       description,
-      accessibilityTree.toStr()
+      accessibilityTree.toStr(),
+      await this.driver.app()
     );
     return this.driver.findElement(response.id as number);
   }
@@ -199,7 +214,8 @@ export class Alumni {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findArea(
       description,
-      accessibilityTree.toStr()
+      accessibilityTree.toStr(),
+      await this.driver.app()
     );
     const scopedTree = accessibilityTree.scopeToArea(response.id);
     return new Area(

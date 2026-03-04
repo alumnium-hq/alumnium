@@ -1,5 +1,4 @@
 import json
-import os
 import shutil
 from pathlib import Path
 from typing import Any
@@ -15,23 +14,32 @@ from ..models import Model
 logger = get_logger(__name__)
 
 
-class FilesystemCache(BaseCache):
+class ResponseCache(BaseCache):
     def __init__(self, cache_dir: str = ".alumnium/cache"):
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.usage = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}
-        # Each (llm_string, hashed_request) pair is cached in memory
-        # as (response, save) where `save` means it should be saved to filesystem.
-        self._in_memory_cache: dict[tuple[str, str], tuple[RETURN_VAL_TYPE, bool]] = {}
+        self._app: str = "unknown"
+        # Each (llm_string, hashed_request, app) triple is cached in memory
+        # as (response, prompt, app, save) where `save` means it should be saved to filesystem.
+        self._in_memory_cache: dict[tuple[str, str, str], tuple[RETURN_VAL_TYPE, str, str, bool]] = {}
+
+    @property
+    def app(self) -> str:
+        return self._app
+
+    @app.setter
+    def app(self, value: str) -> None:
+        self._app = value
 
     def lookup(self, prompt: str, llm_string: str) -> RETURN_VAL_TYPE | None:
         try:
             system_message, human_message = self._extract_messages(prompt)
             hashed_request = self._hash_request(system_message, human_message, llm_string)
 
-            if (llm_string, hashed_request) in self._in_memory_cache:
+            if (llm_string, hashed_request, self._app) in self._in_memory_cache:
                 logger.debug(f"Cache hit (in-memory) for message: {human_message[:100]}...")
-                return_val, _ = self._in_memory_cache[(llm_string, hashed_request)]
+                return_val, _, _, _ = self._in_memory_cache[(llm_string, hashed_request, self._app)]
                 self._update_usage(return_val[0].message.usage_metadata)
                 return return_val
 
@@ -41,46 +49,50 @@ class FilesystemCache(BaseCache):
                 logger.debug(f"Cache hit (file) for message: {human_message[:100]}...")
                 with open(response_file, "r") as f:
                     response = loads(f.read())
-                    self._in_memory_cache[(llm_string, hashed_request)] = ([response], False)
+                    self._in_memory_cache[(llm_string, hashed_request, self._app)] = ([response], "", self._app, False)
                     self._update_usage(response.message.usage_metadata)
                     return [response]
         except Exception as e:
-            logger.fatal(f"Error occurred while looking up cache: {e}")
+            logger.warning(f"Error occurred while looking up cache: {e}")
 
         return None
 
     def update(self, prompt: str, llm_string: str, return_val: RETURN_VAL_TYPE):
         system_message, human_message = self._extract_messages(prompt)
         hashed_request = self._hash_request(system_message, human_message, llm_string)
-        self._in_memory_cache[(llm_string, hashed_request)] = (return_val, True)
+        self._in_memory_cache[(llm_string, hashed_request, self._app)] = (return_val, prompt, self._app, True)
 
     def save(self):
-        for (_, hashed_request), (return_val, save) in self._in_memory_cache.items():
+        for (_, hashed_request, _), (return_val, prompt, app, save) in self._in_memory_cache.items():
             if save:
-                cache_path = self._get_cache_path(hashed_request)
+                cache_path = self._get_cache_path(hashed_request, app=app)
                 cache_path.mkdir(parents=True, exist_ok=True)
                 lock_path = f"{cache_path}.lock"
                 lock = FileLock(lock_path, timeout=1)
                 try:
                     lock.acquire()
-                    response_file = cache_path / "response.json"
-                    with open(response_file, "w") as f:
+                    with open(cache_path / "response.json", "w") as f:
                         f.write(dumps(return_val[0], pretty=True))
+                    system_message, human_message = self._extract_messages(prompt)
+                    with open(cache_path / "request.json", "w") as f:
+                        json.dump({"system": system_message, "human": human_message}, f, indent=2)
                 finally:
                     lock.release()
                     # https://github.com/tox-dev/filelock/pull/408
-                    Path.unlink(Path(lock_path))
+                    Path(lock_path).unlink(missing_ok=True)
         self.discard()
 
     def discard(self):
         self._in_memory_cache.clear()
 
     def clear(self, **kwargs: Any):
-        for path in self.cache_dir.iterdir():
-            if path.is_dir():
-                shutil.rmtree(path)
-            else:
-                os.remove(path)
+        provider = Model.current.provider.value
+        model_name = Model.current.name
+        responses_dir = self.cache_dir / self._app / provider / model_name / "responses"
+        if not responses_dir.resolve().is_relative_to(self.cache_dir.resolve()):
+            raise ValueError(f"Cache path escapes cache_dir: {responses_dir}")
+        if responses_dir.exists():
+            shutil.rmtree(responses_dir)
         self.discard()
 
     def _extract_messages(self, prompt: str) -> tuple[str, str]:
@@ -112,10 +124,13 @@ class FilesystemCache(BaseCache):
         combined = f"{system_message}|{human_message}|{llm_string}"
         return xxh3_128_hexdigest(combined)
 
-    def _get_cache_path(self, hashed_request: str) -> Path:
+    def _get_cache_path(self, hashed_request: str, app: str | None = None) -> Path:
         provider = Model.current.provider.value
         model_name = Model.current.name
-        return self.cache_dir / provider / model_name / hashed_request
+        path = self.cache_dir / (app or self._app) / provider / model_name / "responses" / hashed_request
+        if not path.resolve().is_relative_to(self.cache_dir.resolve()):
+            raise ValueError(f"Cache path escapes cache_dir: {path}")
+        return path
 
     def _update_usage(self, usage_metadata: dict) -> None:
         self.usage["input_tokens"] += usage_metadata.get("input_tokens", 0)

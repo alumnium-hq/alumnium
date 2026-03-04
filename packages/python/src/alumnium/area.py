@@ -42,11 +42,13 @@ class Area:
         Returns:
             DoResult containing the explanation and executed steps with their actions.
         """
-        explanation, steps = self.client.plan_actions(goal, self.accessibility_tree.to_str())
+        explanation, steps = self.client.plan_actions(goal, self.accessibility_tree.to_str(), app=self.driver.app)
 
         executed_steps = []
         for step in steps:
-            actor_explanation, actions = self.client.execute_action(goal, step, self.accessibility_tree.to_str())
+            actor_explanation, actions = self.client.execute_action(
+                goal, step, self.accessibility_tree.to_str(), app=self.driver.app
+            )
 
             # When planner is off, explanation is just the goal — replace with actor's reasoning.
             if explanation == goal:
@@ -82,6 +84,7 @@ class Area:
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
+            app=self.driver.app,
         )
         assert value, explanation
         return explanation
@@ -104,6 +107,7 @@ class Area:
             title=self.driver.title,
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
+            app=self.driver.app,
         )
         return explanation if value is None else value
 
@@ -118,5 +122,5 @@ class Area:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
-        response = self.client.find_element(description, self.accessibility_tree.to_str())
+        response = self.client.find_element(description, self.accessibility_tree.to_str(), app=self.driver.app)
         return self.driver.find_element(response["id"])

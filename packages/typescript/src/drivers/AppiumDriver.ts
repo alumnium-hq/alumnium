@@ -142,6 +142,17 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
+  app(): string {
+    const caps = this.driver.capabilities as Record<string, unknown>;
+    return (
+      (caps["appium:appPackage"] as string | undefined) ||
+      (caps["appium:bundleId"] as string | undefined) ||
+      (caps["appPackage"] as string | undefined) ||
+      (caps["bundleId"] as string | undefined) ||
+      "unknown"
+    );
+  }
+
   async findElement(id: number): Promise<WebdriverIO.Element> {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);

@@ -24,6 +24,7 @@ class RetrievedInformation(BaseModel):
 
 
 class RetrieverAgent(BaseAgent):
+    EXCLUDED_ATTRIBUTES = {"id"}
     LIST_SEPARATOR = "<SEP>"
 
     def __init__(self, llm: BaseChatModel):
