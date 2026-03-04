@@ -67,7 +67,7 @@ jobs:
 
       - name: Install Playwright
         if: matrix.driver == 'playwright'
-        run: npx playwright install chromium
+        run: bunx playwright install chromium
 
       - name: Start server
         run: |
