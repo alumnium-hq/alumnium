@@ -43,7 +43,7 @@ export class AreaAgent extends BaseAgent {
       "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
     });
 
-    const message = await this.invokeChain(this.chain, [
+    const response = await this.invokeChain(this.chain, [
       ["system", this.prompts.system],
       [
         "user",
@@ -55,10 +55,13 @@ export class AreaAgent extends BaseAgent {
     ]);
 
     this.logData(logger, "out", {
-      Result: message.parsed,
-      Usage: BaseAgent.getMessageUsage(message.raw),
+      Result: response.structured,
+      Usage: response.usage,
     });
 
-    return message.parsed;
+    return {
+      id: (response.structured as Area).id,
+      explanation: (response.structured as Area).explanation,
+    };
   }
 }

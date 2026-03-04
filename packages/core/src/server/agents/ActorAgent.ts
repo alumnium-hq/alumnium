@@ -4,6 +4,7 @@ import { AIMessageChunk, MessageStructure } from "@langchain/core/messages";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
+import { ToolCall } from "../accessibility/BaseServerAccessibilityTree.js";
 import { getLogger } from "../../utils/logger.js";
 import { BaseAgent } from "./BaseAgent.js";
 
@@ -17,6 +18,8 @@ export namespace ActorAgent {
   }
 
   export type ChainOutput = AIMessageChunk<MessageStructure>;
+
+  export type InvokeResult = [string, ToolCall[]];
 }
 
 export class ActorAgent extends BaseAgent {
@@ -36,9 +39,13 @@ export class ActorAgent extends BaseAgent {
     this.chain = prompt.pipe(llm.bindTools(toolSchemas));
   }
 
-  async invoke(goal: string, step: string, accessibilityTreeXml: string) {
+  async invoke(
+    goal: string,
+    step: string,
+    accessibilityTreeXml: string,
+  ): Promise<ActorAgent.InvokeResult> {
     if (!step.trim()) {
-      return;
+      return ["", []];
     }
 
     logger.info("Starting action:");
@@ -48,18 +55,17 @@ export class ActorAgent extends BaseAgent {
       "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
     });
 
-    const message = await this.invokeChain(this.chain, {
+    const response = await this.invokeChain(this.chain, {
       goal,
       step,
       accessibility_tree: accessibilityTreeXml,
     });
 
     this.logData(logger, "out", {
-      Tools: message.tool_calls,
-      Usage: message.usage_metadata,
+      Tools: response.toolCalls,
+      Usage: response.usage,
     });
 
-    // Return tool calls for the client to execute
-    return message.tool_calls;
+    return [response.reasoning ?? "", response.toolCalls];
   }
 }

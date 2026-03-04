@@ -108,6 +108,7 @@ export namespace SessionManager {
     name?: string | undefined;
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
+    planner?: boolean | undefined;
     sessionId?: SessionId | undefined;
   }
 }
