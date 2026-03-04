@@ -84,14 +84,7 @@ export class LLMFactory {
     model: Model,
     defaults: Partial<AzureChatOpenAIFields>,
   ): AzureChatOpenAIFields {
-    const azureOpenAIEndpoint = process.env.AZURE_FOUNDRY_TARGET_URI;
-    const apiKey = process.env.AZURE_FOUNDRY_API_KEY;
     const openAIApiVersion = process.env.AZURE_FOUNDRY_API_VERSION;
-    if (!azureOpenAIEndpoint) {
-      throw new Error(
-        "AZURE_FOUNDRY_TARGET_URI environment variable is required for Azure Foundry models",
-      );
-    }
     if (!openAIApiVersion) {
       throw new Error(
         "AZURE_FOUNDRY_API_VERSION environment variable is required for Azure Foundry models",
@@ -99,9 +92,7 @@ export class LLMFactory {
     }
 
     return {
-      azureOpenAIEndpoint,
       azureOpenAIApiDeploymentName: model.name,
-      apiKey,
       openAIApiVersion,
       ...defaults,
     };
@@ -111,14 +102,27 @@ export class LLMFactory {
     model: Model,
     defaults: Partial<AzureChatOpenAIFields>,
   ): AzureChatOpenAIFields {
-    const openAIApiVersion = process.env.AZURE_OPENAI_API_VERSION;
-    if (!openAIApiVersion) {
+    const azureOpenAIApiKey = process.env.AZURE_OPENAI_API_KEY;
+    if (!azureOpenAIApiKey) {
+      throw new Error(
+        "AZURE_OPENAI_API_KEY environment variable is required for Azure OpenAI models",
+      );
+    }
+    const azureOpenAIEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    if (!azureOpenAIEndpoint) {
+      throw new Error(
+        "AZURE_OPENAI_ENDPOINT environment variable is required for Azure OpenAI models",
+      );
+    }
+
+    const azureOpenAIApiVersion = process.env.AZURE_OPENAI_API_VERSION;
+    if (!azureOpenAIApiVersion) {
       throw new Error(
         "AZURE_OPENAI_API_VERSION environment variable is required for Azure OpenAI models",
       );
     }
-    let defaultHeaders: Headers | undefined;
 
+    let defaultHeaders: Headers | undefined;
     const envHeaders = process.env.AZURE_OPENAI_DEFAULT_HEADERS;
     if (envHeaders) {
       try {
@@ -132,8 +136,17 @@ export class LLMFactory {
 
     return {
       model: model.name,
-      openAIApiVersion,
-      configuration: { defaultHeaders },
+      azureOpenAIApiKey,
+      azureOpenAIApiVersion,
+      // TODO: These configuration fields rely on LangChain JS SDK bug that
+      // prevents endpoints without specifying instance and deployment names.
+      // It has to be fixed or better replaced with a sane AI API client.
+      // See: https://github.com/langchain-ai/langchainjs/blob/main/libs/providers/langchain-openai/src/utils/azure.ts#L38-L79
+      azureOpenAIBasePath: azureOpenAIEndpoint,
+      azureOpenAIApiDeploymentName: "openai",
+      configuration: {
+        defaultHeaders,
+      },
       ...defaults,
     };
   }
