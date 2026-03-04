@@ -628,7 +628,7 @@ class TestPlannerCache:
         from xxhash import xxh3_128_hexdigest
 
         goal_hash = xxh3_128_hexdigest(goal)
-        mem_key = ("llm_string", goal_hash)
+        mem_key = ("llm_string", goal_hash, "example.com")
         assert mem_key in elements_cache._in_memory_cache
 
         masked_json, elements, agent_type, app, instruction, should_save = elements_cache._in_memory_cache[mem_key]
@@ -702,7 +702,7 @@ class TestActorCache:
         from xxhash import xxh3_128_hexdigest
 
         step_hash = xxh3_128_hexdigest(step)
-        mem_key = ("llm_string", step_hash)
+        mem_key = ("llm_string", step_hash, "example.com")
         assert mem_key in elements_cache._in_memory_cache
 
         masked_json, elements, agent_type, app, instruction, should_save = elements_cache._in_memory_cache[mem_key]
@@ -765,7 +765,7 @@ class TestActorCache:
         from xxhash import xxh3_128_hexdigest
 
         step_hash = xxh3_128_hexdigest(step)
-        mem_key = ("llm_string", step_hash)
+        mem_key = ("llm_string", step_hash, "example.com")
         assert mem_key in elements_cache._in_memory_cache
 
         _, elements, _, _, _, _ = elements_cache._in_memory_cache[mem_key]
