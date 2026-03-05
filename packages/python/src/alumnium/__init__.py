@@ -8,7 +8,7 @@ logger.addHandler(logging.NullHandler())
 
 CHANGE_ANALYSIS = getenv("ALUMNIUM_CHANGE_ANALYSIS", "false").lower() == "true"
 DELAY = float(getenv("ALUMNIUM_DELAY", 0.5))
-EXCLUDED_ATTRIBUTES = set(filter(None, getenv("ALUMNIUM_EXCLUDE_ATTRIBUTES", "").split(",")))
+EXCLUDE_ATTRIBUTES = set(filter(None, getenv("ALUMNIUM_EXCLUDE_ATTRIBUTES", "").split(",")))
 PLANNER = getenv("ALUMNIUM_PLANNER", "true").lower() == "true"
 RETRIES = int(getenv("ALUMNIUM_RETRIES", 2))
 

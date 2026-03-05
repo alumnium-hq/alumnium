@@ -3,6 +3,8 @@ import { Elysia } from "elysia";
 import { Model } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
 import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.js";
+import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.js";
+import { RetrieverAgent } from "./agents/RetrieverAgent.js";
 import * as s from "./serverSchema.js";
 import { SessionManager } from "./session/SessionManager.js";
 
@@ -127,7 +129,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   const [explanation, steps] =
                     await session.plannerAgent.invoke(
                       ctx.body.goal,
-                      accessibilityTree.toXml(),
+                      accessibilityTree.toXml(session.excludeAttributes),
                     );
                   return {
                     explanation,
@@ -163,7 +165,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const [explanation, actions] = await session.actorAgent.invoke(
                   ctx.body.goal,
                   ctx.body.step,
-                  accessibilityTree.toXml(),
+                  accessibilityTree.toXml(session.excludeAttributes),
                 );
                 return {
                   explanation,
@@ -232,7 +234,12 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const [explanation, value] =
                   await session.retrieverAgent.invoke(
                     ctx.body.statement,
-                    accessibilityTree.toXml(),
+                    accessibilityTree.toXml(
+                      new Set([
+                        ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
+                        ...session.excludeAttributes,
+                      ]),
+                    ),
                     ctx.body.title,
                     ctx.body.url,
                     ctx.body.screenshot,
@@ -260,7 +267,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { id: simplifiedId, explanation } =
                   await session.areaAgent.invoke(
                     ctx.body.description,
-                    accessibilityTree.toXml(),
+                    accessibilityTree.toXml(session.excludeAttributes),
                   );
                 const id = accessibilityTree.getRawId(simplifiedId);
                 return {
@@ -287,7 +294,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 );
                 const elements = await session.locatorAgent.invoke(
                   ctx.body.description,
-                  accessibilityTree.toXml(),
+                  accessibilityTree.toXml(session.excludeAttributes),
                 );
                 return {
                   elements,
@@ -316,7 +323,10 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const afterTree = await session.processTree(
                   after.accessibility_tree,
                 );
-                const excludeAttrs = new Set(["id"]);
+                const excludeAttrs = new Set([
+                  ...ChangesAnalyzerAgent.EXCLUDE_ATTRIBUTES,
+                  ...session.excludeAttributes,
+                ]);
                 const diff = new AccessibilityTreeDiff(
                   beforeTree.toXml(excludeAttrs),
                   afterTree.toXml(excludeAttrs),

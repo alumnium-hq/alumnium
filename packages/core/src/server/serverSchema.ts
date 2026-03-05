@@ -81,6 +81,7 @@ export const CreateSessionBody = z.object({
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),
   planner: z.boolean().default(true),
+  exclude_attributes: z.array(z.string()).default([]),
 });
 
 export const CreateSessionResponse = z.object({

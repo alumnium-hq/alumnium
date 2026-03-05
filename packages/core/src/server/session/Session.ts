@@ -34,6 +34,7 @@ export class Session {
   llm: BaseChatModel;
   cache: NullCache;
   planner: boolean;
+  excludeAttributes: Set<string>;
 
   actorAgent: ActorAgent;
   plannerAgent: PlannerAgent;
@@ -49,6 +50,7 @@ export class Session {
     this.platform = platform;
     this.tools = tools;
     this.planner = props.planner ?? true;
+    this.excludeAttributes = props.excludeAttributes ?? new Set();
 
     this.cache = CacheFactory.createCache();
     this.llm = props.llm ?? LLMFactory.createLlm(this.model);
@@ -135,6 +137,7 @@ export class Session {
       platform: this.platform,
       tools: this.tools,
       planner: this.planner,
+      exclude_attributes: [...this.excludeAttributes],
       // "llm" is omitted even though it is passed in the constructor, as
       // 1) it's external and may not be serializable, and 2) in HTTP API
       // where sessions are exchanged, llm is never passed as a param.
@@ -155,6 +158,7 @@ export class Session {
       platform: state["platform"],
       tools: state["tools"],
       planner: state["planner"],
+      excludeAttributes: new Set(state["exclude_attributes"]),
       // llm is not never in state, see note in to_state.
     });
 
@@ -179,6 +183,7 @@ export namespace Session {
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
     planner?: boolean | undefined;
+    excludeAttributes?: Set<string> | undefined;
   }
 
   export const Id = z.custom<SessionId>((val) => typeof val === "string", {
@@ -191,6 +196,7 @@ export namespace Session {
     platform: Platform,
     tools: z.array(z.custom<ToolDefinition>()),
     planner: z.boolean(),
+    exclude_attributes: z.array(z.string()).default([]),
     actor_agent: Agent.State,
     planner_agent: PlannerAgent.State,
     retriever_agent: Agent.State,

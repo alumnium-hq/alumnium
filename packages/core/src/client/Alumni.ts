@@ -25,22 +25,23 @@ import { AssertionError } from "./errors/AssertionError.js";
 import { DoResult, DoStep } from "./result.js";
 
 const logger = getLogger(import.meta.url);
-const changeAnalysis =
+
+const CHANGE_ANALYSIS =
   (process.env.ALUMNIUM_CHANGE_ANALYSIS || "false").toLowerCase() === "true";
 const PLANNER =
   (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
-const excludedAttributes = new Set(
-  (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "").split(",").filter(Boolean),
-);
+const EXCLUDE_ATTRIBUTES = (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "")
+  .split(",")
+  .filter(Boolean);
 
 export interface AlumniOptions {
-  url?: string;
-  model?: Model;
-  llm?: BaseChatModel;
+  url?: string | undefined;
+  model?: Model | undefined;
+  llm?: BaseChatModel | undefined;
   extraTools?: ToolClass[];
   planner?: boolean | undefined;
-  changeAnalysis?: boolean;
-  excludedAttributes?: Set<string>;
+  changeAnalysis?: boolean | undefined;
+  excludeAttributes?: string[] | undefined;
 }
 
 export interface VisionOptions {
@@ -61,7 +62,7 @@ export class Alumni {
   constructor(driver: WebDriver | Page | Browser, options: AlumniOptions = {}) {
     this.url = options.url || "http://localhost:8013";
     this.model = options.model || Model.current;
-    this.changeAnalysis = options.changeAnalysis ?? changeAnalysis;
+    this.changeAnalysis = options.changeAnalysis ?? CHANGE_ANALYSIS;
     this.llm = options.llm;
 
     // Wrap driver or use directly if already wrapped
@@ -88,27 +89,26 @@ export class Alumni {
 
     const planner = options.planner ?? PLANNER;
 
+    const clientProps: Client.Props = {
+      model: this.model,
+      platform: this.driver.platform,
+      tools: this.tools,
+      planner,
+      excludeAttributes: options.excludeAttributes ?? EXCLUDE_ATTRIBUTES,
+    };
+
     if (this.url) {
       logger.info(`Using HTTP client with server: ${this.url}`);
-      this.client = new HttpClient(
-        this.url,
-        this.model,
-        this.driver.platform,
-        this.tools,
-        planner,
-        options.excludedAttributes ?? excludedAttributes,
-      );
+      this.client = new HttpClient({
+        baseUrl: this.url,
+        ...clientProps,
+      });
     } else {
       logger.info("Using native client");
-      this.client = new NativeClient(
-        this.model,
-        this.driver.platform,
-        this.tools,
-        this.llm,
-        planner,
-        // TODO: Add  excludedAttributes to NativeClient
-        // options.excludedAttributes ?? excludedAttributes,
-      );
+      this.client = new NativeClient({
+        llm: this.llm,
+        ...clientProps,
+      });
     }
 
     this.cache = new Cache(this.client);
@@ -132,6 +132,7 @@ export class Alumni {
     const { explanation, steps } = await this.client.planActions(
       goal,
       initialAccessibilityTree.toStr(),
+      // @ts-expect-error -- TODO: Add when applying cache diff
       app,
     );
 
@@ -151,6 +152,7 @@ export class Alumni {
           goal,
           step,
           accessibilityTree.toStr(),
+          // @ts-expect-error -- TODO: Add when applying cache diff
           app,
         );
 
@@ -197,6 +199,7 @@ export class Alumni {
       await this.driver.title(),
       await this.driver.url(),
       screenshot,
+      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
 
@@ -219,6 +222,7 @@ export class Alumni {
       await this.driver.title(),
       await this.driver.url(),
       screenshot,
+      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
 
@@ -231,6 +235,7 @@ export class Alumni {
     const response = await this.client.findElement(
       description,
       accessibilityTree.toStr(),
+      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
     if (response?.id == null) return;
@@ -242,6 +247,7 @@ export class Alumni {
     const response = await this.client.findArea(
       description,
       accessibilityTree.toStr(),
+      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
     const scopedTree = accessibilityTree.scopeToArea(response.id);

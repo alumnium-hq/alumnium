@@ -6,6 +6,7 @@ import { BaseAgent } from "./BaseAgent.js";
 const logger = getLogger(import.meta.url);
 
 export class ChangesAnalyzerAgent extends BaseAgent {
+  static readonly EXCLUDE_ATTRIBUTES = new Set(["id"]);
   llm: BaseChatModel;
 
   constructor(llm: BaseChatModel) {
