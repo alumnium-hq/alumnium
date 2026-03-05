@@ -34,7 +34,7 @@ class Session:
         tool_schemas: list[dict[str, Any]],
         llm: BaseChatModel | None = None,
         planner: bool = True,
-        excluded_attributes: set[str] | None = None,
+        exclude_attributes: set[str] | None = None,
     ):
         self.session_id = session_id
         self.model = model
@@ -42,7 +42,7 @@ class Session:
         self.planner = planner
         self.tool_schemas = tool_schemas
         self.tools = convert_schemas_to_tools(self.tool_schemas)
-        self.excluded_attributes = excluded_attributes or set()
+        self.exclude_attributes = exclude_attributes or set()
 
         self.cache = CacheFactory.create_cache()
         if llm is not None:

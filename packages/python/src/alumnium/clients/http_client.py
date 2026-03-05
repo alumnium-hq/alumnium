@@ -14,7 +14,7 @@ class HttpClient:
         platform: str,
         tools: dict[str, type[BaseTool]],
         planner: bool = True,
-        excluded_attributes: set[str] | None = None,
+        exclude_attributes: set[str] | None = None,
     ):
         self.base_url = base_url.rstrip("/")
         self.session_id = None
@@ -29,7 +29,7 @@ class HttpClient:
                 "tools": tool_schemas,
                 "platform": platform,
                 "planner": planner,
-                "excluded_attributes": list(excluded_attributes or []),
+                "exclude_attributes": list(exclude_attributes or []),
             },
             timeout=30,
         )

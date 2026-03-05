@@ -1,6 +1,4 @@
-import { Model } from "../Model.js";
 import { ErrorResponse, UsageStats } from "../server/serverSchema.js";
-import { ToolClass } from "../tools/BaseTool.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
 import {
@@ -25,22 +23,21 @@ import { Data, looselyTypecast } from "./typecasting.js";
 
 const logger = getLogger(import.meta.url);
 
-export namespace HttpClient {}
+export namespace HttpClient {
+  export interface Props extends Client.Props {
+    baseUrl: string;
+  }
+}
 
-export class HttpClient implements Client {
+export class HttpClient extends Client {
   private baseUrl: string;
   private sessionId: string | null = null;
   private sessionPromise: Promise<void> | null = null;
   private timeout: number = 300_000; // 5 minutes
 
-  constructor(
-    baseUrl: string,
-    private model: Model,
-    private platform: string,
-    private tools: Record<string, ToolClass>,
-    private planner: boolean = true,
-    private excludedAttributes: Set<string> = new Set(),
-  ) {
+  constructor(props: HttpClient.Props) {
+    const { baseUrl, ...superProps } = props;
+    super(superProps);
     this.baseUrl = baseUrl.replace(/\/$/, "");
   }
 
@@ -91,7 +88,7 @@ export class HttpClient implements Client {
           platform: this.platform as SessionRequest["platform"],
           tools: toolSchemas,
           planner: this.planner,
-          excluded_attributes: [...this.excludedAttributes],
+          exclude_attributes: this.excludeAttributes,
         };
         const response = await this.fetchWithTimeout(
           `${this.baseUrl}/v1/sessions`,

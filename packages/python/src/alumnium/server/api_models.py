@@ -14,7 +14,7 @@ class SessionRequest(VersionedModel):
     name: str | None = None
     tools: list[dict[str, Any]]
     planner: bool = True
-    excluded_attributes: list[str] = []
+    exclude_attributes: list[str] = []
 
 
 class SessionResponse(VersionedModel):
