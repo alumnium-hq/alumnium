@@ -1,3 +1,4 @@
+import json
 from os import getenv
 
 from langchain_anthropic import ChatAnthropic
@@ -50,16 +51,19 @@ class LLMFactory:
                 )
         elif model.provider == Provider.AZURE_OPENAI:
             azure_openai_api_version = getenv("AZURE_OPENAI_API_VERSION")
+            azure_default_headers = json.loads(getenv("AZURE_OPENAI_DEFAULT_HEADERS", "null"))
             if "gpt-4o" in model.name:
                 llm = AzureChatOpenAI(
                     model=model.name,
                     api_version=azure_openai_api_version,
+                    default_headers=azure_default_headers,
                     temperature=0,
                 )
             else:
                 llm = AzureChatOpenAI(
                     model=model.name,
                     api_version=azure_openai_api_version,
+                    default_headers=azure_default_headers,
                     temperature=0,
                     reasoning={
                         "effort": "low",
