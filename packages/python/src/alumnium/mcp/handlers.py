@@ -49,7 +49,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
     # Extract alumnium:options for Alumnium driver configuration
     alumnium_options = capabilities.pop("alumnium:options", {})
     driver_settings = alumnium_options.get("driverSettings", {})
-    excluded_attributes = set(alumnium_options.get("excludedAttributes", []))
+    exclude_attributes = set(alumnium_options.get("excludeAttributes", []))
 
     # Generate driver ID from current directory and timestamp
     cwd_name = os.path.basename(os.getcwd())
@@ -95,7 +95,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             getenv("ALUMNIUM_CHANGE_ANALYSIS", "true").lower() == "true",
         ),
         planner=alumnium_options.get("planner", None),
-        excluded_attributes=excluded_attributes or None,
+        exclude_attributes=exclude_attributes or None,
     )
 
     # Apply driver options to Alumnium driver
@@ -209,7 +209,7 @@ async def handle_fetch_accessibility_tree(args: dict[str, Any]) -> list[dict]:
     return [
         {
             "type": "text",
-            "text": f"Accessibility Tree:\n{tree.to_xml(exclude_attrs=client.session.excluded_attributes)}",
+            "text": f"Accessibility Tree:\n{tree.to_xml(exclude_attrs=client.session.exclude_attributes)}",
         }
     ]
 

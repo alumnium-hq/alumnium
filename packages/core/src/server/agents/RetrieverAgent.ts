@@ -32,6 +32,7 @@ export namespace RetrieverAgent {
 }
 
 export class RetrieverAgent extends BaseAgent {
+  static readonly EXCLUDE_ATTRIBUTES = new Set(["id"]);
   static readonly #LIST_SEPARATOR = "<SEP>";
 
   chain;
