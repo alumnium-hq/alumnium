@@ -4,12 +4,12 @@ import { always } from "alwaysly";
 import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
 import { retry } from "../../utils/retry.js";
-import { Usage } from "../serverSchema.js";
 import { Agent } from "./Agent.js";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
+import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
 import { agentPrompts } from "./prompts/bundledPrompts.js";
 import {
   type AgentPrompts,
@@ -32,7 +32,7 @@ export namespace BaseAgentResponse {
     reasoning: string | null;
     structured: unknown;
     toolCalls: Array<{ name: string; args: Record<string, unknown> }>;
-    usage: Partial<Usage>;
+    usage: Partial<LlmUsage>;
   }
 }
 
@@ -48,14 +48,14 @@ export class BaseAgentResponse {
   reasoning: string | null;
   structured: unknown;
   toolCalls: Array<{ name: string; args: Record<string, unknown> }>;
-  usage: Usage;
+  usage: LlmUsage;
 
   constructor(props: BaseAgentResponse.Props) {
     this.content = props.content ?? "";
     this.reasoning = props.reasoning ?? null;
     this.structured = props.structured ?? null;
     this.toolCalls = props.toolCalls ?? [];
-    this.usage = { ...Agent.createUsage(), ...props.usage };
+    this.usage = { ...createLlmUsage(), ...props.usage };
   }
 }
 
@@ -68,7 +68,7 @@ export namespace BaseAgent {
 }
 
 export class BaseAgent {
-  #usage: Usage = Agent.createUsage();
+  #usage: LlmUsage = Agent.createUsage();
   protected prompts: AgentPrompts.RolePrompts;
 
   constructor() {
@@ -156,7 +156,7 @@ export class BaseAgent {
       logger.info(this.formatLog("out", "Reasoning"), { detail: reasoning });
     }
 
-    const usage: Partial<Usage> = {};
+    const usage: Partial<LlmUsage> = {};
     if (message.usage_metadata) {
       this.#updateUsage(message.usage_metadata);
       usage.input_tokens = message.usage_metadata.input_tokens ?? 0;
@@ -231,7 +231,7 @@ export class BaseAgent {
     return String(content);
   }
 
-  #updateUsage(usage: Partial<Usage>) {
+  #updateUsage(usage: Partial<LlmUsage>) {
     this.#usage.input_tokens += usage.input_tokens ?? 0;
     this.#usage.output_tokens += usage.output_tokens ?? 0;
     this.#usage.total_tokens += usage.total_tokens ?? 0;

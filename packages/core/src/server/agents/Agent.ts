@@ -1,9 +1,9 @@
 import z from "zod";
-import { Usage } from "../serverSchema.js";
+import { LlmUsage } from "../../llm/llmSchema.js";
 
 export namespace Agent {
   export const State = z.object({
-    usage: Usage,
+    usage: LlmUsage,
   });
 
   export type State = z.infer<typeof State>;
@@ -16,7 +16,7 @@ export namespace Agent {
     };
   }
 
-  export function createUsage(): Usage {
+  export function createUsage(): LlmUsage {
     return {
       input_tokens: 0,
       output_tokens: 0,

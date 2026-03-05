@@ -14,8 +14,8 @@ import {
   PlaywrightDriver,
   SeleniumDriver,
 } from "../drivers/index.js";
+import { LlmUsageStats } from "../llm/llmSchema.js";
 import { Model } from "../Model.js";
-import { UsageStats } from "../server/serverSchema.js";
 import { BaseTool, ToolClass } from "../tools/BaseTool.js";
 import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
@@ -269,7 +269,7 @@ export class Alumni {
     await this.client.clearExamples();
   }
 
-  async getStats(): Promise<UsageStats> {
+  async getStats(): Promise<LlmUsageStats> {
     return await this.client.getStats();
   }
 }
