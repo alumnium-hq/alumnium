@@ -1,5 +1,6 @@
-import { Model } from "../Model.js";
-import type { ElementRef, UsageStats } from "../server/serverSchema.js";
+import { LlmUsageStats } from "../llm/llmSchema.js";
+import type { Model } from "../Model.js";
+import type { ElementRef } from "../server/serverSchema.js";
 import type { ToolCall, ToolClass } from "../tools/BaseTool.js";
 import type { Data } from "./typecasting.js";
 

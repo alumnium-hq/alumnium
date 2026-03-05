@@ -7,7 +7,7 @@ import { always } from "alwaysly";
 import path from "node:path";
 import { Alumni } from "../client/Alumni.js";
 import { PlaywrightDriver } from "../drivers/PlaywrightDriver.js";
-import { UsageStats } from "../server/serverSchema.js";
+import { LlmUsageStats } from "../llm/llmSchema.js";
 import { getLogger } from "../utils/logger.js";
 import { McpDriver } from "./mcpDrivers.js";
 import { startDriverMcpTool } from "./tools/startDriverMcpTool.js";
@@ -56,7 +56,9 @@ export abstract class McpState {
   /**
    * Clean up driver and return artifacts directory and stats.
    */
-  static async cleanupDriver(driverId: string): Promise<[string, UsageStats]> {
+  static async cleanupDriver(
+    driverId: string,
+  ): Promise<[string, LlmUsageStats]> {
     const driverEntry = this.drivers[driverId];
     if (!driverEntry) {
       logger.error(`Driver ${driverId} not found for cleanup`);

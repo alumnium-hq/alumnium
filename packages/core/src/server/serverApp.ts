@@ -1,5 +1,6 @@
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
+import { LlmUsageStats } from "../llm/llmSchema.js";
 import { Model } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
 import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.js";
@@ -103,7 +104,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
             //#region Get session stats ////////////////////////////////////////
 
             .get("/stats", (ctx) => ctx.session.stats, {
-              response: s.UsageStats,
+              response: LlmUsageStats,
             })
 
             //#endregion
