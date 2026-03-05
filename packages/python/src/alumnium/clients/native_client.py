@@ -19,7 +19,7 @@ class NativeClient:
         tools: dict[str, type[BaseTool]],
         llm: BaseChatModel | None = None,
         planner: bool = True,
-        excluded_attributes: set[str] | None = None,
+        exclude_attributes: set[str] | None = None,
     ):
         self.session_manager = SessionManager()
         self.model = model
@@ -34,7 +34,7 @@ class NativeClient:
             platform=platform,
             llm=llm,
             planner=planner,
-            excluded_attributes=excluded_attributes or set(),
+            exclude_attributes=exclude_attributes or set(),
         )
 
         self.session = self.session_manager.get_session(self.session_id)
@@ -55,7 +55,7 @@ class NativeClient:
         self.cache.app = app
         accessibility_tree = self.session.process_tree(accessibility_tree)
         return self.session.planner_agent.invoke(
-            goal, accessibility_tree.to_xml(exclude_attrs=self.session.excluded_attributes)
+            goal, accessibility_tree.to_xml(exclude_attrs=self.session.exclude_attributes)
         )
 
     def add_example(self, goal: str, actions: list[str]):
@@ -71,7 +71,7 @@ class NativeClient:
         self.cache.app = app
         accessibility_tree = self.session.process_tree(accessibility_tree)
         explanation, actions = self.session.actor_agent.invoke(
-            goal, step, accessibility_tree.to_xml(exclude_attrs=self.session.excluded_attributes)
+            goal, step, accessibility_tree.to_xml(exclude_attrs=self.session.exclude_attributes)
         )
         return explanation, accessibility_tree.map_tool_calls_to_raw_id(actions)
 
@@ -86,7 +86,7 @@ class NativeClient:
     ) -> tuple[str, Data]:
         self.cache.app = app
         accessibility_tree = self.session.process_tree(accessibility_tree)
-        exclude_attrs = self.session.retriever_agent.EXCLUDED_ATTRIBUTES | self.session.excluded_attributes
+        exclude_attrs = self.session.retriever_agent.EXCLUDE_ATTRIBUTES | self.session.exclude_attributes
         explanation, result = self.session.retriever_agent.invoke(
             statement,
             accessibility_tree.to_xml(exclude_attrs=exclude_attrs),
@@ -100,7 +100,7 @@ class NativeClient:
         self.cache.app = app
         accessibility_tree = self.session.process_tree(accessibility_tree)
         area = self.session.area_agent.invoke(
-            description, accessibility_tree.to_xml(exclude_attrs=self.session.excluded_attributes)
+            description, accessibility_tree.to_xml(exclude_attrs=self.session.exclude_attributes)
         )
         return {"id": accessibility_tree.get_raw_id(area["id"]), "explanation": area["explanation"]}
 
@@ -108,7 +108,7 @@ class NativeClient:
         self.cache.app = app
         accessibility_tree = self.session.process_tree(accessibility_tree)
         element = self.session.locator_agent.invoke(
-            description, accessibility_tree.to_xml(exclude_attrs=self.session.excluded_attributes)
+            description, accessibility_tree.to_xml(exclude_attrs=self.session.exclude_attributes)
         )[0]
         element["id"] = accessibility_tree.get_raw_id(element["id"])
         return element
@@ -124,7 +124,7 @@ class NativeClient:
         self.cache.app = app
         before_tree = self.session.process_tree(before_accessibility_tree)
         after_tree = self.session.process_tree(after_accessibility_tree)
-        exclude_attrs = self.session.changes_analyzer_agent.EXCLUDED_ATTRIBUTES | self.session.excluded_attributes
+        exclude_attrs = self.session.changes_analyzer_agent.EXCLUDE_ATTRIBUTES | self.session.exclude_attributes
         diff = AccessibilityTreeDiff(
             before_tree.to_xml(exclude_attrs=exclude_attrs),
             after_tree.to_xml(exclude_attrs=exclude_attrs),

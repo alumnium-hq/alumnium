@@ -30,13 +30,19 @@ export class SessionManager {
     logger.info(
       `Creating session ${sessionId} with model ${props.provider}/${props.name} and platform ${props.platform}`,
     );
-    const { provider, name: modelName, ...restProps } = props;
+    const {
+      provider,
+      name: modelName,
+      excludeAttributes,
+      ...restProps
+    } = props;
     const model = new Model(provider, modelName);
 
     this.#sessions[sessionId] = new Session({
       ...restProps,
       sessionId,
       model,
+      excludeAttributes: new Set(excludeAttributes ?? []),
     });
     logger.info(`Created new session: ${sessionId}`);
     return sessionId;
@@ -109,6 +115,7 @@ export namespace SessionManager {
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
     planner?: boolean | undefined;
+    excludeAttributes?: string[] | undefined;
     sessionId?: SessionId | undefined;
   }
 }

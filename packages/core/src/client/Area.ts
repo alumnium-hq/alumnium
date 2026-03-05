@@ -38,6 +38,7 @@ export class Area {
     const { explanation, steps } = await this.client.planActions(
       goal,
       this.accessibilityTree.toStr(),
+      // @ts-expect-error -- TODO: Add when applying cache diff
       app,
     );
 
@@ -49,6 +50,7 @@ export class Area {
           goal,
           step,
           this.accessibilityTree.toStr(),
+          // @ts-expect-error -- TODO: Add when applying cache diff
           app,
         );
 
@@ -84,6 +86,7 @@ export class Area {
       await this.driver.title(),
       await this.driver.url(),
       screenshot,
+      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
 
@@ -105,6 +108,7 @@ export class Area {
       await this.driver.title(),
       await this.driver.url(),
       screenshot,
+      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
 
@@ -116,6 +120,7 @@ export class Area {
     const response = await this.client.findElement(
       description,
       this.accessibilityTree.toStr(),
+      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
     if (response?.id == null) return;
