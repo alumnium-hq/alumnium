@@ -1,0 +1,31 @@
+import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import type { ToolClass } from "../tools/BaseTool.js";
+import type { Element } from "./index.js";
+import type { Key } from "./keys.js";
+
+export abstract class BaseDriver {
+  abstract platform: string;
+  abstract supportedTools: Set<ToolClass>;
+  abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
+  abstract click(id: number): void | Promise<void>;
+  abstract dragAndDrop(fromId: number, toId: number): void | Promise<void>;
+  abstract pressKey(key: Key): void | Promise<void>;
+  abstract quit(): void | Promise<void>;
+  abstract back(): void | Promise<void>;
+  abstract screenshot(): string | Promise<string>;
+  abstract title(): string | Promise<string>;
+  abstract type(id: number, text: string): void | Promise<void>;
+  abstract url(): string | Promise<string>;
+  abstract app(): string | Promise<string>;
+  abstract findElement(id: number): Element | Promise<Element>;
+  abstract visit(url: string): void | Promise<void>;
+  abstract scrollTo(id: number): void | Promise<void>;
+  abstract executeScript(script: string): void | Promise<void>;
+  abstract switchToNextTab(): void | Promise<void>;
+  abstract switchToPreviousTab(): void | Promise<void>;
+  abstract wait(seconds: number): void | Promise<void>;
+  abstract waitForSelector(
+    selector: string,
+    timeout?: number,
+  ): void | Promise<void>;
+}

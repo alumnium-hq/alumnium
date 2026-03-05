@@ -1,7 +1,5 @@
+import { Alumni, Model, NavigateBackTool, Provider } from "alumnium";
 import assert from "assert";
-import { Alumni } from "../../src/Alumni.js";
-import { Model, Provider } from "../../src/Model.js";
-import { NavigateBackTool } from "../../src/tools/NavigateBackTool.js";
 import "./globals.js";
 import { navigate } from "./helpers.js";
 

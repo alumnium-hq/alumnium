@@ -1,11 +1,9 @@
+import { Alumni, AlumniOptions, AppiumDriver, type Element } from "alumnium";
 import { join, resolve } from "path";
 import { Locator } from "playwright";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { type Browser } from "webdriverio";
-import { Alumni } from "../../src/Alumni.js";
-import { type Element } from "../../src/drivers/index.js";
-import { AppiumDriver } from "../../src/index.js";
 
 let driver: WebDriver | Browser;
 let al: Alumni;
@@ -14,6 +12,10 @@ const driverType = process.env.ALUMNIUM_DRIVER || "selenium";
 
 export const mochaHooks = {
   async beforeAll() {
+    const alOptions: AlumniOptions = process.env.ALUMNIUM_TEST_NATIVE_CLIENT
+      ? {}
+      : { url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013" };
+
     if (driverType === "selenium") {
       const options = new Options();
       options.addArguments("--disable-blink-features=AutomationControlled");
@@ -30,15 +32,11 @@ export const mochaHooks = {
         .setChromeOptions(options)
         .build();
 
-      al = new Alumni(driver, {
-        url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013",
-      });
+      al = new Alumni(driver, alOptions);
     } else if (driverType === "appium") {
       const { browser } = await import("@wdio/globals");
       driver = browser as Browser;
-      al = new Alumni(driver, {
-        url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013",
-      });
+      al = new Alumni(driver, alOptions);
       (al.driver as AppiumDriver).delay = 0.1;
     } else {
       throw new Error(`Driver type '${driverType}' not implemented`);
@@ -88,7 +86,7 @@ export function navigate(driver: WebDriver | Browser, url: string) {
   }
 }
 
-export function type(element: Element, text: string) {
+export function type(element: Element | undefined, text: string) {
   if (driverType === "appium") {
     return (element as WebdriverIO.Element).setValue(text);
   } else if (driverType === "selenium") {
@@ -100,7 +98,7 @@ export function type(element: Element, text: string) {
   }
 }
 
-export function click(element: Element) {
+export function click(element: Element | undefined) {
   if (driverType === "appium") {
     return (element as WebdriverIO.Element).click();
   } else if (driverType === "selenium") {

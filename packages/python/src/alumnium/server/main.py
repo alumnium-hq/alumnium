@@ -1,6 +1,6 @@
 import importlib.metadata
 from contextlib import asynccontextmanager
-from typing import List
+from typing import Any, List
 
 from fastapi import APIRouter, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,6 +23,7 @@ from .api_models import (
     PlanResponse,
     SessionRequest,
     SessionResponse,
+    SessionStateRequest,
     StatementRequest,
     StatementResponse,
     StepRequest,
@@ -83,7 +84,7 @@ async def create_session(request: SessionRequest):
             request.platform,
             request.tools,
             planner=request.planner,
-            excluded_attributes=set(request.excluded_attributes),
+            exclude_attributes=set(request.exclude_attributes),
         )
         return SessionResponse(session_id=session_id)
     except Exception as e:
@@ -115,6 +116,21 @@ async def get_session_stats(session_id: str):
     return session.stats
 
 
+@v1_router.get("/sessions/{session_id}/state")
+async def get_session_state(session_id: str):
+    """Get session state snapshot."""
+    session = session_manager.get_session(session_id)
+    if session is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+    return session.to_state()
+
+
+@v1_router.post("/sessions/state")
+async def apply_session_state(request: SessionStateRequest):
+    """Apply session state snapshot."""
+    session_manager.apply_session_state(request.state)
+
+
 @v1_router.post("/sessions/{session_id}/plans", response_model=PlanResponse)
 async def plan_actions(session_id: str, request: PlanRequest):
     """Plan actions to achieve a goal."""
@@ -130,7 +146,7 @@ async def plan_actions(session_id: str, request: PlanRequest):
         accessibility_tree = session.process_tree(request.accessibility_tree)
         explanation, steps = session.planner_agent.invoke(
             request.goal,
-            accessibility_tree.to_xml(exclude_attrs=session.excluded_attributes),
+            accessibility_tree.to_xml(exclude_attrs=session.exclude_attributes),
         )
         return PlanResponse(explanation=explanation, steps=steps)
 
@@ -152,7 +168,7 @@ async def plan_step_actions(session_id: str, request: StepRequest):
         session.cache.app = request.app
         accessibility_tree = session.process_tree(request.accessibility_tree)
         explanation, actions = session.actor_agent.invoke(
-            request.goal, request.step, accessibility_tree.to_xml(exclude_attrs=session.excluded_attributes)
+            request.goal, request.step, accessibility_tree.to_xml(exclude_attrs=session.exclude_attributes)
         )
         return StepResponse(explanation=explanation, actions=accessibility_tree.map_tool_calls_to_raw_id(actions))
 
@@ -176,7 +192,7 @@ async def execute_statement(session_id: str, request: StatementRequest):
         explanation, value = session.retriever_agent.invoke(
             request.statement,
             accessibility_tree.to_xml(
-                exclude_attrs=session.retriever_agent.EXCLUDED_ATTRIBUTES | session.excluded_attributes
+                exclude_attrs=session.retriever_agent.EXCLUDE_ATTRIBUTES | session.exclude_attributes
             ),
             title=request.title,
             url=request.url,
@@ -203,7 +219,7 @@ async def choose_area(session_id: str, request: AreaRequest):
         session.cache.app = request.app
         accessibility_tree = session.process_tree(request.accessibility_tree)
         area = session.area_agent.invoke(
-            request.description, accessibility_tree.to_xml(exclude_attrs=session.excluded_attributes)
+            request.description, accessibility_tree.to_xml(exclude_attrs=session.exclude_attributes)
         )
         return AreaResponse(
             id=accessibility_tree.get_raw_id(area["id"]),
@@ -246,7 +262,7 @@ async def find_element(session_id: str, request: FindRequest):
         session.cache.app = request.app
         accessibility_tree = session.process_tree(request.accessibility_tree)
         elements = session.locator_agent.invoke(
-            request.description, accessibility_tree.to_xml(exclude_attrs=session.excluded_attributes)
+            request.description, accessibility_tree.to_xml(exclude_attrs=session.exclude_attributes)
         )
         for element in elements:
             element["id"] = accessibility_tree.get_raw_id(element["id"])
@@ -271,7 +287,7 @@ async def analyze_changes(session_id: str, request: ChangesRequest):
         session.cache.app = request.app
         before_tree = session.process_tree(request.before.accessibility_tree)
         after_tree = session.process_tree(request.after.accessibility_tree)
-        exclude_attrs = session.changes_analyzer_agent.EXCLUDED_ATTRIBUTES | session.excluded_attributes
+        exclude_attrs = session.changes_analyzer_agent.EXCLUDE_ATTRIBUTES | session.exclude_attributes
         diff = AccessibilityTreeDiff(
             before_tree.to_xml(exclude_attrs=exclude_attrs),
             after_tree.to_xml(exclude_attrs=exclude_attrs),

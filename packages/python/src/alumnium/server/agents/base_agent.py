@@ -167,3 +167,14 @@ class BaseAgent:
         self.usage["input_tokens"] += usage_metadata.get("input_tokens", 0)
         self.usage["output_tokens"] += usage_metadata.get("output_tokens", 0)
         self.usage["total_tokens"] += usage_metadata.get("total_tokens", 0)
+
+    def to_state(self) -> dict[str, Any]:
+        # Note that most of the agents don't have any internal state beyond usage, except for
+        # the planner agent which has examples.
+        state = {
+            "usage": self.usage,
+        }
+        return state
+
+    def apply_state(self, state: dict[str, Any]) -> None:
+        self.usage = state["usage"]

@@ -13,6 +13,7 @@
 **/node_modules/
 **/playwright-report/
 **/test-results/
+**/.ts/
 
 # Coverage
 **/htmlcov/
@@ -28,3 +29,6 @@
 
 # Cache
 **/.alumnium/cache/**/*
+
+# Temporary files
+tmp/

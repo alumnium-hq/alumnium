@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Base",
+  "include": [
+    "./*.ts",
+    "./src/**/*.ts",
+    "./scripts/**/*.ts",
+    "./tests/**/*.ts",
+    "./package.json"
+  ],
+  "compilerOptions": {
+    // Resolve
+    "rootDir": ".",
+    "paths": {},
+    // Output
+    "target": "esnext",
+    "outDir": "./.ts",
+    "tsBuildInfoFile": "./.ts/tsconfig.tsbuildinfo",
+    "emitDeclarationOnly": true,
+    // Modules
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "isolatedModules": true,
+    "moduleDetection": "force", // Stop treating files wtypithout imports/exports as single global scripts
+    "allowImportingTsExtensions": false, // Don't allow importing .ts files, as we need to enable emitting.
+    "resolveJsonModule": true,
+    // Env
+    "lib": ["ESNext"],
+    "types": ["bun", "@wdio/globals/types"],
+    "experimentalDecorators": true, // Enable experimental decorators
+    // TODO: See packages/typescript/tsconfig.json
+    "emitDecoratorMetadata": true,
+    // TODO: Enable it whenever possible
+    // "erasableSyntaxOnly": true,
+    // Checks
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    // Build
+    "incremental": true,
+    // Project references
+    "composite": true
+  }
+}

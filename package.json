@@ -1,0 +1,14 @@
+{
+  "name": "@alumnium/repo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "types": "tsc --build",
+    "types:watch": "tsc --build --watch"
+  }
+}
