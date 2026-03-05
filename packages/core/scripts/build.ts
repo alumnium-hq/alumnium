@@ -127,6 +127,11 @@ await Promise.all([
     const packageJsonStr = await fs.readFile(packageJsonPath, "utf-8");
     const packageJson = JSON.parse(packageJsonStr);
     packageJson.optionalDependencies = {};
+
+    TARGET_PACKAGES.forEach(({ name }) => {
+      packageJson.optionalDependencies[name] = ALUMNIUM_VERSION;
+    });
+
     await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
 
     console.log("✅ alumnium");
