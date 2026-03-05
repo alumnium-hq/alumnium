@@ -1,6 +1,7 @@
 import { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
+import { LlmUsageStats } from "../../llm/llmSchema.js";
 import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
 import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.js";
@@ -76,7 +77,7 @@ export class Session {
    *
    * @returns Session usage statistics.
    */
-  get stats(): UsageStats {
+  get stats(): LlmUsageStats {
     return {
       total: {
         input_tokens:

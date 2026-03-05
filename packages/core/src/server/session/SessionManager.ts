@@ -1,10 +1,9 @@
 import { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import { createLlmUsageStats, LlmUsageStats } from "../../llm/llmSchema.js";
 import { Model, Provider } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
-import { Agent } from "../agents/Agent.js";
 import { Platform } from "../Platform.js";
-import { UsageStats } from "../serverSchema.js";
 import { Session } from "./Session.js";
 import { SessionId } from "./SessionId.js";
 
@@ -86,24 +85,17 @@ export class SessionManager {
   /**
    * Get combined token usage statistics for all sessions.
    */
-  getTotalStats(): UsageStats {
-    const totalStats = SessionManager.createTotalStats();
+  getTotalStats(): LlmUsageStats {
+    const totalStats = createLlmUsageStats();
     for (const session of Object.values(this.#sessions)) {
       const sessionStats = session.stats;
-      for (const key of Object.keys(totalStats) as (keyof UsageStats)[]) {
+      for (const key of Object.keys(totalStats) as (keyof LlmUsageStats)[]) {
         totalStats[key].input_tokens += sessionStats[key].input_tokens;
         totalStats[key].output_tokens += sessionStats[key].output_tokens;
         totalStats[key].total_tokens += sessionStats[key].total_tokens;
       }
     }
     return totalStats;
-  }
-
-  static createTotalStats(): UsageStats {
-    return {
-      total: Agent.createUsage(),
-      cache: Agent.createUsage(),
-    };
   }
 }
 

@@ -1,6 +1,7 @@
 import type { ToolDefinition } from "@langchain/core/language_models/base";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { always } from "alwaysly";
+import { LlmUsageStats } from "../llm/llmSchema.js";
 import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.js";
 import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.js";
 import { RetrieverAgent } from "../server/agents/RetrieverAgent.js";
@@ -200,7 +201,7 @@ export class NativeClient extends Client {
     await this.session.cache.discard();
   }
 
-  async getStats(): Promise<UsageStats> {
+  async getStats(): Promise<LlmUsageStats> {
     return this.session.stats;
   }
 }

@@ -14,21 +14,6 @@ export const SessionId = z.string().brand<"SessionId">();
 
 export type SessionId = z.infer<typeof SessionId>;
 
-export const Usage = z.object({
-  input_tokens: z.number(),
-  output_tokens: z.number(),
-  total_tokens: z.number(),
-});
-
-export type Usage = z.infer<typeof Usage>;
-
-export const UsageStats = z.object({
-  total: Usage,
-  cache: Usage,
-});
-
-export type UsageStats = z.infer<typeof UsageStats>;
-
 export const Change = z.object({
   accessibility_tree: z.string(),
   url: z.string(),
