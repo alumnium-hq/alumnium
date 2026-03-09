@@ -1,12 +1,6 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  Mock,
-  spyOn,
-} from "bun:test";
+import { beforeEach, describe, expect, it, spyOn } from "bun:test";
+import { pushMock } from "../../tests/mocks.js";
+import type { Http } from "../Http.js";
 import { ActorAgent } from "./agents/ActorAgent.js";
 import { AreaAgent } from "./agents/AreaAgent.js";
 import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.js";
@@ -18,13 +12,11 @@ import { serverApp } from "./serverApp.js";
 import { CreateSessionResponse } from "./serverSchema.js";
 import { SessionManager } from "./session/SessionManager.js";
 
-const mocks: Mock<any>[] = [];
-
 describe("serverApp", () => {
   beforeEach(() => {
     serverApp.store.sessions = new SessionManager();
 
-    mocks.push(
+    pushMock(
       spyOn(LLMFactory, "createLlm").mockReturnValue({
         withStructuredOutput: () => ({ invoke: async () => ({}) }),
         bindTools: () => ({ invoke: async () => ({}) }),
@@ -66,11 +58,6 @@ describe("serverApp", () => {
         "Button text changed from 'Click me' to 'Submit'.",
       ),
     );
-  });
-
-  afterEach(() => {
-    mocks.forEach((mock) => mock.mockRestore());
-    mocks.length = 0;
   });
 
   describe("GET /health", () => {
@@ -421,9 +408,7 @@ async function createSession() {
   return CreateSessionResponse.parse(await response.json()).session_id;
 }
 
-type RequestMethod = "GET" | "POST" | "DELETE";
-
-function createRequest(method: RequestMethod, path: string, body?: unknown) {
+function createRequest(method: Http.Method, path: string, body?: unknown) {
   const init: RequestInit = { method };
   if (typeof body === "object" && body) {
     Object.assign(init, {
