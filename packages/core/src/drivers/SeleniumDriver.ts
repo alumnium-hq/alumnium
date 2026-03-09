@@ -10,7 +10,7 @@ import { NoSuchSessionError } from "selenium-webdriver/lib/error.js";
 import { always } from "alwaysly";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
-import { ToolClass } from "../tools/BaseTool.js";
+import type { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
 import { HoverTool } from "../tools/HoverTool.js";
@@ -24,6 +24,8 @@ import { Key } from "./keys.js";
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
+import { AppId } from "../AppId.js";
+import { Platform } from "../server/Platform.js";
 import {
   waiterScriptSource,
   waitForScriptSource,
@@ -95,7 +97,7 @@ const WAIT_FOR_SCRIPT = waitForScriptSource;
 
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
-  public platform: string = "chromium";
+  public platform: Platform = "chromium";
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     DragAndDropTool,
@@ -143,9 +145,7 @@ export class SeleniumDriver extends BaseDriver {
       try {
         const response = (await this.executeCdpCommand(
           "Accessibility.getFullAXTree",
-          {
-            frameId,
-          },
+          { frameId },
         )) as { nodes: CDPNode[] };
         const nodes = response.nodes || [];
         logger.debug(
@@ -304,12 +304,12 @@ export class SeleniumDriver extends BaseDriver {
     await this.driver.executeScript("arguments[0].scrollIntoView();", element);
   }
 
-  async screenshot(): Promise<string> {
-    return await this.driver.takeScreenshot();
+  screenshot(): Promise<string> {
+    return this.driver.takeScreenshot();
   }
 
-  async title(): Promise<string> {
-    return await this.driver.getTitle();
+  title(): Promise<string> {
+    return this.driver.getTitle();
   }
 
   async type(id: number, text: string): Promise<void> {
@@ -323,17 +323,13 @@ export class SeleniumDriver extends BaseDriver {
     await element.sendKeys(paths.join("\n"));
   }
 
-  async url(): Promise<string> {
-    return await this.driver.getCurrentUrl();
+  url(): Promise<string> {
+    return this.driver.getCurrentUrl();
   }
 
-  async app(): Promise<string> {
-    try {
-      const currentUrl = await this.driver.getCurrentUrl();
-      return new URL(currentUrl).hostname || "unknown";
-    } catch {
-      return "unknown";
-    }
+  async app(): Promise<AppId> {
+    const currentUrl = await this.driver.getCurrentUrl();
+    return AppId.parse(currentUrl);
   }
 
   async findElement(id: number): Promise<WebElement> {
@@ -353,9 +349,7 @@ export class SeleniumDriver extends BaseDriver {
 
     const { nodeIds } = (await this.executeCdpCommand(
       "DOM.pushNodesByBackendIdsToFrontend",
-      {
-        backendNodeIds: [backendNodeId],
-      },
+      { backendNodeIds: [backendNodeId] },
     )) as { nodeIds: number[] };
 
     const nodeId = nodeIds[0];
@@ -402,9 +396,7 @@ export class SeleniumDriver extends BaseDriver {
 
     const { nodeIds } = (await this.executeCdpCommand(
       "DOM.pushNodesByBackendIdsToFrontend",
-      {
-        backendNodeIds: [iframeBackendNodeId],
-      },
+      { backendNodeIds: [iframeBackendNodeId] },
     )) as { nodeIds: number[] };
 
     const nodeId = nodeIds[0];
@@ -469,7 +461,7 @@ export class SeleniumDriver extends BaseDriver {
     await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
   }
 
-  waitForSelector(): void {
+  async waitForSelector(): Promise<void> {
     throw new Error("waitForSelector not supported for this driver");
   }
 
@@ -483,24 +475,21 @@ export class SeleniumDriver extends BaseDriver {
   private async waitForPageToLoad(): Promise<void> {
     try {
       await this.driver.executeScript(WAITER_SCRIPT);
-      const error: unknown =
-        await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
+      const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
       if (error) {
         // eslint-disable-next-line @typescript-eslint/no-base-to-string
         logger.warn(`Failed to wait for page to load: ${String(error)}`);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_e) {
+    } catch {
       // Retry once on failure
       try {
         await this.driver.executeScript(WAITER_SCRIPT);
-        const error: unknown =
-          await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
+        const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
         if (error) {
           // eslint-disable-next-line @typescript-eslint/no-base-to-string
           logger.warn(`Failed to wait for page to load: ${String(error)}`);
         }
-      } catch (retryError: unknown) {
+      } catch (retryError) {
         logger.warn(
           `Failed to wait for page to load after retry: ${String(retryError)}`,
         );

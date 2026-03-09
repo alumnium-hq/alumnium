@@ -14,7 +14,7 @@ import {
   createAndroidDriver,
   createChromeDriver,
   createIosDriver,
-  McpDriver,
+  type McpDriver,
 } from "../mcpDrivers.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";

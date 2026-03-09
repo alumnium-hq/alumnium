@@ -1,6 +1,6 @@
 import { BaseDriver } from "../drivers/BaseDriver.js";
 import { BaseTool } from "./BaseTool.js";
-import { field, FieldMetadata } from "./Field.js";
+import { field, type FieldMetadata } from "./Field.js";
 
 export class TypeTool extends BaseTool {
   static description = "Type text into an element.";

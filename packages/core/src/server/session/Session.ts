@@ -1,4 +1,4 @@
-import { ToolDefinition } from "@langchain/core/language_models/base";
+import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { LlmUsageStats } from "../../llm/llmSchema.js";

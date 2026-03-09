@@ -23,6 +23,7 @@
     "isolatedModules": true,
     "moduleDetection": "force", // Stop treating files wtypithout imports/exports as single global scripts
     "allowImportingTsExtensions": false, // Don't allow importing .ts files, as we need to enable emitting.
+    "verbatimModuleSyntax": true, // Enforce type-only imports
     "resolveJsonModule": true,
     // Env
     "lib": ["ESNext"],

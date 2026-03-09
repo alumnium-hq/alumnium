@@ -1,5 +1,5 @@
-import { Runnable, RunnableConfig } from "@langchain/core/runnables";
-import { Logger } from "@logtape/logtape";
+import { Runnable, type RunnableConfig } from "@langchain/core/runnables";
+import type { Logger } from "@logtape/logtape";
 import { always } from "alwaysly";
 import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
@@ -12,9 +12,9 @@ import { Agent } from "./Agent.js";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
 import { agentPrompts } from "./prompts/bundledPrompts.js";
 import {
-  type AgentPrompts,
   agentClassNameToPromptsAgentId,
   PROVIDER_TO_PROMPTS_DEV,
+  type AgentPrompts,
 } from "./prompts/prompts.js";
 
 const logger = getLogger(import.meta.url);
@@ -68,7 +68,7 @@ export namespace BaseAgent {
 }
 
 export class BaseAgent {
-  #usage: LlmUsage = Agent.createUsage();
+  #usage: LlmUsage = createLlmUsage();
   protected prompts: AgentPrompts.RolePrompts;
 
   constructor() {

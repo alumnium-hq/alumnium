@@ -1,5 +1,5 @@
 import { always } from "alwaysly";
-import { ChildNode, Element, Node, Text } from "domhandler";
+import { type ChildNode, Element, Node, Text } from "domhandler";
 import { textContent } from "domutils";
 import { "default" as xmlFormatter } from "xml-formatter";
 import { pythonicId } from "../../pythonic/pythonicId.js";

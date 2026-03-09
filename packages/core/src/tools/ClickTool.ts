@@ -1,6 +1,6 @@
 import { BaseDriver } from "../drivers/BaseDriver.js";
 import { BaseTool } from "./BaseTool.js";
-import { field, FieldMetadata } from "./Field.js";
+import { field, type FieldMetadata } from "./Field.js";
 import { UploadTool } from "./UploadTool.js";
 
 export class ClickTool extends BaseTool {

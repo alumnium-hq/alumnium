@@ -2,7 +2,7 @@ import { always, ensure } from "alwaysly";
 import type { CDPSession, Frame, Locator, Page } from "playwright-core";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
-import { ToolClass } from "../tools/BaseTool.js";
+import type { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
 import { HoverTool } from "../tools/HoverTool.js";
@@ -17,6 +17,8 @@ import { Key } from "./keys.js";
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
+import { AppId } from "../AppId.js";
+import { Platform } from "../server/Platform.js";
 import {
   waiterScriptSource,
   waitForScriptSource,
@@ -59,7 +61,7 @@ export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
   page: Page;
   private _pages: Page[] = [];
-  public platform: string = "chromium";
+  public platform: Platform = "chromium";
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     DragAndDropTool,
@@ -359,12 +361,8 @@ export class PlaywrightDriver extends BaseDriver {
     return Promise.resolve(this.page.url());
   }
 
-  app(): string {
-    try {
-      return new URL(this.page.url()).hostname || "unknown";
-    } catch {
-      return "unknown";
-    }
+  async app(): Promise<AppId> {
+    return AppId.parse(this.page.url());
   }
 
   async findElement(id: number): Promise<Locator> {
