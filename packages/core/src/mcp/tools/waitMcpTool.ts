@@ -62,7 +62,7 @@ export const waitMcpTool = McpTool.define("wait", {
       `Driver ${driverId}: Waiting for '${waitFor}' (timeout=${timeout}s)`,
     );
 
-    const [al] = McpState.getDriver(driverId);
+    const al = McpState.getDriverAlumni(driverId);
 
     const startTime = Date.now();
     let lastError: string | undefined;

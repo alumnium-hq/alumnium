@@ -9,7 +9,7 @@ import { ScrollTool } from "../../tools/ScrollTool.js";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.js";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.js";
 import { getLogger } from "../../utils/logger.js";
-import { ensureArtifactsDir } from "../McpArtifacts.js";
+import { McpArtifactsStore } from "../McpArtifactsStore.js";
 import {
   createAndroidDriver,
   createChromeDriver,
@@ -96,13 +96,17 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
     logger.info(`Starting driver ${driverId} for platform: ${platformName}`);
 
     // Create artifacts directories
-    const artifactsDir = await ensureArtifactsDir(driverId);
+    const artifactsStore = new McpArtifactsStore(driverId);
 
     // Detect platform and create appropriate driver
     let driver: McpDriver;
     let platformLabel: string;
     if (["chrome", "chromium"].includes(platformName)) {
-      driver = await createChromeDriver(capabilities, serverUrl, artifactsDir);
+      driver = await createChromeDriver(
+        capabilities,
+        serverUrl,
+        artifactsStore,
+      );
       platformLabel = "Chrome";
     } else if (platformName === "ios") {
       never();
@@ -160,7 +164,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
     }
 
     // Register driver in global state
-    McpState.registerDriver(driverId, al, driver, artifactsDir);
+    McpState.registerDriver(driverId, al, driver, artifactsStore);
 
     logger.info(
       `Driver ${driverId} started successfully. Platform: ${platformLabel}, Model: ${al.model.provider}/${al.model.name}`,
