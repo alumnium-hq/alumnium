@@ -12,7 +12,7 @@ import { SessionManager } from "../server/session/SessionManager.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
 import { Client } from "./Client.js";
-import { Data, looselyTypecast } from "./typecasting.js";
+import { type Data, looselyTypecast } from "./typecasting.js";
 
 const logger = getLogger(import.meta.url);
 

@@ -1,10 +1,12 @@
 import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
+import { AppId } from "../AppId.js";
+import { Platform } from "../server/Platform.js";
 import type { ToolClass } from "../tools/BaseTool.js";
 import type { Element } from "./index.js";
 import type { Key } from "./keys.js";
 
 export abstract class BaseDriver {
-  abstract platform: string;
+  abstract platform: Platform;
   abstract supportedTools: Set<ToolClass>;
   abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
   abstract click(id: number): Promise<void>;
@@ -13,21 +15,18 @@ export abstract class BaseDriver {
   abstract pressKey(key: Key): Promise<void>;
   abstract quit(): Promise<void>;
   abstract back(): Promise<void>;
-  abstract screenshot(): string | Promise<string>;
-  abstract title(): string | Promise<string>;
+  abstract screenshot(): Promise<string>;
+  abstract title(): Promise<string>;
   abstract type(id: number, text: string): Promise<void>;
-  abstract url(): string | Promise<string>;
-  abstract app(): string | Promise<string>;
+  abstract url(): Promise<string>;
+  abstract app(): Promise<AppId>;
   abstract findElement(id: number): Promise<Element>;
   abstract visit(url: string): Promise<void>;
-  abstract scrollTo(id: number): void | Promise<void>;
-  abstract executeScript(script: string): void | Promise<void>;
-  abstract switchToNextTab(): void | Promise<void>;
-  abstract switchToPreviousTab(): void | Promise<void>;
-  abstract wait(seconds: number): void | Promise<void>;
-  abstract waitForSelector(
-    selector: string,
-    timeout?: number,
-  ): void | Promise<void>;
-  abstract printToPdf(filepath: string): void | Promise<void>;
+  abstract scrollTo(id: number): Promise<void>;
+  abstract executeScript(script: string): Promise<void>;
+  abstract switchToNextTab(): Promise<void>;
+  abstract switchToPreviousTab(): Promise<void>;
+  abstract wait(seconds: number): Promise<void>;
+  abstract waitForSelector(selector: string, timeout?: number): Promise<void>;
+  abstract printToPdf(filepath: string): Promise<void>;
 }

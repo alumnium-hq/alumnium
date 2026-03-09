@@ -1,6 +1,6 @@
 import { BaseDriver } from "../drivers/BaseDriver.js";
 import { BaseTool } from "./BaseTool.js";
-import { field, FieldMetadata } from "./Field.js";
+import { field, type FieldMetadata } from "./Field.js";
 
 export class NavigateToUrlTool extends BaseTool {
   static description = "Navigate to or open the URL.";

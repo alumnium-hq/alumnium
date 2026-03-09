@@ -1,7 +1,7 @@
 import { PlaywrightDriver } from "../drivers/PlaywrightDriver.js";
 import { SeleniumDriver } from "../drivers/SeleniumDriver.js";
 import { BaseTool } from "./BaseTool.js";
-import { field, FieldMetadata } from "./Field.js";
+import { field, type FieldMetadata } from "./Field.js";
 
 export class HoverTool extends BaseTool {
   static description = "Hover over an element.";

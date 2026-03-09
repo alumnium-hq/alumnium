@@ -1,4 +1,4 @@
-import { Client } from "../clients/Client.js";
+import type { Client } from "../clients/Client.js";
 
 export class Cache {
   private client: Client;

@@ -1,6 +1,8 @@
-import { ToolDefinition } from "@langchain/core/language_models/base";
+import type { ToolDefinition } from "@langchain/core/language_models/base";
 import z from "zod";
+import { AppId } from "../AppId.js";
 import { Provider } from "../Model.js";
+import { SessionId } from "./session/SessionId.js";
 
 //#region Types
 
@@ -9,10 +11,6 @@ export const PLATFORMS = ["chromium", "uiautomator2", "xcuitest"] as const;
 export const Platform = z.enum(PLATFORMS);
 
 export type Platform = z.infer<typeof Platform>;
-
-export const SessionId = z.string().brand<"SessionId">();
-
-export type SessionId = z.infer<typeof SessionId>;
 
 export const Change = z.object({
   accessibility_tree: z.string(),

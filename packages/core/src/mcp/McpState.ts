@@ -9,7 +9,7 @@ import { Alumni } from "../client/Alumni.js";
 import { PlaywrightDriver } from "../drivers/PlaywrightDriver.js";
 import { LlmUsageStats } from "../llm/llmSchema.js";
 import { getLogger } from "../utils/logger.js";
-import { McpDriver } from "./mcpDrivers.js";
+import type { McpDriver } from "./mcpDrivers.js";
 import { startDriverMcpTool } from "./tools/startDriverMcpTool.js";
 
 const logger = getLogger(import.meta.url);
