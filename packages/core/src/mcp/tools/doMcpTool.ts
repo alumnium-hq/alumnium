@@ -12,7 +12,7 @@ import {
   UploadTool,
 } from "../../tools/index.js";
 import { getLogger } from "../../utils/logger.js";
-import { McpArtifacts } from "../McpArtifacts.js";
+import { McpArtifactsStore } from "../McpArtifactsStore.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
 
@@ -79,7 +79,7 @@ export const doMcpTool = McpTool.define("do", {
 
     logger.info(`Driver ${driverId}: Executing do('${goal}')`);
 
-    const [al] = McpState.getDriver(driverId);
+    const al = McpState.getDriverAlumni(driverId);
     const client = al.client;
     const beforeTree = (await al.driver.getAccessibilityTree()).toStr();
     const beforeUrl = await al.driver.url();
@@ -88,7 +88,7 @@ export const doMcpTool = McpTool.define("do", {
     logger.debug(
       `Driver ${driverId}: do() completed with ${result.steps.length} steps`,
     );
-    await McpArtifacts.saveScreenshot({ driverId, description: goal, al });
+    await McpArtifactsStore.saveScreenshot({ driverId, description: goal });
 
     // Build structured response
     const performedSteps = result.steps.map((step) => ({
@@ -106,6 +106,7 @@ export const doMcpTool = McpTool.define("do", {
           beforeUrl,
           afterTree,
           afterUrl,
+          await al.driver.app(),
         );
       } catch (error) {
         logger.error(`Driver ${driverId}: Error analyzing changes: ${error}`);

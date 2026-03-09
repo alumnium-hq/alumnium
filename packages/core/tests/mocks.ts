@@ -3,18 +3,29 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
+export type TeardownFn = () => void | Promise<void>;
+
 const mocks: Mock<any>[] = [];
 const dirs: string[] = [];
+const teardowns: TeardownFn[] = [];
 
 export function pushMock(...newMocks: Mock<any>[]) {
   mocks.push(...newMocks);
 }
 
-export function createMockDir(prefix: string = "test"): Promise<MockDir> {
+export namespace createMockDir {
+  export interface Props {
+    prefix?: string | undefined;
+    preserve?: boolean | undefined;
+  }
+}
+
+export function createMockDir(props?: createMockDir.Props): Promise<MockDir> {
+  const { preserve, prefix = "test" } = props || {};
   return fs
     .mkdtemp(path.join(os.tmpdir(), `alumnium-${prefix}-`))
     .then((dir) => {
-      dirs.push(dir);
+      if (!preserve) dirs.push(dir);
       return new MockDir(dir);
     });
 }
@@ -53,13 +64,18 @@ export async function clearAllMocks() {
 
   await Promise.all(dirs.map((dir) => fs.rmdir(dir, { recursive: true })));
   dirs.length = 0;
+
+  teardowns.forEach((fn) => fn());
+  teardowns.length = 0;
 }
 
 afterEach(async () => {
   mocks.forEach((m) => m.mockRestore());
   mocks.length = 0;
 
-  await Promise.all(dirs.map((dir) => fs.rmdir(dir, { recursive: true })));
+  await Promise.all(
+    dirs.map((dir) => fs.rm(dir, { recursive: true, force: true })),
+  );
   dirs.length = 0;
 });
 
@@ -75,4 +91,24 @@ export function mockBeforeEach<Mocks extends Record<string, Mock<any>>>(
   });
 
   return mocksRef;
+}
+
+export interface HookRef<Type> {
+  cur: Type;
+}
+
+export function setupBeforeEach<Result>(
+  fn: () => Promise<Result> | Result,
+): HookRef<Result> {
+  const ref: HookRef<Result> = { cur: {} as Result };
+
+  beforeEach(async () => {
+    ref.cur = await fn();
+  });
+
+  return ref;
+}
+
+export function pushTeardown(fn: TeardownFn) {
+  teardowns.push(fn);
 }

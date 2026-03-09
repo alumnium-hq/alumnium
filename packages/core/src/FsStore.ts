@@ -144,7 +144,6 @@ export class FsStore {
    * Removes the store directory.
    */
   async clear(): Promise<void> {
-    console.log("clearing", this.dir);
     await fs.rm(this.dir, { recursive: true, force: true });
   }
 
@@ -170,10 +169,32 @@ export class FsStore {
    *
    * @param envDir Environment variable value, e.g. `process.env.ALUMNIUM_MCP_ARTIFACTS_DIR`.
    * @param defaultDir Default subdirectory under global store, e.g. `artifacts`.
+   * @param nestedDir Optional nested directory under the resolved subdirectory, e.g. driver ID.
    * @returns FsStore instance for the resolved directory.
    */
-  static subStore(envDir: string | undefined, defaultDir: string): FsStore {
-    return new FsStore(envDir ?? this.globalSubDir(defaultDir));
+  static subStore(
+    envDir: string | undefined,
+    defaultDir: string,
+    nestedDir?: string,
+  ): FsStore {
+    return new FsStore(this.subResolve(envDir, defaultDir, nestedDir));
+  }
+
+  /**
+   * Resolves a subdirectory path under the global store directory, allowing
+   * override via environment variable.
+   *
+   * @param envDir Environment variable value, e.g. `process.env.ALUMNIUM_MCP_ARTIFACTS_DIR`.
+   * @param defaultDir Default subdirectory under global store, e.g. `artifacts`.
+   * @param nestedDir Optional nested directory under the resolved subdirectory, e.g. driver ID.
+   * @returns Resolved path.
+   */
+  static subResolve(
+    envDir: string | undefined,
+    defaultDir: string,
+    nestedDir?: string,
+  ): string {
+    return path.join(envDir ?? this.globalSubDir(defaultDir), nestedDir ?? "");
   }
 
   /**

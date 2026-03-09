@@ -144,14 +144,14 @@ describe("FsStore", () => {
     });
 
     it("writes string data to file", async () => {
-      const { mockDir, store } = setup.cur;
+      const { store } = setup.cur;
       const result = await store.writeFile("sub/dir/file.txt", "Hello, world!");
       const content = await fs.readFile(result, "utf-8");
       expect(content).toBe("Hello, world!");
     });
 
     it("writes buffer data to file", async () => {
-      const { mockDir, store } = setup.cur;
+      const { store } = setup.cur;
       const buf = Buffer.from("Hello, buffer!");
       const result = await store.writeFile("sub/dir/file.bin", buf);
       const content = await fs.readFile(result);
@@ -277,7 +277,7 @@ describe("FsStore", () => {
   });
 
   describe("FsStore.subStore", () => {
-    it("creates nested sub-stores with env var param", async () => {
+    it("creates nested sub-store with env var param", async () => {
       const subStore = FsStore.subStore("sub/dir", "default/dir");
       expect(subStore.dir).toBe("sub/dir");
     });
@@ -287,9 +287,44 @@ describe("FsStore", () => {
       expect(subStore.dir).toBe(".alumnium/default/dir");
     });
 
-    it("respects empty env var string", () => {
+    it("resolves empty string to '.'", () => {
       const subStore = FsStore.subStore("", "default/dir");
-      expect(subStore.dir).toBe("");
+      expect(subStore.dir).toBe(".");
+    });
+
+    it("allows to pass nested directory relative to base dir", () => {
+      expect(FsStore.subStore(".custom", "default", "nested/dir").dir).toBe(
+        ".custom/nested/dir",
+      );
+      expect(FsStore.subStore(undefined, "default", "nested/dir").dir).toBe(
+        ".alumnium/default/nested/dir",
+      );
+    });
+  });
+
+  describe("FsStore.subResolve", () => {
+    it("resolves nested sub-store path with env var param", () => {
+      const subDir = FsStore.subResolve("sub/dir", "default/dir");
+      expect(subDir).toBe("sub/dir");
+    });
+
+    it("falls back to the default dir within global dir if the env var is undefined", () => {
+      const subDir = FsStore.subResolve(undefined, "default/dir");
+      expect(subDir).toBe(".alumnium/default/dir");
+    });
+
+    it("resolves empty string to '.'", () => {
+      const subDir = FsStore.subResolve("", "default/dir");
+      expect(subDir).toBe(".");
+    });
+
+    it("allows to pass nested directory relative to base dir", () => {
+      expect(FsStore.subResolve(".custom", "default", "nested/dir")).toBe(
+        ".custom/nested/dir",
+      );
+      expect(FsStore.subResolve(undefined, "default", "nested/dir")).toBe(
+        ".alumnium/default/nested/dir",
+      );
     });
   });
 

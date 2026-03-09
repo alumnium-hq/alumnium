@@ -1,6 +1,6 @@
 import z from "zod";
 import { getLogger } from "../../utils/logger.js";
-import { McpArtifacts } from "../McpArtifacts.js";
+import { McpArtifactsStore } from "../McpArtifactsStore.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
 
@@ -33,7 +33,7 @@ export const checkMcpTool = McpTool.define("check", {
       `Driver ${driverId}: Executing check('${statement}', vision=${vision})`,
     );
 
-    const [al] = McpState.getDriver(driverId);
+    const al = McpState.getDriverAlumni(driverId);
 
     let explanation = "";
     let result = "";
@@ -47,10 +47,9 @@ export const checkMcpTool = McpTool.define("check", {
       logger.debug(`Driver ${driverId}: check() failed: ${error}`);
     }
 
-    await McpArtifacts.saveScreenshot({
+    await McpArtifactsStore.saveScreenshot({
       driverId,
       description: `check ${statement}`,
-      al,
     });
 
     return [{ type: "text", text: `Check ${result}! ${explanation}` }];
