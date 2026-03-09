@@ -25,7 +25,7 @@ export const fetchAccessibilityTreeMcpTool = McpTool.define(
 
       logger.debug(`Driver ${driverId}: Getting accessibility tree`);
 
-      const [al] = McpState.getDriver(driverId);
+      const al = McpState.getDriverAlumni(driverId);
       // Access the internal driver's accessibility tree
       // as if it's processed by Alumnium server
       const client = al.client;

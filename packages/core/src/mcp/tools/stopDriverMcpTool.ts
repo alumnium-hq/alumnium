@@ -34,7 +34,7 @@ export const stopDriverMcpTool = McpTool.define("stop_driver", {
 
     // Save cache if requested
     if (saveCache) {
-      const [al] = McpState.getDriver(driverId);
+      const al = McpState.getDriverAlumni(driverId);
       await al.cache.save();
       logger.info(`Driver ${driverId}: Cache saved`);
     }

@@ -2,12 +2,12 @@
  * Driver factory functions for different platforms.
  */
 
-import path from "node:path";
 import type { Browser, BrowserContext, Page } from "playwright-core";
 import { chromium } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { never } from "zod";
+import { FsStore } from "../FsStore.js";
 import { getLogger } from "../utils/logger.js";
 
 const logger = getLogger(import.meta.url);
@@ -39,12 +39,12 @@ export namespace McpDriver {
 export function createChromeDriver(
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
-  artifactsDir: string,
+  artifactsStore: FsStore,
 ): Promise<McpDriver> {
   const driverType = (process.env.ALUMNIUM_DRIVER || "selenium").toLowerCase();
   logger.info(`Creating Chrome driver using ${driverType}`);
   if (driverType === "playwright") {
-    return createPlaywrightDriver(capabilities, artifactsDir);
+    return createPlaywrightDriver(capabilities, artifactsStore);
   } else {
     return createSeleniumDriver(capabilities, serverUrl);
   }
@@ -55,7 +55,7 @@ export function createChromeDriver(
  */
 export async function createPlaywrightDriver(
   capabilities: McpDriver.Capabilities,
-  artifactsDir: string,
+  artifactsStore: FsStore,
 ): Promise<Page> {
   const headless =
     (process.env.ALUMNIUM_PLAYWRIGHT_HEADLESS || "true").toLowerCase() ===
@@ -69,8 +69,9 @@ export async function createPlaywrightDriver(
     logger.debug("Setting extra HTTP headers: {headers}", { headers });
   }
 
+  const videosDir = await artifactsStore.ensureDir("videos");
   const context: BrowserContext = await browser.newContext({
-    recordVideo: { dir: path.join(artifactsDir, "videos") },
+    recordVideo: { dir: videosDir },
     extraHTTPHeaders: headers,
   });
 

@@ -3,12 +3,11 @@
  * State management for MCP server driver instances.
  */
 
-import { always } from "alwaysly";
-import path from "node:path";
 import { Alumni } from "../client/Alumni.js";
 import { PlaywrightDriver } from "../drivers/PlaywrightDriver.js";
 import { LlmUsageStats } from "../llm/llmSchema.js";
 import { getLogger } from "../utils/logger.js";
+import { McpArtifactsStore } from "./McpArtifactsStore.js";
 import type { McpDriver } from "./mcpDrivers.js";
 import { startDriverMcpTool } from "./tools/startDriverMcpTool.js";
 
@@ -16,13 +15,18 @@ const logger = getLogger(import.meta.url);
 
 export namespace McpState {
   export type DriverPair = [Alumni, McpDriver];
+
+  export interface Driver {
+    readonly al: Alumni;
+    readonly mcpDriver: McpDriver;
+    readonly artifactsStore: McpArtifactsStore;
+    stepCounter: number;
+  }
 }
 
 export abstract class McpState {
   // Global state for driver management
-  static drivers: Record<string, McpState.DriverPair> = {}; // driver_id -> (Alumni instance, raw driver)
-  static artifactsDirs: Record<string, string> = {}; // driver_id -> artifacts directory path
-  static stepCounters: Record<string, number> = {}; // driver_id -> current step number
+  private static drivers: Record<string, McpState.Driver> = {}; // driver_id -> driver state
 
   /**
    * Register a new driver instance.
@@ -30,27 +34,51 @@ export abstract class McpState {
   static registerDriver(
     driverId: string,
     al: Alumni,
-    rawDriver: McpDriver,
-    artifactsDir: string,
+    mcpDriver: McpDriver,
+    artifactsStore: McpArtifactsStore,
   ): void {
-    this.drivers[driverId] = [al, rawDriver];
-    this.artifactsDirs[driverId] = artifactsDir;
-    this.stepCounters[driverId] = 1;
+    this.drivers[driverId] = {
+      al: al,
+      mcpDriver,
+      artifactsStore: artifactsStore,
+      stepCounter: 1,
+    };
     logger.debug(`Registered driver ${driverId} in state`);
   }
 
   /**
-   * Get driver instance by ID.
+   * Get driver's Alumni instance by driver ID.
    */
-  static getDriver(driverId: string): McpState.DriverPair {
-    const driverEntry = this.drivers[driverId];
-    if (!driverEntry) {
-      logger.error(`Driver ${driverId} not found`);
+  static getDriverAlumni(driverId: string): Alumni {
+    const driverState = this.getDriverState(driverId);
+    return driverState.al;
+  }
+
+  /**
+   * Increment driver step counter and return new step number.
+   *
+   * @param driverId Driver ID.
+   * @returns New step number after increment.
+   */
+  static incrementStepNum(driverId: string): number {
+    const driverState = this.getDriverState(driverId);
+    const newStepCounter = driverState.stepCounter++;
+    return newStepCounter;
+  }
+
+  /**
+   * Get driver state by ID.
+   */
+  static getDriverState(driverId: string): McpState.Driver {
+    const driverState = this.drivers[driverId];
+    if (!driverState) {
+      logger.error(`Driver state for ${driverId} not found`);
+      // NOTE: This error is required for the controlling agent calling MCP.
       throw new Error(
         `Driver ${driverId} not found. Call ${startDriverMcpTool.name} first.`,
       );
     }
-    return driverEntry;
+    return driverState;
   }
 
   /**
@@ -59,36 +87,38 @@ export abstract class McpState {
   static async cleanupDriver(
     driverId: string,
   ): Promise<[string, LlmUsageStats]> {
-    const driverEntry = this.drivers[driverId];
-    if (!driverEntry) {
-      logger.error(`Driver ${driverId} not found for cleanup`);
-      throw new Error(`Driver ${driverId} not found.`);
-    }
+    const driverState = this.getDriverState(driverId);
+
     logger.debug(`Cleaning up driver ${driverId}`);
 
-    const [al, driver] = driverEntry;
+    const { al, mcpDriver } = driverState;
     const stats = await al.getStats();
-    const artifactsDir = this.artifactsDirs[driverId];
-    always(artifactsDir);
 
-    if (driver instanceof PlaywrightDriver) {
-      // Playwright driver
-
+    if (mcpDriver instanceof PlaywrightDriver) {
       logger.debug(`Driver ${driverId}: Stopping Playwright tracing`);
 
-      await driver.page
-        .context()
-        .tracing.stop({ path: path.join(artifactsDir, "trace.zip") });
+      const tracePath =
+        await driverState.artifactsStore.ensureFilePath("trace.zip");
+      await mcpDriver.page.context().tracing.stop({ path: tracePath });
     }
+
+    // Save token stats to JSON file
+    const statsPath = await driverState.artifactsStore.writeJson(
+      "token-stats.json",
+      stats,
+    );
+    logger.info(`Driver ${driverId}: Token stats saved to ${statsPath}`);
 
     await al.quit();
 
     delete this.drivers[driverId];
-    delete this.artifactsDirs[driverId];
-    delete this.stepCounters[driverId];
 
     logger.debug(`Driver ${driverId} cleanup complete`);
 
-    return [artifactsDir, stats];
+    return [driverState.artifactsStore.dir, stats];
+  }
+
+  static clear() {
+    this.drivers = {};
   }
 }
