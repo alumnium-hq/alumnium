@@ -4,7 +4,8 @@ import type { Browser } from "webdriverio";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
-import { ToolClass } from "../tools/BaseTool.js";
+import { AppId } from "../AppId.js";
+import type { ToolClass } from "../tools/BaseTool.js";
 import { ClickTool } from "../tools/ClickTool.js";
 import { DragAndDropTool } from "../tools/DragAndDropTool.js";
 import { PressKeyTool } from "../tools/PressKeyTool.js";
@@ -146,14 +147,13 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  app(): string {
+  async app(): Promise<AppId> {
     const caps = this.driver.capabilities as Record<string, unknown>;
-    return (
-      (caps["appium:appPackage"] as string | undefined) ||
-      (caps["appium:bundleId"] as string | undefined) ||
-      (caps["appPackage"] as string | undefined) ||
-      (caps["bundleId"] as string | undefined) ||
-      "unknown"
+    return AppId.parse(
+      caps["appPackage"] ||
+        caps["bundleId"] ||
+        caps["appium:appPackage"] ||
+        caps["appium:bundleId"],
     );
   }
 
@@ -206,11 +206,11 @@ export class AppiumDriver extends BaseDriver {
     await this.driver.execute(script);
   }
 
-  switchToNextTab(): void {
+  async switchToNextTab(): Promise<void> {
     throw new Error("Tab switching not supported for this driver");
   }
 
-  switchToPreviousTab(): void {
+  async switchToPreviousTab(): Promise<void> {
     throw new Error("Tab switching not supported for this driver");
   }
 
@@ -219,11 +219,11 @@ export class AppiumDriver extends BaseDriver {
     await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
   }
 
-  waitForSelector(): void {
+  async waitForSelector(): Promise<void> {
     throw new Error("waitForSelector not supported for this driver");
   }
 
-  printToPdf(): void {
+  async printToPdf(): Promise<void> {
     throw new Error("Printing to PDF not supported for this driver");
   }
 

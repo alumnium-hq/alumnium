@@ -2,7 +2,7 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import {
   AIMessageChunk,
   BaseMessage,
-  MessageStructure,
+  type MessageStructure,
 } from "@langchain/core/messages";
 import {
   ChatPromptTemplate,

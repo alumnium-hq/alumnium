@@ -2,7 +2,7 @@ import { always } from "alwaysly";
 import { Element } from "domhandler";
 import { pythonicSplitlines } from "../pythonic/pythonicSplitlines.js";
 import { XML } from "../xml/index.js";
-import { AccessibilityElement } from "./AccessibilityElement.js";
+import type { AccessibilityElement } from "./AccessibilityElement.js";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
 
 export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {

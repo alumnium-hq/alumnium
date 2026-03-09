@@ -5,6 +5,7 @@
  * defined in packages/python/src/alumnium/server/api_models.py
  */
 
+import type { AppId } from "../AppId.js";
 import type { ElementRef } from "../server/serverSchema.js";
 import type { ToolCall } from "../tools/BaseTool.js";
 
@@ -27,7 +28,7 @@ export interface PlanRequest {
   accessibility_tree: string;
   url?: string;
   title?: string;
-  app?: string;
+  app: AppId;
 }
 
 export interface PlanResponse {
@@ -39,7 +40,7 @@ export interface StepRequest {
   goal: string;
   step: string;
   accessibility_tree: string;
-  app?: string;
+  app: AppId;
 }
 
 export interface StepResponse {
@@ -53,7 +54,7 @@ export interface StatementRequest {
   url?: string;
   title?: string;
   screenshot?: string | null;
-  app?: string;
+  app: AppId;
 }
 
 export interface StatementResponse {
@@ -64,7 +65,7 @@ export interface StatementResponse {
 export interface AreaRequest {
   description: string;
   accessibility_tree: string;
-  app?: string;
+  app: AppId;
 }
 
 export interface AreaResponse {
@@ -75,7 +76,7 @@ export interface AreaResponse {
 export interface FindRequest {
   description: string;
   accessibility_tree: string;
-  app?: string;
+  app: AppId;
 }
 
 export interface FindResponse {
@@ -95,6 +96,7 @@ export interface ChangeState {
 export interface ChangesRequest {
   before: ChangeState;
   after: ChangeState;
+  app: AppId;
 }
 
 export interface ChangesResponse {

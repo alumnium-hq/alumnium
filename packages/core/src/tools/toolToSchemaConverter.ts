@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { BindToolsInput } from "@langchain/core/language_models/chat_models";
-import { ToolClass } from "./BaseTool.js";
-import { ToolWithFields } from "./Field.js";
+import type { ToolDefinition } from "@langchain/core/language_models/base";
+import type { ToolClass } from "./BaseTool.js";
+import type { ToolWithFields } from "./Field.js";
 
 export function convertToolsToSchemas(
   tools: Record<string, ToolClass>,
-): BindToolsInput[] {
+): ToolDefinition[] {
   return Object.entries(tools).map(([name, ToolClass]) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     const description = (ToolClass as any).description || `Execute ${name}`;

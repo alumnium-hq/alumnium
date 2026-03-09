@@ -7,9 +7,9 @@ import { ChatMistralAI } from "@langchain/mistralai";
 import { ChatOllama } from "@langchain/ollama";
 import {
   AzureChatOpenAI,
-  AzureChatOpenAIFields,
+  type AzureChatOpenAIFields,
   ChatOpenAI,
-  ChatOpenAIFields,
+  type ChatOpenAIFields,
 } from "@langchain/openai";
 import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";

@@ -9,7 +9,7 @@ export interface ToolCall {
 }
 
 export abstract class BaseTool {
-  abstract invoke(driver: BaseDriver): void | Promise<void>;
+  abstract invoke(driver: BaseDriver): Promise<void>;
 
   static async executeToolCall(
     toolCall: ToolCall,

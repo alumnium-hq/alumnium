@@ -1,6 +1,6 @@
 import { BaseDriver } from "../drivers/BaseDriver.js";
 import { BaseTool } from "./BaseTool.js";
-import { field, FieldMetadata } from "./Field.js";
+import { field, type FieldMetadata } from "./Field.js";
 
 export class WaitTool extends BaseTool {
   static description = `Wait for a specified number of seconds.

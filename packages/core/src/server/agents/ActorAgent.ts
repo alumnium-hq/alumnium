@@ -1,11 +1,14 @@
-import { ToolDefinition } from "@langchain/core/language_models/base";
+import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { AIMessageChunk, MessageStructure } from "@langchain/core/messages";
+import {
+  AIMessageChunk,
+  type MessageStructure,
+} from "@langchain/core/messages";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
-import { ToolCall } from "../accessibility/BaseServerAccessibilityTree.js";
 import { getLogger } from "../../utils/logger.js";
+import type { ToolCall } from "../accessibility/BaseServerAccessibilityTree.js";
 import { BaseAgent } from "./BaseAgent.js";
 
 const logger = getLogger(import.meta.url);

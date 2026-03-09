@@ -1,13 +1,15 @@
+import { AppId } from "../AppId.js";
+import type { Cache } from "../client/Cache.js";
 import { LlmUsageStats } from "../llm/llmSchema.js";
 import type { Model } from "../Model.js";
-import type { ElementRef } from "../server/serverSchema.js";
+import type { ElementRef, Platform } from "../server/serverSchema.js";
 import type { ToolCall, ToolClass } from "../tools/BaseTool.js";
 import type { Data } from "./typecasting.js";
 
 export namespace Client {
   export interface Props {
     model: Model;
-    platform: string;
+    platform: Platform;
     tools: Record<string, ToolClass>;
     planner: boolean | undefined;
     excludeAttributes: string[] | undefined;
@@ -33,7 +35,7 @@ export namespace Client {
 
 export abstract class Client {
   protected model: Model;
-  protected platform: string;
+  protected platform: Platform;
   protected tools: Record<string, ToolClass>;
   protected planner: boolean;
   protected excludeAttributes: string[] | undefined;
@@ -51,6 +53,7 @@ export abstract class Client {
   abstract planActions(
     goal: string,
     accessibilityTree: string,
+    app: AppId,
   ): Promise<Client.PlanActionsResult>;
 
   abstract addExample(goal: string, actions: string[]): Promise<void>;
@@ -61,6 +64,7 @@ export abstract class Client {
     goal: string,
     step: string,
     accessibilityTree: string,
+    app: AppId,
   ): Promise<Client.ExecuteActionResult>;
 
   abstract retrieve(
@@ -68,29 +72,35 @@ export abstract class Client {
     accessibilityTree: string,
     title: string,
     url: string,
+    app: AppId,
     screenshot?: string,
   ): Promise<[string, Data]>;
 
   abstract findArea(
     description: string,
     accessibilityTree: string,
+    app: AppId,
   ): Promise<Client.FindAreaResult>;
 
   abstract findElement(
     description: string,
     accessibilityTree: string,
+    app: AppId,
   ): Promise<Client.FindElementResult | undefined>;
 
   abstract saveCache(): Promise<void>;
 
   abstract discardCache(): Promise<void>;
 
-  abstract getStats(): Promise<UsageStats>;
+  abstract clearCache(props?: Cache.ClearProps | undefined): Promise<void>;
+
+  abstract getStats(): Promise<LlmUsageStats>;
 
   abstract analyzeChanges(
     beforeAccessibilityTree: string,
     beforeUrl: string,
     afterAccessibilityTree: string,
     afterUrl: string,
+    app: AppId,
   ): Promise<string>;
 }

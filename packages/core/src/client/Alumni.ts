@@ -6,23 +6,23 @@ import type { Browser } from "webdriverio";
 import { Client } from "../clients/Client.js";
 import { HttpClient } from "../clients/HttpClient.js";
 import { NativeClient } from "../clients/NativeClient.js";
-import { Data } from "../clients/typecasting.js";
+import type { Data } from "../clients/typecasting.js";
 import {
   AppiumDriver,
   BaseDriver,
-  Element,
+  type Element,
   PlaywrightDriver,
   SeleniumDriver,
 } from "../drivers/index.js";
 import { LlmUsageStats } from "../llm/llmSchema.js";
 import { Model } from "../Model.js";
-import { BaseTool, ToolClass } from "../tools/BaseTool.js";
+import { BaseTool, type ToolClass } from "../tools/BaseTool.js";
 import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
 import { Area } from "./Area.js";
 import { Cache } from "./Cache.js";
 import { AssertionError } from "./errors/AssertionError.js";
-import { DoResult, DoStep } from "./result.js";
+import type { DoResult, DoStep } from "./result.js";
 
 const logger = getLogger(import.meta.url);
 

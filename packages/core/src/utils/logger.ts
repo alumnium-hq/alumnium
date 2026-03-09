@@ -3,7 +3,7 @@ import {
   ansiColorFormatter,
   configureSync,
   getConsoleSink,
-  LogLevel,
+  type LogLevel,
   getLogger as logtapeGetLogger,
   resetSync,
 } from "@logtape/logtape";

@@ -1,7 +1,7 @@
 import { ErrorResponse, UsageStats } from "../server/serverSchema.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
-import {
+import type {
   AddExampleRequest,
   AreaRequest,
   AreaResponse,
@@ -19,7 +19,7 @@ import {
   StepResponse,
 } from "./ApiModels.js";
 import { Client } from "./Client.js";
-import { Data, looselyTypecast } from "./typecasting.js";
+import { type Data, looselyTypecast } from "./typecasting.js";
 
 const logger = getLogger(import.meta.url);
 
