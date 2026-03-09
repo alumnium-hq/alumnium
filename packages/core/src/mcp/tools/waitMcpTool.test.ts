@@ -1,45 +1,29 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  Mock,
-  mock,
-  spyOn,
-} from "bun:test";
+import { describe, expect, it, mock, spyOn } from "bun:test";
+import { mockBeforeEach, pushMock } from "../../../tests/mocks.js";
 import { McpState } from "../McpState.js";
 import { waitMcpTool } from "./waitMcpTool.js";
 
-let sleepSpy: Mock<any>;
-const mocks: Mock<any>[] = [];
-
-describe("waitMcpTool.execute", () => {
-  beforeEach(() => {
-    mocks.push((sleepSpy = spyOn(Bun, "sleep").mockResolvedValue(undefined)));
-  });
-
-  afterEach(() => {
-    mocks.forEach((mock) => mock.mockRestore());
-    mocks.length = 0;
-  });
+describe("waitMcpTool", () => {
+  const mocks = mockBeforeEach(() => ({
+    sleepSpy: spyOn(Bun, "sleep").mockResolvedValue(undefined),
+  }));
 
   it("waits for given number of seconds", async () => {
     const result = await waitMcpTool.execute({ for: 1, timeout: 10 });
     expect(result).toEqual([{ type: "text", text: "Waited 1 seconds" }]);
-    expect(sleepSpy).toHaveBeenCalledWith(1000);
+    expect(mocks.cur.sleepSpy).toHaveBeenCalledWith(1000);
   });
 
   it("clamps number waits to minimum", async () => {
     const result = await waitMcpTool.execute({ for: 0, timeout: 10 });
     expect(result).toEqual([{ type: "text", text: "Waited 1 seconds" }]);
-    expect(sleepSpy).toHaveBeenCalledWith(1000);
+    expect(mocks.cur.sleepSpy).toHaveBeenCalledWith(1000);
   });
 
   it("clamps number waits to maximum", async () => {
     const result = await waitMcpTool.execute({ for: 100, timeout: 10 });
     expect(result).toEqual([{ type: "text", text: "Waited 30 seconds" }]);
-    expect(sleepSpy).toHaveBeenCalledWith(30000);
+    expect(mocks.cur.sleepSpy).toHaveBeenCalledWith(30000);
   });
 
   it("requires driver_id when waiting for condition", async () => {
@@ -127,10 +111,9 @@ describe("waitMcpTool.execute", () => {
 
 function mockCheck(checkFn: (condition: string) => Promise<string>) {
   const checkSpy = mock(checkFn);
-  const getDriverSpy = spyOn(McpState, "getDriver").mockReturnValue([
-    { check: checkSpy },
-    {},
-  ] as any);
-  mocks.push(getDriverSpy);
+  const getDriverSpy = spyOn(McpState, "getDriverAlumni").mockReturnValue({
+    check: checkSpy,
+  } as any);
+  pushMock(getDriverSpy);
   return checkSpy;
 }
