@@ -1,5 +1,6 @@
-import { ToolDefinition } from "@langchain/core/language_models/base";
+import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import { AppId } from "../../AppId.js";
 import { createLlmUsageStats, LlmUsageStats } from "../../llm/llmSchema.js";
 import { Model, Provider } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
@@ -9,21 +10,33 @@ import { SessionId } from "./SessionId.js";
 
 const logger = getLogger(import.meta.url);
 
+export namespace SessionManager {
+  export interface CreateSessionProps {
+    platform: Platform;
+    provider: Provider;
+    name?: string | undefined;
+    tools: ToolDefinition[];
+    llm?: BaseChatModel | undefined;
+    planner?: boolean | undefined;
+    excludeAttributes?: string[] | undefined;
+    sessionId?: SessionId | undefined;
+    app?: AppId | undefined;
+  }
+}
+
 /**
  * Manages multiple client sessions.
  */
 export class SessionManager {
   #sessions: Record<SessionId, Session> = {};
 
-  constructor() {}
-
   /**
    * Create a new session and return its ID.
    *
    * @param props Session creation properties
-   * @returns Session ID string
+   * @returns Session instance
    */
-  createSession(props: SessionManager.CreateSessionProps): SessionId {
+  createSession(props: SessionManager.CreateSessionProps): Session {
     const sessionId = props.sessionId || Session.createId();
 
     logger.info(
@@ -37,14 +50,15 @@ export class SessionManager {
     } = props;
     const model = new Model(provider, modelName);
 
-    this.#sessions[sessionId] = new Session({
+    const session = new Session({
       ...restProps,
       sessionId,
       model,
       excludeAttributes: new Set(excludeAttributes ?? []),
     });
+    this.#sessions[sessionId] = session;
     logger.info(`Created new session: ${sessionId}`);
-    return sessionId;
+    return session;
   }
 
   applySessionState(sessionState: Session.State): void {
@@ -96,18 +110,5 @@ export class SessionManager {
       }
     }
     return totalStats;
-  }
-}
-
-export namespace SessionManager {
-  export interface CreateSessionProps {
-    platform: Platform;
-    provider: Provider;
-    name?: string | undefined;
-    tools: ToolDefinition[];
-    llm?: BaseChatModel | undefined;
-    planner?: boolean | undefined;
-    excludeAttributes?: string[] | undefined;
-    sessionId?: SessionId | undefined;
   }
 }
