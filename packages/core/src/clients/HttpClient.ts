@@ -1,4 +1,7 @@
-import { ErrorResponse, UsageStats } from "../server/serverSchema.js";
+import { AppId } from "../AppId.js";
+import type { Http } from "../Http.js";
+import { LlmUsageStats } from "../llm/llmSchema.js";
+import { ErrorResponse } from "../server/serverSchema.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
 import type {
@@ -30,25 +33,206 @@ export namespace HttpClient {
 }
 
 export class HttpClient extends Client {
-  private baseUrl: string;
-  private sessionId: string | null = null;
-  private sessionPromise: Promise<void> | null = null;
-  private timeout: number = 300_000; // 5 minutes
+  static TIMEOUT: number = 300_000; // 5 minutes
+
+  #baseUrl: string;
+  #sessionIdPromise: Promise<string>;
 
   constructor(props: HttpClient.Props) {
     const { baseUrl, ...superProps } = props;
     super(superProps);
-    this.baseUrl = baseUrl.replace(/\/$/, "");
+    this.#baseUrl = baseUrl.replace(/\/$/, "");
+    this.#sessionIdPromise = this.#initSession();
   }
 
-  private async fetchWithTimeout(
+  async quit(): Promise<void> {
+    await this.#sessionFetch("DELETE", "/sessions");
+  }
+
+  async planActions(
+    goal: string,
+    accessibilityTree: string,
+    app: AppId,
+  ): Promise<Client.PlanActionsResult> {
+    const body: PlanRequest = {
+      goal,
+      accessibility_tree: accessibilityTree,
+      app,
+    };
+    return this.#sessionFetch<PlanResponse>("POST", "/plans", body);
+  }
+
+  async addExample(goal: string, actions: string[]): Promise<void> {
+    const body: AddExampleRequest = {
+      goal,
+      actions,
+    };
+    await this.#sessionFetch("POST", "/examples", body);
+  }
+
+  async clearExamples(): Promise<void> {
+    await this.#sessionFetch("DELETE", "/examples");
+  }
+
+  async executeAction(
+    goal: string,
+    step: string,
+    accessibilityTree: string,
+    app: AppId,
+  ): Promise<Client.ExecuteActionResult> {
+    const body: StepRequest = {
+      goal,
+      step,
+      accessibility_tree: accessibilityTree,
+      app,
+    };
+    return this.#sessionFetch<StepResponse>("POST", "/steps", body);
+  }
+
+  async retrieve(
+    statement: string,
+    accessibilityTree: string,
+    title: string,
     url: string,
-    options: RequestInit = {},
-  ): Promise<Response> {
-    const response = await fetch(url, {
-      ...options,
-      signal: AbortSignal.timeout(this.timeout),
-    });
+    app: AppId,
+    screenshot?: string,
+  ): Promise<[string, Data]> {
+    const body: StatementRequest = {
+      statement,
+      accessibility_tree: accessibilityTree,
+      title,
+      url,
+      screenshot: screenshot || null,
+      app,
+    };
+    const result = await this.#sessionFetch<StatementResponse>(
+      "POST",
+      "/statements",
+      body,
+    );
+    return [result.explanation, looselyTypecast(result.result)];
+  }
+
+  async findArea(
+    description: string,
+    accessibilityTree: string,
+    app: AppId,
+  ): Promise<Client.FindAreaResult> {
+    const body: AreaRequest = {
+      description,
+      accessibility_tree: accessibilityTree,
+      app,
+    };
+    const data = await this.#sessionFetch<AreaResponse>("POST", "/areas", body);
+    return { id: data.id, explanation: data.explanation };
+  }
+
+  async findElement(
+    description: string,
+    accessibilityTree: string,
+    app: AppId,
+  ): Promise<Client.FindElementResult | undefined> {
+    const body: FindRequest = {
+      description,
+      accessibility_tree: accessibilityTree,
+      app,
+    };
+    const result = await this.#sessionFetch<FindResponse>(
+      "POST",
+      "/elements",
+      body,
+    );
+    return result.elements[0];
+  }
+
+  async analyzeChanges(
+    beforeAccessibilityTree: string,
+    beforeUrl: string,
+    afterAccessibilityTree: string,
+    afterUrl: string,
+    app: AppId,
+  ): Promise<string> {
+    const body: ChangesRequest = {
+      before: { accessibility_tree: beforeAccessibilityTree, url: beforeUrl },
+      after: { accessibility_tree: afterAccessibilityTree, url: afterUrl },
+      app,
+    };
+    const result = await this.#sessionFetch<ChangesResponse>(
+      "POST",
+      "/changes",
+      body,
+    );
+    return result.result;
+  }
+
+  async saveCache(): Promise<void> {
+    await this.#sessionFetch("POST", "/caches");
+  }
+
+  async discardCache(): Promise<void> {
+    await this.#sessionFetch("DELETE", "/caches");
+  }
+
+  async getStats(): Promise<LlmUsageStats> {
+    return this.#sessionFetch<LlmUsageStats>("GET", "/stats");
+  }
+
+  async #sessionFetch<Result>(
+    method: Http.Method,
+    path: string,
+    body?: unknown,
+  ): Promise<Result> {
+    return this.#withSessionId((sessionId) =>
+      this.#fetch(method, `/sessions/${sessionId}${path}`, body),
+    );
+  }
+
+  async #withSessionId<Result>(
+    fn: (sessionId: string) => Result | Promise<Result>,
+  ): Promise<Result> {
+    const sessionId = await this.#sessionIdPromise;
+    return fn(sessionId);
+  }
+
+  async #initSession(): Promise<string> {
+    const toolSchemas = convertToolsToSchemas(this.tools);
+    const body: SessionRequest = {
+      provider: this.model.provider,
+      name: this.model.name,
+      platform: this.platform as SessionRequest["platform"],
+      tools: toolSchemas,
+      planner: this.planner,
+      exclude_attributes: this.excludeAttributes,
+    };
+
+    const result = await this.#fetch<SessionResponse>(
+      "POST",
+      "/sessions",
+      body,
+    );
+
+    const sessionId = result.session_id;
+    logger.debug(`Session initialized with ID: ${sessionId}`);
+    return sessionId;
+  }
+
+  async #fetch<Result>(
+    method: Http.Method,
+    path: string,
+    body?: unknown,
+  ): Promise<Result> {
+    const init: RequestInit = {
+      method,
+      signal: AbortSignal.timeout(HttpClient.TIMEOUT),
+    };
+    if (body != null) {
+      init.headers = { "Content-Type": "application/json" };
+      init.body = JSON.stringify(body);
+    }
+
+    const url = `${this.#baseUrl}/v1${path}`;
+
+    const response = await fetch(url, init);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -67,280 +251,10 @@ export class HttpClient extends Client {
         detail = errorText;
       }
       throw new Error(
-        `${options.method || "GET"} ${url} responded with ${response.status} ${response.statusText}: ${detail}`,
+        `${init.method || "GET"} ${url} responded with ${response.status} ${response.statusText}: ${detail}`,
       );
     }
 
-    return response;
-  }
-
-  private async ensureSession(): Promise<void> {
-    if (this.sessionId) {
-      return;
-    }
-
-    if (!this.sessionPromise) {
-      this.sessionPromise = (async () => {
-        const toolSchemas = convertToolsToSchemas(this.tools);
-        const requestBody: SessionRequest = {
-          provider: this.model.provider,
-          name: this.model.name,
-          platform: this.platform as SessionRequest["platform"],
-          tools: toolSchemas,
-          planner: this.planner,
-          exclude_attributes: this.excludeAttributes,
-        };
-        const response = await this.fetchWithTimeout(
-          `${this.baseUrl}/v1/sessions`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          },
-        );
-
-        const data = (await response.json()) as SessionResponse;
-        this.sessionId = data.session_id;
-        logger.debug(`Session initialized with ID: ${this.sessionId}`);
-      })();
-    }
-
-    await this.sessionPromise;
-  }
-
-  async quit(): Promise<void> {
-    if (this.sessionId) {
-      await this.fetchWithTimeout(
-        `${this.baseUrl}/v1/sessions/${this.sessionId}`,
-        {
-          method: "DELETE",
-        },
-      );
-      this.sessionId = null;
-    }
-  }
-
-  async planActions(
-    goal: string,
-    accessibilityTree: string,
-    app: string = "unknown",
-  ): Promise<Client.PlanActionsResult> {
-    await this.ensureSession();
-    const requestBody: PlanRequest = {
-      goal,
-      accessibility_tree: accessibilityTree,
-      app,
-    };
-    const response = await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/plans`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      },
-    );
-
-    const responseData = (await response.json()) as PlanResponse;
-    return { explanation: responseData.explanation, steps: responseData.steps };
-  }
-
-  async addExample(goal: string, actions: string[]): Promise<void> {
-    await this.ensureSession();
-    const requestBody: AddExampleRequest = {
-      goal,
-      actions,
-    };
-    await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/examples`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      },
-    );
-  }
-
-  async clearExamples(): Promise<void> {
-    await this.ensureSession();
-    await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/examples`,
-      {
-        method: "DELETE",
-      },
-    );
-  }
-
-  async executeAction(
-    goal: string,
-    step: string,
-    accessibilityTree: string,
-    app: string = "unknown",
-  ): Promise<Client.ExecuteActionResult> {
-    await this.ensureSession();
-    const requestBody: StepRequest = {
-      goal,
-      step,
-      accessibility_tree: accessibilityTree,
-      app,
-    };
-    const response = await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/steps`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      },
-    );
-
-    return (await response.json()) as StepResponse;
-  }
-
-  async retrieve(
-    statement: string,
-    accessibilityTree: string,
-    title: string,
-    url: string,
-    screenshot?: string,
-    app: string = "unknown",
-  ): Promise<[string, Data]> {
-    await this.ensureSession();
-    const requestBody: StatementRequest = {
-      statement,
-      accessibility_tree: accessibilityTree,
-      title,
-      url,
-      screenshot: screenshot || null,
-      app,
-    };
-    const response = await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/statements`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      },
-    );
-
-    const responseData = (await response.json()) as StatementResponse;
-    return [responseData.explanation, looselyTypecast(responseData.result)];
-  }
-
-  async findArea(
-    description: string,
-    accessibilityTree: string,
-    app: string = "unknown",
-  ): Promise<Client.FindAreaResult> {
-    await this.ensureSession();
-    const requestBody: AreaRequest = {
-      description,
-      accessibility_tree: accessibilityTree,
-      app,
-    };
-    const response = await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/areas`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      },
-    );
-
-    const responseData = (await response.json()) as AreaResponse;
-    return { id: responseData.id, explanation: responseData.explanation };
-  }
-
-  async findElement(
-    description: string,
-    accessibilityTree: string,
-    app: string = "unknown",
-  ): Promise<Client.FindElementResult | undefined> {
-    await this.ensureSession();
-    const requestBody: FindRequest = {
-      description,
-      accessibility_tree: accessibilityTree,
-      app,
-    };
-    const response = await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/elements`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      },
-    );
-
-    const responseData = (await response.json()) as FindResponse;
-    return responseData.elements[0];
-  }
-
-  async analyzeChanges(
-    beforeAccessibilityTree: string,
-    beforeUrl: string,
-    afterAccessibilityTree: string,
-    afterUrl: string,
-  ): Promise<string> {
-    await this.ensureSession();
-    const requestBody: ChangesRequest = {
-      before: { accessibility_tree: beforeAccessibilityTree, url: beforeUrl },
-      after: { accessibility_tree: afterAccessibilityTree, url: afterUrl },
-    };
-    const response = await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/changes`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      },
-    );
-
-    const responseData = (await response.json()) as ChangesResponse;
-    return responseData.result;
-  }
-
-  async saveCache(): Promise<void> {
-    await this.ensureSession();
-    await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`,
-      {
-        method: "POST",
-      },
-    );
-  }
-
-  async discardCache(): Promise<void> {
-    await this.ensureSession();
-    await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/caches`,
-      {
-        method: "DELETE",
-      },
-    );
-  }
-
-  async getStats(): Promise<UsageStats> {
-    await this.ensureSession();
-    const response = await this.fetchWithTimeout(
-      `${this.baseUrl}/v1/sessions/${this.sessionId}/stats`,
-      {
-        method: "GET",
-      },
-    );
-    return (await response.json()) as UsageStats;
+    return (await response.json()) as Result;
   }
 }

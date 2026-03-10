@@ -1,5 +1,4 @@
 import { AppId } from "../AppId.js";
-import type { Cache } from "../client/Cache.js";
 import { LlmUsageStats } from "../llm/llmSchema.js";
 import type { Model } from "../Model.js";
 import type { ElementRef, Platform } from "../server/serverSchema.js";
@@ -91,8 +90,6 @@ export abstract class Client {
   abstract saveCache(): Promise<void>;
 
   abstract discardCache(): Promise<void>;
-
-  abstract clearCache(props?: Cache.ClearProps | undefined): Promise<void>;
 
   abstract getStats(): Promise<LlmUsageStats>;
 

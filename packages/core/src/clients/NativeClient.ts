@@ -1,13 +1,11 @@
-import type { ToolDefinition } from "@langchain/core/language_models/base";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { always } from "alwaysly";
+import { AppId } from "../AppId.js";
 import { LlmUsageStats } from "../llm/llmSchema.js";
 import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.js";
 import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.js";
 import { RetrieverAgent } from "../server/agents/RetrieverAgent.js";
-import type { UsageStats } from "../server/serverSchema.js";
 import { Session } from "../server/session/Session.js";
-import type { SessionId } from "../server/session/SessionId.js";
 import { SessionManager } from "../server/session/SessionManager.js";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
 import { getLogger } from "../utils/logger.js";
@@ -23,45 +21,29 @@ export namespace NativeClient {
 }
 
 export class NativeClient extends Client {
-  private sessionManager: SessionManager;
-  // private model: Model;
-  // private tools: Record<string, ToolClass>;
-  private sessionId: SessionId;
+  #sessionManager: SessionManager;
   session: Session;
 
-  constructor(
-    props: NativeClient.Props,
-    // model: Model,
-    // platform: string,
-    // tools: Record<string, ToolClass>,
-    // llm?: BaseChatModel,
-    // planner: boolean = true,
-    // excludeAttributes: Set<string> = new Set(),
-  ) {
+  constructor(props: NativeClient.Props) {
     const { llm, ...superProps } = props;
     super(superProps);
 
-    this.sessionManager = new SessionManager();
+    this.#sessionManager = new SessionManager();
 
-    // Convert tools to schemas for API
     const toolSchemas = convertToolsToSchemas(this.tools);
-    this.sessionId = this.sessionManager.createSession({
+    this.session = this.#sessionManager.createSession({
       provider: this.model.provider,
       name: this.model.name,
-      tools: toolSchemas as ToolDefinition[],
+      tools: toolSchemas,
       platform: this.platform as SessionManager.CreateSessionProps["platform"],
       llm,
       planner: this.planner,
       excludeAttributes: this.excludeAttributes,
     });
-
-    const session = this.sessionManager.getSession(this.sessionId);
-    always(session);
-    this.session = session;
   }
 
   async quit(): Promise<void> {
-    this.sessionManager.deleteSession(this.sessionId);
+    this.#sessionManager.deleteSession(this.session.sessionId);
   }
 
   /**
