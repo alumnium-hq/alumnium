@@ -54,7 +54,10 @@ export class NativeClient extends Client {
   async planActions(
     goal: string,
     accessibilityTree: string,
+    app: AppId,
   ): Promise<Client.PlanActionsResult> {
+    this.session.updateContext({ app });
+
     if (!this.session.planner) {
       return { explanation: goal, steps: [goal] };
     }
@@ -71,7 +74,7 @@ export class NativeClient extends Client {
     logger.debug(
       `Adding example. Goal: ${goal}, Actions: ${JSON.stringify(actions)}`,
     );
-    await this.session.plannerAgent.addExample(goal, actions);
+    this.session.plannerAgent.addExample(goal, actions);
   }
 
   async clearExamples(): Promise<void> {
@@ -82,7 +85,10 @@ export class NativeClient extends Client {
     goal: string,
     step: string,
     accessibilityTree: string,
+    app: AppId,
   ): Promise<Client.ExecuteActionResult> {
+    this.session.updateContext({ app });
+
     const tree = this.session.processTree(accessibilityTree);
     const [explanation, actions] = await this.session.actorAgent.invoke(
       goal,
@@ -100,8 +106,11 @@ export class NativeClient extends Client {
     accessibilityTree: string,
     title: string,
     url: string,
+    app: AppId,
     screenshot?: string,
   ): Promise<[string, Data]> {
+    this.session.updateContext({ app });
+
     const tree = this.session.processTree(accessibilityTree);
     const excludeAttrs = new Set([
       ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
@@ -120,7 +129,10 @@ export class NativeClient extends Client {
   async findArea(
     description: string,
     accessibilityTree: string,
+    app: AppId,
   ): Promise<Client.FindAreaResult> {
+    this.session.updateContext({ app });
+
     const tree = this.session.processTree(accessibilityTree);
     const area = await this.session.areaAgent.invoke(
       description,
@@ -132,7 +144,10 @@ export class NativeClient extends Client {
   async findElement(
     description: string,
     accessibilityTree: string,
+    app: AppId,
   ): Promise<Client.FindElementResult | undefined> {
+    this.session.updateContext({ app });
+
     const tree = this.session.processTree(accessibilityTree);
     const element = (
       await this.session.locatorAgent.invoke(
@@ -150,7 +165,10 @@ export class NativeClient extends Client {
     beforeUrl: string,
     afterAccessibilityTree: string,
     afterUrl: string,
+    app: AppId,
   ): Promise<string> {
+    this.session.updateContext({ app });
+
     const beforeTree = this.session.processTree(beforeAccessibilityTree);
     const afterTree = this.session.processTree(afterAccessibilityTree);
     const excludeAttrs = new Set([

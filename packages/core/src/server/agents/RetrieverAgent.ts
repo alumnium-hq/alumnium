@@ -3,6 +3,7 @@ import type { MessageContent } from "@langchain/core/messages";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
 import { getLogger } from "../../utils/logger.js";
+import type { LlmContext } from "../LlmContext.js";
 import { BaseAgent } from "./BaseAgent.js";
 
 const logger = getLogger(import.meta.url);
@@ -29,16 +30,27 @@ export type RetrievedInformation = z.infer<typeof RetrievedInformation>;
 
 export namespace RetrieverAgent {
   export type InvokeResult = [string, string | string[]];
+
+  export type Meta = z.infer<typeof RetrieverAgent.Meta>;
 }
 
 export class RetrieverAgent extends BaseAgent {
+  static Meta = z.object({
+    type: z.literal("retriever"),
+    information: z.string(),
+    accessibilityTreeXml: z.string(),
+    title: z.string(),
+    url: z.string(),
+    screenshot: z.string().nullable(),
+  });
+
   static readonly EXCLUDE_ATTRIBUTES = new Set(["id"]);
   static readonly #LIST_SEPARATOR = "<SEP>";
 
   chain;
 
-  constructor(llm: BaseChatModel) {
-    super();
+  constructor(llmContext: LlmContext, llm: BaseChatModel) {
+    super(llmContext);
 
     this.chain = llm.withStructuredOutput(RetrievedInformation, {
       includeRaw: true,
@@ -82,15 +94,28 @@ export class RetrieverAgent extends BaseAgent {
       });
     }
 
-    const response = await this.invokeChain(this.chain, [
+    const meta: RetrieverAgent.Meta = {
+      type: "retriever",
+      information,
+      accessibilityTreeXml,
+      title,
+      url,
+      screenshot,
+    };
+
+    const response = await this.invokeChain(
+      this.chain,
       [
-        "system",
-        pythonicFormat(this.prompts.system, {
-          separator: RetrieverAgent.#LIST_SEPARATOR,
-        }),
+        [
+          "system",
+          pythonicFormat(this.prompts.system, {
+            separator: RetrieverAgent.#LIST_SEPARATOR,
+          }),
+        ],
+        ["human", humanMessages],
       ],
-      ["human", humanMessages],
-    ]);
+      meta,
+    );
 
     this.logData(logger, "out", {
       Result: response.structured,

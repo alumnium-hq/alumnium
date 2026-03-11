@@ -37,7 +37,7 @@ export class MockDir {
     this.path = dir;
   }
 
-  async list(): Promise<string[]> {
+  async flatTree(): Promise<string[]> {
     const files: string[] = [];
     const walk = async (current: string): Promise<void> => {
       const entries = await fs.readdir(current, { withFileTypes: true });
@@ -55,6 +55,16 @@ export class MockDir {
     };
     await walk(this.path);
     return files;
+  }
+
+  readText(relPath: string): Promise<string> {
+    const filePath = path.join(this.path, relPath);
+    return fs.readFile(filePath, "utf-8");
+  }
+
+  async readJson<Type = unknown>(relPath: string): Promise<Type> {
+    const text = await this.readText(relPath);
+    return JSON.parse(text) as Type;
   }
 }
 

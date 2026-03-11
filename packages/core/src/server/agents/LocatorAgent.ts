@@ -2,6 +2,7 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
 import { getLogger } from "../../utils/logger.js";
+import type { LlmContext } from "../LlmContext.js";
 import type { ElementRef } from "../serverSchema.js";
 import { BaseAgent } from "./BaseAgent.js";
 
@@ -26,11 +27,21 @@ export const Locator = z.object({
 
 export type Locator = z.infer<typeof Locator>;
 
+export namespace LocatorAgent {
+  export type Meta = z.infer<typeof LocatorAgent.Meta>;
+}
+
 export class LocatorAgent extends BaseAgent {
+  static Meta = z.object({
+    type: z.literal("locator"),
+    description: z.string(),
+    accessibilityTreeXml: z.string(),
+  });
+
   chain;
 
-  constructor(llm: BaseChatModel) {
-    super();
+  constructor(llmContext: LlmContext, llm: BaseChatModel) {
+    super(llmContext);
     this.chain = llm.withStructuredOutput(Locator, { includeRaw: true });
   }
 
@@ -44,16 +55,26 @@ export class LocatorAgent extends BaseAgent {
       "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
     });
 
-    const response = await this.invokeChain(this.chain, [
-      ["system", this.prompts["system"]],
+    const meta: LocatorAgent.Meta = {
+      type: "locator",
+      description,
+      accessibilityTreeXml,
+    };
+
+    const response = await this.invokeChain(
+      this.chain,
       [
-        "human",
-        pythonicFormat(this.prompts.user, {
-          accessibility_tree: accessibilityTreeXml,
-          description,
-        }),
+        ["system", this.prompts["system"]],
+        [
+          "human",
+          pythonicFormat(this.prompts.user, {
+            accessibility_tree: accessibilityTreeXml,
+            description,
+          }),
+        ],
       ],
-    ]);
+      meta,
+    );
 
     this.logData(logger, "out", {
       Result: response.structured,

@@ -1,26 +1,55 @@
-import { BaseCache } from "@langchain/core/caches";
-import { Generation } from "@langchain/core/outputs";
-import { Agent } from "../agents/Agent.js";
+import type { Generation } from "@langchain/core/outputs";
+import { LlmContext } from "../LlmContext.js";
+import { ServerCache } from "./ServerCache.js";
 
-export class NullCache extends BaseCache {
-  usage = Agent.createUsage();
-
-  async lookup(
-    _prompt: string,
-    _llmString: string,
+export class NullCache extends ServerCache {
+  override async lookup(
+    prompt: LlmContext.Prompt,
+    llmKey: LlmContext.LlmKey,
   ): Promise<Generation[] | null> {
+    /*     try {
+      throw new Error("STACK");
+    } catch (error) {
+      console.log("==========================");
+      console.log("######## LOOKUP:", {
+        prompt,
+        llmKey,
+      });
+      console.log("--------------------------");
+      // @ts-expect-error
+      console.log(error.stack);
+      // process.exit(0);
+    } */
     return null;
   }
 
-  async update(
-    _prompt: string,
-    _llmString: string,
-    _returnVal: Generation[],
-  ): Promise<void> {}
+  override async update(
+    prompt: LlmContext.Prompt,
+    llmKey: LlmContext.LlmKey,
+    generations: Generation[],
+  ): Promise<void> {
+    console.log("######## UPDATE #########");
+    console.log(JSON.stringify(generations[0]!, null, 2));
+    console.log("#########################");
+    // try {
+    //   throw new Error("STACK");
+    // } catch (error) {
+    //   console.log("==========================");
+    //   console.log("######## UPDATE:", {
+    //     prompt,
+    //     llmKey,
+    //   });
+    //   console.log("--------------------------");
+    //   // @ts-expect-error
+    //   console.log(error.stack);
+    //   // process.exit(0);
+    // }
+    // console.log("--- GENERATIONS:", generations);
+  }
 
-  save(): void {}
+  async save(): Promise<void> {}
 
-  discard(): void {}
+  async discard(): Promise<void> {}
 
-  clear(_args = {}): void {}
+  async clear(): Promise<void> {}
 }

@@ -29,13 +29,3 @@ export function createLlmUsageStats(): LlmUsageStats {
     cache: createLlmUsage(),
   };
 }
-
-export const LlmGeneration = z.object({
-  text: z.string(),
-  message: z.object({
-    content: z.string(),
-    usage_metadata: LlmUsage,
-  }),
-});
-
-export type LlmGeneration = z.infer<typeof LlmGeneration>;

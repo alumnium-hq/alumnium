@@ -124,6 +124,7 @@ export class Alumni {
   @retry()
   async do(goal: string): Promise<DoResult> {
     const app = await this.driver.app();
+
     const initialAccessibilityTree = await this.driver.getAccessibilityTree();
     const beforeTree = this.changeAnalysis
       ? initialAccessibilityTree.toStr()
@@ -132,7 +133,6 @@ export class Alumni {
     const { explanation, steps } = await this.client.planActions(
       goal,
       initialAccessibilityTree.toStr(),
-      // @ts-expect-error -- TODO: Add when applying cache diff
       app,
     );
 
@@ -152,7 +152,6 @@ export class Alumni {
           goal,
           step,
           accessibilityTree.toStr(),
-          // @ts-expect-error -- TODO: Add when applying cache diff
           app,
         );
 
@@ -181,6 +180,7 @@ export class Alumni {
         beforeUrl!,
         (await this.driver.getAccessibilityTree()).toStr(),
         await this.driver.url(),
+        app,
       );
     }
 
@@ -198,9 +198,8 @@ export class Alumni {
       accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot,
-      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
+      screenshot,
     );
 
     if (!value) {
@@ -221,9 +220,8 @@ export class Alumni {
       accessibilityTree.toStr(),
       await this.driver.title(),
       await this.driver.url(),
-      screenshot,
-      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
+      screenshot,
     );
 
     return value === null ? explanation : value;
@@ -235,7 +233,6 @@ export class Alumni {
     const response = await this.client.findElement(
       description,
       accessibilityTree.toStr(),
-      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
     if (response?.id == null) return;
@@ -247,10 +244,10 @@ export class Alumni {
     const response = await this.client.findArea(
       description,
       accessibilityTree.toStr(),
-      // @ts-expect-error -- TODO: Add when applying cache diff
       await this.driver.app(),
     );
     const scopedTree = accessibilityTree.scopeToArea(response.id);
+    const app = await this.driver.app();
     return new Area(
       response.id,
       response.explanation,
@@ -269,7 +266,7 @@ export class Alumni {
     await this.client.clearExamples();
   }
 
-  async getStats(): Promise<LlmUsageStats> {
-    return await this.client.getStats();
+  getStats(): Promise<LlmUsageStats> {
+    return this.client.getStats();
   }
 }

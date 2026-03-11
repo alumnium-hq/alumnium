@@ -1,5 +1,9 @@
 import type { Client } from "../clients/Client.js";
 
+export namespace Cache {
+  export type ClearProps = Record<string, unknown>;
+}
+
 export class Cache {
   private client: Client;
 
@@ -7,11 +11,11 @@ export class Cache {
     this.client = client;
   }
 
-  async save(): Promise<void> {
-    await this.client.saveCache();
+  save(): Promise<void> {
+    return this.client.saveCache();
   }
 
-  async discard(): Promise<void> {
-    await this.client.discardCache();
+  discard(): Promise<void> {
+    return this.client.discardCache();
   }
 }
