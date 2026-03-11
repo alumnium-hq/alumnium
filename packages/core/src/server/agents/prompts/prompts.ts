@@ -102,7 +102,7 @@ function loadPrompt(devDir: string, role: AgentPrompts.Role): Promise<string> {
   try {
     return fs.readFile(promptPath, "utf-8");
   } catch (err) {
-    throw new Error(`Prompt file not found: ${promptPath}`);
+    throw new AggregateError([err], `Failed to read file '${promptPath}'`);
   }
 }
 

@@ -27,8 +27,8 @@ export abstract class ServerCache extends BaseCache {
    * @returns Cached LLM generations or null if no cache entry is found.
    */
   async lookup(
-    prompt: LlmContext.Prompt,
-    llmKey: LlmContext.LlmKey,
+    _prompt: LlmContext.Prompt,
+    _llmKey: LlmContext.LlmKey,
   ): Promise<Generation[] | null> {
     return null;
   }
@@ -41,14 +41,14 @@ export abstract class ServerCache extends BaseCache {
    * @param generations LLM generations to store in the cache.
    */
   async update(
-    prompt: LlmContext.Prompt,
-    llmKey: LlmContext.LlmKey,
-    generations: Generation[],
+    _prompt: LlmContext.Prompt,
+    _llmKey: LlmContext.LlmKey,
+    _generations: Generation[],
   ): Promise<void> {}
 
   abstract save(): Promise<void>;
 
   abstract discard(): Promise<void>;
 
-  abstract clear(props?: Cache.ClearProps | undefined): Promise<void>;
+  abstract clear(props?: Cache.ClearProps): Promise<void>;
 }

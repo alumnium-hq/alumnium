@@ -1,11 +1,8 @@
 import type { AppId } from "../../../AppId.js";
 import { Lchain } from "../../../llm/Lchain.js";
-import { getLogger } from "../../../utils/index.js";
 import type { SessionContext } from "../../session/SessionContext.js";
 import type { ElementsCache } from "./ElementsCache.js";
 import { ElementsCacheMask } from "./ElementsCacheMask.js";
-
-const logger = getLogger(import.meta.url);
 
 export namespace BaseAgentElementsCache {
   export interface UpdateProps<AgentMeta> {

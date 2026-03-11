@@ -1,13 +1,9 @@
 import { always } from "alwaysly";
 import { type ChildNode, Element, Node, Text } from "domhandler";
 import { textContent } from "domutils";
-import { "default" as xmlFormatter } from "xml-formatter";
 import { pythonicId } from "../../pythonic/pythonicId.js";
 import { XML } from "../../xml/index.js";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.js";
-
-// NOTE: xml-formatter has busted types, so we need to cast it manually.
-const xmlFormat: (typeof xmlFormatter)["default"] = xmlFormatter as any;
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
   readonly SKIPPED_PROPERTIES = new Set([
@@ -186,7 +182,6 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
    */
   #pruneRedundantName(node: ChildNode): string[] {
     const elem = XML.nodeAsTag(node);
-    const text = XML.nodeAsText(node);
     // RootWebArea should remain untouched - only process children
     if (elem?.tagName === "RootWebArea") {
       const descendantContent: string[] = [];

@@ -75,12 +75,14 @@
 
         // Log state every second
         if (logEnabled && now - lastLogged >= 1000) {
-          const resourceInfo = Array.from(state.resources).map(el => {
-            const tag = el.tagName?.toLowerCase() || 'unknown';
-            const src = el.src || el.href || '';
+          const resourceInfo = Array.from(state.resources).map((el) => {
+            const tag = el.tagName?.toLowerCase() || "unknown";
+            const src = el.src || el.href || "";
             return `${tag}:${src.slice(0, 60)}`;
           });
-          const pendingUrlsInfo = Array.from(state.pendingUrls).map(url => url.slice(0, 80));
+          const pendingUrlsInfo = Array.from(state.pendingUrls).map((url) =>
+            url.slice(0, 80),
+          );
 
           log("state check", {
             elapsed: `${elapsed}ms`,
@@ -96,16 +98,24 @@
           lastLogged = now;
         }
 
-        if (state.initialLoad && noRequests && noResources && noMutations && isIdle) {
+        if (
+          state.initialLoad &&
+          noRequests &&
+          noResources &&
+          noMutations &&
+          isIdle
+        ) {
           log("page stable", { elapsed: `${elapsed}ms` });
           return resolve();
         }
 
         if (now - startTime >= timeout) {
-          const pendingUrlsInfo = Array.from(state.pendingUrls).map(url => url.slice(0, 100));
-          const resourceInfo = Array.from(state.resources).map(el => {
-            const tag = el.tagName?.toLowerCase() || 'unknown';
-            const src = el.src || el.href || '';
+          const pendingUrlsInfo = Array.from(state.pendingUrls).map((url) =>
+            url.slice(0, 100),
+          );
+          const resourceInfo = Array.from(state.resources).map((el) => {
+            const tag = el.tagName?.toLowerCase() || "unknown";
+            const src = el.src || el.href || "";
             return `${tag}:${src.slice(0, 100)}`;
           });
 
@@ -121,8 +131,8 @@
           return reject(
             new Error(
               `Timed out waiting for page to stabilize after ${timeout}ms. ` +
-              `pendingRequests=${state.pendingRequests}, resources=${state.resources.size}, mutationIdle=${state.mutationIdle}`
-            )
+                `pendingRequests=${state.pendingRequests}, resources=${state.resources.size}, mutationIdle=${state.mutationIdle}`,
+            ),
           );
         }
 
@@ -160,7 +170,11 @@
     if (isLoaded) return;
 
     state.resources.add(el);
-    log("resource loading", { tag, src: (src || "(no src)").slice(0, 100), total: state.resources.size });
+    log("resource loading", {
+      tag,
+      src: (src || "(no src)").slice(0, 100),
+      total: state.resources.size,
+    });
     updateActiveAt();
 
     el.addEventListener("load", onDone);
@@ -171,7 +185,11 @@
       el.removeEventListener("error", onDone);
 
       state.resources.delete(el);
-      log("resource loaded", { tag, src: (src || "(no src)").slice(0, 100), remaining: state.resources.size });
+      log("resource loaded", {
+        tag,
+        src: (src || "(no src)").slice(0, 100),
+        remaining: state.resources.size,
+      });
       updateActiveAt();
     }
   }
@@ -258,7 +276,9 @@
   //#region Requests
 
   function hookXHR() {
+    // oxlint-disable-next-line typescript-eslint(unbound-method)
     const nativeOpen = XMLHttpRequest.prototype.open;
+    // oxlint-disable-next-line typescript-eslint(unbound-method)
     const nativeSend = XMLHttpRequest.prototype.send;
 
     XMLHttpRequest.prototype.open = function (method, url, ...rest) {
@@ -266,7 +286,10 @@
       this.addEventListener("loadend", () => {
         state.pendingRequests--;
         state.pendingUrls.delete(this._alumniumUrl);
-        log("XHR complete", { url: this._alumniumUrl, pending: state.pendingRequests });
+        log("XHR complete", {
+          url: this._alumniumUrl,
+          pending: state.pendingRequests,
+        });
         updateActiveAt();
       });
 
@@ -276,7 +299,10 @@
     XMLHttpRequest.prototype.send = function (...args) {
       state.pendingRequests++;
       state.pendingUrls.add(this._alumniumUrl);
-      log("XHR start", { url: this._alumniumUrl, pending: state.pendingRequests });
+      log("XHR start", {
+        url: this._alumniumUrl,
+        pending: state.pendingRequests,
+      });
       updateActiveAt();
 
       return nativeSend.apply(this, args);

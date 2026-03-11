@@ -251,7 +251,7 @@ describe("FsStore", () => {
       const { mockDir, store } = setup.cur;
       await fs.rmdir(mockDir.path, { recursive: true });
       await store.clear();
-      await expect(store.clear()).resolves.toBeUndefined();
+      expect(store.clear()).resolves.toBeUndefined();
     });
   });
 

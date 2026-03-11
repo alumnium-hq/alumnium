@@ -6,6 +6,6 @@ const logger = getLogger(import.meta.url);
 export async function mcpCommand() {
   setLoggerLevel("error");
   const server = new McpServer();
-  await void server.run();
+  await server.run();
   logger.debug("Started MCP server");
 }

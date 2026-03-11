@@ -130,6 +130,8 @@ export class ElementsCache extends ServerCache {
 
       const tree = new ElementsCacheTree(data.meta.accessibilityTreeXml);
 
+      // TODO: Why is it unused?!
+      // oxlint-disable-next-line no-unused-vars
       let resolvedMemoryKey = memoryKey;
 
       const memoryEntry = this.#memoryCache[memoryKey];
