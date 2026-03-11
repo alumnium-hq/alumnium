@@ -1,6 +1,7 @@
 import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
+import { AppId } from "../../AppId.js";
 import { LlmUsageStats } from "../../llm/llmSchema.js";
 import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
@@ -15,11 +16,12 @@ import { ChangesAnalyzerAgent } from "../agents/ChangesAnalyzerAgent.js";
 import { LocatorAgent } from "../agents/LocatorAgent.js";
 import { PlannerAgent } from "../agents/PlannerAgent.js";
 import { RetrieverAgent } from "../agents/RetrieverAgent.js";
-import { NullCache } from "../cache/NullCache.js";
+import { ServerCache } from "../cache/ServerCache.js";
 import { CacheFactory } from "../CacheFactory.js";
-import { LLMFactory } from "../LLMFactory.js";
+import { LlmContext } from "../LlmContext.js";
+import { LlmFactory } from "../LlmFactory.js";
 import { Platform } from "../Platform.js";
-import { UsageStats } from "../serverSchema.js";
+import { SessionContext } from "./SessionContext.js";
 import { SessionId } from "./SessionId.js";
 
 const logger = getLogger(import.meta.url);
@@ -33,9 +35,10 @@ export class Session {
   platform: Platform;
   tools: ToolDefinition[];
   llm: BaseChatModel;
-  cache: NullCache;
+  cache: ServerCache;
   planner: boolean;
   excludeAttributes: Set<string>;
+  #context: SessionContext;
 
   actorAgent: ActorAgent;
   plannerAgent: PlannerAgent;
@@ -44,32 +47,53 @@ export class Session {
   locatorAgent: LocatorAgent;
   changesAnalyzerAgent: ChangesAnalyzerAgent;
 
-  constructor(props: Session.ConstructorProps) {
-    const { sessionId, model, platform, tools: tools } = props;
+  constructor(props: Session.Props) {
+    const { sessionId, model, platform, app, tools } = props;
     this.sessionId = sessionId;
     this.model = model;
     this.platform = platform;
     this.tools = tools;
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes ?? new Set();
+    this.#context = new SessionContext({ app, sessionId });
+    const llmContext = new LlmContext();
 
-    this.cache = CacheFactory.createCache();
-    this.llm = props.llm ?? LLMFactory.createLlm(this.model);
-    this.llm.cache = this.cache;
+    this.cache = CacheFactory.createCache(this.#context, llmContext);
 
-    this.actorAgent = new ActorAgent(this.llm, this.tools);
+    // TODO: When assigning cache via `props.llm.cache` it doesn't work properly
+    // find a way to make it work or expose option to create cache via `Alumni`.
+    if (props.llm) {
+      props.llm.cache = this.cache;
+    }
+    this.llm = props.llm ?? LlmFactory.createLlm(this.model, this.cache);
+
+    this.actorAgent = new ActorAgent(llmContext, this.llm, this.tools);
     this.plannerAgent = new PlannerAgent(
+      llmContext,
       this.llm,
       this.tools.map((schema) => schema.function.name),
     );
-    this.retrieverAgent = new RetrieverAgent(this.llm);
-    this.areaAgent = new AreaAgent(this.llm);
-    this.locatorAgent = new LocatorAgent(this.llm);
-    this.changesAnalyzerAgent = new ChangesAnalyzerAgent(this.llm);
+
+    this.retrieverAgent = new RetrieverAgent(llmContext, this.llm);
+    this.areaAgent = new AreaAgent(llmContext, this.llm);
+    this.locatorAgent = new LocatorAgent(llmContext, this.llm);
+    this.changesAnalyzerAgent = new ChangesAnalyzerAgent(llmContext, this.llm);
 
     logger.info(
       `Created session ${sessionId} with model ${model.provider}/${model.name} and platform ${platform}`,
     );
+  }
+
+  updateContext(props: SessionContext.UpdateProps): void {
+    this.#context.update(props);
+  }
+
+  get app(): AppId {
+    return this.#context.app;
+  }
+
+  set app(appId: AppId) {
+    this.updateContext({ app: appId });
   }
 
   /**
@@ -148,6 +172,7 @@ export class Session {
       area_agent: this.areaAgent.toState(),
       locator_agent: this.locatorAgent.toState(),
       changes_analyzer_agent: this.changesAnalyzerAgent.toState(),
+      app: this.#context.app,
     };
     return state;
   }
@@ -160,6 +185,7 @@ export class Session {
       tools: state["tools"],
       planner: state["planner"],
       excludeAttributes: new Set(state["exclude_attributes"]),
+      app: state["app"],
       // llm is not never in state, see note in to_state.
     });
 
@@ -177,7 +203,8 @@ export class Session {
 }
 
 export namespace Session {
-  export interface ConstructorProps {
+  export interface Props {
+    app?: AppId | undefined;
     sessionId: SessionId;
     model: Model;
     platform: Platform;
@@ -195,6 +222,7 @@ export namespace Session {
     session_id: SessionId,
     model: Model.Schema,
     platform: Platform,
+    app: AppId,
     tools: z.array(z.custom<ToolDefinition>()),
     planner: z.boolean(),
     exclude_attributes: z.array(z.string()).default([]),

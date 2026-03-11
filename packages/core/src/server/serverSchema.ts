@@ -38,6 +38,10 @@ export const SuccessResponse = z.object({
   message: z.string(),
 });
 
+export const CacheableRequestBody = z.object({
+  app: AppId,
+});
+
 //#endregion
 
 //#region Health check /////////////////////////////////////////////////////////
@@ -79,7 +83,7 @@ export const SessionParams = z.object({
 
 //#region Create plan //////////////////////////////////////////////////////////
 
-export const CreatePlanBody = z.object({
+export const CreatePlanBody = CacheableRequestBody.extend({
   goal: z.string(),
   accessibility_tree: z.string(),
   url: z.string().optional(),
@@ -95,7 +99,7 @@ export const CreatePlanResponse = z.object({
 
 //#region Plan step actions ////////////////////////////////////////////////////
 
-export const PlanStepActionsBody = z.object({
+export const PlanStepActionsBody = CacheableRequestBody.extend({
   goal: z.string(),
   step: z.string(),
   accessibility_tree: z.string(),
@@ -120,7 +124,7 @@ export const AddExampleBody = z.object({
 
 //#region Execute statement ////////////////////////////////////////////////////
 
-export const ExecuteStatementBody = z.object({
+export const ExecuteStatementBody = CacheableRequestBody.extend({
   statement: z.string(),
   accessibility_tree: z.string(),
   url: z.string().optional(),
@@ -137,7 +141,7 @@ export const ExecuteStatementResponse = z.object({
 
 //#region Choose area //////////////////////////////////////////////////////////
 
-export const ChooseAreaBody = z.object({
+export const ChooseAreaBody = CacheableRequestBody.extend({
   description: z.string(),
   accessibility_tree: z.string(),
 });
@@ -151,7 +155,7 @@ export const ChooseAreaResponse = z.object({
 
 //#region Find element /////////////////////////////////////////////////////////
 
-export const FindElementBody = z.object({
+export const FindElementBody = CacheableRequestBody.extend({
   description: z.string(),
   accessibility_tree: z.string(),
 });
@@ -164,7 +168,7 @@ export const FindElementResponse = z.object({
 
 //#region Analyze changes //////////////////////////////////////////////////////
 
-export const AnalyzeChangesBody = z.object({
+export const AnalyzeChangesBody = CacheableRequestBody.extend({
   before: Change,
   after: Change,
 });
@@ -172,5 +176,11 @@ export const AnalyzeChangesBody = z.object({
 export const AnalyzeChangesResponse = z.object({
   result: z.string(),
 });
+
+//#endregion
+
+//#region Clear cache //////////////////////////////////////////////////////////
+
+export const ClearCacheBody = z.record(z.string(), z.unknown());
 
 //#endregion

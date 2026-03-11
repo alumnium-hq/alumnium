@@ -17,7 +17,7 @@ describe("Calculator", () => {
     await al.clearLearnExamples();
   });
 
-  it.only("addition", async () => {
+  it("addition", async () => {
     await navigate(driver, "https://seleniumbase.io/apps/calculator");
     await al.do("2 + 2 =");
     const result = await al.get("value from textfield");

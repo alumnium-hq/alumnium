@@ -1,5 +1,6 @@
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatBedrockConverse } from "@langchain/aws";
+import type { BaseCache } from "@langchain/core/caches";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { ChatDeepSeek } from "@langchain/deepseek";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
@@ -22,52 +23,53 @@ const logger = getLogger(import.meta.url);
 /**
  * Factory for creating LLM instances based on model configuration.
  */
-export class LLMFactory {
+export class LlmFactory {
   /**
    * Create an LLM instance based on the model configuration.
    */
-  static createLlm(model: Model): BaseChatModel {
+  static createLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.info(`Creating LLM for model: ${model.provider}/${model.name}`);
 
     switch (model.provider) {
       case Provider.AZURE_FOUNDRY:
       case Provider.AZURE_OPENAI:
-        return LLMFactory.createAzureLlm(model);
+        return LlmFactory.createAzureLlm(model, cache);
       case Provider.ANTHROPIC:
-        return LLMFactory.createAnthropicLlm(model);
+        return LlmFactory.createAnthropicLlm(model, cache);
       case Provider.AWS_ANTHROPIC:
       case Provider.AWS_META:
-        return LLMFactory.createAwsLlm(model);
+        return LlmFactory.createAwsLlm(model, cache);
       case Provider.DEEPSEEK:
-        return LLMFactory.createDeepSeekLlm(model);
+        return LlmFactory.createDeepSeekLlm(model, cache);
       case Provider.GOOGLE:
-        return LLMFactory.createGoogleLlm(model);
+        return LlmFactory.createGoogleLlm(model, cache);
       case Provider.GITHUB:
-        return LLMFactory.createGithubLlm(model);
+        return LlmFactory.createGithubLlm(model, cache);
       case Provider.MISTRALAI:
-        return LLMFactory.createMistralAiLlm(model);
+        return LlmFactory.createMistralAiLlm(model, cache);
       case Provider.OLLAMA:
-        return LLMFactory.createOllamaLlm(model);
+        return LlmFactory.createOllamaLlm(model, cache);
       case Provider.OPENAI:
-        return LLMFactory.createOpenAiLlm(model);
+        return LlmFactory.createOpenAiLlm(model, cache);
       case Provider.XAI:
-        return LLMFactory.createXAiLlm(model);
+        return LlmFactory.createXAiLlm(model, cache);
     }
   }
 
-  static createAzureLlm(model: Model): BaseChatModel {
+  static createAzureLlm(model: Model, cache: BaseCache): BaseChatModel {
     const variant = Provider.AZURE_FOUNDRY ? "Azure Foundry" : "Azure OpenAI";
     logger.debug(`Creating ${variant} LLM with model ${model.name}`);
 
     const defaultFields: Partial<AzureChatOpenAIFields> = {
       // TODO: See the OpenAI LLM function for more info about the issue.
       // temperature: 0,
+      cache,
     };
     const fields =
       model.provider === Provider.AZURE_FOUNDRY
-        ? LLMFactory.azureFoundryLlmFields(model, defaultFields)
+        ? LlmFactory.azureFoundryLlmFields(model, defaultFields)
         : model.provider === Provider.AZURE_OPENAI
-          ? LLMFactory.azureOpenAiLlmFields(model, defaultFields)
+          ? LlmFactory.azureOpenAiLlmFields(model, defaultFields)
           : never();
 
     if (!model.name.includes("gpt-4o")) {
@@ -151,7 +153,7 @@ export class LLMFactory {
     };
   }
 
-  static createAnthropicLlm(model: Model): BaseChatModel {
+  static createAnthropicLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating Anthropic LLM with model ${model.name}`);
 
     return new ChatAnthropic({
@@ -163,10 +165,11 @@ export class LLMFactory {
         type: "enabled",
         budget_tokens: 1024,
       },
+      cache,
     });
   }
 
-  static createAwsLlm(model: Model): BaseChatModel {
+  static createAwsLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating AWS LLM with model ${model.name}`);
 
     const accessKeyId = process.env.AWS_ACCESS_KEY ?? "";
@@ -186,10 +189,11 @@ export class LLMFactory {
       region,
       credentials: { accessKeyId, secretAccessKey },
       additionalModelRequestFields,
+      cache,
     });
   }
 
-  static createDeepSeekLlm(model: Model): BaseChatModel {
+  static createDeepSeekLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating DeepSeek LLM with model ${model.name}`);
 
     return new ChatDeepSeek({
@@ -197,16 +201,18 @@ export class LLMFactory {
       temperature: 0,
       // TODO: Python implementation also includes field missing in JS SDK:
       //     disabled_params={"tool_choice": None}
+      cache,
     });
   }
 
-  static createGoogleLlm(model: Model): BaseChatModel {
+  static createGoogleLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating Google LLM with model ${model.name}`);
 
     if (model.name.includes("gemini-2.0")) {
       return new ChatGoogleGenerativeAI({
         model: model.name,
         temperature: 0,
+        cache,
       });
     } else {
       return new ChatGoogleGenerativeAI({
@@ -216,30 +222,33 @@ export class LLMFactory {
           thinkingLevel: "LOW",
           includeThoughts: true,
         },
+        cache,
       });
     }
   }
 
-  static createGithubLlm(model: Model): BaseChatModel {
+  static createGithubLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating Github LLM with model ${model.name}`);
 
     return new ChatOpenAI({
       model: model.name,
       configuration: { baseURL: "https://models.github.ai/inference" },
       temperature: 0,
+      cache,
     });
   }
 
-  static createMistralAiLlm(model: Model): BaseChatModel {
+  static createMistralAiLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating MistralAI LLM with model ${model.name}`);
 
     return new ChatMistralAI({
       model: model.name,
       temperature: 0,
+      cache,
     });
   }
 
-  static createOllamaLlm(model: Model): BaseChatModel {
+  static createOllamaLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating Ollama LLM with model ${model.name}`);
 
     const baseUrl = process.env.ALUMNIUM_OLLAMA_URL;
@@ -248,16 +257,18 @@ export class LLMFactory {
         model: model.name,
         baseUrl,
         temperature: 0,
+        cache,
       });
     } else {
       return new ChatOllama({
         model: model.name,
         temperature: 0,
+        cache,
       });
     }
   }
 
-  static createOpenAiLlm(model: Model): BaseChatModel {
+  static createOpenAiLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating OpenAI LLM with model ${model.name}`);
 
     const fields: ChatOpenAIFields = {
@@ -275,6 +286,7 @@ export class LLMFactory {
       // - https://community.openai.com/t/gpt-5-removed-parameters-logprob-top-p-temperature/1345768/2
       //
       // temperature: 0,
+      cache,
     };
 
     if (model.name.includes("gpt-4o")) {
@@ -296,12 +308,13 @@ export class LLMFactory {
     return new ChatOpenAI(fields);
   }
 
-  static createXAiLlm(model: Model): BaseChatModel {
+  static createXAiLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating XAI LLM with model ${model.name}`);
 
     return new ChatXAI({
       model: model.name,
       temperature: 0,
+      cache,
     });
   }
 }

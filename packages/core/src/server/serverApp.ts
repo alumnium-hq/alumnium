@@ -15,6 +15,7 @@ const logger = getLogger(import.meta.url);
 
 export const serverApp = new Elysia({ prefix: "/v1" })
   .use(cors())
+  .state(() => ({ sessions: new SessionManager() }))
   .onError((ctx) => {
     const { method, url } = ctx.request;
     logger.warn(`${method} ${url} failed: {error}`, {
@@ -31,7 +32,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
       stack: "stack" in ctx.error ? ctx.error.stack : undefined,
     });
   })
-  .state("sessions", new SessionManager())
 
   //#region Health check ///////////////////////////////////////////////////////
 
@@ -61,9 +61,9 @@ export const serverApp = new Elysia({ prefix: "/v1" })
       .post(
         "/",
         (ctx) => {
-          const sessionId = ctx.store.sessions.createSession(ctx.body);
+          const session = ctx.store.sessions.createSession(ctx.body);
           return {
-            session_id: sessionId,
+            session_id: session.sessionId,
           };
         },
         {
@@ -124,6 +124,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                     };
                   }
 
+                  session.updateContext({ app: ctx.body.app });
+
                   const accessibilityTree = session.processTree(
                     ctx.body.accessibility_tree,
                   );
@@ -160,6 +162,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/steps",
               async (ctx) => {
                 const { session } = ctx;
+                session.updateContext({ app: ctx.body.app });
+
                 const accessibilityTree = await session.processTree(
                   ctx.body.accessibility_tree,
                 );
@@ -229,6 +233,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/statements",
               async (ctx) => {
                 const { session } = ctx;
+                session.updateContext({ app: ctx.body.app });
+
                 const accessibilityTree = await session.processTree(
                   ctx.body.accessibility_tree,
                 );
@@ -262,6 +268,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/areas",
               async (ctx) => {
                 const { session } = ctx;
+                session.updateContext({ app: ctx.body.app });
+
                 const accessibilityTree = await session.processTree(
                   ctx.body.accessibility_tree,
                 );
@@ -290,6 +298,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/elements",
               async (ctx) => {
                 const { session } = ctx;
+                session.updateContext({ app: ctx.body.app });
+
                 const accessibilityTree = await session.processTree(
                   ctx.body.accessibility_tree,
                 );
@@ -318,6 +328,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   session,
                   body: { before, after },
                 } = ctx;
+                session.updateContext({ app: ctx.body.app });
+
                 const beforeTree = await session.processTree(
                   before.accessibility_tree,
                 );

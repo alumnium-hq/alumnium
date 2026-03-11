@@ -2,6 +2,9 @@ import { always, never } from "alwaysly";
 import fs from "fs/promises";
 import path from "path";
 import type z from "zod";
+import { getLogger } from "./utils/logger.js";
+
+const logger = getLogger(import.meta.url);
 
 const DEFAULT_GLOBAL_STORE_DIR = ".alumnium";
 
@@ -97,6 +100,7 @@ export class FsStore {
    */
   async writeJson(relPath: string, data: unknown): Promise<string> {
     const filePath = await this.ensureFilePath(relPath);
+    logger.debug(`Writing JSON file ${filePath}...`);
     await fs.writeFile(filePath, JSON.stringify(data, null, 2));
     return filePath;
   }
@@ -111,6 +115,7 @@ export class FsStore {
    */
   async writeFile(relPath: string, data: Buffer | string): Promise<string> {
     const filePath = await this.ensureFilePath(relPath);
+    logger.debug(`Writing file ${filePath}...`);
     await fs.writeFile(filePath, data);
     return filePath;
   }
