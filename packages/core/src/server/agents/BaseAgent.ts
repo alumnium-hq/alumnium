@@ -24,7 +24,7 @@ const logger = getLogger(import.meta.url);
 const convertInputToPromptValue =
   // @ts-expect-error -- It is marked as protected in BaseAgent, but we need to call it from
   // invokeChain callbacks to provide meta data for caching.
-  BaseChatModel._convertInputToPromptValue;
+  BaseChatModel._convertInputToPromptValue.bind(BaseChatModel);
 
 // NOTE: See loadAgentPrompts import NOTE above.
 // const agentPrompts = await loadAgentPrompts();
@@ -69,9 +69,7 @@ export class BaseAgentResponse {
 export namespace BaseAgent {
   export type LogDir = "in" | "out";
 
-  export type LogData = Record<string, LogDataValue>;
-
-  export type LogDataValue = BaseAgentDebugLogDetail | unknown;
+  export type LogData = Record<string, unknown>;
 }
 
 export class BaseAgent {

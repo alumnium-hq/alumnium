@@ -156,15 +156,15 @@ export async function createSeleniumDriver(
 }
 
 export async function createIosDriver(
-  capabilities: McpDriver.Capabilities,
-  serverUrl: string | null | undefined,
+  _capabilities: McpDriver.Capabilities,
+  _serverUrl: string | null | undefined,
 ): Promise<any> {
   never();
 }
 
 export async function createAndroidDriver(
-  capabilities: McpDriver.Capabilities,
-  serverUrl: string | null | undefined,
+  _capabilities: McpDriver.Capabilities,
+  _serverUrl: string | null | undefined,
 ): Promise<any> {
   never();
 }

@@ -75,7 +75,7 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
       const goalHash = xxh32(Buffer.from(goal, "utf8")).toString(16);
 
       for (const [memoryKey, entry] of Object.entries(this.memoryCache)) {
-        const { cacheHash, agentType, app, elements } = entry;
+        const { cacheHash, agentType, app } = entry;
         if (
           cacheHash !== goalHash ||
           agentType !== "planner" ||

@@ -247,7 +247,6 @@ export class Alumni {
       await this.driver.app(),
     );
     const scopedTree = accessibilityTree.scopeToArea(response.id);
-    const app = await this.driver.app();
     return new Area(
       response.id,
       response.explanation,

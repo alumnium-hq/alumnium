@@ -164,7 +164,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
 
-                const accessibilityTree = await session.processTree(
+                const accessibilityTree = session.processTree(
                   ctx.body.accessibility_tree,
                 );
                 const [explanation, actions] = await session.actorAgent.invoke(
@@ -191,7 +191,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/examples",
               async (ctx) => {
                 const { session } = ctx;
-                await session.plannerAgent.addExample(
+                session.plannerAgent.addExample(
                   ctx.body.goal,
                   ctx.body.actions,
                 );
@@ -235,7 +235,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
 
-                const accessibilityTree = await session.processTree(
+                const accessibilityTree = session.processTree(
                   ctx.body.accessibility_tree,
                 );
                 const [explanation, value] =
@@ -270,7 +270,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
 
-                const accessibilityTree = await session.processTree(
+                const accessibilityTree = session.processTree(
                   ctx.body.accessibility_tree,
                 );
                 const { id: simplifiedId, explanation } =
@@ -300,7 +300,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
 
-                const accessibilityTree = await session.processTree(
+                const accessibilityTree = session.processTree(
                   ctx.body.accessibility_tree,
                 );
                 const elements = await session.locatorAgent.invoke(
@@ -330,12 +330,10 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 } = ctx;
                 session.updateContext({ app: ctx.body.app });
 
-                const beforeTree = await session.processTree(
+                const beforeTree = session.processTree(
                   before.accessibility_tree,
                 );
-                const afterTree = await session.processTree(
-                  after.accessibility_tree,
-                );
+                const afterTree = session.processTree(after.accessibility_tree);
                 const excludeAttrs = new Set([
                   ...ChangesAnalyzerAgent.EXCLUDE_ATTRIBUTES,
                   ...session.excludeAttributes,

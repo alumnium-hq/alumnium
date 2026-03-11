@@ -11,7 +11,7 @@ const Command = z.union([z.literal("mcp"), z.literal("server")]);
 type Command = z.infer<typeof Command>;
 
 const {
-  positionals: [_, __, commandArg, ...restArgs],
+  positionals: [_, __, commandArg],
 } = parseArgs({
   args: Bun.argv,
   allowPositionals: true,
@@ -28,7 +28,7 @@ try {
 
 switch (command) {
   case "mcp":
-    mcpCommand();
+    await mcpCommand();
     break;
 
   case "server":

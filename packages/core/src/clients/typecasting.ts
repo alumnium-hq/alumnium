@@ -11,7 +11,7 @@ export type Data =
 export function looselyTypecast(value: string | string[]): Data {
   if (Array.isArray(value)) {
     return value.map(
-      (item) => looselyTypecast(item) as string | number | boolean
+      (item) => looselyTypecast(item) as string | number | boolean,
     );
   }
 
