@@ -7,7 +7,7 @@ import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.js";
 import { LocatorAgent } from "./agents/LocatorAgent.js";
 import { PlannerAgent } from "./agents/PlannerAgent.js";
 import { RetrieverAgent } from "./agents/RetrieverAgent.js";
-import { LLMFactory } from "./LLMFactory.js";
+import { LlmFactory } from "./LlmFactory.js";
 import { serverApp } from "./serverApp.js";
 import { CreateSessionResponse } from "./serverSchema.js";
 import { SessionManager } from "./session/SessionManager.js";
@@ -17,7 +17,7 @@ describe("serverApp", () => {
     serverApp.store.sessions = new SessionManager();
 
     pushMock(
-      spyOn(LLMFactory, "createLlm").mockReturnValue({
+      spyOn(LlmFactory, "createLlm").mockReturnValue({
         withStructuredOutput: () => ({ invoke: async () => ({}) }),
         bindTools: () => ({ invoke: async () => ({}) }),
         invoke: async () => ({ content: "" }),

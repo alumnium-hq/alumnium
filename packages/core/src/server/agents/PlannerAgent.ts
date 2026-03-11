@@ -15,12 +15,23 @@ import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.js";
 import { UploadTool } from "../../tools/UploadTool.js";
 import { getLogger } from "../../utils/logger.js";
+import type { LlmContext } from "../LlmContext.js";
 import { Agent } from "./Agent.js";
 import { BaseAgent } from "./BaseAgent.js";
 
 const logger = getLogger(import.meta.url);
 
+export namespace PlannerAgent {
+  export type Meta = z.infer<typeof PlannerAgent.Meta>;
+}
+
 export class PlannerAgent extends BaseAgent {
+  static Meta = z.object({
+    type: z.literal("planner"),
+    goal: z.string(),
+    accessibilityTreeXml: z.string(),
+  });
+
   static readonly #NAVIGATE_TO_URL_EXAMPLE = `
 Example:
 Input:
@@ -56,8 +67,8 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   promptWithExamples: FewShotChatMessagePromptTemplate<PlannerAgent.Example>;
   chain: Runnable<PlannerAgent.ChainInput, PlannerAgent.ChainOutput>;
 
-  constructor(llm: BaseChatModel, toolNames: string[]) {
-    super();
+  constructor(llmContext: LlmContext, llm: BaseChatModel, toolNames: string[]) {
+    super(llmContext);
     this.llm = llm;
 
     // Convert tool class names to human-readable names
@@ -153,12 +164,24 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
       "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
     });
 
-    const response = await this.invokeChain(this.chain, {
+    const meta: PlannerAgent.Meta = {
+      type: "planner",
       goal,
-      accessibility_tree: accessibilityTreeXml,
-    });
+      accessibilityTreeXml,
+    };
 
-    if (!PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)) {
+    const response = await this.invokeChain(
+      this.chain,
+      {
+        goal,
+        accessibility_tree: accessibilityTreeXml,
+      },
+      meta,
+    );
+
+    if (
+      !PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)
+    ) {
       const structured = response.structured as PlannerAgent.Plan;
       this.logData(logger, "out", {
         Result: structured,
@@ -210,7 +233,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     };
   }
 
-  toState(): PlannerAgent.State {
+  override toState(): PlannerAgent.State {
     const state = super.toState();
     const examples = this.promptWithExamples.examples;
     return {
@@ -223,7 +246,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     };
   }
 
-  applyState(state: PlannerAgent.State): void {
+  override applyState(state: PlannerAgent.State): void {
     super.applyState(state);
     this.promptWithExamples.examples = state["examples"];
   }

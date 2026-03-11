@@ -26,14 +26,17 @@
         "@logtape/logtape": "^2.0.2",
         "@modelcontextprotocol/sdk": "^1.27.1",
         "alwaysly": "^0.4.0",
+        "case-anything": "^3.1.2",
         "diff": "^8.0.3",
         "dom-serializer": "^2.0.0",
         "domhandler": "^5.0.3",
         "domutils": "^3.2.2",
         "elysia": "^1.4.26",
         "htmlparser2": "^10.1.0",
+        "npm-fuzzy": "^1.0.1",
         "playwright-core": "^1.58.2",
         "selenium-webdriver": "^4.41.0",
+        "smolxxh": "^0.1.0",
         "webdriverio": "^9.24.0",
         "xml-formatter": "^3.6.7",
         "zod": "^4.3.6",
@@ -796,6 +799,8 @@
 
     "camelcase": ["camelcase@6.3.0", "", {}, "sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA=="],
 
+    "case-anything": ["case-anything@3.1.2", "", {}, "sha512-wljhAjDDIv/hM2FzgJnYQg90AWmZMNtESCjTeLH680qTzdo0nErlCxOmgzgX4ZsZAtIvqHyD87ES8QyriXB+BQ=="],
+
     "chalk": ["chalk@5.6.2", "", {}, "sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA=="],
 
     "chardet": ["chardet@2.1.1", "", {}, "sha512-PsezH1rqdV9VvyNhxxOW32/d75r01NY7TQCmOqomRo15ZSOKbpTFVsfjghxo6JloQUCGnH4k1LGu0R4yCLlWQQ=="],
@@ -1404,6 +1409,8 @@
 
     "normalize-url": ["normalize-url@6.1.0", "", {}, "sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A=="],
 
+    "npm-fuzzy": ["npm-fuzzy@1.0.1", "", {}, "sha512-Z75D6/VtYTeD5kWxe9qshd4a5oE7kpVMPQEIA1azJhI0jHtWw6EqyDRNeIMgh68wM7oB0sjvoWiEq49dsfBJgA=="],
+
     "npm-normalize-package-bin": ["npm-normalize-package-bin@4.0.0", "", {}, "sha512-TZKxPvItzai9kN9H/TkmCtx/ZN/hvr3vUycjlfmH0ootY9yFBzNOpiXAdIn1Iteqsvk4lQn6B5PTrt+n6h8k/w=="],
 
     "npm-run-all2": ["npm-run-all2@8.0.4", "", { "dependencies": { "ansi-styles": "^6.2.1", "cross-spawn": "^7.0.6", "memorystream": "^0.3.1", "picomatch": "^4.0.2", "pidtree": "^0.6.0", "read-package-json-fast": "^4.0.0", "shell-quote": "^1.7.3", "which": "^5.0.0" }, "bin": { "run-p": "bin/run-p/index.js", "run-s": "bin/run-s/index.js", "npm-run-all": "bin/npm-run-all/index.js", "npm-run-all2": "bin/npm-run-all/index.js" } }, "sha512-wdbB5My48XKp2ZfJUlhnLVihzeuA1hgBnqB2J9ahV77wLS+/YAJAlN8I+X3DIFIPZ3m5L7nplmlbhNiFDmXRDA=="],
@@ -1653,6 +1660,8 @@
     "slugify": ["slugify@1.6.6", "", {}, "sha512-h+z7HKHYXj6wJU+AnS/+IH8Uh9fdcX1Lrhg1/VMdf9PwoBQXFcXiAdsy2tSK0P6gKwJLXp02r90ahUCqHk9rrw=="],
 
     "smart-buffer": ["smart-buffer@4.2.0", "", {}, "sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg=="],
+
+    "smolxxh": ["smolxxh@0.1.0", "", {}, "sha512-xDPQDLMibVQyT+KjcXGHqj69y4IyWD3MlRY0EOw5LaYe0MdHyhnEzZMz0mvv6v8Pp8uwgc/DxiLqN9lnsuPJsw=="],
 
     "socks": ["socks@2.8.7", "", { "dependencies": { "ip-address": "^10.0.1", "smart-buffer": "^4.2.0" } }, "sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A=="],
 

@@ -9,7 +9,9 @@ import { Agent } from "./Agent.js";
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
+import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
+import { LlmContext } from "../LlmContext.js";
 import { agentPrompts } from "./prompts/bundledPrompts.js";
 import {
   agentClassNameToPromptsAgentId,
@@ -18,6 +20,11 @@ import {
 } from "./prompts/prompts.js";
 
 const logger = getLogger(import.meta.url);
+
+const convertInputToPromptValue =
+  // @ts-expect-error -- It is marked as protected in BaseAgent, but we need to call it from
+  // invokeChain callbacks to provide meta data for caching.
+  BaseChatModel._convertInputToPromptValue;
 
 // NOTE: See loadAgentPrompts import NOTE above.
 // const agentPrompts = await loadAgentPrompts();
@@ -68,10 +75,13 @@ export namespace BaseAgent {
 }
 
 export class BaseAgent {
+  #llmContext: LlmContext;
   #usage: LlmUsage = createLlmUsage();
   protected prompts: AgentPrompts.RolePrompts;
 
-  constructor() {
+  constructor(llmContext: LlmContext) {
+    this.#llmContext = llmContext;
+
     const dev = PROVIDER_TO_PROMPTS_DEV[Model.current.provider];
     const prompts =
       agentPrompts[agentClassNameToPromptsAgentId(this.constructor.name)]?.[
@@ -138,9 +148,28 @@ export class BaseAgent {
   >(
     chain: Runnable<RunInput, RunOutput, CallOptions>,
     input: RunInput,
+    meta: LlmContext.Meta,
     options?: Partial<CallOptions>,
   ): Promise<BaseAgentResponse> {
-    const result = await chain.invoke(input, options);
+    const contextPrompts: string[] = [];
+
+    // @ts-expect-error
+    const result = await chain.invoke(input, {
+      ...options,
+      callbacks: [
+        {
+          handleChatModelStart: (_llm, baseMessages) => {
+            contextPrompts.push(
+              ...baseMessages.map((baseMessage) =>
+                convertInputToPromptValue.call(this, baseMessage).toString(),
+              ),
+            );
+            this.#llmContext.assignPromptsMeta(contextPrompts, meta);
+          },
+        },
+      ],
+    });
+    this.#llmContext.clearPromptsMeta(contextPrompts);
 
     let message: any;
     let structured: unknown = null;

@@ -61,7 +61,13 @@ export const mochaHooks = {
     if (driverType === "selenium") {
       await (driver as WebDriver).quit();
     }
-    await al.quit();
+    try {
+      const stats = await al.getStats();
+      console.log("Total usage stats:", stats);
+      await al.quit();
+    } catch (error) {
+      console.warn("Error quitting Alumni:", error);
+    }
   },
 };
 
