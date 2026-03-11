@@ -7,8 +7,8 @@ const FIXTURE_PATH = path.resolve(
   "__fixtures__/uiautomator2_accessibility_tree.xml",
 );
 
-describe(UIAutomator2AccessibilityTree, () => {
-  describe(UIAutomator2AccessibilityTree.prototype.elementById, () => {
+describe("UIAutomator2AccessibilityTree", () => {
+  describe("elementById", () => {
     it("returns correct element for given ID", async () => {
       const xml = await Bun.file(FIXTURE_PATH).text();
       const tree = new UIAutomator2AccessibilityTree(xml);

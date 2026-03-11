@@ -10,13 +10,13 @@ import type { RetrieverAgent } from "./RetrieverAgent.js";
 export namespace Agent {
   export type State = z.infer<typeof Agent.State>;
 
-    export type Meta =
-      | ActorAgent.Meta
-      | AreaAgent.Meta
-      | ChangesAnalyzerAgent.Meta
-      | LocatorAgent.Meta
-      | PlannerAgent.Meta
-      | RetrieverAgent.Meta;
+  export type Meta =
+    | ActorAgent.Meta
+    | AreaAgent.Meta
+    | ChangesAnalyzerAgent.Meta
+    | LocatorAgent.Meta
+    | PlannerAgent.Meta
+    | RetrieverAgent.Meta;
 }
 
 export abstract class Agent {

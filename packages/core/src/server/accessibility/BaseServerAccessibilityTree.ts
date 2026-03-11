@@ -12,7 +12,7 @@ export abstract class BaseServerAccessibilityTree {
   /**
    * Convert tree to XML string, optionally excluding specified attributes.
    */
-  abstract toXml(excludeAttrs?: Set<string> | undefined): string;
+  abstract toXml(excludeAttrs?: Set<string>): string;
 
   getRawId(simplifiedIdArg: unknown): number {
     const simplifiedId = this.#extractId(simplifiedIdArg);
@@ -28,7 +28,7 @@ export abstract class BaseServerAccessibilityTree {
     const mappedCalls: ToolCall[] = [];
     for (const call of toolCalls) {
       const mappedCall: ToolCall = { ...call };
-      const args = { ...(call.args ?? {}) };
+      const args = { ...call.args };
 
       if ("id" in args) {
         args.id = this.getRawId(args.id);

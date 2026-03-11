@@ -79,6 +79,7 @@ describe("McpArtifactsStore", () => {
         spyOn(McpState, "incrementStepNum").mockImplementation(() => 42),
       );
       const result = await McpArtifactsStore.saveScreenshot(screenshotProps);
+      // oxlint-disable-next-line typescript-eslint/unbound-method
       expect(McpState.incrementStepNum).toBeCalledTimes(1);
       expect(result).toBe(
         path.resolve(

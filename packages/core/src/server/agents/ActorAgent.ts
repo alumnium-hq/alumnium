@@ -53,6 +53,7 @@ export class ActorAgent extends BaseAgent {
 
     // TODO: Figure out when bindTools aren't available and maybe throw a proper
     // error or replace this comment with a NOTE comment instead.
+    // oxlint-disable-next-line typescript-eslint(unbound-method) -- TODO: File an issue to the rule suggesting ignore pattern
     always(llm.bindTools);
     this.chain = prompt.pipe(llm.bindTools(toolSchemas));
   }

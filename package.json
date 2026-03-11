@@ -4,11 +4,14 @@
   "workspaces": [
     "packages/*"
   ],
-  "devDependencies": {
-    "typescript": "^5.9.3"
-  },
   "scripts": {
     "types": "tsc --build",
     "types:watch": "tsc --build --watch"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.38.0",
+    "oxlint": "^1.53.0",
+    "oxlint-tsgolint": "^0.16.0",
+    "typescript": "^5.9.3"
   }
 }
