@@ -46,7 +46,7 @@ export class HttpClient extends Client {
   }
 
   async quit(): Promise<void> {
-    await this.#sessionFetch("DELETE", "/sessions");
+    await this.#sessionFetch("DELETE", "/");
   }
 
   async planActions(
