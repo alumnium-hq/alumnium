@@ -2,6 +2,7 @@ import { describe, expect, it, spyOn } from "bun:test";
 import { pushMock, setupBeforeEach } from "../../../../tests/mocks.js";
 import { AppId } from "../../../AppId.js";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
+import type { BaseAgent } from "../../agents/BaseAgent.js";
 import { SessionFactory } from "../../session/__factories__/SessionFactory.js";
 import { ActorAgentElementsCache } from "./ActorAgentElementsCache.js";
 import type { ElementsCache } from "./ElementsCache.js";
@@ -36,8 +37,8 @@ describe("ActorAgentElementsCache", () => {
       cacheHash,
       meta: {
         type: "actor",
-        goal: "login",
-        step: "click login button",
+        goal: "login" as BaseAgent.Goal,
+        step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/><input id="2" name="username"/>',
       },
       generation: LchainFactory.storedGenerationWith({
@@ -69,8 +70,8 @@ describe("ActorAgentElementsCache", () => {
       cacheHash,
       meta: {
         type: "actor",
-        goal: "login",
-        step: "click login button",
+        goal: "login" as BaseAgent.Goal,
+        step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/>',
       },
       generation: LchainFactory.storedGeneration(),
@@ -87,8 +88,8 @@ describe("ActorAgentElementsCache", () => {
       cacheHash,
       meta: {
         type: "actor",
-        goal: "go back",
-        step: "navigate back",
+        goal: "go back" as BaseAgent.Goal,
+        step: "navigate back" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/>',
       },
       generation: LchainFactory.storedGenerationWith({
@@ -113,8 +114,8 @@ describe("ActorAgentElementsCache", () => {
       cacheHash,
       meta: {
         type: "actor",
-        goal: "login",
-        step: "click login button",
+        goal: "login" as BaseAgent.Goal,
+        step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="10" name="Login"/><button id="11" name="Login"/>',
       },
       generation: LchainFactory.storedGenerationWith({

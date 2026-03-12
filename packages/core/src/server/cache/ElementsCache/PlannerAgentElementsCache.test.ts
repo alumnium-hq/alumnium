@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { setupBeforeEach } from "../../../../tests/mocks.js";
 import { AppId } from "../../../AppId.js";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
+import type { BaseAgent } from "../../agents/BaseAgent.js";
 import { SessionFactory } from "../../session/__factories__/SessionFactory.js";
 import type { ElementsCache } from "./ElementsCache.js";
 import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.js";
@@ -30,7 +31,7 @@ describe("PlannerAgentElementsCache", () => {
       cacheHash: "hash" as ElementsCache.CacheHash,
       meta: {
         type: "planner",
-        goal: "login to app",
+        goal: "login to app" as BaseAgent.Goal,
         treeXml: "<button id='1'>Login</button>",
       },
       generation: LchainFactory.storedGeneration({ text: "step1\nstep2" }),
@@ -54,7 +55,7 @@ describe("PlannerAgentElementsCache", () => {
       cacheHash: "hash" as ElementsCache.CacheHash,
       meta: {
         type: "planner",
-        goal: "login to app",
+        goal: "login to app" as BaseAgent.Goal,
         treeXml: "<button id='1'>Login</button>",
       },
       generation: LchainFactory.storedGeneration({ text: "" }),

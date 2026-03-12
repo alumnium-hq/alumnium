@@ -10,6 +10,7 @@ import { Agent } from "./Agent.js";
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import z from "zod";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
 import { LlmContext } from "../LlmContext.js";
 import { agentPrompts } from "./prompts/bundledPrompts.js";
@@ -70,9 +71,17 @@ export namespace BaseAgent {
   export type LogDir = "in" | "out";
 
   export type LogData = Record<string, unknown>;
+
+  export type Goal = z.infer<typeof BaseAgent.Goal>;
+
+  export type Step = z.infer<typeof BaseAgent.Step>;
 }
 
 export class BaseAgent {
+  static Goal = z.string().brand("BaseAgent.Goal");
+
+  static Step = z.string().brand("BaseAgent.Step");
+
   #llmContext: LlmContext;
   #usage: LlmUsage = createLlmUsage();
   protected prompts: AgentPrompts.RolePrompts;

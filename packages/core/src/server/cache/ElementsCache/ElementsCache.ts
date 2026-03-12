@@ -2,12 +2,13 @@ import type { Generation } from "@langchain/core/outputs";
 import fs from "node:fs/promises";
 // @ts-expect-error -- npm-fuzzy has broken ESM+TS support, so we import ESM version directly
 import * as fuzzy from "npm-fuzzy/dist/index.esm.js";
-import { xxh32 } from "smolxxh";
+import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../../AppId.js";
 import { Lchain } from "../../../llm/Lchain.js";
 import { getLogger } from "../../../utils/logger.js";
 import { ActorAgent } from "../../agents/ActorAgent.js";
+import type { BaseAgent } from "../../agents/BaseAgent.js";
 import { PlannerAgent } from "../../agents/PlannerAgent.js";
 import { LlmContext } from "../../LlmContext.js";
 import { SessionContext } from "../../session/SessionContext.js";
@@ -55,7 +56,7 @@ export namespace ElementsCache {
 
   export type CacheHash = z.infer<typeof ElementsCache.CacheHash>;
 
-  export type CacheKey = z.infer<typeof ElementsCache.CacheKey>;
+  export type CacheKey = BaseAgent.Goal | BaseAgent.Step;
 
   export type MemoryKey = z.infer<typeof ElementsCache.MemoryKey>;
 
@@ -76,9 +77,7 @@ export class ElementsCache extends ServerCache {
 
   static Instruction = z.record(z.string(), z.string());
 
-  static CacheHash = z.string().brand("ElementsCache.RequestHash");
-
-  static CacheKey = z.string().brand("ElementsCache.CacheKey");
+  static CacheHash = z.string().brand("ElementsCache.CacheHash");
 
   static MemoryKey = z.string().brand("ElementsCache.MemoryKey");
 
@@ -307,7 +306,7 @@ export class ElementsCache extends ServerCache {
     if (agentMeta.type !== "actor" && agentMeta.type !== "planner") return null;
 
     const cacheKey = this.#cacheKey(agentMeta);
-    const cacheHash = this.#cacheHash(cacheKey);
+    const cacheHash: ElementsCache.CacheHash = xxh64Str(cacheKey);
 
     const memoryKey = this.#memoryKey(cacheHash, llmKey);
 
@@ -320,15 +319,7 @@ export class ElementsCache extends ServerCache {
   }
 
   #cacheKey(meta: ElementsCache.AgentMeta): ElementsCache.CacheKey {
-    return (
-      meta.type === "planner" ? meta.goal : meta.step
-    ) as ElementsCache.CacheKey;
-  }
-
-  #cacheHash(value: ElementsCache.CacheKey): ElementsCache.CacheHash {
-    return xxh32(Buffer.from(value, "utf8")).toString(
-      16,
-    ) as ElementsCache.CacheHash;
+    return meta.type === "planner" ? meta.goal : meta.step;
   }
 
   #memoryKey(

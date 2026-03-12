@@ -39,7 +39,8 @@
         "npm-fuzzy": "^1.0.1",
         "playwright-core": "^1.58.2",
         "selenium-webdriver": "^4.41.0",
-        "smolxxh": "^0.1.0",
+        "smolxxh": "1.1.0",
+        "ts-deepmerge": "^7.0.3",
         "webdriverio": "^9.24.0",
         "xml-formatter": "^3.6.7",
         "zod": "^4.3.6",
@@ -1758,7 +1759,7 @@
 
     "smart-buffer": ["smart-buffer@4.2.0", "", {}, "sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg=="],
 
-    "smolxxh": ["smolxxh@0.1.0", "", {}, "sha512-xDPQDLMibVQyT+KjcXGHqj69y4IyWD3MlRY0EOw5LaYe0MdHyhnEzZMz0mvv6v8Pp8uwgc/DxiLqN9lnsuPJsw=="],
+    "smolxxh": ["smolxxh@1.1.0", "", {}, "sha512-83GmRJmlSPH1P063XHXHFnsNaB2ZF6gDlE9Lx8b9aoaBDaxR1HepMiBnHQGpXUijlaTRNEJPlp5k4DTWc6fliA=="],
 
     "socks": ["socks@2.8.7", "", { "dependencies": { "ip-address": "^10.0.1", "smart-buffer": "^4.2.0" } }, "sha512-HLpt+uLy/pxB+bum/9DzAgiKS8CX1EvbWxI4zlmgGCExImLdiad2iCwXT5Z4c9c3Eq8rP2318mPW2c+QbtjK8A=="],
 
@@ -1859,6 +1860,8 @@
     "ts-algebra": ["ts-algebra@2.0.0", "", {}, "sha512-FPAhNPFMrkwz76P7cdjdmiShwMynZYN6SgOujD1urY4oNm80Ou9oMdmbR45LotcKOXoy7wSmHkRFE6Mxbrhefw=="],
 
     "ts-api-utils": ["ts-api-utils@2.4.0", "", { "peerDependencies": { "typescript": ">=4.8.4" } }, "sha512-3TaVTaAv2gTiMB35i3FiGJaRfwb3Pyn/j3m/bfAvGe8FB7CF6u+LMYqYlDh7reQf7UNvoTvdfAqHGmPGOSsPmA=="],
+
+    "ts-deepmerge": ["ts-deepmerge@7.0.3", "", {}, "sha512-Du/ZW2RfwV/D4cmA5rXafYjBQVuvu4qGiEEla4EmEHVHgRdx68Gftx7i66jn2bzHPwSVZY36Ae6OuDn9el4ZKA=="],
 
     "ts-node": ["ts-node@10.9.2", "", { "dependencies": { "@cspotcode/source-map-support": "^0.8.0", "@tsconfig/node10": "^1.0.7", "@tsconfig/node12": "^1.0.7", "@tsconfig/node14": "^1.0.0", "@tsconfig/node16": "^1.0.2", "acorn": "^8.4.1", "acorn-walk": "^8.1.1", "arg": "^4.1.0", "create-require": "^1.1.0", "diff": "^4.0.1", "make-error": "^1.1.1", "v8-compile-cache-lib": "^3.0.1", "yn": "3.1.1" }, "peerDependencies": { "@swc/core": ">=1.2.50", "@swc/wasm": ">=1.2.50", "@types/node": "*", "typescript": ">=2.7" }, "optionalPeers": ["@swc/core", "@swc/wasm"], "bin": { "ts-node": "dist/bin.js", "ts-script": "dist/bin-script-deprecated.js", "ts-node-cwd": "dist/bin-cwd.js", "ts-node-esm": "dist/bin-esm.js", "ts-node-script": "dist/bin-script.js", "ts-node-transpile-only": "dist/bin-transpile.js" } }, "sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ=="],
 
