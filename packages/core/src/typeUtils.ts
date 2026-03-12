@@ -15,4 +15,11 @@ export namespace TypeUtils {
       ? true
       : false
     : false;
+
+  export type DeepPartial<Type> =
+    IsUnknown<Type> extends true
+      ? unknown
+      : {
+          [Key in keyof Type]?: DeepPartial<Type[Key]> | undefined;
+        };
 }

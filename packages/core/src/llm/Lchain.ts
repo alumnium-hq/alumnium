@@ -198,7 +198,10 @@ export abstract class Lchain {
     message: Lchain.StoredMessage.optional(),
   });
 
-  static toStored(generation: Lchain.Generation): Lchain.StoredGeneration {
+  static toStored(
+    this: void,
+    generation: Lchain.Generation,
+  ): Lchain.StoredGeneration {
     const stored = serializeGeneration(generation as LangchainGeneration);
     return Lchain.StoredGeneration.parse(stored);
   }

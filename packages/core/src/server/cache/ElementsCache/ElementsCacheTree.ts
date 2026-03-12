@@ -167,20 +167,13 @@ export class ElementsCacheTree {
   }
 
   #parseXmlRoot(treeXml: string): DomElement {
-    const open = (treeXml.match(/</g) || []).length;
-    const close = (treeXml.match(/>/g) || []).length;
-    if (open !== close) {
-      throw new Error("Invalid accessibility tree XML");
-    }
     const document = parseDocument(`<root>${treeXml}</root>`, {
       xmlMode: true,
     });
     const root = document.children.find(
       (node): node is DomElement => node instanceof DomElement,
     );
-    if (!root) {
-      throw new Error("Invalid accessibility tree XML");
-    }
+    if (!root) throw new Error("Invalid accessibility tree XML");
     return root;
   }
 

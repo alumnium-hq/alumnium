@@ -1,3 +1,4 @@
+import { xxh32 } from "smolxxh";
 import { getLogger } from "../../../utils/index.js";
 import type { PlannerAgent } from "../../agents/PlannerAgent.js";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.js";
@@ -9,24 +10,77 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
     props: BaseAgentElementsCache.UpdateProps<PlannerAgent.Meta>,
   ): Promise<void> {
     const { cacheHash, memoryKey, meta, generation } = props;
-    if (!generation.message?.content) {
+    const { goal } = meta;
+
+    if (!generation.message?.data.content) {
       logger.warn(
-        `Skipping planner cache update: empty plan content for goal: ${meta.goal.slice(0, 50)}...`,
+        `Skipping planner cache update: empty plan content for goal: ${goal.slice(0, 50)}...`,
       );
       return;
     }
 
     logger.debug(
-      `Cashing planner response for goal: "${meta.goal.slice(0, 50)}..."`,
+      `Cashing planner response for goal: "${goal.slice(0, 50)}..."`,
     );
 
-    this.store({
+    this.setRecord({
       cacheHash,
       generation,
       elements: [],
       agentType: "planner",
       memoryKey,
-      instruction: { goal: meta.goal },
+      instruction: { goal },
     });
+  }
+
+  updateElements(
+    goal: string,
+    newElements: Array<Record<string, string | number>>,
+  ): void {
+    try {
+      const goalHash = xxh32(Buffer.from(goal, "utf8")).toString(16);
+
+      for (const [memoryKey, entry] of this.getEntries()) {
+        const { cacheHash, agentType, app } = entry;
+        if (
+          cacheHash !== goalHash ||
+          agentType !== "planner" ||
+          app !== this.app
+        )
+          continue;
+
+        const existingKeys = new Set(
+          entry.elements.map((el) => this.#elementDedupKey(el)),
+        );
+        const mergedEls = [...entry.elements];
+        for (const newEl of newElements) {
+          const dedupKey = this.#elementDedupKey(newEl);
+          if (!existingKeys.has(dedupKey)) {
+            existingKeys.add(dedupKey);
+            mergedEls.push(newEl);
+          }
+        }
+
+        this.setRecord({
+          ...entry,
+          memoryKey,
+          elements: mergedEls,
+        });
+
+        logger.debug(
+          `Updated planner elements: ${mergedEls.length} total elements`,
+        );
+        break;
+      }
+    } catch (error) {
+      logger.debug(`Error updating planner elements: ${error}`);
+    }
+  }
+
+  #elementDedupKey(element: Record<string, string | number>): string {
+    const parts = Object.entries(element)
+      .filter(([key]) => key !== "index")
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+    return JSON.stringify(parts);
   }
 }
