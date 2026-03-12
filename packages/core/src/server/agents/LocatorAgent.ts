@@ -35,7 +35,7 @@ export class LocatorAgent extends BaseAgent {
   static Meta = z.object({
     type: z.literal("locator"),
     description: z.string(),
-    accessibilityTreeXml: z.string(),
+    treeXml: z.string(),
   });
 
   chain;
@@ -47,18 +47,18 @@ export class LocatorAgent extends BaseAgent {
 
   async invoke(
     description: string,
-    accessibilityTreeXml: string,
+    treeXml: string,
   ): Promise<Array<ElementRef>> {
     logger.info("Starting element location:");
     this.logData(logger, "in", {
       Description: description,
-      "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
+      "Accessibility tree": this.debugLogDetail(treeXml),
     });
 
     const meta: LocatorAgent.Meta = {
       type: "locator",
       description,
-      accessibilityTreeXml,
+      treeXml,
     };
 
     const response = await this.invokeChain(
@@ -68,7 +68,7 @@ export class LocatorAgent extends BaseAgent {
         [
           "human",
           pythonicFormat(this.prompts.user, {
-            accessibility_tree: accessibilityTreeXml,
+            accessibility_tree: treeXml,
             description,
           }),
         ],

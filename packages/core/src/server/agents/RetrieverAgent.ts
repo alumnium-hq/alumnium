@@ -38,7 +38,7 @@ export class RetrieverAgent extends BaseAgent {
   static Meta = z.object({
     type: z.literal("retriever"),
     information: z.string(),
-    accessibilityTreeXml: z.string(),
+    treeXml: z.string(),
     title: z.string(),
     url: z.string(),
     screenshot: z.string().nullable(),
@@ -59,7 +59,7 @@ export class RetrieverAgent extends BaseAgent {
 
   async invoke(
     information: string,
-    accessibilityTreeXml: string,
+    treeXml: string,
     title = "",
     url = "",
     screenshot: string | null = null,
@@ -67,7 +67,7 @@ export class RetrieverAgent extends BaseAgent {
     logger.info("Starting retrieval:");
     this.logData(logger, "in", {
       Information: information,
-      "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
+      "Accessibility tree": this.debugLogDetail(treeXml),
       Title: this.debugLogDetail(title),
       URL: this.debugLogDetail(url),
     });
@@ -75,7 +75,7 @@ export class RetrieverAgent extends BaseAgent {
     let prompt = "";
     if (!screenshot) {
       prompt += pythonicFormat(this.prompts.user, {
-        accessibility_tree: accessibilityTreeXml,
+        accessibility_tree: treeXml,
         title,
         url,
       });
@@ -97,7 +97,7 @@ export class RetrieverAgent extends BaseAgent {
     const meta: RetrieverAgent.Meta = {
       type: "retriever",
       information,
-      accessibilityTreeXml,
+      treeXml,
       title,
       url,
       screenshot,

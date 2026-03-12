@@ -29,7 +29,7 @@ export class PlannerAgent extends BaseAgent {
   static Meta = z.object({
     type: z.literal("planner"),
     goal: z.string(),
-    accessibilityTreeXml: z.string(),
+    treeXml: z.string(),
   });
 
   static readonly #NAVIGATE_TO_URL_EXAMPLE = `
@@ -150,31 +150,28 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
    * Plan actions to achieve a goal.
    *
    * @param goal The goal to achieve
-   * @param accessibilityTreeXml The accessibility tree XML
+   * @param treeXml The accessibility tree XML
    * @returns A tuple of (explanation, actions) where explanation describes
    *   the reasoning and actions is the list of steps to achieve the goal.
    */
-  async invoke(
-    goal: string,
-    accessibilityTreeXml: string,
-  ): Promise<[string, string[]]> {
+  async invoke(goal: string, treeXml: string): Promise<[string, string[]]> {
     logger.info("Starting planning:");
     this.logData(logger, "in", {
       Goal: goal,
-      "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
+      "Accessibility tree": this.debugLogDetail(treeXml),
     });
 
     const meta: PlannerAgent.Meta = {
       type: "planner",
       goal,
-      accessibilityTreeXml,
+      treeXml,
     };
 
     const response = await this.invokeChain(
       this.chain,
       {
         goal,
-        accessibility_tree: accessibilityTreeXml,
+        accessibility_tree: treeXml,
       },
       meta,
     );

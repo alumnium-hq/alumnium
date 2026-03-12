@@ -73,6 +73,7 @@
     "playwright-core": "^1.58.2",
     "selenium-webdriver": "^4.41.0",
     "smolxxh": "^0.1.0",
+    "ts-deepmerge": "^7.0.3",
     "webdriverio": "^9.24.0",
     "xml-formatter": "^3.6.7",
     "zod": "^4.3.6"

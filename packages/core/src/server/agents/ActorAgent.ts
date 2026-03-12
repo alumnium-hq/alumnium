@@ -34,7 +34,7 @@ export class ActorAgent extends BaseAgent {
     type: z.literal("actor"),
     goal: z.string(),
     step: z.string(),
-    accessibilityTreeXml: z.string(),
+    treeXml: z.string(),
   });
 
   chain: Runnable<ActorAgent.ChainInput, ActorAgent.ChainOutput>;
@@ -53,7 +53,7 @@ export class ActorAgent extends BaseAgent {
 
     // TODO: Figure out when bindTools aren't available and maybe throw a proper
     // error or replace this comment with a NOTE comment instead.
-    // oxlint-disable-next-line typescript-eslint(unbound-method) -- TODO: File an issue to the rule suggesting ignore pattern
+    // oxlint-disable-next-line typescript/unbound-method -- TODO: File an issue to the rule suggesting ignore pattern
     always(llm.bindTools);
     this.chain = prompt.pipe(llm.bindTools(toolSchemas));
   }
@@ -61,7 +61,7 @@ export class ActorAgent extends BaseAgent {
   async invoke(
     goal: string,
     step: string,
-    accessibilityTreeXml: string,
+    treeXml: string,
   ): Promise<ActorAgent.InvokeResult> {
     if (!step.trim()) {
       return ["", []];
@@ -71,14 +71,14 @@ export class ActorAgent extends BaseAgent {
     this.logData(logger, "in", {
       Goal: goal,
       Step: step,
-      "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
+      "Accessibility tree": this.debugLogDetail(treeXml),
     });
 
     const meta: ActorAgent.Meta = {
       type: "actor",
       goal,
       step,
-      accessibilityTreeXml,
+      treeXml,
     };
 
     const response = await this.invokeChain(
@@ -86,7 +86,7 @@ export class ActorAgent extends BaseAgent {
       {
         goal,
         step,
-        accessibility_tree: accessibilityTreeXml,
+        accessibility_tree: treeXml,
       },
       meta,
     );
