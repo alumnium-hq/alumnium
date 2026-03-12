@@ -276,9 +276,9 @@
   //#region Requests
 
   function hookXHR() {
-    // oxlint-disable-next-line typescript-eslint(unbound-method)
+    // oxlint-disable-next-line typescript/unbound-method
     const nativeOpen = XMLHttpRequest.prototype.open;
-    // oxlint-disable-next-line typescript-eslint(unbound-method)
+    // oxlint-disable-next-line typescript/unbound-method
     const nativeSend = XMLHttpRequest.prototype.send;
 
     XMLHttpRequest.prototype.open = function (method, url, ...rest) {

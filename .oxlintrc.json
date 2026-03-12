@@ -7,10 +7,11 @@
   },
   "categories": {},
   "rules": {
-    "restrict-template-expressions": "off", // Allow implicit string coercion in tempalate literals
+    "restrict-template-expressions": "off", // Allow implicit string coercion in tempalate literals.
     // TODO: Create an issue in Oxlint or corresponding ESLint repo.
     "typescript/no-base-to-string": "off", // Useful but fails to detect branded types
-    // "typescript-eslint(no-duplicate-type-constituents)"
+    // TODO: Create an issue in Oxlint suggesting to add `exactOptionalPropertyTypes` support.
+    "typescript/no-duplicate-type-constituents": "off", // Useful but fails on optional arguments with `| undefined`
   },
   "settings": {
     "jsx-a11y": {

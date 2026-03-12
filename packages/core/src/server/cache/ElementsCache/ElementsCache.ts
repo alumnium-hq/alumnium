@@ -29,9 +29,9 @@ const logger = getLogger(import.meta.url);
 const FUZZY_MATCH_THRESHOLD = 95;
 
 export namespace ElementsCache {
-  export type MemoryCache = Record<MemoryKey, MemoryEntry>;
+  export type MemoryCache = Record<MemoryKey, MemoryRecord>;
 
-  export interface MemoryEntry {
+  export interface MemoryRecord {
     cacheHash: CacheHash;
     generation: Lchain.StoredGeneration;
     elements: Elements;
@@ -65,6 +65,8 @@ export namespace ElementsCache {
     cacheHash: CacheHash;
     memoryKey: MemoryKey;
   }
+
+  export type Entries = [ElementsCache.MemoryKey, ElementsCache.MemoryRecord][];
 }
 
 export class ElementsCache extends ServerCache {
@@ -81,7 +83,6 @@ export class ElementsCache extends ServerCache {
   static MemoryKey = z.string().brand("ElementsCache.MemoryKey");
 
   readonly #cacheStore: CacheStore;
-  #memoryCache: Record<string, ElementsCache.MemoryEntry> = {};
   readonly #llmContext: LlmContext;
   #plannerCache: PlannerAgentElementsCache;
   #actorCache: ActorAgentElementsCache;
@@ -94,14 +95,11 @@ export class ElementsCache extends ServerCache {
     super(sessionContext);
     this.#cacheStore = cacheStore.subStore("elements");
     this.#llmContext = llmContext;
-    this.#plannerCache = new PlannerAgentElementsCache(
+    this.#plannerCache = new PlannerAgentElementsCache(sessionContext);
+    this.#actorCache = new ActorAgentElementsCache({
+      plannerCache: this.#plannerCache,
       sessionContext,
-      this.#memoryCache,
-    );
-    this.#actorCache = new ActorAgentElementsCache(
-      sessionContext,
-      this.#memoryCache,
-    );
+    });
   }
 
   /**
@@ -128,13 +126,21 @@ export class ElementsCache extends ServerCache {
       if (!data) return null;
       const { meta: agentMeta, cacheKey, cacheHash, memoryKey } = data;
 
-      const tree = new ElementsCacheTree(data.meta.accessibilityTreeXml);
+      const tree = new ElementsCacheTree(data.meta.treeXml);
 
-      // TODO: Why is it unused?!
-      // oxlint-disable-next-line no-unused-vars
       let resolvedMemoryKey = memoryKey;
 
-      const memoryEntry = this.#memoryCache[memoryKey];
+      if (!this.#memoryRecord(memoryKey)) {
+        const fuzzyMemoryKey = this.#fuzzyMemoryLookup(
+          agentMeta.type,
+          cacheKey,
+        );
+        if (fuzzyMemoryKey) {
+          resolvedMemoryKey = fuzzyMemoryKey as ElementsCache.MemoryKey;
+        }
+      }
+
+      const memoryEntry = this.#memoryRecord(resolvedMemoryKey);
       if (memoryEntry) {
         const masksIdsMap = tree.resolveElements(memoryEntry.elements);
 
@@ -151,14 +157,6 @@ export class ElementsCache extends ServerCache {
           );
           return [generation];
         }
-      } else {
-        const fuzzyMemoryKey = this.#fuzzyMemoryLookup(
-          agentMeta.type,
-          cacheKey,
-        );
-        if (fuzzyMemoryKey) {
-          resolvedMemoryKey = fuzzyMemoryKey as ElementsCache.MemoryKey;
-        }
       }
 
       const cacheStore = this.#cacheStore.subStore(
@@ -171,7 +169,7 @@ export class ElementsCache extends ServerCache {
       ]);
 
       if (!elements || !maskedGeneration) {
-        const fuzzyHash = this.#fuzzyLookupHash(agentMeta.type, cacheKey);
+        const fuzzyHash = await this.#fuzzyLookupHash(agentMeta.type, cacheKey);
         if (!fuzzyHash) return null;
 
         const fuzzyStore = this.#cacheStore.subStore(
@@ -190,7 +188,7 @@ export class ElementsCache extends ServerCache {
       }
 
       const masksIdsMap = tree.resolveElements(elements);
-      if (masksIdsMap === null) {
+      if (!masksIdsMap) {
         logger.debug(
           `Elements cache miss (resolution failed) for ${agentMeta.type}: "${cacheKey.slice(0, 50)}..."`,
         );
@@ -230,7 +228,8 @@ export class ElementsCache extends ServerCache {
       }
       const { meta, cacheHash, memoryKey } = data;
 
-      const [generation] = generations as Lchain.GenerationsSingle;
+      const [firstGeneration] = generations as Lchain.GenerationsSingle;
+      const generation = Lchain.toStored(firstGeneration);
 
       switch (meta.type) {
         case "planner":
@@ -258,13 +257,13 @@ export class ElementsCache extends ServerCache {
   }
 
   async save(): Promise<void> {
-    const entries = Object.values(this.#memoryCache);
+    const entries = this.#memoryEntries();
     if (!entries.length) return;
 
     logger.debug(`Saving ${entries.length} elements cache entries`);
 
     await Promise.all(
-      entries.map(async (entry) => {
+      entries.map(async ([_, entry]) => {
         const { cacheHash, app, agentType, instruction, generation, elements } =
           entry;
         const store = this.#cacheStore.subStore(
@@ -284,7 +283,8 @@ export class ElementsCache extends ServerCache {
   }
 
   async discard(): Promise<void> {
-    this.#memoryCache = {};
+    this.#actorCache.discard();
+    this.#plannerCache.discard();
   }
 
   async clear(): Promise<void> {
@@ -338,6 +338,22 @@ export class ElementsCache extends ServerCache {
     return `${cacheHash}|${llmKey}|${this.app}` as ElementsCache.MemoryKey;
   }
 
+  #memoryRecord(
+    memoryKey: ElementsCache.MemoryKey,
+  ): ElementsCache.MemoryRecord | null {
+    return (
+      this.#actorCache.getRecord(memoryKey) ||
+      this.#plannerCache.getRecord(memoryKey)
+    );
+  }
+
+  #memoryEntries(): ElementsCache.Entries {
+    return [
+      ...this.#plannerCache.getEntries(),
+      ...this.#actorCache.getEntries(),
+    ];
+  }
+
   //#region Fuzzy lookup
 
   #fuzzyMemoryLookup(
@@ -348,7 +364,7 @@ export class ElementsCache extends ServerCache {
     let bestKey: ElementsCache.MemoryKey | null = null;
     let bestScore = 0;
 
-    for (const [memoryKey, entry] of Object.entries(this.#memoryCache)) {
+    for (const [memoryKey, entry] of this.#memoryEntries()) {
       if (entry.agentType !== agentType || entry.app !== this.app) continue;
 
       const entryCacheKey = entry.instruction[keyField] ?? "";
@@ -363,7 +379,7 @@ export class ElementsCache extends ServerCache {
 
       if (score > bestScore) {
         bestScore = score;
-        bestKey = memoryKey as ElementsCache.MemoryKey;
+        bestKey = memoryKey;
       }
     }
 
@@ -371,7 +387,7 @@ export class ElementsCache extends ServerCache {
       logger.debug(
         `Fuzzy cache match (in-memory, ${Math.round(bestScore)}%) for ${agentType}: "${cacheKey.slice(0, 50)}..."`,
       );
-      return bestKey as ElementsCache.MemoryKey;
+      return bestKey;
     }
 
     return null;

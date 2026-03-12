@@ -34,7 +34,7 @@ export class AreaAgent extends BaseAgent {
   static Meta = z.object({
     type: z.literal("area"),
     description: z.string(),
-    accessibilityTreeXml: z.string(),
+    treeXml: z.string(),
   });
 
   chain;
@@ -46,18 +46,18 @@ export class AreaAgent extends BaseAgent {
 
   async invoke(
     description: string,
-    accessibilityTreeXml: string,
+    treeXml: string,
   ): Promise<{ id: number; explanation: string }> {
     logger.info("Starting area detection:");
     this.logData(logger, "in", {
       Description: description,
-      "Accessibility tree": this.debugLogDetail(accessibilityTreeXml),
+      "Accessibility tree": this.debugLogDetail(treeXml),
     });
 
     const meta: AreaAgent.Meta = {
       type: "area",
       description,
-      accessibilityTreeXml,
+      treeXml,
     };
 
     const response = await this.invokeChain(
@@ -67,7 +67,7 @@ export class AreaAgent extends BaseAgent {
         [
           "user",
           pythonicFormat(this.prompts.user, {
-            accessibility_tree: accessibilityTreeXml,
+            accessibility_tree: treeXml,
             description,
           }),
         ],

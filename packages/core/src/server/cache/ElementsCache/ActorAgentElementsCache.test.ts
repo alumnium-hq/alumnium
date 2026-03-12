@@ -1,0 +1,133 @@
+import { describe, expect, it, spyOn } from "bun:test";
+import { pushMock, setupBeforeEach } from "../../../../tests/mocks.js";
+import { AppId } from "../../../AppId.js";
+import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
+import { SessionFactory } from "../../session/__factories__/SessionFactory.js";
+import { ActorAgentElementsCache } from "./ActorAgentElementsCache.js";
+import type { ElementsCache } from "./ElementsCache.js";
+import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.js";
+
+describe("ActorAgentElementsCache", () => {
+  const setup = setupBeforeEach(() => {
+    const sessionContext = SessionFactory.sessionContext();
+    const plannerCache = new PlannerAgentElementsCache(sessionContext);
+    const actorCache = new ActorAgentElementsCache({
+      plannerCache,
+      sessionContext,
+    });
+    const memoryKey = "actor-memory" as ElementsCache.MemoryKey;
+    const cacheHash = "actor-hash" as ElementsCache.CacheHash;
+    const app = AppId.parse("test-app");
+    return {
+      actorCache,
+      plannerCache,
+      sessionContext,
+      cacheHash,
+      memoryKey,
+      app,
+    };
+  });
+
+  it("caches generation with extracted elements", async () => {
+    const { actorCache, cacheHash, memoryKey, app } = setup.cur;
+
+    await actorCache.update({
+      memoryKey,
+      cacheHash,
+      meta: {
+        type: "actor",
+        goal: "login",
+        step: "click login button",
+        treeXml: '<button id="1" name="Login"/><input id="2" name="username"/>',
+      },
+      generation: LchainFactory.storedGenerationWith({
+        toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+      }),
+    });
+
+    const entry = actorCache.getRecord(memoryKey);
+    expect(entry).toEqual({
+      agentType: "actor",
+      app,
+      cacheHash,
+      elements: [{ index: 0, name: "Login", role: "button" }],
+      generation: LchainFactory.storedGenerationWith({
+        toolCalls: [{ args: { id: "<MASKED_0>" }, name: "ClickTool" }],
+      }),
+      instruction: {
+        goal: "login",
+        step: "click login button",
+      },
+    });
+  });
+
+  it("skips caching without tool calls", async () => {
+    const { actorCache, cacheHash, memoryKey } = setup.cur;
+
+    await actorCache.update({
+      memoryKey,
+      cacheHash,
+      meta: {
+        type: "actor",
+        goal: "login",
+        step: "click login button",
+        treeXml: '<button id="1" name="Login"/>',
+      },
+      generation: LchainFactory.storedGeneration(),
+    });
+
+    expect(actorCache.getEntries()).toEqual([]);
+  });
+
+  it("skips caching when no element ids can be extracted", async () => {
+    const { actorCache, cacheHash, memoryKey } = setup.cur;
+
+    await actorCache.update({
+      memoryKey,
+      cacheHash,
+      meta: {
+        type: "actor",
+        goal: "go back",
+        step: "navigate back",
+        treeXml: '<button id="1" name="Login"/>',
+      },
+      generation: LchainFactory.storedGenerationWith({
+        toolCalls: [{ name: "NavigateBackTool", args: {} }],
+      }),
+    });
+
+    expect(actorCache.getEntries()).toEqual([]);
+  });
+
+  it("updates planner elements", async () => {
+    const { plannerCache, actorCache, cacheHash, memoryKey } = setup.cur;
+
+    const updateElements = spyOn(
+      plannerCache,
+      "updateElements",
+    ).mockImplementation(() => {});
+    pushMock(updateElements);
+
+    await actorCache.update({
+      memoryKey,
+      cacheHash,
+      meta: {
+        type: "actor",
+        goal: "login",
+        step: "click login button",
+        treeXml: '<button id="10" name="Login"/><button id="11" name="Login"/>',
+      },
+      generation: LchainFactory.storedGenerationWith({
+        toolCalls: [
+          { name: "ClickTool", args: { id: 10 } },
+          { name: "ClickTool", args: { id: 11 } },
+        ],
+      }),
+    });
+
+    expect(updateElements).toHaveBeenCalledWith("login", [
+      { role: "button", name: "Login", index: 0 },
+      { role: "button", name: "Login", index: 1 },
+    ]);
+  });
+});

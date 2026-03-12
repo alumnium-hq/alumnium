@@ -9,11 +9,11 @@ export namespace BaseAgentElementsCache {
     memoryKey: ElementsCache.MemoryKey;
     cacheHash: ElementsCache.CacheHash;
     meta: AgentMeta;
-    generation: Lchain.Generation;
+    generation: Lchain.StoredGeneration;
   }
 
   export interface StoreProps {
-    generation: Lchain.Generation | Lchain.StoredGeneration;
+    generation: Lchain.StoredGeneration;
     memoryKey: ElementsCache.MemoryKey;
     cacheHash: ElementsCache.CacheHash;
     agentType: ElementsCache.AgentType;
@@ -26,17 +26,11 @@ export abstract class BaseAgentElementsCache<
   AgentMeta,
 > extends ElementsCacheMask {
   #sessionContext: SessionContext;
-  protected memoryCache: ElementsCache.MemoryCache;
+  protected memoryCache: ElementsCache.MemoryCache = {};
 
-  constructor(
-    sessionContext: SessionContext,
-    memoryCache: ElementsCache.MemoryCache,
-  ) {
+  constructor(sessionContext: SessionContext) {
     super();
     this.#sessionContext = sessionContext;
-    // TODO: Instead maintain own memory cache that would be triggered to save
-    // by the ElementsCache. This will remove extra state.
-    this.memoryCache = memoryCache;
   }
 
   abstract update(
@@ -47,7 +41,13 @@ export abstract class BaseAgentElementsCache<
     return this.#sessionContext.app;
   }
 
-  protected store(props: BaseAgentElementsCache.StoreProps): void {
+  getRecord(
+    memoryKey: ElementsCache.MemoryKey,
+  ): ElementsCache.MemoryRecord | null {
+    return this.memoryCache[memoryKey] ?? null;
+  }
+
+  setRecord(props: BaseAgentElementsCache.StoreProps): void {
     const {
       generation,
       memoryKey,
@@ -56,20 +56,22 @@ export abstract class BaseAgentElementsCache<
       elements,
       instruction,
     } = props;
-    let storedGeneration: Lchain.StoredGeneration;
-    try {
-      storedGeneration = Lchain.StoredGeneration.parse(generation);
-    } catch {
-      storedGeneration = Lchain.toStored(generation as Lchain.Generation);
-    }
 
     this.memoryCache[memoryKey] = {
-      generation: storedGeneration,
+      generation,
       cacheHash,
       elements,
       agentType,
       app: this.app,
       instruction,
     };
+  }
+
+  getEntries(): ElementsCache.Entries {
+    return Object.entries(this.memoryCache) as ElementsCache.Entries;
+  }
+
+  discard() {
+    this.memoryCache = {};
   }
 }

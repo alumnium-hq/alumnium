@@ -167,7 +167,30 @@ describe("ElementsCacheTree", () => {
       const xml = "<button id='1'>Login</button>";
       const tree = new ElementsCacheTree(xml);
 
-      expect(tree.extractAttrs(999)).toBeNull;
+      expect(tree.extractAttrs(999)).toBeNull();
+    });
+
+    // TODO: Review packages/python/tests/server/cache/test_elements_cache.py::test_missing_id_attribute
+    it("returns null when target element has no id in tree", () => {
+      const xml = "<button name='Login'/>";
+      const tree = new ElementsCacheTree(xml);
+
+      expect(tree.extractAttrs(1)).toBeNull();
+    });
+
+    // TODO: Review packages/python/tests/server/cache/test_elements_cache.py::test_multiple_elements_same_id
+    it("uses the first matching node when duplicate ids exist", () => {
+      const xml = `<root>
+        <button id="1" name="First"/>
+        <button id="1" name="Second"/>
+      </root>`;
+      const tree = new ElementsCacheTree(xml);
+
+      expect(tree.extractAttrs(1)).toEqual({
+        role: "button",
+        name: "First",
+        index: 0,
+      });
     });
 
     it("handles attr values with '", () => {
