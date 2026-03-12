@@ -1,4 +1,4 @@
-import { xxh32 } from "smolxxh";
+import { xxh64Str } from "smolxxh/str";
 import { getLogger } from "../../../utils/index.js";
 import type { PlannerAgent } from "../../agents/PlannerAgent.js";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.js";
@@ -38,7 +38,7 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
     newElements: Array<Record<string, string | number>>,
   ): void {
     try {
-      const goalHash = xxh32(Buffer.from(goal, "utf8")).toString(16);
+      const goalHash = xxh64Str(goal);
 
       for (const [memoryKey, entry] of this.getEntries()) {
         const { cacheHash, agentType, app } = entry;

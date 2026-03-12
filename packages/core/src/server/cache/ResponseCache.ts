@@ -4,7 +4,7 @@ import {
 } from "@langchain/core/caches";
 import type { StoredGeneration } from "@langchain/core/messages";
 import type { Generation } from "@langchain/core/outputs";
-import { xxh32 } from "smolxxh";
+import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../AppId.js";
 import { Lchain } from "../../llm/Lchain.js";
@@ -128,9 +128,7 @@ export class ResponseCache extends ServerCache {
     llmKey: LlmContext.LlmKey,
   ): ResponseCache.RequestHash {
     const str = [this.app, prompt, llmKey].join("|");
-    return xxh32(Buffer.from(str, "utf8")).toString(
-      16,
-    ) as ResponseCache.RequestHash;
+    return xxh64Str(str);
   }
 
   #updateUsage(generations: Generation[]): void {

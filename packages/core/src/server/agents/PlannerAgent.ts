@@ -28,7 +28,7 @@ export namespace PlannerAgent {
 export class PlannerAgent extends BaseAgent {
   static Meta = z.object({
     type: z.literal("planner"),
-    goal: z.string(),
+    goal: BaseAgent.Goal,
     treeXml: z.string(),
   });
 
@@ -163,7 +163,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 
     const meta: PlannerAgent.Meta = {
       type: "planner",
-      goal,
+      goal: goal as BaseAgent.Goal,
       treeXml,
     };
 

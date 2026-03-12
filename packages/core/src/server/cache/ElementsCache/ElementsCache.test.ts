@@ -8,6 +8,7 @@ import { AppId } from "../../../AppId.js";
 import { FsStore } from "../../../FsStore.js";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
 import { Lchain } from "../../../llm/Lchain.js";
+import type { BaseAgent } from "../../agents/BaseAgent.js";
 import { LlmContext } from "../../LlmContext.js";
 import { SessionContext } from "../../session/SessionContext.js";
 import { SessionId } from "../../session/SessionId.js";
@@ -72,7 +73,7 @@ describe("ElementsCache", () => {
         const { llmContext, cache, prompt1, llmKey, treeXml } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "planner",
-          goal: "click login",
+          goal: "click login" as BaseAgent.Goal,
           treeXml: treeXml,
         });
         const generation = LchainFactory.generation({ text: "step1" });
@@ -92,7 +93,7 @@ describe("ElementsCache", () => {
           setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "planner",
-          goal: "click login",
+          goal: "click login" as BaseAgent.Goal,
           treeXml: treeXml,
         });
         const generation = LchainFactory.generation({ text: "step1" });
@@ -111,7 +112,7 @@ describe("ElementsCache", () => {
         const { llmContext, cache, prompt1, llmKey } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "planner",
-          goal: "click login",
+          goal: "click login" as BaseAgent.Goal,
           treeXml: '<button id="1',
         });
 
@@ -135,8 +136,8 @@ describe("ElementsCache", () => {
         const { llmContext, cache, prompt1, llmKey, treeXml } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "actor",
-          step: 'Click "Login" button',
-          goal: "login",
+          step: 'Click "Login" button' as BaseAgent.Step,
+          goal: "login" as BaseAgent.Goal,
           treeXml: treeXml,
         });
         const generation = LchainFactory.generationWith({
@@ -162,8 +163,8 @@ describe("ElementsCache", () => {
           setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "actor",
-          step: 'Click "Login" button',
-          goal: "login",
+          step: 'Click "Login" button' as BaseAgent.Step,
+          goal: "login" as BaseAgent.Goal,
           treeXml: treeXml,
         });
         const generation = LchainFactory.generationWith({
@@ -185,14 +186,14 @@ describe("ElementsCache", () => {
         const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "actor",
-          step: 'Click "Login" button',
-          goal: "login",
+          step: 'Click "Login" button' as BaseAgent.Step,
+          goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="1" name="Login" />',
         });
         llmContext.assignPromptsMeta([prompt2], {
           type: "actor",
-          step: 'Click "Login" button',
-          goal: "login",
+          step: 'Click "Login" button' as BaseAgent.Step,
+          goal: "login" as BaseAgent.Goal,
           treeXml: '<div><button id="99" name="Login" /></div>',
         });
         const generation = LchainFactory.generationWith({
@@ -223,14 +224,14 @@ describe("ElementsCache", () => {
         const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "actor",
-          step: "click login",
-          goal: "login",
+          step: "click login" as BaseAgent.Step,
+          goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="1" name="Login" />',
         });
         llmContext.assignPromptsMeta([prompt2], {
           type: "actor",
-          step: "click login",
-          goal: "login",
+          step: "click login" as BaseAgent.Step,
+          goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="9" name="Logout" />',
         });
 
@@ -248,8 +249,8 @@ describe("ElementsCache", () => {
         const { llmContext, cache, prompt1, llmKey } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "actor",
-          step: "click login",
-          goal: "login",
+          step: "click login" as BaseAgent.Step,
+          goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="1',
         });
 
@@ -268,14 +269,14 @@ describe("ElementsCache", () => {
           const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
           llmContext.assignPromptsMeta([prompt1], {
             type: "actor",
-            goal: "submit form",
-            step: 'Click "Submit" button',
+            goal: "submit form" as BaseAgent.Goal,
+            step: 'Click "Submit" button' as BaseAgent.Step,
             treeXml: '<button id="1" name="Submit" />',
           });
           llmContext.assignPromptsMeta([prompt2], {
             type: "actor",
-            goal: "submit form",
-            step: 'Click the "Submit" button',
+            goal: "submit form" as BaseAgent.Goal,
+            step: 'Click the "Submit" button' as BaseAgent.Step,
             treeXml: '<button id="7" name="Submit" />',
           });
           const generation = LchainFactory.generationWith({
@@ -298,14 +299,14 @@ describe("ElementsCache", () => {
           const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
           llmContext.assignPromptsMeta([prompt1], {
             type: "actor",
-            goal: "submit form",
-            step: 'Click "Submit" button',
+            goal: "submit form" as BaseAgent.Goal,
+            step: 'Click "Submit" button' as BaseAgent.Step,
             treeXml: '<button id="1" name="Submit" />',
           });
           llmContext.assignPromptsMeta([prompt2], {
             type: "actor",
-            goal: "submit form",
-            step: 'Click the "Submit" button',
+            goal: "submit form" as BaseAgent.Goal,
+            step: 'Click the "Submit" button' as BaseAgent.Step,
             treeXml: '<button id="8" name="Submit" />',
           });
           await cache.update(prompt1, llmKey, [
@@ -328,14 +329,14 @@ describe("ElementsCache", () => {
 
           llmContext.assignPromptsMeta([prompt1], {
             type: "actor",
-            goal: "save",
-            step: 'Click the "Save" button',
+            goal: "save" as BaseAgent.Goal,
+            step: 'Click the "Save" button' as BaseAgent.Step,
             treeXml: '<button id="1" name="Save" />',
           });
           llmContext.assignPromptsMeta([prompt2], {
             type: "actor",
-            goal: "save",
-            step: 'Type "hello" into the search field',
+            goal: "save" as BaseAgent.Goal,
+            step: 'Type "hello" into the search field' as BaseAgent.Step,
             treeXml: '<button id="2" name="Save" />',
           });
 
@@ -358,7 +359,7 @@ describe("ElementsCache", () => {
         setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
         type: "planner",
-        goal: "click login",
+        goal: "click login" as BaseAgent.Goal,
         treeXml: '<button id="1" name="Login" />',
       });
 
@@ -370,7 +371,7 @@ describe("ElementsCache", () => {
       ]);
       await cache.save();
 
-      const baseDir = `${app}/azure_openai/gpt-5-nano/elements/planner/b1e9b737`;
+      const baseDir = `${app}/azure_openai/gpt-5-nano/elements/planner/ffa5f4be241f9c48`;
       expect(await cacheDir.flatTree()).toEqual([
         `${baseDir}/response.json`,
         `${baseDir}/instruction.json`,
@@ -390,7 +391,7 @@ describe("ElementsCache", () => {
         } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "planner",
-          goal: "login to app",
+          goal: "login to app" as BaseAgent.Goal,
           treeXml: '<button id="1">Login</button>',
         });
         const generation = LchainFactory.generation({ text: "step1\nstep2" });
@@ -400,7 +401,7 @@ describe("ElementsCache", () => {
         await cache.save();
 
         const baseDir =
-          "test-app/azure_openai/gpt-5-nano/elements/planner/1504cea3";
+          "test-app/azure_openai/gpt-5-nano/elements/planner/b3806cd36b301287";
         const responsePath = `${baseDir}/response.json`;
         const instructionPath = `${baseDir}/instruction.json`;
         const elementsPath = `${baseDir}/elements.json`;
@@ -436,8 +437,8 @@ describe("ElementsCache", () => {
         } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
           type: "actor",
-          step: 'Click "Login" button',
-          goal: "login",
+          step: 'Click "Login" button' as BaseAgent.Step,
+          goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="1" name="Login" />',
         });
         const text = "step1\nstep2";
@@ -451,7 +452,7 @@ describe("ElementsCache", () => {
         await cache.save();
 
         const baseDir =
-          "test-app/azure_openai/gpt-5-nano/elements/actor/e4314b69";
+          "test-app/azure_openai/gpt-5-nano/elements/actor/fb8d7f17ec7416d7";
         const responsePath = `${baseDir}/response.json`;
         const instructionPath = `${baseDir}/instruction.json`;
         const elementsPath = `${baseDir}/elements.json`;
@@ -501,7 +502,7 @@ describe("ElementsCache", () => {
       } = setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
         type: "planner",
-        goal: "click login",
+        goal: "click login" as BaseAgent.Goal,
         treeXml: treeXml,
       });
 
@@ -522,7 +523,7 @@ describe("ElementsCache", () => {
         setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
         type: "planner",
-        goal: "click login",
+        goal: "click login" as BaseAgent.Goal,
         treeXml: treeXml,
       });
 
@@ -544,7 +545,7 @@ describe("ElementsCache", () => {
       const { llmContext, cache, prompt1, llmKey } = setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
         type: "planner",
-        goal: "click login",
+        goal: "click login" as BaseAgent.Goal,
         treeXml: '<button id="1" name="Login" />',
       });
 
