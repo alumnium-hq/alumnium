@@ -8,6 +8,7 @@ import { AppId } from "../../../AppId.js";
 import { FsStore } from "../../../FsStore.js";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
 import { Lchain } from "../../../llm/Lchain.js";
+import { Model } from "../../../Model.js";
 import type { BaseAgent } from "../../agents/BaseAgent.js";
 import { LlmContext } from "../../LlmContext.js";
 import { SessionContext } from "../../session/SessionContext.js";
@@ -371,11 +372,12 @@ describe("ElementsCache", () => {
       ]);
       await cache.save();
 
-      const baseDir = `${app}/azure_openai/gpt-5-nano/elements/planner/ffa5f4be241f9c48`;
+      const model = Model.current.toString();
+      const baseDir = `${app}/${model}/elements/planner/ffa5f4be241f9c48`;
       expect(await cacheDir.flatTree()).toEqual([
-        `${baseDir}/response.json`,
-        `${baseDir}/instruction.json`,
         `${baseDir}/elements.json`,
+        `${baseDir}/instruction.json`,
+        `${baseDir}/response.json`,
       ]);
     });
 
@@ -400,15 +402,15 @@ describe("ElementsCache", () => {
         await cache.update(prompt1, llmKey, [generation]);
         await cache.save();
 
-        const baseDir =
-          "test-app/azure_openai/gpt-5-nano/elements/planner/b3806cd36b301287";
+        const model = Model.current.toString();
+        const baseDir = `test-app/${model}/elements/planner/b3806cd36b301287`;
         const responsePath = `${baseDir}/response.json`;
         const instructionPath = `${baseDir}/instruction.json`;
         const elementsPath = `${baseDir}/elements.json`;
         expect(await cacheDir.flatTree()).toEqual([
-          responsePath,
-          instructionPath,
           elementsPath,
+          instructionPath,
+          responsePath,
         ]);
 
         const [response, instruction, elements] = await Promise.all([
@@ -451,15 +453,15 @@ describe("ElementsCache", () => {
         await cache.update(prompt1, llmKey, [generation]);
         await cache.save();
 
-        const baseDir =
-          "test-app/azure_openai/gpt-5-nano/elements/actor/fb8d7f17ec7416d7";
+        const model = Model.current.toString();
+        const baseDir = `test-app/${model}/elements/actor/fb8d7f17ec7416d7`;
         const responsePath = `${baseDir}/response.json`;
         const instructionPath = `${baseDir}/instruction.json`;
         const elementsPath = `${baseDir}/elements.json`;
         expect(await cacheDir.flatTree()).toEqual([
-          responsePath,
-          instructionPath,
           elementsPath,
+          instructionPath,
+          responsePath,
         ]);
 
         const [response, instruction, elements] = await Promise.all([

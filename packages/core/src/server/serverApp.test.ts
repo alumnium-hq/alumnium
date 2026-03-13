@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { pushMock } from "../../tests/mocks.js";
 import type { Http } from "../Http.js";
+import { Model } from "../Model.js";
 import { ActorAgent } from "./agents/ActorAgent.js";
 import { AreaAgent } from "./agents/AreaAgent.js";
 import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.js";
@@ -65,7 +66,7 @@ describe("serverApp", () => {
       const response = await serverApp.handle(createRequest("GET", "/health"));
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({
-        model: "azure_openai/gpt-5-nano",
+        model: Model.current.toString(),
         status: "healthy",
       });
     });

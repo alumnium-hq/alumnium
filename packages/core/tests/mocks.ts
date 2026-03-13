@@ -54,7 +54,7 @@ export class MockDir {
       );
     };
     await walk(this.path);
-    return files;
+    return files.toSorted();
   }
 
   readText(relPath: string): Promise<string> {
