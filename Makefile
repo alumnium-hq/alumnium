@@ -26,7 +26,7 @@ test:
 	cd packages/python && poetry poe test
 
 types:
-	bun tsc --build
+	bun tsgo --build
 
 start-server:
 	cd packages/python && poetry run alumnium-server

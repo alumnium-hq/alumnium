@@ -1,18 +1,18 @@
 {
   "name": "alumnium",
-  "private": true,
   "version": "1.0.0-alpha.0",
-  "license": "MIT",
+  "private": true,
   "description": "Pave the way towards AI-powered test automation",
   "keywords": [
     "ai",
     "alumnium",
-    "automation",
     "appium",
+    "automation",
     "playwright",
     "selenium",
     "webdriverio"
   ],
+  "license": "MIT",
   "author": "Alex Rodionov <p0deje@gmail.com>",
   "contributors": [
     "Alex Rodionov <p0deje@gmail.com>",
@@ -22,12 +22,12 @@
     "type": "git",
     "url": "https://github.com/alumnium-hq/alumnium.git"
   },
-  "type": "module",
   "files": [
     "src",
     "README.md",
     "LICENSE.md"
   ],
+  "type": "module",
   "exports": {
     ".": "./src/client/index.ts"
   },
@@ -44,8 +44,8 @@
     "format": "node -e \"console.log('TODO')\"",
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "types": "tsc --noEmit",
-    "types:watch": "tsc --noEmit --watch"
+    "types": "tsgo --noEmit",
+    "types:watch": "tsgo --noEmit --watch"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
