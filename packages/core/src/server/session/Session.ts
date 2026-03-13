@@ -2,6 +2,7 @@ import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { AppId } from "../../AppId.js";
+import { Driver } from "../../drivers/Driver.js";
 import { LlmUsageStats } from "../../llm/llmSchema.js";
 import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
@@ -20,7 +21,6 @@ import { ServerCache } from "../cache/ServerCache.js";
 import { CacheFactory } from "../CacheFactory.js";
 import { LlmContext } from "../LlmContext.js";
 import { LlmFactory } from "../LlmFactory.js";
-import { Platform } from "../Platform.js";
 import { SessionContext } from "./SessionContext.js";
 import { SessionId } from "./SessionId.js";
 
@@ -31,7 +31,7 @@ export namespace Session {
     app?: AppId | undefined;
     sessionId: SessionId;
     model: Model;
-    platform: Platform;
+    platform: Driver.Platform;
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
     planner?: boolean | undefined;
@@ -52,7 +52,7 @@ export class Session {
   static State = z.object({
     session_id: SessionId,
     model: Model.Schema,
-    platform: Platform,
+    platform: Driver.Platform,
     app: AppId,
     tools: z.array(z.custom<ToolDefinition>()),
     planner: z.boolean(),
@@ -67,7 +67,7 @@ export class Session {
 
   sessionId: SessionId;
   model: Model;
-  platform: Platform;
+  platform: Driver.Platform;
   tools: ToolDefinition[];
   llm: BaseChatModel;
   cache: ServerCache;

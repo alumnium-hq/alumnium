@@ -1,16 +1,11 @@
 import type { ToolDefinition } from "@langchain/core/language_models/base";
 import z from "zod";
 import { AppId } from "../AppId.js";
+import { Driver } from "../drivers/Driver.js";
 import { Model } from "../Model.js";
 import { SessionId } from "./session/SessionId.js";
 
 //#region Types
-
-export const PLATFORMS = ["chromium", "uiautomator2", "xcuitest"] as const;
-
-export const Platform = z.enum(PLATFORMS);
-
-export type Platform = z.infer<typeof Platform>;
 
 export const Change = z.object({
   accessibility_tree: z.string(),
@@ -63,7 +58,7 @@ export const GetSessionsResponse = z.array(SessionId);
 //#region Create session ///////////////////////////////////////////////////////
 
 export const CreateSessionBody = z.object({
-  platform: Platform,
+  platform: Driver.Platform,
   provider: Model.Provider,
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),

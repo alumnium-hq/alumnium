@@ -30,7 +30,7 @@ import { Keys } from "./keys.js";
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import { AppId } from "../AppId.js";
-import { Platform } from "../server/Platform.js";
+import type { Driver } from "./Driver.js";
 import {
   waiterScriptSource,
   waitForScriptSource,
@@ -107,7 +107,7 @@ const WAIT_FOR_SCRIPT = waitForScriptSource;
 
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
-  public platform: Platform = "chromium";
+  public platform: Driver.Platform = "chromium";
   public autoswitchToNewTab: boolean = true;
   public fullPageScreenshot: boolean =
     (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
