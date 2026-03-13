@@ -1,0 +1,30 @@
+[tools]
+bun = "latest"
+fnox = "latest"
+opencode = "latest"
+
+[env]
+_.source = "scripts/env.sh"
+ALUMNIUM_MODEL = "azure_openai"
+ALUMNIUM_LOG_LEVEL = "debug"
+AZURE_OPENAI_API_VERSION = "2025-03-01-preview"
+OPENCODE_CONFIG_DIR = "./.agents"
+
+[settings]
+lockfile = true
+idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
+
+[tasks.tsify-ts-server]
+run = "cd packages/core && fnox exec -- bun --watch ./src/cli.ts server"
+
+[tasks.tsify-test-playwright]
+run = "cd packages/typescript && bun run examples:playwright"
+
+[tasks.tsify-test-selenium]
+run = "cd packages/typescript && bun run examples:selenium"
+
+[tasks.tsify-test-appium]
+run = "cd packages/typescript && bun run examples:appium"
+
+[tasks.tsify-mcp-inspect]
+run = "cd packages/core && fnox exec -- bunx @modelcontextprotocol/inspector bun ./src/cli.ts mcp"

@@ -1,25 +1,30 @@
 install:
+	bun install
 	cd packages/python && poetry install
-	cd packages/typescript && npm install
 
 build:
+	cd packages/core && bun run build
 	cd packages/python && poetry build
-	cd packages/typescript && npm run build
 
 clean:
+	cd packages/core && bun run clean
 	cd packages/python && poetry poe clean
-	cd packages/typescript && npm run clean
+	cd packages/typescript && bun run clean
 
 check-format:
+	cd packages/core && bun run check-format
 	cd packages/python && poetry poe check-format
-	cd packages/typescript && npm run check-format
 
 format:
+	cd packages/core && bun run format
 	cd packages/python && poetry poe format
-	cd packages/typescript && npm run format
 
 test:
+	cd packages/core && bun run test
 	cd packages/python && poetry poe test
+
+types:
+	bun tsgo --build
 
 start-server:
 	cd packages/python && poetry run alumnium-server
@@ -35,4 +40,4 @@ start-server-docker:
 		alumnium-server
 
 start-mcp:
-	cd packages/python && poetry run alumnium-mcp
+	@cd packages/core && fnox exec -- bun ./src/cli.ts mcp
