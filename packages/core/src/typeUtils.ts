@@ -23,3 +23,11 @@ export namespace TypeUtils {
           [Key in keyof Type]?: DeepPartial<Type[Key]> | undefined;
         };
 }
+
+export abstract class TypeUtils {
+  static polyfillExactOptionalPropertyTypes<Type>(
+    value: TypeUtils.PolyfillExactOptionalPropertyTypes<Type>,
+  ): Type {
+    return value as Type;
+  }
+}

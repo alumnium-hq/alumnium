@@ -1,4 +1,3 @@
-import { never } from "alwaysly";
 import path from "node:path";
 import z from "zod";
 import { Alumni } from "../../client/Alumni.js";
@@ -109,11 +108,9 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       );
       platformLabel = "Chrome";
     } else if (platformName === "ios") {
-      never();
       driver = await createIosDriver(capabilities, serverUrl);
       platformLabel = "iOS";
     } else if (platformName === "android") {
-      never();
       driver = await createAndroidDriver(capabilities, serverUrl);
       platformLabel = "Android";
     } else {
