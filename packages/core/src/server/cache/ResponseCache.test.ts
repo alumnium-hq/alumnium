@@ -4,6 +4,7 @@ import { describe, expect, it, spyOn } from "bun:test";
 import { createMockDir, pushMock } from "../../../tests/mocks.js";
 import { AppId } from "../../AppId.js";
 import { FsStore } from "../../FsStore.js";
+import { Model } from "../../Model.js";
 import { LlmContext } from "../LlmContext.js";
 import { SessionContext } from "../session/SessionContext.js";
 import { SessionId } from "../session/SessionId.js";
@@ -20,10 +21,12 @@ describe("ResponseCache", () => {
     await cache.update(prompt1, llmKey, generations);
     await cache.save();
 
+    const model = Model.current.toString();
+    const baseDir = `test-app/${model}/responses`;
     const files = await cacheDir.flatTree();
     expect(files).toEqual([
-      "test-app/azure_openai/gpt-5-nano/responses/2bdbeaf0/response.json",
-      "test-app/azure_openai/gpt-5-nano/responses/2bdbeaf0/request.json",
+      `${baseDir}/61c658835389ffe6/request.json`,
+      `${baseDir}/61c658835389ffe6/response.json`,
     ]);
 
     const result = await cache.lookup(prompt1, llmKey);
@@ -44,12 +47,14 @@ describe("ResponseCache", () => {
     await cache1.save();
     await cache2.save();
 
+    const model = Model.current.toString();
+    const baseDir = `test-app/${model}/responses`;
     const files = await cacheDir.flatTree();
     expect(files).toEqual([
-      "test-app/azure_openai/gpt-5-nano/responses/2bdbeaf0/response.json",
-      "test-app/azure_openai/gpt-5-nano/responses/2bdbeaf0/request.json",
-      "test-app/azure_openai/gpt-5-nano/responses/8bb99df3/response.json",
-      "test-app/azure_openai/gpt-5-nano/responses/8bb99df3/request.json",
+      `${baseDir}/61c658835389ffe6/request.json`,
+      `${baseDir}/61c658835389ffe6/response.json`,
+      `${baseDir}/c6c488a888c8e4df/request.json`,
+      `${baseDir}/c6c488a888c8e4df/response.json`,
     ]);
 
     const result1 = await cache1.lookup(prompt1, llmKey);
