@@ -26,10 +26,45 @@ import { SessionId } from "./SessionId.js";
 
 const logger = getLogger(import.meta.url);
 
+export namespace Session {
+  export interface Props {
+    app?: AppId | undefined;
+    sessionId: SessionId;
+    model: Model;
+    platform: Platform;
+    tools: ToolDefinition[];
+    llm?: BaseChatModel | undefined;
+    planner?: boolean | undefined;
+    excludeAttributes?: Set<string> | undefined;
+  }
+
+  export type State = z.infer<typeof Session.State>;
+}
+
 /**
  * Represents a client session with its own agent instances.
  */
 export class Session {
+  static Id = z.custom<SessionId>((val) => typeof val === "string", {
+    message: "Invalid session ID",
+  });
+
+  static State = z.object({
+    session_id: SessionId,
+    model: Model.Schema,
+    platform: Platform,
+    app: AppId,
+    tools: z.array(z.custom<ToolDefinition>()),
+    planner: z.boolean(),
+    exclude_attributes: z.array(z.string()).default([]),
+    actor_agent: Agent.State,
+    planner_agent: PlannerAgent.State,
+    retriever_agent: Agent.State,
+    area_agent: Agent.State,
+    locator_agent: Agent.State,
+    changes_analyzer_agent: Agent.State,
+  });
+
   sessionId: SessionId;
   model: Model;
   platform: Platform;
@@ -200,39 +235,4 @@ export class Session {
   }
 
   //#endregion
-}
-
-export namespace Session {
-  export interface Props {
-    app?: AppId | undefined;
-    sessionId: SessionId;
-    model: Model;
-    platform: Platform;
-    tools: ToolDefinition[];
-    llm?: BaseChatModel | undefined;
-    planner?: boolean | undefined;
-    excludeAttributes?: Set<string> | undefined;
-  }
-
-  export const Id = z.custom<SessionId>((val) => typeof val === "string", {
-    message: "Invalid session ID",
-  });
-
-  export const State = z.object({
-    session_id: SessionId,
-    model: Model.Schema,
-    platform: Platform,
-    app: AppId,
-    tools: z.array(z.custom<ToolDefinition>()),
-    planner: z.boolean(),
-    exclude_attributes: z.array(z.string()).default([]),
-    actor_agent: Agent.State,
-    planner_agent: PlannerAgent.State,
-    retriever_agent: Agent.State,
-    area_agent: Agent.State,
-    locator_agent: Agent.State,
-    changes_analyzer_agent: Agent.State,
-  });
-
-  export type State = z.infer<typeof Session.State>;
 }

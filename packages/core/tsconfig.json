@@ -6,7 +6,7 @@
     "./src/**/*.ts",
     "./scripts/**/*.ts",
     "./tests/**/*.ts",
-    "./package.json"
+    "./package.json",
   ],
   "compilerOptions": {
     // Resolve
@@ -31,8 +31,7 @@
     "experimentalDecorators": true, // Enable experimental decorators
     // TODO: See packages/typescript/tsconfig.json
     "emitDecoratorMetadata": true,
-    // TODO: Enable it whenever possible
-    // "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": true, // Disallow using using runtime TS features
     // Checks
     "skipLibCheck": true,
     "strict": true,
@@ -43,6 +42,6 @@
     // Build
     "incremental": true,
     // Project references
-    "composite": true
-  }
+    "composite": true,
+  },
 }

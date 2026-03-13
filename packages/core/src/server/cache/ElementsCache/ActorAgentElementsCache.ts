@@ -56,9 +56,7 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
       return;
     }
 
-    logger.debug(
-      `Cashing actor response for step: "${step.slice(0, 50)}..."`,
-    );
+    logger.debug(`Cashing actor response for step: "${step.slice(0, 50)}..."`);
 
     const masked = ElementsCacheMask.mask(generation, elIds);
 
@@ -66,7 +64,7 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
       cacheHash,
       generation: masked,
       elements: els,
-      agentType: "actor",
+      agentKind: "actor",
       memoryKey,
       instruction: { goal, step },
     });

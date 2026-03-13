@@ -13,7 +13,7 @@ export namespace ChangesAnalyzerAgent {
 
 export class ChangesAnalyzerAgent extends BaseAgent {
   static Meta = z.object({
-    type: z.literal("changes-analyzer"),
+    kind: z.literal("changes-analyzer"),
   });
 
   static readonly EXCLUDE_ATTRIBUTES = new Set(["id"]);
@@ -29,7 +29,7 @@ export class ChangesAnalyzerAgent extends BaseAgent {
     logger.debug(this.formatLog("in", "Diff"), { detail: diff });
 
     const meta: ChangesAnalyzerAgent.Meta = {
-      type: "changes-analyzer",
+      kind: "changes-analyzer",
     };
 
     const response = await this.invokeChain(

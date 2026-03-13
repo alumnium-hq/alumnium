@@ -33,7 +33,7 @@ export namespace LocatorAgent {
 
 export class LocatorAgent extends BaseAgent {
   static Meta = z.object({
-    type: z.literal("locator"),
+    kind: z.literal("locator"),
     description: z.string(),
     treeXml: z.string(),
   });
@@ -56,7 +56,7 @@ export class LocatorAgent extends BaseAgent {
     });
 
     const meta: LocatorAgent.Meta = {
-      type: "locator",
+      kind: "locator",
       description,
       treeXml,
     };

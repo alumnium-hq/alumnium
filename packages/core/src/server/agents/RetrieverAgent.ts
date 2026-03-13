@@ -36,7 +36,7 @@ export namespace RetrieverAgent {
 
 export class RetrieverAgent extends BaseAgent {
   static Meta = z.object({
-    type: z.literal("retriever"),
+    kind: z.literal("retriever"),
     information: z.string(),
     treeXml: z.string(),
     title: z.string(),
@@ -95,7 +95,7 @@ export class RetrieverAgent extends BaseAgent {
     }
 
     const meta: RetrieverAgent.Meta = {
-      type: "retriever",
+      kind: "retriever",
       information,
       treeXml,
       title,

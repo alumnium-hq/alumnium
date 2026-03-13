@@ -30,7 +30,7 @@ describe("PlannerAgentElementsCache", () => {
       memoryKey,
       cacheHash: "hash" as ElementsCache.CacheHash,
       meta: {
-        type: "planner",
+        kind: "planner",
         goal: "login to app" as BaseAgent.Goal,
         treeXml: "<button id='1'>Login</button>",
       },
@@ -41,7 +41,7 @@ describe("PlannerAgentElementsCache", () => {
       cacheHash: "hash" as ElementsCache.CacheHash,
       generation: LchainFactory.storedGeneration({ text: "step1\nstep2" }),
       elements: [],
-      agentType: "planner",
+      agentKind: "planner",
       app: AppId.parse("test-app"),
       instruction: { goal: "login to app" },
     });
@@ -54,7 +54,7 @@ describe("PlannerAgentElementsCache", () => {
       memoryKey,
       cacheHash: "hash" as ElementsCache.CacheHash,
       meta: {
-        type: "planner",
+        kind: "planner",
         goal: "login to app" as BaseAgent.Goal,
         treeXml: "<button id='1'>Login</button>",
       },
@@ -74,7 +74,7 @@ describe("PlannerAgentElementsCache", () => {
       generation: LchainFactory.storedGeneration({ text: "step1" }),
       memoryKey: plannerKey,
       cacheHash: plannerHash,
-      agentType: "planner",
+      agentKind: "planner",
       elements: [{ role: "button", name: "Login", index: 0 }],
       instruction: { goal: "login" },
     });
@@ -88,7 +88,7 @@ describe("PlannerAgentElementsCache", () => {
       cacheHash: plannerHash,
       generation: LchainFactory.storedGeneration({ text: "step1" }),
       elements: [{ role: "button", name: "Login", index: 0 }],
-      agentType: "planner",
+      agentKind: "planner",
       app,
       instruction: { goal: "login" },
     });

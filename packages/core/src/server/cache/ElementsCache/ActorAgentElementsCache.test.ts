@@ -36,7 +36,7 @@ describe("ActorAgentElementsCache", () => {
       memoryKey,
       cacheHash,
       meta: {
-        type: "actor",
+        kind: "actor",
         goal: "login" as BaseAgent.Goal,
         step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/><input id="2" name="username"/>',
@@ -48,7 +48,7 @@ describe("ActorAgentElementsCache", () => {
 
     const entry = actorCache.getRecord(memoryKey);
     expect(entry).toEqual({
-      agentType: "actor",
+      agentKind: "actor",
       app,
       cacheHash,
       elements: [{ index: 0, name: "Login", role: "button" }],
@@ -69,7 +69,7 @@ describe("ActorAgentElementsCache", () => {
       memoryKey,
       cacheHash,
       meta: {
-        type: "actor",
+        kind: "actor",
         goal: "login" as BaseAgent.Goal,
         step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/>',
@@ -87,7 +87,7 @@ describe("ActorAgentElementsCache", () => {
       memoryKey,
       cacheHash,
       meta: {
-        type: "actor",
+        kind: "actor",
         goal: "go back" as BaseAgent.Goal,
         step: "navigate back" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/>',
@@ -113,7 +113,7 @@ describe("ActorAgentElementsCache", () => {
       memoryKey,
       cacheHash,
       meta: {
-        type: "actor",
+        kind: "actor",
         goal: "login" as BaseAgent.Goal,
         step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="10" name="Login"/><button id="11" name="Login"/>',

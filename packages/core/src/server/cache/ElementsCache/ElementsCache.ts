@@ -36,7 +36,7 @@ export namespace ElementsCache {
     cacheHash: CacheHash;
     generation: Lchain.StoredGeneration;
     elements: Elements;
-    agentType: AgentType;
+    agentKind: EligibleAgentKind;
     app: AppId;
     instruction: Instruction;
   }
@@ -52,7 +52,7 @@ export namespace ElementsCache {
 
   export type AgentMeta = PlannerAgent.Meta | ActorAgent.Meta;
 
-  export type AgentType = AgentMeta["type"];
+  export type EligibleAgentKind = AgentMeta["kind"];
 
   export type CacheHash = z.infer<typeof ElementsCache.CacheHash>;
 
@@ -131,7 +131,7 @@ export class ElementsCache extends ServerCache {
 
       if (!this.#memoryRecord(memoryKey)) {
         const fuzzyMemoryKey = this.#fuzzyMemoryLookup(
-          agentMeta.type,
+          agentMeta.kind,
           cacheKey,
         );
         if (fuzzyMemoryKey) {
@@ -152,14 +152,14 @@ export class ElementsCache extends ServerCache {
 
           const generation = Lchain.fromStored(unmaskedGeneration);
           logger.debug(
-            `Elements cache hit (in-memory) for ${agentMeta.type}: "${cacheKey.slice(0, 50)}..."`,
+            `Elements cache hit (in-memory) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
           );
           return [generation];
         }
       }
 
       const cacheStore = this.#cacheStore.subStore(
-        `${agentMeta.type}/${cacheHash}`,
+        `${agentMeta.kind}/${cacheHash}`,
       );
 
       let [elements, maskedGeneration] = await Promise.all([
@@ -168,11 +168,11 @@ export class ElementsCache extends ServerCache {
       ]);
 
       if (!elements || !maskedGeneration) {
-        const fuzzyHash = await this.#fuzzyLookupHash(agentMeta.type, cacheKey);
+        const fuzzyHash = await this.#fuzzyLookupHash(agentMeta.kind, cacheKey);
         if (!fuzzyHash) return null;
 
         const fuzzyStore = this.#cacheStore.subStore(
-          `${agentMeta.type}/${fuzzyHash}`,
+          `${agentMeta.kind}/${fuzzyHash}`,
         );
 
         const [fuzzyElements, fuzzyResponse] = await Promise.all([
@@ -189,7 +189,7 @@ export class ElementsCache extends ServerCache {
       const masksIdsMap = tree.resolveElements(elements);
       if (!masksIdsMap) {
         logger.debug(
-          `Elements cache miss (resolution failed) for ${agentMeta.type}: "${cacheKey.slice(0, 50)}..."`,
+          `Elements cache miss (resolution failed) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
         );
         return null;
       }
@@ -203,7 +203,7 @@ export class ElementsCache extends ServerCache {
 
       const generation = Lchain.fromStored(unmaskedGeneration);
       logger.debug(
-        `Elements cache hit (file) for ${agentMeta.type}: "${cacheKey.slice(0, 50)}..."`,
+        `Elements cache hit (file) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
       );
       return [generation];
     } catch (error) {
@@ -230,7 +230,7 @@ export class ElementsCache extends ServerCache {
       const [firstGeneration] = generations as Lchain.GenerationsSingle;
       const generation = Lchain.toStored(firstGeneration);
 
-      switch (meta.type) {
+      switch (meta.kind) {
         case "planner":
           return this.#plannerCache.update({
             cacheHash,
@@ -263,10 +263,10 @@ export class ElementsCache extends ServerCache {
 
     await Promise.all(
       entries.map(async ([_, entry]) => {
-        const { cacheHash, app, agentType, instruction, generation, elements } =
+        const { cacheHash, app, agentKind, instruction, generation, elements } =
           entry;
         const store = this.#cacheStore.subStore(
-          `${agentType}/${cacheHash}`,
+          `${agentKind}/${cacheHash}`,
           app,
         );
 
@@ -303,7 +303,7 @@ export class ElementsCache extends ServerCache {
       return null;
     }
 
-    if (agentMeta.type !== "actor" && agentMeta.type !== "planner") return null;
+    if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") return null;
 
     const cacheKey = this.#cacheKey(agentMeta);
     const cacheHash: ElementsCache.CacheHash = xxh64Str(cacheKey);
@@ -319,7 +319,7 @@ export class ElementsCache extends ServerCache {
   }
 
   #cacheKey(meta: ElementsCache.AgentMeta): ElementsCache.CacheKey {
-    return meta.type === "planner" ? meta.goal : meta.step;
+    return meta.kind === "planner" ? meta.goal : meta.step;
   }
 
   #memoryKey(
@@ -348,15 +348,15 @@ export class ElementsCache extends ServerCache {
   //#region Fuzzy lookup
 
   #fuzzyMemoryLookup(
-    agentType: ElementsCache.AgentType,
+    agentKind: ElementsCache.EligibleAgentKind,
     cacheKey: ElementsCache.CacheKey,
   ): ElementsCache.MemoryKey | null {
-    const keyField = agentType === "planner" ? "goal" : "step";
+    const keyField = agentKind === "planner" ? "goal" : "step";
     let bestKey: ElementsCache.MemoryKey | null = null;
     let bestScore = 0;
 
     for (const [memoryKey, entry] of this.#memoryEntries()) {
-      if (entry.agentType !== agentType || entry.app !== this.app) continue;
+      if (entry.agentKind !== agentKind || entry.app !== this.app) continue;
 
       const entryCacheKey = entry.instruction[keyField] ?? "";
       if (!entryCacheKey) {
@@ -376,7 +376,7 @@ export class ElementsCache extends ServerCache {
 
     if (bestScore >= FUZZY_MATCH_THRESHOLD) {
       logger.debug(
-        `Fuzzy cache match (in-memory, ${Math.round(bestScore)}%) for ${agentType}: "${cacheKey.slice(0, 50)}..."`,
+        `Fuzzy cache match (in-memory, ${Math.round(bestScore)}%) for ${agentKind}: "${cacheKey.slice(0, 50)}..."`,
       );
       return bestKey;
     }
@@ -385,14 +385,14 @@ export class ElementsCache extends ServerCache {
   }
 
   async #fuzzyLookupHash(
-    agentType: ElementsCache.AgentType,
+    agentKind: ElementsCache.EligibleAgentKind,
     cacheKey: ElementsCache.CacheKey,
   ): Promise<ElementsCache.CacheHash | null> {
-    const keyField = agentType === "planner" ? "goal" : "step";
+    const keyField = agentKind === "planner" ? "goal" : "step";
     let bestHash: ElementsCache.CacheHash | null = null;
     let bestScore = 0;
 
-    const dir = this.#cacheStore.resolve(agentType);
+    const dir = this.#cacheStore.resolve(agentKind);
 
     const entries = await fs
       .readdir(dir, { withFileTypes: true })
@@ -403,7 +403,7 @@ export class ElementsCache extends ServerCache {
         if (!entry.isDirectory) return;
 
         const entryStore = this.#cacheStore.subStore(
-          `${agentType}/${entry.name}`,
+          `${agentKind}/${entry.name}`,
         );
         const instruction = await entryStore.readJson(
           "instruction.json",
@@ -428,13 +428,13 @@ export class ElementsCache extends ServerCache {
 
     if (bestScore >= FUZZY_MATCH_THRESHOLD) {
       logger.debug(
-        `Fuzzy cache match (${Math.round(bestScore)}%) for ${agentType}: "${cacheKey.slice(0, 50)}..."`,
+        `Fuzzy cache match (${Math.round(bestScore)}%) for ${agentKind}: "${cacheKey.slice(0, 50)}..."`,
       );
       return bestHash;
     }
 
     logger.debug(
-      `No fuzzy cache match (best: ${Math.round(bestScore)}%) above threshold for ${agentType}: "${cacheKey.slice(0, 50)}..."`,
+      `No fuzzy cache match (best: ${Math.round(bestScore)}%) above threshold for ${agentKind}: "${cacheKey.slice(0, 50)}..."`,
     );
     return null;
   }

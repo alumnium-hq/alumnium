@@ -27,7 +27,7 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
       cacheHash,
       generation,
       elements: [],
-      agentType: "planner",
+      agentKind: "planner",
       memoryKey,
       instruction: { goal },
     });
@@ -41,10 +41,10 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
       const goalHash = xxh64Str(goal);
 
       for (const [memoryKey, entry] of this.getEntries()) {
-        const { cacheHash, agentType, app } = entry;
+        const { cacheHash, agentKind, app } = entry;
         if (
           cacheHash !== goalHash ||
-          agentType !== "planner" ||
+          agentKind !== "planner" ||
           app !== this.app
         )
           continue;

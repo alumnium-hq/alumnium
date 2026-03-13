@@ -10,7 +10,7 @@ import {
 } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import z from "zod";
-import { Model, Provider } from "../../Model.js";
+import { Model } from "../../Model.js";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.js";
 import { UploadTool } from "../../tools/UploadTool.js";
@@ -23,11 +23,60 @@ const logger = getLogger(import.meta.url);
 
 export namespace PlannerAgent {
   export type Meta = z.infer<typeof PlannerAgent.Meta>;
+
+  export interface ChainInput {
+    goal: string;
+    accessibility_tree: string;
+  }
+
+  export type ChainOutput = ChainOutputStructured | ChainOutputUnstructured;
+
+  export interface ChainOutputStructured {
+    raw: BaseMessage;
+    parsed: Plan;
+  }
+
+  export type ChainOutputUnstructured = AIMessageChunk<MessageStructure>;
+
+  export type Example = z.infer<typeof PlannerAgent.Example>;
+
+  export type State = z.infer<typeof PlannerAgent.State>;
+
+  export type Plan = z.infer<typeof PlannerAgent.Plan>;
 }
 
 export class PlannerAgent extends BaseAgent {
+  static Example = z.object({
+    goal: z.string().describe("The goal to achieve."),
+    accessibility_tree: z
+      .string()
+      .describe("The accessibility tree XML used for planning."),
+    actions: z
+      .array(z.string())
+      .or(z.string())
+      .describe(
+        "The list of actions to achieve the goal. Can be a single string with actions separated by a special separator.",
+      ),
+  });
+
+  static State = Agent.State.extend({
+    examples: z.array(PlannerAgent.Example),
+  });
+
+  static Plan = z.object({
+    explanation: z
+      .string()
+      .describe(
+        "Explanation how the actions were determined and why they are related to the goal. " +
+          "Always include the goal, actions to achieve it, and their order in the explanation.",
+      ),
+    actions: z
+      .array(z.string())
+      .describe("List of actions to achieve the goal."),
+  });
+
   static Meta = z.object({
-    type: z.literal("planner"),
+    kind: z.literal("planner"),
     goal: BaseAgent.Goal,
     treeXml: z.string(),
   });
@@ -60,7 +109,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 `.trim();
 
   static readonly #LIST_SEPARATOR = "<SEP>";
-  static readonly #UNSTRUCTURED_OUTPUT_MODELS = [Provider.OLLAMA];
+  static readonly #UNSTRUCTURED_OUTPUT_MODELS: Model.Provider[] = ["ollama"];
 
   llm: BaseChatModel;
   toolNames: string[];
@@ -162,7 +211,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     });
 
     const meta: PlannerAgent.Meta = {
-      type: "planner",
+      kind: "planner",
       goal: goal as BaseAgent.Goal,
       treeXml,
     };
@@ -249,55 +298,4 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   }
 
   //#endregion
-}
-
-export namespace PlannerAgent {
-  export interface ChainInput {
-    goal: string;
-    accessibility_tree: string;
-  }
-
-  export type ChainOutput = ChainOutputStructured | ChainOutputUnstructured;
-
-  export interface ChainOutputStructured {
-    raw: BaseMessage;
-    parsed: Plan;
-  }
-
-  export type ChainOutputUnstructured = AIMessageChunk<MessageStructure>;
-
-  export const Example = z.object({
-    goal: z.string().describe("The goal to achieve."),
-    accessibility_tree: z
-      .string()
-      .describe("The accessibility tree XML used for planning."),
-    actions: z
-      .array(z.string())
-      .or(z.string())
-      .describe(
-        "The list of actions to achieve the goal. Can be a single string with actions separated by a special separator.",
-      ),
-  });
-
-  export type Example = z.infer<typeof PlannerAgent.Example>;
-
-  export const State = Agent.State.extend({
-    examples: z.array(PlannerAgent.Example),
-  });
-
-  export type State = z.infer<typeof PlannerAgent.State>;
-
-  export const Plan = z.object({
-    explanation: z
-      .string()
-      .describe(
-        "Explanation how the actions were determined and why they are related to the goal. " +
-          "Always include the goal, actions to achieve it, and their order in the explanation.",
-      ),
-    actions: z
-      .array(z.string())
-      .describe("List of actions to achieve the goal."),
-  });
-
-  export type Plan = z.infer<typeof PlannerAgent.Plan>;
 }

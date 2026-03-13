@@ -1,4 +1,4 @@
-import { Model, Provider } from "alumnium";
+import { Model } from "alumnium";
 import assert from "assert";
 import "./globals.js";
 import { navigate } from "./helpers.js";
@@ -6,7 +6,7 @@ import { navigate } from "./helpers.js";
 describe("Drag and Drop", () => {
   const shouldSkip = () => {
     // Skip if using DeepSeek (no vision support yet)
-    if (Model.current.provider === Provider.DEEPSEEK) {
+    if (Model.current.provider === "deepseek") {
       return "DeepSeek does not support vision yet";
     }
 
@@ -28,7 +28,7 @@ describe("Drag and Drop", () => {
 
     const initialOrder = await al.get(
       "titles of squares ordered from left to right",
-      { vision: true }
+      { vision: true },
     );
     assert.deepStrictEqual(initialOrder, ["A", "B"]);
 
@@ -36,7 +36,7 @@ describe("Drag and Drop", () => {
 
     const finalOrder = await al.get(
       "titles of squares ordered from left to right",
-      { vision: true }
+      { vision: true },
     );
     assert.deepStrictEqual(finalOrder, ["B", "A"]);
   });

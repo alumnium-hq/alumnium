@@ -60,7 +60,7 @@ describe("ElementsCache", () => {
     it("resolves null when it for unsupported agent prompts", async () => {
       const { llmContext, cache, prompt1, llmKey } = setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
-        type: "locator",
+        kind: "locator",
         description: "test",
         treeXml: "<div />",
       });
@@ -72,7 +72,7 @@ describe("ElementsCache", () => {
       it("resolves cached response for exact match", async () => {
         const { llmContext, cache, prompt1, llmKey, treeXml } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "planner",
+          kind: "planner",
           goal: "click login" as BaseAgent.Goal,
           treeXml: treeXml,
         });
@@ -92,7 +92,7 @@ describe("ElementsCache", () => {
         const { sessionContext, llmContext, cache, prompt1, llmKey, treeXml } =
           setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "planner",
+          kind: "planner",
           goal: "click login" as BaseAgent.Goal,
           treeXml: treeXml,
         });
@@ -111,7 +111,7 @@ describe("ElementsCache", () => {
       it("ignores malformed accessibility tree", async () => {
         const { llmContext, cache, prompt1, llmKey } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "planner",
+          kind: "planner",
           goal: "click login" as BaseAgent.Goal,
           treeXml: '<button id="1',
         });
@@ -135,7 +135,7 @@ describe("ElementsCache", () => {
       it("resolves cached response for exact match", async () => {
         const { llmContext, cache, prompt1, llmKey, treeXml } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "actor",
+          kind: "actor",
           step: 'Click "Login" button' as BaseAgent.Step,
           goal: "login" as BaseAgent.Goal,
           treeXml: treeXml,
@@ -162,7 +162,7 @@ describe("ElementsCache", () => {
         const { sessionContext, llmContext, cache, prompt1, llmKey, treeXml } =
           setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "actor",
+          kind: "actor",
           step: 'Click "Login" button' as BaseAgent.Step,
           goal: "login" as BaseAgent.Goal,
           treeXml: treeXml,
@@ -185,13 +185,13 @@ describe("ElementsCache", () => {
       it("resolves actor ids in similar trees with changed ids", async () => {
         const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "actor",
+          kind: "actor",
           step: 'Click "Login" button' as BaseAgent.Step,
           goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="1" name="Login" />',
         });
         llmContext.assignPromptsMeta([prompt2], {
-          type: "actor",
+          kind: "actor",
           step: 'Click "Login" button' as BaseAgent.Step,
           goal: "login" as BaseAgent.Goal,
           treeXml: '<div><button id="99" name="Login" /></div>',
@@ -223,13 +223,13 @@ describe("ElementsCache", () => {
       it("resolves null when cached elements cannot be resolved", async () => {
         const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "actor",
+          kind: "actor",
           step: "click login" as BaseAgent.Step,
           goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="1" name="Login" />',
         });
         llmContext.assignPromptsMeta([prompt2], {
-          type: "actor",
+          kind: "actor",
           step: "click login" as BaseAgent.Step,
           goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="9" name="Logout" />',
@@ -248,7 +248,7 @@ describe("ElementsCache", () => {
       it("returns null on malformed accessibility tree", async () => {
         const { llmContext, cache, prompt1, llmKey } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "actor",
+          kind: "actor",
           step: "click login" as BaseAgent.Step,
           goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="1',
@@ -268,13 +268,13 @@ describe("ElementsCache", () => {
         it("uses fuzzy lookup for near-matching actor step", async () => {
           const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
           llmContext.assignPromptsMeta([prompt1], {
-            type: "actor",
+            kind: "actor",
             goal: "submit form" as BaseAgent.Goal,
             step: 'Click "Submit" button' as BaseAgent.Step,
             treeXml: '<button id="1" name="Submit" />',
           });
           llmContext.assignPromptsMeta([prompt2], {
-            type: "actor",
+            kind: "actor",
             goal: "submit form" as BaseAgent.Goal,
             step: 'Click the "Submit" button' as BaseAgent.Step,
             treeXml: '<button id="7" name="Submit" />',
@@ -298,13 +298,13 @@ describe("ElementsCache", () => {
         it("uses fuzzy lookup for memory records", async () => {
           const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
           llmContext.assignPromptsMeta([prompt1], {
-            type: "actor",
+            kind: "actor",
             goal: "submit form" as BaseAgent.Goal,
             step: 'Click "Submit" button' as BaseAgent.Step,
             treeXml: '<button id="1" name="Submit" />',
           });
           llmContext.assignPromptsMeta([prompt2], {
-            type: "actor",
+            kind: "actor",
             goal: "submit form" as BaseAgent.Goal,
             step: 'Click the "Submit" button' as BaseAgent.Step,
             treeXml: '<button id="8" name="Submit" />',
@@ -328,13 +328,13 @@ describe("ElementsCache", () => {
           const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
 
           llmContext.assignPromptsMeta([prompt1], {
-            type: "actor",
+            kind: "actor",
             goal: "save" as BaseAgent.Goal,
             step: 'Click the "Save" button' as BaseAgent.Step,
             treeXml: '<button id="1" name="Save" />',
           });
           llmContext.assignPromptsMeta([prompt2], {
-            type: "actor",
+            kind: "actor",
             goal: "save" as BaseAgent.Goal,
             step: 'Type "hello" into the search field' as BaseAgent.Step,
             treeXml: '<button id="2" name="Save" />',
@@ -358,7 +358,7 @@ describe("ElementsCache", () => {
       const { sessionContext, llmContext, cache, prompt1, llmKey, cacheDir } =
         setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
-        type: "planner",
+        kind: "planner",
         goal: "click login" as BaseAgent.Goal,
         treeXml: '<button id="1" name="Login" />',
       });
@@ -390,7 +390,7 @@ describe("ElementsCache", () => {
           cacheDir,
         } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "planner",
+          kind: "planner",
           goal: "login to app" as BaseAgent.Goal,
           treeXml: '<button id="1">Login</button>',
         });
@@ -436,7 +436,7 @@ describe("ElementsCache", () => {
           cacheDir,
         } = setup.cur;
         llmContext.assignPromptsMeta([prompt1], {
-          type: "actor",
+          kind: "actor",
           step: 'Click "Login" button' as BaseAgent.Step,
           goal: "login" as BaseAgent.Goal,
           treeXml: '<button id="1" name="Login" />',
@@ -501,7 +501,7 @@ describe("ElementsCache", () => {
         treeXml,
       } = setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
-        type: "planner",
+        kind: "planner",
         goal: "click login" as BaseAgent.Goal,
         treeXml: treeXml,
       });
@@ -522,7 +522,7 @@ describe("ElementsCache", () => {
       const { llmContext, cache, prompt1, llmKey, cacheDir, treeXml } =
         setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
-        type: "planner",
+        kind: "planner",
         goal: "click login" as BaseAgent.Goal,
         treeXml: treeXml,
       });
@@ -544,7 +544,7 @@ describe("ElementsCache", () => {
     it("tracks usage when lookup hits", async () => {
       const { llmContext, cache, prompt1, llmKey } = setup.cur;
       llmContext.assignPromptsMeta([prompt1], {
-        type: "planner",
+        kind: "planner",
         goal: "click login" as BaseAgent.Goal,
         treeXml: '<button id="1" name="Login" />',
       });

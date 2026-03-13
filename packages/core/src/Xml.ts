@@ -12,37 +12,39 @@ import {
 import { parseDocument } from "htmlparser2";
 import { "default" as xmlFormatter } from "xml-formatter";
 
-export namespace XML {
+// NOTE: xml-formatter has busted types, so we need to cast it manually.
+const xmlFormat: (typeof xmlFormatter)["default"] = xmlFormatter as any;
+
+export namespace Xml {
   export type Node = DOMHandlerNode;
 
   export type AnyElement = Element | Text;
+}
 
-  // NOTE: xml-formatter has busted types, so we need to cast it manually.
-  const xmlFormat: (typeof xmlFormatter)["default"] = xmlFormatter as any;
-
-  export function parseRootChildren(xml: string): Node[] {
+export abstract class Xml {
+  static parseRootChildren(xml: string): Xml.Node[] {
     const root = parseDocument(xml.trim(), { xmlMode: true });
     return root.children;
   }
 
-  export function parseMultirootChildren(xml: string): Node[] {
+  static parseMultirootChildren(xml: string): Xml.Node[] {
     const wrappedXml = `<root>${xml.trim()}</root>`;
-    return parseRootChildren(wrappedXml);
+    return this.parseRootChildren(wrappedXml);
   }
 
-  export function parseAnyRootChildren(xml: string): Node[] {
+  static parseAnyRootChildren(xml: string): Xml.Node[] {
     try {
-      return parseRootChildren(xml);
+      return this.parseRootChildren(xml);
     } catch {
-      return parseMultirootChildren(xml);
+      return this.parseMultirootChildren(xml);
     }
   }
 
-  export function parseRoot(xml: string): Element {
-    const roots = XML.parseRootChildren(xml);
+  static parseRoot(xml: string): Element {
+    const roots = Xml.parseRootChildren(xml);
     let root: Element | null = null;
     for (const node of roots) {
-      const el = XML.nodeAsTag(node);
+      const el = Xml.nodeAsTag(node);
       if (el && el.tagName === "root") {
         root = el;
         break;
@@ -52,7 +54,7 @@ export namespace XML {
     return root;
   }
 
-  export function format(els: AnyElement[]): string {
+  static format(els: Xml.AnyElement[]): string {
     let xml = "";
     for (const element of els) {
       xml += xmlFormat(
@@ -72,21 +74,21 @@ export namespace XML {
     return xml;
   }
 
-  export function nodeAsTag(node: Node): Element | null {
+  static nodeAsTag(node: Xml.Node): Element | null {
     if (isTag(node)) {
       return node;
     }
     return null;
   }
 
-  export function nodeAsNodeWithChildren(node: Node): NodeWithChildren | null {
+  static nodeAsNodeWithChildren(node: Xml.Node): NodeWithChildren | null {
     if (hasChildren(node)) {
       return node;
     }
     return null;
   }
 
-  export function nodeAsText(node: Node): Text | null {
+  static nodeAsText(node: Xml.Node): Text | null {
     if (isText(node)) {
       return node;
     }
