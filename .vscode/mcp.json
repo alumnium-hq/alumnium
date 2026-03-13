@@ -2,9 +2,16 @@
   "servers": {
     "alumnium": {
       "type": "stdio",
-      "command": "make",
-      "args": ["start-mcp"],
-      "envFile": "${workspaceFolder}/.env"
-    }
-  }
+      "command": "fnox",
+      "args": ["exec", "--", "bun", "./src/cli.ts", "mcp"],
+      "cwd": "${workspaceFolder}/packages/core",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "ALUMNIUM_MODEL": "${env:ALUMNIUM_MODEL}",
+        "AZURE_OPENAI_API_VERSION": "${env:AZURE_OPENAI_API_VERSION}",
+        "AZURE_OPENAI_API_KEY": "${env:AZURE_OPENAI_API_KEY}",
+        "AZURE_OPENAI_ENDPOINT": "${env:AZURE_OPENAI_ENDPOINT}",
+      },
+    },
+  },
 }

@@ -42,4 +42,4 @@ start-server-docker:
 		alumnium-server
 
 start-mcp:
-	@cd packages/core && bun ./src/cli.ts mcp
+	@cd packages/core && fnox exec -- bun ./src/cli.ts mcp
