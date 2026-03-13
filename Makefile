@@ -14,12 +14,10 @@ clean:
 check-format:
 	cd packages/core && bun run check-format
 	cd packages/python && poetry poe check-format
-	cd packages/typescript && bun run check-format
 
 format:
 	cd packages/core && bun run format
 	cd packages/python && poetry poe format
-	cd packages/typescript && bun run format
 
 test:
 	cd packages/core && bun run test
