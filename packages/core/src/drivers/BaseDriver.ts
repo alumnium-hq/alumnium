@@ -1,12 +1,12 @@
 import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { AppId } from "../AppId.js";
-import { Platform } from "../server/Platform.js";
 import type { ToolClass } from "../tools/BaseTool.js";
+import type { Driver } from "./Driver.js";
 import type { Element } from "./index.js";
 import type { Keys } from "./keys.js";
 
 export abstract class BaseDriver {
-  abstract platform: Platform;
+  abstract platform: Driver.Platform;
   abstract supportedTools: Set<ToolClass>;
   abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
   abstract click(id: number): Promise<void>;

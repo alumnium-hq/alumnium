@@ -1,14 +1,15 @@
 import { AppId } from "../AppId.js";
+import type { Driver } from "../drivers/Driver.js";
 import { LlmUsageStats } from "../llm/llmSchema.js";
 import type { Model } from "../Model.js";
-import type { ElementRef, Platform } from "../server/serverSchema.js";
+import type { ElementRef } from "../server/serverSchema.js";
 import type { ToolCall, ToolClass } from "../tools/BaseTool.js";
 import type { Data } from "./typecasting.js";
 
 export namespace Client {
   export interface Props {
     model: Model;
-    platform: Platform;
+    platform: Driver.Platform;
     tools: Record<string, ToolClass>;
     planner: boolean | undefined;
     excludeAttributes: string[] | undefined;
@@ -34,7 +35,7 @@ export namespace Client {
 
 export abstract class Client {
   protected model: Model;
-  protected platform: Platform;
+  protected platform: Driver.Platform;
   protected tools: Record<string, ToolClass>;
   protected planner: boolean;
   protected excludeAttributes: string[] | undefined;
