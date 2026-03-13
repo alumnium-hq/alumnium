@@ -116,7 +116,7 @@ await Promise.all([
   (async () => {
     if (!buildPackages) return;
 
-    await $`bun tsc --project tsconfig.build.json`;
+    await $`bun tsgo --project tsconfig.build.json`;
 
     const pkgDir = path.resolve(DIST_DIR, "alumnium");
     await Promise.all(

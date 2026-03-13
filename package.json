@@ -5,10 +5,11 @@
     "packages/*"
   ],
   "scripts": {
-    "types": "tsc --build",
-    "types:watch": "tsc --build --watch"
+    "types": "tsgo --build",
+    "types:watch": "tsgo --build --watch"
   },
   "devDependencies": {
+    "@typescript/native-preview": "^7.0.0-dev.20260312.1",
     "oxfmt": "^0.38.0",
     "oxlint": "^1.53.0",
     "oxlint-tsgolint": "^0.16.0",
