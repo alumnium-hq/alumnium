@@ -60,7 +60,7 @@ export class Alumni {
   private llm: BaseChatModel | undefined;
 
   constructor(driver: WebDriver | Page | Browser, options: AlumniOptions = {}) {
-    this.url = options.url || "http://localhost:8013";
+    this.url = options.url;
     this.model = options.model || Model.current;
     this.changeAnalysis = options.changeAnalysis ?? CHANGE_ANALYSIS;
     this.llm = options.llm;

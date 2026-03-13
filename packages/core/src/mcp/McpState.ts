@@ -38,7 +38,7 @@ export abstract class McpState {
     artifactsStore: McpArtifactsStore,
   ): void {
     this.drivers[driverId] = {
-      al: al,
+      al,
       mcpDriver,
       artifactsStore: artifactsStore,
       stepCounter: 1,
