@@ -1,6 +1,6 @@
 import { always } from "alwaysly";
 import { Element, Text } from "domhandler";
-import { XML } from "../../xml/index.js";
+import { Xml } from "../../Xml.js";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.js";
 
 export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree {
@@ -13,20 +13,20 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
     this.#tree = null;
     this.#idToNode = {}; // Maps simplified ID to Node
 
-    let roots: XML.Node[];
+    let roots: Xml.Node[];
     try {
-      roots = XML.parseRootChildren(xmlString);
+      roots = Xml.parseRootChildren(xmlString);
     } catch (error) {
       throw new Error(`Invalid XML string: ${error}`);
     }
 
     let appElement: Element | null = null;
     for (const root of roots) {
-      const el = XML.nodeAsTag(root);
+      const el = Xml.nodeAsTag(root);
       if (!el) continue;
       if (el.tagName === "AppiumAUT") {
         for (const child of el.children) {
-          const childEl = XML.nodeAsTag(child);
+          const childEl = Xml.nodeAsTag(child);
           if (childEl && childEl.tagName.startsWith("XCUIElementType")) {
             appElement = childEl;
             break;
@@ -48,9 +48,9 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
     return simple === "Other" ? "generic" : simple;
   }
 
-  #parseElement(node: XML.Node): InternalNode {
-    const element = XML.nodeAsTag(node);
-    const text = XML.nodeAsText(node);
+  #parseElement(node: Xml.Node): InternalNode {
+    const element = Xml.nodeAsTag(node);
+    const text = Xml.nodeAsText(node);
     const simplifiedId = this.getNextId();
 
     const rawType =
@@ -144,7 +144,7 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
 
     // TODO: It is better to use map to define children before creating the node.
     for (const childElement of element?.children || []) {
-      const element = XML.nodeAsTag(childElement);
+      const element = Xml.nodeAsTag(childElement);
       if (!element) continue;
       internalNode.children.push(this.#parseElement(element));
     }
@@ -330,7 +330,7 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
       return ""; // Root itself was filtered out
     }
 
-    const xmlString = XML.format([rootXmlElement]);
+    const xmlString = Xml.format([rootXmlElement]);
     return xmlString;
   }
 

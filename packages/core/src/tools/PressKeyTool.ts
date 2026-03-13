@@ -1,5 +1,5 @@
 import { BaseDriver } from "../drivers/BaseDriver.js";
-import { Key } from "../drivers/keys.js";
+import { Keys } from "../drivers/keys.js";
 import { BaseTool } from "./BaseTool.js";
 import { field, type FieldMetadata } from "./Field.js";
 
@@ -10,13 +10,13 @@ export class PressKeyTool extends BaseTool {
       name: "key",
       type: "string",
       description: "Key to press.",
-      enum: Object.values(Key),
+      enum: Keys.enum,
     }),
   ];
 
-  key: Key;
+  key: Keys.Key;
 
-  constructor(args: { key: Key }) {
+  constructor(args: { key: Keys.Key }) {
     super();
     this.key = args.key;
   }

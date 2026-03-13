@@ -3,7 +3,7 @@ import { AppId } from "../AppId.js";
 import { Platform } from "../server/Platform.js";
 import type { ToolClass } from "../tools/BaseTool.js";
 import type { Element } from "./index.js";
-import type { Key } from "./keys.js";
+import type { Keys } from "./keys.js";
 
 export abstract class BaseDriver {
   abstract platform: Platform;
@@ -11,7 +11,7 @@ export abstract class BaseDriver {
   abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
   abstract click(id: number): Promise<void>;
   abstract dragAndDrop(fromId: number, toId: number): Promise<void>;
-  abstract pressKey(key: Key): Promise<void>;
+  abstract pressKey(key: Keys.Key): Promise<void>;
   abstract quit(): Promise<void>;
   abstract back(): Promise<void>;
   abstract screenshot(): Promise<string>;

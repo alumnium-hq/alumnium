@@ -1,4 +1,4 @@
-import { Model, Provider } from "alumnium";
+import { Model } from "alumnium";
 import assert from "assert";
 import "./globals.js";
 import { navigate } from "./helpers.js";
@@ -6,7 +6,7 @@ import { navigate } from "./helpers.js";
 describe("Table", () => {
   before(async () => {
     // These models double-click to sort
-    if (Model.current.provider === Provider.MISTRALAI) {
+    if (Model.current.provider === "mistralai") {
       await al.learn("sort by web site", ["click 'Web Site' header"]);
     }
   });
@@ -20,7 +20,7 @@ describe("Table", () => {
     if (driverType === "appium") {
       return "Area is not properly extracted from Appium source code.";
     }
-    if (Model.current.provider === Provider.AWS_META) {
+    if (Model.current.provider === "aws_meta") {
       return "Table area instructions need more work";
     }
     return null;

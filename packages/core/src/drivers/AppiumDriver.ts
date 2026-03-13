@@ -1,6 +1,5 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
-
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
@@ -11,7 +10,7 @@ import { DragAndDropTool } from "../tools/DragAndDropTool.js";
 import { PressKeyTool } from "../tools/PressKeyTool.js";
 import { TypeTool } from "../tools/TypeTool.js";
 import { BaseDriver } from "./BaseDriver.js";
-import { Key } from "./keys.js";
+import type { Keys } from "./keys.js";
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;
@@ -72,13 +71,13 @@ export class AppiumDriver extends BaseDriver {
     await fromElement.dragAndDrop(toElement);
   }
 
-  async pressKey(key: Key): Promise<void> {
+  async pressKey(key: Keys.Key): Promise<void> {
     await this.ensureNativeAppContext();
-    const keyMap: Record<Key, string> = {
-      [Key.BACKSPACE]: SeleniumKey.BACK_SPACE,
-      [Key.ENTER]: SeleniumKey.ENTER,
-      [Key.ESCAPE]: SeleniumKey.ESCAPE,
-      [Key.TAB]: SeleniumKey.TAB,
+    const keyMap: Record<Keys.Key, string> = {
+      backspace: SeleniumKey.BACK_SPACE,
+      enter: SeleniumKey.ENTER,
+      escape: SeleniumKey.ESCAPE,
+      tab: SeleniumKey.TAB,
     };
 
     // Simulate ActionChains behavior

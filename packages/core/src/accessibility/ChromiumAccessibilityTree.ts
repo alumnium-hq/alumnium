@@ -1,6 +1,6 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
-import { XML } from "../xml/index.js";
+import { Xml } from "../Xml.js";
 import type { AccessibilityElement } from "./AccessibilityElement.js";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
 
@@ -96,7 +96,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     // Combine all root nodes into a single XML string
     let xmlString = "";
     for (const root of rootNodes) {
-      xmlString += XML.format([root]);
+      xmlString += Xml.format([root]);
     }
 
     this.#raw = xmlString;
@@ -229,7 +229,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   elementById(rawId: number): AccessibilityElement {
     // Get raw XML with raw_id attributes
     const rawXml = this.toStr();
-    const root = XML.parseRoot(`<root>${rawXml}</root>`);
+    const root = Xml.parseRoot(`<root>${rawXml}</root>`);
 
     // Find element with matching raw_id
     const findElement = (elem: Element, targetId: string): Element | null => {
@@ -237,7 +237,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
         return elem;
       }
       for (const child of Array.from(elem.children)) {
-        const childEl = XML.nodeAsTag(child);
+        const childEl = Xml.nodeAsTag(child);
         if (!childEl) {
           continue;
         }
@@ -301,7 +301,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     const rawXml = this.toStr();
 
     // Parse the XML
-    const root = XML.parseRoot(`<root>${rawXml}</root>`);
+    const root = Xml.parseRoot(`<root>${rawXml}</root>`);
 
     // Find the element with the matching raw_id
     const findElement = (elem: Element, targetId: string): Element | null => {
@@ -309,7 +309,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
         return elem;
       }
       for (const child of Array.from(elem.children)) {
-        const childEl = XML.nodeAsTag(child);
+        const childEl = Xml.nodeAsTag(child);
         if (!childEl) {
           continue;
         }
@@ -329,7 +329,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Convert the scoped element back to XML string
-    const scopedXml = XML.format([targetElem]);
+    const scopedXml = Xml.format([targetElem]);
 
     return ChromiumAccessibilityTree.#fromXml(scopedXml, this.#frameMap);
   }

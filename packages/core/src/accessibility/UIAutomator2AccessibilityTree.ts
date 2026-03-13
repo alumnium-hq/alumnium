@@ -1,7 +1,7 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
 import { pythonicSplitlines } from "../pythonic/pythonicSplitlines.js";
-import { XML } from "../xml/index.js";
+import { Xml } from "../Xml.js";
 import type { AccessibilityElement } from "./AccessibilityElement.js";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
 
@@ -34,13 +34,13 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     // Parse the XML
     // TODO: Simplify after figuring out multiroot shenanigans.
     // Also refactor duplicate roots -> root code below.
-    const root = XML.parseRoot(this.#xmlString);
+    const root = Xml.parseRoot(this.#xmlString);
 
     // Add raw_id attributes recursively
     this.#addRawIds(root);
 
     // Serialize back to string
-    this.#raw = XML.format([root]);
+    this.#raw = Xml.format([root]);
     return this.#raw;
   }
 
@@ -49,7 +49,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     this.#nextRawId += 1;
     elem.attribs["raw_id"] = String(this.#nextRawId);
     for (const child of elem.children) {
-      const el = XML.nodeAsTag(child);
+      const el = Xml.nodeAsTag(child);
       if (!el) continue; // Skip non-element nodes, e.g., text nodes
       this.#addRawIds(el);
     }
@@ -64,7 +64,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
   elementById(rawId: number): AccessibilityElement {
     // Get raw XML with raw_id attributes
     const rawXml = this.toStr();
-    const root = XML.parseRoot(rawXml);
+    const root = Xml.parseRoot(rawXml);
 
     // Find element with matching raw_id
     function findElement(elem: Element, targetId: string): Element | null {
@@ -72,7 +72,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
         return elem;
       }
       for (const child of Array.from(elem.children)) {
-        const childEl = XML.nodeAsTag(child);
+        const childEl = Xml.nodeAsTag(child);
         if (!childEl) continue; // Skip non-element nodes, e.g., text nodes
         const result = findElement(childEl, targetId);
         if (result !== null) {
@@ -105,7 +105,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     const rawXml = this.toStr();
 
     // Parse the XML
-    const root = XML.parseRoot(rawXml);
+    const root = Xml.parseRoot(rawXml);
 
     // Find the element with the matching raw_id
     function findElement(elem: Element, targetId: string): Element | null {
@@ -113,7 +113,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
         return elem;
       }
       for (const child of Array.from(elem.children)) {
-        const childEl = XML.nodeAsTag(child);
+        const childEl = Xml.nodeAsTag(child);
         always(childEl);
         const result = findElement(childEl, targetId);
         if (result !== null) {
@@ -131,7 +131,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Convert the scoped element back to XML string
-    const scopedXml = XML.format([targetElem]);
+    const scopedXml = Xml.format([targetElem]);
 
     return new UIAutomator2AccessibilityTree(scopedXml);
   }

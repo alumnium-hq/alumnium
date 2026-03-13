@@ -15,7 +15,7 @@ import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
 import { LlmContext } from "../LlmContext.js";
 import { agentPrompts } from "./prompts/bundledPrompts.js";
 import {
-  agentClassNameToPromptsAgentId,
+  agentClassNameToPromptsAgentKind,
   PROVIDER_TO_PROMPTS_DEV,
   type AgentPrompts,
 } from "./prompts/prompts.js";
@@ -31,7 +31,10 @@ const convertInputToPromptValue =
 // const agentPrompts = await loadAgentPrompts();
 
 export class BaseAgentDebugLogDetail {
-  constructor(public payload: unknown) {}
+  payload: unknown;
+  constructor(payload: unknown) {
+    this.payload = payload;
+  }
 }
 
 export namespace BaseAgentResponse {
@@ -91,7 +94,7 @@ export class BaseAgent {
 
     const dev = PROVIDER_TO_PROMPTS_DEV[Model.current.provider];
     const prompts =
-      agentPrompts[agentClassNameToPromptsAgentId(this.constructor.name)]?.[
+      agentPrompts[agentClassNameToPromptsAgentKind(this.constructor.name)]?.[
         dev
       ];
     always(prompts);

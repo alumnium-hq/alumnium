@@ -1,6 +1,6 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
-import { XML } from "../xml/index.js";
+import { Xml } from "../Xml.js";
 import type { AccessibilityElement } from "./AccessibilityElement.js";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
 
@@ -27,7 +27,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     this.#addRawIds(root);
 
     // Serialize back to string
-    this.#raw = XML.format([root]);
+    this.#raw = Xml.format([root]);
     return this.#raw;
   }
 
@@ -36,7 +36,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     this.#nextRawId += 1;
     elem.attribs["raw_id"] = String(this.#nextRawId);
     for (const child of elem.children) {
-      const childEl = XML.nodeAsTag(child);
+      const childEl = Xml.nodeAsTag(child);
       if (!childEl) {
         continue;
       }
@@ -61,7 +61,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
         return elem;
       }
       for (const child of elem.children) {
-        const childEl = XML.nodeAsTag(child);
+        const childEl = Xml.nodeAsTag(child);
         if (!childEl) {
           continue;
         }
@@ -101,7 +101,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
         return elem;
       }
       for (const child of elem.children) {
-        const childEl = XML.nodeAsTag(child);
+        const childEl = Xml.nodeAsTag(child);
         if (!childEl) {
           continue;
         }
@@ -121,16 +121,16 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Convert the scoped element back to XML string
-    const scopedXml = XML.format([targetElem]);
+    const scopedXml = Xml.format([targetElem]);
 
     return new XCUITestAccessibilityTree(scopedXml);
   }
 
   #parseRoot(xml: string): Element {
-    const roots = XML.parseRootChildren(xml);
+    const roots = Xml.parseRootChildren(xml);
     let root: Element | null = null;
     for (const node of roots) {
-      const el = XML.nodeAsTag(node);
+      const el = Xml.nodeAsTag(node);
       if (el) {
         root = el;
         break;

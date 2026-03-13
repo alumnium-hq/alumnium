@@ -3,42 +3,70 @@ import { getLogger } from "./utils/logger.js";
 
 const logger = getLogger(import.meta.url);
 
-export enum Provider {
-  AZURE_FOUNDRY = "azure_foundry",
-  AZURE_OPENAI = "azure_openai",
-  ANTHROPIC = "anthropic",
-  AWS_ANTHROPIC = "aws_anthropic",
-  AWS_META = "aws_meta",
-  DEEPSEEK = "deepseek",
-  GITHUB = "github",
-  GOOGLE = "google",
-  MISTRALAI = "mistralai",
-  OLLAMA = "ollama",
-  OPENAI = "openai",
-  XAI = "xai",
+export namespace Model {
+  export type Schema = z.infer<typeof Model.Schema>;
+
+  export type Dev = z.infer<typeof Model.Dev>;
+
+  export type Provider = z.infer<typeof Model.Provider>;
 }
 
 export class ModelName {
-  static readonly DEFAULT: Record<Provider, string> = {
-    [Provider.AZURE_FOUNDRY]: "gpt-5-nano",
-    [Provider.AZURE_OPENAI]: "gpt-5-nano",
-    [Provider.ANTHROPIC]: "claude-haiku-4-5-20251001",
-    [Provider.AWS_ANTHROPIC]: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-    [Provider.AWS_META]: "us.meta.llama4-maverick-17b-instruct-v1:0",
-    [Provider.DEEPSEEK]: "deepseek-reasoner",
-    [Provider.GITHUB]: "gpt-4o-mini",
-    [Provider.GOOGLE]: "gemini-3-flash-preview",
-    [Provider.MISTRALAI]: "mistral-medium-2505",
-    [Provider.OLLAMA]: "mistral-small3.1",
-    [Provider.OPENAI]: "gpt-5-nano-2025-08-07",
-    [Provider.XAI]: "grok-4-1-fast-reasoning",
+  static readonly DEFAULT: Record<Model.Provider, string> = {
+    azure_foundry: "gpt-5-nano",
+    azure_openai: "gpt-5-nano",
+    anthropic: "claude-haiku-4-5-20251001",
+    aws_anthropic: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    aws_meta: "us.meta.llama4-maverick-17b-instruct-v1:0",
+    deepseek: "deepseek-reasoner",
+    github: "gpt-4o-mini",
+    google: "gemini-3-flash-preview",
+    mistralai: "mistral-medium-2505",
+    ollama: "mistral-small3.1",
+    openai: "gpt-5-nano-2025-08-07",
+    xai: "grok-4-1-fast-reasoning",
   };
 }
 
 let currentModel: Model | undefined;
 
 export class Model {
-  provider: Provider;
+  static PROVIDERS = [
+    "azure_foundry",
+    "azure_openai",
+    "anthropic",
+    "aws_anthropic",
+    "aws_meta",
+    "deepseek",
+    "github",
+    "google",
+    "mistralai",
+    "ollama",
+    "openai",
+    "xai",
+  ] as const;
+
+  static Provider = z.enum(Model.PROVIDERS);
+
+  static DEVS = [
+    "anthropic",
+    "google",
+    "deepseek",
+    "meta",
+    "mistralai",
+    "ollama",
+    "xai",
+    "openai",
+  ] as const;
+
+  static Dev = z.enum(Model.DEVS);
+
+  static Schema = z.object({
+    provider: Model.Provider,
+    name: z.string(),
+  });
+
+  provider: Model.Provider;
   name: string;
 
   static get current(): Model {
@@ -46,22 +74,22 @@ export class Model {
     return currentModel;
   }
 
-  constructor(provider?: Provider | string, name?: string) {
+  constructor(provider?: Model.Provider | undefined, name?: string) {
     // Convert string to Provider enum if needed
-    this.provider =
-      (provider && Provider[provider.toUpperCase() as keyof typeof Provider]) ||
-      Provider.OPENAI;
+    this.provider = provider || "openai";
 
     this.name = name || ModelName.DEFAULT[this.provider];
   }
 
   private static initialize() {
     const alumniumModel = process.env.ALUMNIUM_MODEL || "";
-    let [provider, name] = alumniumModel.toLowerCase().split("/");
+    let [providerStr, name] = alumniumModel.toLowerCase().split("/");
 
-    if (!provider && process.env.GITHUB_ACTIONS) {
+    let provider = Model.Provider.safeParse(providerStr).data;
+
+    if (!providerStr && process.env.GITHUB_ACTIONS) {
       provider = "github";
-      name = ModelName.DEFAULT[Provider.GITHUB];
+      name = ModelName.DEFAULT.github;
     }
 
     const model = new Model(provider, name);
@@ -88,25 +116,3 @@ export class Model {
 
   //#endregion
 }
-
-export namespace Model {
-  export const Schema = z.object({
-    provider: z.enum(Provider),
-    name: z.string(),
-  });
-
-  export type Schema = z.infer<typeof Schema>;
-}
-
-export type Dev = (typeof DEVS)[number];
-
-export const DEVS = [
-  "anthropic",
-  "google",
-  "deepseek",
-  "meta",
-  "mistralai",
-  "ollama",
-  "xai",
-  "openai",
-] as const;

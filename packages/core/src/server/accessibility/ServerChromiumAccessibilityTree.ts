@@ -2,7 +2,7 @@ import { always } from "alwaysly";
 import { type ChildNode, Element, Node, Text } from "domhandler";
 import { textContent } from "domutils";
 import { pythonicId } from "../../pythonic/pythonicId.js";
-import { XML } from "../../xml/index.js";
+import { Xml } from "../../Xml.js";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.js";
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
@@ -25,7 +25,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     this.tree = {}; // Initialize the result dictionary
 
     // Parse the raw XML
-    const roots = XML.parseAnyRootChildren(xml);
+    const roots = Xml.parseAnyRootChildren(xml);
 
     // Process each root element
     for (const rootElem of roots) {
@@ -38,8 +38,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
   /** Convert XML element to node dict structure with simplified IDs. */
   #xmlToNode(node: Node): ChromiumNode {
-    const elem = XML.nodeAsTag(node);
-    const text = XML.nodeAsText(node);
+    const elem = Xml.nodeAsTag(node);
+    const text = Xml.nodeAsText(node);
 
     // Assign simplified ID
     const simplifiedId = elem ? this.getNextId() : -1;
@@ -82,7 +82,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     // Process children recursively
-    const nodeChildren = XML.nodeAsNodeWithChildren(node)?.children || [];
+    const nodeChildren = Xml.nodeAsNodeWithChildren(node)?.children || [];
     const children: ChromiumNode[] = [];
     for (const childElem of nodeChildren) {
       const childNode = this.#xmlToNode(childElem);
@@ -171,7 +171,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     // Convert the XML elements to a string
-    const xmlString = XML.format(rootElements);
+    const xmlString = Xml.format(rootElements);
 
     return xmlString;
   }
@@ -181,7 +181,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
    * and returns a list of all content (names) in the current subtree.
    */
   #pruneRedundantName(node: ChildNode): string[] {
-    const elem = XML.nodeAsTag(node);
+    const elem = Xml.nodeAsTag(node);
     // RootWebArea should remain untouched - only process children
     if (elem?.tagName === "RootWebArea") {
       const descendantContent: string[] = [];
@@ -238,8 +238,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
   }
 
   #getTexts(node: ChildNode): string[] {
-    const elem = XML.nodeAsTag(node);
-    const text = XML.nodeAsText(node);
+    const elem = Xml.nodeAsTag(node);
+    const text = Xml.nodeAsText(node);
     const texts = new Set<string>();
     if (elem?.attribs.name) {
       texts.add(elem.attribs.name);

@@ -1,18 +1,16 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { type Dev, Provider } from "../../../Model.js";
+import { type Model } from "../../../Model.js";
+import type { Agent } from "../Agent.js";
 
 //#region Types
 
 export type AgentPrompts = {
-  [AgentId: AgentPrompts.AgentId]: AgentPrompts.DevPrompts;
+  [Kind in Agent.Kind]: AgentPrompts.DevPrompts;
 };
 
 export namespace AgentPrompts {
-  export type AgentId = string & { [agentIdBrand]: true };
-  declare const agentIdBrand: unique symbol;
-
   export type DevPrompts = {
     [DevId: string]: RolePrompts;
   };
@@ -24,7 +22,7 @@ export namespace AgentPrompts {
   export type Role = "system" | "user";
 
   export type ProviderToDev = {
-    [Provider_ in Provider]: Dev;
+    [Provider in Model.Provider]: Model.Dev;
   };
 }
 
@@ -33,18 +31,18 @@ export namespace AgentPrompts {
 //#region Consts
 
 export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
-  [Provider.ANTHROPIC]: "anthropic",
-  [Provider.AWS_ANTHROPIC]: "anthropic",
-  [Provider.GOOGLE]: "google",
-  [Provider.DEEPSEEK]: "deepseek",
-  [Provider.AWS_META]: "meta",
-  [Provider.MISTRALAI]: "mistralai",
-  [Provider.OLLAMA]: "ollama",
-  [Provider.XAI]: "xai",
-  [Provider.AZURE_FOUNDRY]: "openai",
-  [Provider.AZURE_OPENAI]: "openai",
-  [Provider.GITHUB]: "openai",
-  [Provider.OPENAI]: "openai",
+  anthropic: "anthropic",
+  aws_anthropic: "anthropic",
+  google: "google",
+  deepseek: "deepseek",
+  aws_meta: "meta",
+  mistralai: "mistralai",
+  ollama: "ollama",
+  xai: "xai",
+  azure_foundry: "openai",
+  azure_openai: "openai",
+  github: "openai",
+  openai: "openai",
 };
 
 //#endregion
@@ -52,7 +50,7 @@ export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
 //#region loadAgentPrompts
 
 export async function loadAgentPrompts(): Promise<AgentPrompts> {
-  const prompts: AgentPrompts = {};
+  const prompts: Partial<AgentPrompts> = {};
 
   const curFilePath = fileURLToPath(import.meta.url);
   const rootDirPath = path.dirname(curFilePath);
@@ -61,8 +59,8 @@ export async function loadAgentPrompts(): Promise<AgentPrompts> {
 
   await Promise.all(
     agentDirs.map(async (agentDir) => {
-      const agentId = agentDir.name as AgentPrompts.AgentId;
-      const agentPrompts = (prompts[agentId] ??= {});
+      const agentKind = agentDir.name as Agent.Kind;
+      const agentPrompts = (prompts[agentKind] ??= {});
 
       const devDirs = await getDirs(agentDir.path);
       await Promise.all(
@@ -77,7 +75,7 @@ export async function loadAgentPrompts(): Promise<AgentPrompts> {
     }),
   );
 
-  return prompts;
+  return prompts as AgentPrompts;
 }
 
 namespace GetDirs {
@@ -108,17 +106,17 @@ function loadPrompt(devDir: string, role: AgentPrompts.Role): Promise<string> {
 
 //#endregion
 
-//#region agentClassNameToPromptsAgentId
+//#region agentClassNameToPromptsAgentKind
 
-export function agentClassNameToPromptsAgentId(
+export function agentClassNameToPromptsAgentKind(
   className: string,
-): AgentPrompts.AgentId {
+): Agent.Kind {
   // Convert CamelCase to snake_case (e.g., ChangesAnalyzer -> changes_analyzer)
-  const agentId = className
+  const kind = className
     .replace(/Agent$/, "")
     .replace(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/g, "-")
-    .toLowerCase() as AgentPrompts.AgentId;
-  return agentId;
+    .toLowerCase();
+  return kind as Agent.Kind;
 }
 
 //#endregion

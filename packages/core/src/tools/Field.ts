@@ -12,7 +12,7 @@ export interface FieldMetadata {
   type: JSONSchemaType;
   description: string;
   required?: boolean | undefined; // Defaults to true if not specified
-  enum?: string[] | undefined;
+  enum?: readonly string[] | undefined;
   items?: { type: JSONSchemaType } | undefined; // Type of array elements (for array types)
 }
 
@@ -33,7 +33,7 @@ export function field(options: {
   description: string;
   paramName?: string;
   required?: boolean;
-  enum?: string[];
+  enum?: readonly string[];
   items?: { type: JSONSchemaType };
 }): FieldMetadata {
   return {

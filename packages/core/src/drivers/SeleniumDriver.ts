@@ -19,7 +19,7 @@ import { TypeTool } from "../tools/TypeTool.js";
 import { UploadTool } from "../tools/UploadTool.js";
 import { getLogger } from "../utils/logger.js";
 import { BaseDriver } from "./BaseDriver.js";
-import { Key } from "./keys.js";
+import { Keys } from "./keys.js";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
@@ -267,12 +267,12 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @autoswitchToNewTab
-  async pressKey(key: Key): Promise<void> {
-    const keyMap: Record<Key, string> = {
-      [Key.BACKSPACE]: SeleniumKey.BACK_SPACE,
-      [Key.ENTER]: SeleniumKey.ENTER,
-      [Key.ESCAPE]: SeleniumKey.ESCAPE,
-      [Key.TAB]: SeleniumKey.TAB,
+  async pressKey(key: Keys.Key): Promise<void> {
+    const keyMap: Record<Keys.Key, string> = {
+      backspace: SeleniumKey.BACK_SPACE,
+      enter: SeleniumKey.ENTER,
+      escape: SeleniumKey.ESCAPE,
+      tab: SeleniumKey.TAB,
     };
 
     const actions = this.driver.actions({ async: true });

@@ -1,7 +1,7 @@
 import type { ToolDefinition } from "@langchain/core/language_models/base";
 import z from "zod";
 import { AppId } from "../AppId.js";
-import { Provider } from "../Model.js";
+import { Model } from "../Model.js";
 import { SessionId } from "./session/SessionId.js";
 
 //#region Types
@@ -64,7 +64,7 @@ export const GetSessionsResponse = z.array(SessionId);
 
 export const CreateSessionBody = z.object({
   platform: Platform,
-  provider: z.enum(Provider),
+  provider: Model.Provider,
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),
   planner: z.boolean().default(true),

@@ -16,7 +16,7 @@ export namespace BaseAgentElementsCache {
     generation: Lchain.StoredGeneration;
     memoryKey: ElementsCache.MemoryKey;
     cacheHash: ElementsCache.CacheHash;
-    agentType: ElementsCache.AgentType;
+    agentKind: ElementsCache.EligibleAgentKind;
     elements: ElementsCache.Elements;
     instruction: ElementsCache.Instruction;
   }
@@ -52,7 +52,7 @@ export abstract class BaseAgentElementsCache<
       generation,
       memoryKey,
       cacheHash,
-      agentType,
+      agentKind,
       elements,
       instruction,
     } = props;
@@ -61,7 +61,7 @@ export abstract class BaseAgentElementsCache<
       generation,
       cacheHash,
       elements,
-      agentType,
+      agentKind,
       app: this.app,
       instruction,
     };
