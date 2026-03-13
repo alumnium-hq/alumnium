@@ -31,7 +31,7 @@ export namespace ActorAgent {
 
 export class ActorAgent extends BaseAgent {
   static Meta = z.object({
-    type: z.literal("actor"),
+    kind: z.literal("actor"),
     goal: BaseAgent.Goal,
     step: BaseAgent.Step,
     treeXml: z.string(),
@@ -75,7 +75,7 @@ export class ActorAgent extends BaseAgent {
     });
 
     const meta: ActorAgent.Meta = {
-      type: "actor",
+      kind: "actor",
       goal: goal as BaseAgent.Goal,
       step: step as BaseAgent.Step,
       treeXml,

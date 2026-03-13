@@ -12,7 +12,7 @@ import { UploadTool } from "../tools/UploadTool.js";
 import { getLogger } from "../utils/logger.js";
 import { retry } from "../utils/retry.js";
 import { BaseDriver } from "./BaseDriver.js";
-import { Key } from "./keys.js";
+import type { Keys } from "./keys.js";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
@@ -297,12 +297,12 @@ export class PlaywrightDriver extends BaseDriver {
     await element.hover();
   }
 
-  async pressKey(key: Key): Promise<void> {
-    const keyMap: Record<Key, string> = {
-      [Key.BACKSPACE]: "Backspace",
-      [Key.ENTER]: "Enter",
-      [Key.ESCAPE]: "Escape",
-      [Key.TAB]: "Tab",
+  async pressKey(key: Keys.Key): Promise<void> {
+    const keyMap: Record<Keys.Key, string> = {
+      backspace: "Backspace",
+      enter: "Enter",
+      escape: "Escape",
+      tab: "Tab",
     };
 
     await this.autoswitchToNewTabAction(() =>

@@ -18,7 +18,7 @@ export function convertToolsToSchemas(
       {
         type: string;
         description: string;
-        enum?: string[];
+        enum?: readonly string[];
         items?: { type: string };
       }
     > = {};

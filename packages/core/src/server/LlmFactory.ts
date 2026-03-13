@@ -15,7 +15,7 @@ import {
 import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";
 import { never } from "alwaysly";
-import { Model, Provider } from "../Model.js";
+import { Model } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
 
 const logger = getLogger(import.meta.url);
@@ -31,33 +31,34 @@ export class LlmFactory {
     logger.info(`Creating LLM for model: ${model.provider}/${model.name}`);
 
     switch (model.provider) {
-      case Provider.AZURE_FOUNDRY:
-      case Provider.AZURE_OPENAI:
+      case "azure_foundry":
+      case "azure_openai":
         return LlmFactory.createAzureLlm(model, cache);
-      case Provider.ANTHROPIC:
+      case "anthropic":
         return LlmFactory.createAnthropicLlm(model, cache);
-      case Provider.AWS_ANTHROPIC:
-      case Provider.AWS_META:
+      case "aws_anthropic":
+      case "aws_meta":
         return LlmFactory.createAwsLlm(model, cache);
-      case Provider.DEEPSEEK:
+      case "deepseek":
         return LlmFactory.createDeepSeekLlm(model, cache);
-      case Provider.GOOGLE:
+      case "google":
         return LlmFactory.createGoogleLlm(model, cache);
-      case Provider.GITHUB:
+      case "github":
         return LlmFactory.createGithubLlm(model, cache);
-      case Provider.MISTRALAI:
+      case "mistralai":
         return LlmFactory.createMistralAiLlm(model, cache);
-      case Provider.OLLAMA:
+      case "ollama":
         return LlmFactory.createOllamaLlm(model, cache);
-      case Provider.OPENAI:
+      case "openai":
         return LlmFactory.createOpenAiLlm(model, cache);
-      case Provider.XAI:
+      case "xai":
         return LlmFactory.createXAiLlm(model, cache);
     }
   }
 
   static createAzureLlm(model: Model, cache: BaseCache): BaseChatModel {
-    const variant = Provider.AZURE_FOUNDRY ? "Azure Foundry" : "Azure OpenAI";
+    const variant =
+      model.provider === "azure_foundry" ? "Azure Foundry" : "Azure OpenAI";
     logger.debug(`Creating ${variant} LLM with model ${model.name}`);
 
     const defaultFields: Partial<AzureChatOpenAIFields> = {
@@ -66,9 +67,9 @@ export class LlmFactory {
       cache,
     };
     const fields =
-      model.provider === Provider.AZURE_FOUNDRY
+      model.provider === "azure_foundry"
         ? LlmFactory.azureFoundryLlmFields(model, defaultFields)
-        : model.provider === Provider.AZURE_OPENAI
+        : model.provider === "azure_openai"
           ? LlmFactory.azureOpenAiLlmFields(model, defaultFields)
           : never();
 
@@ -177,7 +178,7 @@ export class LlmFactory {
     const region = process.env.AWS_REGION_NAME ?? "us-east-1";
     const additionalModelRequestFields: DocumentType = {};
 
-    if (model.provider === Provider.AWS_ANTHROPIC) {
+    if (model.provider === "aws_anthropic") {
       additionalModelRequestFields.thinking = {
         type: "enabled",
         budget_tokens: 1024, // Minimum budget for Anthropic thinking

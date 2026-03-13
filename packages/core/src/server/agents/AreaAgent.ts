@@ -32,7 +32,7 @@ export namespace AreaAgent {
 
 export class AreaAgent extends BaseAgent {
   static Meta = z.object({
-    type: z.literal("area"),
+    kind: z.literal("area"),
     description: z.string(),
     treeXml: z.string(),
   });
@@ -55,7 +55,7 @@ export class AreaAgent extends BaseAgent {
     });
 
     const meta: AreaAgent.Meta = {
-      type: "area",
+      kind: "area",
       description,
       treeXml,
     };

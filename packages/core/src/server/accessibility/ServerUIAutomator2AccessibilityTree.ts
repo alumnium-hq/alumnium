@@ -1,6 +1,6 @@
 import { always } from "alwaysly";
 import { Element, Node } from "domhandler";
-import { XML } from "../../xml/index.js";
+import { Xml } from "../../Xml.js";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.js";
 
 export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibilityTree {
@@ -23,13 +23,13 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
 
     let roots: Node[];
     try {
-      roots = XML.parseMultirootChildren(cleanedXmlContent);
+      roots = Xml.parseMultirootChildren(cleanedXmlContent);
     } catch (error) {
       throw new Error(`Invalid XML string: ${error}`);
     }
 
     for (const root of roots) {
-      const rootEl = XML.nodeAsTag(root);
+      const rootEl = Xml.nodeAsTag(root);
       always(rootEl);
       for (const appElement of rootEl.children) {
         const internalNode = this.#parseElement(appElement);
@@ -40,8 +40,8 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
     }
   }
 
-  #parseElement(nodeArg: XML.Node): InternalNode | null {
-    const element = XML.nodeAsTag(nodeArg);
+  #parseElement(nodeArg: Xml.Node): InternalNode | null {
+    const element = Xml.nodeAsTag(nodeArg);
     // NOTE: In Python's XML implementation, non-element nodes (like text nodes)
     // aren't available as children of an element, so simply ignoring them here.
     if (!element) return null;
@@ -229,7 +229,7 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
       convertDictToXml(ele, rootXml);
     }
 
-    return XML.format([rootXml]);
+    return Xml.format([rootXml]);
   }
 }
 
