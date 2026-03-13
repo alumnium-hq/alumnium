@@ -6,13 +6,17 @@ import type { Browser, BrowserContext, Page } from "playwright-core";
 import { chromium } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { never } from "zod";
+import {
+  remote as remoteWebdriverio,
+  type Browser as WebdriverIoBrowser,
+} from "webdriverio";
 import { FsStore } from "../FsStore.js";
+import { TypeUtils } from "../typeUtils.js";
 import { getLogger } from "../utils/logger.js";
 
 const logger = getLogger(import.meta.url);
 
-export type McpDriver = Page | WebDriver;
+export type McpDriver = Page | WebDriver | WebdriverIoBrowser;
 
 export namespace McpDriver {
   export type PlaywrightCookie = Parameters<
@@ -34,6 +38,8 @@ export namespace McpDriver {
   export interface SeleniumCdpConnection {
     send(method: string, params: Record<string, unknown>): Promise<unknown>;
   }
+
+  export type WebdriverioProps = Parameters<typeof remoteWebdriverio>[0];
 }
 
 export function createChromeDriver(
@@ -155,16 +161,96 @@ export async function createSeleniumDriver(
   return driver;
 }
 
+/**
+ * Create Appium iOS driver from capabilities.
+ */
 export async function createIosDriver(
-  _capabilities: McpDriver.Capabilities,
-  _serverUrl: string | null | undefined,
-): Promise<any> {
-  never();
+  capabilities: McpDriver.Capabilities,
+  serverUrl: string | null | undefined,
+): Promise<WebdriverIoBrowser> {
+  const settings = capabilities["appium:settings"] || {};
+  delete capabilities["appium:settings"];
+
+  const remoteServer =
+    serverUrl || process.env.ALUMNIUM_APPIUM_SERVER || "http://localhost:4723";
+
+  logger.info(`Creating iOS driver (server=${remoteServer})`);
+
+  const remoteServerUrl = new URL(remoteServer);
+  const remoteOptions =
+    TypeUtils.polyfillExactOptionalPropertyTypes<McpDriver.WebdriverioProps>({
+      protocol: remoteServerUrl.protocol.replace(":", ""),
+      hostname: remoteServerUrl.hostname,
+      port:
+        Number.parseInt(remoteServerUrl.port, 10) ||
+        (remoteServerUrl.protocol === "https:" ? 443 : 80),
+      path: `${remoteServerUrl.pathname}${remoteServerUrl.search}`,
+      capabilities,
+      enableDirectConnect: true,
+    });
+
+  if (process.env.LT_USERNAME) {
+    remoteOptions.user = process.env.LT_USERNAME;
+  }
+  if (process.env.LT_ACCESS_KEY) {
+    remoteOptions.key = process.env.LT_ACCESS_KEY;
+  }
+
+  const driver = await remoteWebdriverio(remoteOptions);
+
+  if (Object.keys(settings).length) {
+    logger.debug("Applying Appium settings: {settings}", { settings });
+    await driver.updateSettings(settings);
+  }
+
+  logger.debug("iOS driver created successfully");
+  return driver;
 }
 
+/**
+ * Create Appium Android driver from capabilities.
+ */
 export async function createAndroidDriver(
-  _capabilities: McpDriver.Capabilities,
-  _serverUrl: string | null | undefined,
-): Promise<any> {
-  never();
+  capabilities: McpDriver.Capabilities,
+  serverUrl: string | null | undefined,
+): Promise<WebdriverIoBrowser> {
+  const settings =
+    (capabilities["appium:settings"] as Record<string, unknown> | undefined) ||
+    {};
+  delete capabilities["appium:settings"];
+
+  const remoteServer =
+    serverUrl || process.env.ALUMNIUM_APPIUM_SERVER || "http://localhost:4723";
+
+  logger.info(`Creating Android driver (server=${remoteServer})`);
+
+  const remoteServerUrl = new URL(remoteServer);
+  const remoteOptions =
+    TypeUtils.polyfillExactOptionalPropertyTypes<McpDriver.WebdriverioProps>({
+      protocol: remoteServerUrl.protocol.replace(":", ""),
+      hostname: remoteServerUrl.hostname,
+      port:
+        +remoteServerUrl.port ||
+        (remoteServerUrl.protocol === "https:" ? 443 : 80),
+      path: `${remoteServerUrl.pathname}${remoteServerUrl.search}`,
+      capabilities,
+      enableDirectConnect: true,
+    });
+
+  if (process.env.LT_USERNAME) {
+    remoteOptions.user = process.env.LT_USERNAME;
+  }
+  if (process.env.LT_ACCESS_KEY) {
+    remoteOptions.key = process.env.LT_ACCESS_KEY;
+  }
+
+  const driver = await remoteWebdriverio(remoteOptions);
+
+  if (Object.keys(settings).length) {
+    logger.debug("Applying Appium settings: {settings}", { settings });
+    await driver.updateSettings(settings);
+  }
+
+  logger.debug("Android driver created successfully");
+  return driver;
 }
