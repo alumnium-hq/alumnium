@@ -1,10 +1,10 @@
 import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { AppId } from "../../AppId.js";
+import type { Driver } from "../../drivers/Driver.js";
 import { createLlmUsageStats, LlmUsageStats } from "../../llm/llmSchema.js";
 import { Model } from "../../Model.js";
 import { getLogger } from "../../utils/logger.js";
-import { Platform } from "../Platform.js";
 import { Session } from "./Session.js";
 import { SessionId } from "./SessionId.js";
 
@@ -12,7 +12,7 @@ const logger = getLogger(import.meta.url);
 
 export namespace SessionManager {
   export interface CreateSessionProps {
-    platform: Platform;
+    platform: Driver.Platform;
     provider: Model.Provider;
     name?: string | undefined;
     tools: ToolDefinition[];

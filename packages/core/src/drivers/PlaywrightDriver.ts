@@ -18,7 +18,7 @@ import type { Keys } from "./keys.js";
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import { AppId } from "../AppId.js";
-import { Platform } from "../server/Platform.js";
+import type { Driver } from "./Driver.js";
 import {
   waiterScriptSource,
   waitForScriptSource,
@@ -61,7 +61,7 @@ export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
   page: Page;
   private _pages: Page[] = [];
-  public platform: Platform = "chromium";
+  public platform: Driver.Platform = "chromium";
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     DragAndDropTool,
