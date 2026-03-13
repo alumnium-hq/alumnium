@@ -1,8 +1,27 @@
 {
   "name": "@alumnium/system-tests",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "description": "Temporary? package holding system tests for Alumnium",
+  "keywords": [
+    "ai",
+    "alumnium",
+    "appium",
+    "automation",
+    "playwright",
+    "selenium",
+    "webdriverio"
+  ],
+  "license": "MIT",
+  "author": "Alex Rodionov <p0deje@gmail.com>",
+  "contributors": [
+    "Alex Rodionov <p0deje@gmail.com>",
+    "Tatiana Shepeleva <tati.shep@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alumnium-hq/alumnium.git"
+  },
   "type": "module",
   "scripts": {
     "clean": "rm -rf .alumnium/cache log/ playwright-report/ test-results/",
@@ -12,32 +31,13 @@
     "examples": "bun run examples:appium && bun run examples:playwright && bun run examples:selenium",
     "check-format": "prettier --check . && eslint .",
     "format": "prettier --write . && eslint . --fix",
-    "types": "tsc --noEmit",
-    "types:watch": "tsc --noEmit --watch"
-  },
-  "keywords": [
-    "ai",
-    "alumnium",
-    "automation",
-    "appium",
-    "playwright",
-    "selenium",
-    "webdriverio"
-  ],
-  "author": "Alex Rodionov <p0deje@gmail.com>",
-  "contributors": [
-    "Alex Rodionov <p0deje@gmail.com>",
-    "Tatiana Shepeleva <tati.shep@gmail.com>"
-  ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/alumnium-hq/alumnium.git"
+    "types": "tsgo --noEmit",
+    "types:watch": "tsgo --noEmit --watch"
   },
   "dependencies": {
-    "alumnium": "workspace:*",
     "@logtape/file": "^1.1.1",
     "@logtape/logtape": "^1.1.1",
+    "alumnium": "workspace:*",
     "alwaysly": "^0.4.0",
     "playwright": "^1.55.1",
     "selenium-webdriver": "^4.17.0",
