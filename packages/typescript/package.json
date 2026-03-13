@@ -29,8 +29,6 @@
     "examples:playwright": "ALUMNIUM_DRIVER=playwright playwright test",
     "examples:selenium": "ALUMNIUM_DRIVER=selenium mocha",
     "examples": "bun run examples:appium && bun run examples:playwright && bun run examples:selenium",
-    "check-format": "prettier --check . && eslint .",
-    "format": "prettier --write . && eslint . --fix",
     "types": "tsgo --noEmit",
     "types:watch": "tsgo --noEmit --watch"
   },
