@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 from playwright.sync_api import Error, Frame, Locator, Page, TimeoutError
 
+from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
@@ -36,6 +37,7 @@ class PlaywrightDriver(BaseDriver):
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
         self.page = page
+        self.full_page_screenshot = FULL_PAGE_SCREENSHOT
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -178,7 +180,7 @@ class PlaywrightDriver(BaseDriver):
 
     @property
     def screenshot(self) -> str:
-        return b64encode(self.page.screenshot()).decode()
+        return b64encode(self.page.screenshot(full_page=self.full_page_screenshot)).decode()
 
     def scroll_to(self, id: int):
         element = self.find_element(id)

@@ -99,6 +99,9 @@ export class SeleniumDriver extends BaseDriver {
 
   protected driver: ChromiumWebDriver;
   public platform: string = "chromium";
+  public fullPageScreenshot: boolean =
+    (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
+    "true";
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     DragAndDropTool,
@@ -319,7 +322,15 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async screenshot(): Promise<string> {
-    return await this.driver.takeScreenshot();
+    if (this.fullPageScreenshot) {
+      const result = (await this.executeCdpCommand("Page.captureScreenshot", {
+        format: "png",
+        captureBeyondViewport: true,
+      })) as { data: string };
+      return result.data;
+    } else {
+      return await this.driver.takeScreenshot();
+    }
   }
 
   async title(): Promise<string> {
