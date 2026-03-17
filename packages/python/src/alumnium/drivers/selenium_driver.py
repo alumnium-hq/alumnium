@@ -33,6 +33,7 @@ class SeleniumDriver(BaseDriver):
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
+        self.autoswitch_to_new_tab = True
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -341,6 +342,9 @@ class SeleniumDriver(BaseDriver):
         """Decorator that automatically switches to new tabs opened during method execution."""
 
         def wrapper(self: "SeleniumDriver", *args, **kwargs):
+            if not self.autoswitch_to_new_tab:
+                return func(self, *args, **kwargs)
+
             current_handles = self.driver.window_handles
             result = func(self, *args, **kwargs)
             new_handles = self.driver.window_handles

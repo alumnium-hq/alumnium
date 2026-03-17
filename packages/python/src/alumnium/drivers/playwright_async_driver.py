@@ -25,7 +25,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         self.client = None
         self.page = page
         self.loop = loop
-        self.autoswitch_to_new_tab = True  # Can be disabled via alumnium:options
+        self.autoswitch_to_new_tab = True
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,

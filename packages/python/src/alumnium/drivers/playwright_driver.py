@@ -36,6 +36,7 @@ class PlaywrightDriver(BaseDriver):
     def __init__(self, page: Page):
         self.client = page.context.new_cdp_session(page)
         self.page = page
+        self.autoswitch_to_new_tab = True
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -290,6 +291,11 @@ class PlaywrightDriver(BaseDriver):
 
     @contextmanager
     def _autoswitch_to_new_tab(self):
+        # If auto-switch is disabled, just yield without waiting for new pages
+        if not self.autoswitch_to_new_tab:
+            yield
+            return
+
         try:
             with self.page.context.expect_page(timeout=self.NEW_TAB_TIMEOUT) as new_page_info:
                 yield
