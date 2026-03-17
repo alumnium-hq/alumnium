@@ -29,4 +29,5 @@ export abstract class BaseDriver {
     selector: string,
     timeout?: number
   ): void | Promise<void>;
+  abstract printToPdf(filepath: string): void | Promise<void>;
 }

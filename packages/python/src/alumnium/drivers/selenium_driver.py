@@ -1,3 +1,4 @@
+from base64 import b64decode
 from pathlib import Path
 from typing import Callable
 from urllib.parse import urlparse
@@ -551,6 +552,11 @@ class SeleniumDriver(BaseDriver):
 
     def execute_script(self, script: str):
         self.driver.execute_script(script)
+
+    def print_to_pdf(self, filepath: str):
+        result = self.driver.execute_cdp_cmd("Page.printToPDF", {})  # type: ignore[attr-defined]
+        with open(filepath, "wb") as f:
+            f.write(b64decode(result["data"]))
 
     # Remote Chromium instances support CDP commands, but the Python bindings don't expose them.
     # https://github.com/SeleniumHQ/selenium/issues/14799

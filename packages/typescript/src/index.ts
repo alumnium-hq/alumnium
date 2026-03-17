@@ -14,4 +14,5 @@ export { DragSliderTool } from "./tools/DragSliderTool.js";
 export { ExecuteJavascriptTool } from "./tools/ExecuteJavascriptTool.js";
 export { NavigateBackTool } from "./tools/NavigateBackTool.js";
 export { NavigateToUrlTool } from "./tools/NavigateToUrlTool.js";
+export { PrintToPdfTool } from "./tools/PrintToPdfTool.js";
 export { ScrollTool } from "./tools/ScrollTool.js";

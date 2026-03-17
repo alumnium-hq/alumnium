@@ -223,6 +223,10 @@ export class AppiumDriver extends BaseDriver {
     throw new Error("waitForSelector not supported for this driver");
   }
 
+  printToPdf(): void {
+    throw new Error("Printing to PDF not supported for this driver");
+  }
+
   private async ensureNativeAppContext(): Promise<void> {
     if (!this.autoswitchContexts) {
       return;

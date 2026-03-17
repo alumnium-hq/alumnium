@@ -279,6 +279,9 @@ class PlaywrightDriver(BaseDriver):
     def execute_script(self, script: str):
         self.page.evaluate(f"() => {{ {script} }}")
 
+    def print_to_pdf(self, filepath: str):
+        self.page.pdf(path=filepath)
+
     def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         try:
