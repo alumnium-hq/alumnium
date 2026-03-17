@@ -78,6 +78,9 @@ export class PlaywrightDriver extends BaseDriver {
     10
   );
   public autoswitchToNewTab: boolean = true;
+  public fullPageScreenshot: boolean =
+    (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
+    "true";
 
   constructor(page: Page) {
     super();
@@ -329,7 +332,9 @@ export class PlaywrightDriver extends BaseDriver {
       error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   async screenshot(): Promise<string> {
-    const buffer = await this.page.screenshot();
+    const buffer = await this.page.screenshot({
+      fullPage: this.fullPageScreenshot,
+    });
     return buffer.toString("base64");
   }
 

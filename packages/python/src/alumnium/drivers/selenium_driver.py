@@ -11,6 +11,7 @@ from selenium.webdriver.remote.errorhandler import JavascriptException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
+from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
 from ..server.logutils import get_logger
 from ..tools.click_tool import ClickTool
@@ -33,6 +34,7 @@ class SeleniumDriver(BaseDriver):
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
+        self.full_page_screenshot = FULL_PAGE_SCREENSHOT
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -396,7 +398,16 @@ class SeleniumDriver(BaseDriver):
 
     @property
     def screenshot(self) -> str:
-        return self.driver.get_screenshot_as_base64()
+        if self.full_page_screenshot:
+            return self.driver.execute_cdp_cmd(
+                "Page.captureScreenshot",
+                {
+                    "format": "png",
+                    "captureBeyondViewport": True,
+                },
+            )["data"]  # type: ignore[attr-defined]
+        else:
+            return self.driver.get_screenshot_as_base64()
 
     def scroll_to(self, id: int):
         element = self.find_element(id)
