@@ -6,19 +6,19 @@ import {
   createMockDir,
   pushTeardown,
   setupBeforeEach,
-} from "../tests/mocks.js";
-import { FsStore } from "./FsStore.js";
+} from "../../tests/mocks.js";
+import { FileStore } from "./FileStore.js";
 
-describe("FsStore", () => {
+describe("FileStore", () => {
   describe("constructor", () => {
     it("initializes with a directory", () => {
       const dir = "test/store/dir";
-      const store = new FsStore(dir);
+      const store = new FileStore(dir);
       expect(store.dir).toBe("test/store/dir");
     });
 
     it("allows override dir in subclasses", () => {
-      const TestStore = class extends FsStore {
+      const TestStore = class extends FileStore {
         constructor(dir: string) {
           super(dir);
           this.defineDir(() => `overridden/${dir}`);
@@ -29,10 +29,10 @@ describe("FsStore", () => {
     });
 
     it("allows to define dynamic dir in subclasses", () => {
-      const TestStore = class extends FsStore {
+      const TestStore = class extends FileStore {
         #counter = 0;
         constructor() {
-          super(FsStore.DYNAMIC_DIR_SYMBOL);
+          super(FileStore.DYNAMIC_DIR_SYMBOL);
         }
 
         override get dir() {
@@ -53,7 +53,7 @@ describe("FsStore", () => {
 
   describe("resolve", () => {
     it("resolves path against base dir", () => {
-      const store = new FsStore("test/dir");
+      const store = new FileStore("test/dir");
       expect(store.resolve("./sub/dir")).toBe("test/dir/sub/dir");
     });
   });
@@ -61,7 +61,7 @@ describe("FsStore", () => {
   describe("ensureFilePath", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      const store = new FsStore(mockDir.path);
+      const store = new FileStore(mockDir.path);
       const relFilePath = "sub/dir/file.txt";
       const result = await store.ensureFilePath(relFilePath);
       return { mockDir, relFilePath, result };
@@ -88,7 +88,7 @@ describe("FsStore", () => {
   describe("ensureDir", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      const store = new FsStore(mockDir.path);
+      const store = new FileStore(mockDir.path);
       const relDirPath = "sub/dir";
       const result = await store.ensureDir(relDirPath);
       return { mockDir, relDirPath, result };
@@ -110,7 +110,7 @@ describe("FsStore", () => {
   describe("writeJson", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      const store = new FsStore(mockDir.path);
+      const store = new FileStore(mockDir.path);
       const relFilePath = "sub/dir/file.json";
       const data = { key: "value" };
       const result = await store.writeJson(relFilePath, data);
@@ -132,7 +132,7 @@ describe("FsStore", () => {
   describe("writeFile", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      const store = new FsStore(mockDir.path);
+      const store = new FileStore(mockDir.path);
       return { mockDir, store };
     });
 
@@ -162,7 +162,7 @@ describe("FsStore", () => {
   describe("readText", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      const store = new FsStore(mockDir.path);
+      const store = new FileStore(mockDir.path);
       return { mockDir, store };
     });
 
@@ -184,7 +184,7 @@ describe("FsStore", () => {
   describe("readJson", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      const store = new FsStore(mockDir.path);
+      const store = new FileStore(mockDir.path);
       return { mockDir, store };
     });
 
@@ -233,7 +233,7 @@ describe("FsStore", () => {
   describe("clear", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      const store = new FsStore(mockDir.path);
+      const store = new FileStore(mockDir.path);
       return { mockDir, store };
     });
 
@@ -258,7 +258,7 @@ describe("FsStore", () => {
   describe("subStore", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      const store = new FsStore(mockDir.path);
+      const store = new FileStore(mockDir.path);
       return { mockDir, store };
     });
 
@@ -276,61 +276,61 @@ describe("FsStore", () => {
     });
   });
 
-  describe("FsStore.subStore", () => {
+  describe("FileStore.subStore", () => {
     it("creates nested sub-store with env var param", async () => {
-      const subStore = FsStore.subStore("sub/dir", "default/dir");
+      const subStore = FileStore.subStore("sub/dir", "default/dir");
       expect(subStore.dir).toBe("sub/dir");
     });
 
     it("falls back to the default dir within global dir if the env var is undefined", () => {
-      const subStore = FsStore.subStore(undefined, "default/dir");
+      const subStore = FileStore.subStore(undefined, "default/dir");
       expect(subStore.dir).toBe(".alumnium/default/dir");
     });
 
     it("resolves empty string to '.'", () => {
-      const subStore = FsStore.subStore("", "default/dir");
+      const subStore = FileStore.subStore("", "default/dir");
       expect(subStore.dir).toBe(".");
     });
 
     it("allows to pass nested directory relative to base dir", () => {
-      expect(FsStore.subStore(".custom", "default", "nested/dir").dir).toBe(
+      expect(FileStore.subStore(".custom", "default", "nested/dir").dir).toBe(
         ".custom/nested/dir",
       );
-      expect(FsStore.subStore(undefined, "default", "nested/dir").dir).toBe(
+      expect(FileStore.subStore(undefined, "default", "nested/dir").dir).toBe(
         ".alumnium/default/nested/dir",
       );
     });
   });
 
-  describe("FsStore.subResolve", () => {
+  describe("FileStore.subResolve", () => {
     it("resolves nested sub-store path with env var param", () => {
-      const subDir = FsStore.subResolve("sub/dir", "default/dir");
+      const subDir = FileStore.subResolve("sub/dir", "default/dir");
       expect(subDir).toBe("sub/dir");
     });
 
     it("falls back to the default dir within global dir if the env var is undefined", () => {
-      const subDir = FsStore.subResolve(undefined, "default/dir");
+      const subDir = FileStore.subResolve(undefined, "default/dir");
       expect(subDir).toBe(".alumnium/default/dir");
     });
 
     it("resolves empty string to '.'", () => {
-      const subDir = FsStore.subResolve("", "default/dir");
+      const subDir = FileStore.subResolve("", "default/dir");
       expect(subDir).toBe(".");
     });
 
     it("allows to pass nested directory relative to base dir", () => {
-      expect(FsStore.subResolve(".custom", "default", "nested/dir")).toBe(
+      expect(FileStore.subResolve(".custom", "default", "nested/dir")).toBe(
         ".custom/nested/dir",
       );
-      expect(FsStore.subResolve(undefined, "default", "nested/dir")).toBe(
+      expect(FileStore.subResolve(undefined, "default", "nested/dir")).toBe(
         ".alumnium/default/nested/dir",
       );
     });
   });
 
-  describe("FsStore.globalSubDir", () => {
+  describe("FileStore.globalSubDir", () => {
     it("returns a subdirectory path under the global store directory", () => {
-      const result = FsStore.globalSubDir("sub/dir");
+      const result = FileStore.globalSubDir("sub/dir");
       expect(result).toBe(".alumnium/sub/dir");
     });
 
@@ -339,14 +339,14 @@ describe("FsStore", () => {
       pushTeardown(() => {
         delete process.env.ALUMNIUM_STORE_DIR;
       });
-      const result = FsStore.globalSubDir("sub/dir");
+      const result = FileStore.globalSubDir("sub/dir");
       expect(result).toBe(".custom/sub/dir");
     });
   });
 
-  describe("FsStore.globalDir", () => {
+  describe("FileStore.globalDir", () => {
     it("returns the default global store directory", () => {
-      expect(FsStore.globalDir).toBe(".alumnium");
+      expect(FileStore.globalDir).toBe(".alumnium");
     });
 
     it("allows to override global store directory via env var", () => {
@@ -354,7 +354,7 @@ describe("FsStore", () => {
       pushTeardown(() => {
         delete process.env.ALUMNIUM_STORE_DIR;
       });
-      expect(FsStore.globalDir).toBe(".custom");
+      expect(FileStore.globalDir).toBe(".custom");
     });
   });
 });

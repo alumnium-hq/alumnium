@@ -2,40 +2,40 @@ import { always, never } from "alwaysly";
 import fs from "fs/promises";
 import path from "path";
 import type z from "zod";
-import { getLogger } from "./utils/logger.js";
+import { getLogger } from "../utils/logger.js";
 
 const logger = getLogger(import.meta.url);
 
 const DEFAULT_GLOBAL_STORE_DIR = ".alumnium";
 
-export namespace FsStore {
+export namespace FileStore {
   export type DirGetter = () => string;
 }
 
 /**
  * File system-based store for state persistence, caching, artifacts, etc.
  */
-export class FsStore {
+export class FileStore {
   protected static DYNAMIC_DIR_SYMBOL = Symbol();
 
   /**
-   * Creates a new FsStore instance for the specified directory. When the
-   * `dir` parameter is `FsStore.DYNAMIC_DIR_SYMBOL`, the store is expected to
+   * Creates a new FileStore instance for the specified directory. When the
+   * `dir` parameter is `FileStore.DYNAMIC_DIR_SYMBOL`, the store is expected to
    * implement dynamic directory resolution by overriding the `dir` getter.
    *
-   * @param dir Directory path for the store or `FsStore.DYNAMIC_DIR_SYMBOL` for dynamic resolution.
+   * @param dir Directory path for the store or `FileStore.DYNAMIC_DIR_SYMBOL` for dynamic resolution.
    */
-  constructor(dir: string | typeof FsStore.DYNAMIC_DIR_SYMBOL) {
+  constructor(dir: string | typeof FileStore.DYNAMIC_DIR_SYMBOL) {
     // NOTE: This is done, so that internal methods always use the dir getter.
     // It allows subclasses to override the dir getter to provide dynamic
     // directory paths if needed, i.e., for dynamic cache resolution based on
     // app and model.
-    if (dir === FsStore.DYNAMIC_DIR_SYMBOL) return;
+    if (dir === FileStore.DYNAMIC_DIR_SYMBOL) return;
     always(typeof dir === "string");
     this.defineDir(() => dir);
   }
 
-  protected defineDir(get: FsStore.DirGetter) {
+  protected defineDir(get: FileStore.DirGetter) {
     Object.defineProperty(this, "dir", {
       get,
       enumerable: true,
@@ -157,14 +157,14 @@ export class FsStore {
    * resolved from the specified relative (to the current store directory) path.
    *
    * @param subDir Relative subdirectory path.
-   * @returns FsStore instance for the resolved subdirectory.
+   * @returns FileStore instance for the resolved subdirectory.
    */
-  subStore(subDir: string): FsStore {
+  subStore(subDir: string): FileStore {
     if (path.isAbsolute(subDir))
       throw new RangeError(
         `Subdirectory path '${subDir}' must be relative to the store directory '${this.dir}'`,
       );
-    return new FsStore(path.join(this.dir, subDir));
+    return new FileStore(path.join(this.dir, subDir));
   }
 
   /**
@@ -175,14 +175,14 @@ export class FsStore {
    * @param envDir Environment variable value, e.g. `process.env.ALUMNIUM_MCP_ARTIFACTS_DIR`.
    * @param defaultDir Default subdirectory under global store, e.g. `artifacts`.
    * @param nestedDir Optional nested directory under the resolved subdirectory, e.g. driver ID.
-   * @returns FsStore instance for the resolved directory.
+   * @returns FileStore instance for the resolved directory.
    */
   static subStore(
     envDir: string | undefined,
     defaultDir: string,
     nestedDir?: string,
-  ): FsStore {
-    return new FsStore(this.subResolve(envDir, defaultDir, nestedDir));
+  ): FileStore {
+    return new FileStore(this.subResolve(envDir, defaultDir, nestedDir));
   }
 
   /**

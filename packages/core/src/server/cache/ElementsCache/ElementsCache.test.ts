@@ -5,7 +5,7 @@ import {
   setupBeforeEach,
 } from "../../../../tests/mocks.js";
 import { AppId } from "../../../AppId.js";
-import { FsStore } from "../../../FsStore.js";
+import { FileStore } from "../../../FileStore/FileStore.js";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
 import { Lchain } from "../../../llm/Lchain.js";
 import { Model } from "../../../Model.js";
@@ -25,7 +25,7 @@ describe("ElementsCache", () => {
 
     const cacheDir = await createMockDir({ prefix: "elements-cache" });
 
-    pushMock(spyOn(FsStore, "globalSubDir").mockReturnValue(cacheDir.path));
+    pushMock(spyOn(FileStore, "globalSubDir").mockReturnValue(cacheDir.path));
     const cacheStore = new CacheStore(sessionContext);
 
     const llmContext = new LlmContext();

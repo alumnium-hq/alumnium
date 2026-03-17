@@ -10,7 +10,7 @@ import {
   remote as remoteWebdriverio,
   type Browser as WebdriverIoBrowser,
 } from "webdriverio";
-import { FsStore } from "../FsStore.js";
+import { FileStore } from "../FileStore/FileStore.js";
 import { TypeUtils } from "../typeUtils.js";
 import { getLogger } from "../utils/logger.js";
 
@@ -45,7 +45,7 @@ export namespace McpDriver {
 export function createChromeDriver(
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
-  artifactsStore: FsStore,
+  artifactsStore: FileStore,
 ): Promise<McpDriver> {
   const driverType = (process.env.ALUMNIUM_DRIVER || "selenium").toLowerCase();
   logger.info(`Creating Chrome driver using ${driverType}`);
@@ -61,7 +61,7 @@ export function createChromeDriver(
  */
 export async function createPlaywrightDriver(
   capabilities: McpDriver.Capabilities,
-  artifactsStore: FsStore,
+  artifactsStore: FileStore,
 ): Promise<Page> {
   const headless =
     (process.env.ALUMNIUM_PLAYWRIGHT_HEADLESS || "true").toLowerCase() ===
