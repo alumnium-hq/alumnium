@@ -316,6 +316,12 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _execute_script(self, script: str):
         await self.page.evaluate(f"() => {{ {script} }}")
 
+    def print_to_pdf(self, filepath: str):
+        self._run_async(self._print_to_pdf(filepath))
+
+    async def _print_to_pdf(self, filepath: str):
+        await self.page.pdf(path=filepath)
+
     async def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         try:

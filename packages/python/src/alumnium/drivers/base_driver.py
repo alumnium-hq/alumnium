@@ -78,3 +78,7 @@ class BaseDriver(ABC):
     @abstractmethod
     def switch_to_previous_tab(self):
         pass
+
+    @abstractmethod
+    def print_to_pdf(self, filepath: str):
+        pass

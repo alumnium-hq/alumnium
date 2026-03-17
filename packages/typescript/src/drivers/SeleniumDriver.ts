@@ -1,4 +1,5 @@
 import { readFileSync } from "fs";
+import { writeFile } from "fs/promises";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -435,6 +436,13 @@ export class SeleniumDriver extends BaseDriver {
 
   async executeScript(script: string): Promise<void> {
     await this.driver.executeScript(script);
+  }
+
+  async printToPdf(filepath: string): Promise<void> {
+    const { data } = (await this.executeCdpCommand("Page.printToPDF", {})) as {
+      data: string;
+    };
+    await writeFile(filepath, Buffer.from(data, "base64"));
   }
 
   async switchToNextTab(): Promise<void> {

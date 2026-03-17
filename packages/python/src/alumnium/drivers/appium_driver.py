@@ -259,3 +259,6 @@ class AppiumDriver(BaseDriver):
 
     def switch_to_previous_tab(self):
         raise NotImplementedError("Tab switching not supported for this driver")
+
+    def print_to_pdf(self, filepath: str):
+        raise NotImplementedError("Printing to PDF not supported for this driver")

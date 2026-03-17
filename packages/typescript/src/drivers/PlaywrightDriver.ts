@@ -418,6 +418,10 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.evaluate(`() => { ${script} }`);
   }
 
+  async printToPdf(filepath: string): Promise<void> {
+    await this.page.pdf({ path: filepath });
+  }
+
   async switchToNextTab(): Promise<void> {
     // Brief wait to allow popup handlers to complete
     await this.page.waitForTimeout(100);
