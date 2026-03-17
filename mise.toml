@@ -2,12 +2,14 @@
 bun = "latest"
 fnox = "latest"
 opencode = "latest"
+redis = "latest"
 
 [env]
 _.source = "scripts/env.sh"
 ALUMNIUM_MODEL = "azure_openai"
 ALUMNIUM_LOG_LEVEL = "debug"
 AZURE_OPENAI_API_VERSION = "2025-03-01-preview"
+ALUMNIUM_REMOTE_CACHE_REDIS_URL = "redis://localhost:6379"
 OPENCODE_CONFIG_DIR = "./.agents"
 
 [settings]
