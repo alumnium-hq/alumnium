@@ -1,8 +1,10 @@
 import { always, never } from "alwaysly";
-import fs from "fs/promises";
 import path from "path";
 import type z from "zod";
 import { getLogger } from "../utils/logger.js";
+import { FsFileStoreBackend } from "./backends/FsFileStoreBackend.js";
+import { RedisFileStoreBackend } from "./backends/RedisFileStoreBackend.js";
+import { S3FileStoreBackend } from "./backends/S3FileStoreBackend.js";
 
 const logger = getLogger(import.meta.url);
 
@@ -10,6 +12,32 @@ const DEFAULT_GLOBAL_STORE_DIR = ".alumnium";
 
 export namespace FileStore {
   export type DirGetter = () => string;
+
+  export interface Backend {
+    ensureFilePath(storeDir: string, relPath: string): Promise<string>;
+    ensureDir(storeDir: string, relPath: string): Promise<string>;
+    writeFile(
+      storeDir: string,
+      relPath: string,
+      data: Buffer | string,
+    ): Promise<string>;
+    readText(storeDir: string, relPath: string): Promise<string | null>;
+    clear(storeDir: string): Promise<void>;
+    listDirs(storeDir: string, relPath: string): Promise<string[]>;
+  }
+
+  export interface BackendInit<Kind extends string> {
+    kind: Kind;
+  }
+
+  export type BackendOption =
+    | "fs"
+    | RedisFileStoreBackend.Init
+    | S3FileStoreBackend.Init;
+
+  export interface Options {
+    backend?: BackendOption | undefined;
+  }
 }
 
 /**
@@ -17,6 +45,8 @@ export namespace FileStore {
  */
 export class FileStore {
   protected static DYNAMIC_DIR_SYMBOL = Symbol();
+  #backendOption: FileStore.BackendOption | undefined;
+  #backend: FileStore.Backend;
 
   /**
    * Creates a new FileStore instance for the specified directory. When the
@@ -25,7 +55,13 @@ export class FileStore {
    *
    * @param dir Directory path for the store or `FileStore.DYNAMIC_DIR_SYMBOL` for dynamic resolution.
    */
-  constructor(dir: string | typeof FileStore.DYNAMIC_DIR_SYMBOL) {
+  constructor(
+    dir: string | typeof FileStore.DYNAMIC_DIR_SYMBOL,
+    options: FileStore.Options = {},
+  ) {
+    this.#backendOption = options.backend;
+    this.#backend = this.#createBackend(options.backend);
+
     // NOTE: This is done, so that internal methods always use the dir getter.
     // It allows subclasses to override the dir getter to provide dynamic
     // directory paths if needed, i.e., for dynamic cache resolution based on
@@ -33,6 +69,19 @@ export class FileStore {
     if (dir === FileStore.DYNAMIC_DIR_SYMBOL) return;
     always(typeof dir === "string");
     this.defineDir(() => dir);
+  }
+
+  #createBackend(
+    backend: FileStore.BackendOption | undefined,
+  ): FileStore.Backend {
+    if (!backend || backend === "fs") return new FsFileStoreBackend();
+
+    switch (backend.kind) {
+      case "redis":
+        return new RedisFileStoreBackend(backend);
+      case "s3":
+        return new S3FileStoreBackend(backend);
+    }
   }
 
   protected defineDir(get: FileStore.DirGetter) {
@@ -71,9 +120,7 @@ export class FileStore {
    * @returns The resolved file path.
    */
   async ensureFilePath(relPath: string): Promise<string> {
-    const filePath = this.resolve(relPath);
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
-    return filePath;
+    return this.#backend.ensureFilePath(this.dir, relPath);
   }
 
   /**
@@ -84,9 +131,7 @@ export class FileStore {
    * @returns The resolved directory path.
    */
   async ensureDir(relPath: string): Promise<string> {
-    const storeDir = this.resolve(relPath);
-    await fs.mkdir(storeDir, { recursive: true });
-    return storeDir;
+    return this.#backend.ensureDir(this.dir, relPath);
   }
 
   /**
@@ -99,10 +144,13 @@ export class FileStore {
    * @returns The resolved file path.
    */
   async writeJson(relPath: string, data: unknown): Promise<string> {
-    const filePath = await this.ensureFilePath(relPath);
+    const filePath = this.resolve(relPath);
     logger.debug(`Writing JSON file ${filePath}...`);
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-    return filePath;
+    return this.#backend.writeFile(
+      this.dir,
+      relPath,
+      JSON.stringify(data, null, 2),
+    );
   }
 
   /**
@@ -114,10 +162,9 @@ export class FileStore {
    * @returns The resolved file path.
    */
   async writeFile(relPath: string, data: Buffer | string): Promise<string> {
-    const filePath = await this.ensureFilePath(relPath);
+    const filePath = this.resolve(relPath);
     logger.debug(`Writing file ${filePath}...`);
-    await fs.writeFile(filePath, data);
-    return filePath;
+    return this.#backend.writeFile(this.dir, relPath, data);
   }
 
   /**
@@ -125,8 +172,7 @@ export class FileStore {
    * the file doesn't exist, it returns null.
    */
   async readText(relPath: string): Promise<string | null> {
-    const filePath = this.resolve(relPath);
-    return fs.readFile(filePath, "utf-8").catch(() => null);
+    return this.#backend.readText(this.dir, relPath);
   }
 
   /**
@@ -137,8 +183,7 @@ export class FileStore {
     relPath: string,
     Schema?: z.Schema<Type>,
   ): Promise<Type | null> {
-    const filePath = this.resolve(relPath);
-    const content = await fs.readFile(filePath, "utf-8").catch(() => null);
+    const content = await this.readText(relPath);
     if (content === null) return null;
     const obj = JSON.parse(content);
     if (Schema) return Schema.parse(obj);
@@ -149,7 +194,17 @@ export class FileStore {
    * Removes the store directory.
    */
   async clear(): Promise<void> {
-    await fs.rm(this.dir, { recursive: true, force: true });
+    await this.#backend.clear(this.dir);
+  }
+
+  /**
+   * Lists direct subdirectory names under the specified relative path.
+   *
+   * @param relPath Store-relative directory path
+   * @returns Direct subdirectory names (without path prefix).
+   */
+  async listDirs(relPath = ""): Promise<string[]> {
+    return this.#backend.listDirs(this.dir, relPath);
   }
 
   /**
@@ -164,7 +219,9 @@ export class FileStore {
       throw new RangeError(
         `Subdirectory path '${subDir}' must be relative to the store directory '${this.dir}'`,
       );
-    return new FileStore(path.join(this.dir, subDir));
+    return new FileStore(path.join(this.dir, subDir), {
+      backend: this.#backendOption,
+    });
   }
 
   /**

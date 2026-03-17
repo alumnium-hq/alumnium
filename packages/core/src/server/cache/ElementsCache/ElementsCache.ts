@@ -1,5 +1,4 @@
 import type { Generation } from "@langchain/core/outputs";
-import fs from "node:fs/promises";
 // @ts-expect-error -- npm-fuzzy has broken ESM+TS support, so we import ESM version directly
 import * as fuzzy from "npm-fuzzy/dist/index.esm.js";
 import { xxh64Str } from "smolxxh/str";
@@ -392,19 +391,11 @@ export class ElementsCache extends ServerCache {
     let bestHash: ElementsCache.CacheHash | null = null;
     let bestScore = 0;
 
-    const dir = this.#cacheStore.resolve(agentKind);
-
-    const entries = await fs
-      .readdir(dir, { withFileTypes: true })
-      .catch(() => []);
+    const entries = await this.#cacheStore.listDirs(agentKind);
 
     await Promise.all(
       entries.map(async (entry) => {
-        if (!entry.isDirectory) return;
-
-        const entryStore = this.#cacheStore.subStore(
-          `${agentKind}/${entry.name}`,
-        );
+        const entryStore = this.#cacheStore.subStore(`${agentKind}/${entry}`);
         const instruction = await entryStore.readJson(
           "instruction.json",
           ElementsCache.Instruction,
@@ -421,7 +412,7 @@ export class ElementsCache extends ServerCache {
 
         if (score > bestScore) {
           bestScore = score;
-          bestHash = entry.name as ElementsCache.CacheHash;
+          bestHash = entry as ElementsCache.CacheHash;
         }
       }),
     );
