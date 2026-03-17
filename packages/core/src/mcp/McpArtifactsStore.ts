@@ -1,5 +1,5 @@
 import { kebabCase } from "case-anything";
-import { FsStore } from "../FsStore.js";
+import { FileStore } from "../FileStore/FileStore.js";
 import { getLogger } from "../utils/logger.js";
 import { McpState } from "./McpState.js";
 
@@ -12,10 +12,10 @@ export namespace McpArtifactsStore {
   }
 }
 
-export class McpArtifactsStore extends FsStore {
+export class McpArtifactsStore extends FileStore {
   constructor(driverId: string) {
     super(
-      FsStore.subResolve(
+      FileStore.subResolve(
         process.env.ALUMNIUM_MCP_ARTIFACTS_DIR,
         "artifacts",
         driverId,

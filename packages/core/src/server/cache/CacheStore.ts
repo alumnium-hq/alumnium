@@ -1,17 +1,17 @@
 import path from "node:path";
 import type { AppId } from "../../AppId.js";
-import { FsStore } from "../../FsStore.js";
+import { FileStore } from "../../FileStore/FileStore.js";
 import { Model } from "../../Model.js";
 import { SessionContext } from "../session/SessionContext.js";
 
-export class CacheStore extends FsStore {
+export class CacheStore extends FileStore {
   #sessionContext: SessionContext;
-  #baseDir = process.env.ALUMNIUM_CACHE_PATH ?? FsStore.globalSubDir("cache");
+  #baseDir = process.env.ALUMNIUM_CACHE_PATH ?? FileStore.globalSubDir("cache");
   #subDir: string;
   #appOverride: AppId | undefined;
 
   constructor(sessionContext: SessionContext, subDir?: string) {
-    super(FsStore.DYNAMIC_DIR_SYMBOL);
+    super(FileStore.DYNAMIC_DIR_SYMBOL);
     this.#sessionContext = sessionContext;
     this.#subDir = subDir || "";
   }
