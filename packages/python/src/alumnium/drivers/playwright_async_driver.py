@@ -26,7 +26,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         self.client = None
         self.page = page
         self.loop = loop
-        self.autoswitch_to_new_tab = True  # Can be disabled via alumnium:options
+        self.autoswitch_to_new_tab = True
         self.full_page_screenshot = FULL_PAGE_SCREENSHOT
         self.supported_tools = {
             ClickTool,

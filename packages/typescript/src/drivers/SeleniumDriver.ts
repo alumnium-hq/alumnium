@@ -68,6 +68,11 @@ function autoswitchToNewTab(
     this: SeleniumDriver,
     ...args: unknown[]
   ): Promise<void> {
+    if (!this.autoswitchToNewTab) {
+      await originalMethod.call(this, ...args);
+      return;
+    }
+
     const currentHandles = await this.driver.getAllWindowHandles();
     await originalMethod.call(this, ...args);
     const newHandles = await this.driver.getAllWindowHandles();
@@ -99,6 +104,7 @@ export class SeleniumDriver extends BaseDriver {
 
   protected driver: ChromiumWebDriver;
   public platform: string = "chromium";
+  public autoswitchToNewTab: boolean = true;
   public fullPageScreenshot: boolean =
     (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
     "true";
