@@ -112,7 +112,9 @@ def get_tool_definitions() -> list[Tool]:
                 f"Supported actions: {_get_do_tool_actions()}. "
                 "IMPORTANT: Each call operates on the CURRENT PAGE state only. "
                 "For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', "
-                "then 'search for X' as a separate call after page loads)."
+                "then 'search for X' as a separate call after page loads). "
+                "Note that you don't need to scroll the page to interact with elements, "
+                "Alumnium can locate and work with elements outside the viewport."
             ),
             inputSchema={
                 "type": "object",
