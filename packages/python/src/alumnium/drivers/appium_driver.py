@@ -61,6 +61,9 @@ class AppiumDriver(BaseDriver):
         self._scroll_into_view(element)
         element.click()
 
+    def drag_slider(self, id: int, value: float):
+        raise NotImplementedError("Dragging slider is not supported for this driver")
+
     def drag_and_drop(self, from_id: int, to_id: int):
         self._ensure_native_app_context()
         from_element = self.find_element(from_id)
@@ -137,42 +140,10 @@ class AppiumDriver(BaseDriver):
 
     def find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)
-
         if self.platform == "xcuitest":
-            # Use iOS Predicate locators for XCUITest
-            predicate = f'type == "{element.type}"'
-
-            props = {}
-            if element.name:
-                props["name"] = element.name
-            if element.value:
-                props["value"] = element.value
-            if element.label:
-                props["label"] = element.label
-
-            if props:
-                props = [f'{k} == "{v}"' for k, v in props.items()]
-                props_str = " AND ".join(props)
-                predicate += f" AND {props_str}"
-
-            logger.debug(f"Finding element by predicate: {predicate}")
-            return self.driver.find_element(By.IOS_PREDICATE, predicate)  # type: ignore[reportReturnType]
+            return self._find_element_ios(element)
         else:
-            # Use XPath for UIAutomator2
-            xpath = f"//{element.type}"
-
-            props = {}
-            if element.androidresourceid:
-                props["resource-id"] = element.androidresourceid
-            if element.androidbounds:
-                props["bounds"] = element.androidbounds
-
-            if props:
-                props = [f'@{k}="{v}"' for k, v in props.items()]
-                xpath += f"[{' and '.join(props)}]"
-
-            logger.debug(f"Finding element by xpath: {xpath}")
-            return self.driver.find_element(By.XPATH, xpath)  # type: ignore[reportReturnType]
+            return self._find_element_android(element)
 
     def execute_script(self, script: str):
         self._ensure_webview_context()
@@ -193,6 +164,43 @@ class AppiumDriver(BaseDriver):
             if "WEBVIEW" in context:
                 self.driver.switch_to.context(context)
                 return
+
+    # Use iOS Predicate locators for XCUITest
+    def _find_element_ios(self, element):
+        predicate = f'type == "{element.type}"'
+
+        props = {}
+        if element.name:
+            props["name"] = element.name
+        if element.value:
+            props["value"] = element.value
+        if element.label:
+            props["label"] = element.label
+
+        if props:
+            props = [f'{k} == "{v}"' for k, v in props.items()]
+            props_str = " AND ".join(props)
+            predicate += f" AND {props_str}"
+
+        logger.debug(f"Finding element by predicate: {predicate}")
+        return self.driver.find_element(By.IOS_PREDICATE, predicate)  # type: ignore[reportReturnType]
+
+    # Use XPath for UIAutomator2
+    def _find_element_android(self, element):
+        xpath = f"//{element.type}"
+
+        props = {}
+        if element.androidresourceid:
+            props["resource-id"] = element.androidresourceid
+        if element.androidbounds:
+            props["bounds"] = element.androidbounds
+
+        if props:
+            props = [f'@{k}="{v}"' for k, v in props.items()]
+            xpath += f"[{' and '.join(props)}]"
+
+        logger.debug(f"Finding element by xpath: {xpath}")
+        return self.driver.find_element(By.XPATH, xpath)  # type: ignore[reportReturnType]
 
     def _hide_keyboard(self):
         if self.platform == "uiautomator2":

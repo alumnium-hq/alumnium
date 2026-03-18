@@ -7,6 +7,7 @@ from mcp.types import Tool
 from ..tools import (
     ClickTool,
     DragAndDropTool,
+    DragSliderTool,
     ExecuteJavascriptTool,
     HoverTool,
     NavigateBackTool,
@@ -21,6 +22,7 @@ from ..tools import (
 _DO_TOOLS = [
     ClickTool,
     DragAndDropTool,
+    DragSliderTool,
     ExecuteJavascriptTool,
     HoverTool,
     NavigateBackTool,

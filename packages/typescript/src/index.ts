@@ -10,6 +10,7 @@ export { SeleniumDriver } from "./drivers/SeleniumDriver.js";
 export { AssertionError } from "./errors/AssertionError.js";
 export { Model, ModelName, Provider } from "./Model.js";
 export type { DoResult, DoStep } from "./result.js";
+export { DragSliderTool } from "./tools/DragSliderTool.js";
 export { ExecuteJavascriptTool } from "./tools/ExecuteJavascriptTool.js";
 export { NavigateBackTool } from "./tools/NavigateBackTool.js";
 export { NavigateToUrlTool } from "./tools/NavigateToUrlTool.js";

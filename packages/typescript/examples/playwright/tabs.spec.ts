@@ -13,10 +13,6 @@ test.describe("Tabs", () => {
     });
   });
 
-  test.afterEach(async () => {
-    await al.quit();
-  });
-
   test("switching tabs", async ({ page }) => {
     await page.goto(resolveURL("multi_tab_page.html"));
 

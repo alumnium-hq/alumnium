@@ -78,6 +78,9 @@ export class PlaywrightDriver extends BaseDriver {
     10
   );
   public autoswitchToNewTab: boolean = true;
+  public fullPageScreenshot: boolean =
+    (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
+    "true";
 
   constructor(page: Page) {
     super();
@@ -281,6 +284,11 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
+  async dragSlider(id: number, value: number): Promise<void> {
+    const element = await this.findElement(id);
+    await element.fill(String(value));
+  }
+
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);
@@ -329,7 +337,9 @@ export class PlaywrightDriver extends BaseDriver {
       error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
   })
   async screenshot(): Promise<string> {
-    const buffer = await this.page.screenshot();
+    const buffer = await this.page.screenshot({
+      fullPage: this.fullPageScreenshot,
+    });
     return buffer.toString("base64");
   }
 
