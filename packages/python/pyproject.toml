@@ -120,6 +120,7 @@ rapidfuzz = "^3.0"
 retry2 = "^0.9"
 rich = "^14.0.0"
 selenium = "^4.0"
+undetected-chromedriver = "^3.5.5"
 xxhash = "^3.5.0"
 
 [tool.poetry.group.dev.dependencies]
