@@ -94,9 +94,16 @@ def create_selenium_driver(capabilities: dict[str, Any], server_url: str | None)
 
         driver = Remote(command_executor=server_url, options=options)
     else:
-        from selenium.webdriver import Chrome
+        undetected_chromedriver = getenv("ALUMNIUM_USE_UNDETECTED_CHROMEDRIVER", "false").lower() == "true"
+        if undetected_chromedriver:
+            from undetected_chromedriver import Chrome
 
-        driver = Chrome(options=options)
+            version = getenv("ALUMNIUM_CHROME_VERSION", "145")
+            driver = Chrome(version_main=int(version), options=options)
+        else:
+            from selenium.webdriver import Chrome
+
+            driver = Chrome(options=options)
 
     if headers or cookies:
         driver.execute_cdp_cmd("Network.enable", {})  # type: ignore[reportAttributeAccessIssue]
