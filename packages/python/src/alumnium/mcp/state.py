@@ -1,5 +1,7 @@
 """State management for MCP server driver instances."""
 
+import atexit
+import json
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +14,19 @@ logger = get_logger(__name__)
 drivers: dict[str, tuple[Alumni, Any]] = {}  # driver_id -> (Alumni instance, raw driver)
 artifacts_dirs: dict[str, Path] = {}  # driver_id -> artifacts directory path
 step_counters: dict[str, int] = {}  # driver_id -> current step number
+
+
+def _cleanup_all_drivers() -> None:
+    """Stop all active drivers on process exit."""
+    for driver_id in list(drivers.keys()):
+        logger.info(f"Exit hook: stopping driver {driver_id}")
+        try:
+            cleanup_driver(driver_id)
+        except Exception as e:
+            logger.warning(f"Exit hook: error stopping driver {driver_id}: {e}")
+
+
+atexit.register(_cleanup_all_drivers)
 
 
 def register_driver(driver_id: str, al: Alumni, raw_driver: Any, artifacts_dir: Path) -> None:
@@ -61,6 +76,16 @@ def cleanup_driver(driver_id: str) -> tuple[Path, dict[str, Any]]:
     del drivers[driver_id]
     del artifacts_dirs[driver_id]
     del step_counters[driver_id]
+
+    # Save token stats to JSON file
+    stats_file = artifacts_dir / "token-stats.json"
+    with open(stats_file, "w") as f:
+        json.dump(stats, f, indent=2)
+    logger.info(
+        f"Driver {driver_id}: Token stats saved to {stats_file}. "
+        f"Total tokens: {stats['total']['total_tokens']}, "
+        f"Cached tokens: {stats['cache']['total_tokens']}"
+    )
 
     logger.debug(f"Driver {driver_id} cleanup complete")
 

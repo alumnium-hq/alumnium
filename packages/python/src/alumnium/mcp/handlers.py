@@ -226,16 +226,7 @@ async def handle_stop_driver(args: dict[str, Any]) -> list[dict]:
     # Cleanup driver and get stats
     artifacts_dir, stats = state.cleanup_driver(driver_id)
 
-    # Save token stats to JSON file
-    stats_file = artifacts_dir / "token-stats.json"
-    with open(stats_file, "w") as f:
-        json.dump(stats, f, indent=2)
-    logger.info(f"Driver {driver_id}: Token stats saved to {stats_file}")
-
-    logger.info(
-        f"Driver {driver_id}: Closed. Total tokens: {stats['total']['total_tokens']}, "
-        f"Cached tokens: {stats['cache']['total_tokens']}"
-    )
+    logger.info(f"Driver {driver_id}: Closed")
 
     # Format stats message with detailed cache breakdown
     message = (
