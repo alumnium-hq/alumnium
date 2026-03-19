@@ -7,7 +7,7 @@ from os import getenv
 from pathlib import Path
 from typing import Any
 
-from .. import Alumni
+from .. import CHANGE_ANALYSIS, Alumni
 from ..clients.native_client import NativeClient
 from ..server.logutils import get_logger
 from ..tools import (
@@ -90,6 +90,10 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
             SwitchToNextTabTool,
             SwitchToPreviousTabTool,
         ],
+        change_analysis=alumnium_options.get(
+            "changeAnalysis",
+            getenv("ALUMNIUM_CHANGE_ANALYSIS", "true").lower() == "true",
+        ),
         planner=alumnium_options.get("planner", None),
         excluded_attributes=excluded_attributes or None,
     )
