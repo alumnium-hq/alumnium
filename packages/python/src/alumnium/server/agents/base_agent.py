@@ -7,6 +7,7 @@ from anthropic import RateLimitError as AnthropicRateLimitError
 from botocore.exceptions import ClientError as BedrockClientError
 from google.genai.errors import ClientError as GoogleClientError
 from httpx import HTTPStatusError
+from httpx import TimeoutException as HTTPTimeoutException
 from langchain_core.runnables import Runnable
 from openai import InternalServerError as OpenAIInternalServerError
 from openai import RateLimitError as OpenAIRateLimitError
@@ -90,6 +91,8 @@ class BaseAgent:
             or (isinstance(error, HTTPStatusError) and error.response.status_code == 429)
             # DeepSeek instead throws internal server error
             or isinstance(error, OpenAIInternalServerError)
+            # LangChain timeout errors - retry with a fresh request
+            or isinstance(error, HTTPTimeoutException)
         ):
             return False  # Retry
         else:
