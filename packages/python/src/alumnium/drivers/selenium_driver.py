@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.errorhandler import JavascriptException
+from selenium.webdriver.remote.errorhandler import ElementNotInteractableException, JavascriptException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -366,7 +366,11 @@ class SeleniumDriver(BaseDriver):
     @_autoswitch_to_new_tab
     def click(self, id: int):
         element = self.find_element(id)
-        ActionChains(self.driver).move_to_element(element).click().perform()
+        try:
+            ActionChains(self.driver).move_to_element(element).click().perform()
+        except ElementNotInteractableException:
+            # Fallback to direct click if ActionChains fails (e.g. for <option> elements)
+            element.click()
 
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
