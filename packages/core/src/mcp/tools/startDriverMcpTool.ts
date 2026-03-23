@@ -1,6 +1,7 @@
 import path from "node:path";
 import z from "zod";
 import { Alumni } from "../../client/Alumni.js";
+import { DragSliderTool } from "../../tools/DragSliderTool.js";
 import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.js";
 import { NavigateBackTool } from "../../tools/NavigateBackTool.js";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.js";
@@ -122,6 +123,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
 
     const al = new Alumni(driver, {
       extraTools: [
+        DragSliderTool,
         ExecuteJavascriptTool,
         NavigateBackTool,
         NavigateToUrlTool,

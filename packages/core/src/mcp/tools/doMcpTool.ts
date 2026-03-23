@@ -2,6 +2,7 @@ import z from "zod";
 import {
   ClickTool,
   DragAndDropTool,
+  DragSliderTool,
   ExecuteJavascriptTool,
   HoverTool,
   NavigateBackTool,
@@ -25,6 +26,7 @@ const logger = getLogger(import.meta.url);
 const MCPS_DO_TOOLS = [
   ClickTool,
   DragAndDropTool,
+  DragSliderTool,
   ExecuteJavascriptTool,
   HoverTool,
   NavigateBackTool,
