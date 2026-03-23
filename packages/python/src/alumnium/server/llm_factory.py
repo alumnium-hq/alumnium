@@ -25,6 +25,7 @@ class LLMFactory:
         """Create an LLM instance based on the model configuration."""
         logger.info(f"Creating LLM for model: {model.provider.value}/{model.name}")
 
+        timeout = int(getenv("ALUMNIUM_MODEL_TIMEOUT", "90"))
         if model.provider == Provider.AZURE_FOUNDRY:
             azure_foundry_target_uri = getenv("AZURE_FOUNDRY_TARGET_URI")
             azure_foundry_api_key = getenv("AZURE_FOUNDRY_API_KEY")
@@ -36,6 +37,7 @@ class LLMFactory:
                     api_key=azure_foundry_api_key,
                     api_version=azure_foundry_api_version,
                     temperature=0,
+                    timeout=timeout,
                 )
             else:
                 llm = AzureChatOpenAI(
@@ -44,6 +46,7 @@ class LLMFactory:
                     api_key=azure_foundry_api_key,
                     api_version=azure_foundry_api_version,
                     temperature=0,
+                    timeout=timeout,
                     reasoning={
                         "effort": "low",
                         "summary": "auto",
@@ -58,6 +61,7 @@ class LLMFactory:
                     api_version=azure_openai_api_version,
                     default_headers=azure_default_headers,
                     temperature=0,
+                    timeout=timeout,
                 )
             else:
                 llm = AzureChatOpenAI(
@@ -65,6 +69,7 @@ class LLMFactory:
                     api_version=azure_openai_api_version,
                     default_headers=azure_default_headers,
                     temperature=0,
+                    timeout=timeout,
                     reasoning={
                         "effort": "low",
                         "summary": "auto",
@@ -74,7 +79,7 @@ class LLMFactory:
             llm = ChatAnthropic(
                 model_name=model.name,
                 stop=None,
-                timeout=None,
+                timeout=timeout,
                 thinking={
                     "type": "enabled",
                     "budget_tokens": 1024,
@@ -100,27 +105,43 @@ class LLMFactory:
                 additional_model_request_fields=additional_model_request_fields,
             )
         elif model.provider == Provider.DEEPSEEK:
-            llm = ChatDeepSeek(model=model.name, temperature=0, disabled_params={"tool_choice": None})
+            llm = ChatDeepSeek(
+                model=model.name,
+                temperature=0,
+                timeout=timeout,
+                disabled_params={"tool_choice": None},
+            )
         elif model.provider == Provider.GOOGLE:
             if "gemini-2.0" in model.name:
-                llm = ChatGoogleGenerativeAI(model=model.name, temperature=0)
+                llm = ChatGoogleGenerativeAI(model=model.name, temperature=0, timeout=timeout)
             else:
                 llm = ChatGoogleGenerativeAI(
                     model=model.name,
                     temperature=0,
+                    timeout=timeout,
                     thinking_level="low",
                     include_thoughts=True,
                 )
         elif model.provider == Provider.GITHUB:
-            llm = ChatOpenAI(model=model.name, base_url="https://models.github.ai/inference", temperature=0)
+            llm = ChatOpenAI(
+                model=model.name,
+                base_url="https://models.github.ai/inference",
+                temperature=0,
+                timeout=timeout,
+            )
         elif model.provider == Provider.MISTRALAI:
-            llm = ChatMistralAI(model_name=model.name, temperature=0)
+            llm = ChatMistralAI(model_name=model.name, temperature=0, timeout=timeout)
         elif model.provider == Provider.OLLAMA:
             if not getenv("ALUMNIUM_OLLAMA_URL"):
-                llm = ChatOllama(model=model.name, temperature=0)
+                llm = ChatOllama(model=model.name, temperature=0, client_kwargs={"timeout": timeout})
             else:
                 cloud_endpoint = getenv("ALUMNIUM_OLLAMA_URL")
-                llm = ChatOllama(model=model.name, base_url=cloud_endpoint, temperature=0)
+                llm = ChatOllama(
+                    model=model.name,
+                    base_url=cloud_endpoint,
+                    temperature=0,
+                    client_kwargs={"timeout": timeout},
+                )
         elif model.provider == Provider.OPENAI:
             if "gpt-4o" in model.name:
                 llm = ChatOpenAI(
@@ -128,6 +149,7 @@ class LLMFactory:
                     base_url=getenv("OPENAI_CUSTOM_URL"),
                     seed=None if getenv("OPENAI_CUSTOM_URL") else 1,  # Only OpenAI official API gets a seed
                     temperature=0,
+                    timeout=timeout,
                 )
             else:
                 llm = ChatOpenAI(
@@ -138,9 +160,10 @@ class LLMFactory:
                         "summary": "auto",
                     },
                     temperature=0,
+                    timeout=timeout,
                 )
         elif model.provider == Provider.XAI:
-            llm = ChatXAI(model=model.name, temperature=0)
+            llm = ChatXAI(model=model.name, temperature=0, timeout=timeout)
         else:
             raise NotImplementedError(f"Model {model.provider} not implemented")
 
