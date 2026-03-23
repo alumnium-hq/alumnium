@@ -10,7 +10,7 @@ describe(convertToolsToSchemas, () => {
       type: "function",
       function: {
         name: "TypeTool",
-        description: "Type text into an element.",
+        description: "Type text into an element. Automatically focuses the element and clears it before typing.",
         parameters: {
           type: "object",
           properties: {
@@ -36,7 +36,7 @@ describe(convertToolsToSchemas, () => {
       type: "function",
       function: {
         name: "PressKeyTool",
-        description: "Press a keyboard key.",
+        description: "Press a keyboard key. Does not require element to be focused.",
         parameters: {
           type: "object",
           properties: {
