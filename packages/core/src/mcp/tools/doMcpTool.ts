@@ -63,7 +63,8 @@ export const doMcpTool = McpTool.define("do", {
   description:
     "Execute a goal using natural language (e.g., 'click login button', 'fill out the form'). Alumnium will plan and execute the necessary steps. " +
     `Supported actions: ${getDoToolActions()}. ` +
-    "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads).",
+    "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads). " +
+    "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport.",
 
   inputSchema: z.object({
     driver_id: z.string().describe("Driver ID from start_driver"),
