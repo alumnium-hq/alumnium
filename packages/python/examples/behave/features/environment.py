@@ -45,7 +45,7 @@ def driver(context):
 
         if lt_username and lt_access_key:
             options.platform_version = "18"
-            options.app = "lt://APP1016041721767721056718998"  # poetry poe upload-ios-app
+            options.app = "lt://APP10160422151774312193564972"  # poetry poe upload-ios-app
             options.set_capability(
                 "lt:options",
                 {
@@ -95,7 +95,7 @@ def driver(context):
 
         if lt_username and lt_access_key:
             options.platform_version = "16"
-            options.app = "lt://APP1016054801767715200199672"  # poetry poe upload-android-app
+            options.app = "lt://APP10160422151774312238697602"  # poetry poe upload-android-app
             options.set_capability(
                 "lt:options",
                 {
