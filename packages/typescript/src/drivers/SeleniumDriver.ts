@@ -10,7 +10,10 @@ import {
   WebElement,
 } from "selenium-webdriver";
 import { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
-import { NoSuchSessionError } from "selenium-webdriver/lib/error.js";
+import {
+  ElementNotInteractableError,
+  NoSuchSessionError,
+} from "selenium-webdriver/lib/error.js";
 
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
@@ -263,11 +266,18 @@ export class SeleniumDriver extends BaseDriver {
 
   @autoswitchToNewTab
   async click(id: number): Promise<void> {
-    const actions = this.driver.actions({ async: true });
-    await actions
-      .move({ origin: await this.findElement(id) })
-      .click()
-      .perform();
+    const element = await this.findElement(id);
+    try {
+      const actions = this.driver.actions({ async: true });
+      await actions.move({ origin: element }).click().perform();
+    } catch (error) {
+      if (error instanceof ElementNotInteractableError) {
+        // Fallback to direct click if ActionChains fails (e.g. for <option> elements)
+        await element.click();
+      } else {
+        throw error;
+      }
+    }
   }
 
   async dragSlider(id: number, value: number): Promise<void> {
