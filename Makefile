@@ -2,8 +2,12 @@ install:
 	bun install
 	cd packages/python && poetry install
 
-build:
+build: build-core build-python
+
+build-core:
 	cd packages/core && bun run build
+
+build-python:
 	cd packages/python && poetry build
 
 clean:
