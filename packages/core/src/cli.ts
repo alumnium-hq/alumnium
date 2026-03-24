@@ -32,7 +32,7 @@ switch (command) {
     break;
 
   case "server":
-    serverCommand();
+    await serverCommand();
     break;
 
   default:

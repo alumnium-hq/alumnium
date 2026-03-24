@@ -148,6 +148,9 @@ async function main() {
           outfile: binPath,
         },
         plugins: [loggerPathPlugin, depsPatcherPlugin],
+        define: {
+          BUNDLED: "true",
+        },
       });
 
       if (!result.success) {
@@ -298,8 +301,6 @@ __all__ = ["bin_path"]
         writeMainPy(pip.dir, PIP_CLI_TARGET_MODULE_NAME, initPy),
 
         buildTargetPkgCommons(platform, pip),
-
-        copyAssets(COMMON_PKG_ASSETS, DIST_PIP_CLI_PKG_DIR),
       ]);
 
       const whlPath = await buildPipWheel(pip.name, pip.dir);

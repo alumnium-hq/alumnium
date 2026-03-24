@@ -17,18 +17,25 @@ let level =
   (process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase() as LogLevel | undefined) ||
   "info";
 
+namespace configureLogging {
+  export interface Props {
+    reset?: boolean | undefined;
+    logPath?: string | undefined;
+  }
+}
+
 /**
  * Configure the logging system based on environment variables:
  * - ALUMNIUM_LOG_LEVEL: Log level (debug, info, warning, error, fatal) - defaults to "info"
  * - ALUMNIUM_LOG_PATH: Output destination ("stdout" or file path) - defaults to "stdout"
  */
-function configureLogging(reset?: boolean): void {
+function configureLogging(props: configureLogging.Props = {}): void {
   if (configured) {
-    if (reset) resetSync();
+    if (props.reset) resetSync();
     else return;
   }
 
-  const logPath = process.env.ALUMNIUM_LOG_PATH;
+  const logPath = props.logPath ?? process.env.ALUMNIUM_LOG_PATH;
   if (logPath) {
     fs.mkdirSync(path.dirname(logPath), { recursive: true });
   }
@@ -59,7 +66,11 @@ function configureLogging(reset?: boolean): void {
 
 export function setLoggerLevel(newLevel: LogLevel) {
   level = newLevel;
-  configureLogging(true);
+  configureLogging({ reset: true });
+}
+
+export function setLogPath(newLogPath: string) {
+  configureLogging({ logPath: newLogPath, reset: true });
 }
 
 export function getLogger(modulePath: string) {
