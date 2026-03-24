@@ -440,7 +440,8 @@ function getSampleToolSchemas() {
       type: "function",
       function: {
         name: "TypeTool",
-        description: "Type text into an element.",
+        description:
+          "Type text into an element. Automatically focuses the element and clears it before typing.",
         parameters: {
           type: "object",
           properties: {
