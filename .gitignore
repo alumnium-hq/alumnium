@@ -28,8 +28,7 @@
 .envrc
 
 # Alumnium
-**/.alumnium/cache/**/*
-**/.alumnium/artifacts/**/*
+**/.alumnium/**/*
 
 # Temporary files
 tmp/
