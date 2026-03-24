@@ -45,7 +45,6 @@ jobs:
             typescript:
               - packages/python/examples/support/pages/**
               - packages/typescript/**
-      - uses: docker/setup-buildx-action@v3
       - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-python@v5
         with:
@@ -54,24 +53,24 @@ jobs:
         with:
           path: packages/python/.venv
           key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-      - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
       - run: make install
       - run: make check-format
       - run: make test
+      - run: bun ./packages/core/src/cli.ts server --daemon --wait-for
+        env:
+          OPENAI_API_KEY: ${{ github.token }}
+      - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - run: |
           poetry run behave \
             --format html-pretty \
             --outfile reports/behave.html \
             --format pretty
         env:
-          OPENAI_API_KEY: ${{ github.token }}
+          ALUMNIUM_SERVER_URL: http://localhost:8013
         working-directory: packages/python
-      - uses: docker/build-push-action@v6
-        with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          context: .
+      - if: always()
+        run: bun ./packages/core/src/cli.ts server --kill
       - if: always()
         uses: actions/upload-artifact@v4
         with:
