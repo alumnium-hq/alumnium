@@ -4,7 +4,18 @@ import "./globals.js";
 import { navigate } from "./helpers.js";
 
 describe("Drag Slider", () => {
+  const shouldSkip = () => {
+    // Drag slider is not implemented in Appium yet
+    const driverType = process.env.ALUMNIUM_DRIVER || "selenium";
+    if (driverType === "appium") {
+      return "Drag slider is not implemented in Appium yet";
+    }
+  };
+
   it("sets slider value", async function () {
+    if (shouldSkip()) {
+      this.skip();
+    }
     const al = new Alumni(driver, {
       extraTools: [DragSliderTool],
     });
