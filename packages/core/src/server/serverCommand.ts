@@ -123,8 +123,8 @@ export async function serverCommand() {
 
   logger.debug("Starting server");
 
-  serverApp.listen({ hostname: host, port }, () => {
-    logger.info(`Started at http://${host}:${port}`);
+  serverApp.listen({ hostname: host, port, reusePort: false }, (server) => {
+    logger.info(`Started at http://${server.hostname}:${server.port}`);
   });
 }
 
