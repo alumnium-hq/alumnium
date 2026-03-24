@@ -5,6 +5,7 @@ import { DragSliderTool } from "../../tools/DragSliderTool.js";
 import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.js";
 import { NavigateBackTool } from "../../tools/NavigateBackTool.js";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.js";
+import { PrintToPdfTool } from "../../tools/PrintToPdfTool.js";
 import { ScrollTool } from "../../tools/ScrollTool.js";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.js";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.js";
@@ -127,6 +128,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
         ExecuteJavascriptTool,
         NavigateBackTool,
         NavigateToUrlTool,
+        PrintToPdfTool,
         ScrollTool,
         SwitchToNextTabTool,
         SwitchToPreviousTabTool,
