@@ -28,6 +28,9 @@ export abstract class McpState {
   // Global state for driver management
   private static drivers: Record<string, McpState.Driver> = {}; // driver_id -> driver state
 
+  private static cleanupHooksRegistered = false;
+  private static cleanupAllPromise: Promise<void> | null = null;
+
   /**
    * Register a new driver instance.
    */
@@ -37,6 +40,8 @@ export abstract class McpState {
     mcpDriver: McpDriver,
     artifactsStore: McpArtifactsStore,
   ): void {
+    this.registerCleanupHooks();
+
     this.drivers[driverId] = {
       al,
       mcpDriver,
@@ -118,7 +123,51 @@ export abstract class McpState {
     return [driverState.artifactsStore.dir, stats];
   }
 
+  static async cleanupAllDrivers(): Promise<void> {
+    const driverIds = Object.keys(this.drivers);
+    await Promise.all(
+      driverIds.map(async (driverId) => {
+        logger.debug(`Exit hook: stopping driver ${driverId}`);
+        await this.cleanupDriver(driverId).catch((err) => {
+          logger.debug(
+            `Exit hook: error stopping driver ${driverId}: {error}`,
+            { error: err },
+          );
+        });
+      }),
+    );
+  }
+
   static clear() {
     this.drivers = {};
+    this.cleanupAllPromise = null;
+  }
+
+  private static registerCleanupHooks(): void {
+    if (this.cleanupHooksRegistered) return;
+
+    process.once("beforeExit", () => void this.cleanupAllDriversOnce());
+
+    process.once(
+      "SIGINT",
+      () => void this.cleanupAllDriversOnce().finally(() => process.exit(0)),
+    );
+
+    process.once(
+      "SIGTERM",
+      () => void this.cleanupAllDriversOnce().finally(() => process.exit(0)),
+    );
+
+    this.cleanupHooksRegistered = true;
+  }
+
+  private static cleanupAllDriversOnce(): Promise<void> {
+    if (!this.cleanupAllPromise) {
+      this.cleanupAllPromise = this.cleanupAllDrivers().finally(() => {
+        this.cleanupAllPromise = null;
+      });
+    }
+
+    return this.cleanupAllPromise;
   }
 }
