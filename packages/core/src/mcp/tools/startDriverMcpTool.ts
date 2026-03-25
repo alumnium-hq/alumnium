@@ -81,6 +81,10 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       typeof alumniumOptions["planner"] === "boolean"
         ? alumniumOptions["planner"]
         : undefined;
+    const changeAnalysis =
+      typeof alumniumOptions["changeAnalysis"] === "boolean"
+        ? alumniumOptions["changeAnalysis"]
+        : undefined;
     const excludeAttributes = Array.isArray(
       alumniumOptions["excludeAttributes"],
     )
@@ -134,6 +138,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
         SwitchToPreviousTabTool,
       ],
       planner,
+      changeAnalysis,
       excludeAttributes,
     });
 

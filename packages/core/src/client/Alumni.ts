@@ -27,7 +27,7 @@ import type { DoResult, DoStep } from "./result.js";
 const logger = getLogger(import.meta.url);
 
 const CHANGE_ANALYSIS =
-  (process.env.ALUMNIUM_CHANGE_ANALYSIS || "false").toLowerCase() === "true";
+  (process.env.ALUMNIUM_CHANGE_ANALYSIS || "true").toLowerCase() === "true";
 const PLANNER =
   (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
 const EXCLUDE_ATTRIBUTES = (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "")
