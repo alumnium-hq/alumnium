@@ -1,4 +1,3 @@
-import fs from "node:fs/promises";
 import path from "node:path";
 import z from "zod";
 import { getLogger } from "../../utils/logger.js";
@@ -42,14 +41,7 @@ export const stopDriverMcpTool = McpTool.define("stop_driver", {
     // Cleanup driver and get stats
     const [artifactsDir, stats] = await McpState.cleanupDriver(driverId);
 
-    // Save token stats to JSON file
-    const statsFile = path.join(artifactsDir, "token-stats.json");
-    await fs.writeFile(statsFile, JSON.stringify(stats, null, 2));
-    logger.info(`Driver ${driverId}: Token stats saved to ${statsFile}`);
-
-    logger.info(
-      `Driver ${driverId}: Closed. Total tokens: ${stats["total"]["total_tokens"]}, Cached tokens: ${stats["cache"]["total_tokens"]}`,
-    );
+    logger.info(`Driver ${driverId}: Closed`);
 
     // Format stats message with detailed cache breakdown
     const message = `Driver ${driverId} closed.\nArtifacts saved to: ${path.resolve(artifactsDir)}\nToken usage statistics:\n- Total: ${stats["total"]["total_tokens"]} tokens (${stats["total"]["input_tokens"]} input, ${stats["total"]["output_tokens"]} output)\n- Cached: ${stats["cache"]["total_tokens"]} tokens (${stats["cache"]["input_tokens"]} input, ${stats["cache"]["output_tokens"]} output)`;
