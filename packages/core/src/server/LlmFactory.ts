@@ -19,6 +19,10 @@ import { Model } from "../Model.js";
 import { getLogger } from "../utils/logger.js";
 
 const logger = getLogger(import.meta.url);
+const parsedModelTimeout = parseInt(process.env.ALUMNIUM_MODEL_TIMEOUT ?? "90");
+const MODEL_TIMEOUT = Number.isFinite(parsedModelTimeout)
+  ? parsedModelTimeout
+  : 90;
 
 /**
  * Factory for creating LLM instances based on model configuration.
@@ -64,6 +68,7 @@ export class LlmFactory {
     const defaultFields: Partial<AzureChatOpenAIFields> = {
       // TODO: See the OpenAI LLM function for more info about the issue.
       // temperature: 0,
+      timeout: MODEL_TIMEOUT,
       cache,
     };
     const fields =
@@ -161,7 +166,8 @@ export class LlmFactory {
       model: model.name,
       // TODO: Python implementation also includes fields missing in JS SDK:
       //     stop=None,
-      //     timeout=None,
+      // TODO: Timeout option is missing in the provider options.
+      // timeout: MODEL_TIMEOUT,
       thinking: {
         type: "enabled",
         budget_tokens: 1024,
@@ -200,6 +206,7 @@ export class LlmFactory {
     return new ChatDeepSeek({
       model: model.name,
       temperature: 0,
+      timeout: MODEL_TIMEOUT,
       // TODO: Python implementation also includes field missing in JS SDK:
       //     disabled_params={"tool_choice": None}
       cache,
@@ -213,12 +220,16 @@ export class LlmFactory {
       return new ChatGoogleGenerativeAI({
         model: model.name,
         temperature: 0,
+        // TODO: Timeout option is missing in the provider options.
+        // timeout: MODEL_TIMEOUT,
         cache,
       });
     } else {
       return new ChatGoogleGenerativeAI({
         model: model.name,
         temperature: 0,
+        // TODO: Timeout option is missing in the provider options.
+        // timeout: MODEL_TIMEOUT,
         thinkingConfig: {
           thinkingLevel: "LOW",
           includeThoughts: true,
@@ -235,6 +246,7 @@ export class LlmFactory {
       model: model.name,
       configuration: { baseURL: "https://models.github.ai/inference" },
       temperature: 0,
+      timeout: MODEL_TIMEOUT,
       cache,
     });
   }
@@ -245,6 +257,8 @@ export class LlmFactory {
     return new ChatMistralAI({
       model: model.name,
       temperature: 0,
+      // TODO: Timeout option is missing in the provider options.
+      // timeout: MODEL_TIMEOUT,
       cache,
     });
   }
@@ -258,12 +272,16 @@ export class LlmFactory {
         model: model.name,
         baseUrl,
         temperature: 0,
+        // TODO: Timeout option is missing in the provider options.
+        // timeout: MODEL_TIMEOUT,
         cache,
       });
     } else {
       return new ChatOllama({
         model: model.name,
         temperature: 0,
+        // TODO: Timeout option is missing in the provider options.
+        // timeout: MODEL_TIMEOUT,
         cache,
       });
     }
@@ -287,6 +305,7 @@ export class LlmFactory {
       // - https://community.openai.com/t/gpt-5-removed-parameters-logprob-top-p-temperature/1345768/2
       //
       // temperature: 0,
+      timeout: MODEL_TIMEOUT,
       cache,
     };
 
@@ -315,6 +334,8 @@ export class LlmFactory {
     return new ChatXAI({
       model: model.name,
       temperature: 0,
+      // TODO: Timeout option is missing in the provider options.
+      // timeout: MODEL_TIMEOUT,
       cache,
     });
   }

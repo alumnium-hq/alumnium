@@ -134,6 +134,12 @@ export class BaseAgent {
       error.name === "InternalServerError" ||
       error.constructor.name === "InternalServerError";
 
+    const isTimeoutError =
+      error.name === "TimeoutError" ||
+      error.constructor.name === "TimeoutError" ||
+      error.name === "APIConnectionTimeoutError" ||
+      error.constructor.name === "APIConnectionTimeoutError";
+
     const isRateLimitError =
       isCommonRateLimitError ||
       isAwsRateLimitError ||
@@ -141,7 +147,7 @@ export class BaseAgent {
       isMistralRateLimitError ||
       isDeepSeekRateLimitError;
 
-    return !isRateLimitError;
+    return !isTimeoutError && !isRateLimitError;
   }
 
   @retry({
