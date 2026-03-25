@@ -1,4 +1,5 @@
 from asyncio import AbstractEventLoop
+from os import getenv
 
 from appium.webdriver.webdriver import WebDriver as Appium
 from langchain_core.language_models import BaseChatModel
@@ -65,10 +66,14 @@ class Alumni:
         for tool in self.driver.supported_tools | set(extra_tools or []):
             self.tools[tool.__name__] = tool
 
-        if url:
+        # NOTE: Since we're migrating to TypeScript core, this is enforced now
+        # to always use the server, even if the URL is not provided. Later we
+        # will simply remove the native client.
+        server_url = url or getenv("ALUMNIUM_SERVER_URL") or "http://localhost:8013"
+        if server_url:
             logger.info(f"Using HTTP client with server: {url}")
             self.client = HttpClient(
-                url,
+                server_url,
                 self.model,
                 self.driver.platform,
                 self.tools,

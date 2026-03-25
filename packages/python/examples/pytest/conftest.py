@@ -147,7 +147,7 @@ def driver():
 
 @fixture(scope="session")
 def al(driver):
-    al = Alumni(driver, url=getenv("ALUMNIUM_SERVER_URL", None))
+    al = Alumni(driver)
     if isinstance(al.driver, AppiumDriver):
         al.driver.delay = 0.1
 
