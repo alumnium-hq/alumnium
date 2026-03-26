@@ -184,7 +184,9 @@ class PlaywrightAsyncDriver(BaseDriver):
         self._run_async(self._quit())
 
     async def _quit(self):
+        context = self.page.context
         await self.page.close()
+        await context.close()
 
     def back(self):
         self._run_async(self._back())

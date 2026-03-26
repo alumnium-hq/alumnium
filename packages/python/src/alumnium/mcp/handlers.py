@@ -51,6 +51,14 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
     driver_settings = alumnium_options.get("driverSettings", {})
     excluded_attributes = set(alumnium_options.get("excludedAttributes", []))
 
+    # Extract profile name for persistent browser profile
+    profile = capabilities.pop("profile", None)
+    profile_dir = None
+    if profile:
+        profile_dir = Path.home() / ".alumnium" / "profiles" / profile
+        profile_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Using persistent profile: {profile} ({profile_dir})")
+
     # Generate driver ID from current directory and timestamp
     cwd_name = os.path.basename(os.getcwd())
     timestamp = int(datetime.now().timestamp())
@@ -64,7 +72,7 @@ async def handle_start_driver(args: dict[str, Any]) -> list[dict]:
 
     # Detect platform and create appropriate driver
     if platform_name in ["chrome", "chromium"]:
-        driver = drivers.create_chrome_driver(capabilities, server_url, artifacts_dir)
+        driver = drivers.create_chrome_driver(capabilities, server_url, artifacts_dir, profile_dir=profile_dir)
         platform_label = "Chrome"
     elif platform_name == "ios":
         driver = drivers.create_ios_driver(capabilities, server_url)

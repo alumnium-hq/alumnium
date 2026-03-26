@@ -9,16 +9,18 @@ from ..server.logutils import get_logger
 logger = get_logger(__name__)
 
 
-def create_chrome_driver(capabilities: dict[str, Any], server_url: str | None, artifacts_dir: Path) -> Any:
+def create_chrome_driver(
+    capabilities: dict[str, Any], server_url: str | None, artifacts_dir: Path, profile_dir: Path | None = None
+) -> Any:
     driver_type = getenv("ALUMNIUM_DRIVER", "selenium").lower()
     logger.info(f"Creating Chrome driver using {driver_type}")
     if driver_type == "playwright":
-        return create_playwright_driver(capabilities, artifacts_dir)
+        return create_playwright_driver(capabilities, artifacts_dir, profile_dir=profile_dir)
     else:
-        return create_selenium_driver(capabilities, server_url)
+        return create_selenium_driver(capabilities, server_url, profile_dir=profile_dir)
 
 
-def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path) -> Any:
+def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path, profile_dir: Path | None = None) -> Any:
     """Create async Playwright driver from capabilities."""
     import asyncio
     from threading import Thread
@@ -26,7 +28,7 @@ def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path) 
     from playwright.async_api import async_playwright
 
     headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true"
-    logger.info(f"Creating Playwright driver (headless={headless})")
+    logger.info(f"Creating Playwright driver (headless={headless}, profile={profile_dir})")
 
     # Create event loop in dedicated thread (shared by Playwright and driver)
     loop = asyncio.new_event_loop()
@@ -36,16 +38,26 @@ def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path) 
     # Create Playwright resources in the shared event loop
     async def _create_resources():
         playwright = await async_playwright().start()
-        browser = await playwright.chromium.launch(headless=headless)
 
         headers = capabilities.get("headers", {})
         if headers:
             logger.debug(f"Setting extra HTTP headers: {headers}")
 
-        context = await browser.new_context(
-            record_video_dir=artifacts_dir / "videos",
-            extra_http_headers=headers,
-        )
+        if profile_dir:
+            # Persistent context: launch + context combined
+            context = await playwright.chromium.launch_persistent_context(
+                user_data_dir=str(profile_dir),
+                headless=headless,
+                record_video_dir=str(artifacts_dir / "videos"),
+                extra_http_headers=headers or {},
+            )
+        else:
+            # Ephemeral context: separate launch + new_context
+            browser = await playwright.chromium.launch(headless=headless)
+            context = await browser.new_context(
+                record_video_dir=artifacts_dir / "videos",
+                extra_http_headers=headers,
+            )
 
         await context.tracing.start(screenshots=True, snapshots=True, sources=True)
 
@@ -62,7 +74,11 @@ def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path) 
             logger.debug(f"Granting permissions: {permissions}")
             await context.grant_permissions(permissions)
 
-        page = await context.new_page()
+        # Persistent contexts may already have a page open
+        if context.pages:
+            page = context.pages[0]
+        else:
+            page = await context.new_page()
 
         return page
 
@@ -73,15 +89,20 @@ def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path) 
     return (page, loop)
 
 
-def create_selenium_driver(capabilities: dict[str, Any], server_url: str | None) -> Any:
+def create_selenium_driver(
+    capabilities: dict[str, Any], server_url: str | None, profile_dir: Path | None = None
+) -> Any:
     """Create Selenium Chrome driver from capabilities."""
     from selenium.webdriver.chrome.options import Options
 
-    logger.info(f"Creating Selenium driver (server_url={server_url or 'local'})")
+    logger.info(f"Creating Selenium driver (server_url={server_url or 'local'}, profile={profile_dir})")
 
     headers = capabilities.pop("headers", {})
     cookies = capabilities.pop("cookies", [])
     options = Options()
+
+    if profile_dir:
+        options.add_argument(f"--user-data-dir={profile_dir}")
 
     # Apply all capabilities to options
     for key, value in capabilities.items():

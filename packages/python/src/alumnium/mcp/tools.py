@@ -72,6 +72,9 @@ def get_tool_definitions() -> list[Tool]:
                             "You can optionally set cookies. "
                             'Example: \'{"cookies": [{"name": "session", "value": "abc123", '
                             '"domain": ".example.com"}]}\'.'
+                            "You can optionally set a persistent browser profile to preserve "
+                            "cookies and sessions across restarts. "
+                            'Example: \'{"platformName": "chrome", "profile": "personal"}\'.'
                         ),
                     },
                     "server_url": {
