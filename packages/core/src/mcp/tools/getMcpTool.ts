@@ -32,6 +32,6 @@ export const getMcpTool = McpTool.define("get", {
       description: `get ${data}`,
     });
 
-    return [{ type: "text", text: String(result) }];
+    return [{ type: "text", text: JSON.stringify(result) }];
   },
 });
