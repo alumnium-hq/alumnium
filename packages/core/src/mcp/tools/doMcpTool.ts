@@ -79,53 +79,21 @@ export const doMcpTool = McpTool.define("do", {
     const { driver_id: driverId, goal } = input;
 
     const al = McpState.getDriverAlumni(driverId);
-    const client = al.client;
+    const { steps, explanation, changes } = await al.do(goal);
 
-    logger.debug("Scanning driver state");
-    const beforeTree = (await al.driver.getAccessibilityTree()).toStr();
-    logger.debug("Got before tree: {beforeTree}", { beforeTree });
-    const beforeUrl = await al.driver.url();
-    logger.debug("Got before URL: {beforeUrl}", { beforeUrl });
-
-    const result = await al.do(goal);
-
-    logger.debug(`Completed with ${result.steps.length} steps`);
+    logger.debug(`Completed with ${steps.length} steps`);
     await McpArtifactsStore.saveScreenshot({ driverId, description: goal });
 
     // Build structured response
-    const performedSteps = result.steps.map((step) => ({
+    const performedSteps = steps.map((step) => ({
       name: step.name,
       tools: step.tools,
     }));
 
-    let changes = "";
-    if (result.steps.length) {
-      try {
-        const afterTree = (await al.driver.getAccessibilityTree()).toStr();
-        const afterUrl = await al.driver.url();
-        changes = await client.analyzeChanges(
-          beforeTree,
-          beforeUrl,
-          afterTree,
-          afterUrl,
-          await al.driver.app(),
-        );
-      } catch (error) {
-        logger.error(`Error analyzing changes: ${error}`);
-      }
-    }
-
-    const response: {
-      explanation: string;
-      performed_steps: Array<{ name: string; tools: unknown[] }>;
-      changes?: string;
-    } = {
-      explanation: result.explanation,
-      performed_steps: performedSteps,
-    };
-    if (changes) {
-      response["changes"] = changes;
-    }
+    const response = Object.assign(
+      { explanation, performed_steps: performedSteps },
+      changes ? { changes } : {},
+    );
 
     return [{ type: "text", text: JSON.stringify(response, null, 2) }];
   },

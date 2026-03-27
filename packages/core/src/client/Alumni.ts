@@ -202,9 +202,7 @@ export class Alumni {
       screenshot,
     );
 
-    if (!value) {
-      throw new AssertionError(explanation);
-    }
+    if (!value || !explanation) throw new AssertionError(explanation);
 
     return explanation;
   }
