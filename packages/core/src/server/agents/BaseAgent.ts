@@ -13,6 +13,7 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
 import { LlmContext } from "../LlmContext.js";
+import { MODEL_RETRIES, MODEL_TIMEOUT_SEC } from "../LlmFactory.js";
 import { agentPrompts } from "./prompts/bundledPrompts.js";
 import {
   agentClassNameToPromptsAgentKind,
@@ -101,9 +102,15 @@ export class BaseAgent {
     this.prompts = prompts;
   }
 
-  // TODO: It would be better if we reversed the function (shouldRetry).
-  protected static shouldRaise(error: unknown): boolean {
-    if (!(error instanceof Error)) return true;
+  protected static shouldRetry(this: void, error: unknown): boolean {
+    logger.debug("Got error from LLM chain: {error}", { error });
+
+    if (!(error instanceof Error)) {
+      logger.debug(
+        "  -> Error is not an instance of Error, re-raising without retrying.",
+      );
+      return false;
+    }
 
     // Common API rate limit errors
     const isCommonRateLimitError =
@@ -147,13 +154,23 @@ export class BaseAgent {
       isMistralRateLimitError ||
       isDeepSeekRateLimitError;
 
-    return !isTimeoutError && !isRateLimitError;
+    const doRetry = isTimeoutError || isRateLimitError;
+    logger.debug(
+      "  -> Should wait and retry? {doRetry} (timeout: {isTimeoutError}, rate limit: {isRateLimitError})",
+      {
+        doRetry,
+        isTimeoutError,
+        isRateLimitError,
+      },
+    );
+
+    return doRetry;
   }
 
   @retry({
-    maxAttempts: 8,
+    maxAttempts: 1 + MODEL_RETRIES,
     backOff: 2000,
-    doRetry: (error) => !BaseAgent.shouldRaise(error),
+    doRetry: (error) => BaseAgent.shouldRetry(error),
   })
   // TODO: This function is infested with bad types, figure out a better way
   // or simply replace LangChain with AI SDK or custom code.
@@ -169,9 +186,13 @@ export class BaseAgent {
   ): Promise<BaseAgentResponse> {
     const contextPrompts: string[] = [];
 
+    const agentName = agentClassNameToPromptsAgentKind(this.constructor.name);
+
+    logger.debug(`Invoking ${agentName} agent chain input: {input}`, { input });
     // @ts-expect-error
     const result = await chain.invoke(input, {
       ...options,
+      timeout: MODEL_TIMEOUT_SEC * 1000,
       callbacks: [
         {
           handleChatModelStart: (_llm, baseMessages) => {
@@ -185,6 +206,7 @@ export class BaseAgent {
         },
       ],
     });
+    logger.debug(`Got ${agentName} agent chain result: {result}`, { result });
     this.#llmContext.clearPromptsMeta(contextPrompts);
 
     let message: any;

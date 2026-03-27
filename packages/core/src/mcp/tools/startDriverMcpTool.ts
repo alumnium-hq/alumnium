@@ -9,7 +9,6 @@ import { PrintToPdfTool } from "../../tools/PrintToPdfTool.js";
 import { ScrollTool } from "../../tools/ScrollTool.js";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.js";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.js";
-import { getLogger } from "../../utils/logger.js";
 import { McpArtifactsStore } from "../McpArtifactsStore.js";
 import {
   createAndroidDriver,
@@ -19,8 +18,6 @@ import {
 } from "../mcpDrivers.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
-
-const logger = getLogger(import.meta.url);
 
 /**
  * Start a new driver instance.
@@ -44,7 +41,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       .optional(),
   }),
 
-  async execute(input) {
+  async execute(input, { logger }) {
     // Parse capabilities JSON
     let capabilities: Record<string, unknown>;
     try {
@@ -59,8 +56,8 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       typeof capabilities.platformName !== "string" ||
       !capabilities.platformName
     ) {
-      logger.error("capabilities must include 'platformName' field");
-      throw new Error("capabilities must include 'platformName' field");
+      logger.error("Capabilities must include 'platformName' field");
+      throw new Error("Capabilities must include 'platformName' field");
     }
 
     const platformName = capabilities.platformName.toLowerCase();
@@ -144,9 +141,9 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
 
     // Apply driver options to Alumnium driver
     if (Object.keys(driverSettings).length) {
-      logger.debug(
-        `Applying driver options: ${JSON.stringify(driverSettings)}`,
-      );
+      logger.debug(`Applying driver options: {driverSettings}`, {
+        driverSettings,
+      });
       for (const [key, value] of Object.entries(driverSettings)) {
         // Convert camelCase to snake_case
         const snakeKey = key
@@ -162,7 +159,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
         if (snakeKey in al.driver) {
           // @ts-expect-error -- TODO
           al.driver[snakeKey] = value;
-          logger.debug(`Set driver option ${snakeKey}=${String(value)}`);
+          logger.debug(`Set driver option ${snakeKey}={value}`, { value });
         } else {
           logger.warn(`Unknown driver option: ${key}`);
         }
@@ -171,10 +168,6 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
 
     // Register driver in global state
     McpState.registerDriver(driverId, al, driver, artifactsStore);
-
-    logger.info(
-      `Driver ${driverId} started successfully. Platform: ${platformLabel}, Model: ${al.model.provider}/${al.model.name}`,
-    );
 
     return [
       {

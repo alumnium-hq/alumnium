@@ -13,12 +13,9 @@ import {
   TypeTool,
   UploadTool,
 } from "../../tools/index.js";
-import { getLogger } from "../../utils/logger.js";
 import { McpArtifactsStore } from "../McpArtifactsStore.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
-
-const logger = getLogger(import.meta.url);
 
 /**
  * @internal
@@ -78,21 +75,21 @@ export const doMcpTool = McpTool.define("do", {
       ),
   }),
 
-  async execute(input) {
-    const driverId = input["driver_id"];
-    const goal = input["goal"];
-
-    logger.info(`Driver ${driverId}: Executing do('${goal}')`);
+  async execute(input, { logger }) {
+    const { driver_id: driverId, goal } = input;
 
     const al = McpState.getDriverAlumni(driverId);
     const client = al.client;
+
+    logger.debug("Scanning driver state");
     const beforeTree = (await al.driver.getAccessibilityTree()).toStr();
+    logger.debug("Got before tree: {beforeTree}", { beforeTree });
     const beforeUrl = await al.driver.url();
+    logger.debug("Got before URL: {beforeUrl}", { beforeUrl });
+
     const result = await al.do(goal);
 
-    logger.debug(
-      `Driver ${driverId}: do() completed with ${result.steps.length} steps`,
-    );
+    logger.debug(`Completed with ${result.steps.length} steps`);
     await McpArtifactsStore.saveScreenshot({ driverId, description: goal });
 
     // Build structured response
@@ -114,7 +111,7 @@ export const doMcpTool = McpTool.define("do", {
           await al.driver.app(),
         );
       } catch (error) {
-        logger.error(`Driver ${driverId}: Error analyzing changes: ${error}`);
+        logger.error(`Error analyzing changes: ${error}`);
       }
     }
 

@@ -8,6 +8,3 @@ set -eo pipefail
 if [ -f ~/.config/fnox/age.txt ]; then
   export FNOX_AGE_KEY="$(cat ~/.config/fnox/age.txt | grep "AGE-SECRET-KEY")"
 fi
-
-# Force colors, i.e., for `bun --filter test`
-export FORCE_COLOR=1

@@ -129,7 +129,9 @@ export class SeleniumDriver extends BaseDriver {
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     // Switch to default content to ensure we're at the top level for frame enumeration
     await this.driver.switchTo().defaultContent();
+    logger.debug("Waiting for page to load before getting accessibility tree");
     await this.waitForPageToLoad();
+    logger.debug("Page loaded, retrieving accessibility tree");
 
     // Get frame tree to enumerate all frames
     const frameTree = (await this.executeCdpCommand(
@@ -184,6 +186,8 @@ export class SeleniumDriver extends BaseDriver {
         );
       }
     }
+
+    logger.debug(`Total accessibility nodes collected: ${allNodes.length}`);
 
     return new ChromiumAccessibilityTree({ nodes: allNodes });
   }
@@ -519,7 +523,10 @@ export class SeleniumDriver extends BaseDriver {
     cmd: string,
     params: object,
   ): Promise<unknown> {
-    return await this.driver.sendAndGetDevToolsCommand(cmd, params);
+    logger.debug(`Executing CDP command: ${cmd} with: {params}`, { params });
+    const result = await this.driver.sendAndGetDevToolsCommand(cmd, params);
+    logger.debug(`CDP ${cmd} command result: {result}`, { result });
+    return result;
   }
 
   private async waitForPageToLoad(): Promise<void> {

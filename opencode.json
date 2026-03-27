@@ -7,5 +7,21 @@
     "webfetch": "allow",
     "doom_loop": "ask",
     "external_directory": "ask"
+  },
+  "mcp": {
+    "alumnium": {
+      "type": "local",
+      "command": ["mise", "mcp/start"],
+      "enabled": true,
+      "environment": {
+        "ALUMNIUM_LOG_LEVEL": "{env:ALUMNIUM_LOG_LEVEL}",
+        "ALUMNIUM_LOG_FILENAME": "mcp-opencode.log",
+        "ALUMNIUM_DRIVER": "{env:ALUMNIUM_DRIVER}",
+        "ALUMNIUM_MODEL": "{env:ALUMNIUM_MODEL}",
+        "ALUMNIUM_PLANNER": "{env:ALUMNIUM_PLANNER}",
+        "ALUMNIUM_PLAYWRIGHT_HEADLESS": "{env:ALUMNIUM_PLAYWRIGHT_HEADLESS}",
+        "AZURE_OPENAI_API_VERSION": "{env:AZURE_OPENAI_API_VERSION}"
+      }
+    }
   }
 }

@@ -2,15 +2,17 @@
   "servers": {
     "alumnium": {
       "type": "stdio",
-      "command": "fnox",
-      "args": ["exec", "--", "bun", "./src/cli.ts", "mcp"],
-      "cwd": "${workspaceFolder}/packages/core",
+      "command": "mise",
+      "args": ["mcp/start"],
       "envFile": "${workspaceFolder}/.env",
       "env": {
+        "ALUMNIUM_LOG_LEVEL": "${env:ALUMNIUM_LOG_LEVEL}",
+        "ALUMNIUM_LOG_FILENAME": "mcp-vscode.log",
+        "ALUMNIUM_DRIVER": "${env:ALUMNIUM_DRIVER}",
         "ALUMNIUM_MODEL": "${env:ALUMNIUM_MODEL}",
+        "ALUMNIUM_PLANNER": "${env:ALUMNIUM_PLANNER}",
+        "ALUMNIUM_PLAYWRIGHT_HEADLESS": "${env:ALUMNIUM_PLAYWRIGHT_HEADLESS}",
         "AZURE_OPENAI_API_VERSION": "${env:AZURE_OPENAI_API_VERSION}",
-        "AZURE_OPENAI_API_KEY": "${env:AZURE_OPENAI_API_KEY}",
-        "AZURE_OPENAI_ENDPOINT": "${env:AZURE_OPENAI_ENDPOINT}",
       },
     },
   },

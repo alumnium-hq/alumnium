@@ -48,7 +48,8 @@ export abstract class McpState {
       artifactsStore: artifactsStore,
       stepCounter: 1,
     };
-    logger.debug(`Registered driver ${driverId} in state`);
+
+    logger.debug(`Registered driver ${driverId}`);
   }
 
   /**
@@ -157,6 +158,8 @@ export abstract class McpState {
       "SIGTERM",
       () => void this.cleanupAllDriversOnce().finally(() => process.exit(0)),
     );
+
+    logger.debug("Registered MCP cleanup hooks");
 
     this.cleanupHooksRegistered = true;
   }

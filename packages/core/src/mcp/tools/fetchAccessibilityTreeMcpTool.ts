@@ -1,11 +1,8 @@
 import { always } from "alwaysly";
 import z from "zod";
 import { NativeClient } from "../../clients/NativeClient.js";
-import { getLogger } from "../../utils/logger.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
-
-const logger = getLogger(import.meta.url);
 
 /**
  * Fetch accessibility tree for debugging.
@@ -23,8 +20,6 @@ export const fetchAccessibilityTreeMcpTool = McpTool.define(
     async execute(input) {
       const { driver_id: driverId } = input;
 
-      logger.debug(`Driver ${driverId}: Getting accessibility tree`);
-
       const al = McpState.getDriverAlumni(driverId);
       // Access the internal driver's accessibility tree
       // as if it's processed by Alumnium server
@@ -34,12 +29,9 @@ export const fetchAccessibilityTreeMcpTool = McpTool.define(
         (await al.driver.getAccessibilityTree()).toStr(),
       );
 
-      return [
-        {
-          type: "text",
-          text: `Accessibility Tree:\n${tree.toXml(client.session.excludeAttributes)}`,
-        },
-      ];
+      const text = `Accessibility Tree:\n${tree.toXml(client.session.excludeAttributes)}`;
+
+      return [{ type: "text", text }];
     },
   },
 );

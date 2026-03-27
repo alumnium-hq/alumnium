@@ -15,7 +15,7 @@ const DEFAULT_PORT = "8013";
 const DEFAULT_TIMEOUT_MS = "15000";
 const WAIT_POLL_INTERVAL_MS = 200;
 
-export async function serverCommand() {
+export async function serverCommand(logPath: string) {
   const { values } = parseArgs({
     args: Bun.argv,
     options: {
@@ -102,9 +102,6 @@ export async function serverCommand() {
   }
 
   if (process.env.ALUMNIUM_SERVER_DAEMONIZE === "1") {
-    const logPath =
-      process.env.ALUMNIUM_SERVER_DAEMON_LOG_PATH ||
-      FileStore.globalSubDir(`server-${process.pid}.log`);
     setLogPath(logPath);
 
     await writePidFile(pidPath);
