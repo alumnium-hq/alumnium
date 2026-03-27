@@ -136,7 +136,7 @@ export function bindLogger(
       const methodName: LogMethod = level === "warning" ? "warn" : level;
       const method: LoggerMethod = (message: string, payload?: any) =>
         logger[methodName](messageFn(message), payload);
-      return [level, method];
+      return [methodName, method];
     }),
   );
   return boundLogger as LoggerLike;
