@@ -1,4 +1,5 @@
 import z from "zod";
+import { AssertionError } from "../../client/errors/AssertionError.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
 
@@ -27,6 +28,7 @@ export const waitMcpTool = McpTool.define("wait", {
     timeout: z
       .number()
       .int()
+      .default(10)
       .optional()
       .describe("Max seconds to wait for condition (default: 10, string only)"),
   }),
@@ -70,6 +72,12 @@ export const waitMcpTool = McpTool.define("wait", {
           { type: "text", text: `Condition met: ${waitFor}\n${explanation}` },
         ];
       } catch (error) {
+        if (
+          !(error instanceof AssertionError) &&
+          !(error instanceof Error && error.name === "AssertionError")
+        ) {
+          throw error;
+        }
         lastError = String(error);
         logger.debug(`Condition not met after ${attempts} attempts(s)`);
         await Bun.sleep(pollInterval * 1000);

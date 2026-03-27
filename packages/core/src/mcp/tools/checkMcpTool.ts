@@ -1,4 +1,5 @@
 import z from "zod";
+import { AssertionError } from "../../client/errors/AssertionError.js";
 import { McpArtifactsStore } from "../McpArtifactsStore.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
@@ -33,6 +34,8 @@ export const checkMcpTool = McpTool.define("check", {
       result = "passed";
       logger.debug(`Passed with ${explanation}`);
     } catch (error) {
+      if (!(error instanceof AssertionError)) throw error;
+
       explanation = String(error);
       result = "failed";
       logger.error(`Failed with ${explanation}`);

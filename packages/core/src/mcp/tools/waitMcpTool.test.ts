@@ -1,5 +1,6 @@
 import { describe, expect, it, mock, spyOn } from "bun:test";
 import { mockBeforeEach, pushMock } from "../../../tests/mocks.js";
+import { AssertionError } from "../../client/errors/AssertionError.js";
 import { McpState } from "../McpState.js";
 import { waitMcpTool } from "./waitMcpTool.js";
 
@@ -58,8 +59,8 @@ describe("waitMcpTool", () => {
 
   it("retries until condition is met", async () => {
     const check = mockCheck(async () => "The condition is now satisfied")
-      .mockRejectedValueOnce(new Error("Not yet"))
-      .mockRejectedValueOnce(new Error("Still not"));
+      .mockRejectedValueOnce(new AssertionError("Not yet"))
+      .mockRejectedValueOnce(new AssertionError("Still not"));
     const result = await waitMcpTool.execute({
       driver_id: "test-123",
       for: "page loaded",
@@ -77,7 +78,7 @@ describe("waitMcpTool", () => {
 
   it("returns timeout message when condition is never met", async () => {
     const check = mockCheck(() => {
-      throw new Error("Condition not satisfied");
+      throw new AssertionError("Condition not satisfied");
     });
     const result = await waitMcpTool.execute({
       driver_id: "test-123",
@@ -93,6 +94,20 @@ describe("waitMcpTool", () => {
       },
     ]);
     expect(check).toHaveBeenCalledWith("element visible");
+  });
+
+  it("rethrows non-assertion errors", async () => {
+    mockCheck(() => {
+      throw new Error("Connection lost");
+    });
+
+    expect(
+      waitMcpTool.execute({
+        driver_id: "test-123",
+        for: "element visible",
+        timeout: 1,
+      }),
+    ).rejects.toThrow("Connection lost");
   });
 
   it("uses default timeout when timeout is omitted", async () => {
