@@ -94,10 +94,9 @@ export class BaseAgent {
     this.#llmContext = llmContext;
 
     const dev = PROVIDER_TO_PROMPTS_DEV[Model.current.provider];
-    const prompts =
-      agentPrompts[agentClassNameToPromptsAgentKind(this.constructor.name)]?.[
-        dev
-      ];
+    const agentPromptsByDev =
+      agentPrompts[agentClassNameToPromptsAgentKind(this.constructor.name)];
+    const prompts = agentPromptsByDev[dev] ?? agentPromptsByDev.openai;
     always(prompts);
     this.prompts = prompts;
   }
