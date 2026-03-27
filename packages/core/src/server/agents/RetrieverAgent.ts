@@ -143,8 +143,8 @@ export class RetrieverAgent extends BaseAgent {
         (response.structured as RetrievedInformation).explanation,
         value
           .split(RetrieverAgent.#LIST_SEPARATOR)
-          .map((item) => item.trim())
-          .filter((item) => item),
+          .filter((item) => item)
+          .map((item) => item.trim()),
       ];
     } else {
       return [(response.structured as RetrievedInformation).explanation, value];
