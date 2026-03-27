@@ -1,9 +1,6 @@
 import z from "zod";
-import { getLogger } from "../../utils/logger.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
-
-const logger = getLogger(import.meta.url);
 
 /**
  * Wait for seconds or a natural language condition.
@@ -34,7 +31,7 @@ export const waitMcpTool = McpTool.define("wait", {
       .describe("Max seconds to wait for condition (default: 10, string only)"),
   }),
 
-  async execute(input) {
+  async execute(input, { logger }) {
     const { for: waitFor, driver_id: driverId, timeout: inputTimeout } = input;
 
     // If it's a number, wait that many seconds
@@ -58,10 +55,6 @@ export const waitMcpTool = McpTool.define("wait", {
     const timeout = typeof inputTimeout === "number" ? inputTimeout : 10;
     const pollInterval = 1.0;
 
-    logger.info(
-      `Driver ${driverId}: Waiting for '${waitFor}' (timeout=${timeout}s)`,
-    );
-
     const al = McpState.getDriverAlumni(driverId);
 
     const startTime = Date.now();
@@ -72,22 +65,19 @@ export const waitMcpTool = McpTool.define("wait", {
       attempts += 1;
       try {
         const explanation = await al.check(waitFor);
-        logger.info(
-          `Driver ${driverId}: Condition met after ${attempts} attempt(s)`,
-        );
+        logger.info(`Condition met after ${attempts} attempt(s)`);
         return [
           { type: "text", text: `Condition met: ${waitFor}\n${explanation}` },
         ];
       } catch (error) {
         lastError = String(error);
-        logger.debug(
-          `Driver ${driverId}: Condition not met (attempt ${attempts})`,
-        );
+        logger.debug(`Condition not met after ${attempts} attempts(s)`);
         await Bun.sleep(pollInterval * 1000);
       }
     }
 
-    logger.warn(`Driver ${driverId}: Timeout waiting for '${waitFor}'`);
+    logger.warn(`Timeout waiting for '${waitFor}'`);
+
     return [
       {
         type: "text",

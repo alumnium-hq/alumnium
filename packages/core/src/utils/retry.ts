@@ -2,8 +2,13 @@ import { getLogger } from "./logger.js";
 
 const logger = getLogger(import.meta.url);
 
-const DELAY = parseFloat(process.env.ALUMNIUM_DELAY || "0.5") * 1000; // Convert to milliseconds
-const RETRIES = parseInt(process.env.ALUMNIUM_RETRIES || "2", 10);
+const DEFAULT_DELAY_SEC = 0.5; // seconds
+let DELAY_MS = parseFloat(process.env.ALUMNIUM_DELAY || "0.5") * 1000; // Convert to milliseconds
+if (isNaN(DELAY_MS) || DELAY_MS < 0) DELAY_MS = DEFAULT_DELAY_SEC * 1000;
+
+const DEFAULT_RETRIES = 2;
+let RETRIES = parseInt(process.env.ALUMNIUM_RETRIES || String(DEFAULT_RETRIES));
+if (isNaN(RETRIES) || RETRIES < 0) RETRIES = DEFAULT_RETRIES;
 
 interface RetryOptions {
   maxAttempts?: number;
@@ -16,7 +21,7 @@ function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
   options: RetryOptions,
 ): T {
   const maxAttempts = options.maxAttempts ?? RETRIES;
-  const backOff = options.backOff ?? DELAY;
+  const backOff = options.backOff ?? DELAY_MS;
 
   return async function (this: unknown, ...args: unknown[]): Promise<unknown> {
     let lastError: Error | undefined;
@@ -25,11 +30,15 @@ function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
       try {
         return await originalMethod.apply(this, args);
       } catch (error) {
+        logger.debug(
+          `Error on attempt ${attempt} for method ${originalMethod.name}: {error}`,
+          { error },
+        );
         lastError = error as Error;
 
         // Check if we should retry this error
         if (options.doRetry && !options.doRetry(lastError)) {
-          console.debug(`Not retrying error: ${lastError.message}`, {
+          logger.debug(`Not retrying error: ${lastError.message}`, {
             error: lastError,
           });
           throw lastError;
@@ -45,13 +54,13 @@ function wrapWithRetry<T extends (...args: unknown[]) => Promise<unknown>>(
 
         // Don't wait after the last attempt
         if (attempt < maxAttempts) {
-          console.debug(
+          logger.debug(
             `Attempt ${attempt}/${maxAttempts} failed, retrying in ${backOff}ms: ${lastError.message}`,
             { attempt, maxAttempts, backOff, error: lastError },
           );
           await new Promise((resolve) => setTimeout(resolve, backOff));
         } else {
-          console.debug(
+          logger.debug(
             `Attempt ${attempt}/${maxAttempts} failed, no more retries`,
             { attempt, maxAttempts, error: lastError },
           );

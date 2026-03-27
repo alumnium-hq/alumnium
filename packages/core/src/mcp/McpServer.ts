@@ -37,7 +37,7 @@ export class McpServer {
   constructor() {
     this.#server = new Server({ name: "alumnium", version: ALUMNIUM_VERSION });
     this.#registerTools();
-    logger.info("Server initialized");
+    logger.info("MCP server initialized");
   }
 
   /**

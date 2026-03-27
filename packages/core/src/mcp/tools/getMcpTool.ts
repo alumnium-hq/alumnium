@@ -1,10 +1,7 @@
 import z from "zod";
-import { getLogger } from "../../utils/logger.js";
 import { McpArtifactsStore } from "../McpArtifactsStore.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
-
-const logger = getLogger(import.meta.url);
 
 /**
  * Execute Alumni.get().
@@ -27,15 +24,9 @@ export const getMcpTool = McpTool.define("get", {
   async execute(input) {
     const { driver_id: driverId, data, vision } = input;
 
-    logger.info(
-      `Driver ${driverId}: Executing get('${data}', vision=${vision})`,
-    );
-
     const al = McpState.getDriverAlumni(driverId);
     const result = await al.get(data, { vision });
-    logger.debug(`Driver ${driverId}: get() extracted data: {result}`, {
-      result,
-    });
+
     await McpArtifactsStore.saveScreenshot({
       driverId,
       description: `get ${data}`,

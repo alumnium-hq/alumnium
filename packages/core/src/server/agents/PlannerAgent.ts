@@ -216,22 +216,19 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
       treeXml,
     };
 
-    const response = await this.invokeChain(
-      this.chain,
-      {
-        goal,
-        accessibility_tree: treeXml,
-      },
-      meta,
-    );
+    const input = {
+      goal,
+      accessibility_tree: treeXml,
+    };
+    const result = await this.invokeChain(this.chain, input, meta);
 
     if (
       !PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)
     ) {
-      const structured = response.structured as PlannerAgent.Plan;
+      const structured = result.structured as PlannerAgent.Plan;
       this.logData(logger, "out", {
         Result: structured,
-        Usage: response.usage,
+        Usage: result.usage,
       });
 
       return [
@@ -241,11 +238,11 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     }
 
     this.logData(logger, "out", {
-      Result: response.content,
-      Usage: response.usage,
+      Result: result.content,
+      Usage: result.usage,
     });
 
-    let content = response.content;
+    let content = result.content;
 
     // TODO: Figure out if LangChain JS and Python have different content types
     // or Python simply assumes content is always string. If the latter, we can

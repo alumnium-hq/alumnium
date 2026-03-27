@@ -1,10 +1,7 @@
 import z from "zod";
-import { getLogger } from "../../utils/logger.js";
 import { McpArtifactsStore } from "../McpArtifactsStore.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
-
-const logger = getLogger(import.meta.url);
 
 /**
  * Execute Alumni.check().
@@ -13,9 +10,7 @@ export const checkMcpTool = McpTool.define("check", {
   description:
     "Verify a statement is true about the current page. Returns the result and explanation.",
 
-  inputSchema: z.object({
-    driver_id: z.string(),
-
+  inputSchema: McpTool.DriverInput.extend({
     statement: z
       .string()
       .describe("Statement to verify (e.g., 'page title contains Dashboard')"),
@@ -26,12 +21,8 @@ export const checkMcpTool = McpTool.define("check", {
       .describe("Use screenshot for verification"),
   }),
 
-  async execute(input) {
+  async execute(input, { logger }) {
     const { driver_id: driverId, statement, vision } = input;
-
-    logger.info(
-      `Driver ${driverId}: Executing check('${statement}', vision=${vision})`,
-    );
 
     const al = McpState.getDriverAlumni(driverId);
 
@@ -40,11 +31,11 @@ export const checkMcpTool = McpTool.define("check", {
     try {
       explanation = await al.check(statement, { vision });
       result = "passed";
-      logger.debug(`Driver ${driverId}: check() passed: ${explanation}`);
+      logger.debug(`Passed with ${explanation}`);
     } catch (error) {
       explanation = String(error);
       result = "failed";
-      logger.debug(`Driver ${driverId}: check() failed: ${error}`);
+      logger.error(`Failed with ${explanation}`);
     }
 
     await McpArtifactsStore.saveScreenshot({

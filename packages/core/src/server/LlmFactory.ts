@@ -20,9 +20,17 @@ import { getLogger } from "../utils/logger.js";
 
 const logger = getLogger(import.meta.url);
 const parsedModelTimeout = parseInt(process.env.ALUMNIUM_MODEL_TIMEOUT ?? "90");
-const MODEL_TIMEOUT = Number.isFinite(parsedModelTimeout)
+export const MODEL_TIMEOUT_SEC = Number.isFinite(parsedModelTimeout)
   ? parsedModelTimeout
   : 90;
+
+const DEFAULT_LLM_RETRIES = 8;
+
+export let MODEL_RETRIES = parseInt(
+  process.env.ALUMNIUM_MODEL_RETRIES || String(DEFAULT_LLM_RETRIES),
+);
+if (isNaN(MODEL_RETRIES)) MODEL_RETRIES = DEFAULT_LLM_RETRIES;
+if (MODEL_RETRIES < 0) MODEL_RETRIES = 0;
 
 /**
  * Factory for creating LLM instances based on model configuration.
@@ -32,7 +40,9 @@ export class LlmFactory {
    * Create an LLM instance based on the model configuration.
    */
   static createLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.info(`Creating LLM for model: ${model.provider}/${model.name}`);
+    logger.info(
+      `Creating LLM for model: ${model.provider}/${model.name} (timeout: ${MODEL_TIMEOUT_SEC}s, retries: ${MODEL_RETRIES})`,
+    );
 
     switch (model.provider) {
       case "azure_foundry":
@@ -68,7 +78,6 @@ export class LlmFactory {
     const defaultFields: Partial<AzureChatOpenAIFields> = {
       // TODO: See the OpenAI LLM function for more info about the issue.
       // temperature: 0,
-      timeout: MODEL_TIMEOUT,
       cache,
     };
     const fields =
@@ -116,12 +125,15 @@ export class LlmFactory {
         "AZURE_OPENAI_API_KEY environment variable is required for Azure OpenAI models",
       );
     }
+    logMaskedSecret("Azure OpenAI API Key", azureOpenAIApiKey);
+
     const azureOpenAIEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
     if (!azureOpenAIEndpoint) {
       throw new Error(
         "AZURE_OPENAI_ENDPOINT environment variable is required for Azure OpenAI models",
       );
     }
+    logMaskedSecret("Azure OpenAI API Endpoint", azureOpenAIEndpoint);
 
     const azureOpenAIApiVersion = process.env.AZURE_OPENAI_API_VERSION;
     if (!azureOpenAIApiVersion) {
@@ -129,6 +141,7 @@ export class LlmFactory {
         "AZURE_OPENAI_API_VERSION environment variable is required for Azure OpenAI models",
       );
     }
+    logMaskedSecret("Azure OpenAI API Version", azureOpenAIApiVersion);
 
     let defaultHeaders: Headers | undefined;
     const envHeaders = process.env.AZURE_OPENAI_DEFAULT_HEADERS;
@@ -206,7 +219,6 @@ export class LlmFactory {
     return new ChatDeepSeek({
       model: model.name,
       temperature: 0,
-      timeout: MODEL_TIMEOUT,
       // TODO: Python implementation also includes field missing in JS SDK:
       //     disabled_params={"tool_choice": None}
       cache,
@@ -246,7 +258,6 @@ export class LlmFactory {
       model: model.name,
       configuration: { baseURL: "https://models.github.ai/inference" },
       temperature: 0,
-      timeout: MODEL_TIMEOUT,
       cache,
     });
   }
@@ -305,7 +316,6 @@ export class LlmFactory {
       // - https://community.openai.com/t/gpt-5-removed-parameters-logprob-top-p-temperature/1345768/2
       //
       // temperature: 0,
-      timeout: MODEL_TIMEOUT,
       cache,
     };
 
@@ -339,4 +349,20 @@ export class LlmFactory {
       cache,
     });
   }
+}
+
+function logMaskedSecret(name: string, secret: string) {
+  logger.debug(`${name} is set: ${maskStr(secret)}`);
+}
+
+function maskStr(str: string, unmaskedStart = 4, unmaskedEnd = 4): string {
+  if (str.length <= unmaskedStart + unmaskedEnd) {
+    return "*".repeat(str.length);
+  }
+  const maskedLength = str.length - unmaskedStart - unmaskedEnd;
+  return (
+    str.slice(0, unmaskedStart) +
+    "*".repeat(maskedLength) +
+    str.slice(str.length - unmaskedEnd)
+  );
 }
