@@ -1,0 +1,7 @@
+[tasks.build]
+run = "./scripts/build.ts"
+description = "Build CLI bins, core npm and CLI pip packages"
+
+[tasks."generate/bundles"]
+run = "./scripts/generate-bundles.ts | xargs oxfmt"
+description = "Generates code bundles to enable building single-file executable"

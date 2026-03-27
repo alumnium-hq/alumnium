@@ -1,3 +1,4 @@
+import { always } from "alwaysly";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,7 +13,7 @@ export type AgentPrompts = {
 
 export namespace AgentPrompts {
   export type DevPrompts = {
-    [DevId: string]: RolePrompts;
+    [DevId in Model.Dev]?: RolePrompts;
   };
 
   export type RolePrompts = {
@@ -69,13 +70,29 @@ export async function loadAgentPrompts(): Promise<AgentPrompts> {
             loadPrompt(devDir.path, "user"),
             loadPrompt(devDir.path, "system"),
           ]);
-          agentPrompts[devDir.name] = { user, system };
+          agentPrompts[devDir.name as Model.Dev] = { user, system };
         }),
       );
     }),
   );
 
-  return prompts as AgentPrompts;
+  return sortPrompts(prompts as AgentPrompts);
+}
+
+// NOTE: Sort objects so that generated bundles have a consistent order.
+function sortPrompts(prompts: AgentPrompts): AgentPrompts {
+  const sortedPrompts: Partial<AgentPrompts> = {};
+  (Object.keys(prompts) as Agent.Kind[]).sort().forEach((agentKind) => {
+    const agentPrompts = prompts[agentKind];
+    const sortedAgentPrompts: Partial<AgentPrompts.DevPrompts> = {};
+    (Object.keys(agentPrompts) as Model.Dev[]).sort().forEach((dev) => {
+      always(agentPrompts[dev]);
+      sortedAgentPrompts[dev] = agentPrompts[dev];
+    });
+    sortedPrompts[agentKind as Agent.Kind] =
+      sortedAgentPrompts as AgentPrompts.DevPrompts;
+  });
+  return sortedPrompts as AgentPrompts;
 }
 
 namespace GetDirs {

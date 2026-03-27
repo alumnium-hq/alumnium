@@ -1,8 +1,13 @@
+experimental_monorepo_root = true
+[monorepo]
+config_roots = ["packages/*"]
+
 [tools]
 bun = "latest"
 fnox = "latest"
 opencode = "latest"
 shfmt = "latest" # .sh formatter
+oxfmt = "latest" # TS formatter
 
 [env]
 _.source = "scripts/env.sh"
@@ -12,10 +17,12 @@ ALUMNIUM_MODEL = "${ALUMNIUM_MODEL:-azure_openai}"
 ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT = "2000"
 AZURE_OPENAI_API_VERSION = "${AZURE_OPENAI_API_VERSION:-2025-03-01-preview}"
 # Tool envs
+MISE_EXPERIMENTAL = true # Enable monorepo root support
 OPENCODE_CONFIG_DIR = "./.agents"
 FORCE_COLOR = "1" # Force colors, i.e., for `bun --filter test`
 
 [settings]
+env_shell_expand = true # Allow using "${VAR}" in values
 lockfile = true
 idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
 

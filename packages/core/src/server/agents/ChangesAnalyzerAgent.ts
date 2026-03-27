@@ -41,7 +41,7 @@ export class ChangesAnalyzerAgent extends BaseAgent {
       meta,
     );
 
-    const content = response.content.replace("\n\n", " ");
+    const content = response.content.replaceAll("\n\n", " ");
 
     this.logData(logger, "out", {
       Result: content,
