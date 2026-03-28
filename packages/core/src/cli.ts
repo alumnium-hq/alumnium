@@ -1,6 +1,5 @@
 import { parseArgs } from "node:util";
 import z from "zod";
-import { FileStore } from "./FileStore/FileStore.js";
 import { mcpCommand } from "./mcp/mcpCommand.js";
 import { serverCommand } from "./server/serverCommand.js";
 import { getLogger } from "./utils/logger.js";
@@ -27,20 +26,19 @@ try {
   process.exit(1);
 }
 
+// NOTE: Log path can be overridden via env vars, see utils/logger.ts.
+// Also commands themselves decide if to use console or file logging, i.e.,
+// MCP and server in daemon mode will to file automatically.
 const logTimeStr = new Date().toISOString().slice(0, 19);
-const logFilename =
-  process.env.ALUMNIUM_LOG_FILENAME || `${command}-${logTimeStr}.log`;
-const logPath =
-  process.env.ALUMNIUM_LOG_PATH ||
-  FileStore.globalSubDir(`logs/${logFilename}`);
+const logFilenameHint = `${command}-${logTimeStr}.log`;
 
 switch (command) {
   case "mcp":
-    await mcpCommand(logPath);
+    await mcpCommand(logFilenameHint);
     break;
 
   case "server":
-    await serverCommand(logPath);
+    await serverCommand(logFilenameHint);
     break;
 
   default:

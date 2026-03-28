@@ -10,6 +10,7 @@ import { always } from "alwaysly";
 import * as fs from "fs";
 import path from "node:path";
 import { z } from "zod";
+import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.js";
 
 export const logLevels = [
   "debug",
@@ -44,14 +45,14 @@ export type LoggerMethod = (message: string, payload?: any) => void;
 let configured = false;
 let level = LogLevel.parse(process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase());
 
+const PRUNE_LOGS = !!process.env.ALUMNIUM_PRUNE_LOGS;
+
 namespace configureLogging {
   export interface Props {
     reset?: boolean | undefined;
-    logPath?: string | undefined;
+    logPath?: string | resolveLogPath.Props | undefined;
   }
 }
-
-const PRUNE_LOGS = !!process.env.ALUMNIUM_PRUNE_LOGS;
 
 /**
  * Configure the logging system based on environment variables:
@@ -59,12 +60,15 @@ const PRUNE_LOGS = !!process.env.ALUMNIUM_PRUNE_LOGS;
  * - ALUMNIUM_LOG_PATH: Output destination ("stdout" or file path) - defaults to "stdout"
  */
 function configureLogging(props: configureLogging.Props = {}): void {
-  const { reset, logPath } = props;
+  const { reset, logPath: logPathProp } = props;
   if (configured) {
     if (reset) resetSync();
     else return;
   }
 
+  const logPath = resolveLogPath(
+    typeof logPathProp === "string" ? { path: logPathProp } : logPathProp,
+  );
   if (logPath) {
     fs.mkdirSync(path.dirname(logPath), { recursive: true });
     if (PRUNE_LOGS) fs.rmSync(logPath, { force: true });
@@ -105,7 +109,7 @@ export function setLoggerLevel(newLevel: LogLevel) {
   configureLogging({ reset: true });
 }
 
-export function setLogPath(newLogPath: string) {
+export function setLogPath(newLogPath: string | resolveLogPath.Props) {
   configureLogging({ logPath: newLogPath, reset: true });
 }
 
@@ -113,6 +117,26 @@ export function getLogger(modulePath: string) {
   configureLogging();
 
   return logtapeGetLogger(["alumnium", moduleUrlToLoggerCategory(modulePath)]);
+}
+
+export namespace resolveLogPath {
+  export interface Props {
+    filename?: string | undefined;
+    path?: string | undefined;
+  }
+}
+
+export function resolveLogPath(
+  props?: resolveLogPath.Props,
+): string | undefined {
+  const logFilename = process.env.ALUMNIUM_LOG_FILENAME || props?.filename;
+  return (
+    process.env.ALUMNIUM_LOG_PATH ||
+    props?.path ||
+    (logFilename
+      ? GlobalFileStorePaths.globalSubDir(`logs/${logFilename}`)
+      : undefined)
+  );
 }
 
 const MODULE_PATH_RE = /(src|dist)\/(.+)\.ts/;

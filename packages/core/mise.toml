@@ -1,3 +1,9 @@
+[tasks.test]
+run = "bun test"
+
+[tasks."test:watch"]
+run = "bun test --watch"
+
 [tasks.build]
 run = "./scripts/build.ts"
 description = "Build CLI bins, core npm and CLI pip packages"
