@@ -7,7 +7,7 @@ logger = get_logger(__name__)
 
 
 class ChangesAnalyzerAgent(BaseAgent):
-    EXCLUDED_ATTRIBUTES = {"id"}
+    EXCLUDE_ATTRIBUTES = {"id"}
 
     def __init__(self, llm: BaseChatModel):
         super().__init__()

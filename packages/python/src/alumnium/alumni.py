@@ -1,4 +1,5 @@
 from asyncio import AbstractEventLoop
+from os import getenv
 
 from appium.webdriver.webdriver import WebDriver as Appium
 from langchain_core.language_models import BaseChatModel
@@ -7,7 +8,7 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from . import CHANGE_ANALYSIS, DELAY, EXCLUDED_ATTRIBUTES, PLANNER, RETRIES
+from . import CHANGE_ANALYSIS, DELAY, EXCLUDE_ATTRIBUTES, PLANNER, RETRIES
 from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
@@ -36,11 +37,11 @@ class Alumni:
         url: str | None = None,
         planner: bool | None = None,
         change_analysis: bool | None = None,
-        excluded_attributes: set[str] | None = None,
+        exclude_attributes: set[str] | None = None,
     ):
         planner = planner if planner is not None else PLANNER
         self.change_analysis = change_analysis if change_analysis is not None else CHANGE_ANALYSIS
-        excluded_attributes = excluded_attributes if excluded_attributes is not None else EXCLUDED_ATTRIBUTES
+        exclude_attributes = exclude_attributes if exclude_attributes is not None else EXCLUDE_ATTRIBUTES
 
         self.model = model or Model.current
         self.llm = llm
@@ -65,15 +66,19 @@ class Alumni:
         for tool in self.driver.supported_tools | set(extra_tools or []):
             self.tools[tool.__name__] = tool
 
-        if url:
+        # NOTE: Since we're migrating to TypeScript core, this is enforced now
+        # to always use the server, even if the URL is not provided. Later we
+        # will simply remove the native client.
+        server_url = url or getenv("ALUMNIUM_SERVER_URL") or "http://localhost:8013"
+        if server_url:
             logger.info(f"Using HTTP client with server: {url}")
             self.client = HttpClient(
-                url,
+                server_url,
                 self.model,
                 self.driver.platform,
                 self.tools,
                 planner,
-                excluded_attributes,
+                exclude_attributes,
             )
         else:
             logger.info("Using native client")
@@ -83,7 +88,7 @@ class Alumni:
                 self.tools,
                 self.llm,
                 planner,
-                excluded_attributes,
+                exclude_attributes,
             )
 
         self.cache = Cache(self.client)

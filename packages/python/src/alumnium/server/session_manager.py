@@ -5,7 +5,6 @@ from langchain_core.language_models import BaseChatModel
 
 from .logutils import get_logger
 from .models import Model
-from .schema_to_tool_converter import convert_schemas_to_tools
 from .session import Session
 
 logger = get_logger(__name__)
@@ -20,12 +19,13 @@ class SessionManager:
     def create_session(
         self,
         provider: str,
-        name: str,
+        name: Optional[str],
         platform: str,
-        tools: List[Dict[str, Any]],
+        tool_schemas: List[Dict[str, Any]],
         llm: BaseChatModel | None = None,
         planner: bool = True,
-        excluded_attributes: set[str] | None = None,
+        session_id: str | None = None,
+        exclude_attributes: set[str] | None = None,
     ) -> str:
         """Create a new session and return its ID.
         Args:
@@ -34,29 +34,36 @@ class SessionManager:
             platform: The platform type (chromium, xcuitest, uiautomator2)
             tools: List of LangChain tool schemas
             llm: Optional custom LangChain Chat model instance
-            excluded_attributes: Optional set of attribute names to exclude from accessibility tree XML
+            exclude_attributes: Optional set of attribute names to exclude from accessibility tree XML
         Returns:
             Session ID string
         """
-        session_id = str(uuid.uuid4())
+        session_id = session_id or str(uuid.uuid4())
 
         logger.info(f"Creating session {session_id} with model {provider}/{name} and platform {platform}")
         model = Model(provider=provider, name=name)
-
-        # Convert tool schemas to tool classes
-        tool_classes = convert_schemas_to_tools(tools)
 
         self.sessions[session_id] = Session(
             session_id=session_id,
             model=model,
             platform=platform,
-            tools=tool_classes,
+            tool_schemas=tool_schemas,
             llm=llm,
             planner=planner,
-            excluded_attributes=excluded_attributes or set(),
+            exclude_attributes=exclude_attributes or set(),
         )
         logger.info(f"Created new session: {session_id}")
         return session_id
+
+    def apply_session_state(
+        self,
+        session_state: dict[str, Any],
+    ) -> None:
+        logger.info(f"Applying session state for session {session_state['session_id']}")
+        logger.debug(f"Session state: {session_state}")
+        session = Session.from_state(session_state)
+        self.sessions[session.session_id] = session
+        logger.info(f"Applied session state: {session.session_id}")
 
     def get_session(self, session_id: str) -> Optional[Session]:
         """Get a session by ID."""

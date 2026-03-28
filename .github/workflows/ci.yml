@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      # TODO: Disable before merging the branch
+      - ts
   schedule:
     - cron: 0 0 * * *
   workflow_dispatch:
@@ -21,7 +23,7 @@ jobs:
     outputs:
       permitted: ${{ steps.check-access.outputs.require-result }}
       python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
-      server-changed: ${{ steps.changed-files.outputs.server_any_changed }}
+      core-changed: ${{ steps.changed-files.outputs.core_any_changed }}
       typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
     steps:
       - uses: actions/checkout@v4
@@ -38,18 +40,12 @@ jobs:
           files_yaml: |
             python:
               - packages/python/**
-            server:
-              - Dockerfile
-              - packages/python/**/server/**
+            core:
+              - packages/core/**
             typescript:
               - packages/python/examples/support/pages/**
               - packages/typescript/**
-      - uses: docker/setup-buildx-action@v3
-      - uses: actions/setup-node@v6
-        with:
-          cache: npm
-          cache-dependency-path: packages/typescript/package-lock.json
-          node-version-file: .tool-versions
+      - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-python@v5
         with:
           python-version-file: .tool-versions
@@ -57,25 +53,24 @@ jobs:
         with:
           path: packages/python/.venv
           key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-      - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
       - run: make install
-      - run: make build
       - run: make check-format
       - run: make test
+      - run: bun ./packages/core/src/cli.ts server --daemon --wait-for
+        env:
+          OPENAI_API_KEY: ${{ github.token }}
+      - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       - run: |
           poetry run behave \
             --format html-pretty \
             --outfile reports/behave.html \
             --format pretty
         env:
-          OPENAI_API_KEY: ${{ github.token }}
+          ALUMNIUM_SERVER_URL: http://localhost:8013
         working-directory: packages/python
-      - uses: docker/build-push-action@v6
-        with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          context: .
+      - if: always()
+        run: bun ./packages/core/src/cli.ts server --kill
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -83,6 +78,19 @@ jobs:
           path: |
             packages/python/htmlcov/
             packages/python/coverage.xml
+      - if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+
+  types:
+    name: Types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: make types
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
@@ -99,11 +107,13 @@ jobs:
 
   typescript:
     name: TypeScript
-    needs: test
+    needs:
+      - test
+      - types
     secrets: inherit
     if: >
       needs.test.outputs.permitted == 'true'
-        && (needs.test.outputs.server-changed == 'true' || needs.test.outputs.typescript-changed == 'true')
+        && (needs.test.outputs.core-changed == 'true' || needs.test.outputs.typescript-changed == 'true')
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}

@@ -1,5 +1,4 @@
-import { Alumni } from "../../src/Alumni.js";
-import { DragSliderTool } from "../../src/index.js";
+import { Alumni, DragSliderTool } from "alumnium";
 import { resolveURL } from "../mocha/helpers.js";
 import { test } from "./index.js";
 
