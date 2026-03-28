@@ -81,7 +81,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
     const changeAnalysis =
       typeof alumniumOptions["changeAnalysis"] === "boolean"
         ? alumniumOptions["changeAnalysis"]
-        : undefined;
+        : true;
     const excludeAttributes = Array.isArray(
       alumniumOptions["excludeAttributes"],
     )
