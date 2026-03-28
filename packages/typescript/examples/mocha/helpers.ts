@@ -12,9 +12,9 @@ const driverType = process.env.ALUMNIUM_DRIVER || "selenium";
 
 export const mochaHooks = {
   async beforeAll() {
-    const alOptions: AlumniOptions = process.env.ALUMNIUM_TEST_NATIVE_CLIENT
-      ? {}
-      : { url: process.env.ALUMNIUM_SERVER_URL || "http://localhost:8013" };
+    const alOptions: AlumniOptions = process.env.ALUMNIUM_SERVER_URL
+      ? { url: process.env.ALUMNIUM_SERVER_URL }
+      : {};
 
     if (driverType === "selenium") {
       const options = new Options();

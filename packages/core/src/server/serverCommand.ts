@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import { isBundled } from "../bundle.js";
-import { FileStore } from "../FileStore/FileStore.js";
+import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.js";
 import { getLogger, setLogPath } from "../utils/logger.js";
 import { serverApp } from "./serverApp.js";
 
@@ -15,7 +15,7 @@ const DEFAULT_PORT = "8013";
 const DEFAULT_TIMEOUT_MS = "15000";
 const WAIT_POLL_INTERVAL_MS = 200;
 
-export async function serverCommand(logPath: string) {
+export async function serverCommand(logFilename: string) {
   const { values } = parseArgs({
     args: Bun.argv,
     options: {
@@ -55,7 +55,7 @@ export async function serverCommand(logPath: string) {
   const waitFor = values["wait-for"];
   const pidPath =
     process.env.ALUMNIUM_SERVER_PID_PATH ??
-    FileStore.globalSubDir("server.pid");
+    GlobalFileStorePaths.globalSubDir("server.pid");
 
   if (values.kill) {
     const pid = await readPid(pidPath);
@@ -102,7 +102,7 @@ export async function serverCommand(logPath: string) {
   }
 
   if (process.env.ALUMNIUM_SERVER_DAEMONIZE === "1") {
-    setLogPath(logPath);
+    setLogPath({ filename: logFilename });
 
     await writePidFile(pidPath);
 

@@ -3,7 +3,7 @@ import type { Generation } from "@langchain/core/outputs";
 import { describe, expect, it, spyOn } from "bun:test";
 import { createMockDir, pushMock } from "../../../tests/mocks.js";
 import { AppId } from "../../AppId.js";
-import { FileStore } from "../../FileStore/FileStore.js";
+import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.js";
 import { Model } from "../../Model.js";
 import { LlmContext } from "../LlmContext.js";
 import { SessionContext } from "../session/SessionContext.js";
@@ -72,7 +72,9 @@ async function setup() {
 
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 
-  pushMock(spyOn(FileStore, "globalSubDir").mockReturnValue(cacheDir.path));
+  pushMock(
+    spyOn(GlobalFileStorePaths, "globalSubDir").mockReturnValue(cacheDir.path),
+  );
   const cacheStore = new CacheStore(sessionContext);
 
   const prompt1 = "prompt 1" as LlmContext.Prompt;

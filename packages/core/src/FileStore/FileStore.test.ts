@@ -2,11 +2,7 @@ import { describe, expect, it } from "bun:test";
 import fs from "node:fs/promises";
 import path from "node:path";
 import z from "zod";
-import {
-  createMockDir,
-  pushTeardown,
-  setupBeforeEach,
-} from "../../tests/mocks.js";
+import { createMockDir, setupBeforeEach } from "../../tests/mocks.js";
 import { FileStore } from "./FileStore.js";
 
 describe("FileStore", () => {
@@ -325,36 +321,6 @@ describe("FileStore", () => {
       expect(FileStore.subResolve(undefined, "default", "nested/dir")).toBe(
         ".alumnium/default/nested/dir",
       );
-    });
-  });
-
-  describe("FileStore.globalSubDir", () => {
-    it("returns a subdirectory path under the global store directory", () => {
-      const result = FileStore.globalSubDir("sub/dir");
-      expect(result).toBe(".alumnium/sub/dir");
-    });
-
-    it("allows to override global store directory via env var", () => {
-      process.env.ALUMNIUM_STORE_DIR = ".custom";
-      pushTeardown(() => {
-        delete process.env.ALUMNIUM_STORE_DIR;
-      });
-      const result = FileStore.globalSubDir("sub/dir");
-      expect(result).toBe(".custom/sub/dir");
-    });
-  });
-
-  describe("FileStore.globalDir", () => {
-    it("returns the default global store directory", () => {
-      expect(FileStore.globalDir).toBe(".alumnium");
-    });
-
-    it("allows to override global store directory via env var", () => {
-      process.env.ALUMNIUM_STORE_DIR = ".custom";
-      pushTeardown(() => {
-        delete process.env.ALUMNIUM_STORE_DIR;
-      });
-      expect(FileStore.globalDir).toBe(".custom");
     });
   });
 });

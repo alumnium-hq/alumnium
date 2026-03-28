@@ -43,9 +43,7 @@
     "check-format": "node -e \"console.log('TODO')\"",
     "format": "node -e \"console.log('TODO')\"",
     "test": "bun test",
-    "test:watch": "bun test --watch",
-    "types": "tsgo --noEmit",
-    "types:watch": "tsgo --noEmit --watch"
+    "test:watch": "bun test --watch"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",

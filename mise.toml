@@ -39,3 +39,9 @@ run = "fnox exec --if-missing error -- bun ./packages/core/src/cli.ts server"
 
 [tasks."clean/logs"]
 run = "rm -rf ./.alumnium/logs/*"
+
+[tasks.types]
+run = "bun run tsgo --build"
+
+[tasks."types:watch"]
+run = "bun run tsgo --build --watch"
