@@ -6,7 +6,7 @@
     </p>
 </h1>
 <p align="center">
-    Pave the way towards AI-powered test automation.
+    End-to-end testing with AI
     <br />
     <a href="#installation">Installation</a>
     ·
@@ -15,11 +15,9 @@
     <a href="https://alumnium.ai/docs/">Documentation</a>
 </p>
 
-Alumnium is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It simplifies interactions with applications and provide more robust mechanisms for verifying assertions. It works with Appium, Playwright, or Selenium.
+Alumnium is an AI-native library and MCP for end-to-end testing. It builds upon the existing test automation ecosystem and simplifies interactions with applications, providing more robust mechanisms for verifying assertions. It works with Appium, Playwright, or Selenium and gives you [state-of-the-art][7] capabilities.
 
 https://github.com/user-attachments/assets/b1a548c0-f1e1-4ffe-bec9-d814770ba2ae
-
-Currently in the very early stages of development and not recommended for production use.
 
 ## Installation
 
@@ -34,6 +32,14 @@ pip install alumnium
 ```bash
 npm install alumnium
 ```
+
+### MCP
+
+```bash
+claude mcp add alumnium --env OPENAI_API_KEY=... -- uvx --from alumnium alumnium-mcp
+```
+
+Refer to [documentation][8] for installation details on other MCP clients.
 
 ## Quick Start
 
@@ -84,16 +90,20 @@ await al.quit();
 
 Check out [documentation][1] and more [Python][2] and [TypeScript][6] examples!
 
+### MCP
+
+1. Run your agent (Claude Code).
+2. Tell it to open URL and test your application.
+
 ## Contributing
 
 See the [contributing guidelines][4] for information on how to get involved in the project and develop locally.
 
 ## Acknowledgments
 
-[![LambdaTest](https://www.lambdatest.com/resources/images/logos/logo.svg)][5]
+[<img alt="TestMu AI" src="https://assets.testmuai.com/resources/images/testmu-ai/footer/footerLogo.svg" width="150">][5]
 
-Alumnium is a member of [LambdaTest][5] Open Source Program, which supports the project community and development with
-the necessary tools. Thank you! 💚
+Alumnium is a member of [TestMu AI][5] Open Source Program, which supports the project community and development with the necessary tools. Thank you! 💚
 
 
 
@@ -101,5 +111,7 @@ the necessary tools. Thank you! 💚
 [2]: packages/python/examples/
 [3]: https://alumnium.ai/docs/getting-started/configuration/
 [4]: ./CONTRIBUTING.md
-[5]: https://www.lambdatest.com/
+[5]: https://www.testmuai.com/
 [6]: packages/typescript/examples/
+[7]: https://alumnium.ai/blog/webvoyager-benchmark/
+[8]: https://alumnium.ai/docs/guides/mcp/
