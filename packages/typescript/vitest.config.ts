@@ -18,6 +18,18 @@ export default defineConfig({
           retry: process.env.CI ? 1 : 0,
         },
       },
+      {
+        test: {
+          name: "appium",
+          include: ["tests/system/**/*.test.ts"],
+          testTimeout: 5 * 60_000, // 5 minutes
+          retry: process.env.CI ? 1 : 0,
+          globalSetup: ["tests/system/setup.appium.ts"],
+          env: {
+            ALUMNIUM_DRIVER: "appium",
+          },
+        },
+      },
     ],
   },
 });

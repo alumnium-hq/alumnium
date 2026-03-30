@@ -44,6 +44,7 @@
     "format": "node -e \"console.log('TODO')\"",
     "test": "bun vitest --project unit run",
     "test:system:playwright": "ALUMNIUM_DRIVER=playwright bun vitest --project system run",
+    "test:system:appium": "bun vitest --project appium run",
     "test:system:selenium": "ALUMNIUM_DRIVER=selenium bun vitest --project system run",
     "test:watch": "bun vitest --project unit"
   },

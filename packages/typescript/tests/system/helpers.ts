@@ -6,8 +6,8 @@ import { chromium } from "playwright";
 import type { Locator, Page } from "playwright-core";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { it as vitestIt } from "vitest";
-import { type Browser } from "webdriverio";
+import { inject, it as vitestIt } from "vitest";
+import { attach, type Browser } from "webdriverio";
 import { z } from "zod";
 
 export const DriverType = z
@@ -52,6 +52,10 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
 
   const al = new Alumni(driver, options);
 
+  if (driverType === "appium") {
+    (al.driver as AppiumDriver).delay = 0.1;
+  }
+
   onTestFinished(async (ctx) => {
     const passed = ctx.task.result?.state === "pass";
     if (passed) {
@@ -85,9 +89,18 @@ async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
     }
 
     case "appium": {
-      const { browser } = await import("@wdio/globals");
-      const driver = browser as Browser;
-      (driver as unknown as AppiumDriver).delay = 0.1;
+      const sessionId = inject("wdioSessionId");
+      const capabilities = inject("wdioSessionCapabilities");
+      const driver = (await attach({
+        sessionId,
+        capabilities,
+        hostname: "mobile-hub.lambdatest.com",
+        path: "/wd/hub",
+        port: 80,
+        logLevel: "warn",
+        ...(process.env.LT_USERNAME && { user: process.env.LT_USERNAME }),
+        ...(process.env.LT_ACCESS_KEY && { key: process.env.LT_ACCESS_KEY }),
+      })) as Browser;
       return driver;
     }
 
