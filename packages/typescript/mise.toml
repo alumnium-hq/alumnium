@@ -5,10 +5,10 @@ run = "bun vitest --project unit run"
 run = "bun vitest --project unit"
 
 [tasks."test/system:playwright"]
-run = "fnox exec -- env ALUMNIUM_LOG_LEVEL=debug ALUMNIUM_LOG_FILENAME=test-system.log ALUMNIUM_PRUNE_LOGS=true TEST_DRIVER=playwright TEST_PLAYWRIGHT_HEADLESS=true bun vitest --project system run"
+run = "fnox exec -- env ALUMNIUM_LOG_LEVEL=debug ALUMNIUM_LOG_FILENAME=test-system.log ALUMNIUM_PRUNE_LOGS=true ALUMNIUM_DRIVER=playwright ALUMNIUM_PLAYWRIGHT_HEADLESS=true bun vitest --project system run"
 
 [tasks."test/system:selenium"]
-run = "fnox exec -- env ALUMNIUM_LOG_LEVEL=debug ALUMNIUM_LOG_FILENAME=test-system.log ALUMNIUM_PRUNE_LOGS=true TEST_DRIVER=selenium bun vitest --project system run"
+run = "fnox exec -- env ALUMNIUM_LOG_LEVEL=debug ALUMNIUM_LOG_FILENAME=test-system.log ALUMNIUM_PRUNE_LOGS=true ALUMNIUM_DRIVER=selenium bun vitest --project system run"
 
 [tasks.build]
 run = "./scripts/build.ts"

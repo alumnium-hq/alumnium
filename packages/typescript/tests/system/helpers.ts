@@ -2,7 +2,7 @@ import { Alumni, AppiumDriver, type Element } from "alumnium";
 import { never } from "alwaysly";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium, devices } from "playwright";
+import { chromium } from "playwright";
 import type { Locator, Page } from "playwright-core";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
@@ -42,7 +42,7 @@ export namespace useSetup {
 export async function useSetup(props: useSetup.Props): Promise<Setup> {
   const { onTestFinished } = props;
 
-  const driverType = DriverType.parse(process.env.TEST_DRIVER);
+  const driverType = DriverType.parse(process.env.ALUMNIUM_DRIVER);
   const driver = await createDriver(driverType);
   const $ = createHelpers(driverType, driver);
 
@@ -92,8 +92,10 @@ async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
     }
 
     case "playwright": {
-      const browser = await chromium.launch({ headless: !!process.env.TEST_PLAYWRIGHT_HEADLESS });
-      const context = await browser.newContext(devices["Desktop Chrome"]);
+      const browser = await chromium.launch({
+        headless: process.env.ALUMNIUM_PLAYWRIGHT_HEADLESS !== "false",
+      });
+      const context = await browser.newContext();
       const page = await context.newPage();
       return page;
     }
