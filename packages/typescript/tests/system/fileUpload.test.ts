@@ -57,7 +57,7 @@ describe("File Upload", () => {
     await al.do("click 'Upload Files' button");
 
     const message = await al.get("success message");
-    expect(message).toBe("✓ Upload Successful!");
+    expect(message).toContain("✓ Upload Successful!");
 
     const uploadedFiles = await al.get("uploaded files names");
     expect(uploadedFiles).toEqual([

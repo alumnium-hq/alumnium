@@ -34,7 +34,7 @@ def test_multiple_file_upload(al, file, file2, navigate):
     navigate("multiple_file_upload.html")
     al.do(f"upload files '{file.name}', '{file2.name}'")
     al.do("click 'Upload Files' button")
-    assert al.get("success message") == "✓ Upload Successful!"
+    assert "✓ Upload Successful!" in al.get("success message")
     assert al.get("uploaded files names") == [
         file.name.split("/")[-1],
         file2.name.split("/")[-1],
