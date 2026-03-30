@@ -5,6 +5,8 @@
     "bash": "allow",
     "skill": "allow",
     "webfetch": "allow",
+    "websearch": "allow",
+    "codesearch": "allow",
     "doom_loop": "ask",
     "external_directory": "ask"
   },
