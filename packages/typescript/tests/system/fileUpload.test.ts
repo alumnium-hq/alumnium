@@ -65,4 +65,18 @@ describe("File Upload", () => {
       testFile2.split("/").pop(),
     ]);
   });
+
+  it("should upload a hidden file", async ({ expect, setup, skip }) => {
+    const { al, $, driverType } = await setup();
+
+    if (driverType === "selenium")
+      skip("Hidden file upload inputs are not supported in Selenium");
+
+    await $.navigate("hidden_file_upload.html");
+    await al.do(`upload '${testFile1}' to 'Choose Files' button`);
+    await al.do("click 'Upload Files' button");
+
+    const message = await al.get("success message");
+    expect(message).toBe("Files Uploaded Successfully!");
+  });
 });
