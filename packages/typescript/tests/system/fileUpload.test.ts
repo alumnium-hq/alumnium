@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -9,9 +10,8 @@ describe("File Upload", () => {
   let testFile2: string;
 
   beforeEach(() => {
-    const timestamp = Date.now();
-    testFile1 = path.join(tmpdir(), `test-upload-${timestamp}-1.txt`);
-    testFile2 = path.join(tmpdir(), `test-upload-${timestamp}-2.txt`);
+    testFile1 = path.join(tmpdir(), `${randomUUID()}.txt`);
+    testFile2 = path.join(tmpdir(), `${randomUUID()}.txt`);
     return Promise.all([
       fs.writeFile(testFile1, "Test content 1"),
       fs.writeFile(testFile2, "Test content 2"),
