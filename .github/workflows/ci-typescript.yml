@@ -62,20 +62,12 @@ jobs:
           key: alumnium-cache-v2-typescript-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
           restore-keys: alumnium-cache-v2-typescript-${{ matrix.driver }}-${{ matrix.model }}-
 
-      - name: Install dependencies
-        run: bun install
+      - run: bun install
 
-      - name: Install Playwright
-        if: matrix.driver == 'playwright'
+      - if: matrix.driver == 'playwright'
         run: bunx playwright install chromium
 
-      - name: Start server
-        run: |
-          ALUMNIUM_LOG_LEVEL=debug bun packages/typescript/src/cli/bin.ts server > server.log &
-          echo $! > server.pid
-
-      - name: Run examples
-        run: cd packages/typescript && bun run examples:${{ matrix.driver }}
+      - run: cd packages/typescript && bun run test:system:${{ matrix.driver }}
 
       - if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
@@ -85,7 +77,6 @@ jobs:
         with:
           name: ci-typescript-${{ matrix.driver }}-${{ matrix.model }}
           path: |
-            server.log
             packages/typescript/*.log
             packages/typescript/playwright-report/
             packages/typescript/test-results/
