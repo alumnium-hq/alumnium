@@ -83,6 +83,7 @@
     "@wdio/globals": "^9.23.0",
     "chromium-bidi": "^15.0.0",
     "electron": "^40.6.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2"
   }
 }

@@ -1,18 +1,26 @@
-import { Alumni, SwitchToNextTabTool, SwitchToPreviousTabTool } from "alumnium";
-import { resolveURL } from "../mocha/helpers.js";
-import { expect, test } from "./index.js";
+import { SwitchToNextTabTool, SwitchToPreviousTabTool } from "alumnium";
+import { describe } from "vitest";
+import { baseIt } from "./helpers.js";
 
-test.describe("Tabs", () => {
-  let al: Alumni;
+describe("Tabs", () => {
+  const it = baseIt.override("setup", async ({ setup, skip }) => {
+    return async (options) => {
+      const result = await setup(options);
+      const { driverType } = result;
 
-  test.beforeEach(({ page }) => {
-    al = new Alumni(page, {
-      extraTools: [SwitchToNextTabTool, SwitchToPreviousTabTool],
-    });
+      if (driverType === "appium")
+        skip("Tabs functionality is not implemented in Appium yet");
+
+      return result;
+    };
   });
 
-  test("switching tabs", async ({ page }) => {
-    await page.goto(resolveURL("multi_tab_page.html"));
+  it("switching tabs", async ({ expect, setup }) => {
+    const { al, $ } = await setup({
+      extraTools: [SwitchToNextTabTool, SwitchToPreviousTabTool],
+    });
+
+    await $.navigate("multi_tab_page.html");
 
     await al.do("click on 'Open New Tab' button");
     expect(await al.get("current page URL")).toBe("about:blank");

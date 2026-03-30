@@ -34,18 +34,41 @@ const EXCLUDE_ATTRIBUTES = (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "")
   .split(",")
   .filter(Boolean);
 
-export interface AlumniOptions {
-  url?: string | undefined;
-  model?: Model | undefined;
-  llm?: BaseChatModel | undefined;
-  extraTools?: ToolClass[];
-  planner?: boolean | undefined;
-  changeAnalysis?: boolean | undefined;
-  excludeAttributes?: string[] | undefined;
-}
+/**
+ * @deprecated Use `Alumni.Options` instead.
+ */
+export type AlumniOptions = Alumni.Options;
 
-export interface VisionOptions {
-  vision?: boolean;
+/**
+ * @deprecated Use `Alumni.VisionOptions` instead.
+ */
+export type VisionOptions = Alumni.VisionOptions;
+
+export namespace Alumni {
+  export type Driver = WebDriver | Page | Browser;
+
+  export interface Options {
+    url?: string | undefined;
+    model?: Model | undefined;
+    llm?: BaseChatModel | undefined;
+    extraTools?: ToolClass[];
+    planner?: boolean | undefined;
+    changeAnalysis?: boolean | undefined;
+    excludeAttributes?: string[] | undefined;
+  }
+
+  export interface VisionOptions {
+    vision?: boolean;
+  }
+
+  export interface CheckOptions extends VisionOptions {
+    assert?: CheckAssert;
+  }
+
+  export type CheckAssert = (
+    expression: any,
+    message?: string,
+  ) => asserts expression;
 }
 
 export class Alumni {
@@ -59,7 +82,7 @@ export class Alumni {
   private changeAnalysis: boolean;
   private llm: BaseChatModel | undefined;
 
-  constructor(driver: WebDriver | Page | Browser, options: AlumniOptions = {}) {
+  constructor(driver: Alumni.Driver, options: Alumni.Options = {}) {
     this.url = options.url;
     this.model = options.model || Model.current;
     this.changeAnalysis = options.changeAnalysis ?? CHANGE_ANALYSIS;
@@ -188,7 +211,10 @@ export class Alumni {
   }
 
   @retry()
-  async check(statement: string, options: VisionOptions = {}): Promise<string> {
+  async check(
+    statement: string,
+    options: Alumni.CheckOptions = {},
+  ): Promise<string> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
@@ -202,13 +228,20 @@ export class Alumni {
       screenshot,
     );
 
-    if (!value || !explanation) throw new AssertionError(explanation);
+    if (!value || !explanation) {
+      const { assert } = options;
+      if (assert) {
+        (assert as any)(false, explanation);
+      } else {
+        throw new AssertionError(explanation);
+      }
+    }
 
     return explanation;
   }
 
   @retry()
-  async get(data: string, options: VisionOptions = {}): Promise<Data> {
+  async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
     const screenshot = options.vision
       ? await this.driver.screenshot()
       : undefined;
