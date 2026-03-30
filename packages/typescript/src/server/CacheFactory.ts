@@ -29,7 +29,7 @@ export class CacheFactory {
         logger.info("Using filesystem cache");
         const cacheStore = new CacheStore(sessionContext);
         return new ChainedCache(sessionContext, [
-          new ResponseCache(sessionContext, cacheStore),
+          new ResponseCache(sessionContext, cacheStore, llmContext),
           new ElementsCache(sessionContext, cacheStore, llmContext),
         ]);
       }

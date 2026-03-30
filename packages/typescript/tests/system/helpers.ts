@@ -92,7 +92,7 @@ async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
     }
 
     case "playwright": {
-      const browser = await chromium.launch({ headless: true });
+      const browser = await chromium.launch({ headless: !!process.env.TEST_PLAYWRIGHT_HEADLESS });
       const context = await browser.newContext(devices["Desktop Chrome"]);
       const page = await context.newPage();
       return page;

@@ -20,7 +20,7 @@ describe("To Do application", () => {
     await al.check('"Buy milk" task is marked as completed', {
       assert: expect.assert,
     });
-    expect(await al.get("tasks counter")).toBe(0);
+    await al.check("tasks counter is 0", { assert: expect.assert });
   });
 
   it("uncomplete a task", async ({ expect, setup }) => {
@@ -32,7 +32,7 @@ describe("To Do application", () => {
     await al.check('"Buy milk" task is not marked as completed', {
       assert: expect.assert,
     });
-    expect(await al.get("tasks counter")).toBe(1);
+    await al.check("tasks counter is 1", { assert: expect.assert });
   });
 
   it("complete all tasks", async ({ expect, setup }) => {
@@ -47,7 +47,7 @@ describe("To Do application", () => {
     await al.check('"Buy bread" task is marked as completed', {
       assert: expect.assert,
     });
-    expect(await al.get("tasks counter")).toBe(0);
+    await al.check("tasks counter is 0", { assert: expect.assert });
   });
 
   it("delete a task", async ({ expect, setup }) => {

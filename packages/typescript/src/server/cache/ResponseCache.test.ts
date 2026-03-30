@@ -5,6 +5,7 @@ import { createMockDir, pushMock } from "../../../tests/mocks.js";
 import { AppId } from "../../AppId.js";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.js";
 import { Model } from "../../Model.js";
+import type { RetrieverAgent } from "../agents/RetrieverAgent.js";
 import { LlmContext } from "../LlmContext.js";
 import { SessionContext } from "../session/SessionContext.js";
 import { SessionId } from "../session/SessionId.js";
@@ -13,9 +14,15 @@ import { ResponseCache } from "./ResponseCache.js";
 
 describe("ResponseCache", () => {
   it("saves and looks up cached response", async () => {
-    const { sessionContext, cacheStore, cacheDir, prompt1, llmKey } =
-      await setup();
-    const cache = new ResponseCache(sessionContext, cacheStore);
+    const {
+      sessionContext,
+      llmContext,
+      cacheStore,
+      cacheDir,
+      prompt1,
+      llmKey,
+    } = await setup();
+    const cache = new ResponseCache(sessionContext, cacheStore, llmContext);
 
     const generations = createGenerations("Hi there");
     await cache.update(prompt1, llmKey, generations);
@@ -24,10 +31,18 @@ describe("ResponseCache", () => {
     const model = Model.current.toString();
     const baseDir = `test-app/${model}/responses`;
     const files = await cacheDir.flatTree();
-    expect(files).toEqual([
-      `${baseDir}/61c658835389ffe6/request.json`,
-      `${baseDir}/61c658835389ffe6/response.json`,
-    ]);
+    expect(files).toMatchInlineSnapshot(
+      [
+        `${baseDir}/e0bb44d1f59087be/request.json`,
+        `${baseDir}/e0bb44d1f59087be/response.json`,
+      ],
+      `
+      [
+        "test-app/azure_openai/gpt-5-nano/responses/e0bb44d1f59087be/request.json",
+        "test-app/azure_openai/gpt-5-nano/responses/e0bb44d1f59087be/response.json",
+      ]
+    `,
+    );
 
     const result = await cache.lookup(prompt1, llmKey);
     expect(result).toEqual(generations);
@@ -35,10 +50,17 @@ describe("ResponseCache", () => {
   });
 
   it("supports multiple cache instances saving concurrently", async () => {
-    const { sessionContext, cacheStore, cacheDir, prompt1, prompt2, llmKey } =
-      await setup();
-    const cache1 = new ResponseCache(sessionContext, cacheStore);
-    const cache2 = new ResponseCache(sessionContext, cacheStore);
+    const {
+      sessionContext,
+      llmContext,
+      cacheStore,
+      cacheDir,
+      prompt1,
+      prompt2,
+      llmKey,
+    } = await setup();
+    const cache1 = new ResponseCache(sessionContext, cacheStore, llmContext);
+    const cache2 = new ResponseCache(sessionContext, cacheStore, llmContext);
 
     const generations1 = createGenerations("one");
     const generations2 = createGenerations("two");
@@ -51,16 +73,35 @@ describe("ResponseCache", () => {
     const baseDir = `test-app/${model}/responses`;
     const files = await cacheDir.flatTree();
     expect(files).toEqual([
-      `${baseDir}/61c658835389ffe6/request.json`,
-      `${baseDir}/61c658835389ffe6/response.json`,
-      `${baseDir}/c6c488a888c8e4df/request.json`,
-      `${baseDir}/c6c488a888c8e4df/response.json`,
+      `${baseDir}/171a4e371acbe42f/request.json`,
+      `${baseDir}/171a4e371acbe42f/response.json`,
+      `${baseDir}/e0bb44d1f59087be/request.json`,
+      `${baseDir}/e0bb44d1f59087be/response.json`,
     ]);
 
     const result1 = await cache1.lookup(prompt1, llmKey);
     expect(result1).toEqual(generations1);
     const result2 = await cache2.lookup(prompt2, llmKey);
     expect(result2).toEqual(generations2);
+  });
+
+  it("differentiates same prompts with different metadata", async () => {
+    const { sessionContext, llmContext, cacheStore, prompt1, llmKey } =
+      await setup();
+    const cache = new ResponseCache(sessionContext, cacheStore, llmContext);
+
+    const generations = createGenerations("one");
+    await cache.update(prompt1, llmKey, generations);
+
+    const resultBefore = await cache.lookup(prompt1, llmKey);
+    expect(resultBefore).toEqual(generations);
+
+    llmContext.clearPromptsMeta([prompt1]);
+    const newMeta = createAgentMeta("screenshot");
+    llmContext.assignPromptsMeta([prompt1], newMeta);
+
+    const result = await cache.lookup(prompt1, llmKey);
+    expect(result).toBeNull();
   });
 });
 
@@ -69,6 +110,8 @@ async function setup() {
     app: "test-app" as AppId,
     sessionId: "test-session-id" as SessionId,
   });
+
+  const llmContext = new LlmContext();
 
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 
@@ -81,7 +124,23 @@ async function setup() {
   const prompt2 = "prompt 2" as LlmContext.Prompt;
   const llmKey = "test-llm" as LlmContext.LlmKey;
 
-  return { sessionContext, cacheStore, cacheDir, prompt1, prompt2, llmKey };
+  const meta1 = createAgentMeta();
+  llmContext.assignPromptsMeta([prompt1], meta1);
+
+  const meta2 = createAgentMeta("screenshot");
+  llmContext.assignPromptsMeta([prompt2], meta2);
+
+  return {
+    sessionContext,
+    llmContext,
+    cacheStore,
+    cacheDir,
+    prompt1,
+    prompt2,
+    meta1,
+    meta2,
+    llmKey,
+  };
 }
 
 function createGenerations(text: string): Generation[] {
@@ -99,4 +158,17 @@ function createGenerations(text: string): Generation[] {
       },
     }),
   ];
+}
+
+function createAgentMeta(
+  screenshot: string | null = null,
+): RetrieverAgent.Meta {
+  return {
+    kind: "retriever",
+    information: "test information",
+    treeXml: "<xml></xml>",
+    title: "Test Title",
+    url: "https://example.com",
+    screenshot,
+  };
 }

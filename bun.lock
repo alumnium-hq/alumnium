@@ -40,6 +40,7 @@
         "npm-fuzzy": "^1.0.1",
         "playwright-core": "^1.58.2",
         "selenium-webdriver": "^4.41.0",
+        "smolcanon": "^0.2.1",
         "smolxxh": "1.1.0",
         "ts-deepmerge": "^7.0.3",
         "webdriverio": "^9.24.0",
@@ -1244,6 +1245,8 @@
     "slash": ["slash@3.0.0", "", {}, "sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q=="],
 
     "smart-buffer": ["smart-buffer@4.2.0", "", {}, "sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg=="],
+
+    "smolcanon": ["smolcanon@0.2.1", "", {}, "sha512-ZJvfESeVgTeB8epI82fTVpzZPMN8L54YYHeB9OXZIS1lCGLZzftbI/gzhqT8Nb+osyI4ZvYDHLAZ2LivkAwY7g=="],
 
     "smolxxh": ["smolxxh@1.1.0", "", {}, "sha512-83GmRJmlSPH1P063XHXHFnsNaB2ZF6gDlE9Lx8b9aoaBDaxR1HepMiBnHQGpXUijlaTRNEJPlp5k4DTWc6fliA=="],
 

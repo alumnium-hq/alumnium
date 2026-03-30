@@ -19,7 +19,7 @@ import { ElementsCacheMask } from "./ElementsCacheMask.js";
 import { ElementsCacheTree } from "./ElementsCacheTree.js";
 import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.js";
 
-// NOTE: See `npm-fuzze` import above
+// NOTE: See `npm-fuzzy` import above
 const tokenSortRatio =
   fuzzy.tokenSortRatio as typeof import("npm-fuzzy").tokenSortRatio;
 const tokenSetRatio =

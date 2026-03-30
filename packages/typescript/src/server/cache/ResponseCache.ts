@@ -4,11 +4,13 @@ import {
 } from "@langchain/core/caches";
 import type { StoredGeneration } from "@langchain/core/messages";
 import type { Generation } from "@langchain/core/outputs";
+import { canonize } from "smolcanon";
 import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../AppId.js";
 import { Lchain } from "../../llm/Lchain.js";
 import { getLogger } from "../../utils/logger.js";
+import type { Agent } from "../agents/Agent.js";
 import { LlmContext } from "../LlmContext.js";
 import { SessionContext } from "../session/SessionContext.js";
 import { CacheStore } from "./CacheStore.js";
@@ -25,27 +27,40 @@ export namespace ResponseCache {
   }
 
   export type RequestHash = z.infer<typeof ResponseCache.RequestHash>;
+
+  export interface InitiatedData {
+    meta: Agent.Meta;
+    requestHash: RequestHash;
+  }
 }
 
 export class ResponseCache extends ServerCache {
   static RequestHash = z.string().brand("ResponseCache.RequestHash");
 
   readonly #cacheStore: CacheStore;
+  readonly #llmContext: LlmContext;
   #memoryCache: Record<ResponseCache.RequestHash, ResponseCache.MemoryEntry> =
     {};
 
-  constructor(sessionContext: SessionContext, cacheStore: CacheStore) {
+  constructor(
+    sessionContext: SessionContext,
+    cacheStore: CacheStore,
+    llmContext: LlmContext,
+  ) {
     super(sessionContext);
     this.#cacheStore = cacheStore.subStore("responses");
+    this.#llmContext = llmContext;
   }
 
   override async lookup(
     prompt: LlmContext.Prompt,
     llmKey: LlmContext.LlmKey,
   ): Promise<Generation[] | null> {
-    try {
-      const requestHash = this.#hashRequest(prompt, llmKey);
+    const initiatedData = this.#initiate(prompt, llmKey);
+    if (!initiatedData) return null;
+    const { requestHash } = initiatedData;
 
+    try {
       const memoryEntry = this.#memoryCache[requestHash];
       if (memoryEntry) {
         logger.debug(
@@ -83,7 +98,10 @@ export class ResponseCache extends ServerCache {
     llmKey: LlmContext.LlmKey,
     generations: Generation[],
   ): Promise<void> {
-    const requestHash = this.#hashRequest(prompt, llmKey);
+    const initiatedData = this.#initiate(prompt, llmKey);
+    if (!initiatedData) return;
+    const { requestHash } = initiatedData;
+
     this.#memoryCache[requestHash] = {
       prompt,
       llmKey,
@@ -123,11 +141,32 @@ export class ResponseCache extends ServerCache {
     await this.discard();
   }
 
+  #initiate(
+    prompt: LlmContext.Prompt,
+    llmKey: LlmContext.LlmKey,
+  ): ResponseCache.InitiatedData | null {
+    const agentMeta = this.#llmContext.getPromptMeta(prompt);
+    if (!agentMeta) {
+      logger.warn(
+        `No metadata found, skipping request cache lookup for prompt: "${prompt.slice(0, 100)}"...`,
+      );
+      return null;
+    }
+    const requestHash = this.#hashRequest(prompt, llmKey, agentMeta);
+
+    return {
+      meta: agentMeta,
+      requestHash,
+    };
+  }
+
   #hashRequest(
     prompt: LlmContext.Prompt,
     llmKey: LlmContext.LlmKey,
+    agentMeta: Agent.Meta,
   ): ResponseCache.RequestHash {
-    const str = [this.app, prompt, llmKey].join("|");
+    const metaCanon = canonize(agentMeta);
+    const str = [this.app, prompt, llmKey, metaCanon].join("|");
     return xxh64Str(str);
   }
 

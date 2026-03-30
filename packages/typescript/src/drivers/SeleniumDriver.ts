@@ -519,14 +519,11 @@ export class SeleniumDriver extends BaseDriver {
     throw new Error("waitForSelector not supported for this driver");
   }
 
-  private async executeCdpCommand(
+  private executeCdpCommand(
     cmd: string,
     params: object,
   ): Promise<unknown> {
-    logger.debug(`Executing CDP command: ${cmd} with: {params}`, { params });
-    const result = await this.driver.sendAndGetDevToolsCommand(cmd, params);
-    logger.debug(`CDP ${cmd} command result: {result}`, { result });
-    return result;
+    return this.driver.sendAndGetDevToolsCommand(cmd, params);
   }
 
   private async waitForPageToLoad(): Promise<void> {

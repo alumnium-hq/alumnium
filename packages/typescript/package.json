@@ -70,6 +70,7 @@
     "npm-fuzzy": "^1.0.1",
     "playwright-core": "^1.58.2",
     "selenium-webdriver": "^4.41.0",
+    "smolcanon": "^0.2.1",
     "smolxxh": "1.1.0",
     "ts-deepmerge": "^7.0.3",
     "webdriverio": "^9.24.0",
