@@ -5,23 +5,16 @@
       "path": ".",
     },
     {
-      "name": "packages/core",
-      "path": "packages/core",
+      "name": "packages/typescript",
+      "path": "packages/typescript",
     },
     {
       "name": "packages/python",
       "path": "packages/python",
     },
-    {
-      "name": "packages/typescript",
-      "path": "packages/typescript",
-    }
   ],
   "settings": {
-    "cSpell.words": [
-      "alumnium",
-      "Alumnium",
-    ],
+    "cSpell.words": ["alumnium", "Alumnium"],
     "python.defaultInterpreterPath": "packages/python/.venv/bin/python",
     "search.exclude": {
       "**/dist": true,
@@ -29,11 +22,11 @@
     },
     "testing.automaticallyOpenPeekView": "never",
     "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit",
-            "source.fixAll": "explicit",
-        },
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.fixAll": "explicit",
+      },
     },
     "files.exclude": {
       "packages/": true,

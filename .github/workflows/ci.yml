@@ -41,7 +41,7 @@ jobs:
             python:
               - packages/python/**
             core:
-              - packages/core/**
+              - packages/typescript/**
             typescript:
               - packages/python/examples/support/pages/**
               - packages/typescript/**
@@ -57,7 +57,7 @@ jobs:
       - run: make install
       - run: make check-format
       - run: make test
-      - run: bun ./packages/core/src/cli.ts server --daemon --wait-for
+      - run: bun ./packages/typescript/src/cli.ts server --daemon --wait-for
         env:
           OPENAI_API_KEY: ${{ github.token }}
       - run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
@@ -70,7 +70,7 @@ jobs:
           ALUMNIUM_SERVER_URL: http://localhost:8013
         working-directory: packages/python
       - if: always()
-        run: bun ./packages/core/src/cli.ts server --kill
+        run: bun ./packages/typescript/src/cli.ts server --kill
       - if: always()
         uses: actions/upload-artifact@v4
         with:

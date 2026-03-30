@@ -104,9 +104,9 @@ When converting local module imports, use the same relative paths as in the Pyth
 
 When converting agent classes, look up already translated agent classes to use the same patterns and structures:
 
-- `BaseAgent`: `packages/core/src/server/agents/BaseAgent.ts`
-- `ActorAgent`: `packages/core/src/server/agents/ActorAgent.ts`
-- `ChangesAnalyzerAgent`: `packages/core/src/server/agents/ChangesAnalyzerAgent.ts`
+- `BaseAgent`: `packages/typescript/src/server/agents/BaseAgent.ts`
+- `ActorAgent`: `packages/typescript/src/server/agents/ActorAgent.ts`
+- `ChangesAnalyzerAgent`: `packages/typescript/src/server/agents/ChangesAnalyzerAgent.ts`
 
 ### Pydantic Models
 
@@ -116,7 +116,7 @@ When converting Pydantic models, use the `zod` library to define the schema. Fol
 
 The following are the cases when you must diverge from the Python code structure or logic and use existing TypeScript solutions instead of direct translations:
 
-- **Logging**: The logger module is located in `packages/core/src/utils/logger.ts` and exports the `getLogger` function. It wraps the LogTape module (`@logtape/logtape`). Always use `getLogger(import.meta.url)` without changing the argument. It later gets processed by a Bun plugin during the build to inline the module name instead of `import.meta.url`.
+- **Logging**: The logger module is located in `packages/typescript/src/utils/logger.ts` and exports the `getLogger` function. It wraps the LogTape module (`@logtape/logtape`). Always use `getLogger(import.meta.url)` without changing the argument. It later gets processed by a Bun plugin during the build to inline the module name instead of `import.meta.url`.
 
 ## TypeScript
 
@@ -146,4 +146,4 @@ After you finish converting the code, run the tests via `bun run test` to check 
 
 Here are the mappings for the existing packages:
 
-- `packages/python/src/alumnium` -> `packages/core/src`
+- `packages/python/src/alumnium` -> `packages/typescript/src`

@@ -1,7 +1,4 @@
 {
   "include": [],
-  "references": [
-    { "path": "./packages/core/" },
-    { "path": "./packages/typescript/" },
-  ],
+  "references": [{ "path": "./packages/typescript/" }],
 }

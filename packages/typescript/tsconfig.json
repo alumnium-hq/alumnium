@@ -29,7 +29,7 @@
     "lib": ["ESNext"],
     "types": ["bun", "@wdio/globals/types"],
     "experimentalDecorators": true, // Enable experimental decorators
-    // TODO: See packages/typescript/tsconfig.json
+    // TODO: Do we need this? It adds metadata that might not be consumed at all.
     "emitDecoratorMetadata": true,
     "erasableSyntaxOnly": true, // Disallow using using runtime TS features
     // Checks
