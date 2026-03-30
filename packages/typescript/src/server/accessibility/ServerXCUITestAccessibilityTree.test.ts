@@ -1,4 +1,5 @@
-import { describe, expect, it } from "bun:test";
+import fs from "fs/promises";
+import { describe, expect, it } from "vitest";
 import { ServerXCUITestAccessibilityTree } from "./ServerXCUITestAccessibilityTree.js";
 
 async function tree(
@@ -8,7 +9,7 @@ async function tree(
     `./__fixtures__/${filename}.xml`,
     import.meta.url,
   );
-  const xml = await Bun.file(fixturePath).text();
+  const xml = await fs.readFile(fixturePath, "utf-8");
   return new ServerXCUITestAccessibilityTree(xml);
 }
 

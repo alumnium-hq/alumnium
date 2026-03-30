@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, spyOn } from "bun:test";
-import { pushMock } from "../../tests/mocks.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { pushMock } from "../../tests/unit/mocks.js";
 import type { Http } from "../Http.js";
 import { Model } from "../Model.js";
 import { ActorAgent } from "./agents/ActorAgent.js";
@@ -18,22 +18,24 @@ describe("serverApp", () => {
     serverApp.store.sessions = new SessionManager();
 
     pushMock(
-      spyOn(LlmFactory, "createLlm").mockReturnValue({
+      vi.spyOn(LlmFactory, "createLlm").mockReturnValue({
         withStructuredOutput: () => ({ invoke: async () => ({}) }),
         bindTools: () => ({ invoke: async () => ({}) }),
         invoke: async () => ({ content: "" }),
       } as any),
 
-      spyOn(PlannerAgent.prototype, "invoke").mockResolvedValue([
-        "Explanation",
-        [
-          "Step 1: Click New Todo Input field",
-          "Step 2: Enter 'Buy milk'",
-          "Step 3: Press Enter",
-        ],
-      ]),
+      vi
+        .spyOn(PlannerAgent.prototype, "invoke")
+        .mockResolvedValue([
+          "Explanation",
+          [
+            "Step 1: Click New Todo Input field",
+            "Step 2: Enter 'Buy milk'",
+            "Step 3: Press Enter",
+          ],
+        ]),
 
-      spyOn(ActorAgent.prototype, "invoke").mockResolvedValue([
+      vi.spyOn(ActorAgent.prototype, "invoke").mockResolvedValue([
         "Clicking the element and typing text",
         [
           { name: "click", args: { id: 2 } },
@@ -41,23 +43,27 @@ describe("serverApp", () => {
         ],
       ]),
 
-      spyOn(RetrieverAgent.prototype, "invoke").mockResolvedValue([
-        "Found the requested information in the accessibility tree",
-        "true",
-      ]),
+      vi
+        .spyOn(RetrieverAgent.prototype, "invoke")
+        .mockResolvedValue([
+          "Found the requested information in the accessibility tree",
+          "true",
+        ]),
 
-      spyOn(AreaAgent.prototype, "invoke").mockResolvedValue({
+      vi.spyOn(AreaAgent.prototype, "invoke").mockResolvedValue({
         id: 3,
         explanation: "Found the TODO list area",
       }),
 
-      spyOn(LocatorAgent.prototype, "invoke").mockResolvedValue([
-        { id: 16, explanation: "Found the checkbox element" },
-      ]),
+      vi
+        .spyOn(LocatorAgent.prototype, "invoke")
+        .mockResolvedValue([
+          { id: 16, explanation: "Found the checkbox element" },
+        ]),
 
-      spyOn(ChangesAnalyzerAgent.prototype, "invoke").mockResolvedValue(
-        "Button text changed from 'Click me' to 'Submit'.",
-      ),
+      vi
+        .spyOn(ChangesAnalyzerAgent.prototype, "invoke")
+        .mockResolvedValue("Button text changed from 'Click me' to 'Submit'."),
     );
   });
 

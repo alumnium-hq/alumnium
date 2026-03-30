@@ -1,5 +1,5 @@
-import { describe, expect, it } from "bun:test";
-import { setupBeforeEach } from "../../../../tests/mocks.js";
+import { describe, expect, it } from "vitest";
+import { setupBeforeEach } from "../../../../tests/unit/mocks.js";
 import { AppId } from "../../../AppId.js";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
 import type { BaseAgent } from "../../agents/BaseAgent.js";

@@ -1,5 +1,5 @@
-import { describe, expect, it, spyOn } from "bun:test";
-import { pushMock, setupBeforeEach } from "../../../../tests/mocks.js";
+import { describe, expect, it, vi } from "vitest";
+import { pushMock, setupBeforeEach } from "../../../../tests/unit/mocks.js";
 import { AppId } from "../../../AppId.js";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
 import type { BaseAgent } from "../../agents/BaseAgent.js";
@@ -103,10 +103,9 @@ describe("ActorAgentElementsCache", () => {
   it("updates planner elements", async () => {
     const { plannerCache, actorCache, cacheHash, memoryKey } = setup.cur;
 
-    const updateElements = spyOn(
-      plannerCache,
-      "updateElements",
-    ).mockImplementation(() => {});
+    const updateElements = vi
+      .spyOn(plannerCache, "updateElements")
+      .mockImplementation(() => {});
     pushMock(updateElements);
 
     await actorCache.update({

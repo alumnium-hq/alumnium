@@ -1,13 +1,13 @@
 import { always } from "alwaysly";
-import { describe, expect, it, mock, spyOn } from "bun:test";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { describe, expect, it, vi } from "vitest";
 import {
   createMockDir,
   pushMock,
   pushTeardown,
   setupBeforeEach,
-} from "../../tests/mocks.js";
+} from "../../tests/unit/mocks.js";
 import { McpArtifactsStore } from "./McpArtifactsStore.js";
 import type { McpDriver } from "./mcpDrivers.js";
 import { McpState } from "./McpState.js";
@@ -44,7 +44,7 @@ describe("McpArtifactsStore", () => {
       const artifactsStore = new McpArtifactsStore(driverId);
       const pixelB64 =
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
-      const mockScreenshot = mock(async () => pixelB64);
+      const mockScreenshot = vi.fn(async () => pixelB64);
       McpState.registerDriver(
         driverId,
         { driver: { screenshot: mockScreenshot } } as any,
@@ -76,7 +76,7 @@ describe("McpArtifactsStore", () => {
     it("increments step number", async () => {
       const { mockDir, screenshotProps } = setup.cur;
       pushMock(
-        spyOn(McpState, "incrementStepNum").mockImplementation(() => 42),
+        vi.spyOn(McpState, "incrementStepNum").mockImplementation(() => 42),
       );
       const result = await McpArtifactsStore.saveScreenshot(screenshotProps);
       // oxlint-disable-next-line typescript-eslint/unbound-method

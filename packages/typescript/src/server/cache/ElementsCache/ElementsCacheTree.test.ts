@@ -1,6 +1,6 @@
-import { describe, expect, it } from "bun:test";
 import { findOne } from "domutils";
 import { parseDocument } from "htmlparser2";
+import { describe, expect, it } from "vitest";
 import type { ElementsCache } from "./ElementsCache.js";
 import { ElementsCacheTree } from "./ElementsCacheTree.js";
 

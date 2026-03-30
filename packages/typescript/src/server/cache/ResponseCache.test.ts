@@ -1,7 +1,7 @@
 import { deserializeStoredGeneration } from "@langchain/core/caches";
 import type { Generation } from "@langchain/core/outputs";
-import { describe, expect, it, spyOn } from "bun:test";
-import { createMockDir, pushMock } from "../../../tests/mocks.js";
+import { describe, expect, it, vi } from "vitest";
+import { createMockDir, pushMock } from "../../../tests/unit/mocks.js";
 import { AppId } from "../../AppId.js";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.js";
 import { Model } from "../../Model.js";
@@ -116,7 +116,9 @@ async function setup() {
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 
   pushMock(
-    spyOn(GlobalFileStorePaths, "globalSubDir").mockReturnValue(cacheDir.path),
+    vi
+      .spyOn(GlobalFileStorePaths, "globalSubDir")
+      .mockReturnValue(cacheDir.path),
   );
   const cacheStore = new CacheStore(sessionContext);
 

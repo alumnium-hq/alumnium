@@ -1,4 +1,5 @@
-import { describe, expect, it } from "bun:test";
+import fs from "node:fs/promises";
+import { describe, expect, it } from "vitest";
 import { ChromiumAccessibilityTree as ClientChromiumAccessibilityTree } from "../../accessibility/ChromiumAccessibilityTree.js";
 import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.js";
 
@@ -8,7 +9,7 @@ const FIXTURE_PATH = new URL(
 );
 
 async function chromiumTree(): Promise<ServerChromiumAccessibilityTree> {
-  const json = await Bun.file(FIXTURE_PATH).json();
+  const json = JSON.parse(await fs.readFile(FIXTURE_PATH, "utf-8"));
   const clientAccessibilityTree = new ClientChromiumAccessibilityTree(json);
   return new ServerChromiumAccessibilityTree(clientAccessibilityTree.toStr());
 }

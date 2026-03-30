@@ -1,16 +1,18 @@
-import { describe, expect, it } from "bun:test";
+import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
 import { UIAutomator2AccessibilityTree } from "./UIAutomator2AccessibilityTree.js";
 
 const FIXTURE_PATH = path.resolve(
-  import.meta.dir,
+  path.dirname(fileURLToPath(import.meta.url)),
   "__fixtures__/uiautomator2_accessibility_tree.xml",
 );
 
 describe("UIAutomator2AccessibilityTree", () => {
   describe("elementById", () => {
     it("returns correct element for given ID", async () => {
-      const xml = await Bun.file(FIXTURE_PATH).text();
+      const xml = await fs.readFile(FIXTURE_PATH, "utf-8");
       const tree = new UIAutomator2AccessibilityTree(xml);
       expect(tree.elementById(9)).toMatchObject({
         id: 9,

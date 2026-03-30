@@ -1,5 +1,5 @@
 import type { Generation } from "@langchain/core/outputs";
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, vi } from "vitest";
 import { AppId } from "../../AppId.js";
 import { Lchain } from "../../llm/Lchain.js";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
@@ -280,9 +280,9 @@ class MockCache extends ServerCache {
     if (usage) this.usage = usage;
   }
 
-  override lookup = mock(async () => this.result);
-  override update = mock(async () => {});
-  save = mock(async () => {});
-  discard = mock(async () => {});
-  clear = mock(async () => {});
+  override lookup = vi.fn(async () => this.result);
+  override update = vi.fn(async () => {});
+  save = vi.fn(async () => {});
+  discard = vi.fn(async () => {});
+  clear = vi.fn(async () => {});
 }

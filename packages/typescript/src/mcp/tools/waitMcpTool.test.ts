@@ -1,30 +1,33 @@
-import { describe, expect, it, mock, spyOn } from "bun:test";
-import { mockBeforeEach, pushMock } from "../../../tests/mocks.js";
+import { describe, expect, it, vi } from "vitest";
+import { pushMock } from "../../../tests/unit/mocks.js";
 import { AssertionError } from "../../client/errors/AssertionError.js";
+import { sleep } from "../../utils/timers.js";
 import { McpState } from "../McpState.js";
 import { waitMcpTool } from "./waitMcpTool.js";
 
-describe("waitMcpTool", () => {
-  const mocks = mockBeforeEach(() => ({
-    sleepSpy: spyOn(Bun, "sleep").mockResolvedValue(undefined),
-  }));
+vi.mock("../../utils/timers.js", async () => {
+  return {
+    sleep: vi.fn(() => Promise.resolve()),
+  };
+});
 
+describe("waitMcpTool", () => {
   it("waits for given number of seconds", async () => {
     const result = await waitMcpTool.execute({ for: 1, timeout: 10 });
     expect(result).toEqual([{ type: "text", text: "Waited 1 seconds" }]);
-    expect(mocks.cur.sleepSpy).toHaveBeenCalledWith(1000);
+    expect(sleep).toHaveBeenCalledWith(1000);
   });
 
   it("clamps number waits to minimum", async () => {
     const result = await waitMcpTool.execute({ for: 0, timeout: 10 });
     expect(result).toEqual([{ type: "text", text: "Waited 1 seconds" }]);
-    expect(mocks.cur.sleepSpy).toHaveBeenCalledWith(1000);
+    expect(sleep).toHaveBeenCalledWith(1000);
   });
 
   it("clamps number waits to maximum", async () => {
     const result = await waitMcpTool.execute({ for: 100, timeout: 10 });
     expect(result).toEqual([{ type: "text", text: "Waited 30 seconds" }]);
-    expect(mocks.cur.sleepSpy).toHaveBeenCalledWith(30000);
+    expect(sleep).toHaveBeenCalledWith(30000);
   });
 
   it("requires driver_id when waiting for condition", async () => {
@@ -101,7 +104,7 @@ describe("waitMcpTool", () => {
       throw new Error("Connection lost");
     });
 
-    expect(
+    await expect(
       waitMcpTool.execute({
         driver_id: "test-123",
         for: "element visible",
@@ -125,8 +128,8 @@ describe("waitMcpTool", () => {
 });
 
 function mockCheck(checkFn: (condition: string) => Promise<string>) {
-  const checkSpy = mock(checkFn);
-  const getDriverSpy = spyOn(McpState, "getDriverAlumni").mockReturnValue({
+  const checkSpy = vi.fn(checkFn);
+  const getDriverSpy = vi.spyOn(McpState, "getDriverAlumni").mockReturnValue({
     check: checkSpy,
   } as any);
   pushMock(getDriverSpy);

@@ -1,25 +1,28 @@
-import { describe, expect, it } from "bun:test";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
 import { AccessibilityTreeDiff } from "./AccessibilityTreeDiff.js";
 import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.js";
 
-const ACCESSIBILITY_TREE_DIFF_1_PATH = new URL(
+const ACCESSIBILITY_TREE_DIFF_1_PATH = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
   "./__fixtures__/accessibility_tree_diff_1.xml",
-  import.meta.url,
 );
-const ACCESSIBILITY_TREE_DIFF_2_PATH = new URL(
+const ACCESSIBILITY_TREE_DIFF_2_PATH = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
   "./__fixtures__/accessibility_tree_diff_2.xml",
-  import.meta.url,
 );
 
 async function accessibilityTreeBefore(): Promise<string> {
-  const xml = await Bun.file(ACCESSIBILITY_TREE_DIFF_1_PATH).text();
+  const xml = await fs.readFile(ACCESSIBILITY_TREE_DIFF_1_PATH, "utf-8");
   const tree = new ServerChromiumAccessibilityTree(xml);
 
   return tree.toXml();
 }
 
 async function accessibilityTreeAfter(): Promise<string> {
-  const xml = await Bun.file(ACCESSIBILITY_TREE_DIFF_2_PATH).text();
+  const xml = await fs.readFile(ACCESSIBILITY_TREE_DIFF_2_PATH, "utf-8");
   const tree = new ServerChromiumAccessibilityTree(xml);
 
   return tree.toXml();

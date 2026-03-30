@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it } from "vitest";
 import { PressKeyTool } from "./PressKeyTool.js";
 import { convertToolsToSchemas } from "./toolToSchemaConverter.js";
 import { TypeTool } from "./TypeTool.js";
@@ -10,7 +10,8 @@ describe(convertToolsToSchemas, () => {
       type: "function",
       function: {
         name: "TypeTool",
-        description: "Type text into an element. Automatically focuses the element and clears it before typing.",
+        description:
+          "Type text into an element. Automatically focuses the element and clears it before typing.",
         parameters: {
           type: "object",
           properties: {
@@ -36,7 +37,8 @@ describe(convertToolsToSchemas, () => {
       type: "function",
       function: {
         name: "PressKeyTool",
-        description: "Press a keyboard key. Does not require element to be focused.",
+        description:
+          "Press a keyboard key. Does not require element to be focused.",
         parameters: {
           type: "object",
           properties: {

@@ -1,5 +1,6 @@
 import z from "zod";
 import { AssertionError } from "../../client/errors/AssertionError.js";
+import { sleep } from "../../utils/timers.js";
 import { McpState } from "../McpState.js";
 import { McpTool } from "./McpTool.js";
 
@@ -40,7 +41,8 @@ export const waitMcpTool = McpTool.define("wait", {
     if (typeof waitFor === "number") {
       const seconds = Math.max(1, Math.min(30, Math.trunc(waitFor)));
       logger.info(`Waiting for ${seconds} seconds`);
-      await Bun.sleep(seconds * 1000);
+
+      await sleep(seconds * 1000);
       return [{ type: "text", text: `Waited ${seconds} seconds` }];
     }
 
@@ -80,7 +82,7 @@ export const waitMcpTool = McpTool.define("wait", {
         }
         lastError = String(error);
         logger.debug(`Condition not met after ${attempts} attempts(s)`);
-        await Bun.sleep(pollInterval * 1000);
+        await sleep(pollInterval * 1000);
       }
     }
 

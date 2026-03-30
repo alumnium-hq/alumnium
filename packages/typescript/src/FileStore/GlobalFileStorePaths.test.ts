@@ -1,5 +1,5 @@
-import { describe, expect, it } from "bun:test";
-import { pushTeardown } from "../../tests/mocks.js";
+import { describe, expect, it } from "vitest";
+import { pushTeardown } from "../../tests/unit/mocks.js";
 import { GlobalFileStorePaths } from "./GlobalFileStorePaths.js";
 
 describe("GlobalFileStorePaths", () => {

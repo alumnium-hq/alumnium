@@ -1,9 +1,9 @@
-import { describe, expect, it, spyOn } from "bun:test";
+import { describe, expect, it, vi } from "vitest";
 import {
   createMockDir,
   pushMock,
   setupBeforeEach,
-} from "../../../../tests/mocks.js";
+} from "../../../../tests/unit/mocks.js";
 import { AppId } from "../../../AppId.js";
 import { GlobalFileStorePaths } from "../../../FileStore/GlobalFileStorePaths.js";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
@@ -26,9 +26,9 @@ describe("ElementsCache", () => {
     const cacheDir = await createMockDir({ prefix: "elements-cache" });
 
     pushMock(
-      spyOn(GlobalFileStorePaths, "globalSubDir").mockReturnValue(
-        cacheDir.path,
-      ),
+      vi
+        .spyOn(GlobalFileStorePaths, "globalSubDir")
+        .mockReturnValue(cacheDir.path),
     );
     const cacheStore = new CacheStore(sessionContext);
 

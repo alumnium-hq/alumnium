@@ -1,4 +1,5 @@
-import { describe, expect, it } from "bun:test";
+import fs from "node:fs/promises";
+import { describe, expect, it } from "vitest";
 import { ServerUIAutomator2AccessibilityTree } from "./ServerUIAutomator2AccessibilityTree.js";
 
 async function tree(
@@ -8,7 +9,7 @@ async function tree(
     `./__fixtures__/${filename}.xml`,
     import.meta.url,
   );
-  const xml = await Bun.file(fixturePath).text();
+  const xml = await fs.readFile(fixturePath, "utf-8");
   const normalizedXml = xml.normalize("NFKC");
   return new ServerUIAutomator2AccessibilityTree(normalizedXml);
 }

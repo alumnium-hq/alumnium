@@ -1,11 +1,11 @@
-import { describe, expect, it } from "bun:test";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { describe, expect, it } from "vitest";
 import z from "zod";
-import { createMockDir, setupBeforeEach } from "../../tests/mocks.js";
+import { createMockDir, setupBeforeEach } from "../../tests/unit/mocks.js";
 import { FileStore } from "./FileStore.js";
 
-describe("FileStore", () => {
+describe.only("FileStore", () => {
   describe("constructor", () => {
     it("initializes with a directory", () => {
       const dir = "test/store/dir";
@@ -70,14 +70,14 @@ describe("FileStore", () => {
 
     it("creates file dir", async () => {
       const { result } = setup.cur;
-      expect(fs.stat(path.dirname(result))).resolves.toMatchObject({
+      await expect(fs.stat(path.dirname(result))).resolves.toMatchObject({
         size: expect.any(Number),
       });
     });
 
     it("does't create file", async () => {
       const { result } = setup.cur;
-      expect(fs.stat(result)).rejects.toThrow("ENOENT");
+      await expect(fs.stat(result)).rejects.toThrow("ENOENT");
     });
   });
 
@@ -97,7 +97,7 @@ describe("FileStore", () => {
 
     it("creates dir", async () => {
       const { result } = setup.cur;
-      expect(fs.stat(result)).resolves.toMatchObject({
+      await expect(fs.stat(result)).resolves.toMatchObject({
         isDirectory: expect.any(Function),
       });
     });
@@ -203,7 +203,7 @@ describe("FileStore", () => {
       const { mockDir, store } = setup.cur;
       const filePath = path.resolve(mockDir.path, "invalid.json");
       await fs.writeFile(filePath, "Not a JSON string");
-      expect(store.readJson("invalid.json")).rejects.toThrow();
+      await expect(store.readJson("invalid.json")).rejects.toThrow();
     });
 
     it("allows to parse using zod schema", async () => {
@@ -222,7 +222,7 @@ describe("FileStore", () => {
       const filePath = path.resolve(mockDir.path, "data.json");
       const data = { age: 30 };
       await fs.writeFile(filePath, JSON.stringify(data));
-      expect(store.readJson("data.json", Schema)).rejects.toThrow();
+      await expect(store.readJson("data.json", Schema)).rejects.toThrow();
     });
   });
 
@@ -236,18 +236,18 @@ describe("FileStore", () => {
     it("removes the store directory with all contents", async () => {
       const { mockDir, store } = setup.cur;
       const filePath = await store.writeFile("sub/dir/file.txt", "Hello");
-      expect(fs.stat(filePath)).resolves.toMatchObject({
+      await expect(fs.stat(filePath)).resolves.toMatchObject({
         size: expect.any(Number),
       });
       await store.clear();
-      expect(fs.stat(mockDir.path)).rejects.toThrow("ENOENT");
+      await expect(fs.stat(mockDir.path)).rejects.toThrow("ENOENT");
     });
 
     it("doesn't throw if directory doesn't exist", async () => {
       const { mockDir, store } = setup.cur;
-      await fs.rmdir(mockDir.path, { recursive: true });
+      await fs.rm(mockDir.path, { recursive: true });
       await store.clear();
-      expect(store.clear()).resolves.toBeUndefined();
+      await expect(store.clear()).resolves.toBeUndefined();
     });
   });
 

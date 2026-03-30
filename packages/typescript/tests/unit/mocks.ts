@@ -1,15 +1,17 @@
-import { afterEach, beforeEach, type Mock } from "bun:test";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { beforeEach, type Mock, type MockInstance, vi } from "vitest";
 
 export type TeardownFn = () => void | Promise<void>;
 
-const mocks: Mock<any>[] = [];
+export type AnyMock = MockInstance<any> | Mock<any>;
+
+const mocks: AnyMock[] = [];
 const dirs: string[] = [];
 const teardowns: TeardownFn[] = [];
 
-export function pushMock(...newMocks: Mock<any>[]) {
+export function pushMock(...newMocks: AnyMock[]) {
   mocks.push(...newMocks);
 }
 
@@ -72,24 +74,18 @@ export async function clearAllMocks() {
   mocks.forEach((m) => m.mockRestore());
   mocks.length = 0;
 
-  await Promise.all(dirs.map((dir) => fs.rmdir(dir, { recursive: true })));
-  dirs.length = 0;
-
-  teardowns.forEach((fn) => fn());
-  teardowns.length = 0;
-}
-
-afterEach(async () => {
-  mocks.forEach((m) => m.mockRestore());
-  mocks.length = 0;
-
   await Promise.all(
     dirs.map((dir) => fs.rm(dir, { recursive: true, force: true })),
   );
   dirs.length = 0;
-});
 
-export function mockBeforeEach<Mocks extends Record<string, Mock<any>>>(
+  teardowns.forEach((fn) => fn());
+  teardowns.length = 0;
+
+  vi.restoreAllMocks();
+}
+
+export function mockBeforeEach<Mocks extends Record<string, MockInstance<any>>>(
   fn: () => Mocks,
 ) {
   const mocksRef = { cur: {} as Mocks };

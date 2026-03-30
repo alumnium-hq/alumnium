@@ -42,8 +42,8 @@
     "clean": "node -e \"console.log('TODO')\"",
     "check-format": "node -e \"console.log('TODO')\"",
     "format": "node -e \"console.log('TODO')\"",
-    "test": "bun test",
-    "test:watch": "bun test --watch"
+    "test": "bun vitest --project unit run",
+    "test:watch": "bun vitest --project unit"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
