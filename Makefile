@@ -30,7 +30,7 @@ types:
 	bun tsgo --build
 
 start-server:
-	cd packages/python && poetry run alumnium-server
+	cd packages/typescript && fnox exec -- bun ./src/cli.ts server
 
 start-server-docker:
 	docker build -t alumnium-server .
