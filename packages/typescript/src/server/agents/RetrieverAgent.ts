@@ -136,6 +136,8 @@ export class RetrieverAgent extends BaseAgent {
       new RegExp(`${RetrieverAgent.#LIST_SEPARATOR.slice(0, -1)}.`, "g"),
       RetrieverAgent.#LIST_SEPARATOR,
     );
+    // Grok 4.1 Fast Reasoning sometimes use escaped tags
+    value = value.replace("&lt;SEP&gt;", RetrieverAgent.#LIST_SEPARATOR);
 
     // Return raw string or list of strings
     if (value.includes(RetrieverAgent.#LIST_SEPARATOR)) {
