@@ -30,6 +30,7 @@
         "@logtape/logtape": "^2.0.2",
         "@modelcontextprotocol/sdk": "^1.27.1",
         "alwaysly": "^0.4.0",
+        "cac": "^7.0.0",
         "case-anything": "^3.1.2",
         "diff": "^8.0.3",
         "dom-serializer": "^2.0.0",
@@ -38,6 +39,7 @@
         "elysia": "^1.4.26",
         "htmlparser2": "^10.1.0",
         "npm-fuzzy": "^1.0.1",
+        "picocolors": "^1.1.1",
         "playwright-core": "^1.58.2",
         "selenium-webdriver": "^4.41.0",
         "smolcanon": "^0.2.1",
@@ -647,6 +649,8 @@
     "bun-types": ["bun-types@1.3.9", "", { "dependencies": { "@types/node": "*" } }, "sha512-+UBWWOakIP4Tswh0Bt0QD0alpTY8cb5hvgiYeWCMet9YukHbzuruIEeXC2D7nMJPB12kbh8C7XJykSexEqGKJg=="],
 
     "bytes": ["bytes@3.1.2", "", {}, "sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg=="],
+
+    "cac": ["cac@7.0.0", "", {}, "sha512-tixWYgm5ZoOD+3g6UTea91eow5z6AAHaho3g0V9CNSNb45gM8SmflpAc+GRd1InC4AqN/07Unrgp56Y94N9hJQ=="],
 
     "cacheable-lookup": ["cacheable-lookup@5.0.4", "", {}, "sha512-2/kNscPhpcxrOigMZzbiWF7dz8ilhb/nIHU3EyZiXWXpeq/au8qJ8VhdftMkty3n7Gj6HIGalQG8oiBNB3AJgA=="],
 

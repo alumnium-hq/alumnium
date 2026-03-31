@@ -36,7 +36,7 @@ const CORE_PKG_ASSETS = [...COMMON_PKG_ASSETS, "../../README.md"];
 
 const REPO_ROOT_DIR = path.resolve(import.meta.dirname, "../../");
 const PKG_DIR = path.resolve(import.meta.dirname, "..");
-const SRC_CLI_PATH = path.resolve(PKG_DIR, "src/cli.ts");
+const SRC_CLI_PATH = path.resolve(PKG_DIR, "src/cli/main.ts");
 const DIST_DIR = path.resolve(PKG_DIR, "dist");
 const DIST_CORE_PKG_DIR = path.resolve(DIST_DIR, "npm-alumnium");
 const DIST_BIN_DIR = path.resolve(DIST_DIR, "bin");

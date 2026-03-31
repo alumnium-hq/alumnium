@@ -43,4 +43,4 @@ start-server-docker:
 		alumnium-server
 
 start-mcp:
-	@cd packages/typescript && fnox exec -- bun ./src/cli.ts mcp
+	@cd packages/typescript && fnox exec -- bun ./src/cli/bin.ts mcp

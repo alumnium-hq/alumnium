@@ -71,7 +71,7 @@ jobs:
 
       - name: Start server
         run: |
-          ALUMNIUM_LOG_LEVEL=debug bun packages/typescript/src/cli.ts server > server.log &
+          ALUMNIUM_LOG_LEVEL=debug bun packages/typescript/src/cli/bin.ts server > server.log &
           echo $! > server.pid
 
       - name: Run examples
