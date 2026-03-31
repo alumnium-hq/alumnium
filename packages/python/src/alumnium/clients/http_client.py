@@ -1,6 +1,6 @@
 from requests import delete, get, post
 
-from ..server.models import Model
+from ..models import Model
 from ..tools.base_tool import BaseTool
 from ..tools.tool_to_schema_converter import convert_tools_to_schemas
 from .typecasting import Data, loosely_typecast

@@ -7,7 +7,7 @@ Data: TypeAlias = Optional[Union[str, int, float, bool, list[Union[str, int, flo
 def loosely_typecast(value: str | list[str]) -> Data:
     """Convert string or list of strings to appropriate Python types."""
     if isinstance(value, list):
-        return [loosely_typecast(item) for item in value]
+        return [loosely_typecast(item) for item in value]  # ty:ignore[invalid-return-type]
 
     value = value.strip()
 

@@ -14,7 +14,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
-from ..server.logutils import get_logger
+from ..logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.hover_tool import HoverTool
@@ -308,7 +308,7 @@ class SeleniumDriver(BaseDriver):
 
             # Track which iframe this is in
             if iframe_backend_node_id:
-                synthetic_node["_frame_chain"] = [iframe_backend_node_id]
+                synthetic_node["_frame_chain"] = [iframe_backend_node_id]  # ty:ignore[invalid-assignment]
 
             nodes.append(synthetic_node)
             node_id -= 1

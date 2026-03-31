@@ -3,12 +3,11 @@ from retry import retry
 from . import DELAY, RETRIES
 from .accessibility.base_accessibility_tree import BaseAccessibilityTree
 from .clients.http_client import HttpClient
-from .clients.native_client import NativeClient
 from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.base_driver import BaseDriver
+from .logutils import get_logger
 from .result import DoResult, DoStep
-from .server.logutils import get_logger
 from .tools import BaseTool
 
 logger = get_logger(__name__)
@@ -22,7 +21,7 @@ class Area:
         driver: BaseDriver,
         accessibility_tree: BaseAccessibilityTree,
         tools: dict[str, BaseTool],
-        client: HttpClient | NativeClient,
+        client: HttpClient,
     ):
         self.id = id
         self.description = description

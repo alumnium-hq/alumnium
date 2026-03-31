@@ -12,16 +12,15 @@ from . import CHANGE_ANALYSIS, DELAY, EXCLUDE_ATTRIBUTES, PLANNER, RETRIES
 from .area import Area
 from .cache import Cache
 from .clients.http_client import HttpClient
-from .clients.native_client import NativeClient
 from .clients.typecasting import Data
 from .drivers import Element
 from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
+from .logutils import get_logger
+from .models import Model
 from .result import DoResult, DoStep
-from .server.logutils import get_logger
-from .server.models import Model
 from .tools import BaseTool
 
 logger = get_logger(__name__)
@@ -32,7 +31,6 @@ class Alumni:
         self,
         driver: Page | WebDriver | tuple[PageAsync, AbstractEventLoop],
         model: Model | None = None,
-        llm: BaseChatModel | None = None,
         extra_tools: list[type[BaseTool]] | None = None,
         url: str | None = None,
         planner: bool | None = None,
@@ -44,7 +42,6 @@ class Alumni:
         exclude_attributes = exclude_attributes if exclude_attributes is not None else EXCLUDE_ATTRIBUTES
 
         self.model = model or Model.current
-        self.llm = llm
 
         if isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
@@ -66,30 +63,16 @@ class Alumni:
         for tool in self.driver.supported_tools | set(extra_tools or []):
             self.tools[tool.__name__] = tool
 
-        # NOTE: Since we're migrating to TypeScript core, this is enforced now
-        # to always use the server, even if the URL is not provided. Later we
-        # will simply remove the native client.
         server_url = url or getenv("ALUMNIUM_SERVER_URL") or "http://localhost:8013"
-        if server_url:
-            logger.info(f"Using HTTP client with server: {url}")
-            self.client = HttpClient(
-                server_url,
-                self.model,
-                self.driver.platform,
-                self.tools,
-                planner,
-                exclude_attributes,
-            )
-        else:
-            logger.info("Using native client")
-            self.client = NativeClient(
-                self.model,
-                self.driver.platform,
-                self.tools,
-                self.llm,
-                planner,
-                exclude_attributes,
-            )
+        logger.info(f"Using HTTP client with server: {server_url}")
+        self.client = HttpClient(
+            server_url,
+            self.model,
+            self.driver.platform,
+            self.tools,
+            planner,
+            exclude_attributes,
+        )
 
         self.cache = Cache(self.client)
 
@@ -135,8 +118,8 @@ class Alumni:
         if self.change_analysis and executed_steps:
             try:
                 changes = self.client.analyze_changes(
-                    before_accessibility_tree=before_tree,
-                    before_url=before_url,
+                    before_accessibility_tree=before_tree,  # ty:ignore[invalid-argument-type]
+                    before_url=before_url,  # ty:ignore[invalid-argument-type]
                     after_accessibility_tree=self.driver.accessibility_tree.to_str(),
                     after_url=self.driver.url,
                 )

@@ -1,4 +1,5 @@
 # type: ignore[reportRedeclaration]
+# ty:ignore[call-non-callable]
 
 from os import getenv
 

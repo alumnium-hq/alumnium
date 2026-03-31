@@ -10,7 +10,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 from ..accessibility import UIAutomator2AccessibilityTree, XCUITestAccessibilityTree
-from ..server.logutils import get_logger
+from ..logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.press_key_tool import PressKeyTool

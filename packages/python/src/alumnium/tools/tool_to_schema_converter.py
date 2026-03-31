@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, get_args, get_origin
 
-from ..server.logutils import get_logger
+from ..logutils import get_logger
 from .base_tool import BaseTool
 
 logger = get_logger(__name__)

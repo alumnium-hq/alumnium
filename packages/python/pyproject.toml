@@ -136,12 +136,7 @@ pytest-html = "^4.1.1"
 pytest-retry = "^1.7.0"
 python-dotenv = "^1.1.1"
 ruff = "^0.11.9"
-
-[tool.poetry.group.server.dependencies.uvicorn]
-extras = [
-    "standard",
-]
-version = "^0.32.0"
+ty = "^0.0.26"
 
 [tool.poetry.requires-plugins.poethepoet]
 extras = [

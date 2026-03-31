@@ -1,7 +1,7 @@
 import logging
 from os import getenv
 
-from .server.logutils import configure_logging, get_logger
+from .logutils import configure_logging, get_logger
 
 logger: logging.Logger = get_logger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -16,4 +16,4 @@ RETRIES = int(getenv("ALUMNIUM_RETRIES", 2))
 configure_logging()
 
 from .alumni import *
-from .server.models import Model, Provider
+from .models import Model, Provider

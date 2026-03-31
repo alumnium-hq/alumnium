@@ -19,7 +19,7 @@ class UploadTool(BaseTool):
     )
 
     def invoke(self, driver: BaseDriver):
-        driver.upload(self.id, self._normalize_paths(self.paths))  # type: ignore[reportAttributeAccessIssue]
+        driver.upload(self.id, self._normalize_paths(self.paths))  # type: ignore[reportAttributeAccessIssue]  # ty:ignore[unresolved-attribute]
 
     def _normalize_paths(self, paths: list[str]) -> list[str]:
         # Planner often attempts to "escape" file paths by adding backslashes.

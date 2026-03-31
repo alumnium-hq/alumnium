@@ -1,0 +1,67 @@
+
+[tools]
+python = "3.10"
+poetry = "latest"
+
+[env]
+_.python.venv = { create = true, path = '.venv' }
+
+[tasks.install]
+run = '''
+mise install
+poetry install
+'''
+
+[tasks.clean]
+run = "rm -rf .alumnium/cache dist log reports .pytest_cache __pycache__ .ruff_cache htmlcov .coverage coverage.xml"
+
+[tasks.test]
+run = [{ task = "test/unit" }]
+
+[tasks."test/unit"]
+run = "pytest --cov=alumnium --cov-report=html --cov-report=xml tests/"
+
+[tasks."test/system"]
+usage = '''
+arg "<driver>" help="Driver to use for system tests" {
+  choices "selenium" "playwright" "appium-ios" "appium-android"
+  default "selenium"
+}
+'''
+run = "ALUMNIUM_DRIVER={{usage.driver}} ./scripts/test-system.sh"
+
+[tasks.lint]
+run = "poetry run ruff check ."
+
+[tasks."lint:fix"]
+run = "poetry run ruff check --fix ."
+
+[tasks.format]
+run = [
+  { task = "format/pyproject" },
+  { task = "format/code" },
+]
+
+[tasks."format:check"]
+run = [
+  { task = "format/pyproject:check" },
+  { task = "format/code:check" },
+]
+
+[tasks."format/pyproject"]
+run = "pyprojectsort"
+
+[tasks."format/pyproject:check"]
+run = "pyprojectsort --diff"
+
+[tasks."format/code"]
+run = "poetry run ruff format ."
+
+[tasks."format/code:check"]
+run = "poetry run ruff format . --check"
+
+[tasks.types]
+run = "poetry run ty check"
+
+[tasks."types:watch"]
+run = "poetry run ty check --watch"
