@@ -48,6 +48,10 @@ url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.10/bun-windows-
 checksum = "sha256:715709c69b176e20994533d3292bd0b7c32de9c0c5575b916746ec6b2aa38346"
 url = "https://github.com/oven-sh/bun/releases/download/bun-v1.3.10/bun-windows-x64-baseline.zip"
 
+[[tools.claude]]
+version = "2.1.85"
+backend = "aqua:anthropics/claude-code"
+
 [[tools.fnox]]
 version = "1.12.1"
 backend = "github:jdx/fnox"
@@ -207,6 +211,10 @@ url = "https://github.com/anomalyco/opencode/releases/download/v1.2.24/opencode-
 version = "0.40.0"
 backend = "npm:oxfmt"
 
+[[tools."pipx:pyprojectsort"]]
+version = "0.4.0"
+backend = "pipx:pyprojectsort"
+
 [[tools.poetry]]
 version = "2.1.1"
 backend = "vfox:mise-plugins/vfox-poetry"
@@ -259,6 +267,14 @@ url = "https://github.com/astral-sh/python-build-standalone/releases/download/20
 checksum = "sha256:9c2d3604a06fcd422289df73015cd00e7271d90de28d2c910f0e2309a7f73a68"
 url = "https://github.com/astral-sh/python-build-standalone/releases/download/20230507/cpython-3.10.11+20230507-x86_64-pc-windows-msvc-shared-install_only.tar.gz"
 
+[[tools.ruff]]
+version = "0.15.8"
+backend = "aqua:astral-sh/ruff"
+
 [[tools.shfmt]]
 version = "3.13.0"
 backend = "aqua:mvdan/sh"
+
+[[tools.uv]]
+version = "0.11.2"
+backend = "aqua:astral-sh/uv"

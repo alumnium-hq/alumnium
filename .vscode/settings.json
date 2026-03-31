@@ -1,3 +1,5 @@
 {
   "js/ts.experimental.useTsgo": true,
+  "evenBetterToml.schema.associations": {
+  }
 }

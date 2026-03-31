@@ -15,6 +15,7 @@ const logger = getLogger(import.meta.url);
 const DEFAULT_SERVER_HOST = "127.0.0.1";
 const DEFAULT_SERVER_PORT = 8013;
 const DEFAULT_SERVER_TIMEOUT_MS = 15000;
+const DEFAULT_DAEMON_PID_NAME = "server.pid";
 const WAIT_POLL_INTERVAL_MS = 200;
 
 export const ServerCommand = CliCommand.define({
@@ -49,63 +50,78 @@ export const ServerCommand = CliCommand.define({
         description: "Run server as a daemon",
       }),
 
-    kill: z
+    daemonKill: z
       .union([z.boolean(), z.stringbool()])
       .default(false)
       .register(CliCommand.option, {
-        name: "kill",
-        syntax: "-k, --kill",
+        name: "daemon-kill",
+        syntax: "--daemon-kill",
         description: "Kill the running server",
       }),
 
-    force: z
+    daemonPid: z.string().optional().register(CliCommand.option, {
+      name: "daemon-pid",
+      syntax: "--daemon-pid <path.pid>",
+      description: "PID file name to read/write server daemon PID file",
+    }),
+
+    daemonForce: z
       .union([z.boolean(), z.stringbool()])
       .default(false)
       .register(CliCommand.option, {
-        name: "force",
-        syntax: "-f, --force",
+        name: "daemon-force",
+        syntax: "-f, --daemon-force",
         description: "Ignore server daemon status when killing or starting",
       }),
 
-    waitFor: z
+    daemonWait: z
       .union([z.boolean(), z.stringbool()])
       .default(false)
       .register(CliCommand.option, {
-        name: "wait-for",
-        syntax: "--wait-for",
+        name: "daemon-wait",
+        syntax: "--daemon-wait",
         description: "Wait for the server daemon to become healthy and exit",
       }),
 
-    timeout: z.coerce
+    daemonWaitTimeout: z.coerce
       .number()
       .int()
       .min(0, "Timeout must be a non-negative integer")
       .default(DEFAULT_SERVER_TIMEOUT_MS)
       .register(CliCommand.option, {
-        name: "timeout",
-        syntax: "--timeout <ms>",
-        description: "Healthcheck timeout in milliseconds",
+        name: "daemon-wait-timeout",
+        syntax: "--daemon-wait-timeout <ms>",
+        description: "Daemon healthcheck timeout in milliseconds",
       }),
   }),
 
   action: async ({ args, logFilenameHint }) => {
-    const { host, port, timeout, waitFor, daemon, kill, force } = args;
+    const {
+      host,
+      port,
+      daemon,
+      daemonKill,
+      daemonPid,
+      daemonForce,
+      daemonWait,
+      daemonWaitTimeout,
+    } = args;
     const pidPath =
       process.env.ALUMNIUM_SERVER_PID_PATH ??
-      GlobalFileStorePaths.globalSubDir("server.pid");
+      GlobalFileStorePaths.globalSubDir(daemonPid || DEFAULT_DAEMON_PID_NAME);
 
-    if (kill) {
-      await killDaemon(pidPath, null, force);
+    if (daemonKill) {
+      await killDaemon(pidPath, null, daemonForce);
       process.exit(0);
     }
 
     if (daemon) {
-      await startDaemon(pidPath, force);
-      if (!waitFor) process.exit(0);
+      await startDaemon(pidPath, daemonForce);
+      if (!daemonWait) process.exit(0);
     }
 
-    if (waitFor) {
-      const deadline = Date.now() + timeout;
+    if (daemonWait) {
+      const deadline = Date.now() + daemonWaitTimeout;
       const pid = await waitForPidFile(pidPath, deadline);
       if (pid == null) {
         logger.error(`Server PID file not found or invalid at ${pidPath}`);
@@ -120,7 +136,9 @@ export const ServerCommand = CliCommand.define({
 
       const healthy = await waitForHealth(host, port, pid, deadline);
       if (!healthy) {
-        logger.error(`Server health check timed out after ${timeout}ms`);
+        logger.error(
+          `Server health check timed out after ${daemonWaitTimeout}ms`,
+        );
         process.exit(1);
       }
       logger.info(`Server is healthy at http://${host}:${port}/v1/health`);
@@ -166,7 +184,7 @@ async function startDaemon(pidPath: string, force: boolean): Promise<void> {
 
   const childArgs = process.argv.slice(isBundled() ? 2 : 1).filter((arg) => {
     if (arg === "--daemon" || arg === "-d") return false;
-    if (arg === "--wait-for") return false;
+    if (arg === "--daemon-wait") return false;
     return true;
   });
 

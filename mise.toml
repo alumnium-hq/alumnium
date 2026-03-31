@@ -1,13 +1,23 @@
 experimental_monorepo_root = true
 [monorepo]
-config_roots = ["packages/*"]
+config_roots = [".", "packages/*"]
 
 [tools]
+# TypeScript
 bun = "latest"
-fnox = "latest"
-opencode = "latest"
+
+# Python
+python = "3.10"
+uv = "latest"
+
+# Tools
+fnox = "latest" # Secrets manager
+opencode = "latest" # AI agent
+claude = "latest" # AI agent
+ruff = "latest" # Python formatter
 shfmt = "latest" # .sh formatter
 oxfmt = "latest" # TS formatter
+"pipx:pyprojectsort" = "latest" # pyproject.toml formatter
 
 [env]
 _.source = "scripts/env.sh"
@@ -26,22 +36,41 @@ env_shell_expand = true # Allow using "${VAR}" in values
 lockfile = true
 idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
 
-[tasks."mcp/start"]
+[tasks.install]
+run = [
+  { task = "install/mise" },
+  { task = "install/bun" },
+]
+
+[tasks."install/mise"]
+run = "mise install"
+
+[tasks."install/bun"]
+run = "bun install"
+# NOTE: No need to specify sources and outputs as `bun install` is faster at tracking them than mise.
+depends = "install/mise"
+
+[tasks."dev:mcp"]
 run = "fnox exec --if-missing error -- bun ./packages/typescript/src/cli/bin.ts mcp"
 quiet = true
 raw = true
+depends = "install"
 
-[tasks."mcp/inspect"]
+[tasks."dev/mcp:inspect"]
 run = "cd packages/typescript && fnox exec --if-missing error -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./src/cli/bin.ts mcp"
+depends = "install"
 
-[tasks."server/start"]
+[tasks."dev/server/start"]
 run = "fnox exec --if-missing error -- bun ./packages/typescript/src/cli/bin.ts server"
+depends = "install"
 
-[tasks."clean/logs"]
-run = "rm -rf ./.alumnium/logs/*"
+[tasks."clean"]
+run = "rm -rf ./.alumnium"
 
-[tasks.types]
+[tasks."types/ts"]
 run = "bun run tsgo --build"
+depends = "install"
 
-[tasks."types:watch"]
+[tasks."types/ts:watch"]
 run = "bun run tsgo --build --watch"
+depends = "install"

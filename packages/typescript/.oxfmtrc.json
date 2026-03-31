@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  // TODO: Enable later
+  "ignorePatterns": [
+    "src/drivers/SeleniumDriver.ts",
+    "tests/system/helpers.ts",
+    "src/server/agents/prompts/**/*",
+    "src/server/accessibility/__fixtures__/*",
+    "src/accessibility/__fixtures__/*",
+    "tsconfig.json",
+    "tsconfig.build.json"
+  ],
+  "printWidth": 80,
+  // TODO: Enable later
+  "sortPackageJson": false
+}

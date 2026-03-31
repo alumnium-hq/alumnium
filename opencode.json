@@ -13,7 +13,7 @@
   "mcp": {
     "alumnium": {
       "type": "local",
-      "command": ["mise", "mcp/start"],
+      "command": ["mise", ":dev:mcp"],
       "enabled": true,
       "environment": {
         "ALUMNIUM_LOG_LEVEL": "{env:ALUMNIUM_LOG_LEVEL}",

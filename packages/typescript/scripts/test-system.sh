@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# This script run TypeScript system tests using Vitest against driver passed
+# via ALUMNIUM_DRIVER env var.
+
+set -euo pipefail
+
+failed=0
+run_tests() {
+	if "$@"; then
+		echo -e "\n🟢 OK\n"
+	else
+		echo -e "\n🔴 FAILED\n"
+		failed=1
+	fi
+}
+
+export ALUMNIUM_LOG_LEVEL=debug
+export ALUMNIUM_LOG_FILENAME=test-system-$ALUMNIUM_DRIVER.log
+export ALUMNIUM_PRUNE_LOGS=true
+export TEST_PLAYWRIGHT_HEADLESS=true
+
+echo -e "🌀 Running vitest tests\n"
+run_tests fnox exec --if-missing error -- \
+	bun vitest --project system run
+
+echo
+if [ $failed -ne 0 ]; then
+	echo "🔴 Some tests failed"
+	exit 1
+else
+	echo "🟢 All tests passed"
+fi

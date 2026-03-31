@@ -3,9 +3,13 @@
 // This script builds the Alumnium for multiple target platforms using Bun.
 
 import { $, type BunPlugin } from "bun";
+import { snakeCase } from "case-anything";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { stringify as tomlStringify } from "smol-toml";
 import { ALUMNIUM_VERSION } from "../src/package.js";
+
+//#region Types and consts
 
 const OSES = ["linux", "darwin", "windows"] as const;
 
@@ -29,6 +33,7 @@ interface TargetPkg {
   name: string;
   dir: string;
   mainUrl: string;
+  binPath: string;
 }
 
 const COMMON_PKG_ASSETS = ["../../LICENSE.md"];
@@ -36,26 +41,32 @@ const CORE_PKG_ASSETS = [...COMMON_PKG_ASSETS, "../../README.md"];
 
 const REPO_ROOT_DIR = path.resolve(import.meta.dirname, "../../");
 const PKG_DIR = path.resolve(import.meta.dirname, "..");
-const SRC_CLI_PATH = path.resolve(PKG_DIR, "src/cli/main.ts");
+const SRC_CLI_PATH = path.resolve(PKG_DIR, "src/cli/bin.ts");
 const DIST_DIR = path.resolve(PKG_DIR, "dist");
 const DIST_CORE_PKG_DIR = path.resolve(DIST_DIR, "npm-alumnium");
 const DIST_BIN_DIR = path.resolve(DIST_DIR, "bin");
 const DIST_PIP_DIR = path.resolve(DIST_DIR, "pip");
 const PIP_CLI_PKG_NAME = "alumnium-cli";
-const PIP_CLI_MODULE_NAME = "alumnium_cli";
+const PIP_CLI_MODULE_NAME = getPipModuleName(PIP_CLI_PKG_NAME);
 const PIP_CLI_TARGET_MODULE_NAME = `${PIP_CLI_MODULE_NAME}_bin`;
 const DIST_PIP_CLI_PKG_DIR = path.resolve(DIST_DIR, `pip-${PIP_CLI_PKG_NAME}`);
 const PIP_MAIN_URL = "https://pypi.org/project/alumnium/";
+const PYPROJECT_NAME = "pyproject.toml";
 const META_AUTHORS = [
-  "Alex Rodionov <p0deje@gmail.com>",
-  "Tatiana Shepeleva <tati.shep@gmail.com>",
+  { name: "Alex Rodionov", email: "p0deje@gmail.com" },
+  { name: "Tatiana Shepeleva", email: "tati.shep@gmail.com" },
 ];
 
 const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
   ARCHS.map((arch) => {
     const target = `${os}-${arch}`;
     const binName = getBinName(os, target);
+
+    const npmDir = path.resolve(DIST_DIR, `npm-alumnium-cli-${target}`);
+
     const pipName = `alumnium-cli-${target}`;
+    const pipDir = path.resolve(DIST_DIR, `pip-${pipName}`);
+
     return {
       os,
       arch,
@@ -64,17 +75,28 @@ const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
       binPath: path.resolve(DIST_BIN_DIR, binName),
       npm: {
         name: `@alumnium/cli-${target}`,
-        dir: path.resolve(DIST_DIR, `npm-alumnium-cli-${target}`),
+        dir: npmDir,
         mainUrl: "https://www.npmjs.com/package/alumnium",
+        binPath: path.resolve(npmDir, binName),
       },
       pip: {
         name: pipName,
-        dir: path.resolve(DIST_DIR, `pip-${pipName}`),
+        dir: pipDir,
         mainUrl: PIP_MAIN_URL,
+        binPath: path.resolve(
+          pipDir,
+          "src",
+          PIP_CLI_TARGET_MODULE_NAME,
+          binName,
+        ),
       },
     };
   }),
 );
+
+//#endregion
+
+//#region Bun plugins
 
 const loggerPathPlugin: BunPlugin = {
   name: "logger-path-rewrite",
@@ -120,10 +142,16 @@ const depsPatcherPlugin: BunPlugin = {
   },
 };
 
+//#endregion
+
+//#region Main
+
 await main();
 
 async function main() {
-  console.log(`Building Alumnium ${ALUMNIUM_VERSION}...`);
+  console.log(`🚧 Building Alumnium ${ALUMNIUM_VERSION}...\n`);
+
+  //#region Clean up
 
   await Promise.all([
     cleanUpDir(DIST_BIN_DIR),
@@ -131,12 +159,16 @@ async function main() {
     cleanUpDir(DIST_PIP_DIR),
     cleanUpDir(DIST_PIP_CLI_PKG_DIR),
     ...TARGET_PLATFORMS.flatMap(({ npm, pip }) => [
-      cleanUpDir(npm.dir),
-      cleanUpDir(pip.dir),
+      cleanUpPkg(npm),
+      cleanUpPkg(pip),
     ]),
   ]);
 
-  console.log("\nBinaries:");
+  //#endregion
+
+  //#region Binaries
+
+  console.log("🌀 Building binaries:\n");
 
   await Promise.all(
     TARGET_PLATFORMS.map(async ({ os, arch, target, binPath }) => {
@@ -154,20 +186,25 @@ async function main() {
       });
 
       if (!result.success) {
-        console.error(`🚫 ${target}`);
+        console.error(`🔴 ${target}`);
         throw new AggregateError(
           result.logs.map((log) => new Error(log.message)),
           `Failed to build for target: ${target}`,
         );
       }
 
-      console.log(`✅ ${target} (${cwdRelPath(binPath)})`);
+      console.log(`🟢 ${target} (${cwdRelPath(binPath)})`);
     }),
   );
 
-  console.log("\nNpm packages:");
+  //#endregion
+
+  //#region npm
+
+  console.log("\n🌀 Building npm packages...\n");
 
   await Promise.all([
+    //#region npm-alumnium
     (async () => {
       await Promise.all([
         $`cd ${PKG_DIR} && bun tsgo --project tsconfig.build.json`,
@@ -189,40 +226,51 @@ async function main() {
         JSON.stringify(distPackageJson, null, 2),
       );
 
-      console.log(`✅ alumnium (${cwdRelPath(DIST_CORE_PKG_DIR)})`);
-    })(),
+      await finalizeNpm(DIST_CORE_PKG_DIR);
 
+      console.log(`🟢 alumnium (${cwdRelPath(DIST_CORE_PKG_DIR)})`);
+    })(),
+    //#endregion
+
+    //#region npm-alumnium-cli-<os>-<arch>
     ...TARGET_PLATFORMS.map(async (platform) => {
       const { arch, os, binName, target, npm } = platform;
+
+      const packageJson = {
+        name: npm.name,
+        version: ALUMNIUM_VERSION,
+        description: `Alumnium CLI binary for ${target}`,
+        repository: "https://github.com/alumnium-hq/alumnium",
+        license: "MIT",
+        os: [getNpmOs(os)],
+        cpu: [arch],
+        bin: { alumnium: `./${binName}` },
+      };
+
       await Promise.all([
         buildTargetPkgCommons(platform, npm),
 
         fs.writeFile(
           path.join(npm.dir, "package.json"),
-          JSON.stringify(
-            {
-              name: npm.name,
-              version: ALUMNIUM_VERSION,
-              description: `Alumnium CLI binary for ${target}`,
-              repository: "https://github.com/alumnium-hq/alumnium",
-              license: "MIT",
-              os: [getNpmOs(os)],
-              cpu: [arch],
-              bin: { alumnium: `./${binName}` },
-            },
-            null,
-            2,
-          ),
+          JSON.stringify(packageJson, null, 2),
         ),
       ]);
 
-      console.log(`✅ ${npm.name} (${cwdRelPath(npm.dir)})`);
+      await finalizeNpm(npm.dir);
+
+      console.log(`🟢 ${npm.name} (${cwdRelPath(npm.dir)})`);
     }),
+    //#endregion
   ]);
 
-  console.log("\nPip packages:");
+  //#endregion
+
+  //#region pip
+
+  console.log("\n🌀 Building pip packages...\n");
 
   await Promise.all([
+    //#region pip-alumnium-cli
     (async () => {
       const initPy = `from ${PIP_CLI_TARGET_MODULE_NAME} import bin_path
 
@@ -230,23 +278,24 @@ async function main() {
 __all__ = ["bin_path"]
 `;
 
-      const pyProject = getPyProjectToml({
+      const pyProject: PyProject = {
         name: PIP_CLI_PKG_NAME,
         description: `Alumnium CLI binary `,
-        poetryLines: [
-          `packages = [{ include = "${PIP_CLI_MODULE_NAME}", from = "src" }]`,
-        ],
-        depsLines: TARGET_PLATFORMS.map(
+        moduleName: PIP_CLI_MODULE_NAME,
+        deps: TARGET_PLATFORMS.map(
           ({ os, arch, pip }) =>
-            `${pip.name} = { version = "==${ALUMNIUM_VERSION}", markers = "${getPipMarker(os, arch)}" }`,
+            `${pip.name}==${ALUMNIUM_VERSION}; ${getPipMarker(os, arch)}`,
         ),
-      });
+        sources: Object.fromEntries(
+          TARGET_PLATFORMS.map(({ pip }) => [
+            pip.name,
+            { path: `../pip-${pip.name}` },
+          ]),
+        ),
+      };
 
       await Promise.all([
-        fs.writeFile(
-          path.join(DIST_PIP_CLI_PKG_DIR, "pyproject.toml"),
-          pyProject,
-        ),
+        writePyProjectToml(DIST_PIP_CLI_PKG_DIR, pyProject),
 
         writeMainPy(DIST_PIP_CLI_PKG_DIR, PIP_CLI_MODULE_NAME, initPy),
 
@@ -261,16 +310,15 @@ Alumnium CLI binary package. See [the main \`alumnium\` package page](${PIP_MAIN
         copyAssets(COMMON_PKG_ASSETS, DIST_PIP_CLI_PKG_DIR),
       ]);
 
-      const whlPath = await buildPipWheel(
-        PIP_CLI_PKG_NAME,
-        DIST_PIP_CLI_PKG_DIR,
-      );
+      const whlPath = await finalizePip(PIP_CLI_PKG_NAME, DIST_PIP_CLI_PKG_DIR);
 
       console.log(
-        `✅ ${PIP_CLI_PKG_NAME} (${cwdRelPath(DIST_PIP_CLI_PKG_DIR)} / ${cwdRelPath(whlPath)})`,
+        `🟢 ${PIP_CLI_PKG_NAME} (${cwdRelPath(DIST_PIP_CLI_PKG_DIR)} / ${cwdRelPath(whlPath)})`,
       );
     })(),
+    //#endregion
 
+    //#region pip-alumnium-cli-<os>-<arch>
     ...TARGET_PLATFORMS.map(async (platform) => {
       const { binName, target, pip } = platform;
 
@@ -286,54 +334,54 @@ def bin_path() -> Path:
 __all__ = ["bin_path"]
 `;
 
-      const pyProject = getPyProjectToml({
+      const pyProject: PyProject = {
         name: pip.name,
         description: `Alumnium CLI binary for ${target}`,
-        poetryLines: [
-          `packages = [{ include = "${PIP_CLI_TARGET_MODULE_NAME}", from = "src" }]`,
-          `include = [{ path = "./${binName}", format = ["wheel"] }]`,
-        ],
-      });
+        moduleName: PIP_CLI_TARGET_MODULE_NAME,
+      };
 
       await Promise.all([
-        fs.writeFile(path.join(pip.dir, "pyproject.toml"), pyProject),
+        writePyProjectToml(pip.dir, pyProject),
 
         writeMainPy(pip.dir, PIP_CLI_TARGET_MODULE_NAME, initPy),
 
         buildTargetPkgCommons(platform, pip),
       ]);
 
-      const whlPath = await buildPipWheel(pip.name, pip.dir);
+      const whlPath = await finalizePip(pip.name, pip.dir);
 
       console.log(
-        `✅ ${pip.name} (${cwdRelPath(pip.dir)} / ${cwdRelPath(whlPath)})`,
+        `🟢 ${pip.name} (${cwdRelPath(pip.dir)} / ${cwdRelPath(whlPath)})`,
       );
     }),
+    //#endregion
   ]);
+
+  //#endregion
+
+  console.log("\n🎉 Build completed successfully!");
 }
+
+//#endregion
+
+//#region Internals
 
 function buildTargetPkgCommons(target: TargetPlatform, pkg: TargetPkg) {
-  const { binPath } = target;
+  const { target: targetStr, binPath } = target;
+  const { name, dir, binPath: pkgBinPath } = pkg;
+
+  const readmeMd = `# ${name}
+
+Alumnium CLI binary package for ${targetStr}. See [the main \`alumnium\` package page](${pkg.mainUrl}) for more details.
+`;
+
   return Promise.all([
-    copyAssets(COMMON_PKG_ASSETS, pkg.dir),
+    copyAssets(COMMON_PKG_ASSETS, dir),
 
-    $`cp ${binPath} ${pkg.dir}`,
+    $`cp ${binPath} ${pkgBinPath}`,
 
-    fs.writeFile(
-      path.join(pkg.dir, "README.md"),
-      `# ${pkg.name}
-
-Alumnium CLI binary package for ${target.target}. See [the main \`alumnium\` package page](${pkg.mainUrl}) for more details.
-`,
-    ),
+    fs.writeFile(path.join(pkg.dir, "README.md"), readmeMd),
   ]);
-}
-
-interface PyProject {
-  name: string;
-  description: string;
-  poetryLines?: string[];
-  depsLines?: string[];
 }
 
 async function writeMainPy(dir: string, moduleName: string, content: string) {
@@ -344,32 +392,116 @@ async function writeMainPy(dir: string, moduleName: string, content: string) {
 }
 
 async function buildPipWheel(name: string, dir: string) {
-  await $`cd ${dir} && poetry build --format wheel --output ${DIST_PIP_DIR}`.quiet();
+  await $`uv build --wheel --out-dir ${DIST_PIP_DIR}`.cwd(dir).quiet();
   return path.resolve(
     DIST_PIP_DIR,
     `${name.replace(/-/g, "_")}-${ALUMNIUM_VERSION}-py3-none-any.whl`,
   );
 }
 
-function getPyProjectToml(project: PyProject) {
-  const { name, description, poetryLines, depsLines } = project;
-  return `[tool.poetry]
-name = "${name}"
-version = "${ALUMNIUM_VERSION}"
-description = ${JSON.stringify(description)}
-authors = ${JSON.stringify(META_AUTHORS, null, 2)}
-license = "MIT"
-readme = "README.md"
-repository = "https://github.com/alumnium-hq/alumnium"
-${poetryLines ? poetryLines.join("\n") + "\n" : ""}
-[tool.poetry.dependencies]
-python = ">=3.10,<4.0"
-${depsLines ? depsLines.join("\n") + "\n" : ""}
-[build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core"]
-`;
+namespace PyProject {
+  export interface Source {
+    path: string;
+  }
 }
+
+interface PyProject {
+  name: string;
+  description: string;
+  moduleName: string;
+  deps?: string[];
+  sources?: Record<string, PyProject.Source>;
+}
+
+async function writePyProjectToml(dir: string, pyProject: PyProject) {
+  const toml = getPyProjectToml(pyProject);
+  return fs.writeFile(path.resolve(dir, PYPROJECT_NAME), toml);
+}
+
+function getPyProjectToml(project: PyProject) {
+  const { name, description, moduleName, deps, sources } = project;
+
+  // TODO: Read `requires-python`, `license`, etc. from the packages/python/pyproject.toml
+  // and packages/typescript/package.json.
+  const toml = tomlStringify({
+    project: {
+      name,
+      version: ALUMNIUM_VERSION,
+      description,
+      authors: META_AUTHORS,
+      license: "MIT",
+      readme: "README.md",
+      "requires-python": ">=3.10,<4.0",
+      dependencies: deps || [],
+      urls: {
+        Homepage: "https://alumnium.ai/",
+        Repository: "https://github.com/alumnium-hq/alumnium",
+        Issues: "https://github.com/alumnium-hq/alumnium/issues",
+        Documentation: "https://alumnium.ai/docs/",
+      },
+    },
+
+    ...(sources ? { "tool.uv.sources": sources } : {}),
+
+    "tool.uv.build-backend": {
+      "module-name": moduleName,
+      "module-root": "src",
+    },
+
+    "build-system": {
+      "build-backend": "uv_build",
+      requires: ["uv_build>=0.11.2,<0.12"],
+    },
+  });
+
+  // NOTE: smol-toml (as well as alternatives like jsr:@std/toml) add quotes
+  // around `["tool.uv.build-backend"]` (as well as `["tool.uv.sources".alumnium-cli-linux-x64]`)
+  // which results in an invalid TOML.
+  return toml.replace(/^\[.*\]$/gm, (block) =>
+    block.replace(/"([\w.-]+)"/g, "$1"),
+  );
+}
+
+async function finalizePip(pipName: string, pipDir: string) {
+  await oxfmtFormat(pipDir);
+  await pyprojectsortFormat(pipDir);
+  await ruffFormat(pipDir);
+  await ruffLintFix(pipDir);
+  const whlPath = await buildPipWheel(pipName, pipDir);
+  return whlPath;
+}
+
+async function finalizeNpm(npmDir: string) {
+  await oxfmtFormat(npmDir);
+}
+
+function ruffLintFix(dir: string) {
+  return $`ruff check . --fix`.cwd(dir).quiet();
+}
+
+function ruffFormat(dir: string) {
+  return $`ruff format .`.cwd(dir).quiet();
+}
+
+function oxfmtFormat(dir: string) {
+  return $`bun oxfmt .`.cwd(dir).quiet();
+}
+
+function pyprojectsortFormat(dir: string) {
+  return $`pyprojectsort ${PYPROJECT_NAME}`
+    .cwd(dir)
+    .quiet()
+    .catch((err) => {
+      // NOTE: pyprojectsort returns a non-zero exit code when it reformats
+      // the file, so we need to silence the error. Typical Python.
+      if (err instanceof Bun.$.ShellError) {
+        if (err.stdout.includes(`Reformatted '${PYPROJECT_NAME}'`)) return;
+      }
+      throw err;
+    });
+}
+
+// function p
 
 function getPipMarker(os: OS, arch: Arch) {
   return `${getPipOsMarker(os)} and ${getPipArchMarker(arch)}`;
@@ -395,8 +527,19 @@ function getPipArchMarker(arch: Arch): string {
   }
 }
 
+function getPipModuleName(pkgName: string) {
+  return snakeCase(pkgName);
+}
+
 function cwdRelPath(absPath: string) {
   return path.relative(process.cwd(), absPath);
+}
+
+async function cleanUpPkg(pkg: TargetPkg) {
+  const { dir, binPath } = pkg;
+  await cleanUpDir(dir);
+  const binDir = path.dirname(binPath);
+  await $`mkdir -p ${binDir}`;
 }
 
 async function cleanUpDir(dir: string) {
@@ -423,3 +566,5 @@ function getNpmOs(os: OS) {
   if (os === "windows") return "win32";
   return os;
 }
+
+//#endregion

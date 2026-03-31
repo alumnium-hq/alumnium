@@ -2,16 +2,12 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      docker:
-        description: Release Docker image
-        type: boolean
-        default: true
       python:
-        description: Release Python package
+        description: Release Python packages
         type: boolean
         default: true
       typescript:
-        description: Release TypeScript package
+        description: Release TypeScript packages
         type: boolean
         default: true
 

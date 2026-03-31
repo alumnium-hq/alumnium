@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": null,
+  "plugins": [],
   "options": {
     "typeAware": true,
     "typeCheck": true,
@@ -14,20 +14,6 @@
     "typescript/no-duplicate-type-constituents": "off", // Useful but fails on optional arguments with `| undefined`
   },
   "settings": {
-    "jsx-a11y": {
-      "polymorphicPropName": null,
-      "components": {},
-      "attributes": {},
-    },
-    "next": {
-      "rootDir": [],
-    },
-    "react": {
-      "formComponents": [],
-      "linkComponents": [],
-      "version": null,
-      "componentWrapperFunctions": [],
-    },
     "jsdoc": {
       "ignorePrivate": false,
       "ignoreInternal": false,

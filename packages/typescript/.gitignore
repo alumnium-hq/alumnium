@@ -1,0 +1,6 @@
+# Duplicates from root's .gitignore so VS Code is not showing these files in
+# the quick file picker.
+# TODO: Remove when fixed https://github.com/microsoft/vscode/issues/249617
+.ts/
+dist/
+.alumnium/

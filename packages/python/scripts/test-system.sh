@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This script run Python system tests using behave and pytest against driver
-# specified via ALUMNIUM_DRIVER env var.
+# passed via ALUMNIUM_DRIVER env var.
 
 set -euo pipefail
 
@@ -15,26 +15,22 @@ run_tests() {
 	fi
 }
 
-echo -e "🌀 Starting server daemon...\n"
-mise run //packages/typescript:server/daemon
-echo
-
-cleanup() {
-	mise run //packages/typescript:server/daemon:kill
-}
-trap cleanup INT
+export ALUMNIUM_LOG_LEVEL=debug
+export ALUMNIUM_PRUNE_LOGS=true
 
 echo -e "🌀 Running behave tests\n"
-run_tests fnox exec --if-missing error -- poetry run behave -t "@$ALUMNIUM_DRIVER" -f html-pretty -o reports/behave.html -f pretty
+run_tests fnox exec --if-missing error -- \
+	env ALUMNIUM_LOG_FILENAME=test-system-behave-$ALUMNIUM_DRIVER.log \
+	uv run behave -t "@$ALUMNIUM_DRIVER" -f html-pretty -o reports/behave.html -f pretty
 
 if [ "$ALUMNIUM_DRIVER" == "appium-android" ]; then
 	echo -e "🟠 Skipping pytest tests for $ALUMNIUM_DRIVER\n"
 else
 	echo -e "🌀 Running pytest tests\n"
-	run_tests fnox exec --if-missing error -- pytest --retries 1 --html reports/pytest.html examples/pytest
+	run_tests fnox exec --if-missing error -- \
+		env ALUMNIUM_LOG_FILENAME=test-system-pytest-$ALUMNIUM_DRIVER.log \
+		uv run pytest --retries 1 --html reports/pytest.html examples/pytest
 fi
-
-cleanup
 
 echo
 if [ $failed -ne 0 ]; then

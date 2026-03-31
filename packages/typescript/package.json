@@ -36,18 +36,6 @@
       ".": "./src/client/index.js"
     }
   },
-  "scripts": {
-    "build": "./scripts/build.ts",
-    "build:bin": "./scripts/build.ts --bin",
-    "clean": "node -e \"console.log('TODO')\"",
-    "check-format": "node -e \"console.log('TODO')\"",
-    "format": "node -e \"console.log('TODO')\"",
-    "test": "bun vitest --project unit run",
-    "test:system:playwright": "ALUMNIUM_DRIVER=playwright bun vitest --project system run",
-    "test:system:appium": "bun vitest --project appium run",
-    "test:system:selenium": "ALUMNIUM_DRIVER=selenium bun vitest --project system run",
-    "test:watch": "bun vitest --project unit"
-  },
   "dependencies": {
     "@elysiajs/cors": "^1.4.1",
     "@langchain/anthropic": "^1.3.20",
@@ -89,6 +77,11 @@
     "@wdio/globals": "^9.23.0",
     "chromium-bidi": "^15.0.0",
     "electron": "^40.6.1",
+    "oxfmt": "^0.43.0",
+    "oxlint": "^1.58.0",
+    "oxlint-tsgolint": "^0.19.0",
+    "playwright": "^1.58.2",
+    "smol-toml": "^1.6.1",
     "typescript": "^5.9.3",
     "vitest": "^4.1.2"
   }

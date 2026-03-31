@@ -1,25 +1,104 @@
-[tasks."test/unit"]
-run = "bun vitest --project unit run"
+[tasks.install]
+depends = ["//:install"]
 
-[tasks."test/unit:watch"]
-run = "bun vitest --project unit"
-
-[tasks."test/system:playwright"]
-run = "fnox exec -- env ALUMNIUM_LOG_LEVEL=debug ALUMNIUM_LOG_FILENAME=test-system.log ALUMNIUM_DRIVER=playwright ALUMNIUM_PLAYWRIGHT_HEADLESS=true bun vitest --project system run"
-
-[tasks."test/system:selenium"]
-run = "fnox exec -- env ALUMNIUM_LOG_LEVEL=debug ALUMNIUM_LOG_FILENAME=test-system.log ALUMNIUM_DRIVER=selenium bun vitest --project system run"
+[tasks.clean]
+run = "rm -rf .alumnium dist"
 
 [tasks.build]
 run = "./scripts/build.ts"
 description = "Build CLI bins, core npm and CLI pip packages"
+depends = ["install", "build/generate"]
+sources = [
+  "src/**/*",
+  "scripts/build.ts",
+  "package.json",
+  "tsconfig.json",
+  "tsconfig.build.json",
+  "*.md",
+]
+outputs = ["dist/**/*"]
 
-[tasks."generate/bundles"]
+[tasks."build/generate"]
+run = { task = "build/generate:bundles" }
+
+[tasks."build/generate:bundles"]
 run = "./scripts/generate-bundles.ts | xargs oxfmt"
 description = "Generates code bundles to enable building single-file executable"
+depends = "install"
+sources = [
+  "scripts/generate-bundles.ts",
+  # TODO: Move prompts generation into the script
+  "src/server/agents/prompts/prompts.ts",
+  "src/drivers/scripts/*.js",
+  "src/server/agents/prompts/**/*.md"
+]
+outputs = [
+  "src/server/agents/prompts/bundledPrompts.ts",
+  "src/drivers/scripts/bundledScripts.ts"
+]
 
-[tasks."server/daemon"]
-run = "fnox exec --if-missing error -- bun ./src/cli/bin.ts server --daemon --wait-for --force"
+[tasks.test]
+run = [
+  { task = "test/unit" },
+  { task = "test/system:all" }
+]
 
-[tasks."server/daemon:kill"]
-run = "fnox exec --if-missing error -- bun ./src/cli/bin.ts server --kill --force"
+[tasks."test/unit"]
+run = "bun vitest --project unit run"
+depends = "install"
+
+[tasks."test/unit:watch"]
+run = "bun vitest --project unit"
+depends = "install"
+
+[tasks."test/system"]
+usage = '''
+arg "<driver>" help="Driver to use for system tests" {
+  choices "selenium" "playwright" "appium-ios" "appium-android"
+  default "selenium"
+}
+'''
+run = "ALUMNIUM_DRIVER={{usage.driver}} ./scripts/test-system.sh"
+depends = "install"
+
+[tasks."test/system:all"]
+run = [
+  { task = "test/system:selenium" },
+  { task = "test/system:playwright" },
+  { task = "test/system:appium-ios" },
+  { task = "test/system:appium-android" },
+]
+
+[tasks."test/system:selenium"]
+run = [{ task = "test/system selenium" }]
+
+[tasks."test/system:playwright"]
+run = [{ task = "test/system playwright" }]
+
+[tasks."test/system:appium-ios"]
+run = [{ task = "test/system appium-ios" }]
+
+[tasks."test/system:appium-android"]
+run = [{ task = "test/system appium-android" }]
+
+[tasks.lint]
+run = "bun oxlint ."
+depends = "install"
+
+[tasks."lint:fix"]
+run = "bun oxlint --fix ."
+depends = "install"
+
+[tasks.format]
+run = "bun oxfmt ."
+depends = "install"
+
+[tasks."format:check"]
+run = "bun oxfmt . --check"
+depends = "install"
+
+[tasks.types]
+depends = "//:types/ts"
+
+[tasks."types:watch"]
+depends = "//:types/ts:watch"

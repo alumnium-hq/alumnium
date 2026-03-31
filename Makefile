@@ -1,6 +1,6 @@
 install:
 	bun install
-	cd packages/python && poetry install
+	cd packages/python && uv sync
 
 build: build-core build-python
 
@@ -8,39 +8,29 @@ build-core:
 	cd packages/typescript && bun run build
 
 build-python:
-	cd packages/python && poetry build
+	cd packages/python && uv build
 
 clean:
 	cd packages/typescript && bun run clean
-	cd packages/python && poetry poe clean
+	cd packages/python && uv poe clean
 
 check-format:
 	cd packages/typescript && bun run check-format
-	cd packages/python && poetry poe check-format
+	cd packages/python && uv poe check-format
 
 format:
 	cd packages/typescript && bun run format
-	cd packages/python && poetry poe format
+	cd packages/python && uv poe format
 
 test:
 	cd packages/typescript && bun run test
-	cd packages/python && poetry poe test
+	cd packages/python && uv poe test
 
 types:
 	bun tsgo --build
 
 start-server:
 	cd packages/typescript && fnox exec -- bun ./src/cli.ts server
-
-start-server-docker:
-	docker build -t alumnium-server .
-	docker run -ti --rm -p 8013:8013 \
-		-v $(PWD)/.alumnium/cache:/app/.alumnium/cache \
-		--env-file .env \
-		-e ALUMNIUM_CACHE \
-		-e ALUMNIUM_LOG_PATH=stdout \
-		-e ALUMNIUM_OLLAMA_URL \
-		alumnium-server
 
 start-mcp:
 	@cd packages/typescript && fnox exec -- bun ./src/cli/bin.ts mcp
