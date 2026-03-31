@@ -85,7 +85,7 @@ export class Model {
     const alumniumModel = process.env.ALUMNIUM_MODEL || "";
     let [providerStr, name] = alumniumModel.toLowerCase().split("/");
 
-    let provider = Model.Provider.safeParse(providerStr).data;
+    let provider = Model.Provider.parse(providerStr);
 
     if (!providerStr && process.env.GITHUB_ACTIONS) {
       provider = "github";
