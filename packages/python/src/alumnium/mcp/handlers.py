@@ -160,6 +160,8 @@ async def handle_check(args: dict[str, Any]) -> list[dict]:
     driver_id = args["driver_id"]
     statement = args["statement"]
     vision = args.get("vision", False)
+    if isinstance(vision, str):
+        vision = vision.lower() == "true"
 
     logger.info(f"Driver {driver_id}: Executing check('{statement}', vision={vision})")
 
@@ -183,6 +185,8 @@ async def handle_get(args: dict[str, Any]) -> list[dict]:
     driver_id = args["driver_id"]
     data = args["data"]
     vision = args.get("vision", False)
+    if isinstance(vision, str):
+        vision = vision.lower() == "true"
 
     logger.info(f"Driver {driver_id}: Executing get('{data}', vision={vision})")
 
@@ -218,6 +222,8 @@ async def handle_stop_driver(args: dict[str, Any]) -> list[dict]:
     """Stop driver and cleanup."""
     driver_id = args["driver_id"]
     save_cache = args.get("save_cache", False)
+    if isinstance(save_cache, str):
+        save_cache = save_cache.lower() == "true"
 
     logger.info(f"Driver {driver_id}: Stopping driver (save_cache={save_cache})")
 

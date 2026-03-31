@@ -95,7 +95,7 @@ def get_tool_definitions() -> list[Tool]:
                 "properties": {
                     "driver_id": {"type": "string"},
                     "save_cache": {
-                        "type": "boolean",
+                        "oneOf": [{"type": "boolean"}, {"type": "string"}],
                         "description": (
                             "Save the Alumnium cache before stopping. "
                             "This persists executed interactions for future use."
@@ -148,7 +148,7 @@ def get_tool_definitions() -> list[Tool]:
                         "description": "Statement to verify (e.g., 'page title contains Dashboard')",
                     },
                     "vision": {
-                        "type": "boolean",
+                        "oneOf": [{"type": "boolean"}, {"type": "string"}],
                         "description": "Use screenshot for verification",
                         "default": False,
                     },
@@ -171,7 +171,7 @@ def get_tool_definitions() -> list[Tool]:
                         "description": "Description of data to extract",
                     },
                     "vision": {
-                        "type": "boolean",
+                        "oneOf": [{"type": "boolean"}, {"type": "string"}],
                         "description": "Use screenshot for extraction",
                         "default": False,
                     },
