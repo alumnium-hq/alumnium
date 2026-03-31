@@ -45,7 +45,7 @@ export type LoggerMethod = (message: string, payload?: any) => void;
 let configured = false;
 let level = LogLevel.parse(process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase());
 
-const PRUNE_LOGS = !!process.env.ALUMNIUM_PRUNE_LOGS;
+const PRUNE_LOGS = process.env.ALUMNIUM_PRUNE_LOGS !== "false";
 
 namespace configureLogging {
   export interface Props {
