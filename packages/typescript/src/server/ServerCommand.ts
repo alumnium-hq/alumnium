@@ -7,6 +7,7 @@ import { isBundled } from "../bundle.js";
 import { CliCommand } from "../cli/CliCommand.js";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.js";
 import { getLogger, setLogPath } from "../utils/logger.js";
+import { sleep } from "../utils/timers.js";
 import { serverApp } from "./serverApp.js";
 
 const logger = getLogger(import.meta.url);
@@ -39,23 +40,41 @@ export const ServerCommand = CliCommand.define({
         description: "Port to bind to",
       }),
 
-    daemon: z.stringbool().default(false).register(CliCommand.option, {
-      name: "daemon",
-      syntax: "-d, --daemon",
-      description: "Run server as a daemon",
-    }),
+    daemon: z
+      .union([z.boolean(), z.stringbool()])
+      .default(false)
+      .register(CliCommand.option, {
+        name: "daemon",
+        syntax: "-d, --daemon",
+        description: "Run server as a daemon",
+      }),
 
-    kill: z.stringbool().default(false).register(CliCommand.option, {
-      name: "kill",
-      syntax: "-k, --kill",
-      description: "Kill the running server",
-    }),
+    kill: z
+      .union([z.boolean(), z.stringbool()])
+      .default(false)
+      .register(CliCommand.option, {
+        name: "kill",
+        syntax: "-k, --kill",
+        description: "Kill the running server",
+      }),
 
-    waitFor: z.stringbool().default(false).register(CliCommand.option, {
-      name: "wait-for",
-      syntax: "--wait-for",
-      description: "Wait for the server daemon to become healthy and exit",
-    }),
+    force: z
+      .union([z.boolean(), z.stringbool()])
+      .default(false)
+      .register(CliCommand.option, {
+        name: "force",
+        syntax: "-f, --force",
+        description: "Ignore server daemon status when killing or starting",
+      }),
+
+    waitFor: z
+      .union([z.boolean(), z.stringbool()])
+      .default(false)
+      .register(CliCommand.option, {
+        name: "wait-for",
+        syntax: "--wait-for",
+        description: "Wait for the server daemon to become healthy and exit",
+      }),
 
     timeout: z.coerce
       .number()
@@ -70,29 +89,18 @@ export const ServerCommand = CliCommand.define({
   }),
 
   action: async ({ args, logFilenameHint }) => {
-    const { host, port, timeout, waitFor, daemon, kill } = args;
+    const { host, port, timeout, waitFor, daemon, kill, force } = args;
     const pidPath =
       process.env.ALUMNIUM_SERVER_PID_PATH ??
       GlobalFileStorePaths.globalSubDir("server.pid");
 
     if (kill) {
-      const pid = await readPid(pidPath);
-      if (!pid) {
-        logger.error(`Server PID file not found or invalid at ${pidPath}`);
-        process.exit(1);
-      }
-      if (!isProcessRunning(pid)) {
-        logger.warn(`Process ${pid} is not running, removing stale PID file`);
-        await removePidFile(pidPath);
-        process.exit(1);
-      }
-      process.kill(pid, "SIGTERM");
-      logger.info(`Sent SIGTERM to server process ${pid}`);
+      await killDaemon(pidPath, null, force);
       process.exit(0);
     }
 
     if (daemon) {
-      await startDaemon(pidPath);
+      await startDaemon(pidPath, force);
       if (!waitFor) process.exit(0);
     }
 
@@ -144,16 +152,17 @@ export const ServerCommand = CliCommand.define({
   },
 });
 
-async function startDaemon(pidPath: string): Promise<void> {
+async function startDaemon(pidPath: string, force: boolean): Promise<void> {
   const existingPid = await readPid(pidPath);
-  if (existingPid && isProcessRunning(existingPid)) {
+  const isExistingRunning = existingPid && isProcessRunning(existingPid);
+  if (existingPid && isExistingRunning && !force) {
     logger.error(
       `Server is already running with PID ${existingPid} (${pidPath})`,
     );
     process.exit(1);
   }
 
-  if (existingPid) await removePidFile(pidPath);
+  await killDaemon(pidPath, existingPid, true);
 
   const childArgs = process.argv.slice(isBundled() ? 2 : 1).filter((arg) => {
     if (arg === "--daemon" || arg === "-d") return false;
@@ -172,6 +181,30 @@ async function startDaemon(pidPath: string): Promise<void> {
   child.unref();
 
   logger.info(`Started daemon process ${child.pid}`);
+}
+
+async function killDaemon(
+  pidPath: string,
+  pidArg: number | null,
+  force: boolean,
+): Promise<void> {
+  const pid = pidArg || (await readPid(pidPath));
+  if (!pid) {
+    if (force) return;
+    logger.error(`Server PID file not found or invalid at ${pidPath}`);
+    process.exit(1);
+  }
+
+  if (isProcessRunning(pid)) {
+    process.kill(pid, "SIGTERM");
+    logger.info(`Sent SIGTERM to server process ${pid}`);
+    return sleep(1000); // Give it a moment to exit gracefully
+  }
+
+  if (!force)
+    logger.warn(`Process ${pid} is not running, removing stale PID file`);
+  await removePidFile(pidPath);
+  if (!force) process.exit(1);
 }
 
 async function waitForPidFile(

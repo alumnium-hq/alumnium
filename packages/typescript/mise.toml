@@ -17,3 +17,9 @@ description = "Build CLI bins, core npm and CLI pip packages"
 [tasks."generate/bundles"]
 run = "./scripts/generate-bundles.ts | xargs oxfmt"
 description = "Generates code bundles to enable building single-file executable"
+
+[tasks."server/daemon"]
+run = "fnox exec --if-missing error -- bun ./src/cli/bin.ts server --daemon --wait-for --force"
+
+[tasks."server/daemon:kill"]
+run = "fnox exec --if-missing error -- bun ./src/cli/bin.ts server --kill --force"
