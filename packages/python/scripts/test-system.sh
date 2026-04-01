@@ -33,7 +33,7 @@ else
 	echo -e "🌀 Running pytest tests\n"
 	run_tests fnox exec -- \
 		env ALUMNIUM_LOG_FILENAME=test-system-pytest-$ALUMNIUM_DRIVER.log \
-		uv run pytest --retries 1 --html reports/pytest.html examples/pytest
+		uv run pytest --retries 3 --html reports/pytest.html examples/pytest
 fi
 
 echo

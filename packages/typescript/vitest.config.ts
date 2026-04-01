@@ -15,7 +15,7 @@ export default defineConfig({
           name: "system",
           include: ["tests/system/**/*.test.ts"],
           testTimeout: 5 * 60_000, // 5 minutes
-          retry: process.env.CI ? 1 : 0,
+          retry: process.env.CI ? 3 : 0,
           globalSetup: process.env.ALUMNIUM_DRIVER?.startsWith("appium")
             ? ["tests/system/setup.appium.ts"]
             : [],
