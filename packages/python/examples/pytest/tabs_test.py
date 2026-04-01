@@ -2,7 +2,6 @@ from os import getenv
 
 from pytest import mark
 
-from alumnium.alumni import Alumni
 from alumnium.tools import SwitchToNextTabTool, SwitchToPreviousTabTool
 
 
@@ -10,13 +9,12 @@ from alumnium.tools import SwitchToNextTabTool, SwitchToPreviousTabTool
     "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
     reason="Appium doesn't support tab manipulation yet",
 )
-def test_switching_tabs(al, driver, navigate):
-    al = Alumni(
-        driver,
+def test_switching_tabs(al_factory, navigate):
+    al = al_factory(
         extra_tools=[
             SwitchToNextTabTool,
             SwitchToPreviousTabTool,
-        ],
+        ]
     )
 
     navigate("multi_tab_page.html")

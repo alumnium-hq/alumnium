@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import os
 from os import getpid
-from uuid import uuid4
+from secrets import token_hex
 
 from portpicker import pick_unused_port
 from requests import ConnectionError, delete, get, post
@@ -215,6 +216,7 @@ class HttpClient:
             daemon_pid=pid_name,
             daemon_force=True,
             daemon_wait=True,
+            check=True,
         )
 
         self._server_pid = pid_name
@@ -236,4 +238,5 @@ class HttpClient:
 
     @staticmethod
     def _build_server_pid_name(port: int) -> str:
-        return f"server-{getpid()}-py.pid"
+        random_id = token_hex(4)[:7]
+        return f"server-{getpid()}-{random_id}.pid"

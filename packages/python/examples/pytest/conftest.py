@@ -148,12 +148,33 @@ def driver():
 
 @fixture(scope="session")
 def al(driver):
-    al = Alumni(driver)
-    if isinstance(al.driver, AppiumDriver):
-        al.driver.delay = 0.1
-
+    al = _create_al(driver)
     yield al
     al.quit()
+
+
+@fixture
+def al_factory(driver):
+    al_list: list[Alumni] = []
+
+    def _create(*, extra_tools=None):
+        al = _create_al(driver, extra_tools=extra_tools)
+        al_list.append(al)
+        return al
+
+    yield _create
+
+    for al in reversed(al_list):
+        # NOTE: We don't call al.quit() here as we have single a single driver
+        # instance and quitting it would break all the tests.
+        al.client.quit()
+
+
+def _create_al(driver, extra_tools=None):
+    al = Alumni(driver, extra_tools=extra_tools or [])
+    if isinstance(al.driver, AppiumDriver):
+        al.driver.delay = 0.1
+    return al
 
 
 @fixture
