@@ -12,6 +12,13 @@ runs:
     - name: Set Up Mise
       uses: jdx/mise-action@v4
 
+    - name: Restore mise State
+      uses: actions/cache/restore@v5
+      with:
+        path: ~/.local/state/mise
+        key: mise-state-${{ runner.os }}-${{ github.sha }}
+        restore-keys: mise-state-${{ runner.os }}-
+
     - name: Restore Bun Cache
       uses: actions/cache/restore@v5
       with:

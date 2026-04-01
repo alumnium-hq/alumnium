@@ -9,6 +9,12 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Save mise State
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.local/state/mise
+        key: mise-state-${{ runner.os }}-${{ github.sha }}
+
     - name: Save Bun Cache
       uses: actions/cache/save@v5
       with:
