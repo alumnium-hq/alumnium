@@ -1,0 +1,53 @@
+name: Test System
+
+inputs:
+  package:
+    required: true
+    description: "Package to test (typescript, python)."
+
+  driver:
+    required: true
+    description: "Driver to use in system tests (selenium, playwright, appium-ios, appium-android)."
+
+  model:
+    required: true
+    description: "Model to use in system tests (e.g., azure_openai, google)."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Restore Alumnium Cache
+      uses: actions/cache/restore@v5
+      with:
+        path: packages/${{ inputs.package }}/.alumnium/cache/
+        key: alumnium-cache-v2-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
+
+    - name: Install Playwright
+      if: inputs.driver == 'playwright'
+      run: mise //packages/${{ inputs.package }}:install/playwright
+      shell: bash
+
+    - name: Prepare Display
+      if: startsWith(inputs.driver, 'appium') != true
+      run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
+      shell: bash
+
+    - name: System Tests
+      run: mise //packages/${{ inputs.package }}:test/system:${{ inputs.driver }}
+      shell: bash
+
+    - name: Save Alumnium Cache
+      if: always()
+      uses: actions/cache/save@v5
+      with:
+        path: packages/${{ inputs.package }}/.alumnium/cache/
+        key: alumnium-cache-v2-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ github.sha }}
+
+    - name: Upload Alumnium Artifacts
+      if: always()
+      uses: actions/upload-artifact@v6
+      with:
+        name: ci-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}
+        path: |
+          packages/${{ inputs.package }}/.alumnium/logs/*.log
+          packages/${{ inputs.package }}/.alumnium/cache/

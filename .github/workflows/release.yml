@@ -3,13 +3,17 @@ on:
   workflow_dispatch:
     inputs:
       python:
-        description: Release Python packages
+        description: Publish pip packages
         type: boolean
         default: true
       typescript:
-        description: Release TypeScript packages
+        description: Publish npm packages
         type: boolean
         default: true
+			release:
+				description: Create GitHub release
+				type: boolean
+				default: true
 
 concurrency:
   group: release-${{ github.ref }}
@@ -21,97 +25,40 @@ jobs:
     if: inputs.python
     runs-on: ubuntu-latest
     environment: release
-    defaults:
-      run:
-        working-directory: packages/python
     permissions:
       attestations: write
       contents: write
       id-token: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Git Checkout
+        uses: actions/checkout@v6
         with:
-          python-version-file: .tool-versions
-      - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
-        working-directory: .
-      - uses: actions/cache@v4
+          ref: ${{ inputs.sha || github.sha }}
+
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
         with:
-          path: packages/python/.venv
-          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
-      - run: poetry install
-      - run: poetry build
-      - run: echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
-        id: version
-      - uses: actions/attest-build-provenance@v3
+          python-cache: true
+
+      - name: Build Dist
+        run: mise //packages/typescript:build
+
+      - name: Build Main Package
+        run: mise //packages/python:build
+
+      - name: Publish CLI Pip Packages
+				uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          subject-path: packages/python/dist/*
-      - uses: pypa/gh-action-pypi-publish@release/v1
+          packages-dir: packages/typescript/dist/pip/
+
+      - name: Publish Main Package
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: packages/python/dist/
-      - run: gh release create ${{ steps.version.outputs.version }} --generate-notes dist/*
-        env:
-          GH_TOKEN: ${{ github.token }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: python-dist
-          path: packages/python/dist/
-      - if: failure() && runner.debug == '1'
-        uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
 
-  docker:
-    name: Docker
-    if: inputs.docker
-    runs-on: ubuntu-latest
-    environment: release
-    permissions:
-      attestations: write
-      contents: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version-file: .tool-versions
-      - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
-      - run: echo "version=$(poetry version --short)" >> "$GITHUB_OUTPUT"
-        working-directory: packages/python/
-        id: version
-      - uses: docker/setup-qemu-action@v3
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - uses: actions/checkout@v4
-      - uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: alumnium/alumnium
-          tags: |
-            type=ref,event=tag
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.version }}
-            type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
-      - uses: docker/build-push-action@v6
-        id: push
-        with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          context: .
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
-          provenance: mode=max
-          push: true
-          sbom: true
-          tags: ${{ steps.meta.outputs.tags }}
-      - uses: actions/attest-build-provenance@v3
-        with:
-          subject-name: index.docker.io/alumnium/alumnium
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
-      - if: failure() && runner.debug == '1'
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true
@@ -121,28 +68,108 @@ jobs:
     if: inputs.typescript
     runs-on: ubuntu-latest
     environment: release
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
+
+      - name: Build Dist
+        run: mise //packages/typescript:build
+
+      - name: Authenticate npm
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish npm Packages
+        run: mise //packages/typescript:publish
+
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+
+  release:
+    name: GitHub Release
+    if: inputs.release
+    runs-on: ubuntu-latest
+    environment: release
     defaults:
       run:
         working-directory: packages/typescript
     permissions:
       contents: read
       id-token: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v6
+      - name: Git Checkout
+        uses: actions/checkout@v6
         with:
-          cache: npm
-          cache-dependency-path: packages/typescript/package-lock.json
-          node-version-file: .tool-versions
-          registry-url: https://registry.npmjs.org
-      - run: npm install -g npm@latest # 11.5.1+ required for Trusted Publishing
-      - run: npm install
-      - run: npm publish
-      - uses: actions/upload-artifact@v4
+          ref: ${{ inputs.sha || github.sha }}
+
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
         with:
-          name: typescript-dist
-          path: packages/typescript/dist/
-      - if: failure() && runner.debug == '1'
+          python-cache: true
+
+      - name: Build Dist
+        run: mise //packages/typescript:build
+
+      - name: Build Main pip Package
+        run: mise //packages/python:build
+
+      - name: Attest Release Files
+        id: attest
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            packages/typescript/dist/bin/*
+            packages/typescript/dist/npm/*
+            packages/python/dist/*
+            packages/typescript/dist/pip/*
+
+      - name: Get Version
+        id: version
+        run: echo "version=$(mise //packages/typescript:version)" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        run: gh release create ${{ steps.version.outputs.version }} --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload Release Files
+        run: |
+          gh release upload ${{ steps.version.outputs.version }} \
+            packages/typescript/dist/bin/* \
+            packages/typescript/dist/pip/* \
+            packages/typescript/dist/npm/* \
+            packages/python/dist/* \
+            "${{ steps.attest.outputs.bundle-path }}" \
+            --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Upload Release Artifacts
+        if: always()
+        uses: ./.github/actions/dist-artifacts
+        with:
+          name: release
+          npm: true
+          pip: true
+          bin: true
+          attest-bundle-path: ${{ steps.attest.outputs.bundle-path }}
+
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
         with:
           limit-access-to-actor: true

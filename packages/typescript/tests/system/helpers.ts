@@ -11,7 +11,7 @@ import { attach, type Browser } from "webdriverio";
 import { z } from "zod";
 
 export const DriverType = z
-  .enum(["selenium", "appium", "playwright"])
+  .enum(["selenium", "playwright", "appium-ios"])
   .default("selenium");
 
 export type DriverType = z.infer<typeof DriverType>;
@@ -52,7 +52,7 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
 
   const al = new Alumni(driver, options);
 
-  if (driverType === "appium") {
+  if (driverType.startsWith("appium")) {
     (al.driver as AppiumDriver).delay = 0.1;
   }
 
@@ -88,7 +88,16 @@ async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
         .build();
     }
 
-    case "appium": {
+    case "playwright": {
+      const browser = await chromium.launch({
+        headless: process.env.ALUMNIUM_PLAYWRIGHT_HEADLESS !== "false",
+      });
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      return page;
+    }
+
+    case "appium-ios": {
       const sessionId = inject("wdioSessionId");
       const capabilities = inject("wdioSessionCapabilities");
       const driver = (await attach({
@@ -102,15 +111,6 @@ async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
         ...(process.env.LT_ACCESS_KEY && { key: process.env.LT_ACCESS_KEY }),
       })) as Browser;
       return driver;
-    }
-
-    case "playwright": {
-      const browser = await chromium.launch({
-        headless: process.env.ALUMNIUM_PLAYWRIGHT_HEADLESS !== "false",
-      });
-      const context = await browser.newContext();
-      const page = await context.newPage();
-      return page;
     }
 
     default:
@@ -139,16 +139,16 @@ function createHelpers(
 
     async navigate(url: string) {
       switch (driverType) {
-        case "appium":
-          await (driver as Browser).url($.resolveUrl(url));
-          return;
-
         case "selenium":
           await (driver as WebDriver).get($.resolveUrl(url));
           return;
 
         case "playwright":
           await (driver as Page).goto($.resolveUrl(url));
+          return;
+
+        case "appium-ios":
+          await (driver as Browser).url($.resolveUrl(url));
           return;
 
         default:
@@ -158,14 +158,14 @@ function createHelpers(
 
     async type(element: Element | undefined, text: string) {
       switch (driverType) {
-        case "appium":
-          return (element as WebdriverIO.Element).setValue(text);
-
         case "selenium":
           return (element as WebElement).sendKeys(text);
 
         case "playwright":
           return (element as Locator).fill(text);
+
+        case "appium-ios":
+          return (element as WebdriverIO.Element).setValue(text);
 
         default:
           driverType satisfies never;
@@ -174,14 +174,14 @@ function createHelpers(
 
     async click(element: Element | undefined) {
       switch (driverType) {
-        case "appium":
-          return (element as WebdriverIO.Element).click();
-
         case "selenium":
           return (element as WebElement).click();
 
         case "playwright":
           return (element as Locator).click();
+
+        case "appium-ios":
+          return (element as WebdriverIO.Element).click();
 
         default:
           driverType satisfies never;

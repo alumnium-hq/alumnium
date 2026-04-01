@@ -5,6 +5,8 @@
 
 set -euo pipefail
 
+PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
+
 failed=0
 run_tests() {
 	if "$@"; then
@@ -14,6 +16,8 @@ run_tests() {
 		failed=1
 	fi
 }
+
+cd "$PKG_DIR"
 
 export ALUMNIUM_LOG_LEVEL=debug
 export ALUMNIUM_PRUNE_LOGS=true

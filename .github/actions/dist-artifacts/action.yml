@@ -1,0 +1,60 @@
+name: Upload Publish Artifacts
+
+inputs:
+  name:
+    required: true
+    description: "Name of the workflow to upload artifacts for."
+
+  npm:
+    required: false
+    default: false
+    description: "Whether to upload npm dist artifacts."
+
+  pip:
+    required: false
+    default: false
+    description: "Whether to upload pip dist artifacts."
+
+  bin:
+    required: false
+    default: false
+    description: "Whether to upload bin dist artifacts."
+
+  attest-bundle-path:
+    required: false
+    description: "Attest bundle path to upload as artifact."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upload npm Dist Artifacts
+      if: inputs.npm == 'true'
+      uses: actions/upload-artifact@v6
+      with:
+        name: dist-npm-${{ inputs.name }}
+        path: |
+          packages/typescript/dist/npm/*
+
+    - name: Upload Pip Dist Artifacts
+      if: inputs.pip == 'true'
+      uses: actions/upload-artifact@v6
+      with:
+        name: dist-pip-${{ inputs.name }}
+        path: |
+          packages/python/dist/*
+          packages/typescript/dist/pip/*
+
+    - name: Upload Bin Dist Artifacts
+      if: inputs.bin == 'true'
+      uses: actions/upload-artifact@v6
+      with:
+        name: dist-bin-${{ inputs.name }}
+        path: |
+          packages/typescript/dist/bin/*
+
+    - name: Upload Attest Bundle
+      if: inputs.attest-bundle-path != ''
+      uses: actions/upload-artifact@v6
+      with:
+        name: attest-bundle-${{ inputs.name }}
+        path: ${{ inputs.attest-bundle-path }}

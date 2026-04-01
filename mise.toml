@@ -5,21 +5,24 @@ config_roots = [".", "packages/*"]
 [tools]
 # TypeScript
 bun = "latest"
+node = "lts"
 
 # Python
-python = "3.10"
+python = "3.10.20"
 uv = "latest"
 
 # Tools
 fnox = "latest" # Secrets manager
 opencode = "latest" # AI agent
 claude = "latest" # AI agent
+gh ="latest" # GitHub CLI
 ruff = "latest" # Python formatter
 shfmt = "latest" # .sh formatter
 oxfmt = "latest" # TS formatter
 "pipx:pyprojectsort" = "latest" # pyproject.toml formatter
 
 [env]
+'_'.file = { path = ".env" }
 _.source = "scripts/env.sh"
 # Alumnium envs
 ALUMNIUM_LOG_LEVEL = "${ALUMNIUM_LOG_LEVEL:-debug}"
@@ -27,6 +30,7 @@ ALUMNIUM_MODEL = "${ALUMNIUM_MODEL:-azure_openai}"
 ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT = "2000"
 AZURE_OPENAI_API_VERSION = "${AZURE_OPENAI_API_VERSION:-2025-03-01-preview}"
 # Tool envs
+gh ="latest" # GitHub CLI
 MISE_EXPERIMENTAL = true # Enable monorepo root support
 OPENCODE_CONFIG_DIR = "./.agents"
 FORCE_COLOR = "1" # Force colors, i.e., for `bun --filter test`
@@ -40,6 +44,8 @@ idiomatic_version_file_enable_tools = ["node", "bun", "potery", "python"]
 run = [
   { task = "install/mise" },
   { task = "install/bun" },
+  { task = "//packages/typescript:install" },
+  { task = "//packages/python:install" },
 ]
 
 [tasks."install/mise"]
@@ -48,29 +54,47 @@ run = "mise install"
 [tasks."install/bun"]
 run = "bun install"
 # NOTE: No need to specify sources and outputs as `bun install` is faster at tracking them than mise.
-depends = "install/mise"
 
 [tasks."dev:mcp"]
 run = "fnox exec  -- bun ./packages/typescript/src/cli/bin.ts mcp"
 quiet = true
 raw = true
-depends = "install"
 
 [tasks."dev/mcp:inspect"]
 run = "cd packages/typescript && fnox exec  -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./src/cli/bin.ts mcp"
-depends = "install"
 
 [tasks."dev/server/start"]
 run = "fnox exec  -- bun ./packages/typescript/src/cli/bin.ts server"
-depends = "install"
 
 [tasks."clean"]
 run = "rm -rf ./.alumnium"
 
+[tasks.format]
+run = [
+  { task = "//packages/typescript:format" },
+  { task = "//packages/python:format" },
+]
+
+[tasks."format:check"]
+run = [
+  { task = "//packages/typescript:format:check" },
+  { task = "//packages/python:format:check" },
+]
+
+[tasks.types]
+run = [
+  { task = "types/ts" },
+  { task = "//packages/python:types" },
+]
+
+[tasks."test/unit"]
+run = [
+  { task = "//packages/typescript:test/unit" },
+  { task = "//packages/python:test/unit" },
+]
+
 [tasks."types/ts"]
 run = "bun run tsgo --build"
-depends = "install"
 
 [tasks."types/ts:watch"]
 run = "bun run tsgo --build --watch"
-depends = "install"

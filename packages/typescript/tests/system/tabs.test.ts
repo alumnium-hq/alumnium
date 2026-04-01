@@ -8,7 +8,7 @@ describe("Tabs", () => {
       const result = await setup(options);
       const { driverType } = result;
 
-      if (driverType === "appium")
+      if (driverType.startsWith("appium"))
         skip("Tabs functionality is not implemented in Appium yet");
 
       return result;

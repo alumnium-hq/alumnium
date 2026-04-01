@@ -12,7 +12,7 @@ describe("Drag and Drop", () => {
         skip("DeepSeek does not support vision yet");
 
       // Skip if using Appium driver (no drag and drop support in mobile browsers)
-      if (driverType === "appium")
+      if (driverType.startsWith("appium"))
         skip("Example doesn't support drag and drop in mobile browsers");
 
       return result;

@@ -1,0 +1,35 @@
+name: Dev Env Post-Setup
+
+inputs:
+  python-cache:
+    required: false
+    default: false
+    description: "If to cache Python-specific artifacts, i.e., venv."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Save Bun Cache
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.bun/install/cache
+        key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+
+    - name: Save uv Cache
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.cache/uv
+        key: uv-${{ runner.os }}-${{ hashFiles('packages/python/uv.lock') }}
+
+    - name: Save Python venv
+      if: ${{ inputs.python-cache == 'true' }}
+      uses: actions/cache/save@v5
+      with:
+        path: packages/python/.venv
+        key: venv-${{ runner.os }}-${{ hashFiles('packages/python/uv.lock') }}
+
+    - name: Save Playwright Cache
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}

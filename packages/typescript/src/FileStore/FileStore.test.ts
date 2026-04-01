@@ -5,7 +5,7 @@ import z from "zod";
 import { createMockDir, setupBeforeEach } from "../../tests/unit/mocks.js";
 import { FileStore } from "./FileStore.js";
 
-describe.only("FileStore", () => {
+describe("FileStore", () => {
   describe("constructor", () => {
     it("initializes with a directory", () => {
       const dir = "test/store/dir";

@@ -26,82 +26,84 @@ env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 jobs:
-  examples:
-    name: Examples
+  test-system:
+    name: System Tests
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
+      ALUMNIUM_DRIVER: ${{ matrix.driver }}
       ALUMNIUM_MODEL: ${{ matrix.model }}
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - driver: appium
-            model: azure_openai
-          - driver: playwright
-            model: azure_openai
-          - driver: playwright
-            model: google
           - driver: selenium
             model: azure_openai
 
+          - driver: playwright
+            model: azure_openai
+
+          - driver: playwright
+            model: google
+
+          - driver: appium-ios
+            model: azure_openai
+
+          # TODO: Add support for appium-android to system tests
+          # - driver: appium-android
+          #   model: azure_openai
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Git Checkout
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.sha || github.sha }}
 
-      - uses: oven-sh/setup-bun@v2
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
 
-      - if: matrix.driver != 'appium'
-        run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
-
-      - uses: actions/cache@v4
+      - name: Test System
+        uses: ./.github/actions/test-system
         with:
-          path: .alumnium/cache/
-          key: alumnium-cache-v2-typescript-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
-          restore-keys: alumnium-cache-v2-typescript-${{ matrix.driver }}-${{ matrix.model }}-
+          package: typescript
+          driver: ${{ matrix.driver }}
+          model: ${{ matrix.model }}
 
-      - run: bun install
+      - name: Upload Test Artifacts
+        if: always()
+        uses: ./.github/actions/test-artifacts
+        with:
+          name: system-${{ matrix.driver }}-${{ matrix.model }}
+          typescript: true
 
-      - if: matrix.driver == 'playwright'
-        run: bunx playwright install chromium
-
-      - run: cd packages/typescript && bun run test:system:${{ matrix.driver }}
-
-      - if: failure() && runner.debug == '1'
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
-
-      - if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ci-typescript-${{ matrix.driver }}-${{ matrix.model }}
-          path: |
-            packages/typescript/*.log
-            packages/typescript/playwright-report/
-            packages/typescript/test-results/
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: examples
+    needs: test-system
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Git Checkout
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.sha || github.sha }}
 
-      - uses: oven-sh/setup-bun@v2
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
 
-      - run: bun install
+      - name: Build Dist
+        run: mise //packages/typescript:build
 
-      - name: Build core binaries
-        run: cd packages/typescript && bun run build:binaries
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload npm Artifacts
+        uses: ./.github/actions/dist-artifacts
         with:
           name: build
-          path: packages/typescript/dist/bin/*
+          npm: true
 
-      - if: failure() && runner.debug == '1'
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3

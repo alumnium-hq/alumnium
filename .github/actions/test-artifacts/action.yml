@@ -1,0 +1,38 @@
+name: Upload Test Artifacts
+
+inputs:
+  name:
+    required: true
+    description: "Name of the workflow to upload artifacts for."
+
+  typescript:
+    required: false
+    default: false
+    description: "Whether to upload TypeScript test artifacts."
+
+  python:
+    required: false
+    default: false
+    description: "Whether to upload Python test artifacts."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upload TypeScript Test Artifacts
+      if: inputs.typescript == 'true'
+      uses: actions/upload-artifact@v6
+      with:
+        name: test-typescript-${{ inputs.name }}
+        path: |
+          packages/typescript/tests/artifacts/
+
+    - name: Upload Python Test Artifacts
+      if: inputs.python == 'true'
+      uses: actions/upload-artifact@v6
+      with:
+        name: test-python-${{ inputs.name }}
+        path: |
+          packages/python/reports/
+          packages/python/test-results/
+          packages/python/htmlcov/
+          packages/python/coverage.xml

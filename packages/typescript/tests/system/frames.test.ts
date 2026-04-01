@@ -8,7 +8,7 @@ describe("Frames", () => {
       const { driverType } = result;
 
       // Frames support is not implemented in Appium yet
-      if (driverType === "appium")
+      if (driverType.startsWith("appium"))
         skip("Frames support is not implemented in Appium yet");
 
       return result;

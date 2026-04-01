@@ -31,7 +31,7 @@ describe("File Upload", () => {
       const { driverType } = result;
 
       // File upload is not implemented in Appium yet
-      if (driverType === "appium")
+      if (driverType.startsWith("appium"))
         skip("File upload is not implemented in Appium yet");
 
       return result;

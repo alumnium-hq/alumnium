@@ -4,3 +4,6 @@
 .ts/
 dist/
 .alumnium/
+
+# Test artifacts
+/tests/artifacts/

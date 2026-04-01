@@ -45,6 +45,7 @@ const SRC_CLI_PATH = path.resolve(PKG_DIR, "src/cli/bin.ts");
 const DIST_DIR = path.resolve(PKG_DIR, "dist");
 const DIST_CORE_PKG_DIR = path.resolve(DIST_DIR, "npm-alumnium");
 const DIST_BIN_DIR = path.resolve(DIST_DIR, "bin");
+const DIST_NPM_DIR = path.resolve(DIST_DIR, "npm");
 const DIST_PIP_DIR = path.resolve(DIST_DIR, "pip");
 const PIP_CLI_PKG_NAME = "alumnium-cli";
 const PIP_CLI_MODULE_NAME = getPipModuleName(PIP_CLI_PKG_NAME);
@@ -156,6 +157,7 @@ async function main() {
   await Promise.all([
     cleanUpDir(DIST_BIN_DIR),
     cleanUpDir(DIST_CORE_PKG_DIR),
+    cleanUpDir(DIST_NPM_DIR),
     cleanUpDir(DIST_PIP_DIR),
     cleanUpDir(DIST_PIP_CLI_PKG_DIR),
     ...TARGET_PLATFORMS.flatMap(({ npm, pip }) => [
@@ -228,7 +230,11 @@ async function main() {
 
       await finalizeNpm(DIST_CORE_PKG_DIR);
 
-      console.log(`🟢 alumnium (${cwdRelPath(DIST_CORE_PKG_DIR)})`);
+      const tarPath = await buildNpmTar("alumnium", DIST_CORE_PKG_DIR);
+
+      console.log(
+        `🟢 alumnium (${cwdRelPath(DIST_CORE_PKG_DIR)} / ${tarPath})`,
+      );
     })(),
     //#endregion
 
@@ -258,7 +264,11 @@ async function main() {
 
       await finalizeNpm(npm.dir);
 
-      console.log(`🟢 ${npm.name} (${cwdRelPath(npm.dir)})`);
+      const tarPath = await buildNpmTar(npm.name, npm.dir);
+
+      console.log(
+        `🟢 ${npm.name} (${cwdRelPath(npm.dir)} / ${cwdRelPath(tarPath)})`,
+      );
     }),
     //#endregion
   ]);
@@ -469,6 +479,11 @@ async function finalizePip(pipName: string, pipDir: string) {
   await ruffLintFix(pipDir);
   const whlPath = await buildPipWheel(pipName, pipDir);
   return whlPath;
+}
+
+async function buildNpmTar(name: string, dir: string) {
+  await $`bun pm pack --destination ${DIST_NPM_DIR}`.cwd(dir).quiet();
+  return path.resolve(DIST_NPM_DIR, `${name}-${ALUMNIUM_VERSION}.tgz`);
 }
 
 async function finalizeNpm(npmDir: string) {

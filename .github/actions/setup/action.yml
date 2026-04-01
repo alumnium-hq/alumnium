@@ -1,0 +1,52 @@
+name: Setup Dev Env
+
+inputs:
+  python-cache:
+    required: false
+    default: false
+    description: "If to cache Python-specific artifacts, i.e., venv."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set Up Mise
+      uses: jdx/mise-action@v4
+
+    - name: Restore Bun Cache
+      uses: actions/cache/restore@v5
+      with:
+        path: ~/.bun/install/cache
+        key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+        restore-keys: bun-${{ runner.os }}-
+
+    - name: Restore uv Cache
+      uses: actions/cache/restore@v5
+      with:
+        path: ~/.cache/uv
+        key: uv-${{ runner.os }}-${{ hashFiles('packages/python/uv.lock') }}
+        restore-keys: uv-${{ runner.os }}-
+
+    - name: Restore Python venv
+      if: ${{ inputs.python-cache == 'true' }}
+      uses: actions/cache/restore@v5
+      with:
+        path: packages/python/.venv
+        key: venv-${{ runner.os }}-${{ hashFiles('packages/python/uv.lock') }}
+        restore-keys: venv-${{ runner.os }}-
+
+    - name: Restore Playwright Cache
+      uses: actions/cache/restore@v5
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}
+
+    - name: Cache Dist
+      uses: actions/cache@v5
+      with:
+        path: packages/typescript/dist
+        key: dist-${{ inputs.sha || github.sha }}
+        restore-keys: dist-
+
+    - name: Install
+      run: mise :install
+      shell: bash

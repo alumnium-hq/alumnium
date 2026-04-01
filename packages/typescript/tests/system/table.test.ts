@@ -14,7 +14,7 @@ describe("Table", () => {
       if (al.model.provider === "aws_meta")
         skip("Table area instructions need more work");
 
-      if (driverType === "appium")
+      if (driverType.startsWith("appium"))
         skip("Area is not properly extracted from Appium source code.");
 
       return result;

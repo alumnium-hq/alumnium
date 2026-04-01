@@ -1,5 +1,8 @@
 [tasks.install]
-depends = ["//:install"]
+run = []
+
+[tasks."install/playwright"]
+run = "bun run playwright install chromium --with-deps"
 
 [tasks.clean]
 run = "rm -rf .alumnium dist"
@@ -7,7 +10,7 @@ run = "rm -rf .alumnium dist"
 [tasks.build]
 run = "./scripts/build.ts"
 description = "Build CLI bins, core npm and CLI pip packages"
-depends = ["install", "build/generate"]
+depends = ["build/generate"]
 sources = [
   "src/**/*",
   "scripts/build.ts",
@@ -24,7 +27,6 @@ run = { task = "build/generate:bundles" }
 [tasks."build/generate:bundles"]
 run = "./scripts/generate-bundles.ts | xargs oxfmt"
 description = "Generates code bundles to enable building single-file executable"
-depends = "install"
 sources = [
   "scripts/generate-bundles.ts",
   # TODO: Move prompts generation into the script
@@ -37,16 +39,21 @@ outputs = [
   "src/drivers/scripts/bundledScripts.ts",
 ]
 
+[tasks.publish]
+run = "./scripts/publish.sh"
+depends = "build"
+
 [tasks.test]
 run = [{ task = "test/unit" }, { task = "test/system:all" }]
 
 [tasks."test/unit"]
 run = "bun vitest --project unit run"
-depends = "install"
 
 [tasks."test/unit:watch"]
 run = "bun vitest --project unit"
-depends = "install"
+
+[tasks."test/unit:coverage"]
+run = "bun vitest --project unit --coverage --coverage.reportsDirectory tests/artifacts/coverage/ run"
 
 [tasks."test/system"]
 usage = '''
@@ -56,7 +63,6 @@ arg "<driver>" help="Driver to use for system tests" {
 }
 '''
 run = "ALUMNIUM_DRIVER={{usage.driver}} ./scripts/test-system.sh"
-depends = "install"
 
 [tasks."test/system:all"]
 run = [
@@ -80,22 +86,23 @@ run = [{ task = "test/system appium-android" }]
 
 [tasks.lint]
 run = "bun oxlint ."
-depends = "install"
 
 [tasks."lint:fix"]
 run = "bun oxlint --fix ."
-depends = "install"
 
 [tasks.format]
 run = "bun oxfmt ."
-depends = "install"
 
 [tasks."format:check"]
 run = "bun oxfmt . --check"
-depends = "install"
 
 [tasks.types]
 depends = "//:types/ts"
 
 [tasks."types:watch"]
 depends = "//:types/ts:watch"
+
+[tasks.version]
+run = "./scripts/version.ts"
+quiet = true
+raw = true

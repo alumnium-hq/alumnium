@@ -9,7 +9,7 @@ describe("Drag Slider", () => {
       const { driverType } = result;
 
       // Drag slider is not implemented in Appium yet
-      if (driverType === "appium")
+      if (driverType.startsWith("appium"))
         skip("Drag slider is not implemented in Appium yet");
 
       return result;

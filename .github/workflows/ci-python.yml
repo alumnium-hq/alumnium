@@ -26,8 +26,8 @@ env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 jobs:
-  examples:
-    name: Examples
+  test-system:
+    name: System Tests
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -43,91 +43,78 @@ jobs:
           - azure_openai
           - google
         include:
-          - driver: appium-android
+          - driver: selenium
             model: azure_openai
-          - driver: appium-ios
-            model: azure_openai
+
           - driver: playwright
             model: azure_openai
+
           - driver: playwright
             model: google
 
+          - driver: appium-ios
+            model: azure_openai
+
+          - driver: appium-android
+            model: azure_openai
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Git Checkout
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.sha || github.sha }}
 
-      - uses: actions/setup-python@v5
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
         with:
-          python-version-file: .tool-versions
+          python-cache: true
 
-      - run: pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
-        working-directory: .
-
-      - uses: actions/cache@v4
+      - name: Test System
+        uses: ./.github/actions/test-system
         with:
-          path: packages/python/.venv
-          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+          package: python
+          driver: ${{ matrix.driver }}
+          model: ${{ matrix.model }}
 
-      - run: cd packages/python && poetry install
-
-      - if: matrix.driver == 'playwright'
-        run: cd packages/python && poetry run playwright install chromium
-
-      - if: startsWith(matrix.driver, 'appium') != true
-        run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
-
-      - uses: actions/cache@v4
+      - name: Upload Test Artifacts
+        if: always()
+        uses: ./.github/actions/test-artifacts
         with:
-          path: packages/python/.alumnium/cache/
-          key: alumnium-cache-v2-python-${{ matrix.driver }}-${{ matrix.model }}-${{ github.sha }}
-          restore-keys: alumnium-cache-v2-python-${{ matrix.driver }}-${{ matrix.model }}-
+          name: system-${{ matrix.driver }}-${{ matrix.model }}
+          python: true
 
-      - run: cd packages/python && poetry poe examples-${{ matrix.driver }}
-
-      - if: failure() && runner.debug == '1'
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
-
-      - if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ci-python-${{ matrix.driver }}-${{ matrix.model }}
-          path: |
-            packages/python/*.log
-            packages/python/reports/
-            packages/python/test-results/
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: examples
+    needs: test-system
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Git Checkout
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.sha || github.sha }}
 
-      - uses: actions/setup-python@v5
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
         with:
-          python-version-file: .tool-versions
+          python-cache: true
 
-      - uses: actions/cache@v4
-        with:
-          path: packages/python/.venv
-          key: venv-${{ hashFiles('packages/python/poetry.lock') }}
+      - name: Build Dist
+        run: mise //packages/typescript:build
 
-      - name: Install Poetry and plugins
-        run: |
-          pip install poetry=="$(grep poetry .tool-versions | cut -d" " -f2)"
-          poetry self add 'poethepoet[poetry_plugin]'
+      - name: Build Main Pip Package
+        run: mise //packages/python:build
 
-      - name: Build Python package
-        run: cd packages/python && poetry build
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload pip Artifacts
+        uses: ./.github/actions/dist-artifacts
         with:
           name: build
-          path: packages/python/dist/*
+          pip: true
 
-      - if: failure() && runner.debug == '1'
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
