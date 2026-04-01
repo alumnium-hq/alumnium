@@ -23,9 +23,11 @@ If you cannot find a way to achieve the goal based on the given accessibility tr
 Example:
 Input:
 Given the following XML accessibility tree:
+
 ```xml
 <button label="Foobar" />
 ```
+
 Outline the actions needed to achieve the following goal: perform foobar
 Output:
 Explanation: In order to foobar, I am going to click button with "Foobar" label - it clearly corresponds with the goal.

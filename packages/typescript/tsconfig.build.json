@@ -10,6 +10,6 @@
     // Build
     "incremental": false, // Always rebuild from scratch as we `rm -rf dist`
     // Project references
-    "composite": false,
-  },
+    "composite": false
+  }
 }

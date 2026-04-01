@@ -519,10 +519,7 @@ export class SeleniumDriver extends BaseDriver {
     throw new Error("waitForSelector not supported for this driver");
   }
 
-  private executeCdpCommand(
-    cmd: string,
-    params: object,
-  ): Promise<unknown> {
+  private executeCdpCommand(cmd: string, params: object): Promise<unknown> {
     return this.driver.sendAndGetDevToolsCommand(cmd, params);
   }
 

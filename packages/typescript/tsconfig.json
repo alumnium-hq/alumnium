@@ -6,7 +6,7 @@
     "./src/**/*.ts",
     "./scripts/**/*.ts",
     "./tests/**/*.ts",
-    "./package.json",
+    "./package.json"
   ],
   "compilerOptions": {
     // Resolve
@@ -42,6 +42,6 @@
     // Build
     "incremental": true,
     // Project references
-    "composite": true,
-  },
+    "composite": true
+  }
 }

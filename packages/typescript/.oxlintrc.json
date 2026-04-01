@@ -3,7 +3,7 @@
   "plugins": [],
   "options": {
     "typeAware": true,
-    "typeCheck": true,
+    "typeCheck": true
   },
   "categories": {},
   "rules": {
@@ -11,7 +11,7 @@
     // TODO: Create an issue in Oxlint or corresponding ESLint repo.
     "typescript/no-base-to-string": "off", // Useful but fails to detect branded types
     // TODO: Create an issue in Oxlint suggesting to add `exactOptionalPropertyTypes` support.
-    "typescript/no-duplicate-type-constituents": "off", // Useful but fails on optional arguments with `| undefined`
+    "typescript/no-duplicate-type-constituents": "off" // Useful but fails on optional arguments with `| undefined`
   },
   "settings": {
     "jsdoc": {
@@ -22,15 +22,15 @@
       "augmentsExtendsReplacesDocs": false,
       "implementsReplacesDocs": false,
       "exemptDestructuredRootsFromChecks": false,
-      "tagNamePreference": {},
+      "tagNamePreference": {}
     },
     "vitest": {
-      "typecheck": false,
-    },
+      "typecheck": false
+    }
   },
   "env": {
-    "builtin": true,
+    "builtin": true
   },
   "globals": {},
-  "ignorePatterns": [],
+  "ignorePatterns": []
 }

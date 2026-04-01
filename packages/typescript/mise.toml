@@ -30,18 +30,15 @@ sources = [
   # TODO: Move prompts generation into the script
   "src/server/agents/prompts/prompts.ts",
   "src/drivers/scripts/*.js",
-  "src/server/agents/prompts/**/*.md"
+  "src/server/agents/prompts/**/*.md",
 ]
 outputs = [
   "src/server/agents/prompts/bundledPrompts.ts",
-  "src/drivers/scripts/bundledScripts.ts"
+  "src/drivers/scripts/bundledScripts.ts",
 ]
 
 [tasks.test]
-run = [
-  { task = "test/unit" },
-  { task = "test/system:all" }
-]
+run = [{ task = "test/unit" }, { task = "test/system:all" }]
 
 [tasks."test/unit"]
 run = "bun vitest --project unit run"
