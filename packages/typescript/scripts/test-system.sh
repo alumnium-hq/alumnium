@@ -21,7 +21,7 @@ export ALUMNIUM_PRUNE_LOGS=true
 export TEST_PLAYWRIGHT_HEADLESS=true
 
 echo -e "🌀 Running vitest tests\n"
-run_tests fnox exec --if-missing error -- \
+run_tests fnox exec -- \
 	bun vitest --project system run
 
 echo

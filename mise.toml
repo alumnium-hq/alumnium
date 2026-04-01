@@ -51,17 +51,17 @@ run = "bun install"
 depends = "install/mise"
 
 [tasks."dev:mcp"]
-run = "fnox exec --if-missing error -- bun ./packages/typescript/src/cli/bin.ts mcp"
+run = "fnox exec  -- bun ./packages/typescript/src/cli/bin.ts mcp"
 quiet = true
 raw = true
 depends = "install"
 
 [tasks."dev/mcp:inspect"]
-run = "cd packages/typescript && fnox exec --if-missing error -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./src/cli/bin.ts mcp"
+run = "cd packages/typescript && fnox exec  -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./src/cli/bin.ts mcp"
 depends = "install"
 
 [tasks."dev/server/start"]
-run = "fnox exec --if-missing error -- bun ./packages/typescript/src/cli/bin.ts server"
+run = "fnox exec  -- bun ./packages/typescript/src/cli/bin.ts server"
 depends = "install"
 
 [tasks."clean"]
