@@ -10,16 +10,13 @@ from appium.webdriver.webdriver import WebDriver as Appium
 from behave import fixture, use_fixture
 from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from playwright.sync_api import Page, sync_playwright
-from portpicker import pick_unused_port
 from selenium.webdriver import Chrome
 
 from alumnium import Alumni, Model
-from alumnium.cli import run_server
 from alumnium.drivers.appium_driver import AppiumDriver
 
 driver_name = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
-server_pid = "behave.pid"
 
 
 @fixture
@@ -142,8 +139,7 @@ def driver(context):
 
 @fixture
 def alumnium(context):
-    url = f"http://localhost:{context.port}"
-    context.al = Alumni(context.driver, url=url)
+    context.al = Alumni(context.driver)
     if isinstance(context.al.driver, AppiumDriver):
         context.al.driver.autoswitch_contexts = False  # Slow!
         context.al.driver.delay = 0.1
@@ -219,30 +215,12 @@ def alumnium(context):
 
 
 def before_all(context):
-    context.port = pick_unused_port()
-
-    run_server(
-        port=context.port,
-        daemon=True,
-        daemon_pid=server_pid,
-        daemon_force=True,
-        daemon_wait=True,
-    )
-
     use_fixture(driver, context)
     use_fixture(alumnium, context)
 
     for formatter in context._runner.formatters:
         if formatter.name == "html-pretty":
             context.embed = formatter.embed
-
-
-def after_all(context):
-    run_server(
-        daemon_kill=True,
-        daemon_pid=server_pid,
-        daemon_force=True,
-    )
 
 
 def before_feature(_, feature):

@@ -9,33 +9,17 @@ from appium.webdriver.client_config import AppiumClientConfig
 from appium.webdriver.webdriver import WebDriver as Appium
 from dotenv import load_dotenv
 from playwright.sync_api import Page, sync_playwright
-from portpicker import pick_unused_port
 from pytest import fixture, hookimpl
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
 from alumnium import Alumni, Model
-from alumnium.cli import run_server
 from alumnium.drivers.appium_driver import AppiumDriver
 
 load_dotenv()
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
-server_pid = "pytest.pid"
-
-
-@fixture(scope="session")
-def port():
-    return pick_unused_port()
-
-
-@fixture(scope="session", autouse=True)
-def global_setup_teardown(port):
-    run_server(port=port, daemon=True, daemon_pid=server_pid, daemon_force=True, daemon_wait=True)
-    yield
-    run_server(daemon_kill=True, daemon_pid=server_pid, daemon_force=True)
-    print("afterAll (session)")
 
 
 @fixture(scope="session")
@@ -163,9 +147,8 @@ def driver():
 
 
 @fixture(scope="session")
-def al(driver, port):
-    url = f"http://localhost:{port}"
-    al = Alumni(driver, url=url)
+def al(driver):
+    al = Alumni(driver)
     if isinstance(al.driver, AppiumDriver):
         al.driver.delay = 0.1
 

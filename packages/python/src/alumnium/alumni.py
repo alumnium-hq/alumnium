@@ -63,8 +63,11 @@ class Alumni:
         for tool in self.driver.supported_tools | set(extra_tools or []):
             self.tools[tool.__name__] = tool
 
-        server_url = url or getenv("ALUMNIUM_SERVER_URL") or "http://localhost:8013"
-        logger.info(f"Using HTTP client with server: {server_url}")
+        server_url = url or getenv("ALUMNIUM_SERVER_URL")
+        if server_url:
+            logger.info(f"Using HTTP client with server: {server_url}")
+        else:
+            logger.info("Using HTTP client with auto-managed local server")
         self.client = HttpClient(
             server_url,
             self.model,
