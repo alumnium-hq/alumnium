@@ -170,8 +170,13 @@ async def handle_check(args: dict[str, Any]) -> list[dict]:
         logger.debug(f"Driver {driver_id}: check() passed: {explanation}")
     except AssertionError as e:
         explanation = str(e)
-        result = "failed"
-        logger.debug(f"Driver {driver_id}: check() failed: {explanation}")
+        if explanation.startswith("NOOP:"):
+            result = "inconclusive"
+            explanation = explanation[5:].strip()
+            logger.debug(f"Driver {driver_id}: check() inconclusive (NOOP): {explanation}")
+        else:
+            result = "failed"
+            logger.debug(f"Driver {driver_id}: check() failed: {explanation}")
 
     screenshots.save_screenshot(driver_id, f"check {statement}", al)
 

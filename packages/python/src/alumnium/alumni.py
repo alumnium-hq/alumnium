@@ -163,6 +163,8 @@ class Alumni:
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
         )
+        if value is None:
+            raise AssertionError(f"NOOP: {explanation}")
         assert value, explanation
         return explanation
 
