@@ -52,7 +52,7 @@ describe("ElementsCacheMask", () => {
       ]);
     });
 
-    it("masks ids in messages", () => {
+    it("masks ids in Google messages", () => {
       const generation = LchainFactory.storedGenerationWith({
         content: [
           { type: "thinking", thinking: "Hmm..." },
@@ -117,15 +117,69 @@ describe("ElementsCacheMask", () => {
       ]);
     });
 
+    it("masks ids in Anthropic messages", () => {
+      const generation = LchainFactory.storedGenerationWith({
+        content: [
+          { type: "thinking", thinking: "Hmm..." },
+          {
+            type: "tool_use",
+            id: "tool-use-id",
+            name: "ClickTool",
+            input: { id: 5 },
+            caller: {},
+          },
+          {
+            type: "tool_use",
+            id: "tool-use-id",
+            name: "ClickTool",
+            input: { from_id: 10, to_id: 5 },
+            caller: {},
+          },
+          {
+            type: "tool_use",
+            id: "tool-use-id-",
+            name: "ClickTool",
+            input: {
+              uid: "123",
+              value: 456,
+            },
+            caller: {},
+          },
+        ],
+      });
+
+      const masked = ElementsCacheMask.mask(generation, [5, 10]);
+
+      expect(masked.message?.data.content).toEqual([
+        expect.objectContaining({ thinking: "Hmm..." }),
+        expect.objectContaining({
+          input: {
+            id: "<MASKED_0>",
+          },
+        }),
+        expect.objectContaining({
+          input: {
+            from_id: "<MASKED_1>",
+            to_id: "<MASKED_0>",
+          },
+        }),
+        expect.objectContaining({
+          input: {
+            uid: "123",
+            value: 456,
+          },
+        }),
+      ]);
+    });
+
     it("returns the same generation when element ids are empty", () => {
       const generation = LchainFactory.storedGenerationWith({
         toolCalls: [
-          {
-            name: "ClickTool",
+          LchainFactory.toolCall({
             args: {
               id: 5,
             },
-          },
+          }),
         ],
       });
 
@@ -145,26 +199,26 @@ describe("ElementsCacheMask", () => {
     it("unmasks ids in tool_calls args", () => {
       const generation = LchainFactory.storedGenerationWith({
         toolCalls: [
-          {
+          LchainFactory.toolCall({
             name: "ClickTool",
             args: {
               id: "<MASKED_0>",
             },
-          },
-          {
+          }),
+          LchainFactory.toolCall({
             name: "DragAndDropTool",
             args: {
               from_id: "<MASKED_1>",
               to_id: "<MASKED_0>",
             },
-          },
-          {
+          }),
+          LchainFactory.toolCall({
             name: "RandomTool",
             args: {
               uid: "123",
               value: 456,
             },
-          },
+          }),
         ],
       });
 
@@ -174,30 +228,30 @@ describe("ElementsCacheMask", () => {
       });
 
       expect(unmasked.message?.data.tool_calls).toEqual([
-        {
+        expect.objectContaining({
           name: "ClickTool",
           args: {
             id: 42,
           },
-        },
-        {
+        }),
+        expect.objectContaining({
           name: "DragAndDropTool",
           args: {
             from_id: 99,
             to_id: 42,
           },
-        },
-        {
+        }),
+        expect.objectContaining({
           name: "RandomTool",
           args: {
             uid: "123",
             value: 456,
           },
-        },
+        }),
       ]);
     });
 
-    it("unmasks ids in messages", () => {
+    it("unmasks ids in Google messages", () => {
       const generation = LchainFactory.storedGenerationWith({
         content: [
           { type: "thinking", thinking: "Hmm..." },
@@ -265,15 +319,76 @@ describe("ElementsCacheMask", () => {
       ]);
     });
 
+    it("unmasks ids in Anthropic messages", () => {
+      const generation = LchainFactory.storedGenerationWith({
+        content: [
+          { type: "thinking", thinking: "Hmm..." },
+          {
+            type: "tool_use",
+            id: "tool-use-id",
+            name: "ClickTool",
+            input: { id: "<MASKED_0>" },
+            caller: {},
+          },
+          {
+            type: "tool_use",
+            id: "tool-use-id",
+            name: "ClickTool",
+            input: {
+              from_id: "<MASKED_1>",
+              to_id: "<MASKED_0>",
+            },
+            caller: {},
+          },
+          {
+            type: "tool_use",
+            id: "tool-use-id",
+            name: "RandomTool",
+            input: {
+              uid: "123",
+              value: 456,
+            },
+            caller: {},
+          },
+        ],
+      });
+
+      const unmasked = ElementsCacheMask.unmask(generation, {
+        0: 42,
+        1: 99,
+      });
+
+      expect(unmasked.message?.data.content).toEqual([
+        expect.objectContaining({ thinking: "Hmm..." }),
+        expect.objectContaining({
+          input: {
+            id: 42,
+          },
+        }),
+        expect.objectContaining({
+          input: {
+            from_id: 99,
+            to_id: 42,
+          },
+        }),
+        expect.objectContaining({
+          input: {
+            uid: "123",
+            value: 456,
+          },
+        }),
+      ]);
+    });
+
     it("returns the same generation when mapping is empty", () => {
       const generation = LchainFactory.storedGenerationWith({
         toolCalls: [
-          {
+          LchainFactory.toolCall({
             name: "ClickTool",
             args: {
               id: "<MASKED_5>",
             },
-          },
+          }),
         ],
       });
 
@@ -285,15 +400,18 @@ describe("ElementsCacheMask", () => {
     it("supports mask/unmask roundtrip for tool calls", () => {
       const generation = LchainFactory.storedGenerationWith({
         toolCalls: [
-          { name: "ClickTool", args: { id: 5 } },
-          { name: "TypeTool", args: { id: 10, text: "hello" } },
-          {
+          LchainFactory.toolCall({ name: "ClickTool", args: { id: 5 } }),
+          LchainFactory.toolCall({
+            name: "TypeTool",
+            args: { id: 10, text: "hello" },
+          }),
+          LchainFactory.toolCall({
             name: "DragAndDropTool",
             args: {
               from_id: 5,
               to_id: 10,
             },
-          },
+          }),
         ],
       });
 
@@ -305,14 +423,21 @@ describe("ElementsCacheMask", () => {
 
     it("supports unmasking with remapped ids", () => {
       const generation = LchainFactory.storedGenerationWith({
-        toolCalls: [{ name: "ClickTool", args: { id: "<MASKED_0>" } }],
+        toolCalls: [
+          LchainFactory.toolCall({
+            name: "ClickTool",
+            args: { id: "<MASKED_0>" },
+          }),
+        ],
       });
 
       const unmasked = ElementsCacheMask.unmask(generation, { 0: 42 });
 
       expect(unmasked).toEqual(
         LchainFactory.storedGenerationWith({
-          toolCalls: [{ name: "ClickTool", args: { id: 42 } }],
+          toolCalls: [
+            LchainFactory.toolCall({ name: "ClickTool", args: { id: 42 } }),
+          ],
         }),
       );
     });

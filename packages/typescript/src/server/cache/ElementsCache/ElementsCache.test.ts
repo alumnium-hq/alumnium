@@ -147,7 +147,9 @@ describe("ElementsCache", () => {
         });
         const generation = LchainFactory.generationWith({
           text: "step1",
-          toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+          toolCalls: [
+            LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+          ],
         });
 
         await cache.update(prompt1, llmKey, [generation]);
@@ -158,7 +160,9 @@ describe("ElementsCache", () => {
         expect(Lchain.toStored(result![0]!)).toEqual(
           LchainFactory.storedGenerationWith({
             text: "step1",
-            toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+            toolCalls: [
+              expect.objectContaining({ name: "ClickTool", args: { id: 1 } }),
+            ],
           }),
         );
       });
@@ -174,7 +178,9 @@ describe("ElementsCache", () => {
         });
         const generation = LchainFactory.generationWith({
           text: "step1",
-          toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+          toolCalls: [
+            LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+          ],
         });
 
         await cache.update(prompt1, llmKey, [generation]);
@@ -202,7 +208,9 @@ describe("ElementsCache", () => {
           treeXml: '<div><button id="99" name="Login" /></div>',
         });
         const generation = LchainFactory.generationWith({
-          toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+          toolCalls: [
+            LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+          ],
         });
 
         await cache.update(prompt1, llmKey, [generation]);
@@ -212,7 +220,9 @@ describe("ElementsCache", () => {
 
         expect(result1?.map(Lchain.toStored)).toEqual([
           LchainFactory.storedGenerationWith({
-            toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+            toolCalls: [
+              expect.objectContaining({ name: "ClickTool", args: { id: 1 } }),
+            ],
           }),
         ]);
 
@@ -220,7 +230,9 @@ describe("ElementsCache", () => {
 
         expect(result2?.map(Lchain.toStored)).toEqual([
           LchainFactory.storedGenerationWith({
-            toolCalls: [{ name: "ClickTool", args: { id: 99 } }],
+            toolCalls: [
+              expect.objectContaining({ name: "ClickTool", args: { id: 99 } }),
+            ],
           }),
         ]);
       });
@@ -242,7 +254,9 @@ describe("ElementsCache", () => {
 
         await cache.update(prompt1, llmKey, [
           LchainFactory.generationWith({
-            toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+            toolCalls: [
+              LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+            ],
           }),
         ]);
         await cache.save();
@@ -261,7 +275,9 @@ describe("ElementsCache", () => {
 
         await cache.update(prompt1, llmKey, [
           LchainFactory.generationWith({
-            toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+            toolCalls: [
+              LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+            ],
           }),
         ]);
         await cache.save();
@@ -285,7 +301,9 @@ describe("ElementsCache", () => {
             treeXml: '<button id="7" name="Submit" />',
           });
           const generation = LchainFactory.generationWith({
-            toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+            toolCalls: [
+              LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+            ],
           });
 
           await cache.update(prompt1, llmKey, [generation]);
@@ -295,7 +313,9 @@ describe("ElementsCache", () => {
 
           expect(Lchain.toStored(result![0]!)).toEqual(
             LchainFactory.storedGenerationWith({
-              toolCalls: [{ name: "ClickTool", args: { id: 7 } }],
+              toolCalls: [
+                expect.objectContaining({ name: "ClickTool", args: { id: 7 } }),
+              ],
             }),
           );
         });
@@ -316,7 +336,9 @@ describe("ElementsCache", () => {
           });
           await cache.update(prompt1, llmKey, [
             LchainFactory.generationWith({
-              toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+              toolCalls: [
+                LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+              ],
             }),
           ]);
 
@@ -324,7 +346,9 @@ describe("ElementsCache", () => {
 
           expect(Lchain.toStored(result![0]!)).toEqual(
             LchainFactory.storedGenerationWith({
-              toolCalls: [{ name: "ClickTool", args: { id: 8 } }],
+              toolCalls: [
+                expect.objectContaining({ name: "ClickTool", args: { id: 8 } }),
+              ],
             }),
           );
         });
@@ -347,7 +371,9 @@ describe("ElementsCache", () => {
 
           await cache.update(prompt1, llmKey, [
             LchainFactory.generationWith({
-              toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+              toolCalls: [
+                LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+              ],
             }),
           ]);
           await cache.save();
@@ -450,7 +476,9 @@ describe("ElementsCache", () => {
         const text = "step1\nstep2";
         const generation = LchainFactory.generationWith({
           text,
-          toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+          toolCalls: [
+            LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+          ],
         });
 
         const cache = new ElementsCache(sessionContext, cacheStore, llmContext);
@@ -477,7 +505,12 @@ describe("ElementsCache", () => {
         expect(response).toEqual(
           LchainFactory.storedGenerationWith({
             text,
-            toolCalls: [{ name: "ClickTool", args: { id: "<MASKED_0>" } }],
+            toolCalls: [
+              expect.objectContaining({
+                name: "ClickTool",
+                args: { id: "<MASKED_0>" },
+              }),
+            ],
           }),
         );
         expect(instruction).toEqual({

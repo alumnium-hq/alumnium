@@ -7,9 +7,15 @@ describe("ElementsCacheToolCalls", () => {
     it("extracts element ids in order from tool calls", () => {
       const generation = LchainFactory.storedGenerationWith({
         toolCalls: [
-          { name: "ClickTool", args: { id: 4 } },
-          { name: "TypeTool", args: { id: 3, text: "hello" } },
-          { name: "DragAndDropTool", args: { from_id: 1, to_id: 2 } },
+          LchainFactory.toolCall({ name: "ClickTool", args: { id: 4 } }),
+          LchainFactory.toolCall({
+            name: "TypeTool",
+            args: { id: 3, text: "hello" },
+          }),
+          LchainFactory.toolCall({
+            name: "DragAndDropTool",
+            args: { from_id: 1, to_id: 2 },
+          }),
         ],
       });
 
@@ -21,9 +27,9 @@ describe("ElementsCacheToolCalls", () => {
     it("deduplicates extracted element ids preserving first appearance", () => {
       const generation = LchainFactory.storedGenerationWith({
         toolCalls: [
-          { name: "ClickTool", args: { id: 3 } },
-          { name: "TypeTool", args: { id: 1 } },
-          { name: "ClickTool", args: { id: 3 } },
+          LchainFactory.toolCall({ name: "ClickTool", args: { id: 3 } }),
+          LchainFactory.toolCall({ name: "TypeTool", args: { id: 1 } }),
+          LchainFactory.toolCall({ name: "ClickTool", args: { id: 3 } }),
         ],
       });
 

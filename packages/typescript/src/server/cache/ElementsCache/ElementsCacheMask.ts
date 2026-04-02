@@ -20,9 +20,18 @@ export abstract class ElementsCacheMask {
 
       if (Array.isArray(masked.message?.data.content)) {
         masked.message?.data.content.forEach((content) => {
-          if (typeof content !== "object" || content.type !== "functionCall")
-            return;
-          this.#maskArgs(content.functionCall.args, idToMask);
+          if (typeof content !== "object") return;
+
+          let args: Record<string, unknown> | undefined;
+          switch (content.type) {
+            case "functionCall":
+              args = content.functionCall.args;
+              break;
+            case "tool_use":
+              args = content.input;
+              break;
+          }
+          this.#maskArgs(args, idToMask);
         });
       }
 
@@ -67,9 +76,17 @@ export abstract class ElementsCacheMask {
 
       if (Array.isArray(unmasked.message?.data.content)) {
         unmasked.message?.data.content.forEach((content) => {
-          if (typeof content !== "object" || content.type !== "functionCall")
-            return;
-          this.#unmaskArgs(content.functionCall.args, maskToId);
+          if (typeof content !== "object") return;
+          let args: Record<string, unknown> | undefined;
+          switch (content.type) {
+            case "functionCall":
+              args = content.functionCall.args;
+              break;
+            case "tool_use":
+              args = content.input;
+              break;
+          }
+          this.#unmaskArgs(args, maskToId);
         });
       }
 

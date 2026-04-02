@@ -42,7 +42,9 @@ describe("ActorAgentElementsCache", () => {
         treeXml: '<button id="1" name="Login"/><input id="2" name="username"/>',
       },
       generation: LchainFactory.storedGenerationWith({
-        toolCalls: [{ name: "ClickTool", args: { id: 1 } }],
+        toolCalls: [
+          LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+        ],
       }),
     });
 
@@ -53,7 +55,12 @@ describe("ActorAgentElementsCache", () => {
       cacheHash,
       elements: [{ index: 0, name: "Login", role: "button" }],
       generation: LchainFactory.storedGenerationWith({
-        toolCalls: [{ args: { id: "<MASKED_0>" }, name: "ClickTool" }],
+        toolCalls: [
+          LchainFactory.toolCall({
+            args: { id: "<MASKED_0>" },
+            name: "ClickTool",
+          }),
+        ],
       }),
       instruction: {
         goal: "login",
@@ -93,7 +100,9 @@ describe("ActorAgentElementsCache", () => {
         treeXml: '<button id="1" name="Login"/>',
       },
       generation: LchainFactory.storedGenerationWith({
-        toolCalls: [{ name: "NavigateBackTool", args: {} }],
+        toolCalls: [
+          LchainFactory.toolCall({ name: "NavigateBackTool", args: {} }),
+        ],
       }),
     });
 
@@ -119,8 +128,8 @@ describe("ActorAgentElementsCache", () => {
       },
       generation: LchainFactory.storedGenerationWith({
         toolCalls: [
-          { name: "ClickTool", args: { id: 10 } },
-          { name: "ClickTool", args: { id: 11 } },
+          LchainFactory.toolCall({ name: "ClickTool", args: { id: 10 } }),
+          LchainFactory.toolCall({ name: "ClickTool", args: { id: 11 } }),
         ],
       }),
     });

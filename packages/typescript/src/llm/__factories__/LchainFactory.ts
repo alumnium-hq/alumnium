@@ -15,6 +15,7 @@ export namespace LchainFactory {
 export abstract class LchainFactory {
   static toolCall(overrides?: Partial<Lchain.ToolCall>) {
     return {
+      type: "tool_call" as const,
       name: "ClickTool",
       args: { id: 42 },
       ...overrides,

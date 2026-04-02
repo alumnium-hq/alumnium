@@ -32,7 +32,6 @@ export namespace Lchain {
   export type OutputTokenDetails = z.infer<typeof Lchain.OutputTokenDetails>;
   export type UsageMetadata = z.infer<typeof Lchain.UsageMetadata>;
   export type GoogleFunctionCall = z.infer<typeof Lchain.GoogleFunctionCall>;
-  export type OpenAIToolCall = z.infer<typeof Lchain.OpenAIToolCall>;
   export type ToolCall = z.infer<typeof Lchain.ToolCall>;
   export type InvalidToolCall = z.infer<typeof Lchain.InvalidToolCall>;
   export type Reasoning = z.infer<typeof Lchain.Reasoning>;
@@ -73,26 +72,31 @@ export abstract class Lchain {
     id: z.string(),
   });
 
-  static FunctionCall = z.union([
-    this.OpenAIFunctionCall,
-    this.GoogleFunctionCall,
-  ]);
-
   static MessageContentObjectGoogleFunctionCall = z.object({
     type: z.literal("functionCall"),
     functionCall: this.GoogleFunctionCall,
   });
 
-  static MessageContentObjectGoogleThinking = z.object({
+  static MessageContentObjectAnthropicToolUse = z.object({
+    type: z.literal("tool_use"),
+    id: z.string(),
+    name: z.string(),
+    input: z.record(z.string(), z.unknown()),
+    caller: z.unknown(),
+  });
+
+  static MessageContentObjectThinking = z.object({
     type: z.literal("thinking"),
     thinking: z.string(),
+    signature: z.string().optional(),
   });
 
   static MessageContentObject = z.union([
     Lchain.MessageContentObjectText,
     Lchain.MessageContentObjectReasoing,
-    Lchain.MessageContentObjectGoogleThinking,
+    Lchain.MessageContentObjectThinking,
     Lchain.MessageContentObjectGoogleFunctionCall,
+    Lchain.MessageContentObjectAnthropicToolUse,
   ]);
 
   static MessageContent = z.union([
@@ -125,15 +129,8 @@ export abstract class Lchain {
     output_token_details: Lchain.OutputTokenDetails.optional(),
   });
 
-  static OpenAIToolCall = z.object({
-    id: z.string(),
-    function: Lchain.OpenAIFunctionCall,
-    type: z.literal("function"),
-    index: z.number().optional(),
-  });
-
   static ToolCall = z.object({
-    type: z.literal("tool_call").optional(),
+    type: z.literal("tool_call"),
     id: z.string().optional(),
     name: z.string(),
     args: Lchain.UnknownRecord,
@@ -156,7 +153,7 @@ export abstract class Lchain {
 
   static AdditionalKwargs = z.object({
     function_call: Lchain.OpenAIFunctionCall.optional(),
-    tool_calls: z.array(Lchain.OpenAIToolCall).optional(),
+    tool_calls: z.array(Lchain.ToolCall).optional(),
   });
 
   static ResponseMetadata = z.object({
