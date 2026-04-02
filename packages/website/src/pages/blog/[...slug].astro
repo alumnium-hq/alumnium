@@ -1,0 +1,35 @@
+---
+import Page from "../../components/BlogPage.astro";
+import MarkdownContent from "@astrojs/starlight/components/MarkdownContent.astro";
+import "../../styles/global.css";
+import { render } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
+import Post from "../../layout/Post.astro";
+import { routeConfig } from "../../utils/routeConfig";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id.slice(11) },
+    props: post,
+  }));
+}
+type Props = CollectionEntry<"blog">;
+
+const post = Astro.props;
+const { Content, headings } = await render(post);
+Astro.locals.starlightRoute = routeConfig({
+  title: post.data.title,
+  slug: post.id.slice(11),
+  description: post.data.description,
+  toc: headings,
+});
+---
+
+<Page>
+  <Post {...post.data}>
+    <MarkdownContent>
+      <Content />
+    </MarkdownContent>
+  </Post>
+</Page>

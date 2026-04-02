@@ -1,0 +1,86 @@
+---
+import Select from "@astrojs/starlight/components/Select.astro";
+import { Icon } from "@astrojs/starlight/components";
+---
+
+<starlight-language-select>
+  <Select
+    icon="seti:python"
+    label="Select language"
+    value="python"
+    options={[
+      { label: "Python", selected: true, value: "python" },
+      { label: "TypeScript", selected: false, value: "typescript" },
+    ]}
+    width="8em"
+  />
+</starlight-language-select>
+
+<script>
+  type Language = "python" | "typescript";
+
+  /** Key in `localStorage` to store language preference at. */
+  const storageKey = "starlight-language";
+
+  /** Get a typesafe language string from any JS value (unknown values are coerced to `'python'`). */
+  const parseLanguage = (language: unknown): Language =>
+    language === "python" || language === "typescript" ? language : "python";
+
+  /** Load the user’s preference from `localStorage`. */
+  const loadLanguage = (): Language =>
+    parseLanguage(typeof localStorage !== "undefined" && localStorage.getItem(storageKey));
+
+  /** Store the user’s preference in `localStorage`. */
+  function storeLanguage(language: Language): void {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(storageKey, language === "python" || language === "typescript" ? language : "");
+    }
+  }
+
+  function updatePickerIcon(language: Language): void {
+    document.querySelectorAll("starlight-language-select").forEach((picker) => {
+      const select = picker.querySelector("select");
+      if (select) select.value = language;
+      const tmpl = document.querySelector(`#language-icons`);
+      let newIcon: Element | null = null;
+      if (tmpl instanceof HTMLTemplateElement) {
+        newIcon = tmpl.content.querySelector("." + language);
+      } else if (tmpl) {
+        // If the element isn't a <template>, try querying it directly as a fallback.
+        newIcon = tmpl.querySelector("." + language);
+      }
+      if (newIcon) {
+        const oldIcon = picker.querySelector("svg.label-icon");
+        if (oldIcon) {
+          oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+        }
+      }
+    });
+  }
+
+  /** Update select menu UI, document theme, and local storage state. */
+  function onLanguageChange(language: Language): void {
+    // StarlightLanguageProvider.updatePickers(language);
+    document.documentElement.dataset.language = language;
+    storeLanguage(language);
+    updatePickerIcon(language);
+  }
+
+  class StarlightLanguageSelect extends HTMLElement {
+    constructor() {
+      super();
+      onLanguageChange(loadLanguage());
+      this.querySelector("select")?.addEventListener("change", (e) => {
+        if (e.currentTarget instanceof HTMLSelectElement) {
+          onLanguageChange(parseLanguage(e.currentTarget.value));
+        }
+      });
+    }
+  }
+  customElements.define("starlight-language-select", StarlightLanguageSelect);
+</script>
+
+<template id="language-icons">
+  <Icon name="seti:python" class="python" />
+  <Icon name="seti:tsconfig" class="typescript" />
+</template>

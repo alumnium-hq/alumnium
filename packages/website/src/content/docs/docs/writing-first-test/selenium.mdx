@@ -1,0 +1,758 @@
+---
+title: Writing First Test with Selenium
+description: Write AI-powered automated tests with Alumnium. Learn how to integrate Selenium and run reliable browser tests.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import LanguageContent from "../../../../components/LanguageContent.astro";
+
+Let's see how we can write a simple test that would use [Selenium][5] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
+
+<LanguageContent lang="python">
+
+:::note
+Alumnium can be used with any test runner you like. For the examples in this guide, we'll use [Pytest][2].
+:::
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+:::note
+Alumnium can be used with any test runner you like. For the examples in this guide, we'll use [Mocha][3].
+:::
+
+</LanguageContent>
+
+## Install Dependencies
+
+Make sure you have Alumnium installed in your project.
+
+<LanguageContent lang="python">
+
+```bash title="Installing dependencies"
+$ pip install alumnium pytest
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```bash title="Installing dependencies"
+$ npm install alumnium mocha
+$ npm install ts-node @types/mocha @types/selenium-webdriver  # for TypeScript
+```
+
+We'll also need to install Docker to run Alumnium server. Please, refer to [Docker installation guide][4] for your platform.
+
+</LanguageContent>
+
+## Setup Browser
+
+Start by creating a test file for your tests and instantiating a browser instance:
+
+<LanguageContent lang="python">
+
+```python title="test_search.py"
+from selenium.webdriver import Chrome
+from pytest import fixture
+
+
+@fixture
+def driver():
+    driver = Chrome()
+    yield driver
+    driver.quit()
+
+
+def test_search(driver: Chrome):
+    driver.get("https://duckduckgo.com")
+```
+
+Now run the test. You should see a Chrome browser window with DuckDuckGo opened.
+
+```bash title="Running test"
+$ pytest --quiet
+...
+1 passed in 1.32s
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript title="search.test.ts"
+import { strict as assert } from "assert";
+import { Builder, Browser, type WebDriver } from "selenium-webdriver";
+
+describe("TestSearch", () => {
+  let driver: WebDriver;
+
+  before(async () => {
+    driver = await new Builder().forBrowser(Browser.CHROME).build();
+  });
+
+  after(async () => {
+    await driver.quit();
+  });
+
+  it("should search", async () => {
+    await driver.get("https://duckduckgo.com");
+  });
+});
+```
+
+We will also need to configure Mocha to run TypeScript tests. You can skip this step if you are using JavaScript.
+
+```json title=".mocharc.json"
+{
+  "spec": "*.test.ts",
+  "require": "ts-node/register",
+  "timeout": 300000
+}
+```
+
+Now run the test. You should see a Chrome browser window with DuckDuckGo opened.
+
+```bash title="Running test"
+$ npx mocha
+
+  TestSearch
+    ✔ should search (791ms)
+
+
+  1 passing (3s)
+```
+
+</LanguageContent>
+
+## Setup Alumnium
+
+<LanguageContent lang="typescript">
+The next thing we need to do is to start the Alumnium server. It is responsible for communication between the browser and the AI model and **must be running for the tests to work**. You can start it using Docker:
+
+```bash title="Starting server"
+$ docker run --rm --detach \
+      --publish 8013:8013 \
+      --env ALUMNIUM_MODEL \
+      --env OPENAI_API_KEY \
+      alumnium/alumnium
+```
+
+</LanguageContent>
+
+Now let’s add the code that would instantiate Alumnium using the browser. We can use a test fixture to ensure proper setup and teardown of the Alumnium instance:
+
+<LanguageContent lang="python">
+
+```python title="test_search.py" ins={1, 13-17} ins="al: Alumni"
+from alumnium import Alumni
+from selenium.webdriver import Chrome
+from pytest import fixture
+
+
+@fixture
+def driver():
+    driver = Chrome()
+    yield driver
+    driver.quit()
+
+
+@fixture
+def al(driver: Chrome):
+    al = Alumni(driver)
+    yield al
+    al.quit()
+
+
+def test_search(al: Alumni, driver: Chrome):
+    driver.get("https://duckduckgo.com")
+```
+
+The test should still work fine, let's re-run it to make sure:
+
+```bash title="Running test"
+$ pytest --quiet
+...
+1 passed in 7.81s
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript title="search.test.ts" ins={2, 7, 11, 16}
+import { strict as assert } from "assert";
+import { Alumni } from "alumnium";
+import { Builder, Browser, type WebDriver } from "selenium-webdriver";
+
+describe("TestSearch", () => {
+  let driver: WebDriver;
+  let al: Alumni;
+
+  before(async () => {
+    driver = await new Builder().forBrowser(Browser.CHROME).build();
+    al = new Alumni(driver);
+  });
+
+  after(async () => {
+    await driver.quit();
+    await al.quit();
+  });
+
+  it("should search", async () => {
+    await driver.get("https://duckduckgo.com");
+  });
+});
+```
+
+The test should still work fine, let's re-run it to make sure:
+
+```bash title="Running test"
+$ npx mocha
+
+  TestSearch
+    ✔ should search (813ms)
+
+
+  1 passing (3s)
+```
+
+</LanguageContent>
+
+:::note
+If you are getting errors about missing API keys, make sure you [configured][1] Alumnium and try again!
+::::
+
+## Add Actions
+
+Now let's add some actions that Alumnium should **do** on the page. Our test needs to search for a Mercury element, so let's use this exact command:
+
+<LanguageContent lang="python">
+
+```python title="test_search.py" ins={22}
+from alumnium import Alumni
+from selenium.webdriver import Chrome
+from pytest import fixture
+
+
+@fixture
+def driver():
+    driver = Chrome()
+    yield driver
+    driver.quit()
+
+
+@fixture
+def al(driver: Chrome):
+    al = Alumni(driver)
+    yield al
+    al.quit()
+
+
+def test_search(al: Alumni, driver: Chrome):
+    driver.get("https://duckduckgo.com")
+    al.do("search for 'Mercury element' and press Enter")
+```
+
+Run the test, you should now see "Mercury element" typed in the search box and the page with results loaded.
+
+```bash title="Running test"
+$ pytest --quiet
+...
+1 passed in 11.34s
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript title="search.test.ts" ins={21}
+import { strict as assert } from "assert";
+import { Alumni } from "alumnium";
+import { Builder, Browser, type WebDriver } from "selenium-webdriver";
+
+describe("TestSearch", () => {
+  let driver: WebDriver;
+  let al: Alumni;
+
+  before(async () => {
+    driver = await new Builder().forBrowser(Browser.CHROME).build();
+    al = new Alumni(driver);
+  });
+
+  after(async () => {
+    await driver.quit();
+    await al.quit();
+  });
+
+  it("should search", async () => {
+    await driver.get("https://duckduckgo.com");
+    await al.do("search for 'Mercury element' and press Enter");
+  });
+});
+```
+
+Run the test, you should now see "Mercury element" typed in the search box and the page with results loaded.
+
+```bash title="Running test"
+$ npx mocha
+
+  TestSearch
+    ✔ should search (12680ms)
+
+
+1 passing (14s)
+```
+
+</LanguageContent>
+
+## Add Verifications
+
+The next step is to add some verifications that Alumnium should **check** on the page. We are going to add two of them, one that checks that the page title contains the search keyword and one to see if the Wikipedia article is present in the results.
+
+Common wisdom says to _never trust a test you haven't seen fail_. Let's add the first verification and see it fail!
+
+<LanguageContent lang="python">
+
+```python title="test_search.py" ins={23}
+from alumnium import Alumni
+from selenium.webdriver import Chrome
+from pytest import fixture
+
+
+@fixture
+def driver():
+    driver = Chrome()
+    yield driver
+    driver.quit()
+
+
+@fixture
+def al(driver: Chrome):
+    al = Alumni(driver)
+    yield al
+    al.quit()
+
+
+def test_search(al: Alumni, driver: Chrome):
+    driver.get("https://duckduckgo.com")
+    al.do("search for 'Mercury element' and press Enter")
+    al.check("page title contains Aluminium word")
+```
+
+Now let's run our test:
+
+```bash title="Running test" wrap {4}
+$ pytest --quiet
+F
+...
+E       AssertionError: The requested information is whether the page title contains the word 'Aluminium'. The page title is 'Mercury element at DuckDuckGo', which does not include the word 'Aluminium'. Therefore, the statement is false.
+...
+1 failed in 25.21s
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript title="search.test.ts" ins={22}
+import { strict as assert } from "assert";
+import { Alumni } from "alumnium";
+import { Builder, Browser, type WebDriver } from "selenium-webdriver";
+
+describe("TestSearch", () => {
+  let driver: WebDriver;
+  let al: Alumni;
+
+  before(async () => {
+    driver = await new Builder().forBrowser(Browser.CHROME).build();
+    al = new Alumni(driver);
+  });
+
+  after(async () => {
+    await driver.quit();
+    await al.quit();
+  });
+
+  it("should search", async () => {
+    await driver.get("https://duckduckgo.com");
+    await al.do("search for 'Mercury element' and press Enter");
+    await al.check("page title contains Aluminium word");
+  });
+});
+```
+
+Now let's run our test:
+
+```bash title="Running test" wrap {3}
+$ npx mocha
+...
+     AssertionError: The requested information is about whether the page title contains the word 'Aluminium'. The page title is 'Mercury element at DuckDuckGo', which does not include the word 'Aluminium'. Therefore, the statement is false.
+...
+  1 failing
+```
+
+</LanguageContent>
+
+Our test failed as we expected and provided a meaningful explanation of what went wrong.
+
+Let's fix the first check and add another one to fail again:
+
+<LanguageContent lang="python">
+
+```python title="test_search.py" del={23} ins={24-25}
+from alumnium import Alumni
+from selenium.webdriver import Chrome
+from pytest import fixture
+
+
+@fixture
+def driver():
+    driver = Chrome()
+    yield driver
+    driver.quit()
+
+
+@fixture
+def al(driver: Chrome):
+    al = Alumni(driver)
+    yield al
+    al.quit()
+
+
+def test_search(al: Alumni, driver: Chrome):
+    driver.get("https://duckduckgo.com")
+    al.do("search for 'Mercury element' and press Enter")
+    al.check("page title contains Aluminium word")
+    al.check("page title contains Mercury word")
+    al.check("search results do not contain Wikipedia articles")
+```
+
+Time to re-run the test:
+
+```bash title="Running test" wrap {4}
+$ pytest --quiet
+F
+...
+E       AssertionError: The search results do contain links to Wikipedia articles, specifically mentioning 'Mercury (element) - Wikipedia' and providing a link to the Wikipedia page for Mercury. Therefore, the statement is false.
+...
+1 failed in 37.28s
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript title="search.test.ts" del={22} ins={23-24}
+import { strict as assert } from "assert";
+import { Alumni } from "alumnium";
+import { Builder, Browser, type WebDriver } from "selenium-webdriver";
+
+describe("TestSearch", () => {
+  let driver: WebDriver;
+  let al: Alumni;
+
+  before(async () => {
+    driver = await new Builder().forBrowser(Browser.CHROME).build();
+    al = new Alumni(driver);
+  });
+
+  after(async () => {
+    await driver.quit();
+    await al.quit();
+  });
+
+  it("should search", async () => {
+    await driver.get("https://duckduckgo.com");
+    await al.do("search for 'Mercury element' and press Enter");
+    await al.check("page title contains Aluminium word");
+    await al.check("page title contains Mercury word");
+    await al.check("search results do not contain Wikipedia articles");
+  });
+});
+```
+
+Time to re-run the test:
+
+```bash title="Running test" wrap {3}
+$ npx mocha
+...
+     AssertionError: The search results do contain Wikipedia articles, as indicated by the presence of links to Wikipedia in the accessibility tree. For example, there is a link with the text 'More at Wikipedia' and another link titled 'Mercury (element) - Wikipedia'. Therefore, the statement is false.
+...
+  1 failing
+```
+
+</LanguageContent>
+
+Ok, the test failed as we wanted it to, let's fix it:
+
+<LanguageContent lang="python">
+
+```python title="test_search.py" del={24} ins={25}
+from alumnium import Alumni
+from selenium.webdriver import Chrome
+from pytest import fixture
+
+
+@fixture
+def driver():
+    driver = Chrome()
+    yield driver
+    driver.quit()
+
+
+@fixture
+def al(driver: Chrome):
+    al = Alumni(driver)
+    yield al
+    al.quit()
+
+
+def test_search(al: Alumni, driver: Chrome):
+    driver.get("https://duckduckgo.com")
+    al.do("search for 'Mercury element' and press Enter")
+    al.check("page title contains Mercury word")
+    al.check("search results do not contain Wikipedia articles")
+    al.check("search results contain Wikipedia articles")
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript title="search.test.ts" del={23} ins={24}
+import { strict as assert } from "assert";
+import { Alumni } from "alumnium";
+import { Builder, Browser, type WebDriver } from "selenium-webdriver";
+
+describe("TestSearch", () => {
+  let driver: WebDriver;
+  let al: Alumni;
+
+  before(async () => {
+    driver = await new Builder().forBrowser(Browser.CHROME).build();
+    al = new Alumni(driver);
+  });
+
+  after(async () => {
+    await driver.quit();
+    await al.quit();
+  });
+
+  it("should search", async () => {
+    await driver.get("https://duckduckgo.com");
+    await al.do("search for 'Mercury element' and press Enter");
+    await al.check("page title contains Mercury word");
+    await al.check("search results do not contain Wikipedia articles");
+    await al.check("search results contain Wikipedia articles");
+  });
+```
+
+Now, re-run to make sure it passes:
+
+```bash title="Running test"
+$ npx mocha
+
+  TestSearch
+    ✔ should search (14233ms)
+
+
+  1 passing (17s)
+```
+
+</LanguageContent>
+
+## Add Data Retrieval
+
+Finally, let's verify some data that Alumnium can **get** from the page. We are going to ensure the Mercury element card shows its symbol correctly.
+
+Let's add a failing verification first:
+
+<LanguageContent lang="python">
+
+```python title="test_search.py" ins={25-27}
+from alumnium import Alumni
+from selenium.webdriver import Chrome
+from pytest import fixture
+
+
+@fixture
+def driver():
+    driver = Chrome()
+    yield driver
+    driver.quit()
+
+
+@fixture
+def al(driver: Chrome):
+    al = Alumni(driver)
+    yield al
+    al.quit()
+
+
+def test_search(al: Alumni, driver: Chrome):
+    driver.get("https://duckduckgo.com")
+    al.do("search for 'Mercury element' and press Enter")
+    al.check("page title contains Mercury word")
+    al.check("search results contain Wikipedia articles")
+    symbol = al.get("chemical symbol")
+    assert symbol == "Al"
+```
+
+Time to re-run the test:
+
+```bash title="Running test" {3-6}
+$ pytest --quiet
+...
+E       AssertionError: assert 'Hg' == 'Al'
+E
+E         - Al
+E         + Hg
+...
+1 failed in 49.14s
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript title="search.test.ts" ins={24-25}
+import { strict as assert } from "assert";
+import { Alumni } from "alumnium";
+import { Builder, Browser, type WebDriver } from "selenium-webdriver";
+
+describe("TestSearch", () => {
+  let driver: WebDriver;
+  let al: Alumni;
+
+  before(async () => {
+    driver = await new Builder().forBrowser(Browser.CHROME).build();
+    al = new Alumni(driver);
+  });
+
+  after(async () => {
+    await driver.quit();
+    await al.quit();
+  });
+
+  it("should search", async () => {
+    await driver.get("https://duckduckgo.com");
+    await al.do("search for 'Mercury element' and press Enter");
+    await al.check("page title contains Mercury word");
+    await al.check("search results contain Wikipedia articles");
+    const symbol = await al.get("chemical symbol");
+    assert.equal(symbol, "Al");
+  });
+});
+```
+
+Time to re-run the test:
+
+```bash title="Running test" {3-7}
+$ npx mocha
+...
+      AssertionError [ERR_ASSERTION]: 'Hg' == 'Al'
+      + expected - actual
+
+      -Hg
+      +Al
+...
+```
+
+</LanguageContent>
+
+The test failed as expected, let's fix it and re-run to make sure it's passing:
+
+<LanguageContent lang="python">
+
+```python title="test_search.py" del={26} ins={27}
+from alumnium import Alumni
+from selenium.webdriver import Chrome
+from pytest import fixture
+
+
+@fixture
+def driver():
+    driver = Chrome()
+    yield driver
+    driver.quit()
+
+
+@fixture
+def al(driver: Chrome):
+    al = Alumni(driver)
+    yield al
+    al.quit()
+
+
+def test_search(al: Alumni, driver: Chrome):
+    driver.get("https://duckduckgo.com")
+    al.do("search for 'Mercury element' and press Enter")
+    al.check("page title contains Mercury word")
+    al.check("search results contain Wikipedia articles")
+    symbol = al.get("chemical symbol")
+    assert symbol == "Al"
+    assert symbol == "Hg"
+```
+
+```bash title="Running test"
+$ pytest --quiet
+...
+1 passed in 64.50s (0:01:04)
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript title="search.test.ts" del={25} ins={26}
+import { strict as assert } from "assert";
+import { Alumni } from "alumnium";
+import { Builder, Browser, type WebDriver } from "selenium-webdriver";
+
+describe("TestSearch", () => {
+  let driver: WebDriver;
+  let al: Alumni;
+
+  before(async () => {
+    driver = await new Builder().forBrowser(Browser.CHROME).build();
+    al = new Alumni(driver);
+  });
+
+  after(async () => {
+    await driver.quit();
+    await al.quit();
+  });
+
+  it("should search", async () => {
+    await driver.get("https://duckduckgo.com");
+    await al.do("search for 'Mercury element' and press Enter");
+    await al.check("page title contains Mercury word");
+    await al.check("search results contain Wikipedia articles");
+    const symbol = await al.get("chemical symbol");
+    assert.equal(symbol, "Al");
+    assert.equal(symbol, "Hg");
+  });
+});
+```
+
+```bash title="Running test"
+$ npx mocha
+
+  TestSearch
+    ✔ should search (29270ms)
+
+
+  1 passing (32s)
+```
+
+</LanguageContent>
+
+Congratulations, we have completed our first test!
+
+[1]: /docs/getting-started/configuration
+[2]: https://pytest.org
+[3]: https://mochajs.org
+[4]: https://docs.docker.com/get-docker/
+[5]: https://www.selenium.dev/

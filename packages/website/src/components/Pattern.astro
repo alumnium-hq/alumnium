@@ -1,0 +1,58 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  mode?: "post" | "list";
+  author: {
+    name: string;
+    image: string;
+  };
+  tags?: string[];
+}
+
+import Author from "./Author.astro";
+import FormattedDate from "./FormattedDate.astro";
+import Tags from "./Tags.astro";
+const { title, mode, date, author, tags } = Astro.props;
+
+const className = [
+  "font-bold text-white leading-tight text-center text-balance text-3xl",
+  mode === "post" ? "sm:text-[3rem]" : "sm:text-[2rem] md:text-[2.5rem]",
+];
+---
+
+<div
+  class:list={[
+    "bg-[url('/src/assets/pattern.svg')] bg-repeat bg-[length:48px_48px] overflow-hidden",
+    mode === "post" ? "" : "sm:aspect-video rounded-xl",
+  ]}
+>
+  <div
+    class:list={[
+      "bg-gradient-to-b from-cerulean-blue-800/40 to-cerulean-blue-950 w-full h-full flex flex-col justify-end items-center px-2 py-4 sm:p-10",
+      mode === "post" ? "pt-20 sm:pt-[10rem]" : "pt-20 sm:pt-4",
+    ]}
+  >
+    <div class="gap-3 flex flex-col items-center max-w-screen-lg">
+      {
+        mode === "post" ? (
+          <h1 class:list={className} id="_top">
+            {title}
+          </h1>
+        ) : (
+          <h3 class:list={className}>{title}</h3>
+        )
+      }
+
+      <div class="text-gray-300">
+        <Author prefix="Published by" author={author} />
+      </div>
+
+      <div class="text-gray-300">
+        <FormattedDate date={date} />
+      </div>
+
+      <Tags tags={tags} mode="pattern" />
+    </div>
+  </div>
+</div>

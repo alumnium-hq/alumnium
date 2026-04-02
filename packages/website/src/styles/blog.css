@@ -1,0 +1,25 @@
+.prose p > img {
+  display: block;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.prose p > img[alt="Architecture diagram"] {
+  max-width: 450px;
+}
+
+figure:not(.is-terminal) code {
+  counter-reset: step;
+  counter-increment: step 0;
+}
+
+figure:not(.is-terminal) code .ec-line::before {
+  content: counter(step);
+  counter-increment: step;
+  width: 2rem;
+  margin-right: 0rem;
+  display: inline-block;
+  text-align: right;
+  color: rgba(115, 138, 148, 0.4);
+}

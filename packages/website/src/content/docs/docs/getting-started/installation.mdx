@@ -1,0 +1,52 @@
+---
+title: Installation
+description: Learn how to install Alumnium, an AI-powered test automation tool.
+---
+
+import LanguageContent from "../../../../components/LanguageContent.astro";
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+<LanguageContent lang="python">
+
+Alumnium requires Python 3+ and is distributed as a [PyPI package](https://pypi.org/project/alumnium/).
+
+To install, run the following command:
+
+```bash title="Installing dependencies…"
+pip install alumnium
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+Alumnium for TypeScript requires Node.js 18+ and is distributed as an [NPM package](https://www.npmjs.com/package/alumnium).
+
+To install, run one of the following commands:
+
+<Tabs>
+  <TabItem label="npm">
+
+```bash title="Installing dependencies…"
+npm install alumnium
+```
+
+  </TabItem>
+  <TabItem label="pnpm">
+
+```bash title="Installing dependencies…"
+pnpm add alumnium
+```
+
+  </TabItem>
+  <TabItem label="Yarn">
+
+```bash title="Installing dependencies…"
+yarn add alumnium
+```
+
+  </TabItem>
+</Tabs>
+</LanguageContent>
+
+That's it! Keep reading to learn how to configure Alumnium to use an AI provider.

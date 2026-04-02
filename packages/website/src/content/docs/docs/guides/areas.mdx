@@ -1,0 +1,90 @@
+---
+title: Focusing Areas
+description: Learn how Alumnium focuses on distinctive areas of the application under test.
+---
+
+import LanguageContent from "../../../../components/LanguageContent.astro";
+
+By default, Alumnium operates over the entire application under test. However, this approach can have drawbacks, sometimes resulting in cumbersome and slow tests.
+
+For example, imagine you are testing two similar-looking tables:
+
+![A screenshot of application with "Example 1" and "Example 2" tables](../../../../assets/tables.png)
+
+Suppose you want to assert data from each table separately. You would need to repeat the table name in each call:
+
+<LanguageContent lang="python">
+
+```python
+last_names = al.get("last names from 'Example 1' table")
+first_names = al.get("first names from 'Example 1' table")
+assert last_names == ["Smith", "Bach", "Doe", "Conway"]
+assert first_names == ["John", "Frank", "Jason", "Tim"]
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+const lastNames = await al.get("last names from 'Example 1' table");
+const firstNames = await al.get("first names from 'Example 1' table");
+expect(lastNames).toEqual(["Smith", "Bach", "Doe", "Conway"]);
+expect(firstNames).toEqual(["John", "Frank", "Jason", "Tim"]);
+```
+
+</LanguageContent>
+
+This repetition is not only cumbersome but also affects accuracy and performance, as Alumnium must process the accessibility tree of the **entire** application each time, including both tables. To simplify your tests and improve both accuracy and speed, you can locate an _area_ and retrieve data from it instead:
+
+<LanguageContent lang="python">
+
+```python
+area = al.area("'Example 1' table")
+assert area.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
+assert area.get("first names") == ["John", "Frank", "Jason", "Tim"]
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+const area = await al.area("'Example 1' table");
+expect(await area.get("last names")).toEqual(["Smith", "Bach", "Doe", "Conway"]);
+expect(await area.get("first names")).toEqual(["John", "Frank", "Jason", "Tim"]);
+```
+
+</LanguageContent>
+
+You can use all regular Alumnium methods on areas, including `do`, `get`, `check`, and `find`. Once located, the area is not automatically updated when UI of the application changes. This means that you need to re-locate area again so it's fresh:
+
+<LanguageContent lang="python">
+
+```python
+area = al.area("'Example 1' table")
+assert area.get("last names") == ["Smith", "Bach", "Doe", "Conway"]
+
+area.do("sort by last name")  # change order of rows
+assert area.get("last names") == ["Bach", "Conway", "Doe", "Smith"]  # error
+
+area = al.area("'Example 1' table")  # re-locate the table
+assert area.get("last names") == ["Bach", "Conway", "Doe", "Smith"]  # passes
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+let area = await al.area("'Example 1' table");
+expect(await area.get("last names")).toEqual(["Smith", "Bach", "Doe", "Conway"]);
+
+await area.do("sort by last name"); // change order of rows
+expect(await area.get("last names")).toEqual(["Bach", "Conway", "Doe", "Smith"]); // error
+
+area = await al.area("'Example 1' table"); // re-locate the table
+expect(await area.get("last names")).toEqual(["Bach", "Conway", "Doe", "Smith"]); // passes
+```
+
+</LanguageContent>
