@@ -3,7 +3,7 @@
     "alumnium": {
       "type": "stdio",
       "command": "mise",
-      "args": [":dev:mcp"],
+      "args": [":dev/mcp"],
       "envFile": "${workspaceFolder}/.env",
       "env": {
         "ALUMNIUM_LOG_LEVEL": "${env:ALUMNIUM_LOG_LEVEL}",

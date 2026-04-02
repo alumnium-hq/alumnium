@@ -4,7 +4,7 @@
       "type": "stdio",
       "trust": true,
       "command": "mise",
-      "args": [":dev:mcp"],
+      "args": [":dev/mcp"],
       "env": {
         "ALUMNIUM_LOG_LEVEL": "${env:ALUMNIUM_LOG_LEVEL:-}",
         "ALUMNIUM_LOG_FILENAME": "mcp-global.log",

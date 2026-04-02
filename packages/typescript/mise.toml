@@ -44,6 +44,24 @@ outputs = [
 run = "./scripts/publish.sh"
 depends = "build"
 
+[tasks."dev/cli"]
+run = "fnox exec  -- bun ./src/cli/bin.ts"
+quiet = true
+raw = true
+
+[tasks."dev/server"]
+run = "fnox exec  -- bun ./src/cli/bin.ts server"
+quiet = true
+raw = true
+
+[tasks."dev/mcp"]
+run = "fnox exec  -- bun ./src/cli/bin.ts mcp"
+quiet = true
+raw = true
+
+[tasks."dev/mcp:inspect"]
+run = "fnox exec  -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./src/cli/bin.ts mcp"
+
 [tasks.test]
 run = [{ task = "test/unit" }, { task = "test/system:all" }]
 

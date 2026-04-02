@@ -15,7 +15,7 @@ uv = "latest"
 fnox = "latest" # Secrets manager
 opencode = "latest" # AI agent
 claude = "latest" # AI agent
-gh ="latest" # GitHub CLI
+gh = "latest" # GitHub CLI
 ruff = "latest" # Python formatter
 shfmt = "latest" # .sh formatter
 oxfmt = "latest" # TS formatter
@@ -30,7 +30,7 @@ ALUMNIUM_MODEL = "${ALUMNIUM_MODEL:-azure_openai}"
 ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT = "2000"
 AZURE_OPENAI_API_VERSION = "${AZURE_OPENAI_API_VERSION:-2025-03-01-preview}"
 # Tool envs
-gh ="latest" # GitHub CLI
+gh = "latest" # GitHub CLI
 MISE_EXPERIMENTAL = true # Enable monorepo root support
 OPENCODE_CONFIG_DIR = "./.agents"
 FORCE_COLOR = "1" # Force colors, i.e., for `bun --filter test`
@@ -55,43 +55,42 @@ run = "mise install"
 run = "bun install"
 # NOTE: No need to specify sources and outputs as `bun install` is faster at tracking them than mise.
 
-[tasks."dev:mcp"]
-run = "fnox exec  -- bun ./packages/typescript/src/cli/bin.ts mcp"
+[tasks."dev/cli"]
+run = [{ task = "//packages/typescript:dev/cli" }]
+quiet = true
+raw = true
+
+[tasks."dev/server"]
+run = [{ task = "//packages/typescript:dev/server" }]
+quiet = true
+raw = true
+
+[tasks."dev/mcp"]
+run = [{ task = "//packages/typescript:dev/mcp" }]
 quiet = true
 raw = true
 
 [tasks."dev/mcp:inspect"]
-run = "cd packages/typescript && fnox exec  -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./src/cli/bin.ts mcp"
-
-[tasks."dev/server/start"]
-run = "fnox exec  -- bun ./packages/typescript/src/cli/bin.ts server"
+run = [{ task = "//packages/typescript:dev/mcp:inspect" }]
 
 [tasks."clean"]
 run = "rm -rf ./.alumnium"
+depends_post = ["//packages/typescript:clean", "//packages/python:clean"]
 
 [tasks.format]
-run = [
-  { task = "//packages/typescript:format" },
-  { task = "//packages/python:format" },
-]
+depends = ["//packages/typescript:format", "//packages/python:format"]
 
 [tasks."format:check"]
-run = [
-  { task = "//packages/typescript:format:check" },
-  { task = "//packages/python:format:check" },
+depends = [
+  "//packages/typescript:format:check",
+  "//packages/python:format:check",
 ]
 
 [tasks.types]
-run = [
-  { task = "types/ts" },
-  { task = "//packages/python:types" },
-]
+depends = ["types/ts", "//packages/python:types"]
 
 [tasks."test/unit"]
-run = [
-  { task = "//packages/typescript:test/unit" },
-  { task = "//packages/python:test/unit" },
-]
+depends = ["//packages/typescript:test/unit", "//packages/python:test/unit"]
 
 [tasks."types/ts"]
 run = "bun run tsgo --build"
