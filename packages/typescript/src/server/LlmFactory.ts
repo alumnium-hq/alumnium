@@ -216,13 +216,13 @@ export class LlmFactory {
   static createDeepSeekLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating DeepSeek LLM with model ${model.name}`);
 
-    return new ChatDeepSeek({
+    const deepSeek = new ReasonableChatDeepSeek({
       model: model.name,
       temperature: 0,
-      // TODO: Python implementation also includes field missing in JS SDK:
-      //     disabled_params={"tool_choice": None}
       cache,
     });
+
+    return deepSeek;
   }
 
   static createGoogleLlm(model: Model, cache: BaseCache): BaseChatModel {
@@ -232,16 +232,12 @@ export class LlmFactory {
       return new ChatGoogleGenerativeAI({
         model: model.name,
         temperature: 0,
-        // TODO: Timeout option is missing in the provider options.
-        // timeout: MODEL_TIMEOUT,
         cache,
       });
     } else {
       return new ChatGoogleGenerativeAI({
         model: model.name,
         temperature: 0,
-        // TODO: Timeout option is missing in the provider options.
-        // timeout: MODEL_TIMEOUT,
         thinkingConfig: {
           thinkingLevel: "LOW",
           includeThoughts: true,
@@ -268,8 +264,6 @@ export class LlmFactory {
     return new ChatMistralAI({
       model: model.name,
       temperature: 0,
-      // TODO: Timeout option is missing in the provider options.
-      // timeout: MODEL_TIMEOUT,
       cache,
     });
   }
@@ -283,16 +277,12 @@ export class LlmFactory {
         model: model.name,
         baseUrl,
         temperature: 0,
-        // TODO: Timeout option is missing in the provider options.
-        // timeout: MODEL_TIMEOUT,
         cache,
       });
     } else {
       return new ChatOllama({
         model: model.name,
         temperature: 0,
-        // TODO: Timeout option is missing in the provider options.
-        // timeout: MODEL_TIMEOUT,
         cache,
       });
     }
@@ -365,4 +355,16 @@ function maskStr(str: string, unmaskedStart = 4, unmaskedEnd = 4): string {
     "*".repeat(maskedLength) +
     str.slice(str.length - unmaskedEnd)
   );
+}
+
+class ReasonableChatDeepSeek extends ChatDeepSeek {
+  override invocationParams(
+    ...args: Parameters<ChatDeepSeek["invocationParams"]>
+  ) {
+    const params = super.invocationParams(...args);
+    // NOTE: Workaround for "Error: 400 deepseek-reasoner does not support this tool_choice"
+    // LangChain Python supports disabled_params, but it's missing in the JS SDK.
+    delete params.tool_choice;
+    return params;
+  }
 }
