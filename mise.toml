@@ -89,11 +89,17 @@ depends = [
 [tasks.types]
 depends = ["types/ts", "//packages/python:types"]
 
-[tasks."test/unit"]
-depends = ["//packages/typescript:test/unit", "//packages/python:test/unit"]
-
 [tasks."types/ts"]
 run = "bun run tsgo --build"
 
 [tasks."types/ts:watch"]
 run = "bun run tsgo --build --watch"
+
+[tasks."test/unit"]
+depends = ["//packages/typescript:test/unit", "//packages/python:test/unit"]
+
+[tasks."test/system"]
+run = [
+  { task = "//packages/typescript:test/system" },
+  { task = "//packages/python:test/system" },
+]

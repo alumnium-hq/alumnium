@@ -532,7 +532,9 @@ class PlaywrightDriver(BaseDriver):
 
                                 # Track which iframe this is in
                                 if iframe_backend_node_id:
-                                    synthetic_node["_frame_chain"] = [iframe_backend_node_id]  # ty:ignore[invalid-assignment]
+                                    synthetic_node["_frame_chain"] = [
+                                        iframe_backend_node_id
+                                    ]  # ty:ignore[invalid-assignment]
 
                                 # Store frame reference for element finding
                                 synthetic_node["_frame"] = frame  # ty:ignore[invalid-assignment]

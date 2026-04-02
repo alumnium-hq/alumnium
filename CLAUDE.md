@@ -5,8 +5,8 @@
 AI-powered test automation framework using natural language commands. Wraps Appium, Playwright, and Selenium. Experimental/early development.
 
 **Monorepo structure**:
-- `packages/python/` - Primary implementation + AI server
-- `packages/typescript/` - Client implementation
+- `packages/typescript/` - Primary implementation + MCP and AI servers
+- `packages/python/` - Client implementation
 
 ## Key Architecture
 
@@ -30,33 +30,47 @@ AI-powered test automation framework using natural language commands. Wraps Appi
 ## Development
 
 ### Common commands
+
 ```bash
 # Root
-make install                      # or cd packages/{python,typescript} and install separately
-make test                         # Python tests
-make format                       # Format both
+mise :install                         # or cd packages/{python,typescript} and install separately
+mise :format                          # Format code
+mise :types                           # Check types
+mise :lint                            # Run linter
+mise :test/unit                       # Run unit tests
+mise :test/system                     # Run all system tests
 
 # Python
 cd packages/python
-poetry poe test                   # Run unit tests
-poetry poe format                 # Format
-poetry run behave                 # Run example BDD tests
-poetry run pytest examples/       # Run example Pytest tests, use ALUMNIUM_DRIVER variable to switch drivers
-poetry run alumnium-mcp           # Start Alumnium MCP
-poetry run alumnium-server        # Start Alumnium server
+mise :build                           # Build
+mise :format                          # Format code
+mise :types                           # Check types
+mise :lint                            # Run linter
+mise :test/unit                       # Run unit tests
+TEST_ONLY=behave mise :test/system    # Run BDD system tests
+TEST_ONLY=pytest mise :test/system    # Run Pytest system tests
+mise :test/system:playwright          # Run Playwright system tests
+mise :test/system:selenium            # Run Selenium system tests
+mise :test/system:appium-ios          # Run Appium iOS system tests
+mise :test/system:appium-android      # Run Appium Android system tests
 
 # TypeScript
 cd packages/typescript
-npm run build                     # Build
-npm run examples                  # Run tests
-npm run format                    # Format
-npm run examples:appium           # Run Appium example tests
-npm run examples:playwright       # Run Playwright example tests
-npm run examples:selenium         # Run Selenium example tests
+mise :build                           # Build
+mise :format                          # Format code
+mise :types                           # Check types
+mise :lint                            # Run linter
+mise :test/unit                       # Run unit tests
+mise :test/system:playwright          # Run Playwright system tests
+mise :test/system:selenium            # Run Selenium system tests
+mise :test/system:appium-ios          # Run Appium iOS system tests
+mise :test/system:appium-android      # Run Appium Android system tests
+mise :dev/mcp                         # Start Alumnium MCP
+mise :dev/server                      # Start Alumnium server
 ```
 
 ## Best Practices
 
-1. **Read files before editing** - Understand current implementation
-2. **Match existing patterns** - Keep architecture consistent
-3. **Update both languages** - Maintain API parity between Python/TypeScript
+1. **Read files before editing**: Understand current implementation
+2. **Match existing patterns**: Keep architecture consistent
+3. **Update both languages**: Maintain API parity between Python/TypeScript

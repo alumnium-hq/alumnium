@@ -22,18 +22,25 @@ cd "$PKG_DIR"
 export ALUMNIUM_LOG_LEVEL=debug
 export ALUMNIUM_PRUNE_LOGS=true
 
-echo -e "🌀 Running behave tests\n"
-run_tests fnox exec -- \
-	env ALUMNIUM_LOG_FILENAME=test-system-behave-$ALUMNIUM_DRIVER.log \
-	uv run behave -t "@$ALUMNIUM_DRIVER" -f html-pretty -o reports/behave.html -f pretty
+TEST_ONLY=${TEST_ONLY:-behave,pytest}
 
-if [ "$ALUMNIUM_DRIVER" == "appium-android" ]; then
-	echo -e "🟠 Skipping pytest tests for $ALUMNIUM_DRIVER\n"
-else
-	echo -e "🌀 Running pytest tests\n"
+# Check if TEST_ONLY includes "behave"
+if [[ "$TEST_ONLY" == *"behave"* ]]; then
+	echo -e "🌀 Running behave tests\n"
 	run_tests fnox exec -- \
-		env ALUMNIUM_LOG_FILENAME=test-system-pytest-$ALUMNIUM_DRIVER.log \
-		uv run pytest --retries 3 --html reports/pytest.html examples/pytest
+		env ALUMNIUM_LOG_FILENAME=test-system-behave-$ALUMNIUM_DRIVER.log \
+		uv run behave -t "@$ALUMNIUM_DRIVER" -f html-pretty -o reports/behave.html -f pretty
+fi
+
+if [[ "$TEST_ONLY" == *"pytest"* ]]; then
+	if [ "$ALUMNIUM_DRIVER" == "appium-android" ]; then
+		echo -e "🟠 Skipping pytest tests for $ALUMNIUM_DRIVER\n"
+	else
+		echo -e "🌀 Running pytest tests\n"
+		run_tests fnox exec -- \
+			env ALUMNIUM_LOG_FILENAME=test-system-pytest-$ALUMNIUM_DRIVER.log \
+			uv run pytest --retries 3 --html reports/pytest.html examples/pytest
+	fi
 fi
 
 echo

@@ -15,7 +15,7 @@
     <a href="https://alumnium.ai/docs/">Documentation</a>
 </p>
 
-Alumnium is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It simplifies interactions with applications and provide more robust mechanisms for verifying assertions. It works with Appium, Playwright, or Selenium.
+Alumnium is an experimental project that builds upon the existing test automation ecosystem, offering a higher-level abstraction for testing. It simplifies interactions with applications and provides more robust mechanisms for verifying assertions. It works with Appium, Playwright, or Selenium.
 
 ## Installation
 
@@ -40,6 +40,8 @@ al.do("type 'selenium' into the search field, then press 'Enter'")
 al.check("page title contains selenium")
 al.check("search results contain selenium.dev")
 assert al.get("atomic number") == 34
+
+al.quit()
 ```
 
 Check out [documentation][1] and more [examples][2]!

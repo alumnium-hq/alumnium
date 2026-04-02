@@ -36,7 +36,11 @@ npm install alumnium
 ### MCP
 
 ```bash
-claude mcp add alumnium --env OPENAI_API_KEY=... -- uvx --from alumnium alumnium-mcp
+# Using npx:
+claude mcp add alumnium --env OPENAI_API_KEY=... -- npx alumnium mcp
+
+# Using uvx:
+claude mcp add alumnium --env OPENAI_API_KEY=... -- uvx alumnium mcp
 ```
 
 Refer to [documentation][8] for installation details on other MCP clients.
@@ -60,21 +64,17 @@ al.do("type 'selenium' into the search field, then press 'Enter'")
 al.check("page title contains selenium")
 al.check("search results contain selenium.dev")
 assert al.get("atomic number") == 34
+
+al.quit()
 ```
 
 ### TypeScript
 
-1. Run Alumnium server:
-
-```sh
-docker run --rm -p 8013:8013 -e OPENAI_API_KEY=... alumnium/alumnium
-```
-
-2. Run your tests:
-
-```javascript
+```ts
 import { Alumni } from "alumnium";
 import { Builder } from "selenium-webdriver";
+
+process.env.OPENAI_API_KEY = "...";
 
 const driver = await new Builder().forBrowser("chrome").build();
 const al = new Alumni(driver);
@@ -83,7 +83,7 @@ await driver.get("https://search.brave.com");
 await al.do("type 'selenium' into the search field, then press 'Enter'");
 await al.check("page title contains selenium");
 await al.check("search results contain selenium.dev");
-console.log("Atomic number:", await al.get("atomic number")); // 34
+console.assert(await al.get("atomic number") === 34);
 
 await al.quit();
 ```
@@ -93,7 +93,7 @@ Check out [documentation][1] and more [Python][2] and [TypeScript][6] examples!
 ### MCP
 
 1. Run your agent (Claude Code).
-2. Tell it to open URL and test your application.
+2. Tell it to open the URL and test your application.
 
 ## Contributing
 
@@ -103,9 +103,7 @@ See the [contributing guidelines][4] for information on how to get involved in t
 
 [<img alt="TestMu AI" src="https://assets.testmuai.com/resources/images/testmu-ai/footer/footerLogo.svg" width="150">][5]
 
-Alumnium is a member of [TestMu AI][5] Open Source Program, which supports the project community and development with the necessary tools. Thank you! 💚
-
-
+Alumnium is a member of the [TestMu AI][5] Open Source Program, which supports the project community and development with the necessary tools. Thank you! 💚
 
 [1]: https://alumnium.ai/docs/
 [2]: packages/python/examples/
