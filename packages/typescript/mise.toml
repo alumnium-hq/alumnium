@@ -1,5 +1,6 @@
 [tasks.install]
 run = []
+depends_post = "install/playwright"
 
 [tasks."install/playwright"]
 run = "bun run playwright install chromium --with-deps"

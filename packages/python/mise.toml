@@ -8,6 +8,7 @@ _.python.venv = { create = true, path = '.venv' }
 [tasks.install]
 run = "uv sync"
 depends = ["//packages/typescript:build"]
+depends_post = "install/playwright"
 
 [tasks."install/playwright"]
 run = "uv run playwright install chromium --with-deps"
