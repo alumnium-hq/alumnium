@@ -1,9 +1,9 @@
-import { deserializeStoredGeneration } from "@langchain/core/caches";
 import type { Generation } from "@langchain/core/outputs";
 import { describe, expect, it, vi } from "vitest";
 import { createMockDir, pushMock } from "../../../tests/unit/mocks.ts";
 import { AppId } from "../../AppId.ts";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";
+import { Lchain } from "../../llm/Lchain.ts";
 import { Model } from "../../Model.ts";
 import type { RetrieverAgent } from "../agents/RetrieverAgent.ts";
 import { LlmContext } from "../LlmContext.ts";
@@ -33,13 +33,13 @@ describe("ResponseCache", () => {
     const files = await cacheDir.flatTree();
     expect(files).toMatchInlineSnapshot(
       [
-        `${baseDir}/e0bb44d1f59087be/request.json`,
-        `${baseDir}/e0bb44d1f59087be/response.json`,
+        `${baseDir}/d2e93e97ce7079be/request.json`,
+        `${baseDir}/d2e93e97ce7079be/response.json`,
       ],
       `
       [
-        "test-app/azure_openai/gpt-5-nano/responses/e0bb44d1f59087be/request.json",
-        "test-app/azure_openai/gpt-5-nano/responses/e0bb44d1f59087be/response.json",
+        "test-app/azure_openai/gpt-5-nano/responses/d2e93e97ce7079be/request.json",
+        "test-app/azure_openai/gpt-5-nano/responses/d2e93e97ce7079be/response.json",
       ]
     `,
     );
@@ -73,10 +73,10 @@ describe("ResponseCache", () => {
     const baseDir = `test-app/${model}/responses`;
     const files = await cacheDir.flatTree();
     expect(files).toEqual([
-      `${baseDir}/171a4e371acbe42f/request.json`,
-      `${baseDir}/171a4e371acbe42f/response.json`,
-      `${baseDir}/e0bb44d1f59087be/request.json`,
-      `${baseDir}/e0bb44d1f59087be/response.json`,
+      `${baseDir}/a07a64efcdf52cdc/request.json`,
+      `${baseDir}/a07a64efcdf52cdc/response.json`,
+      `${baseDir}/d2e93e97ce7079be/request.json`,
+      `${baseDir}/d2e93e97ce7079be/response.json`,
     ]);
 
     const result1 = await cache1.lookup(prompt1, llmKey);
@@ -147,15 +147,14 @@ async function setup() {
 
 function createGenerations(text: string): Generation[] {
   return [
-    deserializeStoredGeneration({
+    Lchain.fromStored({
       text,
       message: {
         type: "system",
         data: {
           content: text,
-          role: "assistant",
-          tool_call_id: undefined,
-          name: undefined,
+          additional_kwargs: {},
+          response_metadata: {},
         },
       },
     }),

@@ -27,6 +27,10 @@ const tokenSetRatio =
 
 const logger = getLogger(import.meta.url);
 
+// NOTE: This is current empty to preserve compatibility with existing cache entries,
+// as the format didn't change.
+const CACHE_VERSION = "";
+
 const FUZZY_MATCH_THRESHOLD = 95;
 
 export namespace ElementsCache {
@@ -306,7 +310,9 @@ export class ElementsCache extends ServerCache {
     if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") return null;
 
     const cacheKey = this.#cacheKey(agentMeta);
-    const cacheHash: ElementsCache.CacheHash = xxh64Str(cacheKey);
+    const cacheHash: ElementsCache.CacheHash = xxh64Str(
+      CACHE_VERSION + cacheKey,
+    );
 
     const memoryKey = this.#memoryKey(cacheHash, llmKey);
 

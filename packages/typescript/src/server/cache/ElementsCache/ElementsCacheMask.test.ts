@@ -52,6 +52,71 @@ describe("ElementsCacheMask", () => {
       ]);
     });
 
+    it("masks ids in messages", () => {
+      const generation = LchainFactory.storedGenerationWith({
+        content: [
+          { type: "thinking", thinking: "Hmm..." },
+          {
+            type: "functionCall",
+            functionCall: LchainFactory.googleFunctionCall({
+              args: {
+                id: 5,
+              },
+            }),
+          },
+          {
+            type: "functionCall",
+            functionCall: LchainFactory.googleFunctionCall({
+              name: "DragAndDropTool",
+              args: {
+                from_id: 10,
+                to_id: 5,
+              },
+            }),
+          },
+          {
+            type: "functionCall",
+            functionCall: LchainFactory.googleFunctionCall({
+              name: "RandomTool",
+              args: {
+                uid: "123",
+                value: 456,
+              },
+            }),
+          },
+        ],
+      });
+
+      const masked = ElementsCacheMask.mask(generation, [5, 10]);
+
+      expect(masked.message?.data.content).toEqual([
+        expect.objectContaining({ thinking: "Hmm..." }),
+        expect.objectContaining({
+          functionCall: expect.objectContaining({
+            args: {
+              id: "<MASKED_0>",
+            },
+          }),
+        }),
+        expect.objectContaining({
+          functionCall: expect.objectContaining({
+            args: {
+              from_id: "<MASKED_1>",
+              to_id: "<MASKED_0>",
+            },
+          }),
+        }),
+        expect.objectContaining({
+          functionCall: expect.objectContaining({
+            args: {
+              uid: "123",
+              value: 456,
+            },
+          }),
+        }),
+      ]);
+    });
+
     it("returns the same generation when element ids are empty", () => {
       const generation = LchainFactory.storedGenerationWith({
         toolCalls: [
@@ -129,6 +194,74 @@ describe("ElementsCacheMask", () => {
             value: 456,
           },
         },
+      ]);
+    });
+
+    it("unmasks ids in messages", () => {
+      const generation = LchainFactory.storedGenerationWith({
+        content: [
+          { type: "thinking", thinking: "Hmm..." },
+          {
+            type: "functionCall",
+            functionCall: LchainFactory.googleFunctionCall({
+              args: {
+                id: "<MASKED_0>",
+              },
+            }),
+          },
+          {
+            type: "functionCall",
+            functionCall: LchainFactory.googleFunctionCall({
+              name: "DragAndDropTool",
+              args: {
+                from_id: "<MASKED_1>",
+                to_id: "<MASKED_0>",
+              },
+            }),
+          },
+          {
+            type: "functionCall",
+            functionCall: LchainFactory.googleFunctionCall({
+              name: "RandomTool",
+              args: {
+                uid: "123",
+                value: 456,
+              },
+            }),
+          },
+        ],
+      });
+
+      const unmasked = ElementsCacheMask.unmask(generation, {
+        0: 42,
+        1: 99,
+      });
+
+      expect(unmasked.message?.data.content).toEqual([
+        expect.objectContaining({ thinking: "Hmm..." }),
+        expect.objectContaining({
+          functionCall: expect.objectContaining({
+            args: {
+              id: 42,
+            },
+          }),
+        }),
+        expect.objectContaining({
+          functionCall: expect.objectContaining({
+            args: {
+              from_id: 99,
+              to_id: 42,
+            },
+          }),
+        }),
+        expect.objectContaining({
+          functionCall: expect.objectContaining({
+            args: {
+              uid: "123",
+              value: 456,
+            },
+          }),
+        }),
       ]);
     });
 

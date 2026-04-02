@@ -18,16 +18,16 @@ export abstract class ElementsCacheMask {
     try {
       const idToMask = new Map(elementIds.map((id, index) => [id, index]));
 
-      for (const call of masked.message?.data.tool_calls || []) {
-        const args = call.args ?? {};
-        this.ID_FIELDS.forEach((field) => {
-          const value = args[field];
-          if (typeof value === "number" && idToMask.has(value)) {
-            const maskedId = idToMask.get(value);
-            ensure(maskedId);
-            args[field] = this.#maskValue(maskedId);
-          }
+      if (Array.isArray(masked.message?.data.content)) {
+        masked.message?.data.content.forEach((content) => {
+          if (typeof content !== "object" || content.type !== "functionCall")
+            return;
+          this.#maskArgs(content.functionCall.args, idToMask);
         });
+      }
+
+      for (const call of masked.message?.data.tool_calls || []) {
+        this.#maskArgs(call.args, idToMask);
       }
 
       return masked;
@@ -35,6 +35,21 @@ export abstract class ElementsCacheMask {
       logger.debug(`Error masking response: ${error}`);
       return masked;
     }
+  }
+
+  static #maskArgs(
+    args: Record<string, unknown> | undefined,
+    idToMask: Map<number, number>,
+  ) {
+    if (!args) return;
+    this.ID_FIELDS.forEach((field) => {
+      const value = args[field];
+      if (typeof value === "number" && idToMask.has(value)) {
+        const maskedId = idToMask.get(value);
+        ensure(maskedId);
+        args[field] = this.#maskValue(maskedId);
+      }
+    });
   }
 
   static unmask(
@@ -47,12 +62,15 @@ export abstract class ElementsCacheMask {
 
     try {
       for (const toolCall of unmasked.message?.data.tool_calls ?? []) {
-        const args = toolCall.args ?? {};
-        for (const field of ElementsCacheMask.ID_FIELDS) {
-          if (field in args) {
-            args[field] = this.#unmaskValue(args[field], maskToId);
-          }
-        }
+        this.#unmaskArgs(toolCall.args, maskToId);
+      }
+
+      if (Array.isArray(unmasked.message?.data.content)) {
+        unmasked.message?.data.content.forEach((content) => {
+          if (typeof content !== "object" || content.type !== "functionCall")
+            return;
+          this.#unmaskArgs(content.functionCall.args, maskToId);
+        });
       }
 
       return unmasked;
@@ -60,6 +78,18 @@ export abstract class ElementsCacheMask {
       logger.debug(`Error unmasking response: ${error}`);
       return generation;
     }
+  }
+
+  static #unmaskArgs(
+    args: Record<string, unknown> | undefined,
+    maskToId: Record<number, number>,
+  ) {
+    if (!args) return;
+    ElementsCacheMask.ID_FIELDS.forEach((field) => {
+      if (field in args) {
+        args[field] = this.#unmaskValue(args[field], maskToId);
+      }
+    });
   }
 
   static #MASKED_RE = /^<MASKED_(\d+)>$/;

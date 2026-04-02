@@ -70,7 +70,6 @@ export function logSchemaParseError(
   const message = z.prettifyError(error);
   logBlocks("error", `Failed to parse ${name}: "${message}"`, {
     input: { json: input },
-    error: { json: error },
   });
   return message;
 }

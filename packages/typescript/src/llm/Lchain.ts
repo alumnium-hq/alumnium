@@ -18,8 +18,8 @@ export namespace Lchain {
   export type MessageContentObjectReasoing = z.infer<
     typeof Lchain.MessageContentObjectReasoing
   >;
-  export type MessageContentObjectFunctionCall = z.infer<
-    typeof Lchain.MessageContentObjectFunctionCall
+  export type MessageContentObjectGoogleFunctionCall = z.infer<
+    typeof Lchain.MessageContentObjectGoogleFunctionCall
   >;
   export type MessageContentObject = z.infer<
     typeof Lchain.MessageContentObject
@@ -31,7 +31,7 @@ export namespace Lchain {
   export type InputTokenDetails = z.infer<typeof Lchain.InputTokenDetails>;
   export type OutputTokenDetails = z.infer<typeof Lchain.OutputTokenDetails>;
   export type UsageMetadata = z.infer<typeof Lchain.UsageMetadata>;
-  export type FunctionCall = z.infer<typeof Lchain.FunctionCall>;
+  export type GoogleFunctionCall = z.infer<typeof Lchain.GoogleFunctionCall>;
   export type OpenAIToolCall = z.infer<typeof Lchain.OpenAIToolCall>;
   export type ToolCall = z.infer<typeof Lchain.ToolCall>;
   export type InvalidToolCall = z.infer<typeof Lchain.InvalidToolCall>;
@@ -62,15 +62,37 @@ export abstract class Lchain {
     reasoning: z.string(),
   });
 
-  static MessageContentObjectFunctionCall = z.object({
-    type: "function_call",
+  static OpenAIFunctionCall = z.object({
     arguments: z.string(),
+    name: z.string(),
+  });
+
+  static GoogleFunctionCall = z.object({
+    name: z.string(),
+    args: z.record(z.string(), z.unknown()),
+    id: z.string(),
+  });
+
+  static FunctionCall = z.union([
+    this.OpenAIFunctionCall,
+    this.GoogleFunctionCall,
+  ]);
+
+  static MessageContentObjectGoogleFunctionCall = z.object({
+    type: z.literal("functionCall"),
+    functionCall: this.GoogleFunctionCall,
+  });
+
+  static MessageContentObjectGoogleThinking = z.object({
+    type: z.literal("thinking"),
+    thinking: z.string(),
   });
 
   static MessageContentObject = z.union([
     Lchain.MessageContentObjectText,
     Lchain.MessageContentObjectReasoing,
-    Lchain.MessageContentObjectFunctionCall,
+    Lchain.MessageContentObjectGoogleThinking,
+    Lchain.MessageContentObjectGoogleFunctionCall,
   ]);
 
   static MessageContent = z.union([
@@ -103,14 +125,9 @@ export abstract class Lchain {
     output_token_details: Lchain.OutputTokenDetails.optional(),
   });
 
-  static FunctionCall = z.object({
-    arguments: z.string(),
-    name: z.string(),
-  });
-
   static OpenAIToolCall = z.object({
     id: z.string(),
-    function: Lchain.FunctionCall,
+    function: Lchain.OpenAIFunctionCall,
     type: z.literal("function"),
     index: z.number().optional(),
   });
@@ -138,7 +155,7 @@ export abstract class Lchain {
   });
 
   static AdditionalKwargs = z.object({
-    function_call: Lchain.FunctionCall.optional(),
+    function_call: Lchain.OpenAIFunctionCall.optional(),
     tool_calls: z.array(Lchain.OpenAIToolCall).optional(),
   });
 
@@ -181,8 +198,6 @@ export abstract class Lchain {
     content: Lchain.MessageContent,
     tool_calls: z.array(Lchain.ToolCall).optional(),
     invalid_tool_calls: z.array(Lchain.InvalidToolCall).optional(),
-    // role: z.union([z.string(), z.undefined()]),
-    // name: z.union([z.string(), z.undefined()]),
     usage_metadata: Lchain.UsageMetadata.optional(),
     tool_call_id: z.union([z.string(), z.undefined()]).optional(),
     // TODO: Use `Lchain.AdditionalKwargs.optional()`?

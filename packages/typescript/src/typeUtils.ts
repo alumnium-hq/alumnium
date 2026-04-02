@@ -19,9 +19,11 @@ export namespace TypeUtils {
   export type DeepPartial<Type> =
     IsUnknown<Type> extends true
       ? unknown
-      : {
-          [Key in keyof Type]?: DeepPartial<Type[Key]> | undefined;
-        };
+      : Type extends Array<infer ItemType>
+        ? Array<ItemType>
+        : {
+            [Key in keyof Type]?: DeepPartial<Type[Key]> | undefined;
+          };
 }
 
 export abstract class TypeUtils {

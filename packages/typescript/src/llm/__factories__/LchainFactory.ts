@@ -8,6 +8,7 @@ export namespace LchainFactory {
     text?: string | undefined;
     toolCalls?: Lchain.ToolCall[] | undefined;
     usage?: Lchain.UsageMetadata | undefined;
+    content?: Lchain.MessageContent | undefined;
   }
 }
 
@@ -20,17 +21,27 @@ export abstract class LchainFactory {
     };
   }
 
+  static googleFunctionCall(overrides?: Partial<Lchain.GoogleFunctionCall>) {
+    return {
+      id: "call-id",
+      name: "ClickTool",
+      args: { id: 42 },
+      ...overrides,
+    };
+  }
+
   static storedGeneration(
     overrides?: TypeUtils.DeepPartial<Lchain.StoredGeneration> | undefined,
   ): Lchain.StoredGeneration {
     const text = overrides?.text ?? "";
+    const content = overrides?.message?.data?.content ?? text;
     return this.#merge(
       {
         text,
         message: {
           type: "ai",
           data: {
-            content: text,
+            content,
             tool_calls: [],
             invalid_tool_calls: [],
             additional_kwargs: {},
@@ -51,10 +62,13 @@ export abstract class LchainFactory {
   static storedGenerationWith(
     props: LchainFactory.StoredGenerationWithProps,
   ): Lchain.StoredGeneration {
-    const { text, toolCalls, usage } = props;
+    const { text, content, toolCalls, usage } = props;
     let overrides: TypeUtils.DeepPartial<Lchain.StoredGeneration> = {};
 
     if (text) overrides = this.#merge(overrides, { text });
+
+    if (content)
+      overrides = this.#merge(overrides, { message: { data: { content } } });
 
     if (toolCalls)
       overrides = this.#merge(overrides, {

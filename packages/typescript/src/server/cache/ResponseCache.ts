@@ -1,15 +1,9 @@
-import {
-  deserializeStoredGeneration,
-  serializeGeneration,
-} from "@langchain/core/caches";
-import type { StoredGeneration } from "@langchain/core/messages";
 import type { Generation } from "@langchain/core/outputs";
 import { canonize } from "smolcanon";
 import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Lchain } from "../../llm/Lchain.ts";
-import { logBlocks, logSchemaParseError } from "../../utils/logFormat.ts";
 import { getLogger } from "../../utils/logger.ts";
 import type { Agent } from "../agents/Agent.ts";
 import { LlmContext } from "../LlmContext.ts";
@@ -19,11 +13,13 @@ import { ServerCache } from "./ServerCache.ts";
 
 const logger = getLogger(import.meta.url);
 
+const CACHE_VERSION = "v1";
+
 export namespace ResponseCache {
   export interface MemoryEntry {
     prompt: LlmContext.Prompt;
     llmKey: LlmContext.LlmKey;
-    generations: Generation[];
+    generations: Lchain.StoredGeneration[];
     app: AppId;
   }
 
@@ -68,28 +64,22 @@ export class ResponseCache extends ServerCache {
           `Cache hit (in-memory) for prompt: "${prompt.slice(0, 100)}..."`,
         );
         this.#updateUsage(memoryEntry.generations);
-        return memoryEntry.generations;
+        return memoryEntry.generations.map(Lchain.fromStored);
       }
 
       const entryStore = this.#cacheStore.subStore(requestHash);
 
       const storedGenerations =
-        await entryStore.readJson<StoredGeneration[]>("response.json");
+        await entryStore.readJson<Lchain.StoredGeneration[]>("response.json");
       if (!storedGenerations) return null;
-      const generations = storedGenerations.map(deserializeStoredGeneration);
 
       logger.debug(
         `Cache hit (file) for prompt: "${prompt.slice(0, 100)}...":`,
       );
 
-      // TODO: In the original implementation the file cache is also saved to
-      // memory cache on lookup. This cause memory leak as the memory cache is
-      // never cleared. If we want to optimize cache for faster lookup, we
-      // should implement a proper cache eviction strategy instead of saving
-      // everything to memory cache.
+      this.#updateUsage(storedGenerations);
 
-      this.#updateUsage(generations);
-      return generations;
+      return storedGenerations.map(Lchain.fromStored);
     } catch (error) {
       logger.warn(`Error occurred while looking up cache: {error}`, { error });
       return null;
@@ -105,10 +95,11 @@ export class ResponseCache extends ServerCache {
     if (!initiatedData) return;
     const { requestHash } = initiatedData;
 
+    const storedGenerations = generations.map(Lchain.toStored);
     this.#memoryCache[requestHash] = {
       prompt,
       llmKey,
-      generations,
+      generations: storedGenerations,
       app: this.app,
     };
   }
@@ -122,11 +113,10 @@ export class ResponseCache extends ServerCache {
     await Promise.all(
       entries.map(async ([hash, entry]) => {
         const { prompt, llmKey, generations, app } = entry;
-        const storedGenerations = generations.map(serializeGeneration);
         const entryStore = this.#cacheStore.subStore(hash, app);
 
         await Promise.all([
-          entryStore.writeJson("response.json", storedGenerations),
+          entryStore.writeJson("response.json", generations),
           entryStore.writeJson("request.json", { prompt, llmKey, app }),
         ]);
       }),
@@ -169,35 +159,16 @@ export class ResponseCache extends ServerCache {
     agentMeta: Agent.Meta,
   ): ResponseCache.RequestHash {
     const metaCanon = canonize(agentMeta);
-    const str = [this.app, prompt, llmKey, metaCanon].join("|");
+    const str = [CACHE_VERSION, this.app, prompt, llmKey, metaCanon].join("|");
     return xxh64Str(str);
   }
 
-  #updateUsage(generations: Generation[]): void {
+  #updateUsage(generations: Lchain.StoredGeneration[]): void {
     for (const generation of generations) {
-      try {
-        const result = Lchain.Generation.safeParse(generation);
-        if (!result.success) {
-          logSchemaParseError(
-            "generation for usage metadata",
-            generation,
-            result,
-          );
-          continue;
-        }
-
-        const parsed = result.data;
-        const usageMetadata = parsed.message?.usage_metadata;
-        this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
-        this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
-        this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
-      } catch (error) {
-        console.log("#####", Lchain.Generation);
-        logBlocks("error", `Error in updating usage metadata:`, {
-          generation: { json: generation },
-          error: { data: error },
-        });
-      }
+      const usageMetadata = generation?.message?.data.usage_metadata;
+      this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
+      this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
+      this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
     }
   }
 }
