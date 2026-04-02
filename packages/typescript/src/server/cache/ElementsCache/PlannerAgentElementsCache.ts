@@ -1,7 +1,7 @@
 import { xxh64Str } from "smolxxh/str";
-import { getLogger } from "../../../utils/index.js";
-import type { PlannerAgent } from "../../agents/PlannerAgent.js";
-import { BaseAgentElementsCache } from "./BaseAgentElementsCache.js";
+import { getLogger } from "../../../utils/index.ts";
+import type { PlannerAgent } from "../../agents/PlannerAgent.ts";
+import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
 
 const logger = getLogger(import.meta.url);
 

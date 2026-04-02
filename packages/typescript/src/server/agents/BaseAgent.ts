@@ -1,25 +1,24 @@
 import { Runnable, type RunnableConfig } from "@langchain/core/runnables";
-import type { Logger } from "@logtape/logtape";
 import { always } from "alwaysly";
-import { Model } from "../../Model.js";
-import { getLogger } from "../../utils/logger.js";
-import { retry } from "../../utils/retry.js";
-import { Agent } from "./Agent.js";
+import { Model } from "../../Model.ts";
+import { getLogger, type LoggerLike } from "../../utils/logger.ts";
+import { Agent } from "./Agent.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
-import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
-import { LlmContext } from "../LlmContext.js";
-import { MODEL_RETRIES, MODEL_TIMEOUT_SEC } from "../LlmFactory.js";
-import { agentPrompts } from "./prompts/bundledPrompts.js";
+import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
+import { retry } from "../../utils/retry.ts";
+import { LlmContext } from "../LlmContext.ts";
+import { MODEL_RETRIES, MODEL_TIMEOUT_SEC } from "../LlmFactory.ts";
+import { agentPrompts } from "./prompts/bundledPrompts.ts";
 import {
   agentClassNameToPromptsAgentKind,
   PROVIDER_TO_PROMPTS_DEV,
   type AgentPrompts,
-} from "./prompts/prompts.js";
+} from "./prompts/prompts.ts";
 
 const logger = getLogger(import.meta.url);
 
@@ -166,11 +165,6 @@ export class BaseAgent {
     return doRetry;
   }
 
-  @retry({
-    maxAttempts: 1 + MODEL_RETRIES,
-    backOff: 2000,
-    doRetry: (error) => BaseAgent.shouldRetry(error),
-  })
   // TODO: This function is infested with bad types, figure out a better way
   // or simply replace LangChain with AI SDK or custom code.
   protected async invokeChain<
@@ -183,60 +177,79 @@ export class BaseAgent {
     meta: LlmContext.Meta,
     options?: Partial<CallOptions>,
   ): Promise<BaseAgentResponse> {
-    const contextPrompts: string[] = [];
+    return retry(
+      {
+        maxAttempts: 1 + MODEL_RETRIES,
+        backOff: 2000,
+        doRetry: (error) => BaseAgent.shouldRetry(error),
+      },
+      async () => {
+        const contextPrompts: string[] = [];
 
-    const agentName = agentClassNameToPromptsAgentKind(this.constructor.name);
+        const agentName = agentClassNameToPromptsAgentKind(
+          this.constructor.name,
+        );
 
-    logger.debug(`Invoking ${agentName} agent chain input: {input}`, { input });
-    // @ts-expect-error
-    const result = await chain.invoke(input, {
-      ...options,
-      timeout: MODEL_TIMEOUT_SEC * 1000,
-      callbacks: [
-        {
-          handleChatModelStart: (_llm, baseMessages) => {
-            contextPrompts.push(
-              ...baseMessages.map((baseMessage) =>
-                convertInputToPromptValue.call(this, baseMessage).toString(),
-              ),
-            );
-            this.#llmContext.assignPromptsMeta(contextPrompts, meta);
-          },
-        },
-      ],
-    });
-    logger.debug(`Got ${agentName} agent chain result: {result}`, { result });
-    this.#llmContext.clearPromptsMeta(contextPrompts);
+        logger.debug(`Invoking ${agentName} agent chain input: {input}`, {
+          input,
+        });
+        // @ts-expect-error
+        const result = await chain.invoke(input, {
+          ...options,
+          timeout: MODEL_TIMEOUT_SEC * 1000,
+          callbacks: [
+            {
+              handleChatModelStart: (_llm, baseMessages) => {
+                contextPrompts.push(
+                  ...baseMessages.map((baseMessage) =>
+                    convertInputToPromptValue
+                      .call(this, baseMessage)
+                      .toString(),
+                  ),
+                );
+                this.#llmContext.assignPromptsMeta(contextPrompts, meta);
+              },
+            },
+          ],
+        });
+        logger.debug(`Got ${agentName} agent chain result: {result}`, {
+          result,
+        });
+        this.#llmContext.clearPromptsMeta(contextPrompts);
 
-    let message: any;
-    let structured: unknown = null;
-    if (typeof result === "object" && result && "raw" in result) {
-      message = result.raw;
-      structured = (result as any).parsed;
-    } else {
-      message = result;
-    }
+        let message: any;
+        let structured: unknown = null;
+        if (typeof result === "object" && result && "raw" in result) {
+          message = result.raw;
+          structured = (result as any).parsed;
+        } else {
+          message = result;
+        }
 
-    const reasoning = this.#extractReasoning(message.content);
-    if (reasoning) {
-      logger.info(this.formatLog("out", "Reasoning"), { detail: reasoning });
-    }
+        const reasoning = this.#extractReasoning(message.content);
+        if (reasoning) {
+          logger.info(this.formatLog("out", "Reasoning"), {
+            detail: reasoning,
+          });
+        }
 
-    const usage: Partial<LlmUsage> = {};
-    if (message.usage_metadata) {
-      this.#updateUsage(message.usage_metadata);
-      usage.input_tokens = message.usage_metadata.input_tokens ?? 0;
-      usage.output_tokens = message.usage_metadata.output_tokens ?? 0;
-      usage.total_tokens = message.usage_metadata.total_tokens ?? 0;
-    }
+        const usage: Partial<LlmUsage> = {};
+        if (message.usage_metadata) {
+          this.#updateUsage(message.usage_metadata);
+          usage.input_tokens = message.usage_metadata.input_tokens ?? 0;
+          usage.output_tokens = message.usage_metadata.output_tokens ?? 0;
+          usage.total_tokens = message.usage_metadata.total_tokens ?? 0;
+        }
 
-    return new BaseAgentResponse({
-      content: this.#extractText(message.content),
-      reasoning,
-      structured,
-      toolCalls: message.tool_calls ?? [],
-      usage,
-    });
+        return new BaseAgentResponse({
+          content: this.#extractText(message.content),
+          reasoning,
+          structured,
+          toolCalls: message.tool_calls ?? [],
+          usage,
+        });
+      },
+    );
   }
 
   #extractReasoning(content: unknown): string | null {
@@ -308,7 +321,7 @@ export class BaseAgent {
   }
 
   protected logData(
-    logger: Logger,
+    logger: LoggerLike,
     dir: BaseAgent.LogDir,
     data: BaseAgent.LogData,
   ) {

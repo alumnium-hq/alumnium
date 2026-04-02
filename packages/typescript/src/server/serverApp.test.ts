@@ -1,17 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { pushMock } from "../../tests/unit/mocks.js";
-import type { Http } from "../Http.js";
-import { Model } from "../Model.js";
-import { ActorAgent } from "./agents/ActorAgent.js";
-import { AreaAgent } from "./agents/AreaAgent.js";
-import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.js";
-import { LocatorAgent } from "./agents/LocatorAgent.js";
-import { PlannerAgent } from "./agents/PlannerAgent.js";
-import { RetrieverAgent } from "./agents/RetrieverAgent.js";
-import { LlmFactory } from "./LlmFactory.js";
-import { serverApp } from "./serverApp.js";
-import { CreateSessionResponse } from "./serverSchema.js";
-import { SessionManager } from "./session/SessionManager.js";
+import { pushMock } from "../../tests/unit/mocks.ts";
+import type { Http } from "../Http.ts";
+import { Model } from "../Model.ts";
+import { ActorAgent } from "./agents/ActorAgent.ts";
+import { AreaAgent } from "./agents/AreaAgent.ts";
+import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.ts";
+import { LocatorAgent } from "./agents/LocatorAgent.ts";
+import { PlannerAgent } from "./agents/PlannerAgent.ts";
+import { RetrieverAgent } from "./agents/RetrieverAgent.ts";
+import { LlmFactory } from "./LlmFactory.ts";
+import { serverApp } from "./serverApp.ts";
+import { CreateSessionResponse } from "./serverSchema.ts";
+import { SessionManager } from "./session/SessionManager.ts";
 
 describe("serverApp", () => {
   beforeEach(() => {

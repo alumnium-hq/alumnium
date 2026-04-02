@@ -1,8 +1,8 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
-import { Xml } from "../Xml.js";
-import type { AccessibilityElement } from "./AccessibilityElement.js";
-import { BaseAccessibilityTree } from "./BaseAccessibilityTree.js";
+import { Xml } from "../Xml.ts";
+import type { AccessibilityElement } from "./AccessibilityElement.ts";
+import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
 
 export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
   #xmlString: string;

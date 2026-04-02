@@ -1,8 +1,8 @@
 import type { Generation } from "@langchain/core/outputs";
-import { getLogger } from "../../utils/logger.js";
-import { LlmContext } from "../LlmContext.js";
-import { SessionContext } from "../session/SessionContext.js";
-import { ServerCache } from "./ServerCache.js";
+import { getLogger } from "../../utils/logger.ts";
+import { LlmContext } from "../LlmContext.ts";
+import { SessionContext } from "../session/SessionContext.ts";
+import { ServerCache } from "./ServerCache.ts";
 
 const logger = getLogger(import.meta.url);
 

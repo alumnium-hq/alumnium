@@ -7,10 +7,10 @@ import {
   pushMock,
   pushTeardown,
   setupBeforeEach,
-} from "../../tests/unit/mocks.js";
-import { McpArtifactsStore } from "./McpArtifactsStore.js";
-import type { McpDriver } from "./mcpDrivers.js";
-import { McpState } from "./McpState.js";
+} from "../../tests/unit/mocks.ts";
+import { McpArtifactsStore } from "./McpArtifactsStore.ts";
+import type { McpDriver } from "./mcpDrivers.ts";
+import { McpState } from "./McpState.ts";
 
 describe("McpArtifactsStore", () => {
   describe("path", () => {

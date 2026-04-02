@@ -1,8 +1,8 @@
 import { cac } from "cac";
 import * as ansi from "picocolors";
-import { McpCommand } from "../mcp/McpCommand.js";
-import { ALUMNIUM_VERSION } from "../package.js";
-import { ServerCommand } from "../server/ServerCommand.js";
+import { McpCommand } from "../mcp/McpCommand.ts";
+import { ALUMNIUM_VERSION } from "../package.ts";
+import { ServerCommand } from "../server/ServerCommand.ts";
 
 const COMMANDS = [ServerCommand, McpCommand];
 

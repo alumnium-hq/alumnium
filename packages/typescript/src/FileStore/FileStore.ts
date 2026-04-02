@@ -2,8 +2,8 @@ import { always, never } from "alwaysly";
 import fs from "fs/promises";
 import path from "path";
 import type z from "zod";
-import { getLogger } from "../utils/logger.js";
-import { GlobalFileStorePaths } from "./GlobalFileStorePaths.js";
+import { getLogger } from "../utils/logger.ts";
+import { GlobalFileStorePaths } from "./GlobalFileStorePaths.ts";
 
 const logger = getLogger(import.meta.url);
 

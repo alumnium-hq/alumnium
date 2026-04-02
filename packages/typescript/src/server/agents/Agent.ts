@@ -1,11 +1,11 @@
 import z from "zod";
-import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
-import type { ActorAgent } from "./ActorAgent.js";
-import type { AreaAgent } from "./AreaAgent.js";
-import type { ChangesAnalyzerAgent } from "./ChangesAnalyzerAgent.js";
-import type { LocatorAgent } from "./LocatorAgent.js";
-import type { PlannerAgent } from "./PlannerAgent.js";
-import type { RetrieverAgent } from "./RetrieverAgent.js";
+import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
+import type { ActorAgent } from "./ActorAgent.ts";
+import type { AreaAgent } from "./AreaAgent.ts";
+import type { ChangesAnalyzerAgent } from "./ChangesAnalyzerAgent.ts";
+import type { LocatorAgent } from "./LocatorAgent.ts";
+import type { PlannerAgent } from "./PlannerAgent.ts";
+import type { RetrieverAgent } from "./RetrieverAgent.ts";
 
 export namespace Agent {
   export type State = z.infer<typeof Agent.State>;

@@ -1,6 +1,6 @@
-import { BaseDriver } from "../drivers/BaseDriver.js";
-import { BaseTool } from "./BaseTool.js";
-import { field, type FieldMetadata } from "./Field.js";
+import { BaseDriver } from "../drivers/BaseDriver.ts";
+import { BaseTool } from "./BaseTool.ts";
+import { field, type FieldMetadata } from "./Field.ts";
 
 export class ExecuteJavascriptTool extends BaseTool {
   static description = "Execute a JavaScript snippet in the browser context.";

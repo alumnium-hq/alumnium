@@ -3,26 +3,26 @@ import { always } from "alwaysly";
 import type { Page } from "playwright-core";
 import { WebDriver } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
-import { Client } from "../clients/Client.js";
-import { HttpClient } from "../clients/HttpClient.js";
-import { NativeClient } from "../clients/NativeClient.js";
-import type { Data } from "../clients/typecasting.js";
+import { Client } from "../clients/Client.ts";
+import { HttpClient } from "../clients/HttpClient.ts";
+import { NativeClient } from "../clients/NativeClient.ts";
+import type { Data } from "../clients/typecasting.ts";
 import {
   AppiumDriver,
   BaseDriver,
   type Element,
   PlaywrightDriver,
   SeleniumDriver,
-} from "../drivers/index.js";
-import { LlmUsageStats } from "../llm/llmSchema.js";
-import { Model } from "../Model.js";
-import { BaseTool, type ToolClass } from "../tools/BaseTool.js";
-import { getLogger } from "../utils/logger.js";
-import { retry } from "../utils/retry.js";
-import { Area } from "./Area.js";
-import { Cache } from "./Cache.js";
-import { AssertionError } from "./errors/AssertionError.js";
-import type { DoResult, DoStep } from "./result.js";
+} from "../drivers/index.ts";
+import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { Model } from "../Model.ts";
+import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
+import { getLogger } from "../utils/logger.ts";
+import { retry } from "../utils/retry.ts";
+import { Area } from "./Area.ts";
+import { Cache } from "./Cache.ts";
+import { AssertionError } from "./errors/AssertionError.ts";
+import type { DoResult, DoStep } from "./result.ts";
 
 const logger = getLogger(import.meta.url);
 
@@ -144,130 +144,134 @@ export class Alumni {
     await this.driver.quit();
   }
 
-  @retry()
   async do(goal: string): Promise<DoResult> {
-    const app = await this.driver.app();
+    return retry(async () => {
+      const app = await this.driver.app();
 
-    const initialAccessibilityTree = await this.driver.getAccessibilityTree();
-    const beforeTree = this.changeAnalysis
-      ? initialAccessibilityTree.toStr()
-      : null;
-    const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
-    const { explanation, steps } = await this.client.planActions(
-      goal,
-      initialAccessibilityTree.toStr(),
-      app,
-    );
-
-    let finalExplanation = explanation;
-    const executedSteps: DoStep[] = [];
-    for (let idx = 0; idx < steps.length; idx++) {
-      const step = steps[idx];
-      always(step);
-
-      // Use initial tree for first step, fresh tree for subsequent steps
-      const accessibilityTree =
-        idx === 0
-          ? initialAccessibilityTree
-          : await this.driver.getAccessibilityTree();
-      const { explanation: actorExplanation, actions } =
-        await this.client.executeAction(
-          goal,
-          step,
-          accessibilityTree.toStr(),
-          app,
-        );
-
-      // When planner is off, explanation is just the goal — replace with actor's reasoning.
-      if (finalExplanation === goal) {
-        finalExplanation = actorExplanation;
-      }
-
-      const calledTools: string[] = [];
-      for (const toolCall of actions) {
-        const calledTool = await BaseTool.executeToolCall(
-          toolCall,
-          this.tools,
-          this.driver,
-        );
-        calledTools.push(calledTool);
-      }
-
-      executedSteps.push({ name: step, tools: calledTools });
-    }
-
-    let changes = "";
-    if (this.changeAnalysis && executedSteps.length > 0) {
-      changes = await this.client.analyzeChanges(
-        beforeTree!,
-        beforeUrl!,
-        (await this.driver.getAccessibilityTree()).toStr(),
-        await this.driver.url(),
+      const initialAccessibilityTree = await this.driver.getAccessibilityTree();
+      const beforeTree = this.changeAnalysis
+        ? initialAccessibilityTree.toStr()
+        : null;
+      const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
+      const { explanation, steps } = await this.client.planActions(
+        goal,
+        initialAccessibilityTree.toStr(),
         app,
       );
-    }
 
-    return { explanation: finalExplanation, steps: executedSteps, changes };
+      let finalExplanation = explanation;
+      const executedSteps: DoStep[] = [];
+      for (let idx = 0; idx < steps.length; idx++) {
+        const step = steps[idx];
+        always(step);
+
+        // Use initial tree for first step, fresh tree for subsequent steps
+        const accessibilityTree =
+          idx === 0
+            ? initialAccessibilityTree
+            : await this.driver.getAccessibilityTree();
+        const { explanation: actorExplanation, actions } =
+          await this.client.executeAction(
+            goal,
+            step,
+            accessibilityTree.toStr(),
+            app,
+          );
+
+        // When planner is off, explanation is just the goal — replace with actor's reasoning.
+        if (finalExplanation === goal) {
+          finalExplanation = actorExplanation;
+        }
+
+        const calledTools: string[] = [];
+        for (const toolCall of actions) {
+          const calledTool = await BaseTool.executeToolCall(
+            toolCall,
+            this.tools,
+            this.driver,
+          );
+          calledTools.push(calledTool);
+        }
+
+        executedSteps.push({ name: step, tools: calledTools });
+      }
+
+      let changes = "";
+      if (this.changeAnalysis && executedSteps.length > 0) {
+        changes = await this.client.analyzeChanges(
+          beforeTree!,
+          beforeUrl!,
+          (await this.driver.getAccessibilityTree()).toStr(),
+          await this.driver.url(),
+          app,
+        );
+      }
+
+      return { explanation: finalExplanation, steps: executedSteps, changes };
+    });
   }
 
-  @retry()
   async check(
     statement: string,
     options: Alumni.CheckOptions = {},
   ): Promise<string> {
-    const screenshot = options.vision
-      ? await this.driver.screenshot()
-      : undefined;
-    const accessibilityTree = await this.driver.getAccessibilityTree();
-    const [explanation, value] = await this.client.retrieve(
-      `Is the following true or false - ${statement}`,
-      accessibilityTree.toStr(),
-      await this.driver.title(),
-      await this.driver.url(),
-      await this.driver.app(),
-      screenshot,
-    );
+    return retry(async () => {
+      const screenshot = options.vision
+        ? await this.driver.screenshot()
+        : undefined;
+      const accessibilityTree = await this.driver.getAccessibilityTree();
+      const [explanation, value] = await this.client.retrieve(
+        `Is the following true or false - ${statement}`,
+        accessibilityTree.toStr(),
+        await this.driver.title(),
+        await this.driver.url(),
+        await this.driver.app(),
+        screenshot,
+      );
 
-    if (!value || !explanation) {
-      const { assert } = options;
-      if (assert) {
-        (assert as any)(false, explanation);
-      } else {
-        throw new AssertionError(explanation);
+      if (!value || !explanation) {
+        const { assert } = options;
+        if (assert) {
+          (assert as any)(false, explanation);
+        } else {
+          throw new AssertionError(explanation);
+        }
       }
-    }
 
-    return explanation;
+      return explanation;
+    });
   }
 
-  @retry()
   async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
-    const screenshot = options.vision
-      ? await this.driver.screenshot()
-      : undefined;
-    const accessibilityTree = await this.driver.getAccessibilityTree();
-    const [explanation, value] = await this.client.retrieve(
-      data,
-      accessibilityTree.toStr(),
-      await this.driver.title(),
-      await this.driver.url(),
-      await this.driver.app(),
-      screenshot,
-    );
+    return retry(async () => {
+      const screenshot = options.vision
+        ? await this.driver.screenshot()
+        : undefined;
+      const accessibilityTree = await this.driver.getAccessibilityTree();
+      const [explanation, value] = await this.client.retrieve(
+        data,
+        accessibilityTree.toStr(),
+        await this.driver.title(),
+        await this.driver.url(),
+        await this.driver.app(),
+        screenshot,
+      );
 
-    return value === null ? explanation : value;
+      return value === null ? explanation : value;
+    });
   }
 
-  @retry()
   async find(description: string): Promise<Element | undefined> {
-    const accessibilityTree = await this.driver.getAccessibilityTree();
-    const response = await this.client.findElement(
-      description,
-      accessibilityTree.toStr(),
-      await this.driver.app(),
-    );
-    if (response?.id == null) return;
-    return this.driver.findElement(+response.id);
+    return retry(async () => {
+      const accessibilityTree = await this.driver.getAccessibilityTree();
+      const response = await this.client.findElement(
+        description,
+        accessibilityTree.toStr(),
+        await this.driver.app(),
+      );
+      if (response?.id == null) return;
+      return this.driver.findElement(+response.id);
+    });
   }
 
   async area(description: string): Promise<Area> {

@@ -5,6 +5,7 @@
 
 set -euo pipefail
 
+TEST_FILTER="${TEST_FILTER:-}"
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
 
 failed=0
@@ -25,8 +26,14 @@ export ALUMNIUM_PRUNE_LOGS=true
 export TEST_PLAYWRIGHT_HEADLESS=true
 
 echo -e "🌀 Running vitest tests\n"
-run_tests fnox exec -- \
-	bun vitest --project system run
+if [ -n "${TEST_FILTER}" ]; then
+	echo "🔵 Using test filter '$TEST_FILTER'"
+	run_tests fnox exec -- \
+		bun vitest --project system --hideSkippedTests run "$TEST_FILTER"
+else
+	run_tests fnox exec -- \
+		bun vitest --project system run
+fi
 
 echo
 if [ $failed -ne 0 ]; then

@@ -8,10 +8,10 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
 import z from "zod";
-import { getLogger } from "../../utils/logger.js";
-import type { ToolCall } from "../accessibility/BaseServerAccessibilityTree.js";
-import type { LlmContext } from "../LlmContext.js";
-import { BaseAgent } from "./BaseAgent.js";
+import { getLogger } from "../../utils/logger.ts";
+import type { ToolCall } from "../accessibility/BaseServerAccessibilityTree.ts";
+import type { LlmContext } from "../LlmContext.ts";
+import { BaseAgent } from "./BaseAgent.ts";
 
 const logger = getLogger(import.meta.url);
 

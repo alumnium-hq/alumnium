@@ -1,0 +1,5 @@
+{
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  }
+}

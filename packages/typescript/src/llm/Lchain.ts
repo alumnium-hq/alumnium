@@ -8,6 +8,7 @@ import type {
   Generation as LangchainGeneration,
 } from "@langchain/core/outputs";
 import z from "zod";
+import { logSchemaParseError } from "../utils/logFormat.ts";
 
 export namespace Lchain {
   export type UnknownRecord = z.infer<typeof Lchain.UnknownRecord>;
@@ -147,9 +148,11 @@ export abstract class Lchain {
     output_version: z.enum(["v0", "v1"]).optional(),
   });
 
+  static MessageId = z.union([z.string(), z.array(z.string())]);
+
   static Message = z.object({
     type: z.string(),
-    id: z.string().optional(),
+    id: Lchain.MessageId.optional(),
     name: z.string().optional(),
     content: Lchain.MessageContent,
     additional_kwargs: Lchain.AdditionalKwargs.optional(),
@@ -203,7 +206,18 @@ export abstract class Lchain {
     generation: Lchain.Generation,
   ): Lchain.StoredGeneration {
     const stored = serializeGeneration(generation as LangchainGeneration);
-    return Lchain.StoredGeneration.parse(stored);
+    const result = Lchain.StoredGeneration.safeParse(stored);
+    if (!result.success) {
+      const message = logSchemaParseError(
+        "stored generation",
+        generation,
+        result,
+      );
+      throw new Error(
+        `Failed to serialize generation to stored format: ${message}`,
+      );
+    }
+    return result.data;
   }
 
   static fromStored(stored: Lchain.StoredGeneration): Generation {

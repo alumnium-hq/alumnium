@@ -7,14 +7,15 @@ import type { Generation } from "@langchain/core/outputs";
 import { canonize } from "smolcanon";
 import { xxh64Str } from "smolxxh/str";
 import z from "zod";
-import { AppId } from "../../AppId.js";
-import { Lchain } from "../../llm/Lchain.js";
-import { getLogger } from "../../utils/logger.js";
-import type { Agent } from "../agents/Agent.js";
-import { LlmContext } from "../LlmContext.js";
-import { SessionContext } from "../session/SessionContext.js";
-import { CacheStore } from "./CacheStore.js";
-import { ServerCache } from "./ServerCache.js";
+import { AppId } from "../../AppId.ts";
+import { Lchain } from "../../llm/Lchain.ts";
+import { logBlocks, logSchemaParseError } from "../../utils/logFormat.ts";
+import { getLogger } from "../../utils/logger.ts";
+import type { Agent } from "../agents/Agent.ts";
+import { LlmContext } from "../LlmContext.ts";
+import { SessionContext } from "../session/SessionContext.ts";
+import { CacheStore } from "./CacheStore.ts";
+import { ServerCache } from "./ServerCache.ts";
 
 const logger = getLogger(import.meta.url);
 
@@ -77,7 +78,9 @@ export class ResponseCache extends ServerCache {
       if (!storedGenerations) return null;
       const generations = storedGenerations.map(deserializeStoredGeneration);
 
-      logger.debug(`Cache hit (file) for prompt: "${prompt.slice(0, 100)}..."`);
+      logger.debug(
+        `Cache hit (file) for prompt: "${prompt.slice(0, 100)}...":`,
+      );
 
       // TODO: In the original implementation the file cache is also saved to
       // memory cache on lookup. This cause memory leak as the memory cache is
@@ -88,7 +91,7 @@ export class ResponseCache extends ServerCache {
       this.#updateUsage(generations);
       return generations;
     } catch (error) {
-      logger.warn(`Error occurred while looking up cache: ${error}`);
+      logger.warn(`Error occurred while looking up cache: {error}`, { error });
       return null;
     }
   }
@@ -173,17 +176,27 @@ export class ResponseCache extends ServerCache {
   #updateUsage(generations: Generation[]): void {
     for (const generation of generations) {
       try {
-        const usageMetadata =
-          Lchain.Generation.parse(generation).message?.usage_metadata;
+        const result = Lchain.Generation.safeParse(generation);
+        if (!result.success) {
+          logSchemaParseError(
+            "generation for usage metadata",
+            generation,
+            result,
+          );
+          continue;
+        }
+
+        const parsed = result.data;
+        const usageMetadata = parsed.message?.usage_metadata;
         this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
         this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
         this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
       } catch (error) {
-        logger.warn(
-          `Failed to parse generation for usage metadata: ${JSON.stringify(
-            generation,
-          )}. Error: ${error}`,
-        );
+        console.log("#####", Lchain.Generation);
+        logBlocks("error", `Error in updating usage metadata:`, {
+          generation: { json: generation },
+          error: { data: error },
+        });
       }
     }
   }

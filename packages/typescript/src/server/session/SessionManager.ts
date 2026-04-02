@@ -1,12 +1,12 @@
 import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { AppId } from "../../AppId.js";
-import type { Driver } from "../../drivers/Driver.js";
-import { createLlmUsageStats, LlmUsageStats } from "../../llm/llmSchema.js";
-import { Model } from "../../Model.js";
-import { getLogger } from "../../utils/logger.js";
-import { Session } from "./Session.js";
-import { SessionId } from "./SessionId.js";
+import { AppId } from "../../AppId.ts";
+import type { Driver } from "../../drivers/Driver.ts";
+import { createLlmUsageStats, LlmUsageStats } from "../../llm/llmSchema.ts";
+import { Model } from "../../Model.ts";
+import { getLogger } from "../../utils/logger.ts";
+import { Session } from "./Session.ts";
+import { SessionId } from "./SessionId.ts";
 
 const logger = getLogger(import.meta.url);
 

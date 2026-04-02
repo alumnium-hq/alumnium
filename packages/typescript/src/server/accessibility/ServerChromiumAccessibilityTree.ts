@@ -1,9 +1,9 @@
 import { always } from "alwaysly";
 import { type ChildNode, Element, Node, Text } from "domhandler";
 import { textContent } from "domutils";
-import { pythonicId } from "../../pythonic/pythonicId.js";
-import { Xml } from "../../Xml.js";
-import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.js";
+import { pythonicId } from "../../pythonic/pythonicId.ts";
+import { Xml } from "../../Xml.ts";
+import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
   readonly SKIPPED_PROPERTIES = new Set([

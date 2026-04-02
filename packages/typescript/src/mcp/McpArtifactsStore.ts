@@ -1,7 +1,7 @@
 import { kebabCase } from "case-anything";
-import { FileStore } from "../FileStore/FileStore.js";
-import { getLogger } from "../utils/logger.js";
-import { McpState } from "./McpState.js";
+import { FileStore } from "../FileStore/FileStore.ts";
+import { getLogger } from "../utils/logger.ts";
+import { McpState } from "./McpState.ts";
 
 const logger = getLogger(import.meta.url);
 

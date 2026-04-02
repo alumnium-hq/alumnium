@@ -3,12 +3,12 @@ import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import z from "zod";
-import { isBundled } from "../bundle.js";
-import { CliCommand } from "../cli/CliCommand.js";
-import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.js";
-import { getLogger, setLogPath } from "../utils/logger.js";
-import { sleep } from "../utils/timers.js";
-import { serverApp } from "./serverApp.js";
+import { isSingleFileExecutable } from "../bundle.ts";
+import { CliCommand } from "../cli/CliCommand.ts";
+import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
+import { getLogger, setLogPath } from "../utils/logger.ts";
+import { sleep } from "../utils/timers.ts";
+import { serverApp } from "./serverApp.ts";
 
 const logger = getLogger(import.meta.url);
 
@@ -182,11 +182,13 @@ async function startDaemon(pidPath: string, force: boolean): Promise<void> {
 
   await killDaemon(pidPath, existingPid, true);
 
-  const childArgs = process.argv.slice(isBundled() ? 2 : 1).filter((arg) => {
-    if (arg === "--daemon" || arg === "-d") return false;
-    if (arg === "--daemon-wait") return false;
-    return true;
-  });
+  const childArgs = process.argv
+    .slice(isSingleFileExecutable() ? 2 : 1)
+    .filter((arg) => {
+      if (arg === "--daemon" || arg === "-d") return false;
+      if (arg === "--daemon-wait") return false;
+      return true;
+    });
 
   const child = spawn(process.execPath, childArgs, {
     detached: true,

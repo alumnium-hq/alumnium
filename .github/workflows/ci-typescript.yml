@@ -70,6 +70,12 @@ jobs:
           driver: ${{ matrix.driver }}
           model: ${{ matrix.model }}
 
+      - name: Build Dist
+        run: mise //packages/typescript:build
+
+      - name: Run npm Tests
+        run: mise //packages/typescript:test/npm
+
       - name: Upload Test Artifacts
         if: always()
         uses: ./.github/actions/test-artifacts

@@ -1,10 +1,10 @@
-import { AppId } from "../AppId.js";
-import type { Driver } from "../drivers/Driver.js";
-import { LlmUsageStats } from "../llm/llmSchema.js";
-import type { Model } from "../Model.js";
-import type { ElementRef } from "../server/serverSchema.js";
-import type { ToolCall, ToolClass } from "../tools/BaseTool.js";
-import type { Data } from "./typecasting.js";
+import { AppId } from "../AppId.ts";
+import type { Driver } from "../drivers/Driver.ts";
+import { LlmUsageStats } from "../llm/llmSchema.ts";
+import type { Model } from "../Model.ts";
+import type { ElementRef } from "../server/serverSchema.ts";
+import type { ToolCall, ToolClass } from "../tools/BaseTool.ts";
+import type { Data } from "./typecasting.ts";
 
 export namespace Client {
   export interface Props {

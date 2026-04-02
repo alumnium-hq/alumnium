@@ -1,8 +1,8 @@
-import type { AppId } from "../../../AppId.js";
-import { Lchain } from "../../../llm/Lchain.js";
-import type { SessionContext } from "../../session/SessionContext.js";
-import type { ElementsCache } from "./ElementsCache.js";
-import { ElementsCacheMask } from "./ElementsCacheMask.js";
+import type { AppId } from "../../../AppId.ts";
+import { Lchain } from "../../../llm/Lchain.ts";
+import type { SessionContext } from "../../session/SessionContext.ts";
+import type { ElementsCache } from "./ElementsCache.ts";
+import { ElementsCacheMask } from "./ElementsCacheMask.ts";
 
 export namespace BaseAgentElementsCache {
   export interface UpdateProps<AgentMeta> {

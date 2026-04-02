@@ -10,7 +10,7 @@ import { always } from "alwaysly";
 import * as fs from "fs";
 import path from "node:path";
 import { z } from "zod";
-import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.js";
+import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
 
 export const logLevels = [
   "debug",
@@ -79,13 +79,7 @@ function configureLogging(props: configureLogging.Props = {}): void {
   configureSync({
     sinks: {
       console: consoleSink,
-      main: logPath
-        ? getFileSink(logPath, {
-            // Don't wait to write logs to the file to help with debugging
-            flushInterval: 0,
-            bufferSize: 0,
-          })
-        : consoleSink,
+      main: logPath ? getFileSink(logPath) : consoleSink,
     },
     filters: {},
     loggers: [

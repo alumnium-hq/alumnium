@@ -1,12 +1,12 @@
-import { getLogger } from "../../../utils/index.js";
-import type { ActorAgent } from "../../agents/ActorAgent.js";
-import type { SessionContext } from "../../session/SessionContext.js";
-import { BaseAgentElementsCache } from "./BaseAgentElementsCache.js";
-import type { ElementsCache } from "./ElementsCache.js";
-import { ElementsCacheMask } from "./ElementsCacheMask.js";
-import { ElementsCacheToolCalls } from "./ElementsCacheToolCalls.js";
-import { ElementsCacheTree } from "./ElementsCacheTree.js";
-import type { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.js";
+import { getLogger } from "../../../utils/index.ts";
+import type { ActorAgent } from "../../agents/ActorAgent.ts";
+import type { SessionContext } from "../../session/SessionContext.ts";
+import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
+import type { ElementsCache } from "./ElementsCache.ts";
+import { ElementsCacheMask } from "./ElementsCacheMask.ts";
+import { ElementsCacheToolCalls } from "./ElementsCacheToolCalls.ts";
+import { ElementsCacheTree } from "./ElementsCacheTree.ts";
+import type { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.ts";
 
 const logger = getLogger(import.meta.url);
 

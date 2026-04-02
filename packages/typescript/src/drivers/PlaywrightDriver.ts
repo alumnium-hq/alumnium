@@ -1,28 +1,28 @@
 import { always, ensure } from "alwaysly";
 import type { CDPSession, Frame, Locator, Page } from "playwright-core";
-import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
-import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
-import type { ToolClass } from "../tools/BaseTool.js";
-import { ClickTool } from "../tools/ClickTool.js";
-import { DragAndDropTool } from "../tools/DragAndDropTool.js";
-import { HoverTool } from "../tools/HoverTool.js";
-import { PressKeyTool } from "../tools/PressKeyTool.js";
-import { TypeTool } from "../tools/TypeTool.js";
-import { UploadTool } from "../tools/UploadTool.js";
-import { getLogger } from "../utils/logger.js";
-import { retry } from "../utils/retry.js";
-import { BaseDriver } from "./BaseDriver.js";
-import type { Keys } from "./keys.js";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
+import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
+import type { ToolClass } from "../tools/BaseTool.ts";
+import { ClickTool } from "../tools/ClickTool.ts";
+import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
+import { HoverTool } from "../tools/HoverTool.ts";
+import { PressKeyTool } from "../tools/PressKeyTool.ts";
+import { TypeTool } from "../tools/TypeTool.ts";
+import { UploadTool } from "../tools/UploadTool.ts";
+import { getLogger } from "../utils/logger.ts";
+import { BaseDriver } from "./BaseDriver.ts";
+import type { Keys } from "./keys.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
-import { AppId } from "../AppId.js";
-import type { Driver } from "./Driver.js";
+import { AppId } from "../AppId.ts";
+import { retry } from "../utils/retry.ts";
+import type { Driver } from "./Driver.ts";
 import {
   waiterScriptSource,
   waitForScriptSource,
-} from "./scripts/bundledScripts.js";
+} from "./scripts/bundledScripts.ts";
 
 interface CDPNode {
   nodeId: string;
@@ -56,6 +56,12 @@ const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
 const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
 const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${waitForScriptSource /* await readScript("waitFor.js") */} })`;
+
+const RETRY_OPTIONS: retry.Options = {
+  maxAttempts: 2,
+  backOff: 500,
+  doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
+};
 
 export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
@@ -327,25 +333,17 @@ export class PlaywrightDriver extends BaseDriver {
     await element.scrollIntoViewIfNeeded();
   }
 
-  @retry({
-    maxAttempts: 2,
-    backOff: 500,
-    doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
-  })
   async screenshot(): Promise<string> {
-    const buffer = await this.page.screenshot({
-      fullPage: this.fullPageScreenshot,
+    return retry(RETRY_OPTIONS, async () => {
+      const buffer = await this.page.screenshot({
+        fullPage: this.fullPageScreenshot,
+      });
+      return buffer.toString("base64");
     });
-    return buffer.toString("base64");
   }
 
-  @retry({
-    maxAttempts: 2,
-    backOff: 500,
-    doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
-  })
   async title(): Promise<string> {
-    return await this.page.title();
+    return retry(RETRY_OPTIONS, () => this.page.title());
   }
 
   async type(id: number, text: string): Promise<void> {
@@ -362,13 +360,8 @@ export class PlaywrightDriver extends BaseDriver {
     await fileChooser.setFiles(paths);
   }
 
-  @retry({
-    maxAttempts: 2,
-    backOff: 500,
-    doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
-  })
   url(): Promise<string> {
-    return Promise.resolve(this.page.url());
+    return retry(RETRY_OPTIONS, async () => this.page.url());
   }
 
   async app(): Promise<AppId> {
@@ -473,21 +466,18 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.context().grantPermissions(permissions);
   }
 
-  @retry({
-    maxAttempts: 2,
-    backOff: 500,
-    doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
-  })
   private async waitForPageToLoad(): Promise<void> {
-    logger.debug("Waiting for page to finish loading:");
-    await this.page.evaluate(WAITER_SCRIPT);
-    const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`);
-    if (error) {
-      // eslint-disable-next-line @typescript-eslint/no-base-to-string
-      logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
-    } else {
-      logger.debug("  <- Page finished loading");
-    }
+    return retry(RETRY_OPTIONS, async () => {
+      logger.debug("Waiting for page to finish loading:");
+      await this.page.evaluate(WAITER_SCRIPT);
+      const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`);
+      if (error) {
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+        logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
+      } else {
+        logger.debug("  <- Page finished loading");
+      }
+    });
   }
 
   private async autoswitchToNewTabAction(

@@ -22,5 +22,14 @@ export default defineConfig({
         },
       },
     ],
+    experimental: {
+      // NOTE: Vite's module runner has issue with cyclic dependencies that
+      // Node.js/Bun resolves just fine. It is subtle and result in modules
+      // detected as cyclic resolve empty objects instead of the actual exports.
+      // It is hard to track down and causes random failures not reproducible in
+      // actual runtime. This option makes Vitest use Node.js's native
+      // TypeScript/modules support.
+      viteModuleRunner: false,
+    },
   },
 });

@@ -3,13 +3,13 @@
  * State management for MCP server driver instances.
  */
 
-import { Alumni } from "../client/Alumni.js";
-import { PlaywrightDriver } from "../drivers/PlaywrightDriver.js";
-import { LlmUsageStats } from "../llm/llmSchema.js";
-import { getLogger } from "../utils/logger.js";
-import { McpArtifactsStore } from "./McpArtifactsStore.js";
-import type { McpDriver } from "./mcpDrivers.js";
-import { startDriverMcpTool } from "./tools/startDriverMcpTool.js";
+import { Alumni } from "../client/Alumni.ts";
+import { PlaywrightDriver } from "../drivers/PlaywrightDriver.ts";
+import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { getLogger } from "../utils/logger.ts";
+import { McpArtifactsStore } from "./McpArtifactsStore.ts";
+import type { McpDriver } from "./mcpDrivers.ts";
+import { startDriverMcpTool } from "./tools/startDriverMcpTool.ts";
 
 const logger = getLogger(import.meta.url);
 

@@ -10,9 +10,9 @@ import {
   remote as remoteWebdriverio,
   type Browser as WebdriverIoBrowser,
 } from "webdriverio";
-import { FileStore } from "../FileStore/FileStore.js";
-import { TypeUtils } from "../typeUtils.js";
-import { getLogger } from "../utils/logger.js";
+import { FileStore } from "../FileStore/FileStore.ts";
+import { TypeUtils } from "../typeUtils.ts";
+import { getLogger } from "../utils/logger.ts";
 
 const logger = getLogger(import.meta.url);
 

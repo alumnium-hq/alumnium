@@ -1,8 +1,8 @@
 import z from "zod";
-import { AssertionError } from "../../client/errors/AssertionError.js";
-import { sleep } from "../../utils/timers.js";
-import { McpState } from "../McpState.js";
-import { McpTool } from "./McpTool.js";
+import { AssertionError } from "../../client/errors/AssertionError.ts";
+import { sleep } from "../../utils/timers.ts";
+import { McpState } from "../McpState.ts";
+import { McpTool } from "./McpTool.ts";
 
 /**
  * Wait for seconds or a natural language condition.

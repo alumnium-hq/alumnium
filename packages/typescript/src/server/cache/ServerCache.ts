@@ -1,10 +1,10 @@
 import { BaseCache } from "@langchain/core/caches";
 import type { Generation } from "@langchain/core/outputs";
-import { AppId } from "../../AppId.js";
-import type { Cache } from "../../client/Cache.js";
-import { createLlmUsage, type LlmUsage } from "../../llm/llmSchema.js";
-import type { LlmContext } from "../LlmContext.js";
-import type { SessionContext } from "../session/SessionContext.js";
+import { AppId } from "../../AppId.ts";
+import type { Cache } from "../../client/Cache.ts";
+import { createLlmUsage, type LlmUsage } from "../../llm/llmSchema.ts";
+import type { LlmContext } from "../LlmContext.ts";
+import type { SessionContext } from "../session/SessionContext.ts";
 
 export abstract class ServerCache extends BaseCache {
   usage: LlmUsage = createLlmUsage();

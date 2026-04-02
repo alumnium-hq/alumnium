@@ -6,15 +6,15 @@
 
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { ALUMNIUM_VERSION } from "../package.js";
-import { getLogger } from "../utils/logger.js";
-import { checkMcpTool } from "./tools/checkMcpTool.js";
-import { doMcpTool } from "./tools/doMcpTool.js";
-import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.js";
-import { getMcpTool } from "./tools/getMcpTool.js";
-import { startDriverMcpTool } from "./tools/startDriverMcpTool.js";
-import { stopDriverMcpTool } from "./tools/stopDriverMcpTool.js";
-import { waitMcpTool } from "./tools/waitMcpTool.js";
+import { ALUMNIUM_VERSION } from "../package.ts";
+import { getLogger } from "../utils/logger.ts";
+import { checkMcpTool } from "./tools/checkMcpTool.ts";
+import { doMcpTool } from "./tools/doMcpTool.ts";
+import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.ts";
+import { getMcpTool } from "./tools/getMcpTool.ts";
+import { startDriverMcpTool } from "./tools/startDriverMcpTool.ts";
+import { stopDriverMcpTool } from "./tools/stopDriverMcpTool.ts";
+import { waitMcpTool } from "./tools/waitMcpTool.ts";
 
 const logger = getLogger(import.meta.url);
 

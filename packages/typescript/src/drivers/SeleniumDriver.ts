@@ -6,35 +6,35 @@ import {
   WebDriver,
   WebElement,
 } from "selenium-webdriver";
-import { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import {
   ElementNotInteractableError,
   NoSuchSessionError,
 } from "selenium-webdriver/lib/error.js";
 
 import { always } from "alwaysly";
-import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
-import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.js";
-import type { ToolClass } from "../tools/BaseTool.js";
-import { ClickTool } from "../tools/ClickTool.js";
-import { DragAndDropTool } from "../tools/DragAndDropTool.js";
-import { HoverTool } from "../tools/HoverTool.js";
-import { PressKeyTool } from "../tools/PressKeyTool.js";
-import { TypeTool } from "../tools/TypeTool.js";
-import { UploadTool } from "../tools/UploadTool.js";
-import { getLogger } from "../utils/logger.js";
-import { BaseDriver } from "./BaseDriver.js";
-import { Keys } from "./keys.js";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
+import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
+import type { ToolClass } from "../tools/BaseTool.ts";
+import { ClickTool } from "../tools/ClickTool.ts";
+import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
+import { HoverTool } from "../tools/HoverTool.ts";
+import { PressKeyTool } from "../tools/PressKeyTool.ts";
+import { TypeTool } from "../tools/TypeTool.ts";
+import { UploadTool } from "../tools/UploadTool.ts";
+import { getLogger } from "../utils/logger.ts";
+import { BaseDriver } from "./BaseDriver.ts";
+import { Keys } from "./keys.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
-import { AppId } from "../AppId.js";
-import type { Driver } from "./Driver.js";
+import type { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
+import { AppId } from "../AppId.ts";
+import type { Driver } from "./Driver.ts";
 import {
   waiterScriptSource,
   waitForScriptSource,
-} from "./scripts/bundledScripts.js";
+} from "./scripts/bundledScripts.ts";
 
 interface CDPNode {
   nodeId: string;
@@ -54,61 +54,13 @@ interface CDPFrameInfo {
 
 const logger = getLogger(import.meta.url);
 
-/**
- * Decorator that automatically switches to new tabs opened during method execution.
- */
-function autoswitchToNewTab(
-  _target: unknown,
-  _propertyKey: string | symbol,
-  descriptor?: PropertyDescriptor,
-): PropertyDescriptor | void {
-  // Handle both legacy and modern decorator standards
-  if (!descriptor) {
-    // Modern decorator - descriptor is undefined, need to return a new descriptor
-    return;
-  }
-
-  // Legacy decorator - descriptor is provided
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const originalMethod: (...args: unknown[]) => Promise<void> =
-    descriptor.value;
-
-  descriptor.value = async function (
-    this: SeleniumDriver,
-    ...args: unknown[]
-  ): Promise<void> {
-    if (!this.autoswitchToNewTab) {
-      await originalMethod.call(this, ...args);
-      return;
-    }
-
-    const currentHandles = await this.driver.getAllWindowHandles();
-    await originalMethod.call(this, ...args);
-    const newHandles = await this.driver.getAllWindowHandles();
-    const newTabs = newHandles.filter((h) => !currentHandles.includes(h));
-    if (newTabs.length) {
-      // Only switch to the last new tab, as only one tab can be active at the end.
-      const lastNewTab = newTabs[newTabs.length - 1];
-      always(lastNewTab);
-      if (lastNewTab !== (await this.driver.getWindowHandle())) {
-        await this.driver.switchTo().window(lastNewTab);
-        logger.debug(
-          `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
-        );
-      }
-    }
-  };
-
-  return descriptor;
-}
-
 const WAITER_SCRIPT = waiterScriptSource;
 const WAIT_FOR_SCRIPT = waitForScriptSource;
 
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
   public platform: Driver.Platform = "chromium";
-  public autoswitchToNewTab: boolean = true;
+  #autoswitchToNewTabEnabled: boolean = true;
   public fullPageScreenshot: boolean =
     (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
     "true";
@@ -266,20 +218,21 @@ export class SeleniumDriver extends BaseDriver {
     return frameIds;
   }
 
-  @autoswitchToNewTab
   async click(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    try {
-      const actions = this.driver.actions({ async: true });
-      await actions.move({ origin: element }).click().perform();
-    } catch (error) {
-      if (error instanceof ElementNotInteractableError) {
-        // Fallback to direct click if ActionChains fails (e.g. for <option> elements)
-        await element.click();
-      } else {
-        throw error;
+    return this.#autoswitchToNewTab(async () => {
+      const element = await this.findElement(id);
+      try {
+        const actions = this.driver.actions({ async: true });
+        await actions.move({ origin: element }).click().perform();
+      } catch (error) {
+        if (error instanceof ElementNotInteractableError) {
+          // Fallback to direct click if ActionChains fails (e.g. for <option> elements)
+          await element.click();
+        } else {
+          throw error;
+        }
       }
-    }
+    });
   }
 
   async dragSlider(id: number, value: number): Promise<void> {
@@ -305,17 +258,18 @@ export class SeleniumDriver extends BaseDriver {
     await actions.move({ origin: await this.findElement(id) }).perform();
   }
 
-  @autoswitchToNewTab
-  async pressKey(key: Keys.Key): Promise<void> {
-    const keyMap: Record<Keys.Key, string> = {
-      backspace: SeleniumKey.BACK_SPACE,
-      enter: SeleniumKey.ENTER,
-      escape: SeleniumKey.ESCAPE,
-      tab: SeleniumKey.TAB,
-    };
+  pressKey(key: Keys.Key): Promise<void> {
+    return this.#autoswitchToNewTab(async () => {
+      const keyMap: Record<Keys.Key, string> = {
+        backspace: SeleniumKey.BACK_SPACE,
+        enter: SeleniumKey.ENTER,
+        escape: SeleniumKey.ESCAPE,
+        tab: SeleniumKey.TAB,
+      };
 
-    const actions = this.driver.actions({ async: true });
-    await actions.sendKeys(keyMap[key]).perform();
+      const actions = this.driver.actions({ async: true });
+      await actions.sendKeys(keyMap[key]).perform();
+    });
   }
 
   async quit(): Promise<void> {
@@ -546,5 +500,34 @@ export class SeleniumDriver extends BaseDriver {
         );
       }
     }
+  }
+
+  async #autoswitchToNewTab<Result>(
+    fn: () => Promise<Result>,
+  ): Promise<Result> {
+    if (!this.#autoswitchToNewTabEnabled) {
+      return await fn();
+    }
+
+    const currentHandles = await this.driver.getAllWindowHandles();
+
+    const result = await fn();
+
+    const newHandles = await this.driver.getAllWindowHandles();
+    const newTabs = newHandles.filter((h) => !currentHandles.includes(h));
+
+    if (newTabs.length) {
+      const lastNewTab = newTabs[newTabs.length - 1];
+      always(lastNewTab);
+
+      if (lastNewTab !== (await this.driver.getWindowHandle())) {
+        await this.driver.switchTo().window(lastNewTab);
+        logger.debug(
+          `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
+        );
+      }
+    }
+
+    return result;
   }
 }

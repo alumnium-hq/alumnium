@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pythonicSplitlines } from "./pythonicSplitlines.js";
+import { pythonicSplitlines } from "./pythonicSplitlines.ts";
 
 describe(pythonicSplitlines, () => {
   it("splits on \\n", () => {

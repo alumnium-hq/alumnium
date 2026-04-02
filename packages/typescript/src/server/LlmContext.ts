@@ -1,5 +1,5 @@
 import z from "zod";
-import type { Agent } from "./agents/Agent.js";
+import type { Agent } from "./agents/Agent.ts";
 
 export namespace LlmContext {
   export type Meta = Agent.Meta;

@@ -1,6 +1,6 @@
 import { afterEach } from "vitest";
-import { setLoggerLevel } from "../../src/utils/logger.js";
-import { clearAllMocks } from "./mocks.js";
+import { setLoggerLevel } from "../../src/utils/logger.ts";
+import { clearAllMocks } from "./mocks.ts";
 
 setLoggerLevel("error");
 

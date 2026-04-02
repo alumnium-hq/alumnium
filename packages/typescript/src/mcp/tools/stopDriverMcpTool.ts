@@ -1,7 +1,7 @@
 import path from "node:path";
 import z from "zod";
-import { McpState } from "../McpState.js";
-import { McpTool } from "./McpTool.js";
+import { McpState } from "../McpState.ts";
+import { McpTool } from "./McpTool.ts";
 
 /**
  * Stop driver and cleanup.

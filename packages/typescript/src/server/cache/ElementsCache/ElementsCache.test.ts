@@ -3,18 +3,18 @@ import {
   createMockDir,
   pushMock,
   setupBeforeEach,
-} from "../../../../tests/unit/mocks.js";
-import { AppId } from "../../../AppId.js";
-import { GlobalFileStorePaths } from "../../../FileStore/GlobalFileStorePaths.js";
-import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
-import { Lchain } from "../../../llm/Lchain.js";
-import { Model } from "../../../Model.js";
-import type { BaseAgent } from "../../agents/BaseAgent.js";
-import { LlmContext } from "../../LlmContext.js";
-import { SessionContext } from "../../session/SessionContext.js";
-import { SessionId } from "../../session/SessionId.js";
-import { CacheStore } from "../CacheStore.js";
-import { ElementsCache } from "./ElementsCache.js";
+} from "../../../../tests/unit/mocks.ts";
+import { AppId } from "../../../AppId.ts";
+import { GlobalFileStorePaths } from "../../../FileStore/GlobalFileStorePaths.ts";
+import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
+import { Lchain } from "../../../llm/Lchain.ts";
+import { Model } from "../../../Model.ts";
+import type { BaseAgent } from "../../agents/BaseAgent.ts";
+import { LlmContext } from "../../LlmContext.ts";
+import { SessionContext } from "../../session/SessionContext.ts";
+import { SessionId } from "../../session/SessionId.ts";
+import { CacheStore } from "../CacheStore.ts";
+import { ElementsCache } from "./ElementsCache.ts";
 
 describe("ElementsCache", () => {
   const setup = setupBeforeEach(async () => {

@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import { describe, expect, it } from "vitest";
-import { ServerXCUITestAccessibilityTree } from "./ServerXCUITestAccessibilityTree.js";
+import { ServerXCUITestAccessibilityTree } from "./ServerXCUITestAccessibilityTree.ts";
 
 async function tree(
   filename: string,

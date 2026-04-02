@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
-import { ElementsCacheToolCalls } from "./ElementsCacheToolCalls.js";
+import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
+import { ElementsCacheToolCalls } from "./ElementsCacheToolCalls.ts";
 
 describe("ElementsCacheToolCalls", () => {
   describe("extractElementIds", () => {

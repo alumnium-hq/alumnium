@@ -1,7 +1,7 @@
-import { BaseDriver } from "../drivers/BaseDriver.js";
-import { Keys } from "../drivers/keys.js";
-import { BaseTool } from "./BaseTool.js";
-import { field, type FieldMetadata } from "./Field.js";
+import { BaseDriver } from "../drivers/BaseDriver.ts";
+import { Keys } from "../drivers/keys.ts";
+import { BaseTool } from "./BaseTool.ts";
+import { field, type FieldMetadata } from "./Field.ts";
 
 export class PressKeyTool extends BaseTool {
   static description =

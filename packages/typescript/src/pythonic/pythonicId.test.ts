@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pythonicId } from "./pythonicId.js";
+import { pythonicId } from "./pythonicId.ts";
 
 describe(pythonicId, () => {
   it("returns the same id for the same object", () => {

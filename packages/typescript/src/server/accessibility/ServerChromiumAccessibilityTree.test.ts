@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { ChromiumAccessibilityTree as ClientChromiumAccessibilityTree } from "../../accessibility/ChromiumAccessibilityTree.js";
-import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.js";
+import { ChromiumAccessibilityTree as ClientChromiumAccessibilityTree } from "../../accessibility/ChromiumAccessibilityTree.ts";
+import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
 
 const FIXTURE_PATH = new URL(
   "./__fixtures__/chromium_accessibility_tree.json",

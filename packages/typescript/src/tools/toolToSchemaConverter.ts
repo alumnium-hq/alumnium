@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { ToolDefinition } from "@langchain/core/language_models/base";
-import type { ToolClass } from "./BaseTool.js";
-import type { ToolWithFields } from "./Field.js";
+import type { ToolClass } from "./BaseTool.ts";
+import type { ToolWithFields } from "./Field.ts";
 
 export function convertToolsToSchemas(
   tools: Record<string, ToolClass>,

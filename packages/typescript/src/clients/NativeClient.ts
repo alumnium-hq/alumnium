@@ -1,16 +1,16 @@
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { always } from "alwaysly";
-import { AppId } from "../AppId.js";
-import { LlmUsageStats } from "../llm/llmSchema.js";
-import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.js";
-import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.js";
-import { RetrieverAgent } from "../server/agents/RetrieverAgent.js";
-import { Session } from "../server/session/Session.js";
-import { SessionManager } from "../server/session/SessionManager.js";
-import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
-import { getLogger } from "../utils/logger.js";
-import { Client } from "./Client.js";
-import { type Data, looselyTypecast } from "./typecasting.js";
+import { AppId } from "../AppId.ts";
+import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.ts";
+import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.ts";
+import { RetrieverAgent } from "../server/agents/RetrieverAgent.ts";
+import { Session } from "../server/session/Session.ts";
+import { SessionManager } from "../server/session/SessionManager.ts";
+import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.ts";
+import { getLogger } from "../utils/logger.ts";
+import { Client } from "./Client.ts";
+import { type Data, looselyTypecast } from "./typecasting.ts";
 
 const logger = getLogger(import.meta.url);
 

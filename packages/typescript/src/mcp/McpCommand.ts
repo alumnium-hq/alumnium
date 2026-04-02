@@ -1,7 +1,7 @@
 import z from "zod";
-import { CliCommand } from "../cli/CliCommand.js";
-import { setLogPath } from "../utils/logger.js";
-import { McpServer } from "./McpServer.js";
+import { CliCommand } from "../cli/CliCommand.ts";
+import { setLogPath } from "../utils/logger.ts";
+import { McpServer } from "./McpServer.ts";
 
 export namespace McpCommand {}
 

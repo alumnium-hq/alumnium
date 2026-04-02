@@ -1,8 +1,8 @@
 import { findOne } from "domutils";
 import { parseDocument } from "htmlparser2";
 import { describe, expect, it } from "vitest";
-import type { ElementsCache } from "./ElementsCache.js";
-import { ElementsCacheTree } from "./ElementsCacheTree.js";
+import type { ElementsCache } from "./ElementsCache.ts";
+import { ElementsCacheTree } from "./ElementsCacheTree.ts";
 
 describe("ElementsCacheTree", () => {
   describe("extractElements", () => {

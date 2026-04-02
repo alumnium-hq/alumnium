@@ -1,8 +1,8 @@
-declare const BUNDLED: boolean | undefined;
+declare const SINGLE_FILE_EXECUTABLE: boolean | undefined;
 
-export function isBundled(): boolean {
+export function isSingleFileExecutable(): boolean {
   try {
-    return !!BUNDLED;
+    return !!SINGLE_FILE_EXECUTABLE;
   } catch {
     return false;
   }

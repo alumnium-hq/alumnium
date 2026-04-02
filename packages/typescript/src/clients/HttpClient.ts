@@ -1,9 +1,9 @@
-import { AppId } from "../AppId.js";
-import type { Http } from "../Http.js";
-import { LlmUsageStats } from "../llm/llmSchema.js";
-import { ErrorResponse } from "../server/serverSchema.js";
-import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.js";
-import { getLogger } from "../utils/logger.js";
+import { AppId } from "../AppId.ts";
+import type { Http } from "../Http.ts";
+import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { ErrorResponse } from "../server/serverSchema.ts";
+import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.ts";
+import { getLogger } from "../utils/logger.ts";
 import type {
   AddExampleRequest,
   AreaRequest,
@@ -20,9 +20,9 @@ import type {
   StatementResponse,
   StepRequest,
   StepResponse,
-} from "./ApiModels.js";
-import { Client } from "./Client.js";
-import { type Data, looselyTypecast } from "./typecasting.js";
+} from "./ApiModels.ts";
+import { Client } from "./Client.ts";
+import { type Data, looselyTypecast } from "./typecasting.ts";
 
 const logger = getLogger(import.meta.url);
 

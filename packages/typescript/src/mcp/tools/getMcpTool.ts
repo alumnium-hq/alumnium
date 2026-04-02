@@ -1,7 +1,7 @@
 import z from "zod";
-import { McpArtifactsStore } from "../McpArtifactsStore.js";
-import { McpState } from "../McpState.js";
-import { McpTool } from "./McpTool.js";
+import { McpArtifactsStore } from "../McpArtifactsStore.ts";
+import { McpState } from "../McpState.ts";
+import { McpTool } from "./McpTool.ts";
 
 /**
  * Execute Alumni.get().

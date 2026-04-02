@@ -1,12 +1,12 @@
-import { getLogger } from "../utils/logger.js";
-import { CacheStore } from "./cache/CacheStore.js";
-import { ChainedCache } from "./cache/ChainedCache.js";
-import { ElementsCache } from "./cache/ElementsCache/ElementsCache.js";
-import { NullCache } from "./cache/NullCache.js";
-import { ResponseCache } from "./cache/ResponseCache.js";
-import { ServerCache } from "./cache/ServerCache.js";
-import { LlmContext } from "./LlmContext.js";
-import { SessionContext } from "./session/SessionContext.js";
+import { getLogger } from "../utils/logger.ts";
+import { CacheStore } from "./cache/CacheStore.ts";
+import { ChainedCache } from "./cache/ChainedCache.ts";
+import { ElementsCache } from "./cache/ElementsCache/ElementsCache.ts";
+import { NullCache } from "./cache/NullCache.ts";
+import { ResponseCache } from "./cache/ResponseCache.ts";
+import { ServerCache } from "./cache/ServerCache.ts";
+import { LlmContext } from "./LlmContext.ts";
+import { SessionContext } from "./session/SessionContext.ts";
 
 const logger = getLogger(import.meta.url);
 

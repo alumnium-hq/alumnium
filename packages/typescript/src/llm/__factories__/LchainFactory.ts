@@ -1,7 +1,7 @@
 import type { Generation } from "@langchain/core/outputs";
 import { merge } from "ts-deepmerge";
-import type { TypeUtils } from "../../typeUtils.js";
-import { Lchain } from "../Lchain.js";
+import type { TypeUtils } from "../../typeUtils.ts";
+import { Lchain } from "../Lchain.ts";
 
 export namespace LchainFactory {
   export interface StoredGenerationWithProps {

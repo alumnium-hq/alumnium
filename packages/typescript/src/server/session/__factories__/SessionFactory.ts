@@ -1,6 +1,6 @@
-import type { AppId } from "../../../AppId.js";
-import { SessionContext } from "../SessionContext.js";
-import type { SessionId } from "../SessionId.js";
+import type { AppId } from "../../../AppId.ts";
+import { SessionContext } from "../SessionContext.ts";
+import type { SessionId } from "../SessionId.ts";
 
 export abstract class SessionFactory {
   static sessionContext(): SessionContext {

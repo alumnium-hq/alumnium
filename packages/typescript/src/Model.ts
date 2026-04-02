@@ -1,5 +1,5 @@
 import z from "zod";
-import { getLogger } from "./utils/logger.js";
+import { getLogger } from "./utils/logger.ts";
 
 const logger = getLogger(import.meta.url);
 

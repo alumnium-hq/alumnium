@@ -1,6 +1,6 @@
 import type { Generation } from "@langchain/core/outputs";
-import { LlmContext } from "../LlmContext.js";
-import { ServerCache } from "./ServerCache.js";
+import { LlmContext } from "../LlmContext.ts";
+import { ServerCache } from "./ServerCache.ts";
 
 export class NullCache extends ServerCache {
   override async lookup(

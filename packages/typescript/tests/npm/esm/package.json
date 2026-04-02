@@ -1,0 +1,10 @@
+{
+  "name": "@alumnium/test-npm-esm",
+  "private": true,
+  "description": "Test package for ESM",
+  "type": "module",
+  "dependencies": {
+    "@playwright/test": "^1.59.1",
+    "alumnium": "file:../../../dist/npm-alumnium"
+  }
+}

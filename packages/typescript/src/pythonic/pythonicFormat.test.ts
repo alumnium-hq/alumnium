@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pythonicFormat } from "./pythonicFormat.js";
+import { pythonicFormat } from "./pythonicFormat.ts";
 
 describe(pythonicFormat, () => {
   it("replaces one variable", () => {

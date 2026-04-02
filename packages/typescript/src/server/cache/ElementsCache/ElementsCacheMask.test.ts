@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
-import { ElementsCacheMask } from "./ElementsCacheMask.js";
+import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
+import { ElementsCacheMask } from "./ElementsCacheMask.ts";
 
 describe("ElementsCacheMask", () => {
   describe("mask", () => {

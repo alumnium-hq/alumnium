@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { pushMock } from "../../../tests/unit/mocks.js";
-import { AssertionError } from "../../client/errors/AssertionError.js";
-import { sleep } from "../../utils/timers.js";
-import { McpState } from "../McpState.js";
-import { waitMcpTool } from "./waitMcpTool.js";
+import { pushMock } from "../../../tests/unit/mocks.ts";
+import { AssertionError } from "../../client/errors/AssertionError.ts";
+import { sleep } from "../../utils/timers.ts";
+import { McpState } from "../McpState.ts";
+import { waitMcpTool } from "./waitMcpTool.ts";
 
-vi.mock("../../utils/timers.js", async () => {
+vi.mock("../../utils/timers.ts", async () => {
   return {
     sleep: vi.fn(() => Promise.resolve()),
   };

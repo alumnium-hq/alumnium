@@ -1,16 +1,16 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
-import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
-import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.js";
-import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.js";
-import { AppId } from "../AppId.js";
-import type { ToolClass } from "../tools/BaseTool.js";
-import { ClickTool } from "../tools/ClickTool.js";
-import { DragAndDropTool } from "../tools/DragAndDropTool.js";
-import { PressKeyTool } from "../tools/PressKeyTool.js";
-import { TypeTool } from "../tools/TypeTool.js";
-import { BaseDriver } from "./BaseDriver.js";
-import type { Keys } from "./keys.js";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
+import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.ts";
+import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.ts";
+import { AppId } from "../AppId.ts";
+import type { ToolClass } from "../tools/BaseTool.ts";
+import { ClickTool } from "../tools/ClickTool.ts";
+import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
+import { PressKeyTool } from "../tools/PressKeyTool.ts";
+import { TypeTool } from "../tools/TypeTool.ts";
+import { BaseDriver } from "./BaseDriver.ts";
+import type { Keys } from "./keys.ts";
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;

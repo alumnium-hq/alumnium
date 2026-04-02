@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe } from "vitest";
-import { baseIt } from "./helpers.js";
+import { baseIt } from "./helpers.ts";
 
 describe("File Upload", () => {
   let testFile1: string;

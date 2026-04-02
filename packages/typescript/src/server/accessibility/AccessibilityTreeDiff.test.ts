@@ -2,8 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { AccessibilityTreeDiff } from "./AccessibilityTreeDiff.js";
-import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.js";
+import { AccessibilityTreeDiff } from "./AccessibilityTreeDiff.ts";
+import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
 
 const ACCESSIBILITY_TREE_DIFF_1_PATH = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),

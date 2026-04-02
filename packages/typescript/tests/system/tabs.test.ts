@@ -1,6 +1,6 @@
 import { SwitchToNextTabTool, SwitchToPreviousTabTool } from "alumnium";
 import { describe } from "vitest";
-import { baseIt } from "./helpers.js";
+import { baseIt } from "./helpers.ts";
 
 describe("Tabs", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {

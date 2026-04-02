@@ -15,8 +15,8 @@ import {
 import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";
 import { never } from "alwaysly";
-import { Model } from "../Model.js";
-import { getLogger } from "../utils/logger.js";
+import { Model } from "../Model.ts";
+import { getLogger } from "../utils/logger.ts";
 
 const logger = getLogger(import.meta.url);
 const parsedModelTimeout = parseInt(process.env.ALUMNIUM_MODEL_TIMEOUT ?? "90");

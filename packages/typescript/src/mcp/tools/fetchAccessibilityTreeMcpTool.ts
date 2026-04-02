@@ -1,8 +1,8 @@
 import { always } from "alwaysly";
 import z from "zod";
-import { NativeClient } from "../../clients/NativeClient.js";
-import { McpState } from "../McpState.js";
-import { McpTool } from "./McpTool.js";
+import { NativeClient } from "../../clients/NativeClient.ts";
+import { McpState } from "../McpState.ts";
+import { McpTool } from "./McpTool.ts";
 
 /**
  * Fetch accessibility tree for debugging.

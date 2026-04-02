@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { moduleUrlToLoggerCategory } from "./logger.js";
+import { moduleUrlToLoggerCategory } from "./logger.ts";
 
 describe(moduleUrlToLoggerCategory, () => {
   it("should convert module URL to logger category", () => {

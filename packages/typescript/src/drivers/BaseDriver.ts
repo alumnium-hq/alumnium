@@ -1,9 +1,9 @@
-import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.js";
-import { AppId } from "../AppId.js";
-import type { ToolClass } from "../tools/BaseTool.js";
-import type { Driver } from "./Driver.js";
-import type { Element } from "./index.js";
-import type { Keys } from "./keys.js";
+import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
+import { AppId } from "../AppId.ts";
+import type { ToolClass } from "../tools/BaseTool.ts";
+import type { Driver } from "./Driver.ts";
+import type { Element } from "./index.ts";
+import type { Keys } from "./keys.ts";
 
 export abstract class BaseDriver {
   abstract platform: Driver.Platform;

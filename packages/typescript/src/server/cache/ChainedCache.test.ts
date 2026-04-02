@@ -1,13 +1,13 @@
 import type { Generation } from "@langchain/core/outputs";
 import { describe, expect, it, vi } from "vitest";
-import { AppId } from "../../AppId.js";
-import { Lchain } from "../../llm/Lchain.js";
-import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.js";
-import { LlmContext } from "../LlmContext.js";
-import { SessionContext } from "../session/SessionContext.js";
-import { SessionId } from "../session/SessionId.js";
-import { ChainedCache } from "./ChainedCache.js";
-import { ServerCache } from "./ServerCache.js";
+import { AppId } from "../../AppId.ts";
+import { Lchain } from "../../llm/Lchain.ts";
+import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
+import { LlmContext } from "../LlmContext.ts";
+import { SessionContext } from "../session/SessionContext.ts";
+import { SessionId } from "../session/SessionId.ts";
+import { ChainedCache } from "./ChainedCache.ts";
+import { ServerCache } from "./ServerCache.ts";
 
 describe(ChainedCache, () => {
   describe("constructor", () => {

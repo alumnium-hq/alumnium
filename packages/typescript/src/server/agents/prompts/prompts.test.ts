@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { agentClassNameToPromptsAgentKind } from "./prompts.js";
+import { agentClassNameToPromptsAgentKind } from "./prompts.ts";
 
 describe(agentClassNameToPromptsAgentKind, () => {
   it("converts simple class names to IDs", () => {

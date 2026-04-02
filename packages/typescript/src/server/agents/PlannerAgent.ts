@@ -10,14 +10,14 @@ import {
 } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import z from "zod";
-import { Model } from "../../Model.js";
-import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
-import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.js";
-import { UploadTool } from "../../tools/UploadTool.js";
-import { getLogger } from "../../utils/logger.js";
-import type { LlmContext } from "../LlmContext.js";
-import { Agent } from "./Agent.js";
-import { BaseAgent } from "./BaseAgent.js";
+import { Model } from "../../Model.ts";
+import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
+import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
+import { UploadTool } from "../../tools/UploadTool.ts";
+import { getLogger } from "../../utils/logger.ts";
+import type { LlmContext } from "../LlmContext.ts";
+import { Agent } from "./Agent.ts";
+import { BaseAgent } from "./BaseAgent.ts";
 
 const logger = getLogger(import.meta.url);
 

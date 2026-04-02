@@ -1,4 +1,4 @@
-import type { Client } from "../clients/Client.js";
+import type { Client } from "../clients/Client.ts";
 
 export namespace Cache {
   export type ClearProps = Record<string, unknown>;

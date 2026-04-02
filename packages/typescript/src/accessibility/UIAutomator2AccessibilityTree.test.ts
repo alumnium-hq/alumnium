@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { UIAutomator2AccessibilityTree } from "./UIAutomator2AccessibilityTree.js";
+import { UIAutomator2AccessibilityTree } from "./UIAutomator2AccessibilityTree.ts";
 
 const FIXTURE_PATH = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),

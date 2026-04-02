@@ -1,5 +1,5 @@
 import { createTwoFilesPatch } from "diff";
-import { pythonicSplitlines } from "../../pythonic/pythonicSplitlines.js";
+import { pythonicSplitlines } from "../../pythonic/pythonicSplitlines.ts";
 
 // TODO: This is a direct translation of the Python implementation. An idiomatic TypeScript would be
 // a simple function `computeTreeDiff`. Consider refactoring it.

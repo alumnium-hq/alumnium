@@ -1,6 +1,6 @@
-import { BaseDriver } from "../drivers/BaseDriver.js";
-import { BaseTool } from "./BaseTool.js";
-import { field, type FieldMetadata } from "./Field.js";
+import { BaseDriver } from "../drivers/BaseDriver.ts";
+import { BaseTool } from "./BaseTool.ts";
+import { field, type FieldMetadata } from "./Field.ts";
 
 export class WaitForElementTool extends BaseTool {
   static description = `Wait for an element matching a CSS selector to become visible.

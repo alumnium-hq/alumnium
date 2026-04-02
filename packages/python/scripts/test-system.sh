@@ -38,8 +38,8 @@ fi
 
 echo
 if [ $failed -ne 0 ]; then
-	echo "🔴 Some tests failed"
+	echo "👎 Some tests failed"
 	exit 1
 else
-	echo "🟢 All tests passed"
+	echo "🎉 All tests passed"
 fi

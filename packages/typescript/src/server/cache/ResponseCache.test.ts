@@ -1,16 +1,16 @@
 import { deserializeStoredGeneration } from "@langchain/core/caches";
 import type { Generation } from "@langchain/core/outputs";
 import { describe, expect, it, vi } from "vitest";
-import { createMockDir, pushMock } from "../../../tests/unit/mocks.js";
-import { AppId } from "../../AppId.js";
-import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.js";
-import { Model } from "../../Model.js";
-import type { RetrieverAgent } from "../agents/RetrieverAgent.js";
-import { LlmContext } from "../LlmContext.js";
-import { SessionContext } from "../session/SessionContext.js";
-import { SessionId } from "../session/SessionId.js";
-import { CacheStore } from "./CacheStore.js";
-import { ResponseCache } from "./ResponseCache.js";
+import { createMockDir, pushMock } from "../../../tests/unit/mocks.ts";
+import { AppId } from "../../AppId.ts";
+import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";
+import { Model } from "../../Model.ts";
+import type { RetrieverAgent } from "../agents/RetrieverAgent.ts";
+import { LlmContext } from "../LlmContext.ts";
+import { SessionContext } from "../session/SessionContext.ts";
+import { SessionId } from "../session/SessionId.ts";
+import { CacheStore } from "./CacheStore.ts";
+import { ResponseCache } from "./ResponseCache.ts";
 
 describe("ResponseCache", () => {
   it("saves and looks up cached response", async () => {

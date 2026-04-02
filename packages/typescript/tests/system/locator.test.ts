@@ -1,5 +1,5 @@
 import { describe } from "vitest";
-import { it } from "./helpers.js";
+import { it } from "./helpers.ts";
 
 describe("Locator", () => {
   it("finds elements", async ({ expect, setup }) => {

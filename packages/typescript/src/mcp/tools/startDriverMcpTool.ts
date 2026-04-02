@@ -1,23 +1,23 @@
 import path from "node:path";
 import z from "zod";
-import { Alumni } from "../../client/Alumni.js";
-import { DragSliderTool } from "../../tools/DragSliderTool.js";
-import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.js";
-import { NavigateBackTool } from "../../tools/NavigateBackTool.js";
-import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.js";
-import { PrintToPdfTool } from "../../tools/PrintToPdfTool.js";
-import { ScrollTool } from "../../tools/ScrollTool.js";
-import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.js";
-import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.js";
-import { McpArtifactsStore } from "../McpArtifactsStore.js";
+import { Alumni } from "../../client/Alumni.ts";
+import { DragSliderTool } from "../../tools/DragSliderTool.ts";
+import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.ts";
+import { NavigateBackTool } from "../../tools/NavigateBackTool.ts";
+import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
+import { PrintToPdfTool } from "../../tools/PrintToPdfTool.ts";
+import { ScrollTool } from "../../tools/ScrollTool.ts";
+import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
+import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
+import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import {
   createAndroidDriver,
   createChromeDriver,
   createIosDriver,
   type McpDriver,
-} from "../mcpDrivers.js";
-import { McpState } from "../McpState.js";
-import { McpTool } from "./McpTool.js";
+} from "../mcpDrivers.ts";
+import { McpState } from "../McpState.ts";
+import { McpTool } from "./McpTool.ts";
 
 /**
  * Start a new driver instance.

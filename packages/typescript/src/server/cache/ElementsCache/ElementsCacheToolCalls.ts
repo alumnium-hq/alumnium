@@ -1,5 +1,5 @@
-import type { Lchain } from "../../../llm/Lchain.js";
-import { getLogger } from "../../../utils/logger.js";
+import type { Lchain } from "../../../llm/Lchain.ts";
+import { getLogger } from "../../../utils/logger.ts";
 
 const logger = getLogger(import.meta.url);
 

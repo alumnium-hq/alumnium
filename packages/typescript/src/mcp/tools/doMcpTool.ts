@@ -12,10 +12,10 @@ import {
   ScrollTool,
   TypeTool,
   UploadTool,
-} from "../../tools/index.js";
-import { McpArtifactsStore } from "../McpArtifactsStore.js";
-import { McpState } from "../McpState.js";
-import { McpTool } from "./McpTool.js";
+} from "../../tools/index.ts";
+import { McpArtifactsStore } from "../McpArtifactsStore.ts";
+import { McpState } from "../McpState.ts";
+import { McpTool } from "./McpTool.ts";
 
 /**
  * @internal

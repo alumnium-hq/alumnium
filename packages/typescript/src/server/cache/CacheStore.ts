@@ -1,9 +1,9 @@
 import path from "node:path";
-import type { AppId } from "../../AppId.js";
-import { FileStore } from "../../FileStore/FileStore.js";
-import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.js";
-import { Model } from "../../Model.js";
-import { SessionContext } from "../session/SessionContext.js";
+import type { AppId } from "../../AppId.ts";
+import { FileStore } from "../../FileStore/FileStore.ts";
+import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";
+import { Model } from "../../Model.ts";
+import { SessionContext } from "../session/SessionContext.ts";
 
 export class CacheStore extends FileStore {
   #sessionContext: SessionContext;

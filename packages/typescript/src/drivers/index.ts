@@ -3,8 +3,8 @@ import type { WebElement } from "selenium-webdriver";
 
 export type Element = WebElement | Locator | WebdriverIO.Element;
 
-export * from "./AppiumDriver.js";
-export * from "./BaseDriver.js";
-export * from "./keys.js";
-export * from "./PlaywrightDriver.js";
-export * from "./SeleniumDriver.js";
+export * from "./AppiumDriver.ts";
+export * from "./BaseDriver.ts";
+export * from "./keys.ts";
+export * from "./PlaywrightDriver.ts";
+export * from "./SeleniumDriver.ts";

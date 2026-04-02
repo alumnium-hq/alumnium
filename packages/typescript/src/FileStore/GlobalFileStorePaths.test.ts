@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { pushTeardown } from "../../tests/unit/mocks.js";
-import { GlobalFileStorePaths } from "./GlobalFileStorePaths.js";
+import { pushTeardown } from "../../tests/unit/mocks.ts";
+import { GlobalFileStorePaths } from "./GlobalFileStorePaths.ts";
 
 describe("GlobalFileStorePaths", () => {
   describe("GlobalFileStorePaths.globalSubDir", () => {

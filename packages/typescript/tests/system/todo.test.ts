@@ -1,5 +1,5 @@
 import { describe } from "vitest";
-import { it } from "./helpers.js";
+import { it } from "./helpers.ts";
 
 describe("To Do application", () => {
   it("creates a new task", async ({ expect, setup }) => {

@@ -1,2 +1,2 @@
-export * from "./pythonicId.js";
-export * from "./pythonicFormat.js";
+export * from "./pythonicFormat.ts";
+export * from "./pythonicId.ts";

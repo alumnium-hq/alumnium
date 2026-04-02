@@ -2,8 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import z from "zod";
-import { createMockDir, setupBeforeEach } from "../../tests/unit/mocks.js";
-import { FileStore } from "./FileStore.js";
+import { createMockDir, setupBeforeEach } from "../../tests/unit/mocks.ts";
+import { FileStore } from "./FileStore.ts";
 
 describe("FileStore", () => {
   describe("constructor", () => {

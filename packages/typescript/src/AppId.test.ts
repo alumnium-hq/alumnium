@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AppId } from "./AppId.js";
+import { AppId } from "./AppId.ts";
 
 describe("AppId", () => {
   it("parses string as AppId", () => {

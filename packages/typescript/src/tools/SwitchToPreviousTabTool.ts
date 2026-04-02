@@ -1,5 +1,5 @@
-import { BaseDriver } from "../drivers/BaseDriver.js";
-import { BaseTool } from "./BaseTool.js";
+import { BaseDriver } from "../drivers/BaseDriver.ts";
+import { BaseTool } from "./BaseTool.ts";
 
 export class SwitchToPreviousTabTool extends BaseTool {
   static description = `Switch to the previous browser tab/window.`;

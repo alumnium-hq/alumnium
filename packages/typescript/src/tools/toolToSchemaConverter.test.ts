@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { PressKeyTool } from "./PressKeyTool.js";
-import { convertToolsToSchemas } from "./toolToSchemaConverter.js";
-import { TypeTool } from "./TypeTool.js";
-import { UploadTool } from "./UploadTool.js";
+import { PressKeyTool } from "./PressKeyTool.ts";
+import { convertToolsToSchemas } from "./toolToSchemaConverter.ts";
+import { TypeTool } from "./TypeTool.ts";
+import { UploadTool } from "./UploadTool.ts";
 
 describe(convertToolsToSchemas, () => {
   it("converts tool with primitives", () => {

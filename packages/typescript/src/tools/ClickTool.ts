@@ -1,6 +1,6 @@
-import { BaseDriver } from "../drivers/BaseDriver.js";
-import { BaseTool } from "./BaseTool.js";
-import { field, type FieldMetadata } from "./Field.js";
+import { BaseDriver } from "../drivers/BaseDriver.ts";
+import { BaseTool } from "./BaseTool.ts";
+import { field, type FieldMetadata } from "./Field.ts";
 
 export class ClickTool extends BaseTool {
   static description = `Click an element. NEVER use ClickTool to upload files - use UploadTool instead.`;

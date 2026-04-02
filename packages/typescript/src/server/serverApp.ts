@@ -1,13 +1,13 @@
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
-import { LlmUsageStats } from "../llm/llmSchema.js";
-import { Model } from "../Model.js";
-import { getLogger } from "../utils/logger.js";
-import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.js";
-import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.js";
-import { RetrieverAgent } from "./agents/RetrieverAgent.js";
-import * as s from "./serverSchema.js";
-import { SessionManager } from "./session/SessionManager.js";
+import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { Model } from "../Model.ts";
+import { getLogger } from "../utils/logger.ts";
+import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.ts";
+import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.ts";
+import { RetrieverAgent } from "./agents/RetrieverAgent.ts";
+import * as s from "./serverSchema.ts";
+import { SessionManager } from "./session/SessionManager.ts";
 
 const logger = getLogger(import.meta.url);
 

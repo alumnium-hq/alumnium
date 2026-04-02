@@ -1,6 +1,6 @@
-import { AppId } from "../../AppId.js";
-import { getLogger } from "../../utils/logger.js";
-import { SessionId } from "./SessionId.js";
+import { AppId } from "../../AppId.ts";
+import { getLogger } from "../../utils/logger.ts";
+import { SessionId } from "./SessionId.ts";
 
 const logger = getLogger(import.meta.url);
 

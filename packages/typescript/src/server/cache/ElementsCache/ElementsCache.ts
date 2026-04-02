@@ -4,20 +4,20 @@ import fs from "node:fs/promises";
 import * as fuzzy from "npm-fuzzy/dist/index.esm.js";
 import { xxh64Str } from "smolxxh/str";
 import z from "zod";
-import { AppId } from "../../../AppId.js";
-import { Lchain } from "../../../llm/Lchain.js";
-import { getLogger } from "../../../utils/logger.js";
-import { ActorAgent } from "../../agents/ActorAgent.js";
-import type { BaseAgent } from "../../agents/BaseAgent.js";
-import { PlannerAgent } from "../../agents/PlannerAgent.js";
-import { LlmContext } from "../../LlmContext.js";
-import { SessionContext } from "../../session/SessionContext.js";
-import { CacheStore } from "../CacheStore.js";
-import { ServerCache } from "../ServerCache.js";
-import { ActorAgentElementsCache } from "./ActorAgentElementsCache.js";
-import { ElementsCacheMask } from "./ElementsCacheMask.js";
-import { ElementsCacheTree } from "./ElementsCacheTree.js";
-import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.js";
+import { AppId } from "../../../AppId.ts";
+import { Lchain } from "../../../llm/Lchain.ts";
+import { getLogger } from "../../../utils/logger.ts";
+import { ActorAgent } from "../../agents/ActorAgent.ts";
+import type { BaseAgent } from "../../agents/BaseAgent.ts";
+import { PlannerAgent } from "../../agents/PlannerAgent.ts";
+import { LlmContext } from "../../LlmContext.ts";
+import { SessionContext } from "../../session/SessionContext.ts";
+import { CacheStore } from "../CacheStore.ts";
+import { ServerCache } from "../ServerCache.ts";
+import { ActorAgentElementsCache } from "./ActorAgentElementsCache.ts";
+import { ElementsCacheMask } from "./ElementsCacheMask.ts";
+import { ElementsCacheTree } from "./ElementsCacheTree.ts";
+import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.ts";
 
 // NOTE: See `npm-fuzzy` import above
 const tokenSortRatio =
@@ -251,7 +251,7 @@ export class ElementsCache extends ServerCache {
           meta satisfies never;
       }
     } catch (error) {
-      logger.warn(`Error in elements cache update: ${error}`);
+      logger.warn(`Error in elements cache update: {error}`, { error });
     }
   }
 

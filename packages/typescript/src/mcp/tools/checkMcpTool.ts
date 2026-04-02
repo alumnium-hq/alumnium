@@ -1,8 +1,8 @@
 import z from "zod";
-import { AssertionError } from "../../client/errors/AssertionError.js";
-import { McpArtifactsStore } from "../McpArtifactsStore.js";
-import { McpState } from "../McpState.js";
-import { McpTool } from "./McpTool.js";
+import { AssertionError } from "../../client/errors/AssertionError.ts";
+import { McpArtifactsStore } from "../McpArtifactsStore.ts";
+import { McpState } from "../McpState.ts";
+import { McpTool } from "./McpTool.ts";
 
 /**
  * Execute Alumni.check().

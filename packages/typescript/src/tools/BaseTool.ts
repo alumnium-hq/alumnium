@@ -1,4 +1,4 @@
-import { BaseDriver } from "../drivers/BaseDriver.js";
+import { BaseDriver } from "../drivers/BaseDriver.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ToolClass = new (...args: any[]) => BaseTool;

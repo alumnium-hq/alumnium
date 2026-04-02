@@ -5,9 +5,9 @@
  * defined in packages/python/src/alumnium/server/api_models.py
  */
 
-import type { AppId } from "../AppId.js";
-import type { ElementRef } from "../server/serverSchema.js";
-import type { ToolCall } from "../tools/BaseTool.js";
+import type { AppId } from "../AppId.ts";
+import type { ElementRef } from "../server/serverSchema.ts";
+import type { ToolCall } from "../tools/BaseTool.ts";
 
 export interface SessionRequest {
   platform: "chromium" | "uiautomator2" | "xcuitest";

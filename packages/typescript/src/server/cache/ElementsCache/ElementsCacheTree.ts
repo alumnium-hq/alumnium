@@ -1,8 +1,8 @@
 import { Element as DomElement, Node as DomNode, Text } from "domhandler";
 import { innerText } from "domutils";
 import { parseDocument } from "htmlparser2";
-import { getLogger } from "../../../utils/logger.js";
-import type { ElementsCache } from "./ElementsCache.js";
+import { getLogger } from "../../../utils/logger.ts";
+import type { ElementsCache } from "./ElementsCache.ts";
 
 const logger = getLogger(import.meta.url);
 

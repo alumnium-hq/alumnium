@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { ServerUIAutomator2AccessibilityTree } from "./ServerUIAutomator2AccessibilityTree.js";
+import { ServerUIAutomator2AccessibilityTree } from "./ServerUIAutomator2AccessibilityTree.ts";
 
 async function tree(
   filename: string,

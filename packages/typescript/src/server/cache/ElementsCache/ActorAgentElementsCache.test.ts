@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { pushMock, setupBeforeEach } from "../../../../tests/unit/mocks.js";
-import { AppId } from "../../../AppId.js";
-import { LchainFactory } from "../../../llm/__factories__/LchainFactory.js";
-import type { BaseAgent } from "../../agents/BaseAgent.js";
-import { SessionFactory } from "../../session/__factories__/SessionFactory.js";
-import { ActorAgentElementsCache } from "./ActorAgentElementsCache.js";
-import type { ElementsCache } from "./ElementsCache.js";
-import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.js";
+import { pushMock, setupBeforeEach } from "../../../../tests/unit/mocks.ts";
+import { AppId } from "../../../AppId.ts";
+import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
+import type { BaseAgent } from "../../agents/BaseAgent.ts";
+import { SessionFactory } from "../../session/__factories__/SessionFactory.ts";
+import { ActorAgentElementsCache } from "./ActorAgentElementsCache.ts";
+import type { ElementsCache } from "./ElementsCache.ts";
+import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.ts";
 
 describe("ActorAgentElementsCache", () => {
   const setup = setupBeforeEach(() => {

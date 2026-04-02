@@ -5,7 +5,7 @@
   "compilerOptions": {
     // Output
     "outDir": "./dist/npm-alumnium",
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
     "declaration": true,
     // Build
     "incremental": false, // Always rebuild from scratch as we `rm -rf dist`

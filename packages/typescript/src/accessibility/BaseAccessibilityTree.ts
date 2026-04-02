@@ -1,4 +1,4 @@
-import type { AccessibilityElement } from "./AccessibilityElement.js";
+import type { AccessibilityElement } from "./AccessibilityElement.ts";
 
 export abstract class BaseAccessibilityTree {
   abstract toStr(): string;

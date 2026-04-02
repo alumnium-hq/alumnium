@@ -1,10 +1,10 @@
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { MessageContent } from "@langchain/core/messages";
 import z from "zod";
-import { pythonicFormat } from "../../pythonic/pythonicFormat.js";
-import { getLogger } from "../../utils/logger.js";
-import type { LlmContext } from "../LlmContext.js";
-import { BaseAgent } from "./BaseAgent.js";
+import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
+import { getLogger } from "../../utils/logger.ts";
+import type { LlmContext } from "../LlmContext.ts";
+import { BaseAgent } from "./BaseAgent.ts";
 
 const logger = getLogger(import.meta.url);
 
