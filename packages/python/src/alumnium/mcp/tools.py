@@ -74,7 +74,7 @@ def get_tool_definitions() -> list[Tool]:
                             '"domain": ".example.com"}]}\'.'
                             "You can optionally set a persistent browser profile to preserve "
                             "cookies and sessions across restarts. "
-                            'Example: \'{"platformName": "chrome", "profile": "personal"}\'.'
+                            'Example: \'{"platformName": "chrome", "alumnium:options": {"driverSettings": {"profile": "personal"}}}\'.'
                         ),
                     },
                     "server_url": {

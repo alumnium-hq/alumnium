@@ -10,17 +10,22 @@ logger = get_logger(__name__)
 
 
 def create_chrome_driver(
-    capabilities: dict[str, Any], server_url: str | None, artifacts_dir: Path, profile_dir: Path | None = None
+    capabilities: dict[str, Any], server_url: str | None, artifacts_dir: Path, profile_dir: Path | None = None,
+    driver_settings: dict[str, Any] | None = None
 ) -> Any:
     driver_type = getenv("ALUMNIUM_DRIVER", "selenium").lower()
     logger.info(f"Creating Chrome driver using {driver_type}")
     if driver_type == "playwright":
-        return create_playwright_driver(capabilities, artifacts_dir, profile_dir=profile_dir)
+        return create_playwright_driver(capabilities, artifacts_dir, profile_dir=profile_dir, driver_settings=driver_settings)
     else:
-        return create_selenium_driver(capabilities, server_url, profile_dir=profile_dir)
+        return create_selenium_driver(capabilities, server_url, profile_dir=profile_dir, driver_settings=driver_settings)
 
 
-def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path, profile_dir: Path | None = None) -> Any:
+
+def create_playwright_driver(
+    capabilities: dict[str, Any], artifacts_dir: Path, profile_dir: Path | None = None,
+    driver_settings: dict[str, Any] | None = None
+) -> Any:
     """Create async Playwright driver from capabilities."""
     import asyncio
     from threading import Thread
@@ -29,6 +34,8 @@ def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path, 
 
     headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true").lower() == "true"
     logger.info(f"Creating Playwright driver (headless={headless}, profile={profile_dir})")
+
+    driver_settings = driver_settings or {}
 
     # Create event loop in dedicated thread (shared by Playwright and driver)
     loop = asyncio.new_event_loop()
@@ -44,13 +51,18 @@ def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path, 
             logger.debug(f"Setting extra HTTP headers: {headers}")
 
         if profile_dir:
-            # Persistent context: launch + context combined
-            context = await playwright.chromium.launch_persistent_context(
+            executable_path = driver_settings.get("executablePath")
+            ignore_default_args = driver_settings.get("ignoreDefaultArgs")
+            launch_kwargs = dict(
                 user_data_dir=str(profile_dir),
                 headless=headless,
+                executable_path=executable_path,
                 record_video_dir=str(artifacts_dir / "videos"),
                 extra_http_headers=headers or {},
             )
+            if ignore_default_args is not None:
+                launch_kwargs["ignore_default_args"] = ignore_default_args
+            context = await playwright.chromium.launch_persistent_context(**launch_kwargs)
         else:
             # Ephemeral context: separate launch + new_context
             browser = await playwright.chromium.launch(headless=headless)
@@ -90,16 +102,23 @@ def create_playwright_driver(capabilities: dict[str, Any], artifacts_dir: Path, 
 
 
 def create_selenium_driver(
-    capabilities: dict[str, Any], server_url: str | None, profile_dir: Path | None = None
+    capabilities: dict[str, Any], server_url: str | None, profile_dir: Path | None = None,
+    driver_settings: dict[str, Any] | None = None
 ) -> Any:
     """Create Selenium Chrome driver from capabilities."""
     from selenium.webdriver.chrome.options import Options
 
     logger.info(f"Creating Selenium driver (server_url={server_url or 'local'}, profile={profile_dir})")
 
+    driver_settings = driver_settings or {}
     headers = capabilities.pop("headers", {})
     cookies = capabilities.pop("cookies", [])
     options = Options()
+
+    executable_path = driver_settings.get("executablePath")
+    if executable_path:
+        logger.debug(f"Using custom Chrome binary: {executable_path}")
+        options.binary_location = executable_path
 
     if profile_dir:
         options.add_argument(f"--user-data-dir={profile_dir}")
