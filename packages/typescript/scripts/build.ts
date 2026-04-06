@@ -500,6 +500,7 @@ async function buildPipWheel(
   dir: string,
   tagArg: string | undefined,
 ) {
+  await fs.mkdir(TMP_DIR, { recursive: true });
   const tmpWhlDir = await fs
     .mkdtemp(path.join(TMP_DIR, "alumnium-whl"))
     .then((name) => path.resolve(os.tmpdir(), name));
