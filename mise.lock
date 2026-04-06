@@ -302,6 +302,10 @@ backend = "npm:oxfmt"
 version = "0.4.0"
 backend = "pipx:pyprojectsort"
 
+[[tools."pipx:wheel"]]
+version = "0.46.3"
+backend = "pipx:wheel"
+
 [[tools.python]]
 version = "3.10.20"
 backend = "core:python"

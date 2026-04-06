@@ -20,6 +20,7 @@ ruff = "latest" # Python formatter
 shfmt = "latest" # .sh formatter
 oxfmt = "latest" # TS formatter
 "pipx:pyprojectsort" = "latest" # pyproject.toml formatter
+"pipx:wheel" = "latest" # Python wheel builder
 
 [env]
 '_'.file = { path = ".env" }
@@ -54,6 +55,10 @@ run = "mise install"
 [tasks."install/bun"]
 run = "bun install"
 # NOTE: No need to specify sources and outputs as `bun install` is faster at tracking them than mise.
+
+[tasks.build]
+depends = ["//packages/typescript:build", "//packages/python:build"]
+description = "Build all packages"
 
 [tasks."dev/cli"]
 run = [{ task = "//packages/typescript:dev/cli" }]

@@ -28,7 +28,7 @@ authors = [
     { email = "tati.shep@gmail.com", name = "Tatiana Shepeleva" },
 ]
 dependencies = [
-    "alumnium-cli==0.19.0",
+    "alumnium-cli==0.19.0; (sys_platform == 'linux' or sys_platform == 'darwin' or sys_platform == 'win32') and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')",
     "appium-python-client>=5.1.1,<6.0.0",
     "fastapi>=0.127,<0.128",
     "langchain-anthropic>=1.2.0,<2.0.0",
@@ -136,23 +136,26 @@ select = [
 module-name = "alumnium"
 module-root = "src"
 
-[tool.uv.sources.alumnium-cli]
-path = "../typescript/dist/pip-alumnium-cli"
+[[tool.uv.sources.alumnium-cli]]
+path = "../typescript/dist/pip/alumnium_cli-0.19.0-py3-none-manylinux_2_28_x86_64.whl"
+marker = "sys_platform == 'linux' and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64')"
 
-[tool.uv.sources.alumnium-cli-darwin-arm64]
-path = "../typescript/dist/pip-alumnium-cli-darwin-arm64"
+[[tool.uv.sources.alumnium-cli]]
+path = "../typescript/dist/pip/alumnium_cli-0.19.0-py3-none-manylinux_2_28_aarch64.whl"
+marker = "sys_platform == 'linux' and (platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')"
 
-[tool.uv.sources.alumnium-cli-darwin-x64]
-path = "../typescript/dist/pip-alumnium-cli-darwin-x64"
+[[tool.uv.sources.alumnium-cli]]
+path = "../typescript/dist/pip/alumnium_cli-0.19.0-py3-none-macosx_x86_64.whl"
+marker = "sys_platform == 'darwin' and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64')"
 
-[tool.uv.sources.alumnium-cli-linux-arm64]
-path = "../typescript/dist/pip-alumnium-cli-linux-arm64"
+[[tool.uv.sources.alumnium-cli]]
+path = "../typescript/dist/pip/alumnium_cli-0.19.0-py3-none-macosx_arm64.whl"
+marker = "sys_platform == 'darwin' and (platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')"
 
-[tool.uv.sources.alumnium-cli-linux-x64]
-path = "../typescript/dist/pip-alumnium-cli-linux-x64"
+[[tool.uv.sources.alumnium-cli]]
+path = "../typescript/dist/pip/alumnium_cli-0.19.0-py3-none-win_amd64.whl"
+marker = "sys_platform == 'win32' and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64')"
 
-[tool.uv.sources.alumnium-cli-windows-arm64]
-path = "../typescript/dist/pip-alumnium-cli-windows-arm64"
-
-[tool.uv.sources.alumnium-cli-windows-x64]
-path = "../typescript/dist/pip-alumnium-cli-windows-x64"
+[[tool.uv.sources.alumnium-cli]]
+path = "../typescript/dist/pip/alumnium_cli-0.19.0-py3-none-win_arm64.whl"
+marker = "sys_platform == 'win32' and (platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')"
