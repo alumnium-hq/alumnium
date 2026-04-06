@@ -13,36 +13,24 @@ DIST_DIR="$PKG_DIR/dist"
 SRC_TAR_GZ_NAME="alumnium-cli-$VERSION.tar.gz"
 SRC_TAR_GZ_PATH="$DIST_DIR/pip/$SRC_TAR_GZ_NAME"
 
-cd "$DIST_DIR"
+tmp_dir="$(mktemp -d)"
+trap 'rm -rf "$tmp_dir"' EXIT
 
-tmp_tar="$(mktemp).tar"
+# Copy pip directories to temp, zeroing out binaries
+while IFS= read -r -d '' dir; do
+	cp -r "$dir" "$tmp_dir/"
+	find "$tmp_dir/$(basename "$dir")" -path '*/src/alumnium_cli/alumnium-*' \
+		-exec sh -c ': > "$1"' _ {} \;
+done < <(find "$DIST_DIR" -maxdepth 1 -type d -name 'pip-alumnium-cli*' -print0)
 
-# Archive without the binaries
-tar -cf "$tmp_tar" \
-	--warning=no-all \
-	--exclude='*/src/alumnium_cli/alumnium-*' \
+# Archive from temp directory, excluding ruff cache
+tar -czf "$SRC_TAR_GZ_PATH" \
 	--exclude='*.ruff_cache*' \
-	$(find . -maxdepth 1 -type d -name 'pip-alumnium-cli*' -printf '%P\n')
-
-# Zero out the binaries
-empty_file=".empty"
-: >"$empty_file"
-while IFS= read -r f; do
-	tar --append -f "$tmp_tar" \
-		--warning=no-all \
-		--transform "s|.*|$f|" \
-		"$empty_file"
-done < <(find pip-alumnium-cli* -path '*/src/alumnium_cli/alumnium-*')
-rm "$empty_file"
-
-cd - >/dev/null
-
-gzip -c "$tmp_tar" >"$SRC_TAR_GZ_PATH"
-rm "$tmp_tar"
+	-C "$tmp_dir" \
+	.
 
 if [ "$BUILD_SUBSCRIPT" = "true" ]; then
-	rel_path="$(realpath --relative-to="$PWD" "$SRC_TAR_GZ_PATH")"
-	echo "🟢 Pip source tarball: $rel_path"
+	echo "🟢 Pip source tarball: $SRC_TAR_GZ_PATH"
 else
 	echo "🎉 Generated source tarball: $SRC_TAR_GZ_PATH"
 fi
