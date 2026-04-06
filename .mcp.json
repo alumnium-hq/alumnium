@@ -1,18 +1,17 @@
 {
   "mcpServers": {
     "alumnium": {
-      "type": "stdio",
       "trust": true,
       "command": "mise",
       "args": [":dev/mcp"],
       "env": {
-        "ALUMNIUM_LOG_LEVEL": "${env:ALUMNIUM_LOG_LEVEL:-}",
+        "ALUMNIUM_LOG_LEVEL": "${ALUMNIUM_LOG_LEVEL}",
         "ALUMNIUM_LOG_FILENAME": "mcp-global.log",
-        "ALUMNIUM_DRIVER": "${ALUMNIUM_DRIVER:-}",
-        "ALUMNIUM_MODEL": "${ALUMNIUM_MODEL:-}",
-        "ALUMNIUM_PLANNER": "${ALUMNIUM_PLANNER:-}",
-        "ALUMNIUM_PLAYWRIGHT_HEADLESS": "${ALUMNIUM_PLAYWRIGHT_HEADLESS:-}",
-        "AZURE_OPENAI_API_VERSION": "${AZURE_OPENAI_API_VERSION:-}"
+        "ALUMNIUM_DRIVER": "${ALUMNIUM_DRIVER}",
+        "ALUMNIUM_MODEL": "${ALUMNIUM_MODEL}",
+        "ALUMNIUM_PLANNER": "${ALUMNIUM_PLANNER}",
+        "ALUMNIUM_PLAYWRIGHT_HEADLESS": "${ALUMNIUM_PLAYWRIGHT_HEADLESS}",
+        "AZURE_OPENAI_API_VERSION": "${AZURE_OPENAI_API_VERSION}"
       }
     }
   }

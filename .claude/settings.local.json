@@ -5,7 +5,7 @@
       "Bash(cat:*)",
       "Bash(curl:*)",
       "Bash(grep:*)",
-      "Bash(make:*)",
+      "Bash(mise:*)",
       "Bash(poetry poe:*)",
       "Bash(poetry run behave:*)",
       "Bash(poetry run pytest:*)",
