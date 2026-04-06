@@ -14,6 +14,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
+from ..accessibility.chromium_node_types import ChromiumSyntheticNode
 from ..logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -295,7 +296,7 @@ class SeleniumDriver(BaseDriver):
             role = self._map_tag_to_role(el.get("tagName", ""), el.get("role", ""))
             selector = self._build_element_selector(el)
 
-            synthetic_node = {
+            synthetic_node: ChromiumSyntheticNode = {
                 "nodeId": str(node_id),
                 "role": {"value": role},
                 "name": {"value": el.get("name", "")},
@@ -308,7 +309,7 @@ class SeleniumDriver(BaseDriver):
 
             # Track which iframe this is in
             if iframe_backend_node_id:
-                synthetic_node["_frame_chain"] = [iframe_backend_node_id]  # ty:ignore[invalid-assignment]
+                synthetic_node["_frame_chain"] = [iframe_backend_node_id]
 
             nodes.append(synthetic_node)
             node_id -= 1

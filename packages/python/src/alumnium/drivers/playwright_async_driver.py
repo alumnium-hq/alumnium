@@ -7,6 +7,7 @@ from playwright.async_api import Error, Frame, Locator, Page, TimeoutError
 
 from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
+from ..accessibility.chromium_node_types import ChromiumSyntheticNode
 from ..logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -577,7 +578,7 @@ class PlaywrightAsyncDriver(BaseDriver):
                             name = aria_label or (text.strip()[:50] if text else "")
 
                             if name:
-                                synthetic_node = {
+                                synthetic_node: ChromiumSyntheticNode = {
                                     "nodeId": str(node_id),
                                     "role": {"value": role},
                                     "name": {"value": name},
@@ -587,12 +588,10 @@ class PlaywrightAsyncDriver(BaseDriver):
 
                                 # Track which iframe this is in
                                 if iframe_backend_node_id:
-                                    synthetic_node["_frame_chain"] = [
-                                        iframe_backend_node_id
-                                    ]  # ty:ignore[invalid-assignment]
+                                    synthetic_node["_frame_chain"] = [iframe_backend_node_id]
 
                                 # Store frame reference for element finding
-                                synthetic_node["_frame"] = frame  # ty:ignore[invalid-assignment]
+                                synthetic_node["_frame"] = frame
 
                                 nodes.append(synthetic_node)
                                 node_id -= 1
