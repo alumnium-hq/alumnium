@@ -49,7 +49,7 @@ export class McpArtifactsStore extends FileStore {
       const screenshotBytes = Buffer.from(screenshotB64, "base64");
       const fileName = `${String(stepNum).padStart(2, "0")}-${normalizedDesc}.png`;
       const filePath = await driverState.artifactsStore.writeFile(
-        `screenshots/${driverId}/${fileName}`,
+        `screenshots/${fileName}`,
         screenshotBytes,
       );
 
