@@ -28,10 +28,7 @@ uv build --out-dir dist
 description = "Build main pip package"
 
 [tasks.test]
-run = [
-  { task = "test/unit" },
-  { task = "test/system:all" }
-]
+run = [{ task = "test/unit" }, { task = "test/system:all" }]
 
 [tasks."test/unit"]
 run = "pytest --cov=alumnium --cov-report=html --cov-report=xml tests/"
@@ -79,16 +76,10 @@ run = "ruff check ."
 run = "ruff check --fix ."
 
 [tasks.format]
-run = [
-  { task = "format/pyproject" },
-  { task = "format/code" },
-]
+run = [{ task = "format/pyproject" }, { task = "format/code" }]
 
 [tasks."format:check"]
-run = [
-  { task = "format/pyproject:check" },
-  { task = "format/code:check" },
-]
+run = [{ task = "format/pyproject:check" }, { task = "format/code:check" }]
 
 [tasks."format/pyproject"]
 run = "pyprojectsort"
@@ -107,3 +98,7 @@ run = "uv run ty check"
 
 [tasks."types:watch"]
 run = "uv run ty check --watch"
+
+[tasks.demo]
+run = "uv run python -i demo.py"
+depends = "//packages/typescript:build"

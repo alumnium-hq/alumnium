@@ -20,7 +20,7 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
     }
 
     logger.debug(
-      `Cashing planner response for goal: "${goal.slice(0, 50)}..."`,
+      `Caching planner response for goal: "${goal.slice(0, 50)}..."`,
     );
 
     this.setRecord({

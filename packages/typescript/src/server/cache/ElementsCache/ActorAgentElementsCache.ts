@@ -56,7 +56,7 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
       return;
     }
 
-    logger.debug(`Cashing actor response for step: "${step.slice(0, 50)}..."`);
+    logger.debug(`Caching actor response for step: "${step.slice(0, 50)}..."`);
 
     const masked = ElementsCacheMask.mask(generation, elIds);
 

@@ -252,35 +252,36 @@ export class BaseAgent {
     );
   }
 
-  #extractReasoning(content: unknown): string | null {
+  #extractReasoning(content: object[]): string | null {
     if (!Array.isArray(content) || !content.length) {
       return null;
     }
 
-    const first = content[0];
-    if (!first || typeof first !== "object") {
-      return null;
+    // Collect all reasoning from content blocks
+    const reasoningParts: string[] = [];
+
+    for (const block of content) {
+      if (!block || typeof block !== "object") {
+        continue;
+      }
+
+      if ("reasoning_content" in block) {
+        // Anthropic
+        reasoningParts.push(String(block["reasoning_content"]));
+      } else if (
+        "type" in block &&
+        block["type"] === "reasoning" &&
+        "reasoning" in block
+      ) {
+        // OpenAI
+        reasoningParts.push(String(block["reasoning"]));
+      } else if ("thinking" in block) {
+        // Google
+        reasoningParts.push(String(block["thinking"]));
+      }
     }
 
-    if ("reasoning_content" in first) {
-      // Anthropic
-      return String(first["reasoning_content"]);
-    } else if ("summary" in first && Array.isArray(first["summary"])) {
-      // OpenAI
-      return first["summary"]
-        .map((entry) => {
-          if (typeof entry === "object" && entry && "text" in entry) {
-            return String(entry["text"]);
-          }
-          return "";
-        })
-        .join(" ");
-    } else if ("thinking" in first) {
-      // Google
-      return String(first["thinking"]);
-    }
-
-    return null;
+    return reasoningParts.length > 0 ? reasoningParts.join(" ") : null;
   }
 
   #extractText(content: unknown): string {
