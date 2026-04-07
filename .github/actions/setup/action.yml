@@ -57,3 +57,7 @@ runs:
     - name: Install
       run: mise :install
       shell: bash
+
+    - name: Install Playwright
+      run: mise :install/playwright
+      shell: bash

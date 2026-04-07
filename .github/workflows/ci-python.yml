@@ -76,15 +76,37 @@ jobs:
           driver: ${{ matrix.driver }}
           model: ${{ matrix.model }}
 
-      - name: Run Pip Tests
-        run: mise //packages/python:test/pip
-
       - name: Upload Test Artifacts
         if: always()
         uses: ./.github/actions/test-artifacts
         with:
           name: system-${{ matrix.driver }}-${{ matrix.model }}
           python: true
+
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+
+  test-pip:
+    name: Test Pip Packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
+        with:
+          python-cache: true
+
+      - name: Build Dist
+        run: mise //packages/typescript:build
+
+      - name: Run Pip Tests
+        run: mise //packages/python:test/pip
 
       - name: Debug Session
         if: failure() && runner.debug == '1'

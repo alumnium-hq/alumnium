@@ -73,15 +73,35 @@ jobs:
       - name: Build Dist
         run: mise //packages/typescript:build
 
-      - name: Run npm Tests
-        run: mise //packages/typescript:test/npm
-
       - name: Upload Test Artifacts
         if: always()
         uses: ./.github/actions/test-artifacts
         with:
           name: system-${{ matrix.driver }}-${{ matrix.model }}
           typescript: true
+
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+
+  test-npm:
+    name: Test npm packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
+
+      - name: Build Dist
+        run: mise //packages/typescript:build
+
+      - name: Run npm Tests
+        run: mise //packages/typescript:test/npm
 
       - name: Debug Session
         if: failure() && runner.debug == '1'

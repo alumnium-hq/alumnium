@@ -56,6 +56,16 @@ run = "mise install"
 run = "bun install"
 # NOTE: No need to specify sources and outputs as `bun install` is faster at tracking them than mise.
 
+[tasks."install/playwright"]
+# NOTE: Each package might have its own Playwright version and expect a particular browser versions,
+# so we need to run the installation for each package separately.
+run = [
+  { task = "//packages/typescript:install/playwright" },
+  { task = "//packages/python:install/playwright" },
+]
+# NOTE: It prompts for sudo to install OS dependencies
+raw = true
+
 [tasks.build]
 depends = ["//packages/typescript:build", "//packages/python:build"]
 description = "Build all packages"

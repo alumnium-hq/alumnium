@@ -1,9 +1,11 @@
 [tasks.install]
 run = []
-depends_post = "install/playwright"
+
 
 [tasks."install/playwright"]
 run = "bun run playwright install chromium --with-deps"
+# NOTE: It prompts for sudo to install OS dependencies
+raw = true
 
 [tasks.clean]
 run = "rm -rf .alumnium dist"

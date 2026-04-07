@@ -8,10 +8,11 @@ _.python.venv = { create = true, path = '.venv' }
 [tasks.install]
 run = "uv sync"
 depends = "//packages/typescript:build"
-depends_post = "install/playwright"
 
 [tasks."install/playwright"]
 run = "uv run playwright install chromium --with-deps"
+# NOTE: It prompts for sudo to install OS dependencies
+raw = true
 
 [tasks.clean]
 run = "rm -rf .alumnium dist log reports .pytest_cache __pycache__ .ruff_cache htmlcov .coverage coverage.xml"
@@ -38,7 +39,6 @@ arg "<driver>" help="Driver to use for system tests" {
 }
 '''
 run = "ALUMNIUM_DRIVER={{usage.driver}} ./scripts/test-system.sh"
-depends = "install"
 
 [tasks."test/system:all"]
 run = [
@@ -62,10 +62,7 @@ run = [{ task = "test/system appium-android" }]
 
 [tasks."test/pip"]
 run = "./scripts/test-pip.sh"
-depends = [
-	"//packages/typescript:build",
-	"build"
-]
+depends = "build"
 
 [tasks."test/system/upload:android-app"]
 run = "fnox exec -- curl -u $LT_USERNAME:$LT_ACCESS_KEY -X POST https://manual-api.lambdatest.com/app/upload/realDevice -F appFile=@examples/behave/features/support/TodoList.apk -F name=AndroidToDoApp"
