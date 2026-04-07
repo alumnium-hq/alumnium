@@ -76,6 +76,9 @@ jobs:
           driver: ${{ matrix.driver }}
           model: ${{ matrix.model }}
 
+      - name: Run Pip Tests
+        run: mise //packages/python:test/pip
+
       - name: Upload Test Artifacts
         if: always()
         uses: ./.github/actions/test-artifacts

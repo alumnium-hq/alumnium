@@ -162,7 +162,7 @@ wheels = [
 
 [[package]]
 name = "alumnium"
-version = "0.18.0"
+version = "0.19.0"
 source = { editable = "." }
 dependencies = [
     { name = "alumnium-cli", version = "0.19.0", source = { directory = "../typescript/dist/pip-alumnium-cli-darwin-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin')" },

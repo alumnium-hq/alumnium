@@ -108,3 +108,8 @@ run = [
   { task = "//packages/typescript:test/system" },
   { task = "//packages/python:test/system" },
 ]
+
+[tasks.version]
+run = { task = "//packages/typescript:version" }
+quiet = true
+raw = true
