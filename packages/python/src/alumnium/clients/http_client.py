@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import atexit
 import os
 from os import getpid
 from secrets import token_hex
@@ -218,6 +219,9 @@ class HttpClient:
             daemon_wait=True,
             check=True,
         )
+
+        # Ensure to stop the server when the program exits
+        atexit.register(self._stop_server)
 
         self._server_pid = pid_name
         managed_url = f"http://{DEFAULT_SERVER_HOST}:{port}"
