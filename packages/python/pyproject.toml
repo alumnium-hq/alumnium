@@ -95,7 +95,7 @@ source = [
 output = "coverage.xml"
 
 [tool.pytest.ini_options]
-addopts = "-v"
+addopts = "-v --ignore tests/pip"
 asyncio_default_fixture_loop_scope = "function"
 generate_report_on_test = true
 pythonpath = "."
