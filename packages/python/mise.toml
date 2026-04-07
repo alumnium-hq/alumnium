@@ -6,11 +6,8 @@ python.uv_venv_auto = "source"
 _.python.venv = { create = true, path = '.venv' }
 
 [tasks.install]
-run = '''
-uv lock --upgrade-package alumnium-cli
-uv sync
-'''
-depends = ["//packages/typescript:build"]
+run = "uv sync"
+depends = "//packages/typescript:build"
 depends_post = "install/playwright"
 
 [tasks."install/playwright"]
@@ -41,14 +38,14 @@ arg "<driver>" help="Driver to use for system tests" {
 }
 '''
 run = "ALUMNIUM_DRIVER={{usage.driver}} ./scripts/test-system.sh"
-depends = "//packages/typescript:build"
+depends = "install"
 
 [tasks."test/system:all"]
 run = [
-  { task = "test/system:selenium" },
-  { task = "test/system:playwright" },
-  { task = "test/system:appium-ios" },
-  { task = "test/system:appium-android" },
+	{ task = "test/system:selenium" },
+	{ task = "test/system:playwright" },
+	{ task = "test/system:appium-ios" },
+	{ task = "test/system:appium-android" },
 ]
 
 [tasks."test/system:selenium"]
@@ -101,4 +98,4 @@ run = "uv run ty check --watch"
 
 [tasks.demo]
 run = "uv run python -i demo.py"
-depends = "//packages/typescript:build"
+depends = "install"
