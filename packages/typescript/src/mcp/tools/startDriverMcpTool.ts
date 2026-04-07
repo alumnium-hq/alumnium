@@ -145,21 +145,10 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
         driverSettings,
       });
       for (const [key, value] of Object.entries(driverSettings)) {
-        // Convert camelCase to snake_case
-        const snakeKey = key
-          .split("")
-          .map((char) =>
-            char === char.toUpperCase() && char !== char.toLowerCase()
-              ? `_${char.toLowerCase()}`
-              : char,
-          )
-          .join("")
-          .replace(/^_/, "");
-
-        if (snakeKey in al.driver) {
-          // @ts-expect-error -- TODO
-          al.driver[snakeKey] = value;
-          logger.debug(`Set driver option ${snakeKey}={value}`, { value });
+        if (key in al.driver) {
+          // @ts-expect-error
+          al.driver[key] = value;
+          logger.debug(`Set driver option ${key}={value}`, { value });
         } else {
           logger.warn(`Unknown driver option: ${key}`);
         }
