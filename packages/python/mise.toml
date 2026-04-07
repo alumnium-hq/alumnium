@@ -60,8 +60,8 @@ run = [{ task = "test/system appium-ios" }]
 [tasks."test/system:appium-android"]
 run = [{ task = "test/system appium-android" }]
 
-[tasks."test/pip"]
-run = "./scripts/test-pip.sh"
+[tasks."test/package"]
+run = "./scripts/test-package.sh"
 depends = "build"
 
 [tasks."test/system/upload:android-app"]

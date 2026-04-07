@@ -68,7 +68,7 @@ describe("McpArtifactsStore", () => {
       expect(result).toBe(
         path.resolve(
           mockDir.path,
-          "test-driver/screenshots/test-driver/01-test-screenshot-with-special-chars-long-descriptio.png",
+          "test-driver/screenshots/01-test-screenshot-with-special-chars-long-descriptio.png",
         ),
       );
     });
@@ -84,7 +84,7 @@ describe("McpArtifactsStore", () => {
       expect(result).toBe(
         path.resolve(
           mockDir.path,
-          "test-driver/screenshots/test-driver/42-test-screenshot-with-special-chars-long-descriptio.png",
+          "test-driver/screenshots/42-test-screenshot-with-special-chars-long-descriptio.png",
         ),
       );
     });

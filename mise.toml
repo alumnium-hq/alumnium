@@ -104,6 +104,9 @@ depends = [
 [tasks.types]
 depends = ["types/ts", "//packages/python:types"]
 
+[tasks.lint]
+depends = ["//packages/typescript:lint", "//packages/python:lint"]
+
 [tasks."types/ts"]
 run = "bun run tsgo --build"
 
@@ -117,6 +120,13 @@ depends = ["//packages/typescript:test/unit", "//packages/python:test/unit"]
 run = [
   { task = "//packages/typescript:test/system" },
   { task = "//packages/python:test/system" },
+]
+
+[tasks."test/package"]
+description = "Run all (npm, pip) package tests"
+depends = [
+  "//packages/typescript:test/package",
+  "//packages/python:test/package",
 ]
 
 [tasks.version]

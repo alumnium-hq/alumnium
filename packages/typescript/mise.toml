@@ -105,8 +105,8 @@ run = [{ task = "test/system appium-ios" }]
 [tasks."test/system:appium-android"]
 run = [{ task = "test/system appium-android" }]
 
-[tasks."test/npm"]
-run = "./scripts/test-npm.sh"
+[tasks."test/package"]
+run = "./scripts/test-package.sh"
 
 [tasks.lint]
 run = "bun oxlint ."

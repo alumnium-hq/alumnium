@@ -84,8 +84,8 @@ jobs:
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
-  test-npm:
-    name: Test npm packages
+  test-pkg:
+    name: Package Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -101,7 +101,7 @@ jobs:
         run: mise //packages/typescript:build
 
       - name: Run npm Tests
-        run: mise //packages/typescript:test/npm
+        run: mise //packages/typescript:test/package
 
       - name: Debug Session
         if: failure() && runner.debug == '1'

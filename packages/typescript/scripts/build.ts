@@ -150,12 +150,7 @@ const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
         name: pipName,
         dir: pipDir,
         mainUrl: PIP_MAIN_URL,
-        binPath: path.resolve(
-          pipDir,
-          "src",
-          PIP_CLI_MODULE_NAME,
-          binName,
-        ),
+        binPath: path.resolve(pipDir, "src", PIP_CLI_MODULE_NAME, binName),
       },
     };
   }),
@@ -448,7 +443,7 @@ __all__ = ["bin_path"]
         const whlPath = await finalizePip(
           PIP_CLI_PKG_NAME,
           pip.dir,
-          getPipWheelTagTarget(platform)
+          getPipWheelTagTarget(platform),
         );
 
         console.log(
@@ -638,7 +633,6 @@ function pyprojectsortFormat(dir: string) {
     });
 }
 
-
 function getPipWheelTagTarget(platform: TargetPlatform): string {
   const { os, arch } = platform;
 
@@ -666,30 +660,6 @@ function getPipWheelTagTarget(platform: TargetPlatform): string {
         case "arm64":
           return "win_arm64";
       }
-  }
-}
-
-function getPipMarker(os: OS, arch: Arch) {
-  return `${getPipOsMarker(os)} and ${getPipArchMarker(arch)}`;
-}
-
-function getPipOsMarker(os: OS): string {
-  switch (os) {
-    case "linux":
-      return "sys_platform == 'linux'";
-    case "darwin":
-      return "sys_platform == 'darwin'";
-    case "windows":
-      return "sys_platform == 'win32'";
-  }
-}
-
-function getPipArchMarker(arch: Arch): string {
-  switch (arch) {
-    case "x64":
-      return "(platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64')";
-    case "arm64":
-      return "(platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')";
   }
 }
 
