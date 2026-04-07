@@ -104,5 +104,6 @@ run = "uv run ty check"
 run = "uv run ty check --watch"
 
 [tasks.demo]
-run = "uv run python -i demo.py"
-depends = "install"
+run = "fnox exec -- uv run python -i demo.py"
+raw = true
+quiet = true
