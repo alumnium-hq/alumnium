@@ -51,6 +51,9 @@ jobs:
             typescript:
               - packages/typescript/**
 
+      - name: Build
+        run: mise :build
+
       - name: Check Formatting
         run: mise :format:check
 
@@ -60,15 +63,11 @@ jobs:
       - name: Unit Tests
         run: mise :test/unit
 
-      - name: Build Dist
-        run: mise //packages/typescript:build
-
-      - name: Upload Dist
-        if: always() && hashFiles('packages/typescript/dist/**') != ''
-        uses: actions/cache/save@v5
+      - name: Upload Binaries Artifacts
+        uses: ./.github/actions/dist-artifacts
         with:
-          path: packages/typescript/dist
-          key: typescript-dist-${{ github.event.pull_request.head.sha || github.sha }}
+          name: build
+          bin: true
 
       - name: Upload Test Artifacts
         if: always()
@@ -107,16 +106,5 @@ jobs:
     #   needs.test.outputs.permitted == 'true'
     #     && needs.test.outputs.typescript-changed == 'true'
     uses: ./.github/workflows/ci-typescript.yml
-    with:
-      sha: ${{ github.event.pull_request.head.sha || github.sha }}
-
-  binaries:
-    name: Binaries
-    needs: test
-    # TODO: Re-enable after fixing GitHub Actions
-    # if: >
-    #   needs.test.outputs.permitted == 'true'
-    #     && needs.test.outputs.typescript-changed == 'true'
-    uses: ./.github/workflows/ci-binaries.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
