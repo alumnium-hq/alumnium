@@ -2,7 +2,6 @@ from asyncio import AbstractEventLoop
 from os import getenv
 
 from appium.webdriver.webdriver import WebDriver as Appium
-from langchain_core.language_models import BaseChatModel
 from playwright.async_api import Page as PageAsync
 from playwright.sync_api import Page
 from retry import retry
