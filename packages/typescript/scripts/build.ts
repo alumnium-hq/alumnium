@@ -269,6 +269,7 @@ async function main() {
       TARGET_PLATFORMS.map(async ({ os, arch, target, binPath }) => {
         const result = await Bun.build({
           entrypoints: [BIN_SRC_PATH],
+          external: ["chromium-bidi", "electron"],
           compile: {
             target: getBunTarget(os, arch),
             outfile: binPath,

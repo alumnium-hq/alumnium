@@ -89,8 +89,6 @@
     "@vitest/coverage-v8": "^4.1.2",
     "@vitest/ui": "^4.1.2",
     "@wdio/globals": "^9.23.0",
-    "chromium-bidi": "^15.0.0",
-    "electron": "^40.6.1",
     "elysia": "^1.4.26",
     "oxfmt": "^0.43.0",
     "oxlint": "^1.58.0",
