@@ -8,7 +8,7 @@ from typing import Any
 
 from alumnium_cli import bin_path
 
-_RUN_KWARGS = {"check", "capture_output", "text", "env", "cwd"}
+_SUBPROCESS_KWARGS = {"check", "capture_output", "text", "env", "cwd"}
 
 
 # region Main
@@ -65,13 +65,13 @@ async def run_async(
 
 
 def run_server(**kwargs: Any) -> subprocess.CompletedProcess[str]:
-    run_kwargs, subprocess_kwargs = _split_kwargs(kwargs)
-    return run(_build_args("server", subprocess_kwargs), **run_kwargs)
+    subprocess_kwargs, alumnium_kwargs = _split_kwargs(kwargs)
+    return run(_build_args("server", alumnium_kwargs), **subprocess_kwargs)
 
 
 async def run_server_async(**kwargs: Any) -> subprocess.CompletedProcess[str]:
-    run_kwargs, subprocess_kwargs = _split_kwargs(kwargs)
-    return await run_async(_build_args("server", subprocess_kwargs), **run_kwargs)
+    subprocess_kwargs, alumnium_kwargs = _split_kwargs(kwargs)
+    return await run_async(_build_args("server", alumnium_kwargs), **subprocess_kwargs)
 
 
 # endregion
@@ -81,13 +81,13 @@ async def run_server_async(**kwargs: Any) -> subprocess.CompletedProcess[str]:
 
 
 def run_mcp(**kwargs: Any) -> subprocess.CompletedProcess[str]:
-    run_kwargs, subprocess_kwargs = _split_kwargs(kwargs)
-    return run(_build_args("mcp", subprocess_kwargs), **run_kwargs)
+    subprocess_kwargs, alumnium_kwargs = _split_kwargs(kwargs)
+    return run(_build_args("mcp", alumnium_kwargs), **subprocess_kwargs)
 
 
 async def run_mcp_async(**kwargs: Any) -> subprocess.CompletedProcess[str]:
-    run_kwargs, subprocess_kwargs = _split_kwargs(kwargs)
-    return await run_async(_build_args("mcp", subprocess_kwargs), **run_kwargs)
+    subprocess_kwargs, alumnium_kwargs = _split_kwargs(kwargs)
+    return await run_async(_build_args("mcp", alumnium_kwargs), **subprocess_kwargs)
 
 
 # endregion
@@ -97,14 +97,14 @@ async def run_mcp_async(**kwargs: Any) -> subprocess.CompletedProcess[str]:
 
 
 def _split_kwargs(kwargs: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
-    run_kwargs: dict[str, Any] = {}
     subprocess_kwargs: dict[str, Any] = {}
+    alumnium_kwargs: dict[str, Any] = {}
     for key, value in kwargs.items():
-        if key in _RUN_KWARGS:
-            run_kwargs[key] = value
-        else:
+        if key in _SUBPROCESS_KWARGS:
             subprocess_kwargs[key] = value
-    return run_kwargs, subprocess_kwargs
+        else:
+            alumnium_kwargs[key] = value
+    return subprocess_kwargs, alumnium_kwargs
 
 
 def _build_args(subcommand: str, kwargs: dict[str, Any]) -> list[str]:
