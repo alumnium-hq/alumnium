@@ -144,19 +144,22 @@ export class Session {
           this.actorAgent.toState().usage.input_tokens +
           this.retrieverAgent.toState().usage.input_tokens +
           this.areaAgent.toState().usage.input_tokens +
-          this.locatorAgent.toState().usage.input_tokens,
+          this.locatorAgent.toState().usage.input_tokens +
+          this.changesAnalyzerAgent.toState().usage.input_tokens,
         output_tokens:
           this.plannerAgent.toState().usage.output_tokens +
           this.actorAgent.toState().usage.output_tokens +
           this.retrieverAgent.toState().usage.output_tokens +
           this.areaAgent.toState().usage.output_tokens +
-          this.locatorAgent.toState().usage.output_tokens,
+          this.locatorAgent.toState().usage.output_tokens +
+          this.changesAnalyzerAgent.toState().usage.output_tokens,
         total_tokens:
           this.plannerAgent.toState().usage.total_tokens +
           this.actorAgent.toState().usage.total_tokens +
           this.retrieverAgent.toState().usage.total_tokens +
           this.areaAgent.toState().usage.total_tokens +
-          this.locatorAgent.toState().usage.total_tokens,
+          this.locatorAgent.toState().usage.total_tokens +
+          this.changesAnalyzerAgent.toState().usage.total_tokens,
       },
       cache: this.cache.usage,
     };
