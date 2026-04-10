@@ -2,7 +2,6 @@ import { Runnable, type RunnableConfig } from "@langchain/core/runnables";
 import { always } from "alwaysly";
 import { Model } from "../../Model.ts";
 import { getLogger, type LoggerLike } from "../../utils/logger.ts";
-import { Agent } from "./Agent.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
@@ -86,7 +85,7 @@ export class BaseAgent {
   static Step = z.string().brand("BaseAgent.Step");
 
   #llmContext: LlmContext;
-  #usage: LlmUsage = createLlmUsage();
+  usage: LlmUsage = createLlmUsage();
   protected prompts: AgentPrompts.RolePrompts;
 
   constructor(llmContext: LlmContext) {
@@ -233,12 +232,8 @@ export class BaseAgent {
           });
         }
 
-        const usage: Partial<LlmUsage> = {};
         if (message.usage_metadata) {
           this.#updateUsage(message.usage_metadata);
-          usage.input_tokens = message.usage_metadata.input_tokens ?? 0;
-          usage.output_tokens = message.usage_metadata.output_tokens ?? 0;
-          usage.total_tokens = message.usage_metadata.total_tokens ?? 0;
         }
 
         return new BaseAgentResponse({
@@ -246,7 +241,7 @@ export class BaseAgent {
           reasoning,
           structured,
           toolCalls: message.tool_calls ?? [],
-          usage,
+          usage: this.usage,
         });
       },
     );
@@ -312,9 +307,9 @@ export class BaseAgent {
   }
 
   #updateUsage(usage: Partial<LlmUsage>) {
-    this.#usage.input_tokens += usage.input_tokens ?? 0;
-    this.#usage.output_tokens += usage.output_tokens ?? 0;
-    this.#usage.total_tokens += usage.total_tokens ?? 0;
+    this.usage.input_tokens += usage.input_tokens ?? 0;
+    this.usage.output_tokens += usage.output_tokens ?? 0;
+    this.usage.total_tokens += usage.total_tokens ?? 0;
   }
 
   protected formatLog(dir: BaseAgent.LogDir, topic: string) {
@@ -338,18 +333,4 @@ export class BaseAgent {
   protected debugLogDetail(value: unknown): BaseAgentDebugLogDetail {
     return new BaseAgentDebugLogDetail(value);
   }
-
-  //#region Agent state
-
-  toState(): Agent.State {
-    // Note that most of the agents don't have any internal state beyond usage,
-    // except for the planner agent which has examples.
-    return { usage: this.#usage };
-  }
-
-  applyState(state: Agent.State): void {
-    this.#usage = state.usage;
-  }
-
-  //#endregion
 }

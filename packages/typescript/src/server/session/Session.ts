@@ -11,7 +11,6 @@ import { ServerChromiumAccessibilityTree } from "../accessibility/ServerChromium
 import { ServerUIAutomator2AccessibilityTree } from "../accessibility/ServerUIAutomator2AccessibilityTree.ts";
 import { ServerXCUITestAccessibilityTree } from "../accessibility/ServerXCUITestAccessibilityTree.ts";
 import { ActorAgent } from "../agents/ActorAgent.ts";
-import { Agent } from "../agents/Agent.ts";
 import { AreaAgent } from "../agents/AreaAgent.ts";
 import { ChangesAnalyzerAgent } from "../agents/ChangesAnalyzerAgent.ts";
 import { LocatorAgent } from "../agents/LocatorAgent.ts";
@@ -37,8 +36,6 @@ export namespace Session {
     planner?: boolean | undefined;
     excludeAttributes?: Set<string> | undefined;
   }
-
-  export type State = z.infer<typeof Session.State>;
 }
 
 /**
@@ -47,22 +44,6 @@ export namespace Session {
 export class Session {
   static Id = z.custom<SessionId>((val) => typeof val === "string", {
     message: "Invalid session ID",
-  });
-
-  static State = z.object({
-    session_id: SessionId,
-    model: Model.Schema,
-    platform: Driver.Platform,
-    app: AppId,
-    tools: z.array(z.custom<ToolDefinition>()),
-    planner: z.boolean(),
-    exclude_attributes: z.array(z.string()).default([]),
-    actor_agent: Agent.State,
-    planner_agent: PlannerAgent.State,
-    retriever_agent: Agent.State,
-    area_agent: Agent.State,
-    locator_agent: Agent.State,
-    changes_analyzer_agent: Agent.State,
   });
 
   sessionId: SessionId;
@@ -140,26 +121,26 @@ export class Session {
     return {
       total: {
         input_tokens:
-          this.plannerAgent.toState().usage.input_tokens +
-          this.actorAgent.toState().usage.input_tokens +
-          this.retrieverAgent.toState().usage.input_tokens +
-          this.areaAgent.toState().usage.input_tokens +
-          this.locatorAgent.toState().usage.input_tokens +
-          this.changesAnalyzerAgent.toState().usage.input_tokens,
+          this.plannerAgent.usage.input_tokens +
+          this.actorAgent.usage.input_tokens +
+          this.retrieverAgent.usage.input_tokens +
+          this.areaAgent.usage.input_tokens +
+          this.locatorAgent.usage.input_tokens +
+          this.changesAnalyzerAgent.usage.input_tokens,
         output_tokens:
-          this.plannerAgent.toState().usage.output_tokens +
-          this.actorAgent.toState().usage.output_tokens +
-          this.retrieverAgent.toState().usage.output_tokens +
-          this.areaAgent.toState().usage.output_tokens +
-          this.locatorAgent.toState().usage.output_tokens +
-          this.changesAnalyzerAgent.toState().usage.output_tokens,
+          this.plannerAgent.usage.output_tokens +
+          this.actorAgent.usage.output_tokens +
+          this.retrieverAgent.usage.output_tokens +
+          this.areaAgent.usage.output_tokens +
+          this.locatorAgent.usage.output_tokens +
+          this.changesAnalyzerAgent.usage.output_tokens,
         total_tokens:
-          this.plannerAgent.toState().usage.total_tokens +
-          this.actorAgent.toState().usage.total_tokens +
-          this.retrieverAgent.toState().usage.total_tokens +
-          this.areaAgent.toState().usage.total_tokens +
-          this.locatorAgent.toState().usage.total_tokens +
-          this.changesAnalyzerAgent.toState().usage.total_tokens,
+          this.plannerAgent.usage.total_tokens +
+          this.actorAgent.usage.total_tokens +
+          this.retrieverAgent.usage.total_tokens +
+          this.areaAgent.usage.total_tokens +
+          this.locatorAgent.usage.total_tokens +
+          this.changesAnalyzerAgent.usage.total_tokens,
       },
       cache: this.cache.usage,
     };
@@ -190,52 +171,4 @@ export class Session {
   static createId(): SessionId {
     return crypto.randomUUID() as SessionId;
   }
-
-  //#region State
-
-  toState(): Session.State {
-    const state: Session.State = {
-      session_id: this.sessionId,
-      model: this.model.toState(),
-      platform: this.platform,
-      tools: this.tools,
-      planner: this.planner,
-      exclude_attributes: [...this.excludeAttributes],
-      // "llm" is omitted even though it is passed in the constructor, as
-      // 1) it's external and may not be serializable, and 2) in HTTP API
-      // where sessions are exchanged, llm is never passed as a param.
-      actor_agent: this.actorAgent.toState(),
-      planner_agent: this.plannerAgent.toState(),
-      retriever_agent: this.retrieverAgent.toState(),
-      area_agent: this.areaAgent.toState(),
-      locator_agent: this.locatorAgent.toState(),
-      changes_analyzer_agent: this.changesAnalyzerAgent.toState(),
-      app: this.#context.app,
-    };
-    return state;
-  }
-
-  static fromState(state: Session.State): Session {
-    const session = new Session({
-      sessionId: state["session_id"],
-      model: Model.fromState(state["model"]),
-      platform: state["platform"],
-      tools: state["tools"],
-      planner: state["planner"],
-      excludeAttributes: new Set(state["exclude_attributes"]),
-      app: state["app"],
-      // llm is not never in state, see note in to_state.
-    });
-
-    session.actorAgent.applyState(state["actor_agent"]);
-    session.plannerAgent.applyState(state["planner_agent"]);
-    session.retrieverAgent.applyState(state["retriever_agent"]);
-    session.areaAgent.applyState(state["area_agent"]);
-    session.locatorAgent.applyState(state["locator_agent"]);
-    session.changesAnalyzerAgent.applyState(state["changes_analyzer_agent"]);
-
-    return session;
-  }
-
-  //#endregion
 }

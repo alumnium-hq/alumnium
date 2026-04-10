@@ -61,15 +61,6 @@ export class SessionManager {
     return session;
   }
 
-  applySessionState(sessionState: Session.State): void {
-    logger.info(
-      `Applying session state for session ${sessionState["session_id"]}`,
-    );
-    const session = Session.fromState(sessionState);
-    this.#sessions[session.sessionId] = session;
-    logger.info(`Applied session state: ${session.sessionId}`);
-  }
-
   /**
    * Get a session by ID.
    */

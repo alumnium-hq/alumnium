@@ -100,19 +100,4 @@ export class Model {
   toString() {
     return `${this.provider}/${this.name}`;
   }
-
-  //#region State
-
-  toState(): Model.Schema {
-    return {
-      provider: this.provider,
-      name: this.name,
-    };
-  }
-
-  static fromState(state: Model.Schema): Model {
-    return new Model(state.provider, state.name);
-  }
-
-  //#endregion
 }

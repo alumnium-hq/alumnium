@@ -16,7 +16,6 @@ import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
 import { getLogger } from "../../utils/logger.ts";
 import type { LlmContext } from "../LlmContext.ts";
-import { Agent } from "./Agent.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
 const logger = getLogger(import.meta.url);
@@ -40,8 +39,6 @@ export namespace PlannerAgent {
 
   export type Example = z.infer<typeof PlannerAgent.Example>;
 
-  export type State = z.infer<typeof PlannerAgent.State>;
-
   export type Plan = z.infer<typeof PlannerAgent.Plan>;
 }
 
@@ -57,10 +54,6 @@ export class PlannerAgent extends BaseAgent {
       .describe(
         "The list of actions to achieve the goal. Can be a single string with actions separated by a special separator.",
       ),
-  });
-
-  static State = Agent.State.extend({
-    examples: z.array(PlannerAgent.Example),
   });
 
   static Plan = z.object({
@@ -266,33 +259,4 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 
     return ["", steps];
   }
-
-  //#region State
-
-  static createState(): PlannerAgent.State {
-    return {
-      ...Agent.createState(),
-      examples: [],
-    };
-  }
-
-  override toState(): PlannerAgent.State {
-    const state = super.toState();
-    const examples = this.promptWithExamples.examples;
-    return {
-      ...state,
-      examples: examples
-        ? // NOTE: LangChain has broken generic types for examples, so they
-          // never resolve properly.
-          (examples as PlannerAgent.Example[])
-        : [],
-    };
-  }
-
-  override applyState(state: PlannerAgent.State): void {
-    super.applyState(state);
-    this.promptWithExamples.examples = state["examples"];
-  }
-
-  //#endregion
 }

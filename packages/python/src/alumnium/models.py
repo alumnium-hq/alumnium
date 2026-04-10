@@ -42,16 +42,6 @@ class Model:
         self.provider = Provider(provider or Provider.OPENAI)
         self.name = name or Name.DEFAULT.get(self.provider, "")
 
-    def to_state(self) -> dict[str, str]:
-        return {
-            "provider": self.provider.value,
-            "name": self.name,
-        }
-
-    @classmethod
-    def from_state(cls, state: dict[str, Any]) -> "Model":
-        return Model(state["provider"], state["name"])
-
 
 provider, *name = getenv("ALUMNIUM_MODEL", "").lower().split("/", maxsplit=1)
 
