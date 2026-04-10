@@ -682,9 +682,9 @@ function getPipWheelTagTarget(platform: TargetPlatform): string {
     case "darwin":
       switch (arch) {
         case "x64":
-          return "macosx_x86_64";
+          return "macosx_10_9_x86_64";
         case "arm64":
-          return "macosx_arm64";
+          return "macosx_11_0_arm64";
       }
 
     case "windows":

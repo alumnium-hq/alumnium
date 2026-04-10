@@ -8,6 +8,7 @@ PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TEST_DIR="$PKG_DIR/tests/pip"
 
 VERSION="$(mise //:version)"
+VERSION="${VERSION//-alpha./a}"
 
 write_pyproject_toml() {
 	cat >"$TEST_DIR/pyproject.toml" <<EOF
@@ -36,11 +37,11 @@ path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-manylinux_2_
 marker = "sys_platform == 'linux' and (platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')"
 
 [[tool.uv.sources.alumnium-cli]]
-path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-macosx_x86_64.whl"
+path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-macosx_10_9_x86_64.whl"
 marker = "sys_platform == 'darwin' and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64')"
 
 [[tool.uv.sources.alumnium-cli]]
-path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-macosx_arm64.whl"
+path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-macosx_11_0_arm64.whl"
 marker = "sys_platform == 'darwin' and (platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')"
 
 [[tool.uv.sources.alumnium-cli]]
