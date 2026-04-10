@@ -92,6 +92,7 @@ const PIP_ANY_PLATFORM_TAG = "any";
 
 const META_AUTHORS = [
   { name: "Alex Rodionov", email: "p0deje@gmail.com" },
+  { name: "Sasha Koss", email: "koss@nocorp.me" },
   { name: "Tatiana Shepeleva", email: "tati.shep@gmail.com" },
 ];
 

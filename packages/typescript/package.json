@@ -1,7 +1,6 @@
 {
   "name": "alumnium",
   "version": "0.20.0-alpha.1",
-  "private": true,
   "description": "Pave the way towards AI-powered test automation",
   "keywords": [
     "ai",
@@ -16,6 +15,7 @@
   "author": "Alex Rodionov <p0deje@gmail.com>",
   "contributors": [
     "Alex Rodionov <p0deje@gmail.com>",
+    "Sasha Koss <koss@nocorp.me>",
     "Tatiana Shepeleva <tati.shep@gmail.com>"
   ],
   "repository": {

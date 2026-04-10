@@ -24,6 +24,7 @@ dev = [
 
 [project]
 authors = [
+    { email = "koss@nocorp.me", name = "Sasha Koss" },
     { email = "p0deje@gmail.com", name = "Alex Rodionov" },
     { email = "tati.shep@gmail.com", name = "Tatiana Shepeleva" },
 ]
