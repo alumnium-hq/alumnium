@@ -42,6 +42,7 @@ for module in "${MODULES[@]}"; do
 
 	echo -e "\n🌀 Running Playwright with $module module"
 
+	mise x pnpm -- pnpm exec playwright install chromium
 	ALUMNIUM_LOG_LEVEL=warning fnox exec -- mise x pnpm -- pnpm exec playwright test --retries=3
 
 	echo -e "\n🟢 Playwright OK: Tests executed successfully"
