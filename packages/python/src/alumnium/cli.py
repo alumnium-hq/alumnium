@@ -3,10 +3,13 @@ from __future__ import annotations
 import asyncio
 import subprocess
 import sys
-from collections.abc import Mapping, Sequence
-from pathlib import Path
+from collections.abc import Sequence
+from typing import Any
 
 from alumnium_cli import bin_path
+
+_RUN_KWARGS = {"check", "capture_output", "text", "env", "cwd"}
+
 
 # region Main
 
@@ -61,107 +64,14 @@ async def run_async(
 # region Server
 
 
-def run_server(
-    *,
-    host: str | None = None,
-    port: int | None = None,
-    daemon: bool | None = None,
-    daemon_kill: bool | None = None,
-    daemon_pid: str | None = None,
-    daemon_force: bool | None = None,
-    daemon_wait: bool | None = None,
-    daemon_wait_timeout: int | None = None,
-    extra_args: Sequence[str] = (),
-    check: bool = False,
-    capture_output: bool = False,
-    text: bool = True,
-    env: Mapping[str, str] | None = None,
-    cwd: str | None = None,
-) -> subprocess.CompletedProcess[str]:
-    args = _server_args(
-        host=host,
-        port=port,
-        daemon=daemon,
-        daemon_kill=daemon_kill,
-        daemon_pid=daemon_pid,
-        daemon_force=daemon_force,
-        daemon_wait=daemon_wait,
-        daemon_wait_timeout=daemon_wait_timeout,
-        extra_args=extra_args,
-    )
-    return run(
-        args,
-        check=check,
-        capture_output=capture_output,
-        text=text,
-        env=env,
-        cwd=cwd,
-    )
+def run_server(**kwargs: Any) -> subprocess.CompletedProcess[str]:
+    run_kwargs, subprocess_kwargs = _split_kwargs(kwargs)
+    return run(_build_args("server", subprocess_kwargs), **run_kwargs)
 
 
-async def run_server_async(
-    *,
-    host: str | None = None,
-    port: int | None = None,
-    daemon: bool | None = None,
-    daemon_kill: bool | None = None,
-    daemon_pid: str | None = None,
-    daemon_force: bool | None = None,
-    daemon_wait: bool | None = None,
-    daemon_wait_timeout: int | None = None,
-    extra_args: Sequence[str] = (),
-    check: bool = False,
-    capture_output: bool = False,
-    text: bool = True,
-    env: Mapping[str, str] | None = None,
-    cwd: str | None = None,
-) -> subprocess.CompletedProcess[str]:
-    args = _server_args(
-        host=host,
-        port=port,
-        daemon=daemon,
-        daemon_kill=daemon_kill,
-        daemon_pid=daemon_pid,
-        daemon_force=daemon_force,
-        daemon_wait=daemon_wait,
-        daemon_wait_timeout=daemon_wait_timeout,
-        extra_args=extra_args,
-    )
-    return await run_async(
-        args,
-        check=check,
-        capture_output=capture_output,
-        text=text,
-        env=env,
-        cwd=cwd,
-    )
-
-
-def _server_args(
-    *,
-    host: str | None,
-    port: int | None,
-    daemon: bool | None,
-    daemon_kill: bool | None,
-    daemon_pid: str | None,
-    daemon_force: bool | None,
-    daemon_wait: bool | None,
-    daemon_wait_timeout: int | None,
-    extra_args: Sequence[str],
-) -> list[str]:
-    args = ["server"]
-
-    _append_set_arg(args, "--host", host)
-    _append_set_arg(args, "--port", port)
-    _append_flag_arg(args, "--daemon", daemon)
-    _append_flag_arg(args, "--daemon-kill", daemon_kill)
-    _append_set_arg(args, "--daemon-pid", daemon_pid)
-    _append_flag_arg(args, "--daemon-force", daemon_force)
-    _append_flag_arg(args, "--daemon-wait", daemon_wait)
-    _append_set_arg(args, "--daemon-wait-timeout", daemon_wait_timeout)
-
-    args.extend(extra_args)
-    return args
+async def run_server_async(**kwargs: Any) -> subprocess.CompletedProcess[str]:
+    run_kwargs, subprocess_kwargs = _split_kwargs(kwargs)
+    return await run_async(_build_args("server", subprocess_kwargs), **run_kwargs)
 
 
 # endregion
@@ -170,60 +80,14 @@ def _server_args(
 # region MCP
 
 
-def run_mcp(
-    *,
-    extra_args: Sequence[str] = (),
-    check: bool = False,
-    capture_output: bool = False,
-    text: bool = True,
-    env: Mapping[str, str] | None = None,
-    cwd: str | None = None,
-) -> subprocess.CompletedProcess[str]:
-    args = _mcp_args(
-        extra_args=extra_args,
-    )
-    return run(
-        args,
-        check=check,
-        capture_output=capture_output,
-        text=text,
-        env=env,
-        cwd=cwd,
-    )
+def run_mcp(**kwargs: Any) -> subprocess.CompletedProcess[str]:
+    run_kwargs, subprocess_kwargs = _split_kwargs(kwargs)
+    return run(_build_args("mcp", subprocess_kwargs), **run_kwargs)
 
 
-async def run_mcp_async(
-    *,
-    extra_args: Sequence[str] = (),
-    check: bool = False,
-    capture_output: bool = False,
-    text: bool = True,
-    env: Mapping[str, str] | None = None,
-    cwd: str | None = None,
-) -> subprocess.CompletedProcess[str]:
-    args = _mcp_args(
-        extra_args=extra_args,
-    )
-    return await run_async(
-        args,
-        check=check,
-        capture_output=capture_output,
-        text=text,
-        env=env,
-        cwd=cwd,
-    )
-
-
-def _mcp_args(
-    *,
-    extra_args: Sequence[str],
-) -> list[str]:
-    args = ["mcp"]
-
-    # NOTE: Current MCP has no CLI arguments
-
-    args.extend(extra_args)
-    return args
+async def run_mcp_async(**kwargs: Any) -> subprocess.CompletedProcess[str]:
+    run_kwargs, subprocess_kwargs = _split_kwargs(kwargs)
+    return await run_async(_build_args("mcp", subprocess_kwargs), **run_kwargs)
 
 
 # endregion
@@ -232,19 +96,28 @@ def _mcp_args(
 # region Internals
 
 
-def _append_set_arg(args: list[str], flag: str, value: object | None) -> None:
-    if value is None:
-        return
-    args.extend((flag, str(value)))
+def _split_kwargs(kwargs: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+    run_kwargs: dict[str, Any] = {}
+    subprocess_kwargs: dict[str, Any] = {}
+    for key, value in kwargs.items():
+        if key in _RUN_KWARGS:
+            run_kwargs[key] = value
+        else:
+            subprocess_kwargs[key] = value
+    return run_kwargs, subprocess_kwargs
 
 
-def _append_flag_arg(args: list[str], flag: str, value: bool | None) -> None:
-    if value is None:
-        return
-    if value:
-        args.append(flag)
-    else:
-        args.append(f"{flag}=false")
+def _build_args(subcommand: str, kwargs: dict[str, Any]) -> list[str]:
+    args = [subcommand]
+    for key, value in kwargs.items():
+        if value is None:
+            continue
+        flag = "--" + key.replace("_", "-")
+        if isinstance(value, bool):
+            args.append(flag if value else f"{flag}=false")
+        else:
+            args.extend((flag, str(value)))
+    return args
 
 
 # endregion
