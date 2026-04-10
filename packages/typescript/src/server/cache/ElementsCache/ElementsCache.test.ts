@@ -30,7 +30,7 @@ describe("ElementsCache", () => {
         .spyOn(GlobalFileStorePaths, "globalSubDir")
         .mockReturnValue(cacheDir.path),
     );
-    const cacheStore = new CacheStore(sessionContext);
+    const cacheStore = new CacheStore(sessionContext, Model.current);
 
     const llmContext = new LlmContext();
 

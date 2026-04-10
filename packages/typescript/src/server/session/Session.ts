@@ -74,7 +74,7 @@ export class Session {
     this.#context = new SessionContext({ app, sessionId });
     const llmContext = new LlmContext();
 
-    this.cache = CacheFactory.createCache(this.#context, llmContext);
+    this.cache = CacheFactory.createCache(this.#context, llmContext, model);
 
     // TODO: When assigning cache via `props.llm.cache` it doesn't work properly
     // find a way to make it work or expose option to create cache via `Alumni`.
