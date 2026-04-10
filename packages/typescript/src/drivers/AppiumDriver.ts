@@ -78,10 +78,10 @@ export class AppiumDriver extends BaseDriver {
   async pressKey(key: Keys.Key): Promise<void> {
     await this.ensureNativeAppContext();
     const keyMap: Record<Keys.Key, string> = {
-      backspace: SeleniumKey.BACK_SPACE,
-      enter: SeleniumKey.ENTER,
-      escape: SeleniumKey.ESCAPE,
-      tab: SeleniumKey.TAB,
+      Backspace: SeleniumKey.BACK_SPACE,
+      Enter: SeleniumKey.ENTER,
+      Escape: SeleniumKey.ESCAPE,
+      Tab: SeleniumKey.TAB,
     };
 
     // Simulate ActionChains behavior

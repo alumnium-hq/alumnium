@@ -305,10 +305,10 @@ export class PlaywrightDriver extends BaseDriver {
 
   async pressKey(key: Keys.Key): Promise<void> {
     const keyMap: Record<Keys.Key, string> = {
-      backspace: "Backspace",
-      enter: "Enter",
-      escape: "Escape",
-      tab: "Tab",
+      Backspace: "Backspace",
+      Enter: "Enter",
+      Escape: "Escape",
+      Tab: "Tab",
     };
 
     await this.autoswitchToNewTabAction(() =>
