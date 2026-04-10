@@ -24,7 +24,7 @@ publish_pkg() {
 	[[ -f "$pkg" ]] || return 0
 
 	echo -e "🌀️ Publishing $pkg...\n"
-	# npm publish "$pkg" --provenance --access public
+	npm publish "$pkg" --provenance --access public
 	echo -e "\n🟢 $pkg published\n"
 }
 
