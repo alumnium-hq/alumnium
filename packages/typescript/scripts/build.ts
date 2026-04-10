@@ -274,7 +274,11 @@ async function main() {
             target: getBunTarget(os, arch),
             outfile: binPath,
           },
-          plugins: [loggerPathPlugin, depsPatcherPlugin, playwrightPatcherPlugin],
+          plugins: [
+            loggerPathPlugin,
+            depsPatcherPlugin,
+            playwrightPatcherPlugin,
+          ],
           define: {
             SINGLE_FILE_EXECUTABLE: "true",
           },
@@ -542,7 +546,13 @@ async function buildPipWheel(
 }
 
 function pipWheelFileName(name: string, platformTag: string): string {
-  return `${name.replace(/-/g, "_")}-${ALUMNIUM_VERSION}-py3-none-${platformTag}.whl`;
+  const version = pipWheelVersion(ALUMNIUM_VERSION);
+  return `${name.replace(/-/g, "_")}-${version}-py3-none-${platformTag}.whl`;
+}
+
+// Pip and NPM has different rules for alpha versions. NPM allows hyphens (e.g. 0.20.0-alpha.1) while pip doesn't (it expects 0.20.0a1).
+function pipWheelVersion(version: string): string {
+  return version.replace(/-alpha\.(\d+)/, "a$1");
 }
 
 namespace PyProject {

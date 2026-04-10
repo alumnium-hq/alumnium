@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 
 ARG TARGETARCH
-ARG VERSION=0.19.0
+ARG VERSION
 WORKDIR /app
 
 ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini-${TARGETARCH} /tini

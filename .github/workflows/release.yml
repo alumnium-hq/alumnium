@@ -222,7 +222,9 @@ jobs:
         run: echo "version=$(mise //packages/typescript:version)" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        run: gh release create ${{ steps.version.outputs.version }} --generate-notes
+        run: >
+          gh release create ${{ steps.version.outputs.version }} --generate-notes
+          ${{ contains(steps.version.outputs.version, 'alpha') && '--prerelease' }}
         env:
           GH_TOKEN: ${{ github.token }}
 
