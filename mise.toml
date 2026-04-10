@@ -133,3 +133,12 @@ depends = [
 run = { task = "//packages/typescript:version" }
 quiet = true
 raw = true
+
+[tasks."docker/build"]
+description = "Build Docker image"
+depends = ["//packages/typescript:build"]
+run = "docker build --build-arg VERSION=$(mise //packages/typescript:version) -t alumnium:latest ."
+
+[tasks."docker/run"]
+description = "Run Docker container"
+run = "docker run --rm -p 8013:8013 alumnium:latest"
