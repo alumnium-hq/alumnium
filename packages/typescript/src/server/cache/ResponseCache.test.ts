@@ -38,8 +38,8 @@ describe("ResponseCache", () => {
       ],
       `
       [
-        "test-app/azure_openai/gpt-5-nano/responses/d2e93e97ce7079be/request.json",
-        "test-app/azure_openai/gpt-5-nano/responses/d2e93e97ce7079be/response.json",
+        "test-app/openai/gpt-5-nano-2025-08-07/responses/d2e93e97ce7079be/request.json",
+        "test-app/openai/gpt-5-nano-2025-08-07/responses/d2e93e97ce7079be/response.json",
       ]
     `,
     );
@@ -115,7 +115,9 @@ async function setup() {
 
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 
+  const fixedModel = new Model("openai", "gpt-5-nano-2025-08-07");
   pushMock(
+    vi.spyOn(Model, "current", "get").mockReturnValue(fixedModel),
     vi
       .spyOn(GlobalFileStorePaths, "globalSubDir")
       .mockReturnValue(cacheDir.path),

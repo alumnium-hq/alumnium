@@ -75,9 +75,7 @@ export class Model {
   }
 
   constructor(provider?: Model.Provider | undefined, name?: string) {
-    // Convert string to Provider enum if needed
     this.provider = provider || "openai";
-
     this.name = name || ModelName.DEFAULT[this.provider];
   }
 
@@ -85,9 +83,10 @@ export class Model {
     const alumniumModel = process.env.ALUMNIUM_MODEL || "";
     let [providerStr, name] = alumniumModel.toLowerCase().split("/");
 
-    let provider = Model.Provider.parse(providerStr);
-
-    if (!providerStr && process.env.GITHUB_ACTIONS) {
+    let provider: Model.Provider = "openai";
+    if (providerStr) {
+      provider = Model.Provider.parse(providerStr);
+    } else if (process.env.GITHUB_ACTIONS) {
       provider = "github";
       name = ModelName.DEFAULT.github;
     }
