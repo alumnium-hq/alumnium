@@ -206,6 +206,28 @@ const depsPatcherPlugin: BunPlugin = {
   },
 };
 
+// playwright-core's nodePlatform.js resolves its own package.json via
+// require.resolve() at module load time. In a compiled Bun binary the absolute
+// dev-machine path doesn't exist, crashing startup. coreDir is only used for
+// stack-trace prefix filtering so falling back to "" is safe.
+const playwrightPatcherPlugin: BunPlugin = {
+  name: "playwright-patcher",
+  setup(build) {
+    build.onLoad(
+      { filter: /playwright-core.+nodePlatform\.js$/, namespace: "file" },
+      async (args) => {
+        const input = await Bun.file(args.path).text();
+        return {
+          contents: input.replace(
+            'require.resolve("../../../package.json")',
+            '(() => { try { return require.resolve("../../../package.json"); } catch { return ""; } })()',
+          ),
+        };
+      },
+    );
+  },
+};
+
 //#endregion
 
 //#region Main
@@ -251,7 +273,7 @@ async function main() {
             target: getBunTarget(os, arch),
             outfile: binPath,
           },
-          plugins: [loggerPathPlugin, depsPatcherPlugin],
+          plugins: [loggerPathPlugin, depsPatcherPlugin, playwrightPatcherPlugin],
           define: {
             SINGLE_FILE_EXECUTABLE: "true",
           },
