@@ -24,7 +24,11 @@ publish_pkg() {
 	[[ -f "$pkg" ]] || return 0
 
 	echo -e "🌀️ Publishing $pkg...\n"
-	npm publish "$pkg" --provenance --access public
+	PUBLISH_ARGS=("--provenance" "--access public")
+	if [[ "$VERSION" == *alpha* ]]; then
+		PUBLISH_ARGS+=("--tag=next")
+	fi
+	npm publish "$pkg" "${PUBLISH_ARGS[@]}"
 	echo -e "\n🟢 $pkg published\n"
 }
 
