@@ -90,6 +90,8 @@ jobs:
   test-pkg:
     name: Package Tests
     runs-on: ubuntu-latest
+    env:
+      ALUMNIUM_MODEL: azure_openai
 
     steps:
       - name: Git Checkout
