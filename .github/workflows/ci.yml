@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      # TODO: Disable before merging the branch
-      - ts
   schedule:
     - cron: 0 0 * * *
   workflow_dispatch:
@@ -89,10 +87,9 @@ jobs:
     name: Python
     needs: test
     secrets: inherit
-    # TODO: Re-enable after fixing GitHub Actions
-    # if: >
-    #   needs.test.outputs.permitted == 'true'
-    #     && (needs.test.outputs.typescript-changed == 'true' || needs.test.outputs.python-changed == 'true')
+    if: >
+      needs.test.outputs.permitted == 'true'
+        && (needs.test.outputs.typescript-changed == 'true' || needs.test.outputs.python-changed == 'true')
     uses: ./.github/workflows/ci-python.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -101,10 +98,9 @@ jobs:
     name: TypeScript
     needs: test
     secrets: inherit
-    # TODO: Re-enable after fixing GitHub Actions
-    # if: >
-    #   needs.test.outputs.permitted == 'true'
-    #     && needs.test.outputs.typescript-changed == 'true'
+    if: >
+      needs.test.outputs.permitted == 'true'
+        && needs.test.outputs.typescript-changed == 'true'
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
