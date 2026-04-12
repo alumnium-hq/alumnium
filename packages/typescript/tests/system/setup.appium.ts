@@ -1,5 +1,6 @@
 import type { TestProject } from "vitest/node";
 import { remote } from "webdriverio";
+import { Model } from "alumnium";
 
 declare module "vitest" {
   export interface ProvidedContext {
@@ -19,6 +20,7 @@ export async function setup(project: TestProject) {
       "appium:noReset": true,
       "lt:options": {
         build: "TypeScript - iOS",
+        name: `Vitest (${Model.current.provider}/${Model.current.name}) `,
         isRealMobile: true,
         network: false,
         visual: true,
