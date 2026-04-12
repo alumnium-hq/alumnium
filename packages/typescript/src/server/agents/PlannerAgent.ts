@@ -168,6 +168,10 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   }
 
   addExample(goal: string, actions: string[]) {
+    logger.info("Adding example:");
+    logger.debug(`  -> Goal: ${goal}`);
+    logger.debug(`  -> Actions: ${actions.join(", ")}`);
+
     let output: string[] | string;
     if (
       PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)
@@ -186,6 +190,10 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
       accessibility_tree: "",
       actions: output,
     });
+
+    logger.info(
+      `Example added. Total examples: ${this.promptWithExamples.examples.length}`,
+    );
   }
 
   /**
