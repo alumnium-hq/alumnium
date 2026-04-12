@@ -1,7 +1,28 @@
 import { describe } from "vitest";
-import { it } from "./helpers.ts";
+import { baseIt } from "./helpers.ts";
 
 describe("To Do application", () => {
+  const it = baseIt.override("setup", async ({ setup }) => {
+    return async (options) => {
+      const result = await setup(options);
+      const { al } = result;
+
+      al.learn('create a new task "this is Al"', [
+        'type "this is Al" in textbox "what needs to be done"',
+        'press key "Enter"',
+      ]);
+      al.learn('mark the "this is Al" task as completed', [
+        'click checkbox near the "this is Al" task',
+      ]);
+      al.learn('delete the "this is Al" task', [
+        'hover the "this is Al" task',
+        'click button "x" near the "this is Al" task',
+      ]);
+
+      return result;
+    };
+  });
+
   it("creates a new task", async ({ expect, setup }) => {
     const { al, $ } = await setup();
     await $.navigate("https://todomvc.com/examples/vue/dist");
