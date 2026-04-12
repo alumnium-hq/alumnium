@@ -30,15 +30,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     permissions:
-      attestations: write
-      contents: write
+      contents: read
       id-token: write
 
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.sha || github.sha }}
 
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
@@ -111,8 +108,6 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.sha || github.sha }}
 
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
