@@ -50,10 +50,6 @@ jobs:
           - driver: appium-ios
             model: azure_openai
 
-          # TODO: Add support for appium-android to system tests
-          # - driver: appium-android
-          #   model: azure_openai
-
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
