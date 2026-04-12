@@ -547,12 +547,12 @@ async function buildPipWheel(
 }
 
 function pipWheelFileName(name: string, platformTag: string): string {
-  const version = pipWheelVersion(ALUMNIUM_VERSION);
+  const version = pipVersion(ALUMNIUM_VERSION);
   return `${name.replace(/-/g, "_")}-${version}-py3-none-${platformTag}.whl`;
 }
 
 // Pip and NPM has different rules for alpha versions. NPM allows hyphens (e.g. 0.20.0-alpha.1) while pip doesn't (it expects 0.20.0a1).
-function pipWheelVersion(version: string): string {
+function pipVersion(version: string): string {
   return version.replace(/-alpha\.(\d+)/, "a$1");
 }
 
@@ -620,7 +620,8 @@ function getPyProjectToml(project: PyProject) {
 }
 
 async function generateSourceTarGz() {
-  await $`VERSION=${ALUMNIUM_VERSION} BUILD_SUBSCRIPT=true ./scripts/build-pip-src.sh`;
+  const version = pipVersion(ALUMNIUM_VERSION);
+  await $`VERSION=${version} BUILD_SUBSCRIPT=true ./scripts/build-pip-src.sh`;
 }
 
 async function finalizePip(pipName: string, pipDir: string, tag?: string) {
