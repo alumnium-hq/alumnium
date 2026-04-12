@@ -79,8 +79,6 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.sha || github.sha }}
 
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
@@ -89,9 +87,7 @@ jobs:
         run: mise //packages/typescript:build
 
       - name: Authenticate npm
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
 
       - name: Publish npm Packages
         run: mise //packages/typescript:publish
