@@ -14,7 +14,7 @@ on:
         description: Publish npm packages
         type: boolean
         default: true
-      release:
+      github:
         description: Create GitHub release
         type: boolean
         default: true
@@ -169,23 +169,19 @@ jobs:
         with:
           limit-access-to-actor: true
 
-  release:
+  github:
     name: GitHub Release
-    if: inputs.release
+    if: inputs.github
     runs-on: ubuntu-latest
     environment: release
-    defaults:
-      run:
-        working-directory: packages/typescript
     permissions:
-      contents: read
+      attestations: write
+      contents: write
       id-token: write
 
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.sha || github.sha }}
 
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
@@ -214,20 +210,14 @@ jobs:
 
       - name: Create GitHub Release
         run: >
-          gh release create ${{ steps.version.outputs.version }} --generate-notes
+          gh release create ${{ steps.version.outputs.version }}
+          packages/typescript/dist/bin/*
+          packages/typescript/dist/pip/*
+          packages/typescript/dist/npm/*
+          packages/python/dist/*
+          "${{ steps.attest.outputs.bundle-path }}"
+          --generate-notes
           ${{ contains(steps.version.outputs.version, 'alpha') && '--prerelease' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Upload Release Files
-        run: |
-          gh release upload ${{ steps.version.outputs.version }} \
-            packages/typescript/dist/bin/* \
-            packages/typescript/dist/pip/* \
-            packages/typescript/dist/npm/* \
-            packages/python/dist/* \
-            "${{ steps.attest.outputs.bundle-path }}" \
-            --clobber
         env:
           GH_TOKEN: ${{ github.token }}
 
