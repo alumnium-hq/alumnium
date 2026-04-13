@@ -86,6 +86,14 @@ run = [{ task = "//packages/typescript:dev/mcp:inspect" }]
 run = "rm -rf ./.alumnium"
 depends_post = ["//packages/typescript:clean", "//packages/python:clean"]
 
+[tasks."clear/cache"]
+description = "Clears all Alumnium LLM cache."
+run = "rm -rf ./.alumnium/cache"
+depends_post = [
+  "//packages/typescript:clear/cache",
+  "//packages/python:clear/cache",
+]
+
 [tasks.format]
 depends = ["//packages/typescript:format", "//packages/python:format"]
 
