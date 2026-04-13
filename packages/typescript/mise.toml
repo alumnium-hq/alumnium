@@ -141,3 +141,12 @@ usage = '''
 arg "<types_scan_path>" help="Path to .types-scan.json file"
 '''
 run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}}"
+
+
+[tasks."generate/types-scan-schema:class"]
+description = "Generates Zod schema from .types-scan.json file produced by `scanTypes` function. See docs/contributing/scan-types.md for details."
+usage = '''
+arg "<types_scan_path>" help="Path to .types-scan.json file"
+arg "<class_name>" help="Name of the class to enclose the generated schema in"
+'''
+run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}} --mode class --class-name {{usage.class_name}}"

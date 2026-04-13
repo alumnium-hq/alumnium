@@ -3,12 +3,10 @@ import {
   serializeGeneration,
 } from "@langchain/core/caches";
 import type { StoredGeneration } from "@langchain/core/messages";
-import type {
-  Generation,
-  Generation as LangchainGeneration,
-} from "@langchain/core/outputs";
+import type { Generation } from "@langchain/core/outputs";
 import z from "zod";
 import { logSchemaParseError } from "../utils/logFormat.ts";
+import { scanTypes } from "../utils/typesScan.ts";
 
 export namespace Lchain {
   export type UnknownRecord = z.infer<typeof Lchain.UnknownRecord>;
@@ -213,11 +211,9 @@ export abstract class Lchain {
     message: Lchain.StoredMessage.optional(),
   });
 
-  static toStored(
-    this: void,
-    generation: Lchain.Generation,
-  ): Lchain.StoredGeneration {
-    const stored = serializeGeneration(generation as LangchainGeneration);
+  static toStored(this: void, generation: Generation): Lchain.StoredGeneration {
+    const stored = serializeGeneration(generation);
+    scanTypes(import.meta.url, "serialized", stored);
     const result = Lchain.StoredGeneration.safeParse(stored);
     if (!result.success) {
       const message = logSchemaParseError(
