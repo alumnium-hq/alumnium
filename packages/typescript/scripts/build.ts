@@ -200,6 +200,56 @@ const loggerPathPlugin: BunPlugin = {
   },
 };
 
+// @wdio/utils/build/index.js sets client.capabilities only when `scopeType.name === "Browser"`.
+// Bun's bundler may rename the internal `Browser` function during compilation, breaking this
+// string comparison. We patch it to use reference equality against SCOPE_TYPES.browser instead.
+const wdioUtilsPatcherPlugin: BunPlugin = {
+  name: "wdio-utils-patcher",
+  setup(build) {
+    build.onLoad(
+      { filter: /@wdio\/utils.+index\.js$/, namespace: "file" },
+      async (args) => {
+        const input = await Bun.file(args.path).text();
+        if (!input.includes('scopeType.name === "Browser"')) {
+          return;
+        }
+        return {
+          contents: input.replace(
+            'scopeType.name === "Browser"',
+            "scopeType === SCOPE_TYPES.browser",
+          ),
+        };
+      },
+    );
+  },
+};
+
+// webdriverio/build/node.js uses `await import(options.automationProtocol || "webdriver")` to
+// load the WebDriver class. Bun's bundler can't statically analyze this computed import specifier,
+// so it doesn't bundle "webdriver" into the binary, causing a runtime error. The file also has
+// a module-level `var webdriverImport;` (always undefined) that short-circuits the dynamic import
+// when set. We patch it to use the already-statically-imported `WebDriver` class instead.
+const webdriverIOPatcherPlugin: BunPlugin = {
+  name: "webdriverio-patcher",
+  setup(build) {
+    build.onLoad(
+      { filter: /webdriverio.+node\.js$/, namespace: "file" },
+      async (args) => {
+        const input = await Bun.file(args.path).text();
+        if (!input.includes("var webdriverImport;")) {
+          return;
+        }
+        return {
+          contents: input.replace(
+            "var webdriverImport;",
+            "var webdriverImport = WebDriver;",
+          ),
+        };
+      },
+    );
+  },
+};
+
 const standaloneEmbeddedAssetPlugin: BunPlugin = {
   name: "standalone-embedded-assets",
   setup(build) {
@@ -264,7 +314,12 @@ async function main() {
             target: getBunTarget(os, arch),
             outfile: binPath,
           },
-          plugins: [loggerPathPlugin, standaloneEmbeddedAssetPlugin],
+          plugins: [
+            loggerPathPlugin,
+            wdioUtilsPatcherPlugin,
+            webdriverIOPatcherPlugin,
+            standaloneEmbeddedAssetPlugin,
+          ],
           define: {
             SINGLE_FILE_EXECUTABLE: "true",
           },
