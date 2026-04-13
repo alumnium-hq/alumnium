@@ -3,7 +3,7 @@ from base64 import b64encode
 from contextlib import asynccontextmanager
 from urllib.parse import urlparse
 
-from playwright.async_api import Error, Frame, Locator, Page, TimeoutError
+from playwright.async_api import Dialog, Error, Frame, Locator, Page, TimeoutError
 
 from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
@@ -37,6 +37,8 @@ class PlaywrightAsyncDriver(BaseDriver):
             TypeTool,
             UploadTool,
         }
+        self._last_dialog_info: dict | None = None
+        self.page.on("dialog", self._on_dialog_sync)
         self._run_async(self._enable_target_auto_attach())
         self._run_async(self._setup_page_tracking(page))
 
@@ -44,12 +46,32 @@ class PlaywrightAsyncDriver(BaseDriver):
     def platform(self) -> str:
         return "chromium"
 
+    def _on_dialog_sync(self, dialog: Dialog):
+        """Capture dialog info and auto-accept.
+
+        Playwright requires dialogs to be resolved in the handler or the page
+        freezes. Unlike Selenium, we cannot defer the accept/dismiss decision
+        to the user.
+        """
+        self._last_dialog_info = {
+            "type": dialog.type,
+            "message": dialog.message,
+            "default_value": dialog.default_value,
+        }
+        logger.debug(f"Dialog captured ({dialog.type}): {dialog.message[:80]}")
+        run_coroutine_threadsafe(dialog.accept(), self.loop)
+
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
         return self._run_async(self._accessibility_tree)
 
     @property
     async def _accessibility_tree(self) -> ChromiumAccessibilityTree:
+        if self._last_dialog_info:
+            dialog_info = self._last_dialog_info
+            self._last_dialog_info = None
+            return ChromiumAccessibilityTree({"nodes": PlaywrightDriver._create_dialog_nodes(dialog_info)})
+
         await self._wait_for_page_to_load()
 
         # Get frame tree to enumerate all frames (same approach as Selenium)

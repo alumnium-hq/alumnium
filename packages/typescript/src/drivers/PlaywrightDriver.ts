@@ -1,73 +1,74 @@
-import { always, ensure } from "alwaysly";
-import type { CDPSession, Frame, Locator, Page } from "playwright-core";
-import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
-import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
-import type { ToolClass } from "../tools/BaseTool.ts";
-import { ClickTool } from "../tools/ClickTool.ts";
-import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
-import { HoverTool } from "../tools/HoverTool.ts";
-import { PressKeyTool } from "../tools/PressKeyTool.ts";
-import { TypeTool } from "../tools/TypeTool.ts";
-import { UploadTool } from "../tools/UploadTool.ts";
-import { getLogger } from "../utils/logger.ts";
-import { BaseDriver } from "./BaseDriver.ts";
-import type { Keys } from "./keys.ts";
+import { always, ensure } from "alwaysly"
+import type { CDPSession, Dialog, Frame, Locator, Page } from "playwright-core"
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts"
+import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts"
+import type { ToolClass } from "../tools/BaseTool.ts"
+import { ClickTool } from "../tools/ClickTool.ts"
+import { DragAndDropTool } from "../tools/DragAndDropTool.ts"
+import { HoverTool } from "../tools/HoverTool.ts"
+import { PressKeyTool } from "../tools/PressKeyTool.ts"
+import { TypeTool } from "../tools/TypeTool.ts"
+import { UploadTool } from "../tools/UploadTool.ts"
+import { getLogger } from "../utils/logger.ts"
+import { BaseDriver } from "./BaseDriver.ts"
+import type { Keys } from "./keys.ts"
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
-import { AppId } from "../AppId.ts";
-import { retry } from "../utils/retry.ts";
-import type { Driver } from "./Driver.ts";
+import { AppId } from "../AppId.ts"
+import { retry } from "../utils/retry.ts"
+import type { Driver } from "./Driver.ts"
 import {
   waiterScriptSource,
   waitForScriptSource,
-} from "./scripts/bundledScripts.ts";
+} from "./scripts/bundledScripts.ts"
 
 interface CDPNode {
-  nodeId: string;
-  parentId?: string | null;
-  role?: { value?: string };
-  name?: { value?: string };
-  childIds?: string[];
-  _playwright_node?: boolean;
-  _locator_info?: Record<string, unknown>;
-  _frame_url?: string;
-  _frame?: object;
-  _frame_chain?: number[];
-  _parent_iframe_backend_node_id?: number | undefined;
+  nodeId: string
+  parentId?: string | null
+  role?: { value?: string }
+  name?: { value?: string }
+  childIds?: string[]
+  _playwright_node?: boolean
+  _locator_info?: Record<string, unknown>
+  _frame_url?: string
+  _frame?: object
+  _frame_chain?: number[]
+  _parent_iframe_backend_node_id?: number | undefined
+  _alert_action?: string
 }
 
 interface CDPFrameInfo {
   frame: {
-    id: string;
-    url: string;
-  };
-  childFrames?: CDPFrameInfo[];
+    id: string
+    url: string
+  }
+  childFrames?: CDPFrameInfo[]
 }
 
 interface CDPFrameTree {
-  frameTree: CDPFrameInfo;
+  frameTree: CDPFrameInfo
 }
 
-const logger = getLogger(import.meta.url);
+const logger = getLogger(import.meta.url)
 
-const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
+const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
-const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
-const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${waitForScriptSource /* await readScript("waitFor.js") */} })`;
+const WAITER_SCRIPT = waiterScriptSource // await readScript("waiter.js");
+const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${waitForScriptSource /* await readScript("waitFor.js") */} })`
 
 const RETRY_OPTIONS: retry.Options = {
   maxAttempts: 2,
   backOff: 500,
   doRetry: (error) => error.message.includes(CONTEXT_WAS_DESTROYED_ERROR),
-};
+}
 
 export class PlaywrightDriver extends BaseDriver {
-  private client!: CDPSession;
-  page: Page;
-  private _pages: Page[] = [];
-  public platform: Driver.Platform = "chromium";
+  private client: CDPSession
+  page: Page
+  private _pages: Page[] = []
+  public platform: Driver.Platform = "chromium"
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     DragAndDropTool,
@@ -75,50 +76,56 @@ export class PlaywrightDriver extends BaseDriver {
     PressKeyTool,
     TypeTool,
     UploadTool,
-  ]);
+  ])
   public newTabTimeout = parseInt(
     process.env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT || "200",
     10,
-  );
-  public autoswitchToNewTab: boolean = true;
+  )
+  public autoswitchToNewTab: boolean = true
   public fullPageScreenshot: boolean =
     (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
-    "true";
+    "true"
+  private lastDialogInfo: {
+    type: string
+    message: string
+    defaultValue: string
+  } | null = null
 
   constructor(page: Page) {
-    super();
-    this.page = page;
-    this.setupPageTracking(page);
-    void this.initCDPSession();
+    super()
+    this.page = page
+    this.page.on("dialog", (dialog: Dialog) => this.onDialog(dialog))
+    this.setupPageTracking(page)
+    void this.initCDPSession()
   }
 
   private setupPageTracking(initialPage: Page): void {
-    this._pages = [initialPage];
-    this.attachPageListeners(initialPage);
+    this._pages = [initialPage]
+    this.attachPageListeners(initialPage)
   }
 
   private attachPageListeners(page: Page): void {
-    page.on("popup", (popup) => this.onPopup(popup));
-    page.on("close", (popup) => this.onPageClose(popup));
+    page.on("popup", (popup) => this.onPopup(popup))
+    page.on("close", (popup) => this.onPageClose(popup))
   }
 
   private onPopup(popup: Page) {
-    logger.debug(`New popup opened: ${popup.url()}`);
-    this._pages.push(popup);
-    this.attachPageListeners(popup); // Chain: new page also listens for popups
+    logger.debug(`New popup opened: ${popup.url()}`)
+    this._pages.push(popup)
+    this.attachPageListeners(popup) // Chain: new page also listens for popups
   }
 
   private onPageClose(page: Page): void {
-    const index = this._pages.indexOf(page);
+    const index = this._pages.indexOf(page)
     if (index !== -1) {
-      logger.debug(`Page closed: ${page.url()}`);
-      this._pages.splice(index, 1);
+      logger.debug(`Page closed: ${page.url()}`)
+      this._pages.splice(index, 1)
     }
   }
 
   private async initCDPSession(): Promise<void> {
-    this.client = await this.page.context().newCDPSession(this.page);
-    await this.enableTargetAutoAttach();
+    this.client = await this.page.context().newCDPSession(this.page)
+    await this.enableTargetAutoAttach()
   }
 
   private async enableTargetAutoAttach(): Promise<void> {
@@ -127,60 +134,127 @@ export class PlaywrightDriver extends BaseDriver {
         autoAttach: true,
         waitForDebuggerOnStart: false,
         flatten: true,
-      });
-      logger.debug("Enabled Target.setAutoAttach for OOPIF support");
+      })
+      logger.debug("Enabled Target.setAutoAttach for OOPIF support")
     } catch (error) {
       logger.debug(
-        `Could not enable Target.setAutoAttach: ${error instanceof Error ? error.message : String(error)}`,
-      );
+        `Could not enable Target.setAutoAttach: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      )
     }
   }
 
+  /**
+   * Capture dialog info and auto-accept.
+   *
+   * Playwright requires dialogs to be resolved in the handler or the page
+   * freezes. Unlike Selenium, we cannot defer the accept/dismiss decision
+   * to the user.
+   */
+  private async onDialog(dialog: Dialog): Promise<void> {
+    this.lastDialogInfo = {
+      type: dialog.type(),
+      message: dialog.message(),
+      defaultValue: dialog.defaultValue(),
+    }
+    logger.debug(
+      `Dialog captured (${dialog.type()}): ${dialog.message().slice(0, 80)}`,
+    )
+    await dialog.accept()
+  }
+
+  /**
+   * Create synthetic nodes for a captured dialog.
+   *
+   * The dialog has already been auto-accepted (Playwright constraint), but
+   * we still expose it so check() and get() can verify dialog text.
+   */
+  private static createDialogNodes(dialogInfo: {
+    type: string
+    message: string
+  }): CDPNode[] {
+    const dialogId = "-100"
+    const acceptId = "-101"
+    const dismissId = "-102"
+
+    return [
+      {
+        nodeId: dialogId,
+        role: { value: "alertdialog" },
+        name: { value: `${dialogInfo.type}: ${dialogInfo.message}` },
+        childIds: [acceptId, dismissId],
+      },
+      {
+        nodeId: acceptId,
+        role: { value: "button" },
+        name: { value: "Accept" },
+        _alert_action: "accept",
+      },
+      {
+        nodeId: dismissId,
+        role: { value: "button" },
+        name: { value: "Dismiss" },
+        _alert_action: "dismiss",
+      },
+    ]
+  }
+
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
-    await this.waitForPageToLoad();
+    if (this.lastDialogInfo) {
+      const dialogInfo = this.lastDialogInfo
+      this.lastDialogInfo = null
+      return new ChromiumAccessibilityTree({
+        nodes: PlaywrightDriver.createDialogNodes(dialogInfo),
+      })
+    }
+
+    await this.waitForPageToLoad()
 
     // Get frame tree to enumerate all frames (same approach as Selenium)
     const frameTree = (await this.client.send(
       "Page.getFrameTree",
-    )) as CDPFrameTree;
-    const frameIds = this.getAllFrameIds(frameTree.frameTree);
-    const mainFrameId = frameTree.frameTree.frame.id;
-    logger.debug(`Found ${frameIds.length} frames`);
+    )) as CDPFrameTree
+    const frameIds = this.getAllFrameIds(frameTree.frameTree)
+    const mainFrameId = frameTree.frameTree.frame.id
+    logger.debug(`Found ${frameIds.length} frames`)
 
     // Get all targets including OOPIFs (cross-origin iframes)
-    let oopifTargets: Array<{ url?: string; type?: string }> = [];
+    let oopifTargets: Array<{ url?: string type?: string }> = []
     try {
-      const targets = await this.client.send("Target.getTargets");
-      oopifTargets = this.getOopifTargets(targets, frameTree);
-      logger.debug(`Found ${oopifTargets.length} cross-origin iframes`);
+      const targets = await this.client.send("Target.getTargets")
+      oopifTargets = this.getOopifTargets(targets, frameTree)
+      logger.debug(`Found ${oopifTargets.length} cross-origin iframes`)
     } catch (error) {
       logger.debug(
-        `Could not get OOPIF targets: ${error instanceof Error ? error.message : String(error)}`,
-      );
+        `Could not get OOPIF targets: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      )
     }
 
     // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
-    const frameToIframeMap: Map<string, number> = new Map();
+    const frameToIframeMap: Map<string, number> = new Map()
     // Build mapping: frameId -> parent frameId (for nested frames)
-    const frameParentMap: Map<string, string> = new Map();
+    const frameParentMap: Map<string, string> = new Map()
     await this.buildFrameHierarchy(
       frameTree.frameTree,
       mainFrameId,
       frameToIframeMap,
       frameParentMap,
-    );
+    )
 
     // Build mapping: frameId -> Playwright Frame object (for element finding)
-    const frameIdToPlaywrightFrame: Map<string, Frame> = new Map();
+    const frameIdToPlaywrightFrame: Map<string, Frame> = new Map()
     for (const frame of this.page.frames()) {
-      const cdpFrameId = this.findCdpFrameIdByUrl(frameTree, frame.url());
+      const cdpFrameId = this.findCdpFrameIdByUrl(frameTree, frame.url())
       if (cdpFrameId) {
-        frameIdToPlaywrightFrame.set(cdpFrameId, frame);
+        frameIdToPlaywrightFrame.set(cdpFrameId, frame)
       }
     }
 
     // Aggregate accessibility nodes from all frames
-    const allNodes: CDPNode[] = [];
+    const allNodes: CDPNode[] = []
     for (const frameId of frameIds) {
       try {
         const response = (await this.client.send(
@@ -188,119 +262,134 @@ export class PlaywrightDriver extends BaseDriver {
           {
             frameId,
           },
-        )) as { nodes: CDPNode[] };
-        const nodes = response.nodes || [];
+        )) as { nodes: CDPNode[] }
+        const nodes = response.nodes || []
         logger.debug(
           `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
-        );
+        )
 
         // Calculate frame chain for this frame
         const frameChain = this.getFrameChain(
           frameId,
           frameToIframeMap,
           frameParentMap,
-        );
+        )
         // Get Playwright frame reference
         const playwrightFrame =
-          frameIdToPlaywrightFrame.get(frameId) || this.page.mainFrame();
+          frameIdToPlaywrightFrame.get(frameId) || this.page.mainFrame()
 
         // Tag ALL nodes from child frames with their frame chain
         for (const node of nodes) {
           if (frameChain.length > 0) {
-            node._frame_chain = frameChain;
+            node._frame_chain = frameChain
           }
           // Also keep frame reference for Playwright-specific element finding
-          node._frame = playwrightFrame;
+          node._frame = playwrightFrame
           // Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
           if (node.parentId === undefined && frameToIframeMap.has(frameId)) {
-            node._parent_iframe_backend_node_id = frameToIframeMap.get(frameId);
+            node._parent_iframe_backend_node_id = frameToIframeMap.get(frameId)
           }
-          allNodes.push(node);
+          allNodes.push(node)
         }
       } catch (error) {
         logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-        );
+          `  -> Frame ${frameId.slice(0, 20)}...: failed (${
+            error instanceof Error ? error.message : String(error)
+          })`,
+        )
       }
     }
 
     // Process cross-origin iframes via Playwright query fallback
     for (const oopif of oopifTargets) {
       try {
-        const nodes = await this.getCrossOriginFrameNodes(oopif);
-        allNodes.push(...nodes);
+        const nodes = await this.getCrossOriginFrameNodes(oopif)
+        allNodes.push(...nodes)
         logger.debug(
           `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: ${nodes.length} nodes`,
-        );
+        )
       } catch (error) {
         logger.debug(
-          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-        );
+          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: failed (${
+            error instanceof Error ? error.message : String(error)
+          })`,
+        )
       }
     }
 
     // Process Playwright frames not in CDP tree (e.g., data: URI iframes)
-    const cdpFrameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree));
-    const oopifUrls = new Set(oopifTargets.map((t) => t.url || ""));
+    const cdpFrameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree))
+    const oopifUrls = new Set(oopifTargets.map((t) => t.url || ""))
     for (const frame of this.page.frames()) {
-      const frameUrl = frame.url();
+      const frameUrl = frame.url()
       if (!cdpFrameUrls.has(frameUrl) && !oopifUrls.has(frameUrl)) {
         logger.debug(
           `Processing Playwright-only frame: ${frameUrl.slice(0, 60)}`,
-        );
+        )
         try {
           const iframeBackendNodeId =
-            await this.getIframeBackendNodeIdByUrl(frameUrl);
+            await this.getIframeBackendNodeIdByUrl(frameUrl)
           const nodes = await this.queryFrameInteractiveElements(
             frame,
             iframeBackendNodeId,
-          );
-          allNodes.push(...nodes);
+          )
+          allNodes.push(...nodes)
           logger.debug(
             `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: ${nodes.length} nodes`,
-          );
+          )
         } catch (error) {
           logger.debug(
-            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-          );
+            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: failed (${
+              error instanceof Error ? error.message : String(error)
+            })`,
+          )
         }
       }
     }
 
-    return new ChromiumAccessibilityTree({ nodes: allNodes });
+    return new ChromiumAccessibilityTree({ nodes: allNodes })
   }
 
   async click(id: number): Promise<void> {
-    const element = await this.findElement(id);
+    const tree = await this.getAccessibilityTree()
+    const accessibilityElement = tree.elementById(id)
+    if (accessibilityElement.alertAction) {
+      logger.debug(
+        `Alert action acknowledged: ${accessibilityElement.alertAction}`,
+      )
+      return
+    }
+
+    const element = await this.findElement(id)
     const tagName = await element.evaluate(
       (el: { tagName: string }) => el.tagName,
-    );
+    )
     if (tagName?.toLowerCase() === "option") {
-      const value = await element.evaluate((el: { value: string }) => el.value);
+      const value = await element.evaluate((el: { value: string }) => el.value)
       await this.autoswitchToNewTabAction(async () => {
-        await element.locator("xpath=parent::select").selectOption(value);
-      });
+        await element.locator("xpath=parent::select").selectOption(value)
+      })
     } else {
       await this.autoswitchToNewTabAction(async () => {
-        await element.click({ force: true });
-      });
+        await element.click({ force: true })
+      })
     }
   }
 
   async dragSlider(id: number, value: number): Promise<void> {
-    const element = await this.findElement(id);
-    await element.fill(String(value));
+    const element = await this.findElement(id)
+    await element.fill(String(value))
   }
 
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
-    const fromElement = await this.findElement(fromId);
-    const toElement = await this.findElement(toId);
-    await fromElement.dragTo(toElement);
+    const fromElement = await this.findElement(fromId)
+    const toElement = await this.findElement(toId)
+    await fromElement.dragTo(toElement)
   }
 
   async hover(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    await element.hover();
+    const element = await this.findElement(id)
+    await element.hover()
   }
 
   async pressKey(key: Keys.Key): Promise<void> {
@@ -309,183 +398,182 @@ export class PlaywrightDriver extends BaseDriver {
       Enter: "Enter",
       Escape: "Escape",
       Tab: "Tab",
-    };
+    }
 
     await this.autoswitchToNewTabAction(() =>
       this.page.keyboard.press(keyMap[key]),
-    );
+    )
   }
 
   async quit(): Promise<void> {
-    await this.page.close();
+    await this.page.close()
   }
 
   async back(): Promise<void> {
-    await this.page.goBack();
+    await this.page.goBack()
   }
 
   async visit(url: string): Promise<void> {
-    await this.page.goto(url);
+    await this.page.goto(url)
   }
 
   async scrollTo(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    await element.scrollIntoViewIfNeeded();
+    const element = await this.findElement(id)
+    await element.scrollIntoViewIfNeeded()
   }
 
   async screenshot(): Promise<string> {
     return retry(RETRY_OPTIONS, async () => {
       const buffer = await this.page.screenshot({
         fullPage: this.fullPageScreenshot,
-      });
-      return buffer.toString("base64");
-    });
+      })
+      return buffer.toString("base64")
+    })
   }
 
   async title(): Promise<string> {
-    return retry(RETRY_OPTIONS, () => this.page.title());
+    return retry(RETRY_OPTIONS, () => this.page.title())
   }
 
   async type(id: number, text: string): Promise<void> {
-    const element = await this.findElement(id);
-    await element.fill(text);
+    const element = await this.findElement(id)
+    await element.fill(text)
   }
 
   async upload(id: number, paths: string[]): Promise<void> {
-    const element = await this.findElement(id);
+    const element = await this.findElement(id)
     const [fileChooser] = await Promise.all([
       this.page.waitForEvent("filechooser", { timeout: 5000 }),
       element.click({ force: true }),
-    ]);
-    await fileChooser.setFiles(paths);
+    ])
+    await fileChooser.setFiles(paths)
   }
 
   url(): Promise<string> {
-    return retry(RETRY_OPTIONS, async () => this.page.url());
+    return retry(RETRY_OPTIONS, async () => this.page.url())
   }
 
   async app(): Promise<AppId> {
-    return AppId.parse(this.page.url());
+    return AppId.parse(this.page.url())
   }
 
   async findElement(id: number): Promise<Locator> {
-    const tree = await this.getAccessibilityTree();
-    const accessibilityElement = tree.elementById(id);
+    const tree = await this.getAccessibilityTree()
+    const accessibilityElement = tree.elementById(id)
 
     // Get frame reference (default to main frame)
-    const frame = (accessibilityElement.frame ||
-      this.page.mainFrame()) as Frame;
+    const frame = (accessibilityElement.frame || this.page.mainFrame()) as Frame
 
     // Handle Playwright nodes (cross-origin iframes) using locator info
     if (accessibilityElement.locatorInfo) {
       return this.findElementByLocatorInfo(
         frame,
         accessibilityElement.locatorInfo,
-      );
+      )
     }
 
     // Existing CDP node logic
-    const backendNodeId = accessibilityElement.backendNodeId!;
+    const backendNodeId = accessibilityElement.backendNodeId!
 
     // Beware!
-    await this.client.send("DOM.enable");
-    await this.client.send("DOM.getFlattenedDocument");
+    await this.client.send("DOM.enable")
+    await this.client.send("DOM.getFlattenedDocument")
     const nodeIds = await this.client.send(
       "DOM.pushNodesByBackendIdsToFrontend",
       {
         backendNodeIds: [backendNodeId],
       },
-    );
-    const nodeId = nodeIds.nodeIds[0];
-    ensure(nodeId);
+    )
+    const nodeId = nodeIds.nodeIds[0]
+    ensure(nodeId)
     await this.client.send("DOM.setAttributeValue", {
       nodeId,
       name: "data-alumnium-id",
       value: String(backendNodeId),
-    });
+    })
     // TODO: We need to remove the attribute after we are done with the element,
     // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
-    return frame.locator(`css=[data-alumnium-id='${backendNodeId}']`);
+    return frame.locator(`css=[data-alumnium-id='${backendNodeId}']`)
   }
 
   async executeScript(script: string): Promise<void> {
-    await this.page.evaluate(`() => { ${script} }`);
+    await this.page.evaluate(`() => { ${script} }`)
   }
 
   async printToPdf(filepath: string): Promise<void> {
-    await this.page.pdf({ path: filepath });
+    await this.page.pdf({ path: filepath })
   }
 
   async switchToNextTab(): Promise<void> {
     // Brief wait to allow popup handlers to complete
-    await this.page.waitForTimeout(100);
+    await this.page.waitForTimeout(100)
     if (this._pages.length <= 1) {
-      return; // Only one tab, nothing to switch
+      return // Only one tab, nothing to switch
     }
 
-    const currentIndex = this._pages.indexOf(this.page);
-    const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
+    const currentIndex = this._pages.indexOf(this.page)
+    const nextIndex = (currentIndex + 1) % this._pages.length // Wrap to first
 
-    always(this._pages[nextIndex]);
-    this.page = this._pages[nextIndex];
-    await this.initCDPSession();
-    await this.page.waitForLoadState();
+    always(this._pages[nextIndex])
+    this.page = this._pages[nextIndex]
+    await this.initCDPSession()
+    await this.page.waitForLoadState()
   }
 
   async switchToPreviousTab(): Promise<void> {
     // Brief wait to allow popup handlers to complete
-    await this.page.waitForTimeout(100);
+    await this.page.waitForTimeout(100)
     if (this._pages.length <= 1) {
-      return; // Only one tab, nothing to switch
+      return // Only one tab, nothing to switch
     }
 
-    const currentIndex = this._pages.indexOf(this.page);
+    const currentIndex = this._pages.indexOf(this.page)
     const prevIndex =
-      (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
+      (currentIndex - 1 + this._pages.length) % this._pages.length // Wrap to last
 
-    always(this._pages[prevIndex]);
-    this.page = this._pages[prevIndex];
-    await this.initCDPSession();
-    await this.page.waitForLoadState();
+    always(this._pages[prevIndex])
+    this.page = this._pages[prevIndex]
+    await this.initCDPSession()
+    await this.page.waitForLoadState()
   }
 
   async wait(seconds: number): Promise<void> {
-    const clampedSeconds = Math.max(1, Math.min(30, seconds));
-    await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
+    const clampedSeconds = Math.max(1, Math.min(30, seconds))
+    await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000))
   }
 
   async waitForSelector(selector: string, timeout?: number): Promise<void> {
-    const timeoutMs = (timeout ?? 10) * 1000;
+    const timeoutMs = (timeout ?? 10) * 1000
     await this.page.waitForSelector(selector, {
       state: "visible",
       timeout: timeoutMs,
-    });
+    })
   }
 
   async grantPermissions(permissions: string[]): Promise<void> {
-    await this.page.context().grantPermissions(permissions);
+    await this.page.context().grantPermissions(permissions)
   }
 
   private async waitForPageToLoad(): Promise<void> {
     return retry(RETRY_OPTIONS, async () => {
-      logger.debug("Waiting for page to finish loading:");
-      await this.page.evaluate(WAITER_SCRIPT);
-      const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`);
+      logger.debug("Waiting for page to finish loading:")
+      await this.page.evaluate(WAITER_SCRIPT)
+      const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`)
       if (error) {
         // eslint-disable-next-line @typescript-eslint/no-base-to-string
-        logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
+        logger.debug(`  <- Failed to wait for page to load: ${String(error)}`)
       } else {
-        logger.debug("  <- Page finished loading");
+        logger.debug("  <- Page finished loading")
       }
-    });
+    })
   }
 
   private async autoswitchToNewTabAction(
     action: () => Promise<void>,
   ): Promise<void> {
     if (!this.autoswitchToNewTab) {
-      await action();
-      return;
+      await action()
+      return
     }
 
     const [newPage] = await Promise.all([
@@ -494,31 +582,31 @@ export class PlaywrightDriver extends BaseDriver {
         .waitForEvent("page", { timeout: this.newTabTimeout })
         .catch(() => null),
       action(),
-    ]);
+    ])
 
     if (newPage) {
       logger.debug(
         `Auto-switching to new tab ${newPage.url()} (${await newPage.title()})`,
-      );
-      this.page = newPage;
-      await this.initCDPSession();
+      )
+      this.page = newPage
+      await this.initCDPSession()
     }
   }
 
   private getAllFrameIds(frameInfo: CDPFrameInfo): string[] {
-    const frameIds: string[] = [frameInfo.frame.id];
+    const frameIds: string[] = [frameInfo.frame.id]
     for (const child of frameInfo.childFrames || []) {
-      frameIds.push(...this.getAllFrameIds(child));
+      frameIds.push(...this.getAllFrameIds(child))
     }
-    return frameIds;
+    return frameIds
   }
 
   private getAllFrameUrls(frameInfo: CDPFrameInfo): string[] {
-    const urls: string[] = [frameInfo.frame.url || ""];
+    const urls: string[] = [frameInfo.frame.url || ""]
     for (const child of frameInfo.childFrames || []) {
-      urls.push(...this.getAllFrameUrls(child));
+      urls.push(...this.getAllFrameUrls(child))
     }
-    return urls;
+    return urls
   }
 
   private async buildFrameHierarchy(
@@ -528,26 +616,28 @@ export class PlaywrightDriver extends BaseDriver {
     frameParentMap: Map<string, string>,
     parentFrameId?: string,
   ): Promise<void> {
-    const frameId = frameInfo.frame.id;
+    const frameId = frameInfo.frame.id
 
     if (frameId !== mainFrameId) {
-      await this.client.send("DOM.enable");
+      await this.client.send("DOM.enable")
       try {
         const ownerInfo = await this.client.send("DOM.getFrameOwner", {
           frameId,
-        });
-        frameToIframeMap.set(frameId, ownerInfo.backendNodeId);
+        })
+        frameToIframeMap.set(frameId, ownerInfo.backendNodeId)
         logger.debug(
           `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`,
-        );
+        )
       } catch (error) {
         logger.debug(
-          `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`,
-        );
+          `Could not get frame owner for ${frameId.slice(0, 20)}...: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        )
       }
 
       if (parentFrameId) {
-        frameParentMap.set(frameId, parentFrameId);
+        frameParentMap.set(frameId, parentFrameId)
       }
     }
 
@@ -558,7 +648,7 @@ export class PlaywrightDriver extends BaseDriver {
         frameToIframeMap,
         frameParentMap,
         frameId,
-      );
+      )
     }
   }
 
@@ -567,106 +657,108 @@ export class PlaywrightDriver extends BaseDriver {
     frameToIframeMap: Map<string, number>,
     frameParentMap: Map<string, string>,
   ): number[] {
-    const chain: number[] = [];
-    let currentFrameId = frameId;
+    const chain: number[] = []
+    let currentFrameId = frameId
 
     while (frameToIframeMap.has(currentFrameId)) {
-      const iframeBackendNodeId = frameToIframeMap.get(currentFrameId)!;
-      chain.unshift(iframeBackendNodeId);
+      const iframeBackendNodeId = frameToIframeMap.get(currentFrameId)!
+      chain.unshift(iframeBackendNodeId)
       if (frameParentMap.has(currentFrameId)) {
-        currentFrameId = frameParentMap.get(currentFrameId)!;
+        currentFrameId = frameParentMap.get(currentFrameId)!
       } else {
-        break;
+        break
       }
     }
 
-    return chain;
+    return chain
   }
 
   private getOopifTargets(
-    targets: { targetInfos?: Array<{ type?: string; url?: string }> },
+    targets: { targetInfos?: Array<{ type?: string url?: string }> },
     frameTree: CDPFrameTree,
-  ): Array<{ url?: string; type?: string }> {
-    const frameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree));
-    const oopifTargets: Array<{ url?: string; type?: string }> = [];
+  ): Array<{ url?: string type?: string }> {
+    const frameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree))
+    const oopifTargets: Array<{ url?: string type?: string }> = []
 
     for (const target of targets.targetInfos || []) {
       if (target.type === "iframe") {
-        const url = target.url || "";
+        const url = target.url || ""
         if (url && !frameUrls.has(url)) {
-          oopifTargets.push(target);
-          logger.debug(`Detected OOPIF target: ${url.slice(0, 60)}`);
+          oopifTargets.push(target)
+          logger.debug(`Detected OOPIF target: ${url.slice(0, 60)}`)
         }
       }
     }
 
-    return oopifTargets;
+    return oopifTargets
   }
 
   private async getCrossOriginFrameNodes(oopifTarget: {
-    url?: string;
+    url?: string
   }): Promise<CDPNode[]> {
-    const url = oopifTarget.url || "";
+    const url = oopifTarget.url || ""
 
-    const frame = this.findPlaywrightFrameByUrl(url);
+    const frame = this.findPlaywrightFrameByUrl(url)
     if (!frame) {
       logger.debug(
         `Could not find Playwright frame for URL: ${url.slice(0, 60)}`,
-      );
-      return [];
+      )
+      return []
     }
 
-    const iframeBackendNodeId = await this.getIframeBackendNodeIdByUrl(url);
-    return await this.queryFrameInteractiveElements(frame, iframeBackendNodeId);
+    const iframeBackendNodeId = await this.getIframeBackendNodeIdByUrl(url)
+    return await this.queryFrameInteractiveElements(frame, iframeBackendNodeId)
   }
 
   private findPlaywrightFrameByUrl(frameUrl: string): Frame | null {
     for (const frame of this.page.frames()) {
       if (frame.url() === frameUrl) {
-        return frame;
+        return frame
       }
     }
     if (frameUrl === "about:blank") {
       for (const frame of this.page.frames()) {
         if (frame.url() === "about:blank" || !frame.url()) {
-          return frame;
+          return frame
         }
       }
     }
-    logger.debug(`Could not find Playwright frame for URL: ${frameUrl}`);
-    return null;
+    logger.debug(`Could not find Playwright frame for URL: ${frameUrl}`)
+    return null
   }
 
   private async getIframeBackendNodeIdByUrl(
     url: string,
   ): Promise<number | null> {
     try {
-      await this.client.send("DOM.enable");
-      const doc = await this.client.send("DOM.getDocument");
+      await this.client.send("DOM.enable")
+      const doc = await this.client.send("DOM.getDocument")
       const result = await this.client.send("DOM.querySelectorAll", {
         nodeId: doc.root.nodeId,
         selector: `iframe[src='${url}']`,
-      });
+      })
 
       if (result.nodeIds && typeof result.nodeIds[0] === "number") {
-        const nodeId = result.nodeIds[0];
-        const node = await this.client.send("DOM.describeNode", { nodeId });
-        return node.node?.backendNodeId ?? null;
+        const nodeId = result.nodeIds[0]
+        const node = await this.client.send("DOM.describeNode", { nodeId })
+        return node.node?.backendNodeId ?? null
       }
     } catch (error) {
       logger.debug(
-        `Could not get iframe backendNodeId: ${error instanceof Error ? error.message : String(error)}`,
-      );
+        `Could not get iframe backendNodeId: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      )
     }
-    return null;
+    return null
   }
 
   private async queryFrameInteractiveElements(
     frame: Frame,
     iframeBackendNodeId: number | null,
   ): Promise<CDPNode[]> {
-    const nodes: CDPNode[] = [];
-    let nodeId = -1;
+    const nodes: CDPNode[] = []
+    let nodeId = -1
 
     try {
       const interactiveSelectors: Array<[string, string]> = [
@@ -679,20 +771,20 @@ export class PlaywrightDriver extends BaseDriver {
         ["select", "combobox"],
         ["textarea", "textbox"],
         ["[aria-label]", "generic"],
-      ];
+      ]
 
       for (const [selector, role] of interactiveSelectors) {
         try {
-          const elements = frame.locator(selector);
-          const count = await elements.count();
+          const elements = frame.locator(selector)
+          const count = await elements.count()
           for (let i = 0; i < Math.min(count, 20); i++) {
-            const element = elements.nth(i);
+            const element = elements.nth(i)
             try {
-              const text = await element.textContent({ timeout: 1000 });
+              const text = await element.textContent({ timeout: 1000 })
               const ariaLabel = await element.getAttribute("aria-label", {
                 timeout: 1000,
-              });
-              const name = ariaLabel || (text ? text.trim().slice(0, 50) : "");
+              })
+              const name = ariaLabel || (text ? text.trim().slice(0, 50) : "")
 
               if (name) {
                 const syntheticNode: CDPNode = {
@@ -702,15 +794,15 @@ export class PlaywrightDriver extends BaseDriver {
                   _playwright_node: true,
                   _locator_info: { selector, nth: i },
                   _frame: frame,
-                };
-
-                if (iframeBackendNodeId !== null) {
-                  syntheticNode._frame_chain = [iframeBackendNodeId];
                 }
 
-                nodes.push(syntheticNode);
-                nodeId--;
-                logger.debug(`  -> Found ${role}: ${name.slice(0, 40)}`);
+                if (iframeBackendNodeId !== null) {
+                  syntheticNode._frame_chain = [iframeBackendNodeId]
+                }
+
+                nodes.push(syntheticNode)
+                nodeId--
+                logger.debug(`  -> Found ${role}: ${name.slice(0, 40)}`)
               }
             } catch {
               // Element query failed, skip
@@ -723,14 +815,16 @@ export class PlaywrightDriver extends BaseDriver {
 
       logger.debug(
         `  -> Created ${nodes.length} synthetic nodes for cross-origin frame`,
-      );
+      )
     } catch (error) {
       logger.error(
-        `  -> Failed to query frame content: ${error instanceof Error ? error.message : String(error)}`,
-      );
+        `  -> Failed to query frame content: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      )
     }
 
-    return nodes;
+    return nodes
   }
 
   private findCdpFrameIdByUrl(
@@ -739,17 +833,17 @@ export class PlaywrightDriver extends BaseDriver {
   ): string | null {
     const searchFrame = (frameInfo: CDPFrameInfo): string | null => {
       if (frameInfo.frame.url === targetUrl) {
-        return frameInfo.frame.id;
+        return frameInfo.frame.id
       }
 
       for (const child of frameInfo.childFrames || []) {
-        const result = searchFrame(child);
-        if (result) return result;
+        const result = searchFrame(child)
+        if (result) return result
       }
-      return null;
-    };
+      return null
+    }
 
-    return searchFrame(cdpFrameTree.frameTree);
+    return searchFrame(cdpFrameTree.frameTree)
   }
 
   private findElementByLocatorInfo(
@@ -759,13 +853,11 @@ export class PlaywrightDriver extends BaseDriver {
     // Handle synthetic frame nodes
     if (locatorInfo._synthetic_frame) {
       const frameUrl =
-        typeof locatorInfo._frame_url === "string"
-          ? locatorInfo._frame_url
-          : "";
+        typeof locatorInfo._frame_url === "string" ? locatorInfo._frame_url : ""
       logger.debug(
         `Synthetic frame node clicked, returning frame locator for: ${frameUrl.slice(0, 80)}`,
-      );
-      return frame.locator("body");
+      )
+      return frame.locator("body")
     }
 
     // Handle selector+nth-based locators (from queried frame content)
@@ -773,30 +865,30 @@ export class PlaywrightDriver extends BaseDriver {
       typeof locatorInfo.selector === "string" &&
       typeof locatorInfo.nth === "number"
     ) {
-      const selector = locatorInfo.selector;
-      const nth = locatorInfo.nth;
-      logger.debug(`Finding element by selector: ${selector} (nth=${nth})`);
-      return frame.locator(selector).nth(nth);
+      const selector = locatorInfo.selector
+      const nth = locatorInfo.nth
+      logger.debug(`Finding element by selector: ${selector} (nth=${nth})`)
+      return frame.locator(selector).nth(nth)
     }
 
-    const role = locatorInfo.role;
-    const name = locatorInfo.name;
+    const role = locatorInfo.role
+    const name = locatorInfo.name
 
     logger.debug(
       `Finding element by locator info: role=${String(role)}, name=${String(name)}`,
-    );
+    )
 
     // Use Playwright's getByRole for accessibility-based element finding
     if (typeof role === "string" && typeof name === "string") {
-      return frame.getByRole(role as never, { name });
+      return frame.getByRole(role as never, { name })
     } else if (typeof role === "string") {
-      return frame.getByRole(role as never);
+      return frame.getByRole(role as never)
     } else if (typeof name === "string") {
-      return frame.getByText(name);
+      return frame.getByText(name)
     } else {
       throw new Error(
         `Cannot find element: no role or name in locator_info: ${JSON.stringify(locatorInfo)}`,
-      );
+      )
     }
   }
 }
