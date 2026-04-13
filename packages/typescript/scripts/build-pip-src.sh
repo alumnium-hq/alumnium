@@ -20,6 +20,9 @@ trap 'rm -rf "$tmp_dir"' EXIT
 top_dir="$tmp_dir/alumnium_cli-$VERSION"
 mkdir -p "$top_dir"
 
+# PyPI requires PKG-INFO in the sdist root
+printf '%s' "$PKG_INFO" > "$top_dir/PKG-INFO"
+
 # Copy pip directories to temp, zeroing out binaries
 while IFS= read -r -d '' dir; do
 	cp -r "$dir" "$top_dir/"
