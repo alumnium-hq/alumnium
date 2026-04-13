@@ -10,6 +10,10 @@ raw = true
 [tasks.clean]
 run = "rm -rf .alumnium dist"
 
+[tasks."clear/cache"]
+description = "Clears TypeScript package Alumnium LLM cache."
+run = "rm -rf ./.alumnium/cache"
+
 [tasks.build]
 run = "./scripts/build.ts"
 description = "Build CLI bins, core npm and CLI pip packages"
@@ -130,3 +134,10 @@ depends = "//:types/ts:watch"
 run = "./scripts/version.ts"
 quiet = true
 raw = true
+
+[tasks."generate/types-scan-schema"]
+description = "Generates Zod schema from .types-scan.json file produced by `scanTypes` function. See docs/contributing/scan-types.md for details."
+usage = '''
+arg "<types_scan_path>" help="Path to .types-scan.json file"
+'''
+run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}}"
