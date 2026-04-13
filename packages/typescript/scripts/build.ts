@@ -621,7 +621,29 @@ function getPyProjectToml(project: PyProject) {
 
 async function generateSourceTarGz() {
   const version = pipVersion(ALUMNIUM_VERSION);
-  await $`VERSION=${version} BUILD_SUBSCRIPT=true ./scripts/build-pip-src.sh`;
+  const pkgInfo = getPkgInfo(version);
+  await $`VERSION=${version} PKG_INFO=${pkgInfo} BUILD_SUBSCRIPT=true ./scripts/build-pip-src.sh`;
+}
+
+function getPkgInfo(version: string): string {
+  const authorNames = META_AUTHORS.map((a) => a.name).join(", ");
+  const authorEmails = META_AUTHORS.map((a) => `${a.name} <${a.email}>`).join(
+    ", ",
+  );
+  return [
+    "Metadata-Version: 2.4",
+    `Name: ${PIP_CLI_PKG_NAME}`,
+    `Version: ${version}`,
+    "Summary: Alumnium CLI",
+    `Author: ${authorNames}`,
+    `Author-email: ${authorEmails}`,
+    "License-Expression: MIT",
+    "Requires-Python: >=3.10, <4.0",
+    "Project-URL: Documentation, https://alumnium.ai/docs/",
+    "Project-URL: Homepage, https://alumnium.ai/",
+    "Project-URL: Issues, https://github.com/alumnium-hq/alumnium/issues",
+    "Project-URL: Repository, https://github.com/alumnium-hq/alumnium",
+  ].join("\n");
 }
 
 async function finalizePip(pipName: string, pipDir: string, tag?: string) {
