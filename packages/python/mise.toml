@@ -17,6 +17,10 @@ raw = true
 [tasks.clean]
 run = "rm -rf .alumnium dist log reports .pytest_cache __pycache__ .ruff_cache htmlcov .coverage coverage.xml"
 
+[tasks."clear/cache"]
+description = "Clears Python package Alumnium LLM cache."
+run = "rm -rf ./.alumnium/cache"
+
 [tasks.build]
 run = '''
 rm -rf dist
