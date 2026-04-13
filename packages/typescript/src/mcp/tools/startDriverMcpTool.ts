@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import z from "zod";
 import { Alumni } from "../../client/Alumni.ts";
@@ -30,7 +31,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
     capabilities: z
       .string()
       .describe(
-        `JSON string with Selenium/Appium/Playwright capabilities. Must include 'platformName' (e.g., 'chrome', 'iOS', 'Android'). Example: '{"platformName": "iOS", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'. You can optionally set extra HTTP headers. Example: '{"headers": {"Authorization": "Bearer token"}}'. You can optionally set cookies. Example: '{"cookies": [{"name": "session", "value": "abc123", "domain": ".example.com"}]}'.`,
+        `JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities. Must include 'platformName' (e.g., 'chrome', 'iOS', 'Android'). Example JSON string: '{"platformName": "iOS", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'. Example file path: '/path/to/capabilities.json'. You can optionally set extra HTTP headers. Example: '{"headers": {"Authorization": "Bearer token"}}'. You can optionally set cookies. Example: '{"cookies": [{"name": "session", "value": "abc123", "domain": ".example.com"}]}'.`,
       ),
 
     server_url: z
@@ -42,10 +43,24 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
   }),
 
   async execute(input, { logger }) {
+    // Resolve capabilities: file path or inline JSON string
+    let rawCapabilities: string;
+    const filePath = path.resolve(input.capabilities);
+    if (fs.existsSync(filePath)) {
+      try {
+        rawCapabilities = fs.readFileSync(filePath, "utf-8");
+      } catch (error) {
+        logger.error(`Failed to read capabilities file '${filePath}': ${error}`);
+        throw new Error(`Failed to read capabilities file '${filePath}': ${error}`);
+      }
+    } else {
+      rawCapabilities = input.capabilities;
+    }
+
     // Parse capabilities JSON
     let capabilities: Record<string, unknown>;
     try {
-      capabilities = JSON.parse(input.capabilities);
+      capabilities = JSON.parse(rawCapabilities);
     } catch (error) {
       logger.error(`Invalid JSON in capabilities parameter: ${error}`);
       throw new Error(`Invalid JSON in capabilities parameter: ${error}`);
