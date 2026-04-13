@@ -355,9 +355,7 @@ async function main() {
         distPackageJson.bin = distPackageJson.publishConfig.bin;
 
         TARGET_PLATFORMS.forEach(({ npm }) => {
-          distPackageJson.optionalDependencies[npm.name] = `file:${npm.dir}`;
-          distPackageJson.publishConfig.optionalDependencies[npm.name] =
-            ALUMNIUM_VERSION;
+          distPackageJson.optionalDependencies[npm.name] = ALUMNIUM_VERSION;
         });
 
         const distPackageJsonPath = path.resolve(
