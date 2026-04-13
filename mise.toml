@@ -13,8 +13,6 @@ uv = "latest"
 
 # Tools
 fnox = "latest" # Secrets manager
-opencode = "latest" # AI agent
-claude = "latest" # AI agent
 gh = "latest" # GitHub CLI
 ruff = "latest" # Python formatter
 shfmt = "latest" # .sh formatter
