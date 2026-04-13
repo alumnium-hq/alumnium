@@ -14,7 +14,7 @@
     },
     "packages/typescript": {
       "name": "alumnium",
-      "version": "0.20.0-alpha.7",
+      "version": "0.20.0-alpha.8",
       "bin": {
         "alumnium": "./src/cli/bin.ts",
       },
