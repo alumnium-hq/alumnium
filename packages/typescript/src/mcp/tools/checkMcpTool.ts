@@ -31,14 +31,14 @@ export const checkMcpTool = McpTool.define("check", {
     let result = "";
     try {
       explanation = await al.check(statement, { vision });
-      result = "passed";
-      logger.debug(`Passed with ${explanation}`);
+      result = "success";
+      logger.debug(`Success with ${explanation}`);
     } catch (error) {
       if (!(error instanceof AssertionError)) throw error;
 
       explanation = String(error);
-      result = "failed";
-      logger.error(`Failed with ${explanation}`);
+      result = "failure";
+      logger.error(`Failure with ${explanation}`);
     }
 
     await McpArtifactsStore.saveScreenshot({
@@ -46,6 +46,6 @@ export const checkMcpTool = McpTool.define("check", {
       description: `check ${statement}`,
     });
 
-    return [{ type: "text", text: `Check ${result}! ${explanation}` }];
+    return [{ type: "text", text: JSON.stringify({ result, explanation }) }];
   },
 });

@@ -102,20 +102,16 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
 
     // Detect platform and create appropriate driver
     let driver: McpDriver;
-    let platformLabel: string;
     if (["chrome", "chromium"].includes(platformName)) {
       driver = await createChromeDriver(
         capabilities,
         serverUrl,
         artifactsStore,
       );
-      platformLabel = "Chrome";
     } else if (platformName === "ios") {
       driver = await createIosDriver(capabilities, serverUrl);
-      platformLabel = "iOS";
     } else if (platformName === "android") {
       driver = await createAndroidDriver(capabilities, serverUrl);
-      platformLabel = "Android";
     } else {
       logger.error(`Unsupported platformName: ${platformName}`);
       throw new Error(
@@ -161,7 +157,12 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
     return [
       {
         type: "text",
-        text: `${platformLabel} driver started successfully (driver_id: ${driverId})\nModel: ${al.model.provider}/${al.model.name}`,
+        text: JSON.stringify({
+          driver_id: driverId,
+          driver_type: al.driver.constructor.name,
+          platform_name: platformName,
+          model: `${al.model.provider}/${al.model.name}`,
+        }),
       },
     ];
   },

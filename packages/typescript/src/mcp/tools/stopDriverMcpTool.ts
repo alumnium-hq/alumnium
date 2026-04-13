@@ -34,9 +34,18 @@ export const stopDriverMcpTool = McpTool.define("stop_driver", {
     // Cleanup driver and get stats
     const [artifactsDir, stats] = await McpState.cleanupDriver(driverId);
 
-    // Format stats message with detailed cache breakdown
-    const message = `Driver ${driverId} closed.\nArtifacts saved to: ${path.resolve(artifactsDir)}\nToken usage statistics:\n- Total: ${stats["total"]["total_tokens"]} tokens (${stats["total"]["input_tokens"]} input, ${stats["total"]["output_tokens"]} output)\n- Cached: ${stats["cache"]["total_tokens"]} tokens (${stats["cache"]["input_tokens"]} input, ${stats["cache"]["output_tokens"]} output)`;
-
-    return [{ type: "text", text: message }];
+    return [
+      {
+        type: "text",
+        text: JSON.stringify({
+          driver_id: driverId,
+          artifacts_dir: path.resolve(artifactsDir),
+          token_usage: {
+            total: stats["total"],
+            cached: stats["cache"],
+          },
+        }),
+      },
+    ];
   },
 });
