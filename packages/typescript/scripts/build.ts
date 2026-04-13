@@ -188,8 +188,8 @@ const loggerPathPlugin: BunPlugin = {
 
 const seleniumRequireAtomRe = /requireAtom\('([^']+)'.+$/gm;
 
-const depsPatcherPlugin: BunPlugin = {
-  name: "deps-patcher",
+const seleniumAtomsPatcherPlugin: BunPlugin = {
+  name: "selenium-atoms-patcher",
   setup(build) {
     build.onLoad(
       { filter: /selenium-webdriver.+http\.js$/, namespace: "file" },
@@ -200,6 +200,30 @@ const depsPatcherPlugin: BunPlugin = {
           contents: input.replace(
             seleniumRequireAtomRe,
             "require('./atoms/$1')",
+          ),
+        };
+      },
+    );
+  },
+};
+
+const seleniumManagerBasepathRe =
+  /let seleniumManagerBasePath = path\.join\(__dirname.+$/m;
+
+const seleniumManagerPatcherPlugin: BunPlugin = {
+  name: "selenium-manager-patcher",
+  setup(build) {
+    build.onLoad(
+      {
+        filter: /selenium-webdriver.+seleniumManager\.js$/,
+        namespace: "file",
+      },
+      async (args) => {
+        const input = await Bun.file(args.path).text();
+        return {
+          contents: input.replace(
+            seleniumManagerBasepathRe,
+            "let seleniumManagerBasePath = (() => { try { return path.join(path.dirname(require.resolve('selenium-webdriver/package.json')), 'bin'); } catch { return ''; } })()",
           ),
         };
       },
@@ -277,7 +301,8 @@ async function main() {
           },
           plugins: [
             loggerPathPlugin,
-            depsPatcherPlugin,
+            seleniumAtomsPatcherPlugin,
+            seleniumManagerPatcherPlugin,
             playwrightPatcherPlugin,
           ],
           define: {
