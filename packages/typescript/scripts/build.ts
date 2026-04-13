@@ -10,6 +10,11 @@ import path from "node:path";
 import { stringify as tomlStringify } from "smol-toml";
 import { z } from "zod";
 import { ALUMNIUM_VERSION } from "../src/package.ts";
+import {
+  PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
+  SELENIUM_ATOM_ASSET_PREFIX,
+  SELENIUM_MANAGER_ASSET_NAMES,
+} from "../src/standalone/embeddedAssetNames.ts";
 
 //#region Types and consts
 
@@ -52,6 +57,10 @@ const REPO_ROOT_DIR = path.resolve(import.meta.dirname, "../../../");
 const PKG_DIR = path.resolve(import.meta.dirname, "..");
 const TMP_DIR = path.resolve(PKG_DIR, "tmp");
 const DIST_DIR = path.resolve(PKG_DIR, "dist");
+const STANDALONE_EMBEDDED_ASSETS_DIR = path.resolve(
+  TMP_DIR,
+  "standalone-embedded-assets",
+);
 
 // Bin paths
 const BIN_SRC_PATH = path.resolve(PKG_DIR, "src/cli/bin.ts");
@@ -125,6 +134,11 @@ interface TargetPkg {
   binPath: string;
 }
 
+interface StandaloneEmbeddedAsset {
+  name: string;
+  sourcePath: string;
+}
+
 const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
   ARCHS.map((arch) => {
     const target = `${os}-${arch}`;
@@ -186,67 +200,15 @@ const loggerPathPlugin: BunPlugin = {
   },
 };
 
-const seleniumRequireAtomRe = /requireAtom\('([^']+)'.+$/gm;
-
-const seleniumAtomsPatcherPlugin: BunPlugin = {
-  name: "selenium-atoms-patcher",
+const standaloneEmbeddedAssetPlugin: BunPlugin = {
+  name: "standalone-embedded-assets",
   setup(build) {
     build.onLoad(
-      { filter: /selenium-webdriver.+http\.js$/, namespace: "file" },
+      { filter: /\/standalone-embedded-assets\/[^/]+$/, namespace: "file" },
       async (args) => {
-        const input = await Bun.file(args.path).text();
         return {
-          ...args,
-          contents: input.replace(
-            seleniumRequireAtomRe,
-            "require('./atoms/$1')",
-          ),
-        };
-      },
-    );
-  },
-};
-
-const seleniumManagerBasepathRe =
-  /let seleniumManagerBasePath = path\.join\(__dirname.+$/m;
-
-const seleniumManagerPatcherPlugin: BunPlugin = {
-  name: "selenium-manager-patcher",
-  setup(build) {
-    build.onLoad(
-      {
-        filter: /selenium-webdriver.+seleniumManager\.js$/,
-        namespace: "file",
-      },
-      async (args) => {
-        const input = await Bun.file(args.path).text();
-        return {
-          contents: input.replace(
-            seleniumManagerBasepathRe,
-            "let seleniumManagerBasePath = (() => { try { return path.join(path.dirname(require.resolve('selenium-webdriver/package.json')), 'bin'); } catch { return ''; } })()",
-          ),
-        };
-      },
-    );
-  },
-};
-
-// playwright-core's nodePlatform.js resolves its own package.json via
-// require.resolve() at module load time. In a compiled Bun binary the absolute
-// dev-machine path doesn't exist, crashing startup. coreDir is only used for
-// stack-trace prefix filtering so falling back to "" is safe.
-const playwrightPatcherPlugin: BunPlugin = {
-  name: "playwright-patcher",
-  setup(build) {
-    build.onLoad(
-      { filter: /playwright-core.+nodePlatform\.js$/, namespace: "file" },
-      async (args) => {
-        const input = await Bun.file(args.path).text();
-        return {
-          contents: input.replace(
-            'require.resolve("../../../package.json")',
-            '(() => { try { return require.resolve("../../../package.json"); } catch { return ""; } })()',
-          ),
+          contents: await Bun.file(args.path).bytes(),
+          loader: "file",
         };
       },
     );
@@ -290,21 +252,19 @@ async function main() {
   if (BUILD_BIN) {
     console.log("\n🌀 Building binaries:\n");
 
+    const standaloneEmbeddedAssetPaths =
+      await prepareStandaloneEmbeddedAssets();
+
     await Promise.all(
       TARGET_PLATFORMS.map(async ({ os, arch, target, binPath }) => {
         const result = await Bun.build({
-          entrypoints: [BIN_SRC_PATH],
+          entrypoints: [BIN_SRC_PATH, ...standaloneEmbeddedAssetPaths],
           external: ["chromium-bidi", "electron"],
           compile: {
             target: getBunTarget(os, arch),
             outfile: binPath,
           },
-          plugins: [
-            loggerPathPlugin,
-            seleniumAtomsPatcherPlugin,
-            seleniumManagerPatcherPlugin,
-            playwrightPatcherPlugin,
-          ],
+          plugins: [loggerPathPlugin, standaloneEmbeddedAssetPlugin],
           define: {
             SINGLE_FILE_EXECUTABLE: "true",
           },
@@ -792,6 +752,60 @@ function getBunTarget(os: OS, arch: Arch): Bun.Build.CompileTarget {
 function getNpmOs(os: OS) {
   if (os === "windows") return "win32";
   return os;
+}
+
+async function prepareStandaloneEmbeddedAssets() {
+  await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
+
+  const assets = await getStandaloneEmbeddedAssets();
+
+  return Promise.all(
+    assets.map(async ({ name, sourcePath }) => {
+      const stagedPath = path.join(STANDALONE_EMBEDDED_ASSETS_DIR, name);
+      await fs.copyFile(sourcePath, stagedPath);
+      return stagedPath;
+    }),
+  );
+}
+
+async function getStandaloneEmbeddedAssets(): Promise<
+  StandaloneEmbeddedAsset[]
+> {
+  const seleniumPkgDir = await fs.realpath(
+    path.resolve(PKG_DIR, "node_modules/selenium-webdriver"),
+  );
+  const playwrightCorePkgDir = await fs.realpath(
+    path.resolve(PKG_DIR, "node_modules/playwright-core"),
+  );
+
+  const seleniumAtomPaths = Array.from(
+    new Bun.Glob(path.join(seleniumPkgDir, "lib/atoms/*.js")).scanSync("/"),
+  ).sort();
+
+  return [
+    ...seleniumAtomPaths.map((sourcePath) => ({
+      name: `${SELENIUM_ATOM_ASSET_PREFIX}${path.basename(sourcePath)}`,
+      sourcePath,
+    })),
+
+    {
+      name: SELENIUM_MANAGER_ASSET_NAMES.linux,
+      sourcePath: path.join(seleniumPkgDir, "bin/linux/selenium-manager"),
+    },
+    {
+      name: SELENIUM_MANAGER_ASSET_NAMES.macos,
+      sourcePath: path.join(seleniumPkgDir, "bin/macos/selenium-manager"),
+    },
+    {
+      name: SELENIUM_MANAGER_ASSET_NAMES.windows,
+      sourcePath: path.join(seleniumPkgDir, "bin/windows/selenium-manager.exe"),
+    },
+
+    {
+      name: PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
+      sourcePath: path.join(playwrightCorePkgDir, "package.json"),
+    },
+  ];
 }
 
 //#endregion
