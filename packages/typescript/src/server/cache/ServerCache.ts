@@ -2,6 +2,8 @@ import { BaseCache } from "@langchain/core/caches";
 import type { Generation } from "@langchain/core/outputs";
 import { AppId } from "../../AppId.ts";
 import type { Cache } from "../../client/Cache.ts";
+import { Lchain } from "../../llm/Lchain.ts";
+import type { LchainSchema } from "../../llm/LchainSchema.ts";
 import { createLlmUsage, type LlmUsage } from "../../llm/llmSchema.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import type { SessionContext } from "../session/SessionContext.ts";
@@ -51,4 +53,17 @@ export abstract class ServerCache extends BaseCache {
   abstract discard(): Promise<void>;
 
   abstract clear(props?: Cache.ClearProps): Promise<void>;
+
+  protected applyUsage(
+    generationsArg:
+      | LchainSchema.StoredGeneration
+      | LchainSchema.StoredGeneration[],
+  ): void {
+    const generations = Array.isArray(generationsArg)
+      ? generationsArg
+      : [generationsArg];
+    generations.forEach((generation) => {
+      Lchain.applyUsage(this.usage, generation.message.data.usage_metadata);
+    });
+  }
 }
