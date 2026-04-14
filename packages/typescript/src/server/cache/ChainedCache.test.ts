@@ -254,17 +254,25 @@ function createGenerations(): Generation[] {
     Lchain.fromStored({
       text: "Hi there",
       message: {
-        type: "human",
+        type: "ai",
         data: {
           content: "Hi there",
           response_metadata: {
-            usage_metadata: {
+            usage: {
               input_tokens: 1,
               output_tokens: 2,
               total_tokens: 3,
             },
           },
           additional_kwargs: {},
+          tool_calls: [],
+          invalid_tool_calls: [],
+          usage_metadata: {
+            input_tokens: 1,
+            output_tokens: 2,
+            total_tokens: 3,
+          },
+          id: "gen-id",
         },
       },
     }),

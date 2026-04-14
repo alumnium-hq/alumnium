@@ -1,5 +1,5 @@
 import type { AppId } from "../../../AppId.ts";
-import { Lchain } from "../../../llm/Lchain.ts";
+import type { LchainSchema } from "../../../llm/LchainSchema.ts";
 import type { SessionContext } from "../../session/SessionContext.ts";
 import type { ElementsCache } from "./ElementsCache.ts";
 import { ElementsCacheMask } from "./ElementsCacheMask.ts";
@@ -9,11 +9,11 @@ export namespace BaseAgentElementsCache {
     memoryKey: ElementsCache.MemoryKey;
     cacheHash: ElementsCache.CacheHash;
     meta: AgentMeta;
-    generation: Lchain.StoredGeneration;
+    generation: LchainSchema.StoredGeneration;
   }
 
   export interface StoreProps {
-    generation: Lchain.StoredGeneration;
+    generation: LchainSchema.StoredGeneration;
     memoryKey: ElementsCache.MemoryKey;
     cacheHash: ElementsCache.CacheHash;
     agentKind: ElementsCache.EligibleAgentKind;
