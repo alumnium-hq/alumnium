@@ -12,8 +12,8 @@ import { checkMcpTool } from "./tools/checkMcpTool.ts";
 import { doMcpTool } from "./tools/doMcpTool.ts";
 import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.ts";
 import { getMcpTool } from "./tools/getMcpTool.ts";
-import { startDriverMcpTool } from "./tools/startDriverMcpTool.ts";
-import { stopDriverMcpTool } from "./tools/stopDriverMcpTool.ts";
+import { startMcpTool } from "./tools/startMcpTool.ts";
+import { stopMcpTool } from "./tools/stopMcpTool.ts";
 import { waitMcpTool } from "./tools/waitMcpTool.ts";
 
 const logger = getLogger(import.meta.url);
@@ -23,8 +23,8 @@ const MCP_TOOLS = [
   doMcpTool,
   fetchAccessibilityTreeMcpTool,
   getMcpTool,
-  startDriverMcpTool,
-  stopDriverMcpTool,
+  startMcpTool,
+  stopMcpTool,
   waitMcpTool,
 ];
 

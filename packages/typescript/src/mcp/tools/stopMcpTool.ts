@@ -6,7 +6,7 @@ import { McpTool } from "./McpTool.ts";
 /**
  * Stop driver and cleanup.
  */
-export const stopDriverMcpTool = McpTool.define("stop_driver", {
+export const stopMcpTool = McpTool.define("stop", {
   description: "Close browser/app and cleanup driver resources.",
 
   inputSchema: z.object({
@@ -38,7 +38,7 @@ export const stopDriverMcpTool = McpTool.define("stop_driver", {
       {
         type: "text",
         text: JSON.stringify({
-          driver_id: driverId,
+          id: driverId,
           artifacts_dir: path.resolve(artifactsDir),
           token_usage: {
             total: stats["total"],

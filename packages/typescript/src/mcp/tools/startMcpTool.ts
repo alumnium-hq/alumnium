@@ -23,9 +23,9 @@ import { McpTool } from "./McpTool.ts";
 /**
  * Start a new driver instance.
  */
-export const startDriverMcpTool = McpTool.define("start_driver", {
+export const startMcpTool = McpTool.define("start", {
   description:
-    "Initialize a browser driver for automated testing. Returns a driver_id for use in other calls.",
+    "Initialize a browser driver for automated testing. Returns an id for use in other calls.",
 
   inputSchema: z.object({
     capabilities: z
@@ -210,8 +210,10 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       {
         type: "text",
         text: JSON.stringify({
-          driver_id: driverId,
-          driver_type: al.driver.constructor.name,
+          id: driverId,
+          driver: al.driver.constructor.name
+            .replace(/Driver$/, "")
+            .toLowerCase(),
           platform_name: platformName,
           model: `${al.model.provider}/${al.model.name}`,
         }),
