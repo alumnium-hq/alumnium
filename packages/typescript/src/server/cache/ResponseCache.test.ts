@@ -152,11 +152,19 @@ function createGenerations(text: string): Generation[] {
     Lchain.fromStored({
       text,
       message: {
-        type: "system",
+        type: "ai",
         data: {
+          id: "gen-id",
           content: text,
-          additional_kwargs: {},
+          tool_calls: [],
+          invalid_tool_calls: [],
+          usage_metadata: {
+            input_tokens: 1,
+            output_tokens: 2,
+            total_tokens: 3,
+          },
           response_metadata: {},
+          additional_kwargs: {},
         },
       },
     }),

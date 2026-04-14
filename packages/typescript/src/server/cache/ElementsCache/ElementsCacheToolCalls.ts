@@ -1,4 +1,4 @@
-import type { Lchain } from "../../../llm/Lchain.ts";
+import type { LchainSchema } from "../../../llm/LchainSchema.ts";
 import { getLogger } from "../../../utils/logger.ts";
 
 const logger = getLogger(import.meta.url);
@@ -6,7 +6,9 @@ const logger = getLogger(import.meta.url);
 export abstract class ElementsCacheToolCalls {
   static ID_FIELDS = ["id", "from_id", "to_id"] as const;
 
-  static extractElementIds(generation: Lchain.StoredGeneration): number[] {
+  static extractElementIds(
+    generation: LchainSchema.StoredGeneration,
+  ): number[] {
     const ids: number[] = [];
     const seen = new Set<number>();
 

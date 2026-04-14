@@ -2,19 +2,23 @@ import type { Generation } from "@langchain/core/outputs";
 import { merge } from "ts-deepmerge";
 import type { TypeUtils } from "../../typeUtils.ts";
 import { Lchain } from "../Lchain.ts";
+import { LchainSchema } from "../LchainSchema.ts";
 
 export namespace LchainFactory {
   export interface StoredGenerationWithProps {
     text?: string | undefined;
-    toolCalls?: Lchain.ToolCall[] | undefined;
-    usage?: Lchain.UsageMetadata | undefined;
-    content?: Lchain.MessageContent | undefined;
+    toolCalls?: LchainSchema.ToolCall[] | undefined;
+    usage?: LchainSchema.UsageMetadata | undefined;
+    content?: LchainSchema.MessageContent[] | undefined;
   }
 }
 
 export abstract class LchainFactory {
-  static toolCall(overrides?: Partial<Lchain.ToolCall>) {
+  static toolCall(
+    overrides?: Partial<LchainSchema.ToolCall>,
+  ): LchainSchema.ToolCall {
     return {
+      id: "call-id",
       type: "tool_call" as const,
       name: "ClickTool",
       args: { id: 42 },
@@ -22,7 +26,9 @@ export abstract class LchainFactory {
     };
   }
 
-  static googleFunctionCall(overrides?: Partial<Lchain.GoogleFunctionCall>) {
+  static googleFunctionCall(
+    overrides?: Partial<LchainSchema.MessageFunctionCallData>,
+  ) {
     return {
       id: "call-id",
       name: "ClickTool",
@@ -32,21 +38,29 @@ export abstract class LchainFactory {
   }
 
   static storedGeneration(
-    overrides?: TypeUtils.DeepPartial<Lchain.StoredGeneration> | undefined,
-  ): Lchain.StoredGeneration {
+    overrides?:
+      | TypeUtils.DeepPartial<LchainSchema.StoredGeneration>
+      | undefined,
+  ): LchainSchema.StoredGeneration {
     const text = overrides?.text ?? "";
     const content = overrides?.message?.data?.content ?? text;
-    return this.#merge(
+    return this.#merge<LchainSchema.StoredGeneration>(
       {
         text,
         message: {
           type: "ai",
           data: {
+            id: "gen-id",
             content,
             tool_calls: [],
             invalid_tool_calls: [],
-            additional_kwargs: {},
+            usage_metadata: {
+              input_tokens: 1,
+              output_tokens: 2,
+              total_tokens: 3,
+            },
             response_metadata: {},
+            additional_kwargs: {},
           },
         },
       },
@@ -55,16 +69,16 @@ export abstract class LchainFactory {
   }
 
   static generation(
-    overrides?: TypeUtils.DeepPartial<Lchain.StoredGeneration>,
+    overrides?: TypeUtils.DeepPartial<LchainSchema.StoredGeneration>,
   ): Generation {
     return Lchain.fromStored(this.storedGeneration(overrides));
   }
 
   static storedGenerationWith(
     props: LchainFactory.StoredGenerationWithProps,
-  ): Lchain.StoredGeneration {
+  ): LchainSchema.StoredGeneration {
     const { text, content, toolCalls, usage } = props;
-    let overrides: TypeUtils.DeepPartial<Lchain.StoredGeneration> = {};
+    let overrides: TypeUtils.DeepPartial<LchainSchema.StoredGeneration> = {};
 
     if (text) overrides = this.#merge(overrides, { text });
 

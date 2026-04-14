@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
+import type { LchainSchema } from "../../../llm/LchainSchema.ts";
 import { ElementsCacheMask } from "./ElementsCacheMask.ts";
 
 describe("ElementsCacheMask", () => {
@@ -126,14 +127,14 @@ describe("ElementsCacheMask", () => {
             id: "tool-use-id",
             name: "ClickTool",
             input: { id: 5 },
-            caller: {},
+            caller: { type: "direct" },
           },
           {
             type: "tool_use",
             id: "tool-use-id",
             name: "ClickTool",
             input: { from_id: 10, to_id: 5 },
-            caller: {},
+            caller: { type: "direct" },
           },
           {
             type: "tool_use",
@@ -143,7 +144,7 @@ describe("ElementsCacheMask", () => {
               uid: "123",
               value: 456,
             },
-            caller: {},
+            caller: { type: "direct" },
           },
         ],
       });
@@ -328,7 +329,7 @@ describe("ElementsCacheMask", () => {
             id: "tool-use-id",
             name: "ClickTool",
             input: { id: "<MASKED_0>" },
-            caller: {},
+            caller: { type: "direct" },
           },
           {
             type: "tool_use",
@@ -338,7 +339,7 @@ describe("ElementsCacheMask", () => {
               from_id: "<MASKED_1>",
               to_id: "<MASKED_0>",
             },
-            caller: {},
+            caller: { type: "direct" },
           },
           {
             type: "tool_use",
@@ -348,9 +349,9 @@ describe("ElementsCacheMask", () => {
               uid: "123",
               value: 456,
             },
-            caller: {},
+            caller: { type: "direct" },
           },
-        ],
+        ] satisfies LchainSchema.MessageContent[],
       });
 
       const unmasked = ElementsCacheMask.unmask(generation, {

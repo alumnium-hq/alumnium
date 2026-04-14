@@ -265,8 +265,66 @@
                                                 "optional": false,
                                                 "type": [
                                                   {
+                                                    "wip": {
+                                                      "kind": "add",
+                                                      "type": [
+                                                        {
+                                                          "kind": "string",
+                                                          "literal": false
+                                                        }
+                                                      ]
+                                                    },
                                                     "kind": "string",
                                                     "values": ["direct"]
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "name": "MessageReasoningContent",
+                                    "kind": "object",
+                                    "properties": {
+                                      "type": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["reasoning_content"]
+                                          }
+                                        ],
+                                        "discriminator": true
+                                      },
+                                      "reasoningText": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "name": "MessageReasoningContentData",
+                                            "kind": "object",
+                                            "properties": {
+                                              "text": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "signature": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
                                                   }
                                                 ]
                                               }
@@ -452,7 +510,9 @@
                                                         "type": [
                                                           {
                                                             "kind": "string",
-                                                            "values": ["summary_text"]
+                                                            "values": [
+                                                              "summary_text"
+                                                            ]
                                                           }
                                                         ]
                                                       },
@@ -1070,6 +1130,10 @@
                                   {
                                     "kind": "number",
                                     "literal": false
+                                  },
+                                  {
+                                    "kind": "string",
+                                    "literal": false
                                   }
                                 ]
                               },
@@ -1153,7 +1217,9 @@
                                                             "type": [
                                                               {
                                                                 "kind": "string",
-                                                                "values": ["summary_text"]
+                                                                "values": [
+                                                                  "summary_text"
+                                                                ]
                                                               }
                                                             ]
                                                           },
@@ -1232,7 +1298,9 @@
                                                                 "type": [
                                                                   {
                                                                     "kind": "string",
-                                                                    "values": ["output_text"]
+                                                                    "values": [
+                                                                      "output_text"
+                                                                    ]
                                                                   }
                                                                 ],
                                                                 "discriminator": true
@@ -1737,6 +1805,26 @@
                                             "literal": false
                                           }
                                         ]
+                                      },
+                                      "cacheReadInputTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cacheWriteInputTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
                                       }
                                     }
                                   }
@@ -1902,6 +1990,86 @@
                                     "literal": false
                                   }
                                 ]
+                              },
+                              "done": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "boolean",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "done_reason": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "values": ["stop"]
+                                  }
+                                ]
+                              },
+                              "total_duration": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "load_duration": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "prompt_eval_count": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "prompt_eval_duration": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "eval_count": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "eval_duration": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
                               }
                             }
                           }
@@ -1922,6 +2090,7 @@
                         "optional": true,
                         "type": [
                           {
+                            "wip": true,
                             "kind": "undefined"
                           }
                         ]
@@ -1931,6 +2100,7 @@
                         "optional": true,
                         "type": [
                           {
+                            "wip": true,
                             "kind": "string",
                             "values": ["ai"]
                           }
