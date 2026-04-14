@@ -7,18 +7,18 @@ const logger = getLogger(import.meta.url);
 
 export namespace McpArtifactsStore {
   export interface SaveScreenshotProps {
-    driverId: string;
+    id: string;
     description: string;
   }
 }
 
 export class McpArtifactsStore extends FileStore {
-  constructor(driverId: string) {
+  constructor(id: string) {
     super(
       FileStore.subResolve(
         process.env.ALUMNIUM_MCP_ARTIFACTS_DIR,
         "artifacts",
-        driverId,
+        id,
       ),
     );
   }
@@ -29,14 +29,14 @@ export class McpArtifactsStore extends FileStore {
   static async saveScreenshot(
     props: McpArtifactsStore.SaveScreenshotProps,
   ): Promise<string | null> {
-    const { driverId, description } = props;
+    const { id, description } = props;
     try {
-      const driverState = McpState.getDriverState(driverId);
+      const driverState = McpState.getDriverState(id);
 
       // TODO: It is a bad idea to manage step number here in the artifacts
       // store. A better place would be McpState and the `saveScreenshot` method
       // would only accept the step number as a prop.
-      const stepNum = McpState.incrementStepNum(driverId);
+      const stepNum = McpState.incrementStepNum(id);
 
       // Sanitize description for filename
       // Remove special characters and limit length
@@ -53,12 +53,12 @@ export class McpArtifactsStore extends FileStore {
         screenshotBytes,
       );
 
-      logger.debug(`Driver ${driverId}: Saved screenshot to ${filePath}`);
+      logger.debug(`Driver ${id}: Saved screenshot to ${filePath}`);
 
       return filePath;
     } catch (error) {
       // Log error but don't fail the operation
-      logger.warn(`Failed to save screenshot for driver ${driverId}: ${error}`);
+      logger.warn(`Failed to save screenshot for driver ${id}: ${error}`);
       return null;
     }
   }

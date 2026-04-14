@@ -12,11 +12,9 @@ export const waitMcpTool = McpTool.define("wait", {
     "Wait for a specified duration or until a condition is met. Pass a number to wait that many seconds (1-30). Pass a string to wait for a natural language condition (e.g., 'My Account text', 'user is logged in', 'page shows success'). Uses AI-powered verification to check conditions.",
 
   inputSchema: z.object({
-    driver_id: z
+    id: z
       .string()
-      .describe(
-        "Driver ID from start_driver (required for condition-based waiting)",
-      )
+      .describe("Driver ID from start (required for condition-based waiting)")
       .optional(),
 
     for: z
@@ -35,7 +33,7 @@ export const waitMcpTool = McpTool.define("wait", {
   }),
 
   async execute(input, { logger }) {
-    const { for: waitFor, driver_id: driverId, timeout: inputTimeout } = input;
+    const { for: waitFor, id, timeout: inputTimeout } = input;
 
     // If it's a number, wait that many seconds
     if (typeof waitFor === "number") {
@@ -49,12 +47,12 @@ export const waitMcpTool = McpTool.define("wait", {
     }
 
     // Otherwise, treat as natural language condition
-    if (!driverId) {
+    if (!id) {
       return [
         {
           type: "text",
           text: JSON.stringify({
-            error: "driver_id is required when waiting for a condition",
+            error: "id is required when waiting for a condition",
           }),
         },
       ];
@@ -63,7 +61,7 @@ export const waitMcpTool = McpTool.define("wait", {
     const timeout = typeof inputTimeout === "number" ? inputTimeout : 10;
     const pollInterval = 1.0;
 
-    const al = McpState.getDriverAlumni(driverId);
+    const al = McpState.getDriverAlumni(id);
 
     const startTime = Date.now();
     let lastError: string | undefined;

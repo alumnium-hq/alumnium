@@ -11,7 +11,7 @@ export const getMcpTool = McpTool.define("get", {
     "Extract data from the page (e.g., 'user name', 'product prices', 'item count'). Returns the extracted data if it's available or explanation why it can't be extracted.",
 
   inputSchema: z.object({
-    driver_id: z.string(),
+    id: z.string(),
 
     data: z.string().describe("Description of data to extract"),
 
@@ -22,13 +22,13 @@ export const getMcpTool = McpTool.define("get", {
   }),
 
   async execute(input) {
-    const { driver_id: driverId, data, vision } = input;
+    const { id, data, vision } = input;
 
-    const al = McpState.getDriverAlumni(driverId);
+    const al = McpState.getDriverAlumni(id);
     const result = await al.get(data, { vision });
 
     await McpArtifactsStore.saveScreenshot({
-      driverId,
+      id,
       description: `get ${data}`,
     });
 
