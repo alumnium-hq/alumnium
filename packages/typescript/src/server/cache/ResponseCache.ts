@@ -4,6 +4,7 @@ import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Lchain } from "../../llm/Lchain.ts";
+import type { LchainSchema } from "../../llm/LchainSchema.ts";
 import { getLogger } from "../../utils/logger.ts";
 import type { Agent } from "../agents/Agent.ts";
 import { LlmContext } from "../LlmContext.ts";
@@ -19,7 +20,7 @@ export namespace ResponseCache {
   export interface MemoryEntry {
     prompt: LlmContext.Prompt;
     llmKey: LlmContext.LlmKey;
-    generations: Lchain.StoredGeneration[];
+    generations: LchainSchema.StoredGeneration[];
     app: AppId;
   }
 
@@ -70,7 +71,9 @@ export class ResponseCache extends ServerCache {
       const entryStore = this.#cacheStore.subStore(requestHash);
 
       const storedGenerations =
-        await entryStore.readJson<Lchain.StoredGeneration[]>("response.json");
+        await entryStore.readJson<LchainSchema.StoredGeneration[]>(
+          "response.json",
+        );
       if (!storedGenerations) return null;
 
       logger.debug(
@@ -163,7 +166,7 @@ export class ResponseCache extends ServerCache {
     return xxh64Str(str);
   }
 
-  #updateUsage(generations: Lchain.StoredGeneration[]): void {
+  #updateUsage(generations: LchainSchema.StoredGeneration[]): void {
     for (const generation of generations) {
       const usageMetadata = generation?.message?.data.usage_metadata;
       this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
