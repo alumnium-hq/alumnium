@@ -20,7 +20,7 @@ describe("Calculator", () => {
     };
   });
 
-  it("addition", async ({ expect, setup }) => {
+  it("addition", { tags: ["cache"] }, async ({ expect, setup }) => {
     const { al, $ } = await setup();
     await $.navigate("https://seleniumbase.io/apps/calculator");
     await al.do("2 + 2 =");
