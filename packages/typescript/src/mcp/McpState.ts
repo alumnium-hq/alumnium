@@ -9,7 +9,7 @@ import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { getLogger } from "../utils/logger.ts";
 import { McpArtifactsStore } from "./McpArtifactsStore.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
-import { startDriverMcpTool } from "./tools/startDriverMcpTool.ts";
+import { startMcpTool } from "./tools/startMcpTool.ts";
 
 const logger = getLogger(import.meta.url);
 
@@ -81,7 +81,7 @@ export abstract class McpState {
       logger.error(`Driver state for ${driverId} not found`);
       // NOTE: This error is required for the controlling agent calling MCP.
       throw new Error(
-        `Driver ${driverId} not found. Call ${startDriverMcpTool.name} first.`,
+        `Driver ${driverId} not found. Call ${startMcpTool.name} first.`,
       );
     }
     return driverState;
