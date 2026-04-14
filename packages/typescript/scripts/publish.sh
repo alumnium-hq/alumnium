@@ -24,7 +24,7 @@ publish_pkg() {
 	[[ -f "$pkg" ]] || return 0
 
 	echo -e "🌀️ Publishing $pkg...\n"
-	PUBLISH_ARGS=("--provenance", "--access=public")
+	PUBLISH_ARGS=("--provenance" "--access=public")
 	if [[ "$VERSION" == *alpha* ]]; then
 		PUBLISH_ARGS+=("--tag=next")
 	fi
