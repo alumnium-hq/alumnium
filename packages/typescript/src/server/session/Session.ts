@@ -3,7 +3,11 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Driver } from "../../drivers/Driver.ts";
-import { LlmUsageStats } from "../../llm/llmSchema.ts";
+import {
+  createLlmUsage,
+  LlmUsage,
+  LlmUsageStats,
+} from "../../llm/llmSchema.ts";
 import { Model } from "../../Model.ts";
 import { getLogger } from "../../utils/logger.ts";
 import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.ts";
@@ -118,32 +122,27 @@ export class Session {
    * @returns Session usage statistics.
    */
   get stats(): LlmUsageStats {
-    return {
-      total: {
-        input_tokens:
-          this.plannerAgent.usage.input_tokens +
-          this.actorAgent.usage.input_tokens +
-          this.retrieverAgent.usage.input_tokens +
-          this.areaAgent.usage.input_tokens +
-          this.locatorAgent.usage.input_tokens +
-          this.changesAnalyzerAgent.usage.input_tokens,
-        output_tokens:
-          this.plannerAgent.usage.output_tokens +
-          this.actorAgent.usage.output_tokens +
-          this.retrieverAgent.usage.output_tokens +
-          this.areaAgent.usage.output_tokens +
-          this.locatorAgent.usage.output_tokens +
-          this.changesAnalyzerAgent.usage.output_tokens,
-        total_tokens:
-          this.plannerAgent.usage.total_tokens +
-          this.actorAgent.usage.total_tokens +
-          this.retrieverAgent.usage.total_tokens +
-          this.areaAgent.usage.total_tokens +
-          this.locatorAgent.usage.total_tokens +
-          this.changesAnalyzerAgent.usage.total_tokens,
-      },
+    const usageStats: LlmUsageStats = {
+      total: createLlmUsage(),
       cache: this.cache.usage,
     };
+
+    const agents = [
+      this.plannerAgent,
+      this.actorAgent,
+      this.retrieverAgent,
+      this.areaAgent,
+      this.locatorAgent,
+      this.changesAnalyzerAgent,
+    ];
+
+    agents.forEach((agent) => {
+      (Object.keys(usageStats.total) as (keyof LlmUsage)[]).forEach((key) => {
+        usageStats.total[key] += agent.usage[key];
+      });
+    });
+
+    return usageStats;
   }
 
   /**

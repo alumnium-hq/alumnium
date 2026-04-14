@@ -64,7 +64,7 @@ export class ResponseCache extends ServerCache {
         logger.debug(
           `Cache hit (in-memory) for prompt: "${prompt.slice(0, 100)}..."`,
         );
-        this.#updateUsage(memoryEntry.generations);
+        this.applyUsage(memoryEntry.generations);
         return memoryEntry.generations.map(Lchain.fromStored);
       }
 
@@ -80,7 +80,7 @@ export class ResponseCache extends ServerCache {
         `Cache hit (file) for prompt: "${prompt.slice(0, 100)}...":`,
       );
 
-      this.#updateUsage(storedGenerations);
+      this.applyUsage(storedGenerations);
 
       return storedGenerations.map(Lchain.fromStored);
     } catch (error) {
@@ -164,14 +164,5 @@ export class ResponseCache extends ServerCache {
     const metaCanon = canonize(agentMeta);
     const str = [CACHE_VERSION, this.app, prompt, llmKey, metaCanon].join("|");
     return xxh64Str(str);
-  }
-
-  #updateUsage(generations: LchainSchema.StoredGeneration[]): void {
-    for (const generation of generations) {
-      const usageMetadata = generation?.message?.data.usage_metadata;
-      this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
-      this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
-      this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
-    }
   }
 }
