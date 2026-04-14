@@ -29,9 +29,9 @@ export const fetchAccessibilityTreeMcpTool = McpTool.define(
         (await al.driver.getAccessibilityTree()).toStr(),
       );
 
-      const text = `Accessibility Tree:\n${tree.toXml(client.session.excludeAttributes)}`;
-
-      return [{ type: "text", text }];
+      return [
+        { type: "text", text: tree.toXml(client.session.excludeAttributes) },
+      ];
     },
   },
 );
