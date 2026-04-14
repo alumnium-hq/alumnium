@@ -2,7 +2,7 @@
  * Driver factory functions for different platforms.
  */
 
-import type { Browser, BrowserContext, Page } from "playwright-core";
+import type { BrowserContext, Page } from "playwright-core";
 import { chromium } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
@@ -19,20 +19,21 @@ const logger = getLogger(import.meta.url);
 export type McpDriver = Page | WebDriver | WebdriverIoBrowser;
 
 export namespace McpDriver {
-  export type PlaywrightCookie = Parameters<
-    BrowserContext["addCookies"]
-  >[0][number];
+  type PlaywrightCookie = Parameters<BrowserContext["addCookies"]>[0][number];
 
-  export type PlaywrightHeaders = (Parameters<
-    Browser["newContext"]
-  >[0] & {})["extraHTTPHeaders"] & {};
+  export type Cookies = PlaywrightCookie[];
+  export type Headers = Record<string, string>;
 
   export interface Capabilities {
-    headers?: PlaywrightHeaders | undefined;
-    cookies?: PlaywrightCookie[] | undefined;
-    permissions?: string[] | undefined;
     "appium:settings"?: Record<string, unknown> | undefined;
     [key: string]: unknown;
+  }
+
+  export interface DriverOptions {
+    cookies?: Cookies;
+    headers?: Headers;
+    headless?: boolean;
+    permissions?: string[];
   }
 
   export interface SeleniumCdpConnection {
@@ -46,13 +47,14 @@ export function createChromeDriver(
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
   artifactsStore: FileStore,
+  driverOptions: McpDriver.DriverOptions = {},
 ): Promise<McpDriver> {
   const driverType = (process.env.ALUMNIUM_DRIVER || "selenium").toLowerCase();
   logger.info(`Creating Chrome driver using ${driverType}`);
   if (driverType === "playwright") {
-    return createPlaywrightDriver(capabilities, artifactsStore);
+    return createPlaywrightDriver(capabilities, artifactsStore, driverOptions);
   } else {
-    return createSeleniumDriver(capabilities, serverUrl);
+    return createSeleniumDriver(capabilities, serverUrl, driverOptions);
   }
 }
 
@@ -60,18 +62,21 @@ export function createChromeDriver(
  * Create Playwright driver from capabilities.
  */
 export async function createPlaywrightDriver(
-  capabilities: McpDriver.Capabilities,
+  _capabilities: McpDriver.Capabilities,
   artifactsStore: FileStore,
+  driverOptions: McpDriver.DriverOptions = {},
 ): Promise<Page> {
-  const headless =
-    (process.env.ALUMNIUM_PLAYWRIGHT_HEADLESS || "true").toLowerCase() ===
-    "true";
-  logger.info(`Creating Playwright driver (headless=${headless})`);
+  const {
+    cookies,
+    headless = false,
+    headers = {},
+    permissions,
+  } = driverOptions;
 
+  logger.info(`Creating Playwright driver (headless=${headless})`);
   const browser = await chromium.launch({ headless });
 
-  const headers = capabilities["headers"] || {};
-  if (Object.keys(headers).length) {
+  if (headers) {
     logger.debug("Setting extra HTTP headers: {headers}", { headers });
   }
 
@@ -86,8 +91,6 @@ export async function createPlaywrightDriver(
     snapshots: true,
     sources: true,
   });
-
-  const { cookies, permissions } = capabilities;
 
   if (cookies) {
     logger.debug("Adding cookies: {cookies}", { cookies });
@@ -114,22 +117,29 @@ export async function createPlaywrightDriver(
 export async function createSeleniumDriver(
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
+  driverOptions: McpDriver.DriverOptions = {},
 ): Promise<WebDriver> {
   logger.info(`Creating Selenium driver (serverUrl=${serverUrl || "local"})`);
 
-  const { headers, cookies, ...seleniumCapabilities } = capabilities;
+  const { cookies, headers = {}, headless = false } = driverOptions;
 
-  const options = new Options();
+  const chromeOptions = new Options();
+
+  if (headless) {
+    chromeOptions.addArguments("--headless=new");
+  }
 
   // Apply all capabilities to options
-  for (const [key, value] of Object.entries(seleniumCapabilities)) {
+  for (const [key, value] of Object.entries(capabilities)) {
     if (key !== "platformName") {
-      options.set(key, value);
+      chromeOptions.set(key, value);
     }
   }
 
   // Use remote driver if serverUrl provided, otherwise local Chrome
-  const builder = new Builder().forBrowser("chrome").setChromeOptions(options);
+  const builder = new Builder()
+    .forBrowser("chrome")
+    .setChromeOptions(chromeOptions);
   if (serverUrl) {
     builder.usingServer(serverUrl);
   }
@@ -137,20 +147,19 @@ export async function createSeleniumDriver(
   const cdp: McpDriver.SeleniumCdpConnection =
     await driver.createCDPConnection("page");
 
-  const cdpPromises: Promise<unknown>[] = [];
-
-  if (headers || cookies) {
-    cdpPromises.push(cdp.send("Network.enable", {}));
+  if (Object.keys(headers).length || cookies?.length) {
+    await cdp.send("Network.enable", {});
   }
 
-  if (headers) {
+  const cdpPromises: Promise<unknown>[] = [];
+  if (Object.keys(headers).length) {
     logger.debug("Setting extra HTTP headers: {headerNames}", {
       headerNames: Object.keys(headers),
     });
     cdpPromises.push(cdp.send("Network.setExtraHTTPHeaders", { headers }));
   }
 
-  if (cookies) {
+  if (cookies?.length) {
     logger.debug(`Adding ${cookies.length} cookie(s)`);
     cdpPromises.push(cdp.send("Network.setCookies", { cookies }));
   }
