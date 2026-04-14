@@ -25,7 +25,7 @@ jobs:
       - name: Git Checkout
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
