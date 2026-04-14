@@ -336,6 +336,8 @@ async function main() {
         console.log(`🟢 ${target} (${cwdRelPath(binPath)})`);
       }),
     );
+
+    await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
   }
 
   //#endregion
