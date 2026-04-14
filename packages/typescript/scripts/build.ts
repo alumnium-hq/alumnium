@@ -826,19 +826,21 @@ async function prepareStandaloneEmbeddedAssets() {
 async function getStandaloneEmbeddedAssets(): Promise<
   StandaloneEmbeddedAsset[]
 > {
-  const seleniumPkgDir = await fs.realpath(
-    path.resolve(PKG_DIR, "node_modules/selenium-webdriver"),
+  const seleniumPkgDir = path.resolve(
+    PKG_DIR,
+    "node_modules/selenium-webdriver",
   );
-  const playwrightCorePkgDir = await fs.realpath(
-    path.resolve(PKG_DIR, "node_modules/playwright-core"),
+  const playwrightCorePkgDir = path.resolve(
+    PKG_DIR,
+    "node_modules/playwright-core",
   );
 
-  const seleniumAtomPaths = Array.from(
-    new Bun.Glob(path.join(seleniumPkgDir, "lib/atoms/*.js")).scanSync("/"),
-  ).sort();
+  const seleniumAtomPaths = await Array.fromAsync(
+    new Bun.Glob(path.join(seleniumPkgDir, "lib/atoms/*.js")).scan("/"),
+  );
 
   return [
-    ...seleniumAtomPaths.map((sourcePath) => ({
+    ...seleniumAtomPaths.sort().map((sourcePath) => ({
       name: `${SELENIUM_ATOM_ASSET_PREFIX}${path.basename(sourcePath)}`,
       sourcePath,
     })),

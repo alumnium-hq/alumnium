@@ -83,19 +83,12 @@ async function extractEmbeddedDependencies(): Promise<ExtractedEmbeddedDependenc
   ]);
 
   const filesByName = getEmbeddedFilesByName();
-
-  await writeEmbeddedFile(
-    filesByName,
-    PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
-    playwrightPackageJsonPath,
-  );
-
   const seleniumAtomNames = Object.keys(filesByName)
     .filter((name) => name.startsWith(SELENIUM_ATOM_ASSET_PREFIX))
     .sort();
-
-  await Promise.all(
-    seleniumAtomNames.map((name) =>
+  const [seleniumManagerPath] = await Promise.all([
+    extractSeleniumManager(filesByName, extractedDir),
+    ...seleniumAtomNames.map((name) =>
       writeEmbeddedFile(
         filesByName,
         name,
@@ -105,12 +98,12 @@ async function extractEmbeddedDependencies(): Promise<ExtractedEmbeddedDependenc
         ),
       ),
     ),
-  );
-
-  const seleniumManagerPath = await extractSeleniumManager(
-    filesByName,
-    extractedDir,
-  );
+    writeEmbeddedFile(
+      filesByName,
+      PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
+      playwrightPackageJsonPath,
+    ),
+  ]);
 
   return {
     playwrightPackageJsonPath,
@@ -165,13 +158,9 @@ function installResolveHook(paths: ExtractedEmbeddedDependencies) {
         );
       }
 
-      if (request === "../../../package.json") {
-        return paths.playwrightPackageJsonPath;
-      }
-
       if (
-        request.endsWith("/playwright-core/package.json") ||
-        request.endsWith("\\playwright-core\\package.json")
+        request === "../../../package.json" ||
+        request.endsWith(path.join("playwright-core", "package.json"))
       ) {
         return paths.playwrightPackageJsonPath;
       }
