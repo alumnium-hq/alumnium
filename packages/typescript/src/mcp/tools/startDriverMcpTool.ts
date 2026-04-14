@@ -31,7 +31,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
     capabilities: z
       .string()
       .describe(
-        `JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities. Must include 'platformName' (e.g., 'chrome', 'iOS', 'Android'). Example JSON string: '{"platformName": "iOS", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'. Example file path: '/path/to/capabilities.json'. You can optionally set extra HTTP headers. Example: '{"headers": {"Authorization": "Bearer token"}}'. You can optionally set cookies. Example: '{"cookies": [{"name": "session", "value": "abc123", "domain": ".example.com"}]}'.`,
+        `JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities. Must include 'platformName' (e.g., 'chrome', 'ios', 'android'). Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'. Example file path: '/path/to/capabilities.json'. Alumnium-specific options go in 'alumnium:options': 'headless' (boolean, default false) — run browser headless, supported for Selenium and Playwright; 'headers' (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"}; 'cookies' (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}]; 'permissions' (string[]) — browser permissions to grant, Playwright only, e.g. ["geolocation"]; 'planner' (boolean) — enable/disable planner agent; 'changeAnalysis' (boolean, default true) — enable change analysis; 'excludeAttributes' (string[]) — accessibility attributes to exclude from the tree; 'newTabTimeout' (number, default 200) — ms to wait for new tab detection, Playwright only; 'autoswitchToNewTab' (boolean, default true) — auto-switch to newly opened tabs; 'fullPageScreenshot' (boolean, default false) — capture full-page screenshots. Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "headers": {"Authorization": "Bearer token"}, "newTabTimeout": 500}}'.`,
       ),
 
     server_url: z
@@ -50,12 +50,9 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       try {
         rawCapabilities = fs.readFileSync(filePath, "utf-8");
       } catch (error) {
-        logger.error(
-          `Failed to read capabilities file '${filePath}': ${error}`,
-        );
-        throw new Error(
-          `Failed to read capabilities file '${filePath}': ${error}`,
-        );
+        const message = `Failed to read capabilities file '${filePath}': ${error}`;
+        logger.error(message);
+        throw new Error(message);
       }
     } else {
       rawCapabilities = input.capabilities;
@@ -66,8 +63,9 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
     try {
       capabilities = JSON.parse(rawCapabilities);
     } catch (error) {
-      logger.error(`Invalid JSON in capabilities parameter: ${error}`);
-      throw new Error(`Invalid JSON in capabilities parameter: ${error}`);
+      const message = `Invalid JSON in capabilities parameter: ${error}`;
+      logger.error(message);
+      throw new Error(message);
     }
 
     // Extract and validate platformName
@@ -75,11 +73,13 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       typeof capabilities.platformName !== "string" ||
       !capabilities.platformName
     ) {
-      logger.error("Capabilities must include 'platformName' field");
-      throw new Error("Capabilities must include 'platformName' field");
+      const message = "Capabilities must include 'platformName' field";
+      logger.error(message);
+      throw new Error(message);
     }
-
     const platformName = capabilities.platformName.toLowerCase();
+    capabilities.platformName = platformName;
+
     const serverUrl =
       typeof input["server_url"] === "string" ? input["server_url"] : null;
 
@@ -89,10 +89,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
         | Record<string, unknown>
         | undefined) || {};
     delete capabilities["alumnium:options"];
-    const driverSettings =
-      (alumniumOptions["driverSettings"] as
-        | Record<string, unknown>
-        | undefined) || {};
+
     const planner =
       typeof alumniumOptions["planner"] === "boolean"
         ? alumniumOptions["planner"]
@@ -108,6 +105,37 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
           (value): value is string => typeof value === "string",
         )
       : undefined;
+
+    const driverOptions: McpDriver.DriverOptions = {
+      ...(alumniumOptions["headers"] !== undefined && {
+        headers: alumniumOptions["headers"] as McpDriver.Headers,
+      }),
+      ...(alumniumOptions["cookies"] !== undefined && {
+        cookies: alumniumOptions["cookies"] as McpDriver.Cookies,
+      }),
+      ...(Array.isArray(alumniumOptions["permissions"]) && {
+        permissions: alumniumOptions["permissions"] as string[],
+      }),
+      ...(typeof alumniumOptions["headless"] === "boolean" && {
+        headless: alumniumOptions["headless"],
+      }),
+    };
+
+    const alumniumOptionsNonDriverKeys = new Set([
+      "changeAnalysis",
+      "cookies",
+      "excludeAttributes",
+      "headers",
+      "headless",
+      "permissions",
+      "planner",
+    ]);
+    const driverSettings: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(alumniumOptions)) {
+      if (!alumniumOptionsNonDriverKeys.has(key)) {
+        driverSettings[key] = value;
+      }
+    }
 
     // Generate driver ID from current directory and timestamp
     const cwdName = path.basename(process.cwd());
@@ -126,6 +154,7 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
         capabilities,
         serverUrl,
         artifactsStore,
+        driverOptions,
       );
     } else if (platformName === "ios") {
       driver = await createIosDriver(capabilities, serverUrl);
@@ -161,9 +190,13 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       });
       for (const [key, value] of Object.entries(driverSettings)) {
         if (key in al.driver) {
-          // @ts-expect-error
-          al.driver[key] = value;
-          logger.debug(`Set driver option ${key}={value}`, { value });
+          try {
+            // @ts-expect-error
+            al.driver[key] = value;
+            logger.debug(`Set driver option ${key}={value}`, { value });
+          } catch (error) {
+            logger.warn(`Failed to set driver option ${key}: ${error}`);
+          }
         } else {
           logger.warn(`Unknown driver option: ${key}`);
         }
