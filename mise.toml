@@ -19,10 +19,11 @@ shfmt = "latest" # .sh formatter
 oxfmt = "latest" # TS formatter
 "pipx:pyprojectsort" = "latest" # pyproject.toml formatter
 "pipx:wheel" = "latest" # Python wheel builder
+ollama = "latest"
 
 [env]
 '_'.file = { path = ".env" }
-_.source = "scripts/env.sh"
+'_'.source = "scripts/env.sh"
 # Tool envs
 gh = "latest" # GitHub CLI
 MISE_EXPERIMENTAL = true # Enable monorepo root support
@@ -58,6 +59,9 @@ run = [
 ]
 # NOTE: It prompts for sudo to install OS dependencies
 raw = true
+
+[tasks."install/ollama"]
+run = "ollama pull mistral-small3.1:24b"
 
 [tasks.build]
 depends = ["//packages/typescript:build", "//packages/python:build"]
