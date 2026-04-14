@@ -2,11 +2,12 @@ import {
   deserializeStoredGeneration,
   serializeGeneration,
 } from "@langchain/core/caches";
-import type { StoredGeneration } from "@langchain/core/messages";
+import type { AIMessage, StoredGeneration } from "@langchain/core/messages";
 import type { Generation } from "@langchain/core/outputs";
 import { logSchemaParseError } from "../utils/logFormat.ts";
 import { scanTypes } from "../utils/typesScan.ts";
 import { LchainSchema } from "./LchainSchema.ts";
+import type { LlmUsage } from "./llmSchema.ts";
 
 export abstract class Lchain {
   static toStored(
@@ -36,4 +37,30 @@ export abstract class Lchain {
   static fromStored(stored: LchainSchema.StoredGeneration): Generation {
     return deserializeStoredGeneration(stored as unknown as StoredGeneration);
   }
+
+  static applyUsage(
+    usage: LlmUsage,
+    usageMetadata: LchainSchema.UsageMetadata,
+  ) {
+    usage.cache_creation +=
+      usageMetadata.input_token_details?.cache_creation ?? 0;
+    usage.cache_read += usageMetadata.input_token_details?.cache_read ?? 0;
+    usage.reasoning += usageMetadata.output_token_details?.reasoning ?? 0;
+    usage.input_tokens += usageMetadata.input_tokens;
+    usage.output_tokens += usageMetadata.output_tokens;
+    usage.total_tokens += usageMetadata.total_tokens;
+  }
+}
+
+export namespace Lchain {
+  export type InvokeResult = AIMessage | InvokeResultContainer;
+
+  export interface InvokeResultContainer {
+    raw: AIMessage;
+    parsed?: InvokeResultParsed | undefined;
+  }
+
+  export type InvokeResultParsed = Record<string, unknown>;
+
+  export type MessageContent = AIMessage["content"];
 }

@@ -589,8 +589,11 @@ describe("ElementsCache", () => {
       });
 
       expect(cache.usage).toEqual({
+        cache_creation: 0,
+        cache_read: 0,
         input_tokens: 0,
         output_tokens: 0,
+        reasoning: 0,
         total_tokens: 0,
       });
 
@@ -601,6 +604,13 @@ describe("ElementsCache", () => {
             input_tokens: 5,
             output_tokens: 10,
             total_tokens: 15,
+            input_token_details: {
+              cache_creation: 20,
+              cache_read: 25,
+            },
+            output_token_details: {
+              reasoning: 30,
+            },
           },
         }),
       ]);
@@ -612,6 +622,9 @@ describe("ElementsCache", () => {
         input_tokens: 5,
         output_tokens: 10,
         total_tokens: 15,
+        cache_creation: 20,
+        cache_read: 25,
+        reasoning: 30,
       });
 
       await cache.lookup(prompt1, llmKey);
@@ -620,6 +633,9 @@ describe("ElementsCache", () => {
         input_tokens: 10,
         output_tokens: 20,
         total_tokens: 30,
+        cache_creation: 40,
+        cache_read: 50,
+        reasoning: 60,
       });
     });
   });

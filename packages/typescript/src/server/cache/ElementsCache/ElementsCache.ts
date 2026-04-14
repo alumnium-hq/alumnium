@@ -154,7 +154,7 @@ export class ElementsCache extends ServerCache {
             memoryEntry.generation,
             masksIdsMap,
           );
-          this.#updateUsage(unmaskedGeneration);
+          this.applyUsage(unmaskedGeneration);
 
           const generation = Lchain.fromStored(unmaskedGeneration);
           logger.debug(
@@ -205,7 +205,7 @@ export class ElementsCache extends ServerCache {
         masksIdsMap,
       );
 
-      this.#updateUsage(unmaskedGeneration);
+      this.applyUsage(unmaskedGeneration);
 
       const generation = Lchain.fromStored(unmaskedGeneration);
       logger.debug(
@@ -449,11 +449,4 @@ export class ElementsCache extends ServerCache {
   }
 
   //#endregion
-
-  #updateUsage(generation: LchainSchema.StoredGeneration): void {
-    const usageMetadata = generation?.message?.data.usage_metadata;
-    this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
-    this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
-    this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
-  }
 }
