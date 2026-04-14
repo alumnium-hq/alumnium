@@ -140,12 +140,12 @@ export const startMcpTool = McpTool.define("start", {
     // Generate driver ID from current directory and timestamp
     const cwdName = path.basename(process.cwd());
     const timestamp = Math.floor(Date.now() / 1000);
-    const driverId = `${cwdName}-${timestamp}`;
+    const id = `${cwdName}-${timestamp}`;
 
-    logger.info(`Starting driver ${driverId} for platform: ${platformName}`);
+    logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
     // Create artifacts directories
-    const artifactsStore = new McpArtifactsStore(driverId);
+    const artifactsStore = new McpArtifactsStore(id);
 
     // Detect platform and create appropriate driver
     let driver: McpDriver;
@@ -204,18 +204,18 @@ export const startMcpTool = McpTool.define("start", {
     }
 
     // Register driver in global state
-    McpState.registerDriver(driverId, al, driver, artifactsStore);
+    McpState.registerDriver(id, al, driver, artifactsStore);
 
     return [
       {
         type: "text",
         text: JSON.stringify({
-          id: driverId,
+          id: id,
           driver: al.driver.constructor.name
             .replace(/Driver$/, "")
             .toLowerCase(),
-          platform_name: platformName,
           model: `${al.model.provider}/${al.model.name}`,
+          platform_name: platformName,
         }),
       },
     ];

@@ -11,7 +11,7 @@ export const checkMcpTool = McpTool.define("check", {
   description:
     "Verify a statement is true about the current page. Returns the result and explanation.",
 
-  inputSchema: McpTool.DriverInput.extend({
+  inputSchema: McpTool.IdInput.extend({
     statement: z
       .string()
       .describe("Statement to verify (e.g., 'page title contains Dashboard')"),
@@ -23,9 +23,9 @@ export const checkMcpTool = McpTool.define("check", {
   }),
 
   async execute(input, { logger }) {
-    const { driver_id: driverId, statement, vision } = input;
+    const { id, statement, vision } = input;
 
-    const al = McpState.getDriverAlumni(driverId);
+    const al = McpState.getDriverAlumni(id);
 
     let explanation = "";
     let result = "";
@@ -42,7 +42,7 @@ export const checkMcpTool = McpTool.define("check", {
     }
 
     await McpArtifactsStore.saveScreenshot({
-      driverId,
+      id,
       description: `check ${statement}`,
     });
 

@@ -36,7 +36,7 @@ describe("waitMcpTool", () => {
     expect(sleep).toHaveBeenCalledWith(30000);
   });
 
-  it("requires driver_id when waiting for condition", async () => {
+  it("requires id when waiting for condition", async () => {
     const result = await waitMcpTool.execute({
       for: "user is logged in",
       timeout: 10,
@@ -45,7 +45,7 @@ describe("waitMcpTool", () => {
       {
         type: "text",
         text: JSON.stringify({
-          error: "driver_id is required when waiting for a condition",
+          error: "id is required when waiting for a condition",
         }),
       },
     ]);
@@ -54,7 +54,7 @@ describe("waitMcpTool", () => {
   it("returns success when condition is met immediately", async () => {
     const check = mockCheck(async () => "The condition is satisfied");
     const result = await waitMcpTool.execute({
-      driver_id: "test-123",
+      id: "test-123",
       for: "user is logged in",
       timeout: 10,
     });
@@ -77,7 +77,7 @@ describe("waitMcpTool", () => {
       .mockRejectedValueOnce(new AssertionError("Not yet"))
       .mockRejectedValueOnce(new AssertionError("Still not"));
     const result = await waitMcpTool.execute({
-      driver_id: "test-123",
+      id: "test-123",
       for: "page loaded",
       timeout: 10,
     });
@@ -100,7 +100,7 @@ describe("waitMcpTool", () => {
       throw new AssertionError("Condition not satisfied");
     });
     const result = await waitMcpTool.execute({
-      driver_id: "test-123",
+      id: "test-123",
       for: "element visible",
       timeout: 0.001,
     });
@@ -125,7 +125,7 @@ describe("waitMcpTool", () => {
 
     await expect(
       waitMcpTool.execute({
-        driver_id: "test-123",
+        id: "test-123",
         for: "element visible",
         timeout: 1,
       }),
@@ -135,13 +135,17 @@ describe("waitMcpTool", () => {
   it("uses default timeout when timeout is omitted", async () => {
     const check = mockCheck(async () => "OK");
     const result = await waitMcpTool.execute({
-      driver_id: "test-123",
+      id: "test-123",
       for: "test condition",
     });
     expect(result).toEqual([
       {
         type: "text",
-        text: JSON.stringify({ status: "met", condition: "test condition", explanation: "OK" }),
+        text: JSON.stringify({
+          status: "met",
+          condition: "test condition",
+          explanation: "OK",
+        }),
       },
     ]);
     expect(check).toHaveBeenCalledTimes(1);

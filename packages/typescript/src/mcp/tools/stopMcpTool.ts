@@ -10,7 +10,7 @@ export const stopMcpTool = McpTool.define("stop", {
   description: "Close browser/app and cleanup driver resources.",
 
   inputSchema: z.object({
-    driver_id: z.string(),
+    id: z.string(),
 
     save_cache: z
       .boolean()
@@ -21,24 +21,24 @@ export const stopMcpTool = McpTool.define("stop", {
   }),
 
   async execute(input, { logger }) {
-    const driverId = String(input["driver_id"]);
+    const id = String(input.id);
     const saveCache = Boolean(input["save_cache"] || false);
 
     // Save cache if requested
     if (saveCache) {
-      const al = McpState.getDriverAlumni(driverId);
+      const al = McpState.getDriverAlumni(id);
       await al.cache.save();
       logger.info("Cache saved");
     }
 
     // Cleanup driver and get stats
-    const [artifactsDir, stats] = await McpState.cleanupDriver(driverId);
+    const [artifactsDir, stats] = await McpState.cleanupDriver(id);
 
     return [
       {
         type: "text",
         text: JSON.stringify({
-          id: driverId,
+          id: id,
           artifacts_dir: path.resolve(artifactsDir),
           token_usage: {
             total: stats["total"],
