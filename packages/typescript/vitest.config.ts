@@ -19,6 +19,12 @@ export default defineConfig({
           globalSetup: process.env.ALUMNIUM_DRIVER?.startsWith("appium")
             ? ["tests/system/setup.appium.ts"]
             : [],
+          tags: [
+            {
+              name: "cache",
+              description: "Minimal tests to verify Alumnium cache.",
+            },
+          ],
         },
       },
     ],
