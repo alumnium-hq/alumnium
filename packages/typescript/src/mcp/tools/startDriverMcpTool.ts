@@ -50,8 +50,12 @@ export const startDriverMcpTool = McpTool.define("start_driver", {
       try {
         rawCapabilities = fs.readFileSync(filePath, "utf-8");
       } catch (error) {
-        logger.error(`Failed to read capabilities file '${filePath}': ${error}`);
-        throw new Error(`Failed to read capabilities file '${filePath}': ${error}`);
+        logger.error(
+          `Failed to read capabilities file '${filePath}': ${error}`,
+        );
+        throw new Error(
+          `Failed to read capabilities file '${filePath}': ${error}`,
+        );
       }
     } else {
       rawCapabilities = input.capabilities;
