@@ -2,7 +2,11 @@ import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { AppId } from "../../AppId.ts";
 import type { Driver } from "../../drivers/Driver.ts";
-import { createLlmUsageStats, LlmUsageStats } from "../../llm/llmSchema.ts";
+import {
+  createLlmUsageStats,
+  LlmUsage,
+  LlmUsageStats,
+} from "../../llm/llmSchema.ts";
 import { Model } from "../../Model.ts";
 import { getLogger } from "../../utils/logger.ts";
 import { Session } from "./Session.ts";
@@ -90,14 +94,14 @@ export class SessionManager {
    */
   getTotalStats(): LlmUsageStats {
     const totalStats = createLlmUsageStats();
-    for (const session of Object.values(this.#sessions)) {
-      const sessionStats = session.stats;
-      for (const key of Object.keys(totalStats) as (keyof LlmUsageStats)[]) {
-        totalStats[key].input_tokens += sessionStats[key].input_tokens;
-        totalStats[key].output_tokens += sessionStats[key].output_tokens;
-        totalStats[key].total_tokens += sessionStats[key].total_tokens;
-      }
-    }
+    Object.values(this.#sessions).forEach((session) => {
+      (Object.keys(session.stats.total) as (keyof LlmUsage)[]).forEach(
+        (key) => {
+          totalStats.total[key] += session.stats.total[key];
+          totalStats.cache[key] += session.stats.cache[key];
+        },
+      );
+    });
     return totalStats;
   }
 }
