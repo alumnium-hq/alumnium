@@ -22,7 +22,7 @@ export const ServerCommand = CliCommand.define({
   name: "server",
   description: "Run HTTP server",
 
-  Args: z.object({
+  Options: z.object({
     host: z.string().default(DEFAULT_SERVER_HOST).register(CliCommand.option, {
       name: "host",
       syntax: "--host <host>",
@@ -95,7 +95,7 @@ export const ServerCommand = CliCommand.define({
       }),
   }),
 
-  action: async ({ args, logFilenameHint }) => {
+  action: async ({ options, logFilenameHint }) => {
     const {
       host,
       port,
@@ -105,7 +105,7 @@ export const ServerCommand = CliCommand.define({
       daemonForce,
       daemonWait,
       daemonWaitTimeout,
-    } = args;
+    } = options;
     const pidPath =
       process.env.ALUMNIUM_SERVER_PID_PATH ??
       GlobalFileStorePaths.globalSubDir(daemonPid || DEFAULT_DAEMON_PID_NAME);
