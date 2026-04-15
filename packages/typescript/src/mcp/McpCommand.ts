@@ -9,7 +9,7 @@ export const McpCommand = CliCommand.define({
   name: "mcp",
   description: "Run MCP server",
 
-  Args: z.object({}),
+  Options: z.object({}),
 
   action: async ({ logFilenameHint }) => {
     setLogPath({ filename: logFilenameHint });

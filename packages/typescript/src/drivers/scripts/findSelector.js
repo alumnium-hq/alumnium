@@ -3,11 +3,17 @@
 /// <reference lib="dom" />
 
 (() => {
-  /** @typedef {import("../../play/selector.ts").PlaySelector.Type} PlaySelector */
-  /** @typedef {import("../../play/selector.ts").PlaySelector.Css} PlaySelectorCss */
+  /** @typedef {import("../../play/PlaySelector.ts").PlaySelector.Schema} PlaySelector */
+  /** @typedef {import("../../play/PlaySelector.ts").PlaySelector.Css} PlaySelectorCss */
 
   const symbol = Symbol.for("alumnium.findSelector");
-  /** @type {any} */ (window)[symbol] ??= function findSelector(element) {
+  const win = /** @type {any} */ (window);
+
+  /**
+   * @param {Element} element
+   * @returns {PlaySelector}
+   */
+  win[symbol] ??= function findSelector(element) {
     if (element.id) {
       const selector = buildIdSelector(element.id);
       if (isUniqueSelector(selector)) return selector;

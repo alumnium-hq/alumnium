@@ -5,7 +5,7 @@ export namespace PlaySelector {
 
   export type Text = z.infer<typeof PlaySelector.Text>;
 
-  export type Type = z.infer<typeof PlaySelector.Type>;
+  export type Schema = z.infer<typeof PlaySelector.Schema>;
 }
 
 export abstract class PlaySelector {
@@ -19,5 +19,5 @@ export abstract class PlaySelector {
     base: this.Css,
   });
 
-  static Type = z.union([this.Css, this.Text]);
+  static Schema = z.union([this.Css, this.Text]);
 }

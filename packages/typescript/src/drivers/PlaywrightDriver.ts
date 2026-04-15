@@ -17,7 +17,7 @@ import type { Keys } from "./keys.ts";
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import { AppId } from "../AppId.ts";
-import type { PlaySelector } from "../play/selector.ts";
+import type { PlaySelector } from "../play/PlaySelector.ts";
 import { retry } from "../utils/retry.ts";
 import type { Driver } from "./Driver.ts";
 import {
@@ -804,11 +804,11 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
-  async #findSelector(locator: Locator): Promise<PlaySelector.Type | null> {
+  async #findSelector(locator: Locator): Promise<PlaySelector.Schema | null> {
     await this.page.evaluate(FIND_SELECTOR_SCRIPT);
 
     const elementHandle = await locator.elementHandle();
-    const result: DriverScripts.Result<PlaySelector.Type> = await this.#callFn(
+    const result: DriverScripts.Result<PlaySelector.Schema> = await this.#callFn(
       "findSelector",
       elementHandle,
     );

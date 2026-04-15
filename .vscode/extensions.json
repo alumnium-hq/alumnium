@@ -3,5 +3,6 @@
     "tekumara.typos-vscode",
     "typescriptteam.native-preview",
     "oxc.oxc-vscode",
-  ],
+    "kdl-org.kdl"
+  ]
 }

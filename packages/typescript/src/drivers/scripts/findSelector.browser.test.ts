@@ -1,6 +1,6 @@
 import { assert, beforeAll, describe, expect, it } from "vitest";
 import "vitest/browser";
-import type { PlaySelector } from "../../play/selector.ts";
+import type { PlaySelector } from "../../play/PlaySelector.ts";
 
 describe("findSelector", () => {
   beforeAll(async () => {
@@ -140,7 +140,7 @@ describe("findSelector", () => {
   });
 });
 
-function findSelector(element: Element): PlaySelector.Type {
+function findSelector(element: Element): PlaySelector.Schema {
   const symbol = Symbol.for("alumnium.findSelector");
   const fn = (window as any)[symbol];
   assert(fn, "findSelector function is not defined on window");

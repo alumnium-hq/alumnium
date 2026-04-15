@@ -61,6 +61,14 @@ run = "fnox exec  -- bun ./src/cli/bin.ts mcp"
 quiet = true
 raw = true
 
+[tasks."dev/play"]
+usage = '''
+arg "<path>" help="Path to the scenario file to play"
+'''
+run = "fnox exec  -- bun ./src/cli/bin.ts play {{usage.path}}"
+quiet = true
+raw = true
+
 [tasks."dev/mcp:inspect"]
 run = "fnox exec  -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./src/cli/bin.ts mcp"
 
