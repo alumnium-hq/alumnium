@@ -160,7 +160,7 @@ function installResolveHook(paths: ExtractedEmbeddedDependencies) {
 
       if (
         request === "../../../package.json" ||
-        request.endsWith(path.join("playwright-core", "package.json"))
+        request.endsWith("playwright-core/package.json")
       ) {
         return paths.playwrightPackageJsonPath;
       }
