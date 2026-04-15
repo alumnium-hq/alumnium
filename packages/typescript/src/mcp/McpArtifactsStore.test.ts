@@ -40,13 +40,13 @@ describe("McpArtifactsStore", () => {
       pushTeardown(() => {
         delete process.env.ALUMNIUM_MCP_ARTIFACTS_DIR;
       });
-      const driverId = "test-driver";
-      const artifactsStore = new McpArtifactsStore(driverId);
+      const id = "test-driver";
+      const artifactsStore = new McpArtifactsStore(id);
       const pixelB64 =
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
       const mockScreenshot = vi.fn(async () => pixelB64);
       McpState.registerDriver(
-        driverId,
+        id,
         { driver: { screenshot: mockScreenshot } } as any,
         {} as McpDriver,
         artifactsStore,
@@ -55,11 +55,11 @@ describe("McpArtifactsStore", () => {
         McpState.clear();
       });
       const screenshotProps: McpArtifactsStore.SaveScreenshotProps = {
-        driverId,
+        id,
         description:
           "Test screenshot! With special chars & long description that should be truncated",
       };
-      return { mockDir, driverId, mockScreenshot, pixelB64, screenshotProps };
+      return { mockDir, id, mockScreenshot, pixelB64, screenshotProps };
     });
 
     it("resolves path with step number and sanitized description prefix", async () => {

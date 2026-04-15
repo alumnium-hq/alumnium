@@ -11,7 +11,7 @@ export const checkMcpTool = McpTool.define("check", {
   description:
     "Verify a statement is true about the current page. Returns the result and explanation.",
 
-  inputSchema: McpTool.DriverInput.extend({
+  inputSchema: McpTool.IdInput.extend({
     statement: z
       .string()
       .describe("Statement to verify (e.g., 'page title contains Dashboard')"),
@@ -23,29 +23,29 @@ export const checkMcpTool = McpTool.define("check", {
   }),
 
   async execute(input, { logger }) {
-    const { driver_id: driverId, statement, vision } = input;
+    const { id, statement, vision } = input;
 
-    const al = McpState.getDriverAlumni(driverId);
+    const al = McpState.getDriverAlumni(id);
 
     let explanation = "";
     let result = "";
     try {
       explanation = await al.check(statement, { vision });
-      result = "passed";
-      logger.debug(`Passed with ${explanation}`);
+      result = "success";
+      logger.debug(`Success with ${explanation}`);
     } catch (error) {
       if (!(error instanceof AssertionError)) throw error;
 
       explanation = String(error);
-      result = "failed";
-      logger.error(`Failed with ${explanation}`);
+      result = "failure";
+      logger.error(`Failure with ${explanation}`);
     }
 
     await McpArtifactsStore.saveScreenshot({
-      driverId,
+      id,
       description: `check ${statement}`,
     });
 
-    return [{ type: "text", text: `Check ${result}! ${explanation}` }];
+    return [{ type: "text", text: JSON.stringify({ result, explanation }) }];
   },
 });

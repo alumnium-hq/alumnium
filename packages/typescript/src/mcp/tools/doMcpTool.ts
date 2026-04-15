@@ -66,7 +66,7 @@ export const doMcpTool = McpTool.define("do", {
     "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport.",
 
   inputSchema: z.object({
-    driver_id: z.string().describe("Driver ID from start_driver"),
+    id: z.string().describe("Driver ID from start"),
 
     goal: z
       .string()
@@ -76,13 +76,13 @@ export const doMcpTool = McpTool.define("do", {
   }),
 
   async execute(input, { logger }) {
-    const { driver_id: driverId, goal } = input;
+    const { id, goal } = input;
 
-    const al = McpState.getDriverAlumni(driverId);
+    const al = McpState.getDriverAlumni(id);
     const { steps, explanation, changes } = await al.do(goal);
 
     logger.debug(`Completed with ${steps.length} steps`);
-    await McpArtifactsStore.saveScreenshot({ driverId, description: goal });
+    await McpArtifactsStore.saveScreenshot({ id, description: goal });
 
     // Build structured response
     const performedSteps = steps.map((step) => ({

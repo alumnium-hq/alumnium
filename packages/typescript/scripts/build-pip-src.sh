@@ -10,16 +10,23 @@ fi
 
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
 DIST_DIR="$PKG_DIR/dist"
-SRC_TAR_GZ_NAME="alumnium-cli-$VERSION.tar.gz"
+SRC_TAR_GZ_NAME="alumnium_cli-$VERSION.tar.gz"
 SRC_TAR_GZ_PATH="$DIST_DIR/pip/$SRC_TAR_GZ_NAME"
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
+# PyPI sdist requires a single top-level directory named {package}-{version}
+top_dir="$tmp_dir/alumnium_cli-$VERSION"
+mkdir -p "$top_dir"
+
+# PyPI requires PKG-INFO in the sdist root
+printf '%s' "$PKG_INFO" > "$top_dir/PKG-INFO"
+
 # Copy pip directories to temp, zeroing out binaries
 while IFS= read -r -d '' dir; do
-	cp -r "$dir" "$tmp_dir/"
-	find "$tmp_dir/$(basename "$dir")" -path '*/src/alumnium_cli/alumnium-*' \
+	cp -r "$dir" "$top_dir/"
+	find "$top_dir/$(basename "$dir")" -path '*/src/alumnium_cli/alumnium-*' \
 		-exec sh -c ': > "$1"' _ {} \;
 done < <(find "$DIST_DIR" -maxdepth 1 -type d -name 'pip-alumnium-cli*' -print0)
 
@@ -27,7 +34,7 @@ done < <(find "$DIST_DIR" -maxdepth 1 -type d -name 'pip-alumnium-cli*' -print0)
 tar -czf "$SRC_TAR_GZ_PATH" \
 	--exclude='*.ruff_cache*' \
 	-C "$tmp_dir" \
-	.
+	"alumnium_cli-$VERSION"
 
 if [ "$BUILD_SUBSCRIPT" = "true" ]; then
 	echo "🟢 Pip source tarball: $SRC_TAR_GZ_PATH"

@@ -12,11 +12,9 @@ export const waitMcpTool = McpTool.define("wait", {
     "Wait for a specified duration or until a condition is met. Pass a number to wait that many seconds (1-30). Pass a string to wait for a natural language condition (e.g., 'My Account text', 'user is logged in', 'page shows success'). Uses AI-powered verification to check conditions.",
 
   inputSchema: z.object({
-    driver_id: z
+    id: z
       .string()
-      .describe(
-        "Driver ID from start_driver (required for condition-based waiting)",
-      )
+      .describe("Driver ID from start (required for condition-based waiting)")
       .optional(),
 
     for: z
@@ -35,7 +33,7 @@ export const waitMcpTool = McpTool.define("wait", {
   }),
 
   async execute(input, { logger }) {
-    const { for: waitFor, driver_id: driverId, timeout: inputTimeout } = input;
+    const { for: waitFor, id, timeout: inputTimeout } = input;
 
     // If it's a number, wait that many seconds
     if (typeof waitFor === "number") {
@@ -43,15 +41,19 @@ export const waitMcpTool = McpTool.define("wait", {
       logger.info(`Waiting for ${seconds} seconds`);
 
       await sleep(seconds * 1000);
-      return [{ type: "text", text: `Waited ${seconds} seconds` }];
+      return [
+        { type: "text", text: JSON.stringify({ waited_seconds: seconds }) },
+      ];
     }
 
     // Otherwise, treat as natural language condition
-    if (!driverId) {
+    if (!id) {
       return [
         {
           type: "text",
-          text: "driver_id is required when waiting for a condition",
+          text: JSON.stringify({
+            error: "id is required when waiting for a condition",
+          }),
         },
       ];
     }
@@ -59,7 +61,7 @@ export const waitMcpTool = McpTool.define("wait", {
     const timeout = typeof inputTimeout === "number" ? inputTimeout : 10;
     const pollInterval = 1.0;
 
-    const al = McpState.getDriverAlumni(driverId);
+    const al = McpState.getDriverAlumni(id);
 
     const startTime = Date.now();
     let lastError: string | undefined;
@@ -71,7 +73,14 @@ export const waitMcpTool = McpTool.define("wait", {
         const explanation = await al.check(waitFor);
         logger.info(`Condition met after ${attempts} attempt(s)`);
         return [
-          { type: "text", text: `Condition met: ${waitFor}\n${explanation}` },
+          {
+            type: "text",
+            text: JSON.stringify({
+              status: "met",
+              condition: waitFor,
+              explanation,
+            }),
+          },
         ];
       } catch (error) {
         if (
@@ -91,7 +100,12 @@ export const waitMcpTool = McpTool.define("wait", {
     return [
       {
         type: "text",
-        text: `Timeout after ${timeout}s waiting for: ${waitFor}\nLast check: ${lastError}`,
+        text: JSON.stringify({
+          status: "timeout",
+          condition: waitFor,
+          timeout_seconds: timeout,
+          last_error: lastError,
+        }),
       },
     ];
   },

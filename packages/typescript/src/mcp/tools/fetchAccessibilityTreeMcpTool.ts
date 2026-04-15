@@ -14,13 +14,13 @@ export const fetchAccessibilityTreeMcpTool = McpTool.define(
       "Get structured representation of current page for debugging. Useful for understanding page structure or debugging.",
 
     inputSchema: z.object({
-      driver_id: z.string(),
+      id: z.string(),
     }),
 
     async execute(input) {
-      const { driver_id: driverId } = input;
+      const { id } = input;
 
-      const al = McpState.getDriverAlumni(driverId);
+      const al = McpState.getDriverAlumni(id);
       // Access the internal driver's accessibility tree
       // as if it's processed by Alumnium server
       const client = al.client;
@@ -29,9 +29,9 @@ export const fetchAccessibilityTreeMcpTool = McpTool.define(
         (await al.driver.getAccessibilityTree()).toStr(),
       );
 
-      const text = `Accessibility Tree:\n${tree.toXml(client.session.excludeAttributes)}`;
-
-      return [{ type: "text", text }];
+      return [
+        { type: "text", text: tree.toXml(client.session.excludeAttributes) },
+      ];
     },
   },
 );

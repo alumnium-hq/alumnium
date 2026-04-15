@@ -1,14 +1,19 @@
 import { cac } from "cac";
 import * as ansi from "picocolors";
-import { McpCommand } from "../mcp/McpCommand.ts";
 import { ALUMNIUM_VERSION } from "../package.ts";
-import { ServerCommand } from "../server/ServerCommand.ts";
-
-const COMMANDS = [ServerCommand, McpCommand];
+import { setupEmbeddedDependencies } from "../standalone/setupEmbeddedDependencies.ts";
 
 await main();
 
 async function main() {
+  await setupEmbeddedDependencies();
+
+  const [{ McpCommand }, { ServerCommand }] = await Promise.all([
+    import("../mcp/McpCommand.ts"),
+    import("../server/ServerCommand.ts"),
+  ]);
+
+  const COMMANDS = [ServerCommand, McpCommand];
   const cli = cac("alumnium");
 
   COMMANDS.forEach((command) => command.register(cli));

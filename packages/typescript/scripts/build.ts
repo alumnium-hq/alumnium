@@ -10,6 +10,11 @@ import path from "node:path";
 import { stringify as tomlStringify } from "smol-toml";
 import { z } from "zod";
 import { ALUMNIUM_VERSION } from "../src/package.ts";
+import {
+  PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
+  SELENIUM_ATOM_ASSET_PREFIX,
+  SELENIUM_MANAGER_ASSET_NAMES,
+} from "../src/standalone/embeddedAssetNames.ts";
 
 //#region Types and consts
 
@@ -52,6 +57,10 @@ const REPO_ROOT_DIR = path.resolve(import.meta.dirname, "../../../");
 const PKG_DIR = path.resolve(import.meta.dirname, "..");
 const TMP_DIR = path.resolve(PKG_DIR, "tmp");
 const DIST_DIR = path.resolve(PKG_DIR, "dist");
+const STANDALONE_EMBEDDED_ASSETS_DIR = path.resolve(
+  TMP_DIR,
+  "standalone-embedded-assets",
+);
 
 // Bin paths
 const BIN_SRC_PATH = path.resolve(PKG_DIR, "src/cli/bin.ts");
@@ -125,6 +134,11 @@ interface TargetPkg {
   binPath: string;
 }
 
+interface StandaloneEmbeddedAsset {
+  name: string;
+  sourcePath: string;
+}
+
 const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
   ARCHS.map((arch) => {
     const target = `${os}-${arch}`;
@@ -186,20 +200,23 @@ const loggerPathPlugin: BunPlugin = {
   },
 };
 
-const seleniumRequireAtomRe = /requireAtom\('([^']+)'.+$/gm;
-
-const depsPatcherPlugin: BunPlugin = {
-  name: "deps-patcher",
+// @wdio/utils/build/index.js sets client.capabilities only when `scopeType.name === "Browser"`.
+// Bun's bundler may rename the internal `Browser` function during compilation, breaking this
+// string comparison. We patch it to use reference equality against SCOPE_TYPES.browser instead.
+const wdioUtilsPatcherPlugin: BunPlugin = {
+  name: "wdio-utils-patcher",
   setup(build) {
     build.onLoad(
-      { filter: /selenium-webdriver.+http\.js$/, namespace: "file" },
+      { filter: /@wdio\/utils.+index\.js$/, namespace: "file" },
       async (args) => {
         const input = await Bun.file(args.path).text();
+        if (!input.includes('scopeType.name === "Browser"')) {
+          return;
+        }
         return {
-          ...args,
           contents: input.replace(
-            seleniumRequireAtomRe,
-            "require('./atoms/$1')",
+            'scopeType.name === "Browser"',
+            "scopeType === SCOPE_TYPES.browser",
           ),
         };
       },
@@ -207,22 +224,41 @@ const depsPatcherPlugin: BunPlugin = {
   },
 };
 
-// playwright-core's nodePlatform.js resolves its own package.json via
-// require.resolve() at module load time. In a compiled Bun binary the absolute
-// dev-machine path doesn't exist, crashing startup. coreDir is only used for
-// stack-trace prefix filtering so falling back to "" is safe.
-const playwrightPatcherPlugin: BunPlugin = {
-  name: "playwright-patcher",
+// webdriverio/build/node.js uses `await import(options.automationProtocol || "webdriver")` to
+// load the WebDriver class. Bun's bundler can't statically analyze this computed import specifier,
+// so it doesn't bundle "webdriver" into the binary, causing a runtime error. The file also has
+// a module-level `var webdriverImport;` (always undefined) that short-circuits the dynamic import
+// when set. We patch it to use the already-statically-imported `WebDriver` class instead.
+const webdriverIOPatcherPlugin: BunPlugin = {
+  name: "webdriverio-patcher",
   setup(build) {
     build.onLoad(
-      { filter: /playwright-core.+nodePlatform\.js$/, namespace: "file" },
+      { filter: /webdriverio.+node\.js$/, namespace: "file" },
       async (args) => {
         const input = await Bun.file(args.path).text();
+        if (!input.includes("var webdriverImport;")) {
+          return;
+        }
         return {
           contents: input.replace(
-            'require.resolve("../../../package.json")',
-            '(() => { try { return require.resolve("../../../package.json"); } catch { return ""; } })()',
+            "var webdriverImport;",
+            "var webdriverImport = WebDriver;",
           ),
+        };
+      },
+    );
+  },
+};
+
+const standaloneEmbeddedAssetPlugin: BunPlugin = {
+  name: "standalone-embedded-assets",
+  setup(build) {
+    build.onLoad(
+      { filter: /\/standalone-embedded-assets\/[^/]+$/, namespace: "file" },
+      async (args) => {
+        return {
+          contents: await Bun.file(args.path).bytes(),
+          loader: "file",
         };
       },
     );
@@ -266,10 +302,13 @@ async function main() {
   if (BUILD_BIN) {
     console.log("\n🌀 Building binaries:\n");
 
+    const standaloneEmbeddedAssetPaths =
+      await prepareStandaloneEmbeddedAssets();
+
     await Promise.all(
       TARGET_PLATFORMS.map(async ({ os, arch, target, binPath }) => {
         const result = await Bun.build({
-          entrypoints: [BIN_SRC_PATH],
+          entrypoints: [BIN_SRC_PATH, ...standaloneEmbeddedAssetPaths],
           external: ["chromium-bidi", "electron"],
           compile: {
             target: getBunTarget(os, arch),
@@ -277,8 +316,9 @@ async function main() {
           },
           plugins: [
             loggerPathPlugin,
-            depsPatcherPlugin,
-            playwrightPatcherPlugin,
+            wdioUtilsPatcherPlugin,
+            webdriverIOPatcherPlugin,
+            standaloneEmbeddedAssetPlugin,
           ],
           define: {
             SINGLE_FILE_EXECUTABLE: "true",
@@ -296,6 +336,8 @@ async function main() {
         console.log(`🟢 ${target} (${cwdRelPath(binPath)})`);
       }),
     );
+
+    await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
   }
 
   //#endregion
@@ -355,9 +397,7 @@ async function main() {
         distPackageJson.bin = distPackageJson.publishConfig.bin;
 
         TARGET_PLATFORMS.forEach(({ npm }) => {
-          distPackageJson.optionalDependencies[npm.name] = `file:${npm.dir}`;
-          distPackageJson.publishConfig.optionalDependencies[npm.name] =
-            ALUMNIUM_VERSION;
+          distPackageJson.optionalDependencies[npm.name] = ALUMNIUM_VERSION;
         });
 
         const distPackageJsonPath = path.resolve(
@@ -547,12 +587,12 @@ async function buildPipWheel(
 }
 
 function pipWheelFileName(name: string, platformTag: string): string {
-  const version = pipWheelVersion(ALUMNIUM_VERSION);
+  const version = pipVersion(ALUMNIUM_VERSION);
   return `${name.replace(/-/g, "_")}-${version}-py3-none-${platformTag}.whl`;
 }
 
 // Pip and NPM has different rules for alpha versions. NPM allows hyphens (e.g. 0.20.0-alpha.1) while pip doesn't (it expects 0.20.0a1).
-function pipWheelVersion(version: string): string {
+function pipVersion(version: string): string {
   return version.replace(/-alpha\.(\d+)/, "a$1");
 }
 
@@ -620,7 +660,30 @@ function getPyProjectToml(project: PyProject) {
 }
 
 async function generateSourceTarGz() {
-  await $`VERSION=${ALUMNIUM_VERSION} BUILD_SUBSCRIPT=true ./scripts/build-pip-src.sh`;
+  const version = pipVersion(ALUMNIUM_VERSION);
+  const pkgInfo = getPkgInfo(version);
+  await $`VERSION=${version} PKG_INFO=${pkgInfo} BUILD_SUBSCRIPT=true ./scripts/build-pip-src.sh`;
+}
+
+function getPkgInfo(version: string): string {
+  const authorNames = META_AUTHORS.map((a) => a.name).join(", ");
+  const authorEmails = META_AUTHORS.map((a) => `${a.name} <${a.email}>`).join(
+    ", ",
+  );
+  return [
+    "Metadata-Version: 2.4",
+    `Name: ${PIP_CLI_PKG_NAME}`,
+    `Version: ${version}`,
+    "Summary: Alumnium CLI",
+    `Author: ${authorNames}`,
+    `Author-email: ${authorEmails}`,
+    "License-Expression: MIT",
+    "Requires-Python: >=3.10, <4.0",
+    "Project-URL: Documentation, https://alumnium.ai/docs/",
+    "Project-URL: Homepage, https://alumnium.ai/",
+    "Project-URL: Issues, https://github.com/alumnium-hq/alumnium/issues",
+    "Project-URL: Repository, https://github.com/alumnium-hq/alumnium",
+  ].join("\n");
 }
 
 async function finalizePip(pipName: string, pipDir: string, tag?: string) {
@@ -746,6 +809,62 @@ function getBunTarget(os: OS, arch: Arch): Bun.Build.CompileTarget {
 function getNpmOs(os: OS) {
   if (os === "windows") return "win32";
   return os;
+}
+
+async function prepareStandaloneEmbeddedAssets() {
+  await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
+
+  const assets = await getStandaloneEmbeddedAssets();
+
+  return Promise.all(
+    assets.map(async ({ name, sourcePath }) => {
+      const stagedPath = path.join(STANDALONE_EMBEDDED_ASSETS_DIR, name);
+      await fs.copyFile(sourcePath, stagedPath);
+      return stagedPath;
+    }),
+  );
+}
+
+async function getStandaloneEmbeddedAssets(): Promise<
+  StandaloneEmbeddedAsset[]
+> {
+  const seleniumPkgDir = path.resolve(
+    PKG_DIR,
+    "node_modules/selenium-webdriver",
+  );
+  const playwrightCorePkgDir = path.resolve(
+    PKG_DIR,
+    "node_modules/playwright-core",
+  );
+
+  const seleniumAtomPaths = await Array.fromAsync(
+    new Bun.Glob(path.join(seleniumPkgDir, "lib/atoms/*.js")).scan("/"),
+  );
+
+  return [
+    ...seleniumAtomPaths.sort().map((sourcePath) => ({
+      name: `${SELENIUM_ATOM_ASSET_PREFIX}${path.basename(sourcePath)}`,
+      sourcePath,
+    })),
+
+    {
+      name: SELENIUM_MANAGER_ASSET_NAMES.linux,
+      sourcePath: path.join(seleniumPkgDir, "bin/linux/selenium-manager"),
+    },
+    {
+      name: SELENIUM_MANAGER_ASSET_NAMES.macos,
+      sourcePath: path.join(seleniumPkgDir, "bin/macos/selenium-manager"),
+    },
+    {
+      name: SELENIUM_MANAGER_ASSET_NAMES.windows,
+      sourcePath: path.join(seleniumPkgDir, "bin/windows/selenium-manager.exe"),
+    },
+
+    {
+      name: PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
+      sourcePath: path.join(playwrightCorePkgDir, "package.json"),
+    },
+  ];
 }
 
 //#endregion
