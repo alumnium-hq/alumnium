@@ -101,9 +101,6 @@ I don't need to click the button first, as the upload action will handle that.
 Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 `.trim();
 
-  static readonly #LIST_SEPARATOR = "<SEP>";
-  static readonly #UNSTRUCTURED_OUTPUT_MODELS: Model.Provider[] = ["ollama"];
-
   llm: BaseChatModel;
   toolNames: string[];
   promptWithExamples: FewShotChatMessagePromptTemplate<PlannerAgent.Example>;
@@ -156,15 +153,15 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
       ["human", this.prompts["user"]],
     ]);
 
-    if (
-      !PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)
-    ) {
-      this.chain = finalPrompt.pipe(
-        llm.withStructuredOutput(PlannerAgent.Plan, { includeRaw: true }),
-      );
-    } else {
-      this.chain = finalPrompt.pipe(llm);
-    }
+    this.chain = finalPrompt.pipe(
+      this.llm.withStructuredOutput(PlannerAgent.Plan, { includeRaw: true }),
+    );
+  }
+
+  clearExamples(): void {
+    this.#extraExamples = this.#baseExamples;
+    this.#generateChain();
+    logger.info("Examples cleared.");
   }
 
   addExample(goal: string, actions: string[]) {
@@ -223,48 +220,15 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     };
     const result = await this.invokeChain(this.chain, input, meta);
 
-    if (
-      !PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)
-    ) {
-      const structured = result.structured as PlannerAgent.Plan;
-      this.logData(logger, "out", {
-        Result: structured,
-        Usage: result.usage,
-      });
-
-      return [
-        structured.explanation,
-        structured.actions.filter((action) => action),
-      ];
-    }
-
+    const structured = result.structured as PlannerAgent.Plan;
     this.logData(logger, "out", {
-      Result: result.content,
+      Result: structured,
       Usage: result.usage,
     });
 
-    let content = result.content;
-
-    // TODO: Figure out if LangChain JS and Python have different content types
-    // or Python simply assumes content is always string. If the latter, we can
-    // replace this with an assertion.
-    content = content.trim();
-
-    if (content.startsWith(PlannerAgent.#LIST_SEPARATOR)) {
-      content = content.slice(PlannerAgent.#LIST_SEPARATOR.length);
-    }
-    if (content.endsWith(PlannerAgent.#LIST_SEPARATOR)) {
-      content = content.slice(0, -PlannerAgent.#LIST_SEPARATOR.length);
-    }
-
-    const steps: string[] = [];
-    for (let step of content.split(PlannerAgent.#LIST_SEPARATOR)) {
-      step = step.trim();
-      if (step && step.toUpperCase() !== "NOOP") {
-        steps.push(step);
-      }
-    }
-
-    return ["", steps];
+    return [
+      structured.explanation,
+      structured.actions.filter((action) => action),
+    ];
   }
 }

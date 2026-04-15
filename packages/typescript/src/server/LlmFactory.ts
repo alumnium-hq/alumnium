@@ -177,10 +177,6 @@ export class LlmFactory {
 
     return new ChatAnthropic({
       model: model.name,
-      // TODO: Python implementation also includes fields missing in JS SDK:
-      //     stop=None,
-      // TODO: Timeout option is missing in the provider options.
-      // timeout: MODEL_TIMEOUT,
       thinking: {
         type: "enabled",
         budget_tokens: 1024,
@@ -276,13 +272,11 @@ export class LlmFactory {
       return new ChatOllama({
         model: model.name,
         baseUrl,
-        temperature: 0,
         cache,
       });
     } else {
       return new ChatOllama({
         model: model.name,
-        temperature: 0,
         cache,
       });
     }
@@ -334,8 +328,6 @@ export class LlmFactory {
     return new ChatXAI({
       model: model.name,
       temperature: 0,
-      // TODO: Timeout option is missing in the provider options.
-      // timeout: MODEL_TIMEOUT,
       cache,
     });
   }
