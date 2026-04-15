@@ -1,4 +1,5 @@
 import path from "node:path";
+import { txt } from "smollit";
 import z from "zod";
 import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
@@ -6,18 +7,18 @@ import { McpTool } from "./McpTool.ts";
 /**
  * Stop driver and cleanup.
  */
-export const stopMcpTool = McpTool.define("stop", {
+export const stopMcpTool = McpTool.define({
+  name: "stop",
+
   description: "Close browser/app and cleanup driver resources.",
 
-  inputSchema: z.object({
+  Input: z.object({
     id: z.string(),
 
-    save_cache: z
-      .boolean()
-      .default(false)
-      .describe(
-        "Save the Alumnium cache before stopping. This persists executed interactions for future use.",
-      ),
+    save_cache: z.boolean().default(false).describe(txt`
+      Save the Alumnium cache before stopping. This persists executed
+      interactions for future use.
+    `),
   }),
 
   async execute(input, { logger }) {
@@ -34,18 +35,13 @@ export const stopMcpTool = McpTool.define("stop", {
     // Cleanup driver and get stats
     const [artifactsDir, stats] = await McpState.cleanupDriver(id);
 
-    return [
-      {
-        type: "text",
-        text: JSON.stringify({
-          id: id,
-          artifacts_dir: path.resolve(artifactsDir),
-          token_usage: {
-            total: stats["total"],
-            cached: stats["cache"],
-          },
-        }),
+    return {
+      id: id,
+      artifacts_dir: path.resolve(artifactsDir),
+      token_usage: {
+        total: stats["total"],
+        cached: stats["cache"],
       },
-    ];
+    };
   },
 });

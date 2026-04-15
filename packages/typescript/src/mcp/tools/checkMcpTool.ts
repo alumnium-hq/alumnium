@@ -1,3 +1,4 @@
+import { txt } from "smollit";
 import z from "zod";
 import { AssertionError } from "../../client/errors/AssertionError.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
@@ -7,11 +8,15 @@ import { McpTool } from "./McpTool.ts";
 /**
  * Execute Alumni.check().
  */
-export const checkMcpTool = McpTool.define("check", {
-  description:
-    "Verify a statement is true about the current page. Returns the result and explanation.",
+export const checkMcpTool = McpTool.define({
+  name: "check",
 
-  inputSchema: McpTool.IdInput.extend({
+  description: txt`
+    Verify a statement is true about the current page. Returns the result and
+    explanation.
+  `,
+
+  Input: McpTool.WithDriverId.extend({
     statement: z
       .string()
       .describe("Statement to verify (e.g., 'page title contains Dashboard')"),
@@ -46,6 +51,6 @@ export const checkMcpTool = McpTool.define("check", {
       description: `check ${statement}`,
     });
 
-    return [{ type: "text", text: JSON.stringify({ result, explanation }) }];
+    return { result, explanation };
   },
 });

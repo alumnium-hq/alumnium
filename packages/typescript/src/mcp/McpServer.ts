@@ -8,34 +8,21 @@ import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import { getLogger } from "../utils/logger.ts";
-import { checkMcpTool } from "./tools/checkMcpTool.ts";
-import { doMcpTool } from "./tools/doMcpTool.ts";
-import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.ts";
-import { getMcpTool } from "./tools/getMcpTool.ts";
-import { startMcpTool } from "./tools/startMcpTool.ts";
-import { stopMcpTool } from "./tools/stopMcpTool.ts";
-import { waitMcpTool } from "./tools/waitMcpTool.ts";
+import { McpScenariosState } from "./scenarios/McpScenariosState.ts";
+import { mcpTools } from "./tools/index.ts";
 
 const logger = getLogger(import.meta.url);
-
-const MCP_TOOLS = [
-  checkMcpTool,
-  doMcpTool,
-  fetchAccessibilityTreeMcpTool,
-  getMcpTool,
-  startMcpTool,
-  stopMcpTool,
-  waitMcpTool,
-];
 
 /**
  * MCP Server that wraps Alumnium functionality for AI agents.
  */
 export class McpServer {
   #server: Server;
+  #scenarios: McpScenariosState;
 
   constructor() {
     this.#server = new Server({ name: "alumnium", version: ALUMNIUM_VERSION });
+    this.#scenarios = new McpScenariosState();
     this.#registerTools();
     logger.info("MCP server initialized");
   }
@@ -44,25 +31,48 @@ export class McpServer {
    * Register all MCP tools.
    */
   #registerTools() {
-    MCP_TOOLS.forEach((toolDef) => {
-      const { name, description, inputSchema, execute } = toolDef;
+    mcpTools.forEach((tool) => {
+      const { name, description, Input: inputSchema, execute } = tool;
+
+      const executeTool = async (input: any) => {
+        const context = { scenarios: this.#scenarios };
+        try {
+          const output = await execute(input, context);
+          return output;
+        } catch (error) {
+          logger.error(`Error executing tool ${name}: {error}`, { error });
+          return `Error: ${String(error)}`;
+        }
+      };
+
       this.#server.registerTool(
-        toolDef.name,
-        { description, inputSchema },
+        tool.name,
+        {
+          description:
+            typeof description === "function" ? description() : description,
+          inputSchema,
+        },
         async (input: any) => {
-          try {
-            return { content: await execute(input) };
-          } catch (error) {
-            logger.error(`Error executing tool ${name}: {error}`, { error });
-            return {
-              content: [
-                { type: "text" as const, text: `Error: ${String(error)}` },
-              ],
-            };
-          }
+          const output = await executeTool(input);
+
+          // Process tool execution in scenarios state.
+          const hookResult = await this.#scenarios.onToolExecuted({
+            tool,
+            input,
+            output,
+          });
+          if (hookResult.status === "failure")
+            return this.#outputToContent(hookResult);
+
+          return this.#outputToContent(output);
         },
       );
     });
+  }
+
+  #outputToContent(output: any) {
+    const text = typeof output === "string" ? output : JSON.stringify(output);
+    return { content: [{ type: "text" as const, text }] };
   }
 
   /**

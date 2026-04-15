@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { txt } from "smollit";
 import z from "zod";
 import { Alumni } from "../../client/Alumni.ts";
 import { NativeClient } from "../../clients/NativeClient.ts";
@@ -24,16 +25,40 @@ import { McpTool } from "./McpTool.ts";
 /**
  * Start a new driver instance.
  */
-export const startMcpTool = McpTool.define("start", {
-  description:
-    "Initialize a browser driver for automated testing. Returns an id for use in other calls.",
+export const startMcpTool = McpTool.define({
+  name: "start",
 
-  inputSchema: z.object({
-    capabilities: z
-      .string()
-      .describe(
-        `JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities. Must include 'platformName' (e.g., 'chrome', 'ios', 'android'). Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'. Example file path: '/path/to/capabilities.json'. Alumnium-specific options go in 'alumnium:options': 'headless' (boolean, default false) — run browser headless, supported for Selenium and Playwright; 'headers' (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"}; 'cookies' (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}]; 'permissions' (string[]) — browser permissions to grant, Playwright only, e.g. ["geolocation"]; 'planner' (boolean) — enable/disable planner agent; 'changeAnalysis' (boolean, default true) — enable change analysis; 'excludeAttributes' (string[]) — accessibility attributes to exclude from the tree; 'newTabTimeout' (number, default 200) — ms to wait for new tab detection, Playwright only; 'autoswitchToNewTab' (boolean, default true) — auto-switch to newly opened tabs; 'fullPageScreenshot' (boolean, default false) — capture full-page screenshots. Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "headers": {"Authorization": "Bearer token"}, "newTabTimeout": 500}}'.`,
-      ),
+  description: txt`
+    Initialize a browser driver for automated testing. Returns an id for use in
+    other calls.
+  `,
+
+  Input: z.object({
+    capabilities: z.string().describe(txt`
+      JSON string or path to a JSON file with Selenium/Appium/Playwright
+      capabilities. Must include 'platformName' (e.g., 'chrome', 'ios',
+      'android').
+
+      Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'.
+
+      Example file path: '/path/to/capabilities.json'.
+
+      Alumnium-specific options go in 'alumnium:options';
+
+      'headless' (boolean, default false) — run browser headless, supported for
+      Selenium and Playwright;
+      'headers' (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"};
+      'cookies' (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
+      'permissions' (string[]) — browser permissions to grant, Playwright only, e.g. ["geolocation"];
+      'planner' (boolean) — enable/disable planner agent;
+      'changeAnalysis' (boolean, default true) — enable change analysis;
+      'excludeAttributes' (string[]) — accessibility attributes to exclude from the tree;
+      'newTabTimeout' (number, default 200) — ms to wait for new tab detection, Playwright only;
+      'autoswitchToNewTab' (boolean, default true) — auto-switch to newly opened tabs;
+      'fullPageScreenshot' (boolean, default false) — capture full-page screenshots.
+
+      Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "headers": {"Authorization": "Bearer token"}, "newTabTimeout": 500}}'.
+    `),
 
     server_url: z
       .string()
@@ -216,18 +241,11 @@ export const startMcpTool = McpTool.define("start", {
 
     const model = await al.model;
 
-    return [
-      {
-        type: "text",
-        text: JSON.stringify({
-          id: id,
-          driver: al.driver.constructor.name
-            .replace(/Driver$/, "")
-            .toLowerCase(),
-          model: `${model.provider}/${model.name}`,
-          platform_name: platformName,
-        }),
-      },
-    ];
+    return {
+      id: id,
+      driver: al.driver.constructor.name.replace(/Driver$/, "").toLowerCase(),
+      model: `${model.provider}/${model.name}`,
+      platform_name: platformName,
+    };
   },
 });

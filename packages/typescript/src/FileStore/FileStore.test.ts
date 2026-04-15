@@ -226,6 +226,73 @@ describe("FileStore", () => {
     });
   });
 
+  describe("listFiles", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("lists direct child files in store directory by default", async () => {
+      const { store } = setup.cur;
+      await store.writeFile("a.txt", "A");
+      await store.writeFile("b.json", "{}");
+      await store.writeFile("nested/c.txt", "C");
+
+      await expect(store.listFiles()).resolves.toEqual(["a.txt", "b.json"]);
+    });
+
+    it("lists direct child files in nested directory", async () => {
+      const { store } = setup.cur;
+      await store.writeFile("nested/a.txt", "A");
+      await store.writeFile("nested/b.json", "{}");
+      await store.writeFile("nested/deeper/c.txt", "C");
+
+      await expect(store.listFiles("nested")).resolves.toEqual([
+        "a.txt",
+        "b.json",
+      ]);
+    });
+
+    it("returns empty list if directory doesn't exist", async () => {
+      const { store } = setup.cur;
+      await expect(store.listFiles("nope")).resolves.toEqual([]);
+    });
+  });
+
+  describe("removeFile", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("removes file and returns true", async () => {
+      const { store } = setup.cur;
+      const relFilePath = "sub/dir/file.txt";
+      const filePath = await store.writeFile(relFilePath, "Hello, world!");
+
+      await expect(store.removeFile(relFilePath)).resolves.toBe(true);
+      await expect(fs.stat(filePath)).rejects.toThrow("ENOENT");
+    });
+
+    it("returns false if file doesn't exist", async () => {
+      const { store } = setup.cur;
+      await expect(store.removeFile("nope.txt")).resolves.toBe(false);
+    });
+
+    it("returns false on another remove failure", async () => {
+      const { store } = setup.cur;
+      const relDirPath = "sub/dir";
+      const dirPath = await store.ensureDir(relDirPath);
+
+      await expect(store.removeFile(relDirPath)).resolves.toBe(false);
+      await expect(fs.stat(dirPath)).resolves.toMatchObject({
+        isDirectory: expect.any(Function),
+      });
+    });
+  });
+
   describe("clear", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();

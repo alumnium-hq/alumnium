@@ -61,7 +61,11 @@ run = [
 raw = true
 
 [tasks.build]
-depends = ["//packages/typescript:build", "//packages/python:build", "//websites/docs:build"]
+depends = [
+  "//packages/typescript:build",
+  "//packages/python:build",
+  "//websites/docs:build",
+]
 description = "Build all packages"
 
 [tasks."dev/cli"]

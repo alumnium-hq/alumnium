@@ -26,10 +26,10 @@ export namespace McpState {
 
 export abstract class McpState {
   // Global state for driver management
-  private static drivers: Record<string, McpState.Driver> = {}; // id -> driver state
+  static #drivers: Record<string, McpState.Driver> = {}; // id -> driver state
 
-  private static cleanupHooksRegistered = false;
-  private static cleanupAllPromise: Promise<void> | null = null;
+  static #cleanupHooksRegistered = false;
+  static #cleanupAllPromise: Promise<void> | null = null;
 
   /**
    * Register a new driver instance.
@@ -42,7 +42,7 @@ export abstract class McpState {
   ): void {
     this.registerCleanupHooks();
 
-    this.drivers[id] = {
+    this.#drivers[id] = {
       al,
       mcpDriver,
       artifactsStore: artifactsStore,
@@ -76,7 +76,7 @@ export abstract class McpState {
    * Get driver state by ID.
    */
   static getDriverState(id: string): McpState.Driver {
-    const driverState = this.drivers[id];
+    const driverState = this.#drivers[id];
     if (!driverState) {
       logger.error(`Driver state for ${id} not found`);
       // NOTE: This error is required for the controlling agent calling MCP.
@@ -115,7 +115,7 @@ export abstract class McpState {
 
     await al.quit();
 
-    delete this.drivers[id];
+    delete this.#drivers[id];
 
     logger.debug(`Driver ${id} cleanup complete`);
 
@@ -123,7 +123,7 @@ export abstract class McpState {
   }
 
   static async cleanupAllDrivers(): Promise<void> {
-    const ids = Object.keys(this.drivers);
+    const ids = Object.keys(this.#drivers);
     await Promise.all(
       ids.map(async (id) => {
         logger.debug(`Exit hook: stopping driver ${id}`);
@@ -137,12 +137,12 @@ export abstract class McpState {
   }
 
   static clear() {
-    this.drivers = {};
-    this.cleanupAllPromise = null;
+    this.#drivers = {};
+    this.#cleanupAllPromise = null;
   }
 
   private static registerCleanupHooks(): void {
-    if (this.cleanupHooksRegistered) return;
+    if (this.#cleanupHooksRegistered) return;
 
     process.once("beforeExit", () => void this.cleanupAllDriversOnce());
 
@@ -158,16 +158,16 @@ export abstract class McpState {
 
     logger.debug("Registered MCP cleanup hooks");
 
-    this.cleanupHooksRegistered = true;
+    this.#cleanupHooksRegistered = true;
   }
 
   private static cleanupAllDriversOnce(): Promise<void> {
-    if (!this.cleanupAllPromise) {
-      this.cleanupAllPromise = this.cleanupAllDrivers().finally(() => {
-        this.cleanupAllPromise = null;
+    if (!this.#cleanupAllPromise) {
+      this.#cleanupAllPromise = this.cleanupAllDrivers().finally(() => {
+        this.#cleanupAllPromise = null;
       });
     }
 
-    return this.cleanupAllPromise;
+    return this.#cleanupAllPromise;
   }
 }

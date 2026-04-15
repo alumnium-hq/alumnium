@@ -16,6 +16,8 @@ export namespace TypeUtils {
       : false
     : false;
 
+  export type IsNever<Type> = [Type] extends [never] ? true : false;
+
   export type DeepPartial<Type> =
     IsUnknown<Type> extends true
       ? unknown
