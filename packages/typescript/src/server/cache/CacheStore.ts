@@ -1,8 +1,8 @@
-import path from "node:path";
 import type { AppId } from "../../AppId.ts";
 import { FileStore } from "../../FileStore/FileStore.ts";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";
 import { Model } from "../../Model.ts";
+import { safePathJoin } from "../../utils/fs.ts";
 import { SessionContext } from "../session/SessionContext.ts";
 
 export class CacheStore extends FileStore {
@@ -23,7 +23,7 @@ export class CacheStore extends FileStore {
 
   override get dir(): string {
     const { provider, name } = this.#model;
-    return path.join(
+    return safePathJoin(
       this.#baseDir,
       this.#appOverride ?? this.#sessionContext.app,
       provider,
@@ -37,7 +37,7 @@ export class CacheStore extends FileStore {
     return new CacheStore(
       this.#sessionContext,
       this.#model,
-      path.join(this.#subDir, subDir),
+      safePathJoin(this.#subDir, subDir),
     );
   }
 }

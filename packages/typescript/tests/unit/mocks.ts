@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { beforeEach, type Mock, type MockInstance, vi } from "vitest";
+import { safePathJoin } from "../../src/utils/fs.ts";
 
 export type TeardownFn = () => void | Promise<void>;
 
@@ -25,7 +26,7 @@ export namespace createMockDir {
 export function createMockDir(props?: createMockDir.Props): Promise<MockDir> {
   const { preserve, prefix = "test" } = props || {};
   return fs
-    .mkdtemp(path.join(os.tmpdir(), `alumnium-${prefix}-`))
+    .mkdtemp(safePathJoin(os.tmpdir(), `alumnium-${prefix}-`))
     .then((dir) => {
       if (!preserve) dirs.push(dir);
       return new MockDir(dir);
@@ -45,7 +46,7 @@ export class MockDir {
       const entries = await fs.readdir(current, { withFileTypes: true });
       await Promise.all(
         entries.map((entry) => {
-          const filePath = path.join(current, entry.name);
+          const filePath = safePathJoin(current, entry.name);
           if (entry.isDirectory()) {
             return walk(filePath);
           } else {
@@ -60,7 +61,7 @@ export class MockDir {
   }
 
   readText(relPath: string): Promise<string> {
-    const filePath = path.join(this.path, relPath);
+    const filePath = safePathJoin(this.path, relPath);
     return fs.readFile(filePath, "utf-8");
   }
 

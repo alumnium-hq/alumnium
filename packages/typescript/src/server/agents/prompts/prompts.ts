@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { type Model } from "../../../Model.ts";
+import { safePathJoin } from "../../../utils/fs.ts";
 import type { Agent } from "../Agent.ts";
 
 //#region Types
@@ -108,12 +109,12 @@ async function getDirs(parentDir: string): Promise<GetDirs.Entry[]> {
     .filter((entry) => entry.isDirectory())
     .map((entry) => ({
       name: entry.name,
-      path: path.join(parentDir, entry.name),
+      path: safePathJoin(parentDir, entry.name),
     }));
 }
 
 function loadPrompt(devDir: string, role: AgentPrompts.Role): Promise<string> {
-  const promptPath = path.join(devDir, `${role}.md`);
+  const promptPath = safePathJoin(devDir, `${role}.md`);
   try {
     return fs.readFile(promptPath, "utf-8");
   } catch (err) {
