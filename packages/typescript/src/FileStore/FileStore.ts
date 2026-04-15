@@ -1,7 +1,8 @@
 import { always, never } from "alwaysly";
 import fs from "fs/promises";
-import path from "path";
+import path from "node:path";
 import type z from "zod";
+import { safePathJoin } from "../utils/fs.ts";
 import { getLogger } from "../utils/logger.ts";
 import { GlobalFileStorePaths } from "./GlobalFileStorePaths.ts";
 
@@ -59,7 +60,7 @@ export class FileStore {
    * @returns Resolved absolute path.
    */
   resolve(relPath: string): string {
-    return path.join(this.dir, relPath);
+    return safePathJoin(this.dir, relPath);
   }
 
   /**
@@ -163,7 +164,7 @@ export class FileStore {
       throw new RangeError(
         `Subdirectory path '${subDir}' must be relative to the store directory '${this.dir}'`,
       );
-    return new FileStore(path.join(this.dir, subDir));
+    return new FileStore(safePathJoin(this.dir, subDir));
   }
 
   /**
@@ -198,7 +199,7 @@ export class FileStore {
     defaultDir: string,
     nestedDir?: string,
   ): string {
-    return path.join(
+    return safePathJoin(
       envDir ?? GlobalFileStorePaths.globalSubDir(defaultDir),
       nestedDir ?? "",
     );

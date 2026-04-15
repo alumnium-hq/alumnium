@@ -1,4 +1,4 @@
-import path from "node:path";
+import { safePathJoin } from "../utils/fs.ts";
 
 const DEFAULT_GLOBAL_STORE_DIR = ".alumnium";
 
@@ -19,6 +19,6 @@ export abstract class GlobalFileStorePaths {
    * @returns The resolved path.
    */
   static globalSubDir(dir: string): string {
-    return path.join(this.globalDir, dir);
+    return safePathJoin(this.globalDir, dir);
   }
 }

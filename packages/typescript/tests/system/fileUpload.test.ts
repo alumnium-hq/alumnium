@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import { tmpdir } from "node:os";
-import path from "node:path";
 import { afterEach, beforeEach, describe } from "vitest";
+import { safePathJoin } from "../../src/utils/fs.ts";
 import { baseIt } from "./helpers.ts";
 
 describe("File Upload", () => {
@@ -10,8 +10,8 @@ describe("File Upload", () => {
   let testFile2: string;
 
   beforeEach(() => {
-    testFile1 = path.join(tmpdir(), `${randomUUID()}.txt`);
-    testFile2 = path.join(tmpdir(), `${randomUUID()}.txt`);
+    testFile1 = safePathJoin(tmpdir(), `${randomUUID()}.txt`);
+    testFile2 = safePathJoin(tmpdir(), `${randomUUID()}.txt`);
     return Promise.all([
       fs.writeFile(testFile1, "Test content 1"),
       fs.writeFile(testFile2, "Test content 2"),
