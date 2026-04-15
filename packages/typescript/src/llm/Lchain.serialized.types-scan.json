@@ -26,6 +26,15 @@
                 "optional": false,
                 "type": [
                   {
+                    "wip": {
+                      "kind": "add",
+                      "type": [
+                        {
+                          "kind": "string",
+                          "literal": false
+                        }
+                      ]
+                    },
                     "kind": "string",
                     "values": ["ai"]
                   }
@@ -420,6 +429,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["STOP"]
                                   }
@@ -587,6 +605,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["message"]
                                   }
@@ -597,6 +624,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["assistant"]
                                   }
@@ -607,6 +643,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["tool_use"]
                                   }
@@ -713,6 +758,15 @@
                                         "optional": false,
                                         "type": [
                                           {
+                                            "wip": {
+                                              "kind": "add",
+                                              "type": [
+                                                {
+                                                  "kind": "string",
+                                                  "literal": false
+                                                }
+                                              ]
+                                            },
                                             "kind": "string",
                                             "values": ["standard"]
                                           }
@@ -1027,6 +1081,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["STOP"]
                                   }
@@ -1161,6 +1224,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["response"]
                                   }
@@ -1271,6 +1343,15 @@
                                                 "optional": false,
                                                 "type": [
                                                   {
+                                                    "wip": {
+                                                      "kind": "add",
+                                                      "type": [
+                                                        {
+                                                          "kind": "string",
+                                                          "literal": false
+                                                        }
+                                                      ]
+                                                    },
                                                     "kind": "string",
                                                     "values": ["completed"]
                                                   }
@@ -1357,6 +1438,15 @@
                                                 "optional": false,
                                                 "type": [
                                                   {
+                                                    "wip": {
+                                                      "kind": "add",
+                                                      "type": [
+                                                        {
+                                                          "kind": "string",
+                                                          "literal": false
+                                                        }
+                                                      ]
+                                                    },
                                                     "kind": "string",
                                                     "values": ["assistant"]
                                                   }
@@ -1442,6 +1532,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["completed"]
                                   }
@@ -1461,6 +1560,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["default"]
                                   }
@@ -1481,6 +1589,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["tool_use"]
                                   }
@@ -1835,6 +1952,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["message"]
                                   }
@@ -1845,6 +1971,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["assistant"]
                                   }
@@ -1855,6 +1990,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["tool_calls"]
                                   }
@@ -1875,6 +2019,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["tool_use"]
                                   }
@@ -2006,6 +2159,15 @@
                                 "optional": true,
                                 "type": [
                                   {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
                                     "kind": "string",
                                     "values": ["stop"]
                                   }
@@ -2100,7 +2262,15 @@
                         "optional": true,
                         "type": [
                           {
-                            "wip": true,
+                            "wip": {
+                              "kind": "add",
+                              "type": [
+                                {
+                                  "kind": "string",
+                                  "literal": false
+                                }
+                              ]
+                            },
                             "kind": "string",
                             "values": ["ai"]
                           }
