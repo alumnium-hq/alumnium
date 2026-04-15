@@ -23,7 +23,7 @@ export const ServerCommand = CliCommand.define({
   name: "server",
   description: "Run HTTP server",
 
-  Args: z.object({
+  Options: z.object({
     host: z.string().default(DEFAULT_SERVER_HOST).register(CliCommand.option, {
       name: "host",
       syntax: "--host <host>",
@@ -96,7 +96,7 @@ export const ServerCommand = CliCommand.define({
       }),
   }),
 
-  action: async ({ args, logFilenameHint }) => {
+  action: async ({ options, logFilenameHint }) => {
     // NOTE: We do it first thing, to make sure all the logs go to the right place
     if (Env.ALUMNIUM_SERVER_DAEMONIZE)
       Logger.path = { filename: logFilenameHint };
@@ -112,7 +112,7 @@ export const ServerCommand = CliCommand.define({
       daemonForce,
       daemonWait,
       daemonWaitTimeout,
-    } = args;
+    } = options;
     const pidPath =
       Env.ALUMNIUM_SERVER_PID_PATH ??
       GlobalFileStorePaths.globalSubDir(daemonPid || DEFAULT_DAEMON_PID_NAME);
