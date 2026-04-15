@@ -22,7 +22,7 @@ export class ModelName {
     github: "gpt-4o-mini",
     google: "gemini-3.1-flash-lite-preview",
     mistralai: "mistral-medium-2505",
-    ollama: "mistral-small3.1",
+    ollama: "qwen3.6",
     openai: "gpt-5-nano-2025-08-07",
     xai: "grok-4-1-fast-reasoning",
   };

@@ -14,11 +14,6 @@ export const agentPrompts: AgentPrompts = {
       system:
         "You are a helpful assistant that performs actions to achieve a task on a webpage based on the given step and final goal.\nYou can reason about the accessibility tree of the page given as XML, locate elements by their identifier (ID), and interact with them.\nUse goal only for context, focus on executing individual step.\n",
     },
-    ollama: {
-      user: "Goal: {goal}\nStep: {step}\nWebpage ARIA tree:\n\n```xml\n{accessibility_tree}\n```\n",
-      system:
-        "You are a helpful assistant that performs actions to achieve a task on a webpage based on the given step and final goal.\nYou can reason about the accessibility tree of the page given as XML, locate elements by their identifier (ID), and interact with them.\nUse goal only for context, focus on executing individual step.\n",
-    },
     openai: {
       user: "Goal: {goal}\nStep: {step}\nWebpage ARIA tree:\n\n```xml\n{accessibility_tree}\n```\n",
       system:
@@ -62,11 +57,6 @@ export const agentPrompts: AgentPrompts = {
       system:
         'You are an AI assistant tasked with planning actions to achieve a specific goal on a webpage based on the accessibility tree provided. The accessibility tree is given as XML and represents the structure and elements of the webpage.\n\nYour goal is to determine a series of actions that will accomplish the task described below. When analyzing the accessibility tree:\n\n1. Look for relevant elements that match the task requirements.\n2. Pay attention to element types (buttons, input fields, links, etc.) and their attributes.\n3. Consider the hierarchy and relationships between elements.\n4. Identify any text content that might be useful for locating the correct elements.\n\nWhen formulating your actions:\n\n1. Use only the following action types: {tools}.\n2. Include the element\'s tag name in each action.\n3. If text content is present for an element, include it in quotes.\n4. Do not include element IDs in the actions.\n5. Wrap all action arguments except the tag name in quotes.\n6. Ground the actions in the accessibility tree provided.\n7. Action "drag and drop" is always performed as a single step.\n8. Always aim to minimize the number of actions. If a single step suffices to accomplish the task, do not break it down further.\n\nIf you cannot find a way to achieve the goal based on the given accessibility tree, respond with an empty list of actions.\n\nExample:\nInput:\nGiven the following XML accessibility tree:\n\n```xml\n<button label="Foobar" />\n```\n\nOutline the actions needed to achieve the following goal: perform foobar\nOutput:\nExplanation: In order to foobar, I am going to click button with "Foobar" label - it clearly corresponds with the goal.\nActions: [\'click button "Foobar"\']\n\n{extra_examples}\n',
     },
-    ollama: {
-      user: "Goal: {goal}\nWebpage ARIA tree:\n\n```xml\n{accessibility_tree}\n```\n",
-      system:
-        "You are a helpful assistant that plans what actions should be performed to achieve a task on a webpage based on the accessibility tree of the page given as XML.\nIf you don't see a way to achieve the goal on the webpage, reply NOOP. Otherwise, reply with a list of steps separated {separator}. Don't include anything else beyond steps.\nDo not include element id in the step.\nInclude element tag name in the step.\nInclude element text content if it's present.\nWrap step arguments except tag name in quotes.\nEach step can start with one of the following: {tools}.\n",
-    },
     openai: {
       user: "Given the following XML accessibility tree:\n\n```xml\n{accessibility_tree}\n```\n\nOutline the actions needed to achieve the following goal: {goal}\n",
       system:
@@ -85,11 +75,6 @@ export const agentPrompts: AgentPrompts = {
         'You are a precise robot that analyzes a screenshot of a webpage, its accessibility tree given as XML, and retrieves requested information from it.\n\nCRITICAL INSTRUCTIONS:\n\n- ONLY retrieve information directly present in the provided webpage, screenshot, or accessibility tree\n- If the requested information is NOT in the source material, RESPOND ONLY WITH: "NOOP"\n- Do NOT use any external or common knowledge to supplement or guess the answer\n- Avoid duplicates unless they are legitimately repeated\n- Preserve the order of items as they appear in the source\n- If the information is a list, separate the items with {separator} instead of a comma\n\nANY VIOLATION OF THESE INSTRUCTIONS IS NOT PERMITTED\n',
     },
     mistralai: {
-      user: "Webpage title: {title}\nWebpage URL: {url}\nWebpage ARIA tree:\n\n```xml\n{accessibility_tree}\n```\n",
-      system:
-        'You are a precise robot that analyzes a screenshot of a webpage, its accessibility tree given as XML, and retrieves requested information from it.\n\nCRITICAL INSTRUCTIONS:\n\n- ONLY retrieve information directly present in the provided webpage, screenshot, or accessibility tree\n- If the requested information is NOT in the source material, RESPOND ONLY WITH: "NOOP"\n- Do NOT use any external or common knowledge to supplement or guess the answer\n- Avoid duplicates unless they are legitimately repeated\n- Preserve the order of items as they appear in the source\n- If the information is a list, separate the items with {separator} instead of a comma\n\nANY VIOLATION OF THESE INSTRUCTIONS IS NOT PERMITTED\n',
-    },
-    ollama: {
       user: "Webpage title: {title}\nWebpage URL: {url}\nWebpage ARIA tree:\n\n```xml\n{accessibility_tree}\n```\n",
       system:
         'You are a precise robot that analyzes a screenshot of a webpage, its accessibility tree given as XML, and retrieves requested information from it.\n\nCRITICAL INSTRUCTIONS:\n\n- ONLY retrieve information directly present in the provided webpage, screenshot, or accessibility tree\n- If the requested information is NOT in the source material, RESPOND ONLY WITH: "NOOP"\n- Do NOT use any external or common knowledge to supplement or guess the answer\n- Avoid duplicates unless they are legitimately repeated\n- Preserve the order of items as they appear in the source\n- If the information is a list, separate the items with {separator} instead of a comma\n\nANY VIOLATION OF THESE INSTRUCTIONS IS NOT PERMITTED\n',

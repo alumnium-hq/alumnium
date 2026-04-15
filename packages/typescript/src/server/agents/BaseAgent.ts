@@ -18,6 +18,7 @@ import {
   PROVIDER_TO_PROMPTS_DEV,
   type AgentPrompts,
 } from "./prompts/prompts.ts";
+import type { AIMessage } from "@langchain/core/messages";
 
 const logger = getLogger(import.meta.url);
 
@@ -225,7 +226,7 @@ export class BaseAgent {
           message = result;
         }
 
-        const reasoning = this.#extractReasoning(message.content);
+        const reasoning = this.#extractReasoning(message);
         if (reasoning) {
           logger.info(this.formatLog("out", "Reasoning"), {
             detail: reasoning,
@@ -247,7 +248,14 @@ export class BaseAgent {
     );
   }
 
-  #extractReasoning(content: object[]): string | null {
+  #extractReasoning(message: AIMessage): string | null {
+    return (
+      this.#extractReasoningFromContent(message.content as object[]) ??
+      this.#extractReasoningFromAdditional(message.additional_kwargs)
+    );
+  }
+
+  #extractReasoningFromContent(content: object[]): string | null {
     if (!Array.isArray(content) || !content.length) {
       return null;
     }
@@ -277,6 +285,12 @@ export class BaseAgent {
     }
 
     return reasoningParts.length > 0 ? reasoningParts.join(" ") : null;
+  }
+
+  #extractReasoningFromAdditional(additional: object): string | null {
+    if (!additional || typeof additional !== "object") return null;
+    const value = (additional as Record<string, unknown>)["reasoning_content"];
+    return typeof value === "string" && value ? value : null;
   }
 
   #extractText(content: unknown): string {

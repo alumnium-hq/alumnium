@@ -38,7 +38,7 @@ export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
   deepseek: "deepseek",
   aws_meta: "meta",
   mistralai: "mistralai",
-  ollama: "ollama",
+  ollama: "openai",
   xai: "xai",
   azure_foundry: "openai",
   azure_openai: "openai",

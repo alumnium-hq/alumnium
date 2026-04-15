@@ -29,7 +29,7 @@ class Name:
         Provider.GITHUB: "gpt-4o-mini",
         Provider.GOOGLE: "gemini-3.1-flash-lite-preview",
         Provider.MISTRALAI: "mistral-medium-2505",
-        Provider.OLLAMA: "mistral-small3.1",
+        Provider.OLLAMA: "qwen3.6",
         Provider.OPENAI: "gpt-5-nano-2025-08-07",
         Provider.XAI: "grok-4-1-fast-reasoning",
     }
