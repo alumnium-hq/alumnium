@@ -1,6 +1,5 @@
 import { Runnable, type RunnableConfig } from "@langchain/core/runnables";
 import { always } from "alwaysly";
-import { Model } from "../../Model.ts";
 import { getLogger, type LoggerLike } from "../../utils/logger.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
@@ -91,7 +90,7 @@ export class BaseAgent {
   constructor(llmContext: LlmContext) {
     this.#llmContext = llmContext;
 
-    const dev = PROVIDER_TO_PROMPTS_DEV[Model.current.provider];
+    const dev = PROVIDER_TO_PROMPTS_DEV[llmContext.model.provider];
     const agentPromptsByDev =
       agentPrompts[agentClassNameToPromptsAgentKind(this.constructor.name)];
     const prompts = agentPromptsByDev[dev] ?? agentPromptsByDev.openai;

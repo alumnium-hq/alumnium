@@ -1,4 +1,5 @@
 import z from "zod";
+import type { Model } from "../Model.ts";
 import type { Agent } from "./agents/Agent.ts";
 
 export namespace LlmContext {
@@ -13,6 +14,12 @@ export class LlmContext {
   static Prompt = z.string().brand("LlmContext.Prompt");
 
   static LlmKey = z.string().brand("LlmContext.LlmKey");
+
+  readonly model: Model;
+
+  constructor(model: Model) {
+    this.model = model;
+  }
 
   #promptsMeta: Record<string, LlmContext.Meta> = {};
 

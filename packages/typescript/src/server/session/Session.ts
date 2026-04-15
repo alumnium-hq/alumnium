@@ -72,7 +72,7 @@ export class Session {
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes ?? new Set();
     this.#context = new SessionContext({ app, sessionId });
-    const llmContext = new LlmContext();
+    const llmContext = new LlmContext(model);
 
     this.cache = CacheFactory.createCache(this.#context, llmContext, model);
 

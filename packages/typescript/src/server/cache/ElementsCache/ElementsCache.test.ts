@@ -32,7 +32,7 @@ describe("ElementsCache", () => {
     );
     const cacheStore = new CacheStore(sessionContext, Model.current);
 
-    const llmContext = new LlmContext();
+    const llmContext = new LlmContext(Model.current);
 
     const cache = new ElementsCache(sessionContext, cacheStore, llmContext);
 
