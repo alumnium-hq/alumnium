@@ -104,7 +104,9 @@ depends = ["//packages/typescript:lint", "//packages/python:lint"]
 run = "bun run tsgo --build"
 
 [tasks."types/ts:watch"]
-run = "bun run tsgo --build --watch"
+# TODO: Enable when it gets JSDoc support.
+# run = "bun run tsgo --build --watch"
+run = "bun run tsc --build --watch"
 
 [tasks."test/unit"]
 depends = ["//packages/typescript:test/unit", "//packages/python:test/unit"]

@@ -1,8 +1,5 @@
 {
-  "js/ts.experimental.useTsgo": true,
-  "evenBetterToml.schema.associations": {
-  },
-  "[toml]": {
-    "editor.defaultFormatter": "oxc.oxc-vscode"
-  }
+  // TODO: Enable when it gets JSDoc support
+  // "js/ts.experimental.useTsgo": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
 }
