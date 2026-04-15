@@ -1,3 +1,4 @@
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -5,8 +6,21 @@ export default defineConfig({
     projects: [
       {
         test: {
+          name: "unit/browser",
+          include: ["src/**/*.browser.test.ts"],
+          browser: {
+            provider: playwright(),
+            enabled: true,
+            instances: [{ browser: "chromium" }],
+            headless: true,
+          },
+        },
+      },
+      {
+        test: {
           name: "unit",
           include: ["src/**/*.test.ts"],
+          exclude: ["src/**/*.browser.test.ts"],
           setupFiles: ["tests/unit/setup.ts"],
         },
       },
@@ -22,14 +36,6 @@ export default defineConfig({
         },
       },
     ],
-    experimental: {
-      // NOTE: Vite's module runner has issue with cyclic dependencies that
-      // Node.js/Bun resolves just fine. It is subtle and result in modules
-      // detected as cyclic resolve empty objects instead of the actual exports.
-      // It is hard to track down and causes random failures not reproducible in
-      // actual runtime. This option makes Vitest use Node.js's native
-      // TypeScript/modules support.
-      viteModuleRunner: false,
-    },
+    attachmentsDir: "tests/artifacts/attachments",
   },
 });

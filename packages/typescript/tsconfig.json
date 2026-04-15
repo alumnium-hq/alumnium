@@ -4,6 +4,7 @@
   "include": [
     "./*.ts",
     "./src/**/*.ts",
+    "./src/**/*.js",
     "./scripts/**/*.ts",
     "./tests/**/*.ts",
     "./package.json"
@@ -25,6 +26,7 @@
     "allowImportingTsExtensions": true, // Use .ts extensions to make imports work in Node.js
     "verbatimModuleSyntax": true, // Enforce type-only imports
     "resolveJsonModule": true,
+    "allowJs": true, // Allow importing JS files
     // Env
     "lib": ["ESNext"],
     "types": ["bun", "@wdio/globals/types"],

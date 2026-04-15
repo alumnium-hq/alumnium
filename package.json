@@ -15,10 +15,10 @@
     "yaml": ">=2.8.3"
   },
   "devDependencies": {
-    "@typescript/native-preview": "7.0.0-dev.20260327.2",
+    "@typescript/native-preview": "^7.0.0-dev.20260415.1",
     "oxfmt": "^0.38.0",
     "oxlint": "^1.60.0",
     "oxlint-tsgolint": "^0.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   }
 }
