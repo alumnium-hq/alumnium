@@ -9,7 +9,7 @@ import {
   LlmUsageStats,
 } from "../../llm/llmSchema.ts";
 import { Model } from "../../Model.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Logger } from "../../telemetry/Logger.ts";
 import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.ts";
 import { ServerChromiumAccessibilityTree } from "../accessibility/ServerChromiumAccessibilityTree.ts";
 import { ServerUIAutomator2AccessibilityTree } from "../accessibility/ServerUIAutomator2AccessibilityTree.ts";
@@ -27,7 +27,7 @@ import { LlmFactory } from "../LlmFactory.ts";
 import { SessionContext } from "./SessionContext.ts";
 import { SessionId } from "./SessionId.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export namespace Session {
   export interface Props {

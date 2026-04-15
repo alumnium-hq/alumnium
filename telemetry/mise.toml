@@ -1,0 +1,27 @@
+[tasks."docker/up"]
+description = "Start local Grafana LGTM stack"
+run = "docker compose -f docker-compose.yml up -d"
+
+[tasks."docker/down"]
+description = "Stop local Grafana LGTM stack"
+run = "docker compose -f docker-compose.yml down"
+
+[tasks."docker/restart"]
+description = "Restart local Grafana LGTM stack"
+run = [{ task = "docker/down" }, { task = "docker/up" }]
+
+[tasks."docker/logs"]
+description = "Follow local Grafana LGTM logs"
+run = "docker compose -f docker-compose.yml logs -f"
+
+[tasks."docker/ps"]
+description = "Show local Grafana LGTM status"
+run = "docker compose -f docker-compose.yml ps"
+
+[tasks."docker/config"]
+description = "Validate local Grafana LGTM compose config"
+run = "docker compose -f docker-compose.yml config"
+
+[tasks."docker/reset"]
+description = "Remove local Grafana LGTM containers and data"
+run = "docker compose -f docker-compose.yml down -v && rm -rf ../.alumnium/telemetry"

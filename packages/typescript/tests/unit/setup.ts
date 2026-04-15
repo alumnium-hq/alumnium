@@ -1,7 +1,7 @@
 import { afterEach } from "vitest";
-import { setLoggerLevel } from "../../src/utils/logger.ts";
+import { Logger } from "../../src/telemetry/Logger.ts";
 import { clearAllMocks } from "./mocks.ts";
 
-setLoggerLevel("error");
+Logger.level = "error";
 
 afterEach(clearAllMocks);

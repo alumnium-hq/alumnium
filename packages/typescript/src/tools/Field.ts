@@ -18,7 +18,6 @@ export interface FieldMetadata {
 
 // Interface for tool classes that use fields
 export interface ToolWithFields {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new (...args: any[]): any;
   fields: FieldMetadata[];
   description: string;

@@ -6,11 +6,11 @@ import z from "zod";
 import { isSingleFileExecutable } from "../bundle.ts";
 import { CliCommand } from "../cli/CliCommand.ts";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
-import { getLogger, setLogPath } from "../utils/logger.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { sleep } from "../utils/timers.ts";
 import { serverApp } from "./serverApp.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 const DEFAULT_SERVER_HOST = "127.0.0.1";
 const DEFAULT_SERVER_PORT = 8013;
@@ -146,7 +146,7 @@ export const ServerCommand = CliCommand.define({
     }
 
     if (process.env.ALUMNIUM_SERVER_DAEMONIZE === "1") {
-      setLogPath({ filename: logFilenameHint });
+      Logger.path = { filename: logFilenameHint };
 
       await writePidFile(pidPath);
 

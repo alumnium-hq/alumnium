@@ -13,7 +13,6 @@ export interface SessionRequest {
   platform: "chromium" | "uiautomator2" | "xcuitest";
   provider: string | undefined;
   name?: string | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tools: { [key: string]: any }[];
   planner: boolean;
   exclude_attributes?: string[] | undefined;

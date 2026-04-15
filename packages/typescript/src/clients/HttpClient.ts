@@ -1,10 +1,11 @@
-import { AppId } from "../AppId.ts";
 import type { Http } from "../Http.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { ErrorResponse, HealthCheckResponse } from "../server/serverSchema.ts";
+import { Logger } from "../telemetry/Logger.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
+import type { Tracer } from "../telemetry/Tracer.ts";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.ts";
-import { getLogger, optionalLogDebugExtra } from "../utils/logger.ts";
 import type {
   AddExampleRequest,
   AreaRequest,
@@ -25,7 +26,9 @@ import type {
 import { Client } from "./Client.ts";
 import { type Data, looselyTypecast } from "./typecasting.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
+const { tracer } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 export namespace HttpClient {
   export interface Props extends Client.Props {
@@ -56,24 +59,27 @@ export class HttpClient extends Client {
     this.#sessionIdPromise = this.#initSession();
   }
 
+  @span("client.get_model", spanAttrs)
   async getModel(): Promise<Model> {
     await this.#sessionIdPromise;
     return this.#model!;
   }
 
+  @span("client.get_health", spanAttrs)
   async getHealth(): Promise<HealthCheckResponse> {
     return this.#fetch<HealthCheckResponse>("GET", "/health");
   }
 
+  @span("client.quit", spanAttrs)
   async quit(): Promise<void> {
     await this.#sessionFetch("DELETE", "/");
   }
 
+  @span("client.plan_actions", spanAttrs)
   async planActions(
-    goal: string,
-    accessibilityTree: string,
-    app: AppId,
+    props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
+    const { goal, accessibilityTree, app } = props;
     const body: PlanRequest = {
       goal,
       accessibility_tree: accessibilityTree,
@@ -82,7 +88,9 @@ export class HttpClient extends Client {
     return this.#sessionFetch<PlanResponse>("POST", "/plans", body);
   }
 
-  async addExample(goal: string, actions: string[]): Promise<void> {
+  @span("client.add_example", spanAttrs)
+  async addExample(props: Client.AddExampleProps): Promise<void> {
+    const { goal, actions } = props;
     const body: AddExampleRequest = {
       goal,
       actions,
@@ -90,16 +98,16 @@ export class HttpClient extends Client {
     await this.#sessionFetch("POST", "/examples", body);
   }
 
+  @span("client.clear_examples", spanAttrs)
   async clearExamples(): Promise<void> {
     await this.#sessionFetch("DELETE", "/examples");
   }
 
+  @span("client.execute_action", spanAttrs)
   async executeAction(
-    goal: string,
-    step: string,
-    accessibilityTree: string,
-    app: AppId,
+    props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
+    const { goal, step, accessibilityTree, app } = props;
     const body: StepRequest = {
       goal,
       step,
@@ -109,14 +117,13 @@ export class HttpClient extends Client {
     return this.#sessionFetch<StepResponse>("POST", "/steps", body);
   }
 
-  async retrieve(
-    statement: string,
-    accessibilityTree: string,
-    title: string,
-    url: string,
-    app: AppId,
-    screenshot?: string,
-  ): Promise<[string, Data]> {
+  @span("client.retrieve", (props) => ({
+    "client.kind": "http",
+    "client.retrieve.args.has_screenshot": !!props.screenshot,
+  }))
+  async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
+    const { statement, accessibilityTree, title, url, app, screenshot } = props;
+
     const body: StatementRequest = {
       statement,
       accessibility_tree: accessibilityTree,
@@ -130,14 +137,15 @@ export class HttpClient extends Client {
       "/statements",
       body,
     );
-    return [result.explanation, looselyTypecast(result.result)];
+    return [result.explanation, looselyTypecast(result.result)] as [
+      string,
+      Data,
+    ];
   }
 
-  async findArea(
-    description: string,
-    accessibilityTree: string,
-    app: AppId,
-  ): Promise<Client.FindAreaResult> {
+  @span("client.find_area", spanAttrs)
+  async findArea(props: Client.FindAreaProps): Promise<Client.FindAreaResult> {
+    const { description, accessibilityTree, app } = props;
     const body: AreaRequest = {
       description,
       accessibility_tree: accessibilityTree,
@@ -147,11 +155,11 @@ export class HttpClient extends Client {
     return { id: data.id, explanation: data.explanation };
   }
 
+  @span("client.find_element", spanAttrs)
   async findElement(
-    description: string,
-    accessibilityTree: string,
-    app: AppId,
+    props: Client.FindElementProps,
   ): Promise<Client.FindElementResult | undefined> {
+    const { description, accessibilityTree, app } = props;
     const body: FindRequest = {
       description,
       accessibility_tree: accessibilityTree,
@@ -165,15 +173,20 @@ export class HttpClient extends Client {
     return result.elements[0];
   }
 
-  async analyzeChanges(
-    beforeAccessibilityTree: string,
-    beforeUrl: string,
-    afterAccessibilityTree: string,
-    afterUrl: string,
-    app: AppId,
-  ): Promise<string> {
+  @span("client.analyze_changes", spanAttrs)
+  async analyzeChanges(props: Client.AnalyzeChangesProps): Promise<string> {
+    const {
+      beforeAccessibilityTree,
+      beforeUrl,
+      afterAccessibilityTree,
+      afterUrl,
+      app,
+    } = props;
     const body: ChangesRequest = {
-      before: { accessibility_tree: beforeAccessibilityTree, url: beforeUrl },
+      before: {
+        accessibility_tree: beforeAccessibilityTree,
+        url: beforeUrl,
+      },
       after: { accessibility_tree: afterAccessibilityTree, url: afterUrl },
       app,
     };
@@ -185,14 +198,17 @@ export class HttpClient extends Client {
     return result.result;
   }
 
+  @span("client.save_cache", spanAttrs)
   async saveCache(): Promise<void> {
     await this.#sessionFetch("POST", "/caches");
   }
 
+  @span("client.discard_cache", spanAttrs)
   async discardCache(): Promise<void> {
     await this.#sessionFetch("DELETE", "/caches");
   }
 
+  @span("client.get_stats", spanAttrs)
   async getStats(): Promise<LlmUsageStats> {
     return this.#sessionFetch<LlmUsageStats>("GET", "/stats");
   }
@@ -242,55 +258,72 @@ export class HttpClient extends Client {
     path: string,
     body?: unknown,
   ): Promise<Result> {
-    const init: RequestInit = {
-      method,
-      signal: AbortSignal.timeout(HttpClient.TIMEOUT),
-    };
+    return tracer.span(
+      "http.request",
+      { "http.request.method": method },
+      async (span) => {
+        const init: RequestInit = {
+          method,
+          signal: AbortSignal.timeout(HttpClient.TIMEOUT),
+        };
 
-    logger.debug("Making HTTP request {method} {path} with body: {body}", {
-      method,
-      path,
-      body: optionalLogDebugExtra("http", body),
-    });
-
-    if (body != null) {
-      init.headers = { "Content-Type": "application/json" };
-      init.body = JSON.stringify(body);
-    }
-
-    const url = `${this.#baseUrl}/v1${path}`;
-
-    const response = await fetch(url, init);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let detail = "";
-      let stack = "";
-
-      try {
-        const errorData = ErrorResponse.parse(JSON.parse(errorText));
-        detail = errorData.message;
-        stack = `\n${errorData.stack}`;
-      } catch (err) {
-        logger.warn("Failed to parse error response as JSON: {err}{stack}", {
-          err,
-          stack,
+        logger.debug("Making HTTP request {method} {path} with body: {body}", {
+          method,
+          path,
+          body: Logger.debugExtra("http", body),
         });
-        detail = errorText;
-      }
-      throw new Error(
-        `${init.method || "GET"} ${url} responded with ${response.status} ${response.statusText}: ${detail}`,
-      );
-    }
 
-    const payload = await response.json();
+        if (body != null) {
+          init.headers = { "Content-Type": "application/json" };
+          init.body = JSON.stringify(body);
 
-    logger.debug("Received response for {method} {path}: {payload}", {
-      method,
-      path,
-      payload: optionalLogDebugExtra("http", payload),
-    });
+          span.attr("http.request.content_type", "application/json");
+        }
 
-    return payload as Result;
+        const url = `${this.#baseUrl}/v1${path}`;
+
+        const response = await fetch(url, init);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          let detail = "";
+          let stack = "";
+
+          try {
+            const errorData = ErrorResponse.parse(JSON.parse(errorText));
+            detail = errorData.message;
+            stack = `\n${errorData.stack}`;
+          } catch (err) {
+            logger.warn(
+              "Failed to parse error response as JSON: {err}{stack}",
+              {
+                err,
+                stack,
+              },
+            );
+            detail = errorText;
+          }
+          throw new Error(
+            `${init.method || "GET"} ${url} responded with ${response.status} ${response.statusText}: ${detail}`,
+          );
+        }
+
+        const payload = await response.json();
+
+        logger.debug("Received response for {method} {path}: {payload}", {
+          method,
+          path,
+          payload: Logger.debugExtra("http", payload),
+        });
+
+        return payload as Result;
+      },
+    );
   }
+}
+
+function spanAttrs(this: HttpClient): Tracer.SpansClientAttrsBase {
+  return {
+    "client.kind": "http",
+  };
 }
