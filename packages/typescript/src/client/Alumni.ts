@@ -16,15 +16,17 @@ import {
 } from "../drivers/index.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
+import type { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
-import { getLogger } from "../utils/logger.ts";
 import { retry } from "../utils/retry.ts";
 import { Area } from "./Area.ts";
 import { Cache } from "./Cache.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
 import type { DoResult, DoStep } from "./result.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 const CHANGE_ANALYSIS =
   (process.env.ALUMNIUM_CHANGE_ANALYSIS || "false").toLowerCase() === "true";
@@ -137,15 +139,18 @@ export class Alumni {
     this.cache = new Cache(this.client);
   }
 
-  get model(): Promise<Model> {
+  @span("alumni.model", spanAttrs)
+  model(): Promise<Model> {
     return this.client.getModel();
   }
 
+  @span("alumni.quit", spanAttrs)
   async quit(): Promise<void> {
     await this.client.quit();
     await this.driver.quit();
   }
 
+  @span("alumni.do", spanAttrs)
   async do(goal: string): Promise<DoResult> {
     return retry(async () => {
       const app = await this.driver.app();
@@ -155,11 +160,11 @@ export class Alumni {
         ? initialAccessibilityTree.toStr()
         : null;
       const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
-      const { explanation, steps } = await this.client.planActions(
+      const { explanation, steps } = await this.client.planActions({
         goal,
-        initialAccessibilityTree.toStr(),
+        accessibilityTree: initialAccessibilityTree.toStr(),
         app,
-      );
+      });
 
       let finalExplanation = explanation;
       const executedSteps: DoStep[] = [];
@@ -173,12 +178,12 @@ export class Alumni {
             ? initialAccessibilityTree
             : await this.driver.getAccessibilityTree();
         const { explanation: actorExplanation, actions } =
-          await this.client.executeAction(
+          await this.client.executeAction({
             goal,
             step,
-            accessibilityTree.toStr(),
+            accessibilityTree: accessibilityTree.toStr(),
             app,
-          );
+          });
 
         // When planner is off, explanation is just the goal — replace with actor's reasoning.
         if (finalExplanation === goal) {
@@ -200,19 +205,29 @@ export class Alumni {
 
       let changes = "";
       if (this.changeAnalysis && executedSteps.length > 0) {
-        changes = await this.client.analyzeChanges(
-          beforeTree!,
-          beforeUrl!,
-          (await this.driver.getAccessibilityTree()).toStr(),
-          await this.driver.url(),
+        changes = await this.client.analyzeChanges({
+          beforeAccessibilityTree: beforeTree!,
+          beforeUrl: beforeUrl!,
+          afterAccessibilityTree: (
+            await this.driver.getAccessibilityTree()
+          ).toStr(),
+          afterUrl: await this.driver.url(),
           app,
-        );
+        });
       }
 
-      return { explanation: finalExplanation, steps: executedSteps, changes };
+      return {
+        explanation: finalExplanation,
+        steps: executedSteps,
+        changes,
+      };
     });
   }
 
+  @span("alumni.check", (_, options) => ({
+    "alumni.flavor": "alumni",
+    "alumni.method.args.vision": !!options?.vision,
+  }))
   async check(
     statement: string,
     options: Alumni.CheckOptions = {},
@@ -222,14 +237,14 @@ export class Alumni {
         ? await this.driver.screenshot()
         : undefined;
       const accessibilityTree = await this.driver.getAccessibilityTree();
-      const [explanation, value] = await this.client.retrieve(
-        `Is the following true or false - ${statement}`,
-        accessibilityTree.toStr(),
-        await this.driver.title(),
-        await this.driver.url(),
-        await this.driver.app(),
+      const [explanation, value] = await this.client.retrieve({
+        statement: `Is the following true or false - ${statement}`,
+        accessibilityTree: accessibilityTree.toStr(),
+        title: await this.driver.title(),
+        url: await this.driver.url(),
+        app: await this.driver.app(),
         screenshot,
-      );
+      });
 
       if (!value || !explanation) {
         const { assert } = options;
@@ -244,45 +259,51 @@ export class Alumni {
     });
   }
 
+  @span("alumni.get", (_, options) => ({
+    "alumni.flavor": "alumni",
+    "alumni.method.args.vision": !!options?.vision,
+  }))
   async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
       const accessibilityTree = await this.driver.getAccessibilityTree();
-      const [explanation, value] = await this.client.retrieve(
-        data,
-        accessibilityTree.toStr(),
-        await this.driver.title(),
-        await this.driver.url(),
-        await this.driver.app(),
+      const [explanation, value] = await this.client.retrieve({
+        statement: data,
+        accessibilityTree: accessibilityTree.toStr(),
+        title: await this.driver.title(),
+        url: await this.driver.url(),
+        app: await this.driver.app(),
         screenshot,
-      );
+      });
 
       return value === null ? explanation : value;
     });
   }
 
+  @span("alumni.find", spanAttrs)
   async find(description: string): Promise<Element | undefined> {
     return retry(async () => {
       const accessibilityTree = await this.driver.getAccessibilityTree();
-      const response = await this.client.findElement(
+      const response = await this.client.findElement({
         description,
-        accessibilityTree.toStr(),
-        await this.driver.app(),
-      );
+        accessibilityTree: accessibilityTree.toStr(),
+        app: await this.driver.app(),
+      });
       if (response?.id == null) return;
       return this.driver.findElement(+response.id);
     });
   }
 
+  @span("alumni.area", spanAttrs)
   async area(description: string): Promise<Area> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
-    const response = await this.client.findArea(
+    const response = await this.client.findArea({
       description,
-      accessibilityTree.toStr(),
-      await this.driver.app(),
-    );
+      accessibilityTree: accessibilityTree.toStr(),
+      app: await this.driver.app(),
+    });
     const scopedTree = accessibilityTree.scopeToArea(response.id);
     return new Area(
       response.id,
@@ -294,15 +315,24 @@ export class Alumni {
     );
   }
 
+  @span("alumni.learn", spanAttrs)
   async learn(goal: string, actions: string[]): Promise<void> {
-    await this.client.addExample(goal, actions);
+    return this.client.addExample({ goal, actions });
   }
 
+  @span("alumni.clear_learn_examples", spanAttrs)
   async clearLearnExamples(): Promise<void> {
-    await this.client.clearExamples();
+    return this.client.clearExamples();
   }
 
+  @span("alumni.get_stats", spanAttrs)
   getStats(): Promise<LlmUsageStats> {
     return this.client.getStats();
   }
+}
+
+function spanAttrs(this: Alumni): Tracer.SpansAlumniAttrsBase {
+  return {
+    "alumni.flavor": "alumni",
+  };
 }

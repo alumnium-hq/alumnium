@@ -1,11 +1,12 @@
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 /**
  * Area of the accessibility tree to use.
@@ -44,6 +45,7 @@ export class AreaAgent extends BaseAgent {
     this.chain = llm.withStructuredOutput(Area, { includeRaw: true });
   }
 
+  @span("agent.invoke", { "agent.kind": "area" })
   async invoke(
     description: string,
     treeXml: string,

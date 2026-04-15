@@ -9,7 +9,6 @@ import { HoverTool } from "../tools/HoverTool.ts";
 import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { UploadTool } from "../tools/UploadTool.ts";
-import { getLogger } from "../utils/logger.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import type { Keys } from "./keys.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
@@ -17,12 +16,17 @@ import type { Keys } from "./keys.ts";
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import { AppId } from "../AppId.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
+import type { Tracer } from "../telemetry/Tracer.ts";
 import { retry } from "../utils/retry.ts";
 import type { Driver } from "./Driver.ts";
 import {
   waiterScriptSource,
   waitForScriptSource,
 } from "./scripts/bundledScripts.ts";
+
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 interface CDPNode {
   nodeId: string;
@@ -49,8 +53,6 @@ interface CDPFrameInfo {
 interface CDPFrameTree {
   frameTree: CDPFrameInfo;
 }
-
-const logger = getLogger(import.meta.url);
 
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
@@ -136,6 +138,7 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
+  @span("driver.get_accessibility_tree", spanAttrs)
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.waitForPageToLoad();
 
@@ -270,6 +273,7 @@ export class PlaywrightDriver extends BaseDriver {
     return new ChromiumAccessibilityTree({ nodes: allNodes });
   }
 
+  @span("driver.click", spanAttrs)
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
     const tagName = await element.evaluate(
@@ -287,22 +291,26 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
+  @span("driver.drag_slider", spanAttrs)
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
     await element.fill(String(value));
   }
 
+  @span("driver.drag_and_drop", spanAttrs)
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);
     await fromElement.dragTo(toElement);
   }
 
+  @span("driver.hover", spanAttrs)
   async hover(id: number): Promise<void> {
     const element = await this.findElement(id);
     await element.hover();
   }
 
+  @span("driver.press_key", spanAttrs)
   async pressKey(key: Keys.Key): Promise<void> {
     const keyMap: Record<Keys.Key, string> = {
       Backspace: "Backspace",
@@ -316,23 +324,28 @@ export class PlaywrightDriver extends BaseDriver {
     );
   }
 
+  @span("driver.quit", spanAttrs)
   async quit(): Promise<void> {
-    await this.page.close();
+    return this.page.close();
   }
 
+  @span("driver.back", spanAttrs)
   async back(): Promise<void> {
     await this.page.goBack();
   }
 
+  @span("driver.visit", spanAttrs)
   async visit(url: string): Promise<void> {
     await this.page.goto(url);
   }
 
+  @span("driver.scroll_to", spanAttrs)
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await element.scrollIntoViewIfNeeded();
   }
 
+  @span("driver.screenshot", spanAttrs)
   async screenshot(): Promise<string> {
     return retry(RETRY_OPTIONS, async () => {
       const buffer = await this.page.screenshot({
@@ -342,15 +355,18 @@ export class PlaywrightDriver extends BaseDriver {
     });
   }
 
+  @span("driver.title", spanAttrs)
   async title(): Promise<string> {
     return retry(RETRY_OPTIONS, () => this.page.title());
   }
 
+  @span("driver.type", spanAttrs)
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
     await element.fill(text);
   }
 
+  @span("driver.upload", spanAttrs)
   async upload(id: number, paths: string[]): Promise<void> {
     const element = await this.findElement(id);
     const [fileChooser] = await Promise.all([
@@ -360,14 +376,17 @@ export class PlaywrightDriver extends BaseDriver {
     await fileChooser.setFiles(paths);
   }
 
+  @span("driver.url", spanAttrs)
   url(): Promise<string> {
     return retry(RETRY_OPTIONS, async () => this.page.url());
   }
 
+  @span("driver.app", spanAttrs)
   async app(): Promise<AppId> {
     return AppId.parse(this.page.url());
   }
 
+  @span("driver.find_element", spanAttrs)
   async findElement(id: number): Promise<Locator> {
     const tree = await this.getAccessibilityTree();
     const accessibilityElement = tree.elementById(id);
@@ -408,14 +427,17 @@ export class PlaywrightDriver extends BaseDriver {
     return frame.locator(`css=[data-alumnium-id='${backendNodeId}']`);
   }
 
+  @span("driver.execute_script", spanAttrs)
   async executeScript(script: string): Promise<void> {
     await this.page.evaluate(`() => { ${script} }`);
   }
 
+  @span("driver.print_to_pdf", spanAttrs)
   async printToPdf(filepath: string): Promise<void> {
     await this.page.pdf({ path: filepath });
   }
 
+  @span("driver.switch_to_next_tab", spanAttrs)
   async switchToNextTab(): Promise<void> {
     // Brief wait to allow popup handlers to complete
     await this.page.waitForTimeout(100);
@@ -432,6 +454,7 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.waitForLoadState();
   }
 
+  @span("driver.switch_to_previous_tab", spanAttrs)
   async switchToPreviousTab(): Promise<void> {
     // Brief wait to allow popup handlers to complete
     await this.page.waitForTimeout(100);
@@ -449,11 +472,13 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.waitForLoadState();
   }
 
+  @span("driver.wait", spanAttrs)
   async wait(seconds: number): Promise<void> {
     const clampedSeconds = Math.max(1, Math.min(30, seconds));
     await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
   }
 
+  @span("driver.wait_for_selector", spanAttrs)
   async waitForSelector(selector: string, timeout?: number): Promise<void> {
     const timeoutMs = (timeout ?? 10) * 1000;
     await this.page.waitForSelector(selector, {
@@ -466,13 +491,13 @@ export class PlaywrightDriver extends BaseDriver {
     await this.page.context().grantPermissions(permissions);
   }
 
+  @span("driver.wait_for_page_to_load", spanAttrs)
   private async waitForPageToLoad(): Promise<void> {
     return retry(RETRY_OPTIONS, async () => {
       logger.debug("Waiting for page to finish loading:");
       await this.page.evaluate(WAITER_SCRIPT);
       const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`);
       if (error) {
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
       } else {
         logger.debug("  <- Page finished loading");
@@ -799,4 +824,11 @@ export class PlaywrightDriver extends BaseDriver {
       );
     }
   }
+}
+
+function spanAttrs(this: PlaywrightDriver): Tracer.SpansDriverAttrsBase {
+  return {
+    "driver.kind": "playwright",
+    "driver.platform": this.platform,
+  };
 }

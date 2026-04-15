@@ -17,9 +17,10 @@ import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";
 import { never } from "alwaysly";
 import { Model } from "../Model.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Logger } from "../telemetry/Logger.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
+
 const parsedModelTimeout = parseInt(process.env.ALUMNIUM_MODEL_TIMEOUT ?? "90");
 export const MODEL_TIMEOUT_SEC = Number.isFinite(parsedModelTimeout)
   ? parsedModelTimeout

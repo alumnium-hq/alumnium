@@ -1,4 +1,4 @@
-import { getLogger } from "../../../utils/index.ts";
+import { Logger } from "../../../telemetry/Logger.ts";
 import type { ActorAgent } from "../../agents/ActorAgent.ts";
 import type { SessionContext } from "../../session/SessionContext.ts";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
@@ -8,7 +8,7 @@ import { ElementsCacheToolCalls } from "./ElementsCacheToolCalls.ts";
 import { ElementsCacheTree } from "./ElementsCacheTree.ts";
 import type { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export namespace ActorAgentElementsCache {
   export interface Props {

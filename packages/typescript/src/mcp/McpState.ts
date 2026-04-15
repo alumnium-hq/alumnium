@@ -6,12 +6,13 @@
 import { Alumni } from "../client/Alumni.ts";
 import { PlaywrightDriver } from "../drivers/PlaywrightDriver.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 import { McpArtifactsStore } from "./McpArtifactsStore.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
 import { startMcpTool } from "./tools/startMcpTool.ts";
 
-const logger = getLogger(import.meta.url);
+const { logger, tracer } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 export namespace McpState {
   export type DriverPair = [Alumni, McpDriver];
@@ -90,6 +91,7 @@ export abstract class McpState {
   /**
    * Clean up driver and return artifacts directory and stats.
    */
+  @span("mcp.driver.shutdown", (id) => ({ "mcp.driver.id": id }))
   static async cleanupDriver(id: string): Promise<[string, LlmUsageStats]> {
     const driverState = this.getDriverState(id);
 
@@ -116,6 +118,8 @@ export abstract class McpState {
     await al.quit();
 
     delete this.drivers[id];
+
+    tracer.end(id);
 
     logger.debug(`Driver ${id} cleanup complete`);
 

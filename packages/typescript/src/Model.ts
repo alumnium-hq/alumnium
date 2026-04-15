@@ -1,7 +1,7 @@
 import z from "zod";
-import { getLogger } from "./utils/logger.ts";
+import { Logger } from "./telemetry/Logger.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 const ALUMNIUM_MODEL = process.env.ALUMNIUM_MODEL || "";
 

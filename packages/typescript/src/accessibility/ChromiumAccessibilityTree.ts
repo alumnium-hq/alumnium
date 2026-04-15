@@ -1,8 +1,12 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 import { Xml } from "../Xml.ts";
 import type { AccessibilityElement } from "./AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
+
+const { tracer } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 interface CDPNode {
   nodeId?: string | number;
@@ -50,6 +54,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   }
 
   /** Convert CDP response to raw XML format preserving all data. */
+  @span("driver.tree.to_str", { "driver.tree.platform": "chromium" })
   toStr(): string {
     if (this.#raw !== null) {
       return this.#raw;
@@ -226,11 +231,11 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
    * @param rawId The raw_id to search for
    * @returns AccessibilityElement with backend_node_id set
    */
+  @span("driver.tree.element_by_id", { "driver.tree.platform": "chromium" })
   elementById(rawId: number): AccessibilityElement {
     // Get raw XML with raw_id attributes
     const rawXml = this.toStr();
     const root = Xml.parseRoot(`<root>${rawXml}</root>`);
-
     // Find element with matching raw_id
     const findElement = (elem: Element, targetId: string): Element | null => {
       if (elem.attribs["raw_id"] === targetId) {
@@ -297,6 +302,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   }
 
   /** Scope the tree to a smaller subtree identified by raw_id. */
+  @span("driver.tree.scope_to_area", { "driver.tree.platform": "chromium" })
   scopeToArea(rawId: number): ChromiumAccessibilityTree {
     const rawXml = this.toStr();
 

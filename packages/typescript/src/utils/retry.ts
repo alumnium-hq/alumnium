@@ -1,7 +1,7 @@
 import { always } from "alwaysly";
-import { getLogger } from "./logger.ts";
+import { Logger } from "../telemetry/Logger.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 const DEFAULT_DELAY_SEC = 0.5; // seconds
 let DELAY_MS = parseFloat(process.env.ALUMNIUM_DELAY || "0.5") * 1000; // Convert to milliseconds

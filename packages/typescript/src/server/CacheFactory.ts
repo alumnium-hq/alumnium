@@ -1,5 +1,5 @@
 import { Model } from "../Model.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { CacheStore } from "./cache/CacheStore.ts";
 import { ChainedCache } from "./cache/ChainedCache.ts";
 import { ElementsCache } from "./cache/ElementsCache/ElementsCache.ts";
@@ -9,7 +9,7 @@ import { ServerCache } from "./cache/ServerCache.ts";
 import { LlmContext } from "./LlmContext.ts";
 import { SessionContext } from "./session/SessionContext.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export class CacheFactory {
   static createCache(

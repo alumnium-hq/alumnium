@@ -74,6 +74,17 @@ The following workflow step enables debug logging in Alumnium when they are enab
 
 :::
 
+### `ALUMNIUM_TRACE`
+
+Set to `true` to enable local OpenTelemetry tracing and logs. When enabled, configure the OTLP endpoint with standard OpenTelemetry environment variables, for example:
+
+```sh
+export ALUMNIUM_TRACE="true"
+export OTEL_SERVICE_NAME="alumnium"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:4318"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+```
+
 ### `ALUMNIUM_MODEL`
 
 Select AI provider and model to use.

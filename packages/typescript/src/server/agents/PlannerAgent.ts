@@ -8,13 +8,14 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
-import { getLogger } from "../../utils/logger.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 export namespace PlannerAgent {
   export type Meta = z.infer<typeof PlannerAgent.Meta>;
@@ -167,6 +168,7 @@ Actions: [${actionsStr}]`.trim();
    * @returns A tuple of (explanation, actions) where explanation describes
    *   the reasoning and actions is the list of steps to achieve the goal.
    */
+  @span("agent.invoke", { "agent.kind": "planner" })
   async invoke(goal: string, treeXml: string): Promise<[string, string[]]> {
     logger.info("Starting planning:");
     this.logData(logger, "in", {

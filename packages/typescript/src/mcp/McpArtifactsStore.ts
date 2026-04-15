@@ -1,9 +1,9 @@
 import { kebabCase } from "case-anything";
 import { FileStore } from "../FileStore/FileStore.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { McpState } from "./McpState.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export namespace McpArtifactsStore {
   export interface SaveScreenshotProps {

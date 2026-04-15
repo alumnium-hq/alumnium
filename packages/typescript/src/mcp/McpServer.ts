@@ -7,7 +7,7 @@
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ALUMNIUM_VERSION } from "../package.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { checkMcpTool } from "./tools/checkMcpTool.ts";
 import { doMcpTool } from "./tools/doMcpTool.ts";
 import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.ts";
@@ -16,7 +16,7 @@ import { startMcpTool } from "./tools/startMcpTool.ts";
 import { stopMcpTool } from "./tools/stopMcpTool.ts";
 import { waitMcpTool } from "./tools/waitMcpTool.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 const MCP_TOOLS = [
   checkMcpTool,

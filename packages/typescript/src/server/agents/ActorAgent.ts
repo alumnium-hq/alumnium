@@ -8,12 +8,13 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
 import z from "zod";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { ToolCall } from "../accessibility/BaseServerAccessibilityTree.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 export namespace ActorAgent {
   export interface ChainInput {
@@ -58,6 +59,7 @@ export class ActorAgent extends BaseAgent {
     this.chain = prompt.pipe(llm.bindTools(toolSchemas));
   }
 
+  @span("agent.invoke", { "agent.kind": "actor" })
   async invoke(
     goal: string,
     step: string,

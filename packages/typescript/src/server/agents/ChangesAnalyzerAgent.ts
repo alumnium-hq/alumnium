@@ -1,11 +1,12 @@
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 export namespace ChangesAnalyzerAgent {
   export type Meta = z.infer<typeof ChangesAnalyzerAgent.Meta>;
@@ -24,6 +25,7 @@ export class ChangesAnalyzerAgent extends BaseAgent {
     this.llm = llm;
   }
 
+  @span("agent.invoke", { "agent.kind": "changes-analyzer" })
   async invoke(diff: string): Promise<string> {
     logger.info("Starting changes analysis:");
     logger.debug(this.formatLog("in", "Diff"), { detail: diff });
