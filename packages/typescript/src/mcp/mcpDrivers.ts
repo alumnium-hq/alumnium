@@ -124,6 +124,11 @@ export async function createSeleniumDriver(
   const { cookies, headers = {}, headless = false } = driverOptions;
 
   const chromeOptions = new Options();
+  // Disable verbose logging so it doesn't print to stdout and interfere with
+  // MCP output parsing. Currently it only appears on Windows but may also
+  // happen on other platforms.
+  chromeOptions.addArguments("--disable-logging", "--log-level=3");
+  chromeOptions.excludeSwitches("enable-logging");
 
   if (headless) {
     chromeOptions.addArguments("--headless=new");
