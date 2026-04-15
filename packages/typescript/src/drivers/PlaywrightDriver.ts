@@ -17,12 +17,15 @@ import type { Keys } from "./keys.ts";
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import { AppId } from "../AppId.ts";
+import type { PlaySelector } from "../play/selector.ts";
 import { retry } from "../utils/retry.ts";
 import type { Driver } from "./Driver.ts";
 import {
-  waiterScriptSource,
-  waitForScriptSource,
+    findSelectorScriptSource,
+    waiterScriptSource,
+    waitForScriptSource,
 } from "./scripts/bundledScripts.ts";
+import type { DriverScripts } from "./scripts/scripts.ts";
 
 interface CDPNode {
   nodeId: string;
@@ -56,6 +59,7 @@ const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
 const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
 const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${waitForScriptSource /* await readScript("waitFor.js") */} })`;
+const FIND_SELECTOR_SCRIPT = findSelectorScriptSource;
 
 const RETRY_OPTIONS: retry.Options = {
   maxAttempts: 2,
@@ -271,19 +275,19 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   async click(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    const tagName = await element.evaluate(
+    const locator = await this.findElement(id);
+    const tagName = await locator.evaluate(
       (el: { tagName: string }) => el.tagName,
     );
     if (tagName?.toLowerCase() === "option") {
-      const value = await element.evaluate((el: { value: string }) => el.value);
+      const value = await locator.evaluate((el: HTMLOptionElement) => el.value);
       await this.autoswitchToNewTabAction(async () => {
-        await element.locator("xpath=parent::select").selectOption(value);
+        await locator.locator("xpath=parent::select").selectOption(value);
       });
     } else {
-      await this.autoswitchToNewTabAction(async () => {
-        await element.click({ force: true });
-      });
+      // TODO: Use it to save step to the scenario
+      const selector = await this.#findSelector(locator);
+      await this.autoswitchToNewTabAction(() => locator.click({ force: true }));
     }
   }
 
@@ -798,5 +802,48 @@ export class PlaywrightDriver extends BaseDriver {
         `Cannot find element: no role or name in locator_info: ${JSON.stringify(locatorInfo)}`,
       );
     }
+  }
+
+  async #findSelector(locator: Locator): Promise<PlaySelector.Type | null> {
+    await this.page.evaluate(FIND_SELECTOR_SCRIPT);
+
+    const elementHandle = await locator.elementHandle();
+    const result: DriverScripts.Result<PlaySelector.Type> = await this.#callFn(
+      "findSelector",
+      elementHandle,
+    );
+
+    if (result.status === "error") {
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
+      logger.debug("  <- Failed to find selector for {locator}: {message}", {
+        message: result.message,
+      });
+      return null;
+    }
+
+    const selector = result.payload;
+    logger.debug("  <- Found selector '{selector}' for {locator}", {
+      locator,
+      selector,
+    });
+    return selector;
+  }
+
+  #callFn<Payload>(
+    fnName: string,
+    ...args: unknown[]
+  ): Promise<DriverScripts.Result<Payload>> {
+    return this.page.evaluate(
+      ([fnName, args]) => {
+        const fn = (window as any)[Symbol.for(`alumnium.${fnName}`)];
+        try {
+          const payload = fn(...args);
+          return { status: "success", payload };
+        } catch (err) {
+          return { status: "error", message: String(err) };
+        }
+      },
+      [fnName, args] as const,
+    );
   }
 }

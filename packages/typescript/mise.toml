@@ -76,6 +76,12 @@ run = "bun vitest --project unit"
 [tasks."test/unit:coverage"]
 run = "bun vitest --project unit --coverage --coverage.reportsDirectory tests/artifacts/coverage/ run"
 
+[tasks."test/unit/browser"]
+run = "bun vitest --project unit/browser run"
+
+[tasks."test/unit/browser:watch"]
+run = "bun vitest --project unit/browser"
+
 [tasks."test/system"]
 usage = '''
 arg "<driver>" help="Driver to use for system tests" {
