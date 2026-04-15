@@ -6,13 +6,13 @@ export abstract class LchainSchema {
   static MessageThinking = z.object({
     type: z.literal("thinking"),
     thinking: z.string(),
-    signature: z.string().optional(),
+    signature: z.string().exactOptional(),
   });
 
   static MessageText = z.object({
     type: z.literal("text"),
     text: z.string(),
-    annotations: z.array(z.unknown()).optional(),
+    annotations: z.array(z.unknown()).exactOptional(),
   });
 
   static MessageFunctionCallData = z.object({
@@ -97,7 +97,7 @@ export abstract class LchainSchema {
     cache_read_input_tokens: z.number(),
     cache_creation: this.MessageDataAdditionalKwargsUsageCacheCreation,
     output_tokens: z.number(),
-    service_tier: z.literal("standard"),
+    service_tier: z.union([z.literal("standard"), z.string()]),
     inference_geo: z.string(),
   });
 
@@ -107,7 +107,7 @@ export abstract class LchainSchema {
   });
 
   static FunctionCall = z.object({
-    index: z.literal(0).optional(),
+    index: z.literal(0).exactOptional(),
     id: z.string(),
     type: z.literal("function"),
     function: this.FunctionCallFunction,
@@ -119,47 +119,49 @@ export abstract class LchainSchema {
   );
 
   static MessageDataAdditionalKwargs = z.object({
-    finishReason: z.literal("STOP").optional(),
-    index: z.number().optional(),
+    finishReason: z.union([z.literal("STOP"), z.string()]).exactOptional(),
+    index: z.number().exactOptional(),
     __gemini_function_call_thought_signatures__: z
       .record(z.string(), z.string())
-      .optional(),
-    finishMessage: z.string().optional(),
-    reasoning: this.MessageDataAdditionalKwargsReasoning.optional(),
-    parsed: z.record(z.string(), z.unknown()).optional(),
-    __openai_function_call_ids__: z.record(z.string(), z.string()).optional(),
-    model: z.string().optional(),
-    id: z.string().optional(),
-    type: z.literal("message").optional(),
-    role: z.literal("assistant").optional(),
-    stop_reason: z.literal("tool_use").optional(),
-    stop_sequence: z.null().optional(),
-    stop_details: z.null().optional(),
-    usage: this.MessageDataAdditionalKwargsUsage.optional(),
-    function_call: z.undefined().optional(),
+      .exactOptional(),
+    finishMessage: z.string().exactOptional(),
+    reasoning: this.MessageDataAdditionalKwargsReasoning.exactOptional(),
+    parsed: z.record(z.string(), z.unknown()).exactOptional(),
+    __openai_function_call_ids__: z
+      .record(z.string(), z.string())
+      .exactOptional(),
+    model: z.string().exactOptional(),
+    id: z.string().exactOptional(),
+    type: z.union([z.literal("message"), z.string()]).exactOptional(),
+    role: z.union([z.literal("assistant"), z.string()]).exactOptional(),
+    stop_reason: z.union([z.literal("tool_use"), z.string()]).exactOptional(),
+    stop_sequence: z.null().exactOptional(),
+    stop_details: z.null().exactOptional(),
+    usage: this.MessageDataAdditionalKwargsUsage.exactOptional(),
+    function_call: z.undefined().exactOptional(),
     tool_calls: z
       .array(this.MessageDataAdditionalKwargsToolCallsItem)
-      .optional(),
-    reasoning_content: z.union([z.string(), z.undefined()]).optional(),
+      .exactOptional(),
+    reasoning_content: z.union([z.string(), z.undefined()]).exactOptional(),
   });
 
   static UsageMetadataInputTokenDetails = z.object({
-    cache_read: z.number().optional(),
-    cache_creation: z.number().optional(),
-    audio: z.union([z.undefined(), z.number()]).optional(),
+    cache_read: z.number().exactOptional(),
+    cache_creation: z.number().exactOptional(),
+    audio: z.union([z.undefined(), z.number()]).exactOptional(),
   });
 
   static UsageMetadataOutputTokenDetails = z.object({
-    reasoning: z.number().optional(),
-    audio: z.union([z.undefined(), z.number()]).optional(),
+    reasoning: z.number().exactOptional(),
+    audio: z.union([z.undefined(), z.number()]).exactOptional(),
   });
 
   static UsageMetadata = z.object({
     input_tokens: z.number(),
     output_tokens: z.number(),
     total_tokens: z.number(),
-    input_token_details: this.UsageMetadataInputTokenDetails.optional(),
-    output_token_details: this.UsageMetadataOutputTokenDetails.optional(),
+    input_token_details: this.UsageMetadataInputTokenDetails.exactOptional(),
+    output_token_details: this.UsageMetadataOutputTokenDetails.exactOptional(),
   });
 
   static ResponseMetadataTokenUsage = z.object({
@@ -169,9 +171,9 @@ export abstract class LchainSchema {
   });
 
   static ResponseMetadataEstimatedTokenUsage = z.object({
-    promptTokens: z.number().optional(),
-    completionTokens: z.number().optional(),
-    totalTokens: z.number().optional(),
+    promptTokens: z.number().exactOptional(),
+    completionTokens: z.number().exactOptional(),
+    totalTokens: z.number().exactOptional(),
   });
 
   static ResponseMetadataMetadata = z.object({});
@@ -181,7 +183,7 @@ export abstract class LchainSchema {
     annotations: z.array(z.unknown()),
     logprobs: z.array(z.unknown()),
     text: z.string(),
-    parsed: z.record(z.string(), z.unknown()).optional(),
+    parsed: z.record(z.string(), z.unknown()).exactOptional(),
   });
 
   static MetadataOutput = z.discriminatedUnion("type", [
@@ -191,9 +193,9 @@ export abstract class LchainSchema {
   static OutputMessage = z.object({
     id: z.string(),
     type: z.literal("message"),
-    status: z.literal("completed"),
+    status: z.union([z.literal("completed"), z.string()]),
     content: z.array(this.MetadataOutput),
-    role: z.literal("assistant"),
+    role: z.union([z.literal("assistant"), z.string()]),
   });
 
   static OutputFunctionCall = z.object({
@@ -213,42 +215,42 @@ export abstract class LchainSchema {
 
   static ResponseMetadataUsagePromptTokensDetails = z.object({
     cached_tokens: z.number(),
-    text_tokens: z.number().optional(),
-    audio_tokens: z.number().optional(),
-    image_tokens: z.number().optional(),
+    text_tokens: z.number().exactOptional(),
+    audio_tokens: z.number().exactOptional(),
+    image_tokens: z.number().exactOptional(),
   });
 
   static CompletionTokensDetails = z.object({
     reasoning_tokens: z.number(),
-    audio_tokens: z.number().optional(),
-    accepted_prediction_tokens: z.number().optional(),
-    rejected_prediction_tokens: z.number().optional(),
+    audio_tokens: z.number().exactOptional(),
+    accepted_prediction_tokens: z.number().exactOptional(),
+    rejected_prediction_tokens: z.number().exactOptional(),
   });
 
   static ResponseMetadataUsage = z.object({
-    input_tokens: z.number().optional(),
-    cache_creation_input_tokens: z.number().optional(),
-    cache_read_input_tokens: z.number().optional(),
+    input_tokens: z.number().exactOptional(),
+    cache_creation_input_tokens: z.number().exactOptional(),
+    cache_read_input_tokens: z.number().exactOptional(),
     cache_creation:
-      this.MessageDataAdditionalKwargsUsageCacheCreation.optional(),
-    output_tokens: z.number().optional(),
-    service_tier: z.string().optional(),
-    inference_geo: z.string().optional(),
-    prompt_tokens: z.number().optional(),
-    completion_tokens: z.number().optional(),
-    total_tokens: z.number().optional(),
+      this.MessageDataAdditionalKwargsUsageCacheCreation.exactOptional(),
+    output_tokens: z.number().exactOptional(),
+    service_tier: z.string().exactOptional(),
+    inference_geo: z.string().exactOptional(),
+    prompt_tokens: z.number().exactOptional(),
+    completion_tokens: z.number().exactOptional(),
+    total_tokens: z.number().exactOptional(),
     prompt_tokens_details:
-      this.ResponseMetadataUsagePromptTokensDetails.optional(),
-    completion_tokens_details: this.CompletionTokensDetails.optional(),
-    prompt_cache_hit_tokens: z.number().optional(),
-    prompt_cache_miss_tokens: z.number().optional(),
-    inputTokens: z.number().optional(),
-    outputTokens: z.number().optional(),
-    totalTokens: z.number().optional(),
-    num_sources_used: z.number().optional(),
-    cost_in_usd_ticks: z.number().optional(),
-    cacheReadInputTokens: z.number().optional(),
-    cacheWriteInputTokens: z.number().optional(),
+      this.ResponseMetadataUsagePromptTokensDetails.exactOptional(),
+    completion_tokens_details: this.CompletionTokensDetails.exactOptional(),
+    prompt_cache_hit_tokens: z.number().exactOptional(),
+    prompt_cache_miss_tokens: z.number().exactOptional(),
+    inputTokens: z.number().exactOptional(),
+    outputTokens: z.number().exactOptional(),
+    totalTokens: z.number().exactOptional(),
+    num_sources_used: z.number().exactOptional(),
+    cost_in_usd_ticks: z.number().exactOptional(),
+    cacheReadInputTokens: z.number().exactOptional(),
+    cacheWriteInputTokens: z.number().exactOptional(),
   });
 
   static ResponseMetadataMetrics = z.object({ latencyMs: z.number() });
@@ -263,44 +265,47 @@ export abstract class LchainSchema {
   });
 
   static ResponseMetadata = z.object({
-    tokenUsage: this.ResponseMetadataTokenUsage.optional(),
-    finishReason: z.literal("STOP").optional(),
-    index: z.number().optional(),
-    finishMessage: z.string().optional(),
-    id: z.string().optional(),
-    estimatedTokenUsage: this.ResponseMetadataEstimatedTokenUsage.optional(),
-    model_provider: z.string().optional(),
-    model: z.string().optional(),
-    created_at: z.union([z.number(), z.string()]).optional(),
-    incomplete_details: z.null().optional(),
-    metadata: this.ResponseMetadataMetadata.optional(),
-    object: z.literal("response").optional(),
-    output: z.array(this.ResponseMetadataOutputItem).optional(),
-    status: z.literal("completed").optional(),
-    user: z.null().optional(),
-    service_tier: z.literal("default").optional(),
-    model_name: z.string().optional(),
-    stop_reason: z.literal("tool_use").optional(),
-    stop_sequence: z.null().optional(),
-    stop_details: z.null().optional(),
-    usage: this.ResponseMetadataUsage.optional(),
-    type: z.literal("message").optional(),
-    role: z.literal("assistant").optional(),
-    finish_reason: z.literal("tool_calls").optional(),
-    system_fingerprint: z.string().optional(),
-    stopReason: z.literal("tool_use").optional(),
-    metrics: this.ResponseMetadataMetrics.optional(),
-    $metadata: this.ResponseMetadataInternal.optional(),
-    prompt: z.number().optional(),
-    completion: z.number().optional(),
-    done: z.boolean().optional(),
-    done_reason: z.literal("stop").optional(),
-    total_duration: z.number().optional(),
-    load_duration: z.number().optional(),
-    prompt_eval_count: z.number().optional(),
-    prompt_eval_duration: z.number().optional(),
-    eval_count: z.number().optional(),
-    eval_duration: z.number().optional(),
+    tokenUsage: this.ResponseMetadataTokenUsage.exactOptional(),
+    finishReason: z.union([z.literal("STOP"), z.string()]).exactOptional(),
+    index: z.number().exactOptional(),
+    finishMessage: z.string().exactOptional(),
+    id: z.string().exactOptional(),
+    estimatedTokenUsage:
+      this.ResponseMetadataEstimatedTokenUsage.exactOptional(),
+    model_provider: z.string().exactOptional(),
+    model: z.string().exactOptional(),
+    created_at: z.union([z.number(), z.string()]).exactOptional(),
+    incomplete_details: z.null().exactOptional(),
+    metadata: this.ResponseMetadataMetadata.exactOptional(),
+    object: z.union([z.literal("response"), z.string()]).exactOptional(),
+    output: z.array(this.ResponseMetadataOutputItem).exactOptional(),
+    status: z.union([z.literal("completed"), z.string()]).exactOptional(),
+    user: z.null().exactOptional(),
+    service_tier: z.union([z.literal("default"), z.string()]).exactOptional(),
+    model_name: z.string().exactOptional(),
+    stop_reason: z.union([z.literal("tool_use"), z.string()]).exactOptional(),
+    stop_sequence: z.null().exactOptional(),
+    stop_details: z.null().exactOptional(),
+    usage: this.ResponseMetadataUsage.exactOptional(),
+    type: z.union([z.literal("message"), z.string()]).exactOptional(),
+    role: z.union([z.literal("assistant"), z.string()]).exactOptional(),
+    finish_reason: z
+      .union([z.literal("tool_calls"), z.string()])
+      .exactOptional(),
+    system_fingerprint: z.string().exactOptional(),
+    stopReason: z.union([z.literal("tool_use"), z.string()]).exactOptional(),
+    metrics: this.ResponseMetadataMetrics.exactOptional(),
+    $metadata: this.ResponseMetadataInternal.exactOptional(),
+    prompt: z.number().exactOptional(),
+    completion: z.number().exactOptional(),
+    done: z.boolean().exactOptional(),
+    done_reason: z.union([z.literal("stop"), z.string()]).exactOptional(),
+    total_duration: z.number().exactOptional(),
+    load_duration: z.number().exactOptional(),
+    prompt_eval_count: z.number().exactOptional(),
+    prompt_eval_duration: z.number().exactOptional(),
+    eval_count: z.number().exactOptional(),
+    eval_duration: z.number().exactOptional(),
   });
 
   static ToolCallChunk = z.object({
@@ -319,12 +324,15 @@ export abstract class LchainSchema {
     invalid_tool_calls: z.array(z.unknown()),
     response_metadata: this.ResponseMetadata,
     id: z.string(),
-    name: z.unknown().optional(),
-    type: z.unknown().optional(),
-    tool_call_chunks: z.array(this.ToolCallChunk).optional(),
+    name: z.unknown().exactOptional(),
+    type: z.union([z.literal("ai"), z.string()]).exactOptional(),
+    tool_call_chunks: z.array(this.ToolCallChunk).exactOptional(),
   });
 
-  static Message = z.object({ type: z.literal("ai"), data: this.MessageData });
+  static Message = z.object({
+    type: z.union([z.literal("ai"), z.string()]),
+    data: this.MessageData,
+  });
 
   static StoredGeneration = z.object({
     text: z.string(),

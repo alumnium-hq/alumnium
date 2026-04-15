@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
+import { pascalCase } from "case-anything";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { pascalCase } from "case-anything";
 import { format } from "oxfmt";
 import {
   hashValue,
@@ -14,6 +14,7 @@ type OutputMode = "module" | "class";
 
 interface CliArgs {
   scanFilePath: string;
+  noExactOptional: boolean;
   mode: OutputMode;
   className?: string;
 }
@@ -24,7 +25,7 @@ interface SchemaDecl {
 }
 
 const args = parseArgs(process.argv.slice(2));
-const { scanFilePath, mode } = args;
+const { scanFilePath, mode, noExactOptional } = args;
 const raw = await fs.readFile(scanFilePath, "utf-8");
 const parsed = JSON.parse(raw);
 if (!Array.isArray(parsed)) {
@@ -52,6 +53,7 @@ function parseArgs(args: string[]): CliArgs {
   let mode: OutputMode = "module";
   let className: string | undefined;
   let scanFilePath: string | undefined;
+  let noExactOptional = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
@@ -88,6 +90,11 @@ function parseArgs(args: string[]): CliArgs {
       continue;
     }
 
+    if (arg === "--no-exact-optional") {
+      noExactOptional = true;
+      continue;
+    }
+
     if (arg.startsWith("-")) {
       throw new TypeError(`Unknown argument: ${arg}`);
     }
@@ -97,7 +104,9 @@ function parseArgs(args: string[]): CliArgs {
       continue;
     }
 
-    throw new TypeError(`Unexpected extra argument: ${arg}`);
+    throw new TypeError(
+      `Unexpected extra argument: ${arg} ${JSON.stringify(args)}`,
+    );
   }
 
   if (!scanFilePath) {
@@ -111,10 +120,10 @@ function parseArgs(args: string[]): CliArgs {
   }
 
   if (className !== undefined) {
-    return { scanFilePath, mode, className };
+    return { scanFilePath, mode, className, noExactOptional };
   }
 
-  return { scanFilePath, mode };
+  return { scanFilePath, mode, noExactOptional };
 }
 
 function deriveBaseName(filePath: string): string {
@@ -177,8 +186,7 @@ function generateSchemas(
   ): string {
     if (type.kind === "unknown") return "z.unknown()";
 
-    if (type.kind === "object")
-      return defineObjectSchema(type, nameParts);
+    if (type.kind === "object") return defineObjectSchema(type, nameParts);
     if (type.kind === "array") return buildArrayExpr(type, nameParts);
     if (type.kind === "record") return buildRecordExpr(type, nameParts);
     return buildPrimitiveExpr(type);
@@ -266,7 +274,8 @@ function generateSchemas(
     return Object.entries(properties).map(([key, field]) => {
       const fieldRef = buildFieldExpr(field, [...nameParts, toPascalCase(key)]);
       const optional = field.optional && field.discriminator !== true;
-      return `${JSON.stringify(key)}: ${optional ? `${fieldRef}.optional()` : fieldRef}`;
+      const optionalMethod = noExactOptional ? "optional" : "exactOptional";
+      return `${JSON.stringify(key)}: ${optional ? `${fieldRef}.${optionalMethod}()` : fieldRef}`;
     });
   }
 
