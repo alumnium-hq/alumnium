@@ -21,7 +21,7 @@ Closes #
 ## Type of Change
 Mark the relevant options.
 
-- [ ] Bug fix  
+- [ ] Bug fix
 - [ ] New feature (non-breaking changes, test coverage, refactoring)
 - [ ] Breaking change (fix, refactoring, or feature that would cause existing functionality to change)
 - [ ] Cleanup (documentation, formatting)
