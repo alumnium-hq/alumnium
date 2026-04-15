@@ -111,7 +111,7 @@ async function setup() {
     sessionId: "test-session-id" as SessionId,
   });
 
-  const llmContext = new LlmContext();
+  const llmContext = new LlmContext(Model.current);
 
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 

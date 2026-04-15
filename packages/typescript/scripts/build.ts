@@ -15,7 +15,6 @@ import {
   SELENIUM_ATOM_ASSET_PREFIX,
   SELENIUM_MANAGER_ASSET_NAMES,
 } from "../src/standalone/embeddedAssetNames.ts";
-import { safePathJoin } from "../src/utils/fs.ts";
 
 //#region Types and consts
 
@@ -452,11 +451,11 @@ exports.binPath = function binPath() {
           buildTargetPkgCommons(platform, npm),
 
           fs.writeFile(
-            safePathJoin(npm.dir, PACKAGE_JSON_NAME),
+            path.join(npm.dir, PACKAGE_JSON_NAME),
             JSON.stringify(packageJson, null, 2),
           ),
 
-          fs.writeFile(safePathJoin(npm.dir, "index.js"), indexJs),
+          fs.writeFile(path.join(npm.dir, "index.js"), indexJs),
         ]);
 
         await finalizeNpm(npm.dir);
@@ -548,7 +547,7 @@ Alumnium CLI binary package for ${targetStr}. See [the main \`alumnium\` package
 
     $`cp ${binPath} ${pkgBinPath}`,
 
-    fs.writeFile(safePathJoin(pkg.dir, "README.md"), readmeMd),
+    fs.writeFile(path.join(pkg.dir, "README.md"), readmeMd),
   ]);
 }
 
@@ -566,19 +565,19 @@ async function buildPipWheel(
 ) {
   await fs.mkdir(TMP_DIR, { recursive: true });
   const tmpWhlDir = await fs
-    .mkdtemp(safePathJoin(TMP_DIR, "alumnium-whl"))
+    .mkdtemp(path.join(TMP_DIR, "alumnium-whl"))
     .then((name) => path.resolve(os.tmpdir(), name));
 
   await $`uv build --wheel --out-dir ${tmpWhlDir}`.cwd(dir).quiet();
 
-  const tmpAnyWhlPath = safePathJoin(
+  const tmpAnyWhlPath = path.join(
     tmpWhlDir,
     pipWheelFileName(name, PIP_ANY_PLATFORM_TAG),
   );
   const tag = tagArg || PIP_ANY_PLATFORM_TAG;
   const tagFileName = pipWheelFileName(name, tag);
-  const tmpTagWhlPath = safePathJoin(tmpWhlDir, tagFileName);
-  const tagWhlPath = safePathJoin(DIST_PIP_DIR, tagFileName);
+  const tmpTagWhlPath = path.join(tmpWhlDir, tagFileName);
+  const tagWhlPath = path.join(DIST_PIP_DIR, tagFileName);
   await $`wheel tags ${tmpAnyWhlPath} --platform-tag ${tag}`.quiet();
   await $`cp ${tmpTagWhlPath} ${tagWhlPath}`.quiet();
 
@@ -819,7 +818,7 @@ async function prepareStandaloneEmbeddedAssets() {
 
   return Promise.all(
     assets.map(async ({ name, sourcePath }) => {
-      const stagedPath = safePathJoin(STANDALONE_EMBEDDED_ASSETS_DIR, name);
+      const stagedPath = path.join(STANDALONE_EMBEDDED_ASSETS_DIR, name);
       await fs.copyFile(sourcePath, stagedPath);
       return stagedPath;
     }),
@@ -839,7 +838,7 @@ async function getStandaloneEmbeddedAssets(): Promise<
   );
 
   const seleniumAtomPaths = await Array.fromAsync(
-    new Bun.Glob(safePathJoin(seleniumPkgDir, "lib/atoms/*.js")).scan("/"),
+    new Bun.Glob(path.join(seleniumPkgDir, "lib/atoms/*.js")).scan("/"),
   );
 
   return [
@@ -850,15 +849,15 @@ async function getStandaloneEmbeddedAssets(): Promise<
 
     {
       name: SELENIUM_MANAGER_ASSET_NAMES.linux,
-      sourcePath: safePathJoin(seleniumPkgDir, "bin/linux/selenium-manager"),
+      sourcePath: path.join(seleniumPkgDir, "bin/linux/selenium-manager"),
     },
     {
       name: SELENIUM_MANAGER_ASSET_NAMES.macos,
-      sourcePath: safePathJoin(seleniumPkgDir, "bin/macos/selenium-manager"),
+      sourcePath: path.join(seleniumPkgDir, "bin/macos/selenium-manager"),
     },
     {
       name: SELENIUM_MANAGER_ASSET_NAMES.windows,
-      sourcePath: safePathJoin(
+      sourcePath: path.join(
         seleniumPkgDir,
         "bin/windows/selenium-manager.exe",
       ),
@@ -866,7 +865,7 @@ async function getStandaloneEmbeddedAssets(): Promise<
 
     {
       name: PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
-      sourcePath: safePathJoin(playwrightCorePkgDir, "package.json"),
+      sourcePath: path.join(playwrightCorePkgDir, "package.json"),
     },
   ];
 }
