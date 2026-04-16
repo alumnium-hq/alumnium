@@ -19,10 +19,11 @@ shfmt = "latest" # .sh formatter
 oxfmt = "latest" # TS formatter
 "pipx:pyprojectsort" = "latest" # pyproject.toml formatter
 "pipx:wheel" = "latest" # Python wheel builder
+ollama = "latest"
 
 [env]
 '_'.file = { path = ".env" }
-_.source = "scripts/env.sh"
+'_'.source = "scripts/env.sh"
 # Tool envs
 gh = "latest" # GitHub CLI
 MISE_EXPERIMENTAL = true # Enable monorepo root support
@@ -59,6 +60,9 @@ run = [
 # NOTE: It prompts for sudo to install OS dependencies
 raw = true
 
+[tasks."install/ollama"]
+run = "ollama pull mistral-small3.1:24b"
+
 [tasks.build]
 depends = ["//packages/typescript:build", "//packages/python:build"]
 description = "Build all packages"
@@ -84,6 +88,14 @@ run = [{ task = "//packages/typescript:dev/mcp:inspect" }]
 [tasks."clean"]
 run = "rm -rf ./.alumnium"
 depends_post = ["//packages/typescript:clean", "//packages/python:clean"]
+
+[tasks."clear/cache"]
+description = "Clears all Alumnium LLM cache."
+run = "rm -rf ./.alumnium/cache"
+depends_post = [
+  "//packages/typescript:clear/cache",
+  "//packages/python:clear/cache",
+]
 
 [tasks.format]
 depends = ["//packages/typescript:format", "//packages/python:format"]

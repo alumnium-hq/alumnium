@@ -1,5 +1,5 @@
 import { ensure } from "alwaysly";
-import type { Lchain } from "../../../llm/Lchain.ts";
+import type { LchainSchema } from "../../../llm/LchainSchema.ts";
 import { getLogger } from "../../../utils/logger.ts";
 
 const logger = getLogger(import.meta.url);
@@ -8,9 +8,9 @@ export abstract class ElementsCacheMask {
   static ID_FIELDS = new Set(["id", "from_id", "to_id"]);
 
   static mask(
-    generation: Lchain.StoredGeneration,
+    generation: LchainSchema.StoredGeneration,
     elementIds: number[],
-  ): Lchain.StoredGeneration {
+  ): LchainSchema.StoredGeneration {
     const masked = structuredClone(generation);
 
     if (!elementIds.length) return masked;
@@ -62,9 +62,9 @@ export abstract class ElementsCacheMask {
   }
 
   static unmask(
-    generation: Lchain.StoredGeneration,
+    generation: LchainSchema.StoredGeneration,
     maskToId: Record<number, number>,
-  ): Lchain.StoredGeneration {
+  ): LchainSchema.StoredGeneration {
     const unmasked = structuredClone(generation);
 
     if (!Object.keys(maskToId).length) return unmasked;

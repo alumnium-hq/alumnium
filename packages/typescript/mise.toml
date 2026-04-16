@@ -10,6 +10,10 @@ raw = true
 [tasks.clean]
 run = "rm -rf .alumnium dist"
 
+[tasks."clear/cache"]
+description = "Clears TypeScript package Alumnium LLM cache."
+run = "rm -rf ./.alumnium/cache"
+
 [tasks.build]
 run = "./scripts/build.ts"
 description = "Build CLI bins, core npm and CLI pip packages"
@@ -105,6 +109,88 @@ run = [{ task = "test/system appium-ios" }]
 [tasks."test/system:appium-android"]
 run = [{ task = "test/system appium-android" }]
 
+[tasks."test/cache"]
+description = "Run cache tests checking if Alumnium cache correctly generated for given model. It indirectly verified LangChain Zod schemas parsing."
+usage = '''
+arg "<model>" help="Model to use for cache tests" {
+  default "azure_openai"
+}
+'''
+run = '''
+ALUMNIUM_DRIVER="playwright" \
+ALUMNIUM_MODEL="{{usage.model}}" \
+ALUMNIUM_TEST_VITEST_ARGS="--tags-filter=cache" \
+ALUMNIUM_TEST_CACHE="true" \
+./scripts/test-system.sh
+'''
+
+[tasks."test/cache:all"]
+description = "Run cache tests for all models. See `test/cache` task for details."
+# TODO: Some models aren't configured in the dev env. Add missing keys and env
+# vars if applicable, then re-enable or remove commented cache tests below.
+run = [
+  # { task = "test/cache:azure_foundry" }, # Missing key
+  { task = "test/cache:azure_openai" },
+  { task = "test/cache:anthropic" },
+  { task = "test/cache:aws_anthropic" },
+  { task = "test/cache:aws_meta" },
+  { task = "test/cache:deepseek" },
+  # { task = "test/cache:github" }, # Not supported
+  { task = "test/cache:google" },
+  { task = "test/cache:mistralai" },
+  # { task = "test/cache:ollama" }, # Fails
+  # { task = "test/cache:openai" }, # Missing key
+  { task = "test/cache:xai" },
+]
+
+[tasks."test/cache:azure_foundry"]
+description = "Run cache tests for `azure_foundry` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["azure_foundry"] }
+
+[tasks."test/cache:azure_openai"]
+description = "Run cache tests for `azure_openai` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["azure_openai"] }
+
+[tasks."test/cache:anthropic"]
+description = "Run cache tests for `anthropic` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["anthropic"] }
+
+[tasks."test/cache:aws_anthropic"]
+description = "Run cache tests for `aws_anthropic` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["aws_anthropic"] }
+
+[tasks."test/cache:aws_meta"]
+description = "Run cache tests for `aws_meta` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["aws_meta"] }
+
+[tasks."test/cache:deepseek"]
+description = "Run cache tests for `deepseek` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["deepseek"] }
+
+[tasks."test/cache:github"]
+description = "Run cache tests for `github` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["github"] }
+
+[tasks."test/cache:google"]
+description = "Run cache tests for `google` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["google"] }
+
+[tasks."test/cache:mistralai"]
+description = "Run cache tests for `mistralai` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["mistralai"] }
+
+[tasks."test/cache:ollama"]
+description = "Run cache tests for `ollama` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["ollama"] }
+
+[tasks."test/cache:openai"]
+description = "Run cache tests for `openai` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["openai"] }
+
+[tasks."test/cache:xai"]
+description = "Run cache tests for `xai` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["xai"] }
+
 [tasks."test/package"]
 run = "./scripts/test-package.sh"
 
@@ -130,3 +216,25 @@ depends = "//:types/ts:watch"
 run = "./scripts/version.ts"
 quiet = true
 raw = true
+
+[tasks."generate/types-scan-schema"]
+description = "Generates Zod schema from .types-scan.json file produced by `scanTypes` function. See docs/contributing/scan-types.md for details."
+usage = '''
+arg "<types_scan_path>" help="Path to .types-scan.json file"
+'''
+run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}}"
+
+
+[tasks."generate/types-scan-schema:class"]
+description = "Generates Zod schema from .types-scan.json file produced by `scanTypes` function. See docs/contributing/scan-types.md for details."
+usage = '''
+arg "<types_scan_path>" help="Path to .types-scan.json file"
+arg "<class_name>" help="Name of the class to enclose the generated schema in"
+'''
+run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}} --mode class --class-name {{usage.class_name}}"
+
+[tasks."generate/lchain-schema"]
+description = "Generates LchainSchema from scanned types. See docs/contributing/scan-types.md for details."
+run = '''
+mise :generate/types-scan-schema:class ./src/llm/Lchain.serialized.types-scan.json LchainSchema > ./src/llm/LchainSchema.ts
+'''
