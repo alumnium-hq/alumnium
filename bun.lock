@@ -43,6 +43,7 @@
         "playwright-core": "^1.58.2",
         "selenium-webdriver": "^4.41.0",
         "smolcanon": "^0.2.1",
+        "smollit": "^0.1.0",
         "smolxxh": "1.1.0",
         "webdriverio": "^9.24.0",
         "xml-formatter": "^3.6.7",
@@ -1173,6 +1174,8 @@
     "smol-toml": ["smol-toml@1.6.1", "", {}, "sha512-dWUG8F5sIIARXih1DTaQAX4SsiTXhInKf1buxdY9DIg4ZYPZK5nGM1VRIYmEbDbsHt7USo99xSLFu5Q1IqTmsg=="],
 
     "smolcanon": ["smolcanon@0.2.1", "", {}, "sha512-ZJvfESeVgTeB8epI82fTVpzZPMN8L54YYHeB9OXZIS1lCGLZzftbI/gzhqT8Nb+osyI4ZvYDHLAZ2LivkAwY7g=="],
+
+    "smollit": ["smollit@0.1.0", "", {}, "sha512-m8N1/fg4FgiXyVfWodMFcRqidWXRqLMtWIBiCrJuY5PPVMOhh5Dlt1sUzxgGfpAoE+sxNuqTusXeTlELxvMi6A=="],
 
     "smolxxh": ["smolxxh@1.1.0", "", {}, "sha512-83GmRJmlSPH1P063XHXHFnsNaB2ZF6gDlE9Lx8b9aoaBDaxR1HepMiBnHQGpXUijlaTRNEJPlp5k4DTWc6fliA=="],
 

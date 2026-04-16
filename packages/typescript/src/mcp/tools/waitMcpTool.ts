@@ -1,3 +1,4 @@
+import { txt } from "smollit";
 import z from "zod";
 import { AssertionError } from "../../client/errors/AssertionError.ts";
 import { sleep } from "../../utils/timers.ts";
@@ -7,11 +8,17 @@ import { McpTool } from "./McpTool.ts";
 /**
  * Wait for seconds or a natural language condition.
  */
-export const waitMcpTool = McpTool.define("wait", {
-  description:
-    "Wait for a specified duration or until a condition is met. Pass a number to wait that many seconds (1-30). Pass a string to wait for a natural language condition (e.g., 'My Account text', 'user is logged in', 'page shows success'). Uses AI-powered verification to check conditions.",
+export const waitMcpTool = McpTool.define({
+  name: "wait",
 
-  inputSchema: z.object({
+  description: txt`
+    Wait for a specified duration or until a condition is met. Pass a number to
+    wait that many seconds (1-30). Pass a string to wait for a natural language
+    condition (e.g., 'My Account text', 'user is logged in',
+    'page shows success'). Uses AI-powered verification to check conditions.
+  `,
+
+  Input: z.object({
     id: z
       .string()
       .describe("Driver ID from start (required for condition-based waiting)")

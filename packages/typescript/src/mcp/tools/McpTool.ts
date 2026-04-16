@@ -4,9 +4,10 @@ import { bindLogger, getLogger, type LoggerLike } from "../../utils/logger.ts";
 const logger = getLogger(import.meta.url);
 
 export namespace McpTool {
-  export interface DefineProps<Input extends z.ZodObject> {
+  export interface DefineProps<Name extends string, Input extends z.ZodObject> {
+    name: Name;
     description: string;
-    inputSchema: Input;
+    Input: Input;
     execute: NoInfer<DefineExecuteFn<Input>>;
   }
 
@@ -18,7 +19,7 @@ export namespace McpTool {
   export interface Definition<Name extends string, Input extends z.ZodObject> {
     name: Name;
     description: string;
-    inputSchema: Input;
+    Input: Input;
     execute: DefinitionExecuteFn<Input>;
   }
 
@@ -46,8 +47,7 @@ export abstract class McpTool {
   static Output = z.array(this.OutputContent);
 
   static define<Name extends string, Input extends z.ZodObject>(
-    name: Name,
-    props: McpTool.DefineProps<Input>,
+    props: McpTool.DefineProps<Name, Input>,
   ): McpTool.Definition<Name, Input> {
     // Instrument with input/output logging
     const execute = async (input: z.infer<Input>) => {
@@ -55,7 +55,7 @@ export abstract class McpTool {
       const id = parsedInput.data?.id;
       const executeLogger = bindLogger(
         logger,
-        (message) => `${id || "global"}/${name}(): ${message}`,
+        (message) => `${id || "global"}/${props.name}(): ${message}`,
       );
 
       executeLogger.info("Executing");
@@ -69,6 +69,6 @@ export abstract class McpTool {
       return result;
     };
 
-    return { ...props, name, execute };
+    return { ...props, execute };
   }
 }
