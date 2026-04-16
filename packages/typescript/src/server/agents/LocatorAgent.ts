@@ -52,7 +52,7 @@ export class LocatorAgent extends BaseAgent {
     logger.info("Starting element location:");
     this.logData(logger, "in", {
       Description: description,
-      "Accessibility tree": this.debugLogDetail(treeXml),
+      "Accessibility tree": this.debugLogTreeDetail(treeXml),
     });
 
     const meta: LocatorAgent.Meta = {

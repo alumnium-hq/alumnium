@@ -67,7 +67,7 @@ export class RetrieverAgent extends BaseAgent {
     logger.info("Starting retrieval:");
     this.logData(logger, "in", {
       Information: information,
-      "Accessibility tree": this.debugLogDetail(treeXml),
+      "Accessibility tree": this.debugLogTreeDetail(treeXml),
       Title: this.debugLogDetail(title),
       URL: this.debugLogDetail(url),
     });

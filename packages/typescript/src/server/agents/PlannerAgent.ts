@@ -171,7 +171,7 @@ Actions: [${actionsStr}]`.trim();
     logger.info("Starting planning:");
     this.logData(logger, "in", {
       Goal: goal,
-      "Accessibility tree": this.debugLogDetail(treeXml),
+      "Accessibility tree": this.debugLogTreeDetail(treeXml),
     });
 
     const meta: PlannerAgent.Meta = {

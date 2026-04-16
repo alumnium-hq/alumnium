@@ -23,6 +23,9 @@ concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  ALUMNIUM_LOG_DEBUG_EXTRA: all
+
 jobs:
   python:
     name: Python

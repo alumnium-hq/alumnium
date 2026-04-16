@@ -71,7 +71,7 @@ export class ActorAgent extends BaseAgent {
     this.logData(logger, "in", {
       Goal: goal,
       Step: step,
-      "Accessibility tree": this.debugLogDetail(treeXml),
+      "Accessibility tree": this.debugLogTreeDetail(treeXml),
     });
 
     const meta: ActorAgent.Meta = {
