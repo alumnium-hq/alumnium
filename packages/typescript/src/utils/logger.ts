@@ -159,3 +159,26 @@ export function bindLogger(
   );
   return boundLogger as LoggerLike;
 }
+
+export const LogDebugExtra = z.enum(["all", "langchain", "tree", "reasoning"]);
+
+export type LogDebugExtra = z.infer<typeof LogDebugExtra>;
+
+export const LOG_DEBUG_EXTRA: LogDebugExtra[] =
+  process.env.ALUMNIUM_LOG_DEBUG_EXTRA?.split(",").flatMap((s) => {
+    const parsed = LogDebugExtra.safeParse(s.trim()).data;
+    return parsed ? [parsed] : [];
+  }) || [];
+
+export function shouldLogDebugExtra(extra: LogDebugExtra) {
+  return LOG_DEBUG_EXTRA.includes(extra);
+}
+
+export function optionalLogDebugExtra<Type>(
+  extra: LogDebugExtra,
+  value: Type,
+): Type | string {
+  return LOG_DEBUG_EXTRA.includes(extra) || LOG_DEBUG_EXTRA.includes("all")
+    ? value
+    : `<DISABLED: USE ALUMNIUM_LOG_DEBUG_EXTRA="${extra}">`;
+}

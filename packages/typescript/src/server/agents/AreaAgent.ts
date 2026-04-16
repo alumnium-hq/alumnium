@@ -51,7 +51,7 @@ export class AreaAgent extends BaseAgent {
     logger.info("Starting area detection:");
     this.logData(logger, "in", {
       Description: description,
-      "Accessibility tree": this.debugLogDetail(treeXml),
+      "Accessibility tree": this.debugLogTreeDetail(treeXml),
     });
 
     const meta: AreaAgent.Meta = {
