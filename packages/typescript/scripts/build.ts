@@ -857,10 +857,7 @@ async function getStandaloneEmbeddedAssets(): Promise<
     },
     {
       name: SELENIUM_MANAGER_ASSET_NAMES.windows,
-      sourcePath: path.join(
-        seleniumPkgDir,
-        "bin/windows/selenium-manager.exe",
-      ),
+      sourcePath: path.join(seleniumPkgDir, "bin/windows/selenium-manager.exe"),
     },
 
     {

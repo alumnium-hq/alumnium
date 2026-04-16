@@ -30,7 +30,7 @@
           }
         ]
       }
-    ],
+    ]
 
     // TODO: Enabled when available in Oxlint, see: https://github.com/oxc-project/oxc/issues/479
     // "no-restricted-syntax": [
