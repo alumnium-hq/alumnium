@@ -45,7 +45,7 @@ export class McpServer {
    */
   #registerTools() {
     MCP_TOOLS.forEach((toolDef) => {
-      const { name, description, inputSchema, execute } = toolDef;
+      const { name, description, Input: inputSchema, execute } = toolDef;
       this.#server.registerTool(
         toolDef.name,
         { description, inputSchema },
