@@ -23,7 +23,6 @@ export namespace NativeClient {
 }
 
 export class NativeClient extends Client {
-  #model: Model;
   #sessionManager: SessionManager;
   session: Session;
 
@@ -34,7 +33,6 @@ export class NativeClient extends Client {
     logger.debug("Initializing NativeClient with props: {props}", { props });
     logger.info(`Using model: ${model.provider}/${model.name}`);
 
-    this.#model = model;
     this.#sessionManager = new SessionManager();
 
     const toolSchemas = convertToolsToSchemas(this.tools);
@@ -50,19 +48,15 @@ export class NativeClient extends Client {
     });
   }
 
-  get model(): Model {
-    return this.#model;
-  }
-
   async getHealth(): Promise<Client.Health> {
     return {
       status: "healthy",
-      model: this.#model.toString(),
+      model: this.session.model.toString(),
     };
   }
 
-  async getModel(): Promise<Model> {
-    return this.#model;
+  async getSessionConfiguration(): Promise<Session.Configuration> {
+    return this.session.configuration;
   }
 
   async quit(): Promise<void> {

@@ -138,7 +138,8 @@ export class Alumni {
   }
 
   async getModel(): Promise<Model> {
-    return this.client.getModel();
+    const configuration = await this.client.getSessionConfiguration();
+    return Model.fromString(configuration.model);
   }
 
   async quit(): Promise<void> {

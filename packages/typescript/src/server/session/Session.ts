@@ -36,6 +36,8 @@ export namespace Session {
     planner?: boolean | undefined;
     excludeAttributes?: Set<string> | undefined;
   }
+
+  export type Configuration = z.infer<typeof Session.Configuration>;
 }
 
 /**
@@ -44,6 +46,11 @@ export namespace Session {
 export class Session {
   static Id = z.custom<SessionId>((val) => typeof val === "string", {
     message: "Invalid session ID",
+  });
+
+  static Configuration = z.object({
+    platform: Driver.Platform,
+    model: z.string(),
   });
 
   sessionId: SessionId;
@@ -110,6 +117,13 @@ export class Session {
 
   set app(appId: AppId) {
     this.updateContext({ app: appId });
+  }
+
+  get configuration(): Session.Configuration {
+    return {
+      platform: this.platform,
+      model: this.model.toString(),
+    };
   }
 
   /**

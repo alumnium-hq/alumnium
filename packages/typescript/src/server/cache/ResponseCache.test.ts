@@ -122,7 +122,7 @@ async function setup() {
       .spyOn(GlobalFileStorePaths, "globalSubDir")
       .mockReturnValue(cacheDir.path),
   );
-  const cacheStore = new CacheStore(sessionContext, Model.current);
+  const cacheStore = new CacheStore(sessionContext, llmContext.model);
 
   const prompt1 = "prompt 1" as LlmContext.Prompt;
   const prompt2 = "prompt 2" as LlmContext.Prompt;

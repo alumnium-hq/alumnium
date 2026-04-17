@@ -1,12 +1,13 @@
 from os import getenv
 from time import sleep
 
+import pytest
 from pytest import fixture, mark
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.webdriver.support.wait import WebDriverWait
 
-from alumnium import Model, Provider
+from alumnium import Provider
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 
@@ -59,8 +60,10 @@ def login(al, driver, execute_script, navigate):
     al.clear_learn_examples()
 
 
-@mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
 def test_sorting(al):
+    if al.get_model().provider == Provider.OLLAMA:
+        pytest.xfail("Too hard for Mistral")
+
     products = {
         "Sauce Labs Backpack": 29.99,
         "Sauce Labs Bike Light": 9.99,
@@ -88,13 +91,17 @@ def test_sorting(al):
     assert al.get("prices of products (without money sign)") == sorted(prices, reverse=True)
 
 
-@mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Too hard for Mistral")
-@mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Cannot figure out how to open cart")
 @mark.xfail(
     driver_type == "appium-ios",
     reason="https://github.com/alumnium-hq/alumnium/issues/132",
 )
 def test_checkout(al):
+    model_provider = al.get_model().provider
+    if model_provider == Provider.OLLAMA:
+        pytest.xfail("Too hard for Mistral")
+    if model_provider == Provider.MISTRALAI:
+        pytest.xfail("Cannot figure out how to open cart")
+
     al.do("add onesie to cart")
     al.do("add backpack to cart")
     al.do("go to shopping cart")
@@ -115,5 +122,5 @@ def test_checkout(al):
     al.do("finish checkout")
 
     al.check("thank you for the order message is shown")
-    if Model.current.provider != Provider.DEEPSEEK:
+    if model_provider != Provider.DEEPSEEK:
         al.check("big green checkmark is shown", vision=True)

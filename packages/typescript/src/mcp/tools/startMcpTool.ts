@@ -214,6 +214,8 @@ export const startMcpTool = McpTool.define("start", {
     // Register driver in global state
     McpState.registerDriver(id, al, driver, artifactsStore);
 
+    const model = await al.getModel();
+
     return [
       {
         type: "text",
@@ -222,7 +224,7 @@ export const startMcpTool = McpTool.define("start", {
           driver: al.driver.constructor.name
             .replace(/Driver$/, "")
             .toLowerCase(),
-          model: `${client.model.provider}/${client.model.name}`,
+          model: `${model.provider}/${model.name}`,
           platform_name: platformName,
         }),
       },

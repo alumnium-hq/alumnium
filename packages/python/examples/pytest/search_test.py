@@ -1,8 +1,9 @@
 from os import getenv
 
+import pytest
 from pytest import mark, raises
 
-from alumnium import Model, Provider
+from alumnium import Provider
 
 alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
 playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
@@ -12,8 +13,10 @@ playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
     alumnium_driver == "playwright" and playwright_headless == "true",
     reason="DuckDuckGo blocks headless browsers",
 )
-@mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
 def test_search(al, navigate):
+    if al.get_model().provider == Provider.OLLAMA:
+        pytest.xfail("Poor instruction following")
+
     navigate("https://search.brave.com")
 
     al.do("type 'selenium' into the search field, then press 'Enter'")

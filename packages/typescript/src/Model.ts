@@ -3,6 +3,8 @@ import { getLogger } from "./utils/logger.ts";
 
 const logger = getLogger(import.meta.url);
 
+const ALUMNIUM_MODEL = process.env.ALUMNIUM_MODEL || "";
+
 export namespace Model {
   export type Schema = z.infer<typeof Model.Schema>;
 
@@ -28,6 +30,7 @@ export class ModelName {
   };
 }
 
+// TODO: Make class abstract and use plain object instead.
 export class Model {
   static PROVIDERS = [
     "azure_foundry",
@@ -77,8 +80,9 @@ export class Model {
   constructor(provider?: Model.Provider | undefined, name?: string) {
     // If provider is not provided, use the current model setup
     if (!provider) {
-      this.provider = Model.current.provider;
-      this.name = Model.current.name;
+      const defaults = Model.defaults();
+      this.provider = defaults.provider;
+      this.name = defaults.name;
       return;
     }
 
@@ -88,16 +92,21 @@ export class Model {
   }
 
   private static initialize() {
-    const alumniumModel = process.env.ALUMNIUM_MODEL || "";
-    if (alumniumModel) {
-      logger.debug(`Initializing model from ALUMNIUM_MODEL: ${alumniumModel}`);
+    if (ALUMNIUM_MODEL) {
+      logger.debug(`Initializing model from ALUMNIUM_MODEL: ${ALUMNIUM_MODEL}`);
     } else {
       logger.debug(
         "ALUMNIUM_MODEL not set, using default model for environment",
       );
     }
 
-    let [providerStr, name] = alumniumModel.toLowerCase().split("/");
+    const model = new Model();
+    logger.debug(`Initialized current model ${model.provider}/${model.name}`);
+    return model;
+  }
+
+  static defaults(): Model.Schema {
+    let [providerStr, name] = ALUMNIUM_MODEL.toLowerCase().split("/");
 
     let provider: Model.Provider = "openai";
     if (providerStr) {
@@ -107,9 +116,9 @@ export class Model {
       name = ModelName.DEFAULT.github;
     }
 
-    const model = new Model(provider, name);
-    logger.debug(`Initialized current model ${model.provider}/${model.name}`);
-    return model;
+    if (!name) name = ModelName.DEFAULT[provider];
+
+    return { provider, name };
   }
 
   toString() {

@@ -40,8 +40,6 @@ class Alumni:
         self.change_analysis = change_analysis if change_analysis is not None else CHANGE_ANALYSIS
         exclude_attributes = exclude_attributes if exclude_attributes is not None else EXCLUDE_ATTRIBUTES
 
-        self.model = model or Model.current
-
         if isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
         elif isinstance(driver, Page):
@@ -56,8 +54,6 @@ class Alumni:
         else:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
-        logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
-
         self.tools = {}
         for tool in self.driver.supported_tools | set(extra_tools or []):
             self.tools[tool.__name__] = tool
@@ -67,20 +63,28 @@ class Alumni:
             logger.info(f"Using HTTP client with server: {server_url}")
         else:
             logger.info("Using HTTP client with auto-managed local server")
+
         self.client = HttpClient(
             server_url,
-            self.model,
+            model,
             self.driver.platform,
             self.tools,
             planner,
             exclude_attributes,
         )
 
+        self.model = Model.from_string(self.client.get_session_configuration()["model"])
+        logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
+
         self.cache = Cache(self.client)
 
     def quit(self):
         self.client.quit()
         self.driver.quit()
+
+    def get_model(self) -> Model:
+        self.model = Model.from_string(self.client.get_session_configuration()["model"])
+        return self.model
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def do(self, goal: str) -> DoResult:
@@ -119,9 +123,11 @@ class Alumni:
         changes = ""
         if self.change_analysis and executed_steps:
             try:
+                assert before_tree is not None
+                assert before_url is not None
                 changes = self.client.analyze_changes(
-                    before_accessibility_tree=before_tree,  # ty:ignore[invalid-argument-type]
-                    before_url=before_url,  # ty:ignore[invalid-argument-type]
+                    before_accessibility_tree=before_tree,
+                    before_url=before_url,
                     after_accessibility_tree=self.driver.accessibility_tree.to_str(),
                     after_url=self.driver.url,
                 )

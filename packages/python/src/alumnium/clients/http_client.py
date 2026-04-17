@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import atexit
-import os
 from os import getpid
 from secrets import token_hex
 
@@ -24,32 +23,60 @@ class HttpClient:
     def __init__(
         self,
         url: str | None,
-        model: Model,
+        model: Model | None,
         platform: str,
         tools: dict[str, type[BaseTool]],
         planner: bool = True,
         exclude_attributes: set[str] | None = None,
     ):
         self._server_pid: str | None = None
+        self._model = model
+        self._session_configuration: dict[str, str] | None = None
         self.base_url = self._resolve_url(url)
         self.session_id = None
 
         tool_schemas = convert_tools_to_schemas(tools)
 
+        payload = {
+            "tools": tool_schemas,
+            "platform": platform,
+            "planner": planner,
+            "exclude_attributes": list(exclude_attributes or []),
+            **(
+                {
+                    "provider": self._model.provider.value,
+                    "name": self._model.name,
+                }
+                if self._model
+                else {}
+            ),
+        }
+
         response = post(
             f"{self.base_url}/v1/sessions",
-            json={
-                "provider": model.provider.value,
-                "name": model.name,
-                "tools": tool_schemas,
-                "platform": platform,
-                "planner": planner,
-                "exclude_attributes": list(exclude_attributes or []),
-            },
+            json=payload,
             timeout=30,
         )
         response.raise_for_status()
         self.session_id = response.json()["session_id"]
+
+    def get_health(self) -> dict[str, str]:
+        response = get(
+            f"{self.base_url}/v1/health",
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def get_session_configuration(self) -> dict[str, str]:
+        if self._session_configuration is None:
+            response = get(
+                f"{self.base_url}/v1/sessions/{self.session_id}/configuration",
+                timeout=30,
+            )
+            response.raise_for_status()
+            self._session_configuration = response.json()
+        return self._session_configuration
 
     def quit(self):
         try:

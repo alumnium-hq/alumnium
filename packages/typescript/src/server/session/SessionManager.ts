@@ -39,9 +39,7 @@ export class SessionManager {
   createSession(props: SessionManager.CreateSessionProps): Session {
     const sessionId = props.sessionId || Session.createId();
 
-    logger.info(
-      `Creating session ${sessionId} with model ${props.provider}/${props.name} and platform ${props.platform}`,
-    );
+    logger.debug(`Creating session with {props}`, { props });
     const {
       provider,
       name: modelName,
