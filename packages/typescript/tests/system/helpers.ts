@@ -1,4 +1,4 @@
-import { Alumni, AppiumDriver, type Element } from "alumnium";
+import { Alumni, AppiumDriver, Model, type Element } from "alumnium";
 import { never } from "alwaysly";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -30,6 +30,7 @@ export interface Setup {
   al: Alumni;
   $: Setup.Helpers;
   driverType: DriverType;
+  model: Model;
 }
 
 export namespace useSetup {
@@ -56,6 +57,8 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
     (al.driver as AppiumDriver).delay = 0.1;
   }
 
+  const model = await al.getModel();
+
   onTestFinished(async (ctx) => {
     const passed = ctx.task.result?.state === "pass";
     if (passed) {
@@ -67,7 +70,7 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
     await al.quit();
   });
 
-  return { driver, driverType, al, $ };
+  return { driver, driverType, al, $, model };
 }
 
 async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {

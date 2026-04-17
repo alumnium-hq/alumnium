@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import z from "zod";
 import { Alumni } from "../../client/Alumni.ts";
+import { NativeClient } from "../../clients/NativeClient.ts";
 import { DragSliderTool } from "../../tools/DragSliderTool.ts";
 import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.ts";
 import { NavigateBackTool } from "../../tools/NavigateBackTool.ts";
@@ -183,6 +184,13 @@ export const startMcpTool = McpTool.define("start", {
       excludeAttributes,
     });
 
+    const client = al.client;
+    if (!(client instanceof NativeClient)) {
+      const message = "Expected client to be an instance of NativeClient";
+      logger.error(message);
+      throw new Error(message);
+    }
+
     // Apply driver options to Alumnium driver
     if (Object.keys(driverSettings).length) {
       logger.debug(`Applying driver options: {driverSettings}`, {
@@ -214,7 +222,7 @@ export const startMcpTool = McpTool.define("start", {
           driver: al.driver.constructor.name
             .replace(/Driver$/, "")
             .toLowerCase(),
-          model: `${al.model.provider}/${al.model.name}`,
+          model: `${client.model.provider}/${client.model.name}`,
           platform_name: platformName,
         }),
       },
