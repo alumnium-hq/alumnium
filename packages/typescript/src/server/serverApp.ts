@@ -214,7 +214,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/examples",
               (ctx) => {
                 const { session } = ctx;
-                session.plannerAgent.promptWithExamples.examples = [];
+                session.plannerAgent.clearExamples();
                 return {
                   success: true,
                   message: "All examples cleared successfully",
