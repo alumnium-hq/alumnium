@@ -4,7 +4,7 @@ import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { ErrorResponse, HealthCheckResponse } from "../server/serverSchema.ts";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.ts";
-import { getLogger } from "../utils/logger.ts";
+import { getLogger, optionalLogDebugExtra } from "../utils/logger.ts";
 import type {
   AddExampleRequest,
   AreaRequest,
@@ -247,6 +247,13 @@ export class HttpClient extends Client {
       method,
       signal: AbortSignal.timeout(HttpClient.TIMEOUT),
     };
+
+    logger.debug("Making HTTP request {method} {path} with body: {body}", {
+      method,
+      path,
+      body: optionalLogDebugExtra("http", body),
+    });
+
     if (body != null) {
       init.headers = { "Content-Type": "application/json" };
       init.body = JSON.stringify(body);
@@ -277,6 +284,14 @@ export class HttpClient extends Client {
       );
     }
 
-    return (await response.json()) as Result;
+    const payload = await response.json();
+
+    logger.debug("Received response for {method} {path}: {payload}", {
+      method,
+      path,
+      payload: optionalLogDebugExtra("http", payload),
+    });
+
+    return payload as Result;
   }
 }
