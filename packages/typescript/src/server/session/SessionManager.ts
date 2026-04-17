@@ -13,7 +13,7 @@ const logger = getLogger(import.meta.url);
 export namespace SessionManager {
   export interface CreateSessionProps {
     platform: Driver.Platform;
-    provider: Model.Provider;
+    provider?: Model.Provider | undefined;
     name?: string | undefined;
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;

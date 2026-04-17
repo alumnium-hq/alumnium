@@ -1,3 +1,4 @@
+import z from "zod";
 import { AppId } from "../AppId.ts";
 import type { Driver } from "../drivers/Driver.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
@@ -8,7 +9,6 @@ import type { Data } from "./typecasting.ts";
 
 export namespace Client {
   export interface Props {
-    model: Model;
     platform: Driver.Platform;
     tools: Record<string, ToolClass>;
     planner: boolean | undefined;
@@ -31,22 +31,32 @@ export namespace Client {
   }
 
   export type FindElementResult = ElementRef;
+
+  export type Health = z.infer<typeof Client.Health>;
 }
 
 export abstract class Client {
-  protected model: Model;
+  static Health = z.object({
+    status: z.literal("healthy"),
+    // TODO: Maybe use branded type?
+    model: z.string(),
+  });
+
   protected platform: Driver.Platform;
   protected tools: Record<string, ToolClass>;
   protected planner: boolean;
   protected excludeAttributes: string[] | undefined;
 
   constructor(props: Client.Props) {
-    this.model = props.model;
     this.platform = props.platform;
     this.tools = props.tools;
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes;
   }
+
+  abstract getHealth(): Promise<Client.Health>;
+
+  abstract getModel(): Promise<Model>;
 
   abstract quit(): Promise<void>;
 

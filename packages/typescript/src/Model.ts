@@ -28,8 +28,6 @@ export class ModelName {
   };
 }
 
-let currentModel: Model | undefined;
-
 export class Model {
   static PROVIDERS = [
     "azure_foundry",
@@ -69,13 +67,23 @@ export class Model {
   provider: Model.Provider;
   name: string;
 
+  static #currentModel: Model | undefined;
+
   static get current(): Model {
-    if (!currentModel) currentModel = Model.initialize();
-    return currentModel;
+    if (!this.#currentModel) this.#currentModel = this.initialize();
+    return this.#currentModel;
   }
 
   constructor(provider?: Model.Provider | undefined, name?: string) {
-    this.provider = provider || "openai";
+    // If provider is not provided, use the current model setup
+    if (!provider) {
+      this.provider = Model.current.provider;
+      this.name = Model.current.name;
+      return;
+    }
+
+    // Apply model setup from arguments
+    this.provider = provider;
     this.name = name || ModelName.DEFAULT[this.provider];
   }
 
@@ -98,5 +106,11 @@ export class Model {
 
   toString() {
     return `${this.provider}/${this.name}`;
+  }
+
+  static fromString(modelStr: string): Model {
+    const [providerStr, name] = modelStr.toLowerCase().split("/");
+    const provider = Model.Provider.parse(providerStr);
+    return new Model(provider, name);
   }
 }

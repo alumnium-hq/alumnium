@@ -6,9 +6,9 @@ describe("Navigation", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { al } = result;
+      const { model } = result;
 
-      if (al.model.provider === "mistralai")
+      if (model.provider === "mistralai")
         skip("Mistral needs more work on navigation");
 
       return result;

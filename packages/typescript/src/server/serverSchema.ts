@@ -47,6 +47,8 @@ export const HealthCheckResponse = z.object({
   model: z.string(),
 });
 
+export type HealthCheckResponse = z.infer<typeof HealthCheckResponse>;
+
 //#endregion
 
 //#region Get sessions list ////////////////////////////////////////////////////
@@ -59,7 +61,7 @@ export const GetSessionsResponse = z.array(SessionId);
 
 export const CreateSessionBody = z.object({
   platform: Driver.Platform,
-  provider: Model.Provider,
+  provider: Model.Provider.optional(),
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),
   planner: z.boolean().default(true),
