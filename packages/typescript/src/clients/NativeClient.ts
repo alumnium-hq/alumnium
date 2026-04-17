@@ -78,7 +78,7 @@ export class NativeClient extends Client {
   }
 
   async clearExamples(): Promise<void> {
-    this.session.plannerAgent.promptWithExamples.examples = [];
+    this.session.plannerAgent.clearExamples();
   }
 
   async executeAction(

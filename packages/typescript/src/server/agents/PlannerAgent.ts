@@ -4,13 +4,9 @@ import {
   BaseMessage,
   type MessageStructure,
 } from "@langchain/core/messages";
-import {
-  ChatPromptTemplate,
-  FewShotChatMessagePromptTemplate,
-} from "@langchain/core/prompts";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import z from "zod";
-import { Model } from "../../Model.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
@@ -37,25 +33,10 @@ export namespace PlannerAgent {
 
   export type ChainOutputUnstructured = AIMessageChunk<MessageStructure>;
 
-  export type Example = z.infer<typeof PlannerAgent.Example>;
-
   export type Plan = z.infer<typeof PlannerAgent.Plan>;
 }
 
 export class PlannerAgent extends BaseAgent {
-  static Example = z.object({
-    goal: z.string().describe("The goal to achieve."),
-    accessibility_tree: z
-      .string()
-      .describe("The accessibility tree XML used for planning."),
-    actions: z
-      .array(z.string())
-      .or(z.string())
-      .describe(
-        "The list of actions to achieve the goal. Can be a single string with actions separated by a special separator.",
-      ),
-  });
-
   static Plan = z.object({
     explanation: z
       .string()
@@ -103,8 +84,9 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 
   llm: BaseChatModel;
   toolNames: string[];
-  promptWithExamples: FewShotChatMessagePromptTemplate<PlannerAgent.Example>;
-  chain: Runnable<PlannerAgent.ChainInput, PlannerAgent.ChainOutput>;
+  chain!: Runnable<PlannerAgent.ChainInput, PlannerAgent.ChainOutput>;
+  #baseExamples = "";
+  #extraExamples = "";
 
   constructor(llmContext: LlmContext, llm: BaseChatModel, toolNames: string[]) {
     super(llmContext);
@@ -119,37 +101,26 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
         .replace(" tool", ""),
     );
 
-    const examplePrompt = ChatPromptTemplate.fromMessages([
-      ["human", this.prompts.user],
-      ["ai", "{actions}"],
-    ]);
-    this.promptWithExamples = new FewShotChatMessagePromptTemplate({
-      examples: [],
-      examplePrompt,
-      inputVariables: [],
-    });
-
-    let extraExamples = "";
     if (toolNames.includes(NavigateToUrlTool.name)) {
-      extraExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
+      this.#baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
     }
     if (toolNames.includes(UploadTool.name)) {
-      extraExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
+      this.#baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
     }
+    this.#extraExamples = this.#baseExamples;
 
+    this.#generateChain();
+  }
+
+  #generateChain(): void {
     const finalPrompt = ChatPromptTemplate.fromMessages([
       [
         "system",
         pythonicFormat(this.prompts.system, {
-          separator: PlannerAgent.#LIST_SEPARATOR,
           tools: this.toolNames.join(", "),
-          extra_examples: extraExamples,
+          extra_examples: this.#extraExamples,
         }),
       ],
-      // TODO: Apparently FewShotChatMessagePromptTemplate types doesn't work,
-      // so we have to cast it to any to prevent type errors. Figure out if this
-      // can be fixed.
-      this.promptWithExamples as any,
       ["human", this.prompts["user"]],
     ]);
 
@@ -169,28 +140,23 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     logger.debug(`  -> Goal: ${goal}`);
     logger.debug(`  -> Actions: ${actions.join(", ")}`);
 
-    let output: string[] | string;
-    if (
-      PlannerAgent.#UNSTRUCTURED_OUTPUT_MODELS.includes(Model.current.provider)
-    ) {
-      output = actions.join(PlannerAgent.#LIST_SEPARATOR);
-    } else {
-      output = actions;
-    }
+    this.#extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
+    this.#generateChain();
 
-    if (!this.promptWithExamples.examples) {
-      this.promptWithExamples.examples = [];
-    }
+    logger.info("Example added.");
+  }
 
-    this.promptWithExamples.examples.push({
-      goal,
-      accessibility_tree: "",
-      actions: output,
-    });
-
-    logger.info(
-      `Example added. Total examples: ${this.promptWithExamples.examples.length}`,
-    );
+  static #formatExample(goal: string, actions: string[]): string {
+    const actionsStr = actions.map((a) => `'${a}'`).join(", ");
+    return `Example:
+Input:
+Given the following XML accessibility tree:
+\`\`\`xml
+\`\`\`
+Outline the actions needed to achieve the following goal: ${goal}
+Output:
+Explanation: To achieve the goal, the following actions will be performed: ${actions.join(", ")}.
+Actions: [${actionsStr}]`.trim();
   }
 
   /**
