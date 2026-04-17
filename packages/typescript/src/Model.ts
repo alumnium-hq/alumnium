@@ -89,6 +89,14 @@ export class Model {
 
   private static initialize() {
     const alumniumModel = process.env.ALUMNIUM_MODEL || "";
+    if (alumniumModel) {
+      logger.debug(`Initializing model from ALUMNIUM_MODEL: ${alumniumModel}`);
+    } else {
+      logger.debug(
+        "ALUMNIUM_MODEL not set, using default model for environment",
+      );
+    }
+
     let [providerStr, name] = alumniumModel.toLowerCase().split("/");
 
     let provider: Model.Provider = "openai";

@@ -160,7 +160,13 @@ export function bindLogger(
   return boundLogger as LoggerLike;
 }
 
-export const LogDebugExtra = z.enum(["all", "langchain", "tree", "reasoning"]);
+export const LogDebugExtra = z.enum([
+  "all",
+  "langchain",
+  "tree",
+  "reasoning",
+  "http",
+]);
 
 export type LogDebugExtra = z.infer<typeof LogDebugExtra>;
 
