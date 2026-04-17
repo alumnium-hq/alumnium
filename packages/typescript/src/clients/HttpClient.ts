@@ -3,6 +3,7 @@ import type { Http } from "../Http.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { ErrorResponse, HealthCheckResponse } from "../server/serverSchema.ts";
+import type { Session } from "../server/session/Session.ts";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.ts";
 import { getLogger, optionalLogDebugExtra } from "../utils/logger.ts";
 import type {
@@ -38,6 +39,7 @@ export class HttpClient extends Client {
   static TIMEOUT: number = 300_000; // 5 minutes
 
   #model: Model | undefined;
+  #sessionConfiguration: Session.Configuration | undefined;
   #baseUrl: string;
   #sessionIdPromise: Promise<string>;
 
@@ -57,10 +59,14 @@ export class HttpClient extends Client {
     this.#sessionIdPromise = this.#initSession();
   }
 
-  async getModel(): Promise<Model> {
-    if (this.#model) return this.#model;
-    const health = await this.getHealth();
-    return Model.fromString(health.model);
+  async getSessionConfiguration(): Promise<Session.Configuration> {
+    if (this.#sessionConfiguration) return this.#sessionConfiguration;
+    const config = await this.#sessionFetch<Session.Configuration>(
+      "GET",
+      "/configuration",
+    );
+    this.#sessionConfiguration = config;
+    return config;
   }
 
   async getHealth(): Promise<HealthCheckResponse> {

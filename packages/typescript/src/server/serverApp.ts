@@ -7,6 +7,7 @@ import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.ts"
 import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.ts";
 import { RetrieverAgent } from "./agents/RetrieverAgent.ts";
 import * as s from "./serverSchema.ts";
+import { Session } from "./session/Session.ts";
 import { SessionManager } from "./session/SessionManager.ts";
 
 const logger = getLogger(import.meta.url);
@@ -105,6 +106,14 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             .get("/stats", (ctx) => ctx.session.stats, {
               response: LlmUsageStats,
+            })
+
+            //#endregion
+
+            //#region Get session configuration ////////////////////////////////
+
+            .get("/configuration", (ctx) => ctx.session.configuration, {
+              response: Session.Configuration,
             })
 
             //#endregion

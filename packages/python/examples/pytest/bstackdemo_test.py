@@ -1,8 +1,9 @@
 from os import getenv
 
+import pytest
 from pytest import fixture, mark
 
-from alumnium import Model, Provider
+from alumnium import Provider
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 
@@ -16,10 +17,11 @@ def learn(al, execute_script, navigate):
     al.clear_learn_examples()
 
 
-@mark.xfail(Model.current.provider == Provider.AWS_META, reason="Needs more tuning.")
-@mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Needs more tuning.")
 @mark.xfail(driver_type == "appium-ios", reason="https://github.com/alumnium-hq/alumnium/issues/132")
 def test_checkout(al):
+    if al.get_model().provider in (Provider.AWS_META, Provider.MISTRALAI):
+        pytest.xfail("Needs more tuning.")
+
     # Add products to the cart
     al.do("add 'iPhone 12 Pro Max' to cart")
     al.do("add 'iPhone 12 Mini' to cart")

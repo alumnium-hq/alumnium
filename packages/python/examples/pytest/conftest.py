@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from os import getenv
 from pathlib import Path
@@ -10,16 +9,19 @@ from appium.webdriver.webdriver import WebDriver as Appium
 from dotenv import load_dotenv
 from playwright.sync_api import Page, sync_playwright
 from pytest import fixture, hookimpl
-from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
+from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
-from alumnium import Alumni, Model
+from alumnium import Alumni
 from alumnium.drivers.appium_driver import AppiumDriver
 
 load_dotenv()
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+model_label = getenv("ALUMNIUM_MODEL")
+run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
 
 
 @fixture(scope="session")
@@ -43,7 +45,7 @@ def driver():
                 "profile.password_manager_leak_detection": False,
             },
         )
-        driver = Chrome(options=options)
+        driver = ChromeDriver(options=options)
         yield driver
     elif driver_type == "appium-ios":
         options = XCUITestOptions()
@@ -62,7 +64,7 @@ def driver():
                 "lt:options",
                 {
                     "build": "Python - iOS",
-                    "name": f"Pytest ({Model.current.provider.value}/{Model.current.name}) ",
+                    "name": f"Pytest ({run_model_name})",
                     "isRealMobile": True,
                     "network": False,
                     "visual": True,
@@ -107,7 +109,7 @@ def driver():
                 "lt:options",
                 {
                     "build": "Python - Android",
-                    "name": f"Pytest ({Model.current.provider.value}/{Model.current.name})",
+                    "name": f"Pytest ({run_model_name})",
                     "isRealMobile": True,
                     "network": False,
                     "visual": True,
@@ -196,7 +198,7 @@ def execute_script(al):
 @fixture
 def type(driver):
     def __type(element, text):
-        if isinstance(driver, (Appium, Chrome)):
+        if isinstance(driver, (Appium, SeleniumWebDriver)):
             element.send_keys(text)
         elif isinstance(driver, Page):
             element.fill(text)
@@ -216,7 +218,7 @@ def pytest_runtest_makereport(item):
         al = item.funcargs["al"]
         driver = item.funcargs["driver"]
 
-        if isinstance(driver, (Appium, Chrome)):
+        if isinstance(driver, (Appium, SeleniumWebDriver)):
             driver.save_screenshot(f"reports/screenshot-{timestamp}.png")
         elif isinstance(driver, Page):
             driver.screenshot(path=f"reports/screenshot-{timestamp}.png")

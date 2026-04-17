@@ -2,8 +2,8 @@ import z from "zod";
 import { AppId } from "../AppId.ts";
 import type { Driver } from "../drivers/Driver.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
-import type { Model } from "../Model.ts";
 import type { ElementRef } from "../server/serverSchema.ts";
+import type { Session } from "../server/session/Session.ts";
 import type { ToolCall, ToolClass } from "../tools/BaseTool.ts";
 import type { Data } from "./typecasting.ts";
 
@@ -56,7 +56,7 @@ export abstract class Client {
 
   abstract getHealth(): Promise<Client.Health>;
 
-  abstract getModel(): Promise<Model>;
+  abstract getSessionConfiguration(): Promise<Session.Configuration>;
 
   abstract quit(): Promise<void>;
 

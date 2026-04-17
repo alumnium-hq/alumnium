@@ -88,12 +88,12 @@ export class BaseAgent {
 
   static Step = z.string().brand("BaseAgent.Step");
 
-  #llmContext: LlmContext;
+  protected llmContext: LlmContext;
   usage: LlmUsage = createLlmUsage();
   protected prompts: AgentPrompts.RolePrompts;
 
   constructor(llmContext: LlmContext) {
-    this.#llmContext = llmContext;
+    this.llmContext = llmContext;
 
     const dev = PROVIDER_TO_PROMPTS_DEV[llmContext.model.provider];
     const agentPromptsByDev =
@@ -211,7 +211,7 @@ export class BaseAgent {
                       .toString(),
                   ),
                 );
-                this.#llmContext.assignPromptsMeta(contextPrompts, meta);
+                this.llmContext.assignPromptsMeta(contextPrompts, meta);
               },
             },
           ],
@@ -221,7 +221,7 @@ export class BaseAgent {
           result: optionalLogDebugExtra("langchain", result),
         });
 
-        this.#llmContext.clearPromptsMeta(contextPrompts);
+        this.llmContext.clearPromptsMeta(contextPrompts);
 
         let message: any;
         let structured: unknown = null;

@@ -23,6 +23,11 @@ export interface SessionResponse {
   session_id: string;
 }
 
+export interface SessionConfigurationResponse {
+  platform: "chromium" | "uiautomator2" | "xcuitest";
+  model: string;
+}
+
 export interface PlanRequest {
   goal: string;
   accessibility_tree: string;
