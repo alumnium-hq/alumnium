@@ -14,7 +14,7 @@ playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
     reason="DuckDuckGo blocks headless browsers",
 )
 def test_search(al, navigate):
-    if al.get_model().provider == Provider.OLLAMA:
+    if al.model.provider == Provider.OLLAMA:
         pytest.xfail("Poor instruction following")
 
     navigate("https://search.brave.com")

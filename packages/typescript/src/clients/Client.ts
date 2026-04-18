@@ -2,8 +2,8 @@ import z from "zod";
 import { AppId } from "../AppId.ts";
 import type { Driver } from "../drivers/Driver.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { Model } from "../Model.ts";
 import type { ElementRef } from "../server/serverSchema.ts";
-import type { Session } from "../server/session/Session.ts";
 import type { ToolCall, ToolClass } from "../tools/BaseTool.ts";
 import type { Data } from "./typecasting.ts";
 
@@ -38,8 +38,6 @@ export namespace Client {
 export abstract class Client {
   static Health = z.object({
     status: z.literal("healthy"),
-    // TODO: Maybe use branded type?
-    model: z.string(),
   });
 
   protected platform: Driver.Platform;
@@ -56,7 +54,7 @@ export abstract class Client {
 
   abstract getHealth(): Promise<Client.Health>;
 
-  abstract getSessionConfiguration(): Promise<Session.Configuration>;
+  abstract getModel(): Promise<Model>;
 
   abstract quit(): Promise<void>;
 

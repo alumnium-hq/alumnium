@@ -6,7 +6,7 @@ from alumnium.tools import NavigateBackTool
 
 def test_navigate_back_uses_history(al_factory, navigate):
     al = al_factory(extra_tools=[NavigateBackTool])
-    if al.get_model().provider == Provider.MISTRALAI:
+    if al.model.provider == Provider.MISTRALAI:
         pytest.xfail("Needs more work")
 
     navigate("https://the-internet.herokuapp.com")

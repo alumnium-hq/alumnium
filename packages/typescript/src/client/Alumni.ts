@@ -137,9 +137,8 @@ export class Alumni {
     this.cache = new Cache(this.client);
   }
 
-  async getModel(): Promise<Model> {
-    const configuration = await this.client.getSessionConfiguration();
-    return Model.fromString(configuration.model);
+  get model(): Promise<Model> {
+    return this.client.getModel();
   }
 
   async quit(): Promise<void> {

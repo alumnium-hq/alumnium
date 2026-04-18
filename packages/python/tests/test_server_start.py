@@ -23,11 +23,7 @@ def test_server_starts_and_health_endpoint_responds():
         response = httpx.get(f"http://localhost:{port}/v1/health", timeout=10.0)
 
         assert response.status_code == 200
-        payload = response.json()
-        assert payload["status"] == "healthy"
-        assert isinstance(payload["model"], str)
-        model = Model.from_string(payload["model"])
-        assert model.name
+        assert response.json() == {"status": "healthy"}
     finally:
         run_server(
             daemon_kill=True,

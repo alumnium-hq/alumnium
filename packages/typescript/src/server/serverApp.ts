@@ -40,7 +40,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
     "/health",
     (_) => ({
       status: "healthy",
-      model: Model.current.toString(),
     }),
     { response: s.HealthCheckResponse },
   )
@@ -65,6 +64,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
           const session = ctx.store.sessions.createSession(ctx.body);
           return {
             session_id: session.sessionId,
+            model: session.model.toString(),
+            platform: session.platform,
           };
         },
         {
@@ -106,14 +107,6 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             .get("/stats", (ctx) => ctx.session.stats, {
               response: LlmUsageStats,
-            })
-
-            //#endregion
-
-            //#region Get session configuration ////////////////////////////////
-
-            .get("/configuration", (ctx) => ctx.session.configuration, {
-              response: Session.Configuration,
             })
 
             //#endregion

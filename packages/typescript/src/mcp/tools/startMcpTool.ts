@@ -214,7 +214,7 @@ export const startMcpTool = McpTool.define("start", {
     // Register driver in global state
     McpState.registerDriver(id, al, driver, artifactsStore);
 
-    const model = await al.getModel();
+    const model = await al.model;
 
     return [
       {

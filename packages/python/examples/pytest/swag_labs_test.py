@@ -61,7 +61,7 @@ def login(al, driver, execute_script, navigate):
 
 
 def test_sorting(al):
-    if al.get_model().provider == Provider.OLLAMA:
+    if al.model.provider == Provider.OLLAMA:
         pytest.xfail("Too hard for Mistral")
 
     products = {
@@ -96,7 +96,7 @@ def test_sorting(al):
     reason="https://github.com/alumnium-hq/alumnium/issues/132",
 )
 def test_checkout(al):
-    model_provider = al.get_model().provider
+    model_provider = al.model.provider
     if model_provider == Provider.OLLAMA:
         pytest.xfail("Too hard for Mistral")
     if model_provider == Provider.MISTRALAI:

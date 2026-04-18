@@ -30,8 +30,6 @@ class HttpClient:
         exclude_attributes: set[str] | None = None,
     ):
         self._server_pid: str | None = None
-        self._model = model
-        self._session_configuration: dict[str, str] | None = None
         self.base_url = self._resolve_url(url)
         self.session_id = None
 
@@ -44,10 +42,10 @@ class HttpClient:
             "exclude_attributes": list(exclude_attributes or []),
             **(
                 {
-                    "provider": self._model.provider.value,
-                    "name": self._model.name,
+                    "provider": model.provider.value,
+                    "name": model.name,
                 }
-                if self._model
+                if model
                 else {}
             ),
         }
@@ -58,7 +56,10 @@ class HttpClient:
             timeout=30,
         )
         response.raise_for_status()
-        self.session_id = response.json()["session_id"]
+        response_data = response.json()
+
+        self.session_id = response_data["session_id"]
+        self.model = Model.from_string(response_data["model"])
 
     def get_health(self) -> dict[str, str]:
         response = get(
@@ -67,16 +68,6 @@ class HttpClient:
         )
         response.raise_for_status()
         return response.json()
-
-    def get_session_configuration(self) -> dict[str, str]:
-        if self._session_configuration is None:
-            response = get(
-                f"{self.base_url}/v1/sessions/{self.session_id}/configuration",
-                timeout=30,
-            )
-            response.raise_for_status()
-            self._session_configuration = response.json()
-        return self._session_configuration
 
     def quit(self):
         try:

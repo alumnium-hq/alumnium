@@ -49,14 +49,11 @@ export class NativeClient extends Client {
   }
 
   async getHealth(): Promise<Client.Health> {
-    return {
-      status: "healthy",
-      model: this.session.model.toString(),
-    };
+    return { status: "healthy" };
   }
 
-  async getSessionConfiguration(): Promise<Session.Configuration> {
-    return this.session.configuration;
+  async getModel(): Promise<Model> {
+    return this.session.model;
   }
 
   async quit(): Promise<void> {

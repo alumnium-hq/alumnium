@@ -21,11 +21,8 @@ export interface SessionRequest {
 
 export interface SessionResponse {
   session_id: string;
-}
-
-export interface SessionConfigurationResponse {
-  platform: "chromium" | "uiautomator2" | "xcuitest";
   model: string;
+  platform: "chromium" | "uiautomator2" | "xcuitest";
 }
 
 export interface PlanRequest {

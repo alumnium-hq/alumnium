@@ -6,7 +6,7 @@ from alumnium.tools import ExecuteJavascriptTool
 
 def test_execute_javascript_to_scroll(al_factory, navigate):
     al = al_factory(extra_tools=[ExecuteJavascriptTool])
-    model_provider = al.get_model().provider
+    model_provider = al.model.provider
     if model_provider == Provider.DEEPSEEK:
         pytest.xfail("No vision support yet")
     if model_provider == Provider.XAI:

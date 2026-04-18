@@ -31,7 +31,7 @@ def test_file_upload(al, file, navigate):
 
 @mark.xfail("appium" in driver_type, reason="File upload is not implemented in Appium yet")
 def test_multiple_file_upload(al, file, file2, navigate):
-    if al.get_model().provider == Provider.AWS_META:
+    if al.model.provider == Provider.AWS_META:
         pytest.xfail("Prefers to click on the upload button manually")
 
     navigate("multiple_file_upload.html")
@@ -47,7 +47,7 @@ def test_multiple_file_upload(al, file, file2, navigate):
 @mark.xfail("appium" in driver_type, reason="File upload is not implemented in Appium yet")
 @mark.xfail(driver_type == "selenium", reason="Hidden file upload inputs are not supported in Selenium")
 def test_hidden_file_upload(al, file, navigate):
-    if al.get_model().provider == Provider.AWS_META:
+    if al.model.provider == Provider.AWS_META:
         pytest.xfail("Prefers to click on the upload button manually")
 
     navigate("hidden_file_upload.html")

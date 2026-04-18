@@ -11,7 +11,7 @@ from alumnium import Provider
     reason="Example doesn't support drag and drop in mobile browsers",
 )
 def test_drag_and_drop(al, navigate):
-    if al.get_model().provider == Provider.DEEPSEEK:
+    if al.model.provider == Provider.DEEPSEEK:
         pytest.xfail("No vision support yet")
 
     navigate("https://the-internet.herokuapp.com/drag_and_drop")

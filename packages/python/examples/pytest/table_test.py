@@ -9,7 +9,7 @@ from alumnium import Provider
 @fixture(autouse=True)
 def learn(al):
     # These models double-click to sort
-    if al.get_model().provider == Provider.MISTRALAI:
+    if al.model.provider == Provider.MISTRALAI:
         al.learn(
             goal="sort by web site",
             actions=["click 'Web Site' header"],
@@ -23,7 +23,7 @@ def learn(al):
     reason="Area is not properly extracted from Appium source code.",
 )
 def test_table_extraction(al, navigate):
-    if al.get_model().provider == Provider.AWS_META:
+    if al.model.provider == Provider.AWS_META:
         pytest.xfail("Table area instructions need more work")
 
     navigate("https://the-internet.herokuapp.com/tables")
@@ -40,7 +40,7 @@ def test_table_extraction(al, navigate):
     reason="Area is not properly extracted from Appium source code.",
 )
 def test_table_sorting(al, navigate):
-    if al.get_model().provider == Provider.AWS_META:
+    if al.model.provider == Provider.AWS_META:
         pytest.xfail("Table area instructions need more work")
 
     navigate("https://the-internet.herokuapp.com/tables")
