@@ -80,6 +80,10 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         if "_frame_chain" in node:
             self._frame_chain_map[self._next_raw_id] = node["_frame_chain"]
 
+        # Store alert action metadata for synthetic alert dialog buttons
+        if "_alert_action" in node:
+            elem.set("_alert_action", node["_alert_action"])
+
         # Add all node attributes as XML attributes
         if "backendDOMNodeId" in node:
             elem.set("backendDOMNodeId", str(node["backendDOMNodeId"]))
@@ -165,6 +169,14 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         element = find_element(root, str(raw_id))
         if element is None:
             raise KeyError(f"No element with raw_id={raw_id} found")
+
+        # Check if this is an alert dialog button
+        alert_action = element.get("_alert_action")
+        if alert_action:
+            return AccessibilityElement(
+                type=element.tag,
+                alert_action=alert_action,
+            )
 
         # Check if this is a Playwright node (cross-origin iframe element)
         if element.get("_playwright_node") == "true":
