@@ -72,8 +72,8 @@ class Alumni:
             planner,
             exclude_attributes,
         )
+        self.model = self.client.model
 
-        self.model = Model.from_string(self.client.get_session_configuration()["model"])
         logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
 
         self.cache = Cache(self.client)
@@ -81,10 +81,6 @@ class Alumni:
     def quit(self):
         self.client.quit()
         self.driver.quit()
-
-    def get_model(self) -> Model:
-        self.model = Model.from_string(self.client.get_session_configuration()["model"])
-        return self.model
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def do(self, goal: str) -> DoResult:

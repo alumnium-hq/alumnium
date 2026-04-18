@@ -11,7 +11,7 @@ from alumnium import Provider
     reason="Appium doesn't support select tool yet",
 )
 def test_select_option(al, navigate):
-    model_provider = al.get_model().provider
+    model_provider = al.model.provider
     if model_provider == Provider.OLLAMA:
         pytest.xfail("Poor instruction following")
     if model_provider in (Provider.DEEPSEEK, Provider.XAI):

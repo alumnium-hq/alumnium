@@ -43,8 +43,6 @@ export const CacheableRequestBody = z.object({
 
 export const HealthCheckResponse = z.object({
   status: z.literal("healthy"),
-  // TODO: Maybe use branded type?
-  model: z.string(),
 });
 
 export type HealthCheckResponse = z.infer<typeof HealthCheckResponse>;
@@ -70,6 +68,8 @@ export const CreateSessionBody = z.object({
 
 export const CreateSessionResponse = z.object({
   session_id: SessionId,
+  model: z.string(),
+  platform: Driver.Platform,
 });
 
 export const SessionParams = z.object({

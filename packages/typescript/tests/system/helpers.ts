@@ -57,7 +57,7 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
     (al.driver as AppiumDriver).delay = 0.1;
   }
 
-  const model = await al.getModel();
+  const model = await al.model;
 
   onTestFinished(async (ctx) => {
     const passed = ctx.task.result?.state === "pass";
