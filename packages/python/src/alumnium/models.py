@@ -1,6 +1,5 @@
 from enum import Enum
 from os import getenv
-from typing import Any
 
 
 class Provider(Enum):
@@ -36,17 +35,22 @@ class Name:
 
 
 class Model:
-    current: "Model"
-
     def __init__(self, provider=None, name=None):
         self.provider = Provider(provider or Provider.OPENAI)
         self.name = name or Name.DEFAULT.get(self.provider, "")
 
+    @staticmethod
+    def from_string(model: str) -> "Model":
+        provider, *name = model.lower().split("/", maxsplit=1)
+        return Model(provider, name[0] if name else None)
 
-provider, *name = getenv("ALUMNIUM_MODEL", "").lower().split("/", maxsplit=1)
+    @staticmethod
+    def from_env() -> "Model | None":
+        provider, *name = getenv("ALUMNIUM_MODEL", "").lower().split("/", maxsplit=1)
+        if not provider and getenv("GITHUB_ACTIONS"):
+            provider = "github"
 
-name = name[0] if name else None
-if not provider and getenv("GITHUB_ACTIONS"):
-    provider = "github"
+        if not provider:
+            return None
 
-Model.current = Model(provider, name)
+        return Model(provider, name[0] if name else None)

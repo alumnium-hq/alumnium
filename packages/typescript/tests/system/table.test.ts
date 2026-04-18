@@ -5,13 +5,13 @@ describe("Table", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { al, driverType } = result;
+      const { al, model, driverType } = result;
 
       // These models double-click to sort
-      if (al.model.provider === "mistralai")
+      if (model.provider === "mistralai")
         await al.learn("sort by web site", ["click 'Web Site' header"]);
 
-      if (al.model.provider === "aws_meta")
+      if (model.provider === "aws_meta")
         skip("Table area instructions need more work");
 
       if (driverType.startsWith("appium"))

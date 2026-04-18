@@ -12,6 +12,9 @@ concurrency:
   group: ci-${{ github.event.pull_request.head.ref || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
 
+env:
+  ALUMNIUM_LOG_DEBUG_EXTRA: all
+
 jobs:
   test:
     name: Test

@@ -11,8 +11,8 @@ import type { ToolCall } from "../tools/BaseTool.ts";
 
 export interface SessionRequest {
   platform: "chromium" | "uiautomator2" | "xcuitest";
-  provider: string;
-  name?: string;
+  provider: string | undefined;
+  name?: string | undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tools: { [key: string]: any }[];
   planner: boolean;
@@ -21,6 +21,8 @@ export interface SessionRequest {
 
 export interface SessionResponse {
   session_id: string;
+  model: string;
+  platform: "chromium" | "uiautomator2" | "xcuitest";
 }
 
 export interface PlanRequest {

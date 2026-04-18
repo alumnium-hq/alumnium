@@ -5,10 +5,10 @@ describe("Calculator", () => {
   const it = baseIt.override("setup", async ({ setup }) => {
     return async (options) => {
       const result = await setup(options);
-      const { al } = result;
+      const { model } = result;
 
       // Mistral skips '+' button.
-      if (al.model.provider === "mistralai")
+      if (model.provider === "mistralai")
         await result.al.learn("4 / 2 =", [
           "click button '4'",
           "click button '÷'",

@@ -1,6 +1,10 @@
 import { Runnable, type RunnableConfig } from "@langchain/core/runnables";
 import { always } from "alwaysly";
-import { getLogger, type LoggerLike } from "../../utils/logger.ts";
+import {
+  getLogger,
+  optionalLogDebugExtra,
+  type LoggerLike,
+} from "../../utils/logger.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
@@ -84,12 +88,12 @@ export class BaseAgent {
 
   static Step = z.string().brand("BaseAgent.Step");
 
-  #llmContext: LlmContext;
+  protected llmContext: LlmContext;
   usage: LlmUsage = createLlmUsage();
   protected prompts: AgentPrompts.RolePrompts;
 
   constructor(llmContext: LlmContext) {
-    this.#llmContext = llmContext;
+    this.llmContext = llmContext;
 
     const dev = PROVIDER_TO_PROMPTS_DEV[llmContext.model.provider];
     const agentPromptsByDev =
@@ -190,8 +194,9 @@ export class BaseAgent {
         );
 
         logger.debug(`Invoking ${agentName} agent chain input: {input}`, {
-          input,
+          input: optionalLogDebugExtra("langchain", input),
         });
+
         // @ts-expect-error
         const result = await chain.invoke(input, {
           ...options,
@@ -206,15 +211,17 @@ export class BaseAgent {
                       .toString(),
                   ),
                 );
-                this.#llmContext.assignPromptsMeta(contextPrompts, meta);
+                this.llmContext.assignPromptsMeta(contextPrompts, meta);
               },
             },
           ],
         });
+
         logger.debug(`Got ${agentName} agent chain result: {result}`, {
-          result,
+          result: optionalLogDebugExtra("langchain", result),
         });
-        this.#llmContext.clearPromptsMeta(contextPrompts);
+
+        this.llmContext.clearPromptsMeta(contextPrompts);
 
         let message: any;
         let structured: unknown = null;
@@ -228,7 +235,7 @@ export class BaseAgent {
         const reasoning = this.#extractReasoning(message);
         if (reasoning) {
           logger.info(this.formatLog("out", "Reasoning"), {
-            detail: reasoning,
+            detail: optionalLogDebugExtra("reasoning", reasoning),
           });
         }
 
@@ -341,6 +348,12 @@ export class BaseAgent {
         value instanceof BaseAgentDebugLogDetail ? value.payload : value;
       logger[level](message, { detail });
     }
+  }
+
+  protected debugLogTreeDetail(
+    treeXml: string,
+  ): BaseAgentDebugLogDetail | string {
+    return optionalLogDebugExtra("tree", new BaseAgentDebugLogDetail(treeXml));
   }
 
   protected debugLogDetail(value: unknown): BaseAgentDebugLogDetail {

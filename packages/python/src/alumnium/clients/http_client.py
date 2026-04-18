@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import atexit
-import os
 from os import getpid
 from secrets import token_hex
 
@@ -24,7 +23,7 @@ class HttpClient:
     def __init__(
         self,
         url: str | None,
-        model: Model,
+        model: Model | None,
         platform: str,
         tools: dict[str, type[BaseTool]],
         planner: bool = True,
@@ -36,20 +35,39 @@ class HttpClient:
 
         tool_schemas = convert_tools_to_schemas(tools)
 
+        payload = {
+            "tools": tool_schemas,
+            "platform": platform,
+            "planner": planner,
+            "exclude_attributes": list(exclude_attributes or []),
+            **(
+                {
+                    "provider": model.provider.value,
+                    "name": model.name,
+                }
+                if model
+                else {}
+            ),
+        }
+
         response = post(
             f"{self.base_url}/v1/sessions",
-            json={
-                "provider": model.provider.value,
-                "name": model.name,
-                "tools": tool_schemas,
-                "platform": platform,
-                "planner": planner,
-                "exclude_attributes": list(exclude_attributes or []),
-            },
+            json=payload,
             timeout=30,
         )
         response.raise_for_status()
-        self.session_id = response.json()["session_id"]
+        response_data = response.json()
+
+        self.session_id = response_data["session_id"]
+        self.model = Model.from_string(response_data["model"])
+
+    def get_health(self) -> dict[str, str]:
+        response = get(
+            f"{self.base_url}/v1/health",
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json()
 
     def quit(self):
         try:

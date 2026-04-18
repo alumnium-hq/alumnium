@@ -111,8 +111,6 @@ async function setup() {
     sessionId: "test-session-id" as SessionId,
   });
 
-  const llmContext = new LlmContext(Model.current);
-
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 
   const fixedModel = new Model("openai", "gpt-5-nano-2025-08-07");
@@ -122,7 +120,9 @@ async function setup() {
       .spyOn(GlobalFileStorePaths, "globalSubDir")
       .mockReturnValue(cacheDir.path),
   );
-  const cacheStore = new CacheStore(sessionContext, Model.current);
+
+  const llmContext = new LlmContext(Model.current);
+  const cacheStore = new CacheStore(sessionContext, llmContext.model);
 
   const prompt1 = "prompt 1" as LlmContext.Prompt;
   const prompt2 = "prompt 2" as LlmContext.Prompt;

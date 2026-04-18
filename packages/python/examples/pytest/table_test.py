@@ -1,14 +1,15 @@
 from os import getenv
 
+import pytest
 from pytest import fixture, mark
 
-from alumnium import Model, Provider
+from alumnium import Provider
 
 
 @fixture(autouse=True)
 def learn(al):
     # These models double-click to sort
-    if Model.current.provider == Provider.MISTRALAI:
+    if al.model.provider == Provider.MISTRALAI:
         al.learn(
             goal="sort by web site",
             actions=["click 'Web Site' header"],
@@ -19,13 +20,12 @@ def learn(al):
 
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
-    reason="Area is not propery extracted from Appium source code.",
-)
-@mark.xfail(
-    Model.current.provider == Provider.AWS_META,
-    reason="Table area instructions need more work",
+    reason="Area is not properly extracted from Appium source code.",
 )
 def test_table_extraction(al, navigate):
+    if al.model.provider == Provider.AWS_META:
+        pytest.xfail("Table area instructions need more work")
+
     navigate("https://the-internet.herokuapp.com/tables")
 
     area = al.area("first table")
@@ -37,13 +37,12 @@ def test_table_extraction(al, navigate):
 
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
-    reason="Area is not propery extracted from Appium source code.",
-)
-@mark.xfail(
-    Model.current.provider == Provider.AWS_META,
-    reason="Table area instructions need more work",
+    reason="Area is not properly extracted from Appium source code.",
 )
 def test_table_sorting(al, navigate):
+    if al.model.provider == Provider.AWS_META:
+        pytest.xfail("Table area instructions need more work")
+
     navigate("https://the-internet.herokuapp.com/tables")
 
     table1 = al.area("first table")

@@ -3,6 +3,8 @@ import { getLogger } from "./utils/logger.ts";
 
 const logger = getLogger(import.meta.url);
 
+const ALUMNIUM_MODEL = process.env.ALUMNIUM_MODEL || "";
+
 export namespace Model {
   export type Schema = z.infer<typeof Model.Schema>;
 
@@ -28,8 +30,7 @@ export class ModelName {
   };
 }
 
-let currentModel: Model | undefined;
-
+// TODO: Make class abstract and use plain object instead.
 export class Model {
   static PROVIDERS = [
     "azure_foundry",
@@ -69,19 +70,43 @@ export class Model {
   provider: Model.Provider;
   name: string;
 
+  static #currentModel: Model | undefined;
+
   static get current(): Model {
-    if (!currentModel) currentModel = Model.initialize();
-    return currentModel;
+    if (!this.#currentModel) this.#currentModel = this.initialize();
+    return this.#currentModel;
   }
 
   constructor(provider?: Model.Provider | undefined, name?: string) {
-    this.provider = provider || "openai";
+    // If provider is not provided, use the current model setup
+    if (!provider) {
+      const defaults = Model.defaults();
+      this.provider = defaults.provider;
+      this.name = defaults.name;
+      return;
+    }
+
+    // Apply model setup from arguments
+    this.provider = provider;
     this.name = name || ModelName.DEFAULT[this.provider];
   }
 
   private static initialize() {
-    const alumniumModel = process.env.ALUMNIUM_MODEL || "";
-    let [providerStr, name] = alumniumModel.toLowerCase().split("/");
+    if (ALUMNIUM_MODEL) {
+      logger.debug(`Initializing model from ALUMNIUM_MODEL: ${ALUMNIUM_MODEL}`);
+    } else {
+      logger.debug(
+        "ALUMNIUM_MODEL not set, using default model for environment",
+      );
+    }
+
+    const model = new Model();
+    logger.debug(`Initialized current model ${model.provider}/${model.name}`);
+    return model;
+  }
+
+  static defaults(): Model.Schema {
+    let [providerStr, name] = ALUMNIUM_MODEL.toLowerCase().split("/");
 
     let provider: Model.Provider = "openai";
     if (providerStr) {
@@ -91,12 +116,18 @@ export class Model {
       name = ModelName.DEFAULT.github;
     }
 
-    const model = new Model(provider, name);
-    logger.debug(`Initialized current model ${model.provider}/${model.name}`);
-    return model;
+    if (!name) name = ModelName.DEFAULT[provider];
+
+    return { provider, name };
   }
 
   toString() {
     return `${this.provider}/${this.name}`;
+  }
+
+  static fromString(modelStr: string): Model {
+    const [providerStr, name] = modelStr.toLowerCase().split("/");
+    const provider = Model.Provider.parse(providerStr);
+    return new Model(provider, name);
   }
 }

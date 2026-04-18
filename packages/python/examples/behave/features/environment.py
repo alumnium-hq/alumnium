@@ -10,13 +10,16 @@ from appium.webdriver.webdriver import WebDriver as Appium
 from behave import fixture, use_fixture
 from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from playwright.sync_api import Page, sync_playwright
-from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
+from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
-from alumnium import Alumni, Model
+from alumnium import Alumni
 from alumnium.drivers.appium_driver import AppiumDriver
 
 driver_name = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+model_label = getenv("ALUMNIUM_MODEL")
+run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
 
 
 @fixture
@@ -31,7 +34,7 @@ def driver(context):
             yield context.driver
             browser_context.tracing.stop(path="reports/traces/behave.zip")
     elif driver_name == "selenium":
-        context.driver = Chrome()
+        context.driver = ChromeDriver()
         yield context.driver
         context.driver.quit()
     elif driver_name == "appium-ios":
@@ -50,7 +53,7 @@ def driver(context):
                 "lt:options",
                 {
                     "build": "Python - iOS",
-                    "name": f"Behave ({Model.current.provider.value}/{Model.current.name}) ",
+                    "name": f"Behave ({run_model_name})",
                     "isRealMobile": True,
                     "network": False,
                     "visual": True,
@@ -100,7 +103,7 @@ def driver(context):
                 "lt:options",
                 {
                     "build": "Python - Android",
-                    "name": f"Behave ({Model.current.provider.value}/{Model.current.name})",
+                    "name": f"Behave ({run_model_name})",
                     "isRealMobile": True,
                     "network": False,
                     "visual": True,
@@ -238,7 +241,7 @@ def after_scenario(context, scenario):
     for formatter in context._runner.formatters:
         if formatter.name == "html-pretty":
             timestamp = datetime.now().strftime("%H-%M-%S")
-            if isinstance(context.driver, Chrome) or isinstance(context.driver, Appium):
+            if isinstance(context.driver, (SeleniumWebDriver, Appium)):
                 context.driver.save_screenshot(f"reports/screenshot-{timestamp}.png")
             elif isinstance(context.driver, Page):
                 context.driver.screenshot(path=f"reports/screenshot-{timestamp}.png")

@@ -1,12 +1,13 @@
-from pytest import mark
+import pytest
 
-from alumnium import Model, Provider
+from alumnium import Provider
 from alumnium.tools import NavigateBackTool
 
 
-@mark.xfail(Model.current.provider == Provider.MISTRALAI, reason="Needs more work")
 def test_navigate_back_uses_history(al_factory, navigate):
     al = al_factory(extra_tools=[NavigateBackTool])
+    if al.model.provider == Provider.MISTRALAI:
+        pytest.xfail("Needs more work")
 
     navigate("https://the-internet.herokuapp.com")
     assert al.driver.url == "https://the-internet.herokuapp.com/"

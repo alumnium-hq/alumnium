@@ -1,9 +1,10 @@
 import { AppId } from "../AppId.ts";
 import type { Http } from "../Http.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
-import { ErrorResponse } from "../server/serverSchema.ts";
+import { Model } from "../Model.ts";
+import { ErrorResponse, HealthCheckResponse } from "../server/serverSchema.ts";
 import { convertToolsToSchemas } from "../tools/toolToSchemaConverter.ts";
-import { getLogger } from "../utils/logger.ts";
+import { getLogger, optionalLogDebugExtra } from "../utils/logger.ts";
 import type {
   AddExampleRequest,
   AreaRequest,
@@ -28,6 +29,7 @@ const logger = getLogger(import.meta.url);
 
 export namespace HttpClient {
   export interface Props extends Client.Props {
+    model?: Model | undefined;
     baseUrl: string;
   }
 }
@@ -35,14 +37,32 @@ export namespace HttpClient {
 export class HttpClient extends Client {
   static TIMEOUT: number = 300_000; // 5 minutes
 
+  #model: Model | undefined;
   #baseUrl: string;
   #sessionIdPromise: Promise<string>;
 
   constructor(props: HttpClient.Props) {
-    const { baseUrl, ...superProps } = props;
+    const { baseUrl, model, ...superProps } = props;
     super(superProps);
+
+    logger.debug("Initializing HttpClient with props: {props}", { props });
+    if (model) {
+      logger.info(`Using model: ${model.provider}/${model.name}`);
+    } else {
+      logger.info("Using model defined by server");
+    }
+
     this.#baseUrl = baseUrl.replace(/\/$/, "");
     this.#sessionIdPromise = this.#initSession();
+  }
+
+  async getModel(): Promise<Model> {
+    await this.#sessionIdPromise;
+    return this.#model!;
+  }
+
+  async getHealth(): Promise<HealthCheckResponse> {
+    return this.#fetch<HealthCheckResponse>("GET", "/health");
   }
 
   async quit(): Promise<void> {
@@ -197,8 +217,8 @@ export class HttpClient extends Client {
   async #initSession(): Promise<string> {
     const toolSchemas = convertToolsToSchemas(this.tools);
     const body: SessionRequest = {
-      provider: this.model.provider,
-      name: this.model.name,
+      provider: this.#model?.provider,
+      name: this.#model?.name,
       platform: this.platform as SessionRequest["platform"],
       tools: toolSchemas,
       planner: this.planner,
@@ -211,6 +231,7 @@ export class HttpClient extends Client {
       body,
     );
 
+    this.#model = Model.fromString(result.model);
     const sessionId = result.session_id;
     logger.debug(`Session initialized with ID: ${sessionId}`);
     return sessionId;
@@ -225,6 +246,13 @@ export class HttpClient extends Client {
       method,
       signal: AbortSignal.timeout(HttpClient.TIMEOUT),
     };
+
+    logger.debug("Making HTTP request {method} {path} with body: {body}", {
+      method,
+      path,
+      body: optionalLogDebugExtra("http", body),
+    });
+
     if (body != null) {
       init.headers = { "Content-Type": "application/json" };
       init.body = JSON.stringify(body);
@@ -255,6 +283,14 @@ export class HttpClient extends Client {
       );
     }
 
-    return (await response.json()) as Result;
+    const payload = await response.json();
+
+    logger.debug("Received response for {method} {path}: {payload}", {
+      method,
+      path,
+      payload: optionalLogDebugExtra("http", payload),
+    });
+
+    return payload as Result;
   }
 }

@@ -13,7 +13,7 @@ const logger = getLogger(import.meta.url);
 export namespace SessionManager {
   export interface CreateSessionProps {
     platform: Driver.Platform;
-    provider: Model.Provider;
+    provider?: Model.Provider | undefined;
     name?: string | undefined;
     tools: ToolDefinition[];
     llm?: BaseChatModel | undefined;
@@ -39,9 +39,7 @@ export class SessionManager {
   createSession(props: SessionManager.CreateSessionProps): Session {
     const sessionId = props.sessionId || Session.createId();
 
-    logger.info(
-      `Creating session ${sessionId} with model ${props.provider}/${props.name} and platform ${props.platform}`,
-    );
+    logger.debug(`Creating session with {props}`, { props });
     const {
       provider,
       name: modelName,

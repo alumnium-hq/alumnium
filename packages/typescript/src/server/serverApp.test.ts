@@ -71,10 +71,7 @@ describe("serverApp", () => {
     it("responds with health status", async () => {
       const response = await serverApp.handle(createRequest("GET", "/health"));
       expect(response.status).toBe(200);
-      expect(await response.json()).toEqual({
-        model: Model.current.toString(),
-        status: "healthy",
-      });
+      expect(await response.json()).toEqual({ status: "healthy" });
     });
   });
 

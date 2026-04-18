@@ -77,14 +77,14 @@ export class Alumni {
 
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
-  private url: string | undefined;
-  model: Model;
   private changeAnalysis: boolean;
   private llm: BaseChatModel | undefined;
 
   constructor(driver: Alumni.Driver, options: Alumni.Options = {}) {
-    this.url = options.url;
-    this.model = options.model || Model.current;
+    logger.debug("Initializing Alumni with options: {options}", { options });
+
+    const { url, model } = options;
+
     this.changeAnalysis = options.changeAnalysis ?? CHANGE_ANALYSIS;
     this.llm = options.llm;
 
@@ -113,30 +113,32 @@ export class Alumni {
     const planner = options.planner ?? PLANNER;
 
     const clientProps: Client.Props = {
-      model: this.model,
       platform: this.driver.platform,
       tools: this.tools,
       planner,
       excludeAttributes: options.excludeAttributes ?? EXCLUDE_ATTRIBUTES,
     };
 
-    if (this.url) {
-      logger.info(`Using HTTP client with server: ${this.url}`);
+    if (url) {
+      logger.info(`Using HTTP client with server: ${url}`);
       this.client = new HttpClient({
-        baseUrl: this.url,
+        baseUrl: url,
+        model,
         ...clientProps,
       });
     } else {
-      logger.info("Using native client");
       this.client = new NativeClient({
+        model: Model.current,
         llm: this.llm,
         ...clientProps,
       });
     }
 
     this.cache = new Cache(this.client);
+  }
 
-    logger.info(`Using model: ${this.model.provider}/${this.model.name}`);
+  get model(): Promise<Model> {
+    return this.client.getModel();
   }
 
   async quit(): Promise<void> {

@@ -20,7 +20,7 @@ runs:
       uses: actions/cache/restore@v5
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
-        key: alumnium-cache-v2-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
+        key: alumnium-cache-v3-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
 
     - name: Prepare Display
       if: startsWith(inputs.driver, 'appium') != true
@@ -36,7 +36,7 @@ runs:
       uses: actions/cache/save@v5
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
-        key: alumnium-cache-v2-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ github.sha }}
+        key: alumnium-cache-v3-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ github.sha }}
 
     - name: Upload Alumnium Artifacts
       if: always()

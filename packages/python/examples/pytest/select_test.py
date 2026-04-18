@@ -1,23 +1,25 @@
 from os import getenv
 
+import pytest
 from pytest import mark, raises
 
-from alumnium import Model, Provider
+from alumnium import Provider
 
 
-@mark.xfail(Model.current.provider == Provider.OLLAMA, reason="Poor instruction following")
-@mark.xfail(
-    Model.current.provider in (Provider.DEEPSEEK, Provider.XAI),
-    reason="""
-Requires separate check agent as it prefers to follow
-retriever instructions (return `value` instead of `statement`)
-    """,
-)
 @mark.xfail(
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Appium doesn't support select tool yet",
 )
 def test_select_option(al, navigate):
+    model_provider = al.model.provider
+    if model_provider == Provider.OLLAMA:
+        pytest.xfail("Poor instruction following")
+    if model_provider in (Provider.DEEPSEEK, Provider.XAI):
+        pytest.xfail(
+            "Requires separate check agent as it prefers to follow "
+            "retriever instructions (return `value` instead of `statement`)"
+        )
+
     navigate("https://the-internet.herokuapp.com/dropdown")
 
     al.check("Option 1 is not selected")

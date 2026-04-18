@@ -2,6 +2,7 @@ import type { BaseChatModel } from "@langchain/core/language_models/chat_models"
 import { always } from "alwaysly";
 import { AppId } from "../AppId.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { Model } from "../Model.ts";
 import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.ts";
 import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.ts";
 import { RetrieverAgent } from "../server/agents/RetrieverAgent.ts";
@@ -16,6 +17,7 @@ const logger = getLogger(import.meta.url);
 
 export namespace NativeClient {
   export interface Props extends Client.Props {
+    model: Model;
     llm?: BaseChatModel | undefined;
   }
 }
@@ -25,21 +27,33 @@ export class NativeClient extends Client {
   session: Session;
 
   constructor(props: NativeClient.Props) {
-    const { llm, ...superProps } = props;
-    super(superProps);
+    const { llm, model, ...superProps } = props;
+    super({ ...superProps });
+
+    logger.debug("Initializing NativeClient with props: {props}", { props });
+    logger.info(`Using model: ${model.provider}/${model.name}`);
 
     this.#sessionManager = new SessionManager();
 
     const toolSchemas = convertToolsToSchemas(this.tools);
+
     this.session = this.#sessionManager.createSession({
-      provider: this.model.provider,
-      name: this.model.name,
+      provider: model.provider,
+      name: model.name,
       tools: toolSchemas,
       platform: this.platform as SessionManager.CreateSessionProps["platform"],
       llm,
       planner: this.planner,
       excludeAttributes: this.excludeAttributes,
     });
+  }
+
+  async getHealth(): Promise<Client.Health> {
+    return { status: "healthy" };
+  }
+
+  async getModel(): Promise<Model> {
+    return this.session.model;
   }
 
   async quit(): Promise<void> {
