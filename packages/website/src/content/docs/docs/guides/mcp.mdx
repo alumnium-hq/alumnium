@@ -1,0 +1,180 @@
+---
+title: MCP
+description: Learn how to use Alumnium's MCP server to enable general-purpose AI agents to automate web and mobile applications.
+---
+
+Alumnium's [Model Context Protocol][1] server enables general-purpose AI agents like Claude Code to leverage Alumnium's web and mobile automation capabilities through the standardized Model Context Protocol. This integration allows AI assistants to control browsers and mobile applications directly.
+
+## Demo
+
+<iframe
+  width="1024"
+  height="768"
+  src="https://www.youtube.com/embed/DzkbOdQsloc?si=Tpo6QQYMUbML-Sab"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen
+/>
+
+## Installation
+
+The MCP Server is included in the Alumnium package for Python.
+
+It's recommended to use [`uv`][2] to automatically install Python and manage virtual environments. Follow official [installation instructions][3] to set it up on your system. Once installed, proceed to install Alumnium MCP server.
+
+:::note
+MCP server can be configured to use different AI providers. Follow [configuration guide][4] to learn about environment variables and setup for various AI providers. The examples below use OpenAI by default.
+:::
+
+### Claude Code
+
+```bash
+claude mcp add alumnium --env OPENAI_API_KEY=... -- uvx --from alumnium alumnium-mcp
+```
+
+### Codex
+
+```bash
+codex mcp add alumnium --env OPENAI_API_KEY=... -- uvx --from alumnium alumnium-mcp
+```
+
+### Cursor
+
+Add the the following to `mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "alumnium": {
+      "command": "uvx",
+      "args": ["--from", "alumnium", "alumnium-mcp"],
+      "env": {
+        "OPENAI_API_KEY": "..."
+      }
+    }
+  }
+}
+```
+
+### Gemini CLI
+
+```bash
+gemini mcp add alumnium --env OPENAI_API_KEY=... uvx --from alumnium alumnium-mcp
+```
+
+### Visual Studio Code
+
+```bash
+code --add-mcp '{
+    "name": "alumnium",
+    "command": "uvx",
+    "args": [
+      "--from",
+      "alumnium",
+      "alumnium-mcp"
+    ],
+    "env": {
+      "OPENAI_API_KEY": "..."
+    }
+  }'
+```
+
+## Tools
+
+The MCP Server exposes Alumnium's core automation capabilities:
+
+| Tool                       | Description                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `start_driver`             | Initialize browser/mobile drivers with Appium/Selenium/Playwright capabilities |
+| `stop_driver`              | Cleanup resources and retrieve token usage statistics                          |
+| `do`                       | Execute natural language automation commands                                   |
+| `check`                    | Verify statements about the current page state with optional vision support    |
+| `get`                      | Extract data from pages using natural language descriptions                    |
+| `fetch_accessibility_tree` | Debug page structure with raw accessibility tree                               |
+
+### `start_driver`
+
+Initialize the browser or mobile driver session with JSON capabilities. Supports all drivers: Appium, Selenium, or Playwright.
+
+#### `platformName`
+
+Selects the driver to use. Supported values are `chrome`, `ios`, and `android`.
+
+#### `cookies`
+
+Selenium and Playwright only. Set pre-defined cookies before the session starts, useful for authentication.
+
+#### `headers`
+
+Selenium and Playwright only. Set custom headers for all browser requests in the session.
+
+#### `alumnium:options`
+
+Pass `alumnium:options` in capabilities to configure Alumnium behavior for the session:
+
+```json
+{
+  "platformName": "chrome",
+  "alumnium:options": {
+    "changeAnalysis": true,
+    "planner": false,
+    "excludedAttributes": ["url"],
+    "driverSettings": {
+      "autoswitchToNewTab": false
+    }
+  }
+}
+```
+
+| Option               | Description                                                                            |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| `changeAnalysis`     | Enable UI changes analysis after each `do()` call. Default is `true`.                  |
+| `planner`            | Enable or disable the planning step in `do()`. Default is `true`.                      |
+| `excludedAttributes` | Array of accessibility tree attributes to exclude. Reduces tree size on large pages.   |
+| `driverSettings`     | Key-value pairs applied directly to the underlying driver (e.g. `autoswitchToNewTab`). |
+
+#### `appium:settings`
+
+For iOS and Android sessions, pass `appium:settings` in capabilities to configure [Appium settings][9] that are applied to the driver after it is created:
+
+```json
+{
+  "platformName": "ios",
+  "appium:settings": {
+    "allowInvisibleElements": true,
+    "ignoreUnimportantViews": true
+  }
+}
+```
+
+### `stop_driver`
+
+Stops running driver session and cleans up resources. Returns path to the artifacts directory, token usage statistics for the session and optionally saves the execution [cache][5].
+
+### `do`
+
+Perform [actions][6] in the application using natural language commands and return summary of the performed steps. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
+
+### `check`
+
+[Verify][7] application state and run assertions using natural language commands. Returns the result of the check along with explanation the verification was evaluated. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
+
+### `get`
+
+[Extract][8] data from the application based on natural language descriptions. If data is not found, returns explanation why it can't be retrieved. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
+
+### `fetch_accessibility_tree`
+
+Returns the raw accessibility tree of the current page as XML. Useful for debugging when `do`, `check`, or `get` behave unexpectedly - inspect the tree to verify element visibility, roles, and attributes.
+
+[1]: https://modelcontextprotocol.io
+[2]: https://docs.astral.sh/uv/
+[3]: https://docs.astral.sh/uv/getting-started/installation/
+[4]: /docs/getting-started/configuration
+[5]: /docs/guides/caching
+[6]: /docs/guides/actions
+[7]: /docs/guides/verifications
+[8]: /docs/guides/retrievals
+[9]: https://appium.io/docs/en/2.0/guides/settings/

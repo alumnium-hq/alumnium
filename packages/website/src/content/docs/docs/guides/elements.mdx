@@ -1,0 +1,80 @@
+---
+title: Finding Elements
+description: Learn how to find elements using Alumnium and return native Appium, Playwright, or Selenium elements for direct manipulation.
+---
+
+import LanguageContent from "../../../../components/LanguageContent.astro";
+
+Sometimes you need direct access to elements instead of using Alumnium's autonomous actions. The `find()` method locates elements using natural language descriptions and returns native driver elements that you can interact with directly.
+
+<LanguageContent lang="python">
+
+The returned element is a native driver element (Appium/Selenium `WebElement` or Playwright `Locator`), so you can use all standard methods from your testing framework.
+
+```python
+submit_button = al.find("submit button")
+submit_button.click()
+
+text_input = al.find("text input")
+text_input.send_keys("Hello Alumnium!")
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+The returned element is a native driver element (WebdriverIO `Element`, Selenium `WebElement`, or Playwright `Locator`), so you can use all standard methods from your testing framework.
+
+```typescript
+import type { WebElement } from "selenium-webdriver";
+
+const submitButton = await al.find("submit button");
+await submitButton.click();
+
+// Typecast to framework-specific element
+const textInput = (await al.find("text input")) as WebElement;
+await textInput.sendKeys("Hello Alumnium!");
+```
+
+</LanguageContent>
+
+Use `find()` when you need to:
+
+- Access element properties or attributes
+- Use framework-specific methods
+- Work with test fixtures that expect native elements
+- Get precise control over interactions
+
+<LanguageContent lang="python">
+
+```python
+# Getting element text
+price = al.find("total price")
+total = float(price.text.replace("$", ""))
+assert total > 0
+
+# Using framework-specific methods
+button = al.find("dropdown menu")
+assert button.is_displayed()
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+import type { WebElement } from "selenium-webdriver";
+
+// Getting element text
+const price = (await al.find("total price")) as WebElement;
+const total = parseFloat((await price.getText()).replace("$", ""));
+expect(total).toBeGreaterThan(0);
+
+// Using framework-specific methods
+const button = (await al.find("dropdown menu")) as WebElement;
+expect(await button.isDisplayed()).toBe(true);
+```
+
+</LanguageContent>
+
+For simple interactions where you don't need the element reference, use `do()` instead.

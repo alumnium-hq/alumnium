@@ -1,0 +1,36 @@
+---
+import PageSidebar from "@astrojs/starlight/components/PageSidebar.astro";
+
+import Pattern from "../components/Pattern.astro";
+import "../styles/global.css";
+import "../styles/blog.css";
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  author: {
+    name: string;
+    image: string;
+  };
+  tags?: string[];
+}
+
+const { title, pubDate, author, tags } = Astro.props;
+---
+
+<Pattern title={title} date={pubDate} author={author} tags={tags} mode="post" />
+
+<div class="flex flex-col lg:flex-row max-w-screen-xl mx-auto px-4 lg:px-8 lg:py-10 py-4">
+  <aside class="hidden lg:block lg:w-1/5 pr-4"></aside>
+  <main class="w-full lg:w-3/5 prose prose-lg max-w-none py-4">
+    <article class="prose dark:prose-invert lg:prose-x flex flex-col gap-14">
+      <slot />
+    </article>
+  </main>
+  <aside class="hidden lg:block lg:w-1/5 pl-4">
+    <div class="sticky top-20">
+      <PageSidebar />
+    </div>
+  </aside>
+</div>

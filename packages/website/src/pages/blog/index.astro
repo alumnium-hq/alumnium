@@ -1,0 +1,57 @@
+---
+import Page from "../../components/BlogPage.astro";
+import "../../styles/global.css";
+import { getCollection } from "astro:content";
+import FormattedDate from "../../components/FormattedDate.astro";
+import Pattern from "../../components/Pattern.astro";
+import Author from "../../components/Author.astro";
+import { routeConfig } from "../../utils/routeConfig";
+import Tags from "../../components/Tags.astro";
+const posts = (await getCollection("blog")).sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+const first = posts[0];
+if (!first) throw new Error("No posts found");
+Astro.locals.starlightRoute = routeConfig({
+  title: "Alumnium Blog",
+  slug: "blog",
+  description: "Alumnium blog with news, updates, and guides",
+});
+---
+
+<Page>
+  <main class="w-full max-w-screen-lg m-auto px-2 pt-5 pb-10 sm:px-10 sm:py-10">
+    <section>
+      <ul class="list-none flex flex-col px-2 items-center gap-8 sm:gap-10 text-cerulean-blue-900">
+        <li class="w-full">
+          <a href={`/blog/${first.id.slice(11)}/`} class="no-underline">
+            <Pattern
+              title={first.data.title}
+              date={first.data.pubDate}
+              author={first.data.author}
+              tags={first.data.tags}
+            />
+          </a>
+        </li>
+
+        {
+          posts.slice(1).map((post) => (
+            <li class="w-full max-w-screen-xs border-b border-gray-200 dark:border-gray-800 pb-8 sm:pb-10 last:border-none last:pb-0">
+              <a href={`/blog/${post.id.slice(11)}/`} class="no-underline flex flex-col gap-3">
+                <h3 class="text-2xl sm:text-3xl font-bold leading-tight text-black dark:text-white">
+                  {post.data.title}
+                </h3>
+
+                <div class="flex flex-row gap-2 items-center text-gray-600 dark:text-gray-500">
+                  <Author prefix="By" author={post.data.author} />
+                  <span>·</span>
+                  <FormattedDate date={post.data.pubDate} />
+                </div>
+
+                <Tags tags={post.data.tags} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Page>

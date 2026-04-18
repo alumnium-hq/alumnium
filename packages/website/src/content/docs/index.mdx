@@ -1,0 +1,93 @@
+---
+title: Alumnium
+description: Alumnium paves the way towards AI-powered test automation. Write human-readable test instructions and let Alumnium translate them into executable commands.
+template: splash
+banner:
+  content: |
+    Alumnium achieves SOTA on WebVoyager with <b>98.5%</b>. <a href="/blog/webvoyager-benchmark" class="underline">Read more</a>
+hero:
+  tagline: Bridge the gap between human and automated testing! Translate your test instructions into executable commands using AI.
+  image:
+    file: ../../assets/logo.svg
+    alt: Alumnium logo
+  actions:
+    - text: Get started
+      link: /docs
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/alumnium-hq/alumnium
+      icon: external
+      variant: minimal
+      attrs:
+        target: _blank
+---
+
+import { Card, CardGrid, LinkButton } from "@astrojs/starlight/components";
+import IntegratesWith from "../../components/IntegratesWith.astro";
+import SupportedBy from "../../components/SupportedBy.astro";
+import FeaturesBlock from "../../components/FeaturesBlock.astro";
+import GetNotified from "../../components/GetNotified.astro";
+
+<IntegratesWith />
+
+<FeaturesBlock />
+
+## How it works
+
+<Card title="Write Human-Readable Instructions" icon="pencil">
+Write your test case instructions in plain language with test framework you like. Alumnium provides simple commands:
+- Use `do` to describe the steps to <b>perform</b>.
+- Use `check` to verify the <b>results</b>.
+- Use `get` to <b>extract</b> data from the page.
+
+```python title="todo_test.py"
+al.do("create task 'buy milk'")
+al.check("task 'buy milk' is pending")
+assert al.get("number of pending tasks") == 1
+```
+
+  <LinkButton href="/docs/getting-started/writing-first-test" variant="secondary">Write your first test</LinkButton>
+</Card>
+
+<Card title="AI-Powered Test Execution" icon="translate">
+  Alumnium's AI interprets your instructions to generate browser interactions and execute them. This process utilizes the application's accessibility tree and, if needed, a screenshot. Alumnium works with popular AI providers like Anthropic, Google Gemini, OpenAI, Meta Llama, DeepSeek, and Mistral, with support for reasoning models for improved accuracy.
+
+{" "}
+
+{" "}
+
+<video class="rounded-xl" alt="Alumnium overview" autoplay loop muted playsinline preload width="100%" height="auto">
+  <source src="/videos/overview.mp4" type="video/mp4" />
+  <source src="/videos/overview.webm" type="video/webm" />
+</video>
+
+  <LinkButton href="/docs" variant="secondary">Learn more details</LinkButton>
+</Card>
+<Card title="Engineer-Centric Flexibility" icon="warning">
+  Alumnium doesn't write the tests for you — it helps you automate them. Designed for test and software engineers, the
+  tool keeps you in control of your test logic while handling the browser interactions.
+
+  <LinkButton href="https://github.com/alumnium-hq/alumnium/tree/main/examples" icon="external" variant="secondary" target="_blank">Check out more examples</LinkButton>
+</Card>
+
+<Card title="MCP Server" icon="seti:config">
+  Use Alumnium's automation capabilities with general-purpose AI agents through the Model Context Protocol. Connect tools like Claude Code to automate web and mobile applications as part of broader workflows.
+
+  <LinkButton href="/docs/guides/mcp" variant="secondary">Learn about MCP Server</LinkButton>
+</Card>
+
+<SupportedBy />
+
+<hr />
+<GetNotified />
+<hr />
+
+## Future-Proof Your Test Automation
+
+Alumnium is built with growth in mind. As we expand support for additional languages and platforms, you’ll have the tools you need to keep your automation strategy agile and adaptable.
+
+Get started with Python and TypeScript support and see how Alumnium can transform your test automation process.
+
+<LinkButton href="/docs/getting-started/installation" variant="secondary">
+  Try Alumnium
+</LinkButton>

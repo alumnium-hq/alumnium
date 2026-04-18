@@ -1,0 +1,33 @@
+---
+interface Props {
+  lang: "python" | "typescript";
+}
+
+const { lang } = Astro.props;
+---
+
+<div class="language-content" data-language={lang}>
+  <slot />
+</div>
+
+<style is:global>
+  .language-content {
+    display: none;
+  }
+
+  /* Show Python content by default and when Python is selected */
+  :root:not([data-language]) .language-content[data-language="python"],
+  :root[data-language="python"] .language-content[data-language="python"] {
+    display: block;
+  }
+
+  /* Show TypeScript content when TypeScript is selected */
+  :root[data-language="typescript"] .language-content[data-language="typescript"] {
+    display: block;
+  }
+
+  /* Hide Python content when TypeScript is selected */
+  :root[data-language="typescript"] .language-content[data-language="python"] {
+    display: none;
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+import "../styles/global.css";
+interface Props {
+  tags?: string[];
+  mode?: "content" | "pattern";
+}
+
+const { tags, mode = "content" } = Astro.props;
+---
+
+<div>
+  {
+    tags && (
+      <div class="flex flex-wrap gap-2 justify-center">
+        {tags.map((tag) => (
+          <span
+            class:list={[
+              "px-3 py-1 rounded-full text-sm text-center",
+              mode === "content"
+                ? "text-gray-950 bg-gray-100 dark:text-gray-300 dark:bg-gray-800"
+                : "bg-gray-100/10 text-gray-300",
+            ]}
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    )
+  }
+</div>
