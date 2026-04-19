@@ -23,3 +23,10 @@ def test_element_by_id(simple_tree: XCUITestAccessibilityTree):
     assert element.id == 74
     assert element.name == "Continue"
     assert element.type == "XCUIElementTypeButton"
+
+
+def test_scope_to_area_returns_original_if_not_found(simple_tree: XCUITestAccessibilityTree):
+    # Try to scope to a non-existent element
+    result = simple_tree.scope_to_area(99999)
+    # Should return the original tree when element not found
+    assert result.to_str() == simple_tree.to_str()
