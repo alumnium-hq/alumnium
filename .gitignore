@@ -32,3 +32,6 @@
 
 # Temporary files
 **/tmp/
+
+# AIs
+**/.claude/settings.local.json
