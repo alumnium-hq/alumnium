@@ -64,8 +64,9 @@ Ollama provides a fully local model inference. You can use it to power test exec
 Please follow the respective documentation on how to deploy Ollama to the cloud. Once deployed, download necessary model and configure Alumnium to use it:
 
 ```bash
-ollama pull mistral-small3.1:24b
+ollama pull qwen3.6
 export ALUMNIUM_MODEL="ollama"
+export ALUMNIUM_OLLAMA_URL="..."  # if you host Ollama on a server
 ```
 
 [1]: https://aws.amazon.com/bedrock

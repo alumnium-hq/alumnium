@@ -6,7 +6,7 @@ description: Write AI-powered automated tests with Alumnium. Learn how to integr
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 import LanguageContent from "../../../../components/LanguageContent.astro";
 
-Let's see how we can write a simple test that would use [Selenium][5] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
+Let's see how we can write a simple test that would use [Selenium][4] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
 
 <LanguageContent lang="python">
 
@@ -43,7 +43,6 @@ $ npm install alumnium mocha
 $ npm install ts-node @types/mocha @types/selenium-webdriver  # for TypeScript
 ```
 
-We'll also need to install Docker to run Alumnium server. Please, refer to [Docker installation guide][4] for your platform.
 
 </LanguageContent>
 
@@ -127,19 +126,6 @@ $ npx mocha
 </LanguageContent>
 
 ## Setup Alumnium
-
-<LanguageContent lang="typescript">
-The next thing we need to do is to start the Alumnium server. It is responsible for communication between the browser and the AI model and **must be running for the tests to work**. You can start it using Docker:
-
-```bash title="Starting server"
-$ docker run --rm --detach \
-      --publish 8013:8013 \
-      --env ALUMNIUM_MODEL \
-      --env OPENAI_API_KEY \
-      alumnium/alumnium
-```
-
-</LanguageContent>
 
 Now let’s add the code that would instantiate Alumnium using the browser. We can use a test fixture to ensure proper setup and teardown of the Alumnium instance:
 
@@ -754,5 +740,4 @@ Congratulations, we have completed our first test!
 [1]: /docs/getting-started/configuration
 [2]: https://pytest.org
 [3]: https://mochajs.org
-[4]: https://docs.docker.com/get-docker/
-[5]: https://www.selenium.dev/
+[4]: https://www.selenium.dev/

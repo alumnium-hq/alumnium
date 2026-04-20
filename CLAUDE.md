@@ -5,6 +5,7 @@
 AI-powered test automation framework using natural language commands. Wraps Appium, Playwright, and Selenium. Experimental/early development.
 
 **Monorepo structure**:
+
 - `packages/typescript/` - Primary implementation + MCP and AI servers
 - `packages/python/` - Client implementation
 
@@ -13,6 +14,7 @@ AI-powered test automation framework using natural language commands. Wraps Appi
 **Alumni Class**: Main entry point with API: `do()`, `check()`, `get()`, `find()`
 
 **Core flow**:
+
 1. User calls `al.do("click login button")`
 2. **PlannerAgent** breaks goal into steps
 3. **ActorAgent** converts steps to tool calls
@@ -21,6 +23,7 @@ AI-powered test automation framework using natural language commands. Wraps Appi
 6. **Accessibility Trees** provide platform-agnostic UI representation
 
 **Key directories**:
+
 - `accessibility/` - Platform-specific tree implementations (Chromium, XCUITest, UIAutomator2)
 - `drivers/` - Driver wrappers (`SeleniumDriver`, `PlaywrightDriver`, `AppiumDriver`)
 - `clients/` - `HttpClient` (communicates with server), `NativeClient` (Python only, runs agents locally)

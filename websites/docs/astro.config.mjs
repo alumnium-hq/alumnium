@@ -1,8 +1,8 @@
 // @ts-check
-import { defineConfig, sharpImageService } from "astro/config";
-import starlight from "@astrojs/starlight";
 import sitemap from "@astrojs/sitemap";
+import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
+import { defineConfig, sharpImageService } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
@@ -23,9 +23,21 @@ export default defineConfig({
       },
       title: "Alumnium",
       social: [
-        { icon: "github", label: "GitHub", href: "https://github.com/alumnium-hq/alumnium" },
-        { icon: "discord", label: "Discord", href: "https://discord.gg/mP29tTtKHg" },
-        { icon: "slack", label: "Slack", href: "https://seleniumhq.slack.com/channels/alumnium" },
+        {
+          icon: "github",
+          label: "GitHub",
+          href: "https://github.com/alumnium-hq/alumnium",
+        },
+        {
+          icon: "discord",
+          label: "Discord",
+          href: "https://discord.gg/mP29tTtKHg",
+        },
+        {
+          icon: "slack",
+          label: "Slack",
+          href: "https://seleniumhq.slack.com/channels/alumnium",
+        },
       ],
       favicon: "./public/favicon.svg",
       head: [

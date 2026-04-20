@@ -281,7 +281,9 @@ al.do("switch to the next tab")
 ```typescript
 import { Alumni, SwitchToNextTabTool, SwitchToPreviousTabTool } from "alumnium";
 
-const al = new Alumni(driver, { extraTools: [SwitchToNextTabTool, SwitchToPreviousTabTool] });
+const al = new Alumni(driver, {
+  extraTools: [SwitchToNextTabTool, SwitchToPreviousTabTool],
+});
 al.driver.autoswitchToNewTab = false;
 // do something that opens a new tab
 await al.do("switch to the next tab");

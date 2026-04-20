@@ -83,7 +83,7 @@ await driver.get("https://search.brave.com");
 await al.do("type 'selenium' into the search field, then press 'Enter'");
 await al.check("page title contains selenium");
 await al.check("search results contain selenium.dev");
-console.assert(await al.get("atomic number") === 34);
+console.assert((await al.get("atomic number")) === 34);
 
 await al.quit();
 ```

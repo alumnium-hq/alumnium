@@ -8,6 +8,12 @@
     "types": "tsgo --build",
     "types:watch": "tsgo --build --watch"
   },
+  "overrides": {
+    "ajv": ">=8.18.0",
+    "lodash": ">=4.18.1",
+    "picomatch": ">=2.3.2",
+    "yaml": ">=2.8.3"
+  },
   "devDependencies": {
     "@typescript/native-preview": "7.0.0-dev.20260327.2",
     "oxfmt": "^0.38.0",

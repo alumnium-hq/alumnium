@@ -1,6 +1,6 @@
 experimental_monorepo_root = true
 [monorepo]
-config_roots = [".", "packages/*"]
+config_roots = [".", "packages/*", "websites/*"]
 
 [tools]
 # TypeScript
@@ -40,6 +40,7 @@ run = [
   { task = "install/bun" },
   { task = "//packages/typescript:install" },
   { task = "//packages/python:install" },
+  { task = "//websites/docs:install" },
 ]
 
 [tasks."install/mise"]
@@ -60,7 +61,7 @@ run = [
 raw = true
 
 [tasks.build]
-depends = ["//packages/typescript:build", "//packages/python:build"]
+depends = ["//packages/typescript:build", "//packages/python:build", "//websites/docs:build"]
 description = "Build all packages"
 
 [tasks."dev/cli"]

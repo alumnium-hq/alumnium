@@ -1,11 +1,5 @@
-name: Deploy Website
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - websites/docs/**
-  workflow_dispatch:
+name: Deployment
+on: workflow_dispatch
 
 permissions:
   contents: read
@@ -20,11 +14,13 @@ jobs:
       run:
         working-directory: websites/docs
     steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
-      - run: mise run //websites/docs:install
-      - run: mise run //websites/docs:build
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+        with:
+          experimental: true
+      - run: mise //websites/docs:install
+      - run: mise //websites/docs:build
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: websites/docs/dist/
 
@@ -38,5 +34,5 @@ jobs:
       name: release
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v5
         id: deployment

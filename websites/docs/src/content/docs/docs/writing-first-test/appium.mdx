@@ -6,7 +6,7 @@ description: Write AI-powered automated tests with Alumnium. Learn how to integr
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 import LanguageContent from "../../../../components/LanguageContent.astro";
 
-Let's see how we can write a simple test that would use [Appium][5] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
+Let's see how we can write a simple test that would use [Appium][4] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
 
 <LanguageContent lang="python">
 
@@ -19,7 +19,7 @@ Alumnium can be used with both iOS and Android platforms, web and native applica
 <LanguageContent lang="typescript">
 
 :::note
-Alumnium can be used with both iOS and Android platforms, web and native applications, as well as any test runner you like. For the examples in this guide, we'll use iOS with Safari and [WebdriverIO][4].
+Alumnium can be used with both iOS and Android platforms, web and native applications, as well as any test runner you like. For the examples in this guide, we'll use iOS with Safari and [WebdriverIO][3].
 :::
 
 </LanguageContent>
@@ -56,7 +56,6 @@ $ npm init wdio
 $ rm test/specs/test.e2e.ts
 ```
 
-We'll also need to install Docker to run Alumnium server. Please, refer to [Docker installation guide][3] for your platform.
 
 </LanguageContent>
 
@@ -149,19 +148,6 @@ Spec Files:      1 passed, 1 total (100% completed) in 00:00:09
 </LanguageContent>
 
 ## Setup Alumnium
-
-<LanguageContent lang="typescript">
-The next thing we need to do is to start the Alumnium server. It is responsible for communication between the browser and the AI model and **must be running for the tests to work**. You can start it using Docker:
-
-```bash title="Starting server"
-$ docker run --rm --detach \
-      --publish 8013:8013 \
-      --env ALUMNIUM_MODEL \
-      --env OPENAI_API_KEY \
-      alumnium/alumnium
-```
-
-</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -789,6 +775,5 @@ Congratulations, we have completed our first test!
 
 [1]: /docs/getting-started/configuration
 [2]: https://pytest.org
-[3]: https://docs.docker.com/get-docker/
-[4]: https://webdriver.io
-[5]: https://appium.io/
+[3]: https://webdriver.io
+[4]: https://appium.io/

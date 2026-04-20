@@ -46,7 +46,6 @@ The fun part about a name like this is that it’s as flexible as the metal it's
 
 For now, Alumnium stays. It’s a name that bridges the gap between traditional automated testing and its future, as it paves its way for test automation with AI.
 
-
 [1]: https://en.wikipedia.org/wiki/Mercury_Interactive
 [2]: https://en.wikipedia.org/wiki/Selenium_(software)
 [3]: https://en.wikipedia.org/wiki/Watir

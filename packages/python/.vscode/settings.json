@@ -2,6 +2,7 @@
   "behave-vsc.featuresPath": "examples/behave/features",
   "files.exclude": {
     "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
     "**/__pycache__": true,
   },
   "python.analysis.autoImportCompletions": false,

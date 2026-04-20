@@ -1,11 +1,8 @@
 [tasks.install]
-description = "Install dependencies"
-run = "yarn install"
+run = "bun install"
 
 [tasks.build]
-description = "Build website"
-run = "yarn build"
+run = "bun run build"
 
 [tasks.dev]
-description = "Start Astro development server"
-run = "yarn dev"
+run = "bun run dev"

@@ -34,7 +34,6 @@ $ npm init playwright
 $ rm tests/example.spec.ts
 ```
 
-We'll also need to install Docker to run the Alumnium server. Please, refer to [Docker installation guide][2] for your platform.
 
 </LanguageContent>
 
@@ -84,19 +83,6 @@ Running 1 test using 1 worker
 </LanguageContent>
 
 ## Setup Alumnium
-
-<LanguageContent lang="typescript">
-The next thing we need to do is to start the Alumnium server. It is responsible for communication between the browser and the AI model and **must be running for the tests to work**. You can start it using Docker:
-
-```bash title="Starting server"
-$ docker run --rm --detach \
-      --publish 8013:8013 \
-      --env ALUMNIUM_MODEL \
-      --env OPENAI_API_KEY \
-      alumnium/alumnium
-```
-
-</LanguageContent>
 
 Now let's add the code that would instantiate Alumnium using the browser. We can use a test fixture to ensure proper setup and teardown of the Alumnium instance:
 
@@ -549,5 +535,4 @@ $ npx playwright test --project chromium --headed
 Congratulations, we have completed our first test!
 
 [1]: /docs/getting-started/configuration
-[2]: https://docs.docker.com/get-docker/
 [3]: https://playwright.dev

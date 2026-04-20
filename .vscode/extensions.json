@@ -1,3 +1,7 @@
 {
-  "recommendations": ["tekumara.typos-vscode", "typescriptteam.native-preview"],
+  "recommendations": [
+    "tekumara.typos-vscode",
+    "typescriptteam.native-preview",
+    "oxc.oxc-vscode",
+  ],
 }

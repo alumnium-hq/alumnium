@@ -5,17 +5,17 @@ description: Configure Alumnium with AI providers like OpenAI, Anthropic, Google
 
 Alumnium needs access to an AI model to work. The following models are supported:
 
-| Provider                | Model                    |
-| ----------------------- | ------------------------ |
-| [Anthropic][1]          | Claude 4.5 Haiku         |
-| [GitHub][20]            | GPT-4o Mini              |
-| [Google][2]             | Gemini 3.1 Flash Lite    |
-| [OpenAI][3] _(default)_ | GPT-5 Nano               |
-| [DeepSeek][12]          | DeepSeek R1              |
-| [Meta][8]               | Llama 4 Maverick 17B     |
-| [MistralAI][16]         | Mistral Medium 3         |
-| [Ollama][15]            | Mistral Small 3.1 24B    |
-| [xAI][18]               | Grok 4.1 Fast Reasoning  |
+| Provider                | Model                   |
+| ----------------------- | ----------------------- |
+| [Anthropic][1]          | Claude 4.5 Haiku        |
+| [GitHub][20]            | GPT-4o Mini             |
+| [Google][2]             | Gemini 3.1 Flash Lite   |
+| [OpenAI][3] _(default)_ | GPT-5 Nano              |
+| [DeepSeek][12]          | DeepSeek R1             |
+| [Meta][8]               | Llama 4 Maverick 17B    |
+| [MistralAI][16]         | Mistral Medium 3        |
+| [Ollama][15]            | Qwen 3.6                |
+| [xAI][18]               | Grok 4.1 Fast Reasoning |
 
 These models were chosen because they provide the best balance between intelligence, performance, and cost. Most models now support reasoning capabilities for improved accuracy and decision-making in test automation.
 
@@ -119,7 +119,6 @@ export ALUMNIUM_MODEL="mistralai"
 export MISTRAL_API_KEY="..."
 ```
 
-
 ## Ollama
 
 :::caution
@@ -129,10 +128,10 @@ Ollama support is experimental and performance depends on your hardware.
 To use Ollama for a fully local model inference:
 
 1. Download and install [Ollama][15].
-2. Download Mistrall Small 3.1 24B model:
+2. Download Qwen 3.6 model:
 
 ```bash
-ollama pull mistral-small3.1:24b
+ollama pull qwen3.6
 ```
 
 3. Export the following environment variable before running tests:
