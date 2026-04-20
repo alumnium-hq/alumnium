@@ -24,3 +24,10 @@ def test_element_by_id(simple_tree: UIAutomator2AccessibilityTree):
     assert element.id == 9
     assert element.androidresourceid == "org.wikipedia.alpha:id/fragment_container"
     assert element.type == "android.widget.FrameLayout"
+
+
+def test_scope_to_area_returns_original_if_not_found(simple_tree: UIAutomator2AccessibilityTree):
+    # Try to scope to a non-existent element
+    result = simple_tree.scope_to_area(99999)
+    # Should return the original tree when element not found
+    assert result.to_str() == simple_tree.to_str()
