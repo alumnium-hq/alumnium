@@ -1,0 +1,128 @@
+---
+title: Caching
+description: Learn how Alumnium caches AI communications and increases test performance and stability.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import LanguageContent from "../../../../components/LanguageContent.astro";
+
+Caching system allows to significantly increase performance and stability of tests written with Alumnium. It works best on CI systems that frequently re-run tests without underlying changes.
+
+By default, Alumnium provides in-memory cache that is used during tests execution, but discarded at the end. In order to persist the cache database, you need to add a hook in your test runner that _saves_ the cache every time the test passes and _discards_ otherwise:
+
+<LanguageContent lang="python">
+
+<Tabs>
+<TabItem label="Behave">
+
+```python
+def after_scenario(context, scenario):
+  # Assuming `context.al` is an instance of `Alumni`.
+    if scenario.status == "passed":
+        context.al.cache.save()
+    else:
+        context.al.cache.discard()
+```
+
+</TabItem>
+<TabItem label="Pytest">
+
+```python
+from pytest import hookimpl
+
+
+@hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item):
+    outcome = yield
+    report = outcome.get_result()
+    if report.when == "call":
+        # Assuming `al` is an instance of `Alumni`.
+        al = item.funcargs["al"]
+        if report.passed:
+            al.cache.save()
+        else:
+            al.cache.discard()
+```
+
+</TabItem>
+</Tabs>
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+<Tabs>
+<TabItem label="Mocha">
+
+```typescript
+export const mochaHooks = {
+  async afterEach(this: Mocha.Context) {
+    // Assuming `al` is an instance of `Alumni`.
+    if (this.currentTest?.state === "failed") {
+      await al.cache.discard();
+    } else {
+      await al.cache.save();
+    }
+  },
+};
+```
+
+</TabItem>
+<TabItem label="Playwright">
+
+```typescript
+import { test } from "@playwright/test";
+
+// Assuming `al` is an instance of `Alumni`.
+test.afterEach(async ({ al }, testInfo) => {
+  if (testInfo.status === testInfo.expectedStatus) {
+    await al.cache.save();
+  } else {
+    await al.cache.discard();
+  }
+});
+```
+
+</TabItem>
+</Tabs>
+
+</LanguageContent>
+
+Once the cache is saved, you should see storage files in the root of your project. These files contain all the AI responses that Alumnium has used during the test execution. They can be added to `.gitignore` or committed to the repository, depending on your needs.
+
+The cache will be updated automatically when the tests or UI of the application change.
+
+## Layers
+
+Alumnium uses two complementary cache layers that work together to skip LLM calls as often as possible.
+
+| Layer    | Description                                                                                                                                                                                                                                                                                                   |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Response | Stores full AI responses keyed by the exact request content — instruction, accessibility tree, and model. A cache miss occurs when the instruction or the page structure changes.                                                                                                                             |
+| Elements | Stores AI decisions together with the UI elements they reference. Resolves cached elements to their current IDs in the accessibility tree, so the cache remains valid even when element IDs change between runs. Also uses fuzzy matching on instructions, so minor rephrasing can still produce a cache hit. |
+
+## Providers
+
+You can select the cache provider by setting the `ALUMNIUM_CACHE` environment variable.
+
+| Provider                 | Description                                   | Storage            |
+| ------------------------ | --------------------------------------------- | ------------------ |
+| `filesystem` _(default)_ | Stores the cache in the filesystem directory. | `.alumnium/cache/` |
+
+You can also disable the cache completely by setting the provider to `none` or `false`.
+
+The storage directory for the `filesystem` provider can be changed with the `ALUMNIUM_CACHE_PATH` environment variable.
+
+## GitHub Actions
+
+While cache maybe less useful for local test execution, it's a good idea to use it in CI systems like GitHub Actions. This way, you can avoid unnecessary LLM calls and speed up your test runs. Saving and restoring the cache can be done using the `actions/cache` action:
+
+```yaml
+- uses: actions/cache@v4
+  with:
+    path: .alumnium/cache/
+    key: alumnium-cache-${{ github.sha }}
+    restore-keys: alumnium-cache-
+```
+
+This configuration will keep updating the cache on every commit, falling back to the latest cache in the current or default branch.

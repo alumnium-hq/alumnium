@@ -1,0 +1,29 @@
+---
+import Logo from "./Logo.astro";
+import microsoftForStartupsLight from "../assets/microsoft-for-startups-light.jpg";
+import microsoftForStartupsDark from "../assets/microsoft-for-startups-dark.jpg";
+import awsForStartups from "../assets/aws-for-startups.svg";
+import lambdaTest from "../assets/lambdatest.svg";
+---
+
+<div class="bg-primary-light dark:bg-primary-dark py-8 not-content">
+  <div class="mx-auto max-w-7xl">
+    <h2 class="text-center font-semibold text-header">Supported by</h2>
+    <div class="mx-auto mt-10 flex flex-wrap max-w-lg gap-x-8 gap-y-10 justify-center items-center">
+      <Logo src={awsForStartups.src} alt="AWS for Startups" href="https://aws.amazon.com/startups" />
+      <Logo
+        src={microsoftForStartupsLight.src}
+        alt="Microsoft for Startups"
+        className="block dark:hidden"
+        href="https://startups.microsoft.com"
+      />
+      <Logo
+        src={microsoftForStartupsDark.src}
+        alt="Microsoft for Startups"
+        className="hidden dark:block dark:invert-0 dark:brightness-100"
+        href="https://startups.microsoft.com"
+      />
+      <Logo src={lambdaTest.src} alt="LambdaTest" className="h-6" href="https://www.lambdatest.com/open-source" />
+    </div>
+  </div>
+</div>

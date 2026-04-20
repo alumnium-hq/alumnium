@@ -1,8 +1,0 @@
-{
-  "js/ts.experimental.useTsgo": true,
-  "evenBetterToml.schema.associations": {
-  },
-  "[toml]": {
-    "editor.defaultFormatter": "oxc.oxc-vscode"
-  }
-}

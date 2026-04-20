@@ -1,0 +1,82 @@
+---
+import StarsIcon from "./icons/Stars.astro";
+import ComputerIcon from "./icons/Computer.astro";
+import CodeIcon from "./icons/Code.astro";
+import WrenchIcon from "./icons/Wrench.astro";
+---
+
+<div class="bg-primary-light dark:bg-primary-dark py-8 lg:py-24 not-content">
+  <div class="mx-auto max-w-7xl">
+    <div class="max-w-2xl mx-0">
+      <h2 class="text-pretty text-3xl lg:text-4xl font-semibold tracking-tight text-header">
+        Testing doesn’t have to be tedious
+      </h2>
+      <p class="mt-6 text-lg/8 text-gray-600 dark:text-gray-300">
+        Alumnium empowers software and test engineers to speed up browser test creation without sacrificing precision or
+        control.
+      </p>
+    </div>
+    <div class="mt-8 max-w-none">
+      <dl class="grid grid-cols-1 gap-x-8 gap-y-8 lg:gap-y-16 max-w-none lg:grid-cols-4">
+        <div class="flex flex-col">
+          <dt class="text-base/7 font-semibold text-header">
+            <div class="mb-6 flex size-10 items-center justify-center rounded-lg bg-cerulean-blue-600">
+              <StarsIcon />
+            </div>
+            AI-Powered Intelligence
+          </dt>
+          <dd class="mt-1 flex flex-auto flex-col text-base/7 text-gray-600 dark:text-gray-300">
+            <p class="flex-auto">
+              Leveraging the full power of LLMs, Alumnium eliminates testing headaches with natural-language-to-code
+              translation.
+            </p>
+          </dd>
+        </div>
+        <div class="flex flex-col">
+          <dt class="text-base/7 font-semibold text-header">
+            <div class="mb-6 flex size-10 items-center justify-center rounded-lg bg-cerulean-blue-600">
+              <ComputerIcon />
+            </div>
+            Supports Web and Mobile
+          </dt>
+          <dd class="mt-1 flex flex-auto flex-col text-base/7 text-gray-600 dark:text-gray-300">
+            <p class="flex-auto">
+              Alumnium works together with the most popular test automation tools, including
+              <a href="https://appium.io">Appium</a>,
+              <a href="https://playwright.dev/">Playwright</a>, and
+              <a href="https://www.selenium.dev/">Selenium</a>.
+            </p>
+          </dd>
+        </div>
+        <div class="flex
+                flex-col">
+          <dt class="text-base/7 font-semibold text-header">
+            <div class="mb-6 flex size-10 items-center justify-center rounded-lg bg-cerulean-blue-600">
+              <CodeIcon />
+            </div>
+            Use Your Test Framework
+          </dt>
+          <dd class="mt-1 flex flex-auto flex-col text-base/7 text-gray-600 dark:text-gray-300">
+            <p class="flex-auto">
+              Alumnium supports any Python test framework today, with JavaScript, Ruby, and more in the works.
+            </p>
+          </dd>
+        </div>
+        <div class="flex flex-col">
+          <dt class="text-base/7 font-semibold text-header">
+            <div class="mb-6 flex size-10 items-center justify-center rounded-lg bg-cerulean-blue-600">
+              <WrenchIcon />
+            </div>
+            Tailored for Engineers
+          </dt>
+          <dd class="mt-1 flex flex-auto flex-col text-base/7 text-gray-600 dark:text-gray-300">
+            <p class="flex-auto">
+              Written by software and QA engineers, Alumnium helps you build reliable tests without sacrificing your
+              expertise.
+            </p>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>

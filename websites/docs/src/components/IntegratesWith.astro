@@ -1,0 +1,35 @@
+---
+import Logo from "./Logo.astro";
+
+import claude from "../assets/claude.svg";
+import deepseek from "../assets/deepseek.svg";
+import gemini from "../assets/gemini.svg";
+import meta from "../assets/meta.svg";
+import mistral from "../assets/mistral.svg";
+import openai from "../assets/openai.svg";
+import grok from "../assets/grok.svg";
+
+import appium from "../assets/appium.svg";
+import playwright from "../assets/playwright.svg";
+import selenium from "../assets/selenium.svg";
+---
+
+<div class="bg-primary-light dark:bg-primary-dark py-8 not-content">
+  <div class="mx-auto max-w-7xl">
+    <h2 class="text-center font-semibold text-header">Integrates with</h2>
+    <div class="mx-auto mt-6 lg:mt-10 max-w-none gap-x-10 gap-y-10 flex justify-center items-center flex-wrap">
+      <Logo src={claude.src} alt="Anthropic Claude" className="h-20" href="https://claude.ai" />
+      <Logo src={gemini.src} alt="Google Gemini" className="h-20" href="https://gemini.google.com" />
+      <Logo src={openai.src} alt="OpenAI" className="h-20" href="https://openai.com" />
+      <Logo src={grok.src} alt="xAI Grok" className="h-20" href="https://x.ai" />
+      <Logo src={meta.src} alt="Meta Llama" className="h-20" href="https://www.llama.com" />
+      <Logo src={deepseek.src} alt="DeepSeek" className="h-20" href="https://www.deepseek.com" />
+      <Logo src={mistral.src} alt="Mistral" className="h-20" href="https://mistral.ai" />
+    </div>
+    <div class="pt-5 mx-auto mt-6 lg:mt-5 max-w-none gap-x-10 gap-y-10 flex justify-center items-center flex-wrap">
+      <Logo src={appium.src} alt="Appium" href="https://appium.io" />
+      <Logo src={playwright.src} alt="Playwright" href="https://playwright.dev" />
+      <Logo src={selenium.src} alt="Selenium" href="https://www.selenium.dev" />
+    </div>
+  </div>
+</div>

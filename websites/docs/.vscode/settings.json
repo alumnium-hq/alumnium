@@ -1,0 +1,9 @@
+{
+  "cSpell.words": ["Alumnium", "alumnium", "Ollama"],
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[astro]": {
+    "editor.defaultFormatter": "astro-build.astro-vscode",
+    "editor.formatOnSave": true
+  }
+}

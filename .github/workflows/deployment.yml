@@ -1,0 +1,42 @@
+name: Deploy Website
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - websites/docs/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: websites/docs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - run: mise run //websites/docs:install
+      - run: mise run //websites/docs:build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: websites/docs/dist/
+
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release
+    environment:
+      name: release
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

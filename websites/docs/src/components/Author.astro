@@ -1,0 +1,17 @@
+---
+interface Props {
+  prefix: string;
+  author: {
+    name: string;
+    image: string;
+  };
+}
+
+const { prefix, author } = Astro.props;
+---
+
+<div class="flex flex-row gap-2 items-center">
+  <span>{prefix}</span>
+  <img src={`/authors/${author.image}`} alt={`${author.name}'s avatar`} class="w-7 h-7 rounded-full" />
+  <span class="font-medium">{author.name}</span>
+</div>

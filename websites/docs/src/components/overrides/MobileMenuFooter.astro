@@ -1,0 +1,38 @@
+---
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
+import LanguageSelect from "../LanguageSelect.astro";
+
+const isDocsPage = Astro.url.pathname.startsWith("/docs");
+---
+
+<div class="mobile-preferences sl-flex">
+  <div class="social-icons">
+    <SocialIcons />
+  </div>
+  {isDocsPage && <LanguageSelect />}
+  <ThemeSelect />
+</div>
+
+<style>
+  @layer starlight.core {
+    .social-icons {
+      display: flex;
+      margin-inline-end: auto;
+      gap: 1rem;
+      align-items: center;
+      padding-block: 1rem;
+    }
+    .social-icons:empty {
+      display: none;
+    }
+    .mobile-preferences {
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--sl-color-gray-6);
+      column-gap: 1rem;
+      padding: 0.5rem 0;
+    }
+  }
+</style>

@@ -1,0 +1,33 @@
+@layer base, starlight, theme, components, utilities;
+
+@import "@astrojs/starlight-tailwind";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --color-cerulean-blue-50: #ecf9ff;
+  --color-cerulean-blue-100: #d5efff;
+  --color-cerulean-blue-200: #b4e4ff;
+  --color-cerulean-blue-300: #80d5ff;
+  --color-cerulean-blue-400: #44bbff;
+  --color-cerulean-blue-500: #1a99ff;
+  --color-cerulean-blue-600: #0278ff;
+  --color-cerulean-blue-700: #0060f9;
+  --color-cerulean-blue-800: #044cc7;
+  --color-cerulean-blue-900: #0b459d;
+  --color-cerulean-blue-950: #0c2a5f;
+
+  --color-header: var(--sl-color-white);
+
+  --color-accent-50: var(--color-cerulean-blue-50);
+  --color-accent-100: var(--color-cerulean-blue-100);
+  --color-accent-200: var(--color-cerulean-blue-200);
+  --color-accent-300: var(--color-cerulean-blue-300);
+  --color-accent-400: var(--color-cerulean-blue-400);
+  --color-accent-500: var(--color-cerulean-blue-500);
+  --color-accent-600: var(--color-cerulean-blue-600);
+  --color-accent-700: var(--color-cerulean-blue-700);
+  --color-accent-800: var(--color-cerulean-blue-800);
+  --color-accent-900: var(--color-cerulean-blue-900);
+  --color-accent-950: var(--color-cerulean-blue-950);
+}

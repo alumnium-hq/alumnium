@@ -1,0 +1,62 @@
+---
+import "../../node_modules/@astrojs/starlight/style/layers.css";
+import "../../node_modules/@astrojs/starlight/style/asides.css";
+import "../../node_modules/@astrojs/starlight/style/props.css";
+import "../../node_modules/@astrojs/starlight/style/reset.css";
+import "../../node_modules/@astrojs/starlight/style/anchor-links.css";
+import "../../node_modules/@astrojs/starlight/style/util.css";
+
+import Head from "@astrojs/starlight/components/Head.astro";
+import Header from "../components/overrides/Header.astro";
+import PageFrame from "@astrojs/starlight/components/PageFrame.astro";
+import SkipLink from "@astrojs/starlight/components/SkipLink.astro";
+import ThemeProvider from "@astrojs/starlight/components/ThemeProvider.astro";
+
+import printHref from "../../node_modules/@astrojs/starlight/style/print.css?url&no-inline";
+
+const { starlightRoute } = Astro.locals;
+---
+
+<html lang={starlightRoute.lang} dir={starlightRoute.dir}>
+  <head>
+    <Head />
+    <style>
+      html:not([data-has-toc]) {
+        --sl-mobile-toc-height: 0rem;
+      }
+      html:not([data-has-sidebar]) {
+        --sl-content-width: 67.5rem;
+      }
+      /* Add scroll padding to ensure anchor headings aren't obscured by nav */
+      html {
+        /* Additional padding is needed to account for the mobile TOC */
+        scroll-padding-top: calc(1.5rem + var(--sl-nav-height) + var(--sl-mobile-toc-height));
+      }
+      main {
+        padding-bottom: 3vh;
+      }
+      @media (min-width: 50em) {
+        [data-has-sidebar] {
+          --sl-content-inline-start: var(--sl-sidebar-width);
+        }
+      }
+      @media (min-width: 72em) {
+        html {
+          scroll-padding-top: calc(1.5rem + var(--sl-nav-height));
+        }
+      }
+    </style>
+    <ThemeProvider />
+    <link rel="stylesheet" href={printHref} media="print" />
+  </head>
+  <body>
+    <SkipLink />
+    <PageFrame>
+      <Header slot="header" hasSearch={false} />
+
+      <main lang={starlightRoute.entryMeta.lang} dir={starlightRoute.entryMeta.dir}>
+        <slot />
+      </main>
+    </PageFrame>
+  </body>
+</html>
