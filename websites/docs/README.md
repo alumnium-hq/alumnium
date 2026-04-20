@@ -1,38 +1,27 @@
 # Alumnium website
 
-## 🚀 Project Structure
+The Alumnium documentation website, built with [Astro](https://astro.build) and [Starlight](https://starlight.astro.build). Deployed to [alumnium.ai](https://alumnium.ai).
 
-Inside you'll see the following folders and files:
+## Content
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   ├── docs/
-│   │   └── config.ts
-│   └── env.d.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
+- **Landing page** — marketing overview with feature highlights, integration demos, and blog
+- **Docs** — Getting Started, Writing First Test (Appium/Playwright/Selenium), Guides (Actions, Verifications, Retrievals, Elements, Areas, Caching, Self-hosting LLMs, MCP), and API Reference
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+Content lives in `src/content/docs/` as `.md`/`.mdx` files. Blog posts are in `src/content/blog/`.
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+## Commands
 
-Static assets, like favicons, can be placed in the `public/` directory.
+| Command           | Action                                     |
+| :---------------- | :----------------------------------------- |
+| `bun install`     | Install dependencies                       |
+| `bun run dev`     | Start local dev server at `localhost:4321` |
+| `bun run build`   | Build production site to `./dist/`         |
+| `bun run preview` | Preview the build locally before deploying |
 
-## 🧞 Commands
+Or via mise from the repo root:
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                    | Action                                           |
-| :------------------------- | :----------------------------------------------- |
-| `yarn install`             | Installs dependencies                            |
-| `yarn run dev`             | Starts local dev server at `localhost:4321`      |
-| `yarn run build`           | Build your production site to `./dist/`          |
-| `yarn run preview`         | Preview your build locally, before deploying     |
-| `yarn run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `yarn run astro -- --help` | Get help using the Astro CLI                     |
+| Command                            | Action               |
+| :--------------------------------- | :------------------- |
+| `mise run //websites/docs:install` | Install dependencies |
+| `mise run //websites/docs:build`   | Build the site       |
+| `mise run //websites/docs:dev`     | Start dev server     |
