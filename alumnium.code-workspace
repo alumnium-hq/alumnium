@@ -11,25 +11,24 @@
     {
       "name": "packages/typescript",
       "path": "packages/typescript",
-    }
+    },
+    {
+      "name": "websites/docs",
+      "path": "websites/docs",
+    },
   ],
   "settings": {
-    "cSpell.words": [
-      "alumnium",
-      "Alumnium",
-    ],
+    "cSpell.flagWords": ["Aluminium", "aluminium", "Aluminum", "aluminum"],
+    "cSpell.words": ["alumnium", "Alumnium", "Ollama"],
+    "files.exclude": {
+      "packages/**": true,
+      "websites/**": true,
+    },
     "python.defaultInterpreterPath": "packages/python/.venv/bin/python",
     "search.exclude": {
       "**/dist": true,
       "**/node_modules": true,
     },
     "testing.automaticallyOpenPeekView": "never",
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit",
-            "source.fixAll": "explicit",
-        },
-    },
   }
 }
