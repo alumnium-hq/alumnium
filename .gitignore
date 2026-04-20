@@ -4,16 +4,18 @@
 **/.pytest_cache/
 **/.ruff_cache/
 **/.venv/
-**/dist/
 **/log/
 **/reports/
 
 # Node
-**/dist/
 **/node_modules/
 **/playwright-report/
 **/test-results/
+**/.astro/
 **/.ts/
+
+# Build Artifacts
+**/dist/
 
 # Coverage
 **/htmlcov/
