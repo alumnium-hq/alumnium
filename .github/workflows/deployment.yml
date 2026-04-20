@@ -1,11 +1,5 @@
 name: Deployment
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - websites/docs/**
-  workflow_dispatch:
+on: workflow_dispatch
 
 permissions:
   contents: read
@@ -24,8 +18,8 @@ jobs:
       - uses: jdx/mise-action@v4
         with:
           experimental: true
-      - run: mise run //websites/docs:install
-      - run: mise run //websites/docs:build
+      - run: mise //websites/docs:install
+      - run: mise //websites/docs:build
       - uses: actions/upload-pages-artifact@v5
         with:
           path: websites/docs/dist/
