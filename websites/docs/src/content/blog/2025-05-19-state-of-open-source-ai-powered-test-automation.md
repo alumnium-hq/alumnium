@@ -11,7 +11,6 @@ tags:
   - selenium
 ---
 
-
 :::note[TLDR]
 The open-source AI test automation landscape is growing, featuring three main approaches:
 
@@ -350,7 +349,6 @@ In the end, the test libraries provide a way to start using AI in existing test 
 The open-source landscape for AI-powered test automation is vibrant. Test generators offer a quick way to get started, test runners provide high resilience and take care of a huge amount of work, and test libraries offer a flexible, integrated approach.
 
 While challenges with stability, performance, and costs remain with all the solutions (I will one day write a post about AI failures in test automation), the potential for AI to reduce the burden of maintaining UI automation is significant. As AI models become more capable and new solutions emerge, we can expect AI to become an increasingly valuable assistant in our testing toolkits. We’re at the very beginning!
-
 
 [1]: https://www.youtube.com/watch?v=9-e8K_KF904
 [2]: https://youtu.be/NbQrcpllTyA

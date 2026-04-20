@@ -7,7 +7,7 @@ description: Alumnium reference and notes
 
 Alumnium works by building an accessibility tree of the webpage. Unfortunately, there is no standard API in browsers to provide this tree. Due to this limitation, the current version of Alumnium only works in Chromium-based browsers such as Google Chrome, Microsoft Edge, Opera, and others.
 
-Playwright driver supports both *headful* and *headless* modes, while Selenium driver only supports the *headful* mode.
+Playwright driver supports both _headful_ and _headless_ modes, while Selenium driver only supports the _headful_ mode.
 
 ## Mobile Support
 
@@ -71,26 +71,27 @@ The following workflow step enables debug logging in Alumnium when they are enab
     echo ALUMNIUM_LOG_LEVEL=debug >> "$GITHUB_ENV"
     echo ALUMNIUM_LOG_PATH=alumnium.log >> "$GITHUB_ENV"
 ```
+
 :::
 
 ### `ALUMNIUM_MODEL`
 
 Select AI provider and model to use.
 
-| Value         | LLM                                             | Notes                                                                    |
-| ------------- | ----------------------------------------------- | ------------------------------------------------------------------------ |
-| anthropic     | claude-haiku-4-5-20251001                       | Anthropic API.                                                           |
-| azure_foundry | gpt-5-nano                                      | Azure AI Foundry API.                                                    |
-| azure_openai  | gpt-5-nano                                      | Self-hosted Azure OpenAI API. Recommended model version is _2025-08-07_. |
-| aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0     | Serverless Amazon Bedrock API.                                           |
-| aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0       | Serverless Amazon Bedrock API.                                           |
-| deepseek      | deepseek-reasoner                               | DeepSeek Platform.                                                       |
-| github        | gpt-4o-mini                                     | GitHub Models API.                                                       |
-| google        | gemini-3.1-flash-lite-preview                   | Google AI Studio API.                                                    |
-| mistralai     | mistral-medium-2505                             | Mistral AI Studio API.                                                   |
-| ollama        | mistral-small3.1:24b                            | Local model inference with Ollama.                                       |
-| openai        | gpt-5-nano-2025-08-07                           | OpenAI API.                                                              |
-| xai           | grok-4-1-fast-reasoning                         | xAI API.                                                                 |
+| Value         | LLM                                         | Notes                                                                    |
+| ------------- | ------------------------------------------- | ------------------------------------------------------------------------ |
+| anthropic     | claude-haiku-4-5-20251001                   | Anthropic API.                                                           |
+| azure_foundry | gpt-5-nano                                  | Azure AI Foundry API.                                                    |
+| azure_openai  | gpt-5-nano                                  | Self-hosted Azure OpenAI API. Recommended model version is _2025-08-07_. |
+| aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                                           |
+| aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
+| deepseek      | deepseek-reasoner                           | DeepSeek Platform.                                                       |
+| github        | gpt-4o-mini                                 | GitHub Models API.                                                       |
+| google        | gemini-3.1-flash-lite-preview               | Google AI Studio API.                                                    |
+| mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
+| ollama        | mistral-small3.1:24b                        | Local model inference with Ollama.                                       |
+| openai        | gpt-5-nano-2025-08-07                       | OpenAI API.                                                              |
+| xai           | grok-4-1-fast-reasoning                     | xAI API.                                                                 |
 
 You can also override the LLM for each provider by passing it after `/`.
 

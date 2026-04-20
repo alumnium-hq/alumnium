@@ -29,7 +29,11 @@ export function routeConfig(data: {
     },
     collection: "docs" as const,
   };
-  const entryMeta = { dir: "ltr" as const, lang: "en" as const, locale: "en-US" as const };
+  const entryMeta = {
+    dir: "ltr" as const,
+    lang: "en" as const,
+    locale: "en-US" as const,
+  };
   return {
     siteTitle,
     entry,
@@ -42,14 +46,11 @@ export function routeConfig(data: {
     toc: {
       minHeadingLevel: 2,
       maxHeadingLevel: 3,
-      items: generateToC(
-        data.toc || [],
-        {
-          minHeadingLevel: 2,
-          maxHeadingLevel: 3,
-          title: "Overview",
-        }
-      ),
+      items: generateToC(data.toc || [], {
+        minHeadingLevel: 2,
+        maxHeadingLevel: 3,
+        title: "Overview",
+      }),
     },
     lastUpdated: undefined,
     editUrl: undefined,
@@ -59,8 +60,21 @@ export function routeConfig(data: {
     lang: "en",
     locale: "en-US",
     head: getHead(
-      { entry, lang: "en", entryMeta, headings: [], slug: data.slug, id: data.slug, dir: "ltr", locale: "en-US" },
-      { url: new URL(data.slug, "https://alumnium.ai/blog/"), generator: "Astro", site: new URL("https://alumnium.ai") },
+      {
+        entry,
+        lang: "en",
+        entryMeta,
+        headings: [],
+        slug: data.slug,
+        id: data.slug,
+        dir: "ltr",
+        locale: "en-US",
+      },
+      {
+        url: new URL(data.slug, "https://alumnium.ai/blog/"),
+        generator: "Astro",
+        site: new URL("https://alumnium.ai"),
+      },
       siteTitle,
     ),
   };

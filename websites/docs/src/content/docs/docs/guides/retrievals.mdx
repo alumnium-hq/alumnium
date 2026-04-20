@@ -79,9 +79,20 @@ assert al.get("titles of pending tasks") == ["buy honey", "buy water"]
 <LanguageContent lang="typescript">
 
 ```typescript
-expect(await al.get("titles of tasks")).toEqual(["buy milk", "buy bread", "buy honey", "buy water"]);
-expect(await al.get("titles of complete tasks")).toEqual(["buy milk", "buy bread"]);
-expect(await al.get("titles of pending tasks")).toEqual(["buy honey", "buy water"]);
+expect(await al.get("titles of tasks")).toEqual([
+  "buy milk",
+  "buy bread",
+  "buy honey",
+  "buy water",
+]);
+expect(await al.get("titles of complete tasks")).toEqual([
+  "buy milk",
+  "buy bread",
+]);
+expect(await al.get("titles of pending tasks")).toEqual([
+  "buy honey",
+  "buy water",
+]);
 ```
 
 </LanguageContent>

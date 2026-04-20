@@ -4,21 +4,25 @@ Thank you for your contribution to Alumnium!
 Please fill out this template to help us understand and review your PR efficiently.
 
 ## Summary
+
 What is this pull request about?
 Provide a brief description of what the PR does, the problem it solves, and any context around the implementation.
 
 ## Motivation
+
 Why is this change being made?
 Describe the use case, problem, or opportunity that this PR addresses.
 Explain how this change contributes to the project's goals or improves functionality.
 
 ## Related Issue(s)
+
 If this PR fixes or is related to an open issue, link it here.
 Example: Closes #123
 
 Closes #
 
 ## Type of Change
+
 Mark the relevant options.
 
 - [ ] Bug fix
@@ -27,10 +31,12 @@ Mark the relevant options.
 - [ ] Cleanup (documentation, formatting)
 
 ## Code or UI Demos (if applicable)
+
 Add screenshots, logs, terminal output, or code snippets that help reviewers understand the change.
 Useful especially for UI changes or error fixes.
 
 ## Checklist
+
 Please verify the following before submitting:
 
 - [ ] I have read the [Contributing Guidelines](https://github.com/alumnium-hq/alumnium/blob/main/CONTRIBUTING.md)
@@ -43,5 +49,6 @@ Please verify the following before submitting:
 - [ ] I have considered security implications of these changes
 
 ## Additional Notes
+
 Anything else the reviewer should be aware of?
 For example: limitations, discussions to follow up on, or next steps.

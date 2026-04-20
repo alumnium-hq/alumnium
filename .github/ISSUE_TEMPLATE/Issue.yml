@@ -29,15 +29,15 @@ body:
     id: tool-choice
     attributes:
       label: Which tool are you using Selenium or Playwright?
-      options :
+      options:
         - Selenium
         - Playwright
     validations:
-        required: true
+      required: true
 
   - type: input
     id: tool-version
-    attributes :
+    attributes:
       label: Selenium or Playwright Version
       description: What version of Playwright or Selenium you are using currently?
 
@@ -45,14 +45,14 @@ body:
     id: Browser-choice
     attributes:
       label: Which Browser are you using?
-      options :
+      options:
         - Chrome
         - Firefox
         - Edge
         - Safari
         - other(Description)
     validations:
-        required: true
+      required: true
 
   - type: input
     id: Browser-version

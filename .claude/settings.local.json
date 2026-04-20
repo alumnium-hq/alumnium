@@ -19,7 +19,5 @@
     "ask": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "alumnium"
-  ]
+  "enabledMcpjsonServers": ["alumnium"]
 }

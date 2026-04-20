@@ -51,8 +51,18 @@ assert area.get("first names") == ["John", "Frank", "Jason", "Tim"]
 
 ```typescript
 const area = await al.area("'Example 1' table");
-expect(await area.get("last names")).toEqual(["Smith", "Bach", "Doe", "Conway"]);
-expect(await area.get("first names")).toEqual(["John", "Frank", "Jason", "Tim"]);
+expect(await area.get("last names")).toEqual([
+  "Smith",
+  "Bach",
+  "Doe",
+  "Conway",
+]);
+expect(await area.get("first names")).toEqual([
+  "John",
+  "Frank",
+  "Jason",
+  "Tim",
+]);
 ```
 
 </LanguageContent>
@@ -78,13 +88,28 @@ assert area.get("last names") == ["Bach", "Conway", "Doe", "Smith"]  # passes
 
 ```typescript
 let area = await al.area("'Example 1' table");
-expect(await area.get("last names")).toEqual(["Smith", "Bach", "Doe", "Conway"]);
+expect(await area.get("last names")).toEqual([
+  "Smith",
+  "Bach",
+  "Doe",
+  "Conway",
+]);
 
 await area.do("sort by last name"); // change order of rows
-expect(await area.get("last names")).toEqual(["Bach", "Conway", "Doe", "Smith"]); // error
+expect(await area.get("last names")).toEqual([
+  "Bach",
+  "Conway",
+  "Doe",
+  "Smith",
+]); // error
 
 area = await al.area("'Example 1' table"); // re-locate the table
-expect(await area.get("last names")).toEqual(["Bach", "Conway", "Doe", "Smith"]); // passes
+expect(await area.get("last names")).toEqual([
+  "Bach",
+  "Conway",
+  "Doe",
+  "Smith",
+]); // passes
 ```
 
 </LanguageContent>
