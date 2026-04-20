@@ -29,7 +29,7 @@ authors = [
     { email = "tati.shep@gmail.com", name = "Tatiana Shepeleva" },
 ]
 dependencies = [
-    "alumnium-cli==0.20.0a10; (sys_platform == 'linux' or sys_platform == 'darwin' or sys_platform == 'win32') and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')",
+    "alumnium-cli==0.20.0a11; (sys_platform == 'linux' or sys_platform == 'darwin' or sys_platform == 'win32') and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')",
     "appium-python-client>=5.1.1,<6.0.0",
     "playwright>=1.49,<2.0",
     "portpicker>=1.6.0",
@@ -44,7 +44,7 @@ license = "MIT"
 name = "alumnium"
 readme = "README.md"
 requires-python = ">=3.10,<4.0"
-version = "0.20.0a10"
+version = "0.20.0a11"
 
 [project.scripts]
 alumnium = "alumnium.cli:main"
