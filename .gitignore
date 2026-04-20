@@ -16,6 +16,8 @@
 
 # Build Artifacts
 **/dist/
+/websites/docs/public/install.sh
+/websites/docs/public/install.ps1
 
 # Coverage
 **/htmlcov/
