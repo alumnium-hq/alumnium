@@ -20,36 +20,39 @@ Alumnium's [Model Context Protocol][1] server enables general-purpose AI agents 
 
 ## Installation
 
-The MCP Server is included in the Alumnium package for Python.
-
-It's recommended to use [`uv`][2] to automatically install Python and manage virtual environments. Follow official [installation instructions][3] to set it up on your system. Once installed, proceed to install Alumnium MCP server.
+The MCP Server is available in both the Python and TypeScript packages.
 
 :::note
 MCP server can be configured to use different AI providers. Follow [configuration guide][4] to learn about environment variables and setup for various AI providers. The examples below use OpenAI by default.
 :::
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+<Tabs>
+<TabItem label="Python">
+
 ### Claude Code
 
 ```bash
-claude mcp add alumnium --env OPENAI_API_KEY=... -- uvx --from alumnium alumnium-mcp
+claude mcp add alumnium --env OPENAI_API_KEY=... -- uvx alumnium mcp
 ```
 
 ### Codex
 
 ```bash
-codex mcp add alumnium --env OPENAI_API_KEY=... -- uvx --from alumnium alumnium-mcp
+codex mcp add alumnium --env OPENAI_API_KEY=... -- uvx alumnium mcp
 ```
 
 ### Cursor
 
-Add the the following to `mcp.json`:
+Add the following to `mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "alumnium": {
       "command": "uvx",
-      "args": ["--from", "alumnium", "alumnium-mcp"],
+      "args": ["alumnium", "mcp"],
       "env": {
         "OPENAI_API_KEY": "..."
       }
@@ -61,7 +64,7 @@ Add the the following to `mcp.json`:
 ### Gemini CLI
 
 ```bash
-gemini mcp add alumnium --env OPENAI_API_KEY=... uvx --from alumnium alumnium-mcp
+gemini mcp add alumnium --env OPENAI_API_KEY=... uvx alumnium mcp
 ```
 
 ### Visual Studio Code
@@ -71,9 +74,8 @@ code --add-mcp '{
     "name": "alumnium",
     "command": "uvx",
     "args": [
-      "--from",
       "alumnium",
-      "alumnium-mcp"
+      "mcp"
     ],
     "env": {
       "OPENAI_API_KEY": "..."
@@ -81,59 +83,126 @@ code --add-mcp '{
   }'
 ```
 
+</TabItem>
+<TabItem label="TypeScript">
+
+### Claude Code
+
+```bash
+claude mcp add alumnium --env OPENAI_API_KEY=... -- npx alumnium mcp
+```
+
+### Codex
+
+```bash
+codex mcp add alumnium --env OPENAI_API_KEY=... -- npx alumnium mcp
+```
+
+### Cursor
+
+Add the following to `mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "alumnium": {
+      "command": "npx",
+      "args": ["alumnium", "mcp"],
+      "env": {
+        "OPENAI_API_KEY": "..."
+      }
+    }
+  }
+}
+```
+
+### Gemini CLI
+
+```bash
+gemini mcp add alumnium --env OPENAI_API_KEY=... npx alumnium mcp
+```
+
+### Visual Studio Code
+
+```bash
+code --add-mcp '{
+    "name": "alumnium",
+    "command": "npx",
+    "args": [
+      "alumnium",
+      "mcp"
+    ],
+    "env": {
+      "OPENAI_API_KEY": "..."
+    }
+  }'
+```
+
+</TabItem>
+</Tabs>
+
 ## Tools
 
 The MCP Server exposes Alumnium's core automation capabilities:
 
 | Tool                       | Description                                                                    |
 | -------------------------- | ------------------------------------------------------------------------------ |
-| `start_driver`             | Initialize browser/mobile drivers with Appium/Selenium/Playwright capabilities |
-| `stop_driver`              | Cleanup resources and retrieve token usage statistics                          |
+| `start`                    | Initialize browser/mobile drivers with Appium/Selenium/Playwright capabilities |
+| `stop`                     | Cleanup resources and retrieve token usage statistics                          |
 | `do`                       | Execute natural language automation commands                                   |
 | `check`                    | Verify statements about the current page state with optional vision support    |
 | `get`                      | Extract data from pages using natural language descriptions                    |
+| `wait`                     | Wait a fixed duration or until a natural language condition is met             |
 | `fetch_accessibility_tree` | Debug page structure with raw accessibility tree                               |
 
-### `start_driver`
+### `start`
 
-Initialize the browser or mobile driver session with JSON capabilities. Supports all drivers: Appium, Selenium, or Playwright.
+Initialize the browser or mobile driver session. Pass capabilities as an inline JSON string or a path to a JSON file. Supports all drivers: Appium, Selenium, or Playwright.
 
 #### `platformName`
 
-Selects the driver to use. Supported values are `chrome`, `ios`, and `android`.
-
-#### `cookies`
-
-Selenium and Playwright only. Set pre-defined cookies before the session starts, useful for authentication.
-
-#### `headers`
-
-Selenium and Playwright only. Set custom headers for all browser requests in the session.
+Selects the driver to use. Supported values are `chrome`, `ios`, and `android`. Case-insensitive.
 
 #### `alumnium:options`
 
-Pass `alumnium:options` in capabilities to configure Alumnium behavior for the session:
+Pass `alumnium:options` in capabilities to configure Alumnium and driver behavior for the session:
 
 ```json
 {
   "platformName": "chrome",
   "alumnium:options": {
+    "autoswitchToNewTab": false,
     "changeAnalysis": true,
-    "planner": false,
-    "excludedAttributes": ["url"],
-    "driverSettings": {
-      "autoswitchToNewTab": false
-    }
+    "cookies": [
+      {
+        "name": "session",
+        "value": "abc123",
+        "domain": ".example.com"
+      }
+    ],
+    "excludeAttributes": ["url"],
+    "headers": { "Authorization": "Bearer token" },
+    "headless": true,
+    "planner": false
   }
 }
 ```
 
-| Option               | Description                                                                            |
-| -------------------- | -------------------------------------------------------------------------------------- |
-| `changeAnalysis`     | Enable UI changes analysis after each `do()` call. Default is `true`.                  |
-| `planner`            | Enable or disable the planning step in `do()`. Default is `true`.                      |
-| `excludedAttributes` | Array of accessibility tree attributes to exclude. Reduces tree size on large pages.   |
-| `driverSettings`     | Key-value pairs applied directly to the underlying driver (e.g. `autoswitchToNewTab`). |
+| Option                    | Description                                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `autoswitchContexts`      | Automatically switch between native and web contexts after interactions. Appium only. Default is `true`. |
+| `autoswitchToNewTab`      | Automatically switch focus to newly opened tabs. Selenium and Playwright only. Default is `true`.        |
+| `changeAnalysis`          | Enable UI changes analysis after each `do()` call. Default is `true`.                                    |
+| `cookies`                 | Pre-defined cookies to set before the session starts. Selenium and Playwright only.                      |
+| `delay`                   | Seconds to wait after each interaction. Appium only. Default is `0`.                                     |
+| `excludeAttributes`       | Array of accessibility tree attributes to exclude. Reduces tree size on large pages.                     |
+| `fullPageScreenshot`      | Capture full-page screenshots instead of viewport-only. Default is `false`.                              |
+| `headers`                 | Custom HTTP headers for all browser requests. Selenium and Playwright only.                              |
+| `headless`                | Run browser in headless mode. Selenium and Playwright only. Default is `false`.                          |
+| `hideKeyboardAfterTyping` | Dismiss the on-screen keyboard after typing. Appium only. Default is `false`.                            |
+| `newTabTimeout`           | Milliseconds to wait for a new tab to open after a click. Playwright only. Default is `200`.             |
+| `permissions`             | Browser permissions to grant (e.g. `["geolocation"]`). Playwright only.                                  |
+| `planner`                 | Enable or disable the planning step in `do()`. Default is `true`.                                        |
 
 #### `appium:settings`
 
@@ -149,7 +218,7 @@ For iOS and Android sessions, pass `appium:settings` in capabilities to configur
 }
 ```
 
-### `stop_driver`
+### `stop`
 
 Stops running driver session and cleans up resources. Returns path to the artifacts directory, token usage statistics for the session and optionally saves the execution [cache][5].
 
@@ -165,9 +234,13 @@ Perform [actions][6] in the application using natural language commands and retu
 
 [Extract][8] data from the application based on natural language descriptions. If data is not found, returns explanation why it can't be retrieved. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
 
+### `wait`
+
+Wait for a fixed duration or until a natural language condition is met. Pass a number (1–30) to wait that many seconds, or a string condition (e.g. `"user is logged in"`) to poll with AI-powered verification until it becomes true or a timeout is reached.
+
 ### `fetch_accessibility_tree`
 
-Returns the raw accessibility tree of the current page as XML. Useful for debugging when `do`, `check`, or `get` behave unexpectedly - inspect the tree to verify element visibility, roles, and attributes.
+Returns the raw accessibility tree of the current page as XML. Useful for debugging when `do`, `check`, or `get` behave unexpectedly — inspect the tree to verify element visibility, roles, and attributes.
 
 [1]: https://modelcontextprotocol.io
 [2]: https://docs.astral.sh/uv/
