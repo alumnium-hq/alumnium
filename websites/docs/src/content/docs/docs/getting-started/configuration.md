@@ -14,7 +14,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | [DeepSeek][12]          | DeepSeek R1             |
 | [Meta][8]               | Llama 4 Maverick 17B    |
 | [MistralAI][16]         | Mistral Medium 3        |
-| [Ollama][15]            | Mistral Small 3.1 24B   |
+| [Ollama][15]            | Qwen 3.6                |
 | [xAI][18]               | Grok 4.1 Fast Reasoning |
 
 These models were chosen because they provide the best balance between intelligence, performance, and cost. Most models now support reasoning capabilities for improved accuracy and decision-making in test automation.
@@ -128,10 +128,10 @@ Ollama support is experimental and performance depends on your hardware.
 To use Ollama for a fully local model inference:
 
 1. Download and install [Ollama][15].
-2. Download Mistrall Small 3.1 24B model:
+2. Download Qwen 3.6 model:
 
 ```bash
-ollama pull mistral-small3.1:24b
+ollama pull qwen3.6
 ```
 
 3. Export the following environment variable before running tests:
