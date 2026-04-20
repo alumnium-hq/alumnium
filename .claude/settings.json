@@ -13,7 +13,8 @@
       "Bash(npm pack:*)",
       "Bash(npm run:*)",
       "Bash(npx tsc:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "WebFetch(domain:claude.ai)"
     ],
     "deny": [],
     "ask": []
