@@ -159,13 +159,13 @@ mise :types
 
 For local development, you may need to configure the following environment variables:
 
-| Variable Name          | Description                                          | Default Value             |
-|------------------------|------------------------------------------------------|---------------------------|
-| `ALUMNIUM_DRIVER`      | Driver to use for tests (selenium, playwright, appium) | `selenium`                |
-| `ALUMNIUM_MODEL`       | AI model provider (anthropic, openai, google, etc.)  | `openai`                  |
-| `ALUMNIUM_LOG_PATH`    | Path to the alumnium log directory                   | `stdout(logs to console)` |
-| `ALUMNIUM_LOG_LEVEL`   | Log level or configuration value                     | `WARNING`                 |
-| `ALUMNIUM_CACHE`       | Cache provider or disable it                         | `filesystem`              |
+| Variable Name        | Description                                            | Default Value             |
+| -------------------- | ------------------------------------------------------ | ------------------------- |
+| `ALUMNIUM_DRIVER`    | Driver to use for tests (selenium, playwright, appium) | `selenium`                |
+| `ALUMNIUM_MODEL`     | AI model provider (anthropic, openai, google, etc.)    | `openai`                  |
+| `ALUMNIUM_LOG_PATH`  | Path to the alumnium log directory                     | `stdout(logs to console)` |
+| `ALUMNIUM_LOG_LEVEL` | Log level or configuration value                       | `WARNING`                 |
+| `ALUMNIUM_CACHE`     | Cache provider or disable it                           | `filesystem`              |
 
 ### 5. Pull Request Process
 
@@ -207,7 +207,6 @@ All contributors will be acknowledged in our releases and documentation. As an e
 ---
 
 Thank you for joining us in paving the road towards AI-powered test automation. Together, we can create more intuitive, maintainable, and powerful testing experiences.
-
 
 [1]: https://github.com/alumnium-hq/alumnium?tab=readme-ov-file
 [2]: https://alumnium.ai/docs/

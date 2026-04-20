@@ -28,7 +28,7 @@
 .envrc
 
 # Alumnium
-**/.alumnium
+**/.alumnium/
 
 # Temporary files
-tmp/
+**/tmp/
