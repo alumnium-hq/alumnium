@@ -34,12 +34,12 @@ def mock_area():
 
 def test_area_get_returns_value_when_not_none(mock_area: Area):
     """Test that Area.get() returns the value when value is not None."""
-    mock_area.client.retrieve.return_value = ("explanation", "extracted data")  # type: ignore[invalid-assignment]
+    mock_area.client.retrieve.return_value = ("explanation", "extracted data")  # type: ignore
 
     result = mock_area.get("heading text")
 
     assert result == "extracted data"
-    mock_area.client.retrieve.assert_called_once_with(  # type: ignore[unresolved-attribute]
+    mock_area.client.retrieve.assert_called_once_with(  # type: ignore
         "heading text",
         "<root><button raw_id='1'>Click me</button></root>",
         title="Test Page",
@@ -51,7 +51,7 @@ def test_area_get_returns_value_when_not_none(mock_area: Area):
 
 def test_area_get_returns_explanation_when_value_is_none(mock_area: Area):
     """Test that Area.get() returns the explanation when value is None."""
-    mock_area.client.retrieve.return_value = ("No data found", None)  # type: ignore[invalid-assignment]
+    mock_area.client.retrieve.return_value = ("No data found", None)  # type: ignore
 
     result = mock_area.get("missing element")
 
