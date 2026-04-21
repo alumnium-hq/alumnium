@@ -11,104 +11,104 @@ CHECKSUM_linux_arm64="{{CHECKSUM_linux_arm64}}"
 CHECKSUM_linux_x64="{{CHECKSUM_linux_x64}}"
 
 main() {
-  # Detect OS
-  case "$(uname -s)" in
-    Darwin) os="darwin" ;;
-    Linux)  os="linux"  ;;
-    *)
-      echo "Unsupported OS: $(uname -s)" >&2
-      exit 1
-      ;;
-  esac
+	# Detect OS
+	case "$(uname -s)" in
+	Darwin) os="darwin" ;;
+	Linux) os="linux" ;;
+	*)
+		echo "Unsupported OS: $(uname -s)" >&2
+		exit 1
+		;;
+	esac
 
-  # Detect arch
-  case "$(uname -m)" in
-    x86_64|amd64)   arch="x64"   ;;
-    arm64|aarch64)  arch="arm64" ;;
-    *)
-      echo "Unsupported architecture: $(uname -m)" >&2
-      exit 1
-      ;;
-  esac
+	# Detect arch
+	case "$(uname -m)" in
+	x86_64 | amd64) arch="x64" ;;
+	arm64 | aarch64) arch="arm64" ;;
+	*)
+		echo "Unsupported architecture: $(uname -m)" >&2
+		exit 1
+		;;
+	esac
 
-  # Prefer native arm64 binary when running under Rosetta 2
-  if [ "$os" = "darwin" ] && [ "$arch" = "x64" ]; then
-    if [ "$(sysctl -n sysctl.proc_translated 2>/dev/null)" = "1" ]; then
-      arch="arm64"
-    fi
-  fi
+	# Prefer native arm64 binary when running under Rosetta 2
+	if [ "$os" = "darwin" ] && [ "$arch" = "x64" ]; then
+		if [ "$(sysctl -n sysctl.proc_translated 2>/dev/null)" = "1" ]; then
+			arch="arm64"
+		fi
+	fi
 
-  platform="${os}_${arch}"
-  case "$platform" in
-    darwin_arm64) checksum="$CHECKSUM_darwin_arm64" ;;
-    darwin_x64)   checksum="$CHECKSUM_darwin_x64"   ;;
-    linux_arm64)  checksum="$CHECKSUM_linux_arm64"  ;;
-    linux_x64)    checksum="$CHECKSUM_linux_x64"    ;;
-    *)
-      echo "Unsupported platform: $os-$arch" >&2
-      exit 1
-      ;;
-  esac
+	platform="${os}_${arch}"
+	case "$platform" in
+	darwin_arm64) checksum="$CHECKSUM_darwin_arm64" ;;
+	darwin_x64) checksum="$CHECKSUM_darwin_x64" ;;
+	linux_arm64) checksum="$CHECKSUM_linux_arm64" ;;
+	linux_x64) checksum="$CHECKSUM_linux_x64" ;;
+	*)
+		echo "Unsupported platform: $os-$arch" >&2
+		exit 1
+		;;
+	esac
 
-  binary="alumnium-${ALUMNIUM_VERSION}-${os}-${arch}"
-  url="https://github.com/alumnium-hq/alumnium/releases/download/${ALUMNIUM_VERSION}/${binary}"
+	binary="alumnium-${ALUMNIUM_VERSION}-${os}-${arch}"
+	url="https://github.com/alumnium-hq/alumnium/releases/download/${ALUMNIUM_VERSION}/${binary}"
 
-  # Pick downloader
-  if command -v curl >/dev/null 2>&1; then
-    dl() { curl -fL --progress-bar -o "$1" "$2"; }
-  elif command -v wget >/dev/null 2>&1; then
-    dl() { wget --show-progress -qO "$1" "$2"; }
-  else
-    echo "curl or wget is required" >&2
-    exit 1
-  fi
+	# Pick downloader
+	if command -v curl >/dev/null 2>&1; then
+		dl() { curl -fL --progress-bar -o "$1" "$2"; }
+	elif command -v wget >/dev/null 2>&1; then
+		dl() { wget --show-progress -qO "$1" "$2"; }
+	else
+		echo "curl or wget is required" >&2
+		exit 1
+	fi
 
-  tmp="$(mktemp)"
-  trap 'rm -f "$tmp"' EXIT
+	tmp="$(mktemp)"
+	trap 'rm -f "$tmp"' EXIT
 
-  echo "Downloading alumnium ${ALUMNIUM_VERSION} (${os}-${arch})..."
-  dl "$tmp" "$url"
+	echo "Downloading alumnium ${ALUMNIUM_VERSION} (${os}-${arch})..."
+	dl "$tmp" "$url"
 
-  printf "Verifying checksum... "
-  if command -v shasum >/dev/null 2>&1; then
-    actual="$(shasum -a 256 "$tmp" | cut -d' ' -f1)"
-  else
-    actual="$(sha256sum "$tmp" | cut -d' ' -f1)"
-  fi
+	printf "Verifying checksum... "
+	if command -v shasum >/dev/null 2>&1; then
+		actual="$(shasum -a 256 "$tmp" | cut -d' ' -f1)"
+	else
+		actual="$(sha256sum "$tmp" | cut -d' ' -f1)"
+	fi
 
-  if [ "$actual" != "$checksum" ]; then
-    echo "Checksum mismatch!" >&2
-    echo "  expected: $checksum" >&2
-    echo "  actual:   $actual" >&2
-    exit 1
-  fi
-  echo "ok"
+	if [ "$actual" != "$checksum" ]; then
+		echo "Checksum mismatch!" >&2
+		echo "  expected: $checksum" >&2
+		echo "  actual:   $actual" >&2
+		exit 1
+	fi
+	echo "ok"
 
-  chmod +x "$tmp"
+	chmod +x "$tmp"
 
-  # Install binary
-  if [ -w /usr/local/bin ]; then
-    install_dir="/usr/local/bin"
-  else
-    install_dir="$HOME/.local/bin"
-    mkdir -p "$install_dir"
-  fi
+	# Install binary
+	if [ -w /usr/local/bin ]; then
+		install_dir="/usr/local/bin"
+	else
+		install_dir="$HOME/.local/bin"
+		mkdir -p "$install_dir"
+	fi
 
-  mv "$tmp" "${install_dir}/alumnium"
+	mv "$tmp" "${install_dir}/alumnium"
 
-  # Warn if install dir is not on PATH
-  case ":${PATH}:" in
-    *":${install_dir}:"*) ;;
-    *)
-      echo ""
-      echo "Note: ${install_dir} is not on your PATH."
-      echo "Add the following to your shell profile:"
-      echo "  export PATH=\"${install_dir}:\$PATH\""
-      ;;
-  esac
+	# Warn if install dir is not on PATH
+	case ":${PATH}:" in
+	*":${install_dir}:"*) ;;
+	*)
+		echo ""
+		echo "Note: ${install_dir} is not on your PATH."
+		echo "Add the following to your shell profile:"
+		echo "  export PATH=\"${install_dir}:\$PATH\""
+		;;
+	esac
 
-  echo ""
-  echo "Alumnium ${ALUMNIUM_VERSION} installed to ${install_dir}/alumnium"
+	echo ""
+	echo "Alumnium ${ALUMNIUM_VERSION} installed to ${install_dir}/alumnium"
 }
 
 main
