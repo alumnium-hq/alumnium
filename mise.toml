@@ -117,7 +117,12 @@ depends = [
 depends = ["types/ts", "//packages/python:types"]
 
 [tasks.lint]
+description = "Lint all packages"
 depends = ["//packages/typescript:lint", "//packages/python:lint"]
+
+[tasks."lint:fix"]
+description = "Fix linting issues in all packages"
+depends = ["//packages/typescript:lint:fix", "//packages/python:lint:fix"]
 
 [tasks."types/ts"]
 run = "bun run tsgo --build"
