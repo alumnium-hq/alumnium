@@ -28,6 +28,7 @@ jobs:
           experimental: true
       - run: mise //websites/docs:install
       - run: mise //websites/docs:generate-install-scripts
+      - run: mise //websites/docs:test-install-script
       - run: mise //websites/docs:build
       - uses: actions/upload-pages-artifact@v5
         with:

@@ -12,3 +12,10 @@ run = "bun run dev"
 
 [tasks.generate-install-scripts]
 run = "bun scripts/generate-install-scripts.ts"
+
+[tasks.test-install-script]
+run = '''
+sh public/install.sh
+expected=$(mise //packages/typescript:version)
+alumnium --version | grep -qF "$expected"
+'''
