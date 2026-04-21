@@ -320,7 +320,7 @@ export abstract class LchainSchema {
     content: z.union([z.array(this.MessageContent), z.string()]),
     tool_calls: z.array(this.MessageDataToolCall),
     additional_kwargs: this.MessageDataAdditionalKwargs,
-    usage_metadata: this.UsageMetadata,
+    usage_metadata: z.union([this.UsageMetadata, z.undefined()]),
     invalid_tool_calls: z.array(z.unknown()),
     response_metadata: this.ResponseMetadata,
     id: z.string(),
