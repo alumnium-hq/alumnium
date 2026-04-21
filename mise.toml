@@ -62,10 +62,15 @@ run = [
 raw = true
 
 [tasks."install/ollama"]
-run = "ollama pull mistral-small3.1:24b"
+description = "Installs default Ollama provider model. Requires Ollama to be installed and running."
+run = "ollama pull $(mise //packages/typescript:get-ollama-model)"
 
 [tasks.build]
-depends = ["//packages/typescript:build", "//packages/python:build", "//websites/docs:build"]
+depends = [
+  "//packages/typescript:build",
+  "//packages/python:build",
+  "//websites/docs:build",
+]
 description = "Build all packages"
 
 [tasks."dev/cli"]
