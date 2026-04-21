@@ -278,7 +278,7 @@ export class LlmFactory {
   static createOllamaLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating Ollama LLM with model ${model.name}`);
 
-    const baseUrl = process.env.ALUMNIUM_OLLAMA_URL;
+    const baseUrl = process.env.OLLAMA_HOST || process.env.ALUMNIUM_OLLAMA_URL;
     if (baseUrl) {
       return new ChatOllama({
         model: model.name,

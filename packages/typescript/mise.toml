@@ -217,6 +217,12 @@ run = "./scripts/version.ts"
 quiet = true
 raw = true
 
+[tasks."get-ollama-model"]
+description = "Gets the current Ollama model id."
+run = "./scripts/get-ollama-model.ts"
+quiet = true
+raw = true
+
 [tasks."generate/types-scan-schema"]
 description = "Generates Zod schema from .types-scan.json file produced by `scanTypes` function. See docs/contributing/scan-types.md for details."
 usage = '''
@@ -237,4 +243,10 @@ run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}} --mode 
 description = "Generates LchainSchema from scanned types. See docs/contributing/scan-types.md for details."
 run = '''
 mise :generate/types-scan-schema:class ./src/llm/Lchain.serialized.types-scan.json LchainSchema > ./src/llm/LchainSchema.ts
+'''
+
+[tasks."generate/lchain-generation-additional-kwargs-schema"]
+description = "Generates LchainGenerationAdditionalKwargsSchema from scanned types. See docs/contributing/scan-types.md for details."
+run = '''
+mise :generate/types-scan-schema:class ./src/server/agents/BaseAgent.additional-kwargs.types-scan.json LchainGeneration > ./src/llm/LchainGenerationSchema.ts
 '''
