@@ -4,11 +4,10 @@
 
 set -eu
 
-ALUMNIUM_VERSION="{{VERSION}}"
-CHECKSUM_darwin_arm64="{{CHECKSUM_darwin_arm64}}"
-CHECKSUM_darwin_x64="{{CHECKSUM_darwin_x64}}"
-CHECKSUM_linux_arm64="{{CHECKSUM_linux_arm64}}"
-CHECKSUM_linux_x64="{{CHECKSUM_linux_x64}}"
+TAG_VERSION="${VERSION:-}"
+GH_REPO_NAME="alumnium-hq/alumnium"
+GH_API_HEADER_ACCEPT="Accept: application/vnd.github+json"
+GH_API_HEADER_VERSION="X-GitHub-Api-Version: 2026-03-10"
 
 main() {
 	# Detect OS
@@ -38,53 +37,93 @@ main() {
 		fi
 	fi
 
-	platform="${os}_${arch}"
-	case "$platform" in
-	darwin_arm64) checksum="$CHECKSUM_darwin_arm64" ;;
-	darwin_x64) checksum="$CHECKSUM_darwin_x64" ;;
-	linux_arm64) checksum="$CHECKSUM_linux_arm64" ;;
-	linux_x64) checksum="$CHECKSUM_linux_x64" ;;
-	*)
-		echo "Unsupported platform: $os-$arch" >&2
-		exit 1
-		;;
-	esac
-
-	binary="alumnium-${ALUMNIUM_VERSION}-${os}-${arch}"
-	url="https://github.com/alumnium-hq/alumnium/releases/download/${ALUMNIUM_VERSION}/${binary}"
-
-	# Pick downloader
+	# Pick HTTP client
 	if command -v curl >/dev/null 2>&1; then
-		dl() { curl -fL --progress-bar -o "$1" "$2"; }
+		download() {
+			curl -fL --progress-bar -o "$1" "$2"
+		}
+
+		gh_get() {
+			curl -fsSL \
+				-H "$GH_API_HEADER_ACCEPT" \
+				-H "$GH_API_HEADER_VERSION" \
+				"$1"
+		}
 	elif command -v wget >/dev/null 2>&1; then
-		dl() { wget --show-progress -qO "$1" "$2"; }
+		download() {
+			wget --show-progress -qO "$1" "$2"
+		}
+
+		gh_get() {
+			wget -qO- \
+				--header="$GH_API_HEADER_ACCEPT" \
+				--header="$GH_API_HEADER_VERSION" \
+				"$1"
+		}
 	else
 		echo "curl or wget is required" >&2
 		exit 1
 	fi
 
-	tmp="$(mktemp)"
-	trap 'rm -f "$tmp"' EXIT
+	if ! command -v sed >/dev/null 2>&1; then
+		echo "sed is required" >&2
+		exit 1
+	fi
 
-	echo "Downloading alumnium ${ALUMNIUM_VERSION} (${os}-${arch})..."
-	dl "$tmp" "$url"
+	# Get latest release version JSON
+	if [ -n "$TAG_VERSION" ]; then
+		version_json="$(
+			gh_get "https://api.github.com/repos/${GH_REPO_NAME}/releases/tags/${TAG_VERSION}"
+		)"
+	else
+		version_json="$(
+			gh_get "https://api.github.com/repos/${GH_REPO_NAME}/releases/latest"
+		)"
+	fi
+
+	# Extract tag_name from JSON
+	version="$(
+		echo "$version_json" | sed -n 's/^[[:space:]]*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p'
+	)"
+
+	# Construct binary name and URL
+	binary="alumnium-${version}-${os}-${arch}"
+	binary_url="https://github.com/${GH_REPO_NAME}/releases/download/${version}/${binary}"
+
+	# Extract checksum from JSON
+	binary_checksum="$(
+		printf '%s\n' "$version_json" |
+			sed -n '/"name": "'"$binary"'"/,/"digest":/{
+			/"digest":/{
+				s/.*"digest":[[:space:]]*"sha256:\([^"]*\)".*/\1/p
+				q
+			}
+		}'
+	)"
+
+	tmp_binary="$(mktemp)"
+	trap 'rm -f "$tmp_binary"' EXIT
+
+	# Download binary
+	echo "Downloading alumnium ${version} (${os}-${arch})..."
+	download "$tmp_binary" "$binary_url"
 
 	printf "Verifying checksum... "
 	if command -v shasum >/dev/null 2>&1; then
-		actual="$(shasum -a 256 "$tmp" | cut -d' ' -f1)"
+		actual_checksum="$(shasum -a 256 "$tmp_binary" | cut -d' ' -f1)"
 	else
-		actual="$(sha256sum "$tmp" | cut -d' ' -f1)"
+		actual_checksum="$(sha256sum "$tmp_binary" | cut -d' ' -f1)"
 	fi
 
-	if [ "$actual" != "$checksum" ]; then
+	if [ "$actual_checksum" != "$binary_checksum" ]; then
 		echo "Checksum mismatch!" >&2
-		echo "  expected: $checksum" >&2
-		echo "  actual:   $actual" >&2
+		echo "  expected: $binary_checksum" >&2
+		echo "  actual:   $actual_checksum" >&2
 		exit 1
 	fi
 	echo "ok"
 
-	chmod +x "$tmp"
+	chmod +x "$tmp_binary"
 
 	# Install binary
 	if [ -w /usr/local/bin ]; then
@@ -94,7 +133,7 @@ main() {
 		mkdir -p "$install_dir"
 	fi
 
-	mv "$tmp" "${install_dir}/alumnium"
+	mv "$tmp_binary" "${install_dir}/alumnium"
 
 	# Warn if install dir is not on PATH
 	case ":${PATH}:" in
@@ -108,7 +147,7 @@ main() {
 	esac
 
 	echo ""
-	echo "Alumnium ${ALUMNIUM_VERSION} installed to ${install_dir}/alumnium"
+	echo "Alumnium ${version} installed to ${install_dir}/alumnium"
 }
 
 main
