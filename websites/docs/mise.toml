@@ -9,6 +9,3 @@ run = "bun run build"
 
 [tasks.dev]
 run = "bun run dev"
-
-[tasks.generate-install-scripts]
-run = "bun scripts/generate-install-scripts.ts"
