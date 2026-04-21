@@ -13,9 +13,11 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { AIMessage } from "@langchain/core/messages";
 import z from "zod";
 import { Lchain } from "../../llm/Lchain.ts";
+import { LchainGeneration } from "../../llm/LchainGenerationSchema.ts";
 import { LchainSchema } from "../../llm/LchainSchema.ts";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
 import { retry } from "../../utils/retry.ts";
+import { scanTypes } from "../../utils/typesScan.ts";
 import { LlmContext } from "../LlmContext.ts";
 import { MODEL_RETRIES, MODEL_TIMEOUT_SEC } from "../LlmFactory.ts";
 import { agentPrompts } from "./prompts/bundledPrompts.ts";
@@ -227,7 +229,7 @@ export class BaseAgent {
 
         const [message, structured] = this.#extractMessageContent(result);
 
-        const reasoning = this.#extractReasoning(message.content);
+        const reasoning = this.#extractReasoning(message);
         if (reasoning) {
           logger.info(this.formatLog("out", "Reasoning"), {
             detail: optionalLogDebugExtra("reasoning", reasoning),
@@ -257,7 +259,16 @@ export class BaseAgent {
     }
   }
 
-  #extractReasoning(contentArg: Lchain.MessageContent): string | null {
+  #extractReasoning(message: AIMessage): string | null {
+    return (
+      this.#extractReasoningFromContent(message.content) ||
+      this.#extractReasoningFromAdditional(message.additional_kwargs)
+    );
+  }
+
+  #extractReasoningFromContent(
+    contentArg: Lchain.MessageContent,
+  ): string | null {
     if (!Array.isArray(contentArg) || !contentArg.length) {
       return null;
     }
@@ -275,6 +286,18 @@ export class BaseAgent {
     });
 
     return reasoningParts.length ? reasoningParts.join(" ") : null;
+  }
+
+  #extractReasoningFromAdditional(
+    additional: AIMessage["additional_kwargs"],
+  ): string | null {
+    scanTypes({
+      id: "additional-kwargs",
+      url: import.meta.url,
+      value: additional,
+    });
+    const kwargs = LchainGeneration.AdditionalKwargs.parse(additional);
+    return kwargs.reasoning_content || null;
   }
 
   #extractText(contentArg: Lchain.MessageContent): string {
