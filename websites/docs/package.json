@@ -15,7 +15,7 @@
     "@astrojs/starlight": "0.34.2",
     "@astrojs/starlight-tailwind": "4.0.1",
     "@astrojs/tailwind": "6.0.2",
-    "astro": "5.18.1",
+    "astro": "6.1.6",
     "sharp": "^0.32.6",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3"
