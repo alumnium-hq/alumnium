@@ -21,13 +21,29 @@ $checksum = $Checksums[$platform]
 
 $binary = "alumnium-$AlumniumVersion-$platform.exe"
 $url = "https://github.com/alumnium-hq/alumnium/releases/download/$AlumniumVersion/$binary"
-$installDir = Join-Path $env:USERPROFILE ".alumnium" "bin"
+$installDir = Join-Path (Join-Path $env:USERPROFILE ".alumnium") "bin"
 $installPath = Join-Path $installDir "alumnium.exe"
 $tmp = [System.IO.Path]::GetTempFileName() + ".exe"
 
 try {
   Write-Output "Downloading alumnium $AlumniumVersion (windows-$arch)..."
-  Invoke-WebRequest -Uri $url -OutFile $tmp -ErrorAction Stop
+  if (Get-Command curl.exe -ErrorAction SilentlyContinue) {
+    & curl.exe -fL --progress-bar -o $tmp $url
+    if ($LASTEXITCODE -ne 0) {
+      Write-Error "Failed to download binary from $url"
+      exit 1
+    }
+  }
+  else {
+    $oldProgressPreference = $ProgressPreference
+    $ProgressPreference = "SilentlyContinue"
+    try {
+      Invoke-WebRequest -Uri $url -OutFile $tmp -ErrorAction Stop
+    }
+    finally {
+      $ProgressPreference = $oldProgressPreference
+    }
+  }
 
   Write-Host -NoNewline "Verifying checksum... "
   $actual = (Get-FileHash -Path $tmp -Algorithm SHA256).Hash.ToLower()
