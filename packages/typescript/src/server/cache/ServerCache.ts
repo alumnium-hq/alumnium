@@ -63,7 +63,9 @@ export abstract class ServerCache extends BaseCache {
       ? generationsArg
       : [generationsArg];
     generations.forEach((generation) => {
-      Lchain.applyUsage(this.usage, generation.message.data.usage_metadata);
+      // TODO: Figure out what models has `usage_metadata` undefined and find a fallback.
+      if (generation.message.data.usage_metadata)
+        Lchain.applyUsage(this.usage, generation.message.data.usage_metadata);
     });
   }
 }
