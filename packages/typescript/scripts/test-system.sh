@@ -53,7 +53,7 @@ fi
 
 echo -e "\n🌀 Running vitest tests"
 run_tests fnox exec -- \
-	bun vitest --project system --hideSkippedTests $ALUMNIUM_TEST_VITEST_ARGS run
+	bun vitest run --project system --hideSkippedTests $ALUMNIUM_TEST_VITEST_ARGS
 
 if [ -n "$ALUMNIUM_TEST_CACHE" ]; then
 	# NOTE: We wrap into `bash -c` to grep tree output rather than `run_tests`.
