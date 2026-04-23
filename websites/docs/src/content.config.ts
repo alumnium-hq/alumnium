@@ -9,7 +9,6 @@ export const collections = {
     schema: docsSchema(),
   }),
   blog: defineCollection({
-    type: "content_layer",
     loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
     schema: z.object({
       title: z.string(),
