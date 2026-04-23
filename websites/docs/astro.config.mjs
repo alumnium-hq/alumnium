@@ -1,4 +1,3 @@
-// @ts-check
 import sitemap from "@astrojs/sitemap";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
@@ -158,7 +157,7 @@ export default defineConfig({
     }),
     sitemap({}),
   ],
-  vite: { plugins: [tailwindcss()] },
+  vite: { plugins: [...tailwindcss()] },
   redirects: {
     "/docs/getting-started/writing-first-test": "/docs/writing-first-test/selenium",
   },
