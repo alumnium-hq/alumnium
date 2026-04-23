@@ -172,6 +172,7 @@ Pass `alumnium:options` in capabilities to configure Alumnium and driver behavio
   "platformName": "chrome",
   "alumnium:options": {
     "autoswitchToNewTab": false,
+    "baseUrl": "https://example.com",
     "changeAnalysis": true,
     "cookies": [
       {
@@ -192,6 +193,7 @@ Pass `alumnium:options` in capabilities to configure Alumnium and driver behavio
 | ------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `autoswitchContexts`      | Automatically switch between native and web contexts after interactions. Appium only. Default is `true`. |
 | `autoswitchToNewTab`      | Automatically switch focus to newly opened tabs. Selenium and Playwright only. Default is `true`.        |
+| `baseUrl`                 | URL to navigate to when the session starts.                                                              |
 | `changeAnalysis`          | Enable UI changes analysis after each `do()` call. Default is `true`.                                    |
 | `cookies`                 | Pre-defined cookies to set before the session starts. Selenium and Playwright only.                      |
 | `delay`                   | Seconds to wait after each interaction. Appium only. Default is `0`.                                     |
