@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { pushMock } from "../../tests/unit/mocks.ts";
 import type { Http } from "../Http.ts";
-import { Model } from "../Model.ts";
 import { ActorAgent } from "./agents/ActorAgent.ts";
 import { AreaAgent } from "./agents/AreaAgent.ts";
 import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.ts";

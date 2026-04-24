@@ -58,6 +58,9 @@ jobs:
       - name: Check Formatting
         run: mise :format:check
 
+      - name: Lint
+        run: mise :lint
+
       - name: Check Types
         run: mise :types
 
