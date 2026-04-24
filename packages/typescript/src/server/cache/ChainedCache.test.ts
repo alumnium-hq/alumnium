@@ -170,18 +170,25 @@ describe(ChainedCache, () => {
       const { sessionContext, cache1, cache2, lookupArgs } = setup();
       const response = createGenerations();
       cache2.assign(response, {
-        input_tokens: 2,
+        ...createLlmUsage(),
+        input_tokens: 1,
         output_tokens: 2,
-        total_tokens: 2,
+        total_tokens: 3,
+        cache_creation: 4,
+        cache_read: 5,
+        reasoning: 6,
       });
 
       const chained = new ChainedCache(sessionContext, [cache1, cache2]);
       await chained.lookup(...lookupArgs);
 
       expect(chained.usage).toEqual({
-        input_tokens: 2,
+        input_tokens: 1,
         output_tokens: 2,
-        total_tokens: 2,
+        total_tokens: 3,
+        cache_creation: 4,
+        cache_read: 5,
+        reasoning: 6,
       });
     });
 
@@ -189,34 +196,47 @@ describe(ChainedCache, () => {
       const { sessionContext, cache1, cache2, lookupArgs } = setup();
       const response = createGenerations();
       cache1.assign(null, {
+        ...createLlmUsage(),
         input_tokens: 1,
         output_tokens: 1,
         total_tokens: 1,
+        cache_creation: 1,
+        cache_read: 1,
+        reasoning: 1,
       });
       cache2.assign(response, {
-        input_tokens: 2,
+        ...createLlmUsage(),
+        input_tokens: 1,
         output_tokens: 2,
-        total_tokens: 2,
+        total_tokens: 3,
+        cache_creation: 4,
+        cache_read: 5,
+        reasoning: 6,
       });
 
       const chained = new ChainedCache(sessionContext, [cache1, cache2]);
       await chained.lookup(...lookupArgs);
 
       expect(chained.usage).toEqual({
-        input_tokens: 2,
+        input_tokens: 1,
         output_tokens: 2,
-        total_tokens: 2,
+        total_tokens: 3,
+        cache_creation: 4,
+        cache_read: 5,
+        reasoning: 6,
       });
     });
 
     it("resolves empty usage on miss", async () => {
       const { sessionContext, cache1, cache2, lookupArgs } = setup();
       cache1.assign(null, {
+        ...createLlmUsage(),
         input_tokens: 1,
         output_tokens: 1,
         total_tokens: 1,
       });
       cache2.assign(null, {
+        ...createLlmUsage(),
         input_tokens: 2,
         output_tokens: 2,
         total_tokens: 2,
@@ -229,6 +249,9 @@ describe(ChainedCache, () => {
         input_tokens: 0,
         output_tokens: 0,
         total_tokens: 0,
+        cache_creation: 0,
+        cache_read: 0,
+        reasoning: 0,
       });
     });
   });
@@ -254,17 +277,25 @@ function createGenerations(): Generation[] {
     Lchain.fromStored({
       text: "Hi there",
       message: {
-        type: "human",
+        type: "ai",
         data: {
           content: "Hi there",
           response_metadata: {
-            usage_metadata: {
+            usage: {
               input_tokens: 1,
               output_tokens: 2,
               total_tokens: 3,
             },
           },
           additional_kwargs: {},
+          tool_calls: [],
+          invalid_tool_calls: [],
+          usage_metadata: {
+            input_tokens: 1,
+            output_tokens: 2,
+            total_tokens: 3,
+          },
+          id: "gen-id",
         },
       },
     }),

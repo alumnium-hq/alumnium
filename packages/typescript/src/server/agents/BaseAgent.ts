@@ -10,9 +10,14 @@ import {
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import type { AIMessage } from "@langchain/core/messages";
 import z from "zod";
+import { Lchain } from "../../llm/Lchain.ts";
+import { LchainGeneration } from "../../llm/LchainGenerationSchema.ts";
+import { LchainSchema } from "../../llm/LchainSchema.ts";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
 import { retry } from "../../utils/retry.ts";
+import { scanTypes } from "../../utils/typesScan.ts";
 import { LlmContext } from "../LlmContext.ts";
 import { MODEL_RETRIES, MODEL_TIMEOUT_SEC } from "../LlmFactory.ts";
 import { agentPrompts } from "./prompts/bundledPrompts.ts";
@@ -21,7 +26,6 @@ import {
   PROVIDER_TO_PROMPTS_DEV,
   type AgentPrompts,
 } from "./prompts/prompts.ts";
-import type { AIMessage } from "@langchain/core/messages";
 
 const logger = getLogger(import.meta.url);
 
@@ -198,7 +202,7 @@ export class BaseAgent {
         });
 
         // @ts-expect-error
-        const result = await chain.invoke(input, {
+        const result = (await chain.invoke(input, {
           ...options,
           timeout: MODEL_TIMEOUT_SEC * 1000,
           callbacks: [
@@ -215,7 +219,7 @@ export class BaseAgent {
               },
             },
           ],
-        });
+        })) as Lchain.InvokeResult;
 
         logger.debug(`Got ${agentName} agent chain result: {result}`, {
           result: optionalLogDebugExtra("langchain", result),
@@ -223,14 +227,7 @@ export class BaseAgent {
 
         this.llmContext.clearPromptsMeta(contextPrompts);
 
-        let message: any;
-        let structured: unknown = null;
-        if (typeof result === "object" && result && "raw" in result) {
-          message = result.raw;
-          structured = (result as any).parsed;
-        } else {
-          message = result;
-        }
+        const [message, structured] = this.#extractMessageContent(result);
 
         const reasoning = this.#extractReasoning(message);
         if (reasoning) {
@@ -239,9 +236,7 @@ export class BaseAgent {
           });
         }
 
-        if (message.usage_metadata) {
-          this.#updateUsage(message.usage_metadata);
-        }
+        this.#applyUsage(message);
 
         return new BaseAgentResponse({
           content: this.#extractText(message.content),
@@ -254,82 +249,90 @@ export class BaseAgent {
     );
   }
 
+  #extractMessageContent(
+    result: Lchain.InvokeResult,
+  ): [AIMessage, Lchain.InvokeResultParsed | undefined] {
+    if ("raw" in result) {
+      return [result.raw, result.parsed];
+    } else {
+      return [result, undefined];
+    }
+  }
+
   #extractReasoning(message: AIMessage): string | null {
     return (
-      this.#extractReasoningFromContent(message.content as object[]) ??
+      this.#extractReasoningFromContent(message.content) ||
       this.#extractReasoningFromAdditional(message.additional_kwargs)
     );
   }
 
-  #extractReasoningFromContent(content: object[]): string | null {
-    if (!Array.isArray(content) || !content.length) {
+  #extractReasoningFromContent(
+    contentArg: Lchain.MessageContent,
+  ): string | null {
+    if (!Array.isArray(contentArg) || !contentArg.length) {
       return null;
     }
 
-    // Collect all reasoning from content blocks
-    const reasoningParts: string[] = [];
-
-    for (const block of content) {
-      if (!block || typeof block !== "object") {
-        continue;
+    // Collect all reasoning from content objects
+    const reasoningParts = contentArg.flatMap((lcContent) => {
+      const content = LchainSchema.MessageContent.parse(lcContent);
+      switch (content.type) {
+        case "reasoning":
+          return [content.reasoning];
+        case "thinking":
+          return [content.thinking];
       }
+      return [];
+    });
 
-      if ("reasoning_content" in block) {
-        // Anthropic
-        reasoningParts.push(String(block["reasoning_content"]));
-      } else if (
-        "type" in block &&
-        block["type"] === "reasoning" &&
-        "reasoning" in block
-      ) {
-        // OpenAI
-        reasoningParts.push(String(block["reasoning"]));
-      } else if ("thinking" in block) {
-        // Google
-        reasoningParts.push(String(block["thinking"]));
-      }
-    }
-
-    return reasoningParts.length > 0 ? reasoningParts.join(" ") : null;
+    return reasoningParts.length ? reasoningParts.join(" ") : null;
   }
 
-  #extractReasoningFromAdditional(additional: object): string | null {
-    if (!additional || typeof additional !== "object") return null;
-    const value = (additional as Record<string, unknown>)["reasoning_content"];
-    return typeof value === "string" && value ? value : null;
+  #extractReasoningFromAdditional(
+    additional: AIMessage["additional_kwargs"],
+  ): string | null {
+    scanTypes({
+      id: "additional-kwargs",
+      url: import.meta.url,
+      value: additional,
+    });
+    const kwargs = LchainGeneration.AdditionalKwargs.parse(additional);
+    return kwargs.reasoning_content || null;
   }
 
-  #extractText(content: unknown): string {
-    if (typeof content === "string") {
-      return content;
+  #extractText(contentArg: Lchain.MessageContent): string {
+    if (typeof contentArg === "string") {
+      return contentArg;
     }
 
-    if (Array.isArray(content)) {
-      const texts: string[] = [];
-      for (const block of content) {
-        if (typeof block === "string") {
-          texts.push(block);
-        } else if (
-          typeof block === "object" &&
-          block &&
-          "type" in block &&
-          block.type === "text" &&
-          "text" in block
-        ) {
-          texts.push(String(block.text ?? ""));
-        }
-      }
-
-      return texts.join("");
-    }
-
-    return String(content);
+    return contentArg
+      .flatMap((lcContent) => {
+        const content = LchainSchema.MessageContent.parse(lcContent);
+        if (content.type !== "text") return [];
+        return [content.text];
+      })
+      .join("");
   }
 
-  #updateUsage(usage: Partial<LlmUsage>) {
-    this.usage.input_tokens += usage.input_tokens ?? 0;
-    this.usage.output_tokens += usage.output_tokens ?? 0;
-    this.usage.total_tokens += usage.total_tokens ?? 0;
+  #applyUsage(message: AIMessage): void {
+    // NOTE: LangChain is lying about `usage_metadata` being undefined
+    const result = LchainSchema.UsageMetadata.safeParse(
+      message.usage_metadata,
+      { reportInput: true },
+    );
+
+    if (!result.success) {
+      logger.warn(
+        "Failed to parse usage metadata from LangChain response, skipping usage update. Metadata: {metadata}, error: {error}",
+        {
+          metadata: message.usage_metadata,
+          error: result.error,
+        },
+      );
+      return;
+    }
+
+    Lchain.applyUsage(this.usage, result.data);
   }
 
   protected formatLog(dir: BaseAgent.LogDir, topic: string) {

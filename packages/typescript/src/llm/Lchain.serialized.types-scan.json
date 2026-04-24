@@ -1,0 +1,2359 @@
+[
+  {
+    "name": "StoredGeneration",
+    "kind": "object",
+    "properties": {
+      "text": {
+        "kind": "field",
+        "optional": false,
+        "type": [
+          {
+            "kind": "string",
+            "literal": false
+          }
+        ]
+      },
+      "message": {
+        "kind": "field",
+        "optional": false,
+        "type": [
+          {
+            "name": "Message",
+            "kind": "object",
+            "properties": {
+              "type": {
+                "kind": "field",
+                "optional": false,
+                "type": [
+                  {
+                    "wip": {
+                      "kind": "add",
+                      "type": [
+                        {
+                          "kind": "string",
+                          "literal": false
+                        }
+                      ]
+                    },
+                    "kind": "string",
+                    "values": ["ai"]
+                  }
+                ]
+              },
+              "data": {
+                "kind": "field",
+                "optional": false,
+                "type": [
+                  {
+                    "kind": "object",
+                    "properties": {
+                      "content": {
+                        "kind": "field",
+                        "optional": false,
+                        "type": [
+                          {
+                            "kind": "array",
+                            "type": [
+                              {
+                                "name": "MessageContent",
+                                "kind": "object",
+                                "discriminator": "type",
+                                "properties": [
+                                  {
+                                    "name": "MessageThinking",
+                                    "kind": "object",
+                                    "properties": {
+                                      "type": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["thinking"]
+                                          }
+                                        ],
+                                        "discriminator": true
+                                      },
+                                      "thinking": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "signature": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "name": "MessageText",
+                                    "kind": "object",
+                                    "properties": {
+                                      "type": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["text"]
+                                          }
+                                        ],
+                                        "discriminator": true
+                                      },
+                                      "text": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "annotations": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "array",
+                                            "type": []
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "name": "MessageFunctionCall",
+                                    "kind": "object",
+                                    "properties": {
+                                      "type": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["functionCall"]
+                                          }
+                                        ],
+                                        "discriminator": true
+                                      },
+                                      "functionCall": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "name": "MessageFunctionCallData",
+                                            "kind": "object",
+                                            "properties": {
+                                              "name": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "args": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "record"
+                                                  }
+                                                ]
+                                              },
+                                              "id": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "name": "MessageReasoning",
+                                    "kind": "object",
+                                    "properties": {
+                                      "type": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["reasoning"]
+                                          }
+                                        ],
+                                        "discriminator": true
+                                      },
+                                      "reasoning": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "name": "MessageToolUse",
+                                    "kind": "object",
+                                    "properties": {
+                                      "type": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["tool_use"]
+                                          }
+                                        ],
+                                        "discriminator": true
+                                      },
+                                      "id": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "name": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "input": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "record"
+                                          }
+                                        ]
+                                      },
+                                      "caller": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "type": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "wip": {
+                                                      "kind": "add",
+                                                      "type": [
+                                                        {
+                                                          "kind": "string",
+                                                          "literal": false
+                                                        }
+                                                      ]
+                                                    },
+                                                    "kind": "string",
+                                                    "values": ["direct"]
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "name": "MessageReasoningContent",
+                                    "kind": "object",
+                                    "properties": {
+                                      "type": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["reasoning_content"]
+                                          }
+                                        ],
+                                        "discriminator": true
+                                      },
+                                      "reasoningText": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "name": "MessageReasoningContentData",
+                                            "kind": "object",
+                                            "properties": {
+                                              "text": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "signature": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "string",
+                            "literal": false
+                          }
+                        ]
+                      },
+                      "tool_calls": {
+                        "kind": "field",
+                        "optional": false,
+                        "type": [
+                          {
+                            "kind": "array",
+                            "type": [
+                              {
+                                "name": "MessageDataToolCall",
+                                "kind": "object",
+                                "discriminator": "type",
+                                "properties": [
+                                  {
+                                    "name": "ToolCall",
+                                    "kind": "object",
+                                    "properties": {
+                                      "type": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["tool_call"]
+                                          }
+                                        ],
+                                        "discriminator": true
+                                      },
+                                      "id": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "name": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "args": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "record"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      "additional_kwargs": {
+                        "kind": "field",
+                        "optional": false,
+                        "type": [
+                          {
+                            "kind": "object",
+                            "properties": {
+                              "finishReason": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["STOP"]
+                                  }
+                                ]
+                              },
+                              "index": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "__gemini_function_call_thought_signatures__": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "record",
+                                    "type": [
+                                      {
+                                        "kind": "string",
+                                        "literal": false
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "finishMessage": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "reasoning": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "discriminator": "type",
+                                    "properties": [
+                                      {
+                                        "name": "Reasoning",
+                                        "kind": "object",
+                                        "properties": {
+                                          "id": {
+                                            "kind": "field",
+                                            "optional": false,
+                                            "type": [
+                                              {
+                                                "kind": "string",
+                                                "literal": false
+                                              }
+                                            ]
+                                          },
+                                          "type": {
+                                            "kind": "field",
+                                            "optional": false,
+                                            "type": [
+                                              {
+                                                "kind": "string",
+                                                "values": ["reasoning"]
+                                              }
+                                            ],
+                                            "discriminator": true
+                                          },
+                                          "summary": {
+                                            "kind": "field",
+                                            "optional": false,
+                                            "type": [
+                                              {
+                                                "kind": "array",
+                                                "type": [
+                                                  {
+                                                    "name": "ReasoningSummary",
+                                                    "kind": "object",
+                                                    "properties": {
+                                                      "type": {
+                                                        "kind": "field",
+                                                        "optional": false,
+                                                        "type": [
+                                                          {
+                                                            "kind": "string",
+                                                            "values": [
+                                                              "summary_text"
+                                                            ]
+                                                          }
+                                                        ]
+                                                      },
+                                                      "text": {
+                                                        "kind": "field",
+                                                        "optional": false,
+                                                        "type": [
+                                                          {
+                                                            "kind": "string",
+                                                            "literal": false
+                                                          }
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "parsed": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "record"
+                                  }
+                                ]
+                              },
+                              "__openai_function_call_ids__": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "record",
+                                    "type": [
+                                      {
+                                        "kind": "string",
+                                        "literal": false
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "model": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "id": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "type": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["message"]
+                                  }
+                                ]
+                              },
+                              "role": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["assistant"]
+                                  }
+                                ]
+                              },
+                              "stop_reason": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["tool_use"]
+                                  }
+                                ]
+                              },
+                              "stop_sequence": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "null"
+                                  }
+                                ]
+                              },
+                              "stop_details": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "null"
+                                  }
+                                ]
+                              },
+                              "usage": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "input_tokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cache_creation_input_tokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cache_read_input_tokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cache_creation": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "ephemeral_5m_input_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "ephemeral_1h_input_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      "output_tokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "service_tier": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "wip": {
+                                              "kind": "add",
+                                              "type": [
+                                                {
+                                                  "kind": "string",
+                                                  "literal": false
+                                                }
+                                              ]
+                                            },
+                                            "kind": "string",
+                                            "values": ["standard"]
+                                          }
+                                        ]
+                                      },
+                                      "inference_geo": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "function_call": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "undefined"
+                                  }
+                                ]
+                              },
+                              "tool_calls": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "array",
+                                    "type": [
+                                      {
+                                        "kind": "object",
+                                        "discriminator": "type",
+                                        "properties": [
+                                          {
+                                            "name": "FunctionCall",
+                                            "kind": "object",
+                                            "properties": {
+                                              "index": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "values": [0]
+                                                  }
+                                                ]
+                                              },
+                                              "id": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "type": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "values": ["function"]
+                                                  }
+                                                ],
+                                                "discriminator": true
+                                              },
+                                              "function": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "object",
+                                                    "properties": {
+                                                      "name": {
+                                                        "kind": "field",
+                                                        "optional": false,
+                                                        "type": [
+                                                          {
+                                                            "kind": "string",
+                                                            "literal": false
+                                                          }
+                                                        ]
+                                                      },
+                                                      "arguments": {
+                                                        "kind": "field",
+                                                        "optional": false,
+                                                        "type": [
+                                                          {
+                                                            "kind": "string",
+                                                            "literal": false
+                                                          }
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "reasoning_content": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  },
+                                  {
+                                    "kind": "undefined"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "usage_metadata": {
+                        "kind": "field",
+                        "optional": false,
+                        "type": [
+                          {
+                            "name": "UsageMetadata",
+                            "kind": "object",
+                            "properties": {
+                              "input_tokens": {
+                                "kind": "field",
+                                "optional": false,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "output_tokens": {
+                                "kind": "field",
+                                "optional": false,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "total_tokens": {
+                                "kind": "field",
+                                "optional": false,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "input_token_details": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "cache_read": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cache_creation": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "audio": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "undefined"
+                                          },
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "output_token_details": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "reasoning": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "audio": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "undefined"
+                                          },
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          {
+                            "kind": "undefined"
+                          }
+                        ]
+                      },
+                      "invalid_tool_calls": {
+                        "kind": "field",
+                        "optional": false,
+                        "type": [
+                          {
+                            "kind": "array",
+                            "type": []
+                          }
+                        ]
+                      },
+                      "response_metadata": {
+                        "kind": "field",
+                        "optional": false,
+                        "type": [
+                          {
+                            "name": "ResponseMetadata",
+                            "kind": "object",
+                            "properties": {
+                              "tokenUsage": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "promptTokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "completionTokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "totalTokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "finishReason": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["STOP"]
+                                  }
+                                ]
+                              },
+                              "index": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "finishMessage": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "id": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "estimatedTokenUsage": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "promptTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "completionTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "totalTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "model_provider": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "model": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "created_at": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  },
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "incomplete_details": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "null"
+                                  }
+                                ]
+                              },
+                              "metadata": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {}
+                                  }
+                                ]
+                              },
+                              "object": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["response"]
+                                  }
+                                ]
+                              },
+                              "output": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "array",
+                                    "type": [
+                                      {
+                                        "kind": "object",
+                                        "discriminator": "type",
+                                        "properties": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "id": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "type": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "values": ["reasoning"]
+                                                  }
+                                                ],
+                                                "discriminator": true
+                                              },
+                                              "summary": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "array",
+                                                    "type": [
+                                                      {
+                                                        "kind": "object",
+                                                        "properties": {
+                                                          "type": {
+                                                            "kind": "field",
+                                                            "optional": false,
+                                                            "type": [
+                                                              {
+                                                                "kind": "string",
+                                                                "values": [
+                                                                  "summary_text"
+                                                                ]
+                                                              }
+                                                            ]
+                                                          },
+                                                          "text": {
+                                                            "kind": "field",
+                                                            "optional": false,
+                                                            "type": [
+                                                              {
+                                                                "kind": "string",
+                                                                "literal": false
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          },
+                                          {
+                                            "name": "OutputMessage",
+                                            "kind": "object",
+                                            "properties": {
+                                              "id": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "type": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "values": ["message"]
+                                                  }
+                                                ],
+                                                "discriminator": true
+                                              },
+                                              "status": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "wip": {
+                                                      "kind": "add",
+                                                      "type": [
+                                                        {
+                                                          "kind": "string",
+                                                          "literal": false
+                                                        }
+                                                      ]
+                                                    },
+                                                    "kind": "string",
+                                                    "values": ["completed"]
+                                                  }
+                                                ]
+                                              },
+                                              "content": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "array",
+                                                    "type": [
+                                                      {
+                                                        "name": "MetadataOutput",
+                                                        "kind": "object",
+                                                        "discriminator": "type",
+                                                        "properties": [
+                                                          {
+                                                            "name": "MetadataOutputText",
+                                                            "kind": "object",
+                                                            "properties": {
+                                                              "type": {
+                                                                "kind": "field",
+                                                                "optional": false,
+                                                                "type": [
+                                                                  {
+                                                                    "kind": "string",
+                                                                    "values": [
+                                                                      "output_text"
+                                                                    ]
+                                                                  }
+                                                                ],
+                                                                "discriminator": true
+                                                              },
+                                                              "annotations": {
+                                                                "kind": "field",
+                                                                "optional": false,
+                                                                "type": [
+                                                                  {
+                                                                    "kind": "array",
+                                                                    "type": []
+                                                                  }
+                                                                ]
+                                                              },
+                                                              "logprobs": {
+                                                                "kind": "field",
+                                                                "optional": false,
+                                                                "type": [
+                                                                  {
+                                                                    "kind": "array",
+                                                                    "type": []
+                                                                  }
+                                                                ]
+                                                              },
+                                                              "text": {
+                                                                "kind": "field",
+                                                                "optional": false,
+                                                                "type": [
+                                                                  {
+                                                                    "kind": "string",
+                                                                    "literal": false
+                                                                  }
+                                                                ]
+                                                              },
+                                                              "parsed": {
+                                                                "kind": "field",
+                                                                "optional": true,
+                                                                "type": [
+                                                                  {
+                                                                    "kind": "record"
+                                                                  }
+                                                                ]
+                                                              }
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              "role": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "wip": {
+                                                      "kind": "add",
+                                                      "type": [
+                                                        {
+                                                          "kind": "string",
+                                                          "literal": false
+                                                        }
+                                                      ]
+                                                    },
+                                                    "kind": "string",
+                                                    "values": ["assistant"]
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          },
+                                          {
+                                            "name": "OutputFunctionCall",
+                                            "kind": "object",
+                                            "properties": {
+                                              "id": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "type": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "values": ["function_call"]
+                                                  }
+                                                ],
+                                                "discriminator": true
+                                              },
+                                              "status": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "values": ["completed"]
+                                                  }
+                                                ]
+                                              },
+                                              "arguments": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "call_id": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "name": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              "status": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["completed"]
+                                  }
+                                ]
+                              },
+                              "user": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "null"
+                                  }
+                                ]
+                              },
+                              "service_tier": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["default"]
+                                  }
+                                ]
+                              },
+                              "model_name": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "stop_reason": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["tool_use"]
+                                  }
+                                ]
+                              },
+                              "stop_sequence": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "null"
+                                  }
+                                ]
+                              },
+                              "stop_details": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "null"
+                                  }
+                                ]
+                              },
+                              "usage": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "input_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cache_creation_input_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cache_read_input_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cache_creation": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "ephemeral_5m_input_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "ephemeral_1h_input_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      "output_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "service_tier": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "inference_geo": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "prompt_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "completion_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "total_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "prompt_tokens_details": {
+                                        "name": "PromptTokensDetails",
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "cached_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "text_tokens": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "audio_tokens": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "image_tokens": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      "completion_tokens_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "name": "CompletionTokensDetails",
+                                            "kind": "object",
+                                            "properties": {
+                                              "reasoning_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "audio_tokens": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "accepted_prediction_tokens": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "rejected_prediction_tokens": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      "prompt_cache_hit_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "prompt_cache_miss_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "inputTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "outputTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "totalTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "num_sources_used": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cost_in_usd_ticks": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cacheReadInputTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "cacheWriteInputTokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "type": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["message"]
+                                  }
+                                ]
+                              },
+                              "role": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["assistant"]
+                                  }
+                                ]
+                              },
+                              "finish_reason": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["tool_calls"]
+                                  }
+                                ]
+                              },
+                              "system_fingerprint": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "stopReason": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["tool_use"]
+                                  }
+                                ]
+                              },
+                              "metrics": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "latencyMs": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "$metadata": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "name": "ResponseMetadataInternal",
+                                    "kind": "object",
+                                    "properties": {
+                                      "httpStatusCode": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "requestId": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "extendedRequestId": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "undefined"
+                                          }
+                                        ]
+                                      },
+                                      "cfId": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "undefined"
+                                          }
+                                        ]
+                                      },
+                                      "attempts": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "totalRetryDelay": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "prompt": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "completion": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "done": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "boolean",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "done_reason": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "wip": {
+                                      "kind": "add",
+                                      "type": [
+                                        {
+                                          "kind": "string",
+                                          "literal": false
+                                        }
+                                      ]
+                                    },
+                                    "kind": "string",
+                                    "values": ["stop"]
+                                  }
+                                ]
+                              },
+                              "total_duration": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "load_duration": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "prompt_eval_count": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "prompt_eval_duration": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "eval_count": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "eval_duration": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "number",
+                                    "literal": false
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "id": {
+                        "kind": "field",
+                        "optional": false,
+                        "type": [
+                          {
+                            "kind": "string",
+                            "literal": false
+                          }
+                        ]
+                      },
+                      "name": {
+                        "kind": "field",
+                        "optional": true,
+                        "type": [
+                          {
+                            "wip": true,
+                            "kind": "undefined"
+                          }
+                        ]
+                      },
+                      "type": {
+                        "kind": "field",
+                        "optional": true,
+                        "type": [
+                          {
+                            "wip": {
+                              "kind": "add",
+                              "type": [
+                                {
+                                  "kind": "string",
+                                  "literal": false
+                                }
+                              ]
+                            },
+                            "kind": "string",
+                            "values": ["ai"]
+                          }
+                        ]
+                      },
+                      "tool_call_chunks": {
+                        "kind": "field",
+                        "optional": true,
+                        "type": [
+                          {
+                            "kind": "array",
+                            "type": [
+                              {
+                                "name": "ToolCallChunk",
+                                "kind": "object",
+                                "properties": {
+                                  "name": {
+                                    "kind": "field",
+                                    "optional": false,
+                                    "type": [
+                                      {
+                                        "kind": "string",
+                                        "literal": false
+                                      }
+                                    ]
+                                  },
+                                  "args": {
+                                    "kind": "field",
+                                    "optional": false,
+                                    "type": [
+                                      {
+                                        "kind": "string",
+                                        "literal": false
+                                      }
+                                    ]
+                                  },
+                                  "id": {
+                                    "kind": "field",
+                                    "optional": false,
+                                    "type": [
+                                      {
+                                        "kind": "string",
+                                        "literal": false
+                                      }
+                                    ]
+                                  },
+                                  "index": {
+                                    "kind": "field",
+                                    "optional": false,
+                                    "type": [
+                                      {
+                                        "kind": "number",
+                                        "literal": false
+                                      }
+                                    ]
+                                  },
+                                  "type": {
+                                    "kind": "field",
+                                    "optional": false,
+                                    "type": [
+                                      {
+                                        "kind": "string",
+                                        "values": ["tool_call_chunk"]
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+]

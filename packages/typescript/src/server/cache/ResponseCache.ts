@@ -4,6 +4,7 @@ import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Lchain } from "../../llm/Lchain.ts";
+import type { LchainSchema } from "../../llm/LchainSchema.ts";
 import { getLogger } from "../../utils/logger.ts";
 import type { Agent } from "../agents/Agent.ts";
 import { LlmContext } from "../LlmContext.ts";
@@ -19,7 +20,7 @@ export namespace ResponseCache {
   export interface MemoryEntry {
     prompt: LlmContext.Prompt;
     llmKey: LlmContext.LlmKey;
-    generations: Lchain.StoredGeneration[];
+    generations: LchainSchema.StoredGeneration[];
     app: AppId;
   }
 
@@ -63,21 +64,23 @@ export class ResponseCache extends ServerCache {
         logger.debug(
           `Cache hit (in-memory) for prompt: "${prompt.slice(0, 100)}..."`,
         );
-        this.#updateUsage(memoryEntry.generations);
+        this.applyUsage(memoryEntry.generations);
         return memoryEntry.generations.map(Lchain.fromStored);
       }
 
       const entryStore = this.#cacheStore.subStore(requestHash);
 
       const storedGenerations =
-        await entryStore.readJson<Lchain.StoredGeneration[]>("response.json");
+        await entryStore.readJson<LchainSchema.StoredGeneration[]>(
+          "response.json",
+        );
       if (!storedGenerations) return null;
 
       logger.debug(
         `Cache hit (file) for prompt: "${prompt.slice(0, 100)}...":`,
       );
 
-      this.#updateUsage(storedGenerations);
+      this.applyUsage(storedGenerations);
 
       return storedGenerations.map(Lchain.fromStored);
     } catch (error) {
@@ -161,14 +164,5 @@ export class ResponseCache extends ServerCache {
     const metaCanon = canonize(agentMeta);
     const str = [CACHE_VERSION, this.app, prompt, llmKey, metaCanon].join("|");
     return xxh64Str(str);
-  }
-
-  #updateUsage(generations: Lchain.StoredGeneration[]): void {
-    for (const generation of generations) {
-      const usageMetadata = generation?.message?.data.usage_metadata;
-      this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
-      this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
-      this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
-    }
   }
 }

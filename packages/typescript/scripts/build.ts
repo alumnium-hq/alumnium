@@ -314,6 +314,12 @@ async function main() {
             target: getBunTarget(os, arch),
             outfile: binPath,
           },
+          files: {
+            // Ignore scanTypes in the binary since it's only needed in dev.
+            [path.resolve(MAIN_NPM_SRC_DIR, "utils/typesScan.ts")]: `
+              export function scanTypes() {}
+            `,
+          },
           plugins: [
             loggerPathPlugin,
             wdioUtilsPatcherPlugin,

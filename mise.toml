@@ -19,10 +19,11 @@ shfmt = "latest" # .sh formatter
 oxfmt = "latest" # TS formatter
 "pipx:pyprojectsort" = "latest" # pyproject.toml formatter
 "pipx:wheel" = "latest" # Python wheel builder
+ollama = "latest"
 
 [env]
 '_'.file = { path = ".env" }
-_.source = "scripts/env.sh"
+'_'.source = "scripts/env.sh"
 # Tool envs
 gh = "latest" # GitHub CLI
 MISE_EXPERIMENTAL = true # Enable monorepo root support
@@ -60,8 +61,16 @@ run = [
 # NOTE: It prompts for sudo to install OS dependencies
 raw = true
 
+[tasks."install/ollama"]
+description = "Installs default Ollama provider model. Requires Ollama to be installed and running."
+run = "ollama pull $(mise //packages/typescript:get-ollama-model)"
+
 [tasks.build]
-depends = ["//packages/typescript:build", "//packages/python:build", "//websites/docs:build"]
+depends = [
+  "//packages/typescript:build",
+  "//packages/python:build",
+  "//websites/docs:build",
+]
 description = "Build all packages"
 
 [tasks."dev/cli"]
@@ -86,6 +95,14 @@ run = [{ task = "//packages/typescript:dev/mcp:inspect" }]
 run = "rm -rf ./.alumnium"
 depends_post = ["//packages/typescript:clean", "//packages/python:clean"]
 
+[tasks."clear/cache"]
+description = "Clears all Alumnium LLM cache."
+run = "rm -rf ./.alumnium/cache"
+depends_post = [
+  "//packages/typescript:clear/cache",
+  "//packages/python:clear/cache",
+]
+
 [tasks.format]
 depends = ["//packages/typescript:format", "//packages/python:format"]
 
@@ -99,7 +116,12 @@ depends = [
 depends = ["types/ts", "//packages/python:types"]
 
 [tasks.lint]
+description = "Lint all packages"
 depends = ["//packages/typescript:lint", "//packages/python:lint"]
+
+[tasks."lint:fix"]
+description = "Fix linting issues in all packages"
+depends = ["//packages/typescript:lint:fix", "//packages/python:lint:fix"]
 
 [tasks."types/ts"]
 run = "bun run tsgo --build"

@@ -1,4 +1,5 @@
 import type { Generation } from "@langchain/core/outputs";
+import { always } from "alwaysly";
 import fs from "node:fs/promises";
 // @ts-expect-error -- npm-fuzzy has broken ESM+TS support, so we import ESM version directly
 import * as fuzzy from "npm-fuzzy/dist/index.esm.js";
@@ -6,6 +7,7 @@ import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../../AppId.ts";
 import { Lchain } from "../../../llm/Lchain.ts";
+import { LchainSchema } from "../../../llm/LchainSchema.ts";
 import { getLogger } from "../../../utils/logger.ts";
 import { ActorAgent } from "../../agents/ActorAgent.ts";
 import type { BaseAgent } from "../../agents/BaseAgent.ts";
@@ -38,7 +40,7 @@ export namespace ElementsCache {
 
   export interface MemoryRecord {
     cacheHash: CacheHash;
-    generation: Lchain.StoredGeneration;
+    generation: LchainSchema.StoredGeneration;
     elements: Elements;
     agentKind: EligibleAgentKind;
     app: AppId;
@@ -152,7 +154,7 @@ export class ElementsCache extends ServerCache {
             memoryEntry.generation,
             masksIdsMap,
           );
-          this.#updateUsage(unmaskedGeneration);
+          this.applyUsage(unmaskedGeneration);
 
           const generation = Lchain.fromStored(unmaskedGeneration);
           logger.debug(
@@ -168,7 +170,7 @@ export class ElementsCache extends ServerCache {
 
       let [elements, maskedGeneration] = await Promise.all([
         cacheStore.readJson("elements.json", ElementsCache.Elements),
-        cacheStore.readJson("response.json", Lchain.StoredGeneration),
+        cacheStore.readJson("response.json", LchainSchema.StoredGeneration),
       ]);
 
       if (!elements || !maskedGeneration) {
@@ -181,7 +183,7 @@ export class ElementsCache extends ServerCache {
 
         const [fuzzyElements, fuzzyResponse] = await Promise.all([
           fuzzyStore.readJson("elements.json", ElementsCache.Elements),
-          fuzzyStore.readJson("response.json", Lchain.StoredGeneration),
+          fuzzyStore.readJson("response.json", LchainSchema.StoredGeneration),
         ]);
 
         if (!fuzzyElements || !fuzzyResponse) return null;
@@ -203,7 +205,7 @@ export class ElementsCache extends ServerCache {
         masksIdsMap,
       );
 
-      this.#updateUsage(unmaskedGeneration);
+      this.applyUsage(unmaskedGeneration);
 
       const generation = Lchain.fromStored(unmaskedGeneration);
       logger.debug(
@@ -231,7 +233,8 @@ export class ElementsCache extends ServerCache {
       }
       const { meta, cacheHash, memoryKey } = data;
 
-      const [firstGeneration] = generations as Lchain.GenerationsSingle;
+      const [firstGeneration] = generations;
+      always(firstGeneration);
       const generation = Lchain.toStored(firstGeneration);
 
       switch (meta.kind) {
@@ -446,11 +449,4 @@ export class ElementsCache extends ServerCache {
   }
 
   //#endregion
-
-  #updateUsage(generation: Lchain.StoredGeneration): void {
-    const usageMetadata = generation?.message?.data.usage_metadata;
-    this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
-    this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
-    this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
-  }
 }

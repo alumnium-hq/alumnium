@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { pushMock } from "../../tests/unit/mocks.ts";
 import type { Http } from "../Http.ts";
-import { Model } from "../Model.ts";
 import { ActorAgent } from "./agents/ActorAgent.ts";
 import { AreaAgent } from "./agents/AreaAgent.ts";
 import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.ts";
@@ -154,11 +153,17 @@ describe("serverApp", () => {
           input_tokens: 0,
           output_tokens: 0,
           total_tokens: 0,
+          cache_creation: 0,
+          cache_read: 0,
+          reasoning: 0,
         },
         total: {
           input_tokens: 0,
           output_tokens: 0,
           total_tokens: 0,
+          cache_creation: 0,
+          cache_read: 0,
+          reasoning: 0,
         },
       });
     });
