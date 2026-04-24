@@ -1,5 +1,4 @@
 {
-  // TODO: Enable when it gets JSDoc support
-  // "js/ts.experimental.useTsgo": true,
+  "js/ts.experimental.useTsgo": true,
   "editor.defaultFormatter": "oxc.oxc-vscode"
 }

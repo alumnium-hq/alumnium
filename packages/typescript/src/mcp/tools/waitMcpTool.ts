@@ -48,21 +48,14 @@ export const waitMcpTool = McpTool.define({
       logger.info(`Waiting for ${seconds} seconds`);
 
       await sleep(seconds * 1000);
-      return [
-        { type: "text", text: JSON.stringify({ waited_seconds: seconds }) },
-      ];
+      return { waited_seconds: seconds };
     }
 
     // Otherwise, treat as natural language condition
     if (!id) {
-      return [
-        {
-          type: "text",
-          text: JSON.stringify({
-            error: "id is required when waiting for a condition",
-          }),
-        },
-      ];
+      return {
+        error: "id is required when waiting for a condition",
+      };
     }
 
     const timeout = typeof inputTimeout === "number" ? inputTimeout : 10;
@@ -79,16 +72,11 @@ export const waitMcpTool = McpTool.define({
       try {
         const explanation = await al.check(waitFor);
         logger.info(`Condition met after ${attempts} attempt(s)`);
-        return [
-          {
-            type: "text",
-            text: JSON.stringify({
-              status: "met",
-              condition: waitFor,
-              explanation,
-            }),
-          },
-        ];
+        return {
+          status: "met",
+          condition: waitFor,
+          explanation,
+        };
       } catch (error) {
         if (
           !(error instanceof AssertionError) &&
@@ -104,16 +92,11 @@ export const waitMcpTool = McpTool.define({
 
     logger.warn(`Timeout waiting for '${waitFor}'`);
 
-    return [
-      {
-        type: "text",
-        text: JSON.stringify({
-          status: "timeout",
-          condition: waitFor,
-          timeout_seconds: timeout,
-          last_error: lastError,
-        }),
-      },
-    ];
+    return {
+      status: "timeout",
+      condition: waitFor,
+      timeout_seconds: timeout,
+      last_error: lastError,
+    };
   },
 });

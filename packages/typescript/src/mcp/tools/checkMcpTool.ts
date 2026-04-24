@@ -16,7 +16,7 @@ export const checkMcpTool = McpTool.define({
     explanation.
   `,
 
-  Input: McpTool.IdInput.extend({
+  Input: McpTool.WithDriverId.extend({
     statement: z
       .string()
       .describe("Statement to verify (e.g., 'page title contains Dashboard')"),
@@ -51,6 +51,6 @@ export const checkMcpTool = McpTool.define({
       description: `check ${statement}`,
     });
 
-    return [{ type: "text", text: JSON.stringify({ result, explanation }) }];
+    return { result, explanation };
   },
 });

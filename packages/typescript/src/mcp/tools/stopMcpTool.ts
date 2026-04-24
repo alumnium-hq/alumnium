@@ -35,18 +35,13 @@ export const stopMcpTool = McpTool.define({
     // Cleanup driver and get stats
     const [artifactsDir, stats] = await McpState.cleanupDriver(id);
 
-    return [
-      {
-        type: "text",
-        text: JSON.stringify({
-          id: id,
-          artifacts_dir: path.resolve(artifactsDir),
-          token_usage: {
-            total: stats["total"],
-            cached: stats["cache"],
-          },
-        }),
+    return {
+      id: id,
+      artifacts_dir: path.resolve(artifactsDir),
+      token_usage: {
+        total: stats["total"],
+        cached: stats["cache"],
       },
-    ];
+    };
   },
 });

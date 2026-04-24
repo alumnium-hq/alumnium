@@ -104,6 +104,8 @@ export const doMcpTool = McpTool.define({
       changes ? { changes } : {},
     );
 
-    return [{ type: "text", text: JSON.stringify(response, null, 2) }];
+    if (changes) response.changes = changes;
+
+    return response;
   },
 });

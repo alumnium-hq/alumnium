@@ -241,18 +241,11 @@ export const startMcpTool = McpTool.define({
 
     const model = await al.model;
 
-    return [
-      {
-        type: "text",
-        text: JSON.stringify({
-          id: id,
-          driver: al.driver.constructor.name
-            .replace(/Driver$/, "")
-            .toLowerCase(),
-          model: `${model.provider}/${model.name}`,
-          platform_name: platformName,
-        }),
-      },
-    ];
+    return {
+      id: id,
+      driver: al.driver.constructor.name.replace(/Driver$/, "").toLowerCase(),
+      model: `${model.provider}/${model.name}`,
+      platform_name: platformName,
+    };
   },
 });
