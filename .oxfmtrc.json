@@ -1,10 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": [
-    // NOTE: Packages implement their own formatting rules.
-    "packages/**/*",
-  ],
   "printWidth": 80,
   // TODO: Enable later
-  "sortPackageJson": false,
+  "sortPackageJson": false
 }

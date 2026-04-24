@@ -1,67 +1,91 @@
 import z from "zod";
 import { bindLogger, getLogger, type LoggerLike } from "../../utils/logger.ts";
+import type { McpScenariosState } from "../scenarios/McpScenariosState.ts";
 
 const logger = getLogger(import.meta.url);
 
 export namespace McpTool {
-  export interface DefineProps<Input extends z.ZodObject> {
-    description: string;
-    inputSchema: Input;
-    execute: NoInfer<DefineExecuteFn<Input>>;
+  export interface DefineProps<
+    Name extends string,
+    Input extends z.ZodObject,
+  > extends Shape<Name, Input> {
+    execute: NoInfer<DefineExecuteFn<Input, any>>;
   }
 
-  export type DefineExecuteFn<Input> = (
-    input: z.infer<Input>,
-    helpers: ExecuteHelpers,
+  export type DefineExecuteFn<InputSchema, Output> = (
+    input: z.infer<InputSchema>,
+    context: DefineExecuteContext,
   ) => Promise<Output>;
 
-  export interface Definition<Name extends string, Input extends z.ZodObject> {
-    name: Name;
-    description: string;
-    inputSchema: Input;
-    execute: DefinitionExecuteFn<Input>;
-  }
-
-  export type DefinitionExecuteFn<Input> = (
-    input: z.infer<Input>,
-  ) => Promise<Output>;
-
-  export interface ExecuteHelpers {
+  export interface DefineExecuteContext extends DefinitionExecuteContext {
     logger: LoggerLike;
   }
 
-  export type OutputContent = z.infer<typeof McpTool.OutputContent>;
+  export interface Definition<
+    Name extends string,
+    InputSchema extends z.ZodObject,
+  > {
+    name: Name;
+    description: string | (() => string);
+    Input: InputSchema;
+    execute: DefinitionExecuteFn<InputSchema, any>;
+  }
 
-  export type Output = z.infer<typeof McpTool.Output>;
+  export type DefinitionExecuteFn<Input, Output> = (
+    input: z.infer<Input>,
+    context: DefinitionExecuteContext,
+  ) => Promise<Output>;
+
+  export interface DefinitionExecuteContext {
+    scenarios: McpScenariosState;
+  }
+
+  export interface Shape<
+    Name extends string = string,
+    InputSchema extends z.ZodObject = z.ZodObject,
+  > {
+    name: Name;
+    description: string | (() => string);
+    Input: InputSchema;
+    snippets?: ShapeSnippetsFn;
+  }
+
+  export type ShapeSnippetsFn = (...args: any[]) => Record<string, Snippet>;
+
+  export type Snippet = string | SnippetFn;
+
+  export type SnippetFn = (...args: any[]) => string;
+
+  export type Shapes = Record<string, Shape<string, z.ZodObject>>;
 }
 
 export abstract class McpTool {
-  static IdInput = z.object({ id: z.string() });
+  static WithDriverId = z.object({ id: z.string() });
 
   static OutputContent = z.object({
     type: z.literal("text"),
     text: z.string(),
   });
 
-  static Output = z.array(this.OutputContent);
+  static Output = z.tuple([this.OutputContent]);
 
   static define<Name extends string, Input extends z.ZodObject>(
-    name: Name,
-    props: McpTool.DefineProps<Input>,
+    props: McpTool.DefineProps<Name, Input>,
   ): McpTool.Definition<Name, Input> {
     // Instrument with input/output logging
-    const execute = async (input: z.infer<Input>) => {
-      const parsedInput = McpTool.IdInput.safeParse(input);
-      const id = parsedInput.data?.id;
-      const executeLogger = bindLogger(
-        logger,
-        (message) => `${id || "global"}/${name}(): ${message}`,
-      );
+    const execute = async (
+      input: z.infer<Input>,
+      context: McpTool.DefinitionExecuteContext,
+    ) => {
+      const executeLogger = this.createExecuteLogger(input, props.name);
 
       executeLogger.info("Executing");
       executeLogger.debug(`  -> Input: {input}`, { input });
 
-      const result = await props.execute(input, { logger: executeLogger });
+      const result = await props.execute(input, {
+        ...context,
+        logger: executeLogger,
+      });
 
       executeLogger.info("Completed");
       executeLogger.debug("  -> Result: {result}", { result });
@@ -69,6 +93,15 @@ export abstract class McpTool {
       return result;
     };
 
-    return { ...props, name, execute };
+    return { ...props, execute };
+  }
+
+  static createExecuteLogger(input: any, toolName: string): LoggerLike {
+    const parsedInput = McpTool.WithDriverId.safeParse(input);
+    const driverId = parsedInput.data?.id;
+    return bindLogger(
+      logger,
+      (message) => `${driverId || "global"}/${toolName}(): ${message}`,
+    );
   }
 }

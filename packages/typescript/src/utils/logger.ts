@@ -166,6 +166,7 @@ export const LogDebugExtra = z.enum([
   "tree",
   "reasoning",
   "http",
+  "scenarios",
 ]);
 
 export type LogDebugExtra = z.infer<typeof LogDebugExtra>;
