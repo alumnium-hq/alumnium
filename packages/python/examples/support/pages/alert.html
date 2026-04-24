@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Alert Test Page</title>
+</head>
+<body>
+  <h1>Alert Test</h1>
+  <button id="alert-btn" onclick="alert('Hello from alert!')">Trigger Alert</button>
+  <button id="confirm-btn" onclick="handleConfirm()">Trigger Confirm</button>
+  <p id="result"></p>
+
+  <script>
+    function handleConfirm() {
+      const result = confirm('Do you confirm?');
+      document.getElementById('result').textContent = result ? 'Confirmed' : 'Dismissed';
+    }
+  </script>
+</body>
+</html>
