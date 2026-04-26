@@ -43,6 +43,15 @@ claude mcp add alumnium --env OPENAI_API_KEY=... -- uvx alumnium mcp
 codex mcp add alumnium --env OPENAI_API_KEY=... -- uvx alumnium mcp
 ```
 
+:::tip[Reuse your Codex subscription]
+If you're already signed in to the [Codex CLI][10], you can drop `OPENAI_API_KEY` and let Alumnium reuse your ChatGPT Plus/Pro OAuth tokens instead. See the [Codex configuration][11] for details.
+
+```bash
+codex mcp add alumnium --env ALUMNIUM_MODEL=codex -- uvx alumnium mcp
+```
+
+:::
+
 ### Cursor
 
 Add the following to `mcp.json`:
@@ -97,6 +106,15 @@ claude mcp add alumnium --env OPENAI_API_KEY=... -- npx alumnium mcp
 ```bash
 codex mcp add alumnium --env OPENAI_API_KEY=... -- npx alumnium mcp
 ```
+
+:::tip[Reuse your Codex subscription]
+If you're already signed in to the [Codex CLI][10], you can drop `OPENAI_API_KEY` and let Alumnium reuse your ChatGPT Plus/Pro OAuth tokens instead. See the [Codex configuration][11] for details.
+
+```bash
+codex mcp add alumnium --env ALUMNIUM_MODEL=codex -- npx alumnium mcp
+```
+
+:::
 
 ### Cursor
 
@@ -251,3 +269,5 @@ Returns the raw accessibility tree of the current page as XML. Useful for debugg
 [7]: /docs/guides/verifications
 [8]: /docs/guides/retrievals
 [9]: https://appium.io/docs/en/2.0/guides/settings/
+[10]: https://github.com/openai/codex
+[11]: /docs/getting-started/configuration#codex

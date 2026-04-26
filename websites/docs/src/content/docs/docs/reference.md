@@ -85,6 +85,7 @@ Select AI provider and model to use.
 | azure_openai  | gpt-5-nano                                  | Self-hosted Azure OpenAI API. Recommended model version is _2025-08-07_. |
 | aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                                           |
 | aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
+| codex         | gpt-5.4-mini                                | OpenAI models via ChatGPT Plus/Pro OAuth.                 |
 | deepseek      | deepseek-reasoner                           | DeepSeek Platform.                                                       |
 | github        | gpt-4o-mini                                 | GitHub Models API.                                                       |
 | google        | gemini-3.1-flash-lite-preview               | Google AI Studio API.                                                    |
@@ -175,6 +176,10 @@ JSON string of additional headers to send with Azure OpenAI requests (e.g. `{"x-
 
 Endpoint URL used when `ALUMNIUM_MODEL` is set to `azure_openai`.
 
+### `LANGCHAIN_CODEX_LITTERBOX_UPLOAD`
+
+Set to `true` to enable vision support for the `codex` provider by temporarily uploading screenshots to a third-party image host ([litterbox.catbox.moe][4]) before sending them to the model. Codex models only accept image URLs, so this is required for vision checks. Default is `false`.
+
 ### `OPENAI_CUSTOM_URL`
 
 Sets the URL for OpenAI models if you access them via custom endpoint.
@@ -182,3 +187,4 @@ Sets the URL for OpenAI models if you access them via custom endpoint.
 [1]: https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
 [2]: https://github.com/alumnium-hq/alumnium/issues/112
 [3]: /docs/guides/mcp
+[4]: https://litterbox.catbox.moe

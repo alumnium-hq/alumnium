@@ -338,6 +338,7 @@ async function main() {
     );
 
     await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
+    await fs.rmdir(STANDALONE_EMBEDDED_ASSETS_DIR);
   }
 
   //#endregion

@@ -25,6 +25,7 @@ oxfmt = "latest" # TS formatter
 _.source = "scripts/env.sh"
 # Tool envs
 gh = "latest" # GitHub CLI
+LANGCHAIN_CODEX_LITTERBOX_UPLOAD = true # Enable image auto-uploading for Codex
 MISE_EXPERIMENTAL = true # Enable monorepo root support
 OPENCODE_CONFIG_DIR = "./.agents"
 FORCE_COLOR = "1" # Force colors, i.e., for `bun --filter test`
