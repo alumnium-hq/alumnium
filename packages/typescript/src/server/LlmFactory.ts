@@ -1,3 +1,4 @@
+import { ChatCodex } from "@alumnium/langchain-codex";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatBedrockConverse } from "@langchain/aws";
 import type { BaseCache } from "@langchain/core/caches";
@@ -53,6 +54,8 @@ export class LlmFactory {
       case "aws_anthropic":
       case "aws_meta":
         return LlmFactory.createAwsLlm(model, cache);
+      case "codex":
+        return LlmFactory.createCodexLlm(model, cache);
       case "deepseek":
         return LlmFactory.createDeepSeekLlm(model, cache);
       case "google":
@@ -205,6 +208,14 @@ export class LlmFactory {
       region,
       credentials: { accessKeyId, secretAccessKey },
       additionalModelRequestFields,
+      cache,
+    });
+  }
+
+  static createCodexLlm(model: Model, cache: BaseCache): BaseChatModel {
+    logger.debug(`Creating Codex LLM with model ${model.name}`);
+    return new ChatCodex({
+      model: model.name,
       cache,
     });
   }

@@ -122,9 +122,9 @@ export abstract class Lchain {
   });
 
   static UsageMetadata = z.object({
-    input_tokens: z.number(),
-    output_tokens: z.number(),
-    total_tokens: z.number(),
+    input_tokens: z.number().optional(),
+    output_tokens: z.number().optional(),
+    total_tokens: z.number().optional(),
     input_token_details: Lchain.InputTokenDetails.optional(),
     output_token_details: Lchain.OutputTokenDetails.optional(),
   });

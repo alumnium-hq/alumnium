@@ -11,6 +11,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | [GitHub][20]            | GPT-4o Mini             |
 | [Google][2]             | Gemini 3.1 Flash Lite   |
 | [OpenAI][3] _(default)_ | GPT-5 Nano              |
+| [Codex][22]             | GPT-5.4 Mini            |
 | [DeepSeek][12]          | DeepSeek R1             |
 | [Meta][8]               | Llama 4 Maverick 17B    |
 | [MistralAI][16]         | Mistral Medium 3        |
@@ -69,6 +70,24 @@ To use OpenAI as an AI provider in Alumnium:
 ```bash
 export ALUMNIUM_MODEL="openai"
 export OPENAI_API_KEY="sk-proj-..."
+```
+
+## Codex
+
+:::caution
+Codex support is experimental and can stop working at any time. Instead of an API key, it authenticates via your ChatGPT Plus/Pro subscription using OAuth tokens managed by the [Codex CLI][22].
+
+Vision is not supported out-of-the-box because Codex models only accept pre-uploaded images. You can enable it by setting `LANGCHAIN_CODEX_LITTERBOX_UPLOAD=true`, which will temporarily upload screenshots to a third-party image host ([litterbox.catbox.moe][23]) before sending them to the model.
+:::
+
+To use Codex as an AI provider in Alumnium:
+
+1. Install the [Codex CLI][22] and sign in with your ChatGPT account (the OAuth tokens are stored in `~/.codex/auth.json`).
+2. Export the following environment variables before running tests:
+
+```bash
+export ALUMNIUM_MODEL="codex"
+export LANGCHAIN_CODEX_LITTERBOX_UPLOAD="true"  # optionally enable vision support
 ```
 
 ## DeepSeek
@@ -176,3 +195,5 @@ Read next to learn how to write tests!
 [19]: https://x.ai/api
 [20]: https://docs.github.com/en/github-models
 [21]: https://docs.github.com/en/github-models/use-github-models/prototyping-with-ai-models#experimenting-with-ai-models-using-the-api
+[22]: https://github.com/openai/codex
+[23]: https://litterbox.catbox.moe
