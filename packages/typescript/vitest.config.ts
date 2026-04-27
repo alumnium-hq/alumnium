@@ -19,6 +19,7 @@ export default defineConfig({
           globalSetup: process.env.ALUMNIUM_DRIVER?.startsWith("appium")
             ? ["tests/system/setup.appium.ts"]
             : [],
+          fileParallelism: !process.env.ALUMNIUM_DRIVER?.startsWith("appium"),
         },
       },
     ],
