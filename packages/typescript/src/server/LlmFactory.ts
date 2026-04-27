@@ -4,7 +4,7 @@ import { ChatBedrockConverse } from "@langchain/aws";
 import type { BaseCache } from "@langchain/core/caches";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { ChatDeepSeek } from "@langchain/deepseek";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatGoogle } from "@langchain/google";
 import { ChatMistralAI } from "@langchain/mistralai";
 import { ChatOllama } from "@langchain/ollama";
 import {
@@ -236,13 +236,13 @@ export class LlmFactory {
     logger.debug(`Creating Google LLM with model ${model.name}`);
 
     if (model.name.includes("gemini-2.0")) {
-      return new ChatGoogleGenerativeAI({
+      return new ChatGoogle({
         model: model.name,
         temperature: 0,
         cache,
       });
     } else {
-      return new ChatGoogleGenerativeAI({
+      return new ChatGoogle({
         model: model.name,
         temperature: 0,
         thinkingConfig: {
