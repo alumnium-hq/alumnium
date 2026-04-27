@@ -11,6 +11,9 @@ import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import type { Keys } from "./keys.ts";
+import { getLogger } from "../utils/logger.ts";
+
+const logger = getLogger(import.meta.url);
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;
@@ -177,7 +180,7 @@ export class AppiumDriver extends BaseDriver {
         predicate += ` AND ${propsStr}`;
       }
 
-      console.debug(`Finding element by predicate: ${predicate}`);
+      logger.debug(`Finding element by predicate: ${predicate}`);
       return this.driver.$(`-ios predicate string:${predicate}`).getElement();
     } else {
       // Use XPath for UIAutomator2
@@ -195,7 +198,7 @@ export class AppiumDriver extends BaseDriver {
         xpath += `[${conditions.join(" and ")}]`;
       }
 
-      console.debug(`Finding element by xpath: ${xpath}`);
+      logger.debug(`Finding element by xpath: ${xpath}`);
       return this.driver.$(xpath).getElement();
     }
   }
