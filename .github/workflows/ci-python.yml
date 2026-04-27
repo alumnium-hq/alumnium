@@ -76,6 +76,7 @@ jobs:
           package: python
           driver: ${{ matrix.driver }}
           model: ${{ matrix.model }}
+          sha: ${{ inputs.sha }}
 
       - name: Upload Test Artifacts
         if: always()

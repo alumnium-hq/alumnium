@@ -1,4 +1,5 @@
 name: Test System
+description: Run system tests for a given package, driver, and model.
 
 inputs:
   package:
@@ -13,6 +14,10 @@ inputs:
     required: true
     description: "Model to use in system tests (e.g., azure_openai, google)."
 
+  sha:
+    required: true
+    description: "Git SHA to use for caching."
+
 runs:
   using: "composite"
   steps:
@@ -20,7 +25,8 @@ runs:
       uses: actions/cache/restore@v5
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
-        key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
+        key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
+        restore-keys: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
 
     - name: Prepare Display
       if: startsWith(inputs.driver, 'appium') != true
@@ -36,7 +42,7 @@ runs:
       uses: actions/cache/save@v5
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
-        key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ github.sha }}
+        key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
 
     - name: Upload Alumnium Artifacts
       if: always()
