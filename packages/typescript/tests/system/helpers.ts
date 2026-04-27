@@ -103,15 +103,12 @@ async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
     case "appium-ios": {
       const sessionId = inject("wdioSessionId");
       const capabilities = inject("wdioSessionCapabilities");
+      const remoteOptions = inject("wdioRemoteOptions");
       const driver = (await attach({
         sessionId,
         capabilities,
-        hostname: "mobile-hub.lambdatest.com",
-        path: "/wd/hub",
-        port: 80,
+        ...remoteOptions,
         logLevel: "warn",
-        ...(process.env.LT_USERNAME && { user: process.env.LT_USERNAME }),
-        ...(process.env.LT_ACCESS_KEY && { key: process.env.LT_ACCESS_KEY }),
       })) as Browser;
       return driver;
     }
