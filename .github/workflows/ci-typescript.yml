@@ -66,6 +66,7 @@ jobs:
           package: typescript
           driver: ${{ matrix.driver }}
           model: ${{ matrix.model }}
+          sha: ${{ inputs.sha }}
 
       - name: Build Dist
         run: mise //packages/typescript:build
