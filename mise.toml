@@ -22,7 +22,6 @@ oxfmt = "latest" # TS formatter
 ollama = "latest"
 
 [env]
-'_'.file = { path = ".env" }
 '_'.source = "scripts/env.sh"
 # Tool envs
 gh = "latest" # GitHub CLI
