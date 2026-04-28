@@ -907,7 +907,7 @@
                             "properties": {
                               "input_tokens": {
                                 "kind": "field",
-                                "optional": false,
+                                "optional": true,
                                 "type": [
                                   {
                                     "kind": "number",
@@ -917,7 +917,7 @@
                               },
                               "output_tokens": {
                                 "kind": "field",
-                                "optional": false,
+                                "optional": true,
                                 "type": [
                                   {
                                     "kind": "number",
@@ -927,7 +927,7 @@
                               },
                               "total_tokens": {
                                 "kind": "field",
-                                "optional": false,
+                                "optional": true,
                                 "type": [
                                   {
                                     "kind": "number",
@@ -949,6 +949,9 @@
                                           {
                                             "kind": "number",
                                             "literal": false
+                                          },
+                                          {
+                                            "kind": "undefined"
                                           }
                                         ]
                                       },
@@ -993,6 +996,9 @@
                                           {
                                             "kind": "number",
                                             "literal": false
+                                          },
+                                          {
+                                            "kind": "undefined"
                                           }
                                         ]
                                       },
@@ -1052,6 +1058,9 @@
                                           {
                                             "kind": "number",
                                             "literal": false
+                                          },
+                                          {
+                                            "kind": "undefined"
                                           }
                                         ]
                                       },
@@ -1062,6 +1071,9 @@
                                           {
                                             "kind": "number",
                                             "literal": false
+                                          },
+                                          {
+                                            "kind": "undefined"
                                           }
                                         ]
                                       },
@@ -1072,6 +1084,9 @@
                                           {
                                             "kind": "number",
                                             "literal": false
+                                          },
+                                          {
+                                            "kind": "undefined"
                                           }
                                         ]
                                       }
