@@ -170,7 +170,7 @@ def alumnium(context):
             )
         elif driver_name == "appium-android":
             context.al.driver.hide_keyboard_after_typing = True
-            context.al.driver.delay = 0.5
+            context.al.driver.delay = 2
             # Workaround for LambdaTest stale page source issue
             context.al.driver.double_fetch_page_source = True
 
