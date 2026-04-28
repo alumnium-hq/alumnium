@@ -1,16 +1,29 @@
 import { getFileSink } from "@logtape/file";
 import {
-  ansiColorFormatter,
   configureSync,
+  getAnsiColorFormatter,
   getConsoleSink,
   getLogger as logtapeGetLogger,
+  getTextFormatter,
   resetSync,
 } from "@logtape/logtape";
 import { always } from "alwaysly";
 import * as fs from "fs";
 import path from "node:path";
+import { inspect } from "node:util";
 import { z } from "zod";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
+
+const renderValue = (colors: boolean) => (value: unknown) =>
+  inspect(value, {
+    colors,
+    depth: null,
+    maxArrayLength: Infinity,
+    maxStringLength: Infinity,
+  });
+
+const ansiColorFormatter = getAnsiColorFormatter({ value: renderValue(true) });
+const textFormatter = getTextFormatter({ value: renderValue(false) });
 
 export const logLevels = [
   "debug",
@@ -79,7 +92,9 @@ function configureLogging(props: configureLogging.Props = {}): void {
   configureSync({
     sinks: {
       console: consoleSink,
-      main: logPath ? getFileSink(logPath) : consoleSink,
+      main: logPath
+        ? getFileSink(logPath, { formatter: textFormatter })
+        : consoleSink,
     },
     filters: {},
     loggers: [
