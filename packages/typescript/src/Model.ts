@@ -31,7 +31,6 @@ export class ModelName {
   };
 }
 
-// TODO: Make class abstract and use plain object instead.
 export class Model {
   static PROVIDERS = [
     "azure_foundry",

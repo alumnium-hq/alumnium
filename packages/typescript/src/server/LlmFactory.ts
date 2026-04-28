@@ -70,6 +70,8 @@ export class LlmFactory {
         return LlmFactory.createOpenAiLlm(model, cache);
       case "xai":
         return LlmFactory.createXAiLlm(model, cache);
+      default:
+        throw new Error(`Unknown provider: ${model.provider}`);
     }
   }
 

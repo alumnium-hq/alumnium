@@ -49,8 +49,6 @@ ${value}`,
     : [];
 
   const content = `${message}${lines.length ? "\n" : ""}${lines.join("\n")}`;
-  console.log(content);
-
   logger[method](content, payload);
 }
 
