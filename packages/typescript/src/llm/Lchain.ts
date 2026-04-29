@@ -46,9 +46,9 @@ export abstract class Lchain {
       usageMetadata.input_token_details?.cache_creation ?? 0;
     usage.cache_read += usageMetadata.input_token_details?.cache_read ?? 0;
     usage.reasoning += usageMetadata.output_token_details?.reasoning ?? 0;
-    usage.input_tokens += usageMetadata.input_tokens;
-    usage.output_tokens += usageMetadata.output_tokens;
-    usage.total_tokens += usageMetadata.total_tokens;
+    usage.input_tokens += usageMetadata.input_tokens ?? 0;
+    usage.output_tokens += usageMetadata.output_tokens ?? 0;
+    usage.total_tokens += usageMetadata.total_tokens ?? 0;
   }
 }
 
