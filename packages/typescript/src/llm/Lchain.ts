@@ -63,4 +63,5 @@ export namespace Lchain {
   export type InvokeResultParsed = Record<string, unknown>;
 
   export type MessageContent = AIMessage["content"];
+  export type AdditionalKwargs = AIMessage["additional_kwargs"];
 }

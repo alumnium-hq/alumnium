@@ -244,9 +244,3 @@ description = "Generates LchainSchema from scanned types. See docs/contributing/
 run = '''
 mise :generate/types-scan-schema:class ./src/llm/Lchain.serialized.types-scan.json LchainSchema > ./src/llm/LchainSchema.ts
 '''
-
-[tasks."generate/lchain-generation-additional-kwargs-schema"]
-description = "Generates LchainGenerationAdditionalKwargsSchema from scanned types. See docs/contributing/scan-types.md for details."
-run = '''
-mise :generate/types-scan-schema:class ./src/server/agents/BaseAgent.additional-kwargs.types-scan.json LchainGeneration > ./src/llm/LchainGenerationSchema.ts
-'''
