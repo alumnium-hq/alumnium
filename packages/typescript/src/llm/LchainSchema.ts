@@ -13,6 +13,7 @@ export abstract class LchainSchema {
     type: z.literal("text"),
     text: z.string(),
     annotations: z.array(z.unknown()).exactOptional(),
+    phase: z.undefined().exactOptional(),
   });
 
   static MessageFunctionCallData = z.object({
@@ -115,7 +116,7 @@ export abstract class LchainSchema {
     function: this.FunctionCallFunction,
   });
 
-  static MessageDataAdditionalKwargsToolCallsItem = z.discriminatedUnion(
+  static MessageDataAdditionalKwargsToolCallsOption1Item = z.discriminatedUnion(
     "type",
     [this.FunctionCall],
   );
@@ -142,7 +143,10 @@ export abstract class LchainSchema {
     usage: this.MessageDataAdditionalKwargsUsage.exactOptional(),
     function_call: z.undefined().exactOptional(),
     tool_calls: z
-      .array(this.MessageDataAdditionalKwargsToolCallsItem)
+      .union([
+        z.array(this.MessageDataAdditionalKwargsToolCallsOption1Item),
+        z.undefined(),
+      ])
       .exactOptional(),
     reasoning_content: z.union([z.string(), z.undefined()]).exactOptional(),
   });
@@ -317,7 +321,11 @@ export abstract class LchainSchema {
     role: z.union([z.literal("assistant"), z.string()]).exactOptional(),
     finish_reason: z
       .union([
-        z.union([z.literal("tool_calls"), z.literal("STOP")]),
+        z.union([
+          z.literal("tool_calls"),
+          z.literal("STOP"),
+          z.literal("stop"),
+        ]),
         z.string(),
       ])
       .exactOptional(),
@@ -436,8 +444,8 @@ export namespace LchainSchema {
 
   export type FunctionCall = z.infer<typeof LchainSchema.FunctionCall>;
 
-  export type MessageDataAdditionalKwargsToolCallsItem = z.infer<
-    typeof LchainSchema.MessageDataAdditionalKwargsToolCallsItem
+  export type MessageDataAdditionalKwargsToolCallsOption1Item = z.infer<
+    typeof LchainSchema.MessageDataAdditionalKwargsToolCallsOption1Item
   >;
 
   export type MessageDataAdditionalKwargs = z.infer<

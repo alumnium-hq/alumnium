@@ -130,6 +130,15 @@
                                             "type": []
                                           }
                                         ]
+                                      },
+                                      "phase": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "undefined"
+                                          }
+                                        ]
                                       }
                                     }
                                   },
@@ -897,6 +906,9 @@
                                         ]
                                       }
                                     ]
+                                  },
+                                  {
+                                    "kind": "undefined"
                                   }
                                 ]
                               },
@@ -2120,7 +2132,7 @@
                                       ]
                                     },
                                     "kind": "string",
-                                    "values": ["tool_calls", "STOP"]
+                                    "values": ["tool_calls", "STOP", "stop"]
                                   }
                                 ]
                               },
