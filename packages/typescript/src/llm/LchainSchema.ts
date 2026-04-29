@@ -24,6 +24,7 @@ export abstract class LchainSchema {
   static MessageFunctionCall = z.object({
     type: z.literal("functionCall"),
     functionCall: this.MessageFunctionCallData,
+    thoughtSignature: z.string().exactOptional(),
   });
 
   static MessageReasoning = z.object({
@@ -67,6 +68,7 @@ export abstract class LchainSchema {
     id: z.string(),
     name: z.string(),
     args: z.record(z.string(), z.unknown()),
+    thoughtSignature: z.string().exactOptional(),
   });
 
   static MessageDataToolCall = z.discriminatedUnion("type", [this.ToolCall]);
@@ -146,28 +148,44 @@ export abstract class LchainSchema {
   });
 
   static UsageMetadataInputTokenDetails = z.object({
-    cache_read: z.number().exactOptional(),
+    cache_read: z.union([z.number(), z.undefined()]).exactOptional(),
     cache_creation: z.number().exactOptional(),
     audio: z.union([z.undefined(), z.number()]).exactOptional(),
   });
 
   static UsageMetadataOutputTokenDetails = z.object({
-    reasoning: z.number().exactOptional(),
+    reasoning: z.union([z.number(), z.undefined()]).exactOptional(),
     audio: z.union([z.undefined(), z.number()]).exactOptional(),
   });
 
   static UsageMetadata = z.object({
-    input_tokens: z.number(),
-    output_tokens: z.number(),
-    total_tokens: z.number(),
+    input_tokens: z.number().exactOptional(),
+    output_tokens: z.number().exactOptional(),
+    total_tokens: z.number().exactOptional(),
     input_token_details: this.UsageMetadataInputTokenDetails.exactOptional(),
     output_token_details: this.UsageMetadataOutputTokenDetails.exactOptional(),
   });
 
+  static ResponseMetadataTokenUsageInputTokenDetails = z.object({
+    text: z.number(),
+    cache_read: z.number(),
+  });
+
+  static ResponseMetadataTokenUsageOutputTokenDetails = z.object({
+    reasoning: z.number(),
+  });
+
   static ResponseMetadataTokenUsage = z.object({
-    promptTokens: z.number(),
-    completionTokens: z.number(),
-    totalTokens: z.number(),
+    promptTokens: z.union([z.number(), z.undefined()]).exactOptional(),
+    completionTokens: z.union([z.number(), z.undefined()]).exactOptional(),
+    totalTokens: z.union([z.number(), z.undefined()]).exactOptional(),
+    input_tokens: z.number().exactOptional(),
+    output_tokens: z.number().exactOptional(),
+    total_tokens: z.number().exactOptional(),
+    input_token_details:
+      this.ResponseMetadataTokenUsageInputTokenDetails.exactOptional(),
+    output_token_details:
+      this.ResponseMetadataTokenUsageOutputTokenDetails.exactOptional(),
   });
 
   static ResponseMetadataEstimatedTokenUsage = z.object({
@@ -264,6 +282,14 @@ export abstract class LchainSchema {
     totalRetryDelay: z.number(),
   });
 
+  static ResponseMetadataUsageMetadata = z.object({
+    input_tokens: z.number(),
+    output_tokens: z.number(),
+    total_tokens: z.number(),
+    input_token_details: this.ResponseMetadataTokenUsageInputTokenDetails,
+    output_token_details: this.ResponseMetadataTokenUsageOutputTokenDetails,
+  });
+
   static ResponseMetadata = z.object({
     tokenUsage: this.ResponseMetadataTokenUsage.exactOptional(),
     finishReason: z.union([z.literal("STOP"), z.string()]).exactOptional(),
@@ -290,7 +316,10 @@ export abstract class LchainSchema {
     type: z.union([z.literal("message"), z.string()]).exactOptional(),
     role: z.union([z.literal("assistant"), z.string()]).exactOptional(),
     finish_reason: z
-      .union([z.literal("tool_calls"), z.string()])
+      .union([
+        z.union([z.literal("tool_calls"), z.literal("STOP")]),
+        z.string(),
+      ])
       .exactOptional(),
     system_fingerprint: z.string().exactOptional(),
     stopReason: z.union([z.literal("tool_use"), z.string()]).exactOptional(),
@@ -306,6 +335,12 @@ export abstract class LchainSchema {
     prompt_eval_duration: z.number().exactOptional(),
     eval_count: z.number().exactOptional(),
     eval_duration: z.number().exactOptional(),
+    responseId: z.string().exactOptional(),
+    usageMetadata: this.ResponseMetadataUsageMetadata.exactOptional(),
+    safetyRatings: z.undefined().exactOptional(),
+    citationMetadata: z.undefined().exactOptional(),
+    tokenCount: z.undefined().exactOptional(),
+    groundingSupport: z.array(z.unknown()).exactOptional(),
   });
 
   static ToolCallChunk = z.object({
@@ -320,7 +355,9 @@ export abstract class LchainSchema {
     content: z.union([z.array(this.MessageContent), z.string()]),
     tool_calls: z.array(this.MessageDataToolCall),
     additional_kwargs: this.MessageDataAdditionalKwargs,
-    usage_metadata: z.union([this.UsageMetadata, z.undefined()]),
+    usage_metadata: z
+      .union([this.UsageMetadata, z.undefined()])
+      .exactOptional(),
     invalid_tool_calls: z.array(z.unknown()),
     response_metadata: this.ResponseMetadata,
     id: z.string(),
@@ -417,6 +454,14 @@ export namespace LchainSchema {
 
   export type UsageMetadata = z.infer<typeof LchainSchema.UsageMetadata>;
 
+  export type ResponseMetadataTokenUsageInputTokenDetails = z.infer<
+    typeof LchainSchema.ResponseMetadataTokenUsageInputTokenDetails
+  >;
+
+  export type ResponseMetadataTokenUsageOutputTokenDetails = z.infer<
+    typeof LchainSchema.ResponseMetadataTokenUsageOutputTokenDetails
+  >;
+
   export type ResponseMetadataTokenUsage = z.infer<
     typeof LchainSchema.ResponseMetadataTokenUsage
   >;
@@ -463,6 +508,10 @@ export namespace LchainSchema {
 
   export type ResponseMetadataInternal = z.infer<
     typeof LchainSchema.ResponseMetadataInternal
+  >;
+
+  export type ResponseMetadataUsageMetadata = z.infer<
+    typeof LchainSchema.ResponseMetadataUsageMetadata
   >;
 
   export type ResponseMetadata = z.infer<typeof LchainSchema.ResponseMetadata>;

@@ -188,6 +188,16 @@
                                             }
                                           }
                                         ]
+                                      },
+                                      "thoughtSignature": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
+                                          }
+                                        ]
                                       }
                                     }
                                   },
@@ -406,6 +416,16 @@
                                         "type": [
                                           {
                                             "kind": "record"
+                                          }
+                                        ]
+                                      },
+                                      "thoughtSignature": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "literal": false
                                           }
                                         ]
                                       }
@@ -899,7 +919,7 @@
                       },
                       "usage_metadata": {
                         "kind": "field",
-                        "optional": false,
+                        "optional": true,
                         "type": [
                           {
                             "name": "UsageMetadata",
@@ -1053,7 +1073,7 @@
                                     "properties": {
                                       "promptTokens": {
                                         "kind": "field",
-                                        "optional": false,
+                                        "optional": true,
                                         "type": [
                                           {
                                             "kind": "number",
@@ -1066,7 +1086,7 @@
                                       },
                                       "completionTokens": {
                                         "kind": "field",
-                                        "optional": false,
+                                        "optional": true,
                                         "type": [
                                           {
                                             "kind": "number",
@@ -1079,7 +1099,7 @@
                                       },
                                       "totalTokens": {
                                         "kind": "field",
-                                        "optional": false,
+                                        "optional": true,
                                         "type": [
                                           {
                                             "kind": "number",
@@ -1087,6 +1107,88 @@
                                           },
                                           {
                                             "kind": "undefined"
+                                          }
+                                        ]
+                                      },
+                                      "input_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "output_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "total_tokens": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "input_token_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "text": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "cache_read": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      "output_token_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "reasoning": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
                                           }
                                         ]
                                       }
@@ -2018,7 +2120,7 @@
                                       ]
                                     },
                                     "kind": "string",
-                                    "values": ["tool_calls"]
+                                    "values": ["tool_calls", "STOP"]
                                   }
                                 ]
                               },
@@ -2248,6 +2350,150 @@
                                   {
                                     "kind": "number",
                                     "literal": false
+                                  }
+                                ]
+                              },
+                              "responseId": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "string",
+                                    "literal": false
+                                  }
+                                ]
+                              },
+                              "usageMetadata": {
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "input_tokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "output_tokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "total_tokens": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "number",
+                                            "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "input_token_details": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "text": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "cache_read": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      },
+                                      "output_token_details": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "reasoning": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                              },
+                              "safetyRatings": {
+                                "wip": true,
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "undefined"
+                                  }
+                                ]
+                              },
+                              "citationMetadata": {
+                                "wip": true,
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "undefined"
+                                  }
+                                ]
+                              },
+                              "tokenCount": {
+                                "wip": true,
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "undefined"
+                                  }
+                                ]
+                              },
+                              "groundingSupport": {
+                                "wip": true,
+                                "kind": "field",
+                                "optional": true,
+                                "type": [
+                                  {
+                                    "kind": "array",
+                                    "type": []
                                   }
                                 ]
                               }
