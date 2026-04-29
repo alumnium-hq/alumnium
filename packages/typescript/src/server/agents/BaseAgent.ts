@@ -13,11 +13,9 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { AIMessage } from "@langchain/core/messages";
 import z from "zod";
 import { Lchain } from "../../llm/Lchain.ts";
-import { LchainGeneration } from "../../llm/LchainGenerationSchema.ts";
 import { LchainSchema } from "../../llm/LchainSchema.ts";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
 import { retry } from "../../utils/retry.ts";
-import { scanTypes } from "../../utils/typesScan.ts";
 import { LlmContext } from "../LlmContext.ts";
 import { MODEL_RETRIES, MODEL_TIMEOUT_SEC } from "../LlmFactory.ts";
 import { agentPrompts } from "./prompts/bundledPrompts.ts";
@@ -289,15 +287,22 @@ export class BaseAgent {
   }
 
   #extractReasoningFromAdditional(
-    additional: AIMessage["additional_kwargs"],
+    additional: Lchain.AdditionalKwargs,
   ): string | null {
-    scanTypes({
-      id: "additional-kwargs",
-      url: import.meta.url,
-      value: additional,
-    });
-    const kwargs = LchainGeneration.AdditionalKwargs.parse(additional);
-    return kwargs.reasoning_content || null;
+    const kwargs = LchainSchema.MessageDataAdditionalKwargs.parse(additional);
+
+    let reasoningParts = [];
+    if (kwargs.reasoning && kwargs.reasoning.summary) {
+      for (const summary of kwargs.reasoning.summary) {
+        reasoningParts.push(summary.text);
+      }
+    }
+
+    if (kwargs.reasoning_content) {
+      reasoningParts.push(kwargs.reasoning_content);
+    }
+
+    return reasoningParts.length ? reasoningParts.join(" ") : null;
   }
 
   #extractText(contentArg: Lchain.MessageContent): string {
