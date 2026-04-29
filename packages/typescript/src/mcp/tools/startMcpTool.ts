@@ -32,7 +32,7 @@ export const startMcpTool = McpTool.define("start", {
     capabilities: z
       .string()
       .describe(
-        `JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities. Must include 'platformName' (e.g., 'chrome', 'ios', 'android'). Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'. Example file path: '/path/to/capabilities.json'. Alumnium-specific options go in 'alumnium:options': 'headless' (boolean, default false) — run browser headless, supported for Selenium and Playwright; 'headers' (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"}; 'cookies' (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}]; 'permissions' (string[]) — browser permissions to grant, Playwright only, e.g. ["geolocation"]; 'planner' (boolean) — enable/disable planner agent; 'changeAnalysis' (boolean, default true) — enable change analysis; 'excludeAttributes' (string[]) — accessibility attributes to exclude from the tree; 'newTabTimeout' (number, default 200) — ms to wait for new tab detection, Playwright only; 'autoswitchToNewTab' (boolean, default true) — auto-switch to newly opened tabs; 'fullPageScreenshot' (boolean, default false) — capture full-page screenshots. Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "headers": {"Authorization": "Bearer token"}, "newTabTimeout": 500}}'.`,
+        `JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities. Must include 'platformName' (e.g., 'chrome', 'ios', 'android'). Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'. Example file path: '/path/to/capabilities.json'. Alumnium-specific options go in 'alumnium:options': 'headless' (boolean, default false) — run browser headless, supported for Selenium and Playwright; 'headers' (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"}; 'cookies' (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}]; 'permissions' (string[]) — browser permissions to grant, Playwright only, e.g. ["geolocation"]; 'baseUrl' (string) — URL to navigate to automatically after driver start, e.g. "https://example.com"; 'planner' (boolean) — enable/disable planner agent; 'changeAnalysis' (boolean, default true) — enable change analysis; 'excludeAttributes' (string[]) — accessibility attributes to exclude from the tree; 'newTabTimeout' (number, default 200) — ms to wait for new tab detection, Playwright only; 'autoswitchToNewTab' (boolean, default true) — auto-switch to newly opened tabs; 'fullPageScreenshot' (boolean, default false) — capture full-page screenshots. Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "headers": {"Authorization": "Bearer token"}, "newTabTimeout": 500}}'.`,
       ),
 
     server_url: z
@@ -91,6 +91,10 @@ export const startMcpTool = McpTool.define("start", {
         | undefined) || {};
     delete capabilities["alumnium:options"];
 
+    const baseUrl =
+      typeof alumniumOptions["baseUrl"] === "string"
+        ? alumniumOptions["baseUrl"]
+        : undefined;
     const planner =
       typeof alumniumOptions["planner"] === "boolean"
         ? alumniumOptions["planner"]
@@ -123,6 +127,7 @@ export const startMcpTool = McpTool.define("start", {
     };
 
     const alumniumOptionsNonDriverKeys = new Set([
+      "baseUrl",
       "changeAnalysis",
       "cookies",
       "excludeAttributes",
@@ -209,6 +214,11 @@ export const startMcpTool = McpTool.define("start", {
           logger.warn(`Unknown driver option: ${key}`);
         }
       }
+    }
+
+    if (baseUrl) {
+      logger.info(`Navigating to baseUrl: ${baseUrl}`);
+      await al.driver.visit(baseUrl);
     }
 
     // Register driver in global state
