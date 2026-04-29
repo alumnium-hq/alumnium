@@ -180,6 +180,10 @@ Endpoint URL used when `ALUMNIUM_MODEL` is set to `azure_openai`.
 
 Set to `true` to enable vision support for the `codex` provider by temporarily uploading screenshots to a third-party image host ([litterbox.catbox.moe][4]) before sending them to the model. Codex models only accept image URLs, so this is required for vision checks. Default is `false`.
 
+### `OLLAMA_HOST`
+
+Sets the URL for Ollama models if you host them externally on a server.
+
 ### `OPENAI_CUSTOM_URL`
 
 Sets the URL for OpenAI models if you access them via custom endpoint.
