@@ -11,6 +11,7 @@ import { stringify as tomlStringify } from "smol-toml";
 import { z } from "zod";
 import { ALUMNIUM_VERSION } from "../src/package.ts";
 import {
+  PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
   PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
   SELENIUM_ATOM_ASSET_PREFIX,
   SELENIUM_MANAGER_ASSET_NAMES,
@@ -343,8 +344,7 @@ async function main() {
       }),
     );
 
-    await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
-    await fs.rmdir(STANDALONE_EMBEDDED_ASSETS_DIR);
+    await fs.rm(TMP_DIR, { recursive: true, force: true });
   }
 
   //#endregion
@@ -821,15 +821,58 @@ function getNpmOs(os: OS) {
 async function prepareStandaloneEmbeddedAssets() {
   await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
 
-  const assets = await getStandaloneEmbeddedAssets();
+  const [assets, oopDownloadPath] = await Promise.all([
+    getStandaloneEmbeddedAssets(),
+    buildPlaywrightOopDownloadBundle(),
+  ]);
+
+  const allAssets: StandaloneEmbeddedAsset[] = [
+    ...assets,
+    {
+      name: PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
+      sourcePath: oopDownloadPath,
+    },
+  ];
 
   return Promise.all(
-    assets.map(async ({ name, sourcePath }) => {
+    allAssets.map(async ({ name, sourcePath }) => {
       const stagedPath = path.join(STANDALONE_EMBEDDED_ASSETS_DIR, name);
       await fs.copyFile(sourcePath, stagedPath);
       return stagedPath;
     }),
   );
+}
+
+async function buildPlaywrightOopDownloadBundle(): Promise<string> {
+  const playwrightCorePkgDir = path.resolve(
+    PKG_DIR,
+    "node_modules/playwright-core",
+  );
+  const entrypoint = path.join(
+    playwrightCorePkgDir,
+    "lib/server/registry/oopDownloadBrowserMain.js",
+  );
+  const outDir = path.resolve(TMP_DIR, "playwright-oop-download");
+  await cleanUpDir(outDir);
+
+  const result = await Bun.build({
+    entrypoints: [entrypoint],
+    outdir: outDir,
+    target: "node",
+    format: "cjs",
+    packages: "bundle",
+    naming: "[name].cjs",
+    minify: false,
+  });
+
+  if (!result.success) {
+    throw new AggregateError(
+      result.logs.map((log) => new Error(log.message)),
+      "Failed to bundle playwright oopDownloadBrowserMain.js",
+    );
+  }
+
+  return path.join(outDir, "oopDownloadBrowserMain.cjs");
 }
 
 async function getStandaloneEmbeddedAssets(): Promise<
