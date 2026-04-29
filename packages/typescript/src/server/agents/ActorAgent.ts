@@ -8,12 +8,12 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
 import z from "zod";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { ToolCall } from "../accessibility/BaseServerAccessibilityTree.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 export namespace ActorAgent {
   export interface ChainInput {
@@ -63,39 +63,45 @@ export class ActorAgent extends BaseAgent {
     step: string,
     treeXml: string,
   ): Promise<ActorAgent.InvokeResult> {
-    if (!step.trim()) {
-      return ["", []];
-    }
+    return tracer.span(
+      "agent.invoke",
+      { "agent.kind": "actor" },
+      async (): Promise<ActorAgent.InvokeResult> => {
+        if (!step.trim()) {
+          return ["", []];
+        }
 
-    logger.info("Starting action:");
-    this.logData(logger, "in", {
-      Goal: goal,
-      Step: step,
-      "Accessibility tree": this.debugLogTreeDetail(treeXml),
-    });
+        logger.info("Starting action:");
+        this.logData(logger, "in", {
+          Goal: goal,
+          Step: step,
+          "Accessibility tree": this.debugLogTreeDetail(treeXml),
+        });
 
-    const meta: ActorAgent.Meta = {
-      kind: "actor",
-      goal: goal as BaseAgent.Goal,
-      step: step as BaseAgent.Step,
-      treeXml,
-    };
+        const meta: ActorAgent.Meta = {
+          kind: "actor",
+          goal: goal as BaseAgent.Goal,
+          step: step as BaseAgent.Step,
+          treeXml,
+        };
 
-    const response = await this.invokeChain(
-      this.chain,
-      {
-        goal,
-        step,
-        accessibility_tree: treeXml,
+        const response = await this.invokeChain(
+          this.chain,
+          {
+            goal,
+            step,
+            accessibility_tree: treeXml,
+          },
+          meta,
+        );
+
+        this.logData(logger, "out", {
+          Tools: response.toolCalls,
+          Usage: response.usage,
+        });
+
+        return [response.reasoning ?? "", response.toolCalls];
       },
-      meta,
     );
-
-    this.logData(logger, "out", {
-      Tools: response.toolCalls,
-      Usage: response.usage,
-    });
-
-    return [response.reasoning ?? "", response.toolCalls];
   }
 }

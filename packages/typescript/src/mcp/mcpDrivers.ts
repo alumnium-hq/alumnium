@@ -11,10 +11,10 @@ import {
   type Browser as WebdriverIoBrowser,
 } from "webdriverio";
 import { FileStore } from "../FileStore/FileStore.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { TypeUtils } from "../typeUtils.ts";
-import { getLogger } from "../utils/logger.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export type McpDriver = Page | WebDriver | WebdriverIoBrowser;
 
@@ -192,7 +192,7 @@ export async function createIosDriver(
 
   const remoteServerUrl = new URL(remoteServer);
   const remoteOptions =
-    TypeUtils.polyfillExactOptionalPropertyTypes<McpDriver.WebdriverioProps>({
+    TypeUtils.fromExactOptionalTypes<McpDriver.WebdriverioProps>({
       protocol: remoteServerUrl.protocol.replace(":", ""),
       hostname: remoteServerUrl.hostname,
       port:
@@ -240,7 +240,7 @@ export async function createAndroidDriver(
 
   const remoteServerUrl = new URL(remoteServer);
   const remoteOptions =
-    TypeUtils.polyfillExactOptionalPropertyTypes<McpDriver.WebdriverioProps>({
+    TypeUtils.fromExactOptionalTypes<McpDriver.WebdriverioProps>({
       protocol: remoteServerUrl.protocol.replace(":", ""),
       hostname: remoteServerUrl.hostname,
       port:

@@ -7,11 +7,11 @@
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { ALUMNIUM_VERSION } from "../package.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { McpScenariosState } from "./scenarios/McpScenariosState.ts";
 import { mcpTools } from "./tools/index.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 /**
  * MCP Server that wraps Alumnium functionality for AI agents.
@@ -56,7 +56,7 @@ export class McpServer {
           const output = await executeTool(input);
 
           // Process tool execution in scenarios state.
-          const hookResult = await this.#scenarios.onToolExecuted({
+          const hookResult = this.#scenarios.onToolExecuted({
             tool,
             input,
             output,

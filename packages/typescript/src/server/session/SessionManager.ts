@@ -4,11 +4,11 @@ import { AppId } from "../../AppId.ts";
 import type { Driver } from "../../drivers/Driver.ts";
 import { createLlmUsageStats, LlmUsageStats } from "../../llm/llmSchema.ts";
 import { Model } from "../../Model.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { Session } from "./Session.ts";
 import { SessionId } from "./SessionId.ts";
 
-const logger = getLogger(import.meta.url);
+const { logger, tracer } = Telemetry.get(import.meta.url);
 
 export namespace SessionManager {
   export interface CreateSessionProps {
@@ -39,24 +39,28 @@ export class SessionManager {
   createSession(props: SessionManager.CreateSessionProps): Session {
     const sessionId = props.sessionId || Session.createId();
 
-    logger.debug(`Creating session with {props}`, { props });
-    const {
-      provider,
-      name: modelName,
-      excludeAttributes,
-      ...restProps
-    } = props;
-    const model = new Model(provider, modelName);
+    return tracer.span("session.create", { "session.id": sessionId }, () => {
+      tracer.span("session.active", { "session.id": sessionId }, sessionId);
 
-    const session = new Session({
-      ...restProps,
-      sessionId,
-      model,
-      excludeAttributes: new Set(excludeAttributes ?? []),
+      logger.debug(`Creating session with {props}`, { props });
+      const {
+        provider,
+        name: modelName,
+        excludeAttributes,
+        ...restProps
+      } = props;
+      const model = new Model(provider, modelName);
+
+      const session = new Session({
+        ...restProps,
+        sessionId,
+        model,
+        excludeAttributes: new Set(excludeAttributes ?? []),
+      });
+      this.#sessions[sessionId] = session;
+      logger.info(`Created new session: ${sessionId}`);
+      return session;
     });
-    this.#sessions[sessionId] = session;
-    logger.info(`Created new session: ${sessionId}`);
-    return session;
   }
 
   /**
@@ -70,12 +74,16 @@ export class SessionManager {
    * Delete a session by ID.
    */
   deleteSession(sessionId: SessionId): boolean {
-    if (sessionId in this.#sessions) {
-      delete this.#sessions[sessionId];
-      logger.info(`Deleted session: ${sessionId}`);
-      return true;
-    }
-    return false;
+    return tracer.span("session.delete", { "session.id": sessionId }, () => {
+      tracer.end(sessionId);
+
+      if (sessionId in this.#sessions) {
+        delete this.#sessions[sessionId];
+        logger.info(`Deleted session: ${sessionId}`);
+        return true;
+      }
+      return false;
+    });
   }
 
   /**

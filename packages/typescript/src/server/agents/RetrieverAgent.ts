@@ -2,11 +2,11 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { MessageContent } from "@langchain/core/messages";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 /**
  * Retrieved information.
@@ -64,92 +64,104 @@ export class RetrieverAgent extends BaseAgent {
     url = "",
     screenshot: string | null = null,
   ): Promise<RetrieverAgent.InvokeResult> {
-    logger.info("Starting retrieval:");
-    this.logData(logger, "in", {
-      Information: information,
-      "Accessibility tree": this.debugLogTreeDetail(treeXml),
-      Title: this.debugLogDetail(title),
-      URL: this.debugLogDetail(url),
-    });
+    return tracer.span(
+      "agent.invoke",
+      {
+        "agent.kind": "retriever",
+        "agent.invoke.args.has_screenshot": !!screenshot,
+      },
+      async (): Promise<RetrieverAgent.InvokeResult> => {
+        logger.info("Starting retrieval:");
+        this.logData(logger, "in", {
+          Information: information,
+          "Accessibility tree": this.debugLogTreeDetail(treeXml),
+          Title: this.debugLogDetail(title),
+          URL: this.debugLogDetail(url),
+        });
 
-    let prompt = "";
-    if (!screenshot) {
-      prompt += pythonicFormat(this.prompts.user, {
-        accessibility_tree: treeXml,
-        title,
-        url,
-      });
-    }
-    prompt += "\n";
-    prompt += `Retrieve the following information: ${information}`;
+        let prompt = "";
+        if (!screenshot) {
+          prompt += pythonicFormat(this.prompts.user, {
+            accessibility_tree: treeXml,
+            title,
+            url,
+          });
+        }
+        prompt += "\n";
+        prompt += `Retrieve the following information: ${information}`;
 
-    const humanMessages: MessageContent = [{ type: "text", text: prompt }];
+        const humanMessages: MessageContent = [{ type: "text", text: prompt }];
 
-    if (screenshot) {
-      humanMessages.push({
-        type: "image_url",
-        image_url: {
-          url: `data:image/png;base64,${screenshot}`,
-        },
-      });
-    }
+        if (screenshot) {
+          humanMessages.push({
+            type: "image_url",
+            image_url: {
+              url: `data:image/png;base64,${screenshot}`,
+            },
+          });
+        }
 
-    const meta: RetrieverAgent.Meta = {
-      kind: "retriever",
-      information,
-      treeXml,
-      title,
-      url,
-      screenshot,
-    };
+        const meta: RetrieverAgent.Meta = {
+          kind: "retriever",
+          information,
+          treeXml,
+          title,
+          url,
+          screenshot,
+        };
 
-    const response = await this.invokeChain(
-      this.chain,
-      [
-        [
-          "system",
-          pythonicFormat(this.prompts.system, {
-            separator: RetrieverAgent.#LIST_SEPARATOR,
-          }),
-        ],
-        ["human", humanMessages],
-      ],
-      meta,
+        const response = await this.invokeChain(
+          this.chain,
+          [
+            [
+              "system",
+              pythonicFormat(this.prompts.system, {
+                separator: RetrieverAgent.#LIST_SEPARATOR,
+              }),
+            ],
+            ["human", humanMessages],
+          ],
+          meta,
+        );
+
+        this.logData(logger, "out", {
+          Result: response.structured,
+          Usage: response.usage,
+        });
+
+        let value = (response.structured as RetrievedInformation).value;
+        // LLMs sometimes add separator to the start/end.
+        if (value.startsWith(RetrieverAgent.#LIST_SEPARATOR)) {
+          value = value.slice(RetrieverAgent.#LIST_SEPARATOR.length);
+        }
+        if (value.endsWith(RetrieverAgent.#LIST_SEPARATOR)) {
+          value = value.slice(0, -RetrieverAgent.#LIST_SEPARATOR.length);
+        }
+        value = value.trim();
+        // GPT-5 Nano sometimes replaces closing brace with something else
+        value = value.replace(
+          new RegExp(`${RetrieverAgent.#LIST_SEPARATOR.slice(0, -1)}.`, "g"),
+          RetrieverAgent.#LIST_SEPARATOR,
+        );
+        // Grok 4.1 Fast Reasoning sometimes use escaped tags
+        value = value.replace("&lt;SEP&gt;", RetrieverAgent.#LIST_SEPARATOR);
+
+        // Return raw string or list of strings
+        if (value.includes(RetrieverAgent.#LIST_SEPARATOR)) {
+          return [
+            (response.structured as RetrievedInformation).explanation,
+            value
+              .split(RetrieverAgent.#LIST_SEPARATOR)
+              .filter((item) => item)
+              .map((item) => item.trim()),
+          ];
+        } else {
+          return [
+            (response.structured as RetrievedInformation).explanation,
+            value,
+          ];
+        }
+      },
     );
-
-    this.logData(logger, "out", {
-      Result: response.structured,
-      Usage: response.usage,
-    });
-
-    let value = (response.structured as RetrievedInformation).value;
-    // LLMs sometimes add separator to the start/end.
-    if (value.startsWith(RetrieverAgent.#LIST_SEPARATOR)) {
-      value = value.slice(RetrieverAgent.#LIST_SEPARATOR.length);
-    }
-    if (value.endsWith(RetrieverAgent.#LIST_SEPARATOR)) {
-      value = value.slice(0, -RetrieverAgent.#LIST_SEPARATOR.length);
-    }
-    value = value.trim();
-    // GPT-5 Nano sometimes replaces closing brace with something else
-    value = value.replace(
-      new RegExp(`${RetrieverAgent.#LIST_SEPARATOR.slice(0, -1)}.`, "g"),
-      RetrieverAgent.#LIST_SEPARATOR,
-    );
-    // Grok 4.1 Fast Reasoning sometimes use escaped tags
-    value = value.replace("&lt;SEP&gt;", RetrieverAgent.#LIST_SEPARATOR);
-
-    // Return raw string or list of strings
-    if (value.includes(RetrieverAgent.#LIST_SEPARATOR)) {
-      return [
-        (response.structured as RetrievedInformation).explanation,
-        value
-          .split(RetrieverAgent.#LIST_SEPARATOR)
-          .filter((item) => item)
-          .map((item) => item.trim()),
-      ];
-    } else {
-      return [(response.structured as RetrievedInformation).explanation, value];
-    }
   }
 }

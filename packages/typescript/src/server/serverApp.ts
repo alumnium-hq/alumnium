@@ -1,36 +1,29 @@
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
-import { Model } from "../Model.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.ts";
 import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.ts";
 import { RetrieverAgent } from "./agents/RetrieverAgent.ts";
 import * as s from "./serverSchema.ts";
-import { Session } from "./session/Session.ts";
+import { ServerTelemetry } from "./ServerTelemetry.ts";
 import { SessionManager } from "./session/SessionManager.ts";
 
-const logger = getLogger(import.meta.url);
+const telemetry = Telemetry.get(import.meta.url);
+const { logger } = telemetry;
 
 //#region Routes
 
 export const serverApp = new Elysia({ prefix: "/v1" })
+  .use(ServerTelemetry.plugin(telemetry))
   .use(cors())
   .state(() => ({ sessions: new SessionManager() }))
   .onError((ctx) => {
-    const { method, url } = ctx.request;
-    logger.warn(`${method} ${url} failed: {error}`, {
-      error: ctx.error,
-    });
-    logger.debug("  -> content-type: {contentType}", {
-      contentType: ctx.request.headers.get("content-type"),
-    });
-    logger.debug("  -> body: {body}", { body: ctx.body });
-
+    const { error } = ctx;
     return ctx.status(500, {
-      message: ctx.error.toString(),
+      message: String(error),
       // TODO: Figure out how to pass the stack
-      stack: "stack" in ctx.error ? ctx.error.stack : undefined,
+      stack: "stack" in error ? error.stack : undefined,
     });
   })
 

@@ -1,11 +1,11 @@
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 /**
  * Area of the accessibility tree to use.
@@ -48,41 +48,43 @@ export class AreaAgent extends BaseAgent {
     description: string,
     treeXml: string,
   ): Promise<{ id: number; explanation: string }> {
-    logger.info("Starting area detection:");
-    this.logData(logger, "in", {
-      Description: description,
-      "Accessibility tree": this.debugLogTreeDetail(treeXml),
-    });
+    return tracer.span("agent.invoke", { "agent.kind": "area" }, async () => {
+      logger.info("Starting area detection:");
+      this.logData(logger, "in", {
+        Description: description,
+        "Accessibility tree": this.debugLogTreeDetail(treeXml),
+      });
 
-    const meta: AreaAgent.Meta = {
-      kind: "area",
-      description,
-      treeXml,
-    };
+      const meta: AreaAgent.Meta = {
+        kind: "area",
+        description,
+        treeXml,
+      };
 
-    const response = await this.invokeChain(
-      this.chain,
-      [
-        ["system", this.prompts.system],
+      const response = await this.invokeChain(
+        this.chain,
         [
-          "user",
-          pythonicFormat(this.prompts.user, {
-            accessibility_tree: treeXml,
-            description,
-          }),
+          ["system", this.prompts.system],
+          [
+            "user",
+            pythonicFormat(this.prompts.user, {
+              accessibility_tree: treeXml,
+              description,
+            }),
+          ],
         ],
-      ],
-      meta,
-    );
+        meta,
+      );
 
-    this.logData(logger, "out", {
-      Result: response.structured,
-      Usage: response.usage,
+      this.logData(logger, "out", {
+        Result: response.structured,
+        Usage: response.usage,
+      });
+
+      return {
+        id: (response.structured as Area).id,
+        explanation: (response.structured as Area).explanation,
+      };
     });
-
-    return {
-      id: (response.structured as Area).id,
-      explanation: (response.structured as Area).explanation,
-    };
   }
 }

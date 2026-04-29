@@ -1,6 +1,6 @@
 experimental_monorepo_root = true
 [monorepo]
-config_roots = [".", "packages/*", "websites/*"]
+config_roots = [".", "packages/*", "websites/*", "telemetry"]
 
 [tools]
 # TypeScript
@@ -24,10 +24,14 @@ oxfmt = "latest" # TS formatter
 '_'.file = { path = ".env" }
 _.source = "scripts/env.sh"
 # Tool envs
-gh = "latest" # GitHub CLI
 MISE_EXPERIMENTAL = true # Enable monorepo root support
 OPENCODE_CONFIG_DIR = "./.agents"
 FORCE_COLOR = "1" # Force colors, i.e., for `bun --filter test`
+
+# Default tracing envs. To enable set ALUMNIUM_TRACE=true.
+OTEL_SERVICE_NAME = "alumnium"
+OTEL_EXPORTER_OTLP_ENDPOINT = "http://127.0.0.1:4318"
+OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf"
 
 [settings]
 env_shell_expand = true # Allow using "${VAR}" in values

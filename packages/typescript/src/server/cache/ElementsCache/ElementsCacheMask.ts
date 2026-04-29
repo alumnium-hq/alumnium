@@ -1,8 +1,8 @@
 import { ensure } from "alwaysly";
 import type { Lchain } from "../../../llm/Lchain.ts";
-import { getLogger } from "../../../utils/logger.ts";
+import { Logger } from "../../../telemetry/Logger.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export abstract class ElementsCacheMask {
   static ID_FIELDS = new Set(["id", "from_id", "to_id"]);

@@ -30,6 +30,8 @@ export namespace McpScenario {
 
   export type RecordingState = z.infer<typeof McpScenario.RecordingState>;
 
+  export type RecordingId = z.infer<typeof McpScenario.RecordingId>;
+
   export type Recording = z.infer<typeof McpScenario.Recording>;
 
   export type Execution = z.infer<typeof McpScenario.Execution>;
@@ -99,8 +101,11 @@ export abstract class McpScenario {
     z.literal("committed"),
   ]);
 
+  static RecordingId = z.string().brand("RecordingId");
+
   static Recording = z.object({
     kind: z.literal("recording"),
+    recordingId: this.RecordingId,
     scenario: this.Scenario,
     state: this.RecordingState,
     diversion: this.Diversion.exactOptional(),
@@ -146,12 +151,18 @@ export abstract class McpScenario {
     };
   }
 
+  static createRecordingId(): McpScenario.RecordingId {
+    return nanoid();
+  }
+
   static createRecording(
+    recordingId: McpScenario.RecordingId,
     text: string,
     scenarioId?: McpScenario.ScenarioId | undefined,
   ): McpScenario.Recording {
     return {
       kind: "recording",
+      recordingId,
       scenario: this.createScenario(text, scenarioId),
       state: "recording",
       toMaskMap: {},
@@ -159,11 +170,13 @@ export abstract class McpScenario {
   }
 
   static createDivergedRecording(
+    recordingId: McpScenario.RecordingId,
     scenario: McpScenario.Scenario,
     stepId: McpScenario.StepId | null,
   ): McpScenario.Recording {
     return {
       kind: "recording",
+      recordingId,
       scenario,
       state: "recording",
       toMaskMap: {},
@@ -174,14 +187,19 @@ export abstract class McpScenario {
     };
   }
 
+  static createPlaybackId(): McpScenario.PlaybackId {
+    return nanoid();
+  }
+
   static createPlayback(
+    playbackId: McpScenario.PlaybackId,
     scenario: McpScenario.Scenario,
     stepByStep = false,
   ): McpScenario.Playback {
     const nextStepId = scenario.steps[0]?.id ?? null;
     return {
       kind: "playback",
-      playbackId: nanoid(),
+      playbackId,
       scenario: structuredClone(scenario),
       nextStepId,
       stepByStep,

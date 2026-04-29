@@ -1,6 +1,6 @@
 import z from "zod";
 import { CliCommand } from "../cli/CliCommand.ts";
-import { setLogPath } from "../utils/logger.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { McpServer } from "./McpServer.ts";
 
 export namespace McpCommand {}
@@ -12,7 +12,7 @@ export const McpCommand = CliCommand.define({
   Args: z.object({}),
 
   action: async ({ logFilenameHint }) => {
-    setLogPath({ filename: logFilenameHint });
+    Logger.path = { filename: logFilenameHint };
 
     const server = new McpServer();
     await server.run();

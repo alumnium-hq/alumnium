@@ -6,7 +6,9 @@ import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../../AppId.ts";
 import { Lchain } from "../../../llm/Lchain.ts";
-import { getLogger } from "../../../utils/logger.ts";
+import { Telemetry } from "../../../telemetry/Telemetry.ts";
+import type { Tracer } from "../../../telemetry/Tracer.ts";
+import { stringExcerpt } from "../../../utils/string.ts";
 import { ActorAgent } from "../../agents/ActorAgent.ts";
 import type { BaseAgent } from "../../agents/BaseAgent.ts";
 import { PlannerAgent } from "../../agents/PlannerAgent.ts";
@@ -25,7 +27,7 @@ const tokenSortRatio =
 const tokenSetRatio =
   fuzzy.tokenSetRatio as typeof import("npm-fuzzy").tokenSetRatio;
 
-const logger = getLogger(import.meta.url);
+const { logger, tracer } = Telemetry.get(import.meta.url);
 
 // NOTE: This is current empty to preserve compatibility with existing cache entries,
 // as the format didn't change.
@@ -65,13 +67,14 @@ export namespace ElementsCache {
   export type MemoryKey = z.infer<typeof ElementsCache.MemoryKey>;
 
   export interface InitiatedData {
-    meta: AgentMeta;
     cacheKey: CacheKey;
     cacheHash: CacheHash;
     memoryKey: MemoryKey;
   }
 
   export type Entries = [ElementsCache.MemoryKey, ElementsCache.MemoryRecord][];
+
+  export type CacheSource = "store_fuzzy" | "store";
 }
 
 export class ElementsCache extends ServerCache {
@@ -124,96 +127,178 @@ export class ElementsCache extends ServerCache {
     prompt: LlmContext.Prompt,
     llmKey: LlmContext.LlmKey,
   ): Promise<Generation[] | null> {
-    try {
-      const data = this.#initiate(prompt, llmKey);
-      if (!data) return null;
-      const { meta: agentMeta, cacheKey, cacheHash, memoryKey } = data;
-
-      const tree = new ElementsCacheTree(data.meta.treeXml);
-
-      let resolvedMemoryKey = memoryKey;
-
-      if (!this.#memoryRecord(memoryKey)) {
-        const fuzzyMemoryKey = this.#fuzzyMemoryLookup(
-          agentMeta.kind,
-          cacheKey,
+    return tracer.span("cache.lookup", this.#spanAttrs(), async (span) => {
+      const agentMeta = this.#llmContext.getPromptMeta(prompt);
+      if (!agentMeta) {
+        logger.warn(
+          `No metadata found, skipping elements cache lookup for prompt: "${stringExcerpt(prompt, 100)}"...`,
         );
-        if (fuzzyMemoryKey) {
-          resolvedMemoryKey = fuzzyMemoryKey as ElementsCache.MemoryKey;
-        }
-      }
+        span.event("cache.lookup.miss", {
+          ...this.#spanAttrs(),
+          "cache.lookup.miss.reason": "no_meta",
+        });
 
-      const memoryEntry = this.#memoryRecord(resolvedMemoryKey);
-      if (memoryEntry) {
-        const masksIdsMap = tree.resolveElements(memoryEntry.elements);
-
-        if (masksIdsMap) {
-          const unmaskedGeneration = ElementsCacheMask.unmask(
-            memoryEntry.generation,
-            masksIdsMap,
-          );
-          this.#updateUsage(unmaskedGeneration);
-
-          const generation = Lchain.fromStored(unmaskedGeneration);
-          logger.debug(
-            `Elements cache hit (in-memory) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
-          );
-          return [generation];
-        }
-      }
-
-      const cacheStore = this.#cacheStore.subStore(
-        `${agentMeta.kind}/${cacheHash}`,
-      );
-
-      let [elements, maskedGeneration] = await Promise.all([
-        cacheStore.readJson("elements.json", ElementsCache.Elements),
-        cacheStore.readJson("response.json", Lchain.StoredGeneration),
-      ]);
-
-      if (!elements || !maskedGeneration) {
-        const fuzzyHash = await this.#fuzzyLookupHash(agentMeta.kind, cacheKey);
-        if (!fuzzyHash) return null;
-
-        const fuzzyStore = this.#cacheStore.subStore(
-          `${agentMeta.kind}/${fuzzyHash}`,
-        );
-
-        const [fuzzyElements, fuzzyResponse] = await Promise.all([
-          fuzzyStore.readJson("elements.json", ElementsCache.Elements),
-          fuzzyStore.readJson("response.json", Lchain.StoredGeneration),
-        ]);
-
-        if (!fuzzyElements || !fuzzyResponse) return null;
-
-        elements = fuzzyElements;
-        maskedGeneration = fuzzyResponse;
-      }
-
-      const masksIdsMap = tree.resolveElements(elements);
-      if (!masksIdsMap) {
-        logger.debug(
-          `Elements cache miss (resolution failed) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
-        );
         return null;
       }
 
-      const unmaskedGeneration = ElementsCacheMask.unmask(
-        maskedGeneration,
-        masksIdsMap,
+      if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") {
+        logger.debug(
+          `Agent kind "${agentMeta.kind}" is not eligible for elements caching, skipping lookup for prompt: "${stringExcerpt(prompt, 100)}"...`,
+        );
+        span.event("cache.lookup.miss", {
+          ...this.#spanAttrs(),
+          "agent.kind": agentMeta.kind,
+          "cache.lookup.miss.reason": "not_eligible",
+        });
+
+        return null;
+      }
+
+      const { cacheKey, cacheHash, memoryKey } = this.#initiate(
+        agentMeta,
+        llmKey,
       );
 
-      this.#updateUsage(unmaskedGeneration);
+      try {
+        const tree = new ElementsCacheTree(agentMeta.treeXml);
 
-      const generation = Lchain.fromStored(unmaskedGeneration);
-      logger.debug(
-        `Elements cache hit (file) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
-      );
-      return [generation];
-    } catch (error) {
-      logger.debug(`Error in elements cache lookup: ${error}`);
-      return null;
-    }
+        let resolvedMemoryKey = memoryKey;
+
+        if (!this.#memoryRecord(memoryKey)) {
+          const fuzzyMemoryKey = this.#fuzzyMemoryLookup(
+            agentMeta.kind,
+            cacheKey,
+          );
+          if (fuzzyMemoryKey) {
+            resolvedMemoryKey = fuzzyMemoryKey as ElementsCache.MemoryKey;
+          }
+        }
+
+        const memoryEntry = this.#memoryRecord(resolvedMemoryKey);
+        if (memoryEntry) {
+          const masksIdsMap = tree.resolveElements(memoryEntry.elements);
+
+          if (masksIdsMap) {
+            const unmaskedGeneration = ElementsCacheMask.unmask(
+              memoryEntry.generation,
+              masksIdsMap,
+            );
+            this.#updateUsage(unmaskedGeneration);
+
+            const generation = Lchain.fromStored(unmaskedGeneration);
+
+            logger.debug(
+              `Elements cache hit (in-memory) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
+            );
+            span.event("cache.lookup.hit", {
+              ...this.#spanAttrs(),
+              "agent.kind": agentMeta.kind,
+              "cache.hash": cacheHash,
+              "cache.lookup.hit.source": "memory",
+            });
+
+            return [generation];
+          }
+        }
+
+        const cacheStore = this.#cacheStore.subStore(
+          `${agentMeta.kind}/${cacheHash}`,
+        );
+
+        let [elements, maskedGeneration] = await Promise.all([
+          cacheStore.readJson("elements.json", ElementsCache.Elements),
+          cacheStore.readJson("response.json", Lchain.StoredGeneration),
+        ]);
+        let storeSource: ElementsCache.CacheSource = "store";
+
+        if (!elements || !maskedGeneration) {
+          const fuzzyHash = await this.#fuzzyLookupHash(
+            agentMeta.kind,
+            cacheKey,
+          );
+          if (!fuzzyHash) {
+            span.event("cache.lookup.miss", {
+              ...this.#spanAttrs(),
+              "agent.kind": agentMeta.kind,
+              "cache.hash": cacheHash,
+              "cache.lookup.miss.reason": "no_match",
+            });
+
+            return null;
+          }
+
+          const fuzzyStore = this.#cacheStore.subStore(
+            `${agentMeta.kind}/${fuzzyHash}`,
+          );
+
+          const [fuzzyElements, fuzzyResponse] = await Promise.all([
+            fuzzyStore.readJson("elements.json", ElementsCache.Elements),
+            fuzzyStore.readJson("response.json", Lchain.StoredGeneration),
+          ]);
+
+          if (!fuzzyElements || !fuzzyResponse) {
+            span.event("cache.lookup.miss", {
+              ...this.#spanAttrs(),
+              "agent.kind": agentMeta.kind,
+              "cache.hash": fuzzyHash,
+              "cache.lookup.miss.reason": "not_found",
+            });
+
+            return null;
+          }
+
+          elements = fuzzyElements;
+          maskedGeneration = fuzzyResponse;
+          storeSource = "store_fuzzy";
+        }
+
+        const masksIdsMap = tree.resolveElements(elements);
+        if (!masksIdsMap) {
+          logger.debug(
+            `Elements cache miss (resolution failed) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
+          );
+          span.event("cache.lookup.miss", {
+            ...this.#spanAttrs(),
+            "agent.kind": agentMeta.kind,
+            "cache.hash": cacheHash,
+            "cache.lookup.miss.reason": "resolution_failed",
+          });
+
+          return null;
+        }
+
+        const unmaskedGeneration = ElementsCacheMask.unmask(
+          maskedGeneration,
+          masksIdsMap,
+        );
+
+        this.#updateUsage(unmaskedGeneration);
+
+        const generation = Lchain.fromStored(unmaskedGeneration);
+
+        logger.debug(
+          `Elements cache hit (file) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
+        );
+        span.event("cache.lookup.hit", {
+          ...this.#spanAttrs(),
+          "agent.kind": agentMeta.kind,
+          "cache.hash": cacheHash,
+          "cache.lookup.hit.source": storeSource,
+        });
+
+        return [generation];
+      } catch (error) {
+        logger.debug(`Error in elements cache lookup: ${error}`);
+        span.event("cache.lookup.miss", {
+          ...this.#spanAttrs(),
+          "agent.kind": agentMeta.kind,
+          "cache.hash": cacheHash,
+          "cache.lookup.miss.reason": "error",
+        });
+
+        return null;
+      }
+    });
   }
 
   override async update(
@@ -221,94 +306,117 @@ export class ElementsCache extends ServerCache {
     llmKey: LlmContext.LlmKey,
     generations: Generation[],
   ): Promise<void> {
-    try {
-      const data = this.#initiate(prompt, llmKey);
-      if (!data) {
-        logger.debug(
-          `Prompt is not eligible for elements caching: "${prompt.slice(0, 100)}"`,
-        );
-        return;
-      }
-      const { meta, cacheHash, memoryKey } = data;
-
-      const [firstGeneration] = generations as Lchain.GenerationsSingle;
-      const generation = Lchain.toStored(firstGeneration);
-
-      switch (meta.kind) {
-        case "planner":
-          return this.#plannerCache.update({
-            cacheHash,
-            memoryKey,
-            generation,
-            meta,
+    return tracer.span("cache.update", this.#spanAttrs(), async (span) => {
+      try {
+        const agentMeta = this.#llmContext.getPromptMeta(prompt);
+        if (!agentMeta) {
+          logger.warn(
+            `No metadata found, skipping elements cache update for prompt: "${stringExcerpt(prompt, 100)}"...`,
+          );
+          span.event("cache.update.skip", {
+            ...this.#spanAttrs(),
+            "cache.update.skip.reason": "no_meta",
           });
 
-        case "actor":
-          return this.#actorCache.update({
-            cacheHash,
-            memoryKey,
-            generation,
-            meta,
+          return;
+        }
+
+        if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") {
+          logger.debug(
+            `Agent kind "${agentMeta.kind}" is not eligible for elements caching, skipping update for prompt: "${stringExcerpt(prompt, 100)}"...`,
+          );
+          span.event("cache.update.skip", {
+            ...this.#spanAttrs(),
+            "agent.kind": agentMeta.kind,
+            "cache.update.skip.reason": "not_eligible",
           });
 
-        default:
-          meta satisfies never;
+          return;
+        }
+
+        const { cacheHash, memoryKey } = this.#initiate(agentMeta, llmKey);
+
+        const [firstGeneration] = generations as Lchain.GenerationsSingle;
+        const generation = Lchain.toStored(firstGeneration);
+
+        switch (agentMeta.kind) {
+          case "planner":
+            return this.#plannerCache.update({
+              cacheHash,
+              memoryKey,
+              generation,
+              meta: agentMeta,
+            });
+
+          case "actor":
+            return this.#actorCache.update({
+              cacheHash,
+              memoryKey,
+              generation,
+              meta: agentMeta,
+            });
+
+          default:
+            agentMeta satisfies never;
+        }
+      } catch (error) {
+        logger.warn(`Error in elements cache update: {error}`, { error });
       }
-    } catch (error) {
-      logger.warn(`Error in elements cache update: {error}`, { error });
-    }
+    });
   }
 
   async save(): Promise<void> {
-    const entries = this.#memoryEntries();
-    if (!entries.length) return;
+    return tracer.span("cache.save", this.#spanAttrs(), async () => {
+      const entries = this.#memoryEntries();
+      if (!entries.length) return;
 
-    logger.debug(`Saving ${entries.length} elements cache entries`);
+      logger.debug(`Saving ${entries.length} elements cache entries`);
 
-    await Promise.all(
-      entries.map(async ([_, entry]) => {
-        const { cacheHash, app, agentKind, instruction, generation, elements } =
-          entry;
-        const store = this.#cacheStore.subStore(
-          `${agentKind}/${cacheHash}`,
-          app,
-        );
+      await Promise.all(
+        entries.map(async ([_, entry]) => {
+          const {
+            cacheHash,
+            app,
+            agentKind,
+            instruction,
+            generation,
+            elements,
+          } = entry;
+          const store = this.#cacheStore.subStore(
+            `${agentKind}/${cacheHash}`,
+            app,
+          );
 
-        await Promise.all([
-          store.writeJson("instruction.json", instruction),
-          store.writeJson("response.json", generation),
-          store.writeJson("elements.json", elements),
-        ]);
-      }),
-    );
+          await Promise.all([
+            store.writeJson("instruction.json", instruction),
+            store.writeJson("response.json", generation),
+            store.writeJson("elements.json", elements),
+          ]);
+        }),
+      );
 
-    await this.discard();
+      await this.discard();
+    });
   }
 
   async discard(): Promise<void> {
-    this.#actorCache.discard();
-    this.#plannerCache.discard();
+    return tracer.span("cache.discard", this.#spanAttrs(), async () => {
+      this.#actorCache.discard();
+      this.#plannerCache.discard();
+    });
   }
 
   async clear(): Promise<void> {
-    await this.#cacheStore.clear();
-    await this.discard();
+    return tracer.span("cache.clear", this.#spanAttrs(), async () => {
+      await this.#cacheStore.clear();
+      await this.discard();
+    });
   }
 
   #initiate(
-    prompt: LlmContext.Prompt,
+    agentMeta: ElementsCache.AgentMeta,
     llmKey: LlmContext.LlmKey,
-  ): ElementsCache.InitiatedData | null {
-    const agentMeta = this.#llmContext.getPromptMeta(prompt);
-    if (!agentMeta) {
-      logger.warn(
-        `No metadata found, skipping elements cache lookup for prompt: "${prompt.slice(0, 100)}"...`,
-      );
-      return null;
-    }
-
-    if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") return null;
-
+  ): ElementsCache.InitiatedData {
     const cacheKey = this.#cacheKey(agentMeta);
     const cacheHash: ElementsCache.CacheHash = xxh64Str(
       CACHE_VERSION + cacheKey,
@@ -317,7 +425,6 @@ export class ElementsCache extends ServerCache {
     const memoryKey = this.#memoryKey(cacheHash, llmKey);
 
     return {
-      meta: agentMeta,
       cacheKey,
       cacheHash,
       memoryKey,
@@ -452,5 +559,12 @@ export class ElementsCache extends ServerCache {
     this.usage.input_tokens += usageMetadata?.input_tokens ?? 0;
     this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
     this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
+  }
+
+  #spanAttrs(): Tracer.SpansCacheAttrsBase {
+    return {
+      "app.id": this.app,
+      "cache.layer": "elements",
+    };
   }
 }

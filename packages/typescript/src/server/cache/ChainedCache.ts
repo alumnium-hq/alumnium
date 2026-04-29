@@ -1,10 +1,11 @@
 import type { Generation } from "@langchain/core/outputs";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
+import type { Tracer } from "../../telemetry/Tracer.ts";
 import { LlmContext } from "../LlmContext.ts";
 import { SessionContext } from "../session/SessionContext.ts";
 import { ServerCache } from "./ServerCache.ts";
 
-const logger = getLogger(import.meta.url);
+const { logger, tracer } = Telemetry.get(import.meta.url);
 
 export class ChainedCache extends ServerCache {
   caches: ServerCache[];
@@ -18,19 +19,23 @@ export class ChainedCache extends ServerCache {
     prompt: LlmContext.Prompt,
     llmString: LlmContext.LlmKey,
   ): Promise<Generation[] | null> {
-    for (const [index, cache] of this.caches.entries()) {
-      const result = await cache.lookup(prompt, llmString);
-      if (result !== null) {
-        logger.debug(
-          `Cache hit in ${cache.constructor.name} (position ${index})`,
-        );
-        this.usage = { ...cache.usage };
-        return result;
-      }
-    }
+    return tracer.span("cache.lookup", this.#spanAttrs(), async (span) => {
+      for (const [index, cache] of this.caches.entries()) {
+        const result = await cache.lookup(prompt, llmString);
+        if (result !== null) {
+          logger.debug(
+            `Cache hit in ${cache.constructor.name} (position ${index})`,
+          );
 
-    logger.debug("Cache miss in all chained caches");
-    return null;
+          this.usage = { ...cache.usage };
+          return result;
+        }
+      }
+
+      logger.debug("Cache miss in all chained caches");
+
+      return null;
+    });
   }
 
   override async update(
@@ -38,20 +43,37 @@ export class ChainedCache extends ServerCache {
     llmString: LlmContext.LlmKey,
     generations: Generation[],
   ): Promise<void> {
-    await Promise.all(
-      this.caches.map((cache) => cache.update(prompt, llmString, generations)),
+    return tracer.span("cache.update", this.#spanAttrs(), async () =>
+      Promise.all(
+        this.caches.map((cache) =>
+          cache.update(prompt, llmString, generations),
+        ),
+      ).then(() => undefined),
     );
   }
 
   async save(): Promise<void> {
-    await Promise.all(this.caches.map((cache) => cache.save()));
+    return tracer.span("cache.save", this.#spanAttrs(), async () => {
+      await Promise.all(this.caches.map((cache) => cache.save()));
+    });
   }
 
   async discard(): Promise<void> {
-    await Promise.all(this.caches.map((cache) => cache.discard()));
+    return tracer.span("cache.discard", this.#spanAttrs(), async () => {
+      await Promise.all(this.caches.map((cache) => cache.discard()));
+    });
   }
 
   async clear(props: Record<string, unknown> = {}): Promise<void> {
-    await Promise.all(this.caches.map((cache) => cache.clear(props)));
+    return tracer.span("cache.clear", this.#spanAttrs(), async () => {
+      await Promise.all(this.caches.map((cache) => cache.clear(props)));
+    });
+  }
+
+  #spanAttrs(): Tracer.SpansCacheAttrsBase {
+    return {
+      "app.id": this.app,
+      "cache.layer": "chained",
+    };
   }
 }

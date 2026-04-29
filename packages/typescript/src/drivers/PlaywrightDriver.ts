@@ -9,7 +9,6 @@ import { HoverTool } from "../tools/HoverTool.ts";
 import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { UploadTool } from "../tools/UploadTool.ts";
-import { getLogger } from "../utils/logger.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import type { Keys } from "./keys.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
@@ -17,12 +16,16 @@ import type { Keys } from "./keys.ts";
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import { AppId } from "../AppId.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
+import type { Tracer } from "../telemetry/Tracer.ts";
 import { retry } from "../utils/retry.ts";
 import type { Driver } from "./Driver.ts";
 import {
   waiterScriptSource,
   waitForScriptSource,
 } from "./scripts/bundledScripts.ts";
+
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 interface CDPNode {
   nodeId: string;
@@ -49,8 +52,6 @@ interface CDPFrameInfo {
 interface CDPFrameTree {
   frameTree: CDPFrameInfo;
 }
-
-const logger = getLogger(import.meta.url);
 
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
@@ -137,329 +138,399 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
-    await this.waitForPageToLoad();
+    return tracer.span(
+      "driver.get_accessibility_tree",
+      this.#spanAttrs(),
+      async () => {
+        await this.waitForPageToLoad();
 
-    // Get frame tree to enumerate all frames (same approach as Selenium)
-    const frameTree = (await this.client.send(
-      "Page.getFrameTree",
-    )) as CDPFrameTree;
-    const frameIds = this.getAllFrameIds(frameTree.frameTree);
-    const mainFrameId = frameTree.frameTree.frame.id;
-    logger.debug(`Found ${frameIds.length} frames`);
+        // Get frame tree to enumerate all frames (same approach as Selenium)
+        const frameTree = (await this.client.send(
+          "Page.getFrameTree",
+        )) as CDPFrameTree;
+        const frameIds = this.getAllFrameIds(frameTree.frameTree);
+        const mainFrameId = frameTree.frameTree.frame.id;
+        logger.debug(`Found ${frameIds.length} frames`);
 
-    // Get all targets including OOPIFs (cross-origin iframes)
-    let oopifTargets: Array<{ url?: string; type?: string }> = [];
-    try {
-      const targets = await this.client.send("Target.getTargets");
-      oopifTargets = this.getOopifTargets(targets, frameTree);
-      logger.debug(`Found ${oopifTargets.length} cross-origin iframes`);
-    } catch (error) {
-      logger.debug(
-        `Could not get OOPIF targets: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+        // Get all targets including OOPIFs (cross-origin iframes)
+        let oopifTargets: Array<{ url?: string; type?: string }> = [];
+        try {
+          const targets = await this.client.send("Target.getTargets");
+          oopifTargets = this.getOopifTargets(targets, frameTree);
+          logger.debug(`Found ${oopifTargets.length} cross-origin iframes`);
+        } catch (error) {
+          logger.debug(
+            `Could not get OOPIF targets: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
 
-    // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
-    const frameToIframeMap: Map<string, number> = new Map();
-    // Build mapping: frameId -> parent frameId (for nested frames)
-    const frameParentMap: Map<string, string> = new Map();
-    await this.buildFrameHierarchy(
-      frameTree.frameTree,
-      mainFrameId,
-      frameToIframeMap,
-      frameParentMap,
-    );
-
-    // Build mapping: frameId -> Playwright Frame object (for element finding)
-    const frameIdToPlaywrightFrame: Map<string, Frame> = new Map();
-    for (const frame of this.page.frames()) {
-      const cdpFrameId = this.findCdpFrameIdByUrl(frameTree, frame.url());
-      if (cdpFrameId) {
-        frameIdToPlaywrightFrame.set(cdpFrameId, frame);
-      }
-    }
-
-    // Aggregate accessibility nodes from all frames
-    const allNodes: CDPNode[] = [];
-    for (const frameId of frameIds) {
-      try {
-        const response = (await this.client.send(
-          "Accessibility.getFullAXTree",
-          {
-            frameId,
-          },
-        )) as { nodes: CDPNode[] };
-        const nodes = response.nodes || [];
-        logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
-        );
-
-        // Calculate frame chain for this frame
-        const frameChain = this.getFrameChain(
-          frameId,
+        // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
+        const frameToIframeMap: Map<string, number> = new Map();
+        // Build mapping: frameId -> parent frameId (for nested frames)
+        const frameParentMap: Map<string, string> = new Map();
+        await this.buildFrameHierarchy(
+          frameTree.frameTree,
+          mainFrameId,
           frameToIframeMap,
           frameParentMap,
         );
-        // Get Playwright frame reference
-        const playwrightFrame =
-          frameIdToPlaywrightFrame.get(frameId) || this.page.mainFrame();
 
-        // Tag ALL nodes from child frames with their frame chain
-        for (const node of nodes) {
-          if (frameChain.length > 0) {
-            node._frame_chain = frameChain;
+        // Build mapping: frameId -> Playwright Frame object (for element finding)
+        const frameIdToPlaywrightFrame: Map<string, Frame> = new Map();
+        for (const frame of this.page.frames()) {
+          const cdpFrameId = this.findCdpFrameIdByUrl(frameTree, frame.url());
+          if (cdpFrameId) {
+            frameIdToPlaywrightFrame.set(cdpFrameId, frame);
           }
-          // Also keep frame reference for Playwright-specific element finding
-          node._frame = playwrightFrame;
-          // Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
-          if (node.parentId === undefined && frameToIframeMap.has(frameId)) {
-            node._parent_iframe_backend_node_id = frameToIframeMap.get(frameId);
+        }
+
+        // Aggregate accessibility nodes from all frames
+        const allNodes: CDPNode[] = [];
+        for (const frameId of frameIds) {
+          try {
+            const response = (await this.client.send(
+              "Accessibility.getFullAXTree",
+              {
+                frameId,
+              },
+            )) as { nodes: CDPNode[] };
+            const nodes = response.nodes || [];
+            logger.debug(
+              `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
+            );
+
+            // Calculate frame chain for this frame
+            const frameChain = this.getFrameChain(
+              frameId,
+              frameToIframeMap,
+              frameParentMap,
+            );
+            // Get Playwright frame reference
+            const playwrightFrame =
+              frameIdToPlaywrightFrame.get(frameId) || this.page.mainFrame();
+
+            // Tag ALL nodes from child frames with their frame chain
+            for (const node of nodes) {
+              if (frameChain.length > 0) {
+                node._frame_chain = frameChain;
+              }
+              // Also keep frame reference for Playwright-specific element finding
+              node._frame = playwrightFrame;
+              // Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
+              if (
+                node.parentId === undefined &&
+                frameToIframeMap.has(frameId)
+              ) {
+                node._parent_iframe_backend_node_id =
+                  frameToIframeMap.get(frameId);
+              }
+              allNodes.push(node);
+            }
+          } catch (error) {
+            logger.debug(
+              `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
+            );
           }
-          allNodes.push(node);
         }
-      } catch (error) {
-        logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-        );
-      }
-    }
 
-    // Process cross-origin iframes via Playwright query fallback
-    for (const oopif of oopifTargets) {
-      try {
-        const nodes = await this.getCrossOriginFrameNodes(oopif);
-        allNodes.push(...nodes);
-        logger.debug(
-          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: ${nodes.length} nodes`,
-        );
-      } catch (error) {
-        logger.debug(
-          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-        );
-      }
-    }
-
-    // Process Playwright frames not in CDP tree (e.g., data: URI iframes)
-    const cdpFrameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree));
-    const oopifUrls = new Set(oopifTargets.map((t) => t.url || ""));
-    for (const frame of this.page.frames()) {
-      const frameUrl = frame.url();
-      if (!cdpFrameUrls.has(frameUrl) && !oopifUrls.has(frameUrl)) {
-        logger.debug(
-          `Processing Playwright-only frame: ${frameUrl.slice(0, 60)}`,
-        );
-        try {
-          const iframeBackendNodeId =
-            await this.getIframeBackendNodeIdByUrl(frameUrl);
-          const nodes = await this.queryFrameInteractiveElements(
-            frame,
-            iframeBackendNodeId,
-          );
-          allNodes.push(...nodes);
-          logger.debug(
-            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: ${nodes.length} nodes`,
-          );
-        } catch (error) {
-          logger.debug(
-            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-          );
+        // Process cross-origin iframes via Playwright query fallback
+        for (const oopif of oopifTargets) {
+          try {
+            const nodes = await this.getCrossOriginFrameNodes(oopif);
+            allNodes.push(...nodes);
+            logger.debug(
+              `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: ${nodes.length} nodes`,
+            );
+          } catch (error) {
+            logger.debug(
+              `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
+            );
+          }
         }
-      }
-    }
 
-    return new ChromiumAccessibilityTree({ nodes: allNodes });
+        // Process Playwright frames not in CDP tree (e.g., data: URI iframes)
+        const cdpFrameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree));
+        const oopifUrls = new Set(oopifTargets.map((t) => t.url || ""));
+        for (const frame of this.page.frames()) {
+          const frameUrl = frame.url();
+          if (!cdpFrameUrls.has(frameUrl) && !oopifUrls.has(frameUrl)) {
+            logger.debug(
+              `Processing Playwright-only frame: ${frameUrl.slice(0, 60)}`,
+            );
+            try {
+              const iframeBackendNodeId =
+                await this.getIframeBackendNodeIdByUrl(frameUrl);
+              const nodes = await this.queryFrameInteractiveElements(
+                frame,
+                iframeBackendNodeId,
+              );
+              allNodes.push(...nodes);
+              logger.debug(
+                `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: ${nodes.length} nodes`,
+              );
+            } catch (error) {
+              logger.debug(
+                `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
+              );
+            }
+          }
+        }
+
+        return new ChromiumAccessibilityTree({ nodes: allNodes });
+      },
+    );
   }
 
   async click(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    const tagName = await element.evaluate(
-      (el: { tagName: string }) => el.tagName,
-    );
-    if (tagName?.toLowerCase() === "option") {
-      const value = await element.evaluate((el: { value: string }) => el.value);
-      await this.autoswitchToNewTabAction(async () => {
-        await element.locator("xpath=parent::select").selectOption(value);
-      });
-    } else {
-      await this.autoswitchToNewTabAction(async () => {
-        await element.click({ force: true });
-      });
-    }
+    return tracer.span("driver.click", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      const tagName = await element.evaluate(
+        (el: { tagName: string }) => el.tagName,
+      );
+      if (tagName?.toLowerCase() === "option") {
+        const value = await element.evaluate(
+          (el: { value: string }) => el.value,
+        );
+        await this.autoswitchToNewTabAction(async () => {
+          await element.locator("xpath=parent::select").selectOption(value);
+        });
+      } else {
+        await this.autoswitchToNewTabAction(async () => {
+          await element.click({ force: true });
+        });
+      }
+    });
   }
 
   async dragSlider(id: number, value: number): Promise<void> {
-    const element = await this.findElement(id);
-    await element.fill(String(value));
+    return tracer.span("driver.drag_slider", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      await element.fill(String(value));
+    });
   }
 
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
-    const fromElement = await this.findElement(fromId);
-    const toElement = await this.findElement(toId);
-    await fromElement.dragTo(toElement);
+    return tracer.span("driver.drag_and_drop", this.#spanAttrs(), async () => {
+      const fromElement = await this.findElement(fromId);
+      const toElement = await this.findElement(toId);
+      await fromElement.dragTo(toElement);
+    });
   }
 
   async hover(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    await element.hover();
+    return tracer.span("driver.hover", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      await element.hover();
+    });
   }
 
   async pressKey(key: Keys.Key): Promise<void> {
-    const keyMap: Record<Keys.Key, string> = {
-      Backspace: "Backspace",
-      Enter: "Enter",
-      Escape: "Escape",
-      Tab: "Tab",
-    };
+    return tracer.span("driver.press_key", this.#spanAttrs(), async () => {
+      const keyMap: Record<Keys.Key, string> = {
+        Backspace: "Backspace",
+        Enter: "Enter",
+        Escape: "Escape",
+        Tab: "Tab",
+      };
 
-    await this.autoswitchToNewTabAction(() =>
-      this.page.keyboard.press(keyMap[key]),
-    );
+      await this.autoswitchToNewTabAction(() =>
+        this.page.keyboard.press(keyMap[key]),
+      );
+    });
   }
 
   async quit(): Promise<void> {
-    await this.page.close();
+    return tracer.span("driver.quit", this.#spanAttrs(), () =>
+      this.page.close(),
+    );
   }
 
   async back(): Promise<void> {
-    await this.page.goBack();
+    return tracer.span("driver.back", this.#spanAttrs(), async () => {
+      await this.page.goBack();
+    });
   }
 
   async visit(url: string): Promise<void> {
-    await this.page.goto(url);
+    return tracer.span("driver.visit", this.#spanAttrs(), async () => {
+      await this.page.goto(url);
+    });
   }
 
   async scrollTo(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    await element.scrollIntoViewIfNeeded();
+    return tracer.span("driver.scroll_to", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      await element.scrollIntoViewIfNeeded();
+    });
   }
 
   async screenshot(): Promise<string> {
-    return retry(RETRY_OPTIONS, async () => {
-      const buffer = await this.page.screenshot({
-        fullPage: this.fullPageScreenshot,
-      });
-      return buffer.toString("base64");
-    });
+    return tracer.span("driver.screenshot", this.#spanAttrs(), () =>
+      retry(RETRY_OPTIONS, async () => {
+        const buffer = await this.page.screenshot({
+          fullPage: this.fullPageScreenshot,
+        });
+        return buffer.toString("base64");
+      }),
+    );
   }
 
   async title(): Promise<string> {
-    return retry(RETRY_OPTIONS, () => this.page.title());
+    return tracer.span("driver.title", this.#spanAttrs(), () =>
+      retry(RETRY_OPTIONS, () => this.page.title()),
+    );
   }
 
   async type(id: number, text: string): Promise<void> {
-    const element = await this.findElement(id);
-    await element.fill(text);
+    return tracer.span("driver.type", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      await element.fill(text);
+    });
   }
 
   async upload(id: number, paths: string[]): Promise<void> {
-    const element = await this.findElement(id);
-    const [fileChooser] = await Promise.all([
-      this.page.waitForEvent("filechooser", { timeout: 5000 }),
-      element.click({ force: true }),
-    ]);
-    await fileChooser.setFiles(paths);
+    return tracer.span("driver.upload", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      const [fileChooser] = await Promise.all([
+        this.page.waitForEvent("filechooser", { timeout: 5000 }),
+        element.click({ force: true }),
+      ]);
+      await fileChooser.setFiles(paths);
+    });
   }
 
   url(): Promise<string> {
-    return retry(RETRY_OPTIONS, async () => this.page.url());
+    return tracer.span("driver.url", this.#spanAttrs(), () =>
+      retry(RETRY_OPTIONS, async () => this.page.url()),
+    );
   }
 
   async app(): Promise<AppId> {
-    return AppId.parse(this.page.url());
+    return tracer.span("driver.app", this.#spanAttrs(), () =>
+      AppId.parse(this.page.url()),
+    );
   }
 
   async findElement(id: number): Promise<Locator> {
-    const tree = await this.getAccessibilityTree();
-    const accessibilityElement = tree.elementById(id);
+    return tracer.span("driver.find_element", this.#spanAttrs(), async () => {
+      const tree = await this.getAccessibilityTree();
+      const accessibilityElement = tree.elementById(id);
 
-    // Get frame reference (default to main frame)
-    const frame = (accessibilityElement.frame ||
-      this.page.mainFrame()) as Frame;
+      // Get frame reference (default to main frame)
+      const frame = (accessibilityElement.frame ||
+        this.page.mainFrame()) as Frame;
 
-    // Handle Playwright nodes (cross-origin iframes) using locator info
-    if (accessibilityElement.locatorInfo) {
-      return this.findElementByLocatorInfo(
-        frame,
-        accessibilityElement.locatorInfo,
+      // Handle Playwright nodes (cross-origin iframes) using locator info
+      if (accessibilityElement.locatorInfo) {
+        return this.findElementByLocatorInfo(
+          frame,
+          accessibilityElement.locatorInfo,
+        );
+      }
+
+      // Existing CDP node logic
+      const backendNodeId = accessibilityElement.backendNodeId!;
+
+      // Beware!
+      await this.client.send("DOM.enable");
+      await this.client.send("DOM.getFlattenedDocument");
+      const nodeIds = await this.client.send(
+        "DOM.pushNodesByBackendIdsToFrontend",
+        {
+          backendNodeIds: [backendNodeId],
+        },
       );
-    }
-
-    // Existing CDP node logic
-    const backendNodeId = accessibilityElement.backendNodeId!;
-
-    // Beware!
-    await this.client.send("DOM.enable");
-    await this.client.send("DOM.getFlattenedDocument");
-    const nodeIds = await this.client.send(
-      "DOM.pushNodesByBackendIdsToFrontend",
-      {
-        backendNodeIds: [backendNodeId],
-      },
-    );
-    const nodeId = nodeIds.nodeIds[0];
-    ensure(nodeId);
-    await this.client.send("DOM.setAttributeValue", {
-      nodeId,
-      name: "data-alumnium-id",
-      value: String(backendNodeId),
+      const nodeId = nodeIds.nodeIds[0];
+      ensure(nodeId);
+      await this.client.send("DOM.setAttributeValue", {
+        nodeId,
+        name: "data-alumnium-id",
+        value: String(backendNodeId),
+      });
+      // TODO: We need to remove the attribute after we are done with the element,
+      // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
+      return frame.locator(`css=[data-alumnium-id='${backendNodeId}']`);
     });
-    // TODO: We need to remove the attribute after we are done with the element,
-    // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
-    return frame.locator(`css=[data-alumnium-id='${backendNodeId}']`);
   }
 
   async executeScript(script: string): Promise<void> {
-    await this.page.evaluate(`() => { ${script} }`);
+    return tracer.span("driver.execute_script", this.#spanAttrs(), async () => {
+      await this.page.evaluate(`() => { ${script} }`);
+    });
   }
 
   async printToPdf(filepath: string): Promise<void> {
-    await this.page.pdf({ path: filepath });
+    return tracer.span("driver.print_to_pdf", this.#spanAttrs(), async () => {
+      await this.page.pdf({ path: filepath });
+    });
   }
 
   async switchToNextTab(): Promise<void> {
-    // Brief wait to allow popup handlers to complete
-    await this.page.waitForTimeout(100);
-    if (this._pages.length <= 1) {
-      return; // Only one tab, nothing to switch
-    }
+    return tracer.span(
+      "driver.switch_to_next_tab",
+      this.#spanAttrs(),
+      async () => {
+        // Brief wait to allow popup handlers to complete
+        await this.page.waitForTimeout(100);
+        if (this._pages.length <= 1) {
+          return; // Only one tab, nothing to switch
+        }
 
-    const currentIndex = this._pages.indexOf(this.page);
-    const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
+        const currentIndex = this._pages.indexOf(this.page);
+        const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
 
-    always(this._pages[nextIndex]);
-    this.page = this._pages[nextIndex];
-    await this.initCDPSession();
-    await this.page.waitForLoadState();
+        always(this._pages[nextIndex]);
+        this.page = this._pages[nextIndex];
+        await this.initCDPSession();
+        await this.page.waitForLoadState();
+      },
+    );
   }
 
   async switchToPreviousTab(): Promise<void> {
-    // Brief wait to allow popup handlers to complete
-    await this.page.waitForTimeout(100);
-    if (this._pages.length <= 1) {
-      return; // Only one tab, nothing to switch
-    }
+    return tracer.span(
+      "driver.switch_to_previous_tab",
+      this.#spanAttrs(),
+      async () => {
+        // Brief wait to allow popup handlers to complete
+        await this.page.waitForTimeout(100);
+        if (this._pages.length <= 1) {
+          return; // Only one tab, nothing to switch
+        }
 
-    const currentIndex = this._pages.indexOf(this.page);
-    const prevIndex =
-      (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
+        const currentIndex = this._pages.indexOf(this.page);
+        const prevIndex =
+          (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
 
-    always(this._pages[prevIndex]);
-    this.page = this._pages[prevIndex];
-    await this.initCDPSession();
-    await this.page.waitForLoadState();
+        always(this._pages[prevIndex]);
+        this.page = this._pages[prevIndex];
+        await this.initCDPSession();
+        await this.page.waitForLoadState();
+      },
+    );
   }
 
   async wait(seconds: number): Promise<void> {
-    const clampedSeconds = Math.max(1, Math.min(30, seconds));
-    await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
+    return tracer.span("driver.wait", this.#spanAttrs(), async () => {
+      const clampedSeconds = Math.max(1, Math.min(30, seconds));
+      await new Promise((resolve) =>
+        setTimeout(resolve, clampedSeconds * 1000),
+      );
+    });
   }
 
   async waitForSelector(selector: string, timeout?: number): Promise<void> {
-    const timeoutMs = (timeout ?? 10) * 1000;
-    await this.page.waitForSelector(selector, {
-      state: "visible",
-      timeout: timeoutMs,
-    });
+    return tracer.span(
+      "driver.wait_for_selector",
+      this.#spanAttrs(),
+      async () => {
+        const timeoutMs = (timeout ?? 10) * 1000;
+        await this.page.waitForSelector(selector, {
+          state: "visible",
+          timeout: timeoutMs,
+        });
+      },
+    );
   }
 
   async grantPermissions(permissions: string[]): Promise<void> {
@@ -467,17 +538,22 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   private async waitForPageToLoad(): Promise<void> {
-    return retry(RETRY_OPTIONS, async () => {
-      logger.debug("Waiting for page to finish loading:");
-      await this.page.evaluate(WAITER_SCRIPT);
-      const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`);
-      if (error) {
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string
-        logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
-      } else {
-        logger.debug("  <- Page finished loading");
-      }
-    });
+    return tracer.span("driver.wait_for_page_to_load", this.#spanAttrs(), () =>
+      retry(RETRY_OPTIONS, async () => {
+        logger.debug("Waiting for page to finish loading:");
+        await this.page.evaluate(WAITER_SCRIPT);
+        const error: unknown = await this.page.evaluate(
+          `(${WAIT_FOR_SCRIPT})()`,
+        );
+        if (error) {
+          logger.debug(
+            `  <- Failed to wait for page to load: ${String(error)}`,
+          );
+        } else {
+          logger.debug("  <- Page finished loading");
+        }
+      }),
+    );
   }
 
   private async autoswitchToNewTabAction(
@@ -798,5 +874,12 @@ export class PlaywrightDriver extends BaseDriver {
         `Cannot find element: no role or name in locator_info: ${JSON.stringify(locatorInfo)}`,
       );
     }
+  }
+
+  #spanAttrs(): Tracer.SpansDriverAttrsBase {
+    return {
+      "driver.kind": "playwright",
+      "driver.platform": this.platform,
+    };
   }
 }

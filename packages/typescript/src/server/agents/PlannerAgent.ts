@@ -8,13 +8,13 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
-import { getLogger } from "../../utils/logger.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 export namespace PlannerAgent {
   export type Meta = z.infer<typeof PlannerAgent.Meta>;
@@ -168,33 +168,39 @@ Actions: [${actionsStr}]`.trim();
    *   the reasoning and actions is the list of steps to achieve the goal.
    */
   async invoke(goal: string, treeXml: string): Promise<[string, string[]]> {
-    logger.info("Starting planning:");
-    this.logData(logger, "in", {
-      Goal: goal,
-      "Accessibility tree": this.debugLogTreeDetail(treeXml),
-    });
+    return tracer.span(
+      "agent.invoke",
+      { "agent.kind": "planner" },
+      async (): Promise<[string, string[]]> => {
+        logger.info("Starting planning:");
+        this.logData(logger, "in", {
+          Goal: goal,
+          "Accessibility tree": this.debugLogTreeDetail(treeXml),
+        });
 
-    const meta: PlannerAgent.Meta = {
-      kind: "planner",
-      goal: goal as BaseAgent.Goal,
-      treeXml,
-    };
+        const meta: PlannerAgent.Meta = {
+          kind: "planner",
+          goal: goal as BaseAgent.Goal,
+          treeXml,
+        };
 
-    const input = {
-      goal,
-      accessibility_tree: treeXml,
-    };
-    const result = await this.invokeChain(this.chain, input, meta);
+        const input = {
+          goal,
+          accessibility_tree: treeXml,
+        };
+        const result = await this.invokeChain(this.chain, input, meta);
 
-    const structured = result.structured as PlannerAgent.Plan;
-    this.logData(logger, "out", {
-      Result: structured,
-      Usage: result.usage,
-    });
+        const structured = result.structured as PlannerAgent.Plan;
+        this.logData(logger, "out", {
+          Result: structured,
+          Usage: result.usage,
+        });
 
-    return [
-      structured.explanation,
-      structured.actions.filter((action) => action),
-    ];
+        return [
+          structured.explanation,
+          structured.actions.filter((action) => action),
+        ];
+      },
+    );
   }
 }

@@ -6,12 +6,12 @@
 import { Alumni } from "../client/Alumni.ts";
 import { PlaywrightDriver } from "../drivers/PlaywrightDriver.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
-import { getLogger } from "../utils/logger.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 import { McpArtifactsStore } from "./McpArtifactsStore.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
 import { startMcpTool } from "./tools/startMcpTool.ts";
 
-const logger = getLogger(import.meta.url);
+const { logger, tracer } = Telemetry.get(import.meta.url);
 
 export namespace McpState {
   export type DriverPair = [Alumni, McpDriver];
@@ -91,35 +91,43 @@ export abstract class McpState {
    * Clean up driver and return artifacts directory and stats.
    */
   static async cleanupDriver(id: string): Promise<[string, LlmUsageStats]> {
-    const driverState = this.getDriverState(id);
+    return tracer.span(
+      "mcp.driver.shutdown",
+      { "mcp.driver.id": id },
+      async () => {
+        const driverState = this.getDriverState(id);
 
-    logger.debug(`Cleaning up driver ${id}`);
+        logger.debug(`Cleaning up driver ${id}`);
 
-    const { al, mcpDriver } = driverState;
-    const stats = await al.getStats();
+        const { al, mcpDriver } = driverState;
+        const stats = await al.getStats();
 
-    if (mcpDriver instanceof PlaywrightDriver) {
-      logger.debug(`Driver ${id}: Stopping Playwright tracing`);
+        if (mcpDriver instanceof PlaywrightDriver) {
+          logger.debug(`Driver ${id}: Stopping Playwright tracing`);
 
-      const tracePath =
-        await driverState.artifactsStore.ensureFilePath("trace.zip");
-      await mcpDriver.page.context().tracing.stop({ path: tracePath });
-    }
+          const tracePath =
+            await driverState.artifactsStore.ensureFilePath("trace.zip");
+          await mcpDriver.page.context().tracing.stop({ path: tracePath });
+        }
 
-    // Save token stats to JSON file
-    const statsPath = await driverState.artifactsStore.writeJson(
-      "token-stats.json",
-      stats,
+        // Save token stats to JSON file
+        const statsPath = await driverState.artifactsStore.writeJson(
+          "token-stats.json",
+          stats,
+        );
+        logger.info(`Driver ${id}: Token stats saved to ${statsPath}`);
+
+        await al.quit();
+
+        delete this.#drivers[id];
+
+        tracer.end(id);
+
+        logger.debug(`Driver ${id} cleanup complete`);
+
+        return [driverState.artifactsStore.dir, stats];
+      },
     );
-    logger.info(`Driver ${id}: Token stats saved to ${statsPath}`);
-
-    await al.quit();
-
-    delete this.#drivers[id];
-
-    logger.debug(`Driver ${id} cleanup complete`);
-
-    return [driverState.artifactsStore.dir, stats];
   }
 
   static async cleanupAllDrivers(): Promise<void> {

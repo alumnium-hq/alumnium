@@ -1,8 +1,8 @@
 import { AppId } from "../../AppId.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Logger } from "../../telemetry/Logger.ts";
 import { SessionId } from "./SessionId.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export namespace SessionContext {
   export interface Props {

@@ -7,7 +7,6 @@ export function convertToolsToSchemas(
   tools: Record<string, ToolClass>,
 ): ToolDefinition[] {
   return Object.entries(tools).map(([name, ToolClass]) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     const description = (ToolClass as any).description || `Execute ${name}`;
 
     // Get field metadata from the tool class static property

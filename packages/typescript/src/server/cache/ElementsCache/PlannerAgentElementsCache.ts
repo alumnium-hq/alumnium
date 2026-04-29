@@ -1,9 +1,9 @@
 import { xxh64Str } from "smolxxh/str";
-import { getLogger } from "../../../utils/index.ts";
+import { Logger } from "../../../telemetry/Logger.ts";
 import type { PlannerAgent } from "../../agents/PlannerAgent.ts";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAgent.Meta> {
   async update(

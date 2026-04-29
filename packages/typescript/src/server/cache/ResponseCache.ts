@@ -4,14 +4,16 @@ import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Lchain } from "../../llm/Lchain.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
+import type { Tracer } from "../../telemetry/Tracer.ts";
+import { stringExcerpt } from "../../utils/string.ts";
 import type { Agent } from "../agents/Agent.ts";
 import { LlmContext } from "../LlmContext.ts";
 import { SessionContext } from "../session/SessionContext.ts";
 import { CacheStore } from "./CacheStore.ts";
 import { ServerCache } from "./ServerCache.ts";
 
-const logger = getLogger(import.meta.url);
+const { logger, tracer } = Telemetry.get(import.meta.url);
 
 const CACHE_VERSION = "v1";
 
@@ -53,37 +55,81 @@ export class ResponseCache extends ServerCache {
     prompt: LlmContext.Prompt,
     llmKey: LlmContext.LlmKey,
   ): Promise<Generation[] | null> {
-    const initiatedData = this.#initiate(prompt, llmKey);
-    if (!initiatedData) return null;
-    const { requestHash } = initiatedData;
-
-    try {
-      const memoryEntry = this.#memoryCache[requestHash];
-      if (memoryEntry) {
-        logger.debug(
-          `Cache hit (in-memory) for prompt: "${prompt.slice(0, 100)}..."`,
+    return tracer.span("cache.lookup", this.#spanAttrs(), async (span) => {
+      const agentMeta = this.#llmContext.getPromptMeta(prompt);
+      if (!agentMeta) {
+        logger.warn(
+          `No metadata found, skipping request cache lookup for prompt: "${stringExcerpt(prompt, 100)}"...`,
         );
-        this.#updateUsage(memoryEntry.generations);
-        return memoryEntry.generations.map(Lchain.fromStored);
+        span.event("cache.lookup.miss", {
+          ...this.#spanAttrs(),
+          "cache.lookup.miss.reason": "no_meta",
+        });
+
+        return null;
       }
 
-      const entryStore = this.#cacheStore.subStore(requestHash);
+      const { requestHash } = this.#initiate(agentMeta, prompt, llmKey);
 
-      const storedGenerations =
-        await entryStore.readJson<Lchain.StoredGeneration[]>("response.json");
-      if (!storedGenerations) return null;
+      try {
+        const memoryEntry = this.#memoryCache[requestHash];
+        if (memoryEntry) {
+          logger.debug(
+            `Cache hit (in-memory) for prompt: "${stringExcerpt(prompt, 100)}..."`,
+          );
+          span.event("cache.lookup.hit", {
+            ...this.#spanAttrs(),
+            "agent.kind": agentMeta.kind,
+            "cache.hash": requestHash,
+            "cache.lookup.hit.source": "memory",
+          });
 
-      logger.debug(
-        `Cache hit (file) for prompt: "${prompt.slice(0, 100)}...":`,
-      );
+          this.#updateUsage(memoryEntry.generations);
+          return memoryEntry.generations.map(Lchain.fromStored);
+        }
 
-      this.#updateUsage(storedGenerations);
+        const entryStore = this.#cacheStore.subStore(requestHash);
 
-      return storedGenerations.map(Lchain.fromStored);
-    } catch (error) {
-      logger.warn(`Error occurred while looking up cache: {error}`, { error });
-      return null;
-    }
+        const storedGenerations =
+          await entryStore.readJson<Lchain.StoredGeneration[]>("response.json");
+        if (!storedGenerations) {
+          span.event("cache.lookup.miss", {
+            ...this.#spanAttrs(),
+            "agent.kind": agentMeta.kind,
+            "cache.hash": requestHash,
+            "cache.lookup.miss.reason": "not_found",
+          });
+
+          return null;
+        }
+
+        logger.debug(
+          `Cache hit (file) for prompt: "${stringExcerpt(prompt, 100)}...":`,
+        );
+        span.event("cache.lookup.hit", {
+          ...this.#spanAttrs(),
+          "agent.kind": agentMeta.kind,
+          "cache.hash": requestHash,
+          "cache.lookup.hit.source": "store",
+        });
+
+        this.#updateUsage(storedGenerations);
+
+        return storedGenerations.map(Lchain.fromStored);
+      } catch (error) {
+        logger.warn(`Error occurred while looking up cache: {error}`, {
+          error,
+        });
+        span.event("cache.lookup.miss", {
+          ...this.#spanAttrs(),
+          "agent.kind": agentMeta.kind,
+          "cache.hash": requestHash,
+          "cache.lookup.miss.reason": "error",
+        });
+
+        return null;
+      }
+    });
   }
 
   override async update(
@@ -91,62 +137,73 @@ export class ResponseCache extends ServerCache {
     llmKey: LlmContext.LlmKey,
     generations: Generation[],
   ): Promise<void> {
-    const initiatedData = this.#initiate(prompt, llmKey);
-    if (!initiatedData) return;
-    const { requestHash } = initiatedData;
+    return tracer.span("cache.update", this.#spanAttrs(), async (span) => {
+      const agentMeta = this.#llmContext.getPromptMeta(prompt);
+      if (!agentMeta) {
+        logger.warn(
+          `No metadata found, skipping response cache update for prompt: "${stringExcerpt(prompt, 100)}"...`,
+        );
+        span.event("cache.update.skip", {
+          ...this.#spanAttrs(),
+          "cache.update.skip.reason": "no_meta",
+        });
+        return;
+      }
 
-    const storedGenerations = generations.map(Lchain.toStored);
-    this.#memoryCache[requestHash] = {
-      prompt,
-      llmKey,
-      generations: storedGenerations,
-      app: this.app,
-    };
+      const { requestHash } = this.#initiate(agentMeta, prompt, llmKey);
+
+      const storedGenerations = generations.map(Lchain.toStored);
+      this.#memoryCache[requestHash] = {
+        prompt,
+        llmKey,
+        generations: storedGenerations,
+        app: this.app,
+      };
+    });
   }
 
   async save(): Promise<void> {
-    const entries = Object.entries(this.#memoryCache);
-    if (!entries.length) return;
+    return tracer.span("cache.save", this.#spanAttrs(), async () => {
+      const entries = Object.entries(this.#memoryCache);
+      if (!entries.length) return;
 
-    logger.debug(`Saving ${entries.length} response cache entries...`);
+      logger.debug(`Saving ${entries.length} response cache entries...`);
 
-    await Promise.all(
-      entries.map(async ([hash, entry]) => {
-        const { prompt, llmKey, generations, app } = entry;
-        const entryStore = this.#cacheStore.subStore(hash, app);
+      await Promise.all(
+        entries.map(async ([hash, entry]) => {
+          const { prompt, llmKey, generations, app } = entry;
+          const entryStore = this.#cacheStore.subStore(hash, app);
 
-        await Promise.all([
-          entryStore.writeJson("response.json", generations),
-          entryStore.writeJson("request.json", { prompt, llmKey, app }),
-        ]);
-      }),
-    );
+          await Promise.all([
+            entryStore.writeJson("response.json", generations),
+            entryStore.writeJson("request.json", { prompt, llmKey, app }),
+          ]);
+        }),
+      );
 
-    await this.discard();
+      await this.discard();
+    });
   }
 
   async discard(): Promise<void> {
-    this.#memoryCache = {};
+    return tracer.span("cache.discard", this.#spanAttrs(), () => {
+      this.#memoryCache = {};
+    });
   }
 
   async clear(): Promise<void> {
-    await this.#cacheStore.clear();
-    await this.discard();
+    return tracer.span("cache.clear", this.#spanAttrs(), async () => {
+      await this.#cacheStore.clear();
+      await this.discard();
+    });
   }
 
   #initiate(
+    agentMeta: Agent.Meta,
     prompt: LlmContext.Prompt,
     llmKey: LlmContext.LlmKey,
-  ): ResponseCache.InitiatedData | null {
-    const agentMeta = this.#llmContext.getPromptMeta(prompt);
-    if (!agentMeta) {
-      logger.warn(
-        `No metadata found, skipping request cache lookup for prompt: "${prompt.slice(0, 100)}"...`,
-      );
-      return null;
-    }
+  ): ResponseCache.InitiatedData {
     const requestHash = this.#hashRequest(prompt, llmKey, agentMeta);
-
     return {
       meta: agentMeta,
       requestHash,
@@ -170,5 +227,12 @@ export class ResponseCache extends ServerCache {
       this.usage.output_tokens += usageMetadata?.output_tokens ?? 0;
       this.usage.total_tokens += usageMetadata?.total_tokens ?? 0;
     }
+  }
+
+  #spanAttrs(): Tracer.SpansCacheAttrsBase {
+    return {
+      "app.id": this.app,
+      "cache.layer": "response",
+    };
   }
 }

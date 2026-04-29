@@ -1,9 +1,9 @@
 export namespace TypeUtils {
-  export type PolyfillExactOptionalPropertyTypes<Type> =
+  export type ToExactOptional<Type> =
     IsUnknown<Type> extends true
       ? unknown
       : {
-          [Key in keyof Type]: PolyfillExactOptionalPropertyTypes<
+          [Key in keyof Type]: ToExactOptional<
             Type[Key] extends Required<Type>[Key]
               ? Type[Key]
               : Type[Key] | undefined
@@ -29,8 +29,8 @@ export namespace TypeUtils {
 }
 
 export abstract class TypeUtils {
-  static polyfillExactOptionalPropertyTypes<Type>(
-    value: TypeUtils.PolyfillExactOptionalPropertyTypes<Type>,
+  static fromExactOptionalTypes<Type>(
+    value: TypeUtils.ToExactOptional<Type>,
   ): Type {
     return value as Type;
   }

@@ -21,7 +21,6 @@ import { HoverTool } from "../tools/HoverTool.ts";
 import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { UploadTool } from "../tools/UploadTool.ts";
-import { getLogger } from "../utils/logger.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import { Keys } from "./keys.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
@@ -30,11 +29,15 @@ import { Keys } from "./keys.ts";
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import type { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import { AppId } from "../AppId.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
+import type { Tracer } from "../telemetry/Tracer.ts";
 import type { Driver } from "./Driver.ts";
 import {
   waiterScriptSource,
   waitForScriptSource,
 } from "./scripts/bundledScripts.ts";
+
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 interface CDPNode {
   nodeId: string;
@@ -51,8 +54,6 @@ interface CDPFrameInfo {
   };
   childFrames?: CDPFrameInfo[];
 }
-
-const logger = getLogger(import.meta.url);
 
 const WAITER_SCRIPT = waiterScriptSource;
 const WAIT_FOR_SCRIPT = waitForScriptSource;
@@ -79,69 +80,77 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
-    // Switch to default content to ensure we're at the top level for frame enumeration
-    await this.driver.switchTo().defaultContent();
-    logger.debug("Waiting for page to load before getting accessibility tree");
-    await this.waitForPageToLoad();
-    logger.debug("Page loaded, retrieving accessibility tree");
-
-    // Get frame tree to enumerate all frames
-    const frameTree = (await this.executeCdpCommand(
-      "Page.getFrameTree",
-      {},
-    )) as {
-      frameTree: CDPFrameInfo;
-    };
-    const frameIds = this.getAllFrameIds(frameTree.frameTree);
-    const mainFrameId = frameTree.frameTree.frame.id;
-    logger.debug(`Found ${frameIds.length} frames`);
-
-    // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
-    const frameToIframeMap: Map<string, number> = new Map();
-    // Build mapping: frameId -> parent frameId (for nested frames)
-    const frameParentMap: Map<string, string> = new Map();
-    await this.buildFrameHierarchy(
-      frameTree.frameTree,
-      mainFrameId,
-      frameToIframeMap,
-      frameParentMap,
-    );
-
-    // Aggregate accessibility nodes from all frames
-    const allNodes: CDPNode[] = [];
-    for (const frameId of frameIds) {
-      try {
-        const response = (await this.executeCdpCommand(
-          "Accessibility.getFullAXTree",
-          { frameId },
-        )) as { nodes: CDPNode[] };
-        const nodes = response.nodes || [];
+    return tracer.span(
+      "driver.get_accessibility_tree",
+      this.#spanAttrs(),
+      async () => {
+        // Switch to default content to ensure we're at the top level for frame enumeration
+        await this.driver.switchTo().defaultContent();
         logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
+          "Waiting for page to load before getting accessibility tree",
         );
-        // Tag ALL nodes from child frames with their frame chain (list of iframe backendNodeIds)
-        // This allows us to switch through nested frames when finding elements
-        const frameChain = this.getFrameChain(
-          frameId,
+        await this.waitForPageToLoad();
+        logger.debug("Page loaded, retrieving accessibility tree");
+
+        // Get frame tree to enumerate all frames
+        const frameTree = (await this.executeCdpCommand(
+          "Page.getFrameTree",
+          {},
+        )) as {
+          frameTree: CDPFrameInfo;
+        };
+        const frameIds = this.getAllFrameIds(frameTree.frameTree);
+        const mainFrameId = frameTree.frameTree.frame.id;
+        logger.debug(`Found ${frameIds.length} frames`);
+
+        // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
+        const frameToIframeMap: Map<string, number> = new Map();
+        // Build mapping: frameId -> parent frameId (for nested frames)
+        const frameParentMap: Map<string, string> = new Map();
+        await this.buildFrameHierarchy(
+          frameTree.frameTree,
+          mainFrameId,
           frameToIframeMap,
           frameParentMap,
         );
-        for (const node of nodes) {
-          if (frameChain.length > 0) {
-            node._frame_chain = frameChain;
+
+        // Aggregate accessibility nodes from all frames
+        const allNodes: CDPNode[] = [];
+        for (const frameId of frameIds) {
+          try {
+            const response = (await this.executeCdpCommand(
+              "Accessibility.getFullAXTree",
+              { frameId },
+            )) as { nodes: CDPNode[] };
+            const nodes = response.nodes || [];
+            logger.debug(
+              `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
+            );
+            // Tag ALL nodes from child frames with their frame chain (list of iframe backendNodeIds)
+            // This allows us to switch through nested frames when finding elements
+            const frameChain = this.getFrameChain(
+              frameId,
+              frameToIframeMap,
+              frameParentMap,
+            );
+            for (const node of nodes) {
+              if (frameChain.length > 0) {
+                node._frame_chain = frameChain;
+              }
+            }
+            allNodes.push(...nodes);
+          } catch (error) {
+            logger.debug(
+              `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
+            );
           }
         }
-        allNodes.push(...nodes);
-      } catch (error) {
-        logger.debug(
-          `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-        );
-      }
-    }
 
-    logger.debug(`Total accessibility nodes collected: ${allNodes.length}`);
+        logger.debug(`Total accessibility nodes collected: ${allNodes.length}`);
 
-    return new ChromiumAccessibilityTree({ nodes: allNodes });
+        return new ChromiumAccessibilityTree({ nodes: allNodes });
+      },
+    );
   }
 
   private async buildFrameHierarchy(
@@ -219,15 +228,79 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async click(id: number): Promise<void> {
-    return this.#autoswitchToNewTab(async () => {
+    return tracer.span("driver.click", this.#spanAttrs(), () =>
+      this.#autoswitchToNewTab(async () => {
+        const element = await this.findElement(id);
+        try {
+          const actions = this.driver.actions({ async: true });
+          await actions.move({ origin: element }).click().perform();
+        } catch (error) {
+          if (error instanceof ElementNotInteractableError) {
+            // Fallback to direct click if ActionChains fails (e.g. for <option> elements)
+            await element.click();
+          } else {
+            throw error;
+          }
+        }
+      }),
+    );
+  }
+
+  async dragSlider(id: number, value: number): Promise<void> {
+    return tracer.span("driver.drag_slider", this.#spanAttrs(), async () => {
       const element = await this.findElement(id);
-      try {
+      await this.driver.executeScript(
+        "arguments[0].value = arguments[1];" +
+          "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));" +
+          "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
+        element,
+        String(value),
+      );
+    });
+  }
+
+  async dragAndDrop(fromId: number, toId: number): Promise<void> {
+    return tracer.span("driver.drag_and_drop", this.#spanAttrs(), async () => {
+      const actions = this.driver.actions({ async: true });
+      await actions
+        .dragAndDrop(
+          await this.findElement(fromId),
+          await this.findElement(toId),
+        )
+        .perform();
+    });
+  }
+
+  async hover(id: number): Promise<void> {
+    return tracer.span("driver.hover", this.#spanAttrs(), async () => {
+      const actions = this.driver.actions({ async: true });
+      await actions.move({ origin: await this.findElement(id) }).perform();
+    });
+  }
+
+  pressKey(key: Keys.Key): Promise<void> {
+    return tracer.span("driver.press_key", this.#spanAttrs(), () =>
+      this.#autoswitchToNewTab(async () => {
+        const keyMap: Record<Keys.Key, string> = {
+          Backspace: SeleniumKey.BACK_SPACE,
+          Enter: SeleniumKey.ENTER,
+          Escape: SeleniumKey.ESCAPE,
+          Tab: SeleniumKey.TAB,
+        };
+
         const actions = this.driver.actions({ async: true });
-        await actions.move({ origin: element }).click().perform();
+        await actions.sendKeys(keyMap[key]).perform();
+      }),
+    );
+  }
+
+  async quit(): Promise<void> {
+    return tracer.span("driver.quit", this.#spanAttrs(), async () => {
+      try {
+        await this.driver.quit();
       } catch (error) {
-        if (error instanceof ElementNotInteractableError) {
-          // Fallback to direct click if ActionChains fails (e.g. for <option> elements)
-          await element.click();
+        if (error instanceof NoSuchSessionError) {
+          logger.info("Selenium session already closed, ignoring quit error");
         } else {
           throw error;
         }
@@ -235,147 +308,126 @@ export class SeleniumDriver extends BaseDriver {
     });
   }
 
-  async dragSlider(id: number, value: number): Promise<void> {
-    const element = await this.findElement(id);
-    await this.driver.executeScript(
-      "arguments[0].value = arguments[1];" +
-        "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));" +
-        "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
-      element,
-      String(value),
-    );
-  }
-
-  async dragAndDrop(fromId: number, toId: number): Promise<void> {
-    const actions = this.driver.actions({ async: true });
-    await actions
-      .dragAndDrop(await this.findElement(fromId), await this.findElement(toId))
-      .perform();
-  }
-
-  async hover(id: number): Promise<void> {
-    const actions = this.driver.actions({ async: true });
-    await actions.move({ origin: await this.findElement(id) }).perform();
-  }
-
-  pressKey(key: Keys.Key): Promise<void> {
-    return this.#autoswitchToNewTab(async () => {
-      const keyMap: Record<Keys.Key, string> = {
-        Backspace: SeleniumKey.BACK_SPACE,
-        Enter: SeleniumKey.ENTER,
-        Escape: SeleniumKey.ESCAPE,
-        Tab: SeleniumKey.TAB,
-      };
-
-      const actions = this.driver.actions({ async: true });
-      await actions.sendKeys(keyMap[key]).perform();
-    });
-  }
-
-  async quit(): Promise<void> {
-    try {
-      await this.driver.quit();
-    } catch (error) {
-      if (error instanceof NoSuchSessionError) {
-        logger.info("Selenium session already closed, ignoring quit error");
-      } else {
-        throw error;
-      }
-    }
-  }
-
   async back(): Promise<void> {
-    await this.driver.navigate().back();
+    return tracer.span("driver.back", this.#spanAttrs(), () =>
+      this.driver.navigate().back(),
+    );
   }
 
   async visit(url: string): Promise<void> {
-    await this.driver.get(url);
+    return tracer.span("driver.visit", this.#spanAttrs(), () =>
+      this.driver.get(url),
+    );
   }
 
   async scrollTo(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    await this.driver.executeScript("arguments[0].scrollIntoView();", element);
+    return tracer.span("driver.scroll_to", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      await this.driver.executeScript(
+        "arguments[0].scrollIntoView();",
+        element,
+      );
+    });
   }
 
   async screenshot(): Promise<string> {
-    if (this.fullPageScreenshot) {
-      const result = (await this.executeCdpCommand("Page.captureScreenshot", {
-        format: "png",
-        captureBeyondViewport: true,
-      })) as { data: string };
-      return result.data;
-    } else {
-      return await this.driver.takeScreenshot();
-    }
+    return tracer.span("driver.screenshot", this.#spanAttrs(), async () => {
+      if (this.fullPageScreenshot) {
+        const result = (await this.executeCdpCommand("Page.captureScreenshot", {
+          format: "png",
+          captureBeyondViewport: true,
+        })) as { data: string };
+        return result.data;
+      } else {
+        return await this.driver.takeScreenshot();
+      }
+    });
   }
 
   title(): Promise<string> {
-    return this.driver.getTitle();
+    return tracer.span("driver.title", this.#spanAttrs(), () =>
+      this.driver.getTitle(),
+    );
   }
 
   async type(id: number, text: string): Promise<void> {
-    const element = await this.findElement(id);
-    await element.clear();
-    await element.sendKeys(text);
+    return tracer.span("driver.type", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      await element.clear();
+      await element.sendKeys(text);
+    });
   }
 
   async upload(id: number, paths: string[]): Promise<void> {
-    const element = await this.findElement(id);
-    await element.sendKeys(paths.join("\n"));
+    return tracer.span(
+      "driver.upload",
+      this.#spanAttrs(),
+
+      async () => {
+        const element = await this.findElement(id);
+        await element.sendKeys(paths.join("\n"));
+      },
+    );
   }
 
   url(): Promise<string> {
-    return this.driver.getCurrentUrl();
+    return tracer.span("driver.url", this.#spanAttrs(), () =>
+      this.driver.getCurrentUrl(),
+    );
   }
 
   async app(): Promise<AppId> {
-    const currentUrl = await this.driver.getCurrentUrl();
-    return AppId.parse(currentUrl);
+    return tracer.span("driver.app", this.#spanAttrs(), async () => {
+      const currentUrl = await this.driver.getCurrentUrl();
+      return AppId.parse(currentUrl);
+    });
   }
 
   async findElement(id: number): Promise<WebElement> {
-    const tree = await this.getAccessibilityTree();
-    const accessibilityElement = tree.elementById(id);
-    const backendNodeId = accessibilityElement.backendNodeId!;
-    const frameChain = accessibilityElement.frameChain;
+    return tracer.span("driver.find_element", this.#spanAttrs(), async () => {
+      const tree = await this.getAccessibilityTree();
+      const accessibilityElement = tree.elementById(id);
+      const backendNodeId = accessibilityElement.backendNodeId!;
+      const frameChain = accessibilityElement.frameChain;
 
-    // Switch through the frame chain if element is inside nested iframes
-    if (frameChain && frameChain.length > 0) {
-      await this.switchToFrameChain(frameChain);
-    }
+      // Switch through the frame chain if element is inside nested iframes
+      if (frameChain && frameChain.length > 0) {
+        await this.switchToFrameChain(frameChain);
+      }
 
-    // Use CDP to find element by backend node ID
-    await this.executeCdpCommand("DOM.enable", {});
-    await this.executeCdpCommand("DOM.getFlattenedDocument", {});
+      // Use CDP to find element by backend node ID
+      await this.executeCdpCommand("DOM.enable", {});
+      await this.executeCdpCommand("DOM.getFlattenedDocument", {});
 
-    const { nodeIds } = (await this.executeCdpCommand(
-      "DOM.pushNodesByBackendIdsToFrontend",
-      { backendNodeIds: [backendNodeId] },
-    )) as { nodeIds: number[] };
+      const { nodeIds } = (await this.executeCdpCommand(
+        "DOM.pushNodesByBackendIdsToFrontend",
+        { backendNodeIds: [backendNodeId] },
+      )) as { nodeIds: number[] };
 
-    const nodeId = nodeIds[0];
+      const nodeId = nodeIds[0];
 
-    // Set temporary attribute to locate element
-    await this.executeCdpCommand("DOM.setAttributeValue", {
-      nodeId,
-      name: "data-alumnium-id",
-      value: String(backendNodeId),
+      // Set temporary attribute to locate element
+      await this.executeCdpCommand("DOM.setAttributeValue", {
+        nodeId,
+        name: "data-alumnium-id",
+        value: String(backendNodeId),
+      });
+
+      const element = await this.driver.findElement(
+        By.css(`[data-alumnium-id='${backendNodeId}']`),
+      );
+
+      // Remove temporary attribute
+      await this.executeCdpCommand("DOM.removeAttribute", {
+        nodeId,
+        name: "data-alumnium-id",
+      });
+
+      // Note: We don't switch back to default content here because the element
+      // needs to remain in its frame context for subsequent operations (click, type, etc.)
+
+      return element;
     });
-
-    const element = await this.driver.findElement(
-      By.css(`[data-alumnium-id='${backendNodeId}']`),
-    );
-
-    // Remove temporary attribute
-    await this.executeCdpCommand("DOM.removeAttribute", {
-      nodeId,
-      name: "data-alumnium-id",
-    });
-
-    // Note: We don't switch back to default content here because the element
-    // needs to remain in its frame context for subsequent operations (click, type, etc.)
-
-    return element;
   }
 
   private async switchToFrameChain(frameChain: number[]): Promise<void> {
@@ -424,53 +476,78 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   async executeScript(script: string): Promise<void> {
-    await this.driver.executeScript(script);
+    return tracer.span("driver.execute_script", this.#spanAttrs(), async () => {
+      await this.driver.executeScript(script);
+    });
   }
 
   async printToPdf(filepath: string): Promise<void> {
-    const { data } = (await this.executeCdpCommand("Page.printToPDF", {})) as {
-      data: string;
-    };
-    await fs.writeFile(filepath, Buffer.from(data, "base64"));
+    return tracer.span("driver.print_to_pdf", this.#spanAttrs(), async () => {
+      const { data } = (await this.executeCdpCommand(
+        "Page.printToPDF",
+        {},
+      )) as {
+        data: string;
+      };
+      await fs.writeFile(filepath, Buffer.from(data, "base64"));
+    });
   }
 
   async switchToNextTab(): Promise<void> {
-    const handles = await this.driver.getAllWindowHandles();
-    if (handles.length <= 1) return;
+    return tracer.span(
+      "driver.switch_to_next_tab",
+      this.#spanAttrs(),
+      async () => {
+        const handles = await this.driver.getAllWindowHandles();
+        if (handles.length <= 1) return;
 
-    const current = await this.driver.getWindowHandle();
-    const currentIndex = handles.indexOf(current);
-    const nextIndex = (currentIndex + 1) % handles.length;
+        const current = await this.driver.getWindowHandle();
+        const currentIndex = handles.indexOf(current);
+        const nextIndex = (currentIndex + 1) % handles.length;
 
-    always(handles[nextIndex]);
-    await this.driver.switchTo().window(handles[nextIndex]);
-    logger.debug(
-      `Switched to next tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
+        always(handles[nextIndex]);
+        await this.driver.switchTo().window(handles[nextIndex]);
+        logger.debug(
+          `Switched to next tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
+        );
+      },
     );
   }
 
   async switchToPreviousTab(): Promise<void> {
-    const handles = await this.driver.getAllWindowHandles();
-    if (handles.length <= 1) return;
+    return tracer.span(
+      "driver.switch_to_previous_tab",
+      this.#spanAttrs(),
+      async () => {
+        const handles = await this.driver.getAllWindowHandles();
+        if (handles.length <= 1) return;
 
-    const current = await this.driver.getWindowHandle();
-    const currentIndex = handles.indexOf(current);
-    const prevIndex = (currentIndex - 1 + handles.length) % handles.length;
+        const current = await this.driver.getWindowHandle();
+        const currentIndex = handles.indexOf(current);
+        const prevIndex = (currentIndex - 1 + handles.length) % handles.length;
 
-    always(handles[prevIndex]);
-    await this.driver.switchTo().window(handles[prevIndex]);
-    logger.debug(
-      `Switched to previous tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
+        always(handles[prevIndex]);
+        await this.driver.switchTo().window(handles[prevIndex]);
+        logger.debug(
+          `Switched to previous tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
+        );
+      },
     );
   }
 
   async wait(seconds: number): Promise<void> {
-    const clampedSeconds = Math.max(1, Math.min(30, seconds));
-    await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
+    return tracer.span("driver.wait", this.#spanAttrs(), async () => {
+      const clampedSeconds = Math.max(1, Math.min(30, seconds));
+      await new Promise((resolve) =>
+        setTimeout(resolve, clampedSeconds * 1000),
+      );
+    });
   }
 
   async waitForSelector(): Promise<void> {
-    throw new Error("waitForSelector not supported for this driver");
+    return tracer.span("driver.wait_for_selector", this.#spanAttrs(), () => {
+      throw new Error("waitForSelector not supported for this driver");
+    });
   }
 
   private executeCdpCommand(cmd: string, params: object): Promise<unknown> {
@@ -482,7 +559,6 @@ export class SeleniumDriver extends BaseDriver {
       await this.driver.executeScript(WAITER_SCRIPT);
       const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
       if (error) {
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         logger.warn(`Failed to wait for page to load: ${String(error)}`);
       }
     } catch {
@@ -491,7 +567,6 @@ export class SeleniumDriver extends BaseDriver {
         await this.driver.executeScript(WAITER_SCRIPT);
         const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
         if (error) {
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
           logger.warn(`Failed to wait for page to load: ${String(error)}`);
         }
       } catch (retryError) {
@@ -529,5 +604,12 @@ export class SeleniumDriver extends BaseDriver {
     }
 
     return result;
+  }
+
+  #spanAttrs(): Tracer.SpansDriverAttrsBase {
+    return {
+      "driver.kind": "selenium",
+      "driver.platform": this.platform,
+    };
   }
 }

@@ -4,6 +4,8 @@ import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.ts";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.ts";
 import { AppId } from "../AppId.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
+import type { Tracer } from "../telemetry/Tracer.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { ClickTool } from "../tools/ClickTool.ts";
 import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
@@ -11,6 +13,8 @@ import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import type { Keys } from "./keys.ts";
+
+const { tracer } = Telemetry.get(import.meta.url);
 
 export class AppiumDriver extends BaseDriver {
   private driver: Browser;
@@ -37,193 +41,250 @@ export class AppiumDriver extends BaseDriver {
   }
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
-    await this.ensureNativeAppContext();
-    if (this.delay > 0) {
-      await new Promise((resolve) => setTimeout(resolve, this.delay * 1000));
-    }
-    // Hacky workaround for cloud providers reporting stale page source.
-    // Intentionally fetch and discard the page source to refresh internal state.
-    if (this.doubleFetchPageSource) {
-      await this.driver.getPageSource();
-    }
+    return tracer.span(
+      "driver.get_accessibility_tree",
+      this.#spanAttrs(),
+      async () => {
+        await this.ensureNativeAppContext();
+        if (this.delay > 0) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, this.delay * 1000),
+          );
+        }
+        // Hacky workaround for cloud providers reporting stale page source.
+        // Intentionally fetch and discard the page source to refresh internal state.
+        if (this.doubleFetchPageSource) {
+          await this.driver.getPageSource();
+        }
 
-    const xmlString = await this.driver.getPageSource();
-    if (this.platform === "uiautomator2") {
-      return new UIAutomator2AccessibilityTree(xmlString);
-    } else {
-      return new XCUITestAccessibilityTree(xmlString);
-    }
-  }
-
-  async click(id: number): Promise<void> {
-    await this.ensureNativeAppContext();
-    const element = await this.findElement(id);
-    await this.scrollIntoView(element);
-    await element.click();
-  }
-
-  dragSlider(): void {
-    throw new Error("Dragging slider is not supported for this driver");
-  }
-
-  async dragAndDrop(fromId: number, toId: number): Promise<void> {
-    await this.ensureNativeAppContext();
-    const fromElement = await this.findElement(fromId);
-    const toElement = await this.findElement(toId);
-
-    await this.scrollIntoView(fromElement);
-    await fromElement.dragAndDrop(toElement);
-  }
-
-  async pressKey(key: Keys.Key): Promise<void> {
-    await this.ensureNativeAppContext();
-    const keyMap: Record<Keys.Key, string> = {
-      Backspace: SeleniumKey.BACK_SPACE,
-      Enter: SeleniumKey.ENTER,
-      Escape: SeleniumKey.ESCAPE,
-      Tab: SeleniumKey.TAB,
-    };
-
-    // Simulate ActionChains behavior
-    await this.driver.performActions([
-      {
-        type: "key",
-        id: "keyboard",
-        actions: [
-          { type: "keyDown", value: keyMap[key] },
-          { type: "keyUp", value: keyMap[key] },
-        ],
+        const xmlString = await this.driver.getPageSource();
+        if (this.platform === "uiautomator2") {
+          return new UIAutomator2AccessibilityTree(xmlString);
+        } else {
+          return new XCUITestAccessibilityTree(xmlString);
+        }
       },
-    ]);
-  }
-
-  async back(): Promise<void> {
-    await this.driver.back();
-  }
-
-  async visit(url: string): Promise<void> {
-    await this.driver.url(url);
-  }
-
-  async scrollTo(id: number): Promise<void> {
-    const element = await this.findElement(id);
-    await this.scrollIntoView(element);
-  }
-
-  async quit(): Promise<void> {
-    // WebdriverIO handles session termination automatically.
-  }
-
-  async screenshot(): Promise<string> {
-    return await this.driver.takeScreenshot();
-  }
-
-  async title(): Promise<string> {
-    await this.ensureWebviewContext();
-    try {
-      return await this.driver.getTitle();
-    } catch {
-      return "";
-    }
-  }
-
-  async type(id: number, text: string): Promise<void> {
-    await this.ensureNativeAppContext();
-    const element = await this.findElement(id);
-    await this.scrollIntoView(element);
-    await element.setValue(text);
-    if (this.hideKeyboardAfterTyping && (await this.driver.isKeyboardShown())) {
-      await this.hideKeyboard();
-    }
-  }
-
-  async url(): Promise<string> {
-    await this.ensureWebviewContext();
-    try {
-      return await this.driver.getUrl();
-    } catch {
-      return "";
-    }
-  }
-
-  async app(): Promise<AppId> {
-    const caps = this.driver.capabilities as Record<string, unknown>;
-    return AppId.parse(
-      caps["appPackage"] ||
-        caps["bundleId"] ||
-        caps["appium:appPackage"] ||
-        caps["appium:bundleId"],
     );
   }
 
+  async click(id: number): Promise<void> {
+    return tracer.span("driver.click", this.#spanAttrs(), async () => {
+      await this.ensureNativeAppContext();
+      const element = await this.findElement(id);
+      await this.scrollIntoView(element);
+      await element.click();
+    });
+  }
+
+  dragSlider(): void {
+    tracer.span("driver.drag_slider", this.#spanAttrs(), () => {
+      throw new Error("Dragging slider is not supported for this driver");
+    });
+  }
+
+  async dragAndDrop(fromId: number, toId: number): Promise<void> {
+    return tracer.span("driver.drag_and_drop", this.#spanAttrs(), async () => {
+      await this.ensureNativeAppContext();
+      const fromElement = await this.findElement(fromId);
+      const toElement = await this.findElement(toId);
+
+      await this.scrollIntoView(fromElement);
+      await fromElement.dragAndDrop(toElement);
+    });
+  }
+
+  async pressKey(key: Keys.Key): Promise<void> {
+    return tracer.span("driver.press_key", this.#spanAttrs(), async () => {
+      await this.ensureNativeAppContext();
+      const keyMap: Record<Keys.Key, string> = {
+        Backspace: SeleniumKey.BACK_SPACE,
+        Enter: SeleniumKey.ENTER,
+        Escape: SeleniumKey.ESCAPE,
+        Tab: SeleniumKey.TAB,
+      };
+
+      // Simulate ActionChains behavior
+      await this.driver.performActions([
+        {
+          type: "key",
+          id: "keyboard",
+          actions: [
+            { type: "keyDown", value: keyMap[key] },
+            { type: "keyUp", value: keyMap[key] },
+          ],
+        },
+      ]);
+    });
+  }
+
+  async back(): Promise<void> {
+    return tracer.span("driver.back", this.#spanAttrs(), () =>
+      this.driver.back(),
+    );
+  }
+
+  async visit(url: string): Promise<void> {
+    return tracer.span("driver.visit", this.#spanAttrs(), async () => {
+      await this.driver.url(url);
+    });
+  }
+
+  async scrollTo(id: number): Promise<void> {
+    return tracer.span("driver.scroll_to", this.#spanAttrs(), async () => {
+      const element = await this.findElement(id);
+      await this.scrollIntoView(element);
+    });
+  }
+
+  async quit(): Promise<void> {
+    return tracer.span("driver.quit", this.#spanAttrs(), async () => {
+      // WebdriverIO handles session termination automatically.
+    });
+  }
+
+  async screenshot(): Promise<string> {
+    return tracer.span("driver.screenshot", this.#spanAttrs(), () =>
+      this.driver.takeScreenshot(),
+    );
+  }
+
+  async title(): Promise<string> {
+    return tracer.span("driver.title", this.#spanAttrs(), async () => {
+      await this.ensureWebviewContext();
+      try {
+        return await this.driver.getTitle();
+      } catch {
+        return "";
+      }
+    });
+  }
+
+  async type(id: number, text: string): Promise<void> {
+    return tracer.span("driver.type", this.#spanAttrs(), async () => {
+      await this.ensureNativeAppContext();
+      const element = await this.findElement(id);
+      await this.scrollIntoView(element);
+      await element.setValue(text);
+      if (
+        this.hideKeyboardAfterTyping &&
+        (await this.driver.isKeyboardShown())
+      ) {
+        await this.hideKeyboard();
+      }
+    });
+  }
+
+  async url(): Promise<string> {
+    return tracer.span("driver.url", this.#spanAttrs(), async () => {
+      await this.ensureWebviewContext();
+      try {
+        return await this.driver.getUrl();
+      } catch {
+        return "";
+      }
+    });
+  }
+
+  async app(): Promise<AppId> {
+    return tracer.span("driver.app", this.#spanAttrs(), async () => {
+      const caps = this.driver.capabilities as Record<string, unknown>;
+      return AppId.parse(
+        caps["appPackage"] ||
+          caps["bundleId"] ||
+          caps["appium:appPackage"] ||
+          caps["appium:bundleId"],
+      );
+    });
+  }
+
   async findElement(id: number): Promise<WebdriverIO.Element> {
-    const tree = await this.getAccessibilityTree();
-    const element = tree.elementById(id);
+    return tracer.span("driver.find_element", this.#spanAttrs(), async () => {
+      const tree = await this.getAccessibilityTree();
+      const element = tree.elementById(id);
 
-    if (this.platform === "xcuitest") {
-      // Use iOS Predicate locators for XCUITest
-      let predicate = `type == "${element.type}"`;
+      if (this.platform === "xcuitest") {
+        // Use iOS Predicate locators for XCUITest
+        let predicate = `type == "${element.type}"`;
 
-      const props: Record<string, string> = {};
-      if (element.name) props["name"] = element.name;
-      if (element.value) props["value"] = element.value;
-      if (element.label) props["label"] = element.label;
+        const props: Record<string, string> = {};
+        if (element.name) props["name"] = element.name;
+        if (element.value) props["value"] = element.value;
+        if (element.label) props["label"] = element.label;
 
-      if (Object.keys(props).length > 0) {
-        const conditions = Object.entries(props).map(
-          ([k, v]) => `${k} == "${v}"`,
-        );
-        const propsStr = conditions.join(" AND ");
-        predicate += ` AND ${propsStr}`;
+        if (Object.keys(props).length > 0) {
+          const conditions = Object.entries(props).map(
+            ([k, v]) => `${k} == "${v}"`,
+          );
+          const propsStr = conditions.join(" AND ");
+          predicate += ` AND ${propsStr}`;
+        }
+
+        console.debug(`Finding element by predicate: ${predicate}`);
+        return this.driver.$(`-ios predicate string:${predicate}`).getElement();
+      } else {
+        // Use XPath for UIAutomator2
+        let xpath = `//${element.type}`;
+
+        const props: Record<string, string> = {};
+        if (element.androidResourceId)
+          props["resource-id"] = element.androidResourceId;
+        if (element.androidBounds) props["bounds"] = element.androidBounds;
+
+        if (Object.keys(props).length > 0) {
+          const conditions = Object.entries(props).map(
+            ([k, v]) => `@${k}="${v}"`,
+          );
+          xpath += `[${conditions.join(" and ")}]`;
+        }
+
+        console.debug(`Finding element by xpath: ${xpath}`);
+        return this.driver.$(xpath).getElement();
       }
-
-      console.debug(`Finding element by predicate: ${predicate}`);
-      return this.driver.$(`-ios predicate string:${predicate}`).getElement();
-    } else {
-      // Use XPath for UIAutomator2
-      let xpath = `//${element.type}`;
-
-      const props: Record<string, string> = {};
-      if (element.androidResourceId)
-        props["resource-id"] = element.androidResourceId;
-      if (element.androidBounds) props["bounds"] = element.androidBounds;
-
-      if (Object.keys(props).length > 0) {
-        const conditions = Object.entries(props).map(
-          ([k, v]) => `@${k}="${v}"`,
-        );
-        xpath += `[${conditions.join(" and ")}]`;
-      }
-
-      console.debug(`Finding element by xpath: ${xpath}`);
-      return this.driver.$(xpath).getElement();
-    }
+    });
   }
 
   async executeScript(script: string): Promise<void> {
-    await this.ensureWebviewContext();
-    await this.driver.execute(script);
+    return tracer.span("driver.execute_script", this.#spanAttrs(), async () => {
+      await this.ensureWebviewContext();
+      await this.driver.execute(script);
+    });
   }
 
   async switchToNextTab(): Promise<void> {
-    throw new Error("Tab switching not supported for this driver");
+    return tracer.span("driver.switch_to_next_tab", this.#spanAttrs(), () => {
+      throw new Error("Tab switching not supported for this driver");
+    });
   }
 
   async switchToPreviousTab(): Promise<void> {
-    throw new Error("Tab switching not supported for this driver");
+    return tracer.span(
+      "driver.switch_to_previous_tab",
+      this.#spanAttrs(),
+      () => {
+        throw new Error("Tab switching not supported for this driver");
+      },
+    );
   }
 
   async wait(seconds: number): Promise<void> {
-    const clampedSeconds = Math.max(1, Math.min(30, seconds));
-    await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
+    return tracer.span("driver.wait", this.#spanAttrs(), async () => {
+      const clampedSeconds = Math.max(1, Math.min(30, seconds));
+      await new Promise((resolve) =>
+        setTimeout(resolve, clampedSeconds * 1000),
+      );
+    });
   }
 
   async waitForSelector(): Promise<void> {
-    throw new Error("waitForSelector not supported for this driver");
+    return tracer.span("driver.wait_for_selector", this.#spanAttrs(), () => {
+      throw new Error("waitForSelector not supported for this driver");
+    });
   }
 
   async printToPdf(): Promise<void> {
-    throw new Error("Printing to PDF not supported for this driver");
+    return tracer.span("driver.print_to_pdf", this.#spanAttrs(), () => {
+      throw new Error("Printing to PDF not supported for this driver");
+    });
   }
 
   private async ensureNativeAppContext(): Promise<void> {
@@ -275,5 +336,12 @@ export class AppiumDriver extends BaseDriver {
         elementId: element.elementId,
       });
     }
+  }
+
+  #spanAttrs(): Tracer.SpansDriverAttrsBase {
+    return {
+      "driver.kind": "appium",
+      "driver.platform": this.platform,
+    };
   }
 }

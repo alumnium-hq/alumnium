@@ -1,9 +1,7 @@
+import z from "zod";
+import { Logger } from "../../telemetry/Logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { TypeUtils } from "../../typeUtils.ts";
-import {
-  getLogger,
-  optionalLogDebugExtra,
-  type LoggerLike,
-} from "../../utils/logger.ts";
 import { mcpTools, type McpTools } from "../tools/index.ts";
 import { McpTool } from "../tools/McpTool.ts";
 import { startMcpTool } from "../tools/startMcpTool.ts";
@@ -15,20 +13,18 @@ import {
   scenariosMcpToolsShape as shape,
 } from "./tools/scenariosMcpToolsShape.ts";
 
-const logger = getLogger(import.meta.url);
+const { logger, tracer } = Telemetry.get(import.meta.url);
 
 export namespace McpScenariosState {
   //#region Results
 
-  export interface MethodResultSuccess {
-    status: "success";
-    message: string;
-  }
+  export type MethodResultSuccess = z.infer<
+    typeof McpScenariosState.MethodResultSuccess
+  >;
 
-  export interface MethodResultFailure {
-    status: "failure";
-    error: string;
-  }
+  export type MethodResultFailure = z.infer<
+    typeof McpScenariosState.MethodResultFailure
+  >;
 
   export type MethodResult = MethodResultSuccess | MethodResultFailure;
 
@@ -236,12 +232,35 @@ export namespace McpScenariosState {
 }
 
 export class McpScenariosState {
+  //#region Schemas
+
+  static MethodResultSuccess = z.object({
+    status: z.literal("success"),
+    message: z.string(),
+  });
+
+  static MethodResultFailure = z.object({
+    status: z.literal("failure"),
+    error: z.string(),
+  });
+
+  static MethodResult = z.union([
+    McpScenariosState.MethodResultSuccess,
+    McpScenariosState.MethodResultFailure,
+  ]);
+
+  //#endregion
+
+  //#region Instance
+
   #recordings = new McpScenarioRecordings();
   // NOTE: It widens type to `McpTools.Definition` in a type-safe way.
   #tools: McpTools.Definition[] = scenariosMcpTools;
   #run: McpScenario.Run | null = null;
 
   constructor() {}
+
+  //#endregion
 
   //#region Management
 
@@ -253,10 +272,12 @@ export class McpScenariosState {
   async listScenarios(): Promise<McpScenariosState.ListScenariosResult> {
     const snippets = shape.list.snippets();
 
-    const scenarioFiles = await this.#recordings.list();
-    if (!scenarioFiles) return this.#failure(snippets.errorStore);
+    return tracer.span("mcp.scenario.list", async () => {
+      const scenarioFiles = await this.#recordings.list();
+      if (!scenarioFiles) return this.#failure(snippets.errorStore);
 
-    return this.#success(snippets.success, { scenarioFiles });
+      return this.#success(snippets.success, { scenarioFiles });
+    });
   }
 
   /**
@@ -270,12 +291,14 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.LookupScenarioResult> {
     const snippets = shape.lookup.snippets(text);
 
-    const scenario = await this.#recordings.lookup(text);
+    return tracer.span("mcp.scenario.lookup", async () => {
+      const scenario = await this.#recordings.lookup(text);
 
-    if (!scenario)
-      return this.#success(snippets.successNotFound, { scenario: null });
+      if (!scenario)
+        return this.#success(snippets.successNotFound, { scenario: null });
 
-    return this.#success(snippets.successFound, { scenario });
+      return this.#success(snippets.successFound, { scenario });
+    });
   }
 
   /**
@@ -288,10 +311,16 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.GetScenarioResult> {
     const snippets = shape.get.snippets(scenarioId);
 
-    const scenario = await this.#recordings.get(scenarioId);
-    if (!scenario) return this.#failure(snippets.errorNotFound);
+    return tracer.span(
+      "mcp.scenario.get",
+      { "mcp.scenario.id": scenarioId },
+      async () => {
+        const scenario = await this.#recordings.get(scenarioId);
+        if (!scenario) return this.#failure(snippets.errorNotFound);
 
-    return this.#success(snippets.success, { scenario });
+        return this.#success(snippets.success, { scenario });
+      },
+    );
   }
 
   /**
@@ -305,11 +334,17 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.MethodResult> {
     const snippets = shape.remove.snippets(scenarioId);
 
-    if (await this.#recordings.remove(scenarioId)) {
-      return this.#success(snippets.success);
-    }
+    return tracer.span(
+      "mcp.scenario.remove",
+      { "mcp.scenario.id": scenarioId },
+      async () => {
+        if (await this.#recordings.remove(scenarioId)) {
+          return this.#success(snippets.success);
+        }
 
-    return this.#failure(snippets.errorStore);
+        return this.#failure(snippets.errorStore);
+      },
+    );
   }
 
   //#endregion
@@ -329,43 +364,75 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.PlayScenarioResult> {
     const snippets = shape.play.snippets(scenarioId);
 
-    switch (this.#run?.kind) {
-      case "recording":
-        return this.#failure(
-          snippets.errorRunningRecording(this.#run.scenario.id),
-        );
+    return tracer.span(
+      "mcp.scenario.play",
+      {
+        "mcp.scenario.id": scenarioId,
+        "mcp.scenario.playback.step_by_step": stepByStep,
+      },
+      async () => {
+        switch (this.#run?.kind) {
+          case "recording":
+            return this.#failure(
+              snippets.errorRunningRecording(this.#run.scenario.id),
+            );
 
-      case "playback":
-        return this.#failure(
-          snippets.errorRunningPlayback(this.#run.playbackId),
-        );
+          case "playback":
+            return this.#failure(
+              snippets.errorRunningPlayback(this.#run.playbackId),
+            );
 
-      default:
-        this.#run satisfies null;
-        const scenario = await this.#recordings.get(scenarioId);
-        if (!scenario) return this.#failure(snippets.errorNotFound);
+          default:
+            this.#run satisfies null;
+            const playbackId = McpScenario.createPlaybackId();
 
-        const firstStep = scenario.steps[0];
-        if (!firstStep) return this.#failure(snippets.errorNoSteps);
+            const scenario = await this.#recordings.get(scenarioId);
+            if (!scenario) {
+              return this.#failure(snippets.errorNotFound);
+            }
 
-        this.#run = McpScenario.createPlayback(scenario, stepByStep);
+            const firstStep = scenario.steps[0];
+            if (!firstStep) {
+              return this.#failure(snippets.errorNoSteps);
+            }
 
-        if (stepByStep)
-          return this.#success(snippets.successStepByStep, {
-            playbackId: this.#run.playbackId,
-            nextStep: firstStep,
-          });
+            const playbackSpan = tracer.span(
+              "mcp.scenario.playback",
+              {
+                "mcp.scenario.id": scenarioId,
+                "mcp.scenario.playback.step_by_step": stepByStep,
+              },
+              playbackId,
+            );
 
-        const playAllResult = await this.#playAll({
-          snippets,
-          playback: this.#run,
-        });
-        if (playAllResult.status === "failure") return playAllResult;
+            this.#run = McpScenario.createPlayback(
+              playbackId,
+              scenario,
+              stepByStep,
+            );
 
-        this.#completePlayback(this.#run);
+            if (stepByStep)
+              return this.#success(snippets.successStepByStep, {
+                playbackId: this.#run.playbackId,
+                nextStep: firstStep,
+              });
 
-        return playAllResult;
-    }
+            const playAllResult = await this.#playAll({
+              snippets,
+              playback: this.#run,
+            });
+
+            if (playAllResult.status === "failure") {
+              playbackSpan.fail(playAllResult);
+              return playAllResult;
+            }
+
+            this.#completePlayback(this.#run);
+
+            return playAllResult;
+        }
+      },
+    );
   }
 
   /**
@@ -379,54 +446,62 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.StepScenarioResult> {
     const snippets = shape.step.snippets(scenarioId);
 
-    switch (this.#run?.kind) {
-      case "recording":
-        return this.#failure(
-          snippets.errorRunningRecording(this.#run.scenario.id),
-        );
+    return tracer.span(
+      "mcp.scenario.step",
+      { "mcp.scenario.id": scenarioId },
+      async () => {
+        switch (this.#run?.kind) {
+          case "recording":
+            return this.#failure(
+              snippets.errorRunningRecording(this.#run.scenario.id),
+            );
 
-      case "playback":
-        if (this.#run.scenario.id !== scenarioId)
-          return this.#failure(
-            snippets.errorRunningPlaybackId(this.#run.playbackId),
-          );
+          case "playback":
+            if (this.#run.scenario.id !== scenarioId)
+              return this.#failure(
+                snippets.errorRunningPlaybackId(this.#run.playbackId),
+              );
 
-        if (!this.#run.stepByStep)
-          return this.#failure(snippets.errorNotStepByStep);
+            if (!this.#run.stepByStep)
+              return this.#failure(snippets.errorNotStepByStep);
 
-        const stepResult = await this.#playStep({
-          stepId: this.#run.nextStepId!,
-          snippets,
-          playback: this.#run,
-        });
+            const stepResult = await this.#playStep({
+              stepId: this.#run.nextStepId!,
+              snippets,
+              playback: this.#run,
+            });
 
-        if (stepResult.status === "failure") return stepResult;
+            if (stepResult.status === "failure") return stepResult;
 
-        const { execution } = stepResult;
+            const { execution } = stepResult;
 
-        const nextStepId = this.#run.nextStepId;
-        if (nextStepId) {
-          const [nextStep] = this.#findStep(this.#run.scenario, nextStepId);
-          if (!nextStep)
-            return this.#failure(snippets.errorNextStepNotFound(nextStepId));
+            const nextStepId = this.#run.nextStepId;
+            if (nextStepId) {
+              const [nextStep] = this.#findStep(this.#run.scenario, nextStepId);
+              if (!nextStep)
+                return this.#failure(
+                  snippets.errorNextStepNotFound(nextStepId),
+                );
 
-          return this.#success(snippets.successNextStep, {
-            nextStep,
-            execution,
-          });
+              return this.#success(snippets.successNextStep, {
+                nextStep,
+                execution,
+              });
+            }
+
+            this.#completePlayback(this.#run);
+
+            return this.#success(snippets.successCompleted, {
+              nextStep: null,
+              execution,
+            });
+
+          default:
+            this.#run satisfies null;
+            return this.#failure(snippets.errorNoActivePlayback);
         }
-
-        this.#completePlayback(this.#run);
-
-        return this.#success(snippets.successCompleted, {
-          nextStep: null,
-          execution,
-        });
-
-      default:
-        this.#run satisfies null;
-        return this.#failure(snippets.errorNoActivePlayback);
-    }
+      },
+    );
   }
 
   /**
@@ -440,32 +515,55 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.MethodResult> {
     const snippets = shape.diverge.snippets(scenarioId);
 
-    switch (this.#run?.kind) {
-      case "recording":
-        return this.#failure(
-          snippets.errorRunningRecording(this.#run.scenario.id),
-        );
+    return tracer.span(
+      "mcp.scenario.diverge",
+      { "mcp.scenario.id": scenarioId },
+      async () => {
+        switch (this.#run?.kind) {
+          case "recording":
+            return this.#failure(
+              snippets.errorRunningRecording(this.#run.scenario.id),
+            );
 
-      case "playback":
-        if (this.#run.scenario.id !== scenarioId)
-          return this.#failure(snippets.errorRunningId(this.#run.scenario.id));
+          case "playback":
+            if (this.#run.scenario.id !== scenarioId)
+              return this.#failure(
+                snippets.errorRunningId(this.#run.scenario.id),
+              );
 
-        if (!this.#run.stepByStep)
-          return this.#failure(snippets.errorNotStepByStep);
+            if (!this.#run.stepByStep)
+              return this.#failure(snippets.errorNotStepByStep);
 
-        const diveredStepId = this.#run.nextStepId;
+            tracer.end(this.#run.playbackId);
 
-        this.#run = McpScenario.createDivergedRecording(
-          this.#run.scenario,
-          diveredStepId,
-        );
+            const recordingId = McpScenario.createRecordingId();
+            const diveredStepId = this.#run.nextStepId;
 
-        return this.#success(snippets.success(diveredStepId));
+            tracer.span(
+              "mcp.scenario.diverge_recording",
+              {
+                "mcp.scenario.id": scenarioId,
+                "mcp.scenario.playback.id": this.#run.playbackId,
+                "mcp.scenario.recording.id": recordingId,
+                "mcp.scenario.diverge.step_id": diveredStepId,
+              },
+              recordingId,
+            );
 
-      default:
-        this.#run satisfies null;
-        return this.#failure(snippets.errorNoActivePlayback);
-    }
+            this.#run = McpScenario.createDivergedRecording(
+              recordingId,
+              this.#run.scenario,
+              diveredStepId,
+            );
+
+            return this.#success(snippets.success(diveredStepId));
+
+          default:
+            this.#run satisfies null;
+            return this.#failure(snippets.errorNoActivePlayback);
+        }
+      },
+    );
   }
 
   /**
@@ -479,34 +577,43 @@ export class McpScenariosState {
   ): McpScenariosState.MethodResult {
     const snippets = shape.reset.snippets(scenarioId);
 
-    switch (this.#run?.kind) {
-      case "recording":
-        if (this.#run.scenario.id !== scenarioId)
-          return this.#failure(
-            snippets.errorRunningRecordingId(this.#run.scenario.id),
-          );
+    return tracer.span(
+      "mcp.scenario.reset",
+      { "mcp.scenario.id": scenarioId },
+      () => {
+        switch (this.#run?.kind) {
+          case "recording":
+            if (this.#run.scenario.id !== scenarioId)
+              return this.#failure(
+                snippets.errorRunningRecordingId(this.#run.scenario.id),
+              );
 
-        this.#run = null;
-        return this.#success(snippets.successRecording);
+            tracer.end(this.#run.recordingId);
 
-      case "playback":
-        if (this.#run.scenario.id !== scenarioId)
-          return this.#failure(
-            snippets.errorRunningPlaybackId(
-              this.#run.scenario.id,
-              this.#run.playbackId,
-            ),
-          );
+            this.#run = null;
+            return this.#success(snippets.successRecording);
 
-        this.#run.state = "canceled";
-        this.#run = null;
+          case "playback":
+            if (this.#run.scenario.id !== scenarioId)
+              return this.#failure(
+                snippets.errorRunningPlaybackId(
+                  this.#run.scenario.id,
+                  this.#run.playbackId,
+                ),
+              );
 
-        return this.#success(snippets.successPlayback);
+            tracer.end(this.#run.playbackId);
 
-      default:
-        this.#run satisfies null;
-        return this.#failure(snippets.errorNoActiveRun);
-    }
+            this.#run.state = "canceled";
+            this.#run = null;
+            return this.#success(snippets.successPlayback);
+
+          default:
+            this.#run satisfies null;
+            return this.#failure(snippets.errorNoActiveRun);
+        }
+      },
+    );
   }
 
   async #playAll(
@@ -514,24 +621,68 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.PlayScenarioResult> {
     const { snippets, playback } = props;
 
-    const executions: McpScenario.Execution[] = [];
-    while (playback.nextStepId) {
-      const stepResult = await this.#playStep({
-        stepId: playback.nextStepId,
-        snippets,
-        playback,
-      });
+    return tracer.span(
+      "mcp.scenario.play_all",
+      {
+        "mcp.scenario.id": playback.scenario.id,
+        "mcp.scenario.playback.id": playback.playbackId,
+      },
+      async () => {
+        const executions: McpScenario.Execution[] = [];
 
-      if (stepResult.status === "failure") return stepResult;
+        logger.info(
+          `Starting playback for scenario ${playback.scenario.id} with ${playback.scenario.steps.length} steps.`,
+        );
 
-      const { execution } = stepResult;
-      executions.push(execution);
-    }
+        while (playback.nextStepId) {
+          const stepResult = await this.#playStep({
+            stepId: playback.nextStepId,
+            snippets,
+            playback,
+          });
 
-    return this.#success(snippets.successAll, { executions });
+          if (stepResult.status === "failure") {
+            logger.warn(
+              `Playback failed at step ${playback.nextStepId}: ${stepResult.error}`,
+            );
+
+            return stepResult;
+          }
+
+          const { execution } = stepResult;
+          executions.push(execution);
+        }
+
+        logger.info(
+          `Playback completed for scenario ${playback.scenario.id} with ${executions.length} executions.`,
+        );
+
+        return this.#success(snippets.successAll, { executions });
+      },
+    );
   }
 
-  async #playStep(
+  #playStep(
+    props: McpScenariosState.PlayStepProps,
+  ): Promise<McpScenariosState.PlayStepResult> {
+    const { playback, stepId } = props;
+
+    return tracer.span(
+      "mcp.scenario.play_step",
+      {
+        "mcp.scenario.id": playback.scenario.id,
+        "mcp.scenario.playback.id": playback.playbackId,
+        "mcp.scenario.playback.step_id": stepId,
+        "mcp.scenario.playback.step_by_step": playback.stepByStep,
+      },
+      async () => {
+        const result = await this.#playStepInner(props);
+        return result;
+      },
+    );
+  }
+
+  async #playStepInner(
     props: McpScenariosState.PlayStepProps,
   ): Promise<McpScenariosState.PlayStepResult> {
     const { stepId, snippets, playback } = props;
@@ -567,7 +718,7 @@ export class McpScenariosState {
     });
     if (unmaskOutputResult.status === "failure")
       return this.#failure(unmaskOutputResult.error);
-    const { unmaskedOutput } = unmaskOutputResult;
+    const { unmaskedOutput: _unmaskedOutput } = unmaskOutputResult;
 
     // TODO: Check output match
 
@@ -583,6 +734,8 @@ export class McpScenariosState {
   }
 
   #completePlayback(playback: McpScenario.Playback): void {
+    tracer.end(playback.playbackId);
+
     playback.state = "completed";
     this.#run = null;
   }
@@ -605,40 +758,47 @@ export class McpScenariosState {
    *
    * @param props - Hook props.
    */
-  async onToolExecuted(
+  onToolExecuted(
     props: McpScenariosState.OnToolExecutedProps,
-  ): Promise<McpScenariosState.OnToolExecutedResult> {
+  ): McpScenariosState.OnToolExecutedResult {
     const { tool, input: unmaskedInput, output: unmaskedOutput } = props;
     const snippets = miscScenariosMcpToolSnippets.onToolExecuted(tool.name);
 
-    // Ignore scenario tool executions.
-    if (this.#tools.includes(tool))
-      return this.#success(snippets.successIgnored);
+    return tracer.span(
+      "mcp.scenario.on_tool_executed",
+      { "mcp.tool.name": tool.name },
+      () => {
+        // Ignore scenario tool executions.
+        if (this.#tools.includes(tool))
+          return this.#success(snippets.successIgnored);
 
-    const run = this.#run;
-    if (run?.kind !== "recording" || run.state !== "recording")
-      return this.#success(snippets.successNotRecording);
+        const run = this.#run;
+        if (run?.kind !== "recording" || run.state !== "recording")
+          return this.#success(snippets.successNotRecording);
 
-    const maskResult = this.#mask({
-      recording: run,
-      tool,
-      unmaskedInput,
-      unmaskedOutput,
-    });
+        const maskResult = this.#mask({
+          recording: run,
+          tool,
+          unmaskedInput,
+          unmaskedOutput,
+        });
 
-    if (maskResult.status === "failure") return this.#failure(maskResult.error);
+        if (maskResult.status === "failure")
+          return this.#failure(maskResult.error);
 
-    const { maskedInput, maskedOutput } = maskResult;
+        const { maskedInput, maskedOutput } = maskResult;
 
-    run.scenario.steps.push(
-      McpScenario.createStep({
-        toolName: tool.name,
-        maskedInput,
-        maskedOutput,
-      }),
+        run.scenario.steps.push(
+          McpScenario.createStep({
+            toolName: tool.name,
+            maskedInput,
+            maskedOutput,
+          }),
+        );
+
+        return this.#success(snippets.successRecorded(run.scenario.id));
+      },
     );
-
-    return this.#success(snippets.successRecorded(run.scenario.id));
   }
 
   /**
@@ -652,31 +812,49 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.StartRecordingResult> {
     const snippets = shape.record.snippets();
 
-    switch (this.#run?.kind) {
-      case "recording":
-        return this.#failure(
-          snippets.errorRunningRecording(this.#run.scenario.id),
-        );
+    return tracer.span("mcp.scenario.start_recording", async () => {
+      switch (this.#run?.kind) {
+        case "recording":
+          return this.#failure(
+            snippets.errorRunningRecording(this.#run.scenario.id),
+          );
 
-      case "playback":
-        return this.#failure(
-          snippets.errorRunningPlayback(
-            this.#run.scenario.id,
-            this.#run.playbackId,
-          ),
-        );
+        case "playback":
+          return this.#failure(
+            snippets.errorRunningPlayback(
+              this.#run.scenario.id,
+              this.#run.playbackId,
+            ),
+          );
 
-      default:
-        this.#run satisfies null;
+        default:
+          this.#run satisfies null;
 
-        const existingScenario = await this.#recordings.lookup(text);
-        this.#run = McpScenario.createRecording(text, existingScenario?.id);
+          const existingScenario = await this.#recordings.lookup(text);
 
-        const scenarioId = this.#run.scenario.id;
-        return this.#success(snippets.success(scenarioId), {
-          scenarioId,
-        });
-    }
+          const recordingId = McpScenario.createRecordingId();
+
+          tracer.span(
+            "mcp.scenario.recording",
+            {
+              "mcp.scenario.id": existingScenario?.id,
+              "mcp.scenario.recording.id": recordingId,
+            },
+            recordingId,
+          );
+
+          this.#run = McpScenario.createRecording(
+            recordingId,
+            text,
+            existingScenario?.id,
+          );
+
+          const scenarioId = this.#run.scenario.id;
+          return this.#success(snippets.success(scenarioId), {
+            scenarioId,
+          });
+      }
+    });
   }
 
   /**
@@ -690,31 +868,38 @@ export class McpScenariosState {
   ): McpScenariosState.MethodResult {
     const snippets = shape.pause.snippets(scenarioId);
 
-    switch (this.#run?.kind) {
-      case "recording":
-        if (this.#run.scenario.id !== scenarioId) {
-          return this.#failure(
-            snippets.errorRunningRecordingId(this.#run.scenario.id),
-          );
+    return tracer.span(
+      "mcp.scenario.pause_recording",
+      { "mcp.scenario.id": scenarioId },
+      () => {
+        switch (this.#run?.kind) {
+          case "recording":
+            if (this.#run.scenario.id !== scenarioId) {
+              return this.#failure(
+                snippets.errorRunningRecordingId(this.#run.scenario.id),
+              );
+            }
+
+            if (this.#run.state !== "recording") {
+              return this.#failure(snippets.errorRunningRecordingPaused);
+            }
+
+            tracer.end(this.#run.recordingId);
+
+            this.#run.state = "paused";
+            return this.#success(snippets.success);
+
+          case "playback":
+            return this.#failure(
+              snippets.errorRunningPlayback(this.#run.playbackId),
+            );
+
+          default:
+            this.#run satisfies null;
+            return this.#failure(snippets.errorNoRunningRecording);
         }
-
-        if (this.#run.state !== "recording") {
-          return this.#failure(snippets.errorRunningRecordingPaused);
-        }
-
-        this.#run.state = "paused";
-
-        return this.#success(snippets.success);
-
-      case "playback":
-        return this.#failure(
-          snippets.errorRunningPlayback(this.#run.playbackId),
-        );
-
-      default:
-        this.#run satisfies null;
-        return this.#failure(snippets.errorNoRunningRecording);
-    }
+      },
+    );
   }
 
   /**
@@ -728,31 +913,45 @@ export class McpScenariosState {
   ): McpScenariosState.MethodResult {
     const snippets = shape.unpause.snippets(scenarioId);
 
-    switch (this.#run?.kind) {
-      case "recording":
-        if (this.#run.scenario.id !== scenarioId) {
-          return this.#failure(
-            snippets.errorRunningRecordingId(this.#run.scenario.id),
-          );
+    return tracer.span(
+      "mcp.scenario.unpause_recording",
+      { "mcp.scenario.id": scenarioId },
+      () => {
+        switch (this.#run?.kind) {
+          case "recording":
+            if (this.#run.scenario.id !== scenarioId) {
+              return this.#failure(
+                snippets.errorRunningRecordingId(this.#run.scenario.id),
+              );
+            }
+
+            if (this.#run.state !== "paused") {
+              return this.#failure(snippets.errorRunningRecordingUnpaused);
+            }
+
+            tracer.span(
+              "mcp.scenario.recording",
+              {
+                "mcp.scenario.id": this.#run.scenario.id,
+                "mcp.scenario.recording.id": this.#run.recordingId,
+              },
+              this.#run.recordingId,
+            );
+
+            this.#run.state = "recording";
+            return this.#success(snippets.success);
+
+          case "playback":
+            return this.#failure(
+              snippets.errorRunningPlayback(this.#run.playbackId),
+            );
+
+          default:
+            this.#run satisfies null;
+            return this.#failure(snippets.errorNoRunningRecording);
         }
-
-        if (this.#run.state !== "paused") {
-          return this.#failure(snippets.errorRunningRecordingUnpaused);
-        }
-
-        this.#run.state = "recording";
-
-        return this.#success(snippets.success);
-
-      case "playback":
-        return this.#failure(
-          snippets.errorRunningPlayback(this.#run.playbackId),
-        );
-
-      default:
-        this.#run satisfies null;
-        return this.#failure(snippets.errorNoRunningRecording);
-    }
+      },
+    );
   }
 
   /**
@@ -766,30 +965,41 @@ export class McpScenariosState {
   ): Promise<McpScenariosState.MethodResult> {
     const snippets = shape.commit.snippets(scenarioId);
 
-    switch (this.#run?.kind) {
-      case "recording":
-        if (this.#run.scenario.id !== scenarioId)
-          return this.#failure(snippets.errorRunningId(this.#run.scenario.id));
+    return tracer.span(
+      "mcp.scenario.commit",
+      { "mcp.scenario.id": scenarioId },
+      async () => {
+        switch (this.#run?.kind) {
+          case "recording":
+            if (this.#run.scenario.id !== scenarioId)
+              return this.#failure(
+                snippets.errorRunningId(this.#run.scenario.id),
+              );
 
-        await this.#commitRecording(this.#run);
-        this.#run = null;
-        return this.#success(snippets.success);
+            await this.#commitRecording(this.#run);
 
-      case "playback":
-        return this.#failure(
-          snippets.errorRunningPlayback(this.#run.playbackId),
-        );
+            this.#run = null;
+            return this.#success(snippets.success);
 
-      default:
-        this.#run satisfies null;
-        return this.#failure(snippets.errorNoActiveRun);
-    }
+          case "playback":
+            return this.#failure(
+              snippets.errorRunningPlayback(this.#run.playbackId),
+            );
+
+          default:
+            this.#run satisfies null;
+            return this.#failure(snippets.errorNoActiveRun);
+        }
+      },
+    );
   }
 
   async #commitRecording(recording: McpScenario.Recording): Promise<void> {
     this.#recordings.commit(recording);
     recording.state = "committed";
     this.#run = null;
+
+    tracer.end(recording.recordingId);
   }
 
   //#endregion
@@ -797,7 +1007,7 @@ export class McpScenariosState {
   //#region Results
 
   async logWrapMethodResult<Type extends McpScenariosState.MethodResult>(
-    logger: LoggerLike,
+    logger: Logger.Like,
     methodLabel: string,
     method: () => Promise<Type> | Type,
   ): Promise<Type> {
@@ -811,7 +1021,7 @@ export class McpScenariosState {
 
     logger.info(`${methodLabel} succeeded: ${result.message}`);
     logger.debug(`${methodLabel} result: {result}`, {
-      result: optionalLogDebugExtra("scenarios", result),
+      result: Logger.debugExtra("scenarios", result),
     });
     return result;
   }

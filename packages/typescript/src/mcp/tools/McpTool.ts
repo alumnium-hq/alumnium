@@ -1,8 +1,9 @@
 import z from "zod";
-import { bindLogger, getLogger, type LoggerLike } from "../../utils/logger.ts";
+import { Logger } from "../../telemetry/Logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { McpScenariosState } from "../scenarios/McpScenariosState.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 export namespace McpTool {
   export interface DefineProps<
@@ -18,7 +19,7 @@ export namespace McpTool {
   ) => Promise<Output>;
 
   export interface DefineExecuteContext extends DefinitionExecuteContext {
-    logger: LoggerLike;
+    logger: Logger.Like;
   }
 
   export interface Definition<
@@ -73,33 +74,43 @@ export abstract class McpTool {
     props: McpTool.DefineProps<Name, Input>,
   ): McpTool.Definition<Name, Input> {
     // Instrument with input/output logging
-    const execute = async (
+    const execute = (
       input: z.infer<Input>,
       context: McpTool.DefinitionExecuteContext,
-    ) => {
-      const executeLogger = this.createExecuteLogger(input, props.name);
+    ) =>
+      tracer.span(
+        "mcp.tool.invoke",
+        { "mcp.tool.name": props.name },
+        async (span) => {
+          const parsedInput = McpTool.WithDriverId.safeParse(input);
+          const driverId = parsedInput.data?.id;
 
-      executeLogger.info("Executing");
-      executeLogger.debug(`  -> Input: {input}`, { input });
+          span.attr("mcp.driver.id", driverId);
 
-      const result = await props.execute(input, {
-        ...context,
-        logger: executeLogger,
-      });
+          const executeLogger = this.createExecuteLogger(driverId, props.name);
+          executeLogger.info("Executing");
+          executeLogger.debug(`  -> Input: {input}`, { input });
 
-      executeLogger.info("Completed");
-      executeLogger.debug("  -> Result: {result}", { result });
+          const result = await props.execute(input, {
+            ...context,
+            logger: executeLogger,
+          });
 
-      return result;
-    };
+          executeLogger.info("Completed");
+          executeLogger.debug("  -> Result: {result}", { result });
+
+          return result;
+        },
+      );
 
     return { ...props, execute };
   }
 
-  static createExecuteLogger(input: any, toolName: string): LoggerLike {
-    const parsedInput = McpTool.WithDriverId.safeParse(input);
-    const driverId = parsedInput.data?.id;
-    return bindLogger(
+  static createExecuteLogger(
+    driverId: string | undefined,
+    toolName: string,
+  ): Logger.Like {
+    return Logger.bind(
       logger,
       (message) => `${driverId || "global"}/${toolName}(): ${message}`,
     );
