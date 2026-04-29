@@ -20,12 +20,6 @@ export default defineConfig({
             ? ["tests/system/setup.appium.ts"]
             : [],
           fileParallelism: !process.env.ALUMNIUM_DRIVER?.startsWith("appium"),
-          tags: [
-            {
-              name: "cache",
-              description: "Minimal tests to verify Alumnium cache.",
-            },
-          ],
         },
       },
     ],
