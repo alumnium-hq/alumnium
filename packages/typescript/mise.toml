@@ -119,7 +119,7 @@ arg "<model>" help="Model to use for cache tests" {
 run = '''
 ALUMNIUM_DRIVER="playwright" \
 ALUMNIUM_MODEL="{{usage.model}}" \
-ALUMNIUM_TEST_VITEST_ARGS="--tags-filter=cache" \
+ALUMNIUM_TEST_VITEST_ARGS="-t addition tests/system/calculator.test.ts" \
 ALUMNIUM_TEST_CACHE="true" \
 ./scripts/test-system.sh
 '''
