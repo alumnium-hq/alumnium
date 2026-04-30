@@ -135,10 +135,12 @@ export class NativeClient extends Client {
     };
   }
 
-  @span("client.retrieve", (props) => ({
-    "client.kind": "native",
-    "client.retrieve.args.has_screenshot": !!props.screenshot,
-  }))
+  @span("client.retrieve", function (props) {
+    return {
+      ...spanAttrs.call(this),
+      "client.retrieve.args.has_screenshot": !!props.screenshot,
+    };
+  })
   async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
     const { statement, accessibilityTree, title, url, app, screenshot } = props;
 
@@ -245,5 +247,6 @@ export class NativeClient extends Client {
 function spanAttrs(this: NativeClient): Tracer.SpansClientAttrsBase {
   return {
     "client.kind": "native",
+    "session.id": this.session.sessionId,
   };
 }

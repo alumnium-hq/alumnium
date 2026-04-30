@@ -7,6 +7,7 @@
 
 import type { AppId } from "../AppId.ts";
 import type { ElementRef } from "../server/serverSchema.ts";
+import type { SessionId } from "../server/session/SessionId.ts";
 import type { ToolCall } from "../tools/BaseTool.ts";
 
 export interface SessionRequest {
@@ -19,7 +20,7 @@ export interface SessionRequest {
 }
 
 export interface SessionResponse {
-  session_id: string;
+  session_id: SessionId;
   model: string;
   platform: "chromium" | "uiautomator2" | "xcuitest";
 }
