@@ -86,8 +86,12 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   llm: BaseChatModel;
   toolNames: string[];
   chain!: Runnable<PlannerAgent.ChainInput, PlannerAgent.ChainOutput>;
-  #baseExamples = "";
-  #extraExamples = "";
+  // TODO: There's a bug in Bun that results in `#baseExamples` compiled to
+  // `__privateGet(this, _baseExamples)` which causes a runtime error.
+  // Figure out a solution to use private fields without breaking Bun
+  // compatibility.
+  private baseExamples = "";
+  private extraExamples = "";
 
   constructor(llmContext: LlmContext, llm: BaseChatModel, toolNames: string[]) {
     super(llmContext);
@@ -103,12 +107,12 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     );
 
     if (toolNames.includes(NavigateToUrlTool.name)) {
-      this.#baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
+      this.baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
     }
     if (toolNames.includes(UploadTool.name)) {
-      this.#baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
+      this.baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
     }
-    this.#extraExamples = this.#baseExamples;
+    this.extraExamples = this.baseExamples;
 
     this.#generateChain();
   }
@@ -119,7 +123,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
         "system",
         pythonicFormat(this.prompts.system, {
           tools: this.toolNames.join(", "),
-          extra_examples: this.#extraExamples,
+          extra_examples: this.extraExamples,
         }),
       ],
       ["human", this.prompts["user"]],
@@ -131,7 +135,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   }
 
   clearExamples(): void {
-    this.#extraExamples = this.#baseExamples;
+    this.extraExamples = this.baseExamples;
     this.#generateChain();
     logger.info("Examples cleared.");
   }
@@ -141,7 +145,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     logger.debug(`  -> Goal: ${goal}`);
     logger.debug(`  -> Actions: ${actions.join(", ")}`);
 
-    this.#extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
+    this.extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
     this.#generateChain();
 
     logger.info("Example added.");
