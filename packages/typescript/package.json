@@ -90,13 +90,15 @@
     "zod": "^4.4.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.29.0",
     "@elysiajs/cors": "^1.4.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "@rolldown/plugin-babel": "^0.2.3",
     "@smithy/types": "^4.13.0",
     "@types/bun": "^1.3.9",
     "@types/selenium-webdriver": "^4.35.5",
-    "@vitest/coverage-v8": "^4.1.2",
-    "@vitest/ui": "^4.1.2",
+    "@vitest/coverage-v8": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
     "@wdio/globals": "^9.23.0",
     "elysia": "^1.4.26",
     "picocolors": "^1.1.1",
@@ -104,7 +106,7 @@
     "smol-toml": "^1.6.1",
     "ts-deepmerge": "^7.0.3",
     "typescript": "^6.0.3",
-    "vite": "7.3.1",
-    "vitest": "4.0.18"
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5"
   }
 }
