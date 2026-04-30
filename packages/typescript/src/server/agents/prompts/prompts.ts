@@ -132,6 +132,10 @@ export function agentClassNameToPromptsAgentKind(
 ): Agent.Kind {
   // Convert CamelCase to snake_case (e.g., ChangesAnalyzer -> changes_analyzer)
   const kind = className
+    // TODO: Older Vitest/Vite versions put _ in front of the name for some
+    // reason. For better compatibility use statically defined string instead of
+    // deriving from class name, and remove this workaround.
+    .replace(/^_+/, "")
     .replace(/Agent$/, "")
     .replace(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/g, "-")
     .toLowerCase();
