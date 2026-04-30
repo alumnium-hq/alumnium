@@ -134,11 +134,36 @@ export async function createSeleniumDriver(
     chromeOptions.addArguments("--headless=new");
   }
 
-  // Apply all capabilities to options
+  // Apply all capabilities to options.
+  //
+  // `goog:chromeOptions` is special-cased: setting it via `chromeOptions.set(...)`
+  // would replace the entire dict at that capability key, losing the built-in
+  // args/excludeSwitches set above and de-syncing the internal `options_` cache
+  // that `addArguments`/`addExtensions`/`setBinaryPath` mutate. Translate caller-
+  // supplied `args`/`extensions`/`binary` to the proper helpers so they merge
+  // cleanly with built-in state and actually reach the spawned browser.
   for (const [key, value] of Object.entries(capabilities)) {
-    if (key !== "platformName") {
-      chromeOptions.set(key, value);
+    if (key === "platformName") {
+      continue;
     }
+    if (key === "goog:chromeOptions" && value && typeof value === "object") {
+      const chromeOpts = value as {
+        args?: string[];
+        extensions?: (string | Buffer)[];
+        binary?: string;
+      };
+      if (chromeOpts.args?.length) {
+        chromeOptions.addArguments(...chromeOpts.args);
+      }
+      if (chromeOpts.extensions?.length) {
+        chromeOptions.addExtensions(...chromeOpts.extensions);
+      }
+      if (chromeOpts.binary) {
+        chromeOptions.setBinaryPath(chromeOpts.binary);
+      }
+      continue;
+    }
+    chromeOptions.set(key, value);
   }
 
   // Use remote driver if serverUrl provided, otherwise local Chrome
