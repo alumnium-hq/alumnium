@@ -30,7 +30,11 @@ interface CDPNode {
 
 export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   #cdpResponse: Record<string, unknown>;
-  #nextRawId: number = 0;
+  // TODO: There's a bug in Bun that results in `#nextRawId` compiled to
+  // `__privateGet(this, _nextRawId)++;` which causes a runtime error.
+  // Figure out a solution to use private fields without breaking Bun
+  // compatibility.
+  private nextRawId: number = 0;
   #raw: string | null = null;
   #frameMap: Record<number, object> = {}; // raw_id -> Frame object for iframe support
   #frameChainMap: Record<number, number[]> = {}; // raw_id -> frame chain (list of iframe backendNodeIds)
@@ -119,17 +123,17 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     const elem = new Element(role, {});
 
     // Add our own sequential raw_id attribute
-    this.#nextRawId++;
-    elem.attribs["raw_id"] = String(this.#nextRawId);
+    this.nextRawId++;
+    elem.attribs["raw_id"] = String(this.nextRawId);
 
     // Store frame reference if present (for iframe support)
     if ("_frame" in node && node._frame) {
-      this.#frameMap[this.#nextRawId] = node._frame;
+      this.#frameMap[this.nextRawId] = node._frame;
     }
 
     // Store frame chain if present (for Selenium nested frame switching)
     if ("_frame_chain" in node && node._frame_chain) {
-      this.#frameChainMap[this.#nextRawId] = node._frame_chain;
+      this.#frameChainMap[this.nextRawId] = node._frame_chain;
     }
 
     // Add all node attributes as XML attributes
