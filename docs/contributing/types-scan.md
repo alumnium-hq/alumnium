@@ -311,7 +311,7 @@ It will result in such a schema:
 
 ```ts
 export const Message = z.object({
-  data: z.unknown()
+  data: z.unknown(),
 });
 ```
 
@@ -408,11 +408,11 @@ It will result in such a schema:
 
 ```ts
 export const MessageData = z.object({
-  type: z.union([z.literal("text"), z.string()])
+  type: z.union([z.literal("text"), z.string()]),
 });
 
 export const Message = z.object({
-  data: MessageData
+  data: MessageData,
 });
 ```
 

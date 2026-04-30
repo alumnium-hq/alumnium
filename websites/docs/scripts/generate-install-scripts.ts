@@ -7,15 +7,23 @@ const GITHUB_API = "https://api.github.com";
 const SCRIPTS_DIR = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(SCRIPTS_DIR, "..", "public");
 
-const UNIX_PLATFORMS = ["darwin-arm64", "darwin-x64", "linux-arm64", "linux-x64"] as const;
+const UNIX_PLATFORMS = [
+  "darwin-arm64",
+  "darwin-x64",
+  "linux-arm64",
+  "linux-x64",
+] as const;
 const WIN_PLATFORMS = ["windows-arm64", "windows-x64"] as const;
 
 async function fetchGitHub(path: string): Promise<Response> {
   const token = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN;
-  const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+  };
   if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(`${GITHUB_API}${path}`, { headers });
-  if (!res.ok) throw new Error(`GitHub API ${path} → ${res.status} ${res.statusText}`);
+  if (!res.ok)
+    throw new Error(`GitHub API ${path} → ${res.status} ${res.statusText}`);
   return res;
 }
 
@@ -24,7 +32,9 @@ type Release = { tag_name: string; assets: ReleaseAsset[] };
 
 async function fetchRelease(): Promise<Release> {
   const version = process.argv[2] ?? process.env.ALUMNIUM_VERSION;
-  const path = version ? `/repos/${REPO}/releases/tags/${version}` : `/repos/${REPO}/releases/latest`;
+  const path = version
+    ? `/repos/${REPO}/releases/tags/${version}`
+    : `/repos/${REPO}/releases/latest`;
   const res = await fetchGitHub(path);
   return res.json() as Promise<Release>;
 }
@@ -35,7 +45,9 @@ function binaryName(version: string, platform: string): string {
 }
 
 function generateChecksums(release: Release): Record<string, string> {
-  const assetMap = Object.fromEntries(release.assets.map(({ name, digest }) => [name, digest]));
+  const assetMap = Object.fromEntries(
+    release.assets.map(({ name, digest }) => [name, digest]),
+  );
 
   const checksums: Record<string, string> = {};
   for (const platform of [...UNIX_PLATFORMS, ...WIN_PLATFORMS]) {
@@ -74,8 +86,14 @@ const vars = {
   CHECKSUM_windows_arm64: checksums["windows-arm64"],
 };
 
-writeFileSync(join(PUBLIC_DIR, "install.sh"), renderTemplate("install.sh.tpl", vars));
+writeFileSync(
+  join(PUBLIC_DIR, "install.sh"),
+  renderTemplate("install.sh.tpl", vars),
+);
 console.log("Written: public/install.sh");
 
-writeFileSync(join(PUBLIC_DIR, "install.ps1"), renderTemplate("install.ps1.tpl", vars));
+writeFileSync(
+  join(PUBLIC_DIR, "install.ps1"),
+  renderTemplate("install.ps1.tpl", vars),
+);
 console.log("Written: public/install.ps1");

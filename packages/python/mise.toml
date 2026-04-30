@@ -46,10 +46,10 @@ run = "ALUMNIUM_DRIVER={{usage.driver}} ./scripts/test-system.sh"
 
 [tasks."test/system:all"]
 run = [
-	{ task = "test/system:selenium" },
-	{ task = "test/system:playwright" },
-	{ task = "test/system:appium-ios" },
-	{ task = "test/system:appium-android" },
+  { task = "test/system:selenium" },
+  { task = "test/system:playwright" },
+  { task = "test/system:appium-ios" },
+  { task = "test/system:appium-android" },
 ]
 
 [tasks."test/system:selenium"]

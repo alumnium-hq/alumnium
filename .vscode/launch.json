@@ -6,7 +6,7 @@
       "name": "server#dev",
       "program": "src/cli/bin.ts",
       "args": ["server"],
-      "cwd": "${workspaceFolder}/packages/typescript",
+      "cwd": "${workspaceFolder}/packages/typescript"
     },
     {
       "type": "bun",
@@ -15,7 +15,7 @@
       "program": "src/cli/bin.ts",
       "args": ["server"],
       "cwd": "${workspaceFolder}/packages/typescript",
-      "stopOnEntry": true,
-    },
-  ],
+      "stopOnEntry": true
+    }
+  ]
 }

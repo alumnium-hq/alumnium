@@ -1,14 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>Slider Test Page</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Slider Test Page</h1>
 
     <label for="slider">Value: <span id="value">50</span></label>
-    <br>
-    <input type="range" id="slider" min="0" max="100" value="50"
-           oninput="document.getElementById('value').textContent = this.value">
-</body>
+    <br />
+    <input
+      type="range"
+      id="slider"
+      min="0"
+      max="100"
+      value="50"
+      oninput="document.getElementById('value').textContent = this.value"
+    />
+  </body>
 </html>

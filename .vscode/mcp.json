@@ -12,8 +12,8 @@
         "ALUMNIUM_MODEL": "${env:ALUMNIUM_MODEL}",
         "ALUMNIUM_PLANNER": "${env:ALUMNIUM_PLANNER}",
         "ALUMNIUM_PLAYWRIGHT_HEADLESS": "${env:ALUMNIUM_PLAYWRIGHT_HEADLESS}",
-        "AZURE_OPENAI_API_VERSION": "${env:AZURE_OPENAI_API_VERSION}",
-      },
-    },
-  },
+        "AZURE_OPENAI_API_VERSION": "${env:AZURE_OPENAI_API_VERSION}"
+      }
+    }
+  }
 }
