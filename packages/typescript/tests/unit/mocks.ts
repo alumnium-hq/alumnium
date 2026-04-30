@@ -45,7 +45,7 @@ export class MockDir {
     const walk = async (current: string): Promise<void> => {
       const entries = await fs.readdir(current, { withFileTypes: true });
       await Promise.all(
-        entries.map((entry) => {
+        entries.map(async (entry) => {
           const filePath = safePathJoin(current, entry.name);
           if (entry.isDirectory()) {
             return walk(filePath);

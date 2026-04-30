@@ -791,7 +791,7 @@ async function cleanUpMatchingInDir(patterns: unknown[], dir: string) {
   await $`mkdir -p ${dir}`;
   await Promise.all(
     patterns.map(
-      (pattern) =>
+      async (pattern) =>
         typeof pattern === "string" &&
         $`find "${dir}" -maxdepth 1 -type f -name '${pattern}' -exec rm -f {} +`,
     ),

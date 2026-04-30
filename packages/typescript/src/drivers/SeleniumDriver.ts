@@ -223,7 +223,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.click", spanAttrs) async click(id: number): Promise<void> {
-    this.#autoswitchToNewTab(async () => {
+    return this.#autoswitchToNewTab(async () => {
       const element = await this.findElement(id);
       try {
         const actions = this.driver.actions({ async: true });

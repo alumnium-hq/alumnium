@@ -142,7 +142,7 @@ function installResolveHook(paths: ExtractedEmbeddedDependencies) {
   if (resolveHookInstalled) return;
 
   const moduleWithResolveFilename = Module as typeof Module & {
-    _resolveFilename(...args: unknown[]): string;
+    _resolveFilename(this: void, ...args: unknown[]): string;
   };
 
   const resolveFilename = moduleWithResolveFilename._resolveFilename;

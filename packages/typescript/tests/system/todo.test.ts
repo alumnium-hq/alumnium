@@ -7,16 +7,18 @@ describe("To Do application", () => {
       const result = await setup(options);
       const { al } = result;
 
-      al.learn('create a new task "this is Al"', [
-        'type "this is Al" in textbox "what needs to be done"',
-        'press key "Enter"',
-      ]);
-      al.learn('mark the "this is Al" task as completed', [
-        'click checkbox near the "this is Al" task',
-      ]);
-      al.learn('delete the "this is Al" task', [
-        'hover the "this is Al" task',
-        'click button "x" near the "this is Al" task',
+      await Promise.all([
+        al.learn('create a new task "this is Al"', [
+          'type "this is Al" in textbox "what needs to be done"',
+          'press key "Enter"',
+        ]),
+        al.learn('mark the "this is Al" task as completed', [
+          'click checkbox near the "this is Al" task',
+        ]),
+        al.learn('delete the "this is Al" task', [
+          'hover the "this is Al" task',
+          'click button "x" near the "this is Al" task',
+        ]),
       ]);
 
       return result;
