@@ -1,6 +1,24 @@
+// @ts-check
+
+/// <reference lib="dom" />
+
 (() => {
+  /**
+   * @typedef {Element | HTMLAnchorElement | HTMLMediaElement | HTMLLinkElement | HTMLIFrameElement} ResourceElement
+   */
+
+  /**
+   * @typedef {Object} WaitState
+   * @property {number} pendingRequests
+   * @property {Set<string>} pendingUrls
+   * @property {Set<ResourceElement>} resources
+   * @property {number} activeAt
+   * @property {boolean} initialLoad
+   * @property {boolean} mutationIdle
+   * @property {ReturnType<typeof setTimeout> | null} mutationDebounceTimer
+   */
   const symbol = Symbol.for("alumnium");
-  if (window[symbol]) return;
+  if (/** @type {any} */ (window)[symbol]) return;
 
   const resourceTags = [
     "img",
@@ -12,6 +30,7 @@
     // "link" should be tracked only when rel="stylesheet" and "href" is set
   ];
 
+  /** @type {WaitState} */
   const state = {
     pendingRequests: 0,
     pendingUrls: new Set(),
@@ -25,6 +44,10 @@
   // Logging settings - can be enabled via options
   let logEnabled = false;
 
+  /**
+   * @param {string} message
+   * @param {unknown=} data
+   */
   function log(message, data) {
     if (logEnabled) {
       const dataStr = data ? " " + JSON.stringify(data) : "";
@@ -42,11 +65,23 @@
   hookXHR();
   hookFetch();
 
-  window[symbol] = {
+  /** @type {any} */ (window)[symbol] = {
     waitForStability,
     state,
   };
 
+  /**
+   * @typedef {Object} WaitForStabilityOptions
+   * @property {number=} idle
+   * @property {number=} timeout
+   * @property {boolean=} log
+   */
+
+  /**
+   *
+   * @param {WaitForStabilityOptions?} options
+   * @returns {Promise<void>}
+   */
   function waitForStability(options) {
     const idle = options?.idle ?? 500;
     const timeout = options?.timeout ?? 10000;
@@ -77,7 +112,8 @@
         if (logEnabled && now - lastLogged >= 1000) {
           const resourceInfo = Array.from(state.resources).map((el) => {
             const tag = el.tagName?.toLowerCase() || "unknown";
-            const src = el.src || el.href || "";
+            const src =
+              ("src" in el && el.src) || ("href" in el && el.href) || "";
             return `${tag}:${src.slice(0, 60)}`;
           });
           const pendingUrlsInfo = Array.from(state.pendingUrls).map((url) =>
@@ -106,7 +142,7 @@
           isIdle
         ) {
           log("page stable", { elapsed: `${elapsed}ms` });
-          return resolve();
+          return resolve(void 0);
         }
 
         if (now - startTime >= timeout) {
@@ -115,7 +151,8 @@
           );
           const resourceInfo = Array.from(state.resources).map((el) => {
             const tag = el.tagName?.toLowerCase() || "unknown";
-            const src = el.src || el.href || "";
+            const src =
+              ("src" in el && el.src) || ("href" in el && el.href) || "";
             return `${tag}:${src.slice(0, 100)}`;
           });
 
@@ -143,22 +180,26 @@
 
   //#region Resources
 
+  /**
+   * @param {ResourceElement} el
+   */
   function trackResource(el) {
     const tag = el.tagName.toLowerCase();
-    const src = el.src || el.href || "";
+    const src = ("src" in el && el.src) || ("href" in el && el.href) || "";
 
     if ((tag === "video" || tag === "audio") && !src) {
       return;
     }
 
     let isLoaded =
-      el.loading === "lazy" || // lazy loading
-      el.complete || // img
-      el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA || // media
-      (tag === "link" && el.sheet); // CSS
+      ("loading" in el && el.loading === "lazy") || // lazy loading
+      ("complete" in el && !!el.complete) || // img
+      ("readyState" in el &&
+        el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) || // media
+      (tag === "link" && "sheet" in el && !!el.sheet); // CSS
 
     if (tag === "iframe") {
-      const doc = el.contentDocument;
+      const doc = "contentDocument" in el && el.contentDocument;
       if (doc) {
         isLoaded = doc.readyState === "complete";
       } else {
@@ -221,13 +262,17 @@
       // Track new resources
       for (const mutation of mutationList) {
         for (const node of mutation.addedNodes) {
-          if (node.nodeType !== Node.ELEMENT_NODE) continue;
+          if (!(node instanceof Element)) continue;
           const tag = node.tagName.toLowerCase();
           const isResource =
             resourceTags.includes(tag) ||
-            (tag === "script" && node.src) ||
-            (tag === "iframe" && node.src) ||
-            (tag === "link" && node.rel === "stylesheet" && node.href);
+            (tag === "script" && "src" in node && !!node.src) ||
+            (tag === "iframe" && "src" in node && !!node.src) ||
+            (tag === "link" &&
+              "rel" in node &&
+              node.rel === "stylesheet" &&
+              "href" in node &&
+              !!node.href);
           if (isResource) trackResource(node);
         }
       }
@@ -281,11 +326,21 @@
     // oxlint-disable-next-line typescript/unbound-method
     const nativeSend = XMLHttpRequest.prototype.send;
 
+    /**
+     * @typedef {{ _alumniumUrl?: string }} XhrExtra
+     */
+
+    /**
+     * @this {XMLHttpRequest & XhrExtra}
+     * @param {string} method
+     * @param {string | URL} url
+     * @param {...any} rest
+     */
     XMLHttpRequest.prototype.open = function (method, url, ...rest) {
       this._alumniumUrl = String(url).slice(0, 200);
       this.addEventListener("loadend", () => {
         state.pendingRequests--;
-        state.pendingUrls.delete(this._alumniumUrl);
+        state.pendingUrls.delete(this._alumniumUrl || "");
         log("XHR complete", {
           url: this._alumniumUrl,
           pending: state.pendingRequests,
@@ -293,27 +348,42 @@
         updateActiveAt();
       });
 
-      return nativeOpen.call(this, method, url, ...rest);
+      // @ts-expect-error -- It is tricky to type
+      return nativeOpen(method, url, ...rest);
     };
 
-    XMLHttpRequest.prototype.send = function (...args) {
+    /**
+     * @this  {XMLHttpRequest & XhrExtra}
+     * @param {Document | XMLHttpRequestBodyInit | null} body
+     */
+    XMLHttpRequest.prototype.send = function (body) {
       state.pendingRequests++;
-      state.pendingUrls.add(this._alumniumUrl);
+      state.pendingUrls.add(this._alumniumUrl || "");
       log("XHR start", {
         url: this._alumniumUrl,
         pending: state.pendingRequests,
       });
       updateActiveAt();
 
-      return nativeSend.apply(this, args);
+      return nativeSend.call(this, body);
     };
   }
 
   function hookFetch() {
     const nativeFetch = window.fetch;
 
+    /**
+     * @param {RequestInfo | URL} input
+     * @returns {string}
+     */
+    function getFetchUrl(input) {
+      if (typeof input === "string") return input;
+      if (input instanceof URL) return input.href;
+      return input.url;
+    }
+
     window.fetch = async function (input, ...args) {
-      const url = String(input?.url || input).slice(0, 200);
+      const url = getFetchUrl(input).slice(0, 200);
       state.pendingRequests++;
       state.pendingUrls.add(url);
       log("fetch start", { url, pending: state.pendingRequests });
