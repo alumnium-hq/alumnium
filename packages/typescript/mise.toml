@@ -109,6 +109,25 @@ run = [{ task = "test/system appium-ios" }]
 [tasks."test/system:appium-android"]
 run = [{ task = "test/system appium-android" }]
 
+[tasks."test/waiter"]
+usage = '''
+arg "<driver>" help="Driver to use for waiter tests" {
+  choices "selenium" "playwright"
+  default "selenium"
+}
+'''
+run = '''
+ALUMNIUM_DRIVER={{usage.driver}} \
+ALUMNIUM_TEST_VITEST_ARGS="tests/system/waiter.test.ts" \
+./scripts/test-system.sh
+'''
+
+[tasks."test/waiter:selenium"]
+run = [{ task = "test/waiter selenium" }]
+
+[tasks."test/waiter:playwright"]
+run = [{ task = "test/waiter playwright" }]
+
 [tasks."test/cache"]
 description = "Run cache tests checking if Alumnium cache correctly generated for given model. It indirectly verified LangChain Zod schemas parsing."
 usage = '''
