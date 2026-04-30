@@ -1,8 +1,11 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 import { Xml } from "../Xml.ts";
 import type { AccessibilityElement } from "./AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
+
+const { tracer } = Telemetry.get(import.meta.url);
 
 interface CDPNode {
   nodeId?: string | number;
@@ -51,56 +54,62 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
 
   /** Convert CDP response to raw XML format preserving all data. */
   toStr(): string {
-    if (this.#raw !== null) {
-      return this.#raw;
-    }
-
-    const nodes = (this.#cdpResponse.nodes as CDPNode[] | undefined) ?? [];
-    if (nodes.length === 0) {
-      this.#raw = "";
-      return this.#raw;
-    }
-
-    // Create a lookup table for nodes by their ID
-    const nodeLookup: Record<string, CDPNode> = {};
-    for (const node of nodes) {
-      if (node.nodeId !== undefined) {
-        nodeLookup[String(node.nodeId)] = node;
-      }
-    }
-
-    // Build mapping: backendDOMNodeId -> list of iframe child root nodes
-    // This allows us to inline iframe content inside their parent <Iframe> elements
-    const iframeChildren: Record<number, CDPNode[]> = {};
-    const trueRoots: CDPNode[] = [];
-
-    for (const node of nodes) {
-      if (!node.parentId) {
-        const parentIframeId = node._parent_iframe_backend_node_id;
-        if (parentIframeId) {
-          iframeChildren[parentIframeId] ??= [];
-          iframeChildren[parentIframeId].push(node);
-        } else {
-          trueRoots.push(node);
+    return tracer.span(
+      "driver.tree.to_str",
+      { "driver.tree.platform": "chromium" },
+      () => {
+        if (this.#raw !== null) {
+          return this.#raw;
         }
-      }
-    }
 
-    // Build tree structure and convert to XML (only from true roots)
-    const rootNodes: Element[] = [];
-    for (const node of trueRoots) {
-      const xmlNode = this.#nodeToXml(node, nodeLookup, iframeChildren);
-      rootNodes.push(xmlNode);
-    }
+        const nodes = (this.#cdpResponse.nodes as CDPNode[] | undefined) ?? [];
+        if (nodes.length === 0) {
+          this.#raw = "";
+          return this.#raw;
+        }
 
-    // Combine all root nodes into a single XML string
-    let xmlString = "";
-    for (const root of rootNodes) {
-      xmlString += Xml.format([root]);
-    }
+        // Create a lookup table for nodes by their ID
+        const nodeLookup: Record<string, CDPNode> = {};
+        for (const node of nodes) {
+          if (node.nodeId !== undefined) {
+            nodeLookup[String(node.nodeId)] = node;
+          }
+        }
 
-    this.#raw = xmlString;
-    return this.#raw;
+        // Build mapping: backendDOMNodeId -> list of iframe child root nodes
+        // This allows us to inline iframe content inside their parent <Iframe> elements
+        const iframeChildren: Record<number, CDPNode[]> = {};
+        const trueRoots: CDPNode[] = [];
+
+        for (const node of nodes) {
+          if (!node.parentId) {
+            const parentIframeId = node._parent_iframe_backend_node_id;
+            if (parentIframeId) {
+              iframeChildren[parentIframeId] ??= [];
+              iframeChildren[parentIframeId].push(node);
+            } else {
+              trueRoots.push(node);
+            }
+          }
+        }
+
+        // Build tree structure and convert to XML (only from true roots)
+        const rootNodes: Element[] = [];
+        for (const node of trueRoots) {
+          const xmlNode = this.#nodeToXml(node, nodeLookup, iframeChildren);
+          rootNodes.push(xmlNode);
+        }
+
+        // Combine all root nodes into a single XML string
+        let xmlString = "";
+        for (const root of rootNodes) {
+          xmlString += Xml.format([root]);
+        }
+
+        this.#raw = xmlString;
+        return this.#raw;
+      },
+    );
   }
 
   /** Convert a CDP node to XML element, recursively processing children. */
@@ -227,110 +236,128 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
    * @returns AccessibilityElement with backend_node_id set
    */
   elementById(rawId: number): AccessibilityElement {
-    // Get raw XML with raw_id attributes
-    const rawXml = this.toStr();
-    const root = Xml.parseRoot(`<root>${rawXml}</root>`);
+    return tracer.span(
+      "driver.tree.element_by_id",
+      { "driver.tree.platform": "chromium" },
+      () => {
+        // Get raw XML with raw_id attributes
+        const rawXml = this.toStr();
+        const root = Xml.parseRoot(`<root>${rawXml}</root>`);
 
-    // Find element with matching raw_id
-    const findElement = (elem: Element, targetId: string): Element | null => {
-      if (elem.attribs["raw_id"] === targetId) {
-        return elem;
-      }
-      for (const child of Array.from(elem.children)) {
-        const childEl = Xml.nodeAsTag(child);
-        if (!childEl) {
-          continue;
+        // Find element with matching raw_id
+        const findElement = (
+          elem: Element,
+          targetId: string,
+        ): Element | null => {
+          if (elem.attribs["raw_id"] === targetId) {
+            return elem;
+          }
+          for (const child of Array.from(elem.children)) {
+            const childEl = Xml.nodeAsTag(child);
+            if (!childEl) {
+              continue;
+            }
+            const result = findElement(childEl, targetId);
+            if (result !== null) {
+              return result;
+            }
+          }
+          return null;
+        };
+
+        const element = findElement(root, String(rawId));
+        if (element === null) {
+          throw new Error(`No element with raw_id=${rawId} found`);
         }
-        const result = findElement(childEl, targetId);
-        if (result !== null) {
-          return result;
+
+        // Check if this is a Playwright node (cross-origin iframe element)
+        if (element.attribs["_playwright_node"] === "true") {
+          // Check if it's a synthetic frame node
+          const frameUrl = element.attribs["_frame_url"];
+          if (frameUrl) {
+            // Synthetic iframe node - no locator info, use frame reference
+            return {
+              type: element.tagName,
+              frame: this.#frameMap[rawId],
+              locatorInfo: { _synthetic_frame: true, _frame_url: frameUrl },
+            };
+          }
+
+          // Regular Playwright node with locator info
+          const locatorInfoStr = element.attribs["_locator_info"];
+          const locatorInfo = locatorInfoStr
+            ? (JSON.parse(locatorInfoStr) as Record<string, unknown>)
+            : {};
+
+          return {
+            type: element.tagName,
+            frame: this.#frameMap[rawId],
+            locatorInfo,
+          };
         }
-      }
-      return null;
-    };
 
-    const element = findElement(root, String(rawId));
-    if (element === null) {
-      throw new Error(`No element with raw_id=${rawId} found`);
-    }
+        // Extract backendDOMNodeId for Chromium CDP nodes
+        const backendNodeIdStr = element.attribs["backendDOMNodeId"];
+        if (backendNodeIdStr === undefined) {
+          throw new Error(
+            `Element with raw_id=${rawId} has no backendDOMNodeId attribute`,
+          );
+        }
 
-    // Check if this is a Playwright node (cross-origin iframe element)
-    if (element.attribs["_playwright_node"] === "true") {
-      // Check if it's a synthetic frame node
-      const frameUrl = element.attribs["_frame_url"];
-      if (frameUrl) {
-        // Synthetic iframe node - no locator info, use frame reference
         return {
           type: element.tagName,
+          backendNodeId: parseInt(backendNodeIdStr),
           frame: this.#frameMap[rawId],
-          locatorInfo: { _synthetic_frame: true, _frame_url: frameUrl },
+          frameChain: this.#frameChainMap[rawId],
         };
-      }
-
-      // Regular Playwright node with locator info
-      const locatorInfoStr = element.attribs["_locator_info"];
-      const locatorInfo = locatorInfoStr
-        ? (JSON.parse(locatorInfoStr) as Record<string, unknown>)
-        : {};
-
-      return {
-        type: element.tagName,
-        frame: this.#frameMap[rawId],
-        locatorInfo,
-      };
-    }
-
-    // Extract backendDOMNodeId for Chromium CDP nodes
-    const backendNodeIdStr = element.attribs["backendDOMNodeId"];
-    if (backendNodeIdStr === undefined) {
-      throw new Error(
-        `Element with raw_id=${rawId} has no backendDOMNodeId attribute`,
-      );
-    }
-
-    return {
-      type: element.tagName,
-      backendNodeId: parseInt(backendNodeIdStr),
-      frame: this.#frameMap[rawId],
-      frameChain: this.#frameChainMap[rawId],
-    };
+      },
+    );
   }
 
   /** Scope the tree to a smaller subtree identified by raw_id. */
   scopeToArea(rawId: number): ChromiumAccessibilityTree {
-    const rawXml = this.toStr();
+    return tracer.span(
+      "driver.tree.scope_to_area",
+      { "driver.tree.platform": "chromium" },
+      () => {
+        const rawXml = this.toStr();
 
-    // Parse the XML
-    const root = Xml.parseRoot(`<root>${rawXml}</root>`);
+        // Parse the XML
+        const root = Xml.parseRoot(`<root>${rawXml}</root>`);
 
-    // Find the element with the matching raw_id
-    const findElement = (elem: Element, targetId: string): Element | null => {
-      if (elem.attribs["raw_id"] === targetId) {
-        return elem;
-      }
-      for (const child of Array.from(elem.children)) {
-        const childEl = Xml.nodeAsTag(child);
-        if (!childEl) {
-          continue;
+        // Find the element with the matching raw_id
+        const findElement = (
+          elem: Element,
+          targetId: string,
+        ): Element | null => {
+          if (elem.attribs["raw_id"] === targetId) {
+            return elem;
+          }
+          for (const child of Array.from(elem.children)) {
+            const childEl = Xml.nodeAsTag(child);
+            if (!childEl) {
+              continue;
+            }
+            const result = findElement(childEl, targetId);
+            if (result !== null) {
+              return result;
+            }
+          }
+          return null;
+        };
+
+        const targetElem = findElement(root, String(rawId));
+
+        if (targetElem === null) {
+          // If not found, return original tree
+          return this;
         }
-        const result = findElement(childEl, targetId);
-        if (result !== null) {
-          return result;
-        }
-      }
-      return null;
-    };
 
-    const targetElem = findElement(root, String(rawId));
+        // Convert the scoped element back to XML string
+        const scopedXml = Xml.format([targetElem]);
 
-    if (targetElem === null) {
-      // If not found, return original tree
-      return this;
-    }
-
-    // Convert the scoped element back to XML string
-    const scopedXml = Xml.format([targetElem]);
-
-    return ChromiumAccessibilityTree.#fromXml(scopedXml, this.#frameMap);
+        return ChromiumAccessibilityTree.#fromXml(scopedXml, this.#frameMap);
+      },
+    );
   }
 }

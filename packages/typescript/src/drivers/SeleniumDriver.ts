@@ -160,41 +160,43 @@ export class SeleniumDriver extends BaseDriver {
     frameParentMap: Map<string, string>,
     parentFrameId?: string,
   ): Promise<void> {
-    const frameId = frameInfo.frame.id;
+    return tracer.span("driver.internal.build_frame_hierarchy", async () => {
+      const frameId = frameInfo.frame.id;
 
-    if (frameId !== mainFrameId) {
-      // Get the iframe element that owns this frame
-      await this.executeCdpCommand("DOM.enable", {});
-      try {
-        const ownerInfo = (await this.executeCdpCommand("DOM.getFrameOwner", {
+      if (frameId !== mainFrameId) {
+        // Get the iframe element that owns this frame
+        await this.executeCdpCommand("DOM.enable", {});
+        try {
+          const ownerInfo = (await this.executeCdpCommand("DOM.getFrameOwner", {
+            frameId,
+          })) as { backendNodeId: number };
+          frameToIframeMap.set(frameId, ownerInfo.backendNodeId);
+          logger.debug(
+            `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`,
+          );
+        } catch (error) {
+          logger.debug(
+            `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+
+        // Track parent frame
+        if (parentFrameId) {
+          frameParentMap.set(frameId, parentFrameId);
+        }
+      }
+
+      // Process children
+      for (const child of frameInfo.childFrames || []) {
+        await this.buildFrameHierarchy(
+          child,
+          mainFrameId,
+          frameToIframeMap,
+          frameParentMap,
           frameId,
-        })) as { backendNodeId: number };
-        frameToIframeMap.set(frameId, ownerInfo.backendNodeId);
-        logger.debug(
-          `Frame ${frameId.slice(0, 20)}... owned by iframe backendNodeId=${ownerInfo.backendNodeId}`,
-        );
-      } catch (error) {
-        logger.debug(
-          `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
-
-      // Track parent frame
-      if (parentFrameId) {
-        frameParentMap.set(frameId, parentFrameId);
-      }
-    }
-
-    // Process children
-    for (const child of frameInfo.childFrames || []) {
-      await this.buildFrameHierarchy(
-        child,
-        mainFrameId,
-        frameToIframeMap,
-        frameParentMap,
-        frameId,
-      );
-    }
+    });
   }
 
   private getFrameChain(
@@ -431,48 +433,52 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   private async switchToFrameChain(frameChain: number[]): Promise<void> {
-    // First switch to default content to ensure we're at the top level
-    await this.driver.switchTo().defaultContent();
+    return tracer.span("driver.internal.switch_to_frame_chain", async () => {
+      // First switch to default content to ensure we're at the top level
+      await this.driver.switchTo().defaultContent();
 
-    // Switch through each iframe in the chain
-    for (const iframeBackendNodeId of frameChain) {
-      await this.switchToSingleFrame(iframeBackendNodeId);
-    }
+      // Switch through each iframe in the chain
+      for (const iframeBackendNodeId of frameChain) {
+        await this.switchToSingleFrame(iframeBackendNodeId);
+      }
+    });
   }
 
   private async switchToSingleFrame(
     iframeBackendNodeId: number,
   ): Promise<void> {
-    // Use CDP to find and switch to the iframe
-    await this.executeCdpCommand("DOM.enable", {});
-    await this.executeCdpCommand("DOM.getFlattenedDocument", {});
+    return tracer.span("driver.internal.switch_to_single_frame", async () => {
+      // Use CDP to find and switch to the iframe
+      await this.executeCdpCommand("DOM.enable", {});
+      await this.executeCdpCommand("DOM.getFlattenedDocument", {});
 
-    const { nodeIds } = (await this.executeCdpCommand(
-      "DOM.pushNodesByBackendIdsToFrontend",
-      { backendNodeIds: [iframeBackendNodeId] },
-    )) as { nodeIds: number[] };
+      const { nodeIds } = (await this.executeCdpCommand(
+        "DOM.pushNodesByBackendIdsToFrontend",
+        { backendNodeIds: [iframeBackendNodeId] },
+      )) as { nodeIds: number[] };
 
-    const nodeId = nodeIds[0];
+      const nodeId = nodeIds[0];
 
-    await this.executeCdpCommand("DOM.setAttributeValue", {
-      nodeId,
-      name: "data-alumnium-iframe-id",
-      value: String(iframeBackendNodeId),
+      await this.executeCdpCommand("DOM.setAttributeValue", {
+        nodeId,
+        name: "data-alumnium-iframe-id",
+        value: String(iframeBackendNodeId),
+      });
+
+      const iframeElement = await this.driver.findElement(
+        By.css(`[data-alumnium-iframe-id='${iframeBackendNodeId}']`),
+      );
+
+      await this.executeCdpCommand("DOM.removeAttribute", {
+        nodeId,
+        name: "data-alumnium-iframe-id",
+      });
+
+      await this.driver.switchTo().frame(iframeElement);
+      logger.debug(
+        `Switched to iframe with backendNodeId=${iframeBackendNodeId}`,
+      );
     });
-
-    const iframeElement = await this.driver.findElement(
-      By.css(`[data-alumnium-iframe-id='${iframeBackendNodeId}']`),
-    );
-
-    await this.executeCdpCommand("DOM.removeAttribute", {
-      nodeId,
-      name: "data-alumnium-iframe-id",
-    });
-
-    await this.driver.switchTo().frame(iframeElement);
-    logger.debug(
-      `Switched to iframe with backendNodeId=${iframeBackendNodeId}`,
-    );
   }
 
   async executeScript(script: string): Promise<void> {
@@ -551,30 +557,39 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   private executeCdpCommand(cmd: string, params: object): Promise<unknown> {
-    return this.driver.sendAndGetDevToolsCommand(cmd, params);
+    return tracer.span(
+      "driver.internal.cdp_command",
+      {
+        ...this.#spanAttrs(),
+        "driver.internal.cdp_command.name": cmd,
+      },
+      () => this.driver.sendAndGetDevToolsCommand(cmd, params),
+    );
   }
 
   private async waitForPageToLoad(): Promise<void> {
-    try {
-      await this.driver.executeScript(WAITER_SCRIPT);
-      const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
-      if (error) {
-        logger.warn(`Failed to wait for page to load: ${String(error)}`);
-      }
-    } catch {
-      // Retry once on failure
+    return tracer.span("driver.internal.wait_for_page_load", async () => {
       try {
         await this.driver.executeScript(WAITER_SCRIPT);
         const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
         if (error) {
           logger.warn(`Failed to wait for page to load: ${String(error)}`);
         }
-      } catch (retryError) {
-        logger.warn(
-          `Failed to wait for page to load after retry: ${String(retryError)}`,
-        );
+      } catch {
+        // Retry once on failure
+        try {
+          await this.driver.executeScript(WAITER_SCRIPT);
+          const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
+          if (error) {
+            logger.warn(`Failed to wait for page to load: ${String(error)}`);
+          }
+        } catch (retryError) {
+          logger.warn(
+            `Failed to wait for page to load after retry: ${String(retryError)}`,
+          );
+        }
       }
-    }
+    });
   }
 
   async #autoswitchToNewTab<Result>(
@@ -584,26 +599,28 @@ export class SeleniumDriver extends BaseDriver {
       return await fn();
     }
 
-    const currentHandles = await this.driver.getAllWindowHandles();
+    return tracer.span("driver.internal.switch_to_new_tab", async () => {
+      const currentHandles = await this.driver.getAllWindowHandles();
 
-    const result = await fn();
+      const result = await fn();
 
-    const newHandles = await this.driver.getAllWindowHandles();
-    const newTabs = newHandles.filter((h) => !currentHandles.includes(h));
+      const newHandles = await this.driver.getAllWindowHandles();
+      const newTabs = newHandles.filter((h) => !currentHandles.includes(h));
 
-    if (newTabs.length) {
-      const lastNewTab = newTabs[newTabs.length - 1];
-      always(lastNewTab);
+      if (newTabs.length) {
+        const lastNewTab = newTabs[newTabs.length - 1];
+        always(lastNewTab);
 
-      if (lastNewTab !== (await this.driver.getWindowHandle())) {
-        await this.driver.switchTo().window(lastNewTab);
-        logger.debug(
-          `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
-        );
+        if (lastNewTab !== (await this.driver.getWindowHandle())) {
+          await this.driver.switchTo().window(lastNewTab);
+          logger.debug(
+            `Auto-switching to new tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
+          );
+        }
       }
-    }
 
-    return result;
+      return result;
+    });
   }
 
   #spanAttrs(): Tracer.SpansDriverAttrsBase {

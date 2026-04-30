@@ -260,6 +260,40 @@ export namespace Tracer {
     "driver.print_to_pdf": {
       Attrs: SpansDriverAttrsBase;
     };
+
+    "driver.internal.cdp_command": {
+      Attrs: SpansDriverAttrsBase & {
+        "driver.internal.cdp_command.name": string;
+      };
+    };
+
+    "driver.internal.build_frame_hierarchy": null;
+
+    "driver.internal.switch_to_frame_chain": null;
+
+    "driver.internal.switch_to_single_frame": null;
+
+    "driver.internal.wait_for_page_load": null;
+
+    "driver.internal.switch_to_new_tab": null;
+
+    "driver.tree.to_str": {
+      Attrs: {
+        "driver.tree.platform": "chromium";
+      };
+    };
+
+    "driver.tree.element_by_id": {
+      Attrs: {
+        "driver.tree.platform": "chromium";
+      };
+    };
+
+    "driver.tree.scope_to_area": {
+      Attrs: {
+        "driver.tree.platform": "chromium";
+      };
+    };
   }
 
   export interface SpansDriverAttrsBase {
