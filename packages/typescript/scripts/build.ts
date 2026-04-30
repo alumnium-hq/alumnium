@@ -177,23 +177,23 @@ const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
 
 //#region Bun plugins
 
-const loggerPathPlugin: BunPlugin = {
-  name: "logger-path-rewrite",
+const TELEMETRY_GET_RE = /(Logger|Tracer|Telemetry)\.get\(import\.meta\.url\)/g;
+
+const telemetryPathsRewritePlugin: BunPlugin = {
+  name: "telemetry-paths-rewrite",
   setup(build) {
     build.onLoad({ filter: /\.ts$/, namespace: "file" }, async (args) => {
       const input = await Bun.file(args.path).text();
 
-      if (!input.includes("getLogger(import.meta.url)")) {
-        return;
-      }
+      if (!TELEMETRY_GET_RE.test(input)) return;
 
       const relativePath = path.relative(REPO_ROOT_DIR, args.path);
 
       return {
         ...args,
         contents: input.replaceAll(
-          "getLogger(import.meta.url)",
-          `getLogger(${JSON.stringify(relativePath)})`,
+          TELEMETRY_GET_RE,
+          (_, name) => `${name}.get(${JSON.stringify(relativePath)})`,
         ),
       };
     });
@@ -321,7 +321,7 @@ async function main() {
             `,
           },
           plugins: [
-            loggerPathPlugin,
+            telemetryPathsRewritePlugin,
             wdioUtilsPatcherPlugin,
             webdriverIOPatcherPlugin,
             standaloneEmbeddedAssetPlugin,
@@ -371,7 +371,7 @@ async function main() {
           outdir: DIST_NPM_MAIN_PKG_DIR,
           sourcemap: true,
           target: "node",
-          plugins: [loggerPathPlugin],
+          plugins: [telemetryPathsRewritePlugin],
           packages: "external",
         };
 
