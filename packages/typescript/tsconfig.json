@@ -39,6 +39,7 @@
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true, // Force using override modifier in classes
+    "checkJs": true, // Allow using JSDoc to type check JavaScript files
     // Build
     "incremental": true,
     // Project references
