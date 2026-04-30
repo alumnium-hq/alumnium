@@ -29,6 +29,9 @@
     "lib": ["ESNext"],
     "types": ["bun", "@wdio/globals/types"],
     "erasableSyntaxOnly": true, // Disallow using using runtime TS features
+    // TODO: Remove and use ES decorators when Oxc gets support for them:
+    // https://github.com/oxc-project/oxc/issues/9170
+    "experimentalDecorators": true,
     // Checks
     "skipLibCheck": true,
     "strict": true,
