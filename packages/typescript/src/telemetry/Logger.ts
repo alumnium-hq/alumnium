@@ -20,6 +20,8 @@ const FILENAME = process.env.ALUMNIUM_LOG_FILENAME;
 const PATH = process.env.ALUMNIUM_LOG_PATH;
 const DEFAULT_LEVEL = process.env.ALUMNIUM_LOG_LEVEL?.toLowerCase().trim();
 const DEBUG_EXTRA_STR = process.env.ALUMNIUM_LOG_DEBUG_EXTRA;
+const BUFFER_SIZE = Number(process.env.ALUMNIUM_LOG_BUFFER_SIZE || 4096);
+const FLUSH_INTERVAL = Number(process.env.ALUMNIUM_LOG_FLUSH_INTERVAL || 500);
 
 export namespace Logger {
   //#region Schemas
@@ -200,8 +202,22 @@ export abstract class Logger {
 
     const sinks: Record<string, Sink> = {
       console: consoleSink,
-      main: this.#path ? getFileSink(this.#path) : consoleSink,
+      main: this.#path
+        ? getFileSink(this.#path, {
+            bufferSize: BUFFER_SIZE,
+            flushInterval: FLUSH_INTERVAL,
+          })
+        : consoleSink,
     };
+
+    // NOTE: Wait for flush on process exit to ensure all logs are written.
+    if (this.#path) {
+      process.on("exit", () => {
+        void new Promise((resolve) => {
+          setTimeout(resolve, FLUSH_INTERVAL + 100);
+        });
+      });
+    }
 
     if (Tracer.enabled) {
       mainSinks.push("otel");

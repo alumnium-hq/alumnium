@@ -26,6 +26,8 @@ cd "$PKG_DIR"
 export ALUMNIUM_LOG_LEVEL=debug
 export ALUMNIUM_LOG_FILENAME=test-system-$ALUMNIUM_DRIVER.log
 export ALUMNIUM_PRUNE_LOGS=true
+export ALUMNIUM_LOG_BUFFER_SIZE=0
+export ALUMNIUM_LOG_FLUSH_INTERVAL=0
 
 test_cache="false"
 if [ -n "$ALUMNIUM_TEST_CACHE" ]; then
