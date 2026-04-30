@@ -13,11 +13,8 @@ import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import type { Keys } from "./keys.ts";
-import { getLogger } from "../utils/logger.ts";
 
-const logger = getLogger(import.meta.url);
-
-const { tracer } = Telemetry.get(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
 
 export class AppiumDriver extends BaseDriver {

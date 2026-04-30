@@ -34,7 +34,10 @@ export abstract class Lchain {
     return result.data;
   }
 
-  static fromStored(stored: LchainSchema.StoredGeneration): Generation {
+  static fromStored(
+    this: void,
+    stored: LchainSchema.StoredGeneration,
+  ): Generation {
     return deserializeStoredGeneration(stored as unknown as StoredGeneration);
   }
 

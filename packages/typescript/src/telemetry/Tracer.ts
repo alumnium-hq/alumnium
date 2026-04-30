@@ -854,7 +854,10 @@ export abstract class Tracer {
               );
             };
 
-            fn.name = context.name;
+            // NOTE: Instead of directly setting the name, we define it with'
+            // Object.defineProperty to avoid compatibility issues with certain
+            // environments, i.e., Vitest.
+            Object.defineProperty(fn, "name", { value: context.name });
 
             return fn;
           },
