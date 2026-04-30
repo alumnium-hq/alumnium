@@ -1,3 +1,4 @@
 allowBuilds:
   edgedriver: true
   geckodriver: true
+  protobufjs: true
