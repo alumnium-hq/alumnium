@@ -964,6 +964,12 @@ export abstract class Tracer {
     }
   }
 
+  static async flush() {
+    const provider = this.#configure();
+    if (!provider) return;
+    return this.#flush(provider);
+  }
+
   //#endregion
 
   //#region Store

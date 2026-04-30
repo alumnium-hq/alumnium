@@ -6,9 +6,15 @@ import { chromium } from "playwright";
 import type { Locator, Page } from "playwright-core";
 import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { inject, it as vitestIt } from "vitest";
+import { afterAll, inject, it as vitestIt } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import { z } from "zod";
+import { Tracer } from "../../src/telemetry/Tracer.ts";
+
+// Make sure to flush the telemetry data after all tests are done.
+afterAll(() => {
+  return Tracer.flush();
+});
 
 export const DriverType = z
   .enum(["selenium", "playwright", "appium-ios"])
