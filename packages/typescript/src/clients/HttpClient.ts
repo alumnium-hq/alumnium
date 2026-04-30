@@ -2,6 +2,7 @@ import type { Http } from "../Http.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { ErrorResponse, HealthCheckResponse } from "../server/serverSchema.ts";
+import type { SessionId } from "../server/session/SessionId.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
@@ -42,7 +43,7 @@ export class HttpClient extends Client {
 
   #model: Model | undefined;
   #baseUrl: string;
-  #sessionIdPromise: Promise<string>;
+  #sessionIdPromise: Promise<SessionId>;
 
   constructor(props: HttpClient.Props) {
     const { baseUrl, model, ...superProps } = props;
@@ -59,23 +60,31 @@ export class HttpClient extends Client {
     this.#sessionIdPromise = this.#initSession();
   }
 
-  @span("client.get_model", spanAttrs)
+  @span("client.get_model", function () {
+    return this.spanAttrs();
+  })
   async getModel(): Promise<Model> {
     await this.#sessionIdPromise;
     return this.#model!;
   }
 
-  @span("client.get_health", spanAttrs)
+  @span("client.get_health", function () {
+    return this.spanAttrs();
+  })
   async getHealth(): Promise<HealthCheckResponse> {
     return this.#fetch<HealthCheckResponse>("GET", "/health");
   }
 
-  @span("client.quit", spanAttrs)
+  @span("client.quit", function () {
+    return this.spanAttrs();
+  })
   async quit(): Promise<void> {
     await this.#sessionFetch("DELETE", "/");
   }
 
-  @span("client.plan_actions", spanAttrs)
+  @span("client.plan_actions", function () {
+    return this.spanAttrs();
+  })
   async planActions(
     props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
@@ -88,7 +97,9 @@ export class HttpClient extends Client {
     return this.#sessionFetch<PlanResponse>("POST", "/plans", body);
   }
 
-  @span("client.add_example", spanAttrs)
+  @span("client.add_example", function () {
+    return this.spanAttrs();
+  })
   async addExample(props: Client.AddExampleProps): Promise<void> {
     const { goal, actions } = props;
     const body: AddExampleRequest = {
@@ -98,12 +109,16 @@ export class HttpClient extends Client {
     await this.#sessionFetch("POST", "/examples", body);
   }
 
-  @span("client.clear_examples", spanAttrs)
+  @span("client.clear_examples", function () {
+    return this.spanAttrs();
+  })
   async clearExamples(): Promise<void> {
     await this.#sessionFetch("DELETE", "/examples");
   }
 
-  @span("client.execute_action", spanAttrs)
+  @span("client.execute_action", function () {
+    return this.spanAttrs();
+  })
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
@@ -117,10 +132,12 @@ export class HttpClient extends Client {
     return this.#sessionFetch<StepResponse>("POST", "/steps", body);
   }
 
-  @span("client.retrieve", (props) => ({
-    "client.kind": "http",
-    "client.retrieve.args.has_screenshot": !!props.screenshot,
-  }))
+  @span("client.retrieve", async function (props) {
+    return {
+      ...(await this.spanAttrs()),
+      "client.retrieve.args.has_screenshot": !!props.screenshot,
+    };
+  })
   async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
     const { statement, accessibilityTree, title, url, app, screenshot } = props;
 
@@ -143,7 +160,9 @@ export class HttpClient extends Client {
     ];
   }
 
-  @span("client.find_area", spanAttrs)
+  @span("client.find_area", function () {
+    return this.spanAttrs();
+  })
   async findArea(props: Client.FindAreaProps): Promise<Client.FindAreaResult> {
     const { description, accessibilityTree, app } = props;
     const body: AreaRequest = {
@@ -155,7 +174,9 @@ export class HttpClient extends Client {
     return { id: data.id, explanation: data.explanation };
   }
 
-  @span("client.find_element", spanAttrs)
+  @span("client.find_element", function () {
+    return this.spanAttrs();
+  })
   async findElement(
     props: Client.FindElementProps,
   ): Promise<Client.FindElementResult | undefined> {
@@ -173,7 +194,9 @@ export class HttpClient extends Client {
     return result.elements[0];
   }
 
-  @span("client.analyze_changes", spanAttrs)
+  @span("client.analyze_changes", function () {
+    return this.spanAttrs();
+  })
   async analyzeChanges(props: Client.AnalyzeChangesProps): Promise<string> {
     const {
       beforeAccessibilityTree,
@@ -198,17 +221,23 @@ export class HttpClient extends Client {
     return result.result;
   }
 
-  @span("client.save_cache", spanAttrs)
+  @span("client.save_cache", function () {
+    return this.spanAttrs();
+  })
   async saveCache(): Promise<void> {
     await this.#sessionFetch("POST", "/caches");
   }
 
-  @span("client.discard_cache", spanAttrs)
+  @span("client.discard_cache", function () {
+    return this.spanAttrs();
+  })
   async discardCache(): Promise<void> {
     await this.#sessionFetch("DELETE", "/caches");
   }
 
-  @span("client.get_stats", spanAttrs)
+  @span("client.get_stats", function () {
+    return this.spanAttrs();
+  })
   async getStats(): Promise<LlmUsageStats> {
     return this.#sessionFetch<LlmUsageStats>("GET", "/stats");
   }
@@ -230,7 +259,7 @@ export class HttpClient extends Client {
     return fn(sessionId);
   }
 
-  async #initSession(): Promise<string> {
+  async #initSession(): Promise<SessionId> {
     const toolSchemas = convertToolsToSchemas(this.tools);
     const body: SessionRequest = {
       provider: this.#model?.provider,
@@ -320,10 +349,11 @@ export class HttpClient extends Client {
       },
     );
   }
-}
 
-function spanAttrs(this: HttpClient): Tracer.SpansClientAttrsBase {
-  return {
-    "client.kind": "http",
-  };
+  private async spanAttrs(): Promise<Tracer.SpansClientAttrsBase> {
+    return {
+      "client.kind": "http",
+      "session.id": await this.#sessionIdPromise,
+    };
+  }
 }

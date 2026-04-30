@@ -155,7 +155,7 @@ export namespace Tracer {
     };
   }
 
-  export interface SpansClientAttrsBase {
+  export interface SpansClientAttrsBase extends SpansAttrsWithSessionId {
     "client.kind": "native" | "http";
   }
 
@@ -318,7 +318,9 @@ export namespace Tracer {
     };
   }
 
-  export interface SpansSessionAttrsBase {
+  export interface SpansSessionAttrsBase extends SpansAttrsWithSessionId {}
+
+  export interface SpansAttrsWithSessionId {
     "session.id": SessionId;
   }
 
@@ -529,13 +531,33 @@ export namespace Tracer {
       spanName: SpanName,
       ...attrs: NoInfer<SpanMethodDecArgs<This, GetterArgs, SpanName>>
     ): DecMethod<This, GetterArgs>;
+
+    span<
+      SpanName extends keyof Spans,
+      GetterArgs extends unknown[] = any[],
+      This = any,
+    >(
+      this: void,
+      spanName: SpanName,
+      ...attrs: NoInfer<SpanMethodDecArgsAsync<This, GetterArgs, SpanName>>
+    ): DecMethodAsync<This, GetterArgs>;
   }
 
-  export type DecMethod<This, Args extends unknown[]> = <Return>(
+  export type DecMethod<This, Args extends unknown[]> = <Result>(
     target: object,
     propertyKey: string | symbol,
-    descriptor: TypedPropertyDescriptor<(this: This, ...args: Args) => Return>,
-  ) => void | TypedPropertyDescriptor<(this: This, ...args: Args) => Return>;
+    descriptor: TypedPropertyDescriptor<(this: This, ...args: Args) => Result>,
+  ) => void | TypedPropertyDescriptor<(this: This, ...args: Args) => Result>;
+
+  export type DecMethodAsync<This, Args extends unknown[]> = <Result>(
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: TypedPropertyDescriptor<
+      (this: This, ...args: Args) => Promise<Result>
+    >,
+  ) => void | TypedPropertyDescriptor<
+    (this: This, ...args: Args) => Promise<Result>
+  >;
 
   //#endregion
 
@@ -671,11 +693,34 @@ export namespace Tracer {
       : SpanMethodDecArgsWithAttrs<This, GetterArgs, Attrs>
     : [];
 
+  export type SpanMethodDecArgsAsync<
+    This,
+    GetterArgs extends unknown[],
+    Name extends SpanName,
+  > = Spans[Name] extends {
+    Attrs: infer Attrs;
+  }
+    ? TypeUtils.IsNever<Attrs> extends true
+      ? []
+      : SpanMethodDecArgsAsyncWithAttrs<This, GetterArgs, Attrs>
+    : [];
+
   export type SpanMethodDecArgsWithAttrs<
     This,
     GetterArgs extends unknown[],
     Attrs,
   > = [attrs: Attrs | ((this: This, ...args: GetterArgs) => Attrs)];
+
+  export type SpanMethodDecArgsAsyncWithAttrs<
+    This,
+    GetterArgs extends unknown[],
+    Attrs,
+  > = [
+    attrs:
+      | Attrs
+      | ((this: This, ...args: GetterArgs) => Attrs)
+      | ((this: This, ...args: GetterArgs) => Promise<Attrs>),
+  ];
 
   //#endregion
 
@@ -827,7 +872,9 @@ export abstract class Tracer {
       dec: (): Tracer.Dec => ({
         span: <This>(
           spanName: any,
-          ...attrsArgs: Tracer.SpanMethodDecArgs<any, any, any>
+          ...attrsArgs:
+            | Tracer.SpanMethodDecArgs<any, any, any>
+            | Tracer.SpanMethodDecArgsAsync<any, any, any>
         ) =>
           function <Result>(
             _target: object,
@@ -844,12 +891,20 @@ export abstract class Tracer {
             const fn = function (this: This, ...args: any[]): Result {
               const attrsOrGetter = attrsArgs[0];
 
-              const attrs =
+              const attrsOrPromise =
                 typeof attrsOrGetter === "function"
                   ? attrsOrGetter.call(this, ...args)
                   : attrsOrGetter;
 
-              return spanMethod(spanName, attrs || {}, () =>
+              if (attrsOrPromise instanceof Promise) {
+                return attrsOrPromise.then((resolvedAttrs) =>
+                  spanMethod(spanName, resolvedAttrs || {}, () =>
+                    value.call(this, ...args),
+                  ),
+                ) as Result;
+              }
+
+              return spanMethod(spanName, attrsOrPromise || {}, () =>
                 value.call(this, ...args),
               );
             };
