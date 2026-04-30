@@ -44,11 +44,13 @@ export class SessionManager {
    */
   createSession(props: SessionManager.CreateSessionProps): Session {
     const sessionId = props.sessionId || Session.createId();
-    return this.#createSession({ ...props, sessionId });
+    return this.createSessionInner({ ...props, sessionId });
   }
 
   @span("session.create", (props) => ({ "session.id": props.sessionId }))
-  #createSession(
+  // TODO: Rename back to `#createSessionInner` after Oxc gets support for
+  // ES decorators: https://github.com/oxc-project/oxc/issues/9170
+  private createSessionInner(
     props: TypeUtils.RequiredKeys<
       SessionManager.CreateSessionProps,
       "sessionId"

@@ -532,12 +532,10 @@ export namespace Tracer {
   }
 
   export type DecMethod<This, Args extends unknown[]> = <Return>(
-    value: (this: This, ...args: Args) => Return,
-    context: ClassMethodDecoratorContext<
-      This,
-      (this: This, ...args: Args) => Return
-    >,
-  ) => (this: This, ...args: Args) => Return;
+    target: object,
+    propertyKey: string | symbol,
+    descriptor: TypedPropertyDescriptor<(this: This, ...args: Args) => Return>,
+  ) => void | TypedPropertyDescriptor<(this: This, ...args: Args) => Return>;
 
   //#endregion
 
@@ -832,13 +830,15 @@ export abstract class Tracer {
           ...attrsArgs: Tracer.SpanMethodDecArgs<any, any, any>
         ) =>
           function <Result>(
-            value: (this: This, ...args: any[]) => Result,
-            context: ClassMethodDecoratorContext<
-              This,
+            _target: object,
+            propertyKey: string | symbol,
+            descriptor: TypedPropertyDescriptor<
               (this: This, ...args: any[]) => Result
             >,
-          ): (this: This, ...args: any[]) => Result {
-            if (context.kind !== "method")
+          ) {
+            const value = descriptor.value;
+
+            if (typeof value !== "function")
               throw new Error("@span can only decorate methods");
 
             const fn = function (this: This, ...args: any[]): Result {
@@ -857,9 +857,16 @@ export abstract class Tracer {
             // NOTE: Instead of directly setting the name, we define it with'
             // Object.defineProperty to avoid compatibility issues with certain
             // environments, i.e., Vitest.
-            Object.defineProperty(fn, "name", { value: context.name });
+            Object.defineProperty(fn, "name", {
+              value:
+                typeof propertyKey === "symbol"
+                  ? propertyKey.toString()
+                  : propertyKey,
+            });
 
-            return fn;
+            descriptor.value = fn;
+
+            return descriptor;
           },
       }),
     };
