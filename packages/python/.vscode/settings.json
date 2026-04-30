@@ -3,7 +3,7 @@
   "files.exclude": {
     "**/.pytest_cache": true,
     "**/.ruff_cache": true,
-    "**/__pycache__": true,
+    "**/__pycache__": true
   },
   "python.analysis.autoImportCompletions": false,
   "python.analysis.extraPaths": ["./.venv/lib/python3.10/site-packages"],
@@ -14,7 +14,7 @@
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.codeActionsOnSave": {
-      "source.organizeImports.ruff": "explicit",
-    },
-  },
+      "source.organizeImports.ruff": "explicit"
+    }
+  }
 }

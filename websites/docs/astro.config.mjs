@@ -159,6 +159,7 @@ export default defineConfig({
   ],
   vite: { plugins: [...tailwindcss()] },
   redirects: {
-    "/docs/getting-started/writing-first-test": "/docs/writing-first-test/selenium",
+    "/docs/getting-started/writing-first-test":
+      "/docs/writing-first-test/selenium",
   },
 });

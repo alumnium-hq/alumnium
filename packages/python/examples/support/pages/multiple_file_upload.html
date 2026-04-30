@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -288,7 +288,7 @@
           const uploadedFile = document.createElement("div");
           uploadedFile.className = "uploaded-file";
           uploadedFile.textContent = `${index + 1}. ${file.name} (${formatBytes(
-            file.size
+            file.size,
           )})`;
           uploadedFilesList.appendChild(uploadedFile);
         });
