@@ -525,6 +525,7 @@ export namespace Tracer {
       GetterArgs extends unknown[] = any[],
       This = any,
     >(
+      this: void,
       spanName: SpanName,
       ...attrs: NoInfer<SpanMethodDecArgs<This, GetterArgs, SpanName>>
     ): DecMethod<This, GetterArgs>;
@@ -921,7 +922,7 @@ export abstract class Tracer {
     let ended = false;
 
     const attr = (key: any, value: any) => {
-      Promise.resolve(otelSpan).then((otelSpan) => {
+      void Promise.resolve(otelSpan).then((otelSpan) => {
         if (value != null) otelSpan.setAttribute(key, value);
       });
     };
@@ -932,7 +933,7 @@ export abstract class Tracer {
 
       this.#spans.delete(key);
 
-      Promise.resolve(otelSpan).then((otelSpan) => {
+      void Promise.resolve(otelSpan).then((otelSpan) => {
         const endedAt = performance.now();
         const duration = endedAt - startedAt;
         attr("duration.ms", duration);
@@ -945,7 +946,7 @@ export abstract class Tracer {
 
     const event = (name: any, ...args: Tracer.SpanEventFnArgs<any, any>) => {
       const attrs = this.#compactAttrs(args[0] || {});
-      Promise.resolve(otelSpan).then((otelSpan) => {
+      void Promise.resolve(otelSpan).then((otelSpan) => {
         otelSpan.addEvent(name, attrs);
       });
     };
@@ -963,7 +964,7 @@ export abstract class Tracer {
       },
 
       fail: (error: unknown) => {
-        Promise.resolve(otelSpan).then((otelSpan) => {
+        void Promise.resolve(otelSpan).then((otelSpan) => {
           otelSpan.recordException(
             error instanceof Error ? error : String(error),
           );
