@@ -298,7 +298,14 @@ export class PlaywrightDriver extends BaseDriver {
     const domResponse = (await this.client.send("DOM.getFlattenedDocument", {
       depth: -1,
       pierce: true,
-    })) as { nodes: Array<{ nodeId: number; backendNodeId?: number; nodeName?: string; shadowRoots?: unknown[] }> };
+    })) as {
+      nodes: Array<{
+        nodeId: number;
+        backendNodeId?: number;
+        nodeName?: string;
+        shadowRoots?: unknown[];
+      }>;
+    };
 
     if (!domResponse.nodes) return shadowNodes;
 
