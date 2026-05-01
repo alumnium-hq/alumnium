@@ -6,7 +6,8 @@ import ai.alumnium.accessibility.AccessibilityElement;
 import ai.alumnium.accessibility.ChromiumAccessibilityTree;
 import ai.alumnium.tool.BaseTool;
 import ai.alumnium.tool.ClickTool;
-
+import ai.alumnium.tool.PressKeyTool;
+import ai.alumnium.tool.TypeTool;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
@@ -46,7 +47,9 @@ public final class PlaywrightDriver extends BaseDriver {
     private boolean autoswitchToNewTab = true;
     private boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
     private final Set<Class<? extends BaseTool>> supportedTools = Set.of(
-        ClickTool.class
+        ClickTool.class,
+        PressKeyTool.class,
+        TypeTool.class
     );
 
     public PlaywrightDriver(Page page) {
