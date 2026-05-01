@@ -31,9 +31,11 @@ export namespace McpDriver {
 
   export interface DriverOptions {
     cookies?: Cookies;
+    executablePath?: string;
     headers?: Headers;
     headless?: boolean;
     permissions?: string[];
+    profileDir?: string;
   }
 
   export interface SeleniumCdpConnection {
@@ -68,23 +70,41 @@ export async function createPlaywrightDriver(
 ): Promise<Page> {
   const {
     cookies,
+    executablePath,
     headless = false,
     headers = {},
     permissions,
+    profileDir,
   } = driverOptions;
 
-  logger.info(`Creating Playwright driver (headless=${headless})`);
-  const browser = await chromium.launch({ headless });
+  logger.info(
+    `Creating Playwright driver (headless=${headless}, profile=${profileDir ?? "none"})`,
+  );
 
   if (headers) {
     logger.debug("Setting extra HTTP headers: {headers}", { headers });
   }
 
   const videosDir = await artifactsStore.ensureDir("videos");
-  const context: BrowserContext = await browser.newContext({
-    recordVideo: { dir: videosDir },
-    extraHTTPHeaders: headers,
-  });
+
+  let context: BrowserContext;
+  if (profileDir) {
+    context = await chromium.launchPersistentContext(profileDir, {
+      headless,
+      recordVideo: { dir: videosDir },
+      extraHTTPHeaders: headers,
+      ...(executablePath ? { executablePath } : {}),
+    });
+  } else {
+    const browser = await chromium.launch({
+      headless,
+      ...(executablePath ? { executablePath } : {}),
+    });
+    context = await browser.newContext({
+      recordVideo: { dir: videosDir },
+      extraHTTPHeaders: headers,
+    });
+  }
 
   await context.tracing.start({
     screenshots: true,
@@ -105,7 +125,8 @@ export async function createPlaywrightDriver(
     await context.grantPermissions(permissions);
   }
 
-  const page = await context.newPage();
+  // Persistent context typically loads with a page.
+  const page = context.pages()[0] ?? (await context.newPage());
 
   logger.debug("Playwright driver created successfully");
   return page;
@@ -119,9 +140,17 @@ export async function createSeleniumDriver(
   serverUrl: string | null | undefined,
   driverOptions: McpDriver.DriverOptions = {},
 ): Promise<WebDriver> {
-  logger.info(`Creating Selenium driver (serverUrl=${serverUrl || "local"})`);
+  logger.info(
+    `Creating Selenium driver (serverUrl=${serverUrl || "local"}, profile=${driverOptions.profileDir ?? "none"})`,
+  );
 
-  const { cookies, headers = {}, headless = false } = driverOptions;
+  const {
+    cookies,
+    executablePath,
+    headers = {},
+    headless = false,
+    profileDir,
+  } = driverOptions;
 
   const chromeOptions = new Options();
   // Disable verbose logging so it doesn't print to stdout and interfere with
@@ -129,6 +158,17 @@ export async function createSeleniumDriver(
   // happen on other platforms.
   chromeOptions.addArguments("--disable-logging", "--log-level=3");
   chromeOptions.excludeSwitches("enable-logging");
+
+  if (executablePath) {
+    logger.debug("Using custom Chrome binary: {executablePath}", {
+      executablePath,
+    });
+    chromeOptions.setBinaryPath(executablePath);
+  }
+
+  if (profileDir) {
+    chromeOptions.addArguments(`--user-data-dir=${profileDir}`);
+  }
 
   if (headless) {
     chromeOptions.addArguments("--headless=new");
