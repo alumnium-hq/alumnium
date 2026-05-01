@@ -5,6 +5,7 @@
 import type { BrowserContext, Page } from "playwright-core";
 import { chromium } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
+import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
 import { Options } from "selenium-webdriver/chrome.js";
 import {
   remote as remoteWebdriverio,
@@ -74,6 +75,7 @@ export async function createPlaywrightDriver(
   } = driverOptions;
 
   logger.info(`Creating Playwright driver (headless=${headless})`);
+  await ensurePlaywrightChromiumInstalled();
   const browser = await chromium.launch({ headless });
 
   if (headers) {
