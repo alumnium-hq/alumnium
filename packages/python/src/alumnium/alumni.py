@@ -78,7 +78,7 @@ class Alumni:
 
         self.cache = Cache(self.client)
 
-    def quit(self):
+    def quit(self) -> None:
         self.client.quit()
         self.driver.quit()
 
@@ -219,7 +219,7 @@ class Alumni:
             client=self.client,
         )
 
-    def learn(self, goal: str, actions: list[str]):
+    def learn(self, goal: str, actions: list[str]) -> None:
         """
         Adds a new learning example on what steps should be take to achieve the goal.
 
@@ -229,7 +229,7 @@ class Alumni:
         """
         self.client.add_example(goal, actions)
 
-    def clear_learn_examples(self):
+    def clear_learn_examples(self) -> None:
         """
         Clears the learn examples.
         """
