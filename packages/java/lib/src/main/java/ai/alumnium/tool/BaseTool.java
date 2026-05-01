@@ -17,7 +17,7 @@ import java.util.StringJoiner;
  * appropriate record using Jackson and invokes it against the driver.
  */
 public sealed interface BaseTool
-    permits ClickTool {
+    permits ClickTool, PressKeyTool, TypeTool {
 
     /** Run the tool against the given driver. */
     void invoke(BaseDriver driver);

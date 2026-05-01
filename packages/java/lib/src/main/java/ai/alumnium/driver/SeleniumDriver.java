@@ -5,7 +5,8 @@ import ai.alumnium.accessibility.ChromiumAccessibilityTree;
 import ai.alumnium.driver.locators.Element;
 import ai.alumnium.tool.BaseTool;
 import ai.alumnium.tool.ClickTool;
-
+import ai.alumnium.tool.PressKeyTool;
+import ai.alumnium.tool.TypeTool;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,7 +42,9 @@ public final class SeleniumDriver extends BaseDriver {
     private boolean autoswitchToNewTab = true;
     private boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
     private final Set<Class<? extends BaseTool>> supportedTools = Set.of(
-        ClickTool.class
+        ClickTool.class,
+        PressKeyTool.class,
+        TypeTool.class
     );
 
     public SeleniumDriver(WebDriver driver) {

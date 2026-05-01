@@ -8,7 +8,8 @@ import ai.alumnium.accessibility.UIAutomator2AccessibilityTree;
 import ai.alumnium.accessibility.XCUITestAccessibilityTree;
 import ai.alumnium.tool.BaseTool;
 import ai.alumnium.tool.ClickTool;
-
+import ai.alumnium.tool.PressKeyTool;
+import ai.alumnium.tool.TypeTool;
 import io.appium.java_client.AppiumBy;
 
 import java.util.Set;
@@ -42,7 +43,9 @@ public final class AppiumDriver extends BaseDriver {
     private boolean hideKeyboardAfterTyping = false;
     private boolean doubleFetchPageSource = false;
     private final Set<Class<? extends BaseTool>> supportedTools = Set.of(
-        ClickTool.class
+        ClickTool.class,
+        PressKeyTool.class,
+        TypeTool.class
     );
 
     public AppiumDriver(io.appium.java_client.AppiumDriver driver) {
