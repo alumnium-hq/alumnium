@@ -200,29 +200,33 @@ Pass `alumnium:options` in capabilities to configure Alumnium and driver behavio
       }
     ],
     "excludeAttributes": ["url"],
+    "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc",
     "headers": { "Authorization": "Bearer token" },
     "headless": true,
-    "planner": false
+    "planner": false,
+    "profile": "work"
   }
 }
 ```
 
-| Option                    | Description                                                                                              |
-| ------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `autoswitchContexts`      | Automatically switch between native and web contexts after interactions. Appium only. Default is `true`. |
-| `autoswitchToNewTab`      | Automatically switch focus to newly opened tabs. Selenium and Playwright only. Default is `true`.        |
-| `baseUrl`                 | URL to navigate to when the session starts.                                                              |
-| `changeAnalysis`          | Enable UI changes analysis after each `do()` call. Default is `true`.                                    |
-| `cookies`                 | Pre-defined cookies to set before the session starts. Selenium and Playwright only.                      |
-| `delay`                   | Seconds to wait after each interaction. Appium only. Default is `0`.                                     |
-| `excludeAttributes`       | Array of accessibility tree attributes to exclude. Reduces tree size on large pages.                     |
-| `fullPageScreenshot`      | Capture full-page screenshots instead of viewport-only. Default is `false`.                              |
-| `headers`                 | Custom HTTP headers for all browser requests. Selenium and Playwright only.                              |
-| `headless`                | Run browser in headless mode. Selenium and Playwright only. Default is `false`.                          |
-| `hideKeyboardAfterTyping` | Dismiss the on-screen keyboard after typing. Appium only. Default is `false`.                            |
-| `newTabTimeout`           | Milliseconds to wait for a new tab to open after a click. Playwright only. Default is `200`.             |
-| `permissions`             | Browser permissions to grant (e.g. `["geolocation"]`). Playwright only.                                  |
-| `planner`                 | Enable or disable the planning step in `do()`. Default is `true`.                                        |
+| Option                    | Description                                                                                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `autoswitchContexts`      | Automatically switch between native and web contexts after interactions. Appium only. Default is `true`.                                                           |
+| `autoswitchToNewTab`      | Automatically switch focus to newly opened tabs. Selenium and Playwright only. Default is `true`.                                                                  |
+| `baseUrl`                 | URL to navigate to when the session starts.                                                                                                                        |
+| `changeAnalysis`          | Enable UI changes analysis after each `do()` call. Default is `true`.                                                                                              |
+| `cookies`                 | Pre-defined cookies to set before the session starts. Selenium and Playwright only.                                                                                |
+| `delay`                   | Seconds to wait after each interaction. Appium only. Default is `0`.                                                                                               |
+| `excludeAttributes`       | Array of accessibility tree attributes to exclude. Reduces tree size on large pages.                                                                               |
+| `executablePath`          | Path to a custom Chrome/Chromium executable (e.g. Arc, Brave). Selenium and Playwright only.                                                                       |
+| `fullPageScreenshot`      | Capture full-page screenshots instead of viewport-only. Default is `false`.                                                                                        |
+| `headers`                 | Custom HTTP headers for all browser requests. Selenium and Playwright only.                                                                                        |
+| `headless`                | Run browser in headless mode. Selenium and Playwright only. Default is `false`.                                                                                    |
+| `hideKeyboardAfterTyping` | Dismiss the on-screen keyboard after typing. Appium only. Default is `false`.                                                                                      |
+| `newTabTimeout`           | Milliseconds to wait for a new tab to open after a click. Playwright only. Default is `200`.                                                                       |
+| `permissions`             | Browser permissions to grant (e.g. `["geolocation"]`). Playwright only.                                                                                            |
+| `planner`                 | Enable or disable the planning step in `do()`. Default is `true`.                                                                                                  |
+| `profile`                 | Name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in `~/.alumnium/profiles/{name}`. Selenium and Playwright only. |
 
 #### `appium:settings`
 

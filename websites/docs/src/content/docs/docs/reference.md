@@ -104,6 +104,10 @@ export ALUMNIUM_MODEL="openai/gpt-5"
 
 Sets the directory where the MCP server stores artifacts such as screenshots. Default is `.alumnium/artifacts`.
 
+### `ALUMNIUM_MCP_PROFILES_DIR`
+
+Sets the directory where the MCP server stores persistent browser profiles. Default is `~/.alumnium/profiles`. See the [`profile` option](/docs/guides/mcp#alumniumoptions) for details.
+
 ### `ALUMNIUM_MODEL_RETRIES`
 
 Number of retries for failed AI model requests (e.g., rate limiting). Default is `8`.

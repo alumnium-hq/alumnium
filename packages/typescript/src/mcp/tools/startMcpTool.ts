@@ -12,6 +12,7 @@ import { ScrollTool } from "../../tools/ScrollTool.ts";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
+import { McpProfilesStore } from "../McpProfilesStore.ts";
 import {
   createAndroidDriver,
   createChromeDriver,
@@ -29,11 +30,38 @@ export const startMcpTool = McpTool.define("start", {
     "Initialize a browser driver for automated testing. Returns an id for use in other calls.",
 
   inputSchema: z.object({
-    capabilities: z
-      .string()
-      .describe(
-        `JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities. Must include 'platformName' (e.g., 'chrome', 'ios', 'android'). Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'. Example file path: '/path/to/capabilities.json'. Alumnium-specific options go in 'alumnium:options': 'headless' (boolean, default false) — run browser headless, supported for Selenium and Playwright; 'headers' (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"}; 'cookies' (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}]; 'permissions' (string[]) — browser permissions to grant, Playwright only, e.g. ["geolocation"]; 'baseUrl' (string) — URL to navigate to automatically after driver start, e.g. "https://example.com"; 'planner' (boolean) — enable/disable planner agent; 'changeAnalysis' (boolean, default true) — enable change analysis; 'excludeAttributes' (string[]) — accessibility attributes to exclude from the tree; 'newTabTimeout' (number, default 200) — ms to wait for new tab detection, Playwright only; 'autoswitchToNewTab' (boolean, default true) — auto-switch to newly opened tabs; 'fullPageScreenshot' (boolean, default false) — capture full-page screenshots. Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "headers": {"Authorization": "Bearer token"}, "newTabTimeout": 500}}'.`,
-      ),
+    capabilities: z.string().describe(
+      `
+          JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities and Alumnium-specific options.
+
+          Must include "platformName" (e.g., "chrome", "ios", "android").
+
+          Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'.
+
+          Example file path: "/path/to/capabilities.json".
+
+          Top-level options:
+
+          Alumnium-specific options go in "alumnium:options":
+            - "autoswitchToNewTab" (boolean, default true) — auto-switch to newly opened tabs;
+            - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
+            - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
+            - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
+            - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree (e.g., ["src"]);
+            - "executablePath" (string) — path to a custom Chrome executable;
+            - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
+            - "headers" (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"};
+            - "headless" (boolean, default false) — run browser headless, supported for Selenium and Playwright;
+            - "newTabTimeout" (number, default 200) — ms to wait for new tab detection, Playwright only;
+            - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
+            - "planner" (boolean) — enable/disable planner agent;
+            - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal".
+
+          Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc", "profile": "work"}}'.
+        `
+        .replace(/\n\s*/g, " ")
+        .trim(),
+    ),
 
     server_url: z
       .string()
@@ -111,6 +139,15 @@ export const startMcpTool = McpTool.define("start", {
         )
       : undefined;
 
+    // Generate driver ID from current directory and timestamp
+    const cwdName = path.basename(process.cwd());
+    const timestamp = Math.floor(Date.now() / 1000);
+    const id = `${cwdName}-${timestamp}`;
+
+    // Create directories
+    const artifactsStore = new McpArtifactsStore(id);
+    const profilesStore = new McpProfilesStore();
+
     const driverOptions: McpDriver.DriverOptions = {
       ...(alumniumOptions["headers"] !== undefined && {
         headers: alumniumOptions["headers"] as McpDriver.Headers,
@@ -124,6 +161,12 @@ export const startMcpTool = McpTool.define("start", {
       ...(typeof alumniumOptions["headless"] === "boolean" && {
         headless: alumniumOptions["headless"],
       }),
+      ...(typeof alumniumOptions["profile"] === "string" && {
+        profileDir: await profilesStore.ensureDir(alumniumOptions["profile"]),
+      }),
+      ...(typeof alumniumOptions["executablePath"] === "string" && {
+        executablePath: alumniumOptions["executablePath"],
+      }),
     };
 
     const alumniumOptionsNonDriverKeys = new Set([
@@ -131,6 +174,7 @@ export const startMcpTool = McpTool.define("start", {
       "changeAnalysis",
       "cookies",
       "excludeAttributes",
+      "executablePath",
       "headers",
       "headless",
       "permissions",
@@ -143,15 +187,7 @@ export const startMcpTool = McpTool.define("start", {
       }
     }
 
-    // Generate driver ID from current directory and timestamp
-    const cwdName = path.basename(process.cwd());
-    const timestamp = Math.floor(Date.now() / 1000);
-    const id = `${cwdName}-${timestamp}`;
-
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
-
-    // Create artifacts directories
-    const artifactsStore = new McpArtifactsStore(id);
 
     // Detect platform and create appropriate driver
     let driver: McpDriver;
