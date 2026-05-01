@@ -60,7 +60,6 @@
   }
 
   trackInitialLoad();
-  observeDom();
   trackExistingResources();
   hookXHR();
   hookFetch();
@@ -83,7 +82,7 @@
    * @returns {Promise<void>}
    */
   function waitForStability(options) {
-    const idle = options?.idle ?? 500;
+    const idle = options?.idle ?? 50;
     const timeout = options?.timeout ?? 10000;
     logEnabled = options?.log ?? false;
 
@@ -95,6 +94,7 @@
     return new Promise((resolve, reject) => {
       const startTime = Date.now();
       let lastLogged = startTime;
+      let domObserverStarted = false;
 
       checkStability();
 
@@ -141,8 +141,13 @@
           noMutations &&
           isIdle
         ) {
-          log("page stable", { elapsed: `${elapsed}ms` });
-          return resolve(void 0);
+          if (domObserverStarted) {
+            log("page stable", { elapsed: `${elapsed}ms` });
+            return resolve(void 0);
+          }
+
+          observeDom();
+          domObserverStarted = true;
         }
 
         if (now - startTime >= timeout) {
@@ -249,12 +254,17 @@
   }
 
   function observeDom() {
-    const mutationDebounceMs = 400;
+    const mutationDebounceMs = 50;
 
     // Skip if documentElement is not available (e.g., about:blank)
     if (!(document.documentElement instanceof Node)) {
       return;
     }
+
+    // We start observing mutations after everything is stable, so we need to
+    // delay the activeAt to give a chance for any loaded scripts to start
+    // work and trigger any potential mutations.
+    updateActiveAt();
 
     const observer = new MutationObserver((mutationList) => {
       if (mutationList.length === 0) return;
