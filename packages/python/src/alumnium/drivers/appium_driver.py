@@ -55,23 +55,23 @@ class AppiumDriver(BaseDriver):
         else:
             return XCUITestAccessibilityTree(xml_string)
 
-    def click(self, id: int):
+    def click(self, id: int) -> None:
         self._ensure_native_app_context()
         element = self.find_element(id)
         self._scroll_into_view(element)
         element.click()
 
-    def drag_slider(self, id: int, value: float):
+    def drag_slider(self, id: int, value: float) -> None:
         raise NotImplementedError("Dragging slider is not supported for this driver")
 
-    def drag_and_drop(self, from_id: int, to_id: int):
+    def drag_and_drop(self, from_id: int, to_id: int) -> None:
         self._ensure_native_app_context()
         from_element = self.find_element(from_id)
         to_element = self.find_element(to_id)
         self._scroll_into_view(from_element)
         self.driver.drag_and_drop(from_element, to_element)
 
-    def press_key(self, key: Key):
+    def press_key(self, key: Key) -> None:
         self._ensure_native_app_context()
         keys = []
         if key == Key.BACKSPACE:
@@ -85,13 +85,13 @@ class AppiumDriver(BaseDriver):
 
         ActionChains(self.driver).send_keys(*keys).perform()
 
-    def back(self):
+    def back(self) -> None:
         self.driver.back()
 
-    def visit(self, url: str):
+    def visit(self, url: str) -> None:
         self.driver.get(url)
 
-    def quit(self):
+    def quit(self) -> None:
         self.driver.quit()
 
     @property
@@ -262,10 +262,10 @@ class AppiumDriver(BaseDriver):
             f"Try adjusting the scroll direction or increase max_scrolls."
         )
 
-    def switch_to_next_tab(self):
+    def switch_to_next_tab(self) -> None:
         raise NotImplementedError("Tab switching not supported for this driver")
 
-    def switch_to_previous_tab(self):
+    def switch_to_previous_tab(self) -> None:
         raise NotImplementedError("Tab switching not supported for this driver")
 
     def print_to_pdf(self, filepath: str):
