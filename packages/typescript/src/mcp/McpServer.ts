@@ -48,7 +48,8 @@ export class McpServer {
       const { name, description, inputSchema, execute } = toolDef;
       this.#server.registerTool(
         toolDef.name,
-        { description, inputSchema },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        { description, inputSchema: inputSchema as any },
         async (input: any) => {
           try {
             return { content: await execute(input) };
