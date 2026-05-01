@@ -8,6 +8,10 @@
     "alumnium": "file:../../../dist/npm-alumnium"
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "edgedriver",
+      "geckodriver"
+    ],
     "overrides": {
       "@alumnium/cli-darwin-arm64": "file:../../../dist/npm-alumnium-cli-darwin-arm64",
       "@alumnium/cli-darwin-x64": "file:../../../dist/npm-alumnium-cli-darwin-x64",
