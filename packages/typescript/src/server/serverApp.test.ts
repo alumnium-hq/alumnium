@@ -184,6 +184,7 @@ describe("serverApp", () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/plans`, {
+          app: "test",
           goal: "fill out the login form",
           accessibility_tree: sampleAccessibilityTree,
           url: "https://example.com/login",
@@ -204,6 +205,7 @@ describe("serverApp", () => {
     it("responds with 404 when session does not exist", async () => {
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/nonexistent/plans`, {
+          app: "test",
           goal: "click submit button",
           accessibility_tree: sampleAccessibilityTree,
         }),
@@ -234,6 +236,7 @@ describe("serverApp", () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/steps`, {
+          app: "test",
           goal: "create 'Buy milk' todo item",
           step: "click New Todo Input field",
           accessibility_tree: sampleAccessibilityTree,
@@ -255,6 +258,7 @@ describe("serverApp", () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/statements`, {
+          app: "test",
           statement: "there is a submit button on the page",
           accessibility_tree: sampleAccessibilityTree,
           url: "https://example.com",
@@ -275,6 +279,7 @@ describe("serverApp", () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/areas`, {
+          app: "test",
           description: "find the login form area",
           accessibility_tree: sampleAccessibilityTree,
         }),
@@ -292,6 +297,7 @@ describe("serverApp", () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/elements`, {
+          app: "test",
           description: "submit button",
           accessibility_tree: sampleAccessibilityTree,
         }),
@@ -309,6 +315,7 @@ describe("serverApp", () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/changes`, {
+          app: "test",
           before: {
             accessibility_tree: sampleAccessibilityTree,
             url: "https://example.com/page",
@@ -330,6 +337,7 @@ describe("serverApp", () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/changes`, {
+          app: "test",
           before: {
             accessibility_tree: sampleAccessibilityTree,
             url: "https://example.com/page1",
@@ -352,6 +360,7 @@ describe("serverApp", () => {
 
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/changes`, {
+          app: "test",
           before: {
             accessibility_tree: sampleAccessibilityTree,
             url: "",

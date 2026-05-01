@@ -3,7 +3,6 @@ from uuid import uuid4
 import httpx
 from portpicker import pick_unused_port
 
-from alumnium import Model
 from alumnium.cli import run_server
 
 
