@@ -1,0 +1,29 @@
+[tools]
+java = "21"
+gradle = "8.11.1"
+
+[tasks.install]
+run = "gradle --no-daemon dependencies -q || true"
+
+[tasks.compile]
+run = "gradle --no-daemon compileJava"
+
+[tasks.build]
+run = "gradle --no-daemon build -x test"
+description = "Build main Java artifact"
+
+[tasks.lint]
+run = "gradle --no-daemon check -x test"
+
+[tasks.local_lib]
+run = "gradle --no-daemon publishToMavenLocal"
+description = "Publish main + classifier jars to local Maven repository"
+
+[tasks."test/unit"]
+run = "gradle --no-daemon test --tests 'ai.alumnium.unit.*'"
+description = "Run unit tests"
+
+[tasks."test/integration"]
+run = "gradle --no-daemon test --tests 'ai.alumnium.integration.*'"
+description = "Run integration tests"
+
