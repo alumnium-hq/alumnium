@@ -36,6 +36,7 @@ interface CDPNode {
   _frame?: object;
   _frame_chain?: number[];
   _parent_iframe_backend_node_id?: number | undefined;
+  _is_shadow_dom?: boolean;
 }
 
 interface CDPFrameInfo {
@@ -267,7 +268,129 @@ export class PlaywrightDriver extends BaseDriver {
       }
     }
 
+    // Collect shadow DOM nodes from the main frame
+    // Note: Shadow DOM piercing for iframes would require additional per-frame handling
+    try {
+      const shadowNodes = await this.getShadowDomNodes();
+      allNodes.push(...shadowNodes);
+      if (shadowNodes.length > 0) {
+        logger.debug(`  -> Shadow DOM: ${shadowNodes.length} nodes added`);
+      }
+    } catch (error) {
+      logger.debug(
+        `  -> Shadow DOM failed (${error instanceof Error ? error.message : String(error)})`,
+      );
+    }
+
     return new ChromiumAccessibilityTree({ nodes: allNodes });
+  }
+
+  /**
+   * Get shadow DOM nodes from the page using CDP.
+   * This pierces into shadow roots to make shadow DOM elements accessible.
+   */
+  private async getShadowDomNodes(): Promise<CDPNode[]> {
+    const shadowNodes: CDPNode[] = [];
+    const processedNodes = new Set<string>();
+
+    // Get all DOM nodes to find shadow hosts
+    // Note: DOM.getFlattenedDocument with pierce=true traverses into shadow roots
+    const domResponse = (await this.client.send("DOM.getFlattenedDocument", {
+      depth: -1,
+      pierce: true,
+    })) as {
+      nodes: Array<{
+        nodeId: number;
+        backendNodeId?: number;
+        nodeName?: string;
+        shadowRoots?: unknown[];
+      }>;
+    };
+
+    if (!domResponse.nodes) return shadowNodes;
+
+    // Find shadow hosts (nodes with shadow roots)
+    for (const domNode of domResponse.nodes) {
+      if (domNode.shadowRoots && domNode.shadowRoots.length > 0) {
+        // Get accessibility info for shadow host
+        try {
+          const axResponse = (await this.client.send(
+            "Accessibility.queryAXTree",
+            {
+              nodeId: domNode.nodeId,
+            },
+          )) as { nodes: CDPNode[] };
+
+          if (axResponse.nodes) {
+            for (const axNode of axResponse.nodes) {
+              // Skip if we already have this node
+              if (processedNodes.has(axNode.nodeId)) continue;
+              processedNodes.add(axNode.nodeId);
+
+              // Mark as shadow DOM node
+              axNode._is_shadow_dom = true;
+              shadowNodes.push(axNode);
+
+              // Recursively get children from this shadow tree
+              if (axNode.childIds) {
+                for (const childId of axNode.childIds) {
+                  const childNodes = await this.getShadowChildNodes(
+                    childId,
+                    processedNodes,
+                  );
+                  shadowNodes.push(...childNodes);
+                }
+              }
+            }
+          }
+        } catch {
+          // Ignore errors for individual shadow hosts
+        }
+      }
+    }
+
+    return shadowNodes;
+  }
+
+  /**
+   * Recursively get child nodes from shadow DOM.
+   */
+  private async getShadowChildNodes(
+    nodeId: string,
+    processedNodes: Set<string>,
+  ): Promise<CDPNode[]> {
+    const nodes: CDPNode[] = [];
+
+    if (processedNodes.has(nodeId)) return nodes;
+    processedNodes.add(nodeId);
+
+    try {
+      const response = (await this.client.send("Accessibility.queryAXTree", {
+        nodeId: Number.parseInt(nodeId),
+      })) as { nodes: CDPNode[] };
+
+      if (response.nodes) {
+        for (const node of response.nodes) {
+          node._is_shadow_dom = true;
+          nodes.push(node);
+
+          // Recursively get grandchildren
+          if (node.childIds) {
+            for (const childId of node.childIds) {
+              const childNodes = await this.getShadowChildNodes(
+                childId,
+                processedNodes,
+              );
+              nodes.push(...childNodes);
+            }
+          }
+        }
+      }
+    } catch {
+      // Ignore errors for individual nodes
+    }
+
+    return nodes;
   }
 
   async click(id: number): Promise<void> {
