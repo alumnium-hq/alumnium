@@ -1,10 +1,6 @@
 import { Runnable, type RunnableConfig } from "@langchain/core/runnables";
 import { always } from "alwaysly";
-import {
-  getLogger,
-  optionalLogDebugExtra,
-  type LoggerLike,
-} from "../../utils/logger.ts";
+import { Logger } from "../../telemetry/Logger.ts";
 // NOTE: While macros work well in Bun, it fails when using Alumium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
@@ -15,6 +11,7 @@ import z from "zod";
 import { Lchain } from "../../llm/Lchain.ts";
 import { LchainSchema } from "../../llm/LchainSchema.ts";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { retry } from "../../utils/retry.ts";
 import { LlmContext } from "../LlmContext.ts";
 import { MODEL_RETRIES, MODEL_TIMEOUT_SEC } from "../LlmFactory.ts";
@@ -25,7 +22,7 @@ import {
   type AgentPrompts,
 } from "./prompts/prompts.ts";
 
-const logger = getLogger(import.meta.url);
+const { logger, tracer } = Telemetry.get(import.meta.url);
 
 const convertInputToPromptValue =
   // @ts-expect-error -- It is marked as protected in BaseAgent, but we need to call it from
@@ -191,36 +188,44 @@ export class BaseAgent {
       async () => {
         const contextPrompts: string[] = [];
 
-        const agentName = agentClassNameToPromptsAgentKind(
+        const agentKind = agentClassNameToPromptsAgentKind(
           this.constructor.name,
         );
 
-        logger.debug(`Invoking ${agentName} agent chain input: {input}`, {
-          input: optionalLogDebugExtra("langchain", input),
+        logger.debug(`Invoking ${agentKind} agent chain input: {input}`, {
+          input: Logger.debugExtra("langchain", input),
         });
 
-        // @ts-expect-error
-        const result = (await chain.invoke(input, {
-          ...options,
-          timeout: MODEL_TIMEOUT_SEC * 1000,
-          callbacks: [
-            {
-              handleChatModelStart: (_llm, baseMessages) => {
-                contextPrompts.push(
-                  ...baseMessages.map((baseMessage) =>
-                    convertInputToPromptValue
-                      .call(this, baseMessage)
-                      .toString(),
-                  ),
-                );
-                this.llmContext.assignPromptsMeta(contextPrompts, meta);
-              },
-            },
-          ],
-        })) as Lchain.InvokeResult;
+        const result = (await tracer.span(
+          "llm.request",
+          {
+            "llm.model.provider": this.llmContext.model.provider,
+            "llm.model.name": this.llmContext.model.name,
+          },
+          () =>
+            // @ts-expect-error
+            chain.invoke(input, {
+              ...options,
+              timeout: MODEL_TIMEOUT_SEC * 1000,
+              callbacks: [
+                {
+                  handleChatModelStart: (_llm, baseMessages) => {
+                    contextPrompts.push(
+                      ...baseMessages.map((baseMessage) =>
+                        convertInputToPromptValue
+                          .call(this, baseMessage)
+                          .toString(),
+                      ),
+                    );
+                    this.llmContext.assignPromptsMeta(contextPrompts, meta);
+                  },
+                },
+              ],
+            }),
+        )) as Lchain.InvokeResult;
 
-        logger.debug(`Got ${agentName} agent chain result: {result}`, {
-          result: optionalLogDebugExtra("langchain", result),
+        logger.debug(`Got ${agentKind} agent chain result: {result}`, {
+          result: Logger.debugExtra("langchain", result),
         });
 
         this.llmContext.clearPromptsMeta(contextPrompts);
@@ -230,7 +235,7 @@ export class BaseAgent {
         const reasoning = this.#extractReasoning(message);
         if (reasoning) {
           logger.info(this.formatLog("out", "Reasoning"), {
-            detail: optionalLogDebugExtra("reasoning", reasoning),
+            detail: Logger.debugExtra("reasoning", reasoning),
           });
         }
 
@@ -345,7 +350,7 @@ export class BaseAgent {
   }
 
   protected logData(
-    logger: LoggerLike,
+    logger: Logger.Like,
     dir: BaseAgent.LogDir,
     data: BaseAgent.LogData,
   ) {
@@ -361,7 +366,7 @@ export class BaseAgent {
   protected debugLogTreeDetail(
     treeXml: string,
   ): BaseAgentDebugLogDetail | string {
-    return optionalLogDebugExtra("tree", new BaseAgentDebugLogDetail(treeXml));
+    return Logger.debugExtra("tree", new BaseAgentDebugLogDetail(treeXml));
   }
 
   protected debugLogDetail(value: unknown): BaseAgentDebugLogDetail {

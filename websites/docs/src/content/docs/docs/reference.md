@@ -74,6 +74,17 @@ The following workflow step enables debug logging in Alumnium when they are enab
 
 :::
 
+### `ALUMNIUM_TRACE`
+
+Set to `true` to enable local OpenTelemetry tracing and logs. When enabled, configure the OTLP endpoint with standard OpenTelemetry environment variables, for example:
+
+```sh
+export ALUMNIUM_TRACE="true"
+export OTEL_SERVICE_NAME="alumnium"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:4318"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+```
+
 ### `ALUMNIUM_MODEL`
 
 Select AI provider and model to use.
@@ -85,7 +96,7 @@ Select AI provider and model to use.
 | azure_openai  | gpt-5-nano                                  | Self-hosted Azure OpenAI API. Recommended model version is _2025-08-07_. |
 | aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                                           |
 | aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
-| codex         | gpt-5.4-mini                                | OpenAI models via ChatGPT Plus/Pro OAuth.                 |
+| codex         | gpt-5.4-mini                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
 | deepseek      | deepseek-reasoner                           | DeepSeek Platform.                                                       |
 | github        | gpt-4o-mini                                 | GitHub Models API.                                                       |
 | google        | gemini-3.1-flash-lite-preview               | Google AI Studio API.                                                    |

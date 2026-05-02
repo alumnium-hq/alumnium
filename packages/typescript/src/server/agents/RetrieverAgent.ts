@@ -2,11 +2,12 @@ import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { MessageContent } from "@langchain/core/messages";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 /**
  * Retrieved information.
@@ -57,6 +58,10 @@ export class RetrieverAgent extends BaseAgent {
     });
   }
 
+  @span("agent.invoke", (information, treeXml, title, url, screenshot) => ({
+    "agent.kind": "retriever",
+    "agent.invoke.args.has_screenshot": !!screenshot,
+  }))
   async invoke(
     information: string,
     treeXml: string,

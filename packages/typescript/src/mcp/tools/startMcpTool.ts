@@ -3,6 +3,7 @@ import path from "node:path";
 import z from "zod";
 import { Alumni } from "../../client/Alumni.ts";
 import { NativeClient } from "../../clients/NativeClient.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { DragSliderTool } from "../../tools/DragSliderTool.ts";
 import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.ts";
 import { NavigateBackTool } from "../../tools/NavigateBackTool.ts";
@@ -21,6 +22,8 @@ import {
 } from "../mcpDrivers.ts";
 import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
+
+const { tracer } = Telemetry.get(import.meta.url);
 
 /**
  * Start a new driver instance.
@@ -192,22 +195,49 @@ export const startMcpTool = McpTool.define("start", {
     // Detect platform and create appropriate driver
     let driver: McpDriver;
     if (["chrome", "chromium"].includes(platformName)) {
-      driver = await createChromeDriver(
-        capabilities,
-        serverUrl,
-        artifactsStore,
-        driverOptions,
+      driver = await tracer.span(
+        "mcp.driver.start",
+        {
+          "mcp.driver.id": id,
+          "mcp.driver.kind": "playwright",
+          "mcp.driver.platform": platformName,
+        },
+        () =>
+          createChromeDriver(
+            capabilities,
+            serverUrl,
+            artifactsStore,
+            driverOptions,
+          ),
       );
     } else if (platformName === "ios") {
-      driver = await createIosDriver(capabilities, serverUrl);
+      driver = await tracer.span(
+        "mcp.driver.start",
+        {
+          "mcp.driver.id": id,
+          "mcp.driver.kind": "appium",
+          "mcp.driver.platform": platformName,
+        },
+        () => createIosDriver(capabilities, serverUrl),
+      );
     } else if (platformName === "android") {
-      driver = await createAndroidDriver(capabilities, serverUrl);
+      driver = await tracer.span(
+        "mcp.driver.start",
+        {
+          "mcp.driver.id": id,
+          "mcp.driver.kind": "appium",
+          "mcp.driver.platform": platformName,
+        },
+        async () => createAndroidDriver(capabilities, serverUrl),
+      );
     } else {
       logger.error(`Unsupported platformName: ${platformName}`);
       throw new Error(
         `Unsupported platformName: ${platformName}. Supported values: chrome, chromium, ios, android`,
       );
     }
+
+    tracer.span("mcp.driver.active", { "mcp.driver.id": id }, id);
 
     const al = new Alumni(driver, {
       extraTools: [
@@ -260,7 +290,7 @@ export const startMcpTool = McpTool.define("start", {
     // Register driver in global state
     McpState.registerDriver(id, al, driver, artifactsStore);
 
-    const model = await al.model;
+    const model = await al.model();
 
     return [
       {

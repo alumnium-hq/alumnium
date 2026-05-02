@@ -1,7 +1,8 @@
 import z from "zod";
-import { bindLogger, getLogger, type LoggerLike } from "../../utils/logger.ts";
+import { Logger } from "../../telemetry/Logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 export namespace McpTool {
   export interface DefineProps<Input extends z.ZodObject> {
@@ -27,7 +28,7 @@ export namespace McpTool {
   ) => Promise<Output>;
 
   export interface ExecuteHelpers {
-    logger: LoggerLike;
+    logger: Logger.Like;
   }
 
   export type OutputContent = z.infer<typeof McpTool.OutputContent>;
@@ -50,24 +51,25 @@ export abstract class McpTool {
     props: McpTool.DefineProps<Input>,
   ): McpTool.Definition<Name, Input> {
     // Instrument with input/output logging
-    const execute = async (input: z.infer<Input>) => {
-      const parsedInput = McpTool.IdInput.safeParse(input);
-      const id = parsedInput.data?.id;
-      const executeLogger = bindLogger(
-        logger,
-        (message) => `${id || "global"}/${name}(): ${message}`,
-      );
+    const execute = async (input: z.infer<Input>) =>
+      tracer.span("mcp.tool.invoke", { "mcp.tool.name": name }, async () => {
+        const parsedInput = McpTool.IdInput.safeParse(input);
+        const id = parsedInput.data?.id;
+        const executeLogger = Logger.bind(
+          logger,
+          (message) => `${id || "global"}/${name}(): ${message}`,
+        );
 
-      executeLogger.info("Executing");
-      executeLogger.debug(`  -> Input: {input}`, { input });
+        executeLogger.info("Executing");
+        executeLogger.debug(`  -> Input: {input}`, { input });
 
-      const result = await props.execute(input, { logger: executeLogger });
+        const result = await props.execute(input, { logger: executeLogger });
 
-      executeLogger.info("Completed");
-      executeLogger.debug("  -> Result: {result}", { result });
+        executeLogger.info("Completed");
+        executeLogger.debug("  -> Result: {result}", { result });
 
-      return result;
-    };
+        return result;
+      });
 
     return { ...props, name, execute };
   }

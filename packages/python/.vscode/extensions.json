@@ -1,7 +1,3 @@
 {
-  "recommendations": [
-    "charliermarsh.ruff",
-    "jimasp.behave-vsc",
-    "astral-sh.ty"
-  ],
+  "recommendations": ["charliermarsh.ruff", "jimasp.behave-vsc", "astral-sh.ty"]
 }

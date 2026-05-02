@@ -7,20 +7,20 @@
 
 import type { AppId } from "../AppId.ts";
 import type { ElementRef } from "../server/serverSchema.ts";
+import type { SessionId } from "../server/session/SessionId.ts";
 import type { ToolCall } from "../tools/BaseTool.ts";
 
 export interface SessionRequest {
   platform: "chromium" | "uiautomator2" | "xcuitest";
   provider: string | undefined;
   name?: string | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tools: { [key: string]: any }[];
   planner: boolean;
   exclude_attributes?: string[] | undefined;
 }
 
 export interface SessionResponse {
-  session_id: string;
+  session_id: SessionId;
   model: string;
   platform: "chromium" | "uiautomator2" | "xcuitest";
 }

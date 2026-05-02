@@ -1,8 +1,12 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 import { Xml } from "../Xml.ts";
 import type { AccessibilityElement } from "./AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
+
+const { tracer } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 interface CDPNode {
   nodeId?: string | number;
@@ -26,7 +30,11 @@ interface CDPNode {
 
 export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   #cdpResponse: Record<string, unknown>;
-  #nextRawId: number = 0;
+  // TODO: There's a bug in Bun that results in `#nextRawId` compiled to
+  // `__privateGet(this, _nextRawId)++;` which causes a runtime error.
+  // Figure out a solution to use private fields without breaking Bun
+  // compatibility.
+  private nextRawId: number = 0;
   #raw: string | null = null;
   #frameMap: Record<number, object> = {}; // raw_id -> Frame object for iframe support
   #frameChainMap: Record<number, number[]> = {}; // raw_id -> frame chain (list of iframe backendNodeIds)
@@ -50,6 +58,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   }
 
   /** Convert CDP response to raw XML format preserving all data. */
+  @span("driver.tree.to_str", { "driver.tree.platform": "chromium" })
   toStr(): string {
     if (this.#raw !== null) {
       return this.#raw;
@@ -114,17 +123,17 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     const elem = new Element(role, {});
 
     // Add our own sequential raw_id attribute
-    this.#nextRawId++;
-    elem.attribs["raw_id"] = String(this.#nextRawId);
+    this.nextRawId++;
+    elem.attribs["raw_id"] = String(this.nextRawId);
 
     // Store frame reference if present (for iframe support)
     if ("_frame" in node && node._frame) {
-      this.#frameMap[this.#nextRawId] = node._frame;
+      this.#frameMap[this.nextRawId] = node._frame;
     }
 
     // Store frame chain if present (for Selenium nested frame switching)
     if ("_frame_chain" in node && node._frame_chain) {
-      this.#frameChainMap[this.#nextRawId] = node._frame_chain;
+      this.#frameChainMap[this.nextRawId] = node._frame_chain;
     }
 
     // Add all node attributes as XML attributes
@@ -226,11 +235,11 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
    * @param rawId The raw_id to search for
    * @returns AccessibilityElement with backend_node_id set
    */
+  @span("driver.tree.element_by_id", { "driver.tree.platform": "chromium" })
   elementById(rawId: number): AccessibilityElement {
     // Get raw XML with raw_id attributes
     const rawXml = this.toStr();
     const root = Xml.parseRoot(`<root>${rawXml}</root>`);
-
     // Find element with matching raw_id
     const findElement = (elem: Element, targetId: string): Element | null => {
       if (elem.attribs["raw_id"] === targetId) {
@@ -297,6 +306,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   }
 
   /** Scope the tree to a smaller subtree identified by raw_id. */
+  @span("driver.tree.scope_to_area", { "driver.tree.platform": "chromium" })
   scopeToArea(rawId: number): ChromiumAccessibilityTree {
     const rawXml = this.toStr();
 

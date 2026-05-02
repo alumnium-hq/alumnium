@@ -8,13 +8,14 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
-import { getLogger } from "../../utils/logger.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 export namespace PlannerAgent {
   export type Meta = z.infer<typeof PlannerAgent.Meta>;
@@ -85,8 +86,12 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   llm: BaseChatModel;
   toolNames: string[];
   chain!: Runnable<PlannerAgent.ChainInput, PlannerAgent.ChainOutput>;
-  #baseExamples = "";
-  #extraExamples = "";
+  // TODO: There's a bug in Bun that results in `#baseExamples` compiled to
+  // `__privateGet(this, _baseExamples)` which causes a runtime error.
+  // Figure out a solution to use private fields without breaking Bun
+  // compatibility.
+  private baseExamples = "";
+  private extraExamples = "";
 
   constructor(llmContext: LlmContext, llm: BaseChatModel, toolNames: string[]) {
     super(llmContext);
@@ -102,12 +107,12 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     );
 
     if (toolNames.includes(NavigateToUrlTool.name)) {
-      this.#baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
+      this.baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
     }
     if (toolNames.includes(UploadTool.name)) {
-      this.#baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
+      this.baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
     }
-    this.#extraExamples = this.#baseExamples;
+    this.extraExamples = this.baseExamples;
 
     this.#generateChain();
   }
@@ -118,7 +123,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
         "system",
         pythonicFormat(this.prompts.system, {
           tools: this.toolNames.join(", "),
-          extra_examples: this.#extraExamples,
+          extra_examples: this.extraExamples,
         }),
       ],
       ["human", this.prompts["user"]],
@@ -130,7 +135,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   }
 
   clearExamples(): void {
-    this.#extraExamples = this.#baseExamples;
+    this.extraExamples = this.baseExamples;
     this.#generateChain();
     logger.info("Examples cleared.");
   }
@@ -140,7 +145,7 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     logger.debug(`  -> Goal: ${goal}`);
     logger.debug(`  -> Actions: ${actions.join(", ")}`);
 
-    this.#extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
+    this.extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
     this.#generateChain();
 
     logger.info("Example added.");
@@ -167,6 +172,7 @@ Actions: [${actionsStr}]`.trim();
    * @returns A tuple of (explanation, actions) where explanation describes
    *   the reasoning and actions is the list of steps to achieve the goal.
    */
+  @span("agent.invoke", { "agent.kind": "planner" })
   async invoke(goal: string, treeXml: string): Promise<[string, string[]]> {
     logger.info("Starting planning:");
     this.logData(logger, "in", {

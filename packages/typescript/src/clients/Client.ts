@@ -33,6 +33,53 @@ export namespace Client {
   export type FindElementResult = ElementRef;
 
   export type Health = z.infer<typeof Client.Health>;
+
+  export interface RetrieveProps {
+    statement: string;
+    accessibilityTree: string;
+    title: string;
+    url: string;
+    app: AppId;
+    screenshot?: string | undefined;
+  }
+
+  export interface PlanActionsProps {
+    goal: string;
+    accessibilityTree: string;
+    app: AppId;
+  }
+
+  export interface AddExampleProps {
+    goal: string;
+    actions: string[];
+  }
+
+  export interface ExecuteActionProps {
+    goal: string;
+    step: string;
+    accessibilityTree: string;
+    app: AppId;
+  }
+
+  export interface FindAreaProps {
+    description: string;
+    accessibilityTree: string;
+    app: AppId;
+  }
+
+  export interface FindElementProps {
+    description: string;
+    accessibilityTree: string;
+    app: AppId;
+  }
+
+  export interface AnalyzeChangesProps {
+    beforeAccessibilityTree: string;
+    beforeUrl: string;
+    afterAccessibilityTree: string;
+    afterUrl: string;
+    app: AppId;
+  }
 }
 
 export abstract class Client {
@@ -59,41 +106,25 @@ export abstract class Client {
   abstract quit(): Promise<void>;
 
   abstract planActions(
-    goal: string,
-    accessibilityTree: string,
-    app: AppId,
+    props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult>;
 
-  abstract addExample(goal: string, actions: string[]): Promise<void>;
+  abstract addExample(props: Client.AddExampleProps): Promise<void>;
 
   abstract clearExamples(): Promise<void>;
 
   abstract executeAction(
-    goal: string,
-    step: string,
-    accessibilityTree: string,
-    app: AppId,
+    props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult>;
 
-  abstract retrieve(
-    statement: string,
-    accessibilityTree: string,
-    title: string,
-    url: string,
-    app: AppId,
-    screenshot?: string,
-  ): Promise<[string, Data]>;
+  abstract retrieve(props: Client.RetrieveProps): Promise<[string, Data]>;
 
   abstract findArea(
-    description: string,
-    accessibilityTree: string,
-    app: AppId,
+    props: Client.FindAreaProps,
   ): Promise<Client.FindAreaResult>;
 
   abstract findElement(
-    description: string,
-    accessibilityTree: string,
-    app: AppId,
+    props: Client.FindElementProps,
   ): Promise<Client.FindElementResult | undefined>;
 
   abstract saveCache(): Promise<void>;
@@ -102,11 +133,5 @@ export abstract class Client {
 
   abstract getStats(): Promise<LlmUsageStats>;
 
-  abstract analyzeChanges(
-    beforeAccessibilityTree: string,
-    beforeUrl: string,
-    afterAccessibilityTree: string,
-    afterUrl: string,
-    app: AppId,
-  ): Promise<string>;
+  abstract analyzeChanges(props: Client.AnalyzeChangesProps): Promise<string>;
 }

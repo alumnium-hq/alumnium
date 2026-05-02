@@ -1,3 +1,4 @@
+import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -26,14 +27,21 @@ export default defineConfig({
         },
       },
     ],
-    experimental: {
-      // NOTE: Vite's module runner has issue with cyclic dependencies that
-      // Node.js/Bun resolves just fine. It is subtle and result in modules
-      // detected as cyclic resolve empty objects instead of the actual exports.
-      // It is hard to track down and causes random failures not reproducible in
-      // actual runtime. This option makes Vitest use Node.js's native
-      // TypeScript/modules support.
-      viteModuleRunner: false,
-    },
   },
+  plugins: [
+    // TODO: Get rid of it when this is closed and shipped with Vite:
+    // https://github.com/oxc-project/oxc/issues/9170
+    babel({
+      presets: [
+        {
+          preset: () => ({
+            plugins: [
+              ["@babel/plugin-proposal-decorators", { version: "2023-11" }],
+            ],
+          }),
+          rolldown: { filter: { code: "@" } },
+        },
+      ],
+    }),
+  ],
 });

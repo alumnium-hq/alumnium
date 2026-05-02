@@ -2,9 +2,7 @@
   "nodes": [
     {
       "backendDOMNodeId": 7,
-      "childIds": [
-        "6"
-      ],
+      "childIds": ["6"],
       "chromeRole": {
         "type": "internalRole",
         "value": 144
@@ -60,9 +58,7 @@
     },
     {
       "backendDOMNodeId": 6,
-      "childIds": [
-        "5"
-      ],
+      "childIds": ["5"],
       "chromeRole": {
         "type": "internalRole",
         "value": 0
@@ -86,10 +82,7 @@
     },
     {
       "backendDOMNodeId": 5,
-      "childIds": [
-        "4",
-        "16"
-      ],
+      "childIds": ["4", "16"],
       "chromeRole": {
         "type": "internalRole",
         "value": 0
@@ -113,11 +106,7 @@
     },
     {
       "backendDOMNodeId": 4,
-      "childIds": [
-        "30",
-        "19",
-        "48"
-      ],
+      "childIds": ["30", "19", "48"],
       "chromeRole": {
         "type": "internalRole",
         "value": 211
@@ -151,11 +140,7 @@
     },
     {
       "backendDOMNodeId": 16,
-      "childIds": [
-        "9",
-        "11",
-        "15"
-      ],
+      "childIds": ["9", "11", "15"],
       "chromeRole": {
         "type": "internalRole",
         "value": 85
@@ -189,10 +174,7 @@
     },
     {
       "backendDOMNodeId": 30,
-      "childIds": [
-        "21",
-        "29"
-      ],
+      "childIds": ["21", "29"],
       "chromeRole": {
         "type": "internalRole",
         "value": 95
@@ -226,10 +208,7 @@
     },
     {
       "backendDOMNodeId": 19,
-      "childIds": [
-        "59",
-        "18"
-      ],
+      "childIds": ["59", "18"],
       "chromeRole": {
         "type": "internalRole",
         "value": 118
@@ -263,11 +242,7 @@
     },
     {
       "backendDOMNodeId": 48,
-      "childIds": [
-        "35",
-        "45",
-        "47"
-      ],
+      "childIds": ["35", "45", "47"],
       "chromeRole": {
         "type": "internalRole",
         "value": 86
@@ -301,9 +276,7 @@
     },
     {
       "backendDOMNodeId": 9,
-      "childIds": [
-        "8"
-      ],
+      "childIds": ["8"],
       "chromeRole": {
         "type": "internalRole",
         "value": 133
@@ -337,9 +310,7 @@
     },
     {
       "backendDOMNodeId": 11,
-      "childIds": [
-        "10"
-      ],
+      "childIds": ["10"],
       "chromeRole": {
         "type": "internalRole",
         "value": 133
@@ -373,10 +344,7 @@
     },
     {
       "backendDOMNodeId": 15,
-      "childIds": [
-        "12",
-        "14"
-      ],
+      "childIds": ["12", "14"],
       "chromeRole": {
         "type": "internalRole",
         "value": 133
@@ -410,9 +378,7 @@
     },
     {
       "backendDOMNodeId": 21,
-      "childIds": [
-        "20"
-      ],
+      "childIds": ["20"],
       "chromeRole": {
         "type": "internalRole",
         "value": 96
@@ -462,10 +428,7 @@
     },
     {
       "backendDOMNodeId": 29,
-      "childIds": [
-        "26",
-        "28"
-      ],
+      "childIds": ["26", "28"],
       "chromeRole": {
         "type": "internalRole",
         "value": 88
@@ -499,10 +462,7 @@
     },
     {
       "backendDOMNodeId": 59,
-      "childIds": [
-        "55",
-        "58"
-      ],
+      "childIds": ["55", "58"],
       "chromeRole": {
         "type": "internalRole",
         "value": 88
@@ -536,10 +496,7 @@
     },
     {
       "backendDOMNodeId": 18,
-      "childIds": [
-        "54",
-        "68"
-      ],
+      "childIds": ["54", "68"],
       "chromeRole": {
         "type": "internalRole",
         "value": 111
@@ -573,9 +530,7 @@
     },
     {
       "backendDOMNodeId": 35,
-      "childIds": [
-        "34"
-      ],
+      "childIds": ["34"],
       "chromeRole": {
         "type": "internalRole",
         "value": 0
@@ -628,11 +583,7 @@
     },
     {
       "backendDOMNodeId": 45,
-      "childIds": [
-        "38",
-        "41",
-        "44"
-      ],
+      "childIds": ["38", "41", "44"],
       "chromeRole": {
         "type": "internalRole",
         "value": 111
@@ -666,9 +617,7 @@
     },
     {
       "backendDOMNodeId": 47,
-      "childIds": [
-        "46"
-      ],
+      "childIds": ["46"],
       "chromeRole": {
         "type": "internalRole",
         "value": 9
@@ -816,9 +765,7 @@
     },
     {
       "backendDOMNodeId": 14,
-      "childIds": [
-        "13"
-      ],
+      "childIds": ["13"],
       "chromeRole": {
         "type": "internalRole",
         "value": 110
@@ -897,10 +844,7 @@
     },
     {
       "backendDOMNodeId": 26,
-      "childIds": [
-        "23",
-        "24"
-      ],
+      "childIds": ["23", "24"],
       "chromeRole": {
         "type": "internalRole",
         "value": 170
@@ -1037,9 +981,7 @@
     },
     {
       "backendDOMNodeId": 28,
-      "childIds": [
-        "27"
-      ],
+      "childIds": ["27"],
       "chromeRole": {
         "type": "internalRole",
         "value": 104
@@ -1136,10 +1078,7 @@
     },
     {
       "backendDOMNodeId": 58,
-      "childIds": [
-        "56",
-        "57"
-      ],
+      "childIds": ["56", "57"],
       "chromeRole": {
         "type": "internalRole",
         "value": 104
@@ -1173,9 +1112,7 @@
     },
     {
       "backendDOMNodeId": 54,
-      "childIds": [
-        "53"
-      ],
+      "childIds": ["53"],
       "chromeRole": {
         "type": "internalRole",
         "value": 115
@@ -1217,9 +1154,7 @@
     },
     {
       "backendDOMNodeId": 68,
-      "childIds": [
-        "67"
-      ],
+      "childIds": ["67"],
       "chromeRole": {
         "type": "internalRole",
         "value": 115
@@ -1261,9 +1196,7 @@
     },
     {
       "backendDOMNodeId": 38,
-      "childIds": [
-        "37"
-      ],
+      "childIds": ["37"],
       "chromeRole": {
         "type": "internalRole",
         "value": 115
@@ -1305,9 +1238,7 @@
     },
     {
       "backendDOMNodeId": 41,
-      "childIds": [
-        "40"
-      ],
+      "childIds": ["40"],
       "chromeRole": {
         "type": "internalRole",
         "value": 115
@@ -1349,9 +1280,7 @@
     },
     {
       "backendDOMNodeId": 44,
-      "childIds": [
-        "43"
-      ],
+      "childIds": ["43"],
       "chromeRole": {
         "type": "internalRole",
         "value": 115
@@ -1538,9 +1467,7 @@
     },
     {
       "backendDOMNodeId": 56,
-      "childIds": [
-        "-1000000002"
-      ],
+      "childIds": ["-1000000002"],
       "chromeRole": {
         "type": "internalRole",
         "value": 88
@@ -1603,10 +1530,7 @@
     },
     {
       "backendDOMNodeId": 53,
-      "childIds": [
-        "49",
-        "51"
-      ],
+      "childIds": ["49", "51"],
       "chromeRole": {
         "type": "internalRole",
         "value": 0
@@ -1700,9 +1624,7 @@
     },
     {
       "backendDOMNodeId": 51,
-      "childIds": [
-        "50"
-      ],
+      "childIds": ["50"],
       "chromeRole": {
         "type": "internalRole",
         "value": 104
@@ -1736,10 +1658,7 @@
     },
     {
       "backendDOMNodeId": 67,
-      "childIds": [
-        "63",
-        "65"
-      ],
+      "childIds": ["63", "65"],
       "chromeRole": {
         "type": "internalRole",
         "value": 0
@@ -1826,9 +1745,7 @@
     },
     {
       "backendDOMNodeId": 65,
-      "childIds": [
-        "64"
-      ],
+      "childIds": ["64"],
       "chromeRole": {
         "type": "internalRole",
         "value": 104
@@ -1862,9 +1779,7 @@
     },
     {
       "backendDOMNodeId": 37,
-      "childIds": [
-        "36"
-      ],
+      "childIds": ["36"],
       "chromeRole": {
         "type": "internalRole",
         "value": 110
@@ -1914,9 +1829,7 @@
     },
     {
       "backendDOMNodeId": 40,
-      "childIds": [
-        "39"
-      ],
+      "childIds": ["39"],
       "chromeRole": {
         "type": "internalRole",
         "value": 110
@@ -1966,9 +1879,7 @@
     },
     {
       "backendDOMNodeId": 43,
-      "childIds": [
-        "42"
-      ],
+      "childIds": ["42"],
       "chromeRole": {
         "type": "internalRole",
         "value": 110

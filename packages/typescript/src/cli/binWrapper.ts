@@ -3,7 +3,7 @@
 import { spawn } from "node:child_process";
 import { cliBinPath } from "./cliClient.ts";
 
-main();
+await main();
 
 async function main() {
   const binPath = await cliBinPath();

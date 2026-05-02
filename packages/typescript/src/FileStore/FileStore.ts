@@ -2,11 +2,11 @@ import { always, never } from "alwaysly";
 import fs from "fs/promises";
 import path from "node:path";
 import type z from "zod";
+import { Logger } from "../telemetry/Logger.ts";
 import { safePathJoin } from "../utils/fs.ts";
-import { getLogger } from "../utils/logger.ts";
 import { GlobalFileStorePaths } from "./GlobalFileStorePaths.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export namespace FileStore {
   export type DirGetter = () => string;

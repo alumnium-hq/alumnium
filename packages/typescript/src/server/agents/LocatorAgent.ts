@@ -1,12 +1,13 @@
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
-import { getLogger } from "../../utils/logger.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import type { ElementRef } from "../serverSchema.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
-const logger = getLogger(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
 
 /**
  * Element locator in the accessibility tree.
@@ -45,6 +46,7 @@ export class LocatorAgent extends BaseAgent {
     this.chain = llm.withStructuredOutput(Locator, { includeRaw: true });
   }
 
+  @span("agent.invoke", { "agent.kind": "locator" })
   async invoke(
     description: string,
     treeXml: string,

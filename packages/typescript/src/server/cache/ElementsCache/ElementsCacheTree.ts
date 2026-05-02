@@ -1,10 +1,10 @@
 import { Element as DomElement, Node as DomNode, Text } from "domhandler";
 import { innerText } from "domutils";
 import { parseDocument } from "htmlparser2";
-import { getLogger } from "../../../utils/logger.ts";
+import { Logger } from "../../../telemetry/Logger.ts";
 import type { ElementsCache } from "./ElementsCache.ts";
 
-const logger = getLogger(import.meta.url);
+const logger = Logger.get(import.meta.url);
 
 export class ElementsCacheTree {
   #root: DomElement;
