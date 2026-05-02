@@ -18,3 +18,4 @@ class AccessibilityElement:
     frame: Any | None = None  # Playwright Frame object for iframe support
     locator_info: dict | None = None  # Locator info for Playwright nodes (cross-origin iframes)
     frame_chain: list[int] | None = None  # For Selenium: chain of iframe backendNodeIds from root to element's frame
+    alert_action: str | None = None  # "accept" or "dismiss" for alert dialog buttons

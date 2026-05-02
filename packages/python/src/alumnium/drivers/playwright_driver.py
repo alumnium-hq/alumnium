@@ -4,7 +4,7 @@ from os import getenv
 from pathlib import Path
 from urllib.parse import urlparse
 
-from playwright.sync_api import Error, Frame, Locator, Page, TimeoutError
+from playwright.sync_api import Dialog, Error, Frame, Locator, Page, TimeoutError
 
 from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
@@ -40,6 +40,8 @@ class PlaywrightDriver(BaseDriver):
         self.page = page
         self.autoswitch_to_new_tab = True
         self.full_page_screenshot = FULL_PAGE_SCREENSHOT
+        self._last_dialog_info: dict | None = None
+        self.page.on("dialog", self._on_dialog)
         self.supported_tools = {
             ClickTool,
             DragAndDropTool,
@@ -57,6 +59,11 @@ class PlaywrightDriver(BaseDriver):
 
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
+        if self._last_dialog_info:
+            dialog_info = self._last_dialog_info
+            self._last_dialog_info = None
+            return ChromiumAccessibilityTree({"nodes": self._create_dialog_nodes(dialog_info)})
+
         self._wait_for_page_to_load()
 
         # Get frame tree to enumerate all frames (same approach as Selenium)
@@ -144,6 +151,11 @@ class PlaywrightDriver(BaseDriver):
         return ChromiumAccessibilityTree({"nodes": all_nodes})
 
     def click(self, id: int):
+        accessibility_element = self.accessibility_tree.element_by_id(id)
+        if accessibility_element.alert_action:
+            logger.debug(f"Alert action acknowledged: {accessibility_element.alert_action}")
+            return
+
         element = self.find_element(id)
         tag_name = element.evaluate("el => el.tagName")
         if tag_name.lower() == "option":
@@ -282,6 +294,55 @@ class PlaywrightDriver(BaseDriver):
 
     def print_to_pdf(self, filepath: str):
         self.page.pdf(path=filepath)
+
+    def _on_dialog(self, dialog: Dialog):
+        """Capture dialog info and auto-accept.
+
+        Playwright requires dialogs to be resolved in the handler or the page
+        freezes. Unlike Selenium, we cannot defer the accept/dismiss decision
+        to the user.
+        """
+        self._last_dialog_info = {
+            "type": dialog.type,
+            "message": dialog.message,
+            "default_value": dialog.default_value,
+        }
+        logger.debug(f"Dialog captured ({dialog.type}): {dialog.message[:80]}")
+        dialog.accept()
+
+    @staticmethod
+    def _create_dialog_nodes(dialog_info: dict) -> list[dict]:
+        """Create synthetic nodes representing a captured dialog for the LLM to see.
+
+        The dialog has already been auto-accepted (Playwright constraint), but
+        we still expose it so al.check() and al.get() can verify dialog text.
+        """
+        message = dialog_info.get("message", "Alert")
+        dialog_type = dialog_info.get("type", "alert")
+        dialog_id = "-100"
+        accept_id = "-101"
+        dismiss_id = "-102"
+
+        return [
+            {
+                "nodeId": dialog_id,
+                "role": {"value": "alertdialog"},
+                "name": {"value": f"{dialog_type}: {message}"},
+                "childIds": [accept_id, dismiss_id],
+            },
+            {
+                "nodeId": accept_id,
+                "role": {"value": "button"},
+                "name": {"value": "Accept"},
+                "_alert_action": "accept",
+            },
+            {
+                "nodeId": dismiss_id,
+                "role": {"value": "button"},
+                "name": {"value": "Dismiss"},
+                "_alert_action": "dismiss",
+            },
+        ]
 
     def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")

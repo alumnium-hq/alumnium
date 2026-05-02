@@ -4,6 +4,7 @@ from typing import Callable
 from urllib.parse import urlparse
 
 from retry import retry
+from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.chrome.remote_connection import ChromiumRemoteConnection
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -55,9 +56,13 @@ class SeleniumDriver(BaseDriver):
 
     @property
     def accessibility_tree(self) -> ChromiumAccessibilityTree:
-        # Switch to default content to ensure we're at the top level for frame enumeration
-        self.driver.switch_to.default_content()
-        self._wait_for_page_to_load()
+        alert = self._detect_alert()
+
+        # WebDriver commands (switch_to, execute_script) fail when an alert is open,
+        # but CDP commands still work since they use the DevTools protocol directly.
+        if not alert:
+            self.driver.switch_to.default_content()
+            self._wait_for_page_to_load()
 
         # Get frame tree to enumerate all frames
         frame_tree = self.driver.execute_cdp_cmd("Page.getFrameTree", {})  # type: ignore[attr-defined]
@@ -108,6 +113,9 @@ class SeleniumDriver(BaseDriver):
                 logger.debug(f"  -> Cross-origin iframe {oopif.get('url', '')[:40]}...: {len(nodes)} nodes")
             except Exception as e:
                 logger.debug(f"  -> Cross-origin iframe {oopif.get('url', '')[:40]}...: failed ({e})")
+
+        if alert:
+            all_nodes.extend(self._create_alert_nodes(alert))
 
         return ChromiumAccessibilityTree({"nodes": all_nodes})
 
@@ -349,9 +357,15 @@ class SeleniumDriver(BaseDriver):
             if not self.autoswitch_to_new_tab:
                 return func(self, *args, **kwargs)
 
-            current_handles = self.driver.window_handles
+            try:
+                current_handles = self.driver.window_handles
+            except Exception:
+                return func(self, *args, **kwargs)
             result = func(self, *args, **kwargs)
-            new_handles = self.driver.window_handles
+            try:
+                new_handles = self.driver.window_handles
+            except Exception:
+                return result
             new_tabs = set(new_handles) - set(current_handles)
             if new_tabs:
                 # Only switch to the last new tab opened, as only one tab can be active at a time.
@@ -366,11 +380,19 @@ class SeleniumDriver(BaseDriver):
 
     @_autoswitch_to_new_tab
     def click(self, id: int):
+        accessibility_element = self.accessibility_tree.element_by_id(id)
+        if accessibility_element.alert_action:
+            alert = self.driver.switch_to.alert
+            if accessibility_element.alert_action == "accept":
+                alert.accept()
+            elif accessibility_element.alert_action == "dismiss":
+                alert.dismiss()
+            return
+
         element = self.find_element(id)
         try:
             ActionChains(self.driver).move_to_element(element).click().perform()
         except ElementNotInteractableException:
-            # Fallback to direct click if ActionChains fails (e.g. for <option> elements)
             element.click()
 
     def drag_slider(self, id: int, value: float):
@@ -572,6 +594,50 @@ class SeleniumDriver(BaseDriver):
                 return self.execute("executeCdpCommand", {"cmd": cmd, "params": cmd_args})["value"]
 
             driver.execute_cdp_cmd = execute_cdp_cmd.__get__(driver)  # type: ignore[attr-defined]
+
+    def _detect_alert(self):
+        """Return the alert object if a JS alert/confirm/prompt is present, else None."""
+        try:
+            return self.driver.switch_to.alert
+        except NoAlertPresentException:
+            return None
+
+    @staticmethod
+    def _create_alert_nodes(alert) -> list[dict]:
+        """Create synthetic accessibility nodes representing an open alert dialog.
+
+        Returns a parent alertdialog with Accept/Dismiss buttons as children,
+        linked via childIds so the tree renders as:
+          <alertdialog name="...">
+            <button name="Accept" />
+            <button name="Dismiss" />
+          </alertdialog>
+        """
+        alert_text = alert.text
+        dialog_id = "-100"
+        accept_id = "-101"
+        dismiss_id = "-102"
+
+        return [
+            {
+                "nodeId": dialog_id,
+                "role": {"value": "alertdialog"},
+                "name": {"value": alert_text or "Alert"},
+                "childIds": [accept_id, dismiss_id],
+            },
+            {
+                "nodeId": accept_id,
+                "role": {"value": "button"},
+                "name": {"value": "Accept"},
+                "_alert_action": "accept",
+            },
+            {
+                "nodeId": dismiss_id,
+                "role": {"value": "button"},
+                "name": {"value": "Dismiss"},
+                "_alert_action": "dismiss",
+            },
+        ]
 
     def _enable_target_auto_attach(self):
         """Enable auto-attach to OOPIF targets for cross-origin iframe support."""
