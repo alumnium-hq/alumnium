@@ -35,7 +35,7 @@ public final class ToolToSchemaConverter {
 
         for (RecordComponent rc : toolClass.getRecordComponents()) {
             String fieldName = fieldName(rc);
-            Map<String, Object> typeSchema = pythonToJsonType(rc.getGenericType());
+            Map<String, Object> typeSchema = toJsonType(rc.getGenericType());
 
             ToolField tf = rc.getAnnotation(ToolField.class);
             Map<String, Object> prop = new LinkedHashMap<>(typeSchema);
@@ -80,7 +80,7 @@ public final class ToolToSchemaConverter {
         return rc.getName();
     }
 
-    private static Map<String, Object> pythonToJsonType(Type type) {
+    private static Map<String, Object> toJsonType(Type type) {
         if (type instanceof Class<?> cls) {
             if (cls.isEnum()) {
                 List<String> values = new ArrayList<>();
@@ -118,7 +118,7 @@ public final class ToolToSchemaConverter {
             if (raw instanceof Class<?> rawCls && List.class.isAssignableFrom(rawCls)) {
                 Type[] args = pt.getActualTypeArguments();
                 Map<String, Object> items = args.length > 0
-                    ? pythonToJsonType(args[0])
+                    ? toJsonType(args[0])
                     : Map.of("type", "string");
                 return ordered(Map.of("type", "array", "items", items));
             }
