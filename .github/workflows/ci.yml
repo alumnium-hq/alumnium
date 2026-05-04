@@ -110,3 +110,12 @@ jobs:
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+  eval:
+    name: Eval
+    needs: test
+    secrets: inherit
+    if: needs.test.outputs.permitted == 'true'
+    uses: ./.github/workflows/ci-eval.yml
+    with:
+      sha: ${{ github.event.pull_request.head.sha || github.sha }}

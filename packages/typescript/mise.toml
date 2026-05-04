@@ -1,7 +1,6 @@
 [tasks.install]
 run = []
 
-
 [tasks."install/playwright"]
 run = "bun run playwright install chromium --with-deps"
 # NOTE: It prompts for sudo to install OS dependencies
@@ -212,6 +211,9 @@ run = { task = "test/cache", args = ["xai"] }
 
 [tasks."test/package"]
 run = "./scripts/test-package.sh"
+
+[tasks.eval]
+run = "fnox exec -- bun evalite"
 
 [tasks.lint]
 run = "bun oxlint ."

@@ -176,7 +176,7 @@ function createAgentMeta(
 ): RetrieverAgent.Meta {
   return {
     kind: "retriever",
-    information: "test information",
+    statement: "test information",
     treeXml: "<xml></xml>",
     title: "Test Title",
     url: "https://example.com",

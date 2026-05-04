@@ -233,19 +233,21 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const accessibilityTree = session.processTree(
                   ctx.body.accessibility_tree,
                 );
+                const { statement, title, url, screenshot } = ctx.body;
+                const treeXml = accessibilityTree.toXml(
+                  new Set([
+                    ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
+                    ...session.excludeAttributes,
+                  ]),
+                );
                 const [explanation, value] =
-                  await session.retrieverAgent.invoke(
-                    ctx.body.statement,
-                    accessibilityTree.toXml(
-                      new Set([
-                        ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
-                        ...session.excludeAttributes,
-                      ]),
-                    ),
-                    ctx.body.title,
-                    ctx.body.url,
-                    ctx.body.screenshot,
-                  );
+                  await session.retrieverAgent.invoke({
+                    statement,
+                    treeXml,
+                    title,
+                    url,
+                    screenshot,
+                  });
                 return {
                   result: value,
                   explanation,

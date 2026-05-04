@@ -30,20 +30,33 @@ export const RetrievedInformation = z.object({
 export type RetrievedInformation = z.infer<typeof RetrievedInformation>;
 
 export namespace RetrieverAgent {
-  export type InvokeResult = [string, string | string[]];
+  export type Output = z.infer<typeof RetrieverAgent.Output>;
 
   export type Meta = z.infer<typeof RetrieverAgent.Meta>;
+
+  export interface Props {
+    statement: string;
+    treeXml: string;
+    title: string | undefined;
+    url: string | undefined;
+    screenshot: string | undefined | null;
+  }
 }
 
 export class RetrieverAgent extends BaseAgent {
   static Meta = z.object({
     kind: z.literal("retriever"),
-    information: z.string(),
+    statement: z.string(),
     treeXml: z.string(),
     title: z.string(),
     url: z.string(),
     screenshot: z.string().nullable(),
   });
+
+  static Output = z.tuple([
+    z.string(),
+    z.union([z.string(), z.array(z.string())]),
+  ]);
 
   static readonly EXCLUDE_ATTRIBUTES = new Set(["id"]);
   static readonly #LIST_SEPARATOR = "<SEP>";
@@ -58,20 +71,22 @@ export class RetrieverAgent extends BaseAgent {
     });
   }
 
-  @span("agent.invoke", (information, treeXml, title, url, screenshot) => ({
+  @span("agent.invoke", (props) => ({
     "agent.kind": "retriever",
-    "agent.invoke.args.has_screenshot": !!screenshot,
+    "agent.invoke.args.has_screenshot": !!props.screenshot,
   }))
-  async invoke(
-    information: string,
-    treeXml: string,
-    title = "",
-    url = "",
-    screenshot: string | null = null,
-  ): Promise<RetrieverAgent.InvokeResult> {
+  async invoke(props: RetrieverAgent.Props): Promise<RetrieverAgent.Output> {
+    const {
+      statement,
+      treeXml,
+      title = "",
+      url = "",
+      screenshot = null,
+    } = props;
+
     logger.info("Starting retrieval:");
     this.logData(logger, "in", {
-      Information: information,
+      Statement: statement,
       "Accessibility tree": this.debugLogTreeDetail(treeXml),
       Title: this.debugLogDetail(title),
       URL: this.debugLogDetail(url),
@@ -86,7 +101,7 @@ export class RetrieverAgent extends BaseAgent {
       });
     }
     prompt += "\n";
-    prompt += `Retrieve the following information: ${information}`;
+    prompt += `Retrieve the following information: ${statement}`;
 
     const humanMessages: MessageContent = [{ type: "text", text: prompt }];
 
@@ -101,7 +116,7 @@ export class RetrieverAgent extends BaseAgent {
 
     const meta: RetrieverAgent.Meta = {
       kind: "retriever",
-      information,
+      statement,
       treeXml,
       title,
       url,
