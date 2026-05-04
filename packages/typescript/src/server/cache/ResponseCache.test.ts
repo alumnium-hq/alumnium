@@ -28,21 +28,13 @@ describe("ResponseCache", () => {
     await cache.update(prompt1, llmKey, generations);
     await cache.save();
 
-    const model = Model.current.toString();
-    const baseDir = `test-app/${model}/responses`;
     const files = await cacheDir.flatTree();
-    expect(files).toMatchInlineSnapshot(
+    expect(files).toMatchInlineSnapshot(`
       [
-        `${baseDir}/d2e93e97ce7079be/request.json`,
-        `${baseDir}/d2e93e97ce7079be/response.json`,
-      ],
-      `
-      [
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/d2e93e97ce7079be/request.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/d2e93e97ce7079be/response.json",
+        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/request.json",
+        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/response.json",
       ]
-    `,
-    );
+    `);
 
     const result = await cache.lookup(prompt1, llmKey);
     expect(result).toEqual(generations);
@@ -69,15 +61,15 @@ describe("ResponseCache", () => {
     await cache1.save();
     await cache2.save();
 
-    const model = Model.current.toString();
-    const baseDir = `test-app/${model}/responses`;
     const files = await cacheDir.flatTree();
-    expect(files).toEqual([
-      `${baseDir}/a07a64efcdf52cdc/request.json`,
-      `${baseDir}/a07a64efcdf52cdc/response.json`,
-      `${baseDir}/d2e93e97ce7079be/request.json`,
-      `${baseDir}/d2e93e97ce7079be/response.json`,
-    ]);
+    expect(files).toMatchInlineSnapshot(`
+      [
+        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/request.json",
+        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/response.json",
+        "test-app/openai/gpt-5-nano-2025-08-07/responses/90a8b9ed129be0b8/request.json",
+        "test-app/openai/gpt-5-nano-2025-08-07/responses/90a8b9ed129be0b8/response.json",
+      ]
+    `);
 
     const result1 = await cache1.lookup(prompt1, llmKey);
     expect(result1).toEqual(generations1);
