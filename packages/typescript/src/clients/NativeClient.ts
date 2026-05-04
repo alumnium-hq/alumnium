@@ -151,13 +151,13 @@ export class NativeClient extends Client {
       ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
       ...this.session.excludeAttributes,
     ]);
-    const [explanation, result] = await this.session.retrieverAgent.invoke(
-      statement,
-      tree.toXml(excludeAttrs),
+    const [explanation, result] = await this.session.retrieverAgent.invoke({
+      statement: statement,
+      treeXml: tree.toXml(excludeAttrs),
       title,
       url,
-      screenshot || null,
-    );
+      screenshot: screenshot || null,
+    });
     return [explanation, looselyTypecast(result)] as [string, Data];
   }
 
