@@ -8,7 +8,7 @@ describe("Shadow DOM support", () => {
     expect,
     setup,
   }) => {
-    const { al, driver, $ } = await setup();
+    const { al, $ } = await setup();
 
     // Navigate to the-internet.herokuapp.com shadow DOM test page
     await $.navigate("https://the-internet.herokuapp.com/shadowdom");
