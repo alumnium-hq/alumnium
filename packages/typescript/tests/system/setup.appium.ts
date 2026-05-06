@@ -1,6 +1,7 @@
+import { Model } from "alumnium";
 import type { TestProject } from "vitest/node";
 import { remote } from "webdriverio";
-import { Model } from "alumnium";
+import { Env } from "../../src/Env.ts";
 
 interface WdioRemoteOptions {
   hostname: string;
@@ -19,9 +20,10 @@ declare module "vitest" {
 }
 
 export async function setup(project: TestProject) {
-  const useLambdaTest = !!(
-    process.env.LT_USERNAME && process.env.LT_ACCESS_KEY
-  );
+  const ltUsername = Env.LT_USERNAME;
+  const ltAccessKey = Env.LT_ACCESS_KEY;
+  const useLambdaTest = ltUsername && ltAccessKey;
+  const model = Env.ALUMNIUM_MODEL;
 
   const capabilities: WebdriverIO.Capabilities = useLambdaTest
     ? {
@@ -33,7 +35,7 @@ export async function setup(project: TestProject) {
         "appium:noReset": true,
         "lt:options": {
           build: "TypeScript - iOS",
-          name: `Vitest (${Model.current.provider}/${Model.current.name})`,
+          name: `Vitest (${Model.toString(model)})`,
           isRealMobile: true,
           network: false,
           visual: true,
@@ -56,8 +58,8 @@ export async function setup(project: TestProject) {
         hostname: "mobile-hub.lambdatest.com",
         path: "/wd/hub",
         port: 80,
-        ...(process.env.LT_USERNAME && { user: process.env.LT_USERNAME }),
-        ...(process.env.LT_ACCESS_KEY && { key: process.env.LT_ACCESS_KEY }),
+        user: ltUsername,
+        key: ltAccessKey,
       }
     : {
         hostname: "localhost",

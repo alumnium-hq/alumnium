@@ -7,9 +7,8 @@ import { Alumni } from "../client/Alumni.ts";
 import { PlaywrightDriver } from "../drivers/PlaywrightDriver.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import { McpArtifactsStore } from "./McpArtifactsStore.ts";
+import type { McpArtifactsStore } from "./McpArtifactsStore.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
-import { startMcpTool } from "./tools/startMcpTool.ts";
 
 const { logger, tracer } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -81,9 +80,7 @@ export abstract class McpState {
     if (!driverState) {
       logger.error(`Driver state for ${id} not found`);
       // NOTE: This error is required for the controlling agent calling MCP.
-      throw new Error(
-        `Driver ${id} not found. Call ${startMcpTool.name} first.`,
-      );
+      throw new Error(`Driver ${id} not found. Call start first.`);
     }
     return driverState;
   }

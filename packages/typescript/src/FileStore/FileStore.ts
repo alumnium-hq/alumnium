@@ -172,7 +172,7 @@ export class FileStore {
    * be configured via environment variable or resolved from the specified
    * relative (to the global store directory `.alumnium`) path.
    *
-   * @param envDir Environment variable value, e.g. `process.env.ALUMNIUM_MCP_ARTIFACTS_DIR`.
+   * @param envDir Environment variable value, e.g. `Env.ALUMNIUM_MCP_ARTIFACTS_DIR`.
    * @param defaultDir Default subdirectory under global store, e.g. `artifacts`.
    * @param nestedDir Optional nested directory under the resolved subdirectory, e.g. driver ID.
    * @returns FileStore instance for the resolved directory.
@@ -189,7 +189,7 @@ export class FileStore {
    * Resolves a subdirectory path under the global store directory, allowing
    * override via environment variable.
    *
-   * @param envDir Environment variable value, e.g. `process.env.ALUMNIUM_MCP_ARTIFACTS_DIR`.
+   * @param envDir Environment variable value, e.g. `Env.ALUMNIUM_MCP_ARTIFACTS_DIR`.
    * @param defaultDir Default subdirectory under global store, e.g. `artifacts`.
    * @param nestedDir Optional nested directory under the resolved subdirectory, e.g. driver ID.
    * @returns Resolved path.

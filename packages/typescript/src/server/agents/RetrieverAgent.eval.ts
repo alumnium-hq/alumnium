@@ -2,18 +2,15 @@ import { evalite } from "evalite";
 import { nanoid } from "nanoid";
 import { lit } from "smollit";
 import type { AppId } from "../../AppId.ts";
-import { Model } from "../../Model.ts";
 import { Logger } from "../../telemetry/Logger.ts";
 import { NullCache } from "../cache/NullCache.ts";
 import { LlmContext } from "../LlmContext.ts";
 import { LlmFactory } from "../LlmFactory.ts";
 import { SessionContext } from "../session/SessionContext.ts";
 import { RetrieverAgent } from "./RetrieverAgent.ts";
+import { Env } from "../../Env.ts";
 
 Logger.level = "warning";
-
-let TRIAL_COUNT = parseInt(process.env.ALUMNIUM_EVAL_TRIAL_COUNT || "25");
-if (isNaN(TRIAL_COUNT) || TRIAL_COUNT <= 0) TRIAL_COUNT = 25;
 
 evalite("RetrieverAgent", {
   data: [
@@ -124,7 +121,7 @@ evalite("RetrieverAgent", {
     },
   ],
 
-  trialCount: TRIAL_COUNT,
+  trialCount: Env.ALUMNIUM_EVAL_TRIAL_COUNT,
 
   columns: ({ output, expected }) => {
     const parsed = RetrieverAgent.Output.safeParse(output);
@@ -142,7 +139,7 @@ evalite("RetrieverAgent", {
   },
 
   task: async (input) => {
-    const model = Model.current;
+    const model = Env.ALUMNIUM_MODEL;
     const llmContext = new LlmContext(model);
     const sessionContext = new SessionContext({
       app: "eval" as AppId,

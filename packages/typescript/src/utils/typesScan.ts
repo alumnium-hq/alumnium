@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { format } from "oxfmt";
 import { canonize } from "smolcanon";
 import { xxh64Str } from "smolxxh/str";
+import { Env } from "../Env.ts";
 
 export namespace TypesScan {
   export type Node = NodeType | NodeField;
@@ -111,7 +112,7 @@ export namespace scanTypes {
 export function scanTypes(props: scanTypes.Props): void {
   const { id, url, value } = props;
   const scanFilePath = getScanFilePath(url, id);
-  if (!process.env.ALUMNIUM_DEV_DATA_TYPES_SCAN) return;
+  if (!Env.ALUMNIUM_DEV_DATA_TYPES_SCAN) return;
 
   enqueueScan(scanFilePath, async () => {
     await withScanFileLock(scanFilePath, async () => {

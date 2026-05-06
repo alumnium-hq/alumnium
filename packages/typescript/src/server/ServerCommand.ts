@@ -5,6 +5,7 @@ import path from "node:path";
 import z from "zod";
 import { isSingleFileExecutable } from "../bundle.ts";
 import { CliCommand } from "../cli/CliCommand.ts";
+import { Env } from "../Env.ts";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { sleep } from "../utils/timers.ts";
@@ -96,6 +97,12 @@ export const ServerCommand = CliCommand.define({
   }),
 
   action: async ({ args, logFilenameHint }) => {
+    // NOTE: We do it first thing, to make sure all the logs go to the right place
+    if (Env.ALUMNIUM_SERVER_DAEMONIZE)
+      Logger.path = { filename: logFilenameHint };
+
+    await Logger.initEnv(logger);
+
     const {
       host,
       port,
@@ -107,7 +114,7 @@ export const ServerCommand = CliCommand.define({
       daemonWaitTimeout,
     } = args;
     const pidPath =
-      process.env.ALUMNIUM_SERVER_PID_PATH ??
+      Env.ALUMNIUM_SERVER_PID_PATH ??
       GlobalFileStorePaths.globalSubDir(daemonPid || DEFAULT_DAEMON_PID_NAME);
 
     if (daemonKill) {
@@ -145,9 +152,7 @@ export const ServerCommand = CliCommand.define({
       process.exit(0);
     }
 
-    if (process.env.ALUMNIUM_SERVER_DAEMONIZE === "1") {
-      Logger.path = { filename: logFilenameHint };
-
+    if (Env.ALUMNIUM_SERVER_DAEMONIZE) {
       await writePidFile(pidPath);
 
       const cleanup = removePidFileSync.bind(null, pidPath);
@@ -194,8 +199,9 @@ async function startDaemon(pidPath: string, force: boolean): Promise<void> {
     detached: true,
     stdio: ["ignore", "ignore", "ignore"],
     env: {
+      // oxlint-disable-next-line no-process-env -- We need it to pass env vars
       ...process.env,
-      ALUMNIUM_SERVER_DAEMONIZE: "1",
+      ALUMNIUM_SERVER_DAEMONIZE: z.stringbool().encode(true),
     },
   });
   child.unref();

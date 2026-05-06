@@ -20,6 +20,7 @@ oxfmt = "latest" # TS formatter
 "pipx:pyprojectsort" = "latest" # pyproject.toml formatter
 "pipx:wheel" = "latest" # Python wheel builder
 ollama = "latest"
+watchexec = "latest" # File system watcher
 
 [env]
 '_'.source = "scripts/env.sh"

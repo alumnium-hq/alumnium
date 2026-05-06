@@ -6,9 +6,9 @@ describe("Tabs", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { driverType } = result;
+      const { isAppiumDriver } = result;
 
-      if (driverType.startsWith("appium"))
+      if (isAppiumDriver)
         skip("Tabs functionality is not implemented in Appium yet");
 
       return result;

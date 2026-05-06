@@ -28,11 +28,10 @@ describe("File Upload", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { driverType } = result;
+      const { isAppiumDriver } = result;
 
       // File upload is not implemented in Appium yet
-      if (driverType.startsWith("appium"))
-        skip("File upload is not implemented in Appium yet");
+      if (isAppiumDriver) skip("File upload is not implemented in Appium yet");
 
       return result;
     };
@@ -67,9 +66,9 @@ describe("File Upload", () => {
   });
 
   it("should upload a hidden file", async ({ expect, setup, skip }) => {
-    const { al, $, driverType } = await setup();
+    const { al, $, driverId: driverKind } = await setup();
 
-    if (driverType === "selenium")
+    if (driverKind === "selenium")
       skip("Hidden file upload inputs are not supported in Selenium");
 
     await $.navigate("hidden_file_upload.html");

@@ -61,6 +61,7 @@ async function setupEmbeddedDependenciesInternal() {
   const paths = await extractEmbeddedDependencies();
 
   if (paths.seleniumManagerPath) {
+    // oxlint-disable-next-line no-process-env -- We need it to set the path for Selenium Manager
     process.env.SE_MANAGER_PATH ??= paths.seleniumManagerPath;
   }
 

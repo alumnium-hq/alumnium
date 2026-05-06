@@ -29,6 +29,7 @@ import { Keys } from "./keys.ts";
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import type { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import { AppId } from "../AppId.ts";
+import { Env } from "../Env.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 import type { Driver } from "./Driver.ts";
@@ -62,10 +63,8 @@ const WAIT_FOR_SCRIPT = waitForScriptSource;
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
   public platform: Driver.Platform = "chromium";
-  #autoswitchToNewTabEnabled: boolean = true;
-  public fullPageScreenshot: boolean =
-    (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
-    "true";
+  #autoswitchToNewTabEnabled = true;
+  public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     DragAndDropTool,
@@ -565,7 +564,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 }
 
-function spanAttrs(this: SeleniumDriver): Tracer.SpansDriverAttrsBase {
+function spanAttrs(this: SeleniumDriver): Tracer.SpansDriverAttrs {
   return {
     "driver.kind": "selenium",
     "driver.platform": this.platform,

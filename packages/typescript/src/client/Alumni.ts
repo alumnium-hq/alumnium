@@ -14,6 +14,7 @@ import {
   PlaywrightDriver,
   SeleniumDriver,
 } from "../drivers/index.ts";
+import { Env } from "../Env.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
@@ -27,14 +28,6 @@ import type { DoResult, DoStep } from "./result.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
-
-const CHANGE_ANALYSIS =
-  (process.env.ALUMNIUM_CHANGE_ANALYSIS || "false").toLowerCase() === "true";
-const PLANNER =
-  (process.env.ALUMNIUM_PLANNER || "true").toLowerCase() === "true";
-const EXCLUDE_ATTRIBUTES = (process.env.ALUMNIUM_EXCLUDE_ATTRIBUTES || "")
-  .split(",")
-  .filter(Boolean);
 
 /**
  * @deprecated Use `Alumni.Options` instead.
@@ -87,7 +80,8 @@ export class Alumni {
 
     const { url, model } = options;
 
-    this.changeAnalysis = options.changeAnalysis ?? CHANGE_ANALYSIS;
+    this.changeAnalysis =
+      options.changeAnalysis ?? Env.ALUMNIUM_CHANGE_ANALYSIS;
     this.llm = options.llm;
 
     // Wrap driver or use directly if already wrapped
@@ -112,13 +106,14 @@ export class Alumni {
       this.tools[tool.name] = tool;
     }
 
-    const planner = options.planner ?? PLANNER;
+    const planner = options.planner ?? Env.ALUMNIUM_PLANNER;
 
     const clientProps: Client.Props = {
       platform: this.driver.platform,
       tools: this.tools,
       planner,
-      excludeAttributes: options.excludeAttributes ?? EXCLUDE_ATTRIBUTES,
+      excludeAttributes:
+        options.excludeAttributes ?? Env.ALUMNIUM_EXCLUDE_ATTRIBUTES,
     };
 
     if (url) {
@@ -130,7 +125,7 @@ export class Alumni {
       });
     } else {
       this.client = new NativeClient({
-        model: Model.current,
+        model: model || Env.ALUMNIUM_MODEL,
         llm: this.llm,
         ...clientProps,
       });
