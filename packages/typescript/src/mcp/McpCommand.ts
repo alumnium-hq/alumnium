@@ -3,6 +3,8 @@ import { CliCommand } from "../cli/CliCommand.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { McpServer } from "./McpServer.ts";
 
+const logger = Logger.get(import.meta.url);
+
 export namespace McpCommand {}
 
 export const McpCommand = CliCommand.define({
@@ -13,6 +15,7 @@ export const McpCommand = CliCommand.define({
 
   action: async ({ logFilenameHint }) => {
     Logger.path = { filename: logFilenameHint };
+    await Logger.initEnv(logger);
 
     const server = new McpServer();
     await server.run();

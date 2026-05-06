@@ -16,23 +16,15 @@ import {
 import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";
 import { never } from "alwaysly";
+import { Env } from "../Env.ts";
 import { Model } from "../Model.ts";
 import { Logger } from "../telemetry/Logger.ts";
+import { maskString } from "../utils/string.ts";
 
 const logger = Logger.get(import.meta.url);
 
-const parsedModelTimeout = parseInt(process.env.ALUMNIUM_MODEL_TIMEOUT ?? "90");
-export const MODEL_TIMEOUT_SEC = Number.isFinite(parsedModelTimeout)
-  ? parsedModelTimeout
-  : 90;
-
-const DEFAULT_LLM_RETRIES = 8;
-
-export let MODEL_RETRIES = parseInt(
-  process.env.ALUMNIUM_MODEL_RETRIES || String(DEFAULT_LLM_RETRIES),
-);
-if (isNaN(MODEL_RETRIES)) MODEL_RETRIES = DEFAULT_LLM_RETRIES;
-if (MODEL_RETRIES < 0) MODEL_RETRIES = 0;
+export const MODEL_TIMEOUT_SEC = Env.ALUMNIUM_MODEL_TIMEOUT;
+export const MODEL_RETRIES = Env.ALUMNIUM_MODEL_RETRIES;
 
 /**
  * Factory for creating LLM instances based on model configuration.
@@ -105,7 +97,7 @@ export class LlmFactory {
     model: Model,
     defaults: Partial<AzureChatOpenAIFields>,
   ): AzureChatOpenAIFields {
-    const openAIApiVersion = process.env.AZURE_FOUNDRY_API_VERSION;
+    const openAIApiVersion = Env.AZURE_FOUNDRY_API_VERSION;
     if (!openAIApiVersion) {
       throw new Error(
         "AZURE_FOUNDRY_API_VERSION environment variable is required for Azure Foundry models",
@@ -123,7 +115,7 @@ export class LlmFactory {
     model: Model,
     defaults: Partial<AzureChatOpenAIFields>,
   ): AzureChatOpenAIFields {
-    const azureOpenAIApiKey = process.env.AZURE_OPENAI_API_KEY;
+    const azureOpenAIApiKey = Env.AZURE_OPENAI_API_KEY;
     if (!azureOpenAIApiKey) {
       throw new Error(
         "AZURE_OPENAI_API_KEY environment variable is required for Azure OpenAI models",
@@ -131,7 +123,7 @@ export class LlmFactory {
     }
     logMaskedSecret("Azure OpenAI API Key", azureOpenAIApiKey);
 
-    const azureOpenAIEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const azureOpenAIEndpoint = Env.AZURE_OPENAI_ENDPOINT;
     if (!azureOpenAIEndpoint) {
       throw new Error(
         "AZURE_OPENAI_ENDPOINT environment variable is required for Azure OpenAI models",
@@ -139,7 +131,7 @@ export class LlmFactory {
     }
     logMaskedSecret("Azure OpenAI API Endpoint", azureOpenAIEndpoint);
 
-    const azureOpenAIApiVersion = process.env.AZURE_OPENAI_API_VERSION;
+    const azureOpenAIApiVersion = Env.AZURE_OPENAI_API_VERSION;
     if (!azureOpenAIApiVersion) {
       throw new Error(
         "AZURE_OPENAI_API_VERSION environment variable is required for Azure OpenAI models",
@@ -147,17 +139,8 @@ export class LlmFactory {
     }
     logMaskedSecret("Azure OpenAI API Version", azureOpenAIApiVersion);
 
-    let defaultHeaders: Headers | undefined;
-    const envHeaders = process.env.AZURE_OPENAI_DEFAULT_HEADERS;
-    if (envHeaders) {
-      try {
-        defaultHeaders = new Headers(JSON.parse(envHeaders));
-      } catch {
-        logger.warn(
-          "Failed to parse AZURE_OPENAI_DEFAULT_HEADERS, it should be a valid JSON string. Ignoring the variable.",
-        );
-      }
-    }
+    const envHeaders = Env.AZURE_OPENAI_DEFAULT_HEADERS;
+    const defaultHeaders = new Headers(envHeaders);
 
     return {
       model: model.name,
@@ -192,9 +175,9 @@ export class LlmFactory {
   static createAwsLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating AWS LLM with model ${model.name}`);
 
-    const accessKeyId = process.env.AWS_ACCESS_KEY ?? "";
-    const secretAccessKey = process.env.AWS_SECRET_KEY ?? "";
-    const region = process.env.AWS_REGION_NAME ?? "us-east-1";
+    const accessKeyId = Env.AWS_ACCESS_KEY || "";
+    const secretAccessKey = Env.AWS_SECRET_KEY || "";
+    const region = Env.AWS_REGION_NAME;
     const additionalModelRequestFields: DocumentType = {};
 
     if (model.provider === "aws_anthropic") {
@@ -279,7 +262,7 @@ export class LlmFactory {
   static createOllamaLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating Ollama LLM with model ${model.name}`);
 
-    const baseUrl = process.env.OLLAMA_HOST || process.env.ALUMNIUM_OLLAMA_URL;
+    const baseUrl = Env.OLLAMA_HOST || Env.ALUMNIUM_OLLAMA_URL;
     if (baseUrl) {
       return new ChatOllama({
         model: model.name,
@@ -299,7 +282,7 @@ export class LlmFactory {
 
     const fields: ChatOpenAIFields = {
       model: model.name,
-      configuration: { baseURL: process.env.OPENAI_CUSTOM_URL },
+      configuration: { baseURL: Env.OPENAI_CUSTOM_URL },
       // TODO: Apparently the latest OpenAI models (o1, o3, o4, gpt-5) don't
       // accept temperature anymore, so we need to either conditionally include
       // it or figure out the correct way to set it for the new models.
@@ -316,7 +299,7 @@ export class LlmFactory {
     };
 
     if (model.name.includes("gpt-4o")) {
-      if (!process.env.OPENAI_CUSTOM_URL) {
+      if (!Env.OPENAI_CUSTOM_URL) {
         // TODO: The seed parameter is deprecated and missing the LangChain
         // types, so we need to figure out the correct way to move forward.
         //
@@ -346,19 +329,7 @@ export class LlmFactory {
 }
 
 function logMaskedSecret(name: string, secret: string) {
-  logger.debug(`${name} is set: ${maskStr(secret)}`);
-}
-
-function maskStr(str: string, unmaskedStart = 4, unmaskedEnd = 4): string {
-  if (str.length <= unmaskedStart + unmaskedEnd) {
-    return "*".repeat(str.length);
-  }
-  const maskedLength = str.length - unmaskedStart - unmaskedEnd;
-  return (
-    str.slice(0, unmaskedStart) +
-    "*".repeat(maskedLength) +
-    str.slice(str.length - unmaskedEnd)
-  );
+  logger.debug(`${name} is set: ${maskString(secret)}`);
 }
 
 class ReasonableChatDeepSeek extends ChatDeepSeek {

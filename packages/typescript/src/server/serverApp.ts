@@ -1,6 +1,7 @@
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { Model } from "../Model.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.ts";
 import { ChangesAnalyzerAgent } from "./agents/ChangesAnalyzerAgent.ts";
@@ -57,7 +58,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
           const session = ctx.store.sessions.createSession(ctx.body);
           return {
             session_id: session.sessionId,
-            model: session.model.toString(),
+            model: Model.toString(session.model),
             platform: session.platform,
           };
         },

@@ -216,6 +216,9 @@ run = "./scripts/test-package.sh"
 [tasks.lint]
 run = "bun oxlint ."
 
+[tasks."lint:watch"]
+run = "watchexec --exts ts,js --clear -- bun oxlint ."
+
 [tasks."lint:fix"]
 run = "bun oxlint --fix ."
 

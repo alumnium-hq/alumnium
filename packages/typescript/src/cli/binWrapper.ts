@@ -10,6 +10,7 @@ async function main() {
 
   const child = spawn(binPath, process.argv.slice(2), {
     stdio: "inherit",
+    // oxlint-disable-next-line no-process-env -- We need it to pass env vars
     env: process.env,
   });
 

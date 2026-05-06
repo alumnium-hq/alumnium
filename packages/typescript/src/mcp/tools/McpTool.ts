@@ -1,5 +1,6 @@
 import z from "zod";
 import { Logger } from "../../telemetry/Logger.ts";
+import type { LoggerSchema } from "../../telemetry/LoggerSchema.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -28,7 +29,7 @@ export namespace McpTool {
   ) => Promise<Output>;
 
   export interface ExecuteHelpers {
-    logger: Logger.Like;
+    logger: LoggerSchema.Like;
   }
 
   export type OutputContent = z.infer<typeof McpTool.OutputContent>;

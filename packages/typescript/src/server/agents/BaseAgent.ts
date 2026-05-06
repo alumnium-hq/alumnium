@@ -11,6 +11,7 @@ import z from "zod";
 import { Lchain } from "../../llm/Lchain.ts";
 import { LchainSchema } from "../../llm/LchainSchema.ts";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
+import type { LoggerSchema } from "../../telemetry/LoggerSchema.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { retry } from "../../utils/retry.ts";
 import { LlmContext } from "../LlmContext.ts";
@@ -350,7 +351,7 @@ export class BaseAgent {
   }
 
   protected logData(
-    logger: Logger.Like,
+    logger: LoggerSchema.Like,
     dir: BaseAgent.LogDir,
     data: BaseAgent.LogData,
   ) {

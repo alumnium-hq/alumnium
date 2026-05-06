@@ -1,15 +1,8 @@
 import { always } from "alwaysly";
+import { Env } from "../Env.ts";
 import { Logger } from "../telemetry/Logger.ts";
 
 const logger = Logger.get(import.meta.url);
-
-const DEFAULT_DELAY_SEC = 0.5; // seconds
-let DELAY_MS = parseFloat(process.env.ALUMNIUM_DELAY || "0.5") * 1000; // Convert to milliseconds
-if (isNaN(DELAY_MS) || DELAY_MS < 0) DELAY_MS = DEFAULT_DELAY_SEC * 1000;
-
-const DEFAULT_RETRIES = 2;
-let RETRIES = parseInt(process.env.ALUMNIUM_RETRIES || String(DEFAULT_RETRIES));
-if (isNaN(RETRIES) || RETRIES < 0) RETRIES = DEFAULT_RETRIES;
 
 export namespace retry {
   export interface Options {
@@ -43,8 +36,8 @@ export async function retry<Type>(
     fn = maybeFn!;
   }
 
-  const maxAttempts = options.maxAttempts ?? RETRIES;
-  const backOff = options.backOff ?? DELAY_MS;
+  const maxAttempts = options.maxAttempts ?? Env.ALUMNIUM_RETRIES;
+  const backOff = options.backOff ?? Env.ALUMNIUM_DELAY * 1000;
 
   let lastError: Error | undefined;
 
@@ -63,7 +56,7 @@ export async function retry<Type>(
         throw lastError;
       }
 
-      if (process.env.ALUMNIUM_NO_RETRY) {
+      if (Env.ALUMNIUM_NO_RETRY) {
         logger.info(
           "ALUMNIUM_NO_RETRY is set, not retrying after error: {error}",
           { error: lastError },

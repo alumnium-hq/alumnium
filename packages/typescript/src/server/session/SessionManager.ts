@@ -2,6 +2,7 @@ import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { AppId } from "../../AppId.ts";
 import type { Driver } from "../../drivers/Driver.ts";
+import { Env } from "../../Env.ts";
 import {
   createLlmUsageStats,
   LlmUsage,
@@ -67,7 +68,9 @@ export class SessionManager {
       ...restProps
     } = props;
 
-    const model = new Model(provider, modelName);
+    const model = provider
+      ? Model.new(provider, modelName)
+      : Env.ALUMNIUM_MODEL;
     const session = new Session({
       ...restProps,
       sessionId,

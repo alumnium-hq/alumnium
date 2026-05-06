@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { pushTeardown } from "../../tests/unit/mocks.ts";
+import { describe, expect, it, vi } from "vitest";
+import { pushMock } from "../../tests/unit/mocks.ts";
+import { Env } from "../Env.ts";
 import { GlobalFileStorePaths } from "./GlobalFileStorePaths.ts";
 
 describe("GlobalFileStorePaths", () => {
@@ -10,10 +11,9 @@ describe("GlobalFileStorePaths", () => {
     });
 
     it("allows to override global store directory via env var", () => {
-      process.env.ALUMNIUM_STORE_DIR = ".custom";
-      pushTeardown(() => {
-        delete process.env.ALUMNIUM_STORE_DIR;
-      });
+      pushMock(
+        vi.spyOn(Env, "ALUMNIUM_STORE_DIR", "get").mockReturnValue(".custom"),
+      );
       const result = GlobalFileStorePaths.globalSubDir("sub/dir");
       expect(result).toBe(".custom/sub/dir");
     });
@@ -25,11 +25,11 @@ describe("GlobalFileStorePaths", () => {
     });
 
     it("allows to override global store directory via env var", () => {
-      process.env.ALUMNIUM_STORE_DIR = ".custom";
-      pushTeardown(() => {
-        delete process.env.ALUMNIUM_STORE_DIR;
-      });
-      expect(GlobalFileStorePaths.globalDir).toBe(".custom");
+      pushMock(
+        vi.spyOn(Env, "ALUMNIUM_STORE_DIR", "get").mockReturnValue(".custom"),
+      );
+      const result = GlobalFileStorePaths.globalDir;
+      expect(result).toBe(".custom");
     });
   });
 });

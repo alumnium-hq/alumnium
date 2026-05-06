@@ -2,6 +2,6 @@
 
 // This script outputs the current Ollama model id.
 
-import { ModelName } from "../src/Model.ts";
+import { Model } from "../src/Model.ts";
 
-process.stdout.write(ModelName.DEFAULT.ollama);
+process.stdout.write(Model.defaultProviderModel("ollama"));

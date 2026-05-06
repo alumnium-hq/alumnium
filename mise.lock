@@ -498,3 +498,7 @@ provenance = "github-attestations"
 checksum = "sha256:171b7ccda1bbd562da6babeffcf533a1c6cc7862cf998da826e1db534fc43e48"
 url = "https://github.com/astral-sh/uv/releases/download/0.11.2/uv-x86_64-pc-windows-msvc.zip"
 provenance = "github-attestations"
+
+[[tools.watchexec]]
+version = "2.5.1"
+backend = "aqua:watchexec/watchexec"

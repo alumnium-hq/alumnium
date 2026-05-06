@@ -2,6 +2,7 @@ import type { Generation } from "@langchain/core/outputs";
 import { describe, expect, it, vi } from "vitest";
 import { createMockDir, pushMock } from "../../../tests/unit/mocks.ts";
 import { AppId } from "../../AppId.ts";
+import { Env } from "../../Env.ts";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";
 import { Lchain } from "../../llm/Lchain.ts";
 import { Model } from "../../Model.ts";
@@ -21,6 +22,7 @@ describe("ResponseCache", () => {
       cacheDir,
       prompt1,
       llmKey,
+      contextModel,
     } = await setup();
     const cache = new ResponseCache(sessionContext, cacheStore, llmContext);
 
@@ -28,8 +30,7 @@ describe("ResponseCache", () => {
     await cache.update(prompt1, llmKey, generations);
     await cache.save();
 
-    const model = Model.current.toString();
-    const baseDir = `test-app/${model}/responses`;
+    const baseDir = `test-app/${Model.toString(contextModel)}/responses`;
     const files = await cacheDir.flatTree();
     expect(files).toMatchInlineSnapshot(
       [
@@ -58,6 +59,7 @@ describe("ResponseCache", () => {
       prompt1,
       prompt2,
       llmKey,
+      contextModel,
     } = await setup();
     const cache1 = new ResponseCache(sessionContext, cacheStore, llmContext);
     const cache2 = new ResponseCache(sessionContext, cacheStore, llmContext);
@@ -69,8 +71,7 @@ describe("ResponseCache", () => {
     await cache1.save();
     await cache2.save();
 
-    const model = Model.current.toString();
-    const baseDir = `test-app/${model}/responses`;
+    const baseDir = `test-app/${Model.toString(contextModel)}/responses`;
     const files = await cacheDir.flatTree();
     expect(files).toEqual([
       `${baseDir}/a07a64efcdf52cdc/request.json`,
@@ -113,15 +114,17 @@ async function setup() {
 
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 
-  const fixedModel = new Model("openai", "gpt-5-nano-2025-08-07");
+  const defaultModel = Model.parse("ollama");
+  const contextModel = Model.parse("openai/gpt-5-nano-2025-08-07");
+
   pushMock(
-    vi.spyOn(Model, "current", "get").mockReturnValue(fixedModel),
+    vi.spyOn(Env, "ALUMNIUM_MODEL", "get").mockReturnValue(defaultModel),
     vi
       .spyOn(GlobalFileStorePaths, "globalSubDir")
       .mockReturnValue(cacheDir.path),
   );
 
-  const llmContext = new LlmContext(Model.current);
+  const llmContext = new LlmContext(contextModel);
   const cacheStore = new CacheStore(sessionContext, llmContext.model);
 
   const prompt1 = "prompt 1" as LlmContext.Prompt;
@@ -144,6 +147,8 @@ async function setup() {
     meta1,
     meta2,
     llmKey,
+    defaultModel,
+    contextModel,
   };
 }
 

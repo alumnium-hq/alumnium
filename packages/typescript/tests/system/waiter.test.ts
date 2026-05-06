@@ -5,9 +5,9 @@ describe("Waiter script", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { driverType } = result;
+      const { driverId } = result;
 
-      if (driverType === "appium-ios")
+      if (driverId === "appium-ios")
         skip("Synchronization is not implemented in Appium yet");
 
       return result;
