@@ -10,7 +10,7 @@ describe("Shadow DOM - TypeScript Playwright (Live URL)", () => {
   beforeEach(async () => {
     browser = await chromium.launch({ headless: true });
     page = await browser.newPage();
-    
+
     // Create Alumni instance with Playwright page
     al = new Alumni(page);
   });
@@ -21,24 +21,26 @@ describe("Shadow DOM - TypeScript Playwright (Live URL)", () => {
 
   it("Shadow DOM content appears in accessibility tree", async () => {
     await page.goto("https://the-internet.herokuapp.com/shadowdom");
-    
+
     const tree = await al.driver.getAccessibilityTree();
     const treeStr = tree.toStr();
-    
+
     console.log("\n=== PLAYWRIGHT SHADOW DOM - ACCESSIBILITY TREE ===");
     console.log(treeStr.substring(0, 3000));
     console.log("=== END OF TREE ===\n");
-    
+
     // This proves Shadow DOM content is already accessible without any fixes
     // "In a list!" is text inside a shadow DOM element
     expect(treeStr).toContain("In a list!");
     expect(treeStr).toContain("different text");
-    console.log("PASS: Shadow DOM content is present in accessibility tree (no fix needed)!");
+    console.log(
+      "PASS: Shadow DOM content is present in accessibility tree (no fix needed)!",
+    );
   });
 
   it("al.do() can interact with Shadow DOM elements", async () => {
     await page.goto("https://the-internet.herokuapp.com/shadowdom");
-    
+
     try {
       await al.do("click 'In a list!'");
       console.log("SUCCESS: al.do() clicked Shadow DOM element 'In a list!'!");
@@ -46,10 +48,12 @@ describe("Shadow DOM - TypeScript Playwright (Live URL)", () => {
     } catch (error) {
       console.log(`NOTE: al.do() test: ${error}`);
       // Don't fail if it's an API issue - the important thing is Shadow DOM is accessible
-      if (error instanceof Error && 
-          (error.message.includes("API") || 
-           error.message.includes("key") || 
-           error.message.includes("auth"))) {
+      if (
+        error instanceof Error &&
+        (error.message.includes("API") ||
+          error.message.includes("key") ||
+          error.message.includes("auth"))
+      ) {
         console.log("Skipping - LLM API not configured properly");
         expect(true).toBe(true);
       } else {
@@ -60,17 +64,19 @@ describe("Shadow DOM - TypeScript Playwright (Live URL)", () => {
 
   it("al.get() can retrieve text from Shadow DOM", async () => {
     await page.goto("https://the-internet.herokuapp.com/shadowdom");
-    
+
     try {
       const result = await al.get("text in the shadow DOM paragraph");
       console.log(`SUCCESS: al.get() returned: ${result}`);
       expect(result).toContain("different text");
     } catch (error) {
       console.log(`NOTE: al.get() test: ${error}`);
-      if (error instanceof Error && 
-          (error.message.includes("API") || 
-           error.message.includes("key") || 
-           error.message.includes("auth"))) {
+      if (
+        error instanceof Error &&
+        (error.message.includes("API") ||
+          error.message.includes("key") ||
+          error.message.includes("auth"))
+      ) {
         console.log("Skipping - LLM API not configured properly");
         expect(true).toBe(true);
       } else {
@@ -81,17 +87,19 @@ describe("Shadow DOM - TypeScript Playwright (Live URL)", () => {
 
   it("al.check() can verify Shadow DOM content", async () => {
     await page.goto("https://the-internet.herokuapp.com/shadowdom");
-    
+
     try {
       await al.check("page contains 'In a list!'");
       console.log("SUCCESS: al.check() verified Shadow DOM content!");
       expect(true).toBe(true);
     } catch (error) {
       console.log(`NOTE: al.check() test: ${error}`);
-      if (error instanceof Error && 
-          (error.message.includes("API") || 
-           error.message.includes("key") || 
-           error.message.includes("auth"))) {
+      if (
+        error instanceof Error &&
+        (error.message.includes("API") ||
+          error.message.includes("key") ||
+          error.message.includes("auth"))
+      ) {
         console.log("Skipping - LLM API not configured properly");
         expect(true).toBe(true);
       } else {
