@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shadow DOM Test Page</title>
+  </head>
+  <body>
+    <h1>Shadow DOM Test Page</h1>
+    <p>This page contains Shadow DOM elements for testing Alumni support.</p>
+
+    <div id="shadow-host-1"></div>
+    <div id="shadow-host-2"></div>
+
+    <script>
+      // Create first shadow DOM
+      const host1 = document.getElementById("shadow-host-1");
+      const shadow1 = host1.attachShadow({ mode: "open" });
+      shadow1.innerHTML = `
+            <style>
+                p { color: blue; }
+                button { background: lightblue; }
+            </style>
+            <p>This is inside Shadow DOM!</p>
+            <button id="shadow-button-1">Shadow Button 1</button>
+        `;
+
+      // Create second shadow DOM
+      const host2 = document.getElementById("shadow-host-2");
+      const shadow2 = host2.attachShadow({ mode: "open" });
+      shadow2.innerHTML = `
+            <style>
+                p { color: green; }
+            </style>
+            <p>This is another text inside Shadow DOM!</p>
+            <button id="shadow-button-2">Shadow Button 2</button>
+        `;
+    </script>
+  </body>
+</html>
