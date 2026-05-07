@@ -30,6 +30,8 @@ describe("Shadow DOM - TypeScript Playwright (Live URL)", () => {
     console.log("=== END OF TREE ===\n");
     
     // This proves Shadow DOM content is already accessible without any fixes
+    // "In a list!" is text inside a shadow DOM element
+    expect(treeStr).toContain("In a list!");
     expect(treeStr).toContain("different text");
     console.log("PASS: Shadow DOM content is present in accessibility tree (no fix needed)!");
   });
@@ -38,8 +40,8 @@ describe("Shadow DOM - TypeScript Playwright (Live URL)", () => {
     await page.goto("https://the-internet.herokuapp.com/shadowdom");
     
     try {
-      await al.do("click the element that contains 'Let's have some different text'");
-      console.log("SUCCESS: al.do() interacted with Shadow DOM element!");
+      await al.do("click 'In a list!'");
+      console.log("SUCCESS: al.do() clicked Shadow DOM element 'In a list!'!");
       expect(true).toBe(true);
     } catch (error) {
       console.log(`NOTE: al.do() test: ${error}`);
@@ -81,7 +83,7 @@ describe("Shadow DOM - TypeScript Playwright (Live URL)", () => {
     await page.goto("https://the-internet.herokuapp.com/shadowdom");
     
     try {
-      await al.check("page contains 'Let's have some different text'");
+      await al.check("page contains 'In a list!'");
       console.log("SUCCESS: al.check() verified Shadow DOM content!");
       expect(true).toBe(true);
     } catch (error) {
