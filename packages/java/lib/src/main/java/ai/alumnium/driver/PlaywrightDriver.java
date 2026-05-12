@@ -1,7 +1,6 @@
 package ai.alumnium.driver;
 
 import ai.alumnium.Config;
-import ai.alumnium.driver.locators.Element;
 import ai.alumnium.accessibility.AccessibilityElement;
 import ai.alumnium.accessibility.ChromiumAccessibilityTree;
 import ai.alumnium.tool.BaseTool;

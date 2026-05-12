@@ -20,10 +20,10 @@ run = "gradle --no-daemon publishToMavenLocal"
 description = "Publish main + classifier jars to local Maven repository"
 
 [tasks."test/unit"]
-run = "gradle --no-daemon test --tests 'ai.alumnium.unit.*'"
+run = "gradle clean --no-daemon test --tests 'ai.alumnium.unit.*'"
 description = "Run unit tests"
 
 [tasks."test/integration"]
-run = "gradle --no-daemon test --tests 'ai.alumnium.integration.*'"
+run = "gradle clean --no-daemon test --tests 'ai.alumnium.integration.*'"
 description = "Run integration tests"
 

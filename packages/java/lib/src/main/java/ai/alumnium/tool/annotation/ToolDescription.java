@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Attaches a class-level description to a
- * tool record. Consumed by {@link ToolToSchemaConverter}.
+ * tool record. Consumed by {@link ai.alumnium.tool.ToolToSchemaConverter}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

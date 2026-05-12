@@ -2,7 +2,6 @@ package ai.alumnium.driver;
 
 import ai.alumnium.Config;
 import ai.alumnium.accessibility.ChromiumAccessibilityTree;
-import ai.alumnium.driver.locators.Element;
 import ai.alumnium.tool.BaseTool;
 import ai.alumnium.tool.ClickTool;
 import ai.alumnium.tool.PressKeyTool;

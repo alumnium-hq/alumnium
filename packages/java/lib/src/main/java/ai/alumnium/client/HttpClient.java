@@ -33,6 +33,13 @@ public final class HttpClient implements AutoCloseable {
 
     public static final String DEFAULT_SERVER_HOST = "127.0.0.1";
 
+    /** Same default port as the TypeScript {@code server} CLI command. */
+    public static final int DEFAULT_SERVER_PORT = 8013;
+
+    /** Default base URL when none is passed (matches TS server defaults). */
+    public static final String DEFAULT_BASE_URL =
+        "http://" + DEFAULT_SERVER_HOST + ":" + DEFAULT_SERVER_PORT;
+
     private static final Logger LOG = LoggerFactory.getLogger(HttpClient.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP_OF_OBJECT =
@@ -44,7 +51,8 @@ public final class HttpClient implements AutoCloseable {
     private Thread shutdownHook;
 
     /**
-     * @param url                explicit server URL
+     * @param url                server base URL; null or blank uses {@link #DEFAULT_BASE_URL};
+     *                           values without a scheme get {@code http://}
      * @param model              {@link Model} to be used by the session
      * @param platform           driver platform string (e.g. {@code "web-selenium"})
      * @param toolSchemas        JSON-serialisable tool schemas (maps or annotated POJOs)
@@ -61,7 +69,7 @@ public final class HttpClient implements AutoCloseable {
             .executor(Executors.newVirtualThreadPerTaskExecutor())
             .connectTimeout(Duration.ofSeconds(30))
             .build();
-        this.baseUrl = url;
+        this.baseUrl = normalizeBaseUrl(url);
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("provider", model.provider().value());
@@ -139,7 +147,7 @@ public final class HttpClient implements AutoCloseable {
         return new RetrieveResult(data.path("explanation").asText(""), Data.looselyTypecast(rawResult));
     }
 
-    public Map<String, Object> findElement(String description, String accessibilityTree, String app) {
+    public FindElementResult findElement(String description, String accessibilityTree, String app) {
         JsonNode data = postJson("/v1/sessions/" + requireSession() + "/elements",
             Map.of("description", description, "accessibility_tree", accessibilityTree,
                    "app", app == null ? "unknown" : app),
@@ -148,7 +156,11 @@ public final class HttpClient implements AutoCloseable {
         if (!elements.isArray() || elements.isEmpty()) {
             throw new IllegalStateException("Server returned no elements for description: " + description);
         }
-        return MAPPER.convertValue(elements.get(0), MAP_OF_OBJECT);
+        JsonNode first = elements.get(0);
+        return new FindElementResult(
+            first.path("id").asInt(),
+            first.path("explanation").asText(null)
+        );
     }
 
     public String analyzeChanges(String beforeTree,
@@ -202,6 +214,20 @@ public final class HttpClient implements AutoCloseable {
             throw new IllegalStateException("Session has been closed");
         }
         return id;
+    }
+
+    private static String normalizeBaseUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return DEFAULT_BASE_URL;
+        }
+        String t = url.trim();
+        if (t.isEmpty()) {
+            return DEFAULT_BASE_URL;
+        }
+        if (!t.contains("://")) {
+            t = "http://" + t;
+        }
+        return t.replaceAll("/+$", "");
     }
 
     private JsonNode postJson(String path, Object body, Duration timeout) {

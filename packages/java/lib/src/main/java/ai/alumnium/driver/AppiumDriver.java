@@ -1,7 +1,6 @@
 package ai.alumnium.driver;
 
 import ai.alumnium.Config;
-import ai.alumnium.driver.locators.Element;
 import ai.alumnium.accessibility.AccessibilityElement;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
 import ai.alumnium.accessibility.UIAutomator2AccessibilityTree;
@@ -17,6 +16,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.appium.java_client.remote.SupportsContextSwitching;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -237,7 +237,7 @@ public final class AppiumDriver extends BaseDriver {
 
     private void ensureNativeContext() {
         if (!autoswitchContexts) return;
-        var switcher = (io.appium.java_client.remote.SupportsContextSwitching) driver;
+        var switcher = (SupportsContextSwitching) driver;
         if (!"NATIVE_APP".equals(switcher.getContext())) {
             switcher.context("NATIVE_APP");
         }

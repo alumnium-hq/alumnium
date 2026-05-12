@@ -97,7 +97,6 @@ publishing {
                 }
                 developers {
                     developer { id = 'p0deje'; name = 'Alex Rodionov' }
-                    developer { id = 'koss';   name = 'Sasha Koss' }
                     developer { id = 'rookieintraing';   name = 'Ish Abbi' }
                 }
                 scm {
@@ -115,6 +114,16 @@ publishing {
             url = layout.buildDirectory.dir('staging-deploy')
         }
     }
+}
+
+tasks.register('copyDriverScripts', Copy) {
+    from "${rootProject.projectDir}/../python/src/alumnium/drivers/scripts"
+    include '*.js'
+    into layout.buildDirectory.dir('resources/main/ai/alumnium/driver/scripts')
+}
+
+tasks.named('processResources') {
+    dependsOn copyDriverScripts
 }
 
 signing {

@@ -3,9 +3,10 @@ package ai.alumnium;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
 import ai.alumnium.client.Data;
 import ai.alumnium.client.HttpClient;
+import ai.alumnium.client.FindElementResult;
 import ai.alumnium.driver.AppiumDriver;
 import ai.alumnium.driver.BaseDriver;
-import ai.alumnium.driver.locators.Element;
+import ai.alumnium.driver.Element;
 import ai.alumnium.driver.PlaywrightDriver;
 import ai.alumnium.driver.SeleniumDriver;
 import ai.alumnium.result.DoResult;
@@ -71,11 +72,6 @@ public final class Alumni implements AutoCloseable {
         this.tools = Collections.unmodifiableMap(builtTools);
 
         String serverUrl = opts.url() != null ? opts.url() : Config.SERVER_URL;
-        if (serverUrl != null) {
-            LOG.info("Using HTTP client with server: {}", serverUrl);
-        } else {
-            LOG.info("Using HTTP client with auto-managed local server");
-        }
 
         List<Map<String, Object>> toolSchemas = ToolToSchemaConverter.convertAll(this.tools);
 
@@ -86,6 +82,7 @@ public final class Alumni implements AutoCloseable {
             toolSchemas,
             planner,
             excludeAttributes);
+        LOG.info("Using HTTP client with server: {}", this.client.baseUrl());
     }
 
     // ---------------------------------------------------------------
@@ -101,15 +98,10 @@ public final class Alumni implements AutoCloseable {
 
     /**
      * Executes a series of steps to achieve the given goal. Named
-     * {@code doGoal} because {@code do} is a reserved word in Java.
+     * {@code act} because {@code do} is a reserved word in Java.
      */
-    public DoResult doGoal(String goal) {
+    public DoResult act(String goal) {
         return executeDo(goal);
-    }
-
-    /** Alias for {@link #doGoal(String)} to match the Python {@code do(...)} name. */
-    public DoResult perform(String goal) {
-        return doGoal(goal);
     }
 
     /** Assert that the statement is true about the current view. */
@@ -155,9 +147,9 @@ public final class Alumni implements AutoCloseable {
 
     /** Resolve a natural-language description to a native driver element. */
     public Element find(String description) {
-        Map<String, Object> response = client.findElement(
+        FindElementResult response = client.findElement(
             description, driver.accessibilityTree().toStr(), driver.app());
-        int id = toInt(response.get("id"));
+        int id = response.id();
         return driver.findElement(id);
     }
 
@@ -256,18 +248,6 @@ public final class Alumni implements AutoCloseable {
             default -> throw new UnsupportedOperationException(
                 "Driver " + driver + " not implemented");
         };
-    }
-
-    static int toInt(Object raw) {
-        if (raw == null) {
-            throw new IllegalStateException("Server returned no id");
-        }
-        if (raw instanceof Number n) return n.intValue();
-        String s = raw.toString().trim();
-        if (s.isEmpty()) {
-            throw new IllegalStateException("Server returned empty id");
-        }
-        return Integer.parseInt(s);
     }
 
     // ---------------------------------------------------------------

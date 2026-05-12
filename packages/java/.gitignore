@@ -26,3 +26,6 @@ Thumbs.db
 
 # Local binary cache scratch (do not track)
 .alumnium/
+
+# JavaScript driver scripts (will be copied from python package)
+lib/src/main/resources/ai/alumnium/driver/scripts/*.js

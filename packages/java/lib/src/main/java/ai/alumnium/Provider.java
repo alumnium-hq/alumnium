@@ -11,6 +11,7 @@ public enum Provider {
     ANTHROPIC("anthropic"),
     AWS_ANTHROPIC("aws_anthropic"),
     AWS_META("aws_meta"),
+    CODEX("codex"),
     DEEPSEEK("deepseek"),
     GITHUB("github"),
     GOOGLE("google"),

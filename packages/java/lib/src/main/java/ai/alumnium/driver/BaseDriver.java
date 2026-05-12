@@ -1,7 +1,6 @@
 package ai.alumnium.driver;
 
 import ai.alumnium.accessibility.BaseAccessibilityTree;
-import ai.alumnium.driver.locators.Element;
 import ai.alumnium.tool.BaseTool;
 
 import java.io.IOException;

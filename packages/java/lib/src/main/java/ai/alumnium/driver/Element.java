@@ -1,4 +1,4 @@
-package ai.alumnium.driver.locators;
+package ai.alumnium.driver;
 
 import org.openqa.selenium.WebElement;
 import com.microsoft.playwright.Locator;

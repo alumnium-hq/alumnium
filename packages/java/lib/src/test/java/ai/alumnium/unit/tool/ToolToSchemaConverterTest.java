@@ -2,6 +2,7 @@ package ai.alumnium.unit.tool;
 
 import ai.alumnium.tool.ToolToSchemaConverter;
 import ai.alumnium.tool.ClickTool;
+import ai.alumnium.tool.TypeTool;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,11 +45,44 @@ class ToolToSchemaConverterTest {
     }
 
     @Test
+    void convertsTypeToolToFunctionSchema() {
+        Map<String, Object> schema = ToolToSchemaConverter.convert(TypeTool.class);
+
+        assertThat(schema).containsEntry("type", "function");
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> function = (Map<String, Object>) schema.get("function");
+        assertThat(function)
+            .containsEntry("name", "TypeTool")
+            .containsEntry(
+                "description",
+                "Type text into an element. Automatically focuses the element and clears it before typing.");
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> parameters = (Map<String, Object>) function.get("parameters");
+        assertThat(parameters).containsEntry("type", "object");
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> properties = (Map<String, Object>) parameters.get("properties");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> idProp = (Map<String, Object>) properties.get("id");
+        assertThat(idProp)
+            .containsEntry("type", "integer")
+            .containsEntry("description", "Element identifier (ID)");
+
+        @SuppressWarnings("unchecked")
+        List<String> required = (List<String>) parameters.get("required");
+        assertThat(required).containsExactly("id", "text");
+    }
+
+    @Test
     void convertAllReturnsOneSchemaPerTool() {
         List<Map<String, Object>> schemas =
-            ToolToSchemaConverter.convertAll(Map.of("ClickTool", ClickTool.class));
+            ToolToSchemaConverter.convertAll(Map.of("ClickTool", ClickTool.class, "TypeTool", TypeTool.class));
 
-        assertThat(schemas).hasSize(1);
-        assertThat(schemas.get(0)).containsEntry("type", "function");
+        assertThat(schemas).hasSize(2);
+        schemas.forEach((tool) -> {
+            assertThat(tool).containsEntry("type", "function");
+        });
     }
 }

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Documents a tool record component so
- * {@link ToolToSchemaConverter} can emit a meaningful JSON schema. 
+ * {@link ai.alumnium.tool.ToolToSchemaConverter} can emit a meaningful JSON schema. 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.RECORD_COMPONENT, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
