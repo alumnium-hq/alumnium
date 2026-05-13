@@ -220,7 +220,7 @@ jobs:
           packages/python/dist/*
           "${{ steps.attest.outputs.bundle-path }}"
           --generate-notes
-          ${{ contains(steps.version.outputs.version, 'alpha') && '--prerelease' }}
+          ${{ contains(steps.version.outputs.version, 'alpha') && '--prerelease' || '' }}
         env:
           GH_TOKEN: ${{ github.token }}
 
