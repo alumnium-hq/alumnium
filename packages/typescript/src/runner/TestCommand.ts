@@ -2,6 +2,7 @@ import z from "zod";
 import { CliCommand } from "../cli/CliCommand.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { pathString } from "../utils/schema.ts";
+import { Runner } from "./Runner.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -24,8 +25,7 @@ export const TestCommand = CliCommand.define({
 
     const [scenarioPath] = args;
 
-    logger.info(`Running scenario ${scenarioPath}`);
-
-    // TODO: Do the work here
+    const runner = new Runner(scenarioPath);
+    await runner.run();
   },
 });

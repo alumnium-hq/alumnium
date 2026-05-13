@@ -38,7 +38,7 @@ export namespace McpTool {
 }
 
 export abstract class McpTool {
-  static IdInput = z.object({ id: z.string() });
+  static WithDriverId = z.object({ id: z.string() });
 
   static OutputContent = z.object({
     type: z.literal("text"),
@@ -54,7 +54,7 @@ export abstract class McpTool {
     // Instrument with input/output logging
     const execute = async (input: z.infer<Input>) =>
       tracer.span("mcp.tool.invoke", { "mcp.tool.name": name }, async () => {
-        const parsedInput = McpTool.IdInput.safeParse(input);
+        const parsedInput = McpTool.WithDriverId.safeParse(input);
         const id = parsedInput.data?.id;
         const executeLogger = Logger.bind(
           logger,

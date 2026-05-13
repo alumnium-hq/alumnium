@@ -16,7 +16,7 @@ async function main() {
     await Promise.all([
       import("../mcp/McpCommand.ts"),
       import("../server/ServerCommand.ts"),
-      import("../test/TestCommand.ts"),
+      import("../runner/TestCommand.ts"),
     ]);
 
   const COMMANDS = [ServerCommand, McpCommand, TestCommand];

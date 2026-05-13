@@ -21,6 +21,8 @@ oxfmt = "latest" # TS formatter
 "pipx:wheel" = "latest" # Python wheel builder
 ollama = "latest"
 watchexec = "latest" # File system watcher
+claude-code = "latest" # Claude Code is needed for the test runner feature
+claude = "latest"
 
 [env]
 '_'.source = "scripts/env.sh"

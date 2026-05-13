@@ -146,6 +146,40 @@ export class FileStore {
   }
 
   /**
+   * Lists direct child files under the specified nested directory path.
+   *
+   * @param nestedDir Optional store-relative nested directory path.
+   * @returns List of file names relative to the nested directory path.
+   */
+  async listFiles(nestedDir = ""): Promise<string[]> {
+    const dirPath = this.resolve(nestedDir);
+    const entries = await fs
+      .readdir(dirPath, { withFileTypes: true })
+      .catch(() => null);
+    if (!entries) return [];
+    return entries
+      .filter((entry) => entry.isFile())
+      .map((entry) => entry.name)
+      .sort();
+  }
+
+  /**
+   * Removes a file at the specified relative path.
+   *
+   * @param relPath Store-relative file path.
+   * @returns `true` if the file was removed, otherwise `false`.
+   */
+  async removeFile(relPath: string): Promise<boolean> {
+    const filePath = this.resolve(relPath);
+    try {
+      await fs.rm(filePath);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
    * Removes the store directory.
    */
   async clear(): Promise<void> {
