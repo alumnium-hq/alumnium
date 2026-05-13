@@ -248,6 +248,13 @@ export const Env = {
     return envVar("OPENAI_CUSTOM_URL", z.string().optional());
   },
 
+  get OPENAI_DEFAULT_HEADERS() {
+    return envVar(
+      "OPENAI_DEFAULT_HEADERS",
+      jsonString(z.record(z.string(), z.string())).optional(),
+    );
+  },
+
   get LT_USERNAME() {
     return secretEnvVar("LT_USERNAME", z.string().optional());
   },
