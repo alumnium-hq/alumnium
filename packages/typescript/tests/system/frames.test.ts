@@ -5,10 +5,10 @@ describe("Frames", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { driverType } = result;
+      const { isAppiumDriver } = result;
 
       // Frames support is not implemented in Appium yet
-      if (driverType.startsWith("appium"))
+      if (isAppiumDriver)
         skip("Frames support is not implemented in Appium yet");
 
       return result;

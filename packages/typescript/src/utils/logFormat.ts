@@ -1,6 +1,7 @@
 import { capitalCase } from "case-anything";
 import { z } from "zod";
 import { Logger } from "../telemetry/Logger.ts";
+import type { LoggerSchema } from "../telemetry/LoggerSchema.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -25,7 +26,7 @@ export namespace LogBlocks {
 }
 
 export function logBlocks(
-  method: Logger.Method,
+  method: LoggerSchema.Method,
   message: string,
   blocks: LogBlocks,
 ) {

@@ -1,5 +1,13 @@
 import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
+import { Driver } from "./src/drivers/Driver.ts";
+import { Env } from "./src/Env.ts";
+import { Logger } from "./src/telemetry/Logger.ts";
+
+const driverKind = Env.ALUMNIUM_DRIVER;
+const isAppium = Driver.isAppium(driverKind);
+
+await Logger.initEnv();
 
 export default defineConfig({
   test: {
@@ -17,13 +25,11 @@ export default defineConfig({
           include: ["tests/system/**/*.test.ts"],
           testTimeout: 5 * 60_000, // 5 minutes
           retry: {
-            count: process.env.CI ? 1 : 0,
+            count: Env.CI ? 1 : 0,
             delay: 1000,
           },
-          globalSetup: process.env.ALUMNIUM_DRIVER?.startsWith("appium")
-            ? ["tests/system/setup.appium.ts"]
-            : [],
-          fileParallelism: !process.env.ALUMNIUM_DRIVER?.startsWith("appium"),
+          globalSetup: isAppium ? ["tests/system/setup.appium.ts"] : [],
+          fileParallelism: !isAppium,
         },
       },
     ],

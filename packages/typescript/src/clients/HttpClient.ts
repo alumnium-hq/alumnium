@@ -276,7 +276,7 @@ export class HttpClient extends Client {
       body,
     );
 
-    this.#model = Model.fromString(result.model);
+    this.#model = Model.parse(result.model);
     const sessionId = result.session_id;
     logger.debug(`Session initialized with ID: ${sessionId}`);
     return sessionId;

@@ -32,6 +32,7 @@ const BASE_BUILD_TARGETS = [
 const BuildTarget = z.enum(BASE_BUILD_TARGETS);
 
 const BUILD_ONLY =
+  // oxlint-disable-next-line no-process-env -- It is ok in a script
   process.env.BUILD_ONLY?.split(",")?.map((target) =>
     BuildTarget.parse(target),
   ) || BASE_BUILD_TARGETS;

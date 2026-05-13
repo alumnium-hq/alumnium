@@ -49,8 +49,8 @@ Set to `true` to capture full-page screenshots instead of viewport-only screensh
 Sets the level used by Alumnium logger. Supported values are:
 
 - `debug`
-- `info`
-- `warning` (default)
+- `info` (default)
+- `warning`
 - `error`
 - `critical`
 

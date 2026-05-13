@@ -8,6 +8,7 @@ import {
   pushTeardown,
   setupBeforeEach,
 } from "../../tests/unit/mocks.ts";
+import { Env } from "../Env.ts";
 import { McpArtifactsStore } from "./McpArtifactsStore.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
 import { McpState } from "./McpState.ts";
@@ -23,10 +24,11 @@ describe("McpArtifactsStore", () => {
     });
 
     it("allows to override the base dir via environment variable", () => {
-      process.env.ALUMNIUM_MCP_ARTIFACTS_DIR = ".custom";
-      pushTeardown(() => {
-        delete process.env.ALUMNIUM_MCP_ARTIFACTS_DIR;
-      });
+      pushMock(
+        vi
+          .spyOn(Env, "ALUMNIUM_MCP_ARTIFACTS_DIR", "get")
+          .mockReturnValue(".custom"),
+      );
       const store = new McpArtifactsStore("test-driver");
       const resolvedPath = store.resolve("sub/dir/file.txt");
       expect(resolvedPath).toBe(`.custom/test-driver/sub/dir/file.txt`);
@@ -36,10 +38,11 @@ describe("McpArtifactsStore", () => {
   describe("saveScreenshot", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
-      process.env.ALUMNIUM_MCP_ARTIFACTS_DIR = mockDir.path;
-      pushTeardown(() => {
-        delete process.env.ALUMNIUM_MCP_ARTIFACTS_DIR;
-      });
+      pushMock(
+        vi
+          .spyOn(Env, "ALUMNIUM_MCP_ARTIFACTS_DIR", "get")
+          .mockReturnValue(mockDir.path),
+      );
       const id = "test-driver";
       const artifactsStore = new McpArtifactsStore(id);
       const pixelB64 =

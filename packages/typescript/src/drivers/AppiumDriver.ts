@@ -1,5 +1,6 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
+import z from "zod";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.ts";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.ts";
@@ -17,9 +18,19 @@ import type { Keys } from "./keys.ts";
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
 
+export namespace AppiumDriver {
+  export type Platform = z.infer<typeof AppiumDriver.Platform>;
+}
+
 export class AppiumDriver extends BaseDriver {
+  static platforms = ["uiautomator2", "xcuitest"] as const;
+
+  static Platform = z.enum(AppiumDriver.platforms);
+
+  public platform: AppiumDriver.Platform;
+
   private driver: Browser;
-  public platform: "xcuitest" | "uiautomator2";
+
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     DragAndDropTool,
@@ -305,7 +316,7 @@ export class AppiumDriver extends BaseDriver {
   }
 }
 
-function spanAttrs(this: AppiumDriver): Tracer.SpansDriverAttrsBase {
+function spanAttrs(this: AppiumDriver): Tracer.SpansDriverAttrs {
   return {
     "driver.kind": "appium",
     "driver.platform": this.platform,

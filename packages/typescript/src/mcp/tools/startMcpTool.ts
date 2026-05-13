@@ -1,8 +1,10 @@
+import { never } from "alwaysly";
 import fs from "node:fs";
 import path from "node:path";
 import z from "zod";
 import { Alumni } from "../../client/Alumni.ts";
 import { NativeClient } from "../../clients/NativeClient.ts";
+import { Driver } from "../../drivers/Driver.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { DragSliderTool } from "../../tools/DragSliderTool.ts";
 import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.ts";
@@ -13,13 +15,12 @@ import { ScrollTool } from "../../tools/ScrollTool.ts";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
-import { McpProfilesStore } from "../McpProfilesStore.ts";
 import {
-  createAndroidDriver,
+  createAppiumDriver,
   createChromeDriver,
-  createIosDriver,
   type McpDriver,
 } from "../mcpDrivers.ts";
+import { McpProfilesStore } from "../McpProfilesStore.ts";
 import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
 
@@ -193,48 +194,51 @@ export const startMcpTool = McpTool.define("start", {
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
     // Detect platform and create appropriate driver
+    const platform = Driver.Platform.safeParse(platformName).data;
     let driver: McpDriver;
-    if (["chrome", "chromium"].includes(platformName)) {
-      driver = await tracer.span(
-        "mcp.driver.start",
+    switch (platform) {
+      case "chromium": {
+        driver = await tracer.span(
+          "mcp.driver.start",
+          {
+            "mcp.driver.id": id,
+            "driver.kind": "playwright",
+            "driver.platform": platform,
+          },
+          () =>
+            createChromeDriver(
+              capabilities,
+              serverUrl,
+              artifactsStore,
+              driverOptions,
+            ),
+        );
+        break;
+      }
+
+      case "xcuitest":
+      case "uiautomator2":
         {
-          "mcp.driver.id": id,
-          "mcp.driver.kind": "playwright",
-          "mcp.driver.platform": platformName,
-        },
-        () =>
-          createChromeDriver(
-            capabilities,
-            serverUrl,
-            artifactsStore,
-            driverOptions,
-          ),
-      );
-    } else if (platformName === "ios") {
-      driver = await tracer.span(
-        "mcp.driver.start",
-        {
-          "mcp.driver.id": id,
-          "mcp.driver.kind": "appium",
-          "mcp.driver.platform": platformName,
-        },
-        () => createIosDriver(capabilities, serverUrl),
-      );
-    } else if (platformName === "android") {
-      driver = await tracer.span(
-        "mcp.driver.start",
-        {
-          "mcp.driver.id": id,
-          "mcp.driver.kind": "appium",
-          "mcp.driver.platform": platformName,
-        },
-        async () => createAndroidDriver(capabilities, serverUrl),
-      );
-    } else {
-      logger.error(`Unsupported platformName: ${platformName}`);
-      throw new Error(
-        `Unsupported platformName: ${platformName}. Supported values: chrome, chromium, ios, android`,
-      );
+          driver = await tracer.span(
+            "mcp.driver.start",
+            {
+              "mcp.driver.id": id,
+              "driver.kind": "appium",
+              "driver.platform": platform,
+            },
+            () => createAppiumDriver(platform, capabilities, serverUrl),
+          );
+        }
+        break;
+
+      case undefined:
+        logger.error(`Unsupported platformName: ${platformName}`);
+        throw new Error(
+          `Unsupported platformName: ${platformName}. Supported values: chrome, chromium, ios, android`,
+        );
+
+      default:
+        never(platform);
     }
 
     tracer.span("mcp.driver.active", { "mcp.driver.id": id }, id);

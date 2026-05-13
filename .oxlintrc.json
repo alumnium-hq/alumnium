@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [],
+  "plugins": ["import"],
   "options": {
     "typeAware": true
   },
@@ -10,7 +10,10 @@
     // TODO: Create an issue in Oxlint or corresponding ESLint repo.
     "typescript/no-base-to-string": "off", // Useful but fails to detect branded types
     // TODO: Create an issue in Oxlint suggesting to add `exactOptionalPropertyTypes` support.
-    "typescript/no-duplicate-type-constituents": "off" // Useful but fails on optional arguments with `| undefined`
+    "typescript/no-duplicate-type-constituents": "off", // Useful but fails on optional arguments with `| undefined`
+
+    // Disallow circular dependencies (except for types).
+    "import/no-cycle": "error"
   },
   "settings": {
     "jsdoc": {

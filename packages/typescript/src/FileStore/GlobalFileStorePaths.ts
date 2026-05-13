@@ -1,6 +1,5 @@
+import { Env } from "../Env.ts";
 import { safePathJoin } from "../utils/fs.ts";
-
-const DEFAULT_GLOBAL_STORE_DIR = ".alumnium";
 
 export abstract class GlobalFileStorePaths {
   /**
@@ -9,7 +8,7 @@ export abstract class GlobalFileStorePaths {
    * @returns The global store directory path.
    */
   static get globalDir(): string {
-    return process.env.ALUMNIUM_STORE_DIR ?? DEFAULT_GLOBAL_STORE_DIR;
+    return Env.ALUMNIUM_STORE_DIR;
   }
 
   /**

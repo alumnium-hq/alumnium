@@ -5,7 +5,7 @@ describe("Table", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { al, model, driverType } = result;
+      const { al, model, isAppiumDriver } = result;
 
       // These models double-click to sort
       if (model.provider === "mistralai")
@@ -14,7 +14,7 @@ describe("Table", () => {
       if (model.provider === "aws_meta")
         skip("Table area instructions need more work");
 
-      if (driverType.startsWith("appium"))
+      if (isAppiumDriver)
         skip("Area is not properly extracted from Appium source code.");
 
       return result;

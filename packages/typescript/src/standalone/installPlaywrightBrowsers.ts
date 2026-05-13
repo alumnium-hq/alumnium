@@ -161,6 +161,7 @@ function patchForkForOopDownload(extractedPath: string) {
     return originalFork(extractedPath, args as string[], {
       ...options,
       execPath: process.execPath,
+      // oxlint-disable-next-line no-process-env -- We need it to pass env vars
       env: { ...(options?.env ?? process.env), BUN_BE_BUN: "1" },
     });
   };

@@ -1,4 +1,5 @@
 import { kebabCase } from "case-anything";
+import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { McpState } from "./McpState.ts";
@@ -15,11 +16,7 @@ export namespace McpArtifactsStore {
 export class McpArtifactsStore extends FileStore {
   constructor(id: string) {
     super(
-      FileStore.subResolve(
-        process.env.ALUMNIUM_MCP_ARTIFACTS_DIR,
-        "artifacts",
-        id,
-      ),
+      FileStore.subResolve(Env.ALUMNIUM_MCP_ARTIFACTS_DIR, "artifacts", id),
     );
   }
 

@@ -1,3 +1,4 @@
+import { Env } from "../Env.ts";
 import { Model } from "../Model.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { CacheStore } from "./cache/CacheStore.ts";
@@ -17,9 +18,7 @@ export class CacheFactory {
     llmContext: LlmContext,
     model: Model,
   ): ServerCache {
-    const cacheProvider = (
-      process.env.ALUMNIUM_CACHE ?? "filesystem"
-    ).toLowerCase();
+    const cacheProvider = Env.ALUMNIUM_CACHE;
 
     switch (cacheProvider) {
       case "sqlite":
@@ -27,6 +26,7 @@ export class CacheFactory {
           "ALUMNIUM_CACHE=sqlite is no longer supported. Use ALUMNIUM_CACHE=filesystem.",
         );
 
+      case true:
       case "filesystem": {
         logger.info("Using filesystem cache");
         const cacheStore = new CacheStore(sessionContext, model);
@@ -36,16 +36,9 @@ export class CacheFactory {
         ]);
       }
 
-      case "false":
-      case "0":
-      case "none":
-      case "null":
+      case false:
         logger.info("Using null cache");
         return new NullCache(sessionContext);
-
-      default:
-        logger.error(`Unknown cache provider: ${cacheProvider}`);
-        throw new Error(`Unknown cache provider: ${cacheProvider}`);
     }
   }
 }

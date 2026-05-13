@@ -2,6 +2,7 @@ import type { Generation } from "@langchain/core/outputs";
 import { describe, expect, it, vi } from "vitest";
 import { createMockDir, pushMock } from "../../../tests/unit/mocks.ts";
 import { AppId } from "../../AppId.ts";
+import { Env } from "../../Env.ts";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";
 import { Lchain } from "../../llm/Lchain.ts";
 import { Model } from "../../Model.ts";
@@ -105,15 +106,17 @@ async function setup() {
 
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 
-  const fixedModel = new Model("openai", "gpt-5-nano-2025-08-07");
+  const defaultModel = Model.parse("ollama");
+  const contextModel = Model.parse("openai/gpt-5-nano-2025-08-07");
+
   pushMock(
-    vi.spyOn(Model, "current", "get").mockReturnValue(fixedModel),
+    vi.spyOn(Env, "ALUMNIUM_MODEL", "get").mockReturnValue(defaultModel),
     vi
       .spyOn(GlobalFileStorePaths, "globalSubDir")
       .mockReturnValue(cacheDir.path),
   );
 
-  const llmContext = new LlmContext(Model.current);
+  const llmContext = new LlmContext(contextModel);
   const cacheStore = new CacheStore(sessionContext, llmContext.model);
 
   const prompt1 = "prompt 1" as LlmContext.Prompt;
@@ -136,6 +139,8 @@ async function setup() {
     meta1,
     meta2,
     llmKey,
+    defaultModel,
+    contextModel,
   };
 }
 

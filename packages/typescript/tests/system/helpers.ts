@@ -8,19 +8,14 @@ import { Builder, WebDriver, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { afterAll, inject, it as vitestIt } from "vitest";
 import { attach, type Browser } from "webdriverio";
-import { z } from "zod";
+import { Driver } from "../../src/drivers/Driver.ts";
+import { Env } from "../../src/Env.ts";
 import { Tracer } from "../../src/telemetry/Tracer.ts";
 
 // Make sure to flush the telemetry data after all tests are done.
 afterAll(() => {
   return Tracer.flush();
 });
-
-export const DriverType = z
-  .enum(["selenium", "playwright", "appium-ios"])
-  .default("selenium");
-
-export type DriverType = z.infer<typeof DriverType>;
 
 export namespace Setup {
   export interface Helpers {
@@ -35,7 +30,8 @@ export interface Setup {
   driver: Alumni.Driver;
   al: Alumni;
   $: Setup.Helpers;
-  driverType: DriverType;
+  driverId: Driver.Id;
+  isAppiumDriver: boolean;
   model: Model;
 }
 
@@ -49,17 +45,20 @@ export namespace useSetup {
 export async function useSetup(props: useSetup.Props): Promise<Setup> {
   const { onTestFinished } = props;
 
-  const driverType = DriverType.parse(process.env.ALUMNIUM_DRIVER);
-  const driver = await createDriver(driverType);
-  const $ = createHelpers(driverType, driver);
+  const driverId = Env.ALUMNIUM_DRIVER;
+  const driver = await createDriver(driverId);
+  const isAppiumDriver = Driver.isAppium(driverId);
 
-  const options: Alumni.Options = { ...props.options };
-  if (process.env.ALUMNIUM_SERVER_URL)
-    options.url = process.env.ALUMNIUM_SERVER_URL;
+  const $ = createHelpers(driverId, driver);
+
+  const options: Alumni.Options = {
+    ...props.options,
+    url: Env.ALUMNIUM_SERVER_URL,
+  };
 
   const al = new Alumni(driver, options);
 
-  if (driverType.startsWith("appium")) {
+  if (isAppiumDriver) {
     (al.driver as AppiumDriver).delay = 0.1;
   }
 
@@ -76,11 +75,11 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
     await al.quit();
   });
 
-  return { driver, driverType, al, $, model };
+  return { driver, driverId, isAppiumDriver, al, $, model };
 }
 
-async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
-  switch (driverType) {
+async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
+  switch (driverId) {
     case "selenium": {
       const options = new Options();
       options.addArguments("--disable-blink-features=AutomationControlled");
@@ -99,7 +98,7 @@ async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
 
     case "playwright": {
       const browser = await chromium.launch({
-        headless: process.env.ALUMNIUM_PLAYWRIGHT_HEADLESS !== "false",
+        headless: Env.ALUMNIUM_PLAYWRIGHT_HEADLESS,
       });
       const context = await browser.newContext();
       const page = await context.newPage();
@@ -119,13 +118,17 @@ async function createDriver(driverType: DriverType): Promise<Alumni.Driver> {
       return driver;
     }
 
+    case "appium-android": {
+      throw new Error("Unimplemented");
+    }
+
     default:
       never();
   }
 }
 
 function createHelpers(
-  driverType: DriverType,
+  driverId: Driver.Id,
   driver: Alumni.Driver,
 ): Setup.Helpers {
   const $: Setup.Helpers = {
@@ -144,7 +147,7 @@ function createHelpers(
     },
 
     async navigate(url: string) {
-      switch (driverType) {
+      switch (driverId) {
         case "selenium":
           await (driver as WebDriver).get($.resolveUrl(url));
           return;
@@ -154,16 +157,17 @@ function createHelpers(
           return;
 
         case "appium-ios":
+        case "appium-android":
           await (driver as Browser).url($.resolveUrl(url));
           return;
 
         default:
-          driverType satisfies never;
+          driverId satisfies never;
       }
     },
 
     async type(element: Element | undefined, text: string) {
-      switch (driverType) {
+      switch (driverId) {
         case "selenium":
           return (element as WebElement).sendKeys(text);
 
@@ -171,15 +175,16 @@ function createHelpers(
           return (element as Locator).fill(text);
 
         case "appium-ios":
+        case "appium-android":
           return (element as WebdriverIO.Element).setValue(text);
 
         default:
-          driverType satisfies never;
+          driverId satisfies never;
       }
     },
 
     async click(element: Element | undefined) {
-      switch (driverType) {
+      switch (driverId) {
         case "selenium":
           return (element as WebElement).click();
 
@@ -187,10 +192,11 @@ function createHelpers(
           return (element as Locator).click();
 
         case "appium-ios":
+        case "appium-android":
           return (element as WebdriverIO.Element).click();
 
         default:
-          driverType satisfies never;
+          driverId satisfies never;
       }
     },
   };

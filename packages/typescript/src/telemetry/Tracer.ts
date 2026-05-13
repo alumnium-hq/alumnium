@@ -14,14 +14,13 @@ import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { nanoid } from "nanoid";
 import type { Driver } from "../drivers/Driver.ts";
+import { Env } from "../Env.ts";
 import type { Model } from "../Model.ts";
 import type { Agent } from "../server/agents/Agent.ts";
 import type { ElementsCache } from "../server/cache/ElementsCache/ElementsCache.ts";
 import type { SessionId } from "../server/session/SessionId.ts";
 import { TypeUtils } from "../typeUtils.ts";
-import { Telemetry } from "./Telemetry.ts";
-
-const TRACE = process.env.ALUMNIUM_TRACE?.toLowerCase();
+import { Instrumentation } from "./Instrumentation.ts";
 
 export namespace Tracer {
   //#region Defs
@@ -165,103 +164,103 @@ export namespace Tracer {
 
   export interface SpansDriver {
     "driver.get_accessibility_tree": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.click": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.drag_slider": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.drag_and_drop": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.hover": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.press_key": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.back": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.visit": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.scroll_to": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.quit": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.screenshot": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.title": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.type": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.upload": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.url": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.app": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.find_element": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.execute_script": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.switch_to_next_tab": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.switch_to_previous_tab": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.wait": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.wait_for_selector": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.wait_for_page_to_load": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.print_to_pdf": {
-      Attrs: SpansDriverAttrsBase;
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.internal.cdp_command": {
-      Attrs: SpansDriverAttrsBase & {
+      Attrs: SpansDriverAttrs & {
         "driver.internal.cdp_command.name": string;
       };
     };
@@ -295,8 +294,8 @@ export namespace Tracer {
     };
   }
 
-  export interface SpansDriverAttrsBase {
-    "driver.kind": "appium" | "selenium" | "playwright";
+  export interface SpansDriverAttrs {
+    "driver.kind": Driver.Kind;
     "driver.platform": Driver.Platform;
   }
 
@@ -428,10 +427,7 @@ export namespace Tracer {
     };
 
     "mcp.driver.start": {
-      Attrs: SpansMcpToolAttrsDriverBase & {
-        "mcp.driver.kind": "appium" | "selenium" | "playwright";
-        "mcp.driver.platform": string;
-      };
+      Attrs: SpansMcpToolAttrsDriverBase & SpansDriverAttrs;
     };
 
     "mcp.driver.shutdown": {
@@ -464,11 +460,11 @@ export namespace Tracer {
 
   export interface SpansLlm {
     "llm.request": {
-      Attrs: SpansModelAttrs;
+      Attrs: SpansLlmModelAttrs;
     };
   }
 
-  export interface SpansModelAttrs {
+  export interface SpansLlmModelAttrs {
     "llm.model.name": string;
     "llm.model.provider": Model.Provider;
   }
@@ -765,12 +761,12 @@ export abstract class Tracer {
 
   static readonly serviceName = "alumnium";
 
-  static get enabled() {
-    return !!TRACE && !["0", "false", "no", "off"].includes(TRACE);
+  static get enabled(): boolean {
+    return Env.ALUMNIUM_TRACE;
   }
 
   static get(moduleUrl: string): Tracer.Like {
-    const moduleName = Telemetry.moduleUrlToName(moduleUrl);
+    const moduleName = Instrumentation.moduleUrlToName(moduleUrl);
 
     function traceAttrs(attrs: object) {
       const compactedAttrs = Tracer.#compactAttrs(attrs);

@@ -16,6 +16,7 @@ import type { Keys } from "./keys.ts";
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
 import { AppId } from "../AppId.ts";
+import { Env } from "../Env.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 import { retry } from "../utils/retry.ts";
@@ -78,14 +79,9 @@ export class PlaywrightDriver extends BaseDriver {
     TypeTool,
     UploadTool,
   ]);
-  public newTabTimeout = parseInt(
-    process.env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT || "200",
-    10,
-  );
-  public autoswitchToNewTab: boolean = true;
-  public fullPageScreenshot: boolean =
-    (process.env.ALUMNIUM_FULL_PAGE_SCREENSHOT || "false").toLowerCase() ===
-    "true";
+  public newTabTimeout = Env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT;
+  public autoswitchToNewTab = true;
+  public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
 
   constructor(page: Page) {
     super();
@@ -826,7 +822,7 @@ export class PlaywrightDriver extends BaseDriver {
   }
 }
 
-function spanAttrs(this: PlaywrightDriver): Tracer.SpansDriverAttrsBase {
+function spanAttrs(this: PlaywrightDriver): Tracer.SpansDriverAttrs {
   return {
     "driver.kind": "playwright",
     "driver.platform": this.platform,

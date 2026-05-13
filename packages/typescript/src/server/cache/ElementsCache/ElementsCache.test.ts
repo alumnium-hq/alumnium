@@ -5,6 +5,7 @@ import {
   setupBeforeEach,
 } from "../../../../tests/unit/mocks.ts";
 import { AppId } from "../../../AppId.ts";
+import { Env } from "../../../Env.ts";
 import { GlobalFileStorePaths } from "../../../FileStore/GlobalFileStorePaths.ts";
 import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
 import { Lchain } from "../../../llm/Lchain.ts";
@@ -30,9 +31,11 @@ describe("ElementsCache", () => {
         .spyOn(GlobalFileStorePaths, "globalSubDir")
         .mockReturnValue(cacheDir.path),
     );
-    const cacheStore = new CacheStore(sessionContext, Model.current);
 
-    const llmContext = new LlmContext(Model.current);
+    const model = Env.ALUMNIUM_MODEL;
+    const cacheStore = new CacheStore(sessionContext, model);
+
+    const llmContext = new LlmContext(model);
 
     const cache = new ElementsCache(sessionContext, cacheStore, llmContext);
 
@@ -402,7 +405,7 @@ describe("ElementsCache", () => {
       ]);
       await cache.save();
 
-      const model = Model.current.toString();
+      const model = Model.toString(Env.ALUMNIUM_MODEL);
       const baseDir = `${app}/${model}/elements/planner/ffa5f4be241f9c48`;
       expect(await cacheDir.flatTree()).toEqual([
         `${baseDir}/elements.json`,
@@ -432,7 +435,7 @@ describe("ElementsCache", () => {
         await cache.update(prompt1, llmKey, [generation]);
         await cache.save();
 
-        const model = Model.current.toString();
+        const model = Model.toString(Env.ALUMNIUM_MODEL);
         const baseDir = `test-app/${model}/elements/planner/b3806cd36b301287`;
         const responsePath = `${baseDir}/response.json`;
         const instructionPath = `${baseDir}/instruction.json`;
@@ -485,7 +488,7 @@ describe("ElementsCache", () => {
         await cache.update(prompt1, llmKey, [generation]);
         await cache.save();
 
-        const model = Model.current.toString();
+        const model = Model.toString(Env.ALUMNIUM_MODEL);
         const baseDir = `test-app/${model}/elements/actor/fb8d7f17ec7416d7`;
         const responsePath = `${baseDir}/response.json`;
         const instructionPath = `${baseDir}/instruction.json`;

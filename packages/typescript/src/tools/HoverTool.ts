@@ -1,5 +1,5 @@
-import { PlaywrightDriver } from "../drivers/PlaywrightDriver.ts";
-import { SeleniumDriver } from "../drivers/SeleniumDriver.ts";
+import type { PlaywrightDriver } from "../drivers/PlaywrightDriver.ts";
+import type { SeleniumDriver } from "../drivers/SeleniumDriver.ts";
 import { BaseTool } from "./BaseTool.ts";
 import { field, type FieldMetadata } from "./Field.ts";
 
