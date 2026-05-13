@@ -11,7 +11,7 @@ export const checkMcpTool = McpTool.define("check", {
   description:
     "Verify a statement is true about the current page. Returns the result and explanation.",
 
-  inputSchema: McpTool.IdInput.extend({
+  inputSchema: McpTool.WithDriverId.extend({
     statement: z
       .string()
       .describe("Statement to verify (e.g., 'page title contains Dashboard')"),

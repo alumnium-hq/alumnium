@@ -28,6 +28,8 @@ let cachedVars: Env.VarsRecord = {};
 let envLogger: LoggerSchema.Like | undefined = undefined;
 
 export const Env = {
+  //#region Vars
+
   get ALUMNIUM_CACHE() {
     return envVar(
       "ALUMNIUM_CACHE",
@@ -193,6 +195,13 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_SCENARIOS_DIR() {
+    return envVar(
+      "ALUMNIUM_SCENARIOS_DIR",
+      pathString().default(".alumnium/scenarios"),
+    );
+  },
+
   get AWS_ACCESS_KEY() {
     return secretEnvVar("AWS_ACCESS_KEY", z.string().optional());
   },
@@ -259,6 +268,8 @@ export const Env = {
   get GITHUB_ACTIONS() {
     return envVar("GITHUB_ACTIONS", z.stringbool().default(false));
   },
+
+  //#endregion
 
   reset(): void {
     cachedVars = {};

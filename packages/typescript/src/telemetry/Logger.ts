@@ -86,9 +86,15 @@ export abstract class Logger {
     });
 
     if (!valid) {
-      await this.#flush();
+      await this.flush();
       process.exit(1);
     }
+  }
+
+  static async flush() {
+    await this.#loggerPromise;
+    disposeSync();
+    await dispose();
   }
 
   //#endregion
@@ -170,7 +176,7 @@ export abstract class Logger {
     // NOTE: Wait for flush on process exit to ensure all logs are written.
     if (this.#path) {
       process.on("exit", () => {
-        void this.#flush();
+        void this.flush();
       });
     }
 
@@ -202,12 +208,6 @@ export abstract class Logger {
 
   static #logger(): LoggerSchema.Like {
     return Logger.get(import.meta.url);
-  }
-
-  static async #flush() {
-    await this.#loggerPromise;
-    disposeSync();
-    await dispose();
   }
 
   //#endregion
