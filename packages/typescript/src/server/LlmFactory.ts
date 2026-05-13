@@ -282,7 +282,10 @@ export class LlmFactory {
 
     const fields: ChatOpenAIFields = {
       model: model.name,
-      configuration: { baseURL: Env.OPENAI_CUSTOM_URL },
+      configuration: {
+        baseURL: Env.OPENAI_CUSTOM_URL,
+        defaultHeaders: new Headers(Env.OPENAI_DEFAULT_HEADERS),
+      },
       // TODO: Apparently the latest OpenAI models (o1, o3, o4, gpt-5) don't
       // accept temperature anymore, so we need to either conditionally include
       // it or figure out the correct way to set it for the new models.
