@@ -55,8 +55,6 @@ export AZURE_OPENAI_API_KEY="..."
 # Change as needed
 export AZURE_OPENAI_API_VERSION="2025-03-01-preview"
 export AZURE_OPENAI_ENDPOINT="https://my-model.openai.azure.com"
-# Optional: JSON object of extra headers sent on every request
-export AZURE_OPENAI_DEFAULT_HEADERS='{"x-custom-header":"value"}'
 ```
 
 ## Ollama
