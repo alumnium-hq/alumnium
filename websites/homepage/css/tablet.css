@@ -56,6 +56,14 @@
     }
   }
 
+  .columns-1-1\/2 {
+    grid-template-columns: 1fr;
+  }
+
+  .logo-marquee-group {
+    justify-content: center;
+  }
+
   .nav-hamburger {
     display: flex;
   }

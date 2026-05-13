@@ -55,8 +55,13 @@
   .columns-2,
   .columns-3,
   .columns-1\/2-1,
+  .columns-1-1\/2,
   .cards-with-icons-container {
     grid-template-columns: 1fr;
+  }
+
+  .logo-marquee-group {
+    justify-content: center;
   }
 
   .card-with-icon {

@@ -23,13 +23,13 @@
 }
 
 :root {
-  /** There features 
+  /** There features
   These are values that determine the overall look of the theme.
   - Saturation controls how much of accent color will be mixed into text, background, and surface colors.
   - Contrast controls how contrast the text colors will be.
   */
-  --theme-hue: 255;
-  --theme-saturation: 0.2; /* 0...1 where 0 means grayscale colors; 1 means fully saturated colors */
+  --theme-hue: 264;
+  --theme-saturation: 0.25; /* 0...1 where 0 means grayscale colors; 1 means fully saturated colors */
   --theme-contrast: 0.8; /* 0...1 where 0 means low contrast; 1 means high contrast, black-n-white in fact */
 
   /* Fonts */
@@ -86,9 +86,9 @@
   --color-text-primary: #363e48;
   --color-text-secondary: #757a7f;
   --color-text-tertiary: #a7acb2;
-  --color-accent: #0081ff;
+  --color-accent: #034cc7;
   --color-accent-hover: #0088f0d9;
-  --color-accent-b: #0081ff29;
+  --color-accent-b: #034cc729;
   --color-accent-b-hover: #0088f033;
   --color-on-accent: white;
   --color-border-level-2: #99a3ae29;
@@ -104,12 +104,12 @@
   /** Base color
   By default it's blue ≈ #0289ff
   Usually it's your brand color. Simply provide your value and the whole theme will be recalculated automatically.
-  Default value is in OKLCH because it produces richer P3 colors, however you can use any color format. 
+  Default value is in OKLCH because it produces richer P3 colors, however you can use any color format.
   */
   /* --color-accent: #00bc81; */
-  --color-accent: oklch(0.64 0.21 var(--theme-hue));
+  --color-accent: oklch(0.46 0.22 var(--theme-hue));
 
-  /* Relative colors 
+  /* Relative colors
   These colors are calculated based on the accent color and saturation/contrast values.
   Feel free to provide exact values if you want to override them.
   */
@@ -153,12 +153,12 @@
   /** Base color
   By default it's blue ≈ #0289ff
   Usually it's your brand color. Simply provide your value and the whole theme will be recalculated automatically.
-  Default value is in OKLCH because it produces richer P3 colors, however you can use any color format. 
+  Default value is in OKLCH because it produces richer P3 colors, however you can use any color format.
    */
   /* --colors-accent: #00bc81; */
   --color-accent: oklch(0.53 0.22 var(--theme-hue));
 
-  /* Relative colors 
+  /* Relative colors
   These colors are calculated based on the accent color and saturation/contrast values.
   Feel free to provide exact values if you want to override them.
   */
@@ -648,6 +648,85 @@ section {
   padding: 24px 0;
 }
 
+.logo-marquee-group {
+  display: flex;
+  gap: 24px;
+  justify-content: end;
+  align-items: stretch;
+}
+
+.logo-marquee-group .logo-marquee {
+  flex: 0 0 96px;
+}
+
+.logo-marquee {
+  height: 360px;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+}
+
+.logo-marquee-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation-name: logo-scroll-up;
+  animation-duration: 30s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.logo-marquee[data-direction="down"] .logo-marquee-track {
+  animation-name: logo-scroll-down;
+}
+
+.logo-marquee-track img {
+  height: 60px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-bottom: 32px;
+}
+
+@property --logo-scroll-distance {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes logo-scroll-up {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, var(--logo-scroll-distance), 0);
+  }
+}
+
+@keyframes logo-scroll-down {
+  0% {
+    transform: translate3d(0, var(--logo-scroll-distance), 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 .clients-divider {
   display: flex;
   justify-content: center;
@@ -707,6 +786,10 @@ section {
 
 .columns-1\/2-1 {
   grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr);
+}
+
+.columns-1-1\/2 {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.5fr);
 }
 
 .card-with-icon {
