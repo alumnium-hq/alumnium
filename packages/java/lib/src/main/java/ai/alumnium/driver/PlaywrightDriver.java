@@ -43,9 +43,9 @@ public final class PlaywrightDriver extends BaseDriver {
 
     private Page page;
     private CDPSession client;
-    private boolean autoswitchToNewTab = true;
-    private boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
-    private final Set<Class<? extends BaseTool>> supportedTools = Set.of(
+    public boolean autoswitchToNewTab = true;
+    public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
+    public final Set<Class<? extends BaseTool>> supportedTools = Set.of(
         ClickTool.class,
         PressKeyTool.class,
         TypeTool.class

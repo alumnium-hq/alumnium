@@ -38,9 +38,9 @@ public final class SeleniumDriver extends BaseDriver {
 
     private final WebDriver driver;
     private final HasCdp cdp;
-    private boolean autoswitchToNewTab = true;
-    private boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
-    private final Set<Class<? extends BaseTool>> supportedTools = Set.of(
+    public boolean autoswitchToNewTab = true;
+    public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
+    public final Set<Class<? extends BaseTool>> supportedTools = Set.of(
         ClickTool.class,
         PressKeyTool.class,
         TypeTool.class
@@ -54,16 +54,6 @@ public final class SeleniumDriver extends BaseDriver {
         }
         this.cdp = hasCdp;
         enableTargetAutoAttach();
-    }
-
-    public SeleniumDriver autoswitchToNewTab(boolean value) {
-        this.autoswitchToNewTab = value;
-        return this;
-    }
-
-    public SeleniumDriver fullPageScreenshot(boolean value) {
-        this.fullPageScreenshot = value;
-        return this;
     }
 
     @Override public String platform() { return "chromium"; }

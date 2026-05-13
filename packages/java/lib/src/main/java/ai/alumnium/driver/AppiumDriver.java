@@ -38,11 +38,11 @@ public final class AppiumDriver extends BaseDriver {
 
     private final io.appium.java_client.AppiumDriver driver;
     private final Platform platform;
-    private boolean autoswitchContexts = true;
-    private double delay = Config.DELAY;
-    private boolean hideKeyboardAfterTyping = false;
-    private boolean doubleFetchPageSource = false;
-    private final Set<Class<? extends BaseTool>> supportedTools = Set.of(
+    public boolean autoswitchContexts = true;
+    public double delay = Config.DELAY;
+    public boolean hideKeyboardAfterTyping = false;
+    public boolean doubleFetchPageSource = false;
+    public final Set<Class<? extends BaseTool>> supportedTools = Set.of(
         ClickTool.class,
         PressKeyTool.class,
         TypeTool.class
@@ -279,11 +279,6 @@ public final class AppiumDriver extends BaseDriver {
             Thread.currentThread().interrupt();
         }
     }
-
-    public AppiumDriver autoswitchContexts(boolean v) { this.autoswitchContexts = v; return this; }
-    public AppiumDriver delay(double v) { this.delay = v; return this; }
-    public AppiumDriver hideKeyboardAfterTyping(boolean v) { this.hideKeyboardAfterTyping = v; return this; }
-    public AppiumDriver doubleFetchPageSource(boolean v) { this.doubleFetchPageSource = v; return this; }
 
     // endregion
 }
