@@ -1,9 +1,10 @@
+import { TZDate } from "@date-fns/tz";
 import { getFileSink } from "@logtape/file";
 import {
-  ansiColorFormatter,
   configure,
   dispose,
   disposeSync,
+  getAnsiColorFormatter,
   getConsoleSink,
   getLogger as logtapeGetLogger,
   type Config as LogtapeConfig,
@@ -159,7 +160,18 @@ export abstract class Logger {
       if (Env.ALUMNIUM_PRUNE_LOGS) await fs.rm(this.#path, { force: true });
     }
 
-    const consoleSink = getConsoleSink({ formatter: ansiColorFormatter });
+    const textFormatter = getAnsiColorFormatter({
+      value(value, inspect) {
+        // In Bun environment, use Bun's built-in inspector.
+        if (typeof Bun !== "undefined")
+          return Bun.inspect(value, { colors: true, depth: Infinity });
+        // Fall back to default for everything else
+        return inspect(value, { colors: true });
+      },
+      timestamp: this.#createDateFormatter(),
+    });
+
+    const consoleSink = getConsoleSink({ formatter: textFormatter });
     const mainSinks: string[] = ["main"];
     const flushInterval = Env.ALUMNIUM_LOG_FLUSH_INTERVAL;
 
@@ -208,6 +220,19 @@ export abstract class Logger {
 
   static #logger(): LoggerSchema.Like {
     return Logger.get(import.meta.url);
+  }
+
+  static #createDateFormatter() {
+    const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+      dateStyle: "short",
+    });
+    return (time: number) => {
+      const datePart = dateFormatter.format(time);
+      const isoTimeStr = new TZDate(time).toISOString().slice(11);
+      const timePart = isoTimeStr.slice(0, 12);
+      const tzPart = isoTimeStr.slice(12);
+      return `${datePart} ${timePart} ${tzPart}`;
+    };
   }
 
   //#endregion
