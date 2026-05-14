@@ -1,4 +1,7 @@
-import type { BetaToolUseBlock as ClaudeCodeToolUse } from "@anthropic-ai/sdk/resources/beta";
+import type {
+  BetaToolResultBlockParam as ClaudeCodeToolResult,
+  BetaToolUseBlock as ClaudeCodeToolUse,
+} from "@anthropic-ai/sdk/resources/beta";
 import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { pathString } from "../utils/schema.ts";
@@ -10,11 +13,17 @@ export namespace Scenario {
 
   export type ClaudeCodeStepToolUse = ClaudeCodeToolUse;
 
+  export type ClaudeCodeStepToolResult = ClaudeCodeToolResult;
+
+  export type ClaudeCodeStepToolResultContent = ClaudeCodeToolResult["content"];
+
   export type ClaudeCodeStep = z.infer<typeof Scenario.ClaudeCodeStep>;
 
   export type ClaudeCode = z.infer<typeof Scenario.ClaudeCode>;
 
   export type Type = z.infer<typeof Scenario.Schema>;
+
+  export type MaskMap = Record<string, string>;
 }
 
 export abstract class Scenario {
@@ -28,7 +37,8 @@ export abstract class Scenario {
 
   static ClaudeCodeStepToolUse = z.object({
     kind: z.literal("tool-use"),
-    toolUse: z.custom<Scenario.ClaudeCodeStepToolUse>((value) => value),
+    use: z.custom<Scenario.ClaudeCodeStepToolUse>((value) => value),
+    result: z.custom<Scenario.ClaudeCodeStepToolResult>((value) => value),
   });
 
   static ClaudeCodeStep = z.union([this.ClaudeCodeStepToolUse]);
