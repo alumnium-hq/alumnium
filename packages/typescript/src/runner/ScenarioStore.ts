@@ -1,8 +1,21 @@
+import z from "zod";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
 import { Scenario } from "./Scenario.ts";
+import { ScenarioClaudeCodeSessionStore } from "./ScenarioClaudeCodeSessionStore.ts";
 
-export class ScenariosStore {
+export namespace ScenarioStore {
+  export type File = z.infer<typeof ScenarioStore.File>;
+}
+
+export class ScenarioStore {
+  static File = z.object({
+    scenario: Scenario.Schema,
+    session: z.custom<ScenarioClaudeCodeSessionStore.Snapshot>(
+      (value) => value,
+    ),
+  });
+
   #store = FileStore.subStore(Env.ALUMNIUM_SCENARIOS_DIR, "scenarios");
 
   /**
@@ -21,8 +34,8 @@ export class ScenariosStore {
    * @param id - Scenario ID to get.
    * @returns Scenario object if found, `null` otherwise.
    */
-  async get(id: Scenario.Id): Promise<Scenario.Type | null> {
-    return this.#store.readJson(this.#fileName(id), Scenario.Schema);
+  async get(id: Scenario.Id): Promise<ScenarioStore.File | null> {
+    return this.#store.readJson(this.#fileName(id), ScenarioStore.File);
   }
 
   /**
@@ -31,9 +44,9 @@ export class ScenariosStore {
    * @param text - Scenario text to look up.
    * @returns Scenario object if found, `null` otherwise.
    */
-  async lookup(text: string): Promise<Scenario.Type | null> {
+  async lookup(text: string): Promise<ScenarioStore.File | null> {
     const id = Scenario.textToId(text);
-    return this.#store.readJson(this.#fileName(id), Scenario.Schema);
+    return this.#store.readJson(this.#fileName(id), ScenarioStore.File);
   }
 
   /**
@@ -42,8 +55,8 @@ export class ScenariosStore {
    * @param scenario - Scenario recording to save.
    * @returns File path of the saved scenario recording.
    */
-  save(scenario: Scenario.Type): Promise<string> {
-    return this.#store.writeJson(this.#fileName(scenario.id), scenario);
+  save(file: ScenarioStore.File): Promise<string> {
+    return this.#store.writeJson(this.#fileName(file.scenario.id), file);
   }
 
   #fileName(id: Scenario.Id) {

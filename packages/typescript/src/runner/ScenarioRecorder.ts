@@ -1,18 +1,23 @@
 import {
   startup,
+  type Options,
   type SDKAssistantMessage,
   type SDKMessage,
+  type SDKResultMessage,
   type SDKUserMessage,
   type SDKUserMessageReplay,
   type WarmQuery,
 } from "@anthropic-ai/claude-agent-sdk";
 import { $ } from "bun";
-import { txt } from "smollit";
+import { txts } from "smollit";
 import { SystemProcess } from "../system/SystemProcess.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
+import { TypeUtils } from "../typeUtils.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
+import { ScenarioClaudeCodeSessionStore } from "./ScenarioClaudeCodeSessionStore.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
+import type { ScenarioPlayer } from "./ScenarioPlayer.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -20,6 +25,12 @@ export namespace ScenarioRecorder {
   export interface Props {
     text: string;
     path: string;
+    recovery?: ScenarioRecorder.Recovery | undefined;
+  }
+
+  export interface Recovery {
+    session: ScenarioClaudeCodeSessionStore.Snapshot;
+    logs: ScenarioPlayer.Log[];
   }
 
   export interface StepBufferClaudeCodeToolUse {
@@ -29,21 +40,42 @@ export namespace ScenarioRecorder {
   }
 
   export type StepBuffer = StepBufferClaudeCodeToolUse;
+
+  export interface ResultSuccess {
+    status: "success";
+    session: ScenarioClaudeCodeSessionStore.Snapshot;
+  }
+
+  export interface ResultFailure {
+    status: "failure";
+    error: string;
+  }
+
+  export type Result = ResultSuccess | ResultFailure;
 }
 
 export class ScenarioRecorder {
   #scenario: Scenario.Type;
-  #buffer: ScenarioRecorder.StepBuffer | undefined = undefined;
+  #buffer: ScenarioRecorder.StepBuffer | undefined;
   #masker = new ScenarioMasker();
+  #recovery: ScenarioRecorder.Recovery | undefined;
+  #sessionStore: ScenarioClaudeCodeSessionStore;
+  #sessionId: string | undefined;
 
   constructor(props: ScenarioRecorder.Props) {
-    const id = Scenario.textToId(props.text);
+    const { text, path, recovery } = props;
+    const id = Scenario.textToId(text);
     this.#scenario = {
       agent: "claude-code",
       steps: [],
       id,
-      ...props,
+      text,
+      path,
     };
+
+    this.#recovery = recovery;
+    this.#sessionStore = new ScenarioClaudeCodeSessionStore(recovery?.session);
+    this.#sessionId = recovery?.session?.sessionId;
   }
 
   get scenario(): Scenario.Type {
@@ -52,14 +84,27 @@ export class ScenarioRecorder {
 
   //#region Recording
 
-  async record(text: string) {
+  async record(): Promise<ScenarioRecorder.Result> {
     const claude = await this.#claudeCode();
 
-    for await (const message of claude.query(text)) {
+    for await (const message of claude.query(this.#scenario.text)) {
       logger.debug("Received Claude Code message: {message}", { message });
 
       this.#processMessage(message);
     }
+
+    if (!this.#sessionId)
+      return {
+        status: "failure",
+        error: "No Claude Code SDK session ID received from Claude Code",
+      };
+
+    const session = this.#sessionStore.snapshot(this.#sessionId);
+
+    return {
+      status: "success",
+      session,
+    };
   }
 
   #processMessage(message: SDKMessage) {
@@ -69,6 +114,9 @@ export class ScenarioRecorder {
 
       case "user":
         return this.#processUserMessage(message);
+
+      case "result":
+        return this.#processResultMessage(message);
     }
   }
 
@@ -90,6 +138,11 @@ export class ScenarioRecorder {
       this.#recordToolResult(block);
     });
   }
+
+  #processResultMessage(message: SDKResultMessage) {
+    this.#sessionId = message.session_id;
+  }
+
   //#endregion
 
   //#region Claude Code
@@ -97,7 +150,7 @@ export class ScenarioRecorder {
   async #claudeCode(): Promise<WarmQuery> {
     const claudeCodePath = await this.#claudeCodePath();
     return startup({
-      options: {
+      options: TypeUtils.fromExactOptionalTypes<Options>({
         pathToClaudeCodeExecutable: claudeCodePath,
         mcpServers: {
           alumnium: {
@@ -107,16 +160,38 @@ export class ScenarioRecorder {
           },
         },
         allowedTools: ["Read", "Write", "Edit", "Bash", "mcp__alumnium__*"],
+        sessionStore: this.#sessionStore,
+        sessionStoreFlush: "eager",
         systemPrompt: {
           type: "preset",
           preset: "claude_code",
-          append: txt`
-            If the test is successful, make sure to pass \`"save_cache": true\`
-            to the \`mcp__alumnium__stop\` tool to save the cache for future
-            test runs.
-          `,
+          append: txts(
+            this.#recovery &&
+              `
+              The saved Alumnium scenario playback failed and must be recovered.
+
+              Start from scratch and record a new set of steps that passes
+              the original scenario. Use the playback failure details below to
+              understand what went stale, but do not try to continue from
+              the failed playback state.
+
+              Original scenario:
+
+              ${this.#scenario.text}
+
+              Playback logs::
+
+              ${JSON.stringify(this.#recovery.logs, null, 2)}
+            `,
+            `
+              If the test is successful, make sure to pass \`"save_cache": true\`
+              to the \`mcp__alumnium__stop\` tool to save the cache for future
+              test runs.
+            `,
+          ),
         },
-      },
+        resume: this.#sessionId,
+      }),
     });
   }
 
