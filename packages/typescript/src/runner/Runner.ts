@@ -2,10 +2,9 @@ import fs from "node:fs/promises";
 import z from "zod";
 import { SystemProcess } from "../system/SystemProcess.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import { Scenario } from "./Scenario.ts";
 import { ScenarioPlayer } from "./ScenarioPlayer.ts";
 import { ScenarioRecorder } from "./ScenarioRecorder.ts";
-import { ScenariosStore } from "./ScenariosStore.ts";
+import { ScenarioStore } from "./ScenarioStore.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -13,13 +12,19 @@ export namespace Runner {
   export type ToolArguments = z.infer<typeof Runner.ToolArguments>;
 
   export type MaskMap = Record<string, string>;
+
+  export interface RecoverProps {
+    text: string;
+    file: ScenarioStore.File;
+    logs: ScenarioPlayer.Log[];
+  }
 }
 
 export class Runner {
   static ToolArguments = z.record(z.string(), z.unknown());
 
   #path: string;
-  #store = new ScenariosStore();
+  #store = new ScenarioStore();
 
   constructor(path: string) {
     this.#path = path;
@@ -29,11 +34,13 @@ export class Runner {
     logger.info(`Running scenario ${this.#path}`);
 
     const text = await this.#readScenarioText();
-    const scenario = await this.#store.lookup(text);
+    const file = await this.#store.lookup(text);
 
-    if (scenario) {
-      logger.info(`Scenario ${scenario.id} found in the store, playing...`);
-      await this.#play(scenario);
+    if (file) {
+      logger.info(
+        `Scenario ${file.scenario.id} found in the store, playing...`,
+      );
+      await this.#play(text, file);
     } else {
       logger.info(`Scenario not found in the store, recording...`);
       await this.#record(text);
@@ -42,12 +49,19 @@ export class Runner {
     await SystemProcess.exit(0);
   }
 
-  async #play(scenario: Scenario.Type) {
-    const player = new ScenarioPlayer(scenario);
+  async #play(text: string, file: ScenarioStore.File) {
+    const player = new ScenarioPlayer(file.scenario);
 
     const result = await player.play();
 
-    if (result.status === "failure") return SystemProcess.exit(1);
+    if (result.status === "failure") {
+      logger.info("Scenario playback failed, starting recovery...");
+      await this.#recover({
+        text,
+        file,
+        logs: result.logs,
+      });
+    }
   }
 
   async #record(text: string) {
@@ -56,9 +70,33 @@ export class Runner {
       path: this.#path,
     });
 
-    await recorder.record(text);
+    await this.#recordWith(recorder);
+  }
 
-    const path = await this.#store.save(recorder.scenario);
+  async #recover(props: Runner.RecoverProps) {
+    const { text, file, logs } = props;
+
+    const recorder = new ScenarioRecorder({
+      text,
+      path: this.#path,
+      recovery: { session: file.session, logs },
+    });
+
+    return this.#recordWith(recorder);
+  }
+
+  async #recordWith(recorder: ScenarioRecorder) {
+    const result = await recorder.record();
+
+    if (result.status === "failure") {
+      logger.error(`Scenario recording failed: ${result.error}`);
+      return SystemProcess.exit(1);
+    }
+
+    const path = await this.#store.save({
+      scenario: recorder.scenario,
+      session: result.session,
+    });
 
     logger.info(`Saved scenario recording to ${path}`);
   }

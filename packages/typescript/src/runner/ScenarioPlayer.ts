@@ -14,6 +14,12 @@ export namespace ScenarioPlayer {
 
   export type PlayFn = (step: Scenario.ClaudeCodeStep) => Promise<void>;
 
+  export interface Log {
+    step: Scenario.ClaudeCodeStep;
+    mcpOutput: ScenarioAlumniumMcp.Output;
+    error?: string;
+  }
+
   export interface ResultSuccess {
     status: "success";
   }
@@ -21,6 +27,7 @@ export namespace ScenarioPlayer {
   export interface ResultFailure {
     status: "failure";
     error: string;
+    logs: Log[];
   }
 
   export type Result = ResultSuccess | ResultFailure;
@@ -41,6 +48,7 @@ export class ScenarioPlayer {
     await mcp.connect();
 
     const stepsCount = this.#scenario.steps.length;
+    const logs: ScenarioPlayer.Log[] = [];
 
     try {
       for (const stepIdxStr in this.#scenario.steps) {
@@ -55,6 +63,12 @@ export class ScenarioPlayer {
 
         const unmaskedInput = this.#masker.unmaskInput(use.input);
         const mcpOutput = await mcp.call(mcpName, unmaskedInput);
+
+        const log: ScenarioPlayer.Log = {
+          step,
+          mcpOutput,
+        };
+        logs.push(log);
 
         switch (mcpName) {
           case "start":
@@ -83,10 +97,12 @@ export class ScenarioPlayer {
                 `${message}\nExpected: {useContent}\nActual: {mcpContent}`,
                 { useContent, mcpContent },
               );
+              log.error = message;
 
               return {
                 status: "failure",
                 error: message,
+                logs,
               };
             }
             break;
