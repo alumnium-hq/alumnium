@@ -30,12 +30,6 @@ public class BaseTest {
 
         driver = new ChromeDriver();
         al = new Alumni(driver, options);
-        al.learn("2 + 2 =", 
-        List.of(
-            "click button '2'",
-            "click button '+'",
-            "click button '2'",
-            "click button '='"));
     }
 
     @AfterAll
