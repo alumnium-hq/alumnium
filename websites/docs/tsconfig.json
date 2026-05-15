@@ -1,3 +1,37 @@
 {
-  "extends": "astro/tsconfigs/strict"
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    "./*.ts",
+    "./src/**/*.ts",
+    "./scripts/**/*.ts",
+    // Astro types
+    ".astro/types.d.ts",
+    // Starlight types
+    "./node_modules/@astrojs/starlight/virtual.d.ts",
+    "./node_modules/@astrojs/starlight/virtual-internal.d.ts"
+  ],
+  "compilerOptions": {
+    // Resolve
+    "paths": {
+      // NOTE: These lines fix type error in content.config.ts:
+      // > The inferred type of 'collections' cannot be named without
+      // > a reference to 'LinkHTMLAttributes' from '../node_modules/@astrojs/starlight/schemas/sidebar'.
+      // > This is likely not portable. A type annotation is necessary. ts(2883)
+      "@astrojs/starlight/schemas/*": [
+        "./node_modules/@astrojs/starlight/schemas/*"
+      ]
+    },
+    // Output
+    "outDir": "./.ts",
+    "tsBuildInfoFile": "./.ts/tsconfig.tsbuildinfo",
+    "emitDeclarationOnly": true,
+    // Env
+    "lib": ["ESNext", "DOM"],
+    // Checks
+    "skipLibCheck": true,
+    // Build
+    "incremental": true,
+    // Project references
+    "composite": true
+  }
 }

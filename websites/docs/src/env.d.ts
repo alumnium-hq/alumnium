@@ -1,2 +1,4 @@
-/// <reference path="../.astro/types.d.ts" />
-/// <reference types="astro/client" />
+declare namespace App {
+  type StarlightLocals = import("@astrojs/starlight").StarlightLocals;
+  interface Locals extends StarlightLocals {}
+}

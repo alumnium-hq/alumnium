@@ -2,6 +2,7 @@
   "recommendations": [
     "tekumara.typos-vscode",
     "typescriptteam.native-preview",
-    "oxc.oxc-vscode"
+    "oxc.oxc-vscode",
+    "astro-build.astro-vscode"
   ]
 }

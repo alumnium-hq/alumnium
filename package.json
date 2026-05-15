@@ -2,7 +2,8 @@
   "name": "@alumnium/repo",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "websites/docs"
   ],
   "scripts": {
     "types": "tsgo --build",
@@ -13,7 +14,7 @@
     "oxfmt": "^0.47.0",
     "oxlint": "^1.62.0",
     "oxlint-tsgolint": "^0.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "ajv": ">=8.18.0",
