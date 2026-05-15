@@ -1,6 +1,7 @@
 package ai.alumnium.client;
 
 import ai.alumnium.Model;
+import ai.alumnium.result.DoStep;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -113,7 +114,7 @@ public final class HttpClient implements AutoCloseable {
         return new PlanResult(data.path("explanation").asText(""), toStringList(data.path("steps")));
     }
 
-    public record ActionResult(String explanation, List<Map<String, Object>> actions) {}
+    public record ActionResult(String explanation, List<DoStep> actions) {}
 
     public ActionResult executeAction(String goal, String step, String accessibilityTree) {
         return executeAction(goal, step, accessibilityTree, "unknown");
@@ -123,7 +124,10 @@ public final class HttpClient implements AutoCloseable {
         JsonNode data = postJson("/v1/sessions/" + requireSession() + "/steps",
             Map.of("goal", goal, "step", step, "accessibility_tree", accessibilityTree, "app", app),
             Duration.ofSeconds(120));
-        return new ActionResult(data.path("explanation").asText(""), toListOfMap(data.path("actions")));
+        return new ActionResult(
+            data.path("explanation").asText(""),
+            MAPPER.convertValue(data.path("actions"), new TypeReference<List<DoStep>>() {})
+        );
     }
 
     public record RetrieveResult(String explanation, Data result) {}
@@ -145,6 +149,16 @@ public final class HttpClient implements AutoCloseable {
             Duration.ofSeconds(120));
         Object rawResult = MAPPER.convertValue(data.path("result"), Object.class);
         return new RetrieveResult(data.path("explanation").asText(""), Data.looselyTypecast(rawResult));
+    }
+
+    public FindElementResult findArea(String description, String accessibilityTree, String app) {
+        JsonNode data = postJson("/v1/sessions/" + requireSession() + "/areas",
+            Map.of("description", description, "accessibility_tree", accessibilityTree,
+                   "app", app == null ? "unknown" : app),
+            Duration.ofSeconds(60));
+        return new FindElementResult(
+            data.path("id").asInt(), 
+            data.path("explanation").asText(""));
     }
 
     public FindElementResult findElement(String description, String accessibilityTree, String app) {
@@ -309,11 +323,6 @@ public final class HttpClient implements AutoCloseable {
     private static List<String> toStringList(JsonNode node) {
         if (node == null || !node.isArray()) return List.of();
         return MAPPER.convertValue(node, new TypeReference<List<String>>() {});
-    }
-
-    private static List<Map<String, Object>> toListOfMap(JsonNode node) {
-        if (node == null || !node.isArray()) return List.of();
-        return MAPPER.convertValue(node, new TypeReference<List<Map<String, Object>>>() {});
     }
 
     /** Thrown when the server returned a non-2xx status. */

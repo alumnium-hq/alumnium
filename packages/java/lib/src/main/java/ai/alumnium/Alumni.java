@@ -145,7 +145,12 @@ public final class Alumni implements AutoCloseable {
         return value;
     }
 
-    /** Resolve a natural-language description to a native driver element. */
+    /** 
+     * Finds an element in the accessibility tree and returns the native driver element.
+     * 
+     * @param description Natural language description of the element to find.
+     * @return Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
+    */
     public Element find(String description) {
         FindElementResult response = client.findElement(
             description, driver.accessibilityTree().toStr(), driver.app());
@@ -153,7 +158,34 @@ public final class Alumni implements AutoCloseable {
         return driver.findElement(id);
     }
 
-    /** Add a learning example (goal + actions) to the server session. */
+    /**
+     * Creates an area for the agents to work within.
+     * This is useful for narrowing down the context or focus of the agents' actions, checks and data retrievals.
+     * 
+     * Note that if the area cannot be found, the topmost area of the accessibility tree will be used,
+     * which is equivalent to the whole page.
+     * 
+     * @param description The description of the area.
+     * @return An instance of the Area class that represents the area of the accessibility tree to use.
+     */
+    public Area area(String description) {
+        FindElementResult response = client.findArea(
+            description, driver.accessibilityTree().toStr(), driver.app());
+        int id = response.id();
+        return new Area(id, 
+            response.explanation(), 
+            driver,
+            driver.accessibilityTree().scopeToArea(id),
+            tools,
+            client);
+    }
+
+    /** 
+     * Adds a new learning example on what steps should be take to achieve the goal.
+     * 
+     * @param goal The goal to be achieved. Use same format as in {@link #act(String)}.
+     * @param actions A list of actions to achieve the goal.
+    */
     public void learn(String goal, List<String> actions) {
         client.addExample(goal, actions == null ? List.of() : List.copyOf(actions));
     }
@@ -206,7 +238,7 @@ public final class Alumni implements AutoCloseable {
             }
 
             List<String> calledTools = new ArrayList<>();
-            for (Map<String, Object> toolCall : action.actions()) {
+            for (DoStep toolCall : action.actions()) {
                 calledTools.add(BaseTool.executeToolCall(toolCall, tools, driver));
             }
             executedSteps.add(new DoStep(step, calledTools));
