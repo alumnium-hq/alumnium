@@ -42,6 +42,7 @@ public final class Alumni implements AutoCloseable {
     private final BaseDriver driver;
     private final Model model;
     private final HttpClient client;
+    private final Cache cache;
     private final Map<String, Class<? extends BaseTool>> tools;
     private final boolean changeAnalysis;
 
@@ -82,6 +83,7 @@ public final class Alumni implements AutoCloseable {
             toolSchemas,
             planner,
             excludeAttributes);
+        this.cache = new Cache(this.client);
         LOG.info("Using HTTP client with server: {}", this.client.baseUrl());
     }
 
@@ -90,6 +92,7 @@ public final class Alumni implements AutoCloseable {
 
     public BaseDriver driver() { return driver; }
     public HttpClient client() { return client; }
+    public Cache cache() { return cache; }
     public Model model() { return model; }
     public Map<String, Class<? extends BaseTool>> tools() { return tools; }
 

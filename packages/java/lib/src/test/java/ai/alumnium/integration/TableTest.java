@@ -7,28 +7,15 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.chrome.ChromeDriver;
 import java.util.List;
 
 import ai.alumnium.Area;
 
-public class TableTest {
-    private static final String TABLE_URL = "https://the-internet.herokuapp.com/tables";
-    private static final Model MODEL = new Model(Provider.ANTHROPIC, "claude-haiku-4-5-20251001");
-    private static Alumni al;
-    private static ChromeDriver driver;
+public class TableTest extends BaseTest {
     
-    @BeforeAll
-    static void learn() {
-        Alumni.Options options = new Alumni.Options()
-            .withUrl("http://127.0.0.1:8013")
-            .withModel(MODEL)
-            .withPlanner(true)
-            .withChangeAnalysis(true);
-
-        driver = new ChromeDriver();
-        al = new Alumni(driver, options);
-    }
+    private static final String TABLE_URL = "https://the-internet.herokuapp.com/tables";
 
     @Test
     void testTableExtraction() {
@@ -71,10 +58,5 @@ public class TableTest {
 
         Assertions.assertEquals(List.of("Frank", "Tim", "Jason", "John"), table1.get("first names").toObject());
         Assertions.assertEquals(List.of("Bach", "Conway", "Doe", "Smith"), table1.get("last names").toObject());
-    }
-
-    @AfterAll
-    static void tearDown() {
-        al.close();
     }
 }

@@ -2,31 +2,15 @@ package ai.alumnium.integration;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.List;
 
-import ai.alumnium.Alumni;
-import ai.alumnium.Model;
-import ai.alumnium.Provider;
-
-public class CalculatorTest {
+public class CalculatorTest extends BaseTest {
 
     private static final String CALCULATOR_URL = "https://seleniumbase.io/apps/calculator";
-    private static final Model MODEL = new Model(Provider.ANTHROPIC, "claude-haiku-4-5-20251001");
-    private static Alumni al;
-    private static ChromeDriver driver;
     
     @BeforeAll
-    static void learn() {
-        Alumni.Options options = new Alumni.Options()
-            .withUrl("http://127.0.0.1:8013")
-            .withModel(MODEL)
-            .withPlanner(true)
-            .withChangeAnalysis(true);
-
-        driver = new ChromeDriver();
-        al = new Alumni(driver, options);
+    static void learn() {   
         al.learn("2 + 2 =", 
         List.of(
             "click button '2'",

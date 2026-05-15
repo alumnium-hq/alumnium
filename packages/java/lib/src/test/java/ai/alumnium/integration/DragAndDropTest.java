@@ -1,36 +1,17 @@
 package ai.alumnium.integration;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
+import ai.alumnium.Alumni;
 
 import java.util.List;
 
-import ai.alumnium.Alumni;
-import ai.alumnium.Model;
-import ai.alumnium.Provider;
 import ai.alumnium.client.Data;
 
-public class DragAndDropTest {
+public class DragAndDropTest extends BaseTest {
 
     private static final String DRAG_AND_DROP_URL = "https://the-internet.herokuapp.com/drag_and_drop";
-    private static final Model MODEL = new Model(Provider.ANTHROPIC, "claude-haiku-4-5-20251001");
-    private static Alumni al;
-    private static ChromeDriver driver;
-    
-    @BeforeAll
-    static void learn() {
-        Alumni.Options options = new Alumni.Options()
-            .withUrl("http://127.0.0.1:8013")
-            .withModel(MODEL)
-            .withPlanner(true)
-            .withChangeAnalysis(true);
-
-        driver = new ChromeDriver();
-        al = new Alumni(driver, options);
-    }
 
     @Test
     void testDragAndDrop() {

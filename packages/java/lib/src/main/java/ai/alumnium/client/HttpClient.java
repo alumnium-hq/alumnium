@@ -208,6 +208,14 @@ public final class HttpClient implements AutoCloseable {
         return MAPPER.convertValue(data, MAP_OF_OBJECT);
     }
 
+    public void saveCache() {
+        postJson("/v1/sessions/" + requireSession() + "/caches", Map.of(), Duration.ofSeconds(30));
+    }
+
+    public void discardCache() {
+        delete("/v1/sessions/" + requireSession() + "/caches", Duration.ofSeconds(30));
+    }
+
     /** GET /v1/health. Returns {@code true} if the server reports ready. */
     public boolean health() {
         try {
