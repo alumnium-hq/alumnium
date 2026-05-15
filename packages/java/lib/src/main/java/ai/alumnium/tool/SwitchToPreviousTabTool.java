@@ -5,9 +5,8 @@ import ai.alumnium.tool.annotation.ToolDescription;
 
 @ToolDescription("Switch to the previous browser tab/window.")
 public record SwitchToPreviousTabTool() implements BaseTool {
-    @Override
-    public void invoke(BaseDriver driver) {
-        driver.switchToPreviousTab();
-    }
-    
+  @Override
+  public void invoke(BaseDriver driver) {
+    driver.switchToPreviousTab();
+  }
 }

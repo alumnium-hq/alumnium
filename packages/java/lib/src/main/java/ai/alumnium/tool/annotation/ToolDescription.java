@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Attaches a class-level description to a
- * tool record. Consumed by {@link ai.alumnium.tool.ToolToSchemaConverter}.
+ * Attaches a class-level description to a tool record. Consumed by {@link
+ * ai.alumnium.tool.ToolToSchemaConverter}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ToolDescription {
-    String value();
+  String value();
 }

@@ -15,6 +15,14 @@ description = "Build main Java artifact"
 [tasks.lint]
 run = "gradle --no-daemon check -x test"
 
+[tasks.format]
+run = "gradle clean --no-daemon spotlessApply"
+description = "Apply Spotless formatting to Java sources"
+
+[tasks."format:check"]
+run = "gradle clean --no-daemon spotlessCheck"
+description = "Verify Spotless formatting (CI-style)"
+
 [tasks.local_lib]
 run = "gradle --no-daemon publishToMavenLocal"
 description = "Publish main + classifier jars to local Maven repository"

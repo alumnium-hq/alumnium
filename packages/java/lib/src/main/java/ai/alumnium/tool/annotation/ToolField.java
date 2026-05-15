@@ -6,12 +6,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Documents a tool record component so
- * {@link ai.alumnium.tool.ToolToSchemaConverter} can emit a meaningful JSON schema. 
+ * Documents a tool record component so {@link ai.alumnium.tool.ToolToSchemaConverter} can emit a
+ * meaningful JSON schema.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.RECORD_COMPONENT, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
+@Target({
+  ElementType.RECORD_COMPONENT,
+  ElementType.FIELD,
+  ElementType.PARAMETER,
+  ElementType.METHOD
+})
 public @interface ToolField {
-    /** Human-readable description of the field, surfaced to the server. */
-    String description();
+  /** Human-readable description of the field, surfaced to the server. */
+  String description();
 }

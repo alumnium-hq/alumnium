@@ -11,22 +11,22 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  */
 public final class AlumniCacheExtension implements AfterTestExecutionCallback {
 
-    private final Supplier<Alumni> alumni;
+  private final Supplier<Alumni> alumni;
 
-    public AlumniCacheExtension(Supplier<Alumni> alumni) {
-        this.alumni = alumni;
-    }
+  public AlumniCacheExtension(Supplier<Alumni> alumni) {
+    this.alumni = alumni;
+  }
 
-    @Override
-    public void afterTestExecution(ExtensionContext context) {
-        Alumni a = alumni.get();
-        if (a == null) {
-            return;
-        }
-        if (context.getExecutionException().isEmpty()) {
-            a.cache().save();
-        } else {
-            a.cache().discard();
-        }
+  @Override
+  public void afterTestExecution(ExtensionContext context) {
+    Alumni a = alumni.get();
+    if (a == null) {
+      return;
     }
+    if (context.getExecutionException().isEmpty()) {
+      a.cache().save();
+    } else {
+      a.cache().discard();
+    }
+  }
 }

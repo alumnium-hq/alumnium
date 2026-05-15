@@ -113,12 +113,17 @@ depends_post = [
 ]
 
 [tasks.format]
-depends = ["//packages/typescript:format", "//packages/python:format"]
+depends = [
+  "//packages/typescript:format",
+  "//packages/python:format",
+  "//packages/java:format",
+]
 
 [tasks."format:check"]
 depends = [
   "//packages/typescript:format:check",
   "//packages/python:format:check",
+  "//packages/java:format:check",
 ]
 
 [tasks.types]
