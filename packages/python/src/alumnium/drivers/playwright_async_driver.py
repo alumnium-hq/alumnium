@@ -59,9 +59,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
         # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
         frame_to_iframe_map: dict[str, int] = {}
-        await self._build_frame_hierarchy(
-            frame_tree["frameTree"], main_frame_id, frame_to_iframe_map
-        )
+        await self._build_frame_hierarchy(frame_tree["frameTree"], main_frame_id, frame_to_iframe_map)
 
         # Build mapping: frameId -> Playwright Frame object (for element finding)
         frame_id_to_playwright_frame: dict[str, Frame] = {}

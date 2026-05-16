@@ -477,11 +477,7 @@ export class PlaywrightDriver extends BaseDriver {
     }
 
     for (const child of frameInfo.childFrames || []) {
-      await this.buildFrameHierarchy(
-        child,
-        mainFrameId,
-        frameToIframeMap,
-      );
+      await this.buildFrameHierarchy(child, mainFrameId, frameToIframeMap);
     }
   }
 
@@ -503,7 +499,6 @@ export class PlaywrightDriver extends BaseDriver {
 
     return searchFrame(cdpFrameTree.frameTree);
   }
-
 }
 
 function spanAttrs(this: PlaywrightDriver): Tracer.SpansDriverAttrs {
