@@ -1338,6 +1338,21 @@
                                 "type": [
                                   {
                                     "kind": "null"
+                                  },
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "reason": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["content_filter"]
+                                          }
+                                        ]
+                                      }
+                                    }
                                   }
                                 ]
                               },
@@ -1674,7 +1689,7 @@
                                       ]
                                     },
                                     "kind": "string",
-                                    "values": ["completed"]
+                                    "values": ["completed", "incomplete"]
                                   }
                                 ]
                               },
