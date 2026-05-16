@@ -294,17 +294,11 @@ class SeleniumDriver(BaseDriver):
 
         for el in elements:
             role = self._map_tag_to_role(el.get("tagName", ""), el.get("role", ""))
-            selector = self._build_element_selector(el)
 
             synthetic_node: ChromiumSyntheticNode = {
                 "nodeId": str(node_id),
                 "role": {"value": role},
                 "name": {"value": el.get("name", "")},
-                "_playwright_node": True,  # Mark as synthetic (reuse existing flag)
-                "_locator_info": {
-                    "selector": selector,
-                    "nth": el.get("index", 0),
-                },
             }
 
             # Track which iframe this is in
@@ -458,10 +452,6 @@ class SeleniumDriver(BaseDriver):
     def find_element(self, id: int) -> WebElement:
         accessibility_element = self.accessibility_tree.element_by_id(id)
 
-        # Handle synthetic nodes (cross-origin iframe elements)
-        if accessibility_element.locator_info:
-            return self._find_element_by_locator_info(accessibility_element)
-
         backend_node_id = accessibility_element.backend_node_id
         frame_chain = accessibility_element.frame_chain
 
@@ -497,24 +487,6 @@ class SeleniumDriver(BaseDriver):
         # needs to remain in its frame context for subsequent operations (click, type, etc.)
 
         return element
-
-    def _find_element_by_locator_info(self, accessibility_element) -> WebElement:
-        """Find element using locator info for cross-origin iframe elements."""
-        locator_info = accessibility_element.locator_info
-        frame_chain = accessibility_element.frame_chain
-
-        # Switch to the appropriate frame
-        if frame_chain:
-            self._switch_to_frame_chain(frame_chain)
-
-        selector = locator_info.get("selector", "")
-        nth = locator_info.get("nth", 0)
-
-        elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
-        if nth < len(elements):
-            return elements[nth]
-
-        raise ValueError(f"Could not find element with selector {selector} (nth={nth})")
 
     def _switch_to_frame_chain(self, frame_chain: list[int]):
         """Switch through a chain of nested iframes."""
