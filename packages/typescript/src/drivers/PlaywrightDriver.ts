@@ -35,11 +35,7 @@ interface CDPNode {
   role?: { value?: string };
   name?: { value?: string };
   childIds?: string[];
-  _playwright_node?: boolean;
-  _locator_info?: Record<string, unknown>;
-  _frame_url?: string;
   _frame?: object;
-  _frame_chain?: number[];
   _parent_iframe_backend_node_id?: number | undefined;
 }
 
@@ -146,27 +142,12 @@ export class PlaywrightDriver extends BaseDriver {
     const mainFrameId = frameTree.frameTree.frame.id;
     logger.debug(`Found ${frameIds.length} frames`);
 
-    // Get all targets including OOPIFs (cross-origin iframes)
-    let oopifTargets: Array<{ url?: string; type?: string }> = [];
-    try {
-      const targets = await this.client.send("Target.getTargets");
-      oopifTargets = this.getOopifTargets(targets, frameTree);
-      logger.debug(`Found ${oopifTargets.length} cross-origin iframes`);
-    } catch (error) {
-      logger.debug(
-        `Could not get OOPIF targets: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-
     // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
     const frameToIframeMap: Map<string, number> = new Map();
-    // Build mapping: frameId -> parent frameId (for nested frames)
-    const frameParentMap: Map<string, string> = new Map();
     await this.buildFrameHierarchy(
       frameTree.frameTree,
       mainFrameId,
       frameToIframeMap,
-      frameParentMap,
     );
 
     // Build mapping: frameId -> Playwright Frame object (for element finding)
@@ -193,22 +174,11 @@ export class PlaywrightDriver extends BaseDriver {
           `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
         );
 
-        // Calculate frame chain for this frame
-        const frameChain = this.getFrameChain(
-          frameId,
-          frameToIframeMap,
-          frameParentMap,
-        );
         // Get Playwright frame reference
         const playwrightFrame =
           frameIdToPlaywrightFrame.get(frameId) || this.page.mainFrame();
 
-        // Tag ALL nodes from child frames with their frame chain
         for (const node of nodes) {
-          if (frameChain.length > 0) {
-            node._frame_chain = frameChain;
-          }
-          // Also keep frame reference for Playwright-specific element finding
           node._frame = playwrightFrame;
           // Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
           if (node.parentId === undefined && frameToIframeMap.has(frameId)) {
@@ -220,49 +190,6 @@ export class PlaywrightDriver extends BaseDriver {
         logger.debug(
           `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
         );
-      }
-    }
-
-    // Process cross-origin iframes via Playwright query fallback
-    for (const oopif of oopifTargets) {
-      try {
-        const nodes = await this.getCrossOriginFrameNodes(oopif);
-        allNodes.push(...nodes);
-        logger.debug(
-          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: ${nodes.length} nodes`,
-        );
-      } catch (error) {
-        logger.debug(
-          `  -> Cross-origin iframe ${(oopif.url || "").slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-        );
-      }
-    }
-
-    // Process Playwright frames not in CDP tree (e.g., data: URI iframes)
-    const cdpFrameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree));
-    const oopifUrls = new Set(oopifTargets.map((t) => t.url || ""));
-    for (const frame of this.page.frames()) {
-      const frameUrl = frame.url();
-      if (!cdpFrameUrls.has(frameUrl) && !oopifUrls.has(frameUrl)) {
-        logger.debug(
-          `Processing Playwright-only frame: ${frameUrl.slice(0, 60)}`,
-        );
-        try {
-          const iframeBackendNodeId =
-            await this.getIframeBackendNodeIdByUrl(frameUrl);
-          const nodes = await this.queryFrameInteractiveElements(
-            frame,
-            iframeBackendNodeId,
-          );
-          allNodes.push(...nodes);
-          logger.debug(
-            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: ${nodes.length} nodes`,
-          );
-        } catch (error) {
-          logger.debug(
-            `  -> Playwright-only frame ${frameUrl.slice(0, 40)}...: failed (${error instanceof Error ? error.message : String(error)})`,
-          );
-        }
       }
     }
 
@@ -391,15 +318,6 @@ export class PlaywrightDriver extends BaseDriver {
     const frame = (accessibilityElement.frame ||
       this.page.mainFrame()) as Frame;
 
-    // Handle Playwright nodes (cross-origin iframes) using locator info
-    if (accessibilityElement.locatorInfo) {
-      return this.findElementByLocatorInfo(
-        frame,
-        accessibilityElement.locatorInfo,
-      );
-    }
-
-    // Existing CDP node logic
     const backendNodeId = accessibilityElement.backendNodeId!;
 
     // Beware!
@@ -534,20 +452,10 @@ export class PlaywrightDriver extends BaseDriver {
     return frameIds;
   }
 
-  private getAllFrameUrls(frameInfo: CDPFrameInfo): string[] {
-    const urls: string[] = [frameInfo.frame.url || ""];
-    for (const child of frameInfo.childFrames || []) {
-      urls.push(...this.getAllFrameUrls(child));
-    }
-    return urls;
-  }
-
   private async buildFrameHierarchy(
     frameInfo: CDPFrameInfo,
     mainFrameId: string,
     frameToIframeMap: Map<string, number>,
-    frameParentMap: Map<string, string>,
-    parentFrameId?: string,
   ): Promise<void> {
     const frameId = frameInfo.frame.id;
 
@@ -566,192 +474,11 @@ export class PlaywrightDriver extends BaseDriver {
           `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
-
-      if (parentFrameId) {
-        frameParentMap.set(frameId, parentFrameId);
-      }
     }
 
     for (const child of frameInfo.childFrames || []) {
-      await this.buildFrameHierarchy(
-        child,
-        mainFrameId,
-        frameToIframeMap,
-        frameParentMap,
-        frameId,
-      );
+      await this.buildFrameHierarchy(child, mainFrameId, frameToIframeMap);
     }
-  }
-
-  private getFrameChain(
-    frameId: string,
-    frameToIframeMap: Map<string, number>,
-    frameParentMap: Map<string, string>,
-  ): number[] {
-    const chain: number[] = [];
-    let currentFrameId = frameId;
-
-    while (frameToIframeMap.has(currentFrameId)) {
-      const iframeBackendNodeId = frameToIframeMap.get(currentFrameId)!;
-      chain.unshift(iframeBackendNodeId);
-      if (frameParentMap.has(currentFrameId)) {
-        currentFrameId = frameParentMap.get(currentFrameId)!;
-      } else {
-        break;
-      }
-    }
-
-    return chain;
-  }
-
-  private getOopifTargets(
-    targets: { targetInfos?: Array<{ type?: string; url?: string }> },
-    frameTree: CDPFrameTree,
-  ): Array<{ url?: string; type?: string }> {
-    const frameUrls = new Set(this.getAllFrameUrls(frameTree.frameTree));
-    const oopifTargets: Array<{ url?: string; type?: string }> = [];
-
-    for (const target of targets.targetInfos || []) {
-      if (target.type === "iframe") {
-        const url = target.url || "";
-        if (url && !frameUrls.has(url)) {
-          oopifTargets.push(target);
-          logger.debug(`Detected OOPIF target: ${url.slice(0, 60)}`);
-        }
-      }
-    }
-
-    return oopifTargets;
-  }
-
-  private async getCrossOriginFrameNodes(oopifTarget: {
-    url?: string;
-  }): Promise<CDPNode[]> {
-    const url = oopifTarget.url || "";
-
-    const frame = this.findPlaywrightFrameByUrl(url);
-    if (!frame) {
-      logger.debug(
-        `Could not find Playwright frame for URL: ${url.slice(0, 60)}`,
-      );
-      return [];
-    }
-
-    const iframeBackendNodeId = await this.getIframeBackendNodeIdByUrl(url);
-    return await this.queryFrameInteractiveElements(frame, iframeBackendNodeId);
-  }
-
-  private findPlaywrightFrameByUrl(frameUrl: string): Frame | null {
-    for (const frame of this.page.frames()) {
-      if (frame.url() === frameUrl) {
-        return frame;
-      }
-    }
-    if (frameUrl === "about:blank") {
-      for (const frame of this.page.frames()) {
-        if (frame.url() === "about:blank" || !frame.url()) {
-          return frame;
-        }
-      }
-    }
-    logger.debug(`Could not find Playwright frame for URL: ${frameUrl}`);
-    return null;
-  }
-
-  private async getIframeBackendNodeIdByUrl(
-    url: string,
-  ): Promise<number | null> {
-    try {
-      await this.client.send("DOM.enable");
-      const doc = await this.client.send("DOM.getDocument");
-      const result = await this.client.send("DOM.querySelectorAll", {
-        nodeId: doc.root.nodeId,
-        selector: `iframe[src='${url}']`,
-      });
-
-      if (result.nodeIds && typeof result.nodeIds[0] === "number") {
-        const nodeId = result.nodeIds[0];
-        const node = await this.client.send("DOM.describeNode", { nodeId });
-        return node.node?.backendNodeId ?? null;
-      }
-    } catch (error) {
-      logger.debug(
-        `Could not get iframe backendNodeId: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-    return null;
-  }
-
-  private async queryFrameInteractiveElements(
-    frame: Frame,
-    iframeBackendNodeId: number | null,
-  ): Promise<CDPNode[]> {
-    const nodes: CDPNode[] = [];
-    let nodeId = -1;
-
-    try {
-      const interactiveSelectors: Array<[string, string]> = [
-        ["button", "button"],
-        ["a", "link"],
-        ["[role='button']", "button"],
-        ["[role='link']", "link"],
-        ["input[type='submit']", "button"],
-        ["input:not([type='hidden'])", "textbox"],
-        ["select", "combobox"],
-        ["textarea", "textbox"],
-        ["[aria-label]", "generic"],
-      ];
-
-      for (const [selector, role] of interactiveSelectors) {
-        try {
-          const elements = frame.locator(selector);
-          const count = await elements.count();
-          for (let i = 0; i < Math.min(count, 20); i++) {
-            const element = elements.nth(i);
-            try {
-              const text = await element.textContent({ timeout: 1000 });
-              const ariaLabel = await element.getAttribute("aria-label", {
-                timeout: 1000,
-              });
-              const name = ariaLabel || (text ? text.trim().slice(0, 50) : "");
-
-              if (name) {
-                const syntheticNode: CDPNode = {
-                  nodeId: String(nodeId),
-                  role: { value: role },
-                  name: { value: name },
-                  _playwright_node: true,
-                  _locator_info: { selector, nth: i },
-                  _frame: frame,
-                };
-
-                if (iframeBackendNodeId !== null) {
-                  syntheticNode._frame_chain = [iframeBackendNodeId];
-                }
-
-                nodes.push(syntheticNode);
-                nodeId--;
-                logger.debug(`  -> Found ${role}: ${name.slice(0, 40)}`);
-              }
-            } catch {
-              // Element query failed, skip
-            }
-          }
-        } catch {
-          // Selector query failed, skip
-        }
-      }
-
-      logger.debug(
-        `  -> Created ${nodes.length} synthetic nodes for cross-origin frame`,
-      );
-    } catch (error) {
-      logger.error(
-        `  -> Failed to query frame content: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-
-    return nodes;
   }
 
   private findCdpFrameIdByUrl(
@@ -771,54 +498,6 @@ export class PlaywrightDriver extends BaseDriver {
     };
 
     return searchFrame(cdpFrameTree.frameTree);
-  }
-
-  private findElementByLocatorInfo(
-    frame: Frame,
-    locatorInfo: Record<string, unknown>,
-  ): Locator {
-    // Handle synthetic frame nodes
-    if (locatorInfo._synthetic_frame) {
-      const frameUrl =
-        typeof locatorInfo._frame_url === "string"
-          ? locatorInfo._frame_url
-          : "";
-      logger.debug(
-        `Synthetic frame node clicked, returning frame locator for: ${frameUrl.slice(0, 80)}`,
-      );
-      return frame.locator("body");
-    }
-
-    // Handle selector+nth-based locators (from queried frame content)
-    if (
-      typeof locatorInfo.selector === "string" &&
-      typeof locatorInfo.nth === "number"
-    ) {
-      const selector = locatorInfo.selector;
-      const nth = locatorInfo.nth;
-      logger.debug(`Finding element by selector: ${selector} (nth=${nth})`);
-      return frame.locator(selector).nth(nth);
-    }
-
-    const role = locatorInfo.role;
-    const name = locatorInfo.name;
-
-    logger.debug(
-      `Finding element by locator info: role=${String(role)}, name=${String(name)}`,
-    );
-
-    // Use Playwright's getByRole for accessibility-based element finding
-    if (typeof role === "string" && typeof name === "string") {
-      return frame.getByRole(role as never, { name });
-    } else if (typeof role === "string") {
-      return frame.getByRole(role as never);
-    } else if (typeof name === "string") {
-      return frame.getByText(name);
-    } else {
-      throw new Error(
-        `Cannot find element: no role or name in locator_info: ${JSON.stringify(locatorInfo)}`,
-      );
-    }
   }
 }
 

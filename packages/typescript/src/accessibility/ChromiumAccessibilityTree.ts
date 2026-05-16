@@ -20,9 +20,6 @@ interface CDPNode {
     value?: unknown;
   }>;
   childIds?: Array<string | number>;
-  _playwright_node?: boolean;
-  _locator_info?: Record<string, unknown>;
-  _frame_url?: string;
   _frame?: object;
   _parent_iframe_backend_node_id?: number;
   _frame_chain?: number[];
@@ -147,18 +144,6 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       elem.attribs["ignored"] = String(node.ignored);
     }
 
-    // Store locator info for Playwright nodes (used for cross-origin iframes)
-    if ("_playwright_node" in node && node._playwright_node) {
-      elem.attribs["_playwright_node"] = "true";
-    }
-    if ("_locator_info" in node && node._locator_info !== undefined) {
-      // Store as JSON-like string for later parsing
-      elem.attribs["_locator_info"] = JSON.stringify(node._locator_info);
-    }
-    if ("_frame_url" in node && node._frame_url !== undefined) {
-      elem.attribs["_frame_url"] = node._frame_url;
-    }
-
     // Add name as attribute if present
     if ("name" in node && node.name && "value" in node.name) {
       elem.attribs["name"] = String(node.name.value);
@@ -261,32 +246,6 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     const element = findElement(root, String(rawId));
     if (element === null) {
       throw new Error(`No element with raw_id=${rawId} found`);
-    }
-
-    // Check if this is a Playwright node (cross-origin iframe element)
-    if (element.attribs["_playwright_node"] === "true") {
-      // Check if it's a synthetic frame node
-      const frameUrl = element.attribs["_frame_url"];
-      if (frameUrl) {
-        // Synthetic iframe node - no locator info, use frame reference
-        return {
-          type: element.tagName,
-          frame: this.#frameMap[rawId],
-          locatorInfo: { _synthetic_frame: true, _frame_url: frameUrl },
-        };
-      }
-
-      // Regular Playwright node with locator info
-      const locatorInfoStr = element.attribs["_locator_info"];
-      const locatorInfo = locatorInfoStr
-        ? (JSON.parse(locatorInfoStr) as Record<string, unknown>)
-        : {};
-
-      return {
-        type: element.tagName,
-        frame: this.#frameMap[rawId],
-        locatorInfo,
-      };
     }
 
     // Extract backendDOMNodeId for Chromium CDP nodes
