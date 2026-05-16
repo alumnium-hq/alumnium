@@ -13,6 +13,10 @@
       "path": "packages/typescript",
     },
     {
+      "name": "packages/java",
+      "path": "packages/java",
+    },
+    {
       "name": "websites/docs",
       "path": "websites/docs",
     },
