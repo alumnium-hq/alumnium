@@ -66,9 +66,7 @@ class PlaywrightDriver(BaseDriver):
 
         # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
         frame_to_iframe_map: dict[str, int] = {}
-        # Build mapping: frameId -> parent frameId (for nested frames)
-        frame_parent_map: dict[str, str] = {}
-        self._build_frame_hierarchy(frame_tree["frameTree"], main_frame_id, frame_to_iframe_map, frame_parent_map)
+        self._build_frame_hierarchy(frame_tree["frameTree"], main_frame_id, frame_to_iframe_map)
 
         # Build mapping: frameId -> Playwright Frame object (for element finding)
         frame_id_to_playwright_frame: dict[str, Frame] = {}
@@ -88,16 +86,10 @@ class PlaywrightDriver(BaseDriver):
                 nodes = response.get("nodes", [])
                 logger.debug(f"  -> Frame {frame_id[:20]}...: {len(nodes)} nodes")
 
-                # Calculate frame chain for this frame
-                frame_chain = self._get_frame_chain(frame_id, frame_to_iframe_map, frame_parent_map)
                 # Get Playwright frame reference
                 playwright_frame = frame_id_to_playwright_frame.get(frame_id, self.page.main_frame)
 
-                # Tag ALL nodes from child frames with their frame chain
                 for node in nodes:
-                    if frame_chain:
-                        node["_frame_chain"] = frame_chain
-                    # Also keep frame reference for Playwright-specific element finding
                     node["_frame"] = playwright_frame
                     # Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
                     if node.get("parentId") is None and frame_id in frame_to_iframe_map:
@@ -297,8 +289,6 @@ class PlaywrightDriver(BaseDriver):
         frame_info: dict,
         main_frame_id: str,
         frame_to_iframe_map: dict[str, int],
-        frame_parent_map: dict[str, str],
-        parent_frame_id: str | None = None,
     ):
         """Build frame hierarchy maps recursively."""
         frame_id = frame_info["frame"]["id"]
@@ -316,34 +306,9 @@ class PlaywrightDriver(BaseDriver):
             except Exception as e:
                 logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
 
-            # Track parent frame
-            if parent_frame_id:
-                frame_parent_map[frame_id] = parent_frame_id
-
         # Process children
         for child in frame_info.get("childFrames", []):
-            self._build_frame_hierarchy(child, main_frame_id, frame_to_iframe_map, frame_parent_map, frame_id)
-
-    def _get_frame_chain(
-        self,
-        frame_id: str,
-        frame_to_iframe_map: dict[str, int],
-        frame_parent_map: dict[str, str],
-    ) -> list[int]:
-        """Get the chain of iframe backendNodeIds from root to this frame."""
-        chain: list[int] = []
-        current_frame_id = frame_id
-
-        while current_frame_id in frame_to_iframe_map:
-            iframe_backend_node_id = frame_to_iframe_map[current_frame_id]
-            chain.insert(0, iframe_backend_node_id)  # Insert at beginning to build from root
-            # Move to parent frame
-            if current_frame_id in frame_parent_map:
-                current_frame_id = frame_parent_map[current_frame_id]
-            else:
-                break
-
-        return chain
+            self._build_frame_hierarchy(child, main_frame_id, frame_to_iframe_map)
 
     def _find_cdp_frame_id_by_url(self, cdp_frame_tree: dict, target_url: str) -> str | None:
         """Find CDP frameId by matching URL in CDP frame tree."""

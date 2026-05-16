@@ -36,7 +36,6 @@ interface CDPNode {
   name?: { value?: string };
   childIds?: string[];
   _frame?: object;
-  _frame_chain?: number[];
   _parent_iframe_backend_node_id?: number | undefined;
 }
 
@@ -145,13 +144,10 @@ export class PlaywrightDriver extends BaseDriver {
 
     // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
     const frameToIframeMap: Map<string, number> = new Map();
-    // Build mapping: frameId -> parent frameId (for nested frames)
-    const frameParentMap: Map<string, string> = new Map();
     await this.buildFrameHierarchy(
       frameTree.frameTree,
       mainFrameId,
       frameToIframeMap,
-      frameParentMap,
     );
 
     // Build mapping: frameId -> Playwright Frame object (for element finding)
@@ -178,22 +174,11 @@ export class PlaywrightDriver extends BaseDriver {
           `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
         );
 
-        // Calculate frame chain for this frame
-        const frameChain = this.getFrameChain(
-          frameId,
-          frameToIframeMap,
-          frameParentMap,
-        );
         // Get Playwright frame reference
         const playwrightFrame =
           frameIdToPlaywrightFrame.get(frameId) || this.page.mainFrame();
 
-        // Tag ALL nodes from child frames with their frame chain
         for (const node of nodes) {
-          if (frameChain.length > 0) {
-            node._frame_chain = frameChain;
-          }
-          // Also keep frame reference for Playwright-specific element finding
           node._frame = playwrightFrame;
           // Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
           if (node.parentId === undefined && frameToIframeMap.has(frameId)) {
@@ -471,8 +456,6 @@ export class PlaywrightDriver extends BaseDriver {
     frameInfo: CDPFrameInfo,
     mainFrameId: string,
     frameToIframeMap: Map<string, number>,
-    frameParentMap: Map<string, string>,
-    parentFrameId?: string,
   ): Promise<void> {
     const frameId = frameInfo.frame.id;
 
@@ -491,10 +474,6 @@ export class PlaywrightDriver extends BaseDriver {
           `Could not get frame owner for ${frameId.slice(0, 20)}...: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
-
-      if (parentFrameId) {
-        frameParentMap.set(frameId, parentFrameId);
-      }
     }
 
     for (const child of frameInfo.childFrames || []) {
@@ -502,31 +481,8 @@ export class PlaywrightDriver extends BaseDriver {
         child,
         mainFrameId,
         frameToIframeMap,
-        frameParentMap,
-        frameId,
       );
     }
-  }
-
-  private getFrameChain(
-    frameId: string,
-    frameToIframeMap: Map<string, number>,
-    frameParentMap: Map<string, string>,
-  ): number[] {
-    const chain: number[] = [];
-    let currentFrameId = frameId;
-
-    while (frameToIframeMap.has(currentFrameId)) {
-      const iframeBackendNodeId = frameToIframeMap.get(currentFrameId)!;
-      chain.unshift(iframeBackendNodeId);
-      if (frameParentMap.has(currentFrameId)) {
-        currentFrameId = frameParentMap.get(currentFrameId)!;
-      } else {
-        break;
-      }
-    }
-
-    return chain;
   }
 
   private findCdpFrameIdByUrl(
