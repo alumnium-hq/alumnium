@@ -22,7 +22,7 @@ description = "Apply Spotless formatting to Java sources"
 [tasks.types]
 run = "gradle --no-daemon compileJava compileTestJava"
 
-[tasks."format:check"]
+[tasks."format/check"]
 run = "gradle clean --no-daemon spotlessCheck"
 description = "Verify Spotless formatting (CI-style)"
 
