@@ -19,14 +19,14 @@ public final class AlumniCacheExtension implements AfterTestExecutionCallback {
 
   @Override
   public void afterTestExecution(ExtensionContext context) {
-    Alumni a = alumni.get();
-    if (a == null) {
+    Alumni al = alumni.get();
+    if (al == null) {
       return;
     }
     if (context.getExecutionException().isEmpty()) {
-      a.cache().save();
+      al.cache().save();
     } else {
-      a.cache().discard();
+      al.cache().discard();
     }
   }
 }
