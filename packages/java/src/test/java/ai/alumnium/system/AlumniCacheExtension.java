@@ -1,4 +1,4 @@
-package ai.alumnium.integration;
+package ai.alumnium.system;
 
 import ai.alumnium.Alumni;
 import java.util.function.Supplier;
