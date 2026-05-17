@@ -118,6 +118,11 @@ public final class Alumni implements AutoCloseable {
     return executeDo(goal);
   }
 
+  /** Alias for {@link #act(String)} - as close as possible to other clients {@code do}. */
+  public DoResult do_(String goal) {
+    return executeDo(goal);
+  }
+
   /** Assert that the statement is true about the current view. */
   public String check(String statement) {
     return check(statement, new CheckOptions(false));
