@@ -2,7 +2,7 @@ package ai.alumnium.result;
 
 import java.util.List;
 
-/** Result of executing {@code Alumni.doGoal}. */
+/** Result of executing {@code Alumni.act}. */
 public record DoResult(String explanation, List<DoStep> steps, String changes) {
 
   public DoResult {
