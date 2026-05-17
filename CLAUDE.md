@@ -37,11 +37,22 @@ AI-powered test automation framework using natural language commands. Wraps Appi
 ```bash
 # Root
 mise :install                         # or cd packages/{python,typescript} and install separately
+mise :build                           # Build all
 mise :format                          # Format code
 mise :types                           # Check types
 mise :lint                            # Run linter
 mise :test/unit                       # Run unit tests
 mise :test/system                     # Run all system tests
+
+# Java
+cd packages/java
+mise :build                           # Build
+mise :format                          # Format code
+mise :types                           # Check types
+mise :lint                            # Run linter
+mise :test/unit                       # Run unit tests
+mise :test/system:playwright          # Run Playwright system tests
+mise :test/system:selenium            # Run Selenium system tests
 
 # Python
 cd packages/python
