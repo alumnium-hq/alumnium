@@ -227,7 +227,7 @@ run = "bun oxlint --fix ."
 [tasks.format]
 run = "bun oxfmt ."
 
-[tasks."format:check"]
+[tasks."format/check"]
 run = "bun oxfmt . --check"
 
 [tasks.types]

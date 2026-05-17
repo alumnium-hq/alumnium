@@ -120,11 +120,11 @@ depends = [
   "//packages/typescript:format",
 ]
 
-[tasks."format:check"]
+[tasks."format/check"]
 depends = [
-  "//packages/java:format:check",
-  "//packages/python:format:check",
-  "//packages/typescript:format:check",
+  "//packages/java:format/check",
+  "//packages/python:format/check",
+  "//packages/typescript:format/check",
 ]
 
 [tasks.types]
