@@ -2,7 +2,8 @@
 .gradle
 
 # Ignore Gradle build output directory
-**/build
+/bin/
+**/build/
 
 # Ignore Kotlin plugin data
 .kotlin
@@ -12,20 +13,9 @@
 *.iml
 *.ipr
 *.iws
-.vscode/
 .project
 .classpath
 .settings/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Local binary cache scratch (do not track)
-.alumnium/
 
 # JavaScript driver scripts (will be copied from python package)
 lib/src/main/resources/ai/alumnium/driver/scripts/*.js
