@@ -11,7 +11,7 @@ playwright_headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 
 @mark.skipif(
     alumnium_driver == "playwright" and playwright_headless == "true",
-    reason="DuckDuckGo blocks headless browsers",
+    reason="Brave Search blocks headless browsers",
 )
 def test_search(al, navigate):
     if al.model.provider == Provider.OLLAMA:
