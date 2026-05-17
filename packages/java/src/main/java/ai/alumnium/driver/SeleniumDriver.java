@@ -5,16 +5,8 @@ import ai.alumnium.accessibility.ChromiumAccessibilityTree;
 import ai.alumnium.tool.BaseTool;
 import ai.alumnium.tool.ClickTool;
 import ai.alumnium.tool.DragAndDropTool;
-import ai.alumnium.tool.DragSliderTool;
-import ai.alumnium.tool.ExecuteJavascriptTool;
 import ai.alumnium.tool.HoverTool;
-import ai.alumnium.tool.NavigateBackTool;
-import ai.alumnium.tool.NavigateToUrlTool;
 import ai.alumnium.tool.PressKeyTool;
-import ai.alumnium.tool.PrintToPdfTool;
-import ai.alumnium.tool.ScrollTool;
-import ai.alumnium.tool.SwitchToNextTabTool;
-import ai.alumnium.tool.SwitchToPreviousTabTool;
 import ai.alumnium.tool.TypeTool;
 import ai.alumnium.tool.UploadTool;
 import java.net.URI;
@@ -52,18 +44,10 @@ public final class SeleniumDriver extends BaseDriver {
   public final Set<Class<? extends BaseTool>> supportedTools =
       Set.of(
           ClickTool.class,
+          DragAndDropTool.class,
+          HoverTool.class,
           PressKeyTool.class,
           TypeTool.class,
-          DragAndDropTool.class,
-          DragSliderTool.class,
-          ExecuteJavascriptTool.class,
-          HoverTool.class,
-          NavigateBackTool.class,
-          NavigateToUrlTool.class,
-          PrintToPdfTool.class,
-          ScrollTool.class,
-          SwitchToNextTabTool.class,
-          SwitchToPreviousTabTool.class,
           UploadTool.class);
 
   public SeleniumDriver(WebDriver driver) {

@@ -8,18 +8,8 @@ import ai.alumnium.accessibility.XCUITestAccessibilityTree;
 import ai.alumnium.tool.BaseTool;
 import ai.alumnium.tool.ClickTool;
 import ai.alumnium.tool.DragAndDropTool;
-import ai.alumnium.tool.DragSliderTool;
-import ai.alumnium.tool.ExecuteJavascriptTool;
-import ai.alumnium.tool.HoverTool;
-import ai.alumnium.tool.NavigateBackTool;
-import ai.alumnium.tool.NavigateToUrlTool;
 import ai.alumnium.tool.PressKeyTool;
-import ai.alumnium.tool.PrintToPdfTool;
-import ai.alumnium.tool.ScrollTool;
-import ai.alumnium.tool.SwitchToNextTabTool;
-import ai.alumnium.tool.SwitchToPreviousTabTool;
 import ai.alumnium.tool.TypeTool;
-import ai.alumnium.tool.UploadTool;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
 import java.util.Set;
@@ -54,23 +44,7 @@ public final class AppiumDriver extends BaseDriver {
   public boolean hideKeyboardAfterTyping = false;
   public boolean doubleFetchPageSource = false;
   public final Set<Class<? extends BaseTool>> supportedTools =
-      Set.of(
-          ClickTool.class,
-          PressKeyTool.class,
-          TypeTool.class,
-          DragAndDropTool.class,
-          DragSliderTool.class,
-          ExecuteJavascriptTool.class,
-          HoverTool.class,
-          NavigateBackTool.class,
-          NavigateToUrlTool.class,
-          PressKeyTool.class,
-          PrintToPdfTool.class,
-          ScrollTool.class,
-          SwitchToNextTabTool.class,
-          SwitchToPreviousTabTool.class,
-          TypeTool.class,
-          UploadTool.class);
+      Set.of(ClickTool.class, DragAndDropTool.class, PressKeyTool.class, TypeTool.class);
 
   public AppiumDriver(io.appium.java_client.AppiumDriver driver) {
     this.driver = driver;
