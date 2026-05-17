@@ -14,7 +14,7 @@ public class DragAndDropTest extends BaseTest {
 
   @Test
   void testDragAndDrop() {
-    driver.get(DRAG_AND_DROP_URL);
+    navigate(DRAG_AND_DROP_URL);
     Data data =
         al.get("titles of squares ordered from left to right", new Alumni.VisionOptions(true));
     Assertions.assertEquals(List.of("A", "B"), listFromGet(data));

@@ -45,7 +45,7 @@ spotless {
 ext {
     jacksonVersion = '2.18.2'
     seleniumVersion = '4.27.0'
-    playwrightVersion = '1.49.0'
+    playwrightVersion = '1.52.0'
     appiumVersion = '9.3.0'
     junitVersion = '5.11.4'
     assertjVersion = '3.26.3'
@@ -83,10 +83,11 @@ tasks.withType(JavaCompile).configureEach {
 testing {
     suites {
         test {
-            useJUnitJupiter() 
+            useJUnitJupiter()
             targets {
                 all {
                     testTask.configure {
+                        environment "ALUMNIUM_DRIVER", System.getenv("ALUMNIUM_DRIVER") ?: "selenium"
                         testLogging {
                             events 'passed', 'skipped', 'failed'
                         }
@@ -131,6 +132,12 @@ publishing {
             url = layout.buildDirectory.dir('staging-deploy')
         }
     }
+}
+
+tasks.register('installPlaywright', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.microsoft.playwright.CLI'
+    args = ['install', 'chromium']
 }
 
 tasks.register('copyDriverScripts', Copy) {
