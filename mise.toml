@@ -76,11 +76,12 @@ run = "ollama pull $(mise //packages/typescript:get-ollama-model)"
 
 [tasks.build]
 depends = [
-  "//packages/typescript:build",
+  "//packages/java:build",
   "//packages/python:build",
+  "//packages/typescript:build",
   "//websites/docs:build",
 ]
-description = "Build all packages"
+description = "Build all"
 
 [tasks."dev/cli"]
 run = [{ task = "//packages/typescript:dev/cli" }]
@@ -114,24 +115,28 @@ depends_post = [
 
 [tasks.format]
 depends = [
-  "//packages/typescript:format",
-  "//packages/python:format",
   "//packages/java:format",
+  "//packages/python:format",
+  "//packages/typescript:format",
 ]
 
 [tasks."format:check"]
 depends = [
-  "//packages/typescript:format:check",
-  "//packages/python:format:check",
   "//packages/java:format:check",
+  "//packages/python:format:check",
+  "//packages/typescript:format:check",
 ]
 
 [tasks.types]
-depends = ["types/ts", "//packages/python:types"]
+depends = ["types/ts", "//packages/java:types", "//packages/python:types"]
 
 [tasks.lint]
 description = "Lint all packages"
-depends = ["//packages/typescript:lint", "//packages/python:lint"]
+depends = [
+  "//packages/java:lint",
+  "//packages/python:lint",
+  "//packages/typescript:lint",
+]
 
 [tasks."lint:fix"]
 description = "Fix linting issues in all packages"
@@ -144,19 +149,25 @@ run = "bun run tsgo --build"
 run = "bun run tsgo --build --watch"
 
 [tasks."test/unit"]
-depends = ["//packages/typescript:test/unit", "//packages/python:test/unit"]
+depends = [
+  "//packages/java:test/unit",
+  "//packages/python:test/unit",
+  "//packages/typescript:test/unit",
+]
 
 [tasks."test/system"]
-run = [
-  { task = "//packages/typescript:test/system" },
-  { task = "//packages/python:test/system" },
+depends = [
+  "//packages/java:test/system",
+  "//packages/python:test/system",
+  "//packages/typescript:test/system",
 ]
 
 [tasks."test/package"]
 description = "Run all (npm, pip) package tests"
 depends = [
-  "//packages/typescript:test/package",
+  # TODO: add java package tests when they are added
   "//packages/python:test/package",
+  "//packages/typescript:test/package",
 ]
 
 [tasks.version]
