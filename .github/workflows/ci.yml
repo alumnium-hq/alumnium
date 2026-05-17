@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       permitted: ${{ steps.check-access.outputs.require-result }}
+      java-changed: ${{ steps.changed-files.outputs.java_any_changed }}
       python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
       typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
 
@@ -47,6 +48,8 @@ jobs:
         uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323 # v47.0.5
         with:
           files_yaml: |
+            java:
+              - packages/java/**
             python:
               - packages/python/**
             typescript:
@@ -89,6 +92,26 @@ jobs:
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
+  eval:
+    name: Eval
+    needs: test
+    secrets: inherit
+    if: needs.test.outputs.permitted == 'true'
+    uses: ./.github/workflows/ci-eval.yml
+    with:
+      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+  java:
+    name: Java
+    needs: test
+    secrets: inherit
+    if: >
+      needs.test.outputs.permitted == 'true'
+        && needs.test.outputs.java-changed == 'true'
+    uses: ./.github/workflows/ci-java.yml
+    with:
+      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
   python:
     name: Python
     needs: test
@@ -108,14 +131,5 @@ jobs:
       needs.test.outputs.permitted == 'true'
         && needs.test.outputs.typescript-changed == 'true'
     uses: ./.github/workflows/ci-typescript.yml
-    with:
-      sha: ${{ github.event.pull_request.head.sha || github.sha }}
-
-  eval:
-    name: Eval
-    needs: test
-    secrets: inherit
-    if: needs.test.outputs.permitted == 'true'
-    uses: ./.github/workflows/ci-eval.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
