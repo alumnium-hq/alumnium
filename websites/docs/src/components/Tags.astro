@@ -1,5 +1,4 @@
 ---
-import "../styles/global.css";
 interface Props {
   tags?: string[];
   mode?: "content" | "pattern";
@@ -11,7 +10,12 @@ const { tags, mode = "content" } = Astro.props;
 <div>
   {
     tags && (
-      <div class="flex flex-wrap gap-2 justify-center">
+      <div
+        class:list={[
+          "flex flex-wrap gap-2",
+          mode === "pattern" && "justify-center max-w-xl",
+        ]}
+      >
         {tags.map((tag) => (
           <span
             class:list={[

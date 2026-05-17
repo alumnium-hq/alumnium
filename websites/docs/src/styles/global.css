@@ -4,7 +4,193 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 
+/* Base theme *****************************************************************/
+
+/* Pattern */
+
+:root {
+  --pattern-canvas-size: 48px;
+}
+
+@utility pattern-canvas {
+  background-image: url("../assets/pattern-canvas.svg");
+  background-color: color-mix(in srgb, var(--color-canvas), transparent 60%);
+  background-blend-mode: darken;
+  background-repeat: repeat;
+  background-size: var(--pattern-canvas-size) var(--pattern-canvas-size);
+}
+
+/* Header */
+
+.page > .header {
+  @apply pattern-canvas;
+  border-bottom: none;
+  background-position: left center;
+}
+
+/* Social icons */
+
+.social-icons {
+  & a {
+    @apply text-gray-500 dark:text-gray-400 md:text-accent-200 dark:md:text-accent-200;
+  }
+}
+
+/* Theme & language select */
+
+starlight-language-select,
+starlight-theme-select {
+  & label,
+  & select {
+    @apply text-gray-500 dark:text-gray-200 md:text-accent-200;
+  }
+
+  & select option {
+    @apply text-accent-200 bg-accent-800;
+
+    &:checked {
+      @apply text-white bg-accent-700;
+    }
+  }
+}
+
+/* Search button */
+
+site-search button svg {
+  @apply text-gray-200 md:text-gray-800 dark:md:text-gray-400;
+}
+
+/* Menu button */
+
+starlight-menu-button button {
+  @apply flex items-center justify-center md:hidden;
+  background: var(--color-canvas);
+  box-shadow: none;
+  color: var(--color-gray-200);
+  padding: 0;
+  font-size: 1.5rem;
+}
+
+:root {
+  /* Banner */
+
+  --sl-color-bg-accent: var(--color-accent-700);
+  --sl-color-banner-text: var(--color-white);
+
+  /* Accent colors */
+
+  --sl-color-accent-high: var(--color-accent-200);
+  --sl-color-accent-low: var(--color-gray-800);
+}
+
+/* Dark theme *****************************************************************/
+
+:root {
+  /* Base */
+
+  --sl-color-white: var(--color-white);
+  --sl-color-black: var(--color-black);
+
+  /* Text */
+
+  --sl-color-text: #d0d5e1;
+
+  /* Backgrounds */
+
+  --sl-color-bg: var(--color-content-dark);
+  --sl-color-bg-nav: var(--color-canvas);
+  --sl-color-bg-sidebar: var(--color-content-dark);
+  --sl-color-bg-inline-code: #17224c;
+
+  /* Hairlines */
+
+  --sl-color-hairline-light: var(--color-gray-700);
+  --sl-color-hairline: var(--color-gray-800);
+  --sl-color-hairline-shade: var(--color-gray-800);
+}
+
+/* Mobile ToC */
+
+mobile-starlight-toc {
+  & nav {
+    background-color: var(--color-content-dark);
+  }
+}
+
+/* Light theme ****************************************************************/
+
+:root[data-theme="light"] {
+  /* Base */
+
+  --sl-color-white: var(--color-black);
+  --sl-color-black: var(--color-white);
+
+  /* Text */
+
+  --sl-color-text: #0d1017;
+
+  /* Backgrounds */
+
+  --sl-color-bg: var(--color-content-light);
+  --sl-color-bg-sidebar: var(--color-content-light);
+  --sl-color-bg-inline-code: var(--color-accent-100);
+
+  /* Hairlines */
+
+  --sl-color-hairline-light: var(--color-gray-300);
+  --sl-color-hairline: var(--color-gray-200);
+  --sl-color-hairline-shade: var(--color-gray-200);
+
+  /* Search */
+
+  & site-search button {
+    color: var(--color-gray-600);
+
+    &:hover {
+      color: var(--color-gray-950);
+    }
+  }
+
+  /* Mobile ToC */
+
+  & mobile-starlight-toc {
+    & nav {
+      background-color: var(--color-content-light);
+    }
+  }
+}
+
+/* Tailwind theme *************************************************************/
+
 @theme {
+  /* Fonts */
+
+  --font-sans: "Mona Sans Variable", serif;
+  --font-mono: "Monaspace Neon", monospace;
+
+  /* Base */
+
+  --color-white: #f7f7ff;
+  --color-black: #00020b;
+
+  /* Elements */
+
+  --color-canvas: var(--color-accent-900);
+  --color-del-canvas: #4863b46b;
+
+  --color-content-dark: var(--color-gray-900);
+  --color-del-content-dark: #0f1529;
+
+  --color-content-light: var(--color-gray-50);
+  --color-del-content-light: #bfc3cf;
+
+  --color-header: var(--sl-color-white);
+
+  --color-del-dark: var(--color-gray-800);
+  --color-del-light: var(--color-gray-200);
+
+  /* Cerulean Blue */
+
   --color-cerulean-blue-50: #ecf9ff;
   --color-cerulean-blue-100: #d5efff;
   --color-cerulean-blue-200: #b4e4ff;
@@ -17,17 +203,31 @@
   --color-cerulean-blue-900: #0b459d;
   --color-cerulean-blue-950: #0c2a5f;
 
-  --color-header: var(--sl-color-white);
+  /* Accent */
 
-  --color-accent-50: var(--color-cerulean-blue-50);
-  --color-accent-100: var(--color-cerulean-blue-100);
-  --color-accent-200: var(--color-cerulean-blue-200);
-  --color-accent-300: var(--color-cerulean-blue-300);
-  --color-accent-400: var(--color-cerulean-blue-400);
-  --color-accent-500: var(--color-cerulean-blue-500);
-  --color-accent-600: var(--color-cerulean-blue-600);
-  --color-accent-700: var(--color-cerulean-blue-700);
-  --color-accent-800: var(--color-cerulean-blue-800);
-  --color-accent-900: var(--color-cerulean-blue-900);
-  --color-accent-950: var(--color-cerulean-blue-950);
+  --color-accent-50: #f1f1ff;
+  --color-accent-100: #e0e6ff;
+  --color-accent-200: #d5dbff;
+  --color-accent-300: #bdc4ff;
+  --color-accent-400: #91a5ff;
+  --color-accent-500: #647bec;
+  --color-accent-600: #3d52d7;
+  --color-accent-700: #223abf;
+  --color-accent-800: #101aa2;
+  --color-accent-900: #04007a;
+  --color-accent-950: #03004c;
+
+  /* Gray */
+
+  --color-gray-50: #f3f5ff;
+  --color-gray-100: #e4e6ed;
+  --color-gray-200: #d4d7e0;
+  --color-gray-300: #9fa6bc;
+  --color-gray-400: #787f96;
+  --color-gray-500: #505975;
+  --color-gray-600: #444d6b;
+  --color-gray-700: #1f2433;
+  --color-gray-800: #10162d;
+  --color-gray-900: #01040f;
+  --color-gray-950: #00020b;
 }

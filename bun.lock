@@ -88,6 +88,8 @@
         "@astrojs/sitemap": "3.7.2",
         "@astrojs/starlight": "0.39.2",
         "@astrojs/starlight-tailwind": "5.0.0",
+        "@fontsource-variable/mona-sans": "^5.2.8",
+        "@fontsource/monaspace-neon": "^5.2.5",
         "astro": "6.3.3",
         "sharp": "^0.34.5",
         "tailwindcss": "^4.3.0",
@@ -387,6 +389,10 @@
     "@fastify/static": ["@fastify/static@8.3.0", "", { "dependencies": { "@fastify/accept-negotiator": "^2.0.0", "@fastify/send": "^4.0.0", "content-disposition": "^0.5.4", "fastify-plugin": "^5.0.0", "fastq": "^1.17.1", "glob": "^11.0.0" } }, "sha512-yKxviR5PH1OKNnisIzZKmgZSus0r2OZb8qCSbqmw34aolT4g3UlzYfeBRym+HJ1J471CR8e2ldNub4PubD1coA=="],
 
     "@fastify/websocket": ["@fastify/websocket@11.2.0", "", { "dependencies": { "duplexify": "^4.1.3", "fastify-plugin": "^5.0.0", "ws": "^8.16.0" } }, "sha512-3HrDPbAG1CzUCqnslgJxppvzaAZffieOVbLp1DAy1huCSynUWPifSvfdEDUR8HlJLp3sp1A36uOM2tJogADS8w=="],
+
+    "@fontsource-variable/mona-sans": ["@fontsource-variable/mona-sans@5.2.8", "", {}, "sha512-8OWdTcP8KvRxkU1Skkk+tX3D5XHN9buejxSDwrT7teRfGnpKBYxQUApV/+zS8TzeHiSU8H5Tc0HfBr57ahgcvA=="],
+
+    "@fontsource/monaspace-neon": ["@fontsource/monaspace-neon@5.2.5", "", {}, "sha512-TjSSuHC37DroyhP5YCKRCAxdUb3In/uqHzqqW/8Ul+JWilz37d8lr8jFeapnbD3QdYXgiQoU2Rf/CmTdyl06DA=="],
 
     "@grpc/grpc-js": ["@grpc/grpc-js@1.14.3", "", { "dependencies": { "@grpc/proto-loader": "^0.8.0", "@js-sdsl/ordered-map": "^4.4.2" } }, "sha512-Iq8QQQ/7X3Sac15oB6p0FmUg/klxQvXLeileoqrTRGJYLV+/9tubbr9ipz0GKHjmXVsgFPo/+W+2cA8eNcR+XA=="],
 

@@ -1,4 +1,7 @@
 {
   "js/ts.experimental.useTsgo": true,
-  "editor.defaultFormatter": "oxc.oxc-vscode"
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }

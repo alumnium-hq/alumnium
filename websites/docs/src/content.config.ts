@@ -7,8 +7,13 @@ import { defineCollection } from "astro:content";
 export const collections = {
   docs: defineCollection({
     loader: docsLoader(),
-    schema: docsSchema(),
+    schema: docsSchema({
+      extend: z.object({
+        bare: z.boolean().optional(),
+      }),
+    }),
   }),
+
   blog: defineCollection({
     loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
     schema: z.object({

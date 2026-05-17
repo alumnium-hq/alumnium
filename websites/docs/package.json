@@ -14,6 +14,8 @@
     "@astrojs/sitemap": "3.7.2",
     "@astrojs/starlight": "0.39.2",
     "@astrojs/starlight-tailwind": "5.0.0",
+    "@fontsource-variable/mona-sans": "^5.2.8",
+    "@fontsource/monaspace-neon": "^5.2.5",
     "astro": "6.3.3",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.3.0"
