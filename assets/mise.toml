@@ -1,0 +1,37 @@
+[tools]
+ffmpeg = "latest" # Media processing
+oxipng = "latest" # PNG optimizer
+svgo = "latest" # SVG optimizer
+
+[tasks.process]
+run = [{ task = "optimize" }, { task = "generate/ico" }]
+
+[tasks."generate/ico"]
+run = "ffmpeg -y -i exports/favicon-32.png exports/favicon.ico"
+
+[tasks."optimize"]
+depends = ["optimize/png", "optimize/svg"]
+
+[tasks."optimize/png"]
+run = "oxipng --opt max --scale16 exports/*.png"
+
+[tasks."optimize/svg"]
+run = "svgo exports/*.svg --precision 3"
+
+[tasks."generate/symlinks"]
+run = '''
+#!/usr/bin/env bash
+cd ../websites/docs/public/
+ln -sf ../../../assets/exports/favicon.ico favicon.ico
+ln -sf ../../../assets/exports/favicon.svg favicon.svg
+ln -sf ../../../assets/exports/icon-180.png apple-touch-icon.png
+ln -sf ../../../assets/exports/icon-192.png icon-192.png
+ln -sf ../../../assets/exports/icon-512.png icon-512.png
+cd -
+cd ../websites/docs/src/assets/
+ln -sf ../../../../assets/exports/logotype.svg logotype.svg
+ln -sf ../../../../assets/exports/logomark.svg logomark.svg
+ln -sf ../../../../assets/exports/icon.svg icon.svg
+ln -sf ../../../../assets/exports/pattern-canvas.svg pattern-canvas.svg
+'''
+depends = ["generate/ico", "optimize"]
