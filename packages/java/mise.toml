@@ -32,5 +32,16 @@ run = "gradle clean --no-daemon test --tests 'ai.alumnium.unit.*'"
 description = "Run unit tests"
 
 [tasks."test/system"]
-run = "gradle clean --no-daemon test --tests 'ai.alumnium.system.*'"
-description = "Run system tests"
+usage = '''
+arg "<driver>" help="Driver to use for system tests" {
+  choices "selenium" "playwright"
+  default "selenium"
+}
+'''
+run = "ALUMNIUM_DRIVER={{usage.driver}} gradle clean --no-daemon test --tests 'ai.alumnium.system.*'"
+
+[tasks."test/system:playwright"]
+run = [{ task = "test/system playwright" }]
+
+[tasks."test/system:selenium"]
+run = [{ task = "test/system selenium" }]

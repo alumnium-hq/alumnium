@@ -17,28 +17,28 @@ public class CalculatorTest extends BaseTest {
 
   @Test
   void testAddition() {
-    driver.get(CALCULATOR_URL);
+    navigate(CALCULATOR_URL);
     al.act("2 + 2 =");
     al.check("calculator result from textfield equals 4");
   }
 
   @Test
   void testSubtraction() {
-    driver.get(CALCULATOR_URL);
+    navigate(CALCULATOR_URL);
     al.act("5 - 3 =");
     al.check("calculator result from textfield equals 2");
   }
 
   @Test
   void testMultiplication() {
-    driver.get(CALCULATOR_URL);
+    navigate(CALCULATOR_URL);
     al.act("3 * 4 =");
     al.check("calculator result from textfield equals 12");
   }
 
   @Test
   void testDivision() {
-    driver.get(CALCULATOR_URL);
+    navigate(CALCULATOR_URL);
     al.act("8 / 2 =");
     al.check("calculator result from textfield equals 4");
   }

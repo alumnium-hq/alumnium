@@ -11,7 +11,7 @@ public class TableTest extends BaseTest {
 
   @Test
   void testTableExtraction() {
-    driver.get(TABLE_URL);
+    navigate(TABLE_URL);
 
     Area table1 = al.area("first table");
     Assertions.assertEquals(
@@ -32,7 +32,7 @@ public class TableTest extends BaseTest {
 
   @Test
   void testTableSorting() {
-    driver.get(TABLE_URL);
+    navigate(TABLE_URL);
 
     Area table1 = al.area("first table");
     Assertions.assertEquals(
