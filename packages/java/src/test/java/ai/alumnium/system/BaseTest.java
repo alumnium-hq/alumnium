@@ -2,6 +2,7 @@ package ai.alumnium.system;
 
 import ai.alumnium.Alumni;
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.AfterAll;
@@ -15,6 +16,8 @@ public class BaseTest {
 
   private static final String DRIVER_TYPE =
       System.getenv().getOrDefault("ALUMNIUM_DRIVER", "selenium");
+  private static final boolean PLAYWRIGHT_HEADLESS =
+      !"false".equalsIgnoreCase(System.getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS"));
 
   private static ChromeDriver seleniumDriver;
   private static Playwright playwright;
@@ -30,7 +33,10 @@ public class BaseTest {
 
     if ("playwright".equals(DRIVER_TYPE)) {
       playwright = Playwright.create();
-      browser = playwright.chromium().launch();
+      browser =
+          playwright
+              .chromium()
+              .launch(new BrowserType.LaunchOptions().setHeadless(PLAYWRIGHT_HEADLESS));
       playwrightPage = browser.newPage();
       al = new Alumni(playwrightPage, options);
     } else {
