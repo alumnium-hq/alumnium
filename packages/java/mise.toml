@@ -31,7 +31,6 @@ description = "Publish main + classifier jars to local Maven repository"
 run = "gradle clean --no-daemon test --tests 'ai.alumnium.unit.*'"
 description = "Run unit tests"
 
-[tasks."test/integration"]
-run = "gradle clean --no-daemon test --tests 'ai.alumnium.integration.*'"
-description = "Run integration tests"
-
+[tasks."test/system"]
+run = "gradle clean --no-daemon test --tests 'ai.alumnium.system.*'"
+description = "Run system tests"

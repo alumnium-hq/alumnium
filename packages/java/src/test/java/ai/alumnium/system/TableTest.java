@@ -1,4 +1,4 @@
-package ai.alumnium.integration;
+package ai.alumnium.system;
 
 import ai.alumnium.Area;
 import java.util.List;

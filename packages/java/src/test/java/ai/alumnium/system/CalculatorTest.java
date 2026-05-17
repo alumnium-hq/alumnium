@@ -1,4 +1,4 @@
-package ai.alumnium.integration;
+package ai.alumnium.system;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
