@@ -5,16 +5,16 @@
       "path": ".",
     },
     {
+      "name": "packages/java",
+      "path": "packages/java",
+    },
+    {
       "name": "packages/python",
       "path": "packages/python",
     },
     {
       "name": "packages/typescript",
       "path": "packages/typescript",
-    },
-    {
-      "name": "packages/java",
-      "path": "packages/java",
     },
     {
       "name": "websites/docs",
@@ -41,5 +41,6 @@
         "source.fixAll": "explicit",
       },
     },
+    "java.compile.nullAnalysis.mode": "automatic",
   },
 }
