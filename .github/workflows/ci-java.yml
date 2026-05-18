@@ -54,9 +54,6 @@ jobs:
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
 
-      - name: Start Server
-        run: mise :dev/server &
-
       - name: Test System
         uses: ./.github/actions/test-system
         with:
@@ -64,6 +61,31 @@ jobs:
           driver: ${{ matrix.driver }}
           model: ${{ matrix.model }}
           sha: ${{ inputs.sha }}
+
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+
+  test-pkg:
+    name: Package Tests
+    runs-on: ubuntu-latest
+    env:
+      ALUMNIUM_MODEL: azure_openai
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.sha || github.sha }}
+
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
+
+      - name: Build Dist
+        run: mise //packages/typescript:build
+
+      - name: Run Maven Tests
+        run: mise //packages/java:test/package
 
       - name: Debug Session
         if: failure() && runner.debug == '1'

@@ -48,3 +48,7 @@ run = [{ task = "test/system playwright" }]
 
 [tasks."test/system:selenium"]
 run = [{ task = "test/system selenium" }]
+
+[tasks."test/package"]
+run = "./scripts/test-package.sh"
+description = "Test Maven package installation and CLI binary auto-start"

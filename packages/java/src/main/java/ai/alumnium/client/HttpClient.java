@@ -1,12 +1,15 @@
 package ai.alumnium.client;
 
 import ai.alumnium.Model;
+import ai.alumnium.cli.Cli;
+import ai.alumnium.cli.CliException;
 import ai.alumnium.result.DoStep;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +53,12 @@ public final class HttpClient implements AutoCloseable {
   private final java.net.http.HttpClient http;
   private final String baseUrl;
   private final AtomicReference<String> sessionId = new AtomicReference<>();
+  private volatile String managedPidName;
   private Thread shutdownHook;
 
   /**
-   * @param url server base URL; null or blank uses {@link #DEFAULT_BASE_URL}; values without a
-   *     scheme get {@code http://}
+   * @param url server base URL; null or blank auto-starts a managed server (requires an {@code
+   *     alumnium-cli-*} JAR on the classpath); explicit values without a scheme get {@code http://}
    * @param model {@link Model} to be used by the session
    * @param platform driver platform string (e.g. {@code "web-selenium"})
    * @param toolSchemas JSON-serialisable tool schemas (maps or annotated POJOs)
@@ -72,7 +77,7 @@ public final class HttpClient implements AutoCloseable {
             .executor(Executors.newVirtualThreadPerTaskExecutor())
             .connectTimeout(Duration.ofSeconds(30))
             .build();
-    this.baseUrl = normalizeBaseUrl(url);
+    this.baseUrl = resolveUrl(url);
 
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("provider", model.provider().value());
@@ -106,6 +111,7 @@ public final class HttpClient implements AutoCloseable {
     if (id != null) {
       delete("/v1/sessions/" + id, Duration.ofSeconds(30));
     }
+    stopManagedServer();
   }
 
   // region Plans / steps / statements
@@ -260,6 +266,89 @@ public final class HttpClient implements AutoCloseable {
       throw new IllegalStateException("Session has been closed");
     }
     return id;
+  }
+
+  /**
+   * When a URL is provided, normalises and returns it. Otherwise, attempts to start a managed
+   * alumnium server on a free port. If no CLI binary is on the classpath, falls back to {@link
+   * #DEFAULT_BASE_URL}. Mirrors Python's {@code HttpClient._resolve_url()}.
+   */
+  private String resolveUrl(String url) {
+    if (url != null && !url.isBlank()) {
+      return normalizeBaseUrl(url);
+    }
+
+    try {
+      int port = pickUnusedPort();
+      String pidName = buildServerPidName();
+
+      LOG.info("Starting managed alumnium server on port {} (pid name: {})", port, pidName);
+
+      Cli.runServer(
+              Map.of(
+                  "host",
+                  DEFAULT_SERVER_HOST,
+                  "port",
+                  port,
+                  "daemon",
+                  true,
+                  "daemon_pid",
+                  pidName,
+                  "daemon_force",
+                  true,
+                  "daemon_wait",
+                  true))
+          .check();
+
+      this.managedPidName = pidName;
+      this.shutdownHook = new Thread(this::stopManagedServer, "alumnium-server-shutdown");
+      Runtime.getRuntime().addShutdownHook(this.shutdownHook);
+
+      String managedUrl = "http://" + DEFAULT_SERVER_HOST + ":" + port;
+      LOG.debug("Started managed local server: {} ({})", managedUrl, pidName);
+      return managedUrl;
+    } catch (IllegalStateException | CliException e) {
+      LOG.debug(
+          "CLI binary not available, falling back to default URL {}: {}",
+          DEFAULT_BASE_URL,
+          e.getMessage());
+      return DEFAULT_BASE_URL;
+    }
+  }
+
+  private void stopManagedServer() {
+    String pidName = this.managedPidName;
+    if (pidName == null) {
+      return;
+    }
+    this.managedPidName = null;
+    try {
+      Cli.run("server", "--daemon-kill", "--daemon-pid", pidName, "--daemon-force");
+      LOG.debug("Stopped managed local server ({})", pidName);
+    } catch (CliException e) {
+      LOG.warn("Failed to stop managed server ({}): {}", pidName, e.getMessage());
+    }
+    if (shutdownHook != null) {
+      try {
+        Runtime.getRuntime().removeShutdownHook(shutdownHook);
+      } catch (IllegalStateException ignored) {
+        // JVM already shutting down
+      }
+      shutdownHook = null;
+    }
+  }
+
+  private static int pickUnusedPort() {
+    try (ServerSocket s = new ServerSocket(0)) {
+      return s.getLocalPort();
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to find a free port", e);
+    }
+  }
+
+  private static String buildServerPidName() {
+    String randomId = Long.toHexString(ThreadLocalRandom.current().nextLong()).substring(0, 7);
+    return "server-" + ProcessHandle.current().pid() + "-" + randomId + ".pid";
   }
 
   private static String normalizeBaseUrl(String url) {

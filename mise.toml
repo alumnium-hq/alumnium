@@ -163,9 +163,9 @@ depends = [
 ]
 
 [tasks."test/package"]
-description = "Run all (npm, pip) package tests"
+description = "Run all (npm, pip, maven) package tests"
 depends = [
-  # TODO: add java package tests when they are added
+  "//packages/java:test/package",
   "//packages/python:test/package",
   "//packages/typescript:test/package",
 ]

@@ -27,6 +27,7 @@ const BASE_BUILD_TARGETS = [
   "npm:main",
   "npm:cli",
   "pip",
+  "maven",
 ] as const;
 
 const BuildTarget = z.enum(BASE_BUILD_TARGETS);
@@ -47,8 +48,14 @@ const BUILD_NPM = BUILD_NPM_MAIN && BUILD_NPM_CLI;
 
 const BUILD_PIP = BUILD_ONLY.includes("pip");
 
+const BUILD_MAVEN = BUILD_ONLY.includes("maven");
+
 const BUILD_BIN =
-  BUILD_PIP || BUILD_NPM || BUILD_NPM_CLI || BUILD_ONLY.includes("bin");
+  BUILD_PIP ||
+  BUILD_NPM ||
+  BUILD_NPM_CLI ||
+  BUILD_MAVEN ||
+  BUILD_ONLY.includes("bin");
 
 //#endregion
 
@@ -89,6 +96,12 @@ const PIP_CLI_MODULE_NAME = getPipModuleName(PIP_CLI_PKG_NAME);
 const DIST_PIP_CLI_PKG_DIR = path.resolve(DIST_DIR, `pip-${PIP_CLI_PKG_NAME}`);
 const PYPROJECT_NAME = "pyproject.toml";
 
+// Maven paths
+const MAVEN_CLI_PKG_NAME = "alumnium-cli";
+const MAVEN_GROUP_ID = "ai.alumnium";
+const MAVEN_RESOURCE_PREFIX = "ai/alumnium/cli/bin";
+const DIST_MAVEN_DIR = path.resolve(DIST_DIR, "maven");
+
 // Assets
 const COMMON_PKG_ASSETS = ["../../LICENSE.md"];
 const CORE_PKG_ASSETS = [...COMMON_PKG_ASSETS, "../../README.md"];
@@ -127,6 +140,7 @@ interface TargetPlatform {
   binPath: string;
   npm: TargetPkg;
   pip: TargetPkg;
+  maven: TargetPkg;
 }
 
 interface TargetPkg {
@@ -168,6 +182,18 @@ const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
         dir: pipDir,
         mainUrl: PIP_MAIN_URL,
         binPath: path.resolve(pipDir, "src", PIP_CLI_MODULE_NAME, binName),
+      },
+      maven: {
+        name: `${MAVEN_CLI_PKG_NAME}-${target}`,
+        dir: path.resolve(DIST_DIR, `maven-${MAVEN_CLI_PKG_NAME}-${target}`),
+        mainUrl: "https://central.sonatype.com/artifact/ai.alumnium/alumnium",
+        binPath: path.resolve(
+          DIST_DIR,
+          `maven-${MAVEN_CLI_PKG_NAME}-${target}`,
+          MAVEN_RESOURCE_PREFIX,
+          "bin",
+          os === "windows" ? "alumnium.exe" : "alumnium",
+        ),
       },
     };
   }),
@@ -295,6 +321,11 @@ async function main() {
     BUILD_PIP && cleanUpDir(DIST_PIP_DIR),
     BUILD_PIP && cleanUpDir(DIST_PIP_CLI_PKG_DIR),
     ...TARGET_PLATFORMS.flatMap(({ pip }) => BUILD_PIP && cleanUpPkg(pip)),
+    // maven
+    BUILD_MAVEN && cleanUpDir(DIST_MAVEN_DIR),
+    ...TARGET_PLATFORMS.flatMap(
+      ({ maven }) => BUILD_MAVEN && cleanUpPkg(maven),
+    ),
   ]);
 
   //#endregion
@@ -530,6 +561,76 @@ __all__ = ["bin_path"]
     //#endregion
 
     await generateSourceTarGz();
+  }
+
+  //#endregion
+
+  //#region maven
+
+  if (BUILD_MAVEN) {
+    console.log("\n🌀 Building Maven packages...\n");
+
+    await Promise.all(
+      TARGET_PLATFORMS.map(async (platform) => {
+        const { os, binPath, target, maven } = platform;
+
+        const binResourceDir = path.resolve(
+          maven.dir,
+          MAVEN_RESOURCE_PREFIX,
+          "bin",
+        );
+        const propsDir = path.resolve(maven.dir, MAVEN_RESOURCE_PREFIX);
+        await Promise.all([
+          fs.mkdir(binResourceDir, { recursive: true }),
+          fs.mkdir(propsDir, { recursive: true }),
+        ]);
+
+        // binary.properties declares the binary name and resource path,
+        // so the Java BinaryResolver doesn't need OS/arch detection.
+        const binFileName = path.basename(binPath);
+        const binResourcePath = `${MAVEN_RESOURCE_PREFIX}/bin/${binFileName}`;
+        await Promise.all([
+          $`cp ${binPath} ${path.resolve(binResourceDir, binFileName)}`,
+          fs.writeFile(
+            path.resolve(propsDir, "binary.properties"),
+            `name=${binFileName}\nresource=${binResourcePath}\n`,
+          ),
+        ]);
+
+        // Generate pom.xml
+        const pomXml = `<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>${MAVEN_GROUP_ID}</groupId>
+  <artifactId>${maven.name}</artifactId>
+  <version>${ALUMNIUM_VERSION}</version>
+  <packaging>jar</packaging>
+  <name>Alumnium CLI binary for ${target}</name>
+  <description>Platform-specific alumnium CLI binary for ${target}.</description>
+  <url>https://alumnium.ai</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+</project>
+`;
+        await fs.writeFile(path.resolve(maven.dir, "pom.xml"), pomXml);
+
+        // Build JAR containing binary.properties and the binary as classpath resources
+        const jarName = `${maven.name}-${ALUMNIUM_VERSION}.jar`;
+        const jarPath = path.resolve(DIST_MAVEN_DIR, jarName);
+        await $`jar cf ${jarPath} -C ${maven.dir} ${MAVEN_RESOURCE_PREFIX}/binary.properties -C ${maven.dir} ${binResourcePath}`;
+
+        // Copy pom.xml to dist/maven/ for publishing
+        await $`cp ${path.resolve(maven.dir, "pom.xml")} ${path.resolve(DIST_MAVEN_DIR, `${maven.name}-${ALUMNIUM_VERSION}.pom`)}`;
+
+        console.log(`🟢 ${maven.name} (${cwdRelPath(jarPath)})`);
+      }),
+    );
   }
 
   //#endregion

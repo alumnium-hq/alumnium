@@ -31,7 +31,7 @@ repositories {
 
 spotless {
         java {
-            target 'src/**/*.java'
+            target 'src/**/*.java', 'test/**/*.java'
 
             importOrder()
             forbidWildcardImports()
