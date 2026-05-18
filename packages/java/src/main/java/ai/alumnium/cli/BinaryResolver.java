@@ -13,15 +13,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Locates the alumnium CLI binary on the classpath and extracts it to a local cache directory.
  *
- * <p>The platform-specific CLI JAR (e.g. {@code ai.alumnium:alumnium-cli-darwin-arm64}) provides a
- * {@code ai/alumnium/cli/binary.properties} resource declaring the binary's resource path and file
- * name. This class reads those properties, extracts the binary, and returns a usable executable
- * path.
+ * <p>Each platform-specific CLI JAR (e.g. {@code ai.alumnium:alumnium-cli-darwin-arm64}) provides a
+ * properties resource at {@code ai/alumnium/cli/<os>-<arch>/binary.properties}. Multiple platform
+ * JARs can coexist on the classpath without conflict — this class detects the current OS and
+ * architecture to locate the right one.
  */
 public final class BinaryResolver {
 
   private static final Logger LOG = LoggerFactory.getLogger(BinaryResolver.class);
-  private static final String PROPERTIES_RESOURCE = "ai/alumnium/cli/binary.properties";
 
   private static volatile Path cachedPath;
 
@@ -44,7 +43,9 @@ public final class BinaryResolver {
   }
 
   private static Path doResolve() {
-    Properties props = loadProperties();
+    String os = detectOs();
+    String arch = detectArch();
+    Properties props = loadProperties(os, arch);
     String resourcePath = props.getProperty("resource");
     String fileName = props.getProperty("name");
 
@@ -88,13 +89,21 @@ public final class BinaryResolver {
     }
   }
 
-  private static Properties loadProperties() {
+  private static Properties loadProperties(String os, String arch) {
+    String propertiesPath = "ai/alumnium/cli/" + os + "-" + arch + "/binary.properties";
     try (InputStream in =
-        BinaryResolver.class.getClassLoader().getResourceAsStream(PROPERTIES_RESOURCE)) {
+        BinaryResolver.class.getClassLoader().getResourceAsStream(propertiesPath)) {
       if (in == null) {
         throw new IllegalStateException(
-            "No alumnium CLI binary found on classpath. "
-                + "Add ai.alumnium:alumnium-cli-<os>-<arch> to your dependencies.");
+            "No alumnium CLI binary found on classpath for "
+                + os
+                + "-"
+                + arch
+                + ". Add ai.alumnium:alumnium-cli-"
+                + os
+                + "-"
+                + arch
+                + " to your dependencies.");
       }
       Properties props = new Properties();
       props.load(in);
@@ -102,5 +111,27 @@ public final class BinaryResolver {
     } catch (IOException e) {
       throw new UncheckedIOException("Failed to read CLI binary properties", e);
     }
+  }
+
+  static String detectOs() {
+    String name = System.getProperty("os.name", "").toLowerCase();
+    if (name.contains("mac") || name.contains("darwin")) {
+      return "darwin";
+    } else if (name.contains("linux")) {
+      return "linux";
+    } else if (name.contains("win")) {
+      return "windows";
+    }
+    throw new UnsupportedOperationException("Unsupported OS: " + name);
+  }
+
+  static String detectArch() {
+    String arch = System.getProperty("os.arch", "").toLowerCase();
+    if (arch.equals("aarch64") || arch.equals("arm64")) {
+      return "arm64";
+    } else if (arch.equals("amd64") || arch.equals("x86_64") || arch.equals("x64")) {
+      return "x64";
+    }
+    throw new UnsupportedOperationException("Unsupported architecture: " + arch);
   }
 }

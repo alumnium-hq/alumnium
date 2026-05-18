@@ -99,7 +99,7 @@ const PYPROJECT_NAME = "pyproject.toml";
 // Maven paths
 const MAVEN_CLI_PKG_NAME = "alumnium-cli";
 const MAVEN_GROUP_ID = "ai.alumnium";
-const MAVEN_RESOURCE_PREFIX = "ai/alumnium/cli/bin";
+const MAVEN_RESOURCE_PREFIX = "ai/alumnium/cli";
 const DIST_MAVEN_DIR = path.resolve(DIST_DIR, "maven");
 
 // Assets
@@ -574,25 +574,19 @@ __all__ = ["bin_path"]
       TARGET_PLATFORMS.map(async (platform) => {
         const { os, binPath, target, maven } = platform;
 
-        const binResourceDir = path.resolve(
-          maven.dir,
-          MAVEN_RESOURCE_PREFIX,
-          "bin",
-        );
-        const propsDir = path.resolve(maven.dir, MAVEN_RESOURCE_PREFIX);
-        await Promise.all([
-          fs.mkdir(binResourceDir, { recursive: true }),
-          fs.mkdir(propsDir, { recursive: true }),
-        ]);
+        // Each platform gets its own resource namespace so multiple CLI JARs
+        // can coexist on the classpath (e.g. darwin-arm64 + linux-x64).
+        // BinaryResolver detects OS/arch to find the right binary.properties.
+        const platformPrefix = `${MAVEN_RESOURCE_PREFIX}/${target}`;
+        const platformDir = path.resolve(maven.dir, platformPrefix);
+        await fs.mkdir(platformDir, { recursive: true });
 
-        // binary.properties declares the binary name and resource path,
-        // so the Java BinaryResolver doesn't need OS/arch detection.
         const binFileName = path.basename(binPath);
-        const binResourcePath = `${MAVEN_RESOURCE_PREFIX}/bin/${binFileName}`;
+        const binResourcePath = `${platformPrefix}/${binFileName}`;
         await Promise.all([
-          $`cp ${binPath} ${path.resolve(binResourceDir, binFileName)}`,
+          $`cp ${binPath} ${path.resolve(platformDir, binFileName)}`,
           fs.writeFile(
-            path.resolve(propsDir, "binary.properties"),
+            path.resolve(platformDir, "binary.properties"),
             `name=${binFileName}\nresource=${binResourcePath}\n`,
           ),
         ]);
@@ -623,7 +617,7 @@ __all__ = ["bin_path"]
         // Build JAR containing binary.properties and the binary as classpath resources
         const jarName = `${maven.name}-${ALUMNIUM_VERSION}.jar`;
         const jarPath = path.resolve(DIST_MAVEN_DIR, jarName);
-        await $`jar cf ${jarPath} -C ${maven.dir} ${MAVEN_RESOURCE_PREFIX}/binary.properties -C ${maven.dir} ${binResourcePath}`;
+        await $`jar cf ${jarPath} -C ${maven.dir} ${platformPrefix}/binary.properties -C ${maven.dir} ${binResourcePath}`;
 
         // Copy pom.xml to dist/maven/ for publishing
         await $`cp ${path.resolve(maven.dir, "pom.xml")} ${path.resolve(DIST_MAVEN_DIR, `${maven.name}-${ALUMNIUM_VERSION}.pom`)}`;

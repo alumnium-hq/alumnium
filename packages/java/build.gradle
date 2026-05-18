@@ -73,6 +73,10 @@ dependencies {
     testImplementation "io.appium:java-client:${appiumVersion}"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testRuntimeOnly "org.slf4j:slf4j-simple:${slf4jVersion}"
+    testRuntimeOnly files({
+        def mavenDir = file("${rootProject.projectDir}/../typescript/dist/maven")
+        mavenDir.listFiles()?.findAll { it.name.endsWith('.jar') } ?: []
+    })
 }
 
 tasks.withType(JavaCompile).configureEach {

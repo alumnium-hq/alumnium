@@ -307,8 +307,8 @@ public final class HttpClient implements AutoCloseable {
       String managedUrl = "http://" + DEFAULT_SERVER_HOST + ":" + port;
       LOG.debug("Started managed local server: {} ({})", managedUrl, pidName);
       return managedUrl;
-    } catch (IllegalStateException | CliException e) {
-      LOG.debug(
+    } catch (IllegalStateException e) {
+      LOG.info(
           "CLI binary not available, falling back to default URL {}: {}",
           DEFAULT_BASE_URL,
           e.getMessage());
