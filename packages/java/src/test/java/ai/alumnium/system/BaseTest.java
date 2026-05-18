@@ -29,7 +29,7 @@ public class BaseTest {
 
   @BeforeAll
   static void setUp() {
-    Alumni.Options options = new Alumni.Options().withUrl("http://127.0.0.1:8013");
+    Alumni.Options options = new Alumni.Options();
 
     if ("playwright".equals(DRIVER_TYPE)) {
       playwright = Playwright.create();
