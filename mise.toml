@@ -64,6 +64,7 @@ run = "bun install"
 # NOTE: Each package might have its own Playwright version and expect a particular browser versions,
 # so we need to run the installation for each package separately.
 run = [
+  { task = "//packages/java:install/playwright" },
   { task = "//packages/typescript:install/playwright" },
   { task = "//packages/python:install/playwright" },
 ]

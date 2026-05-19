@@ -142,7 +142,7 @@ publishing {
 tasks.register('installPlaywright', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.microsoft.playwright.CLI'
-    args = ['install', 'chromium']
+    args = ['install', 'chromium', '--with-deps']
 }
 
 tasks.register('copyDriverScripts', Copy) {
