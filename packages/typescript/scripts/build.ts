@@ -191,8 +191,8 @@ const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
           DIST_DIR,
           `maven-${MAVEN_CLI_PKG_NAME}-${target}`,
           MAVEN_RESOURCE_PREFIX,
-          "bin",
-          os === "windows" ? "alumnium.exe" : "alumnium",
+          target,
+          binName,
         ),
       },
     };
@@ -572,26 +572,20 @@ __all__ = ["bin_path"]
 
     await Promise.all(
       TARGET_PLATFORMS.map(async (platform) => {
-        const { os, binPath, target, maven } = platform;
+        const { target, binName, maven } = platform;
 
         // Each platform gets its own resource namespace so multiple CLI JARs
         // can coexist on the classpath (e.g. darwin-arm64 + linux-x64).
         // BinaryResolver detects OS/arch to find the right binary.properties.
         const platformPrefix = `${MAVEN_RESOURCE_PREFIX}/${target}`;
-        const platformDir = path.resolve(maven.dir, platformPrefix);
-        await fs.mkdir(platformDir, { recursive: true });
+        const binResourcePath = `${platformPrefix}/${binName}`;
+        const metaInfDir = path.resolve(maven.dir, "META-INF");
 
-        const binFileName = path.basename(binPath);
-        const binResourcePath = `${platformPrefix}/${binFileName}`;
         await Promise.all([
-          $`cp ${binPath} ${path.resolve(platformDir, binFileName)}`,
-          fs.writeFile(
-            path.resolve(platformDir, "binary.properties"),
-            `name=${binFileName}\nresource=${binResourcePath}\n`,
-          ),
+          buildTargetPkgCommons(platform, maven),
+          fs.mkdir(metaInfDir, { recursive: true }),
         ]);
 
-        // Generate pom.xml
         const pomXml = `<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -612,12 +606,30 @@ __all__ = ["bin_path"]
   </licenses>
 </project>
 `;
-        await fs.writeFile(path.resolve(maven.dir, "pom.xml"), pomXml);
 
-        // Build JAR containing binary.properties and the binary as classpath resources
+        await Promise.all([
+          // README.md/LICENSE.md are staged at the package root by
+          // buildTargetPkgCommons; move them under META-INF/ so they ship
+          // inside the JAR per Maven convention.
+          fs.rename(
+            path.resolve(maven.dir, "LICENSE.md"),
+            path.resolve(metaInfDir, "LICENSE.md"),
+          ),
+          fs.rename(
+            path.resolve(maven.dir, "README.md"),
+            path.resolve(metaInfDir, "README.md"),
+          ),
+          fs.writeFile(
+            path.resolve(maven.dir, platformPrefix, "binary.properties"),
+            `name=${binName}\nresource=${binResourcePath}\n`,
+          ),
+          fs.writeFile(path.resolve(maven.dir, "pom.xml"), pomXml),
+        ]);
+
+        // Build JAR containing binary.properties, the binary, and META-INF docs
         const jarName = `${maven.name}-${ALUMNIUM_VERSION}.jar`;
         const jarPath = path.resolve(DIST_MAVEN_DIR, jarName);
-        await $`jar cf ${jarPath} -C ${maven.dir} ${platformPrefix}/binary.properties -C ${maven.dir} ${binResourcePath}`;
+        await $`jar cf ${jarPath} -C ${maven.dir} ${platformPrefix}/binary.properties -C ${maven.dir} ${binResourcePath} -C ${maven.dir} META-INF/LICENSE.md -C ${maven.dir} META-INF/README.md`;
 
         // Copy pom.xml to dist/maven/ for publishing
         await $`cp ${path.resolve(maven.dir, "pom.xml")} ${path.resolve(DIST_MAVEN_DIR, `${maven.name}-${ALUMNIUM_VERSION}.pom`)}`;
