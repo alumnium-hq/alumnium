@@ -62,6 +62,13 @@ jobs:
           model: ${{ matrix.model }}
           sha: ${{ inputs.sha }}
 
+      - name: Upload Test Artifacts
+        if: always()
+        uses: ./.github/actions/test-artifacts
+        with:
+          name: system-${{ matrix.driver }}-${{ matrix.model }}
+          java: true
+
       - name: Debug Session
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3

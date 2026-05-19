@@ -1,4 +1,5 @@
 name: Upload Test Artifacts
+description: Uploads test artifacts for a given workflow run.
 
 inputs:
   name:
@@ -7,12 +8,12 @@ inputs:
 
   typescript:
     required: false
-    default: false
+    default: "false"
     description: "Whether to upload TypeScript test artifacts."
 
   python:
     required: false
-    default: false
+    default: "false"
     description: "Whether to upload Python test artifacts."
 
 runs:
@@ -36,3 +37,11 @@ runs:
           packages/python/test-results/
           packages/python/htmlcov/
           packages/python/coverage.xml
+
+    - name: Upload Java Test Artifacts
+      if: inputs.java == 'true'
+      uses: actions/upload-artifact@v6
+      with:
+        name: test-java-${{ inputs.name }}
+        path: |
+          packages/java/build/reports/
