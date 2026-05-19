@@ -11,6 +11,7 @@ public final class Config {
   public static final Set<String> EXCLUDE_ATTRIBUTES = parseCsv("ALUMNIUM_EXCLUDE_ATTRIBUTES");
   public static final boolean FULL_PAGE_SCREENSHOT =
       parseBool("ALUMNIUM_FULL_PAGE_SCREENSHOT", false);
+  public static final boolean NO_RETRY = parseBool("ALUMNIUM_NO_RETRY", false);
   public static final boolean PLANNER = parseBool("ALUMNIUM_PLANNER", true);
   public static final int RETRIES = parseInt("ALUMNIUM_RETRIES", 2);
   public static final String SERVER_URL = emptyToNull(System.getenv("ALUMNIUM_SERVER_URL"));

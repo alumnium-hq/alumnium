@@ -13,6 +13,7 @@ import ai.alumnium.result.DoResult;
 import ai.alumnium.result.DoStep;
 import ai.alumnium.tool.BaseTool;
 import ai.alumnium.tool.ToolToSchemaConverter;
+import ai.alumnium.util.Retry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -129,19 +130,22 @@ public final class Alumni implements AutoCloseable {
   }
 
   public String check(String statement, CheckOptions opts) {
-    boolean vision = opts != null && opts.vision();
-    HttpClient.RetrieveResult result =
-        client.retrieve(
-            "Is the following true or false - " + statement,
-            driver.accessibilityTree().toStr(),
-            driver.title(),
-            driver.url(),
-            vision ? driver.screenshot() : null,
-            driver.app());
-    if (!Boolean.TRUE.equals(result.result().boxedValue())) {
-      throw new AssertionError(result.explanation());
-    }
-    return result.explanation();
+    return Retry.execute(
+        () -> {
+          boolean vision = opts != null && opts.vision();
+          HttpClient.RetrieveResult result =
+              client.retrieve(
+                  "Is the following true or false - " + statement,
+                  driver.accessibilityTree().toStr(),
+                  driver.title(),
+                  driver.url(),
+                  vision ? driver.screenshot() : null,
+                  driver.app());
+          if (!Boolean.TRUE.equals(result.result().boxedValue())) {
+            throw new AssertionError(result.explanation());
+          }
+          return result.explanation();
+        });
   }
 
   /** Extract data described in natural language from the current view. */
@@ -150,20 +154,23 @@ public final class Alumni implements AutoCloseable {
   }
 
   public Data get(String data, VisionOptions opts) {
-    boolean vision = opts != null && opts.vision();
-    HttpClient.RetrieveResult result =
-        client.retrieve(
-            data,
-            driver.accessibilityTree().toStr(),
-            driver.title(),
-            driver.url(),
-            vision ? driver.screenshot() : null,
-            driver.app());
-    Data value = result.result();
-    if (value == null || value.isNoop()) {
-      return new Data.StringData(result.explanation());
-    }
-    return value;
+    return Retry.execute(
+        () -> {
+          boolean vision = opts != null && opts.vision();
+          HttpClient.RetrieveResult result =
+              client.retrieve(
+                  data,
+                  driver.accessibilityTree().toStr(),
+                  driver.title(),
+                  driver.url(),
+                  vision ? driver.screenshot() : null,
+                  driver.app());
+          Data value = result.result();
+          if (value == null || value.isNoop()) {
+            return new Data.StringData(result.explanation());
+          }
+          return value;
+        });
   }
 
   /**
@@ -173,10 +180,13 @@ public final class Alumni implements AutoCloseable {
    * @return Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
    */
   public Element find(String description) {
-    FindElementResult response =
-        client.findElement(description, driver.accessibilityTree().toStr(), driver.app());
-    int id = response.id();
-    return driver.findElement(id);
+    return Retry.execute(
+        () -> {
+          FindElementResult response =
+              client.findElement(description, driver.accessibilityTree().toStr(), driver.app());
+          int id = response.id();
+          return driver.findElement(id);
+        });
   }
 
   /**
@@ -241,44 +251,47 @@ public final class Alumni implements AutoCloseable {
   // Internals
 
   private DoResult executeDo(String goal) {
-    String app = driver.app();
-    BaseAccessibilityTree initial = driver.accessibilityTree();
-    String beforeTree = changeAnalysis ? initial.toStr() : null;
-    String beforeUrl = changeAnalysis ? driver.url() : null;
+    return Retry.execute(
+        () -> {
+          String app = driver.app();
+          BaseAccessibilityTree initial = driver.accessibilityTree();
+          String beforeTree = changeAnalysis ? initial.toStr() : null;
+          String beforeUrl = changeAnalysis ? driver.url() : null;
 
-    HttpClient.PlanResult plan = client.planActions(goal, initial.toStr(), app);
-    String explanation = plan.explanation();
+          HttpClient.PlanResult plan = client.planActions(goal, initial.toStr(), app);
+          String explanation = plan.explanation();
 
-    List<DoStep> executedSteps = new ArrayList<>();
-    List<String> steps = plan.steps();
-    for (int idx = 0; idx < steps.size(); idx++) {
-      String step = steps.get(idx);
-      BaseAccessibilityTree tree = idx == 0 ? initial : driver.accessibilityTree();
-      HttpClient.ActionResult action = client.executeAction(goal, step, tree.toStr(), app);
+          List<DoStep> executedSteps = new ArrayList<>();
+          List<String> steps = plan.steps();
+          for (int idx = 0; idx < steps.size(); idx++) {
+            String step = steps.get(idx);
+            BaseAccessibilityTree tree = idx == 0 ? initial : driver.accessibilityTree();
+            HttpClient.ActionResult action = client.executeAction(goal, step, tree.toStr(), app);
 
-      if (explanation.equals(goal)) {
-        explanation = action.explanation();
-      }
+            if (explanation.equals(goal)) {
+              explanation = action.explanation();
+            }
 
-      List<String> calledTools = new ArrayList<>();
-      for (DoStep toolCall : action.actions()) {
-        calledTools.add(BaseTool.executeToolCall(toolCall, tools, driver));
-      }
-      executedSteps.add(new DoStep(step, calledTools));
-    }
+            List<String> calledTools = new ArrayList<>();
+            for (DoStep toolCall : action.actions()) {
+              calledTools.add(BaseTool.executeToolCall(toolCall, tools, driver));
+            }
+            executedSteps.add(new DoStep(step, calledTools));
+          }
 
-    String changes = "";
-    if (changeAnalysis && !executedSteps.isEmpty()) {
-      try {
-        changes =
-            client.analyzeChanges(
-                beforeTree, beforeUrl, driver.accessibilityTree().toStr(), driver.url(), app);
-      } catch (RuntimeException e) {
-        LOG.warn("Error analyzing changes", e);
-      }
-    }
+          String changes = "";
+          if (changeAnalysis && !executedSteps.isEmpty()) {
+            try {
+              changes =
+                  client.analyzeChanges(
+                      beforeTree, beforeUrl, driver.accessibilityTree().toStr(), driver.url(), app);
+            } catch (RuntimeException e) {
+              LOG.warn("Error analyzing changes", e);
+            }
+          }
 
-    return new DoResult(explanation, executedSteps, changes);
+          return new DoResult(explanation, executedSteps, changes);
+        });
   }
 
   private static BaseDriver wrapDriver(Object driver) {

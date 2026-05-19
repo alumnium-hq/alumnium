@@ -9,6 +9,7 @@ import ai.alumnium.tool.HoverTool;
 import ai.alumnium.tool.PressKeyTool;
 import ai.alumnium.tool.TypeTool;
 import ai.alumnium.tool.UploadTool;
+import ai.alumnium.util.Retry;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -368,14 +369,22 @@ public final class SeleniumDriver extends BaseDriver {
   }
 
   private void waitForPageToLoad() {
+    Retry.Options options = new Retry.Options();
+    options.maxAttempts = 2;
+    options.backOffMillis = 0L;
     try {
-      ((JavascriptExecutor) driver).executeScript(WAITER_SCRIPT);
-      Object err = ((JavascriptExecutor) driver).executeAsyncScript(WAIT_FOR_SCRIPT);
-      if (err != null) {
-        LOG.debug("Failed to wait for page: {}", err);
-      }
+      Retry.execute(
+          options,
+          () -> {
+            ((JavascriptExecutor) driver).executeScript(WAITER_SCRIPT);
+            Object err = ((JavascriptExecutor) driver).executeAsyncScript(WAIT_FOR_SCRIPT);
+            if (err != null) {
+              LOG.debug("Failed to wait for page: {}", err);
+            }
+            return null;
+          });
     } catch (RuntimeException e) {
-      LOG.debug("waitForPageToLoad threw", e);
+      LOG.debug("waitForPageToLoad threw after retry", e);
     }
   }
 

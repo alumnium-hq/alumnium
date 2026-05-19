@@ -13,6 +13,7 @@ import ai.alumnium.driver.Element;
 import ai.alumnium.result.DoResult;
 import ai.alumnium.result.DoStep;
 import ai.alumnium.tool.BaseTool;
+import ai.alumnium.util.Retry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,25 +81,28 @@ public class Area {
    * @return the result of the action (explanation and executed steps)
    */
   public DoResult act(String goal) {
-    PlanResult response = client.planActions(goal, scopedTree().toStr(), driver.app());
-    String explanation = response.explanation();
-    List<String> steps = response.steps();
-    List<DoStep> executedSteps = new ArrayList<>();
-    for (String step : steps) {
-      ActionResult actionResult =
-          client.executeAction(goal, step, scopedTree().toStr(), driver.app());
+    return Retry.execute(
+        () -> {
+          PlanResult response = client.planActions(goal, scopedTree().toStr(), driver.app());
+          String explanation = response.explanation();
+          List<String> steps = response.steps();
+          List<DoStep> executedSteps = new ArrayList<>();
+          for (String step : steps) {
+            ActionResult actionResult =
+                client.executeAction(goal, step, scopedTree().toStr(), driver.app());
 
-      if (explanation.equals(goal)) {
-        explanation = actionResult.explanation();
-      }
+            if (explanation.equals(goal)) {
+              explanation = actionResult.explanation();
+            }
 
-      List<String> calledTools = new ArrayList<>();
-      for (DoStep toolCall : actionResult.actions()) {
-        calledTools.add(BaseTool.executeToolCall(toolCall, tools, driver));
-      }
-      executedSteps.add(new DoStep(step, calledTools));
-    }
-    return new DoResult(explanation, executedSteps);
+            List<String> calledTools = new ArrayList<>();
+            for (DoStep toolCall : actionResult.actions()) {
+              calledTools.add(BaseTool.executeToolCall(toolCall, tools, driver));
+            }
+            executedSteps.add(new DoStep(step, calledTools));
+          }
+          return new DoResult(explanation, executedSteps);
+        });
   }
 
   /**
@@ -119,20 +123,23 @@ public class Area {
    * @return the result of the check
    */
   public String check(String statement, CheckOptions opts) {
-    boolean vision = opts != null && opts.vision();
-    HttpClient.RetrieveResult result =
-        client.retrieve(
-            "Is the following true or false - " + statement,
-            scopedTree().toStr(),
-            this.driver.title(),
-            this.driver.url(),
-            vision ? this.driver.screenshot() : null,
-            this.driver.app());
+    return Retry.execute(
+        () -> {
+          boolean vision = opts != null && opts.vision();
+          HttpClient.RetrieveResult result =
+              client.retrieve(
+                  "Is the following true or false - " + statement,
+                  scopedTree().toStr(),
+                  this.driver.title(),
+                  this.driver.url(),
+                  vision ? this.driver.screenshot() : null,
+                  this.driver.app());
 
-    if (!Boolean.TRUE.equals(result.result().boxedValue())) {
-      throw new AssertionError(result.explanation());
-    }
-    return result.explanation();
+          if (!Boolean.TRUE.equals(result.result().boxedValue())) {
+            throw new AssertionError(result.explanation());
+          }
+          return result.explanation();
+        });
   }
 
   /**
@@ -153,17 +160,20 @@ public class Area {
    * @return the data
    */
   public Data get(String data, VisionOptions opts) {
-    boolean vision = opts != null && opts.vision();
-    HttpClient.RetrieveResult result =
-        client.retrieve(
-            data,
-            scopedTree().toStr(),
-            this.driver.title(),
-            this.driver.url(),
-            vision ? this.driver.screenshot() : null,
-            this.driver.app());
+    return Retry.execute(
+        () -> {
+          boolean vision = opts != null && opts.vision();
+          HttpClient.RetrieveResult result =
+              client.retrieve(
+                  data,
+                  scopedTree().toStr(),
+                  this.driver.title(),
+                  this.driver.url(),
+                  vision ? this.driver.screenshot() : null,
+                  this.driver.app());
 
-    return result.result();
+          return result.result();
+        });
   }
 
   /**
@@ -173,8 +183,11 @@ public class Area {
    * @return the element
    */
   public Element find(String description) {
-    FindElementResult response =
-        client.findElement(description, scopedTree().toStr(), this.driver.app());
-    return this.driver.findElement(response.id());
+    return Retry.execute(
+        () -> {
+          FindElementResult response =
+              client.findElement(description, scopedTree().toStr(), this.driver.app());
+          return this.driver.findElement(response.id());
+        });
   }
 }
