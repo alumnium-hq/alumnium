@@ -851,7 +851,7 @@ async function buildPlaywrightOopDownloadBundle(): Promise<string> {
   );
   const entrypoint = path.join(
     playwrightCorePkgDir,
-    "lib/server/registry/oopDownloadBrowserMain.js",
+    "lib/entry/oopBrowserDownload.js",
   );
   const outDir = path.resolve(TMP_DIR, "playwright-oop-download");
   await cleanUpDir(outDir);
@@ -862,6 +862,7 @@ async function buildPlaywrightOopDownloadBundle(): Promise<string> {
     target: "node",
     format: "cjs",
     packages: "bundle",
+    external: ["chromium-bidi"],
     naming: "[name].cjs",
     minify: false,
   });
@@ -873,7 +874,7 @@ async function buildPlaywrightOopDownloadBundle(): Promise<string> {
     );
   }
 
-  return path.join(outDir, "oopDownloadBrowserMain.cjs");
+  return path.join(outDir, "oopBrowserDownload.cjs");
 }
 
 async function getStandaloneEmbeddedAssets(): Promise<
