@@ -5,6 +5,11 @@ gradle = "8.11.1"
 [tasks.install]
 run = "gradle --no-daemon dependencies -q || true"
 
+[tasks."install/playwright"]
+run = "gradle --no-daemon installPlaywright"
+# NOTE: It prompts for sudo to install OS dependencies
+raw = true
+
 [tasks.compile]
 run = "gradle --no-daemon compileJava"
 

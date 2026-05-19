@@ -90,7 +90,7 @@ repositories {
 dependencies {
     testImplementation 'ai.alumnium:alumnium:${ALUMNIUM_VERSION}'
     testRuntimeOnly 'ai.alumnium:alumnium-cli-${CLI_TARGET}:${VERSION}'
-    testImplementation 'com.microsoft.playwright:playwright:1.52.0'
+    testImplementation 'com.microsoft.playwright:playwright:1.60.0'
     testImplementation 'org.seleniumhq.selenium:selenium-java:4.27.0'
     testImplementation 'io.appium:java-client:9.3.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
@@ -101,7 +101,7 @@ dependencies {
 tasks.register('installPlaywright', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.microsoft.playwright.CLI'
-    args = ['install', 'chromium']
+    args = ['install', 'chromium', '--with-deps']
 }
 
 tasks.withType(Test).configureEach {
