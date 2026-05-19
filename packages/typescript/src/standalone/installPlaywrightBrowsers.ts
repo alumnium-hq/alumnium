@@ -54,10 +54,9 @@ async function installChromiumIfNeeded() {
   // The import is lazy (inside this function, not at module top level) so the
   // _resolveFilename hook is already installed before the registry module loads.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { registry, installBrowsersForNpmInstall } = (await import(
-    // @ts-expect-error — internal path, no type declarations
-    "playwright-core/lib/server/registry/index"
-  )) as any;
+  // @ts-expect-error — internal path, no type declarations
+  const coreBundle = (await import("playwright-core/lib/coreBundle")) as any;
+  const { registry, installBrowsersForNpmInstall } = coreBundle.registry;
 
   const chromiumExecutable = registry.findExecutable("chromium");
   const chromiumHeadlessShellExecutable = registry.findExecutable(
