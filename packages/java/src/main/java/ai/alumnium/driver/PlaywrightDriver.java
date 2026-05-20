@@ -10,15 +10,17 @@ import ai.alumnium.tool.HoverTool;
 import ai.alumnium.tool.PressKeyTool;
 import ai.alumnium.tool.TypeTool;
 import ai.alumnium.tool.UploadTool;
+import ai.alumnium.util.Retry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.CDPSession;
 import com.microsoft.playwright.Frame;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.options.AriaRole;
-import com.microsoft.playwright.options.LoadState;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,9 +43,11 @@ public final class PlaywrightDriver extends BaseDriver {
   private static final String WAITER_SCRIPT = loadScript("/ai/alumnium/driver/scripts/waiter.js");
   private static final String WAIT_FOR_SCRIPT =
       loadScript("/ai/alumnium/driver/scripts/waitFor.js");
+  private static final String CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
   private Page page;
   private CDPSession client;
+  private final List<Page> pages = new ArrayList<>();
   public boolean autoswitchToNewTab = true;
   public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
   public final Set<Class<? extends BaseTool>> supportedTools =
@@ -58,6 +62,7 @@ public final class PlaywrightDriver extends BaseDriver {
   public PlaywrightDriver(Page page) {
     this.page = page;
     this.client = page.context().newCDPSession(page);
+    setupPageTracking(page);
     enableTargetAutoAttach();
   }
 
@@ -133,9 +138,9 @@ public final class PlaywrightDriver extends BaseDriver {
     if (tag != null && tag.equalsIgnoreCase("option")) {
       Object value = element.evaluate("el => el.value");
       Locator parentSelect = element.locator("xpath=parent::select");
-      parentSelect.selectOption(String.valueOf(value));
+      autoswitchToNewTabAction(() -> parentSelect.selectOption(String.valueOf(value)));
     } else {
-      element.click(new Locator.ClickOptions().setForce(true));
+      autoswitchToNewTabAction(() -> element.click(new Locator.ClickOptions().setForce(true)));
     }
   }
 
@@ -156,7 +161,7 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void pressKey(Key key) {
-    page.keyboard().press(key.value());
+    autoswitchToNewTabAction(() -> page.keyboard().press(key.value()));
   }
 
   @Override
@@ -233,24 +238,24 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void switchToNextTab() {
-    List<Page> pages = page.context().pages();
+    page.waitForTimeout(100);
     if (pages.size() <= 1) return;
     int idx = pages.indexOf(page);
     Page next = pages.get((idx + 1) % pages.size());
     this.page = next;
     this.client = next.context().newCDPSession(next);
-    next.waitForLoadState(LoadState.LOAD);
+    next.waitForLoadState();
   }
 
   @Override
   public void switchToPreviousTab() {
-    List<Page> pages = page.context().pages();
+    page.waitForTimeout(100);
     if (pages.size() <= 1) return;
     int idx = pages.indexOf(page);
     Page prev = pages.get((idx - 1 + pages.size()) % pages.size());
     this.page = prev;
     this.client = prev.context().newCDPSession(prev);
-    prev.waitForLoadState(LoadState.LOAD);
+    prev.waitForLoadState();
   }
 
   @Override
@@ -357,19 +362,76 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   private void waitForPageToLoad() {
+    Retry.Options opts = new Retry.Options();
+    opts.maxAttempts = 2;
+    opts.backOffMillis = 500L;
+    opts.doRetry =
+        e -> e.getMessage() != null && e.getMessage().contains(CONTEXT_WAS_DESTROYED_ERROR);
+    Retry.execute(
+        opts,
+        () -> {
+          page.evaluate(WAITER_SCRIPT);
+          Object err =
+              page.evaluate(
+                  "(...scriptArgs) => new Promise((resolve) => "
+                      + "{ const arguments = [...scriptArgs, resolve]; "
+                      + WAIT_FOR_SCRIPT
+                      + " })");
+          if (err != null) {
+            LOG.debug("Failed to wait for page: {}", err);
+          }
+          return null;
+        });
+  }
+
+  private void setupPageTracking(Page initialPage) {
+    pages.add(initialPage);
+    attachPageListeners(initialPage);
+  }
+
+  private void attachPageListeners(Page page) {
+    page.onPopup(this::onPopup);
+    page.onClose(this::onPageClose);
+  }
+
+  private void onPopup(Page popup) {
+    LOG.debug("New popup opened: {}", popup.url());
+    pages.add(popup);
+    attachPageListeners(popup);
+  }
+
+  private void onPageClose(Page closed) {
+    if (pages.remove(closed)) {
+      LOG.debug("Page closed: {}", closed.url());
+    }
+  }
+
+  private void autoswitchToNewTabAction(Runnable action) {
+    if (!autoswitchToNewTab) {
+      action.run();
+      return;
+    }
+
+    Page newPage;
     try {
-      page.evaluate(WAITER_SCRIPT);
-      Object err =
-          page.evaluate(
-              "(...scriptArgs) => new Promise((resolve) => "
-                  + "{ const arguments = [...scriptArgs, resolve]; "
-                  + WAIT_FOR_SCRIPT
-                  + " })");
-      if (err != null) {
-        LOG.debug("Failed to wait for page: {}", err);
+      newPage =
+          page.context()
+              .waitForPage(
+                  new BrowserContext.WaitForPageOptions()
+                      .setTimeout(Config.PLAYWRIGHT_NEW_TAB_TIMEOUT),
+                  action);
+    } catch (TimeoutError e) {
+      return;
+    }
+
+    if (newPage != null) {
+      LOG.debug("Auto-switching to new tab {} ({})", newPage.url(), newPage.title());
+      if (!pages.contains(newPage)) {
+        pages.add(newPage);
+        attachPageListeners(newPage);
       }
-    } catch (RuntimeException e) {
-      LOG.debug("waitForPageToLoad threw", e);
+      this.page = newPage;
+      this.client = newPage.context().newCDPSession(newPage);
     }
   }
 
