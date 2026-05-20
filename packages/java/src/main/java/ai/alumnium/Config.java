@@ -13,6 +13,8 @@ public final class Config {
       parseBool("ALUMNIUM_FULL_PAGE_SCREENSHOT", false);
   public static final boolean NO_RETRY = parseBool("ALUMNIUM_NO_RETRY", false);
   public static final boolean PLANNER = parseBool("ALUMNIUM_PLANNER", true);
+  public static final int PLAYWRIGHT_NEW_TAB_TIMEOUT =
+      parseInt("ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT", 200);
   public static final int RETRIES = parseInt("ALUMNIUM_RETRIES", 2);
   public static final String SERVER_URL = emptyToNull(System.getenv("ALUMNIUM_SERVER_URL"));
   public static final String MODEL = emptyToNull(System.getenv("ALUMNIUM_MODEL"));
