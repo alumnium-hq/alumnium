@@ -276,12 +276,9 @@ public final class SeleniumDriver extends BaseDriver {
 
   private WebElement findRaw(int id) {
     var element = accessibilityTree().elementById(id);
-    if (element.locatorInfo() != null) {
-      return findByLocator(element);
-    }
     Integer backendNodeId = element.backendNodeId();
     if (backendNodeId == null) {
-      throw new IllegalStateException("Element " + id + " missing backendNodeId and locator info");
+      throw new IllegalStateException("Element " + id + " has no backendNodeId");
     }
     List<Integer> chain = element.frameChain();
     if (chain != null && !chain.isEmpty()) {
@@ -306,21 +303,6 @@ public final class SeleniumDriver extends BaseDriver {
         driver.findElement(By.cssSelector("[data-alumnium-id='" + backendNodeId + "']"));
     executeCdp("DOM.removeAttribute", Map.of("nodeId", nodeId, "name", "data-alumnium-id"));
     return webElement;
-  }
-
-  private WebElement findByLocator(ai.alumnium.accessibility.AccessibilityElement element) {
-    Map<String, Object> locator = element.locatorInfo();
-    List<Integer> chain = element.frameChain();
-    if (chain != null && !chain.isEmpty()) {
-      switchToFrameChain(chain);
-    }
-    String selector = String.valueOf(locator.getOrDefault("selector", ""));
-    int nth = ((Number) locator.getOrDefault("nth", 0)).intValue();
-    List<WebElement> matches = driver.findElements(By.cssSelector(selector));
-    if (nth < matches.size()) {
-      return matches.get(nth);
-    }
-    throw new IllegalStateException("No element for selector " + selector + " nth=" + nth);
   }
 
   private void switchToFrameChain(List<Integer> chain) {

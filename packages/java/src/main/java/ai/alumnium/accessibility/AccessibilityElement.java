@@ -1,7 +1,6 @@
 package ai.alumnium.accessibility;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Mutable bag of accessibility-element properties produced by the three accessibility-tree
@@ -24,7 +23,6 @@ public final class AccessibilityElement {
   private String androidContentDesc;
   private String androidBounds;
   private Object frame;
-  private Map<String, Object> locatorInfo;
   private List<Integer> frameChain;
 
   public AccessibilityElement() {}
@@ -134,15 +132,6 @@ public final class AccessibilityElement {
 
   public AccessibilityElement frame(Object v) {
     this.frame = v;
-    return this;
-  }
-
-  public Map<String, Object> locatorInfo() {
-    return locatorInfo;
-  }
-
-  public AccessibilityElement locatorInfo(Map<String, Object> v) {
-    this.locatorInfo = v;
     return this;
   }
 

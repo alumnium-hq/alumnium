@@ -1,6 +1,5 @@
 package ai.alumnium.accessibility;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -23,8 +22,6 @@ import org.xml.sax.InputSource;
 
 /** Chromium DevTools {@code Accessibility.getFullAXTree} payload rendered as XML. */
 public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
-
-  private static final ObjectMapper MAPPER = new ObjectMapper();
 
   private final Map<String, Object> cdpResponse;
   private int nextRawId = 0;
@@ -133,19 +130,6 @@ public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     if (node.containsKey("ignored")) {
       elem.setAttribute("ignored", toStr(node.get("ignored")));
     }
-    if (Boolean.TRUE.equals(node.get("_playwright_node"))) {
-      elem.setAttribute("_playwright_node", "true");
-    }
-    if (node.containsKey("_locator_info")) {
-      try {
-        elem.setAttribute("_locator_info", MAPPER.writeValueAsString(node.get("_locator_info")));
-      } catch (Exception ignored) {
-        // leave attribute absent
-      }
-    }
-    if (node.containsKey("_frame_url")) {
-      elem.setAttribute("_frame_url", toStr(node.get("_frame_url")));
-    }
 
     @SuppressWarnings("unchecked")
     Map<String, Object> name = (Map<String, Object>) node.get("name");
@@ -197,37 +181,6 @@ public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     Element match = findByRawId(doc.getDocumentElement(), Integer.toString(rawId));
     if (match == null) {
       throw new IllegalArgumentException("No element with raw_id=" + rawId + " found");
-    }
-
-    if ("true".equals(match.getAttribute("_playwright_node"))) {
-      String frameUrl = match.getAttribute("_frame_url");
-      if (frameUrl != null && !frameUrl.isEmpty()) {
-        Map<String, Object> synthetic = new LinkedHashMap<>();
-        synthetic.put("_synthetic_frame", true);
-        synthetic.put("_frame_url", frameUrl);
-        return new AccessibilityElement()
-            .type(match.getTagName())
-            .frame(frameMap.get(rawId))
-            .locatorInfo(synthetic);
-      }
-
-      String locatorStr = match.getAttribute("_locator_info");
-      Map<String, Object> locator;
-      if (locatorStr == null || locatorStr.isEmpty()) {
-        locator = Map.of();
-      } else {
-        try {
-          @SuppressWarnings("unchecked")
-          Map<String, Object> parsed = MAPPER.readValue(locatorStr, Map.class);
-          locator = parsed;
-        } catch (Exception e) {
-          locator = Map.of();
-        }
-      }
-      return new AccessibilityElement()
-          .type(match.getTagName())
-          .frame(frameMap.get(rawId))
-          .locatorInfo(locator);
     }
 
     String backend = match.getAttribute("backendDOMNodeId");

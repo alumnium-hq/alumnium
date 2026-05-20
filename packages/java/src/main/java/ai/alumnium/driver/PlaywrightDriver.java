@@ -20,7 +20,6 @@ import com.microsoft.playwright.Frame;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.TimeoutError;
-import com.microsoft.playwright.options.AriaRole;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -88,8 +87,7 @@ public final class PlaywrightDriver extends BaseDriver {
     LOG.debug("Found {} frames", frameIds.size());
 
     Map<String, Integer> frameToIframeMap = new HashMap<>();
-    Map<String, String> frameParentMap = new HashMap<>();
-    buildFrameHierarchy(frameTree, mainFrameId, frameToIframeMap, frameParentMap, null);
+    buildFrameHierarchy(frameTree, mainFrameId, frameToIframeMap);
 
     Map<String, Frame> frameIdToFrame = new HashMap<>();
     for (Frame f : page.frames()) {
@@ -107,12 +105,8 @@ public final class PlaywrightDriver extends BaseDriver {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> nodes =
             (List<Map<String, Object>>) resp.getOrDefault("nodes", List.of());
-        List<Integer> chain = frameChain(frameId, frameToIframeMap, frameParentMap);
         Frame pwFrame = frameIdToFrame.getOrDefault(frameId, page.mainFrame());
         for (Map<String, Object> node : nodes) {
-          if (!chain.isEmpty()) {
-            node.put("_frame_chain", chain);
-          }
           node.put("_frame", pwFrame);
           if (node.get("parentId") == null && frameToIframeMap.containsKey(frameId)) {
             node.put("_parent_iframe_backend_node_id", frameToIframeMap.get(frameId));
@@ -270,12 +264,9 @@ public final class PlaywrightDriver extends BaseDriver {
     AccessibilityElement element = accessibilityTree().elementById(id);
     Frame frame = element.frame() instanceof Frame f ? f : page.mainFrame();
 
-    if (element.locatorInfo() != null) {
-      return findByLocator(frame, element.locatorInfo());
-    }
     Integer backendNodeId = element.backendNodeId();
     if (backendNodeId == null) {
-      throw new IllegalStateException("Element " + id + " missing backendNodeId and locator info");
+      throw new IllegalStateException("Element " + id + " has no backendNodeId");
     }
     sendCdp("DOM.enable", null);
     sendCdp("DOM.getFlattenedDocument", null);
@@ -293,38 +284,6 @@ public final class PlaywrightDriver extends BaseDriver {
         "DOM.setAttributeValue",
         Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
     return frame.locator("css=[data-alumnium-id='" + backendNodeId + "']");
-  }
-
-  private Locator findByLocator(Frame frame, Map<String, Object> locatorInfo) {
-    if (Boolean.TRUE.equals(locatorInfo.get("_synthetic_frame"))) {
-      return frame.locator("body");
-    }
-    if (locatorInfo.containsKey("selector") && locatorInfo.containsKey("nth")) {
-      String selector = String.valueOf(locatorInfo.get("selector"));
-      int nth = ((Number) locatorInfo.get("nth")).intValue();
-      return frame.locator(selector).nth(nth);
-    }
-    Object role = locatorInfo.get("role");
-    Object name = locatorInfo.get("name");
-    if (role != null && name != null) {
-      return frame.getByRole(
-          parseRole(role.toString()), new Frame.GetByRoleOptions().setName(name.toString()));
-    }
-    if (role != null) {
-      return frame.getByRole(parseRole(role.toString()));
-    }
-    if (name != null) {
-      return frame.getByText(name.toString());
-    }
-    throw new IllegalArgumentException("Cannot build locator from info: " + locatorInfo);
-  }
-
-  private static AriaRole parseRole(String role) {
-    try {
-      return AriaRole.valueOf(role.toUpperCase().replace('-', '_'));
-    } catch (IllegalArgumentException e) {
-      return AriaRole.GENERIC;
-    }
   }
 
   private Map<String, Object> sendCdp(String method, Map<String, Object> params) {
@@ -455,11 +414,7 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   private void buildFrameHierarchy(
-      Map<String, Object> frameInfo,
-      String mainFrameId,
-      Map<String, Integer> frameToIframeMap,
-      Map<String, String> frameParentMap,
-      String parentFrameId) {
+      Map<String, Object> frameInfo, String mainFrameId, Map<String, Integer> frameToIframeMap) {
     String id = frameIdOf(frameInfo);
     if (!id.equals(mainFrameId)) {
       try {
@@ -472,29 +427,14 @@ public final class PlaywrightDriver extends BaseDriver {
       } catch (RuntimeException e) {
         LOG.debug("Could not get frame owner for {}", id, e);
       }
-      if (parentFrameId != null) {
-        frameParentMap.put(id, parentFrameId);
-      }
     }
     @SuppressWarnings("unchecked")
     List<Map<String, Object>> children = (List<Map<String, Object>>) frameInfo.get("childFrames");
     if (children != null) {
       for (Map<String, Object> child : children) {
-        buildFrameHierarchy(child, mainFrameId, frameToIframeMap, frameParentMap, id);
+        buildFrameHierarchy(child, mainFrameId, frameToIframeMap);
       }
     }
-  }
-
-  private static List<Integer> frameChain(
-      String frameId, Map<String, Integer> frameToIframeMap, Map<String, String> frameParentMap) {
-    List<Integer> chain = new ArrayList<>();
-    String current = frameId;
-    while (frameToIframeMap.containsKey(current)) {
-      chain.add(0, frameToIframeMap.get(current));
-      current = frameParentMap.getOrDefault(current, null);
-      if (current == null) break;
-    }
-    return chain;
   }
 
   private static String findCdpFrameIdByUrl(Map<String, Object> frameInfo, String targetUrl) {
