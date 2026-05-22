@@ -6,7 +6,7 @@ import java.util.Objects;
 /** Identifies a model by {@link Provider} and model name. */
 public final class Model {
 
-  private static volatile Model current = buildFromEnv();
+  private static volatile Model current = fromEnv();
 
   private final Provider provider;
   private final String name;
@@ -30,7 +30,8 @@ public final class Model {
 
   /**
    * The process-default model, derived from {@code ALUMNIUM_MODEL} (format: {@code provider/name}).
-   * Falls back to {@link Provider#GITHUB} under GitHub Actions, otherwise {@link Provider#OPENAI}.
+   * Falls back to {@link Provider#GITHUB} when running under GitHub Actions. Returns {@code null}
+   * when neither is set.
    */
   public static Model current() {
     return current;
@@ -41,21 +42,40 @@ public final class Model {
     current = model;
   }
 
-  private static Model buildFromEnv() {
-    String raw = System.getenv().getOrDefault("ALUMNIUM_MODEL", "");
-    String providerToken = raw;
-    String nameToken = null;
-    int slash = raw.indexOf('/');
-    if (slash >= 0) {
-      providerToken = raw.substring(0, slash);
-      nameToken = raw.substring(slash + 1);
+  /**
+   * Parses a model string of the form {@code provider/name} (as returned by the alumnium server).
+   * The name is optional — when omitted, the provider's default model is used.
+   */
+  public static Model fromString(String model) {
+    if (model == null || model.isBlank()) {
+      return null;
     }
-    providerToken = providerToken.trim().toLowerCase();
-    if (providerToken.isEmpty() && System.getenv("GITHUB_ACTIONS") != null) {
-      providerToken = "github";
+
+    String providerToken = model;
+    String nameToken = null;
+    int slash = model.indexOf('/');
+    if (slash >= 0) {
+      providerToken = model.substring(0, slash);
+      nameToken = model.substring(slash + 1);
     }
     Provider provider = Provider.fromValue(providerToken).orElse(Provider.OPENAI);
     return new Model(provider, (nameToken == null || nameToken.isBlank()) ? null : nameToken);
+  }
+
+  /**
+   * Resolves the default model from environment variables. Mirrors Python's {@code
+   * Model.from_env()}: parses {@code ALUMNIUM_MODEL} when set, otherwise uses {@link
+   * Provider#GITHUB} under GitHub Actions, otherwise returns {@code null}.
+   */
+  private static Model fromEnv() {
+    Model fromConfig = fromString(Config.MODEL);
+    if (fromConfig != null) {
+      return fromConfig;
+    }
+    if (System.getenv("GITHUB_ACTIONS") != null) {
+      return new Model(Provider.GITHUB, null);
+    }
+    return null;
   }
 
   static final class Names {

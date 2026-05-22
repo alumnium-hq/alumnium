@@ -58,10 +58,7 @@ public final class Alumni implements AutoCloseable {
         opts.changeAnalysis() != null ? opts.changeAnalysis() : Config.CHANGE_ANALYSIS;
     Set<String> excludeAttributes =
         opts.excludeAttributes() != null ? opts.excludeAttributes() : Config.EXCLUDE_ATTRIBUTES;
-    this.model = opts.model() != null ? opts.model() : Model.current();
     this.driver = wrapDriver(driver);
-
-    LOG.info("Using model: {}/{}", this.model.provider().value(), this.model.name());
 
     Map<String, Class<? extends BaseTool>> builtTools = new LinkedHashMap<>();
     for (Class<? extends BaseTool> tool : this.driver.supportedTools()) {
@@ -80,7 +77,16 @@ public final class Alumni implements AutoCloseable {
 
     this.client =
         new HttpClient(
-            serverUrl, this.model, this.driver.platform(), toolSchemas, planner, excludeAttributes);
+            serverUrl,
+            opts.model(),
+            this.driver.platform(),
+            toolSchemas,
+            planner,
+            excludeAttributes);
+
+    this.model = client.model();
+    LOG.info("Using model: {}/{}", this.model.provider().value(), this.model.name());
+
     this.cache = new Cache(this.client);
     LOG.info("Using HTTP client with server: {}", this.client.baseUrl());
   }
