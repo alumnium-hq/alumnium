@@ -1,36 +1,35 @@
 package ai.alumnium.driver;
 
 import ai.alumnium.Config;
-import ai.alumnium.accessibility.AccessibilityElement;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
-import ai.alumnium.accessibility.UIAutomator2AccessibilityTree;
-import ai.alumnium.accessibility.XCUITestAccessibilityTree;
+import ai.alumnium.driver.appium.AppiumViewContext;
+import ai.alumnium.driver.appium.AppiumViewStrategy;
+import ai.alumnium.driver.appium.ChromiumAppiumViewStrategy;
+import ai.alumnium.driver.appium.NativeAppiumViewStrategy;
+import ai.alumnium.driver.appium.WebViewAppiumViewStrategy;
 import ai.alumnium.tool.BaseTool;
 import ai.alumnium.tool.ClickTool;
 import ai.alumnium.tool.DragAndDropTool;
 import ai.alumnium.tool.PressKeyTool;
 import ai.alumnium.tool.TypeTool;
-import io.appium.java_client.AppiumBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
 import java.util.Set;
-import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Appium (mobile) implementation of {@link BaseDriver}.
  *
- * <p>Switches between the {@code NATIVE_APP} and a web-view context when gathering source vs.
- * querying title/URL. Tools unsupported on mobile (e.g. tab switching, drag slider) throw {@link
- * UnsupportedOperationException}.
+ * <p>Dispatches every action and accessibility snapshot to the correct {@link AppiumViewStrategy}
+ * based on the current Appium context:
+ *
+ * <ul>
+ *   <li>{@code NATIVE_APP} (or unknown) → {@link NativeAppiumViewStrategy}
+ *   <li>Contains {@code WEBVIEW} → {@link WebViewAppiumViewStrategy}
+ *   <li>{@code CHROMIUM} → {@link ChromiumAppiumViewStrategy}
+ * </ul>
  */
 public final class AppiumDriver extends BaseDriver {
-
-  private static final Logger LOG = LoggerFactory.getLogger(AppiumDriver.class);
 
   public enum Platform {
     UIAUTOMATOR2,
@@ -66,27 +65,16 @@ public final class AppiumDriver extends BaseDriver {
     return supportedTools;
   }
 
+  // region BaseDriver delegation
+
   @Override
   public BaseAccessibilityTree accessibilityTree() {
-    ensureNativeContext();
-    sleep(delay);
-    if (doubleFetchPageSource) {
-      driver.getPageSource();
-    }
-    String xml = driver.getPageSource();
-    return platform == Platform.UIAUTOMATOR2
-        ? new UIAutomator2AccessibilityTree(xml)
-        : new XCUITestAccessibilityTree(xml);
+    return currentStrategy().accessibilityTree();
   }
-
-  // region Actions
 
   @Override
   public void click(int id) {
-    ensureNativeContext();
-    WebElement element = findElement(id);
-    scrollIntoView(element);
-    element.click();
+    currentStrategy().click(id);
   }
 
   @Override
@@ -96,26 +84,12 @@ public final class AppiumDriver extends BaseDriver {
 
   @Override
   public void dragAndDrop(int fromId, int toId) {
-    ensureNativeContext();
-    // Appium 9.x removed the dedicated helper; the Actions/gestures API is
-    // the recommended replacement. We fall back to a simple move-press-release.
-    WebElement fromElement = findElement(fromId);
-    WebElement toElement = findElement(toId);
-    scrollIntoView(fromElement);
-    new Actions(driver).clickAndHold(fromElement).moveToElement(toElement).release().perform();
+    currentStrategy().dragAndDrop(fromId, toId);
   }
 
   @Override
   public void pressKey(Key key) {
-    ensureNativeContext();
-    CharSequence code =
-        switch (key) {
-          case BACKSPACE -> org.openqa.selenium.Keys.BACK_SPACE;
-          case ENTER -> org.openqa.selenium.Keys.ENTER;
-          case ESCAPE -> org.openqa.selenium.Keys.ESCAPE;
-          case TAB -> org.openqa.selenium.Keys.TAB;
-        };
-    new Actions(driver).sendKeys(code).perform();
+    currentStrategy().pressKey(key);
   }
 
   @Override
@@ -140,36 +114,22 @@ public final class AppiumDriver extends BaseDriver {
 
   @Override
   public void scrollTo(int id) {
-    scrollIntoView(findElement(id));
+    currentStrategy().scrollTo(id);
   }
 
   @Override
   public String title() {
-    ensureWebviewContext();
-    try {
-      return driver.getTitle();
-    } catch (RuntimeException e) {
-      return "";
-    }
+    return currentStrategy().title();
   }
 
   @Override
   public void type(int id, String text) {
-    ensureNativeContext();
-    WebElement element = findElement(id);
-    scrollIntoView(element);
-    element.clear();
-    element.sendKeys(text);
+    currentStrategy().type(id, text);
   }
 
   @Override
   public String url() {
-    ensureWebviewContext();
-    try {
-      return driver.getCurrentUrl();
-    } catch (RuntimeException e) {
-      return "";
-    }
+    return currentStrategy().url();
   }
 
   @Override
@@ -184,15 +144,13 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   @Override
-  public WebElement findElement(int id) {
-    AccessibilityElement element = accessibilityTree().elementById(id);
-    return platform == Platform.XCUITEST ? findElementIos(element) : findElementAndroid(element);
+  public Element findElement(int id) {
+    return new Element.Appium(currentStrategy().findRaw(id));
   }
 
   @Override
   public void executeScript(String script) {
-    ensureWebviewContext();
-    driver.executeScript(script);
+    currentStrategy().executeScript(script);
   }
 
   @Override
@@ -211,88 +169,23 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   // endregion
-  // region Internals
 
-  private WebElement findElementIos(AccessibilityElement element) {
-    StringBuilder predicate = new StringBuilder();
-    predicate.append("type == \"").append(element.type()).append("\"");
-    appendPredicate(predicate, "name", element.name());
-    appendPredicate(predicate, "value", element.value());
-    appendPredicate(predicate, "label", element.label());
-    String expr = predicate.toString();
-    return driver.findElement(AppiumBy.iOSNsPredicateString(expr));
-  }
-
-  private void appendPredicate(StringBuilder out, String key, String value) {
-    if (value == null || value.isEmpty()) return;
-    out.append(" AND ").append(key).append(" == \"").append(value).append("\"");
-  }
-
-  private WebElement findElementAndroid(AccessibilityElement element) {
-    StringBuilder xpath = new StringBuilder();
-    xpath.append("//").append(element.type());
-    StringBuilder preds = new StringBuilder();
-    appendXpathPredicate(preds, "resource-id", element.androidResourceId());
-    appendXpathPredicate(preds, "bounds", element.androidBounds());
-    if (preds.length() > 0) {
-      xpath.append('[').append(preds).append(']');
+  private AppiumViewStrategy currentStrategy() {
+    AppiumViewContext ctx =
+        new AppiumViewContext(
+            driver,
+            platform,
+            autoswitchContexts,
+            hideKeyboardAfterTyping,
+            doubleFetchPageSource,
+            delay);
+    String context = ((SupportsContextSwitching) driver).getContext();
+    if (context != null && context.toUpperCase().contains("WEBVIEW")) {
+      return new WebViewAppiumViewStrategy(ctx);
     }
-    return driver.findElement(By.xpath(xpath.toString()));
-  }
-
-  private void appendXpathPredicate(StringBuilder out, String key, String value) {
-    if (value == null || value.isEmpty()) return;
-    if (out.length() > 0) out.append(" and ");
-    out.append('@').append(key).append("=\"").append(value).append('\"');
-  }
-
-  private void ensureNativeContext() {
-    if (!autoswitchContexts) return;
-    var switcher = (SupportsContextSwitching) driver;
-    if (!"NATIVE_APP".equals(switcher.getContext())) {
-      switcher.context("NATIVE_APP");
+    if ("CHROMIUM".equalsIgnoreCase(context)) {
+      return new ChromiumAppiumViewStrategy(ctx);
     }
+    return new NativeAppiumViewStrategy(ctx);
   }
-
-  private void ensureWebviewContext() {
-    if (!autoswitchContexts) return;
-    var switcher = (io.appium.java_client.remote.SupportsContextSwitching) driver;
-    var contexts = new java.util.ArrayList<>(switcher.getContextHandles());
-    for (int i = contexts.size() - 1; i >= 0; i--) {
-      String ctx = contexts.get(i);
-      if (ctx.contains("WEBVIEW")) {
-        switcher.context(ctx);
-        return;
-      }
-    }
-  }
-
-  private void scrollIntoView(WebElement element) {
-    if (platform == Platform.UIAUTOMATOR2) {
-      scrollIntoViewAndroid(element);
-    } else {
-      driver.executeScript(
-          "mobile: scrollToElement",
-          java.util.Map.of(
-              "elementId", ((org.openqa.selenium.remote.RemoteWebElement) element).getId()));
-    }
-  }
-
-  private void scrollIntoViewAndroid(WebElement element) {
-    if (element.isDisplayed()) return;
-    // Minimal fallback: skip swipe gesture implementation. Real impl
-    // should port the Python _scroll_into_view_android loop.
-    LOG.warn("Android scroll-into-view fallback is not implemented; element may be off-screen");
-  }
-
-  private static void sleep(double seconds) {
-    if (seconds <= 0) return;
-    try {
-      Thread.sleep((long) (seconds * 1000d));
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
-  }
-
-  // endregion
 }

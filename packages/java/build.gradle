@@ -56,6 +56,7 @@ ext {
     junitVersion = '5.11.4'
     assertjVersion = '3.26.3'
     slf4jVersion = '2.0.16'
+    jsoupVersion = '1.17.2'
 }
 
 dependencies {
@@ -72,6 +73,9 @@ dependencies {
     api "org.seleniumhq.selenium:selenium-java:${seleniumVersion}"
     api "com.microsoft.playwright:playwright:${playwrightVersion}"
     api "io.appium:java-client:${appiumVersion}"
+    
+    // HTML parsing for WebView accessibility tree
+    implementation "org.jsoup:jsoup:${jsoupVersion}"
 
     // Testing
     testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"

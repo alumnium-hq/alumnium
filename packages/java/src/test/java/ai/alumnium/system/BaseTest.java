@@ -14,9 +14,9 @@ import io.appium.java_client.ios.options.XCUITestOptions;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.time.Duration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
@@ -37,6 +37,7 @@ public class BaseTest {
   private static final boolean PLAYWRIGHT_HEADLESS =
       !"false".equalsIgnoreCase(System.getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS"));
 
+  // Playwright-only: kept as fields so GC does not kill the Playwright process mid-run
   private static Playwright playwright;
   private static Browser browser;
 
