@@ -3,7 +3,6 @@ package ai.alumnium;
 import ai.alumnium.Alumni.CheckOptions;
 import ai.alumnium.Alumni.VisionOptions;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
-import ai.alumnium.client.Data;
 import ai.alumnium.client.FindElementResult;
 import ai.alumnium.client.HttpClient;
 import ai.alumnium.client.HttpClient.ActionResult;
@@ -148,7 +147,7 @@ public class Area {
    * @param data the data to get
    * @return the data
    */
-  public Data get(String data) {
+  public Object get(String data) {
     return get(data, new VisionOptions(false));
   }
 
@@ -159,7 +158,7 @@ public class Area {
    * @param opts the options for the get
    * @return the data
    */
-  public Data get(String data, VisionOptions opts) {
+  public Object get(String data, VisionOptions opts) {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
@@ -172,7 +171,7 @@ public class Area {
                   vision ? this.driver.screenshot() : null,
                   this.driver.app());
 
-          return result.result();
+          return result.result().toObject();
         });
   }
 

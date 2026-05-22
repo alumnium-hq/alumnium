@@ -21,18 +21,18 @@ public class TabsTest extends BaseTest {
     navigate(MULTI_TAB_URL);
 
     al.act("click on 'Open New Tab' button");
-    Assertions.assertEquals("about:blank", al.get("current page URL").toObject());
+    Assertions.assertEquals("about:blank", al.get("current page URL"));
 
     al.act("switch to previous browser tab");
-    Assertions.assertEquals("Multi-Tab Test Page", al.get("header text").toObject());
+    Assertions.assertEquals("Multi-Tab Test Page", al.get("header text"));
 
     al.act("switch to next browser tab");
-    Assertions.assertEquals("about:blank", al.get("current page URL").toObject());
+    Assertions.assertEquals("about:blank", al.get("current page URL"));
 
     al.act("switch to next browser tab");
-    Assertions.assertEquals("Multi-Tab Test Page", al.get("header text").toObject());
+    Assertions.assertEquals("Multi-Tab Test Page", al.get("header text"));
 
     al.act("switch to previous browser tab");
-    Assertions.assertEquals("about:blank", al.get("current page URL").toObject());
+    Assertions.assertEquals("about:blank", al.get("current page URL"));
   }
 }

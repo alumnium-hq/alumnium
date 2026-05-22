@@ -1,7 +1,6 @@
 package ai.alumnium.system;
 
 import ai.alumnium.Alumni;
-import ai.alumnium.client.Data;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +14,7 @@ public class DragAndDropTest extends BaseTest {
   @Test
   void testDragAndDrop() {
     navigate(DRAG_AND_DROP_URL);
-    Data data =
+    Object data =
         al.get("titles of squares ordered from left to right", new Alumni.VisionOptions(true));
     Assertions.assertEquals(List.of("A", "B"), listFromGet(data));
 
@@ -30,11 +29,10 @@ public class DragAndDropTest extends BaseTest {
     al.close();
   }
 
-  private static List<String> listFromGet(Data data) {
-    Object raw = data.toObject();
+  private static List<String> listFromGet(Object data) {
     Assertions.assertInstanceOf(
-        List.class, raw, () -> "expected list result, got: " + (raw == null ? "null" : raw));
-    List<?> items = (List<?>) raw;
+        List.class, data, () -> "expected list result, got: " + (data == null ? "null" : data));
+    List<?> items = (List<?>) data;
     return items.stream().map(String::valueOf).toList();
   }
 }
