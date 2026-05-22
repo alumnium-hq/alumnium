@@ -30,17 +30,25 @@ repositories {
 }
 
 spotless {
-        java {
-            target 'src/**/*.java', 'test/**/*.java'
+    java {
+        target 'src/**/*.java', 'test/**/*.java'
 
-            importOrder()
-            forbidWildcardImports()
-            googleJavaFormat()
-            removeUnusedImports()
-            trimTrailingWhitespace()
-            endWithNewline()
-        }
+        importOrder()
+        forbidWildcardImports()
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
     }
+
+    groovyGradle {
+        target '*.gradle'
+        greclipse()
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
 
 ext {
     jacksonVersion = '2.18.2'
@@ -81,7 +89,11 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.compilerArgs.addAll(['-Xlint:all', '-Xlint:-serial', '-parameters'])
+    options.compilerArgs.addAll([
+        '-Xlint:all',
+        '-Xlint:-serial',
+        '-parameters'
+    ])
 }
 
 testing {
@@ -102,6 +114,57 @@ testing {
         }
     }
 }
+
+mavenPublishing {
+    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, true)
+    signAllPublications()
+
+    coordinates('ai.alumnium', 'alumnium', project.version.toString())
+
+    pom {
+        name = 'Alumnium'
+        description = 'End-to-end testing with AI.'
+        url = 'https://alumnium.ai'
+        licenses {
+            license {
+                name = 'MIT License'
+                url = 'https://opensource.org/licenses/MIT'
+            }
+        }
+        developers {
+            developer {
+                id = 'p0deje'
+                name = 'Alex Rodionov'
+            }
+            developer {
+                id = 'rookieintraing'
+                name = 'Ish Abbi'
+            }
+        }
+        scm {
+            url = 'https://github.com/alumnium-hq/alumnium'
+            connection = 'scm:git:https://github.com/alumnium-hq/alumnium.git'
+            developerConnection = 'scm:git:ssh://git@github.com/alumnium-hq/alumnium.git'
+        }
+    }
+}
+
+// Skip signing when GPG credentials aren't provided (e.g. publishToMavenLocal
+// during smoke tests). Maven Central publish always has the key set.
+def signingKey = providers.gradleProperty('signingInMemoryKey')
+tasks.withType(Sign).configureEach {
+    onlyIf { signingKey.isPresent() }
+}
+
+def cliPlatforms = [
+    'darwin-arm64',
+    'darwin-x64',
+    'linux-arm64',
+    'linux-x64',
+    'windows-arm64',
+    'windows-x64'
+]
+def tsMavenDir = file("${rootProject.projectDir}/../typescript/dist/maven")
 
 publishing {
     publications {
@@ -142,7 +205,11 @@ publishing {
 tasks.register('installPlaywright', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.microsoft.playwright.CLI'
-    args = ['install', 'chromium', '--with-deps']
+    args = [
+        'install',
+        'chromium',
+        '--with-deps'
+    ]
 }
 
 tasks.register('copyDriverScripts', Copy) {

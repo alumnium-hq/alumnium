@@ -21,7 +21,7 @@ run = "./gradlew --no-daemon check -x test"
 
 [tasks.format]
 run = "./gradlew clean --no-daemon spotlessApply"
-description = "Apply Spotless formatting to Java sources"
+description = "Apply Spotless formatting to Java and Gradle sources"
 
 [tasks.types]
 run = "./gradlew --no-daemon compileJava compileTestJava"
