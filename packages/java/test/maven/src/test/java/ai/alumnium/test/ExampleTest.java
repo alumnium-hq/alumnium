@@ -23,8 +23,7 @@ class ExampleTest {
       try (Alumni al = new Alumni(page)) {
         page.navigate("https://seleniumbase.io/apps/calculator");
         al.act("2 + 2 =");
-        Object result = al.get("calculator result from textfield").toObject();
-        assertEquals(4L, result);
+        assertEquals(4L, al.get("calculator result from textfield"));
       } finally {
         browser.close();
       }
