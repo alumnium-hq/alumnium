@@ -52,6 +52,7 @@ public final class HttpClient implements AutoCloseable {
 
   private final java.net.http.HttpClient http;
   private final String baseUrl;
+  private final Model model;
   private final AtomicReference<String> sessionId = new AtomicReference<>();
   private volatile String managedPidName;
   private Thread shutdownHook;
@@ -59,7 +60,8 @@ public final class HttpClient implements AutoCloseable {
   /**
    * @param url server base URL; null or blank auto-starts a managed server (requires an {@code
    *     alumnium-cli-*} JAR on the classpath); explicit values without a scheme get {@code http://}
-   * @param model {@link Model} to be used by the session
+   * @param model {@link Model} to be used by the session; {@code null} lets the server pick a
+   *     default
    * @param platform driver platform string (e.g. {@code "web-selenium"})
    * @param toolSchemas JSON-serialisable tool schemas (maps or annotated POJOs)
    * @param planner enable the planner agent
@@ -80,8 +82,10 @@ public final class HttpClient implements AutoCloseable {
     this.baseUrl = resolveUrl(url);
 
     Map<String, Object> body = new LinkedHashMap<>();
-    body.put("provider", model.provider().value());
-    body.put("name", model.name());
+    if (model != null) {
+      body.put("provider", model.provider().value());
+      body.put("name", model.name());
+    }
     body.put("tools", toolSchemas == null ? List.of() : toolSchemas);
     body.put("platform", platform);
     body.put("planner", planner);
@@ -90,11 +94,16 @@ public final class HttpClient implements AutoCloseable {
         excludeAttributes == null ? List.of() : List.copyOf(excludeAttributes));
 
     JsonNode resp = postJson("/v1/sessions", body, Duration.ofSeconds(30));
+    this.model = Model.fromString(resp.path("model").asText(null));
     sessionId.set(resp.path("session_id").asText(null));
   }
 
   public String baseUrl() {
     return baseUrl;
+  }
+
+  public Model model() {
+    return model;
   }
 
   public String sessionId() {
