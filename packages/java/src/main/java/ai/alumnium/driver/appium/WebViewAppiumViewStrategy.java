@@ -7,6 +7,7 @@ import ai.alumnium.driver.Key;
 import java.util.List;
 import java.util.Map;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -22,6 +23,15 @@ public final class WebViewAppiumViewStrategy implements AppiumViewStrategy {
 
   @Override
   public BaseAccessibilityTree accessibilityTree() {
+    // The value IDL attribute (set via JS) is not serialised into outerHTML; copy it to a
+    // data attribute first so that WebViewAccessibilityTree can expose it to the AI.
+    try {
+      ((JavascriptExecutor) ctx.driver())
+          .executeScript(
+              "document.querySelectorAll('input,textarea,select').forEach(function(el){"
+                  + "el.setAttribute('data-al-live-value',el.value);});");
+    } catch (Exception ignored) {
+    }
     String html = ctx.driver().getPageSource();
     return new WebViewAccessibilityTree(html);
   }
@@ -55,7 +65,23 @@ public final class WebViewAppiumViewStrategy implements AppiumViewStrategy {
 
   @Override
   public void dragAndDrop(int fromId, int toId) {
-    new Actions(ctx.driver()).dragAndDrop(findRaw(fromId), findRaw(toId)).perform();
+    WebElement from = findRaw(fromId);
+    WebElement to = findRaw(toId);
+    // Touch pointer gestures do not trigger HTML5 dragstart/drop events on mobile Chrome;
+    // dispatch drag events directly via JavaScript instead.
+    ((JavascriptExecutor) ctx.driver())
+        .executeScript(
+            "var dt = new DataTransfer();"
+                + "arguments[0].dispatchEvent(new DragEvent('dragstart', {dataTransfer: dt,"
+                + " bubbles: true}));"
+                + "arguments[1].dispatchEvent(new DragEvent('dragover',  {dataTransfer: dt,"
+                + " bubbles: true}));"
+                + "arguments[1].dispatchEvent(new DragEvent('drop',      {dataTransfer: dt,"
+                + " bubbles: true}));"
+                + "arguments[0].dispatchEvent(new DragEvent('dragend',   {dataTransfer: dt,"
+                + " bubbles: true}));",
+            from,
+            to);
   }
 
   @Override
@@ -73,8 +99,24 @@ public final class WebViewAppiumViewStrategy implements AppiumViewStrategy {
   @Override
   public void type(int id, String text) {
     WebElement element = findRaw(id);
-    element.clear();
-    element.sendKeys(text);
+    ((JavascriptExecutor) ctx.driver())
+        .executeScript("arguments[0].scrollIntoView(true);", element);
+    try {
+      element.clear();
+      element.sendKeys(text);
+    } catch (ElementNotInteractableException e) {
+      // Element may be covered by an overlay (e.g. consent dialog) on mobile; use JS input.
+      ((JavascriptExecutor) ctx.driver())
+          .executeScript(
+              "arguments[0].focus();"
+                  + "var s = Object.getOwnPropertyDescriptor("
+                  + "  window.HTMLInputElement.prototype,'value').set;"
+                  + "s.call(arguments[0],arguments[1]);"
+                  + "arguments[0].dispatchEvent(new Event('input',{bubbles:true}));"
+                  + "arguments[0].dispatchEvent(new Event('change',{bubbles:true}));",
+              element,
+              text);
+    }
   }
 
   @Override

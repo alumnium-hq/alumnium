@@ -64,6 +64,21 @@ public final class WebViewAccessibilityTree extends BaseAccessibilityTree {
       xmlEl.setAttribute("text", text);
     }
 
+    String draggable = jsoupEl.attr("draggable");
+    if ("true".equalsIgnoreCase(draggable)) {
+      xmlEl.setAttribute("draggable", "true");
+    }
+
+    // Expose live form-element value injected by WebViewAppiumViewStrategy.accessibilityTree()
+    String liveValue = jsoupEl.attr("data-al-live-value");
+    if (!liveValue.isEmpty()) {
+      xmlEl.setAttribute("value", liveValue);
+      if (text.isEmpty()) {
+        xmlEl.setAttribute("name", liveValue);
+        xmlEl.setAttribute("text", liveValue);
+      }
+    }
+
     try {
       Map<String, Object> locator = new LinkedHashMap<>();
       locator.put("selector", computeSelector(jsoupEl));
@@ -90,7 +105,13 @@ public final class WebViewAccessibilityTree extends BaseAccessibilityTree {
 
   private static String computeSelector(Element el) {
     String id = el.id();
-    if (!id.isEmpty()) return "#" + id;
+    if (!id.isEmpty()) {
+      // CSS id-selectors starting with a digit are invalid; use attribute selector instead
+      if (Character.isDigit(id.charAt(0))) {
+        return "[id=\"" + id.replace("\\", "\\\\").replace("\"", "\\\"") + "\"]";
+      }
+      return "#" + id;
+    }
 
     String tag = el.tagName().toLowerCase();
     if (tag.equals("html")) return "html";

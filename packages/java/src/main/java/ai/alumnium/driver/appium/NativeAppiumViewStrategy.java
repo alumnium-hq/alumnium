@@ -61,7 +61,27 @@ public final class NativeAppiumViewStrategy implements AppiumViewStrategy {
     WebElement from = findRaw(fromId);
     WebElement to = findRaw(toId);
     scrollIntoView(from);
-    new Actions(ctx.driver()).clickAndHold(from).moveToElement(to).release().perform();
+    int fromX = from.getLocation().getX() + from.getSize().getWidth() / 2;
+    int fromY = from.getLocation().getY() + from.getSize().getHeight() / 2;
+    int toX = to.getLocation().getX() + to.getSize().getWidth() / 2;
+    int toY = to.getLocation().getY() + to.getSize().getHeight() / 2;
+    if (ctx.platform() == Platform.UIAUTOMATOR2) {
+      ctx.driver()
+          .executeScript(
+              "mobile: dragGesture",
+              Map.<String, Object>of(
+                  "startX", fromX, "startY", fromY, "endX", toX, "endY", toY, "speed", 2500));
+    } else {
+      ctx.driver()
+          .executeScript(
+              "mobile: drag",
+              Map.<String, Object>of(
+                  "startX", (double) fromX,
+                  "startY", (double) fromY,
+                  "endX", (double) toX,
+                  "endY", (double) toY,
+                  "duration", 1.0));
+    }
   }
 
   @Override

@@ -26,7 +26,9 @@ import org.openqa.selenium.TakesScreenshot;
  * <ul>
  *   <li>{@code NATIVE_APP} (or unknown) → {@link NativeAppiumViewStrategy}
  *   <li>Contains {@code WEBVIEW} → {@link WebViewAppiumViewStrategy}
- *   <li>{@code CHROMIUM} → {@link ChromiumAppiumViewStrategy}
+ *   <li>{@code CHROMIUM} + driver implements {@code HasCdp} → {@link ChromiumAppiumViewStrategy}
+ *   <li>{@code CHROMIUM} without CDP (e.g. {@code AndroidDriver} on Chrome) → {@link
+ *       WebViewAppiumViewStrategy}
  * </ul>
  */
 public final class AppiumDriver extends BaseDriver {
@@ -184,7 +186,11 @@ public final class AppiumDriver extends BaseDriver {
       return new WebViewAppiumViewStrategy(ctx);
     }
     if ("CHROMIUM".equalsIgnoreCase(context)) {
-      return new ChromiumAppiumViewStrategy(ctx);
+      // AndroidDriver does not implement HasCdp; fall back to HTML-based parsing
+      if (driver instanceof org.openqa.selenium.chromium.HasCdp) {
+        return new ChromiumAppiumViewStrategy(ctx);
+      }
+      return new WebViewAppiumViewStrategy(ctx);
     }
     return new NativeAppiumViewStrategy(ctx);
   }

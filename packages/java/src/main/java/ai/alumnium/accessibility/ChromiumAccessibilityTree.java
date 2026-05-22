@@ -252,6 +252,7 @@ public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     try {
       TransformerFactory tf = TransformerFactory.newInstance();
       Transformer t = tf.newTransformer();
+      t.setOutputProperty(OutputKeys.METHOD, "xml");
       t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
       t.setOutputProperty(OutputKeys.INDENT, "yes");
       t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");

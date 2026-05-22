@@ -2,6 +2,7 @@ package ai.alumnium.driver.appium;
 
 import ai.alumnium.accessibility.ChromiumAccessibilityTree;
 import ai.alumnium.driver.Key;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -11,6 +12,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chromium.HasCdp;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +118,21 @@ public final class ChromiumAppiumViewStrategy implements AppiumViewStrategy {
 
   @Override
   public void dragAndDrop(int fromId, int toId) {
-    new Actions(ctx.driver()).dragAndDrop(findRaw(fromId), findRaw(toId)).perform();
+    WebElement from = findRaw(fromId);
+    WebElement to = findRaw(toId);
+    int fromX = from.getLocation().getX() + from.getSize().getWidth() / 2;
+    int fromY = from.getLocation().getY() + from.getSize().getHeight() / 2;
+    int toX = to.getLocation().getX() + to.getSize().getWidth() / 2;
+    int toY = to.getLocation().getY() + to.getSize().getHeight() / 2;
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+    Sequence drag = new Sequence(finger, 0);
+    drag.addAction(
+        finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), fromX, fromY));
+    drag.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    drag.addAction(
+        finger.createPointerMove(Duration.ofMillis(600), PointerInput.Origin.viewport(), toX, toY));
+    drag.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    ctx.driver().perform(List.of(drag));
   }
 
   @Override
