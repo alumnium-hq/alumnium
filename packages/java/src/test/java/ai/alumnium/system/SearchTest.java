@@ -17,6 +17,6 @@ class SearchTest extends BaseTest {
     al.act("type 'selenium' into the search field, then press 'Enter'");
     al.check("page title contains selenium");
     al.check("search results contain selenium.dev");
-    assertEquals(al.get("atomic number").toObject(), 34L);
+    assertEquals(al.get("atomic number"), 34L);
   }
 }

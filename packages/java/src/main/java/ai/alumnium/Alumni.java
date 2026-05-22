@@ -149,11 +149,11 @@ public final class Alumni implements AutoCloseable {
   }
 
   /** Extract data described in natural language from the current view. */
-  public Data get(String data) {
+  public Object get(String data) {
     return get(data, new VisionOptions(false));
   }
 
-  public Data get(String data, VisionOptions opts) {
+  public Object get(String data, VisionOptions opts) {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
@@ -169,7 +169,7 @@ public final class Alumni implements AutoCloseable {
           if (value == null || value.isNoop()) {
             return new Data.StringData(result.explanation());
           }
-          return value;
+          return value.toObject();
         });
   }
 
