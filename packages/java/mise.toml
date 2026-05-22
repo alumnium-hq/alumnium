@@ -1,42 +1,41 @@
 [tools]
 java = "21"
-gradle = "8.11.1"
 
 [tasks.install]
-run = "gradle --no-daemon dependencies -q || true"
+run = "./gradlew --no-daemon dependencies -q || true"
 
 [tasks."install/playwright"]
-run = "gradle --no-daemon installPlaywright"
+run = "./gradlew --no-daemon installPlaywright"
 # NOTE: It prompts for sudo to install OS dependencies
 raw = true
 
 [tasks.compile]
-run = "gradle --no-daemon compileJava"
+run = "./gradlew --no-daemon compileJava"
 
 [tasks.build]
-run = "gradle --no-daemon build -x test"
+run = "./gradlew --no-daemon build -x test"
 description = "Build main Java artifact"
 
 [tasks.lint]
-run = "gradle --no-daemon check -x test"
+run = "./gradlew --no-daemon check -x test"
 
 [tasks.format]
-run = "gradle clean --no-daemon spotlessApply"
+run = "./gradlew clean --no-daemon spotlessApply"
 description = "Apply Spotless formatting to Java sources"
 
 [tasks.types]
-run = "gradle --no-daemon compileJava compileTestJava"
+run = "./gradlew --no-daemon compileJava compileTestJava"
 
 [tasks."format/check"]
-run = "gradle clean --no-daemon spotlessCheck"
+run = "./gradlew clean --no-daemon spotlessCheck"
 description = "Verify Spotless formatting (CI-style)"
 
 [tasks.local_lib]
-run = "gradle --no-daemon publishToMavenLocal"
+run = "./gradlew --no-daemon publishToMavenLocal"
 description = "Publish main + classifier jars to local Maven repository"
 
 [tasks."test/unit"]
-run = "gradle clean --no-daemon test --tests 'ai.alumnium.unit.*'"
+run = "./gradlew clean --no-daemon test --tests 'ai.alumnium.unit.*'"
 description = "Run unit tests"
 
 [tasks."test/system"]
@@ -46,7 +45,7 @@ arg "<driver>" help="Driver to use for system tests" {
   default "selenium"
 }
 '''
-run = "ALUMNIUM_DRIVER={{usage.driver}} gradle clean --no-daemon test --tests 'ai.alumnium.system.*'"
+run = "ALUMNIUM_DRIVER={{usage.driver}} ./gradlew clean --no-daemon test --tests 'ai.alumnium.system.*'"
 
 [tasks."test/system:playwright"]
 run = [{ task = "test/system playwright" }]

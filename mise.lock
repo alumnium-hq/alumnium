@@ -266,54 +266,6 @@ url = "https://github.com/ollama/ollama/releases/download/v0.23.1/ollama-windows
 version = "0.48.0"
 backend = "npm:oxfmt"
 
-[[tools.oxipng]]
-version = "10.1.1"
-backend = "aqua:oxipng/oxipng"
-
-[tools.oxipng."platforms.linux-arm64"]
-checksum = "sha256:d8b599202378b038fc7571ba6ffd5f65592529a694f0315a7d436863c56029ed"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-aarch64-unknown-linux-musl.tar.gz"
-
-[tools.oxipng."platforms.linux-arm64-musl"]
-checksum = "sha256:d8b599202378b038fc7571ba6ffd5f65592529a694f0315a7d436863c56029ed"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-aarch64-unknown-linux-musl.tar.gz"
-
-[tools.oxipng."platforms.linux-x64"]
-checksum = "sha256:a7e13e06040dea5fe1298668ac99afbe0ed781610a9e4b27d62a8850b3fdf273"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-x86_64-unknown-linux-musl.tar.gz"
-
-[tools.oxipng."platforms.linux-x64-baseline"]
-checksum = "sha256:a7e13e06040dea5fe1298668ac99afbe0ed781610a9e4b27d62a8850b3fdf273"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-x86_64-unknown-linux-musl.tar.gz"
-
-[tools.oxipng."platforms.linux-x64-musl"]
-checksum = "sha256:a7e13e06040dea5fe1298668ac99afbe0ed781610a9e4b27d62a8850b3fdf273"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-x86_64-unknown-linux-musl.tar.gz"
-
-[tools.oxipng."platforms.linux-x64-musl-baseline"]
-checksum = "sha256:a7e13e06040dea5fe1298668ac99afbe0ed781610a9e4b27d62a8850b3fdf273"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-x86_64-unknown-linux-musl.tar.gz"
-
-[tools.oxipng."platforms.macos-arm64"]
-checksum = "sha256:615a401629b5cc104bdc775ac962abd67ab2f3084f0b3b1ba9c51e9b76c3964f"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-aarch64-apple-darwin.tar.gz"
-
-[tools.oxipng."platforms.macos-x64"]
-checksum = "sha256:8f23d1bc9cd5b3f88e84f1cca77b461f6900aa20f2ecbf84f729cd12530c5a53"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-x86_64-apple-darwin.tar.gz"
-
-[tools.oxipng."platforms.macos-x64-baseline"]
-checksum = "sha256:8f23d1bc9cd5b3f88e84f1cca77b461f6900aa20f2ecbf84f729cd12530c5a53"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-x86_64-apple-darwin.tar.gz"
-
-[tools.oxipng."platforms.windows-x64"]
-checksum = "sha256:0f57b33abb46c76258ac8e20be604a48208141d514bc2936b5200ed626976dd8"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-x86_64-pc-windows-msvc.zip"
-
-[tools.oxipng."platforms.windows-x64-baseline"]
-checksum = "sha256:0f57b33abb46c76258ac8e20be604a48208141d514bc2936b5200ed626976dd8"
-url = "https://github.com/oxipng/oxipng/releases/download/v10.1.1/oxipng-10.1.1-x86_64-pc-windows-msvc.zip"
-
 [[tools."pipx:pyprojectsort"]]
 version = "0.4.0"
 backend = "pipx:pyprojectsort"
