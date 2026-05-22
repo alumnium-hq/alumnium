@@ -1,7 +1,6 @@
 package ai.alumnium.system;
 
 import ai.alumnium.Alumni;
-import ai.alumnium.client.Data;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;

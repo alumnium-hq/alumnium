@@ -3,7 +3,6 @@ package ai.alumnium;
 import ai.alumnium.Alumni.CheckOptions;
 import ai.alumnium.Alumni.VisionOptions;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
-import ai.alumnium.client.Data;
 import ai.alumnium.client.FindElementResult;
 import ai.alumnium.client.HttpClient;
 import ai.alumnium.client.HttpClient.ActionResult;
