@@ -10,7 +10,7 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'maven-publish'
-    id 'signing'
+    id 'com.vanniktech.maven.publish' version '0.30.0'
     id 'com.diffplug.spotless' version '8.5.0'
 }
 
@@ -21,8 +21,6 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-    withSourcesJar()
-    withJavadocJar()
 }
 
 repositories {
@@ -168,36 +166,34 @@ def tsMavenDir = file("${rootProject.projectDir}/../typescript/dist/maven")
 
 publishing {
     publications {
-        main(MavenPublication) {
-            from components.java
-            artifactId = 'alumnium'
-            pom {
-                name = 'Alumnium'
-                description = 'AI-powered test automation framework (Java client).'
-                url = 'https://alumnium.ai'
-                licenses {
-                    license {
-                        name = 'MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
-                developers {
-                    developer { id = 'p0deje'; name = 'Alex Rodionov' }
-                    developer { id = 'rookieintraing';   name = 'Ish Abbi' }
-                }
-                scm {
-                    url = 'https://github.com/alumnium-hq/alumnium'
-                    connection = 'scm:git:https://github.com/alumnium-hq/alumnium.git'
-                    developerConnection = 'scm:git:ssh://git@github.com/alumnium-hq/alumnium.git'
+        cliPlatforms.each { platform ->
+            def safe = platform.replace('-', '_')
+            // Per-platform empty source/javadoc jars: sharing across publications
+            // causes sign tasks to produce the same .asc path, which Gradle flags
+            // as an implicit cross-task dependency.
+            def sourcesJarTask = tasks.register("emptyCliSourcesJar_${safe}", Jar) {
+                archiveBaseName = "alumnium-cli-${platform}"
+                archiveClassifier = 'sources'
+            }
+            def javadocJarTask = tasks.register("emptyCliJavadocJar_${safe}", Jar) {
+                archiveBaseName = "alumnium-cli-${platform}"
+                archiveClassifier = 'javadoc'
+            }
+
+            "cli_${safe}"(MavenPublication) {
+                groupId = 'ai.alumnium'
+                artifactId = "alumnium-cli-${platform}"
+                version = project.version
+
+                artifact("${tsMavenDir}/alumnium-cli-${platform}-${project.version}.jar")
+                artifact(sourcesJarTask)
+                artifact(javadocJarTask)
+
+                pom {
+                    name = "Alumnium CLI (${platform})"
+                    description = "Platform-specific Alumnium CLI binary for ${platform}."
                 }
             }
-        }
-    }
-
-    repositories {
-        maven {
-            name = 'localStaging'
-            url = layout.buildDirectory.dir('staging-deploy')
         }
     }
 }
@@ -220,9 +216,4 @@ tasks.register('copyDriverScripts', Copy) {
 
 tasks.named('processResources') {
     dependsOn copyDriverScripts
-}
-
-signing {
-    required = { gradle.taskGraph.hasTask('publish') && !version.toString().endsWith('SNAPSHOT') }
-    sign publishing.publications
 }

@@ -14,6 +14,10 @@ on:
         description: Publish npm packages
         type: boolean
         default: true
+      java:
+        description: Publish Maven packages
+        type: boolean
+        default: true
       github:
         description: Create GitHub release
         type: boolean
@@ -91,6 +95,38 @@ jobs:
 
       - name: Publish npm Packages
         run: mise //packages/typescript:publish
+
+      - name: Debug Session
+        if: failure() && runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+
+  java:
+    name: Java
+    if: inputs.java
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+
+      - name: Set Up Dev Env
+        uses: ./.github/actions/setup
+
+      - name: Build TypeScript Dist
+        run: mise //packages/typescript:build
+
+      - name: Publish to Maven Central
+        run: mise //packages/java:publish
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.MAVEN_SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.MAVEN_SIGNING_KEY_PASSWORD }}
 
       - name: Debug Session
         if: failure() && runner.debug == '1'

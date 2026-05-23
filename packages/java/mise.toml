@@ -34,6 +34,10 @@ description = "Verify Spotless formatting (CI-style)"
 run = "./gradlew --no-daemon publishToMavenLocal"
 description = "Publish main + classifier jars to local Maven repository"
 
+[tasks.publish]
+run = "./gradlew --no-daemon publishAndReleaseToMavenCentral --no-configuration-cache"
+description = "Publish main + CLI artifacts to Maven Central (auto-release)"
+
 [tasks."test/unit"]
 run = "./gradlew clean --no-daemon test --tests 'ai.alumnium.unit.*'"
 description = "Run unit tests"
