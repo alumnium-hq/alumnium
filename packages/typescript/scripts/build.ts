@@ -98,7 +98,6 @@ const PYPROJECT_NAME = "pyproject.toml";
 
 // Maven paths
 const MAVEN_CLI_PKG_NAME = "alumnium-cli";
-const MAVEN_GROUP_ID = "ai.alumnium";
 const MAVEN_RESOURCE_PREFIX = "ai/alumnium/cli";
 const DIST_MAVEN_DIR = path.resolve(DIST_DIR, "maven");
 
@@ -586,27 +585,6 @@ __all__ = ["bin_path"]
           fs.mkdir(metaInfDir, { recursive: true }),
         ]);
 
-        const pomXml = `<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>${MAVEN_GROUP_ID}</groupId>
-  <artifactId>${maven.name}</artifactId>
-  <version>${ALUMNIUM_VERSION}</version>
-  <packaging>jar</packaging>
-  <name>Alumnium CLI binary for ${target}</name>
-  <description>Platform-specific alumnium CLI binary for ${target}.</description>
-  <url>https://alumnium.ai</url>
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>https://opensource.org/licenses/MIT</url>
-    </license>
-  </licenses>
-</project>
-`;
-
         await Promise.all([
           // README.md/LICENSE.md are staged at the package root by
           // buildTargetPkgCommons; move them under META-INF/ so they ship
@@ -623,16 +601,12 @@ __all__ = ["bin_path"]
             path.resolve(maven.dir, platformPrefix, "binary.properties"),
             `name=${binName}\nresource=${binResourcePath}\n`,
           ),
-          fs.writeFile(path.resolve(maven.dir, "pom.xml"), pomXml),
         ]);
 
         // Build JAR containing binary.properties, the binary, and META-INF docs
         const jarName = `${maven.name}-${ALUMNIUM_VERSION}.jar`;
         const jarPath = path.resolve(DIST_MAVEN_DIR, jarName);
         await $`jar cf ${jarPath} -C ${maven.dir} ${platformPrefix}/binary.properties -C ${maven.dir} ${binResourcePath} -C ${maven.dir} META-INF/LICENSE.md -C ${maven.dir} META-INF/README.md`;
-
-        // Copy pom.xml to dist/maven/ for publishing
-        await $`cp ${path.resolve(maven.dir, "pom.xml")} ${path.resolve(DIST_MAVEN_DIR, `${maven.name}-${ALUMNIUM_VERSION}.pom`)}`;
 
         console.log(`🟢 ${maven.name} (${cwdRelPath(jarPath)})`);
       }),
