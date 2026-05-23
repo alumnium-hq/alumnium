@@ -6,8 +6,9 @@ AI-powered test automation framework using natural language commands. Wraps Appi
 
 **Monorepo structure**:
 
-- `packages/typescript/` - Primary implementation + MCP and AI servers
-- `packages/python/` - Client implementation
+- `packages/java/` - Java client implementation
+- `packages/python/` - Python client implementation
+- `packages/typescript/` - TypeScript core implementation (agents, server, MCP) and client
 
 ## Key Architecture
 
@@ -27,60 +28,35 @@ AI-powered test automation framework using natural language commands. Wraps Appi
 - `accessibility/` - Platform-specific tree implementations (Chromium, XCUITest, UIAutomator2)
 - `drivers/` - Driver wrappers (`SeleniumDriver`, `PlaywrightDriver`, `AppiumDriver`)
 - `clients/` - `HttpClient` (communicates with server), `NativeClient` (Python only, runs agents locally)
-- `tools/` - Available actions (`ClickTool`, `TypeTool`, etc.)
 - `server/agents/` - AI agents with provider-specific prompts (Python only)
+- `tools/` - Available actions (`ClickTool`, `TypeTool`, etc.)
 
 ## Development
 
-### Common commands
+### Package commands
+
+Each package (java, python, typescript) has development commands:
 
 ```bash
-# Root
-mise :install                         # or cd packages/{python,typescript} and install separately
-mise :build                           # Build all
-mise :format                          # Format code
-mise :types                           # Check types
-mise :lint                            # Run linter
-mise :test/unit                       # Run unit tests
-mise :test/system                     # Run all system tests
+mise //packages/{package-name}:build                       # Build
+mise //packages/{package-name}:format                      # Format code
+mise //packages/{package-name}:types                       # Check types
+mise //packages/{package-name}:lint                        # Run linter
+mise //packages/{package-name}:test/unit                   # Run unit tests
+mise //packages/{package-name}:test/system:appium-ios      # Run Appium iOS system tests
+mise //packages/{package-name}:test/system:appium-android  # Run Appium Android system tests
+mise //packages/{package-name}:test/system:playwright      # Run Playwright system tests
+mise //packages/{package-name}:test/system:selenium        # Run Selenium system tests
+```
 
-# Java
-cd packages/java
-mise :build                           # Build
-mise :format                          # Format code
-mise :types                           # Check types
-mise :lint                            # Run linter
-mise :test/unit                       # Run unit tests
-mise :test/system:playwright          # Run Playwright system tests
-mise :test/system:selenium            # Run Selenium system tests
+### Core Commands
 
-# Python
-cd packages/python
-mise :build                           # Build
-mise :format                          # Format code
-mise :types                           # Check types
-mise :lint                            # Run linter
-mise :test/unit                       # Run unit tests
-TEST_ONLY=behave mise :test/system    # Run BDD system tests
-TEST_ONLY=pytest mise :test/system    # Run Pytest system tests
-mise :test/system:playwright          # Run Playwright system tests
-mise :test/system:selenium            # Run Selenium system tests
-mise :test/system:appium-ios          # Run Appium iOS system tests
-mise :test/system:appium-android      # Run Appium Android system tests
+TypeScript core provides extra commands:
 
-# TypeScript
-cd packages/typescript
-mise :build                           # Build
-mise :format                          # Format code
-mise :types                           # Check types
-mise :lint                            # Run linter
-mise :test/unit                       # Run unit tests
-mise :test/system:playwright          # Run Playwright system tests
-mise :test/system:selenium            # Run Selenium system tests
-mise :test/system:appium-ios          # Run Appium iOS system tests
-mise :test/system:appium-android      # Run Appium Android system tests
-mise :dev/mcp                         # Start Alumnium MCP
-mise :dev/server                      # Start Alumnium server
+```bash
+mise //packages/typescript:eval        # Run agent evaluations
+mise //packages/typescript:dev/mcp     # Start Alumnium MCP
+mise //packages/typescript:dev/server  # Start Alumnium server
 ```
 
 ## Best Practices
