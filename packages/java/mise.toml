@@ -30,7 +30,7 @@ run = "./gradlew --no-daemon compileJava compileTestJava"
 run = "./gradlew clean --no-daemon spotlessCheck"
 description = "Verify Spotless formatting (CI-style)"
 
-[tasks.local_lib]
+[tasks."publish/local"]
 run = "./gradlew --no-daemon publishToMavenLocal"
 description = "Publish main + classifier jars to local Maven repository"
 
