@@ -67,8 +67,6 @@ dependencies {
     testImplementation 'ai.alumnium:alumnium:${ALUMNIUM_VERSION}'
     testRuntimeOnly 'ai.alumnium:alumnium-cli-${CLI_TARGET}:${ALUMNIUM_VERSION}'
     testImplementation 'com.microsoft.playwright:playwright:1.60.0'
-    testImplementation 'org.seleniumhq.selenium:selenium-java:4.27.0'
-    testImplementation 'io.appium:java-client:9.3.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.16'
