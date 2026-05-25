@@ -1,7 +1,7 @@
 package ai.alumnium;
 
 import ai.alumnium.Alumni.CheckOptions;
-import ai.alumnium.Alumni.VisionOptions;
+import ai.alumnium.Alumni.GetOptions;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
 import ai.alumnium.client.FindElementResult;
 import ai.alumnium.client.HttpClient;
@@ -148,7 +148,7 @@ public class Area {
    * @return the data
    */
   public Object get(String data) {
-    return get(data, new VisionOptions(false));
+    return get(data, new GetOptions(false));
   }
 
   /**
@@ -158,7 +158,7 @@ public class Area {
    * @param opts the options for the get
    * @return the data
    */
-  public Object get(String data, VisionOptions opts) {
+  public Object get(String data, GetOptions opts) {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
