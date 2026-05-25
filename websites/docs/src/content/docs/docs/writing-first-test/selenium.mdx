@@ -8,6 +8,14 @@ import LanguageContent from "../../../../components/LanguageContent.astro";
 
 Let's see how we can write a simple test that would use [Selenium][4] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
 
+<LanguageContent lang="java">
+
+:::note
+Alumnium can be used with any test runner you like. For the examples in this guide, we'll use [JUnit][5] with [Gradle][6].
+:::
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 :::note
@@ -27,6 +35,38 @@ Alumnium can be used with any test runner you like. For the examples in this gui
 ## Install Dependencies
 
 Make sure you have Alumnium installed in your project.
+
+<LanguageContent lang="java">
+
+```groovy title="build.gradle"
+plugins {
+    id 'java'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'ai.alumnium:alumnium:0.21.0'
+    testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.21.0' // adjust as needed
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.27.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly    'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -48,6 +88,44 @@ $ npm install ts-node @types/mocha @types/selenium-webdriver  # for TypeScript
 ## Setup Browser
 
 Start by creating a test file for your tests and instantiating a browser instance:
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java"
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class SearchTest {
+  private ChromeDriver driver;
+
+  @BeforeEach
+  void setUp() {
+    driver = new ChromeDriver();
+  }
+
+  @AfterEach
+  void tearDown() {
+    driver.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+  }
+}
+```
+
+Now run the test. You should see a Chrome browser window with DuckDuckGo opened.
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 4s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -127,6 +205,50 @@ $ npx mocha
 ## Setup Alumnium
 
 Now let’s add the code that would instantiate Alumnium using the browser. We can use a test fixture to ensure proper setup and teardown of the Alumnium instance:
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={1, 8, 14, 20} del={19}
+import ai.alumnium.Alumni;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class SearchTest {
+  private Alumni al;
+  private ChromeDriver driver;
+
+  @BeforeEach
+  void setUp() {
+    driver = new ChromeDriver();
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    driver.quit();
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+  }
+}
+```
+
+`Alumni` shuts down both the AI session and the wrapped driver when `quit()` is called, so an explicit `driver.quit()` is no longer needed.
+
+The test should still work fine, let's re-run it to make sure:
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 8s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -213,6 +335,47 @@ If you are getting errors about missing API keys, make sure you [configured][1] 
 
 Now let's add some actions that Alumnium should **do** on the page. Our test needs to search for a Mercury element, so let's use this exact command:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={25}
+import ai.alumnium.Alumni;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class SearchTest {
+  private Alumni al;
+  private ChromeDriver driver;
+
+  @BeforeEach
+  void setUp() {
+    driver = new ChromeDriver();
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+  }
+}
+```
+
+Run the test, you should now see "Mercury element" typed in the search box and the page with results loaded.
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 15s
+```
+
+</LanguageContent>
 <LanguageContent lang="python">
 
 ```python title="test_search.py" ins={22}
@@ -297,6 +460,51 @@ $ npx mocha
 The next step is to add some verifications that Alumnium should **check** on the page. We are going to add two of them, one that checks that the page title contains the search keyword and one to see if the Wikipedia article is present in the results.
 
 Common wisdom says to _never trust a test you haven't seen fail_. Let's add the first verification and see it fail!
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={26}
+import ai.alumnium.Alumni;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class SearchTest {
+  private Alumni al;
+  private ChromeDriver driver;
+
+  @BeforeEach
+  void setUp() {
+    driver = new ChromeDriver();
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Aluminium word");
+  }
+}
+```
+
+Now let's run our test:
+
+```bash title="Running test" wrap {3}
+$ ./gradlew test --info
+...
+java.lang.AssertionError: The requested information is whether the page title contains the word 'Aluminium'. The provided webpage title is 'Mercury element at DuckDuckGo', which does not contain 'Aluminium'. Therefore the value is false.
+...
+BUILD FAILED in 20s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -383,6 +591,53 @@ $ npx mocha
 Our test failed as we expected and provided a meaningful explanation of what went wrong.
 
 Let's fix the first check and add another one to fail again:
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={26} ins={27-28}
+import ai.alumnium.Alumni;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class SearchTest {
+  private Alumni al;
+  private ChromeDriver driver;
+
+  @BeforeEach
+  void setUp() {
+    driver = new ChromeDriver();
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Aluminium word");
+    al.check("page title contains Mercury word");
+    al.check("search results do not contain Wikipedia articles");
+  }
+}
+```
+
+Time to re-run the test:
+
+```bash title="Running test" wrap {3}
+$ ./gradlew test
+...
+java.lang.AssertionError: The search results do contain links to Wikipedia articles, specifically mentioning 'Mercury (element) - Wikipedia' and providing a link to the Wikipedia page for Mercury. Therefore, the statement is false.
+...
+BUILD FAILED in 20s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -472,6 +727,50 @@ $ npx mocha
 
 Ok, the test failed as we wanted it to, let's fix it:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={27} ins={28}
+import ai.alumnium.Alumni;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class SearchTest {
+  private Alumni al;
+  private ChromeDriver driver;
+
+  @BeforeEach
+  void setUp() {
+    driver = new ChromeDriver();
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results do not contain Wikipedia articles");
+    al.check("search results contain Wikipedia articles");
+  }
+}
+```
+
+Now, re-run to make sure it passes:
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 37s
+```
+
+</LanguageContent>
 <LanguageContent lang="python">
 
 ```python title="test_search.py" del={24} ins={25}
@@ -553,6 +852,57 @@ $ npx mocha
 Finally, let's verify some data that Alumnium can **get** from the page. We are going to ensure the Mercury element card shows its symbol correctly.
 
 Let's add a failing verification first:
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={3, 29-30}
+import ai.alumnium.Alumni;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class SearchTest {
+  private Alumni al;
+  private ChromeDriver driver;
+
+  @BeforeEach
+  void setUp() {
+    driver = new ChromeDriver();
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results contain Wikipedia articles");
+    String symbol = (String) al.get("chemical symbol");
+    Assertions.assertEquals("Al", symbol);
+  }
+}
+```
+
+`al.get()` returns `Object` and Alumnium supports the following types — `String`, `Long`, `Double`, `Boolean`, or a `List` of those. A simple cast on the call site is enough.
+
+Time to re-run the test:
+
+```bash title="Running test" {3}
+$ ./gradlew test --info
+...
+org.opentest4j.AssertionFailedError: expected: <Al> but was: <Hg>
+...
+BUILD FAILED in 37s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -649,6 +999,52 @@ $ npx mocha
 
 The test failed as expected, let's fix it and re-run to make sure it's passing:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={30} ins={31}
+import ai.alumnium.Alumni;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class SearchTest {
+  private Alumni al;
+  private ChromeDriver driver;
+
+  @BeforeEach
+  void setUp() {
+    driver = new ChromeDriver();
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results contain Wikipedia articles");
+    String symbol = (String) al.get("chemical symbol");
+    Assertions.assertEquals("Al", symbol);
+    Assertions.assertEquals("Hg", symbol);
+  }
+}
+```
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 37s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" del={26} ins={27}
@@ -740,3 +1136,5 @@ Congratulations, we have completed our first test!
 [2]: https://pytest.org
 [3]: https://mochajs.org
 [4]: https://www.selenium.dev/
+[5]: https://junit.org
+[6]: https://gradle.org

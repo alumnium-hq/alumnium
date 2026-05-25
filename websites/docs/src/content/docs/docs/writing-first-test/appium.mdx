@@ -8,6 +8,14 @@ import LanguageContent from "../../../../components/LanguageContent.astro";
 
 Let's see how we can write a simple test that would use [Appium][4] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
 
+<LanguageContent lang="java">
+
+:::note
+Alumnium can be used with both iOS and Android platforms, web and native applications, as well as any test runner you like. For the examples in this guide, we'll use [JUnit][5] with [Gradle][6].
+:::
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 :::note
@@ -27,6 +35,45 @@ Alumnium can be used with both iOS and Android platforms, web and native applica
 ## Install Dependencies
 
 Make sure you have Alumnium installed in your project.
+
+<LanguageContent lang="java">
+
+```groovy title="build.gradle"
+plugins {
+    id 'java'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'ai.alumnium:alumnium:0.21.0'
+    testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.21.0' // adjust as needed
+    testImplementation 'io.appium:java-client:10.1.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly    'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+```
+
+Now let's install Appium server to communicate with the mobile device. You can do it using npm in a terminal:
+
+```bash title="Installing Appium"
+$ npm install -g appium
+$ appium driver install xcuitest
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -62,6 +109,50 @@ $ rm test/specs/test.e2e.ts
 
 Start by creating a test file for your tests and instantiating a browser instance:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java"
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class SearchTest {
+  private IOSDriver driver;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    XCUITestOptions options = new XCUITestOptions()
+        .setBundleId("com.apple.mobilesafari")
+        .setDeviceName("iPhone 17")
+        .setPlatformVersion("26.5")
+        .setNoReset(true);
+    driver = new IOSDriver(options);
+  }
+
+  @AfterEach
+  void tearDown() {
+    driver.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+  }
+}
+```
+
+Now run the test. You should see an iOS simulator with a browser window with DuckDuckGo opened.
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 5s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py"
@@ -75,10 +166,10 @@ def driver():
     options = XCUITestOptions()
     options.automation_name = "XCUITest"
     options.bundle_id = "com.apple.mobilesafari"
-    options.device_name = "iPhone 16"
+    options.device_name = "iPhone 17"
     options.no_reset = True
     options.platform_name = "iOS"
-    options.platform_version = "18.5"
+    options.platform_version = "26.5"
     driver = WebDriver(options=options)
     yield driver
 
@@ -119,8 +210,8 @@ export const config: WebdriverIO.Config = {
       platformName: "iOS",
       browserName: "Safari",
       "appium:automationName": "XCUITest",
-      "appium:deviceName": "iPhone 16",
-      "appium:platformVersion": "18.5",
+      "appium:deviceName": "iPhone 17",
+      "appium:platformVersion": "26.5",
     },
   ],
   // other options
@@ -148,9 +239,59 @@ Spec Files:      1 passed, 1 total (100% completed) in 00:00:09
 
 ## Setup Alumnium
 
-<LanguageContent lang="python">
+Now let's add the code that would instantiate Alumnium using the browser. We can use a test fixture to ensure proper setup and teardown of the Alumnium instance:
 
-Now let’s add the code that would instantiate Alumnium using the browser. We can use a test fixture to ensure proper setup and teardown of the Alumnium instance:
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={1, 9, 20, 26} del={25}
+import ai.alumnium.Alumni;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class SearchTest {
+  private Alumni al;
+  private IOSDriver driver;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    XCUITestOptions options = new XCUITestOptions()
+        .setBundleId("com.apple.mobilesafari")
+        .setDeviceName("iPhone 17")
+        .setPlatformVersion("26.5")
+        .setNoReset(true);
+    driver = new IOSDriver(options);
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    driver.quit();
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+  }
+}
+```
+
+`Alumni` shuts down both the AI session and the wrapped driver when `quit()` is called, so an explicit `driver.quit()` is no longer needed.
+
+The test should still work fine, let's re-run it to make sure:
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 9s
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
 
 ```python title="test_search.py" ins={1, 20-24} ins="al: Alumni"
 from alumnium import Alumni
@@ -164,10 +305,10 @@ def driver():
     options = XCUITestOptions()
     options.automation_name = "XCUITest"
     options.bundle_id = "com.apple.mobilesafari"
-    options.device_name = "iPhone 16"
+    options.device_name = "iPhone 17"
     options.no_reset = True
     options.platform_name = "iOS"
-    options.platform_version = "18.5"
+    options.platform_version = "26.5"
     driver = WebDriver(options=options)
     yield driver
 
@@ -195,9 +336,7 @@ $ pytest --quiet
 
 <LanguageContent lang="typescript">
 
-Now let’s add the code that would instantiate Alumnium using the browser.
-
-```typescript title="test/specs/search.e2e.ts" ins={1, 5, 7-9, 11-13}
+```typescript title="test/specs/search.e2e.ts" ins={1, 5-13}
 import { Alumni } from "alumnium";
 import { browser, expect } from "@wdio/globals";
 
@@ -236,6 +375,56 @@ If you are getting errors about missing API keys, make sure you [configured][1] 
 
 Now let's add some actions that Alumnium should **do** on the page. Our test needs to search for a Mercury element, so let's use this exact command:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={31}
+import ai.alumnium.Alumni;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class SearchTest {
+  private Alumni al;
+  private IOSDriver driver;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    XCUITestOptions options = new XCUITestOptions()
+        .setBundleId("com.apple.mobilesafari")
+        .setDeviceName("iPhone 17")
+        .setPlatformVersion("26.5")
+        .setNoReset(true);
+    driver = new IOSDriver(options);
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+  }
+}
+```
+
+The Java client uses `act` because `do` is a reserved word in the language.
+
+Run the test, you should now see "Mercury element" typed in the search box and the page with results loaded.
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 52s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" ins={29}
@@ -250,10 +439,10 @@ def driver():
     options = XCUITestOptions()
     options.automation_name = "XCUITest"
     options.bundle_id = "com.apple.mobilesafari"
-    options.device_name = "iPhone 16"
+    options.device_name = "iPhone 17"
     options.no_reset = True
     options.platform_name = "iOS"
-    options.platform_version = "18.5"
+    options.platform_version = "26.5"
     driver = WebDriver(options=options)
     yield driver
 
@@ -320,6 +509,57 @@ The next step is to add some verifications that Alumnium should **check** on the
 
 Common wisdom says to _never trust a test you haven't seen fail_. Let's add the first verification and see it fail!
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={32}
+import ai.alumnium.Alumni;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class SearchTest {
+  private Alumni al;
+  private IOSDriver driver;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    XCUITestOptions options = new XCUITestOptions()
+        .setBundleId("com.apple.mobilesafari")
+        .setDeviceName("iPhone 17")
+        .setPlatformVersion("26.5")
+        .setNoReset(true);
+    driver = new IOSDriver(options);
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Aluminium word");
+  }
+}
+```
+
+Now let's run our test:
+
+```bash title="Running test" wrap {3}
+$ ./gradlew test --info
+...
+java.lang.AssertionError: The requested information is whether the page title contains the word 'Aluminium'. The title of the webpage is 'Mercury element at DuckDuckGo', which does not include the word 'Aluminium'. Therefore, the statement is false.
+...
+BUILD FAILED in 47s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" ins={30}
@@ -334,10 +574,10 @@ def driver():
     options = XCUITestOptions()
     options.automation_name = "XCUITest"
     options.bundle_id = "com.apple.mobilesafari"
-    options.device_name = "iPhone 16"
+    options.device_name = "iPhone 17"
     options.no_reset = True
     options.platform_name = "iOS"
-    options.platform_version = "18.5"
+    options.platform_version = "26.5"
     driver = WebDriver(options=options)
     yield driver
 
@@ -409,6 +649,59 @@ Our test failed as we expected and provided a meaningful explanation of what wen
 
 Let's fix the first check and add another one to fail again:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={32} ins={33-34}
+import ai.alumnium.Alumni;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class SearchTest {
+  private Alumni al;
+  private IOSDriver driver;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    XCUITestOptions options = new XCUITestOptions()
+        .setBundleId("com.apple.mobilesafari")
+        .setDeviceName("iPhone 17")
+        .setPlatformVersion("26.5")
+        .setNoReset(true);
+    driver = new IOSDriver(options);
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Aluminium word");
+    al.check("page title contains Mercury word");
+    al.check("search results do not contain Wikipedia articles");
+  }
+}
+```
+
+Time to re-run the test:
+
+```bash title="Running test" wrap {3}
+$ ./gradlew test --info
+...
+java.lang.AssertionError: The accessibility tree contains multiple links to Wikipedia articles related to the Mercury element, indicating that search results do include Wikipedia articles. Therefore, the statement is false.
+...
+BUILD FAILED in 54s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" del={30} ins={31-32}
@@ -423,10 +716,10 @@ def driver():
     options = XCUITestOptions()
     options.automation_name = "XCUITest"
     options.bundle_id = "com.apple.mobilesafari"
-    options.device_name = "iPhone 16"
+    options.device_name = "iPhone 17"
     options.no_reset = True
     options.platform_name = "iOS"
-    options.platform_version = "18.5"
+    options.platform_version = "26.5"
     driver = WebDriver(options=options)
     yield driver
 
@@ -500,6 +793,57 @@ Spec Files:      0 passed, 1 failed, 1 total (100% completed) in 00:00:36
 
 Ok, the test failed as we wanted it to, let's fix it:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={33} ins={34}
+import ai.alumnium.Alumni;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class SearchTest {
+  private Alumni al;
+  private IOSDriver driver;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    XCUITestOptions options = new XCUITestOptions()
+        .setBundleId("com.apple.mobilesafari")
+        .setDeviceName("iPhone 17")
+        .setPlatformVersion("26.5")
+        .setNoReset(true);
+    driver = new IOSDriver(options);
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results do not contain Wikipedia articles");
+    al.check("search results contain Wikipedia articles");
+  }
+}
+```
+
+Now, re-run to make sure it passes:
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 58s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" del={31} ins={32}
@@ -514,10 +858,10 @@ def driver():
     options = XCUITestOptions()
     options.automation_name = "XCUITest"
     options.bundle_id = "com.apple.mobilesafari"
-    options.device_name = "iPhone 16"
+    options.device_name = "iPhone 17"
     options.no_reset = True
     options.platform_name = "iOS"
-    options.platform_version = "18.5"
+    options.platform_version = "26.5"
     driver = WebDriver(options=options)
     yield driver
 
@@ -590,6 +934,63 @@ Finally, let's verify some data that Alumnium can **get** from the page. We are 
 
 Let's add a failing verification first:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={5, 35-36}
+import ai.alumnium.Alumni;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class SearchTest {
+  private Alumni al;
+  private IOSDriver driver;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    XCUITestOptions options = new XCUITestOptions()
+        .setBundleId("com.apple.mobilesafari")
+        .setDeviceName("iPhone 17")
+        .setPlatformVersion("26.5")
+        .setNoReset(true);
+    driver = new IOSDriver(options);
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results contain Wikipedia articles");
+    String symbol = (String) al.get("chemical symbol");
+    Assertions.assertEquals("Al", symbol);
+  }
+}
+```
+
+`al.get()` returns `Object` and Alumnium supports the following types — `String`, `Long`, `Double`, `Boolean`, or a `List` of those. A simple cast on the call site is enough.
+
+Time to re-run the test:
+
+```bash title="Running test" {3}
+$ ./gradlew test --info
+...
+org.opentest4j.AssertionFailedError: expected: <Al> but was: <Hg>
+...
+BUILD FAILED in 56s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" ins={32-33}
@@ -604,10 +1005,10 @@ def driver():
     options = XCUITestOptions()
     options.automation_name = "XCUITest"
     options.bundle_id = "com.apple.mobilesafari"
-    options.device_name = "iPhone 16"
+    options.device_name = "iPhone 17"
     options.no_reset = True
     options.platform_name = "iOS"
-    options.platform_version = "18.5"
+    options.platform_version = "26.5"
     driver = WebDriver(options=options)
     yield driver
 
@@ -686,6 +1087,58 @@ Spec Files:      0 passed, 1 failed, 1 total (100% completed) in 00:00:45
 
 The test failed as expected, let's fix it and re-run to make sure it's passing:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={36} ins={37}
+import ai.alumnium.Alumni;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class SearchTest {
+  private Alumni al;
+  private IOSDriver driver;
+
+  @BeforeEach
+  void setUp() throws Exception {
+    XCUITestOptions options = new XCUITestOptions()
+        .setBundleId("com.apple.mobilesafari")
+        .setDeviceName("iPhone 17")
+        .setPlatformVersion("26.5")
+        .setNoReset(true);
+    driver = new IOSDriver(options);
+    al = new Alumni(driver);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch() {
+    driver.get("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results contain Wikipedia articles");
+    String symbol = (String) al.get("chemical symbol");
+    Assertions.assertEquals("Al", symbol);
+    Assertions.assertEquals("Hg", symbol);
+  }
+}
+```
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 54s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" del={33} ins={34}
@@ -700,10 +1153,10 @@ def driver():
     options = XCUITestOptions()
     options.automation_name = "XCUITest"
     options.bundle_id = "com.apple.mobilesafari"
-    options.device_name = "iPhone 16"
+    options.device_name = "iPhone 17"
     options.no_reset = True
     options.platform_name = "iOS"
-    options.platform_version = "18.5"
+    options.platform_version = "26.5"
     driver = WebDriver(options=options)
     yield driver
 
@@ -776,3 +1229,5 @@ Congratulations, we have completed our first test!
 [2]: https://pytest.org
 [3]: https://webdriver.io
 [4]: https://appium.io/
+[5]: https://junit.org
+[6]: https://gradle.org

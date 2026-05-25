@@ -1,6 +1,6 @@
 ---
 interface Props {
-  lang: "python" | "typescript";
+  lang: "java" | "python" | "typescript";
 }
 
 const { lang } = Astro.props;
@@ -15,6 +15,11 @@ const { lang } = Astro.props;
     display: none;
   }
 
+  /* Show Java content when Java is selected */
+  :root[data-language="java"] .language-content[data-language="java"] {
+    display: block;
+  }
+
   /* Show Python content by default and when Python is selected */
   :root:not([data-language]) .language-content[data-language="python"],
   :root[data-language="python"] .language-content[data-language="python"] {
@@ -22,12 +27,8 @@ const { lang } = Astro.props;
   }
 
   /* Show TypeScript content when TypeScript is selected */
-  :root[data-language="typescript"] .language-content[data-language="typescript"] {
+  :root[data-language="typescript"]
+    .language-content[data-language="typescript"] {
     display: block;
-  }
-
-  /* Hide Python content when TypeScript is selected */
-  :root[data-language="typescript"] .language-content[data-language="python"] {
-    display: none;
   }
 </style>

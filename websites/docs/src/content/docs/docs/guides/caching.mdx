@@ -10,6 +10,60 @@ Caching system allows to significantly increase performance and stability of tes
 
 By default, Alumnium provides in-memory cache that is used during tests execution, but discarded at the end. In order to persist the cache database, you need to add a hook in your test runner that _saves_ the cache every time the test passes and _discards_ otherwise:
 
+<LanguageContent lang="java">
+
+<Tabs>
+<TabItem label="JUnit">
+
+First, register a custom extension that hooks into `AfterTestExecutionCallback`:
+
+```java title="src/test/java/AlumniCacheExtension.java"
+import ai.alumnium.Alumni;
+import java.util.function.Supplier;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+
+public final class AlumniCacheExtension implements AfterTestExecutionCallback {
+  private final Supplier<Alumni> alumni;
+
+  public AlumniCacheExtension(Supplier<Alumni> alumni) {
+    this.alumni = alumni;
+  }
+
+  @Override
+  public void afterTestExecution(ExtensionContext context) {
+    Alumni al = alumni.get();
+    if (al == null) {
+      return;
+    }
+
+    if (context.getExecutionException().isEmpty()) {
+      al.cache().save();
+    } else {
+      al.cache().discard();
+    }
+  }
+}
+```
+
+Then register it in your test class:
+
+```java title="src/test/java/BaseTest.java"
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+public class BaseTest {
+  private Alumni al;
+
+  @RegisterExtension
+  final AlumniCacheExtension cacheAfterEach = new AlumniCacheExtension(() -> al);
+}
+```
+
+</TabItem>
+</Tabs>
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 <Tabs>
