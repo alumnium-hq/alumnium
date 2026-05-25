@@ -99,7 +99,7 @@ cd "$TEST_DIR"
 # 5. Run the smoke test
 echo -e "\n🌀 Running Maven smoke test\n"
 
-if test_output=$(ALUMNIUM_LOG_LEVEL=warning "$PKG_DIR/gradlew" --no-daemon test 2>&1); then
+if test_output=$(ALUMNIUM_LOG_LEVEL=warning "$PKG_DIR/gradlew" --no-daemon test --rerun 2>&1); then
 	echo "🟢 Test OK: Tests executed successfully"
 else
 	echo -e "🔴 Test FAIL: Smoke test failed\n"

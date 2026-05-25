@@ -6,7 +6,6 @@ import ai.alumnium.client.FindElementResult;
 import ai.alumnium.client.HttpClient;
 import ai.alumnium.driver.AppiumDriver;
 import ai.alumnium.driver.BaseDriver;
-import ai.alumnium.driver.Element;
 import ai.alumnium.driver.PlaywrightDriver;
 import ai.alumnium.driver.SeleniumDriver;
 import ai.alumnium.result.DoResult;
@@ -185,7 +184,7 @@ public final class Alumni implements AutoCloseable {
    * @param description Natural language description of the element to find.
    * @return Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
    */
-  public Element find(String description) {
+  public Object find(String description) {
     return Retry.execute(
         () -> {
           FindElementResult response =

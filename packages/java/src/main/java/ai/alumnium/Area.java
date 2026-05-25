@@ -8,7 +8,6 @@ import ai.alumnium.client.HttpClient;
 import ai.alumnium.client.HttpClient.ActionResult;
 import ai.alumnium.client.HttpClient.PlanResult;
 import ai.alumnium.driver.BaseDriver;
-import ai.alumnium.driver.Element;
 import ai.alumnium.result.DoResult;
 import ai.alumnium.result.DoStep;
 import ai.alumnium.tool.BaseTool;
@@ -178,10 +177,10 @@ public class Area {
   /**
    * Find an element in the area.
    *
-   * @param description the description of the element to find
-   * @return the element
+   * @param description Natural language description of the element to find.
+   * @return Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
    */
-  public Element find(String description) {
+  public Object find(String description) {
     return Retry.execute(
         () -> {
           FindElementResult response =

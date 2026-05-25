@@ -4,6 +4,7 @@ import ai.alumnium.Alumni;
 import ai.alumnium.tool.BaseTool;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 public class BaseTest {
@@ -73,6 +75,26 @@ public class BaseTest {
       playwrightPage.navigate(url);
     } else {
       seleniumDriver.get(url);
+    }
+  }
+
+  protected static void type(Object element, String text) {
+    if (element instanceof Locator locator) {
+      locator.fill(text);
+    } else if (element instanceof WebElement webElement) {
+      webElement.sendKeys(text);
+    } else {
+      throw new IllegalArgumentException("Unsupported element type: " + element);
+    }
+  }
+
+  protected static void click(Object element) {
+    if (element instanceof Locator locator) {
+      locator.click();
+    } else if (element instanceof WebElement webElement) {
+      webElement.click();
+    } else {
+      throw new IllegalArgumentException("Unsupported element type: " + element);
     }
   }
 }

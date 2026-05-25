@@ -49,7 +49,7 @@ public abstract sealed class BaseDriver permits SeleniumDriver, PlaywrightDriver
 
   public abstract String app();
 
-  public abstract Element findElement(int id);
+  public abstract Object findElement(int id);
 
   public abstract void executeScript(String script);
 

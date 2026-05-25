@@ -118,7 +118,7 @@ public final class SeleniumDriver extends BaseDriver {
   public void click(int id) {
     withTabAutoswitch(
         () -> {
-          WebElement element = findRaw(id);
+          WebElement element = findElement(id);
           try {
             new Actions(driver).moveToElement(element).click().perform();
           } catch (RuntimeException e) {
@@ -129,7 +129,7 @@ public final class SeleniumDriver extends BaseDriver {
 
   @Override
   public void dragSlider(int id, double value) {
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     ((JavascriptExecutor) driver)
         .executeScript(
             "arguments[0].value = arguments[1];arguments[0].dispatchEvent(new"
@@ -141,12 +141,12 @@ public final class SeleniumDriver extends BaseDriver {
 
   @Override
   public void dragAndDrop(int fromId, int toId) {
-    new Actions(driver).dragAndDrop(findRaw(fromId), findRaw(toId)).perform();
+    new Actions(driver).dragAndDrop(findElement(fromId), findElement(toId)).perform();
   }
 
   @Override
   public void hover(int id) {
-    new Actions(driver).moveToElement(findRaw(id)).perform();
+    new Actions(driver).moveToElement(findElement(id)).perform();
   }
 
   @Override
@@ -193,7 +193,7 @@ public final class SeleniumDriver extends BaseDriver {
 
   @Override
   public void scrollTo(int id) {
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", findRaw(id));
+    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", findElement(id));
   }
 
   @Override
@@ -203,14 +203,14 @@ public final class SeleniumDriver extends BaseDriver {
 
   @Override
   public void type(int id, String text) {
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     element.clear();
     element.sendKeys(text);
   }
 
   @Override
   public void upload(int id, List<String> paths) {
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     element.sendKeys(String.join("\n", paths));
   }
 
@@ -230,8 +230,35 @@ public final class SeleniumDriver extends BaseDriver {
   }
 
   @Override
-  public Element findElement(int id) {
-    return new Element.Selenium(findRaw(id));
+  public WebElement findElement(int id) {
+    var element = accessibilityTree().elementById(id);
+    Integer backendNodeId = element.backendNodeId();
+    if (backendNodeId == null) {
+      throw new IllegalStateException("Element " + id + " has no backendNodeId");
+    }
+    List<Integer> chain = element.frameChain();
+    if (chain != null && !chain.isEmpty()) {
+      switchToFrameChain(chain);
+    }
+    executeCdp("DOM.enable", Map.of());
+    executeCdp("DOM.getFlattenedDocument", Map.of());
+    Map<String, Object> pushed =
+        executeCdp(
+            "DOM.pushNodesByBackendIdsToFrontend",
+            Map.of("backendNodeIds", List.of(backendNodeId)));
+    @SuppressWarnings("unchecked")
+    List<Number> nodeIds = (List<Number>) pushed.get("nodeIds");
+    if (nodeIds == null || nodeIds.isEmpty()) {
+      throw new IllegalStateException("CDP did not return a node id for " + backendNodeId);
+    }
+    Number nodeId = nodeIds.get(0);
+    executeCdp(
+        "DOM.setAttributeValue",
+        Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
+    WebElement webElement =
+        driver.findElement(By.cssSelector("[data-alumnium-id='" + backendNodeId + "']"));
+    executeCdp("DOM.removeAttribute", Map.of("nodeId", nodeId, "name", "data-alumnium-id"));
+    return webElement;
   }
 
   @Override
@@ -273,37 +300,6 @@ public final class SeleniumDriver extends BaseDriver {
 
   // endregion
   // region Internals
-
-  private WebElement findRaw(int id) {
-    var element = accessibilityTree().elementById(id);
-    Integer backendNodeId = element.backendNodeId();
-    if (backendNodeId == null) {
-      throw new IllegalStateException("Element " + id + " has no backendNodeId");
-    }
-    List<Integer> chain = element.frameChain();
-    if (chain != null && !chain.isEmpty()) {
-      switchToFrameChain(chain);
-    }
-    executeCdp("DOM.enable", Map.of());
-    executeCdp("DOM.getFlattenedDocument", Map.of());
-    Map<String, Object> pushed =
-        executeCdp(
-            "DOM.pushNodesByBackendIdsToFrontend",
-            Map.of("backendNodeIds", List.of(backendNodeId)));
-    @SuppressWarnings("unchecked")
-    List<Number> nodeIds = (List<Number>) pushed.get("nodeIds");
-    if (nodeIds == null || nodeIds.isEmpty()) {
-      throw new IllegalStateException("CDP did not return a node id for " + backendNodeId);
-    }
-    Number nodeId = nodeIds.get(0);
-    executeCdp(
-        "DOM.setAttributeValue",
-        Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
-    WebElement webElement =
-        driver.findElement(By.cssSelector("[data-alumnium-id='" + backendNodeId + "']"));
-    executeCdp("DOM.removeAttribute", Map.of("nodeId", nodeId, "name", "data-alumnium-id"));
-    return webElement;
-  }
 
   private void switchToFrameChain(List<Integer> chain) {
     driver.switchTo().defaultContent();
