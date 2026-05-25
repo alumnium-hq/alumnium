@@ -127,7 +127,7 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void click(int id) {
-    Locator element = findRaw(id);
+    Locator element = findElement(id);
     String tag = (String) element.evaluate("el => el.tagName");
     if (tag != null && tag.equalsIgnoreCase("option")) {
       Object value = element.evaluate("el => el.value");
@@ -140,17 +140,17 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void dragSlider(int id, double value) {
-    findRaw(id).fill(stripTrailingZeros(value));
+    findElement(id).fill(stripTrailingZeros(value));
   }
 
   @Override
   public void dragAndDrop(int fromId, int toId) {
-    findRaw(fromId).dragTo(findRaw(toId));
+    findElement(fromId).dragTo(findElement(toId));
   }
 
   @Override
   public void hover(int id) {
-    findRaw(id).hover();
+    findElement(id).hover();
   }
 
   @Override
@@ -181,7 +181,7 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void scrollTo(int id) {
-    findRaw(id).scrollIntoViewIfNeeded();
+    findElement(id).scrollIntoViewIfNeeded();
   }
 
   @Override
@@ -191,12 +191,12 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void type(int id, String text) {
-    findRaw(id).fill(text);
+    findElement(id).fill(text);
   }
 
   @Override
   public void upload(int id, List<String> paths) {
-    Locator element = findRaw(id);
+    Locator element = findElement(id);
     com.microsoft.playwright.FileChooser fc =
         page.waitForFileChooser(
             new Page.WaitForFileChooserOptions().setTimeout(5000d),
@@ -221,8 +221,30 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   @Override
-  public Element findElement(int id) {
-    return new Element.Playwright(findRaw(id));
+  public Locator findElement(int id) {
+    AccessibilityElement element = accessibilityTree().elementById(id);
+    Frame frame = element.frame() instanceof Frame f ? f : page.mainFrame();
+
+    Integer backendNodeId = element.backendNodeId();
+    if (backendNodeId == null) {
+      throw new IllegalStateException("Element " + id + " has no backendNodeId");
+    }
+    sendCdp("DOM.enable", null);
+    sendCdp("DOM.getFlattenedDocument", null);
+    Map<String, Object> pushed =
+        sendCdp(
+            "DOM.pushNodesByBackendIdsToFrontend",
+            Map.of("backendNodeIds", List.of(backendNodeId)));
+    @SuppressWarnings("unchecked")
+    List<Number> nodeIds = (List<Number>) pushed.get("nodeIds");
+    if (nodeIds == null || nodeIds.isEmpty()) {
+      throw new IllegalStateException("CDP did not return a node id for " + backendNodeId);
+    }
+    Number nodeId = nodeIds.get(0);
+    sendCdp(
+        "DOM.setAttributeValue",
+        Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
+    return frame.locator("css=[data-alumnium-id='" + backendNodeId + "']");
   }
 
   @Override
@@ -259,32 +281,6 @@ public final class PlaywrightDriver extends BaseDriver {
 
   // endregion
   // region Internals
-
-  private Locator findRaw(int id) {
-    AccessibilityElement element = accessibilityTree().elementById(id);
-    Frame frame = element.frame() instanceof Frame f ? f : page.mainFrame();
-
-    Integer backendNodeId = element.backendNodeId();
-    if (backendNodeId == null) {
-      throw new IllegalStateException("Element " + id + " has no backendNodeId");
-    }
-    sendCdp("DOM.enable", null);
-    sendCdp("DOM.getFlattenedDocument", null);
-    Map<String, Object> pushed =
-        sendCdp(
-            "DOM.pushNodesByBackendIdsToFrontend",
-            Map.of("backendNodeIds", List.of(backendNodeId)));
-    @SuppressWarnings("unchecked")
-    List<Number> nodeIds = (List<Number>) pushed.get("nodeIds");
-    if (nodeIds == null || nodeIds.isEmpty()) {
-      throw new IllegalStateException("CDP did not return a node id for " + backendNodeId);
-    }
-    Number nodeId = nodeIds.get(0);
-    sendCdp(
-        "DOM.setAttributeValue",
-        Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
-    return frame.locator("css=[data-alumnium-id='" + backendNodeId + "']");
-  }
 
   private Map<String, Object> sendCdp(String method, Map<String, Object> params) {
     JsonObject paramsJson;

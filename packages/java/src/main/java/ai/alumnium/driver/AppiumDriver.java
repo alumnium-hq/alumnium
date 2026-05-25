@@ -84,7 +84,7 @@ public final class AppiumDriver extends BaseDriver {
   @Override
   public void click(int id) {
     ensureNativeContext();
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     scrollIntoView(element);
     element.click();
   }
@@ -99,8 +99,8 @@ public final class AppiumDriver extends BaseDriver {
     ensureNativeContext();
     // Appium 9.x removed the dedicated helper; the Actions/gestures API is
     // the recommended replacement. We fall back to a simple move-press-release.
-    WebElement fromElement = findRaw(fromId);
-    WebElement toElement = findRaw(toId);
+    WebElement fromElement = findElement(fromId);
+    WebElement toElement = findElement(toId);
     scrollIntoView(fromElement);
     new Actions(driver).clickAndHold(fromElement).moveToElement(toElement).release().perform();
   }
@@ -140,7 +140,7 @@ public final class AppiumDriver extends BaseDriver {
 
   @Override
   public void scrollTo(int id) {
-    scrollIntoView(findRaw(id));
+    scrollIntoView(findElement(id));
   }
 
   @Override
@@ -156,7 +156,7 @@ public final class AppiumDriver extends BaseDriver {
   @Override
   public void type(int id, String text) {
     ensureNativeContext();
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     scrollIntoView(element);
     element.clear();
     element.sendKeys(text);
@@ -184,8 +184,9 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   @Override
-  public Element findElement(int id) {
-    return new Element.Appium(findRaw(id));
+  public WebElement findElement(int id) {
+    AccessibilityElement element = accessibilityTree().elementById(id);
+    return platform == Platform.XCUITEST ? findElementIos(element) : findElementAndroid(element);
   }
 
   @Override
@@ -211,11 +212,6 @@ public final class AppiumDriver extends BaseDriver {
 
   // endregion
   // region Internals
-
-  private WebElement findRaw(int id) {
-    AccessibilityElement element = accessibilityTree().elementById(id);
-    return platform == Platform.XCUITEST ? findElementIos(element) : findElementAndroid(element);
-  }
 
   private WebElement findElementIos(AccessibilityElement element) {
     StringBuilder predicate = new StringBuilder();
