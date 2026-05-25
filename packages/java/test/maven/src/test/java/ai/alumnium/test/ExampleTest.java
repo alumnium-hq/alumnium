@@ -1,11 +1,10 @@
 package ai.alumnium.test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import ai.alumnium.Alumni;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**

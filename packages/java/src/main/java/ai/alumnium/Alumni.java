@@ -156,10 +156,10 @@ public final class Alumni implements AutoCloseable {
 
   /** Extract data described in natural language from the current view. */
   public Object get(String data) {
-    return get(data, new VisionOptions(false));
+    return get(data, new GetOptions(false));
   }
 
-  public Object get(String data, VisionOptions opts) {
+  public Object get(String data, GetOptions opts) {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
@@ -370,9 +370,25 @@ public final class Alumni implements AutoCloseable {
     }
   }
 
-  /** Vision flag for {@link #get(String, VisionOptions)}. */
-  public record VisionOptions(boolean vision) {}
+  /** Vision flag for {@link #get(String, GetOptions)}. */
+  public record GetOptions(boolean vision) {
+    public GetOptions() {
+      this(false);
+    }
+
+    public GetOptions withVision(boolean vision) {
+      return new GetOptions(vision);
+    }
+  }
 
   /** Vision flag for {@link #check(String, CheckOptions)}. */
-  public record CheckOptions(boolean vision) {}
+  public record CheckOptions(boolean vision) {
+    public CheckOptions() {
+      this(false);
+    }
+
+    public CheckOptions withVision(boolean vision) {
+      return new CheckOptions(vision);
+    }
+  }
 }

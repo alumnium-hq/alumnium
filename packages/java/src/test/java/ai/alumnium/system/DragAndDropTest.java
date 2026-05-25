@@ -15,12 +15,17 @@ public class DragAndDropTest extends BaseTest {
   void testDragAndDrop() {
     navigate(DRAG_AND_DROP_URL);
     Object data =
-        al.get("titles of squares ordered from left to right", new Alumni.VisionOptions(true));
+        al.get(
+            "titles of squares ordered from left to right",
+            new Alumni.GetOptions().withVision(true));
     Assertions.assertEquals(List.of("A", "B"), listFromGet(data));
 
     al.act("move square A to square B");
 
-    data = al.get("titles of squares ordered from left to right", new Alumni.VisionOptions(true));
+    data =
+        al.get(
+            "titles of squares ordered from left to right",
+            new Alumni.GetOptions().withVision(true));
     Assertions.assertEquals(List.of("B", "A"), listFromGet(data));
   }
 
