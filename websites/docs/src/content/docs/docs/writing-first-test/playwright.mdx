@@ -6,11 +6,43 @@ description: Write AI-powered automated tests with Alumnium. Learn how to integr
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 import LanguageContent from "../../../../components/LanguageContent.astro";
 
-Let's see how we can write a simple test that would use [Playwright][3] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
+Let's see how we can write a simple test that would use [Playwright][2] to open DuckDuckGo, search for a Mercury element, ensure that search results are loaded, include the Wikipedia article about the element, and check that its symbol is presented correctly on the page.
 
 ## Install Dependencies
 
 Make sure you have Alumnium installed in your project.
+
+<LanguageContent lang="java">
+
+```groovy title="build.gradle"
+plugins {
+    id 'java'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'ai.alumnium:alumnium:0.21.0'
+    testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.21.0' // adjust as needed
+    testImplementation 'com.microsoft.playwright:playwright:1.60.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly    'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -39,6 +71,41 @@ $ rm tests/example.spec.ts
 ## Setup Browser
 
 Start by creating a test file for your tests and instantiating a browser instance:
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java"
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.Test;
+
+@UsePlaywright(SearchTest.CustomOptions.class)
+class SearchTest {
+  public static class CustomOptions implements OptionsFactory {
+    @Override
+    public Options getOptions() {
+      return new Options().setHeadless(false); // DuckDuckGo blocks headless browsers
+    }
+  }
+
+  @Test
+  void shouldSearch(Page page) {
+    page.navigate("https://duckduckgo.com");
+  }
+}
+```
+
+Now run the test. You should see a Chrome browser window with DuckDuckGo opened.
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 7s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -84,6 +151,58 @@ Running 1 test using 1 worker
 ## Setup Alumnium
 
 Now let's add the code that would instantiate Alumnium using the browser. We can use a test fixture to ensure proper setup and teardown of the Alumnium instance:
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={1, 6-7, 19-29}
+import ai.alumnium.Alumni;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+@UsePlaywright(SearchTest.CustomOptions.class)
+class SearchTest {
+  public static class CustomOptions implements OptionsFactory {
+    @Override
+    public Options getOptions() {
+      return new Options().setHeadless(false);
+    }
+  }
+
+  private Alumni al;
+
+  @BeforeEach
+  void setUp(Page page) {
+    al = new Alumni(page);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch(Page page) {
+    page.navigate("https://duckduckgo.com");
+  }
+}
+```
+
+`Alumni` shuts down both the AI session and the wrapped driver when `quit()` is called, so an explicit `driver.quit()` is no longer needed.
+
+The test should still work fine, let's re-run it to make sure:
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 8s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -159,6 +278,59 @@ If you are getting errors about missing API keys, make sure you [configured][1] 
 
 Now let's add some actions that Alumnium should **do** on the page. Our test needs to search for a Mercury element, so let's use this exact command:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={34}
+import ai.alumnium.Alumni;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+@UsePlaywright(SearchTest.CustomOptions.class)
+class SearchTest {
+  public static class CustomOptions implements OptionsFactory {
+    @Override
+    public Options getOptions() {
+      return new Options().setHeadless(false);
+    }
+  }
+
+  private Alumni al;
+
+  @BeforeEach
+  void setUp(Page page) {
+    al = new Alumni(page);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch(Page page) {
+    page.navigate("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+  }
+}
+```
+
+The Java client uses `act` because `do` is a reserved word in the language.
+
+Run the test, you should now see "Mercury element" typed in the search box and the page with results loaded.
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 21s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" ins={15}
@@ -215,6 +387,60 @@ $ npx playwright test --project chromium --headed
 The next step is to add some verifications that Alumnium should **check** on the page. We are going to add two of them, one that checks that the page title contains the search keyword and one to see if the Wikipedia article is present in the results.
 
 Common wisdom says to _never trust a test you haven't seen fail_. Let's add the first verification and see it fail!
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={35}
+import ai.alumnium.Alumni;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+@UsePlaywright(SearchTest.CustomOptions.class)
+class SearchTest {
+  public static class CustomOptions implements OptionsFactory {
+    @Override
+    public Options getOptions() {
+      return new Options().setHeadless(false);
+    }
+  }
+
+  private Alumni al;
+
+  @BeforeEach
+  void setUp(Page page) {
+    al = new Alumni(page);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch(Page page) {
+    page.navigate("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Aluminium word");
+  }
+}
+```
+
+Now let's run our test:
+
+```bash title="Running test" wrap {3}
+$ ./gradlew test --info
+...
+java.lang.AssertionError: The requested information is whether the page title contains the word 'Aluminium'. The page title is 'Mercury element at DuckDuckGo', which does not include the word 'Aluminium'. Therefore, the statement is false.
+...
+BUILD FAILED in 27s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -277,6 +503,62 @@ Error: The requested information is whether the page title contains the word 'Al
 Our test failed as we expected and provided a meaningful explanation of what went wrong.
 
 Let's fix the first check and add another one to fail again:
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={35} ins={36-37}
+import ai.alumnium.Alumni;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+@UsePlaywright(SearchTest.CustomOptions.class)
+class SearchTest {
+  public static class CustomOptions implements OptionsFactory {
+    @Override
+    public Options getOptions() {
+      return new Options().setHeadless(false);
+    }
+  }
+
+  private Alumni al;
+
+  @BeforeEach
+  void setUp(Page page) {
+    al = new Alumni(page);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch(Page page) {
+    page.navigate("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Aluminium word");
+    al.check("page title contains Mercury word");
+    al.check("search results do not contain Wikipedia articles");
+  }
+}
+```
+
+Time to re-run the test:
+
+```bash title="Running test" wrap {3}
+$ ./gradlew test --info
+...
+java.lang.AssertionError: The search results do contain links to Wikipedia articles, specifically mentioning 'Mercury (element) - Wikipedia' and providing a link to the Wikipedia page for Mercury. Therefore, the statement is false.
+...
+BUILD FAILED in 37s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -342,6 +624,60 @@ Error: The search results do contain Wikipedia articles, as indicated by the pre
 
 Ok, the test failed as we wanted it to, let's fix it:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={36} ins={37}
+import ai.alumnium.Alumni;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+@UsePlaywright(SearchTest.CustomOptions.class)
+class SearchTest {
+  public static class CustomOptions implements OptionsFactory {
+    @Override
+    public Options getOptions() {
+      return new Options().setHeadless(false);
+    }
+  }
+
+  private Alumni al;
+
+  @BeforeEach
+  void setUp(Page page) {
+    al = new Alumni(page);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch(Page page) {
+    page.navigate("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results do not contain Wikipedia articles");
+    al.check("search results contain Wikipedia articles");
+  }
+}
+```
+
+Now, re-run to make sure it passes:
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 44s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" del={17} ins={18}
@@ -404,6 +740,66 @@ $ npx playwright test --project chromium --headed
 Finally, let's verify some data that Alumnium can **get** from the page. We are going to ensure the Mercury element card shows its symbol correctly.
 
 Let's add a failing verification first:
+
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" ins={7, 38-39}
+import ai.alumnium.Alumni;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+@UsePlaywright(SearchTest.CustomOptions.class)
+class SearchTest {
+  public static class CustomOptions implements OptionsFactory {
+    @Override
+    public Options getOptions() {
+      return new Options().setHeadless(false);
+    }
+  }
+
+  private Alumni al;
+
+  @BeforeEach
+  void setUp(Page page) {
+    al = new Alumni(page);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch(Page page) {
+    page.navigate("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results contain Wikipedia articles");
+    String symbol = (String) al.get("chemical symbol");
+    Assertions.assertEquals("Al", symbol);
+  }
+}
+```
+
+`al.get()` returns `Object` and Alumnium supports the following types — `String`, `Long`, `Double`, `Boolean`, or a `List` of those. A simple cast on the call site is enough.
+
+Time to re-run the test:
+
+```bash title="Running test" {3}
+$ ./gradlew test --info
+...
+org.opentest4j.AssertionFailedError: expected: <Al> but was: <Hg>
+...
+BUILD FAILED in 34s
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -474,6 +870,61 @@ $ npx playwright test --project chromium --headed
 
 The test failed as expected, let's fix it and re-run to make sure it's passing:
 
+<LanguageContent lang="java">
+
+```java title="src/test/java/SearchTest.java" del={39} ins={40}
+import ai.alumnium.Alumni;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.junit.Options;
+import com.microsoft.playwright.junit.OptionsFactory;
+import com.microsoft.playwright.junit.UsePlaywright;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+@UsePlaywright(SearchTest.CustomOptions.class)
+class SearchTest {
+  public static class CustomOptions implements OptionsFactory {
+    @Override
+    public Options getOptions() {
+      return new Options().setHeadless(false);
+    }
+  }
+
+  private Alumni al;
+
+  @BeforeEach
+  void setUp(Page page) {
+    al = new Alumni(page);
+  }
+
+  @AfterEach
+  void tearDown() {
+    al.quit();
+  }
+
+  @Test
+  void shouldSearch(Page page) {
+    page.navigate("https://duckduckgo.com");
+    al.act("search for 'Mercury element' and press Enter");
+    al.check("page title contains Mercury word");
+    al.check("search results contain Wikipedia articles");
+    String symbol = (String) al.get("chemical symbol");
+    Assertions.assertEquals("Al", symbol);
+    Assertions.assertEquals("Hg", symbol);
+  }
+}
+```
+
+```bash title="Running test"
+$ ./gradlew test --info
+...
+BUILD SUCCESSFUL in 29s
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python title="test_search.py" del={19} ins={20}
@@ -534,4 +985,4 @@ $ npx playwright test --project chromium --headed
 Congratulations, we have completed our first test!
 
 [1]: /docs/getting-started/configuration
-[3]: https://playwright.dev
+[2]: https://playwright.dev

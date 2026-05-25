@@ -9,6 +9,14 @@ Alumnium can verify statements on the application when you instruct it to **chec
 
 For example, after performing a Google search for "Mercury element", you might want to check that search results contain a link to the Wikipedia:
 
+<LanguageContent lang="java">
+
+```java
+al.check("search results contain Wikipedia article");
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -36,6 +44,15 @@ AssertionError: The search results do not include Wikipedia article. The results
 Similarly to [actions][1], Alumnium works better when the verifications are concrete.
 
 For example, if you are writing a test for completing tasks in the To-Do application and you don't check the exact task's state, you might end up with contradictory verifications passing at the same time!
+
+<LanguageContent lang="java">
+
+```java
+al.check("task is completed");
+al.check("task is not completed");
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -71,6 +88,15 @@ await al.check("task is not completed");
 </video>
 
 To avoid false positives in the tests, write more concrete verifications:
+
+<LanguageContent lang="java">
+
+```java
+al.check("task 'buy milk' is completed");
+al.check("task 'buy bread' is not completed");
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -123,6 +149,14 @@ Occasionally, the application state is not enough for Alumnium to perform the ch
 
 For example, in your test for the To-Do application, you might need a check that a completed task is shown with a strikethrough style.
 
+<LanguageContent lang="java">
+
+```java
+al.check("'buy milk' title font style is strikethrough");
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -147,6 +181,17 @@ AssertionError: The ARIA tree does not provide any information regarding the fon
 
 To make the check more reliable, add a screenshot to it:
 
+<LanguageContent lang="java">
+
+```java
+al.check(
+  "'buy milk' title font style is strikethrough",
+  new Alumni.CheckOptions().withVision(true)
+);
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -167,7 +212,7 @@ await al.check("'buy milk' title font style is strikethrough", {
 
 <video
   class="rounded-xl"
-  alt="A screen recording of Alumnium failing to determe font style of completed task"
+  alt="A screen recording of Alumnium failing to determine font style of completed task"
   controls
   controlslist="nofullscreen"
   disablepictureinpicture

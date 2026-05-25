@@ -7,6 +7,22 @@ import LanguageContent from "../../../../components/LanguageContent.astro";
 
 Sometimes you need direct access to elements instead of using Alumnium's autonomous actions. The `find()` method locates elements using natural language descriptions and returns native driver elements that you can interact with directly.
 
+<LanguageContent lang="java">
+
+The returned element is a native driver element (Appium/Selenium `WebElement` or Playwright `Locator`), so you can use all standard methods from your testing framework after casting.
+
+```java
+import org.openqa.selenium.WebElement;
+
+WebElement submitButton = (WebElement) al.find("submit button");
+submitButton.click();
+
+WebElement textInput = (WebElement) al.find("text input");
+textInput.sendKeys("Hello Alumnium!");
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 The returned element is a native driver element (Appium/Selenium `WebElement` or Playwright `Locator`), so you can use all standard methods from your testing framework.
@@ -44,6 +60,23 @@ Use `find()` when you need to:
 - Use framework-specific methods
 - Work with test fixtures that expect native elements
 - Get precise control over interactions
+
+<LanguageContent lang="java">
+
+```java
+import org.openqa.selenium.WebElement;
+
+// Getting element text
+WebElement price = (WebElement) al.find("total price");
+double total = Double.parseDouble(price.getText().replace("$", ""));
+assertTrue(total > 0);
+
+// Using framework-specific methods
+WebElement button = (WebElement) al.find("dropdown menu");
+assertTrue(button.isDisplayed());
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 

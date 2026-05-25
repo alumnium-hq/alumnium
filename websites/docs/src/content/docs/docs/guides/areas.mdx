@@ -13,6 +13,17 @@ For example, imagine you are testing two similar-looking tables:
 
 Suppose you want to assert data from each table separately. You would need to repeat the table name in each call:
 
+<LanguageContent lang="java">
+
+```java
+Object lastNames = al.get("last names from 'Example 1' table");
+Object firstNames = al.get("first names from 'Example 1' table");
+assertEquals(List.of("Smith", "Bach", "Doe", "Conway"), lastNames);
+assertEquals(List.of("John", "Frank", "Jason", "Tim"), firstNames);
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -35,7 +46,19 @@ expect(firstNames).toEqual(["John", "Frank", "Jason", "Tim"]);
 
 </LanguageContent>
 
-This repetition is not only cumbersome but also affects accuracy and performance, as Alumnium must process the accessibility tree of the **entire** application each time, including both tables. To simplify your tests and improve both accuracy and speed, you can locate an _area_ and retrieve data from it instead:
+This repetition is not only cumbersome but also affects accuracy and performance, as Alumnium must process the accessibility tree of the **entire** application each time, including both tables. To simplify your tests and improve both accuracy and speed, you can locate an **area** and retrieve data from it instead:
+
+<LanguageContent lang="java">
+
+```java
+import ai.alumnium.Area;
+
+Area area = al.area("'Example 1' table");
+assertEquals(List.of("Smith", "Bach", "Doe", "Conway"), area.get("last names"));
+assertEquals(List.of("John", "Frank", "Jason", "Tim"), area.get("first names"));
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -68,6 +91,21 @@ expect(await area.get("first names")).toEqual([
 </LanguageContent>
 
 You can use all regular Alumnium methods on areas, including `do`, `get`, `check`, and `find`. Once located, the area is not automatically updated when UI of the application changes. This means that you need to re-locate area again so it's fresh:
+
+<LanguageContent lang="java">
+
+```java
+Area area = al.area("'Example 1' table");
+assertEquals(List.of("Smith", "Bach", "Doe", "Conway"), area.get("last names"));
+
+area.act("sort by last name"); // change order of rows
+assertEquals(List.of("Bach", "Conway", "Doe", "Smith"), area.get("last names")); // error
+
+area = al.area("'Example 1' table"); // re-locate the table
+assertEquals(List.of("Bach", "Conway", "Doe", "Smith"), area.get("last names")); // passes
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 

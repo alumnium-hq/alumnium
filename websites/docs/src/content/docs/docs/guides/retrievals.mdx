@@ -9,6 +9,14 @@ Alumnium can retrieve data from an application when you instruct it to **get** s
 
 For example, after creating and completing tasks in the To-Do application, you might want to get the number of pending tasks:
 
+<LanguageContent lang="java">
+
+```java
+al.get("number of pending tasks");
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -44,6 +52,14 @@ Alumnium checks how many tasks are present on the page, which of them are pendin
 
 You can then use the number to perform assertions within your test.
 
+<LanguageContent lang="java">
+
+```java
+assertEquals(2L, al.get("number of pending tasks"));
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -65,6 +81,25 @@ expect(await al.get("number of pending tasks")).toBe(2);
 Similarly to [actions][1] and [verifications][2], Alumnium works better when the extract data requests are concrete.
 
 For example, you might want to separate the retrieval of titles for pending tasks from the retrieval of titles for completed tasks.
+
+<LanguageContent lang="java">
+
+```java
+assertEquals(
+  List.of("buy milk", "buy bread", "buy honey", "buy water"),
+  al.get("titles of tasks")
+);
+assertEquals(
+  List.of("buy milk", "buy bread"),
+  al.get("titles of complete tasks")
+);
+assertEquals(
+  List.of("buy honey", "buy water"),
+  al.get("titles of pending tasks")
+);
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -116,6 +151,11 @@ expect(await al.get("titles of pending tasks")).toEqual([
 
 Alumnium attempts to cast the data to an appropriate type. The currently supported types are integer, float, boolean, string, and lists of these types.
 
+<LanguageContent lang="java">
+You might need to further typecast returned value if you plan to store it in a variable.
+
+</LanguageContent>
+
 <LanguageContent lang="typescript">
 You might need to further typecast returned value if you plan to store it in a variable.
 
@@ -126,6 +166,14 @@ If the data is not present on the page, Alumnium returns a string with explanati
 ## Vision
 
 Retrieving data from screenshots works similarly to [verifications][3]. In this case, the accessibility tree is completely ignored and therefore does not influence the results.
+
+<LanguageContent lang="java">
+
+```java
+al.get("number of pending tasks", new Alumni.GetOptions().withVision(true));
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 

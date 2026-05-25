@@ -6,6 +6,32 @@ description: Learn how to install Alumnium, an AI-powered test automation tool.
 import LanguageContent from "../../../../components/LanguageContent.astro";
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 
+<LanguageContent lang="java">
+
+Alumnium for Java requires JDK 21+ and is distributed via [Maven Central](https://central.sonatype.com/artifact/ai.alumnium/alumnium).
+
+To install, add the library to your Gradle build along with a CLI artifact that matches your host platform.
+
+```groovy title="build.gradle"
+dependencies {
+  testImplementation 'ai.alumnium:alumnium:0.21.0'
+  testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.21.0'
+}
+```
+
+Replace `alumnium-cli-darwin-arm64` with the artifact matching your platform, or add multiple artifacts if you need to support multiple platforms. The available CLI artifacts are:
+
+| OS      | Architecture | Artifact                     |
+| ------- | ------------ | ---------------------------- |
+| macOS   | arm64        | `alumnium-cli-darwin-arm64`  |
+| macOS   | x64          | `alumnium-cli-darwin-x64`    |
+| Linux   | arm64        | `alumnium-cli-linux-arm64`   |
+| Linux   | x64          | `alumnium-cli-linux-x64`     |
+| Windows | arm64        | `alumnium-cli-windows-arm64` |
+| Windows | x64          | `alumnium-cli-windows-x64`   |
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 Alumnium requires Python 3+ and is distributed as a [PyPI package](https://pypi.org/project/alumnium/).
