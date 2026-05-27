@@ -36,7 +36,7 @@ const defaultModels: Record<Model.Provider, string> = {
   codex: "gpt-5.4-mini",
   deepseek: "deepseek-reasoner",
   github: "gpt-4o-mini",
-  google: "gemini-3.1-flash-lite-preview",
+  google: "gemini-3.1-flash-lite",
   mistralai: "mistral-medium-2505",
   ollama: "qwen3.6",
   openai: "gpt-5-nano-2025-08-07",

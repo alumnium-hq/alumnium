@@ -99,7 +99,7 @@ Select AI provider and model to use.
 | codex         | gpt-5.4-mini                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
 | deepseek      | deepseek-reasoner                           | DeepSeek Platform.                                                       |
 | github        | gpt-4o-mini                                 | GitHub Models API.                                                       |
-| google        | gemini-3.1-flash-lite-preview               | Google AI Studio API.                                                    |
+| google        | gemini-3.1-flash-lite                       | Google AI Studio API.                                                    |
 | mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
 | openai        | gpt-5-nano-2025-08-07                       | OpenAI API.                                                              |

@@ -91,7 +91,7 @@ public final class Model {
             Map.entry(Provider.CODEX, "gpt-5.4-mini"),
             Map.entry(Provider.DEEPSEEK, "deepseek-reasoner"),
             Map.entry(Provider.GITHUB, "gpt-4o-mini"),
-            Map.entry(Provider.GOOGLE, "gemini-3.1-flash-lite-preview"),
+            Map.entry(Provider.GOOGLE, "gemini-3.1-flash-lite"),
             Map.entry(Provider.MISTRALAI, "mistral-medium-2505"),
             Map.entry(Provider.OLLAMA, "qwen3.6"),
             Map.entry(Provider.OPENAI, "gpt-5-nano-2025-08-07"),

@@ -28,7 +28,7 @@ class Name:
         Provider.CODEX: "gpt-5.4-mini",
         Provider.DEEPSEEK: "deepseek-reasoner",
         Provider.GITHUB: "gpt-4o-mini",
-        Provider.GOOGLE: "gemini-3.1-flash-lite-preview",
+        Provider.GOOGLE: "gemini-3.1-flash-lite",
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "qwen3.6",
         Provider.OPENAI: "gpt-5-nano-2025-08-07",
