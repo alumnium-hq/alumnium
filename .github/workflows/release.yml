@@ -230,6 +230,9 @@ jobs:
       - name: Build Dist
         run: mise //packages/typescript:build
 
+      - name: Build main Maven Package
+        run: mise //packages/java:build
+
       - name: Build Main pip Package
         run: mise //packages/python:build
 
@@ -238,9 +241,11 @@ jobs:
         uses: actions/attest@v4
         with:
           subject-path: |
-            packages/typescript/dist/bin/*
-            packages/typescript/dist/npm/*
+            packages/java/build/libs/*
             packages/python/dist/*
+            packages/typescript/dist/bin/*
+            packages/typescript/dist/maven/*
+            packages/typescript/dist/npm/*
             packages/typescript/dist/pip/*
 
       - name: Get Version
@@ -250,10 +255,12 @@ jobs:
       - name: Create GitHub Release
         run: >
           gh release create ${{ steps.version.outputs.version }}
+          packages/java/build/libs/*
+          packages/python/dist/*
           packages/typescript/dist/bin/*
+          packages/typescript/dist/maven/*
           packages/typescript/dist/pip/*
           packages/typescript/dist/npm/*
-          packages/python/dist/*
           "${{ steps.attest.outputs.bundle-path }}"
           --generate-notes
           ${{ contains(steps.version.outputs.version, 'alpha') && '--prerelease' || '' }}
