@@ -4,7 +4,7 @@ import ai.alumnium.Alumni;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -22,7 +22,7 @@ class ExampleTest {
       try (Alumni al = new Alumni(page)) {
         page.navigate("https://seleniumbase.io/apps/calculator");
         al.act("2 + 2 =");
-        assertEquals(4L, al.get("calculator result from textfield"));
+        Assertions.assertEquals(4L, al.get("calculator result from textfield"));
       } finally {
         browser.close();
       }
