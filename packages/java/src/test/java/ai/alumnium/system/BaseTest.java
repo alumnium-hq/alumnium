@@ -1,8 +1,6 @@
 package ai.alumnium.system;
 
 import ai.alumnium.Alumni;
-import ai.alumnium.Model;
-import ai.alumnium.Provider;
 import ai.alumnium.driver.AppiumDriver;
 import ai.alumnium.tool.BaseTool;
 import com.microsoft.playwright.Browser;
@@ -45,33 +43,33 @@ public class BaseTest {
   static final AlumniCacheExtension cacheAfterEach = new AlumniCacheExtension(() -> al);
 
   protected static final boolean IS_APPIUM =
-    System.getenv("ALUMNIUM_DRIVER") != null
-        && System.getenv("ALUMNIUM_DRIVER").startsWith("appium");
+      System.getenv("ALUMNIUM_DRIVER") != null
+          && System.getenv("ALUMNIUM_DRIVER").startsWith("appium");
 
   private static boolean isLambdaTest() {
-      return LT_USERNAME != null && LT_ACCESS_KEY != null;
+    return LT_USERNAME != null && LT_ACCESS_KEY != null;
   }
-  
+
   private static URL lambdaTestUrl() throws MalformedURLException {
-      return URI.create(
-              "https://" + LT_USERNAME + ":" + LT_ACCESS_KEY + "@mobile-hub.lambdatest.com/wd/hub")
-          .toURL();
+    return URI.create(
+            "https://" + LT_USERNAME + ":" + LT_ACCESS_KEY + "@mobile-hub.lambdatest.com/wd/hub")
+        .toURL();
   }
-  
+
   private static URL localAppiumUrl() throws MalformedURLException {
-      String url = System.getenv().getOrDefault("APPIUM_URL", "http://127.0.0.1:4723/");
-      return URI.create(url).toURL();
+    String url = System.getenv().getOrDefault("APPIUM_URL", "http://127.0.0.1:4723/");
+    return URI.create(url).toURL();
   }
-  
+
   private static Map<String, Object> ltOptions(String build) {
-      return Map.of(
-          "build", build,
-          "name", "JUnit (" + DRIVER_TYPE + ")",
-          "isRealMobile", true,
-          "network", false,
-          "visual", true,
-          "video", true,
-          "w3c", true);
+    return Map.of(
+        "build", build,
+        "name", "JUnit (" + DRIVER_TYPE + ")",
+        "isRealMobile", true,
+        "network", false,
+        "visual", true,
+        "video", true,
+        "w3c", true);
   }
 
   // AppiumDriver conflicts with alumni's AppiumDriver. Hence, using canonical class name
