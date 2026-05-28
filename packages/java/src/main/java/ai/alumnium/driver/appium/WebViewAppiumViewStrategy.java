@@ -37,7 +37,7 @@ public final class WebViewAppiumViewStrategy implements AppiumViewStrategy {
   }
 
   @Override
-  public WebElement findRaw(int id) {
+  public WebElement findElement(int id) {
     AccessibilityElement element = accessibilityTree().elementById(id);
     Map<String, Object> locator = element.locatorInfo();
     if (locator == null || !locator.containsKey("selector")) {
@@ -55,7 +55,7 @@ public final class WebViewAppiumViewStrategy implements AppiumViewStrategy {
 
   @Override
   public void click(int id) {
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     try {
       new Actions(ctx.driver()).moveToElement(element).click().perform();
     } catch (RuntimeException e) {
@@ -65,8 +65,8 @@ public final class WebViewAppiumViewStrategy implements AppiumViewStrategy {
 
   @Override
   public void dragAndDrop(int fromId, int toId) {
-    WebElement from = findRaw(fromId);
-    WebElement to = findRaw(toId);
+    WebElement from = findElement(fromId);
+    WebElement to = findElement(toId);
     // Touch pointer gestures do not trigger HTML5 dragstart/drop events on mobile Chrome;
     // dispatch drag events directly via JavaScript instead.
     ((JavascriptExecutor) ctx.driver())
@@ -98,7 +98,7 @@ public final class WebViewAppiumViewStrategy implements AppiumViewStrategy {
 
   @Override
   public void type(int id, String text) {
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     ((JavascriptExecutor) ctx.driver())
         .executeScript("arguments[0].scrollIntoView(true);", element);
     try {
@@ -122,7 +122,7 @@ public final class WebViewAppiumViewStrategy implements AppiumViewStrategy {
   @Override
   public void scrollTo(int id) {
     ((JavascriptExecutor) ctx.driver())
-        .executeScript("arguments[0].scrollIntoView();", findRaw(id));
+        .executeScript("arguments[0].scrollIntoView();", findElement(id));
   }
 
   @Override

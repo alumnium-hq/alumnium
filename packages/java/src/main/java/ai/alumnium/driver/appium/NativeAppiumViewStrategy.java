@@ -40,7 +40,7 @@ public final class NativeAppiumViewStrategy implements AppiumViewStrategy {
   }
 
   @Override
-  public WebElement findRaw(int id) {
+  public WebElement findElement(int id) {
     AccessibilityElement element = accessibilityTree().elementById(id);
     return ctx.platform() == Platform.XCUITEST
         ? findElementIos(element)
@@ -50,7 +50,7 @@ public final class NativeAppiumViewStrategy implements AppiumViewStrategy {
   @Override
   public void click(int id) {
     ensureNativeContext();
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     scrollIntoView(element);
     element.click();
   }
@@ -58,8 +58,8 @@ public final class NativeAppiumViewStrategy implements AppiumViewStrategy {
   @Override
   public void dragAndDrop(int fromId, int toId) {
     ensureNativeContext();
-    WebElement from = findRaw(fromId);
-    WebElement to = findRaw(toId);
+    WebElement from = findElement(fromId);
+    WebElement to = findElement(toId);
     scrollIntoView(from);
     int fromX = from.getLocation().getX() + from.getSize().getWidth() / 2;
     int fromY = from.getLocation().getY() + from.getSize().getHeight() / 2;
@@ -100,7 +100,7 @@ public final class NativeAppiumViewStrategy implements AppiumViewStrategy {
   @Override
   public void type(int id, String text) {
     ensureNativeContext();
-    WebElement element = findRaw(id);
+    WebElement element = findElement(id);
     scrollIntoView(element);
     element.clear();
     element.sendKeys(text);
@@ -111,7 +111,7 @@ public final class NativeAppiumViewStrategy implements AppiumViewStrategy {
 
   @Override
   public void scrollTo(int id) {
-    scrollIntoView(findRaw(id));
+    scrollIntoView(findElement(id));
   }
 
   @Override

@@ -6,11 +6,11 @@ import org.openqa.selenium.WebElement;
 
 /** View-specific behaviour for Appium actions and accessibility snapshots. */
 public sealed interface AppiumViewStrategy
-    permits NativeAppiumViewStrategy, WebViewAppiumViewStrategy, ChromiumAppiumViewStrategy {
+    permits NativeAppiumViewStrategy, WebViewAppiumViewStrategy {
 
   BaseAccessibilityTree accessibilityTree();
 
-  WebElement findRaw(int id);
+  WebElement findElement(int id);
 
   void click(int id);
 

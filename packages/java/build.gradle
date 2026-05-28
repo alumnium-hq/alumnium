@@ -73,7 +73,7 @@ dependencies {
     api "org.seleniumhq.selenium:selenium-java:${seleniumVersion}"
     api "com.microsoft.playwright:playwright:${playwrightVersion}"
     api "io.appium:java-client:${appiumVersion}"
-    
+
     // HTML parsing for WebView accessibility tree
     implementation "org.jsoup:jsoup:${jsoupVersion}"
 

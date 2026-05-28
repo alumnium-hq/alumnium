@@ -4,7 +4,6 @@ import ai.alumnium.Config;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
 import ai.alumnium.driver.appium.AppiumViewContext;
 import ai.alumnium.driver.appium.AppiumViewStrategy;
-import ai.alumnium.driver.appium.ChromiumAppiumViewStrategy;
 import ai.alumnium.driver.appium.NativeAppiumViewStrategy;
 import ai.alumnium.driver.appium.WebViewAppiumViewStrategy;
 import ai.alumnium.tool.BaseTool;
@@ -16,6 +15,7 @@ import io.appium.java_client.remote.SupportsContextSwitching;
 import java.util.Set;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebElement;
 
 /**
  * Appium (mobile) implementation of {@link BaseDriver}.
@@ -146,8 +146,8 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   @Override
-  public Element findElement(int id) {
-    return new Element.Appium(currentStrategy().findRaw(id));
+  public WebElement findElement(int id) {
+    return currentStrategy().findElement(id);
   }
 
   @Override
@@ -182,14 +182,8 @@ public final class AppiumDriver extends BaseDriver {
             doubleFetchPageSource,
             delay);
     String context = ((SupportsContextSwitching) driver).getContext();
-    if (context != null && context.toUpperCase().contains("WEBVIEW")) {
-      return new WebViewAppiumViewStrategy(ctx);
-    }
-    if ("CHROMIUM".equalsIgnoreCase(context)) {
-      // AndroidDriver does not implement HasCdp; fall back to HTML-based parsing
-      if (driver instanceof org.openqa.selenium.chromium.HasCdp) {
-        return new ChromiumAppiumViewStrategy(ctx);
-      }
+    if (context != null
+        && (context.toUpperCase().contains("WEBVIEW") || "CHROMIUM".equalsIgnoreCase(context))) {
       return new WebViewAppiumViewStrategy(ctx);
     }
     return new NativeAppiumViewStrategy(ctx);
