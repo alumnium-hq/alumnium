@@ -1,8 +1,6 @@
 package ai.alumnium.system;
 
 import ai.alumnium.Alumni;
-import ai.alumnium.Model;
-import ai.alumnium.Provider;
 import ai.alumnium.driver.AppiumDriver;
 import ai.alumnium.tool.BaseTool;
 import com.microsoft.playwright.Browser;
@@ -124,7 +122,7 @@ public class BaseTest {
                 // unreachable: JUnit gave us the class already
               }
             });
-    Alumni.Options options = new Alumni.Options().withModel(new Model(Provider.ANTHROPIC, "claude-haiku-4-5-20251001")).withExtraTools(extraTools);
+    Alumni.Options options = new Alumni.Options().withExtraTools(extraTools);
 
     switch (DRIVER_TYPE) {
       case "playwright" -> {
