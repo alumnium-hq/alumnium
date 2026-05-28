@@ -11,6 +11,7 @@ import { stringify as tomlStringify } from "smol-toml";
 import { z } from "zod";
 import { ALUMNIUM_VERSION } from "../src/package.ts";
 import {
+  PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
   PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
   PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
   SELENIUM_ATOM_ASSET_PREFIX,
@@ -996,6 +997,11 @@ async function getStandaloneEmbeddedAssets(): Promise<
     {
       name: PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
       sourcePath: path.join(playwrightCorePkgDir, "package.json"),
+    },
+
+    {
+      name: PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
+      sourcePath: path.join(playwrightCorePkgDir, "browsers.json"),
     },
   ];
 }
