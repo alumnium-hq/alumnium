@@ -1,6 +1,8 @@
 package ai.alumnium.system;
 
 import ai.alumnium.Alumni;
+import ai.alumnium.Model;
+import ai.alumnium.Provider;
 import ai.alumnium.driver.AppiumDriver;
 import ai.alumnium.tool.BaseTool;
 import com.microsoft.playwright.Browser;
@@ -33,6 +35,7 @@ public class BaseTest {
       System.getenv().getOrDefault("ALUMNIUM_DRIVER", "selenium");
   private static final String LT_USERNAME = System.getenv("LT_USERNAME");
   private static final String LT_ACCESS_KEY = System.getenv("LT_ACCESS_KEY");
+  private static final boolean IS_LAMBDA_TEST = LT_USERNAME != null && LT_ACCESS_KEY != null;
   private static final boolean PLAYWRIGHT_HEADLESS =
       !"false".equalsIgnoreCase(System.getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS"));
 
@@ -42,22 +45,11 @@ public class BaseTest {
   @RegisterExtension
   static final AlumniCacheExtension cacheAfterEach = new AlumniCacheExtension(() -> al);
 
-  protected static final boolean IS_APPIUM =
-      System.getenv("ALUMNIUM_DRIVER") != null
-          && System.getenv("ALUMNIUM_DRIVER").startsWith("appium");
-
-  private static boolean isLambdaTest() {
-    return LT_USERNAME != null && LT_ACCESS_KEY != null;
-  }
-
-  private static URL lambdaTestUrl() throws MalformedURLException {
-    return URI.create(
-            "https://" + LT_USERNAME + ":" + LT_ACCESS_KEY + "@mobile-hub.lambdatest.com/wd/hub")
-        .toURL();
-  }
-
-  private static URL localAppiumUrl() throws MalformedURLException {
-    String url = System.getenv().getOrDefault("APPIUM_URL", "http://127.0.0.1:4723/");
+  private static URL appiumUrl() throws MalformedURLException {
+    String url =
+        IS_LAMBDA_TEST
+            ? "https://" + LT_USERNAME + ":" + LT_ACCESS_KEY + "@mobile-hub.lambdatest.com/wd/hub"
+            : System.getenv().getOrDefault("APPIUM_URL", "http://127.0.0.1:4723/");
     return URI.create(url).toURL();
   }
 
@@ -72,24 +64,24 @@ public class BaseTest {
         "w3c", true);
   }
 
-  // AppiumDriver conflicts with alumni's AppiumDriver. Hence, using canonical class name
+  // io.appium.java_client.AppiumDriver conflicts with ai.alumnium.driver.AppiumDriver
   private static io.appium.java_client.AppiumDriver buildIosDriver() throws MalformedURLException {
     XCUITestOptions options = new XCUITestOptions();
     options.setPlatformName("iOS");
-    options.setDeviceName("iPhone 16");
+    options.setDeviceName("iPhone 17 Pro Max");
     options.setNoReset(true);
 
-    if (isLambdaTest()) {
+    if (IS_LAMBDA_TEST) {
       options.withBrowserName("Safari");
       options.setPlatformVersion("18");
       options.setCapability("lt:options", ltOptions("Java - iOS"));
-      return new IOSDriver(lambdaTestUrl(), options);
+    } else {
+      options.setBundleId("com.apple.mobilesafari");
+      options.setPlatformVersion("26.5");
+      options.setNewCommandTimeout(Duration.ofSeconds(300));
     }
 
-    options.setBundleId("com.apple.mobilesafari");
-    options.setPlatformVersion("18.5");
-    options.setNewCommandTimeout(Duration.ofSeconds(300));
-    return new IOSDriver(localAppiumUrl(), options);
+    return new IOSDriver(appiumUrl(), options);
   }
 
   private static io.appium.java_client.AppiumDriver buildAndroidDriver()
@@ -98,21 +90,22 @@ public class BaseTest {
     options.setPlatformName("Android");
     options.setDeviceName("Android Device");
     options.setNoReset(true);
+    options.withBrowserName("Chrome");
 
-    if (isLambdaTest()) {
-      options.withBrowserName("Chrome");
+    if (IS_LAMBDA_TEST) {
       options.setPlatformVersion("14");
       options.setCapability("lt:options", ltOptions("Java - Android"));
-      return new AndroidDriver(lambdaTestUrl(), options);
+    } else {
+      options.setPlatformVersion("16.0");
+      options.setChromeOptions(Map.of("androidKeepAppDataDir", true));
+      options.setNewCommandTimeout(Duration.ofSeconds(300));
     }
 
-    options.withBrowserName("Chrome");
-    options.setPlatformVersion("16.0");
-    options.setChromeOptions(Map.of("androidKeepAppDataDir", true));
-    options.setNewCommandTimeout(Duration.ofSeconds(300));
-    AndroidDriver driver = new AndroidDriver(localAppiumUrl(), options);
-    driver.setSettings(
-        Map.<String, Object>of("allowInvisibleElements", true, "ignoreUnimportantViews", true));
+    AndroidDriver driver = new AndroidDriver(appiumUrl(), options);
+    if (!IS_LAMBDA_TEST) {
+      driver.setSettings(
+          Map.<String, Object>of("allowInvisibleElements", true, "ignoreUnimportantViews", true));
+    }
     return driver;
   }
 
@@ -131,7 +124,7 @@ public class BaseTest {
                 // unreachable: JUnit gave us the class already
               }
             });
-    Alumni.Options options = new Alumni.Options().withExtraTools(extraTools);
+    Alumni.Options options = new Alumni.Options().withModel(new Model(Provider.ANTHROPIC, "claude-haiku-4-5-20251001")).withExtraTools(extraTools);
 
     switch (DRIVER_TYPE) {
       case "playwright" -> {

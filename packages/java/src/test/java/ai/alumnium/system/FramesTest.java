@@ -1,12 +1,12 @@
 package ai.alumnium.system;
 
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 import java.io.File;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
 public class FramesTest extends BaseTest {
 
   private static final String CROSS_ORIGIN_IFRAME_URL =
@@ -14,8 +14,6 @@ public class FramesTest extends BaseTest {
 
   @Test
   void testNestedFrames() {
-    assumeFalse(
-        IS_APPIUM, "Frames support is only implemented for Playwright and Selenium currently");
     navigate("https://the-internet.herokuapp.com/nested_frames");
 
     al.act("click MIDDLE text");
@@ -25,8 +23,6 @@ public class FramesTest extends BaseTest {
 
   @Test
   void testCrossOriginIframe() {
-    assumeFalse(
-        IS_APPIUM, "Frames support is only implemented for Playwright and Selenium currently");
     navigate(CROSS_ORIGIN_IFRAME_URL);
 
     al.check("button 'Main Page Button' is present");

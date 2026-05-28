@@ -1,14 +1,14 @@
 package ai.alumnium.system;
 
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 import ai.alumnium.tool.SwitchToNextTabTool;
 import ai.alumnium.tool.SwitchToPreviousTabTool;
 import java.io.File;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
 public class TabsTest extends BaseTest {
 
   static {
@@ -20,7 +20,6 @@ public class TabsTest extends BaseTest {
 
   @Test
   void testSwitchingTabs() {
-    assumeFalse(IS_APPIUM, "Appium doesn't support tab manipulation yet");
     navigate(MULTI_TAB_URL);
 
     al.act("click on 'Open New Tab' button");

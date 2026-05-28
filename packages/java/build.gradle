@@ -11,7 +11,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'com.vanniktech.maven.publish' version '0.30.0'
-    id 'com.diffplug.spotless' version '8.5.0'
+    id 'com.diffplug.spotless' version '8.5.1'
 }
 
 group   = 'ai.alumnium'

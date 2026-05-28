@@ -1,13 +1,13 @@
 package ai.alumnium.system;
 
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 import ai.alumnium.Alumni;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium-ios")
 public class DragAndDropTest extends BaseTest {
 
   private static final String DRAG_AND_DROP_URL =
@@ -15,7 +15,6 @@ public class DragAndDropTest extends BaseTest {
 
   @Test
   void testDragAndDrop() {
-    assumeFalse(IS_APPIUM, "Example doesn't support drag and drop in mobile browsers");
     navigate(DRAG_AND_DROP_URL);
     Object data =
         al.get(
