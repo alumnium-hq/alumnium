@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { isSingleFileExecutable } from "../bundle.ts";
 import {
+  PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
   PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
   PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
   SELENIUM_ATOM_ASSET_PREFIX,
@@ -33,6 +34,7 @@ const RUNTIME_SELENIUM_MANAGER_TARGETS = {
 
 interface ExtractedEmbeddedDependencies {
   playwrightPackageJsonPath: string;
+  playwrightBrowsersJsonPath: string;
   playwrightOopDownloadPath: string;
   seleniumAtomsDir: string;
   seleniumManagerPath: string | undefined;
@@ -85,6 +87,11 @@ async function extractEmbeddedDependencies(): Promise<ExtractedEmbeddedDependenc
     "playwright-core",
     "package.json",
   );
+  const playwrightBrowsersJsonPath = path.join(
+    extractedDir,
+    "playwright-core",
+    "browsers.json",
+  );
   const playwrightOopDownloadPath = path.join(
     extractedDir,
     "playwright-core",
@@ -119,6 +126,11 @@ async function extractEmbeddedDependencies(): Promise<ExtractedEmbeddedDependenc
     ),
     writeEmbeddedFile(
       filesByName,
+      PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
+      playwrightBrowsersJsonPath,
+    ),
+    writeEmbeddedFile(
+      filesByName,
       PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
       playwrightOopDownloadPath,
     ),
@@ -126,6 +138,7 @@ async function extractEmbeddedDependencies(): Promise<ExtractedEmbeddedDependenc
 
   return {
     playwrightPackageJsonPath,
+    playwrightBrowsersJsonPath,
     playwrightOopDownloadPath,
     seleniumAtomsDir,
     seleniumManagerPath,
@@ -180,9 +193,17 @@ function installResolveHook(paths: ExtractedEmbeddedDependencies) {
 
       if (
         request === "../../../package.json" ||
-        request.endsWith("playwright-core/package.json")
+        request.endsWith("playwright-core/package.json") ||
+        request.endsWith("playwright-core\\package.json")
       ) {
         return paths.playwrightPackageJsonPath;
+      }
+
+      if (
+        request.endsWith("playwright-core/browsers.json") ||
+        request.endsWith("playwright-core\\browsers.json")
+      ) {
+        return paths.playwrightBrowsersJsonPath;
       }
     }
 
