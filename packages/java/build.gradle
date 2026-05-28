@@ -103,6 +103,7 @@ testing {
             targets {
                 all {
                     testTask.configure {
+                        environment System.getenv()
                         environment "ALUMNIUM_DRIVER", System.getenv("ALUMNIUM_DRIVER") ?: "selenium"
                         environment "ALUMNIUM_PLAYWRIGHT_HEADLESS", System.getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS") ?: "true"
                         testLogging {
@@ -137,7 +138,7 @@ mavenPublishing {
                 name = 'Alex Rodionov'
             }
             developer {
-                id = 'rookieintraing'
+                id = 'rookieintraining'
                 name = 'Ish Abbi'
             }
         }

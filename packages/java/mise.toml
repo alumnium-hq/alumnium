@@ -40,7 +40,7 @@ description = "Run unit tests"
 [tasks."test/system"]
 usage = '''
 arg "<driver>" help="Driver to use for system tests" {
-  choices "selenium" "playwright"
+  choices "selenium" "playwright" "appium-ios" "appium-android"
   default "selenium"
 }
 '''
@@ -51,6 +51,12 @@ run = [{ task = "test/system playwright" }]
 
 [tasks."test/system:selenium"]
 run = [{ task = "test/system selenium" }]
+
+[tasks."test/system:appium-ios"]
+run = [{ task = "test/system appium-ios" }]
+
+[tasks."test/system:appium-android"]
+run = [{ task = "test/system appium-android" }]
 
 [tasks."test/package"]
 run = "./scripts/test-package.sh"

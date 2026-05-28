@@ -46,6 +46,12 @@ jobs:
           - driver: playwright
             model: azure_openai
 
+          - driver: appium-ios
+            model: azure_openai
+
+          - driver: appium-android
+            model: azure_openai
+
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6

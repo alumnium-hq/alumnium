@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class DragAndDropTest extends BaseTest {
 
@@ -13,6 +14,9 @@ public class DragAndDropTest extends BaseTest {
 
   @Test
   void testDragAndDrop() {
+    assumeFalse(
+        IS_APPIUM,
+        "Example doesn't support drag and drop in mobile browsers");
     navigate(DRAG_AND_DROP_URL);
     Object data =
         al.get(
