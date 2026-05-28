@@ -4,7 +4,9 @@ import java.io.File;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
 public class FramesTest extends BaseTest {
 
   private static final String CROSS_ORIGIN_IFRAME_URL =

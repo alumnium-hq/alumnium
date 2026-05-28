@@ -11,7 +11,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'com.vanniktech.maven.publish' version '0.30.0'
-    id 'com.diffplug.spotless' version '8.5.0'
+    id 'com.diffplug.spotless' version '8.5.1'
 }
 
 group   = 'ai.alumnium'
@@ -103,6 +103,7 @@ testing {
             targets {
                 all {
                     testTask.configure {
+                        environment System.getenv()
                         environment "ALUMNIUM_DRIVER", System.getenv("ALUMNIUM_DRIVER") ?: "selenium"
                         environment "ALUMNIUM_PLAYWRIGHT_HEADLESS", System.getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS") ?: "true"
                         testLogging {
@@ -137,7 +138,7 @@ mavenPublishing {
                 name = 'Alex Rodionov'
             }
             developer {
-                id = 'rookieintraing'
+                id = 'rookieintraining'
                 name = 'Ish Abbi'
             }
         }

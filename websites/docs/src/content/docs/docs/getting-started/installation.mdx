@@ -19,6 +19,25 @@ dependencies {
 }
 ```
 
+Or, if you're using maven, add this to your pom.xml
+
+```xml title="pom.xml"
+<dependencies>
+  <dependency>
+    <groupId>ai.alumnium</groupId>
+    <artifactId>alumnium</artifactId>
+    <version>0.21.0</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>ai.alumnium</groupId>
+    <artifactId>alumnium-cli-darwin-arm64</artifactId>
+    <version>0.21.0</version>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+```
+
 Replace `alumnium-cli-darwin-arm64` with the artifact matching your platform, or add multiple artifacts if you need to support multiple platforms. The available CLI artifacts are:
 
 | OS      | Architecture | Artifact                     |
