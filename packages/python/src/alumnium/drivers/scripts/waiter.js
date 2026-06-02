@@ -370,7 +370,7 @@
   }
 
   function hookFetch() {
-    const nativeFetch = window.fetch;
+    const nativeFetch = window.fetch.bind(window);
 
     /**
      * @param {RequestInfo | URL} input
