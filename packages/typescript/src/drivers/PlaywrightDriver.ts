@@ -11,7 +11,7 @@ import { TypeTool } from "../tools/TypeTool.ts";
 import { UploadTool } from "../tools/UploadTool.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import type { Keys } from "./keys.ts";
-// NOTE: While macros work well in Bun, it fails when using Alumium client from
+// NOTE: While macros work well in Bun, it fails when using Alumnium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };

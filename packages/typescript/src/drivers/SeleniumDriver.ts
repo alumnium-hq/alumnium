@@ -23,7 +23,7 @@ import { TypeTool } from "../tools/TypeTool.ts";
 import { UploadTool } from "../tools/UploadTool.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import { Keys } from "./keys.ts";
-// NOTE: While macros work well in Bun, it fails when using Alumium client from
+// NOTE: While macros work well in Bun, it fails when using Alumnium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "./scripts/scripts.js" with { type: "macro" };
@@ -74,7 +74,7 @@ export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
   public platform: Driver.Platform = "chromium";
   #autoswitchToNewTabEnabled = true;
-  #shadowChildToHostMap = new Map<number, number>();
+  #shadowChildToHostMap: Partial<Record<number, number>> = {};
   public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
@@ -267,39 +267,37 @@ export class SeleniumDriver extends BaseDriver {
     if (!domResponse.nodes) return shadowNodes;
 
     // Build maps from the DOM tree
-    const nodeIdToBackendId = new Map<number, number>();
-    const parentIdMap = new Map<number, number>();
-    // Maps shadow root nodeId -> shadow host backendNodeId
-    const shadowRootToHostBackendId = new Map<number, number>();
+    const nodeIdToBackendId: Record<number, number> = {};
+    const parentIdMap: Record<number, number> = {};
+    const shadowRootToHostBackendId: Record<number, number> = {};
 
     for (const domNode of domResponse.nodes) {
-      nodeIdToBackendId.set(domNode.nodeId, domNode.backendNodeId);
+      nodeIdToBackendId[domNode.nodeId] = domNode.backendNodeId;
       if (domNode.parentId !== undefined) {
-        parentIdMap.set(domNode.nodeId, domNode.parentId);
+        parentIdMap[domNode.nodeId] = domNode.parentId;
       }
       // Track shadow roots and their host's backendNodeId
       if (domNode.shadowRoots) {
         for (const sr of domNode.shadowRoots) {
-          shadowRootToHostBackendId.set(sr.nodeId, domNode.backendNodeId);
+          shadowRootToHostBackendId[sr.nodeId] = domNode.backendNodeId;
           // Shadow root nodes may not appear in the flat list, so track their parent too
-          parentIdMap.set(sr.nodeId, domNode.nodeId);
+          parentIdMap[sr.nodeId] = domNode.nodeId;
         }
       }
     }
 
     // Build childBackendNodeId -> hostBackendNodeId map by walking parent chains
-    this.#shadowChildToHostMap.clear();
+    this.#shadowChildToHostMap = {};
     for (const domNode of domResponse.nodes) {
+      const nodeBackendId = domNode.backendNodeId;
       let currentId: number | undefined = domNode.nodeId;
       while (currentId !== undefined) {
-        if (shadowRootToHostBackendId.has(currentId)) {
-          this.#shadowChildToHostMap.set(
-            domNode.backendNodeId,
-            shadowRootToHostBackendId.get(currentId)!,
-          );
+        if (currentId in shadowRootToHostBackendId) {
+          this.#shadowChildToHostMap[nodeBackendId] =
+            shadowRootToHostBackendId[currentId];
           break;
         }
-        currentId = parentIdMap.get(currentId);
+        currentId = parentIdMap[currentId];
       }
     }
 
@@ -319,9 +317,8 @@ export class SeleniumDriver extends BaseDriver {
 
               axNode._is_shadow_dom = true;
               if (!axNode.backendDOMNodeId) {
-                const backendId = nodeIdToBackendId.get(
-                  Number.parseInt(axNode.nodeId),
-                );
+                const backendId =
+                  nodeIdToBackendId[Number.parseInt(axNode.nodeId)];
                 if (backendId !== undefined) {
                   axNode.backendDOMNodeId = backendId;
                 }
@@ -356,7 +353,7 @@ export class SeleniumDriver extends BaseDriver {
   private async getShadowChildNodes(
     nodeId: string,
     processedNodes: Set<string>,
-    nodeIdToBackendId: Map<number, number>,
+    nodeIdToBackendId: Record<number, number>,
   ): Promise<CDPNode[]> {
     const nodes: CDPNode[] = [];
 
@@ -374,9 +371,7 @@ export class SeleniumDriver extends BaseDriver {
           node._is_shadow_dom = true;
 
           if (!node.backendDOMNodeId) {
-            const backendId = nodeIdToBackendId.get(
-              Number.parseInt(node.nodeId),
-            );
+            const backendId = nodeIdToBackendId[Number.parseInt(node.nodeId)];
             if (backendId !== undefined) {
               node.backendDOMNodeId = backendId;
             }
@@ -563,7 +558,7 @@ export class SeleniumDriver extends BaseDriver {
     });
 
     const selector = `[data-alumnium-id='${backendNodeId}']`;
-    const hostBackendNodeId = this.#shadowChildToHostMap.get(backendNodeId);
+    const hostBackendNodeId = this.#shadowChildToHostMap[backendNodeId];
 
     let element: WebElement;
     if (hostBackendNodeId !== undefined) {
