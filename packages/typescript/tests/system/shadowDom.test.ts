@@ -7,10 +7,8 @@ describe("Shadow DOM", () => {
       const result = await setup(options);
       const { isAppiumDriver, driverId } = result;
 
-      if (isAppiumDriver || driverId === "selenium")
-        skip(
-          "Shadow DOM support is not implemented in Appium and Selenium yet",
-        );
+      if (isAppiumDriver)
+        skip("Shadow DOM support is not implemented in Appium yet");
 
       return result;
     };

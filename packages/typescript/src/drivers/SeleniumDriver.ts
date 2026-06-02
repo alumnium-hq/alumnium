@@ -44,9 +44,19 @@ const { span } = tracer.dec();
 interface CDPNode {
   nodeId: string;
   parentId?: string;
+  backendDOMNodeId?: number;
   _parent_iframe_backend_node_id?: number;
   _frame_chain?: number[];
+  _is_shadow_dom?: boolean;
   [key: string]: unknown;
+}
+
+interface CDPDomNode {
+  nodeId: number;
+  backendNodeId: number;
+  parentId?: number;
+  nodeName?: string;
+  shadowRoots?: CDPDomNode[];
 }
 
 interface CDPFrameInfo {
@@ -64,6 +74,7 @@ export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
   public platform: Driver.Platform = "chromium";
   #autoswitchToNewTabEnabled = true;
+  #shadowChildToHostMap = new Map<number, number>();
   public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
@@ -143,6 +154,20 @@ export class SeleniumDriver extends BaseDriver {
 
     logger.debug(`Total accessibility nodes collected: ${allNodes.length}`);
 
+    // Collect shadow DOM nodes from the main frame
+    // Note: Shadow DOM piercing for iframes would require additional per-frame handling
+    try {
+      const shadowNodes = await this.getShadowDomNodes();
+      allNodes.push(...shadowNodes);
+      if (shadowNodes.length > 0) {
+        logger.debug(`  -> Shadow DOM: ${shadowNodes.length} nodes added`);
+      }
+    } catch (error) {
+      logger.debug(
+        `  -> Shadow DOM failed (${error instanceof Error ? error.message : String(error)})`,
+      );
+    }
+
     return new ChromiumAccessibilityTree({ nodes: allNodes });
   }
 
@@ -219,6 +244,163 @@ export class SeleniumDriver extends BaseDriver {
       frameIds.push(...this.getAllFrameIds(child));
     }
     return frameIds;
+  }
+
+  /**
+   * Get shadow DOM nodes from the page using CDP.
+   * This pierces into shadow roots to make shadow DOM elements accessible.
+   * Also builds #shadowChildToHostMap for efficient element lookup.
+   */
+  private async getShadowDomNodes(): Promise<CDPNode[]> {
+    const shadowNodes: CDPNode[] = [];
+    const processedNodes = new Set<string>();
+
+    // Enable DOM domain for node operations
+    await this.executeCdpCommand("DOM.enable", {});
+
+    // Get all DOM nodes including shadow DOM content
+    const domResponse = (await this.executeCdpCommand(
+      "DOM.getFlattenedDocument",
+      { depth: -1, pierce: true },
+    )) as { nodes: CDPDomNode[] };
+
+    if (!domResponse.nodes) return shadowNodes;
+
+    // Build maps from the DOM tree
+    const nodeIdToBackendId = new Map<number, number>();
+    const parentIdMap = new Map<number, number>();
+    // Maps shadow root nodeId -> shadow host backendNodeId
+    const shadowRootToHostBackendId = new Map<number, number>();
+
+    for (const domNode of domResponse.nodes) {
+      nodeIdToBackendId.set(domNode.nodeId, domNode.backendNodeId);
+      if (domNode.parentId !== undefined) {
+        parentIdMap.set(domNode.nodeId, domNode.parentId);
+      }
+      // Track shadow roots and their host's backendNodeId
+      if (domNode.shadowRoots) {
+        for (const sr of domNode.shadowRoots) {
+          shadowRootToHostBackendId.set(sr.nodeId, domNode.backendNodeId);
+          // Shadow root nodes may not appear in the flat list, so track their parent too
+          parentIdMap.set(sr.nodeId, domNode.nodeId);
+        }
+      }
+    }
+
+    // Build childBackendNodeId -> hostBackendNodeId map by walking parent chains
+    this.#shadowChildToHostMap.clear();
+    for (const domNode of domResponse.nodes) {
+      let currentId: number | undefined = domNode.nodeId;
+      while (currentId !== undefined) {
+        if (shadowRootToHostBackendId.has(currentId)) {
+          this.#shadowChildToHostMap.set(
+            domNode.backendNodeId,
+            shadowRootToHostBackendId.get(currentId)!,
+          );
+          break;
+        }
+        currentId = parentIdMap.get(currentId);
+      }
+    }
+
+    // Find shadow hosts and collect their accessibility nodes
+    for (const domNode of domResponse.nodes) {
+      if (domNode.shadowRoots && domNode.shadowRoots.length > 0) {
+        try {
+          const axResponse = (await this.executeCdpCommand(
+            "Accessibility.queryAXTree",
+            { nodeId: domNode.nodeId },
+          )) as { nodes: CDPNode[] };
+
+          if (axResponse.nodes) {
+            for (const axNode of axResponse.nodes) {
+              if (processedNodes.has(axNode.nodeId)) continue;
+              processedNodes.add(axNode.nodeId);
+
+              axNode._is_shadow_dom = true;
+              if (!axNode.backendDOMNodeId) {
+                const backendId = nodeIdToBackendId.get(
+                  Number.parseInt(axNode.nodeId),
+                );
+                if (backendId !== undefined) {
+                  axNode.backendDOMNodeId = backendId;
+                }
+              }
+
+              shadowNodes.push(axNode);
+
+              if (axNode.childIds && Array.isArray(axNode.childIds)) {
+                for (const childId of axNode.childIds) {
+                  const childNodes = await this.getShadowChildNodes(
+                    String(childId),
+                    processedNodes,
+                    nodeIdToBackendId,
+                  );
+                  shadowNodes.push(...childNodes);
+                }
+              }
+            }
+          }
+        } catch {
+          // Ignore errors for individual shadow hosts
+        }
+      }
+    }
+
+    return shadowNodes;
+  }
+
+  /**
+   * Recursively get child nodes from shadow DOM.
+   */
+  private async getShadowChildNodes(
+    nodeId: string,
+    processedNodes: Set<string>,
+    nodeIdToBackendId: Map<number, number>,
+  ): Promise<CDPNode[]> {
+    const nodes: CDPNode[] = [];
+
+    if (processedNodes.has(nodeId)) return nodes;
+    processedNodes.add(nodeId);
+
+    try {
+      const response = (await this.executeCdpCommand(
+        "Accessibility.queryAXTree",
+        { nodeId: Number.parseInt(nodeId) },
+      )) as { nodes: CDPNode[] };
+
+      if (response.nodes) {
+        for (const node of response.nodes) {
+          node._is_shadow_dom = true;
+
+          if (!node.backendDOMNodeId) {
+            const backendId = nodeIdToBackendId.get(
+              Number.parseInt(node.nodeId),
+            );
+            if (backendId !== undefined) {
+              node.backendDOMNodeId = backendId;
+            }
+          }
+
+          nodes.push(node);
+
+          if (node.childIds && Array.isArray(node.childIds)) {
+            for (const childId of node.childIds) {
+              const childNodes = await this.getShadowChildNodes(
+                String(childId),
+                processedNodes,
+                nodeIdToBackendId,
+              );
+              nodes.push(...childNodes);
+            }
+          }
+        }
+      }
+    } catch {
+      // Ignore errors for individual nodes
+    }
+
+    return nodes;
   }
 
   @span("driver.click", spanAttrs) async click(id: number): Promise<void> {
@@ -380,9 +562,38 @@ export class SeleniumDriver extends BaseDriver {
       value: String(backendNodeId),
     });
 
-    const element = await this.driver.findElement(
-      By.css(`[data-alumnium-id='${backendNodeId}']`),
-    );
+    const selector = `[data-alumnium-id='${backendNodeId}']`;
+    const hostBackendNodeId = this.#shadowChildToHostMap.get(backendNodeId);
+
+    let element: WebElement;
+    if (hostBackendNodeId !== undefined) {
+      // Shadow DOM element: find the shadow host, get its shadow root, search inside
+      const { nodeIds: hostNodeIds } = (await this.executeCdpCommand(
+        "DOM.pushNodesByBackendIdsToFrontend",
+        { backendNodeIds: [hostBackendNodeId] },
+      )) as { nodeIds: number[] };
+
+      await this.executeCdpCommand("DOM.setAttributeValue", {
+        nodeId: hostNodeIds[0],
+        name: "data-alumnium-host",
+        value: String(hostBackendNodeId),
+      });
+
+      const hostElement = await this.driver.findElement(
+        By.css(`[data-alumnium-host='${hostBackendNodeId}']`),
+      );
+
+      await this.executeCdpCommand("DOM.removeAttribute", {
+        nodeId: hostNodeIds[0],
+        name: "data-alumnium-host",
+      });
+
+      const shadowRoot = await hostElement.getShadowRoot();
+      element = await shadowRoot.findElement(By.css(selector));
+    } else {
+      // Regular DOM element: standard CSS selector
+      element = await this.driver.findElement(By.css(selector));
+    }
 
     // Remove temporary attribute
     await this.executeCdpCommand("DOM.removeAttribute", {
