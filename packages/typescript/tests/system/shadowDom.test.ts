@@ -5,7 +5,7 @@ describe("Shadow DOM", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { isAppiumDriver, driverId } = result;
+      const { isAppiumDriver } = result;
 
       if (isAppiumDriver)
         skip("Shadow DOM support is not implemented in Appium yet");
@@ -19,16 +19,20 @@ describe("Shadow DOM", () => {
 
     await $.navigate("shadow_dom.html");
 
-    const tree = (await al.driver.getAccessibilityTree()).toStr();
-    expect(tree).toContain("This is inside Shadow DOM!");
-    expect(tree).toContain("This is another text inside Shadow DOM!");
+    expect(await al.get("first shadow DOM paragraph")).toContain(
+      "This is inside Shadow DOM!",
+    );
+    await al.do("click first shadow button");
+    expect(await al.get("first shadow DOM paragraph")).toContain(
+      "Shadow Button 1 was clicked!",
+    );
 
-    await al.do("click 'Shadow Button 1'");
-    await al.check("page contains 'This is inside Shadow DOM!'", {
-      assert: expect.assert,
-    });
-
-    const result = await al.get("text in the first shadow DOM paragraph");
-    expect(result).toContain("This is inside Shadow DOM!");
+    expect(await al.get("second shadow DOM paragraph")).toContain(
+      "This is another text inside Shadow DOM!",
+    );
+    await al.do("click second shadow button");
+    expect(await al.get("second shadow DOM paragraph")).toContain(
+      "Shadow Button 2 was clicked!",
+    );
   });
 });
