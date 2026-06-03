@@ -45,6 +45,7 @@ class SeleniumDriver(BaseDriver):
             TypeTool,
             UploadTool,
         }
+        self._shadow_child_to_host_map: dict[int, int] = {}
         self._patch_driver(driver)
         self._enable_target_auto_attach()
 
@@ -89,6 +90,18 @@ class SeleniumDriver(BaseDriver):
                 all_nodes.extend(nodes)
             except Exception as e:
                 logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")
+
+        logger.debug(f"Total accessibility nodes collected: {len(all_nodes)}")
+
+        # Collect shadow DOM nodes from the main frame
+        # Note: Shadow DOM piercing for iframes would require additional per-frame handling
+        try:
+            shadow_nodes = self._get_shadow_dom_nodes()
+            all_nodes.extend(shadow_nodes)
+            if shadow_nodes:
+                logger.debug(f"  -> Shadow DOM: {len(shadow_nodes)} nodes added")
+        except Exception as e:
+            logger.debug(f"  -> Shadow DOM failed ({e})")
 
         return ChromiumAccessibilityTree({"nodes": all_nodes})
 
@@ -151,6 +164,127 @@ class SeleniumDriver(BaseDriver):
         for child in frame_info.get("childFrames", []):
             frame_ids.extend(self._get_all_frame_ids(child))
         return frame_ids
+
+    def _get_shadow_dom_nodes(self) -> list[dict]:
+        """Get shadow DOM nodes from the page using CDP.
+
+        Pierces into shadow roots to make shadow DOM elements accessible.
+        Also rebuilds self._shadow_child_to_host_map for efficient element lookup.
+        """
+        shadow_nodes: list[dict] = []
+        processed_nodes: set[str] = set()
+
+        # Enable DOM domain for node operations
+        self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
+
+        # Get all DOM nodes including shadow DOM content
+        dom_response = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+            "DOM.getFlattenedDocument", {"depth": -1, "pierce": True}
+        )
+
+        dom_nodes = dom_response.get("nodes", [])
+        if not dom_nodes:
+            return shadow_nodes
+
+        # Build maps from the DOM tree
+        node_id_to_backend_id: dict[int, int] = {}
+        parent_id_map: dict[int, int] = {}
+        shadow_root_to_host_backend_id: dict[int, int] = {}
+
+        for dom_node in dom_nodes:
+            node_id = dom_node.get("nodeId")
+            backend_node_id = dom_node.get("backendNodeId")
+            if node_id is not None and backend_node_id is not None:
+                node_id_to_backend_id[node_id] = backend_node_id
+            if node_id is not None and dom_node.get("parentId") is not None:
+                parent_id_map[node_id] = dom_node["parentId"]
+            # Track shadow roots and their host's backendNodeId
+            if node_id is not None and backend_node_id is not None:
+                for sr in dom_node.get("shadowRoots", []):
+                    sr_node_id = sr.get("nodeId")
+                    if sr_node_id is not None:
+                        shadow_root_to_host_backend_id[sr_node_id] = backend_node_id
+                        parent_id_map[sr_node_id] = node_id
+
+        # Build child_backend_node_id -> host_backend_node_id map by walking parent chains
+        self._shadow_child_to_host_map = {}
+        for dom_node in dom_nodes:
+            node_backend_id = dom_node.get("backendNodeId")
+            if node_backend_id is None:
+                continue
+            current_id: int | None = dom_node.get("nodeId")
+            while current_id is not None:
+                if current_id in shadow_root_to_host_backend_id:
+                    self._shadow_child_to_host_map[node_backend_id] = shadow_root_to_host_backend_id[current_id]
+                    break
+                current_id = parent_id_map.get(current_id)
+
+        # Find shadow hosts and collect their accessibility nodes
+        for dom_node in dom_nodes:
+            if not dom_node.get("shadowRoots"):
+                continue
+            try:
+                ax_response = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                    "Accessibility.queryAXTree", {"nodeId": dom_node["nodeId"]}
+                )
+                for ax_node in ax_response.get("nodes", []):
+                    node_id_str = str(ax_node.get("nodeId", ""))
+                    if node_id_str in processed_nodes:
+                        continue
+                    processed_nodes.add(node_id_str)
+
+                    ax_node["_is_shadow_dom"] = True
+                    if not ax_node.get("backendDOMNodeId"):
+                        backend_id = node_id_to_backend_id.get(ax_node.get("nodeId"))
+                        if backend_id is not None:
+                            ax_node["backendDOMNodeId"] = backend_id
+
+                    shadow_nodes.append(ax_node)
+
+                    for child_id in ax_node.get("childIds", []):
+                        child_nodes = self._get_shadow_child_nodes(
+                            str(child_id), processed_nodes, node_id_to_backend_id
+                        )
+                        shadow_nodes.extend(child_nodes)
+            except Exception:
+                pass  # Ignore errors for individual shadow hosts
+
+        return shadow_nodes
+
+    def _get_shadow_child_nodes(
+        self,
+        node_id: str,
+        processed_nodes: set[str],
+        node_id_to_backend_id: dict[int, int],
+    ) -> list[dict]:
+        """Recursively get child nodes from shadow DOM."""
+        nodes: list[dict] = []
+
+        if node_id in processed_nodes:
+            return nodes
+        processed_nodes.add(node_id)
+
+        try:
+            response = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "Accessibility.queryAXTree", {"nodeId": int(node_id)}
+            )
+            for node in response.get("nodes", []):
+                node["_is_shadow_dom"] = True
+
+                if not node.get("backendDOMNodeId"):
+                    backend_id = node_id_to_backend_id.get(node.get("nodeId"))
+                    if backend_id is not None:
+                        node["backendDOMNodeId"] = backend_id
+
+                nodes.append(node)
+
+                for child_id in node.get("childIds", []):
+                    child_nodes = self._get_shadow_child_nodes(str(child_id), processed_nodes, node_id_to_backend_id)
+                    nodes.extend(child_nodes)
+        except Exception:
+            pass  # Ignore errors for individual nodes
+
+        return nodes
 
     @staticmethod
     def _autoswitch_to_new_tab(func: Callable) -> Callable:  # type: ignore[reportSelfClsParameterName]
@@ -291,7 +425,39 @@ class SeleniumDriver(BaseDriver):
                 "value": str(backend_node_id),
             },
         )
-        element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-id='{backend_node_id}']")
+        selector = f"[data-alumnium-id='{backend_node_id}']"
+        host_backend_node_id = (
+            self._shadow_child_to_host_map.get(backend_node_id) if backend_node_id is not None else None
+        )
+        if host_backend_node_id is not None:
+            # Shadow DOM element: find the shadow host, get its shadow root, search inside
+            host_node_ids = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [host_backend_node_id]}
+            )["nodeIds"]
+            if not host_node_ids:
+                raise ValueError(f"CDP did not return a node id for host {host_backend_node_id}")
+            host_node_id = host_node_ids[0]
+            self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "DOM.setAttributeValue",
+                {
+                    "nodeId": host_node_id,
+                    "name": "data-alumnium-host",
+                    "value": str(host_backend_node_id),
+                },
+            )
+            try:
+                host_element = self.driver.find_element(  # type: ignore[attr-defined]
+                    By.CSS_SELECTOR, f"[data-alumnium-host='{host_backend_node_id}']"
+                )
+            finally:
+                self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                    "DOM.removeAttribute",
+                    {"nodeId": host_node_id, "name": "data-alumnium-host"},
+                )
+            element = host_element.shadow_root.find_element(By.CSS_SELECTOR, selector)
+        else:
+            # Regular DOM element: standard CSS selector
+            element = self.driver.find_element(By.CSS_SELECTOR, selector)
         self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
             "DOM.removeAttribute",
             {
