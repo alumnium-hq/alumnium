@@ -22,11 +22,14 @@
                 button { background: lightblue; }
             </style>
             <p id="shadow-text-1">This is inside Shadow DOM!</p>
-            <button id="shadow-button-1">Shadow Button 1</button>
+            <button id="shadow-button-1">First Shadow Button</button>
         `;
-      shadow1.getElementById("shadow-button-1").addEventListener("click", () => {
-        shadow1.getElementById("shadow-text-1").textContent = "Shadow Button 1 was clicked!";
-      });
+      shadow1
+        .getElementById("shadow-button-1")
+        .addEventListener("click", () => {
+          shadow1.getElementById("shadow-text-1").textContent =
+            "Shadow Button 1 was clicked!";
+        });
 
       // Create second shadow DOM
       const host2 = document.getElementById("shadow-host-2");
@@ -36,11 +39,14 @@
                 p { color: green; }
             </style>
             <p id="shadow-text-2">This is another text inside Shadow DOM!</p>
-            <button id="shadow-button-2">Shadow Button 2</button>
+            <button id="shadow-button-2">Second Shadow Button</button>
         `;
-      shadow2.getElementById("shadow-button-2").addEventListener("click", () => {
-        shadow2.getElementById("shadow-text-2").textContent = "Shadow Button 2 was clicked!";
-      });
+      shadow2
+        .getElementById("shadow-button-2")
+        .addEventListener("click", () => {
+          shadow2.getElementById("shadow-text-2").textContent =
+            "Shadow Button 2 was clicked!";
+        });
     </script>
   </body>
 </html>
