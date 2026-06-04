@@ -133,11 +133,6 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       this.#frameChainMap[this.nextRawId] = node._frame_chain;
     }
 
-    // Store shadow DOM flag if present (for Selenium shadow DOM support)
-    if ("_is_shadow_dom" in node && node._is_shadow_dom) {
-      elem.attribs["isShadowDom"] = "true";
-    }
-
     // Add all node attributes as XML attributes
     if ("backendDOMNodeId" in node && node.backendDOMNodeId !== undefined) {
       elem.attribs["backendDOMNodeId"] = String(node.backendDOMNodeId);
@@ -266,7 +261,6 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       backendNodeId: parseInt(backendNodeIdStr),
       frame: this.#frameMap[rawId],
       frameChain: this.#frameChainMap[rawId],
-      isShadowDom: element.attribs["isShadowDom"] === "true",
     };
   }
 
