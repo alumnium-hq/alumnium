@@ -25,6 +25,7 @@ runs:
       with:
         name: test-typescript-${{ inputs.name }}
         path: |
+          packages/typescript/alumnium.log
           packages/typescript/tests/artifacts/
 
     - name: Upload Python Test Artifacts
@@ -33,6 +34,7 @@ runs:
       with:
         name: test-python-${{ inputs.name }}
         path: |
+          packages/python/alumnium.log
           packages/python/reports/
           packages/python/test-results/
           packages/python/htmlcov/
@@ -44,4 +46,5 @@ runs:
       with:
         name: test-java-${{ inputs.name }}
         path: |
+          packages/java/alumnium.log
           packages/java/build/reports/
