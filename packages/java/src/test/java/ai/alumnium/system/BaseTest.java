@@ -23,7 +23,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 public class BaseTest {
 
@@ -142,11 +141,7 @@ public class BaseTest {
         al = new Alumni(buildAndroidDriver(), options);
         ((AppiumDriver) al.driver()).delay = 0.1;
       }
-      default -> {
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.setBrowserVersion("stable");
-        al = new Alumni(new ChromeDriver(chromeOptions), options);
-      }
+      default -> al = new Alumni(new ChromeDriver(), options);
     }
   }
 

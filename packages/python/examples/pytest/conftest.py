@@ -37,7 +37,6 @@ def driver():
             context.tracing.stop(path="reports/traces/pytest.zip")
     elif driver_type == "selenium":
         options = ChromeOptions()
-        options.browser_version = "stable"
         options.add_experimental_option(
             "prefs",
             {

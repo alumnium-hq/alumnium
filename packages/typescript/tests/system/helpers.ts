@@ -83,7 +83,6 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
     case "selenium": {
       const options = new Options();
       options.addArguments("--disable-blink-features=AutomationControlled");
-      options.setBrowserVersion("stable");
       options.setUserPreferences({
         credentials_enable_service: false,
         profile: {
