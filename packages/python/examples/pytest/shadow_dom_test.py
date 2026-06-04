@@ -10,10 +10,10 @@ from pytest import mark
 def test_shadow_dom(al, navigate):
     navigate("shadow_dom.html")
 
-    assert "This is inside Shadow DOM!" in al.get("first shadow DOM paragraph")
+    assert "This is inside Shadow DOM!" in al.get("second paragraph")
     al.do("click first shadow button")
-    assert "Shadow Button 1 was clicked!" in al.get("first shadow DOM paragraph")
+    assert "Shadow Button 1 was clicked!" in al.get("second paragraph")
 
-    assert "This is another text inside Shadow DOM!" in al.get("second shadow DOM paragraph")
+    assert "This is another text inside Shadow DOM!" in al.get("third paragraph")
     al.do("click second shadow button")
-    assert "Shadow Button 2 was clicked!" in al.get("second shadow DOM paragraph")
+    assert "Shadow Button 2 was clicked!" in al.get("third paragraph")

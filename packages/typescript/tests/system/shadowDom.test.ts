@@ -19,19 +19,19 @@ describe("Shadow DOM", () => {
 
     await $.navigate("shadow_dom.html");
 
-    expect(await al.get("first shadow DOM paragraph")).toContain(
+    expect(await al.get("second paragraph")).toContain(
       "This is inside Shadow DOM!",
     );
     await al.do("click first shadow button");
-    expect(await al.get("first shadow DOM paragraph")).toContain(
+    expect(await al.get("second paragraph")).toContain(
       "Shadow Button 1 was clicked!",
     );
 
-    expect(await al.get("second shadow DOM paragraph")).toContain(
+    expect(await al.get("third paragraph")).toContain(
       "This is another text inside Shadow DOM!",
     );
     await al.do("click second shadow button");
-    expect(await al.get("second shadow DOM paragraph")).toContain(
+    expect(await al.get("third paragraph")).toContain(
       "Shadow Button 2 was clicked!",
     );
   });

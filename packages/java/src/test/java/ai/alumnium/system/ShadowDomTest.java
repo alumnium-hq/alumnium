@@ -16,16 +16,15 @@ public class ShadowDomTest extends BaseTest {
     navigate(SHADOW_DOM_URL);
 
     Assertions.assertTrue(
-        ((String) al.get("first shadow DOM paragraph")).contains("This is inside Shadow DOM!"));
+        ((String) al.get("second paragraph")).contains("This is inside Shadow DOM!"));
     al.act("click first shadow button");
     Assertions.assertTrue(
-        ((String) al.get("first shadow DOM paragraph")).contains("Shadow Button 1 was clicked!"));
+        ((String) al.get("second paragraph")).contains("Shadow Button 1 was clicked!"));
 
     Assertions.assertTrue(
-        ((String) al.get("second shadow DOM paragraph"))
-            .contains("This is another text inside Shadow DOM!"));
+        ((String) al.get("third paragraph")).contains("This is another text inside Shadow DOM!"));
     al.act("click second shadow button");
     Assertions.assertTrue(
-        ((String) al.get("second shadow DOM paragraph")).contains("Shadow Button 2 was clicked!"));
+        ((String) al.get("third paragraph")).contains("Shadow Button 2 was clicked!"));
   }
 }
