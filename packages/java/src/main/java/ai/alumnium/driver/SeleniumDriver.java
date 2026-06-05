@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chromium.HasCdp;
@@ -111,10 +112,8 @@ public final class SeleniumDriver extends BaseDriver {
 
     LOG.debug("Total accessibility nodes collected: {}", allNodes.size());
 
-    // Collect shadow DOM nodes from the main frame
-    // Note: Shadow DOM piercing for iframes would require additional per-frame handling
     try {
-      List<Map<String, Object>> shadowNodes = getShadowDomNodes();
+      List<Map<String, Object>> shadowNodes = buildShadowHierarcy();
       allNodes.addAll(shadowNodes);
       if (!shadowNodes.isEmpty()) {
         LOG.debug("  -> Shadow DOM: {} nodes added", shadowNodes.size());
@@ -125,6 +124,7 @@ public final class SeleniumDriver extends BaseDriver {
 
     Map<String, Object> cdpResponse = new LinkedHashMap<>();
     cdpResponse.put("nodes", allNodes);
+
     return new ChromiumAccessibilityTree(cdpResponse);
   }
 
@@ -252,64 +252,39 @@ public final class SeleniumDriver extends BaseDriver {
     if (backendNodeId == null) {
       throw new IllegalStateException("Element " + id + " has no backendNodeId");
     }
+
     List<Integer> chain = element.frameChain();
     if (chain != null && !chain.isEmpty()) {
       switchToFrameChain(chain);
     }
+
     executeCdp("DOM.enable", Map.of());
     executeCdp("DOM.getFlattenedDocument", Map.of());
     Map<String, Object> pushed =
         executeCdp(
             "DOM.pushNodesByBackendIdsToFrontend",
             Map.of("backendNodeIds", List.of(backendNodeId)));
+
     @SuppressWarnings("unchecked")
     List<Number> nodeIds = (List<Number>) pushed.get("nodeIds");
     if (nodeIds == null || nodeIds.isEmpty()) {
       throw new IllegalStateException("CDP did not return a node id for " + backendNodeId);
     }
+
     Number nodeId = nodeIds.get(0);
     executeCdp(
         "DOM.setAttributeValue",
         Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
+
     String selector = "[data-alumnium-id='" + backendNodeId + "']";
     Long hostBackendNodeId = shadowChildToHostMap.get(backendNodeId);
-    WebElement webElement;
+
+    SearchContext searchContext = driver;
     if (hostBackendNodeId != null) {
-      // Shadow DOM element: find the shadow host, get its shadow root, search inside
-      @SuppressWarnings("unchecked")
-      List<Number> hostNodeIds =
-          (List<Number>)
-              executeCdp(
-                      "DOM.pushNodesByBackendIdsToFrontend",
-                      Map.of("backendNodeIds", List.of(hostBackendNodeId)))
-                  .get("nodeIds");
-      if (hostNodeIds == null || hostNodeIds.isEmpty()) {
-        throw new IllegalStateException(
-            "CDP did not return a node id for host " + hostBackendNodeId);
-      }
-      Number hostNodeId = hostNodeIds.get(0);
-      executeCdp(
-          "DOM.setAttributeValue",
-          Map.of(
-              "nodeId",
-              hostNodeId,
-              "name",
-              "data-alumnium-host",
-              "value",
-              hostBackendNodeId.toString()));
-      WebElement hostElement;
-      try {
-        hostElement =
-            driver.findElement(By.cssSelector("[data-alumnium-host='" + hostBackendNodeId + "']"));
-      } finally {
-        executeCdp(
-            "DOM.removeAttribute", Map.of("nodeId", hostNodeId, "name", "data-alumnium-host"));
-      }
-      webElement = hostElement.getShadowRoot().findElement(By.cssSelector(selector));
-    } else {
-      // Regular DOM element: standard CSS selector
-      webElement = driver.findElement(By.cssSelector(selector));
+      searchContext = findShadowRoot(hostBackendNodeId);
     }
+    WebElement webElement = searchContext.findElement(By.cssSelector(selector));
+
     executeCdp("DOM.removeAttribute", Map.of("nodeId", nodeId, "name", "data-alumnium-id"));
     return webElement;
   }
@@ -486,11 +461,53 @@ public final class SeleniumDriver extends BaseDriver {
     }
   }
 
-  /**
-   * Get shadow DOM nodes from the page using CDP. Pierces into shadow roots to make shadow DOM
-   * elements accessible. Also rebuilds {@code shadowChildToHostMap} for efficient element lookup.
-   */
-  private List<Map<String, Object>> getShadowDomNodes() {
+  private static List<Integer> frameChain(
+      String frameId, Map<String, Integer> frameToIframeMap, Map<String, String> frameParentMap) {
+    List<Integer> chain = new ArrayList<>();
+    String current = frameId;
+    while (frameToIframeMap.containsKey(current)) {
+      chain.add(0, frameToIframeMap.get(current));
+      current = frameParentMap.getOrDefault(current, null);
+      if (current == null) break;
+    }
+    return chain;
+  }
+
+  private SearchContext findShadowRoot(Long hostBackendNodeId) {
+    @SuppressWarnings("unchecked")
+    List<Number> hostNodeIds =
+        (List<Number>)
+            executeCdp(
+                    "DOM.pushNodesByBackendIdsToFrontend",
+                    Map.of("backendNodeIds", List.of(hostBackendNodeId)))
+                .get("nodeIds");
+    if (hostNodeIds == null || hostNodeIds.isEmpty()) {
+      throw new IllegalStateException("CDP did not return a node id for host " + hostBackendNodeId);
+    }
+
+    Number hostNodeId = hostNodeIds.get(0);
+    executeCdp(
+        "DOM.setAttributeValue",
+        Map.of(
+            "nodeId",
+            hostNodeId,
+            "name",
+            "data-alumnium-host",
+            "value",
+            hostBackendNodeId.toString()));
+
+    WebElement hostElement;
+    try {
+      hostElement =
+          driver.findElement(By.cssSelector("[data-alumnium-host='" + hostBackendNodeId + "']"));
+    } finally {
+      executeCdp("DOM.removeAttribute", Map.of("nodeId", hostNodeId, "name", "data-alumnium-host"));
+    }
+
+    return hostElement.getShadowRoot();
+  }
+
+  private List<Map<String, Object>> buildShadowHierarcy() {
     List<Map<String, Object>> shadowNodes = new ArrayList<>();
     Set<String> processed = new HashSet<>();
 
@@ -622,18 +639,5 @@ public final class SeleniumDriver extends BaseDriver {
     }
     return nodes;
   }
-
-  private static List<Integer> frameChain(
-      String frameId, Map<String, Integer> frameToIframeMap, Map<String, String> frameParentMap) {
-    List<Integer> chain = new ArrayList<>();
-    String current = frameId;
-    while (frameToIframeMap.containsKey(current)) {
-      chain.add(0, frameToIframeMap.get(current));
-      current = frameParentMap.getOrDefault(current, null);
-      if (current == null) break;
-    }
-    return chain;
-  }
-
   // endregion
 }
