@@ -41,7 +41,7 @@ public final class SeleniumDriver extends BaseDriver {
 
   private final WebDriver driver;
   private final HasCdp cdp;
-  private Map<Integer, Integer> shadowChildToHostMap = new HashMap<>();
+  private Map<Long, Long> shadowChildToHostMap = new HashMap<>();
   public boolean autoswitchToNewTab = true;
   public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
   public final Set<Class<? extends BaseTool>> supportedTools =
@@ -248,7 +248,7 @@ public final class SeleniumDriver extends BaseDriver {
   @Override
   public WebElement findElement(int id) {
     var element = accessibilityTree().elementById(id);
-    Integer backendNodeId = element.backendNodeId();
+    Long backendNodeId = element.backendNodeId();
     if (backendNodeId == null) {
       throw new IllegalStateException("Element " + id + " has no backendNodeId");
     }
@@ -272,7 +272,7 @@ public final class SeleniumDriver extends BaseDriver {
         "DOM.setAttributeValue",
         Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
     String selector = "[data-alumnium-id='" + backendNodeId + "']";
-    Integer hostBackendNodeId = shadowChildToHostMap.get(backendNodeId);
+    Long hostBackendNodeId = shadowChildToHostMap.get(backendNodeId);
     WebElement webElement;
     if (hostBackendNodeId != null) {
       // Shadow DOM element: find the shadow host, get its shadow root, search inside
@@ -503,17 +503,17 @@ public final class SeleniumDriver extends BaseDriver {
         (List<Map<String, Object>>) domResp.getOrDefault("nodes", List.of());
     if (domNodes.isEmpty()) return shadowNodes;
 
-    Map<Integer, Integer> nodeIdToBackendId = new HashMap<>();
-    Map<Integer, Integer> parentIdMap = new HashMap<>();
-    Map<Integer, Integer> shadowRootToHostBackendId = new HashMap<>();
+    Map<Long, Long> nodeIdToBackendId = new HashMap<>();
+    Map<Long, Long> parentIdMap = new HashMap<>();
+    Map<Long, Long> shadowRootToHostBackendId = new HashMap<>();
 
     for (Map<String, Object> domNode : domNodes) {
-      Integer nodeId = toInteger(domNode.get("nodeId"));
-      Integer backendNodeId = toInteger(domNode.get("backendNodeId"));
+      Long nodeId = (Long) domNode.get("nodeId");
+      Long backendNodeId = (Long) domNode.get("backendNodeId");
       if (nodeId != null && backendNodeId != null) {
         nodeIdToBackendId.put(nodeId, backendNodeId);
       }
-      Integer parentId = toInteger(domNode.get("parentId"));
+      Long parentId = (Long) domNode.get("parentId");
       if (parentId != null && nodeId != null) {
         parentIdMap.put(nodeId, parentId);
       }
@@ -522,7 +522,7 @@ public final class SeleniumDriver extends BaseDriver {
           (List<Map<String, Object>>) domNode.get("shadowRoots");
       if (shadowRoots != null && backendNodeId != null) {
         for (Map<String, Object> sr : shadowRoots) {
-          Integer srNodeId = toInteger(sr.get("nodeId"));
+          Long srNodeId = (Long) sr.get("nodeId");
           if (srNodeId != null) {
             shadowRootToHostBackendId.put(srNodeId, backendNodeId);
             if (nodeId != null) {
@@ -536,9 +536,9 @@ public final class SeleniumDriver extends BaseDriver {
     // Build childBackendNodeId -> hostBackendNodeId map by walking parent chains
     shadowChildToHostMap = new HashMap<>();
     for (Map<String, Object> domNode : domNodes) {
-      Integer nodeBackendId = toInteger(domNode.get("backendNodeId"));
+      Long nodeBackendId = (Long) domNode.get("backendNodeId");
       if (nodeBackendId == null) continue;
-      Integer currentId = toInteger(domNode.get("nodeId"));
+      Long currentId = (Long) domNode.get("nodeId");
       while (currentId != null) {
         if (shadowRootToHostBackendId.containsKey(currentId)) {
           shadowChildToHostMap.put(nodeBackendId, shadowRootToHostBackendId.get(currentId));
@@ -567,7 +567,7 @@ public final class SeleniumDriver extends BaseDriver {
 
           axNode.put("_is_shadow_dom", true);
           if (axNode.get("backendDOMNodeId") == null) {
-            Integer bid = nodeIdToBackendId.get(toInteger(axNode.get("nodeId")));
+            Long bid = nodeIdToBackendId.get((Long) axNode.get("nodeId"));
             if (bid != null) axNode.put("backendDOMNodeId", bid);
           }
           shadowNodes.add(axNode);
@@ -576,8 +576,7 @@ public final class SeleniumDriver extends BaseDriver {
           List<Object> childIds = (List<Object>) axNode.get("childIds");
           if (childIds != null) {
             for (Object childId : childIds) {
-              shadowNodes.addAll(
-                  getShadowChildNodes(toInteger(childId), processed, nodeIdToBackendId));
+              shadowNodes.addAll(getShadowChildNodes((Long) childId, processed, nodeIdToBackendId));
             }
           }
         }
@@ -590,7 +589,7 @@ public final class SeleniumDriver extends BaseDriver {
 
   /** Recursively get child nodes from shadow DOM. */
   private List<Map<String, Object>> getShadowChildNodes(
-      Integer nodeId, Set<String> processed, Map<Integer, Integer> nodeIdToBackendId) {
+      Long nodeId, Set<String> processed, Map<Long, Long> nodeIdToBackendId) {
     List<Map<String, Object>> nodes = new ArrayList<>();
     if (nodeId == null) return nodes;
     String key = nodeId.toString();
@@ -605,16 +604,16 @@ public final class SeleniumDriver extends BaseDriver {
       for (Map<String, Object> node : axNodes) {
         node.put("_is_shadow_dom", true);
         if (node.get("backendDOMNodeId") == null) {
-          Integer bid = nodeIdToBackendId.get(toInteger(node.get("nodeId")));
+          Long bid = nodeIdToBackendId.get((Long) node.get("nodeId"));
           if (bid != null) node.put("backendDOMNodeId", bid);
         }
         nodes.add(node);
 
         @SuppressWarnings("unchecked")
-        List<Object> childIds = (List<Object>) node.get("childIds");
+        List<Long> childIds = (List<Long>) node.get("childIds");
         if (childIds != null) {
-          for (Object childId : childIds) {
-            nodes.addAll(getShadowChildNodes(toInteger(childId), processed, nodeIdToBackendId));
+          for (Long childId : childIds) {
+            nodes.addAll(getShadowChildNodes(childId, processed, nodeIdToBackendId));
           }
         }
       }
@@ -634,16 +633,6 @@ public final class SeleniumDriver extends BaseDriver {
       if (current == null) break;
     }
     return chain;
-  }
-
-  private static Integer toInteger(Object value) {
-    if (value == null) return null;
-    if (value instanceof Number n) return n.intValue();
-    try {
-      return Integer.parseInt(value.toString());
-    } catch (NumberFormatException e) {
-      return null;
-    }
   }
 
   // endregion

@@ -225,7 +225,7 @@ public final class PlaywrightDriver extends BaseDriver {
     AccessibilityElement element = accessibilityTree().elementById(id);
     Frame frame = element.frame() instanceof Frame f ? f : page.mainFrame();
 
-    Integer backendNodeId = element.backendNodeId();
+    Long backendNodeId = element.backendNodeId();
     if (backendNodeId == null) {
       throw new IllegalStateException("Element " + id + " has no backendNodeId");
     }
