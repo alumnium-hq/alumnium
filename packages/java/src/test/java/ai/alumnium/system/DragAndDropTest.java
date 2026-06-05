@@ -20,7 +20,7 @@ public class DragAndDropTest extends BaseTest {
         al.get(
             "titles of squares ordered from left to right",
             new Alumni.GetOptions().withVision(true));
-    Assertions.assertEquals(List.of("A", "B"), listFromGet(data));
+    Assertions.assertEquals(List.of("A", "B"), data);
 
     al.act("move square A to square B");
 
@@ -28,18 +28,11 @@ public class DragAndDropTest extends BaseTest {
         al.get(
             "titles of squares ordered from left to right",
             new Alumni.GetOptions().withVision(true));
-    Assertions.assertEquals(List.of("B", "A"), listFromGet(data));
+    Assertions.assertEquals(List.of("B", "A"), data);
   }
 
   @AfterAll
   static void tearDown() {
     al.close();
-  }
-
-  private static List<String> listFromGet(Object data) {
-    Assertions.assertInstanceOf(
-        List.class, data, () -> "expected list result, got: " + (data == null ? "null" : data));
-    List<?> items = (List<?>) data;
-    return items.stream().map(String::valueOf).toList();
   }
 }

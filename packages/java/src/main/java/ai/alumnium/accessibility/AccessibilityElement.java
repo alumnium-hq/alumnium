@@ -12,7 +12,7 @@ import java.util.List;
  */
 public final class AccessibilityElement {
   private Integer id;
-  private Integer backendNodeId;
+  private Long backendNodeId;
   private String name;
   private String label;
   private String type;
@@ -36,11 +36,11 @@ public final class AccessibilityElement {
     return this;
   }
 
-  public Integer backendNodeId() {
+  public Long backendNodeId() {
     return backendNodeId;
   }
 
-  public AccessibilityElement backendNodeId(Integer v) {
+  public AccessibilityElement backendNodeId(Long v) {
     this.backendNodeId = v;
     return this;
   }

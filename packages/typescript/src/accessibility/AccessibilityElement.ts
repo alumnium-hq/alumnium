@@ -12,5 +12,4 @@ export interface AccessibilityElement {
   androidBounds?: string | undefined;
   frame?: object | undefined;
   frameChain?: number[] | undefined; // For Selenium: chain of iframe backendNodeIds from root to element's frame
-  isShadowDom?: boolean | undefined; // For Selenium: indicates if element is inside a shadow DOM
 }

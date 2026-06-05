@@ -16,12 +16,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chromium.HasCdp;
@@ -40,6 +42,7 @@ public final class SeleniumDriver extends BaseDriver {
 
   private final WebDriver driver;
   private final HasCdp cdp;
+  private Map<Long, Long> shadowChildToHostMap = new HashMap<>();
   public boolean autoswitchToNewTab = true;
   public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
   public final Set<Class<? extends BaseTool>> supportedTools =
@@ -107,8 +110,21 @@ public final class SeleniumDriver extends BaseDriver {
       }
     }
 
+    LOG.debug("Total accessibility nodes collected: {}", allNodes.size());
+
+    try {
+      List<Map<String, Object>> shadowNodes = buildShadowHierarcy();
+      allNodes.addAll(shadowNodes);
+      if (!shadowNodes.isEmpty()) {
+        LOG.debug("  -> Shadow DOM: {} nodes added", shadowNodes.size());
+      }
+    } catch (RuntimeException e) {
+      LOG.debug("  -> Shadow DOM failed", e);
+    }
+
     Map<String, Object> cdpResponse = new LinkedHashMap<>();
     cdpResponse.put("nodes", allNodes);
+
     return new ChromiumAccessibilityTree(cdpResponse);
   }
 
@@ -232,31 +248,43 @@ public final class SeleniumDriver extends BaseDriver {
   @Override
   public WebElement findElement(int id) {
     var element = accessibilityTree().elementById(id);
-    Integer backendNodeId = element.backendNodeId();
+    Long backendNodeId = element.backendNodeId();
     if (backendNodeId == null) {
       throw new IllegalStateException("Element " + id + " has no backendNodeId");
     }
+
     List<Integer> chain = element.frameChain();
     if (chain != null && !chain.isEmpty()) {
       switchToFrameChain(chain);
     }
+
     executeCdp("DOM.enable", Map.of());
     executeCdp("DOM.getFlattenedDocument", Map.of());
     Map<String, Object> pushed =
         executeCdp(
             "DOM.pushNodesByBackendIdsToFrontend",
             Map.of("backendNodeIds", List.of(backendNodeId)));
+
     @SuppressWarnings("unchecked")
     List<Number> nodeIds = (List<Number>) pushed.get("nodeIds");
     if (nodeIds == null || nodeIds.isEmpty()) {
       throw new IllegalStateException("CDP did not return a node id for " + backendNodeId);
     }
+
     Number nodeId = nodeIds.get(0);
     executeCdp(
         "DOM.setAttributeValue",
         Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
-    WebElement webElement =
-        driver.findElement(By.cssSelector("[data-alumnium-id='" + backendNodeId + "']"));
+
+    String selector = "[data-alumnium-id='" + backendNodeId + "']";
+    Long hostBackendNodeId = shadowChildToHostMap.get(backendNodeId);
+
+    SearchContext searchContext = driver;
+    if (hostBackendNodeId != null) {
+      searchContext = findShadowRoot(hostBackendNodeId);
+    }
+    WebElement webElement = searchContext.findElement(By.cssSelector(selector));
+
     executeCdp("DOM.removeAttribute", Map.of("nodeId", nodeId, "name", "data-alumnium-id"));
     return webElement;
   }
@@ -445,5 +473,171 @@ public final class SeleniumDriver extends BaseDriver {
     return chain;
   }
 
+  private SearchContext findShadowRoot(Long hostBackendNodeId) {
+    @SuppressWarnings("unchecked")
+    List<Number> hostNodeIds =
+        (List<Number>)
+            executeCdp(
+                    "DOM.pushNodesByBackendIdsToFrontend",
+                    Map.of("backendNodeIds", List.of(hostBackendNodeId)))
+                .get("nodeIds");
+    if (hostNodeIds == null || hostNodeIds.isEmpty()) {
+      throw new IllegalStateException("CDP did not return a node id for host " + hostBackendNodeId);
+    }
+
+    Number hostNodeId = hostNodeIds.get(0);
+    executeCdp(
+        "DOM.setAttributeValue",
+        Map.of(
+            "nodeId",
+            hostNodeId,
+            "name",
+            "data-alumnium-host",
+            "value",
+            hostBackendNodeId.toString()));
+
+    WebElement hostElement;
+    try {
+      hostElement =
+          driver.findElement(By.cssSelector("[data-alumnium-host='" + hostBackendNodeId + "']"));
+    } finally {
+      executeCdp("DOM.removeAttribute", Map.of("nodeId", hostNodeId, "name", "data-alumnium-host"));
+    }
+
+    return hostElement.getShadowRoot();
+  }
+
+  private List<Map<String, Object>> buildShadowHierarcy() {
+    List<Map<String, Object>> shadowNodes = new ArrayList<>();
+    Set<String> processed = new HashSet<>();
+
+    executeCdp("DOM.enable", Map.of());
+
+    Map<String, Object> domResp =
+        executeCdp("DOM.getFlattenedDocument", Map.of("depth", -1, "pierce", true));
+    @SuppressWarnings("unchecked")
+    List<Map<String, Object>> domNodes =
+        (List<Map<String, Object>>) domResp.getOrDefault("nodes", List.of());
+    if (domNodes.isEmpty()) return shadowNodes;
+
+    Map<Long, Long> nodeIdToBackendId = new HashMap<>();
+    Map<Long, Long> parentIdMap = new HashMap<>();
+    Map<Long, Long> shadowRootToHostBackendId = new HashMap<>();
+
+    for (Map<String, Object> domNode : domNodes) {
+      Long nodeId = (Long) domNode.get("nodeId");
+      Long backendNodeId = (Long) domNode.get("backendNodeId");
+      if (nodeId != null && backendNodeId != null) {
+        nodeIdToBackendId.put(nodeId, backendNodeId);
+      }
+      Long parentId = (Long) domNode.get("parentId");
+      if (parentId != null && nodeId != null) {
+        parentIdMap.put(nodeId, parentId);
+      }
+      @SuppressWarnings("unchecked")
+      List<Map<String, Object>> shadowRoots =
+          (List<Map<String, Object>>) domNode.get("shadowRoots");
+      if (shadowRoots != null && backendNodeId != null) {
+        for (Map<String, Object> sr : shadowRoots) {
+          Long srNodeId = (Long) sr.get("nodeId");
+          if (srNodeId != null) {
+            shadowRootToHostBackendId.put(srNodeId, backendNodeId);
+            if (nodeId != null) {
+              parentIdMap.put(srNodeId, nodeId);
+            }
+          }
+        }
+      }
+    }
+
+    // Build childBackendNodeId -> hostBackendNodeId map by walking parent chains
+    shadowChildToHostMap = new HashMap<>();
+    for (Map<String, Object> domNode : domNodes) {
+      Long nodeBackendId = (Long) domNode.get("backendNodeId");
+      if (nodeBackendId == null) continue;
+      Long currentId = (Long) domNode.get("nodeId");
+      while (currentId != null) {
+        if (shadowRootToHostBackendId.containsKey(currentId)) {
+          shadowChildToHostMap.put(nodeBackendId, shadowRootToHostBackendId.get(currentId));
+          break;
+        }
+        currentId = parentIdMap.get(currentId);
+      }
+    }
+
+    // Find shadow hosts and collect their accessibility nodes
+    for (Map<String, Object> domNode : domNodes) {
+      @SuppressWarnings("unchecked")
+      List<Map<String, Object>> shadowRoots =
+          (List<Map<String, Object>>) domNode.get("shadowRoots");
+      if (shadowRoots == null || shadowRoots.isEmpty()) continue;
+      try {
+        Map<String, Object> axResp =
+            executeCdp("Accessibility.queryAXTree", Map.of("nodeId", domNode.get("nodeId")));
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> axNodes =
+            (List<Map<String, Object>>) axResp.getOrDefault("nodes", List.of());
+        for (Map<String, Object> axNode : axNodes) {
+          String axNodeId = String.valueOf(axNode.get("nodeId"));
+          if (processed.contains(axNodeId)) continue;
+          processed.add(axNodeId);
+
+          axNode.put("_is_shadow_dom", true);
+          if (axNode.get("backendDOMNodeId") == null) {
+            Long bid = nodeIdToBackendId.get((Long) axNode.get("nodeId"));
+            if (bid != null) axNode.put("backendDOMNodeId", bid);
+          }
+          shadowNodes.add(axNode);
+
+          @SuppressWarnings("unchecked")
+          List<Object> childIds = (List<Object>) axNode.get("childIds");
+          if (childIds != null) {
+            for (Object childId : childIds) {
+              shadowNodes.addAll(getShadowChildNodes((Long) childId, processed, nodeIdToBackendId));
+            }
+          }
+        }
+      } catch (RuntimeException e) {
+        // Ignore errors for individual shadow hosts
+      }
+    }
+    return shadowNodes;
+  }
+
+  /** Recursively get child nodes from shadow DOM. */
+  private List<Map<String, Object>> getShadowChildNodes(
+      Long nodeId, Set<String> processed, Map<Long, Long> nodeIdToBackendId) {
+    List<Map<String, Object>> nodes = new ArrayList<>();
+    if (nodeId == null) return nodes;
+    String key = nodeId.toString();
+    if (processed.contains(key)) return nodes;
+    processed.add(key);
+
+    try {
+      Map<String, Object> resp = executeCdp("Accessibility.queryAXTree", Map.of("nodeId", nodeId));
+      @SuppressWarnings("unchecked")
+      List<Map<String, Object>> axNodes =
+          (List<Map<String, Object>>) resp.getOrDefault("nodes", List.of());
+      for (Map<String, Object> node : axNodes) {
+        node.put("_is_shadow_dom", true);
+        if (node.get("backendDOMNodeId") == null) {
+          Long bid = nodeIdToBackendId.get((Long) node.get("nodeId"));
+          if (bid != null) node.put("backendDOMNodeId", bid);
+        }
+        nodes.add(node);
+
+        @SuppressWarnings("unchecked")
+        List<Long> childIds = (List<Long>) node.get("childIds");
+        if (childIds != null) {
+          for (Long childId : childIds) {
+            nodes.addAll(getShadowChildNodes(childId, processed, nodeIdToBackendId));
+          }
+        }
+      }
+    } catch (RuntimeException e) {
+      // Ignore errors for individual nodes
+    }
+    return nodes;
+  }
   // endregion
 }

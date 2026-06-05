@@ -190,7 +190,7 @@ public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     }
     return new AccessibilityElement()
         .type(match.getTagName())
-        .backendNodeId(Integer.parseInt(backend))
+        .backendNodeId(Long.parseLong(backend))
         .frame(frameMap.get(rawId))
         .frameChain(frameChainMap.get(rawId));
   }
