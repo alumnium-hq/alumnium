@@ -621,8 +621,19 @@ public final class SeleniumDriver extends BaseDriver {
       for (Map<String, Object> node : axNodes) {
         node.put("_is_shadow_dom", true);
         if (node.get("backendDOMNodeId") == null) {
-          Long bid = nodeIdToBackendId.get((Long) node.get("nodeId"));
-          if (bid != null) node.put("backendDOMNodeId", bid);
+          Object rawNodeId = node.get("nodeId");
+          Long lookUpId = null;
+          if (rawNodeId instanceof Number n) lookUpId = n.longValue();
+          else if (rawNodeId != null) {
+            try {
+              lookUpId = Long.parseLong(rawNodeId.toString());
+            } catch (NumberFormatException ignored) {
+            }
+          }
+          if (lookUpId != null) {
+            Long bid = nodeIdToBackendId.get(lookUpId);
+            if (bid != null) node.put("backendDOMNodeId", bid);
+          }
         }
         nodes.add(node);
 
