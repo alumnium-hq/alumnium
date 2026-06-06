@@ -17,6 +17,8 @@ Alumnium currently supports Appium with XCUITest driver for iOS automation and U
 
 The following environment variables can be used to control the behavior of Alumnium.
 
+Any environment variable listed below may be set to a command substitution of the form `$(command)`. On startup Alumnium runs `command`, trims trailing newlines from its output, and uses the result as the variable's value:
+
 ### `ALUMNIUM_CACHE`
 
 Sets the cache provider used by Alumnium. Supported values are:
@@ -73,6 +75,22 @@ The following workflow step enables debug logging in Alumnium when they are enab
 ```
 
 :::
+
+### `ALUMNIUM_LOG_DEBUG_EXTRA`
+
+Comma-separated list of extra debug payloads to include in logs. Use `all` to enable everything. Supported values include `env` (environment variables) and others. Default is empty.
+
+### `ALUMNIUM_PRUNE_LOGS`
+
+Set to `false` to keep existing log files instead of truncating them on startup. Default is `true`.
+
+### `ALUMNIUM_LOG_BUFFER_SIZE`
+
+Buffer size, in bytes, used when writing logs to a file. Default is `4096`.
+
+### `ALUMNIUM_LOG_FLUSH_INTERVAL`
+
+Interval in milliseconds between flushes when writing logs to a file. Default is `500`.
 
 ### `ALUMNIUM_TRACE`
 
@@ -151,6 +169,10 @@ Set to `false` to start Playwright in headed mode. Only used in the [MCP server]
 
 Timeout in milliseconds when waiting for a new tab to open after interacting with elements using Playwright driver. Increase when Alumnium fails to detect a new tab. Default is 200.
 
+### `ANTHROPIC_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `anthropic`.
+
 ### `AWS_ACCESS_KEY`
 
 AWS access key used when `ALUMNIUM_MODEL` is set to `aws_anthropic` or `aws_meta`.
@@ -191,13 +213,29 @@ JSON string of additional headers to send with Azure OpenAI requests (e.g. `{"x-
 
 Endpoint URL used when `ALUMNIUM_MODEL` is set to `azure_openai`.
 
+### `DEEPSEEK_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `deepseek`.
+
+### `GOOGLE_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `google`.
+
 ### `LANGCHAIN_CODEX_LITTERBOX_UPLOAD`
 
 Set to `true` to enable vision support for the `codex` provider by temporarily uploading screenshots to a third-party image host ([litterbox.catbox.moe][4]) before sending them to the model. Codex models only accept image URLs, so this is required for vision checks. Default is `false`.
 
+### `MISTRAL_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `mistralai`.
+
 ### `OLLAMA_HOST`
 
 Sets the URL for Ollama models if you host them externally on a server.
+
+### `OPENAI_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `openai` (or `github`, which authenticates with a GitHub personal access token via this variable).
 
 ### `OPENAI_CUSTOM_URL`
 
@@ -206,6 +244,10 @@ Sets the URL for OpenAI models if you access them via custom endpoint.
 ### `OPENAI_DEFAULT_HEADERS`
 
 JSON string of additional headers to send with OpenAI requests (e.g. `{"x-custom-header": "value"}`).
+
+### `XAI_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `xai`.
 
 [1]: https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
 [2]: https://github.com/alumnium-hq/alumnium/issues/112

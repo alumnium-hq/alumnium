@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import ansi from "picocolors";
 import { canonize } from "smolcanon";
 import { xxh32Str } from "smolxxh/str";
@@ -197,6 +198,10 @@ export const Env = {
     return envVar("ALUMNIUM_EVAL_TRIAL_COUNT", z.coerce.number().default(25));
   },
 
+  get ANTHROPIC_API_KEY() {
+    return secretEnvVar("ANTHROPIC_API_KEY", z.string().optional());
+  },
+
   get AWS_ACCESS_KEY() {
     return secretEnvVar("AWS_ACCESS_KEY", z.string().optional());
   },
@@ -240,8 +245,24 @@ export const Env = {
     return secretEnvVar("AZURE_OPENAI_ENDPOINT", z.string().optional());
   },
 
+  get DEEPSEEK_API_KEY() {
+    return secretEnvVar("DEEPSEEK_API_KEY", z.string().optional());
+  },
+
+  get GOOGLE_API_KEY() {
+    return secretEnvVar("GOOGLE_API_KEY", z.string().optional());
+  },
+
+  get MISTRAL_API_KEY() {
+    return secretEnvVar("MISTRAL_API_KEY", z.string().optional());
+  },
+
   get OLLAMA_HOST() {
     return envVar("OLLAMA_HOST", z.string().optional());
+  },
+
+  get OPENAI_API_KEY() {
+    return secretEnvVar("OPENAI_API_KEY", z.string().optional());
   },
 
   get OPENAI_CUSTOM_URL() {
@@ -253,6 +274,10 @@ export const Env = {
       "OPENAI_DEFAULT_HEADERS",
       jsonString(z.record(z.string(), z.string())).optional(),
     );
+  },
+
+  get XAI_API_KEY() {
+    return secretEnvVar("XAI_API_KEY", z.string().optional());
   },
 
   get LT_USERNAME() {
@@ -308,7 +333,7 @@ function envVar<Type>(
 ): Type {
   if (!(name in cachedVars)) {
     // oxlint-disable-next-line no-process-env -- We need it to read env vars
-    const envVal = process.env[name];
+    const envVal = expandEnvCommand(name, process.env[name], isSecretVar);
     const parsedVar = Schema.safeParse(envVal);
 
     if (!parsedVar.success) {
@@ -344,4 +369,60 @@ function hashSecret(val: unknown): string {
 
 function maskedValue(val: unknown, isSecretVar: boolean | undefined): unknown {
   return val != null && isSecretVar ? maskString(String(val)) : val;
+}
+
+// NOTE: Matches a value that is *entirely* a command substitution, e.g.
+// `$(iap-auth)`. We intentionally don't support inline substitution or
+// backticks to keep the behavior predictable and the surface small.
+const COMMAND_SUBSTITUTION_RE = /^\$\((.+)\)$/s;
+const EXPANSION_TIMEOUT_MS = 30_000;
+
+/**
+ * Expand an environment variable value of the form `$(command)` by running the
+ * command and returning its stdout. Values that are not a whole-value command
+ * substitution (including `undefined`) are returned unchanged.
+ *
+ * On command failure, logs the error and throws so `Env.init()` marks the
+ * environment invalid and startup aborts.
+ */
+function expandEnvCommand(
+  name: string,
+  rawValue: string | undefined,
+  isSecretVar?: boolean,
+): string | undefined {
+  if (rawValue == null) return rawValue;
+
+  const match = rawValue.trim().match(COMMAND_SUBSTITUTION_RE);
+  if (!match?.[1]) return rawValue;
+
+  const command = match[1];
+
+  try {
+    const stdout = execSync(command, {
+      encoding: "utf8",
+      timeout: EXPANSION_TIMEOUT_MS,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    // NOTE: Mirror shell command substitution, which strips trailing newlines.
+    return stdout.replace(/\n+$/, "");
+  } catch (error) {
+    const stderr = extractStderr(error);
+    const maskedCommand = isSecretVar ? maskString(command) : command;
+    const message = `Failed to expand environment variable ${name} command \`${maskedCommand}\`${
+      stderr ? `: ${stderr}` : ""
+    }`;
+
+    if (envLogger) envLogger.error(message);
+    else console.error(`${ansi.red("Error:")} ${message}`);
+
+    throw error;
+  }
+}
+
+function extractStderr(error: unknown): string {
+  if (error && typeof error === "object" && "stderr" in error) {
+    const { stderr } = error as { stderr?: unknown };
+    if (stderr != null) return String(stderr).trim();
+  }
+  return error instanceof Error ? error.message : String(error);
 }

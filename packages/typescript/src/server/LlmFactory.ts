@@ -164,6 +164,7 @@ export class LlmFactory {
 
     return new ChatAnthropic({
       model: model.name,
+      ...apiKeyField(Env.ANTHROPIC_API_KEY),
       thinking: {
         type: "enabled",
         budget_tokens: 1024,
@@ -209,6 +210,7 @@ export class LlmFactory {
 
     const deepSeek = new ReasonableChatDeepSeek({
       model: model.name,
+      ...apiKeyField(Env.DEEPSEEK_API_KEY),
       temperature: 0,
       cache,
     });
@@ -222,12 +224,14 @@ export class LlmFactory {
     if (model.name.includes("gemini-2.0")) {
       return new ChatGoogle({
         model: model.name,
+        ...apiKeyField(Env.GOOGLE_API_KEY),
         temperature: 0,
         cache,
       });
     } else {
       return new ChatGoogle({
         model: model.name,
+        ...apiKeyField(Env.GOOGLE_API_KEY),
         temperature: 0,
         thinkingConfig: {
           thinkingLevel: "LOW",
@@ -243,6 +247,7 @@ export class LlmFactory {
 
     return new ChatOpenAI({
       model: model.name,
+      ...apiKeyField(Env.OPENAI_API_KEY),
       configuration: { baseURL: "https://models.github.ai/inference" },
       temperature: 0,
       cache,
@@ -254,6 +259,7 @@ export class LlmFactory {
 
     return new ChatMistralAI({
       model: model.name,
+      ...apiKeyField(Env.MISTRAL_API_KEY),
       temperature: 0,
       cache,
     });
@@ -282,6 +288,7 @@ export class LlmFactory {
 
     const fields: ChatOpenAIFields = {
       model: model.name,
+      ...apiKeyField(Env.OPENAI_API_KEY),
       configuration: {
         baseURL: Env.OPENAI_CUSTOM_URL,
         defaultHeaders: new Headers(Env.OPENAI_DEFAULT_HEADERS),
@@ -325,10 +332,15 @@ export class LlmFactory {
 
     return new ChatXAI({
       model: model.name,
+      ...apiKeyField(Env.XAI_API_KEY),
       temperature: 0,
       cache,
     });
   }
+}
+
+function apiKeyField(apiKey: string | undefined): { apiKey: string } | object {
+  return apiKey ? { apiKey } : {};
 }
 
 function logMaskedSecret(name: string, secret: string) {
