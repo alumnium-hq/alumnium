@@ -1,0 +1,18 @@
+---
+// NOTE: StarlightPage must always be the first import in the file!
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import Homepage from "#/components/landings/Homepage.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Alumnium",
+    description: "TODO",
+    template: "splash",
+    bare: true,
+  }}
+  hasSidebar={false}
+>
+  <Homepage />
+</StarlightPage>

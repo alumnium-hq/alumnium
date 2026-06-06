@@ -1,0 +1,19 @@
+---
+import { tt } from "#/copy";
+import InstallComp from "#/components/blocks/Install.astro";
+import Step from "./Step.astro";
+import InstallCli from "#/components/blocks/InstallCli.astro";
+import InstallClient from "#/components/blocks/InstallClient.astro";
+
+const t = tt.landings.sections.howSteps.install;
+---
+
+<Step t={t}>
+  <Fragment slot="agents">
+    <InstallCli />
+  </Fragment>
+
+  <Fragment slot="engineers">
+    <InstallClient />
+  </Fragment>
+</Step>

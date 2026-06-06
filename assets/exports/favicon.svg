@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" clip-rule="evenodd" viewBox="0 0 512 512"><path fill="none" d="M0 0h512v512H0z"/><path fill="#044cc7" d="M0 0h512v512H0z"/><path fill="#fff" fill-rule="nonzero" d="M390.876 430.955q-8.07-1.291-12.299-6.276-5.708-6.727-5.708-20.715l.129-220.921-40.444-.044v224.582q-.05 17.774 6.932 30.831 6.98 13.058 20.448 20.09 5.382 2.81 11.739 4.498M50 463l101.01-280h51.108l101.071 280h-45.714l-54.103-157.209q-6.524-19.714-14.159-44.188-7.634-24.477-18.099-60.064h10.753q-10.435 35.69-18.078 60.269-7.64 24.576-14.132 43.982L95.046 462.999zm55.595-73.06v-35.584h142.023v35.584z"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect id="Favicon" x="0" y="-0" width="512" height="512" style="fill:none;"/>
+    <g id="Favicon1" serif:id="Favicon">
+        <rect x="0" y="-0" width="512" height="512" style="fill:#044cc7;"/>
+        <g id="AL-New" serif:id="AL New">
+            <path id="Custom-L-v2" serif:id="Custom L v2" d="M390.876,430.955c-5.38,-0.861 -9.479,-2.953 -12.299,-6.276c-3.805,-4.485 -5.708,-11.39 -5.708,-20.715l0.129,-220.921l-40.444,-0.044l0,224.582c-0.033,11.849 2.278,22.126 6.932,30.831c4.653,8.705 11.469,15.402 20.448,20.09c3.588,1.874 7.501,3.373 11.739,4.498" style="fill:#fff;fill-rule:nonzero;"/>
+            <path id="Inter-A" serif:id="Inter A" d="M50,463l101.01,-280l51.108,-0l101.071,280l-45.714,0l-54.103,-157.209c-4.35,-13.143 -9.069,-27.872 -14.159,-44.188c-5.089,-16.318 -11.122,-36.339 -18.099,-60.064l10.753,0c-6.957,23.793 -12.983,43.883 -18.078,60.269c-5.093,16.384 -9.804,31.045 -14.132,43.982l-54.611,157.209l-45.045,0Zm55.595,-73.06l0,-35.584l142.023,0l0,35.584l-142.023,0Z" style="fill:#fff;fill-rule:nonzero;"/>
+        </g>
+    </g>
+</svg>

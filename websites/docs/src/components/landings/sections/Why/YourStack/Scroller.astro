@@ -1,0 +1,201 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+const agentLogos = Object.entries(
+  import.meta.glob<{ default: ImageMetadata }>(
+    "../../../../../assets/logos/coding-agent-*-mono.svg",
+  ),
+);
+fillInLogos("coding agent", agentLogos);
+
+const aiLogos = Object.entries(
+  import.meta.glob<{ default: ImageMetadata }>(
+    "../../../../../assets/logos/ai-*-mono.svg",
+  ),
+);
+fillInLogos("AI", aiLogos);
+
+const driverLogos = Object.entries(
+  import.meta.glob<{ default: ImageMetadata }>(
+    "../../../../../assets/logos/driver-*-mono.svg",
+  ),
+);
+fillInLogos("driver", driverLogos);
+
+const langLogos = Object.entries(
+  import.meta.glob<{ default: ImageMetadata }>(
+    "../../../../../assets/logos/lang-*-mono.svg",
+  ),
+);
+fillInLogos("language", langLogos);
+
+const alts: Record<string, string> = {
+  openai: "OpenAI",
+  anthropic: "Anthropic",
+  gemini: "Google Gemini",
+  grok: "xAI Grok",
+  meta: "Meta Llama",
+  deepseek: "DeepSeek",
+  mistral: "Mistral",
+  ollama: "Ollama",
+  selenium: "Selenium",
+  playwright: "Playwright",
+  appium: "Appium",
+  webdriverio: "WebdriverIO",
+  python: "Python",
+  javascript: "JavaScript",
+  typescript: "TypeScript",
+};
+
+function pathToAlt(path: string) {
+  const match = path.match(/\/logos\/(driver|ai|lang)-([a-z0-9-]+)-mono\.svg$/);
+  if (match) {
+    const [, , name] = match;
+    const altBase =
+      alts[name] ||
+      name.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    return altBase;
+  }
+  return "Logo";
+}
+
+function trackStyle<Type>(logos: Type[]): Record<string, string> {
+  const count = logos.length;
+  return {
+    animationDuration: `${count * 3}s`,
+    "--logo-scroll-distance": `-${count * 46}px`,
+  };
+}
+
+function fillInLogos<Type>(kind: string, logos: Type[]) {
+  if (logos.length === 0) {
+    throw new Error(`No ${kind} logos found`);
+  }
+  const baseLogos = [...logos];
+  while (logos.length < 10) logos.push(...baseLogos);
+}
+---
+
+<div class="group">
+  <div class="marquee" data-direction="down">
+    <div class="track" style={trackStyle(aiLogos)}>
+      {
+        agentLogos.map(([logoPath, logo]) => (
+          <Image src={logo()} alt={pathToAlt(logoPath)} />
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="marquee" data-direction="up">
+    <div class="track" style={trackStyle(aiLogos)}>
+      {
+        aiLogos.map(([logoPath, logo]) => (
+          <Image src={logo()} alt={pathToAlt(logoPath)} />
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="marquee" data-direction="down">
+    <div class="track" style={trackStyle(driverLogos)}>
+      {
+        driverLogos.map(([logoPath, logo]) => (
+          <Image src={logo()} alt={pathToAlt(logoPath)} />
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="marquee" data-direction="up">
+    <div class="track" style={trackStyle(langLogos)}>
+      {
+        langLogos.map(([logoPath, logo]) => (
+          <Image src={logo()} alt={pathToAlt(logoPath)} />
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  @layer starlight.core {
+    .group {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .marquee {
+      flex: 0 0 96px;
+      height: 360px;
+      overflow: hidden;
+      position: relative;
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        black 12%,
+        black 88%,
+        transparent 100%
+      );
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        black 12%,
+        black 88%,
+        transparent 100%
+      );
+    }
+
+    .track {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation-name: logo-scroll-up;
+      animation-duration: 30s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      will-change: transform;
+    }
+
+    .marquee[data-direction="down"] .track {
+      animation-name: logo-scroll-down;
+    }
+
+    .track img {
+      height: 60px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      flex-shrink: 0;
+      margin-bottom: 32px;
+    }
+
+    @property --logo-scroll-distance {
+      syntax: "<length>";
+      inherits: false;
+      initial-value: 0px;
+    }
+
+    @keyframes logo-scroll-up {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(0, var(--logo-scroll-distance), 0);
+      }
+    }
+
+    @keyframes logo-scroll-down {
+      0% {
+        transform: translate3d(0, var(--logo-scroll-distance), 0);
+      }
+      100% {
+        transform: translate3d(0, 0, 0);
+      }
+    }
+  }
+</style>

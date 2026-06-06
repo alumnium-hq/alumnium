@@ -1,0 +1,18 @@
+---
+// NOTE: StarlightPage must always be the first import in the file!
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import ForAgents from "#/components/landings/ForAgents.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Alumnium for Coding AI Agents",
+    description: "TODO",
+    template: "splash",
+    bare: true,
+  }}
+  hasSidebar={false}
+>
+  <ForAgents />
+</StarlightPage>

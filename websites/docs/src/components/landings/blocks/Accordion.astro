@@ -1,0 +1,147 @@
+---
+import { tt } from "#/copy";
+import Icon from "#/components/Icon.astro";
+
+export interface Props {
+  items: Accordion.Item[];
+}
+
+export namespace Accordion {
+  export interface Item {
+    id: string;
+    label: string;
+    content: string;
+  }
+}
+
+const { items } = Astro.props;
+---
+
+<landing-accordion class="accordion">
+  {
+    items.map((item) => (
+      <div class="accordion-item" data-accordion-item={item.id}>
+        <button
+          class="accordion-button"
+          data-accordion-button={item.id}
+          aria-expanded="false"
+          aria-controls={`accordion-content-${item.id}`}
+        >
+          <span>{item.label}</span>
+
+          <Icon id="add_2" class:list={["icon accordion-button-icon"]} />
+        </button>
+
+        <div
+          id={`accordion-content-${item.id}`}
+          class="accordion-content copy"
+          data-accordion-content={item.id}
+          set:html={tt.md(item.content)}
+        />
+      </div>
+    ))
+  }
+</landing-accordion>
+
+<script>
+  class Accordion extends HTMLElement {
+    connectedCallback() {
+      this.querySelectorAll(".accordion-button").forEach((buttonEl) =>
+        this.#handleClick(buttonEl),
+      );
+    }
+
+    #toggleItem(id: string) {
+      const itemEl = this.querySelector(
+        `.accordion-item[data-accordion-item="${id}"]`,
+      );
+      const buttonEl = this.querySelector(
+        `.accordion-button[data-accordion-button="${id}"]`,
+      );
+      if (!(itemEl instanceof HTMLElement)) return;
+
+      const isOpen = itemEl.classList.toggle("is-open");
+
+      if (buttonEl instanceof HTMLButtonElement) {
+        buttonEl.setAttribute("aria-expanded", String(isOpen));
+      }
+    }
+
+    #handleClick(buttonEl: Element) {
+      buttonEl.addEventListener("click", (e: Event) => {
+        e.preventDefault();
+
+        const el = e.currentTarget;
+        if (!(el instanceof HTMLButtonElement)) return;
+
+        const id = el.dataset.accordionButton;
+        if (!id) return;
+
+        this.#toggleItem(id);
+      });
+    }
+  }
+
+  customElements.define("landing-accordion", Accordion);
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .accordion {
+    --accordion-border-color: var(--color-accent-700);
+    @apply flex flex-col border;
+    border-color: var(--accordion-border-color);
+  }
+
+  .accordion-item {
+    @apply flex flex-col;
+
+    &:not(:last-child) {
+      @apply border-b;
+      border-color: var(--accordion-border-color);
+    }
+  }
+
+  .accordion-button,
+  .accordion-content {
+    @apply px-8;
+  }
+
+  .accordion-button-icon {
+    @apply transition-transform;
+  }
+
+  .accordion-button {
+    @apply flex items-center justify-between gap-2  bg-accent-950/40 py-4 text-accent-300 font-medium text-lg font-display;
+
+    &:hover {
+      & .accordion-button-icon {
+        @apply text-accent-400;
+      }
+    }
+  }
+
+  .accordion-item.is-open {
+    & .accordion-button {
+      @apply text-accent-100;
+    }
+
+    & .accordion-button-icon {
+      @apply rotate-45;
+    }
+
+    & .accordion-content {
+      @apply flex;
+    }
+  }
+
+  .accordion-button-icon {
+    @apply text-2xl text-accent-500 rotate-90;
+  }
+
+  .accordion-content {
+    @apply hidden flex-col py-7 border-t;
+    border-color: var(--accordion-border-color);
+  }
+</style>

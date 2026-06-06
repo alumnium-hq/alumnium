@@ -1,0 +1,18 @@
+---
+// NOTE: StarlightPage must always be the first import in the file!
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
+import ForTeams from "#/components/landings/ForTeams.astro";
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "Alumnium for Teams",
+    description: "TODO",
+    template: "splash",
+    bare: true,
+  }}
+  hasSidebar={false}
+>
+  <ForTeams />
+</StarlightPage>

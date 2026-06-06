@@ -1,4 +1,7 @@
 ---
+// NOTE: StarlightPage must always be the first import in the file!
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
 import { render } from "astro:content";
 import { type CollectionEntry, getCollection } from "astro:content";
 import Post from "../../layout/Post.astro";
@@ -25,6 +28,16 @@ Astro.locals.starlightRoute = routeConfig({
 });
 ---
 
-<Post {...post.data}>
-  <Content />
-</Post>
+<StarlightPage
+  frontmatter={{
+    title: post.data.title,
+    description: post.data.description,
+    template: "splash",
+    bare: true,
+  }}
+  hasSidebar={false}
+>
+  <Post {...post.data}>
+    <Content />
+  </Post>
+</StarlightPage>

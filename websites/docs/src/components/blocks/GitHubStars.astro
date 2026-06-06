@@ -1,0 +1,28 @@
+---
+import githubMetadata from "#/data/github/metadata.json";
+
+const stars = githubMetadata.stars;
+---
+
+<github-stars>{stars}</github-stars>
+
+<script>
+  import { GitHubData } from "#/data/github";
+
+  class GitHubStars extends HTMLElement {
+    static #repositoryPromise: Promise<GitHubData.Repository> | undefined;
+
+    connectedCallback() {
+      GitHubStars.#repositoryPromise ??= GitHubData.fetchRepository();
+      GitHubStars.#repositoryPromise
+        .then((repository) => {
+          this.textContent = String(repository.stargazers_count);
+        })
+        .catch(() => {});
+    }
+  }
+
+  if (!customElements.get("github-stars")) {
+    customElements.define("github-stars", GitHubStars);
+  }
+</script>

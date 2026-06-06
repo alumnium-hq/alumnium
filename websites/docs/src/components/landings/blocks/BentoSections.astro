@@ -1,0 +1,23 @@
+---
+import type { TtLandings } from "#/copy/landings";
+import type { HeadingProps } from "./Heading.astro";
+import Section from "./Section.astro";
+
+interface Props {
+  heading: Omit<HeadingProps, "t">;
+  t: TtLandings.Bento;
+}
+
+const { heading, t } = Astro.props;
+---
+
+{
+  t.items.map((item) => (
+    <Section
+      heading={heading}
+      t={item.content.en}
+      style="compact"
+      span={item.span}
+    />
+  ))
+}
