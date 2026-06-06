@@ -12,12 +12,19 @@ import ai.alumnium.tool.PressKeyTool;
 import ai.alumnium.tool.TypeTool;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
+import java.time.Duration;
+import java.util.Collections;
 import java.util.Set;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.Pause;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,12 +104,10 @@ public final class AppiumDriver extends BaseDriver {
   @Override
   public void dragAndDrop(int fromId, int toId) {
     ensureNativeContext();
-    // Appium 9.x removed the dedicated helper; the Actions/gestures API is
-    // the recommended replacement. We fall back to a simple move-press-release.
     WebElement fromElement = findElement(fromId);
     WebElement toElement = findElement(toId);
     scrollIntoView(fromElement);
-    new Actions(driver).clickAndHold(fromElement).moveToElement(toElement).release().perform();
+    touchDragAndDrop(fromElement, toElement);
   }
 
   @Override
@@ -283,6 +288,43 @@ public final class AppiumDriver extends BaseDriver {
     // Minimal fallback: skip swipe gesture implementation. Real impl
     // should port the Python _scroll_into_view_android loop.
     LOG.warn("Android scroll-into-view fallback is not implemented; element may be off-screen");
+  }
+
+  /**
+   * Slow viewport-coordinate touch drag for HTML5 drag-and-drop in mobile browsers. Fast
+   * element-relative {@link Actions} gestures do not fire drag events.
+   */
+  private void touchDragAndDrop(WebElement fromElement, WebElement toElement) {
+    int fromX = centerX(fromElement);
+    int fromY = centerY(fromElement);
+    int toX = centerX(toElement);
+    int toY = centerY(toElement);
+
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "main_pointer");
+    Sequence sequence = new Sequence(finger, 0);
+    sequence.addAction(
+        finger.createPointerMove(
+            Duration.ofMillis(2000), PointerInput.Origin.viewport(), fromX, fromY));
+    sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    sequence.addAction(new Pause(finger, Duration.ofMillis(1500)));
+    sequence.addAction(
+        finger.createPointerMove(
+            Duration.ofMillis(2000), PointerInput.Origin.viewport(), toX, toY));
+    sequence.addAction(new Pause(finger, Duration.ofMillis(1500)));
+    sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    driver.perform(Collections.singletonList(sequence));
+  }
+
+  private static int centerX(WebElement element) {
+    Point location = element.getLocation();
+    Dimension size = element.getSize();
+    return location.getX() + size.getWidth() / 2;
+  }
+
+  private static int centerY(WebElement element) {
+    Point location = element.getLocation();
+    Dimension size = element.getSize();
+    return location.getY() + size.getHeight() / 2;
   }
 
   private static void sleep(double seconds) {

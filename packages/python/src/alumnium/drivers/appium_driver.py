@@ -7,6 +7,9 @@ from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.webelement import WebElement
 from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.actions import interaction
+from selenium.webdriver.common.actions.action_builder import ActionBuilder
+from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.webdriver.common.keys import Keys
 
 from ..accessibility import UIAutomator2AccessibilityTree, XCUITestAccessibilityTree
@@ -69,7 +72,7 @@ class AppiumDriver(BaseDriver):
         from_element = self.find_element(from_id)
         to_element = self.find_element(to_id)
         self._scroll_into_view(from_element)
-        self.driver.drag_and_drop(from_element, to_element)
+        self._touch_drag_and_drop(from_element, to_element)
 
     def press_key(self, key: Key) -> None:
         self._ensure_native_app_context()
@@ -214,6 +217,25 @@ class AppiumDriver(BaseDriver):
             actions.move_by_offset(-ceil(size["width"] / 2), -ceil(size["height"] / 2))
             actions.click()
             actions.perform()
+
+    def _touch_drag_and_drop(self, from_element: WebElement, to_element: WebElement) -> None:
+        """Slow viewport-coordinate touch drag for HTML5 DnD in mobile browsers."""
+        from_x = from_element.location["x"] + from_element.size["width"] // 2
+        from_y = from_element.location["y"] + from_element.size["height"] // 2
+        to_x = to_element.location["x"] + to_element.size["width"] // 2
+        to_y = to_element.location["y"] + to_element.size["height"] // 2
+
+        finger = PointerInput(interaction.POINTER_TOUCH, "main_pointer")
+        actions = ActionBuilder(self.driver, mouse=finger)
+        pointer = actions.pointer_action
+        pointer._duration = 2000
+        pointer.move_to_location(from_x, from_y)
+        pointer.pointer_down()
+        pointer.pause(1.5)
+        pointer.move_to_location(to_x, to_y)
+        pointer.pause(1.5)
+        pointer.pointer_up()
+        actions.perform()
 
     def _scroll_into_view(self, element: WebElement):
         if self.platform == "uiautomator2":
