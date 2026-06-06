@@ -1,0 +1,107 @@
+---
+export interface Props {
+  id?: string;
+  solid?: boolean;
+}
+
+const { id, solid } = Astro.props;
+---
+
+<landing-supersection id={id}>
+  <div data-sentinel="top"></div>
+
+  <div class:list={["supersection", solid && "supersection-solid"]}>
+    <div class="supersection-inner">
+      <slot />
+    </div>
+  </div>
+
+  <div data-sentinel="bottom"></div>
+</landing-supersection>
+
+<script>
+  class Supersection extends HTMLElement {
+    connectedCallback() {
+      const { id } = this;
+      if (!this.id) return;
+
+      const sentinels = this.querySelectorAll("[data-sentinel");
+      const topSentinel = sentinels?.[0];
+      const bottomSentinel = sentinels?.[sentinels.length - 1];
+
+      function sendEvent(eventKind: string) {
+        document.body.dispatchEvent(
+          new CustomEvent(`landing-supersection-${eventKind}`, {
+            detail: { id },
+          }),
+        );
+      }
+
+      const enter = () => sendEvent("enter");
+      const leave = () => sendEvent("leave");
+
+      const sentinelObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!(entry.target instanceof HTMLElement)) return;
+          const eventKind = entry.intersectionRatio < 1 ? "leave" : "enter";
+          const sentinelKind = entry.target.dataset.sentinel;
+
+          switch (eventKind) {
+            case "enter":
+              return enter();
+
+            case "leave":
+              const scrollDir =
+                entry.boundingClientRect.top < 0 ? "down" : "up";
+
+              switch (sentinelKind) {
+                case "top":
+                  if (scrollDir === "up") return leave();
+                  return;
+
+                case "bottom":
+                  if (scrollDir === "down") return leave();
+                  return;
+              }
+          }
+        },
+        { root: null, threshold: 1 },
+      );
+
+      sentinelObserver.observe(topSentinel);
+      sentinelObserver.observe(bottomSentinel);
+
+      const sectionObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.intersectionRatio === 0) leave();
+        },
+        { root: null, threshold: 0 },
+      );
+
+      sectionObserver.observe(this);
+    }
+  }
+
+  customElements.define("landing-supersection", Supersection);
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  landing-supersection {
+    @apply block relative;
+  }
+
+  [data-sentinel] {
+    @apply absolute left-0 right-0 pointer-events-none;
+    height: min(40vh, 100%);
+  }
+
+  [data-sentinel="top"] {
+    @apply top-0;
+  }
+
+  [data-sentinel="bottom"] {
+    @apply bottom-0;
+  }
+</style>

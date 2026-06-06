@@ -3,6 +3,8 @@
   "include": [
     "./*.ts",
     "./src/**/*.ts",
+    "./src/**/*.js",
+    "./src/**/*.json",
     "./src/**/*.astro",
     "./scripts/**/*.ts"
   ],
@@ -15,12 +17,16 @@
       // > This is likely not portable. A type annotation is necessary. ts(2883)
       "@astrojs/starlight/schemas/*": [
         "./node_modules/@astrojs/starlight/schemas/*"
-      ]
+      ],
+      "#/*": ["./src/*"]
     },
     // Output
     "outDir": "./.ts",
     "tsBuildInfoFile": "./.ts/tsconfig.tsbuildinfo",
     "emitDeclarationOnly": true,
+    // Modules
+    "allowJs": true,
+    "resolveJsonModule": true,
     // Env
     "lib": ["ESNext", "DOM"],
     // Checks

@@ -1,0 +1,13 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import Table from "./Table.astro";
+
+const t = tt.landings.sections.comparison.en;
+---
+
+<div class="bento">
+  <Section h="2" t={t}>
+    <Table />
+  </Section>
+</div>

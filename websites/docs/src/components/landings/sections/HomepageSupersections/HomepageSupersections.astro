@@ -1,0 +1,31 @@
+---
+import Comparison from "../Comparison/Comparison.astro";
+import GetStarted from "../GetStarted/GetStarted.astro";
+import Scalable from "../Scalable/Scalable.astro";
+import NeedMore from "../NeedMore/NeedMore.astro";
+import Supersection from "../../blocks/Supersection.astro";
+import HelpsShip from "../HelpsShip/HelpsShip.astro";
+import Faq from "../Faq.astro";
+import AiTests from "../AiTests/AiTests.astro";
+import Nav from "./Nav.astro";
+
+const supersections = {
+  "get-started": { link: "Get Started", Section: GetStarted },
+  "ai-tests": { link: "Why Alumnium?", Section: AiTests },
+  "helps-ship": { link: "Tests That Unblock", Section: HelpsShip },
+  scalable: { link: "Scale", Section: Scalable },
+  comparison: { link: "Comparison", Section: Comparison },
+  "need-more": { link: "Need More?", Section: NeedMore },
+  faq: { link: "FAQ", Section: Faq },
+};
+---
+
+<Nav supersections={supersections} />
+
+{
+  Object.entries(supersections).map(([id, { link, Section }]) => (
+    <Supersection id={id}>
+      <Section />
+    </Supersection>
+  ))
+}

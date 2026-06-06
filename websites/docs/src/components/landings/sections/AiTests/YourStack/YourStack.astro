@@ -1,0 +1,13 @@
+---
+import { tt } from "#/copy";
+import Section from "../../../blocks/Section.astro";
+import Scroller from "./Scroller.astro";
+
+const t = tt.landings.sections.yourStack.en;
+---
+
+<Section h="2" t={t} col="2">
+  <div class="opacity-75 flex items-center justify-center w-full h-full">
+    <Scroller />
+  </div>
+</Section>

@@ -24,7 +24,14 @@ const isDocsPage = Astro.url.pathname.startsWith("/docs");
   </div>
 
   <div class="sl-flex print:hidden">
-    {!!hasSearch && <Search {...Astro.props} />}
+    {
+      !!hasSearch && (
+        <Search
+          {...Astro.props}
+          class:list={[!isDocsPage && "site-search-secondary"]}
+        />
+      )
+    }
   </div>
 
   <div class="right-group">
@@ -42,7 +49,7 @@ const isDocsPage = Astro.url.pathname.startsWith("/docs");
   </div>
 
   <style>
-    @reference "../../styles/global.css";
+    @reference "#/styles/global.css";
 
     @layer starlight.core {
       .header {

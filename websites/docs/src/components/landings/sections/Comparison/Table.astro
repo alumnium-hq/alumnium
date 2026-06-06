@@ -1,0 +1,49 @@
+<table class="table">
+  <thead
+    ><tr
+      ><th>Metric</th><th>Alumnium</th><th>browser-use</th><th
+        >playwright-mcp</th
+      ></tr
+    ></thead
+  >
+
+  <tbody>
+    <tr
+      ><td>Main agent context</td><td>8k tokens</td><td>21k tokens</td><td
+        >79k tokens</td
+      ></tr
+    >
+    <tr
+      ><td>Subagent context</td><td>400k tokens</td><td>400k tokens</td><td
+        >—</td
+      ></tr
+    >
+    <tr><td>Duration</td><td>3m 58s</td><td>5m 55s</td><td>3m 57s</td></tr>
+    <tr><td>Total cost</td><td>$0.15</td><td>$0.39</td><td>$1.34</td></tr>
+    <tr
+      ><td>Existing test runner</td><td>✓ yes</td><td>no</td><td>partial</td
+      ></tr
+    >
+    <tr
+      ><td>Python + TypeScript</td><td>✓ yes</td><td>py only</td><td>ts only</td
+      ></tr
+    >
+    <tr><td>Web · iOS · Android</td><td>all 3</td><td>web</td><td>web</td></tr>
+    <tr><td>License</td><td>MIT</td><td>MIT</td><td>Apache</td></tr>
+  </tbody>
+</table>
+
+<style>
+  @reference "#/styles/global.css";
+
+  @layer starlight.core {
+    .table {
+      @apply w-full text-left text-sm border-collapse border border-accent-600;
+
+      & th,
+      & td {
+        @apply border border-accent-600;
+      }
+    }
+  }
+</style>

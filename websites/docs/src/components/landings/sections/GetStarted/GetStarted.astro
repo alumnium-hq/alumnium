@@ -1,0 +1,24 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+
+export const id = "get-started";
+
+const t = tt.landings.sections.getStarted.en;
+---
+
+<div class="bento">
+  <Section h="2" t={t} col="2" style="header">
+    <div class="flex items-center justify-end">
+      <div>
+        <a
+          href="/docs"
+          class="no-underline border border-accent-500 text-accent-300 rounded-3xl px-5 py-1 text-sm"
+          >Read Docs</a
+        >
+      </div>
+    </div>
+  </Section>
+
+  <Section />
+</div>

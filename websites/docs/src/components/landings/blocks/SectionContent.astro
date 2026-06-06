@@ -1,0 +1,42 @@
+---
+import Heading, { type Props as HeadingProps } from "./Heading.astro";
+import Copy from "./Copy.astro";
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+import Icon, {
+  type Props as IconProps,
+} from "#/components/landings/blocks/Icon.astro";
+
+export interface Props {
+  h: HeadingProps["h"];
+  t: HeadingProps["t"] & {
+    copy?: string;
+    icon?: string | IconProps | undefined;
+  };
+  Icon?: AstroComponentFactory | undefined;
+}
+
+const { h, t, Icon: IconProp } = Astro.props;
+
+const iconProps = t.icon
+  ? typeof t.icon === "string"
+    ? { id: t.icon }
+    : t.icon
+  : undefined;
+---
+
+<div>
+  {
+    IconProp ? (
+      <IconProp class="icon text-5xl mb-2" />
+    ) : iconProps ? (
+      <Icon
+        {...iconProps}
+        class:list={["icon text-5xl mb-2", iconProps.class]}
+      />
+    ) : null
+  }
+
+  <Heading h={h} t={t} />
+
+  {t.copy && <Copy t={t.copy} />}
+</div>

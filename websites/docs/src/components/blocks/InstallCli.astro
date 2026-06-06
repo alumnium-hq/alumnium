@@ -1,0 +1,33 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+import { Code } from "astro:components";
+---
+
+<div class="w-full max-w-2xl bg-content-dark">
+  <div
+    class="font-mono text-xs uppercase flex gap-4 border-b border-gray-700 px-4 py-2"
+  >
+    <div class="flex gap-3">
+      <a href="#" class="no-underline text-gray-200">CLI</a>
+      <span class="text-gray-700">❯</span>
+      <a href="#" class="no-underline text-gray-200 border-b border-accent-600"
+        >macOS/Linux</a
+      >
+      <a href="#" class="no-underline text-gray-400">Windows</a>
+    </div>
+    <span class="text-gray-700">|</span>
+    <a href="#" class="no-underline text-gray-400">npm</a>
+    <a href="#" class="no-underline text-gray-400">pip</a>
+  </div>
+
+  <div class="font-mono text-sm px-4 pt-4 pb-3">
+    <Code
+      code="curl -LsSf https://alumnium.ai/install.sh | sh"
+      theme="css-variables"
+      lang="bash"
+      class="text-sm"
+    />
+  </div>
+
+  <div class="text-xs text-gray-500 px-4 pb-2">v0.9.1 · 91 MB</div>
+</div>

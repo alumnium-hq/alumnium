@@ -1,0 +1,205 @@
+{
+  "webvoyager": [
+    {
+      "rank": 1,
+      "systemName": "Alumnium",
+      "organization": "Alumnium",
+      "scoreDisplay": "98.5%",
+      "scoreValue": 98.5,
+      "sourceUrl": "https://alumnium.ai/blog/webvoyager-benchmark/",
+      "repoUrl": "https://github.com/alumnium-hq/alumnium",
+      "notesShort": "Claude Code orchestrating Alumnium MCP with GPT-5 Nano + Selenium; accessibility-tree parsing with visual reasoning.",
+      "reportedAt": "2026-03",
+      "isNew": true
+    },
+    {
+      "rank": 2,
+      "systemName": "Surfer 2",
+      "organization": "H Company",
+      "scoreDisplay": "97.1%",
+      "scoreValue": 97.1,
+      "sourceUrl": "https://hcompany.ai/surfer-2",
+      "notesShort": "System-level orchestration with submitter-defined setup details.",
+      "reportedAt": "2025-10"
+    },
+    {
+      "rank": 3,
+      "systemName": "Magnitude",
+      "organization": "Magnitude",
+      "scoreDisplay": "93.9%",
+      "scoreValue": 93.9,
+      "sourceUrl": "https://magnitude.run/webvoyager",
+      "repoUrl": "https://github.com/magnitudedev/browser-agent",
+      "notesShort": "Open-source architecture utilizing a modular agentic stack.",
+      "reportedAt": "2025-07"
+    },
+    {
+      "rank": 4,
+      "systemName": "Surfer-H + Holo1",
+      "organization": "H Company",
+      "scoreDisplay": "92.2%",
+      "scoreValue": 92.2,
+      "sourceUrl": "https://arxiv.org/pdf/2506.02865",
+      "repoUrl": "https://github.com/hcompai/surfer-h-cli",
+      "notesShort": "Multi-modal action kernels integrated via H-Company research.",
+      "reportedAt": "2025-06"
+    },
+    {
+      "rank": 5,
+      "systemName": "Browserable",
+      "organization": "Browserable",
+      "scoreDisplay": "90.4%",
+      "scoreValue": 90.4,
+      "sourceUrl": "https://www.browserable.ai/blog/web-voyager-benchmark",
+      "repoUrl": "https://github.com/browserable/browserable",
+      "notesShort": "Fine-tuned browser control models within a commercial framework.",
+      "reportedAt": "2025-04"
+    },
+    {
+      "rank": 6,
+      "systemName": "Browser Use",
+      "organization": "Browser Use",
+      "scoreDisplay": "89.1%",
+      "scoreValue": 89.1,
+      "sourceUrl": "https://browser-use.com/posts/sota-technical-report",
+      "repoUrl": "https://github.com/browser-use/browser-use",
+      "notesShort": "Multi-step orchestration framework for open-source automation.",
+      "reportedAt": "2024-12"
+    },
+    {
+      "rank": 7,
+      "systemName": "GLM-5V-Turbo",
+      "organization": "Z.ai",
+      "scoreDisplay": "88.5%",
+      "scoreValue": 88.5,
+      "sourceUrl": "https://docs.z.ai/guides/vlm/glm-5v-turbo",
+      "notesShort": "Multimodal vision model optimized for GUI automation and coding tasks.",
+      "reportedAt": "2026-04",
+      "isNew": true
+    },
+    {
+      "rank": 8,
+      "systemName": "Agent Kura",
+      "organization": "Kura",
+      "scoreDisplay": "87.0%",
+      "scoreValue": 87.0,
+      "sourceUrl": "https://www.trykura.com/benchmarks",
+      "notesShort": "602/643 tasks (41 removed for invalid/auth issues); reported on trykura.com.",
+      "reportedAt": "2024-11"
+    },
+    {
+      "rank": 8,
+      "systemName": "Operator",
+      "organization": "OpenAI",
+      "scoreDisplay": "87%",
+      "scoreValue": 87,
+      "sourceUrl": "https://openai.com/index/introducing-operator/",
+      "notesShort": "Native browser integration using proprietary vision-control models.",
+      "reportedAt": "2025-01"
+    },
+    {
+      "rank": 10,
+      "systemName": "Notte",
+      "organization": "Notte",
+      "scoreDisplay": "86.2%",
+      "scoreValue": 86.2,
+      "sourceUrl": "https://github.com/nottelabs/open-operator-evals",
+      "repoUrl": "https://github.com/nottelabs/notte",
+      "notesShort": "Self-reported score from Notte's open-operator-evals harness (79.0% under LLM evaluation).",
+      "reportedAt": "2025-04"
+    },
+    {
+      "rank": 11,
+      "systemName": "Skyvern 2.0",
+      "organization": "Skyvern",
+      "scoreDisplay": "85.85%",
+      "scoreValue": 85.85,
+      "sourceUrl": "https://www.skyvern.com/blog/skyvern-2-0-state-of-the-art-web-navigation-with-85-8-on-webvoyager-eval",
+      "repoUrl": "https://github.com/Skyvern-AI/skyvern",
+      "notesShort": "DOM-level reasoning coupled with real-time error-correction.",
+      "reportedAt": "2025-01"
+    },
+    {
+      "rank": 12,
+      "systemName": "Project Mariner",
+      "organization": "Google",
+      "scoreDisplay": "83.5%",
+      "scoreValue": 83.5,
+      "sourceUrl": "https://blog.google/technology/google-deepmind/google-gemini-ai-update-december-2024/",
+      "notesShort": "Gemini-powered reasoning with precise visual grounding.",
+      "reportedAt": "2024-12"
+    },
+    {
+      "rank": 13,
+      "systemName": "Agent-E",
+      "organization": "Emergence AI",
+      "scoreDisplay": "73.2%",
+      "scoreValue": 73.2,
+      "sourceUrl": "https://arxiv.org/abs/2407.13032",
+      "repoUrl": "https://github.com/EmergenceAI/Agent-E",
+      "notesShort": "Hierarchical planning modules within a multi-agent framework.",
+      "reportedAt": "2024-07"
+    },
+    {
+      "rank": 14,
+      "systemName": "WebSight",
+      "organization": "Academic Research",
+      "scoreDisplay": "68%",
+      "scoreValue": 68,
+      "sourceUrl": "https://arxiv.org/abs/2508.16987",
+      "notesShort": "Navigation system prioritizing visual-only perceptual inputs.",
+      "reportedAt": "2025-08"
+    },
+    {
+      "rank": 15,
+      "systemName": "Runner H 0.1",
+      "organization": "H Company",
+      "scoreDisplay": "67%",
+      "scoreValue": 67,
+      "sourceUrl": "https://www.hcompany.ai/blog/a-research-update",
+      "notesShort": "Foundational agent architecture for general web interaction.",
+      "reportedAt": "2025-03"
+    },
+    {
+      "rank": 16,
+      "systemName": "WebVoyager",
+      "organization": "Academic Research",
+      "scoreDisplay": "59.1%",
+      "scoreValue": 59.1,
+      "sourceUrl": "https://arxiv.org/abs/2401.13919",
+      "repoUrl": "https://github.com/MinorJerry/WebVoyager",
+      "notesShort": "Baseline implementation using standard multimodal LLM control.",
+      "reportedAt": "2024-01"
+    },
+    {
+      "rank": 17,
+      "systemName": "Anthropic Computer Use 3.5",
+      "organization": "Anthropic",
+      "scoreDisplay": "56.0%",
+      "scoreValue": 56.0,
+      "sourceUrl": "https://www.trykura.com/benchmarks",
+      "notesShort": "Sampled 50/602 tasks for direct comparison; reported on trykura.com.",
+      "reportedAt": "2024-11"
+    },
+    {
+      "rank": 18,
+      "systemName": "WILBUR",
+      "organization": "Bardeen / UC Berkeley",
+      "scoreDisplay": "53%",
+      "scoreValue": 53,
+      "sourceUrl": "https://arxiv.org/abs/2404.05902",
+      "notesShort": "Research implementation using black-box optimization techniques.",
+      "reportedAt": "2024-04"
+    },
+    {
+      "rank": 19,
+      "systemName": "GPT-4 (All Tools)",
+      "organization": "OpenAI",
+      "scoreDisplay": "30.8%",
+      "scoreValue": 30.8,
+      "sourceUrl": "https://arxiv.org/abs/2401.13919",
+      "notesShort": "ChatGPT integrated tool baseline from original WebVoyager paper; reported on arxiv.org.",
+      "reportedAt": "2024-01"
+    }
+  ]
+}

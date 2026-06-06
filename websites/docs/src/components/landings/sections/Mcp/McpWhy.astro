@@ -1,0 +1,19 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import McpMultiPlatform from "./McpMultiPlatform.astro";
+
+const tWhy = tt.landings.sections.mcpWhy.en;
+const tTokenEfficient = tt.landings.sections.mcpTokenEfficient.en;
+const tCheapFast = tt.landings.sections.mcpCheapFast.en;
+---
+
+<div class="bento">
+  <Section h="2" t={tWhy} style="header" />
+
+  <McpMultiPlatform />
+
+  <Section h="3" col="2" t={tTokenEfficient} />
+
+  <Section h="3" col="2" t={tCheapFast} />
+</div>

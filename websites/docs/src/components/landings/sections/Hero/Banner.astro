@@ -1,0 +1,21 @@
+---
+import { tt } from "#/copy";
+
+const version = "0.9";
+
+const ttBanners = tt.landings.banners.sota;
+const headline = ttBanners.headline.en;
+---
+
+<div>
+  <a
+    class="bg-accent-800 inline-flex items-center gap-3 px-3 py-2.5 rounded-full no-underline"
+    href={ttBanners.href}
+  >
+    <span class="size-1.5 bg-green-600 inline-block rounded-full"></span>
+    <div class="leading-none capsize font-mono text-xs uppercase space-x-1">
+      <span>v{version}</span><span class="text-accent-500 font-bold">·</span
+      ><span>{headline}</span>
+    </div>
+  </a>
+</div>

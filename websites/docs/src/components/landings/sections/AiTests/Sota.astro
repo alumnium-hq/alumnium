@@ -1,0 +1,82 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import webvoyagerData from "../../../../data/webvoyager.json";
+
+const t = tt.landings.sections.sota.en;
+---
+
+<Section h="2" t={t} col="2">
+  <div class="relative w-full h-full overflow-hidden">
+    <div
+      class="leaderboard absolute top-0 right-0 bottom-0 left-0 flex flex-col gap-2"
+    >
+      {
+        webvoyagerData.webvoyager.map((entry) => {
+          const sota = entry.rank === 1;
+          return (
+            <div
+              class:list={[
+                "flex flex-col gap-1 font-mono",
+                sota && "font-bold",
+              ]}
+            >
+              <div
+                class:list={[
+                  "leading-none text-xs uppercase",
+                  sota ? "text-accent-200" : "text-accent-400",
+                ]}
+              >
+                {entry.systemName}
+                {entry.organization !== entry.systemName ? (
+                  <span class="text-accent-600">
+                    {t.leaderboardBy} {entry.organization}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </div>
+
+              <div class="relative bg-accent-600/30 rounded-md px-2 py-1 overflow-hidden">
+                <div
+                  class:list={[
+                    "absolute left-0 top-0 bottom-0",
+                    sota ? "bg-accent-600" : "bg-accent-600/60",
+                  ]}
+                  style={{ width: `${entry.scoreValue}%` }}
+                />
+
+                <div class="leading-none text-sm relative">
+                  {entry.scoreDisplay}
+                </div>
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <div class="absolute bottom-0 left-0 right-0 text-center">
+      <a
+        class="inline-block px-4 py-1 text-sm rounded-sm text-accent-200 bg-accent-700 hover:bg-accent-600 cursor-pointer font-medium no-underline"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://leaderboard.steel.dev/leaderboards/webvoyager"
+        >{t.leaderboardViewAll}</a
+      >
+    </div>
+  </div>
+</Section>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .leaderboard {
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  }
+
+  .entry {
+    @apply flex;
+  }
+</style>

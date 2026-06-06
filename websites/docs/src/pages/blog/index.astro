@@ -1,10 +1,11 @@
 ---
-import BareLayout from "../../layout/Bare.astro";
+// NOTE: StarlightPage must always be the first import in the file!
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+
 import { getCollection } from "astro:content";
 import FormattedDate from "../../components/FormattedDate.astro";
 import Pattern from "../../components/Pattern.astro";
 import Author from "../../components/Author.astro";
-import { routeConfig } from "../../utils/routeConfig";
 import Tags from "../../components/Tags.astro";
 
 const posts = (await getCollection("blog")).sort(
@@ -13,15 +14,17 @@ const posts = (await getCollection("blog")).sort(
 
 const first = posts[0];
 if (!first) throw new Error("No posts found");
-
-Astro.locals.starlightRoute = routeConfig({
-  title: "Alumnium Blog",
-  slug: "blog",
-  description: "Alumnium blog with news, updates, and guides",
-});
 ---
 
-<BareLayout title="Alumnium Blog">
+<StarlightPage
+  frontmatter={{
+    title: "Alumnium Blog",
+    description: "Alumnium blog with news, updates, and guides",
+    template: "splash",
+    bare: true,
+  }}
+  hasSidebar={false}
+>
   <main
     class="not-content w-full max-w-5xl m-auto px-2 pt-5 pb-10 sm:px-10 sm:py-10"
   >
@@ -63,4 +66,4 @@ Astro.locals.starlightRoute = routeConfig({
       </ul>
     </section>
   </main>
-</BareLayout>
+</StarlightPage>

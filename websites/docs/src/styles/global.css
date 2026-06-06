@@ -3,8 +3,66 @@
 @import "@astrojs/starlight-tailwind";
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+@config "../../tailwind.config.js";
 
 /* Base theme *****************************************************************/
+
+/* Fonts */
+
+@theme {
+  --font-sans: "Mona Sans Variable", serif;
+  --font-mono: "JetBrains Mono Variable", monospace;
+}
+
+@utility font-display {
+  font-family: "Hubot Sans Variable", serif;
+}
+
+@utility text-ms {
+  font-size: 15px;
+}
+
+/* Colors */
+
+@theme {
+  --color-white: #f7f7ff;
+  --color-black: #00020b;
+  --color-logo: #334cc2;
+  --color-canvas: #04007a;
+  --color-ink-dark: #d0d5e1;
+  --color-ink-light: #0d1017;
+}
+
+/* Icons */
+
+@theme {
+  --color-icon-default: 
+;
+}
+
+@utility icon {
+  width: var(--icon-size, 1em);
+  height: var(--icon-size, 1em);
+  color: var(--color, var(--color-accent-400));
+  fill: currentColor;
+}
+
+@theme {
+  --icon-size-sm: 2rem;
+  --icon-size-md: 4rem;
+  --icon-size-lg: 4rem;
+}
+
+@utility icon-* {
+  width: --value([*]);
+  height: --value([*]);
+
+  width: --value(--icon-size-*);
+  height: --value(--icon-size-*);
+
+  fill: --value(--color-*);
+  color: --value(--color-*);
+}
 
 /* Pattern */
 
@@ -18,6 +76,12 @@
   background-blend-mode: darken;
   background-repeat: repeat;
   background-size: var(--pattern-canvas-size) var(--pattern-canvas-size);
+}
+
+@utility pattern-canvas-content {
+  @apply pattern-canvas;
+  background-position: left top
+    calc((var(--sl-nav-height) - var(--pattern-canvas-size)) / -2);
 }
 
 /* Header */
@@ -54,10 +118,51 @@ starlight-theme-select {
   }
 }
 
-/* Search button */
+/* Search */
 
-site-search button svg {
-  @apply text-gray-200 md:text-gray-800 dark:md:text-gray-400;
+site-search {
+  & button {
+    @apply border-transparent;
+
+    :root[data-theme="light"] &:not(.site-search-secondary) {
+      @apply text-gray-200;
+
+      &:hover {
+        @apply text-gray-950;
+      }
+    }
+  }
+
+  :root[data-theme="light"] &:not(.site-search-secondary) button {
+    @apply text-gray-600;
+
+    &:hover {
+      @apply text-gray-950;
+    }
+  }
+
+  & svg {
+    @apply text-accent-200  md:text-accent-400;
+
+    :root[data-theme="light"] & {
+      @apply text-gray-500;
+    }
+  }
+
+  &.site-search-secondary,
+  :root[data-theme="light"] &.site-search-secondary {
+    & button {
+      @apply text-accent-400 bg-transparent border-accent-700 max-w-48;
+
+      & svg {
+        @apply text-accent-200  md:text-accent-400;
+      }
+
+      & > kbd {
+        @apply bg-transparent border border-accent-800 text-accent-500;
+      }
+    }
+  }
 }
 
 /* Menu button */
@@ -83,6 +188,38 @@ starlight-menu-button button {
   --sl-color-accent-low: var(--color-gray-800);
 }
 
+/* Content */
+
+@utility content-wrapper {
+  @apply w-full m-auto;
+}
+
+@utility content-wrapper-md {
+  @apply content-wrapper md:max-w-5xl;
+}
+
+@utility content-wrapper-lg {
+  @apply content-wrapper md:max-w-6xl;
+}
+
+@utility content-inner {
+  @apply w-full max-w-5xl m-auto px-2 pt-5 pb-10 sm:px-10 sm:py-10;
+}
+
+@utility content-inner-md {
+  @apply content-inner max-w-5xl;
+}
+
+@utility content-inner-lg {
+  @apply content-inner max-w-7xl;
+}
+
+/* Footer */
+
+:root {
+  --sl-main-pad: 0;
+}
+
 /* Dark theme *****************************************************************/
 
 :root {
@@ -93,7 +230,7 @@ starlight-menu-button button {
 
   /* Text */
 
-  --sl-color-text: #d0d5e1;
+  --sl-color-text: var(--color-ink-dark);
 
   /* Backgrounds */
 
@@ -107,6 +244,19 @@ starlight-menu-button button {
   --sl-color-hairline-light: var(--color-gray-700);
   --sl-color-hairline: var(--color-gray-800);
   --sl-color-hairline-shade: var(--color-gray-800);
+
+  /* Code theme */
+
+  /* Base */
+  --astro-code-background: #000;
+  --astro-code-foreground: #b8b0cb;
+  --astro-code-token-comment: #cca879;
+
+  /* Tokens */
+  --astro-code-token-keyword: #ff8df4;
+  --astro-code-token-function: #d4b0ff;
+  --astro-code-token-string-expression: #94a5ef;
+  --astro-code-token-string: #94a5ef;
 }
 
 /* Mobile ToC */
@@ -127,7 +277,7 @@ mobile-starlight-toc {
 
   /* Text */
 
-  --sl-color-text: #0d1017;
+  --sl-color-text: var(--color-ink-light);
 
   /* Backgrounds */
 
@@ -141,16 +291,6 @@ mobile-starlight-toc {
   --sl-color-hairline: var(--color-gray-200);
   --sl-color-hairline-shade: var(--color-gray-200);
 
-  /* Search */
-
-  & site-search button {
-    color: var(--color-gray-600);
-
-    &:hover {
-      color: var(--color-gray-950);
-    }
-  }
-
   /* Mobile ToC */
 
   & mobile-starlight-toc {
@@ -163,19 +303,8 @@ mobile-starlight-toc {
 /* Tailwind theme *************************************************************/
 
 @theme {
-  /* Fonts */
-
-  --font-sans: "Mona Sans Variable", serif;
-  --font-mono: "Monaspace Neon", monospace;
-
-  /* Base */
-
-  --color-white: #f7f7ff;
-  --color-black: #00020b;
-
   /* Elements */
 
-  --color-canvas: var(--color-accent-900);
   --color-del-canvas: #4863b46b;
 
   --color-content-dark: var(--color-gray-900);
@@ -203,6 +332,34 @@ mobile-starlight-toc {
   --color-cerulean-blue-900: #0b459d;
   --color-cerulean-blue-950: #0c2a5f;
 
+  /* Cyan */
+
+  --color-cyan-50: #f1ffff;
+  --color-cyan-100: #e0fffe;
+  --color-cyan-200: #d5ffff;
+  --color-cyan-300: #bdffff;
+  --color-cyan-400: #91fffb;
+  --color-cyan-500: #64eaec;
+  --color-cyan-600: #3dd7cd;
+  --color-cyan-700: #22bcbf;
+  --color-cyan-800: #109fa2;
+  --color-cyan-900: #00747a;
+  --color-cyan-950: #004b4c;
+
+  /* Magenta */
+
+  --color-magenta-50: #fdf1ff;
+  --color-magenta-100: #fae0ff;
+  --color-magenta-200: #f9d5ff;
+  --color-magenta-300: #eebdff;
+  --color-magenta-400: #ef91ff;
+  --color-magenta-500: #dc64ec;
+  --color-magenta-600: #d23dd7;
+  --color-magenta-700: #b222bf;
+  --color-magenta-800: #9d10a2;
+  --color-magenta-900: #72007a;
+  --color-magenta-950: #3d004c;
+
   /* Accent */
 
   --color-accent-50: #f1f1ff;
@@ -214,7 +371,7 @@ mobile-starlight-toc {
   --color-accent-600: #3d52d7;
   --color-accent-700: #223abf;
   --color-accent-800: #101aa2;
-  --color-accent-900: #04007a;
+  --color-accent-900: var(--color-canvas);
   --color-accent-950: #03004c;
 
   /* Gray */

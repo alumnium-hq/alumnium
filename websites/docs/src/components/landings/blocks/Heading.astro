@@ -1,0 +1,27 @@
+---
+import { tt } from "#/copy";
+
+export interface Props {
+  h: "1" | "2" | "3";
+  t: {
+    kicker?: string;
+    headline: string;
+    subheadline?: string;
+  };
+}
+
+const {
+  h,
+  t: { kicker, headline, subheadline },
+} = Astro.props;
+
+const H = `h${h}`;
+---
+
+<div class="heading">
+  {kicker && <p class="kicker">{kicker}</p>}
+
+  <H set:html={tt.md(headline, true)} />
+
+  {subheadline && <p class="subheadline">{subheadline}</p>}
+</div>

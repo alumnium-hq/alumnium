@@ -1,0 +1,57 @@
+---
+import { tt } from "#/copy";
+
+const t = tt.landings.sections.tlDr.en;
+
+const voyagerScore = 98.5;
+
+const costAlumnium = 0.15;
+const costComparison = 1.34;
+
+const contextAlumnium = 8;
+const contextComparison = 79;
+
+const tokensMultiplier = 10;
+---
+
+<section>
+  <div class="content-inner-md p-10">
+    <div
+      class="mx-auto grid max-w-7xl grid-cols-2 gap-px bg-ink/10 px-px md:grid-cols-4"
+    >
+      <div class="bg-paper p-6 md:p-8">
+        <p class="text-4xl font-semibold tracking-[-.05em]">⅒</p>
+
+        <p class="mt-2 text-sm text-ink/60">
+          {t.bill}
+        </p>
+      </div>
+
+      <div class="bg-paper p-6 md:p-8">
+        <p class="text-4xl font-semibold tracking-[-.05em]">
+          {voyagerScore}<span class="text-xl">%</span>
+        </p>
+
+        <p class="mt-2 text-sm text-ink/60">{t.webVoyager}</p>
+      </div>
+
+      <div class="bg-paper p-6 md:p-8">
+        <p class="text-4xl font-semibold tracking-[-.05em]">${costAlumnium}</p>
+
+        <p class="mt-2 text-sm text-ink/60">
+          {t.cost(costComparison)}
+        </p>
+      </div>
+
+      <div class="bg-paper p-6 md:p-8">
+        <p class="text-4xl font-semibold tracking-[-.05em]">
+          {tokensMultiplier}×
+        </p>
+
+        <p class="mt-2 text-sm text-ink/60">
+          {t.context(contextAlumnium, contextComparison)}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

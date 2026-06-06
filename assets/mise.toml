@@ -16,22 +16,35 @@ depends = ["optimize/png", "optimize/svg"]
 run = "oxipng --opt max --scale16 exports/*.png"
 
 [tasks."optimize/svg"]
-run = "svgo exports/*.svg --precision 3"
+run = "svgo exports/**/*.svg --precision 3"
 
 [tasks."generate/symlinks"]
 run = '''
 #!/usr/bin/env bash
+
 cd ../websites/docs/public/
-ln -sf ../../../assets/exports/favicon.ico favicon.ico
-ln -sf ../../../assets/exports/favicon.svg favicon.svg
-ln -sf ../../../assets/exports/icon-180.png apple-touch-icon.png
-ln -sf ../../../assets/exports/icon-192.png icon-192.png
-ln -sf ../../../assets/exports/icon-512.png icon-512.png
+public_rel="../../../assets/exports"
+ln -sf "$public_rel/favicon.ico" favicon.ico
+ln -sf "$public_rel/favicon.svg" favicon.svg
+ln -sf "$public_rel/icon-180.png" apple-touch-icon.png
+ln -sf "$public_rel/icon-192.png" icon-192.png
+ln -sf "$public_rel/icon-512.png" icon-512.png
 cd -
-cd ../websites/docs/src/assets/
-ln -sf ../../../../assets/exports/logotype.svg logotype.svg
-ln -sf ../../../../assets/exports/logomark.svg logomark.svg
-ln -sf ../../../../assets/exports/icon.svg icon.svg
-ln -sf ../../../../assets/exports/pattern-canvas.svg pattern-canvas.svg
+
+assets_rel="../../../../assets/exports"
+ln -sf "$assets_rel/logotype.svg" logotype.svg
+ln -sf "$assets_rel/logomark.svg" logomark.svg
+ln -sf "$assets_rel/icon.svg" icon.svg
+ln -sf "$assets_rel/pattern-canvas.svg" pattern-canvas.svg
+cd -
+
+assets_logos="../websites/docs/src/assets/logos"
+rm -rf "$assets_logos"
+mkdir -p "$assets_logos"
+cd "$assets_logos"
+for logo in ../../../../../assets/exports/logos/*.svg; do
+  ln -sf "$logo" "$(basename "$logo")"
+done
+cd -
 '''
-depends = ["generate/ico", "optimize"]
+depends = ["process"]

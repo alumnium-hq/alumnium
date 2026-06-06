@@ -1,0 +1,176 @@
+---
+export interface Props {
+  supersections: Record<string, { link: string }>;
+}
+
+const { supersections } = Astro.props;
+---
+
+<nav id="sections-nav">
+  <div class="wrapper">
+    <div class="inner">
+      {
+        Object.entries(supersections).map(([id, { link }]) => (
+          <a href={`#${id}`} data-supersection-id={id}>
+            {link}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</nav>
+
+<script>
+  const navEl = document.getElementById("sections-nav");
+  if (!navEl) throw new Error("Sections nav element not found");
+
+  //#region Section active state
+
+  const modifierClass = "is-active";
+
+  let activeLink: Element | null = null;
+  const linksState: Record<string, boolean> = {};
+  let clickedId: string | null = null;
+
+  // Handle supersection events
+
+  const queryLinkEl = (id: string) =>
+    navEl.querySelector(`a[data-supersection-id="${id}"]`) || null;
+
+  type SupersectionEvent = CustomEvent<{ id: string }>;
+
+  function setHash(id?: string) {
+    // NOTE: We use History API instead of `window.location.href` to avoid
+    // built-in browser scroll behavior.
+    history.replaceState(undefined, "", `#${id || ""}`);
+  }
+
+  function onEnter(id: string) {
+    linksState[id] = true;
+
+    // When a click is registered, ignore non-clicked id enter events
+    if (clickedId && clickedId !== id) return;
+
+    const enterEl = queryLinkEl(id);
+    if (enterEl === activeLink) return;
+
+    // Update hash unless there's a click registered.
+    if (!clickedId) setHash(id);
+
+    activeLink?.classList.remove(modifierClass);
+
+    activeLink = enterEl;
+    activeLink?.classList.add(modifierClass);
+  }
+
+  function onLeave(id: string) {
+    linksState[id] = false;
+
+    const leftEl = queryLinkEl(id);
+    if (leftEl !== activeLink) return;
+
+    activeLink?.classList.remove(modifierClass);
+
+    const restoreId = Object.keys(linksState).find(
+      (stateId) => linksState[stateId],
+    );
+    // If not active link to restore found, clear the hash
+    if (!restoreId) return setHash();
+
+    const restoreEl = queryLinkEl(restoreId);
+
+    activeLink = restoreEl;
+    activeLink?.classList.add(modifierClass);
+  }
+
+  document.body.addEventListener("landing-supersection-enter", (e) => {
+    const id = (e as SupersectionEvent).detail.id;
+    onEnter(id);
+  });
+
+  document.body.addEventListener("landing-supersection-leave", (e) => {
+    const id = (e as SupersectionEvent).detail.id;
+    onLeave(id);
+  });
+
+  // Handle click link edge case where multiple blocks gets activated at
+  // the same time. The hash should not change and the priority must be given
+  // to the active hash.
+
+  navEl.querySelectorAll("a[data-supersection-id]").forEach((linkEl) => {
+    linkEl.addEventListener("click", (e) => {
+      const { target } = e;
+      if (!(target instanceof HTMLAnchorElement)) return;
+
+      // NOTE: `target.href` contains full URL rather than just a hash
+      const linkId = target.getAttribute("href")?.slice(1) || null;
+      if (!linkId) return;
+
+      clickedId = linkId;
+
+      // If link is already active, we're not going to receive the supersection
+      // event, in this case we have to trigger the event handler manually.
+      if (linksState[linkId]) onEnter(linkId);
+
+      setTimeout(() => {
+        if (clickedId !== linkId) return;
+        clickedId = null;
+      }, 5);
+    });
+  });
+
+  //#endregion
+
+  //#region Stuck state
+
+  const observer = new IntersectionObserver(
+    ([e]) => e.target.classList.toggle("has-stuck", e.intersectionRatio < 1),
+    { threshold: 1 },
+  );
+  observer.observe(navEl);
+
+  //#endregion
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  nav {
+    @apply sticky z-30;
+  }
+
+  .wrapper {
+    @apply relative pattern-canvas-content py-6;
+  }
+
+  .inner {
+    @apply content-wrapper-lg flex justify-center gap-3;
+  }
+
+  .inner > a {
+    @apply no-underline text-accent-400 bg-accent-800/60 hover:bg-accent-800 rounded-xl px-3 py-1 text-sm;
+
+    &.is-active {
+      @apply bg-accent-700 text-ink-dark;
+    }
+  }
+
+  nav:global(.has-stuck) {
+    & .wrapper {
+      @apply mt-px py-3 border-t border-accent-800;
+    }
+  }
+
+  /* Trick that allows to make the nav intersect with the document top and trigger the intersection observer. */
+
+  nav {
+    @apply -top-px pointer-events-none;
+    margin-top: calc(-1 * var(--sl-nav-height) + 1px);
+    padding-top: var(--sl-nav-height);
+  }
+
+  .wrapper {
+    /* Re-enable pointer events for the content. */
+    @apply pointer-events-auto;
+  }
+</style>

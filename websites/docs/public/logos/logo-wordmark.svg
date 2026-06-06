@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1900 512" width="1900" height="512">
+  <rect width="1900" height="512" fill="#044cc7"/>
+  <path d="M110.943,436l20.029,-57.741l85.227,-0l19.922,57.741l34.943,0l-78.516,-218.182l-38.032,0l-78.516,218.182l34.943,0Zm29.617,-85.44l32.173,-93.111l1.704,-0l32.174,93.111l-66.051,-0Z" fill="#fff" fill-rule="evenodd"/>
+  <rect x="299.935" y="217.818" width="31.854" height="218.182" fill="#fff"/>
+  <text x="358" y="436"
+        font-family="Inter, -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-weight="900"
+        font-size="290"
+        letter-spacing="-6"
+        fill="#fff">umnium</text>
+</svg>

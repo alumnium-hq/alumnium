@@ -1,0 +1,22 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import NaturalLanguageTests from "./NaturalLanguageTests.astro";
+import ExpressIntent from "./ExpressIntent.astro";
+import TestRunner from "./TestRunner.astro";
+import SameTestsForAllPlatforms from "./SameTestsForAllPlatforms.astro";
+
+const t = tt.landings.sections.helpsShip.en;
+---
+
+<div class="bento bento-col-2">
+  <Section h="2" t={t} span="2" style="header" />
+
+  <NaturalLanguageTests />
+
+  <ExpressIntent />
+
+  <SameTestsForAllPlatforms />
+
+  <TestRunner />
+</div>

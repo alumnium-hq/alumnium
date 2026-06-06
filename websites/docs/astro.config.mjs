@@ -157,7 +157,8 @@ export default defineConfig({
       customCss: [
         "./src/styles/global.css",
         "@fontsource-variable/mona-sans",
-        "@fontsource/monaspace-neon",
+        "@fontsource-variable/jetbrains-mono",
+        "@fontsource-variable/hubot-sans",
       ],
       components: {
         Header: "./src/components/overrides/Header.astro",
@@ -165,12 +166,15 @@ export default defineConfig({
         ContentPanel: "./src/components/overrides/ContentPanel.astro",
         PageTitle: "./src/components/overrides/PageTitle.astro",
         SiteTitle: "./src/components/overrides/SiteTitle.astro",
+        Footer: "./src/components/overrides/Footer.astro",
       },
     }),
     sitemap({}),
   ],
 
-  vite: { plugins: [...tailwindcss()] },
+  vite: {
+    plugins: [...tailwindcss()],
+  },
 
   redirects: {
     "/docs/getting-started/writing-first-test":

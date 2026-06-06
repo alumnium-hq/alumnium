@@ -1,0 +1,85 @@
+---
+import { tt } from "#/copy";
+import Heading from "../../../blocks/Heading.astro";
+import InstallCliStep from "./InstallCliStep.astro";
+import SetupMcpStep from "./SetupMcpStep.astro";
+import TestAppStep from "./TestAppStep.astro";
+import RunTestsStep from "./RunTestsStep.astro";
+import ScaleStep from "./ScaleStep.astro";
+import Section from "#/components/landings/blocks/Section.astro";
+
+const t = tt.landings.sections.mcpHow.en;
+---
+
+<div class="bento mcp-how">
+  <div class="section section-header">
+    <Heading h="2" t={t} />
+  </div>
+
+  <div class="section">
+    <div class="steps">
+      <InstallCliStep />
+
+      <SetupMcpStep />
+
+      <TestAppStep />
+
+      <RunTestsStep />
+
+      <ScaleStep />
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  @reference "#/styles/global.css";
+
+  .landing .mcp-how .steps {
+    @apply relative pl-2 md:pl-4;
+
+    &:before,
+    & > *:before {
+      @apply content-[""] block absolute w-[0.8rem] h-[0.8rem] border-2 border-accent-600 rounded-full;
+    }
+
+    & > * {
+      @apply grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 relative px-6 py-4 sm:py-6 md:py-[3rem] lg:px-8;
+
+      &:before {
+        @apply left-[calc(-0.4rem+1px)] top-[1rem] sm:top-6 md:top-[3rem];
+      }
+
+      &:first-child {
+        @apply pt-0;
+
+        &:before {
+          @apply top-0;
+        }
+
+        &:after {
+          @apply top-[0.8rem];
+        }
+      }
+
+      &:last-child {
+        @apply pb-0;
+
+        &:after {
+          @apply bottom-0;
+        }
+      }
+
+      &:after {
+        @apply content-[""] block absolute w-[2px] left-0 top-[calc(2rem-4px)] -bottom-4.5 sm:top-[calc(2.5rem-4px)] sm:-bottom-6 md:top-[calc(4rem-4px)] md:bottom-[-3rem] bg-accent-600;
+      }
+    }
+
+    &:before {
+      @apply bottom-[calc(0.8rem/-2+1px)] left-[4rem];
+    }
+
+    &:after {
+      @apply content-[""] block size-[3rem] bottom-0 border-l-2 border-b-2 rounded-bl-full border-accent-600;
+    }
+  }
+</style>

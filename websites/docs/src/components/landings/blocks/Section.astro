@@ -1,0 +1,37 @@
+---
+import Crosses from "./Crosses.astro";
+import { type Props as ContentProps } from "./SectionContent.astro";
+import SectionContent from "./SectionContent.astro";
+
+export interface BaseProps {
+  col?: "1" | "2";
+  span?: "1" | "2";
+  style?: "header" | "compact";
+}
+
+export interface ContentfulProps extends BaseProps, ContentProps {}
+
+export interface BareProps extends BaseProps {}
+
+export type Props = ContentfulProps | BareProps;
+
+const { col, span, style, ...contentProps } = Astro.props;
+---
+
+<div class:list={["relative", span === "2" && "col-span-2"]}>
+  <div
+    class:list={[
+      "section",
+      style === "header" && "section-header",
+      style === "compact" && "section-compact",
+      (!col || col === "1") && "section-col-1",
+      col === "2" && "section-col-2",
+    ]}
+  >
+    {"h" in contentProps && <SectionContent {...contentProps} />}
+
+    <slot />
+  </div>
+
+  <Crosses />
+</div>

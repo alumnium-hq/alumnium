@@ -1,0 +1,22 @@
+---
+import { tt } from "#/copy";
+import YourStack from "./YourStack/YourStack.astro";
+import Sota from "./Sota.astro";
+import Efficient from "./Efficient.astro";
+import MultiPlatform from "./MultiPlatform.astro";
+import Section from "../../blocks/Section.astro";
+
+const t = tt.landings.sections.aiTests.en;
+---
+
+<div class="bento">
+  <Section h="2" t={t} span="2" style="header" />
+
+  <Sota />
+
+  <Efficient />
+
+  <MultiPlatform />
+
+  <YourStack />
+</div>

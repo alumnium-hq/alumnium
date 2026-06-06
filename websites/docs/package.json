@@ -2,29 +2,35 @@
   "name": "alumnium-website",
   "version": "0.0.1",
   "type": "module",
-  "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+  "imports": {
+    "#/*": "./src/*"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
-    "@astrojs/sitemap": "3.7.2",
-    "@astrojs/starlight": "0.39.2",
+    "@astrojs/sitemap": "3.7.3",
+    "@astrojs/starlight": "^0.39.2",
     "@astrojs/starlight-tailwind": "5.0.0",
+    "@fontsource-variable/hubot-sans": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@fontsource-variable/mona-sans": "^5.2.8",
-    "@fontsource/monaspace-neon": "^5.2.5",
-    "astro": "6.3.3",
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "@material-design-icons/svg": "^0.14.15",
+    "@material-symbols/svg-100": "^0.44.11",
+    "@material-symbols/svg-200": "^0.44.11",
+    "@material-symbols/svg-300": "^0.44.11",
+    "astro": "6.4.2",
+    "marked": "^18.0.4",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4.3.0"
+    "smollit": "^0.2.0",
+    "tailwindcss": "^4.3.0",
+    "vite": "7"
   },
   "devDependencies": {
+    "@capsizecss/metrics": "^3.7.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.3.0",
     "mdast-util-to-hast": "^13.2.1",
-    "typescript": "^6.0.3",
-    "vite": "7.3.2"
+    "tailwindcss-capsize": "^4.0.1",
+    "typescript": "^6.0.3"
   }
 }

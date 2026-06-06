@@ -1,0 +1,248 @@
+@reference "./global.css";
+
+@layer components {
+  .landing {
+    @apply text-ink-dark pattern-canvas-content h-full divide-y divide-accent-600 flex flex-col;
+
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5,
+    & h6,
+    & .headline,
+    & .subheadline {
+      @apply font-display text-balance;
+
+      & strike {
+        @apply font-medium text-accent-300;
+      }
+    }
+
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5,
+    & h6,
+    & .headline {
+      @apply text-accent-50;
+    }
+
+    & .subheadline {
+      @apply text-accent-400;
+    }
+
+    & .kicker {
+      @apply text-accent-500 uppercase font-medium font-mono capsize leading-none mb-1;
+    }
+
+    & .heading {
+      @apply flex flex-col;
+
+      & h1,
+      & h2 {
+        & + .subheadline {
+          @apply text-lg;
+        }
+      }
+
+      & h1 {
+        @apply text-4xl md:text-5xl;
+      }
+
+      &:has(h1) {
+        @apply gap-3;
+      }
+
+      & h2 {
+        @apply text-2xl md:text-3xl;
+      }
+
+      &:has(h2) {
+        @apply gap-0.5;
+
+        & + .copy {
+          @apply mt-5 gap-4;
+        }
+      }
+
+      & h3,
+      & h4,
+      & h5 {
+        & + .subheadline {
+          @apply text-ms;
+        }
+      }
+
+      & h3 {
+        @apply text-xl;
+      }
+
+      &:has(h3) {
+        @apply gap-0.25;
+
+        & + .copy {
+          @apply mt-3 gap-2 text-ms;
+        }
+      }
+
+      & h4,
+      & h5 {
+        @apply text-accent-300;
+
+        & + .copy {
+          @apply text-accent-400;
+        }
+      }
+
+      & h4 {
+        @apply text-lg;
+      }
+
+      &:has(h4) {
+        @apply gap-0.5;
+
+        & + .copy {
+          @apply gap-3;
+        }
+      }
+
+      & h5 {
+        @apply text-base;
+      }
+
+      &:has(h5) {
+        @apply gap-0.5;
+
+        & + .copy {
+          @apply gap-3 text-sm;
+        }
+      }
+    }
+
+    & .copy {
+      @apply text-accent-300 flex flex-col;
+    }
+
+    & a {
+      color: color-mix(in srgb, var(--color-cyan-300) 50%, currentColor);
+
+      &:hover {
+        @apply text-cyan-400;
+      }
+    }
+
+    & .supersection {
+      --padding-x: calc(var(--spacing) * 10);
+      --padding-y: calc(var(--spacing) * 25);
+      --background: transparent;
+
+      &.supersection-solid {
+        --background: var(--color-content-dark);
+      }
+    }
+
+    & .supersection,
+    & .supersection-inner {
+      &:before,
+      &:after {
+        @apply block grow;
+        content: "";
+        background: var(--background);
+      }
+    }
+
+    & .supersection {
+      &:before,
+      &:after {
+        height: var(--padding-y);
+      }
+    }
+
+    & .supersection-inner {
+      display: flex;
+
+      &:before,
+      &:after {
+        min-width: var(--padding-x);
+      }
+    }
+
+    & .section-wrapper {
+      @apply px-0 sm:py-5 md:py-10 md:px-10;
+    }
+
+    & .section {
+      @apply grid relative px-4 md:px-6 lg:px-16;
+
+      &:not(.section-header) {
+        @apply py-8 md:py-10 lg:py-25;
+      }
+
+      &.section-header {
+        @apply py-6 md:py-6 lg:py-12;
+      }
+
+      &.section-compact {
+        @apply py-4 md:py-6 lg:py-16;
+      }
+
+      &.section-col-1 {
+        @apply gap-6;
+      }
+
+      &.section-col-2 {
+        @apply gap-10 sm:grid-cols-2;
+      }
+    }
+
+    & .bento {
+      @apply content-wrapper-lg relative;
+
+      &,
+      & > * {
+        &:before,
+        &:after {
+          @apply absolute bg-accent-600 z-10;
+        }
+
+        &:before {
+          @apply md:content-[""] top-[-0.5px] bottom-[-0.5px] w-px;
+        }
+
+        &:after {
+          @apply content-[""] left-[-0.5px] right-[-0.5px] h-px;
+        }
+      }
+
+      & {
+        &:before {
+          @apply left-[-0.5px];
+        }
+
+        &:after {
+          @apply top-[-0.5px];
+        }
+      }
+
+      & > * {
+        &:before {
+          @apply right-[-0.5px];
+        }
+
+        &:after {
+          @apply bottom-[-0.5px];
+        }
+      }
+
+      &.bento-col-2 {
+        @apply grid grid-cols-1 md:grid-cols-2;
+
+        & > * {
+          @apply flex flex-col;
+        }
+      }
+    }
+  }
+}

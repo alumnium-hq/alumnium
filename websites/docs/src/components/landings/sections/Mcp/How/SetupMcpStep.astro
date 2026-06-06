@@ -1,0 +1,15 @@
+---
+import { tt } from "#/copy";
+import SectionContent from "../../../blocks/SectionContent.astro";
+import SetupMcp from "#/components/blocks/SetupMcp.astro";
+
+const t = tt.landings.sections.mcpSetupMcpStep.en;
+---
+
+<div>
+  <SectionContent h="3" t={t} />
+
+  <div>
+    <SetupMcp />
+  </div>
+</div>

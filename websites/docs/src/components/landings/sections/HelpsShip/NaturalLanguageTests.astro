@@ -1,0 +1,53 @@
+---
+import { lit } from "smollit";
+import { Code } from "astro:components";
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+
+const t = tt.landings.sections.naturalLanguageTests.en;
+---
+
+<Section h="2" t={t} col="2" span="2">
+  <Code
+    code={lit`
+      # Python example
+      from alumnium import Alumni
+
+      al = Alumni(driver)
+
+      # Navigate and interact
+      al.do("go to https://example.com")
+      al.do("click the login button")
+      al.do("fill out the form with email and password")
+
+      # Verify results
+      al.check("dashboard page is visible")
+      username = al.get("user name from header")
+    `}
+    theme="css-variables"
+    lang="python"
+    class="text-sm"
+  />
+
+  <!--
+  <Code
+    code={lit`
+      import { test, expect } from "@playwright/test";
+      import { Alumni } from "alumnium";
+
+      test("user can log in", async ({ page }) => {
+        const al = new Alumni(page);
+
+        await page.goto("https://app.example.com");
+        await al.do("sign in as alice@acme.com");
+        await al.check("dashboard greets Alice");
+
+        // drop into existing assertions whenever
+        await expect(page.getByRole("heading")).toBeVisible();
+      });
+    `}
+    theme="css-variables"
+    lang="ts"
+    class="text-sm"
+  /> -->
+</Section>

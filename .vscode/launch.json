@@ -16,6 +16,20 @@
       "args": ["server"],
       "cwd": "${workspaceFolder}/packages/typescript",
       "stopOnEntry": true
+    },
+
+    //#region docs
+
+    // docs#dev
+    {
+      "name": "docs#dev",
+      "type": "editor-browser",
+      "request": "launch",
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}/websites/docs",
+      "preLaunchTask": "docs#dev"
     }
+
+    //#endregion
   ]
 }
