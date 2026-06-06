@@ -17,7 +17,7 @@ Alumnium currently supports Appium with XCUITest driver for iOS automation and U
 
 The following environment variables can be used to control the behavior of Alumnium.
 
-Any environment variable listed below may be set to a command substitution of the form `$(command)`. On startup Alumnium runs `command`, trims trailing newlines from its output, and uses the result as the variable's value:
+Any environment variable listed below may be set to a command substitution of the form `$(command)`. On startup Alumnium runs `command`, trims trailing newlines from its output, and uses the result as the variable's value.
 
 ### `ALUMNIUM_CACHE`
 
