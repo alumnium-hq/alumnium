@@ -113,7 +113,9 @@ export async function createPlaywrightDriver(
   await context.tracing.start({
     screenshots: true,
     snapshots: true,
-    sources: true,
+    // Capturing call-site sources fails in the Bun single-file executable
+    // because the recorded paths (e.g. /$bunfs/root/...) do not exist on disk.
+    sources: false,
   });
 
   if (cookies) {
