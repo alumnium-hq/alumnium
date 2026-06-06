@@ -1,0 +1,64 @@
+---
+interface Props {
+  pos?: "top" | "bottom";
+  edge?: boolean;
+}
+
+const { pos, edge } = Astro.props;
+---
+
+<div class:list={["decoration-line", `is-${pos || "top"}`, edge && "is-edge"]}>
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .decoration-line {
+    @apply absolute border-l border-accent-600;
+    left: 50%;
+    height: calc(var(--section-padding-y) * 2);
+    --supersection-line-size: 12px;
+
+    &.is-top {
+      top: calc(var(--section-padding-y) * -1);
+    }
+
+    &.is-bottom:not(.is-edge) {
+      bottom: calc(var(--section-padding-y) * -1);
+    }
+
+    &.is-top.is-edge {
+      &:before {
+        @apply hidden;
+      }
+    }
+
+    &.is-bottom.is-edge {
+      bottom: 0;
+
+      &:after {
+        @apply hidden;
+      }
+    }
+
+    &:before,
+    &:after {
+      @apply absolute content-[""] block border border-accent-400;
+      width: var(--supersection-line-size);
+      height: var(--supersection-line-size);
+      left: calc(var(--supersection-line-size) / -2);
+    }
+
+    &:before {
+      top: calc(var(--supersection-line-size) / -2);
+    }
+
+    &:after {
+      bottom: calc(var(--supersection-line-size) / -2);
+    }
+  }
+
+  .supersection-wrapper:last-child .supersection-line {
+    @apply block;
+  }
+</style>

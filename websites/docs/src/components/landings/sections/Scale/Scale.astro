@@ -1,0 +1,27 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import SharedCache from "./SharedCache.astro";
+import CloseToNative from "./CloseToNative.astro";
+import Telemetry from "./Telemetry.astro";
+import Ci from "./Ci.astro";
+
+const t = tt.landings.sections.scalable.en;
+---
+
+<div class="bento bento-cols-2">
+  <Section
+    heading={{ h: 2, align: true, enlarge: true }}
+    t={t}
+    span={2}
+    style="header"
+  />
+
+  <CloseToNative />
+
+  <SharedCache />
+
+  <Ci />
+
+  <Telemetry />
+</div>

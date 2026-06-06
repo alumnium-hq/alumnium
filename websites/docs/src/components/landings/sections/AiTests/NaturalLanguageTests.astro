@@ -1,0 +1,64 @@
+---
+import { lit } from "smollit";
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import Tabs from "../../blocks/Tabs.astro";
+import Code from "#/components/blocks/Code.astro";
+
+const t = tt.landings.sections.naturalLanguageTests.en;
+---
+
+<Section heading={{ h: 2 }} t={t} cols={2} span={2}>
+  <div>
+    <Tabs
+      active="ts"
+      items={[
+        { id: "ts", label: "TypeScript" },
+        { id: "python", label: "Python" },
+      ]}
+      style="code"
+    >
+      <Fragment slot="ts">
+        <Code
+          code={lit`
+      import { test, expect } from "@playwright/test";
+      import { Alumni } from "alumnium";
+
+      test("user can log in", async ({ page }) => {
+        const al = new Alumni(page);
+
+        await page.goto("https://app.example.com");
+        await al.do("sign in as alice@acme.com");
+        await al.check("dashboard greets Alice");
+
+        // drop into existing assertions whenever
+        await expect(page.getByRole("heading")).toBeVisible();
+      });
+    `}
+          lang="ts"
+        />
+      </Fragment>
+
+      <Fragment slot="python">
+        <Code
+          code={lit`
+      # Python example
+      from alumnium import Alumni
+
+      al = Alumni(driver)
+
+      # Navigate and interact
+      al.do("go to https://example.com")
+      al.do("click the login button")
+      al.do("fill out the form with email and password")
+
+      # Verify results
+      al.check("dashboard page is visible")
+      username = al.get("user name from header")
+    `}
+          lang="python"
+        />
+      </Fragment>
+    </Tabs>
+  </div>
+</Section>
