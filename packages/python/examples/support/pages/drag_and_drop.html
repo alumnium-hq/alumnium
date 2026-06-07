@@ -1,0 +1,174 @@
+<html>
+   <head>
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <style>
+           * {
+             box-sizing: border-box;
+           }
+           .columns {
+             display: flex;
+             flex-wrap: wrap;
+             gap: 10px;
+             padding: 10px;
+             width: 100%;
+             max-width: 600px;
+             margin: 0 auto;
+           }
+           .column {
+             flex: 1 1 120px;
+             min-width: 80px;
+             max-width: 100%;
+             aspect-ratio: 1 / 1;
+             border: 2px solid #b8bbbc;
+             background-color: #b8bbbc;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             text-align: center;
+             cursor: move;
+             font-size: clamp(0.5rem, 5vw, 1rem);
+           }
+           .column.over {
+             border: 2px dashed #000;
+           }
+
+           .header {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+           }
+
+           #event-log {
+             max-width: 600px;
+             margin: 16px auto 0;
+             padding: 0 10px;
+             font-family: monospace;
+             font-size: 0.85rem;
+           }
+
+           #log-entries {
+             height: 150px;
+             overflow-y: auto;
+           }
+       </style>
+   </head>
+    <body>
+        <div class="header">
+            <p>Drag and drop the items into the columns</p>
+        </div>
+        <div class="columns" id="columns">
+            <div class="column" draggable=true id="column-a" aria-label="Column A">
+                <header>A</header>
+            </div>
+            <div class="column" draggable=true id="column-b" aria-label="Column B">
+                <header>B</header>
+            </div>
+        </div>
+
+        <div id="event-log">
+            <h3>
+                Event Log
+                <button onclick="document.getElementById('log-entries').innerHTML = ''">Clear</button>
+            </h3>
+            <div id="log-entries"></div>
+        </div>
+    </body>
+
+    <script>
+        const columns = document.querySelectorAll('.column');
+        let dragSrcEl = null;
+
+        function log(eventName, el) {
+            const entries = document.getElementById('log-entries');
+            const ts = new Date().toLocaleTimeString([], { hour12: false });
+            const row = document.createElement('div');
+            row.textContent = `${ts}  ${eventName}  ${el ? '#' + el.id : ''}`;
+            entries.appendChild(row);
+            entries.scrollTop = entries.scrollHeight;
+        }
+
+        function swap(targetEl) {
+            if (!dragSrcEl || dragSrcEl === targetEl) return;
+            const next = dragSrcEl.nextSibling;
+            targetEl.parentNode.insertBefore(dragSrcEl, targetEl);
+            targetEl.parentNode.insertBefore(targetEl, next);
+        }
+
+        function columnAt(x, y) {
+            return [...columns].find(col => {
+                const r = col.getBoundingClientRect();
+                return col !== dragSrcEl && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+            });
+        }
+
+        function handleDragStart(e) {
+            dragSrcEl = this;
+            e.dataTransfer.effectAllowed = 'move';
+            log('dragstart', this);
+        }
+
+        function handleDragEnter()  { 
+            this.classList.add('over');
+            log('dragenter', this); 
+        }
+        
+        function handleDragLeave()  { 
+            this.classList.remove('over'); 
+            log('dragleave', this); 
+        }
+
+        function handleDragOver(e)  { 
+            e.preventDefault();            
+            log('dragover',  this);
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            columns.forEach(col => col.classList.remove('over'));
+            log('drop', this);
+            swap(this);
+        }
+
+        function handleDragEnd() {
+            columns.forEach(col => col.classList.remove('over'));
+            log('dragend', dragSrcEl);
+            dragSrcEl = null;
+        }
+
+        function handleTouchStart()  {
+             dragSrcEl = this; log('touchstart', this); 
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const { clientX, clientY } = e.touches[0];
+            columns.forEach(col => col.classList.remove('over'));
+            const target = columnAt(clientX, clientY);
+            target?.classList.add('over');
+            log('touchmove', target);
+        }
+
+        function handleTouchEnd(e) {
+            const { clientX, clientY } = e.changedTouches[0];
+            columns.forEach(col => col.classList.remove('over'));
+            const target = columnAt(clientX, clientY);
+            log('touchend', target);
+            swap(target);
+            dragSrcEl = null;
+        }
+
+        columns.forEach(col => {
+            col.addEventListener('dragstart',  handleDragStart, false);
+            col.addEventListener('dragenter',  handleDragEnter, false);
+            col.addEventListener('dragover',   handleDragOver,  false);
+            col.addEventListener('dragleave',  handleDragLeave, false);
+            col.addEventListener('drop',       handleDrop,      false);
+            col.addEventListener('dragend',    handleDragEnd,   false);
+            col.addEventListener('touchstart', handleTouchStart, false);
+            col.addEventListener('touchmove',  handleTouchMove, { passive: false });
+            col.addEventListener('touchend',   handleTouchEnd,  false);
+        });
+    </script>
+</html>

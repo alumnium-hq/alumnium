@@ -1,6 +1,7 @@
 package ai.alumnium.system;
 
 import ai.alumnium.Alumni;
+import java.io.File;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +12,8 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 public class DragAndDropTest extends BaseTest {
 
   private static final String DRAG_AND_DROP_URL =
-      "https://the-internet.herokuapp.com/drag_and_drop";
+    new File("../python/examples/support/pages/drag_and_drop.html").toURI().toString();
+
 
   @Test
   void testDragAndDrop() {
