@@ -16,14 +16,13 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Set;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.PointerInput.Origin;
 import org.openqa.selenium.interactions.Sequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -295,36 +294,17 @@ public final class AppiumDriver extends BaseDriver {
    * element-relative {@link Actions} gestures do not fire drag events.
    */
   private void touchDragAndDrop(WebElement fromElement, WebElement toElement) {
-    int fromX = centerX(fromElement);
-    int fromY = centerY(fromElement);
-    int toX = centerX(toElement);
-    int toY = centerY(toElement);
-
     PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "main_pointer");
     Sequence sequence = new Sequence(finger, 0);
     sequence.addAction(
-        finger.createPointerMove(
-            Duration.ofMillis(2000), PointerInput.Origin.viewport(), fromX, fromY));
+        finger.createPointerMove(Duration.ofMillis(2000), Origin.fromElement(fromElement), 0, 0));
     sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
     sequence.addAction(new Pause(finger, Duration.ofMillis(1500)));
     sequence.addAction(
-        finger.createPointerMove(
-            Duration.ofMillis(2000), PointerInput.Origin.viewport(), toX, toY));
+        finger.createPointerMove(Duration.ofMillis(2000), Origin.fromElement(toElement), 0, 0));
     sequence.addAction(new Pause(finger, Duration.ofMillis(1500)));
     sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
     driver.perform(Collections.singletonList(sequence));
-  }
-
-  private static int centerX(WebElement element) {
-    Point location = element.getLocation();
-    Dimension size = element.getSize();
-    return location.getX() + size.getWidth() / 2;
-  }
-
-  private static int centerY(WebElement element) {
-    Point location = element.getLocation();
-    Dimension size = element.getSize();
-    return location.getY() + size.getHeight() / 2;
   }
 
   private static void sleep(double seconds) {
