@@ -32,8 +32,7 @@ public class SeleniumDriverShadowCastTest {
     HasCdp cdp = (HasCdp) webDriver;
 
     // Stub CDP calls made in constructor and method under test
-    when(cdp.executeCdpCommand(eq("Target.setAutoAttach"), any(Map.class)))
-        .thenReturn(Map.of());
+    when(cdp.executeCdpCommand(eq("Target.setAutoAttach"), any(Map.class))).thenReturn(Map.of());
 
     // Accessibility.queryAXTree will return nodes where nodeId is an Integer
     Map<String, Object> axNode = new HashMap<>();
