@@ -139,7 +139,9 @@ public class BaseTest {
       }
       case "appium-android" -> {
         al = new Alumni(buildAndroidDriver(), options);
-        ((AppiumDriver) al.driver()).delay = 0.1;
+        AppiumDriver appiumDriver = (AppiumDriver) al.driver();
+        appiumDriver.delay = 0.1;
+        appiumDriver.doubleFetchPageSource = true;
       }
       default -> al = new Alumni(new ChromeDriver(), options);
     }
