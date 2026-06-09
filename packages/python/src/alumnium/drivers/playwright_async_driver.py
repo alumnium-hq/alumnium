@@ -102,7 +102,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         if tag_name.lower() == "option":
             value = await element.evaluate("el => el.value")
             async with self._autoswitch_to_new_tab():
-                await element.locator("xpath=parent::select").select_option(value)
+                await element.locator("xpath=ancestor::select").select_option(value)
         else:
             async with self._autoswitch_to_new_tab():
                 await element.click(force=True)

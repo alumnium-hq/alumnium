@@ -106,7 +106,7 @@ class PlaywrightDriver(BaseDriver):
         if tag_name.lower() == "option":
             value = element.evaluate("el => el.value")
             with self._autoswitch_to_new_tab():
-                element.locator("xpath=parent::select").select_option(value)
+                element.locator("xpath=ancestor::select").select_option(value)
         else:
             with self._autoswitch_to_new_tab():
                 element.click(force=True)

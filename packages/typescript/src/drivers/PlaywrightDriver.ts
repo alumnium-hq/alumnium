@@ -205,7 +205,7 @@ export class PlaywrightDriver extends BaseDriver {
     if (tagName?.toLowerCase() === "option") {
       const value = await element.evaluate((el: { value: string }) => el.value);
       await this.autoswitchToNewTabAction(async () => {
-        await element.locator("xpath=parent::select").selectOption(value);
+        await element.locator("xpath=ancestor::select").selectOption(value);
       });
     } else {
       await this.autoswitchToNewTabAction(async () => {
