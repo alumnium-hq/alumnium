@@ -131,7 +131,7 @@ public final class PlaywrightDriver extends BaseDriver {
     String tag = (String) element.evaluate("el => el.tagName");
     if (tag != null && tag.equalsIgnoreCase("option")) {
       Object value = element.evaluate("el => el.value");
-      Locator parentSelect = element.locator("xpath=parent::select");
+      Locator parentSelect = element.locator("xpath=ancestor::select");
       autoswitchToNewTabAction(() -> parentSelect.selectOption(String.valueOf(value)));
     } else {
       autoswitchToNewTabAction(() -> element.click(new Locator.ClickOptions().setForce(true)));
