@@ -14,6 +14,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import { Env } from "../Env.ts";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
+import { ensureDir } from "../utils/fs.ts";
 import { Instrumentation } from "./Instrumentation.ts";
 import { LoggerSchema } from "./LoggerSchema.ts";
 import { Tracer } from "./Tracer.ts";
@@ -149,7 +150,7 @@ export abstract class Logger {
 
   static async #config(): Promise<LogtapeConfig<string, string>> {
     if (this.#path) {
-      await fs.mkdir(path.dirname(this.#path), { recursive: true });
+      await ensureDir(path.dirname(this.#path));
       if (Env.ALUMNIUM_PRUNE_LOGS) await fs.rm(this.#path, { force: true });
     }
 

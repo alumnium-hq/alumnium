@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import path from "node:path";
 import type z from "zod";
 import { Logger } from "../telemetry/Logger.ts";
-import { safePathJoin } from "../utils/fs.ts";
+import { ensureDir, safePathJoin } from "../utils/fs.ts";
 import { GlobalFileStorePaths } from "./GlobalFileStorePaths.ts";
 
 const logger = Logger.get(import.meta.url);
@@ -72,7 +72,7 @@ export class FileStore {
    */
   async ensureFilePath(relPath: string): Promise<string> {
     const filePath = this.resolve(relPath);
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await ensureDir(path.dirname(filePath));
     return filePath;
   }
 
@@ -85,7 +85,7 @@ export class FileStore {
    */
   async ensureDir(relPath: string): Promise<string> {
     const storeDir = this.resolve(relPath);
-    await fs.mkdir(storeDir, { recursive: true });
+    await ensureDir(storeDir);
     return storeDir;
   }
 

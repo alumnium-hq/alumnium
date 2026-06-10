@@ -1,5 +1,21 @@
 import filenamify from "filenamify";
+import { existsSync } from "node:fs";
+import * as fs from "node:fs/promises";
 import path from "node:path";
+
+/**
+ * Creates a directory (recursively) only if it does not already exist.
+ *
+ * Avoids calling `fs.mkdir` for a directory that is already present. This
+ * matters because Bun on Windows throws `EEXIST` for `fs.mkdir(".", ...)`
+ * even though recursive mkdir is meant to be idempotent — so a bare-filename
+ * path (dirname === ".") would otherwise crash the process.
+ *
+ * @param dir Directory path to ensure exists
+ */
+export async function ensureDir(dir: string): Promise<void> {
+  if (!existsSync(dir)) await fs.mkdir(dir, { recursive: true });
+}
 
 /**
  * Normalizes, sanitizes, and joins the specified path segments to form a safe
