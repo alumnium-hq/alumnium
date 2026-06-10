@@ -1,6 +1,37 @@
+import * as fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { safePathJoin } from "./fs.ts";
+import { ensureDir, safePathJoin } from "./fs.ts";
+
+describe("ensureDir", () => {
+  it("creates a missing directory recursively", async () => {
+    const base = await fs.mkdtemp(
+      path.join(os.tmpdir(), "alumnium-ensuredir-"),
+    );
+    const target = path.join(base, "nested", "dir");
+    try {
+      await ensureDir(target);
+      const stat = await fs.stat(target);
+      expect(stat.isDirectory()).toBe(true);
+    } finally {
+      await fs.rm(base, { recursive: true, force: true });
+    }
+  });
+
+  it("is a no-op for an already-existing directory", async () => {
+    const base = await fs.mkdtemp(
+      path.join(os.tmpdir(), "alumnium-ensuredir-"),
+    );
+    try {
+      await expect(ensureDir(base)).resolves.toBeUndefined();
+      const stat = await fs.stat(base);
+      expect(stat.isDirectory()).toBe(true);
+    } finally {
+      await fs.rm(base, { recursive: true, force: true });
+    }
+  });
+});
 
 describe("safePathJoin", () => {
   it("sanitizes and joins path segments", () => {

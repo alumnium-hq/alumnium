@@ -4,6 +4,7 @@ import Module from "node:module";
 import os from "node:os";
 import path from "node:path";
 import { isSingleFileExecutable } from "../bundle.ts";
+import { ensureDir } from "../utils/fs.ts";
 import {
   PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
   PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
@@ -99,8 +100,8 @@ async function extractEmbeddedDependencies(): Promise<ExtractedEmbeddedDependenc
   );
 
   await Promise.all([
-    fs.mkdir(seleniumAtomsDir, { recursive: true }),
-    fs.mkdir(path.dirname(playwrightPackageJsonPath), { recursive: true }),
+    ensureDir(seleniumAtomsDir),
+    ensureDir(path.dirname(playwrightPackageJsonPath)),
   ]);
 
   const filesByName = getEmbeddedFilesByName();
@@ -238,7 +239,7 @@ async function writeEmbeddedFile(
     throw new Error(`Missing embedded dependency asset: ${embeddedFileName}`);
   }
 
-  await fs.mkdir(path.dirname(targetPath), { recursive: true });
+  await ensureDir(path.dirname(targetPath));
   await fs.writeFile(targetPath, await file.bytes());
 
   if (mode) {
