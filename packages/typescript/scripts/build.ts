@@ -90,6 +90,12 @@ const DIST_NPM_MAIN_PKG_DIR = path.resolve(DIST_DIR, "npm-alumnium");
 const DIST_NPM_DIR = path.resolve(DIST_DIR, "npm");
 const PACKAGE_JSON_NAME = "package.json";
 
+// Ignore scanTypes in the binary since it's only needed in dev.
+const TYPES_SCAN_STUB_FILES = {
+  [path.resolve(MAIN_NPM_SRC_DIR, "utils/typesScan.ts")]:
+    "export function scanTypes() {}\n",
+};
+
 // Pip paths
 const DIST_PIP_DIR = path.resolve(DIST_DIR, "pip");
 const PIP_CLI_PKG_NAME = "alumnium-cli";
@@ -347,12 +353,7 @@ async function main() {
             target: getBunTarget(os, arch),
             outfile: binPath,
           },
-          files: {
-            // Ignore scanTypes in the binary since it's only needed in dev.
-            [path.resolve(MAIN_NPM_SRC_DIR, "utils/typesScan.ts")]: `
-              export function scanTypes() {}
-            `,
-          },
+          files: TYPES_SCAN_STUB_FILES,
           plugins: [
             telemetryPathsRewritePlugin,
             wdioUtilsPatcherPlugin,
@@ -405,6 +406,7 @@ async function main() {
           target: "node",
           plugins: [telemetryPathsRewritePlugin],
           packages: "external",
+          files: TYPES_SCAN_STUB_FILES,
         };
 
         await Promise.all([
