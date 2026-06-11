@@ -39,6 +39,7 @@ export namespace McpDriver {
     headless?: boolean;
     permissions?: string[];
     profileDir?: string;
+    userAgent?: string;
   }
 
   export interface SeleniumCdpConnection {
@@ -78,6 +79,7 @@ export async function createPlaywrightDriver(
     headers = {},
     permissions,
     profileDir,
+    userAgent,
   } = driverOptions;
 
   logger.info(
@@ -98,6 +100,7 @@ export async function createPlaywrightDriver(
       recordVideo: { dir: videosDir },
       extraHTTPHeaders: headers,
       ...(executablePath ? { executablePath } : {}),
+      ...(userAgent ? { userAgent } : {}),
     });
   } else {
     const browser = await chromium.launch({
@@ -107,6 +110,7 @@ export async function createPlaywrightDriver(
     context = await browser.newContext({
       recordVideo: { dir: videosDir },
       extraHTTPHeaders: headers,
+      ...(userAgent ? { userAgent } : {}),
     });
   }
 
