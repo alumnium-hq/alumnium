@@ -94,7 +94,16 @@ public final class HttpClient implements AutoCloseable {
         excludeAttributes == null ? List.of() : List.copyOf(excludeAttributes));
 
     JsonNode resp = postJson("/v1/sessions", body, Duration.ofSeconds(30));
-    this.model = Model.fromString(resp.path("model").asText(null));
+    String modelStr = resp.path("model").asText(null);
+    if (modelStr == null || modelStr.isBlank()) {
+      throw new IllegalStateException("Server '/v1/sessions' response missing required 'model'");
+    }
+    Model parsedModel = Model.fromString(modelStr);
+    if (parsedModel == null) {
+      throw new IllegalStateException(
+          "Invalid 'model' value '" + modelStr + "' in /v1/sessions response");
+    }
+    this.model = parsedModel;
     sessionId.set(resp.path("session_id").asText(null));
   }
 
