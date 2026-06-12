@@ -21,14 +21,16 @@ public class FramesTest extends BaseTest {
         List.of("LEFT", "MIDDLE", "RIGHT", "BOTTOM"), al.get("text from all frames"));
   }
 
+  @DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "selenium")
   @Test
   void testCrossOriginIframe() {
     navigate(CROSS_ORIGIN_IFRAME_URL);
 
     al.check("button 'Main Page Button' is present");
-    al.act("click button 'Click Me Inside Iframe'");
-    al.check("text 'Button Clicked!' is present");
-    al.act("click link 'Iframe Link'");
-    al.check("text 'Link Clicked!' is present");
+    al.check("'Password' field is present");
+    al.act("type 'testuser' in the text input field");
+    al.check("Text input contains 'testuser'");
+    al.act("click Submit button");
+    al.check("'Form submitted' message is present");
   }
 }

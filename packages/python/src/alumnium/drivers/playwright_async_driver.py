@@ -36,7 +36,8 @@ class PlaywrightAsyncDriver(BaseDriver):
             TypeTool,
             UploadTool,
         }
-        self._run_async(self._enable_target_auto_attach())
+        self.oopif_frames: set[Frame] = set()
+        self._run_async(self._init_cdp_session())
         self._run_async(self._setup_page_tracking(page))
 
     @property
@@ -51,45 +52,32 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _accessibility_tree(self) -> ChromiumAccessibilityTree:
         await self._wait_for_page_to_load()
 
-        # Get frame tree to enumerate all frames (same approach as Selenium)
         frame_tree = await self._send_cdp_command("Page.getFrameTree")
         frame_ids = self._get_all_frame_ids(frame_tree["frameTree"])
         main_frame_id = frame_tree["frameTree"]["frame"]["id"]
-        logger.debug(f"Found {len(frame_ids)} frames")
 
-        # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
-        frame_to_iframe_map: dict[str, int] = {}
-        await self._build_frame_hierarchy(frame_tree["frameTree"], main_frame_id, frame_to_iframe_map)
+        frame_id_to_playwright_frame = await self._build_playwright_frame_map(frame_tree)
+        oopif_frame_ids = [fid for fid, f in frame_id_to_playwright_frame.items() if f in self.oopif_frames]
+        logger.debug(f"Found {len(frame_ids)} same-process frames, {len(oopif_frame_ids)} OOPIFs")
 
-        # Build mapping: frameId -> Playwright Frame object (for element finding)
-        frame_id_to_playwright_frame: dict[str, Frame] = {}
-        for frame in self.page.frames:
-            cdp_frame_id = self._find_cdp_frame_id_by_url(frame_tree, frame.url)
-            if cdp_frame_id:
-                frame_id_to_playwright_frame[cdp_frame_id] = frame
+        frame_to_iframe_map = await self._build_frame_owner_map(
+            frame_tree["frameTree"], main_frame_id, oopif_frame_ids
+        )
 
-        # Aggregate accessibility nodes from all frames
         all_nodes: list[dict] = []
+        frame_index = 0
+
         for frame_id in frame_ids:
-            try:
-                response = await self._send_cdp_command(
-                    "Accessibility.getFullAXTree",
-                    {"frameId": frame_id},
-                )
-                nodes = response.get("nodes", [])
-                logger.debug(f"  -> Frame {frame_id[:20]}...: {len(nodes)} nodes")
+            playwright_frame = frame_id_to_playwright_frame.get(frame_id, self.page.main_frame)
+            nodes = await self._get_frame_nodes(frame_id)
+            self._merge_frame_nodes(nodes, frame_id, frame_to_iframe_map, playwright_frame, frame_index, all_nodes)
+            frame_index += 1
 
-                # Get Playwright frame reference
-                playwright_frame = frame_id_to_playwright_frame.get(frame_id, self.page.main_frame)
-
-                for node in nodes:
-                    node["_frame"] = playwright_frame
-                    # Tag root nodes with their parent iframe's backendNodeId (for tree inlining)
-                    if node.get("parentId") is None and frame_id in frame_to_iframe_map:
-                        node["_parent_iframe_backend_node_id"] = frame_to_iframe_map[frame_id]
-                    all_nodes.append(node)
-            except Exception as e:
-                logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")
+        for oopif_frame_id in oopif_frame_ids:
+            pw_frame = frame_id_to_playwright_frame[oopif_frame_id]
+            nodes = await self._get_oopif_nodes(oopif_frame_id, pw_frame)
+            self._merge_frame_nodes(nodes, oopif_frame_id, frame_to_iframe_map, pw_frame, frame_index, all_nodes)
+            frame_index += 1
 
         return ChromiumAccessibilityTree({"nodes": all_nodes})
 
@@ -215,24 +203,34 @@ class PlaywrightAsyncDriver(BaseDriver):
         if backend_node_id is None:
             raise ValueError(f"Element {id} has no backendNodeId")
 
-        # Beware!
-        await self._send_cdp_command("DOM.enable")
-        await self._send_cdp_command("DOM.getFlattenedDocument")
-        node_ids = await self._send_cdp_command(
-            "DOM.pushNodesByBackendIdsToFrontend",
-            {
-                "backendNodeIds": [backend_node_id],
-            },
-        )
-        node_id = node_ids["nodeIds"][0]
-        await self._send_cdp_command(
-            "DOM.setAttributeValue",
-            {
-                "nodeId": node_id,
-                "name": "data-alumnium-id",
-                "value": str(backend_node_id),
-            },
-        )
+        is_oopif = frame != self.page.main_frame and frame in self.oopif_frames
+        if is_oopif:
+            session = await self.page.context.new_cdp_session(frame)
+        else:
+            if self.client is None:
+                self.client = await self.page.context.new_cdp_session(self.page)
+            session = self.client
+        try:
+            # Beware!
+            await session.send("DOM.enable")
+            await session.send("DOM.getFlattenedDocument")
+            node_ids = await session.send(
+                "DOM.pushNodesByBackendIdsToFrontend",
+                {"backendNodeIds": [backend_node_id]},
+            )
+            node_id = node_ids["nodeIds"][0]
+            await session.send(
+                "DOM.setAttributeValue",
+                {
+                    "nodeId": node_id,
+                    "name": "data-alumnium-id",
+                    "value": str(backend_node_id),
+                },
+            )
+        finally:
+            if is_oopif:
+                await session.detach()
+
         # TODO: We need to remove the attribute after we are done with the element,
         # but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
         return frame.locator(f"css=[data-alumnium-id='{backend_node_id}']")
@@ -267,7 +265,6 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     @asynccontextmanager
     async def _autoswitch_to_new_tab(self):
-        # If auto-switch is disabled, just yield without waiting for new pages
         if not self.autoswitch_to_new_tab:
             yield
             return
@@ -282,16 +279,19 @@ class PlaywrightAsyncDriver(BaseDriver):
         title = await page.title()
         logger.debug(f"Auto-switching to new tab {title} ({page.url})")
         self.page = page
-        self.client = await self.page.context.new_cdp_session(self.page)
+        await self._init_cdp_session()
 
     async def _send_cdp_command(self, method: str, params: dict | None = None):
         if self.client is None:
             self.client = await self.page.context.new_cdp_session(self.page)
-
         return await self.client.send(method, params or {})
 
+    async def _init_cdp_session(self):
+        self.oopif_frames.clear()
+        self.client = await self.page.context.new_cdp_session(self.page)
+        await self._enable_target_auto_attach()
+
     async def _enable_target_auto_attach(self):
-        """Enable auto-attach to OOPIF targets for cross-origin iframe support."""
         try:
             await self._send_cdp_command(
                 "Target.setAutoAttach",
@@ -301,74 +301,146 @@ class PlaywrightAsyncDriver(BaseDriver):
                     "flatten": True,
                 },
             )
-            logger.debug("Enabled Target.setAutoAttach for OOPIF support")
         except Exception as e:
             logger.debug(f"Could not enable Target.setAutoAttach: {e}")
 
+    async def _build_playwright_frame_map(self, frame_tree: dict) -> dict[str, Frame]:
+        frame_map: dict[str, Frame] = {}
+
+        for frame in self.page.frames:
+            cdp_frame_id = self._find_cdp_frame_id_by_url(frame_tree, frame.url)
+            if cdp_frame_id:
+                frame_map[cdp_frame_id] = frame
+
+        self.oopif_frames.clear()
+        for pw_frame in self.page.frames:
+            if pw_frame == self.page.main_frame:
+                continue
+            if pw_frame in frame_map.values():
+                continue
+            try:
+                frame_session = await self.page.context.new_cdp_session(pw_frame)
+                ft = await frame_session.send("Page.getFrameTree")
+                await frame_session.detach()
+                root_frame_id = ft["frameTree"]["frame"]["id"]
+                frame_map[root_frame_id] = pw_frame
+                self.oopif_frames.add(pw_frame)
+                logger.debug(f"Mapped OOPIF {root_frame_id[:20]}... to Playwright frame")
+            except Exception as e:
+                logger.debug(f"Could not detect OOPIF frame: {e}")
+
+        return frame_map
+
+    async def _build_frame_owner_map(
+        self,
+        frame_info: dict,
+        main_frame_id: str,
+        oopif_frame_ids: list[str],
+    ) -> dict[str, int]:
+        frame_to_iframe_map: dict[str, int] = {}
+        await self._send_cdp_command("DOM.enable")
+
+        async def walk(fi: dict):
+            frame_id = fi["frame"]["id"]
+            if frame_id != main_frame_id:
+                try:
+                    owner_info = await self._send_cdp_command("DOM.getFrameOwner", {"frameId": frame_id})
+                    frame_to_iframe_map[frame_id] = owner_info["backendNodeId"]
+                    logger.debug(
+                        f"Frame {frame_id[:20]}... owned by iframe backendNodeId={owner_info['backendNodeId']}"
+                    )
+                except Exception as e:
+                    logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
+            for child in fi.get("childFrames", []):
+                await walk(child)
+
+        await walk(frame_info)
+
+        for oopif_frame_id in oopif_frame_ids:
+            try:
+                owner_info = await self._send_cdp_command("DOM.getFrameOwner", {"frameId": oopif_frame_id})
+                frame_to_iframe_map[oopif_frame_id] = owner_info["backendNodeId"]
+                logger.debug(
+                    f"OOPIF {oopif_frame_id[:20]}... owned by iframe backendNodeId={owner_info['backendNodeId']}"
+                )
+            except Exception as e:
+                logger.debug(f"Could not get frame owner for OOPIF {oopif_frame_id[:20]}...: {e}")
+
+        return frame_to_iframe_map
+
+    async def _get_frame_nodes(self, frame_id: str) -> list[dict]:
+        try:
+            response = await self._send_cdp_command("Accessibility.getFullAXTree", {"frameId": frame_id})
+            nodes = response.get("nodes", [])
+            logger.debug(f"  -> Frame {frame_id[:20]}...: {len(nodes)} nodes")
+            return nodes
+        except Exception as e:
+            logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")
+            return []
+
+    async def _get_oopif_nodes(self, frame_id: str, playwright_frame: Frame) -> list[dict]:
+        try:
+            frame_session = await self.page.context.new_cdp_session(playwright_frame)
+            response = await frame_session.send("Accessibility.getFullAXTree", {})
+            await frame_session.detach()
+            nodes = response.get("nodes", [])
+            logger.debug(f"  -> OOPIF {frame_id[:20]}...: {len(nodes)} nodes")
+            return nodes
+        except Exception as e:
+            logger.debug(f"  -> OOPIF {frame_id[:20]}...: failed ({e})")
+            return []
+
+    def _merge_frame_nodes(
+        self,
+        nodes: list[dict],
+        frame_id: str,
+        frame_to_iframe_map: dict[str, int],
+        playwright_frame: Frame,
+        frame_index: int,
+        all_nodes: list[dict],
+    ):
+        prefix = f"f{frame_index}:"
+        for node in nodes:
+            if node.get("nodeId") is not None:
+                node["nodeId"] = prefix + str(node["nodeId"])
+            if node.get("parentId") is not None:
+                node["parentId"] = prefix + str(node["parentId"])
+            if node.get("childIds") is not None:
+                node["childIds"] = [prefix + str(cid) for cid in node["childIds"]]
+            node["_frame"] = playwright_frame
+            if node.get("parentId") is None and frame_id in frame_to_iframe_map:
+                node["_parent_iframe_backend_node_id"] = frame_to_iframe_map[frame_id]
+            all_nodes.append(node)
+
     async def _setup_page_tracking(self, initial_page: Page):
-        """Set up tracking for all pages in the context."""
         self._pages: list[Page] = [initial_page]
         self._attach_page_listeners(initial_page)
 
     def _attach_page_listeners(self, page: Page):
-        """Attach popup and close listeners to a page."""
-        # Use sync handler to avoid deadlock - async handler would block via _run_async
         page.on("popup", self._on_popup_sync)
         page.on("close", self._on_page_close)
 
     def _on_popup_sync(self, popup: Page):
-        """Handle new popup/tab opened from a page (sync to avoid deadlock)."""
         logger.debug(f"New popup opened: {popup.url}")
         self._pages.append(popup)
-        self._attach_page_listeners(popup)  # Chain: new page also listens for popups
+        self._attach_page_listeners(popup)
 
     def _on_page_close(self, popup: Page):
-        """Handle page closed."""
         if popup in self._pages:
             logger.debug(f"Page closed: {popup.url}")
             self._pages.remove(popup)
 
     def _get_all_frame_ids(self, frame_info: dict) -> list[str]:
-        """Recursively collect all frame IDs from CDP frame tree."""
         frame_ids = [frame_info["frame"]["id"]]
         for child in frame_info.get("childFrames", []):
             frame_ids.extend(self._get_all_frame_ids(child))
         return frame_ids
 
-    async def _build_frame_hierarchy(
-        self,
-        frame_info: dict,
-        main_frame_id: str,
-        frame_to_iframe_map: dict[str, int],
-    ):
-        """Build frame hierarchy maps recursively."""
-        frame_id = frame_info["frame"]["id"]
-
-        if frame_id != main_frame_id:
-            # Get the iframe element that owns this frame
-            await self._send_cdp_command("DOM.enable")
-            try:
-                owner_info = await self._send_cdp_command(
-                    "DOM.getFrameOwner",
-                    {"frameId": frame_id},
-                )
-                frame_to_iframe_map[frame_id] = owner_info["backendNodeId"]
-                logger.debug(f"Frame {frame_id[:20]}... owned by iframe backendNodeId={owner_info['backendNodeId']}")
-            except Exception as e:
-                logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
-
-        # Process children
-        for child in frame_info.get("childFrames", []):
-            await self._build_frame_hierarchy(child, main_frame_id, frame_to_iframe_map)
-
     def _find_cdp_frame_id_by_url(self, cdp_frame_tree: dict, target_url: str) -> str | None:
-        """Find CDP frameId by matching URL in CDP frame tree."""
-
         def search_frame(frame_info: dict) -> str | None:
             frame = frame_info["frame"]
             if frame["url"] == target_url:
                 return frame["id"]
-
             for child in frame_info.get("childFrames", []):
                 result = search_frame(child)
                 if result:
@@ -381,35 +453,27 @@ class PlaywrightAsyncDriver(BaseDriver):
         self._run_async(self._switch_to_next_tab())
 
     async def _switch_to_next_tab(self):
-        # Brief wait to allow popup handlers to complete
         await self.page.wait_for_timeout(100)
         if len(self._pages) <= 1:
-            return  # Only one tab, nothing to switch
+            return
 
         current_index = self._pages.index(self.page)
-        next_index = (current_index + 1) % len(self._pages)  # Wrap to first
-
-        self.page = self._pages[next_index]
-        self.client = None  # Reset CDP client for new page
+        self.page = self._pages[(current_index + 1) % len(self._pages)]
+        await self._init_cdp_session()
         await self.page.wait_for_load_state()
-        logger.debug(f"Switched to next tab: {self.page.url}")
 
     def switch_to_previous_tab(self):
         self._run_async(self._switch_to_previous_tab())
 
     async def _switch_to_previous_tab(self):
-        # Brief wait to allow popup handlers to complete
         await self.page.wait_for_timeout(100)
         if len(self._pages) <= 1:
-            return  # Only one tab, nothing to switch
+            return
 
         current_index = self._pages.index(self.page)
-        prev_index = (current_index - 1) % len(self._pages)  # Wrap to last
-
-        self.page = self._pages[prev_index]
-        self.client = None  # Reset CDP client for new page
+        self.page = self._pages[(current_index - 1) % len(self._pages)]
+        await self._init_cdp_session()
         await self.page.wait_for_load_state()
-        logger.debug(f"Switched to previous tab: {self.page.url}")
 
     def _run_async(self, coro):
         future = run_coroutine_threadsafe(coro, self.loop)
