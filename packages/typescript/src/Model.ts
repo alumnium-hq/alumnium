@@ -73,7 +73,14 @@ export const Model = {
   },
 
   parse(modelStr: string): Model {
-    const [provider, name] = modelStr.split("/");
+    // Split on the first "/" only: the provider is a single segment, but the
+    // model name may itself contain slashes (e.g. OpenRouter/Fireworks ids like
+    // "openai/xiaomi/mimo-v2.5"). A plain split("/") would drop everything after
+    // the second segment and send a truncated model id to the provider.
+    const slashIndex = modelStr.indexOf("/");
+    const provider =
+      slashIndex === -1 ? modelStr : modelStr.slice(0, slashIndex);
+    const name = slashIndex === -1 ? undefined : modelStr.slice(slashIndex + 1);
     if (!provider) throw new Error(`Invalid model string: ${modelStr}`);
     return this.new(provider, name);
   },
