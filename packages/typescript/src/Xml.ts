@@ -57,19 +57,18 @@ export abstract class Xml {
   static format(els: Xml.AnyElement[]): string {
     let xml = "";
     for (const element of els) {
-      xml += xmlFormat(
-        render(element, {
-          xmlMode: true,
-          encodeEntities: false, // Skip encoding unicode text content, e.g., `1701–1870` -> `1701&#x2013;1870`.
-          emptyAttrs: true, // Preserve empty attributes as-is, e.g., `value=""`.
-          selfClosingTags: true,
-        }),
-        {
-          indentation: "  ",
-          forceSelfClosingEmptyTag: true,
-          lineSeparator: "\n",
-        },
-      );
+      Xml.#sanitizeElement(element);
+      const rendered = render(element, {
+        xmlMode: true,
+        encodeEntities: false, // Skip encoding unicode text content, e.g., `1701–1870` -> `1701&#x2013;1870`.
+        emptyAttrs: true, // Preserve empty attributes as-is, e.g., `value=""`.
+        selfClosingTags: true,
+      });
+      xml += xmlFormat(rendered, {
+        indentation: "  ",
+        forceSelfClosingEmptyTag: true,
+        lineSeparator: "\n",
+      });
     }
     return xml;
   }
@@ -93,5 +92,38 @@ export abstract class Xml {
       return node;
     }
     return null;
+  }
+
+  static #sanitizeElement(node: Xml.AnyElement): void {
+    if (isText(node)) {
+      node.data = Xml.#sanitizeText(node.data);
+    } else if (isTag(node)) {
+      for (const [k, v] of Object.entries(node.attribs)) {
+        node.attribs[k] = Xml.#sanitizeAttr(v);
+      }
+      for (const child of node.children) {
+        if (isText(child) || isTag(child)) Xml.#sanitizeElement(child);
+      }
+    }
+  }
+
+  // In text nodes only <, > and & must be escaped.
+  static #sanitizeText(s: string): string {
+    return s.replace(/[<>&\x00-\x08\x0B\x0C\x0E-\x1F]/g, (c) => {
+      if (c === "<") return "&lt;";
+      if (c === ">") return "&gt;";
+      if (c === "&") return "&amp;";
+      return `&#x${c.charCodeAt(0).toString(16).toUpperCase()};`;
+    });
+  }
+
+  // In double-quoted attribute values <, &, " and control chars must be escaped.
+  static #sanitizeAttr(s: string): string {
+    return s.replace(/[<>&"\x00-\x08\x0B\x0C\x0E-\x1F\n\r\t]/g, (c) => {
+      if (c === "<") return "&lt;";
+      if (c === "&") return "&amp;";
+      if (c === '"') return "&quot;";
+      return `&#x${c.charCodeAt(0).toString(16).toUpperCase()};`;
+    });
   }
 }
