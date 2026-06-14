@@ -96,6 +96,31 @@ describe("ResponseCache", () => {
     const result = await cache.lookup(prompt1, llmKey);
     expect(result).toBeNull();
   });
+
+  it("does not cache actor action selection so retries re-sample", async () => {
+    const { sessionContext, llmContext, cacheStore, prompt1, llmKey } =
+      await setup();
+    const cache = new ResponseCache(sessionContext, cacheStore, llmContext);
+
+    // Re-key prompt1 with ACTOR metadata (the action-selecting agent).
+    llmContext.clearPromptsMeta([prompt1]);
+    llmContext.assignPromptsMeta([prompt1], {
+      kind: "actor",
+      goal: "fill the field" as never,
+      step: "type into the field" as never,
+      treeXml: "<xml></xml>",
+    });
+
+    const generations = createGenerations("an action");
+    await cache.update(prompt1, llmKey, generations);
+
+    // Actor generations are intentionally NOT frozen: a stochastic model
+    // (e.g. gpt-5-nano, unable to run at temperature 0) would otherwise have a
+    // single wrong/no-op draw replayed on every retry until the tree changes.
+    // Skipping the cache here makes each actor invocation re-sample.
+    const result = await cache.lookup(prompt1, llmKey);
+    expect(result).toBeNull();
+  });
 });
 
 async function setup() {

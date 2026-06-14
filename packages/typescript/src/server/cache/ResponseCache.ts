@@ -153,6 +153,28 @@ export class ResponseCache extends ServerCache {
         return;
       }
 
+      // Never freeze the actor's stochastic action selection. The actor picks a
+      // mutating action (click/type/execute-javascript/...) from a model that
+      // may be unable to run at temperature 0 (e.g. gpt-5-nano, whose
+      // temperature parameter is rejected, so it samples). The response cache
+      // keys on the exact (prompt = goal + step + accessibility tree), so a
+      // single bad sample - a no-op, a ClickTool where TypeTool was needed, or
+      // a script with mangled quotes/newlines - gets frozen for that page state
+      // and replayed on every retry. The action then never succeeds until the
+      // tree changes (form reload -> new element ids busts the key), which is
+      // the only known workaround. Skipping the actor here makes each actor
+      // invocation re-sample, so a retry can escape a bad draw. Read agents
+      // (planner/locator/area/retriever) still cache normally; the per-element
+      // ElementsCache is a separate layer and is unaffected.
+      if (agentMeta.kind === "actor") {
+        span.event("cache.update.skip", {
+          ...this.#spanAttrs(),
+          "agent.kind": agentMeta.kind,
+          "cache.update.skip.reason": "actor_no_freeze",
+        });
+        return;
+      }
+
       const { requestHash } = this.#initiate(agentMeta, prompt, llmKey);
 
       const storedGenerations = generations.map(Lchain.toStored);
