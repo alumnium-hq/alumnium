@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public final class PlaywrightDriver extends BaseDriver {
   private Page page;
   private CDPSession client;
   private final List<Page> pages = new ArrayList<>();
+  private final Set<Frame> oopifFrames = new HashSet<>();
   public boolean autoswitchToNewTab = true;
   public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
   public final Set<Class<? extends BaseTool>> supportedTools =
@@ -60,9 +62,8 @@ public final class PlaywrightDriver extends BaseDriver {
 
   public PlaywrightDriver(Page page) {
     this.page = page;
-    this.client = page.context().newCDPSession(page);
     setupPageTracking(page);
-    enableTargetAutoAttach();
+    initCDPSession();
   }
 
   @Override
@@ -84,38 +85,31 @@ public final class PlaywrightDriver extends BaseDriver {
     Map<String, Object> frameTree = (Map<String, Object>) frameTreeResp.get("frameTree");
     List<String> frameIds = collectFrameIds(frameTree);
     String mainFrameId = frameIdOf(frameTree);
-    LOG.debug("Found {} frames", frameIds.size());
 
-    Map<String, Integer> frameToIframeMap = new HashMap<>();
-    buildFrameHierarchy(frameTree, mainFrameId, frameToIframeMap);
+    Map<String, Frame> frameIdToFrame = buildPlaywrightFrameMap(frameTreeResp);
+    List<String> oopifFrameIds =
+        frameIdToFrame.entrySet().stream()
+            .filter(e -> oopifFrames.contains(e.getValue()))
+            .map(Map.Entry::getKey)
+            .toList();
+    LOG.debug("Found {} same-process frames, {} OOPIFs", frameIds.size(), oopifFrameIds.size());
 
-    Map<String, Frame> frameIdToFrame = new HashMap<>();
-    for (Frame f : page.frames()) {
-      String cdpFrameId = findCdpFrameIdByUrl(frameTree, f.url());
-      if (cdpFrameId != null) {
-        frameIdToFrame.put(cdpFrameId, f);
-      }
-    }
+    Map<String, Integer> frameToIframeMap =
+        buildFrameOwnerMap(frameTree, mainFrameId, oopifFrameIds);
 
     List<Map<String, Object>> allNodes = new ArrayList<>();
+    int frameIndex = 0;
+
     for (String frameId : frameIds) {
-      try {
-        Map<String, Object> resp =
-            sendCdp("Accessibility.getFullAXTree", Map.of("frameId", frameId));
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> nodes =
-            (List<Map<String, Object>>) resp.getOrDefault("nodes", List.of());
-        Frame pwFrame = frameIdToFrame.getOrDefault(frameId, page.mainFrame());
-        for (Map<String, Object> node : nodes) {
-          node.put("_frame", pwFrame);
-          if (node.get("parentId") == null && frameToIframeMap.containsKey(frameId)) {
-            node.put("_parent_iframe_backend_node_id", frameToIframeMap.get(frameId));
-          }
-          allNodes.add(node);
-        }
-      } catch (RuntimeException e) {
-        LOG.debug("Frame {} failed", frameId, e);
-      }
+      Frame pwFrame = frameIdToFrame.getOrDefault(frameId, page.mainFrame());
+      List<Map<String, Object>> nodes = getFrameNodes(frameId);
+      mergeFrameNodes(nodes, frameId, frameToIframeMap, pwFrame, frameIndex++, allNodes);
+    }
+
+    for (String oopifFrameId : oopifFrameIds) {
+      Frame pwFrame = frameIdToFrame.get(oopifFrameId);
+      List<Map<String, Object>> nodes = getOopifNodes(oopifFrameId, pwFrame);
+      mergeFrameNodes(nodes, oopifFrameId, frameToIframeMap, pwFrame, frameIndex++, allNodes);
     }
 
     Map<String, Object> cdpResponse = new LinkedHashMap<>();
@@ -229,21 +223,31 @@ public final class PlaywrightDriver extends BaseDriver {
     if (backendNodeId == null) {
       throw new IllegalStateException("Element " + id + " has no backendNodeId");
     }
-    sendCdp("DOM.enable", null);
-    sendCdp("DOM.getFlattenedDocument", null);
-    Map<String, Object> pushed =
-        sendCdp(
-            "DOM.pushNodesByBackendIdsToFrontend",
-            Map.of("backendNodeIds", List.of(backendNodeId)));
-    @SuppressWarnings("unchecked")
-    List<Number> nodeIds = (List<Number>) pushed.get("nodeIds");
-    if (nodeIds == null || nodeIds.isEmpty()) {
-      throw new IllegalStateException("CDP did not return a node id for " + backendNodeId);
+
+    boolean isOopif = frame != page.mainFrame() && oopifFrames.contains(frame);
+    CDPSession session = isOopif ? page.context().newCDPSession(frame) : client;
+    try {
+      sendCdpOn(session, "DOM.enable", null);
+      sendCdpOn(session, "DOM.getFlattenedDocument", null);
+      Map<String, Object> pushed =
+          sendCdpOn(
+              session,
+              "DOM.pushNodesByBackendIdsToFrontend",
+              Map.of("backendNodeIds", List.of(backendNodeId)));
+      @SuppressWarnings("unchecked")
+      List<Number> nodeIds = (List<Number>) pushed.get("nodeIds");
+      if (nodeIds == null || nodeIds.isEmpty()) {
+        throw new IllegalStateException("CDP did not return a node id for " + backendNodeId);
+      }
+      Number nodeId = nodeIds.get(0);
+      sendCdpOn(
+          session,
+          "DOM.setAttributeValue",
+          Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
+    } finally {
+      if (isOopif) session.detach();
     }
-    Number nodeId = nodeIds.get(0);
-    sendCdp(
-        "DOM.setAttributeValue",
-        Map.of("nodeId", nodeId, "name", "data-alumnium-id", "value", backendNodeId.toString()));
+
     return frame.locator("css=[data-alumnium-id='" + backendNodeId + "']");
   }
 
@@ -257,10 +261,9 @@ public final class PlaywrightDriver extends BaseDriver {
     page.waitForTimeout(100);
     if (pages.size() <= 1) return;
     int idx = pages.indexOf(page);
-    Page next = pages.get((idx + 1) % pages.size());
-    this.page = next;
-    this.client = next.context().newCDPSession(next);
-    next.waitForLoadState();
+    this.page = pages.get((idx + 1) % pages.size());
+    initCDPSession();
+    page.waitForLoadState();
   }
 
   @Override
@@ -268,10 +271,9 @@ public final class PlaywrightDriver extends BaseDriver {
     page.waitForTimeout(100);
     if (pages.size() <= 1) return;
     int idx = pages.indexOf(page);
-    Page prev = pages.get((idx - 1 + pages.size()) % pages.size());
-    this.page = prev;
-    this.client = prev.context().newCDPSession(prev);
-    prev.waitForLoadState();
+    this.page = pages.get((idx - 1 + pages.size()) % pages.size());
+    initCDPSession();
+    page.waitForLoadState();
   }
 
   @Override
@@ -282,7 +284,62 @@ public final class PlaywrightDriver extends BaseDriver {
   // endregion
   // region Internals
 
+  private void initCDPSession() {
+    oopifFrames.clear();
+    this.client = page.context().newCDPSession(page);
+    enableTargetAutoAttach();
+  }
+
+  private void mergeFrameNodes(
+      List<Map<String, Object>> nodes,
+      String frameId,
+      Map<String, Integer> frameToIframeMap,
+      Frame pwFrame,
+      int frameIndex,
+      List<Map<String, Object>> allNodes) {
+    String prefix = "f" + frameIndex + ":";
+    for (Map<String, Object> node : nodes) {
+      Object nid = node.get("nodeId");
+      if (nid != null) node.put("nodeId", prefix + nid);
+      Object pid = node.get("parentId");
+      if (pid != null) node.put("parentId", prefix + pid);
+      @SuppressWarnings("unchecked")
+      List<Object> childIds = (List<Object>) node.get("childIds");
+      if (childIds != null) {
+        List<Object> prefixed = new ArrayList<>(childIds.size());
+        for (Object cid : childIds) prefixed.add(prefix + cid);
+        node.put("childIds", prefixed);
+      }
+      node.put("_frame", pwFrame);
+      if (node.get("parentId") == null && frameToIframeMap.containsKey(frameId)) {
+        node.put("_parent_iframe_backend_node_id", frameToIframeMap.get(frameId));
+      }
+      allNodes.add(node);
+    }
+  }
+
+  private List<Map<String, Object>> getOopifNodes(String frameId, Frame pwFrame) {
+    try {
+      CDPSession frameSession = page.context().newCDPSession(pwFrame);
+      Map<String, Object> resp = sendCdpOn(frameSession, "Accessibility.getFullAXTree", null);
+      frameSession.detach();
+      @SuppressWarnings("unchecked")
+      List<Map<String, Object>> nodes =
+          (List<Map<String, Object>>) resp.getOrDefault("nodes", List.of());
+      LOG.debug("  -> OOPIF {}: {} nodes", frameId, nodes.size());
+      return nodes;
+    } catch (RuntimeException e) {
+      LOG.debug("  -> OOPIF {}: failed", frameId, e);
+      return List.of();
+    }
+  }
+
   private Map<String, Object> sendCdp(String method, Map<String, Object> params) {
+    return sendCdpOn(client, method, params);
+  }
+
+  private Map<String, Object> sendCdpOn(
+      CDPSession session, String method, Map<String, Object> params) {
     JsonObject paramsJson;
     if (params == null || params.isEmpty()) {
       paramsJson = new JsonObject();
@@ -294,7 +351,7 @@ public final class PlaywrightDriver extends BaseDriver {
         throw new IllegalStateException("Failed to encode CDP params for " + method, e);
       }
     }
-    JsonObject resp = client.send(method, paramsJson);
+    JsonObject resp = session.send(method, paramsJson);
     if (resp == null) return Map.of();
     try {
       JsonNode parsed = MAPPER.readTree(resp.toString());
@@ -386,7 +443,7 @@ public final class PlaywrightDriver extends BaseDriver {
         attachPageListeners(newPage);
       }
       this.page = newPage;
-      this.client = newPage.context().newCDPSession(newPage);
+      initCDPSession();
     }
   }
 
@@ -409,16 +466,66 @@ public final class PlaywrightDriver extends BaseDriver {
     return out;
   }
 
-  private void buildFrameHierarchy(
-      Map<String, Object> frameInfo, String mainFrameId, Map<String, Integer> frameToIframeMap) {
+  private Map<String, Frame> buildPlaywrightFrameMap(Map<String, Object> frameTreeResp) {
+    @SuppressWarnings("unchecked")
+    Map<String, Object> frameTree = (Map<String, Object>) frameTreeResp.get("frameTree");
+    Map<String, Frame> map = new HashMap<>();
+    for (Frame f : page.frames()) {
+      String cdpFrameId = findCdpFrameIdByUrl(frameTree, f.url());
+      if (cdpFrameId != null) map.put(cdpFrameId, f);
+    }
+
+    oopifFrames.clear();
+    for (Frame pwFrame : page.frames()) {
+      if (pwFrame == page.mainFrame()) continue;
+      if (map.containsValue(pwFrame)) continue;
+      try {
+        CDPSession frameSession = page.context().newCDPSession(pwFrame);
+        Map<String, Object> ft = sendCdpOn(frameSession, "Page.getFrameTree", null);
+        frameSession.detach();
+        @SuppressWarnings("unchecked")
+        Map<String, Object> ftTree = (Map<String, Object>) ft.get("frameTree");
+        String rootFrameId = frameIdOf(ftTree);
+        map.put(rootFrameId, pwFrame);
+        oopifFrames.add(pwFrame);
+        LOG.debug("Mapped OOPIF {}... to Playwright frame", rootFrameId);
+      } catch (RuntimeException e) {
+        LOG.debug("Could not detect OOPIF frame", e);
+      }
+    }
+    return map;
+  }
+
+  private Map<String, Integer> buildFrameOwnerMap(
+      Map<String, Object> frameInfo, String mainFrameId, List<String> oopifFrameIds) {
+    Map<String, Integer> map = new HashMap<>();
+    sendCdp("DOM.enable", null);
+    walkFrameOwners(frameInfo, mainFrameId, map);
+    for (String oopifFrameId : oopifFrameIds) {
+      try {
+        Map<String, Object> owner = sendCdp("DOM.getFrameOwner", Map.of("frameId", oopifFrameId));
+        Object backend = owner.get("backendNodeId");
+        if (backend instanceof Number n) {
+          map.put(oopifFrameId, n.intValue());
+          LOG.debug("OOPIF {}... owned by iframe backendNodeId={}", oopifFrameId, n.intValue());
+        }
+      } catch (RuntimeException e) {
+        LOG.debug("Could not get frame owner for OOPIF {}", oopifFrameId, e);
+      }
+    }
+    return map;
+  }
+
+  private void walkFrameOwners(
+      Map<String, Object> frameInfo, String mainFrameId, Map<String, Integer> map) {
     String id = frameIdOf(frameInfo);
     if (!id.equals(mainFrameId)) {
       try {
-        sendCdp("DOM.enable", null);
         Map<String, Object> owner = sendCdp("DOM.getFrameOwner", Map.of("frameId", id));
         Object backend = owner.get("backendNodeId");
         if (backend instanceof Number n) {
-          frameToIframeMap.put(id, n.intValue());
+          map.put(id, n.intValue());
+          LOG.debug("Frame {}... owned by iframe backendNodeId={}", id, n.intValue());
         }
       } catch (RuntimeException e) {
         LOG.debug("Could not get frame owner for {}", id, e);
@@ -427,9 +534,21 @@ public final class PlaywrightDriver extends BaseDriver {
     @SuppressWarnings("unchecked")
     List<Map<String, Object>> children = (List<Map<String, Object>>) frameInfo.get("childFrames");
     if (children != null) {
-      for (Map<String, Object> child : children) {
-        buildFrameHierarchy(child, mainFrameId, frameToIframeMap);
-      }
+      for (Map<String, Object> child : children) walkFrameOwners(child, mainFrameId, map);
+    }
+  }
+
+  private List<Map<String, Object>> getFrameNodes(String frameId) {
+    try {
+      Map<String, Object> resp = sendCdp("Accessibility.getFullAXTree", Map.of("frameId", frameId));
+      @SuppressWarnings("unchecked")
+      List<Map<String, Object>> nodes =
+          (List<Map<String, Object>>) resp.getOrDefault("nodes", List.of());
+      LOG.debug("  -> Frame {}: {} nodes", frameId, nodes.size());
+      return nodes;
+    } catch (RuntimeException e) {
+      LOG.debug("  -> Frame {}: failed", frameId, e);
+      return List.of();
     }
   }
 

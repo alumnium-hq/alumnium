@@ -193,8 +193,12 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
 
     // Inline iframe content: if this element is an iframe, add its child trees
     const backendNodeId = node.backendDOMNodeId;
-    if (backendNodeId && iframeChildren[backendNodeId]) {
-      for (const childRoot of iframeChildren[backendNodeId]) {
+    const iframeRoots = backendNodeId
+      ? iframeChildren[backendNodeId]
+      : undefined;
+    if (backendNodeId && iframeRoots) {
+      delete iframeChildren[backendNodeId];
+      for (const childRoot of iframeRoots) {
         const childElem = this.#nodeToXml(
           childRoot,
           nodeLookup,
