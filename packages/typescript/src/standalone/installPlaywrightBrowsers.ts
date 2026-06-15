@@ -145,7 +145,9 @@ function patchForkForOopDownload(extractedPath: string) {
     const basename = path.basename(String(modulePath));
     if (
       basename !== "oopDownloadBrowserMain.js" &&
-      basename !== "oopDownloadBrowserMain.cjs"
+      basename !== "oopDownloadBrowserMain.cjs" &&
+      basename !== "oopBrowserDownload.js" &&
+      basename !== "oopBrowserDownload.cjs"
     ) {
       return originalFork(modulePath, args as string[], options);
     }
