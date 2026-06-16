@@ -3,75 +3,87 @@ import { tt } from "#/copy";
 import Logotype from "#/assets/logotype.svg";
 import { Icon } from "@astrojs/starlight/components";
 import Banner from "./Banner.astro";
-import Install from "#/components/blocks/Install.astro";
+import Asciinema from "#/components/blocks/Asciinema.astro";
+import GitHubStars from "#/components/blocks/GitHubStars.astro";
+import DiscordMembers from "#/components/blocks/DiscordMembers.astro";
+import Link from "#/components/Link.astro";
+import TextDel from "#/components/TextDel.astro";
+import DecorationAtom0 from "../../blocks/DecorationAtom0.astro";
+import DecorationAtom from "../../blocks/DecorationAtom.astro";
+import DecorationAtom2 from "../../blocks/DecorationAtom2.astro";
+import DecorationAtom3 from "../../blocks/DecorationAtom3.astro";
+import DecorationAtom4 from "../../blocks/DecorationAtom4.astro";
+import DecorationAtom5 from "../../blocks/DecorationAtom5.astro";
 
 const t = tt.landings.sections.hero.en;
-
-const stars = 818;
 ---
 
-<div>
-  <div class="content-inner-md flex flex-col items-center gap-16">
-    <Banner />
+<div class="content-inner hero flex flex-col items-center gap-16 pb-32">
+  <DecorationAtom0 />
 
-    <div class="flex flex-col gap-5 items-center">
-      <Logotype class="h-10" />
+  <DecorationAtom />
 
-      <div class="heading text-center max-w-2xl">
-        <h1 set:html={tt.md(t.headline)} class="h1 text-4xl font-medium" />
+  <DecorationAtom2 />
 
-        <p class="subheadline">{t.subheadline}</p>
-      </div>
+  <DecorationAtom3 />
 
-      <!-- <Install /> -->
+  <DecorationAtom4 />
 
-      <div class="w-xl border border-accent-600 h-[22rem]">TODO: Big demo</div>
+  <DecorationAtom5 />
 
-      <div class="flex gap-3 items-center hidden">
-        <a
-          href="#"
-          class="bg-logo px-6 py-2 rounded-sm text-white font-medium text-md no-underline"
-          >{t.ctaGetStarted}</a
-        >
-        <a
+  <Banner />
+
+  <div class="flex flex-col gap-5 items-center">
+    <Logotype class="h-10" />
+
+    <div class="heading text-center max-w-2xl">
+      <h1 set:html={tt.md(t.headline, true)} class="h1 text-4xl font-medium" />
+
+      <p class="subheadline">{t.subheadline}</p>
+    </div>
+
+    <!-- <Install /> -->
+
+    <div class="w-xl max-w-full">
+      <Asciinema src="https://asciinema.org/a/569727.cast" />
+    </div>
+
+    <div class="flex gap-3 items-center hidden">
+      <a
+        href="#"
+        class="bg-logo px-6 py-2 rounded-sm text-white font-medium text-md no-underline"
+        >{t.ctaGetStarted}</a
+      >
+      <!-- <a
           href="#"
           class="px-6 py-2 rounded-sm text-accent-400 border-accent-600 border font-medium text-md no-underline"
           >{t.ctaDiscord}</a
-        >
-      </div>
+        > -->
+    </div>
 
-      <div class="inline-flex items-center gap-3 text-sm">
-        <a
-          href="https://github.com/alumnhium-hq/alumnium"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-accent-400 inline-flex items-center gap-2 no-underline"
-        >
-          <Icon name="github" class="inline-block h-6" />
-          <span>{t.openSource}</span>
-          <span
-            class="no-underline text-xs border-gray-600 border p-0.5 font-medium rounded-sm inline-flex items-center gap-0.5"
-          >
-            <Icon name="star" class="h-3" />
-            <span class="leading-0 capsize">{stars}</span>
-          </span>
-        </a>
+    <div class="inline-flex items-center gap-3 text-sm text-accent-400">
+      <Link href={tt.links.github.href}>
+        <Icon name="github" class="inline-block h-6" />
+        <span>{t.openSource}</span>
+        <Fragment slot="badge">
+          <Icon name="star" />
+          <GitHubStars />
+        </Fragment>
+      </Link>
 
-        <span class="text-accent-500 font-bold">·</span>
+      <TextDel />
 
-        <span class="text-accent-400">{t.license}</span>
+      <Link t={tt.links.mitLicense} />
 
-        <span class="text-accent-500 font-bold">·</span>
-        <a
-          href="https://github.com/alumnhium-hq/alumnium"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-accent-400 inline-flex items-center gap-2 no-underline"
-        >
-          <Icon name="discord" class="inline-block h-6" />
-          <span>{t.community}</span>
-        </a>
-      </div>
+      <TextDel />
+
+      <Link href={tt.links.discord.href}>
+        <Icon name="discord" class="inline-block h-6" />
+        <span>{t.community}</span>
+        <Fragment slot="badge">
+          <DiscordMembers />
+        </Fragment>
+      </Link>
     </div>
   </div>
 </div>
@@ -88,4 +100,23 @@ const stars = 818;
       @apply text-accent-300;
     }
   }
+
+  .hero {
+    @apply relative overflow-hidden;
+  }
+
+  .hero :global(.decoration-atom) {
+    /* @apply absolute hidden md:block; */
+    font-size: clamp(0.54rem, 1.2vw, 1rem);
+    /* left: 50%; */
+    /* top: 5em; */
+    /* opacity: 1; */
+    /* transform: translateX(-50%); */
+    /* z-index: 0; */
+  }
+
+  /* .hero > :global(:not(.decoration-atom)) {
+    @apply relative;
+    z-index: 1;
+  } */
 </style>

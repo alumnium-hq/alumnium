@@ -1,0 +1,78 @@
+---
+import discordMetadata from "#/data/discord/metadata.json";
+
+const { memberCount } = discordMetadata;
+---
+
+<discord-members class="count">
+  <span class="status"></span>
+  <span class="total">{memberCount}</span>
+
+  <template>
+    <span class="status is-online"></span>
+    <span class="online">0</span><span class="del">/</span><span class="total"
+      >{memberCount}</span
+    >
+  </template>
+</discord-members>
+
+<script>
+  import { DiscordData } from "#/data/discord";
+
+  class DiscordMembers extends HTMLElement {
+    static #invitePromise: Promise<DiscordData.Invite> | undefined;
+
+    connectedCallback() {
+      DiscordMembers.#invitePromise ??= DiscordData.fetchInvite();
+      DiscordMembers.#invitePromise.then((invite) => {
+        const template = this.querySelector("template");
+        if (!(template instanceof HTMLTemplateElement)) return;
+
+        const newChildren = document.importNode(template.content, true);
+
+        const totalEl = newChildren.querySelector(".total");
+        const onlineEl = newChildren.querySelector(".online");
+
+        if (totalEl)
+          totalEl.textContent = String(invite.approximate_member_count);
+        if (onlineEl)
+          onlineEl.textContent = String(invite.approximate_presence_count);
+
+        this.replaceChildren(newChildren, template);
+      });
+    }
+  }
+
+  if (!customElements.get("discord-members")) {
+    customElements.define("discord-members", DiscordMembers);
+  }
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .count {
+    @apply flex items-center;
+  }
+
+  .total,
+  .del,
+  .online {
+    @apply leading-none capsize;
+  }
+
+  .status {
+    @apply inline-block border-2 border-accent-700 rounded-full size-[0.6em] mr-0.5;
+
+    &.is-online {
+      @apply bg-emerald-500 border-emerald-500;
+    }
+  }
+
+  .count:has(.online) {
+    & .del,
+    & .total {
+      @apply opacity-90;
+    }
+  }
+</style>

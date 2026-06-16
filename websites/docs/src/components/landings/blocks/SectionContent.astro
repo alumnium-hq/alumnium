@@ -2,41 +2,26 @@
 import Heading, { type Props as HeadingProps } from "./Heading.astro";
 import Copy from "./Copy.astro";
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
-import Icon, {
-  type Props as IconProps,
-} from "#/components/landings/blocks/Icon.astro";
+import Icon, { type IconProps } from "#/components/Icon.astro";
 
 export interface Props {
-  h: HeadingProps["h"];
   t: HeadingProps["t"] & {
-    copy?: string;
+    copy?: string | undefined;
     icon?: string | IconProps | undefined;
   };
-  Icon?: AstroComponentFactory | undefined;
+  icon?: AstroComponentFactory | undefined;
+  heading: Omit<HeadingProps, "t">;
 }
 
-const { h, t, Icon: IconProp } = Astro.props;
-
-const iconProps = t.icon
-  ? typeof t.icon === "string"
-    ? { id: t.icon }
-    : t.icon
-  : undefined;
+const { t, icon, heading } = Astro.props;
 ---
 
-<div>
-  {
-    IconProp ? (
-      <IconProp class="icon text-5xl mb-2" />
-    ) : iconProps ? (
-      <Icon
-        {...iconProps}
-        class:list={["icon text-5xl mb-2", iconProps.class]}
-      />
-    ) : null
-  }
+<div class="section-content">
+  {icon && <Icon prop={icon} class="icon text-5xl mb-2" />}
 
-  <Heading h={h} t={t} />
+  <Heading {...heading} t={t} />
 
   {t.copy && <Copy t={t.copy} />}
+
+  <slot />
 </div>

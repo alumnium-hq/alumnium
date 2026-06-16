@@ -1,0 +1,30 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import MicrosoftForStartupsLogo from "#/assets/logos/brand-microsoft-for-startups.svg";
+import TestMuAiLogo from "#/assets/logos/brand-testmu-ai.svg";
+import AwsStartupsLogo from "#/assets/logos/brand-aws-startups.svg";
+import Icon from "@material-symbols/svg-100/rounded/volunteer_activism.svg";
+
+const t = tt.landings.sections.supportedBy.en;
+---
+
+<Section heading={{ h: "3" }} t={t} icon={Icon} style="compact">
+  <div class="logos">
+    <MicrosoftForStartupsLogo />
+    <TestMuAiLogo />
+    <AwsStartupsLogo />
+  </div>
+</Section>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .logos {
+    @apply flex gap-5 flex-wrap;
+
+    & > svg {
+      @apply h-10 opacity-75;
+    }
+  }
+</style>

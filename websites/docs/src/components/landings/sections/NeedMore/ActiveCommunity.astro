@@ -1,0 +1,12 @@
+---
+import { tt } from "#/copy";
+import GitHubContributors from "#/components/blocks/GitHubContributors.astro";
+import Section from "../../blocks/Section.astro";
+import Icon from "@material-symbols/svg-100/rounded/crowdsource.svg";
+
+const t = tt.landings.sections.activeCommunity.en;
+---
+
+<Section heading={{ h: "3" }} t={t} icon={Icon} style="compact">
+  <GitHubContributors limit={24} rows={3} stagger="odd" />
+</Section>

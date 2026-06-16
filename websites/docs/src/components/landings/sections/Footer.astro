@@ -1,5 +1,94 @@
 ---
-import SectionWrapper from "../blocks/Supersection.astro";
+import { tt } from "#/copy";
+import Logotype from "#/assets/logotype.svg";
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import Link from "#/components/Link.astro";
+import SectionContent from "../blocks/SectionContent.astro";
+import TextDel from "#/components/TextDel.astro";
+
+const t = tt.layout.footer;
+const tNewsletter = t.newsletter.en;
 ---
 
-<SectionWrapper>TODO: Footer</SectionWrapper>
+<footer class="border-t border-t-accent-600">
+  <div class="content-wrapper-lg">
+    <div class="content-inner-lg col-divide">
+      <div class="flex justify-between">
+        <nav class="flex items-start gap-18">
+          <a href="/">
+            <Logotype class="h-7 w-auto" />
+          </a>
+
+          {
+            t.links.map((group) => (
+              <SectionContent
+                heading={{ h: "4" }}
+                t={{ headline: group.heading.en }}
+              >
+                <ul class="flex flex-col gap-2 p-0 list-none">
+                  {group.links.map((link) => (
+                    <li>
+                      <Link t={link} />
+                    </li>
+                  ))}
+                </ul>
+              </SectionContent>
+            ))
+          }
+        </nav>
+
+        <section class="flex flex-col max-w-sm gap-4 lg:justify-self-end">
+          <SectionContent heading={{ h: "4" }} t={tNewsletter} />
+
+          <form
+            method="POST"
+            action="https://app.convertkit.com/forms/7469948/subscriptions"
+            class="flex max-w-md rounded-lg bg-accent-950 p-1 ring-1 ring-transparent focus-within:ring-accent-700"
+          >
+            <label for="footer-email-address" class="sr-only">
+              {tNewsletter.email.label}
+            </label>
+
+            <input
+              name="email_address"
+              type="email"
+              autocomplete="email"
+              required
+              placeholder={tNewsletter.email.placeholder}
+              class="min-w-0 flex-auto bg-transparent px-3 py-2 text-base text-accent-50 outline-none placeholder:text-accent-500 sm:text-sm"
+            />
+
+            <button
+              type="submit"
+              class="rounded-md bg-accent-900 px-3.5 py-2 text-sm font-medium text-accent-100 hover:bg-accent-800"
+            >
+              {tNewsletter.submit}
+            </button>
+          </form>
+        </section>
+      </div>
+
+      <div
+        class="bottom flex flex-col gap-6 text-accent-500 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div class="flex gap-2 items-center">
+          <span>Alumnium © {new Date().getFullYear()}</span>
+          <TextDel />
+          <Link t={tt.links.mitLicense} />
+        </div>
+
+        <div class="flex gap-5 text-xl">
+          <SocialIcons {...Astro.props} />
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .bottom :global(a) {
+    @apply text-accent-500 hover:text-cyan-500;
+  }
+</style>

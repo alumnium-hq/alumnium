@@ -31,10 +31,12 @@ ln -sf "$public_rel/icon-192.png" icon-192.png
 ln -sf "$public_rel/icon-512.png" icon-512.png
 cd -
 
+cd ../websites/docs/src/assets/
 assets_rel="../../../../assets/exports"
 ln -sf "$assets_rel/logotype.svg" logotype.svg
 ln -sf "$assets_rel/logomark.svg" logomark.svg
 ln -sf "$assets_rel/icon.svg" icon.svg
+ln -sf "$assets_rel/favicon-mono.svg" favicon-mono.svg
 ln -sf "$assets_rel/pattern-canvas.svg" pattern-canvas.svg
 cd -
 
@@ -42,9 +44,11 @@ assets_logos="../websites/docs/src/assets/logos"
 rm -rf "$assets_logos"
 mkdir -p "$assets_logos"
 cd "$assets_logos"
-for logo in ../../../../../assets/exports/logos/*.svg; do
+logos_rel="../../../../../assets/exports/logos"
+for logo in "$logos_rel"/*.svg; do
   ln -sf "$logo" "$(basename "$logo")"
 done
 cd -
 '''
+
 depends = ["process"]

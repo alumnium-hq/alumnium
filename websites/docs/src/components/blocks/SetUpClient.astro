@@ -1,0 +1,137 @@
+---
+import { tt } from "#/copy";
+import type { AstroComponentInstance } from "astro/runtime/server/index.js";
+import Tabs from "../landings/blocks/Tabs.astro";
+import Code from "./Code.astro";
+import type { TtGetStarted } from "#/copy/getStarted";
+
+const t = tt.getStarted;
+
+type T = typeof t;
+
+type SetUpClientVariantKey = keyof T extends infer Key
+  ? Key extends keyof T
+    ? T[Key] extends TtGetStarted.SetUpClientVariant
+      ? Key
+      : never
+    : never
+  : never;
+
+type RenderContent = <Id extends SetUpClientVariantKey>(
+  id: Id,
+) => AstroComponentInstance;
+---
+
+<Fragment>
+  {
+    () => {
+      const renderContent: RenderContent = (id) => {
+        const tContent = t[id];
+        return (
+          <>
+            <Code code={tContent.code} lang={tContent.lang} />
+          </>
+        );
+      };
+
+      return (
+        <Tabs
+          items={[
+            {
+              id: "set-up-client-ts",
+              label: t["set-up-client-ts"].tab,
+              items: [
+                {
+                  id: "set-up-client-ts-selenium",
+                  label: t["set-up-client-ts-selenium"].tab,
+                },
+                {
+                  id: "set-up-client-ts-playwright",
+                  label: t["set-up-client-ts-playwright"].tab,
+                },
+                {
+                  id: "set-up-client-ts-appium",
+                  label: t["set-up-client-ts-appium"].tab,
+                },
+              ],
+            },
+            {
+              id: "set-up-client-python",
+              label: t["set-up-client-python"].tab,
+              items: [
+                {
+                  id: "set-up-client-python-selenium",
+                  label: t["set-up-client-python-selenium"].tab,
+                },
+                {
+                  id: "set-up-client-python-playwright",
+                  label: t["set-up-client-python-playwright"].tab,
+                },
+                {
+                  id: "set-up-client-python-appium",
+                  label: t["set-up-client-python-appium"].tab,
+                },
+              ],
+            },
+            {
+              id: "set-up-client-java",
+              label: t["set-up-client-java"].tab,
+              items: [
+                {
+                  id: "set-up-client-java-selenium",
+                  label: t["set-up-client-java-selenium"].tab,
+                },
+                {
+                  id: "set-up-client-java-playwright",
+                  label: t["set-up-client-java-playwright"].tab,
+                },
+                {
+                  id: "set-up-client-java-appium",
+                  label: t["set-up-client-java-appium"].tab,
+                },
+              ],
+            },
+          ]}
+          active="set-up-client-ts-selenium"
+          style="code"
+        >
+          <Fragment slot="set-up-client-ts-selenium">
+            {renderContent("set-up-client-ts-selenium")}
+          </Fragment>
+
+          <Fragment slot="set-up-client-ts-playwright">
+            {renderContent("set-up-client-ts-playwright")}
+          </Fragment>
+
+          <Fragment slot="set-up-client-ts-appium">
+            {renderContent("set-up-client-ts-appium")}
+          </Fragment>
+
+          <Fragment slot="set-up-client-python-selenium">
+            {renderContent("set-up-client-python-selenium")}
+          </Fragment>
+
+          <Fragment slot="set-up-client-python-playwright">
+            {renderContent("set-up-client-python-playwright")}
+          </Fragment>
+
+          <Fragment slot="set-up-client-python-appium">
+            {renderContent("set-up-client-python-appium")}
+          </Fragment>
+
+          <Fragment slot="set-up-client-java-selenium">
+            {renderContent("set-up-client-java-selenium")}
+          </Fragment>
+
+          <Fragment slot="set-up-client-java-playwright">
+            {renderContent("set-up-client-java-playwright")}
+          </Fragment>
+
+          <Fragment slot="set-up-client-java-appium">
+            {renderContent("set-up-client-java-appium")}
+          </Fragment>
+        </Tabs>
+      );
+    }
+  }
+</Fragment>

@@ -1,6 +1,5 @@
 ---
-import { Icon } from "@astrojs/starlight/components";
-import { Code } from "astro:components";
+import Code from "./Code.astro";
 ---
 
 <div class="w-full max-w-2xl bg-content-dark">
@@ -20,14 +19,7 @@ import { Code } from "astro:components";
     <a href="#" class="no-underline text-gray-400">pip</a>
   </div>
 
-  <div class="font-mono text-sm px-4 pt-4 pb-3">
-    <Code
-      code="curl -LsSf https://alumnium.ai/install.sh | sh"
-      theme="css-variables"
-      lang="bash"
-      class="text-sm"
-    />
-  </div>
+  <Code code="curl -LsSf https://alumnium.ai/install.sh | sh" lang="bash" />
 
   <div class="text-xs text-gray-500 px-4 pb-2">v0.9.1 · 91 MB</div>
 </div>

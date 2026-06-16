@@ -1,24 +1,85 @@
 ---
 import { tt } from "#/copy";
 import Section from "../../blocks/Section.astro";
+import Timeline from "../../blocks/Timeline.astro";
+import Heading from "../../blocks/Heading.astro";
+import Install from "./Install.astro";
+import SetUp from "./SetUp.astro";
+import Test from "./Test.astro";
+import Run from "./Run.astro";
 
 export const id = "get-started";
 
 const t = tt.landings.sections.getStarted.en;
+const tSteps = tt.landings.sections.getStartedSteps;
 ---
 
 <div class="bento">
-  <Section h="2" t={t} col="2" style="header">
-    <div class="flex items-center justify-end">
-      <div>
-        <a
-          href="/docs"
-          class="no-underline border border-accent-500 text-accent-300 rounded-3xl px-5 py-1 text-sm"
-          >Read Docs</a
-        >
-      </div>
+  <Section style="compact">
+    <Heading h="2" t={t} enlarge align />
+
+    <div class="get-started-timeline">
+      <Timeline
+        items={[
+          {
+            id: "heading",
+            style: "header",
+          },
+
+          ...Object.entries(tSteps).map(([id, step]) => ({
+            id,
+
+            heading: { h: "3" },
+            t: step.heading.en,
+          })),
+        ]}
+        style="center"
+        cols="2"
+      >
+        <Fragment slot="heading">
+          <div class="get-started-for is-left">
+            <h3>{t.agents.headline}</h3>
+          </div>
+
+          <div class="get-started-for">
+            <h3>{t.engineers.headline}</h3>
+          </div>
+        </Fragment>
+
+        <Fragment slot="install">
+          <Install />
+        </Fragment>
+
+        <Fragment slot="set-up">
+          <SetUp />
+        </Fragment>
+
+        <Fragment slot="test">
+          <Test />
+        </Fragment>
+
+        <Fragment slot="run">
+          <Run />
+        </Fragment>
+      </Timeline>
     </div>
   </Section>
-
-  <Section />
 </div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .get-started-timeline {
+    @apply pt-[0.5rem];
+  }
+
+  .get-started-for {
+    &.is-left {
+      @apply text-right;
+    }
+
+    & > h3 {
+      @apply text-accent-400 font-medium text-base relative top-[-2px] leading-none capsize;
+    }
+  }
+</style>

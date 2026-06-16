@@ -6,7 +6,7 @@ import Tags from "./Tags.astro";
 interface Props {
   title: string;
   date: Date;
-  mode?: "post" | "list";
+  style?: "post" | "list" | "preview";
   author: {
     name: string;
     image: string;
@@ -14,47 +14,78 @@ interface Props {
   tags?: string[];
 }
 
-const { title, mode, date, author, tags } = Astro.props;
+const { title, style, date, author, tags } = Astro.props;
 
-const h3Class = [
-  "font-bold text-white leading-tight text-center text-balance text-3xl",
-  mode === "post" ? "sm:text-[3rem]" : "sm:text-[2rem] md:text-[2.5rem]",
-];
+const H = style === "post" ? "h1" : "h3";
 ---
 
-<div>
+<div
+  class:list={[
+    "relative not-content overflow-hidden",
+    style === "list" && "sm:aspect-video rounded-xl",
+    style === "preview" ? "rounded-xl" : "pattern-canvas-content",
+  ]}
+>
+  {
+    style === "preview" && (
+      <div class="pointer-events-none absolute left-0 top-0 right-0 bottom-0 rounded-[inherit] mix-blend-soft-light ring ring-inset ring-white inset-1" />
+    )
+  }
+
   <div
     class:list={[
-      "pattern-canvas-content not-content overflow-hidden",
-      mode === "post" ? "" : "sm:aspect-video rounded-xl",
+      "bg-linear-to-b from-canvas/0 to-content-dark/80 w-full h-full px-2",
+      style === "preview"
+        ? "py-8 flex sm:px-4 md:px-5"
+        : [
+            "flex flex-col items-center justify-end pt-20 sm:px-10 pb-4 sm:pb-10",
+            style === "post" ? "sm:pt-40" : "sm:pt-4",
+          ],
     ]}
   >
     <div
       class:list={[
-        "bg-linear-to-b from-canvas/0 to-content-dark/80 w-full h-full flex flex-col justify-end items-center px-2 py-4 sm:p-10",
-        mode === "post" ? "pt-20 sm:pt-40" : "pt-20 sm:pt-4",
+        "gap-5 flex flex-col max-w-5xl",
+        style === "preview" && "justify-between",
       ]}
     >
-      <div class="gap-3 flex flex-col items-center max-w-5xl">
-        {
-          mode === "post" ? (
-            <h1 class:list={h3Class} id="_top">
-              {title}
-            </h1>
-          ) : (
-            <h3 class:list={h3Class}>{title}</h3>
-          )
-        }
+      <H
+        class:list={[
+          "font-bold text-white leading-snug text-center text-balance",
+          (!style || style === "list") && "sm:text-[2rem] md:text-[2.5rem]",
+          style === "post" && "sm:text-[3rem]",
+          style === "preview" && "sm:text-2xl md:text-xl",
+        ]}
+        id={style === "post" ? "_top" : undefined}
+      >
+        {title}
+      </H>
 
-        <div class="text-gray-200">
-          <Author prefix="Published by" author={author} />
+      <div class="flex flex-col gap-3 items-center text-center">
+        <div class="flex flex-col gap-2">
+          <div class:list={["text-gray-200", style === "preview" && "text-xs"]}>
+            <Author
+              prefix="Published by"
+              author={author}
+              size={style === "preview" ? "sm" : "md"}
+            />
+          </div>
+
+          <div
+            class:list={[
+              "text-accent-200/50 leading-none capsize",
+              style === "preview" && "text-xs",
+            ]}
+          >
+            <FormattedDate date={date} />
+          </div>
         </div>
 
-        <div class="text-gray-300">
-          <FormattedDate date={date} />
-        </div>
-
-        <Tags tags={tags} mode="pattern" />
+        <Tags
+          tags={tags}
+          style="pattern"
+          size={style === "preview" ? "sm" : "md"}
+        />
       </div>
     </div>
   </div>

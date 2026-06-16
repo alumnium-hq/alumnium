@@ -1,0 +1,397 @@
+<decoration-atom-2 class="decoration-atom" aria-hidden="true">
+  <canvas></canvas>
+</decoration-atom-2>
+
+<script>
+  import * as THREE from "three";
+
+  type Vec3 = [number, number, number];
+
+  interface Particle {
+    kind: "proton" | "neutron";
+    position: Vec3;
+  }
+
+  interface Shell {
+    electrons: number;
+    duration: number;
+    radius: number;
+    rotateX: number;
+    rotateZ: number;
+  }
+
+  interface ElectronMotion {
+    phase: number;
+    speed: number;
+  }
+
+  interface ElectronModel {
+    mesh: THREE.Mesh;
+    motion: ElectronMotion;
+    shell: Shell;
+    shellIndex: number;
+  }
+
+  const atom = {
+    protons: 13,
+    neutrons: 14,
+    nucleusScale: 0.64,
+    shells: [
+      { electrons: 2, duration: 5, radius: 3.35, rotateX: 66, rotateZ: -18 },
+      { electrons: 8, duration: 8, radius: 5.95, rotateX: 72, rotateZ: 54 },
+      { electrons: 3, duration: 11, radius: 8.55, rotateX: 64, rotateZ: 132 },
+    ] satisfies Shell[],
+  };
+
+  const nucleus = createNucleus(atom.protons, atom.neutrons);
+  const shells = atom.shells;
+  const shellElectronMotions = shells.map((shell, shellIndex) =>
+    createElectronMotions(shellIndex, shell.electrons),
+  );
+  const maxShellRadius = Math.max(...shells.map((shell) => shell.radius));
+  const sceneRadius = maxShellRadius + 0.55;
+  const fieldOfView = 40;
+
+  class DecorationAtom2 extends HTMLElement {
+    private frame = 0;
+    private renderer?: ReturnType<typeof createRenderer>;
+    private resizeObserver?: ResizeObserver;
+    private reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+    private start = performance.now();
+
+    connectedCallback() {
+      const canvas = this.querySelector("canvas");
+      if (!canvas) return;
+
+      this.style.setProperty("--atom-scene-radius", String(sceneRadius));
+      this.renderer = createRenderer(canvas, this);
+      this.resizeObserver = new ResizeObserver(() => this.renderer?.resize());
+      this.resizeObserver.observe(this);
+
+      const render = (now: number) => {
+        const time = this.reduceMotion.matches ? 0 : (now - this.start) / 1000;
+        this.renderer?.render(time);
+        if (this.reduceMotion.matches) return;
+        this.frame = requestAnimationFrame(render);
+      };
+
+      this.frame = requestAnimationFrame(render);
+    }
+
+    disconnectedCallback() {
+      cancelAnimationFrame(this.frame);
+      this.resizeObserver?.disconnect();
+      this.renderer?.dispose();
+    }
+  }
+
+  function createRenderer(canvas: HTMLCanvasElement, host: HTMLElement) {
+    const renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      canvas,
+    });
+    const scene = new THREE.Scene();
+    const cameraDistance =
+      (sceneRadius / Math.tan(deg(fieldOfView) / 2)) * 1.18;
+    const camera = new THREE.PerspectiveCamera(
+      fieldOfView,
+      1,
+      0.1,
+      cameraDistance + sceneRadius * 2,
+    );
+    const nucleusGroup = new THREE.Group();
+    const electronModels: ElectronModel[] = [];
+    const protonColor = cssColor(host, "--atom-color-proton", [0.52, 0.78, 1]);
+    const neutronColor = cssColor(
+      host,
+      "--atom-color-neutron",
+      [0.33, 0.43, 0.58],
+    );
+    const electronColor = cssColor(
+      host,
+      "--atom-color-electron",
+      [0.92, 0.98, 1],
+    );
+    const orbitColor = cssColor(host, "--atom-color-orbit", [0.36, 0.56, 0.82]);
+    const protonMaterial = particleMaterial(protonColor);
+    const neutronMaterial = particleMaterial(neutronColor);
+    const electronMaterial = particleMaterial(electronColor);
+    const nucleonGeometry = new THREE.SphereGeometry(0.27, 18, 14);
+    const electronGeometry = new THREE.SphereGeometry(0.18, 16, 12);
+
+    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    camera.position.z = cameraDistance;
+    scene.add(new THREE.AmbientLight(0xffffff, 0.38));
+
+    const light = new THREE.DirectionalLight(0xffffff, 1.25);
+    light.position.set(0.35, 0.72, 0.58).normalize();
+    scene.add(light);
+
+    for (const [index, particle] of nucleus.entries()) {
+      const material =
+        particle.kind === "proton" ? protonMaterial : neutronMaterial;
+      const mesh = new THREE.Mesh(nucleonGeometry, material);
+      const [x, y, z] = scaleVec3(particle.position, atom.nucleusScale);
+      mesh.position.set(x, y, z);
+      mesh.rotation.y = index * 0.19;
+      nucleusGroup.add(mesh);
+    }
+
+    scene.add(nucleusGroup);
+
+    for (const [shellIndex, shell] of shells.entries()) {
+      const shellGroup = new THREE.Group();
+      shellGroup.matrix.copy(shellMatrix(shell));
+      shellGroup.matrixAutoUpdate = false;
+      shellGroup.add(createOrbit(shell.radius, orbitColor));
+
+      for (
+        let electronIndex = 0;
+        electronIndex < shell.electrons;
+        electronIndex++
+      ) {
+        const mesh = new THREE.Mesh(electronGeometry, electronMaterial);
+        const motion = shellElectronMotions[shellIndex][electronIndex];
+        shellGroup.add(mesh);
+        electronModels.push({ mesh, motion, shell, shellIndex });
+      }
+
+      scene.add(shellGroup);
+    }
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(1, Math.round(rect.width));
+      const height = Math.max(1, Math.round(rect.height));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(width, height, false);
+      camera.aspect = width / Math.max(height, 1);
+      camera.updateProjectionMatrix();
+    }
+
+    resize();
+
+    return {
+      dispose() {
+        nucleonGeometry.dispose();
+        electronGeometry.dispose();
+        protonMaterial.dispose();
+        neutronMaterial.dispose();
+        electronMaterial.dispose();
+        scene.traverse((object) => {
+          if (object instanceof THREE.LineLoop) {
+            object.geometry.dispose();
+            object.material.dispose();
+          }
+        });
+        renderer.dispose();
+      },
+      render(time: number) {
+        nucleusGroup.rotation.y = time * 0.42;
+        nucleusGroup.rotation.x = deg(-16) + time * 0.19;
+        nucleusGroup.rotation.z = time * 0.13;
+
+        for (const { mesh, motion, shell, shellIndex } of electronModels) {
+          const direction = shellIndex === 1 ? -1 : 1;
+          const angle =
+            direction *
+              (time / shell.duration) *
+              motion.speed *
+              Math.PI *
+              2 +
+            motion.phase;
+          mesh.position.set(
+            Math.cos(angle) * shell.radius,
+            Math.sin(angle) * shell.radius,
+            0,
+          );
+          mesh.rotation.y = time * 2;
+        }
+
+        resize();
+        renderer.render(scene, camera);
+      },
+      resize,
+    };
+  }
+
+  function createOrbit(radius: number, color: Vec3) {
+    const points = Array.from({ length: 160 }, (_, index) => {
+      const angle = (index / 160) * Math.PI * 2;
+      return new THREE.Vector3(
+        Math.cos(angle) * radius,
+        Math.sin(angle) * radius,
+        0,
+      );
+    });
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({
+      color: new THREE.Color(...color),
+      opacity: 0.38,
+      transparent: true,
+    });
+
+    return new THREE.LineLoop(geometry, material);
+  }
+
+  function shellMatrix(shell: Shell) {
+    const matrix = new THREE.Matrix4();
+    matrix.multiply(new THREE.Matrix4().makeRotationZ(deg(shell.rotateZ)));
+    matrix.multiply(new THREE.Matrix4().makeRotationX(deg(shell.rotateX)));
+    return matrix;
+  }
+
+  function particleMaterial(color: Vec3) {
+    return new THREE.MeshPhongMaterial({
+      color: new THREE.Color(...color),
+      shininess: 44,
+      specular: new THREE.Color(0.55, 0.64, 0.82),
+    });
+  }
+
+  function createNucleus(protons: number, neutrons: number): Particle[] {
+    const total = protons + neutrons;
+    const kinds = createParticleKinds(protons, neutrons);
+
+    return Array.from({ length: total }, (_, index) => {
+      const point = fibonacciSpherePoint(index, total);
+      const layerScale = 0.78 + (index % 5) * 0.08;
+      const jitter = deterministicJitter(index, 0.11);
+
+      return {
+        kind: kinds[index],
+        position: [
+          point[0] * layerScale + jitter[0],
+          point[1] * layerScale + jitter[1],
+          point[2] * layerScale + jitter[2],
+        ],
+      };
+    });
+  }
+
+  function createParticleKinds(protons: number, neutrons: number) {
+    let protonCount = 0;
+    let neutronCount = 0;
+
+    return Array.from({ length: protons + neutrons }, (): Particle["kind"] => {
+      const protonRatio = protonCount / protons;
+      const neutronRatio = neutronCount / neutrons;
+
+      if (
+        protonCount < protons &&
+        (neutronCount >= neutrons || protonRatio <= neutronRatio)
+      ) {
+        protonCount++;
+        return "proton";
+      }
+
+      neutronCount++;
+      return "neutron";
+    });
+  }
+
+  function createElectronMotions(shellIndex: number, electrons: number): ElectronMotion[] {
+    return Array.from({ length: electrons }, (_, electronIndex) => {
+      const spacing = (Math.PI * 2) / electrons;
+      const basePhase = electronIndex * spacing;
+      const phaseJitter =
+        (seededUnit(shellIndex * 31 + electronIndex, 4) - 0.5) * spacing * 0.54;
+      const speed = 0.86 + seededUnit(shellIndex * 31 + electronIndex, 5) * 0.28;
+
+      return {
+        phase: basePhase + phaseJitter,
+        speed,
+      };
+    });
+  }
+
+  function fibonacciSpherePoint(index: number, total: number): Vec3 {
+    const offset = 2 / total;
+    const increment = Math.PI * (3 - Math.sqrt(5));
+    const y = index * offset - 1 + offset / 2;
+    const radius = Math.sqrt(1 - y * y);
+    const angle = index * increment;
+
+    return [Math.cos(angle) * radius, y, Math.sin(angle) * radius];
+  }
+
+  function deterministicJitter(index: number, amount: number): Vec3 {
+    return [
+      (seededUnit(index, 1) - 0.5) * amount,
+      (seededUnit(index, 2) - 0.5) * amount,
+      (seededUnit(index, 3) - 0.5) * amount,
+    ];
+  }
+
+  function seededUnit(index: number, salt: number) {
+    const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  }
+
+  function cssColor(host: HTMLElement, name: string, fallback: Vec3): Vec3 {
+    const raw = getComputedStyle(host).getPropertyValue(name).trim();
+    if (!raw) return fallback;
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context) return fallback;
+
+    context.fillStyle = raw;
+    const parsed = context.fillStyle;
+    const rgb = parsed.match(/rgba?\((\d+), (\d+), (\d+)/);
+    if (rgb)
+      return [Number(rgb[1]) / 255, Number(rgb[2]) / 255, Number(rgb[3]) / 255];
+
+    const hex = parsed.match(/^#([0-9a-f]{6})$/i);
+    if (!hex) return fallback;
+    return [
+      Number.parseInt(hex[1].slice(0, 2), 16) / 255,
+      Number.parseInt(hex[1].slice(2, 4), 16) / 255,
+      Number.parseInt(hex[1].slice(4, 6), 16) / 255,
+    ];
+  }
+
+  function scaleVec3([x, y, z]: Vec3, amount: number): Vec3 {
+    return [x * amount, y * amount, z * amount];
+  }
+
+  function deg(value: number) {
+    return (value * Math.PI) / 180;
+  }
+
+  if (!customElements.get("decoration-atom-2")) {
+    customElements.define("decoration-atom-2", DecorationAtom2);
+  }
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .decoration-atom {
+    @apply pointer-events-none select-none;
+    --atom-color-proton: var(--color-accent-300);
+    --atom-color-neutron: var(--color-accent-500);
+    --atom-color-electron: var(--color-accent-100);
+    --atom-color-orbit: var(--color-accent-400);
+    --atom-scene-radius: 9.1;
+    display: block;
+    position: relative;
+    width: calc(var(--atom-scene-radius) * 3.5em);
+    height: calc(var(--atom-scene-radius) * 3.5em);
+    contain: layout paint;
+  }
+
+  canvas {
+    @apply absolute inset-0 size-full;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    canvas {
+      opacity: 0.75;
+    }
+  }
+</style>

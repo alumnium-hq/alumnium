@@ -1,0 +1,417 @@
+<decoration-atom-3 class="decoration-atom" aria-hidden="true">
+  <canvas></canvas>
+</decoration-atom-3>
+
+<script>
+  import * as BABYLON from "babylonjs";
+
+  type Vec3 = [number, number, number];
+
+  interface Particle {
+    kind: "proton" | "neutron";
+    position: Vec3;
+  }
+
+  interface Shell {
+    electrons: number;
+    duration: number;
+    radius: number;
+    rotateX: number;
+    rotateZ: number;
+  }
+
+  interface ElectronMotion {
+    phase: number;
+    speed: number;
+  }
+
+  interface ElectronModel {
+    mesh: BABYLON.Mesh;
+    motion: ElectronMotion;
+    shell: Shell;
+    shellIndex: number;
+  }
+
+  const atom = {
+    protons: 13,
+    neutrons: 14,
+    nucleusScale: 0.64,
+    shells: [
+      { electrons: 2, duration: 5, radius: 3.35, rotateX: 66, rotateZ: -18 },
+      { electrons: 8, duration: 8, radius: 5.95, rotateX: 72, rotateZ: 54 },
+      { electrons: 3, duration: 11, radius: 8.55, rotateX: 64, rotateZ: 132 },
+    ] satisfies Shell[],
+  };
+
+  const nucleus = createNucleus(atom.protons, atom.neutrons);
+  const shells = atom.shells;
+  const shellElectronMotions = shells.map((shell, shellIndex) =>
+    createElectronMotions(shellIndex, shell.electrons),
+  );
+  const maxShellRadius = Math.max(...shells.map((shell) => shell.radius));
+  const sceneRadius = maxShellRadius + 0.55;
+  const fieldOfView = 40;
+
+  class DecorationAtom3 extends HTMLElement {
+    #frame = 0;
+    #renderer?: ReturnType<typeof createRenderer>;
+    #resizeObserver?: ResizeObserver;
+    #reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    #start = performance.now();
+
+    connectedCallback() {
+      const canvas = this.querySelector("canvas");
+      if (!canvas) return;
+
+      this.style.setProperty("--atom-scene-radius", String(sceneRadius));
+      this.#renderer = createRenderer(canvas, this);
+      this.#resizeObserver = new ResizeObserver(() => this.#renderer?.resize());
+      this.#resizeObserver.observe(this);
+
+      const render = (now: number) => {
+        const time = this.#reduceMotion.matches ? 0 : (now - this.#start) / 1000;
+        this.#renderer?.render(time);
+        if (this.#reduceMotion.matches) return;
+        this.#frame = requestAnimationFrame(render);
+      };
+
+      this.#frame = requestAnimationFrame(render);
+    }
+
+    disconnectedCallback() {
+      cancelAnimationFrame(this.#frame);
+      this.#resizeObserver?.disconnect();
+      this.#renderer?.dispose();
+    }
+  }
+
+  function createRenderer(canvas: HTMLCanvasElement, host: HTMLElement) {
+    const engine = new BABYLON.Engine(canvas, true, {
+      alpha: true,
+      antialias: true,
+      preserveDrawingBuffer: false,
+      stencil: false,
+    });
+    const scene = new BABYLON.Scene(engine);
+    const cameraDistance =
+      (sceneRadius / Math.tan(deg(fieldOfView) / 2)) * 1.18;
+    const camera = new BABYLON.FreeCamera(
+      "camera",
+      new BABYLON.Vector3(0, 0, cameraDistance),
+      scene,
+    );
+    const nucleusGroup = new BABYLON.TransformNode("nucleus", scene);
+    const electronModels: ElectronModel[] = [];
+    const protonColor = cssColor(host, "--atom-color-proton", [0.52, 0.78, 1]);
+    const neutronColor = cssColor(
+      host,
+      "--atom-color-neutron",
+      [0.33, 0.43, 0.58],
+    );
+    const electronColor = cssColor(
+      host,
+      "--atom-color-electron",
+      [0.92, 0.98, 1],
+    );
+    const orbitColor = cssColor(host, "--atom-color-orbit", [0.36, 0.56, 0.82]);
+    const protonMaterial = particleMaterial(scene, "proton", protonColor);
+    const neutronMaterial = particleMaterial(scene, "neutron", neutronColor);
+    const electronMaterial = particleMaterial(scene, "electron", electronColor);
+
+    scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);
+    camera.fov = deg(fieldOfView);
+    camera.minZ = 0.1;
+    camera.maxZ = cameraDistance + sceneRadius * 2;
+    camera.setTarget(BABYLON.Vector3.Zero());
+
+    const ambient = new BABYLON.HemisphericLight(
+      "ambient",
+      new BABYLON.Vector3(0, 1, 0),
+      scene,
+    );
+    ambient.intensity = 0.38;
+
+    const light = new BABYLON.DirectionalLight(
+      "key",
+      new BABYLON.Vector3(-0.35, -0.72, -0.58).normalize(),
+      scene,
+    );
+    light.intensity = 1.25;
+
+    for (const [index, particle] of nucleus.entries()) {
+      const material =
+        particle.kind === "proton" ? protonMaterial : neutronMaterial;
+      const mesh = BABYLON.MeshBuilder.CreateSphere(
+        `nucleon-${index}`,
+        { diameter: 0.54, segments: 18 },
+        scene,
+      );
+      const [x, y, z] = scaleVec3(particle.position, atom.nucleusScale);
+      mesh.material = material;
+      mesh.position.set(x, y, z);
+      mesh.rotation.y = index * 0.19;
+      mesh.parent = nucleusGroup;
+    }
+
+    for (const [shellIndex, shell] of shells.entries()) {
+      const shellGroup = new BABYLON.TransformNode(`shell-${shellIndex}`, scene);
+      shellGroup.rotationQuaternion = shellQuaternion(shell);
+      createOrbit(scene, shell, orbitColor);
+
+      for (
+        let electronIndex = 0;
+        electronIndex < shell.electrons;
+        electronIndex++
+      ) {
+        const mesh = BABYLON.MeshBuilder.CreateSphere(
+          `electron-${shellIndex}-${electronIndex}`,
+          { diameter: 0.36, segments: 16 },
+          scene,
+        );
+        const motion = shellElectronMotions[shellIndex][electronIndex];
+        mesh.material = electronMaterial;
+        mesh.parent = shellGroup;
+        electronModels.push({ mesh, motion, shell, shellIndex });
+      }
+    }
+
+    function resize() {
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      engine.setHardwareScalingLevel(1 / pixelRatio);
+      engine.resize();
+    }
+
+    resize();
+
+    return {
+      dispose() {
+        scene.dispose();
+        engine.dispose();
+      },
+      render(time: number) {
+        nucleusGroup.rotation.y = time * 0.42;
+        nucleusGroup.rotation.x = deg(-16) + time * 0.19;
+        nucleusGroup.rotation.z = time * 0.13;
+
+        for (const { mesh, motion, shell, shellIndex } of electronModels) {
+          const direction = shellIndex === 1 ? -1 : 1;
+          const angle =
+            direction *
+              (time / shell.duration) *
+              motion.speed *
+              Math.PI *
+              2 +
+            motion.phase;
+          mesh.position.set(
+            Math.cos(angle) * shell.radius,
+            Math.sin(angle) * shell.radius,
+            0,
+          );
+          mesh.rotation.y = time * 2;
+        }
+
+        resize();
+        scene.render();
+      },
+      resize,
+    };
+  }
+
+  function createOrbit(scene: BABYLON.Scene, shell: Shell, color: Vec3) {
+    const material = new BABYLON.StandardMaterial(`orbit-${shell.radius}`, scene);
+    material.diffuseColor = new BABYLON.Color3(...color);
+    material.emissiveColor = new BABYLON.Color3(...color).scale(0.72);
+    material.alpha = 0.52;
+    material.backFaceCulling = false;
+    material.disableLighting = true;
+    material.useAlphaFromDiffuseTexture = true;
+
+    const matrix = shellMatrix(shell);
+    const path = Array.from({ length: 161 }, (_, index) => {
+      const angle = (index / 160) * Math.PI * 2;
+      return BABYLON.Vector3.TransformCoordinates(
+        new BABYLON.Vector3(
+          Math.cos(angle) * shell.radius,
+          Math.sin(angle) * shell.radius,
+          0,
+        ),
+        matrix,
+      );
+    });
+    const mesh = BABYLON.MeshBuilder.CreateTube(
+      `orbit-${shell.radius}`,
+      {
+        path,
+        radius: 0.028,
+        sideOrientation: BABYLON.Mesh.DOUBLESIDE,
+        tessellation: 8,
+      },
+      scene,
+    );
+    mesh.material = material;
+
+    return mesh;
+  }
+
+  function shellMatrix(shell: Shell) {
+    return BABYLON.Matrix.RotationX(deg(shell.rotateX)).multiply(
+      BABYLON.Matrix.RotationZ(deg(shell.rotateZ)),
+    );
+  }
+
+  function shellQuaternion(shell: Shell) {
+    return BABYLON.Quaternion.FromRotationMatrix(shellMatrix(shell));
+  }
+
+  function particleMaterial(scene: BABYLON.Scene, name: string, color: Vec3) {
+    const material = new BABYLON.StandardMaterial(name, scene);
+    material.diffuseColor = new BABYLON.Color3(...color);
+    material.emissiveColor = new BABYLON.Color3(...color).scale(0.08);
+    material.specularColor = new BABYLON.Color3(0.55, 0.64, 0.82);
+    material.specularPower = 44;
+
+    return material;
+  }
+
+  function createNucleus(protons: number, neutrons: number): Particle[] {
+    const total = protons + neutrons;
+    const kinds = createParticleKinds(protons, neutrons);
+
+    return Array.from({ length: total }, (_, index) => {
+      const point = fibonacciSpherePoint(index, total);
+      const layerScale = 0.78 + (index % 5) * 0.08;
+      const jitter = deterministicJitter(index, 0.11);
+
+      return {
+        kind: kinds[index],
+        position: [
+          point[0] * layerScale + jitter[0],
+          point[1] * layerScale + jitter[1],
+          point[2] * layerScale + jitter[2],
+        ],
+      };
+    });
+  }
+
+  function createParticleKinds(protons: number, neutrons: number) {
+    let protonCount = 0;
+    let neutronCount = 0;
+
+    return Array.from({ length: protons + neutrons }, (): Particle["kind"] => {
+      const protonRatio = protonCount / protons;
+      const neutronRatio = neutronCount / neutrons;
+
+      if (
+        protonCount < protons &&
+        (neutronCount >= neutrons || protonRatio <= neutronRatio)
+      ) {
+        protonCount++;
+        return "proton";
+      }
+
+      neutronCount++;
+      return "neutron";
+    });
+  }
+
+  function createElectronMotions(shellIndex: number, electrons: number): ElectronMotion[] {
+    return Array.from({ length: electrons }, (_, electronIndex) => {
+      const spacing = (Math.PI * 2) / electrons;
+      const basePhase = electronIndex * spacing;
+      const phaseJitter =
+        (seededUnit(shellIndex * 31 + electronIndex, 4) - 0.5) * spacing * 0.54;
+      const speed = 0.86 + seededUnit(shellIndex * 31 + electronIndex, 5) * 0.28;
+
+      return {
+        phase: basePhase + phaseJitter,
+        speed,
+      };
+    });
+  }
+
+  function fibonacciSpherePoint(index: number, total: number): Vec3 {
+    const offset = 2 / total;
+    const increment = Math.PI * (3 - Math.sqrt(5));
+    const y = index * offset - 1 + offset / 2;
+    const radius = Math.sqrt(1 - y * y);
+    const angle = index * increment;
+
+    return [Math.cos(angle) * radius, y, Math.sin(angle) * radius];
+  }
+
+  function deterministicJitter(index: number, amount: number): Vec3 {
+    return [
+      (seededUnit(index, 1) - 0.5) * amount,
+      (seededUnit(index, 2) - 0.5) * amount,
+      (seededUnit(index, 3) - 0.5) * amount,
+    ];
+  }
+
+  function seededUnit(index: number, salt: number) {
+    const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  }
+
+  function cssColor(host: HTMLElement, name: string, fallback: Vec3): Vec3 {
+    const raw = getComputedStyle(host).getPropertyValue(name).trim();
+    if (!raw) return fallback;
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context) return fallback;
+
+    context.fillStyle = raw;
+    const parsed = context.fillStyle;
+    const rgb = parsed.match(/rgba?\((\d+), (\d+), (\d+)/);
+    if (rgb)
+      return [Number(rgb[1]) / 255, Number(rgb[2]) / 255, Number(rgb[3]) / 255];
+
+    const hex = parsed.match(/^#([0-9a-f]{6})$/i);
+    if (!hex) return fallback;
+    return [
+      Number.parseInt(hex[1].slice(0, 2), 16) / 255,
+      Number.parseInt(hex[1].slice(2, 4), 16) / 255,
+      Number.parseInt(hex[1].slice(4, 6), 16) / 255,
+    ];
+  }
+
+  function scaleVec3([x, y, z]: Vec3, amount: number): Vec3 {
+    return [x * amount, y * amount, z * amount];
+  }
+
+  function deg(value: number) {
+    return (value * Math.PI) / 180;
+  }
+
+  if (!customElements.get("decoration-atom-3")) {
+    customElements.define("decoration-atom-3", DecorationAtom3);
+  }
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .decoration-atom {
+    @apply pointer-events-none select-none;
+    --atom-color-proton: var(--color-accent-300);
+    --atom-color-neutron: var(--color-accent-500);
+    --atom-color-electron: var(--color-accent-100);
+    --atom-color-orbit: var(--color-accent-400);
+    --atom-scene-radius: 9.1;
+    display: block;
+    position: relative;
+    width: calc(var(--atom-scene-radius) * 3.5em);
+    height: calc(var(--atom-scene-radius) * 3.5em);
+    contain: layout paint;
+  }
+
+  canvas {
+    @apply absolute inset-0 size-full;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    canvas {
+      opacity: 0.75;
+    }
+  }
+</style>

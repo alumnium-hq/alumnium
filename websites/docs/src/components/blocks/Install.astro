@@ -1,34 +1,150 @@
 ---
-import Logotype from "../../../assets/logotype.svg";
-import { Icon } from "@astrojs/starlight/components";
-import { Code } from "astro:components";
+import { tt } from "#/copy";
+import type { AstroComponentInstance } from "astro/runtime/server/index.js";
+import Tabs from "../landings/blocks/Tabs.astro";
+import Code from "./Code.astro";
+import type { TtGetStarted } from "#/copy/getStarted";
+
+export interface Props {
+  kind: "cli" | "client";
+}
+
+// TODO: Detect OS
+const os: "windows" | "xnix" = "windows";
+const defaultCliTab = `cli-bin-${os}` as const;
+
+const { kind } = Astro.props;
+
+const t = tt.getStarted;
+
+type T = typeof t;
+
+type InstallVariantKey = keyof T extends infer Key
+  ? Key extends keyof T
+    ? T[Key] extends TtGetStarted.InstallVariant
+      ? Key
+      : never
+    : never
+  : never;
+
+type RenderContent = <Id extends InstallVariantKey>(
+  id: Id,
+) => AstroComponentInstance;
 ---
 
-<div class="w-full max-w-2xl bg-content-dark">
-  <div
-    class="font-mono text-xs uppercase flex gap-4 border-b border-gray-700 px-4 py-2"
-  >
-    <div class="flex gap-3">
-      <a href="#" class="no-underline text-gray-200">CLI</a>
-      <span class="text-gray-700">❯</span>
-      <a href="#" class="no-underline text-gray-200 border-b border-accent-600"
-        >macOS/Linux</a
-      >
-      <a href="#" class="no-underline text-gray-400">Windows</a>
-    </div>
-    <span class="text-gray-700">|</span>
-    <a href="#" class="no-underline text-gray-400">npm</a>
-    <a href="#" class="no-underline text-gray-400">pip</a>
-  </div>
+<Fragment>
+  {
+    () => {
+      const renderContent: RenderContent = (id) => {
+        const tContent = t[id];
+        return (
+          <>
+            <Code code={tContent.install.code} lang={tContent.install.lang} />
+            <div class="text-xs text-gray-500 px-4 pb-2">v0.9.1 · 91 MB</div>
+          </>
+        );
+      };
 
-  <div class="font-mono text-sm px-4 pt-4 pb-3">
-    <Code
-      code="curl -LsSf https://alumnium.ai/install.sh | sh"
-      theme="css-variables"
-      lang="bash"
-      class="text-sm"
-    />
-  </div>
+      switch (kind) {
+        case "cli":
+          return (
+            <Tabs
+              items={[
+                {
+                  id: "cli-bin",
+                  label: t["cli-bin"].tab,
+                  default: defaultCliTab,
+                  items: [
+                    { id: "cli-bin-xnix", label: t["cli-bin-xnix"].tab },
+                    { id: "cli-bin-windows", label: t["cli-bin-windows"].tab },
+                  ],
+                },
 
-  <div class="text-xs text-gray-500 px-4 pb-2">v0.9.1 · 91 MB</div>
-</div>
+                {
+                  id: "cli-npm",
+                  label: "npm",
+                  items: [
+                    { id: "cli-npm-npm", label: "npm" },
+                    { id: "cli-npm-pnpm", label: "pnpm" },
+                    { id: "cli-npm-yarn", label: "yarn" },
+                    { id: "cli-npm-bun", label: "bun" },
+                  ],
+                },
+
+                {
+                  id: "cli-pip",
+                  label: "Pip",
+                  items: [
+                    { id: "cli-pip-pip", label: "pip" },
+                    { id: "cli-pip-uv", label: "uv" },
+                  ],
+                },
+              ]}
+              active={defaultCliTab}
+              style="code"
+            >
+              <Fragment slot="cli-bin-xnix">
+                {renderContent("cli-bin-xnix")}
+              </Fragment>
+
+              <Fragment slot="cli-bin-windows">
+                {renderContent("cli-bin-windows")}
+              </Fragment>
+            </Tabs>
+          );
+
+        case "client":
+          return (
+            <Tabs
+              items={[
+                {
+                  id: "client-npm",
+                  label: "npm",
+                  items: [
+                    { id: "client-npm-npm", label: "npm" },
+                    { id: "client-npm-pnpm", label: "pnpm" },
+                    { id: "client-npm-yarn", label: "yarn" },
+                    { id: "client-npm-bun", label: "bun" },
+                  ],
+                },
+
+                {
+                  id: "client-pip",
+                  label: "Pip",
+                  items: [
+                    { id: "client-pip-pip", label: "pip" },
+                    { id: "client-pip-uv", label: "uv" },
+                  ],
+                },
+              ]}
+              active="client-npm-npm"
+              style="code"
+            >
+              {/* <Fragment slot="client-npm-npm">
+                {renderContent("client-npm-npm")}
+              </Fragment>
+
+              <Fragment slot="client-npm-pnpm">
+                {renderContent("client-npm-pnpm")}
+              </Fragment>
+
+              <Fragment slot="client-npm-yarn">
+                {renderContent("client-npm-yarn")}
+              </Fragment>
+
+              <Fragment slot="client-npm-bun">
+                {renderContent("client-npm-bun")}
+              </Fragment> */}
+            </Tabs>
+          );
+
+        default:
+          kind satisfies never;
+      }
+    }
+  }
+</Fragment>
+
+<style>
+  @reference "#/styles/global.css";
+</style>

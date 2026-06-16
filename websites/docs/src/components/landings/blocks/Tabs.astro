@@ -1,0 +1,306 @@
+---
+export interface Props<TabId extends string = string> {
+  items: Tabs.Item<TabId>[];
+  active: NoInfer<TabId>;
+  style?: "code" | "links";
+}
+
+export namespace Tabs {
+  export type Item<TabId extends string = string> = Group<TabId> | Tab<TabId>;
+
+  export interface Group<TabId extends string = string> {
+    id: string;
+    label: string;
+    items: Tab<TabId>[];
+    default?: TabId;
+  }
+
+  export interface Tab<TabId extends string = string> {
+    id: TabId;
+    label: string;
+  }
+}
+
+const { items, active, style } = Astro.props;
+
+const mapItem = async ({ id }: Tabs.Tab<string>) => ({
+  id,
+  content: await Astro.slots.render(id),
+});
+
+const contentItems = await Promise.all(
+  items.map((item) =>
+    "items" in item ? Promise.all(item.items.map(mapItem)) : mapItem(item),
+  ),
+).then((items) => items.flatMap((item) => item));
+---
+
+<landing-tabs
+  data-tab={active}
+  class:list={[
+    "tabs-wrapper",
+    (!style || style === "links") && "is-links",
+    style === "code" && "is-code",
+  ]}
+>
+  <div class="tabs">
+    {
+      () => {
+        const renderTab = ({ id, label }: Tabs.Tab) => (
+          <a
+            href="#"
+            data-tab={id}
+            class:list={["tab", id === active && "is-active"]}
+          >
+            {label}
+          </a>
+        );
+
+        const renderGroup = ({
+          id,
+          label,
+          default: defaultId,
+          items,
+        }: Tabs.Group) => {
+          const isActive = items.some((itm) => itm.id === active);
+          return (
+            <div
+              data-group={id}
+              data-default={defaultId}
+              class:list={["tabs-group-wrapper", isActive && "is-active"]}
+            >
+              <div class="tabs-group-del">|</div>
+
+              <a href="#" data-group={id} class="tabs-group">
+                {label}
+              </a>
+
+              <span class="tabs-group-items-del">❯</span>
+
+              <div class="tabs-group-items">
+                {items.map((item) => renderTab(item))}
+              </div>
+
+              <div class="tabs-group-del">|</div>
+            </div>
+          );
+        };
+
+        return items.map((item) =>
+          "items" in item ? renderGroup(item) : renderTab(item),
+        );
+      }
+    }
+  </div>
+
+  {
+    contentItems.map(({ id, content }) => (
+      <div
+        set:html={content}
+        class:list={["tab-content", id === active && "is-active"]}
+        data-tab={id}
+      />
+    ))
+  }
+</landing-tabs>
+
+<script>
+  class Tabs extends HTMLElement {
+    #tab: string | undefined;
+    // #group: string | undefined;
+
+    connectedCallback() {
+      this.#tab = this.dataset.tab;
+
+      this.querySelectorAll(".tab").forEach((tabEl) =>
+        this.#handleClick(tabEl, "tab", (id) => this.#activateTab(id)),
+      );
+
+      this.querySelectorAll(".tabs-group").forEach((groupEl) =>
+        this.#handleClick(groupEl, "group", (id) => this.#activateGroup(id)),
+      );
+    }
+
+    #activateTab(id: string) {
+      if (this.#tab)
+        this.#tabEls(this.#tab).forEach((tabEl) => {
+          tabEl.classList.remove("is-active");
+        });
+
+      this.#tabEls(id).forEach((tabEl) => {
+        tabEl.classList.add("is-active");
+      });
+
+      this.#tab = id;
+    }
+
+    #activateGroup(id: string) {
+      const prevEls = this.querySelectorAll(".tabs-group-wrapper.is-active");
+      prevEls.forEach((el) => el.classList.remove("is-active"));
+
+      const el = this.querySelector(`.tabs-group-wrapper[data-group="${id}"]`);
+      if (!(el instanceof HTMLElement)) return;
+
+      el.classList.add("is-active");
+
+      const defaultId = el.dataset.default;
+      if (defaultId) {
+        const defaultTabEl = this.querySelector(
+          `.tab[data-tab="${defaultId}"]`,
+        );
+        if (defaultTabEl) return this.#activateTabEl(defaultTabEl);
+      }
+
+      const firstTabEl = el.querySelectorAll(".tab")[0];
+      this.#activateTabEl(firstTabEl);
+    }
+
+    #activateTabEl(tabEl: Element) {
+      if (!(tabEl instanceof HTMLAnchorElement)) return;
+
+      const id = tabEl.dataset.tab;
+      if (!id) return;
+
+      this.#activateTab(id);
+    }
+
+    #handleClick(el: Element, idField: string, cb: (id: string) => void) {
+      el.addEventListener("click", (e: Event) => {
+        e.preventDefault();
+
+        const el = e.currentTarget;
+        if (!(el instanceof HTMLAnchorElement)) return;
+
+        const id = el.dataset[idField];
+        if (!id) return;
+
+        cb(id);
+      });
+    }
+
+    #tabEls(id: string) {
+      return this.querySelectorAll(`[data-tab="${id}"]`);
+    }
+  }
+
+  customElements.define("landing-tabs", Tabs);
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  /* Behavior */
+
+  .tabs-wrapper {
+    @apply block;
+  }
+
+  .tab {
+    @apply text-sm font-medium;
+
+    &:not(.is-active) {
+      @apply text-accent-500;
+    }
+
+    &.is-active {
+      @apply text-accent-200;
+    }
+  }
+
+  .tabs-group-wrapper {
+    &:not(.is-active) {
+      & .tabs-group-items,
+      & .tabs-group-del,
+      & .tabs-group-items-del {
+        @apply hidden;
+      }
+    }
+
+    &:first-child .tabs-group-del:first-child,
+    &:last-child .tabs-group-del:last-child {
+      @apply hidden;
+    }
+
+    &.is-active {
+      & .tabs-group {
+        @apply text-accent-200;
+      }
+    }
+  }
+
+  .tab-content:not(.is-active) {
+    @apply hidden;
+  }
+
+  /* Look */
+
+  .tabs-wrapper.is-code {
+    @apply w-full max-w-2xl bg-content-dark;
+
+    & .tabs {
+      @apply flex gap-4 items-center border-b border-gray-700 px-4 py-1;
+    }
+
+    & .tabs-group-wrapper,
+    & .tabs-group-wrapper.is-active .tabs-group-items {
+      @apply inline-flex items-center;
+    }
+
+    & .tabs-group-wrapper {
+      @apply gap-2;
+    }
+
+    & .tabs-group-wrapper.is-active .tabs-group-items {
+      @apply gap-4;
+    }
+
+    & .tab,
+    & .tabs-group,
+    & .tabs-group-del,
+    & .tabs-group-items-del {
+      @apply font-mono text-xs leading-none capsize uppercase py-1 border-b border-transparent no-underline;
+    }
+
+    & .tabs-group-items-del,
+    & .tabs-group-del {
+      @apply text-gray-700;
+    }
+
+    & .tab:not(.is-active),
+    & .tabs-group-wrapper:not(.is-active) .tabs-group {
+      @apply no-underline text-gray-400;
+    }
+
+    & .tabs-group {
+    }
+
+    & .tab.is-active,
+    & .tabs-group-wrapper.is-active .tabs-group {
+      @apply text-gray-200;
+    }
+
+    & .tab.is-active {
+      @apply text-gray-200 border-accent-600;
+    }
+  }
+
+  .tabs-wrapper.is-links {
+    & .tab {
+      &:not(.is-active) {
+        @apply text-accent-500;
+      }
+
+      &.is-active {
+        @apply text-accent-200;
+      }
+    }
+
+    & .tabs-group-wrapper {
+      &.is-active {
+        & .tabs-group {
+          @apply text-accent-200;
+        }
+      }
+    }
+  }
+</style>

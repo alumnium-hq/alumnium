@@ -1,37 +1,26 @@
 ---
 import { lit } from "smollit";
-import { Code } from "astro:components";
 import { tt } from "#/copy";
 import Section from "../../blocks/Section.astro";
+import Tabs from "../../blocks/Tabs.astro";
+import Code from "#/components/blocks/Code.astro";
 
 const t = tt.landings.sections.naturalLanguageTests.en;
 ---
 
-<Section h="2" t={t} col="2" span="2">
-  <Code
-    code={lit`
-      # Python example
-      from alumnium import Alumni
-
-      al = Alumni(driver)
-
-      # Navigate and interact
-      al.do("go to https://example.com")
-      al.do("click the login button")
-      al.do("fill out the form with email and password")
-
-      # Verify results
-      al.check("dashboard page is visible")
-      username = al.get("user name from header")
-    `}
-    theme="css-variables"
-    lang="python"
-    class="text-sm"
-  />
-
-  <!--
-  <Code
-    code={lit`
+<Section heading={{ h: "2" }} t={t} cols="2" span="2">
+  <div>
+    <Tabs
+      active="ts"
+      items={[
+        { id: "ts", label: "TypeScript" },
+        { id: "python", label: "Python" },
+      ]}
+      style="code"
+    >
+      <Fragment slot="ts">
+        <Code
+          code={lit`
       import { test, expect } from "@playwright/test";
       import { Alumni } from "alumnium";
 
@@ -46,8 +35,30 @@ const t = tt.landings.sections.naturalLanguageTests.en;
         await expect(page.getByRole("heading")).toBeVisible();
       });
     `}
-    theme="css-variables"
-    lang="ts"
-    class="text-sm"
-  /> -->
+          lang="ts"
+        />
+      </Fragment>
+
+      <Fragment slot="python">
+        <Code
+          code={lit`
+      # Python example
+      from alumnium import Alumni
+
+      al = Alumni(driver)
+
+      # Navigate and interact
+      al.do("go to https://example.com")
+      al.do("click the login button")
+      al.do("fill out the form with email and password")
+
+      # Verify results
+      al.check("dashboard page is visible")
+      username = al.get("user name from header")
+    `}
+          lang="python"
+        />
+      </Fragment>
+    </Tabs>
+  </div>
 </Section>

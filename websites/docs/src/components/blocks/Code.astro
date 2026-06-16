@@ -1,0 +1,25 @@
+---
+import type { CodeLanguage } from "astro";
+import { Code as AstroCode } from "astro:components";
+
+export interface Props {
+  code: string;
+  lang: CodeLanguage;
+}
+
+const { code, lang } = Astro.props;
+---
+
+<div class="code">
+  <AstroCode code={code} theme="css-variables" lang={lang} />
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .code {
+    & > * {
+      @apply px-4 pt-4 pb-3 scrollbar-thin scrollbar-track-content-dark scrollbar-thumb-gray-600 font-mono text-sm;
+    }
+  }
+</style>

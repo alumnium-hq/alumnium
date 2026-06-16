@@ -1,0 +1,17 @@
+---
+import Asciinema from "#/components/blocks/Asciinema.astro";
+import { tt } from "#/copy";
+import Step from "./Step.astro";
+
+const t = tt.landings.sections.getStartedSteps.run;
+---
+
+<Step t={t}>
+  <Fragment slot="agents"
+    ><Asciinema src="https://asciinema.org/a/569727.cast" />
+  </Fragment>
+
+  <Fragment slot="engineers">
+    <Asciinema src="https://asciinema.org/a/569727.cast" />
+  </Fragment>
+</Step>

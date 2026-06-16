@@ -1,5 +1,6 @@
 ---
 import { tt } from "#/copy";
+import Heading from "../../blocks/Heading.astro";
 import Section from "../../blocks/Section.astro";
 import Table from "./Table.astro";
 
@@ -7,7 +8,9 @@ const t = tt.landings.sections.comparison.en;
 ---
 
 <div class="bento">
-  <Section h="2" t={t}>
+  <Section style="compact">
+    <Heading h="2" enlarge align t={t} />
+
     <Table />
   </Section>
 </div>

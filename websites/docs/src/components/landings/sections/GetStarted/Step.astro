@@ -1,0 +1,25 @@
+---
+import SectionContent from "../../blocks/SectionContent.astro";
+import type { TtLandings } from "#/copy/landings";
+
+export interface Props {
+  t: TtLandings.GetStartedStep;
+}
+
+const { t } = Astro.props;
+
+const tAgents = t.agents.en;
+const tEngineers = t.engineers.en;
+---
+
+<SectionContent heading={{ h: "4" }} t={tAgents} />
+
+<SectionContent heading={{ h: "4" }} t={tEngineers} />
+
+<div>
+  <slot name="agents" />
+</div>
+
+<div>
+  <slot name="engineers" />
+</div>

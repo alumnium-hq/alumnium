@@ -1,49 +1,230 @@
+---
+import { tt } from "#/copy";
+import type { TtLandings } from "#/copy/landings";
+import type { AstroComponentInstance } from "astro/runtime/server/index.js";
+import Icon from "#/components/Icon.astro";
+import type { AstroBuiltinAttributes } from "astro";
+
+const t = tt.landings.sections.comparisonTable;
+
+const order: (keyof TtLandings.ComparisonHeader)[] = [
+  "metric",
+  "alumnium",
+  "browser-use",
+  "playwright-mcp",
+];
+---
+
 <table class="table">
-  <thead
-    ><tr
-      ><th>Metric</th><th>Alumnium</th><th>browser-use</th><th
-        >playwright-mcp</th
-      ></tr
-    ></thead
-  >
+  <thead>
+    <tr>
+      {
+        order.map((key) => (
+          <th class={`cell is-header is-${key}`}>{t.header[key].en}</th>
+        ))
+      }
+    </tr>
+  </thead>
 
   <tbody>
-    <tr
-      ><td>Main agent context</td><td>8k tokens</td><td>21k tokens</td><td
-        >79k tokens</td
-      ></tr
-    >
-    <tr
-      ><td>Subagent context</td><td>400k tokens</td><td>400k tokens</td><td
-        >—</td
-      ></tr
-    >
-    <tr><td>Duration</td><td>3m 58s</td><td>5m 55s</td><td>3m 57s</td></tr>
-    <tr><td>Total cost</td><td>$0.15</td><td>$0.39</td><td>$1.34</td></tr>
-    <tr
-      ><td>Existing test runner</td><td>✓ yes</td><td>no</td><td>partial</td
-      ></tr
-    >
-    <tr
-      ><td>Python + TypeScript</td><td>✓ yes</td><td>py only</td><td>ts only</td
-      ></tr
-    >
-    <tr><td>Web · iOS · Android</td><td>all 3</td><td>web</td><td>web</td></tr>
-    <tr><td>License</td><td>MIT</td><td>MIT</td><td>Apache</td></tr>
+    {
+      t.rows.map((row) => {
+        interface CellItem {
+          classList: AstroBuiltinAttributes["class:list"] & {};
+          content: AstroComponentInstance | string;
+        }
+
+        const renderSuperscript = (value: string) => (
+          <sup class="superscript">{value}</sup>
+        );
+
+        const cellToItem = (
+          cell: TtLandings.ComparisonCell | TtLandings.ComparisonMetricCell,
+        ): CellItem => {
+          if ("en" in cell)
+            return {
+              classList: ["is-string"],
+              content: cell.en,
+            };
+
+          switch (cell.kind) {
+            case "metric": {
+              const valueT = cell.value.en;
+              return {
+                classList: ["is-metric"],
+                content: (
+                  <div class="metric">
+                    <div class="metric-label">{valueT.label}</div>
+                    <div class="metric-subtext">{valueT.subtext}</div>
+                  </div>
+                ),
+              };
+            }
+
+            case "string":
+              return {
+                classList: [
+                  "is-string",
+                  cell.highlight === "positive" && "is-positive",
+                  cell.highlight === "negative" && "is-negative",
+                  cell.highlight === "mixed" && "is-mixed",
+                ],
+                content: cell.value.en,
+              };
+
+            case "support": {
+              const content =
+                cell.support === "partial" ? (
+                  <span class="symbol">~</span>
+                ) : (
+                  <Icon
+                    id={cell.support === "yes" ? "check" : "close"}
+                    class="icon"
+                  />
+                );
+
+              return {
+                classList: [
+                  "is-support",
+                  cell.support === "yes" && "is-yes",
+                  cell.support === "no" && "is-no",
+                  cell.support === "partial" && "is-partial",
+                ],
+                content: (
+                  <>
+                    {content}
+                    {cell.superscript && renderSuperscript(cell.superscript)}
+                  </>
+                ),
+              };
+            }
+
+            case "na":
+              return {
+                classList: ["is-na"],
+                content: <span class="symbol">-</span>,
+              };
+          }
+        };
+
+        return (
+          <tr>
+            {order.map((key) => {
+              const cell = row[key];
+              const item = cellToItem(cell);
+              const classList = [
+                "cell",
+                `is-${key}`,
+                key !== "metric" && "is-product",
+                item.classList,
+              ];
+              return <td class:list={classList}>{item.content}</td>;
+            })}
+          </tr>
+        );
+      })
+    }
   </tbody>
 </table>
+
+<p class="text-accent-500 text-sm">
+  {t.disclaimer.en}
+</p>
 
 <style>
   @reference "#/styles/global.css";
 
   @layer starlight.core {
     .table {
-      @apply w-full text-left text-sm border-collapse border border-accent-600;
+      @apply w-full text-left border-collapse;
 
       & th,
       & td {
-        @apply border border-accent-600;
+        @apply border border-accent-700;
       }
+    }
+
+    .cell {
+      @apply px-5 py-2 relative;
+
+      &.is-header,
+      &.is-metric {
+        @apply bg-accent-950/40;
+      }
+
+      &.is-header {
+        @apply py-5 text-accent-200;
+
+        &.is-alumnium {
+          @apply bg-accent-800/70 text-ink-dark font-bold;
+        }
+      }
+
+      &.is-metric {
+        @apply text-accent-400;
+      }
+
+      &.is-alumnium {
+        @apply bg-accent-800/50 text-ink-dark font-bold;
+      }
+
+      &.is-product {
+        @apply font-mono leading-none capsize px-5 py-3 font-light;
+      }
+
+      & .icon {
+        @apply text-2xl;
+      }
+
+      & .symbol {
+        @apply text-3xl;
+      }
+
+      &.is-na {
+        --symbol-color: var(--color-gray-400);
+      }
+
+      &.is-string {
+        &.is-positive {
+          @apply text-emerald-300;
+        }
+
+        &.is-negative {
+          @apply text-rose-300;
+        }
+
+        &.is-mixed {
+          @apply text-orange-300;
+        }
+      }
+
+      &.is-support {
+        &.is-yes {
+          --icon-color: var(--color-emerald-500);
+        }
+
+        &.is-no {
+          --icon-color: var(--color-rose-500);
+        }
+
+        &.is-partial {
+          --symbol-color: var(--color-yellow-500);
+        }
+      }
+    }
+
+    .metric-label {
+      @apply font-medium text-accent-300;
+    }
+
+    .metric-subtext {
+      @apply text-sm text-accent-500 max-w-[15rem];
+    }
+
+    .superscript {
+      @apply text-accent-500;
+      vertical-align: top;
+      font-size: 11px;
     }
   }
 </style>

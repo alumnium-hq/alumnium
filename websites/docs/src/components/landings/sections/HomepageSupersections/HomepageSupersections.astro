@@ -6,26 +6,39 @@ import NeedMore from "../NeedMore/NeedMore.astro";
 import Supersection from "../../blocks/Supersection.astro";
 import HelpsShip from "../HelpsShip/HelpsShip.astro";
 import Faq from "../Faq.astro";
-import AiTests from "../AiTests/AiTests.astro";
+import Why from "../Why/Why.astro";
 import Nav from "./Nav.astro";
+import { tt } from "#/copy";
+import BlogLatest from "../BlogLatest.astro";
+import DecorationLine from "../../blocks/DecorationLine.astro";
+
+const t = tt.landings.supersections.en;
 
 const supersections = {
-  "get-started": { link: "Get Started", Section: GetStarted },
-  "ai-tests": { link: "Why Alumnium?", Section: AiTests },
-  "helps-ship": { link: "Tests That Unblock", Section: HelpsShip },
-  scalable: { link: "Scale", Section: Scalable },
-  comparison: { link: "Comparison", Section: Comparison },
-  "need-more": { link: "Need More?", Section: NeedMore },
-  faq: { link: "FAQ", Section: Faq },
+  "get-started": { link: t.getStarted, Section: GetStarted },
+  "ai-tests": { link: t.aiTests, Section: Why },
+  "helps-ship": { link: t.helpsShip, Section: HelpsShip },
+  scalable: { link: t.scalable, Section: Scalable },
+  comparison: { link: t.comparison, Section: Comparison },
+  "need-more": { link: t.needMore, Section: NeedMore },
+  faq: { link: t.faq, Section: Faq },
 };
 ---
 
 <Nav supersections={supersections} />
 
-{
-  Object.entries(supersections).map(([id, { link, Section }]) => (
-    <Supersection id={id}>
-      <Section />
-    </Supersection>
-  ))
-}
+<section class="supersections is-shaded">
+  {
+    Object.entries(supersections).map(([id, { Section }], idx) => (
+      <Supersection id={id} shaded edge={idx === 0 && "top"}>
+        <Section />
+      </Supersection>
+    ))
+  }
+
+  <Supersection shaded>
+    <BlogLatest />
+  </Supersection>
+
+  <DecorationLine pos="bottom" edge />
+</section>

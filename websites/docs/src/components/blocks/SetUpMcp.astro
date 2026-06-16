@@ -1,0 +1,63 @@
+---
+import { tt } from "#/copy";
+import type { AstroComponentInstance } from "astro/runtime/server/index.js";
+import Tabs from "../landings/blocks/Tabs.astro";
+import Code from "./Code.astro";
+import type { TtGetStarted } from "#/copy/getStarted";
+
+const t = tt.getStarted;
+
+type T = typeof t;
+
+type SetUpMcpVariantKey = keyof T extends infer Key
+  ? Key extends keyof T
+    ? T[Key] extends TtGetStarted.SetUpMcpVariant
+      ? Key
+      : never
+    : never
+  : never;
+
+type RenderContent = <Id extends SetUpMcpVariantKey>(
+  id: Id,
+) => AstroComponentInstance;
+---
+
+<Fragment>
+  {
+    () => {
+      const renderContent: RenderContent = (id) => {
+        const tContent = t[id];
+        return (
+          <>
+            <Code code={tContent.code} lang={tContent.lang} />
+          </>
+        );
+      };
+
+      return (
+        <Tabs
+          items={[
+            {
+              id: "set-up-mcp-claude-code",
+              label: t["set-up-mcp-claude-code"].tab,
+            },
+            {
+              id: "set-up-mcp-codex",
+              label: t["set-up-mcp-codex"].tab,
+            },
+          ]}
+          active="set-up-mcp-claude-code"
+          style="code"
+        >
+          <Fragment slot="set-up-mcp-claude-code">
+            {renderContent("set-up-mcp-claude-code")}
+          </Fragment>
+
+          <Fragment slot="set-up-mcp-codex">
+            {renderContent("set-up-mcp-codex")}
+          </Fragment>
+        </Tabs>
+      );
+    }
+  }
+</Fragment>

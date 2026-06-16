@@ -4,9 +4,10 @@ import { type Props as ContentProps } from "./SectionContent.astro";
 import SectionContent from "./SectionContent.astro";
 
 export interface BaseProps {
-  col?: "1" | "2";
+  cols?: "1" | "2";
   span?: "1" | "2";
   style?: "header" | "compact";
+  align?: boolean;
 }
 
 export interface ContentfulProps extends BaseProps, ContentProps {}
@@ -15,7 +16,7 @@ export interface BareProps extends BaseProps {}
 
 export type Props = ContentfulProps | BareProps;
 
-const { col, span, style, ...contentProps } = Astro.props;
+const { cols, span, style, align, ...contentProps } = Astro.props;
 ---
 
 <div class:list={["relative", span === "2" && "col-span-2"]}>
@@ -24,11 +25,18 @@ const { col, span, style, ...contentProps } = Astro.props;
       "section",
       style === "header" && "section-header",
       style === "compact" && "section-compact",
-      (!col || col === "1") && "section-col-1",
-      col === "2" && "section-col-2",
+      align && "section-align",
+      (!cols || cols === "1") && "section-cols-1",
+      cols === "2" && "section-cols-2",
     ]}
   >
-    {"h" in contentProps && <SectionContent {...contentProps} />}
+    {
+      "heading" in contentProps && (
+        <SectionContent {...contentProps}>
+          <slot name="content" />
+        </SectionContent>
+      )
+    }
 
     <slot />
   </div>

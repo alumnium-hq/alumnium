@@ -1,5 +1,5 @@
-import { langs } from "./i18n";
-import { txt } from "smollit";
+import { langs, type I18n } from "./i18n";
+import { txt, md } from "smollit";
 
 export const ttLandings = {
   banners: {
@@ -12,13 +12,31 @@ export const ttLandings = {
     },
   },
 
+  supersections: {
+    en: {
+      getStarted: "Get Started",
+
+      aiTests: "Why Alumnium?",
+
+      helpsShip: "Why AI tests?",
+
+      scalable: "Scale",
+
+      comparison: "Comparison",
+
+      needMore: "Need More?",
+
+      faq: "FAQ",
+    },
+  },
+
   sections: {
     hero: langs({
       en: {
         headline: txt`
           <b>End-to-End Testing with AI</b>
           <br/>
-          for [Agents](/for/agents) and [Engineers](/for/engineers)
+          for **Agents** and **Engineers**
         `,
 
         subheadline: txt`
@@ -41,18 +59,24 @@ export const ttLandings = {
 
     //#region Get Started
 
-    // TODO: Prioritize and detalize + lead to pages
-    // TODO: Turn into get started
     getStarted: langs({
       en: {
         kicker: "Start",
 
         headline: "Get Started",
 
-        // subheadline: txt`
-        //   Works for everyone: QA engineers, developers using AI agents, vibe
-        //   coders, and everyone in between.
-        // `,
+        agents: {
+          headline: "For Agents",
+        },
+
+        engineers: {
+          headline: "For Engineers",
+        },
+
+        subheadline: txt`
+          Alumnium works for everyone: QA engineers, developers using AI agents, vibe
+          coders, and everyone in between.
+        `,
 
         // copy: txt`
         //   TODO: Alumnium is for everyone.
@@ -79,15 +103,180 @@ export const ttLandings = {
       },
     }),
 
-    //#endregion
+    getStartedSteps: {
+      install: getStartedStep({
+        heading: langs({
+          en: {
+            kicker: "I. Install",
+          },
+        }),
 
-    //#region AI Tests
+        agents: langs({
+          en: {
+            headline: "Install CLI",
 
-    aiTests: langs({
+            copy: md`
+              Install Alumnium CLI, single cross-platform binary with a small
+              footprint.
+            `,
+          },
+        }),
+
+        engineers: langs({
+          en: {
+            headline: "Install client",
+
+            copy: md`
+              Install carefully crafted, idiomatic, fully type-safe client
+              package for your language of choice.
+            `,
+          },
+        }),
+      }),
+
+      "set-up": getStartedStep({
+        heading: langs({
+          en: {
+            kicker: "II. Set Up",
+          },
+        }),
+
+        agents: langs({
+          en: {
+            headline: "Set Up MCP Server",
+
+            copy: md`
+              Set LLM secrets and configure Alumnium MCP to work with your
+              coding agent of choice.
+            `,
+          },
+        }),
+
+        engineers: langs({
+          en: {
+            headline: "Set Up Client",
+
+            copy: md`
+              Set LLM secrets, import and configure the Alumnium client package
+              in your existing test suite.
+            `,
+          },
+        }),
+      }),
+
+      test: getStartedStep({
+        heading: langs({
+          en: {
+            kicker: "III. Test",
+          },
+        }),
+
+        agents: langs({
+          en: {
+            headline: "Instruct Agent to Test",
+
+            copy: md`
+              Tell your coding agent what you want to test and watch the show.
+            `,
+          },
+        }),
+
+        engineers: langs({
+          en: {
+            headline: "Write Test Steps",
+
+            copy: md`
+              Using Alumnium client write test steps for your test framework.
+            `,
+          },
+        }),
+      }),
+
+      run: getStartedStep({
+        heading: langs({
+          en: {
+            kicker: "IV. Run",
+          },
+        }),
+
+        agents: langs({
+          en: {
+            headline: "Run Markdown Tests",
+
+            copy: md`
+              Ask the coding agent to save test scenario as Markdown and run it
+              again using the test runner.
+            `,
+          },
+        }),
+
+        engineers: langs({
+          en: {
+            headline: "Run Test Suite",
+
+            copy: md`
+              After succeseful completion, instruct to save the LLM cache to run
+              tests with minimal to zero tokens.
+            `,
+          },
+        }),
+      }),
+    },
+
+    getStartedInstall: langs({
       en: {
-        headline: "AI Tests the Right Way TK",
+        kicker: "I. Install",
+
+        headline: "Install Alumnium",
+
+        subheadline: "Single cross-platform binary, small footprint.",
+      },
+    }),
+
+    getStartedSetUp: langs({
+      en: {
+        kicker: "II. Set Up",
+
+        headline: "Set Up Alumnium",
 
         subheadline: "TODO",
+      },
+    }),
+
+    getStartedTest: langs({
+      en: {
+        kicker: "III. Test",
+
+        headline: "Test Your App",
+
+        subheadline: "TODO",
+      },
+    }),
+
+    getStartedRun: langs({
+      en: {
+        kicker: "IV. Run",
+
+        headline: "Run Your Tests",
+
+        subheadline: "TODO",
+      },
+    }),
+
+    //#endregion
+
+    //#region Why
+
+    why: langs({
+      en: {
+        kicker: "We stand out",
+
+        headline: "Why Alumnium?",
+
+        subheadline: txt`
+          With market as crazy as it is, there's no shortage of AI agents
+          capable of performing any task. What makes Alumnium stand out?
+        `,
       },
     }),
 
@@ -114,21 +303,6 @@ export const ttLandings = {
         leaderboardBy: "by",
 
         leaderboardViewAll: "View All",
-      },
-    }),
-
-    // TODO: Join with efficient
-
-    tlDr: langs({
-      en: {
-        bill: "Of a bill vs playwright-mcp on the same task",
-
-        webVoyager: "WebVoyager SOTA · public",
-
-        cost: (cost: number) => `Per task vs $${cost} playwright-mcp`,
-
-        context: (alumnium: number, comparison: number) =>
-          `Less context · ${alumnium}k vs ${comparison}k tokens`,
       },
     }),
 
@@ -186,12 +360,10 @@ export const ttLandings = {
 
             headline: "Runs on Low-Tier Models",
 
-            subheadline: "TODO",
-
             copy: txt`
-              TODO
-
-              TODO
+              Designed to work with low-tier models that are faster and cheaper,
+              Alumnium ensures efficient use of tokens without compromising
+              output quality.
             `,
           },
 
@@ -200,26 +372,22 @@ export const ttLandings = {
 
             headline: "Long-Horizon Tasks",
 
-            subheadline: "TODO",
-
             copy: txt`
-              TODO
-
-              TODO
+              It performs exceptionally well on long-horizon tasks. Where most
+              AI agents struggle to complete a task, Alumnium keeps going even
+              on 100+ steps.
             `,
           },
 
           {
-            icon: "graph_1",
+            icon: "air",
 
             headline: "Prevents Context Rot",
 
-            subheadline: "TODO",
-
             copy: txt`
-              TODO
-
-              TODO
+              When working with a coding agent, Alumnium MCP does all the heavy
+              lifting, exposing just enough context to enable the right
+              decisions and keeping the context fresh.
             `,
           },
         ],
@@ -275,6 +443,15 @@ export const ttLandings = {
 
           TODO: 4th track: assistants
         `,
+
+        checklist: [
+          {
+            copy: "Supports local models via Ollama.",
+          },
+          {
+            copy: "Native TypeScript, Python, and Java support.",
+          },
+        ],
       },
     }),
 
@@ -301,15 +478,14 @@ export const ttLandings = {
 
     helpsShip: langs({
       en: {
-        kicker: "Ship",
+        kicker: "Ship Faster",
 
-        headline: "Tests That Unblock Your Features",
+        headline: "Why AI tests?",
 
-        copy: txt`
-          Historically, while ensuring quality, the end-to-end tests also slow
-          down new features and require constant adjustments to keep them running.
-
-          TODO
+        subheadline: txt`
+          While ensuring quality, the traditional end-to-end tests also slow
+          down new features and require constant adjustments to keep them
+          running. AI tests improve on this.
         `,
       },
     }),
@@ -378,12 +554,17 @@ export const ttLandings = {
       en: {
         headline: "Same Tests for All Platforms",
 
-        subheadline: "TODO",
+        subheadline: "Use the same tests across all supported platforms.",
 
         copy: txt`
-          TODO
+          Building for multiple platforms is already a challenge. Maintaining
+          consistent quality might feel just impossible.
 
-          TODO
+          Alumnium addresses this problem by allowing you to use the same
+          tests across all platforms.
+
+          You describe your feature once, and the AI will test it across all
+          platforms.
         `,
       },
     }),
@@ -396,9 +577,11 @@ export const ttLandings = {
       en: {
         kicker: "Scale",
 
-        headline: "Scalability TK",
+        headline: "Scale with Alumnium",
 
-        subheadline: "TODO",
+        subheadline: `
+          Alumnium is build to scale with your team and business.
+        `,
       },
     }),
 
@@ -520,52 +703,421 @@ export const ttLandings = {
       },
     }),
 
+    activeCommunity: langs({
+      en: {
+        headline: "Active Community",
+
+        subheadline: txt`
+          Pull requests are welcome!
+        `,
+
+        copy: txt`
+          We have a strong core team, but the effort of the community is what
+          makes Alumnium truly special.
+        `,
+      },
+    }),
+
+    supportedBy: langs({
+      en: {
+        headline: "In a Good Company",
+
+        subheadline: txt`
+          Supported by industry leaders.
+        `,
+
+        copy: txt`
+          Alumnium is privileged to get support from these
+          amazing companies.
+        `,
+      },
+    }),
+
     //#endregion
 
     //#region Comparison
 
     comparison: langs({
       en: {
-        kicker: "TODO",
+        kicker: "Head to head",
 
         headline: "Alumnium is Different",
 
         subheadline: txt`
-          TODO
+          See how we line up with another browser agents.
         `,
 
-        copy: txt`
-          TODO: Context isolation
+        // copy: txt`
+        //   TODO: Context isolation
 
-          TODO: Doesn't need frontier models
+        //   TODO: Doesn't need frontier models
 
-          TODO: Open Telemetry
+        //   TODO: Open Telemetry
 
-          TODO: Doesn't rely on vision
+        //   TODO: Doesn't rely on vision
 
-          TODO: Doesn't generate tests
+        //   TODO: Doesn't generate tests
 
-          TODO: Multiple use cases: MCP for agents, test runner, web, mobile, etc.
+        //   TODO: Multiple use cases: MCP for agents, test runner, web, mobile, etc.
 
-          TODO: Not a black box
+        //   TODO: Not a black box
 
-          TODO: Not a generic browser tool
+        //   TODO: Not a generic browser tool
 
-          TODO: ^^^ prev 2 -> middle path, a building block
+        //   TODO: ^^^ prev 2 -> middle path, a building block
 
-          TODO: No lock-in (vs Browser Use)
+        //   TODO: No lock-in (vs Browser Use)
 
-          TODO: Easy to migrate, no lock-in into model/approach (i.e. Playwright
-          -> Alumnium -> Playwright)
+        //   TODO: Easy to migrate, no lock-in into model/approach (i.e. Playwright
+        //   -> Alumnium -> Playwright)
 
-          TODO: Runs locally
+        //   TODO: Runs locally
 
-          TODO: Local models
-        `,
+        //   TODO: Local models
+        // `,
       },
     }),
 
-    // TODO: Comparison + join Alumnium is Different + table
+    comparisonTable: {
+      header: comparisonHeader({
+        metric: { en: "" },
+        alumnium: { en: "Alumnium" },
+        "browser-use": { en: "Browser Use" },
+        "playwright-mcp": { en: "playwright-mcp" },
+      }),
+
+      rows: [
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Main agent context",
+                subtext: txt`
+                  Coding agent context in tokens after completing the same task.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "string",
+            value: { en: "8,000 tokens" },
+            highlight: "positive",
+          },
+          "browser-use": {
+            kind: "string",
+            value: { en: "21,000 tokens" },
+            highlight: "mixed",
+          },
+          "playwright-mcp": {
+            kind: "string",
+            value: { en: "79,000 tokens" },
+            highlight: "negative",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Subagent context",
+                subtext: txt`
+                  Browser agent context after completing the same task.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "string",
+            value: { en: "400,000 tokens" },
+            highlight: "positive",
+          },
+          "browser-use": {
+            kind: "string",
+            value: { en: "400,000 tokens" },
+            highlight: "positive",
+          },
+          "playwright-mcp": { kind: "na" },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Duration",
+                subtext: txt`
+                  Time it takes to complete the same task.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "string",
+            value: { en: "3m 58s" },
+            highlight: "positive",
+          },
+          "browser-use": {
+            kind: "string",
+            value: { en: "5m 55s" },
+            highlight: "negative",
+          },
+          "playwright-mcp": {
+            kind: "string",
+            value: { en: "3m 57s" },
+            highlight: "positive",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Total cost",
+                subtext: txt`
+                  Total cost in USD of completing the same task.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "string",
+            value: { en: "$0.15" },
+            highlight: "positive",
+          },
+          "browser-use": {
+            kind: "string",
+            value: { en: "$0.39" },
+            highlight: "mixed",
+          },
+          "playwright-mcp": {
+            kind: "string",
+            value: { en: "$1.34" },
+            highlight: "negative",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Built-in test runner",
+                subtext: txt`
+                  CLI capable running Markdown tests without a coding agent.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "support",
+            support: "yes",
+            superscript: "*",
+          },
+          "browser-use": {
+            kind: "support",
+            support: "no",
+          },
+          "playwright-mcp": {
+            kind: "support",
+            support: "partial",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "TypeScript client",
+                subtext: txt`
+                  Native JS/TS client package.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "support",
+            support: "yes",
+          },
+          "browser-use": {
+            kind: "support",
+            support: "no",
+          },
+          "playwright-mcp": {
+            kind: "support",
+            support: "yes",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Python client",
+                subtext: txt`
+                  Native Python client package.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "support",
+            support: "yes",
+          },
+          "browser-use": {
+            kind: "support",
+            support: "yes",
+          },
+          "playwright-mcp": {
+            kind: "support",
+            support: "no",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Java client",
+                subtext: txt`
+                  Native Java client package.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "support",
+            support: "yes",
+          },
+          "browser-use": {
+            kind: "support",
+            support: "no",
+          },
+          "playwright-mcp": {
+            kind: "support",
+            support: "no",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Web apps support",
+                subtext: txt`
+                  Testing web apps support.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "support",
+            support: "yes",
+          },
+          "browser-use": {
+            kind: "support",
+            support: "yes",
+          },
+          "playwright-mcp": {
+            kind: "support",
+            support: "yes",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Test iOS apps",
+                subtext: txt`
+                  Testing iOS apps support.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "support",
+            support: "yes",
+          },
+          "browser-use": {
+            kind: "support",
+            support: "no",
+          },
+          "playwright-mcp": {
+            kind: "support",
+            support: "no",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "Test Android apps",
+                subtext: txt`
+                  Testing Android apps support.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "support",
+            support: "yes",
+          },
+          "browser-use": {
+            kind: "support",
+            support: "no",
+          },
+          "playwright-mcp": {
+            kind: "support",
+            support: "no",
+          },
+        }),
+
+        comparisonRow({
+          metric: {
+            kind: "metric",
+            value: {
+              en: {
+                label: "License",
+                subtext: txt`
+                  Project source code license.
+                `,
+              },
+            },
+          },
+          alumnium: {
+            kind: "string",
+            value: { en: "MIT" },
+            highlight: "positive",
+          },
+          "browser-use": {
+            kind: "string",
+            value: { en: "MIT" },
+            highlight: "positive",
+          },
+          "playwright-mcp": {
+            kind: "string",
+            value: { en: "Apache" },
+            highlight: "positive",
+          },
+        }),
+      ],
+
+      disclaimer: langs({
+        en: txt`
+          * Alumnium test runner currently is in preview.
+        `,
+      }),
+    },
 
     //#endregion
 
@@ -580,6 +1132,157 @@ export const ttLandings = {
         subheadline: txt`
           Still have questions? We got you covered.
         `,
+
+        items: [
+          faqItem({
+            id: "what-is-alumnium",
+
+            value: langs({
+              en: {
+                question: "What is Alumnium?",
+
+                answer: md`
+                  Alumnium is an AI-powered test automation framework that lets
+                  you write tests using natural language commands. Instead of
+                  writing complex selectors and waits, you simply describe what
+                  you want to test in plain English, and Alumnium handles the
+                  rest. It works with popular automation tools like Selenium,
+                  Playwright, and Appium.
+                `,
+              },
+            }),
+          }),
+
+          faqItem({
+            id: "which-test-frameworks-does-alumnium-support",
+
+            value: langs({
+              en: {
+                question: "Which test frameworks does Alumnium support?",
+
+                answer: md`
+                  Alumnium works with:
+
+                  1. Selenium WebDriver for web automation.
+                  2. Playwright for modern web testing.
+                  3. Appium for iOS and Android mobile testing.
+
+                  You can use Alumnium with your existing test infrastructure
+                  without any major changes.
+                `,
+              },
+            }),
+          }),
+
+          faqItem({
+            id: "do-i-need-an-ai-api-key",
+
+            value: langs({
+              en: {
+                question: "Do I need an AI API key?",
+
+                answer: md`
+                  Yes, Alumnium uses AI models to understand your natural
+                  language commands and interact with your application. You'll
+                  need an API key from supported providers like OpenAI,
+                  Anthropic, or other compatible AI services. Check our
+                  documentation for the full list of supported providers and
+                  setup instructions.
+                `,
+              },
+            }),
+          }),
+
+          //
+
+          faqItem({
+            id: "is-alumnium-free-to-use",
+
+            value: langs({
+              en: {
+                question: "Is Alumnium free to use?",
+
+                answer: md`
+                  Yes, Alumnium is open source and free to use under the MIT
+                  license. You can use it for both personal and commercial
+                  projects. However, you will need to pay for AI API usage
+                  separately based on your chosen AI provider's pricing.
+                `,
+              },
+            }),
+          }),
+
+          faqItem({
+            id: "how-do-i-get-started",
+
+            value: langs({
+              en: {
+                question: "How do I get started?",
+
+                answer: md`
+                  Getting started is easy:
+
+                  1. Install Alumnium via pip (Python) or npm (TypeScript).
+                  2. Configure your AI provider API key.
+                  3. Initialize Alumnium with your existing Selenium, Playwright, or Appium driver
+                  4. Start writing tests using natural language commands.
+
+                  Check out our [getting started guide](/docs/getting-started/installation/)
+                  for detailed instructions.
+                `,
+              },
+            }),
+          }),
+
+          faqItem({
+            id: "can-i-use-alumnium-with-claude-code-codex-or-gemini",
+
+            value: langs({
+              en: {
+                question:
+                  "Can I use Alumnium with Claude Code, Codex, or Gemini?",
+
+                answer: md`
+                  Yes! Alumnium is available as an MCP (Model Context Protocol)
+                  server that integrates seamlessly with coding agents like
+                  Claude Code, Codex, and Gemini CLI. This lets you control
+                  browsers and mobile apps directly from your conversations.
+                `,
+              },
+            }),
+          }),
+
+          faqItem({
+            id: "how-stable-is-alumnium",
+
+            value: langs({
+              en: {
+                question: "How stable is Alumnium? Can I use it in production?",
+
+                answer: md`
+                  Alumnium is currently in early development and experimental.
+                  While it's actively maintained and used by early adopters, we
+                  recommend starting with non-critical test suites and gradually
+                  expanding usage as you gain confidence. Join our community on
+                  Discord or Slack to share feedback and stay updated on new
+                  releases.
+                `,
+              },
+            }),
+          }),
+        ],
+      },
+    }),
+
+    //#endregion
+
+    //#region Blog Latest
+
+    blogLatest: langs({
+      en: {
+        kicker: "Blog",
+
+        headline: "Learn More from Our Blog",
       },
     }),
 
@@ -758,3 +1461,98 @@ export const ttLandings = {
     //#endregion
   },
 };
+
+export namespace TtLandings {
+  export interface HeadingFull {
+    kicker: string;
+    headline: string;
+    subheadline: string;
+    copy: string;
+  }
+
+  export interface GetStartedStep {
+    heading: I18n.FullLangsMap<{
+      kicker: string;
+    }>;
+    agents: I18n.FullLangsMap<Partial<HeadingFull>>;
+    engineers: I18n.FullLangsMap<Partial<HeadingFull>>;
+  }
+
+  export interface ComparisonHeader {
+    metric: I18n.FullLangsMap<string>;
+    alumnium: I18n.FullLangsMap<string>;
+    "browser-use": I18n.FullLangsMap<string>;
+    "playwright-mcp": I18n.FullLangsMap<string>;
+  }
+
+  export interface ComparisonRow {
+    metric: ComparisonMetricCell;
+    alumnium: ComparisonCell;
+    "browser-use": ComparisonCell;
+    "playwright-mcp": ComparisonCell;
+  }
+
+  export interface ComparisonMetricCell {
+    kind: "metric";
+    value: I18n.FullLangsMap<ComparisonMetric>;
+  }
+
+  export interface ComparisonMetric {
+    label: string;
+    subtext: string;
+  }
+
+  export type ComparisonCell =
+    | I18n.FullLangsMap<string>
+    | ComparisonCellSupport
+    | ComparisonCellString
+    | ComparisonCellNa;
+
+  export interface ComparisonCellSupport {
+    kind: "support";
+    support: "yes" | "no" | "partial";
+    superscript?: string;
+  }
+
+  export interface ComparisonCellString {
+    kind: "string";
+    value: I18n.FullLangsMap<string>;
+    highlight?: "positive" | "negative" | "mixed";
+  }
+
+  export interface ComparisonCellNa {
+    kind: "na";
+  }
+
+  export interface FaqItem {
+    id: string;
+    value: I18n.FullLangsMap<FaqValue>;
+  }
+
+  export interface FaqValue {
+    question: string;
+    answer: string;
+  }
+}
+
+function getStartedStep(
+  step: TtLandings.GetStartedStep,
+): TtLandings.GetStartedStep {
+  return step;
+}
+
+function comparisonHeader(
+  row: TtLandings.ComparisonHeader,
+): TtLandings.ComparisonHeader {
+  return row;
+}
+
+function comparisonRow(
+  row: TtLandings.ComparisonRow,
+): TtLandings.ComparisonRow {
+  return row;
+}
+
+function faqItem(item: TtLandings.FaqItem): TtLandings.FaqItem {
+  return item;
+}

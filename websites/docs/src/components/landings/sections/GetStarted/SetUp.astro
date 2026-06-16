@@ -1,0 +1,18 @@
+---
+import SetUpClient from "#/components/blocks/SetUpClient.astro";
+import SetUpMcp from "#/components/blocks/SetUpMcp.astro";
+import { tt } from "#/copy";
+import Step from "./Step.astro";
+
+const t = tt.landings.sections.getStartedSteps["set-up"];
+---
+
+<Step t={t}>
+  <Fragment slot="agents">
+    <SetUpMcp />
+  </Fragment>
+
+  <Fragment slot="engineers">
+    <SetUpClient />
+  </Fragment>
+</Step>

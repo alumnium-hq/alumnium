@@ -1,0 +1,116 @@
+---
+import "asciinema-player/dist/bundle/asciinema-player.css";
+import type { PlayerOptions } from "asciinema-player";
+import asciinemaMetadata from "../../data/asciinema-metadata.json";
+
+export interface Props {
+  src: string;
+  options?: PlayerOptions;
+}
+
+const { src, options: optionsProp } = Astro.props;
+
+const metadata = asciinemaMetadata[src as keyof typeof asciinemaMetadata];
+if (!metadata) throw new Error(`Metadata not found for ${src}`);
+
+const CH = 9.6; // px
+const PLAYER_CANVAS_BORDER_WIDTH = 0.75; // em
+const LINE_HEIGHT = 1.3333333333; // em
+const PLAYER_BAR_HEIGHT = 32; // px
+const FONT_SIZE = 16; // px
+
+const width = metadata.cols * CH + PLAYER_CANVAS_BORDER_WIDTH * FONT_SIZE * 2;
+const height =
+  metadata.rows * LINE_HEIGHT * FONT_SIZE +
+  PLAYER_CANVAS_BORDER_WIDTH * FONT_SIZE * 2 +
+  PLAYER_BAR_HEIGHT;
+
+const options = {
+  ...optionsProp,
+  terminalLineHeight: LINE_HEIGHT,
+};
+---
+
+<asciinema-player
+  class="asciinema-player"
+  data-src={src}
+  data-options={JSON.stringify(options)}
+  style={{
+    "--asciinema-border-width": `${PLAYER_CANVAS_BORDER_WIDTH}em`,
+    "aspect-ratio": `${width} / ${height}`,
+  }}
+>
+</asciinema-player>
+
+<script>
+  import * as AsciinemaPlayer from "asciinema-player";
+
+  class Asciinema extends HTMLElement {
+    connectedCallback() {
+      const { src } = this.dataset;
+      if (!src) return;
+
+      document.fonts.load("1em 'JetBrains Mono Variable'").then(() => {
+        AsciinemaPlayer.create(src, this, {
+          ...this.#options(),
+          theme: "alumnium",
+          preload: true,
+        });
+      });
+    }
+
+    #options(): AsciinemaPlayer.PlayerOptions {
+      const { options } = this.dataset;
+      if (!options) return {};
+      try {
+        return JSON.parse(options);
+      } catch {
+        return {};
+      }
+    }
+  }
+
+  customElements.define("asciinema-player", Asciinema);
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .asciinema-player {
+    @apply font-mono block bg-content-dark overflow-hidden;
+  }
+
+  .asciinema-player {
+    & :global(.ap-wrapper) :global(.ap-player) {
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: 0;
+    }
+
+    & :global(.ap-term) {
+      border-width: var(--asciinema-border-width);
+    }
+  }
+
+  :global(.asciinema-player-theme-alumnium) {
+    --term-color-foreground: var(--color-ink-dark);
+    --term-color-background: var(--color-content-dark);
+
+    --term-color-0: #21222c;
+    --term-color-1: #ff5555;
+    --term-color-2: #50fa7b;
+    --term-color-3: #f1fa8c;
+    --term-color-4: #bd93f9;
+    --term-color-5: #ff79c6;
+    --term-color-6: #8be9fd;
+    --term-color-7: #f8f8f2;
+    --term-color-8: #6272a4;
+    --term-color-9: #ff6e6e;
+    --term-color-10: #69ff94;
+    --term-color-11: #ffffa5;
+    --term-color-12: #d6acff;
+    --term-color-13: #ff92df;
+    --term-color-14: #a4ffff;
+    --term-color-15: #ffffff;
+  }
+</style>

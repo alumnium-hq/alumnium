@@ -35,15 +35,10 @@
 
 /* Icons */
 
-@theme {
-  --color-icon-default: 
-;
-}
-
 @utility icon {
   width: var(--icon-size, 1em);
   height: var(--icon-size, 1em);
-  color: var(--color, var(--color-accent-400));
+  color: var(--icon-color, var(--color-accent-400));
   fill: currentColor;
 }
 
@@ -64,6 +59,11 @@
   color: --value(--color-*);
 }
 
+@utility symbol {
+  @apply font-thin font-mono;
+  color: var(--symbol-color, var(--color-accent-400));
+}
+
 /* Pattern */
 
 :root {
@@ -76,20 +76,20 @@
   background-blend-mode: darken;
   background-repeat: repeat;
   background-size: var(--pattern-canvas-size) var(--pattern-canvas-size);
+  background-position: center top;
 }
 
 @utility pattern-canvas-content {
   @apply pattern-canvas;
-  background-position: left top
+  background-position: center top
     calc((var(--sl-nav-height) - var(--pattern-canvas-size)) / -2);
 }
 
 /* Header */
 
 .page > .header {
-  @apply pattern-canvas;
-  border-bottom: none;
-  background-position: left center;
+  @apply pattern-canvas border-b border-transparent;
+  background-position: center center;
 }
 
 /* Social icons */
@@ -188,6 +188,32 @@ starlight-menu-button button {
   --sl-color-accent-low: var(--color-gray-800);
 }
 
+/* Spacing */
+
+@utility col {
+  @apply flex flex-col gap-6 md:gap-10;
+}
+
+@utility col-divide {
+  @apply col divide-y divide-accent-800;
+
+  & > :not(:last-child) {
+    @apply pb-6 md:pb-10;
+  }
+}
+
+@utility col-lg {
+  @apply col gap-10 md:gap-14;
+}
+
+@utility col-divide-lg {
+  @apply col-divide col-lg;
+
+  & > :not(:last-child) {
+    @apply pb-10 md:pb-14;
+  }
+}
+
 /* Content */
 
 @utility content-wrapper {
@@ -206,12 +232,8 @@ starlight-menu-button button {
   @apply w-full max-w-5xl m-auto px-2 pt-5 pb-10 sm:px-10 sm:py-10;
 }
 
-@utility content-inner-md {
-  @apply content-inner max-w-5xl;
-}
-
 @utility content-inner-lg {
-  @apply content-inner max-w-7xl;
+  @apply content-inner max-w-7xl py-10 md:py-14;
 }
 
 /* Footer */
@@ -308,10 +330,7 @@ mobile-starlight-toc {
   --color-del-canvas: #4863b46b;
 
   --color-content-dark: var(--color-gray-900);
-  --color-del-content-dark: #0f1529;
-
   --color-content-light: var(--color-gray-50);
-  --color-del-content-light: #bfc3cf;
 
   --color-header: var(--sl-color-white);
 

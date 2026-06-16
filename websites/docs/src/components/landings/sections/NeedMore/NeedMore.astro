@@ -1,17 +1,22 @@
 ---
 import { tt } from "#/copy";
 import Section from "../../blocks/Section.astro";
+import ActiveCommunity from "./ActiveCommunity.astro";
 import ByExperts from "./ByExperts.astro";
 import OpenSource from "./OpenSource.astro";
-import { Home, Settings } from "@material-symbols-svg/astro/w200";
+import SupportedBy from "./SupportedBy.astro";
 
 const t = tt.landings.sections.needMore.en;
 ---
 
 <div class="bento bento-col-2">
-  <Section h="2" t={t} span="2" style="header" />
+  <Section heading={{ h: "2", align: true }} t={t} span="2" style="header" />
 
   <OpenSource />
 
   <ByExperts />
+
+  <ActiveCommunity />
+
+  <SupportedBy />
 </div>

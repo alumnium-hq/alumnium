@@ -6,6 +6,8 @@ export interface Props {
 const { supersections } = Astro.props;
 ---
 
+<div class="sections-nav-sentinel"></div>
+
 <nav id="sections-nav">
   <div class="wrapper">
     <div class="inner">
@@ -123,20 +125,41 @@ const { supersections } = Astro.props;
 
   //#region Stuck state
 
+  const sentinelEl = prevSibling(navEl, ".sections-nav-sentinel");
+  if (!sentinelEl) throw new Error("Sections nav sentinel element not found");
+
   const observer = new IntersectionObserver(
-    ([e]) => e.target.classList.toggle("has-stuck", e.intersectionRatio < 1),
-    { threshold: 1 },
+    ([e]) => navEl.classList.toggle("has-stuck", e.intersectionRatio < 1),
+    { root: null, threshold: 1 },
   );
-  observer.observe(navEl);
+  observer.observe(sentinelEl);
 
   //#endregion
+
+  function prevSibling(element: Element, selector: string) {
+    let sibling = element.previousElementSibling;
+
+    while (sibling) {
+      if (sibling.matches(selector)) return sibling;
+      sibling = sibling.previousElementSibling;
+    }
+
+    return null;
+  }
 </script>
 
 <style>
   @reference "#/styles/global.css";
 
   nav {
-    @apply sticky z-30;
+    @apply sticky z-40 pointer-events-none border-t border-t-accent-600 border-b border-b-accent-600;
+    top: calc(var(--sl-nav-height) - 2px);
+  }
+
+  .sections-nav-sentinel {
+    @apply pointer-events-none invisible;
+    height: var(--sl-nav-height);
+    margin-top: calc(-1 * var(--sl-nav-height) + 1px);
   }
 
   .wrapper {
@@ -157,16 +180,9 @@ const { supersections } = Astro.props;
 
   nav:global(.has-stuck) {
     & .wrapper {
-      @apply mt-px py-3 border-t border-accent-800;
+      @apply mt-px py-0 flex items-center;
+      height: var(--landing-nav-height);
     }
-  }
-
-  /* Trick that allows to make the nav intersect with the document top and trigger the intersection observer. */
-
-  nav {
-    @apply -top-px pointer-events-none;
-    margin-top: calc(-1 * var(--sl-nav-height) + 1px);
-    padding-top: var(--sl-nav-height);
   }
 
   .wrapper {

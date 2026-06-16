@@ -1,12 +1,22 @@
 ---
 import { tt } from "#/copy";
+import Accordion from "../blocks/Accordion.astro";
+import Heading from "../blocks/Heading.astro";
 import Section from "../blocks/Section.astro";
 
 const t = tt.landings.sections.faq.en;
 ---
 
 <div class="bento">
-  <Section h="2" t={t}>
-    <div></div>
+  <Section style="compact">
+    <Heading h="2" t={t} align />
+
+    <Accordion
+      items={t.items.map((item) => ({
+        id: item.id,
+        label: item.value.en.question,
+        content: item.value.en.answer,
+      }))}
+    />
   </Section>
 </div>

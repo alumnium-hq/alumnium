@@ -1,0 +1,75 @@
+---
+import type { ImageMetadata } from "astro";
+// NOTE: It's `Comp` as Astro formatter trips on `| A | B` syntax so we need to
+// make it shorter.
+// TODO: Check after upgrading to Rust-based compiler.
+import type { AstroComponentFactory as Comp } from "astro/runtime/server/index.js";
+
+type Props = IconProps;
+
+export type IconProps = IconPropsDirect | IconPropsProp;
+
+export type IconPropsDirect<Extra = {}> = (IconPropsId | IconPropsComponent) &
+  Extra;
+
+export type IconProp<Extra = {}> = string | Comp | IconPropsDirect<Extra>;
+
+export interface IconPropsProp {
+  prop: IconProp;
+}
+
+export interface IconPropsComponent extends IconPropsBase {
+  Factory: Comp;
+}
+
+export interface IconPropsId extends IconPropsBase {
+  id: string;
+}
+
+export interface IconPropsBase {
+  class?: string;
+}
+
+// NOTE: To avoid load compilation times, each used icon id must be listed
+// inside `{...}.svg`.
+// TODO: Test the performance after Astro upgrades to the Rolldown-powered
+// Vite version.
+const icons = import.meta.glob<{ default: ImageMetadata }>(
+  "../../node_modules/@material-symbols/svg-100/rounded/{savings,avg_pace,air,check,close,chevron_right,add_2}.svg",
+);
+
+let classList: string[] = [];
+if ("class" in Astro.props) {
+  const { class: className } = Astro.props;
+  if (className) classList.push(className);
+}
+
+let directProps: IconPropsDirect;
+if ("prop" in Astro.props) {
+  const { prop } = Astro.props;
+  if (typeof prop === "string") {
+    directProps = { id: prop };
+  } else if (typeof prop === "function") {
+    directProps = { Factory: prop };
+  } else {
+    directProps = prop;
+  }
+} else {
+  directProps = Astro.props;
+}
+
+let IconFactory: Comp;
+if ("id" in directProps) {
+  const { id } = directProps;
+  const iconFilePath = `../../node_modules/@material-symbols/svg-100/rounded/${id}.svg`;
+  const iconPath = icons[iconFilePath];
+  if (!iconPath)
+    throw new Error(`Icon ${id} has not been found at ${iconFilePath}`);
+
+  IconFactory = await iconPath().then((m) => m.default as unknown as Comp);
+} else {
+  IconFactory = directProps.Factory;
+}
+---
+
+<IconFactory class:list={["icon", ...classList]} />

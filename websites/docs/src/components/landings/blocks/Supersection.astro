@@ -1,18 +1,33 @@
 ---
+import DecorationLine from "./DecorationLine.astro";
+
 export interface Props {
   id?: string;
-  solid?: boolean;
+  shaded?: boolean;
+  bg?: "shaded" | "highlighted";
+  edge?: "top" | "bottom" | false;
 }
 
-const { id, solid } = Astro.props;
+const { id, shaded, bg, edge } = Astro.props;
 ---
 
-<landing-supersection id={id}>
+<landing-supersection id={id} class="supersection-wrapper">
+  <DecorationLine edge={!!edge} />
+
   <div data-sentinel="top"></div>
 
-  <div class:list={["supersection", solid && "supersection-solid"]}>
+  <div
+    class:list={[
+      "supersection",
+      shaded && "is-shaded",
+      bg === "shaded" && "is-shaded",
+      bg === "highlighted" && "is-highlighted",
+    ]}
+  >
     <div class="supersection-inner">
-      <slot />
+      <div class="supersection-content">
+        <slot />
+      </div>
     </div>
   </div>
 
@@ -88,7 +103,7 @@ const { id, solid } = Astro.props;
 <style>
   @reference "#/styles/global.css";
 
-  landing-supersection {
+  .supersection-wrapper {
     @apply block relative;
   }
 

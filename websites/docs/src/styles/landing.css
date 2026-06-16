@@ -2,7 +2,10 @@
 
 @layer components {
   .landing {
-    @apply text-ink-dark pattern-canvas-content h-full divide-y divide-accent-600 flex flex-col;
+    --landing-nav-height: 3.25rem;
+
+    @apply text-ink-dark pattern-canvas-content h-full flex flex-col;
+    /* @apply text-ink-dark pattern-canvas-content h-full divide-y divide-accent-600 flex flex-col; */
 
     & h1,
     & h2,
@@ -30,7 +33,7 @@
     }
 
     & .subheadline {
-      @apply text-accent-400;
+      @apply text-accent-400 max-w-3xl;
     }
 
     & .kicker {
@@ -38,7 +41,7 @@
     }
 
     & .heading {
-      @apply flex flex-col;
+      @apply content-wrapper-md flex flex-col;
 
       & h1,
       & h2 {
@@ -57,6 +60,10 @@
 
       & h2 {
         @apply text-2xl md:text-3xl;
+      }
+
+      &.heading-enlarge h2 {
+        @apply text-2xl md:text-4xl;
       }
 
       &:has(h2) {
@@ -89,22 +96,18 @@
 
       & h4,
       & h5 {
-        @apply text-accent-300;
-
-        & + .copy {
-          @apply text-accent-400;
-        }
+        @apply text-accent-200;
       }
 
       & h4 {
-        @apply text-lg;
+        @apply text-base;
       }
 
       &:has(h4) {
         @apply gap-0.5;
 
         & + .copy {
-          @apply gap-3;
+          @apply gap-3 text-accent-400;
         }
       }
 
@@ -116,13 +119,17 @@
         @apply gap-0.5;
 
         & + .copy {
-          @apply gap-3 text-sm;
+          @apply gap-3 text-sm text-accent-400;
         }
       }
     }
 
+    & .heading-align {
+      @apply text-center items-center;
+    }
+
     & .copy {
-      @apply text-accent-300 flex flex-col;
+      @apply text-accent-300 flex flex-col gap-2;
     }
 
     & a {
@@ -133,40 +140,76 @@
       }
     }
 
-    & .supersection {
-      --padding-x: calc(var(--spacing) * 10);
-      --padding-y: calc(var(--spacing) * 25);
-      --background: transparent;
+    & .supersections {
+      --section-padding-x: calc(var(--spacing) * 10);
+      --section-padding-y: calc(var(--spacing) * 15);
+      --edge-padding-multiplier: 3;
+      --section-overlay-bg: transparent;
 
-      &.supersection-solid {
-        --background: var(--color-content-dark);
+      @apply relative;
+    }
+
+    & .supersections.is-shaded,
+    & .supersection.is-shaded {
+      --section-overlay-bg: color-mix(
+        in srgb,
+        var(--color-content-dark),
+        transparent 80%
+      );
+    }
+
+    & .supersection {
+      &.is-shaded {
+        --section-overlay-bg: color-mix(
+          in srgb,
+          var(--color-content-dark),
+          transparent 80%
+        );
+      }
+
+      /* &.is-shaded {
+        @apply bg-accent-950/40;
+      } */
+
+      &.is-highlighted {
+        @apply bg-accent-800/50;
       }
     }
 
+    & .supersections,
     & .supersection,
     & .supersection-inner {
       &:before,
       &:after {
         @apply block grow;
         content: "";
-        background: var(--background);
+        background: var(--section-overlay-bg);
       }
     }
 
+    & .supersections,
     & .supersection {
       &:before,
       &:after {
-        height: var(--padding-y);
+        height: var(--section-padding-y);
       }
     }
 
     & .supersection-inner {
-      display: flex;
+      @apply flex;
 
       &:before,
       &:after {
-        min-width: var(--padding-x);
+        min-width: var(--section-padding-x);
       }
+    }
+
+    & .supersection-content {
+      @apply grow flex flex-col gap-12 content-wrapper-lg;
+    }
+
+    & .supersection-heading {
+      @apply flex flex-col items-center text-center;
     }
 
     & .section-wrapper {
@@ -174,7 +217,7 @@
     }
 
     & .section {
-      @apply grid relative px-4 md:px-6 lg:px-16;
+      @apply grid gap-10 relative px-4 md:px-6 lg:px-16 items-start;
 
       &:not(.section-header) {
         @apply py-8 md:py-10 lg:py-25;
@@ -188,12 +231,20 @@
         @apply py-4 md:py-6 lg:py-16;
       }
 
-      &.section-col-1 {
-        @apply gap-6;
+      &.section-align {
+        @apply justify-center items-center;
       }
 
-      &.section-col-2 {
+      &.section-cols-2 {
         @apply gap-10 sm:grid-cols-2;
+      }
+    }
+
+    & .section-content {
+      @apply flex flex-col;
+
+      &:has(.heading h4) {
+        @apply gap-2 text-accent-400;
       }
     }
 
@@ -244,5 +295,11 @@
         }
       }
     }
+  }
+}
+
+.page:has(.landing) {
+  & > .header.has-stuck {
+    @apply border-accent-600;
   }
 }

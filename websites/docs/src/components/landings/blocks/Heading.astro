@@ -2,26 +2,36 @@
 import { tt } from "#/copy";
 
 export interface Props {
-  h: "1" | "2" | "3";
+  h: "1" | "2" | "3" | "4";
   t: {
-    kicker?: string;
-    headline: string;
-    subheadline?: string;
+    kicker?: string | undefined;
+    headline?: string | undefined;
+    subheadline?: string | undefined;
   };
+  align?: boolean;
+  enlarge?: boolean;
 }
 
 const {
   h,
   t: { kicker, headline, subheadline },
+  align,
+  enlarge,
 } = Astro.props;
 
 const H = `h${h}`;
 ---
 
-<div class="heading">
+<div
+  class:list={[
+    "heading",
+    align && "heading-align",
+    enlarge && "heading-enlarge",
+  ]}
+>
   {kicker && <p class="kicker">{kicker}</p>}
 
-  <H set:html={tt.md(headline, true)} />
+  {headline && <H set:html={tt.md(headline, true)} />}
 
   {subheadline && <p class="subheadline">{subheadline}</p>}
 </div>

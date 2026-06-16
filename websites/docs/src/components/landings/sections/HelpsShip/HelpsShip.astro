@@ -9,8 +9,16 @@ import SameTestsForAllPlatforms from "./SameTestsForAllPlatforms.astro";
 const t = tt.landings.sections.helpsShip.en;
 ---
 
+<!-- <div class="supersection-heading">
+  <Heading h="2" t={t} enlarge />
+</div> -->
 <div class="bento bento-col-2">
-  <Section h="2" t={t} span="2" style="header" />
+  <Section
+    heading={{ h: "2", align: true, enlarge: true }}
+    t={t}
+    span="2"
+    style="header"
+  />
 
   <NaturalLanguageTests />
 

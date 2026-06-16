@@ -1,0 +1,216 @@
+---
+import githubMetadata from "#/data/github/metadata.json";
+
+export interface Props {
+  limit?: number;
+  rows?: number;
+  stagger?: "even" | "odd";
+}
+
+const { limit, rows, stagger } = Astro.props;
+
+const MIN_CONTRIBUTORS = 40;
+
+const contributors = githubMetadata.contributors
+  .toSorted((a, b) => b.contributions - a.contributions)
+  .slice(0, limit);
+const placeholdersCount = Math.max(0, MIN_CONTRIBUTORS - contributors.length);
+const rowsStyle = rows ? `--rows: ${rows};` : undefined;
+---
+
+<github-contributors
+  data-limit={limit}
+  data-rows={rows}
+  data-stagger={stagger}
+  style={rowsStyle}
+>
+  {
+    contributors.map((contributor) => (
+      <img
+        src={contributor.avatarUrl}
+        alt={`@${contributor.username} avatar`}
+        title={`@${contributor.username}`}
+        loading="lazy"
+      />
+    ))
+  }
+
+  {
+    Array.from({ length: placeholdersCount }, () => (
+      <span class="contributor-placeholder" aria-hidden="true" />
+    ))
+  }
+
+  <template data-contributor-template>
+    <img loading="lazy" />
+  </template>
+</github-contributors>
+
+<script>
+  import { GitHubData } from "#/data/github";
+
+  const MIN_CONTRIBUTORS = 40;
+
+  class GitHubContributors extends HTMLElement {
+    static #contributorsPromise: Promise<GitHubData.Contributor[]> | undefined;
+
+    #resizeObserver: ResizeObserver | undefined;
+
+    connectedCallback() {
+      this.#resizeObserver = new ResizeObserver(() => this.#stagger());
+      this.#resizeObserver.observe(this);
+      this.#stagger();
+
+      GitHubContributors.#contributorsPromise ??=
+        GitHubData.fetchContributors();
+      GitHubContributors.#contributorsPromise
+        .then((contributors) => {
+          this.#render(contributors.slice(0, this.#limit()));
+        })
+        .catch(() => {});
+    }
+
+    disconnectedCallback() {
+      this.#resizeObserver?.disconnect();
+    }
+
+    #limit(): number | undefined {
+      const { limit } = this.dataset;
+      if (!limit) return;
+
+      const parsed = Number(limit);
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+    }
+
+    #staggerMode(): "even" | "odd" | undefined {
+      const { stagger } = this.dataset;
+      return stagger === "even" || stagger === "odd" ? stagger : undefined;
+    }
+
+    #render(contributors: GitHubData.Contributor[]) {
+      const template = this.querySelector(
+        "template[data-contributor-template]",
+      );
+      if (!(template instanceof HTMLTemplateElement)) return;
+
+      const avatars = contributors.map((contributor) => {
+        const img = template.content.firstElementChild?.cloneNode();
+        if (!(img instanceof HTMLImageElement)) {
+          throw new Error("GitHub contributor template must contain an image");
+        }
+
+        img.src = contributor.avatarUrl;
+        img.alt = `@${contributor.username} avatar`;
+        img.title = `@${contributor.username}`;
+        return img;
+      });
+
+      this.replaceChildren(...avatars, template);
+      this.#fillPlaceholders(contributors.length);
+      this.#stagger();
+    }
+
+    #fillPlaceholders(contributorsCount: number) {
+      const placeholders = Array.from(
+        { length: Math.max(0, MIN_CONTRIBUTORS - contributorsCount) },
+        () => {
+          const placeholder = document.createElement("span");
+          placeholder.className = "contributor-placeholder";
+          placeholder.ariaHidden = "true";
+          return placeholder;
+        },
+      );
+
+      const template = this.querySelector(
+        "template[data-contributor-template]",
+      );
+      if (!(template instanceof HTMLTemplateElement)) return;
+
+      template.before(...placeholders);
+    }
+
+    #stagger() {
+      const items = [
+        ...this.querySelectorAll<HTMLElement>(
+          ":scope > img, :scope > .contributor-placeholder",
+        ),
+      ];
+      const firstItem = items[0];
+      if (!firstItem) return;
+
+      items.forEach((item) => {
+        item.style.marginLeft = "";
+      });
+
+      const staggerMode = this.#staggerMode();
+      if (!staggerMode) return;
+
+      const containerWidth = this.clientWidth;
+      const itemWidth = firstItem.offsetWidth;
+      if (!containerWidth || !itemWidth) return;
+
+      const columnGap = parseFloat(getComputedStyle(this).columnGap) || 0;
+      const itemPitch = itemWidth + columnGap;
+      const stagger = itemPitch / 2;
+      const rowSize = Math.max(
+        1,
+        Math.floor((containerWidth + columnGap) / itemPitch),
+      );
+      const staggeredRowSize = Math.max(
+        1,
+        Math.floor((containerWidth - stagger + columnGap) / itemPitch),
+      );
+
+      let itemIndex = 0;
+      let rowIndex = 0;
+      while (itemIndex < items.length) {
+        const isStaggeredRow =
+          staggerMode === "even" ? rowIndex % 2 === 0 : rowIndex % 2 === 1;
+        const rowItem = items[itemIndex];
+
+        if (isStaggeredRow && rowItem) {
+          rowItem.style.marginLeft = `${stagger}px`;
+        }
+
+        itemIndex += isStaggeredRow ? staggeredRowSize : rowSize;
+        rowIndex++;
+      }
+    }
+  }
+
+  if (!customElements.get("github-contributors")) {
+    customElements.define("github-contributors", GitHubContributors);
+  }
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  github-contributors {
+    --gap: 0.5rem;
+    --size: 3rem;
+
+    @apply flex flex-wrap;
+    gap: var(--gap);
+
+    &[data-rows] {
+      @apply overflow-hidden;
+      max-height: calc(
+        var(--rows) * var(--size) + (var(--rows) - 1) * var(--gap)
+      );
+      mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        black 40%,
+        transparent 100%
+      );
+    }
+
+    & img,
+    & :global(.contributor-placeholder) {
+      @apply rounded-full bg-accent-600/40 shrink-0 opacity-75;
+      width: var(--size);
+      height: var(--size);
+    }
+  }
+</style>

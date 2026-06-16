@@ -1,15 +1,33 @@
 export namespace I18n {
-  export type Lang = "en";
+  export type LangCode = (typeof langCodes)[number];
 
-  export type LangsMap<Snippets> = {
-    [Lang_ in Exclude<Lang, "en">]: Snippets;
+  export type LangsMap<Value> = {
+    [Lang_ in Exclude<LangCode, "en">]: Value;
+  };
+
+  export type FullLangsMap<Value> = {
+    [Code in LangCode]: Value;
   };
 }
 
-export function langs<Snippets>(
-  // NOTE: `{ en: Snippets } & ` allows to use en as the reference type
+export const langCodes = ["en"] as const;
+
+export function langs<Value>(
+  // NOTE: `{ en: Value } & ` allows to use en as the reference type
   // and force all other languages to have the same structure.
-  obj: { en: Snippets } & I18n.LangsMap<NoInfer<Snippets>>,
+  obj: { en: Value } & I18n.LangsMap<NoInfer<Value>>,
 ) {
   return obj;
+}
+
+export function anyLang<Value>(value: Value): I18n.FullLangsMap<Value> {
+  return new Proxy(
+    {},
+    {
+      get(target, prop) {
+        if (langCodes.includes(prop as I18n.LangCode)) return value;
+        return Reflect.get(target, prop);
+      },
+    },
+  ) as I18n.FullLangsMap<Value>;
 }

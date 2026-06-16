@@ -1,0 +1,116 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import webvoyagerData from "../../../../data/webvoyager.json";
+import AlumniumLogo from "../../../../assets/favicon-mono.svg";
+import BrowserUseLogo from "../../../../assets/logos/browser-agent-browser-use-mono.svg";
+import OpenAiLogo from "../../../../assets/logos/ai-openai-mono.svg";
+import AnthropicLogo from "../../../../assets/logos/ai-claude-mono.svg";
+import GoogleLogo from "../../../../assets/logos/company-google-mono.svg";
+import ZaiLogo from "../../../../assets/logos/company-zai-mono.svg";
+import type { SvgComponent } from "astro/types";
+
+const t = tt.landings.sections.sota.en;
+
+const keepNames = [
+  "Alumnium",
+  "Browser Use",
+  "Operator",
+  "Project Mariner",
+  "GLM-5V-Turbo",
+  "Anthropic Computer Use 3.5",
+];
+
+const renames: Record<string, string> = {
+  "Anthropic Computer Use 3.5": "Computer Use 3.5",
+};
+
+const filteredData = webvoyagerData.webvoyager.filter((entry) =>
+  keepNames.includes(entry.systemName),
+);
+
+const logosMap: Record<string, SvgComponent & ImageMetadata> = {
+  Alumnium: AlumniumLogo,
+  "Browser Use": BrowserUseLogo,
+  OpenAI: OpenAiLogo,
+  Google: GoogleLogo,
+  Anthropic: AnthropicLogo,
+  "Z.ai": ZaiLogo,
+};
+---
+
+<Section heading={{ h: "2" }} t={t} cols="2">
+  <div class="flex flex-col gap-5 justify-center">
+    <div class="leaderboard flex flex-col gap-4">
+      {
+        filteredData.map((entry) => {
+          const sota = entry.rank === 1;
+          const Logo = logosMap[entry.organization];
+          return (
+            <div
+              class:list={[
+                "flex flex-col gap-2 font-mono",
+                sota && "font-bold",
+              ]}
+            >
+              <div class="flex items-center justify-between">
+                <div
+                  class:list={[
+                    "leading-none text-sm font-medium capsize",
+                    sota ? "text-accent-100 font-bold" : "text-accent-300",
+                  ]}
+                >
+                  <span class="text-accent-500">#{entry.rank}</span>
+                  {renames[entry.systemName] || entry.systemName}
+                </div>
+
+                <div class="flex items-center gap-2 text-accent-400 leading-none text-sm">
+                  {Logo && <Logo class="size-[1em] opacity-60" />}
+                  <span class="leading-none capsize">{entry.organization}</span>
+                </div>
+              </div>
+
+              <div class="relative bg-accent-600/30 rounded-xl px-3 py-2 overflow-hidden">
+                <div
+                  class:list={[
+                    "absolute left-0 top-0 bottom-0",
+                    sota ? "bg-accent-600" : "bg-accent-600/60",
+                  ]}
+                  style={{ width: `${entry.scoreValue}%` }}
+                />
+
+                <div class="leading-none text-sm relative capsize">
+                  {entry.scoreDisplay}
+                </div>
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <div class="text-center">
+      <a
+        class="inline-block px-4 py-1 text-sm rounded-sm text-accent-200 bg-accent-700 hover:bg-accent-600 cursor-pointer font-medium no-underline"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://leaderboard.steel.dev/leaderboards/webvoyager"
+      >
+        {t.leaderboardViewAll}
+      </a>
+    </div>
+  </div>
+</Section>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .leaderboard.is-full {
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  }
+
+  .entry {
+    @apply flex;
+  }
+</style>
