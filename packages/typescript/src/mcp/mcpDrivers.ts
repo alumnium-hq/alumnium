@@ -39,6 +39,12 @@ export namespace McpDriver {
     headless?: boolean;
     permissions?: string[];
     profileDir?: string;
+    proxy?: {
+      server: string;
+      bypass?: string;
+      username?: string;
+      password?: string;
+    };
     userAgent?: string;
   }
 
@@ -79,6 +85,7 @@ export async function createPlaywrightDriver(
     headers = {},
     permissions,
     profileDir,
+    proxy,
     userAgent,
   } = driverOptions;
 
@@ -100,12 +107,14 @@ export async function createPlaywrightDriver(
       recordVideo: { dir: videosDir },
       extraHTTPHeaders: headers,
       ...(executablePath ? { executablePath } : {}),
+      ...(proxy ? { proxy } : {}),
       ...(userAgent ? { userAgent } : {}),
     });
   } else {
     const browser = await chromium.launch({
       headless,
       ...(executablePath ? { executablePath } : {}),
+      ...(proxy ? { proxy } : {}),
     });
     context = await browser.newContext({
       recordVideo: { dir: videosDir },
