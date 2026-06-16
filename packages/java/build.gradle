@@ -10,7 +10,7 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'maven-publish'
-    id 'com.vanniktech.maven.publish' version '0.30.0'
+    id 'com.vanniktech.maven.publish' version '0.36.0'
     id 'com.diffplug.spotless' version '8.5.1'
 }
 
@@ -49,12 +49,12 @@ spotless {
 }
 
 ext {
-    jacksonVersion = '2.18.2'
-    seleniumVersion = '4.27.0'
-    playwrightVersion = '1.60.0'
     appiumVersion = '9.3.0'
-    junitVersion = '5.11.4'
     assertjVersion = '3.26.3'
+    jacksonVersion = '2.18.2'
+    junitVersion = '5.11.4'
+    playwrightVersion = '1.60.0'
+    seleniumVersion = '4.27.0'
     slf4jVersion = '2.0.16'
 }
 
@@ -117,7 +117,7 @@ testing {
 }
 
 mavenPublishing {
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, true)
+    publishToMavenCentral(true)
     signAllPublications()
 
     coordinates('ai.alumnium', 'alumnium', project.version.toString())
