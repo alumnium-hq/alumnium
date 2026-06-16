@@ -100,10 +100,8 @@ public class BaseTest {
     }
 
     AndroidDriver driver = new AndroidDriver(appiumUrl(), options);
-    if (!IS_LAMBDA_TEST) {
-      driver.setSettings(
-          Map.<String, Object>of("allowInvisibleElements", true, "ignoreUnimportantViews", true));
-    }
+    driver.setSettings(
+        Map.<String, Object>of("allowInvisibleElements", true, "ignoreUnimportantViews", true));
     return driver;
   }
 

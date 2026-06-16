@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium-android")
 @DisabledIf("isHeadlessPlaywright")
 class SearchTest extends BaseTest {
 

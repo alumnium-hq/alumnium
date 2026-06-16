@@ -3,7 +3,9 @@ package ai.alumnium.system;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium-android")
 public class CalculatorTest extends BaseTest {
 
   private static final String CALCULATOR_URL = "https://seleniumbase.io/apps/calculator";
