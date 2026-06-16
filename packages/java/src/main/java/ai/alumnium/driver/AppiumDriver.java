@@ -16,6 +16,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Set;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
@@ -38,6 +39,10 @@ public final class AppiumDriver extends BaseDriver {
 
   private static final Logger LOG = LoggerFactory.getLogger(AppiumDriver.class);
 
+  private static final String WAITER_SCRIPT = loadScript("/ai/alumnium/driver/scripts/waiter.js");
+  private static final String WAIT_FOR_SCRIPT =
+      loadScript("/ai/alumnium/driver/scripts/waitFor.js");
+
   public enum Platform {
     UIAUTOMATOR2,
     XCUITEST
@@ -49,6 +54,8 @@ public final class AppiumDriver extends BaseDriver {
   public double delay = Config.DELAY;
   public boolean hideKeyboardAfterTyping = false;
   public boolean doubleFetchPageSource = false;
+  // Cached positive detection of a web context (WEBVIEW_*/CHROMIUM). Null until first checked.
+  private Boolean sessionHasWebContext = null;
   public final Set<Class<? extends BaseTool>> supportedTools =
       Set.of(ClickTool.class, DragAndDropTool.class, PressKeyTool.class, TypeTool.class);
 
@@ -74,6 +81,7 @@ public final class AppiumDriver extends BaseDriver {
 
   @Override
   public BaseAccessibilityTree accessibilityTree() {
+    waitForWebPageToLoad();
     ensureNativeContext();
     sleep(delay);
     if (doubleFetchPageSource) {
@@ -264,11 +272,58 @@ public final class AppiumDriver extends BaseDriver {
     var contexts = new java.util.ArrayList<>(switcher.getContextHandles());
     for (int i = contexts.size() - 1; i >= 0; i--) {
       String ctx = contexts.get(i);
-      if (ctx.contains("WEBVIEW")) {
+      if (isWebContext(ctx)) {
         switcher.context(ctx);
         return;
       }
     }
+  }
+
+  // Hybrid apps expose web contexts as WEBVIEW_<package>; Chrome browser sessions expose a single
+  // context named CHROMIUM. Anything other than the native context is a web view we can drive.
+  private static boolean isWebContext(String context) {
+    return context != null && !"NATIVE_APP".equals(context);
+  }
+
+  /**
+   * For browser / hybrid sessions, switch to the web context and block until the page has
+   * stabilized (load complete, network idle, DOM settled) using the shared waiter script, before
+   * the native accessibility tree is captured. Native-only sessions are skipped, and timeouts fall
+   * through gracefully so a tree is always returned.
+   */
+  private void waitForWebPageToLoad() {
+    if (!autoswitchContexts || !hasWebContext()) return;
+    ensureWebviewContext();
+    try {
+      runWaiter();
+    } catch (RuntimeException first) {
+      // Retry once, mirroring the Selenium/Playwright drivers.
+      try {
+        runWaiter();
+      } catch (RuntimeException retry) {
+        LOG.debug("Failed to wait for web page to stabilize after retry", retry);
+      }
+    }
+  }
+
+  private void runWaiter() {
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript(WAITER_SCRIPT);
+    Object error = js.executeAsyncScript(WAIT_FOR_SCRIPT);
+    if (error != null) {
+      LOG.debug("Web page did not stabilize: {}", error);
+    }
+  }
+
+  private boolean hasWebContext() {
+    // Cache positive detection only: a web context can appear after the first capture (hybrid
+    // apps), but never disappears once present.
+    if (sessionHasWebContext == null || !sessionHasWebContext) {
+      var switcher = (SupportsContextSwitching) driver;
+      sessionHasWebContext =
+          switcher.getContextHandles().stream().anyMatch(AppiumDriver::isWebContext);
+    }
+    return sessionHasWebContext;
   }
 
   private void scrollIntoView(WebElement element) {
