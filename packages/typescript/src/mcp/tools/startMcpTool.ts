@@ -60,7 +60,7 @@ export const startMcpTool = McpTool.define("start", {
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
             - "planner" (boolean) — enable/disable planner agent;
             - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal";
-            - "proxy" (object) — HTTP/HTTPS proxy server, Playwright only, e.g. {"server": "http://proxy.example.com:8080"};
+            - "proxy" (string) — HTTP/HTTPS proxy server URL, Playwright only, e.g. "http://proxy.example.com:8080";
             - "userAgent" (string) — custom User-Agent header sent with every request, Playwright only.
 
           Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc", "profile": "work"}}'.
@@ -176,13 +176,9 @@ export const startMcpTool = McpTool.define("start", {
       ...(typeof alumniumOptions["userAgent"] === "string" && {
         userAgent: alumniumOptions["userAgent"],
       }),
-      ...(typeof alumniumOptions["proxy"] === "object" &&
-        alumniumOptions["proxy"] !== null &&
-        typeof (alumniumOptions["proxy"] as Record<string, unknown>)[
-          "server"
-        ] === "string" && {
-          proxy: alumniumOptions["proxy"] as { server: string },
-        }),
+      ...(typeof alumniumOptions["proxy"] === "string" && {
+        proxy: alumniumOptions["proxy"],
+      }),
     };
 
     const alumniumOptionsNonDriverKeys = new Set([
