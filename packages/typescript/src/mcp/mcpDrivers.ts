@@ -169,6 +169,8 @@ export async function createSeleniumDriver(
     headers = {},
     headless = false,
     profileDir,
+    proxy,
+    userAgent,
   } = driverOptions;
 
   const chromeOptions = new Options();
@@ -191,6 +193,17 @@ export async function createSeleniumDriver(
 
   if (headless) {
     chromeOptions.addArguments("--headless=new");
+  }
+
+  if (proxy) {
+    chromeOptions.addArguments(`--proxy-server=${proxy.server}`);
+    if (proxy.bypass) {
+      chromeOptions.addArguments(`--proxy-bypass-list=${proxy.bypass}`);
+    }
+  }
+
+  if (userAgent) {
+    chromeOptions.addArguments(`--user-agent=${userAgent}`);
   }
 
   // Apply all capabilities to options.
