@@ -39,7 +39,12 @@ export namespace McpDriver {
     headless?: boolean;
     permissions?: string[];
     profileDir?: string;
-    proxy?: { server: string; bypass?: string; username?: string; password?: string };
+    proxy?: {
+      server: string;
+      bypass?: string;
+      username?: string;
+      password?: string;
+    };
     userAgent?: string;
   }
 
