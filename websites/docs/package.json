@@ -16,7 +16,7 @@
     "@astrojs/starlight-tailwind": "5.0.0",
     "@fontsource-variable/mona-sans": "^5.2.8",
     "@fontsource/monaspace-neon": "^5.2.5",
-    "astro": "6.3.3",
+    "astro": "6.4.6",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.3.0"
   },
