@@ -1,0 +1,696 @@
+<decoration-atom-1-6 class="decoration-atom" aria-hidden="true">
+  <canvas></canvas>
+</decoration-atom-1-6>
+
+<script>
+  import PicoGL, {
+    type App,
+    type DrawCall,
+    type Program,
+    type VertexArray,
+    type VertexBuffer,
+  } from "picogl";
+
+  type Mat4 = Float32Array;
+  type Vec3 = [number, number, number];
+
+  interface Particle {
+    kind: "proton" | "neutron";
+    position: Vec3;
+  }
+
+  interface Shell {
+    electrons: number;
+    duration: number;
+    radius: number;
+    rotateX: number;
+    rotateZ: number;
+  }
+
+  interface ElectronMotion {
+    phase: number;
+    speed: number;
+  }
+
+  interface SphereMesh {
+    indexBuffer: VertexBuffer;
+    normalBuffer: VertexBuffer;
+    positionBuffer: VertexBuffer;
+    vertexArray: VertexArray;
+    vertexCount: number;
+  }
+
+  interface OrbitMesh {
+    positionBuffer: VertexBuffer;
+    vertexArray: VertexArray;
+    vertexCount: number;
+  }
+
+  interface ProgramInfo {
+    drawCall: DrawCall;
+    program: Program;
+  }
+
+  const atom = {
+    protons: 13,
+    neutrons: 14,
+    nucleusScale: 0.64,
+    shells: [
+      { electrons: 2, duration: 5, radius: 3.35, rotateX: 66, rotateZ: -18 },
+      { electrons: 8, duration: 8, radius: 5.95, rotateX: 72, rotateZ: 54 },
+      { electrons: 3, duration: 11, radius: 8.55, rotateX: 64, rotateZ: 132 },
+    ] satisfies Shell[],
+  };
+
+  const nucleus = createNucleus(atom.protons, atom.neutrons);
+  const shells = atom.shells;
+  const shellElectronMotions = shells.map((shell, shellIndex) =>
+    createElectronMotions(shellIndex, shell.electrons),
+  );
+  const maxShellRadius = Math.max(...shells.map((shell) => shell.radius));
+  const sceneRadius = maxShellRadius + 0.55;
+  const fieldOfView = deg(40);
+
+  class DecorationAtom16 extends HTMLElement {
+    #frame = 0;
+    #renderer?: ReturnType<typeof createRenderer>;
+    #resizeObserver?: ResizeObserver;
+    #reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    #start = performance.now();
+
+    connectedCallback() {
+      const canvas = this.querySelector("canvas");
+      const gl = canvas?.getContext("webgl2", { alpha: true, antialias: true });
+      if (!canvas || !gl) return;
+
+      this.style.setProperty("--atom-scene-radius", String(sceneRadius));
+      this.#renderer = createRenderer(gl);
+      this.#resizeObserver = new ResizeObserver(() => resizeCanvas(canvas, gl));
+      this.#resizeObserver.observe(this);
+
+      const render = (now: number) => {
+        resizeCanvas(canvas, gl);
+        this.#renderer?.render(
+          this.#reduceMotion.matches ? 0 : (now - this.#start) / 1000,
+          this,
+        );
+        if (this.#reduceMotion.matches) return;
+        this.#frame = requestAnimationFrame(render);
+      };
+
+      this.#frame = requestAnimationFrame(render);
+    }
+
+    disconnectedCallback() {
+      cancelAnimationFrame(this.#frame);
+      this.#resizeObserver?.disconnect();
+      this.#renderer?.dispose();
+    }
+  }
+
+  function createRenderer(gl: WebGL2RenderingContext) {
+    const app = PicoGL.createApp(gl as unknown as HTMLElement)
+      .enable(PicoGL.DEPTH_TEST)
+      .enable(PicoGL.CULL_FACE)
+      .enable(PicoGL.BLEND)
+      .blendFunc(PicoGL.SRC_ALPHA, PicoGL.ONE_MINUS_SRC_ALPHA)
+      .clearColor(0, 0, 0, 0)
+      .clearMask(PicoGL.COLOR_BUFFER_BIT | PicoGL.DEPTH_BUFFER_BIT);
+    const sphere = createSphere(app, 10, 14);
+    const orbit = createOrbit(app, 160);
+    const sphereProgram = createProgramInfo(
+      app,
+      sphereVertexShader,
+      sphereFragmentShader,
+      sphere.vertexArray,
+    );
+    const orbitProgram = createProgramInfo(
+      app,
+      orbitVertexShader,
+      orbitFragmentShader,
+      orbit.vertexArray,
+    );
+    orbitProgram.drawCall.primitive(PicoGL.LINE_LOOP);
+    const light = normalizeVec3([0.35, 0.72, 0.58]);
+
+    return {
+      dispose() {
+        sphere.indexBuffer.delete();
+        sphere.normalBuffer.delete();
+        sphere.positionBuffer.delete();
+        sphere.vertexArray.delete();
+        orbit.positionBuffer.delete();
+        orbit.vertexArray.delete();
+        sphereProgram.program.delete();
+        orbitProgram.program.delete();
+      },
+      render(time: number, host: HTMLElement) {
+        const width = gl.drawingBufferWidth;
+        const height = gl.drawingBufferHeight;
+        const aspect = width / Math.max(height, 1);
+        const cameraDistance = sceneRadius / Math.tan(fieldOfView / 2) * 1.18;
+        const projection = perspective(
+          fieldOfView,
+          aspect,
+          0.1,
+          cameraDistance + sceneRadius * 2,
+        );
+        const view = lookAt([0, 0, cameraDistance], [0, 0, 0], [0, 1, 0]);
+        const viewProjection = multiplyMat4(projection, view);
+        const proton = cssColor(host, "--atom-color-proton", [0.52, 0.78, 1]);
+        const neutron = cssColor(
+          host,
+          "--atom-color-neutron",
+          [0.33, 0.43, 0.58],
+        );
+        const electron = cssColor(
+          host,
+          "--atom-color-electron",
+          [0.92, 0.98, 1],
+        );
+        const orbitColor = cssColor(host, "--atom-color-orbit", [
+          0.36,
+          0.56,
+          0.82,
+        ]);
+        const nucleusSpin = multiplyMat4(
+          rotateY(time * 0.42),
+          multiplyMat4(rotateX(deg(-16) + time * 0.19), rotateZ(time * 0.13)),
+        );
+
+        app.viewport(0, 0, width, height).clear();
+
+        for (const shell of shells) {
+          const model = multiplyMat4(
+            shellTransform(shell),
+            scale([shell.radius, shell.radius, shell.radius]),
+          );
+          drawOrbit(orbitProgram, multiplyMat4(viewProjection, model), [
+            ...orbitColor,
+            0.38,
+          ]);
+        }
+
+        for (const [index, particle] of nucleus.entries()) {
+          const color = particle.kind === "proton" ? proton : neutron;
+          const position = scaleVec3(particle.position, atom.nucleusScale);
+          const model = multiplyMat4(
+            nucleusSpin,
+            multiplyMat4(
+              translate(position),
+              multiplyMat4(
+                rotateY(time * (1.8 + (index % 4) * 0.25)),
+                scale([0.27, 0.27, 0.27]),
+              ),
+            ),
+          );
+          drawSphere(sphereProgram, viewProjection, model, color, light);
+        }
+
+        for (const [shellIndex, shell] of shells.entries()) {
+          for (
+            let electronIndex = 0;
+            electronIndex < shell.electrons;
+            electronIndex++
+          ) {
+            const direction = shellIndex === 1 ? -1 : 1;
+            const motion = shellElectronMotions[shellIndex][electronIndex];
+            const angle =
+              direction *
+                (time / shell.duration) *
+                motion.speed *
+                Math.PI *
+                2 +
+              motion.phase;
+            const position = transformVec3(shellTransform(shell, shell.radius), [
+              Math.cos(angle),
+              Math.sin(angle),
+              0,
+            ]);
+            const model = multiplyMat4(
+              translate(position),
+              scale([0.18, 0.18, 0.18]),
+            );
+            drawSphere(sphereProgram, viewProjection, model, electron, light);
+          }
+        }
+      },
+    };
+  }
+
+  function resizeCanvas(canvas: HTMLCanvasElement, gl: WebGL2RenderingContext) {
+    const rect = canvas.getBoundingClientRect();
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const width = Math.max(1, Math.round(rect.width * pixelRatio));
+    const height = Math.max(1, Math.round(rect.height * pixelRatio));
+    if (canvas.width === width && canvas.height === height) return;
+    canvas.width = width;
+    canvas.height = height;
+    gl.viewport(0, 0, width, height);
+  }
+
+  function createProgramInfo(
+    app: App,
+    vertexSource: string,
+    fragmentSource: string,
+    vertexArray: VertexArray,
+  ): ProgramInfo {
+    const program = app.createProgram(vertexSource, fragmentSource, {
+      attributeLocations: { position: 0, normal: 1 },
+    });
+    return { drawCall: app.createDrawCall(program, vertexArray), program };
+  }
+
+  function createSphere(
+    app: App,
+    latBands: number,
+    lonBands: number,
+  ): SphereMesh {
+    const vertices: number[] = [];
+    const normals: number[] = [];
+    const indices: number[] = [];
+
+    for (let lat = 0; lat <= latBands; lat++) {
+      const theta = (lat * Math.PI) / latBands;
+      for (let lon = 0; lon <= lonBands; lon++) {
+        const phi = (lon * Math.PI * 2) / lonBands;
+        const position: Vec3 = [
+          Math.sin(theta) * Math.cos(phi),
+          Math.cos(theta),
+          Math.sin(theta) * Math.sin(phi),
+        ];
+        vertices.push(...position);
+        normals.push(...position);
+      }
+    }
+
+    for (let lat = 0; lat < latBands; lat++) {
+      for (let lon = 0; lon < lonBands; lon++) {
+        const first = lat * (lonBands + 1) + lon;
+        const second = first + lonBands + 1;
+        indices.push(first, second, first + 1, second, second + 1, first + 1);
+      }
+    }
+
+    const indexBuffer = app.createIndexBuffer(
+      PicoGL.UNSIGNED_SHORT,
+      new Uint16Array(indices),
+    );
+    const normalBuffer = app.createVertexBuffer(
+      PicoGL.FLOAT,
+      3,
+      new Float32Array(normals),
+    );
+    const positionBuffer = app.createVertexBuffer(
+      PicoGL.FLOAT,
+      3,
+      new Float32Array(vertices),
+    );
+    const vertexArray = app
+      .createVertexArray()
+      .vertexAttributeBuffer(0, positionBuffer)
+      .vertexAttributeBuffer(1, normalBuffer)
+      .indexBuffer(indexBuffer);
+
+    return {
+      indexBuffer,
+      normalBuffer,
+      positionBuffer,
+      vertexArray,
+      vertexCount: indices.length,
+    };
+  }
+
+  function createOrbit(app: App, segments: number): OrbitMesh {
+    const vertices: number[] = [];
+    for (let index = 0; index < segments; index++) {
+      const angle = (index / segments) * Math.PI * 2;
+      vertices.push(Math.cos(angle), Math.sin(angle), 0);
+    }
+
+    const positionBuffer = app.createVertexBuffer(
+      PicoGL.FLOAT,
+      3,
+      new Float32Array(vertices),
+    );
+    const vertexArray = app.createVertexArray().vertexAttributeBuffer(0, positionBuffer);
+
+    return { positionBuffer, vertexArray, vertexCount: segments };
+  }
+
+  function drawSphere(
+    program: ProgramInfo,
+    viewProjection: Mat4,
+    model: Mat4,
+    color: Vec3,
+    light: Vec3,
+  ) {
+    program.drawCall
+      .uniform("baseColor", color)
+      .uniform("lightDirection", light)
+      .uniform("model", model)
+      .uniform("modelViewProjection", multiplyMat4(viewProjection, model))
+      .draw();
+  }
+
+  function drawOrbit(
+    program: ProgramInfo,
+    modelViewProjection: Mat4,
+    color: number[],
+  ) {
+    program.drawCall
+      .uniform("lineColor", color)
+      .uniform("modelViewProjection", modelViewProjection)
+      .draw();
+  }
+
+  function shellTransform(shell: Shell, radius = 1) {
+    return multiplyMat4(
+      rotateZ(deg(shell.rotateZ)),
+      multiplyMat4(rotateX(deg(shell.rotateX)), scale([radius, radius, radius])),
+    );
+  }
+
+  function createNucleus(protons: number, neutrons: number): Particle[] {
+    const total = protons + neutrons;
+    const kinds = createParticleKinds(protons, neutrons);
+
+    return Array.from({ length: total }, (_, index) => {
+      const point = fibonacciSpherePoint(index, total);
+      const layerScale = 0.78 + (index % 5) * 0.08;
+      const jitter = deterministicJitter(index, 0.11);
+
+      return {
+        kind: kinds[index],
+        position: [
+          point[0] * layerScale + jitter[0],
+          point[1] * layerScale + jitter[1],
+          point[2] * layerScale + jitter[2],
+        ],
+      };
+    });
+  }
+
+  function createParticleKinds(protons: number, neutrons: number) {
+    let protonCount = 0;
+    let neutronCount = 0;
+
+    return Array.from({ length: protons + neutrons }, (): Particle["kind"] => {
+      const protonRatio = protonCount / protons;
+      const neutronRatio = neutronCount / neutrons;
+
+      if (
+        protonCount < protons &&
+        (neutronCount >= neutrons || protonRatio <= neutronRatio)
+      ) {
+        protonCount++;
+        return "proton";
+      }
+
+      neutronCount++;
+      return "neutron";
+    });
+  }
+
+  function createElectronMotions(shellIndex: number, electrons: number): ElectronMotion[] {
+    return Array.from({ length: electrons }, (_, electronIndex) => {
+      const spacing = (Math.PI * 2) / electrons;
+      const basePhase = electronIndex * spacing;
+      const phaseJitter =
+        (seededUnit(shellIndex * 31 + electronIndex, 4) - 0.5) * spacing * 0.54;
+      const speed = 0.86 + seededUnit(shellIndex * 31 + electronIndex, 5) * 0.28;
+
+      return {
+        phase: basePhase + phaseJitter,
+        speed,
+      };
+    });
+  }
+
+  function fibonacciSpherePoint(index: number, total: number): Vec3 {
+    const offset = 2 / total;
+    const increment = Math.PI * (3 - Math.sqrt(5));
+    const y = index * offset - 1 + offset / 2;
+    const radius = Math.sqrt(1 - y * y);
+    const angle = index * increment;
+
+    return [Math.cos(angle) * radius, y, Math.sin(angle) * radius];
+  }
+
+  function deterministicJitter(index: number, amount: number): Vec3 {
+    return [
+      (seededUnit(index, 1) - 0.5) * amount,
+      (seededUnit(index, 2) - 0.5) * amount,
+      (seededUnit(index, 3) - 0.5) * amount,
+    ];
+  }
+
+  function seededUnit(index: number, salt: number) {
+    const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  }
+
+  function cssColor(host: HTMLElement, name: string, fallback: Vec3): Vec3 {
+    const raw = getComputedStyle(host).getPropertyValue(name).trim();
+    if (!raw) return fallback;
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context) return fallback;
+
+    context.fillStyle = raw;
+    const parsed = context.fillStyle;
+    const rgb = parsed.match(/rgba?\((\d+), (\d+), (\d+)/);
+    if (rgb)
+      return [Number(rgb[1]) / 255, Number(rgb[2]) / 255, Number(rgb[3]) / 255];
+
+    const hex = parsed.match(/^#([0-9a-f]{6})$/i);
+    if (!hex) return fallback;
+    return [
+      Number.parseInt(hex[1].slice(0, 2), 16) / 255,
+      Number.parseInt(hex[1].slice(2, 4), 16) / 255,
+      Number.parseInt(hex[1].slice(4, 6), 16) / 255,
+    ];
+  }
+
+  function perspective(fovy: number, aspect: number, near: number, far: number): Mat4 {
+    const output = new Float32Array(16);
+    const f = 1 / Math.tan(fovy / 2);
+    output[0] = f / aspect;
+    output[5] = f;
+    output[10] = (far + near) / (near - far);
+    output[11] = -1;
+    output[14] = (2 * far * near) / (near - far);
+    return output;
+  }
+
+  function lookAt(eye: Vec3, center: Vec3, up: Vec3): Mat4 {
+    const z = normalizeVec3([
+      eye[0] - center[0],
+      eye[1] - center[1],
+      eye[2] - center[2],
+    ]);
+    const x = normalizeVec3(cross(up, z));
+    const y = cross(z, x);
+    const output = identity();
+
+    output[0] = x[0];
+    output[1] = y[0];
+    output[2] = z[0];
+    output[4] = x[1];
+    output[5] = y[1];
+    output[6] = z[1];
+    output[8] = x[2];
+    output[9] = y[2];
+    output[10] = z[2];
+    output[12] = -dot(x, eye);
+    output[13] = -dot(y, eye);
+    output[14] = -dot(z, eye);
+
+    return output;
+  }
+
+  function translate([x, y, z]: Vec3): Mat4 {
+    const output = identity();
+    output[12] = x;
+    output[13] = y;
+    output[14] = z;
+    return output;
+  }
+
+  function scale([x, y, z]: Vec3): Mat4 {
+    const output = identity();
+    output[0] = x;
+    output[5] = y;
+    output[10] = z;
+    return output;
+  }
+
+  function rotateX(angle: number): Mat4 {
+    const output = identity();
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    output[5] = c;
+    output[6] = s;
+    output[9] = -s;
+    output[10] = c;
+    return output;
+  }
+
+  function rotateY(angle: number): Mat4 {
+    const output = identity();
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    output[0] = c;
+    output[2] = -s;
+    output[8] = s;
+    output[10] = c;
+    return output;
+  }
+
+  function rotateZ(angle: number): Mat4 {
+    const output = identity();
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    output[0] = c;
+    output[1] = s;
+    output[4] = -s;
+    output[5] = c;
+    return output;
+  }
+
+  function multiplyMat4(a: Mat4, b: Mat4): Mat4 {
+    const output = new Float32Array(16);
+    for (let column = 0; column < 4; column++) {
+      for (let row = 0; row < 4; row++) {
+        output[column * 4 + row] =
+          a[row] * b[column * 4] +
+          a[4 + row] * b[column * 4 + 1] +
+          a[8 + row] * b[column * 4 + 2] +
+          a[12 + row] * b[column * 4 + 3];
+      }
+    }
+    return output;
+  }
+
+  function transformVec3(matrix: Mat4, [x, y, z]: Vec3): Vec3 {
+    return [
+      matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12],
+      matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13],
+      matrix[2] * x + matrix[6] * y + matrix[10] * z + matrix[14],
+    ];
+  }
+
+  function scaleVec3([x, y, z]: Vec3, amount: number): Vec3 {
+    return [x * amount, y * amount, z * amount];
+  }
+
+  function normalizeVec3(point: Vec3): Vec3 {
+    const length = Math.hypot(point[0], point[1], point[2]) || 1;
+    return [point[0] / length, point[1] / length, point[2] / length];
+  }
+
+  function cross(a: Vec3, b: Vec3): Vec3 {
+    return [
+      a[1] * b[2] - a[2] * b[1],
+      a[2] * b[0] - a[0] * b[2],
+      a[0] * b[1] - a[1] * b[0],
+    ];
+  }
+
+  function dot(a: Vec3, b: Vec3) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  }
+
+  function identity(): Mat4 {
+    const output = new Float32Array(16);
+    output[0] = 1;
+    output[5] = 1;
+    output[10] = 1;
+    output[15] = 1;
+    return output;
+  }
+
+  function deg(value: number) {
+    return (value * Math.PI) / 180;
+  }
+
+  const sphereVertexShader = `
+    #version 300 es
+    in vec3 position;
+    in vec3 normal;
+    uniform mat4 model;
+    uniform mat4 modelViewProjection;
+    out vec3 vNormal;
+    void main() {
+      vNormal = normalize((model * vec4(normal, 0.0)).xyz);
+      gl_Position = modelViewProjection * vec4(position, 1.0);
+    }
+  `;
+
+  const sphereFragmentShader = `
+    #version 300 es
+    precision mediump float;
+    uniform vec3 baseColor;
+    uniform vec3 lightDirection;
+    in vec3 vNormal;
+    out vec4 fragColor;
+    void main() {
+      float light = max(dot(normalize(vNormal), normalize(lightDirection)), 0.0);
+      float rim = pow(1.0 - abs(vNormal.z), 2.0);
+      vec3 color = baseColor * (0.34 + light * 0.86) + vec3(0.9, 0.96, 1.0) * rim * 0.22;
+      fragColor = vec4(color, 1.0);
+    }
+  `;
+
+  const orbitVertexShader = `
+    #version 300 es
+    in vec3 position;
+    uniform mat4 modelViewProjection;
+    void main() {
+      gl_Position = modelViewProjection * vec4(position, 1.0);
+    }
+  `;
+
+  const orbitFragmentShader = `
+    #version 300 es
+    precision mediump float;
+    uniform vec4 lineColor;
+    out vec4 fragColor;
+    void main() {
+      fragColor = lineColor;
+    }
+  `;
+
+  if (!customElements.get("decoration-atom-1-6")) {
+    customElements.define("decoration-atom-1-6", DecorationAtom16);
+  }
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .decoration-atom {
+    @apply pointer-events-none select-none;
+    --atom-color-proton: var(--color-accent-300);
+    --atom-color-neutron: var(--color-accent-500);
+    --atom-color-electron: var(--color-accent-100);
+    --atom-color-orbit: var(--color-accent-400);
+    --atom-scene-radius: 9.1;
+    display: block;
+    position: relative;
+    width: calc(var(--atom-scene-radius) * 3.5em);
+    height: calc(var(--atom-scene-radius) * 3.5em);
+    contain: layout paint;
+  }
+
+  canvas {
+    @apply absolute inset-0 size-full;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    canvas {
+      opacity: 0.75;
+    }
+  }
+</style>

@@ -1,0 +1,635 @@
+<decoration-atom-1-5 class="decoration-atom" aria-hidden="true">
+  <canvas></canvas>
+</decoration-atom-1-5>
+
+<script>
+  import { mat4, vec3 } from "gl-matrix";
+
+  type Mat4 = mat4;
+  type Vec3 = [number, number, number];
+
+  interface Particle {
+    kind: "proton" | "neutron";
+    position: Vec3;
+  }
+
+  interface Shell {
+    electrons: number;
+    duration: number;
+    radius: number;
+    rotateX: number;
+    rotateZ: number;
+  }
+
+  interface ElectronMotion {
+    phase: number;
+    speed: number;
+  }
+
+  interface SphereMesh {
+    indexBuffer: WebGLBuffer;
+    normalBuffer: WebGLBuffer;
+    positionBuffer: WebGLBuffer;
+    vertexCount: number;
+  }
+
+  interface OrbitMesh {
+    positionBuffer: WebGLBuffer;
+    vertexCount: number;
+  }
+
+  interface ProgramInfo {
+    attributes: Record<string, number>;
+    program: WebGLProgram;
+    uniforms: Record<string, WebGLUniformLocation>;
+  }
+
+  const atom = {
+    protons: 13,
+    neutrons: 14,
+    nucleusScale: 0.64,
+    shells: [
+      { electrons: 2, duration: 5, radius: 3.35, rotateX: 66, rotateZ: -18 },
+      { electrons: 8, duration: 8, radius: 5.95, rotateX: 72, rotateZ: 54 },
+      { electrons: 3, duration: 11, radius: 8.55, rotateX: 64, rotateZ: 132 },
+    ] satisfies Shell[],
+  };
+
+  const nucleus = createNucleus(atom.protons, atom.neutrons);
+  const shells = atom.shells;
+  const shellElectronMotions = shells.map((shell, shellIndex) =>
+    createElectronMotions(shellIndex, shell.electrons),
+  );
+  const maxShellRadius = Math.max(...shells.map((shell) => shell.radius));
+  const sceneRadius = maxShellRadius + 0.55;
+  const fieldOfView = deg(40);
+
+  class DecorationAtom15 extends HTMLElement {
+    #frame = 0;
+    #renderer?: ReturnType<typeof createRenderer>;
+    #resizeObserver?: ResizeObserver;
+    #reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    #start = performance.now();
+
+    connectedCallback() {
+      const canvas = this.querySelector("canvas");
+      const gl = canvas?.getContext("webgl", { alpha: true, antialias: true });
+      if (!canvas || !gl) return;
+
+      this.style.setProperty("--atom-scene-radius", String(sceneRadius));
+      this.#renderer = createRenderer(gl);
+      this.#resizeObserver = new ResizeObserver(() => resizeCanvas(canvas, gl));
+      this.#resizeObserver.observe(this);
+
+      const render = (now: number) => {
+        resizeCanvas(canvas, gl);
+        this.#renderer?.render(
+          this.#reduceMotion.matches ? 0 : (now - this.#start) / 1000,
+          this,
+        );
+        if (this.#reduceMotion.matches) return;
+        this.#frame = requestAnimationFrame(render);
+      };
+
+      this.#frame = requestAnimationFrame(render);
+    }
+
+    disconnectedCallback() {
+      cancelAnimationFrame(this.#frame);
+      this.#resizeObserver?.disconnect();
+      this.#renderer?.dispose();
+    }
+  }
+
+  function createRenderer(gl: WebGLRenderingContext) {
+    const sphere = createSphere(gl, 10, 14);
+    const orbit = createOrbit(gl, 160);
+    const sphereProgram = createProgramInfo(gl, sphereVertexShader, sphereFragmentShader, [
+      "position",
+      "normal",
+    ], ["baseColor", "lightDirection", "model", "modelViewProjection"]);
+    const orbitProgram = createProgramInfo(gl, orbitVertexShader, orbitFragmentShader, [
+      "position",
+    ], ["lineColor", "modelViewProjection"]);
+    const light = normalizeVec3([0.35, 0.72, 0.58]);
+
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0, 0, 0, 0);
+
+    return {
+      dispose() {
+        gl.deleteBuffer(sphere.indexBuffer);
+        gl.deleteBuffer(sphere.normalBuffer);
+        gl.deleteBuffer(sphere.positionBuffer);
+        gl.deleteBuffer(orbit.positionBuffer);
+        gl.deleteProgram(sphereProgram.program);
+        gl.deleteProgram(orbitProgram.program);
+      },
+      render(time: number, host: HTMLElement) {
+        const width = gl.drawingBufferWidth;
+        const height = gl.drawingBufferHeight;
+        const aspect = width / Math.max(height, 1);
+        const cameraDistance = sceneRadius / Math.tan(fieldOfView / 2) * 1.18;
+        const projection = mat4.perspective(
+          mat4.create(),
+          fieldOfView,
+          aspect,
+          0.1,
+          cameraDistance + sceneRadius * 2,
+        );
+        const view = mat4.lookAt(
+          mat4.create(),
+          [0, 0, cameraDistance],
+          [0, 0, 0],
+          [0, 1, 0],
+        );
+        const viewProjection = multiplyMat4(projection, view);
+        const proton = cssColor(host, "--atom-color-proton", [0.52, 0.78, 1]);
+        const neutron = cssColor(
+          host,
+          "--atom-color-neutron",
+          [0.33, 0.43, 0.58],
+        );
+        const electron = cssColor(
+          host,
+          "--atom-color-electron",
+          [0.92, 0.98, 1],
+        );
+        const orbitColor = cssColor(host, "--atom-color-orbit", [0.36, 0.56, 0.82]);
+        const nucleusSpin = multiplyMat4(
+          rotateY(time * 0.42),
+          multiplyMat4(rotateX(deg(-16) + time * 0.19), rotateZ(time * 0.13)),
+        );
+
+        gl.viewport(0, 0, width, height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        gl.useProgram(orbitProgram.program);
+        bindOrbit(gl, orbitProgram, orbit);
+        for (const shell of shells) {
+          const model = multiplyMat4(
+            shellTransform(shell),
+            scale([shell.radius, shell.radius, shell.radius]),
+          );
+          drawOrbit(gl, orbitProgram, orbit, multiplyMat4(viewProjection, model), [
+            ...orbitColor,
+            0.38,
+          ]);
+        }
+
+        gl.useProgram(sphereProgram.program);
+        bindSphere(gl, sphereProgram, sphere);
+        for (const [index, particle] of nucleus.entries()) {
+          const color = particle.kind === "proton" ? proton : neutron;
+          const position = scaleVec3(particle.position, atom.nucleusScale);
+          const model = multiplyMat4(
+            nucleusSpin,
+            multiplyMat4(
+              translate(position),
+              multiplyMat4(
+                rotateY(time * (1.8 + (index % 4) * 0.25)),
+                scale([0.27, 0.27, 0.27]),
+              ),
+            ),
+          );
+          drawSphere(gl, sphereProgram, sphere, viewProjection, model, color, light);
+        }
+
+        for (const [shellIndex, shell] of shells.entries()) {
+          for (
+            let electronIndex = 0;
+            electronIndex < shell.electrons;
+            electronIndex++
+          ) {
+            const direction = shellIndex === 1 ? -1 : 1;
+            const motion = shellElectronMotions[shellIndex][electronIndex];
+            const angle =
+              direction *
+                (time / shell.duration) *
+                motion.speed *
+                Math.PI *
+                2 +
+              motion.phase;
+            const position = transformVec3(shellTransform(shell, shell.radius), [
+              Math.cos(angle),
+              Math.sin(angle),
+              0,
+            ]);
+            const model = multiplyMat4(
+              translate(position),
+              scale([0.18, 0.18, 0.18]),
+            );
+            drawSphere(gl, sphereProgram, sphere, viewProjection, model, electron, light);
+          }
+        }
+      },
+    };
+  }
+
+  function resizeCanvas(canvas: HTMLCanvasElement, gl: WebGLRenderingContext) {
+    const rect = canvas.getBoundingClientRect();
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const width = Math.max(1, Math.round(rect.width * pixelRatio));
+    const height = Math.max(1, Math.round(rect.height * pixelRatio));
+    if (canvas.width === width && canvas.height === height) return;
+    canvas.width = width;
+    canvas.height = height;
+    gl.viewport(0, 0, width, height);
+  }
+
+  function createProgramInfo(
+    gl: WebGLRenderingContext,
+    vertexSource: string,
+    fragmentSource: string,
+    attributeNames: string[],
+    uniformNames: string[],
+  ): ProgramInfo {
+    const program = gl.createProgram();
+    if (!program) throw new Error("Could not create WebGL program");
+
+    gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vertexSource));
+    gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fragmentSource));
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      throw new Error(gl.getProgramInfoLog(program) || "Could not link WebGL program");
+    }
+
+    const attributes = Object.fromEntries(
+      attributeNames.map((name) => [name, gl.getAttribLocation(program, name)]),
+    );
+    const uniforms = Object.fromEntries(
+      uniformNames.map((name) => {
+        const location = gl.getUniformLocation(program, name);
+        if (!location) throw new Error(`Missing WebGL uniform: ${name}`);
+        return [name, location];
+      }),
+    );
+
+    return { attributes, program, uniforms };
+  }
+
+  function createShader(gl: WebGLRenderingContext, type: number, source: string) {
+    const shader = gl.createShader(type);
+    if (!shader) throw new Error("Could not create WebGL shader");
+
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      throw new Error(gl.getShaderInfoLog(shader) || "Could not compile WebGL shader");
+    }
+
+    return shader;
+  }
+
+  function createSphere(
+    gl: WebGLRenderingContext,
+    latBands: number,
+    lonBands: number,
+  ): SphereMesh {
+    const vertices: number[] = [];
+    const normals: number[] = [];
+    const indices: number[] = [];
+
+    for (let lat = 0; lat <= latBands; lat++) {
+      const theta = (lat * Math.PI) / latBands;
+      for (let lon = 0; lon <= lonBands; lon++) {
+        const phi = (lon * Math.PI * 2) / lonBands;
+        const position: Vec3 = [
+          Math.sin(theta) * Math.cos(phi),
+          Math.cos(theta),
+          Math.sin(theta) * Math.sin(phi),
+        ];
+        vertices.push(...position);
+        normals.push(...position);
+      }
+    }
+
+    for (let lat = 0; lat < latBands; lat++) {
+      for (let lon = 0; lon < lonBands; lon++) {
+        const first = lat * (lonBands + 1) + lon;
+        const second = first + lonBands + 1;
+        indices.push(first, second, first + 1, second, second + 1, first + 1);
+      }
+    }
+
+    return {
+      indexBuffer: createBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices)),
+      normalBuffer: createBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(normals)),
+      positionBuffer: createBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(vertices)),
+      vertexCount: indices.length,
+    };
+  }
+
+  function createOrbit(gl: WebGLRenderingContext, segments: number): OrbitMesh {
+    const vertices: number[] = [];
+    for (let index = 0; index < segments; index++) {
+      const angle = (index / segments) * Math.PI * 2;
+      vertices.push(Math.cos(angle), Math.sin(angle), 0);
+    }
+
+    return {
+      positionBuffer: createBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(vertices)),
+      vertexCount: segments,
+    };
+  }
+
+  function createBuffer(
+    gl: WebGLRenderingContext,
+    target: number,
+    data: Float32Array | Uint16Array,
+  ) {
+    const buffer = gl.createBuffer();
+    if (!buffer) throw new Error("Could not create WebGL buffer");
+
+    gl.bindBuffer(target, buffer);
+    gl.bufferData(target, data, gl.STATIC_DRAW);
+
+    return buffer;
+  }
+
+  function bindSphere(
+    gl: WebGLRenderingContext,
+    program: ProgramInfo,
+    sphere: SphereMesh,
+  ) {
+    bindAttribute(gl, program.attributes.position, sphere.positionBuffer);
+    bindAttribute(gl, program.attributes.normal, sphere.normalBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphere.indexBuffer);
+  }
+
+  function bindOrbit(gl: WebGLRenderingContext, program: ProgramInfo, orbit: OrbitMesh) {
+    bindAttribute(gl, program.attributes.position, orbit.positionBuffer);
+  }
+
+  function bindAttribute(
+    gl: WebGLRenderingContext,
+    location: number,
+    buffer: WebGLBuffer,
+  ) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.enableVertexAttribArray(location);
+    gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
+  }
+
+  function drawSphere(
+    gl: WebGLRenderingContext,
+    program: ProgramInfo,
+    sphere: SphereMesh,
+    viewProjection: Mat4,
+    model: Mat4,
+    color: Vec3,
+    light: Vec3,
+  ) {
+    gl.uniform3fv(program.uniforms.baseColor, color);
+    gl.uniform3fv(program.uniforms.lightDirection, light);
+    gl.uniformMatrix4fv(program.uniforms.model, false, model);
+    gl.uniformMatrix4fv(
+      program.uniforms.modelViewProjection,
+      false,
+      multiplyMat4(viewProjection, model),
+    );
+    gl.drawElements(gl.TRIANGLES, sphere.vertexCount, gl.UNSIGNED_SHORT, 0);
+  }
+
+  function drawOrbit(
+    gl: WebGLRenderingContext,
+    program: ProgramInfo,
+    orbit: OrbitMesh,
+    modelViewProjection: Mat4,
+    color: number[],
+  ) {
+    gl.uniform4fv(program.uniforms.lineColor, color);
+    gl.uniformMatrix4fv(program.uniforms.modelViewProjection, false, modelViewProjection);
+    gl.drawArrays(gl.LINE_LOOP, 0, orbit.vertexCount);
+  }
+
+  function shellTransform(shell: Shell, radius = 1) {
+    return multiplyMat4(
+      rotateZ(deg(shell.rotateZ)),
+      multiplyMat4(rotateX(deg(shell.rotateX)), scale([radius, radius, radius])),
+    );
+  }
+
+  function createNucleus(protons: number, neutrons: number): Particle[] {
+    const total = protons + neutrons;
+    const kinds = createParticleKinds(protons, neutrons);
+
+    return Array.from({ length: total }, (_, index) => {
+      const point = fibonacciSpherePoint(index, total);
+      const layerScale = 0.78 + (index % 5) * 0.08;
+      const jitter = deterministicJitter(index, 0.11);
+
+      return {
+        kind: kinds[index],
+        position: [
+          point[0] * layerScale + jitter[0],
+          point[1] * layerScale + jitter[1],
+          point[2] * layerScale + jitter[2],
+        ],
+      };
+    });
+  }
+
+  function createParticleKinds(protons: number, neutrons: number) {
+    let protonCount = 0;
+    let neutronCount = 0;
+
+    return Array.from({ length: protons + neutrons }, (): Particle["kind"] => {
+      const protonRatio = protonCount / protons;
+      const neutronRatio = neutronCount / neutrons;
+
+      if (
+        protonCount < protons &&
+        (neutronCount >= neutrons || protonRatio <= neutronRatio)
+      ) {
+        protonCount++;
+        return "proton";
+      }
+
+      neutronCount++;
+      return "neutron";
+    });
+  }
+
+  function createElectronMotions(shellIndex: number, electrons: number): ElectronMotion[] {
+    return Array.from({ length: electrons }, (_, electronIndex) => {
+      const spacing = (Math.PI * 2) / electrons;
+      const basePhase = electronIndex * spacing;
+      const phaseJitter =
+        (seededUnit(shellIndex * 31 + electronIndex, 4) - 0.5) * spacing * 0.54;
+      const speed = 0.86 + seededUnit(shellIndex * 31 + electronIndex, 5) * 0.28;
+
+      return {
+        phase: basePhase + phaseJitter,
+        speed,
+      };
+    });
+  }
+
+  function fibonacciSpherePoint(index: number, total: number): Vec3 {
+    const offset = 2 / total;
+    const increment = Math.PI * (3 - Math.sqrt(5));
+    const y = index * offset - 1 + offset / 2;
+    const radius = Math.sqrt(1 - y * y);
+    const angle = index * increment;
+
+    return [Math.cos(angle) * radius, y, Math.sin(angle) * radius];
+  }
+
+  function deterministicJitter(index: number, amount: number): Vec3 {
+    return [
+      (seededUnit(index, 1) - 0.5) * amount,
+      (seededUnit(index, 2) - 0.5) * amount,
+      (seededUnit(index, 3) - 0.5) * amount,
+    ];
+  }
+
+  function seededUnit(index: number, salt: number) {
+    const value = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  }
+
+  function cssColor(host: HTMLElement, name: string, fallback: Vec3): Vec3 {
+    const raw = getComputedStyle(host).getPropertyValue(name).trim();
+    if (!raw) return fallback;
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context) return fallback;
+
+    context.fillStyle = raw;
+    const parsed = context.fillStyle;
+    const rgb = parsed.match(/rgba?\((\d+), (\d+), (\d+)/);
+    if (rgb)
+      return [Number(rgb[1]) / 255, Number(rgb[2]) / 255, Number(rgb[3]) / 255];
+
+    const hex = parsed.match(/^#([0-9a-f]{6})$/i);
+    if (!hex) return fallback;
+    return [
+      Number.parseInt(hex[1].slice(0, 2), 16) / 255,
+      Number.parseInt(hex[1].slice(2, 4), 16) / 255,
+      Number.parseInt(hex[1].slice(4, 6), 16) / 255,
+    ];
+  }
+
+  function translate([x, y, z]: Vec3): Mat4 {
+    return mat4.fromTranslation(mat4.create(), [x, y, z]);
+  }
+
+  function scale([x, y, z]: Vec3): Mat4 {
+    return mat4.fromScaling(mat4.create(), [x, y, z]);
+  }
+
+  function rotateX(angle: number): Mat4 {
+    return mat4.fromXRotation(mat4.create(), angle);
+  }
+
+  function rotateY(angle: number): Mat4 {
+    return mat4.fromYRotation(mat4.create(), angle);
+  }
+
+  function rotateZ(angle: number): Mat4 {
+    return mat4.fromZRotation(mat4.create(), angle);
+  }
+
+  function multiplyMat4(a: Mat4, b: Mat4): Mat4 {
+    return mat4.multiply(mat4.create(), a, b);
+  }
+
+  function transformVec3(matrix: Mat4, point: Vec3): Vec3 {
+    const output = vec3.transformMat4(vec3.create(), point, matrix);
+    return [output[0], output[1], output[2]];
+  }
+
+  function scaleVec3([x, y, z]: Vec3, amount: number): Vec3 {
+    const output = vec3.scale(vec3.create(), [x, y, z], amount);
+    return [output[0], output[1], output[2]];
+  }
+
+  function normalizeVec3(point: Vec3): Vec3 {
+    const output = vec3.normalize(vec3.create(), point);
+    return [output[0], output[1], output[2]];
+  }
+
+  function deg(value: number) {
+    return (value * Math.PI) / 180;
+  }
+
+  const sphereVertexShader = `
+    attribute vec3 position;
+    attribute vec3 normal;
+    uniform mat4 model;
+    uniform mat4 modelViewProjection;
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize((model * vec4(normal, 0.0)).xyz);
+      gl_Position = modelViewProjection * vec4(position, 1.0);
+    }
+  `;
+
+  const sphereFragmentShader = `
+    precision mediump float;
+    uniform vec3 baseColor;
+    uniform vec3 lightDirection;
+    varying vec3 vNormal;
+    void main() {
+      float light = max(dot(normalize(vNormal), normalize(lightDirection)), 0.0);
+      float rim = pow(1.0 - abs(vNormal.z), 2.0);
+      vec3 color = baseColor * (0.34 + light * 0.86) + vec3(0.9, 0.96, 1.0) * rim * 0.22;
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  const orbitVertexShader = `
+    attribute vec3 position;
+    uniform mat4 modelViewProjection;
+    void main() {
+      gl_Position = modelViewProjection * vec4(position, 1.0);
+    }
+  `;
+
+  const orbitFragmentShader = `
+    precision mediump float;
+    uniform vec4 lineColor;
+    void main() {
+      gl_FragColor = lineColor;
+    }
+  `;
+
+  if (!customElements.get("decoration-atom-1-5")) {
+    customElements.define("decoration-atom-1-5", DecorationAtom15);
+  }
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .decoration-atom {
+    @apply pointer-events-none select-none;
+    --atom-color-proton: var(--color-accent-300);
+    --atom-color-neutron: var(--color-accent-500);
+    --atom-color-electron: var(--color-accent-100);
+    --atom-color-orbit: var(--color-accent-400);
+    --atom-scene-radius: 9.1;
+    display: block;
+    position: relative;
+    width: calc(var(--atom-scene-radius) * 3.5em);
+    height: calc(var(--atom-scene-radius) * 3.5em);
+    contain: layout paint;
+  }
+
+  canvas {
+    @apply absolute inset-0 size-full;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    canvas {
+      opacity: 0.75;
+    }
+  }
+</style>

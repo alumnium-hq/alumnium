@@ -25,6 +25,7 @@
     "babylonjs": "^9.12.1",
     "gl-matrix": "^3.4.4",
     "marked": "^18.0.4",
+    "picogl": "^0.17.9",
     "sharp": "^0.34.5",
     "smollit": "^0.3.0",
     "tailwindcss": "^4.3.0",
