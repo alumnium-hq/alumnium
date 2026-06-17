@@ -28,14 +28,23 @@ export interface IconPropsId extends IconPropsBase {
 
 export interface IconPropsBase {
   class?: string;
+  size?: "100" | "200" | "300";
 }
 
 // NOTE: To avoid load compilation times, each used icon id must be listed
 // inside `{...}.svg`.
 // TODO: Test the performance after Astro upgrades to the Rolldown-powered
 // Vite version.
-const icons = import.meta.glob<{ default: ImageMetadata }>(
-  "../../node_modules/@material-symbols/svg-100/rounded/{savings,avg_pace,air,check,close,chevron_right,add_2}.svg",
+const icons100 = import.meta.glob<{ default: ImageMetadata }>(
+  "../../node_modules/@material-symbols/svg-100/rounded/{savings,avg_pace,air,check,close,chevron_right,add_2,play_circle,play_arrow}.svg",
+);
+
+const icons200 = import.meta.glob<{ default: ImageMetadata }>(
+  "../../node_modules/@material-symbols/svg-200/rounded/{play_circle,play_arrow}.svg",
+);
+
+const icons300 = import.meta.glob<{ default: ImageMetadata }>(
+  "../../node_modules/@material-symbols/svg-300/rounded/{play_circle,play_arrow}.svg",
 );
 
 let classList: string[] = [];
@@ -60,8 +69,10 @@ if ("prop" in Astro.props) {
 
 let IconFactory: Comp;
 if ("id" in directProps) {
-  const { id } = directProps;
-  const iconFilePath = `../../node_modules/@material-symbols/svg-100/rounded/${id}.svg`;
+  const { id, size } = directProps;
+  const iconFilePath = `../../node_modules/@material-symbols/svg-${size || "100"}/rounded/${id}.svg`;
+  const icons =
+    size === "200" ? icons200 : size === "300" ? icons300 : icons100;
   const iconPath = icons[iconFilePath];
   if (!iconPath)
     throw new Error(`Icon ${id} has not been found at ${iconFilePath}`);

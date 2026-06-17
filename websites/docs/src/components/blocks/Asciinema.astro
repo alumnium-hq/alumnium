@@ -51,11 +51,24 @@ const options = {
       if (!src) return;
 
       document.fonts.load("1em 'JetBrains Mono Variable'").then(() => {
-        AsciinemaPlayer.create(src, this, {
+        const player = AsciinemaPlayer.create(src, this, {
           ...this.#options(),
           theme: "alumnium",
           preload: true,
         });
+
+        player.addEventListener("playing", () => {
+          this.classList.add("is-playing");
+          this.classList.add("has-started");
+        });
+
+        player.addEventListener("pause", () =>
+          this.classList.remove("is-playing"),
+        );
+
+        player.addEventListener("ended", () =>
+          this.classList.remove("is-playing"),
+        );
       });
     }
 
@@ -77,7 +90,12 @@ const options = {
   @reference "#/styles/global.css";
 
   .asciinema-player {
-    @apply font-mono block bg-content-dark overflow-hidden;
+    --asciinema-colog-bg-local: var(
+      --asciinema-colog-bg,
+      var(--color-content-dark)
+    );
+    @apply font-mono block overflow-hidden transition-colors;
+    background: var(--asciinema-colog-bg-local);
   }
 
   .asciinema-player {
@@ -89,12 +107,13 @@ const options = {
 
     & :global(.ap-term) {
       border-width: var(--asciinema-border-width);
+      border-color: transparent;
     }
   }
 
   :global(.asciinema-player-theme-alumnium) {
     --term-color-foreground: var(--color-ink-dark);
-    --term-color-background: var(--color-content-dark);
+    --term-color-background: var(--asciinema-colog-bg-local);
 
     --term-color-0: #21222c;
     --term-color-1: #ff5555;

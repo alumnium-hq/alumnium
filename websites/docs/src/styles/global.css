@@ -76,20 +76,37 @@
   background-blend-mode: darken;
   background-repeat: repeat;
   background-size: var(--pattern-canvas-size) var(--pattern-canvas-size);
-  background-position: center top;
+}
+
+@utility pattern-canvas-container {
+  @apply pattern-canvas;
+  background-position: center
+    calc(var(--sl-nav-height) / 2 - var(--pattern-canvas-size) / 2);
 }
 
 @utility pattern-canvas-content {
   @apply pattern-canvas;
   background-position: center top
-    calc((var(--sl-nav-height) - var(--pattern-canvas-size)) / -2);
+    calc(var(--sl-nav-height) + var(--pattern-canvas-size) / -2);
 }
 
-/* Header */
+/* Layout */
 
-.page > .header {
-  @apply pattern-canvas border-b border-transparent;
-  background-position: center center;
+.page {
+  @apply pattern-canvas-container border-b border-transparent;
+
+  & > .header {
+    @apply bg-transparent border-b border-transparent;
+    background-position: center top;
+
+    &.has-stuck {
+      @apply pattern-canvas-container;
+    }
+  }
+
+  & > .main-frame > * {
+    @apply bg-content-light dark:bg-content-dark;
+  }
 }
 
 /* Social icons */

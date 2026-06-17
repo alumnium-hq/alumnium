@@ -20,7 +20,22 @@ declare module "asciinema-player" {
     theme?: string;
   }
 
-  export interface Player {}
+  export type PlayerEventName = "play" | "playing" | "pause" | "ended";
+
+  export interface Player {
+    getCurrentTime(): number;
+    getDuration(): number | null;
+    play(): Promise<void>;
+    pause(): void;
+    seek(
+      location: number | string | { marker: number | "prev" | "next" },
+    ): Promise<void>;
+    addEventListener(
+      eventName: PlayerEventName,
+      handler: (this: Player) => void,
+    ): void;
+    dispose(): void;
+  }
 
   export function create(
     src: string,

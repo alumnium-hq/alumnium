@@ -152,8 +152,8 @@ const { supersections } = Astro.props;
   @reference "#/styles/global.css";
 
   nav {
-    @apply sticky z-40 pointer-events-none border-t border-t-accent-600 border-b border-b-accent-600;
-    top: calc(var(--sl-nav-height) - 2px);
+    @apply sticky z-40 border-t border-t-accent-600 border-b border-b-accent-600;
+    top: calc(var(--sl-nav-height) - 1px);
   }
 
   .sections-nav-sentinel {
@@ -163,7 +163,7 @@ const { supersections } = Astro.props;
   }
 
   .wrapper {
-    @apply relative pattern-canvas-content py-6;
+    @apply relative py-6;
   }
 
   .inner {
@@ -180,13 +180,8 @@ const { supersections } = Astro.props;
 
   nav:global(.has-stuck) {
     & .wrapper {
-      @apply mt-px py-0 flex items-center;
+      @apply pattern-canvas-content py-0 flex items-center;
       height: var(--landing-nav-height);
     }
-  }
-
-  .wrapper {
-    /* Re-enable pointer events for the content. */
-    @apply pointer-events-auto;
   }
 </style>

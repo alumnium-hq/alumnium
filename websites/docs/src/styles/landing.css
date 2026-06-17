@@ -2,10 +2,9 @@
 
 @layer components {
   .landing {
-    --landing-nav-height: 3.25rem;
+    --landing-nav-height: 3rem;
 
     @apply text-ink-dark pattern-canvas-content h-full flex flex-col;
-    /* @apply text-ink-dark pattern-canvas-content h-full divide-y divide-accent-600 flex flex-col; */
 
     & h1,
     & h2,
@@ -251,39 +250,13 @@
     & .bento {
       @apply content-wrapper-lg relative;
 
-      &,
-      & > * {
-        &:before,
-        &:after {
-          @apply absolute bg-accent-600 z-10;
-        }
-
-        &:before {
-          @apply md:content-[""] top-[-0.5px] bottom-[-0.5px] w-px;
-        }
-
-        &:after {
-          @apply content-[""] left-[-0.5px] right-[-0.5px] h-px;
-        }
-      }
-
-      & {
-        &:before {
-          @apply left-[-0.5px];
-        }
-
-        &:after {
-          @apply top-[-0.5px];
-        }
-      }
-
       & > * {
         &:before {
-          @apply right-[-0.5px];
-        }
-
-        &:after {
-          @apply bottom-[-0.5px];
+          @apply content-[""] block absolute border border-accent-600 z-10 pointer-events-none;
+          top: -0.5px;
+          right: -0.5px;
+          bottom: -0.5px;
+          left: -0.5px;
         }
       }
 

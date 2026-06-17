@@ -1,22 +1,8 @@
----
-interface Props {
-  sides?: "4" | "2";
-}
-
-const { sides } = Astro.props;
----
-
 <div class="crosses">
   <div class="cross-tl"></div>
   <div class="cross-bl"></div>
-  {
-    sides === "2" && (
-      <>
-        <div class="cross-tr" />
-        <div class="cross-br" />
-      </>
-    )
-  }
+  <div class="cross-tr"></div>
+  <div class="cross-br"></div>
 </div>
 
 <style>
