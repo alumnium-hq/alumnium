@@ -1,8 +1,5 @@
 import type { Generation } from "@langchain/core/outputs";
 import { always } from "alwaysly";
-import fs from "node:fs/promises";
-// @ts-expect-error -- npm-fuzzy has broken ESM+TS support, so we import ESM version directly
-import * as fuzzy from "npm-fuzzy/dist/index.esm.js";
 import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { AppId } from "../../../AppId.ts";
@@ -23,20 +20,12 @@ import { ElementsCacheMask } from "./ElementsCacheMask.ts";
 import { ElementsCacheTree } from "./ElementsCacheTree.ts";
 import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.ts";
 
-// NOTE: See `npm-fuzzy` import above
-const tokenSortRatio =
-  fuzzy.tokenSortRatio as typeof import("npm-fuzzy").tokenSortRatio;
-const tokenSetRatio =
-  fuzzy.tokenSetRatio as typeof import("npm-fuzzy").tokenSetRatio;
-
 const { logger, tracer } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
 
 // NOTE: This is current empty to preserve compatibility with existing cache entries,
 // as the format didn't change.
 const CACHE_VERSION = "";
-
-const FUZZY_MATCH_THRESHOLD = 95;
 
 export namespace ElementsCache {
   export type MemoryCache = Record<MemoryKey, MemoryRecord>;
@@ -77,7 +66,7 @@ export namespace ElementsCache {
 
   export type Entries = [ElementsCache.MemoryKey, ElementsCache.MemoryRecord][];
 
-  export type CacheSource = "store_fuzzy" | "store";
+  export type CacheSource = "store";
 }
 
 export class ElementsCache extends ServerCache {
@@ -165,19 +154,7 @@ export class ElementsCache extends ServerCache {
       try {
         const tree = new ElementsCacheTree(agentMeta.treeXml);
 
-        let resolvedMemoryKey = memoryKey;
-
-        if (!this.#memoryRecord(memoryKey)) {
-          const fuzzyMemoryKey = this.#fuzzyMemoryLookup(
-            agentMeta.kind,
-            cacheKey,
-          );
-          if (fuzzyMemoryKey) {
-            resolvedMemoryKey = fuzzyMemoryKey as ElementsCache.MemoryKey;
-          }
-        }
-
-        const memoryEntry = this.#memoryRecord(resolvedMemoryKey);
+        const memoryEntry = this.#memoryRecord(memoryKey);
         if (memoryEntry) {
           const masksIdsMap = tree.resolveElements(memoryEntry.elements);
 
@@ -208,51 +185,20 @@ export class ElementsCache extends ServerCache {
           `${agentMeta.kind}/${cacheHash}`,
         );
 
-        let [elements, maskedGeneration] = await Promise.all([
+        const [elements, maskedGeneration] = await Promise.all([
           cacheStore.readJson("elements.json", ElementsCache.Elements),
           cacheStore.readJson("response.json", LchainSchema.StoredGeneration),
         ]);
-        let storeSource: ElementsCache.CacheSource = "store";
 
         if (!elements || !maskedGeneration) {
-          const fuzzyHash = await this.#fuzzyLookupHash(
-            agentMeta.kind,
-            cacheKey,
-          );
-          if (!fuzzyHash) {
-            span.event("cache.lookup.miss", {
-              ...this.#spanAttrs(),
-              "agent.kind": agentMeta.kind,
-              "cache.hash": cacheHash,
-              "cache.lookup.miss.reason": "no_match",
-            });
+          span.event("cache.lookup.miss", {
+            ...this.#spanAttrs(),
+            "agent.kind": agentMeta.kind,
+            "cache.hash": cacheHash,
+            "cache.lookup.miss.reason": "no_match",
+          });
 
-            return null;
-          }
-
-          const fuzzyStore = this.#cacheStore.subStore(
-            `${agentMeta.kind}/${fuzzyHash}`,
-          );
-
-          const [fuzzyElements, fuzzyResponse] = await Promise.all([
-            fuzzyStore.readJson("elements.json", ElementsCache.Elements),
-            fuzzyStore.readJson("response.json", LchainSchema.StoredGeneration),
-          ]);
-
-          if (!fuzzyElements || !fuzzyResponse) {
-            span.event("cache.lookup.miss", {
-              ...this.#spanAttrs(),
-              "agent.kind": agentMeta.kind,
-              "cache.hash": fuzzyHash,
-              "cache.lookup.miss.reason": "not_found",
-            });
-
-            return null;
-          }
-
-          elements = fuzzyElements;
-          maskedGeneration = fuzzyResponse;
-          storeSource = "store_fuzzy";
+          return null;
         }
 
         const masksIdsMap = tree.resolveElements(elements);
@@ -286,7 +232,7 @@ export class ElementsCache extends ServerCache {
           ...this.#spanAttrs(),
           "agent.kind": agentMeta.kind,
           "cache.hash": cacheHash,
-          "cache.lookup.hit.source": storeSource,
+          "cache.lookup.hit.source": "store",
         });
 
         return [generation];
@@ -452,102 +398,6 @@ export class ElementsCache extends ServerCache {
       ...this.#actorCache.getEntries(),
     ];
   }
-
-  //#region Fuzzy lookup
-
-  #fuzzyMemoryLookup(
-    agentKind: ElementsCache.EligibleAgentKind,
-    cacheKey: ElementsCache.CacheKey,
-  ): ElementsCache.MemoryKey | null {
-    const keyField = agentKind === "planner" ? "goal" : "step";
-    let bestKey: ElementsCache.MemoryKey | null = null;
-    let bestScore = 0;
-
-    for (const [memoryKey, entry] of this.#memoryEntries()) {
-      if (entry.agentKind !== agentKind || entry.app !== this.app) continue;
-
-      const entryCacheKey = entry.instruction[keyField] ?? "";
-      if (!entryCacheKey) {
-        continue;
-      }
-
-      const score = Math.max(
-        tokenSortRatio(cacheKey, entryCacheKey),
-        tokenSetRatio(cacheKey, entryCacheKey),
-      );
-
-      if (score > bestScore) {
-        bestScore = score;
-        bestKey = memoryKey;
-      }
-    }
-
-    if (bestScore >= FUZZY_MATCH_THRESHOLD) {
-      logger.debug(
-        `Fuzzy cache match (in-memory, ${Math.round(bestScore)}%) for ${agentKind}: "${cacheKey.slice(0, 50)}..."`,
-      );
-      return bestKey;
-    }
-
-    return null;
-  }
-
-  async #fuzzyLookupHash(
-    agentKind: ElementsCache.EligibleAgentKind,
-    cacheKey: ElementsCache.CacheKey,
-  ): Promise<ElementsCache.CacheHash | null> {
-    const keyField = agentKind === "planner" ? "goal" : "step";
-    let bestHash: ElementsCache.CacheHash | null = null;
-    let bestScore = 0;
-
-    const dir = this.#cacheStore.resolve(agentKind);
-
-    const entries = await fs
-      .readdir(dir, { withFileTypes: true })
-      .catch(() => []);
-
-    await Promise.all(
-      entries.map(async (entry) => {
-        if (!entry.isDirectory) return;
-
-        const entryStore = this.#cacheStore.subStore(
-          `${agentKind}/${entry.name}`,
-        );
-        const instruction = await entryStore.readJson(
-          "instruction.json",
-          ElementsCache.Instruction,
-        );
-        if (!instruction) return;
-
-        const entryCacheKey = instruction[keyField];
-        if (!entryCacheKey) return;
-
-        const score = Math.max(
-          tokenSortRatio(cacheKey, entryCacheKey),
-          tokenSetRatio(cacheKey, entryCacheKey),
-        );
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestHash = entry.name as ElementsCache.CacheHash;
-        }
-      }),
-    );
-
-    if (bestScore >= FUZZY_MATCH_THRESHOLD) {
-      logger.debug(
-        `Fuzzy cache match (${Math.round(bestScore)}%) for ${agentKind}: "${cacheKey.slice(0, 50)}..."`,
-      );
-      return bestHash;
-    }
-
-    logger.debug(
-      `No fuzzy cache match (best: ${Math.round(bestScore)}%) above threshold for ${agentKind}: "${cacheKey.slice(0, 50)}..."`,
-    );
-    return null;
-  }
-
-  //#endregion
 
   #spanAttrs() {
     return spanAttrs.call(this);

@@ -153,7 +153,7 @@ Alumnium uses two complementary cache layers that work together to skip LLM call
 | Layer    | Description                                                                                                                                                                                                                                                                                                   |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Response | Stores full AI responses keyed by the exact request content — instruction, accessibility tree, and model. A cache miss occurs when the instruction or the page structure changes.                                                                                                                             |
-| Elements | Stores AI decisions together with the UI elements they reference. Resolves cached elements to their current IDs in the accessibility tree, so the cache remains valid even when element IDs change between runs. Also uses fuzzy matching on instructions, so minor rephrasing can still produce a cache hit. |
+| Elements | Stores AI decisions together with the UI elements they reference. Resolves cached elements to their current IDs in the accessibility tree, so the cache remains valid even when element IDs change between runs. |
 
 ## Providers
 
