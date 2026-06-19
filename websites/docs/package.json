@@ -16,6 +16,7 @@
     "@fortawesome/fontawesome-free": "^7.2.0",
     "@material-design-icons/svg": "^0.14.15",
     "@material-symbols/svg-100": "^0.44.11",
+    "@material-symbols/svg-300": "^0.44.11",
     "asciinema-player": "^3.15.1",
     "astro": "6.4.2",
     "gl-matrix": "^3.4.4",
