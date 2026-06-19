@@ -1,8 +1,10 @@
 ---
 import { tt } from "#/copy";
 
-export interface Props {
-  h: "1" | "2" | "3" | "4";
+type Props = HeadingProps;
+
+export interface HeadingProps {
+  h: 1 | 2 | 3 | 4;
   t: {
     kicker?: string | undefined;
     headline?: string | undefined;

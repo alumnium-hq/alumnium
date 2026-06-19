@@ -3,15 +3,15 @@ import { tt } from "#/copy";
 import type { AstroComponentInstance } from "astro/runtime/server/index.js";
 import Tabs from "../landings/blocks/Tabs.astro";
 import Code from "./Code.astro";
-import type { TtGetStarted } from "#/copy/getStarted";
+import type { TtHow } from "#/copy/how";
 
-const t = tt.getStarted;
+const t = tt.how;
 
 type T = typeof t;
 
 type SetUpMcpVariantKey = keyof T extends infer Key
   ? Key extends keyof T
-    ? T[Key] extends TtGetStarted.SetUpMcpVariant
+    ? T[Key] extends TtHow.SetUpMcpVariant
       ? Key
       : never
     : never

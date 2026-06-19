@@ -7,6 +7,36 @@
 
 /* Base theme *****************************************************************/
 
+/* Dev */
+
+.debug {
+  @apply border border-[red] bg-[red]/15;
+
+  & & {
+    @apply border-[yellow]! bg-[yellow]/15!;
+  }
+
+  & & & {
+    @apply border-[lime]! bg-[lime]/15!;
+  }
+
+  & & & & {
+    @apply border-[cyan]! bg-[cyan]/15!;
+  }
+
+  & & & & & {
+    @apply border-[magenta]! bg-[magenta]/15!;
+  }
+
+  & & & & & & {
+    @apply border-[orange]! bg-[orange]/15!;
+  }
+}
+
+@utility debug {
+  @apply border;
+}
+
 /* Fonts */
 
 @theme {
@@ -64,8 +94,6 @@
   color: var(--symbol-color, var(--color-accent-400));
 }
 
-/* Pattern */
-
 :root {
   --pattern-canvas-size: 48px;
 }
@@ -104,8 +132,12 @@
     }
   }
 
-  & > .main-frame > * {
-    @apply bg-content-light dark:bg-content-dark;
+  & > .main-frame {
+    @apply grow flex flex-col;
+
+    & > * {
+      @apply bg-content-light dark:bg-content-dark grow;
+    }
   }
 }
 
@@ -191,6 +223,13 @@ starlight-menu-button button {
   color: var(--color-gray-200);
   padding: 0;
   font-size: 1.5rem;
+}
+
+/* Code */
+
+.code,
+.astro-code {
+  @apply rounded-md;
 }
 
 :root {

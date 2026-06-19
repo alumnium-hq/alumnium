@@ -16,9 +16,9 @@ interface RecordingMetadata {
 }
 
 const SCRIPTS_DIR = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = path.join(SCRIPTS_DIR, "..", "src", "data");
-const RECORDINGS_PATH = path.join(DATA_DIR, "asciinema-recordings.json");
-const METADATA_PATH = path.join(DATA_DIR, "asciinema-metadata.json");
+const DATA_DIR = path.join(SCRIPTS_DIR, "..", "src", "data", "asciinema");
+const RECORDINGS_PATH = path.join(DATA_DIR, "recordings.json");
+const METADATA_PATH = path.join(DATA_DIR, "metadata.json");
 
 async function readRecordings(): Promise<string[]> {
   const raw = await fs.readFile(RECORDINGS_PATH, "utf8");

@@ -10,6 +10,7 @@ import Link from "#/components/Link.astro";
 import TextDel from "#/components/TextDel.astro";
 import DecorationAtom from "../../blocks/DecorationAtom.astro";
 import Icon from "#/components/Icon.astro";
+import Heading from "../../blocks/Heading.astro";
 
 const t = tt.landings.sections.hero.en;
 ---
@@ -17,68 +18,59 @@ const t = tt.landings.sections.hero.en;
 <div class="content-inner hero flex flex-col items-center gap-16 pb-32">
   <Banner />
 
-  <div class="flex flex-col gap-5 items-center">
-    <Logotype class="h-10" />
+  <div class="flex flex-col items-center gap-10">
+    <div class="flex flex-col items-center gap-6">
+      <Logotype class="h-10" />
 
-    <div class="heading text-center max-w-2xl">
-      <h1 set:html={tt.md(t.headline, true)} class="h1 text-4xl font-medium" />
-
-      <p class="subheadline">{t.subheadline}</p>
+      <Heading h={1} t={t} align />
     </div>
 
-    <!-- <Install /> -->
+    <div class="flex flex-col gap-6 items-center">
+      <div class="player w-xl max-w-full relative">
+        <DecorationAtom />
 
-    <div class="player w-xl max-w-full relative">
-      <DecorationAtom />
+        <Asciinema src="https://asciinema.org/a/569727.cast" />
 
-      <Asciinema src="https://asciinema.org/a/569727.cast" />
+        <div class="player-play-label">
+          <span class="text-sm leading-none capsize text-accent-400">
+            Watch demo
+          </span>
+          <Icon id="play_circle" style="300" />
+        </div>
+      </div>
 
-      <div class="player-play-label">
-        <span class="text-sm leading-none capsize text-accent-400"
-          >Watch demo</span
-        >
-        <Icon id="play_circle" size="300" />
+      <div class="inline-flex items-center gap-3 text-sm">
+        <Link href={tt.links.github.href}>
+          <AstroIcon name="github" class="inline-block h-6" />
+          {t.openSource}
+          <Fragment slot="badge">
+            <AstroIcon name="star" />
+            <GitHubStars />
+          </Fragment>
+        </Link>
+
+        <TextDel />
+
+        <Link t={tt.links.mitLicense} />
+
+        <TextDel />
+
+        <Link href={tt.links.discord.href}>
+          <AstroIcon name="discord" class="inline-block h-6" />
+          {t.community}
+          <Fragment slot="badge">
+            <DiscordMembers />
+          </Fragment>
+        </Link>
       </div>
     </div>
 
-    <div class="flex gap-3 items-center hidden">
-      <a
-        href="#"
-        class="bg-logo px-6 py-2 rounded-sm text-white font-medium text-md no-underline"
-      >
-        {t.ctaGetStarted}
-      </a>
-      <!-- <a
-          href="#"
-          class="px-6 py-2 rounded-sm text-accent-400 border-accent-600 border font-medium text-md no-underline"
-          >{t.ctaDiscord}</a
-        > -->
-    </div>
-
-    <div class="inline-flex items-center gap-3 text-sm text-accent-400">
-      <Link href={tt.links.github.href}>
-        <AstroIcon name="github" class="inline-block h-6" />
-        <span>{t.openSource}</span>
-        <Fragment slot="badge">
-          <AstroIcon name="star" />
-          <GitHubStars />
-        </Fragment>
-      </Link>
-
-      <TextDel />
-
-      <Link t={tt.links.mitLicense} />
-
-      <TextDel />
-
-      <Link href={tt.links.discord.href}>
-        <AstroIcon name="discord" class="inline-block h-6" />
-        <span>{t.community}</span>
-        <Fragment slot="badge">
-          <DiscordMembers />
-        </Fragment>
-      </Link>
-    </div>
+    <a
+      href="#how-install"
+      class="bg-accent-800 rounded-md px-5 py-2 text-white font-medium text-sm no-underline"
+    >
+      {t.ctaGetStarted}
+    </a>
   </div>
 </div>
 
@@ -112,7 +104,7 @@ const t = tt.landings.sections.hero.en;
       transparent 100%
     );
 
-    @apply border border-accent-500;
+    @apply rounded-md border border-accent-500;
 
     & :global(.ap-play-button) {
       @apply transition-all;

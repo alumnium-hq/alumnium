@@ -1,25 +1,114 @@
 ---
+import { tt } from "#/copy";
+import type { AstroComponentInstance } from "astro/runtime/server/index.js";
+import Tabs, { type Tabs as TabsNs } from "../landings/blocks/Tabs.astro";
 import Code from "./Code.astro";
+import type { TtHow } from "#/copy/how";
+
+// TODO: Detect OS
+const os: "windows" | "xnix" = "windows";
+const defaultTab = `install-cli-bin-${os}` as const;
+
+const t = tt.how;
+
+type T = typeof t;
+
+type InstallKey = TtHow.Filter<"install-cli">;
+
+type InstallVariantKey = keyof T extends infer Key
+  ? Key extends keyof T
+    ? T[Key] extends TtHow.InstallVariant
+      ? Key extends `install-cli-${string}`
+        ? Key
+        : never
+      : never
+    : never
+  : never;
+
+type RenderContent = <Id extends InstallVariantKey>(
+  id: Id,
+) => AstroComponentInstance;
+
+function tab<
+  Id extends InstallKey,
+  SubId extends TtHow.Filter<Id> extends `${Id}-${infer Rest}` ? Rest : never,
+>(id: Id, sub?: SubId[]) {
+  if (sub)
+    return {
+      id,
+      label: t[id].tab,
+      items: sub.map((subIdPost) => {
+        const subId = `${id}-${subIdPost}` as InstallKey;
+        return {
+          id: subId,
+          label: t[subId].tab,
+        };
+      }),
+    };
+
+  return {
+    id,
+    label: t[id].tab,
+  };
+}
 ---
 
-<div class="w-full max-w-2xl bg-content-dark">
-  <div
-    class="font-mono text-xs uppercase flex gap-4 border-b border-gray-700 px-4 py-2"
-  >
-    <div class="flex gap-3">
-      <a href="#" class="no-underline text-gray-200">CLI</a>
-      <span class="text-gray-700">❯</span>
-      <a href="#" class="no-underline text-gray-200 border-b border-accent-600"
-        >macOS/Linux</a
-      >
-      <a href="#" class="no-underline text-gray-400">Windows</a>
-    </div>
-    <span class="text-gray-700">|</span>
-    <a href="#" class="no-underline text-gray-400">npm</a>
-    <a href="#" class="no-underline text-gray-400">pip</a>
-  </div>
+<Fragment>
+  {
+    () => {
+      const renderContent: RenderContent = (id) => {
+        const tContent = t[id];
+        return (
+          <>
+            <Code code={tContent.install.code} lang={tContent.install.lang} />
+            <div class="text-xs text-gray-500 px-4 pb-2">v0.9.1 · 91 MB</div>
+          </>
+        );
+      };
 
-  <Code code="curl -LsSf https://alumnium.ai/install.sh | sh" lang="bash" />
+      return (
+        <Tabs
+          items={[
+            tab("install-cli-bin", ["xnix", "windows"]),
+            tab("install-cli-npm", ["npm", "pnpm", "yarn", "bun"]),
+            tab("install-cli-pip", ["pip", "uv"]),
+          ]}
+          active={defaultTab}
+          style="code"
+        >
+          <Fragment slot="install-cli-bin-xnix">
+            {renderContent("install-cli-bin-xnix")}
+          </Fragment>
 
-  <div class="text-xs text-gray-500 px-4 pb-2">v0.9.1 · 91 MB</div>
-</div>
+          <Fragment slot="install-cli-bin-windows">
+            {renderContent("install-cli-bin-windows")}
+          </Fragment>
+
+          <Fragment slot="install-cli-npm-npm">
+            {renderContent("install-cli-npm-npm")}
+          </Fragment>
+
+          <Fragment slot="install-cli-npm-pnpm">
+            {renderContent("install-cli-npm-pnpm")}
+          </Fragment>
+
+          <Fragment slot="install-cli-npm-yarn">
+            {renderContent("install-cli-npm-yarn")}
+          </Fragment>
+
+          <Fragment slot="install-cli-npm-bun">
+            {renderContent("install-cli-npm-bun")}
+          </Fragment>
+
+          <Fragment slot="install-cli-pip-pip">
+            {renderContent("install-cli-pip-pip")}
+          </Fragment>
+
+          <Fragment slot="install-cli-pip-uv">
+            {renderContent("install-cli-pip-uv")}
+          </Fragment>
+        </Tabs>
+      );
+    }
+  }</Fragment
+>

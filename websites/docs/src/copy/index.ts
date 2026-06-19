@@ -1,6 +1,6 @@
 import { marked } from "marked";
 import { ttLandings } from "./landings";
-import { ttGetStarted } from "./getStarted";
+import { ttHow } from "./how";
 import { ttBase } from "./base";
 import { ttLayout } from "./layout";
 import { ttLinks } from "./links";
@@ -15,7 +15,7 @@ export const tt = {
 
   landings: ttLandings,
 
-  getStarted: ttGetStarted,
+  how: ttHow,
 
   blog: ttBlog,
 

@@ -4,8 +4,9 @@ import SectionContent, {
 } from "./SectionContent.astro";
 
 export interface Props {
+  id?: string;
   items: Timeline.Item[];
-  cols?: "1" | "2";
+  cols?: 1 | 2;
   style?: "left" | "center";
 }
 
@@ -20,7 +21,7 @@ export namespace Timeline {
   export interface ItemContentful extends ItemBare, SectionContentProps {}
 }
 
-const { items: itemsProp, cols, style } = Astro.props;
+const { id: timelineId, items: itemsProp, cols, style } = Astro.props;
 
 const items = await Promise.all(
   itemsProp.map(async (item) => ({
@@ -35,8 +36,8 @@ const items = await Promise.all(
 <landing-timeline
   class:list={[
     "timeline",
-    (!cols || cols === "1") && "is-cols-1",
-    cols === "2" && "is-cols-2",
+    (!cols || cols === 1) && "is-cols-1",
+    cols === 2 && "is-cols-2",
     (!style || style === "left") && "is-left",
     style === "center" && "is-center",
   ]}
@@ -47,9 +48,12 @@ const items = await Promise.all(
       return items.map(
         ({ id, content, style: itemStyle, ...contentProps }, idx) => (
           <>
-            {itemStyle === "header" && <div class="timeline-item-sentinel" />}
+            {itemStyle === "header" && (
+              <div class="timeline-item-sentinel w-full " />
+            )}
 
             <div
+              id={timelineId ? `${timelineId}-${id}` : id}
               class:list={[
                 "timeline-item",
                 itemStyle === "compact" && "is-compact",
@@ -116,9 +120,21 @@ const items = await Promise.all(
   @reference "#/styles/global.css";
 
   .timeline {
-    --timeline-stroke: 2px;
+    --timeline-stroke: 1px;
     --timeline-header-top: calc(
       var(--sl-nav-height) + var(--landing-nav-height)
+    );
+    --timeline-item-decoration-size: 12px;
+    /* √2 = 1.4142 */
+    --timeline-item-decoration-size-rotated: calc(
+      var(--timeline-item-decoration-size) * 1.4142
+    );
+    --timeline-item-decoration-vertical-offset: calc(
+      (
+          var(--timeline-item-decoration-size-rotated) -
+            var(--timeline-item-decoration-size)
+        ) /
+        2
     );
 
     @apply relative;
@@ -137,26 +153,39 @@ const items = await Promise.all(
   }
 
   .timeline {
-    @apply relative;
+    @apply block relative pb-(--timeline-item-decoration-size);
 
-    &:before,
+    &:after,
     & > .timeline-item:before {
-      @apply content-[""] block absolute w-[0.8rem] h-[0.8rem] border-2 border-accent-600 rounded-full bg-canvas;
+      @apply content-[""] block absolute size-(--timeline-item-decoration-size) border-accent-400 rotate-45;
     }
 
-    &:before {
-      @apply bottom-[calc(0.8rem/-2+1px)];
-      left: calc(var(--timeline-x) + 3rem);
+    &:after,
+    & > .timeline-item.is-first:before {
+      @apply border-r border-b bottom-[calc(0.8rem/-2+1px)];
+      border-bottom-width: var(--timeline-stroke);
+      border-right-width: var(--timeline-stroke);
     }
 
     &:after {
-      @apply content-[""] relative block size-[3rem] bottom-0 border-l-2 border-b-2 rounded-bl-full border-accent-600 z-10;
-      left: calc(var(--timeline-x));
+      left: calc(
+        var(--timeline-x) - var(--timeline-item-decoration-size) / 2 +
+          var(--timeline-stroke)
+      );
+    }
+
+    & > .timeline-item:before {
+      @apply bg-canvas;
+    }
+
+    & > .timeline-item:not(.is-first):before {
+      @apply border;
+      border-width: var(--timeline-stroke);
     }
   }
 
   .timeline-item-sentinel {
-    @apply pointer-events-none;
+    @apply pointer-events-none absolute;
     height: var(--timeline-header-top);
     margin-top: calc(-1 * var(--timeline-header-top) - 1px);
   }
@@ -173,30 +202,40 @@ const items = await Promise.all(
       top: var(--timeline-header-top);
 
       &.has-stuck {
+        --timeline-item-stuck-padding: 0.5rem;
+        --timeline-item-stuck-slot-shift-outer: 1rem;
+        --timeline-item-stuck-slot-shift-inner: 0.4rem;
+
         & .timeline-slot {
           & > :global(*) {
-            @apply bg-canvas/60 relative z-20 backdrop-blur-sm;
+            @apply bg-canvas/60 relative z-20 backdrop-blur-sm py-(--timeline-item-stuck-padding);
 
-            @apply -ml-3 pl-3 -mr-3 pr-3 pt-[0.5rem] pb-[0.5rem];
-            /*
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-
-            &:global(:first-child) {
-              margin-left: -2rem;
+            &:first-child {
+              @apply -mr-(--timeline-item-stuck-slot-shift-inner) pr-(--timeline-item-stuck-slot-shift-inner) -ml-(--timeline-item-stuck-slot-shift-outer) pl-(--timeline-item-stuck-slot-shift-outer);
             }
 
-            &:global(:last-child) {
-              margin-left: -0.5rem;
-              padding-left: 0.5rem;
-              margin-right: -2rem;
-            } */
+            &:last-child {
+              @apply -ml-(--timeline-item-stuck-slot-shift-inner) pl-(--timeline-item-stuck-slot-shift-inner) -mr-(--timeline-item-stuck-slot-shift-outer) pr-(--timeline-item-stuck-slot-shift-outer);
+            }
           }
         }
 
         &:before {
-          @apply z-30;
-          margin-top: 0.5rem;
+          @apply z-30 mt-(--timeline-item-stuck-padding);
+          margin-top:;
+        }
+
+        &:after {
+          @apply content-[""] absolute bg-canvas w-(--timeline-item-decoration-size-rotated) top-0 z-20;
+          left: calc(
+            var(--timeline-x) - var(--timeline-item-decoration-size-rotated) /
+              2 + var(--timeline-stroke)
+          );
+          height: calc(
+            var(--timeline-item-decoration-size-rotated) / 2 +
+              var(--timeline-item-stuck-padding) -
+              var(--timeline-item-decoration-vertical-offset)
+          );
         }
       }
     }
@@ -220,8 +259,17 @@ const items = await Promise.all(
   }
 
   .timeline-line {
-    @apply absolute w-[2px] top-0 bottom-[3rem] bg-accent-600;
+    @apply absolute border-l border-accent-600;
+    top: calc(
+      var(--timeline-item-decoration-size-rotated) -
+        var(--timeline-item-decoration-vertical-offset)
+    );
     left: var(--timeline-x);
+    bottom: calc(
+      var(--timeline-item-decoration-size-rotated) / -2 +
+        var(--timeline-item-decoration-vertical-offset)
+    );
+    border-left-width: var(--timeline-stroke);
   }
 
   .timeline-item {

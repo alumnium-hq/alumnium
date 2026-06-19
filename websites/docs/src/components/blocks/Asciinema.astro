@@ -1,7 +1,8 @@
 ---
 import "asciinema-player/dist/bundle/asciinema-player.css";
 import type { PlayerOptions } from "asciinema-player";
-import asciinemaMetadata from "../../data/asciinema-metadata.json";
+import asciinemaMetadata from "#/data/asciinema/metadata.json";
+import { txt } from "smollit";
 
 export interface Props {
   src: string;
@@ -11,8 +12,34 @@ export interface Props {
 const { src, options: optionsProp } = Astro.props;
 
 const metadata = asciinemaMetadata[src as keyof typeof asciinemaMetadata];
-if (!metadata) throw new Error(`Metadata not found for ${src}`);
+if (!metadata) {
+  const { default: recs } = await import("#/data/asciinema/recordings.json");
 
+  const runCode = "mise //websites/docs:fetch/asciinema";
+
+  if (recs.includes(src))
+    throw new Error(
+      txt`
+        Asciinema metadata is not fetched, to fix run:
+
+          ${runCode}
+      `,
+    );
+
+  throw new Error(
+    txt`
+      Metadata not found for ${src}, to fix:
+
+      1. Add ${src} to websites/docs/src/data/asciinema/recordings.json:
+
+        ${JSON.stringify(recs.concat(src), null, 2)}
+
+      2. Run:
+
+        mise //websites/docs:fetch/asciinema
+    `,
+  );
+}
 const CH = 9.6; // px
 const PLAYER_CANVAS_BORDER_WIDTH = 0.75; // em
 const LINE_HEIGHT = 1.3333333333; // em
@@ -94,7 +121,7 @@ const options = {
       --asciinema-colog-bg,
       var(--color-content-dark)
     );
-    @apply font-mono block overflow-hidden transition-colors;
+    @apply font-mono block overflow-hidden transition-colors rounded-md;
     background: var(--asciinema-colog-bg-local);
   }
 

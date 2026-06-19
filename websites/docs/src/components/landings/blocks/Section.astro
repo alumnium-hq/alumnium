@@ -4,10 +4,11 @@ import { type Props as ContentProps } from "./SectionContent.astro";
 import SectionContent from "./SectionContent.astro";
 
 export interface BaseProps {
-  cols?: "1" | "2";
-  span?: "1" | "2";
+  cols?: 1 | 2;
+  span?: 1 | 2 | 3;
   style?: "header" | "compact";
   align?: boolean;
+  continue?: boolean;
 }
 
 export interface ContentfulProps extends BaseProps, ContentProps {}
@@ -16,18 +17,32 @@ export interface BareProps extends BaseProps {}
 
 export type Props = ContentfulProps | BareProps;
 
-const { cols, span, style, align, ...contentProps } = Astro.props;
+const {
+  cols,
+  span,
+  style,
+  align,
+  continue: continueProp,
+  ...contentProps
+} = Astro.props;
 ---
 
-<div class:list={["relative", span === "2" && "col-span-2"]}>
+<div
+  class:list={[
+    "relative",
+    span === 2 && "col-span-2",
+    span === 3 && "col-span-3",
+    continueProp && "has-continuation",
+  ]}
+>
   <div
     class:list={[
       "section",
       style === "header" && "section-header",
       style === "compact" && "section-compact",
       align && "section-align",
-      (!cols || cols === "1") && "section-cols-1",
-      cols === "2" && "section-cols-2",
+      (!cols || cols === 1) && "section-cols-1",
+      cols === 2 && "section-cols-2",
     ]}
   >
     {

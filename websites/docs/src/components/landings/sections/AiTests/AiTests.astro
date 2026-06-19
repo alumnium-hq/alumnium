@@ -3,20 +3,16 @@ import { tt } from "#/copy";
 import Section from "../../blocks/Section.astro";
 import NaturalLanguageTests from "./NaturalLanguageTests.astro";
 import ExpressIntent from "./ExpressIntent.astro";
-import TestRunner from "./TestRunner.astro";
 import SameTestsForAllPlatforms from "./SameTestsForAllPlatforms.astro";
 
-const t = tt.landings.sections.helpsShip.en;
+const t = tt.landings.sections.aiTests.en;
 ---
 
-<!-- <div class="supersection-heading">
-  <Heading h="2" t={t} enlarge />
-</div> -->
-<div class="bento bento-col-2">
+<div class="bento bento-cols-2">
   <Section
-    heading={{ h: "2", align: true, enlarge: true }}
+    heading={{ h: 2, align: true, enlarge: true }}
     t={t}
-    span="2"
+    span={2}
     style="header"
   />
 
@@ -25,6 +21,4 @@ const t = tt.landings.sections.helpsShip.en;
   <ExpressIntent />
 
   <SameTestsForAllPlatforms />
-
-  <TestRunner />
 </div>

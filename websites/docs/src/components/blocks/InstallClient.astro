@@ -1,0 +1,83 @@
+---
+import { tt } from "#/copy";
+import type { AstroComponentInstance } from "astro/runtime/server/index.js";
+import Tabs from "../landings/blocks/Tabs.astro";
+import Code from "./Code.astro";
+import type { TtHow } from "#/copy/how";
+
+const t = tt.how;
+
+type T = typeof t;
+
+type InstallVariantKey = keyof T extends infer Key
+  ? Key extends keyof T
+    ? T[Key] extends TtHow.InstallVariant
+      ? Key extends `install-client-${string}`
+        ? Key
+        : never
+      : never
+    : never
+  : never;
+
+type RenderContent = <Id extends InstallVariantKey>(
+  id: Id,
+) => AstroComponentInstance;
+---
+
+{
+  () => {
+    const renderContent: RenderContent = (id) => {
+      const tContent = t[id];
+      return <Code code={tContent.install.code} lang={tContent.install.lang} />;
+    };
+
+    return (
+      <Tabs
+        items={[
+          {
+            id: "install-client-npm",
+            label: "TypeScript",
+            items: [
+              { id: "install-client-npm-npm", label: "npm" },
+              { id: "install-client-npm-pnpm", label: "pnpm" },
+              { id: "install-client-npm-yarn", label: "yarn" },
+              { id: "install-client-npm-bun", label: "bun" },
+            ],
+          },
+
+          {
+            id: "install-client-pip",
+            label: "Python",
+            items: [
+              { id: "install-client-pip-pip", label: "pip" },
+              { id: "install-client-pip-uv", label: "uv" },
+            ],
+          },
+
+          {
+            id: "install-client-java",
+            label: "Java",
+          },
+        ]}
+        active="install-client-npm-npm"
+        style="code"
+      >
+        <Fragment slot="install-client-npm-npm">
+          {renderContent("install-client-npm-npm")}
+        </Fragment>
+
+        {/* <Fragment slot="install-client-npm-pnpm">
+          {renderContent("install-client-npm-pnpm")}
+        </Fragment>
+
+        <Fragment slot="install-client-npm-yarn">
+          {renderContent("install-client-npm-yarn")}
+        </Fragment>
+
+        <Fragment slot="install-client-npm-bun">
+          {renderContent("install-client-npm-bun")}
+        </Fragment> */}
+      </Tabs>
+    );
+  }
+}

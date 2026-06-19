@@ -12,15 +12,17 @@ export const ttLandings = {
     },
   },
 
-  supersections: {
+  supersections: langs({
     en: {
-      getStarted: "Get Started",
+      how: "How",
 
-      aiTests: "Why Alumnium?",
+      why: "Why",
 
-      helpsShip: "Why AI tests?",
+      aiTests: "AI Tests",
 
-      scalable: "Scale",
+      features: "Features",
+
+      scale: "Scale",
 
       comparison: "Comparison",
 
@@ -28,15 +30,15 @@ export const ttLandings = {
 
       faq: "FAQ",
     },
-  },
+  }),
 
   sections: {
     hero: langs({
       en: {
         headline: txt`
-          <b>End-to-End Testing with AI</b>
+          End-to-End Testing with AI
           <br/>
-          for **Agents** and **Engineers**
+          <small>for *Agents* and *Engineers*</small>
         `,
 
         subheadline: txt`
@@ -57,13 +59,13 @@ export const ttLandings = {
       },
     }),
 
-    //#region Get Started
+    //#region How
 
-    getStarted: langs({
+    how: langs({
       en: {
-        kicker: "Start",
+        kicker: "How",
 
-        headline: "Get Started",
+        headline: "How Alumnium Works",
 
         agents: {
           headline: "For Agents",
@@ -103,8 +105,8 @@ export const ttLandings = {
       },
     }),
 
-    getStartedSteps: {
-      install: getStartedStep({
+    howSteps: {
+      install: howStep({
         heading: langs({
           en: {
             kicker: "I. Install",
@@ -134,7 +136,7 @@ export const ttLandings = {
         }),
       }),
 
-      "set-up": getStartedStep({
+      "set-up": howStep({
         heading: langs({
           en: {
             kicker: "II. Set Up",
@@ -164,7 +166,7 @@ export const ttLandings = {
         }),
       }),
 
-      test: getStartedStep({
+      test: howStep({
         heading: langs({
           en: {
             kicker: "III. Test",
@@ -192,7 +194,7 @@ export const ttLandings = {
         }),
       }),
 
-      run: getStartedStep({
+      run: howStep({
         heading: langs({
           en: {
             kicker: "IV. Run",
@@ -222,46 +224,6 @@ export const ttLandings = {
         }),
       }),
     },
-
-    getStartedInstall: langs({
-      en: {
-        kicker: "I. Install",
-
-        headline: "Install Alumnium",
-
-        subheadline: "Single cross-platform binary, small footprint.",
-      },
-    }),
-
-    getStartedSetUp: langs({
-      en: {
-        kicker: "II. Set Up",
-
-        headline: "Set Up Alumnium",
-
-        subheadline: "TODO",
-      },
-    }),
-
-    getStartedTest: langs({
-      en: {
-        kicker: "III. Test",
-
-        headline: "Test Your App",
-
-        subheadline: "TODO",
-      },
-    }),
-
-    getStartedRun: langs({
-      en: {
-        kicker: "IV. Run",
-
-        headline: "Run Your Tests",
-
-        subheadline: "TODO",
-      },
-    }),
 
     //#endregion
 
@@ -474,9 +436,9 @@ export const ttLandings = {
 
     //#endregion
 
-    //#region Helps Ship
+    //#region AI Tests
 
-    helpsShip: langs({
+    aiTests: langs({
       en: {
         kicker: "Ship Faster",
 
@@ -533,25 +495,148 @@ export const ttLandings = {
       },
     }),
 
-    // TODO: Multi-later cache, self-healing, utilizes Claude Code SDK
     testRunner: langs({
       en: {
-        kicker: "TODO",
+        kicker: "Runner",
 
-        headline: "Test Runner",
+        headline: "Markdown Tests Runner<sup>*</sup>",
 
-        subheadline: "TODO",
+        subheadline:
+          "Run Markdown tests without a coding agent on CI or locally.",
 
-        copy: txt`
-          TODO
+        copy: md`
+          Alumnium ships with a test runner that seamlessly integrates with your
+          coding AI agent workflow:
 
-          TODO
+          1. Test your app using coding agent with Alumnium MCP.
+          2. Ask it to save test description as a Markdown file.
+          3. Run the test \`alumnium test <filename>.md\`.
+
+          <footer>* Alumnium test runner currently is in preview</footer>
         `,
+
+        points: [
+          {
+            icon: "replay",
+
+            headline: "Record and Replay",
+
+            copy: txt`
+              All tool calls get recorded and replayed. Combined with LLM cache,
+              it allows to run tests without spending any tokens at all.
+            `,
+          },
+
+          {
+            icon: "healing",
+
+            headline: "Self-Healing",
+
+            copy: txt`
+              When UI changes, the test runner automatically adapts notifying
+              you only when there's an actual bug.
+            `,
+          },
+
+          {
+            icon: "devices",
+
+            headline: "Cross-Platform Tests",
+
+            copy: txt`
+              Use same Markdown tests to test your web, iOS, and Android apps
+              at the same time.
+            `,
+          },
+
+          {
+            icon: "robot_2",
+
+            headline: "Agent SDK-Powered",
+
+            copy: txt`
+              The test runner utilizes native agent SDKs that allows to match
+              your agent's configuration and behavior.
+            `,
+          },
+        ],
       },
     }),
 
+    multiLevelCache: langs({
+      en: {
+        kicker: "Cache",
+
+        headline: "Multi-Level Cache",
+
+        subheadline: "TODO",
+
+        copy: md`
+          TODO
+          TODO
+        `,
+
+        points: [
+          {
+            icon: "replay",
+
+            headline: "Point #1",
+
+            copy: txt`
+              TODO
+              TODO
+
+              TODO
+            `,
+          },
+
+          {
+            icon: "replay",
+
+            headline: "Point #2",
+
+            copy: txt`
+              TODO
+              TODO
+
+              TODO
+            `,
+          },
+
+          {
+            icon: "replay",
+
+            headline: "Point #3",
+
+            copy: txt`
+              TODO
+              TODO
+
+              TODO
+            `,
+          },
+        ],
+      },
+    }),
+
+    testRunnerDemos: [
+      demoTab({
+        id: "run",
+        label: langs({ en: "Run Tests" }),
+        src: "https://asciinema.org/a/569727.cast",
+      }),
+
+      demoTab({
+        id: "self-healing",
+        label: langs({ en: "Self-Healing" }),
+        src: "https://asciinema.org/a/418574.cast",
+      }),
+    ] as const,
+
     sameTestsForAllPlatforms: langs({
       en: {
+        icon: "devices",
+
         headline: "Same Tests for All Platforms",
 
         subheadline: "Use the same tests across all supported platforms.",
@@ -567,6 +652,124 @@ export const ttLandings = {
           platforms.
         `,
       },
+    }),
+
+    //#endregion
+
+    //#region Features
+
+    features: langs({
+      en: {
+        kicker: "Features",
+
+        headline: "What's in Alumnium?",
+
+        subheadline: txt`
+          Everything you need to test your app with AI, all in one package.
+        `,
+      },
+    }),
+
+    featuresBento: bento({
+      cols: 3,
+      items: [
+        {
+          span: 2,
+          content: langs({
+            en: {
+              headline: "Local Models",
+
+              subheadline: txt`
+                TODO
+                TODO
+              `,
+            },
+          }),
+        },
+
+        {
+          span: 1,
+          content: langs({
+            en: {
+              headline: "API Server",
+
+              subheadline: txt`
+                TODO
+                TODO
+              `,
+            },
+          }),
+        },
+
+        {
+          span: 1,
+          content: langs({
+            en: {
+              headline: "Subtree Focus",
+
+              subheadline: txt`
+                TODO
+                TODO
+              `,
+            },
+          }),
+        },
+
+        {
+          span: 1,
+          content: langs({
+            en: {
+              headline: "Changes Diff",
+
+              subheadline: txt`
+                TODO
+                TODO
+              `,
+            },
+          }),
+        },
+
+        {
+          span: 1,
+          content: langs({
+            en: {
+              headline: "Vision",
+
+              subheadline: txt`
+                TODO
+                TODO
+              `,
+            },
+          }),
+        },
+
+        {
+          span: 1,
+          content: langs({
+            en: {
+              headline: "Frames Support",
+
+              subheadline: txt`
+                TODO
+                TODO
+              `,
+            },
+          }),
+        },
+
+        {
+          span: 1,
+          content: langs({
+            en: {
+              headline: "Cross-Platform",
+
+              subheadline: txt`
+                Works on macOS, Windows, and Linux.
+              `,
+            },
+          }),
+        },
+      ],
     }),
 
     //#endregion
@@ -1463,19 +1666,39 @@ export const ttLandings = {
 };
 
 export namespace TtLandings {
-  export interface HeadingFull {
+  export interface ContentFull {
     kicker: string;
     headline: string;
     subheadline: string;
     copy: string;
   }
 
-  export interface GetStartedStep {
+  export type Content = Partial<ContentFull>;
+
+  export interface HowStep {
     heading: I18n.FullLangsMap<{
       kicker: string;
     }>;
-    agents: I18n.FullLangsMap<Partial<HeadingFull>>;
-    engineers: I18n.FullLangsMap<Partial<HeadingFull>>;
+    agents: I18n.FullLangsMap<Content>;
+    engineers: I18n.FullLangsMap<Content>;
+  }
+
+  export interface DemoTab<Id extends string> {
+    id: Id;
+    label: I18n.FullLangsMap<string>;
+    src: DemoSrc;
+  }
+
+  export type DemoSrc = keyof typeof import("#/data/asciinema/metadata.json");
+
+  export interface Bento {
+    cols: 1 | 2 | 3;
+    items: BentoItem[];
+  }
+
+  export interface BentoItem {
+    content: I18n.FullLangsMap<Content>;
+    span?: 1 | 2 | 3;
   }
 
   export interface ComparisonHeader {
@@ -1535,9 +1758,7 @@ export namespace TtLandings {
   }
 }
 
-function getStartedStep(
-  step: TtLandings.GetStartedStep,
-): TtLandings.GetStartedStep {
+function howStep(step: TtLandings.HowStep): TtLandings.HowStep {
   return step;
 }
 
@@ -1555,4 +1776,14 @@ function comparisonRow(
 
 function faqItem(item: TtLandings.FaqItem): TtLandings.FaqItem {
   return item;
+}
+
+function demoTab<Id extends string>(
+  tab: TtLandings.DemoTab<Id>,
+): TtLandings.DemoTab<Id> {
+  return tab;
+}
+
+function bento(value: TtLandings.Bento): TtLandings.Bento {
+  return value;
 }

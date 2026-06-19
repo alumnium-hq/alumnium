@@ -62,10 +62,6 @@ function normalizeProps(props: Props): LinkPropsBasic {
     @apply text-accent-400 no-underline hover:text-accent-100 inline-flex gap-2 items-center;
   }
 
-  .badge {
-    @apply text-xs border-[currentColor]/40 border p-0.5 font-medium rounded-sm inline-flex items-center gap-0.5 leading-none capsize;
-  }
-
   :global(.links-scope) {
     &:global(.is-highlight-external) {
       /* TODO: Come up with a better name and implement it. The idea is to have

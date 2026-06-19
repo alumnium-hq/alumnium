@@ -10,16 +10,17 @@ import Run from "./Run.astro";
 
 export const id = "get-started";
 
-const t = tt.landings.sections.getStarted.en;
-const tSteps = tt.landings.sections.getStartedSteps;
+const t = tt.landings.sections.how.en;
+const tSteps = tt.landings.sections.howSteps;
 ---
 
 <div class="bento">
   <Section style="compact">
-    <Heading h="2" t={t} enlarge align />
+    <Heading h={2} t={t} enlarge align />
 
     <div class="get-started-timeline">
       <Timeline
+        id="how"
         items={[
           {
             id: "heading",
@@ -29,12 +30,12 @@ const tSteps = tt.landings.sections.getStartedSteps;
           ...Object.entries(tSteps).map(([id, step]) => ({
             id,
 
-            heading: { h: "3" },
+            heading: { h: 3 },
             t: step.heading.en,
           })),
         ]}
         style="center"
-        cols="2"
+        cols={2}
       >
         <Fragment slot="heading">
           <div class="get-started-for is-left">

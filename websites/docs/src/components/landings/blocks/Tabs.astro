@@ -1,29 +1,42 @@
 ---
+import type { I18n } from "#/copy/i18n";
+
 export interface Props<TabId extends string = string> {
   items: Tabs.Item<TabId>[];
-  active: NoInfer<TabId>;
+  active?: NoInfer<TabId>;
   style?: "code" | "links";
 }
 
 export namespace Tabs {
-  export type Item<TabId extends string = string> = Group<TabId> | Tab<TabId>;
+  export type Item<TabId extends string = string> =
+    | ItemGroup<TabId>
+    | ItemNonGroup<TabId>;
 
-  export interface Group<TabId extends string = string> {
+  export interface ItemGroup<TabId extends string = string> {
     id: string;
     label: string;
-    items: Tab<TabId>[];
-    default?: TabId;
+    items: ItemNonGroup<TabId>[];
+    default?: TabId | undefined;
   }
 
-  export interface Tab<TabId extends string = string> {
+  export type ItemNonGroup<TabId extends string = string> =
+    | ItemBasic<TabId>
+    | ItemT<TabId>;
+
+  export interface ItemBasic<TabId extends string = string> {
     id: TabId;
     label: string;
   }
+
+  export interface ItemT<TabId extends string = string> {
+    id: TabId;
+    label: I18n.FullLangsMap<string>;
+  }
 }
 
-const { items, active, style } = Astro.props;
+const { items, active: activeProp, style } = Astro.props;
 
-const mapItem = async ({ id }: Tabs.Tab<string>) => ({
+const mapItem = async ({ id }: Tabs.ItemNonGroup<string>) => ({
   id,
   content: await Astro.slots.render(id),
 });
@@ -33,6 +46,8 @@ const contentItems = await Promise.all(
     "items" in item ? Promise.all(item.items.map(mapItem)) : mapItem(item),
   ),
 ).then((items) => items.flatMap((item) => item));
+
+const active = activeProp ?? contentItems[0]?.id;
 ---
 
 <landing-tabs
@@ -46,13 +61,13 @@ const contentItems = await Promise.all(
   <div class="tabs">
     {
       () => {
-        const renderTab = ({ id, label }: Tabs.Tab) => (
+        const renderTab = ({ id, label }: Tabs.ItemNonGroup) => (
           <a
             href="#"
             data-tab={id}
             class:list={["tab", id === active && "is-active"]}
           >
-            {label}
+            {typeof label === "string" ? label : label.en}
           </a>
         );
 
@@ -61,7 +76,7 @@ const contentItems = await Promise.all(
           label,
           default: defaultId,
           items,
-        }: Tabs.Group) => {
+        }: Tabs.ItemGroup) => {
           const isActive = items.some((itm) => itm.id === active);
           return (
             <div
@@ -74,8 +89,6 @@ const contentItems = await Promise.all(
               <a href="#" data-group={id} class="tabs-group">
                 {label}
               </a>
-
-              <span class="tabs-group-items-del">❯</span>
 
               <div class="tabs-group-items">
                 {items.map((item) => renderTab(item))}
@@ -126,6 +139,12 @@ const contentItems = await Promise.all(
         this.#tabEls(this.#tab).forEach((tabEl) => {
           tabEl.classList.remove("is-active");
         });
+
+      const groupEl = this.#tabEls(id)[0]?.closest(".tabs-group-wrapper");
+      this.querySelectorAll(".tabs-group-wrapper.is-active").forEach((el) => {
+        if (el !== groupEl) el.classList.remove("is-active");
+      });
+      groupEl?.classList.add("is-active");
 
       this.#tabEls(id).forEach((tabEl) => {
         tabEl.classList.add("is-active");
@@ -210,8 +229,7 @@ const contentItems = await Promise.all(
   .tabs-group-wrapper {
     &:not(.is-active) {
       & .tabs-group-items,
-      & .tabs-group-del,
-      & .tabs-group-items-del {
+      & .tabs-group-del {
         @apply hidden;
       }
     }
@@ -235,14 +253,13 @@ const contentItems = await Promise.all(
   /* Look */
 
   .tabs-wrapper.is-code {
-    @apply w-full max-w-2xl bg-content-dark;
+    @apply w-full max-w-2xl bg-gray-900 rounded-md;
 
     & .tabs {
-      @apply flex gap-4 items-center border-b border-gray-700 px-4 py-1;
+      @apply flex flex-wrap gap-x-4 gap-y-[0.3rem] items-center border-b border-gray-700 px-4 py-1;
     }
 
-    & .tabs-group-wrapper,
-    & .tabs-group-wrapper.is-active .tabs-group-items {
+    & .tabs-group-wrapper {
       @apply inline-flex items-center;
     }
 
@@ -250,18 +267,24 @@ const contentItems = await Promise.all(
       @apply gap-2;
     }
 
+    & .tabs-group-wrapper.is-active {
+      display: contents;
+
+      & .tabs-group-del {
+        @apply hidden;
+      }
+    }
+
     & .tabs-group-wrapper.is-active .tabs-group-items {
-      @apply gap-4;
+      @apply flex flex-wrap basis-full gap-x-4 gap-y-2 order-last border-t border-gray-800 pt-1;
     }
 
     & .tab,
     & .tabs-group,
-    & .tabs-group-del,
-    & .tabs-group-items-del {
+    & .tabs-group-del {
       @apply font-mono text-xs leading-none capsize uppercase py-1 border-b border-transparent no-underline;
     }
 
-    & .tabs-group-items-del,
     & .tabs-group-del {
       @apply text-gray-700;
     }
@@ -277,6 +300,10 @@ const contentItems = await Promise.all(
     & .tab.is-active,
     & .tabs-group-wrapper.is-active .tabs-group {
       @apply text-gray-200;
+    }
+
+    & .tabs-group-wrapper.is-active .tabs-group {
+      @apply border-gray-400;
     }
 
     & .tab.is-active {

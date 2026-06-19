@@ -1,0 +1,25 @@
+---
+import { tt } from "#/copy";
+import BentoSections from "../../blocks/BentoSections.astro";
+import Section from "../../blocks/Section.astro";
+import TestRunner from "./TestRunner.astro";
+import MultiLevelCache from "./MultiLevelCache.astro";
+
+const t = tt.landings.sections.features.en;
+const tBento = tt.landings.sections.featuresBento;
+---
+
+<div class:list={["bento", `bento-cols-${tBento.cols}`]}>
+  <Section
+    heading={{ h: 2, align: true, enlarge: true }}
+    t={t}
+    span={3}
+    style="header"
+  />
+
+  <TestRunner />
+
+  <MultiLevelCache />
+
+  <BentoSections heading={{ h: 3 }} t={tBento} />
+</div>

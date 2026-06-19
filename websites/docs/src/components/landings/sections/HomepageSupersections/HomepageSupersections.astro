@@ -1,10 +1,11 @@
 ---
 import Comparison from "../Comparison/Comparison.astro";
-import GetStarted from "../GetStarted/GetStarted.astro";
-import Scalable from "../Scalable/Scalable.astro";
+import How from "../How/How.astro";
+import Scale from "../Scale/Scale.astro";
 import NeedMore from "../NeedMore/NeedMore.astro";
 import Supersection from "../../blocks/Supersection.astro";
-import HelpsShip from "../HelpsShip/HelpsShip.astro";
+import AiTests from "../AiTests/AiTests.astro";
+import Features from "../Features/Features.astro";
 import Faq from "../Faq.astro";
 import Why from "../Why/Why.astro";
 import Nav from "./Nav.astro";
@@ -15,10 +16,11 @@ import DecorationLine from "../../blocks/DecorationLine.astro";
 const t = tt.landings.supersections.en;
 
 const supersections = {
-  "get-started": { link: t.getStarted, Section: GetStarted },
-  "ai-tests": { link: t.aiTests, Section: Why },
-  "helps-ship": { link: t.helpsShip, Section: HelpsShip },
-  scalable: { link: t.scalable, Section: Scalable },
+  how: { link: t.how, Section: How },
+  why: { link: t.why, Section: Why },
+  "ai-tests": { link: t.aiTests, Section: AiTests },
+  features: { link: t.features, Section: Features },
+  scale: { link: t.scale, Section: Scale },
   comparison: { link: t.comparison, Section: Comparison },
   "need-more": { link: t.needMore, Section: NeedMore },
   faq: { link: t.faq, Section: Faq },

@@ -3,7 +3,7 @@ import { tt } from "#/copy";
 import type { AstroComponentInstance } from "astro/runtime/server/index.js";
 import Tabs from "../landings/blocks/Tabs.astro";
 import Code from "./Code.astro";
-import type { TtGetStarted } from "#/copy/getStarted";
+import type { TtHow } from "#/copy/how";
 
 export interface Props {
   kind: "cli" | "client";
@@ -15,13 +15,13 @@ const defaultCliTab = `cli-bin-${os}` as const;
 
 const { kind } = Astro.props;
 
-const t = tt.getStarted;
+const t = tt.how;
 
 type T = typeof t;
 
 type InstallVariantKey = keyof T extends infer Key
   ? Key extends keyof T
-    ? T[Key] extends TtGetStarted.InstallVariant
+    ? T[Key] extends TtHow.InstallVariant
       ? Key
       : never
     : never
@@ -99,7 +99,7 @@ type RenderContent = <Id extends InstallVariantKey>(
               items={[
                 {
                   id: "client-npm",
-                  label: "npm",
+                  label: "TypeScript",
                   items: [
                     { id: "client-npm-npm", label: "npm" },
                     { id: "client-npm-pnpm", label: "pnpm" },
@@ -110,11 +110,16 @@ type RenderContent = <Id extends InstallVariantKey>(
 
                 {
                   id: "client-pip",
-                  label: "Pip",
+                  label: "Python",
                   items: [
                     { id: "client-pip-pip", label: "pip" },
                     { id: "client-pip-uv", label: "uv" },
                   ],
+                },
+
+                {
+                  id: "client-java",
+                  label: "Java",
                 },
               ]}
               active="client-npm-npm"

@@ -3,6 +3,11 @@
 @layer components {
   .landing {
     --landing-nav-height: 3rem;
+    --landing-overlay-bg: color-mix(
+      in srgb,
+      var(--color-content-dark),
+      transparent 80%
+    );
 
     @apply text-ink-dark pattern-canvas-content h-full flex flex-col;
 
@@ -16,8 +21,16 @@
     & .subheadline {
       @apply font-display text-balance;
 
+      & em {
+        @apply not-italic text-accent-400 font-semibold;
+      }
+
       & strike {
         @apply font-medium text-accent-300;
+      }
+
+      & sup {
+        @apply text-accent-400 font-light text-[0.9em];
       }
     }
 
@@ -42,7 +55,12 @@
     & .heading {
       @apply content-wrapper-md flex flex-col;
 
-      & h1,
+      & h1 {
+        & + .subheadline {
+          @apply text-xl;
+        }
+      }
+
       & h2 {
         & + .subheadline {
           @apply text-lg;
@@ -50,7 +68,7 @@
       }
 
       & h1 {
-        @apply text-4xl md:text-5xl;
+        @apply text-4xl md:text-5xl font-medium;
       }
 
       &:has(h1) {
@@ -106,7 +124,7 @@
         @apply gap-0.5;
 
         & + .copy {
-          @apply gap-3 text-accent-400;
+          @apply gap-3 text-accent-400 text-ms;
         }
       }
 
@@ -129,6 +147,19 @@
 
     & .copy {
       @apply text-accent-300 flex flex-col gap-2;
+
+      & code {
+        @apply bg-accent-950 rounded-sm px-1 text-[0.8em] font-mono text-accent-200;
+      }
+
+      & ol,
+      & ul {
+        @apply flex flex-col gap-1;
+      }
+
+      & footer {
+        @apply text-accent-500 text-sm mt-4;
+      }
     }
 
     & a {
@@ -150,25 +181,13 @@
 
     & .supersections.is-shaded,
     & .supersection.is-shaded {
-      --section-overlay-bg: color-mix(
-        in srgb,
-        var(--color-content-dark),
-        transparent 80%
-      );
+      --section-overlay-bg: var(--landing-overlay-bg);
     }
 
     & .supersection {
       &.is-shaded {
-        --section-overlay-bg: color-mix(
-          in srgb,
-          var(--color-content-dark),
-          transparent 80%
-        );
+        --section-overlay-bg: var(--landing-overlay-bg);
       }
-
-      /* &.is-shaded {
-        @apply bg-accent-950/40;
-      } */
 
       &.is-highlighted {
         @apply bg-accent-800/50;
@@ -247,8 +266,24 @@
       }
     }
 
+    .section-points {
+      @apply flex gap-6;
+
+      & > * {
+        @apply basis-full;
+      }
+    }
+
     & .bento {
       @apply content-wrapper-lg relative;
+
+      &.bento-cols-2 {
+        @apply grid grid-cols-1 md:grid-cols-2;
+      }
+
+      &.bento-cols-3 {
+        @apply grid grid-cols-1 md:grid-cols-3;
+      }
 
       & > * {
         &:before {
@@ -258,15 +293,23 @@
           bottom: -0.5px;
           left: -0.5px;
         }
-      }
 
-      &.bento-col-2 {
-        @apply grid grid-cols-1 md:grid-cols-2;
+        &.has-continuation {
+          &:before {
+            border-bottom-style: dashed;
+          }
+        }
 
-        & > * {
-          @apply flex flex-col;
+        &.has-continuation + * {
+          &:before {
+            border-top-style: none;
+          }
         }
       }
+    }
+
+    & .badge {
+      @apply border-[currentColor]/40 border p-0.5 font-medium rounded-sm inline-flex items-center gap-0.5 leading-none capsize text-[0.85em];
     }
   }
 }

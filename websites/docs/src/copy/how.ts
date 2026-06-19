@@ -1,12 +1,16 @@
 import type { CodeLanguage } from "astro";
 import { lit } from "smollit";
 
-export const ttGetStarted = {
-  "cli-bin": {
+export const ttHow = {
+  //#region Install
+
+  //#region Install/CLI
+
+  "install-cli-bin": {
     tab: "CLI",
   },
 
-  "cli-bin-xnix": installVar({
+  "install-cli-bin-xnix": installVar({
     tab: "macOS/Linux",
 
     install: {
@@ -15,7 +19,7 @@ export const ttGetStarted = {
     },
   }),
 
-  "cli-bin-windows": installVar({
+  "install-cli-bin-windows": installVar({
     tab: "Windows",
 
     install: {
@@ -24,49 +28,143 @@ export const ttGetStarted = {
     },
   }),
 
-  "cli-npm": {
+  "install-cli-npm": {
     tab: "npm",
   },
 
-  "cli-npm-npm": {
+  "install-cli-npm-npm": installVar({
+    tab: "npm",
+
     install: {
+      lang: "bash",
       code: "npm install alumnium",
     },
-  },
+  }),
 
-  "cli-npm-pnpm": {
+  "install-cli-npm-pnpm": installVar({
+    tab: "pnpm",
+
     install: {
+      lang: "bash",
       code: "pnpm add alumnium",
     },
-  },
+  }),
 
-  "cli-npm-yarn": {
+  "install-cli-npm-yarn": installVar({
+    tab: "Yarn",
+
     install: {
+      lang: "bash",
       code: "yarn add alumnium",
     },
-  },
+  }),
 
-  "cli-npm-bun": {
+  "install-cli-npm-bun": installVar({
+    tab: "Bun",
+
     install: {
+      lang: "bash",
       code: "bun add alumnium",
     },
-  },
+  }),
 
-  "cli-pip": {
+  "install-cli-pip": {
     tab: "Pip",
   },
 
-  "cli-pip-pip": {
+  "install-cli-pip-pip": installVar({
+    tab: "pip",
+
     install: {
+      lang: "bash",
       code: "pip install alumnium",
     },
-  },
+  }),
 
-  "cli-pip-uv": {
+  "install-cli-pip-uv": installVar({
+    tab: "uv",
+
     install: {
+      lang: "bash",
       code: "uviw alumnium",
     },
+  }),
+
+  //#endregion
+
+  //#region Install/Client
+
+  "install-client-npm": {
+    tab: "TypeScript",
   },
+
+  "install-client-npm-npm": installVar({
+    tab: "npm",
+
+    install: {
+      lang: "bash",
+      code: "npm install alumnium",
+    },
+  }),
+
+  "install-client-npm-pnpm": installVar({
+    tab: "pnpm",
+
+    install: {
+      lang: "bash",
+      code: "pnpm add alumnium",
+    },
+  }),
+
+  "install-client-npm-yarn": installVar({
+    tab: "Yarn",
+
+    install: {
+      lang: "bash",
+      code: "yarn add alumnium",
+    },
+  }),
+
+  "install-client-npm-bun": installVar({
+    tab: "Bun",
+
+    install: {
+      lang: "bash",
+      code: "bun add alumnium",
+    },
+  }),
+
+  "install-client-pip": {
+    tab: "Python",
+  },
+
+  "install-client-pip-pip": installVar({
+    tab: "pip",
+
+    install: {
+      lang: "bash",
+      code: "pip install alumnium",
+    },
+  }),
+
+  "install-client-pip-uv": installVar({
+    tab: "uv",
+
+    install: {
+      lang: "bash",
+      code: "uv add alumnium",
+    },
+  }),
+
+  "install-client-java": {
+    tab: "Java",
+  },
+
+  //#endregion
+
+  //#endregion
+
+  //#region Set Up
 
   "set-up-client-ts": {
     tab: "TS",
@@ -196,8 +294,12 @@ export const ttGetStarted = {
     `,
   }),
 
+  //#endregion
+
+  //#region Test
+
   "test-client-ts": {
-    tab: "TS",
+    tab: "TypeScript",
   },
 
   "test-client-ts-selenium": testExampleVar({
@@ -297,10 +399,24 @@ export const ttGetStarted = {
       // TODO: Appium example
     `,
   }),
+
+  //#endregion
 };
 
-export namespace TtGetStarted {
+export namespace TtHow {
+  export type T = typeof ttHow;
+  export type TKey = keyof T;
+
+  export type Filter<FilterKey extends string, Constraint = {}> = {
+    [Key in TKey]: Key extends `${FilterKey}-${string}`
+      ? T[Key] extends Constraint
+        ? Key
+        : never
+      : never;
+  }[TKey];
+
   export interface InstallVariant {
+    top?: boolean;
     tab: string;
     install: {
       lang: CodeLanguage;
@@ -322,25 +438,25 @@ export namespace TtGetStarted {
   export interface TestExampleVariant extends CodeVariant<"test-client-example"> {}
 }
 
-function installVar<Variant extends TtGetStarted.InstallVariant>(
+function installVar<Variant extends TtHow.InstallVariant>(
   variant: Variant,
 ): Variant {
   return variant;
 }
 
-function setUpClientVar<Variant extends TtGetStarted.SetUpClientVariant>(
+function setUpClientVar<Variant extends TtHow.SetUpClientVariant>(
   variant: Omit<Variant, "kind">,
 ): Variant {
   return { ...variant, kind: "set-up-client" } as Variant;
 }
 
-function setUpMcpVar<Variant extends TtGetStarted.SetUpMcpVariant>(
+function setUpMcpVar<Variant extends TtHow.SetUpMcpVariant>(
   variant: Omit<Variant, "kind">,
 ): Variant {
   return { ...variant, kind: "set-up-mcp" } as Variant;
 }
 
-function testExampleVar<Variant extends TtGetStarted.TestExampleVariant>(
+function testExampleVar<Variant extends TtHow.TestExampleVariant>(
   variant: Omit<Variant, "kind">,
 ): Variant {
   return { ...variant, kind: "test-client-example" } as Variant;
