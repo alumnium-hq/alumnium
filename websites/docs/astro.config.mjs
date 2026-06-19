@@ -13,6 +13,9 @@ export default defineConfig({
     format: "directory",
   },
   trailingSlash: "ignore",
+  markdown: {
+    gfm: true,
+  },
   integrations: [
     starlight({
       logo: {
