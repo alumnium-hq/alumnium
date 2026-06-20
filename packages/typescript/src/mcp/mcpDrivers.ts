@@ -45,6 +45,7 @@ export namespace McpDriver {
       username?: string;
       password?: string;
     };
+    recordVideos?: boolean;
     userAgent?: string;
   }
 
@@ -86,6 +87,7 @@ export async function createPlaywrightDriver(
     permissions,
     profileDir,
     proxy,
+    recordVideos = Env.ALUMNIUM_MCP_RECORD_VIDEOS,
     userAgent,
   } = driverOptions;
 
@@ -98,13 +100,15 @@ export async function createPlaywrightDriver(
   }
 
   await ensurePlaywrightChromiumInstalled();
-  const videosDir = await artifactsStore.ensureDir("videos");
+  const videosDir = recordVideos
+    ? await artifactsStore.ensureDir("videos")
+    : undefined;
 
   let context: BrowserContext;
   if (profileDir) {
     context = await chromium.launchPersistentContext(profileDir, {
       headless,
-      recordVideo: { dir: videosDir },
+      ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
       extraHTTPHeaders: headers,
       ...(executablePath ? { executablePath } : {}),
       ...(proxy ? { proxy } : {}),
@@ -117,7 +121,7 @@ export async function createPlaywrightDriver(
       ...(proxy ? { proxy } : {}),
     });
     context = await browser.newContext({
-      recordVideo: { dir: videosDir },
+      ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
       extraHTTPHeaders: headers,
       ...(userAgent ? { userAgent } : {}),
     });

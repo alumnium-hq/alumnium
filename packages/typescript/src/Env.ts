@@ -128,6 +128,10 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_MCP_RECORD_VIDEOS() {
+    return envVar("ALUMNIUM_MCP_RECORD_VIDEOS", z.stringbool().default(true));
+  },
+
   get ALUMNIUM_MCP_ARTIFACTS_DIR() {
     return envVar("ALUMNIUM_MCP_ARTIFACTS_DIR", pathString().optional());
   },
