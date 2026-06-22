@@ -14,6 +14,7 @@ import {
 import type { Driver } from "../drivers/Driver.ts";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
+import { proxyFromEnv } from "./proxyFromEnv.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { TypeUtils } from "../typeUtils.ts";
 
@@ -37,6 +38,7 @@ export namespace McpDriver {
     executablePath?: string;
     headers?: Headers;
     headless?: boolean;
+    httpProxy?: boolean;
     permissions?: string[];
     profileDir?: string;
     proxy?: {
@@ -84,12 +86,16 @@ export async function createPlaywrightDriver(
     executablePath,
     headless = false,
     headers = {},
+    httpProxy,
     permissions,
     profileDir,
-    proxy,
+    proxy: explicitProxy,
     recordVideos = Env.ALUMNIUM_MCP_RECORD_VIDEOS,
     userAgent,
   } = driverOptions;
+
+  const proxy =
+    explicitProxy ?? (httpProxy ? (proxyFromEnv() ?? undefined) : undefined);
 
   logger.info(
     `Creating Playwright driver (headless=${headless}, profile=${profileDir ?? "none"})`,
