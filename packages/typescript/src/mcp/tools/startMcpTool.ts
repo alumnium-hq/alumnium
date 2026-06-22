@@ -61,6 +61,7 @@ export const startMcpTool = McpTool.define("start", {
             - "planner" (boolean) — enable/disable planner agent;
             - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal";
             - "proxy" (object) — HTTP/HTTPS/SOCKS5 proxy, supported for Selenium and Playwright, e.g. {"server": "http://myproxy.com:3128", "bypass": ".com, chromium.org", "username": "usr", "password": "pwd"};
+            - "recordVideos" (boolean, default true) — record video of the browser session, Playwright only. Can also be disabled via ALUMNIUM_MCP_RECORD_VIDEOS=false;
             - "userAgent" (string) — custom User-Agent header sent with every request, supported for Selenium and Playwright.
 
           Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc", "profile": "work"}}'.
@@ -188,6 +189,9 @@ export const startMcpTool = McpTool.define("start", {
             password?: string;
           },
         }),
+      ...(typeof alumniumOptions["recordVideos"] === "boolean" && {
+        recordVideos: alumniumOptions["recordVideos"],
+      }),
     };
 
     const alumniumOptionsNonDriverKeys = new Set([
@@ -201,6 +205,7 @@ export const startMcpTool = McpTool.define("start", {
       "permissions",
       "planner",
       "proxy",
+      "recordVideos",
       "userAgent",
     ]);
     const driverSettings: Record<string, unknown> = {};
