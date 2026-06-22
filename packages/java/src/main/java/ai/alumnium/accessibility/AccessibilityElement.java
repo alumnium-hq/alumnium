@@ -22,6 +22,7 @@ public final class AccessibilityElement {
   private String androidText;
   private String androidContentDesc;
   private String androidBounds;
+  private Boolean androidClickable;
   private Object frame;
   private List<Integer> frameChain;
 
@@ -123,6 +124,15 @@ public final class AccessibilityElement {
 
   public AccessibilityElement androidBounds(String v) {
     this.androidBounds = v;
+    return this;
+  }
+
+  public Boolean androidClickable() {
+    return androidClickable;
+  }
+
+  public AccessibilityElement androidClickable(Boolean v) {
+    this.androidClickable = v;
     return this;
   }
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
-@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium-ios")
 public class TableTest extends BaseTest {
 
   private static final String TABLE_URL = "https://the-internet.herokuapp.com/tables";

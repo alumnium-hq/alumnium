@@ -31,8 +31,14 @@ public final class XCUITestAccessibilityTree extends BaseAccessibilityTree {
   }
 
   private void addRawIds(Element elem) {
-    nextRawId++;
-    elem.setAttribute("raw_id", Integer.toString(nextRawId));
+    // Assign a raw_id only to elements that don't already have one. Device page source has none
+    // (numbered fresh in document order); a scoped tree is rebuilt from already-numbered XML (see
+    // scopeToArea) so its ids are preserved, keeping scoped ids equal to the full-tree ids the
+    // driver resolves actions against.
+    if (elem.getAttribute("raw_id").isEmpty()) {
+      nextRawId++;
+      elem.setAttribute("raw_id", Integer.toString(nextRawId));
+    }
     NodeList kids = elem.getChildNodes();
     for (int i = 0; i < kids.getLength(); i++) {
       Node n = kids.item(i);

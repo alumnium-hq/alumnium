@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
-@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium-ios")
 public class DragAndDropTest extends BaseTest {
 
   private static final String DRAG_AND_DROP_URL =

@@ -15,7 +15,10 @@ import io.appium.java_client.remote.SupportsContextSwitching;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -42,6 +45,9 @@ public final class AppiumDriver extends BaseDriver {
   private static final String WAITER_SCRIPT = loadScript("/ai/alumnium/driver/scripts/waiter.js");
   private static final String WAIT_FOR_SCRIPT =
       loadScript("/ai/alumnium/driver/scripts/waitFor.js");
+
+  // UIAutomator2 bounds attribute, e.g. "[left,top][right,bottom]".
+  private static final Pattern BOUNDS = Pattern.compile("\\[(\\d+),(\\d+)]\\[(\\d+),(\\d+)]");
 
   public enum Platform {
     UIAUTOMATOR2,
@@ -83,6 +89,13 @@ public final class AppiumDriver extends BaseDriver {
   public BaseAccessibilityTree accessibilityTree() {
     waitForWebPageToLoad();
     ensureNativeContext();
+    if (platform == Platform.UIAUTOMATOR2 && hasWebContext()) {
+      // Android WebViews don't refresh the native accessibility mirror after pure JS DOM
+      // mutations (e.g. drag-and-drop reordering). A tiny native "ghost scroll" forces the
+      // WebView to re-emit accessibility events so UiAutomator2 re-mirrors the current DOM.
+      // See issue #360.
+      ghostScroll();
+    }
     sleep(delay);
     if (doubleFetchPageSource) {
       driver.getPageSource();
@@ -98,9 +111,20 @@ public final class AppiumDriver extends BaseDriver {
   @Override
   public void click(int id) {
     ensureNativeContext();
-    WebElement element = findElement(id);
-    scrollIntoView(element);
-    element.click();
+    AccessibilityElement element = accessibilityTree().elementById(id);
+    if (platform == Platform.UIAUTOMATOR2
+        && hasWebContext()
+        && Boolean.FALSE.equals(element.androidClickable())
+        && element.androidBounds() != null) {
+      // Web controls whose JS click handlers Chrome does not expose as natively clickable (e.g. a
+      // sortable <th>) ignore element.click() (a no-op accessibility ACTION_CLICK); a real
+      // coordinate tap is instead translated by the WebView into a DOM click.
+      tapAtBoundsCenter(element.androidBounds());
+      return;
+    }
+    WebElement webElement = locate(element);
+    scrollIntoView(webElement);
+    webElement.click();
   }
 
   @Override
@@ -197,7 +221,10 @@ public final class AppiumDriver extends BaseDriver {
 
   @Override
   public WebElement findElement(int id) {
-    AccessibilityElement element = accessibilityTree().elementById(id);
+    return locate(accessibilityTree().elementById(id));
+  }
+
+  private WebElement locate(AccessibilityElement element) {
     return platform == Platform.XCUITEST ? findElementIos(element) : findElementAndroid(element);
   }
 
@@ -358,6 +385,61 @@ public final class AppiumDriver extends BaseDriver {
     sequence.addAction(
         finger.createPointerMove(Duration.ofMillis(2000), Origin.fromElement(toElement), 0, 0));
     sequence.addAction(new Pause(finger, Duration.ofMillis(1500)));
+    sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    driver.perform(Collections.singletonList(sequence));
+  }
+
+  /**
+   * Force UiAutomator2 to refresh the native accessibility tree for a WebView.
+   *
+   * <p>Android only re-mirrors a WebView's DOM into the native accessibility tree when the WebView
+   * emits accessibility events; a pure JS DOM mutation emits none, leaving the page source stale. A
+   * small net-zero scroll (move past the touch-slop threshold and back) makes the WebView fire
+   * scroll/content-changed events, refreshing the tree without changing the visible scroll
+   * position.
+   */
+  private void ghostScroll() {
+    Dimension size = driver.manage().window().getSize();
+    int centerX = size.getWidth() / 2;
+    int centerY = size.getHeight() / 2;
+    // Must exceed Android touch slop (~16-24px) or the gesture registers as a tap.
+    int delta = Math.max(50, (int) (size.getHeight() * 0.1));
+
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "ghost_pointer");
+    Sequence sequence = new Sequence(finger, 0);
+    sequence.addAction(
+        finger.createPointerMove(Duration.ZERO, Origin.viewport(), centerX, centerY));
+    sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    sequence.addAction(new Pause(finger, Duration.ofMillis(100)));
+    sequence.addAction(
+        finger.createPointerMove(
+            Duration.ofMillis(200), Origin.viewport(), centerX, centerY - delta));
+    sequence.addAction(
+        finger.createPointerMove(Duration.ofMillis(200), Origin.viewport(), centerX, centerY));
+    sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    driver.perform(Collections.singletonList(sequence));
+    sleep(0.15);
+  }
+
+  /**
+   * Inject a single-finger tap at the center of a UIAutomator2 {@code bounds} rectangle. Used to
+   * actuate web controls that are not natively clickable, where {@link WebElement#click()} resolves
+   * to a no-op accessibility action but a real touch is translated into a DOM click.
+   */
+  private void tapAtBoundsCenter(String bounds) {
+    Matcher m = BOUNDS.matcher(bounds);
+    if (!m.matches()) {
+      LOG.warn("Could not parse bounds '{}'; skipping tap", bounds);
+      return;
+    }
+    int cx = (Integer.parseInt(m.group(1)) + Integer.parseInt(m.group(3))) / 2;
+    int cy = (Integer.parseInt(m.group(2)) + Integer.parseInt(m.group(4))) / 2;
+
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "tap_pointer");
+    Sequence sequence = new Sequence(finger, 0);
+    sequence.addAction(finger.createPointerMove(Duration.ZERO, Origin.viewport(), cx, cy));
+    sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    sequence.addAction(new Pause(finger, Duration.ofMillis(100)));
     sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
     driver.perform(Collections.singletonList(sequence));
   }

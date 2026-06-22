@@ -2,9 +2,7 @@ package ai.alumnium.system;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
-@DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium-android")
 public class LocatorTest extends BaseTest {
 
   private static final String FORM_URL =
