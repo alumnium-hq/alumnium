@@ -51,10 +51,14 @@ const { supersections } = Astro.props;
     linksState[id] = true;
 
     // When a click is registered, ignore non-clicked id enter events
-    if (clickedId && clickedId !== id) return;
+    if (clickedId && clickedId !== id) {
+      return;
+    }
 
     const enterEl = queryLinkEl(id);
-    if (enterEl === activeLink) return;
+    if (enterEl === activeLink) {
+      return;
+    }
 
     // Update hash unless there's a click registered.
     if (!clickedId) setHash(id);
@@ -69,7 +73,9 @@ const { supersections } = Astro.props;
     linksState[id] = false;
 
     const leftEl = queryLinkEl(id);
-    if (leftEl !== activeLink) return;
+    if (leftEl !== activeLink) {
+      return;
+    }
 
     activeLink?.classList.remove(modifierClass);
 
@@ -77,7 +83,10 @@ const { supersections } = Astro.props;
       (stateId) => linksState[stateId],
     );
     // If not active link to restore found, clear the hash
-    if (!restoreId) return setHash();
+    if (!restoreId) {
+      activeLink = null;
+      return setHash();
+    }
 
     const restoreEl = queryLinkEl(restoreId);
 
