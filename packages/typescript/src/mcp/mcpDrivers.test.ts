@@ -1,5 +1,5 @@
 import type { WebDriver } from "selenium-webdriver";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createSeleniumDriver } from "./mcpDrivers.ts";
 
 const mocks = vi.hoisted(() => {
@@ -98,6 +98,38 @@ describe("createSeleniumDriver", () => {
     mocks.builders.length = 0;
     mocks.options.length = 0;
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    delete process.env["http_proxy"];
+    delete process.env["HTTP_PROXY"];
+    delete process.env["https_proxy"];
+    delete process.env["HTTPS_PROXY"];
+  });
+
+  it("reads proxy from http_proxy env var automatically", async () => {
+    process.env["http_proxy"] = "http://envproxy.example:8080";
+
+    await createSeleniumDriver({}, null, {});
+
+    expect(mocks.options[0]?.args).toEqual(
+      expect.arrayContaining(["--proxy-server=http://envproxy.example:8080"]),
+    );
+  });
+
+  it("gives explicit proxy precedence over env var", async () => {
+    process.env["http_proxy"] = "http://envproxy.example:8080";
+
+    await createSeleniumDriver({}, null, {
+      proxy: { server: "http://explicit.example:3128" },
+    });
+
+    expect(mocks.options[0]?.args).toEqual(
+      expect.arrayContaining(["--proxy-server=http://explicit.example:3128"]),
+    );
+    expect(mocks.options[0]?.args).not.toEqual(
+      expect.arrayContaining(["--proxy-server=http://envproxy.example:8080"]),
+    );
   });
 
   it("passes proxy and user agent options to Chrome", async () => {

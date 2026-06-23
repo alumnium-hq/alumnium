@@ -38,7 +38,6 @@ export namespace McpDriver {
     executablePath?: string;
     headers?: Headers;
     headless?: boolean;
-    httpProxy?: boolean;
     permissions?: string[];
     profileDir?: string;
     proxy?: {
@@ -86,7 +85,6 @@ export async function createPlaywrightDriver(
     executablePath,
     headless = false,
     headers = {},
-    httpProxy,
     permissions,
     profileDir,
     proxy: explicitProxy,
@@ -94,8 +92,7 @@ export async function createPlaywrightDriver(
     userAgent,
   } = driverOptions;
 
-  const proxy =
-    explicitProxy ?? (httpProxy ? (proxyFromEnv() ?? undefined) : undefined);
+  const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
 
   logger.info(
     `Creating Playwright driver (headless=${headless}, profile=${profileDir ?? "none"})`,
@@ -179,9 +176,11 @@ export async function createSeleniumDriver(
     headers = {},
     headless = false,
     profileDir,
-    proxy,
+    proxy: explicitProxy,
     userAgent,
   } = driverOptions;
+
+  const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
 
   const chromeOptions = new Options();
   // Disable verbose logging so it doesn't print to stdout and interfere with
