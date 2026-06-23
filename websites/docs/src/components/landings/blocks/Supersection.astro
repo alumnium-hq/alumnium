@@ -11,10 +11,10 @@ export interface Props {
 const { id, shaded, bg, edge } = Astro.props;
 ---
 
-<landing-supersection id={id} class="supersection-wrapper debug">
+<landing-supersection id={id} class="supersection-wrapper">
   <DecorationLine edge={!!edge} />
 
-  <div data-sentinel="top" class="debug"></div>
+  <div data-sentinel="top"></div>
 
   <div
     class:list={[
@@ -31,7 +31,7 @@ const { id, shaded, bg, edge } = Astro.props;
     </div>
   </div>
 
-  <div data-sentinel="bottom" class="debug"></div>
+  <div data-sentinel="bottom"></div>
 </landing-supersection>
 
 <script>
