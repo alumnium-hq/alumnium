@@ -101,14 +101,11 @@ describe("createSeleniumDriver", () => {
   });
 
   afterEach(() => {
-    delete process.env["http_proxy"];
-    delete process.env["HTTP_PROXY"];
-    delete process.env["https_proxy"];
-    delete process.env["HTTPS_PROXY"];
+    vi.unstubAllEnvs();
   });
 
   it("reads proxy from http_proxy env var automatically", async () => {
-    process.env["http_proxy"] = "http://envproxy.example:8080";
+    vi.stubEnv("http_proxy", "http://envproxy.example:8080");
 
     await createSeleniumDriver({}, null, {});
 
@@ -118,7 +115,7 @@ describe("createSeleniumDriver", () => {
   });
 
   it("gives explicit proxy precedence over env var", async () => {
-    process.env["http_proxy"] = "http://envproxy.example:8080";
+    vi.stubEnv("http_proxy", "http://envproxy.example:8080");
 
     await createSeleniumDriver({}, null, {
       proxy: { server: "http://explicit.example:3128" },

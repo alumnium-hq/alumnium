@@ -8,6 +8,7 @@ type ProxyConfig = {
 export function proxyFromEnv(): ProxyConfig | null {
   // oxlint-disable-next-line no-process-env -- reading standard proxy env vars not managed by Env
   const raw =
+    // oxlint-disable-next-line no-process-env -- reading standard proxy env vars not managed by Env
     process.env["http_proxy"] ??
     // oxlint-disable-next-line no-process-env -- reading standard proxy env vars not managed by Env
     process.env["HTTP_PROXY"] ??
