@@ -14,6 +14,7 @@ import {
 import type { Driver } from "../drivers/Driver.ts";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
+import { proxyFromEnv } from "./proxyFromEnv.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { TypeUtils } from "../typeUtils.ts";
 
@@ -86,10 +87,12 @@ export async function createPlaywrightDriver(
     headers = {},
     permissions,
     profileDir,
-    proxy,
+    proxy: explicitProxy,
     recordVideos = Env.ALUMNIUM_MCP_RECORD_VIDEOS,
     userAgent,
   } = driverOptions;
+
+  const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
 
   logger.info(
     `Creating Playwright driver (headless=${headless}, profile=${profileDir ?? "none"})`,
@@ -173,9 +176,11 @@ export async function createSeleniumDriver(
     headers = {},
     headless = false,
     profileDir,
-    proxy,
+    proxy: explicitProxy,
     userAgent,
   } = driverOptions;
+
+  const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
 
   const chromeOptions = new Options();
   // Disable verbose logging so it doesn't print to stdout and interfere with
