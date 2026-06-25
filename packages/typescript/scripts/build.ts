@@ -112,6 +112,32 @@ const DIST_MAVEN_DIR = path.resolve(DIST_DIR, "maven");
 const COMMON_PKG_ASSETS = ["../../LICENSE.md"];
 const CORE_PKG_ASSETS = [...COMMON_PKG_ASSETS, "../../README.md"];
 
+// Banner prepended to the bundled oop download worker. Bun bakes
+// playwright-core's `__dirname` into the bundle as the absolute build-machine
+// path (e.g. /home/runner/... on CI), so the worker's `require(packageRoot +
+// "/package.json")` and `browsers.json` fail on any other machine. This hook
+// redirects those requires to the worker's own runtime directory, where
+// setupEmbeddedDependencies.ts extracts the matching package.json/browsers.json
+// alongside the worker. Mirrors the parent-process hook in that file. The
+// banner runs in the worker's outer CJS scope, so its `__dirname` is the real
+// extracted location rather than the baked literal.
+const PLAYWRIGHT_OOP_DOWNLOAD_BANNER = `"use strict";
+{
+  const __M = require("node:module");
+  const __P = require("node:path");
+  const __orig = __M._resolveFilename;
+  __M._resolveFilename = function (request, ...rest) {
+    if (typeof request === "string") {
+      if (request.endsWith("playwright-core/package.json") || request.endsWith("playwright-core\\\\package.json"))
+        return __P.join(__dirname, "package.json");
+      if (request.endsWith("playwright-core/browsers.json") || request.endsWith("playwright-core\\\\browsers.json"))
+        return __P.join(__dirname, "browsers.json");
+    }
+    return __orig.call(this, request, ...rest);
+  };
+}
+`;
+
 //#endregion
 
 //#region Meta
@@ -949,6 +975,7 @@ async function buildPlaywrightOopDownloadBundle(): Promise<string> {
     external: ["chromium-bidi"],
     naming: "[name].cjs",
     minify: false,
+    banner: PLAYWRIGHT_OOP_DOWNLOAD_BANNER,
   });
 
   if (!result.success) {
