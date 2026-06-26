@@ -275,9 +275,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.press_key", spanAttrs)
   async pressKey(key: Keys.Key): Promise<void> {
-    await this.autoswitchToNewTabAction(() =>
-      this.page.keyboard.press(key),
-    );
+    await this.autoswitchToNewTabAction(() => this.page.keyboard.press(key));
   }
 
   @span("driver.quit", spanAttrs)
