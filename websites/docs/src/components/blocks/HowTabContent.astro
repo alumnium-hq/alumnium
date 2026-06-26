@@ -1,0 +1,24 @@
+---
+import { tt } from "#/copy";
+import type { TtHow } from "#/copy/how";
+import Code from "./Code.astro";
+import Meta from "./Meta/Meta.astro";
+
+interface Props {
+  key: TtHow.CodeVariantKey;
+}
+
+const { key } = Astro.props;
+
+const t = tt.how[key];
+---
+
+<Code code={t.code} lang={t.lang} />
+
+{
+  t.meta && (
+    <div class="text-xs text-gray-500 px-4 pb-2">
+      <Meta source={t.meta} />
+    </div>
+  )
+}

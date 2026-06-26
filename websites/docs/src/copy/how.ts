@@ -1,3 +1,4 @@
+import type { MetaData } from "#/data/meta";
 import type { CodeLanguage } from "astro";
 import { lit } from "smollit";
 
@@ -10,84 +11,76 @@ export const ttHow = {
     tab: "CLI",
   },
 
-  "install-cli-bin-xnix": installVar({
+  "install-cli-bin-xnix": installCliVar({
     tab: "macOS/Linux",
 
-    install: {
-      lang: "bash",
-      code: "curl -LsSf https://alumnium.ai/install.sh | sh",
-    },
+    lang: "bash",
+    code: "curl -LsSf https://alumnium.ai/install.sh | sh",
+    meta: "bin",
   }),
 
-  "install-cli-bin-windows": installVar({
+  "install-cli-bin-windows": installCliVar({
     tab: "Windows",
 
-    install: {
-      lang: "powershell",
-      code: "irm https://alumnium.ai/install.ps1 | iex",
-    },
+    lang: "powershell",
+    code: "irm https://alumnium.ai/install.ps1 | iex",
+    meta: "bin",
   }),
 
   "install-cli-npm": {
     tab: "npm",
   },
 
-  "install-cli-npm-npm": installVar({
+  "install-cli-npm-npm": installCliVar({
     tab: "npm",
 
-    install: {
-      lang: "bash",
-      code: "npm install alumnium",
-    },
+    lang: "bash",
+    code: "npm install alumnium",
+    meta: "bin",
   }),
 
-  "install-cli-npm-pnpm": installVar({
+  "install-cli-npm-pnpm": installCliVar({
     tab: "pnpm",
 
-    install: {
-      lang: "bash",
-      code: "pnpm add alumnium",
-    },
+    lang: "bash",
+    code: "pnpm add alumnium",
+    meta: "bin",
   }),
 
-  "install-cli-npm-yarn": installVar({
+  "install-cli-npm-yarn": installCliVar({
     tab: "Yarn",
 
-    install: {
-      lang: "bash",
-      code: "yarn add alumnium",
-    },
+    lang: "bash",
+    code: "yarn add alumnium",
+    meta: "bin",
   }),
 
-  "install-cli-npm-bun": installVar({
+  "install-cli-npm-bun": installCliVar({
     tab: "Bun",
 
-    install: {
-      lang: "bash",
-      code: "bun add alumnium",
-    },
+    lang: "bash",
+    code: "bun add alumnium",
+    meta: "bin",
   }),
 
   "install-cli-pip": {
     tab: "Pip",
   },
 
-  "install-cli-pip-pip": installVar({
+  "install-cli-pip-pip": installCliVar({
     tab: "pip",
 
-    install: {
-      lang: "bash",
-      code: "pip install alumnium",
-    },
+    lang: "bash",
+    code: "pip install alumnium",
+    meta: "bin",
   }),
 
-  "install-cli-pip-uv": installVar({
+  "install-cli-pip-uv": installCliVar({
     tab: "uv",
 
-    install: {
-      lang: "bash",
-      code: "uviw alumnium",
-    },
+    lang: "bash",
+    code: "uviw alumnium",
+    meta: "bin",
   }),
 
   //#endregion
@@ -98,67 +91,65 @@ export const ttHow = {
     tab: "TypeScript",
   },
 
-  "install-client-npm-npm": installVar({
+  "install-client-npm-npm": installClientVar({
     tab: "npm",
 
-    install: {
-      lang: "bash",
-      code: "npm install alumnium",
-    },
+    lang: "bash",
+    code: "npm install alumnium",
+    meta: "npm",
   }),
 
-  "install-client-npm-pnpm": installVar({
+  "install-client-npm-pnpm": installClientVar({
     tab: "pnpm",
 
-    install: {
-      lang: "bash",
-      code: "pnpm add alumnium",
-    },
+    lang: "bash",
+    code: "pnpm add alumnium",
+    meta: "npm",
   }),
 
-  "install-client-npm-yarn": installVar({
+  "install-client-npm-yarn": installClientVar({
     tab: "Yarn",
 
-    install: {
-      lang: "bash",
-      code: "yarn add alumnium",
-    },
+    lang: "bash",
+    code: "yarn add alumnium",
+    meta: "npm",
   }),
 
-  "install-client-npm-bun": installVar({
+  "install-client-npm-bun": installClientVar({
     tab: "Bun",
 
-    install: {
-      lang: "bash",
-      code: "bun add alumnium",
-    },
+    lang: "bash",
+    code: "bun add alumnium",
+    meta: "npm",
   }),
 
   "install-client-pip": {
     tab: "Python",
   },
 
-  "install-client-pip-pip": installVar({
+  "install-client-pip-pip": installClientVar({
     tab: "pip",
 
-    install: {
-      lang: "bash",
-      code: "pip install alumnium",
-    },
+    lang: "bash",
+    code: "pip install alumnium",
+    meta: "pip",
   }),
 
-  "install-client-pip-uv": installVar({
+  "install-client-pip-uv": installClientVar({
     tab: "uv",
 
-    install: {
-      lang: "bash",
-      code: "uv add alumnium",
-    },
+    lang: "bash",
+    code: "uv add alumnium",
+    meta: "pip",
   }),
 
-  "install-client-java": {
+  "install-client-java-mvn": installClientVar({
     tab: "Java",
-  },
+
+    lang: "bash",
+    code: "mvn dependency:get -D groupId=ai.alumnium -D artifactId=alumnium -D version=LATEST",
+    meta: "version",
+  }),
 
   //#endregion
 
@@ -407,41 +398,50 @@ export namespace TtHow {
   export type T = typeof ttHow;
   export type TKey = keyof T;
 
-  export type Filter<FilterKey extends string, Constraint = {}> = {
-    [Key in TKey]: Key extends `${FilterKey}-${string}`
+  export type FilterKey<Base extends string, Constraint = {}> = {
+    [Key in TKey]: Key extends `${Base}-${string}`
       ? T[Key] extends Constraint
         ? Key
         : never
       : never;
   }[TKey];
 
-  export interface InstallVariant {
-    top?: boolean;
-    tab: string;
-    install: {
-      lang: CodeLanguage;
-      code: string;
-    };
-  }
+  export type CodeVariantKey = {
+    [Key in TKey]: T[Key] extends CodeVariant<string> ? Key : never;
+  }[TKey];
 
-  export interface CodeVariant<Kind extends string> {
+  export interface TabVariant<Kind extends string> {
     kind: Kind;
-    lang: CodeLanguage;
     tab: string;
-    code: string;
   }
 
-  export interface SetUpClientVariant extends CodeVariant<"set-up-client"> {}
+  export interface CodeVariant<Kind extends string> extends TabVariant<Kind> {
+    lang: CodeLanguage;
+    code: string;
+    meta?: MetaData.SourceName;
+  }
+
+  export interface InstallCliVariant extends CodeVariant<"install-cli"> {}
+
+  export interface InstallClientVariant extends CodeVariant<"install-client"> {}
 
   export interface SetUpMcpVariant extends CodeVariant<"set-up-mcp"> {}
+
+  export interface SetUpClientVariant extends CodeVariant<"set-up-client"> {}
 
   export interface TestExampleVariant extends CodeVariant<"test-client-example"> {}
 }
 
-function installVar<Variant extends TtHow.InstallVariant>(
-  variant: Variant,
+function installCliVar<Variant extends TtHow.InstallCliVariant>(
+  variant: Omit<Variant, "kind">,
 ): Variant {
-  return variant;
+  return { ...variant, kind: "install-cli" } as Variant;
+}
+
+function installClientVar<Variant extends TtHow.InstallClientVariant>(
+  variant: Omit<Variant, "kind">,
+): Variant {
+  return { ...variant, kind: "install-client" } as Variant;
 }
 
 function setUpClientVar<Variant extends TtHow.SetUpClientVariant>(

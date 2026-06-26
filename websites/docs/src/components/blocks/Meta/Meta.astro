@@ -1,0 +1,46 @@
+---
+import githubMetadata from "#/data/github/metadata.json";
+import { MetaData } from "#/data/meta";
+import { MetaSource, MetaSourceVersion } from "./MetaSource";
+
+interface Props {
+  source: MetaData.SourceName;
+}
+
+const { source } = Astro.props;
+
+const latestRelease = githubMetadata.releases.find((release) => release.latest);
+if (!latestRelease) throw new Error("No latest release found");
+MetaSourceVersion.preset(latestRelease);
+
+const metaSource = MetaSource.create(source);
+const html = await metaSource.render();
+---
+
+<al-meta source={source} set:html={html} class="flex items-center gap-1" />
+
+<script>
+  import { MetaData } from "#/data/meta";
+  import * as z from "zod/mini";
+  import { MetaSource } from "./MetaSource";
+
+  class MetaWebComponent extends HTMLElement {
+    connectedCallback() {
+      this.#refresh();
+    }
+
+    async #refresh() {
+      const rawSource = this.getAttribute("source");
+      const source = z.parse(MetaData.SourceName, rawSource);
+
+      const metaSource = MetaSource.create(source);
+
+      const html = await metaSource.render();
+      this.innerHTML = html;
+    }
+  }
+
+  if (!customElements.get("al-meta")) {
+    customElements.define("al-meta", MetaWebComponent);
+  }
+</script>

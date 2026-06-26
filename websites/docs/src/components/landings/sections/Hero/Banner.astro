@@ -1,7 +1,5 @@
 ---
-import TextDel from "#/components/TextDel.astro";
 import { tt } from "#/copy";
-import Crosses from "../../blocks/Crosses.astro";
 
 const version = "0.9";
 
@@ -16,6 +14,6 @@ const headline = ttBanners.headline.en;
   <span class="badge text-lime-400">New</span>
   <!-- <span class="leading-none capsize font-mono text-xs uppercase inline gap-1"> -->
   <span>v{version}</span>
-  <TextDel />
+  <text-del></text-del>
   <span>{headline}</span>
 </a>

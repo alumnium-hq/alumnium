@@ -1,137 +1,53 @@
 ---
-import { tt } from "#/copy";
-import type { AstroComponentInstance } from "astro/runtime/server/index.js";
 import Tabs from "../landings/blocks/Tabs.astro";
-import Code from "./Code.astro";
-import type { TtHow } from "#/copy/how";
+import HowTabContent from "./HowTabContent.astro";
+import { createHowTab } from "./howTabs";
 
-const t = tt.how;
-
-type T = typeof t;
-
-type TestExampleVariantKey = keyof T extends infer Key
-  ? Key extends keyof T
-    ? T[Key] extends TtHow.TestExampleVariant
-      ? Key
-      : never
-    : never
-  : never;
-
-type RenderContent = <Id extends TestExampleVariantKey>(
-  id: Id,
-) => AstroComponentInstance;
+const tab = createHowTab<"test-client">();
 ---
 
-<Fragment>
-  {
-    () => {
-      const renderContent: RenderContent = (id) => {
-        const tContent = t[id];
-        return (
-          <>
-            <Code code={tContent.code} lang={tContent.lang} />
-          </>
-        );
-      };
+<Tabs
+  items={[
+    tab("test-client-ts", ["selenium", "playwright", "appium"]),
+    tab("test-client-python", ["selenium", "playwright", "appium"]),
+    tab("test-client-java", ["selenium", "playwright", "appium"]),
+  ]}
+  active="test-client-ts-selenium"
+  style="code"
+>
+  <Fragment slot="test-client-ts-selenium">
+    <HowTabContent key="test-client-ts-selenium" />
+  </Fragment>
 
-      return (
-        <Tabs
-          items={[
-            {
-              id: "test-client-ts",
-              label: t["test-client-ts"].tab,
-              items: [
-                {
-                  id: "test-client-ts-selenium",
-                  label: t["test-client-ts-selenium"].tab,
-                },
-                {
-                  id: "test-client-ts-playwright",
-                  label: t["test-client-ts-playwright"].tab,
-                },
-                {
-                  id: "test-client-ts-appium",
-                  label: t["test-client-ts-appium"].tab,
-                },
-              ],
-            },
-            {
-              id: "test-client-python",
-              label: t["test-client-python"].tab,
-              items: [
-                {
-                  id: "test-client-python-selenium",
-                  label: t["test-client-python-selenium"].tab,
-                },
-                {
-                  id: "test-client-python-playwright",
-                  label: t["test-client-python-playwright"].tab,
-                },
-                {
-                  id: "test-client-python-appium",
-                  label: t["test-client-python-appium"].tab,
-                },
-              ],
-            },
-            {
-              id: "test-client-java",
-              label: t["test-client-java"].tab,
-              items: [
-                {
-                  id: "test-client-java-selenium",
-                  label: t["test-client-java-selenium"].tab,
-                },
-                {
-                  id: "test-client-java-playwright",
-                  label: t["test-client-java-playwright"].tab,
-                },
-                {
-                  id: "test-client-java-appium",
-                  label: t["test-client-java-appium"].tab,
-                },
-              ],
-            },
-          ]}
-          active="test-client-ts-selenium"
-          style="code"
-        >
-          <Fragment slot="test-client-ts-selenium">
-            {renderContent("test-client-ts-selenium")}
-          </Fragment>
+  <Fragment slot="test-client-ts-playwright">
+    <HowTabContent key="test-client-ts-playwright" />
+  </Fragment>
 
-          <Fragment slot="test-client-ts-playwright">
-            {renderContent("test-client-ts-playwright")}
-          </Fragment>
+  <Fragment slot="test-client-ts-appium">
+    <HowTabContent key="test-client-ts-appium" />
+  </Fragment>
 
-          <Fragment slot="test-client-ts-appium">
-            {renderContent("test-client-ts-appium")}
-          </Fragment>
+  <Fragment slot="test-client-python-selenium">
+    <HowTabContent key="test-client-python-selenium" />
+  </Fragment>
 
-          <Fragment slot="test-client-python-selenium">
-            {renderContent("test-client-python-selenium")}
-          </Fragment>
+  <Fragment slot="test-client-python-playwright">
+    <HowTabContent key="test-client-python-playwright" />
+  </Fragment>
 
-          <Fragment slot="test-client-python-playwright">
-            {renderContent("test-client-python-playwright")}
-          </Fragment>
+  <Fragment slot="test-client-python-appium">
+    <HowTabContent key="test-client-python-appium" />
+  </Fragment>
 
-          <Fragment slot="test-client-python-appium">
-            {renderContent("test-client-python-appium")}
-          </Fragment>
+  <Fragment slot="test-client-java-selenium">
+    <HowTabContent key="test-client-java-selenium" />
+  </Fragment>
 
-          <Fragment slot="test-client-java-selenium">
-            {renderContent("test-client-java-selenium")}
-          </Fragment>
+  <Fragment slot="test-client-java-playwright">
+    <HowTabContent key="test-client-java-playwright" />
+  </Fragment>
 
-          <Fragment slot="test-client-java-playwright">
-            {renderContent("test-client-java-playwright")}
-          </Fragment>
-
-          <Fragment slot="test-client-java-appium">
-            {renderContent("test-client-java-appium")}
-          </Fragment>
-        </Tabs>
-      );
-    }
-  }
-</Fragment>
+  <Fragment slot="test-client-java-appium">
+    <HowTabContent key="test-client-java-appium" />
+  </Fragment>
+</Tabs>

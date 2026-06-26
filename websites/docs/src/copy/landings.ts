@@ -798,7 +798,7 @@ export const ttLandings = {
         `,
 
         copy: txt`
-          Thanks to the multi-layer caching, Alumnium avoids repeating expensive
+          Thanks to the multi-level caching, Alumnium avoids repeating expensive
           AI work. Once a test works, its steps and LLM responses are cached and
           reused across future runs.
 

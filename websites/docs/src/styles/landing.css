@@ -311,6 +311,10 @@
     & .badge {
       @apply border-[currentColor]/40 border p-0.5 font-medium rounded-sm inline-flex items-center gap-0.5 leading-none capsize text-[0.85em];
     }
+
+    & text-del {
+      @apply content-[""] inline-block bg-[currentColor]/70 size-[0.2em] rounded-full shrink-0;
+    }
   }
 }
 
