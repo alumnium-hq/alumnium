@@ -110,9 +110,14 @@ public final class AppiumDriver extends BaseDriver {
     ensureNativeContext();
     CharSequence code =
         switch (key) {
+          case ARROW_DOWN -> org.openqa.selenium.Keys.ARROW_DOWN;
+          case ARROW_LEFT -> org.openqa.selenium.Keys.ARROW_LEFT;
+          case ARROW_RIGHT -> org.openqa.selenium.Keys.ARROW_RIGHT;
+          case ARROW_UP -> org.openqa.selenium.Keys.ARROW_UP;
           case BACKSPACE -> org.openqa.selenium.Keys.BACK_SPACE;
           case ENTER -> org.openqa.selenium.Keys.ENTER;
           case ESCAPE -> org.openqa.selenium.Keys.ESCAPE;
+          case F5 -> org.openqa.selenium.Keys.F5;
           case TAB -> org.openqa.selenium.Keys.TAB;
         };
     new Actions(driver).sendKeys(code).perform();
