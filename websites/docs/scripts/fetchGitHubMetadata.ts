@@ -7,9 +7,10 @@ const SCRIPTS_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(SCRIPTS_DIR, "..", "src", "data");
 const METADATA_PATH = path.join(DATA_DIR, "github", "metadata.json");
 
-const [metadata, contributors] = await Promise.all([
+const [metadata, contributors, releases] = await Promise.all([
   GitHubData.fetchRepository(),
   GitHubData.fetchContributors(),
+  GitHubData.fetchReleases(),
 ]);
 
 await fs.writeFile(
@@ -18,6 +19,7 @@ await fs.writeFile(
     {
       stars: metadata.stargazers_count,
       contributors,
+      releases,
     },
     null,
     2,

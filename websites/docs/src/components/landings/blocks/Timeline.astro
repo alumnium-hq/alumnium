@@ -198,7 +198,7 @@ const items = await Promise.all(
     }
 
     &.is-header {
-      @apply sticky z-30 -mb-8;
+      @apply sticky z-30 -mb-8 pointer-events-none;
       top: var(--timeline-header-top);
 
       &.has-stuck {
@@ -256,6 +256,10 @@ const items = await Promise.all(
     &.is-last {
       @apply pb-0;
     }
+  }
+
+  .timeline-slot {
+    @apply pointer-events-auto;
   }
 
   .timeline-line {
