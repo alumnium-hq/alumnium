@@ -48,7 +48,7 @@ def driver(context):
 
         if lt_username and lt_access_key:
             options.platform_version = "18"
-            options.app = "lt://APP10160422151774312193564972"  # mise //packages/python:test/system/upload:ios-app
+            options.app = "t://APP10160251981780919360614287"  # mise //packages/python:test/system/upload:ios-app
             options.set_capability(
                 "lt:options",
                 {
@@ -98,7 +98,7 @@ def driver(context):
 
         if lt_username and lt_access_key:
             options.platform_version = "16"
-            options.app = "lt://APP10160422151774312238697602"  # mise //packages/python:test/system/upload:android-app
+            options.app = "lt://APP10160362031780919316131402"  # mise //packages/python:test/system/upload:android-app
             options.set_capability(
                 "lt:options",
                 {

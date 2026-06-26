@@ -7,6 +7,9 @@ from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.webelement import WebElement
 from selenium.common.exceptions import UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.actions import interaction
+from selenium.webdriver.common.actions.action_builder import ActionBuilder
+from selenium.webdriver.common.actions.pointer_input import PointerInput
 from selenium.webdriver.common.keys import Keys
 
 from ..accessibility import UIAutomator2AccessibilityTree, XCUITestAccessibilityTree
@@ -69,7 +72,7 @@ class AppiumDriver(BaseDriver):
         from_element = self.find_element(from_id)
         to_element = self.find_element(to_id)
         self._scroll_into_view(from_element)
-        self.driver.drag_and_drop(from_element, to_element)
+        self._touch_drag_and_drop(from_element, to_element)
 
     def press_key(self, key: Key) -> None:
         self._ensure_native_app_context()
@@ -214,6 +217,23 @@ class AppiumDriver(BaseDriver):
             actions.move_by_offset(-ceil(size["width"] / 2), -ceil(size["height"] / 2))
             actions.click()
             actions.perform()
+
+    def _touch_drag_and_drop(self, from_element: WebElement, to_element: WebElement) -> None:
+        """Slow element-relative touch drag for HTML5 drag-and-drop in mobile browsers.
+
+        Fast element-relative ActionChains gestures do not fire drag events.
+        """
+        finger = PointerInput(interaction.POINTER_TOUCH, "main_pointer")
+        actions = ActionBuilder(self.driver, mouse=finger)
+        pointer = actions.pointer_action
+        pointer._duration = 2000
+        pointer.move_to(from_element)
+        pointer.pointer_down()
+        pointer.pause(1.5)
+        pointer.move_to(to_element)
+        pointer.pause(1.5)
+        pointer.pointer_up()
+        actions.perform()
 
     def _scroll_into_view(self, element: WebElement):
         if self.platform == "uiautomator2":

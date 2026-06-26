@@ -12,12 +12,22 @@ import ai.alumnium.tool.PressKeyTool;
 import ai.alumnium.tool.TypeTool;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
+import java.time.Duration;
+import java.util.Collections;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.Pause;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.PointerInput.Origin;
+import org.openqa.selenium.interactions.Sequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +42,13 @@ public final class AppiumDriver extends BaseDriver {
 
   private static final Logger LOG = LoggerFactory.getLogger(AppiumDriver.class);
 
+  private static final String WAITER_SCRIPT = loadScript("/ai/alumnium/driver/scripts/waiter.js");
+  private static final String WAIT_FOR_SCRIPT =
+      loadScript("/ai/alumnium/driver/scripts/waitFor.js");
+
+  // UIAutomator2 bounds attribute, e.g. "[left,top][right,bottom]".
+  private static final Pattern BOUNDS = Pattern.compile("\\[(\\d+),(\\d+)]\\[(\\d+),(\\d+)]");
+
   public enum Platform {
     UIAUTOMATOR2,
     XCUITEST
@@ -43,6 +60,8 @@ public final class AppiumDriver extends BaseDriver {
   public double delay = Config.DELAY;
   public boolean hideKeyboardAfterTyping = false;
   public boolean doubleFetchPageSource = false;
+  // Cached positive detection of a web context (WEBVIEW_*/CHROMIUM). Null until first checked.
+  private Boolean sessionHasWebContext = null;
   public final Set<Class<? extends BaseTool>> supportedTools =
       Set.of(ClickTool.class, DragAndDropTool.class, PressKeyTool.class, TypeTool.class);
 
@@ -68,7 +87,15 @@ public final class AppiumDriver extends BaseDriver {
 
   @Override
   public BaseAccessibilityTree accessibilityTree() {
+    waitForWebPageToLoad();
     ensureNativeContext();
+    if (platform == Platform.UIAUTOMATOR2 && hasWebContext()) {
+      // Android WebViews don't refresh the native accessibility mirror after pure JS DOM
+      // mutations (e.g. drag-and-drop reordering). A tiny native "ghost scroll" forces the
+      // WebView to re-emit accessibility events so UiAutomator2 re-mirrors the current DOM.
+      // See issue #360.
+      ghostScroll();
+    }
     sleep(delay);
     if (doubleFetchPageSource) {
       driver.getPageSource();
@@ -84,9 +111,20 @@ public final class AppiumDriver extends BaseDriver {
   @Override
   public void click(int id) {
     ensureNativeContext();
-    WebElement element = findElement(id);
-    scrollIntoView(element);
-    element.click();
+    AccessibilityElement element = accessibilityTree().elementById(id);
+    if (platform == Platform.UIAUTOMATOR2
+        && hasWebContext()
+        && Boolean.FALSE.equals(element.androidClickable())
+        && element.androidBounds() != null) {
+      // Web controls whose JS click handlers Chrome does not expose as natively clickable (e.g. a
+      // sortable <th>) ignore element.click() (a no-op accessibility ACTION_CLICK); a real
+      // coordinate tap is instead translated by the WebView into a DOM click.
+      tapAtBoundsCenter(element.androidBounds());
+      return;
+    }
+    WebElement webElement = locate(element);
+    scrollIntoView(webElement);
+    webElement.click();
   }
 
   @Override
@@ -97,12 +135,10 @@ public final class AppiumDriver extends BaseDriver {
   @Override
   public void dragAndDrop(int fromId, int toId) {
     ensureNativeContext();
-    // Appium 9.x removed the dedicated helper; the Actions/gestures API is
-    // the recommended replacement. We fall back to a simple move-press-release.
     WebElement fromElement = findElement(fromId);
     WebElement toElement = findElement(toId);
     scrollIntoView(fromElement);
-    new Actions(driver).clickAndHold(fromElement).moveToElement(toElement).release().perform();
+    touchDragAndDrop(fromElement, toElement);
   }
 
   @Override
@@ -185,7 +221,10 @@ public final class AppiumDriver extends BaseDriver {
 
   @Override
   public WebElement findElement(int id) {
-    AccessibilityElement element = accessibilityTree().elementById(id);
+    return locate(accessibilityTree().elementById(id));
+  }
+
+  private WebElement locate(AccessibilityElement element) {
     return platform == Platform.XCUITEST ? findElementIos(element) : findElementAndroid(element);
   }
 
@@ -260,11 +299,58 @@ public final class AppiumDriver extends BaseDriver {
     var contexts = new java.util.ArrayList<>(switcher.getContextHandles());
     for (int i = contexts.size() - 1; i >= 0; i--) {
       String ctx = contexts.get(i);
-      if (ctx.contains("WEBVIEW")) {
+      if (isWebContext(ctx)) {
         switcher.context(ctx);
         return;
       }
     }
+  }
+
+  // Hybrid apps expose web contexts as WEBVIEW_<package>; Chrome browser sessions expose a single
+  // context named CHROMIUM. Anything other than the native context is a web view we can drive.
+  private static boolean isWebContext(String context) {
+    return context != null && !"NATIVE_APP".equals(context);
+  }
+
+  /**
+   * For browser / hybrid sessions, switch to the web context and block until the page has
+   * stabilized (load complete, network idle, DOM settled) using the shared waiter script, before
+   * the native accessibility tree is captured. Native-only sessions are skipped, and timeouts fall
+   * through gracefully so a tree is always returned.
+   */
+  private void waitForWebPageToLoad() {
+    if (!autoswitchContexts || !hasWebContext()) return;
+    ensureWebviewContext();
+    try {
+      runWaiter();
+    } catch (RuntimeException first) {
+      // Retry once, mirroring the Selenium/Playwright drivers.
+      try {
+        runWaiter();
+      } catch (RuntimeException retry) {
+        LOG.debug("Failed to wait for web page to stabilize after retry", retry);
+      }
+    }
+  }
+
+  private void runWaiter() {
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript(WAITER_SCRIPT);
+    Object error = js.executeAsyncScript(WAIT_FOR_SCRIPT);
+    if (error != null) {
+      LOG.debug("Web page did not stabilize: {}", error);
+    }
+  }
+
+  private boolean hasWebContext() {
+    // Cache positive detection only: a web context can appear after the first capture (hybrid
+    // apps), but never disappears once present.
+    if (sessionHasWebContext == null || !sessionHasWebContext) {
+      var switcher = (SupportsContextSwitching) driver;
+      sessionHasWebContext =
+          switcher.getContextHandles().stream().anyMatch(AppiumDriver::isWebContext);
+    }
+    return sessionHasWebContext;
   }
 
   private void scrollIntoView(WebElement element) {
@@ -283,6 +369,79 @@ public final class AppiumDriver extends BaseDriver {
     // Minimal fallback: skip swipe gesture implementation. Real impl
     // should port the Python _scroll_into_view_android loop.
     LOG.warn("Android scroll-into-view fallback is not implemented; element may be off-screen");
+  }
+
+  /**
+   * Slow viewport-coordinate touch drag for HTML5 drag-and-drop in mobile browsers. Fast
+   * element-relative {@link Actions} gestures do not fire drag events.
+   */
+  private void touchDragAndDrop(WebElement fromElement, WebElement toElement) {
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "main_pointer");
+    Sequence sequence = new Sequence(finger, 0);
+    sequence.addAction(
+        finger.createPointerMove(Duration.ofMillis(2000), Origin.fromElement(fromElement), 0, 0));
+    sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    sequence.addAction(new Pause(finger, Duration.ofMillis(1500)));
+    sequence.addAction(
+        finger.createPointerMove(Duration.ofMillis(2000), Origin.fromElement(toElement), 0, 0));
+    sequence.addAction(new Pause(finger, Duration.ofMillis(1500)));
+    sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    driver.perform(Collections.singletonList(sequence));
+  }
+
+  /**
+   * Force UiAutomator2 to refresh the native accessibility tree for a WebView.
+   *
+   * <p>Android only re-mirrors a WebView's DOM into the native accessibility tree when the WebView
+   * emits accessibility events; a pure JS DOM mutation emits none, leaving the page source stale. A
+   * small net-zero scroll (move past the touch-slop threshold and back) makes the WebView fire
+   * scroll/content-changed events, refreshing the tree without changing the visible scroll
+   * position.
+   */
+  private void ghostScroll() {
+    Dimension size = driver.manage().window().getSize();
+    int centerX = size.getWidth() / 2;
+    int centerY = size.getHeight() / 2;
+    // Must exceed Android touch slop (~16-24px) or the gesture registers as a tap.
+    int delta = Math.max(50, (int) (size.getHeight() * 0.1));
+
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "ghost_pointer");
+    Sequence sequence = new Sequence(finger, 0);
+    sequence.addAction(
+        finger.createPointerMove(Duration.ZERO, Origin.viewport(), centerX, centerY));
+    sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    sequence.addAction(new Pause(finger, Duration.ofMillis(100)));
+    sequence.addAction(
+        finger.createPointerMove(
+            Duration.ofMillis(200), Origin.viewport(), centerX, centerY - delta));
+    sequence.addAction(
+        finger.createPointerMove(Duration.ofMillis(200), Origin.viewport(), centerX, centerY));
+    sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    driver.perform(Collections.singletonList(sequence));
+    sleep(0.15);
+  }
+
+  /**
+   * Inject a single-finger tap at the center of a UIAutomator2 {@code bounds} rectangle. Used to
+   * actuate web controls that are not natively clickable, where {@link WebElement#click()} resolves
+   * to a no-op accessibility action but a real touch is translated into a DOM click.
+   */
+  private void tapAtBoundsCenter(String bounds) {
+    Matcher m = BOUNDS.matcher(bounds);
+    if (!m.matches()) {
+      LOG.warn("Could not parse bounds '{}'; skipping tap", bounds);
+      return;
+    }
+    int cx = (Integer.parseInt(m.group(1)) + Integer.parseInt(m.group(3))) / 2;
+    int cy = (Integer.parseInt(m.group(2)) + Integer.parseInt(m.group(4))) / 2;
+
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "tap_pointer");
+    Sequence sequence = new Sequence(finger, 0);
+    sequence.addAction(finger.createPointerMove(Duration.ZERO, Origin.viewport(), cx, cy));
+    sequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    sequence.addAction(new Pause(finger, Duration.ofMillis(100)));
+    sequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    driver.perform(Collections.singletonList(sequence));
   }
 
   private static void sleep(double seconds) {
