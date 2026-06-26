@@ -217,9 +217,14 @@ export class SeleniumDriver extends BaseDriver {
   pressKey(key: Keys.Key): Promise<void> {
     return this.#autoswitchToNewTab(async () => {
       const keyMap: Record<Keys.Key, string> = {
+        ArrowDown: SeleniumKey.ARROW_DOWN,
+        ArrowLeft: SeleniumKey.ARROW_LEFT,
+        ArrowRight: SeleniumKey.ARROW_RIGHT,
+        ArrowUp: SeleniumKey.ARROW_UP,
         Backspace: SeleniumKey.BACK_SPACE,
         Enter: SeleniumKey.ENTER,
         Escape: SeleniumKey.ESCAPE,
+        F5: SeleniumKey.F5,
         Tab: SeleniumKey.TAB,
       };
 

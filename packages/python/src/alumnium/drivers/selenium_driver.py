@@ -159,12 +159,22 @@ class SeleniumDriver(BaseDriver):
     @_autoswitch_to_new_tab
     def press_key(self, key: Key):
         keys = []
-        if key == Key.BACKSPACE:
+        if key == Key.ARROW_DOWN:
+            keys.append(Keys.ARROW_DOWN)
+        elif key == Key.ARROW_LEFT:
+            keys.append(Keys.ARROW_LEFT)
+        elif key == Key.ARROW_RIGHT:
+            keys.append(Keys.ARROW_RIGHT)
+        elif key == Key.ARROW_UP:
+            keys.append(Keys.ARROW_UP)
+        elif key == Key.BACKSPACE:
             keys.append(Keys.BACKSPACE)
         elif key == Key.ENTER:
             keys.append(Keys.ENTER)
         elif key == Key.ESCAPE:
             keys.append(Keys.ESCAPE)
+        elif key == Key.F5:
+            keys.append(Keys.F5)
         elif key == Key.TAB:
             keys.append(Keys.TAB)
 

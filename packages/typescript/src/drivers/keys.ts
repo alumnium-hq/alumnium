@@ -3,5 +3,15 @@ export namespace Keys {
 }
 
 export abstract class Keys {
-  static enum = ["Backspace", "Enter", "Escape", "Tab"] as const;
+  static enum = [
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    "ArrowUp",
+    "Backspace",
+    "Enter",
+    "Escape",
+    "F5",
+    "Tab",
+  ] as const;
 }
