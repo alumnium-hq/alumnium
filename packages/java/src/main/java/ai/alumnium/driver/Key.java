@@ -5,9 +5,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 /** Keyboard keys recognized by the server for {@code PressKey} tool calls. */
 public enum Key {
+  ARROW_DOWN("ArrowDown"),
+  ARROW_LEFT("ArrowLeft"),
+  ARROW_RIGHT("ArrowRight"),
+  ARROW_UP("ArrowUp"),
   BACKSPACE("Backspace"),
   ENTER("Enter"),
   ESCAPE("Escape"),
+  F5("F5"),
   TAB("Tab");
 
   private final String value;

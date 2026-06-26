@@ -275,15 +275,8 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.press_key", spanAttrs)
   async pressKey(key: Keys.Key): Promise<void> {
-    const keyMap: Record<Keys.Key, string> = {
-      Backspace: "Backspace",
-      Enter: "Enter",
-      Escape: "Escape",
-      Tab: "Tab",
-    };
-
     await this.autoswitchToNewTabAction(() =>
-      this.page.keyboard.press(keyMap[key]),
+      this.page.keyboard.press(key),
     );
   }
 
