@@ -7,7 +7,6 @@ import Asciinema from "#/components/blocks/Asciinema.astro";
 import GitHubStars from "#/components/blocks/GitHubStars.astro";
 import DiscordMembers from "#/components/blocks/DiscordMembers.astro";
 import Link from "#/components/Link.astro";
-import TextDel from "#/components/TextDel.astro";
 import DecorationAtom from "../../blocks/DecorationAtom.astro";
 import Icon from "#/components/Icon.astro";
 import Heading from "../../blocks/Heading.astro";
@@ -49,11 +48,11 @@ const t = tt.landings.sections.hero.en;
           </Fragment>
         </Link>
 
-        <TextDel />
+        <text-del></text-del>
 
         <Link t={tt.links.mitLicense} />
 
-        <TextDel />
+        <text-del></text-del>
 
         <Link href={tt.links.discord.href}>
           <AstroIcon name="discord" class="inline-block h-6" />

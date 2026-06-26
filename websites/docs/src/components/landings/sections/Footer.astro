@@ -4,7 +4,6 @@ import Logotype from "#/assets/logotype.svg";
 import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
 import Link from "#/components/Link.astro";
 import SectionContent from "../blocks/SectionContent.astro";
-import TextDel from "#/components/TextDel.astro";
 
 const t = tt.layout.footer;
 const tNewsletter = t.newsletter.en;
@@ -73,7 +72,7 @@ const tNewsletter = t.newsletter.en;
       >
         <div class="flex gap-2 items-center">
           <span>Alumnium © {new Date().getFullYear()}</span>
-          <TextDel />
+          <text-del></text-del>
           <Link t={tt.links.mitLicense} />
         </div>
 
