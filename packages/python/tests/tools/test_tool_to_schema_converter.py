@@ -39,9 +39,14 @@ def test_convert_tool_with_enum():
                     "key": {
                         "type": "string",
                         "enum": [
+                            "ArrowDown",
+                            "ArrowLeft",
+                            "ArrowRight",
+                            "ArrowUp",
                             "Backspace",
                             "Enter",
                             "Escape",
+                            "F5",
                             "Tab",
                         ],
                         "description": "Key to press.",
