@@ -83,12 +83,16 @@ const { code, lang, copy = false } = Astro.props;
     @apply block relative;
 
     & > :not(.copy-button) {
-      @apply px-4 pt-4 pb-3 scrollbar-thin scrollbar-track-content-dark scrollbar-thumb-gray-600 font-mono text-sm;
+      @apply px-4 pt-4 pb-3 scrollbar-thin scrollbar-track-content-dark scrollbar-thumb-content-dark font-mono text-sm transition-colors;
+    }
+
+    &:hover > :not(.copy-button) {
+      @apply scrollbar-thumb-gray-600;
     }
   }
 
   .copy-button {
-    @apply cursor-pointer absolute opacity-0 top-3.5 right-3 transition-opacity rounded-md bg-content-dark/80 text-accent-100 hover:bg-accent-900 focus-visible:opacity-100 focus-visible:bg-accent-900 text-xl p-0 size-6 flex items-center justify-center;
+    @apply cursor-pointer absolute opacity-0 top-3.5 right-3 transition-opacity rounded-md bg-content-dark/80 hover:bg-accent-900 focus-visible:opacity-100 focus-visible:bg-accent-900 text-xl p-0 size-6 flex items-center justify-center;
 
     &:hover {
       & .copy-icon {
@@ -102,7 +106,7 @@ const { code, lang, copy = false } = Astro.props;
   }
 
   .copy-icon {
-    --icon-color: var(--color-accent-200);
+    --icon-color: var(--color-accent-50);
 
     &.is-check {
       --icon-color: var(--color-lime-400);
