@@ -13,7 +13,7 @@ const { key } = Astro.props;
 const t = tt.how[key];
 ---
 
-<Code code={t.code} lang={t.lang} />
+<Code code={t.code} lang={t.lang} copy />
 
 {
   t.meta && (

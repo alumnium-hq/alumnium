@@ -1,25 +1,111 @@
 ---
 import type { CodeLanguage } from "astro";
 import { Code as AstroCode } from "astro:components";
+import Icon from "#/components/Icon.astro";
 
 export interface Props {
   code: string;
   lang: CodeLanguage;
+  copy?: boolean;
 }
 
-const { code, lang } = Astro.props;
+const { code, lang, copy = false } = Astro.props;
 ---
 
-<div class="code">
+<al-code class="code">
   <AstroCode code={code} theme="css-variables" lang={lang} />
-</div>
+
+  {
+    copy && (
+      <button
+        class="copy-button"
+        data-copy-button
+        type="button"
+        data-code={code}
+        aria-label="Copy code"
+      />
+    )
+  }
+
+  {
+    copy && (
+      <>
+        <template data-copy-icon>
+          <Icon id="content_copy" class="copy-icon" />
+        </template>
+
+        <template data-check-icon>
+          <Icon id="check" class="copy-icon is-check" />
+        </template>
+      </>
+    )
+  }
+</al-code>
+
+<script>
+  class DocsCode extends HTMLElement {
+    connectedCallback() {
+      const buttonEl = this.querySelector("[data-copy-button]");
+      if (!(buttonEl instanceof HTMLButtonElement)) return;
+
+      this.#setIcon(buttonEl, "copy");
+
+      buttonEl.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(buttonEl.dataset.code || "");
+          this.#setIcon(buttonEl, "check");
+        } catch {}
+      });
+
+      this.addEventListener("mouseleave", () => {
+        // Give time for the button opacity transition
+        setTimeout(() => this.#setIcon(buttonEl, "copy"), 200);
+      });
+    }
+
+    #setIcon(buttonEl: HTMLButtonElement, icon: "copy" | "check") {
+      const templateEl = this.querySelector(`template[data-${icon}-icon]`);
+      if (!(templateEl instanceof HTMLTemplateElement)) return;
+
+      buttonEl.replaceChildren(templateEl.content.cloneNode(true));
+    }
+  }
+
+  if (!customElements.get("al-code")) {
+    customElements.define("al-code", DocsCode);
+  }
+</script>
 
 <style>
   @reference "#/styles/global.css";
 
   .code {
-    & > * {
+    @apply block relative;
+
+    & > :not(.copy-button) {
       @apply px-4 pt-4 pb-3 scrollbar-thin scrollbar-track-content-dark scrollbar-thumb-gray-600 font-mono text-sm;
+    }
+  }
+
+  .copy-button {
+    @apply cursor-pointer absolute opacity-0 top-3.5 right-3 transition-opacity rounded-md bg-content-dark/80 text-accent-100 hover:bg-accent-900 focus-visible:opacity-100 focus-visible:bg-accent-900 text-xl p-0 size-6 flex items-center justify-center;
+
+    &:hover {
+      & .copy-icon {
+        --icon-color: var(--color-accent-50);
+      }
+    }
+  }
+
+  .code:hover .copy-button {
+    @apply opacity-100;
+  }
+
+  .copy-icon {
+    --icon-color: var(--color-accent-200);
+
+    &.is-check {
+      --icon-color: var(--color-lime-400);
     }
   }
 </style>
