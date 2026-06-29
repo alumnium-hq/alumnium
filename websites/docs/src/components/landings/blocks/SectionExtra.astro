@@ -7,11 +7,8 @@ import Icon from "#/components/Icon.astro";
 import type { TtCode } from "#/copy/code";
 import type { TtDemo } from "#/copy/demo";
 import type { I18n } from "#/copy/i18n";
-import type { $brand } from "astro:schema";
-import type { SectionContentHeadingProp } from "./SectionContent.astro";
 import SectionPointsContent, {
   type SectionPointsContentProps,
-  type SectionPointsItem,
 } from "./SectionPointsContent.astro";
 import { tt } from "#/copy";
 
@@ -73,7 +70,7 @@ const extra = Astro.props;
         return (
           <div
             class:list={[
-              "extra is-icons overflow-hidden w-full h-[1.2em]",
+              "extra is-icons overflow-hidden w-full h-[1em]",
               // size
               size === "sm" && "text-4xl",
               (!size || size === "md") && "text-5xl",
@@ -86,8 +83,8 @@ const extra = Astro.props;
                 "extra-icons flex absolute",
                 // size
                 size === "sm" && "text-4xl gap-1",
-                (!size || size === "md") && "text-5xl gap-1",
-                size === "lg" && "text-6xl gap-1",
+                (!size || size === "md") && "text-5xl gap-3",
+                size === "lg" && "text-6xl gap-3",
                 size === "xl" && "text-7xl gap-3",
                 // adjust
                 adjust === "start" && "justify-start",

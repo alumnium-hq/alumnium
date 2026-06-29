@@ -15,16 +15,14 @@ const posts = (await getCollection("blog"))
 
 <div class="bento">
   <Section style="compact">
-    <div class="flex flex-col items-center">
-      <Heading h={2} t={t} align />
-
+    <Heading h={2} t={t} align>
       <div>
         <Link
           t={{ ...tt.links.blog, label: tBlog.seeAllLink }}
           icon={{ id: "chevron_right", pos: "after" }}
         />
       </div>
-    </div>
+    </Heading>
 
     <div>
       <div

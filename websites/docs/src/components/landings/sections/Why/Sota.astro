@@ -53,18 +53,19 @@ const logosMap: Record<string, SvgComponent & ImageMetadata> = {
                 sota && "font-bold",
               ]}
             >
-              <div class="flex items-center justify-between">
+              <div class="flex gap-2 items-center justify-between">
                 <div
                   class:list={[
                     "leading-none text-sm font-medium capsize",
                     sota ? "text-accent-100 font-bold" : "text-accent-300",
                   ]}
                 >
-                  <span class="text-accent-500">#{entry.rank}</span>
+                  <span class="text-accent-500">#{entry.rank}</span>{" "}
                   {renames[entry.systemName] || entry.systemName}
                 </div>
 
                 <div class="flex items-center gap-2 text-accent-400 leading-none text-sm">
+                  {/* {} */}
                   {Logo && <Logo class="size-[1em] opacity-60" />}
                   <span class="leading-none capsize">{entry.organization}</span>
                 </div>

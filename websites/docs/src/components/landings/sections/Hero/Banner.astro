@@ -1,19 +1,14 @@
 ---
 import { tt } from "#/copy";
 
-const version = "0.9";
-
 const ttBanners = tt.landings.banners.sota;
 const headline = ttBanners.headline.en;
 ---
 
 <a
-  class="relative rounded-full inline-flex items-center gap-3 px-3 py-2 no-underline font-mono text-xs uppercase bg-accent-800"
+  class="relative rounded-full inline-flex items-center gap-2 px-3 py-2 no-underline font-mono text-xs uppercase bg-accent-800"
   href={ttBanners.href}
 >
   <span class="badge text-lime-400">New</span>
-  <!-- <span class="leading-none capsize font-mono text-xs uppercase inline gap-1"> -->
-  <span>v{version}</span>
-  <text-del></text-del>
   <span>{headline}</span>
 </a>

@@ -20,7 +20,13 @@ const icon = iconProp || t.icon;
 ---
 
 <div class="section-content">
-  {icon && <Icon prop={icon} class="icon section-content-icon" />}
+  {
+    icon && (
+      <div class="section-content-icon">
+        <Icon prop={icon} class="icon" />
+      </div>
+    )
+  }
 
   <Heading {...heading} t={t} />
 

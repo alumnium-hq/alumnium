@@ -17,9 +17,10 @@ export interface BaseProps {
   style?: SectionStyle;
   align?: boolean;
   continue?: boolean;
+  adjust?: boolean;
 }
 
-export type SectionStyle = "default" | "header" | "compact";
+export type SectionStyle = "default" | "header" | "compact" | "tight";
 
 export interface SectionContentfulProps extends BaseProps, ContentProps {}
 
@@ -34,6 +35,7 @@ const {
   span,
   style,
   align,
+  adjust,
   continue: continueProp,
   content: contentExtra,
   extra,
@@ -57,7 +59,9 @@ const {
       "section",
       style === "header" && "section-header",
       style === "compact" && "section-compact",
+      style === "tight" && "section-tight",
       align && "section-align",
+      adjust && "section-adjust",
       (!cols || cols === 1) && "section-cols-1",
       cols === 2 && "section-cols-2",
     ]}
