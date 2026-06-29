@@ -1,3 +1,4 @@
+import type { IconProp } from "#/components/Icon.astro";
 import type { SectionStyle } from "#/components/landings/blocks/Section.astro";
 import type { SectionContentHeadingProp } from "#/components/landings/blocks/SectionContent.astro";
 import type { SectionExtraProps } from "#/components/landings/blocks/SectionExtra.astro";
@@ -5,20 +6,63 @@ import type { SectionPointsContentProps } from "#/components/landings/blocks/Sec
 import { langs, type I18n } from "./i18n";
 import { txt, md } from "smollit";
 
+const iconsDel: IconProp = { id: "close_small", style: "100" };
+
+const agentIcons: IconProp[] = [
+  { id: "claude-code", style: "logo" },
+  { id: "codex", style: "logo" },
+  { id: "opencode", style: "logo" },
+  { id: "antigravity", style: "logo" },
+  { id: "cursor", style: "logo" },
+  { id: "grok-build", style: "logo" },
+  { id: "pi", style: "logo" },
+];
+
+const langIcons: IconProp[] = [
+  { id: "typescript", style: "logo" },
+  { id: "python", style: "logo" },
+  { id: "java", style: "logo" },
+];
+
+const frameworkIcons: IconProp[] = [
+  { id: "selenium", style: "logo" },
+  { id: "playwright", style: "logo" },
+  { id: "appium", style: "logo" },
+];
+
 const sections = {
   hero: langs({
     en: {
       headline: txt`
-          End-to-End Testing with AI
-          <br/>
-          <small>for *Agents* and *Engineers*</small>
-        `,
+        End-to-End Testing with AI
+        <br/>
+        <small>for *Agents* and *Engineers*</small>
+      `,
 
       subheadline: txt`
-          One open-source engine underneath. The library drops into your
-          existing test suite. The MCP server lets coding agents drive the same
-          flows for 10× fewer tokens.
-        `,
+        Open source, context-efficient MCP for your coding agent +
+        automation frameworks integration for your existing test suite in
+        a single package.
+      `,
+
+      extra: {
+        kind: "icons",
+        size: "xs",
+        icons: [
+          ...langIcons,
+          { id: "file_json", style: "200" },
+          iconsDel,
+          ...frameworkIcons,
+          iconsDel,
+          ...agentIcons.slice(0, 4),
+          { id: "more_horiz", style: "200" },
+        ],
+        align: true,
+      } satisfies SectionExtraProps,
+
+      integrates: "Integrates with your stack:",
+
+      watchDemo: "Watch Demo",
 
       openSource: "Open Source",
 
@@ -49,32 +93,9 @@ const sections = {
       },
 
       subheadline: txt`
-          Alumnium works for everyone: QA engineers, developers using AI agents, vibe
-          coders, and everyone in between.
-        `,
-
-      // copy: txt`
-      //   TODO: Alumnium is for everyone.
-
-      //   Agents | Engineers
-
-      //   [Learn more] | [Learn more]
-
-      //   TODO: Block for installation and basic usage
-
-      //   Alumnium can be used in many different scenarios, seamlessly
-      //   integrating into your existing workflows.
-
-      //   Write automated tests? Use Alumnium client to add AI automation to
-      //   your existing test suite.
-
-      //   Need a QA copilot for your coding AI agent workflow? Alumnium MCP will
-      //   do all the heavy lifting without overwhelming you with context.
-
-      //   And the best part? It's all in a slim single package!
-
-      //   TODO: For teams
-      // `,
+        Alumnium works for everyone: QA engineers, developers using AI agents, vibe
+        coders, and everyone in between.
+      `,
     },
   }),
 
@@ -209,9 +230,9 @@ const sections = {
       headline: "Why Alumnium?",
 
       subheadline: txt`
-          With market as crazy as it is, there's no shortage of AI agents
-          capable of performing any task. What makes Alumnium stand out?
-        `,
+        With market as crazy as it is, there's no shortage of AI agents
+        capable of performing any task. What makes Alumnium stand out?
+      `,
     },
   }),
 
@@ -224,16 +245,16 @@ const sections = {
       subheadline: "#1 on WebVoyager with 98.5% accuracy record.",
 
       copy: txt`
-          Alumnium is the best-in-class AI browser agent, leading
-          [the WebVoyager, an AI browser agent benchmark](#) with 98.5% accuracy.
+        Alumnium is the best-in-class AI browser agent, leading
+        [the WebVoyager, an AI browser agent benchmark](#) with 98.5% accuracy.
 
-          It's not just a claim — [we open-sourced our WebVoyager logs and methodology](/blog/webvoyager-benchmark/)
-          for full transparency.
+        It's not just a claim — [we open-sourced our WebVoyager logs and methodology](/blog/webvoyager-benchmark/)
+        for full transparency.
 
-          It proved that our approach works in real-world scenarios, delivering
-          exceptional results for fraction of the cost of other agents.
-          And we're just getting started!
-        `,
+        It proved that our approach works in real-world scenarios, delivering
+        exceptional results for fraction of the cost of other agents.
+        And we're just getting started!
+      `,
 
       leaderboardBy: "by",
 
@@ -250,8 +271,8 @@ const sections = {
       headline: "Efficient Through and Through",
 
       subheadline: txt`
-          Save time and money without compromizing quality.
-        `,
+        Save time and money without compromizing quality.
+      `,
 
       stats: [
         {
@@ -286,10 +307,10 @@ const sections = {
           headline: "Runs on Low-Tier Models",
 
           copy: txt`
-              Designed to work with low-tier models that are faster and cheaper,
-              Alumnium ensures efficient use of tokens without compromising
-              output quality.
-            `,
+            Designed to work with low-tier models that are faster and cheaper,
+            Alumnium ensures efficient use of tokens without compromising
+            output quality.
+          `,
         },
 
         {
@@ -298,10 +319,10 @@ const sections = {
           headline: "Long-Horizon Tasks",
 
           copy: txt`
-              It performs exceptionally well on long-horizon tasks. Where most
-              AI agents struggle to complete a task, Alumnium keeps going even
-              on 100+ steps.
-            `,
+            It performs exceptionally well on long-horizon tasks. Where most
+            AI agents struggle to complete a task, Alumnium keeps going even
+            on 100+ steps.
+          `,
         },
 
         {
@@ -310,10 +331,10 @@ const sections = {
           headline: "Prevents Context Rot",
 
           copy: txt`
-              When working with a coding agent, Alumnium MCP does all the heavy
-              lifting, exposing just enough context to enable the right
-              decisions and keeping the context fresh.
-            `,
+            When working with a coding agent, Alumnium MCP does all the heavy
+            lifting, exposing just enough context to enable the right
+            decisions and keeping the context fresh.
+          `,
         },
       ],
     },
@@ -326,20 +347,20 @@ const sections = {
       headline: "Multi-Platform: Web and Mobile",
 
       subheadline: txt`
-          Test your web, iOS, and Android apps at the same time.
-        `,
+        Test your web, iOS, and Android apps at the same time.
+      `,
 
       copy: txt`
-          Alumnium is multi-platform from the ground up, designed to work
-          seamlessly with both web and mobile applications.
+        Alumnium is multi-platform from the ground up, designed to work
+        seamlessly with both web and mobile applications.
 
-          You can use the same plain text instructions to test all supported
-          platforms allowing you to ship features to your customers faster
-          wherever they are.
+        You can use the same plain text instructions to test all supported
+        platforms allowing you to ship features to your customers faster
+        wherever they are.
 
-          The multi-session feature even allows you to test multiple platforms
-          simultaneously.
-        `,
+        The multi-session feature even allows you to test multiple platforms
+        simultaneously.
+      `,
     },
   }),
 
@@ -350,50 +371,20 @@ const sections = {
       headline: "Integrates With Your Stack",
 
       subheadline: txt`
-          No lock-in, no rewrites and upfront investments.
-        `,
+        No lock-in, no rewrites and upfront investments.
+      `,
 
       copy: txt`
-          Plug Alumnium into the AI providers, test drivers, and languages you
-          already use. No lock-in, no rewrites — swap models or frameworks any
-          time without rewriting your tests.
+        Plug Alumnium into the AI providers, test drivers, and languages you
+        already use. No lock-in, no rewrites — swap models or frameworks any
+        time without rewriting your tests.
 
-          Run hosted models from Anthropic, OpenAI, Google, xAI, Meta,
-          DeepSeek, and Mistral, or keep everything local with Ollama.
+        Run hosted models from Anthropic, OpenAI, Google, xAI, Meta,
+        DeepSeek, and Mistral, or keep everything local with Ollama.
 
-          The choice is yours: Selenium or Playwright, AWS or Azure, we don't
-          lock you in.
-
-          TODO: Add local model point.
-
-          TODO: 4th track: assistants
-        `,
-
-      checklist: [
-        {
-          copy: "Supports local models via Ollama.",
-        },
-        {
-          copy: "Native TypeScript, Python, and Java support.",
-        },
-      ],
-    },
-  }),
-
-  // TODO: Related to integrates with your stack
-  multiModel: langs({
-    en: {
-      kicker: "Multi-Model",
-
-      headline: "Cloud and Local Models",
-
-      subheadline: "Crafted and tested with multiple models.",
-
-      copy: txt`
-          TODO
-
-          TODO
-        `,
+        The choice is yours: Selenium or Playwright, AWS or Azure, we don't
+        lock you in.
+      `,
     },
   }),
 
@@ -408,14 +399,13 @@ const sections = {
       headline: "Why AI tests?",
 
       subheadline: txt`
-          While ensuring quality, the traditional end-to-end tests also slow
-          down new features and require constant adjustments to keep them
-          running. AI tests improve on this.
-        `,
+        While ensuring quality, the traditional end-to-end tests also slow
+        down new features and require constant adjustments to keep them
+        running. AI tests improve on this.
+      `,
     },
   }),
 
-  // TODO: Langs + markdown
   naturalLanguageTests: langs({
     en: {
       kicker: "Natural",
@@ -425,17 +415,15 @@ const sections = {
       subheadline: "Write tests that read like a Slack message.",
 
       copy: txt`
-          Whether you're talking to Claude Code, using Selenium integration, or
-          Alumnium Test Runner, tests feel natural to write and read.
+        Whether you're talking to Claude Code, using Selenium integration, or
+        Alumnium Test Runner, tests feel natural to write and read.
 
-          No more brittle XPath expressions or complex waits. Just natural
-          language commands that express what you want to test.
+        No more brittle XPath expressions or complex waits. Just natural
+        language commands that express what you want to test.
 
-          These commands are then intelligently interpreted and executed by
-          the AI, adapting to changes in the UI and reducing test maintenance.
-
-          TODO: Intent vs implementation instructions
-        `,
+        These commands are then intelligently interpreted and executed by
+        the AI, adapting to changes in the UI and reducing test maintenance.
+      `,
     },
   }),
 
@@ -444,17 +432,17 @@ const sections = {
       headline: "Express Intent, Not Implementation",
 
       subheadline: txt`
-          Reduce test maintenance and increase reliability.
-        `,
+        Reduce test maintenance and increase reliability.
+      `,
 
       copy: txt`
-          Tired of fixing broken tests every time the UI changes? Alumnium
-          adapts to changes automatically, reducing test maintenance and
-          allowing you to focus on making your product better.
+        Tired of fixing broken tests every time the UI changes? Alumnium
+        adapts to changes automatically, reducing test maintenance and
+        allowing you to focus on making your product better.
 
-          Thanks to our smart element finding feature, AI cache don't drop
-          every time you make changes in your app, so tests stay fast and cheap.
-        `,
+        Thanks to our smart element finding feature, AI cache don't drop
+        every time you make changes in your app, so tests stay fast and cheap.
+      `,
     },
   }),
 
@@ -467,15 +455,15 @@ const sections = {
       subheadline: "Use the same tests across all supported platforms.",
 
       copy: txt`
-          Building for multiple platforms is already a challenge. Maintaining
-          consistent quality might feel just impossible.
+        Building for multiple platforms is already a challenge. Maintaining
+        consistent quality might feel just impossible.
 
-          Alumnium addresses this problem by allowing you to use the same
-          tests across all platforms.
+        Alumnium addresses this problem by allowing you to use the same
+        tests across all platforms.
 
-          You describe your feature once, and the AI will test it across all
-          platforms.
-        `,
+        You describe your feature once, and the AI will test it across all
+        platforms.
+      `,
     },
   }),
 
@@ -501,8 +489,8 @@ const sections = {
             headline: "What's in Alumnium?",
 
             subheadline: txt`
-                Everything you need to test your app with AI, all in one package.
-              `,
+              Everything you need to test your app with AI, all in one package.
+            `,
           },
         }),
       }),
@@ -527,15 +515,7 @@ const sections = {
 
           extra: {
             kind: "icons",
-            icons: [
-              { id: "claude-code", style: "logo" },
-              { id: "codex", style: "logo" },
-              { id: "opencode", style: "logo" },
-              { id: "antigravity", style: "logo" },
-              { id: "cursor", style: "logo" },
-              { id: "grok-build", style: "logo" },
-              { id: "pi", style: "logo" },
-            ],
+            icons: agentIcons,
           },
         }),
 
@@ -566,15 +546,7 @@ const sections = {
 
           extra: {
             kind: "icons",
-            icons: [
-              { id: "typescript", style: "logo" },
-              { id: "python", style: "logo" },
-              { id: "java", style: "logo" },
-              { id: "close_small", style: "100" },
-              { id: "selenium", style: "logo" },
-              { id: "playwright", style: "logo" },
-              { id: "appium", style: "logo" },
-            ],
+            icons: [...langIcons, iconsDel, ...frameworkIcons],
           },
         }),
 
@@ -593,9 +565,7 @@ const sections = {
           en: {
             headline: "Cross-Platform",
 
-            copy: md`
-Alumnium works on macOS, Windows, and Linux.
-            `,
+            copy: "Alumnium works on macOS, Windows, and Linux.",
           },
 
           extra: {
@@ -919,9 +889,9 @@ Alumnium works on macOS, Windows, and Linux.
                   headline: "Native Cache",
 
                   copy: txt`
-                      Prompts optimized to reduce requests cost by leveraging
-                      native LLM cache.
-                    `,
+                    Prompts optimized to reduce requests cost by leveraging
+                    native LLM cache.
+                  `,
                 },
               }),
             },
@@ -934,9 +904,9 @@ Alumnium works on macOS, Windows, and Linux.
                   headline: "Requests Cache",
 
                   copy: txt`
-                      LLM responses are cached and reused to avoid repeating
-                      the same requests.
-                    `,
+                    LLM responses are cached and reused to avoid repeating
+                    the same requests.
+                  `,
                 },
               }),
             },
@@ -949,9 +919,9 @@ Alumnium works on macOS, Windows, and Linux.
                   headline: "Test Steps Cache",
 
                   copy: txt`
-                      Steps generated from plain language instructions
-                      get cached and reused.
-                    `,
+                    Steps generated from plain language instructions
+                    get cached and reused.
+                  `,
                 },
               }),
             },
@@ -1094,9 +1064,9 @@ Alumnium works on macOS, Windows, and Linux.
                   headline: "Record and Replay",
 
                   copy: txt`
-                      All tool calls get recorded and replayed. Combined with LLM cache,
-                      it allows to run tests without spending any tokens at all.
-                    `,
+                    All tool calls get recorded and replayed. Combined with LLM cache,
+                    it allows to run tests without spending any tokens at all.
+                  `,
                 },
               }),
             },
@@ -1139,9 +1109,9 @@ Alumnium works on macOS, Windows, and Linux.
                   headline: "Agent SDK-Powered",
 
                   copy: txt`
-                      The test runner utilizes native agent SDKs that allows to match
-                      your agent's configuration and behavior.
-                    `,
+                    The test runner utilizes native agent SDKs that allows to match
+                    your agent's configuration and behavior.
+                  `,
                 },
               }),
             },
@@ -1162,8 +1132,8 @@ Alumnium works on macOS, Windows, and Linux.
       headline: "Scale with Alumnium",
 
       subheadline: `
-          Alumnium is build to scale with your team and business.
-        `,
+        Alumnium is build to scale with your team and business.
+      `,
     },
   }),
 
@@ -1172,16 +1142,16 @@ Alumnium works on macOS, Windows, and Linux.
       headline: "Close-to-Native Performance",
 
       subheadline: txt`
-          Designed to make AI tests fast and affordable on scale.
-        `,
+        Designed to make AI tests fast and affordable on scale.
+      `,
 
       copy: txt`
-          Thanks to the multi-level caching, Alumnium avoids repeating expensive
-          AI work. Once a test works, its steps and LLM responses are cached and
-          reused across future runs.
+        Thanks to the multi-level caching, Alumnium avoids repeating expensive
+        AI work. Once a test works, its steps and LLM responses are cached and
+        reused across future runs.
 
-          Many tests can run without making any LLM requests at all.
-        `,
+        Many tests can run without making any LLM requests at all.
+      `,
     },
   }),
 
@@ -1192,12 +1162,12 @@ Alumnium works on macOS, Windows, and Linux.
       subheadline: "Avoid skyrocketing costs when your team grows.",
 
       copy: txt`
-          With remote cache teams can share all of the multi-level cache layers,
-          allowing to leverage the work that other team members have already
-          done.
+        With remote cache teams can share all of the multi-level cache layers,
+        allowing to leverage the work that other team members have already
+        done.
 
-          <footer>* Remote cache currently is in preview</footer>
-        `,
+        <footer>* Remote cache currently is in preview</footer>
+      `,
     },
   }),
 
@@ -1208,14 +1178,14 @@ Alumnium works on macOS, Windows, and Linux.
       subheadline: "CI is not an afterthought, it's a first-class citizen.",
 
       copy: txt`
-          Alumnium is designed to work seamlessly with your CI/CD pipelines. It
-          can be easily integrated into your existing workflows, leveraging
-          the same remote cache.
+        Alumnium is designed to work seamlessly with your CI/CD pipelines. It
+        can be easily integrated into your existing workflows, leveraging
+        the same remote cache.
 
-          With security concerns in mind, Alumnium can be configured to run tests
-          without making any LLM requests at all, or leveraging models
-          provided in your CI environment.
-        `,
+        With security concerns in mind, Alumnium can be configured to run tests
+        without making any LLM requests at all, or leveraging models
+        provided in your CI environment.
+      `,
     },
   }),
 
@@ -1226,12 +1196,12 @@ Alumnium works on macOS, Windows, and Linux.
       subheadline: "Get insights into your tests and agents.",
 
       copy: txt`
-          All of the Alumnium tools instrumented with OpenTelemetry, allowing
-          you to collect and analyze telemetry data from your tests and agents.
+        All of the Alumnium tools instrumented with OpenTelemetry, allowing
+        you to collect and analyze telemetry data from your tests and agents.
 
-          This data can be used to identify performance bottlenecks, track
-          errors, and improve the overall quality of your tests.
-        `,
+        This data can be used to identify performance bottlenecks, track
+        errors, and improve the overall quality of your tests.
+      `,
     },
   }),
 
@@ -1256,11 +1226,11 @@ Alumnium works on macOS, Windows, and Linux.
       subheadline: "Free to use and make it your own.",
 
       copy: txt`
-          Alumnium is fully open source under MIT license. It has an active
-          community and regularly updates.
+        Alumnium is fully open source under MIT license. It has an active
+        community and regularly updates.
 
-          It is easy to customize and extend to fit your specific needs.
-        `,
+        It is easy to customize and extend to fit your specific needs.
+      `,
     },
   }),
 
@@ -1273,12 +1243,12 @@ Alumnium works on macOS, Windows, and Linux.
         `,
 
       copy: txt`
-          Alumnium is backed by decades of hands-on experience in QA, browser
-          automation, and app development.
+        Alumnium is backed by decades of hands-on experience in QA, browser
+        automation, and app development.
 
-          From Selenium to date-fns, our team has built tools developers
-          already rely on.
-        `,
+        From Selenium to date-fns, our team has built tools developers
+        already rely on.
+      `,
     },
   }),
 
@@ -1287,13 +1257,13 @@ Alumnium works on macOS, Windows, and Linux.
       headline: "Active Community",
 
       subheadline: txt`
-          Pull requests are welcome!
-        `,
+        Pull requests are welcome!
+      `,
 
       copy: txt`
-          We have a strong core team, but the effort of the community is what
-          makes Alumnium truly special.
-        `,
+        We have a strong core team, but the effort of the community is what
+        makes Alumnium truly special.
+      `,
     },
   }),
 
@@ -1302,13 +1272,13 @@ Alumnium works on macOS, Windows, and Linux.
       headline: "In a Good Company",
 
       subheadline: txt`
-          Supported by industry leaders.
-        `,
+        Supported by industry leaders.
+      `,
 
       copy: txt`
-          Alumnium is privileged to get support from these
-          amazing companies.
-        `,
+        Alumnium is privileged to get support from these
+        amazing companies.
+      `,
     },
   }),
 
@@ -1323,37 +1293,8 @@ Alumnium works on macOS, Windows, and Linux.
       headline: "Alumnium is Different",
 
       subheadline: txt`
-          See how we line up with another browser agents.
-        `,
-
-      // copy: txt`
-      //   TODO: Context isolation
-
-      //   TODO: Doesn't need frontier models
-
-      //   TODO: Open Telemetry
-
-      //   TODO: Doesn't rely on vision
-
-      //   TODO: Doesn't generate tests
-
-      //   TODO: Multiple use cases: MCP for agents, test runner, web, mobile, etc.
-
-      //   TODO: Not a black box
-
-      //   TODO: Not a generic browser tool
-
-      //   TODO: ^^^ prev 2 -> middle path, a building block
-
-      //   TODO: No lock-in (vs Browser Use)
-
-      //   TODO: Easy to migrate, no lock-in into model/approach (i.e. Playwright
-      //   -> Alumnium -> Playwright)
-
-      //   TODO: Runs locally
-
-      //   TODO: Local models
-      // `,
+        See how we line up with another browser agents.
+      `,
     },
   }),
 
@@ -1373,21 +1314,24 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Main agent context",
               subtext: txt`
-                  Coding agent context in tokens after completing the same task.
-                `,
+                Coding agent context in tokens after completing the same task.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "string",
           value: { en: "8,000 tokens" },
           highlight: "positive",
         },
+
         "browser-use": {
           kind: "string",
           value: { en: "21,000 tokens" },
           highlight: "mixed",
         },
+
         "playwright-mcp": {
           kind: "string",
           value: { en: "79,000 tokens" },
@@ -1402,21 +1346,24 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Subagent context",
               subtext: txt`
-                  Browser agent context after completing the same task.
-                `,
+                Browser agent context after completing the same task.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "string",
           value: { en: "400,000 tokens" },
           highlight: "positive",
         },
+
         "browser-use": {
           kind: "string",
           value: { en: "400,000 tokens" },
           highlight: "positive",
         },
+
         "playwright-mcp": { kind: "na" },
       }),
 
@@ -1427,21 +1374,24 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Duration",
               subtext: txt`
-                  Time it takes to complete the same task.
-                `,
+                Time it takes to complete the same task.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "string",
           value: { en: "3m 58s" },
           highlight: "positive",
         },
+
         "browser-use": {
           kind: "string",
           value: { en: "5m 55s" },
           highlight: "negative",
         },
+
         "playwright-mcp": {
           kind: "string",
           value: { en: "3m 57s" },
@@ -1456,21 +1406,24 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Total cost",
               subtext: txt`
-                  Total cost in USD of completing the same task.
-                `,
+                Total cost in USD of completing the same task.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "string",
           value: { en: "$0.15" },
           highlight: "positive",
         },
+
         "browser-use": {
           kind: "string",
           value: { en: "$0.39" },
           highlight: "mixed",
         },
+
         "playwright-mcp": {
           kind: "string",
           value: { en: "$1.34" },
@@ -1485,20 +1438,23 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Built-in test runner",
               subtext: txt`
-                  CLI capable running Markdown tests without a coding agent.
-                `,
+                CLI capable running Markdown tests without a coding agent.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "support",
           support: "yes",
           superscript: "*",
         },
+
         "browser-use": {
           kind: "support",
           support: "no",
         },
+
         "playwright-mcp": {
           kind: "support",
           support: "partial",
@@ -1512,19 +1468,22 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "TypeScript client",
               subtext: txt`
-                  Native JS/TS client package.
-                `,
+                Native JS/TS client package.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "support",
           support: "yes",
         },
+
         "browser-use": {
           kind: "support",
           support: "no",
         },
+
         "playwright-mcp": {
           kind: "support",
           support: "yes",
@@ -1538,19 +1497,22 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Python client",
               subtext: txt`
-                  Native Python client package.
-                `,
+                Native Python client package.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "support",
           support: "yes",
         },
+
         "browser-use": {
           kind: "support",
           support: "yes",
         },
+
         "playwright-mcp": {
           kind: "support",
           support: "no",
@@ -1564,19 +1526,22 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Java client",
               subtext: txt`
-                  Native Java client package.
-                `,
+                Native Java client package.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "support",
           support: "yes",
         },
+
         "browser-use": {
           kind: "support",
           support: "no",
         },
+
         "playwright-mcp": {
           kind: "support",
           support: "no",
@@ -1590,19 +1555,22 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Web apps support",
               subtext: txt`
-                  Testing web apps support.
-                `,
+                Testing web apps support.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "support",
           support: "yes",
         },
+
         "browser-use": {
           kind: "support",
           support: "yes",
         },
+
         "playwright-mcp": {
           kind: "support",
           support: "yes",
@@ -1616,19 +1584,22 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Test iOS apps",
               subtext: txt`
-                  Testing iOS apps support.
-                `,
+                Testing iOS apps support.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "support",
           support: "yes",
         },
+
         "browser-use": {
           kind: "support",
           support: "no",
         },
+
         "playwright-mcp": {
           kind: "support",
           support: "no",
@@ -1642,19 +1613,22 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "Test Android apps",
               subtext: txt`
-                  Testing Android apps support.
-                `,
+                Testing Android apps support.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "support",
           support: "yes",
         },
+
         "browser-use": {
           kind: "support",
           support: "no",
         },
+
         "playwright-mcp": {
           kind: "support",
           support: "no",
@@ -1668,21 +1642,24 @@ Alumnium works on macOS, Windows, and Linux.
             en: {
               label: "License",
               subtext: txt`
-                  Project source code license.
-                `,
+                Project source code license.
+              `,
             },
           },
         },
+
         alumnium: {
           kind: "string",
           value: { en: "MIT" },
           highlight: "positive",
         },
+
         "browser-use": {
           kind: "string",
           value: { en: "MIT" },
           highlight: "positive",
         },
+
         "playwright-mcp": {
           kind: "string",
           value: { en: "Apache" },
@@ -1693,8 +1670,8 @@ Alumnium works on macOS, Windows, and Linux.
 
     disclaimer: langs({
       en: txt`
-          * Alumnium test runner currently is in preview.
-        `,
+        * Alumnium test runner currently is in preview.
+      `,
     }),
   },
 
@@ -1709,8 +1686,8 @@ Alumnium works on macOS, Windows, and Linux.
       headline: "Frequently Asked Questions",
 
       subheadline: txt`
-          Still have questions? We got you covered.
-        `,
+        Still have questions? We got you covered.
+      `,
 
       items: [
         faqItem({
@@ -1862,178 +1839,6 @@ Alumnium works on macOS, Windows, and Linux.
       kicker: "Blog",
 
       headline: "Learn More from Our Blog",
-    },
-  }),
-
-  //#endregion
-
-  //#region For Agents
-
-  mcpWhy: langs({
-    en: {
-      kicker: "Why",
-
-      headline: "Why Alumnium MCP?",
-
-      subheadline: txt`
-          Alumnium MCP is a perfect QA copilot for your coding agent of choice.
-        `,
-    },
-  }),
-
-  mcpMultiPlatform: langs({
-    en: {
-      headline: "Multi-Platform",
-
-      subheadline: "Test multiple apps or platforms simultaneously.",
-
-      copy: txt`
-          One MCP to rule them all. Test web, Android and iOS apps at the same
-          time.
-
-          No need to write specialized step instructions for different
-          platforms, just tell how it should work and let the AI figure out the
-          rest.
-        `,
-    },
-  }),
-
-  mcpTokenEfficient: langs({
-    en: {
-      headline: "Token-Efficient",
-
-      subheadline: "No MCP bloat, no context rot.",
-
-      copy: txt`
-          Alumnium MCP is designed to be token-efficient, using 10x less main
-          coding agent context tokens compared to generalized MCPs like
-          playwright-mcp.
-
-          It surfaces just enough context to help your coding agent make
-          decisions without causing context rot.
-        `,
-    },
-  }),
-
-  mcpCheapFast: langs({
-    en: {
-      headline: "Cheap & Fast",
-
-      subheadline: "Designed to run by fast and low-cost models,",
-
-      copy: txt`
-          Designed to run by fast and low-cost models, Alumnium saves time and
-          money while delivering reliable results.
-        `,
-    },
-  }),
-
-  mcpInstallCliStep: langs({
-    en: {
-      kicker: "I. Install",
-
-      headline: "Install Alumnium CLI",
-
-      subheadline: "Single cross-platform binary, small footprint.",
-
-      copy: txt`
-          The Alumnium CLI is a cross-platform single binary with a small
-          footprint.
-
-          It is open-source, built and attestated by GitHub Actions, and
-          verified upon download.
-        `,
-    },
-  }),
-
-  mcpHow: langs({
-    en: {
-      kicker: "How",
-
-      headline: "How Alumnium Works?",
-
-      subheadline: txt`
-          Follow these steps to get started with Alumnium MCP.
-        `,
-    },
-  }),
-
-  mcpSetupMcpStep: langs({
-    en: {
-      kicker: "II. Setup",
-
-      headline: "Setup Alumnium MCP",
-
-      subheadline: "TODO",
-
-      copy: txt`
-        `,
-    },
-  }),
-
-  mcpTestAppStep: langs({
-    en: {
-      kicker: "III. Test",
-
-      headline: "Test Your App",
-
-      subheadline: txt`
-          Tell your coding agent what you want to test and watch the show.
-        `,
-
-      copy: txt`
-        `,
-    },
-  }),
-
-  mcpRunTestsStep: langs({
-    en: {
-      kicker: "IV. Run",
-
-      headline: "Run Your Tests",
-
-      subheadline: "TODO",
-
-      copy: txt`
-        `,
-    },
-  }),
-
-  mcpScaleStep: langs({
-    en: {
-      kicker: "V. Scale",
-
-      headline: "Scale Your Tests",
-
-      subheadline: "TODO",
-
-      copy: txt`
-        `,
-    },
-  }),
-
-  //#endregion
-
-  //#region For Engineers
-
-  devClients: langs({
-    en: {
-      kicker: "Great DX",
-
-      headline: "Idiomatic TypeScript & Python API",
-
-      subheadline: "Simple, intuitive API that feels natural.",
-
-      copy: txt`
-          We carefully designed the API for each language individually, without
-          cutting corners. The result is fully type-safe, well documented, and
-          easy to use clients that feel natural to use.
-
-          Whether you're a Pythonista or a JS/TS enjoyer, you'll feel right at
-          home with Alumnium.
-
-          Install a single package and you're ready to go!
-        `,
     },
   }),
 
