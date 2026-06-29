@@ -81,7 +81,9 @@ const options = {
         const player = AsciinemaPlayer.create(src, this, {
           ...this.#options(),
           theme: "alumnium",
-          preload: true,
+          // TODO: The option makes the player to start showing spinning wheel
+          // on scroll, so we had to disable it.
+          // preload: true,
         });
 
         player.addEventListener("playing", () => {
