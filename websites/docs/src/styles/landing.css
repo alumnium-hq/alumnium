@@ -21,6 +21,14 @@
     & .subheadline {
       @apply font-display text-balance;
 
+      & a {
+        @apply text-accent-300;
+      }
+
+      & b {
+        @apply text-5xl font-medium;
+      }
+
       & em {
         @apply not-italic text-accent-400 font-semibold;
       }
