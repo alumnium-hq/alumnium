@@ -172,7 +172,7 @@
     }
 
     & .copy {
-      @apply text-accent-300 flex flex-col gap-2 max-w-xl;
+      @apply text-accent-300 flex flex-col gap-2;
 
       & code {
         @apply bg-accent-950 rounded-sm px-1 text-[0.8em] font-mono text-accent-200;
