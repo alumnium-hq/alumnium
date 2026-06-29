@@ -6,7 +6,7 @@ import SectionContent from "../../blocks/SectionContent.astro";
 const t = tt.landings.sections.efficient.en;
 ---
 
-<Section heading={{ h: 2 }} t={t} cols={2} style="header" continue>
+<Section heading={{ h: 2 }} t={t} cols={2} style="header" adjust continue>
   <div class="stats">
     <div class="stats-list">
       {
@@ -25,13 +25,7 @@ const t = tt.landings.sections.efficient.en;
 
 <Section style="compact">
   <div class="section-points section-points-flex">
-    {
-      t.points.map((point) => (
-        <div>
-          <SectionContent heading={{ h: 3 }} t={point} />
-        </div>
-      ))
-    }
+    {t.points.map((point) => <SectionContent heading={{ h: 3 }} t={point} />)}
   </div>
 </Section>
 

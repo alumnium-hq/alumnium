@@ -39,4 +39,6 @@ const H = `h${h}`;
   {headline && <H set:html={tt.md(headline, true)} />}
 
   {subheadline && <p class="subheadline">{subheadline}</p>}
+
+  <slot />
 </div>
