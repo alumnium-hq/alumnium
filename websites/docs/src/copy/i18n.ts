@@ -12,10 +12,10 @@ export namespace I18n {
 
 export const langCodes = ["en"] as const;
 
-export function langs<Value>(
+export function langs<Value, Extra>(
   // NOTE: `{ en: Value } & ` allows to use en as the reference type
   // and force all other languages to have the same structure.
-  obj: { en: Value } & I18n.LangsMap<NoInfer<Value>>,
+  obj: { en: Value } & I18n.LangsMap<NoInfer<Value>> & Extra,
 ) {
   return obj;
 }

@@ -83,11 +83,25 @@
         @apply text-2xl md:text-4xl;
       }
 
+      &.heading-compact h2 {
+        @apply text-xl md:text-2xl;
+      }
+
       &:has(h2) {
         @apply gap-0.5;
 
+        & + .copy,
+        & + .extra,
+        & + .copy + .extra {
+          @apply mt-5;
+        }
+
         & + .copy {
-          @apply mt-5 gap-4;
+          @apply gap-4;
+        }
+
+        & .section-content-icon {
+          @apply text-5xl mb-2;
         }
       }
 
@@ -103,11 +117,21 @@
         @apply text-xl;
       }
 
+      &.heading-enlarge h3 {
+        @apply text-2xl md:text-3xl;
+      }
+
       &:has(h3) {
         @apply gap-0.25;
 
+        & + .copy,
+        & + .extra,
+        & + .copy + .extra {
+          @apply mt-3;
+        }
+
         & + .copy {
-          @apply mt-3 gap-2 text-ms;
+          @apply gap-2 text-ms;
         }
       }
 
@@ -123,7 +147,8 @@
       &:has(h4) {
         @apply gap-0.5;
 
-        & + .copy {
+        & + .copy,
+        & + .extra {
           @apply gap-3 text-accent-400 text-ms;
         }
       }
@@ -135,7 +160,8 @@
       &:has(h5) {
         @apply gap-0.5;
 
-        & + .copy {
+        & + .copy,
+        & + .extra {
           @apply gap-3 text-sm text-accent-400;
         }
       }
@@ -146,7 +172,7 @@
     }
 
     & .copy {
-      @apply text-accent-300 flex flex-col gap-2;
+      @apply text-accent-300 flex flex-col gap-2 max-w-xl;
 
       & code {
         @apply bg-accent-950 rounded-sm px-1 text-[0.8em] font-mono text-accent-200;
@@ -235,7 +261,7 @@
     }
 
     & .section {
-      @apply grid gap-10 relative px-4 md:px-6 lg:px-16 items-start;
+      @apply grid gap-6 relative px-4 md:px-6 lg:px-16 items-start;
 
       &:not(.section-header) {
         @apply py-8 md:py-10 lg:py-25;
@@ -261,13 +287,59 @@
     & .section-content {
       @apply flex flex-col;
 
+      &:has(.heading h2) {
+        & .section-content-icon {
+          @apply text-7xl mb-4;
+        }
+      }
+
+      &:has(.heading h3) {
+        & .section-content-icon {
+          @apply text-6xl mb-2;
+        }
+      }
+
       &:has(.heading h4) {
         @apply gap-2 text-accent-400;
+
+        & .section-content-icon {
+          @apply text-5xl mb-1;
+        }
       }
     }
 
-    .section-points {
-      @apply flex gap-6;
+    & .section-points-flex {
+      @apply flex;
+    }
+
+    & .section-points:not(.section-points-flex) {
+      @apply grid;
+    }
+
+    & .section-points-cols-2 {
+      @apply grid-cols-1 md:grid-cols-2;
+    }
+
+    & .section-points-cols-3 {
+      @apply grid-cols-1 md:grid-cols-3;
+    }
+
+    & .section-points-cols-4 {
+      @apply grid-cols-1 md:grid-cols-4;
+    }
+
+    & .section-points {
+      &:has(.heading h2) {
+        @apply gap-x-6;
+      }
+
+      &:has(.heading h3) {
+        @apply gap-x-12;
+      }
+
+      &:has(.heading h4) {
+        @apply gap-x-8 gap-y-7;
+      }
 
       & > * {
         @apply basis-full;
@@ -283,6 +355,18 @@
 
       &.bento-cols-3 {
         @apply grid grid-cols-1 md:grid-cols-3;
+      }
+
+      &.bento-cols-4 {
+        @apply grid grid-cols-1 md:grid-cols-4;
+      }
+
+      &.bento-cols-5 {
+        @apply grid grid-cols-1 md:grid-cols-5;
+      }
+
+      &.bento-cols-6 {
+        @apply grid grid-cols-1 md:grid-cols-6;
       }
 
       & > * {

@@ -1,0 +1,165 @@
+---
+import McpTestDemo from "#/components/blocks/McpTestDemo.astro";
+import TestClient from "#/components/blocks/TestClient.astro";
+import TestRunnerDemo from "#/components/blocks/TestRunnerDemo.astro";
+import type { IconProp } from "#/components/Icon.astro";
+import Icon from "#/components/Icon.astro";
+import type { TtCode } from "#/copy/code";
+import type { TtDemo } from "#/copy/demo";
+import type { I18n } from "#/copy/i18n";
+import type { $brand } from "astro:schema";
+import type { SectionContentHeadingProp } from "./SectionContent.astro";
+import SectionPointsContent, {
+  type SectionPointsContentProps,
+  type SectionPointsItem,
+} from "./SectionPointsContent.astro";
+import { tt } from "#/copy";
+
+type Props = SectionExtraProps;
+
+export type SectionExtraProps =
+  | SectionExtraIcons
+  | SectionExtraDemo
+  | SectionExtraCode
+  | SectionExtraPoints
+  | SectionExtraChecklist
+  | SectionExtraCopy;
+
+export interface SectionExtraIcons {
+  kind: "icons";
+  icons: IconProp[];
+  size?: "sm" | "md" | "lg" | "xl";
+  adjust?: "start" | "center" | true | "end";
+  align?: "start" | "center" | true | "end";
+}
+
+export interface SectionExtraDemo {
+  kind: "demo";
+  id: TtDemo.Id;
+}
+
+export interface SectionExtraExample {
+  kind: "example";
+  id: TtDemo.Id;
+}
+
+export interface SectionExtraCode {
+  kind: "code";
+  id: TtCode.Id;
+}
+
+export interface SectionExtraPoints extends SectionPointsContentProps {
+  kind: "points";
+}
+
+export interface SectionExtraChecklist {
+  kind: "checklist";
+  items: I18n.FullLangsMap<string>[];
+}
+
+export interface SectionExtraCopy {
+  kind: "copy";
+  content: I18n.FullLangsMap<string>;
+}
+
+const extra = Astro.props;
+---
+
+{
+  () => {
+    switch (extra.kind) {
+      case "icons": {
+        const { icons, size, adjust, align } = extra;
+        return (
+          <div
+            class:list={[
+              "extra is-icons overflow-hidden w-full h-[1.2em]",
+              // size
+              size === "sm" && "text-4xl",
+              (!size || size === "md") && "text-5xl",
+              size === "lg" && "text-6xl",
+              size === "xl" && "text-7xl",
+            ]}
+          >
+            <div
+              class:list={[
+                "extra-icons flex absolute",
+                // size
+                size === "sm" && "text-4xl gap-1",
+                (!size || size === "md") && "text-5xl gap-1",
+                size === "lg" && "text-6xl gap-1",
+                size === "xl" && "text-7xl gap-3",
+                // adjust
+                adjust === "start" && "justify-start",
+                (adjust === true || adjust === "center") && "justify-center",
+                adjust === "end" && "justify-end",
+                // align
+                align === "start" && "items-start",
+                align === "center" && "items-center",
+                align === "end" && "items-end",
+              ]}
+            >
+              {icons.map((icon) => (
+                <Icon prop={icon} />
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      case "code": {
+        const { id } = extra;
+        switch (id) {
+          case "test-client":
+            return <TestClient />;
+        }
+      }
+
+      case "demo": {
+        const { id } = extra;
+        switch (id) {
+          case "test-runner":
+            return <TestRunnerDemo />;
+
+          case "mcp-test":
+            return <McpTestDemo />;
+        }
+      }
+
+      case "points": {
+        return <SectionPointsContent {...extra} />;
+      }
+
+      case "checklist": {
+        const { items } = extra;
+        return (
+          <ul class="extra is-checklist list-none pl-0 text-ms grid grid-cols-2 gap-1">
+            {items.map((item) => (
+              <li class="list flex items-center gap-1">
+                <Icon id="check_circle" style="300" class="text-lime-500" />
+                <span class="">{item.en}</span>
+              </li>
+            ))}
+          </ul>
+        );
+      }
+
+      case "copy": {
+        const { content } = extra;
+        return <div class="extra is-copy copy" set:html={tt.md(content.en)} />;
+      }
+
+      default:
+        extra satisfies never;
+    }
+  }
+}
+
+<style>
+  @reference "#/styles/global.css";
+
+  .extra.is-icons {
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  }
+</style>

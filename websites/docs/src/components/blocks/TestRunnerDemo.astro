@@ -1,0 +1,23 @@
+---
+import { tt } from "#/copy";
+import Asciinema from "#/components/blocks/Asciinema.astro";
+import Tabs from "./Tabs.astro";
+
+const t = tt.demo["demo-test-runner"];
+---
+
+<Tabs
+  style="code"
+  items={t.map(({ label, ...tab }) => ({
+    ...tab,
+    label: label.en,
+  }))}
+>
+  <Fragment slot={t[0].id}>
+    <Asciinema src="https://asciinema.org/a/569727.cast" />
+  </Fragment>
+
+  <Fragment slot={t[1].id}>
+    <Asciinema src="https://asciinema.org/a/418574.cast" />
+  </Fragment>
+</Tabs>

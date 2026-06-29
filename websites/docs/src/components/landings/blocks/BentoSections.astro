@@ -1,23 +1,44 @@
 ---
 import type { TtLandings } from "#/copy/landings";
-import type { HeadingProps } from "./Heading.astro";
+import type { HeadingHProp } from "./Heading.astro";
 import Section from "./Section.astro";
+import SectionContent from "./SectionContent.astro";
+import SectionPoints from "./SectionPoints.astro";
 
 interface Props {
-  heading: Omit<HeadingProps, "t">;
   t: TtLandings.Bento;
 }
 
-const { heading, t } = Astro.props;
+const { t } = Astro.props;
 ---
 
-{
-  t.items.map((item) => (
-    <Section
-      heading={heading}
-      t={item.content.en}
-      style="compact"
-      span={item.span}
-    />
-  ))
-}
+<div class:list={["bento", `bento-cols-${t.cols}`]}>
+  {
+    t.items.map((item) => {
+      const baseProps = {
+        heading: item.heading || t.heading,
+        style: item.style || t.style,
+        span: item.span,
+        continue: item.continue,
+      };
+
+      if ("en" in item.content) {
+        return (
+          <Section
+            {...baseProps}
+            t={item.content.en}
+            content={item.content.extra}
+            cols={item.cols}
+            extra={item.extra}
+          />
+        );
+      }
+
+      switch (item.content.kind) {
+        case "points": {
+          return <SectionPoints {...baseProps} content={item.content} />;
+        }
+      }
+    })
+  }
+</div>
