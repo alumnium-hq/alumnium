@@ -1,0 +1,115 @@
+---
+import { tt } from "#/copy";
+import Asciinema from "#/components/blocks/Asciinema.astro";
+import Icon from "#/components/Icon.astro";
+
+const t = tt.landings.sections.hero.en;
+---
+
+<div class="player w-xl max-w-full relative">
+  <slot />
+
+  <Asciinema src="https://asciinema.org/a/569727.cast" />
+
+  <div class="player-play-label">
+    <span class="text-sm leading-none capsize text-accent-400">
+      {t.watchDemo}
+    </span>
+
+    <Icon id="play_circle" style="300" />
+  </div>
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .player :global(.asciinema-player) {
+    --asciinema-colog-bg: color-mix(
+      in srgb,
+      var(--color-content-dark) 4%,
+      transparent 100%
+    );
+
+    @apply rounded-md border border-accent-500;
+
+    & :global(.ap-play-button) {
+      @apply transition-all;
+      height: 120px;
+    }
+
+    & :global(.ap-play-btn-fill) {
+      @apply transition-all;
+      fill: transparent;
+      stroke: var(--color-accent-500);
+      stroke-width: 10;
+    }
+
+    & :global(.ap-play-btn-stroke) {
+      @apply transition-all;
+      stroke: transparent;
+    }
+
+    &:hover {
+      --asciinema-colog-bg: var(--color-content-dark);
+      border-color: var(--color-content-dark);
+
+      & :global(.ap-play-button) {
+        @apply transition-all;
+        height: 80px;
+      }
+
+      & :global(.ap-play-btn-fill) {
+        fill: white;
+        stroke: transparent;
+        stroke-width: 0;
+      }
+
+      & :global(.ap-play-btn-stroke) {
+        stroke: white;
+      }
+
+      & :global(.player-play-label) {
+        opacity: 0;
+      }
+    }
+  }
+
+  .player {
+    &:hover,
+    &:has(.asciinema-player.has-started) {
+      & :global(.asciinema-player) {
+        --asciinema-colog-bg: var(--color-content-dark);
+        border-color: var(--color-content-dark);
+      }
+
+      & :global(.ap-play-button) {
+        @apply transition-all;
+        height: 80px;
+      }
+
+      & :global(.ap-play-btn-fill) {
+        fill: white;
+        stroke: transparent;
+        stroke-width: 0;
+      }
+
+      & :global(.ap-play-btn-stroke) {
+        stroke: white;
+      }
+
+      & .player-play-label {
+        opacity: 0;
+      }
+    }
+
+    &:hover:not(:has(.asciinema-player.is-playing)) {
+      & :global(.decoration-atom) {
+        --atom-animation-speed: 5;
+      }
+    }
+  }
+
+  .player-play-label {
+    @apply absolute bottom-4 left-0 right-0 text-center inline-flex items-center justify-center gap-1 pointer-events-none transition-opacity;
+  }
+</style>

@@ -1,67 +1,36 @@
 ---
 import { tt } from "#/copy";
 import Logotype from "#/assets/logotype.svg";
-import { Icon as AstroIcon } from "@astrojs/starlight/components";
-import Banner from "./Banner.astro";
-import Asciinema from "#/components/blocks/Asciinema.astro";
-import GitHubStars from "#/components/blocks/GitHubStars.astro";
-import DiscordMembers from "#/components/blocks/DiscordMembers.astro";
-import Link from "#/components/Link.astro";
+import HeroBanner from "./HeroBanner.astro";
 import DecorationAtom from "../../blocks/DecorationAtom.astro";
-import Icon from "#/components/Icon.astro";
 import Heading from "../../blocks/Heading.astro";
+import HeroIntegratesWithYourStack from "./HeroIntegratesWithYourStack.astro";
+import HeroDemo from "./HeroDemo.astro";
+import HeroLinks from "./HeroLinks.astro";
 
 const t = tt.landings.sections.hero.en;
 ---
 
-<div class="content-inner hero flex flex-col items-center gap-16 pb-32">
-  <Banner />
+<div
+  class="content-inner hero relative flex flex-col items-center gap-16 pb-32"
+>
+  <HeroBanner />
 
   <div class="flex flex-col items-center gap-10">
     <div class="flex flex-col items-center gap-6">
       <Logotype class="h-10" />
 
       <Heading h={1} t={t} align />
+
+      <HeroIntegratesWithYourStack />
     </div>
 
     <div class="flex flex-col gap-6 items-center">
-      <div class="player w-xl max-w-full relative">
+      <HeroDemo>
         <DecorationAtom />
+      </HeroDemo>
 
-        <Asciinema src="https://asciinema.org/a/569727.cast" />
-
-        <div class="player-play-label">
-          <span class="text-sm leading-none capsize text-accent-400">
-            Watch demo
-          </span>
-          <Icon id="play_circle" style="300" />
-        </div>
-      </div>
-
-      <div class="inline-flex items-center gap-3 text-sm">
-        <Link href={tt.links.github.href}>
-          <AstroIcon name="github" class="inline-block h-6" />
-          {t.openSource}
-          <Fragment slot="badge">
-            <AstroIcon name="star" />
-            <GitHubStars />
-          </Fragment>
-        </Link>
-
-        <text-del></text-del>
-
-        <Link t={tt.links.mitLicense} />
-
-        <text-del></text-del>
-
-        <Link href={tt.links.discord.href}>
-          <AstroIcon name="discord" class="inline-block h-6" />
-          {t.community}
-          <Fragment slot="badge">
-            <DiscordMembers />
-          </Fragment>
-        </Link>
-      </div>
+      <HeroLinks />
     </div>
 
     <a
@@ -76,113 +45,9 @@ const t = tt.landings.sections.hero.en;
 <style>
   @reference "#/styles/global.css";
 
-  .h1 {
-    & :global(b) {
-      @apply text-5xl font-medium;
-    }
-
-    & :global(a) {
-      @apply text-accent-300;
-    }
-  }
-
-  .hero {
-    @apply relative;
-  }
-
   .hero :global(.decoration-atom) {
     @apply absolute;
     left: calc(50% - var(--atom-size) / 2);
     top: calc(50% - var(--atom-size) / 2);
-  }
-
-  .hero :global(.asciinema-player) {
-    --asciinema-colog-bg: color-mix(
-      in srgb,
-      var(--color-content-dark) 4%,
-      transparent 100%
-    );
-
-    @apply rounded-md border border-accent-500;
-
-    & :global(.ap-play-button) {
-      @apply transition-all;
-      height: 120px;
-    }
-
-    & :global(.ap-play-btn-fill) {
-      @apply transition-all;
-      fill: transparent;
-      stroke: var(--color-accent-500);
-      stroke-width: 10;
-    }
-
-    & :global(.ap-play-btn-stroke) {
-      @apply transition-all;
-      stroke: transparent;
-    }
-
-    &:hover {
-      --asciinema-colog-bg: var(--color-content-dark);
-      border-color: var(--color-content-dark);
-
-      & :global(.ap-play-button) {
-        @apply transition-all;
-        height: 80px;
-      }
-
-      & :global(.ap-play-btn-fill) {
-        fill: white;
-        stroke: transparent;
-        stroke-width: 0;
-      }
-
-      & :global(.ap-play-btn-stroke) {
-        stroke: white;
-      }
-
-      & :global(.player-play-label) {
-        opacity: 0;
-      }
-    }
-  }
-
-  .player {
-    &:hover,
-    &:has(.asciinema-player.has-started) {
-      & :global(.asciinema-player) {
-        --asciinema-colog-bg: var(--color-content-dark);
-        border-color: var(--color-content-dark);
-      }
-
-      & :global(.ap-play-button) {
-        @apply transition-all;
-        height: 80px;
-      }
-
-      & :global(.ap-play-btn-fill) {
-        fill: white;
-        stroke: transparent;
-        stroke-width: 0;
-      }
-
-      & :global(.ap-play-btn-stroke) {
-        stroke: white;
-      }
-
-      & .player-play-label {
-        opacity: 0;
-      }
-    }
-
-    &:hover:not(:has(.asciinema-player.is-playing)) {
-      & :global(.decoration-atom) {
-        --atom-animation-speed: 5;
-      }
-    }
-  }
-
-  .player-play-label {
-    @apply absolute bottom-4 left-0 right-0 text-center inline-flex items-center justify-center gap-1 pointer-events-none transition-opacity;
   }
 </style>

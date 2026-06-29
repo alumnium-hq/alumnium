@@ -25,9 +25,9 @@ export type SectionExtraProps =
 export interface SectionExtraIcons {
   kind: "icons";
   icons: IconProp[];
-  size?: "sm" | "md" | "lg" | "xl";
-  adjust?: "start" | "center" | true | "end";
-  align?: "start" | "center" | true | "end";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  adjust?: "start" | "center" | boolean | "end";
+  align?: "start" | "center" | boolean | "end";
 }
 
 export interface SectionExtraDemo {
@@ -70,30 +70,32 @@ const extra = Astro.props;
         return (
           <div
             class:list={[
-              "extra is-icons overflow-hidden w-full h-[1em]",
+              "extra is-icons overflow-hidden w-full h-[1em] flex",
               // size
+              size === "xs" && "text-3xl",
               size === "sm" && "text-4xl",
               (!size || size === "md") && "text-5xl",
               size === "lg" && "text-6xl",
               size === "xl" && "text-7xl",
+              // align
+              align === "start" && "justify-start",
+              (align === true || align === "center") && "justify-center",
+              align === "end" && "justify-end",
+              // adjust
+              adjust === "start" && "items-start",
+              (align === true || adjust === "center") && "items-center",
+              adjust === "end" && "items-end",
             ]}
           >
             <div
               class:list={[
                 "extra-icons flex absolute",
                 // size
-                size === "sm" && "text-4xl gap-1",
-                (!size || size === "md") && "text-5xl gap-3",
-                size === "lg" && "text-6xl gap-3",
-                size === "xl" && "text-7xl gap-3",
-                // adjust
-                adjust === "start" && "justify-start",
-                (adjust === true || adjust === "center") && "justify-center",
-                adjust === "end" && "justify-end",
-                // align
-                align === "start" && "items-start",
-                align === "center" && "items-center",
-                align === "end" && "items-end",
+                size === "xs" && "gap-1.5",
+                size === "sm" && "gap-2",
+                (!size || size === "md") && "gap-3",
+                size === "lg" && "gap-3",
+                size === "xl" && "gap-3",
               ]}
             >
               {icons.map((icon) => (

@@ -1,0 +1,14 @@
+---
+import { tt } from "#/copy";
+import SectionExtra from "../../blocks/SectionExtra.astro";
+
+const t = tt.landings.sections.hero.en;
+---
+
+<div class="flex flex-col items-center gap-3 w-full">
+  <div class="text-accent-400 font-medium font-display">
+    {t.integrates}
+  </div>
+
+  <SectionExtra {...t.extra} />
+</div>
