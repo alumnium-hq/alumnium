@@ -1,0 +1,47 @@
+---
+import type { I18n } from "#/copy/i18n";
+import type { TtLandings } from "#/copy/landings";
+import type { HeadingHProp } from "./Heading.astro";
+import SectionContent, {
+  type SectionContentHeadingProp,
+} from "./SectionContent.astro";
+
+type Props = SectionPointsContentProps;
+
+export interface SectionPointsContentProps {
+  heading?: SectionContentHeadingProp;
+  items: SectionPointsItem[];
+  cols?: "flex" | 1 | 2 | 3 | 4;
+}
+
+export interface SectionPointsItem {
+  icon: string;
+  content: I18n.FullLangsMap<TtLandings.Content>;
+}
+
+const { heading, items, cols } = Astro.props;
+---
+
+<div
+  class:list={[
+    "section-points",
+    !cols || cols === "flex"
+      ? "section-points-flex"
+      : `section-points-cols-${cols}`,
+  ]}
+>
+  {
+    items.map((item) => {
+      const h = heading ? ((heading.h + 1) as HeadingHProp) : 3;
+      return (
+        <div>
+          <SectionContent
+            heading={{ h }}
+            t={item.content.en}
+            icon={item.icon}
+          />
+        </div>
+      );
+    })
+  }
+</div>

@@ -2,7 +2,7 @@ import type { MetaData } from "#/data/meta";
 import type { CodeLanguage } from "astro";
 import { lit } from "smollit";
 
-export const ttHow = {
+export const ttCode = {
   //#region Install
 
   //#region Install/CLI
@@ -289,6 +289,8 @@ export const ttHow = {
 
   //#region Test
 
+  "code-test-client": {},
+
   "test-client-ts": {
     tab: "TypeScript",
   },
@@ -394,9 +396,12 @@ export const ttHow = {
   //#endregion
 };
 
-export namespace TtHow {
-  export type T = typeof ttHow;
+export namespace TtCode {
+  export type T = typeof ttCode;
   export type TKey = keyof T;
+  export type Id = {
+    [Key in TKey]: Key extends `code-${infer Rest}` ? Rest : never;
+  }[TKey];
 
   export type FilterKey<Base extends string, Constraint = {}> = {
     [Key in TKey]: Key extends `${Base}-${string}`
@@ -432,31 +437,31 @@ export namespace TtHow {
   export interface TestExampleVariant extends CodeVariant<"test-client-example"> {}
 }
 
-function installCliVar<Variant extends TtHow.InstallCliVariant>(
+function installCliVar<Variant extends TtCode.InstallCliVariant>(
   variant: Omit<Variant, "kind">,
 ): Variant {
   return { ...variant, kind: "install-cli" } as Variant;
 }
 
-function installClientVar<Variant extends TtHow.InstallClientVariant>(
+function installClientVar<Variant extends TtCode.InstallClientVariant>(
   variant: Omit<Variant, "kind">,
 ): Variant {
   return { ...variant, kind: "install-client" } as Variant;
 }
 
-function setUpClientVar<Variant extends TtHow.SetUpClientVariant>(
+function setUpClientVar<Variant extends TtCode.SetUpClientVariant>(
   variant: Omit<Variant, "kind">,
 ): Variant {
   return { ...variant, kind: "set-up-client" } as Variant;
 }
 
-function setUpMcpVar<Variant extends TtHow.SetUpMcpVariant>(
+function setUpMcpVar<Variant extends TtCode.SetUpMcpVariant>(
   variant: Omit<Variant, "kind">,
 ): Variant {
   return { ...variant, kind: "set-up-mcp" } as Variant;
 }
 
-function testExampleVar<Variant extends TtHow.TestExampleVariant>(
+function testExampleVar<Variant extends TtCode.TestExampleVariant>(
   variant: Omit<Variant, "kind">,
 ): Variant {
   return { ...variant, kind: "test-client-example" } as Variant;

@@ -70,6 +70,17 @@
   height: var(--icon-size, 1em);
   color: var(--icon-color, var(--color-accent-400));
   fill: currentColor;
+
+  & path[fill]:not([fill="none"]),
+  g[fill]:not([fill="none"]) {
+    fill: currentColor;
+  }
+
+  &.is-brands,
+  &.is-dev,
+  &.is-logo {
+    @apply p-[0.15em];
+  }
 }
 
 @theme {

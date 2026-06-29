@@ -1,3 +1,7 @@
+import type { SectionStyle } from "#/components/landings/blocks/Section.astro";
+import type { SectionContentHeadingProp } from "#/components/landings/blocks/SectionContent.astro";
+import type { SectionExtraProps } from "#/components/landings/blocks/SectionExtra.astro";
+import type { SectionPointsContentProps } from "#/components/landings/blocks/SectionPointsContent.astro";
 import { langs, type I18n } from "./i18n";
 import { txt, md } from "smollit";
 
@@ -306,16 +310,6 @@ export const ttLandings = {
 
         statsDisclaimer: "* vs playwright-mcp on the same task",
 
-        // copy: txt`
-        //   Alumnium designed to work with low-tier models that are faster and
-        //   cheaper, ensuring efficient use of tokens without compromising output
-        //   quality.
-
-        //   When working with a coding AI agent, Alumnium MCP does all the heavy
-        //   lifting, exposing just enough context to the agent to make the right
-        //   decisions without causing context rot.
-        // `,
-
         points: [
           {
             icon: "savings",
@@ -495,144 +489,6 @@ export const ttLandings = {
       },
     }),
 
-    testRunner: langs({
-      en: {
-        kicker: "Runner",
-
-        headline: "Markdown Tests Runner<sup>*</sup>",
-
-        subheadline:
-          "Run Markdown tests without a coding agent on CI or locally.",
-
-        copy: md`
-          Alumnium ships with a test runner that seamlessly integrates with your
-          coding AI agent workflow:
-
-          1. Test your app using coding agent with Alumnium MCP.
-          2. Ask it to save test description as a Markdown file.
-          3. Run the test \`alumnium test <filename>.md\`.
-
-          <footer>* Alumnium test runner currently is in preview</footer>
-        `,
-
-        points: [
-          {
-            icon: "replay",
-
-            headline: "Record and Replay",
-
-            copy: txt`
-              All tool calls get recorded and replayed. Combined with LLM cache,
-              it allows to run tests without spending any tokens at all.
-            `,
-          },
-
-          {
-            icon: "healing",
-
-            headline: "Self-Healing",
-
-            copy: txt`
-              When UI changes, the test runner automatically adapts notifying
-              you only when there's an actual bug.
-            `,
-          },
-
-          {
-            icon: "devices",
-
-            headline: "Cross-Platform Tests",
-
-            copy: txt`
-              Use same Markdown tests to test your web, iOS, and Android apps
-              at the same time.
-            `,
-          },
-
-          {
-            icon: "robot_2",
-
-            headline: "Agent SDK-Powered",
-
-            copy: txt`
-              The test runner utilizes native agent SDKs that allows to match
-              your agent's configuration and behavior.
-            `,
-          },
-        ],
-      },
-    }),
-
-    multiLevelCache: langs({
-      en: {
-        kicker: "Cache",
-
-        headline: "Multi-Level Cache",
-
-        subheadline: "TODO",
-
-        copy: md`
-          TODO
-          TODO
-        `,
-
-        points: [
-          {
-            icon: "replay",
-
-            headline: "Point #1",
-
-            copy: txt`
-              TODO
-              TODO
-
-              TODO
-            `,
-          },
-
-          {
-            icon: "replay",
-
-            headline: "Point #2",
-
-            copy: txt`
-              TODO
-              TODO
-
-              TODO
-            `,
-          },
-
-          {
-            icon: "replay",
-
-            headline: "Point #3",
-
-            copy: txt`
-              TODO
-              TODO
-
-              TODO
-            `,
-          },
-        ],
-      },
-    }),
-
-    testRunnerDemos: [
-      demoTab({
-        id: "run",
-        label: langs({ en: "Run Tests" }),
-        src: "https://asciinema.org/a/569727.cast",
-      }),
-
-      demoTab({
-        id: "self-healing",
-        label: langs({ en: "Self-Healing" }),
-        src: "https://asciinema.org/a/418574.cast",
-      }),
-    ] as const,
-
     sameTestsForAllPlatforms: langs({
       en: {
         icon: "devices",
@@ -658,117 +514,605 @@ export const ttLandings = {
 
     //#region Features
 
-    features: langs({
-      en: {
-        kicker: "Features",
-
-        headline: "What's in Alumnium?",
-
-        subheadline: txt`
-          Everything you need to test your app with AI, all in one package.
-        `,
-      },
-    }),
-
     featuresBento: bento({
-      cols: 3,
+      cols: 6,
+      style: "compact",
+      heading: { h: 3 },
+
       items: [
-        {
+        itemContent({
+          span: 6,
+          heading: { h: 2, style: "enlarge", align: true },
+          style: "header",
+
+          content: langs({
+            en: {
+              kicker: "Features",
+
+              headline: "What's in Alumnium?",
+
+              subheadline: txt`
+                Everything you need to test your app with AI, all in one package.
+              `,
+            },
+          }),
+        }),
+
+        itemContent({
+          span: 3,
+          heading: { h: 3, style: "enlarge" },
+
+          content: langs({
+            en: {
+              headline: "MCP Server",
+
+              subheadline: "TODO TODO TODO",
+
+              copy: md`
+                TODO
+                TODO
+              `,
+            },
+          }),
+
+          extra: {
+            kind: "demo",
+            id: "mcp-test",
+          },
+        }),
+
+        itemContent({
+          span: 3,
+          heading: { h: 3, style: "enlarge" },
+
+          content: langs({
+            en: {
+              headline: "Client",
+
+              subheadline: "TODO TODO TODO",
+
+              copy: md`
+                TODO
+                TODO
+              `,
+            },
+          }),
+
+          extra: {
+            kind: "code",
+            id: "test-client",
+          },
+        }),
+
+        itemContent({
           span: 2,
-          content: langs({
-            en: {
-              headline: "Local Models",
 
-              subheadline: txt`
-                TODO
-                TODO
-              `,
-            },
-          }),
-        },
+          heading: { h: 3 },
 
-        {
-          span: 1,
-          content: langs({
-            en: {
-              headline: "API Server",
-
-              subheadline: txt`
-                TODO
-                TODO
-              `,
-            },
-          }),
-        },
-
-        {
-          span: 1,
-          content: langs({
-            en: {
-              headline: "Subtree Focus",
-
-              subheadline: txt`
-                TODO
-                TODO
-              `,
-            },
-          }),
-        },
-
-        {
-          span: 1,
-          content: langs({
-            en: {
-              headline: "Changes Diff",
-
-              subheadline: txt`
-                TODO
-                TODO
-              `,
-            },
-          }),
-        },
-
-        {
-          span: 1,
-          content: langs({
-            en: {
-              headline: "Vision",
-
-              subheadline: txt`
-                TODO
-                TODO
-              `,
-            },
-          }),
-        },
-
-        {
-          span: 1,
-          content: langs({
-            en: {
-              headline: "Frames Support",
-
-              subheadline: txt`
-                TODO
-                TODO
-              `,
-            },
-          }),
-        },
-
-        {
-          span: 1,
           content: langs({
             en: {
               headline: "Cross-Platform",
 
-              subheadline: txt`
-                Works on macOS, Windows, and Linux.
+              copy: md`
+Alumnium works on macOS, Windows, and Linux.
+              `,
+            },
+
+            extra: {
+              kind: "icons",
+              icons: [
+                { id: "apple", style: "brands" },
+                { id: "linux", style: "brands" },
+                { id: "windows", style: "brands" },
+              ],
+              size: "lg",
+            },
+          }),
+        }),
+
+        itemContent({
+          span: 2,
+
+          content: langs({
+            en: {
+              headline: "Small Build Size",
+
+              copy: md`
+                Alumnium CLI is a single binary with a small ~100 MB footprint.
+              `,
+            },
+
+            extra: {
+              kind: "icons",
+              icons: [{ id: "archive", style: "100" }],
+              size: "lg",
+            },
+          }),
+        }),
+
+        itemContent({
+          span: 2,
+
+          content: langs({
+            en: {
+              headline: "JSON API",
+
+              copy: md`
+                Get full control over Alumnium with detailed
+                JSON API.
+              `,
+            },
+
+            extra: {
+              kind: "icons",
+              icons: [{ id: "api", style: "100" }],
+              size: "lg",
+            },
+          }),
+        }),
+
+        itemContent({
+          span: 6,
+          cols: 2,
+          heading: { h: 3, style: "enlarge" },
+          style: "header",
+          continue: true,
+
+          content: langs({
+            en: {
+              icon: "service_toolbox",
+
+              headline: "Agentic Toolbox",
+
+              subheadline: "Rich AI-powered QA toolbox.",
+            },
+          }),
+
+          extra: {
+            kind: "copy",
+            content: langs({
+              en: md`
+                Whether you use MCP or integrate Alumnium client into your
+                existing test suite, you get a rich set of tools that speed up
+                testing and test suite maintenance.
+
+                These tools are optimized for long-horizon tasks and context
+                efficiency.
+              `,
+            }),
+          },
+
+          // extra: {
+          //   kind: "icons",
+          //   size: "xl",
+          //   icons: [
+          //     { id: "handyman", style: "100" },
+          //     // { id: "service_toolbox", style: "100" },
+          //     // { id: "tools_power_drill", style: "100" },
+          //   ],
+          // },
+        }),
+
+        itemContent({
+          span: 6,
+          heading: { h: 3, style: "enlarge" },
+
+          content: {
+            kind: "points",
+            heading: { h: 3 },
+            cols: 4,
+
+            items: [
+              {
+                icon: "scan",
+                content: langs({
+                  en: {
+                    headline: "Change Analyzer",
+                    copy: md`
+                      Analyzes UI changes and provides tree diff to
+                      analyze how it affects the task.
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "scan",
+                content: langs({
+                  en: {
+                    headline: "Check Tool",
+                    copy: md`
+                      Checks if the app is in the expected state, and reports any discrepancies.
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "database_search",
+                content: langs({
+                  en: {
+                    headline: "Data Retriever",
+                    copy: md`
+                      Retrieves specific data or state from the app for
+                      validation or further processing.
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "visibility",
+                content: langs({
+                  en: {
+                    headline: "Vision",
+                    copy: md`
+                      Uses computer vision to analyze screenshots for more challenging tasks.
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "scan",
+                content: langs({
+                  en: {
+                    headline: "Do Tool",
+                    copy: md`
+                      Figures out how to perform a task and executes it, without
+                      explicit instructions.
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "checklist",
+                content: langs({
+                  en: {
+                    headline: "Planner",
+                    copy: md`
+                      Splits a complex task into smaller steps, tracks and
+                      executes them in order.
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "find_in_page",
+                content: langs({
+                  en: {
+                    headline: "Element Finder",
+                    copy: md`
+                      Finds elements on the page using natural language
+                      descriptions, even if they change over time.
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "center_focus_strong",
+                content: langs({
+                  en: {
+                    headline: "Area Focus",
+                    copy: md`
+                      Focuses on a specific area of the page for more precise
+                      interactions.
+                    `,
+                  },
+                }),
+              },
+            ],
+          },
+        }),
+
+        itemContent({
+          span: 3,
+          heading: { h: 3, style: "enlarge" },
+
+          content: langs({
+            en: {
+              headline: "Deep Browser Integration",
+
+              subheadline: "Can handle most complex web apps.",
+
+              copy: md`
+                Alumnium supports virtually all of the browser APIs, including
+                frames, shadow DOM, file uploads, tabs, and more.
+
+                It comes with smart waiting and element finding features that
+                work consistently across all supported automation frameworks.
               `,
             },
           }),
-        },
+
+          extra: {
+            kind: "checklist",
+            items: [
+              langs({ en: "Tabs handling" }),
+
+              langs({ en: "Auto wait & retry" }),
+
+              langs({ en: "Persistent profiles" }),
+
+              langs({ en: "Frames" }),
+
+              langs({ en: "Page screenshot" }),
+
+              langs({ en: "File uploads" }),
+
+              langs({ en: "PDF export" }),
+
+              langs({ en: "Custom JavaScript" }),
+
+              langs({ en: "Exotic controls" }),
+            ],
+          },
+        }),
+
+        itemContent({
+          span: 3,
+          heading: { h: 3, style: "enlarge" },
+          style: "compact",
+
+          content: langs({
+            en: {
+              headline: "Multi-Level Cache",
+
+              subheadline: "TODO",
+
+              copy: md`
+                TODO
+                TODO
+              `,
+            },
+          }),
+
+          extra: {
+            kind: "points",
+            items: [
+              {
+                icon: "replay",
+
+                content: langs({
+                  en: {
+                    headline: "Point #1",
+
+                    copy: txt`
+                      TODO
+                      TODO
+
+                      TODO
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "replay",
+
+                content: langs({
+                  en: {
+                    headline: "Point #2",
+
+                    copy: txt`
+                      TODO
+                      TODO
+
+                      TODO
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "replay",
+
+                content: langs({
+                  en: {
+                    headline: "Point #3",
+
+                    copy: txt`
+                      TODO
+                      TODO
+
+                      TODO
+                    `,
+                  },
+                }),
+              },
+            ],
+          },
+        }),
+
+        itemContent({
+          span: 2,
+
+          content: langs({
+            en: {
+              headline: "Multi-Model",
+
+              subheadline: "Pick and choose models.",
+
+              copy: md`
+                Use models that works best for you, choosing from a wide range
+                of options available. Each model tested and optimized for best
+                performance.
+              `,
+            },
+
+            extra: {
+              kind: "icons",
+              icons: [
+                { id: "openai", style: "logo" },
+                { id: "claude", style: "logo" },
+                { id: "gemini", style: "logo" },
+                { id: "grok", style: "logo" },
+                { id: "deepseek", style: "logo" },
+                { id: "mistral", style: "logo" },
+                { id: "meta", style: "logo" },
+              ],
+            },
+          }),
+        }),
+
+        itemContent({
+          span: 2,
+
+          content: langs({
+            en: {
+              headline: "Multi-Cloud",
+
+              subheadline: "Supports multiple cloud providers.",
+
+              copy: md`
+                Utilize any model provider you already use: AWS, Azure, Google Cloud, or
+                directly from the model developer.
+              `,
+            },
+
+            extra: {
+              kind: "icons",
+              icons: [
+                { id: "aws", style: "brands" },
+                { id: "azure", style: "dev" },
+                { id: "googlecloud", style: "dev" },
+              ],
+            },
+          }),
+        }),
+
+        itemContent({
+          span: 2,
+
+          content: langs({
+            en: {
+              headline: "Local Models Support",
+
+              subheadline: "Run on local infrastructure.",
+
+              copy: md`
+                Prevent any data from leaving your network and save money on
+                tokens by running open-weight models on your own infrastructure
+                with Ollama.
+              `,
+            },
+
+            extra: {
+              kind: "icons",
+
+              icons: [{ id: "ollama", style: "logo" }],
+            },
+          }),
+        }),
+
+        itemContent({
+          span: 6,
+          cols: 2,
+          heading: { h: 3, style: "enlarge" },
+          style: "default",
+          continue: true,
+
+          content: langs({
+            en: {
+              kicker: "Runner",
+
+              headline: "Markdown Tests Runner<sup>*</sup>",
+
+              subheadline:
+                "Run Markdown tests without a coding agent on CI or locally.",
+
+              copy: md`
+                Alumnium ships with a test runner that seamlessly integrates with your
+                coding AI agent workflow:
+
+                1. Test your app using coding agent with Alumnium MCP.
+                2. Ask it to save test description as a Markdown file.
+                3. Run the test \`alumnium test <filename>.md\`.
+
+                <footer>* Alumnium test runner currently is in preview</footer>
+              `,
+            },
+          }),
+
+          extra: {
+            kind: "demo",
+            id: "test-runner",
+          },
+        }),
+
+        itemContent({
+          span: 6,
+          style: "compact",
+
+          content: {
+            kind: "points",
+
+            items: [
+              {
+                icon: "replay",
+
+                content: langs({
+                  en: {
+                    headline: "Record and Replay",
+
+                    copy: txt`
+                      All tool calls get recorded and replayed. Combined with LLM cache,
+                      it allows to run tests without spending any tokens at all.
+                    `,
+                  },
+                }),
+              },
+
+              {
+                icon: "healing",
+
+                content: langs({
+                  en: {
+                    headline: "Self-Healing",
+
+                    copy: txt`
+                    When UI changes, the test runner automatically adapts notifying
+                    you only when there's an actual bug.
+                  `,
+                  },
+                }),
+              },
+
+              {
+                icon: "devices",
+
+                content: langs({
+                  en: {
+                    headline: "Cross-Platform Tests",
+
+                    copy: txt`
+                    Use same Markdown tests to test your web, iOS, and Android apps
+                    at the same time.
+                  `,
+                  },
+                }),
+              },
+
+              {
+                icon: "robot_2",
+
+                content: langs({
+                  en: {
+                    headline: "Agent SDK-Powered",
+
+                    copy: txt`
+                      The test runner utilizes native agent SDKs that allows to match
+                      your agent's configuration and behavior.
+                    `,
+                  },
+                }),
+              },
+            ],
+          },
+        }),
       ],
     }),
 
@@ -1683,22 +2027,32 @@ export namespace TtLandings {
     engineers: I18n.FullLangsMap<Content>;
   }
 
-  export interface DemoTab<Id extends string> {
-    id: Id;
-    label: I18n.FullLangsMap<string>;
-    src: DemoSrc;
-  }
-
-  export type DemoSrc = keyof typeof import("#/data/asciinema/metadata.json");
-
   export interface Bento {
-    cols: 1 | 2 | 3;
+    cols: 1 | 2 | 3 | 4 | 5 | 6;
+    heading: SectionContentHeadingProp;
+    style?: SectionStyle;
     items: BentoItem[];
   }
 
   export interface BentoItem {
-    content: I18n.FullLangsMap<Content>;
-    span?: 1 | 2 | 3;
+    kind: "content";
+    heading?: SectionContentHeadingProp;
+    content: BentoItemContent;
+    extra?: SectionExtraProps;
+    span?: 1 | 2 | 3 | 4 | 5 | 6;
+    style?: SectionStyle;
+    cols?: 1 | 2;
+    continue?: boolean;
+  }
+
+  export type BentoItemContent = BentoItemContentCopy | BentoItemContentPoints;
+
+  export type BentoItemContentCopy = I18n.FullLangsMap<Content> & {
+    extra?: SectionExtraProps;
+  };
+
+  export interface BentoItemContentPoints extends SectionPointsContentProps {
+    kind: "points";
   }
 
   export interface ComparisonHeader {
@@ -1778,12 +2132,12 @@ function faqItem(item: TtLandings.FaqItem): TtLandings.FaqItem {
   return item;
 }
 
-function demoTab<Id extends string>(
-  tab: TtLandings.DemoTab<Id>,
-): TtLandings.DemoTab<Id> {
-  return tab;
-}
-
 function bento(value: TtLandings.Bento): TtLandings.Bento {
   return value;
+}
+
+function itemContent(
+  item: Omit<TtLandings.BentoItem, "kind">,
+): TtLandings.BentoItem {
+  return { kind: "content", ...item };
 }

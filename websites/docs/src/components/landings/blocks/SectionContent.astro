@@ -1,7 +1,6 @@
 ---
 import Heading, { type HeadingProps } from "./Heading.astro";
 import Copy from "./Copy.astro";
-import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import Icon, { type IconProp } from "#/components/Icon.astro";
 
 export interface Props {
@@ -9,9 +8,11 @@ export interface Props {
     copy?: string | undefined;
     icon?: IconProp;
   };
-  icon?: AstroComponentFactory | undefined;
-  heading: Omit<HeadingProps, "t">;
+  icon?: IconProp | undefined;
+  heading: SectionContentHeadingProp;
 }
+
+export type SectionContentHeadingProp = Omit<HeadingProps, "t">;
 
 const { t, heading, icon: iconProp } = Astro.props;
 
@@ -19,7 +20,7 @@ const icon = iconProp || t.icon;
 ---
 
 <div class="section-content">
-  {icon && <Icon prop={icon} class="icon text-5xl mb-2" />}
+  {icon && <Icon prop={icon} class="icon section-content-icon" />}
 
   <Heading {...heading} t={t} />
 

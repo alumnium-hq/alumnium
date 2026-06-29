@@ -4,21 +4,23 @@ import { tt } from "#/copy";
 type Props = HeadingProps;
 
 export interface HeadingProps {
-  h: 1 | 2 | 3 | 4;
+  h: HeadingHProp;
   t: {
     kicker?: string | undefined;
     headline?: string | undefined;
     subheadline?: string | undefined;
   };
   align?: boolean;
-  enlarge?: boolean;
+  style?: "enlarge" | "compact";
 }
+
+export type HeadingHProp = 1 | 2 | 3 | 4;
 
 const {
   h,
   t: { kicker, headline, subheadline },
   align,
-  enlarge,
+  style,
 } = Astro.props;
 
 const H = `h${h}`;
@@ -28,7 +30,8 @@ const H = `h${h}`;
   class:list={[
     "heading",
     align && "heading-align",
-    enlarge && "heading-enlarge",
+    style === "enlarge" && "heading-enlarge",
+    style === "compact" && "heading-compact",
   ]}
 >
   {kicker && <p class="kicker">{kicker}</p>}
