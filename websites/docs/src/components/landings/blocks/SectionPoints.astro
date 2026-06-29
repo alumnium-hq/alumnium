@@ -1,0 +1,18 @@
+---
+import type { SectionProps } from "./Section.astro";
+import Section from "./Section.astro";
+import type { SectionPointsContentProps } from "./SectionPointsContent.astro";
+import SectionPointsContent from "./SectionPointsContent.astro";
+
+type Props = SectionPointsProps;
+
+export type SectionPointsProps = SectionProps & {
+  content: SectionPointsContentProps;
+};
+
+const { content, ...sectionProps } = Astro.props;
+---
+
+<Section {...sectionProps}>
+  <SectionPointsContent {...content} />
+</Section>

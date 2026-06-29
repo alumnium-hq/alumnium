@@ -1,21 +1,24 @@
 import { marked } from "marked";
 import { ttLandings } from "./landings";
-import { ttHow } from "./how";
+import { ttCode } from "./code";
 import { ttBase } from "./base";
 import { ttLayout } from "./layout";
 import { ttLinks } from "./links";
 import { ttBlog } from "./blog";
+import { ttDemo } from "./demo";
 
 export const tt = {
   base: ttBase,
 
   links: ttLinks,
 
+  demo: ttDemo,
+
   layout: ttLayout,
 
   landings: ttLandings,
 
-  how: ttHow,
+  code: ttCode,
 
   blog: ttBlog,
 

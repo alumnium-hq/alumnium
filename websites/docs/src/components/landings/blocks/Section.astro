@@ -1,21 +1,33 @@
 ---
 import Crosses from "./Crosses.astro";
-import { type Props as ContentProps } from "./SectionContent.astro";
+import {
+  type Props as ContentProps,
+  type SectionContentHeadingProp,
+} from "./SectionContent.astro";
 import SectionContent from "./SectionContent.astro";
+import SectionExtra, { type SectionExtraProps } from "./SectionExtra.astro";
 
 export interface BaseProps {
   cols?: 1 | 2;
-  span?: 1 | 2 | 3;
-  style?: "header" | "compact";
+  span?: 1 | 2 | 3 | 4 | 5 | 6;
+  content?: SectionExtraProps & {
+    heading?: SectionContentHeadingProp;
+  };
+  extra?: SectionExtraProps;
+  style?: SectionStyle;
   align?: boolean;
   continue?: boolean;
 }
 
-export interface ContentfulProps extends BaseProps, ContentProps {}
+export type SectionStyle = "default" | "header" | "compact";
+
+export interface SectionContentfulProps extends BaseProps, ContentProps {}
 
 export interface BareProps extends BaseProps {}
 
-export type Props = ContentfulProps | BareProps;
+export type SectionProps = SectionContentfulProps | BareProps;
+
+type Props = SectionProps;
 
 const {
   cols,
@@ -23,6 +35,8 @@ const {
   style,
   align,
   continue: continueProp,
+  content: contentExtra,
+  extra,
   ...contentProps
 } = Astro.props;
 ---
@@ -32,6 +46,9 @@ const {
     "relative",
     span === 2 && "col-span-2",
     span === 3 && "col-span-3",
+    span === 4 && "col-span-4",
+    span === 5 && "col-span-5",
+    span === 6 && "col-span-6",
     continueProp && "has-continuation",
   ]}
 >
@@ -46,14 +63,18 @@ const {
     ]}
   >
     {
-      "heading" in contentProps && (
+      "t" in contentProps && (
         <SectionContent {...contentProps}>
-          <slot name="content" />
+          {contentExtra ? (
+            <SectionExtra {...contentExtra} />
+          ) : (
+            <slot name="content" />
+          )}
         </SectionContent>
       )
     }
 
-    <slot />
+    {extra ? <SectionExtra {...extra} /> : <slot />}
   </div>
 
   <Crosses />

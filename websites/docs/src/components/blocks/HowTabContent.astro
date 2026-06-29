@@ -1,16 +1,16 @@
 ---
 import { tt } from "#/copy";
-import type { TtHow } from "#/copy/how";
+import type { TtCode } from "#/copy/code";
 import Code from "./Code.astro";
 import Meta from "./Meta/Meta.astro";
 
 interface Props {
-  key: TtHow.CodeVariantKey;
+  key: TtCode.CodeVariantKey;
 }
 
 const { key } = Astro.props;
 
-const t = tt.how[key];
+const t = tt.code[key];
 ---
 
 <Code code={t.code} lang={t.lang} copy />
