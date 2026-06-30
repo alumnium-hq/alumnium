@@ -34,6 +34,6 @@
     "@tailwindcss/vite": "^4.3.0",
     "mdast-util-to-hast": "^13.2.1",
     "tailwindcss-capsize": "^4.0.1",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.1-rc"
   }
 }

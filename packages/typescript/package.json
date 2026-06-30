@@ -108,7 +108,7 @@
     "playwright": "^1.60.0",
     "smol-toml": "^1.6.1",
     "ts-deepmerge": "^7.0.3",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.1-rc",
     "vite": "^8.0.10",
     "vitest": "^4.1.5"
   }
