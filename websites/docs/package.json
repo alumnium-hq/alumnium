@@ -8,7 +8,7 @@
   "dependencies": {
     "@astrojs/check": "^0.9.9",
     "@astrojs/sitemap": "3.7.3",
-    "@astrojs/starlight": "^0.39.2",
+    "@astrojs/starlight": "0.41.1",
     "@astrojs/starlight-tailwind": "5.0.0",
     "@fontsource-variable/hubot-sans": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
@@ -18,7 +18,7 @@
     "@material-symbols/svg-100": "^0.44.11",
     "@material-symbols/svg-300": "^0.44.11",
     "asciinema-player": "^3.15.1",
-    "astro": "6.4.2",
+    "astro": "7.0.3",
     "devicon": "^2.17.0",
     "gl-matrix": "^3.4.4",
     "marked": "^18.0.4",
