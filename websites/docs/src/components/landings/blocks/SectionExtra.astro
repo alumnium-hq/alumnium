@@ -2,62 +2,12 @@
 import McpTestDemo from "#/components/blocks/McpTestDemo.astro";
 import TestClient from "#/components/blocks/TestClient.astro";
 import TestRunnerDemo from "#/components/blocks/TestRunnerDemo.astro";
-import type { IconProp } from "#/components/Icon.astro";
 import Icon from "#/components/Icon.astro";
-import type { TtCode } from "#/copy/code";
-import type { TtDemo } from "#/copy/demo";
-import type { I18n } from "#/copy/i18n";
-import SectionPointsContent, {
-  type SectionPointsContentProps,
-} from "./SectionPointsContent.astro";
+import SectionPointsContent from "./SectionPointsContent.astro";
 import { tt } from "#/copy";
+import type { SectionExtraProps } from "./Section.types";
 
 type Props = SectionExtraProps;
-
-export type SectionExtraProps =
-  | SectionExtraIcons
-  | SectionExtraDemo
-  | SectionExtraCode
-  | SectionExtraPoints
-  | SectionExtraChecklist
-  | SectionExtraCopy;
-
-export interface SectionExtraIcons {
-  kind: "icons";
-  icons: IconProp[];
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  adjust?: "start" | "center" | boolean | "end";
-  align?: "start" | "center" | boolean | "end";
-}
-
-export interface SectionExtraDemo {
-  kind: "demo";
-  id: TtDemo.Id;
-}
-
-export interface SectionExtraExample {
-  kind: "example";
-  id: TtDemo.Id;
-}
-
-export interface SectionExtraCode {
-  kind: "code";
-  id: TtCode.Id;
-}
-
-export interface SectionExtraPoints extends SectionPointsContentProps {
-  kind: "points";
-}
-
-export interface SectionExtraChecklist {
-  kind: "checklist";
-  items: I18n.FullLangsMap<string>[];
-}
-
-export interface SectionExtraCopy {
-  kind: "copy";
-  content: I18n.FullLangsMap<string>;
-}
 
 const extra = Astro.props;
 ---

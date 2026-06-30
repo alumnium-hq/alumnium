@@ -135,7 +135,7 @@
 /* Layout */
 
 .page {
-  @apply pattern-canvas-container border-b border-transparent;
+  @apply overflow-hidden pattern-canvas-container border-b border-transparent;
 
   & > .header {
     @apply bg-transparent border-b border-transparent;

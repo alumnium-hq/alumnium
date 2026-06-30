@@ -5,19 +5,10 @@ run = "bun install"
 run = "rm -rf dist/ public/install.sh public/install.ps1"
 
 [tasks.build]
-depends = ["build/paraglide"]
 run = '''
-bun run astro check
+bun run astro-check
 bun run astro build
 '''
-
-[tasks."generate/paraglide"]
-run = "bun run paraglide-js compile --project ../../project.inlang --outdir ./src/texts --strategy baseLocale"
-# sources = ["../../project.inlang/**/*", "messages/**/*"]
-# outputs = ["src/texts/**/*"]
-
-[tasks."generate/paraglide:watch"]
-run = "bun run paraglide-js compile  --watch --project ../../project.inlang --outdir ./src/texts --strategy baseLocale"
 
 [tasks."dev:build"]
 run = "bun run astro preview"
