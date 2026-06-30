@@ -144,10 +144,10 @@ description = "Fix linting issues in all packages"
 depends = ["//packages/typescript:lint/fix", "//packages/python:lint/fix"]
 
 [tasks."types/ts"]
-run = "bun run tsgo --build"
+run = "bun run tsc --build"
 
 [tasks."types/ts:watch"]
-run = "bun run tsgo --build --watch"
+run = "bun run tsc --build --watch"
 
 [tasks."test/unit"]
 depends = [

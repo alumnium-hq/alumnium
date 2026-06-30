@@ -6,11 +6,14 @@ import { ttLayout } from "./layout";
 import { ttLinks } from "./links";
 import { ttBlog } from "./blog";
 import { ttDemo } from "./demo";
+import { ttBlocks } from "./blocks";
 
 export const tt = {
   base: ttBase,
 
   links: ttLinks,
+
+  blocks: ttBlocks,
 
   demo: ttDemo,
 

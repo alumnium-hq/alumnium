@@ -423,7 +423,7 @@ async function main() {
             format: "esm",
           }),
 
-          $`cd ${PKG_DIR} && bun tsgo --project tsconfig.build.json`,
+          $`cd ${PKG_DIR} && bun tsc --project tsconfig.build.json`,
 
           copyAssets(CORE_PKG_ASSETS, DIST_NPM_MAIN_PKG_DIR),
         ]);

@@ -1,0 +1,25 @@
+---
+import { tt } from "#/copy";
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import Link from "#/components/Link.astro";
+---
+
+<div class="bottom flex gap-6 text-accent-500 items-center justify-between">
+  <div class="flex gap-2 items-center">
+    <span>Alumnium © {new Date().getFullYear()}</span>
+    <text-del></text-del>
+    <Link t={tt.links.mitLicense} />
+  </div>
+
+  <div class="flex gap-5 text-xl">
+    <SocialIcons {...Astro.props} />
+  </div>
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .bottom :global(a) {
+    @apply text-accent-500 hover:text-cyan-500;
+  }
+</style>

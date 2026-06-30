@@ -9,6 +9,45 @@
       transparent 80%
     );
 
+    /* Section padding */
+
+    /* base */
+    --section-padding-y-base: calc(var(--spacing) * 8);
+    --section-padding-y-base-shrunk: calc(var(--spacing) * 0);
+    --section-padding-y-base-compact: calc(var(--spacing) * 8);
+    --section-padding-y-base-compact-shrunk: calc(var(--spacing) * 6);
+    --section-padding-y-base-header: calc(var(--spacing) * 6);
+    --section-padding-y-base-header-shrunk: calc(var(--spacing) * 6);
+    --section-padding-y-base-tight: calc(var(--spacing) * 10);
+    --section-padding-x-base: calc(var(--spacing) * 4);
+    /* md */
+    --section-padding-y-md: calc(var(--spacing) * 14);
+    --section-padding-y-md-shrunk: calc(var(--spacing) * 10);
+    --section-padding-y-md-compact: calc(var(--spacing) * 12);
+    --section-padding-y-md-compact-shrunk: calc(var(--spacing) * 8);
+    --section-padding-y-md-header: calc(var(--spacing) * 12);
+    --section-padding-y-md-header-shrunk: calc(var(--spacing) * 10);
+    --section-padding-y-md-tight: calc(var(--spacing) * 10);
+    --section-padding-x-md: calc(var(--spacing) * 8);
+    /* lg */
+    --section-padding-y-lg: calc(var(--spacing) * 20);
+    --section-padding-y-lg-shrunk: calc(var(--spacing) * 16);
+    --section-padding-y-lg-compact: calc(var(--spacing) * 12);
+    --section-padding-y-lg-compact-shrunk: calc(var(--spacing) * 10);
+    --section-padding-y-lg-header: calc(var(--spacing) * 12);
+    --section-padding-y-lg-header-shrunk: calc(var(--spacing) * 10);
+    --section-padding-y-lg-tight: calc(var(--spacing) * 10);
+    --section-padding-x-lg: calc(var(--spacing) * 14);
+    /* xl */
+    --section-padding-y-xl: calc(var(--spacing) * 25);
+    --section-padding-y-xl-shrunk: calc(var(--spacing) * 18);
+    --section-padding-y-xl-compact: calc(var(--spacing) * 16);
+    --section-padding-y-xl-compact-shrunk: calc(var(--spacing) * 12);
+    --section-padding-y-xl-header: calc(var(--spacing) * 14);
+    --section-padding-y-xl-header-shrunk: calc(var(--spacing) * 12);
+    --section-padding-y-xl-tight: calc(var(--spacing) * 12);
+    --section-padding-x-xl: calc(var(--spacing) * 16);
+
     @apply text-ink-dark pattern-canvas-content h-full flex flex-col;
 
     & h1,
@@ -57,7 +96,7 @@
     }
 
     & .kicker {
-      @apply text-accent-500 uppercase font-medium font-mono capsize leading-none mb-1;
+      @apply text-accent-500 uppercase font-medium font-mono capsize leading-none;
     }
 
     & .heading {
@@ -153,10 +192,28 @@
     }
 
     & .supersections {
-      --section-padding-x: calc(var(--spacing) * 10);
-      --section-padding-y: calc(var(--spacing) * 15);
       --edge-padding-multiplier: 3;
       --section-overlay-bg: transparent;
+
+      @variant sm {
+        --section-padding-x: calc(var(--spacing) * 3);
+        --section-padding-y: calc(var(--spacing) * 8);
+      }
+
+      @variant md {
+        --section-padding-x: calc(var(--spacing) * 4);
+        --section-padding-y: calc(var(--spacing) * 12);
+      }
+
+      @variant lg {
+        --section-padding-x: calc(var(--spacing) * 6);
+        --section-padding-y: calc(var(--spacing) * 12);
+      }
+
+      @variant xl {
+        --section-padding-x: calc(var(--spacing) * 10);
+        --section-padding-y: calc(var(--spacing) * 15);
+      }
 
       @apply relative;
     }
@@ -217,38 +274,21 @@
     }
 
     & .section {
-      /* Padding */
-
-      /* base */
-      --padding-x-base: calc(var(--spacing, 0.25rem) * 4);
-      /* md */
-      --padding-y-md: calc(var(--spacing, 0.25rem) * 14);
-      --padding-x-md: calc(var(--spacing, 0.25rem) * 6);
-      /* lg */
-      --padding-y-lg: calc(var(--spacing, 0.25rem) * 20);
-      --padding-x-lg: calc(var(--spacing, 0.25rem) * 14);
-      /* xl */
-      --padding-y-xl: calc(var(--spacing, 0.25rem) * 25);
-      --padding-y-xl-compact: calc(var(--spacing, 0.25rem) * 16);
-      --padding-x-xl: calc(var(--spacing, 0.25rem) * 16);
-
-      @apply py-8 md:py-10 lg:py-(--padding-y-lg) xl:py-(--padding-y-xl);
-      @apply px-(--padding-x-base) md:px-(--padding-x-md) lg:px-(--padding-x-lg) xl:px-(--padding-x-xl);
+      @apply py-(--section-padding-y-base) md:py-(--section-padding-y-md) lg:py-(--section-padding-y-lg) xl:py-(--section-padding-y-xl);
+      @apply px-(--section-padding-x-base) md:px-(--section-padding-x-md) lg:px-(--section-padding-x-lg) xl:px-(--section-padding-x-xl);
 
       @apply grid items-start relative;
 
       &.section-compact {
-        @apply py-4 md:py-6 lg:py-(--padding-y-xl-compact);
+        @apply py-(--section-padding-y-base-compact) md:py-(--section-padding-y-md-compact) lg:py-(--section-padding-y-lg-compact) xl:py-(--section-padding-y-xl-compact);
       }
 
-      /* TODO: Join tight and header */
-
       &.section-header {
-        @apply py-6 md:py-6 lg:py-12;
+        @apply py-(--section-padding-y-base-header) md:py-(--section-padding-y-md-header) lg:py-(--section-padding-y-lg-header) xl:py-(--section-padding-y-xl-header);
       }
 
       &.section-tight {
-        @apply py-4 md:py-6 lg:py-12;
+        @apply py-(--section-padding-y-base-tight) md:py-(--section-padding-y-md-tight) lg:py-(--section-padding-y-lg-tight) xl:py-(--section-padding-y-xl-tight);
       }
 
       &.section-align {
@@ -260,25 +300,37 @@
       }
 
       &.section-cols-2 {
-        @apply gap-10 sm:grid-cols-2;
+        @apply gap-6 md:gap-8 lg:gap-10 md:grid-cols-2;
+
+        &:has(> .section-points) {
+          @apply grid-cols-1 lg:grid-cols-[4fr_6fr] xl:grid-cols-2;
+        }
       }
     }
 
     & .bento > * {
       &.has-continuation {
         & > .section {
-          @apply pb-(--padding-y-lg);
+          @apply pb-(--section-padding-y-base-shrunk) md:pb-(--section-padding-y-md-shrunk) lg:pb-(--section-padding-y-lg-shrunk) xl:pb-(--section-padding-y-xl-shrunk);
+
+          &.section-compact {
+            @apply pb-(--section-padding-y-base-compact-shrunk) md:pb-(--section-padding-y-md-compact-shrunk) lg:pb-(--section-padding-y-lg-compact-shrunk) xl:pb-(--section-padding-y-xl-compact-shrunk);
+          }
 
           &.section-header {
-            @apply pb-14;
+            @apply pb-(--section-padding-y-base-header-shrunk) md:pb-(--section-padding-y-md-header-shrunk) lg:pb-(--section-padding-y-lg-header-shrunk) xl:pb-(--section-padding-y-xl-header-shrunk);
           }
         }
 
         & + * > .section {
-          @apply pt-20;
+          @apply pt-(--section-padding-y-base-shrunk) md:pt-(--section-padding-y-md-shrunk) lg:pt-(--section-padding-y-lg-shrunk) xl:pt-(--section-padding-y-xl-shrunk);
 
           &.section-compact {
-            @apply pt-14;
+            @apply pt-(--section-padding-y-base-compact-shrunk) md:pt-(--section-padding-y-md-compact-shrunk) lg:pt-(--section-padding-y-lg-compact-shrunk) xl:pt-(--section-padding-y-xl-compact-shrunk);
+          }
+
+          &.section-header {
+            @apply pt-(--section-padding-y-base-header-shrunk) md:pt-(--section-padding-y-md-header-shrunk) lg:pt-(--section-padding-y-lg-header-shrunk) xl:pt-(--section-padding-y-xl-header-shrunk);
           }
         }
       }
@@ -289,24 +341,24 @@
       &:has(> .section-content > .heading h1),
       &:has(> .heading.heading-enlarge h2),
       &:has(> .section-content > .heading.heading-enlarge h2) {
-        @apply gap-10;
+        @apply lg:gap-10;
       }
 
       &:has(> .heading h2),
       &:has(> .section-content > .heading h2),
       &:has(> .heading.heading-enlarge h3),
       &:has(> .section-content > .heading.heading-enlarge h3) {
-        @apply gap-8;
+        @apply lg:gap-10;
       }
 
       &:has(> .heading h3),
       &:has(> .section-content > .heading h3) {
-        @apply gap-6;
+        @apply lg:gap-6;
       }
 
       &:has(> .heading h4),
       &:has(> .section-content > .heading h4) {
-        @apply gap-5;
+        @apply lg:gap-5;
       }
     }
 
@@ -315,20 +367,20 @@
 
       &:has(> .heading h1),
       &:has(> .heading.heading-enlarge h2) {
-        @apply gap-6;
+        @apply lg:gap-6;
       }
 
       &:has(> .heading h2),
       &:has(> .heading.heading-enlarge h3) {
-        @apply gap-4;
+        @apply lg:gap-4;
       }
 
       &:has(> .heading h3) {
-        @apply gap-1.5;
+        @apply lg:gap-1.5;
       }
 
       &:has(> .heading h4) {
-        @apply gap-1;
+        @apply lg:gap-1;
       }
     }
 
@@ -426,15 +478,15 @@
     }
 
     & .section-points-cols-2 {
-      @apply grid-cols-1 md:grid-cols-2;
+      @apply md:grid-cols-2;
     }
 
     & .section-points-cols-3 {
-      @apply grid-cols-1 md:grid-cols-3;
+      @apply md:grid-cols-3;
     }
 
     & .section-points-cols-4 {
-      @apply grid-cols-1 md:grid-cols-4;
+      @apply sm:grid-cols-2 md:grid-cols-4;
     }
 
     & .section-points {
@@ -459,23 +511,23 @@
       @apply content-wrapper-lg relative;
 
       &.bento-cols-2 {
-        @apply grid grid-cols-1 md:grid-cols-2;
+        @apply grid md:grid-cols-2;
       }
 
       &.bento-cols-3 {
-        @apply grid grid-cols-1 md:grid-cols-3;
+        @apply grid md:grid-cols-3;
       }
 
       &.bento-cols-4 {
-        @apply grid grid-cols-1 md:grid-cols-4;
+        @apply grid md:grid-cols-4;
       }
 
       &.bento-cols-5 {
-        @apply grid grid-cols-1 md:grid-cols-5;
+        @apply grid md:grid-cols-5;
       }
 
       &.bento-cols-6 {
-        @apply grid grid-cols-1 md:grid-cols-6;
+        @apply grid md:grid-cols-6;
       }
 
       & > * {

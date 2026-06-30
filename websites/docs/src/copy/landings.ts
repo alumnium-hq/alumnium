@@ -1,8 +1,10 @@
-import type { IconProp } from "#/components/Icon.astro";
-import type { SectionStyle } from "#/components/landings/blocks/Section.astro";
-import type { SectionContentHeadingProp } from "#/components/landings/blocks/SectionContent.astro";
-import type { SectionExtraProps } from "#/components/landings/blocks/SectionExtra.astro";
-import type { SectionPointsContentProps } from "#/components/landings/blocks/SectionPointsContent.astro";
+import type { IconProp } from "../components/Icon.types";
+import type {
+  SectionContentHeadingProp,
+  SectionExtraProps,
+  SectionPointsContentProps,
+  SectionStyle,
+} from "#/components/landings/blocks/Section.types";
 import { langs, type I18n } from "./i18n";
 import { txt, md } from "smollit";
 
@@ -471,7 +473,7 @@ const sections = {
 
   //#region Features
 
-  featuresBento: bento({
+  features: bento({
     cols: 6,
     style: "compact",
     heading: { h: 3 },
@@ -627,7 +629,7 @@ const sections = {
         span: 6,
         cols: 2,
         heading: { h: 3, style: "enlarge" },
-        style: "header",
+        style: "compact",
         adjust: true,
         continue: true,
 
@@ -1054,6 +1056,7 @@ const sections = {
 
         content: {
           kind: "points",
+          heading: { h: 3 },
 
           items: [
             {

@@ -1,7 +1,11 @@
 {
-  "js/ts.experimental.useTsgo": true,
+  // NOTE: Astro extension bugs out and doesn't work properly if this is set to true.
+  "js/ts.experimental.useTsgo": false,
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "files.associations": {
     "*.css": "tailwindcss"
   }
+  // NOTE: Needed for Astro extension to work properly
+  // See: https://github.com/withastro/astro/issues/16155
+  // "typescript.tsdk": "node_modules/typescript/lib"
 }

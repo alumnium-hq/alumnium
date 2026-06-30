@@ -1,32 +1,8 @@
 ---
 import Crosses from "./Crosses.astro";
-import {
-  type Props as ContentProps,
-  type SectionContentHeadingProp,
-} from "./SectionContent.astro";
 import SectionContent from "./SectionContent.astro";
-import SectionExtra, { type SectionExtraProps } from "./SectionExtra.astro";
-
-export interface BaseProps {
-  cols?: 1 | 2;
-  span?: 1 | 2 | 3 | 4 | 5 | 6;
-  content?: SectionExtraProps & {
-    heading?: SectionContentHeadingProp;
-  };
-  extra?: SectionExtraProps;
-  style?: SectionStyle;
-  align?: boolean;
-  continue?: boolean;
-  adjust?: boolean;
-}
-
-export type SectionStyle = "default" | "header" | "compact" | "tight";
-
-export interface SectionContentfulProps extends BaseProps, ContentProps {}
-
-export interface BareProps extends BaseProps {}
-
-export type SectionProps = SectionContentfulProps | BareProps;
+import SectionExtra from "./SectionExtra.astro";
+import type { SectionProps } from "./Section.types";
 
 type Props = SectionProps;
 
@@ -57,8 +33,8 @@ const {
   <div
     class:list={[
       "section",
-      style === "header" && "section-header",
       style === "compact" && "section-compact",
+      style === "header" && "section-header",
       style === "tight" && "section-tight",
       align && "section-align",
       adjust && "section-adjust",

@@ -1,18 +1,10 @@
 ---
-import Heading, { type HeadingProps } from "./Heading.astro";
+import Heading from "./SectionHeading.astro";
 import Copy from "./Copy.astro";
-import Icon, { type IconProp } from "#/components/Icon.astro";
+import Icon from "#/components/Icon.astro";
+import type { SectionContentProps } from "./Section.types";
 
-export interface Props {
-  t: HeadingProps["t"] & {
-    copy?: string | undefined;
-    icon?: IconProp;
-  };
-  icon?: IconProp | undefined;
-  heading: SectionContentHeadingProp;
-}
-
-export type SectionContentHeadingProp = Omit<HeadingProps, "t">;
+type Props = SectionContentProps;
 
 const { t, heading, icon: iconProp } = Astro.props;
 

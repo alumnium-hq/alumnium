@@ -1,20 +1,8 @@
 ---
 import { tt } from "#/copy";
+import type { SectionHeadingProps } from "./Section.types";
 
-type Props = HeadingProps;
-
-export interface HeadingProps {
-  h: HeadingHProp;
-  t: {
-    kicker?: string | undefined;
-    headline?: string | undefined;
-    subheadline?: string | undefined;
-  };
-  align?: boolean;
-  style?: "enlarge" | "compact";
-}
-
-export type HeadingHProp = 1 | 2 | 3 | 4;
+type Props = SectionHeadingProps;
 
 const {
   h,
