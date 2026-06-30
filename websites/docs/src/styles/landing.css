@@ -217,18 +217,34 @@
     }
 
     & .section {
-      @apply grid relative px-4 md:px-6 lg:px-16 items-start;
+      /* Padding */
 
-      &:not(.section-header) {
-        @apply py-8 md:py-10 lg:py-25;
+      /* base */
+      --padding-x-base: calc(var(--spacing, 0.25rem) * 4);
+      /* md */
+      --padding-y-md: calc(var(--spacing, 0.25rem) * 14);
+      --padding-x-md: calc(var(--spacing, 0.25rem) * 6);
+      /* lg */
+      --padding-y-lg: calc(var(--spacing, 0.25rem) * 20);
+      --padding-x-lg: calc(var(--spacing, 0.25rem) * 14);
+      /* xl */
+      --padding-y-xl: calc(var(--spacing, 0.25rem) * 25);
+      --padding-y-xl-compact: calc(var(--spacing, 0.25rem) * 16);
+      --padding-x-xl: calc(var(--spacing, 0.25rem) * 16);
+
+      @apply py-8 md:py-10 lg:py-(--padding-y-lg) xl:py-(--padding-y-xl);
+      @apply px-(--padding-x-base) md:px-(--padding-x-md) lg:px-(--padding-x-lg) xl:px-(--padding-x-xl);
+
+      @apply grid items-start relative;
+
+      &.section-compact {
+        @apply py-4 md:py-6 lg:py-(--padding-y-xl-compact);
       }
+
+      /* TODO: Join tight and header */
 
       &.section-header {
         @apply py-6 md:py-6 lg:py-12;
-      }
-
-      &.section-compact {
-        @apply py-4 md:py-6 lg:py-16;
       }
 
       &.section-tight {
@@ -245,6 +261,26 @@
 
       &.section-cols-2 {
         @apply gap-10 sm:grid-cols-2;
+      }
+    }
+
+    & .bento > * {
+      &.has-continuation {
+        & > .section {
+          @apply pb-(--padding-y-lg);
+
+          &.section-header {
+            @apply pb-14;
+          }
+        }
+
+        & + * > .section {
+          @apply pt-20;
+
+          &.section-compact {
+            @apply pt-14;
+          }
+        }
       }
     }
 
@@ -271,26 +307,6 @@
       &:has(> .heading h4),
       &:has(> .section-content > .heading h4) {
         @apply gap-5;
-      }
-    }
-
-    & .bento > * {
-      &.has-continuation {
-        & > .section {
-          @apply pb-20;
-
-          &.section-header {
-            @apply pb-14;
-          }
-        }
-
-        & + * > .section {
-          @apply pt-20;
-
-          &.section-compact {
-            @apply pt-14;
-          }
-        }
       }
     }
 
