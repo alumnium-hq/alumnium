@@ -3,8 +3,11 @@ import type { TtCode } from "#/copy/code";
 
 export function createHowTab<Base extends string>() {
   return function tab<
-    Id extends TtCode.FilterKey<Base>,
-    SubId extends TtCode.FilterKey<Id> extends `${Id}-${infer Rest}`
+    Id extends TtCode.FilterKey<Base, { tab: string }>,
+    SubId extends TtCode.FilterKey<
+      Id,
+      { tab: string }
+    > extends `${Id}-${infer Rest}`
       ? Rest
       : never,
   >(id: Id, sub?: SubId[]) {
