@@ -178,7 +178,6 @@ const { id, shaded, bg, edge } = Astro.props;
 
           const kind: Edge =
             entry.target.dataset.sentinel === "top" ? "top" : "bottom";
-          const oppKind = kind === "top" ? "bottom" : "top";
 
           // Is sentinel full in the viewport?
           const inViewport = entry.intersectionRatio === 1;

@@ -1,0 +1,84 @@
+---
+import { tt } from "#/copy";
+import Logotype from "#/assets/logotype.svg";
+import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
+import Link from "#/components/Link.astro";
+import SectionContent from "../../blocks/SectionContent.astro";
+import Newsletter from "../../blocks/Newsletter.astro";
+import FooterBottom from "./FooterBottom.astro";
+
+const t = tt.layout.footer;
+---
+
+<footer
+  class="border-t border-t-accent-600 py-(--section-padding-y-base-compact) md:py-(--section-padding-y-md-compact) lg:py-(--section-padding-y-lg-compact) xl:py-(--section-padding-y-xl-compact) px-(--section-padding-x-base) md:px-(--section-padding-x-md) lg:px-(--section-padding-x-lg) xl:px-(--section-padding-x-xl)"
+>
+  <div class="content-wrapper-lg">
+    <div class="col-divide">
+      <div class="top">
+        <div class="">
+          <a href="/">
+            <Logotype class="h-7 w-auto" />
+          </a>
+        </div>
+
+        <div class="rest">
+          <nav class="nav">
+            {
+              t.links.map((group) => (
+                <div class="shrink-0">
+                  <SectionContent
+                    heading={{ h: 4 }}
+                    t={{ headline: group.heading.en }}
+                  >
+                    <ul class="flex flex-col p-0 list-none">
+                      {group.links.map((link) => (
+                        <li>
+                          <Link t={link} />
+                        </li>
+                      ))}
+                    </ul>
+                  </SectionContent>
+                </div>
+              ))
+            }
+          </nav>
+
+          <!-- <div class="grow debug h-5 -ml-10"></div> -->
+
+          <div class="newsletter">
+            <Newsletter />
+          </div>
+        </div>
+      </div>
+
+      <FooterBottom />
+    </div>
+  </div>
+</footer>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .top,
+  .rest,
+  .nav {
+    @apply flex gap-y-6 gap-x-8 sm:gap-y-8 sm:gap-x-10 md:gap-y-10 lg:gap-18;
+  }
+
+  .top {
+    @apply flex-col lg:flex-row;
+  }
+
+  .rest {
+    @apply grow justify-between flex-wrap md:flex-nowrap;
+  }
+
+  .nav {
+    /* @apply grow justify-between; */
+  }
+
+  .newsletter {
+    /* @apply lg:grow flex lg:justify-end; */
+  }
+</style>

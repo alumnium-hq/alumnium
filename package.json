@@ -6,8 +6,11 @@
     "websites/docs"
   ],
   "scripts": {
-    "types": "tsgo --build",
-    "types:watch": "tsgo --build --watch"
+    "types": "tsc --build",
+    "types:watch": "tsc --build --watch"
+  },
+  "dependencies": {
+    "smolxxh": "^1.1.0"
   },
   "devDependencies": {
     "@typescript/native-preview": "7.0.0-dev.20260327.2",
@@ -21,8 +24,5 @@
     "lodash": ">=4.18.1",
     "picomatch": ">=2.3.2",
     "yaml": ">=2.8.3"
-  },
-  "dependencies": {
-    "smolxxh": "^1.1.0"
   }
 }

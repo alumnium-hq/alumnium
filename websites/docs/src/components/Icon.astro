@@ -1,37 +1,12 @@
 ---
 import type { ImageMetadata } from "astro";
+import type { IconProps, IconPropsDirect } from "./Icon.types";
 // NOTE: It's `Comp` as Astro formatter trips on `| A | B` syntax so we need to
 // make it shorter.
 // TODO: Check after upgrading to Rust-based compiler.
 import type { AstroComponentFactory as Comp } from "astro/runtime/server/index.js";
 
 type Props = IconProps;
-
-export type IconProps = IconPropsDirect | IconPropsProp;
-
-export type IconPropsDirect<Extra = {}> = (IconPropsId | IconPropsComponent) &
-  Extra;
-
-export type IconProp<Extra = {}> = string | Comp | IconPropsDirect<Extra>;
-
-export interface IconPropsProp {
-  prop: IconProp;
-}
-
-export interface IconPropsComponent extends IconPropsBase {
-  Factory: Comp;
-}
-
-export interface IconPropsId extends IconPropsBase {
-  id: string;
-}
-
-export interface IconPropsBase {
-  class?: string;
-  style?: IconStyle;
-}
-
-export type IconStyle = "100" | "200" | "300" | "brands" | "dev" | "logo";
 
 // NOTE: To avoid load compilation times, each used icon id must be listed
 // inside `{...}.svg`.

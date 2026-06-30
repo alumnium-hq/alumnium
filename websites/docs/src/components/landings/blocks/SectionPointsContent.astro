@@ -1,23 +1,11 @@
 ---
-import type { I18n } from "#/copy/i18n";
-import type { TtLandings } from "#/copy/landings";
-import type { HeadingHProp } from "./Heading.astro";
-import SectionContent, {
-  type SectionContentHeadingProp,
-} from "./SectionContent.astro";
+import SectionContent from "./SectionContent.astro";
+import type {
+  SectionHeadingHProp,
+  SectionPointsContentProps,
+} from "./Section.types";
 
 type Props = SectionPointsContentProps;
-
-export interface SectionPointsContentProps {
-  heading?: SectionContentHeadingProp;
-  items: SectionPointsItem[];
-  cols?: "flex" | 1 | 2 | 3 | 4;
-}
-
-export interface SectionPointsItem {
-  icon: string;
-  content: I18n.FullLangsMap<TtLandings.Content>;
-}
 
 const { heading, items, cols } = Astro.props;
 ---
@@ -32,7 +20,7 @@ const { heading, items, cols } = Astro.props;
 >
   {
     items.map((item) => {
-      const h = heading ? ((heading.h + 1) as HeadingHProp) : 3;
+      const h = heading ? ((heading.h + 1) as SectionHeadingHProp) : 3;
       return (
         <div>
           <SectionContent
