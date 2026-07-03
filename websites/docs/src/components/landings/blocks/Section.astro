@@ -1,5 +1,5 @@
 ---
-import Crosses from "./Crosses.astro";
+import DecorationCrosses from "./DecorationCrosses.astro";
 import SectionContent from "./SectionContent.astro";
 import SectionExtra from "./SectionExtra.astro";
 import type { SectionProps } from "./Section.types";
@@ -22,11 +22,7 @@ const {
 <div
   class:list={[
     "relative",
-    span === 2 && "col-span-2",
-    span === 3 && "col-span-3",
-    span === 4 && "col-span-4",
-    span === 5 && "col-span-5",
-    span === 6 && "col-span-6",
+    span && `is-span-${span}`,
     continueProp && "has-continuation",
   ]}
 >
@@ -57,5 +53,5 @@ const {
     {extra ? <SectionExtra {...extra} /> : <slot />}
   </div>
 
-  <Crosses />
+  <DecorationCrosses />
 </div>

@@ -8,7 +8,7 @@ import Link from "#/components/Link.astro";
 const t = tt.landings.sections.hero.en;
 ---
 
-<div class="inline-flex items-center gap-3 text-sm">
+<div class="hero-links">
   <Link href={tt.links.github.href}>
     <AstroIcon name="github" class="inline-block h-6" />
     {t.openSource}
@@ -32,3 +32,15 @@ const t = tt.landings.sections.hero.en;
     </Fragment>
   </Link>
 </div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .hero-links {
+    @apply inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm;
+
+    & text-del {
+      @apply hidden sm:inline-block;
+    }
+  }
+</style>

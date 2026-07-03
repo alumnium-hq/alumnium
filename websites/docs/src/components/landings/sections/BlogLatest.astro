@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import { tt } from "#/copy";
-import Pattern from "#/components/Pattern.astro";
+import PostCard from "#/components/PostCard.astro";
 import Section from "../blocks/Section.astro";
 import Heading from "../blocks/SectionHeading.astro";
 import Link from "#/components/Link.astro";
@@ -16,17 +16,17 @@ const posts = (await getCollection("blog"))
 <div class="bento">
   <Section style="compact">
     <Heading h={2} t={t} align>
-      <div>
+      <div class="text-sm sm:text-base">
         <Link
           t={{ ...tt.links.blog, label: tBlog.seeAllLink }}
-          icon={{ id: "chevron_right", pos: "after" }}
+          icon={{ id: "chevron_right", style: "300", pos: "after" }}
         />
       </div>
     </Heading>
 
     <div>
       <div
-        class="grid gap-5 sm:grid-cols-3 sm:gap-6 lg:gap-10 md:min-h-[18rem]"
+        class="grid md:grid-cols-3 gap-3 md:gap-5 lg:gap-8 xl:gap-10 md:min-h-[18rem]"
       >
         {
           posts.map((post) => (
@@ -34,7 +34,7 @@ const posts = (await getCollection("blog"))
               href={`/blog/${post.id.slice(11)}/`}
               class="no-underline inline-flex"
             >
-              <Pattern
+              <PostCard
                 title={post.data.title}
                 date={post.data.pubDate}
                 author={post.data.author}

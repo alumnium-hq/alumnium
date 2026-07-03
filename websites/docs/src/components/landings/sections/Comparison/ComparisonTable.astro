@@ -30,7 +30,7 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
     {
       t.rows.map((row) => {
         interface CellItem {
-          classList: AstroBuiltinAttributes["class:list"] & {};
+          classList?: AstroBuiltinAttributes["class:list"] & {};
           content: AstroComponentInstance | string;
         }
 
@@ -51,7 +51,6 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
             case "metric": {
               const valueT = cell.value.en;
               return {
-                classList: ["is-metric"],
                 content: (
                   <div class="metric">
                     <div class="metric-label">{valueT.label}</div>
@@ -127,7 +126,7 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
   </tbody>
 </table>
 
-<p class="text-accent-500 text-sm">
+<p class="text-accent-500 text-sm px-(--section-padding-x) sm:px-0">
   {t.disclaimer.en}
 </p>
 
@@ -145,7 +144,7 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
     }
 
     .cell {
-      @apply px-5 py-2 relative;
+      @apply px-1.5 py-1.5 sm:px-5 sm:py-2 relative;
 
       &.is-header,
       &.is-metric {
@@ -153,7 +152,7 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
       }
 
       &.is-header {
-        @apply py-5 text-accent-200;
+        @apply py-2 sm:py-5 text-sm sm:text-base text-accent-200 leading-snug;
 
         &.is-alumnium {
           @apply bg-accent-800/70 text-ink-dark font-bold;
@@ -161,7 +160,11 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
       }
 
       &.is-metric {
-        @apply text-accent-400;
+        @apply text-accent-400 min-w-[10rem];
+      }
+
+      &:not(.is-header):not(.is-metric) {
+        @apply text-center text-sm sm:text-base leading-snug;
       }
 
       &.is-alumnium {
@@ -213,8 +216,12 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
       }
     }
 
+    .metric {
+      @apply flex flex-col gap-1;
+    }
+
     .metric-label {
-      @apply font-medium text-accent-300;
+      @apply text-sm sm:text-base leading-snug font-medium text-accent-300;
     }
 
     .metric-subtext {

@@ -105,7 +105,7 @@ const { items } = Astro.props;
 
   .accordion-button,
   .accordion-content {
-    @apply px-8;
+    @apply px-3 sm:px-6 md:px-8;
   }
 
   .accordion-button-icon {
@@ -113,7 +113,7 @@ const { items } = Astro.props;
   }
 
   .accordion-button {
-    @apply flex items-center justify-between gap-2  bg-accent-950/40 py-4 text-accent-300 font-medium text-lg font-display;
+    @apply text-left flex items-center justify-between gap-2  bg-accent-950/40 py-3 sm:py-4 text-accent-300 font-medium sm:text-lg font-display;
 
     &:hover {
       & .accordion-button-icon {

@@ -51,10 +51,10 @@ const H = style === "post" ? "h1" : "h3";
     >
       <H
         class:list={[
-          "font-bold text-white leading-snug text-center text-balance",
+          "font-bold font-display text-white leading-snug text-center text-balance",
           (!style || style === "list") && "sm:text-[2rem] md:text-[2.5rem]",
           style === "post" && "sm:text-[3rem]",
-          style === "preview" && "sm:text-2xl md:text-xl",
+          style === "preview" && "text-lg sm:text-xl md:text-2xl md:text-xl",
         ]}
         id={style === "post" ? "_top" : undefined}
       >

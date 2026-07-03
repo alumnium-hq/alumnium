@@ -4,8 +4,10 @@ import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
 import Link from "#/components/Link.astro";
 ---
 
-<div class="bottom flex gap-6 text-accent-500 items-center justify-between">
-  <div class="flex gap-2 items-center">
+<div
+  class="bottom flex flex-wrap justify-center sm:flex-nowrap sm:justify-between gap-y-3 gap-x-6 text-accent-500 items-center"
+>
+  <div class="flex items-center gap-2">
     <span>Alumnium © {new Date().getFullYear()}</span>
     <text-del></text-del>
     <Link t={tt.links.mitLicense} />

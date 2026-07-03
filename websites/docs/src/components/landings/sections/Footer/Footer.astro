@@ -11,12 +11,12 @@ const t = tt.layout.footer;
 ---
 
 <footer
-  class="border-t border-t-accent-600 py-(--section-padding-y-base-compact) md:py-(--section-padding-y-md-compact) lg:py-(--section-padding-y-lg-compact) xl:py-(--section-padding-y-xl-compact) px-(--section-padding-x-base) md:px-(--section-padding-x-md) lg:px-(--section-padding-x-lg) xl:px-(--section-padding-x-xl)"
+  class="border-t border-t-accent-600 py-(--section-padding-y-compact) px-(--section-padding-x)"
 >
   <div class="content-wrapper-lg">
     <div class="col-divide">
       <div class="top">
-        <div class="">
+        <div class="logo">
           <a href="/">
             <Logotype class="h-7 w-auto" />
           </a>
@@ -63,7 +63,7 @@ const t = tt.layout.footer;
   .top,
   .rest,
   .nav {
-    @apply flex gap-y-6 gap-x-8 sm:gap-y-8 sm:gap-x-10 md:gap-y-10 lg:gap-18;
+    @apply flex gap-y-3 gap-x-8 text-center justify-center sm:text-left sm:gap-y-8 sm:gap-x-10 md:gap-y-10 lg:gap-18;
   }
 
   .top {
@@ -71,14 +71,18 @@ const t = tt.layout.footer;
   }
 
   .rest {
-    @apply grow justify-between flex-wrap md:flex-nowrap;
+    @apply grow sm:justify-between flex-wrap md:flex-nowrap;
+  }
+
+  .logo {
+    /* @apply text-center sm:text-left; */
   }
 
   .nav {
-    /* @apply grow justify-between; */
+    /* @apply text-center; */
   }
 
   .newsletter {
-    /* @apply lg:grow flex lg:justify-end; */
+    @apply basis-full border-t border-t-accent-800 pt-5 flex justify-center sm:pt-0 sm:border-t-0 sm:basis-auto;
   }
 </style>
