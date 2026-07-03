@@ -4,28 +4,26 @@ import Logotype from "#/assets/logotype.svg";
 import HeroBanner from "./HeroBanner.astro";
 import DecorationAtom from "../../blocks/DecorationAtom.astro";
 import Heading from "../../blocks/SectionHeading.astro";
-import HeroIntegratesWithYourStack from "./HeroIntegratesWithYourStack.astro";
+import HeroYourStack from "./HeroYourStack.astro";
 import HeroDemo from "./HeroDemo.astro";
 import HeroLinks from "./HeroLinks.astro";
 
 const t = tt.landings.sections.hero.en;
 ---
 
-<div
-  class="content-inner hero relative flex flex-col items-center gap-16 pb-32"
->
+<div class="content-inner hero">
   <HeroBanner />
 
-  <div class="flex flex-col items-center gap-10">
-    <div class="flex flex-col items-center gap-6">
-      <Logotype class="h-10" />
+  <div class="flex flex-col items-center gap-5 md:gap-10 max-w-full">
+    <div class="flex flex-col items-center gap-4 sm:gap-6 max-w-full">
+      <Logotype class="h-8 sm:h-10" />
 
       <Heading h={1} t={t} align />
 
-      <HeroIntegratesWithYourStack />
+      <HeroYourStack />
     </div>
 
-    <div class="flex flex-col gap-6 items-center">
+    <div class="flex flex-col gap-4 sm:gap-6 items-center max-w-full">
       <HeroDemo>
         <DecorationAtom />
       </HeroDemo>
@@ -45,9 +43,15 @@ const t = tt.landings.sections.hero.en;
 <style>
   @reference "#/styles/global.css";
 
-  .hero :global(.decoration-atom) {
-    @apply absolute;
-    left: calc(50% - var(--atom-size) / 2);
-    top: calc(50% - var(--atom-size) / 2);
+  .hero {
+    @apply relative flex flex-col items-center gap-16;
+
+    padding-bottom: calc(var(--supersection-padding-y) * 2);
+
+    & :global(.decoration-atom) {
+      @apply absolute;
+      left: calc(50% - var(--atom-size) / 2);
+      top: calc(50% - var(--atom-size) / 2);
+    }
   }
 </style>

@@ -30,12 +30,11 @@ const t = tt.landings.sections.multiPlatform.en;
   @reference "#/styles/global.css";
 
   .wrapper {
-    @apply flex justify-center;
+    @apply flex items-center justify-center text-[8px] sm:text-[10px] md:text-[14px];
   }
 
   .illustration-wrapper {
     --canvas-size: 20em;
-
     --web-size: 14em;
     --web-x: 5em;
     --web-y: -6em;
@@ -62,15 +61,11 @@ const t = tt.landings.sections.multiPlatform.en;
     );
     --padding-x: max(var(--padding-left), var(--padding-right));
 
-    @apply inline-block;
-    padding: var(--padding-top) var(--padding-x);
+    @apply inline-block px-(--padding-x) pt-(--padding-top);
   }
 
   .illustration {
-    position: relative;
-    width: var(--canvas-size);
-    height: var(--canvas-size);
-    font-size: 14px;
+    @apply size-(--canvas-size) relative;
   }
 
   .web,

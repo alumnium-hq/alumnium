@@ -4,7 +4,7 @@ import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 
 import { getCollection } from "astro:content";
 import FormattedDate from "../../components/FormattedDate.astro";
-import Pattern from "../../components/Pattern.astro";
+import PostCard from "../../components/PostCard.astro";
 import Author from "../../components/Author.astro";
 import Tags from "../../components/Tags.astro";
 
@@ -32,7 +32,7 @@ if (!first) throw new Error("No posts found");
       <ul class="list-none flex flex-col px-2 items-center gap-8 sm:gap-10">
         <li class="w-full">
           <a href={`/blog/${first.id.slice(11)}/`} class="no-underline">
-            <Pattern
+            <PostCard
               title={first.data.title}
               date={first.data.pubDate}
               author={first.data.author}

@@ -2,7 +2,7 @@
 import { tt } from "#/copy";
 import Heading from "../../blocks/SectionHeading.astro";
 import Section from "../../blocks/Section.astro";
-import Table from "./Table.astro";
+import ComparisonTable from "./ComparisonTable.astro";
 
 const t = tt.landings.sections.comparison.en;
 ---
@@ -11,6 +11,16 @@ const t = tt.landings.sections.comparison.en;
   <Section style="compact">
     <Heading h={2} style="enlarge" align t={t} />
 
-    <Table />
+    <div class="table-wrapper">
+      <ComparisonTable />
+    </div>
   </Section>
 </div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .table-wrapper {
+    @apply mx-[calc(var(--section-padding-x)*-1-0.5px)] sm:mx-0 flex flex-col gap-3 overflow-x-auto scrollbar-thin;
+  }
+</style>

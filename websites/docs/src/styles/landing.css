@@ -1,6 +1,28 @@
 @reference "./global.css";
 
 @layer components {
+  .debug-variant {
+    &:before {
+      @apply z-50 fixed top-0 right-0 bg-red-600 text-white uppercase content-["bs"] leading-none capsize font-mono p-1;
+
+      @variant sm {
+        @apply content-["sm"] bg-orange-600;
+      }
+
+      @variant md {
+        @apply content-["md"] bg-yellow-600;
+      }
+
+      @variant lg {
+        @apply content-["lg"] bg-blue-600;
+      }
+
+      @variant xl {
+        @apply content-["xl"] bg-indigo-600;
+      }
+    }
+  }
+
   .landing {
     --landing-nav-height: 3rem;
     --landing-overlay-bg: color-mix(
@@ -9,44 +31,85 @@
       transparent 80%
     );
 
+    /* Supersection padding */
+
+    --supersection-padding-x: calc(var(--spacing) * 2);
+    --supersection-padding-y: calc(var(--spacing) * 4);
+
+    @variant sm {
+      --supersection-padding-x: calc(var(--spacing) * 3);
+      --supersection-padding-y: calc(var(--spacing) * 8);
+    }
+
+    @variant md {
+      --supersection-padding-x: calc(var(--spacing) * 4);
+      --supersection-padding-y: calc(var(--spacing) * 12);
+    }
+
+    @variant lg {
+      --supersection-padding-x: calc(var(--spacing) * 6);
+      --supersection-padding-y: calc(var(--spacing) * 12);
+    }
+
+    @variant xl {
+      --supersection-padding-x: calc(var(--spacing) * 10);
+      --supersection-padding-y: calc(var(--spacing) * 15);
+    }
+
     /* Section padding */
 
-    /* base */
-    --section-padding-y-base: calc(var(--spacing) * 8);
-    --section-padding-y-base-shrunk: calc(var(--spacing) * 0);
-    --section-padding-y-base-compact: calc(var(--spacing) * 8);
-    --section-padding-y-base-compact-shrunk: calc(var(--spacing) * 6);
-    --section-padding-y-base-header: calc(var(--spacing) * 6);
-    --section-padding-y-base-header-shrunk: calc(var(--spacing) * 6);
-    --section-padding-y-base-tight: calc(var(--spacing) * 10);
-    --section-padding-x-base: calc(var(--spacing) * 4);
-    /* md */
-    --section-padding-y-md: calc(var(--spacing) * 14);
-    --section-padding-y-md-shrunk: calc(var(--spacing) * 10);
-    --section-padding-y-md-compact: calc(var(--spacing) * 12);
-    --section-padding-y-md-compact-shrunk: calc(var(--spacing) * 8);
-    --section-padding-y-md-header: calc(var(--spacing) * 12);
-    --section-padding-y-md-header-shrunk: calc(var(--spacing) * 10);
-    --section-padding-y-md-tight: calc(var(--spacing) * 10);
-    --section-padding-x-md: calc(var(--spacing) * 8);
-    /* lg */
-    --section-padding-y-lg: calc(var(--spacing) * 20);
-    --section-padding-y-lg-shrunk: calc(var(--spacing) * 16);
-    --section-padding-y-lg-compact: calc(var(--spacing) * 12);
-    --section-padding-y-lg-compact-shrunk: calc(var(--spacing) * 10);
-    --section-padding-y-lg-header: calc(var(--spacing) * 12);
-    --section-padding-y-lg-header-shrunk: calc(var(--spacing) * 10);
-    --section-padding-y-lg-tight: calc(var(--spacing) * 10);
-    --section-padding-x-lg: calc(var(--spacing) * 14);
-    /* xl */
-    --section-padding-y-xl: calc(var(--spacing) * 25);
-    --section-padding-y-xl-shrunk: calc(var(--spacing) * 18);
-    --section-padding-y-xl-compact: calc(var(--spacing) * 16);
-    --section-padding-y-xl-compact-shrunk: calc(var(--spacing) * 12);
-    --section-padding-y-xl-header: calc(var(--spacing) * 14);
-    --section-padding-y-xl-header-shrunk: calc(var(--spacing) * 12);
-    --section-padding-y-xl-tight: calc(var(--spacing) * 12);
-    --section-padding-x-xl: calc(var(--spacing) * 16);
+    --section-padding-y: calc(var(--spacing) * 8);
+    --section-padding-y-shrunk: calc(var(--spacing) * 6);
+    --section-padding-y-compact: calc(var(--spacing) * 6);
+    --section-padding-y-compact-shrunk: calc(var(--spacing) * 6);
+    --section-padding-y-header: calc(var(--spacing) * 6);
+    --section-padding-y-header-shrunk: calc(var(--spacing) * 6);
+    --section-padding-y-tight: calc(var(--spacing) * 6);
+    --section-padding-x: calc(var(--spacing) * 3);
+
+    @variant sm {
+      --section-padding-y: calc(var(--spacing) * 8);
+      --section-padding-y-shrunk: calc(var(--spacing) * 0);
+      --section-padding-y-compact: calc(var(--spacing) * 8);
+      --section-padding-y-compact-shrunk: calc(var(--spacing) * 6);
+      --section-padding-y-header: calc(var(--spacing) * 6);
+      --section-padding-y-header-shrunk: calc(var(--spacing) * 6);
+      --section-padding-y-tight: calc(var(--spacing) * 10);
+      --section-padding-x: calc(var(--spacing) * 4);
+    }
+
+    @variant md {
+      --section-padding-y: calc(var(--spacing) * 14);
+      --section-padding-y-shrunk: calc(var(--spacing) * 10);
+      --section-padding-y-compact: calc(var(--spacing) * 12);
+      --section-padding-y-compact-shrunk: calc(var(--spacing) * 8);
+      --section-padding-y-header: calc(var(--spacing) * 12);
+      --section-padding-y-header-shrunk: calc(var(--spacing) * 10);
+      --section-padding-y-tight: calc(var(--spacing) * 10);
+      --section-padding-x: calc(var(--spacing) * 8);
+    }
+
+    @variant lg {
+      --section-padding-y: calc(var(--spacing) * 20);
+      --section-padding-y-shrunk: calc(var(--spacing) * 16);
+      --section-padding-y-compact: calc(var(--spacing) * 12);
+      --section-padding-y-compact-shrunk: calc(var(--spacing) * 10);
+      --section-padding-y-header: calc(var(--spacing) * 12);
+      --section-padding-y-header-shrunk: calc(var(--spacing) * 10);
+      --section-padding-y-tight: calc(var(--spacing) * 10);
+      --section-padding-x: calc(var(--spacing) * 14);
+    }
+
+    @variant xl {
+      --section-padding-y: calc(var(--spacing) * 25);
+      --section-padding-y-shrunk: calc(var(--spacing) * 18);
+      --section-padding-y-compact: calc(var(--spacing) * 16);
+      --section-padding-y-compact-shrunk: calc(var(--spacing) * 12);
+      --section-padding-y-header: calc(var(--spacing) * 14);
+      --section-padding-y-header-shrunk: calc(var(--spacing) * 12);
+      --section-padding-y-tight: calc(var(--spacing) * 12);
+      --section-padding-x: calc(var(--spacing) * 16);
+    }
 
     @apply text-ink-dark pattern-canvas-content h-full flex flex-col;
 
@@ -96,7 +159,7 @@
     }
 
     & .kicker {
-      @apply text-accent-500 uppercase font-medium font-mono capsize leading-none;
+      @apply text-accent-500 uppercase font-medium font-mono text-xs sm:text-sm md:text-base;
     }
 
     & .heading {
@@ -105,60 +168,60 @@
       & h1,
       &.heading-enlarge h2 {
         & + .subheadline {
-          @apply text-xl;
+          @apply text-lg sm:text-xl leading-snug;
         }
       }
 
       & h2,
       &.heading-enlarge h3 {
         & + .subheadline {
-          @apply text-lg;
+          @apply text-base sm:text-lg leading-snug;
         }
       }
 
       & h1 {
-        @apply text-4xl md:text-5xl font-medium;
+        @apply text-3xl sm:text-4xl md:text-5xl font-medium leading-[1.1];
       }
 
       & h2 {
-        @apply text-2xl md:text-3xl;
+        @apply text-lg sm:text-2xl md:text-3xl leading-snug;
       }
 
       &.heading-enlarge h2 {
-        @apply text-2xl md:text-4xl;
+        @apply text-xl sm:text-3xl md:text-4xl leading-snug;
       }
 
       &.heading-compact h2 {
-        @apply text-xl md:text-2xl;
+        @apply text-lg sm:text-xl md:text-2xl leading-snug;
       }
 
       & h3,
       & h4,
       & h5 {
         & + .subheadline {
-          @apply text-ms;
+          @apply text-ms leading-snug;
         }
       }
 
       & h3 {
-        @apply text-xl;
+        @apply text-lg sm:text-xl leading-snug;
       }
 
       &.heading-enlarge h3 {
-        @apply text-2xl md:text-3xl;
+        @apply text-lg sm:text-2xl md:text-3xl leading-snug;
       }
 
       & h4,
       & h5 {
-        @apply text-accent-200;
+        @apply text-accent-200 leading-snug;
       }
 
       & h4 {
-        @apply text-base;
+        @apply text-base leading-snug;
       }
 
       & h5 {
-        @apply text-base;
+        @apply text-base leading-snug;
       }
     }
 
@@ -195,26 +258,6 @@
       --edge-padding-multiplier: 3;
       --section-overlay-bg: transparent;
 
-      @variant sm {
-        --section-padding-x: calc(var(--spacing) * 3);
-        --section-padding-y: calc(var(--spacing) * 8);
-      }
-
-      @variant md {
-        --section-padding-x: calc(var(--spacing) * 4);
-        --section-padding-y: calc(var(--spacing) * 12);
-      }
-
-      @variant lg {
-        --section-padding-x: calc(var(--spacing) * 6);
-        --section-padding-y: calc(var(--spacing) * 12);
-      }
-
-      @variant xl {
-        --section-padding-x: calc(var(--spacing) * 10);
-        --section-padding-y: calc(var(--spacing) * 15);
-      }
-
       @apply relative;
     }
 
@@ -248,7 +291,7 @@
     & .supersection {
       &:before,
       &:after {
-        height: var(--section-padding-y);
+        height: var(--supersection-padding-y);
       }
     }
 
@@ -257,7 +300,7 @@
 
       &:before,
       &:after {
-        min-width: var(--section-padding-x);
+        min-width: var(--supersection-padding-x);
       }
     }
 
@@ -274,21 +317,18 @@
     }
 
     & .section {
-      @apply py-(--section-padding-y-base) md:py-(--section-padding-y-md) lg:py-(--section-padding-y-lg) xl:py-(--section-padding-y-xl);
-      @apply px-(--section-padding-x-base) md:px-(--section-padding-x-md) lg:px-(--section-padding-x-lg) xl:px-(--section-padding-x-xl);
-
-      @apply grid items-start relative;
+      @apply py-(--section-padding-y) px-(--section-padding-x) grid items-start relative;
 
       &.section-compact {
-        @apply py-(--section-padding-y-base-compact) md:py-(--section-padding-y-md-compact) lg:py-(--section-padding-y-lg-compact) xl:py-(--section-padding-y-xl-compact);
+        @apply py-(--section-padding-y-compact);
       }
 
       &.section-header {
-        @apply py-(--section-padding-y-base-header) md:py-(--section-padding-y-md-header) lg:py-(--section-padding-y-lg-header) xl:py-(--section-padding-y-xl-header);
+        @apply py-(--section-padding-y-header);
       }
 
       &.section-tight {
-        @apply py-(--section-padding-y-base-tight) md:py-(--section-padding-y-md-tight) lg:py-(--section-padding-y-lg-tight) xl:py-(--section-padding-y-xl-tight);
+        @apply py-(--section-padding-y-tight);
       }
 
       &.section-align {
@@ -300,7 +340,7 @@
       }
 
       &.section-cols-2 {
-        @apply gap-6 md:gap-8 lg:gap-10 md:grid-cols-2;
+        @apply gap-y-4 gap-x-6 md:gap-8 lg:gap-10 md:grid-cols-2;
 
         &:has(> .section-points) {
           @apply grid-cols-1 lg:grid-cols-[4fr_6fr] xl:grid-cols-2;
@@ -311,26 +351,26 @@
     & .bento > * {
       &.has-continuation {
         & > .section {
-          @apply pb-(--section-padding-y-base-shrunk) md:pb-(--section-padding-y-md-shrunk) lg:pb-(--section-padding-y-lg-shrunk) xl:pb-(--section-padding-y-xl-shrunk);
+          @apply pb-(--section-padding-y-shrunk);
 
           &.section-compact {
-            @apply pb-(--section-padding-y-base-compact-shrunk) md:pb-(--section-padding-y-md-compact-shrunk) lg:pb-(--section-padding-y-lg-compact-shrunk) xl:pb-(--section-padding-y-xl-compact-shrunk);
+            @apply pb-(--section-padding-y-compact-shrunk);
           }
 
           &.section-header {
-            @apply pb-(--section-padding-y-base-header-shrunk) md:pb-(--section-padding-y-md-header-shrunk) lg:pb-(--section-padding-y-lg-header-shrunk) xl:pb-(--section-padding-y-xl-header-shrunk);
+            @apply pb-(--section-padding-y-header-shrunk);
           }
         }
 
         & + * > .section {
-          @apply pt-(--section-padding-y-base-shrunk) md:pt-(--section-padding-y-md-shrunk) lg:pt-(--section-padding-y-lg-shrunk) xl:pt-(--section-padding-y-xl-shrunk);
+          @apply pt-(--section-padding-y-shrunk);
 
           &.section-compact {
-            @apply pt-(--section-padding-y-base-compact-shrunk) md:pt-(--section-padding-y-md-compact-shrunk) lg:pt-(--section-padding-y-lg-compact-shrunk) xl:pt-(--section-padding-y-xl-compact-shrunk);
+            @apply pt-(--section-padding-y-compact-shrunk);
           }
 
           &.section-header {
-            @apply pt-(--section-padding-y-base-header-shrunk) md:pt-(--section-padding-y-md-header-shrunk) lg:pt-(--section-padding-y-lg-header-shrunk) xl:pt-(--section-padding-y-xl-header-shrunk);
+            @apply pt-(--section-padding-y-header-shrunk);
           }
         }
       }
@@ -341,46 +381,46 @@
       &:has(> .section-content > .heading h1),
       &:has(> .heading.heading-enlarge h2),
       &:has(> .section-content > .heading.heading-enlarge h2) {
-        @apply lg:gap-10;
+        @apply gap-6 sm:gap-10;
       }
 
       &:has(> .heading h2),
       &:has(> .section-content > .heading h2),
       &:has(> .heading.heading-enlarge h3),
       &:has(> .section-content > .heading.heading-enlarge h3) {
-        @apply lg:gap-10;
+        @apply gap-4 sm:gap-10;
       }
 
       &:has(> .heading h3),
       &:has(> .section-content > .heading h3) {
-        @apply lg:gap-6;
+        @apply gap-4 sm:gap-6;
       }
 
       &:has(> .heading h4),
       &:has(> .section-content > .heading h4) {
-        @apply lg:gap-5;
+        @apply gap-3 sm:gap-5;
       }
     }
 
     & .section-content {
-      @apply flex flex-col;
+      @apply flex flex-col overflow-hidden max-w-full;
 
       &:has(> .heading h1),
       &:has(> .heading.heading-enlarge h2) {
-        @apply lg:gap-6;
+        @apply gap-6;
       }
 
       &:has(> .heading h2),
       &:has(> .heading.heading-enlarge h3) {
-        @apply lg:gap-4;
+        @apply gap-4;
       }
 
       &:has(> .heading h3) {
-        @apply lg:gap-1.5;
+        @apply gap-1.5;
       }
 
       &:has(> .heading h4) {
-        @apply lg:gap-1;
+        @apply gap-1;
       }
     }
 
@@ -388,7 +428,7 @@
     & .section-content {
       &:has(> .heading h1) {
         & .section-content-icon {
-          @apply text-8xl;
+          @apply text-7xl sm:text-8xl;
         }
 
         & .copy {
@@ -398,7 +438,7 @@
 
       &:has(> .heading.heading-enlarge h2) {
         & .section-content-icon {
-          @apply text-8xl;
+          @apply text-7xl sm:text-8xl;
         }
 
         & .copy {
@@ -409,7 +449,7 @@
       &:has(> .heading h2),
       &:has(> .heading.heading-enlarge h3) {
         & .section-content-icon {
-          @apply text-7xl;
+          @apply text-6xl sm:text-7xl;
         }
 
         & .copy {
@@ -419,7 +459,7 @@
 
       &:has(> .heading h3) {
         & .section-content-icon {
-          @apply text-6xl;
+          @apply text-5xl sm:text-6xl;
         }
 
         & .copy {
@@ -433,7 +473,7 @@
 
       &:has(> .heading h4) {
         & .section-content-icon {
-          @apply text-5xl mb-1;
+          @apply text-4xl sm:text-5xl sm:mb-1;
         }
 
         & .copy {
@@ -448,20 +488,20 @@
 
     .heading {
       &:has(> h1) {
-        @apply gap-4;
+        @apply gap-3 sm:gap-4;
       }
 
       &.heading-enlarge:has(> h2) {
-        @apply gap-2;
+        @apply gap-1 sm:gap-2;
       }
 
       &:has(> h2),
       &.heading-enlarge:has(> h3) {
-        @apply gap-1.5;
+        @apply gap-1 sm:gap-1.5;
       }
 
       &:has(> h3) {
-        @apply gap-1;
+        @apply gap-0.5 sm:gap-1;
       }
 
       &:has(> h4) {
@@ -470,23 +510,27 @@
     }
 
     & .section-points-flex {
-      @apply flex;
+      @apply flex flex-wrap md:flex-nowrap;
     }
 
     & .section-points:not(.section-points-flex) {
       @apply grid;
     }
 
+    & .section-points-cols-1 {
+      @apply grid-cols-1;
+    }
+
     & .section-points-cols-2 {
-      @apply md:grid-cols-2;
+      @apply grid-cols-1 md:grid-cols-2;
     }
 
     & .section-points-cols-3 {
-      @apply md:grid-cols-3;
+      @apply grid-cols-1 md:grid-cols-3;
     }
 
     & .section-points-cols-4 {
-      @apply sm:grid-cols-2 md:grid-cols-4;
+      @apply grid-cols-1 sm:grid-cols-2 md:grid-cols-4;
     }
 
     & .section-points {
@@ -495,11 +539,11 @@
       }
 
       &:has(.heading h3) {
-        @apply gap-x-12;
+        @apply gap-x-12 gap-y-5 md:gap-y-8;
       }
 
       &:has(.heading h4) {
-        @apply gap-x-8 gap-y-7;
+        @apply gap-x-8 gap-y-4 md:gap-y-7;
       }
 
       & > * {
@@ -511,23 +555,27 @@
       @apply content-wrapper-lg relative;
 
       &.bento-cols-2 {
-        @apply grid md:grid-cols-2;
+        @apply grid grid-cols-1 sm:grid-cols-2;
       }
 
       &.bento-cols-3 {
-        @apply grid md:grid-cols-3;
+        @apply grid grid-cols-1 sm:grid-cols-3;
       }
 
       &.bento-cols-4 {
-        @apply grid md:grid-cols-4;
+        @apply grid grid-cols-1 sm:grid-cols-4;
       }
 
       &.bento-cols-5 {
-        @apply grid md:grid-cols-5;
+        @apply grid grid-cols-1 sm:grid-cols-5;
       }
 
       &.bento-cols-6 {
-        @apply grid md:grid-cols-6;
+        @apply grid grid-cols-1 sm:grid-cols-6;
+        /*
+        & > .is-span-2 {
+          @apply md:basis-full;
+        } */
       }
 
       & > * {
@@ -537,6 +585,26 @@
           right: -0.5px;
           bottom: -0.5px;
           left: -0.5px;
+        }
+
+        &.is-span-2 {
+          @apply sm:col-span-2;
+        }
+
+        &.is-span-3 {
+          @apply sm:col-span-3;
+        }
+
+        &.is-span-4 {
+          @apply sm:col-span-4;
+        }
+
+        &.is-span-5 {
+          @apply sm:col-span-5;
+        }
+
+        &.is-span-6 {
+          @apply sm:col-span-6;
         }
 
         &.has-continuation {

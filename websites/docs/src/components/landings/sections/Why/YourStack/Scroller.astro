@@ -63,8 +63,7 @@ function pathToAlt(path: string) {
 function trackStyle<Type>(logos: Type[]): Record<string, string> {
   const count = logos.length;
   return {
-    animationDuration: `${count * 3}s`,
-    "--logo-scroll-distance": `-${count * 46}px`,
+    "--scroller-count": `${count}`,
   };
 }
 
@@ -72,8 +71,7 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
   if (logos.length === 0) {
     throw new Error(`No ${kind} logos found`);
   }
-  const baseLogos = [...logos];
-  while (logos.length < 10) logos.push(...baseLogos);
+  logos.push(...logos);
 }
 ---
 
@@ -124,14 +122,33 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
 
   @layer starlight.core {
     .group {
-      display: flex;
-      gap: 12px;
-      align-items: stretch;
+      @apply flex items-stretch gap-2 md:gap-3;
+
+      --scroller-height: calc(
+        (var(--scroller-logo-size) + var(--scroller-gap-y)) *
+          var(--scroller-visible-count)
+      );
+
+      --scroller-visible-count: 3;
+      --scroller-logo-size: 40px;
+      --scroller-gap-y: calc(var(--scroller-logo-size) / 1.6);
+
+      @variant md {
+        --scroller-visible-count: 5;
+        --scroller-gap-y: 28px;
+        --scroller-logo-size: 50px;
+      }
+
+      @variant lg {
+        --scroller-visible-count: 5;
+        --scroller-gap-y: 32px;
+        --scroller-logo-size: 60px;
+      }
     }
 
     .marquee {
-      flex: 0 0 96px;
-      height: 360px;
+      flex: 0 0 calc(var(--scroller-logo-size) * 1.5);
+      height: var(--scroller-height);
       overflow: hidden;
       position: relative;
       mask-image: linear-gradient(
@@ -151,11 +168,16 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
     }
 
     .track {
+      --scroller-distance: calc(
+        var(--scroller-count) *
+          (var(--scroller-logo-size) + var(--scroller-gap-y)) / -2
+      );
+
       display: flex;
       flex-direction: column;
       align-items: center;
       animation-name: logo-scroll-up;
-      animation-duration: 30s;
+      animation-duration: calc(var(--scroller-count) * 3s);
       animation-timing-function: linear;
       animation-iteration-count: infinite;
       will-change: transform;
@@ -166,15 +188,15 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
     }
 
     .track img {
-      height: 60px;
+      height: var(--scroller-logo-size);
       width: auto;
       max-width: 100%;
       object-fit: contain;
       flex-shrink: 0;
-      margin-bottom: 32px;
+      margin-bottom: var(--scroller-gap-y);
     }
 
-    @property --logo-scroll-distance {
+    @property --scroller-distance {
       syntax: "<length>";
       inherits: false;
       initial-value: 0px;
@@ -185,13 +207,13 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
         transform: translate3d(0, 0, 0);
       }
       100% {
-        transform: translate3d(0, var(--logo-scroll-distance), 0);
+        transform: translate3d(0, var(--scroller-distance), 0);
       }
     }
 
     @keyframes logo-scroll-down {
       0% {
-        transform: translate3d(0, var(--logo-scroll-distance), 0);
+        transform: translate3d(0, var(--scroller-distance), 0);
       }
       100% {
         transform: translate3d(0, 0, 0);

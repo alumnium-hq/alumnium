@@ -49,7 +49,7 @@ function normalizeProps(props: Props): LinkPropsBasic {
 >
   {icon && (!iconPos || iconPos === "before") && <Icon prop={icon} />}
 
-  <slot>{label}</slot>
+  <slot><span class="link-label">{label}</span></slot>
 
   {badge && <span class="badge" set:html={badge} />}
 
@@ -60,7 +60,7 @@ function normalizeProps(props: Props): LinkPropsBasic {
   @reference "#/styles/global.css";
 
   .link {
-    @apply text-accent-400 no-underline hover:text-accent-100 inline-flex gap-2 items-center;
+    @apply text-accent-400 no-underline hover:text-accent-100 inline-flex gap-1.5 items-center;
   }
 
   :global(.links-scope) {

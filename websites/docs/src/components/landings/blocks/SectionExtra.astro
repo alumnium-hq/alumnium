@@ -20,26 +20,29 @@ const extra = Astro.props;
         return (
           <div
             class:list={[
-              "extra is-icons overflow-hidden w-full h-[1em] flex",
+              "extra is-icons overflow-hidden w-full h-[1em] flex relative",
               // size
-              size === "xs" && "text-3xl",
-              size === "sm" && "text-4xl",
-              (!size || size === "md") && "text-5xl",
-              size === "lg" && "text-6xl",
-              size === "xl" && "text-7xl",
+              size === "xs" && "text-2xl sm:text-3xl",
+              size === "sm" && "text-2xl sm:text-4xl",
+              (!size || size === "md") && "text-3xl sm:text-5xl",
+              size === "lg" && "text-4xl sm:text-6xl",
+              size === "xl" && "text-5xl sm:text-7xl",
               // align
+              align && `is-align-${align === true ? "center" : align}`,
               align === "start" && "justify-start",
-              (align === true || align === "center") && "justify-center",
+              (align === true || align === "center") && "",
               align === "end" && "justify-end",
               // adjust
+              adjust && `is-adjust-${adjust === true ? "center" : adjust}`,
               adjust === "start" && "items-start",
               (align === true || adjust === "center") && "items-center",
               adjust === "end" && "items-end",
             ]}
           >
+            <div class="spacer" />
             <div
               class:list={[
-                "extra-icons flex absolute",
+                "extra-icons flex",
                 // size
                 size === "xs" && "gap-1.5",
                 size === "sm" && "gap-2",
@@ -52,6 +55,7 @@ const extra = Astro.props;
                 <Icon prop={icon} />
               ))}
             </div>
+            <div class="spacer" />
           </div>
         );
       }
@@ -84,7 +88,7 @@ const extra = Astro.props;
         return (
           <ul class="extra is-checklist list-none pl-0 text-ms grid grid-cols-2 gap-1">
             {items.map((item) => (
-              <li class="list flex items-center gap-1">
+              <li class="list flex items-center gap-1.5">
                 <Icon id="check_circle" style="300" class="text-lime-500" />
                 <span class="">{item.en}</span>
               </li>
@@ -110,5 +114,11 @@ const extra = Astro.props;
   .extra.is-icons {
     mask-image: linear-gradient(to right, black 80%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+
+    &.is-align-center {
+      & .spacer {
+        @apply grow;
+      }
+    }
   }
 </style>

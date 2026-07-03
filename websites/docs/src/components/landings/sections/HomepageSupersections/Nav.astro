@@ -161,7 +161,7 @@ const { supersections } = Astro.props;
   @reference "#/styles/global.css";
 
   nav {
-    @apply sticky z-40 border-t border-t-accent-600 border-b border-b-accent-600;
+    @apply md:sticky z-40 border-t border-t-accent-600 border-b border-b-accent-600 px-(--supersection-padding-x);
     top: calc(var(--sl-nav-height) - 1px);
   }
 
@@ -172,15 +172,15 @@ const { supersections } = Astro.props;
   }
 
   .wrapper {
-    @apply relative py-6;
+    @apply relative py-4 sm:py-6 md:py-6;
   }
 
   .inner {
-    @apply content-wrapper-lg flex justify-center gap-3;
+    @apply content-wrapper-lg flex flex-wrap justify-center gap-x-3 gap-y-2;
   }
 
   .inner > a {
-    @apply no-underline text-accent-400 bg-accent-800/60 hover:bg-accent-800 rounded-xl px-3 py-1 text-sm;
+    @apply no-underline text-accent-400 bg-accent-800/60 hover:bg-accent-800 rounded-xl px-2 sm:px-3 py-0.5 sm:py-1 text-sm line-clamp-1;
 
     &.is-active {
       @apply bg-accent-700 text-ink-dark;
@@ -188,9 +188,11 @@ const { supersections } = Astro.props;
   }
 
   nav:global(.has-stuck) {
-    & .wrapper {
-      @apply pattern-canvas-content py-0 flex items-center;
-      height: var(--landing-nav-height);
+    @variant md {
+      & .wrapper {
+        @apply pattern-canvas-content py-0 flex items-center;
+        height: var(--landing-nav-height);
+      }
     }
   }
 </style>
