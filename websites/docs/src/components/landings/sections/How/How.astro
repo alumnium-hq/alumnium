@@ -7,6 +7,7 @@ import Install from "./Install.astro";
 import SetUp from "./SetUp.astro";
 import Test from "./Test.astro";
 import Run from "./Run.astro";
+import Icon from "#/components/Icon.astro";
 
 export const id = "get-started";
 
@@ -38,12 +39,18 @@ const tSteps = tt.landings.sections.howSteps;
         cols={2}
       >
         <Fragment slot="heading">
-          <div class="get-started-for is-left">
-            <h3>{t.agents.headline}</h3>
+          <div class="timeline-header get-started-for is-left">
+            <h3>
+              <Icon id="robot" style="300" />
+              <span class="text">{t.agents.headline}</span>
+            </h3>
           </div>
 
-          <div class="get-started-for">
-            <h3>{t.engineers.headline}</h3>
+          <div class="timeline-header get-started-for is-right">
+            <h3>
+              <Icon id="face" style="300" />
+              <span class="text">{t.engineers.headline}</span>
+            </h3>
           </div>
         </Fragment>
 
@@ -75,12 +82,22 @@ const tSteps = tt.landings.sections.howSteps;
   }
 
   .get-started-for {
-    &.is-left {
-      @apply text-right;
+    &.is-left > h3 {
+      @apply md:justify-end;
+    }
+
+    &.is-right > h3 {
+      & .icon {
+        @apply md:order-2;
+      }
     }
 
     & > h3 {
-      @apply text-accent-400 font-medium text-base relative top-[-2px] leading-none capsize;
+      @apply text-accent-400 font-display text-ms md:text-base font-medium text-base relative top-[-2px] flex items-center gap-2;
+
+      & .text {
+        @apply leading-none capsize;
+      }
     }
   }
 </style>
