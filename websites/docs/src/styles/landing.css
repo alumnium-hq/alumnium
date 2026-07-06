@@ -159,7 +159,7 @@
     }
 
     & .kicker {
-      @apply text-accent-500 uppercase font-medium font-mono text-xs sm:text-sm md:text-base;
+      @apply text-accent-500 uppercase font-medium font-mono text-xs sm:text-sm md:text-base leading-none capsize;
     }
 
     & .heading {
@@ -403,7 +403,7 @@
     }
 
     & .section-content {
-      @apply flex flex-col overflow-hidden max-w-full;
+      @apply flex flex-col max-w-full;
 
       &:has(> .heading h1),
       &:has(> .heading.heading-enlarge h2) {

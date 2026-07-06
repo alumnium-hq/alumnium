@@ -110,7 +110,7 @@
       "devDependencies": {
         "@astrojs/check": "^0.9.9",
         "@astrojs/ts-plugin": "^1.10.9",
-        "@capsizecss/metrics": "^3.7.0",
+        "@capsizecss/metrics": "^4.1.0",
         "@tailwindcss/typography": "^0.5.19",
         "@tailwindcss/vite": "^4.3.0",
         "mdast-util-to-hast": "^13.2.1",
@@ -304,7 +304,7 @@
 
     "@bruits/satteri-win32-x64-msvc": ["@bruits/satteri-win32-x64-msvc@0.9.5", "", { "os": "win32", "cpu": "x64" }, "sha512-5Kw9ZAtTGS8WHizyn+CJhjjfIQrw+7jcZodpmpXJjefnO15M8UexIi6JR2E5thyvsmHyhL6ZDDMUNR4bKJPd4g=="],
 
-    "@capsizecss/metrics": ["@capsizecss/metrics@3.7.0", "", {}, "sha512-NHdEMrl/zd2XgiSv2xHRF/FxGc2OTBKjhPzr9SgbHzqmoTVn8BbRK88Dtq0m65idX/RMD7ptyVdbGHFcvlErSw=="],
+    "@capsizecss/metrics": ["@capsizecss/metrics@4.1.0", "", {}, "sha512-utyNeUNh3Y3vECkJCdUDk7CXeslk+Za6/AYzFefKVc/FJrc9lFZnuAqm2Jy5lqiO7mw/abzHLKTMEAg75UI/4A=="],
 
     "@capsizecss/unpack": ["@capsizecss/unpack@4.0.1", "", { "dependencies": { "fontkitten": "^1.0.3" } }, "sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ=="],
 

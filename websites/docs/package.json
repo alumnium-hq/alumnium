@@ -30,7 +30,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@astrojs/ts-plugin": "^1.10.9",
-    "@capsizecss/metrics": "^3.7.0",
+    "@capsizecss/metrics": "^4.1.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.3.0",
     "mdast-util-to-hast": "^13.2.1",
