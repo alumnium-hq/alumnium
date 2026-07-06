@@ -339,8 +339,12 @@
         @apply items-center;
       }
 
+      &.section-cols-1 {
+        @apply grid-cols-1;
+      }
+
       &.section-cols-2 {
-        @apply gap-y-4 gap-x-6 md:gap-8 lg:gap-10 md:grid-cols-2;
+        @apply gap-y-4 gap-x-6 md:gap-8 lg:gap-10 grid-cols-1 md:grid-cols-2;
 
         &:has(> .section-points) {
           @apply grid-cols-1 lg:grid-cols-[4fr_6fr] xl:grid-cols-2;
