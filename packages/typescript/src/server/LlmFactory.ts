@@ -1,5 +1,5 @@
 import { ChatCodex } from "@alumnium/langchain-codex";
-import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatAnthropic, type ChatAnthropicInput } from "@langchain/anthropic";
 import { ChatBedrockConverse } from "@langchain/aws";
 import type { BaseCache } from "@langchain/core/caches";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
@@ -162,15 +162,20 @@ export class LlmFactory {
   static createAnthropicLlm(model: Model, cache: BaseCache): BaseChatModel {
     logger.debug(`Creating Anthropic LLM with model ${model.name}`);
 
-    return new ChatAnthropic({
+    const fields: ChatAnthropicInput = {
       model: model.name,
       ...apiKeyField(Env.ANTHROPIC_API_KEY),
-      thinking: {
-        type: "enabled",
-        budget_tokens: 1024,
-      },
       cache,
-    });
+    };
+
+    if (usesAdaptiveThinking(model.name)) {
+      fields.thinking = { type: "adaptive" };
+      fields.outputConfig = { effort: "low" };
+    } else {
+      fields.thinking = { type: "enabled", budget_tokens: 1024 };
+    }
+
+    return new ChatAnthropic(fields);
   }
 
   static createAwsLlm(model: Model, cache: BaseCache): BaseChatModel {
@@ -182,10 +187,15 @@ export class LlmFactory {
     const additionalModelRequestFields: DocumentType = {};
 
     if (model.provider === "aws_anthropic") {
-      additionalModelRequestFields.thinking = {
-        type: "enabled",
-        budget_tokens: 1024, // Minimum budget for Anthropic thinking
-      };
+      if (usesAdaptiveThinking(model.name)) {
+        additionalModelRequestFields.thinking = { type: "adaptive" };
+        additionalModelRequestFields.output_config = { effort: "low" };
+      } else {
+        additionalModelRequestFields.thinking = {
+          type: "enabled",
+          budget_tokens: 1024, // Minimum budget for Anthropic thinking
+        };
+      }
     }
 
     return new ChatBedrockConverse({
@@ -341,6 +351,17 @@ export class LlmFactory {
 
 function apiKeyField(apiKey: string | undefined): { apiKey: string } | object {
   return apiKey ? { apiKey } : {};
+}
+
+// Adaptive thinking (`thinking.type: "adaptive"` + `output_config.effort`) is
+// the default for Claude 4.6+.
+function usesAdaptiveThinking(modelName: string): boolean {
+  const match = modelName.match(/claude-[a-z]+-(\d+)(?:-(\d{1,2})(?!\d))?/);
+  if (!match) return false;
+
+  const major = Number(match[1]);
+  const minor = match[2] ? Number(match[2]) : 0;
+  return major > 4 || (major === 4 && minor >= 6);
 }
 
 function logMaskedSecret(name: string, secret: string) {
