@@ -17,6 +17,7 @@ import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";
 import { never } from "alwaysly";
 import { Env } from "../Env.ts";
+import { ChatCursor } from "../llm/ChatCursor.ts";
 import { Model } from "../Model.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { maskString } from "../utils/string.ts";
@@ -49,6 +50,8 @@ export class LlmFactory {
         return LlmFactory.createAwsLlm(model, cache);
       case "codex":
         return LlmFactory.createCodexLlm(model, cache);
+      case "cursor":
+        return LlmFactory.createCursorLlm(model, cache);
       case "deepseek":
         return LlmFactory.createDeepSeekLlm(model, cache);
       case "google":
@@ -201,6 +204,19 @@ export class LlmFactory {
     logger.debug(`Creating Codex LLM with model ${model.name}`);
     return new ChatCodex({
       model: model.name,
+      cache,
+    });
+  }
+
+  static createCursorLlm(model: Model, cache: BaseCache): BaseChatModel {
+    logger.debug(`Creating Cursor LLM with model ${model.name}`);
+
+    const apiKey = Env.CURSOR_API_KEY;
+    if (apiKey) logMaskedSecret("Cursor API Key", apiKey);
+
+    return new ChatCursor({
+      model: model.name,
+      ...apiKeyField(apiKey),
       cache,
     });
   }

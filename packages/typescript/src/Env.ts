@@ -249,6 +249,10 @@ export const Env = {
     return secretEnvVar("AZURE_OPENAI_ENDPOINT", z.string().optional());
   },
 
+  get CURSOR_API_KEY() {
+    return secretEnvVar("CURSOR_API_KEY", z.string().optional());
+  },
+
   get DEEPSEEK_API_KEY() {
     return secretEnvVar("DEEPSEEK_API_KEY", z.string().optional());
   },

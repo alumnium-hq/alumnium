@@ -89,6 +89,7 @@ public final class Model {
             Map.entry(Provider.AWS_ANTHROPIC, "us.anthropic.claude-haiku-4-5-20251001-v1:0"),
             Map.entry(Provider.AWS_META, "us.meta.llama4-maverick-17b-instruct-v1:0"),
             Map.entry(Provider.CODEX, "gpt-5.4-mini"),
+            Map.entry(Provider.CURSOR, "composer-2.5"),
             Map.entry(Provider.DEEPSEEK, "deepseek-reasoner"),
             Map.entry(Provider.GITHUB, "gpt-4o-mini"),
             Map.entry(Provider.GOOGLE, "gemini-3.1-flash-lite"),
