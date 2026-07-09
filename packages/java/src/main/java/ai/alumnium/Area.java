@@ -3,6 +3,7 @@ package ai.alumnium;
 import ai.alumnium.Alumni.CheckOptions;
 import ai.alumnium.Alumni.GetOptions;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
+import ai.alumnium.client.Data;
 import ai.alumnium.client.FindElementResult;
 import ai.alumnium.client.HttpClient;
 import ai.alumnium.client.HttpClient.ActionResult;
@@ -163,7 +164,11 @@ public class Area {
                   vision ? driver.screenshot() : null,
                   driver.app());
 
-          return result.result().toObject();
+          Data value = result.result();
+          if (value == null || value.isNoop()) {
+            return new Data.StringData(result.explanation());
+          }
+          return value.toObject();
         });
   }
 
