@@ -1,4 +1,5 @@
 import { ChatCodex } from "@alumnium/langchain-codex";
+import { ChatCursor } from "@alumnium/langchain-cursor";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatBedrockConverse } from "@langchain/aws";
 import type { BaseCache } from "@langchain/core/caches";
@@ -17,7 +18,6 @@ import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";
 import { never } from "alwaysly";
 import { Env } from "../Env.ts";
-import { ChatCursor } from "../llm/ChatCursor.ts";
 import { Model } from "../Model.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { maskString } from "../utils/string.ts";

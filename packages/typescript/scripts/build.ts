@@ -374,11 +374,13 @@ async function main() {
       TARGET_PLATFORMS.map(async ({ os, arch, target, binPath }) => {
         const result = await Bun.build({
           entrypoints: [BIN_SRC_PATH, ...standaloneEmbeddedAssetPaths],
-          // NOTE: @cursor/sdk is external because its webpack-chunked dist
-          // loads chunks dynamically (`require("./" + chunkId + ".js")`),
-          // which cannot be bundled into a single-file executable. Compiled
-          // binaries do not resolve node_modules at runtime either, so
-          // ChatCursor reports a clear unsupported error there.
+          // NOTE: @cursor/sdk (a transitive dependency of
+          // @alumnium/langchain-cursor) is external because its
+          // webpack-chunked dist loads chunks dynamically
+          // (`require("./" + chunkId + ".js")`), which cannot be bundled into
+          // a single-file executable. Compiled binaries do not resolve
+          // node_modules at runtime either, so ChatCursor reports a clear
+          // unsupported error there.
           external: ["chromium-bidi", "electron", "@cursor/sdk"],
           compile: {
             target: getBunTarget(os, arch),
