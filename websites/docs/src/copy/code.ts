@@ -79,7 +79,7 @@ export const ttCode = {
     tab: "uv",
 
     lang: "bash",
-    code: "uviw alumnium",
+    code: "uv tool install alumnium",
     meta: "bin",
   }),
 
@@ -143,14 +143,46 @@ export const ttCode = {
     meta: "pip",
   }),
 
-  "install-client-java-mvn": installClientVar({
+  "install-client-java": {
     tab: "Java",
+  },
 
-    lang: "bash",
-    code: "mvn dependency:get -D groupId=ai.alumnium -D artifactId=alumnium -D version=LATEST",
+  "install-client-java-gradle": installClientVar({
+    tab: "Gradle",
+
+    lang: "java",
+    code: lit`
+      dependencies {
+        testImplementation 'ai.alumnium:alumnium:0.21.0'
+        testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.21.0'
+        // Add other platforms as needed
+      }`,
     meta: "version",
   }),
 
+  "install-client-java-mvn": installClientVar({
+    tab: "Maven",
+
+    lang: "xml",
+    code: lit`
+      <dependencies>
+        <dependency>
+          <groupId>ai.alumnium</groupId>
+          <artifactId>alumnium</artifactId>
+          <version>0.21.0</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>ai.alumnium</groupId>
+          <artifactId>alumnium-cli-darwin-arm64</artifactId>
+          <version>0.21.0</version>
+          <scope>test</scope>
+        </dependency>
+        <!-- Add other platforms as needed -->
+      </dependencies>
+    `,
+    meta: "version",
+  }),
   //#endregion
 
   //#endregion
@@ -158,7 +190,7 @@ export const ttCode = {
   //#region Set Up
 
   "set-up-client-ts": {
-    tab: "TS",
+    tab: "TypeScript",
   },
 
   "set-up-client-ts-selenium": setUpClientVar({
@@ -167,9 +199,26 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      import { Alumnium } from "alumnium";
+      import { strict as assert } from "assert";
+      import { Alumni } from "alumnium";
+      import { Builder, type WebDriver } from "selenium-webdriver";
 
-      // TODO: Selenium example
+      process.env.OPENAI_API_KEY = "...";
+
+      describe("Search", () => {
+        let al: Alumni;
+        let driver: WebDriver;
+
+        before(async () => {
+          driver = await new Builder().forBrowser("chrome").build();
+          al = new Alumni(driver);
+        });
+
+        after(async () => {
+          await driver.quit();
+          await al.quit();
+        });
+      });
     `,
   }),
 
@@ -179,9 +228,22 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      import { Alumnium } from "alumnium";
+      import { Alumni } from "alumnium";
+      import { test, expect } from "@playwright/test";
 
-      // TODO: Playwright example
+      process.env.OPENAI_API_KEY = "...";
+
+      test.describe("Search", async () => {
+        let al: Alumni;
+
+        test.beforeEach(async ({ page }) => {
+          al = new Alumni(page);
+        });
+
+        test.afterEach(async () => {
+          await al.quit();
+        });
+      });
     `,
   }),
 
@@ -191,9 +253,22 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      import { Alumnium } from "alumnium";
+      import { Alumni } from "alumnium";
+      import { browser, expect } from "@wdio/globals";
 
-      // TODO: Appium example
+      process.env.OPENAI_API_KEY = "...";
+
+      describe("Search", () => {
+        let al: Alumni;
+
+        before(async () => {
+          al = new Alumni(browser);
+        });
+
+        after(async () => {
+          await al.quit();
+        });
+      });
     `,
   }),
 
@@ -207,7 +282,21 @@ export const ttCode = {
     lang: "python",
 
     code: lit`
-      # TODO: Selenium example
+      from alumnium import Alumni
+      from selenium.webdriver import Chrome
+      from pytest import fixture
+
+      @fixture
+      def driver():
+          driver = Chrome()
+          yield driver
+          driver.quit()
+
+      @fixture
+      def al(driver):
+          al = Alumni(driver)
+          yield al
+          al.quit()
     `,
   }),
 
@@ -217,7 +306,14 @@ export const ttCode = {
     lang: "python",
 
     code: lit`
-      # TODO: Playwright example
+      from alumnium import Alumni
+      from pytest import fixture
+
+      @fixture
+      def al(page):
+          al = Alumni(page)
+          yield al
+          al.quit()
     `,
   }),
 
@@ -227,7 +323,21 @@ export const ttCode = {
     lang: "python",
 
     code: lit`
-      # TODO: Appium example
+      from alumnium import Alumni
+      from appium.webdriver.webdriver import WebDriver
+      from pytest import fixture
+
+      @fixture
+      def driver():
+          driver = WebDriver()
+          yield driver
+          driver.quit()
+
+      @fixture
+      def al(driver):
+          al = Alumni(driver)
+          yield al
+          al.quit()
     `,
   }),
 
@@ -241,7 +351,30 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      // TODO: Selenium example
+      import static org.junit.jupiter.api.Assertions.assertEquals;
+
+      import ai.alumnium.Alumni;
+      import org.junit.jupiter.api.AfterEach;
+      import org.junit.jupiter.api.BeforeEach;
+      import org.junit.jupiter.api.Test;
+      import org.openqa.selenium.chrome.ChromeDriver;
+
+      class SearchTest {
+        private Alumni al;
+        private ChromeDriver driver;
+
+        @BeforeEach
+        void setUp() {
+          driver = new ChromeDriver();
+          al = new Alumni(driver);
+        }
+
+        @AfterEach
+        void tearDown() {
+          driver.quit();
+          al.quit();
+        }
+      }
     `,
   }),
 
@@ -251,7 +384,29 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      // TODO: Playwright example
+      import static org.junit.jupiter.api.Assertions.assertEquals;
+
+      import ai.alumnium.Alumni;
+      import com.microsoft.playwright.Page;
+      import com.microsoft.playwright.junit.UsePlaywright;
+      import org.junit.jupiter.api.AfterEach;
+      import org.junit.jupiter.api.BeforeEach;
+      import org.junit.jupiter.api.Test;
+
+      @UsePlaywright
+      class SearchTest {
+        private Alumni al;
+
+        @BeforeEach
+        void setUp(Page page) {
+          al = new Alumni(page);
+        }
+
+        @AfterEach
+        void tearDown() {
+          al.quit();
+        }
+      }
     `,
   }),
 
@@ -261,7 +416,30 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      // TODO: Appium example
+      import static org.junit.jupiter.api.Assertions.assertEquals;
+
+      import ai.alumnium.Alumni;
+      import io.appium.java_client.ios.IOSDriver;
+      import org.junit.jupiter.api.AfterEach;
+      import org.junit.jupiter.api.BeforeEach;
+      import org.junit.jupiter.api.Test;
+
+      class SearchTest {
+        private Alumni al;
+        private IOSDriver driver;
+
+        @BeforeEach
+        void setUp() throws Exception {
+          driver = new IOSDriver(/* pass options as needed */);
+          al = new Alumni(driver);
+        }
+
+        @AfterEach
+        void tearDown() {
+          driver.quit();
+          al.quit();
+        }
+      }
     `,
   }),
 
@@ -271,7 +449,8 @@ export const ttCode = {
     lang: "bash",
 
     code: lit`
-      # TODO: Claude Code example
+      claude mcp add alumnium --env OPENAI_API_KEY=... -- \\
+          alumnium mcp
     `,
   }),
 
@@ -281,7 +460,8 @@ export const ttCode = {
     lang: "bash",
 
     code: lit`
-      # TODO: Codex example
+      codex mcp add alumnium --env ALUMNIUM_MODEL=codex -- \\
+          alumnium mcp
     `,
   }),
 
@@ -301,7 +481,15 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      // TODO: Selenium example
+      describe("Search", () => {
+        it("finds Mercury", async () => {
+          await driver.get("https://duckduckgo.com");
+          await al.do("search for 'Mercury element' and press Enter");
+          await al.check("page title contains Mercury word");
+          await al.check("search results contain Wikipedia articles");
+          assert.equal(await al.get("chemical symbol"), "Hg");
+        });
+      });
     `,
   }),
 
@@ -311,7 +499,15 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      // TODO: Playwright example
+      test.describe("Search", async () => {
+        test('finds Mercury', async ({ page }) => {
+          await page.goto("https://duckduckgo.com");
+          await al.do("search for 'Mercury element' and press Enter");
+          await al.check("page title contains Mercury word");
+          await al.check("search results contain Wikipedia articles");
+          expect(await al.get("chemical symbol")).toBe("Hg");
+        });
+      });
     `,
   }),
 
@@ -321,7 +517,15 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      // TODO: Appium example
+      describe("Search", () => {
+        it("finds Mercury", async () => {
+          await browser.url("https://duckduckgo.com");
+          await al.do("search for 'Mercury element' and press Enter");
+          await al.check("page title contains Mercury word");
+          await al.check("search results contain Wikipedia articles");
+          expect(await al.get("chemical symbol")).toEqual("Hg");
+        });
+      });
     `,
   }),
 
@@ -335,7 +539,12 @@ export const ttCode = {
     lang: "python",
 
     code: lit`
-      # TODO: Selenium example
+      def test_search(al, driver):
+          driver.get("https://duckduckgo.com")
+          al.do("search for 'Mercury element' and press Enter")
+          al.check("page title contains Mercury word")
+          al.check("search results contain Wikipedia articles")
+          assert al.get("chemical symbol") == "Hg"
     `,
   }),
 
@@ -345,7 +554,12 @@ export const ttCode = {
     lang: "python",
 
     code: lit`
-      # TODO: Playwright example
+      def test_search(al, page):
+          page.goto("https://duckduckgo.com")
+          al.do("search for 'Mercury element' and press Enter")
+          al.check("page title contains Mercury word")
+          al.check("search results contain Wikipedia articles")
+          assert al.get("chemical symbol") == "Hg"
     `,
   }),
 
@@ -355,7 +569,12 @@ export const ttCode = {
     lang: "python",
 
     code: lit`
-      # TODO: Appium example
+      def test_search(al, driver):
+          driver.get("https://duckduckgo.com")
+          al.do("search for 'Mercury element' and press Enter")
+          al.check("page title contains Mercury word")
+          al.check("search results contain Wikipedia articles")
+          assert al.get("chemical symbol") == "Hg"
     `,
   }),
 
@@ -369,7 +588,16 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      // TODO: Selenium example
+      class SearchTest {
+        @Test
+        void findsMercury() {
+          driver.get("https://duckduckgo.com");
+          al.act("search for 'Mercury element' and press Enter");
+          al.check("page title contains Mercury word");
+          al.check("search results contain Wikipedia articles");
+          assertEquals("Hg", al.get("chemical symbol"));
+        }
+      }
     `,
   }),
 
@@ -379,7 +607,16 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      // TODO: Playwright example
+      class SearchTest {
+        @Test
+        void findsMercury() {
+          page.navigate("https://duckduckgo.com");
+          al.act("search for 'Mercury element' and press Enter");
+          al.check("page title contains Mercury word");
+          al.check("search results contain Wikipedia articles");
+          assertEquals("Hg", al.get("chemical symbol"));
+        }
+      }
     `,
   }),
 
@@ -389,7 +626,16 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      // TODO: Appium example
+      class SearchTest {
+        @Test
+        void findsMercury() {
+          driver.get("https://duckduckgo.com");
+          al.act("search for 'Mercury element' and press Enter");
+          al.check("page title contains Mercury word");
+          al.check("search results contain Wikipedia articles");
+          assertEquals("Hg", al.get("chemical symbol"));
+        }
+      }
     `,
   }),
 
