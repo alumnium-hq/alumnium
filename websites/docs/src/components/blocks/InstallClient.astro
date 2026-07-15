@@ -10,7 +10,7 @@ const tab = createHowTab<"install-client">();
   items={[
     tab("install-client-npm", ["npm", "pnpm", "yarn", "bun"]),
     tab("install-client-pip", ["pip", "uv"]),
-    tab("install-client-java-mvn"),
+    tab("install-client-java", ["gradle", "mvn"]),
   ]}
   active="install-client-npm-npm"
   style="code"
@@ -37,6 +37,10 @@ const tab = createHowTab<"install-client">();
 
   <Fragment slot="install-client-pip-uv">
     <HowTabContent key="install-client-pip-uv" />
+  </Fragment>
+
+  <Fragment slot="install-client-java-gradle">
+    <HowTabContent key="install-client-java-gradle" />
   </Fragment>
 
   <Fragment slot="install-client-java-mvn">
