@@ -55,13 +55,16 @@ const { supersections } = Astro.props;
       return;
     }
 
+    const enteredFromClick = clickedId === id;
+    if (enteredFromClick) clickedId = null;
+
     const enterEl = queryLinkEl(id);
     if (enterEl === activeLink) {
       return;
     }
 
     // Update hash unless there's a click registered.
-    if (!clickedId) setHash(id);
+    if (!enteredFromClick) setHash(id);
 
     activeLink?.classList.remove(modifierClass);
 
@@ -117,16 +120,28 @@ const { supersections } = Astro.props;
       const linkId = target.getAttribute("href")?.slice(1) || null;
       if (!linkId) return;
 
+      const sectionEl = document.getElementById(linkId);
+      if (!sectionEl) return;
+
+      e.preventDefault();
+
       clickedId = linkId;
+      setHash(linkId);
+
+      sectionEl.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      });
 
       // If link is already active, we're not going to receive the supersection
       // event, in this case we have to trigger the event handler manually.
       if (linksState[linkId]) onEnter(linkId);
 
+      // Release the click lock if the user interrupts the scroll.
       setTimeout(() => {
-        if (clickedId !== linkId) return;
-        clickedId = null;
-      }, 5);
+        if (clickedId === linkId) clickedId = null;
+      }, 2_000);
     });
   });
 
