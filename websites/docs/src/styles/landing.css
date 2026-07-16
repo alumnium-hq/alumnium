@@ -1,7 +1,7 @@
 @reference "./global.css";
 
 @layer components {
-  .debug-variant {
+  .debug-breakpoint {
     &:before {
       @apply z-50 fixed top-0 right-0 bg-red-600 text-white uppercase content-["bs"] leading-none capsize font-mono p-1;
 
@@ -576,10 +576,6 @@
 
       &.bento-cols-6 {
         @apply grid grid-cols-1 sm:grid-cols-6;
-        /*
-        & > .is-span-2 {
-          @apply md:basis-full;
-        } */
       }
 
       & > * {
