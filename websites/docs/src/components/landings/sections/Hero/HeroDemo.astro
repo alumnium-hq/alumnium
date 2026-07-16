@@ -9,7 +9,7 @@ const t = tt.landings.sections.hero.en;
 <div class="player w-xl max-w-full relative">
   <slot />
 
-  <Asciinema src="https://asciinema.org/a/569727.cast" />
+  <slot name="player" />
 
   <div class="player-play-label">
     <span class="text-sm leading-none capsize text-accent-400">
@@ -23,8 +23,14 @@ const t = tt.landings.sections.hero.en;
 <style>
   @reference "#/styles/global.css";
 
-  .player :global(.asciinema-player) {
+  .player :global(.asciinema-player),
+  .player :global(.video-player) {
     --asciinema-colog-bg: color-mix(
+      in srgb,
+      var(--color-content-dark) 4%,
+      transparent 100%
+    );
+    --video-player-bg: color-mix(
       in srgb,
       var(--color-content-dark) 4%,
       transparent 100%
@@ -32,39 +38,63 @@ const t = tt.landings.sections.hero.en;
 
     @apply rounded-md border border-accent-500;
 
-    & :global(.ap-play-button) {
+    & :global(video) {
+      opacity: 0;
+    }
+
+    & :global(.ap-play-button),
+    & :global(.play) {
       @apply transition-all;
+      width: 120px;
       height: 120px;
     }
 
-    & :global(.ap-play-btn-fill) {
+    & :global(.ap-play-btn-fill),
+    & :global(.play-fill) {
       @apply transition-all;
       fill: transparent;
       stroke: var(--color-accent-500);
       stroke-width: 10;
     }
 
-    & :global(.ap-play-btn-stroke) {
+    & :global(.ap-play-btn-stroke),
+    & :global(.play-stroke) {
       @apply transition-all;
       stroke: transparent;
     }
 
     &:hover {
       --asciinema-colog-bg: var(--color-content-dark);
+      --video-player-bg: var(--color-content-dark);
       border-color: var(--color-content-dark);
 
-      & :global(.ap-play-button) {
+      & :global(video) {
+        opacity: 1;
+      }
+
+      & :global(.ap-play-button),
+      & :global(.play) {
         @apply transition-all;
+        width: 80px;
         height: 80px;
       }
 
-      & :global(.ap-play-btn-fill) {
+      & :global(.ap-play-btn-fill),
+      & :global(.play-fill) {
         fill: white;
         stroke: transparent;
         stroke-width: 0;
       }
 
-      & :global(.ap-play-btn-stroke) {
+      & :global(.ap-play-btn-fill) {
+      }
+
+      & :global(.play-fill) {
+        stroke: black;
+      }
+
+      & :global(.ap-play-btn-stroke),
+      & :global(.play-stroke) {
         stroke: white;
       }
 
@@ -76,24 +106,35 @@ const t = tt.landings.sections.hero.en;
 
   .player {
     &:hover,
-    &:has(.asciinema-player.has-started) {
-      & :global(.asciinema-player) {
+    &:has(.asciinema-player.has-started),
+    &:has(.video-player.has-started) {
+      & :global(.asciinema-player),
+      & :global(.video-player) {
         --asciinema-colog-bg: var(--color-content-dark);
+        --video-player-bg: var(--color-content-dark);
         border-color: var(--color-content-dark);
+
+        & :global(video) {
+          opacity: 1;
+        }
       }
 
-      & :global(.ap-play-button) {
+      & :global(.ap-play-button),
+      & :global(.play) {
         @apply transition-all;
+        width: 80px;
         height: 80px;
       }
 
-      & :global(.ap-play-btn-fill) {
+      & :global(.ap-play-btn-fill),
+      & :global(.play-fill) {
         fill: white;
         stroke: transparent;
         stroke-width: 0;
       }
 
-      & :global(.ap-play-btn-stroke) {
+      & :global(.ap-play-btn-stroke),
+      & :global(.play-stroke) {
         stroke: white;
       }
 
@@ -102,7 +143,9 @@ const t = tt.landings.sections.hero.en;
       }
     }
 
-    &:hover:not(:has(.asciinema-player.is-playing)) {
+    &:hover:not(:has(.asciinema-player.is-playing)):not(
+        :has(.video-player.is-playing)
+      ) {
       & :global(.decoration-atom) {
         --atom-animation-speed: 5;
       }
