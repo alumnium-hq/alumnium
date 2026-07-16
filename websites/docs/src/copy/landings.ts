@@ -42,7 +42,7 @@ const sections = {
       `,
 
       subheadline: txt`
-        Open source, context-efficient MCP for your coding agent +
+        Open-source, context-efficient MCP for your coding agent +
         automation frameworks integration for your existing test suite in
         a single package.
       `,
@@ -114,7 +114,7 @@ const sections = {
           headline: "Install CLI",
 
           copy: md`
-            Install Alumnium CLI, single cross-platform binary with a small
+            Install Alumnium CLI, a single cross-platform binary with a small
             footprint.
           `,
         },
@@ -125,7 +125,7 @@ const sections = {
           headline: "Install client",
 
           copy: md`
-            Install carefully crafted, idiomatic, fully type-safe client
+            Install a carefully crafted, idiomatic, fully type-safe client
             package for your language of choice.
           `,
         },
@@ -155,7 +155,7 @@ const sections = {
           headline: "Set Up Client",
 
           copy: md`
-            Set LLM secrets, import and configure the Alumnium client package
+            Set LLM secrets, import, and configure the Alumnium client package
             in your existing test suite.
           `,
         },
@@ -184,7 +184,7 @@ const sections = {
           headline: "Write Test Steps",
 
           copy: md`
-            Using Alumnium client write test steps for your test framework.
+            Using the Alumnium client, write test steps for your test framework.
           `,
         },
       }),
@@ -202,7 +202,7 @@ const sections = {
           headline: "Run Markdown Tests",
 
           copy: md`
-            Ask the coding agent to save test scenario as Markdown and run it
+            Ask the coding agent to save the test scenario as Markdown and run it
             again using the test runner.
           `,
         },
@@ -213,7 +213,7 @@ const sections = {
           headline: "Run Test Suite",
 
           copy: md`
-            After succeseful completion, instruct to save the LLM cache to run
+            After successful completion, instruct to save the LLM cache to run
             tests with minimal to zero tokens.
           `,
         },
@@ -244,17 +244,17 @@ const sections = {
 
       headline: "State-of-the-Art",
 
-      subheadline: "#1 on WebVoyager with 98.5% accuracy record.",
+      subheadline: "#1 on WebVoyager with a 98.5% accuracy record.",
 
       copy: txt`
         Alumnium is the best-in-class AI browser agent, leading
         [the WebVoyager, an AI browser agent benchmark](#) with 98.5% accuracy.
 
-        It's not just a claim — [we open-sourced our WebVoyager logs and methodology](/blog/webvoyager-benchmark/)
+        It's not just a claim—[we open-sourced our WebVoyager logs and methodology](/blog/webvoyager-benchmark/)
         for full transparency.
 
         It proved that our approach works in real-world scenarios, delivering
-        exceptional results for fraction of the cost of other agents.
+        exceptional results for a fraction of the cost of other agents.
         And we're just getting started!
       `,
 
@@ -273,7 +273,7 @@ const sections = {
       headline: "Efficient Through and Through",
 
       subheadline: txt`
-        Save time and money without compromizing quality.
+        Save time and money without compromising quality.
       `,
 
       stats: [
@@ -289,14 +289,14 @@ const sections = {
 
           value: "$0.15",
 
-          label: "Price per task vs $1.34*",
+          label: "Price per task vs. $1.34*",
         },
         {
           id: "context",
 
           value: "10x",
 
-          label: "Less tokens 8K vs 79K*",
+          label: "Less tokens: 8K vs. 79K*",
         },
       ],
 
@@ -357,7 +357,7 @@ const sections = {
         seamlessly with both web and mobile applications.
 
         You can use the same plain text instructions to test all supported
-        platforms allowing you to ship features to your customers faster
+        platforms, allowing you to ship features to your customers faster
         wherever they are.
 
         The multi-session feature even allows you to test multiple platforms
@@ -373,12 +373,12 @@ const sections = {
       headline: "Integrates With Your Stack",
 
       subheadline: txt`
-        No lock-in, no rewrites and upfront investments.
+        No lock-in, no rewrites, and upfront investments.
       `,
 
       copy: txt`
         Plug Alumnium into the AI providers, test drivers, and languages you
-        already use. No lock-in, no rewrites — swap models or frameworks any
+        already use. No lock-in, no rewrites—swap models or frameworks any
         time without rewriting your tests.
 
         Run hosted models from Anthropic, OpenAI, Google, xAI, Meta,
@@ -440,9 +440,9 @@ const sections = {
       copy: txt`
         Tired of fixing broken tests every time the UI changes? Alumnium
         adapts to changes automatically, reducing test maintenance and
-        allowing you to focus on making your product better.
+        allowing you to focus on improving your product.
 
-        Thanks to our smart element finding feature, AI cache don't drop
+        Thanks to our smart element-finding feature, the AI cache doesn't drop
         every time you make changes in your app, so tests stay fast and cheap.
       `,
     },
@@ -505,13 +505,13 @@ const sections = {
           en: {
             headline: "MCP Server",
 
-            subheadline: "Context-efficient powerup for your coding agent.",
+            subheadline: "Context-efficient power-up for your coding agent.",
 
             copy: md`
               Supercharge your coding agent with QA expertise without bloating
               your context.
 
-              Works with any coding agent that supports stdio protocol.
+              Works with any coding agent that supports the stdio protocol.
             `,
           },
 
@@ -538,10 +538,10 @@ const sections = {
             subheadline: "Add AI capabilities into your existing test suite.",
 
             copy: md`
-              Powerup your existing web, iOS, and Android test suite with QA AI.
+              Power up your existing web, iOS, and Android test suite with QA AI.
               Works with Selenium, Playwright, and Appium.
 
-              Crafted idiomatic, type-safe, client libraries for TypeScript,
+              Crafted idiomatic, type-safe client libraries for TypeScript,
               Python, and Java.
             `,
           },
@@ -654,7 +654,7 @@ const sections = {
           kind: "copy",
           content: langs({
             en: md`
-              Whether you use MCP or integrate Alumnium client into your
+              Whether you use MCP or integrate the Alumnium client into your
               existing test suite, you get a rich set of tools that speed up
               testing and test suite maintenance.
 
@@ -681,7 +681,7 @@ const sections = {
                 en: {
                   headline: "Change Analyzer",
                   copy: md`
-                    Analyzes UI changes and provides tree diff to
+                    Analyzes UI changes and provides a tree diff to
                     analyze how it affects the task.
                   `,
                 },
@@ -694,7 +694,7 @@ const sections = {
                 en: {
                   headline: "Check Tool",
                   copy: md`
-                    Checks if the app is in the expected state, and reports any discrepancies.
+                    Checks if the app is in the expected state and reports any discrepancies.
                   `,
                 },
               }),
@@ -731,7 +731,7 @@ const sections = {
                 en: {
                   headline: "Do Tool",
                   copy: md`
-                    Figures out how to perform a task and executes it, without
+                    Figures out how to perform a task and executes it without
                     explicit instructions.
                   `,
                 },
@@ -744,7 +744,7 @@ const sections = {
                 en: {
                   headline: "Planner",
                   copy: md`
-                    Splits a complex task into smaller steps, tracks and
+                    Splits a complex task into smaller steps and tasks and
                     executes them in order.
                   `,
                 },
@@ -791,10 +791,10 @@ const sections = {
             subheadline: "Can handle most complex web apps.",
 
             copy: md`
-              Alumnium supports virtually all of the browser APIs, including
+              Alumnium supports virtually all the browser APIs, including
               frames, shadow DOM, file uploads, tabs, and more.
 
-              It comes with smart waiting and element finding features that
+              It comes with smart waiting and element-finding features that
               work consistently across all supported automation frameworks.
             `,
           },
@@ -840,7 +840,7 @@ const sections = {
               structure and state,
 
               Based on the accessibility trees provided by platforms, Alumnium
-              builds focused XML representation, leveraging LLMs strongest suit:
+              builds a focused XML representation, leveraging LLMs strongest suit:
               understanding and reasoning about complex structures.
             `,
           },
@@ -869,11 +869,11 @@ const sections = {
             subheadline: "Smart caching for faster and cheaper tests.",
 
             copy: md`
-              Alumnium's multi-level caching system optimized to reduce
+              Alumnium's multi-level caching system is optimized to reduce
               the number of LLM requests to the minimum.
 
-              The smart caching allows to sustain significant UI changes,
-              abstracting away the dynamic parts of the app.
+              The smart caching allows for significant UI changes, abstracting
+              away the dynamic parts of the app.
             `,
           },
         }),
@@ -942,8 +942,8 @@ const sections = {
             subheadline: "Pick and choose models.",
 
             copy: md`
-              Use models that works best for you, choosing from a wide range
-              of options available. Each model tested and optimized for best
+              Use models that work best for you, picking from a wide range
+              of options available. Each model was tested and optimized for best
               performance.
             `,
           },
@@ -1002,7 +1002,7 @@ const sections = {
 
             copy: md`
               Prevent any data from leaving your network and save money on
-              tokens by running open-weight models on your own infrastructure
+              tokens by running open-weight models on your infrastructure
               with Ollama.
             `,
           },
@@ -1035,8 +1035,8 @@ const sections = {
               Alumnium ships with a test runner that seamlessly integrates with your
               coding AI agent workflow:
 
-              1. Test your app using coding agent with Alumnium MCP.
-              2. Ask it to save test description as a Markdown file.
+              1. Test your app using the coding agent with Alumnium MCP.
+              2. Ask it to save the test description as a Markdown file.
               3. Run the test \`alumnium test <filename>.md\`.
 
               <footer>* Alumnium test runner currently is in preview</footer>
@@ -1068,7 +1068,7 @@ const sections = {
 
                   copy: txt`
                     All tool calls get recorded and replayed. Combined with LLM cache,
-                    it allows to run tests without spending any tokens at all.
+                    it allows running  tests without spending any tokens at all.
                   `,
                 },
               }),
@@ -1082,7 +1082,7 @@ const sections = {
                   headline: "Self-Healing",
 
                   copy: txt`
-                    When UI changes, the test runner automatically adapts notifying
+                    When UI changes, the test runner automatically adapts, notifying
                     you only when there's an actual bug.
                   `,
                 },
@@ -1097,8 +1097,8 @@ const sections = {
                   headline: "Cross-Platform Tests",
 
                   copy: txt`
-                    Use same Markdown tests to test your web, iOS, and Android apps
-                    at the same time.
+                    Use the same Markdown tests to test your web, iOS, and
+                    Android apps at the same time.
                   `,
                 },
               }),
@@ -1112,8 +1112,8 @@ const sections = {
                   headline: "Agent SDK-Powered",
 
                   copy: txt`
-                    The test runner utilizes native agent SDKs that allows to match
-                    your agent's configuration and behavior.
+                    The test runner utilizes native agent SDKs that allow you to
+                    match your agent's configuration and behavior.
                   `,
                 },
               }),
@@ -1135,7 +1135,7 @@ const sections = {
       headline: "Scale with Alumnium",
 
       subheadline: `
-        Alumnium is build to scale with your team and business.
+        Alumnium is built to scale with your team and business.
       `,
     },
   }),
@@ -1145,7 +1145,7 @@ const sections = {
       headline: "Close-to-Native Performance",
 
       subheadline: txt`
-        Designed to make AI tests fast and affordable on scale.
+        Designed to make AI tests fast and affordable on a scale.
       `,
 
       copy: txt`
@@ -1165,8 +1165,8 @@ const sections = {
       subheadline: "Avoid skyrocketing costs when your team grows.",
 
       copy: txt`
-        With remote cache teams can share all of the multi-level cache layers,
-        allowing to leverage the work that other team members have already
+        With remote cache, teams can share all the multi-level cache layers,
+        allowing them to leverage the work that other team members have already
         done.
 
         <footer>* Remote cache currently is in preview</footer>
@@ -1178,7 +1178,7 @@ const sections = {
     en: {
       headline: "Continuous Integration",
 
-      subheadline: "CI is not an afterthought, it's a first-class citizen.",
+      subheadline: "CI is not an afterthought. It's a first-class citizen!",
 
       copy: txt`
         Alumnium is designed to work seamlessly with your CI/CD pipelines. It
@@ -1186,7 +1186,7 @@ const sections = {
         the same remote cache.
 
         With security concerns in mind, Alumnium can be configured to run tests
-        without making any LLM requests at all, or leveraging models
+        without making any LLM requests at all or leveraging models
         provided in your CI environment.
       `,
     },
@@ -1199,7 +1199,7 @@ const sections = {
       subheadline: "Get insights into your tests and agents.",
 
       copy: txt`
-        All of the Alumnium tools instrumented with OpenTelemetry, allowing
+        All the Alumnium tools are instrumented with OpenTelemetry, allowing
         you to collect and analyze telemetry data from your tests and agents.
 
         This data can be used to identify performance bottlenecks, track
@@ -1218,18 +1218,18 @@ const sections = {
 
       headline: "Need More Reasons?",
 
-      subheadline: "You're hard to impress — we like that!",
+      subheadline: "You're difficult to impress—we like that!",
     },
   }),
 
   openSource: langs({
     en: {
-      headline: "Open Source & Extensible",
+      headline: "Open-Source & Extensible",
 
       subheadline: "Free to use and make it your own.",
 
       copy: txt`
-        Alumnium is fully open source under MIT license. It has an active
+        Alumnium is fully open source under the MIT license. It has an active
         community and regularly updates.
 
         It is easy to customize and extend to fit your specific needs.
@@ -1279,8 +1279,7 @@ const sections = {
       `,
 
       copy: txt`
-        Alumnium is privileged to get support from these
-        amazing companies.
+        Alumnium is privileged to get support from these amazing companies.
       `,
     },
   }),
@@ -1296,7 +1295,7 @@ const sections = {
       headline: "Alumnium is Different",
 
       subheadline: txt`
-        See how we line up with another browser agents.
+        See how we line up with other browser agents.
       `,
     },
   }),
@@ -1441,7 +1440,7 @@ const sections = {
             en: {
               label: "Built-in test runner",
               subtext: txt`
-                CLI capable running Markdown tests without a coding agent.
+                CLI capable of running Markdown tests without a coding agent.
               `,
             },
           },
@@ -1786,7 +1785,7 @@ const sections = {
                 3. Initialize Alumnium with your existing Selenium, Playwright, or Appium driver
                 4. Start writing tests using natural language commands.
 
-                Check out our [getting started guide](/docs/getting-started/installation/)
+                See our [Getting Started guide](/docs/getting-started/installation/)
                 for detailed instructions.
               `,
             },
