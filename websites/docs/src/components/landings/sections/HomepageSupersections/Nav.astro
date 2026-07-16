@@ -161,7 +161,7 @@ const { supersections } = Astro.props;
   @reference "#/styles/global.css";
 
   nav {
-    @apply md:sticky z-40 border-t border-t-accent-600 border-b border-b-accent-600 px-(--supersection-padding-x);
+    @apply md:sticky z-40 border-t border-t-accent-600 border-b border-b-accent-600;
     top: calc(var(--sl-nav-height) - 1px);
   }
 
@@ -172,7 +172,7 @@ const { supersections } = Astro.props;
   }
 
   .wrapper {
-    @apply relative py-4 sm:py-6 md:py-6;
+    @apply relative flex items-center px-(--supersection-padding-x) h-(--landing-nav-height);
   }
 
   .inner {
