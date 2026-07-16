@@ -8,7 +8,7 @@
     "./src/**/*.json",
     "./src/**/*.astro",
     "./scripts/**/*.ts"
-,     "src/components/landings/blocks/Section.types"  ],
+  ],
   "compilerOptions": {
     // Resolve
     "paths": {
