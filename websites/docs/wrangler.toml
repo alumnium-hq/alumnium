@@ -1,11 +1,12 @@
 "$schema" = "./node_modules/wrangler/config-schema.json"
-name = "alumnium-website"
+name = "alumnium-docs"
 compatibility_date = "2026-07-20"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
-[[routes]]
-pattern = "alumnium.ai"
-custom_domain = true
+# TODO: Uncomment after configuring alumnium.ai DNS at Cloudflare
+# [[routes]]
+# pattern = "alumnium.ai"
+# custom_domain = true
 
 [observability]
 enabled = true
