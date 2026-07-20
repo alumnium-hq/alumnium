@@ -17,7 +17,7 @@
     "oxfmt": "^0.47.0",
     "oxlint": "^1.62.0",
     "oxlint-tsgolint": "^0.21.0",
-    "typescript": "^7.0.1-rc"
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "ajv": ">=8.18.0",
