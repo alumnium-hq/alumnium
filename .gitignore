@@ -30,6 +30,10 @@
 # Environment variables
 .env
 .envrc
+**/.dev.vars
+
+# Cloudflare
+**/.wrangler/
 
 # Local mise
 mise.local.toml

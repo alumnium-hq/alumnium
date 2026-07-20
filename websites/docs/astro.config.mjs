@@ -1,3 +1,4 @@
+import cloudflare from "@astrojs/cloudflare";
 import sitemap from "@astrojs/sitemap";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
@@ -5,6 +6,7 @@ import { defineConfig, sharpImageService } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
+  adapter: cloudflare({ imageService: "compile" }),
   site: "https://alumnium.ai",
   image: {
     service: sharpImageService({ limitInputPixels: false }),

@@ -1,0 +1,11 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+name = "alumnium-website"
+compatibility_date = "2026-07-20"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[[routes]]
+pattern = "alumnium.ai"
+custom_domain = true
+
+[observability]
+enabled = true

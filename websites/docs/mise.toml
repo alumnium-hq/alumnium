@@ -10,12 +10,20 @@ bun run astro-check
 bun run astro build
 '''
 
-[tasks."dev:build"]
+[tasks.preview]
 run = "bun run astro preview"
 depends = ["build"]
 
 [tasks.dev]
 run = "bun run astro dev --host 0.0.0.0"
+
+[tasks.deploy]
+run = "bun run wrangler deploy"
+depends = ["build"]
+
+[tasks."deploy:dry-run"]
+run = "bun run wrangler deploy --dry-run"
+depends = ["build"]
 
 [tasks."generate/install-scripts"]
 run = "bun scripts/generate-install-scripts.ts"
