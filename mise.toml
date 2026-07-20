@@ -12,7 +12,7 @@ python = "3.10.20"
 uv = "latest"
 
 # Tools
-fnox = "latest" # Secrets manager
+fnox = "latest"
 gh = "latest" # GitHub CLI
 ruff = "latest" # Python formatter
 shfmt = "latest" # .sh formatter
