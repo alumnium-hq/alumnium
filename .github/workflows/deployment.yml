@@ -14,13 +14,16 @@ env:
 
 permissions:
   contents: read
-  id-token: write
-  pages: write
 
 jobs:
-  build:
-    name: Build
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
+    concurrency:
+      group: release
+    environment:
+      name: release
+      url: https://alumnium.ai
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@v4
@@ -30,19 +33,11 @@ jobs:
       - run: mise //websites/docs:generate/install-scripts
       - run: mise //websites/docs:test/install-scripts
       - run: mise //websites/docs:build
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: websites/docs/dist/
-
-  release:
-    name: Release
-    needs: build
-    runs-on: ubuntu-latest
-    concurrency:
-      group: release
-    environment:
-      name: release
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v5
+      - uses: cloudflare/wrangler-action@v4
         id: deployment
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+          packageManager: bun
+          workingDirectory: websites/docs
