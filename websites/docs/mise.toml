@@ -18,7 +18,7 @@ depends = ["build"]
 run = "bun run astro dev --host 0.0.0.0"
 
 [tasks.deploy]
-run = "bun run wrangler deploy"
+run = "fnox exec -- bun run wrangler deploy"
 depends = ["build"]
 
 [tasks."deploy:dry-run"]
