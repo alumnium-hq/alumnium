@@ -1,7 +1,8 @@
 ---
+import { isBareStarlightPage } from "#/utils/starlight";
 import Default from "@astrojs/starlight/components/PageTitle.astro";
 
-const isBare = Astro.locals.starlightRoute.entry.data.bare;
+const isBare = isBareStarlightPage(Astro.locals);
 ---
 
 {
