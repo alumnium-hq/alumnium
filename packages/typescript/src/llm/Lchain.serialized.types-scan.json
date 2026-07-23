@@ -810,6 +810,27 @@
                                             "literal": false
                                           }
                                         ]
+                                      },
+                                      "output_tokens_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "thinking_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
                                       }
                                     }
                                   }
@@ -2087,6 +2108,27 @@
                                           {
                                             "kind": "number",
                                             "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "output_tokens_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "thinking_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
                                           }
                                         ]
                                       }

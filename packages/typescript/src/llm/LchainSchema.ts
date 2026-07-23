@@ -94,6 +94,10 @@ export abstract class LchainSchema {
     ephemeral_1h_input_tokens: z.number(),
   });
 
+  static MessageDataAdditionalKwargsUsageOutputTokensDetails = z.object({
+    thinking_tokens: z.number(),
+  });
+
   static MessageDataAdditionalKwargsUsage = z.object({
     input_tokens: z.number(),
     cache_creation_input_tokens: z.number(),
@@ -102,6 +106,8 @@ export abstract class LchainSchema {
     output_tokens: z.number(),
     service_tier: z.union([z.literal("standard"), z.string()]),
     inference_geo: z.string(),
+    output_tokens_details:
+      this.MessageDataAdditionalKwargsUsageOutputTokensDetails.exactOptional(),
   });
 
   static FunctionCallFunction = z.object({
@@ -277,6 +283,8 @@ export abstract class LchainSchema {
     cost_in_usd_ticks: z.number().exactOptional(),
     cacheReadInputTokens: z.number().exactOptional(),
     cacheWriteInputTokens: z.number().exactOptional(),
+    output_tokens_details:
+      this.MessageDataAdditionalKwargsUsageOutputTokensDetails.exactOptional(),
   });
 
   static ResponseMetadataMetrics = z.object({ latencyMs: z.number() });
@@ -443,6 +451,10 @@ export namespace LchainSchema {
 
   export type MessageDataAdditionalKwargsUsageCacheCreation = z.infer<
     typeof LchainSchema.MessageDataAdditionalKwargsUsageCacheCreation
+  >;
+
+  export type MessageDataAdditionalKwargsUsageOutputTokensDetails = z.infer<
+    typeof LchainSchema.MessageDataAdditionalKwargsUsageOutputTokensDetails
   >;
 
   export type MessageDataAdditionalKwargsUsage = z.infer<
