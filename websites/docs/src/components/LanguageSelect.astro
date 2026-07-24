@@ -8,6 +8,7 @@ import { Icon } from "@astrojs/starlight/components";
     icon="seti:python"
     label="Select language"
     options={[
+      { label: "Java", selected: false, value: "java" },
       { label: "Python", selected: true, value: "python" },
       { label: "TypeScript", selected: false, value: "typescript" },
     ]}
@@ -16,23 +17,34 @@ import { Icon } from "@astrojs/starlight/components";
 </starlight-language-select>
 
 <script>
-  type Language = "python" | "typescript";
+  type Language = "java" | "python" | "typescript";
 
   /** Key in `localStorage` to store language preference at. */
   const storageKey = "starlight-language";
 
   /** Get a typesafe language string from any JS value (unknown values are coerced to `'python'`). */
   const parseLanguage = (language: unknown): Language =>
-    language === "python" || language === "typescript" ? language : "python";
+    language === "java" || language === "python" || language === "typescript"
+      ? language
+      : "python";
 
   /** Load the user’s preference from `localStorage`. */
   const loadLanguage = (): Language =>
-    parseLanguage(typeof localStorage !== "undefined" && localStorage.getItem(storageKey));
+    parseLanguage(
+      typeof localStorage !== "undefined" && localStorage.getItem(storageKey),
+    );
 
   /** Store the user’s preference in `localStorage`. */
   function storeLanguage(language: Language): void {
     if (typeof localStorage !== "undefined") {
-      localStorage.setItem(storageKey, language === "python" || language === "typescript" ? language : "");
+      localStorage.setItem(
+        storageKey,
+        language === "java" ||
+          language === "python" ||
+          language === "typescript"
+          ? language
+          : "",
+      );
     }
   }
 
@@ -80,6 +92,7 @@ import { Icon } from "@astrojs/starlight/components";
 </script>
 
 <template id="language-icons">
+  <Icon name="seti:java" class="java" />
   <Icon name="seti:python" class="python" />
   <Icon name="seti:tsconfig" class="typescript" />
 </template>

@@ -5,6 +5,10 @@
       "path": ".",
     },
     {
+      "name": "packages/java",
+      "path": "packages/java",
+    },
+    {
       "name": "packages/python",
       "path": "packages/python",
     },
@@ -37,5 +41,7 @@
         "source.fixAll": "explicit",
       },
     },
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic",
   },
 }

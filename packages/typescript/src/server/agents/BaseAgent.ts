@@ -1,7 +1,7 @@
 import { Runnable, type RunnableConfig } from "@langchain/core/runnables";
 import { always } from "alwaysly";
 import { Logger } from "../../telemetry/Logger.ts";
-// NOTE: While macros work well in Bun, it fails when using Alumium client from
+// NOTE: While macros work well in Bun, it fails when using Alumnium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };

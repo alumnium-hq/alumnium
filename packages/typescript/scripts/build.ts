@@ -11,6 +11,8 @@ import { stringify as tomlStringify } from "smol-toml";
 import { z } from "zod";
 import { ALUMNIUM_VERSION } from "../src/package.ts";
 import {
+  PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
+  PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
   PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
   SELENIUM_ATOM_ASSET_PREFIX,
   SELENIUM_MANAGER_ASSET_NAMES,
@@ -26,6 +28,7 @@ const BASE_BUILD_TARGETS = [
   "npm:main",
   "npm:cli",
   "pip",
+  "maven",
 ] as const;
 
 const BuildTarget = z.enum(BASE_BUILD_TARGETS);
@@ -46,8 +49,14 @@ const BUILD_NPM = BUILD_NPM_MAIN && BUILD_NPM_CLI;
 
 const BUILD_PIP = BUILD_ONLY.includes("pip");
 
+const BUILD_MAVEN = BUILD_ONLY.includes("maven");
+
 const BUILD_BIN =
-  BUILD_PIP || BUILD_NPM || BUILD_NPM_CLI || BUILD_ONLY.includes("bin");
+  BUILD_PIP ||
+  BUILD_NPM ||
+  BUILD_NPM_CLI ||
+  BUILD_MAVEN ||
+  BUILD_ONLY.includes("bin");
 
 //#endregion
 
@@ -81,6 +90,12 @@ const DIST_NPM_MAIN_PKG_DIR = path.resolve(DIST_DIR, "npm-alumnium");
 const DIST_NPM_DIR = path.resolve(DIST_DIR, "npm");
 const PACKAGE_JSON_NAME = "package.json";
 
+// Ignore scanTypes in the binary since it's only needed in dev.
+const TYPES_SCAN_STUB_FILES = {
+  [path.resolve(MAIN_NPM_SRC_DIR, "utils/typesScan.ts")]:
+    "export function scanTypes() {}\n",
+};
+
 // Pip paths
 const DIST_PIP_DIR = path.resolve(DIST_DIR, "pip");
 const PIP_CLI_PKG_NAME = "alumnium-cli";
@@ -88,9 +103,40 @@ const PIP_CLI_MODULE_NAME = getPipModuleName(PIP_CLI_PKG_NAME);
 const DIST_PIP_CLI_PKG_DIR = path.resolve(DIST_DIR, `pip-${PIP_CLI_PKG_NAME}`);
 const PYPROJECT_NAME = "pyproject.toml";
 
+// Maven paths
+const MAVEN_CLI_PKG_NAME = "alumnium-cli";
+const MAVEN_RESOURCE_PREFIX = "ai/alumnium/cli";
+const DIST_MAVEN_DIR = path.resolve(DIST_DIR, "maven");
+
 // Assets
 const COMMON_PKG_ASSETS = ["../../LICENSE.md"];
 const CORE_PKG_ASSETS = [...COMMON_PKG_ASSETS, "../../README.md"];
+
+// Banner prepended to the bundled oop download worker. Bun bakes
+// playwright-core's `__dirname` into the bundle as the absolute build-machine
+// path (e.g. /home/runner/... on CI), so the worker's `require(packageRoot +
+// "/package.json")` and `browsers.json` fail on any other machine. This hook
+// redirects those requires to the worker's own runtime directory, where
+// setupEmbeddedDependencies.ts extracts the matching package.json/browsers.json
+// alongside the worker. Mirrors the parent-process hook in that file. The
+// banner runs in the worker's outer CJS scope, so its `__dirname` is the real
+// extracted location rather than the baked literal.
+const PLAYWRIGHT_OOP_DOWNLOAD_BANNER = `"use strict";
+{
+  const __M = require("node:module");
+  const __P = require("node:path");
+  const __orig = __M._resolveFilename;
+  __M._resolveFilename = function (request, ...rest) {
+    if (typeof request === "string") {
+      if (request.endsWith("playwright-core/package.json") || request.endsWith("playwright-core\\\\package.json"))
+        return __P.join(__dirname, "package.json");
+      if (request.endsWith("playwright-core/browsers.json") || request.endsWith("playwright-core\\\\browsers.json"))
+        return __P.join(__dirname, "browsers.json");
+    }
+    return __orig.call(this, request, ...rest);
+  };
+}
+`;
 
 //#endregion
 
@@ -126,6 +172,7 @@ interface TargetPlatform {
   binPath: string;
   npm: TargetPkg;
   pip: TargetPkg;
+  maven: TargetPkg;
 }
 
 interface TargetPkg {
@@ -167,6 +214,18 @@ const TARGET_PLATFORMS: TargetPlatform[] = OSES.flatMap((os) =>
         dir: pipDir,
         mainUrl: PIP_MAIN_URL,
         binPath: path.resolve(pipDir, "src", PIP_CLI_MODULE_NAME, binName),
+      },
+      maven: {
+        name: `${MAVEN_CLI_PKG_NAME}-${target}`,
+        dir: path.resolve(DIST_DIR, `maven-${MAVEN_CLI_PKG_NAME}-${target}`),
+        mainUrl: "https://central.sonatype.com/artifact/ai.alumnium/alumnium",
+        binPath: path.resolve(
+          DIST_DIR,
+          `maven-${MAVEN_CLI_PKG_NAME}-${target}`,
+          MAVEN_RESOURCE_PREFIX,
+          target,
+          binName,
+        ),
       },
     };
   }),
@@ -294,6 +353,11 @@ async function main() {
     BUILD_PIP && cleanUpDir(DIST_PIP_DIR),
     BUILD_PIP && cleanUpDir(DIST_PIP_CLI_PKG_DIR),
     ...TARGET_PLATFORMS.flatMap(({ pip }) => BUILD_PIP && cleanUpPkg(pip)),
+    // maven
+    BUILD_MAVEN && cleanUpDir(DIST_MAVEN_DIR),
+    ...TARGET_PLATFORMS.flatMap(
+      ({ maven }) => BUILD_MAVEN && cleanUpPkg(maven),
+    ),
   ]);
 
   //#endregion
@@ -315,12 +379,7 @@ async function main() {
             target: getBunTarget(os, arch),
             outfile: binPath,
           },
-          files: {
-            // Ignore scanTypes in the binary since it's only needed in dev.
-            [path.resolve(MAIN_NPM_SRC_DIR, "utils/typesScan.ts")]: `
-              export function scanTypes() {}
-            `,
-          },
+          files: TYPES_SCAN_STUB_FILES,
           plugins: [
             telemetryPathsRewritePlugin,
             wdioUtilsPatcherPlugin,
@@ -344,8 +403,7 @@ async function main() {
       }),
     );
 
-    await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
-    await fs.rmdir(STANDALONE_EMBEDDED_ASSETS_DIR);
+    await fs.rm(TMP_DIR, { recursive: true, force: true });
   }
 
   //#endregion
@@ -374,6 +432,7 @@ async function main() {
           target: "node",
           plugins: [telemetryPathsRewritePlugin],
           packages: "external",
+          files: TYPES_SCAN_STUB_FILES,
         };
 
         await Promise.all([
@@ -530,6 +589,57 @@ __all__ = ["bin_path"]
     //#endregion
 
     await generateSourceTarGz();
+  }
+
+  //#endregion
+
+  //#region maven
+
+  if (BUILD_MAVEN) {
+    console.log("\n🌀 Building Maven packages...\n");
+
+    await Promise.all(
+      TARGET_PLATFORMS.map(async (platform) => {
+        const { target, binName, maven } = platform;
+
+        // Each platform gets its own resource namespace so multiple CLI JARs
+        // can coexist on the classpath (e.g. darwin-arm64 + linux-x64).
+        // BinaryResolver detects OS/arch to find the right binary.properties.
+        const platformPrefix = `${MAVEN_RESOURCE_PREFIX}/${target}`;
+        const binResourcePath = `${platformPrefix}/${binName}`;
+        const metaInfDir = path.resolve(maven.dir, "META-INF");
+
+        await Promise.all([
+          buildTargetPkgCommons(platform, maven),
+          fs.mkdir(metaInfDir, { recursive: true }),
+        ]);
+
+        await Promise.all([
+          // README.md/LICENSE.md are staged at the package root by
+          // buildTargetPkgCommons; move them under META-INF/ so they ship
+          // inside the JAR per Maven convention.
+          fs.rename(
+            path.resolve(maven.dir, "LICENSE.md"),
+            path.resolve(metaInfDir, "LICENSE.md"),
+          ),
+          fs.rename(
+            path.resolve(maven.dir, "README.md"),
+            path.resolve(metaInfDir, "README.md"),
+          ),
+          fs.writeFile(
+            path.resolve(maven.dir, platformPrefix, "binary.properties"),
+            `name=${binName}\nresource=${binResourcePath}\n`,
+          ),
+        ]);
+
+        // Build JAR containing binary.properties, the binary, and META-INF docs
+        const jarName = `${maven.name}-${ALUMNIUM_VERSION}.jar`;
+        const jarPath = path.resolve(DIST_MAVEN_DIR, jarName);
+        await $`jar cf ${jarPath} -C ${maven.dir} ${platformPrefix}/binary.properties -C ${maven.dir} ${binResourcePath} -C ${maven.dir} META-INF/LICENSE.md -C ${maven.dir} META-INF/README.md`;
+
+        console.log(`🟢 ${maven.name} (${cwdRelPath(jarPath)})`);
+      }),
+    );
   }
 
   //#endregion
@@ -822,15 +932,60 @@ function getNpmOs(os: OS) {
 async function prepareStandaloneEmbeddedAssets() {
   await cleanUpDir(STANDALONE_EMBEDDED_ASSETS_DIR);
 
-  const assets = await getStandaloneEmbeddedAssets();
+  const [assets, oopDownloadPath] = await Promise.all([
+    getStandaloneEmbeddedAssets(),
+    buildPlaywrightOopDownloadBundle(),
+  ]);
+
+  const allAssets: StandaloneEmbeddedAsset[] = [
+    ...assets,
+    {
+      name: PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
+      sourcePath: oopDownloadPath,
+    },
+  ];
 
   return Promise.all(
-    assets.map(async ({ name, sourcePath }) => {
+    allAssets.map(async ({ name, sourcePath }) => {
       const stagedPath = path.join(STANDALONE_EMBEDDED_ASSETS_DIR, name);
       await fs.copyFile(sourcePath, stagedPath);
       return stagedPath;
     }),
   );
+}
+
+async function buildPlaywrightOopDownloadBundle(): Promise<string> {
+  const playwrightCorePkgDir = path.resolve(
+    PKG_DIR,
+    "node_modules/playwright-core",
+  );
+  const entrypoint = path.join(
+    playwrightCorePkgDir,
+    "lib/entry/oopBrowserDownload.js",
+  );
+  const outDir = path.resolve(TMP_DIR, "playwright-oop-download");
+  await cleanUpDir(outDir);
+
+  const result = await Bun.build({
+    entrypoints: [entrypoint],
+    outdir: outDir,
+    target: "node",
+    format: "cjs",
+    packages: "bundle",
+    external: ["chromium-bidi"],
+    naming: "[name].cjs",
+    minify: false,
+    banner: PLAYWRIGHT_OOP_DOWNLOAD_BANNER,
+  });
+
+  if (!result.success) {
+    throw new AggregateError(
+      result.logs.map((log) => new Error(log.message)),
+      "Failed to bundle playwright oopDownloadBrowserMain.js",
+    );
+  }
+
+  return path.join(outDir, "oopBrowserDownload.cjs");
 }
 
 async function getStandaloneEmbeddedAssets(): Promise<
@@ -871,6 +1026,11 @@ async function getStandaloneEmbeddedAssets(): Promise<
     {
       name: PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
       sourcePath: path.join(playwrightCorePkgDir, "package.json"),
+    },
+
+    {
+      name: PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
+      sourcePath: path.join(playwrightCorePkgDir, "browsers.json"),
     },
   ];
 }

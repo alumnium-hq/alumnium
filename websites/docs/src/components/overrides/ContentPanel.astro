@@ -1,0 +1,25 @@
+---
+import Default from "@astrojs/starlight/components/ContentPanel.astro";
+
+const isBare = Astro.locals.starlightRoute.entry.data.bare;
+---
+
+{
+  isBare ? (
+    <div class="content-panel bare-layout">
+      <div class="sl-container">
+        <slot />
+      </div>
+    </div>
+  ) : (
+    <Default {...Astro.props}>
+      <slot />
+    </Default>
+  )
+}
+
+<style>
+  .bare-layout .sl-container {
+    max-width: none;
+  }
+</style>

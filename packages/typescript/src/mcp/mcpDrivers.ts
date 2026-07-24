@@ -5,6 +5,7 @@
 import type { BrowserContext, Page } from "playwright-core";
 import { chromium } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
+import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
 import { Options } from "selenium-webdriver/chrome.js";
 import {
   remote as remoteWebdriverio,
@@ -13,6 +14,7 @@ import {
 import type { Driver } from "../drivers/Driver.ts";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
+import { proxyFromEnv } from "./proxyFromEnv.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { TypeUtils } from "../typeUtils.ts";
 
@@ -38,6 +40,14 @@ export namespace McpDriver {
     headless?: boolean;
     permissions?: string[];
     profileDir?: string;
+    proxy?: {
+      server: string;
+      bypass?: string;
+      username?: string;
+      password?: string;
+    };
+    recordVideos?: boolean;
+    userAgent?: string;
   }
 
   export interface SeleniumCdpConnection {
@@ -77,7 +87,12 @@ export async function createPlaywrightDriver(
     headers = {},
     permissions,
     profileDir,
+    proxy: explicitProxy,
+    recordVideos = Env.ALUMNIUM_MCP_RECORD_VIDEOS,
+    userAgent,
   } = driverOptions;
+
+  const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
 
   logger.info(
     `Creating Playwright driver (headless=${headless}, profile=${profileDir ?? "none"})`,
@@ -87,31 +102,40 @@ export async function createPlaywrightDriver(
     logger.debug("Setting extra HTTP headers: {headers}", { headers });
   }
 
-  const videosDir = await artifactsStore.ensureDir("videos");
+  await ensurePlaywrightChromiumInstalled();
+  const videosDir = recordVideos
+    ? await artifactsStore.ensureDir("videos")
+    : undefined;
 
   let context: BrowserContext;
   if (profileDir) {
     context = await chromium.launchPersistentContext(profileDir, {
       headless,
-      recordVideo: { dir: videosDir },
+      ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
       extraHTTPHeaders: headers,
       ...(executablePath ? { executablePath } : {}),
+      ...(proxy ? { proxy } : {}),
+      ...(userAgent ? { userAgent } : {}),
     });
   } else {
     const browser = await chromium.launch({
       headless,
       ...(executablePath ? { executablePath } : {}),
+      ...(proxy ? { proxy } : {}),
     });
     context = await browser.newContext({
-      recordVideo: { dir: videosDir },
+      ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
       extraHTTPHeaders: headers,
+      ...(userAgent ? { userAgent } : {}),
     });
   }
 
   await context.tracing.start({
     screenshots: true,
     snapshots: true,
-    sources: true,
+    // Capturing call-site sources fails in the Bun single-file executable
+    // because the recorded paths (e.g. /$bunfs/root/...) do not exist on disk.
+    sources: false,
   });
 
   if (cookies) {
@@ -152,7 +176,11 @@ export async function createSeleniumDriver(
     headers = {},
     headless = false,
     profileDir,
+    proxy: explicitProxy,
+    userAgent,
   } = driverOptions;
+
+  const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
 
   const chromeOptions = new Options();
   // Disable verbose logging so it doesn't print to stdout and interfere with
@@ -174,6 +202,17 @@ export async function createSeleniumDriver(
 
   if (headless) {
     chromeOptions.addArguments("--headless=new");
+  }
+
+  if (proxy) {
+    chromeOptions.addArguments(`--proxy-server=${proxy.server}`);
+    if (proxy.bypass) {
+      chromeOptions.addArguments(`--proxy-bypass-list=${proxy.bypass}`);
+    }
+  }
+
+  if (userAgent) {
+    chromeOptions.addArguments(`--user-agent=${userAgent}`);
   }
 
   // Apply all capabilities to options.

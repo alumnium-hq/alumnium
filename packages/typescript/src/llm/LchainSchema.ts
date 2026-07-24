@@ -94,6 +94,10 @@ export abstract class LchainSchema {
     ephemeral_1h_input_tokens: z.number(),
   });
 
+  static MessageDataAdditionalKwargsUsageOutputTokensDetails = z.object({
+    thinking_tokens: z.number(),
+  });
+
   static MessageDataAdditionalKwargsUsage = z.object({
     input_tokens: z.number(),
     cache_creation_input_tokens: z.number(),
@@ -102,6 +106,8 @@ export abstract class LchainSchema {
     output_tokens: z.number(),
     service_tier: z.union([z.literal("standard"), z.string()]),
     inference_geo: z.string(),
+    output_tokens_details:
+      this.MessageDataAdditionalKwargsUsageOutputTokensDetails.exactOptional(),
   });
 
   static FunctionCallFunction = z.object({
@@ -198,6 +204,10 @@ export abstract class LchainSchema {
     totalTokens: z.number().exactOptional(),
   });
 
+  static ResponseMetadataIncompleteDetailsOption2 = z.object({
+    reason: z.literal("content_filter"),
+  });
+
   static ResponseMetadataMetadata = z.object({});
 
   static MetadataOutputText = z.object({
@@ -273,6 +283,8 @@ export abstract class LchainSchema {
     cost_in_usd_ticks: z.number().exactOptional(),
     cacheReadInputTokens: z.number().exactOptional(),
     cacheWriteInputTokens: z.number().exactOptional(),
+    output_tokens_details:
+      this.MessageDataAdditionalKwargsUsageOutputTokensDetails.exactOptional(),
   });
 
   static ResponseMetadataMetrics = z.object({ latencyMs: z.number() });
@@ -305,11 +317,18 @@ export abstract class LchainSchema {
     model_provider: z.string().exactOptional(),
     model: z.string().exactOptional(),
     created_at: z.union([z.number(), z.string()]).exactOptional(),
-    incomplete_details: z.null().exactOptional(),
+    incomplete_details: z
+      .union([z.null(), this.ResponseMetadataIncompleteDetailsOption2])
+      .exactOptional(),
     metadata: this.ResponseMetadataMetadata.exactOptional(),
     object: z.union([z.literal("response"), z.string()]).exactOptional(),
     output: z.array(this.ResponseMetadataOutputItem).exactOptional(),
-    status: z.union([z.literal("completed"), z.string()]).exactOptional(),
+    status: z
+      .union([
+        z.union([z.literal("completed"), z.literal("incomplete")]),
+        z.string(),
+      ])
+      .exactOptional(),
     user: z.null().exactOptional(),
     service_tier: z.union([z.literal("default"), z.string()]).exactOptional(),
     model_name: z.string().exactOptional(),
@@ -434,6 +453,10 @@ export namespace LchainSchema {
     typeof LchainSchema.MessageDataAdditionalKwargsUsageCacheCreation
   >;
 
+  export type MessageDataAdditionalKwargsUsageOutputTokensDetails = z.infer<
+    typeof LchainSchema.MessageDataAdditionalKwargsUsageOutputTokensDetails
+  >;
+
   export type MessageDataAdditionalKwargsUsage = z.infer<
     typeof LchainSchema.MessageDataAdditionalKwargsUsage
   >;
@@ -476,6 +499,10 @@ export namespace LchainSchema {
 
   export type ResponseMetadataEstimatedTokenUsage = z.infer<
     typeof LchainSchema.ResponseMetadataEstimatedTokenUsage
+  >;
+
+  export type ResponseMetadataIncompleteDetailsOption2 = z.infer<
+    typeof LchainSchema.ResponseMetadataIncompleteDetailsOption2
   >;
 
   export type ResponseMetadataMetadata = z.infer<

@@ -8,6 +8,7 @@ import { CliCommand } from "../cli/CliCommand.ts";
 import { Env } from "../Env.ts";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
 import { Logger } from "../telemetry/Logger.ts";
+import { ensureDir } from "../utils/fs.ts";
 import { sleep } from "../utils/timers.ts";
 import { serverApp } from "./serverApp.ts";
 
@@ -263,7 +264,7 @@ async function waitForHealth(
 }
 
 async function writePidFile(pidPath: string): Promise<void> {
-  await fs.mkdir(path.dirname(pidPath), { recursive: true });
+  await ensureDir(path.dirname(pidPath));
   await fs.writeFile(pidPath, String(process.pid), "utf-8");
 }
 

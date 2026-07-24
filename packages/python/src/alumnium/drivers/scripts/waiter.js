@@ -349,7 +349,7 @@
       });
 
       // @ts-expect-error -- It is tricky to type
-      return nativeOpen(method, url, ...rest);
+      return nativeOpen.call(this, method, url, ...rest);
     };
 
     /**
@@ -370,7 +370,7 @@
   }
 
   function hookFetch() {
-    const nativeFetch = window.fetch;
+    const nativeFetch = window.fetch.bind(window);
 
     /**
      * @param {RequestInfo | URL} input

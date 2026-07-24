@@ -32,10 +32,6 @@ MISE_EXPERIMENTAL = true # Enable monorepo root support
 OPENCODE_CONFIG_DIR = "./.agents"
 FORCE_COLOR = "1" # Force colors, i.e., for `bun --filter test`
 
-# Default model envs
-ALUMNIUM_MODEL = "${ALUMNIUM_MODEL:-azure_openai}"
-AZURE_OPENAI_API_VERSION = "2025-03-01-preview"
-
 # Default tracing envs. To enable set ALUMNIUM_TRACE=true.
 OTEL_SERVICE_NAME = "alumnium"
 OTEL_EXPORTER_OTLP_ENDPOINT = "http://127.0.0.1:4318"
@@ -66,6 +62,7 @@ run = "bun install"
 # NOTE: Each package might have its own Playwright version and expect a particular browser versions,
 # so we need to run the installation for each package separately.
 run = [
+  { task = "//packages/java:install/playwright" },
   { task = "//packages/typescript:install/playwright" },
   { task = "//packages/python:install/playwright" },
 ]
@@ -78,11 +75,12 @@ run = "ollama pull $(mise //packages/typescript:get-ollama-model)"
 
 [tasks.build]
 depends = [
-  "//packages/typescript:build",
+  "//packages/java:build",
   "//packages/python:build",
+  "//packages/typescript:build",
   "//websites/docs:build",
 ]
-description = "Build all packages"
+description = "Build all"
 
 [tasks."dev/cli"]
 run = [{ task = "//packages/typescript:dev/cli" }]
@@ -115,45 +113,60 @@ depends_post = [
 ]
 
 [tasks.format]
-depends = ["//packages/typescript:format", "//packages/python:format"]
-
-[tasks."format:check"]
 depends = [
-  "//packages/typescript:format:check",
-  "//packages/python:format:check",
+  "//packages/java:format",
+  "//packages/python:format",
+  "//packages/typescript:format",
+]
+
+[tasks."format/check"]
+depends = [
+  "//packages/java:format/check",
+  "//packages/python:format/check",
+  "//packages/typescript:format/check",
 ]
 
 [tasks.types]
-depends = ["types/ts", "//packages/python:types"]
+depends = ["types/ts", "//packages/java:types", "//packages/python:types"]
 
 [tasks.lint]
 description = "Lint all packages"
-depends = ["//packages/typescript:lint", "//packages/python:lint"]
+depends = [
+  "//packages/java:lint",
+  "//packages/python:lint",
+  "//packages/typescript:lint",
+]
 
-[tasks."lint:fix"]
+[tasks."lint/fix"]
 description = "Fix linting issues in all packages"
-depends = ["//packages/typescript:lint:fix", "//packages/python:lint:fix"]
+depends = ["//packages/typescript:lint/fix", "//packages/python:lint/fix"]
 
 [tasks."types/ts"]
-run = "bun run tsgo --build"
+run = "bun run types"
 
 [tasks."types/ts:watch"]
-run = "bun run tsgo --build --watch"
+run = "bun run types:watch"
 
 [tasks."test/unit"]
-depends = ["//packages/typescript:test/unit", "//packages/python:test/unit"]
+depends = [
+  "//packages/java:test/unit",
+  "//packages/python:test/unit",
+  "//packages/typescript:test/unit",
+]
 
 [tasks."test/system"]
-run = [
-  { task = "//packages/typescript:test/system" },
-  { task = "//packages/python:test/system" },
+depends = [
+  "//packages/java:test/system",
+  "//packages/python:test/system",
+  "//packages/typescript:test/system",
 ]
 
 [tasks."test/package"]
-description = "Run all (npm, pip) package tests"
+description = "Run all (npm, pip, maven) package tests"
 depends = [
-  "//packages/typescript:test/package",
+  "//packages/java:test/package",
   "//packages/python:test/package",
+  "//packages/typescript:test/package",
 ]
 
 [tasks.version]

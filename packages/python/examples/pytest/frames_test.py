@@ -15,14 +15,15 @@ def test_nested_frames(al, navigate):
 
 
 @mark.xfail(
-    "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
-    reason="Frames support is only implemented for Playwright and Selenium currently",
+    "playwright" != getenv("ALUMNIUM_DRIVER", "selenium"),
+    reason="Frames support is only implemented for Playwright currently",
 )
 def test_cross_origin_iframe(al, navigate):
     navigate("cross_origin_iframe.html")
 
     al.check("button 'Main Page Button' is present")
-    al.do("click button 'Click Me Inside Iframe'")
-    al.check("text 'Button Clicked!' is present")
-    al.do("click link 'Iframe Link'")
-    al.check("text 'Link Clicked!' is present")
+    al.check("'Password' field is present")
+    al.do("type 'testuser' in the text input field")
+    al.check("Text input contains 'testuser'")
+    al.do("click Submit button")
+    al.check("'Form submitted' message is present")

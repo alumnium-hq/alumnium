@@ -39,3 +39,11 @@
 
 # AIs
 **/.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+
+# Assets
+*~lock~*

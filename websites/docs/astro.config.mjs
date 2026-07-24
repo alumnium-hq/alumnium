@@ -13,10 +13,13 @@ export default defineConfig({
     format: "directory",
   },
   trailingSlash: "ignore",
+  markdown: {
+    gfm: true,
+  },
   integrations: [
     starlight({
       logo: {
-        src: "./public/favicon.svg",
+        src: "./src/assets/icon.svg",
         alt: "Alumnium",
         replacesTitle: true,
       },
@@ -38,7 +41,6 @@ export default defineConfig({
           href: "https://seleniumhq.slack.com/channels/alumnium",
         },
       ],
-      favicon: "./public/favicon.svg",
       head: [
         {
           tag: "link",
@@ -61,6 +63,13 @@ export default defineConfig({
           attrs: {
             rel: "apple-touch-icon",
             href: "/apple-touch-icon.png",
+          },
+        },
+        {
+          tag: "link",
+          attrs: {
+            rel: "manifest",
+            href: "/manifest.webmanifest",
           },
         },
         {
@@ -148,16 +157,24 @@ export default defineConfig({
           slug: "docs/reference",
         },
       ],
-      customCss: ["./src/styles/global.css"],
+      customCss: [
+        "./src/styles/global.css",
+        "@fontsource-variable/mona-sans",
+        "@fontsource/monaspace-neon",
+      ],
       components: {
-        // Override the default `Header` component.
         Header: "./src/components/overrides/Header.astro",
         MobileMenuFooter: "./src/components/overrides/MobileMenuFooter.astro",
+        ContentPanel: "./src/components/overrides/ContentPanel.astro",
+        PageTitle: "./src/components/overrides/PageTitle.astro",
+        SiteTitle: "./src/components/overrides/SiteTitle.astro",
       },
     }),
     sitemap({}),
   ],
+
   vite: { plugins: [...tailwindcss()] },
+
   redirects: {
     "/docs/getting-started/writing-first-test":
       "/docs/writing-first-test/selenium",

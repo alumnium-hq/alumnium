@@ -5,15 +5,18 @@ run = "bun install"
 run = "rm -rf dist/ public/install.sh public/install.ps1"
 
 [tasks.build]
-run = "bun run build"
+run = '''
+bun run astro check
+bun run astro build
+'''
 
 [tasks.dev]
-run = "bun run dev"
+run = "bun run astro dev --host 0.0.0.0"
 
-[tasks.generate-install-scripts]
+[tasks."generate/install-scripts"]
 run = "bun scripts/generate-install-scripts.ts"
 
-[tasks.test-install-script]
+[tasks."test/install-scripts"]
 run = '''
 sh public/install.sh
 expected=$(mise //packages/typescript:version)

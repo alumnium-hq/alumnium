@@ -1,72 +1,49 @@
 ---
 import Search from "@astrojs/starlight/components/Search.astro";
-import SiteTitle from "@astrojs/starlight/components/SiteTitle.astro";
+import SiteTitle from "./SiteTitle.astro";
 import SocialIcons from "@astrojs/starlight/components/SocialIcons.astro";
 import ThemeSelect from "@astrojs/starlight/components/ThemeSelect.astro";
 import LanguageSelect from "../LanguageSelect.astro";
 
-const {
-  siteTitle,
-  siteTitleHref,
-  headings,
-  sidebar,
-  hasSidebar,
-  pagination,
-  toc,
-  lastUpdated,
-  editUrl,
-  labels,
-  entry,
-  entryMeta,
-  slug,
-  id,
-  dir,
-  lang,
-  locale,
-  hasSearch = true,
-} = Astro.props;
-
-const props = {
-  siteTitle,
-  siteTitleHref,
-  headings,
-  sidebar,
-  hasSidebar,
-  pagination,
-  toc,
-  lastUpdated,
-  editUrl,
-  labels,
-  entry,
-  entryMeta,
-  slug,
-  id,
-  dir,
-  lang,
-  locale,
-};
+const { hasSearch = true } = Astro.props;
 
 const isDocsPage = Astro.url.pathname.startsWith("/docs");
 ---
 
-<div class="header">
+<div class="header bg-blue-canvas">
   <div class="title-wrapper sl-flex flex-row items-center gap-4">
-    <SiteTitle {...props} />
-    <div class="sl-flex items-center gap-4 font-medium">
-      <a href="/blog" class="no-underline text-accent-600 dark:text-accent-200">Blog</a>
-      <a href="/docs" class="no-underline text-accent-600 dark:text-accent-200">Documentation</a>
+    <SiteTitle {...Astro.props} />
+
+    <div
+      class="sl-flex items-center gap-4 font-medium pl-5 border-l border-del-canvas"
+    >
+      <a href="/blog" class="no-underline text-accent-200">Blog</a>
+
+      <a href="/docs" class="no-underline text-accent-200">Documentation</a>
     </div>
   </div>
+
   <div class="sl-flex print:hidden">
-    {!!hasSearch && <Search {...props} />}
+    {!!hasSearch && <Search {...Astro.props} />}
   </div>
-  <div class="print:hidden right-group">
-    <SocialIcons {...props} />
-    {isDocsPage && <LanguageSelect />}
-    <ThemeSelect {...props} />
+
+  <div class="right-group">
+    <div class="print:hidden right-group flex gap-8">
+      <div class="flex gap-4 social-icons">
+        <SocialIcons {...Astro.props} />
+      </div>
+
+      {isDocsPage && <LanguageSelect />}
+
+      <div class="text-accent-200">
+        <ThemeSelect {...Astro.props} />
+      </div>
+    </div>
   </div>
 
   <style>
+    @reference "../../styles/global.css";
+
     @layer starlight.core {
       .header {
         display: flex;
@@ -101,6 +78,7 @@ const isDocsPage = Astro.url.pathname.startsWith("/docs");
           display: flex;
         }
       }
+
       .social-icons::after {
         content: "";
         height: 2rem;
@@ -115,18 +93,29 @@ const isDocsPage = Astro.url.pathname.startsWith("/docs");
           --__toc-width: 0rem;
         }
         .header {
-          --__sidebar-width: max(0rem, var(--sl-content-inline-start, 0rem) - var(--sl-nav-pad-x));
+          --__sidebar-width: max(
+            0rem,
+            var(--sl-content-inline-start, 0rem) - var(--sl-nav-pad-x)
+          );
           --__main-column-fr: calc(
             (
-                100% + var(--__sidebar-pad, 0rem) - var(--__toc-width, var(--sl-sidebar-width)) -
-                  (2 * var(--__toc-width, var(--sl-nav-pad-x))) - var(--sl-content-inline-start, 0rem) -
-                  var(--sl-content-width)
-              ) / 2
+                100% + var(--__sidebar-pad, 0rem) -
+                  var(--__toc-width, var(--sl-sidebar-width)) -
+                  (2 * var(--__toc-width, var(--sl-nav-pad-x))) -
+                  var(--sl-content-inline-start, 0rem) - var(--sl-content-width)
+              ) /
+              2
           );
           display: grid;
           grid-template-columns:
         /* 1 (site title): runs up until the main content column’s left edge or the width of the title, whichever is the largest  */
-            minmax(calc(var(--__sidebar-width) + max(0rem, var(--__main-column-fr) - var(--sl-nav-gap))), auto)
+            minmax(
+              calc(
+                var(--__sidebar-width) +
+                  max(0rem, var(--__main-column-fr) - var(--sl-nav-gap))
+              ),
+              auto
+            )
             /* 2 (search box): all free space that is available. */
             1fr
             /* 3 (right items): use the space that these need. */

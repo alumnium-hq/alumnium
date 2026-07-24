@@ -14,8 +14,7 @@ describe("Waiter script", () => {
     };
   });
 
-  // TODO: Figure out why this test it so flaky on CI and fix it.
-  it.skip("waiting for loading content", async ({ expect, setup }) => {
+  it("waiting for loading content", async ({ expect, setup }) => {
     const { al, $ } = await setup();
     await $.navigate("https://the-internet.herokuapp.com/dynamic_content");
     const totalImages = await al.get("the total number of profile images");

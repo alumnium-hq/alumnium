@@ -94,15 +94,15 @@ export abstract class McpState {
 
     logger.debug(`Cleaning up driver ${id}`);
 
-    const { al, mcpDriver } = driverState;
+    const { al } = driverState;
     const stats = await al.getStats();
 
-    if (mcpDriver instanceof PlaywrightDriver) {
+    if (al.driver instanceof PlaywrightDriver) {
       logger.debug(`Driver ${id}: Stopping Playwright tracing`);
 
       const tracePath =
         await driverState.artifactsStore.ensureFilePath("trace.zip");
-      await mcpDriver.page.context().tracing.stop({ path: tracePath });
+      await al.driver.page.context().tracing.stop({ path: tracePath });
     }
 
     // Save token stats to JSON file

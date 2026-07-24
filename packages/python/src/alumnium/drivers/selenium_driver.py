@@ -14,7 +14,6 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
-from ..accessibility.chromium_node_types import ChromiumSyntheticNode
 from ..logutils import get_logger
 from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
@@ -46,6 +45,7 @@ class SeleniumDriver(BaseDriver):
             TypeTool,
             UploadTool,
         }
+        self._shadow_child_to_host_map: dict[int, int] = {}
         self._patch_driver(driver)
         self._enable_target_auto_attach()
 
@@ -64,15 +64,6 @@ class SeleniumDriver(BaseDriver):
         frame_ids = self._get_all_frame_ids(frame_tree["frameTree"])
         main_frame_id = frame_tree["frameTree"]["frame"]["id"]
         logger.debug(f"Found {len(frame_ids)} frames")
-
-        # Get all targets including OOPIFs (cross-origin iframes)
-        try:
-            targets = self.driver.execute_cdp_cmd("Target.getTargets", {})  # type: ignore[attr-defined]
-            oopif_targets = self._get_oopif_targets(targets, frame_tree)
-            logger.debug(f"Found {len(oopif_targets)} cross-origin iframes")
-        except Exception as e:
-            logger.debug(f"Could not get OOPIF targets: {e}")
-            oopif_targets = []
 
         # Build mapping: frameId -> backendNodeId of the iframe element containing the frame
         frame_to_iframe_map: dict[str, int] = {}
@@ -100,246 +91,17 @@ class SeleniumDriver(BaseDriver):
             except Exception as e:
                 logger.debug(f"  -> Frame {frame_id[:20]}...: failed ({e})")
 
-        # Process cross-origin iframes via JavaScript fallback
-        for oopif in oopif_targets:
-            try:
-                nodes = self._get_cross_origin_frame_nodes(oopif)
-                all_nodes.extend(nodes)
-                logger.debug(f"  -> Cross-origin iframe {oopif.get('url', '')[:40]}...: {len(nodes)} nodes")
-            except Exception as e:
-                logger.debug(f"  -> Cross-origin iframe {oopif.get('url', '')[:40]}...: failed ({e})")
+        logger.debug(f"Total accessibility nodes collected: {len(all_nodes)}")
+
+        try:
+            shadow_nodes = self._build_shadow_hierarcy()
+            all_nodes.extend(shadow_nodes)
+            if shadow_nodes:
+                logger.debug(f"  -> Shadow DOM: {len(shadow_nodes)} nodes added")
+        except Exception as e:
+            logger.debug(f"  -> Shadow DOM failed ({e})")
 
         return ChromiumAccessibilityTree({"nodes": all_nodes})
-
-    def _build_frame_hierarchy(
-        self,
-        frame_info: dict,
-        main_frame_id: str,
-        frame_to_iframe_map: dict[str, int],
-        frame_parent_map: dict[str, str],
-        parent_frame_id: str | None = None,
-    ):
-        """Build frame hierarchy maps recursively."""
-        frame_id = frame_info["frame"]["id"]
-
-        if frame_id != main_frame_id:
-            # Get the iframe element that owns this frame
-            self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
-            try:
-                owner_info = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
-                    "DOM.getFrameOwner",
-                    {"frameId": frame_id},
-                )
-                frame_to_iframe_map[frame_id] = owner_info["backendNodeId"]
-                logger.debug(f"Frame {frame_id[:20]}... owned by iframe backendNodeId={owner_info['backendNodeId']}")
-            except Exception as e:
-                logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
-
-            # Track parent frame
-            if parent_frame_id:
-                frame_parent_map[frame_id] = parent_frame_id
-
-        # Process children
-        for child in frame_info.get("childFrames", []):
-            self._build_frame_hierarchy(child, main_frame_id, frame_to_iframe_map, frame_parent_map, frame_id)
-
-    def _get_frame_chain(
-        self,
-        frame_id: str,
-        frame_to_iframe_map: dict[str, int],
-        frame_parent_map: dict[str, str],
-    ) -> list[int]:
-        """Get the chain of iframe backendNodeIds from root to this frame."""
-        chain: list[int] = []
-        current_frame_id = frame_id
-
-        while current_frame_id in frame_to_iframe_map:
-            iframe_backend_node_id = frame_to_iframe_map[current_frame_id]
-            chain.insert(0, iframe_backend_node_id)  # Insert at beginning to build from root
-            # Move to parent frame
-            if current_frame_id in frame_parent_map:
-                current_frame_id = frame_parent_map[current_frame_id]
-            else:
-                break
-
-        return chain
-
-    def _get_all_frame_ids(self, frame_info: dict) -> list:
-        """Recursively collect all frame IDs from CDP frame tree."""
-        frame_ids = [frame_info["frame"]["id"]]
-        for child in frame_info.get("childFrames", []):
-            frame_ids.extend(self._get_all_frame_ids(child))
-        return frame_ids
-
-    def _get_all_frame_urls(self, frame_info: dict) -> list[str]:
-        """Recursively collect all frame URLs from CDP frame tree."""
-        urls = [frame_info["frame"].get("url", "")]
-        for child in frame_info.get("childFrames", []):
-            urls.extend(self._get_all_frame_urls(child))
-        return urls
-
-    def _get_oopif_targets(self, targets: dict, frame_tree: dict) -> list[dict]:
-        """Identify OOPIF targets that aren't in the main frame tree."""
-        frame_urls = set(self._get_all_frame_urls(frame_tree["frameTree"]))
-        oopif_targets = []
-
-        for target in targets.get("targetInfos", []):
-            if target.get("type") == "iframe":
-                url = target.get("url", "")
-                # If this iframe URL isn't in the same-origin frame tree, it's an OOPIF
-                if url and url not in frame_urls:
-                    oopif_targets.append(target)
-                    logger.debug(f"Detected OOPIF target: {url[:60]}")
-
-        return oopif_targets
-
-    def _get_cross_origin_frame_nodes(self, oopif_target: dict) -> list[dict]:
-        """Get accessibility nodes from a cross-origin iframe using JavaScript query fallback."""
-        url = oopif_target.get("url", "")
-
-        # Find the iframe element that contains this URL
-        iframe_element = self._find_iframe_by_url(url)
-        if not iframe_element:
-            logger.debug(f"Could not find iframe element for URL: {url[:60]}")
-            return []
-
-        # Get the backendNodeId of the iframe element for frame chain tracking
-        iframe_backend_node_id = self._get_element_backend_node_id(iframe_element)
-
-        # Switch into the cross-origin iframe
-        self.driver.switch_to.frame(iframe_element)
-
-        try:
-            # Query interactive elements using JavaScript
-            nodes = self._query_frame_interactive_elements(iframe_backend_node_id)
-            return nodes
-        finally:
-            # Always switch back to default content
-            self.driver.switch_to.default_content()
-
-    def _find_iframe_by_url(self, url: str) -> WebElement | None:
-        """Find an iframe element by its src URL."""
-        try:
-            iframes = self.driver.find_elements(By.TAG_NAME, "iframe")
-            for iframe in iframes:
-                src = iframe.get_attribute("src")
-                if src == url:
-                    return iframe
-            return None
-        except Exception:
-            return None
-
-    def _get_element_backend_node_id(self, element: WebElement) -> int | None:
-        """Get the backendNodeId for a WebElement using CDP."""
-        try:
-            # Set temporary attribute to identify element
-            unique_id = f"alumnium-temp-{id(element)}"
-            self.driver.execute_script(
-                "arguments[0].setAttribute('data-alumnium-temp', arguments[1])",
-                element,
-                unique_id,
-            )
-
-            # Use CDP to find the node
-            self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
-            doc = self.driver.execute_cdp_cmd("DOM.getDocument", {})  # type: ignore[attr-defined]
-            result = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
-                "DOM.querySelector",
-                {
-                    "nodeId": doc["root"]["nodeId"],
-                    "selector": f"[data-alumnium-temp='{unique_id}']",
-                },
-            )
-
-            if result.get("nodeId"):
-                node = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
-                    "DOM.describeNode",
-                    {"nodeId": result["nodeId"]},
-                )
-                backend_node_id = node.get("node", {}).get("backendNodeId")
-
-                # Clean up
-                self.driver.execute_script("arguments[0].removeAttribute('data-alumnium-temp')", element)
-
-                return backend_node_id
-        except Exception as e:
-            logger.debug(f"Could not get backendNodeId: {e}")
-        return None
-
-    def _query_frame_interactive_elements(self, iframe_backend_node_id: int | None) -> list[dict]:
-        """Query interactive elements in the current frame using JavaScript."""
-        # JavaScript to find interactive elements
-        js_query = """
-        return Array.from(document.querySelectorAll(
-            'button, a, [role="button"], [role="link"], input[type="submit"], ' +
-            '[aria-label], input:not([type="hidden"]), select, textarea'
-        )).slice(0, 100).map((el, index) => {
-            const rect = el.getBoundingClientRect();
-            return {
-                tagName: el.tagName.toLowerCase(),
-                role: el.getAttribute('role') || el.tagName.toLowerCase(),
-                name: el.getAttribute('aria-label') || el.textContent?.trim()?.slice(0, 100) || '',
-                type: el.getAttribute('type') || '',
-                id: el.id,
-                className: el.className,
-                index: index,
-                visible: rect.width > 0 && rect.height > 0
-            };
-        }).filter(el => el.visible && el.name);
-        """
-
-        elements = self.driver.execute_script(js_query)
-        nodes = []
-        node_id = -1  # Use negative IDs for synthetic nodes
-
-        for el in elements:
-            role = self._map_tag_to_role(el.get("tagName", ""), el.get("role", ""))
-            selector = self._build_element_selector(el)
-
-            synthetic_node: ChromiumSyntheticNode = {
-                "nodeId": str(node_id),
-                "role": {"value": role},
-                "name": {"value": el.get("name", "")},
-                "_playwright_node": True,  # Mark as synthetic (reuse existing flag)
-                "_locator_info": {
-                    "selector": selector,
-                    "nth": el.get("index", 0),
-                },
-            }
-
-            # Track which iframe this is in
-            if iframe_backend_node_id:
-                synthetic_node["_frame_chain"] = [iframe_backend_node_id]
-
-            nodes.append(synthetic_node)
-            node_id -= 1
-
-        return nodes
-
-    def _map_tag_to_role(self, tag: str, role: str) -> str:
-        """Map HTML tag/role to accessibility role."""
-        if role and role not in ("", tag):
-            return role
-        tag_role_map = {
-            "a": "link",
-            "button": "button",
-            "input": "textbox",
-            "select": "combobox",
-            "textarea": "textbox",
-        }
-        return tag_role_map.get(tag, tag)
-
-    def _build_element_selector(self, el: dict) -> str:
-        """Build a CSS selector for an element."""
-        tag = el.get("tagName", "")
-        el_id = el.get("id", "")
-        el_type = el.get("type", "")
-
-        if el_id:
-            return f"#{el_id}"
-        if tag == "input" and el_type:
-            return f"input[type='{el_type}']"
-        return tag
 
     @staticmethod
     def _autoswitch_to_new_tab(func: Callable) -> Callable:  # type: ignore[reportSelfClsParameterName]
@@ -458,10 +220,6 @@ class SeleniumDriver(BaseDriver):
     def find_element(self, id: int) -> WebElement:
         accessibility_element = self.accessibility_tree.element_by_id(id)
 
-        # Handle synthetic nodes (cross-origin iframe elements)
-        if accessibility_element.locator_info:
-            return self._find_element_by_locator_info(accessibility_element)
-
         backend_node_id = accessibility_element.backend_node_id
         frame_chain = accessibility_element.frame_chain
 
@@ -484,7 +242,15 @@ class SeleniumDriver(BaseDriver):
                 "value": str(backend_node_id),
             },
         )
-        element = self.driver.find_element(By.CSS_SELECTOR, f"[data-alumnium-id='{backend_node_id}']")
+        selector = f"[data-alumnium-id='{backend_node_id}']"
+        host_backend_node_id = (
+            self._shadow_child_to_host_map.get(backend_node_id) if backend_node_id is not None else None
+        )
+
+        search_context = self.driver
+        if host_backend_node_id is not None:
+            search_context = self._find_shadow_root(host_backend_node_id)
+        element = search_context.find_element(By.CSS_SELECTOR, selector)
         self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
             "DOM.removeAttribute",
             {
@@ -497,24 +263,6 @@ class SeleniumDriver(BaseDriver):
         # needs to remain in its frame context for subsequent operations (click, type, etc.)
 
         return element
-
-    def _find_element_by_locator_info(self, accessibility_element) -> WebElement:
-        """Find element using locator info for cross-origin iframe elements."""
-        locator_info = accessibility_element.locator_info
-        frame_chain = accessibility_element.frame_chain
-
-        # Switch to the appropriate frame
-        if frame_chain:
-            self._switch_to_frame_chain(frame_chain)
-
-        selector = locator_info.get("selector", "")
-        nth = locator_info.get("nth", 0)
-
-        elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
-        if nth < len(elements):
-            return elements[nth]
-
-        raise ValueError(f"Could not find element with selector {selector} (nth={nth})")
 
     def _switch_to_frame_chain(self, frame_chain: list[int]):
         """Switch through a chain of nested iframes."""
@@ -615,3 +363,204 @@ class SeleniumDriver(BaseDriver):
         prev_index = (current_index - 1) % len(handles)
         self.driver.switch_to.window(handles[prev_index])
         logger.debug(f"Switched to previous tab: {self.driver.title} ({self.driver.current_url})")
+
+    def _build_frame_hierarchy(
+        self,
+        frame_info: dict,
+        main_frame_id: str,
+        frame_to_iframe_map: dict[str, int],
+        frame_parent_map: dict[str, str],
+        parent_frame_id: str | None = None,
+    ):
+        """Build frame hierarchy maps recursively."""
+        frame_id = frame_info["frame"]["id"]
+
+        if frame_id != main_frame_id:
+            # Get the iframe element that owns this frame
+            self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
+            try:
+                owner_info = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                    "DOM.getFrameOwner",
+                    {"frameId": frame_id},
+                )
+                frame_to_iframe_map[frame_id] = owner_info["backendNodeId"]
+                logger.debug(f"Frame {frame_id[:20]}... owned by iframe backendNodeId={owner_info['backendNodeId']}")
+            except Exception as e:
+                logger.debug(f"Could not get frame owner for {frame_id[:20]}...: {e}")
+
+            # Track parent frame
+            if parent_frame_id:
+                frame_parent_map[frame_id] = parent_frame_id
+
+        # Process children
+        for child in frame_info.get("childFrames", []):
+            self._build_frame_hierarchy(child, main_frame_id, frame_to_iframe_map, frame_parent_map, frame_id)
+
+    def _get_frame_chain(
+        self,
+        frame_id: str,
+        frame_to_iframe_map: dict[str, int],
+        frame_parent_map: dict[str, str],
+    ) -> list[int]:
+        """Get the chain of iframe backendNodeIds from root to this frame."""
+        chain: list[int] = []
+        current_frame_id = frame_id
+
+        while current_frame_id in frame_to_iframe_map:
+            iframe_backend_node_id = frame_to_iframe_map[current_frame_id]
+            chain.insert(0, iframe_backend_node_id)  # Insert at beginning to build from root
+            # Move to parent frame
+            if current_frame_id in frame_parent_map:
+                current_frame_id = frame_parent_map[current_frame_id]
+            else:
+                break
+
+        return chain
+
+    def _get_all_frame_ids(self, frame_info: dict) -> list:
+        """Recursively collect all frame IDs from CDP frame tree."""
+        frame_ids = [frame_info["frame"]["id"]]
+        for child in frame_info.get("childFrames", []):
+            frame_ids.extend(self._get_all_frame_ids(child))
+        return frame_ids
+
+    def _find_shadow_root(self, host_backend_node_id: int):
+        host_node_ids = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+            "DOM.pushNodesByBackendIdsToFrontend", {"backendNodeIds": [host_backend_node_id]}
+        )["nodeIds"]
+        if not host_node_ids:
+            raise ValueError(f"CDP did not return a node id for host {host_backend_node_id}")
+        host_node_id = host_node_ids[0]
+        self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+            "DOM.setAttributeValue",
+            {
+                "nodeId": host_node_id,
+                "name": "data-alumnium-host",
+                "value": str(host_backend_node_id),
+            },
+        )
+        try:
+            host_element = self.driver.find_element(  # type: ignore[attr-defined]
+                By.CSS_SELECTOR, f"[data-alumnium-host='{host_backend_node_id}']"
+            )
+        finally:
+            self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "DOM.removeAttribute",
+                {"nodeId": host_node_id, "name": "data-alumnium-host"},
+            )
+        return host_element.shadow_root
+
+    def _build_shadow_hierarcy(self) -> list[dict]:
+        shadow_nodes: list[dict] = []
+        processed_nodes: set[str] = set()
+
+        # Enable DOM domain for node operations
+        self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
+
+        # Get all DOM nodes including shadow DOM content
+        dom_response = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+            "DOM.getFlattenedDocument", {"depth": -1, "pierce": True}
+        )
+
+        dom_nodes = dom_response.get("nodes", [])
+        if not dom_nodes:
+            return shadow_nodes
+
+        # Build maps from the DOM tree
+        node_id_to_backend_id: dict[int, int] = {}
+        parent_id_map: dict[int, int] = {}
+        shadow_root_to_host_backend_id: dict[int, int] = {}
+
+        for dom_node in dom_nodes:
+            node_id = dom_node.get("nodeId")
+            backend_node_id = dom_node.get("backendNodeId")
+            if node_id is not None and backend_node_id is not None:
+                node_id_to_backend_id[node_id] = backend_node_id
+            if node_id is not None and dom_node.get("parentId") is not None:
+                parent_id_map[node_id] = dom_node["parentId"]
+            # Track shadow roots and their host's backendNodeId
+            if node_id is not None and backend_node_id is not None:
+                for sr in dom_node.get("shadowRoots", []):
+                    sr_node_id = sr.get("nodeId")
+                    if sr_node_id is not None:
+                        shadow_root_to_host_backend_id[sr_node_id] = backend_node_id
+                        parent_id_map[sr_node_id] = node_id
+
+        # Build child_backend_node_id -> host_backend_node_id map by walking parent chains
+        self._shadow_child_to_host_map = {}
+        for dom_node in dom_nodes:
+            node_backend_id = dom_node.get("backendNodeId")
+            if node_backend_id is None:
+                continue
+            current_id: int | None = dom_node.get("nodeId")
+            while current_id is not None:
+                if current_id in shadow_root_to_host_backend_id:
+                    self._shadow_child_to_host_map[node_backend_id] = shadow_root_to_host_backend_id[current_id]
+                    break
+                current_id = parent_id_map.get(current_id)
+
+        # Find shadow hosts and collect their accessibility nodes
+        for dom_node in dom_nodes:
+            if not dom_node.get("shadowRoots"):
+                continue
+            try:
+                ax_response = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                    "Accessibility.queryAXTree", {"nodeId": dom_node["nodeId"]}
+                )
+                for ax_node in ax_response.get("nodes", []):
+                    node_id_str = str(ax_node.get("nodeId", ""))
+                    if node_id_str in processed_nodes:
+                        continue
+                    processed_nodes.add(node_id_str)
+
+                    ax_node["_is_shadow_dom"] = True
+                    if not ax_node.get("backendDOMNodeId"):
+                        backend_id = node_id_to_backend_id.get(ax_node.get("nodeId"))
+                        if backend_id is not None:
+                            ax_node["backendDOMNodeId"] = backend_id
+
+                    shadow_nodes.append(ax_node)
+
+                    for child_id in ax_node.get("childIds", []):
+                        child_nodes = self._get_shadow_child_nodes(
+                            str(child_id), processed_nodes, node_id_to_backend_id
+                        )
+                        shadow_nodes.extend(child_nodes)
+            except Exception:
+                pass  # Ignore errors for individual shadow hosts
+
+        return shadow_nodes
+
+    def _get_shadow_child_nodes(
+        self,
+        node_id: str,
+        processed_nodes: set[str],
+        node_id_to_backend_id: dict[int, int],
+    ) -> list[dict]:
+        nodes: list[dict] = []
+
+        if node_id in processed_nodes:
+            return nodes
+        processed_nodes.add(node_id)
+
+        try:
+            response = self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "Accessibility.queryAXTree", {"nodeId": int(node_id)}
+            )
+            for node in response.get("nodes", []):
+                node["_is_shadow_dom"] = True
+
+                if not node.get("backendDOMNodeId"):
+                    backend_id = node_id_to_backend_id.get(node.get("nodeId"))
+                    if backend_id is not None:
+                        node["backendDOMNodeId"] = backend_id
+
+                nodes.append(node)
+
+                for child_id in node.get("childIds", []):
+                    child_nodes = self._get_shadow_child_nodes(str(child_id), processed_nodes, node_id_to_backend_id)
+                    nodes.extend(child_nodes)
+        except Exception:
+            pass  # Ignore errors for individual nodes
+
+        return nodes

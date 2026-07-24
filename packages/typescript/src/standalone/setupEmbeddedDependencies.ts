@@ -4,7 +4,10 @@ import Module from "node:module";
 import os from "node:os";
 import path from "node:path";
 import { isSingleFileExecutable } from "../bundle.ts";
+import { ensureDir } from "../utils/fs.ts";
 import {
+  PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
+  PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
   PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
   SELENIUM_ATOM_ASSET_PREFIX,
   SELENIUM_MANAGER_ASSET_NAMES,
@@ -32,6 +35,8 @@ const RUNTIME_SELENIUM_MANAGER_TARGETS = {
 
 interface ExtractedEmbeddedDependencies {
   playwrightPackageJsonPath: string;
+  playwrightBrowsersJsonPath: string;
+  playwrightOopDownloadPath: string;
   seleniumAtomsDir: string;
   seleniumManagerPath: string | undefined;
 }
@@ -42,10 +47,15 @@ interface EmbeddedFile extends Blob {
 
 let setupPromise: Promise<void> | undefined;
 let resolveHookInstalled = false;
+let extractedPlaywrightOopDownloadPath: string | undefined;
 
 export function setupEmbeddedDependencies() {
   setupPromise ??= setupEmbeddedDependenciesInternal();
   return setupPromise;
+}
+
+export function getExtractedPlaywrightOopDownloadPath(): string | undefined {
+  return extractedPlaywrightOopDownloadPath;
 }
 
 async function setupEmbeddedDependenciesInternal() {
@@ -58,6 +68,7 @@ async function setupEmbeddedDependenciesInternal() {
     process.env.SE_MANAGER_PATH ??= paths.seleniumManagerPath;
   }
 
+  extractedPlaywrightOopDownloadPath = paths.playwrightOopDownloadPath;
   installResolveHook(paths);
 }
 
@@ -77,10 +88,20 @@ async function extractEmbeddedDependencies(): Promise<ExtractedEmbeddedDependenc
     "playwright-core",
     "package.json",
   );
+  const playwrightBrowsersJsonPath = path.join(
+    extractedDir,
+    "playwright-core",
+    "browsers.json",
+  );
+  const playwrightOopDownloadPath = path.join(
+    extractedDir,
+    "playwright-core",
+    "oopDownloadBrowserMain.cjs",
+  );
 
   await Promise.all([
-    fs.mkdir(seleniumAtomsDir, { recursive: true }),
-    fs.mkdir(path.dirname(playwrightPackageJsonPath), { recursive: true }),
+    ensureDir(seleniumAtomsDir),
+    ensureDir(path.dirname(playwrightPackageJsonPath)),
   ]);
 
   const filesByName = getEmbeddedFilesByName();
@@ -104,10 +125,22 @@ async function extractEmbeddedDependencies(): Promise<ExtractedEmbeddedDependenc
       PLAYWRIGHT_CORE_PACKAGE_JSON_ASSET_NAME,
       playwrightPackageJsonPath,
     ),
+    writeEmbeddedFile(
+      filesByName,
+      PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
+      playwrightBrowsersJsonPath,
+    ),
+    writeEmbeddedFile(
+      filesByName,
+      PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
+      playwrightOopDownloadPath,
+    ),
   ]);
 
   return {
     playwrightPackageJsonPath,
+    playwrightBrowsersJsonPath,
+    playwrightOopDownloadPath,
     seleniumAtomsDir,
     seleniumManagerPath,
   };
@@ -161,9 +194,17 @@ function installResolveHook(paths: ExtractedEmbeddedDependencies) {
 
       if (
         request === "../../../package.json" ||
-        request.endsWith("playwright-core/package.json")
+        request.endsWith("playwright-core/package.json") ||
+        request.endsWith("playwright-core\\package.json")
       ) {
         return paths.playwrightPackageJsonPath;
+      }
+
+      if (
+        request.endsWith("playwright-core/browsers.json") ||
+        request.endsWith("playwright-core\\browsers.json")
+      ) {
+        return paths.playwrightBrowsersJsonPath;
       }
     }
 
@@ -198,7 +239,7 @@ async function writeEmbeddedFile(
     throw new Error(`Missing embedded dependency asset: ${embeddedFileName}`);
   }
 
-  await fs.mkdir(path.dirname(targetPath), { recursive: true });
+  await ensureDir(path.dirname(targetPath));
   await fs.writeFile(targetPath, await file.bytes());
 
   if (mode) {

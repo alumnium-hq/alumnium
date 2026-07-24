@@ -810,6 +810,27 @@
                                             "literal": false
                                           }
                                         ]
+                                      },
+                                      "output_tokens_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "thinking_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        ]
                                       }
                                     }
                                   }
@@ -1338,6 +1359,21 @@
                                 "type": [
                                   {
                                     "kind": "null"
+                                  },
+                                  {
+                                    "kind": "object",
+                                    "properties": {
+                                      "reason": {
+                                        "kind": "field",
+                                        "optional": false,
+                                        "type": [
+                                          {
+                                            "kind": "string",
+                                            "values": ["content_filter"]
+                                          }
+                                        ]
+                                      }
+                                    }
                                   }
                                 ]
                               },
@@ -1674,7 +1710,7 @@
                                       ]
                                     },
                                     "kind": "string",
-                                    "values": ["completed"]
+                                    "values": ["completed", "incomplete"]
                                   }
                                 ]
                               },
@@ -2072,6 +2108,27 @@
                                           {
                                             "kind": "number",
                                             "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "output_tokens_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "thinking_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
                                           }
                                         ]
                                       }

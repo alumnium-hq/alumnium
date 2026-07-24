@@ -59,7 +59,10 @@ export const startMcpTool = McpTool.define("start", {
             - "newTabTimeout" (number, default 200) — ms to wait for new tab detection, Playwright only;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
             - "planner" (boolean) — enable/disable planner agent;
-            - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal".
+            - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal";
+            - "proxy" (object) — HTTP/HTTPS/SOCKS5 proxy, supported for Selenium and Playwright, e.g. {"server": "http://myproxy.com:3128", "bypass": ".com, chromium.org", "username": "usr", "password": "pwd"}; if omitted, the http_proxy/HTTP_PROXY/https_proxy/HTTPS_PROXY environment variables are used automatically;
+            - "recordVideos" (boolean, default true) — record video of the browser session, Playwright only. Can also be disabled via ALUMNIUM_MCP_RECORD_VIDEOS=false;
+            - "userAgent" (string) — custom User-Agent header sent with every request, supported for Selenium and Playwright.
 
           Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc", "profile": "work"}}'.
         `
@@ -171,6 +174,24 @@ export const startMcpTool = McpTool.define("start", {
       ...(typeof alumniumOptions["executablePath"] === "string" && {
         executablePath: alumniumOptions["executablePath"],
       }),
+      ...(typeof alumniumOptions["userAgent"] === "string" && {
+        userAgent: alumniumOptions["userAgent"],
+      }),
+      ...(typeof alumniumOptions["proxy"] === "object" &&
+        alumniumOptions["proxy"] !== null &&
+        typeof (alumniumOptions["proxy"] as Record<string, unknown>)[
+          "server"
+        ] === "string" && {
+          proxy: alumniumOptions["proxy"] as {
+            server: string;
+            bypass?: string;
+            username?: string;
+            password?: string;
+          },
+        }),
+      ...(typeof alumniumOptions["recordVideos"] === "boolean" && {
+        recordVideos: alumniumOptions["recordVideos"],
+      }),
     };
 
     const alumniumOptionsNonDriverKeys = new Set([
@@ -183,6 +204,9 @@ export const startMcpTool = McpTool.define("start", {
       "headless",
       "permissions",
       "planner",
+      "proxy",
+      "recordVideos",
+      "userAgent",
     ]);
     const driverSettings: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(alumniumOptions)) {

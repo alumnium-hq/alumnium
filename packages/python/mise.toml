@@ -83,7 +83,7 @@ run = "ruff check --fix ."
 [tasks.format]
 run = [{ task = "format/pyproject" }, { task = "format/code" }]
 
-[tasks."format:check"]
+[tasks."format/check"]
 run = [{ task = "format/pyproject:check" }, { task = "format/code:check" }]
 
 [tasks."format/pyproject"]

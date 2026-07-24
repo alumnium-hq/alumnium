@@ -9,6 +9,18 @@ Alumnium is capable of interacting with the application when you instruct it to 
 
 For example, if you instruct Alumnium to perform a search on a page with a search box:
 
+<LanguageContent lang="java">
+
+```java
+al.act("search for 'Mercury element'");
+```
+
+:::note
+The Java client uses `act` because `do` is a reserved word in the language.
+:::
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -49,6 +61,14 @@ For example, imagine you are writing tests for a To-Do application. You would li
 ![A screenshot of To Do application with Complete All Tasks checkbox highlighted](../../../../assets/todo-mark-all.png)
 
 You might attempt to achieve this by the following instruction:
+
+<LanguageContent lang="java">
+
+```java
+al.act("mark all tasks complete");
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -101,6 +121,14 @@ await al.do("mark all tasks complete using 'Toggle All' button");
 
 </LanguageContent>
 
+<LanguageContent lang="java">
+
+```java
+al.act("mark all tasks complete using 'Toggle All' button");
+```
+
+</LanguageContent>
+
 <video
   class="rounded-xl"
   alt="A screen recording of Alumnium mark tasks completed at once"
@@ -121,6 +149,15 @@ await al.do("mark all tasks complete using 'Toggle All' button");
 Alumnium does not (yet) support performing actions that span over multiple page changes, so you need to tailor instructions based on the _current state of the application_.
 
 For example, the To-Do application you are testing provides a way to delete a task by clicking the **x** button near the task. However, this button is visible only when the user hovers mouse over the task. Because the state of the page changes after hovering, you need to instruct Alumnium twice:
+
+<LanguageContent lang="java">
+
+```java
+al.act("hover the 'buy milk' task");
+al.act("delete the 'buy milk' task");
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
 
@@ -176,6 +213,20 @@ Often, Alumnium cannot determine the proper sequence of actions it needs to perf
 
 You can either provide the exact steps manually each time (see the section above) or teach it once by providing an example.
 
+<LanguageContent lang="java">
+
+```java
+al.learn(
+  "delete \"Test\" task",
+  List.of(
+    "hover \"Test\" task",
+    "click \"x\" button near \"Test\" task"
+  )
+);
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -222,6 +273,21 @@ From now on, Alumnium knows what to do when told to delete a task.
 
 Alumnium ships with a set of LLM tools that prove to be most useful for test automation. There are also tools that are disabled by default, but you can enable them (and implement your own) by passing them during initialization:
 
+<LanguageContent lang="java">
+
+```java
+import ai.alumnium.Alumni;
+import ai.alumnium.tool.NavigateBackTool;
+import java.util.List;
+
+Alumni al = new Alumni(
+  driver,
+  new Alumni.Options().withExtraTools(List.of(NavigateBackTool.class))
+);
+```
+
+</LanguageContent>
+
 <LanguageContent lang="python">
 
 ```python
@@ -260,9 +326,37 @@ The following extra tools are currently supported:
 
 Actions may open new tabs or windows. By default, Alumnium automatically switches to the newly opened tab or window and continues performing actions there.
 
-You can disable this behavior by setting `autoswitch_to_new_tab` to `false` and instead navigate between tabs manually using the `SwitchToNextTabTool` and `SwitchToPreviousTabTool` extra tools:
+<LanguageContent lang="java">
+
+You can disable this behavior by setting `autoswitchToNewTab` to `false` and instead navigate between tabs manually using the `SwitchToNextTabTool` and `SwitchToPreviousTabTool` extra tools. The flag lives on the concrete driver wrapper, so cast `al.driver()` to `SeleniumDriver` or `PlaywrightDriver` accordingly.
+
+```java
+import ai.alumnium.Alumni;
+import ai.alumnium.driver.SeleniumDriver;
+import ai.alumnium.tool.SwitchToNextTabTool;
+import ai.alumnium.tool.SwitchToPreviousTabTool;
+import java.util.List;
+
+Alumni al = new Alumni(
+  driver,
+  new Alumni.Options()
+    .withExtraTools(
+      List.of(
+        SwitchToNextTabTool.class,
+        SwitchToPreviousTabTool.class
+      )
+    )
+);
+((SeleniumDriver) al.driver()).autoswitchToNewTab = false;
+// do something that opens a new tab
+al.act("switch to the next tab");
+```
+
+</LanguageContent>
 
 <LanguageContent lang="python">
+
+You can disable this behavior by setting `autoswitch_to_new_tab` to `false` and instead navigate between tabs manually using the `SwitchToNextTabTool` and `SwitchToPreviousTabTool` extra tools:
 
 ```python
 from alumnium import Alumni
@@ -277,6 +371,8 @@ al.do("switch to the next tab")
 </LanguageContent>
 
 <LanguageContent lang="typescript">
+
+You can disable this behavior by setting `autoswitchToNewTab` to `false` and instead navigate between tabs manually using the `SwitchToNextTabTool` and `SwitchToPreviousTabTool` extra tools:
 
 ```typescript
 import { Alumni, SwitchToNextTabTool, SwitchToPreviousTabTool } from "alumnium";

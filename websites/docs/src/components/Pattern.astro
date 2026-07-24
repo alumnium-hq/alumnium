@@ -1,4 +1,8 @@
 ---
+import Author from "./Author.astro";
+import FormattedDate from "./FormattedDate.astro";
+import Tags from "./Tags.astro";
+
 interface Props {
   title: string;
   date: Date;
@@ -10,9 +14,6 @@ interface Props {
   tags?: string[];
 }
 
-import Author from "./Author.astro";
-import FormattedDate from "./FormattedDate.astro";
-import Tags from "./Tags.astro";
 const { title, mode, date, author, tags } = Astro.props;
 
 const className = [
@@ -21,38 +22,52 @@ const className = [
 ];
 ---
 
-<div
-  class:list={[
-    "bg-[url('/src/assets/pattern.svg')] bg-repeat bg-[length:48px_48px] overflow-hidden",
-    mode === "post" ? "" : "sm:aspect-video rounded-xl",
-  ]}
->
+<div>
   <div
     class:list={[
-      "bg-gradient-to-b from-cerulean-blue-800/40 to-cerulean-blue-950 w-full h-full flex flex-col justify-end items-center px-2 py-4 sm:p-10",
-      mode === "post" ? "pt-20 sm:pt-[10rem]" : "pt-20 sm:pt-4",
+      "wrapper not-content overflow-hidden",
+      mode === "post" ? "" : "sm:aspect-video rounded-xl",
     ]}
   >
-    <div class="gap-3 flex flex-col items-center max-w-screen-lg">
-      {
-        mode === "post" ? (
-          <h1 class:list={className} id="_top">
-            {title}
-          </h1>
-        ) : (
-          <h3 class:list={className}>{title}</h3>
-        )
-      }
+    <div
+      class:list={[
+        "bg-linear-to-b from-canvas/0 to-content-dark/80 w-full h-full flex flex-col justify-end items-center px-2 py-4 sm:p-10",
+        mode === "post" ? "pt-20 sm:pt-40" : "pt-20 sm:pt-4",
+      ]}
+    >
+      <div class="gap-3 flex flex-col items-center max-w-5xl">
+        {
+          mode === "post" ? (
+            <h1 class:list={className} id="_top">
+              {title}
+            </h1>
+          ) : (
+            <h3 class:list={className}>{title}</h3>
+          )
+        }
 
-      <div class="text-gray-300">
-        <Author prefix="Published by" author={author} />
+        <div class="text-gray-200">
+          <Author prefix="Published by" author={author} />
+        </div>
+
+        <div class="text-gray-300">
+          <FormattedDate date={date} />
+        </div>
+
+        <Tags tags={tags} mode="pattern" />
       </div>
-
-      <div class="text-gray-300">
-        <FormattedDate date={date} />
-      </div>
-
-      <Tags tags={tags} mode="pattern" />
     </div>
   </div>
 </div>
+
+<style>
+  @reference "../styles/global.css";
+
+  @layer starlight.core {
+    .wrapper {
+      @apply pattern-canvas;
+      background-position: left top
+        calc((var(--sl-nav-height) - var(--pattern-canvas-size)) / -2);
+    }
+  }
+</style>
