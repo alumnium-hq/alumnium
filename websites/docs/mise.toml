@@ -4,13 +4,13 @@ run = "bun install"
 [tasks.clean]
 run = "rm -rf dist/ public/install.sh public/install.ps1"
 
-[tasks.build]
-run = '''
-bun run astro-check
-bun run astro build
-'''
+[tasks.check]
+run = "bun run astro-check"
 
-[tasks.preview]
+[tasks.build]
+run = "bun run astro build"
+
+[tasks."dev:build"]
 run = "bun run astro preview"
 depends = ["build"]
 
@@ -19,7 +19,7 @@ run = "bun run astro dev --host 0.0.0.0"
 
 [tasks.deploy]
 run = "fnox exec -- bun run wrangler deploy"
-depends = ["build"]
+depends = ["check", "build"]
 
 [tasks."deploy:dry-run"]
 run = "bun run wrangler deploy --dry-run"
