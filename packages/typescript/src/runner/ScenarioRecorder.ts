@@ -88,10 +88,14 @@ export class ScenarioRecorder {
   async record(): Promise<ScenarioRecorder.Result> {
     const claude = await this.#claudeCode();
 
-    for await (const message of claude.query(this.#scenario.text)) {
-      logger.debug("Received Claude Code message: {message}", { message });
+    try {
+      for await (const message of claude.query(this.#scenario.text)) {
+        logger.debug("Received Claude Code message: {message}", { message });
 
-      this.#processMessage(message);
+        this.#processMessage(message);
+      }
+    } finally {
+      this.#closeClaudeCode(claude);
     }
 
     if (!this.#sessionId)
@@ -161,10 +165,12 @@ export class ScenarioRecorder {
       options: TypeUtils.fromExactOptionalTypes<Options>({
         pathToClaudeCodeExecutable: claudeCodePath,
         mcpServers: {
+          // NOTE: Claude Code shuts the server down the same way the runner
+          // does, so it has to be a direct child process too. See
+          // `ScenarioAlumniumMcp.spawnCommand`.
           alumnium: {
             type: "stdio",
-            command: "mise",
-            args: ["//:dev/mcp"],
+            ...ScenarioAlumniumMcp.spawnCommand(),
           },
         },
         allowedTools: ["Read", "Write", "Edit", "Bash", "mcp__alumnium__*"],
@@ -206,6 +212,16 @@ export class ScenarioRecorder {
         resume: this.#sessionId,
       }),
     });
+  }
+
+  #closeClaudeCode(claude: WarmQuery) {
+    logger.debug("Closing Claude Code subprocess");
+
+    try {
+      claude.close();
+    } catch (error) {
+      logger.warn(`Failed to close Claude Code subprocess: ${error}`);
+    }
   }
 
   async #claudeCodePath(): Promise<string> {

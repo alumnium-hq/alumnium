@@ -1,6 +1,8 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { always } from "alwaysly";
 import z from "zod";
+import { isSingleFileExecutable } from "../bundle.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
@@ -13,6 +15,11 @@ export namespace ScenarioAlumniumMcp {
   export type Output = Awaited<ReturnType<Client["callTool"]>>;
 
   export type OutputContent = Output["content"];
+
+  export interface SpawnCommand {
+    command: string;
+    args: string[];
+  }
 }
 
 export class ScenarioAlumniumMcp {
@@ -24,12 +31,28 @@ export class ScenarioAlumniumMcp {
   constructor() {
     this.#client = new Client({ name: "alumnium-runner", version: "1.0.0" });
 
+    const { command, args } = ScenarioAlumniumMcp.spawnCommand();
     this.#transport = new StdioClientTransport({
-      command: "mise",
-      args: ["//:dev/mcp"],
+      command,
+      args,
       // oxlint-disable-next-line no-process-env
       env: process.env as any,
     });
+  }
+
+  static spawnCommand(): ScenarioAlumniumMcp.SpawnCommand {
+    // NOTE: In a single-file executable `process.execPath` is the Alumnium
+    // binary itself, so the command name is the only argument needed.
+    if (isSingleFileExecutable())
+      return { command: process.execPath, args: ["mcp"] };
+
+    const scriptPath = process.argv[1];
+    always(scriptPath);
+
+    return {
+      command: process.execPath,
+      args: [scriptPath, "mcp"],
+    };
   }
 
   connect() {
