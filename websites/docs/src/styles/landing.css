@@ -1,634 +1,632 @@
 @reference "./global.css";
 
-@layer components {
-  .debug-breakpoint {
-    &:before {
-      @apply z-50 fixed top-0 right-0 bg-red-600 text-white uppercase content-["bs"] leading-none capsize font-mono p-1;
+.debug-breakpoint {
+  &:before {
+    @apply z-50 fixed top-0 right-0 bg-red-600 text-white uppercase content-["bs"] leading-none capsize font-mono p-1;
 
-      @variant sm {
-        @apply content-["sm"] bg-orange-600;
+    @variant sm {
+      @apply content-["sm"] bg-orange-600;
+    }
+
+    @variant md {
+      @apply content-["md"] bg-yellow-600;
+    }
+
+    @variant lg {
+      @apply content-["lg"] bg-blue-600;
+    }
+
+    @variant xl {
+      @apply content-["xl"] bg-indigo-600;
+    }
+  }
+}
+
+.landing {
+  --landing-nav-height: 3rem;
+  --landing-overlay-bg: color-mix(
+    in srgb,
+    var(--color-content-dark),
+    transparent 80%
+  );
+
+  /* Supersection padding */
+
+  --supersection-padding-x: calc(var(--spacing) * 2);
+  --supersection-padding-y: calc(var(--spacing) * 4);
+
+  @variant sm {
+    --supersection-padding-x: calc(var(--spacing) * 3);
+    --supersection-padding-y: calc(var(--spacing) * 8);
+  }
+
+  @variant md {
+    --supersection-padding-x: calc(var(--spacing) * 4);
+    --supersection-padding-y: calc(var(--spacing) * 12);
+  }
+
+  @variant lg {
+    --supersection-padding-x: calc(var(--spacing) * 6);
+    --supersection-padding-y: calc(var(--spacing) * 12);
+  }
+
+  @variant xl {
+    --supersection-padding-x: calc(var(--spacing) * 10);
+    --supersection-padding-y: calc(var(--spacing) * 15);
+  }
+
+  /* Section padding */
+
+  --section-padding-y: calc(var(--spacing) * 8);
+  --section-padding-y-shrunk: calc(var(--spacing) * 6);
+  --section-padding-y-compact: calc(var(--spacing) * 6);
+  --section-padding-y-compact-shrunk: calc(var(--spacing) * 6);
+  --section-padding-y-header: calc(var(--spacing) * 6);
+  --section-padding-y-header-shrunk: calc(var(--spacing) * 6);
+  --section-padding-y-tight: calc(var(--spacing) * 6);
+  --section-padding-x: calc(var(--spacing) * 3);
+
+  @variant sm {
+    --section-padding-y: calc(var(--spacing) * 8);
+    --section-padding-y-shrunk: calc(var(--spacing) * 0);
+    --section-padding-y-compact: calc(var(--spacing) * 8);
+    --section-padding-y-compact-shrunk: calc(var(--spacing) * 6);
+    --section-padding-y-header: calc(var(--spacing) * 6);
+    --section-padding-y-header-shrunk: calc(var(--spacing) * 6);
+    --section-padding-y-tight: calc(var(--spacing) * 10);
+    --section-padding-x: calc(var(--spacing) * 4);
+  }
+
+  @variant md {
+    --section-padding-y: calc(var(--spacing) * 14);
+    --section-padding-y-shrunk: calc(var(--spacing) * 10);
+    --section-padding-y-compact: calc(var(--spacing) * 12);
+    --section-padding-y-compact-shrunk: calc(var(--spacing) * 8);
+    --section-padding-y-header: calc(var(--spacing) * 12);
+    --section-padding-y-header-shrunk: calc(var(--spacing) * 10);
+    --section-padding-y-tight: calc(var(--spacing) * 10);
+    --section-padding-x: calc(var(--spacing) * 8);
+  }
+
+  @variant lg {
+    --section-padding-y: calc(var(--spacing) * 20);
+    --section-padding-y-shrunk: calc(var(--spacing) * 16);
+    --section-padding-y-compact: calc(var(--spacing) * 12);
+    --section-padding-y-compact-shrunk: calc(var(--spacing) * 10);
+    --section-padding-y-header: calc(var(--spacing) * 12);
+    --section-padding-y-header-shrunk: calc(var(--spacing) * 10);
+    --section-padding-y-tight: calc(var(--spacing) * 10);
+    --section-padding-x: calc(var(--spacing) * 14);
+  }
+
+  @variant xl {
+    --section-padding-y: calc(var(--spacing) * 25);
+    --section-padding-y-shrunk: calc(var(--spacing) * 18);
+    --section-padding-y-compact: calc(var(--spacing) * 16);
+    --section-padding-y-compact-shrunk: calc(var(--spacing) * 12);
+    --section-padding-y-header: calc(var(--spacing) * 14);
+    --section-padding-y-header-shrunk: calc(var(--spacing) * 12);
+    --section-padding-y-tight: calc(var(--spacing) * 12);
+    --section-padding-x: calc(var(--spacing) * 16);
+  }
+
+  @apply text-ink-dark pattern-canvas-content h-full flex flex-col;
+
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6,
+  & .headline,
+  & .subheadline {
+    @apply font-display text-balance;
+
+    & a {
+      @apply text-accent-300;
+    }
+
+    & b {
+      @apply text-5xl font-medium;
+    }
+
+    & em {
+      @apply not-italic text-accent-400 font-semibold;
+    }
+
+    & strike {
+      @apply font-medium text-accent-300;
+    }
+
+    & sup {
+      @apply text-accent-400 font-light text-[0.9em];
+    }
+  }
+
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6,
+  & .headline {
+    @apply text-accent-50;
+  }
+
+  & .subheadline {
+    @apply text-accent-400 max-w-3xl;
+  }
+
+  & .kicker {
+    @apply text-accent-500 uppercase font-medium font-mono text-xs sm:text-sm md:text-base leading-none capsize;
+  }
+
+  & .heading {
+    @apply content-wrapper-md flex flex-col;
+
+    & h1,
+    &.heading-enlarge h2 {
+      & + .subheadline {
+        @apply text-lg sm:text-xl leading-snug;
       }
+    }
 
-      @variant md {
-        @apply content-["md"] bg-yellow-600;
+    & h2,
+    &.heading-enlarge h3 {
+      & + .subheadline {
+        @apply text-base sm:text-lg leading-snug;
       }
+    }
 
-      @variant lg {
-        @apply content-["lg"] bg-blue-600;
+    & h1 {
+      @apply text-3xl sm:text-4xl md:text-5xl font-medium leading-[1.1];
+    }
+
+    & h2 {
+      @apply text-lg sm:text-2xl md:text-3xl leading-snug;
+    }
+
+    &.heading-enlarge h2 {
+      @apply text-xl sm:text-3xl md:text-4xl leading-snug;
+    }
+
+    &.heading-compact h2 {
+      @apply text-lg sm:text-xl md:text-2xl leading-snug;
+    }
+
+    & h3,
+    & h4,
+    & h5 {
+      & + .subheadline {
+        @apply text-ms leading-snug;
       }
+    }
 
-      @variant xl {
-        @apply content-["xl"] bg-indigo-600;
+    & h3 {
+      @apply text-lg sm:text-xl leading-snug;
+    }
+
+    &.heading-enlarge h3 {
+      @apply text-lg sm:text-2xl md:text-3xl leading-snug;
+    }
+
+    & h4,
+    & h5 {
+      @apply text-accent-200 leading-snug;
+    }
+
+    & h4 {
+      @apply text-base leading-snug;
+    }
+
+    & h5 {
+      @apply text-base leading-snug;
+    }
+  }
+
+  & .heading-align {
+    @apply text-center items-center;
+  }
+
+  & .copy {
+    @apply text-accent-300 flex flex-col gap-2;
+
+    & code {
+      @apply bg-accent-950 rounded-sm px-1 text-[0.8em] font-mono text-accent-200;
+    }
+
+    & ol,
+    & ul {
+      @apply flex flex-col gap-1;
+    }
+
+    & footer {
+      @apply text-accent-500 text-sm mt-4;
+    }
+  }
+
+  & a {
+    color: color-mix(in srgb, var(--color-cyan-300) 50%, currentColor);
+
+    &:hover {
+      @apply text-cyan-400;
+    }
+  }
+
+  & .supersections {
+    --edge-padding-multiplier: 3;
+    --section-overlay-bg: transparent;
+
+    @apply relative;
+  }
+
+  & .supersections.is-shaded,
+  & .supersection.is-shaded {
+    --section-overlay-bg: var(--landing-overlay-bg);
+  }
+
+  & .supersection {
+    &.is-shaded {
+      --section-overlay-bg: var(--landing-overlay-bg);
+    }
+
+    &.is-highlighted {
+      @apply bg-accent-800/50;
+    }
+  }
+
+  & .supersections,
+  & .supersection,
+  & .supersection-inner {
+    &:before,
+    &:after {
+      @apply block grow;
+      content: "";
+      background: var(--section-overlay-bg);
+    }
+  }
+
+  & .supersections,
+  & .supersection {
+    &:before,
+    &:after {
+      height: var(--supersection-padding-y);
+    }
+  }
+
+  & .supersection-inner {
+    @apply flex;
+
+    &:before,
+    &:after {
+      min-width: var(--supersection-padding-x);
+    }
+  }
+
+  & .supersection-content {
+    @apply grow flex flex-col gap-12 content-wrapper-lg;
+  }
+
+  & .supersection-heading {
+    @apply flex flex-col items-center text-center;
+  }
+
+  & .section-wrapper {
+    @apply px-0 sm:py-5 md:py-10 md:px-10;
+  }
+
+  & .section {
+    @apply py-(--section-padding-y) px-(--section-padding-x) grid items-start relative;
+
+    &.section-compact {
+      @apply py-(--section-padding-y-compact);
+    }
+
+    &.section-header {
+      @apply py-(--section-padding-y-header);
+    }
+
+    &.section-tight {
+      @apply py-(--section-padding-y-tight);
+    }
+
+    &.section-align {
+      @apply justify-center;
+    }
+
+    &.section-adjust {
+      @apply items-center;
+    }
+
+    &.section-cols-1 {
+      @apply grid-cols-1;
+    }
+
+    &.section-cols-2 {
+      @apply gap-y-4 gap-x-6 md:gap-8 lg:gap-10 grid-cols-1 md:grid-cols-2;
+
+      &:has(> .section-points) {
+        @apply grid-cols-1 lg:grid-cols-[4fr_6fr] xl:grid-cols-2;
       }
     }
   }
 
-  .landing {
-    --landing-nav-height: 3rem;
-    --landing-overlay-bg: color-mix(
-      in srgb,
-      var(--color-content-dark),
-      transparent 80%
-    );
+  & .bento > * {
+    &.has-continuation {
+      & > .section {
+        @apply pb-(--section-padding-y-shrunk);
 
-    /* Supersection padding */
+        &.section-compact {
+          @apply pb-(--section-padding-y-compact-shrunk);
+        }
 
-    --supersection-padding-x: calc(var(--spacing) * 2);
-    --supersection-padding-y: calc(var(--spacing) * 4);
-
-    @variant sm {
-      --supersection-padding-x: calc(var(--spacing) * 3);
-      --supersection-padding-y: calc(var(--spacing) * 8);
-    }
-
-    @variant md {
-      --supersection-padding-x: calc(var(--spacing) * 4);
-      --supersection-padding-y: calc(var(--spacing) * 12);
-    }
-
-    @variant lg {
-      --supersection-padding-x: calc(var(--spacing) * 6);
-      --supersection-padding-y: calc(var(--spacing) * 12);
-    }
-
-    @variant xl {
-      --supersection-padding-x: calc(var(--spacing) * 10);
-      --supersection-padding-y: calc(var(--spacing) * 15);
-    }
-
-    /* Section padding */
-
-    --section-padding-y: calc(var(--spacing) * 8);
-    --section-padding-y-shrunk: calc(var(--spacing) * 6);
-    --section-padding-y-compact: calc(var(--spacing) * 6);
-    --section-padding-y-compact-shrunk: calc(var(--spacing) * 6);
-    --section-padding-y-header: calc(var(--spacing) * 6);
-    --section-padding-y-header-shrunk: calc(var(--spacing) * 6);
-    --section-padding-y-tight: calc(var(--spacing) * 6);
-    --section-padding-x: calc(var(--spacing) * 3);
-
-    @variant sm {
-      --section-padding-y: calc(var(--spacing) * 8);
-      --section-padding-y-shrunk: calc(var(--spacing) * 0);
-      --section-padding-y-compact: calc(var(--spacing) * 8);
-      --section-padding-y-compact-shrunk: calc(var(--spacing) * 6);
-      --section-padding-y-header: calc(var(--spacing) * 6);
-      --section-padding-y-header-shrunk: calc(var(--spacing) * 6);
-      --section-padding-y-tight: calc(var(--spacing) * 10);
-      --section-padding-x: calc(var(--spacing) * 4);
-    }
-
-    @variant md {
-      --section-padding-y: calc(var(--spacing) * 14);
-      --section-padding-y-shrunk: calc(var(--spacing) * 10);
-      --section-padding-y-compact: calc(var(--spacing) * 12);
-      --section-padding-y-compact-shrunk: calc(var(--spacing) * 8);
-      --section-padding-y-header: calc(var(--spacing) * 12);
-      --section-padding-y-header-shrunk: calc(var(--spacing) * 10);
-      --section-padding-y-tight: calc(var(--spacing) * 10);
-      --section-padding-x: calc(var(--spacing) * 8);
-    }
-
-    @variant lg {
-      --section-padding-y: calc(var(--spacing) * 20);
-      --section-padding-y-shrunk: calc(var(--spacing) * 16);
-      --section-padding-y-compact: calc(var(--spacing) * 12);
-      --section-padding-y-compact-shrunk: calc(var(--spacing) * 10);
-      --section-padding-y-header: calc(var(--spacing) * 12);
-      --section-padding-y-header-shrunk: calc(var(--spacing) * 10);
-      --section-padding-y-tight: calc(var(--spacing) * 10);
-      --section-padding-x: calc(var(--spacing) * 14);
-    }
-
-    @variant xl {
-      --section-padding-y: calc(var(--spacing) * 25);
-      --section-padding-y-shrunk: calc(var(--spacing) * 18);
-      --section-padding-y-compact: calc(var(--spacing) * 16);
-      --section-padding-y-compact-shrunk: calc(var(--spacing) * 12);
-      --section-padding-y-header: calc(var(--spacing) * 14);
-      --section-padding-y-header-shrunk: calc(var(--spacing) * 12);
-      --section-padding-y-tight: calc(var(--spacing) * 12);
-      --section-padding-x: calc(var(--spacing) * 16);
-    }
-
-    @apply text-ink-dark pattern-canvas-content h-full flex flex-col;
-
-    & h1,
-    & h2,
-    & h3,
-    & h4,
-    & h5,
-    & h6,
-    & .headline,
-    & .subheadline {
-      @apply font-display text-balance;
-
-      & a {
-        @apply text-accent-300;
-      }
-
-      & b {
-        @apply text-5xl font-medium;
-      }
-
-      & em {
-        @apply not-italic text-accent-400 font-semibold;
-      }
-
-      & strike {
-        @apply font-medium text-accent-300;
-      }
-
-      & sup {
-        @apply text-accent-400 font-light text-[0.9em];
-      }
-    }
-
-    & h1,
-    & h2,
-    & h3,
-    & h4,
-    & h5,
-    & h6,
-    & .headline {
-      @apply text-accent-50;
-    }
-
-    & .subheadline {
-      @apply text-accent-400 max-w-3xl;
-    }
-
-    & .kicker {
-      @apply text-accent-500 uppercase font-medium font-mono text-xs sm:text-sm md:text-base leading-none capsize;
-    }
-
-    & .heading {
-      @apply content-wrapper-md flex flex-col;
-
-      & h1,
-      &.heading-enlarge h2 {
-        & + .subheadline {
-          @apply text-lg sm:text-xl leading-snug;
+        &.section-header {
+          @apply pb-(--section-padding-y-header-shrunk);
         }
       }
 
-      & h2,
-      &.heading-enlarge h3 {
-        & + .subheadline {
-          @apply text-base sm:text-lg leading-snug;
+      & + * > .section {
+        @apply pt-(--section-padding-y-shrunk);
+
+        &.section-compact {
+          @apply pt-(--section-padding-y-compact-shrunk);
         }
-      }
 
-      & h1 {
-        @apply text-3xl sm:text-4xl md:text-5xl font-medium leading-[1.1];
-      }
-
-      & h2 {
-        @apply text-lg sm:text-2xl md:text-3xl leading-snug;
-      }
-
-      &.heading-enlarge h2 {
-        @apply text-xl sm:text-3xl md:text-4xl leading-snug;
-      }
-
-      &.heading-compact h2 {
-        @apply text-lg sm:text-xl md:text-2xl leading-snug;
-      }
-
-      & h3,
-      & h4,
-      & h5 {
-        & + .subheadline {
-          @apply text-ms leading-snug;
-        }
-      }
-
-      & h3 {
-        @apply text-lg sm:text-xl leading-snug;
-      }
-
-      &.heading-enlarge h3 {
-        @apply text-lg sm:text-2xl md:text-3xl leading-snug;
-      }
-
-      & h4,
-      & h5 {
-        @apply text-accent-200 leading-snug;
-      }
-
-      & h4 {
-        @apply text-base leading-snug;
-      }
-
-      & h5 {
-        @apply text-base leading-snug;
-      }
-    }
-
-    & .heading-align {
-      @apply text-center items-center;
-    }
-
-    & .copy {
-      @apply text-accent-300 flex flex-col gap-2;
-
-      & code {
-        @apply bg-accent-950 rounded-sm px-1 text-[0.8em] font-mono text-accent-200;
-      }
-
-      & ol,
-      & ul {
-        @apply flex flex-col gap-1;
-      }
-
-      & footer {
-        @apply text-accent-500 text-sm mt-4;
-      }
-    }
-
-    & a {
-      color: color-mix(in srgb, var(--color-cyan-300) 50%, currentColor);
-
-      &:hover {
-        @apply text-cyan-400;
-      }
-    }
-
-    & .supersections {
-      --edge-padding-multiplier: 3;
-      --section-overlay-bg: transparent;
-
-      @apply relative;
-    }
-
-    & .supersections.is-shaded,
-    & .supersection.is-shaded {
-      --section-overlay-bg: var(--landing-overlay-bg);
-    }
-
-    & .supersection {
-      &.is-shaded {
-        --section-overlay-bg: var(--landing-overlay-bg);
-      }
-
-      &.is-highlighted {
-        @apply bg-accent-800/50;
-      }
-    }
-
-    & .supersections,
-    & .supersection,
-    & .supersection-inner {
-      &:before,
-      &:after {
-        @apply block grow;
-        content: "";
-        background: var(--section-overlay-bg);
-      }
-    }
-
-    & .supersections,
-    & .supersection {
-      &:before,
-      &:after {
-        height: var(--supersection-padding-y);
-      }
-    }
-
-    & .supersection-inner {
-      @apply flex;
-
-      &:before,
-      &:after {
-        min-width: var(--supersection-padding-x);
-      }
-    }
-
-    & .supersection-content {
-      @apply grow flex flex-col gap-12 content-wrapper-lg;
-    }
-
-    & .supersection-heading {
-      @apply flex flex-col items-center text-center;
-    }
-
-    & .section-wrapper {
-      @apply px-0 sm:py-5 md:py-10 md:px-10;
-    }
-
-    & .section {
-      @apply py-(--section-padding-y) px-(--section-padding-x) grid items-start relative;
-
-      &.section-compact {
-        @apply py-(--section-padding-y-compact);
-      }
-
-      &.section-header {
-        @apply py-(--section-padding-y-header);
-      }
-
-      &.section-tight {
-        @apply py-(--section-padding-y-tight);
-      }
-
-      &.section-align {
-        @apply justify-center;
-      }
-
-      &.section-adjust {
-        @apply items-center;
-      }
-
-      &.section-cols-1 {
-        @apply grid-cols-1;
-      }
-
-      &.section-cols-2 {
-        @apply gap-y-4 gap-x-6 md:gap-8 lg:gap-10 grid-cols-1 md:grid-cols-2;
-
-        &:has(> .section-points) {
-          @apply grid-cols-1 lg:grid-cols-[4fr_6fr] xl:grid-cols-2;
+        &.section-header {
+          @apply pt-(--section-padding-y-header-shrunk);
         }
       }
     }
+  }
 
-    & .bento > * {
+  & .section {
+    &:has(> .heading h1),
+    &:has(> .section-content > .heading h1),
+    &:has(> .heading.heading-enlarge h2),
+    &:has(> .section-content > .heading.heading-enlarge h2) {
+      @apply gap-6 sm:gap-10;
+    }
+
+    &:has(> .heading h2),
+    &:has(> .section-content > .heading h2),
+    &:has(> .heading.heading-enlarge h3),
+    &:has(> .section-content > .heading.heading-enlarge h3) {
+      @apply gap-4 sm:gap-10;
+    }
+
+    &:has(> .heading h3),
+    &:has(> .section-content > .heading h3) {
+      @apply gap-4 sm:gap-6;
+    }
+
+    &:has(> .heading h4),
+    &:has(> .section-content > .heading h4) {
+      @apply gap-3 sm:gap-5;
+    }
+  }
+
+  & .section-content {
+    @apply flex flex-col max-w-full;
+
+    &:has(> .heading h1),
+    &:has(> .heading.heading-enlarge h2) {
+      @apply gap-6;
+    }
+
+    &:has(> .heading h2),
+    &:has(> .heading.heading-enlarge h3) {
+      @apply gap-4;
+    }
+
+    &:has(> .heading h3) {
+      @apply gap-1.5;
+    }
+
+    &:has(> .heading h4) {
+      @apply gap-1;
+    }
+  }
+
+  & .section,
+  & .section-content {
+    &:has(> .heading h1) {
+      & .section-content-icon {
+        @apply text-7xl sm:text-8xl;
+      }
+
+      & .copy {
+        @apply gap-3;
+      }
+    }
+
+    &:has(> .heading.heading-enlarge h2) {
+      & .section-content-icon {
+        @apply text-7xl sm:text-8xl;
+      }
+
+      & .copy {
+        @apply gap-3;
+      }
+    }
+
+    &:has(> .heading h2),
+    &:has(> .heading.heading-enlarge h3) {
+      & .section-content-icon {
+        @apply text-6xl sm:text-7xl;
+      }
+
+      & .copy {
+        @apply gap-2.5;
+      }
+    }
+
+    &:has(> .heading h3) {
+      & .section-content-icon {
+        @apply text-5xl sm:text-6xl;
+      }
+
+      & .copy {
+        @apply text-accent-300 gap-2;
+      }
+
+      & .copy + .extra {
+        @apply mt-2;
+      }
+    }
+
+    &:has(> .heading h4) {
+      & .section-content-icon {
+        @apply text-4xl sm:text-5xl sm:mb-1;
+      }
+
+      & .copy {
+        @apply text-ms text-accent-400 gap-2;
+      }
+
+      & .copy + .extra {
+        @apply mt-1;
+      }
+    }
+  }
+
+  .heading {
+    &:has(> h1) {
+      @apply gap-3 sm:gap-4;
+    }
+
+    &.heading-enlarge:has(> h2) {
+      @apply gap-1 sm:gap-2;
+    }
+
+    &:has(> h2),
+    &.heading-enlarge:has(> h3) {
+      @apply gap-1 sm:gap-1.5;
+    }
+
+    &:has(> h3) {
+      @apply gap-0.5 sm:gap-1;
+    }
+
+    &:has(> h4) {
+      @apply gap-0.5;
+    }
+  }
+
+  & .section-points-flex {
+    @apply flex flex-wrap md:flex-nowrap;
+  }
+
+  & .section-points:not(.section-points-flex) {
+    @apply grid;
+  }
+
+  & .section-points-cols-1 {
+    @apply grid-cols-1;
+  }
+
+  & .section-points-cols-2 {
+    @apply grid-cols-1 md:grid-cols-2;
+  }
+
+  & .section-points-cols-3 {
+    @apply grid-cols-1 md:grid-cols-3;
+  }
+
+  & .section-points-cols-4 {
+    @apply grid-cols-1 sm:grid-cols-2 md:grid-cols-4;
+  }
+
+  & .section-points {
+    &:has(.heading h2) {
+      @apply gap-x-6;
+    }
+
+    &:has(.heading h3) {
+      @apply gap-x-12 gap-y-5 md:gap-y-8;
+    }
+
+    &:has(.heading h4) {
+      @apply gap-x-8 gap-y-4 md:gap-y-7;
+    }
+
+    & > * {
+      @apply basis-full;
+    }
+  }
+
+  & .bento {
+    @apply content-wrapper-lg relative;
+
+    &.bento-cols-2 {
+      @apply grid grid-cols-1 sm:grid-cols-2;
+    }
+
+    &.bento-cols-3 {
+      @apply grid grid-cols-1 sm:grid-cols-3;
+    }
+
+    &.bento-cols-4 {
+      @apply grid grid-cols-1 sm:grid-cols-4;
+    }
+
+    &.bento-cols-5 {
+      @apply grid grid-cols-1 sm:grid-cols-5;
+    }
+
+    &.bento-cols-6 {
+      @apply grid grid-cols-1 sm:grid-cols-6;
+    }
+
+    & > * {
+      &:before {
+        @apply content-[""] block absolute border border-accent-600 z-10 pointer-events-none;
+        top: -0.5px;
+        right: -0.5px;
+        bottom: -0.5px;
+        left: -0.5px;
+      }
+
+      &.is-span-2 {
+        @apply sm:col-span-2;
+      }
+
+      &.is-span-3 {
+        @apply sm:col-span-3;
+      }
+
+      &.is-span-4 {
+        @apply sm:col-span-4;
+      }
+
+      &.is-span-5 {
+        @apply sm:col-span-5;
+      }
+
+      &.is-span-6 {
+        @apply sm:col-span-6;
+      }
+
       &.has-continuation {
-        & > .section {
-          @apply pb-(--section-padding-y-shrunk);
-
-          &.section-compact {
-            @apply pb-(--section-padding-y-compact-shrunk);
-          }
-
-          &.section-header {
-            @apply pb-(--section-padding-y-header-shrunk);
-          }
-        }
-
-        & + * > .section {
-          @apply pt-(--section-padding-y-shrunk);
-
-          &.section-compact {
-            @apply pt-(--section-padding-y-compact-shrunk);
-          }
-
-          &.section-header {
-            @apply pt-(--section-padding-y-header-shrunk);
-          }
-        }
-      }
-    }
-
-    & .section {
-      &:has(> .heading h1),
-      &:has(> .section-content > .heading h1),
-      &:has(> .heading.heading-enlarge h2),
-      &:has(> .section-content > .heading.heading-enlarge h2) {
-        @apply gap-6 sm:gap-10;
-      }
-
-      &:has(> .heading h2),
-      &:has(> .section-content > .heading h2),
-      &:has(> .heading.heading-enlarge h3),
-      &:has(> .section-content > .heading.heading-enlarge h3) {
-        @apply gap-4 sm:gap-10;
-      }
-
-      &:has(> .heading h3),
-      &:has(> .section-content > .heading h3) {
-        @apply gap-4 sm:gap-6;
-      }
-
-      &:has(> .heading h4),
-      &:has(> .section-content > .heading h4) {
-        @apply gap-3 sm:gap-5;
-      }
-    }
-
-    & .section-content {
-      @apply flex flex-col max-w-full;
-
-      &:has(> .heading h1),
-      &:has(> .heading.heading-enlarge h2) {
-        @apply gap-6;
-      }
-
-      &:has(> .heading h2),
-      &:has(> .heading.heading-enlarge h3) {
-        @apply gap-4;
-      }
-
-      &:has(> .heading h3) {
-        @apply gap-1.5;
-      }
-
-      &:has(> .heading h4) {
-        @apply gap-1;
-      }
-    }
-
-    & .section,
-    & .section-content {
-      &:has(> .heading h1) {
-        & .section-content-icon {
-          @apply text-7xl sm:text-8xl;
-        }
-
-        & .copy {
-          @apply gap-3;
-        }
-      }
-
-      &:has(> .heading.heading-enlarge h2) {
-        & .section-content-icon {
-          @apply text-7xl sm:text-8xl;
-        }
-
-        & .copy {
-          @apply gap-3;
-        }
-      }
-
-      &:has(> .heading h2),
-      &:has(> .heading.heading-enlarge h3) {
-        & .section-content-icon {
-          @apply text-6xl sm:text-7xl;
-        }
-
-        & .copy {
-          @apply gap-2.5;
-        }
-      }
-
-      &:has(> .heading h3) {
-        & .section-content-icon {
-          @apply text-5xl sm:text-6xl;
-        }
-
-        & .copy {
-          @apply text-accent-300 gap-2;
-        }
-
-        & .copy + .extra {
-          @apply mt-2;
-        }
-      }
-
-      &:has(> .heading h4) {
-        & .section-content-icon {
-          @apply text-4xl sm:text-5xl sm:mb-1;
-        }
-
-        & .copy {
-          @apply text-ms text-accent-400 gap-2;
-        }
-
-        & .copy + .extra {
-          @apply mt-1;
-        }
-      }
-    }
-
-    .heading {
-      &:has(> h1) {
-        @apply gap-3 sm:gap-4;
-      }
-
-      &.heading-enlarge:has(> h2) {
-        @apply gap-1 sm:gap-2;
-      }
-
-      &:has(> h2),
-      &.heading-enlarge:has(> h3) {
-        @apply gap-1 sm:gap-1.5;
-      }
-
-      &:has(> h3) {
-        @apply gap-0.5 sm:gap-1;
-      }
-
-      &:has(> h4) {
-        @apply gap-0.5;
-      }
-    }
-
-    & .section-points-flex {
-      @apply flex flex-wrap md:flex-nowrap;
-    }
-
-    & .section-points:not(.section-points-flex) {
-      @apply grid;
-    }
-
-    & .section-points-cols-1 {
-      @apply grid-cols-1;
-    }
-
-    & .section-points-cols-2 {
-      @apply grid-cols-1 md:grid-cols-2;
-    }
-
-    & .section-points-cols-3 {
-      @apply grid-cols-1 md:grid-cols-3;
-    }
-
-    & .section-points-cols-4 {
-      @apply grid-cols-1 sm:grid-cols-2 md:grid-cols-4;
-    }
-
-    & .section-points {
-      &:has(.heading h2) {
-        @apply gap-x-6;
-      }
-
-      &:has(.heading h3) {
-        @apply gap-x-12 gap-y-5 md:gap-y-8;
-      }
-
-      &:has(.heading h4) {
-        @apply gap-x-8 gap-y-4 md:gap-y-7;
-      }
-
-      & > * {
-        @apply basis-full;
-      }
-    }
-
-    & .bento {
-      @apply content-wrapper-lg relative;
-
-      &.bento-cols-2 {
-        @apply grid grid-cols-1 sm:grid-cols-2;
-      }
-
-      &.bento-cols-3 {
-        @apply grid grid-cols-1 sm:grid-cols-3;
-      }
-
-      &.bento-cols-4 {
-        @apply grid grid-cols-1 sm:grid-cols-4;
-      }
-
-      &.bento-cols-5 {
-        @apply grid grid-cols-1 sm:grid-cols-5;
-      }
-
-      &.bento-cols-6 {
-        @apply grid grid-cols-1 sm:grid-cols-6;
-      }
-
-      & > * {
         &:before {
-          @apply content-[""] block absolute border border-accent-600 z-10 pointer-events-none;
-          top: -0.5px;
-          right: -0.5px;
-          bottom: -0.5px;
-          left: -0.5px;
+          @apply border-b-accent-700;
+          border-bottom-style: dashed;
         }
+      }
 
-        &.is-span-2 {
-          @apply sm:col-span-2;
-        }
-
-        &.is-span-3 {
-          @apply sm:col-span-3;
-        }
-
-        &.is-span-4 {
-          @apply sm:col-span-4;
-        }
-
-        &.is-span-5 {
-          @apply sm:col-span-5;
-        }
-
-        &.is-span-6 {
-          @apply sm:col-span-6;
-        }
-
-        &.has-continuation {
-          &:before {
-            @apply border-b-accent-700;
-            border-bottom-style: dashed;
-          }
-        }
-
-        &.has-continuation + * {
-          &:before {
-            border-top-style: none;
-          }
+      &.has-continuation + * {
+        &:before {
+          border-top-style: none;
         }
       }
     }
+  }
 
-    & .badge {
-      @apply border-[currentColor]/40 border p-0.5 font-medium rounded-sm inline-flex items-center gap-0.5 leading-none capsize text-[0.85em];
-    }
+  & .badge {
+    @apply border-[currentColor]/40 border p-0.5 font-medium rounded-sm inline-flex items-center gap-0.5 leading-none capsize text-[0.85em];
+  }
 
-    & text-del {
-      @apply content-[""] inline-block bg-[currentColor]/70 size-[0.2em] rounded-full shrink-0;
-    }
+  & text-del {
+    @apply content-[""] inline-block bg-[currentColor]/70 size-[0.2em] rounded-full shrink-0;
   }
 }
 

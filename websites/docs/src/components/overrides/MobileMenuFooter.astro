@@ -15,24 +15,22 @@ const isDocsPage = Astro.url.pathname.startsWith("/docs");
 </div>
 
 <style>
-  @layer starlight.core {
-    .social-icons {
-      display: flex;
-      margin-inline-end: auto;
-      gap: 1rem;
-      align-items: center;
-      padding-block: 1rem;
-    }
-    .social-icons:empty {
-      display: none;
-    }
-    .mobile-preferences {
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      border-top: 1px solid var(--sl-color-gray-6);
-      column-gap: 1rem;
-      padding: 0.5rem 0;
-    }
+  .social-icons {
+    display: flex;
+    margin-inline-end: auto;
+    gap: 1rem;
+    align-items: center;
+    padding-block: 1rem;
+  }
+  .social-icons:empty {
+    display: none;
+  }
+  .mobile-preferences {
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--sl-color-gray-6);
+    column-gap: 1rem;
+    padding: 0.5rem 0;
   }
 </style>

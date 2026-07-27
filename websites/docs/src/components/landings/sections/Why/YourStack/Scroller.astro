@@ -120,104 +120,102 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
 <style>
   @reference "#/styles/global.css";
 
-  @layer starlight.core {
-    .group {
-      @apply flex items-stretch gap-2 md:gap-3;
+  .group {
+    @apply flex items-stretch gap-2 md:gap-3;
 
-      --scroller-height: calc(
-        (var(--scroller-logo-size) + var(--scroller-gap-y)) *
-          var(--scroller-visible-count)
-      );
+    --scroller-height: calc(
+      (var(--scroller-logo-size) + var(--scroller-gap-y)) *
+        var(--scroller-visible-count)
+    );
 
-      --scroller-visible-count: 3;
-      --scroller-logo-size: 40px;
-      --scroller-gap-y: calc(var(--scroller-logo-size) / 1.6);
+    --scroller-visible-count: 3;
+    --scroller-logo-size: 40px;
+    --scroller-gap-y: calc(var(--scroller-logo-size) / 1.6);
 
-      @variant md {
-        --scroller-visible-count: 5;
-        --scroller-gap-y: 28px;
-        --scroller-logo-size: 50px;
-      }
-
-      @variant lg {
-        --scroller-visible-count: 5;
-        --scroller-gap-y: 32px;
-        --scroller-logo-size: 60px;
-      }
+    @variant md {
+      --scroller-visible-count: 5;
+      --scroller-gap-y: 28px;
+      --scroller-logo-size: 50px;
     }
 
-    .marquee {
-      flex: 0 0 calc(var(--scroller-logo-size) * 1.5);
-      height: var(--scroller-height);
-      overflow: hidden;
-      position: relative;
-      mask-image: linear-gradient(
-        to bottom,
-        transparent 0,
-        black 12%,
-        black 88%,
-        transparent 100%
-      );
-      -webkit-mask-image: linear-gradient(
-        to bottom,
-        transparent 0,
-        black 12%,
-        black 88%,
-        transparent 100%
-      );
+    @variant lg {
+      --scroller-visible-count: 5;
+      --scroller-gap-y: 32px;
+      --scroller-logo-size: 60px;
     }
+  }
 
-    .track {
-      --scroller-distance: calc(
-        var(--scroller-count) *
-          (var(--scroller-logo-size) + var(--scroller-gap-y)) / -2
-      );
+  .marquee {
+    flex: 0 0 calc(var(--scroller-logo-size) * 1.5);
+    height: var(--scroller-height);
+    overflow: hidden;
+    position: relative;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+  }
 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      animation-name: logo-scroll-up;
-      animation-duration: calc(var(--scroller-count) * 3s);
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-      will-change: transform;
+  .track {
+    --scroller-distance: calc(
+      var(--scroller-count) *
+        (var(--scroller-logo-size) + var(--scroller-gap-y)) / -2
+    );
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation-name: logo-scroll-up;
+    animation-duration: calc(var(--scroller-count) * 3s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+
+  .marquee[data-direction="down"] .track {
+    animation-name: logo-scroll-down;
+  }
+
+  .track img {
+    height: var(--scroller-logo-size);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-bottom: var(--scroller-gap-y);
+  }
+
+  @property --scroller-distance {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+
+  @keyframes logo-scroll-up {
+    0% {
+      transform: translate3d(0, 0, 0);
     }
-
-    .marquee[data-direction="down"] .track {
-      animation-name: logo-scroll-down;
+    100% {
+      transform: translate3d(0, var(--scroller-distance), 0);
     }
+  }
 
-    .track img {
-      height: var(--scroller-logo-size);
-      width: auto;
-      max-width: 100%;
-      object-fit: contain;
-      flex-shrink: 0;
-      margin-bottom: var(--scroller-gap-y);
+  @keyframes logo-scroll-down {
+    0% {
+      transform: translate3d(0, var(--scroller-distance), 0);
     }
-
-    @property --scroller-distance {
-      syntax: "<length>";
-      inherits: false;
-      initial-value: 0px;
-    }
-
-    @keyframes logo-scroll-up {
-      0% {
-        transform: translate3d(0, 0, 0);
-      }
-      100% {
-        transform: translate3d(0, var(--scroller-distance), 0);
-      }
-    }
-
-    @keyframes logo-scroll-down {
-      0% {
-        transform: translate3d(0, var(--scroller-distance), 0);
-      }
-      100% {
-        transform: translate3d(0, 0, 0);
-      }
+    100% {
+      transform: translate3d(0, 0, 0);
     }
   }
 </style>

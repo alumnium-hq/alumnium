@@ -133,105 +133,103 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
 <style>
   @reference "#/styles/global.css";
 
-  @layer starlight.core {
-    .table {
-      @apply w-full text-left border-collapse;
+  .table {
+    @apply w-full text-left border-collapse;
 
-      & th,
-      & td {
-        @apply border border-accent-700;
-      }
+    & th,
+    & td {
+      @apply border border-accent-700;
+    }
+  }
+
+  .cell {
+    @apply px-1.5 py-1.5 sm:px-5 sm:py-2 relative;
+
+    &.is-header,
+    &.is-metric {
+      @apply bg-accent-950/40;
     }
 
-    .cell {
-      @apply px-1.5 py-1.5 sm:px-5 sm:py-2 relative;
-
-      &.is-header,
-      &.is-metric {
-        @apply bg-accent-950/40;
-      }
-
-      &.is-header {
-        @apply py-2 sm:py-5 text-sm sm:text-base text-accent-200 leading-snug;
-
-        &.is-alumnium {
-          @apply bg-accent-800/70 text-ink-dark font-bold;
-        }
-      }
-
-      &.is-metric {
-        @apply text-accent-400 min-w-[10rem];
-      }
-
-      &:not(.is-header):not(.is-metric) {
-        @apply text-center text-sm sm:text-base leading-snug;
-      }
+    &.is-header {
+      @apply py-2 sm:py-5 text-sm sm:text-base text-accent-200 leading-snug;
 
       &.is-alumnium {
-        @apply bg-accent-800/50 text-ink-dark font-bold;
-      }
-
-      &.is-product {
-        @apply font-mono leading-none capsize px-5 py-3 font-light;
-      }
-
-      & .icon {
-        @apply text-2xl;
-      }
-
-      & .symbol {
-        @apply text-3xl;
-      }
-
-      &.is-na {
-        --symbol-color: var(--color-gray-400);
-      }
-
-      &.is-string {
-        &.is-positive {
-          @apply text-emerald-300;
-        }
-
-        &.is-negative {
-          @apply text-rose-300;
-        }
-
-        &.is-mixed {
-          @apply text-orange-300;
-        }
-      }
-
-      &.is-support {
-        &.is-yes {
-          --icon-color: var(--color-emerald-500);
-        }
-
-        &.is-no {
-          --icon-color: var(--color-rose-500);
-        }
-
-        &.is-partial {
-          --symbol-color: var(--color-yellow-500);
-        }
+        @apply bg-accent-800/70 text-ink-dark font-bold;
       }
     }
 
-    .metric {
-      @apply flex flex-col gap-1;
+    &.is-metric {
+      @apply text-accent-400 min-w-[10rem];
     }
 
-    .metric-label {
-      @apply text-sm sm:text-base leading-snug font-medium text-accent-300;
+    &:not(.is-header):not(.is-metric) {
+      @apply text-center text-sm sm:text-base leading-snug;
     }
 
-    .metric-subtext {
-      @apply text-sm text-accent-500 max-w-[15rem];
+    &.is-alumnium {
+      @apply bg-accent-800/50 text-ink-dark font-bold;
     }
 
-    .superscript {
-      @apply text-accent-500;
-      vertical-align: top;
-      font-size: 11px;
+    &.is-product {
+      @apply font-mono leading-none capsize px-5 py-3 font-light;
     }
+
+    & .icon {
+      @apply text-2xl;
+    }
+
+    & .symbol {
+      @apply text-3xl;
+    }
+
+    &.is-na {
+      --symbol-color: var(--color-gray-400);
+    }
+
+    &.is-string {
+      &.is-positive {
+        @apply text-emerald-300;
+      }
+
+      &.is-negative {
+        @apply text-rose-300;
+      }
+
+      &.is-mixed {
+        @apply text-orange-300;
+      }
+    }
+
+    &.is-support {
+      &.is-yes {
+        --icon-color: var(--color-emerald-500);
+      }
+
+      &.is-no {
+        --icon-color: var(--color-rose-500);
+      }
+
+      &.is-partial {
+        --symbol-color: var(--color-yellow-500);
+      }
+    }
+  }
+
+  .metric {
+    @apply flex flex-col gap-1;
+  }
+
+  .metric-label {
+    @apply text-sm sm:text-base leading-snug font-medium text-accent-300;
+  }
+
+  .metric-subtext {
+    @apply text-sm text-accent-500 max-w-[15rem];
+  }
+
+  .superscript {
+    @apply text-accent-500;
+    vertical-align: top;
+    font-size: 11px;
   }
 </style>
