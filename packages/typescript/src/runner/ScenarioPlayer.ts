@@ -7,6 +7,8 @@ import { ScenarioMasker } from "./ScenarioMasker.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
+const ALUMNIUM_OPTIONS_KEY = "alumnium:options";
+
 export namespace ScenarioPlayer {
   export interface Props {
     scenario: Scenario.Type;
@@ -62,7 +64,11 @@ export class ScenarioPlayer {
         const mcpName = mcp.convertNameFromToolUse(use.name);
 
         const unmaskedInput = this.#masker.unmaskInput(use.input);
-        const mcpOutput = await mcp.call(mcpName, unmaskedInput);
+        const input =
+          mcpName === "start"
+            ? this.#disableChangeAnalysis(unmaskedInput)
+            : unmaskedInput;
+        const mcpOutput = await mcp.call(mcpName, input);
 
         const log: ScenarioPlayer.Log = {
           step,
@@ -115,6 +121,63 @@ export class ScenarioPlayer {
     } finally {
       await mcp.close();
     }
+  }
+
+  //#endregion
+
+  //#region Capabilities
+
+  /**
+   * Disables the UI changes analysis agent in the recorded `start` tool input.
+   * The analysis costs an extra LLM call per `do` step and playback never
+   * compares `do` output, so it's pure overhead during playback.
+   *
+   * @param input - Unmasked `start` tool input.
+   * @returns Tool input with change analysis disabled.
+   */
+  #disableChangeAnalysis(
+    input: ScenarioAlumniumMcp.Input,
+  ): ScenarioAlumniumMcp.Input {
+    const { capabilities } = input;
+
+    // NOTE: Capabilities can also be a path to a JSON file, which we don't
+    // rewrite. See `startMcpTool`.
+    if (typeof capabilities !== "string") return input;
+
+    let parsedCapabilities: unknown;
+    try {
+      parsedCapabilities = JSON.parse(capabilities);
+    } catch {
+      logger.warn(
+        "Capabilities are not an inline JSON string, cannot disable change analysis",
+      );
+      return input;
+    }
+
+    if (typeof parsedCapabilities !== "object" || parsedCapabilities === null) {
+      logger.warn(
+        "Capabilities are not a JSON object, cannot disable change analysis",
+      );
+      return input;
+    }
+
+    const capabilitiesRecord = parsedCapabilities as Record<string, unknown>;
+    const alumniumOptions = capabilitiesRecord[ALUMNIUM_OPTIONS_KEY];
+
+    capabilitiesRecord[ALUMNIUM_OPTIONS_KEY] = Object.assign(
+      typeof alumniumOptions === "object" && alumniumOptions !== null
+        ? alumniumOptions
+        : {},
+      { changeAnalysis: false },
+    );
+
+    logger.debug("Disabled change analysis for playback: {capabilities}", {
+      capabilities: capabilitiesRecord,
+    });
+
+    return Object.assign(input, {
+      capabilities: JSON.stringify(capabilitiesRecord),
+    });
   }
 
   //#endregion
