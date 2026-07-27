@@ -1,5 +1,10 @@
 ---
-import Asciinema from "./Asciinema.astro";
+import VideoPlayer from "./VideoPlayer.astro";
 ---
 
-<Asciinema src="https://asciinema.org/a/569727.cast" />
+<VideoPlayer
+  src="/videos/landing-demo-hero.mov"
+  aspectRatio="1920 / 1080"
+  musicLicense="videos/landing-demo-hero-music-license.txt"
+  muted
+/>

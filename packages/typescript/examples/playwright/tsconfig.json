@@ -1,0 +1,7 @@
+{
+  "include": ["./*.ts"],
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "esnext"
+  }
+}
