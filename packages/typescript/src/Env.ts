@@ -134,6 +134,13 @@ export const Env = {
     return envVar("ALUMNIUM_MCP_RECORD_VIDEOS", z.stringbool().default(true));
   },
 
+  get ALUMNIUM_MCP_TAKE_SCREENSHOTS() {
+    return envVar(
+      "ALUMNIUM_MCP_TAKE_SCREENSHOTS",
+      z.stringbool().default(true),
+    );
+  },
+
   get ALUMNIUM_MCP_ARTIFACTS_DIR() {
     return envVar("ALUMNIUM_MCP_ARTIFACTS_DIR", pathString().optional());
   },

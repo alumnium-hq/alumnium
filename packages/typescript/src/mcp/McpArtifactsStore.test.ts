@@ -65,6 +65,22 @@ describe("McpArtifactsStore", () => {
       return { mockDir, id, mockScreenshot, pixelB64, screenshotProps };
     });
 
+    function disableScreenshots() {
+      pushMock(
+        vi
+          .spyOn(Env, "ALUMNIUM_MCP_TAKE_SCREENSHOTS", "get")
+          .mockReturnValue(false),
+      );
+    }
+
+    it("resolves null if screenshots are disabled", async () => {
+      const { screenshotProps, mockScreenshot } = setup.cur;
+      disableScreenshots();
+      const result = await McpArtifactsStore.saveScreenshot(screenshotProps);
+      expect(result).toBe(null);
+      expect(mockScreenshot).not.toBeCalled();
+    });
+
     it("resolves path with step number and sanitized description prefix", async () => {
       const { mockDir, screenshotProps } = setup.cur;
       const result = await McpArtifactsStore.saveScreenshot(screenshotProps);

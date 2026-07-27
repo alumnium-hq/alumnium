@@ -27,6 +27,14 @@ export class McpArtifactsStore extends FileStore {
     props: McpArtifactsStore.SaveScreenshotProps,
   ): Promise<string | null> {
     const { id, description } = props;
+
+    if (!Env.ALUMNIUM_MCP_TAKE_SCREENSHOTS) {
+      logger.debug(
+        `Driver ${id}: Screenshots are disabled, set ALUMNIUM_MCP_TAKE_SCREENSHOTS=true to enable`,
+      );
+      return null;
+    }
+
     try {
       const driverState = McpState.getDriverState(id);
 
