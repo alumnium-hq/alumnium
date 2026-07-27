@@ -18,6 +18,7 @@ import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 import { ScenarioClaudeCodeSessionStore } from "./ScenarioClaudeCodeSessionStore.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
 import type { ScenarioPlayer } from "./ScenarioPlayer.ts";
+import { ScenarioReporter } from "./ScenarioReporter.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -122,12 +123,19 @@ export class ScenarioRecorder {
 
   #processAssistantMessage(message: SDKAssistantMessage) {
     message.message.content.forEach((block) => {
-      if (
-        block.type !== "tool_use" ||
-        !ScenarioAlumniumMcp.isOwnToolUseName(block.name)
-      )
-        return;
-      this.#recordToolUse(block);
+      switch (block.type) {
+        case "thinking":
+          return ScenarioReporter.thinking(block.thinking);
+
+        case "text":
+          return ScenarioReporter.assistant(block.text);
+
+        case "tool_use":
+          ScenarioReporter.toolUse(block.name, block.input);
+          // NOTE: Only Alumnium MCP tool calls are recorded.
+          if (!ScenarioAlumniumMcp.isOwnToolUseName(block.name)) return;
+          return this.#recordToolUse(block);
+      }
     });
   }
 
@@ -160,6 +168,11 @@ export class ScenarioRecorder {
           },
         },
         allowedTools: ["Read", "Write", "Edit", "Bash", "mcp__alumnium__*"],
+        // NOTE: Claude Code SDK loads all filesystem settings by default, which
+        // makes recordings depend on the developer's own `~/.claude` config
+        // (plugins, skills, MCP servers). Isolate from it, so that recordings
+        // are reproducible across machines.
+        settingSources: [],
         sessionStore: this.#sessionStore,
         sessionStoreFlush: "eager",
         systemPrompt: {

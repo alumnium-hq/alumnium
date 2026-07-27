@@ -4,6 +4,7 @@ import { Telemetry } from "../telemetry/Telemetry.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
+import { ScenarioReporter } from "./ScenarioReporter.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -61,13 +62,15 @@ export class ScenarioPlayer {
         logger.info(`Playing step ${stepCounterStr}`);
 
         const { use, result } = step;
-        const mcpName = mcp.convertNameFromToolUse(use.name);
+        const mcpName = ScenarioAlumniumMcp.convertNameFromToolUse(use.name);
 
         const unmaskedInput = this.#masker.unmaskInput(use.input);
         const input =
           mcpName === "start"
             ? this.#disableChangeAnalysis(unmaskedInput)
             : unmaskedInput;
+        ScenarioReporter.step(stepCounterStr, mcpName, input);
+
         const mcpOutput = await mcp.call(mcpName, input);
 
         const log: ScenarioPlayer.Log = {
@@ -97,6 +100,7 @@ export class ScenarioPlayer {
               logger.info(
                 `Step ${stepCounterStr} MCP tool '${use.name}' output matches expected result`,
               );
+              ScenarioReporter.stepMatched(mcpName);
             } else {
               const message = `Step ${stepCounterStr} MCP tool '${use.name}' output does not match expected result!`;
               logger.error(
@@ -104,6 +108,7 @@ export class ScenarioPlayer {
                 { useContent, mcpContent },
               );
               log.error = message;
+              ScenarioReporter.stepMismatched(mcpName, useContent, mcpContent);
 
               return {
                 status: "failure",

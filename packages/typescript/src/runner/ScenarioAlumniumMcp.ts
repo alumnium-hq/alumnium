@@ -55,7 +55,7 @@ export class ScenarioAlumniumMcp {
     return result;
   }
 
-  convertNameFromToolUse(toolUseName: string) {
+  static convertNameFromToolUse(toolUseName: string) {
     return toolUseName.replace(TOOL_USE_NAME_PREFIX, "");
   }
 

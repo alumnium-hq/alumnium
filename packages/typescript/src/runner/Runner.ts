@@ -4,6 +4,7 @@ import { SystemProcess } from "../system/SystemProcess.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { ScenarioPlayer } from "./ScenarioPlayer.ts";
 import { ScenarioRecorder } from "./ScenarioRecorder.ts";
+import { ScenarioReporter } from "./ScenarioReporter.ts";
 import { ScenarioStore } from "./ScenarioStore.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
@@ -25,6 +26,7 @@ export class Runner {
 
   #path: string;
   #store = new ScenarioStore();
+  #startedAt = performance.now();
 
   constructor(path: string) {
     this.#path = path;
@@ -32,6 +34,7 @@ export class Runner {
 
   async run() {
     logger.info(`Running scenario ${this.#path}`);
+    this.#startedAt = performance.now();
 
     const text = await this.#readScenarioText();
     const file = await this.#store.lookup(text);
@@ -40,13 +43,22 @@ export class Runner {
       logger.info(
         `Scenario ${file.scenario.id} found in the store, playing...`,
       );
+      ScenarioReporter.playing(this.#path, file.scenario.steps.length);
       await this.#play(text, file);
     } else {
       logger.info(`Scenario not found in the store, recording...`);
+      ScenarioReporter.recording(this.#path);
       await this.#record(text);
     }
 
+    this.#reportFinished();
     await SystemProcess.exit(0);
+  }
+
+  #reportFinished() {
+    const elapsedMs = performance.now() - this.#startedAt;
+    logger.info(`Scenario run finished in ${elapsedMs}ms`);
+    ScenarioReporter.finished(elapsedMs);
   }
 
   async #play(text: string, file: ScenarioStore.File) {
@@ -54,8 +66,14 @@ export class Runner {
 
     const result = await player.play();
 
+    if (result.status === "success") {
+      ScenarioReporter.passed(file.scenario.steps.length);
+      return;
+    }
+
     if (result.status === "failure") {
       logger.info("Scenario playback failed, starting recovery...");
+      ScenarioReporter.recovering();
       await this.#recover({
         text,
         file,
@@ -90,6 +108,8 @@ export class Runner {
 
     if (result.status === "failure") {
       logger.error(`Scenario recording failed: ${result.error}`);
+      ScenarioReporter.failed(result.error);
+      this.#reportFinished();
       return SystemProcess.exit(1);
     }
 
@@ -99,6 +119,7 @@ export class Runner {
     });
 
     logger.info(`Saved scenario recording to ${path}`);
+    ScenarioReporter.saved(path, recorder.scenario.steps.length);
   }
 
   async #readScenarioText(): Promise<string> {
