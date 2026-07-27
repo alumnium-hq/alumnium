@@ -1,8 +1,8 @@
-# Airbnb
+---
+base-url: https://www.airbnb.com
+---
 
-URL: https://www.airbnb.com.
-Don't use Alumnium planner.
-Always save cache, even if tests are failed.
+# Airbnb
 
 ## Search by Destination
 
