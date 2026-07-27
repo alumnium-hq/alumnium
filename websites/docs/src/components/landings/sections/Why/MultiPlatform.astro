@@ -117,8 +117,7 @@ const t = tt.landings.sections.multiPlatform.en;
         calc(var(--mobile-size) + var(--mobile-clip-offset))
         calc(var(--mobile-size) + var(--mobile-clip-offset)) no-repeat;
 
-    mask-composite: subtract;
-    -webkit-mask-composite: xor;
+    mask-composite: exclude;
 
     & svg {
       width: 100%;
