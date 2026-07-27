@@ -1,16 +1,23 @@
 ---
 export interface Props {
   src: string;
-  label: string;
+  label?: string;
   aspectRatio?: string;
   musicLicense?: string;
+  muted?: boolean;
 }
 
-const { src, label, aspectRatio = "4 / 3", musicLicense } = Astro.props;
+const { src, label, aspectRatio = "4 / 3", musicLicense, muted } = Astro.props;
 ---
 
 <al-video class="video-player" style={{ "aspect-ratio": aspectRatio }}>
-  <video controls playsinline preload="metadata" aria-label={label}>
+  <video
+    controls
+    playsinline
+    preload="metadata"
+    aria-label={label}
+    muted={!!muted}
+  >
     <source src={src} />
   </video>
 
@@ -65,7 +72,8 @@ const { src, label, aspectRatio = "4 / 3", musicLicense } = Astro.props;
     }
   }
 
-  customElements.define("al-video", VideoPlayer);
+  if (!customElements.get("al-video"))
+    customElements.define("al-video", VideoPlayer);
 </script>
 
 <style>

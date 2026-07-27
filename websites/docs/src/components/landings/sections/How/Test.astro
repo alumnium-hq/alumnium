@@ -1,6 +1,6 @@
 ---
-import Asciinema from "#/components/blocks/Asciinema.astro";
 import TestClient from "#/components/blocks/TestClient.astro";
+import VideoPlayer from "#/components/blocks/VideoPlayer.astro";
 import { tt } from "#/copy";
 import Step from "./Step.astro";
 
@@ -9,7 +9,13 @@ const t = tt.landings.sections.howSteps.test;
 
 <Step t={t}>
   <Fragment slot="agents">
-    <Asciinema src="https://asciinema.org/a/569727.cast" />
+    <VideoPlayer
+      src="/videos/landing-demo-hero.mov"
+      label={t.agents.en.headline || "TODO"}
+      aspectRatio="1920 / 1080"
+      musicLicense="videos/landing-demo-hero-music-license.txt"
+      muted
+    />
   </Fragment>
 
   <Fragment slot="engineers">
