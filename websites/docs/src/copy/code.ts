@@ -483,11 +483,10 @@ export const ttCode = {
     code: lit`
       describe("Search", () => {
         it("finds Mercury", async () => {
-          await driver.get("https://duckduckgo.com");
-          await al.do("search for 'Mercury element' and press Enter");
-          await al.check("page title contains Mercury word");
-          await al.check("search results contain Wikipedia articles");
-          assert.equal(await al.get("chemical symbol"), "Hg");
+          await driver.get("https://youtube.com");
+          await al.do("search for 'lofi beats' and press Enter");
+          await al.check("page title contains 'lofi beats'");
+          await al.check("search results contain lofi videos");
         });
       });
     `,
@@ -501,11 +500,10 @@ export const ttCode = {
     code: lit`
       test.describe("Search", async () => {
         test('finds Mercury', async ({ page }) => {
-          await page.goto("https://duckduckgo.com");
-          await al.do("search for 'Mercury element' and press Enter");
-          await al.check("page title contains Mercury word");
-          await al.check("search results contain Wikipedia articles");
-          expect(await al.get("chemical symbol")).toBe("Hg");
+          await page.goto("https://youtube.com");
+          await al.do("search for 'lofi beats' and press Enter");
+          await al.check("page title contains 'lofi beats'");
+          await al.check("search results contain lofi videos");
         });
       });
     `,
@@ -519,11 +517,10 @@ export const ttCode = {
     code: lit`
       describe("Search", () => {
         it("finds Mercury", async () => {
-          await browser.url("https://duckduckgo.com");
-          await al.do("search for 'Mercury element' and press Enter");
-          await al.check("page title contains Mercury word");
-          await al.check("search results contain Wikipedia articles");
-          expect(await al.get("chemical symbol")).toEqual("Hg");
+          await browser.url("https://youtube.com");
+          await al.do("search for 'lofi beats' and press Enter");
+          await al.check("page title contains 'lofi beats'");
+          await al.check("search results contain lofi videos");
         });
       });
     `,
@@ -540,11 +537,10 @@ export const ttCode = {
 
     code: lit`
       def test_search(al, driver):
-          driver.get("https://duckduckgo.com")
-          al.do("search for 'Mercury element' and press Enter")
-          al.check("page title contains Mercury word")
-          al.check("search results contain Wikipedia articles")
-          assert al.get("chemical symbol") == "Hg"
+          driver.get("https://youtube.com")
+          al.do("search for 'lofi beats' and press Enter")
+          al.check("page title contains 'lofi beats'")
+          al.check("search results contain lofi videos")
     `,
   }),
 
@@ -555,11 +551,10 @@ export const ttCode = {
 
     code: lit`
       def test_search(al, page):
-          page.goto("https://duckduckgo.com")
-          al.do("search for 'Mercury element' and press Enter")
-          al.check("page title contains Mercury word")
-          al.check("search results contain Wikipedia articles")
-          assert al.get("chemical symbol") == "Hg"
+          page.goto("https://youtube.com")
+          al.do("search for 'lofi beats' and press Enter")
+          al.check("page title contains 'lofi beats'")
+          al.check("search results contain lofi videos")
     `,
   }),
 
@@ -570,11 +565,10 @@ export const ttCode = {
 
     code: lit`
       def test_search(al, driver):
-          driver.get("https://duckduckgo.com")
-          al.do("search for 'Mercury element' and press Enter")
-          al.check("page title contains Mercury word")
-          al.check("search results contain Wikipedia articles")
-          assert al.get("chemical symbol") == "Hg"
+          driver.get("https://youtube.com")
+          al.do("search for 'lofi beats' and press Enter")
+          al.check("page title contains 'lofi beats'")
+          al.check("search results contain lofi videos")
     `,
   }),
 
@@ -591,11 +585,10 @@ export const ttCode = {
       class SearchTest {
         @Test
         void findsMercury() {
-          driver.get("https://duckduckgo.com");
-          al.act("search for 'Mercury element' and press Enter");
-          al.check("page title contains Mercury word");
-          al.check("search results contain Wikipedia articles");
-          assertEquals("Hg", al.get("chemical symbol"));
+          driver.get("https://youtube.com");
+          al.act("search for 'lofi beats' and press Enter");
+          al.check("page title contains 'lofi beats'");
+          al.check("search results contain lofi videos");
         }
       }
     `,
@@ -610,11 +603,10 @@ export const ttCode = {
       class SearchTest {
         @Test
         void findsMercury() {
-          page.navigate("https://duckduckgo.com");
-          al.act("search for 'Mercury element' and press Enter");
-          al.check("page title contains Mercury word");
-          al.check("search results contain Wikipedia articles");
-          assertEquals("Hg", al.get("chemical symbol"));
+          page.navigate("https://youtube.com");
+          al.act("search for 'lofi beats' and press Enter");
+          al.check("page title contains 'lofi beats'");
+          al.check("search results contain lofi videos");
         }
       }
     `,
@@ -629,11 +621,10 @@ export const ttCode = {
       class SearchTest {
         @Test
         void findsMercury() {
-          driver.get("https://duckduckgo.com");
-          al.act("search for 'Mercury element' and press Enter");
-          al.check("page title contains Mercury word");
-          al.check("search results contain Wikipedia articles");
-          assertEquals("Hg", al.get("chemical symbol"));
+          driver.get("https://youtube.com");
+          al.act("search for 'lofi beats' and press Enter");
+          al.check("page title contains 'lofi beats'");
+          al.check("search results contain lofi videos");
         }
       }
     `,
