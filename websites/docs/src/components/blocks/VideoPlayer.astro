@@ -3,9 +3,10 @@ export interface Props {
   src: string;
   label: string;
   aspectRatio?: string;
+  musicLicense?: string;
 }
 
-const { src, label, aspectRatio = "4 / 3" } = Astro.props;
+const { src, label, aspectRatio = "4 / 3", musicLicense } = Astro.props;
 ---
 
 <al-video class="video-player" style={{ "aspect-ratio": aspectRatio }}>
@@ -23,6 +24,21 @@ const { src, label, aspectRatio = "4 / 3" } = Astro.props;
       </polygon>
     </svg>
   </button>
+
+  {
+    musicLicense && (
+      <small class="music-license">
+        <a
+          href={musicLicense}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-content-light hover:text-content"
+        >
+          Music License
+        </a>
+      </small>
+    )
+  }
 </al-video>
 
 <script>
@@ -84,5 +100,17 @@ const { src, label, aspectRatio = "4 / 3" } = Astro.props;
 
   .play-fill {
     @apply shadow-xl drop-shadow-2xl;
+  }
+
+  .video-player.is-playing .play {
+    @apply opacity-0 pointer-events-none;
+  }
+
+  .video-player:hover .music-license {
+    @apply opacity-80;
+  }
+
+  .music-license {
+    @apply absolute bottom-0 right-0 text-xs text-content-light p-2 opacity-0 hover:opacity-100 transition-opacity;
   }
 </style>
