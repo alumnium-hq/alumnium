@@ -17,6 +17,14 @@ export namespace Scenario {
 
   export type ClaudeCodeStepToolResultContent = ClaudeCodeToolResult["content"];
 
+  export type ClaudeCodeMcpStep = z.infer<
+    typeof Scenario.ClaudeCodeStepToolUse
+  >;
+
+  export type ClaudeCodeExternalStep = z.infer<
+    typeof Scenario.ClaudeCodeStepExternalToolUse
+  >;
+
   export type ClaudeCodeStep = z.infer<typeof Scenario.ClaudeCodeStep>;
 
   export type ClaudeCode = z.infer<typeof Scenario.ClaudeCode>;
@@ -41,7 +49,21 @@ export abstract class Scenario {
     result: z.custom<Scenario.ClaudeCodeStepToolResult>((value) => value),
   });
 
-  static ClaudeCodeStep = z.union([this.ClaudeCodeStepToolUse]);
+  /**
+   * A non-Alumnium tool call (e.g. `Bash`) made by the agent. Recorded so that
+   * playback can re-execute it, since its output can feed later MCP tool
+   * inputs.
+   */
+  static ClaudeCodeStepExternalToolUse = z.object({
+    kind: z.literal("external-tool-use"),
+    use: z.custom<Scenario.ClaudeCodeStepToolUse>((value) => value),
+    result: z.custom<Scenario.ClaudeCodeStepToolResult>((value) => value),
+  });
+
+  static ClaudeCodeStep = z.union([
+    this.ClaudeCodeStepToolUse,
+    this.ClaudeCodeStepExternalToolUse,
+  ]);
 
   static ClaudeCode = this.Base.extend({
     agent: z.literal("claude-code"),

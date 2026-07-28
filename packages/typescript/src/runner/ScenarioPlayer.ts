@@ -3,6 +3,7 @@ import { canonize } from "smolcanon";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
+import { ScenarioExternalTool } from "./ScenarioExternalTool.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
 import { ScenarioReporter } from "./ScenarioReporter.ts";
 
@@ -39,6 +40,7 @@ export namespace ScenarioPlayer {
 export class ScenarioPlayer {
   #scenario: Scenario.Type;
   #masker = new ScenarioMasker();
+  #externalCallsCount = 0;
 
   constructor(scenario: Scenario.Type) {
     this.#scenario = scenario;
@@ -61,6 +63,16 @@ export class ScenarioPlayer {
         const stepCounterStr = `${Number(stepIdxStr) + 1}/${stepsCount}`;
         logger.info(`Playing step ${stepCounterStr}`);
 
+        if (step.kind === "external-tool-use") {
+          const externalError = await this.#playExternalStep(
+            stepCounterStr,
+            step,
+          );
+          if (!externalError) continue;
+
+          return { status: "failure", error: externalError, logs };
+        }
+
         const { use, result } = step;
         const mcpName = ScenarioAlumniumMcp.convertNameFromToolUse(use.name);
 
@@ -70,6 +82,16 @@ export class ScenarioPlayer {
             ? this.#disableChangeAnalysis(unmaskedInput)
             : unmaskedInput;
         ScenarioReporter.step(stepCounterStr, mcpName, input);
+
+        const unresolvedMasks =
+          ScenarioMasker.findUnresolvedExternalMasks(input);
+        if (unresolvedMasks.length) {
+          const message = `Step ${stepCounterStr} MCP tool '${use.name}' input has unresolved external values: ${unresolvedMasks.join(", ")}. The external tool produced fewer values than during recording.`;
+          logger.error(message);
+          ScenarioReporter.failed(message);
+
+          return { status: "failure", error: message, logs };
+        }
 
         const mcpOutput = await mcp.call(mcpName, input);
 
@@ -126,6 +148,51 @@ export class ScenarioPlayer {
     } finally {
       await mcp.close();
     }
+  }
+
+  /**
+   * Re-executes an external tool call and registers the values it produced, so
+   * that the MCP tool inputs that follow get the fresh ones instead of the
+   * recorded ones.
+   *
+   * NOTE: Tools that only exist inside the agent (e.g. `ToolSearch`) cannot be
+   * executed here. They are skipped, and only fail the playback if a later MCP
+   * tool input actually depends on their output, which surfaces as an
+   * unresolved mask.
+   *
+   * @param stepCounter - Human-readable step position, e.g. `2/7`.
+   * @param step - External tool call step to replay.
+   * @returns Error message when the call failed, `null` otherwise.
+   */
+  async #playExternalStep(
+    stepCounter: string,
+    step: Scenario.ClaudeCodeExternalStep,
+  ): Promise<string | null> {
+    const { use } = step;
+    const callIndex = this.#externalCallsCount++;
+
+    ScenarioReporter.externalStep(stepCounter, use.name, use.input);
+
+    const input = ScenarioAlumniumMcp.parseInput(use.input);
+    const result = await ScenarioExternalTool.execute(use.name, input);
+
+    if (result.status === "failure") {
+      ScenarioReporter.failed(result.error);
+      return result.error;
+    }
+
+    if (result.status === "unsupported") {
+      logger.info(
+        `External tool '${use.name}' cannot be executed during playback (${result.reason}), skipping`,
+      );
+      ScenarioReporter.externalStepSkipped(use.name, result.reason);
+      return null;
+    }
+
+    logger.debug(`External tool '${use.name}' output: ${result.output}`);
+    this.#masker.registerExternalOutput(callIndex, result.output);
+
+    return null;
   }
 
   //#endregion

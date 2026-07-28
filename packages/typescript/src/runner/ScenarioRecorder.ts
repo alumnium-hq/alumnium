@@ -35,7 +35,7 @@ export namespace ScenarioRecorder {
   }
 
   export interface StepBufferClaudeCodeToolUse {
-    kind: "tool-use";
+    kind: Scenario.ClaudeCodeStep["kind"];
     agent: "claude-code";
     use: Scenario.ClaudeCodeStepToolUse;
   }
@@ -57,7 +57,9 @@ export namespace ScenarioRecorder {
 
 export class ScenarioRecorder {
   #scenario: Scenario.Type;
-  #buffer: ScenarioRecorder.StepBuffer | undefined;
+  // NOTE: Keyed by tool use id, since the agent can run tools in parallel.
+  #pendingUses = new Map<string, ScenarioRecorder.StepBuffer>();
+  #externalCallsCount = 0;
   #masker = new ScenarioMasker();
   #recovery: ScenarioRecorder.Recovery | undefined;
   #sessionStore: ScenarioClaudeCodeSessionStore;
@@ -136,8 +138,6 @@ export class ScenarioRecorder {
 
         case "tool_use":
           ScenarioReporter.toolUse(block.name, block.input);
-          // NOTE: Only Alumnium MCP tool calls are recorded.
-          if (!ScenarioAlumniumMcp.isOwnToolUseName(block.name)) return;
           return this.#recordToolUse(block);
       }
     });
@@ -243,19 +243,18 @@ export class ScenarioRecorder {
   //#region Tool use
 
   #recordToolUse(toolUse: Scenario.ClaudeCodeStepToolUse) {
-    if (this.#buffer) {
-      const message = "The scenario recording buffer is not empty";
-      logger.error(`${message}: {buffer}`, { buffer: this.#buffer });
-      throw new Error(message);
-    }
+    const isOwn = ScenarioAlumniumMcp.isOwnToolUseName(toolUse.name);
 
     logger.debug(`Recording tool use: {toolUse}`, { toolUse });
 
-    this.#buffer = {
-      kind: "tool-use",
+    this.#pendingUses.set(toolUse.id, {
+      kind: isOwn ? "tool-use" : "external-tool-use",
       agent: "claude-code",
-      use: this.#maskToolUse(toolUse),
-    };
+      // NOTE: Only MCP tool inputs are masked. External tool inputs are
+      // replayed verbatim, since masking them risks corrupting e.g. a shell
+      // command that happens to contain a value an earlier tool produced.
+      use: isOwn ? this.#maskToolUse(toolUse) : toolUse,
+    });
   }
 
   #maskToolUse(
@@ -271,29 +270,40 @@ export class ScenarioRecorder {
   //#region Tool result
 
   #recordToolResult(toolResult: Scenario.ClaudeCodeStepToolResult) {
-    if (!this.#buffer) {
+    const pending = this.#pendingUses.get(toolResult.tool_use_id);
+    if (!pending) {
       logger.debug(
-        "The scenario recording buffer is empty, ignoring tool result",
+        `No recorded tool use for result '${toolResult.tool_use_id}', ignoring tool result`,
       );
       return;
     }
 
-    if (this.#buffer.use.id !== toolResult.tool_use_id) {
-      logger.debug(
-        `The buffered tool use id '${this.#buffer.use.id}' does not match the provided tool result '${toolResult.tool_use_id}', ignoring tool result`,
-      );
-      return;
-    }
+    this.#pendingUses.delete(toolResult.tool_use_id);
 
-    logger.info(`Recording '${this.#buffer.use.name}' tool result`);
+    logger.info(`Recording '${pending.use.name}' tool result`);
     logger.debug(`-> Result: {toolResult}`, { toolResult });
+
+    if (pending.kind === "external-tool-use") {
+      this.#scenario.steps.push({
+        kind: "external-tool-use",
+        use: pending.use,
+        result: toolResult,
+      });
+
+      // NOTE: Registered after the step is recorded, so that the values are
+      // masked in the MCP tool inputs that follow, not in this call's own input.
+      this.#masker.registerExternalOutput(
+        this.#externalCallsCount++,
+        toolResult.content,
+      );
+      return;
+    }
 
     this.#scenario.steps.push({
       kind: "tool-use",
-      use: this.#buffer.use,
+      use: pending.use,
       result: this.#maskToolResult(toolResult),
     });
-    this.#buffer = undefined;
   }
 
   #maskToolResult(
