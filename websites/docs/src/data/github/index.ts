@@ -5,6 +5,7 @@ export namespace GitHubData {
   export type Repository = z.infer<typeof GitHubData.Repository>;
   export type ApiContributor = z.infer<typeof GitHubData.ApiContributor>;
   export type ApiRelease = z.infer<typeof GitHubData.ApiRelease>;
+  export type Community = z.infer<typeof GitHubData.Community>;
 
   export interface Contributor {
     username: string;
@@ -25,6 +26,8 @@ export namespace GitHubData {
 }
 
 export abstract class GitHubData {
+  static #communityPromise: Promise<GitHubData.Community> | undefined;
+
   static Repository = z.object({
     stargazers_count: z.number(),
   });
@@ -46,6 +49,55 @@ export abstract class GitHubData {
     prerelease: z.boolean(),
     assets: z.array(GitHubData.ApiReleaseAsset),
   });
+
+  static Contributor = z.object({
+    username: z.string(),
+    avatarUrl: z.string(),
+    contributions: z.number(),
+  });
+
+  static Release = z.object({
+    version: z.string(),
+    latest: z.boolean(),
+    artifacts: z.array(
+      z.object({
+        name: z.string(),
+        size: z.number(),
+      }),
+    ),
+  });
+
+  static Community = z.object({
+    stars: z.number(),
+    contributors: z.array(GitHubData.Contributor),
+  });
+
+  static async fetchCommunity(): Promise<GitHubData.Community> {
+    GitHubData.#communityPromise ??= GitHubData.#fetchCommunity();
+    return GitHubData.#communityPromise;
+  }
+
+  static async #fetchCommunity(): Promise<GitHubData.Community> {
+    const response = await fetch("/api/github/community.json");
+
+    if (!response.ok)
+      throw new Error(
+        `Failed to fetch GitHub community data: ${response.status} ${response.statusText}`,
+      );
+
+    return z.parse(GitHubData.Community, await response.json());
+  }
+
+  static async fetchLatestReleaseEndpoint(): Promise<GitHubData.Release> {
+    const response = await fetch("/api/github/releases.json");
+
+    if (!response.ok)
+      throw new Error(
+        `Failed to fetch GitHub release data: ${response.status} ${response.statusText}`,
+      );
+
+    return z.parse(GitHubData.Release, await response.json());
+  }
 
   static async fetchRepository(): Promise<GitHubData.Repository> {
     const repositoryApiUrl = GitHubData.repositoryApiUrl(githubRepositoryUrl);

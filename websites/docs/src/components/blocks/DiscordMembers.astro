@@ -20,26 +20,26 @@ const { memberCount } = discordMetadata;
   import { DiscordData } from "#/data/discord";
 
   class DiscordMembers extends HTMLElement {
-    static #invitePromise: Promise<DiscordData.Invite> | undefined;
+    static #membersPromise: Promise<DiscordData.Members> | undefined;
 
     connectedCallback() {
-      DiscordMembers.#invitePromise ??= DiscordData.fetchInvite();
-      DiscordMembers.#invitePromise.then((invite) => {
-        const template = this.querySelector("template");
-        if (!(template instanceof HTMLTemplateElement)) return;
+      DiscordMembers.#membersPromise ??= DiscordData.fetchMembers();
+      DiscordMembers.#membersPromise
+        .then((members) => {
+          const template = this.querySelector("template");
+          if (!(template instanceof HTMLTemplateElement)) return;
 
-        const newChildren = document.importNode(template.content, true);
+          const newChildren = document.importNode(template.content, true);
 
-        const totalEl = newChildren.querySelector(".total");
-        const onlineEl = newChildren.querySelector(".online");
+          const totalEl = newChildren.querySelector(".total");
+          const onlineEl = newChildren.querySelector(".online");
 
-        if (totalEl)
-          totalEl.textContent = String(invite.approximate_member_count);
-        if (onlineEl)
-          onlineEl.textContent = String(invite.approximate_presence_count);
+          if (totalEl) totalEl.textContent = String(members.memberCount);
+          if (onlineEl) onlineEl.textContent = String(members.presenceCount);
 
-        this.replaceChildren(newChildren, template);
-      });
+          this.replaceChildren(newChildren, template);
+        })
+        .catch(() => {});
     }
   }
 

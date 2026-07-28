@@ -52,8 +52,6 @@ const rowsStyle = rows ? `--rows: ${rows};` : undefined;
   const MIN_CONTRIBUTORS = 40;
 
   class GitHubContributors extends HTMLElement {
-    static #contributorsPromise: Promise<GitHubData.Contributor[]> | undefined;
-
     #resizeObserver: ResizeObserver | undefined;
 
     connectedCallback() {
@@ -61,11 +59,9 @@ const rowsStyle = rows ? `--rows: ${rows};` : undefined;
       this.#resizeObserver.observe(this);
       this.#stagger();
 
-      GitHubContributors.#contributorsPromise ??=
-        GitHubData.fetchContributors();
-      GitHubContributors.#contributorsPromise
-        .then((contributors) => {
-          this.#render(contributors.slice(0, this.#limit()));
+      GitHubData.fetchCommunity()
+        .then((community) => {
+          this.#render(community.contributors.slice(0, this.#limit()));
         })
         .catch(() => {});
     }

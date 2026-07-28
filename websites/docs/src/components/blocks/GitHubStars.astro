@@ -10,13 +10,10 @@ const stars = githubMetadata.stars;
   import { GitHubData } from "#/data/github";
 
   class GitHubStars extends HTMLElement {
-    static #repositoryPromise: Promise<GitHubData.Repository> | undefined;
-
     connectedCallback() {
-      GitHubStars.#repositoryPromise ??= GitHubData.fetchRepository();
-      GitHubStars.#repositoryPromise
-        .then((repository) => {
-          this.textContent = String(repository.stargazers_count);
+      GitHubData.fetchCommunity()
+        .then((community) => {
+          this.textContent = String(community.stars);
         })
         .catch(() => {});
     }

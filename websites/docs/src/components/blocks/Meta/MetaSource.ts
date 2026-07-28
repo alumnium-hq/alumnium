@@ -47,7 +47,8 @@ export class MetaSourceVersion extends MetaSource {
   }
 
   static latestRelease(): Promise<GitHubData.Release> {
-    MetaSourceVersion.#releasePromise ??= GitHubData.fetchLatestRelease();
+    MetaSourceVersion.#releasePromise ??=
+      GitHubData.fetchLatestReleaseEndpoint();
     return MetaSourceVersion.#releasePromise;
   }
 

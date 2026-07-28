@@ -10,6 +10,7 @@ export type DiscordInvite = z.infer<typeof DiscordInvite>;
 
 export namespace DiscordData {
   export type Invite = z.infer<typeof DiscordData.Invite>;
+  export type Members = z.infer<typeof DiscordData.Members>;
 }
 
 export abstract class DiscordData {
@@ -17,6 +18,22 @@ export abstract class DiscordData {
     approximate_member_count: z.number(),
     approximate_presence_count: z.number(),
   });
+
+  static Members = z.object({
+    memberCount: z.number(),
+    presenceCount: z.number(),
+  });
+
+  static async fetchMembers(): Promise<DiscordData.Members> {
+    const response = await fetch("/api/discord.json");
+
+    if (!response.ok)
+      throw new Error(
+        `Failed to fetch Discord member data: ${response.status} ${response.statusText}`,
+      );
+
+    return z.parse(DiscordData.Members, await response.json());
+  }
 
   static async fetchInvite(): Promise<DiscordData.Invite> {
     const inviteApiUrl = DiscordData.inviteApiUrl(discordInviteUrl);
