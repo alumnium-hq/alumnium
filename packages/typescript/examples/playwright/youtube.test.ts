@@ -3,7 +3,7 @@ import { test } from "@playwright/test";
 
 test.setTimeout(120_000);
 
-test.describe("Search", async () => {
+test.describe("YouTube Search", async () => {
   let al: Alumni;
 
   test.beforeEach(async ({ page }) => {

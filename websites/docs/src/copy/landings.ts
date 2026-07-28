@@ -426,6 +426,13 @@ const sections = {
         These commands are then intelligently interpreted and executed by
         the AI, adapting to changes in the UI and reducing test maintenance.
       `,
+
+      tabs: {
+        md: "Markdown",
+        ts: "TypeScript",
+        python: "Python",
+        java: "Java",
+      },
     },
   }),
 

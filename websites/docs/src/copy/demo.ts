@@ -3,15 +3,21 @@ import { langs, type I18n } from "./i18n";
 export const ttDemo = {
   "demo-test-runner": [
     demoTab({
+      id: "record",
+      label: langs({ en: "Recording" }),
+      src: "https://asciinema.org/a/ixXpWF5XCyFEMjMo.cast",
+    }),
+
+    demoTab({
       id: "run",
-      label: langs({ en: "Run Tests" }),
-      src: "https://asciinema.org/a/569727.cast",
+      label: langs({ en: "Running" }),
+      src: "https://asciinema.org/a/ykvDh9Pkp7U0safp.cast",
     }),
 
     demoTab({
       id: "self-healing",
       label: langs({ en: "Self-Healing" }),
-      src: "https://asciinema.org/a/418574.cast",
+      src: "https://asciinema.org/a/8vVioaoB2TIsLlAc.cast",
     }),
   ] as const,
 

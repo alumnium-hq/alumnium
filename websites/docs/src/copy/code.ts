@@ -205,7 +205,7 @@ export const ttCode = {
 
       process.env.OPENAI_API_KEY = "...";
 
-      describe("Search", () => {
+      describe("YouTube Search", () => {
         let al: Alumni;
         let driver: WebDriver;
 
@@ -233,7 +233,7 @@ export const ttCode = {
 
       process.env.OPENAI_API_KEY = "...";
 
-      test.describe("Search", async () => {
+      test.describe("YouTube Search", async () => {
         let al: Alumni;
 
         test.beforeEach(async ({ page }) => {
@@ -258,7 +258,7 @@ export const ttCode = {
 
       process.env.OPENAI_API_KEY = "...";
 
-      describe("Search", () => {
+      describe("YouTube Search", () => {
         let al: Alumni;
 
         before(async () => {
@@ -481,8 +481,8 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      describe("Search", () => {
-        it("finds Mercury", async () => {
+      describe("YouTube Search", () => {
+        it("queries videos", async () => {
           await driver.get("https://youtube.com");
           await al.do("search for 'lofi beats' and press Enter");
           await al.check("page title contains 'lofi beats'");
@@ -498,8 +498,8 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      test.describe("Search", async () => {
-        test('finds Mercury', async ({ page }) => {
+      test.describe("YouTube Search", async () => {
+        test("queries videos", async ({ page }) => {
           await page.goto("https://youtube.com");
           await al.do("search for 'lofi beats' and press Enter");
           await al.check("page title contains 'lofi beats'");
@@ -515,8 +515,8 @@ export const ttCode = {
     lang: "typescript",
 
     code: lit`
-      describe("Search", () => {
-        it("finds Mercury", async () => {
+      describe("YouTube Search", () => {
+        it("queries videos", async () => {
           await browser.url("https://youtube.com");
           await al.do("search for 'lofi beats' and press Enter");
           await al.check("page title contains 'lofi beats'");
@@ -582,9 +582,9 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      class SearchTest {
+      class YouTubeSearchTest {
         @Test
-        void findsMercury() {
+        void queriesVideos() {
           driver.get("https://youtube.com");
           al.act("search for 'lofi beats' and press Enter");
           al.check("page title contains 'lofi beats'");
@@ -600,9 +600,9 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      class SearchTest {
+      class YouTubeSearchTest {
         @Test
-        void findsMercury() {
+        void queriesVideos() {
           page.navigate("https://youtube.com");
           al.act("search for 'lofi beats' and press Enter");
           al.check("page title contains 'lofi beats'");
@@ -618,9 +618,9 @@ export const ttCode = {
     lang: "java",
 
     code: lit`
-      class SearchTest {
+      class YouTubeSearchTest {
         @Test
-        void findsMercury() {
+        void queriesVideos() {
           driver.get("https://youtube.com");
           al.act("search for 'lofi beats' and press Enter");
           al.check("page title contains 'lofi beats'");
