@@ -1,4 +1,4 @@
-experimental_monorepo_root = true
+monorepo_root = true
 [monorepo]
 config_roots = [".", "packages/*", "websites/*", "telemetry"]
 
