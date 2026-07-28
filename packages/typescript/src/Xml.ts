@@ -109,6 +109,7 @@ export abstract class Xml {
 
   // In text nodes only <, > and & must be escaped.
   static #sanitizeText(s: string): string {
+    // oxlint-disable-next-line no-control-regex
     return s.replace(/[<>&\x00-\x08\x0B\x0C\x0E-\x1F]/g, (c) => {
       if (c === "<") return "&lt;";
       if (c === ">") return "&gt;";
@@ -119,6 +120,7 @@ export abstract class Xml {
 
   // In double-quoted attribute values <, &, " and control chars must be escaped.
   static #sanitizeAttr(s: string): string {
+    // oxlint-disable-next-line no-control-regex
     return s.replace(/[<>&"\x00-\x08\x0B\x0C\x0E-\x1F\n\r\t]/g, (c) => {
       if (c === "<") return "&lt;";
       if (c === "&") return "&amp;";
