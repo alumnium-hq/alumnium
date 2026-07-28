@@ -31,6 +31,9 @@
 .env
 .envrc
 
+# Local mise
+mise.local.toml
+
 # Alumnium
 **/.alumnium/
 
