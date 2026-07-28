@@ -122,6 +122,7 @@ const rowsStyle = rows ? `--rows: ${rows};` : undefined;
       );
       if (!(template instanceof HTMLTemplateElement)) return;
 
+      // @ts-expect-error -- Cloudflare types conflict with Astro types
       template.before(...placeholders);
     }
 

@@ -99,10 +99,10 @@ export abstract class GitHubData {
     return z.parse(GitHubData.Release, await response.json());
   }
 
-  static async fetchRepository(): Promise<GitHubData.Repository> {
+  static async fetchRepository(token?: string): Promise<GitHubData.Repository> {
     const repositoryApiUrl = GitHubData.repositoryApiUrl(githubRepositoryUrl);
     const response = await fetch(repositoryApiUrl, {
-      headers: GitHubData.headers(),
+      headers: GitHubData.headers(token),
     });
 
     if (!response.ok)
@@ -113,10 +113,12 @@ export abstract class GitHubData {
     return z.parse(GitHubData.Repository, await response.json());
   }
 
-  static async fetchContributors(): Promise<GitHubData.Contributor[]> {
+  static async fetchContributors(
+    token?: string,
+  ): Promise<GitHubData.Contributor[]> {
     const contributorsApiUrl = `${GitHubData.repositoryApiUrl(githubRepositoryUrl)}/contributors?per_page=30`;
     const response = await fetch(contributorsApiUrl, {
-      headers: GitHubData.headers(),
+      headers: GitHubData.headers(token),
     });
 
     if (!response.ok)
@@ -158,16 +160,22 @@ export abstract class GitHubData {
     );
   }
 
-  static async fetchLatestRelease(): Promise<GitHubData.Release> {
+  static async fetchLatestRelease(token?: string): Promise<GitHubData.Release> {
     const latestReleaseApiUrl = `${GitHubData.repositoryApiUrl(githubRepositoryUrl)}/releases/latest`;
     const response = await fetch(latestReleaseApiUrl, {
-      headers: GitHubData.headers(),
+      headers: GitHubData.headers(token),
     });
 
-    if (!response.ok)
+    if (!response.ok) {
+      const text = await response.text();
+      console.error(
+        `Failed to fetch latest release data for ${githubRepositoryUrl} from ${latestReleaseApiUrl}: ${response.status} ${response.statusText}`,
+        text,
+      );
       throw new Error(
         `Failed to fetch latest release data for ${githubRepositoryUrl} from ${latestReleaseApiUrl}: ${response.status} ${response.statusText}`,
       );
+    }
 
     const release = z.parse(GitHubData.ApiRelease, await response.json());
     return GitHubData.normalizeRelease(release, true);
@@ -206,10 +214,12 @@ export abstract class GitHubData {
     };
   }
 
-  static headers(): HeadersInit {
+  static headers(token?: string): HeadersInit {
     return {
       Accept: "application/vnd.github+json",
+      ...(token && { Authorization: `Bearer ${token}` }),
       "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "https://alumnium.ai",
     };
   }
 }

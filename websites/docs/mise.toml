@@ -11,11 +11,11 @@ run = "bun run astro-check"
 run = "bun run astro build"
 
 [tasks."dev:build"]
-run = "bun run astro preview"
+run = "fnox exec -- bun run astro preview"
 depends = ["build"]
 
 [tasks.dev]
-run = "bun run astro dev --host 0.0.0.0"
+run = "fnox exec -- bun run astro dev --host 0.0.0.0"
 
 [tasks.deploy]
 run = "fnox exec -- bun run wrangler deploy"
@@ -43,3 +43,6 @@ curl https://raw.githubusercontent.com/steel-dev/leaderboard/refs/heads/main/src
 
 [tasks."fetch/asciinema"]
 run = "bun scripts/fetchAsciinemaMetadata.ts"
+
+[tasks."gen/types"]
+run = "bun wrangler types"
