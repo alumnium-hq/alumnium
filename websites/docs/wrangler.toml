@@ -1,5 +1,6 @@
 "$schema" = "./node_modules/wrangler/config-schema.json"
 name = "alumnium-docs"
+main = "@astrojs/cloudflare/entrypoints/server"
 compatibility_date = "2026-07-20"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
@@ -7,6 +8,13 @@ compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 # [[routes]]
 # pattern = "alumnium.ai"
 # custom_domain = true
+#
+[secrets]
+required = ["GITHUB_TOKEN"]
+
+[[kv_namespaces]]
+binding = "SESSION"
+id = "b178554c32124e41abed0411b892a98c"
 
 [observability]
 enabled = true

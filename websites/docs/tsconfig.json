@@ -30,6 +30,7 @@
     "resolveJsonModule": true,
     // Env
     "lib": ["ESNext", "DOM"],
+    "types": ["node"],
     // Checks
     "skipLibCheck": true,
     // Build
