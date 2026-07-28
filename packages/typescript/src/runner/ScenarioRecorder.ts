@@ -174,10 +174,7 @@ export class ScenarioRecorder {
           },
         },
         allowedTools: ["Read", "Write", "Edit", "Bash", "mcp__alumnium__*"],
-        // NOTE: Claude Code SDK loads all filesystem settings by default, which
-        // makes recordings depend on the developer's own `~/.claude` config
-        // (plugins, skills, MCP servers). Isolate from it, so that recordings
-        // are reproducible across machines.
+        thinking: { type: "adaptive", display: "summarized" },
         settingSources: [],
         sessionStore: this.#sessionStore,
         sessionStoreFlush: "eager",

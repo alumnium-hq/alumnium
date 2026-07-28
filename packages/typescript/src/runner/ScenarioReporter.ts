@@ -4,6 +4,7 @@ import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 
 const THINKING_MAX_LENGTH = 160;
 const INPUT_MAX_LENGTH = 120;
+const DRIVER_ID_KEY = "id";
 
 /**
  * Prints human-readable scenario progress to the console.
@@ -76,7 +77,10 @@ export abstract class ScenarioReporter {
     const label = isOwn
       ? ansi.cyan(`→ ${shortName}`)
       : ansi.dim(`→ ${shortName}`);
-    this.#print(`  ${label} ${ansi.dim(this.#summarize(input))}`);
+    const summary = isOwn
+      ? this.#summarizeMcpInput(input)
+      : this.#summarize(input);
+    this.#print(`  ${label} ${ansi.dim(summary)}`);
   }
 
   //#endregion
@@ -85,8 +89,18 @@ export abstract class ScenarioReporter {
 
   static step(counter: string, name: string, input: unknown) {
     this.#print(
-      `  ${ansi.cyan(`→ ${counter} ${name}`)} ${ansi.dim(this.#summarize(input))}`,
+      `  ${ansi.cyan(`→ ${counter} ${name}`)} ${ansi.dim(this.#summarizeMcpInput(input))}`,
     );
+  }
+
+  static externalStep(counter: string, name: string, input: unknown) {
+    this.#print(
+      `  ${ansi.yellow(`→ ${counter} ${name}`)} ${ansi.dim(this.#summarize(input))}`,
+    );
+  }
+
+  static externalStepSkipped(name: string, reason: string) {
+    this.#print(`    ${ansi.dim(`- skipped ${name}: ${reason}`)}`);
   }
 
   static stepMatched(name: string) {
@@ -102,6 +116,41 @@ export abstract class ScenarioReporter {
   //#endregion
 
   //#region Formatting
+
+  /**
+   * Summarizes an Alumnium MCP tool input. The driver id is noise in every
+   * call, and once it's gone most tools are left with a single meaningful value
+   * (a `do` goal, a `check` statement), which reads better inline than wrapped
+   * in JSON.
+   *
+   * @param input - MCP tool input.
+   * @returns Summarized input.
+   */
+  static #summarizeMcpInput(input: unknown): string {
+    if (typeof input !== "object" || input === null)
+      return this.#summarize(input);
+
+    const entries = Object.entries(input).filter(
+      ([key]) => key !== DRIVER_ID_KEY,
+    );
+
+    if (!entries.length) return "";
+
+    const soleValue = entries.length === 1 ? entries[0]?.[1] : undefined;
+    if (typeof soleValue !== "string")
+      return this.#summarize(Object.fromEntries(entries));
+
+    // NOTE: A JSON value (e.g. `start` capabilities) reads better raw than
+    // quoted, since it already contains quotes of its own.
+    return this.#isJsonLike(soleValue)
+      ? this.#summarize(soleValue)
+      : `"${this.#collapse(soleValue, INPUT_MAX_LENGTH)}"`;
+  }
+
+  static #isJsonLike(value: string): boolean {
+    const trimmedValue = value.trimStart();
+    return trimmedValue.startsWith("{") || trimmedValue.startsWith("[");
+  }
 
   static #summarize(value: unknown): string {
     if (value === undefined) return "";
