@@ -83,7 +83,14 @@ depends = [
 description = "Build all"
 
 [tasks."dev/cli"]
-run = [{ task = "//packages/typescript:dev/cli" }]
+usage = '''
+arg "<args>" var=#true
+'''
+run = [
+  { task = "//packages/typescript:dev/cli", args = [
+    "{{usage.args | join(sep=' ')}}",
+  ] },
+]
 quiet = true
 raw = true
 

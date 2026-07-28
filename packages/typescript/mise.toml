@@ -50,7 +50,10 @@ run = "./scripts/publish.sh"
 depends = "build"
 
 [tasks."dev/cli"]
-run = "fnox exec  -- bun ./src/cli/bin.ts"
+usage = '''
+arg "<args>" var=#true
+'''
+run = "fnox exec  -- bun ./src/cli/bin.ts {{usage.args | join(sep=' ')}}"
 quiet = true
 raw = true
 
