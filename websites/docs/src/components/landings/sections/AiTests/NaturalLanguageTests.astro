@@ -10,30 +10,44 @@ const t = tt.landings.sections.naturalLanguageTests.en;
 
 <Section heading={{ h: 2 }} t={t} cols={2} span={2}>
   <Tabs
-    active="ts"
+    active="md"
     items={[
-      { id: "ts", label: "TypeScript" },
-      { id: "python", label: "Python" },
+      { id: "md", label: t.tabs.md },
+      { id: "ts", label: t.tabs.ts },
+      { id: "python", label: t.tabs.python },
+      { id: "java", label: t.tabs.java },
     ]}
     style="code"
   >
+    <Fragment slot="md">
+      <Code
+        code={lit`
+          # YouTube Search
+
+          Test the https://www.youtube.com search feature.
+
+          Search for "lofi beats" and check that:
+
+          1. The screen title contains the query.
+          2. The displayed search results are relevant
+             to the query.
+      `}
+        lang="md"
+      />
+    </Fragment>
+
     <Fragment slot="ts">
       <Code
         code={lit`
-      import { test, expect } from "@playwright/test";
-      import { Alumni } from "alumnium";
-
-      test("user can log in", async ({ page }) => {
-        const al = new Alumni(page);
-
-        await page.goto("https://app.example.com");
-        await al.do("sign in as alice@acme.com");
-        await al.check("dashboard greets Alice");
-
-        // drop into existing assertions whenever
-        await expect(page.getByRole("heading")).toBeVisible();
-      });
-    `}
+          describe("YouTube Search", () => {
+            it("queries videos", async () => {
+              await driver.get("https://youtube.com");
+              await al.do("search for 'lofi beats' and press Enter");
+              await al.check("page title contains 'lofi beats'");
+              await al.check("search results contain lofi videos");
+            });
+          });
+        `}
         lang="ts"
       />
     </Fragment>
@@ -41,21 +55,30 @@ const t = tt.landings.sections.naturalLanguageTests.en;
     <Fragment slot="python">
       <Code
         code={lit`
-      # Python example
-      from alumnium import Alumni
-
-      al = Alumni(driver)
-
-      # Navigate and interact
-      al.do("go to https://example.com")
-      al.do("click the login button")
-      al.do("fill out the form with email and password")
-
-      # Verify results
-      al.check("dashboard page is visible")
-      username = al.get("user name from header")
-    `}
+          def test_search(al, driver):
+              driver.get("https://youtube.com")
+              al.do("search for 'lofi beats' and press Enter")
+              al.check("page title contains 'lofi beats'")
+              al.check("search results contain lofi videos")
+        `}
         lang="python"
+      />
+    </Fragment>
+
+    <Fragment slot="java">
+      <Code
+        code={lit`
+          class YouTubeSearchTest {
+            @Test
+            void queriesVideos() {
+              driver.get("https://youtube.com");
+              al.act("search for 'lofi beats' and press Enter");
+              al.check("page title contains 'lofi beats'");
+              al.check("search results contain lofi videos");
+            }
+          }
+        `}
+        lang="java"
       />
     </Fragment>
   </Tabs>

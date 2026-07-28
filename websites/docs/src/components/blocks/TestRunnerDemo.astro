@@ -14,10 +14,14 @@ const t = tt.demo["demo-test-runner"];
   }))}
 >
   <Fragment slot={t[0].id}>
-    <Asciinema src="https://asciinema.org/a/569727.cast" />
+    <Asciinema src={t[0].src} />
   </Fragment>
 
   <Fragment slot={t[1].id}>
-    <Asciinema src="https://asciinema.org/a/418574.cast" />
+    <Asciinema src={t[1].src} />
+  </Fragment>
+
+  <Fragment slot={t[2].id}>
+    <Asciinema src={t[2].src} />
   </Fragment>
 </Tabs>
