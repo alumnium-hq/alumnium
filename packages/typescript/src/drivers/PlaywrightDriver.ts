@@ -643,7 +643,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   private async getFrameNodes(
     frameId: string,
-    playwrightFrame: Frame,
+    _playwrightFrame: Frame,
   ): Promise<CDPNode[]> {
     try {
       const response = (await this.client.send("Accessibility.getFullAXTree", {
