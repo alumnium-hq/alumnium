@@ -1,7 +1,9 @@
-import { never } from "alwaysly";
 import fs from "node:fs";
 import path from "node:path";
+
+import { never } from "alwaysly";
 import z from "zod";
+
 import { Alumni } from "../../client/Alumni.ts";
 import { NativeClient } from "../../clients/NativeClient.ts";
 import { Driver } from "../../drivers/Driver.ts";
@@ -15,13 +17,13 @@ import { ScrollTool } from "../../tools/ScrollTool.ts";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
+import { McpProfilesStore } from "../McpProfilesStore.ts";
+import { McpState } from "../McpState.ts";
 import {
   createAppiumDriver,
   createChromeDriver,
   type McpDriver,
 } from "../mcpDrivers.ts";
-import { McpProfilesStore } from "../McpProfilesStore.ts";
-import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
 
 const { tracer } = Telemetry.get(import.meta.url);
@@ -51,18 +53,23 @@ export const startMcpTool = McpTool.define("start", {
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
+            - "device" (string) — name of a Playwright device preset, e.g. "Pixel 7", Playwright only. Expands into viewport/userAgent/isMobile/deviceScaleFactor/hasTouch; any of those set explicitly below override the device's value;
+            - "deviceScaleFactor" (number) — device pixel ratio for the emulated viewport, Playwright only;
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree (e.g., ["src"]);
             - "executablePath" (string) — path to a custom Chrome executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
+            - "hasTouch" (boolean) — whether the viewport supports touch events, Playwright only;
             - "headers" (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"};
             - "headless" (boolean, default false) — run browser headless, supported for Selenium and Playwright;
+            - "isMobile" (boolean) — whether the viewport is a mobile viewport, Playwright only;
             - "newTabTimeout" (number, default 200) — ms to wait for new tab detection, Playwright only;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
             - "planner" (boolean) — enable/disable planner agent;
             - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal";
             - "proxy" (object) — HTTP/HTTPS/SOCKS5 proxy, supported for Selenium and Playwright, e.g. {"server": "http://myproxy.com:3128", "bypass": ".com, chromium.org", "username": "usr", "password": "pwd"}; if omitted, the http_proxy/HTTP_PROXY/https_proxy/HTTPS_PROXY environment variables are used automatically;
             - "recordVideos" (boolean, default true) — record video of the browser session, Playwright only. Can also be disabled via ALUMNIUM_MCP_RECORD_VIDEOS=false;
-            - "userAgent" (string) — custom User-Agent header sent with every request, supported for Selenium and Playwright.
+            - "userAgent" (string) — custom User-Agent header sent with every request, supported for Selenium and Playwright;
+            - "viewport" (object) — emulated viewport size, Playwright only, e.g. {"width": 360, "height": 800}.
 
           Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc", "profile": "work"}}'.
         `
@@ -177,6 +184,31 @@ export const startMcpTool = McpTool.define("start", {
       ...(typeof alumniumOptions["userAgent"] === "string" && {
         userAgent: alumniumOptions["userAgent"],
       }),
+      ...(typeof alumniumOptions["device"] === "string" && {
+        device: alumniumOptions["device"],
+      }),
+      ...(typeof alumniumOptions["isMobile"] === "boolean" && {
+        isMobile: alumniumOptions["isMobile"],
+      }),
+      ...(typeof alumniumOptions["hasTouch"] === "boolean" && {
+        hasTouch: alumniumOptions["hasTouch"],
+      }),
+      ...(typeof alumniumOptions["deviceScaleFactor"] === "number" && {
+        deviceScaleFactor: alumniumOptions["deviceScaleFactor"],
+      }),
+      ...(typeof alumniumOptions["viewport"] === "object" &&
+        alumniumOptions["viewport"] !== null &&
+        typeof (alumniumOptions["viewport"] as Record<string, unknown>)[
+          "width"
+        ] === "number" &&
+        typeof (alumniumOptions["viewport"] as Record<string, unknown>)[
+          "height"
+        ] === "number" && {
+          viewport: alumniumOptions["viewport"] as {
+            width: number;
+            height: number;
+          },
+        }),
       ...(typeof alumniumOptions["proxy"] === "object" &&
         alumniumOptions["proxy"] !== null &&
         typeof (alumniumOptions["proxy"] as Record<string, unknown>)[
@@ -198,15 +230,20 @@ export const startMcpTool = McpTool.define("start", {
       "baseUrl",
       "changeAnalysis",
       "cookies",
+      "device",
+      "deviceScaleFactor",
       "excludeAttributes",
       "executablePath",
+      "hasTouch",
       "headers",
       "headless",
+      "isMobile",
       "permissions",
       "planner",
       "proxy",
       "recordVideos",
       "userAgent",
+      "viewport",
     ]);
     const driverSettings: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(alumniumOptions)) {

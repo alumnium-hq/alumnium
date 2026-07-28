@@ -3,20 +3,21 @@
  */
 
 import type { BrowserContext, Page } from "playwright-core";
-import { chromium } from "playwright-core";
+import { chromium, devices } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
-import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
 import { Options } from "selenium-webdriver/chrome.js";
 import {
   remote as remoteWebdriverio,
   type Browser as WebdriverIoBrowser,
 } from "webdriverio";
+
 import type { Driver } from "../drivers/Driver.ts";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
-import { proxyFromEnv } from "./proxyFromEnv.ts";
+import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { TypeUtils } from "../typeUtils.ts";
+import { proxyFromEnv } from "./proxyFromEnv.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -35,9 +36,14 @@ export namespace McpDriver {
 
   export interface DriverOptions {
     cookies?: Cookies;
+    /** Name of a Playwright device preset (e.g. `"Pixel 7"`), resolved via `playwright-core`'s `devices` catalog. */
+    device?: string;
+    deviceScaleFactor?: number;
     executablePath?: string;
+    hasTouch?: boolean;
     headers?: Headers;
     headless?: boolean;
+    isMobile?: boolean;
     permissions?: string[];
     profileDir?: string;
     proxy?: {
@@ -48,6 +54,7 @@ export namespace McpDriver {
     };
     recordVideos?: boolean;
     userAgent?: string;
+    viewport?: { width: number; height: number };
   }
 
   export interface SeleniumCdpConnection {
@@ -89,10 +96,12 @@ export async function createPlaywrightDriver(
     profileDir,
     proxy: explicitProxy,
     recordVideos = Env.ALUMNIUM_MCP_RECORD_VIDEOS,
-    userAgent,
   } = driverOptions;
 
   const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
+  // Resolves `device`/`viewport`/`isMobile`/`deviceScaleFactor`/`hasTouch`/`userAgent` — an
+  // explicitly-set field always overrides its device-derived counterpart. Empty when unset.
+  const deviceOptions = resolveDeviceOptions(driverOptions);
 
   logger.info(
     `Creating Playwright driver (headless=${headless}, profile=${profileDir ?? "none"})`,
@@ -111,11 +120,11 @@ export async function createPlaywrightDriver(
   if (profileDir) {
     context = await chromium.launchPersistentContext(profileDir, {
       headless,
+      ...deviceOptions,
       ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
       extraHTTPHeaders: headers,
       ...(executablePath ? { executablePath } : {}),
       ...(proxy ? { proxy } : {}),
-      ...(userAgent ? { userAgent } : {}),
     });
   } else {
     const browser = await chromium.launch({
@@ -124,9 +133,9 @@ export async function createPlaywrightDriver(
       ...(proxy ? { proxy } : {}),
     });
     context = await browser.newContext({
+      ...deviceOptions,
       ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
       extraHTTPHeaders: headers,
-      ...(userAgent ? { userAgent } : {}),
     });
   }
 
@@ -326,4 +335,49 @@ export async function createAppiumDriver(
 
   logger.debug(`Appium driver for ${platform} created successfully`);
   return driver;
+}
+
+/** Playwright `BrowserContextOptions` fields that describe a device/viewport emulation profile. */
+type DeviceOptions = Pick<
+  McpDriver.DriverOptions,
+  "deviceScaleFactor" | "hasTouch" | "isMobile" | "userAgent" | "viewport"
+>;
+
+/**
+ * Resolves `driverOptions.device` (a Playwright device-catalog name, e.g. `"Pixel 7"`) into its
+ * viewport/userAgent/isMobile/deviceScaleFactor/hasTouch fields, then lets any of those fields set
+ * explicitly on `driverOptions` override the device-derived value. Returns an empty object when
+ * neither `device` nor any raw field is set, so existing desktop-viewport behavior is unchanged.
+ */
+function resolveDeviceOptions(
+  driverOptions: McpDriver.DriverOptions,
+): DeviceOptions {
+  const { device, deviceScaleFactor, hasTouch, isMobile, userAgent, viewport } =
+    driverOptions;
+
+  let resolved: DeviceOptions = {};
+  if (device !== undefined) {
+    const descriptor = devices[device];
+    if (!descriptor) {
+      throw new Error(
+        `Unknown device "${device}". See Playwright's devices catalog for supported names.`,
+      );
+    }
+    resolved = {
+      deviceScaleFactor: descriptor.deviceScaleFactor,
+      hasTouch: descriptor.hasTouch,
+      isMobile: descriptor.isMobile,
+      userAgent: descriptor.userAgent,
+      viewport: descriptor.viewport,
+    };
+  }
+
+  return {
+    ...resolved,
+    ...(deviceScaleFactor !== undefined && { deviceScaleFactor }),
+    ...(hasTouch !== undefined && { hasTouch }),
+    ...(isMobile !== undefined && { isMobile }),
+    ...(userAgent !== undefined && { userAgent }),
+    ...(viewport !== undefined && { viewport }),
+  };
 }
