@@ -93,7 +93,7 @@ export class ScenarioPlayer {
               );
             } else {
               const message = `Step ${stepCounterStr} MCP tool '${use.name}' output does not match expected result!`;
-              logger.error(
+              logger.warn(
                 `${message}\nExpected: {useContent}\nActual: {mcpContent}`,
                 { useContent, mcpContent },
               );

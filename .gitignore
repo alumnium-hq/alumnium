@@ -13,6 +13,7 @@
 **/test-results/
 **/.astro/
 **/.ts/
+*.bun-build
 
 # Build Artifacts
 **/dist/

@@ -5,6 +5,8 @@ import { Telemetry } from "../telemetry/Telemetry.ts";
 import { ScenarioPlayer } from "./ScenarioPlayer.ts";
 import { ScenarioRecorder } from "./ScenarioRecorder.ts";
 import { ScenarioStore } from "./ScenarioStore.ts";
+import ora, { type Ora } from "ora";
+import clr from "picocolors";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -36,32 +38,58 @@ export class Runner {
     const text = await this.#readScenarioText();
     const file = await this.#store.lookup(text);
 
+    console.log(`\nTest ${clr.bold(clr.blue(this.#path))}:\n`);
+
     if (file) {
-      logger.info(
-        `Scenario ${file.scenario.id} found in the store, playing...`,
+      logger.info(`Scenario ${file.scenario.id} found in the store, running…`);
+
+      console.log(
+        `  ${clr.green("✔")} Found scenario recording ${clr.gray(`(${file.scenario.id})`)}`,
       );
-      await this.#play(text, file);
+      const initialSpinner = ora({ text: "Running tests…", indent: 2 }).start();
+
+      const finalSpinner = await this.#play(text, file, initialSpinner);
+
+      finalSpinner.succeed("Tests passed");
     } else {
-      logger.info(`Scenario not found in the store, recording...`);
+      logger.info("Scenario not found in the store, recording…");
+
+      console.log(`  ${clr.yellow("?")} No scenario recording found`);
+      const spinner = ora({ text: "Recording…", indent: 2 }).start();
+
       await this.#record(text);
+
+      spinner.succeed(clr.green("Tests passed"));
     }
 
     await SystemProcess.exit(0);
   }
 
-  async #play(text: string, file: ScenarioStore.File) {
+  async #play(
+    text: string,
+    file: ScenarioStore.File,
+    initialSpinner: Ora,
+  ): Promise<Ora> {
     const player = new ScenarioPlayer(file.scenario);
 
     const result = await player.play();
 
     if (result.status === "failure") {
       logger.info("Scenario playback failed, starting recovery...");
+      initialSpinner.warn("Scenario playback failed");
+
+      const recoverySpinner = ora({ text: "Recovering…", indent: 2 }).start();
+
       await this.#recover({
         text,
         file,
         logs: result.logs,
       });
+
+      return recoverySpinner;
     }
+
+    return initialSpinner;
   }
 
   async #record(text: string) {
