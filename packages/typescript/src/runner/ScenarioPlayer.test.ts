@@ -8,11 +8,10 @@ function checkOutput(result: string, explanation: string) {
 }
 
 describe("ScenarioPlayer", () => {
-  describe("matchOutput", () => {
-    it("matches a check verdict regardless of its explanation", () => {
+  describe("matchCheckOutput", () => {
+    it("matches a verdict regardless of its explanation", () => {
       expect(
-        ScenarioPlayer.matchOutput(
-          "check",
+        ScenarioPlayer.matchCheckOutput(
           checkOutput(
             "success",
             "The accessibility tree includes a heading saying 'Search'.",
@@ -25,10 +24,9 @@ describe("ScenarioPlayer", () => {
       ).toBe(true);
     });
 
-    it("does not match differing check verdicts", () => {
+    it("does not match differing verdicts", () => {
       expect(
-        ScenarioPlayer.matchOutput(
-          "check",
+        ScenarioPlayer.matchCheckOutput(
           checkOutput("success", "The display shows 11."),
           checkOutput("failure", "AssertionError: the display shows 74."),
         ),
@@ -37,45 +35,24 @@ describe("ScenarioPlayer", () => {
 
     it("reads the verdict out of a string content", () => {
       expect(
-        ScenarioPlayer.matchOutput(
-          "check",
+        ScenarioPlayer.matchCheckOutput(
           JSON.stringify({ result: "success", explanation: "recorded" }),
           checkOutput("success", "played back"),
         ),
       ).toBe(true);
     });
 
-    it("compares a check output with no verdict in full", () => {
+    it("compares an output with no verdict in full", () => {
       expect(
-        ScenarioPlayer.matchOutput(
-          "check",
+        ScenarioPlayer.matchCheckOutput(
           [{ type: "text", text: "boom" }],
           [{ type: "text", text: "boom" }],
         ),
       ).toBe(true);
       expect(
-        ScenarioPlayer.matchOutput(
-          "check",
+        ScenarioPlayer.matchCheckOutput(
           [{ type: "text", text: "boom" }],
           [{ type: "text", text: "bang" }],
-        ),
-      ).toBe(false);
-    });
-
-    it("compares other tool outputs in full", () => {
-      // NOTE: `get` returns the extracted data itself, so all of it matters.
-      expect(
-        ScenarioPlayer.matchOutput(
-          "get",
-          [{ type: "text", text: '"11"' }],
-          [{ type: "text", text: '"11"' }],
-        ),
-      ).toBe(true);
-      expect(
-        ScenarioPlayer.matchOutput(
-          "get",
-          [{ type: "text", text: '"11"' }],
-          [{ type: "text", text: '"74"' }],
         ),
       ).toBe(false);
     });

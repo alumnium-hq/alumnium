@@ -129,8 +129,7 @@ export class ScenarioPlayer {
             this.#masker.processMcpStartOutputContent(mcpOutput.content);
             break;
 
-          case "get":
-          case "check":
+          case "check": {
             const useContent = result.content;
             const mcpContent = mcpOutput.content;
 
@@ -139,43 +138,26 @@ export class ScenarioPlayer {
               { useContent },
             );
 
-            const outputMatches = ScenarioPlayer.matchOutput(
-              mcpName,
-              useContent,
-              mcpContent,
-            );
-
-            if (outputMatches) {
+            if (ScenarioPlayer.matchCheckOutput(useContent, mcpContent)) {
               logger.info(
                 `Step ${stepCounterStr} MCP tool '${use.name}' output matches expected result`,
               );
-            } else {
-              const message = `MCP tool '${use.name}' output does not match expected result!`;
-              logger.error(
-                `Step ${stepCounterStr} ${message}\nExpected: {useContent}\nActual: {mcpContent}`,
-                { useContent, mcpContent },
-              );
-              log.error = message;
-
-              // NOTE: A `check` has already reported its own verdict, which
-              // states the same thing in prose rather than as escaped JSON. Its
-              // expected/actual pair only ever differs in that verdict, so
-              // printing it again adds nothing. `get` has no such line, and its
-              // output is the data being compared, so it keeps the pair.
-              if (mcpName !== "check")
-                ScenarioReporter.stepMismatched(
-                  mcpName,
-                  useContent,
-                  mcpContent,
-                );
-
-              return {
-                status: "failure",
-                error: message,
-                logs,
-              };
+              break;
             }
-            break;
+
+            const message = `MCP tool '${use.name}' output does not match expected result!`;
+            logger.error(
+              `Step ${stepCounterStr} ${message}\nExpected: {useContent}\nActual: {mcpContent}`,
+              { useContent, mcpContent },
+            );
+            log.error = message;
+
+            return {
+              status: "failure",
+              error: message,
+              logs,
+            };
+          }
         }
       }
 
@@ -293,29 +275,25 @@ export class ScenarioPlayer {
   //#region Matching
 
   /**
-   * Compares a tool's output against the one recorded for the same step.
+   * Compares a `check` output against the one recorded for the same step.
    *
-   * @param mcpName - MCP tool name, e.g. `check`.
    * @param toolResultContent - Recorded tool result content.
    * @param mcpOutputContent - Content the tool produced during playback.
-   * @returns `true` when the outputs are equivalent.
+   * @returns `true` when both reached the same verdict.
    */
-  static matchOutput(
-    mcpName: string,
+  static matchCheckOutput(
     toolResultContent: Scenario.ClaudeCodeStepToolResultContent,
     mcpOutputContent: ScenarioAlumniumMcp.OutputContent,
   ): boolean {
-    if (mcpName === "check") {
-      const expectedVerdict = checkVerdict(toolResultContent);
-      const actualVerdict = checkVerdict(mcpOutputContent);
+    const expectedVerdict = checkVerdict(toolResultContent);
+    const actualVerdict = checkVerdict(mcpOutputContent);
 
-      if (expectedVerdict && actualVerdict)
-        return expectedVerdict === actualVerdict;
+    if (expectedVerdict && actualVerdict)
+      return expectedVerdict === actualVerdict;
 
-      logger.warn(
-        "Cannot read the 'check' verdict out of the output, comparing it in full",
-      );
-    }
+    logger.warn(
+      "Cannot read the 'check' verdict out of the output, comparing it in full",
+    );
 
     return canonize(toolResultContent) === canonize(mcpOutputContent);
   }
