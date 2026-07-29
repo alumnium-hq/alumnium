@@ -5,6 +5,7 @@ import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 const THINKING_MAX_LENGTH = 160;
 const INPUT_MAX_LENGTH = 120;
 const DRIVER_ID_KEY = "id";
+const PARAMS_KEY = "params";
 
 /**
  * Prints human-readable scenario progress to the console.
@@ -119,9 +120,10 @@ export abstract class ScenarioReporter {
 
   /**
    * Summarizes an Alumnium MCP tool input. The driver id is noise in every
-   * call, and once it's gone most tools are left with a single meaningful value
-   * (a `do` goal, a `check` statement), which reads better inline than wrapped
-   * in JSON.
+   * call, and once it's gone most tools lead with a single meaningful value
+   * (a `do` goal, a `check` statement), which reads better quoted inline than
+   * wrapped in JSON. Anything left over is appended as a second argument, so a
+   * `do` call prints as `"press {digit} button", {"digit":"2"}`.
    *
    * @param input - MCP tool input.
    * @returns Summarized input.
@@ -136,15 +138,36 @@ export abstract class ScenarioReporter {
 
     if (!entries.length) return "";
 
-    const soleValue = entries.length === 1 ? entries[0]?.[1] : undefined;
-    if (typeof soleValue !== "string")
+    const [leadEntry, ...restEntries] = entries;
+    const leadValue = leadEntry?.[1];
+    if (typeof leadValue !== "string")
       return this.#summarize(Object.fromEntries(entries));
 
     // NOTE: A JSON value (e.g. `start` capabilities) reads better raw than
     // quoted, since it already contains quotes of its own.
-    return this.#isJsonLike(soleValue)
-      ? this.#summarize(soleValue)
-      : `"${this.#collapse(soleValue, INPUT_MAX_LENGTH)}"`;
+    const lead = this.#isJsonLike(leadValue)
+      ? this.#summarize(leadValue)
+      : `"${this.#collapse(leadValue, INPUT_MAX_LENGTH)}"`;
+
+    if (!restEntries.length) return lead;
+
+    return `${lead}, ${this.#summarizeRestOfMcpInput(restEntries)}`;
+  }
+
+  /**
+   * Summarizes the MCP tool input entries following the leading value.
+   *
+   * @param entries - Remaining input entries.
+   * @returns Summarized entries.
+   */
+  static #summarizeRestOfMcpInput(entries: [string, unknown][]): string {
+    // NOTE: `do` params are values for the placeholders in the goal, so they
+    // read as a second argument to the goal rather than a nested `params` key.
+    const [soleEntry] = entries;
+    if (entries.length === 1 && soleEntry?.[0] === PARAMS_KEY)
+      return this.#summarize(soleEntry[1]);
+
+    return this.#summarize(Object.fromEntries(entries));
   }
 
   static #isJsonLike(value: string): boolean {
@@ -159,7 +182,7 @@ export abstract class ScenarioReporter {
   }
 
   static #collapse(text: string, maxLength: number): string {
-    const collapsed = text.replace(/\s+/g, " ").trim();
+    const collapsed = text.replace(/\s{2,}/g, " ").trim();
     if (collapsed.length <= maxLength) return collapsed;
     return `${collapsed.slice(0, maxLength)}…`;
   }

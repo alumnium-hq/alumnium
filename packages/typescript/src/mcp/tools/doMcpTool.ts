@@ -63,6 +63,7 @@ export const doMcpTool = McpTool.define("do", {
     "Execute a goal using natural language (e.g., 'click login button', 'fill out the form'). Alumnium will plan and execute the necessary steps. " +
     `Supported actions: ${getDoToolActions()}. ` +
     "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads). " +
+    "Prefer short, specific goals over long, complex ones. Each goal should describe a single action on the current page. " +
     "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport. " +
     "When any value in the goal varies between runs, put a `{placeholder}` in the goal and pass the value in `params` instead of inlining it — this keeps the goal text stable so repeated runs reuse the cache.",
 
