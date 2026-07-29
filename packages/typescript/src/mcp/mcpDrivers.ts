@@ -34,16 +34,26 @@ export namespace McpDriver {
     [key: string]: unknown;
   }
 
+  /** A device emulation profile: viewport, user agent, and touch/mobile/scale-factor flags. */
+  export interface DeviceDescriptor {
+    deviceScaleFactor?: number;
+    hasTouch?: boolean;
+    isMobile?: boolean;
+    userAgent?: string;
+    viewport?: { width: number; height: number };
+  }
+
   export interface DriverOptions {
     cookies?: Cookies;
-    /** Name of a Playwright device preset (e.g. `"Pixel 7"`), resolved via `playwright-core`'s `devices` catalog. */
-    device?: string;
-    deviceScaleFactor?: number;
+    /**
+     * Either the name of a Playwright device preset (e.g. `"Pixel 7"`), resolved via
+     * `playwright-core`'s `devices` catalog, or a custom `DeviceDescriptor` object (e.g. pasted
+     * directly from Playwright's own device list).
+     */
+    device?: string | DeviceDescriptor;
     executablePath?: string;
-    hasTouch?: boolean;
     headers?: Headers;
     headless?: boolean;
-    isMobile?: boolean;
     permissions?: string[];
     profileDir?: string;
     proxy?: {
@@ -54,7 +64,6 @@ export namespace McpDriver {
     };
     recordVideos?: boolean;
     userAgent?: string;
-    viewport?: { width: number; height: number };
   }
 
   export interface SeleniumCdpConnection {
@@ -99,8 +108,9 @@ export async function createPlaywrightDriver(
   } = driverOptions;
 
   const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
-  // Resolves `device`/`viewport`/`isMobile`/`deviceScaleFactor`/`hasTouch`/`userAgent` — an
-  // explicitly-set field always overrides its device-derived counterpart. Empty when unset.
+  // Resolves `device` (catalog name or descriptor object) into viewport/userAgent/isMobile/
+  // deviceScaleFactor/hasTouch; an explicit `userAgent` overrides the device-derived one. Empty
+  // when unset.
   const deviceOptions = resolveDeviceOptions(driverOptions);
 
   logger.info(
@@ -338,25 +348,22 @@ export async function createAppiumDriver(
 }
 
 /** Playwright `BrowserContextOptions` fields that describe a device/viewport emulation profile. */
-type DeviceOptions = Pick<
-  McpDriver.DriverOptions,
-  "deviceScaleFactor" | "hasTouch" | "isMobile" | "userAgent" | "viewport"
->;
+type DeviceOptions = McpDriver.DeviceDescriptor;
 
 /**
- * Resolves `driverOptions.device` (a Playwright device-catalog name, e.g. `"Pixel 7"`) into its
- * viewport/userAgent/isMobile/deviceScaleFactor/hasTouch fields, then lets any of those fields set
- * explicitly on `driverOptions` override the device-derived value. Returns an empty object when
- * neither `device` nor any raw field is set, so existing desktop-viewport behavior is unchanged.
+ * Resolves `driverOptions.device` into its viewport/userAgent/isMobile/deviceScaleFactor/hasTouch
+ * fields — either by looking up a Playwright device-catalog name (e.g. `"Pixel 7"`) or by using a
+ * `DeviceDescriptor` object directly — then lets an explicit `driverOptions.userAgent` override the
+ * device-derived one. Returns an empty object when `device` is unset, so existing desktop-viewport
+ * behavior is unchanged.
  */
 function resolveDeviceOptions(
   driverOptions: McpDriver.DriverOptions,
 ): DeviceOptions {
-  const { device, deviceScaleFactor, hasTouch, isMobile, userAgent, viewport } =
-    driverOptions;
+  const { device, userAgent } = driverOptions;
 
   let resolved: DeviceOptions = {};
-  if (device !== undefined) {
+  if (typeof device === "string") {
     const descriptor = devices[device];
     if (!descriptor) {
       throw new Error(
@@ -370,14 +377,43 @@ function resolveDeviceOptions(
       userAgent: descriptor.userAgent,
       viewport: descriptor.viewport,
     };
+  } else if (device !== undefined) {
+    resolved = sanitizeDeviceDescriptor(device);
   }
 
   return {
     ...resolved,
-    ...(deviceScaleFactor !== undefined && { deviceScaleFactor }),
-    ...(hasTouch !== undefined && { hasTouch }),
-    ...(isMobile !== undefined && { isMobile }),
     ...(userAgent !== undefined && { userAgent }),
-    ...(viewport !== undefined && { viewport }),
+  };
+}
+
+/**
+ * Picks only the recognized `DeviceDescriptor` fields off an arbitrary object, so a raw Playwright
+ * device descriptor (which also carries fields like `defaultBrowserType`/`screen`) can be passed
+ * in as `driverOptions.device` as-is.
+ */
+function sanitizeDeviceDescriptor(value: object): McpDriver.DeviceDescriptor {
+  const source = value as Record<string, unknown>;
+  const viewport = source["viewport"] as Record<string, unknown> | undefined;
+
+  return {
+    ...(typeof source["userAgent"] === "string" && {
+      userAgent: source["userAgent"],
+    }),
+    ...(typeof source["deviceScaleFactor"] === "number" && {
+      deviceScaleFactor: source["deviceScaleFactor"],
+    }),
+    ...(typeof source["isMobile"] === "boolean" && {
+      isMobile: source["isMobile"],
+    }),
+    ...(typeof source["hasTouch"] === "boolean" && {
+      hasTouch: source["hasTouch"],
+    }),
+    ...(typeof viewport === "object" &&
+      viewport !== null &&
+      typeof viewport["width"] === "number" &&
+      typeof viewport["height"] === "number" && {
+        viewport: { width: viewport["width"], height: viewport["height"] },
+      }),
   };
 }

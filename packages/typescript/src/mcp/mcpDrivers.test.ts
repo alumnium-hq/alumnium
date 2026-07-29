@@ -176,18 +176,53 @@ describe("createPlaywrightDriver", () => {
     });
   });
 
-  it("lets an explicit viewport override the device's viewport", async () => {
+  it("passes a device descriptor object through directly", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      device: {
+        deviceScaleFactor: 2,
+        hasTouch: true,
+        isMobile: true,
+        userAgent: "custom-descriptor-ua",
+        viewport: { width: 360, height: 800 },
+      },
+      recordVideos: false,
+    });
+
+    expect(playwrightMocks.newContextCalls[0]).toMatchObject({
+      deviceScaleFactor: 2,
+      hasTouch: true,
+      isMobile: true,
+      userAgent: "custom-descriptor-ua",
+      viewport: { width: 360, height: 800 },
+    });
+  });
+
+  it("ignores unrecognized fields on a device descriptor object", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      device: {
+        viewport: { width: 360, height: 800 },
+        // Fields real Playwright device JSON carries but that aren't emulation options.
+        defaultBrowserType: "webkit",
+        screen: { width: 360, height: 800 },
+      } as never,
+      recordVideos: false,
+    });
+
+    const options = playwrightMocks.newContextCalls[0];
+    expect(options?.viewport).toEqual({ width: 360, height: 800 });
+    expect(options).not.toHaveProperty("defaultBrowserType");
+    expect(options).not.toHaveProperty("screen");
+  });
+
+  it("lets an explicit userAgent override a named device's userAgent", async () => {
     await createPlaywrightDriver({}, artifactsStore, {
       device: "Pixel 7",
       recordVideos: false,
-      viewport: { width: 360, height: 800 },
+      userAgent: "custom-ua",
     });
 
-    expect(playwrightMocks.newContextCalls[0]?.viewport).toEqual({
-      width: 360,
-      height: 800,
-    });
-    // isMobile stays device-derived — only viewport was overridden explicitly.
+    expect(playwrightMocks.newContextCalls[0]?.userAgent).toBe("custom-ua");
+    // isMobile stays device-derived — only userAgent was overridden explicitly.
     expect(playwrightMocks.newContextCalls[0]?.isMobile).toBe(true);
   });
 
