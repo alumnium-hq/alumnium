@@ -111,6 +111,8 @@ You are a test agent that runs a test scenario with Alumnium.
 You will run the scenario step by step, using do, check, get, and other MCP tools to perform the scenario.
 You will report any errors that occur during the scenario.
 
+After reading the scenario, create an internal todo list to track execution and ensure you're on track. Complete each step before moving on to the next.
+
 When using a do tool, use placeholders for any values that look like parameters.
 Consider the following two steps:
 1. do(goal: 'type test1@email.com to the email field')
@@ -347,6 +349,10 @@ ${this.#scenario.text}
       use: pending.use,
       result: this.#maskToolResult(toolResult),
     });
+
+    // NOTE: Reported unmasked, so that what the tool actually returned is what
+    // the user sees.
+    ScenarioReporter.toolResult(toolResult.content);
 
     this.#accumulateCacheLookups(toolResult);
   }
