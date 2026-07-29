@@ -1,10 +1,20 @@
 import * as ansi from "picocolors";
 import type { CacheLookups } from "../llm/llmSchema.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 import { formatDuration } from "../utils/timers.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 
+const { logger } = Telemetry.get(import.meta.url);
+
 const DRIVER_ID_KEY = "id";
 const PARAMS_KEY = "params";
+
+// NOTE: The agent calls `ToolSearch` to load the Alumnium MCP tool schemas and
+// `TodoWrite` to keep track of where it is in the scenario. Both are its own
+// bookkeeping rather than a step of the scenario, and a todo list reprinted in
+// full on every update drowns out everything around it. They stay in the
+// recording (and in the log), they just aren't worth a line on screen.
+const UNREPORTED_TOOL_NAMES = new Set(["ToolSearch", "TodoWrite"]);
 
 /**
  * Prints human-readable scenario progress to the console.
@@ -15,15 +25,23 @@ const PARAMS_KEY = "params";
 export abstract class ScenarioReporter {
   //#region Lifecycle
 
-  static recording(path: string) {
+  /**
+   * @param path - Scenario file being tested.
+   * @param fileName - Recording file the run will be written to.
+   */
+  static recording(path: string, fileName: string) {
     this.#print(
-      `${ansi.yellow("● recording")} ${path} ${ansi.dim("(not in the store)")}`,
+      `${ansi.yellow("● testing")} ${path} ${ansi.dim(`(recording to ${fileName})`)}`,
     );
   }
 
-  static playing(path: string, stepsCount: number) {
+  /**
+   * @param path - Scenario file being tested.
+   * @param fileName - Recording file the run is played back from.
+   */
+  static playing(path: string, fileName: string) {
     this.#print(
-      `${ansi.green("● playing")} ${path} ${ansi.dim(`(${stepsCount} steps)`)}`,
+      `${ansi.green("● testing")} ${path} ${ansi.dim(`(replaying from ${fileName})`)}`,
     );
   }
 
@@ -75,16 +93,18 @@ export abstract class ScenarioReporter {
   static thinking(thinking: string) {
     const text = this.#collapse(thinking);
     if (!text) return;
-    this.#print(ansi.dim(ansi.italic(`  ✻ ${text}`)));
+    this.#print(ansi.dim(ansi.italic(`✻ ${text}`)));
   }
 
   static assistant(text: string) {
     const trimmedText = text.trim();
     if (!trimmedText) return;
-    this.#print(`  ${ansi.magenta("✻")} ${trimmedText}`);
+    this.#print(`${ansi.magenta("✻")} ${trimmedText}`);
   }
 
   static toolUse(name: string, input: unknown) {
+    if (this.#isUnreported(name, input)) return;
+
     const isOwn = ScenarioAlumniumMcp.isOwnToolUseName(name);
     // NOTE: Only Alumnium MCP tool calls end up in the recording, so other
     // tools the agent uses along the way are dimmed out.
@@ -97,7 +117,7 @@ export abstract class ScenarioReporter {
     const summary = isOwn
       ? this.#summarizeMcpInput(input)
       : this.#summarize(input);
-    this.#print(`  ${label} ${ansi.dim(summary)}`);
+    this.#print(`${label} ${ansi.dim(summary)}`);
   }
 
   //#endregion
@@ -105,32 +125,106 @@ export abstract class ScenarioReporter {
   //#region Tool output
 
   /**
-   * Prints what an Alumnium MCP tool call returned, in both recording and
-   * playback. Each text block of the output gets its own line.
+   * Prints what a tool call returned, in both recording and playback. The
+   * Alumnium tools whose output has a known shape get it broken out into one
+   * line per part; anything else, including the output of an external tool such
+   * as `Bash`, is printed as it came.
    *
-   * @param content - MCP tool output content.
+   * @param name - Tool name, in either the `mcp__alumnium__do` or the `do` form
+   *   for the Alumnium tools, as the agent called it for the rest.
+   * @param content - Tool output content.
    */
-  static toolResult(content: unknown) {
+  static toolResult(name: string, content: unknown) {
+    const shortName = ScenarioAlumniumMcp.convertNameFromToolUse(name);
+    if (this.#isUnreported(shortName, content)) return;
+
     ScenarioAlumniumMcp.outputTexts(content).forEach((text) => {
-      const line = this.#collapse(text);
-      if (!line) return;
-      this.#print(`  ${ansi.dim(`← ${line}`)}`);
+      this.#resultLines(shortName, text).forEach((line) => this.#print(line));
     });
+  }
+
+  /**
+   * Formats one text block of a tool output.
+   *
+   * @param name - MCP tool name.
+   * @param text - Text block of the output.
+   * @returns Lines to print, empty when there is nothing to say.
+   */
+  static #resultLines(name: string, text: string): string[] {
+    const lines =
+      name === "do"
+        ? this.#doResultLines(text)
+        : name === "check"
+          ? this.#checkResultLines(text)
+          : [];
+
+    if (lines.length) return lines;
+
+    const line = this.#collapse(text);
+    return line ? [`${ansi.dim(`← ${line}`)}`] : [];
+  }
+
+  /**
+   * Breaks a `do` output into the reasoning behind the action, the steps that
+   * were actually performed, and how the page changed.
+   *
+   * @param text - Text block of the output.
+   * @returns Lines to print, empty when the output isn't a `do` one.
+   */
+  static #doResultLines(text: string): string[] {
+    const parseResult = ScenarioAlumniumMcp.DoOutput.safeParse(text);
+    if (!parseResult.success) return [];
+
+    const { explanation, performed_steps, changes } = parseResult.data;
+    const lines: string[] = [];
+
+    const collapsedExplanation = this.#collapse(explanation ?? "");
+    if (collapsedExplanation)
+      lines.push(`  ${ansi.dim(ansi.italic(`✻ ${collapsedExplanation}`))}`);
+
+    performed_steps?.forEach((step) => {
+      const tools = step.tools?.join(", ");
+      const suffix = tools ? ` ${ansi.dim(`(${tools})`)}` : "";
+      lines.push(`  ${ansi.dim("◈")} ${this.#collapse(step.name)}${suffix}`);
+    });
+
+    const collapsedChanges = this.#collapse(changes ?? "");
+    if (collapsedChanges) lines.push(`  ${ansi.dim(`± ${collapsedChanges}`)}`);
+
+    return lines;
+  }
+
+  /**
+   * Reduces a `check` output to its verdict and the reasoning for it.
+   *
+   * @param text - Text block of the output.
+   * @returns Lines to print, empty when the output isn't a `check` one.
+   */
+  static #checkResultLines(text: string): string[] {
+    const parseResult = ScenarioAlumniumMcp.CheckOutput.safeParse(text);
+    if (!parseResult.success) return [];
+
+    const { result, explanation } = parseResult.data;
+    const marker = result === "success" ? ansi.green("✓") : ansi.red("✗");
+
+    return [`${marker} ${this.#collapse(explanation ?? result)}`];
   }
 
   //#endregion
 
   //#region Playback
 
-  static step(counter: string, name: string, input: unknown) {
+  static step(name: string, input: unknown) {
     this.#print(
-      `  ${ansi.cyan(`→ ${counter} ${name}`)} ${ansi.dim(this.#summarizeMcpInput(input))}`,
+      `${ansi.cyan(`→ ${name}`)} ${ansi.dim(this.#summarizeMcpInput(input))}`,
     );
   }
 
-  static externalStep(counter: string, name: string, input: unknown) {
+  static externalStep(name: string, input: unknown) {
+    if (this.#isUnreported(name, input)) return;
+
     this.#print(
-      `  ${ansi.yellow(`→ ${counter} ${name}`)} ${ansi.dim(this.#summarize(input))}`,
+      `${ansi.yellow(`→ ${name}`)} ${ansi.dim(this.#summarize(input))}`,
     );
   }
 
@@ -150,23 +244,20 @@ export abstract class ScenarioReporter {
     const color = this.#cacheColor(lookups, total);
 
     this.#print(
-      `    ${ansi.dim("← cache:")} ${color(label)} ${ansi.dim(`(${lookups.hits}/${total})`)}`,
+      `  ${ansi.dim("← cache:")} ${color(label)} ${ansi.dim(`(${lookups.hits}/${total})`)}`,
     );
   }
 
   static externalStepSkipped(name: string, reason: string) {
-    this.#print(`    ${ansi.dim(`- skipped ${name}: ${reason}`)}`);
+    if (this.#isUnreported(name, reason)) return;
+
+    this.#print(`  ${ansi.dim(`- skipped ${name}: ${reason}`)}`);
   }
 
-  static stepMatched(name: string) {
-    this.#print(`    ${ansi.green("✓")} ${ansi.dim(`${name} output matches`)}`);
-  }
-
-  static stepMismatched(name: string, expected: unknown, actual: unknown) {
-    this.#print(`    ${ansi.red("✗")} ${name} output does not match`);
-    this.#print(`      ${ansi.dim("expected:")} ${this.#summarize(expected)}`);
-    this.#print(`      ${ansi.dim("actual:  ")} ${this.#summarize(actual)}`);
-  }
+  // NOTE: Nothing is reported about a step agreeing or disagreeing with the
+  // recording. Every tool prints its own output, and the only output still
+  // compared is a `check`, whose verdict line already says which way it went.
+  // A disagreement then shows up as the recovery that follows it.
 
   //#endregion
 
@@ -236,6 +327,21 @@ export abstract class ScenarioReporter {
     if (lookups.hits === total) return ansi.green;
     if (lookups.hits === 0) return ansi.red;
     return ansi.yellow;
+  }
+
+  /**
+   * Tells whether a tool is plumbing the user doesn't need to see. It is logged
+   * instead, so it can still be found when a run needs explaining.
+   *
+   * @param name - Tool name as the agent called it.
+   * @param details - Whatever the caller was about to print about the tool.
+   * @returns `true` when the tool should not be printed.
+   */
+  static #isUnreported(name: string, details: unknown): boolean {
+    if (!UNREPORTED_TOOL_NAMES.has(name)) return false;
+
+    logger.debug(`Not reporting '${name}' tool: {details}`, { details });
+    return true;
   }
 
   static #isJsonLike(value: string): boolean {

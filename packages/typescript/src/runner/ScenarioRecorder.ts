@@ -335,6 +335,8 @@ ${this.#scenario.text}
         result: toolResult,
       });
 
+      ScenarioReporter.toolResult(pending.use.name, toolResult.content);
+
       // NOTE: Registered after the step is recorded, so that the values are
       // masked in the MCP tool inputs that follow, not in this call's own input.
       this.#masker.registerExternalOutput(
@@ -352,7 +354,7 @@ ${this.#scenario.text}
 
     // NOTE: Reported unmasked, so that what the tool actually returned is what
     // the user sees.
-    ScenarioReporter.toolResult(toolResult.content);
+    ScenarioReporter.toolResult(pending.use.name, toolResult.content);
 
     this.#accumulateCacheLookups(toolResult);
   }

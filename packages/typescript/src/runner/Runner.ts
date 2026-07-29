@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import z from "zod";
 import { SystemProcess } from "../system/SystemProcess.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
+import { Scenario } from "./Scenario.ts";
 import { ScenarioPlayer } from "./ScenarioPlayer.ts";
 import { ScenarioRecorder } from "./ScenarioRecorder.ts";
 import { ScenarioReporter } from "./ScenarioReporter.ts";
@@ -43,11 +44,17 @@ export class Runner {
       logger.info(
         `Scenario ${file.scenario.id} found in the store, playing...`,
       );
-      ScenarioReporter.playing(this.#path, file.scenario.steps.length);
+      ScenarioReporter.playing(
+        this.#path,
+        this.#store.fileName(file.scenario.id),
+      );
       await this.#play(text, file);
     } else {
       logger.info(`Scenario not found in the store, recording...`);
-      ScenarioReporter.recording(this.#path);
+      ScenarioReporter.recording(
+        this.#path,
+        this.#store.fileName(Scenario.textToId(text)),
+      );
       await this.#record(text);
     }
 

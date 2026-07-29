@@ -25,7 +25,7 @@ export class ScenarioStore {
    * @returns `true` if the file was removed successfully, `false` otherwise.
    */
   remove(id: Scenario.Id): Promise<boolean> {
-    return this.#store.removeFile(this.#fileName(id));
+    return this.#store.removeFile(this.fileName(id));
   }
 
   /**
@@ -35,7 +35,7 @@ export class ScenarioStore {
    * @returns Scenario object if found, `null` otherwise.
    */
   async get(id: Scenario.Id): Promise<ScenarioStore.File | null> {
-    return this.#store.readJson(this.#fileName(id), ScenarioStore.File);
+    return this.#store.readJson(this.fileName(id), ScenarioStore.File);
   }
 
   /**
@@ -46,7 +46,7 @@ export class ScenarioStore {
    */
   async lookup(text: string): Promise<ScenarioStore.File | null> {
     const id = Scenario.textToId(text);
-    return this.#store.readJson(this.#fileName(id), ScenarioStore.File);
+    return this.#store.readJson(this.fileName(id), ScenarioStore.File);
   }
 
   /**
@@ -56,10 +56,17 @@ export class ScenarioStore {
    * @returns File path of the saved scenario recording.
    */
   save(file: ScenarioStore.File): Promise<string> {
-    return this.#store.writeJson(this.#fileName(file.scenario.id), file);
+    return this.#store.writeJson(this.fileName(file.scenario.id), file);
   }
 
-  #fileName(id: Scenario.Id) {
+  /**
+   * Name of the file a scenario recording is stored under, whether or not it
+   * exists yet.
+   *
+   * @param id - Scenario ID to get the file name for.
+   * @returns Recording file name.
+   */
+  fileName(id: Scenario.Id): string {
     return `${id}.json`;
   }
 }

@@ -4,6 +4,7 @@ import { always } from "alwaysly";
 import z from "zod";
 import { isSingleFileExecutable } from "../bundle.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
+import { jsonString } from "../utils/schema.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -16,6 +17,10 @@ export namespace ScenarioAlumniumMcp {
 
   export type OutputContent = Output["content"];
 
+  export type DoOutput = z.infer<typeof ScenarioAlumniumMcp.DoOutput>;
+
+  export type CheckOutput = z.infer<typeof ScenarioAlumniumMcp.CheckOutput>;
+
   export interface SpawnCommand {
     command: string;
     args: string[];
@@ -26,6 +31,31 @@ export class ScenarioAlumniumMcp {
   static Input = z.record(z.string(), z.unknown());
 
   static TextBlock = z.object({ type: z.literal("text"), text: z.string() });
+
+  // NOTE: Both outputs are what the tools return today (see `doMcpTool` and
+  // `checkMcpTool`), and are only used to present them. Everything optional, so
+  // that a changed output degrades to being printed raw rather than throwing.
+  static DoOutput = jsonString(
+    z.object({
+      explanation: z.string().optional(),
+      performed_steps: z
+        .array(
+          z.object({
+            name: z.string(),
+            tools: z.array(z.string()).optional(),
+          }),
+        )
+        .optional(),
+      changes: z.string().optional(),
+    }),
+  );
+
+  static CheckOutput = jsonString(
+    z.object({
+      result: z.string(),
+      explanation: z.string().optional(),
+    }),
+  );
 
   /**
    * Collects the text of a tool output, which is either a bare string or a list

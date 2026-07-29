@@ -1,13 +1,11 @@
 import { always } from "alwaysly";
 import { canonize } from "smolcanon";
-import z from "zod";
 import { type CacheLookups, createCacheLookups } from "../llm/llmSchema.ts";
 import {
   MCP_CACHE_LOOKUPS_META_KEY,
   parseMcpCacheLookups,
 } from "../mcp/mcpCacheLookups.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import { jsonString } from "../utils/schema.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 import { ScenarioExternalTool } from "./ScenarioExternalTool.ts";
@@ -17,10 +15,6 @@ import { ScenarioReporter } from "./ScenarioReporter.ts";
 const { logger } = Telemetry.get(import.meta.url);
 
 const ALUMNIUM_OPTIONS_KEY = "alumnium:options";
-
-// NOTE: The `check` tool reports its verdict alongside the explanation the LLM
-// wrote for it. See `checkMcpTool`.
-const CheckOutput = jsonString(z.object({ result: z.string() }));
 
 export namespace ScenarioPlayer {
   export interface Props {
@@ -83,10 +77,7 @@ export class ScenarioPlayer {
         logger.info(`Playing step ${stepCounterStr}`);
 
         if (step.kind === "external-tool-use") {
-          const externalError = await this.#playExternalStep(
-            stepCounterStr,
-            step,
-          );
+          const externalError = await this.#playExternalStep(step);
           if (!externalError) continue;
 
           return { status: "failure", error: externalError, logs };
@@ -100,13 +91,15 @@ export class ScenarioPlayer {
           mcpName === "start"
             ? this.#disableChangeAnalysis(unmaskedInput)
             : unmaskedInput;
-        ScenarioReporter.step(stepCounterStr, mcpName, input);
+        ScenarioReporter.step(mcpName, input);
 
         const unresolvedMasks =
           ScenarioMasker.findUnresolvedExternalMasks(input);
         if (unresolvedMasks.length) {
-          const message = `Step ${stepCounterStr} MCP tool '${use.name}' input has unresolved external values: ${unresolvedMasks.join(", ")}. The external tool did not produce them again - its output may no longer be JSON, or may be missing those keys.`;
-          logger.error(message);
+          const message = `MCP tool '${use.name}' input has unresolved external values: ${unresolvedMasks.join(", ")}. The external tool did not produce them again - its output may no longer be JSON, or may be missing those keys.`;
+          // NOTE: The step position goes to the log only. The console doesn't
+          // number the steps, since it doesn't print all of them.
+          logger.error(`Step ${stepCounterStr} ${message}`);
           ScenarioReporter.failed(message);
 
           return { status: "failure", error: message, logs };
@@ -129,7 +122,7 @@ export class ScenarioPlayer {
           ScenarioReporter.stepCache(lookups);
         }
 
-        ScenarioReporter.toolResult(mcpOutput.content);
+        ScenarioReporter.toolResult(mcpName, mcpOutput.content);
 
         switch (mcpName) {
           case "start":
@@ -156,15 +149,25 @@ export class ScenarioPlayer {
               logger.info(
                 `Step ${stepCounterStr} MCP tool '${use.name}' output matches expected result`,
               );
-              ScenarioReporter.stepMatched(mcpName);
             } else {
-              const message = `Step ${stepCounterStr} MCP tool '${use.name}' output does not match expected result!`;
+              const message = `MCP tool '${use.name}' output does not match expected result!`;
               logger.error(
-                `${message}\nExpected: {useContent}\nActual: {mcpContent}`,
+                `Step ${stepCounterStr} ${message}\nExpected: {useContent}\nActual: {mcpContent}`,
                 { useContent, mcpContent },
               );
               log.error = message;
-              ScenarioReporter.stepMismatched(mcpName, useContent, mcpContent);
+
+              // NOTE: A `check` has already reported its own verdict, which
+              // states the same thing in prose rather than as escaped JSON. Its
+              // expected/actual pair only ever differs in that verdict, so
+              // printing it again adds nothing. `get` has no such line, and its
+              // output is the data being compared, so it keeps the pair.
+              if (mcpName !== "check")
+                ScenarioReporter.stepMismatched(
+                  mcpName,
+                  useContent,
+                  mcpContent,
+                );
 
               return {
                 status: "failure",
@@ -194,18 +197,16 @@ export class ScenarioPlayer {
    * tool input actually depends on their output, which surfaces as an
    * unresolved mask.
    *
-   * @param stepCounter - Human-readable step position, e.g. `2/7`.
    * @param step - External tool call step to replay.
    * @returns Error message when the call failed, `null` otherwise.
    */
   async #playExternalStep(
-    stepCounter: string,
     step: Scenario.ClaudeCodeExternalStep,
   ): Promise<string | null> {
     const { use } = step;
     const callIndex = this.#externalCallsCount++;
 
-    ScenarioReporter.externalStep(stepCounter, use.name, use.input);
+    ScenarioReporter.externalStep(use.name, use.input);
 
     const input = ScenarioAlumniumMcp.parseInput(use.input);
     const result = await ScenarioExternalTool.execute(use.name, input);
@@ -224,6 +225,7 @@ export class ScenarioPlayer {
     }
 
     logger.debug(`External tool '${use.name}' output: ${result.output}`);
+    ScenarioReporter.toolResult(use.name, result.output);
     this.#masker.registerExternalOutput(callIndex, result.output);
 
     return null;
@@ -334,7 +336,7 @@ export class ScenarioPlayer {
  */
 function checkVerdict(content: unknown): string | null {
   for (const text of ScenarioAlumniumMcp.outputTexts(content)) {
-    const parseResult = CheckOutput.safeParse(text);
+    const parseResult = ScenarioAlumniumMcp.CheckOutput.safeParse(text);
     if (parseResult.success) return parseResult.data.result;
   }
 
