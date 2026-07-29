@@ -99,7 +99,7 @@ export class ScenarioPlayer {
         const unresolvedMasks =
           ScenarioMasker.findUnresolvedExternalMasks(input);
         if (unresolvedMasks.length) {
-          const message = `Step ${stepCounterStr} MCP tool '${use.name}' input has unresolved external values: ${unresolvedMasks.join(", ")}. The external tool produced fewer values than during recording.`;
+          const message = `Step ${stepCounterStr} MCP tool '${use.name}' input has unresolved external values: ${unresolvedMasks.join(", ")}. The external tool did not produce them again - its output may no longer be JSON, or may be missing those keys.`;
           logger.error(message);
           ScenarioReporter.failed(message);
 

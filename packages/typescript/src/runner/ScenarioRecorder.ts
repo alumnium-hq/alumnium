@@ -121,6 +121,15 @@ Instead of hardcoding the email addresses, you should use a parameterized approa
 This maximizes the reusability of the scenarios and individual steps, improve test performance.
 Only do tool call supports placeholders, other tools should be called with the actual values.
 
+When a value an Alumnium tool needs comes from another tool (Bash, Read), make that tool print a
+JSON object with a named key for each value, and pass the value on unchanged.
+Consider generating a random number to type into a field:
+1. Bash(command: 'echo "{\\"number\\": $((RANDOM % 10 + 1))}"') -> {"number": 7}
+2. do(goal: 'type {number} into the amount field', params: {"number": "7"})
+Values are only refreshed on a later run when the tool that produced them printed JSON and the
+value reaches the Alumnium tool as a whole \`params\` value. A value inlined into the goal text,
+reformatted, or computed by you cannot be refreshed, so the next run will replay the recorded one.
+
 The scenario is provided below.
 ---
 ${this.#scenario.text}
