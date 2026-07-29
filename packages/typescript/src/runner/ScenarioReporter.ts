@@ -1,4 +1,6 @@
+import type { TodoWriteInput } from "@anthropic-ai/claude-agent-sdk/sdk-tools";
 import * as ansi from "picocolors";
+import z from "zod";
 import type { CacheLookups } from "../llm/llmSchema.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { formatDuration } from "../utils/timers.ts";
@@ -9,12 +11,26 @@ const { logger } = Telemetry.get(import.meta.url);
 const DRIVER_ID_KEY = "id";
 const PARAMS_KEY = "params";
 
-// NOTE: The agent calls `ToolSearch` to load the Alumnium MCP tool schemas and
-// `TodoWrite` to keep track of where it is in the scenario. Both are its own
-// bookkeeping rather than a step of the scenario, and a todo list reprinted in
-// full on every update drowns out everything around it. They stay in the
-// recording (and in the log), they just aren't worth a line on screen.
-const UNREPORTED_TOOL_NAMES = new Set(["ToolSearch", "TodoWrite"]);
+const TODO_TOOL_NAME = "TodoWrite";
+
+// NOTE: The agent calls `ToolSearch` to load the Alumnium MCP tool schemas,
+// which is its own plumbing rather than a step of the scenario. `TodoWrite` is
+// unreported as a call too, but its input is turned into the group headers the
+// steps are printed under. Both stay in the recording, and in the log.
+const UNREPORTED_TOOL_NAMES = new Set(["ToolSearch", TODO_TOOL_NAME]);
+
+// NOTE: The statuses come from the SDK type, so that a renamed one is a compile
+// error rather than grouping that silently stops working. The schema itself
+// keeps `status` a plain string, so that a status added later still leaves the
+// known ones working.
+type TodoStatus = TodoWriteInput["todos"][number]["status"];
+
+const TODO_IN_PROGRESS: TodoStatus = "in_progress";
+const TODO_COMPLETED: TodoStatus = "completed";
+
+const TodoWriteToolInput = z.object({
+  todos: z.array(z.object({ content: z.string(), status: z.string() })),
+});
 
 /**
  * Prints human-readable scenario progress to the console.
@@ -23,6 +39,10 @@ const UNREPORTED_TOOL_NAMES = new Set(["ToolSearch", "TodoWrite"]);
  * so the reporter is the only thing the user sees while a scenario runs.
  */
 export abstract class ScenarioReporter {
+  // Todo content -> the status it was last reported with, so that a list the
+  // agent resends in full only prints what actually changed.
+  static #todoStatuses = new Map<string, string>();
+
   //#region Lifecycle
 
   /**
@@ -30,6 +50,7 @@ export abstract class ScenarioReporter {
    * @param fileName - Recording file the run will be written to.
    */
   static recording(path: string, fileName: string) {
+    this.#todoStatuses.clear();
     this.#print(
       `${ansi.yellow("● testing")} ${path} ${ansi.dim(`(recording to ${fileName})`)}`,
     );
@@ -40,12 +61,16 @@ export abstract class ScenarioReporter {
    * @param fileName - Recording file the run is played back from.
    */
   static playing(path: string, fileName: string) {
+    this.#todoStatuses.clear();
     this.#print(
       `${ansi.green("● testing")} ${path} ${ansi.dim(`(replaying from ${fileName})`)}`,
     );
   }
 
   static recovering() {
+    // NOTE: Recovery re-records from scratch, so the agent starts a fresh todo
+    // list - one whose tasks can be worded exactly like the ones just played.
+    this.#todoStatuses.clear();
     this.#print(
       `${ansi.yellow("● recovering")} ${ansi.dim("playback failed, re-recording")}`,
     );
@@ -103,6 +128,7 @@ export abstract class ScenarioReporter {
   }
 
   static toolUse(name: string, input: unknown) {
+    if (name === TODO_TOOL_NAME) return this.todos(input);
     if (this.#isUnreported(name, input)) return;
 
     const isOwn = ScenarioAlumniumMcp.isOwnToolUseName(name);
@@ -118,6 +144,46 @@ export abstract class ScenarioReporter {
       ? this.#summarizeMcpInput(input)
       : this.#summarize(input);
     this.#print(`${label} ${ansi.dim(summary)}`);
+  }
+
+  /**
+   * Prints the agent's todo list as a header per task, so that the steps that
+   * follow read as a group: `☐` when a task is started, `☑` when it is done.
+   *
+   * NOTE: The agent resends the whole list on every update, so only the tasks
+   * whose status changed are printed. Tasks are tracked by their text, which is
+   * all that identifies them - reworded task counts as a new one.
+   *
+   * @param input - `TodoWrite` tool input.
+   */
+  static todos(input: unknown) {
+    const parseResult = TodoWriteToolInput.safeParse(input);
+    if (!parseResult.success) {
+      logger.debug(`Cannot read the todo list: {input}`, { input });
+      return;
+    }
+
+    parseResult.data.todos.forEach(({ content, status }) => {
+      const reportedStatus = this.#todoStatuses.get(content);
+      if (reportedStatus === status) return;
+
+      this.#todoStatuses.set(content, status);
+
+      if (status === TODO_IN_PROGRESS) {
+        this.#print("");
+        this.#print(`${ansi.dim("☐")} ${ansi.bold(content)}`);
+        return;
+      }
+
+      if (status !== TODO_COMPLETED) return;
+
+      // NOTE: A task can go straight from pending to done, without ever being
+      // reported as started. It still oansi.strikethrough(pens its own group).
+      if (reportedStatus !== TODO_IN_PROGRESS) this.#print("");
+      this.#print(
+        `${ansi.green("☑")} ${ansi.strikethrough(ansi.bold(content))}`,
+      );
+    });
   }
 
   //#endregion
@@ -221,6 +287,7 @@ export abstract class ScenarioReporter {
   }
 
   static externalStep(name: string, input: unknown) {
+    if (name === TODO_TOOL_NAME) return this.todos(input);
     if (this.#isUnreported(name, input)) return;
 
     this.#print(

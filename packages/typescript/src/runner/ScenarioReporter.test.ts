@@ -6,6 +6,10 @@ describe(ScenarioReporter, () => {
 
   beforeEach(() => {
     print = vi.spyOn(console, "log").mockImplementation(() => {});
+    // NOTE: The todo grouping remembers what it already reported, and reporting
+    // the phase a run starts in is what resets it.
+    ScenarioReporter.playing("scenario.md", "recording.json");
+    print.mockClear();
   });
 
   describe("stepCache", () => {
@@ -161,12 +165,80 @@ describe(ScenarioReporter, () => {
     });
   });
 
-  describe("toolUse", () => {
-    it("does not print the agent's own bookkeeping", () => {
-      ScenarioReporter.toolUse("ToolSearch", { query: "select:do" });
-      ScenarioReporter.toolUse("TodoWrite", { todos: [] });
+  describe("todos", () => {
+    function todo(content: string, status: string) {
+      return { content, status, activeForm: `${content}ing` };
+    }
+
+    it("opens a group when a task is started and closes it when done", () => {
+      ScenarioReporter.todos({
+        todos: [
+          todo("Perform 2+2=", "in_progress"),
+          todo("Check 4", "pending"),
+        ],
+      });
+      ScenarioReporter.todos({
+        todos: [todo("Perform 2+2=", "completed"), todo("Check 4", "pending")],
+      });
+
+      expect(printedLines()).toEqual(["", "☐ Perform 2+2=", "☑ Perform 2+2="]);
+    });
+
+    it("prints nothing for a resent list that did not change", () => {
+      const todos = { todos: [todo("Perform 2+2=", "in_progress")] };
+
+      ScenarioReporter.todos(todos);
+      print.mockClear();
+      ScenarioReporter.todos(todos);
 
       expect(print).not.toBeCalled();
+    });
+
+    it("opens a group for a task that skipped being started", () => {
+      ScenarioReporter.todos({ todos: [todo("Stop browser", "completed")] });
+
+      expect(printedLines()).toEqual(["", "☑ Stop browser"]);
+    });
+
+    it("prints nothing for a pending task", () => {
+      ScenarioReporter.todos({ todos: [todo("Check 4", "pending")] });
+
+      expect(print).not.toBeCalled();
+    });
+
+    it("ignores an input it cannot read", () => {
+      ScenarioReporter.todos({ boom: true });
+
+      expect(print).not.toBeCalled();
+    });
+
+    it("starts over on a new run", () => {
+      const todos = { todos: [todo("Perform 2+2=", "in_progress")] };
+
+      ScenarioReporter.todos(todos);
+      ScenarioReporter.playing("scenario.md", "abc.json");
+      print.mockClear();
+      ScenarioReporter.todos(todos);
+
+      expect(printedLines()).toEqual(["", "☐ Perform 2+2="]);
+    });
+  });
+
+  describe("toolUse", () => {
+    it("does not print a ToolSearch call", () => {
+      ScenarioReporter.toolUse("ToolSearch", { query: "select:do" });
+
+      expect(print).not.toBeCalled();
+    });
+
+    it("groups a TodoWrite call instead of printing it", () => {
+      ScenarioReporter.toolUse("TodoWrite", {
+        todos: [
+          { content: "Perform 2+2=", status: "in_progress", activeForm: "…" },
+        ],
+      });
+
+      expect(printedLines()).toEqual(["", "☐ Perform 2+2="]);
     });
 
     it("prints other external tool calls", () => {
