@@ -1,4 +1,5 @@
 import * as ansi from "picocolors";
+import type { CacheLookups } from "../llm/llmSchema.ts";
 import { formatDuration } from "../utils/timers.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 
@@ -46,6 +47,23 @@ export abstract class ScenarioReporter {
 
   static failed(error: string) {
     this.#print(`${ansi.red("● failed")} ${error}`);
+  }
+
+  /**
+   * Prints the cache hit rate across all the played steps.
+   *
+   * @param lookups - Cache lookups the whole scenario made.
+   */
+  static cacheTotal(lookups: CacheLookups) {
+    const total = lookups.hits + lookups.misses;
+    if (!total) return;
+
+    const percentage = Math.round((lookups.hits / total) * 100);
+    const color = this.#cacheColor(lookups, total);
+
+    this.#print(
+      `${color(`● cache hit ${percentage}%`)} ${ansi.dim(`(${lookups.hits}/${total})`)}`,
+    );
   }
 
   static finished(elapsedMs: number) {
@@ -97,6 +115,26 @@ export abstract class ScenarioReporter {
   static externalStep(counter: string, name: string, input: unknown) {
     this.#print(
       `  ${ansi.yellow(`→ ${counter} ${name}`)} ${ansi.dim(this.#summarize(input))}`,
+    );
+  }
+
+  /**
+   * Prints how much of a step was served from the cache. A step can make
+   * several LLM calls (a `do` runs the planner plus an actor call per planned
+   * step), so a step can also be a partial hit.
+   *
+   * @param lookups - Cache lookups the step made.
+   */
+  static stepCache(lookups: CacheLookups) {
+    const total = lookups.hits + lookups.misses;
+    if (!total) return;
+
+    const label =
+      lookups.hits === total ? "yes" : lookups.hits === 0 ? "no" : "partial";
+    const color = this.#cacheColor(lookups, total);
+
+    this.#print(
+      `    ${ansi.dim("← cache:")} ${color(label)} ${ansi.dim(`(${lookups.hits}/${total})`)}`,
     );
   }
 
@@ -168,6 +206,20 @@ export abstract class ScenarioReporter {
       return this.#summarize(soleEntry[1]);
 
     return this.#summarize(Object.fromEntries(entries));
+  }
+
+  /**
+   * Picks the color for a cache verdict: green when everything was served from
+   * the cache, red when nothing was, yellow in between.
+   *
+   * @param lookups - Cache lookups to color.
+   * @param total - Total number of the lookups.
+   * @returns Color function.
+   */
+  static #cacheColor(lookups: CacheLookups, total: number) {
+    if (lookups.hits === total) return ansi.green;
+    if (lookups.hits === 0) return ansi.red;
+    return ansi.yellow;
   }
 
   static #isJsonLike(value: string): boolean {

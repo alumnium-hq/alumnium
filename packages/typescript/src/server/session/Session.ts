@@ -125,6 +125,7 @@ export class Session {
     const usageStats: LlmUsageStats = {
       total: createLlmUsage(),
       cache: this.cache.usage,
+      lookups: { ...this.cache.lookups },
     };
 
     const agents = [

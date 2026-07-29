@@ -1,5 +1,6 @@
 import path from "node:path";
 import z from "zod";
+import { MCP_CACHE_LOOKUPS_OUTPUT_KEY } from "../mcpCacheLookups.ts";
 import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
 
@@ -44,6 +45,10 @@ export const stopMcpTool = McpTool.define("stop", {
             total: stats["total"],
             cached: stats["cache"],
           },
+          // NOTE: Reported in the output rather than the result `_meta` (see
+          // `McpServer`), since by the time the driver is gone there is nothing
+          // left to diff the counters against.
+          [MCP_CACHE_LOOKUPS_OUTPUT_KEY]: stats["lookups"],
         }),
       },
     ];

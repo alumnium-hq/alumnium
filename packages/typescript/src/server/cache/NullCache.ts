@@ -16,6 +16,7 @@ export class NullCache extends ServerCache {
         ...this.#spanAttrs(),
         "cache.lookup.miss.reason": "unimplemented",
       });
+      this.countMiss();
       return null;
     });
   }

@@ -30,9 +30,26 @@ export function createLlmUsage(): LlmUsage {
   };
 }
 
+export const CacheLookups = z.object({
+  // Number of cache lookups that found an entry.
+  hits: z.number(),
+  // Number of cache lookups that found nothing.
+  misses: z.number(),
+});
+
+export type CacheLookups = z.infer<typeof CacheLookups>;
+
+export function createCacheLookups(): CacheLookups {
+  return {
+    hits: 0,
+    misses: 0,
+  };
+}
+
 export const LlmUsageStats = z.object({
   total: LlmUsage,
   cache: LlmUsage,
+  lookups: CacheLookups,
 });
 
 export type LlmUsageStats = z.infer<typeof LlmUsageStats>;
@@ -41,5 +58,6 @@ export function createLlmUsageStats(): LlmUsageStats {
   return {
     total: createLlmUsage(),
     cache: createLlmUsage(),
+    lookups: createCacheLookups(),
   };
 }

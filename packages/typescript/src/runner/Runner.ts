@@ -66,6 +66,8 @@ export class Runner {
 
     const result = await player.play();
 
+    ScenarioReporter.cacheTotal(player.lookups);
+
     if (result.status === "success") {
       ScenarioReporter.passed(file.scenario.steps.length);
       return;
@@ -105,6 +107,8 @@ export class Runner {
 
   async #recordWith(recorder: ScenarioRecorder) {
     const result = await recorder.record();
+
+    ScenarioReporter.cacheTotal(recorder.lookups);
 
     if (result.status === "failure") {
       logger.error(`Scenario recording failed: ${result.error}`);

@@ -61,6 +61,20 @@ export abstract class McpState {
   }
 
   /**
+   * Get driver's Alumni instance by driver ID, if the driver is known.
+   *
+   * Unlike `getDriverAlumni` this doesn't throw, for callers that merely probe
+   * for a driver (e.g. cache lookup reporting, which also wraps `start` and
+   * `stop` calls where no driver exists).
+   *
+   * @param id Driver ID.
+   * @returns Alumni instance, or `undefined` when the driver is unknown.
+   */
+  static findDriverAlumni(id: string): Alumni | undefined {
+    return this.drivers[id]?.al;
+  }
+
+  /**
    * Increment driver step counter and return new step number.
    *
    * @param id Driver ID.

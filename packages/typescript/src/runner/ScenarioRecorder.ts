@@ -10,6 +10,8 @@ import {
 } from "@anthropic-ai/claude-agent-sdk";
 import { $ } from "bun";
 import { txts } from "smollit";
+import { type CacheLookups, createCacheLookups } from "../llm/llmSchema.ts";
+import { parseMcpCacheLookupsOutput } from "../mcp/mcpCacheLookups.ts";
 import { SystemProcess } from "../system/SystemProcess.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { TypeUtils } from "../typeUtils.ts";
@@ -64,6 +66,7 @@ export class ScenarioRecorder {
   #recovery: ScenarioRecorder.Recovery | undefined;
   #sessionStore: ScenarioClaudeCodeSessionStore;
   #sessionId: string | undefined;
+  #lookups = createCacheLookups();
 
   constructor(props: ScenarioRecorder.Props) {
     const { text, path, recovery } = props;
@@ -85,13 +88,44 @@ export class ScenarioRecorder {
     return this.#scenario;
   }
 
+  /**
+   * Cache lookups made by the recorded session, as reported by the `stop` tool.
+   *
+   * NOTE: Unlike the playback, the recording can only report the session totals
+   * and not per-step counters: the agent runs the MCP tools, and the Claude Code
+   * SDK doesn't pass a tool result's `_meta` through to its consumers.
+   */
+  get lookups(): CacheLookups {
+    return { ...this.#lookups };
+  }
+
   //#region Recording
 
   async record(): Promise<ScenarioRecorder.Result> {
     const claude = await this.#claudeCode();
 
     try {
-      for await (const message of claude.query(this.#scenario.text)) {
+      const prompt = `
+You are a test agent that runs a test scenario with Alumnium.
+
+You will run the scenario step by step, using do, check, get, and other MCP tools to perform the scenario.
+You will report any errors that occur during the scenario.
+
+When using a do tool, use placeholders for any values that look like parameters.
+Consider the following two steps:
+1. do(goal: 'type test1@email.com to the email field')
+2. do(goal: 'type test2@email.com to the email field')
+Instead of hardcoding the email addresses, you should use a parameterized approach, like this:
+1. do(goal: 'type {email} to the email field', params: {"email": "test1@email.com"})
+2. do(goal: 'type {email} to the email field', params: {"email": "test2@email.com"})
+This maximizes the reusability of the scenarios and individual steps, improve test performance.
+Only do tool call supports placeholders, other tools should be called with the actual values.
+
+The scenario is provided below.
+---
+${this.#scenario.text}
+`;
+      for await (const message of claude.query(prompt)) {
         logger.debug("Received Claude Code message: {message}", { message });
 
         this.#processMessage(message);
@@ -303,6 +337,32 @@ export class ScenarioRecorder {
       kind: "tool-use",
       use: pending.use,
       result: this.#maskToolResult(toolResult),
+    });
+
+    this.#accumulateCacheLookups(toolResult);
+  }
+
+  /**
+   * Accumulates the cache lookups an MCP tool result reports, if any.
+   *
+   * @param toolResult - MCP tool result to read the counters from.
+   */
+  #accumulateCacheLookups(toolResult: Scenario.ClaudeCodeStepToolResult) {
+    const { content } = toolResult;
+    const texts =
+      typeof content === "string"
+        ? [content]
+        : (content ?? []).map((block) =>
+            block.type === "text" ? block.text : "",
+          );
+
+    texts.forEach((text) => {
+      const lookups = parseMcpCacheLookupsOutput(text);
+      if (!lookups) return;
+
+      logger.debug(`Recorded cache lookups: {lookups}`, { lookups });
+      this.#lookups.hits += lookups.hits;
+      this.#lookups.misses += lookups.misses;
     });
   }
 

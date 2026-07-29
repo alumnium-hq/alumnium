@@ -1,5 +1,10 @@
 import { always } from "alwaysly";
 import { canonize } from "smolcanon";
+import { type CacheLookups, createCacheLookups } from "../llm/llmSchema.ts";
+import {
+  MCP_CACHE_LOOKUPS_META_KEY,
+  parseMcpCacheLookups,
+} from "../mcp/mcpCacheLookups.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
@@ -41,9 +46,17 @@ export class ScenarioPlayer {
   #scenario: Scenario.Type;
   #masker = new ScenarioMasker();
   #externalCallsCount = 0;
+  #lookups = createCacheLookups();
 
   constructor(scenario: Scenario.Type) {
     this.#scenario = scenario;
+  }
+
+  /**
+   * Cache lookups made by all the steps played so far.
+   */
+  get lookups(): CacheLookups {
+    return { ...this.#lookups };
   }
 
   //#region Playback
@@ -100,6 +113,15 @@ export class ScenarioPlayer {
           mcpOutput,
         };
         logs.push(log);
+
+        const lookups = parseMcpCacheLookups(
+          mcpOutput._meta?.[MCP_CACHE_LOOKUPS_META_KEY],
+        );
+        if (lookups) {
+          this.#lookups.hits += lookups.hits;
+          this.#lookups.misses += lookups.misses;
+          ScenarioReporter.stepCache(lookups);
+        }
 
         switch (mcpName) {
           case "start":
