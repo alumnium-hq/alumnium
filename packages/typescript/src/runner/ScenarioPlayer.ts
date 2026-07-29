@@ -1,11 +1,13 @@
 import { always } from "alwaysly";
 import { canonize } from "smolcanon";
+import z from "zod";
 import { type CacheLookups, createCacheLookups } from "../llm/llmSchema.ts";
 import {
   MCP_CACHE_LOOKUPS_META_KEY,
   parseMcpCacheLookups,
 } from "../mcp/mcpCacheLookups.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
+import { jsonString } from "../utils/schema.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 import { ScenarioExternalTool } from "./ScenarioExternalTool.ts";
@@ -15,6 +17,10 @@ import { ScenarioReporter } from "./ScenarioReporter.ts";
 const { logger } = Telemetry.get(import.meta.url);
 
 const ALUMNIUM_OPTIONS_KEY = "alumnium:options";
+
+// NOTE: The `check` tool reports its verdict alongside the explanation the LLM
+// wrote for it. See `checkMcpTool`.
+const CheckOutput = jsonString(z.object({ result: z.string() }));
 
 export namespace ScenarioPlayer {
   export interface Props {
@@ -284,12 +290,53 @@ export class ScenarioPlayer {
 
   //#region Matching
 
-  #matchOutput(
+  /**
+   * Compares a tool's output against the one recorded for the same step.
+   *
+   * @param mcpName - MCP tool name, e.g. `check`.
+   * @param toolResultContent - Recorded tool result content.
+   * @param mcpOutputContent - Content the tool produced during playback.
+   * @returns `true` when the outputs are equivalent.
+   */
+  static matchOutput(
+    mcpName: string,
     toolResultContent: Scenario.ClaudeCodeStepToolResultContent,
     mcpOutputContent: ScenarioAlumniumMcp.OutputContent,
   ): boolean {
+    if (mcpName === "check") {
+      const expectedVerdict = checkVerdict(toolResultContent);
+      const actualVerdict = checkVerdict(mcpOutputContent);
+
+      if (expectedVerdict && actualVerdict)
+        return expectedVerdict === actualVerdict;
+
+      logger.warn(
+        "Cannot read the 'check' verdict out of the output, comparing it in full",
+      );
+    }
+
     return canonize(toolResultContent) === canonize(mcpOutputContent);
   }
 
   //#endregion
+}
+
+/**
+ * Reads the verdict out of a `check` tool output.
+ *
+ * NOTE: Only the verdict is compared. The explanation next to it is prose the
+ * LLM writes anew every time, so it differs between two runs that reached the
+ * same verdict ("the accessibility tree includes a heading saying ..." vs "the
+ * accessibility tree contains a heading: ...").
+ *
+ * @param content - Tool output content.
+ * @returns Verdict, `null` when the content does not carry one.
+ */
+function checkVerdict(content: unknown): string | null {
+  for (const text of ScenarioAlumniumMcp.outputTexts(content)) {
+    const parseResult = CheckOutput.safeParse(text);
+    if (parseResult.success) return parseResult.data.result;
+  }
+
+  return null;
 }
