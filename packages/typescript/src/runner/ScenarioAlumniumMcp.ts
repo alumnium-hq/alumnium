@@ -25,6 +25,25 @@ export namespace ScenarioAlumniumMcp {
 export class ScenarioAlumniumMcp {
   static Input = z.record(z.string(), z.unknown());
 
+  static TextBlock = z.object({ type: z.literal("text"), text: z.string() });
+
+  /**
+   * Collects the text of a tool output, which is either a bare string or a list
+   * of content blocks.
+   *
+   * @param content - Tool output content.
+   * @returns Text of every text block, in order.
+   */
+  static outputTexts(content: unknown): string[] {
+    if (typeof content === "string") return [content];
+    if (!Array.isArray(content)) return [];
+
+    return content.flatMap((block) => {
+      const parseResult = ScenarioAlumniumMcp.TextBlock.safeParse(block);
+      return parseResult.success ? [parseResult.data.text] : [];
+    });
+  }
+
   #client: Client;
   #transport: StdioClientTransport;
 

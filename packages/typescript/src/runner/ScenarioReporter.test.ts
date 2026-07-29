@@ -54,13 +54,62 @@ describe(ScenarioReporter, () => {
     });
   });
 
+  describe("toolResult", () => {
+    it("prints every text block of the output", () => {
+      ScenarioReporter.toolResult([
+        { type: "text", text: '{"result":"success"}' },
+        { type: "text", text: '{"cache":"hit"}' },
+      ]);
+
+      expect(printedLines()).toEqual([
+        '  ← {"result":"success"}',
+        '  ← {"cache":"hit"}',
+      ]);
+    });
+
+    it("puts a multi-line output on a single line", () => {
+      ScenarioReporter.toolResult('{\n  "explanation": "pressed 4"\n}');
+
+      expect(printedLine()).toBe('  ← { "explanation": "pressed 4" }');
+    });
+
+    it("prints nothing when there is no output", () => {
+      ScenarioReporter.toolResult(undefined);
+      ScenarioReporter.toolResult([]);
+      ScenarioReporter.toolResult([{ type: "image", data: "..." }]);
+      ScenarioReporter.toolResult("   ");
+
+      expect(print).not.toBeCalled();
+    });
+  });
+
+  describe("step", () => {
+    it("does not shorten a long input", () => {
+      const goal = `press the ${"very ".repeat(60)}long button`;
+
+      ScenarioReporter.step("1/2", "do", { id: "typescript-1", goal });
+
+      expect(printedLine()).toBe(`  → 1/2 do "${goal.trim()}"`);
+    });
+  });
+
   /**
    * NOTE: `FORCE_COLOR` is set for tests, so the printed line contains ANSI
    * escapes around every part of it.
    */
   function printedLine(): string {
     expect(print).toBeCalledTimes(1);
-    const [line] = print.mock.calls[0] as [string];
+    const [line] = printedLines();
+    return line as string;
+  }
+
+  function printedLines(): string[] {
+    return print.mock.calls.map(([line]: unknown[]) =>
+      escapeless(String(line)),
+    );
+  }
+
+  function escapeless(line: string): string {
     // oxlint-disable-next-line no-control-regex
     return line.replace(/\[\d+m/g, "");
   }

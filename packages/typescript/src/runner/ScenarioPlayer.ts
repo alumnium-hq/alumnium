@@ -123,6 +123,8 @@ export class ScenarioPlayer {
           ScenarioReporter.stepCache(lookups);
         }
 
+        ScenarioReporter.toolResult(mcpOutput.content);
+
         switch (mcpName) {
           case "start":
             this.#masker.processMcpStartOutputContent(mcpOutput.content);
@@ -138,7 +140,11 @@ export class ScenarioPlayer {
               { useContent },
             );
 
-            const outputMatches = this.#matchOutput(useContent, mcpContent);
+            const outputMatches = ScenarioPlayer.matchOutput(
+              mcpName,
+              useContent,
+              mcpContent,
+            );
 
             if (outputMatches) {
               logger.info(

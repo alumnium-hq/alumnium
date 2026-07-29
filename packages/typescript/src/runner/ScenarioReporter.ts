@@ -3,8 +3,6 @@ import type { CacheLookups } from "../llm/llmSchema.ts";
 import { formatDuration } from "../utils/timers.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 
-const THINKING_MAX_LENGTH = 160;
-const INPUT_MAX_LENGTH = 120;
 const DRIVER_ID_KEY = "id";
 const PARAMS_KEY = "params";
 
@@ -75,7 +73,7 @@ export abstract class ScenarioReporter {
   //#region Recording
 
   static thinking(thinking: string) {
-    const text = this.#collapse(thinking, THINKING_MAX_LENGTH);
+    const text = this.#collapse(thinking);
     if (!text) return;
     this.#print(ansi.dim(ansi.italic(`  ✻ ${text}`)));
   }
@@ -100,6 +98,24 @@ export abstract class ScenarioReporter {
       ? this.#summarizeMcpInput(input)
       : this.#summarize(input);
     this.#print(`  ${label} ${ansi.dim(summary)}`);
+  }
+
+  //#endregion
+
+  //#region Tool output
+
+  /**
+   * Prints what an Alumnium MCP tool call returned, in both recording and
+   * playback. Each text block of the output gets its own line.
+   *
+   * @param content - MCP tool output content.
+   */
+  static toolResult(content: unknown) {
+    ScenarioAlumniumMcp.outputTexts(content).forEach((text) => {
+      const line = this.#collapse(text);
+      if (!line) return;
+      this.#print(`  ${ansi.dim(`← ${line}`)}`);
+    });
   }
 
   //#endregion
@@ -185,7 +201,7 @@ export abstract class ScenarioReporter {
     // quoted, since it already contains quotes of its own.
     const lead = this.#isJsonLike(leadValue)
       ? this.#summarize(leadValue)
-      : `"${this.#collapse(leadValue, INPUT_MAX_LENGTH)}"`;
+      : `"${this.#collapse(leadValue)}"`;
 
     if (!restEntries.length) return lead;
 
@@ -230,13 +246,21 @@ export abstract class ScenarioReporter {
   static #summarize(value: unknown): string {
     if (value === undefined) return "";
     const json = typeof value === "string" ? value : JSON.stringify(value);
-    return this.#collapse(json ?? "", INPUT_MAX_LENGTH);
+    return this.#collapse(json ?? "");
   }
 
-  static #collapse(text: string, maxLength: number): string {
-    const collapsed = text.replace(/\s{2,}/g, " ").trim();
-    if (collapsed.length <= maxLength) return collapsed;
-    return `${collapsed.slice(0, maxLength)}…`;
+  /**
+   * Puts a value on a single line, so that one call takes up one line however
+   * the value happens to be formatted.
+   *
+   * NOTE: The line is not shortened. A tool input or output is what the user
+   * came to see, and the terminal wraps it well enough.
+   *
+   * @param text - Text to collapse.
+   * @returns Text on a single line.
+   */
+  static #collapse(text: string): string {
+    return text.replace(/\s+/g, " ").trim();
   }
 
   static #print(line: string) {
