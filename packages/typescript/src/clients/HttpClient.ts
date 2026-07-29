@@ -122,12 +122,13 @@ export class HttpClient extends Client {
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
-    const { goal, step, accessibilityTree, app } = props;
+    const { goal, step, accessibilityTree, app, params = {} } = props;
     const body: StepRequest = {
       goal,
       step,
       accessibility_tree: accessibilityTree,
       app,
+      ...params,
     };
     return this.#sessionFetch<StepResponse>("POST", "/steps", body);
   }

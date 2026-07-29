@@ -59,6 +59,7 @@ export namespace Client {
     step: string;
     accessibilityTree: string;
     app: AppId;
+    params?: Record<string, string> | undefined;
   }
 
   export interface FindAreaProps {

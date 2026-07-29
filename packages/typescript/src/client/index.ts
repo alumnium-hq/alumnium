@@ -7,4 +7,5 @@ export { Alumni, type AlumniOptions } from "./Alumni.ts";
 export { Area } from "./Area.ts";
 export { Cache } from "./Cache.ts";
 export { AssertionError } from "./errors/AssertionError.ts";
+export { ParamsError } from "./errors/ParamsError.ts";
 export type { DoResult, DoStep } from "./result.ts";

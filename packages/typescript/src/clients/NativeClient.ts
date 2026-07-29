@@ -120,7 +120,7 @@ export class NativeClient extends Client {
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
-    const { goal, step, accessibilityTree, app } = props;
+    const { goal, step, accessibilityTree, app, params = {} } = props;
     this.session.updateContext({ app });
 
     const tree = this.session.processTree(accessibilityTree);
@@ -128,6 +128,7 @@ export class NativeClient extends Client {
       goal,
       step,
       tree.toXml(this.session.excludeAttributes),
+      params,
     );
     return {
       explanation,

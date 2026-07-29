@@ -2,12 +2,14 @@ import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts
 import { Client } from "../clients/Client.ts";
 import type { Data } from "../clients/typecasting.ts";
 import { BaseDriver, type Element } from "../drivers/index.ts";
+import { Params } from "../Params.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
 import { retry } from "../utils/retry.ts";
 import { type Alumni } from "./Alumni.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
+import { ParamsError } from "./errors/ParamsError.ts";
 import type { DoResult, DoStep } from "./result.ts";
 
 const { tracer } = Telemetry.get(import.meta.url);
@@ -37,52 +39,69 @@ export class Area {
     this.client = client;
   }
 
+  /**
+   * Executes a series of steps to achieve the given goal within this area.
+   *
+   * @param goal - Goal to achieve, optionally containing `{placeholder}` tokens.
+   * @param params - Values for the goal placeholders. See `Alumni.do`.
+   * @returns Explanation and the executed steps with their actions.
+   */
   @span("alumni.do", spanAttrs)
-  async do(goal: string): Promise<DoResult> {
-    return retry(async () => {
-      const app = await this.driver.app();
+  async do(goal: string, params?: Record<string, string>): Promise<DoResult> {
+    const boundParams = Params.from(params);
+    boundParams.validateGoal(goal);
 
-      const { explanation, steps } = await this.client.planActions({
-        goal,
-        accessibilityTree: this.accessibilityTree.toStr(),
-        app,
-      });
+    return retry(
+      { doRetry: (error) => !(error instanceof ParamsError) },
+      async () => {
+        const app = await this.driver.app();
 
-      let finalExplanation = explanation;
-      const executedSteps: DoStep[] = [];
-      for (const step of steps) {
-        const { explanation: actorExplanation, actions } =
-          await this.client.executeAction({
-            goal,
-            step,
-            accessibilityTree: this.accessibilityTree.toStr(),
-            app,
+        const { explanation, steps } = await this.client.planActions({
+          goal,
+          accessibilityTree: this.accessibilityTree.toStr(),
+          app,
+        });
+
+        let finalExplanation = explanation;
+        const executedSteps: DoStep[] = [];
+        for (const step of steps) {
+          const { explanation: actorExplanation, actions } =
+            await this.client.executeAction({
+              goal,
+              step,
+              accessibilityTree: this.accessibilityTree.toStr(),
+              app,
+              ...(params ? { params } : {}),
+            });
+
+          // When planner is off, explanation is just the goal — replace with actor's reasoning.
+          if (finalExplanation === goal) {
+            finalExplanation = actorExplanation;
+          }
+
+          const calledTools: string[] = [];
+          for (const toolCall of actions) {
+            const calledTool = await BaseTool.executeToolCall(
+              toolCall,
+              this.tools,
+              this.driver,
+            );
+            calledTools.push(calledTool);
+          }
+
+          executedSteps.push({
+            name: boundParams.substitute(step),
+            tools: calledTools,
           });
-
-        // When planner is off, explanation is just the goal — replace with actor's reasoning.
-        if (finalExplanation === goal) {
-          finalExplanation = actorExplanation;
         }
 
-        const calledTools: string[] = [];
-        for (const toolCall of actions) {
-          const calledTool = await BaseTool.executeToolCall(
-            toolCall,
-            this.tools,
-            this.driver,
-          );
-          calledTools.push(calledTool);
-        }
-
-        executedSteps.push({ name: step, tools: calledTools });
-      }
-
-      return {
-        explanation: finalExplanation,
-        steps: executedSteps,
-        changes: "",
-      };
-    });
+        return {
+          explanation: boundParams.substitute(finalExplanation),
+          steps: executedSteps,
+          changes: "",
+        };
+      },
+    );
   }
 
   @span("alumni.check", (_, options) => ({

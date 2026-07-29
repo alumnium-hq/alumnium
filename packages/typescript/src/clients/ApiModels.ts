@@ -43,6 +43,7 @@ export interface StepRequest {
   step: string;
   accessibility_tree: string;
   app: AppId;
+  params?: Record<string, string> | undefined;
 }
 
 export interface StepResponse {

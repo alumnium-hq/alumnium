@@ -63,7 +63,8 @@ export const doMcpTool = McpTool.define("do", {
     "Execute a goal using natural language (e.g., 'click login button', 'fill out the form'). Alumnium will plan and execute the necessary steps. " +
     `Supported actions: ${getDoToolActions()}. ` +
     "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads). " +
-    "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport.",
+    "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport. " +
+    "When any value in the goal varies between runs, put a `{placeholder}` in the goal and pass the value in `params` instead of inlining it — this keeps the goal text stable so repeated runs reuse the cache.",
 
   inputSchema: z.object({
     id: z.string().describe("Driver ID from start"),
@@ -73,13 +74,22 @@ export const doMcpTool = McpTool.define("do", {
       .describe(
         "Natural language description of what to do on the current page. Do NOT combine actions that span multiple pages in a single goal.",
       ),
+
+    params: z
+      .record(z.string(), z.string())
+      .optional()
+      .describe(
+        'Values for the `{placeholder}` tokens in the goal, e.g. goal \'type {email} into the email field\' with params {"email": "a@b.com"}. ' +
+          "Works both for values that get typed or navigated to and for values that pick the element, so 'click {number} button' with a different number reuses one cache entry. " +
+          "Every placeholder in the goal must have a value here, and every value must be referenced by the goal.",
+      ),
   }),
 
   async execute(input, { logger }) {
-    const { id, goal } = input;
+    const { id, goal, params } = input;
 
     const al = McpState.getDriverAlumni(id);
-    const { steps, explanation, changes } = await al.do(goal);
+    const { steps, explanation, changes } = await al.do(goal, params);
 
     logger.debug(`Completed with ${steps.length} steps`);
     await McpArtifactsStore.saveScreenshot({ id, description: goal });

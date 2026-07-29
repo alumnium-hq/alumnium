@@ -5,6 +5,7 @@ import z from "zod";
 import { AppId } from "../../../AppId.ts";
 import { Lchain } from "../../../llm/Lchain.ts";
 import { LchainSchema } from "../../../llm/LchainSchema.ts";
+import { Params } from "../../../Params.ts";
 import { Telemetry } from "../../../telemetry/Telemetry.ts";
 import type { Tracer } from "../../../telemetry/Tracer.ts";
 import { stringExcerpt } from "../../../utils/string.ts";
@@ -151,17 +152,23 @@ export class ElementsCache extends ServerCache {
         llmKey,
       );
 
+      const params = Params.from(
+        agentMeta.kind === "actor" ? agentMeta.params : undefined,
+      );
+
       try {
         const tree = new ElementsCacheTree(agentMeta.treeXml);
 
         const memoryEntry = this.#memoryRecord(memoryKey);
         if (memoryEntry) {
-          const masksIdsMap = tree.resolveElements(memoryEntry.elements);
+          const masksIdsMap = tree.resolveElements(
+            this.#substituteElements(memoryEntry.elements, params),
+          );
 
           if (masksIdsMap) {
-            const unmaskedGeneration = ElementsCacheMask.unmask(
-              memoryEntry.generation,
-              masksIdsMap,
+            const unmaskedGeneration = ElementsCacheMask.substituteParams(
+              ElementsCacheMask.unmask(memoryEntry.generation, masksIdsMap),
+              params,
             );
             this.applyUsage(unmaskedGeneration);
 
@@ -201,7 +208,9 @@ export class ElementsCache extends ServerCache {
           return null;
         }
 
-        const masksIdsMap = tree.resolveElements(elements);
+        const masksIdsMap = tree.resolveElements(
+          this.#substituteElements(elements, params),
+        );
         if (!masksIdsMap) {
           logger.debug(
             `Elements cache miss (resolution failed) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
@@ -216,9 +225,9 @@ export class ElementsCache extends ServerCache {
           return null;
         }
 
-        const unmaskedGeneration = ElementsCacheMask.unmask(
-          maskedGeneration,
-          masksIdsMap,
+        const unmaskedGeneration = ElementsCacheMask.substituteParams(
+          ElementsCacheMask.unmask(maskedGeneration, masksIdsMap),
+          params,
         );
 
         this.applyUsage(unmaskedGeneration);
@@ -374,6 +383,14 @@ export class ElementsCache extends ServerCache {
 
   #cacheKey(meta: ElementsCache.AgentMeta): ElementsCache.CacheKey {
     return meta.kind === "planner" ? meta.goal : meta.step;
+  }
+
+  #substituteElements(
+    elements: ElementsCache.Elements,
+    params: Params,
+  ): ElementsCache.Elements {
+    if (params.isEmpty) return elements;
+    return elements.map((element) => params.substituteRecord(element));
   }
 
   #memoryKey(

@@ -8,6 +8,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
 import z from "zod";
+import { Params } from "../../Params.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { ToolCall } from "../accessibility/BaseServerAccessibilityTree.ts";
 import type { LlmContext } from "../LlmContext.ts";
@@ -36,6 +37,11 @@ export class ActorAgent extends BaseAgent {
     goal: BaseAgent.Goal,
     step: BaseAgent.Step,
     treeXml: z.string(),
+    // NOTE: `goal` and `step` stay in their placeholder form here, since the
+    // meta is the cache identity. The values live alongside them so that the
+    // elements cache can mask them out of what it stores and substitute fresh
+    // ones back in on a hit.
+    params: z.record(z.string(), z.string()).optional(),
   });
 
   chain: Runnable<ActorAgent.ChainInput, ActorAgent.ChainOutput>;
@@ -64,15 +70,24 @@ export class ActorAgent extends BaseAgent {
     goal: string,
     step: string,
     treeXml: string,
+    paramValues?: Record<string, string> | undefined,
   ): Promise<ActorAgent.InvokeResult> {
     if (!step.trim()) {
       return ["", []];
     }
 
+    const params = Params.from(paramValues);
+
+    // NOTE: The model is given the real values, so that it can pick an element
+    // by one of them (e.g. "click 8 button"). Only the cache identity below
+    // keeps the placeholders.
+    const substitutedGoal = params.substitute(goal);
+    const substitutedStep = params.substitute(step);
+
     logger.info("Starting action:");
     this.logData(logger, "in", {
-      Goal: goal,
-      Step: step,
+      Goal: substitutedGoal,
+      Step: substitutedStep,
       "Accessibility tree": this.debugLogTreeDetail(treeXml),
     });
 
@@ -81,13 +96,14 @@ export class ActorAgent extends BaseAgent {
       goal: goal as BaseAgent.Goal,
       step: step as BaseAgent.Step,
       treeXml,
+      ...(paramValues ? { params: paramValues } : {}),
     };
 
     const response = await this.invokeChain(
       this.chain,
       {
-        goal,
-        step,
+        goal: substitutedGoal,
+        step: substitutedStep,
         accessibility_tree: treeXml,
       },
       meta,
