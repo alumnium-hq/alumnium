@@ -16,8 +16,14 @@ const TODO_TOOL_NAME = "TodoWrite";
 // NOTE: The agent calls `ToolSearch` to load the Alumnium MCP tool schemas,
 // which is its own plumbing rather than a step of the scenario. `TodoWrite` is
 // unreported as a call too, but its input is turned into the group headers the
-// steps are printed under. Both stay in the recording, and in the log.
-const UNREPORTED_TOOL_NAMES = new Set(["ToolSearch", TODO_TOOL_NAME]);
+// steps are printed under. `StructuredOutput` is how the agent hands over the
+// pass/fail verdict (see `ScenarioVerdict`), which is reported as the run's
+// outcome instead. All three stay in the recording, and in the log.
+const UNREPORTED_TOOL_NAMES = new Set([
+  "ToolSearch",
+  TODO_TOOL_NAME,
+  "StructuredOutput",
+]);
 
 // NOTE: The statuses come from the SDK type, so that a renamed one is a compile
 // error rather than grouping that silently stops working. The schema itself
@@ -81,12 +87,27 @@ export abstract class ScenarioReporter {
     );
   }
 
-  static passed(stepsCount: number) {
-    this.#print(ansi.green(`● passed ${stepsCount} steps`));
+  /**
+   * Prints how a passing run went, as the last word on it - the counterpart of
+   * `failed`.
+   *
+   * @param stepsCount - Steps the scenario is made of.
+   * @param details - What the recording agent reported about the run. Playback
+   *   has no agent to report it, and falls back to the step count.
+   */
+  static passed(stepsCount: number, details?: string) {
+    const summary = details?.trim()
+      ? this.#collapse(details)
+      : `${stepsCount} steps`;
+
+    this.#print(`${ansi.green("● passed")} ${summary}`);
   }
 
-  static failed(error: string) {
-    this.#print(`${ansi.red("● failed")} ${error}`);
+  /**
+   * @param details - Why the run failed.
+   */
+  static failed(details: string) {
+    this.#print(`${ansi.red("● failed")} ${this.#collapse(details)}`);
   }
 
   /**

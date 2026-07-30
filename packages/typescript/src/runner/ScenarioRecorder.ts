@@ -22,6 +22,7 @@ import { ScenarioExternalMcp } from "./ScenarioExternalMcp.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
 import type { ScenarioPlayer } from "./ScenarioPlayer.ts";
 import { ScenarioReporter } from "./ScenarioReporter.ts";
+import { ScenarioVerdict } from "./ScenarioVerdict.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -45,14 +46,13 @@ export namespace ScenarioRecorder {
 
   export type StepBuffer = StepBufferClaudeCodeToolUse;
 
-  export interface ResultSuccess {
+  export interface ResultSuccess extends ScenarioVerdict.Type {
     status: "success";
     session: ScenarioClaudeCodeSessionStore.Snapshot;
   }
 
-  export interface ResultFailure {
+  export interface ResultFailure extends ScenarioVerdict.Type {
     status: "failure";
-    error: string;
   }
 
   export type Result = ResultSuccess | ResultFailure;
@@ -67,6 +67,7 @@ export class ScenarioRecorder {
   #recovery: ScenarioRecorder.Recovery | undefined;
   #sessionStore: ScenarioClaudeCodeSessionStore;
   #sessionId: string | undefined;
+  #resultMessage: SDKResultMessage | undefined;
   #lookups = createCacheLookups();
 
   constructor(props: ScenarioRecorder.Props) {
@@ -114,6 +115,12 @@ You will report any errors that occur during the scenario.
 
 After reading the scenario, create an internal todo list to track execution and ensure you're on track. Complete each step before moving on to the next.
 
+The last task in the todo list is to report the scenario result.
+You MUST report that result by calling the StructuredOutput tool, and not as prose:
+- result "success" when every step was performed and every check and assertion in the scenario held.
+- result "failure" when a step could not be performed, a check returned a consistent failure, or the scenario could not be completed for any other reason.
+- details always, either way: what the scenario did and verified when it passed, what failed and how when it did not. This is what the person running the test reads at the end, so write it for them rather than restating the scenario.
+
 When using a do tool, use placeholders for any values that look like parameters.
 Consider the following two steps:
 1. do(goal: 'type test1@email.com to the email field')
@@ -146,16 +153,30 @@ ${this.#scenario.text}
       this.#closeClaudeCode(claude);
     }
 
+    if (!this.#resultMessage)
+      return {
+        status: "failure",
+        details: "No result received from Claude Code",
+      };
+
+    const verdict = ScenarioVerdict.read(this.#resultMessage);
+    const { details } = verdict;
+
+    if (verdict.status === "failure") return { status: "failure", details };
+
+    // NOTE: Checked after the verdict, since the session is only needed to save
+    // the recording, and a failed run is never saved.
     if (!this.#sessionId)
       return {
         status: "failure",
-        error: "No Claude Code SDK session ID received from Claude Code",
+        details: "No Claude Code SDK session ID received from Claude Code",
       };
 
     const session = this.#sessionStore.snapshot(this.#sessionId);
 
     return {
       status: "success",
+      details,
       session,
     };
   }
@@ -180,6 +201,16 @@ ${this.#scenario.text}
           return ScenarioReporter.thinking(block.thinking);
 
         case "text":
+          // NOTE: Under `outputFormat` the agent's final message is the verdict
+          // itself, which the runner reports on its own - printing the raw JSON
+          // on top of the `● failed` line is noise.
+          if (ScenarioVerdict.Text.safeParse(block.text).success) {
+            logger.debug(`Not reporting the verdict message: {text}`, {
+              text: block.text,
+            });
+            return;
+          }
+
           return ScenarioReporter.assistant(block.text);
 
         case "tool_use":
@@ -197,8 +228,14 @@ ${this.#scenario.text}
     });
   }
 
+  /**
+   * NOTE: Kept rather than resolved here, so that the verdict is read once the
+   * query is over. A later result message wins, which is what a recording that
+   * takes more than one turn would need.
+   */
   #processResultMessage(message: SDKResultMessage) {
     this.#sessionId = message.session_id;
+    this.#resultMessage = message;
   }
 
   //#endregion
@@ -224,13 +261,18 @@ ${this.#scenario.text}
         },
         allowedTools: [
           "Read",
-          // "Write",
-          // "Edit",
           "Bash",
           "mcp__alumnium__*",
           ...ScenarioExternalMcp.allowedTools(),
         ],
         thinking: { type: "adaptive", display: "summarized" },
+        // NOTE: What makes the pass/fail verdict a contract of the run rather
+        // than something to be read out of the agent's prose: the SDK holds the
+        // agent to this schema, and reports the answer on the result message.
+        outputFormat: {
+          type: "json_schema",
+          schema: ScenarioVerdict.jsonSchema(),
+        },
         settingSources: [],
         sessionStore: this.#sessionStore,
         sessionStoreFlush: "eager",
@@ -256,10 +298,17 @@ ${this.#scenario.text}
 
               ${JSON.stringify(this.#recovery.logs, null, 2)}
             `,
+            // NOTE: Advisory, and it cannot be enforced from here: `stop` runs
+            // while the turn is still going, and tears the driver down with it,
+            // so by the time the verdict exists there is nothing left to gate.
+            // Gating it for real means staging the cache write and committing it
+            // once the verdict is in - see `stopMcpTool`.
             `
-              If the test is successful, make sure to pass \`"save_cache": true\`
-              to the \`mcp__alumnium__stop\` tool to save the cache for future
-              test runs.
+              Call the \`mcp__alumnium__stop\` tool only once you know the
+              scenario result. If the test is successful, make sure to pass
+              \`"save_cache": true\` to it to save the cache for future test
+              runs. If the test failed, pass \`"save_cache": false\`, so that a
+              failed run does not persist its decisions for later runs.
             `,
           ),
         },

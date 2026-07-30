@@ -118,8 +118,8 @@ export class Runner {
     ScenarioReporter.cacheTotal(recorder.lookups);
 
     if (result.status === "failure") {
-      logger.error(`Scenario recording failed: ${result.error}`);
-      ScenarioReporter.failed(result.error);
+      logger.error(`Scenario failed: ${result.details}`);
+      ScenarioReporter.failed(result.details);
       this.#reportFinished();
       return SystemProcess.exit(1);
     }
@@ -131,6 +131,11 @@ export class Runner {
 
     logger.info(`Saved scenario recording to ${path}`);
     ScenarioReporter.saved(path, recorder.scenario.steps.length);
+
+    // NOTE: Printed after the save, so that the run ends on what the agent had
+    // to say about it, the way a failed one ends on why it failed.
+    logger.info(`Scenario passed: ${result.details}`);
+    ScenarioReporter.passed(recorder.scenario.steps.length, result.details);
   }
 
   async #readScenarioText(): Promise<string> {

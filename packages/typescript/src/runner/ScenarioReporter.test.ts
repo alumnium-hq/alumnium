@@ -12,6 +12,59 @@ describe(ScenarioReporter, () => {
     print.mockClear();
   });
 
+  describe("passed", () => {
+    it("reports what the agent said about the run", () => {
+      ScenarioReporter.passed(9, "Performed 2+2= and the display showed 4.");
+
+      expect(printedLine()).toContain(
+        "● passed Performed 2+2= and the display showed 4.",
+      );
+    });
+
+    // NOTE: Playback has no agent to account for the run, so the step count is
+    // all there is to say about it.
+    it("falls back to the step count without details", () => {
+      ScenarioReporter.passed(9);
+
+      expect(printedLine()).toContain("● passed 9 steps");
+    });
+
+    it("falls back to the step count on blank details", () => {
+      ScenarioReporter.passed(9, "  ");
+
+      expect(printedLine()).toContain("● passed 9 steps");
+    });
+
+    it("puts multi-line details on a single line", () => {
+      ScenarioReporter.passed(
+        9,
+        "Pressed 2, + and 2.\n\nThe display showed 4.",
+      );
+
+      expect(printedLine()).toContain(
+        "● passed Pressed 2, + and 2. The display showed 4.",
+      );
+    });
+  });
+
+  describe("failed", () => {
+    it("reports the reason the run failed", () => {
+      ScenarioReporter.failed("The display shows 4, expected 5.");
+
+      expect(printedLine()).toContain(
+        "● failed The display shows 4, expected 5.",
+      );
+    });
+
+    it("puts a multi-line reason on a single line", () => {
+      ScenarioReporter.failed("The check failed.\nThe display shows 4.");
+
+      expect(printedLine()).toContain(
+        "● failed The check failed. The display shows 4.",
+      );
+    });
+  });
+
   describe("stepCache", () => {
     it("reports a full hit", () => {
       ScenarioReporter.stepCache({ hits: 2, misses: 0 });
