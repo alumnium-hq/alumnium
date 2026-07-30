@@ -165,6 +165,316 @@ describe("ScenarioMasker", () => {
     });
   });
 
+  describe("external tool inputs", () => {
+    const SESSION_ID = "854ea339-1941-4b1a-bdef-c48ea8da41ac";
+
+    it("masks a value quoted inside a shell command", () => {
+      const masker = recordingMasker(`{"session_id": "${SESSION_ID}"}`);
+
+      expect(
+        masker.maskExternalToolInput({
+          command: `foo --session_id "${SESSION_ID}"`,
+        }),
+      ).toEqual({ command: 'foo --session_id "<EXTERNAL_0_session_id>"' });
+    });
+
+    it("masks a value in single quotes", () => {
+      const masker = recordingMasker('{"email": "foo@bar.com"}');
+
+      expect(
+        masker.maskExternalToolInput({ command: "foo --to 'foo@bar.com'" }),
+      ).toEqual({ command: "foo --to '<EXTERNAL_0_email>'" });
+    });
+
+    it("masks a value quoted inside a JSON string in single quotes", () => {
+      const masker = recordingMasker('{"id": "a1"}');
+
+      expect(
+        masker.maskExternalToolInput({ command: `curl -d '{"id": "a1"}'` }),
+      ).toEqual({ command: `curl -d '{"id": "<EXTERNAL_0_id>"}'` });
+    });
+
+    it("masks every occurrence of the same value", () => {
+      const masker = recordingMasker('{"id": "a1"}');
+
+      expect(
+        masker.maskExternalToolInput({ command: 'foo "a1" && bar "a1"' }),
+      ).toEqual({
+        command: 'foo "<EXTERNAL_0_id>" && bar "<EXTERNAL_0_id>"',
+      });
+    });
+
+    it("masks a whole input value", () => {
+      const masker = recordingMasker('{"path": "/tmp/report.txt"}');
+
+      expect(
+        masker.maskExternalToolInput({ file_path: "/tmp/report.txt" }),
+      ).toEqual({ file_path: "<EXTERNAL_0_path>" });
+    });
+
+    it("masks a value that is both a whole value and quoted", () => {
+      const masker = recordingMasker(`{"session_id": "${SESSION_ID}"}`);
+
+      expect(
+        masker.maskExternalToolInput({
+          session_id: SESSION_ID,
+          command: `foo "${SESSION_ID}"`,
+        }),
+      ).toEqual({
+        session_id: "<EXTERNAL_0_session_id>",
+        command: 'foo "<EXTERNAL_0_session_id>"',
+      });
+    });
+
+    it("masks a value between escaped double quotes", () => {
+      const masker = recordingMasker(`{"session_id": "${SESSION_ID}"}`);
+
+      expect(
+        masker.maskExternalToolInput({
+          command: `curl -d "{\\"session_id\\": \\"${SESSION_ID}\\"}"`,
+        }),
+      ).toEqual({
+        command: `curl -d "{\\"session_id\\": \\"<EXTERNAL_0_session_id>\\"}"`,
+      });
+    });
+
+    it("masks a value between doubly escaped quotes", () => {
+      const masker = recordingMasker('{"id": "a1"}');
+
+      expect(
+        masker.maskExternalToolInput({ command: `foo \\\\"a1\\\\"` }),
+      ).toEqual({ command: `foo \\\\"<EXTERNAL_0_id>\\\\"` });
+    });
+
+    it("leaves a value whose delimiters escape differently alone", () => {
+      // NOTE: `"a1\"` is not a quoted token - the opening quote is bare and the
+      // closing one is escaped, so they belong to two different runs.
+      const masker = recordingMasker('{"id": "a1"}');
+
+      expect(masker.maskExternalToolInput({ command: `foo "a1\\"` })).toEqual({
+        command: `foo "a1\\"`,
+      });
+    });
+
+    it("leaves an unquoted value alone", () => {
+      const masker = recordingMasker(`{"session_id": "${SESSION_ID}"}`);
+
+      expect(
+        masker.maskExternalToolInput({
+          command: `foo --session_id ${SESSION_ID}`,
+        }),
+      ).toEqual({ command: `foo --session_id ${SESSION_ID}` });
+    });
+
+    it("leaves a longer token containing the value alone", () => {
+      const masker = recordingMasker('{"num": 9}');
+
+      expect(
+        masker.maskExternalToolInput({ command: 'foo --retries "19"' }),
+      ).toEqual({ command: 'foo --retries "19"' });
+    });
+
+    it("leaves a value quoted in a description alone", () => {
+      const masker = recordingMasker('{"id": "a1"}');
+
+      expect(
+        masker.maskExternalToolInput({
+          command: 'foo "a1"',
+          description: 'Run foo with "a1"',
+        }),
+      ).toEqual({
+        command: 'foo "<EXTERNAL_0_id>"',
+        description: 'Run foo with "a1"',
+      });
+    });
+
+    it("masks values in a Write content nesting escaped JSON", () => {
+      // The shape a hook payload takes: a JSON document whose `text` field is
+      // itself a JSON string, so its quotes reach `content` escaped.
+      const masker = recordingMasker(
+        '{"guest": {"aaj": "37|2|DEF", "aat": "0|+fF2"}}',
+      );
+      const inner = String.raw`{\"guest\":{\"aaj\":\"37|2|DEF\",\"aat\":\"0|+fF2\"}}`;
+
+      expect(
+        masker.maskExternalToolInput({
+          file_path: "/tmp/login-input.json",
+          content: `{"tool_response":{"text":"${inner}"}}`,
+        }),
+      ).toEqual({
+        file_path: "/tmp/login-input.json",
+        content: `{"tool_response":{"text":"${String.raw`{\"guest\":{\"aaj\":\"<EXTERNAL_0_guest_aaj>\",\"aat\":\"<EXTERNAL_0_guest_aat>\"}}`}"}}`,
+      });
+    });
+
+    it("does not mask a quoted value in an MCP tool input", () => {
+      const masker = recordingMasker('{"email": "foo@bar.com"}');
+
+      expect(
+        masker.maskInput({ goal: "type 'foo@bar.com' to username" }),
+      ).toEqual({ goal: "type 'foo@bar.com' to username" });
+    });
+  });
+
+  describe("masksToolInput", () => {
+    it("masks tools playback executes", () => {
+      expect(ScenarioMasker.masksToolInput("Bash")).toBe(true);
+      expect(ScenarioMasker.masksToolInput("Read")).toBe(true);
+      expect(ScenarioMasker.masksToolInput("mcp__server__create_guest")).toBe(
+        true,
+      );
+    });
+
+    it("masks tools playback cannot execute, to keep values out of the scenario", () => {
+      expect(ScenarioMasker.masksToolInput("Write")).toBe(true);
+      expect(ScenarioMasker.masksToolInput("Edit")).toBe(true);
+    });
+
+    it("leaves a prose-only tool input verbatim", () => {
+      expect(ScenarioMasker.masksToolInput("TodoWrite")).toBe(false);
+    });
+  });
+
+  describe("unmasking external tool inputs", () => {
+    it("substitutes a freshly produced value inside a command", () => {
+      const recorded = recordingMasker(
+        '{"session_id": "854e"}',
+      ).maskExternalToolInput({ command: 'foo --session_id "854e"' });
+
+      const replayMasker = recordingMasker('{"session_id": "0f1e"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: 'foo --session_id "0f1e"',
+      });
+    });
+
+    it("keeps the quote the command used", () => {
+      const recorded = recordingMasker(
+        '{"email": "a@b.com"}',
+      ).maskExternalToolInput({ command: "foo --to 'a@b.com'" });
+
+      const replayMasker = recordingMasker('{"email": "c@d.com"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: "foo --to 'c@d.com'",
+      });
+    });
+
+    it("substitutes every occurrence", () => {
+      const recorded = recordingMasker('{"id": "a1"}').maskExternalToolInput({
+        command: 'foo "a1" && bar "a1"',
+      });
+
+      const replayMasker = recordingMasker('{"id": "b2"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: 'foo "b2" && bar "b2"',
+      });
+    });
+
+    it("leaves a quoted mask in place when the fresh output lacks its path", () => {
+      const recorded = recordingMasker('{"id": "a1"}').maskExternalToolInput({
+        command: 'foo "a1"',
+      });
+
+      const replayMasker = recordingMasker('{"other": "b2"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: 'foo "<EXTERNAL_0_id>"',
+      });
+    });
+
+    it("leaves a quoted mask in place when the fresh value contains the quote", () => {
+      const recorded = recordingMasker(
+        '{"name": "alex"}',
+      ).maskExternalToolInput({ command: 'foo --name "alex"' });
+
+      const replayMasker = recordingMasker('{"name": "al\\"ex"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: 'foo --name "<EXTERNAL_0_name>"',
+      });
+    });
+
+    it("leaves a double-quoted mask in place when the fresh value has a backslash", () => {
+      const recorded = recordingMasker('{"path": "a/b"}').maskExternalToolInput(
+        {
+          command: 'foo --path "a/b"',
+        },
+      );
+
+      const replayMasker = recordingMasker('{"path": "a\\\\b"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: 'foo --path "<EXTERNAL_0_path>"',
+      });
+    });
+
+    it("substitutes a single-quoted value containing a double quote", () => {
+      const recorded = recordingMasker(
+        '{"name": "alex"}',
+      ).maskExternalToolInput({ command: "foo --name 'alex'" });
+
+      const replayMasker = recordingMasker('{"name": "al\\"ex"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: `foo --name 'al"ex'`,
+      });
+    });
+
+    it("substitutes a value between escaped double quotes", () => {
+      const recorded = recordingMasker(
+        '{"session_id": "854e"}',
+      ).maskExternalToolInput({
+        command: `curl -d "{\\"session_id\\": \\"854e\\"}"`,
+      });
+
+      const replayMasker = recordingMasker('{"session_id": "0f1e"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: `curl -d "{\\"session_id\\": \\"0f1e\\"}"`,
+      });
+    });
+
+    it("leaves an escaped-quote mask in place when the fresh value has a quote", () => {
+      const recorded = recordingMasker(
+        '{"name": "alex"}',
+      ).maskExternalToolInput({ command: `foo "{\\"name\\": \\"alex\\"}"` });
+
+      const replayMasker = recordingMasker('{"name": "al\\"ex"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: `foo "{\\"name\\": \\"<EXTERNAL_0_name>\\"}"`,
+      });
+    });
+
+    it("leaves an escaped single-quote mask in place when the value has a backslash", () => {
+      // NOTE: Unlike a bare `'`, an escaped one implies a layer that still
+      // gives a backslash meaning.
+      const recorded = recordingMasker('{"path": "a/b"}').maskExternalToolInput(
+        {
+          command: `foo \\'a/b\\'`,
+        },
+      );
+
+      const replayMasker = recordingMasker('{"path": "a\\\\b"}');
+
+      expect(replayMasker.unmaskExternalToolInput(recorded)).toEqual({
+        command: `foo \\'<EXTERNAL_0_path>\\'`,
+      });
+    });
+
+    it("does not substitute a quoted mask in an MCP tool input", () => {
+      const replayMasker = recordingMasker('{"num1": 7}');
+
+      expect(
+        replayMasker.unmaskInput({
+          goal: "press the '<EXTERNAL_0_num1>' button",
+        }),
+      ).toEqual({ goal: "press the '<EXTERNAL_0_num1>' button" });
+    });
+  });
+
   describe("unmasking external values", () => {
     it("substitutes freshly produced values on playback", () => {
       const recorded = recordingMasker('{"num1": 4}').maskInput({
@@ -260,8 +570,6 @@ describe("ScenarioMasker", () => {
     });
 
     it("ignores a mask that does not take up a whole value", () => {
-      // NOTE: Masking only ever replaces a whole value, so this is prose that
-      // happens to look like a mask rather than one left unresolved.
       expect(
         ScenarioMasker.findUnresolvedExternalMasks({
           goal: "press the <EXTERNAL_0_num1> button",

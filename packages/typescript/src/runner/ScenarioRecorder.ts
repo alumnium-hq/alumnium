@@ -306,18 +306,44 @@ ${this.#scenario.text}
     this.#pendingUses.set(toolUse.id, {
       kind: isOwn ? "tool-use" : "external-tool-use",
       agent: "claude-code",
-      // NOTE: Only MCP tool inputs are masked. External tool inputs are
-      // replayed verbatim, since masking them risks corrupting e.g. a shell
-      // command that happens to contain a value an earlier tool produced.
-      use: isOwn ? this.#maskToolUse(toolUse) : toolUse,
+      use: this.#maskToolUse(toolUse, isOwn),
     });
   }
 
+  /**
+   * Masks the values earlier external calls produced in a tool input.
+   *
+   * An MCP tool input is masked where a value is a whole input value, an
+   * external tool input also where a quote pair delimits one - which is what
+   * keeps e.g. a shell command intact while still refreshing the value in it.
+   *
+   * NOTE: Masking belongs here, on the tool use, and not where the step is
+   * pushed in `#recordToolResult`. An external call's output is only registered
+   * once its result arrives, so a call can neither mask its own input, nor -
+   * when the agent runs tools in parallel - be masked with a value that did not
+   * exist yet when it was issued.
+   *
+   * NOTE: An external tool playback cannot execute (`Write`, `Edit`) is masked
+   * too. Its input is never re-run, so nothing gets substituted back into it,
+   * but masking still keeps the value a recording happened to produce - often a
+   * credential - out of the stored scenario. Only a tool whose input is prose is
+   * left verbatim, see `ScenarioMasker.masksToolInput`.
+   *
+   * @param toolUse - Tool use to mask, left untouched.
+   * @param isOwn - Whether the tool is one of Alumnium's own MCP tools.
+   * @returns Masked copy of the tool use.
+   */
   #maskToolUse(
     toolUse: Scenario.ClaudeCodeStepToolUse,
+    isOwn: boolean,
   ): Scenario.ClaudeCodeStepToolUse {
+    if (!isOwn && !ScenarioMasker.masksToolInput(toolUse.name)) return toolUse;
+
     const maskedToolUse = structuredClone(toolUse);
-    maskedToolUse.input = this.#masker.maskInput(maskedToolUse.input);
+    maskedToolUse.input = isOwn
+      ? this.#masker.maskInput(maskedToolUse.input)
+      : this.#masker.maskExternalToolInput(maskedToolUse.input);
+
     return maskedToolUse;
   }
 

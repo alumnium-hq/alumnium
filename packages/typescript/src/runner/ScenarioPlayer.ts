@@ -196,9 +196,16 @@ export class ScenarioPlayer {
     const { use } = step;
     const callIndex = this.#externalCallsCount++;
 
-    ScenarioReporter.externalStep(use.name, use.input);
+    // NOTE: The same gate the recorder masks behind, so that a prose-only tool
+    // input is left exactly as recorded in both phases.
+    const input = ScenarioMasker.masksToolInput(use.name)
+      ? this.#masker.unmaskExternalToolInput(use.input)
+      : ScenarioAlumniumMcp.parseInput(use.input);
 
-    const input = ScenarioAlumniumMcp.parseInput(use.input);
+    // NOTE: Reported unmasked, like the MCP steps above, so that the console
+    // shows the call that actually runs.
+    ScenarioReporter.externalStep(use.name, input);
+
     const result = await ScenarioExternalTool.execute(use.name, input, mcp);
 
     if (result.status === "failure") {
