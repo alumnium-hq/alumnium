@@ -26,7 +26,6 @@ const UNREPORTED_TOOL_NAMES = new Set(["ToolSearch", TODO_TOOL_NAME]);
 type TodoStatus = TodoWriteInput["todos"][number]["status"];
 
 const TODO_IN_PROGRESS: TodoStatus = "in_progress";
-const TODO_COMPLETED: TodoStatus = "completed";
 
 const TodoWriteToolInput = z.object({
   todos: z.array(z.object({ content: z.string(), status: z.string() })),
@@ -147,8 +146,9 @@ export abstract class ScenarioReporter {
   }
 
   /**
-   * Prints the agent's todo list as a header per task, so that the steps that
-   * follow read as a group: `☐` when a task is started, `☑` when it is done.
+   * Prints a header for each task the agent starts, so that the steps that
+   * follow read as a group. A group stays open until the next task starts, so
+   * finishing one prints nothing.
    *
    * NOTE: The agent resends the whole list on every update, so only the tasks
    * whose status changed are printed. Tasks are tracked by their text, which is
@@ -169,20 +169,10 @@ export abstract class ScenarioReporter {
 
       this.#todoStatuses.set(content, status);
 
-      if (status === TODO_IN_PROGRESS) {
-        this.#print("");
-        this.#print(`${ansi.dim("☐")} ${ansi.bold(content)}`);
-        return;
-      }
+      if (status !== TODO_IN_PROGRESS) return;
 
-      if (status !== TODO_COMPLETED) return;
-
-      // NOTE: A task can go straight from pending to done, without ever being
-      // reported as started. It still oansi.strikethrough(pens its own group).
-      if (reportedStatus !== TODO_IN_PROGRESS) this.#print("");
-      this.#print(
-        `${ansi.green("☑")} ${ansi.strikethrough(ansi.bold(content))}`,
-      );
+      this.#print("");
+      this.#print(ansi.bold(content));
     });
   }
 

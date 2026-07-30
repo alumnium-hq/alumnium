@@ -170,7 +170,7 @@ describe(ScenarioReporter, () => {
       return { content, status, activeForm: `${content}ing` };
     }
 
-    it("opens a group when a task is started and closes it when done", () => {
+    it("opens a group when a task is started", () => {
       ScenarioReporter.todos({
         todos: [
           todo("Perform 2+2=", "in_progress"),
@@ -181,7 +181,9 @@ describe(ScenarioReporter, () => {
         todos: [todo("Perform 2+2=", "completed"), todo("Check 4", "pending")],
       });
 
-      expect(printedLines()).toEqual(["", "☐ Perform 2+2=", "☑ Perform 2+2="]);
+      // The group stays open until the next one starts, so finishing the task
+      // prints nothing.
+      expect(printedLines()).toEqual(["", "Perform 2+2="]);
     });
 
     it("prints nothing for a resent list that did not change", () => {
@@ -194,14 +196,9 @@ describe(ScenarioReporter, () => {
       expect(print).not.toBeCalled();
     });
 
-    it("opens a group for a task that skipped being started", () => {
-      ScenarioReporter.todos({ todos: [todo("Stop browser", "completed")] });
-
-      expect(printedLines()).toEqual(["", "☑ Stop browser"]);
-    });
-
-    it("prints nothing for a pending task", () => {
+    it("prints nothing for a task that is not started", () => {
       ScenarioReporter.todos({ todos: [todo("Check 4", "pending")] });
+      ScenarioReporter.todos({ todos: [todo("Stop browser", "completed")] });
 
       expect(print).not.toBeCalled();
     });
@@ -220,7 +217,7 @@ describe(ScenarioReporter, () => {
       print.mockClear();
       ScenarioReporter.todos(todos);
 
-      expect(printedLines()).toEqual(["", "☐ Perform 2+2="]);
+      expect(printedLines()).toEqual(["", "Perform 2+2="]);
     });
   });
 
@@ -238,7 +235,7 @@ describe(ScenarioReporter, () => {
         ],
       });
 
-      expect(printedLines()).toEqual(["", "☐ Perform 2+2="]);
+      expect(printedLines()).toEqual(["", "Perform 2+2="]);
     });
 
     it("prints other external tool calls", () => {

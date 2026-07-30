@@ -43,6 +43,14 @@ describe("McpArtifactsStore", () => {
           .spyOn(Env, "ALUMNIUM_MCP_ARTIFACTS_DIR", "get")
           .mockReturnValue(mockDir.path),
       );
+      // NOTE: Pinned rather than left to the default, so that a shell that
+      // exports ALUMNIUM_MCP_TAKE_SCREENSHOTS=false doesn't turn the tests below
+      // into ones that assert nothing.
+      pushMock(
+        vi
+          .spyOn(Env, "ALUMNIUM_MCP_TAKE_SCREENSHOTS", "get")
+          .mockReturnValue(true),
+      );
       const id = "test-driver";
       const artifactsStore = new McpArtifactsStore(id);
       const pixelB64 =
