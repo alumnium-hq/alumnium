@@ -76,7 +76,15 @@ export class Runner {
     ScenarioReporter.cacheTotal(player.lookups);
 
     if (result.status === "success") {
-      ScenarioReporter.passed(file.scenario.steps.length);
+      // NOTE: The details are the account the recording agent gave of the run.
+      // A playback re-performs those very steps and agrees with every check it
+      // recorded, so what was verified then is what was verified now.
+      const { details } = file.scenario.verdict ?? {};
+      logger.info(`Scenario passed: ${details ?? "no recorded details"}`);
+      ScenarioReporter.passed(
+        Scenario.executableStepsCount(file.scenario),
+        details,
+      );
       return;
     }
 
@@ -129,13 +137,15 @@ export class Runner {
       session: result.session,
     });
 
+    const stepsCount = Scenario.executableStepsCount(recorder.scenario);
+
     logger.info(`Saved scenario recording to ${path}`);
-    ScenarioReporter.saved(path, recorder.scenario.steps.length);
+    ScenarioReporter.saved(path, stepsCount);
 
     // NOTE: Printed after the save, so that the run ends on what the agent had
     // to say about it, the way a failed one ends on why it failed.
     logger.info(`Scenario passed: ${result.details}`);
-    ScenarioReporter.passed(recorder.scenario.steps.length, result.details);
+    ScenarioReporter.passed(stepsCount, result.details);
   }
 
   async #readScenarioText(): Promise<string> {

@@ -1,4 +1,3 @@
-import { always } from "alwaysly";
 import { canonize } from "smolcanon";
 import { type CacheLookups, createCacheLookups } from "../llm/llmSchema.ts";
 import {
@@ -70,15 +69,20 @@ export class ScenarioPlayer {
     // their tools, so a scenario that uses none never spawns them.
     const externalMcp = new ScenarioExternalMcp();
 
-    const stepsCount = this.#scenario.steps.length;
+    const stepsCount = Scenario.executableStepsCount(this.#scenario);
     const logs: ScenarioPlayer.Log[] = [];
+    let stepNumber = 0;
 
     try {
-      for (const stepIdxStr in this.#scenario.steps) {
-        const step = this.#scenario.steps[stepIdxStr];
-        always(step);
+      for (const step of this.#scenario.steps) {
+        // NOTE: Printed rather than played, and left out of the step counting -
+        // it is what the agent said while recording, not something to redo.
+        if (step.kind === "narration") {
+          this.#reportNarration(step);
+          continue;
+        }
 
-        const stepCounterStr = `${Number(stepIdxStr) + 1}/${stepsCount}`;
+        const stepCounterStr = `${++stepNumber}/${stepsCount}`;
         logger.info(`Playing step ${stepCounterStr}`);
 
         if (step.kind === "external-tool-use") {
@@ -173,6 +177,19 @@ export class ScenarioPlayer {
       await externalMcp.close();
       await mcp.close();
     }
+  }
+
+  /**
+   * Prints a recorded piece of the agent's prose the way the recording printed
+   * it.
+   *
+   * @param step - Narration step to report.
+   */
+  #reportNarration(step: Scenario.ClaudeCodeNarrationStep) {
+    if (step.narration === "thinking")
+      return ScenarioReporter.thinking(step.text);
+
+    return ScenarioReporter.assistant(step.text);
   }
 
   /**

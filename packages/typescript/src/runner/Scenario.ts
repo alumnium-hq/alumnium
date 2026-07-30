@@ -5,6 +5,7 @@ import type {
 import { xxh64Str } from "smolxxh/str";
 import z from "zod";
 import { pathString } from "../utils/schema.ts";
+import type { ScenarioVerdict } from "./ScenarioVerdict.ts";
 
 export namespace Scenario {
   export type Id = z.infer<typeof Scenario.Id>;
@@ -23,6 +24,10 @@ export namespace Scenario {
 
   export type ClaudeCodeExternalStep = z.infer<
     typeof Scenario.ClaudeCodeStepExternalToolUse
+  >;
+
+  export type ClaudeCodeNarrationStep = z.infer<
+    typeof Scenario.ClaudeCodeStepNarration
   >;
 
   export type ClaudeCodeStep = z.infer<typeof Scenario.ClaudeCodeStep>;
@@ -60,17 +65,50 @@ export abstract class Scenario {
     result: z.custom<Scenario.ClaudeCodeStepToolResult>((value) => value),
   });
 
+  /**
+   * Something the agent said rather than did: a piece of its thinking, or a
+   * message meant for the person running the test. Recorded so that a playback
+   * reads like the recording it came from, and never executed.
+   *
+   * NOTE: This is the agent's own prose, and it is stored as it was written.
+   * Unlike a tool input, it does not go through `ScenarioMasker` - masking
+   * matches whole values and quoted tokens, neither of which is how prose
+   * mentions a value - so a recording can carry a value the agent happened to
+   * write out.
+   */
+  static ClaudeCodeStepNarration = z.object({
+    kind: z.literal("narration"),
+    narration: z.enum(["thinking", "assistant"]),
+    text: z.string(),
+  });
+
   static ClaudeCodeStep = z.union([
     this.ClaudeCodeStepToolUse,
     this.ClaudeCodeStepExternalToolUse,
+    this.ClaudeCodeStepNarration,
   ]);
 
   static ClaudeCode = this.Base.extend({
     agent: z.literal("claude-code"),
     steps: z.array(this.ClaudeCodeStep),
+    // NOTE: Optional, so that a recording made before the verdict was stored
+    // still loads. Playback then has nothing to report but the step count.
+    verdict: z.custom<ScenarioVerdict.Type>((value) => value).optional(),
   });
 
   static Schema = z.union([this.ClaudeCode]);
+
+  /**
+   * Number of steps a playback executes, which is everything the agent did as
+   * opposed to said. This is the count a run is reported with, so that adding
+   * narration to a recording doesn't inflate it.
+   *
+   * @param scenario - Scenario to count the steps of.
+   * @returns Number of executable steps.
+   */
+  static executableStepsCount(scenario: Scenario.Type): number {
+    return scenario.steps.filter((step) => step.kind !== "narration").length;
+  }
 
   /**
    * Converts scenario text to a scenario ID using a hash function.

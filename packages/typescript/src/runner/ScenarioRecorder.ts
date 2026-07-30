@@ -174,6 +174,11 @@ ${this.#scenario.text}
 
     const session = this.#sessionStore.snapshot(this.#sessionId);
 
+    // NOTE: Kept on the scenario, so that a playback can close with the same
+    // account of the run the recording closed with - it has no agent to write a
+    // fresh one.
+    this.#scenario.verdict = { status: "success", details };
+
     return {
       status: "success",
       details,
@@ -198,7 +203,8 @@ ${this.#scenario.text}
     message.message.content.forEach((block) => {
       switch (block.type) {
         case "thinking":
-          return ScenarioReporter.thinking(block.thinking);
+          ScenarioReporter.thinking(block.thinking);
+          return this.#recordNarration("thinking", block.thinking);
 
         case "text":
           // NOTE: Under `outputFormat` the agent's final message is the verdict
@@ -211,7 +217,8 @@ ${this.#scenario.text}
             return;
           }
 
-          return ScenarioReporter.assistant(block.text);
+          ScenarioReporter.assistant(block.text);
+          return this.#recordNarration("assistant", block.text);
 
         case "tool_use":
           ScenarioReporter.toolUse(block.name, block.input);
@@ -342,6 +349,32 @@ ${this.#scenario.text}
 
       return SystemProcess.exit(1);
     }
+  }
+
+  //#endregion
+
+  //#region Narration
+
+  /**
+   * Records what the agent said, so that a playback of this recording reads the
+   * way the recording did. Nothing is executed from it.
+   *
+   * NOTE: Pushed as the message arrives, while a tool call is pushed once its
+   * result does. Narration therefore lands ahead of the call it introduced,
+   * which is the order it was printed in.
+   *
+   * @param narration - Which kind of prose this is.
+   * @param text - Prose as the agent wrote it.
+   */
+  #recordNarration(
+    narration: Scenario.ClaudeCodeNarrationStep["narration"],
+    text: string,
+  ) {
+    // NOTE: Empty prose is dropped rather than stored, matching the reporter,
+    // which prints nothing for it either.
+    if (!text.trim()) return;
+
+    this.#scenario.steps.push({ kind: "narration", narration, text });
   }
 
   //#endregion
