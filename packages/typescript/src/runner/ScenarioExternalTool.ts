@@ -5,7 +5,8 @@ import type {
 import { spawn } from "node:child_process";
 import fs from "node:fs/promises";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import type { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
+import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
+import { ScenarioExternalMcp } from "./ScenarioExternalMcp.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -34,6 +35,10 @@ export namespace ScenarioExternalTool {
 
 /**
  * Re-executes the non-Alumnium tool calls made by the agent during recording.
+ *
+ * Tools of an external MCP server (`mcp__server__tool`) are called on that
+ * server directly, see `ScenarioExternalMcp`. The rest are Claude Code built-ins
+ * reproduced here.
  *
  * NOTE: The Claude Agent SDK doesn't expose implementations of its built-in
  * tools - they live in the Claude Code binary and are only reachable through an
@@ -79,23 +84,29 @@ export abstract class ScenarioExternalTool {
   };
 
   static isSupported(name: string): boolean {
-    return name in this.#executors;
+    if (name in this.#executors) return true;
+
+    return ScenarioExternalMcp.parseToolUseName(name) !== null;
   }
 
   /**
    * Executes an external tool call.
    *
-   * @param name - Tool name as recorded, e.g. `Bash`.
+   * @param name - Tool name as recorded, e.g. `Bash` or `mcp__server__tool`.
    * @param input - Recorded tool input.
+   * @param mcp - Client to reach external MCP servers through.
    * @returns Execution result, including the tool output when executed.
    */
   static async execute(
     name: string,
     input: ScenarioAlumniumMcp.Input,
+    mcp: ScenarioExternalMcp,
   ): Promise<ScenarioExternalTool.Result> {
-    const executor = this.#executors[name];
+    const executor = this.#executor(name, mcp);
     if (!executor) {
-      const reason = `no executor for '${name}'`;
+      const reason = ScenarioExternalMcp.isToolUseName(name)
+        ? `no MCP server configured for '${name}'`
+        : `no executor for '${name}'`;
       logger.debug(`Skipping external tool: ${reason}`);
       return { status: "unsupported", reason };
     }
@@ -108,6 +119,57 @@ export abstract class ScenarioExternalTool {
       return { status: "failure", error: message };
     }
   }
+
+  /**
+   * Resolves the tool name to the function that reproduces the call.
+   *
+   * @param name - Tool name as recorded.
+   * @param mcp - Client to reach external MCP servers through.
+   * @returns Executor, `undefined` when the tool cannot be reproduced.
+   */
+  static #executor(
+    name: string,
+    mcp: ScenarioExternalMcp,
+  ): ScenarioExternalTool.ExecuteFn | undefined {
+    const builtIn = this.#executors[name];
+    if (builtIn) return builtIn;
+
+    const call = ScenarioExternalMcp.parseToolUseName(name);
+    if (!call) return undefined;
+
+    return (input) => callMcpTool(mcp, call, input);
+  }
+}
+
+/**
+ * Calls a tool on an external MCP server.
+ *
+ * NOTE: Only the text blocks of the output are returned, joined the way the
+ * recording stores them. The same text then reaches the masker in both phases,
+ * so the values it registers line up.
+ *
+ * @param mcp - Client to reach external MCP servers through.
+ * @param call - Server and tool to call.
+ * @param input - Recorded tool input.
+ * @returns Execution result carrying the tool's text output.
+ */
+async function callMcpTool(
+  mcp: ScenarioExternalMcp,
+  call: ScenarioExternalMcp.Call,
+  input: ScenarioAlumniumMcp.Input,
+): Promise<ScenarioExternalTool.Result> {
+  const { server, tool } = call;
+
+  const output = await mcp.call(server, tool, input);
+  const text = ScenarioAlumniumMcp.outputTexts(output.content).join("\n");
+
+  if (output.isError)
+    return {
+      status: "failure",
+      error: `MCP tool '${tool}' of '${server}' returned an error: ${text || "no details"}`,
+    };
+
+  return { status: "executed", output: text };
 }
 
 /**

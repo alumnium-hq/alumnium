@@ -18,6 +18,7 @@ import { TypeUtils } from "../typeUtils.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 import { ScenarioClaudeCodeSessionStore } from "./ScenarioClaudeCodeSessionStore.ts";
+import { ScenarioExternalMcp } from "./ScenarioExternalMcp.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
 import type { ScenarioPlayer } from "./ScenarioPlayer.ts";
 import { ScenarioReporter } from "./ScenarioReporter.ts";
@@ -217,8 +218,18 @@ ${this.#scenario.text}
             type: "stdio",
             ...ScenarioAlumniumMcp.spawnCommand(),
           },
+          // NOTE: The same servers the playback connects to, so that every tool
+          // the agent can call here can be called again without an agent turn.
+          ...ScenarioExternalMcp.mcpServers(),
         },
-        allowedTools: ["Read", "Write", "Edit", "Bash", "mcp__alumnium__*"],
+        allowedTools: [
+          "Read",
+          "Write",
+          "Edit",
+          "Bash",
+          "mcp__alumnium__*",
+          ...ScenarioExternalMcp.allowedTools(),
+        ],
         thinking: { type: "adaptive", display: "summarized" },
         settingSources: [],
         sessionStore: this.#sessionStore,

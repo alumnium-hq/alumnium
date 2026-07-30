@@ -8,6 +8,7 @@ import {
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
+import { ScenarioExternalMcp } from "./ScenarioExternalMcp.ts";
 import { ScenarioExternalTool } from "./ScenarioExternalTool.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
 import { ScenarioReporter } from "./ScenarioReporter.ts";
@@ -65,6 +66,10 @@ export class ScenarioPlayer {
     const mcp = new ScenarioAlumniumMcp();
     await mcp.connect();
 
+    // NOTE: External servers are connected lazily, on the first call to one of
+    // their tools, so a scenario that uses none never spawns them.
+    const externalMcp = new ScenarioExternalMcp();
+
     const stepsCount = this.#scenario.steps.length;
     const logs: ScenarioPlayer.Log[] = [];
 
@@ -77,7 +82,7 @@ export class ScenarioPlayer {
         logger.info(`Playing step ${stepCounterStr}`);
 
         if (step.kind === "external-tool-use") {
-          const externalError = await this.#playExternalStep(step);
+          const externalError = await this.#playExternalStep(step, externalMcp);
           if (!externalError) continue;
 
           return { status: "failure", error: externalError, logs };
@@ -165,6 +170,7 @@ export class ScenarioPlayer {
 
       return { status: "success" };
     } finally {
+      await externalMcp.close();
       await mcp.close();
     }
   }
@@ -180,10 +186,12 @@ export class ScenarioPlayer {
    * unresolved mask.
    *
    * @param step - External tool call step to replay.
+   * @param mcp - Client to reach external MCP servers through.
    * @returns Error message when the call failed, `null` otherwise.
    */
   async #playExternalStep(
     step: Scenario.ClaudeCodeExternalStep,
+    mcp: ScenarioExternalMcp,
   ): Promise<string | null> {
     const { use } = step;
     const callIndex = this.#externalCallsCount++;
@@ -191,7 +199,7 @@ export class ScenarioPlayer {
     ScenarioReporter.externalStep(use.name, use.input);
 
     const input = ScenarioAlumniumMcp.parseInput(use.input);
-    const result = await ScenarioExternalTool.execute(use.name, input);
+    const result = await ScenarioExternalTool.execute(use.name, input, mcp);
 
     if (result.status === "failure") {
       ScenarioReporter.failed(result.error);
