@@ -224,8 +224,8 @@ ${this.#scenario.text}
         },
         allowedTools: [
           "Read",
-          "Write",
-          "Edit",
+          // "Write",
+          // "Edit",
           "Bash",
           "mcp__alumnium__*",
           ...ScenarioExternalMcp.allowedTools(),
@@ -237,6 +237,7 @@ ${this.#scenario.text}
         systemPrompt: {
           type: "preset",
           preset: "claude_code",
+          excludeDynamicSections: true,
           append: txts(
             this.#recovery &&
               `
