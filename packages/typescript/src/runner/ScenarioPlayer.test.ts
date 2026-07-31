@@ -8,10 +8,10 @@ function checkOutput(result: string, explanation: string) {
 }
 
 describe("ScenarioPlayer", () => {
-  describe("matchCheckOutput", () => {
-    it("matches a verdict regardless of its explanation", () => {
+  describe("compareCheckOutput", () => {
+    it("agrees on a verdict regardless of its explanation", () => {
       expect(
-        ScenarioPlayer.matchCheckOutput(
+        ScenarioPlayer.compareCheckOutput(
           checkOutput(
             "success",
             "The accessibility tree includes a heading saying 'Search'.",
@@ -21,40 +21,69 @@ describe("ScenarioPlayer", () => {
             'The accessibility tree contains a heading: "Search".',
           ),
         ),
-      ).toBe(true);
+      ).toBe("agreed");
     });
 
-    it("does not match differing verdicts", () => {
+    it("agrees on a check the recording has failing that fails now too", () => {
       expect(
-        ScenarioPlayer.matchCheckOutput(
+        ScenarioPlayer.compareCheckOutput(
+          checkOutput("failure", "AssertionError: the display shows 74."),
+          checkOutput("failure", "AssertionError: the display shows 12."),
+        ),
+      ).toBe("agreed");
+    });
+
+    it("disagrees when a recorded pass fails now", () => {
+      expect(
+        ScenarioPlayer.compareCheckOutput(
           checkOutput("success", "The display shows 11."),
           checkOutput("failure", "AssertionError: the display shows 74."),
         ),
-      ).toBe(false);
+      ).toBe("disagreed");
+    });
+
+    // NOTE: The one tolerated direction - a recording holds a check that failed
+    // and it passes now, so the playback carries on rather than re-recording.
+    it("reports a recorded failure that passes now as improved", () => {
+      expect(
+        ScenarioPlayer.compareCheckOutput(
+          checkOutput("failure", "AssertionError: the user is not shown."),
+          checkOutput("success", "The user test1@email.com is shown."),
+        ),
+      ).toBe("improved");
+    });
+
+    it("disagrees on a verdict neither side recognizes", () => {
+      expect(
+        ScenarioPlayer.compareCheckOutput(
+          checkOutput("failure", "recorded"),
+          checkOutput("inconclusive", "played back"),
+        ),
+      ).toBe("disagreed");
     });
 
     it("reads the verdict out of a string content", () => {
       expect(
-        ScenarioPlayer.matchCheckOutput(
+        ScenarioPlayer.compareCheckOutput(
           JSON.stringify({ result: "success", explanation: "recorded" }),
           checkOutput("success", "played back"),
         ),
-      ).toBe(true);
+      ).toBe("agreed");
     });
 
     it("compares an output with no verdict in full", () => {
       expect(
-        ScenarioPlayer.matchCheckOutput(
+        ScenarioPlayer.compareCheckOutput(
           [{ type: "text", text: "boom" }],
           [{ type: "text", text: "boom" }],
         ),
-      ).toBe(true);
+      ).toBe("agreed");
       expect(
-        ScenarioPlayer.matchCheckOutput(
+        ScenarioPlayer.compareCheckOutput(
           [{ type: "text", text: "boom" }],
           [{ type: "text", text: "bang" }],
         ),
-      ).toBe(false);
+      ).toBe("disagreed");
     });
   });
 

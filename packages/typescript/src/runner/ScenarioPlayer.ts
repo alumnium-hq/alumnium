@@ -20,6 +20,12 @@ const ALUMNIUM_OPTIONS_KEY = "alumnium:options";
 // See `ScenarioPlayer.readOutputError`.
 const ERROR_TEXT_PREFIX = "Error:";
 
+// NOTE: The two verdicts `checkMcpTool` emits. Matched by value rather than
+// assumed to be the only two, since the output schema types `result` as a plain
+// string - so a verdict neither of these covers stays a disagreement.
+const SUCCESS_VERDICT = "success";
+const FAILURE_VERDICT = "failure";
+
 export namespace ScenarioPlayer {
   export interface Props {
     scenario: Scenario.Type;
@@ -40,6 +46,17 @@ export namespace ScenarioPlayer {
     mcpOutput: ScenarioAlumniumMcp.Output;
     error?: string;
   }
+
+  /**
+   * How a played `check` verdict compares with the one recorded for that step.
+   *
+   * NOTE: Only `disagreed` fails a playback. `improved` - the recording has the
+   * check failing and it passes now - does not: a recording legitimately holds a
+   * check that failed, either a false start the agent went on to correct or an
+   * application that has since been fixed, and neither is a reason to throw the
+   * recording away and re-record. So the playback continues past it.
+   */
+  export type CheckComparison = "agreed" | "improved" | "disagreed";
 
   export interface ResultSuccess {
     status: "success";
@@ -181,10 +198,25 @@ export class ScenarioPlayer {
               { useContent },
             );
 
-            if (ScenarioPlayer.matchCheckOutput(useContent, mcpContent)) {
+            const comparison = ScenarioPlayer.compareCheckOutput(
+              useContent,
+              mcpContent,
+            );
+
+            if (comparison === "agreed") {
               logger.info(
                 `Step ${stepCounterStr} MCP tool '${use.name}' output matches expected result`,
               );
+              break;
+            }
+
+            // NOTE: Not a failure, and not something to recover from. See
+            // `ScenarioPlayer.CheckComparison`.
+            if (comparison === "improved") {
+              logger.info(
+                `Step ${stepCounterStr} MCP tool '${use.name}' passed where the recording has it failing, continuing`,
+              );
+              ScenarioReporter.stepCheckImproved();
               break;
             }
 
@@ -381,25 +413,41 @@ export class ScenarioPlayer {
   /**
    * Compares a `check` output against the one recorded for the same step.
    *
+   * Only one direction of disagreement is tolerated, and only between the two
+   * verdicts `check` emits: a check the recording has failing that passes now.
+   * The reverse - passing when recorded, failing now - is exactly what a
+   * playback exists to catch. See `ScenarioPlayer.CheckComparison`.
+   *
    * @param toolResultContent - Recorded tool result content.
    * @param mcpOutputContent - Content the tool produced during playback.
-   * @returns `true` when both reached the same verdict.
+   * @returns How the two verdicts compare.
    */
-  static matchCheckOutput(
+  static compareCheckOutput(
     toolResultContent: Scenario.ClaudeCodeStepToolResultContent,
     mcpOutputContent: ScenarioAlumniumMcp.OutputContent,
-  ): boolean {
+  ): ScenarioPlayer.CheckComparison {
     const expectedVerdict = checkVerdict(toolResultContent);
     const actualVerdict = checkVerdict(mcpOutputContent);
 
-    if (expectedVerdict && actualVerdict)
-      return expectedVerdict === actualVerdict;
+    if (expectedVerdict && actualVerdict) {
+      if (expectedVerdict === actualVerdict) return "agreed";
+
+      if (
+        expectedVerdict === FAILURE_VERDICT &&
+        actualVerdict === SUCCESS_VERDICT
+      )
+        return "improved";
+
+      return "disagreed";
+    }
 
     logger.warn(
       "Cannot read the 'check' verdict out of the output, comparing it in full",
     );
 
-    return canonize(toolResultContent) === canonize(mcpOutputContent);
+    return canonize(toolResultContent) === canonize(mcpOutputContent)
+      ? "agreed"
+      : "disagreed";
   }
 
   //#endregion

@@ -332,10 +332,21 @@ export abstract class ScenarioReporter {
     this.#print(`  ${ansi.dim(`- skipped ${name}: ${reason}`)}`);
   }
 
-  // NOTE: Nothing is reported about a step agreeing or disagreeing with the
-  // recording. Every tool prints its own output, and the only output still
-  // compared is a `check`, whose verdict line already says which way it went.
-  // A disagreement then shows up as the recovery that follows it.
+  /**
+   * Notes a `check` that the recording has failing and that passes now.
+   *
+   * NOTE: The one comparison outcome worth a line of its own. Every tool prints
+   * its own output, and a `check` verdict line already says which way it went,
+   * so a step agreeing with the recording needs nothing added and a step
+   * disagreeing with it is explained by the recovery that follows. This case has
+   * neither: the playback carries on past it, so without a line the fact that
+   * the recording disagrees would go by unsaid.
+   */
+  static stepCheckImproved() {
+    this.#print(
+      `  ${ansi.dim("- passes now, the recording has this check failing")}`,
+    );
+  }
 
   //#endregion
 
