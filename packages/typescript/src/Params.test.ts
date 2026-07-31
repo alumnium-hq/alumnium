@@ -92,10 +92,10 @@ describe(Params, () => {
     });
   });
 
-  describe("validateGoal", () => {
+  describe("validate", () => {
     it("accepts a goal whose placeholders all have values", () => {
       expect(() =>
-        Params.from({ user: "alice", password: "hunter2" }).validateGoal(
+        Params.from({ user: "alice", password: "hunter2" }).validate(
           "type {user} and {password}",
         ),
       ).not.toThrow();
@@ -103,34 +103,114 @@ describe(Params, () => {
 
     it("rejects a placeholder without a value", () => {
       expect(() =>
-        Params.from({ user: "alice" }).validateGoal("type {user} {password}"),
+        Params.from({ user: "alice" }).validate("type {user} {password}"),
       ).toThrow(ParamsError);
     });
 
     it("rejects a value not referenced by the goal", () => {
       expect(() =>
-        Params.from({ user: "alice", password: "x" }).validateGoal(
-          "type {user}",
-        ),
+        Params.from({ user: "alice", password: "x" }).validate("type {user}"),
       ).toThrow(/not referenced by the goal: \{password\}/);
     });
 
     it("rejects an empty placeholder", () => {
       expect(() =>
-        Params.from({ user: "alice" }).validateGoal("type {} into {user}"),
+        Params.from({ user: "alice" }).validate("type {} into {user}"),
       ).toThrow(/empty placeholder/);
     });
 
     it("ignores braces without values", () => {
       expect(() =>
-        Params.from(undefined).validateGoal("type {unmatched} and {}"),
+        Params.from(undefined).validate("type {unmatched} and {}"),
       ).not.toThrow();
     });
 
     it("ignores escaped braces", () => {
       expect(() =>
-        Params.from({ user: "alice" }).validateGoal("{{literal}} and {user}"),
+        Params.from({ user: "alice" }).validate("{{literal}} and {user}"),
       ).not.toThrow();
+    });
+
+    it("names the subject in the message", () => {
+      expect(() =>
+        Params.from({ user: "alice" }).validate(
+          "the page is ready",
+          "statement",
+        ),
+      ).toThrow(/not referenced by the statement: \{user\}/);
+    });
+  });
+
+  // NOTE: `structured` mode exists for text whose braces are its own - a path,
+  // or inline JSON capabilities. The cases below are the ones that made it
+  // necessary: under `prose` each of them either throws or silently corrupts.
+  describe("structured mode", () => {
+    const CAPABILITIES = JSON.stringify({
+      platformName: "chrome",
+      "alumnium:options": {
+        proxy: { server: "http://proxy:3128" },
+        cookies: [{ name: "session", value: "abc" }],
+        baseUrl: "https://{env}.example.com",
+      },
+    });
+
+    it("substitutes a placeholder in a path", () => {
+      expect(
+        Params.from({ session_id: "eca3fa90" }).substitute(
+          "/runs/{session_id}/artifacts/capabilities.json",
+          "structured",
+        ),
+      ).toBe("/runs/eca3fa90/artifacts/capabilities.json");
+    });
+
+    it("keeps nested JSON parseable", () => {
+      const substituted = Params.from({ env: "staging" }).substitute(
+        CAPABILITIES,
+        "structured",
+      );
+
+      expect(() => JSON.parse(substituted)).not.toThrow();
+      expect(JSON.parse(substituted)["alumnium:options"].baseUrl).toBe(
+        "https://staging.example.com",
+      );
+    });
+
+    it("collapses a nested object's closing braces in prose mode", () => {
+      // NOTE: The reason `structured` mode exists. `}}` reads as an escaped
+      // brace, so the JSON comes back one brace short.
+      expect(() =>
+        JSON.parse(Params.from({ env: "staging" }).substitute(CAPABILITIES)),
+      ).toThrow();
+    });
+
+    it("does not read a quoted JSON key as a placeholder", () => {
+      expect(() =>
+        Params.from({ env: "staging" }).validate(
+          CAPABILITIES,
+          "capabilities",
+          "structured",
+        ),
+      ).not.toThrow();
+    });
+
+    it("does not read an empty object as an empty placeholder", () => {
+      expect(() =>
+        Params.from({ env: "staging" }).validate(
+          '{"alumnium:options": {}, "baseUrl": "https://{env}.example.com"}',
+          "capabilities",
+          "structured",
+        ),
+      ).not.toThrow();
+    });
+
+    it("still rejects a value nothing references", () => {
+      expect(() =>
+        Params.from({ missing: "x" }).validate(
+          '{"platformName": "chrome"}',
+          "capabilities",
+          "structured",
+        ),
+      ).toThrow(/not referenced by the capabilities: \{missing\}/);
     });
   });
 });

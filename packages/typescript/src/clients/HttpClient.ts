@@ -122,13 +122,18 @@ export class HttpClient extends Client {
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
-    const { goal, step, accessibilityTree, app, params = {} } = props;
+    const { goal, step, accessibilityTree, app, params } = props;
     const body: StepRequest = {
       goal,
       step,
       accessibility_tree: accessibilityTree,
       app,
-      ...params,
+      // NOTE: Nested under `params`, not spread. Spreading put the placeholder
+      // names at the top level of the body, where `PlanStepActionsBody` strips
+      // them as unknown keys - so the actor got no values and prompted with the
+      // placeholder text. Left `undefined` rather than defaulted to `{}`, since
+      // `{}` and an absent field canonize differently in the cache key.
+      ...(params ? { params } : {}),
     };
     return this.#sessionFetch<StepResponse>("POST", "/steps", body);
   }

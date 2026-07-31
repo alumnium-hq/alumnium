@@ -173,15 +173,16 @@ You MUST report that result by calling the StructuredOutput tool, and not as pro
 - result "failure" when a step could not be performed, a check returned a consistent failure, or the scenario could not be completed for any other reason.
 - details always, either way: what the scenario did and verified when it passed, what failed and how when it did not. This is what the person running the test reads at the end, so write it for them rather than restating the scenario.
 
-When using a do tool, use placeholders for any values that look like parameters.
+Use placeholders for any value that looks like a parameter, never inline it.
 Consider the following two steps:
 1. do(goal: 'type test1@email.com to the email field')
-2. do(goal: 'type test2@email.com to the email field')
-Instead of hardcoding the email addresses, you should use a parameterized approach, like this:
+2. check(statement: 'the email test1@email.com is shown')
+Instead of hardcoding the email address, you should use a parameterized approach, like this:
 1. do(goal: 'type {email} to the email field', params: {"email": "test1@email.com"})
-2. do(goal: 'type {email} to the email field', params: {"email": "test2@email.com"})
+2. check(statement: 'the email {email} is shown', params: {"email": "test1@email.com"})
 This maximizes the reusability of the scenarios and individual steps, improve test performance.
-Only do tool call supports placeholders, other tools should be called with the actual values.
+Placeholders are supported by do (goal), check (statement), get (data), wait (for) and start (capabilities, server_url). Every other tool
+should be called with the actual values.
 
 When a value an Alumnium tool needs comes from another tool (Bash, Read), make that tool print a
 JSON object with a named key for each value, and pass the value on unchanged.
@@ -189,8 +190,9 @@ Consider generating a random number to type into a field:
 1. Bash(command: 'echo "{\\"number\\": $((RANDOM % 10 + 1))}"') -> {"number": 7}
 2. do(goal: 'type {number} into the amount field', params: {"number": "7"})
 Values are only refreshed on a later run when the tool that produced them printed JSON and the
-value reaches the Alumnium tool as a whole \`params\` value. A value inlined into the goal text,
-reformatted, or computed by you cannot be refreshed, so the next run will replay the recorded one.
+value reaches the Alumnium tool as a whole \`params\` value. A value inlined into a goal, statement,
+data description, condition or capabilities path, reformatted, or computed by you cannot be
+refreshed, so the next run will replay the recorded one.
 
 The scenario is provided below.
 ---

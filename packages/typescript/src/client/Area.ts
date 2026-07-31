@@ -49,7 +49,7 @@ export class Area {
   @span("alumni.do", spanAttrs)
   async do(goal: string, params?: Record<string, string>): Promise<DoResult> {
     const boundParams = Params.from(params);
-    boundParams.validateGoal(goal);
+    boundParams.validate(goal, "goal");
 
     return retry(
       { doRetry: (error) => !(error instanceof ParamsError) },
@@ -110,14 +110,19 @@ export class Area {
   }))
   async check(
     statement: string,
-    options: Alumni.VisionOptions = {},
+    options: Alumni.RetrievalOptions = {},
   ): Promise<string> {
+    // NOTE: Substituted here rather than passed down, see `Alumni.check`.
+    const boundParams = Params.from(options.params);
+    boundParams.validate(statement, "statement");
+    const substitutedStatement = boundParams.substitute(statement);
+
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
       const [explanation, value] = await this.client.retrieve({
-        statement: `Is the following true or false - ${statement}`,
+        statement: `Is the following true or false - ${substitutedStatement}`,
         accessibilityTree: this.accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
@@ -137,13 +142,21 @@ export class Area {
     "alumni.flavor": "area",
     "alumni.method.args.vision": !!options?.vision,
   }))
-  async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
+  async get(
+    data: string,
+    options: Alumni.RetrievalOptions = {},
+  ): Promise<Data> {
+    // NOTE: Substituted here rather than passed down, see `Alumni.check`.
+    const boundParams = Params.from(options.params);
+    boundParams.validate(data, "data");
+    const substitutedData = boundParams.substitute(data);
+
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
       const [explanation, value] = await this.client.retrieve({
-        statement: data,
+        statement: substitutedData,
         accessibilityTree: this.accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),

@@ -5,6 +5,7 @@ import z from "zod";
 import { Alumni } from "../../client/Alumni.ts";
 import { NativeClient } from "../../clients/NativeClient.ts";
 import { Driver } from "../../drivers/Driver.ts";
+import { Params } from "../../Params.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { DragSliderTool } from "../../tools/DragSliderTool.ts";
 import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.ts";
@@ -25,6 +26,66 @@ import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
 
 const { tracer } = Telemetry.get(import.meta.url);
+
+export namespace startMcpTool {
+  /** The parameterizable inputs of `start`, and the values for them. */
+  export interface ParamsInput {
+    capabilities: string;
+    server_url?: string | undefined;
+    params?: Record<string, string> | undefined;
+  }
+
+  export interface ResolvedParams {
+    /** Capabilities reference: a file path, or inline JSON. */
+    capabilities: string;
+    serverUrl: string | null;
+  }
+}
+
+/**
+ * Substitutes the `{placeholder}` tokens of `capabilities` and `server_url`.
+ *
+ * Both are substituted in `structured` mode: their braces are a path or JSON
+ * rather than prose, and running prose substitution over inline capabilities
+ * would collapse the closing braces of a nested option (`proxy`, `cookies`) and
+ * quietly leave the JSON unparseable. See `Params.Mode`.
+ *
+ * The capabilities are substituted before the file is looked for, so that a
+ * run-scoped path segment resolves — which is the point: a recorded
+ * `.../runs/{session_id}/artifacts/capabilities.json` otherwise replays against
+ * the recording run's directory, starting the browser with that run's cookies.
+ * Inline JSON passes through the same call, its own braces untouched.
+ *
+ * NOTE: Text read out of a capabilities file is deliberately not substituted.
+ * Only what the tool was called with is.
+ *
+ * @param input - Recorded `start` tool input.
+ * @returns The capabilities reference and server URL to use.
+ * @throws ParamsError When a value is not referenced by either field.
+ */
+export function resolveStartParams(
+  input: startMcpTool.ParamsInput,
+): startMcpTool.ResolvedParams {
+  const boundParams = Params.from(input.params);
+
+  // NOTE: Validated against both fields a value can land in, so that a value
+  // used only in the server URL is not reported as unreferenced.
+  boundParams.validate(
+    [input.capabilities, input["server_url"] ?? ""].join("\n"),
+    "capabilities",
+    "structured",
+  );
+
+  const serverUrl =
+    typeof input["server_url"] === "string"
+      ? boundParams.substitute(input["server_url"], "structured")
+      : null;
+
+  return {
+    capabilities: boundParams.substitute(input.capabilities, "structured"),
+    serverUrl,
+  };
+}
 
 /**
  * Start a new driver instance.
@@ -76,12 +137,24 @@ export const startMcpTool = McpTool.define("start", {
         "Optional remote Selenium/Appium server URL. Examples: 'http://localhost:4723', 'https://mobile-hub.lambdatest.com/wd/hub'. Defaults to local driver (Chrome) or localhost:4723 (Appium)",
       )
       .optional(),
+
+    params: z
+      .record(z.string(), z.string())
+      .optional()
+      .describe(
+        'Values for the `{placeholder}` tokens in `capabilities` and `server_url`, e.g. capabilities \'/tmp/runs/{session_id}/capabilities.json\' with params {"session_id": "eca3fa90"}. ' +
+          "Substituted into the capabilities file path or inline JSON and into the server URL, so a run-scoped path is resolved freshly on every run instead of pointing at an earlier run's directory. " +
+          "Braces that are part of inline JSON are left alone. Every value must be referenced by one of those two fields.",
+      ),
   }),
 
   async execute(input, { logger }) {
+    const { capabilities: capabilitiesRef, serverUrl: substitutedServerUrl } =
+      resolveStartParams(input);
+
     // Resolve capabilities: file path or inline JSON string
     let rawCapabilities: string;
-    const filePath = path.resolve(input.capabilities);
+    const filePath = path.resolve(capabilitiesRef);
     if (fs.existsSync(filePath)) {
       try {
         rawCapabilities = fs.readFileSync(filePath, "utf-8");
@@ -91,7 +164,7 @@ export const startMcpTool = McpTool.define("start", {
         throw new Error(message);
       }
     } else {
-      rawCapabilities = input.capabilities;
+      rawCapabilities = capabilitiesRef;
     }
 
     // Parse capabilities JSON
@@ -99,7 +172,10 @@ export const startMcpTool = McpTool.define("start", {
     try {
       capabilities = JSON.parse(rawCapabilities);
     } catch (error) {
-      const message = `Invalid JSON in capabilities parameter: ${error}`;
+      // NOTE: The resolved path is named too. A capabilities path whose
+      // placeholder was substituted with the wrong value is not a file, so it
+      // falls through to being parsed as JSON and lands here.
+      const message = `Invalid JSON in capabilities parameter '${filePath}': ${error}`;
       logger.error(message);
       throw new Error(message);
     }
@@ -116,8 +192,7 @@ export const startMcpTool = McpTool.define("start", {
     const platformName = capabilities.platformName.toLowerCase();
     capabilities.platformName = platformName;
 
-    const serverUrl =
-      typeof input["server_url"] === "string" ? input["server_url"] : null;
+    const serverUrl = substitutedServerUrl;
 
     // Extract alumnium:options for Alumnium driver configuration
     const alumniumOptions =

@@ -8,21 +8,56 @@ const { logger } = Telemetry.get(import.meta.url);
 // keeps a substituted value containing braces from being rescanned.
 const TOKEN_PATTERN = /\{\{|\}\}|\{([^{}]*)\}/g;
 
+// NOTE: No escape arm, and a name restricted to identifier characters, so that
+// neither a quoted JSON key nor a nested object's `}}` can be read as a
+// placeholder. See `Params.Mode` for why that matters.
+const STRUCTURED_TOKEN_PATTERN = /\{([A-Za-z0-9_]+)\}/g;
+
 const OPEN_BRACE_ESCAPE = "{{";
 const CLOSE_BRACE_ESCAPE = "}}";
 
 export namespace Params {
   export type Values = Record<string, string | number | boolean>;
+
+  /** What the parameterized text is, as the error messages name it. */
+  export type Subject =
+    | "goal"
+    | "statement"
+    | "data"
+    | "condition"
+    | "capabilities";
+
+  /**
+   * How the braces of a text are read.
+   *
+   * `prose` is free-form text a model reads, where `{{` and `}}` escape a
+   * literal brace.
+   *
+   * `structured` is text whose braces are structure rather than prose - a path,
+   * or inline JSON. There a name only counts as a placeholder when it is made
+   * of identifier characters, and nothing is unescaped. Both are required:
+   * `{"platformName": "chrome"}` would otherwise read as a placeholder, and the
+   * trailing `}}` of a nested object would be collapsed to a single brace,
+   * quietly turning valid JSON into unparseable JSON.
+   */
+  export type Mode = "prose" | "structured";
 }
 
 /**
- * Values for the `{placeholder}` tokens of an `Alumni.do` goal.
+ * Values for the `{placeholder}` tokens of a parameterized text - an
+ * `Alumni.do` goal, an `Alumni.check` statement, a `start` capabilities path.
  *
- * Placeholders exist to keep a goal's text stable when only a value changes, so
- * that goals differing only in that value share a cache entry. Both cache
- * layers key off the goal and the step alone, so the agents are invoked with
- * the placeholder text as their cache identity while the model itself sees the
- * real values — see `ActorAgent.invoke`.
+ * Placeholders keep a text stable when only a value changes, which is worth
+ * something in two different ways:
+ *
+ * - For `do`, it is cache identity. Both cache layers key off the goal and the
+ *   step alone, so the agents are invoked with the placeholder text as their
+ *   cache identity while the model itself sees the real values — see
+ *   `ActorAgent.invoke`.
+ * - For `check`, `get`, `wait` and `start`, it is replay. A recorded step whose
+ *   values sit in `params` rather than inlined in its text can be replayed
+ *   against freshly produced ones — see `ScenarioMasker`. Those tools take no
+ *   part in caching, and substitute before the request leaves the client.
  *
  * Two directions are therefore needed:
  *
@@ -53,38 +88,44 @@ export class Params {
   //#region Validation
 
   /**
-   * Checks a goal against the values before anything reaches the LLM.
+   * Checks a parameterized text against the values before anything acts on it.
    *
-   * @param goal - Goal containing `{placeholder}` tokens.
-   * @throws ParamsError When the goal has an empty or unknown placeholder, or
-   *   when a value is never referenced by the goal.
+   * @param text - Text containing `{placeholder}` tokens.
+   * @param subject - What the text is, as the error messages name it.
+   * @param mode - How the braces of the text are read.
+   * @throws ParamsError When the text has an empty or unknown placeholder, or
+   *   when a value is never referenced by the text.
    */
-  validateGoal(goal: string): void {
+  validate(
+    text: string,
+    subject: Params.Subject = "goal",
+    mode: Params.Mode = "prose",
+  ): void {
     if (this.isEmpty) return;
 
-    const goalNames = Params.#placeholderNames(goal);
+    const textNames = Params.#placeholderNames(text, mode);
 
-    if (goalNames.has("")) {
+    if (textNames.has("")) {
       throw new ParamsError(
-        `Goal contains an empty placeholder '{}'. ${this.#knownSuffix()}`,
+        `The ${subject} contains an empty placeholder '{}'. ${this.#knownSuffix()}`,
       );
     }
 
-    const unknownNames = [...goalNames].filter(
+    const unknownNames = [...textNames].filter(
       (name) => !(name in this.#values),
     );
     if (unknownNames.length) {
       throw new ParamsError(
-        `Goal references unknown parameters: ${formatNames(unknownNames)}. ${this.#knownSuffix()}`,
+        `The ${subject} references unknown parameters: ${formatNames(unknownNames)}. ${this.#knownSuffix()}`,
       );
     }
 
     const unreferencedNames = Object.keys(this.#values).filter(
-      (name) => !goalNames.has(name),
+      (name) => !textNames.has(name),
     );
     if (unreferencedNames.length) {
       throw new ParamsError(
-        `Parameters are not referenced by the goal: ${formatNames(unreferencedNames)}. ` +
+        `Parameters are not referenced by the ${subject}: ${formatNames(unreferencedNames)}. ` +
           "Add a placeholder for each one, or drop it.",
       );
     }
@@ -95,28 +136,38 @@ export class Params {
   //#region Substituting
 
   /**
-   * Replaces `{name}` with its value, and unescapes `{{`/`}}`.
+   * Replaces `{name}` with its value, and in `prose` mode unescapes `{{`/`}}`.
    *
    * @param text - Text containing placeholders.
+   * @param mode - How the braces of the text are read.
    * @returns Text with the values substituted.
    */
-  substitute(text: string): string {
+  substitute(text: string, mode: Params.Mode = "prose"): string {
     if (this.isEmpty) return text;
 
-    return text.replace(TOKEN_PATTERN, (token, name: string | undefined) => {
-      if (token === OPEN_BRACE_ESCAPE) return "{";
-      if (token === CLOSE_BRACE_ESCAPE) return "}";
+    return text.replace(
+      Params.#tokenPattern(mode),
+      (token, name: string | undefined) => {
+        // NOTE: Only in `prose`. In `structured` mode a brace pair is structure,
+        // so collapsing `}}` would break the very JSON being substituted into.
+        if (mode === "prose") {
+          if (token === OPEN_BRACE_ESCAPE) return "{";
+          if (token === CLOSE_BRACE_ESCAPE) return "}";
+        }
 
-      // NOTE: An unknown placeholder is left as-is rather than blanked out. It
-      // is either the model inventing one, or prose that happens to use braces,
-      // and a literal token is easier to debug than a silent deletion.
-      if (name === undefined || !(name in this.#values)) {
-        logger.debug(`No parameter for placeholder '${token}', leaving as-is`);
-        return token;
-      }
+        // NOTE: An unknown placeholder is left as-is rather than blanked out. It
+        // is either the model inventing one, or prose that happens to use
+        // braces, and a literal token is easier to debug than a silent deletion.
+        if (name === undefined || !(name in this.#values)) {
+          logger.debug(
+            `No parameter for placeholder '${token}', leaving as-is`,
+          );
+          return token;
+        }
 
-      return String(this.#values[name]);
-    });
+        return String(this.#values[name]);
+      },
+    );
   }
 
   /**
@@ -189,15 +240,19 @@ export class Params {
     return `Known parameters: ${formatNames(Object.keys(this.#values))}.`;
   }
 
-  static #placeholderNames(goal: string): Set<string> {
+  static #placeholderNames(text: string, mode: Params.Mode): Set<string> {
     const names = new Set<string>();
 
-    for (const match of goal.matchAll(TOKEN_PATTERN)) {
+    for (const match of text.matchAll(Params.#tokenPattern(mode))) {
       const name = match[1];
       if (name !== undefined) names.add(name);
     }
 
     return names;
+  }
+
+  static #tokenPattern(mode: Params.Mode): RegExp {
+    return mode === "structured" ? STRUCTURED_TOKEN_PATTERN : TOKEN_PATTERN;
   }
 }
 

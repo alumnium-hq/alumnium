@@ -141,9 +141,11 @@ export class ScenarioMasker {
    * substitute freshly produced ones.
    *
    * In the `whole` scope only a leaf that equals an external value in full is
-   * replaced. A value quoted inside a free-form goal is left alone: there is no
+   * replaced. A value quoted inside free-form prose is left alone: there is no
    * way to tell a value apart from the prose around it without guessing, and
-   * the `do` tool takes such values through `params` anyway.
+   * every Alumnium tool that takes prose takes such values through `params`
+   * anyway - `do` a goal, `check` a statement, `get` a data description, `wait`
+   * a condition.
    *
    * @param input - Tool input to mask.
    * @param scope - Which strings a mask can take the place of.

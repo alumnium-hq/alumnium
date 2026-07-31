@@ -1,4 +1,5 @@
 import { describe } from "vitest";
+import { AssertionError } from "../../src/client/errors/AssertionError.ts";
 import { ParamsError } from "../../src/client/errors/ParamsError.ts";
 import { baseIt } from "./helpers.ts";
 
@@ -84,6 +85,79 @@ describe("Goal parameters", () => {
 
     await expect(
       al.do("type test@example.com in the email field", { email: "a@b.com" }),
+    ).rejects.toThrow(ParamsError);
+  });
+
+  // NOTE: Unlike `do`, a parameterized `check` or `get` substitutes before the
+  // request leaves the client, so it takes no part in caching - see
+  // `Alumni.check`. What these cover is that the values really reach the model,
+  // which is what makes a recorded step replayable against fresh data.
+  it("verifies a statement against the substituted value", async ({
+    expect,
+    setup,
+  }) => {
+    const { al, $ } = await setup({ planner: false });
+    await $.navigate("https://the-internet.herokuapp.com/forgot_password");
+
+    await al.check("the page heading is {heading}", {
+      params: { heading: "Forgot Password" },
+    });
+
+    await expect(
+      al.check("the page heading is {heading}", {
+        params: { heading: "Sign Up" },
+      }),
+    ).rejects.toThrow(AssertionError);
+  });
+
+  it("extracts data described with a parameterized value", async ({
+    expect,
+    setup,
+  }) => {
+    const { al, $ } = await setup({ planner: false });
+    await $.navigate("https://the-internet.herokuapp.com/tables");
+
+    expect(
+      await al.get(
+        "the last name in the row whose first name is {first_name}",
+        {
+          params: { first_name: "John" },
+        },
+      ),
+    ).toBe("Smith");
+  });
+
+  it("does not reuse a check verdict across values", async ({
+    expect,
+    setup,
+  }) => {
+    // NOTE: The semantics that make client-side substitution correct: a check
+    // must read the page for every value, so two values never share an entry.
+    const { al, $ } = await setup({ planner: false });
+    await $.navigate("https://the-internet.herokuapp.com/forgot_password");
+
+    await al.check("the page heading is {heading}", {
+      params: { heading: "Forgot Password" },
+    });
+    await expect(
+      al.check("the page heading is {heading}", {
+        params: { heading: "Sign Up" },
+      }),
+    ).rejects.toThrow(AssertionError);
+
+    expect((await al.getStats()).cache.total_tokens).toBe(0);
+  });
+
+  it("rejects a value the statement never references", async ({
+    expect,
+    setup,
+  }) => {
+    const { al } = await setup({ planner: false });
+
+    await expect(
+      al.check("the page heading is Forgot Password", {
+        params: { heading: "Forgot Password" },
+      }),
     ).rejects.toThrow(ParamsError);
   });
 });

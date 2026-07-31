@@ -27,6 +27,45 @@ describe("ScenarioMasker", () => {
       });
     });
 
+    // NOTE: The payoff of `params` on `check`. Inlined into the statement the
+    // value is frozen into the recording and replays stale; as a discrete leaf
+    // it is masked, so a replay re-verifies against a fresh one.
+    it("masks a params value of a check, keeping the statement stable", () => {
+      const masker = recordingMasker('{"user": {"email": "test1@email.com"}}');
+
+      expect(
+        masker.maskInput({
+          statement: "the user {email} is shown",
+          params: { email: "test1@email.com" },
+        }),
+      ).toEqual({
+        statement: "the user {email} is shown",
+        params: { email: "<EXTERNAL_0_user_email>" },
+      });
+    });
+
+    it("leaves a value inlined in a statement alone", () => {
+      const masker = recordingMasker('{"user": {"email": "test1@email.com"}}');
+
+      expect(
+        masker.maskInput({ statement: "the user test1@email.com is shown" }),
+      ).toEqual({ statement: "the user test1@email.com is shown" });
+    });
+
+    it("masks a params value of a start capabilities path", () => {
+      const masker = recordingMasker('{"session_id": "eca3fa90"}');
+
+      expect(
+        masker.maskInput({
+          capabilities: "/tmp/runs/{session_id}/artifacts/capabilities.json",
+          params: { session_id: "eca3fa90" },
+        }),
+      ).toEqual({
+        capabilities: "/tmp/runs/{session_id}/artifacts/capabilities.json",
+        params: { session_id: "<EXTERNAL_0_session_id>" },
+      });
+    });
+
     it("leaves a value quoted inside a goal alone", () => {
       const masker = recordingMasker('{"email": "foo@bar.com"}');
 

@@ -36,11 +36,6 @@ const { span } = tracer.dec();
  */
 export type AlumniOptions = Alumni.Options;
 
-/**
- * @deprecated Use `Alumni.VisionOptions` instead.
- */
-export type VisionOptions = Alumni.VisionOptions;
-
 export namespace Alumni {
   export type Driver = WebDriver | Page | Browser;
 
@@ -54,11 +49,12 @@ export namespace Alumni {
     excludeAttributes?: string[] | undefined;
   }
 
-  export interface VisionOptions {
+  export interface RetrievalOptions {
     vision?: boolean;
+    params?: Record<string, string> | undefined;
   }
 
-  export interface CheckOptions extends VisionOptions {
+  export interface CheckOptions extends RetrievalOptions {
     assert?: CheckAssert;
   }
 
@@ -153,13 +149,14 @@ export class Alumni {
    * @param goal - Goal to achieve, optionally containing `{placeholder}` tokens.
    * @param params - Values for the goal placeholders. Passing them keeps the
    *   goal text stable across runs, so goals differing only in a value share a
-   *   cache entry. See `Params`.
+   *   cache entry, and a recorded step can be replayed against a freshly
+   *   produced value. See `Params`.
    * @returns Explanation and the executed steps with their actions.
    */
   @span("alumni.do", spanAttrs)
   async do(goal: string, params?: Record<string, string>): Promise<DoResult> {
     const boundParams = Params.from(params);
-    boundParams.validateGoal(goal);
+    boundParams.validate(goal, "goal");
 
     return retry(
       { doRetry: (error) => !(error instanceof ParamsError) },
@@ -249,13 +246,28 @@ export class Alumni {
     statement: string,
     options: Alumni.CheckOptions = {},
   ): Promise<string> {
+    // NOTE: Substituted here, before the request, and deliberately not passed
+    // down the way `do` passes its params to the actor. `do` sends the
+    // placeholder text because `ElementsCache` keys on it and can mask the
+    // values out of what it stores; the retriever is ineligible for that cache,
+    // and a verdict reused across values would be a check that never read the
+    // page. Substituting here makes the request identical to one with the value
+    // written into the statement, so nothing downstream can tell the difference
+    // and existing cache entries keep hitting.
+    //
+    // NOTE: Outside `retry`, which has no `ParamsError` guard of its own and
+    // would otherwise retry a bad call with backoff.
+    const boundParams = Params.from(options.params);
+    boundParams.validate(statement, "statement");
+    const substitutedStatement = boundParams.substitute(statement);
+
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
-        statement: `Is the following true or false - ${statement}`,
+        statement: `Is the following true or false - ${substitutedStatement}`,
         accessibilityTree: accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
@@ -280,14 +292,22 @@ export class Alumni {
     "alumni.flavor": "alumni",
     "alumni.method.args.vision": !!options?.vision,
   }))
-  async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
+  async get(
+    data: string,
+    options: Alumni.RetrievalOptions = {},
+  ): Promise<Data> {
+    // NOTE: Substituted here rather than passed down, see `check`.
+    const boundParams = Params.from(options.params);
+    boundParams.validate(data, "data");
+    const substitutedData = boundParams.substitute(data);
+
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
-        statement: data,
+        statement: substitutedData,
         accessibilityTree: accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
