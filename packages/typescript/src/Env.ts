@@ -211,6 +211,23 @@ export const Env = {
     return envVar("ALUMNIUM_EVAL_TRIAL_COUNT", z.coerce.number().default(25));
   },
 
+  /**
+   * How many more times a scenario playback re-asks a `check` whose verdict
+   * disagrees with its recording, before it takes the disagreement for real. See
+   * `ScenarioPlayer`.
+   *
+   * NOTE: Not the number of LLM calls it buys. `Alumni.check` retries its own
+   * body `ALUMNIUM_RETRIES` times on a failed verdict, and with the cache
+   * bypassed each of those attempts reaches the model - so the default here is
+   * "best of up to 4 verdicts", not "best of 2".
+   *
+   * Set to `0` to fail on the first disagreement, as playback did before
+   * re-asking existed.
+   */
+  get ALUMNIUM_CHECK_CONFIRMATIONS() {
+    return envVar("ALUMNIUM_CHECK_CONFIRMATIONS", z.coerce.number().default(2));
+  },
+
   get ALUMNIUM_SCENARIOS_DIR() {
     return envVar(
       "ALUMNIUM_SCENARIOS_DIR",

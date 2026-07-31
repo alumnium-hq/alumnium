@@ -81,6 +81,21 @@ export namespace BaseAgent {
   export type Goal = z.infer<typeof BaseAgent.Goal>;
 
   export type Step = z.infer<typeof BaseAgent.Step>;
+
+  /**
+   * Per-invocation switches that are deliberately kept out of the cache key.
+   *
+   * NOTE: Apart from `LlmContext.Meta`, which the cache hashes. These change how
+   * a request is served rather than what it asks for, so a request made with one
+   * of them set has to reach the very same cache entry as one made without.
+   */
+  export interface InvokeChainOptions {
+    /**
+     * Generate the response afresh, skipping both the cache lookup and the
+     * cache update.
+     */
+    noCache?: boolean | undefined;
+  }
 }
 
 export class BaseAgent {
@@ -179,6 +194,7 @@ export class BaseAgent {
     input: RunInput,
     meta: LlmContext.Meta,
     options?: Partial<CallOptions>,
+    invokeOptions?: BaseAgent.InvokeChainOptions,
   ): Promise<BaseAgentResponse> {
     return retry(
       {
@@ -197,39 +213,55 @@ export class BaseAgent {
           input: Logger.debugExtra("langchain", input),
         });
 
-        const result = (await tracer.span(
-          "llm.request",
-          {
-            "llm.model.provider": this.llmContext.model.provider,
-            "llm.model.name": this.llmContext.model.name,
-          },
-          () =>
-            // @ts-expect-error
-            chain.invoke(input, {
-              ...options,
-              timeout: MODEL_TIMEOUT_SEC * 1000,
-              callbacks: [
-                {
-                  handleChatModelStart: (_llm, baseMessages) => {
-                    contextPrompts.push(
-                      ...baseMessages.map((baseMessage) =>
-                        convertInputToPromptValue
-                          .call(this, baseMessage)
-                          .toString(),
-                      ),
-                    );
-                    this.llmContext.assignPromptsMeta(contextPrompts, meta);
+        let result: Lchain.InvokeResult;
+        try {
+          result = (await tracer.span(
+            "llm.request",
+            {
+              "llm.model.provider": this.llmContext.model.provider,
+              "llm.model.name": this.llmContext.model.name,
+            },
+            () =>
+              // @ts-expect-error
+              chain.invoke(input, {
+                ...options,
+                timeout: MODEL_TIMEOUT_SEC * 1000,
+                callbacks: [
+                  {
+                    handleChatModelStart: (_llm, baseMessages) => {
+                      contextPrompts.push(
+                        ...baseMessages.map((baseMessage) =>
+                          convertInputToPromptValue
+                            .call(this, baseMessage)
+                            .toString(),
+                        ),
+                      );
+                      this.llmContext.assignPromptsMeta(contextPrompts, meta);
+                      // NOTE: Assigned from here, and not before the invoke,
+                      // because the prompt string isn't known until LangChain
+                      // has built it. It still lands in time: LangChain fires
+                      // this callback before it looks the response up in the
+                      // cache.
+                      if (invokeOptions?.noCache) {
+                        this.llmContext.assignPromptsNoCache(contextPrompts);
+                      }
+                    },
                   },
-                },
-              ],
-            }),
-        )) as Lchain.InvokeResult;
+                ],
+              }),
+          )) as Lchain.InvokeResult;
+        } finally {
+          // NOTE: In a `finally`, unlike the meta this used to sit next to. A
+          // meta entry left behind by a failed request is harmless, but a
+          // no-cache marker left behind silently disables caching for that
+          // prompt for the rest of the session.
+          this.llmContext.clearPromptsMeta(contextPrompts);
+          this.llmContext.clearPromptsNoCache(contextPrompts);
+        }
 
         logger.debug(`Got ${agentKind} agent chain result: {result}`, {
           result: Logger.debugExtra("langchain", result),
         });
-
-        this.llmContext.clearPromptsMeta(contextPrompts);
 
         const [message, structured] = this.#extractMessageContent(result);
 

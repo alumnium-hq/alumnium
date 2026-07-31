@@ -87,6 +87,38 @@ describe("ScenarioPlayer", () => {
     });
   });
 
+  describe("confirmCheckDisagreement", () => {
+    it("confirms a disagreement no re-ask overturned", () => {
+      expect(
+        ScenarioPlayer.confirmCheckDisagreement(["disagreed", "disagreed"]),
+      ).toBe("confirmed");
+    });
+
+    it("reports a check the first re-ask agreed with as unstable", () => {
+      expect(ScenarioPlayer.confirmCheckDisagreement(["agreed"])).toBe(
+        "unstable",
+      );
+    });
+
+    it("reports a check a later re-ask agreed with as unstable", () => {
+      expect(
+        ScenarioPlayer.confirmCheckDisagreement(["disagreed", "agreed"]),
+      ).toBe("unstable");
+    });
+
+    it("treats a re-ask that reports an improvement as agreement", () => {
+      expect(ScenarioPlayer.confirmCheckDisagreement(["improved"])).toBe(
+        "unstable",
+      );
+    });
+
+    // NOTE: What `ALUMNIUM_CHECK_CONFIRMATIONS=0` amounts to, and what playback
+    // did before re-asking existed.
+    it("confirms a disagreement when there was no re-ask to make", () => {
+      expect(ScenarioPlayer.confirmCheckDisagreement([])).toBe("confirmed");
+    });
+  });
+
   describe("readOutputError", () => {
     it("reads a flagged error", () => {
       expect(

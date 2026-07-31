@@ -3,6 +3,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { always } from "alwaysly";
 import z from "zod";
 import { isSingleFileExecutable } from "../bundle.ts";
+import { mcpNoCacheMeta } from "../mcp/mcpNoCache.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { jsonString } from "../utils/schema.ts";
 
@@ -24,6 +25,17 @@ export namespace ScenarioAlumniumMcp {
   export interface SpawnCommand {
     command: string;
     args: string[];
+  }
+
+  export interface CallOptions {
+    /**
+     * Have the tool generate its LLM responses afresh, skipping the response
+     * cache.
+     *
+     * NOTE: Travels in the request `_meta`, not the tool input, so it never lands
+     * in a recording. See `mcpNoCache`.
+     */
+    noCache?: boolean | undefined;
   }
 }
 
@@ -114,9 +126,17 @@ export class ScenarioAlumniumMcp {
     return this.#client.close();
   }
 
+  /**
+   * @param name - Tool to call.
+   * @param input - Tool input.
+   * @param options - Per-call switches, passed in the request `_meta`.
+   * @returns What the tool returned, including a failed call - `callTool` only
+   *   throws on a transport error.
+   */
   async call(
     name: string,
     input: Record<string, unknown>,
+    options: ScenarioAlumniumMcp.CallOptions = {},
   ): Promise<ScenarioAlumniumMcp.Output> {
     logger.debug(`Calling MCP tool '${name}' with: {input}`, { input });
 
@@ -124,6 +144,11 @@ export class ScenarioAlumniumMcp {
       {
         name,
         arguments: input,
+        // NOTE: A server that doesn't know the key ignores it, which degrades to
+        // today's behavior rather than to a wrong answer: a confirmation is then
+        // served from the cache, agrees with itself, and the disagreement it was
+        // sent to question stands.
+        ...(options.noCache ? { _meta: mcpNoCacheMeta() } : {}),
       },
       undefined,
       { timeout: ScenarioAlumniumMcp.TIMEOUT },

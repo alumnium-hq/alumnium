@@ -307,6 +307,70 @@ describe(ScenarioReporter, () => {
     });
   });
 
+  describe("stepCheckReasking", () => {
+    it("reports how many re-asks are coming", () => {
+      ScenarioReporter.stepCheckReasking(2);
+
+      expect(printedLine()).toContain(
+        "- disagrees with the recording, re-asking up to 2 more times (cache bypassed)",
+      );
+    });
+
+    it("reports a single re-ask in the singular", () => {
+      ScenarioReporter.stepCheckReasking(1);
+
+      expect(printedLine()).toContain("re-asking up to 1 more time (");
+    });
+  });
+
+  describe("stepCheckUnstable", () => {
+    it("reports which re-ask agreed, out of how many were allowed", () => {
+      ScenarioReporter.stepCheckUnstable(1, 2);
+
+      expect(printedLine()).toContain(
+        "- unstable: agreed on re-ask 1/2, continuing",
+      );
+    });
+  });
+
+  describe("stepCheckConfirmed", () => {
+    it("reports how many re-asks disagreed", () => {
+      ScenarioReporter.stepCheckConfirmed(2);
+
+      expect(printedLine()).toContain(
+        "- confirmed: disagreed on all 2 re-asks",
+      );
+    });
+
+    it("reports a single re-ask in the singular", () => {
+      ScenarioReporter.stepCheckConfirmed(1);
+
+      expect(printedLine()).toContain("disagreed on all 1 re-ask");
+    });
+  });
+
+  describe("unstableChecks", () => {
+    it("says nothing when every check was stable", () => {
+      ScenarioReporter.unstableChecks(0);
+
+      expect(print).not.toBeCalled();
+    });
+
+    it("reports a single unstable check", () => {
+      ScenarioReporter.unstableChecks(1);
+
+      expect(printedLine()).toContain(
+        "● unstable 1 check (agreed with the recording only when re-asked)",
+      );
+    });
+
+    it("reports several unstable checks", () => {
+      ScenarioReporter.unstableChecks(2);
+
+      expect(printedLine()).toContain("● unstable 2 checks");
+    });
+  });
+
   describe("step", () => {
     it("does not shorten a long input", () => {
       const goal = `press the ${"very ".repeat(60)}long button`;

@@ -72,6 +72,23 @@ export class ResponseCache extends ServerCache {
 
       const { requestHash } = this.#initiate(agentMeta, prompt, llmKey);
 
+      // NOTE: After `#initiate`, so that the span still carries the hash the
+      // lookup would have used - a bypassed request is worth telling apart from
+      // one that had nowhere to look.
+      if (this.#llmContext.isPromptNoCache(prompt)) {
+        logger.debug(
+          `Cache bypassed for prompt: "${stringExcerpt(prompt, 100)}..."`,
+        );
+        span.event("cache.lookup.miss", {
+          ...this.#spanAttrs(),
+          "agent.kind": agentMeta.kind,
+          "cache.hash": requestHash,
+          "cache.lookup.miss.reason": "bypassed",
+        });
+
+        return null;
+      }
+
       try {
         const memoryEntry = this.#memoryCache[requestHash];
         if (memoryEntry) {
@@ -154,6 +171,25 @@ export class ResponseCache extends ServerCache {
       }
 
       const { requestHash } = this.#initiate(agentMeta, prompt, llmKey);
+
+      // NOTE: The update is skipped too, and not just the lookup. A bypassed
+      // request exists to question an answer the cache already holds, so storing
+      // what it produced would overwrite that answer - under the very hash the
+      // recording being questioned depends on. And `stop` with `save_cache` then
+      // writes it to disk, where every future playback reads it.
+      if (this.#llmContext.isPromptNoCache(prompt)) {
+        logger.debug(
+          `Cache bypassed, not storing response for prompt: "${stringExcerpt(prompt, 100)}..."`,
+        );
+        span.event("cache.update.skip", {
+          ...this.#spanAttrs(),
+          "agent.kind": agentMeta.kind,
+          "cache.hash": requestHash,
+          "cache.update.skip.reason": "bypassed",
+        });
+
+        return;
+      }
 
       const storedGenerations = generations.map(Lchain.toStored);
       this.#memoryCache[requestHash] = {

@@ -96,6 +96,49 @@ describe("ResponseCache", () => {
     const result = await cache.lookup(prompt1, llmKey);
     expect(result).toBeNull();
   });
+
+  it("skips the lookup for a prompt marked no-cache", async () => {
+    const { sessionContext, llmContext, cacheStore, prompt1, llmKey } =
+      await setup();
+    const cache = new ResponseCache(sessionContext, cacheStore, llmContext);
+
+    const generations = createGenerations("Hi there");
+    await cache.update(prompt1, llmKey, generations);
+    expect(await cache.lookup(prompt1, llmKey)).toEqual(generations);
+
+    llmContext.assignPromptsNoCache([prompt1]);
+    expect(await cache.lookup(prompt1, llmKey)).toBeNull();
+
+    // NOTE: The entry is still there - a bypass questions an answer, it doesn't
+    // throw it away.
+    llmContext.clearPromptsNoCache([prompt1]);
+    expect(await cache.lookup(prompt1, llmKey)).toEqual(generations);
+  });
+
+  // NOTE: The pollution guard. A bypassed request is made to question the very
+  // entry it would otherwise overwrite - same prompt, same meta, so same hash -
+  // and a playback ends on a recorded `stop` carrying `save_cache`, which would
+  // then write the questionable answer to disk for every later run to read.
+  it("does not store a response generated for a prompt marked no-cache", async () => {
+    const {
+      sessionContext,
+      llmContext,
+      cacheStore,
+      cacheDir,
+      prompt1,
+      llmKey,
+    } = await setup();
+    const cache = new ResponseCache(sessionContext, cacheStore, llmContext);
+
+    llmContext.assignPromptsNoCache([prompt1]);
+    await cache.update(prompt1, llmKey, createGenerations("bypassed"));
+    await cache.save();
+
+    expect(await cacheDir.flatTree()).toEqual([]);
+
+    llmContext.clearPromptsNoCache([prompt1]);
+    expect(await cache.lookup(prompt1, llmKey)).toBeNull();
+  });
 });
 
 async function setup() {

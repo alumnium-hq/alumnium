@@ -1,4 +1,5 @@
 import { canonize } from "smolcanon";
+import { Env } from "../Env.ts";
 import { type CacheLookups, createCacheLookups } from "../llm/llmSchema.ts";
 import {
   MCP_CACHE_LOOKUPS_META_KEY,
@@ -58,6 +59,26 @@ export namespace ScenarioPlayer {
    */
   export type CheckComparison = "agreed" | "improved" | "disagreed";
 
+  /**
+   * What re-asking a disagreed `check` amounted to: the recording and the
+   * application disagree however many times the question is put (`confirmed`), or
+   * the verdict simply isn't reproducible (`unstable`).
+   *
+   * NOTE: A type of its own rather than a fourth `CheckComparison`. A comparison
+   * is how two verdicts relate, and `compareCheckOutput` is total over it; this
+   * is a verdict on a series of those comparisons, which no comparison of two
+   * outputs could ever produce. Only `disagreed` leads here.
+   */
+  export type CheckConfirmation = "confirmed" | "unstable";
+
+  /** A `check` that disagreed with its recording and then agreed on a re-ask. */
+  export interface UnstableCheck {
+    /** The statement as the console prints it. */
+    statement: string;
+    /** Re-asks it took to agree. */
+    attempts: number;
+  }
+
   export interface ResultSuccess {
     status: "success";
   }
@@ -76,6 +97,7 @@ export class ScenarioPlayer {
   #masker = new ScenarioMasker();
   #externalCallsCount = 0;
   #lookups = createCacheLookups();
+  #unstableChecks: ScenarioPlayer.UnstableCheck[] = [];
 
   constructor(scenario: Scenario.Type) {
     this.#scenario = scenario;
@@ -86,6 +108,19 @@ export class ScenarioPlayer {
    */
   get lookups(): CacheLookups {
     return { ...this.#lookups };
+  }
+
+  /**
+   * Checks that only agreed with the recording once they were re-asked.
+   *
+   * NOTE: A property of the run rather than part of `Result`, the way `lookups`
+   * is. A playback can carry an unstable check and then fail on a later step for
+   * an unrelated reason, and hanging this off `ResultSuccess` would lose it
+   * exactly then - while putting it on both members of the union duplicates the
+   * field.
+   */
+  get unstableChecks(): ScenarioPlayer.UnstableCheck[] {
+    return [...this.#unstableChecks];
   }
 
   //#region Playback
@@ -220,12 +255,56 @@ export class ScenarioPlayer {
               break;
             }
 
-            const message = `MCP tool '${use.name}' output does not match expected result!`;
+            // NOTE: Not taken at face value. A verdict is one LLM call, and a
+            // playback that fails on it re-records the whole scenario - far too
+            // much to spend on a coin flip. So the question is put again, with
+            // the cache bypassed so that each re-ask actually reaches the model.
+            const confirmations = Env.ALUMNIUM_CHECK_CONFIRMATIONS;
+            if (confirmations > 0) {
+              ScenarioReporter.stepCheckReasking(confirmations);
+            }
+
+            const comparisons = await this.#reaskCheck(
+              mcp,
+              input,
+              useContent,
+              confirmations,
+            );
+            const confirmation =
+              ScenarioPlayer.confirmCheckDisagreement(comparisons);
+
+            if (confirmation === "unstable") {
+              const statement = ScenarioReporter.summarizeMcpInput(input);
+              this.#unstableChecks.push({
+                statement,
+                attempts: comparisons.length,
+              });
+              logger.warn(
+                `Step ${stepCounterStr} MCP tool '${use.name}' disagreed with the recording and then agreed on re-ask ${comparisons.length}/${confirmations}, continuing`,
+              );
+              ScenarioReporter.stepCheckUnstable(
+                comparisons.length,
+                confirmations,
+              );
+              break;
+            }
+
+            // NOTE: The re-asks go into the message, because this is what the
+            // recovery agent is told about the failure (see `ScenarioRecovery`).
+            // Being told the verdict was re-tested is the difference between "the
+            // recording and the application disagree" and "an LLM said so once".
+            const message = comparisons.length
+              ? `MCP tool '${use.name}' output does not match expected result, confirmed over ${1 + comparisons.length} attempts with the response cache bypassed!`
+              : `MCP tool '${use.name}' output does not match expected result!`;
             logger.error(
               `Step ${stepCounterStr} ${message}\nExpected: {useContent}\nActual: {mcpContent}`,
               { useContent, mcpContent },
             );
             log.error = message;
+
+            if (comparisons.length) {
+              ScenarioReporter.stepCheckConfirmed(comparisons.length);
+            }
 
             return {
               status: "failure",
@@ -319,6 +398,56 @@ export class ScenarioPlayer {
     this.#masker.registerExternalOutput(callIndex, result.output);
 
     return null;
+  }
+
+  /**
+   * Re-asks a `check` whose verdict disagrees with its recording, with the
+   * response cache bypassed so that each re-ask actually reaches the model, and
+   * stops at the first one that agrees.
+   *
+   * NOTE: No delay between re-asks, and none before the first. A confirmation is
+   * meant to put the same question to the same page; waiting would let an
+   * application that was merely slow finish rendering, which quietly turns a
+   * check that needs a `wait` in front of it into a check that passes.
+   *
+   * NOTE: The cache lookups these calls report are dropped rather than added to
+   * `lookups`. That counter answers how much of the recording replayed for free,
+   * and a call whose whole purpose is to bypass the cache is not a cache failure
+   * - counting it would let one flaky check drag down the rate and make it
+   * incomparable between runs. The outcome lines say re-asks happened instead.
+   *
+   * @param mcp - Client to re-issue the call through.
+   * @param input - The `check` input, unmasked, as the step was played with.
+   * @param recordedContent - Recorded output to compare each re-ask against.
+   * @param confirmations - How many re-asks to make at most.
+   * @returns How each re-ask compared with the recording, in the order they ran.
+   */
+  async #reaskCheck(
+    mcp: ScenarioAlumniumMcp,
+    input: ScenarioAlumniumMcp.Input,
+    recordedContent: Scenario.ClaudeCodeStepToolResultContent,
+    confirmations: number,
+  ): Promise<ScenarioPlayer.CheckComparison[]> {
+    const comparisons: ScenarioPlayer.CheckComparison[] = [];
+
+    for (let attempt = 1; attempt <= confirmations; attempt++) {
+      const mcpOutput = await mcp.call("check", input, { noCache: true });
+
+      logger.debug(
+        `Re-asked check ${attempt}/${confirmations}, got: {mcpOutput}`,
+        { mcpOutput },
+      );
+
+      const comparison = ScenarioPlayer.compareCheckOutput(
+        recordedContent,
+        mcpOutput.content,
+      );
+      comparisons.push(comparison);
+
+      if (comparison !== "disagreed") break;
+    }
+
+    return comparisons;
   }
 
   //#endregion
@@ -448,6 +577,29 @@ export class ScenarioPlayer {
     return canonize(toolResultContent) === canonize(mcpOutputContent)
       ? "agreed"
       : "disagreed";
+  }
+
+  /**
+   * Judges a `check` that disagreed with its recording by what re-asking it
+   * produced.
+   *
+   * NOTE: Takes the comparisons rather than the outputs, so that the policy is a
+   * pure function of them and the reading of a verdict stays in one place -
+   * `compareCheckOutput`. Anything but `disagreed` counts as agreement, which in
+   * practice means `agreed`: a re-ask can only reach `improved` if the recording
+   * has the check failing, and a recorded failure never gets here.
+   *
+   * @param comparisons - How each re-ask compared with the recording, in order.
+   * @returns `unstable` when a re-ask agreed, `confirmed` when none did -
+   *   including when there were none to make, which is how playback behaved
+   *   before re-asking existed.
+   */
+  static confirmCheckDisagreement(
+    comparisons: ScenarioPlayer.CheckComparison[],
+  ): ScenarioPlayer.CheckConfirmation {
+    return comparisons.some((comparison) => comparison !== "disagreed")
+      ? "unstable"
+      : "confirmed";
   }
 
   //#endregion

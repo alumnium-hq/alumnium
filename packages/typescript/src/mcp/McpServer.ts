@@ -6,10 +6,16 @@
 
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import type { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
+import type {
+  ServerNotification,
+  ServerRequest,
+} from "@modelcontextprotocol/sdk/types.js";
 import type { CacheLookups } from "../llm/llmSchema.ts";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { MCP_CACHE_LOOKUPS_META_KEY } from "./mcpCacheLookups.ts";
+import { parseMcpNoCache } from "./mcpNoCache.ts";
 import { McpState } from "./McpState.ts";
 import { checkMcpTool } from "./tools/checkMcpTool.ts";
 import { doMcpTool } from "./tools/doMcpTool.ts";
@@ -54,12 +60,20 @@ export class McpServer {
         toolDef.name,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { description, inputSchema: inputSchema as any },
-        async (input: any) => {
+        async (
+          input: any,
+          extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
+        ) => {
           const id = McpTool.WithDriverId.safeParse(input).data?.id;
           const lookupsBefore = await readCacheLookups(id);
 
           try {
-            const content = await execute(input);
+            // NOTE: Read off the request `_meta` rather than the input, so that
+            // the switch stays out of every tool's input schema. See
+            // `mcpNoCache`.
+            const content = await execute(input, {
+              noCache: parseMcpNoCache(extra._meta),
+            });
             const meta = buildCacheLookupsMeta(
               lookupsBefore,
               await readCacheLookups(id),

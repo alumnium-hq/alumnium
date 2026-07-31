@@ -52,6 +52,15 @@ export namespace Alumni {
   export interface RetrievalOptions {
     vision?: boolean;
     params?: Record<string, string> | undefined;
+    /**
+     * Retrieve afresh, skipping the response cache.
+     *
+     * NOTE: For re-asking a question whose recorded answer is the thing in doubt
+     * - see `ScenarioPlayer`, which re-asks a `check` that disagrees with its
+     * recording. A plain retry cannot do that: the cache would serve it the very
+     * answer being questioned.
+     */
+    noCache?: boolean | undefined;
   }
 
   export interface CheckOptions extends RetrievalOptions {
@@ -273,6 +282,7 @@ export class Alumni {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        noCache: options.noCache,
       });
 
       if (!value || !explanation) {
@@ -313,6 +323,7 @@ export class Alumni {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        noCache: options.noCache,
       });
 
       return value === null ? explanation : value;

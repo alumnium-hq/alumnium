@@ -127,6 +127,27 @@ export abstract class ScenarioReporter {
     );
   }
 
+  /**
+   * Prints how many played checks only agreed with the recording once they were
+   * re-asked.
+   *
+   * NOTE: A run whose only blemish is an unstable check still passes, so this
+   * line is the only place the whole run says so - the per-step notes scroll away
+   * in a long scenario. Takes a count rather than the checks themselves, since
+   * the per-step notes have already named them.
+   *
+   * @param count - Unstable checks the playback carried on past.
+   */
+  static unstableChecks(count: number) {
+    if (!count) return;
+
+    const checks = count === 1 ? "check" : "checks";
+
+    this.#print(
+      `${ansi.yellow(`● unstable ${count} ${checks}`)} ${ansi.dim("(agreed with the recording only when re-asked)")}`,
+    );
+  }
+
   static finished(elapsedMs: number) {
     this.#print(`${ansi.dim("● finished in")} ${formatDuration(elapsedMs)}`);
   }
@@ -335,16 +356,68 @@ export abstract class ScenarioReporter {
   /**
    * Notes a `check` that the recording has failing and that passes now.
    *
-   * NOTE: The one comparison outcome worth a line of its own. Every tool prints
-   * its own output, and a `check` verdict line already says which way it went,
-   * so a step agreeing with the recording needs nothing added and a step
-   * disagreeing with it is explained by the recovery that follows. This case has
-   * neither: the playback carries on past it, so without a line the fact that
-   * the recording disagrees would go by unsaid.
+   * NOTE: Every tool prints its own output, and a `check` verdict line already
+   * says which way it went, so a step agreeing with the recording needs nothing
+   * added. Every other outcome does: this one because the playback carries on
+   * past it, and a disagreement because of what follows it - see
+   * `stepCheckUnstable` and `stepCheckConfirmed`.
    */
   static stepCheckImproved() {
     this.#print(
       `  ${ansi.dim("- passes now, the recording has this check failing")}`,
+    );
+  }
+
+  /**
+   * Notes that a `check` disagreeing with its recording is about to be re-asked.
+   *
+   * NOTE: Not decoration. Each re-ask is one or more live LLM calls, so without
+   * this line the console sits silent for tens of seconds after a verdict that
+   * looked like a plain failure.
+   *
+   * @param budget - How many re-asks will be made at most.
+   */
+  static stepCheckReasking(budget: number) {
+    const times = budget === 1 ? "time" : "times";
+
+    this.#print(
+      `  ${ansi.dim(`- disagrees with the recording, re-asking up to ${budget} more ${times} (cache bypassed)`)}`,
+    );
+  }
+
+  /**
+   * Notes a `check` that disagreed with its recording and then agreed on a
+   * re-ask, which the playback carries on past.
+   *
+   * NOTE: Yellow, where `stepCheckImproved` is dim. An improvement means the
+   * application got better; this means we do not know what the application did.
+   * And the line carries how many re-asks it took out of how many were allowed,
+   * because one agreement out of one possible re-ask is much weaker evidence
+   * than one out of three.
+   *
+   * @param agreedAt - Which re-ask agreed.
+   * @param budget - How many re-asks were allowed.
+   */
+  static stepCheckUnstable(agreedAt: number, budget: number) {
+    this.#print(
+      `  ${ansi.yellow("- unstable:")} ${ansi.dim(`agreed on re-ask ${agreedAt}/${budget}, continuing`)}`,
+    );
+  }
+
+  /**
+   * Notes a `check` that disagreed with its recording on every re-ask, which
+   * fails the playback.
+   *
+   * NOTE: The only line that explains, in the console, why `● recovering`
+   * follows - the disagreement never calls `failed`.
+   *
+   * @param attempts - How many re-asks were made.
+   */
+  static stepCheckConfirmed(attempts: number) {
+    const reasks = attempts === 1 ? "re-ask" : "re-asks";
+
+    this.#print(
+      `  ${ansi.dim(`- confirmed: disagreed on all ${attempts} ${reasks}`)}`,
     );
   }
 

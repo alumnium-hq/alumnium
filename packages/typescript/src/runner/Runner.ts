@@ -93,11 +93,16 @@ export class Runner {
     const result = await player.play();
 
     ScenarioReporter.cacheTotal(player.lookups);
+    // NOTE: Before the branch, so it prints whether the playback passed or went
+    // on to fail on a later step. An unstable check is a property of the run, not
+    // of its outcome.
+    ScenarioReporter.unstableChecks(player.unstableChecks.length);
 
     if (result.status === "success") {
       // NOTE: The details are the account the recording agent gave of the run.
       // A playback re-performs those very steps and agrees with every check it
-      // recorded, so what was verified then is what was verified now.
+      // recorded - or, for an unstable one, agrees on a re-ask - so what was
+      // verified then is what was verified now.
       const { details } = file.scenario.verdict ?? {};
       logger.info(`Scenario passed: ${details ?? "no recorded details"}`);
       ScenarioReporter.passed(

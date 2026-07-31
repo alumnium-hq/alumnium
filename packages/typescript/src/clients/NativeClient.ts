@@ -143,7 +143,15 @@ export class NativeClient extends Client {
     };
   })
   async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
-    const { statement, accessibilityTree, title, url, app, screenshot } = props;
+    const {
+      statement,
+      accessibilityTree,
+      title,
+      url,
+      app,
+      screenshot,
+      noCache,
+    } = props;
 
     this.session.updateContext({ app });
 
@@ -158,6 +166,7 @@ export class NativeClient extends Client {
       title,
       url,
       screenshot: screenshot || null,
+      noCache,
     });
     return [explanation, looselyTypecast(result)] as [string, Data];
   }
