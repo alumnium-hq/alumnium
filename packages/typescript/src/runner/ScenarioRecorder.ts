@@ -20,7 +20,7 @@ import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 import { ScenarioClaudeCodeSessionStore } from "./ScenarioClaudeCodeSessionStore.ts";
 import { ScenarioExternalMcp } from "./ScenarioExternalMcp.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
-import type { ScenarioPlayer } from "./ScenarioPlayer.ts";
+import { ScenarioRecovery } from "./ScenarioRecovery.ts";
 import { ScenarioReporter } from "./ScenarioReporter.ts";
 import { ScenarioVerdict } from "./ScenarioVerdict.ts";
 
@@ -30,12 +30,7 @@ export namespace ScenarioRecorder {
   export interface Props {
     text: string;
     path: string;
-    recovery?: ScenarioRecorder.Recovery | undefined;
-  }
-
-  export interface Recovery {
-    session: ScenarioClaudeCodeSessionStore.Snapshot;
-    logs: ScenarioPlayer.Log[];
+    recovery?: ScenarioRecovery.Props | undefined;
   }
 
   export interface StepBufferClaudeCodeToolUse {
@@ -64,7 +59,7 @@ export class ScenarioRecorder {
   #pendingUses = new Map<string, ScenarioRecorder.StepBuffer>();
   #externalCallsCount = 0;
   #masker = new ScenarioMasker();
-  #recovery: ScenarioRecorder.Recovery | undefined;
+  #recovery: ScenarioRecovery.Props | undefined;
   #sessionStore: ScenarioClaudeCodeSessionStore;
   #sessionId: string | undefined;
   #resultMessage: SDKResultMessage | undefined;
@@ -82,8 +77,10 @@ export class ScenarioRecorder {
     };
 
     this.#recovery = recovery;
-    this.#sessionStore = new ScenarioClaudeCodeSessionStore(recovery?.session);
-    this.#sessionId = recovery?.session?.sessionId;
+    // NOTE: Always empty, recovery or not, so that a recording is always a fresh
+    // Claude Code session. See `ScenarioRecovery` for why a recovery does not
+    // resume the session of the recording it replaces.
+    this.#sessionStore = new ScenarioClaudeCodeSessionStore();
   }
 
   get scenario(): Scenario.Type {
@@ -107,44 +104,7 @@ export class ScenarioRecorder {
     const claude = await this.#claudeCode();
 
     try {
-      const prompt = `
-You are a test agent that runs a test scenario with Alumnium.
-
-You will run the scenario step by step, using do, check, get, and other MCP tools to perform the scenario.
-You will report any errors that occur during the scenario.
-
-After reading the scenario, create an internal todo list to track execution and ensure you're on track. Complete each step before moving on to the next.
-
-The last task in the todo list is to report the scenario result.
-You MUST report that result by calling the StructuredOutput tool, and not as prose:
-- result "success" when every step was performed and every check and assertion in the scenario held.
-- result "failure" when a step could not be performed, a check returned a consistent failure, or the scenario could not be completed for any other reason.
-- details always, either way: what the scenario did and verified when it passed, what failed and how when it did not. This is what the person running the test reads at the end, so write it for them rather than restating the scenario.
-
-When using a do tool, use placeholders for any values that look like parameters.
-Consider the following two steps:
-1. do(goal: 'type test1@email.com to the email field')
-2. do(goal: 'type test2@email.com to the email field')
-Instead of hardcoding the email addresses, you should use a parameterized approach, like this:
-1. do(goal: 'type {email} to the email field', params: {"email": "test1@email.com"})
-2. do(goal: 'type {email} to the email field', params: {"email": "test2@email.com"})
-This maximizes the reusability of the scenarios and individual steps, improve test performance.
-Only do tool call supports placeholders, other tools should be called with the actual values.
-
-When a value an Alumnium tool needs comes from another tool (Bash, Read), make that tool print a
-JSON object with a named key for each value, and pass the value on unchanged.
-Consider generating a random number to type into a field:
-1. Bash(command: 'echo "{\\"number\\": $((RANDOM % 10 + 1))}"') -> {"number": 7}
-2. do(goal: 'type {number} into the amount field', params: {"number": "7"})
-Values are only refreshed on a later run when the tool that produced them printed JSON and the
-value reaches the Alumnium tool as a whole \`params\` value. A value inlined into the goal text,
-reformatted, or computed by you cannot be refreshed, so the next run will replay the recorded one.
-
-The scenario is provided below.
----
-${this.#scenario.text}
-`;
-      for await (const message of claude.query(prompt)) {
+      for await (const message of claude.query(this.#prompt())) {
         logger.debug("Received Claude Code message: {message}", { message });
 
         this.#processMessage(message);
@@ -184,6 +144,65 @@ ${this.#scenario.text}
       details,
       session,
     };
+  }
+
+  /**
+   * What the agent is asked to do, as the prompt the recording opens with.
+   *
+   * NOTE: A recovery's own instructions go here, in the prompt, rather than into
+   * the system prompt where they used to be. They are about this run of this
+   * scenario, not about how the agent works, and a system prompt is the wrong
+   * place to argue with what the rest of the context says.
+   *
+   * @returns The prompt.
+   */
+  #prompt(): string {
+    const recovery = this.#recovery;
+
+    const prompt = `
+You are a test agent that runs a test scenario with Alumnium.
+
+You will run the scenario step by step, using do, check, get, and other MCP tools to perform the scenario.
+You will report any errors that occur during the scenario.
+
+After reading the scenario, create an internal todo list to track execution and ensure you're on track. Complete each step before moving on to the next.
+
+The last task in the todo list is to report the scenario result.
+You MUST report that result by calling the StructuredOutput tool, and not as prose:
+- result "success" when every step was performed and every check and assertion in the scenario held.
+- result "failure" when a step could not be performed, a check returned a consistent failure, or the scenario could not be completed for any other reason.
+- details always, either way: what the scenario did and verified when it passed, what failed and how when it did not. This is what the person running the test reads at the end, so write it for them rather than restating the scenario.
+
+When using a do tool, use placeholders for any values that look like parameters.
+Consider the following two steps:
+1. do(goal: 'type test1@email.com to the email field')
+2. do(goal: 'type test2@email.com to the email field')
+Instead of hardcoding the email addresses, you should use a parameterized approach, like this:
+1. do(goal: 'type {email} to the email field', params: {"email": "test1@email.com"})
+2. do(goal: 'type {email} to the email field', params: {"email": "test2@email.com"})
+This maximizes the reusability of the scenarios and individual steps, improve test performance.
+Only do tool call supports placeholders, other tools should be called with the actual values.
+
+When a value an Alumnium tool needs comes from another tool (Bash, Read), make that tool print a
+JSON object with a named key for each value, and pass the value on unchanged.
+Consider generating a random number to type into a field:
+1. Bash(command: 'echo "{\\"number\\": $((RANDOM % 10 + 1))}"') -> {"number": 7}
+2. do(goal: 'type {number} into the amount field', params: {"number": "7"})
+Values are only refreshed on a later run when the tool that produced them printed JSON and the
+value reaches the Alumnium tool as a whole \`params\` value. A value inlined into the goal text,
+reformatted, or computed by you cannot be refreshed, so the next run will replay the recorded one.
+
+The scenario is provided below.
+---
+${this.#scenario.text}
+`;
+
+    // NOTE: Concatenated rather than run through `txts`, which rewraps: it joins
+    // the consecutive lines of a paragraph into one, which would run the
+    // numbered lists above - and the scenario's own markdown - together.
+    if (!recovery) return prompt;
+
+    return `${prompt}\n${ScenarioRecovery.prompt(recovery)}\n`;
   }
 
   #processMessage(message: SDKMessage) {
@@ -288,23 +307,6 @@ ${this.#scenario.text}
           preset: "claude_code",
           excludeDynamicSections: true,
           append: txts(
-            this.#recovery &&
-              `
-              The saved Alumnium scenario playback failed and must be recovered.
-
-              Start from scratch and record a new set of steps that passes
-              the original scenario. Use the playback failure details below to
-              understand what went stale, but do not try to continue from
-              the failed playback state.
-
-              Original scenario:
-
-              ${this.#scenario.text}
-
-              Playback logs::
-
-              ${JSON.stringify(this.#recovery.logs, null, 2)}
-            `,
             // NOTE: Advisory, and it cannot be enforced from here: `stop` runs
             // while the turn is still going, and tears the driver down with it,
             // so by the time the verdict exists there is nothing left to gate.
@@ -319,7 +321,11 @@ ${this.#scenario.text}
             `,
           ),
         },
-        resume: this.#sessionId,
+        // NOTE: Never resumed, not even by a recovery. The session a recovery
+        // would resume is the recording it is replacing, which ends on a
+        // successful run of this very scenario - an agent that is handed it reads
+        // the work as already done and re-executes nothing. See
+        // `ScenarioRecovery`.
       }),
     });
   }

@@ -18,6 +18,7 @@ export namespace Runner {
   export interface RecoverProps {
     text: string;
     file: ScenarioStore.File;
+    error: string;
     logs: ScenarioPlayer.Log[];
   }
 }
@@ -34,6 +35,24 @@ export class Runner {
   }
 
   async run() {
+    try {
+      await this.#run();
+    } catch (error) {
+      // NOTE: The last resort, so that anything the phases below did not turn
+      // into a verdict of its own still ends as a failed run with an exit code,
+      // rather than as an unhandled rejection that reports nothing. `bin.ts` is
+      // left without a handler on purpose - the runner is what owns the
+      // reporting.
+      const message = `Scenario run failed: ${error}`;
+      logger.error(`${message}: {error}`, { error });
+      ScenarioReporter.failed(message);
+      this.#reportFinished();
+
+      return SystemProcess.exit(1);
+    }
+  }
+
+  async #run() {
     logger.info(`Running scenario ${this.#path}`);
     this.#startedAt = performance.now();
 
@@ -94,6 +113,7 @@ export class Runner {
       await this.#recover({
         text,
         file,
+        error: result.error,
         logs: result.logs,
       });
     }
@@ -108,13 +128,23 @@ export class Runner {
     await this.#recordWith(recorder);
   }
 
+  /**
+   * Records the scenario again, after a playback of its recording failed.
+   *
+   * NOTE: The stale recording goes in as the text of the recovery's prompt, and
+   * not as the Claude Code session to resume it once was. That session ends on a
+   * successful run of this very scenario, and an agent that reads it concludes
+   * the work is already done - see `ScenarioRecovery`.
+   *
+   * @param props - What failed, and the recording it failed on.
+   */
   async #recover(props: Runner.RecoverProps) {
-    const { text, file, logs } = props;
+    const { text, file, error, logs } = props;
 
     const recorder = new ScenarioRecorder({
       text,
       path: this.#path,
-      recovery: { session: file.session, logs },
+      recovery: { scenario: file.scenario, error, logs },
     });
 
     return this.#recordWith(recorder);
@@ -125,6 +155,11 @@ export class Runner {
 
     ScenarioReporter.cacheTotal(recorder.lookups);
 
+    // NOTE: A failed run is not saved, which leaves the recording a recovery
+    // failed on right where it was. That is what should happen: the next run
+    // plays it, fails on it and recovers again for as long as the application is
+    // broken, and the moment it is fixed the playback passes with no agent at
+    // all.
     if (result.status === "failure") {
       logger.error(`Scenario failed: ${result.details}`);
       ScenarioReporter.failed(result.details);
@@ -132,6 +167,10 @@ export class Runner {
       return SystemProcess.exit(1);
     }
 
+    // NOTE: The session is saved but no longer read back - a recovery re-records
+    // in a fresh one (see `ScenarioRecovery`). It is kept as the transcript of
+    // how a recording came to be, which is the only place that survives, since
+    // the store keeps Claude Code from writing one to `~/.claude`.
     const path = await this.#store.save({
       scenario: recorder.scenario,
       session: result.session,
@@ -150,7 +189,10 @@ export class Runner {
 
   async #readScenarioText(): Promise<string> {
     try {
-      return fs.readFile(this.#path, "utf-8");
+      // NOTE: Awaited, so that the failure lands in this catch and is reported as
+      // the missing scenario file it is. Returning the promise leaves it to the
+      // catch-all in `run`, which can only say the run failed.
+      return await fs.readFile(this.#path, "utf-8");
     } catch (error) {
       logger.error(`Failed to read scenario file at ${this.#path}: ${error}`);
       return SystemProcess.exit(1);

@@ -68,7 +68,14 @@ export class McpServer {
             return meta ? { content, _meta: meta } : { content };
           } catch (error) {
             logger.error(`Error executing tool ${name}: {error}`, { error });
+            // NOTE: Flagged, not just worded as an error. It is what the MCP
+            // protocol says a failed call is, so it's what both consumers can
+            // tell one by: an agent, which a flagged result stops rather than
+            // being left to notice a text block that starts with "Error:", and a
+            // playback, which fails on a call that errors now and didn't when it
+            // was recorded. See `ScenarioPlayer.readOutputError`.
             return {
+              isError: true,
               content: [
                 { type: "text" as const, text: `Error: ${String(error)}` },
               ],

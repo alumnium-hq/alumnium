@@ -161,7 +161,7 @@ export abstract class ScenarioReporter {
       ? ansi.cyan(`→ ${shortName}`)
       : ansi.dim(`→ ${shortName}`);
     const summary = isOwn
-      ? this.#summarizeMcpInput(input)
+      ? this.summarizeMcpInput(input)
       : this.#summarize(input);
     this.#print(`${label} ${ansi.dim(summary)}`);
   }
@@ -293,7 +293,7 @@ export abstract class ScenarioReporter {
 
   static step(name: string, input: unknown) {
     this.#print(
-      `${ansi.cyan(`→ ${name}`)} ${ansi.dim(this.#summarizeMcpInput(input))}`,
+      `${ansi.cyan(`→ ${name}`)} ${ansi.dim(this.summarizeMcpInput(input))}`,
     );
   }
 
@@ -348,10 +348,14 @@ export abstract class ScenarioReporter {
    * wrapped in JSON. Anything left over is appended as a second argument, so a
    * `do` call prints as `"press {digit} button", {"digit":"2"}`.
    *
+   * NOTE: Public, and color-free, because a summarized call is also how the
+   * recovery prompt refers to a step - see `ScenarioRecovery`. Its lines are
+   * meant to read like the console ones, so they are built the same way.
+   *
    * @param input - MCP tool input.
    * @returns Summarized input.
    */
-  static #summarizeMcpInput(input: unknown): string {
+  static summarizeMcpInput(input: unknown): string {
     if (typeof input !== "object" || input === null)
       return this.#summarize(input);
 
@@ -416,10 +420,22 @@ export abstract class ScenarioReporter {
    * @returns `true` when the tool should not be printed.
    */
   static #isUnreported(name: string, details: unknown): boolean {
-    if (!UNREPORTED_TOOL_NAMES.has(name)) return false;
+    if (!ScenarioReporter.isPlumbingTool(name)) return false;
 
     logger.debug(`Not reporting '${name}' tool: {details}`, { details });
     return true;
+  }
+
+  /**
+   * Tells whether a tool is the agent's own plumbing rather than a step of the
+   * scenario. Such a call is not printed, and it is not something a later run
+   * has to be told about either - see `ScenarioRecovery.recordedSteps`.
+   *
+   * @param name - Tool name as the agent called it.
+   * @returns `true` when the tool is plumbing.
+   */
+  static isPlumbingTool(name: string): boolean {
+    return UNREPORTED_TOOL_NAMES.has(name);
   }
 
   static #isJsonLike(value: string): boolean {

@@ -16,6 +16,10 @@ const { logger } = Telemetry.get(import.meta.url);
 
 const ALUMNIUM_OPTIONS_KEY = "alumnium:options";
 
+// NOTE: How a failed tool call reads when the flag isn't there to tell it by.
+// See `ScenarioPlayer.readOutputError`.
+const ERROR_TEXT_PREFIX = "Error:";
+
 export namespace ScenarioPlayer {
   export interface Props {
     scenario: Scenario.Type;
@@ -23,8 +27,16 @@ export namespace ScenarioPlayer {
 
   export type PlayFn = (step: Scenario.ClaudeCodeStep) => Promise<void>;
 
+  /**
+   * What one played step did, kept so that a recovery can be told how far the
+   * playback got and where it stopped. See `ScenarioRecovery`.
+   *
+   * NOTE: Only an Alumnium MCP step is logged. An external call is replayed for
+   * the values it produces rather than compared, and narration is printed
+   * without being played at all.
+   */
   export interface Log {
-    step: Scenario.ClaudeCodeStep;
+    step: Scenario.ClaudeCodeMcpStep;
     mcpOutput: ScenarioAlumniumMcp.Output;
     error?: string;
   }
@@ -133,6 +145,28 @@ export class ScenarioPlayer {
 
         ScenarioReporter.toolResult(mcpName, mcpOutput.content);
 
+        // NOTE: Compared, and not just detected, the way a `check` verdict is
+        // below. A recording can legitimately hold a call that failed - the agent
+        // tried something, it errored, it went on - and replaying that call is
+        // expected to fail again. What fails a playback is a call that errors now
+        // and did not when it was recorded.
+        const recordedError = ScenarioPlayer.readOutputError(
+          result.content,
+          result.is_error,
+        );
+        const playedError = ScenarioPlayer.readOutputError(
+          mcpOutput.content,
+          Boolean(mcpOutput.isError),
+        );
+
+        if (playedError && !recordedError) {
+          const message = `MCP tool '${use.name}' failed: ${playedError}`;
+          logger.error(`Step ${stepCounterStr} ${message}`);
+          log.error = message;
+
+          return { status: "failure", error: message, logs };
+        }
+
         switch (mcpName) {
           case "start":
             this.#masker.processMcpStartOutputContent(mcpOutput.content);
@@ -173,6 +207,16 @@ export class ScenarioPlayer {
       logger.info(`Scenario played all ${stepsCount} steps successfully`);
 
       return { status: "success" };
+    } catch (error) {
+      // NOTE: A throw here - a dead MCP transport, a recorded input that no
+      // longer parses - still means this recording can no longer be replayed, so
+      // it is a playback failure like any other and goes to recovery, which
+      // spawns its own MCP child process anyway.
+      const message = `Scenario playback failed: ${error}`;
+      logger.error(`${message}: {error}`, { error });
+      ScenarioReporter.failed(message);
+
+      return { status: "failure", error: message, logs };
     } finally {
       await externalMcp.close();
       await mcp.close();
@@ -305,6 +349,34 @@ export class ScenarioPlayer {
   //#endregion
 
   //#region Matching
+
+  /**
+   * Reads the error out of an Alumnium MCP tool output, whichever way the tool
+   * reported it.
+   *
+   * NOTE: The text is read as well as the flag. The MCP server only started
+   * flagging a failed call (see `McpServer`), so in a recording made before that
+   * an `Error: ...` text block is all there is to tell one by - and both sides of
+   * a comparison have to be read the same way for a recording to keep replaying.
+   *
+   * @param content - Tool output content.
+   * @param isError - Whether the call was flagged as failed, under whichever name
+   *   the side being read spells it (`isError` on an MCP result, `is_error` on a
+   *   recorded tool result).
+   * @returns What the tool reported, `null` when it did not fail.
+   */
+  static readOutputError(
+    content: unknown,
+    isError?: boolean | undefined,
+  ): string | null {
+    const texts = ScenarioAlumniumMcp.outputTexts(content).map((text) =>
+      text.trim(),
+    );
+
+    if (isError) return texts.join(" ").trim() || "the tool call failed";
+
+    return texts.find((text) => text.startsWith(ERROR_TEXT_PREFIX)) ?? null;
+  }
 
   /**
    * Compares a `check` output against the one recorded for the same step.

@@ -57,4 +57,45 @@ describe("ScenarioPlayer", () => {
       ).toBe(false);
     });
   });
+
+  describe("readOutputError", () => {
+    it("reads a flagged error", () => {
+      expect(
+        ScenarioPlayer.readOutputError(
+          [{ type: "text", text: "Error: no such element" }],
+          true,
+        ),
+      ).toBe("Error: no such element");
+    });
+
+    it("reads an error a recording made before the flag only worded", () => {
+      expect(
+        ScenarioPlayer.readOutputError([
+          { type: "text", text: "Error: no such element" },
+        ]),
+      ).toBe("Error: no such element");
+    });
+
+    it("reads a flagged error with nothing to say", () => {
+      expect(ScenarioPlayer.readOutputError([], true)).toBe(
+        "the tool call failed",
+      );
+    });
+
+    it("reads no error out of a successful output", () => {
+      expect(
+        ScenarioPlayer.readOutputError(
+          checkOutput("success", "The display shows 4."),
+        ),
+      ).toBe(null);
+    });
+
+    it("reads no error out of an output that only mentions one", () => {
+      expect(
+        ScenarioPlayer.readOutputError(
+          checkOutput("failure", "AssertionError: Error: is not shown."),
+        ),
+      ).toBe(null);
+    });
+  });
 });
