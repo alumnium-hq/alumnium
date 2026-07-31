@@ -465,12 +465,23 @@ ${this.#scenario.text}
 
       ScenarioReporter.toolResult(pending.use.name, toolResult.content);
 
+      const callIndex = this.#externalCallsCount++;
+
+      // NOTE: A failed call registers nothing. Its output describes the failure
+      // rather than carrying a value the run produced, and playback skips such a
+      // call altogether (see `ScenarioPlayer`), so a mask pointing into it could
+      // only ever go unresolved. The index is spent either way, so that both
+      // phases number the calls after it the same.
+      if (Scenario.isFailedToolResult(toolResult)) {
+        logger.debug(
+          `External call ${callIndex} failed, not registering its output for masking`,
+        );
+        return;
+      }
+
       // NOTE: Registered after the step is recorded, so that the values are
       // masked in the MCP tool inputs that follow, not in this call's own input.
-      this.#masker.registerExternalOutput(
-        this.#externalCallsCount++,
-        toolResult.content,
-      );
+      this.#masker.registerExternalOutput(callIndex, toolResult.content);
       return;
     }
 

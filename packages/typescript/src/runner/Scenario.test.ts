@@ -53,6 +53,46 @@ describe("Scenario", () => {
     });
   });
 
+  // NOTE: What recording reads to decide whether to register an external call's
+  // values, and playback to decide whether to execute the call at all.
+  describe("isFailedToolResult", () => {
+    it("reports a flagged result as failed", () => {
+      expect(
+        Scenario.isFailedToolResult({
+          type: "tool_result",
+          tool_use_id: "toolu_1",
+          content: "Error: the tool is unavailable",
+          is_error: true,
+        }),
+      ).toBe(true);
+    });
+
+    it("reports an unflagged result as succeeded", () => {
+      expect(
+        Scenario.isFailedToolResult({
+          type: "tool_result",
+          tool_use_id: "toolu_1",
+          content: '{"item": {"id": "a1"}}',
+        }),
+      ).toBe(false);
+    });
+
+    // NOTE: An external tool reporting a failure in its own output is still a
+    // call that ran, and playback has to replay it to produce its values again.
+    it("reports a result whose output merely reads like an error as succeeded", () => {
+      expect(
+        Scenario.isFailedToolResult({
+          type: "tool_result",
+          tool_use_id: "toolu_1",
+          content: [
+            { type: "text", text: '{"errorMessage": "the item is taken"}' },
+          ],
+          is_error: false,
+        }),
+      ).toBe(false);
+    });
+  });
+
   // NOTE: A recording made before narration and the verdict were stored has to
   // keep loading, since the store is not versioned.
   describe("Schema", () => {

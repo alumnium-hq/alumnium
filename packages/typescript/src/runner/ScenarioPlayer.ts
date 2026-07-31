@@ -357,6 +357,8 @@ export class ScenarioPlayer {
    * tool input actually depends on their output, which surfaces as an
    * unresolved mask.
    *
+   * NOTE: So is a call the recording has failing, see below.
+   *
    * @param step - External tool call step to replay.
    * @param mcp - Client to reach external MCP servers through.
    * @returns Error message when the call failed, `null` otherwise.
@@ -367,6 +369,27 @@ export class ScenarioPlayer {
   ): Promise<string | null> {
     const { use } = step;
     const callIndex = this.#externalCallsCount++;
+
+    // NOTE: A call the recording has failing is not executed again. It produced
+    // no values to substitute - `ScenarioRecorder` registers none for it - and
+    // the calls that follow it are there *because* it failed, an agent retrying
+    // it being the usual case. Running it again therefore repeats whatever its
+    // failure did to the system under test while the retry runs too: a call that
+    // creates a resource and then errors can claim the very thing its retry asks
+    // for, so the retry fails instead - and the values the later inputs are
+    // masked against never get produced.
+    //
+    // The call index is still spent, so that a mask naming one of the calls
+    // after it keeps resolving.
+    if (Scenario.isFailedToolResult(step.result)) {
+      const reason = "the recording has this call failing";
+      logger.info(
+        `External tool '${use.name}' failed when it was recorded, skipping`,
+      );
+      ScenarioReporter.externalStepSkipped(use.name, reason);
+
+      return null;
+    }
 
     // NOTE: The same gate the recorder masks behind, so that a prose-only tool
     // input is left exactly as recorded in both phases.

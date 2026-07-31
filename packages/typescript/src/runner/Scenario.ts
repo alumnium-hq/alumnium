@@ -111,6 +111,29 @@ export abstract class Scenario {
   }
 
   /**
+   * Tells whether a recorded tool result is one the tool reported as failed.
+   *
+   * Both phases read an external call's outcome through here, and they have to
+   * agree: recording registers no values for a failed call and playback skips it
+   * altogether, so a phase reading the outcome differently would leave the other
+   * one's masks pointing at a call that produced nothing.
+   *
+   * NOTE: Only the flag, deliberately. An external tool's output is arbitrary -
+   * a JSON body with an `errorMessage` in it, a command that printed a complaint
+   * and exited 0 - and treating any of that as a failure would stop the recorded
+   * call from being replayed at all. The flag is what the agent sets when the
+   * call itself failed, and nothing else is that unambiguous.
+   *
+   * @param result - Recorded tool result.
+   * @returns `true` when the call was flagged as failed.
+   */
+  static isFailedToolResult(
+    result: Scenario.ClaudeCodeStepToolResult,
+  ): boolean {
+    return Boolean(result.is_error);
+  }
+
+  /**
    * Converts scenario text to a scenario ID using a hash function.
    *
    * @param text - Scenario text to convert to ID.
