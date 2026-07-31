@@ -28,6 +28,8 @@ export namespace ScenarioAlumniumMcp {
 }
 
 export class ScenarioAlumniumMcp {
+  static TIMEOUT: number = 300_000; // 5 minutes
+
   static Input = z.record(z.string(), z.unknown());
 
   static TextBlock = z.object({ type: z.literal("text"), text: z.string() });
@@ -118,10 +120,14 @@ export class ScenarioAlumniumMcp {
   ): Promise<ScenarioAlumniumMcp.Output> {
     logger.debug(`Calling MCP tool '${name}' with: {input}`, { input });
 
-    const result = await this.#client.callTool({
-      name,
-      arguments: input,
-    });
+    const result = await this.#client.callTool(
+      {
+        name,
+        arguments: input,
+      },
+      undefined,
+      { timeout: ScenarioAlumniumMcp.TIMEOUT },
+    );
 
     logger.debug(`MCP tool '${name}' result: {result}`, { result });
     return result;
