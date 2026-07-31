@@ -1,8 +1,17 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { Telemetry } from "../telemetry/Telemetry.ts";
+import { retry } from "../utils/retry.ts";
+import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
+
+/** Three attempts, waiting 1s, 3s and 9s in between. */
+const EXPONENTIAL_RETRY: retry.Options = {
+  maxAttempts: 3,
+  backOff: 1000,
+  backOffFactor: 3,
+};
 
 const TOOL_USE_NAME_PREFIX = "mcp__";
 const TOOL_USE_NAME_SEPARATOR = "__";
@@ -17,10 +26,13 @@ export namespace ScenarioExternalMcp {
   export interface ServerConfig {
     command: string;
     args: string[];
+    retry?: retry.Options;
   }
 
-  export interface StdioServerConfig extends ServerConfig {
+  export interface StdioServerConfig {
     type: "stdio";
+    command: string;
+    args: string[];
   }
 
   /** An MCP tool call, as split out of a recorded tool use name. */
@@ -46,6 +58,7 @@ export class ScenarioExternalMcp {
         "--backend",
         "https://qe-test-data-mcp-staging.a.musta.ch/mcp",
       ],
+      retry: EXPONENTIAL_RETRY,
     },
   };
 
@@ -54,9 +67,9 @@ export class ScenarioExternalMcp {
    */
   static mcpServers(): Record<string, ScenarioExternalMcp.StdioServerConfig> {
     return Object.fromEntries(
-      Object.entries(this.#servers).map(([name, config]) => [
+      Object.entries(this.#servers).map(([name, { command, args }]) => [
         name,
-        { type: "stdio", ...config },
+        { type: "stdio", command, args },
       ]),
     );
   }
@@ -108,29 +121,36 @@ export class ScenarioExternalMcp {
   /**
    * Calls a tool on an external MCP server, connecting to it on first use.
    *
+   * A server configured with `retry` has its failing calls repeated with an
+   * exponential back-off, both when the call itself throws - a server that is
+   * down or a connection that broke - and when it comes back as an error result.
+   *
    * @param server - Configured server name.
    * @param tool - Tool name on that server, without the `mcp__` prefix.
    * @param input - Recorded tool input.
-   * @returns Tool output.
+   * @returns Tool output, an error result once the retries are exhausted.
    */
   async call(
     server: string,
     tool: string,
     input: Record<string, unknown>,
   ): Promise<ScenarioExternalMcp.Output> {
-    const client = await this.#client(server);
+    const options = ScenarioExternalMcp.#servers[server]?.retry;
+    if (!options) return this.#call(server, tool, input);
 
-    logger.debug(`Calling MCP tool '${tool}' on '${server}' with: {input}`, {
-      input,
-    });
-
-    const output = await client.callTool({ name: tool, arguments: input });
-
-    logger.debug(`MCP tool '${tool}' on '${server}' result: {output}`, {
-      output,
-    });
-
-    return output;
+    try {
+      return await retry(options, async () => {
+        const output = await this.#call(server, tool, input);
+        if (output.isError) throw new ToolError(server, tool, output);
+        return output;
+      });
+    } catch (error) {
+      // NOTE: The last attempt returned an error result rather than throwing, so
+      // it is handed back as the call's output. Reporting the failure is up to
+      // the caller, which has the recorded call at hand to name it by.
+      if (error instanceof ToolError) return error.output;
+      throw error;
+    }
   }
 
   /**
@@ -151,6 +171,29 @@ export class ScenarioExternalMcp {
     this.#clients.clear();
   }
 
+  /**
+   * Makes a single attempt at a tool call, connecting to the server when needed.
+   */
+  async #call(
+    server: string,
+    tool: string,
+    input: Record<string, unknown>,
+  ): Promise<ScenarioExternalMcp.Output> {
+    const client = await this.#client(server);
+
+    logger.debug(`Calling MCP tool '${tool}' on '${server}' with: {input}`, {
+      input,
+    });
+
+    const output = await client.callTool({ name: tool, arguments: input });
+
+    logger.debug(`MCP tool '${tool}' on '${server}' result: {output}`, {
+      output,
+    });
+
+    return output;
+  }
+
   async #client(server: string): Promise<Client> {
     const connected = this.#clients.get(server);
     if (connected) return connected;
@@ -166,14 +209,45 @@ export class ScenarioExternalMcp {
       version: "1.0.0",
     });
     const transport = new StdioClientTransport({
-      ...config,
+      command: config.command,
+      args: config.args,
       // oxlint-disable-next-line no-process-env
       env: process.env as any,
     });
+
+    // NOTE: A server that exited is dropped from the connected ones, so that the
+    // next call - a retry of the one that just broke, or a later one - spawns it
+    // again instead of talking to a closed transport.
+    client.onclose = () => {
+      logger.debug(`MCP server '${server}' closed the connection`);
+      this.#clients.delete(server);
+    };
 
     await client.connect(transport);
     this.#clients.set(server, client);
 
     return client;
+  }
+}
+
+/**
+ * A tool call that came back as an error result, in a shape `retry` can act on.
+ *
+ * NOTE: Never leaves `call`, which unwraps the output again once the retries are
+ * exhausted.
+ */
+class ToolError extends Error {
+  readonly output: ScenarioExternalMcp.Output;
+
+  constructor(
+    server: string,
+    tool: string,
+    output: ScenarioExternalMcp.Output,
+  ) {
+    const details = ScenarioAlumniumMcp.outputTexts(output.content).join("\n");
+    super(
+      `MCP tool '${tool}' on '${server}' returned an error: ${details || "no details"}`,
+    );
+    this.output = output;
   }
 }

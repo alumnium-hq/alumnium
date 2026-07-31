@@ -1,6 +1,7 @@
 import { always } from "alwaysly";
 import { Env } from "../Env.ts";
 import { Logger } from "../telemetry/Logger.ts";
+import { sleep } from "./timers.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -8,6 +9,7 @@ export namespace retry {
   export interface Options {
     maxAttempts?: number;
     backOff?: number;
+    backOffFactor?: number;
     doRetry?: (error: Error) => boolean;
   }
 
@@ -37,8 +39,9 @@ export async function retry<Type>(
   }
 
   const maxAttempts = options.maxAttempts ?? Env.ALUMNIUM_RETRIES;
-  const backOff = options.backOff ?? Env.ALUMNIUM_DELAY * 1000;
+  const backOffFactor = options.backOffFactor ?? 1;
 
+  let backOff = options.backOff ?? Env.ALUMNIUM_DELAY * 1000;
   let lastError: Error | undefined;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -70,7 +73,8 @@ export async function retry<Type>(
           `Attempt ${attempt}/${maxAttempts} failed, retrying in ${backOff}ms: ${lastError.message}`,
           { attempt, maxAttempts, backOff, error: lastError },
         );
-        await new Promise((resolve) => setTimeout(resolve, backOff));
+        await sleep(backOff);
+        backOff *= backOffFactor;
       } else {
         logger.debug(
           `Attempt ${attempt}/${maxAttempts} failed, no more retries`,
