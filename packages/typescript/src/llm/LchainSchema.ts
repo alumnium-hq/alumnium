@@ -13,7 +13,7 @@ export abstract class LchainSchema {
     type: z.literal("text"),
     text: z.string(),
     annotations: z.array(z.unknown()).exactOptional(),
-    phase: z.undefined().exactOptional(),
+    phase: z.union([z.undefined(), z.string()]).exactOptional(),
   });
 
   static MessageFunctionCallData = z.object({
@@ -83,6 +83,8 @@ export abstract class LchainSchema {
     id: z.string(),
     type: z.literal("reasoning"),
     summary: z.array(this.ReasoningSummary),
+    content: z.array(z.unknown()).exactOptional(),
+    encrypted_content: z.string().exactOptional(),
   });
 
   static MessageDataAdditionalKwargsReasoning = z.discriminatedUnion("type", [
@@ -228,6 +230,7 @@ export abstract class LchainSchema {
     status: z.union([z.literal("completed"), z.string()]),
     content: z.array(this.MetadataOutput),
     role: z.union([z.literal("assistant"), z.string()]),
+    phase: z.string().exactOptional(),
   });
 
   static OutputFunctionCall = z.object({
