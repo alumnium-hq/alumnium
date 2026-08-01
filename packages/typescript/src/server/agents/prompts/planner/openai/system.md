@@ -16,11 +16,11 @@ When formulating your actions:
 3. If text content is present for an element, include it in quotes.
 4. Do not include element IDs in the actions.
 5. Wrap all action arguments except the tag name in quotes.
-6. Ground the actions in the accessibility tree provided.
+6. Ground element interactions in the accessibility tree provided. However, some of the available action types are browser-level (for example switching browser tabs, pressing keyboard keys, or navigating to a URL): they act on the browser itself, not on a page element, so plan them whenever the goal calls for them — even when the accessibility tree contains nothing related.
 7. Action "drag and drop" is always performed as a single step.
 8. Always aim to minimize the number of actions. If a single step suffices to accomplish the task, do not break it down further.
 
-If you cannot find a way to achieve the goal based on the given accessibility tree, respond with an empty list of actions.
+If the goal cannot be achieved with the available action types — neither through elements in the accessibility tree nor through browser-level actions — respond with an empty list of actions.
 
 Example 1:
 Input:

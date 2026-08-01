@@ -1,7 +1,7 @@
-import { ChatCursor } from "@alumnium/langchain-cursor";
 import type { ToolDefinition } from "@langchain/core/language_models/base";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { Generation } from "@langchain/core/outputs";
+import { ChatCursor } from "langchain-cursor";
 import { describe, expect, it, vi } from "vitest";
 import { Lchain } from "./Lchain.ts";
 
@@ -9,7 +9,7 @@ const createMock = vi.fn();
 const sendMock = vi.fn();
 
 // NOTE: The mock reaches the dynamic import inside the package only because
-// vitest inlines @alumnium/langchain-cursor (see vitest.config.ts).
+// vitest inlines langchain-cursor (see vitest.config.ts).
 vi.mock("@cursor/sdk", () => ({
   Agent: {
     create: (...args: unknown[]) => createMock(...args),

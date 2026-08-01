@@ -21,7 +21,7 @@ export default defineConfig({
             deps: {
               // Process the package with vitest so vi.mock("@cursor/sdk")
               // reaches the dynamic import inside it.
-              inline: ["@alumnium/langchain-cursor"],
+              inline: ["langchain-cursor"],
             },
           },
         },

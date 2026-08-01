@@ -375,12 +375,13 @@ async function main() {
         const result = await Bun.build({
           entrypoints: [BIN_SRC_PATH, ...standaloneEmbeddedAssetPaths],
           // NOTE: @cursor/sdk (a transitive dependency of
-          // @alumnium/langchain-cursor) is external because its
+          // langchain-cursor) is external because its
           // webpack-chunked dist loads chunks dynamically
           // (`require("./" + chunkId + ".js")`), which cannot be bundled into
-          // a single-file executable. Compiled binaries do not resolve
-          // node_modules at runtime either, so ChatCursor reports a clear
-          // unsupported error there.
+          // a single-file executable — and its license does not permit
+          // embedding it as an asset either. Compiled binaries download it
+          // from the npm registry on first cursor-provider use and load it
+          // from ~/.alumnium/vendor (src/standalone/installCursorSdk.ts).
           external: ["chromium-bidi", "electron", "@cursor/sdk"],
           compile: {
             target: getBunTarget(os, arch),

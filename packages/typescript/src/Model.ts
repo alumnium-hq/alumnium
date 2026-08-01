@@ -49,7 +49,6 @@ const ModelProvider = z.enum(providers);
 
 const devs = [
   "anthropic",
-  "cursor",
   "google",
   "deepseek",
   "meta",

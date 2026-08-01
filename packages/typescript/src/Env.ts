@@ -46,6 +46,14 @@ export const Env = {
     return envVar("ALUMNIUM_CHANGE_ANALYSIS", z.stringbool().default(false));
   },
 
+  /**
+   * Pre-installed Cursor SDK node_modules tree for compiled binaries in
+   * air-gapped environments; skips the download-on-first-use install.
+   */
+  get ALUMNIUM_CURSOR_SDK_DIR() {
+    return envVar("ALUMNIUM_CURSOR_SDK_DIR", pathString().optional());
+  },
+
   get ALUMNIUM_DELAY() {
     return envVar("ALUMNIUM_DELAY", z.coerce.number().default(0.5));
   },

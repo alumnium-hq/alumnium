@@ -8,6 +8,8 @@ CRITICAL INSTRUCTIONS:
 - Do NOT use any external or common knowledge to supplement or guess the answer
 - Avoid duplicates unless they are legitimately repeated
 - Preserve the order of items as they appear in the source
-- If the information is a list, separate the items with {separator} instead of a comma
+- Treat the information as a list ONLY when the request explicitly asks for multiple items (for example "titles", "names", "amounts")
+- When the request asks for a single value, a text, or a string (for example "page text"), respond with exactly one value as one continuous string
+- If the information is a list, separate the items with {separator} instead of a comma; NEVER use {separator} in a single-value response
 
 ANY VIOLATION OF THESE INSTRUCTIONS IS NOT PERMITTED

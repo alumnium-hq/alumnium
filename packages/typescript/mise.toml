@@ -39,10 +39,13 @@ sources = [
   "src/server/agents/prompts/prompts.ts",
   "src/drivers/scripts/*.js",
   "src/server/agents/prompts/**/*.md",
+  "src/standalone/cursorSdkManifest.ts",
+  "../../bun.lock",
 ]
 outputs = [
   "src/server/agents/prompts/bundledPrompts.ts",
   "src/drivers/scripts/bundledScripts.ts",
+  "src/standalone/cursorSdkVendorManifest.ts",
 ]
 
 [tasks.publish]

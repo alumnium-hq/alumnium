@@ -1,5 +1,4 @@
 import { ChatCodex } from "@alumnium/langchain-codex";
-import { ChatCursor } from "@alumnium/langchain-cursor";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatBedrockConverse } from "@langchain/aws";
 import type { BaseCache } from "@langchain/core/caches";
@@ -17,8 +16,11 @@ import {
 import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";
 import { never } from "alwaysly";
+import { ChatCursor } from "langchain-cursor";
+import { isSingleFileExecutable } from "../bundle.ts";
 import { Env } from "../Env.ts";
 import { Model } from "../Model.ts";
+import { loadVendoredCursorSdk } from "../standalone/installCursorSdk.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { maskString } from "../utils/string.ts";
 
@@ -218,6 +220,10 @@ export class LlmFactory {
       model: model.name,
       ...apiKeyField(apiKey),
       cache,
+      // The compiled binary cannot resolve @cursor/sdk from node_modules;
+      // the loader downloads it on first use and serves it from
+      // ~/.alumnium/vendor (see standalone/installCursorSdk.ts).
+      ...(isSingleFileExecutable() ? { sdkLoader: loadVendoredCursorSdk } : {}),
     });
   }
 
