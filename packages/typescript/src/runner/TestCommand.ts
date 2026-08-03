@@ -3,6 +3,7 @@ import { CliCommand } from "../cli/CliCommand.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { pathString } from "../utils/schema.ts";
 import { Runner } from "./Runner.ts";
+import { SystemProcess } from "../system/SystemProcess.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -22,6 +23,8 @@ export const TestCommand = CliCommand.define({
 
   action: async ({ args }) => {
     await Logger.initEnv(logger);
+
+    SystemProcess.initCleanup();
 
     const [scenarioPath] = args;
 

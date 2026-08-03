@@ -30,18 +30,22 @@ async function main() {
   cli.addEventListener("command:*", () => {
     const invalidCommand = cli.args[0];
     const commandNames = COMMANDS.map((command) => command.name).join(", ");
-    // NOTE: We intentionally use `console` here to format it independently. Also,
-    // see a NOTE on the top.
+    // NOTE: We intentionally use `console` here to format it independently.
+    // Also, see a NOTE on the top.
     console.error(
       `${ansi.red("Error:")} Incorrect '${invalidCommand}' command, use one of: ${commandNames}\n`,
     );
     console.log(`${ansi.blue("Help:")}\n`);
     cli.outputHelp();
+    // NOTE: We don't use SystemProcess.shutdown here to prevent Logger from
+    // being initialized as SystemProcess depends on it.
     process.exit(1);
   });
 
   if (Bun.argv.length <= 2) {
     cli.outputHelp();
+    // NOTE: We don't use SystemProcess.shutdown here to prevent Logger from
+    // being initialized as SystemProcess depends on it.
     process.exit(1);
   }
 

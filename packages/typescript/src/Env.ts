@@ -215,6 +215,10 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_SHUTDOWN_TIMEOUT_MS() {
+    return envVar("ALUMNIUM_SHUTDOWN_TIMEOUT", z.coerce.number().default(5000));
+  },
+
   get AWS_ACCESS_KEY() {
     return secretEnvVar("AWS_ACCESS_KEY", z.string().optional());
   },

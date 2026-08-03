@@ -179,7 +179,7 @@ export class ScenarioRecorder {
 
               ${this.#scenario.text}
 
-              Playback logs::
+              Playback logs:
 
               ${JSON.stringify(this.#recovery.logs, null, 2)}
             `,
@@ -208,7 +208,7 @@ export class ScenarioRecorder {
         "Claude Code binary not found. Please install Claude Code to run the scenario.",
       );
 
-      return SystemProcess.exit(1);
+      return SystemProcess.shutdown(1);
     }
   }
 

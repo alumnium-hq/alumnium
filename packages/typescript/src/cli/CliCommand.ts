@@ -77,6 +77,8 @@ export abstract class CliCommand {
             console.log(`${ansi.blue("Help:")}\n`);
             definition.cli.outputHelp();
           }
+          // NOTE: We don't use SystemProcess.shutdown here to prevent Logger
+          // from being initialized as SystemProcess depends on it.
           process.exit(1);
         }
 

@@ -62,7 +62,7 @@ export class Runner {
       spinner.succeed(clr.green("Tests passed"));
     }
 
-    await SystemProcess.exit(0);
+    await SystemProcess.shutdown(0);
   }
 
   async #play(
@@ -118,7 +118,7 @@ export class Runner {
 
     if (result.status === "failure") {
       logger.error(`Scenario recording failed: ${result.error}`);
-      return SystemProcess.exit(1);
+      return SystemProcess.shutdown(1);
     }
 
     const path = await this.#store.save({
@@ -134,7 +134,7 @@ export class Runner {
       return fs.readFile(this.#path, "utf-8");
     } catch (error) {
       logger.error(`Failed to read scenario file at ${this.#path}: ${error}`);
-      return SystemProcess.exit(1);
+      return SystemProcess.shutdown(1);
     }
   }
 }

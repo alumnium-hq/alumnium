@@ -89,6 +89,8 @@ export abstract class Logger {
 
     if (!valid) {
       await this.flush();
+      // NOTE: We don't use SystemProcess.shutdown here to avoid circular
+      // dependency between Logger and SystemProcess.
       process.exit(1);
     }
   }

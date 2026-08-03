@@ -11,6 +11,7 @@ import { Logger } from "../telemetry/Logger.ts";
 import { ensureDir } from "../utils/fs.ts";
 import { sleep } from "../utils/timers.ts";
 import { serverApp } from "./serverApp.ts";
+import { SystemProcess } from "../system/SystemProcess.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -104,6 +105,8 @@ export const ServerCommand = CliCommand.define({
 
     await Logger.initEnv(logger);
 
+    SystemProcess.initCleanup();
+
     const {
       host,
       port,
@@ -120,12 +123,12 @@ export const ServerCommand = CliCommand.define({
 
     if (daemonKill) {
       await killDaemon(pidPath, null, daemonForce);
-      process.exit(0);
+      return SystemProcess.shutdown(0);
     }
 
     if (daemon) {
       await startDaemon(pidPath, daemonForce);
-      if (!daemonWait) process.exit(0);
+      if (!daemonWait) return SystemProcess.shutdown(0);
     }
 
     if (daemonWait) {
@@ -133,13 +136,13 @@ export const ServerCommand = CliCommand.define({
       const pid = await waitForPidFile(pidPath, deadline);
       if (pid == null) {
         logger.error(`Server PID file not found or invalid at ${pidPath}`);
-        process.exit(1);
+        return SystemProcess.shutdown(1);
       }
 
       if (!isProcessRunning(pid)) {
         logger.error(`Server process ${pid} is not running`);
         await removePidFile(pidPath);
-        process.exit(1);
+        return SystemProcess.shutdown(1);
       }
 
       const healthy = await waitForHealth(host, port, pid, deadline);
@@ -147,25 +150,16 @@ export const ServerCommand = CliCommand.define({
         logger.error(
           `Server health check timed out after ${daemonWaitTimeout}ms`,
         );
-        process.exit(1);
+        return SystemProcess.shutdown(1);
       }
       logger.info(`Server is healthy at http://${host}:${port}/v1/health`);
-      process.exit(0);
+      return SystemProcess.shutdown(0);
     }
 
     if (Env.ALUMNIUM_SERVER_DAEMONIZE) {
       await writePidFile(pidPath);
 
-      const cleanup = removePidFileSync.bind(null, pidPath);
-      process.on("exit", cleanup);
-      process.on("SIGINT", () => {
-        cleanup();
-        process.exit(0);
-      });
-      process.on("SIGTERM", () => {
-        cleanup();
-        process.exit(0);
-      });
+      SystemProcess.useCleanup(() => removePidFileSync(pidPath));
     }
 
     logger.debug("Starting server");
@@ -183,7 +177,7 @@ async function startDaemon(pidPath: string, force: boolean): Promise<void> {
     logger.error(
       `Server is already running with PID ${existingPid} (${pidPath})`,
     );
-    process.exit(1);
+    return SystemProcess.shutdown(1);
   }
 
   await killDaemon(pidPath, existingPid, true);
@@ -219,7 +213,7 @@ async function killDaemon(
   if (!pid) {
     if (force) return;
     logger.error(`Server PID file not found or invalid at ${pidPath}`);
-    process.exit(1);
+    return SystemProcess.shutdown(1);
   }
 
   if (isProcessRunning(pid)) {
@@ -231,7 +225,7 @@ async function killDaemon(
   if (!force)
     logger.warn(`Process ${pid} is not running, removing stale PID file`);
   await removePidFile(pidPath);
-  if (!force) process.exit(1);
+  if (!force) return SystemProcess.shutdown(1);
 }
 
 async function waitForPidFile(
