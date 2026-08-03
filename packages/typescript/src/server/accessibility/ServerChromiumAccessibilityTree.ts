@@ -115,7 +115,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
       const isGeneric = role === "generic";
 
       // Create the XML element for the node
-      const xmlEl = Xml.element(role);
+      const xmlEl = Xml.element(isGeneric ? "div" : role);
 
       if (!excludeAttrs.has("name") && name) xmlEl.attribs.name = name;
 

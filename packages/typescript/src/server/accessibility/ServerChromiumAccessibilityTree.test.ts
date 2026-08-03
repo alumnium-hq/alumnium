@@ -15,27 +15,27 @@ describe(ServerChromiumAccessibilityTree, () => {
       expect(tree.toXml()).toBe(
         `
 <RootWebArea name="TodoMVC: React" id="1" focusable="true">
-  <generic id="4">
-    <generic id="5">
+  <div id="4">
+    <div id="5">
       <heading id="6" level="1">
         todos
       </heading>
-      <generic id="8">
+      <div id="8">
         <textbox name="New Todo Input" id="9" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
-          <generic id="11" editable="plaintext"/>
+          <div id="11" editable="plaintext"/>
         </textbox>
         <LabelText id="12">
           New Todo Input
         </LabelText>
-      </generic>
-    </generic>
+      </div>
+    </div>
     <main id="14">
-      <generic id="15">
+      <div id="15">
         <checkbox id="16" invalid="false" focusable="true" checked="false"/>
         <LabelText id="17">
           \\u276fToggle All Input
         </LabelText>
-      </generic>
+      </div>
       <list id="21">
         <listitem id="22" level="1">
           <checkbox id="24" invalid="false" focusable="true" focused="true" checked="true"/>
@@ -51,7 +51,7 @@ describe(ServerChromiumAccessibilityTree, () => {
         </listitem>
       </list>
     </main>
-    <generic id="32">
+    <div id="32">
       1 item left!
       <list id="35">
         <listitem id="36" level="1">
@@ -73,8 +73,8 @@ describe(ServerChromiumAccessibilityTree, () => {
       <button id="45" invalid="false" focusable="true">
         Clear completed
       </button>
-    </generic>
-  </generic>
+    </div>
+  </div>
   <contentinfo id="47">
     <paragraph id="48">
       Double-click to edit a todo
@@ -176,16 +176,16 @@ describe(ServerChromiumAccessibilityTree, () => {
       expect(xml).toMatchInlineSnapshot(`
         "<RootWebArea name="YouTube" id="1" focusable="true" url="https://www.youtube.com/">
           <banner id="8">
-            <generic id="13">
+            <div id="13">
               <button name="Guide" id="15" invalid="false" focusable="true" pressed="true"/>
-              <generic id="22">
+              <div id="22">
                 <link name="YouTube Home" id="23" focusable="true" url="https://www.youtube.com/"/>
                 SG
-              </generic>
+              </div>
               <button id="34" invalid="false" focusable="true">
                 Skip navigation
               </button>
-            </generic>
+            </div>
           </banner>
         </RootWebArea>"
       `);
