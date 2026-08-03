@@ -5,7 +5,8 @@ import { Telemetry } from "../telemetry/Telemetry.ts";
 import { ScenarioPlayer } from "./ScenarioPlayer.ts";
 import { ScenarioRecorder } from "./ScenarioRecorder.ts";
 import { ScenarioStore } from "./ScenarioStore.ts";
-import ora, { type Ora } from "ora";
+import { Spinner } from "picospinner";
+
 import clr from "picocolors";
 
 const { logger } = Telemetry.get(import.meta.url);
@@ -46,7 +47,8 @@ export class Runner {
       console.log(
         `  ${clr.green("✔")} Found scenario recording ${clr.gray(`(${file.scenario.id})`)}`,
       );
-      const initialSpinner = ora({ text: "Running tests…", indent: 2 }).start();
+      const initialSpinner = new RunnerSpinner("Running tests…");
+      initialSpinner.start();
 
       const finalSpinner = await this.#play(text, file, initialSpinner);
 
@@ -55,7 +57,8 @@ export class Runner {
       logger.info("Scenario not found in the store, recording…");
 
       console.log(`  ${clr.yellow("?")} No scenario recording found`);
-      const spinner = ora({ text: "Recording…", indent: 2 }).start();
+      const spinner = new RunnerSpinner("Recording…");
+      spinner.start();
 
       await this.#record(text);
 
@@ -68,8 +71,8 @@ export class Runner {
   async #play(
     text: string,
     file: ScenarioStore.File,
-    initialSpinner: Ora,
-  ): Promise<Ora> {
+    initialSpinner: RunnerSpinner,
+  ): Promise<RunnerSpinner> {
     const player = new ScenarioPlayer(file.scenario);
 
     const result = await player.play();
@@ -78,7 +81,8 @@ export class Runner {
       logger.info("Scenario playback failed, starting recovery...");
       initialSpinner.warn("Scenario playback failed");
 
-      const recoverySpinner = ora({ text: "Recovering…", indent: 2 }).start();
+      const recoverySpinner = new RunnerSpinner("Recovering…");
+      recoverySpinner.start();
 
       await this.#recover({
         text,
@@ -136,5 +140,14 @@ export class Runner {
       logger.error(`Failed to read scenario file at ${this.#path}: ${error}`);
       return SystemProcess.shutdown(1);
     }
+  }
+}
+
+export class RunnerSpinner extends Spinner {
+  constructor(text: string) {
+    super({
+      text,
+      symbolFormatter: (str) => `  ${str}`,
+    });
   }
 }
