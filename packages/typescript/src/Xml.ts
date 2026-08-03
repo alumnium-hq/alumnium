@@ -1,22 +1,25 @@
 import { always } from "alwaysly";
 import { render } from "dom-serializer";
-import {
-  Node as DOMHandlerNode,
-  Element,
-  NodeWithChildren,
-  Text,
-  hasChildren,
-  isTag,
-  isText,
-} from "domhandler";
+import { hasChildren, isTag, isText, Text, Element } from "domhandler";
 import { parseDocument } from "htmlparser2";
 import { "default" as xmlFormatter } from "xml-formatter";
+import type * as DomHandler from "domhandler";
 
 // NOTE: xml-formatter has busted types, so we need to cast it manually.
 const xmlFormat: (typeof xmlFormatter)["default"] = xmlFormatter as any;
 
 export namespace Xml {
-  export type Node = DOMHandlerNode;
+  export type Node = DomHandler.Node;
+
+  export type ChildNode = DomHandler.ChildNode;
+
+  export type NodeWithChildren = DomHandler.NodeWithChildren;
+
+  export type Element = DomHandler.Element;
+
+  export type ElementAttrs = Record<string, string>;
+
+  export type Text = DomHandler.Text;
 
   export type AnyElement = Element | Text;
 }
@@ -40,9 +43,9 @@ export abstract class Xml {
     }
   }
 
-  static parseRoot(xml: string): Element {
+  static parseRoot(xml: string): DomHandler.Element {
     const roots = Xml.parseRootChildren(xml);
-    let root: Element | null = null;
+    let root: DomHandler.Element | null = null;
     for (const node of roots) {
       const el = Xml.nodeAsTag(node);
       if (el && el.tagName === "root") {
@@ -73,25 +76,33 @@ export abstract class Xml {
     return xml;
   }
 
-  static nodeAsTag(node: Xml.Node): Element | null {
+  static nodeAsTag(node: Xml.Node): Xml.Element | null {
     if (isTag(node)) {
       return node;
     }
     return null;
   }
 
-  static nodeAsNodeWithChildren(node: Xml.Node): NodeWithChildren | null {
+  static nodeAsNodeWithChildren(node: Xml.Node): Xml.NodeWithChildren | null {
     if (hasChildren(node)) {
       return node;
     }
     return null;
   }
 
-  static nodeAsText(node: Xml.Node): Text | null {
+  static nodeAsText(node: Xml.Node): Xml.Text | null {
     if (isText(node)) {
       return node;
     }
     return null;
+  }
+
+  static text(content: string): Xml.Text {
+    return new Text(content);
+  }
+
+  static element(content: string, attrs: Xml.ElementAttrs = {}): Xml.Element {
+    return new Element(content, attrs);
   }
 
   static #sanitizeElement(node: Xml.AnyElement): void {

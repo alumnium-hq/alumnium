@@ -1,12 +1,12 @@
 import { always } from "alwaysly";
-import { type ChildNode, Element, Node, Text } from "domhandler";
 import { textContent } from "domutils";
 import { pythonicId } from "../../pythonic/pythonicId.ts";
 import { Xml } from "../../Xml.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
+import type { Tree } from "../../tree/Tree.ts";
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
-  readonly SKIPPED_PROPERTIES = new Set([
+  #skipAttrs = new Set([
     "backendDOMNodeId",
     "ignored",
     "name",
@@ -18,84 +18,74 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     "expanded",
   ]);
 
-  tree: Record<string, ChromiumNode>;
+  #tree: Record<string, Tree.Node>;
 
   constructor(xml: string) {
     super();
-    this.tree = {}; // Initialize the result dictionary
+    this.#tree = {}; // Initialize the result dictionary
 
     // Parse the raw XML
-    const roots = Xml.parseAnyRootChildren(xml);
+    const xmlRoots = Xml.parseAnyRootChildren(xml);
 
     // Process each root element
-    for (const rootElem of roots) {
-      const node = this.#xmlToNode(rootElem);
-      // Use backendDOMNodeId as the key
-      const nodeId = node.backendDOMNodeId ?? pythonicId(node);
-      this.tree[`${nodeId}`] = node;
+    for (const xmlRoot of xmlRoots) {
+      const node = this.#xmlNodeToTreeNode(xmlRoot);
+      // Use backendId as the key
+      const backendId = node.backendId ?? pythonicId(node);
+      this.#tree[`${backendId}`] = node;
     }
 
     void this.devCaptureTreeInput("chrome", xml);
   }
 
   /** Convert XML element to node dict structure with simplified IDs. */
-  #xmlToNode(node: Node): ChromiumNode {
-    const elem = Xml.nodeAsTag(node);
-    const text = Xml.nodeAsText(node);
+  #xmlNodeToTreeNode(xmlNode: Xml.Node): Tree.Node {
+    const xmlEl = Xml.nodeAsTag(xmlNode);
+    const text = Xml.nodeAsText(xmlNode);
 
     // Assign simplified ID
-    const simplifiedId = elem ? this.getNextId() : -1;
+    const simplifiedId = xmlEl ? this.getNextId() : -1;
 
     // Map to raw_id attribute
-    const rawId = elem?.attribs["raw_id"] ?? "";
+    const rawId = xmlEl?.attribs["raw_id"] ?? "";
     if (rawId) {
       this.simplifiedToRawId[simplifiedId] = parseInt(rawId);
     }
 
-    const role = elem?.tagName ?? (text ? "StaticText" : undefined);
+    const role = xmlEl?.tagName ?? (text ? "StaticText" : undefined);
     always(role);
 
-    const chromiumNode: ChromiumNode = {
+    const node: Tree.Node = {
       id: simplifiedId,
-      role: { value: role },
+      role,
       // NOTE: In Python implementation we had "True"/"False" strings, so we use
       // case-insensitive comparison here to be safe.
-      ignored: elem?.attribs["ignored"]?.toLowerCase() === "true",
+      ignored: xmlEl?.attribs["ignored"]?.toLowerCase() === "true",
     };
 
     // Add name if present
-    if (elem?.attribs["name"]) {
-      chromiumNode.name = { value: elem.attribs["name"] };
-    }
+    if (xmlEl?.attribs["name"]) node.name = xmlEl.attribs["name"];
 
     // Add properties from other attributes
-    const properties: ChromiumNodeProperty[] = [];
-    for (const [attrName, attrValue] of Object.entries(elem?.attribs || {})) {
-      if (!this.SKIPPED_PROPERTIES.has(attrName)) {
-        properties.push({
-          name: attrName,
-          value: { value: attrValue },
-        });
-      }
+    const attrs: Tree.Attr[] = [];
+    for (const [name, value] of Object.entries(xmlEl?.attribs || {})) {
+      if (this.#skipAttrs.has(name)) continue;
+      attrs.push({ name, value });
     }
 
-    if (properties.length) {
-      chromiumNode.properties = properties;
-    }
+    if (attrs.length) node.attrs = attrs;
 
     // Process children recursively
-    const nodeChildren = Xml.nodeAsNodeWithChildren(node)?.children || [];
-    const children: ChromiumNode[] = [];
-    for (const childElem of nodeChildren) {
-      const childNode = this.#xmlToNode(childElem);
-      children.push(childNode);
+    const xmlChildren = Xml.nodeAsNodeWithChildren(xmlNode)?.children || [];
+    const children: Tree.Node[] = [];
+    for (const xmlChild of xmlChildren) {
+      const child = this.#xmlNodeToTreeNode(xmlChild);
+      children.push(child);
     }
 
-    if (children.length) {
-      chromiumNode.nodes = children;
-    }
+    if (children.length) node.children = children;
 
-    return chromiumNode;
+    return node;
   }
 
   /**
@@ -104,111 +94,96 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
    * @param excludeAttrs Optional set of attribute names to exclude from output.
    */
   override toXml(excludeAttrs: Set<string> = new Set()): string {
-    function convertNodeToXml(
-      node: ChromiumNode,
-      parent: Element | null = null,
-    ): Element | null {
-      // Extract the desired information
-      const roleValue = node.role.value;
-      const nodeId = node.id ?? "";
-      const ignored = node.ignored ?? false;
-      const nameValue = node.name?.value ?? "";
-      const properties = node.properties ?? [];
-      const children = node.nodes ?? [];
+    function treeNodeToXmlNode(
+      node: Tree.Node,
+      xmlParent: Xml.Element | null,
+    ): Xml.Element | null {
+      const { id, role, ignored, name = "", attrs = [], children = [] } = node;
 
-      if (roleValue === "StaticText" && parent) {
-        parent.children.push(new Text(nameValue));
-      } else if (roleValue === "none" || ignored) {
-        if (children.length) {
-          for (const child of children) {
-            convertNodeToXml(child, parent);
-          }
-        }
-      } else if (roleValue === "generic" && !children.length) {
+      if (role === "StaticText" && xmlParent) {
+        xmlParent.children.push(Xml.text(name));
         return null;
-      } else {
-        // Create the XML element for the node
-        const xmlElement = new Element(roleValue, {});
-
-        if (nameValue && !excludeAttrs.has("name")) {
-          xmlElement.attribs.name = nameValue;
-        }
-
-        // Assign a unique ID to the element
-        if (!excludeAttrs.has("id")) {
-          xmlElement.attribs.id = String(nodeId);
-        }
-
-        for (const property of properties) {
-          const propName = property.name;
-          if (!excludeAttrs.has(propName)) {
-            xmlElement.attribs[propName] = property.value.value ?? "";
-          }
-        }
-
-        // Add children recursively
-        for (const child of children) {
-          convertNodeToXml(child, xmlElement);
-        }
-
-        if (parent) {
-          parent.children.push(xmlElement);
-        }
-
-        return xmlElement;
       }
 
-      return null;
+      if (role === "none" || ignored) {
+        for (const child of children) treeNodeToXmlNode(child, xmlParent);
+        return null;
+      }
+
+      if (role === "generic" && !children.length) return null;
+
+      // Create the XML element for the node
+      const xmlEl = Xml.element(role);
+
+      if (!excludeAttrs.has("name") && name) xmlEl.attribs.name = name;
+
+      // Assign a unique ID to the element
+      if (!excludeAttrs.has("id")) xmlEl.attribs.id = String(id);
+
+      for (const attr of attrs) {
+        const attrName = attr.name;
+        if (!excludeAttrs.has(attrName))
+          xmlEl.attribs[attrName] = attr.value ?? "";
+      }
+
+      // Add children recursively
+      for (const child of children) treeNodeToXmlNode(child, xmlEl);
+
+      if (xmlParent) xmlParent.children.push(xmlEl);
+
+      return xmlEl;
     }
 
     // Create the root XML element
-    const rootElements: Element[] = [];
-    for (const rootId of Object.keys(this.tree)) {
-      always(this.tree[rootId]);
-      const element = convertNodeToXml(this.tree[rootId]);
-      if (element) {
-        rootElements.push(element);
-        this.#pruneRedundantName(element);
+    const xmlRoots: Xml.Element[] = [];
+    for (const rootId of Object.keys(this.#tree)) {
+      always(this.#tree[rootId]);
+
+      const xmlRoot = treeNodeToXmlNode(this.#tree[rootId], null);
+
+      if (xmlRoot) {
+        xmlRoots.push(xmlRoot);
+        this.#pruneRedundantName(xmlRoot);
       }
     }
 
-    // Convert the XML elements to a string
-    const xmlString = Xml.format(rootElements);
-    void this.devCaptureTreeOutput(xmlString);
+    const xml = Xml.format(xmlRoots);
+    void this.devCaptureTreeOutput(xml);
 
-    return xmlString;
+    return xml;
   }
 
   /**
    * Recursively traverses the tree, removes redundant name information from parent nodes,
    * and returns a list of all content (names) in the current subtree.
    */
-  #pruneRedundantName(node: ChildNode): string[] {
-    const elem = Xml.nodeAsTag(node);
+  #pruneRedundantName(xmlChild: Xml.ChildNode): string[] {
+    const xmlEl = Xml.nodeAsTag(xmlChild);
+
     // RootWebArea should remain untouched - only process children
-    if (elem?.tagName === "RootWebArea") {
+    if (xmlEl?.tagName === "RootWebArea") {
       const descendantContent: string[] = [];
-      for (const child of elem.children) {
+      for (const child of xmlEl.children) {
         descendantContent.push(...this.#pruneRedundantName(child));
       }
-      return this.#getTexts(elem).concat(descendantContent);
+      return this.#getTexts(xmlEl).concat(descendantContent);
     }
 
     // Remove name if it equals text
     // TODO: This is incorrect, Python's `node.text` gives only direct text nodes,
     // while `textContent(node)` gives all descendant text.
-    const nodeText = textContent(node);
-    if (elem?.attribs.name && nodeText && elem.attribs.name === nodeText) {
-      delete elem.attribs.name;
+    const nodeText = textContent(xmlChild);
+    if (xmlEl?.attribs.name && nodeText && xmlEl.attribs.name === nodeText) {
+      delete xmlEl.attribs.name;
     }
 
-    if (!(elem?.children || []).length) {
-      return this.#getTexts(node);
+    if (!(xmlEl?.children || []).length) {
+      return this.#getTexts(xmlChild);
     }
 
     // Recursively process children and gather all descendant content
     const descendantContent: string[] = [];
-    for (const child of elem?.children || []) {
+    for (const child of xmlEl?.children || []) {
       descendantContent.push(...this.#pruneRedundantName(child));
     }
 
@@ -216,12 +191,12 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     descendantContent.sort((left, right) => right.length - left.length);
 
     for (const content of descendantContent) {
-      if (elem?.attribs.name) {
-        elem.attribs.name = elem.attribs.name.replace(content, "").trim();
-      }
-      if (elem?.attribs.label) {
-        elem.attribs.label = elem.attribs.label.replace(content, "").trim();
-      }
+      if (xmlEl?.attribs.name)
+        xmlEl.attribs.name = xmlEl.attribs.name.replace(content, "").trim();
+
+      if (xmlEl?.attribs.label)
+        xmlEl.attribs.label = xmlEl.attribs.label.replace(content, "").trim();
+
       // TODO: Figure out how to handle that properly, trimming text nodes in
       // the middle of children list can lead to removing spaces and merging
       // words together. It is unclear what problem this solved in Python,
@@ -233,55 +208,23 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     // The content of the current subtree is its own (potentially pruned) name
     // plus all the content from its descendants.
     const currentSubtreeContent = descendantContent;
-    if (elem?.attribs.name) {
-      currentSubtreeContent.push(...this.#getTexts(node));
-    }
+    if (xmlEl?.attribs.name)
+      currentSubtreeContent.push(...this.#getTexts(xmlChild));
 
     return currentSubtreeContent;
   }
 
-  #getTexts(node: ChildNode): string[] {
-    const elem = Xml.nodeAsTag(node);
-    const text = Xml.nodeAsText(node);
+  #getTexts(xmlChild: Xml.ChildNode): string[] {
     const texts = new Set<string>();
-    if (elem?.attribs.name) {
-      texts.add(elem.attribs.name);
-    }
-    if (elem?.attribs.label) {
-      texts.add(elem.attribs.label);
-    }
-    if (text) {
-      texts.add(text.data);
-    }
+    const xmlEl = Xml.nodeAsTag(xmlChild);
+
+    if (xmlEl?.attribs.name) texts.add(xmlEl.attribs.name);
+
+    if (xmlEl?.attribs.label) texts.add(xmlEl.attribs.label);
+
+    const text = Xml.nodeAsText(xmlChild);
+    if (text) texts.add(text.data);
 
     return Array.from(texts);
   }
 }
-
-//#region Types
-
-// TODO: Find a place for these types, as they might be shared between different
-// modules or even defined in an external library.
-
-interface ChromiumNodeProperty {
-  name: string;
-  value: {
-    value: string;
-  };
-}
-
-interface ChromiumNode {
-  id: number;
-  role: {
-    value: string;
-  };
-  ignored: boolean;
-  name?: {
-    value: string;
-  };
-  properties?: ChromiumNodeProperty[];
-  nodes?: ChromiumNode[];
-  backendDOMNodeId?: string | number;
-}
-
-//#endregion
