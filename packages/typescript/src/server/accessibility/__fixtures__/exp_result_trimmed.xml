@@ -1,0 +1,37 @@
+<RootWebArea name="YouTube" id="1" focusable="true" url="https://www.youtube.com/">
+	<generic id="3">
+		<generic id="4">
+			<generic id="6">
+				<generic id="7">
+					<banner id="8">
+						<generic id="12">
+							<generic id="13">
+								<generic id="14">
+									<button name="Guide" id="15" invalid="false" focusable="true" pressed="true">
+										<generic id="16"/>
+									</button>
+									<generic id="19"/>
+								</generic>
+								<generic id="22">
+									<link name="YouTube Home" id="23" focusable="true" url="https://www.youtube.com/">
+										<generic id="24">
+											<generic id="25"/>
+										</generic>
+									</link>
+									<generic id="28">
+										SG
+									</generic>
+								</generic>
+								<generic id="31">
+									<button id="34" invalid="false" focusable="true">
+										Skip navigation
+									</button>
+								</generic>
+							</generic>
+						</generic>
+					</banner>
+				</generic>
+			</generic>
+		</generic>
+	</generic>
+</RootWebArea>

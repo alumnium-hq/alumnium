@@ -101,7 +101,10 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
    *
    * @param excludeAttrs Optional set of attribute names to exclude from output.
    */
-  override toXml(excludeAttrs: Set<string> = new Set()): string {
+  override toXml(
+    excludeAttrs: Set<string> = new Set(),
+    trim?: boolean,
+  ): string {
     function convertNodeToXml(
       node: ChromiumNode,
       parent: Element | null = null,

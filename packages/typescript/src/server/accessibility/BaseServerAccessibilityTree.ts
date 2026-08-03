@@ -66,3 +66,26 @@ export abstract class BaseServerAccessibilityTree {
     throw new Error(`Cannot extract id from ${String(id)}`);
   }
 }
+
+export namespace BaseServerAccessibilityTree {
+  export interface NodeProperty {
+    name: string;
+    value: {
+      value: string;
+    };
+  }
+
+  export interface Node {
+    id: number;
+    role: {
+      value: string;
+    };
+    ignored: boolean;
+    name?: {
+      value: string;
+    };
+    properties?: NodeProperty[];
+    nodes?: Node[];
+    backendDOMNodeId?: string | number;
+  }
+}
