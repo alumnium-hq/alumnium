@@ -101,7 +101,9 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
       const { id, role, ignored, name = "", attrs = [], children = [] } = node;
 
       if (role === "StaticText" && xmlParent) {
-        xmlParent.children.push(Xml.text(name));
+        if (name.trim()) {
+          xmlParent.children.push(Xml.text(name));
+        }
         return null;
       }
 
@@ -110,7 +112,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
         return null;
       }
 
-      if (role === "generic" && !children.length) return null;
+      const isGeneric = role === "generic";
 
       // Create the XML element for the node
       const xmlEl = Xml.element(role);
@@ -129,9 +131,34 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
       // Add children recursively
       for (const child of children) treeNodeToXmlNode(child, xmlEl);
 
-      if (xmlParent) xmlParent.children.push(xmlEl);
+      // Return root XML element
+      if (!xmlParent) return xmlEl;
 
-      return xmlEl;
+      // Trim redundant nodes
+
+      const xmlElAttrs = new Set(Object.keys(xmlEl.attribs));
+      const emptyAttrs =
+        xmlElAttrs.size === 0 ||
+        (xmlElAttrs.size === 1 && xmlElAttrs.has("id"));
+
+      if (isGeneric) {
+        // Collapse empty generic nodes with no children and no attrs except
+        // for id.
+        if (!xmlEl.children.length && emptyAttrs) return null;
+
+        // Flatten generic nodes with a single child and no attributes except
+        // for id.
+        if (xmlEl.children.length === 1 && emptyAttrs) {
+          const singleChild = xmlEl.children[0];
+          always(singleChild);
+
+          xmlParent.children.push(singleChild);
+          return null;
+        }
+      }
+
+      xmlParent.children.push(xmlEl);
+      return null;
     }
 
     // Create the root XML element
