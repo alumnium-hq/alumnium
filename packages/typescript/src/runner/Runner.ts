@@ -21,6 +21,18 @@ export namespace Runner {
     file: ScenarioStore.File;
     logs: ScenarioPlayer.Log[];
   }
+
+  export interface RunProps {
+    record: boolean;
+    recover: boolean;
+  }
+
+  export interface PlayProps {
+    text: string;
+    file: ScenarioStore.File;
+    recover: boolean;
+    spinner: RunnerSpinner;
+  }
 }
 
 export class Runner {
@@ -33,8 +45,10 @@ export class Runner {
     this.#path = path;
   }
 
-  async run() {
+  async run(props: Runner.RunProps) {
     logger.info(`Running scenario ${this.#path}`);
+
+    const { record, recover } = props;
 
     const text = await this.#readScenarioText();
     const file = await this.#store.lookup(text);
@@ -50,10 +64,15 @@ export class Runner {
       const initialSpinner = new RunnerSpinner("Running tests…");
       initialSpinner.start();
 
-      const finalSpinner = await this.#play(text, file, initialSpinner);
+      const finalSpinner = await this.#play({
+        text,
+        file,
+        recover,
+        spinner: initialSpinner,
+      });
 
       finalSpinner.succeed("Tests passed");
-    } else {
+    } else if (record) {
       logger.info("Scenario not found in the store, recording…");
 
       console.log(`  ${clr.yellow("?")} No scenario recording found`);
@@ -63,21 +82,25 @@ export class Runner {
       await this.#record(text);
 
       spinner.succeed(clr.green("Tests passed"));
+    } else {
+      logger.warn("Scenario not found in the store");
+
+      console.log(`  ${clr.red("✖")} No scenario recording found`);
+      return SystemProcess.shutdown(1);
     }
 
     await SystemProcess.shutdown(0);
   }
 
-  async #play(
-    text: string,
-    file: ScenarioStore.File,
-    initialSpinner: RunnerSpinner,
-  ): Promise<RunnerSpinner> {
+  async #play(props: Runner.PlayProps): Promise<RunnerSpinner> {
+    const { text, file, recover, spinner: initialSpinner } = props;
     const player = new ScenarioPlayer(file.scenario);
 
     const result = await player.play();
 
-    if (result.status === "failure") {
+    if (result.status !== "failure") return initialSpinner;
+
+    if (recover) {
       logger.info("Scenario playback failed, starting recovery...");
       initialSpinner.warn("Scenario playback failed");
 
@@ -92,6 +115,9 @@ export class Runner {
 
       return recoverySpinner;
     }
+
+    logger.error(`Scenario playback failed: ${result.error}`);
+    initialSpinner.fail("Scenario playback failed");
 
     return initialSpinner;
   }

@@ -19,16 +19,38 @@ export const TestCommand = CliCommand.define({
     }),
   ]),
 
-  Options: z.object({}),
+  Options: z.object({
+    skipRecovery: z
+      .union([z.boolean(), z.stringbool()])
+      .default(true)
+      .register(CliCommand.option, {
+        name: "skip-recovery",
+        syntax: "--skip-recovery",
+        description: "Skip recovery if scenario playback fails",
+      }),
 
-  action: async ({ args }) => {
+    skipRecording: z
+      .union([z.boolean(), z.stringbool()])
+      .default(false)
+      .register(CliCommand.option, {
+        name: "skip-recording",
+        syntax: "--skip-recording",
+        description: "Skip recording if scenario is not found in the store",
+      }),
+  }),
+
+  action: async ({ args, options }) => {
     await Logger.initEnv(logger);
 
     SystemProcess.initCleanup();
 
     const [scenarioPath] = args;
+    const { skipRecovery, skipRecording } = options;
 
     const runner = new Runner(scenarioPath);
-    await runner.run();
+    await runner.run({
+      recover: !skipRecovery,
+      record: !skipRecording,
+    });
   },
 });
