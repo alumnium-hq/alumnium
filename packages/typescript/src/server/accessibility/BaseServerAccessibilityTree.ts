@@ -1,13 +1,8 @@
-import { Env } from "../../Env.ts";
-import { FileStore } from "../../FileStore/FileStore.ts";
 import { always } from "alwaysly";
 import { xxh64Str } from "smolxxh/str";
-
-// TODO: Combine with the original interface is defined in packages/typescript/src/tools/BaseTool.ts
-export interface ToolCall {
-  name: string;
-  args: Record<string, unknown>;
-}
+import { Env } from "../../Env.ts";
+import { FileStore } from "../../FileStore/FileStore.ts";
+import type { ToolCall } from "../../tools/BaseTool.ts";
 
 export abstract class BaseServerAccessibilityTree {
   #simplifiedIdCounter = 0;
