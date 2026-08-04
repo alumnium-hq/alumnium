@@ -1,0 +1,216 @@
+<RootWebArea raw_id="1" backendDOMNodeId="22" nodeId="f0:22" ignored="false" name="Hands-On Selenium WebDriver with Java" focusable="true" focused="true" url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
+  <none raw_id="2" backendDOMNodeId="25" nodeId="f0:25" ignored="true">
+    <none raw_id="3" backendDOMNodeId="37" nodeId="f0:37" ignored="true">
+      <main raw_id="4" backendDOMNodeId="38" nodeId="f0:38" ignored="false" name="">
+        <none raw_id="5" backendDOMNodeId="39" nodeId="f0:39" ignored="true">
+          <none raw_id="6" backendDOMNodeId="40" nodeId="f0:40" ignored="true">
+            <none raw_id="7" backendDOMNodeId="41" nodeId="f0:41" ignored="true">
+              <heading raw_id="8" backendDOMNodeId="42" nodeId="f0:42" ignored="false" name="Hands-On Selenium WebDriver with Java" level="1">
+                <StaticText raw_id="9" backendDOMNodeId="134" nodeId="f0:134" ignored="false" name="Hands-On Selenium WebDriver with Java">
+                  <InlineTextBox raw_id="10" nodeId="f0:-1000000002" ignored="false" name="Hands-On Selenium WebDriver "/>
+                  <InlineTextBox raw_id="11" nodeId="f0:-1000000003" ignored="false" name="with Java"/>
+                </StaticText>
+              </heading>
+              <heading raw_id="12" backendDOMNodeId="43" nodeId="f0:43" ignored="false" name="Practice site" level="5">
+                <StaticText raw_id="13" backendDOMNodeId="135" nodeId="f0:135" ignored="false" name="Practice site">
+                  <InlineTextBox raw_id="14" nodeId="f0:-1000000004" ignored="false" name="Practice site"/>
+                </StaticText>
+              </heading>
+            </none>
+            <generic raw_id="15" backendDOMNodeId="44" nodeId="f0:44" ignored="false" name="">
+              <link raw_id="16" backendDOMNodeId="45" nodeId="f0:45" ignored="false" name="" focusable="true" url="https://github.com/bonigarcia/selenium-webdriver-java">
+                <image raw_id="17" backendDOMNodeId="23" nodeId="f0:23" ignored="false" name="" url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
+              </link>
+            </generic>
+          </none>
+          <none raw_id="18" backendDOMNodeId="46" nodeId="f0:46" ignored="true">
+            <none raw_id="19" backendDOMNodeId="47" nodeId="f0:47" ignored="true">
+              <separator raw_id="20" backendDOMNodeId="48" nodeId="f0:48" ignored="false" name="" settable="true" orientation="horizontal"/>
+            </none>
+          </none>
+          <none raw_id="21" backendDOMNodeId="49" nodeId="f0:49" ignored="true">
+            <none raw_id="22" backendDOMNodeId="50" nodeId="f0:50" ignored="true">
+              <heading raw_id="23" backendDOMNodeId="51" nodeId="f0:51" ignored="false" name="Web form" level="1">
+                <StaticText raw_id="24" backendDOMNodeId="136" nodeId="f0:136" ignored="false" name="Web form">
+                  <InlineTextBox raw_id="25" nodeId="f0:-1000000005" ignored="false" name="Web form"/>
+                </StaticText>
+              </heading>
+            </none>
+          </none>
+          <generic raw_id="26" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="">
+            <none raw_id="27" backendDOMNodeId="52" nodeId="f0:52" ignored="true">
+              <none raw_id="28" backendDOMNodeId="53" nodeId="f0:53" ignored="true">
+                <LabelText raw_id="29" backendDOMNodeId="54" nodeId="f0:54" ignored="false" name="">
+                  <StaticText raw_id="30" backendDOMNodeId="137" nodeId="f0:137" ignored="false" name="Text input">
+                    <InlineTextBox raw_id="31" nodeId="f0:-1000000006" ignored="false" name="Text input"/>
+                  </StaticText>
+                  <textbox raw_id="32" backendDOMNodeId="2" nodeId="f0:2" ignored="false" name="Text input" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
+                    <generic raw_id="33" backendDOMNodeId="55" nodeId="f0:55" ignored="false" name="" editable="plaintext">
+                      <StaticText raw_id="34" backendDOMNodeId="184" nodeId="f0:184" ignored="false" name="Hello Alumnium!" editable="plaintext">
+                        <InlineTextBox raw_id="35" nodeId="f0:-1000000027" ignored="false" name="Hello Alumnium!" editable="plaintext"/>
+                      </StaticText>
+                    </generic>
+                  </textbox>
+                </LabelText>
+                <LabelText raw_id="36" backendDOMNodeId="56" nodeId="f0:56" ignored="false" name="">
+                  <StaticText raw_id="37" backendDOMNodeId="138" nodeId="f0:138" ignored="false" name="Password">
+                    <InlineTextBox raw_id="38" nodeId="f0:-1000000007" ignored="false" name="Password"/>
+                  </StaticText>
+                  <textbox raw_id="39" backendDOMNodeId="3" nodeId="f0:3" ignored="false" name="Password" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
+                    <generic raw_id="40" backendDOMNodeId="57" nodeId="f0:57" ignored="false" name="" editable="plaintext"/>
+                  </textbox>
+                </LabelText>
+                <LabelText raw_id="41" backendDOMNodeId="58" nodeId="f0:58" ignored="false" name="">
+                  <StaticText raw_id="42" backendDOMNodeId="139" nodeId="f0:139" ignored="false" name="Textarea">
+                    <InlineTextBox raw_id="43" nodeId="f0:-1000000008" ignored="false" name="Textarea"/>
+                  </StaticText>
+                  <textbox raw_id="44" backendDOMNodeId="4" nodeId="f0:4" ignored="false" name="Textarea" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false" labelledby="">
+                    <generic raw_id="45" backendDOMNodeId="59" nodeId="f0:59" ignored="false" name="" editable="plaintext">
+                      <StaticText raw_id="46" backendDOMNodeId="185" nodeId="f0:185" ignored="false" name="Testing the LocatorAgent" editable="plaintext">
+                        <InlineTextBox raw_id="47" nodeId="f0:-1000000029" ignored="false" name="Testing the LocatorAgent" editable="plaintext"/>
+                      </StaticText>
+                    </generic>
+                  </textbox>
+                </LabelText>
+                <LabelText raw_id="48" backendDOMNodeId="60" nodeId="f0:60" ignored="false" name="">
+                  <StaticText raw_id="49" backendDOMNodeId="140" nodeId="f0:140" ignored="false" name="Disabled input">
+                    <InlineTextBox raw_id="50" nodeId="f0:-1000000009" ignored="false" name="Disabled input"/>
+                  </StaticText>
+                  <textbox raw_id="51" backendDOMNodeId="5" nodeId="f0:5" ignored="false" name="Disabled input" disabled="true" invalid="false" editable="plaintext" multiline="false" readonly="false" required="false" labelledby="">
+                    <none raw_id="52" backendDOMNodeId="61" nodeId="f0:61" ignored="true"/>
+                    <generic raw_id="53" backendDOMNodeId="62" nodeId="f0:62" ignored="false" name=""/>
+                  </textbox>
+                </LabelText>
+                <LabelText raw_id="54" backendDOMNodeId="63" nodeId="f0:63" ignored="false" name="">
+                  <StaticText raw_id="55" backendDOMNodeId="141" nodeId="f0:141" ignored="false" name="Readonly input">
+                    <InlineTextBox raw_id="56" nodeId="f0:-1000000010" ignored="false" name="Readonly input"/>
+                  </StaticText>
+                  <textbox raw_id="57" backendDOMNodeId="6" nodeId="f0:6" ignored="false" name="Readonly input" invalid="false" focusable="true" editable="plaintext" multiline="false" readonly="true" required="false" labelledby="">
+                    <generic raw_id="58" backendDOMNodeId="64" nodeId="f0:64" ignored="false" name="">
+                      <StaticText raw_id="59" backendDOMNodeId="142" nodeId="f0:142" ignored="false" name="Readonly input">
+                        <InlineTextBox raw_id="60" nodeId="f0:-1000000011" ignored="false" name="Readonly input"/>
+                      </StaticText>
+                    </generic>
+                  </textbox>
+                </LabelText>
+                <generic raw_id="61" backendDOMNodeId="65" nodeId="f0:65" ignored="false" name="">
+                  <link raw_id="62" backendDOMNodeId="66" nodeId="f0:66" ignored="false" name="Return to index" focusable="true" url="https://bonigarcia.dev/selenium-webdriver-java/index.html">
+                    <StaticText raw_id="63" backendDOMNodeId="143" nodeId="f0:143" ignored="false" name="Return to index">
+                      <InlineTextBox raw_id="64" nodeId="f0:-1000000012" ignored="false" name="Return to index"/>
+                    </StaticText>
+                  </link>
+                </generic>
+              </none>
+              <none raw_id="65" backendDOMNodeId="67" nodeId="f0:67" ignored="true">
+                <LabelText raw_id="66" backendDOMNodeId="68" nodeId="f0:68" ignored="false" name="">
+                  <StaticText raw_id="67" backendDOMNodeId="144" nodeId="f0:144" ignored="false" name="Dropdown (select)">
+                    <InlineTextBox raw_id="68" nodeId="f0:-1000000013" ignored="false" name="Dropdown (select)"/>
+                  </StaticText>
+                  <combobox raw_id="69" backendDOMNodeId="7" nodeId="f0:7" ignored="false" name="Dropdown (select)" invalid="false" focusable="true" hasPopup="menu" expanded="false" labelledby="">
+                    <MenuListPopup raw_id="70" backendDOMNodeId="71" nodeId="f0:71" ignored="false" name="">
+                      <none raw_id="71" backendDOMNodeId="72" nodeId="f0:72" ignored="true">
+                        <option raw_id="72" backendDOMNodeId="75" nodeId="f0:75" ignored="false" name="Open this select menu" focusable="true" selected="true"/>
+                        <option raw_id="73" backendDOMNodeId="78" nodeId="f0:78" ignored="false" name="One" focusable="true" selected="false"/>
+                        <option raw_id="74" backendDOMNodeId="81" nodeId="f0:81" ignored="false" name="Two" focusable="true" selected="false"/>
+                        <option raw_id="75" backendDOMNodeId="84" nodeId="f0:84" ignored="false" name="Three" focusable="true" selected="false"/>
+                      </none>
+                    </MenuListPopup>
+                  </combobox>
+                </LabelText>
+                <LabelText raw_id="76" backendDOMNodeId="87" nodeId="f0:87" ignored="false" name="">
+                  <StaticText raw_id="77" backendDOMNodeId="145" nodeId="f0:145" ignored="false" name="Dropdown (datalist)">
+                    <InlineTextBox raw_id="78" nodeId="f0:-1000000014" ignored="false" name="Dropdown (datalist)"/>
+                  </StaticText>
+                  <combobox raw_id="79" backendDOMNodeId="8" nodeId="f0:8" ignored="false" name="Dropdown (datalist)" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false" labelledby="">
+                    <none raw_id="80" backendDOMNodeId="88" nodeId="f0:88" ignored="true"/>
+                    <none raw_id="81" backendDOMNodeId="89" nodeId="f0:89" ignored="true">
+                      <none raw_id="82" backendDOMNodeId="90" nodeId="f0:90" ignored="true">
+                        <generic raw_id="83" backendDOMNodeId="91" nodeId="f0:91" ignored="false" name="" editable="plaintext"/>
+                      </none>
+                    </none>
+                  </combobox>
+                  <none raw_id="84" backendDOMNodeId="93" nodeId="f0:93" ignored="true"/>
+                </LabelText>
+                <LabelText raw_id="85" backendDOMNodeId="109" nodeId="f0:109" ignored="false" name="">
+                  <StaticText raw_id="86" backendDOMNodeId="146" nodeId="f0:146" ignored="false" name="File input">
+                    <InlineTextBox raw_id="87" nodeId="f0:-1000000015" ignored="false" name="File input"/>
+                  </StaticText>
+                  <button raw_id="88" backendDOMNodeId="10" nodeId="f0:10" ignored="false" name="File input" invalid="false" focusable="true" labelledby=""/>
+                </LabelText>
+                <generic raw_id="89" backendDOMNodeId="112" nodeId="f0:112" ignored="false" name="">
+                  <LabelText raw_id="90" backendDOMNodeId="113" nodeId="f0:113" ignored="false" name="">
+                    <checkbox raw_id="91" backendDOMNodeId="11" nodeId="f0:11" ignored="false" name="Checked checkbox" invalid="false" focusable="true" checked="true" labelledby=""/>
+                    <StaticText raw_id="92" backendDOMNodeId="147" nodeId="f0:147" ignored="false" name="Checked checkbox">
+                      <InlineTextBox raw_id="93" nodeId="f0:-1000000016" ignored="false" name="Checked checkbox"/>
+                    </StaticText>
+                  </LabelText>
+                  <LabelText raw_id="94" backendDOMNodeId="114" nodeId="f0:114" ignored="false" name="">
+                    <checkbox raw_id="95" backendDOMNodeId="12" nodeId="f0:12" ignored="false" name="Default checkbox" invalid="false" focusable="true" checked="false" labelledby=""/>
+                    <StaticText raw_id="96" backendDOMNodeId="148" nodeId="f0:148" ignored="false" name="Default checkbox">
+                      <InlineTextBox raw_id="97" nodeId="f0:-1000000017" ignored="false" name="Default checkbox"/>
+                    </StaticText>
+                  </LabelText>
+                </generic>
+                <generic raw_id="98" backendDOMNodeId="115" nodeId="f0:115" ignored="false" name="">
+                  <none raw_id="99" backendDOMNodeId="116" nodeId="f0:116" ignored="true">
+                    <radio raw_id="100" backendDOMNodeId="13" nodeId="f0:13" ignored="false" name="Checked radio" invalid="false" focusable="true" checked="true" labelledby=""/>
+                    <none raw_id="101" backendDOMNodeId="149" nodeId="f0:149" ignored="true"/>
+                  </none>
+                </generic>
+                <generic raw_id="102" backendDOMNodeId="117" nodeId="f0:117" ignored="false" name="">
+                  <none raw_id="103" backendDOMNodeId="118" nodeId="f0:118" ignored="true">
+                    <radio raw_id="104" backendDOMNodeId="14" nodeId="f0:14" ignored="false" name="Default radio" invalid="false" focusable="true" checked="false" labelledby=""/>
+                    <none raw_id="105" backendDOMNodeId="150" nodeId="f0:150" ignored="true"/>
+                  </none>
+                </generic>
+                <button raw_id="106" backendDOMNodeId="17" nodeId="f0:17" ignored="false" name="Submit" invalid="false" focusable="true">
+                  <StaticText raw_id="107" backendDOMNodeId="151" nodeId="f0:151" ignored="false" name="Submit">
+                    <InlineTextBox raw_id="108" nodeId="f0:-1000000020" ignored="false" name="Submit"/>
+                  </StaticText>
+                </button>
+              </none>
+              <generic raw_id="109" backendDOMNodeId="119" nodeId="f0:119" ignored="false" name="">
+                <LabelText raw_id="110" backendDOMNodeId="120" nodeId="f0:120" ignored="false" name="">
+                  <StaticText raw_id="111" backendDOMNodeId="152" nodeId="f0:152" ignored="false" name="Color picker">
+                    <InlineTextBox raw_id="112" nodeId="f0:-1000000021" ignored="false" name="Color picker"/>
+                  </StaticText>
+                  <ColorWell raw_id="113" backendDOMNodeId="15" nodeId="f0:15" ignored="false" name="Color picker" invalid="false" focusable="true" settable="true" labelledby="">
+                    <none raw_id="114" backendDOMNodeId="121" nodeId="f0:121" ignored="true">
+                      <none raw_id="115" backendDOMNodeId="122" nodeId="f0:122" ignored="true"/>
+                    </none>
+                  </ColorWell>
+                </LabelText>
+                <LabelText raw_id="116" backendDOMNodeId="123" nodeId="f0:123" ignored="false" name="">
+                  <StaticText raw_id="117" backendDOMNodeId="153" nodeId="f0:153" ignored="false" name="Date picker">
+                    <InlineTextBox raw_id="118" nodeId="f0:-1000000022" ignored="false" name="Date picker"/>
+                  </StaticText>
+                  <textbox raw_id="119" backendDOMNodeId="9" nodeId="f0:9" ignored="false" name="Date picker" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
+                    <generic raw_id="120" backendDOMNodeId="124" nodeId="f0:124" ignored="false" name="" editable="plaintext"/>
+                  </textbox>
+                </LabelText>
+                <LabelText raw_id="121" backendDOMNodeId="125" nodeId="f0:125" ignored="false" name="">
+                  <StaticText raw_id="122" backendDOMNodeId="154" nodeId="f0:154" ignored="false" name="Example range ">
+                    <InlineTextBox raw_id="123" nodeId="f0:-1000000023" ignored="false" name="Example range "/>
+                  </StaticText>
+                  <slider raw_id="124" backendDOMNodeId="16" nodeId="f0:16" ignored="false" name="Example range " invalid="false" focusable="true" settable="true" orientation="horizontal" valuemin="0" valuemax="10" valuetext="" labelledby=""/>
+                </LabelText>
+              </generic>
+            </none>
+          </generic>
+        </none>
+      </main>
+      <contentinfo raw_id="125" backendDOMNodeId="129" nodeId="f0:129" ignored="false" name="">
+        <generic raw_id="126" backendDOMNodeId="130" nodeId="f0:130" ignored="false" name="">
+          <StaticText raw_id="127" backendDOMNodeId="155" nodeId="f0:155" ignored="false" name="Copyright © 2021-2026 ">
+            <InlineTextBox raw_id="128" nodeId="f0:-1000000024" ignored="false" name="Copyright © 2021-2026 "/>
+          </StaticText>
+          <link raw_id="129" backendDOMNodeId="132" nodeId="f0:132" ignored="false" name="Boni García" focusable="true" url="https://bonigarcia.dev/">
+            <StaticText raw_id="130" backendDOMNodeId="156" nodeId="f0:156" ignored="false" name="Boni García">
+              <InlineTextBox raw_id="131" nodeId="f0:-1000000025" ignored="false" name="Boni García"/>
+            </StaticText>
+          </link>
+        </generic>
+      </contentinfo>
+    </none>
+  </none>
+</RootWebArea>

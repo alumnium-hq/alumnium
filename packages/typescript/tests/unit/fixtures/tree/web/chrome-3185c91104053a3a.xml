@@ -1,0 +1,43 @@
+<RootWebArea raw_id="1" backendDOMNodeId="81" nodeId="f0:81" ignored="false" name="The Internet" focusable="true" focused="true" url="https://the-internet.herokuapp.com/upload">
+  <none raw_id="2" backendDOMNodeId="83" nodeId="f0:83" ignored="true">
+    <generic raw_id="3" backendDOMNodeId="100" nodeId="f0:100" ignored="false" name="">
+      <none raw_id="4" backendDOMNodeId="101" nodeId="f0:101" ignored="true">
+        <generic raw_id="5" backendDOMNodeId="102" nodeId="f0:102" ignored="false" name=""/>
+      </none>
+      <none raw_id="6" backendDOMNodeId="103" nodeId="f0:103" ignored="true">
+        <link raw_id="7" backendDOMNodeId="104" nodeId="f0:104" ignored="false" name="Fork me on GitHub" focusable="true" url="https://github.com/tourdedave/the-internet">
+          <image raw_id="8" backendDOMNodeId="82" nodeId="f0:82" ignored="false" name="Fork me on GitHub" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+        </link>
+        <generic raw_id="9" backendDOMNodeId="105" nodeId="f0:105" ignored="false" name="">
+          <none raw_id="10" backendDOMNodeId="106" nodeId="f0:106" ignored="true">
+            <heading raw_id="11" backendDOMNodeId="107" nodeId="f0:107" ignored="false" name="File Uploaded!" level="3">
+              <StaticText raw_id="12" backendDOMNodeId="114" nodeId="f0:114" ignored="false" name="File Uploaded!">
+                <InlineTextBox raw_id="13" nodeId="f0:-1000000009" ignored="false" name="File Uploaded!"/>
+              </StaticText>
+            </heading>
+            <generic raw_id="14" backendDOMNodeId="108" nodeId="f0:108" ignored="false" name="">
+              <StaticText raw_id="15" backendDOMNodeId="115" nodeId="f0:115" ignored="false" name="e990a3b7-0d61-4e1f-9260-cf03b575248d.txt">
+                <InlineTextBox raw_id="16" nodeId="f0:-1000000010" ignored="false" name="e990a3b7-0d61-4e1f-9260-cf03b575248d.txt"/>
+              </StaticText>
+            </generic>
+          </none>
+        </generic>
+      </none>
+      <generic raw_id="17" backendDOMNodeId="109" nodeId="f0:109" ignored="false" name="">
+        <generic raw_id="18" backendDOMNodeId="110" nodeId="f0:110" ignored="false" name="">
+          <separator raw_id="19" backendDOMNodeId="111" nodeId="f0:111" ignored="false" name="" settable="true" orientation="horizontal"/>
+          <generic raw_id="20" backendDOMNodeId="112" nodeId="f0:112" ignored="false" name="">
+            <StaticText raw_id="21" backendDOMNodeId="116" nodeId="f0:116" ignored="false" name="Powered by ">
+              <InlineTextBox raw_id="22" nodeId="f0:-1000000011" ignored="false" name="Powered by "/>
+            </StaticText>
+            <link raw_id="23" backendDOMNodeId="113" nodeId="f0:113" ignored="false" name="Elemental Selenium" focusable="true" url="http://elementalselenium.com/">
+              <StaticText raw_id="24" backendDOMNodeId="117" nodeId="f0:117" ignored="false" name="Elemental Selenium">
+                <InlineTextBox raw_id="25" nodeId="f0:-1000000012" ignored="false" name="Elemental Selenium"/>
+              </StaticText>
+            </link>
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </none>
+</RootWebArea>

@@ -1,0 +1,11 @@
+<RootWebArea raw_id="1" backendDOMNodeId="64" nodeId="f0:64" ignored="false" name="" focusable="true" focused="true" url="https://the-internet.herokuapp.com/forgot_password">
+  <none raw_id="2" backendDOMNodeId="66" nodeId="f0:66" ignored="true">
+    <none raw_id="3" backendDOMNodeId="65" nodeId="f0:65" ignored="true">
+      <heading raw_id="4" backendDOMNodeId="68" nodeId="f0:68" ignored="false" name="Internal Server Error" level="1">
+        <StaticText raw_id="5" backendDOMNodeId="69" nodeId="f0:69" ignored="false" name="Internal Server Error">
+          <InlineTextBox raw_id="6" nodeId="f0:-1000000009" ignored="false" name="Internal Server Error"/>
+        </StaticText>
+      </heading>
+    </none>
+  </none>
+</RootWebArea>

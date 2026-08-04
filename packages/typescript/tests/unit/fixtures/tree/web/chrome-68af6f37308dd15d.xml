@@ -1,0 +1,169 @@
+<RootWebArea raw_id="1" backendDOMNodeId="3" nodeId="f0:3" ignored="false" name="Calculator" focusable="true" focused="true" url="https://seleniumbase.io/apps/calculator">
+  <none raw_id="2" backendDOMNodeId="5" nodeId="f0:5" ignored="true">
+    <none raw_id="3" backendDOMNodeId="14" nodeId="f0:14" ignored="true">
+      <generic raw_id="4" backendDOMNodeId="15" nodeId="f0:15" ignored="false" name="">
+        <generic raw_id="5" backendDOMNodeId="16" nodeId="f0:16" ignored="false" name="">
+          <generic raw_id="6" backendDOMNodeId="17" nodeId="f0:17" ignored="false" name="">
+            <LabelText raw_id="7" backendDOMNodeId="18" nodeId="f0:18" ignored="false" name="">
+              <generic raw_id="8" backendDOMNodeId="51" nodeId="f0:51" ignored="false" name=""/>
+            </LabelText>
+            <StaticText raw_id="9" backendDOMNodeId="52" nodeId="f0:52" ignored="false" name="Dark Mode">
+              <InlineTextBox raw_id="10" nodeId="f0:-1000000002" ignored="false" name="Dark Mode"/>
+            </StaticText>
+            <StaticText raw_id="11" backendDOMNodeId="53" nodeId="f0:53" ignored="false" name=" ">
+              <InlineTextBox raw_id="12" nodeId="f0:-1000000003" ignored="false" name=" "/>
+            </StaticText>
+            <StaticText raw_id="13" backendDOMNodeId="54" nodeId="f0:54" ignored="false" name="    ">
+              <InlineTextBox raw_id="14" nodeId="f0:-1000000004" ignored="false" name="    "/>
+            </StaticText>
+            <StaticText raw_id="15" backendDOMNodeId="55" nodeId="f0:55" ignored="false" name=" ">
+              <InlineTextBox raw_id="16" nodeId="f0:-1000000005" ignored="false" name=" "/>
+            </StaticText>
+            <link raw_id="17" backendDOMNodeId="22" nodeId="f0:22" ignored="false" name="Calculator" focusable="true" url="https://seleniumbase.io/apps/calculator">
+              <StaticText raw_id="18" backendDOMNodeId="56" nodeId="f0:56" ignored="false" name="Calculator">
+                <InlineTextBox raw_id="19" nodeId="f0:-1000000006" ignored="false" name="Calculator"/>
+              </StaticText>
+            </link>
+            <StaticText raw_id="20" backendDOMNodeId="57" nodeId="f0:57" ignored="false" name=" ">
+              <InlineTextBox raw_id="21" nodeId="f0:-1000000007" ignored="false" name=" "/>
+            </StaticText>
+            <StaticText raw_id="22" backendDOMNodeId="58" nodeId="f0:58" ignored="false" name="      ">
+              <InlineTextBox raw_id="23" nodeId="f0:-1000000008" ignored="false" name="      "/>
+            </StaticText>
+            <StaticText raw_id="24" backendDOMNodeId="59" nodeId="f0:59" ignored="false" name=" ">
+              <InlineTextBox raw_id="25" nodeId="f0:-1000000009" ignored="false" name=" "/>
+            </StaticText>
+            <StaticText raw_id="26" backendDOMNodeId="60" nodeId="f0:60" ignored="false" name="      ">
+              <InlineTextBox raw_id="27" nodeId="f0:-1000000010" ignored="false" name="      "/>
+            </StaticText>
+            <StaticText raw_id="28" backendDOMNodeId="61" nodeId="f0:61" ignored="false" name=" ">
+              <InlineTextBox raw_id="29" nodeId="f0:-1000000011" ignored="false" name=" "/>
+            </StaticText>
+            <StaticText raw_id="30" backendDOMNodeId="62" nodeId="f0:62" ignored="false" name="     ">
+              <InlineTextBox raw_id="31" nodeId="f0:-1000000012" ignored="false" name="     "/>
+            </StaticText>
+            <StaticText raw_id="32" backendDOMNodeId="63" nodeId="f0:63" ignored="false" name=" ">
+              <InlineTextBox raw_id="33" nodeId="f0:-1000000013" ignored="false" name=" "/>
+            </StaticText>
+            <link raw_id="34" backendDOMNodeId="27" nodeId="f0:27" ignored="false" name="SB" focusable="true" url="https://seleniumbase.io/">
+              <StaticText raw_id="35" backendDOMNodeId="64" nodeId="f0:64" ignored="false" name="SB">
+                <InlineTextBox raw_id="36" nodeId="f0:-1000000014" ignored="false" name="SB"/>
+              </StaticText>
+            </link>
+          </generic>
+          <none raw_id="37" backendDOMNodeId="4" nodeId="f0:4" ignored="true">
+            <generic raw_id="38" backendDOMNodeId="28" nodeId="f0:28" ignored="false" name="">
+              <textbox raw_id="39" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="" invalid="false" focusable="true" editable="plaintext" multiline="false" readonly="true" required="false">
+                <generic raw_id="40" backendDOMNodeId="29" nodeId="f0:29" ignored="false" name="">
+                  <StaticText raw_id="41" backendDOMNodeId="94" nodeId="f0:94" ignored="false" name="5-">
+                    <InlineTextBox raw_id="42" nodeId="f0:-1000000042" ignored="false" name="5-"/>
+                  </StaticText>
+                </generic>
+              </textbox>
+            </generic>
+            <button raw_id="43" backendDOMNodeId="30" nodeId="f0:30" ignored="false" name="C" invalid="false" focusable="true">
+              <StaticText raw_id="44" backendDOMNodeId="66" nodeId="f0:66" ignored="false" name="C">
+                <InlineTextBox raw_id="45" nodeId="f0:-1000000016" ignored="false" name="C"/>
+              </StaticText>
+            </button>
+            <button raw_id="46" backendDOMNodeId="31" nodeId="f0:31" ignored="false" name="(" invalid="false" focusable="true">
+              <StaticText raw_id="47" backendDOMNodeId="67" nodeId="f0:67" ignored="false" name="(">
+                <InlineTextBox raw_id="48" nodeId="f0:-1000000017" ignored="false" name="("/>
+              </StaticText>
+            </button>
+            <button raw_id="49" backendDOMNodeId="32" nodeId="f0:32" ignored="false" name=")" invalid="false" focusable="true">
+              <StaticText raw_id="50" backendDOMNodeId="68" nodeId="f0:68" ignored="false" name=")">
+                <InlineTextBox raw_id="51" nodeId="f0:-1000000018" ignored="false" name=")"/>
+              </StaticText>
+            </button>
+            <button raw_id="52" backendDOMNodeId="33" nodeId="f0:33" ignored="false" name="÷" invalid="false" focusable="true">
+              <StaticText raw_id="53" backendDOMNodeId="69" nodeId="f0:69" ignored="false" name="÷">
+                <InlineTextBox raw_id="54" nodeId="f0:-1000000019" ignored="false" name="÷"/>
+              </StaticText>
+            </button>
+            <button raw_id="55" backendDOMNodeId="34" nodeId="f0:34" ignored="false" name="7" invalid="false" focusable="true">
+              <StaticText raw_id="56" backendDOMNodeId="70" nodeId="f0:70" ignored="false" name="7">
+                <InlineTextBox raw_id="57" nodeId="f0:-1000000020" ignored="false" name="7"/>
+              </StaticText>
+            </button>
+            <button raw_id="58" backendDOMNodeId="35" nodeId="f0:35" ignored="false" name="8" invalid="false" focusable="true">
+              <StaticText raw_id="59" backendDOMNodeId="71" nodeId="f0:71" ignored="false" name="8">
+                <InlineTextBox raw_id="60" nodeId="f0:-1000000021" ignored="false" name="8"/>
+              </StaticText>
+            </button>
+            <button raw_id="61" backendDOMNodeId="36" nodeId="f0:36" ignored="false" name="9" invalid="false" focusable="true">
+              <StaticText raw_id="62" backendDOMNodeId="72" nodeId="f0:72" ignored="false" name="9">
+                <InlineTextBox raw_id="63" nodeId="f0:-1000000022" ignored="false" name="9"/>
+              </StaticText>
+            </button>
+            <button raw_id="64" backendDOMNodeId="37" nodeId="f0:37" ignored="false" name="×" invalid="false" focusable="true">
+              <StaticText raw_id="65" backendDOMNodeId="73" nodeId="f0:73" ignored="false" name="×">
+                <InlineTextBox raw_id="66" nodeId="f0:-1000000023" ignored="false" name="×"/>
+              </StaticText>
+            </button>
+            <button raw_id="67" backendDOMNodeId="38" nodeId="f0:38" ignored="false" name="4" invalid="false" focusable="true">
+              <StaticText raw_id="68" backendDOMNodeId="74" nodeId="f0:74" ignored="false" name="4">
+                <InlineTextBox raw_id="69" nodeId="f0:-1000000024" ignored="false" name="4"/>
+              </StaticText>
+            </button>
+            <button raw_id="70" backendDOMNodeId="39" nodeId="f0:39" ignored="false" name="5" invalid="false" focusable="true">
+              <StaticText raw_id="71" backendDOMNodeId="75" nodeId="f0:75" ignored="false" name="5">
+                <InlineTextBox raw_id="72" nodeId="f0:-1000000039" ignored="false" name="5"/>
+              </StaticText>
+            </button>
+            <button raw_id="73" backendDOMNodeId="40" nodeId="f0:40" ignored="false" name="6" invalid="false" focusable="true">
+              <StaticText raw_id="74" backendDOMNodeId="76" nodeId="f0:76" ignored="false" name="6">
+                <InlineTextBox raw_id="75" nodeId="f0:-1000000026" ignored="false" name="6"/>
+              </StaticText>
+            </button>
+            <button raw_id="76" backendDOMNodeId="41" nodeId="f0:41" ignored="false" name="-" invalid="false" focusable="true" focused="true">
+              <StaticText raw_id="77" backendDOMNodeId="77" nodeId="f0:77" ignored="false" name="-">
+                <InlineTextBox raw_id="78" nodeId="f0:-1000000040" ignored="false" name="-"/>
+              </StaticText>
+            </button>
+            <button raw_id="79" backendDOMNodeId="42" nodeId="f0:42" ignored="false" name="1" invalid="false" focusable="true">
+              <StaticText raw_id="80" backendDOMNodeId="78" nodeId="f0:78" ignored="false" name="1">
+                <InlineTextBox raw_id="81" nodeId="f0:-1000000028" ignored="false" name="1"/>
+              </StaticText>
+            </button>
+            <button raw_id="82" backendDOMNodeId="43" nodeId="f0:43" ignored="false" name="2" invalid="false" focusable="true">
+              <StaticText raw_id="83" backendDOMNodeId="79" nodeId="f0:79" ignored="false" name="2">
+                <InlineTextBox raw_id="84" nodeId="f0:-1000000029" ignored="false" name="2"/>
+              </StaticText>
+            </button>
+            <button raw_id="85" backendDOMNodeId="44" nodeId="f0:44" ignored="false" name="3" invalid="false" focusable="true">
+              <StaticText raw_id="86" backendDOMNodeId="80" nodeId="f0:80" ignored="false" name="3">
+                <InlineTextBox raw_id="87" nodeId="f0:-1000000030" ignored="false" name="3"/>
+              </StaticText>
+            </button>
+            <button raw_id="88" backendDOMNodeId="45" nodeId="f0:45" ignored="false" name="+" invalid="false" focusable="true">
+              <StaticText raw_id="89" backendDOMNodeId="81" nodeId="f0:81" ignored="false" name="+">
+                <InlineTextBox raw_id="90" nodeId="f0:-1000000031" ignored="false" name="+"/>
+              </StaticText>
+            </button>
+            <button raw_id="91" backendDOMNodeId="46" nodeId="f0:46" ignored="false" name="←" invalid="false" focusable="true">
+              <StaticText raw_id="92" backendDOMNodeId="82" nodeId="f0:82" ignored="false" name="←">
+                <InlineTextBox raw_id="93" nodeId="f0:-1000000032" ignored="false" name="←"/>
+              </StaticText>
+            </button>
+            <button raw_id="94" backendDOMNodeId="47" nodeId="f0:47" ignored="false" name="0" invalid="false" focusable="true">
+              <StaticText raw_id="95" backendDOMNodeId="83" nodeId="f0:83" ignored="false" name="0">
+                <InlineTextBox raw_id="96" nodeId="f0:-1000000033" ignored="false" name="0"/>
+              </StaticText>
+            </button>
+            <button raw_id="97" backendDOMNodeId="48" nodeId="f0:48" ignored="false" name="." invalid="false" focusable="true">
+              <StaticText raw_id="98" backendDOMNodeId="84" nodeId="f0:84" ignored="false" name=".">
+                <InlineTextBox raw_id="99" nodeId="f0:-1000000034" ignored="false" name="."/>
+              </StaticText>
+            </button>
+            <button raw_id="100" backendDOMNodeId="49" nodeId="f0:49" ignored="false" name="=" invalid="false" focusable="true">
+              <StaticText raw_id="101" backendDOMNodeId="85" nodeId="f0:85" ignored="false" name="=">
+                <InlineTextBox raw_id="102" nodeId="f0:-1000000035" ignored="false" name="="/>
+              </StaticText>
+            </button>
+          </none>
+        </generic>
+      </generic>
+    </none>
+  </none>
+</RootWebArea>
