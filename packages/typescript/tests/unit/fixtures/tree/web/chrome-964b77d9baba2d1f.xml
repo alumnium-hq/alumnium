@@ -1,0 +1,48 @@
+<RootWebArea raw_id="1" backendDOMNodeId="230" nodeId="f0:230" ignored="false" name="The Internet" focusable="true" focused="true" url="https://the-internet.herokuapp.com/typos">
+  <none raw_id="2" backendDOMNodeId="232" nodeId="f0:232" ignored="true">
+    <generic raw_id="3" backendDOMNodeId="249" nodeId="f0:249" ignored="false" name="">
+      <none raw_id="4" backendDOMNodeId="250" nodeId="f0:250" ignored="true">
+        <generic raw_id="5" backendDOMNodeId="251" nodeId="f0:251" ignored="false" name=""/>
+      </none>
+      <none raw_id="6" backendDOMNodeId="252" nodeId="f0:252" ignored="true">
+        <link raw_id="7" backendDOMNodeId="253" nodeId="f0:253" ignored="false" name="Fork me on GitHub" focusable="true" url="https://github.com/tourdedave/the-internet">
+          <image raw_id="8" backendDOMNodeId="231" nodeId="f0:231" ignored="false" name="Fork me on GitHub" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+        </link>
+        <generic raw_id="9" backendDOMNodeId="254" nodeId="f0:254" ignored="false" name="">
+          <none raw_id="10" backendDOMNodeId="255" nodeId="f0:255" ignored="true">
+            <heading raw_id="11" backendDOMNodeId="256" nodeId="f0:256" ignored="false" name="Typos" level="3">
+              <StaticText raw_id="12" backendDOMNodeId="264" nodeId="f0:264" ignored="false" name="Typos">
+                <InlineTextBox raw_id="13" nodeId="f0:-1000000052" ignored="false" name="Typos"/>
+              </StaticText>
+            </heading>
+            <paragraph raw_id="14" backendDOMNodeId="257" nodeId="f0:257" ignored="false" name="">
+              <StaticText raw_id="15" backendDOMNodeId="265" nodeId="f0:265" ignored="false" name="This example demonstrates a typo being introduced. It does it randomly on each page load.">
+                <InlineTextBox raw_id="16" nodeId="f0:-1000000053" ignored="false" name="This example demonstrates a typo being introduced. It does it randomly on each page load."/>
+              </StaticText>
+            </paragraph>
+            <paragraph raw_id="17" backendDOMNodeId="258" nodeId="f0:258" ignored="false" name="">
+              <StaticText raw_id="18" backendDOMNodeId="266" nodeId="f0:266" ignored="false" name="Sometimes you'll see a typo, other times you won't.">
+                <InlineTextBox raw_id="19" nodeId="f0:-1000000054" ignored="false" name="Sometimes you'll see a typo, other times you won't."/>
+              </StaticText>
+            </paragraph>
+          </none>
+        </generic>
+      </none>
+      <generic raw_id="20" backendDOMNodeId="259" nodeId="f0:259" ignored="false" name="">
+        <generic raw_id="21" backendDOMNodeId="260" nodeId="f0:260" ignored="false" name="">
+          <separator raw_id="22" backendDOMNodeId="261" nodeId="f0:261" ignored="false" name="" settable="true" orientation="horizontal"/>
+          <generic raw_id="23" backendDOMNodeId="262" nodeId="f0:262" ignored="false" name="">
+            <StaticText raw_id="24" backendDOMNodeId="267" nodeId="f0:267" ignored="false" name="Powered by ">
+              <InlineTextBox raw_id="25" nodeId="f0:-1000000055" ignored="false" name="Powered by "/>
+            </StaticText>
+            <link raw_id="26" backendDOMNodeId="263" nodeId="f0:263" ignored="false" name="Elemental Selenium" focusable="true" url="http://elementalselenium.com/">
+              <StaticText raw_id="27" backendDOMNodeId="268" nodeId="f0:268" ignored="false" name="Elemental Selenium">
+                <InlineTextBox raw_id="28" nodeId="f0:-1000000056" ignored="false" name="Elemental Selenium"/>
+              </StaticText>
+            </link>
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </none>
+</RootWebArea>

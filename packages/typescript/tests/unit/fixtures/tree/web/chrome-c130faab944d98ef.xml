@@ -1,0 +1,60 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="" focusable="true" url="https://the-internet.herokuapp.com/nested_frames">
+  <none raw_id="2" backendDOMNodeId="12" nodeId="f0:12" ignored="true">
+    <none raw_id="3" backendDOMNodeId="14" nodeId="f0:14" ignored="true">
+      <Iframe raw_id="4" backendDOMNodeId="7" nodeId="f0:7" ignored="false" name="">
+        <RootWebArea raw_id="5" backendDOMNodeId="2" nodeId="f1:2" ignored="false" name="" focusable="true" url="https://the-internet.herokuapp.com/frame_top">
+          <none raw_id="6" backendDOMNodeId="16" nodeId="f1:16" ignored="true">
+            <none raw_id="7" backendDOMNodeId="18" nodeId="f1:18" ignored="true">
+              <Iframe raw_id="8" backendDOMNodeId="8" nodeId="f1:8" ignored="false" name="">
+                <RootWebArea raw_id="9" backendDOMNodeId="4" nodeId="f2:4" ignored="false" name="" focusable="true" url="https://the-internet.herokuapp.com/frame_left">
+                  <none raw_id="10" backendDOMNodeId="19" nodeId="f2:19" ignored="true">
+                    <generic raw_id="11" backendDOMNodeId="21" nodeId="f2:21" ignored="false" name="">
+                      <StaticText raw_id="12" backendDOMNodeId="22" nodeId="f2:22" ignored="false" name="LEFT">
+                        <InlineTextBox raw_id="13" nodeId="f2:-1000000002" ignored="false" name="LEFT"/>
+                      </StaticText>
+                    </generic>
+                  </none>
+                </RootWebArea>
+              </Iframe>
+              <Iframe raw_id="14" backendDOMNodeId="9" nodeId="f1:9" ignored="false" name="">
+                <RootWebArea raw_id="15" backendDOMNodeId="5" nodeId="f3:5" ignored="false" name="" focusable="true" focused="true" url="https://the-internet.herokuapp.com/frame_middle">
+                  <none raw_id="16" backendDOMNodeId="23" nodeId="f3:23" ignored="true">
+                    <none raw_id="17" backendDOMNodeId="25" nodeId="f3:25" ignored="true">
+                      <generic raw_id="18" backendDOMNodeId="26" nodeId="f3:26" ignored="false" name="">
+                        <StaticText raw_id="19" backendDOMNodeId="27" nodeId="f3:27" ignored="false" name="MIDDLE">
+                          <InlineTextBox raw_id="20" nodeId="f3:-1000000003" ignored="false" name="MIDDLE"/>
+                        </StaticText>
+                      </generic>
+                    </none>
+                  </none>
+                </RootWebArea>
+              </Iframe>
+              <Iframe raw_id="21" backendDOMNodeId="10" nodeId="f1:10" ignored="false" name="">
+                <RootWebArea raw_id="22" backendDOMNodeId="6" nodeId="f4:6" ignored="false" name="" focusable="true" url="https://the-internet.herokuapp.com/frame_right">
+                  <none raw_id="23" backendDOMNodeId="28" nodeId="f4:28" ignored="true">
+                    <generic raw_id="24" backendDOMNodeId="30" nodeId="f4:30" ignored="false" name="">
+                      <StaticText raw_id="25" backendDOMNodeId="31" nodeId="f4:31" ignored="false" name="RIGHT">
+                        <InlineTextBox raw_id="26" nodeId="f4:-1000000004" ignored="false" name="RIGHT"/>
+                      </StaticText>
+                    </generic>
+                  </none>
+                </RootWebArea>
+              </Iframe>
+            </none>
+          </none>
+        </RootWebArea>
+      </Iframe>
+      <Iframe raw_id="27" backendDOMNodeId="11" nodeId="f0:11" ignored="false" name="">
+        <RootWebArea raw_id="28" backendDOMNodeId="3" nodeId="f5:3" ignored="false" name="" focusable="true" url="https://the-internet.herokuapp.com/frame_bottom">
+          <none raw_id="29" backendDOMNodeId="32" nodeId="f5:32" ignored="true">
+            <generic raw_id="30" backendDOMNodeId="34" nodeId="f5:34" ignored="false" name="">
+              <StaticText raw_id="31" backendDOMNodeId="35" nodeId="f5:35" ignored="false" name="BOTTOM">
+                <InlineTextBox raw_id="32" nodeId="f5:-1000000005" ignored="false" name="BOTTOM"/>
+              </StaticText>
+            </generic>
+          </none>
+        </RootWebArea>
+      </Iframe>
+    </none>
+  </none>
+</RootWebArea>

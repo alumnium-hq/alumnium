@@ -1,0 +1,54 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="The Internet" focusable="true" focused="true" url="https://the-internet.herokuapp.com/drag_and_drop">
+  <none raw_id="2" backendDOMNodeId="3" nodeId="f0:3" ignored="true">
+    <generic raw_id="3" backendDOMNodeId="20" nodeId="f0:20" ignored="false" name="">
+      <none raw_id="4" backendDOMNodeId="21" nodeId="f0:21" ignored="true">
+        <generic raw_id="5" backendDOMNodeId="22" nodeId="f0:22" ignored="false" name=""/>
+      </none>
+      <none raw_id="6" backendDOMNodeId="23" nodeId="f0:23" ignored="true">
+        <link raw_id="7" backendDOMNodeId="24" nodeId="f0:24" ignored="false" name="Fork me on GitHub" focusable="true" url="https://github.com/tourdedave/the-internet">
+          <image raw_id="8" backendDOMNodeId="2" nodeId="f0:2" ignored="false" name="Fork me on GitHub" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+        </link>
+        <generic raw_id="9" backendDOMNodeId="25" nodeId="f0:25" ignored="false" name="">
+          <none raw_id="10" backendDOMNodeId="27" nodeId="f0:27" ignored="true">
+            <heading raw_id="11" backendDOMNodeId="28" nodeId="f0:28" ignored="false" name="Drag and Drop" level="3">
+              <StaticText raw_id="12" backendDOMNodeId="40" nodeId="f0:40" ignored="false" name="Drag and Drop">
+                <InlineTextBox raw_id="13" nodeId="f0:-1000000002" ignored="false" name="Drag and Drop"/>
+              </StaticText>
+            </heading>
+            <generic raw_id="14" backendDOMNodeId="29" nodeId="f0:29" ignored="false" name="">
+              <group raw_id="15" backendDOMNodeId="30" nodeId="f0:30" ignored="false" name="">
+                <banner raw_id="16" backendDOMNodeId="59" nodeId="f0:59" ignored="false" name="">
+                  <StaticText raw_id="17" backendDOMNodeId="60" nodeId="f0:60" ignored="false" name="B">
+                    <InlineTextBox raw_id="18" nodeId="f0:-1000000009" ignored="false" name="B"/>
+                  </StaticText>
+                </banner>
+              </group>
+              <group raw_id="19" backendDOMNodeId="32" nodeId="f0:32" ignored="false" name="">
+                <banner raw_id="20" backendDOMNodeId="61" nodeId="f0:61" ignored="false" name="">
+                  <StaticText raw_id="21" backendDOMNodeId="62" nodeId="f0:62" ignored="false" name="A">
+                    <InlineTextBox raw_id="22" nodeId="f0:-1000000010" ignored="false" name="A"/>
+                  </StaticText>
+                </banner>
+              </group>
+            </generic>
+          </none>
+        </generic>
+      </none>
+      <generic raw_id="23" backendDOMNodeId="35" nodeId="f0:35" ignored="false" name="">
+        <generic raw_id="24" backendDOMNodeId="36" nodeId="f0:36" ignored="false" name="">
+          <separator raw_id="25" backendDOMNodeId="37" nodeId="f0:37" ignored="false" name="" settable="true" orientation="horizontal"/>
+          <generic raw_id="26" backendDOMNodeId="38" nodeId="f0:38" ignored="false" name="">
+            <StaticText raw_id="27" backendDOMNodeId="43" nodeId="f0:43" ignored="false" name="Powered by ">
+              <InlineTextBox raw_id="28" nodeId="f0:-1000000005" ignored="false" name="Powered by "/>
+            </StaticText>
+            <link raw_id="29" backendDOMNodeId="39" nodeId="f0:39" ignored="false" name="Elemental Selenium" focusable="true" url="http://elementalselenium.com/">
+              <StaticText raw_id="30" backendDOMNodeId="44" nodeId="f0:44" ignored="false" name="Elemental Selenium">
+                <InlineTextBox raw_id="31" nodeId="f0:-1000000006" ignored="false" name="Elemental Selenium"/>
+              </StaticText>
+            </link>
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </none>
+</RootWebArea>

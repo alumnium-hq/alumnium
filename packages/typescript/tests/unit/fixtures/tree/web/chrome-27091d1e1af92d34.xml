@@ -1,0 +1,1441 @@
+<RootWebArea raw_id="1" backendDOMNodeId="4" nodeId="f0:4" ignored="false" name="Claude" focusable="true" focused="true" url="https://claude.com/">
+  <none raw_id="2" backendDOMNodeId="150" nodeId="f0:150" ignored="true">
+    <none raw_id="3" backendDOMNodeId="233" nodeId="f0:233" ignored="true">
+      <link raw_id="4" backendDOMNodeId="238" nodeId="f0:238" ignored="false" name="Skip to main content" focusable="true" url="https://claude.com/#main-content">
+        <StaticText raw_id="5" backendDOMNodeId="1367" nodeId="f0:1367" ignored="false" name="Skip to main content">
+          <InlineTextBox raw_id="6" nodeId="f0:-1000000002" ignored="false" name="Skip to main content"/>
+        </StaticText>
+      </link>
+      <banner raw_id="7" backendDOMNodeId="239" nodeId="f0:239" ignored="false" name="">
+        <none raw_id="8" backendDOMNodeId="240" nodeId="f0:240" ignored="true">
+          <link raw_id="9" backendDOMNodeId="241" nodeId="f0:241" ignored="false" name="Claude" focusable="true" url="https://claude.com/">
+            <image raw_id="10" backendDOMNodeId="242" nodeId="f0:242" ignored="false" name="Claude"/>
+          </link>
+          <none raw_id="11" backendDOMNodeId="245" nodeId="f0:245" ignored="true">
+            <navigation raw_id="12" backendDOMNodeId="246" nodeId="f0:246" ignored="false" name="Main">
+              <generic raw_id="13" backendDOMNodeId="247" nodeId="f0:247" ignored="false" name="">
+                <generic raw_id="14" backendDOMNodeId="248" nodeId="f0:248" ignored="false" name="">
+                  <button raw_id="15" backendDOMNodeId="249" nodeId="f0:249" ignored="false" name="Meet Claude" invalid="false" focusable="true" hasPopup="menu" expanded="false">
+                    <none raw_id="16" backendDOMNodeId="250" nodeId="f0:250" ignored="true">
+                      <StaticText raw_id="17" backendDOMNodeId="1368" nodeId="f0:1368" ignored="false" name="Meet Claude">
+                        <InlineTextBox raw_id="18" nodeId="f0:-1000000003" ignored="false" name="Meet Claude"/>
+                      </StaticText>
+                    </none>
+                    <generic raw_id="19" backendDOMNodeId="251" nodeId="f0:251" ignored="false" name=""/>
+                  </button>
+                </generic>
+                <none raw_id="20" backendDOMNodeId="254" nodeId="f0:254" ignored="true"/>
+              </generic>
+              <generic raw_id="21" backendDOMNodeId="337" nodeId="f0:337" ignored="false" name="">
+                <generic raw_id="22" backendDOMNodeId="338" nodeId="f0:338" ignored="false" name="">
+                  <button raw_id="23" backendDOMNodeId="339" nodeId="f0:339" ignored="false" name="Platform" invalid="false" focusable="true" hasPopup="menu" expanded="false">
+                    <none raw_id="24" backendDOMNodeId="340" nodeId="f0:340" ignored="true">
+                      <StaticText raw_id="25" backendDOMNodeId="1388" nodeId="f0:1388" ignored="false" name="Platform">
+                        <InlineTextBox raw_id="26" nodeId="f0:-1000000004" ignored="false" name="Platform"/>
+                      </StaticText>
+                    </none>
+                    <generic raw_id="27" backendDOMNodeId="341" nodeId="f0:341" ignored="false" name=""/>
+                  </button>
+                </generic>
+                <none raw_id="28" backendDOMNodeId="344" nodeId="f0:344" ignored="true"/>
+              </generic>
+              <generic raw_id="29" backendDOMNodeId="385" nodeId="f0:385" ignored="false" name="">
+                <generic raw_id="30" backendDOMNodeId="386" nodeId="f0:386" ignored="false" name="">
+                  <button raw_id="31" backendDOMNodeId="387" nodeId="f0:387" ignored="false" name="Solutions" invalid="false" focusable="true" hasPopup="menu" expanded="false">
+                    <none raw_id="32" backendDOMNodeId="388" nodeId="f0:388" ignored="true">
+                      <StaticText raw_id="33" backendDOMNodeId="1399" nodeId="f0:1399" ignored="false" name="Solutions">
+                        <InlineTextBox raw_id="34" nodeId="f0:-1000000005" ignored="false" name="Solutions"/>
+                      </StaticText>
+                    </none>
+                    <generic raw_id="35" backendDOMNodeId="389" nodeId="f0:389" ignored="false" name=""/>
+                  </button>
+                </generic>
+                <none raw_id="36" backendDOMNodeId="392" nodeId="f0:392" ignored="true"/>
+              </generic>
+              <generic raw_id="37" backendDOMNodeId="460" nodeId="f0:460" ignored="false" name="">
+                <generic raw_id="38" backendDOMNodeId="461" nodeId="f0:461" ignored="false" name="">
+                  <button raw_id="39" backendDOMNodeId="462" nodeId="f0:462" ignored="false" name="Pricing" invalid="false" focusable="true" hasPopup="menu" expanded="false">
+                    <none raw_id="40" backendDOMNodeId="463" nodeId="f0:463" ignored="true">
+                      <StaticText raw_id="41" backendDOMNodeId="1418" nodeId="f0:1418" ignored="false" name="Pricing">
+                        <InlineTextBox raw_id="42" nodeId="f0:-1000000006" ignored="false" name="Pricing"/>
+                      </StaticText>
+                    </none>
+                    <generic raw_id="43" backendDOMNodeId="464" nodeId="f0:464" ignored="false" name=""/>
+                  </button>
+                </generic>
+                <none raw_id="44" backendDOMNodeId="467" nodeId="f0:467" ignored="true"/>
+              </generic>
+              <generic raw_id="45" backendDOMNodeId="476" nodeId="f0:476" ignored="false" name="">
+                <generic raw_id="46" backendDOMNodeId="477" nodeId="f0:477" ignored="false" name="">
+                  <button raw_id="47" backendDOMNodeId="478" nodeId="f0:478" ignored="false" name="Resources" invalid="false" focusable="true" hasPopup="menu" expanded="false">
+                    <none raw_id="48" backendDOMNodeId="479" nodeId="f0:479" ignored="true">
+                      <StaticText raw_id="49" backendDOMNodeId="1421" nodeId="f0:1421" ignored="false" name="Resources">
+                        <InlineTextBox raw_id="50" nodeId="f0:-1000000007" ignored="false" name="Resources"/>
+                      </StaticText>
+                    </none>
+                    <generic raw_id="51" backendDOMNodeId="480" nodeId="f0:480" ignored="false" name=""/>
+                  </button>
+                </generic>
+                <none raw_id="52" backendDOMNodeId="483" nodeId="f0:483" ignored="true"/>
+              </generic>
+              <link raw_id="53" backendDOMNodeId="540" nodeId="f0:540" ignored="false" name="Login" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
+                <StaticText raw_id="54" backendDOMNodeId="1434" nodeId="f0:1434" ignored="false" name="Login">
+                  <InlineTextBox raw_id="55" nodeId="f0:-1000000008" ignored="false" name="Login"/>
+                </StaticText>
+              </link>
+            </navigation>
+            <none raw_id="56" backendDOMNodeId="541" nodeId="f0:541" ignored="true">
+              <link raw_id="57" backendDOMNodeId="542" nodeId="f0:542" ignored="false" name="Contact sales" focusable="true" url="https://claude.com/contact-sales">
+                <StaticText raw_id="58" backendDOMNodeId="1435" nodeId="f0:1435" ignored="false" name="Contact sales">
+                  <InlineTextBox raw_id="59" nodeId="f0:-1000000009" ignored="false" name="Contact sales"/>
+                </StaticText>
+              </link>
+              <link raw_id="60" backendDOMNodeId="543" nodeId="f0:543" ignored="false" name="Try Claude" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d">
+                <StaticText raw_id="61" backendDOMNodeId="1436" nodeId="f0:1436" ignored="false" name="Try Claude">
+                  <InlineTextBox raw_id="62" nodeId="f0:-1000000010" ignored="false" name="Try Claude"/>
+                </StaticText>
+              </link>
+            </none>
+          </none>
+        </none>
+      </banner>
+      <none raw_id="63" backendDOMNodeId="548" nodeId="f0:548" ignored="true">
+        <main raw_id="64" backendDOMNodeId="549" nodeId="f0:549" ignored="false" name="">
+          <generic raw_id="65" backendDOMNodeId="550" nodeId="f0:550" ignored="false" name="">
+            <none raw_id="66" backendDOMNodeId="551" nodeId="f0:551" ignored="true">
+              <none raw_id="67" backendDOMNodeId="10" nodeId="f0:10" ignored="true">
+                <none raw_id="68" backendDOMNodeId="552" nodeId="f0:552" ignored="true">
+                  <heading raw_id="69" backendDOMNodeId="553" nodeId="f0:553" ignored="false" name="Think fast, build faster" level="1">
+                    <StaticText raw_id="70" backendDOMNodeId="1437" nodeId="f0:1437" ignored="false" name="Think fast,">
+                      <InlineTextBox raw_id="71" nodeId="f0:-1000000011" ignored="false" name="Think fast,"/>
+                    </StaticText>
+                    <LineBreak raw_id="72" backendDOMNodeId="554" nodeId="f0:554" ignored="false" name="&#xA;">
+                      <InlineTextBox raw_id="73" nodeId="f0:-1000000012" ignored="false" name="&#xA;"/>
+                    </LineBreak>
+                    <StaticText raw_id="74" backendDOMNodeId="1438" nodeId="f0:1438" ignored="false" name="build faster">
+                      <InlineTextBox raw_id="75" nodeId="f0:-1000000013" ignored="false" name="build faster"/>
+                    </StaticText>
+                  </heading>
+                  <paragraph raw_id="76" backendDOMNodeId="555" nodeId="f0:555" ignored="false" name="">
+                    <StaticText raw_id="77" backendDOMNodeId="1439" nodeId="f0:1439" ignored="false" name="Brainstorm in chat, build in Cowork">
+                      <InlineTextBox raw_id="78" nodeId="f0:-1000000014" ignored="false" name="Brainstorm in chat, build in Cowork"/>
+                    </StaticText>
+                  </paragraph>
+                  <none raw_id="79" backendDOMNodeId="556" nodeId="f0:556" ignored="true">
+                    <none raw_id="80" backendDOMNodeId="557" nodeId="f0:557" ignored="true">
+                      <none raw_id="81" backendDOMNodeId="558" nodeId="f0:558" ignored="true">
+                        <none raw_id="82" backendDOMNodeId="559" nodeId="f0:559" ignored="true">
+                          <none raw_id="83" backendDOMNodeId="560" nodeId="f0:560" ignored="true">
+                            <button raw_id="84" backendDOMNodeId="561" nodeId="f0:561" ignored="false" name="Continue with Google" invalid="false" focusable="true">
+                              <StaticText raw_id="85" backendDOMNodeId="1440" nodeId="f0:1440" ignored="false" name="Continue with Google">
+                                <InlineTextBox raw_id="86" nodeId="f0:-1000000015" ignored="false" name="Continue with Google"/>
+                              </StaticText>
+                            </button>
+                            <paragraph raw_id="87" backendDOMNodeId="567" nodeId="f0:567" ignored="false" name="">
+                              <StaticText raw_id="88" backendDOMNodeId="1441" nodeId="f0:1441" ignored="false" name="OR">
+                                <InlineTextBox raw_id="89" nodeId="f0:-1000000016" ignored="false" name="OR"/>
+                              </StaticText>
+                            </paragraph>
+                            <link raw_id="90" backendDOMNodeId="568" nodeId="f0:568" ignored="false" name="Continue with email" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d?redirect=claude.com&amp;via=static_email">
+                              <StaticText raw_id="91" backendDOMNodeId="1442" nodeId="f0:1442" ignored="false" name="Continue with email">
+                                <InlineTextBox raw_id="92" nodeId="f0:-1000000017" ignored="false" name="Continue with email"/>
+                              </StaticText>
+                            </link>
+                            <none raw_id="93" backendDOMNodeId="570" nodeId="f0:570" ignored="true">
+                              <none raw_id="94" backendDOMNodeId="1443" nodeId="f0:1443" ignored="true"/>
+                            </none>
+                          </none>
+                        </none>
+                        <generic raw_id="95" backendDOMNodeId="571" nodeId="f0:571" ignored="false" name="">
+                          <StaticText raw_id="96" backendDOMNodeId="1444" nodeId="f0:1444" ignored="false" name="By continuing, you acknowledge Anthropic's ">
+                            <InlineTextBox raw_id="97" nodeId="f0:-1000000018" ignored="false" name="By continuing, you acknowledge Anthropic's "/>
+                          </StaticText>
+                          <link raw_id="98" backendDOMNodeId="572" nodeId="f0:572" ignored="false" name="Privacy Policy" focusable="true" url="https://www.anthropic.com/legal/privacy">
+                            <StaticText raw_id="99" backendDOMNodeId="1445" nodeId="f0:1445" ignored="false" name="Privacy Policy">
+                              <InlineTextBox raw_id="100" nodeId="f0:-1000000019" ignored="false" name="Privacy Policy"/>
+                            </StaticText>
+                          </link>
+                          <StaticText raw_id="101" backendDOMNodeId="1446" nodeId="f0:1446" ignored="false" name=" and agree to get occasional promotional emails and notifications.">
+                            <InlineTextBox raw_id="102" nodeId="f0:-1000000020" ignored="false" name=" and agree "/>
+                            <InlineTextBox raw_id="103" nodeId="f0:-1000000021" ignored="false" name="to get occasional promotional emails and notifications."/>
+                          </StaticText>
+                        </generic>
+                      </none>
+                      <none raw_id="104" backendDOMNodeId="573" nodeId="f0:573" ignored="true">
+                        <button raw_id="105" backendDOMNodeId="574" nodeId="f0:574" ignored="false" name="Download desktop app" invalid="false" focusable="true">
+                          <none raw_id="106" backendDOMNodeId="575" nodeId="f0:575" ignored="true"/>
+                          <StaticText raw_id="107" backendDOMNodeId="1447" nodeId="f0:1447" ignored="false" name="Download desktop app">
+                            <InlineTextBox raw_id="108" nodeId="f0:-1000000022" ignored="false" name="Download desktop app"/>
+                          </StaticText>
+                        </button>
+                      </none>
+                    </none>
+                  </none>
+                </none>
+                <none raw_id="109" backendDOMNodeId="576" nodeId="f0:576" ignored="true">
+                  <none raw_id="110" backendDOMNodeId="1" nodeId="f0:1" ignored="true">
+                    <none raw_id="111" backendDOMNodeId="577" nodeId="f0:577" ignored="true">
+                      <none raw_id="112" backendDOMNodeId="578" nodeId="f0:578" ignored="true"/>
+                      <none raw_id="113" backendDOMNodeId="579" nodeId="f0:579" ignored="true">
+                        <none raw_id="114" backendDOMNodeId="580" nodeId="f0:580" ignored="true"/>
+                      </none>
+                      <none raw_id="115" backendDOMNodeId="581" nodeId="f0:581" ignored="true">
+                        <none raw_id="116" backendDOMNodeId="582" nodeId="f0:582" ignored="true">
+                          <none raw_id="117" backendDOMNodeId="583" nodeId="f0:583" ignored="true"/>
+                          <none raw_id="118" backendDOMNodeId="584" nodeId="f0:584" ignored="true">
+                            <none raw_id="119" backendDOMNodeId="585" nodeId="f0:585" ignored="true">
+                              <none raw_id="120" backendDOMNodeId="586" nodeId="f0:586" ignored="true"/>
+                            </none>
+                            <none raw_id="121" backendDOMNodeId="589" nodeId="f0:589" ignored="true"/>
+                            <none raw_id="122" backendDOMNodeId="590" nodeId="f0:590" ignored="true">
+                              <none raw_id="123" backendDOMNodeId="591" nodeId="f0:591" ignored="true"/>
+                              <none raw_id="124" backendDOMNodeId="592" nodeId="f0:592" ignored="true"/>
+                              <none raw_id="125" backendDOMNodeId="599" nodeId="f0:599" ignored="true"/>
+                            </none>
+                            <none raw_id="126" backendDOMNodeId="600" nodeId="f0:600" ignored="true">
+                              <none raw_id="127" backendDOMNodeId="601" nodeId="f0:601" ignored="true"/>
+                            </none>
+                            <none raw_id="128" backendDOMNodeId="602" nodeId="f0:602" ignored="true">
+                              <none raw_id="129" backendDOMNodeId="603" nodeId="f0:603" ignored="true"/>
+                            </none>
+                          </none>
+                          <none raw_id="130" backendDOMNodeId="604" nodeId="f0:604" ignored="true"/>
+                        </none>
+                      </none>
+                      <none raw_id="131" backendDOMNodeId="611" nodeId="f0:611" ignored="true"/>
+                      <none raw_id="132" backendDOMNodeId="612" nodeId="f0:612" ignored="true"/>
+                      <none raw_id="133" backendDOMNodeId="613" nodeId="f0:613" ignored="true"/>
+                      <none raw_id="134" backendDOMNodeId="614" nodeId="f0:614" ignored="true"/>
+                      <none raw_id="135" backendDOMNodeId="615" nodeId="f0:615" ignored="true">
+                        <none raw_id="136" backendDOMNodeId="616" nodeId="f0:616" ignored="true"/>
+                        <none raw_id="137" backendDOMNodeId="620" nodeId="f0:620" ignored="true"/>
+                        <none raw_id="138" backendDOMNodeId="624" nodeId="f0:624" ignored="true"/>
+                        <none raw_id="139" backendDOMNodeId="628" nodeId="f0:628" ignored="true"/>
+                        <none raw_id="140" backendDOMNodeId="632" nodeId="f0:632" ignored="true"/>
+                        <none raw_id="141" backendDOMNodeId="636" nodeId="f0:636" ignored="true"/>
+                        <none raw_id="142" backendDOMNodeId="640" nodeId="f0:640" ignored="true"/>
+                        <none raw_id="143" backendDOMNodeId="644" nodeId="f0:644" ignored="true"/>
+                        <none raw_id="144" backendDOMNodeId="648" nodeId="f0:648" ignored="true"/>
+                        <none raw_id="145" backendDOMNodeId="652" nodeId="f0:652" ignored="true"/>
+                      </none>
+                    </none>
+                  </none>
+                </none>
+              </none>
+            </none>
+          </generic>
+          <generic raw_id="146" backendDOMNodeId="657" nodeId="f0:657" ignored="false" name="">
+            <none raw_id="147" backendDOMNodeId="658" nodeId="f0:658" ignored="true">
+              <none raw_id="148" backendDOMNodeId="659" nodeId="f0:659" ignored="true">
+                <heading raw_id="149" backendDOMNodeId="660" nodeId="f0:660" ignored="false" name="Explore plans" level="2"/>
+              </none>
+              <none raw_id="150" backendDOMNodeId="663" nodeId="f0:663" ignored="true">
+                <tablist raw_id="151" backendDOMNodeId="664" nodeId="f0:664" ignored="false" name="" multiselectable="false" orientation="horizontal">
+                  <tab raw_id="152" backendDOMNodeId="666" nodeId="f0:666" ignored="false" name="Individual" invalid="false" focusable="true" selected="true">
+                    <StaticText raw_id="153" backendDOMNodeId="1450" nodeId="f0:1450" ignored="false" name="Individual">
+                      <InlineTextBox raw_id="154" nodeId="f0:-1000000023" ignored="false" name="Individual"/>
+                    </StaticText>
+                  </tab>
+                  <tab raw_id="155" backendDOMNodeId="667" nodeId="f0:667" ignored="false" name="Team and Enterprise" invalid="false" focusable="true" selected="false">
+                    <StaticText raw_id="156" backendDOMNodeId="1451" nodeId="f0:1451" ignored="false" name="Team and Enterprise">
+                      <InlineTextBox raw_id="157" nodeId="f0:-1000000024" ignored="false" name="Team and Enterprise"/>
+                    </StaticText>
+                  </tab>
+                </tablist>
+              </none>
+              <tabpanel raw_id="158" backendDOMNodeId="668" nodeId="f0:668" ignored="false" name="Individual">
+                <none raw_id="159" backendDOMNodeId="669" nodeId="f0:669" ignored="true">
+                  <none raw_id="160" backendDOMNodeId="670" nodeId="f0:670" ignored="true">
+                    <heading raw_id="161" backendDOMNodeId="671" nodeId="f0:671" ignored="false" name="Free" level="3">
+                      <StaticText raw_id="162" backendDOMNodeId="1452" nodeId="f0:1452" ignored="false" name="Free">
+                        <InlineTextBox raw_id="163" nodeId="f0:-1000000025" ignored="false" name="Free"/>
+                      </StaticText>
+                    </heading>
+                    <paragraph raw_id="164" backendDOMNodeId="672" nodeId="f0:672" ignored="false" name="">
+                      <StaticText raw_id="165" backendDOMNodeId="1453" nodeId="f0:1453" ignored="false" name="Try Claude">
+                        <InlineTextBox raw_id="166" nodeId="f0:-1000000026" ignored="false" name="Try Claude"/>
+                      </StaticText>
+                    </paragraph>
+                  </none>
+                  <none raw_id="167" backendDOMNodeId="673" nodeId="f0:673" ignored="true">
+                    <generic raw_id="168" backendDOMNodeId="674" nodeId="f0:674" ignored="false" name="">
+                      <StaticText raw_id="169" backendDOMNodeId="1454" nodeId="f0:1454" ignored="false" name="$0">
+                        <InlineTextBox raw_id="170" nodeId="f0:-1000000027" ignored="false" name="$0"/>
+                      </StaticText>
+                    </generic>
+                    <paragraph raw_id="171" backendDOMNodeId="675" nodeId="f0:675" ignored="false" name="">
+                      <StaticText raw_id="172" backendDOMNodeId="1455" nodeId="f0:1455" ignored="false" name="Free for everyone">
+                        <InlineTextBox raw_id="173" nodeId="f0:-1000000028" ignored="false" name="Free for everyone"/>
+                      </StaticText>
+                    </paragraph>
+                  </none>
+                  <none raw_id="174" backendDOMNodeId="676" nodeId="f0:676" ignored="true">
+                    <link raw_id="175" backendDOMNodeId="677" nodeId="f0:677" ignored="false" name="Try Claude" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=free">
+                      <StaticText raw_id="176" backendDOMNodeId="1456" nodeId="f0:1456" ignored="false" name="Try Claude">
+                        <InlineTextBox raw_id="177" nodeId="f0:-1000000029" ignored="false" name="Try Claude"/>
+                      </StaticText>
+                    </link>
+                  </none>
+                  <none raw_id="178" backendDOMNodeId="678" nodeId="f0:678" ignored="true"/>
+                  <list raw_id="179" backendDOMNodeId="679" nodeId="f0:679" ignored="false" name="">
+                    <listitem raw_id="180" backendDOMNodeId="680" nodeId="f0:680" ignored="false" name="" level="1">
+                      <generic raw_id="181" backendDOMNodeId="681" nodeId="f0:681" ignored="false" name=""/>
+                      <none raw_id="182" backendDOMNodeId="684" nodeId="f0:684" ignored="true">
+                        <StaticText raw_id="183" backendDOMNodeId="1457" nodeId="f0:1457" ignored="false" name="Chat on web, iOS, Android, and on your desktop">
+                          <InlineTextBox raw_id="184" nodeId="f0:-1000000030" ignored="false" name="Chat on web, iOS, Android, and on "/>
+                          <InlineTextBox raw_id="185" nodeId="f0:-1000000031" ignored="false" name="your desktop"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="186" backendDOMNodeId="685" nodeId="f0:685" ignored="false" name="" level="1">
+                      <generic raw_id="187" backendDOMNodeId="686" nodeId="f0:686" ignored="false" name=""/>
+                      <none raw_id="188" backendDOMNodeId="689" nodeId="f0:689" ignored="true">
+                        <StaticText raw_id="189" backendDOMNodeId="1458" nodeId="f0:1458" ignored="false" name="Generate code and visualize data">
+                          <InlineTextBox raw_id="190" nodeId="f0:-1000000032" ignored="false" name="Generate code and visualize data"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="191" backendDOMNodeId="690" nodeId="f0:690" ignored="false" name="" level="1">
+                      <generic raw_id="192" backendDOMNodeId="691" nodeId="f0:691" ignored="false" name=""/>
+                      <none raw_id="193" backendDOMNodeId="694" nodeId="f0:694" ignored="true">
+                        <StaticText raw_id="194" backendDOMNodeId="1459" nodeId="f0:1459" ignored="false" name="Write, edit, and create content">
+                          <InlineTextBox raw_id="195" nodeId="f0:-1000000033" ignored="false" name="Write, edit, and create content"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="196" backendDOMNodeId="695" nodeId="f0:695" ignored="false" name="" level="1">
+                      <generic raw_id="197" backendDOMNodeId="696" nodeId="f0:696" ignored="false" name=""/>
+                      <none raw_id="198" backendDOMNodeId="699" nodeId="f0:699" ignored="true">
+                        <StaticText raw_id="199" backendDOMNodeId="1460" nodeId="f0:1460" ignored="false" name="Ability to search the web">
+                          <InlineTextBox raw_id="200" nodeId="f0:-1000000034" ignored="false" name="Ability to search the web"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="201" backendDOMNodeId="700" nodeId="f0:700" ignored="false" name="" level="1">
+                      <generic raw_id="202" backendDOMNodeId="701" nodeId="f0:701" ignored="false" name=""/>
+                      <none raw_id="203" backendDOMNodeId="704" nodeId="f0:704" ignored="true">
+                        <StaticText raw_id="204" backendDOMNodeId="1461" nodeId="f0:1461" ignored="false" name="Memory across conversations">
+                          <InlineTextBox raw_id="205" nodeId="f0:-1000000035" ignored="false" name="Memory across conversations"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="206" backendDOMNodeId="705" nodeId="f0:705" ignored="false" name="" level="1">
+                      <generic raw_id="207" backendDOMNodeId="706" nodeId="f0:706" ignored="false" name=""/>
+                      <none raw_id="208" backendDOMNodeId="709" nodeId="f0:709" ignored="true">
+                        <StaticText raw_id="209" backendDOMNodeId="1462" nodeId="f0:1462" ignored="false" name="Create files and execute code">
+                          <InlineTextBox raw_id="210" nodeId="f0:-1000000036" ignored="false" name="Create files and execute code"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="211" backendDOMNodeId="710" nodeId="f0:710" ignored="false" name="" level="1">
+                      <generic raw_id="212" backendDOMNodeId="711" nodeId="f0:711" ignored="false" name=""/>
+                      <none raw_id="213" backendDOMNodeId="714" nodeId="f0:714" ignored="true">
+                        <StaticText raw_id="214" backendDOMNodeId="1463" nodeId="f0:1463" ignored="false" name="Unlock more from Claude with desktop extensions">
+                          <InlineTextBox raw_id="215" nodeId="f0:-1000000037" ignored="false" name="Unlock more from Claude with "/>
+                          <InlineTextBox raw_id="216" nodeId="f0:-1000000038" ignored="false" name="desktop extensions"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="217" backendDOMNodeId="715" nodeId="f0:715" ignored="false" name="" level="1">
+                      <generic raw_id="218" backendDOMNodeId="716" nodeId="f0:716" ignored="false" name=""/>
+                      <none raw_id="219" backendDOMNodeId="719" nodeId="f0:719" ignored="true">
+                        <StaticText raw_id="220" backendDOMNodeId="1464" nodeId="f0:1464" ignored="false" name="Connect Slack and Google Workspace services">
+                          <InlineTextBox raw_id="221" nodeId="f0:-1000000039" ignored="false" name="Connect Slack and Google "/>
+                          <InlineTextBox raw_id="222" nodeId="f0:-1000000040" ignored="false" name="Workspace services"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="223" backendDOMNodeId="720" nodeId="f0:720" ignored="false" name="" level="1">
+                      <generic raw_id="224" backendDOMNodeId="721" nodeId="f0:721" ignored="false" name=""/>
+                      <none raw_id="225" backendDOMNodeId="724" nodeId="f0:724" ignored="true">
+                        <StaticText raw_id="226" backendDOMNodeId="1465" nodeId="f0:1465" ignored="false" name="Integrate any context or tool through connectors with remote MCP">
+                          <InlineTextBox raw_id="227" nodeId="f0:-1000000041" ignored="false" name="Integrate any context or tool "/>
+                          <InlineTextBox raw_id="228" nodeId="f0:-1000000042" ignored="false" name="through connectors with remote "/>
+                          <InlineTextBox raw_id="229" nodeId="f0:-1000000043" ignored="false" name="MCP"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="230" backendDOMNodeId="725" nodeId="f0:725" ignored="false" name="" level="1">
+                      <generic raw_id="231" backendDOMNodeId="726" nodeId="f0:726" ignored="false" name=""/>
+                      <none raw_id="232" backendDOMNodeId="729" nodeId="f0:729" ignored="true">
+                        <StaticText raw_id="233" backendDOMNodeId="1466" nodeId="f0:1466" ignored="false" name="Extended thinking for complex work">
+                          <InlineTextBox raw_id="234" nodeId="f0:-1000000044" ignored="false" name="Extended thinking for complex "/>
+                          <InlineTextBox raw_id="235" nodeId="f0:-1000000045" ignored="false" name="work"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                  </list>
+                </none>
+                <none raw_id="236" backendDOMNodeId="730" nodeId="f0:730" ignored="true">
+                  <none raw_id="237" backendDOMNodeId="731" nodeId="f0:731" ignored="true">
+                    <heading raw_id="238" backendDOMNodeId="732" nodeId="f0:732" ignored="false" name="Pro" level="3">
+                      <StaticText raw_id="239" backendDOMNodeId="1467" nodeId="f0:1467" ignored="false" name="Pro">
+                        <InlineTextBox raw_id="240" nodeId="f0:-1000000046" ignored="false" name="Pro"/>
+                      </StaticText>
+                    </heading>
+                    <paragraph raw_id="241" backendDOMNodeId="733" nodeId="f0:733" ignored="false" name="">
+                      <StaticText raw_id="242" backendDOMNodeId="1468" nodeId="f0:1468" ignored="false" name="For everyday productivity">
+                        <InlineTextBox raw_id="243" nodeId="f0:-1000000047" ignored="false" name="For everyday productivity"/>
+                      </StaticText>
+                    </paragraph>
+                  </none>
+                  <none raw_id="244" backendDOMNodeId="734" nodeId="f0:734" ignored="true">
+                    <generic raw_id="245" backendDOMNodeId="735" nodeId="f0:735" ignored="false" name="">
+                      <StaticText raw_id="246" backendDOMNodeId="1469" nodeId="f0:1469" ignored="false" name="$25">
+                        <InlineTextBox raw_id="247" nodeId="f0:-1000000048" ignored="false" name="$25"/>
+                      </StaticText>
+                    </generic>
+                    <paragraph raw_id="248" backendDOMNodeId="736" nodeId="f0:736" ignored="false" name="">
+                      <StaticText raw_id="249" backendDOMNodeId="1470" nodeId="f0:1470" ignored="false" name="Per month with annual subscription discount (">
+                        <InlineTextBox raw_id="250" nodeId="f0:-1000000049" ignored="false" name="Per month with annual subscription discount "/>
+                        <InlineTextBox raw_id="251" nodeId="f0:-1000000050" ignored="false" name="("/>
+                      </StaticText>
+                      <StaticText raw_id="252" backendDOMNodeId="1471" nodeId="f0:1471" ignored="false" name="$300">
+                        <InlineTextBox raw_id="253" nodeId="f0:-1000000051" ignored="false" name="$300"/>
+                      </StaticText>
+                      <StaticText raw_id="254" backendDOMNodeId="1472" nodeId="f0:1472" ignored="false" name=" billed up front). ">
+                        <InlineTextBox raw_id="255" nodeId="f0:-1000000052" ignored="false" name=" billed up front). "/>
+                      </StaticText>
+                      <StaticText raw_id="256" backendDOMNodeId="1473" nodeId="f0:1473" ignored="false" name="$30">
+                        <InlineTextBox raw_id="257" nodeId="f0:-1000000053" ignored="false" name="$30"/>
+                      </StaticText>
+                      <StaticText raw_id="258" backendDOMNodeId="1474" nodeId="f0:1474" ignored="false" name=" if billed monthly.">
+                        <InlineTextBox raw_id="259" nodeId="f0:-1000000054" ignored="false" name=" if billed monthly."/>
+                      </StaticText>
+                    </paragraph>
+                  </none>
+                  <none raw_id="260" backendDOMNodeId="739" nodeId="f0:739" ignored="true">
+                    <link raw_id="261" backendDOMNodeId="740" nodeId="f0:740" ignored="false" name="Try Claude" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=pro">
+                      <StaticText raw_id="262" backendDOMNodeId="1475" nodeId="f0:1475" ignored="false" name="Try Claude">
+                        <InlineTextBox raw_id="263" nodeId="f0:-1000000055" ignored="false" name="Try Claude"/>
+                      </StaticText>
+                    </link>
+                    <paragraph raw_id="264" backendDOMNodeId="741" nodeId="f0:741" ignored="false" name="">
+                      <StaticText raw_id="265" backendDOMNodeId="1476" nodeId="f0:1476" ignored="false" name="No commitment · Cancel anytime">
+                        <InlineTextBox raw_id="266" nodeId="f0:-1000000056" ignored="false" name="No commitment · Cancel anytime"/>
+                      </StaticText>
+                    </paragraph>
+                  </none>
+                  <none raw_id="267" backendDOMNodeId="742" nodeId="f0:742" ignored="true"/>
+                  <paragraph raw_id="268" backendDOMNodeId="743" nodeId="f0:743" ignored="false" name="">
+                    <strong raw_id="269" backendDOMNodeId="744" nodeId="f0:744" ignored="false" name="">
+                      <StaticText raw_id="270" backendDOMNodeId="1477" nodeId="f0:1477" ignored="false" name="Everything in Free, plus:">
+                        <InlineTextBox raw_id="271" nodeId="f0:-1000000057" ignored="false" name="Everything in Free, plus:"/>
+                      </StaticText>
+                    </strong>
+                  </paragraph>
+                  <list raw_id="272" backendDOMNodeId="745" nodeId="f0:745" ignored="false" name="">
+                    <listitem raw_id="273" backendDOMNodeId="746" nodeId="f0:746" ignored="false" name="" level="1">
+                      <generic raw_id="274" backendDOMNodeId="747" nodeId="f0:747" ignored="false" name=""/>
+                      <none raw_id="275" backendDOMNodeId="750" nodeId="f0:750" ignored="true">
+                        <StaticText raw_id="276" backendDOMNodeId="1478" nodeId="f0:1478" ignored="false" name="More usage*">
+                          <InlineTextBox raw_id="277" nodeId="f0:-1000000058" ignored="false" name="More usage*"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="278" backendDOMNodeId="751" nodeId="f0:751" ignored="false" name="" level="1">
+                      <generic raw_id="279" backendDOMNodeId="752" nodeId="f0:752" ignored="false" name=""/>
+                      <none raw_id="280" backendDOMNodeId="755" nodeId="f0:755" ignored="true">
+                        <StaticText raw_id="281" backendDOMNodeId="1479" nodeId="f0:1479" ignored="false" name="Includes Claude Code">
+                          <InlineTextBox raw_id="282" nodeId="f0:-1000000059" ignored="false" name="Includes Claude Code"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="283" backendDOMNodeId="756" nodeId="f0:756" ignored="false" name="" level="1">
+                      <generic raw_id="284" backendDOMNodeId="757" nodeId="f0:757" ignored="false" name=""/>
+                      <none raw_id="285" backendDOMNodeId="760" nodeId="f0:760" ignored="true">
+                        <StaticText raw_id="286" backendDOMNodeId="1480" nodeId="f0:1480" ignored="false" name="Includes Claude Cowork">
+                          <InlineTextBox raw_id="287" nodeId="f0:-1000000060" ignored="false" name="Includes Claude Cowork"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="288" backendDOMNodeId="761" nodeId="f0:761" ignored="false" name="" level="1">
+                      <generic raw_id="289" backendDOMNodeId="762" nodeId="f0:762" ignored="false" name=""/>
+                      <none raw_id="290" backendDOMNodeId="765" nodeId="f0:765" ignored="true">
+                        <StaticText raw_id="291" backendDOMNodeId="1481" nodeId="f0:1481" ignored="false" name="Includes Claude Design">
+                          <InlineTextBox raw_id="292" nodeId="f0:-1000000061" ignored="false" name="Includes Claude Design"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="293" backendDOMNodeId="766" nodeId="f0:766" ignored="false" name="" level="1">
+                      <generic raw_id="294" backendDOMNodeId="767" nodeId="f0:767" ignored="false" name=""/>
+                      <none raw_id="295" backendDOMNodeId="770" nodeId="f0:770" ignored="true">
+                        <StaticText raw_id="296" backendDOMNodeId="1482" nodeId="f0:1482" ignored="false" name="Includes Claude Science">
+                          <InlineTextBox raw_id="297" nodeId="f0:-1000000062" ignored="false" name="Includes Claude Science"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="298" backendDOMNodeId="771" nodeId="f0:771" ignored="false" name="" level="1">
+                      <generic raw_id="299" backendDOMNodeId="772" nodeId="f0:772" ignored="false" name=""/>
+                      <none raw_id="300" backendDOMNodeId="775" nodeId="f0:775" ignored="true">
+                        <StaticText raw_id="301" backendDOMNodeId="1483" nodeId="f0:1483" ignored="false" name="Access to unlimited projects to organize chats and documents">
+                          <InlineTextBox raw_id="302" nodeId="f0:-1000000063" ignored="false" name="Access to unlimited projects to "/>
+                          <InlineTextBox raw_id="303" nodeId="f0:-1000000064" ignored="false" name="organize chats and documents"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="304" backendDOMNodeId="776" nodeId="f0:776" ignored="false" name="" level="1">
+                      <generic raw_id="305" backendDOMNodeId="777" nodeId="f0:777" ignored="false" name=""/>
+                      <none raw_id="306" backendDOMNodeId="780" nodeId="f0:780" ignored="true">
+                        <StaticText raw_id="307" backendDOMNodeId="1484" nodeId="f0:1484" ignored="false" name="Access to Research">
+                          <InlineTextBox raw_id="308" nodeId="f0:-1000000065" ignored="false" name="Access to Research"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="309" backendDOMNodeId="781" nodeId="f0:781" ignored="false" name="" level="1">
+                      <generic raw_id="310" backendDOMNodeId="782" nodeId="f0:782" ignored="false" name=""/>
+                      <none raw_id="311" backendDOMNodeId="785" nodeId="f0:785" ignored="true">
+                        <StaticText raw_id="312" backendDOMNodeId="1485" nodeId="f0:1485" ignored="false" name="Ability to use more Claude models">
+                          <InlineTextBox raw_id="313" nodeId="f0:-1000000066" ignored="false" name="Ability to use more Claude models"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="314" backendDOMNodeId="786" nodeId="f0:786" ignored="false" name="" level="1">
+                      <generic raw_id="315" backendDOMNodeId="787" nodeId="f0:787" ignored="false" name=""/>
+                      <none raw_id="316" backendDOMNodeId="790" nodeId="f0:790" ignored="true">
+                        <StaticText raw_id="317" backendDOMNodeId="1486" nodeId="f0:1486" ignored="false" name="Claude for Microsoft 365">
+                          <InlineTextBox raw_id="318" nodeId="f0:-1000000067" ignored="false" name="Claude for Microsoft 365"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                  </list>
+                </none>
+                <none raw_id="319" backendDOMNodeId="791" nodeId="f0:791" ignored="true">
+                  <none raw_id="320" backendDOMNodeId="792" nodeId="f0:792" ignored="true">
+                    <heading raw_id="321" backendDOMNodeId="793" nodeId="f0:793" ignored="false" name="Max" level="3">
+                      <StaticText raw_id="322" backendDOMNodeId="1487" nodeId="f0:1487" ignored="false" name="Max">
+                        <InlineTextBox raw_id="323" nodeId="f0:-1000000068" ignored="false" name="Max"/>
+                      </StaticText>
+                    </heading>
+                    <paragraph raw_id="324" backendDOMNodeId="794" nodeId="f0:794" ignored="false" name="">
+                      <StaticText raw_id="325" backendDOMNodeId="1488" nodeId="f0:1488" ignored="false" name="5–20x more usage than Pro">
+                        <InlineTextBox raw_id="326" nodeId="f0:-1000000069" ignored="false" name="5–20x more usage than Pro"/>
+                      </StaticText>
+                    </paragraph>
+                  </none>
+                  <none raw_id="327" backendDOMNodeId="795" nodeId="f0:795" ignored="true">
+                    <generic raw_id="328" backendDOMNodeId="796" nodeId="f0:796" ignored="false" name="">
+                      <StaticText raw_id="329" backendDOMNodeId="1489" nodeId="f0:1489" ignored="false" name="From $149.99">
+                        <InlineTextBox raw_id="330" nodeId="f0:-1000000070" ignored="false" name="From $149.99"/>
+                      </StaticText>
+                    </generic>
+                    <paragraph raw_id="331" backendDOMNodeId="797" nodeId="f0:797" ignored="false" name="">
+                      <StaticText raw_id="332" backendDOMNodeId="1490" nodeId="f0:1490" ignored="false" name="Per month">
+                        <InlineTextBox raw_id="333" nodeId="f0:-1000000071" ignored="false" name="Per month"/>
+                      </StaticText>
+                    </paragraph>
+                  </none>
+                  <none raw_id="334" backendDOMNodeId="798" nodeId="f0:798" ignored="true">
+                    <link raw_id="335" backendDOMNodeId="799" nodeId="f0:799" ignored="false" name="Try Claude" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
+                      <StaticText raw_id="336" backendDOMNodeId="1491" nodeId="f0:1491" ignored="false" name="Try Claude">
+                        <InlineTextBox raw_id="337" nodeId="f0:-1000000072" ignored="false" name="Try Claude"/>
+                      </StaticText>
+                    </link>
+                    <paragraph raw_id="338" backendDOMNodeId="800" nodeId="f0:800" ignored="false" name="">
+                      <StaticText raw_id="339" backendDOMNodeId="1492" nodeId="f0:1492" ignored="false" name="No commitment · Cancel anytime">
+                        <InlineTextBox raw_id="340" nodeId="f0:-1000000073" ignored="false" name="No commitment · Cancel anytime"/>
+                      </StaticText>
+                    </paragraph>
+                  </none>
+                  <none raw_id="341" backendDOMNodeId="801" nodeId="f0:801" ignored="true"/>
+                  <paragraph raw_id="342" backendDOMNodeId="802" nodeId="f0:802" ignored="false" name="">
+                    <strong raw_id="343" backendDOMNodeId="803" nodeId="f0:803" ignored="false" name="">
+                      <StaticText raw_id="344" backendDOMNodeId="1493" nodeId="f0:1493" ignored="false" name="Everything in Pro, plus:">
+                        <InlineTextBox raw_id="345" nodeId="f0:-1000000074" ignored="false" name="Everything in Pro, plus:"/>
+                      </StaticText>
+                    </strong>
+                  </paragraph>
+                  <list raw_id="346" backendDOMNodeId="804" nodeId="f0:804" ignored="false" name="">
+                    <listitem raw_id="347" backendDOMNodeId="805" nodeId="f0:805" ignored="false" name="" level="1">
+                      <generic raw_id="348" backendDOMNodeId="806" nodeId="f0:806" ignored="false" name=""/>
+                      <none raw_id="349" backendDOMNodeId="809" nodeId="f0:809" ignored="true">
+                        <StaticText raw_id="350" backendDOMNodeId="1494" nodeId="f0:1494" ignored="false" name="Choose 5x or 20x more usage than Pro*">
+                          <InlineTextBox raw_id="351" nodeId="f0:-1000000075" ignored="false" name="Choose 5x or 20x more usage than "/>
+                          <InlineTextBox raw_id="352" nodeId="f0:-1000000076" ignored="false" name="Pro*"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="353" backendDOMNodeId="810" nodeId="f0:810" ignored="false" name="" level="1">
+                      <generic raw_id="354" backendDOMNodeId="811" nodeId="f0:811" ignored="false" name=""/>
+                      <none raw_id="355" backendDOMNodeId="814" nodeId="f0:814" ignored="true">
+                        <StaticText raw_id="356" backendDOMNodeId="1495" nodeId="f0:1495" ignored="false" name="Higher output limits for all tasks">
+                          <InlineTextBox raw_id="357" nodeId="f0:-1000000077" ignored="false" name="Higher output limits for all tasks"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="358" backendDOMNodeId="815" nodeId="f0:815" ignored="false" name="" level="1">
+                      <generic raw_id="359" backendDOMNodeId="816" nodeId="f0:816" ignored="false" name=""/>
+                      <none raw_id="360" backendDOMNodeId="819" nodeId="f0:819" ignored="true">
+                        <StaticText raw_id="361" backendDOMNodeId="1496" nodeId="f0:1496" ignored="false" name="Early access to advanced Claude features">
+                          <InlineTextBox raw_id="362" nodeId="f0:-1000000078" ignored="false" name="Early access to advanced Claude "/>
+                          <InlineTextBox raw_id="363" nodeId="f0:-1000000079" ignored="false" name="features"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                    <listitem raw_id="364" backendDOMNodeId="820" nodeId="f0:820" ignored="false" name="" level="1">
+                      <generic raw_id="365" backendDOMNodeId="821" nodeId="f0:821" ignored="false" name=""/>
+                      <none raw_id="366" backendDOMNodeId="824" nodeId="f0:824" ignored="true">
+                        <StaticText raw_id="367" backendDOMNodeId="1497" nodeId="f0:1497" ignored="false" name="Priority access at high traffic times">
+                          <InlineTextBox raw_id="368" nodeId="f0:-1000000080" ignored="false" name="Priority access at high traffic times"/>
+                        </StaticText>
+                      </none>
+                    </listitem>
+                  </list>
+                </none>
+              </tabpanel>
+              <none raw_id="369" backendDOMNodeId="825" nodeId="f0:825" ignored="true">
+                <paragraph raw_id="370" backendDOMNodeId="826" nodeId="f0:826" ignored="false" name="">
+                  <StaticText raw_id="371" backendDOMNodeId="1498" nodeId="f0:1498" ignored="false" name="Prices include 9% GST">
+                    <InlineTextBox raw_id="372" nodeId="f0:-1000000081" ignored="false" name="Prices include 9% GST"/>
+                  </StaticText>
+                </paragraph>
+                <paragraph raw_id="373" backendDOMNodeId="830" nodeId="f0:830" ignored="false" name="">
+                  <StaticText raw_id="374" backendDOMNodeId="1502" nodeId="f0:1502" ignored="false" name="*">
+                    <InlineTextBox raw_id="375" nodeId="f0:-1000000082" ignored="false" name="*"/>
+                  </StaticText>
+                  <link raw_id="376" backendDOMNodeId="831" nodeId="f0:831" ignored="false" name="Usage limits apply." focusable="true" url="https://support.anthropic.com/en/articles/9797557-usage-limit-best-practices">
+                    <StaticText raw_id="377" backendDOMNodeId="1503" nodeId="f0:1503" ignored="false" name="Usage limits apply.">
+                      <InlineTextBox raw_id="378" nodeId="f0:-1000000083" ignored="false" name="Usage limits apply."/>
+                    </StaticText>
+                  </link>
+                  <StaticText raw_id="379" backendDOMNodeId="1504" nodeId="f0:1504" ignored="false" name=" Prices and plans are subject to change at Anthropic's discretion.">
+                    <InlineTextBox raw_id="380" nodeId="f0:-1000000084" ignored="false" name=" Prices and plans are subject to change at Anthropic's discretion."/>
+                  </StaticText>
+                </paragraph>
+              </none>
+            </none>
+          </generic>
+          <generic raw_id="381" backendDOMNodeId="833" nodeId="f0:833" ignored="false" name="">
+            <none raw_id="382" backendDOMNodeId="834" nodeId="f0:834" ignored="true">
+              <none raw_id="383" backendDOMNodeId="835" nodeId="f0:835" ignored="true">
+                <heading raw_id="384" backendDOMNodeId="836" nodeId="f0:836" ignored="false" name="FAQ" level="2"/>
+              </none>
+              <none raw_id="385" backendDOMNodeId="838" nodeId="f0:838" ignored="true">
+                <none raw_id="386" backendDOMNodeId="839" nodeId="f0:839" ignored="true">
+                  <heading raw_id="387" backendDOMNodeId="840" nodeId="f0:840" ignored="false" name="What is Claude and how does it work?" level="3">
+                    <button raw_id="388" backendDOMNodeId="841" nodeId="f0:841" ignored="false" name="What is Claude and how does it work?" invalid="false" focusable="true" expanded="false" controls="_R_6jsinpfmlb_-content">
+                      <none raw_id="389" backendDOMNodeId="842" nodeId="f0:842" ignored="true">
+                        <StaticText raw_id="390" backendDOMNodeId="1506" nodeId="f0:1506" ignored="false" name="What is Claude and how does it work?">
+                          <InlineTextBox raw_id="391" nodeId="f0:-1000000085" ignored="false" name="What is Claude and how does it work?"/>
+                        </StaticText>
+                      </none>
+                      <none raw_id="392" backendDOMNodeId="843" nodeId="f0:843" ignored="true">
+                        <none raw_id="393" backendDOMNodeId="844" nodeId="f0:844" ignored="true"/>
+                        <none raw_id="394" backendDOMNodeId="845" nodeId="f0:845" ignored="true"/>
+                      </none>
+                    </button>
+                  </heading>
+                  <region raw_id="395" backendDOMNodeId="846" nodeId="f0:846" ignored="false" name="What is Claude and how does it work?" labelledby="">
+                    <none raw_id="396" backendDOMNodeId="847" nodeId="f0:847" ignored="true">
+                      <paragraph raw_id="397" backendDOMNodeId="848" nodeId="f0:848" ignored="false" name="">
+                        <StaticText raw_id="398" backendDOMNodeId="1507" nodeId="f0:1507" ignored="false" name="Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.">
+                          <InlineTextBox raw_id="399" nodeId="f0:-1000000086" ignored="false" name="Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to "/>
+                          <InlineTextBox raw_id="400" nodeId="f0:-1000000087" ignored="false" name="be safe, accurate, and secure — the trusted assistant for you to do your best work."/>
+                        </StaticText>
+                      </paragraph>
+                      <paragraph raw_id="401" backendDOMNodeId="849" nodeId="f0:849" ignored="false" name="">
+                        <StaticText raw_id="402" backendDOMNodeId="1508" nodeId="f0:1508" ignored="false" name="You can use Claude for your own personal use or create a Team account to collaborate with your teammates. ">
+                          <InlineTextBox raw_id="403" nodeId="f0:-1000000088" ignored="false" name="You can use Claude for your own personal use or create a Team account to "/>
+                          <InlineTextBox raw_id="404" nodeId="f0:-1000000089" ignored="false" name="collaborate with your teammates. "/>
+                        </StaticText>
+                        <link raw_id="405" backendDOMNodeId="850" nodeId="f0:850" ignored="false" name="Learn more about Claude" focusable="true" url="https://claude.com/product/overview">
+                          <StaticText raw_id="406" backendDOMNodeId="1509" nodeId="f0:1509" ignored="false" name="Learn more about Claude">
+                            <InlineTextBox raw_id="407" nodeId="f0:-1000000090" ignored="false" name="Learn more about Claude"/>
+                          </StaticText>
+                        </link>
+                        <StaticText raw_id="408" backendDOMNodeId="1510" nodeId="f0:1510" ignored="false" name=".">
+                          <InlineTextBox raw_id="409" nodeId="f0:-1000000091" ignored="false" name="."/>
+                        </StaticText>
+                      </paragraph>
+                    </none>
+                  </region>
+                </none>
+                <none raw_id="410" backendDOMNodeId="851" nodeId="f0:851" ignored="true">
+                  <heading raw_id="411" backendDOMNodeId="852" nodeId="f0:852" ignored="false" name="What should I use Claude for?" level="3">
+                    <button raw_id="412" backendDOMNodeId="853" nodeId="f0:853" ignored="false" name="What should I use Claude for?" invalid="false" focusable="true" expanded="false" controls="_R_ajsinpfmlb_-content">
+                      <none raw_id="413" backendDOMNodeId="854" nodeId="f0:854" ignored="true">
+                        <StaticText raw_id="414" backendDOMNodeId="1511" nodeId="f0:1511" ignored="false" name="What should I use Claude for?">
+                          <InlineTextBox raw_id="415" nodeId="f0:-1000000092" ignored="false" name="What should I use Claude for?"/>
+                        </StaticText>
+                      </none>
+                      <none raw_id="416" backendDOMNodeId="855" nodeId="f0:855" ignored="true">
+                        <none raw_id="417" backendDOMNodeId="856" nodeId="f0:856" ignored="true"/>
+                        <none raw_id="418" backendDOMNodeId="857" nodeId="f0:857" ignored="true"/>
+                      </none>
+                    </button>
+                  </heading>
+                  <region raw_id="419" backendDOMNodeId="858" nodeId="f0:858" ignored="false" name="What should I use Claude for?" labelledby="">
+                    <none raw_id="420" backendDOMNodeId="859" nodeId="f0:859" ignored="true">
+                      <paragraph raw_id="421" backendDOMNodeId="860" nodeId="f0:860" ignored="false" name="">
+                        <StaticText raw_id="422" backendDOMNodeId="1512" nodeId="f0:1512" ignored="false" name="If you can dream it, Claude can help you do it. Claude can process large amounts of information, brainstorm ideas, generate text and code, help you understand subjects, coach you through difficult situations, simplify your busywork so you can focus on what matters most, and so much more.">
+                          <InlineTextBox raw_id="423" nodeId="f0:-1000000093" ignored="false" name="If you can dream it, Claude can help you do it. Claude can process large amounts of "/>
+                          <InlineTextBox raw_id="424" nodeId="f0:-1000000094" ignored="false" name="information, brainstorm ideas, generate text and code, help you understand "/>
+                          <InlineTextBox raw_id="425" nodeId="f0:-1000000095" ignored="false" name="subjects, coach you through difficult situations, simplify your busywork so you can "/>
+                          <InlineTextBox raw_id="426" nodeId="f0:-1000000096" ignored="false" name="focus on what matters most, and so much more."/>
+                        </StaticText>
+                      </paragraph>
+                    </none>
+                  </region>
+                </none>
+                <none raw_id="427" backendDOMNodeId="861" nodeId="f0:861" ignored="true">
+                  <heading raw_id="428" backendDOMNodeId="862" nodeId="f0:862" ignored="false" name="How much does it cost to use?" level="3">
+                    <button raw_id="429" backendDOMNodeId="863" nodeId="f0:863" ignored="false" name="How much does it cost to use?" invalid="false" focusable="true" expanded="false" controls="_R_ejsinpfmlb_-content">
+                      <none raw_id="430" backendDOMNodeId="864" nodeId="f0:864" ignored="true">
+                        <StaticText raw_id="431" backendDOMNodeId="1513" nodeId="f0:1513" ignored="false" name="How much does it cost to use?">
+                          <InlineTextBox raw_id="432" nodeId="f0:-1000000097" ignored="false" name="How much does it cost to use?"/>
+                        </StaticText>
+                      </none>
+                      <none raw_id="433" backendDOMNodeId="865" nodeId="f0:865" ignored="true">
+                        <none raw_id="434" backendDOMNodeId="866" nodeId="f0:866" ignored="true"/>
+                        <none raw_id="435" backendDOMNodeId="867" nodeId="f0:867" ignored="true"/>
+                      </none>
+                    </button>
+                  </heading>
+                  <region raw_id="436" backendDOMNodeId="868" nodeId="f0:868" ignored="false" name="How much does it cost to use?" labelledby="">
+                    <none raw_id="437" backendDOMNodeId="869" nodeId="f0:869" ignored="true">
+                      <paragraph raw_id="438" backendDOMNodeId="870" nodeId="f0:870" ignored="false" name="">
+                        <StaticText raw_id="439" backendDOMNodeId="1514" nodeId="f0:1514" ignored="false" name="Claude has five pricing plans available — Free, Pro, Max, Team, and Enterprise. The Free plan offers limited use with no payment required. ">
+                          <InlineTextBox raw_id="440" nodeId="f0:-1000000098" ignored="false" name="Claude has five pricing plans available — Free, Pro, Max, Team, and Enterprise. The "/>
+                          <InlineTextBox raw_id="441" nodeId="f0:-1000000099" ignored="false" name="Free plan offers limited use with no payment required. "/>
+                        </StaticText>
+                        <link raw_id="442" backendDOMNodeId="871" nodeId="f0:871" ignored="false" name="Learn more about available pricing plans" focusable="true" url="https://claude.com/pricing">
+                          <StaticText raw_id="443" backendDOMNodeId="1515" nodeId="f0:1515" ignored="false" name="Learn more about available pricing plans">
+                            <InlineTextBox raw_id="444" nodeId="f0:-1000000100" ignored="false" name="Learn more about available "/>
+                            <InlineTextBox raw_id="445" nodeId="f0:-1000000101" ignored="false" name="pricing plans"/>
+                          </StaticText>
+                        </link>
+                        <StaticText raw_id="446" backendDOMNodeId="1516" nodeId="f0:1516" ignored="false" name=".">
+                          <InlineTextBox raw_id="447" nodeId="f0:-1000000102" ignored="false" name="."/>
+                        </StaticText>
+                      </paragraph>
+                    </none>
+                  </region>
+                </none>
+              </none>
+            </none>
+          </generic>
+        </main>
+      </none>
+      <contentinfo raw_id="448" backendDOMNodeId="873" nodeId="f0:873" ignored="false" name="">
+        <none raw_id="449" backendDOMNodeId="874" nodeId="f0:874" ignored="true">
+          <none raw_id="450" backendDOMNodeId="875" nodeId="f0:875" ignored="true">
+            <none raw_id="451" backendDOMNodeId="876" nodeId="f0:876" ignored="true">
+              <none raw_id="452" backendDOMNodeId="877" nodeId="f0:877" ignored="true">
+                <link raw_id="453" backendDOMNodeId="878" nodeId="f0:878" ignored="false" name="Claude" focusable="true" url="https://claude.com/">
+                  <image raw_id="454" backendDOMNodeId="879" nodeId="f0:879" ignored="false" name="Claude"/>
+                </link>
+                <generic raw_id="455" backendDOMNodeId="2" nodeId="f0:2" ignored="false" name="">
+                  <none raw_id="456" backendDOMNodeId="882" nodeId="f0:882" ignored="true">
+                    <textbox raw_id="457" backendDOMNodeId="3" nodeId="f0:3" ignored="false" name="Ask Claude" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false">
+                      <none raw_id="458" backendDOMNodeId="883" nodeId="f0:883" ignored="true"/>
+                      <generic raw_id="459" backendDOMNodeId="884" nodeId="f0:884" ignored="false" name="" editable="plaintext"/>
+                    </textbox>
+                    <button raw_id="460" backendDOMNodeId="885" nodeId="f0:885" ignored="false" name="Submit" invalid="false" focusable="true">
+                      <none raw_id="461" backendDOMNodeId="886" nodeId="f0:886" ignored="true">
+                        <generic raw_id="462" backendDOMNodeId="887" nodeId="f0:887" ignored="false" name=""/>
+                      </none>
+                    </button>
+                  </none>
+                </generic>
+              </none>
+              <none raw_id="463" backendDOMNodeId="890" nodeId="f0:890" ignored="true">
+                <image raw_id="464" backendDOMNodeId="891" nodeId="f0:891" ignored="false" name="By Anthropic"/>
+                <paragraph raw_id="465" backendDOMNodeId="903" nodeId="f0:903" ignored="false" name="">
+                  <StaticText raw_id="466" backendDOMNodeId="1517" nodeId="f0:1517" ignored="false" name="© 2026 Anthropic PBC">
+                    <InlineTextBox raw_id="467" nodeId="f0:-1000000103" ignored="false" name="© 2026 Anthropic PBC"/>
+                  </StaticText>
+                </paragraph>
+              </none>
+            </none>
+            <none raw_id="468" backendDOMNodeId="904" nodeId="f0:904" ignored="true">
+              <none raw_id="469" backendDOMNodeId="1094" nodeId="f0:1094" ignored="true">
+                <none raw_id="470" backendDOMNodeId="1095" nodeId="f0:1095" ignored="true">
+                  <none raw_id="471" backendDOMNodeId="1096" nodeId="f0:1096" ignored="true">
+                    <heading raw_id="472" backendDOMNodeId="1097" nodeId="f0:1097" ignored="false" name="Products" level="2">
+                      <StaticText raw_id="473" backendDOMNodeId="1607" nodeId="f0:1607" ignored="false" name="Products">
+                        <InlineTextBox raw_id="474" nodeId="f0:-1000000104" ignored="false" name="Products"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="475" backendDOMNodeId="1098" nodeId="f0:1098" ignored="false" name="">
+                      <listitem raw_id="476" backendDOMNodeId="1099" nodeId="f0:1099" ignored="false" name="" level="1">
+                        <link raw_id="477" backendDOMNodeId="1100" nodeId="f0:1100" ignored="false" name="Claude" focusable="true" url="https://claude.com/product/overview">
+                          <StaticText raw_id="478" backendDOMNodeId="1608" nodeId="f0:1608" ignored="false" name="Claude">
+                            <InlineTextBox raw_id="479" nodeId="f0:-1000000105" ignored="false" name="Claude"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="480" backendDOMNodeId="1101" nodeId="f0:1101" ignored="false" name="" level="1">
+                        <link raw_id="481" backendDOMNodeId="1102" nodeId="f0:1102" ignored="false" name="Claude Code" focusable="true" url="https://claude.com/product/claude-code">
+                          <StaticText raw_id="482" backendDOMNodeId="1609" nodeId="f0:1609" ignored="false" name="Claude Code">
+                            <InlineTextBox raw_id="483" nodeId="f0:-1000000106" ignored="false" name="Claude Code"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="484" backendDOMNodeId="1103" nodeId="f0:1103" ignored="false" name="" level="1">
+                        <link raw_id="485" backendDOMNodeId="1104" nodeId="f0:1104" ignored="false" name="Claude Code for Enterprise" focusable="true" url="https://claude.com/product/claude-code/enterprise">
+                          <StaticText raw_id="486" backendDOMNodeId="1610" nodeId="f0:1610" ignored="false" name="Claude Code for Enterprise">
+                            <InlineTextBox raw_id="487" nodeId="f0:-1000000107" ignored="false" name="Claude Code for Enterprise"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="488" backendDOMNodeId="1105" nodeId="f0:1105" ignored="false" name="" level="1">
+                        <link raw_id="489" backendDOMNodeId="1106" nodeId="f0:1106" ignored="false" name="Claude Cowork" focusable="true" url="https://claude.com/product/cowork">
+                          <StaticText raw_id="490" backendDOMNodeId="1611" nodeId="f0:1611" ignored="false" name="Claude Cowork">
+                            <InlineTextBox raw_id="491" nodeId="f0:-1000000108" ignored="false" name="Claude Cowork"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="492" backendDOMNodeId="1107" nodeId="f0:1107" ignored="false" name="" level="1">
+                        <link raw_id="493" backendDOMNodeId="1108" nodeId="f0:1108" ignored="false" name="@Claude" focusable="true" url="https://claude.com/product/tag">
+                          <StaticText raw_id="494" backendDOMNodeId="1612" nodeId="f0:1612" ignored="false" name="@Claude">
+                            <InlineTextBox raw_id="495" nodeId="f0:-1000000109" ignored="false" name="@Claude"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="496" backendDOMNodeId="1109" nodeId="f0:1109" ignored="false" name="" level="1">
+                        <link raw_id="497" backendDOMNodeId="1110" nodeId="f0:1110" ignored="false" name="Claude Design" focusable="true" url="https://claude.com/product/design">
+                          <StaticText raw_id="498" backendDOMNodeId="1613" nodeId="f0:1613" ignored="false" name="Claude Design">
+                            <InlineTextBox raw_id="499" nodeId="f0:-1000000110" ignored="false" name="Claude Design"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="500" backendDOMNodeId="1111" nodeId="f0:1111" ignored="false" name="" level="1">
+                        <link raw_id="501" backendDOMNodeId="1112" nodeId="f0:1112" ignored="false" name="Claude Science" focusable="true" url="https://claude.com/product/claude-science">
+                          <StaticText raw_id="502" backendDOMNodeId="1614" nodeId="f0:1614" ignored="false" name="Claude Science">
+                            <InlineTextBox raw_id="503" nodeId="f0:-1000000111" ignored="false" name="Claude Science"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="504" backendDOMNodeId="1113" nodeId="f0:1113" ignored="false" name="" level="1">
+                        <link raw_id="505" backendDOMNodeId="1114" nodeId="f0:1114" ignored="false" name="Claude Security" focusable="true" url="https://claude.com/product/claude-security">
+                          <StaticText raw_id="506" backendDOMNodeId="1615" nodeId="f0:1615" ignored="false" name="Claude Security">
+                            <InlineTextBox raw_id="507" nodeId="f0:-1000000112" ignored="false" name="Claude Security"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="508" backendDOMNodeId="1115" nodeId="f0:1115" ignored="false" name="" level="1">
+                        <link raw_id="509" backendDOMNodeId="1116" nodeId="f0:1116" ignored="false" name="Download app" focusable="true" url="https://claude.com/download">
+                          <StaticText raw_id="510" backendDOMNodeId="1616" nodeId="f0:1616" ignored="false" name="Download app">
+                            <InlineTextBox raw_id="511" nodeId="f0:-1000000113" ignored="false" name="Download app"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="512" backendDOMNodeId="1117" nodeId="f0:1117" ignored="false" name="" level="1">
+                        <link raw_id="513" backendDOMNodeId="1118" nodeId="f0:1118" ignored="false" name="Pricing" focusable="true" url="https://claude.com/pricing">
+                          <StaticText raw_id="514" backendDOMNodeId="1617" nodeId="f0:1617" ignored="false" name="Pricing">
+                            <InlineTextBox raw_id="515" nodeId="f0:-1000000114" ignored="false" name="Pricing"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="516" backendDOMNodeId="1119" nodeId="f0:1119" ignored="false" name="" level="1">
+                        <link raw_id="517" backendDOMNodeId="1120" nodeId="f0:1120" ignored="false" name="Log in" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
+                          <StaticText raw_id="518" backendDOMNodeId="1618" nodeId="f0:1618" ignored="false" name="Log in">
+                            <InlineTextBox raw_id="519" nodeId="f0:-1000000115" ignored="false" name="Log in"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                  <none raw_id="520" backendDOMNodeId="1121" nodeId="f0:1121" ignored="true">
+                    <heading raw_id="521" backendDOMNodeId="1122" nodeId="f0:1122" ignored="false" name="Features" level="2">
+                      <StaticText raw_id="522" backendDOMNodeId="1619" nodeId="f0:1619" ignored="false" name="Features">
+                        <InlineTextBox raw_id="523" nodeId="f0:-1000000116" ignored="false" name="Features"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="524" backendDOMNodeId="1123" nodeId="f0:1123" ignored="false" name="">
+                      <listitem raw_id="525" backendDOMNodeId="1124" nodeId="f0:1124" ignored="false" name="" level="1">
+                        <link raw_id="526" backendDOMNodeId="1125" nodeId="f0:1125" ignored="false" name="Claude for Chrome" focusable="true" url="https://claude.com/claude-for-chrome">
+                          <StaticText raw_id="527" backendDOMNodeId="1620" nodeId="f0:1620" ignored="false" name="Claude for Chrome">
+                            <InlineTextBox raw_id="528" nodeId="f0:-1000000117" ignored="false" name="Claude for Chrome"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="529" backendDOMNodeId="1126" nodeId="f0:1126" ignored="false" name="" level="1">
+                        <link raw_id="530" backendDOMNodeId="1127" nodeId="f0:1127" ignored="false" name="Claude for Slack" focusable="true" url="https://claude.com/claude-for-slack">
+                          <StaticText raw_id="531" backendDOMNodeId="1621" nodeId="f0:1621" ignored="false" name="Claude for Slack">
+                            <InlineTextBox raw_id="532" nodeId="f0:-1000000118" ignored="false" name="Claude for Slack"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="533" backendDOMNodeId="1128" nodeId="f0:1128" ignored="false" name="" level="1">
+                        <link raw_id="534" backendDOMNodeId="1129" nodeId="f0:1129" ignored="false" name="Claude for Microsoft 365" focusable="true" url="https://claude.com/claude-for-microsoft-365">
+                          <StaticText raw_id="535" backendDOMNodeId="1622" nodeId="f0:1622" ignored="false" name="Claude for Microsoft 365">
+                            <InlineTextBox raw_id="536" nodeId="f0:-1000000119" ignored="false" name="Claude for Microsoft 365"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="537" backendDOMNodeId="1130" nodeId="f0:1130" ignored="false" name="" level="1">
+                        <link raw_id="538" backendDOMNodeId="1131" nodeId="f0:1131" ignored="false" name="Skills" focusable="true" url="https://claude.com/skills">
+                          <StaticText raw_id="539" backendDOMNodeId="1623" nodeId="f0:1623" ignored="false" name="Skills">
+                            <InlineTextBox raw_id="540" nodeId="f0:-1000000120" ignored="false" name="Skills"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                  <none raw_id="541" backendDOMNodeId="1132" nodeId="f0:1132" ignored="true">
+                    <heading raw_id="542" backendDOMNodeId="1133" nodeId="f0:1133" ignored="false" name="Models" level="2">
+                      <StaticText raw_id="543" backendDOMNodeId="1624" nodeId="f0:1624" ignored="false" name="Models">
+                        <InlineTextBox raw_id="544" nodeId="f0:-1000000121" ignored="false" name="Models"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="545" backendDOMNodeId="1134" nodeId="f0:1134" ignored="false" name="">
+                      <listitem raw_id="546" backendDOMNodeId="1135" nodeId="f0:1135" ignored="false" name="" level="1">
+                        <link raw_id="547" backendDOMNodeId="1136" nodeId="f0:1136" ignored="false" name="Mythos" focusable="true" url="https://www.anthropic.com/claude/mythos">
+                          <StaticText raw_id="548" backendDOMNodeId="1625" nodeId="f0:1625" ignored="false" name="Mythos">
+                            <InlineTextBox raw_id="549" nodeId="f0:-1000000122" ignored="false" name="Mythos"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="550" backendDOMNodeId="1137" nodeId="f0:1137" ignored="false" name="" level="1">
+                        <link raw_id="551" backendDOMNodeId="1138" nodeId="f0:1138" ignored="false" name="Fable" focusable="true" url="https://www.anthropic.com/claude/fable">
+                          <StaticText raw_id="552" backendDOMNodeId="1626" nodeId="f0:1626" ignored="false" name="Fable">
+                            <InlineTextBox raw_id="553" nodeId="f0:-1000000123" ignored="false" name="Fable"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="554" backendDOMNodeId="1139" nodeId="f0:1139" ignored="false" name="" level="1">
+                        <link raw_id="555" backendDOMNodeId="1140" nodeId="f0:1140" ignored="false" name="Opus" focusable="true" url="https://www.anthropic.com/claude/opus">
+                          <StaticText raw_id="556" backendDOMNodeId="1627" nodeId="f0:1627" ignored="false" name="Opus">
+                            <InlineTextBox raw_id="557" nodeId="f0:-1000000124" ignored="false" name="Opus"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="558" backendDOMNodeId="1141" nodeId="f0:1141" ignored="false" name="" level="1">
+                        <link raw_id="559" backendDOMNodeId="1142" nodeId="f0:1142" ignored="false" name="Sonnet" focusable="true" url="https://www.anthropic.com/claude/sonnet">
+                          <StaticText raw_id="560" backendDOMNodeId="1628" nodeId="f0:1628" ignored="false" name="Sonnet">
+                            <InlineTextBox raw_id="561" nodeId="f0:-1000000125" ignored="false" name="Sonnet"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="562" backendDOMNodeId="1143" nodeId="f0:1143" ignored="false" name="" level="1">
+                        <link raw_id="563" backendDOMNodeId="1144" nodeId="f0:1144" ignored="false" name="Haiku" focusable="true" url="https://www.anthropic.com/claude/haiku">
+                          <StaticText raw_id="564" backendDOMNodeId="1629" nodeId="f0:1629" ignored="false" name="Haiku">
+                            <InlineTextBox raw_id="565" nodeId="f0:-1000000126" ignored="false" name="Haiku"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                </none>
+                <none raw_id="566" backendDOMNodeId="1145" nodeId="f0:1145" ignored="true">
+                  <none raw_id="567" backendDOMNodeId="1146" nodeId="f0:1146" ignored="true">
+                    <heading raw_id="568" backendDOMNodeId="1147" nodeId="f0:1147" ignored="false" name="Solutions" level="2">
+                      <StaticText raw_id="569" backendDOMNodeId="1630" nodeId="f0:1630" ignored="false" name="Solutions">
+                        <InlineTextBox raw_id="570" nodeId="f0:-1000000127" ignored="false" name="Solutions"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="571" backendDOMNodeId="1148" nodeId="f0:1148" ignored="false" name="">
+                      <listitem raw_id="572" backendDOMNodeId="1149" nodeId="f0:1149" ignored="false" name="" level="1">
+                        <link raw_id="573" backendDOMNodeId="1150" nodeId="f0:1150" ignored="false" name="AI agents" focusable="true" url="https://claude.com/solutions/agents">
+                          <StaticText raw_id="574" backendDOMNodeId="1631" nodeId="f0:1631" ignored="false" name="AI agents">
+                            <InlineTextBox raw_id="575" nodeId="f0:-1000000128" ignored="false" name="AI agents"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="576" backendDOMNodeId="1151" nodeId="f0:1151" ignored="false" name="" level="1">
+                        <link raw_id="577" backendDOMNodeId="1152" nodeId="f0:1152" ignored="false" name="Code modernization" focusable="true" url="https://claude.com/solutions/code-modernization">
+                          <StaticText raw_id="578" backendDOMNodeId="1632" nodeId="f0:1632" ignored="false" name="Code modernization">
+                            <InlineTextBox raw_id="579" nodeId="f0:-1000000129" ignored="false" name="Code modernization"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="580" backendDOMNodeId="1153" nodeId="f0:1153" ignored="false" name="" level="1">
+                        <link raw_id="581" backendDOMNodeId="1154" nodeId="f0:1154" ignored="false" name="Coding" focusable="true" url="https://claude.com/solutions/coding">
+                          <StaticText raw_id="582" backendDOMNodeId="1633" nodeId="f0:1633" ignored="false" name="Coding">
+                            <InlineTextBox raw_id="583" nodeId="f0:-1000000130" ignored="false" name="Coding"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="584" backendDOMNodeId="1155" nodeId="f0:1155" ignored="false" name="" level="1">
+                        <link raw_id="585" backendDOMNodeId="1156" nodeId="f0:1156" ignored="false" name="Customer support" focusable="true" url="https://claude.com/solutions/customer-support">
+                          <StaticText raw_id="586" backendDOMNodeId="1634" nodeId="f0:1634" ignored="false" name="Customer support">
+                            <InlineTextBox raw_id="587" nodeId="f0:-1000000131" ignored="false" name="Customer support"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="588" backendDOMNodeId="1157" nodeId="f0:1157" ignored="false" name="" level="1">
+                        <link raw_id="589" backendDOMNodeId="1158" nodeId="f0:1158" ignored="false" name="Cybersecurity" focusable="true" url="https://claude.com/solutions/cybersecurity">
+                          <StaticText raw_id="590" backendDOMNodeId="1635" nodeId="f0:1635" ignored="false" name="Cybersecurity">
+                            <InlineTextBox raw_id="591" nodeId="f0:-1000000132" ignored="false" name="Cybersecurity"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="592" backendDOMNodeId="1159" nodeId="f0:1159" ignored="false" name="" level="1">
+                        <link raw_id="593" backendDOMNodeId="1160" nodeId="f0:1160" ignored="false" name="Enterprise" focusable="true" url="https://claude.com/solutions/enterprise">
+                          <StaticText raw_id="594" backendDOMNodeId="1636" nodeId="f0:1636" ignored="false" name="Enterprise">
+                            <InlineTextBox raw_id="595" nodeId="f0:-1000000133" ignored="false" name="Enterprise"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="596" backendDOMNodeId="1161" nodeId="f0:1161" ignored="false" name="" level="1">
+                        <link raw_id="597" backendDOMNodeId="1162" nodeId="f0:1162" ignored="false" name="Financial services" focusable="true" url="https://claude.com/solutions/financial-services">
+                          <StaticText raw_id="598" backendDOMNodeId="1637" nodeId="f0:1637" ignored="false" name="Financial services">
+                            <InlineTextBox raw_id="599" nodeId="f0:-1000000134" ignored="false" name="Financial services"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="600" backendDOMNodeId="1163" nodeId="f0:1163" ignored="false" name="" level="1">
+                        <link raw_id="601" backendDOMNodeId="1164" nodeId="f0:1164" ignored="false" name="Government" focusable="true" url="https://claude.com/solutions/government">
+                          <StaticText raw_id="602" backendDOMNodeId="1638" nodeId="f0:1638" ignored="false" name="Government">
+                            <InlineTextBox raw_id="603" nodeId="f0:-1000000135" ignored="false" name="Government"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="604" backendDOMNodeId="1165" nodeId="f0:1165" ignored="false" name="" level="1">
+                        <link raw_id="605" backendDOMNodeId="1166" nodeId="f0:1166" ignored="false" name="Healthcare" focusable="true" url="https://claude.com/solutions/healthcare">
+                          <StaticText raw_id="606" backendDOMNodeId="1639" nodeId="f0:1639" ignored="false" name="Healthcare">
+                            <InlineTextBox raw_id="607" nodeId="f0:-1000000136" ignored="false" name="Healthcare"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="608" backendDOMNodeId="1167" nodeId="f0:1167" ignored="false" name="" level="1">
+                        <link raw_id="609" backendDOMNodeId="1168" nodeId="f0:1168" ignored="false" name="Higher education" focusable="true" url="https://claude.com/solutions/education">
+                          <StaticText raw_id="610" backendDOMNodeId="1640" nodeId="f0:1640" ignored="false" name="Higher education">
+                            <InlineTextBox raw_id="611" nodeId="f0:-1000000137" ignored="false" name="Higher education"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="612" backendDOMNodeId="1169" nodeId="f0:1169" ignored="false" name="" level="1">
+                        <link raw_id="613" backendDOMNodeId="1170" nodeId="f0:1170" ignored="false" name="K-12 teachers" focusable="true" url="https://claude.com/solutions/teachers">
+                          <StaticText raw_id="614" backendDOMNodeId="1641" nodeId="f0:1641" ignored="false" name="K-12 teachers">
+                            <InlineTextBox raw_id="615" nodeId="f0:-1000000138" ignored="false" name="K-12 teachers"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="616" backendDOMNodeId="1171" nodeId="f0:1171" ignored="false" name="" level="1">
+                        <link raw_id="617" backendDOMNodeId="1172" nodeId="f0:1172" ignored="false" name="Legal" focusable="true" url="https://claude.com/solutions/legal">
+                          <StaticText raw_id="618" backendDOMNodeId="1642" nodeId="f0:1642" ignored="false" name="Legal">
+                            <InlineTextBox raw_id="619" nodeId="f0:-1000000139" ignored="false" name="Legal"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="620" backendDOMNodeId="1173" nodeId="f0:1173" ignored="false" name="" level="1">
+                        <link raw_id="621" backendDOMNodeId="9" nodeId="f0:9" ignored="false" name="Life sciences" focusable="true" url="https://claude.com/solutions/life-sciences">
+                          <StaticText raw_id="622" backendDOMNodeId="1643" nodeId="f0:1643" ignored="false" name="Life sciences">
+                            <InlineTextBox raw_id="623" nodeId="f0:-1000000140" ignored="false" name="Life sciences"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="624" backendDOMNodeId="1174" nodeId="f0:1174" ignored="false" name="" level="1">
+                        <link raw_id="625" backendDOMNodeId="1175" nodeId="f0:1175" ignored="false" name="Nonprofits" focusable="true" url="https://claude.com/solutions/nonprofits">
+                          <StaticText raw_id="626" backendDOMNodeId="1644" nodeId="f0:1644" ignored="false" name="Nonprofits">
+                            <InlineTextBox raw_id="627" nodeId="f0:-1000000141" ignored="false" name="Nonprofits"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="628" backendDOMNodeId="1176" nodeId="f0:1176" ignored="false" name="" level="1">
+                        <link raw_id="629" backendDOMNodeId="1177" nodeId="f0:1177" ignored="false" name="Small business" focusable="true" url="https://claude.com/solutions/small-business">
+                          <StaticText raw_id="630" backendDOMNodeId="1645" nodeId="f0:1645" ignored="false" name="Small business">
+                            <InlineTextBox raw_id="631" nodeId="f0:-1000000142" ignored="false" name="Small business"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                  <none raw_id="632" backendDOMNodeId="1178" nodeId="f0:1178" ignored="true">
+                    <heading raw_id="633" backendDOMNodeId="1179" nodeId="f0:1179" ignored="false" name="Claude Platform" level="2">
+                      <StaticText raw_id="634" backendDOMNodeId="1646" nodeId="f0:1646" ignored="false" name="Claude Platform">
+                        <InlineTextBox raw_id="635" nodeId="f0:-1000000143" ignored="false" name="Claude Platform"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="636" backendDOMNodeId="1180" nodeId="f0:1180" ignored="false" name="">
+                      <listitem raw_id="637" backendDOMNodeId="1181" nodeId="f0:1181" ignored="false" name="" level="1">
+                        <link raw_id="638" backendDOMNodeId="1182" nodeId="f0:1182" ignored="false" name="Overview" focusable="true" url="https://claude.com/platform/api">
+                          <StaticText raw_id="639" backendDOMNodeId="1647" nodeId="f0:1647" ignored="false" name="Overview">
+                            <InlineTextBox raw_id="640" nodeId="f0:-1000000144" ignored="false" name="Overview"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="641" backendDOMNodeId="1183" nodeId="f0:1183" ignored="false" name="" level="1">
+                        <link raw_id="642" backendDOMNodeId="1184" nodeId="f0:1184" ignored="false" name="Developer docs" focusable="true" url="https://platform.claude.com/docs">
+                          <StaticText raw_id="643" backendDOMNodeId="1648" nodeId="f0:1648" ignored="false" name="Developer docs">
+                            <InlineTextBox raw_id="644" nodeId="f0:-1000000145" ignored="false" name="Developer docs"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="645" backendDOMNodeId="1185" nodeId="f0:1185" ignored="false" name="" level="1">
+                        <link raw_id="646" backendDOMNodeId="1186" nodeId="f0:1186" ignored="false" name="Pricing" focusable="true" url="https://claude.com/pricing#api">
+                          <StaticText raw_id="647" backendDOMNodeId="1649" nodeId="f0:1649" ignored="false" name="Pricing">
+                            <InlineTextBox raw_id="648" nodeId="f0:-1000000146" ignored="false" name="Pricing"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="649" backendDOMNodeId="1187" nodeId="f0:1187" ignored="false" name="" level="1">
+                        <link raw_id="650" backendDOMNodeId="1188" nodeId="f0:1188" ignored="false" name="Ecosystem" focusable="true" url="https://claude.com/ecosystem">
+                          <StaticText raw_id="651" backendDOMNodeId="1650" nodeId="f0:1650" ignored="false" name="Ecosystem">
+                            <InlineTextBox raw_id="652" nodeId="f0:-1000000147" ignored="false" name="Ecosystem"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="653" backendDOMNodeId="1189" nodeId="f0:1189" ignored="false" name="" level="1">
+                        <link raw_id="654" backendDOMNodeId="1190" nodeId="f0:1190" ignored="false" name="Marketplace" focusable="true" url="https://claude.com/platform/marketplace">
+                          <StaticText raw_id="655" backendDOMNodeId="1651" nodeId="f0:1651" ignored="false" name="Marketplace">
+                            <InlineTextBox raw_id="656" nodeId="f0:-1000000148" ignored="false" name="Marketplace"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="657" backendDOMNodeId="1191" nodeId="f0:1191" ignored="false" name="" level="1">
+                        <link raw_id="658" backendDOMNodeId="1192" nodeId="f0:1192" ignored="false" name="Claude on AWS" focusable="true" url="https://claude.com/partners/amazon-bedrock">
+                          <StaticText raw_id="659" backendDOMNodeId="1652" nodeId="f0:1652" ignored="false" name="Claude on AWS">
+                            <InlineTextBox raw_id="660" nodeId="f0:-1000000149" ignored="false" name="Claude on AWS"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="661" backendDOMNodeId="1193" nodeId="f0:1193" ignored="false" name="" level="1">
+                        <link raw_id="662" backendDOMNodeId="1194" nodeId="f0:1194" ignored="false" name="Google Cloud's Vertex AI" focusable="true" url="https://claude.com/partners/google-cloud-vertex-ai">
+                          <StaticText raw_id="663" backendDOMNodeId="1653" nodeId="f0:1653" ignored="false" name="Google Cloud's Vertex AI">
+                            <InlineTextBox raw_id="664" nodeId="f0:-1000000150" ignored="false" name="Google Cloud's Vertex AI"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="665" backendDOMNodeId="1195" nodeId="f0:1195" ignored="false" name="" level="1">
+                        <link raw_id="666" backendDOMNodeId="1196" nodeId="f0:1196" ignored="false" name="Microsoft Foundry" focusable="true" url="https://claude.com/partners/microsoft-foundry">
+                          <StaticText raw_id="667" backendDOMNodeId="1654" nodeId="f0:1654" ignored="false" name="Microsoft Foundry">
+                            <InlineTextBox raw_id="668" nodeId="f0:-1000000151" ignored="false" name="Microsoft Foundry"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="669" backendDOMNodeId="1197" nodeId="f0:1197" ignored="false" name="" level="1">
+                        <link raw_id="670" backendDOMNodeId="1198" nodeId="f0:1198" ignored="false" name="Regional compliance" focusable="true" url="https://claude.com/regional-compliance">
+                          <StaticText raw_id="671" backendDOMNodeId="1655" nodeId="f0:1655" ignored="false" name="Regional compliance">
+                            <InlineTextBox raw_id="672" nodeId="f0:-1000000152" ignored="false" name="Regional compliance"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="673" backendDOMNodeId="1199" nodeId="f0:1199" ignored="false" name="" level="1">
+                        <link raw_id="674" backendDOMNodeId="1200" nodeId="f0:1200" ignored="false" name="Console login" focusable="true" url="https://platform.claude.com/">
+                          <StaticText raw_id="675" backendDOMNodeId="1656" nodeId="f0:1656" ignored="false" name="Console login">
+                            <InlineTextBox raw_id="676" nodeId="f0:-1000000153" ignored="false" name="Console login"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                </none>
+                <none raw_id="677" backendDOMNodeId="1201" nodeId="f0:1201" ignored="true">
+                  <none raw_id="678" backendDOMNodeId="1202" nodeId="f0:1202" ignored="true">
+                    <heading raw_id="679" backendDOMNodeId="1203" nodeId="f0:1203" ignored="false" name="Resources" level="2">
+                      <StaticText raw_id="680" backendDOMNodeId="1657" nodeId="f0:1657" ignored="false" name="Resources">
+                        <InlineTextBox raw_id="681" nodeId="f0:-1000000154" ignored="false" name="Resources"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="682" backendDOMNodeId="1204" nodeId="f0:1204" ignored="false" name="">
+                      <listitem raw_id="683" backendDOMNodeId="1205" nodeId="f0:1205" ignored="false" name="" level="1">
+                        <link raw_id="684" backendDOMNodeId="1206" nodeId="f0:1206" ignored="false" name="Blog" focusable="true" url="https://claude.com/blog">
+                          <StaticText raw_id="685" backendDOMNodeId="1658" nodeId="f0:1658" ignored="false" name="Blog">
+                            <InlineTextBox raw_id="686" nodeId="f0:-1000000155" ignored="false" name="Blog"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="687" backendDOMNodeId="1207" nodeId="f0:1207" ignored="false" name="" level="1">
+                        <link raw_id="688" backendDOMNodeId="1208" nodeId="f0:1208" ignored="false" name="Claude partner network" focusable="true" url="https://claude.com/partners">
+                          <StaticText raw_id="689" backendDOMNodeId="1659" nodeId="f0:1659" ignored="false" name="Claude partner network">
+                            <InlineTextBox raw_id="690" nodeId="f0:-1000000156" ignored="false" name="Claude partner network"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="691" backendDOMNodeId="1209" nodeId="f0:1209" ignored="false" name="" level="1">
+                        <link raw_id="692" backendDOMNodeId="1210" nodeId="f0:1210" ignored="false" name="Community" focusable="true" url="https://claude.com/community">
+                          <StaticText raw_id="693" backendDOMNodeId="1660" nodeId="f0:1660" ignored="false" name="Community">
+                            <InlineTextBox raw_id="694" nodeId="f0:-1000000157" ignored="false" name="Community"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="695" backendDOMNodeId="1211" nodeId="f0:1211" ignored="false" name="" level="1">
+                        <link raw_id="696" backendDOMNodeId="1212" nodeId="f0:1212" ignored="false" name="Connectors" focusable="true" url="https://claude.com/connectors">
+                          <StaticText raw_id="697" backendDOMNodeId="1661" nodeId="f0:1661" ignored="false" name="Connectors">
+                            <InlineTextBox raw_id="698" nodeId="f0:-1000000158" ignored="false" name="Connectors"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="699" backendDOMNodeId="1213" nodeId="f0:1213" ignored="false" name="" level="1">
+                        <link raw_id="700" backendDOMNodeId="1214" nodeId="f0:1214" ignored="false" name="Courses" focusable="true" url="https://claude.com/resources/courses">
+                          <StaticText raw_id="701" backendDOMNodeId="1662" nodeId="f0:1662" ignored="false" name="Courses">
+                            <InlineTextBox raw_id="702" nodeId="f0:-1000000159" ignored="false" name="Courses"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="703" backendDOMNodeId="1215" nodeId="f0:1215" ignored="false" name="" level="1">
+                        <link raw_id="704" backendDOMNodeId="1216" nodeId="f0:1216" ignored="false" name="Customer stories" focusable="true" url="https://claude.com/customers">
+                          <StaticText raw_id="705" backendDOMNodeId="1663" nodeId="f0:1663" ignored="false" name="Customer stories">
+                            <InlineTextBox raw_id="706" nodeId="f0:-1000000160" ignored="false" name="Customer stories"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="707" backendDOMNodeId="1217" nodeId="f0:1217" ignored="false" name="" level="1">
+                        <link raw_id="708" backendDOMNodeId="1218" nodeId="f0:1218" ignored="false" name="Engineering at Anthropic" focusable="true" url="https://claude.com/engineering">
+                          <StaticText raw_id="709" backendDOMNodeId="1664" nodeId="f0:1664" ignored="false" name="Engineering at Anthropic">
+                            <InlineTextBox raw_id="710" nodeId="f0:-1000000161" ignored="false" name="Engineering at Anthropic"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="711" backendDOMNodeId="1219" nodeId="f0:1219" ignored="false" name="" level="1">
+                        <link raw_id="712" backendDOMNodeId="1220" nodeId="f0:1220" ignored="false" name="Events" focusable="true" url="https://claude.com/events">
+                          <StaticText raw_id="713" backendDOMNodeId="1665" nodeId="f0:1665" ignored="false" name="Events">
+                            <InlineTextBox raw_id="714" nodeId="f0:-1000000162" ignored="false" name="Events"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="715" backendDOMNodeId="1221" nodeId="f0:1221" ignored="false" name="" level="1">
+                        <link raw_id="716" backendDOMNodeId="1222" nodeId="f0:1222" ignored="false" name="Plugins" focusable="true" url="https://claude.com/plugins">
+                          <StaticText raw_id="717" backendDOMNodeId="1666" nodeId="f0:1666" ignored="false" name="Plugins">
+                            <InlineTextBox raw_id="718" nodeId="f0:-1000000163" ignored="false" name="Plugins"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="719" backendDOMNodeId="1223" nodeId="f0:1223" ignored="false" name="" level="1">
+                        <link raw_id="720" backendDOMNodeId="1224" nodeId="f0:1224" ignored="false" name="Powered by Claude" focusable="true" url="https://claude.com/partners/powered-by-claude">
+                          <StaticText raw_id="721" backendDOMNodeId="1667" nodeId="f0:1667" ignored="false" name="Powered by Claude">
+                            <InlineTextBox raw_id="722" nodeId="f0:-1000000164" ignored="false" name="Powered by Claude"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="723" backendDOMNodeId="1225" nodeId="f0:1225" ignored="false" name="" level="1">
+                        <link raw_id="724" backendDOMNodeId="1226" nodeId="f0:1226" ignored="false" name="Service partners" focusable="true" url="https://claude.com/service-partners">
+                          <StaticText raw_id="725" backendDOMNodeId="1668" nodeId="f0:1668" ignored="false" name="Service partners">
+                            <InlineTextBox raw_id="726" nodeId="f0:-1000000165" ignored="false" name="Service partners"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="727" backendDOMNodeId="1227" nodeId="f0:1227" ignored="false" name="" level="1">
+                        <link raw_id="728" backendDOMNodeId="1228" nodeId="f0:1228" ignored="false" name="Tutorials" focusable="true" url="https://claude.com/resources/tutorials">
+                          <StaticText raw_id="729" backendDOMNodeId="1669" nodeId="f0:1669" ignored="false" name="Tutorials">
+                            <InlineTextBox raw_id="730" nodeId="f0:-1000000166" ignored="false" name="Tutorials"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="731" backendDOMNodeId="1229" nodeId="f0:1229" ignored="false" name="" level="1">
+                        <link raw_id="732" backendDOMNodeId="1230" nodeId="f0:1230" ignored="false" name="Use cases" focusable="true" url="https://claude.com/resources/use-cases">
+                          <StaticText raw_id="733" backendDOMNodeId="1670" nodeId="f0:1670" ignored="false" name="Use cases">
+                            <InlineTextBox raw_id="734" nodeId="f0:-1000000167" ignored="false" name="Use cases"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                  <none raw_id="735" backendDOMNodeId="1231" nodeId="f0:1231" ignored="true">
+                    <heading raw_id="736" backendDOMNodeId="1232" nodeId="f0:1232" ignored="false" name="Company" level="2">
+                      <StaticText raw_id="737" backendDOMNodeId="1671" nodeId="f0:1671" ignored="false" name="Company">
+                        <InlineTextBox raw_id="738" nodeId="f0:-1000000168" ignored="false" name="Company"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="739" backendDOMNodeId="1233" nodeId="f0:1233" ignored="false" name="">
+                      <listitem raw_id="740" backendDOMNodeId="1234" nodeId="f0:1234" ignored="false" name="" level="1">
+                        <link raw_id="741" backendDOMNodeId="1235" nodeId="f0:1235" ignored="false" name="Anthropic" focusable="true" url="https://www.anthropic.com/">
+                          <StaticText raw_id="742" backendDOMNodeId="1672" nodeId="f0:1672" ignored="false" name="Anthropic">
+                            <InlineTextBox raw_id="743" nodeId="f0:-1000000169" ignored="false" name="Anthropic"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="744" backendDOMNodeId="1236" nodeId="f0:1236" ignored="false" name="" level="1">
+                        <link raw_id="745" backendDOMNodeId="1237" nodeId="f0:1237" ignored="false" name="Careers" focusable="true" url="https://www.anthropic.com/careers">
+                          <StaticText raw_id="746" backendDOMNodeId="1673" nodeId="f0:1673" ignored="false" name="Careers">
+                            <InlineTextBox raw_id="747" nodeId="f0:-1000000170" ignored="false" name="Careers"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="748" backendDOMNodeId="1238" nodeId="f0:1238" ignored="false" name="" level="1">
+                        <link raw_id="749" backendDOMNodeId="1239" nodeId="f0:1239" ignored="false" name="Economic Futures" focusable="true" url="https://www.anthropic.com/economic-futures">
+                          <StaticText raw_id="750" backendDOMNodeId="1674" nodeId="f0:1674" ignored="false" name="Economic Futures">
+                            <InlineTextBox raw_id="751" nodeId="f0:-1000000171" ignored="false" name="Economic Futures"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="752" backendDOMNodeId="1240" nodeId="f0:1240" ignored="false" name="" level="1">
+                        <link raw_id="753" backendDOMNodeId="1241" nodeId="f0:1241" ignored="false" name="Research" focusable="true" url="https://www.anthropic.com/research">
+                          <StaticText raw_id="754" backendDOMNodeId="1675" nodeId="f0:1675" ignored="false" name="Research">
+                            <InlineTextBox raw_id="755" nodeId="f0:-1000000172" ignored="false" name="Research"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="756" backendDOMNodeId="1242" nodeId="f0:1242" ignored="false" name="" level="1">
+                        <link raw_id="757" backendDOMNodeId="1243" nodeId="f0:1243" ignored="false" name="News" focusable="true" url="https://www.anthropic.com/news">
+                          <StaticText raw_id="758" backendDOMNodeId="1676" nodeId="f0:1676" ignored="false" name="News">
+                            <InlineTextBox raw_id="759" nodeId="f0:-1000000173" ignored="false" name="News"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="760" backendDOMNodeId="1244" nodeId="f0:1244" ignored="false" name="" level="1">
+                        <link raw_id="761" backendDOMNodeId="1245" nodeId="f0:1245" ignored="false" name="Responsible Scaling Policy" focusable="true" url="https://www.anthropic.com/responsible-scaling-policy">
+                          <StaticText raw_id="762" backendDOMNodeId="1677" nodeId="f0:1677" ignored="false" name="Responsible Scaling Policy">
+                            <InlineTextBox raw_id="763" nodeId="f0:-1000000174" ignored="false" name="Responsible Scaling Policy"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="764" backendDOMNodeId="1246" nodeId="f0:1246" ignored="false" name="" level="1">
+                        <link raw_id="765" backendDOMNodeId="6" nodeId="f0:6" ignored="false" name="Security and compliance" focusable="true" url="https://claude.com/security">
+                          <StaticText raw_id="766" backendDOMNodeId="1678" nodeId="f0:1678" ignored="false" name="Security and compliance">
+                            <InlineTextBox raw_id="767" nodeId="f0:-1000000175" ignored="false" name="Security and compliance"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="768" backendDOMNodeId="1247" nodeId="f0:1247" ignored="false" name="" level="1">
+                        <link raw_id="769" backendDOMNodeId="1248" nodeId="f0:1248" ignored="false" name="Transparency" focusable="true" url="https://www.anthropic.com/transparency">
+                          <StaticText raw_id="770" backendDOMNodeId="1679" nodeId="f0:1679" ignored="false" name="Transparency">
+                            <InlineTextBox raw_id="771" nodeId="f0:-1000000176" ignored="false" name="Transparency"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                </none>
+                <none raw_id="772" backendDOMNodeId="1249" nodeId="f0:1249" ignored="true">
+                  <none raw_id="773" backendDOMNodeId="1250" nodeId="f0:1250" ignored="true">
+                    <heading raw_id="774" backendDOMNodeId="1251" nodeId="f0:1251" ignored="false" name="Programs" level="2">
+                      <StaticText raw_id="775" backendDOMNodeId="1680" nodeId="f0:1680" ignored="false" name="Programs">
+                        <InlineTextBox raw_id="776" nodeId="f0:-1000000177" ignored="false" name="Programs"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="777" backendDOMNodeId="1252" nodeId="f0:1252" ignored="false" name="">
+                      <listitem raw_id="778" backendDOMNodeId="1253" nodeId="f0:1253" ignored="false" name="" level="1">
+                        <link raw_id="779" backendDOMNodeId="1254" nodeId="f0:1254" ignored="false" name="Startups" focusable="true" url="https://claude.com/programs/startups">
+                          <StaticText raw_id="780" backendDOMNodeId="1681" nodeId="f0:1681" ignored="false" name="Startups">
+                            <InlineTextBox raw_id="781" nodeId="f0:-1000000178" ignored="false" name="Startups"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="782" backendDOMNodeId="1255" nodeId="f0:1255" ignored="false" name="" level="1">
+                        <link raw_id="783" backendDOMNodeId="1256" nodeId="f0:1256" ignored="false" name="Research Labs" focusable="true" url="https://claude.com/programs/claude-team-plan-for-research-labs">
+                          <StaticText raw_id="784" backendDOMNodeId="1682" nodeId="f0:1682" ignored="false" name="Research Labs">
+                            <InlineTextBox raw_id="785" nodeId="f0:-1000000179" ignored="false" name="Research Labs"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                  <none raw_id="786" backendDOMNodeId="1257" nodeId="f0:1257" ignored="true">
+                    <heading raw_id="787" backendDOMNodeId="1258" nodeId="f0:1258" ignored="false" name="Help and security" level="2">
+                      <StaticText raw_id="788" backendDOMNodeId="1683" nodeId="f0:1683" ignored="false" name="Help and security">
+                        <InlineTextBox raw_id="789" nodeId="f0:-1000000180" ignored="false" name="Help and security"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="790" backendDOMNodeId="1259" nodeId="f0:1259" ignored="false" name="">
+                      <listitem raw_id="791" backendDOMNodeId="1260" nodeId="f0:1260" ignored="false" name="" level="1">
+                        <link raw_id="792" backendDOMNodeId="1261" nodeId="f0:1261" ignored="false" name="Availability" focusable="true" url="https://claude.com/availability">
+                          <StaticText raw_id="793" backendDOMNodeId="1684" nodeId="f0:1684" ignored="false" name="Availability">
+                            <InlineTextBox raw_id="794" nodeId="f0:-1000000181" ignored="false" name="Availability"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="795" backendDOMNodeId="1262" nodeId="f0:1262" ignored="false" name="" level="1">
+                        <link raw_id="796" backendDOMNodeId="1263" nodeId="f0:1263" ignored="false" name="Status" focusable="true" url="https://status.anthropic.com/">
+                          <StaticText raw_id="797" backendDOMNodeId="1685" nodeId="f0:1685" ignored="false" name="Status">
+                            <InlineTextBox raw_id="798" nodeId="f0:-1000000182" ignored="false" name="Status"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="799" backendDOMNodeId="1264" nodeId="f0:1264" ignored="false" name="" level="1">
+                        <link raw_id="800" backendDOMNodeId="1265" nodeId="f0:1265" ignored="false" name="Support center" focusable="true" url="https://support.anthropic.com/">
+                          <StaticText raw_id="801" backendDOMNodeId="1686" nodeId="f0:1686" ignored="false" name="Support center">
+                            <InlineTextBox raw_id="802" nodeId="f0:-1000000183" ignored="false" name="Support center"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                  <none raw_id="803" backendDOMNodeId="1266" nodeId="f0:1266" ignored="true">
+                    <heading raw_id="804" backendDOMNodeId="1267" nodeId="f0:1267" ignored="false" name="Terms and policies" level="2">
+                      <StaticText raw_id="805" backendDOMNodeId="1687" nodeId="f0:1687" ignored="false" name="Terms and policies">
+                        <InlineTextBox raw_id="806" nodeId="f0:-1000000184" ignored="false" name="Terms and policies"/>
+                      </StaticText>
+                    </heading>
+                    <list raw_id="807" backendDOMNodeId="1268" nodeId="f0:1268" ignored="false" name="">
+                      <listitem raw_id="808" backendDOMNodeId="1269" nodeId="f0:1269" ignored="false" name="" level="1">
+                        <button raw_id="809" backendDOMNodeId="1270" nodeId="f0:1270" ignored="false" name="Privacy choices" invalid="false" focusable="true">
+                          <StaticText raw_id="810" backendDOMNodeId="1688" nodeId="f0:1688" ignored="false" name="Privacy choices">
+                            <InlineTextBox raw_id="811" nodeId="f0:-1000000185" ignored="false" name="Privacy choices"/>
+                          </StaticText>
+                        </button>
+                      </listitem>
+                      <listitem raw_id="812" backendDOMNodeId="1271" nodeId="f0:1271" ignored="false" name="" level="1">
+                        <link raw_id="813" backendDOMNodeId="1272" nodeId="f0:1272" ignored="false" name="Privacy policy" focusable="true" url="https://www.anthropic.com/policies/privacy">
+                          <StaticText raw_id="814" backendDOMNodeId="1689" nodeId="f0:1689" ignored="false" name="Privacy policy">
+                            <InlineTextBox raw_id="815" nodeId="f0:-1000000186" ignored="false" name="Privacy policy"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="816" backendDOMNodeId="1273" nodeId="f0:1273" ignored="false" name="" level="1">
+                        <link raw_id="817" backendDOMNodeId="1274" nodeId="f0:1274" ignored="false" name="Responsible disclosure policy" focusable="true" url="https://www.anthropic.com/policies/responsible-disclosure">
+                          <StaticText raw_id="818" backendDOMNodeId="1690" nodeId="f0:1690" ignored="false" name="Responsible disclosure policy">
+                            <InlineTextBox raw_id="819" nodeId="f0:-1000000187" ignored="false" name="Responsible disclosure "/>
+                            <InlineTextBox raw_id="820" nodeId="f0:-1000000188" ignored="false" name="policy"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="821" backendDOMNodeId="1275" nodeId="f0:1275" ignored="false" name="" level="1">
+                        <link raw_id="822" backendDOMNodeId="1276" nodeId="f0:1276" ignored="false" name="Terms of service: Commercial" focusable="true" url="https://www.anthropic.com/policies/commercial-terms">
+                          <StaticText raw_id="823" backendDOMNodeId="1691" nodeId="f0:1691" ignored="false" name="Terms of service: Commercial">
+                            <InlineTextBox raw_id="824" nodeId="f0:-1000000189" ignored="false" name="Terms of service: "/>
+                            <InlineTextBox raw_id="825" nodeId="f0:-1000000190" ignored="false" name="Commercial"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="826" backendDOMNodeId="1277" nodeId="f0:1277" ignored="false" name="" level="1">
+                        <link raw_id="827" backendDOMNodeId="1278" nodeId="f0:1278" ignored="false" name="Terms of service: Consumer" focusable="true" url="https://www.anthropic.com/policies/consumer-terms">
+                          <StaticText raw_id="828" backendDOMNodeId="1692" nodeId="f0:1692" ignored="false" name="Terms of service: Consumer">
+                            <InlineTextBox raw_id="829" nodeId="f0:-1000000191" ignored="false" name="Terms of service: Consumer"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="830" backendDOMNodeId="1279" nodeId="f0:1279" ignored="false" name="" level="1">
+                        <link raw_id="831" backendDOMNodeId="1280" nodeId="f0:1280" ignored="false" name="Terms of Service: US K-12" focusable="true" url="https://anthropic.com/legal/k12-terms">
+                          <StaticText raw_id="832" backendDOMNodeId="1693" nodeId="f0:1693" ignored="false" name="Terms of Service: US K-12">
+                            <InlineTextBox raw_id="833" nodeId="f0:-1000000192" ignored="false" name="Terms of Service: US K-12"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="834" backendDOMNodeId="1281" nodeId="f0:1281" ignored="false" name="" level="1">
+                        <link raw_id="835" backendDOMNodeId="1282" nodeId="f0:1282" ignored="false" name="Data Processing Agreement: US K-12" focusable="true" url="https://anthropic.com/legal/k12-dpa">
+                          <StaticText raw_id="836" backendDOMNodeId="1694" nodeId="f0:1694" ignored="false" name="Data Processing Agreement: US K-12">
+                            <InlineTextBox raw_id="837" nodeId="f0:-1000000193" ignored="false" name="Data Processing "/>
+                            <InlineTextBox raw_id="838" nodeId="f0:-1000000194" ignored="false" name="Agreement: US K-12"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                      <listitem raw_id="839" backendDOMNodeId="1283" nodeId="f0:1283" ignored="false" name="" level="1">
+                        <link raw_id="840" backendDOMNodeId="1284" nodeId="f0:1284" ignored="false" name="Usage policy" focusable="true" url="https://www.anthropic.com/policies/aup">
+                          <StaticText raw_id="841" backendDOMNodeId="1695" nodeId="f0:1695" ignored="false" name="Usage policy">
+                            <InlineTextBox raw_id="842" nodeId="f0:-1000000195" ignored="false" name="Usage policy"/>
+                          </StaticText>
+                        </link>
+                      </listitem>
+                    </list>
+                  </none>
+                </none>
+              </none>
+            </none>
+          </none>
+          <none raw_id="843" backendDOMNodeId="1299" nodeId="f0:1299" ignored="true">
+            <separator raw_id="844" backendDOMNodeId="1300" nodeId="f0:1300" ignored="false" name="" settable="true" orientation="horizontal"/>
+            <none raw_id="845" backendDOMNodeId="1301" nodeId="f0:1301" ignored="true">
+              <none raw_id="846" backendDOMNodeId="1302" nodeId="f0:1302" ignored="true">
+                <link raw_id="847" backendDOMNodeId="1303" nodeId="f0:1303" ignored="false" name="Instagram" focusable="true" url="https://www.instagram.com/claudeai"/>
+                <link raw_id="848" backendDOMNodeId="1306" nodeId="f0:1306" ignored="false" name="LinkedIn" focusable="true" url="https://www.linkedin.com/showcase/claude/"/>
+                <link raw_id="849" backendDOMNodeId="1309" nodeId="f0:1309" ignored="false" name="X (Twitter)" focusable="true" url="https://x.com/claudeai"/>
+                <link raw_id="850" backendDOMNodeId="1312" nodeId="f0:1312" ignored="false" name="YouTube" focusable="true" url="https://www.youtube.com/@anthropic-ai"/>
+              </none>
+              <generic raw_id="851" backendDOMNodeId="1315" nodeId="f0:1315" ignored="false" name="">
+                <generic raw_id="852" backendDOMNodeId="1316" nodeId="f0:1316" ignored="false" name="">
+                  <button raw_id="853" backendDOMNodeId="1317" nodeId="f0:1317" ignored="false" name="Language: English" invalid="false" focusable="true" hasPopup="menu" expanded="false">
+                    <none raw_id="854" backendDOMNodeId="1318" nodeId="f0:1318" ignored="true"/>
+                    <none raw_id="855" backendDOMNodeId="1321" nodeId="f0:1321" ignored="true">
+                      <StaticText raw_id="856" backendDOMNodeId="1697" nodeId="f0:1697" ignored="false" name="English">
+                        <InlineTextBox raw_id="857" nodeId="f0:-1000000196" ignored="false" name="English"/>
+                      </StaticText>
+                    </none>
+                    <none raw_id="858" backendDOMNodeId="1322" nodeId="f0:1322" ignored="true"/>
+                  </button>
+                </generic>
+                <none raw_id="859" backendDOMNodeId="1325" nodeId="f0:1325" ignored="true"/>
+              </generic>
+            </none>
+          </none>
+        </none>
+      </contentinfo>
+      <generic raw_id="860" backendDOMNodeId="1364" nodeId="f0:1364" ignored="false" name="">
+        <alert raw_id="861" backendDOMNodeId="1365" nodeId="f0:1365" ignored="false" name="" live="assertive" atomic="true" relevant="additions text"/>
+      </generic>
+    </none>
+  </none>
+</RootWebArea>

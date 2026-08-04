@@ -1,0 +1,55 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="The Internet" focusable="true" focused="true" url="https://the-internet.herokuapp.com/upload">
+  <none raw_id="2" backendDOMNodeId="5" nodeId="f0:5" ignored="true">
+    <generic raw_id="3" backendDOMNodeId="22" nodeId="f0:22" ignored="false" name="">
+      <none raw_id="4" backendDOMNodeId="23" nodeId="f0:23" ignored="true">
+        <generic raw_id="5" backendDOMNodeId="24" nodeId="f0:24" ignored="false" name=""/>
+      </none>
+      <none raw_id="6" backendDOMNodeId="25" nodeId="f0:25" ignored="true">
+        <link raw_id="7" backendDOMNodeId="26" nodeId="f0:26" ignored="false" name="Fork me on GitHub" focusable="true" url="https://github.com/tourdedave/the-internet">
+          <image raw_id="8" backendDOMNodeId="2" nodeId="f0:2" ignored="false" name="Fork me on GitHub" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+        </link>
+        <generic raw_id="9" backendDOMNodeId="4" nodeId="f0:4" ignored="false" name="">
+          <none raw_id="10" backendDOMNodeId="30" nodeId="f0:30" ignored="true">
+            <heading raw_id="11" backendDOMNodeId="31" nodeId="f0:31" ignored="false" name="File Uploader" level="3">
+              <StaticText raw_id="12" backendDOMNodeId="55" nodeId="f0:55" ignored="false" name="File Uploader">
+                <InlineTextBox raw_id="13" nodeId="f0:-1000000002" ignored="false" name="File Uploader"/>
+              </StaticText>
+            </heading>
+            <paragraph raw_id="14" backendDOMNodeId="32" nodeId="f0:32" ignored="false" name="">
+              <StaticText raw_id="15" backendDOMNodeId="56" nodeId="f0:56" ignored="false" name="Choose a file on your system and then click upload. Or, drag and drop a file into the area below.">
+                <InlineTextBox raw_id="16" nodeId="f0:-1000000003" ignored="false" name="Choose a file on your system and then click upload. Or, drag and drop a file into the area below."/>
+              </StaticText>
+            </paragraph>
+            <generic raw_id="17" backendDOMNodeId="3" nodeId="f0:3" ignored="false" name="">
+              <button raw_id="18" backendDOMNodeId="33" nodeId="f0:33" ignored="false" name="Choose File" invalid="false" focusable="true"/>
+              <LineBreak raw_id="19" backendDOMNodeId="36" nodeId="f0:36" ignored="false" name="&#xA;">
+                <InlineTextBox raw_id="20" nodeId="f0:-1000000004" ignored="false" name="&#xA;"/>
+              </LineBreak>
+              <button raw_id="21" backendDOMNodeId="37" nodeId="f0:37" ignored="false" name="Upload" invalid="false" focusable="true">
+                <StaticText raw_id="22" backendDOMNodeId="57" nodeId="f0:57" ignored="false" name="Upload">
+                  <InlineTextBox raw_id="23" nodeId="f0:-1000000005" ignored="false" name="Upload"/>
+                </StaticText>
+              </button>
+            </generic>
+          </none>
+          <generic raw_id="24" backendDOMNodeId="38" nodeId="f0:38" ignored="false" name=""/>
+        </generic>
+      </none>
+      <generic raw_id="25" backendDOMNodeId="50" nodeId="f0:50" ignored="false" name="">
+        <generic raw_id="26" backendDOMNodeId="51" nodeId="f0:51" ignored="false" name="">
+          <separator raw_id="27" backendDOMNodeId="52" nodeId="f0:52" ignored="false" name="" settable="true" orientation="horizontal"/>
+          <generic raw_id="28" backendDOMNodeId="53" nodeId="f0:53" ignored="false" name="">
+            <StaticText raw_id="29" backendDOMNodeId="59" nodeId="f0:59" ignored="false" name="Powered by ">
+              <InlineTextBox raw_id="30" nodeId="f0:-1000000006" ignored="false" name="Powered by "/>
+            </StaticText>
+            <link raw_id="31" backendDOMNodeId="54" nodeId="f0:54" ignored="false" name="Elemental Selenium" focusable="true" url="http://elementalselenium.com/">
+              <StaticText raw_id="32" backendDOMNodeId="60" nodeId="f0:60" ignored="false" name="Elemental Selenium">
+                <InlineTextBox raw_id="33" nodeId="f0:-1000000007" ignored="false" name="Elemental Selenium"/>
+              </StaticText>
+            </link>
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </none>
+</RootWebArea>

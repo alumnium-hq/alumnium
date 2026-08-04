@@ -1,0 +1,31 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="Multiple File Upload Test" focusable="true" focused="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multiple_file_upload.html">
+  <none raw_id="2" backendDOMNodeId="3" nodeId="f0:3" ignored="true">
+    <none raw_id="3" backendDOMNodeId="9" nodeId="f0:9" ignored="true">
+      <heading raw_id="4" backendDOMNodeId="10" nodeId="f0:10" ignored="false" name="Multiple File Upload Test" level="1">
+        <StaticText raw_id="5" backendDOMNodeId="24" nodeId="f0:24" ignored="false" name="Multiple File Upload Test">
+          <InlineTextBox raw_id="6" nodeId="f0:-1000000002" ignored="false" name="Multiple File Upload Test"/>
+        </StaticText>
+      </heading>
+      <none raw_id="7" backendDOMNodeId="2" nodeId="f0:2" ignored="true">
+        <heading raw_id="8" backendDOMNodeId="11" nodeId="f0:11" ignored="false" name="📁 Upload Multiple Files" level="2">
+          <StaticText raw_id="9" backendDOMNodeId="25" nodeId="f0:25" ignored="false" name="📁 Upload Multiple Files">
+            <InlineTextBox raw_id="10" nodeId="f0:-1000000003" ignored="false" name="📁 Upload Multiple Files"/>
+          </StaticText>
+        </heading>
+        <paragraph raw_id="11" backendDOMNodeId="12" nodeId="f0:12" ignored="false" name="">
+          <StaticText raw_id="12" backendDOMNodeId="26" nodeId="f0:26" ignored="false" name="Select multiple files to test the upload functionality">
+            <InlineTextBox raw_id="13" nodeId="f0:-1000000004" ignored="false" name="Select multiple files to test the upload functionality"/>
+          </StaticText>
+        </paragraph>
+        <button raw_id="14" backendDOMNodeId="13" nodeId="f0:13" ignored="false" name="Multiple File Input" invalid="false" focusable="true"/>
+        <generic raw_id="15" backendDOMNodeId="16" nodeId="f0:16" ignored="false" name=""/>
+        <generic raw_id="16" backendDOMNodeId="17" nodeId="f0:17" ignored="false" name=""/>
+        <button raw_id="17" backendDOMNodeId="18" nodeId="f0:18" ignored="false" name="Upload Files" disabled="true" invalid="false">
+          <StaticText raw_id="18" backendDOMNodeId="27" nodeId="f0:27" ignored="false" name="Upload Files">
+            <InlineTextBox raw_id="19" nodeId="f0:-1000000005" ignored="false" name="Upload Files"/>
+          </StaticText>
+        </button>
+      </none>
+    </none>
+  </none>
+</RootWebArea>

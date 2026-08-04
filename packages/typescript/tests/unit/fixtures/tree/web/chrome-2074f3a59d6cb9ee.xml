@@ -1,0 +1,88 @@
+<RootWebArea raw_id="1" backendDOMNodeId="2" nodeId="f0:2" ignored="false" name="TodoMVC: Vue" focusable="true" focused="true" url="https://todomvc.com/examples/vue/dist/#/">
+  <none raw_id="2" backendDOMNodeId="8" nodeId="f0:8" ignored="true">
+    <none raw_id="3" backendDOMNodeId="5" nodeId="f0:5" ignored="true">
+      <complementary raw_id="4" backendDOMNodeId="19" nodeId="f0:19" ignored="false" name="">
+        <sectionheader raw_id="5" backendDOMNodeId="20" nodeId="f0:20" ignored="false" name="">
+          <heading raw_id="6" backendDOMNodeId="21" nodeId="f0:21" ignored="false" name="Vue.js" level="3">
+            <StaticText raw_id="7" backendDOMNodeId="54" nodeId="f0:54" ignored="false" name="Vue.js">
+              <InlineTextBox raw_id="8" nodeId="f0:-1000000002" ignored="false" name="Vue.js"/>
+            </StaticText>
+          </heading>
+          <heading raw_id="9" backendDOMNodeId="23" nodeId="f0:23" ignored="false" name="Example" level="5">
+            <StaticText raw_id="10" backendDOMNodeId="55" nodeId="f0:55" ignored="false" name="Example">
+              <InlineTextBox raw_id="11" nodeId="f0:-1000000003" ignored="false" name="Example"/>
+            </StaticText>
+          </heading>
+          <link raw_id="12" backendDOMNodeId="24" nodeId="f0:24" ignored="false" name="Source" focusable="true" url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue">
+            <StaticText raw_id="13" backendDOMNodeId="56" nodeId="f0:56" ignored="false" name="Source">
+              <InlineTextBox raw_id="14" nodeId="f0:-1000000004" ignored="false" name="Source"/>
+            </StaticText>
+          </link>
+        </sectionheader>
+        <separator raw_id="15" backendDOMNodeId="25" nodeId="f0:25" ignored="false" name="" settable="true" orientation="horizontal"/>
+        <blockquote raw_id="16" backendDOMNodeId="26" nodeId="f0:26" ignored="false" name="">
+          <paragraph raw_id="17" backendDOMNodeId="27" nodeId="f0:27" ignored="false" name="">
+            <generic raw_id="18" backendDOMNodeId="57" nodeId="f0:57" ignored="false" name="">
+              <StaticText raw_id="19" nodeId="f0:-1000000005" ignored="false" name="“">
+                <InlineTextBox raw_id="20" nodeId="f0:-1000000006" ignored="false" name="“"/>
+              </StaticText>
+            </generic>
+            <StaticText raw_id="21" backendDOMNodeId="58" nodeId="f0:58" ignored="false" name="Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `">
+              <InlineTextBox raw_id="22" nodeId="f0:-1000000007" ignored="false" name="Vue is an approachable, progressive "/>
+              <InlineTextBox raw_id="23" nodeId="f0:-1000000008" ignored="false" name="framework for building user "/>
+              <InlineTextBox raw_id="24" nodeId="f0:-1000000009" ignored="false" name="interfaces. Components are authored "/>
+              <InlineTextBox raw_id="25" nodeId="f0:-1000000010" ignored="false" name="as Single-File Components, with "/>
+              <InlineTextBox raw_id="26" nodeId="f0:-1000000011" ignored="false" name="reactive state via the Composition "/>
+              <InlineTextBox raw_id="27" nodeId="f0:-1000000012" ignored="false" name="API and `"/>
+            </StaticText>
+            <generic raw_id="28" backendDOMNodeId="59" nodeId="f0:59" ignored="false" name="">
+              <StaticText raw_id="29" nodeId="f0:-1000000013" ignored="false" name="”">
+                <InlineTextBox raw_id="30" nodeId="f0:-1000000014" ignored="false" name="”"/>
+              </StaticText>
+            </generic>
+          </paragraph>
+        </blockquote>
+      </complementary>
+      <generic raw_id="31" backendDOMNodeId="6" nodeId="f0:6" ignored="false" name="">
+        <sectionheader raw_id="32" backendDOMNodeId="29" nodeId="f0:29" ignored="false" name="">
+          <link raw_id="33" backendDOMNodeId="30" nodeId="f0:30" ignored="false" name="todos" focusable="true" url="https://todomvc.com/examples/vue/dist/#/">
+            <heading raw_id="34" backendDOMNodeId="31" nodeId="f0:31" ignored="false" name="todos" level="1">
+              <StaticText raw_id="35" backendDOMNodeId="60" nodeId="f0:60" ignored="false" name="todos">
+                <InlineTextBox raw_id="36" nodeId="f0:-1000000015" ignored="false" name="todos"/>
+              </StaticText>
+            </heading>
+          </link>
+          <textbox raw_id="37" backendDOMNodeId="3" nodeId="f0:3" ignored="false" name="What needs to be done?" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false">
+            <none raw_id="38" backendDOMNodeId="32" nodeId="f0:32" ignored="true"/>
+            <generic raw_id="39" backendDOMNodeId="33" nodeId="f0:33" ignored="false" name="" editable="plaintext"/>
+          </textbox>
+        </sectionheader>
+        <none raw_id="40" backendDOMNodeId="36" nodeId="f0:36" ignored="true">
+          <none raw_id="41" backendDOMNodeId="61" nodeId="f0:61" ignored="true"/>
+        </none>
+      </generic>
+      <contentinfo raw_id="42" backendDOMNodeId="7" nodeId="f0:7" ignored="false" name="">
+        <paragraph raw_id="43" backendDOMNodeId="49" nodeId="f0:49" ignored="false" name="">
+          <StaticText raw_id="44" backendDOMNodeId="68" nodeId="f0:68" ignored="false" name="Double-click to edit a todo">
+            <InlineTextBox raw_id="45" nodeId="f0:-1000000016" ignored="false" name="Double-click to edit a todo"/>
+          </StaticText>
+        </paragraph>
+        <paragraph raw_id="46" backendDOMNodeId="50" nodeId="f0:50" ignored="false" name="">
+          <StaticText raw_id="47" backendDOMNodeId="69" nodeId="f0:69" ignored="false" name="Created by the TodoMVC Team">
+            <InlineTextBox raw_id="48" nodeId="f0:-1000000017" ignored="false" name="Created by the TodoMVC Team"/>
+          </StaticText>
+        </paragraph>
+        <paragraph raw_id="49" backendDOMNodeId="51" nodeId="f0:51" ignored="false" name="">
+          <StaticText raw_id="50" backendDOMNodeId="70" nodeId="f0:70" ignored="false" name="Part of ">
+            <InlineTextBox raw_id="51" nodeId="f0:-1000000018" ignored="false" name="Part of "/>
+          </StaticText>
+          <link raw_id="52" backendDOMNodeId="52" nodeId="f0:52" ignored="false" name="TodoMVC" focusable="true" url="http://todomvc.com/">
+            <StaticText raw_id="53" backendDOMNodeId="71" nodeId="f0:71" ignored="false" name="TodoMVC">
+              <InlineTextBox raw_id="54" nodeId="f0:-1000000019" ignored="false" name="TodoMVC"/>
+            </StaticText>
+          </link>
+        </paragraph>
+      </contentinfo>
+    </none>
+  </none>
+</RootWebArea>
