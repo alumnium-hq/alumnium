@@ -20,6 +20,10 @@ export namespace Xml {
   export type Text = DomHandler.Text;
 
   export type AnyElement = Element | Text;
+
+  export interface FormatOptions {
+    minify?: boolean;
+  }
 }
 
 export abstract class Xml {
@@ -55,7 +59,10 @@ export abstract class Xml {
     return root;
   }
 
-  static format(els: Xml.AnyElement[]): string {
+  static format(
+    els: Xml.AnyElement[],
+    options: Xml.FormatOptions = {},
+  ): string {
     let xml = "";
     for (const element of els) {
       Xml.#sanitizeElement(element);
@@ -71,6 +78,10 @@ export abstract class Xml {
         lineSeparator: "\n",
       });
     }
+
+    // Remove leading whitespace and newlines from the formatted XML.
+    if (options.minify) xml = xml.replace(/(^\s+|\n)/gm, "");
+
     return xml;
   }
 
@@ -92,8 +103,14 @@ export abstract class Xml {
     return new Text(content);
   }
 
-  static element(content: string, attrs: Xml.ElementAttrs = {}): Xml.Element {
-    return new Element(content, attrs);
+  static element(
+    content: string,
+    attrs: Xml.ElementAttrs = {},
+    children: Xml.AnyElement[] = [],
+  ): Xml.Element {
+    const el = new Element(content, attrs);
+    el.children = children as any;
+    return el;
   }
 
   static #sanitizeElement(node: Xml.AnyElement): void {
