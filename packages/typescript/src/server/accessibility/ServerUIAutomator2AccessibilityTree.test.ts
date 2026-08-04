@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { readdirSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { ServerUIAutomator2AccessibilityTree } from "./ServerUIAutomator2AccessibilityTree.ts";
 
@@ -266,28 +267,26 @@ describe(ServerUIAutomator2AccessibilityTree, () => {
   });
 
   describe("snapshots", () => {
-    it("bulk", async () => {
-      const fixturesPath = new URL(
-        "../../../tests/unit/fixtures/tree/android/",
-        import.meta.url,
+    const fixturesPath = new URL(
+      "../../../tests/unit/fixtures/tree/android/",
+      import.meta.url,
+    );
+    const fixtureNames = readdirSync(fixturesPath)
+      .filter(
+        (name) => name.startsWith("uiautomator2-") && name.endsWith(".xml"),
+      )
+      .sort();
+
+    it.for(fixtureNames)("%s", async (fixtureName) => {
+      const fixtureXml = await fs.readFile(
+        new URL(fixtureName, fixturesPath),
+        "utf-8",
       );
-      const fixtureNames = (await fs.readdir(fixturesPath))
-        .filter(
-          (name) => name.startsWith("uiautomator2-") && name.endsWith(".xml"),
-        )
-        .sort();
+      const tree = new ServerUIAutomator2AccessibilityTree(fixtureXml);
 
-      for (const fixtureName of fixtureNames) {
-        const fixtureXml = await fs.readFile(
-          new URL(fixtureName, fixturesPath),
-          "utf-8",
-        );
-        const tree = new ServerUIAutomator2AccessibilityTree(fixtureXml);
-
-        await expect(tree.toXml()).toMatchFileSnapshot(
-          `./__snapshots__/uiautomator2/${fixtureName.replace(".xml", ".snap.xml")}`,
-        );
-      }
+      await expect(tree.toXml()).toMatchFileSnapshot(
+        `./__snapshots__/uiautomator2/${fixtureName.replace(".xml", ".snap.xml")}`,
+      );
     });
   });
 });
