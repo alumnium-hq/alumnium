@@ -108,4 +108,29 @@ describe(ServerChromiumAccessibilityTree, () => {
     expect(xml.includes(" id=")).toBe(false);
     expect(xml.includes(" focusable=")).toBe(false);
   });
+
+  describe("snapshots", () => {
+    it("bulk", async () => {
+      const fixturesPath = new URL(
+        "../../../tests/unit/fixtures/tree/web/",
+        import.meta.url,
+      );
+
+      const fixtureNames = (await fs.readdir(fixturesPath))
+        .filter((name) => name.startsWith("chrome-") && name.endsWith(".xml"))
+        .sort();
+
+      for (const fixtureName of fixtureNames) {
+        const fixtureXml = await fs.readFile(
+          new URL(fixtureName, fixturesPath),
+          "utf-8",
+        );
+        const tree = new ServerChromiumAccessibilityTree(fixtureXml);
+
+        await expect(tree.toXml()).toMatchFileSnapshot(
+          `./__snapshots__/chrome/${fixtureName.replace(".xml", ".snap.xml")}`,
+        );
+      }
+    });
+  });
 });
