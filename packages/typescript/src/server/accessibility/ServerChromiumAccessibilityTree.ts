@@ -34,6 +34,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
       const nodeId = node.backendDOMNodeId ?? pythonicId(node);
       this.tree[`${nodeId}`] = node;
     }
+
+    void this.devCaptureTreeInput("chrome", xml);
   }
 
   /** Convert XML element to node dict structure with simplified IDs. */
@@ -172,6 +174,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
     // Convert the XML elements to a string
     const xmlString = Xml.format(rootElements);
+    void this.devCaptureTreeOutput(xmlString);
 
     return xmlString;
   }
