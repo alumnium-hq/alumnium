@@ -1,3 +1,8 @@
+import { Env } from "../../Env.ts";
+import { FileStore } from "../../FileStore/FileStore.ts";
+import { always } from "alwaysly";
+import { xxh64Str } from "smolxxh/str";
+
 // TODO: Combine with the original interface is defined in packages/typescript/src/tools/BaseTool.ts
 export interface ToolCall {
   name: string;
@@ -64,5 +69,32 @@ export abstract class BaseServerAccessibilityTree {
     }
 
     throw new Error(`Cannot extract id from ${String(id)}`);
+  }
+
+  static #devTreesStore = FileStore.subStore(undefined, "dev", "trees");
+
+  #devCapturedTreeName?: string;
+
+  protected async devCaptureTreeInput(
+    kind: string,
+    xml: string,
+  ): Promise<void> {
+    if (!Env.ALUMNIUM_DEV_CAPTURE_TREES) return;
+
+    const hash = xxh64Str(xml);
+    this.#devCapturedTreeName = `${kind}-${hash}`;
+    await this.#devWriteTree("in", xml);
+  }
+
+  protected async devCaptureTreeOutput(xml: string): Promise<void> {
+    if (!Env.ALUMNIUM_DEV_CAPTURE_TREES) return;
+
+    await this.#devWriteTree("out", xml);
+  }
+
+  async #devWriteTree(inOut: "in" | "out", xml: string): Promise<void> {
+    always(this.#devCapturedTreeName);
+    const name = `${this.#devCapturedTreeName}-${inOut}.xml`;
+    await BaseServerAccessibilityTree.#devTreesStore.writeFile(name, xml);
   }
 }

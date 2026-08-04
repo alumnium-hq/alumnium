@@ -2,6 +2,7 @@ import { always } from "alwaysly";
 import { Element, Node } from "domhandler";
 import { Xml } from "../../Xml.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
+import { Env } from "../../Env.ts";
 
 export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibilityTree {
   #tree: InternalNode[];
@@ -38,6 +39,8 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
         }
       }
     }
+
+    void this.devCaptureTreeInput("uiautomator2", xmlString);
   }
 
   #parseElement(nodeArg: Xml.Node): InternalNode | null {
@@ -229,7 +232,10 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
       convertDictToXml(ele, rootXml);
     }
 
-    return Xml.format([rootXml]);
+    const xml = Xml.format([rootXml]);
+    void this.devCaptureTreeOutput(xml);
+
+    return xml;
   }
 }
 

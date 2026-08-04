@@ -41,6 +41,8 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
 
     if (!appElement) return;
     this.#tree = this.#parseElement(appElement);
+
+    void this.devCaptureTreeInput("xcuitest", xmlString);
   }
 
   #simplifyRole(xcuiType: string): string {
@@ -331,6 +333,8 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
     }
 
     const xmlString = Xml.format([rootXmlElement]);
+    void this.devCaptureTreeOutput(xmlString);
+
     return xmlString;
   }
 
