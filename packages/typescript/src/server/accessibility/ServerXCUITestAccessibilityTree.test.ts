@@ -154,4 +154,28 @@ describe(ServerXCUITestAccessibilityTree, () => {
       `.trim(),
     );
   });
+
+  describe("snapshots", () => {
+    it("bulk", async () => {
+      const fixturesPath = new URL(
+        "../../../tests/unit/fixtures/tree/ios/",
+        import.meta.url,
+      );
+      const fixtureNames = (await fs.readdir(fixturesPath))
+        .filter((name) => name.startsWith("xcuitest-") && name.endsWith(".xml"))
+        .sort();
+
+      for (const fixtureName of fixtureNames) {
+        const fixtureXml = await fs.readFile(
+          new URL(fixtureName, fixturesPath),
+          "utf-8",
+        );
+        const tree = new ServerXCUITestAccessibilityTree(fixtureXml);
+
+        await expect(tree.toXml()).toMatchFileSnapshot(
+          `./__snapshots__/xcuitest/${fixtureName.replace(".xml", ".snap.xml")}`,
+        );
+      }
+    });
+  });
 });
