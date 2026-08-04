@@ -4,7 +4,8 @@
     "**/pyproject.toml",
     // TODO: Enable it for Java too
     "packages/java/**/*",
-    "websites/homepage/**/*"
+    "websites/homepage/**/*",
+    "**/__fixtures__/**/*"
   ],
   "printWidth": 80
 }
