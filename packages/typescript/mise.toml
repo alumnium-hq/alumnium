@@ -268,3 +268,7 @@ description = "Generates LchainSchema from scanned types. See docs/contributing/
 run = '''
 mise :generate/types-scan-schema:class ./src/llm/Lchain.serialized.types-scan.json LchainSchema > ./src/llm/LchainSchema.ts
 '''
+
+[tasks."bench/tree-tokens"]
+description = "Benchmarks tree tokens."
+run = "bun scripts/report-tree-tokens.ts"
