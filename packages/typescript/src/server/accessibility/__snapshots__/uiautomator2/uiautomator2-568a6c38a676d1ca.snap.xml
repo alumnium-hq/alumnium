@@ -1,0 +1,101 @@
+<hierarchy>
+  <hierarchy id="2" clickable="false">
+    <FrameLayout id="3" clickable="false">
+      <LinearLayout id="4" clickable="false">
+        <FrameLayout id="5" clickable="false">
+          <FrameLayout id="6" clickable="false">
+            <FrameLayout id="7" resource-id="android:id/content" clickable="false">
+              <ViewGroup id="8" resource-id="com.android.chrome:id/coordinator" clickable="false">
+                <FrameLayout id="9" resource-id="com.android.chrome:id/compositor_view_holder" clickable="false">
+                  <FrameLayout id="10" clickable="false">
+                    <View id="11" clickable="false"/>
+                  </FrameLayout>
+                  <FrameLayout id="12" clickable="false">
+                    <WebView id="13" text="TodoMVC: Vue" clickable="false">
+                      <View id="14" clickable="false">
+                        <View id="15" clickable="false">
+                          <View id="16" content-desc="todos" clickable="true">
+                            <TextView id="17" text="todos" clickable="false"/>
+                          </View>
+                          <EditText id="18" clickable="true"/>
+                        </View>
+                        <View id="19" clickable="false">
+                          <CheckBox id="20" resource-id="toggle-all-input" text="❯ Toggle All Input" clickable="true" checked="true"/>
+                          <TextView id="21" text="❯" clickable="false"/>
+                          <ListView id="22" clickable="false">
+                            <View id="23" clickable="false">
+                              <CheckBox id="24" clickable="true" checked="true"/>
+                              <View id="25" text="Buy milk" clickable="false"/>
+                              <Button id="26" text="×" clickable="true"/>
+                            </View>
+                          </ListView>
+                        </View>
+                        <View id="27" clickable="false">
+                          <TextView id="28" text="0" clickable="false"/>
+                          <TextView id="29" text=" items left" clickable="false"/>
+                          <ListView id="30" clickable="false">
+                            <View id="31" clickable="false">
+                              <View id="32" content-desc="All" clickable="true">
+                                <TextView id="33" text="All" clickable="false"/>
+                              </View>
+                            </View>
+                            <View id="34" clickable="false">
+                              <View id="35" content-desc="Active" clickable="true">
+                                <TextView id="36" text="Active" clickable="false"/>
+                              </View>
+                            </View>
+                            <View id="37" clickable="false">
+                              <View id="38" content-desc="Completed" clickable="true">
+                                <TextView id="39" text="Completed" clickable="false"/>
+                              </View>
+                            </View>
+                          </ListView>
+                          <Button id="40" text="Clear completed" clickable="true"/>
+                        </View>
+                      </View>
+                      <View id="41" clickable="false">
+                        <TextView id="42" text="Double-click to edit a todo" clickable="false"/>
+                        <TextView id="43" text="Created by the TodoMVC Team" clickable="false"/>
+                        <View id="44" clickable="false">
+                          <TextView id="45" text="Part of " clickable="false"/>
+                          <View id="46" content-desc="TodoMVC" clickable="true">
+                            <TextView id="47" text="TodoMVC" clickable="false"/>
+                          </View>
+                        </View>
+                      </View>
+                    </WebView>
+                  </FrameLayout>
+                </FrameLayout>
+                <FrameLayout id="48" resource-id="com.android.chrome:id/control_container" clickable="false">
+                  <FrameLayout id="49" resource-id="com.android.chrome:id/toolbar_container" clickable="false">
+                    <FrameLayout id="50" resource-id="com.android.chrome:id/toolbar" clickable="false">
+                      <ImageButton id="51" resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable="true"/>
+                      <FrameLayout id="52" resource-id="com.android.chrome:id/location_bar" clickable="false">
+                        <LinearLayout id="53" resource-id="com.android.chrome:id/location_bar_status" clickable="true">
+                          <LinearLayout id="54" resource-id="com.android.chrome:id/location_bar_status_icon_view" clickable="false">
+                            <FrameLayout id="55" resource-id="com.android.chrome:id/location_bar_status_icon_frame" clickable="false">
+                              <ImageView id="56" resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure" clickable="false"/>
+                            </FrameLayout>
+                          </LinearLayout>
+                        </LinearLayout>
+                        <EditText id="57" resource-id="com.android.chrome:id/url_bar" text="todomvc.com/examples/vue/dist/#/" clickable="true"/>
+                      </FrameLayout>
+                      <LinearLayout id="58" resource-id="com.android.chrome:id/toolbar_buttons" clickable="false">
+                        <ImageButton id="59" resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable="true"/>
+                        <FrameLayout id="60" resource-id="com.android.chrome:id/menu_button_wrapper" clickable="false">
+                          <ImageButton id="61" resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable="true"/>
+                        </FrameLayout>
+                      </LinearLayout>
+                    </FrameLayout>
+                    <ImageView id="62" resource-id="com.android.chrome:id/toolbar_hairline" clickable="false"/>
+                  </FrameLayout>
+                </FrameLayout>
+              </ViewGroup>
+            </FrameLayout>
+          </FrameLayout>
+        </FrameLayout>
+      </LinearLayout>
+      <View id="63" resource-id="android:id/navigationBarBackground" clickable="false"/>
+    </FrameLayout>
+  </hierarchy>
+</hierarchy>

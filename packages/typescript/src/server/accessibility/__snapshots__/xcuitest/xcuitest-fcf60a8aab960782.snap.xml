@@ -1,0 +1,186 @@
+<Application id="1" name="Safari">
+  <Window id="2">
+    <generic id="5">
+      <generic id="8">
+        <generic id="10">
+          <generic id="11" name="SafariWindow?View=Narrow&amp;BarsKeptMinimized=false&amp;UUID=93F2A78-D34-45E-8848-FC5DD46EFFCC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false">
+            <generic id="13">
+              <ScrollView id="18">
+                <generic id="19" name="TabDocument?IsLoadedUsingDesktopUserAgent=false&amp;InReaderMode=false&amp;UUID=A77B726A-4DA-4B7-988C-95D5A384C8&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=44861">
+                  <WebView id="20" name="WebView">
+                    <WebView id="21">
+                      <WebView id="23">
+                        <generic id="27">
+                          <generic id="28" name="main">
+                            <generic id="29" value="1">
+                              <StaticText id="30">
+                                Hands-On Selenium WebDriver with Java
+                              </StaticText>
+                            </generic>
+                            <generic id="31" value="5">
+                              <StaticText id="32">
+                                Practice site
+                              </StaticText>
+                            </generic>
+                            <Link id="34">
+                              <Image id="35"/>
+                            </Link>
+                            <generic id="36" name="separator" enabled="false"/>
+                            <generic id="37" value="1">
+                              <StaticText id="38">
+                                Web form
+                              </StaticText>
+                            </generic>
+                            <generic id="39" name="form">
+                              <generic id="40">
+                                <StaticText id="41">
+                                  Text input
+                                </StaticText>
+                                <TextField id="42" name="Text input"/>
+                              </generic>
+                              <generic id="43">
+                                <StaticText id="44">
+                                  Password
+                                </StaticText>
+                                <SecureTextField id="45" name="Password"/>
+                              </generic>
+                              <generic id="46">
+                                <StaticText id="47">
+                                  Textarea
+                                </StaticText>
+                                <TextView id="48" name="Textarea"/>
+                              </generic>
+                              <generic id="49">
+                                <StaticText id="50">
+                                  Disabled input
+                                </StaticText>
+                                <TextField id="51" name="Disabled input" enabled="false"/>
+                              </generic>
+                              <generic id="52">
+                                <StaticText id="53">
+                                  Readonly input
+                                </StaticText>
+                                <TextField id="54" name="Readonly input"/>
+                              </generic>
+                              <Link id="56">
+                                <StaticText id="57">
+                                  Return to index
+                                </StaticText>
+                              </Link>
+                              <generic id="58">
+                                <StaticText id="59">
+                                  Dropdown (select)
+                                </StaticText>
+                                <generic id="60" name="Dropdown (select)" value="Open this select menu"/>
+                              </generic>
+                              <generic id="61">
+                                <StaticText id="62">
+                                  Dropdown (datalist)
+                                </StaticText>
+                                <TextField id="63" name="Dropdown (datalist)" value="Type to search..."/>
+                              </generic>
+                              <generic id="64">
+                                <StaticText id="65">
+                                  File input
+                                </StaticText>
+                                <Button id="66" name="File input" value="no file selected"/>
+                              </generic>
+                              <generic id="67">
+                                <generic id="68">
+                                  <Switch id="69" name="Checked checkbox" value="1"/>
+                                  <StaticText id="70">
+                                    Checked checkbox
+                                  </StaticText>
+                                </generic>
+                                <generic id="71">
+                                  <Switch id="72" name="Default checkbox" value="0"/>
+                                  <StaticText id="73">
+                                    Default checkbox
+                                  </StaticText>
+                                </generic>
+                              </generic>
+                              <generic id="75">
+                                <generic id="76" name="Checked radio" value="1"/>
+                                <StaticText id="77">
+                                  Checked radio
+                                </StaticText>
+                              </generic>
+                              <generic id="79">
+                                <generic id="80" name="Default radio" value="0"/>
+                                <StaticText id="81">
+                                  Default radio
+                                </StaticText>
+                              </generic>
+                              <Button id="82" name="Submit"/>
+                              <generic id="83">
+                                <generic id="84">
+                                  <StaticText id="85">
+                                    Color picker
+                                  </StaticText>
+                                  <ColorWell id="86" name="Color picker" value="dark indigo"/>
+                                </generic>
+                                <generic id="87">
+                                  <StaticText id="88">
+                                    Date picker
+                                  </StaticText>
+                                  <TextField id="89" name="Date picker"/>
+                                </generic>
+                                <generic id="90">
+                                  <StaticText id="91">
+                                    Example range
+                                  </StaticText>
+                                  <Slider id="92" name="Example range" value="5.00"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="94" name="content information">
+                            <StaticText id="95" value="Copyright © 2021-2026 ">
+                              Copyright © 2021-2026
+                            </StaticText>
+                            <Link id="96">
+                              <StaticText id="97">
+                                Boni García
+                              </StaticText>
+                            </Link>
+                          </generic>
+                        </generic>
+                      </WebView>
+                      <generic id="99">
+                        <Image id="100" name="AdditionalDimmingOverlay"/>
+                      </generic>
+                      <generic id="107" name="Vertical scroll bar, 2 pages"/>
+                      <generic id="109" name="Horizontal scroll bar, 1 page"/>
+                      <generic id="111" name="Vertical scroll bar, 2 pages"/>
+                      <generic id="113" name="Horizontal scroll bar, 1 page"/>
+                    </WebView>
+                  </WebView>
+                </generic>
+                <generic id="115" name="Horizontal scroll bar, 1 page"/>
+                <generic id="117" name="Horizontal scroll bar, 1 page"/>
+              </ScrollView>
+            </generic>
+            <generic id="119" name="CapsuleViewController">
+              <generic id="129">
+                <Button id="130" name="BackButton" label="Back"/>
+              </generic>
+              <generic id="133">
+                <generic id="134" name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false">
+                  <Button id="135" name="PageFormatMenuButton" label="Page Menu">
+                    <StaticText id="136"/>
+                  </Button>
+                  <TextField id="137" name="TabBarItemTitle" label="Address" value="‎bonigarcia.dev"/>
+                  <Button id="138" name="ReloadButton" label="refresh"/>
+                </generic>
+              </generic>
+              <generic id="140">
+                <Button id="141" name="MoreMenuButton" label="More"/>
+              </generic>
+            </generic>
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </Window>
+  <Window id="146"/>
+</Application>

@@ -1,0 +1,95 @@
+<hierarchy>
+  <hierarchy id="2" clickable="false">
+    <FrameLayout id="3" clickable="false">
+      <LinearLayout id="4" clickable="false">
+        <FrameLayout id="5" clickable="false">
+          <FrameLayout id="6" clickable="false">
+            <FrameLayout id="7" resource-id="android:id/content" clickable="false">
+              <ViewGroup id="8" resource-id="com.android.chrome:id/coordinator" clickable="false">
+                <FrameLayout id="9" resource-id="com.android.chrome:id/compositor_view_holder" clickable="false">
+                  <FrameLayout id="10" clickable="false">
+                    <View id="11" clickable="false"/>
+                  </FrameLayout>
+                  <FrameLayout id="12" clickable="false">
+                    <WebView id="13" text="Calculator" clickable="false">
+                      <View id="14" resource-id="calculator" clickable="false">
+                        <View id="15" clickable="false">
+                          <View id="16" clickable="false">
+                            <View id="17" clickable="false"/>
+                            <TextView id="18" text="Dark Mode" clickable="false"/>
+                            <TextView id="19" text=" " clickable="false"/>
+                            <TextView id="20" text="    " clickable="false"/>
+                            <TextView id="21" text=" " clickable="false"/>
+                            <View id="22" content-desc="Calculator" clickable="true">
+                              <TextView id="23" text="Calculator" clickable="false"/>
+                            </View>
+                            <TextView id="24" text=" " clickable="false"/>
+                            <TextView id="25" text="      " clickable="false"/>
+                            <TextView id="26" text=" " clickable="false"/>
+                            <TextView id="27" text="      " clickable="false"/>
+                            <TextView id="28" text=" " clickable="false"/>
+                            <TextView id="29" text="     " clickable="false"/>
+                            <TextView id="30" text=" " clickable="false"/>
+                            <View id="31" content-desc="SB" clickable="true">
+                              <TextView id="32" text="SB" clickable="false"/>
+                            </View>
+                          </View>
+                          <EditText id="33" resource-id="output" text="8÷" clickable="true"/>
+                          <Button id="34" resource-id="clear" text="C" clickable="true"/>
+                          <Button id="35" resource-id="(" text="(" clickable="true"/>
+                          <Button id="36" resource-id=")" text=")" clickable="true"/>
+                          <Button id="37" resource-id="divide" text="÷" clickable="true"/>
+                          <Button id="38" resource-id="7" text="7" clickable="true"/>
+                          <Button id="39" resource-id="8" text="8" clickable="true"/>
+                          <Button id="40" resource-id="9" text="9" clickable="true"/>
+                          <Button id="41" resource-id="multiply" text="×" clickable="true"/>
+                          <Button id="42" resource-id="4" text="4" clickable="true"/>
+                          <Button id="43" resource-id="5" text="5" clickable="true"/>
+                          <Button id="44" resource-id="6" text="6" clickable="true"/>
+                          <Button id="45" resource-id="subtract" text="-" clickable="true"/>
+                          <Button id="46" resource-id="1" text="1" clickable="true"/>
+                          <Button id="47" resource-id="2" text="2" clickable="true"/>
+                          <Button id="48" resource-id="3" text="3" clickable="true"/>
+                          <Button id="49" resource-id="add" text="+" clickable="true"/>
+                          <Button id="50" resource-id="←" text="←" clickable="true"/>
+                          <Button id="51" resource-id="0" text="0" clickable="true"/>
+                          <Button id="52" resource-id="." text="." clickable="true"/>
+                          <Button id="53" resource-id="equal" text="=" clickable="true"/>
+                        </View>
+                      </View>
+                    </WebView>
+                  </FrameLayout>
+                </FrameLayout>
+                <FrameLayout id="54" resource-id="com.android.chrome:id/control_container" clickable="false">
+                  <FrameLayout id="55" resource-id="com.android.chrome:id/toolbar_container" clickable="false">
+                    <FrameLayout id="56" resource-id="com.android.chrome:id/toolbar" clickable="false">
+                      <ImageButton id="57" resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable="true"/>
+                      <FrameLayout id="58" resource-id="com.android.chrome:id/location_bar" clickable="false">
+                        <LinearLayout id="59" resource-id="com.android.chrome:id/location_bar_status" clickable="true">
+                          <LinearLayout id="60" resource-id="com.android.chrome:id/location_bar_status_icon_view" clickable="false">
+                            <FrameLayout id="61" resource-id="com.android.chrome:id/location_bar_status_icon_frame" clickable="false">
+                              <ImageView id="62" resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure" clickable="false"/>
+                            </FrameLayout>
+                          </LinearLayout>
+                        </LinearLayout>
+                        <EditText id="63" resource-id="com.android.chrome:id/url_bar" text="seleniumbase.io/apps/calculator" clickable="true"/>
+                      </FrameLayout>
+                      <LinearLayout id="64" resource-id="com.android.chrome:id/toolbar_buttons" clickable="false">
+                        <ImageButton id="65" resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable="true"/>
+                        <FrameLayout id="66" resource-id="com.android.chrome:id/menu_button_wrapper" clickable="false">
+                          <ImageButton id="67" resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable="true"/>
+                        </FrameLayout>
+                      </LinearLayout>
+                    </FrameLayout>
+                    <ImageView id="68" resource-id="com.android.chrome:id/toolbar_hairline" clickable="false"/>
+                  </FrameLayout>
+                </FrameLayout>
+              </ViewGroup>
+            </FrameLayout>
+          </FrameLayout>
+        </FrameLayout>
+      </LinearLayout>
+      <View id="69" resource-id="android:id/navigationBarBackground" clickable="false"/>
+    </FrameLayout>
+  </hierarchy>
+</hierarchy>

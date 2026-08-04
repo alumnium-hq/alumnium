@@ -1,0 +1,48 @@
+<hierarchy>
+  <hierarchy id="2" clickable="false">
+    <FrameLayout id="3" clickable="false">
+      <LinearLayout id="4" clickable="false">
+        <FrameLayout id="5" clickable="false">
+          <FrameLayout id="6" clickable="false">
+            <FrameLayout id="7" resource-id="android:id/content" clickable="false">
+              <ViewGroup id="8" resource-id="com.android.chrome:id/coordinator" clickable="false">
+                <FrameLayout id="9" resource-id="com.android.chrome:id/compositor_view_holder" clickable="false">
+                  <FrameLayout id="10" clickable="false">
+                    <View id="11" clickable="false"/>
+                  </FrameLayout>
+                  <FrameLayout id="12" content-desc="Web View" clickable="false"/>
+                </FrameLayout>
+                <FrameLayout id="13" resource-id="com.android.chrome:id/control_container" clickable="false">
+                  <FrameLayout id="14" resource-id="com.android.chrome:id/toolbar_container" clickable="false">
+                    <FrameLayout id="15" resource-id="com.android.chrome:id/toolbar" clickable="false">
+                      <ImageButton id="16" resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable="true"/>
+                      <FrameLayout id="17" resource-id="com.android.chrome:id/location_bar" clickable="false">
+                        <LinearLayout id="18" resource-id="com.android.chrome:id/location_bar_status" clickable="true">
+                          <LinearLayout id="19" resource-id="com.android.chrome:id/location_bar_status_icon_view" clickable="false">
+                            <FrameLayout id="20" resource-id="com.android.chrome:id/location_bar_status_icon_frame" clickable="false">
+                              <ImageView id="21" resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure" clickable="false"/>
+                            </FrameLayout>
+                          </LinearLayout>
+                        </LinearLayout>
+                        <EditText id="22" resource-id="com.android.chrome:id/url_bar" text="the-internet.herokuapp.com/dynamic_content" clickable="true"/>
+                      </FrameLayout>
+                      <LinearLayout id="23" resource-id="com.android.chrome:id/toolbar_buttons" clickable="false">
+                        <ImageButton id="24" resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable="true"/>
+                        <FrameLayout id="25" resource-id="com.android.chrome:id/menu_button_wrapper" clickable="false">
+                          <ImageButton id="26" resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable="true"/>
+                        </FrameLayout>
+                      </LinearLayout>
+                    </FrameLayout>
+                    <ImageView id="27" resource-id="com.android.chrome:id/toolbar_hairline" clickable="false"/>
+                  </FrameLayout>
+                  <ProgressBar id="28" clickable="false"/>
+                </FrameLayout>
+              </ViewGroup>
+            </FrameLayout>
+          </FrameLayout>
+        </FrameLayout>
+      </LinearLayout>
+      <View id="29" resource-id="android:id/navigationBarBackground" clickable="false"/>
+    </FrameLayout>
+  </hierarchy>
+</hierarchy>

@@ -1,0 +1,107 @@
+<Application id="1" name="Safari">
+  <Window id="2">
+    <generic id="5">
+      <generic id="8">
+        <generic id="10">
+          <generic id="11" name="SafariWindow?View=Narrow&amp;BarsKeptMinimized=false&amp;UUID=913F2A78-0D34-45E0-8848-FC5DD46EFFCC&amp;UsingLoweredBar=true&amp;IsSecure=false&amp;IsTabBarAvailable=false">
+            <generic id="13">
+              <ScrollView id="18">
+                <generic id="19" name="TabDocument?IsLoadedUsingDesktopUserAgent=false&amp;InReaderMode=false&amp;UUID=A77B726A-4DA0-41B7-988C-95D51A3084C8&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=44812">
+                  <WebView id="20" name="WebView">
+                    <WebView id="21">
+                      <WebView id="22"/>
+                      <generic id="28" name="Vertical scroll bar, 1 page"/>
+                      <generic id="30" name="Horizontal scroll bar, 1 page"/>
+                      <generic id="32" name="Vertical scroll bar, 1 page"/>
+                      <generic id="34" name="Horizontal scroll bar, 1 page"/>
+                    </WebView>
+                  </WebView>
+                </generic>
+                <generic id="36" name="Horizontal scroll bar, 1 page"/>
+                <generic id="38" name="Horizontal scroll bar, 1 page"/>
+              </ScrollView>
+              <generic id="41">
+                <generic id="44">
+                  <CollectionView id="46" name="StartPageCollectionView">
+                    <Cell id="49" name="onboardingItemIdentifierContent-CustomizeStartPage">
+                      <generic id="52">
+                        <generic id="53">
+                          <StaticText id="54">
+                            Start Page
+                          </StaticText>
+                          <generic id="55">
+                            <Image id="56" name="SafariOnboardingCustomizeStartPage"/>
+                          </generic>
+                          <StaticText id="57">
+                            Customise your wallpaper and sections that appear when creating new tabs.
+                          </StaticText>
+                          <Button id="58" name="onboardingButton-CustomizeStartPage">
+                            <StaticText id="59">
+                              Customise Start Page
+                            </StaticText>
+                          </Button>
+                        </generic>
+                        <Button id="60" name="close"/>
+                      </generic>
+                    </Cell>
+                    <generic id="62" name="privacyReportIdentifierHeader">
+                      <StaticText id="63">
+                        Privacy Report
+                      </StaticText>
+                    </generic>
+                    <Cell id="64" name="privacyReportIdentifierContent">
+                      <generic id="67">
+                        <StaticText id="68"/>
+                        <StaticText id="69" label="In the last seven days, Safari has prevented 0 trackers from profiling you.">
+                          TrackersPreventedCount?TrackingPreventionDataExists=false
+                        </StaticText>
+                      </generic>
+                    </Cell>
+                    <Cell id="70" name="com.apple.mobilesafari.framework-customization-sectionContent">
+                      <generic id="71">
+                        <Button id="73" name="customizationsSheetButton">
+                          <StaticText id="74">
+                            Edit
+                          </StaticText>
+                        </Button>
+                      </generic>
+                    </Cell>
+                    <generic id="76" name="Vertical scroll bar, 1 page"/>
+                    <generic id="78" name="Horizontal scroll bar, 1 page"/>
+                    <generic id="80" name="Vertical scroll bar, 1 page"/>
+                    <generic id="82" name="Horizontal scroll bar, 1 page"/>
+                  </CollectionView>
+                </generic>
+              </generic>
+            </generic>
+            <generic id="86" name="CapsuleViewController">
+              <generic id="96">
+                <Button id="97" name="BackButton" label="Back" enabled="false"/>
+              </generic>
+              <generic id="100">
+                <generic id="101" name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false">
+                  <generic id="103">
+                    <generic id="104" name="FluidProgressView"/>
+                  </generic>
+                  <Button id="105" name="PageFormatMenuButton">
+                    <StaticText id="106"/>
+                  </Button>
+                  <generic id="108" name="TabBarItemTitle">
+                    <StaticText id="109">
+                      ‎seleniumbase.io
+                    </StaticText>
+                  </generic>
+                  <Button id="110" name="StopButton" label="Close"/>
+                </generic>
+              </generic>
+              <generic id="112">
+                <Button id="113" name="MoreMenuButton" label="More"/>
+              </generic>
+            </generic>
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </Window>
+  <Window id="118"/>
+</Application>
