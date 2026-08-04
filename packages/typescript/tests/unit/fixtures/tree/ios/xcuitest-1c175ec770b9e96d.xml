@@ -1,0 +1,215 @@
+<AppiumAUT raw_id="1">
+  <XCUIElementTypeApplication type="XCUIElementTypeApplication" name="Safari" label="Safari" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" processId="40166" bundleId="com.apple.mobilesafari" raw_id="2">
+    <XCUIElementTypeWindow type="XCUIElementTypeWindow" enabled="true" visible="true" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="3">
+      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="4"/>
+      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="1" traits="" raw_id="5">
+        <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="6">
+          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="7">
+            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="8">
+              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="9">
+                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="10">
+                  <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="11">
+                    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="12">
+                      <XCUIElementTypeOther type="XCUIElementTypeOther" name="SafariWindow?View=Narrow&amp;BarsKeptMinimized=false&amp;UUID=22EF9D86-B658-4063-9AA0-90A6B50B4BEC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="13">
+                        <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="14">
+                          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="15">
+                            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="46" index="0" traits="" raw_id="16">
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="46" index="0" traits="" raw_id="17"/>
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="46" index="1" traits="" raw_id="18"/>
+                            </XCUIElementTypeOther>
+                            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="59" index="1" traits="" raw_id="19"/>
+                            <XCUIElementTypeScrollView type="XCUIElementTypeScrollView" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="2" traits="" raw_id="20">
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" name="TabDocument?IsLoadedUsingDesktopUserAgent=false&amp;InReaderMode=false&amp;UUID=02185351-127F-4127-B0D1-5F875A2B6EA1&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;WebViewProcessID=40171" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="21">
+                                <XCUIElementTypeWebView type="XCUIElementTypeWebView" name="WebView" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="22">
+                                  <XCUIElementTypeWebView type="XCUIElementTypeWebView" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="23">
+                                    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="24"/>
+                                    <XCUIElementTypeWebView type="XCUIElementTypeWebView" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="1" traits="" raw_id="25">
+                                      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="26">
+                                        <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="27">
+                                          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="0" y="59" width="393" height="852" index="0" traits="" raw_id="28">
+                                            <XCUIElementTypeOther type="XCUIElementTypeOther" name="TodoMVC: Vue" label="TodoMVC: Vue" enabled="true" visible="true" accessible="false" x="0" y="59" width="393" height="695" index="0" traits="" raw_id="29">
+                                              <XCUIElementTypeOther type="XCUIElementTypeOther" name="complementary" label="complementary" enabled="true" visible="true" accessible="false" x="0" y="67" width="292" height="320" index="0" traits="" raw_id="30">
+                                                <XCUIElementTypeOther type="XCUIElementTypeOther" name="section header" label="section header" enabled="true" visible="false" accessible="false" x="0" y="86" width="272" height="74" index="0" traits="" raw_id="31">
+                                                  <XCUIElementTypeOther type="XCUIElementTypeOther" value="3" name="Vue.js" label="Vue.js" enabled="true" visible="false" accessible="false" x="0" y="86" width="272" height="30" index="0" traits="Header" raw_id="32">
+                                                    <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Vue.js" name="Vue.js" label="Vue.js" enabled="true" visible="false" accessible="true" x="0" y="86" width="66" height="30" index="0" traits="Header, StaticText" raw_id="33"/>
+                                                  </XCUIElementTypeOther>
+                                                  <XCUIElementTypeOther type="XCUIElementTypeOther" value="5" name="Example" label="Example" enabled="true" visible="false" accessible="false" x="0" y="124" width="272" height="18" index="1" traits="Header" raw_id="34">
+                                                    <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Example" name="Example" label="Example" enabled="true" visible="false" accessible="true" x="0" y="124" width="57" height="18" index="0" traits="Header, StaticText" raw_id="35"/>
+                                                  </XCUIElementTypeOther>
+                                                  <XCUIElementTypeLink type="XCUIElementTypeLink" name="Source" label="Source" enabled="true" visible="false" accessible="false" x="0" y="142" width="45" height="17" index="2" traits="Link" raw_id="36">
+                                                    <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Source" name="Source" label="Source" enabled="true" visible="false" accessible="true" x="0" y="142" width="45" height="17" index="0" traits="Link, StaticText" raw_id="37"/>
+                                                  </XCUIElementTypeLink>
+                                                </XCUIElementTypeOther>
+                                                <XCUIElementTypeOther type="XCUIElementTypeOther" name="separator" label="separator" enabled="false" visible="false" accessible="true" x="0" y="180" width="272" height="2" index="1" traits="NotEnabled" raw_id="38"/>
+                                                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="0" y="212" width="252" height="95" index="2" traits="" raw_id="39">
+                                                  <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="“" name="“" label="“" enabled="true" visible="false" accessible="true" x="0" y="185" width="19" height="59" index="0" traits="StaticText" raw_id="40"/>
+                                                  <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `" name="Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `" label="Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `" enabled="true" visible="false" accessible="true" x="0" y="212" width="246" height="95" index="1" traits="StaticText" raw_id="41"/>
+                                                  <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="”" name="”" label="”" enabled="true" visible="true" accessible="true" x="0" y="297" width="19" height="59" index="2" traits="StaticText" raw_id="42"/>
+                                                </XCUIElementTypeOther>
+                                              </XCUIElementTypeOther>
+                                              <XCUIElementTypeOther type="XCUIElementTypeOther" name="section header" label="section header" enabled="true" visible="true" accessible="false" x="0" y="189" width="393" height="65" index="1" traits="" raw_id="43">
+                                                <XCUIElementTypeLink type="XCUIElementTypeLink" name="todos" label="todos" enabled="true" visible="true" accessible="false" x="102" y="63" width="189" height="97" index="0" traits="Link" raw_id="44">
+                                                  <XCUIElementTypeLink type="XCUIElementTypeLink" value="1" name="todos" label="todos" enabled="true" visible="true" accessible="false" x="102" y="63" width="189" height="97" index="0" traits="Link, Header" raw_id="45">
+                                                    <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="todos" name="todos" label="todos" enabled="true" visible="true" accessible="true" x="102" y="63" width="189" height="97" index="0" traits="Link, Header, StaticText" raw_id="46"/>
+                                                  </XCUIElementTypeLink>
+                                                </XCUIElementTypeLink>
+                                                <XCUIElementTypeTextField type="XCUIElementTypeTextField" value="What needs to be done?" label="" enabled="true" visible="true" accessible="true" x="0" y="189" width="393" height="65" index="1" placeholderValue="What needs to be done?" traits="" raw_id="47"/>
+                                              </XCUIElementTypeOther>
+                                              <XCUIElementTypeOther type="XCUIElementTypeOther" name="content information" label="content information" enabled="true" visible="true" accessible="false" x="0" y="317" width="393" height="58" index="2" traits="" raw_id="48">
+                                                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="0" y="317" width="393" height="14" index="0" traits="" raw_id="49">
+                                                  <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Double-click to edit a todo" name="Double-click to edit a todo" label="Double-click to edit a todo" enabled="true" visible="true" accessible="true" x="133" y="317" width="127" height="14" index="0" traits="StaticText" raw_id="50"/>
+                                                </XCUIElementTypeOther>
+                                                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="0" y="339" width="393" height="14" index="1" traits="" raw_id="51">
+                                                  <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Created by the TodoMVC Team" name="Created by the TodoMVC Team" label="Created by the TodoMVC Team" enabled="true" visible="true" accessible="true" x="122" y="339" width="149" height="14" index="0" traits="StaticText" raw_id="52"/>
+                                                </XCUIElementTypeOther>
+                                                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="0" y="361" width="393" height="14" index="2" traits="" raw_id="53">
+                                                  <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Part of " name="Part of" label="Part of" enabled="true" visible="true" accessible="true" x="155" y="361" width="35" height="14" index="0" traits="StaticText" raw_id="54"/>
+                                                  <XCUIElementTypeLink type="XCUIElementTypeLink" name="TodoMVC" label="TodoMVC" enabled="true" visible="true" accessible="false" x="189" y="361" width="49" height="14" index="1" traits="Link" raw_id="55">
+                                                    <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="TodoMVC" name="TodoMVC" label="TodoMVC" enabled="true" visible="true" accessible="true" x="189" y="361" width="49" height="14" index="0" traits="Link, StaticText" raw_id="56"/>
+                                                  </XCUIElementTypeLink>
+                                                </XCUIElementTypeOther>
+                                              </XCUIElementTypeOther>
+                                            </XCUIElementTypeOther>
+                                          </XCUIElementTypeOther>
+                                        </XCUIElementTypeOther>
+                                      </XCUIElementTypeOther>
+                                    </XCUIElementTypeWebView>
+                                    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="2" traits="" raw_id="57"/>
+                                    <XCUIElementTypeOther type="XCUIElementTypeOther" value="0 %" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" enabled="true" visible="false" accessible="false" x="360" y="59" width="30" height="738" index="3" traits="Adjustable" raw_id="58">
+                                      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="387" y="62" width="3" height="732" index="0" traits="" raw_id="59"/>
+                                    </XCUIElementTypeOther>
+                                    <XCUIElementTypeOther type="XCUIElementTypeOther" value="0 %" name="Horizontal scroll bar, 1 page" label="Horizontal scroll bar, 1 page" enabled="true" visible="false" accessible="false" x="55" y="819" width="283" height="30" index="4" traits="Adjustable" raw_id="60">
+                                      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="58" y="846" width="277" height="3" index="0" traits="" raw_id="61"/>
+                                    </XCUIElementTypeOther>
+                                    <XCUIElementTypeOther type="XCUIElementTypeOther" value="0 %" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" enabled="true" visible="false" accessible="false" x="360" y="59" width="30" height="738" index="5" traits="Adjustable" raw_id="62">
+                                      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="387" y="62" width="3" height="732" index="0" traits="" raw_id="63"/>
+                                    </XCUIElementTypeOther>
+                                    <XCUIElementTypeOther type="XCUIElementTypeOther" value="0 %" name="Horizontal scroll bar, 1 page" label="Horizontal scroll bar, 1 page" enabled="true" visible="false" accessible="false" x="55" y="819" width="283" height="30" index="6" traits="Adjustable" raw_id="64">
+                                      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="58" y="846" width="277" height="3" index="0" traits="" raw_id="65"/>
+                                    </XCUIElementTypeOther>
+                                  </XCUIElementTypeWebView>
+                                </XCUIElementTypeWebView>
+                              </XCUIElementTypeOther>
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" value="0 %" name="Horizontal scroll bar, 1 page" label="Horizontal scroll bar, 1 page" enabled="true" visible="false" accessible="false" x="55" y="819" width="283" height="30" index="1" traits="Adjustable" raw_id="66">
+                                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="52" y="846" width="289" height="3" index="0" traits="" raw_id="67"/>
+                              </XCUIElementTypeOther>
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" value="0 %" name="Horizontal scroll bar, 1 page" label="Horizontal scroll bar, 1 page" enabled="true" visible="false" accessible="false" x="55" y="819" width="283" height="30" index="2" traits="Adjustable" raw_id="68">
+                                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="52" y="846" width="289" height="3" index="0" traits="" raw_id="69"/>
+                              </XCUIElementTypeOther>
+                            </XCUIElementTypeScrollView>
+                          </XCUIElementTypeOther>
+                        </XCUIElementTypeOther>
+                        <XCUIElementTypeOther type="XCUIElementTypeOther" name="CapsuleViewController" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="1" traits="" raw_id="70">
+                          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="0" traits="" raw_id="71">
+                            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="0" traits="" raw_id="72">
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="0" traits="" raw_id="73">
+                                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="0" traits="" raw_id="74">
+                                  <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="0" traits="" raw_id="75">
+                                    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="0" traits="" raw_id="76">
+                                      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="0" traits="" raw_id="77"/>
+                                    </XCUIElementTypeOther>
+                                  </XCUIElementTypeOther>
+                                  <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="1" traits="" raw_id="78">
+                                    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="754" width="393" height="98" index="0" traits="" raw_id="79"/>
+                                  </XCUIElementTypeOther>
+                                </XCUIElementTypeOther>
+                              </XCUIElementTypeOther>
+                            </XCUIElementTypeOther>
+                            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="34" y="770" width="48" height="48" index="1" traits="" raw_id="80">
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="34" y="770" width="48" height="48" index="0" traits="" raw_id="81">
+                                <XCUIElementTypeButton type="XCUIElementTypeButton" name="BackButton" label="Back" enabled="true" visible="false" accessible="true" x="34" y="770" width="48" height="48" index="0" traits="Button" raw_id="82"/>
+                              </XCUIElementTypeOther>
+                            </XCUIElementTypeOther>
+                            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="90" y="770" width="213" height="48" index="2" traits="" raw_id="83">
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="90" y="770" width="213" height="48" index="0" traits="" raw_id="84">
+                                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="90" y="770" width="213" height="48" index="0" traits="" raw_id="85">
+                                  <XCUIElementTypeOther type="XCUIElementTypeOther" name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" enabled="true" visible="false" accessible="false" x="90" y="770" width="213" height="48" index="0" traits="Selected" raw_id="86">
+                                    <XCUIElementTypeButton type="XCUIElementTypeButton" name="PageFormatMenuButton" label="Page Menu" enabled="true" visible="false" accessible="true" x="94" y="774" width="40" height="40" index="0" traits="Button" raw_id="87">
+                                      <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" enabled="true" visible="false" accessible="false" x="94" y="774" width="0" height="0" index="0" traits="StaticText" raw_id="88"/>
+                                    </XCUIElementTypeButton>
+                                    <XCUIElementTypeTextField type="XCUIElementTypeTextField" value="‎todomvc.com" name="TabBarItemTitle" label="Address" enabled="true" visible="false" accessible="true" x="143" y="784" width="107" height="21" index="1" traits="" raw_id="89"/>
+                                    <XCUIElementTypeButton type="XCUIElementTypeButton" name="ReloadButton" label="refresh" enabled="true" visible="false" accessible="true" x="272" y="783" width="19" height="22" index="2" traits="Button" raw_id="90"/>
+                                  </XCUIElementTypeOther>
+                                </XCUIElementTypeOther>
+                              </XCUIElementTypeOther>
+                            </XCUIElementTypeOther>
+                            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="311" y="770" width="48" height="48" index="3" traits="" raw_id="91">
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="311" y="770" width="48" height="48" index="0" traits="" raw_id="92">
+                                <XCUIElementTypeButton type="XCUIElementTypeButton" name="MoreMenuButton" label="More" enabled="true" visible="false" accessible="true" x="311" y="770" width="48" height="48" index="0" traits="Button" raw_id="93"/>
+                              </XCUIElementTypeOther>
+                            </XCUIElementTypeOther>
+                          </XCUIElementTypeOther>
+                        </XCUIElementTypeOther>
+                      </XCUIElementTypeOther>
+                    </XCUIElementTypeOther>
+                  </XCUIElementTypeOther>
+                  <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="1" traits="" raw_id="94">
+                    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="95"/>
+                  </XCUIElementTypeOther>
+                </XCUIElementTypeOther>
+              </XCUIElementTypeOther>
+            </XCUIElementTypeOther>
+            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="1" traits="" raw_id="96">
+              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="97"/>
+            </XCUIElementTypeOther>
+          </XCUIElementTypeOther>
+        </XCUIElementTypeOther>
+      </XCUIElementTypeOther>
+      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="0" y="0" width="393" height="852" index="2" traits="" raw_id="98">
+        <XCUIElementTypeOther type="XCUIElementTypeOther" name="PopoverDismissRegion" label="dismiss pop-up" enabled="true" visible="true" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="99"/>
+        <XCUIElementTypePopover type="XCUIElementTypePopover" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="200" index="1" traits="" raw_id="100">
+          <XCUIElementTypeImage type="XCUIElementTypeImage" enabled="true" visible="false" accessible="false" x="-87" y="421" width="620" height="487" index="0" traits="Image" raw_id="101"/>
+          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="200" index="1" traits="" raw_id="102">
+            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="103">
+              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="104">
+                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="105">
+                  <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="106">
+                    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="107">
+                      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="63" y="571" width="0" height="0" index="0" traits="" raw_id="108">
+                        <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="62" y="571" width="321" height="200" index="0" traits="" raw_id="109">
+                          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="62" y="571" width="321" height="200" index="0" traits="" raw_id="110">
+                            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="62" y="571" width="321" height="200" index="0" traits="" raw_id="111">
+                              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="62" y="571" width="321" height="200" index="0" traits="" raw_id="112"/>
+                            </XCUIElementTypeOther>
+                          </XCUIElementTypeOther>
+                        </XCUIElementTypeOther>
+                      </XCUIElementTypeOther>
+                    </XCUIElementTypeOther>
+                  </XCUIElementTypeOther>
+                </XCUIElementTypeOther>
+              </XCUIElementTypeOther>
+            </XCUIElementTypeOther>
+            <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="200" index="1" traits="" raw_id="113">
+              <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="114">
+                <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="115">
+                  <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="116">
+                    <XCUIElementTypeOther type="XCUIElementTypeOther" name="TipView" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="117">
+                      <XCUIElementTypeScrollView type="XCUIElementTypeScrollView" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="200" index="0" traits="" raw_id="118">
+                        <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="63" y="571" width="320" height="187" index="0" traits="" raw_id="119">
+                          <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="View Bookmarks, Share Menu and Open Tabs" name="View Bookmarks, Share Menu and Open Tabs" label="View Bookmarks, Share Menu and Open Tabs" enabled="true" visible="true" accessible="true" x="143" y="589" width="180" height="65" index="0" traits="Header, StaticText" raw_id="120"/>
+                          <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="You can now view these items in the  menu.&#xA;You can change this at any time in Safari settings." name="You can now view these items in the  menu.&#xA;You can change this at any time in Safari settings." label="You can now view these items in the  menu.&#xA;You can change this at any time in Safari settings." enabled="true" visible="true" accessible="true" x="143" y="657" width="218" height="79" index="1" traits="StaticText" raw_id="121"/>
+                        </XCUIElementTypeOther>
+                        <XCUIElementTypeOther type="XCUIElementTypeOther" value="0 %" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" enabled="true" visible="true" accessible="false" x="350" y="605" width="30" height="125" index="1" traits="Adjustable" raw_id="122">
+                          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="377" y="607" width="3" height="120" index="0" traits="" raw_id="123"/>
+                        </XCUIElementTypeOther>
+                        <XCUIElementTypeOther type="XCUIElementTypeOther" value="0 %" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" enabled="true" visible="true" accessible="false" x="350" y="605" width="30" height="125" index="2" traits="Adjustable" raw_id="124">
+                          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" accessible="false" x="377" y="607" width="3" height="120" index="0" traits="" raw_id="125"/>
+                        </XCUIElementTypeOther>
+                      </XCUIElementTypeScrollView>
+                      <XCUIElementTypeButton type="XCUIElementTypeButton" name="xmark.circle.fill" label="Close" enabled="true" visible="true" accessible="true" x="342" y="585" width="27" height="26" index="1" traits="Button" raw_id="126"/>
+                    </XCUIElementTypeOther>
+                  </XCUIElementTypeOther>
+                </XCUIElementTypeOther>
+              </XCUIElementTypeOther>
+            </XCUIElementTypeOther>
+          </XCUIElementTypeOther>
+        </XCUIElementTypePopover>
+      </XCUIElementTypeOther>
+    </XCUIElementTypeWindow>
+    <XCUIElementTypeWindow type="XCUIElementTypeWindow" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="1" traits="" raw_id="127">
+      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="128">
+        <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" accessible="false" x="0" y="0" width="393" height="852" index="0" traits="" raw_id="129"/>
+      </XCUIElementTypeOther>
+    </XCUIElementTypeWindow>
+  </XCUIElementTypeApplication>
+</AppiumAUT>
