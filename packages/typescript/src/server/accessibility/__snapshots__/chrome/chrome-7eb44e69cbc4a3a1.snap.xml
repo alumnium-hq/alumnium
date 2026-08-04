@@ -1,0 +1,250 @@
+<RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/">
+  <generic id="3">
+    <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+    </link>
+    <generic id="9">
+      <heading id="10" level="1">
+        Welcome to the-internet
+      </heading>
+      <heading id="13" level="2">
+        Available Examples
+      </heading>
+      <list id="16">
+        <listitem id="17" level="1">
+          <link id="18" focusable="true" url="https://the-internet.herokuapp.com/abtest">
+            A/B Testing
+          </link>
+        </listitem>
+        <listitem id="21" level="1">
+          <link id="22" focusable="true" url="https://the-internet.herokuapp.com/add_remove_elements/">
+            Add/Remove Elements
+          </link>
+        </listitem>
+        <listitem id="25" level="1">
+          <link id="26" focusable="true" url="https://the-internet.herokuapp.com/basic_auth">
+            Basic Auth
+          </link>
+          (user and pass: admin)
+        </listitem>
+        <listitem id="31" level="1">
+          <link id="32" focusable="true" url="https://the-internet.herokuapp.com/broken_images">
+            Broken Images
+          </link>
+        </listitem>
+        <listitem id="35" level="1">
+          <link id="36" focusable="true" url="https://the-internet.herokuapp.com/challenging_dom">
+            Challenging DOM
+          </link>
+        </listitem>
+        <listitem id="39" level="1">
+          <link id="40" focusable="true" url="https://the-internet.herokuapp.com/checkboxes">
+            Checkboxes
+          </link>
+        </listitem>
+        <listitem id="43" level="1">
+          <link id="44" focusable="true" url="https://the-internet.herokuapp.com/context_menu">
+            Context Menu
+          </link>
+        </listitem>
+        <listitem id="47" level="1">
+          <link id="48" focusable="true" url="https://the-internet.herokuapp.com/digest_auth">
+            Digest Authentication
+          </link>
+          (user and pass: admin)
+        </listitem>
+        <listitem id="53" level="1">
+          <link id="54" focusable="true" url="https://the-internet.herokuapp.com/disappearing_elements">
+            Disappearing Elements
+          </link>
+        </listitem>
+        <listitem id="57" level="1">
+          <link id="58" focusable="true" url="https://the-internet.herokuapp.com/drag_and_drop">
+            Drag and Drop
+          </link>
+        </listitem>
+        <listitem id="61" level="1">
+          <link id="62" focusable="true" url="https://the-internet.herokuapp.com/dropdown">
+            Dropdown
+          </link>
+        </listitem>
+        <listitem id="65" level="1">
+          <link id="66" focusable="true" url="https://the-internet.herokuapp.com/dynamic_content">
+            Dynamic Content
+          </link>
+        </listitem>
+        <listitem id="69" level="1">
+          <link id="70" focusable="true" url="https://the-internet.herokuapp.com/dynamic_controls">
+            Dynamic Controls
+          </link>
+        </listitem>
+        <listitem id="73" level="1">
+          <link id="74" focusable="true" url="https://the-internet.herokuapp.com/dynamic_loading">
+            Dynamic Loading
+          </link>
+        </listitem>
+        <listitem id="77" level="1">
+          <link id="78" focusable="true" url="https://the-internet.herokuapp.com/entry_ad">
+            Entry Ad
+          </link>
+        </listitem>
+        <listitem id="81" level="1">
+          <link id="82" focusable="true" url="https://the-internet.herokuapp.com/exit_intent">
+            Exit Intent
+          </link>
+        </listitem>
+        <listitem id="85" level="1">
+          <link id="86" focusable="true" url="https://the-internet.herokuapp.com/download">
+            File Download
+          </link>
+        </listitem>
+        <listitem id="89" level="1">
+          <link id="90" focusable="true" url="https://the-internet.herokuapp.com/upload">
+            File Upload
+          </link>
+        </listitem>
+        <listitem id="93" level="1">
+          <link id="94" focusable="true" url="https://the-internet.herokuapp.com/floating_menu">
+            Floating Menu
+          </link>
+        </listitem>
+        <listitem id="97" level="1">
+          <link id="98" focusable="true" url="https://the-internet.herokuapp.com/forgot_password">
+            Forgot Password
+          </link>
+        </listitem>
+        <listitem id="101" level="1">
+          <link id="102" focusable="true" url="https://the-internet.herokuapp.com/login">
+            Form Authentication
+          </link>
+        </listitem>
+        <listitem id="105" level="1">
+          <link id="106" focusable="true" url="https://the-internet.herokuapp.com/frames">
+            Frames
+          </link>
+        </listitem>
+        <listitem id="109" level="1">
+          <link id="110" focusable="true" url="https://the-internet.herokuapp.com/geolocation">
+            Geolocation
+          </link>
+        </listitem>
+        <listitem id="113" level="1">
+          <link id="114" focusable="true" url="https://the-internet.herokuapp.com/horizontal_slider">
+            Horizontal Slider
+          </link>
+        </listitem>
+        <listitem id="117" level="1">
+          <link id="118" focusable="true" url="https://the-internet.herokuapp.com/hovers">
+            Hovers
+          </link>
+        </listitem>
+        <listitem id="121" level="1">
+          <link id="122" focusable="true" url="https://the-internet.herokuapp.com/infinite_scroll">
+            Infinite Scroll
+          </link>
+        </listitem>
+        <listitem id="125" level="1">
+          <link id="126" focusable="true" url="https://the-internet.herokuapp.com/inputs">
+            Inputs
+          </link>
+        </listitem>
+        <listitem id="129" level="1">
+          <link id="130" focusable="true" url="https://the-internet.herokuapp.com/jqueryui/menu">
+            JQuery UI Menus
+          </link>
+        </listitem>
+        <listitem id="133" level="1">
+          <link id="134" focusable="true" url="https://the-internet.herokuapp.com/javascript_alerts">
+            JavaScript Alerts
+          </link>
+        </listitem>
+        <listitem id="137" level="1">
+          <link id="138" focusable="true" url="https://the-internet.herokuapp.com/javascript_error">
+            JavaScript onload event error
+          </link>
+        </listitem>
+        <listitem id="141" level="1">
+          <link id="142" focusable="true" url="https://the-internet.herokuapp.com/key_presses">
+            Key Presses
+          </link>
+        </listitem>
+        <listitem id="145" level="1">
+          <link id="146" focusable="true" url="https://the-internet.herokuapp.com/large">
+            Large &amp; Deep DOM
+          </link>
+        </listitem>
+        <listitem id="149" level="1">
+          <link id="150" focusable="true" url="https://the-internet.herokuapp.com/windows">
+            Multiple Windows
+          </link>
+        </listitem>
+        <listitem id="153" level="1">
+          <link id="154" focusable="true" url="https://the-internet.herokuapp.com/nested_frames">
+            Nested Frames
+          </link>
+        </listitem>
+        <listitem id="157" level="1">
+          <link id="158" focusable="true" url="https://the-internet.herokuapp.com/notification_message">
+            Notification Messages
+          </link>
+        </listitem>
+        <listitem id="161" level="1">
+          <link id="162" focusable="true" url="https://the-internet.herokuapp.com/redirector">
+            Redirect Link
+          </link>
+        </listitem>
+        <listitem id="165" level="1">
+          <link id="166" focusable="true" url="https://the-internet.herokuapp.com/download_secure">
+            Secure File Download
+          </link>
+        </listitem>
+        <listitem id="169" level="1">
+          <link id="170" focusable="true" url="https://the-internet.herokuapp.com/shadowdom">
+            Shadow DOM
+          </link>
+        </listitem>
+        <listitem id="173" level="1">
+          <link id="174" focusable="true" url="https://the-internet.herokuapp.com/shifting_content">
+            Shifting Content
+          </link>
+        </listitem>
+        <listitem id="177" level="1">
+          <link id="178" focusable="true" url="https://the-internet.herokuapp.com/slow">
+            Slow Resources
+          </link>
+        </listitem>
+        <listitem id="181" level="1">
+          <link id="182" focusable="true" url="https://the-internet.herokuapp.com/tables">
+            Sortable Data Tables
+          </link>
+        </listitem>
+        <listitem id="185" level="1">
+          <link id="186" focusable="true" url="https://the-internet.herokuapp.com/status_codes">
+            Status Codes
+          </link>
+        </listitem>
+        <listitem id="189" level="1">
+          <link id="190" focusable="true" url="https://the-internet.herokuapp.com/typos">
+            Typos
+          </link>
+        </listitem>
+        <listitem id="193" level="1">
+          <link id="194" focusable="true" url="https://the-internet.herokuapp.com/tinymce">
+            WYSIWYG Editor
+          </link>
+        </listitem>
+      </list>
+    </generic>
+    <generic id="197">
+      <generic id="198">
+        <separator id="199" settable="true" orientation="horizontal"/>
+        <generic id="200">
+          Powered by
+          <link id="203" focusable="true" url="http://elementalselenium.com/">
+            Elemental Selenium
+          </link>
+        </generic>
+      </generic>
+    </generic>
+  </generic>
+</RootWebArea>

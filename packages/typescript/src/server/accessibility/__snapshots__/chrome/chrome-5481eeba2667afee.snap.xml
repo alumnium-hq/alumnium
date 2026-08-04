@@ -1,0 +1,17 @@
+<RootWebArea name="Multi-Tab Test Page" id="1" focusable="true" focused="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multi_tab_page.html">
+  <heading id="4" level="1">
+    Multi-Tab Test Page
+  </heading>
+  <paragraph id="7">
+    This page is used to test tab management functionality.
+  </paragraph>
+  <button id="10" invalid="false" focusable="true">
+    Open New Tab
+  </button>
+  <button id="13" invalid="false" focusable="true">
+    Open Popup (auto-closes)
+  </button>
+  <button id="16" invalid="false" focusable="true">
+    Show Delayed Element
+  </button>
+</RootWebArea>

@@ -1,0 +1,1170 @@
+<RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" id="1" focusable="true" focused="true" url="https://www.airbnb.com.sg/">
+  <generic id="3" focusable="true">
+    <generic id="4">
+      <link id="5" focusable="true" url="https://www.airbnb.com.sg/#site-content">
+        Skip to content
+      </link>
+    </generic>
+    <alert id="12" live="assertive" atomic="true" relevant="additions text"/>
+    <generic id="14">
+      <generic id="17">
+        <heading id="24" level="1">
+          Airbnb homepage
+        </heading>
+        <generic id="27">
+          <generic id="28">
+            <banner id="29">
+              <link name="Airbnb homepage" id="30" focusable="true" url="https://www.airbnb.com.sg/">
+                <image id="32"/>
+              </link>
+              <search id="33">
+                <generic id="34">
+                  <tablist id="37" multiselectable="false" orientation="horizontal">
+                    <tab id="38" focusable="true" selected="true">
+                      All
+                    </tab>
+                    <tab id="42" focusable="true" selected="false">
+                      Homes
+                    </tab>
+                    <tab id="46" focusable="true" selected="false">
+                      Experiences
+                    </tab>
+                    <tab id="50" focusable="true" selected="false">
+                      Services
+                    </tab>
+                  </tablist>
+                  <generic id="59">
+                    <generic id="60"/>
+                    <generic id="64">
+                      <generic id="65">
+                        <generic id="66">
+                          Where
+                        </generic>
+                        <combobox name="Where" id="70" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false">
+                          <generic id="73" editable="plaintext">
+                            Singapore
+                          </generic>
+                        </combobox>
+                      </generic>
+                    </generic>
+                    <button name="" id="77" focusable="true" focused="true">
+                      <generic id="79">
+                        <generic id="80">
+                          When
+                        </generic>
+                        <generic id="84">
+                          Add dates
+                        </generic>
+                      </generic>
+                    </button>
+                    <button name="" id="88" focusable="true">
+                      <generic id="89">
+                        <generic id="90">
+                          Who
+                        </generic>
+                        <generic id="94">
+                          Add guests
+                        </generic>
+                      </generic>
+                    </button>
+                    <generic id="97">
+                      <button id="98" invalid="false" focusable="true">
+                        <generic id="102">
+                          Search
+                        </generic>
+                      </button>
+                    </generic>
+                    <generic id="105">
+                      <generic id="106">
+                        <generic id="111">
+                          <generic id="112">
+                            <generic id="113">
+                              <generic id="114">
+                                <generic id="115" hasPopup="dialog">
+                                  <button name="Information about price" id="116" invalid="false" focusable="true"/>
+                                </generic>
+                                <generic id="119"/>
+                              </generic>
+                            </generic>
+                            <generic id="121">
+                              <tablist id="125" multiselectable="false" orientation="horizontal">
+                                <tab id="126" invalid="false" focusable="true" selected="true" controls="panel--tabs--0">
+                                  Dates
+                                </tab>
+                                <tab id="129" invalid="false" focusable="true" selected="false">
+                                  Flexible
+                                </tab>
+                              </tablist>
+                              <tabpanel name="Dates" id="134" labelledby="">
+                                <application name="Calendar" id="136">
+                                  <heading id="139" level="2">
+                                    August 2026
+                                  </heading>
+                                  <heading id="142" level="2">
+                                    September 2026
+                                  </heading>
+                                  <generic id="145">
+                                    <button name="Go back to switch to the previous month." id="146" disabled="true" invalid="false"/>
+                                    <button name="Move forward to change to the next month." id="148" invalid="false" focusable="true"/>
+                                  </generic>
+                                  To navigate this calendar with a keyboard use the right or left arrow keys to move by day, up or down to move by week, page up or page down to move by month, activate to select the date in focus and escape to clear your selections.
+                                  <button name=", Saturday, August 2026. Past dates can’t be selected." id="158" disabled="true" invalid="false" focusable="true">
+                                    1
+                                  </button>
+                                  <button name=", Sunday, August 2026. Past dates can’t be selected." id="166" disabled="true" invalid="false" focusable="true">
+                                    2
+                                  </button>
+                                  <button name=", Monday, August 2026. Past dates can’t be selected." id="174" disabled="true" invalid="false" focusable="true">
+                                    3
+                                  </button>
+                                  <button name=", Tuesday, August 2026, Today. Available. Select as check-in date." id="182" invalid="false" focusable="true">
+                                    4
+                                  </button>
+                                  <button name=", Wednesday, August 2026. Available. Select as check-in date." id="190" invalid="false" focusable="true">
+                                    5
+                                  </button>
+                                  <button name=", Thursday, August 2026. Available. Select as check-in date." id="198" invalid="false" focusable="true">
+                                    6
+                                  </button>
+                                  <button name=", Friday, August 2026. Available. Select as check-in date." id="206" invalid="false" focusable="true">
+                                    7
+                                  </button>
+                                  <button name=", Saturday, August 2026. Available. Select as check-in date." id="214" invalid="false" focusable="true">
+                                    8
+                                  </button>
+                                  <button name=", Sunday, August 2026. Available. Select as check-in date." id="222" invalid="false" focusable="true">
+                                    9
+                                  </button>
+                                  <button name=", Monday, August 2026. Available. Select as check-in date." id="231" invalid="false" focusable="true">
+                                    10
+                                  </button>
+                                  <button name=", Tuesday, August 2026. Available. Select as check-in date." id="240" invalid="false" focusable="true">
+                                    11
+                                  </button>
+                                  <button name=", Wednesday, August 2026. Available. Select as check-in date." id="249" invalid="false" focusable="true">
+                                    12
+                                  </button>
+                                  <button name=", Thursday, August 2026. Available. Select as check-in date." id="258" invalid="false" focusable="true">
+                                    13
+                                  </button>
+                                  <button name=", Friday, August 2026. Available. Select as check-in date." id="266" invalid="false" focusable="true">
+                                    14
+                                  </button>
+                                  <button name=", Saturday, August 2026. Available. Select as check-in date." id="274" invalid="false" focusable="true">
+                                    15
+                                  </button>
+                                  <button name=", Sunday, August 2026. Available. Select as check-in date." id="282" invalid="false" focusable="true">
+                                    16
+                                  </button>
+                                  <button name=", Monday, August 2026. Available. Select as check-in date." id="290" invalid="false" focusable="true">
+                                    17
+                                  </button>
+                                  <button name=", Tuesday, August 2026. Available. Select as check-in date." id="299" invalid="false" focusable="true">
+                                    18
+                                  </button>
+                                  <button name=", Wednesday, August 2026. Available. Select as check-in date." id="307" invalid="false" focusable="true">
+                                    19
+                                  </button>
+                                  <button name=", Thursday, August 2026. Available. Select as check-in date." id="315" invalid="false" focusable="true">
+                                    20
+                                  </button>
+                                  <button name=", Friday, August 2026. Available. Select as check-in date." id="323" invalid="false" focusable="true">
+                                    21
+                                  </button>
+                                  <button name=", Saturday, August 2026. Available. Select as check-in date." id="331" invalid="false" focusable="true">
+                                    22
+                                  </button>
+                                  <button name=", Sunday, August 2026. Available. Select as check-in date." id="339" invalid="false" focusable="true">
+                                    23
+                                  </button>
+                                  <button name=", Monday, August 2026. Available. Select as check-in date." id="347" invalid="false" focusable="true">
+                                    24
+                                  </button>
+                                  <button name=", Tuesday, August 2026. Available. Select as check-in date." id="355" invalid="false" focusable="true">
+                                    25
+                                  </button>
+                                  <button name=", Wednesday, August 2026. Available. Select as check-in date." id="364" invalid="false" focusable="true">
+                                    26
+                                  </button>
+                                  <button name=", Thursday, August 2026. Available. Select as check-in date." id="373" invalid="false" focusable="true">
+                                    27
+                                  </button>
+                                  <button name=", Friday, August 2026. Available. Select as check-in date." id="381" invalid="false" focusable="true">
+                                    28
+                                  </button>
+                                  <button name=", Saturday, August 2026. Available. Select as check-in date." id="389" invalid="false" focusable="true">
+                                    29
+                                  </button>
+                                  <button name=", Sunday, August 2026. Available. Select as check-in date." id="397" invalid="false" focusable="true">
+                                    30
+                                  </button>
+                                  <button name=", Monday, August 2026. Available. Select as check-in date." id="405" invalid="false" focusable="true">
+                                    31
+                                  </button>
+                                  <button name=", Tuesday, September 2026. Available. Select as check-in date." id="414" invalid="false" focusable="true">
+                                    1
+                                  </button>
+                                  <button name=", Wednesday, September 2026. Available. Select as check-in date." id="422" invalid="false" focusable="true">
+                                    2
+                                  </button>
+                                  <button name=", Thursday, September 2026. Available. Select as check-in date." id="430" invalid="false" focusable="true">
+                                    3
+                                  </button>
+                                  <button name=", Friday, September 2026. Available. Select as check-in date." id="438" invalid="false" focusable="true">
+                                    4
+                                  </button>
+                                  <button name=", Saturday, September 2026. Available. Select as check-in date." id="446" invalid="false" focusable="true">
+                                    5
+                                  </button>
+                                  <button name=", Sunday, September 2026. Available. Select as check-in date." id="454" invalid="false" focusable="true">
+                                    6
+                                  </button>
+                                  <button name=", Monday, September 2026. Available. Select as check-in date." id="462" invalid="false" focusable="true">
+                                    7
+                                  </button>
+                                  <button name=", Tuesday, September 2026. Available. Select as check-in date." id="471" invalid="false" focusable="true">
+                                    8
+                                  </button>
+                                  <button name=", Wednesday, September 2026. Available. Select as check-in date." id="480" invalid="false" focusable="true">
+                                    9
+                                  </button>
+                                  <button name=", Thursday, September 2026. Available. Select as check-in date." id="489" invalid="false" focusable="true">
+                                    10
+                                  </button>
+                                  <button name=", Friday, September 2026. Available. Select as check-in date." id="497" invalid="false" focusable="true">
+                                    11
+                                  </button>
+                                  <button name=", Saturday, September 2026. Available. Select as check-in date." id="505" invalid="false" focusable="true">
+                                    12
+                                  </button>
+                                  <button name=", Sunday, September 2026. Available. Select as check-in date." id="513" invalid="false" focusable="true">
+                                    13
+                                  </button>
+                                  <button name=", Monday, September 2026. Available. Select as check-in date." id="521" invalid="false" focusable="true">
+                                    14
+                                  </button>
+                                  <button name=", Tuesday, September 2026. Available. Select as check-in date." id="530" invalid="false" focusable="true">
+                                    15
+                                  </button>
+                                  <button name=", Wednesday, September 2026. Available. Select as check-in date." id="538" invalid="false" focusable="true">
+                                    16
+                                  </button>
+                                  <button name=", Thursday, September 2026. Available. Select as check-in date." id="546" invalid="false" focusable="true">
+                                    17
+                                  </button>
+                                  <button name=", Friday, September 2026. Available. Select as check-in date." id="554" invalid="false" focusable="true">
+                                    18
+                                  </button>
+                                  <button name=", Saturday, September 2026. Available. Select as check-in date." id="562" invalid="false" focusable="true">
+                                    19
+                                  </button>
+                                  <button name=", Sunday, September 2026. Available. Select as check-in date." id="570" invalid="false" focusable="true">
+                                    20
+                                  </button>
+                                  <button name=", Monday, September 2026. Available. Select as check-in date." id="578" invalid="false" focusable="true">
+                                    21
+                                  </button>
+                                  <button name=", Tuesday, September 2026. Available. Select as check-in date." id="587" invalid="false" focusable="true">
+                                    22
+                                  </button>
+                                  <button name=", Wednesday, September 2026. Available. Select as check-in date." id="596" invalid="false" focusable="true">
+                                    23
+                                  </button>
+                                  <button name=", Thursday, September 2026. Available. Select as check-in date." id="605" invalid="false" focusable="true">
+                                    24
+                                  </button>
+                                  <button name=", Friday, September 2026. Available. Select as check-in date." id="614" invalid="false" focusable="true">
+                                    25
+                                  </button>
+                                  <button name=", Saturday, September 2026. Available. Select as check-in date." id="622" invalid="false" focusable="true">
+                                    26
+                                  </button>
+                                  <button name=", Sunday, September 2026. Available. Select as check-in date." id="630" invalid="false" focusable="true">
+                                    27
+                                  </button>
+                                  <button name=", Monday, September 2026. Available. Select as check-in date." id="638" invalid="false" focusable="true">
+                                    28
+                                  </button>
+                                  <button name=", Tuesday, September 2026. Available. Select as check-in date." id="647" invalid="false" focusable="true">
+                                    29
+                                  </button>
+                                  <button name=", Wednesday, September 2026. Available. Select as check-in date." id="656" invalid="false" focusable="true">
+                                    30
+                                  </button>
+                                </application>
+                                <radiogroup name="Flexible dates" id="665" required="false">
+                                  <generic id="667">
+                                    <radio name="Exact dates" id="668" invalid="false" focusable="true" checked="true" labelledby=""/>
+                                  </generic>
+                                  <generic id="671">
+                                    <radio name="1 day ±1 day" id="674" invalid="false" focusable="true" checked="false" labelledby=""/>
+                                  </generic>
+                                  <generic id="680">
+                                    <radio name="2 days ±2 days" id="683" invalid="false" focusable="true" checked="false" labelledby=""/>
+                                  </generic>
+                                  <generic id="689">
+                                    <radio name="3 days ±3 days" id="692" invalid="false" focusable="true" checked="false" labelledby=""/>
+                                  </generic>
+                                  <generic id="698">
+                                    <radio name="7 days ±7 days" id="701" invalid="false" focusable="true" checked="false" labelledby=""/>
+                                  </generic>
+                                  <generic id="707">
+                                    <radio name="14 days ±14 days" id="710" invalid="false" focusable="true" checked="false" labelledby=""/>
+                                  </generic>
+                                </radiogroup>
+                              </tabpanel>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                    </generic>
+                  </generic>
+                </generic>
+              </search>
+              <navigation name="Profile" id="735">
+                <button id="737" invalid="false" focusable="true">
+                  Become a host
+                </button>
+                <generic id="740">
+                  <button name="Choose a language and currency" id="741" invalid="false" focusable="true"/>
+                </generic>
+                <generic id="744">
+                  <generic id="745">
+                    <button name="Main navigation menu" id="746" invalid="false" focusable="true"/>
+                  </generic>
+                </generic>
+              </navigation>
+            </banner>
+          </generic>
+        </generic>
+        <main id="751">
+          <generic id="753">
+            <group name="" id="756" describedby="1951c84d-3c16-45d6-9c04-c92617b453bb-description" labelledby="">
+              <generic id="757">
+                <generic id="758">
+                  <link id="759" focusable="true" url="https://www.airbnb.com.sg/s/Kuala-Lumpur/homes?place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;refinement_paths%5B%5D=%2Fhomes&amp;flexible_trip_lengths%5B%5D=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;search_type=HOMEPAGE_CAROUSEL_CLICK">
+                    <heading id="761" level="2">
+                      <generic id="762">
+                        Popular homes in Kuala Lumpur
+                      </generic>
+                    </heading>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="767">
+                6 of 9 items showing
+              </generic>
+              <generic id="771">
+                <button name="Previous" id="773" disabled="true" invalid="false">
+                  _
+                </button>
+                <button name="Next" id="778" invalid="false" focusable="true">
+                  _
+                </button>
+              </generic>
+              <generic id="787" focusable="true">
+                <generic id="788">
+                  <group name="" id="789" labelledby="">
+                    <link name="Apartment in Cheras" id="790" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1715858489639329673&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2696858512" labelledby=""/>
+                    <generic id="792">
+                      <generic id="796">
+                        <button name="Add to wishlist: Apartment in Cheras" id="801" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="812">
+                      Apartment in Cheras
+                    </generic>
+                    $295 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="834">
+                  <group name="" id="835" labelledby="">
+                    <link name="Home in Kuala Lumpur" id="836" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1404074202202294280&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2332364251" labelledby=""/>
+                    <generic id="838">
+                      <generic id="842">
+                        <generic id="844">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Home in Kuala Lumpur" id="851" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="862">
+                      Home in Kuala Lumpur
+                    </generic>
+                    $358 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="884">
+                  <group name="" id="885" labelledby="">
+                    <link name="Flat in Kuala Lumpur" id="886" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1712174061339499750&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2688896404" labelledby=""/>
+                    <generic id="888">
+                      <generic id="892">
+                        <button name="Add to wishlist: Flat in Kuala Lumpur" id="897" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="908">
+                      Flat in Kuala Lumpur
+                    </generic>
+                    $116 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="930">
+                  <group name="" id="931" labelledby="">
+                    <link name="Flat in Bukit Bintang" id="932" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1456967048393461365&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2238161270" labelledby=""/>
+                    <generic id="934">
+                      <generic id="938">
+                        <button name="Add to wishlist: Flat in Bukit Bintang" id="943" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="954">
+                      Flat in Bukit Bintang
+                    </generic>
+                    $445 SGD for 2 nights,4.78 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="976">
+                  <group name="" id="977" labelledby="">
+                    <link name="Apartment in Cheras" id="978" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1661499740461247110&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2623371594" labelledby=""/>
+                    <generic id="980">
+                      <generic id="984">
+                        <generic id="986">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Apartment in Cheras" id="993" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1004">
+                      Apartment in Cheras
+                    </generic>
+                    $364 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1026">
+                  <group name="" id="1027" labelledby="">
+                    <link name="Flat in Kuala Lumpur" id="1028" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1667460160375756434&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2599135704" labelledby=""/>
+                    <generic id="1030">
+                      <generic id="1034">
+                        <button name="Add to wishlist: Flat in Kuala Lumpur" id="1039" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1050">
+                      Flat in Kuala Lumpur
+                    </generic>
+                    $317 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+              </generic>
+            </group>
+          </generic>
+          <generic id="1094">
+            <group name="" id="1097" describedby="a6b93c7b-fe64-4f39-ae56-c14e858ebb86-description" labelledby="">
+              <generic id="1098">
+                <generic id="1099">
+                  <link id="1100" focusable="true" url="https://www.airbnb.com.sg/s/Tokyo/homes?place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;refinement_paths%5B%5D=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths%5B%5D=WEEKEND_TRIP&amp;flexible_trip_dates%5B%5D=september&amp;search_type=HOMEPAGE_CAROUSEL_CLICK">
+                    <heading id="1102" level="2">
+                      <generic id="1103">
+                        Available next month in Tokyo
+                      </generic>
+                    </heading>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1108">
+                6 of 9 items showing
+              </generic>
+              <generic id="1112">
+                <button name="Previous" id="1114" disabled="true" invalid="false">
+                  _
+                </button>
+                <button name="Next" id="1119" invalid="false" focusable="true">
+                  _
+                </button>
+              </generic>
+              <generic id="1128" focusable="true">
+                <generic id="1129">
+                  <group name="" id="1130" labelledby="">
+                    <link name="Flat in Toshima-k" id="1131" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1568365942167102163&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2524123622" labelledby=""/>
+                    <generic id="1133">
+                      <generic id="1137">
+                        <generic id="1139">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Toshima-k" id="1146" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1157">
+                      Flat in Toshima-k
+                    </generic>
+                    $253 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1179">
+                  <group name="" id="1180" labelledby="">
+                    <link name="Flat in Taitō-ku" id="1181" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1001691188527653306&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2096923170" labelledby=""/>
+                    <generic id="1183">
+                      <generic id="1187">
+                        <generic id="1189">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Taitō-ku" id="1196" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1207">
+                      Flat in Taitō-ku
+                    </generic>
+                    $204 SGD for 2 nights,4.93 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1229">
+                  <group name="" id="1230" labelledby="">
+                    <link name="Home in Shibuya" id="1231" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1709820137125697917&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2683925446" labelledby=""/>
+                    <generic id="1233">
+                      <generic id="1237">
+                        <generic id="1239">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Home in Shibuya" id="1246" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1257">
+                      Home in Shibuya
+                    </generic>
+                    $744 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1279">
+                  <group name="" id="1280" labelledby="">
+                    <link name="Home in Setagaya-ku" id="1281" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1478310554999572994&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2282535684" labelledby=""/>
+                    <generic id="1283">
+                      <generic id="1287">
+                        <generic id="1289">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Home in Setagaya-ku" id="1296" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1307">
+                      Home in Setagaya-ku
+                    </generic>
+                    $941 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1329">
+                  <group name="" id="1330" labelledby="">
+                    <link name="Home in Katsushika-ku" id="1331" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1671799297382979704&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2688051684" labelledby=""/>
+                    <generic id="1333">
+                      <generic id="1337">
+                        <button name="Add to wishlist: Home in Katsushika-ku" id="1342" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1353">
+                      Home in Katsushika-ku
+                    </generic>
+                    $361 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1375">
+                  <group name="" id="1376" labelledby="">
+                    <link name="Home in Sumida-ku" id="1377" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=839524019203261451&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2547893380" labelledby=""/>
+                    <generic id="1379">
+                      <generic id="1383">
+                        <generic id="1385">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Home in Sumida-ku" id="1392" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1403">
+                      Home in Sumida-ku
+                    </generic>
+                    $525 SGD for 2 nights,4.95 out of 5 average rating
+                  </group>
+                </generic>
+              </generic>
+            </group>
+          </generic>
+          <generic id="1447">
+            <group name="" id="1450" describedby="fe1351a2-480d-44a3-8a84-149a4aa7ae61-description" labelledby="">
+              <generic id="1451">
+                <generic id="1452">
+                  <link id="1453" focusable="true" url="https://www.airbnb.com.sg/s/Osaka/homes?place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;refinement_paths%5B%5D=%2Fhomes&amp;flexible_trip_lengths%5B%5D=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;search_type=HOMEPAGE_CAROUSEL_CLICK">
+                    <heading id="1455" level="2">
+                      <generic id="1456">
+                        Stay in Osaka
+                      </generic>
+                    </heading>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1461">
+                6 of 9 items showing
+              </generic>
+              <generic id="1465">
+                <button name="Previous" id="1467" disabled="true" invalid="false">
+                  _
+                </button>
+                <button name="Next" id="1472" invalid="false" focusable="true">
+                  _
+                </button>
+              </generic>
+              <generic id="1481" focusable="true">
+                <generic id="1482">
+                  <group name="" id="1483" labelledby="">
+                    <link name="Flat in Osaka" id="1484" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=851126866230415015&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2158976825" labelledby=""/>
+                    <generic id="1486">
+                      <generic id="1490">
+                        <generic id="1492">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Osaka" id="1499" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1510">
+                      Flat in Osaka
+                    </generic>
+                    $152 SGD for 2 nights,4.89 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1532">
+                  <group name="" id="1533" labelledby="">
+                    <link name="Flat in Naniwa Ward" id="1534" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=32073378&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1855883622" labelledby=""/>
+                    <generic id="1536">
+                      <generic id="1540">
+                        <generic id="1542">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Naniwa Ward" id="1549" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1560">
+                      Flat in Naniwa Ward
+                    </generic>
+                    $101 SGD for 2 nights,4.91 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1582">
+                  <group name="" id="1583" labelledby="">
+                    <link name="Flat in Osaka" id="1584" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=32075321&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1855877915" labelledby=""/>
+                    <generic id="1586">
+                      <generic id="1590">
+                        <generic id="1592">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Osaka" id="1599" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1610">
+                      Flat in Osaka
+                    </generic>
+                    $116 SGD for 2 nights,4.89 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1632">
+                  <group name="" id="1633" labelledby="">
+                    <link name="Flat in Chuo" id="1634" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1283852490431293089&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2025475005" labelledby=""/>
+                    <generic id="1636">
+                      <generic id="1640">
+                        <generic id="1642">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Chuo" id="1649" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1660">
+                      Flat in Chuo
+                    </generic>
+                    $104 SGD for 2 nights,4.92 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1682">
+                  <group name="" id="1683" labelledby="">
+                    <link name="Flat in Ikuno Ward" id="1684" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1239451570720982630&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1990167460" labelledby=""/>
+                    <generic id="1686">
+                      <generic id="1690">
+                        <generic id="1692">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Ikuno Ward" id="1699" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1710">
+                      Flat in Ikuno Ward
+                    </generic>
+                    $105 SGD for 2 nights,4.84 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1732">
+                  <group name="" id="1733" labelledby="">
+                    <link name="Flat in Osaka" id="1734" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=891702610935148042&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2601377129" labelledby=""/>
+                    <generic id="1736">
+                      <generic id="1740">
+                        <generic id="1742">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Osaka" id="1749" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1760">
+                      Flat in Osaka
+                    </generic>
+                    $136 SGD for 2 nights,4.91 out of 5 average rating
+                  </group>
+                </generic>
+              </generic>
+            </group>
+          </generic>
+          <generic id="1804">
+            <group name="" id="1807" describedby="c8d0e1ab-8706-4db0-bdca-ba194393fa8d-description" labelledby="">
+              <generic id="1808">
+                <generic id="1809">
+                  <link id="1810" focusable="true" url="https://www.airbnb.com.sg/s/Bangkok/homes?place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;refinement_paths%5B%5D=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths%5B%5D=WEEKEND_TRIP&amp;flexible_trip_dates%5B%5D=september&amp;search_type=HOMEPAGE_CAROUSEL_CLICK">
+                    <heading id="1812" level="2">
+                      <generic id="1813">
+                        Available next month in Bangkok
+                      </generic>
+                    </heading>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1818">
+                6 of 9 items showing
+              </generic>
+              <generic id="1822">
+                <button name="Previous" id="1824" disabled="true" invalid="false">
+                  _
+                </button>
+                <button name="Next" id="1829" invalid="false" focusable="true">
+                  _
+                </button>
+              </generic>
+              <generic id="1838" focusable="true">
+                <generic id="1839">
+                  <group name="" id="1840" labelledby="">
+                    <link name="Home in Khet Khlong San" id="1841" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1363473448168628845&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2095284534" labelledby=""/>
+                    <generic id="1843">
+                      <generic id="1847">
+                        <generic id="1849">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Home in Khet Khlong San" id="1856" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1867">
+                      Home in Khet Khlong San
+                    </generic>
+                    $177 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1889">
+                  <group name="" id="1890" labelledby="">
+                    <link name="Place to stay in Khet Ratchathewi" id="1891" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=835377390388055017&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=1595768958" labelledby=""/>
+                    <generic id="1893">
+                      <generic id="1897">
+                        <generic id="1899">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Place to stay in Khet Ratchathewi" id="1906" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1917">
+                      Place to stay in Khet Ratchathewi
+                    </generic>
+                    $101 SGD for 2 nights,4.94 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1940">
+                  <group name="" id="1941" labelledby="">
+                    <link name="Flat in Yan Nawa" id="1942" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1687949203742815160&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2637775943" labelledby=""/>
+                    <generic id="1944">
+                      <generic id="1948">
+                        <generic id="1950">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Flat in Yan Nawa" id="1957" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="1968">
+                      Flat in Yan Nawa
+                    </generic>
+                    $136 SGD for 2 nights,4.94 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="1990">
+                  <group name="" id="1991" labelledby="">
+                    <link name="Apartment in Bangkok" id="1992" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=757099645521464263&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=1524604830" labelledby=""/>
+                    <generic id="1994">
+                      <generic id="1998">
+                        <generic id="2000">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Apartment in Bangkok" id="2007" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="2018">
+                      Apartment in Bangkok
+                    </generic>
+                    $354 SGD for 2 nights,4.95 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="2040">
+                  <group name="" id="2041" labelledby="">
+                    <link name="Home in Watthana" id="2042" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1567144478059856018&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2435673754" labelledby=""/>
+                    <generic id="2044">
+                      <generic id="2048">
+                        <generic id="2050">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Home in Watthana" id="2057" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="2068">
+                      Home in Watthana
+                    </generic>
+                    $687 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+                <generic id="2090">
+                  <group name="" id="2091" labelledby="">
+                    <link name="Townhouse in Watthana" id="2092" focusable="true" url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1590236263966349488&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2465114882" labelledby=""/>
+                    <generic id="2094">
+                      <generic id="2098">
+                        <generic id="2100">
+                          Guest favourite
+                        </generic>
+                        <button name="Add to wishlist: Townhouse in Watthana" id="2107" invalid="false" focusable="true"/>
+                      </generic>
+                    </generic>
+                    <generic id="2118">
+                      Townhouse in Watthana
+                    </generic>
+                    $764 SGD for 2 nights,5.0 out of 5 average rating
+                  </group>
+                </generic>
+              </generic>
+            </group>
+          </generic>
+        </main>
+        <generic id="2162">
+          <heading id="2166" level="2">
+            Inspiration for future getaways
+          </heading>
+          <generic id="2169">
+            <generic id="2170">
+              <generic id="2171">
+                <tablist id="2172" multiselectable="false" orientation="horizontal">
+                  <tab id="2173" invalid="false" focusable="true" selected="true" controls="panel--seo-link-section-tabbed-dense-grid--0">
+                    Popular
+                  </tab>
+                  <tab id="2176" invalid="false" focusable="true" selected="false">
+                    Arts &amp; culture
+                  </tab>
+                  <tab id="2179" invalid="false" focusable="true" selected="false">
+                    Beach
+                  </tab>
+                  <tab id="2182" invalid="false" focusable="true" selected="false">
+                    Mountains
+                  </tab>
+                  <tab id="2185" invalid="false" focusable="true" selected="false">
+                    Outdoors
+                  </tab>
+                  <tab id="2188" invalid="false" focusable="true" selected="false">
+                    Things to do
+                  </tab>
+                </tablist>
+              </generic>
+            </generic>
+            <tabpanel name="" id="2193" labelledby="">
+              <list id="2194">
+                <listitem id="2195" level="1">
+                  <link name="" id="2196" focusable="true" url="https://www.airbnb.com.sg/cleveland-oh/stays/apartments">
+                    Cleveland Flat rentals
+                  </link>
+                </listitem>
+                <listitem id="2205" level="1">
+                  <link name="" id="2206" focusable="true" url="https://www.airbnb.com.sg/galveston-tx/stays/cabins">
+                    Galveston Cabin rentals
+                  </link>
+                </listitem>
+                <listitem id="2215" level="1">
+                  <link name="" id="2216" focusable="true" url="https://www.airbnb.com.sg/portland-or/stays">
+                    Portland Holiday rentals
+                  </link>
+                </listitem>
+                <listitem id="2225" level="1">
+                  <link name="" id="2226" focusable="true" url="https://www.airbnb.com.sg/minneapolis-mn/stays/monthly">
+                    Minneapolis Monthly Rentals
+                  </link>
+                </listitem>
+                <listitem id="2235" level="1">
+                  <link name="" id="2236" focusable="true" url="https://www.airbnb.com.sg/north-myrtle-beach-sc/stays/villas">
+                    North Myrtle Beach Villa rentals
+                  </link>
+                </listitem>
+                <listitem id="2245" level="1">
+                  <link name="" id="2246" focusable="true" url="https://www.airbnb.com.sg/portland-me/stays/apartments">
+                    Portland Flat rentals
+                  </link>
+                </listitem>
+                <listitem id="2255" level="1">
+                  <link name="" id="2256" focusable="true" url="https://www.airbnb.com.sg/nice-france/stays/cabins">
+                    Nice Cabin rentals
+                  </link>
+                </listitem>
+                <listitem id="2265" level="1">
+                  <link name="" id="2266" focusable="true" url="https://www.airbnb.com.sg/raleigh-nc/stays">
+                    Raleigh Holiday rentals
+                  </link>
+                </listitem>
+                <listitem id="2275" level="1">
+                  <link name="" id="2276" focusable="true" url="https://www.airbnb.com.sg/kauai-hi/stays/villas">
+                    Kauai Villa rentals
+                  </link>
+                </listitem>
+                <listitem id="2285" level="1">
+                  <link name="" id="2286" focusable="true" url="https://www.airbnb.com.sg/dallas-tx/stays/villas">
+                    Dallas Villa rentals
+                  </link>
+                </listitem>
+                <listitem id="2295" level="1">
+                  <link name="" id="2296" focusable="true" url="https://www.airbnb.com.sg/lake-michigan/stays">
+                    Lake Michigan Holiday rentals
+                  </link>
+                </listitem>
+                <listitem id="2305" level="1">
+                  <link name="" id="2306" focusable="true" url="https://www.airbnb.com.sg/barcelona-spain/stays/condos">
+                    Barcelona Apartment rentals
+                  </link>
+                </listitem>
+                <listitem id="2315" level="1">
+                  <link name="" id="2316" focusable="true" url="https://www.airbnb.com.sg/tokyo-japan/stays/villas">
+                    Tokyo Villa rentals
+                  </link>
+                </listitem>
+                <listitem id="2325" level="1">
+                  <link name="" id="2326" focusable="true" url="https://www.airbnb.com.sg/charlotte-nc/stays/houses">
+                    Charlotte House rentals
+                  </link>
+                </listitem>
+                <listitem id="2335" level="1">
+                  <link name="" id="2336" focusable="true" url="https://www.airbnb.com.sg/amsterdam-netherlands/stays/monthly">
+                    Amsterdam Monthly Rentals
+                  </link>
+                </listitem>
+                <listitem id="2345" level="1">
+                  <link name="" id="2346" focusable="true" url="https://www.airbnb.com.sg/philadelphia-pa/stays">
+                    Philadelphia Holiday rentals
+                  </link>
+                </listitem>
+                <listitem id="2355" level="1">
+                  <link name="" id="2356" focusable="true" url="https://www.airbnb.com.sg/orange-beach-al/stays">
+                    Orange Beach Holiday rentals
+                  </link>
+                </listitem>
+                <listitem id="2365" level="1">
+                  <button name="Popular" id="2366" invalid="false" focusable="true" labelledby="">
+                    Show more
+                  </button>
+                </listitem>
+              </list>
+            </tabpanel>
+          </generic>
+        </generic>
+        <generic id="2397">
+          <contentinfo id="2398">
+            <heading id="2401" level="2">
+              Site Footer
+            </heading>
+            <generic id="2405">
+              <heading id="2406" level="3">
+                Support
+              </heading>
+              <list id="2409">
+                <listitem id="2410" level="1">
+                  <link id="2411" focusable="true" url="https://www.airbnb.com.sg/help/home?from=footer">
+                    Help Centre
+                  </link>
+                </listitem>
+                <listitem id="2414" level="1">
+                  <link id="2415" focusable="true" url="https://www.airbnb.com.sg/help/contact-us?entry=DESKTOP_FOOTER_SAFETY">
+                    Get help with a safety issue
+                  </link>
+                </listitem>
+                <listitem id="2418" level="1">
+                  <link id="2419" focusable="true" url="https://www.airbnb.com.sg/aircover">
+                    AirCover
+                  </link>
+                </listitem>
+                <listitem id="2422" level="1">
+                  <link id="2423" focusable="true" url="https://www.airbnb.com.sg/against-discrimination">
+                    Anti-discrimination
+                  </link>
+                </listitem>
+                <listitem id="2426" level="1">
+                  <link id="2427" focusable="true" url="https://www.airbnb.com.sg/accessibility">
+                    Disability support
+                  </link>
+                </listitem>
+                <listitem id="2430" level="1">
+                  <link id="2431" focusable="true" url="https://www.airbnb.com.sg/help/article/2701/extenuating-circumstances-policy-and-the-coronavirus-covid19">
+                    Cancellation options
+                  </link>
+                </listitem>
+                <listitem id="2434" level="1">
+                  <link id="2435" focusable="true" url="https://www.airbnb.com.sg/neighbors">
+                    Report neighbourhood concern
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+            <generic id="2438">
+              <heading id="2439" level="3">
+                Hosting
+              </heading>
+              <list id="2442">
+                <listitem id="2443" level="1">
+                  <link id="2444" focusable="true" url="https://www.airbnb.com.sg/host/homes?from_footer=1">
+                    Airbnb your home
+                  </link>
+                </listitem>
+                <listitem id="2447" level="1">
+                  <link id="2448" focusable="true" url="https://www.airbnb.com.sg/host/experiences">
+                    Airbnb your experience
+                  </link>
+                </listitem>
+                <listitem id="2451" level="1">
+                  <link id="2452" focusable="true" url="https://www.airbnb.com.sg/host/services">
+                    Airbnb your service
+                  </link>
+                </listitem>
+                <listitem id="2455" level="1">
+                  <link id="2456" focusable="true" url="https://www.airbnb.com.sg/aircover-for-hosts">
+                    AirCover for Hosts
+                  </link>
+                </listitem>
+                <listitem id="2459" level="1">
+                  <link id="2460" focusable="true" url="https://www.airbnb.com.sg/resources">
+                    Hosting resources
+                  </link>
+                </listitem>
+                <listitem id="2463" level="1">
+                  <link id="2464" focusable="true" url="https://community.withairbnb.com/t5/Community-Center/ct-p/community-center">
+                    Community forum
+                  </link>
+                </listitem>
+                <listitem id="2467" level="1">
+                  <link id="2468" focusable="true" url="https://www.airbnb.com.sg/help/responsible-hosting">
+                    Hosting responsibly
+                  </link>
+                </listitem>
+                <listitem id="2471" level="1">
+                  <link id="2472" focusable="true" url="https://www.airbnb.com.sg/e/intro-to-hosting">
+                    Join a free hosting class
+                  </link>
+                </listitem>
+                <listitem id="2475" level="1">
+                  <link id="2476" focusable="true" url="https://www.airbnb.com.sg/host/co-hosts">
+                    Find a co‑host
+                  </link>
+                </listitem>
+                <listitem id="2479" level="1">
+                  <link id="2480" focusable="true" url="https://www.airbnb.com.sg/refer">
+                    Refer a host
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+            <generic id="2483">
+              <heading id="2484" level="3">
+                Airbnb
+              </heading>
+              <list id="2487">
+                <listitem id="2488" level="1">
+                  <link id="2489" focusable="true" url="https://www.airbnb.com.sg/release">
+                    2026 Summer Release
+                  </link>
+                </listitem>
+                <listitem id="2492" level="1">
+                  <link id="2493" focusable="true" url="https://www.airbnb.com.sg/press/news">
+                    Newsroom
+                  </link>
+                </listitem>
+                <listitem id="2496" level="1">
+                  <link id="2497" focusable="true" url="https://www.airbnb.com.sg/careers">
+                    Careers
+                  </link>
+                </listitem>
+                <listitem id="2500" level="1">
+                  <link id="2501" focusable="true" url="https://investors.airbnb.com/">
+                    Investors
+                  </link>
+                </listitem>
+                <listitem id="2504" level="1">
+                  <link id="2505" focusable="true" url="https://www.airbnb.org/?locale=en-SG">
+                    Airbnb.org emergency stays
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+            Footer section
+            <generic id="2512">
+              <generic id="2515">
+                <generic id="2516">
+                  © 2026 Airbnb, Inc.
+                </generic>
+                <generic id="2519">
+                  <generic id="2521">
+                    <list id="2522">
+                      <listitem id="2523" level="1">
+                        <link id="2524" focusable="true" url="https://www.airbnb.com.sg/terms/privacy_policy">
+                          Privacy
+                        </link>
+                      </listitem>
+                      <listitem id="2527" level="1">
+                        <link id="2528" focusable="true" url="https://www.airbnb.com.sg/terms">
+                          Terms
+                        </link>
+                      </listitem>
+                    </list>
+                  </generic>
+                </generic>
+              </generic>
+              <button name="Choose a language" id="2535" invalid="false" focusable="true">
+                English (SG)
+              </button>
+              <button name="Choose a currency" id="2539" invalid="false" focusable="true">
+                $SGD
+              </button>
+              <list id="2548">
+                <listitem id="2549" level="1">
+                  <link name="Navigate to Facebook" id="2550" focusable="true" url="https://www.facebook.com/AirbnbSingapore"/>
+                </listitem>
+                <listitem id="2553" level="1">
+                  <link name="Navigate to Twitter" id="2554" focusable="true" url="https://twitter.com/airbnb"/>
+                </listitem>
+                <listitem id="2557" level="1">
+                  <link name="Navigate to Instagram" id="2558" focusable="true" url="https://instagram.com/airbnb"/>
+                </listitem>
+              </list>
+            </generic>
+          </contentinfo>
+        </generic>
+      </generic>
+      <generic id="2563"/>
+    </generic>
+    <generic id="2570">
+      <generic id="2571">
+        <generic id="2572">
+          <generic id="2573">
+            <generic id="2575">
+              <generic id="2576">
+                <image id="2577"/>
+              </generic>
+            </generic>
+            Prices include all feesPrices include all fees
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </generic>
+  <RootWebArea id="2586" focusable="true" url="about:blank"/>
+</RootWebArea>
