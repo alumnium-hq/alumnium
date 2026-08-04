@@ -1302,7 +1302,7 @@ const sections = {
       headline: "Alumnium is Different",
 
       subheadline: txt`
-        See how we line up with other browser agents.
+        See how we line up with other agents. Claude Code is tasked to "test all YouTube search filters end-to-end as a user."
       `,
     },
   }),
@@ -1312,7 +1312,8 @@ const sections = {
       metric: { en: "" },
       alumnium: { en: "Alumnium" },
       "browser-use": { en: "Browser Use" },
-      "playwright-mcp": { en: "playwright-mcp" },
+      "mobile-mcp": { en: "Mobile Next" },
+      "playwright-mcp": { en: "Playwright" },
     }),
 
     rows: [
@@ -1321,9 +1322,9 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "Main agent context",
+              label: "Tokens used",
               subtext: txt`
-                Coding agent context in tokens after completing the same task.
+                Main agent context usage in tokens.
               `,
             },
           },
@@ -1331,49 +1332,27 @@ const sections = {
 
         alumnium: {
           kind: "string",
-          value: { en: "8,000 tokens" },
+          value: { en: "45,000" },
           highlight: "positive",
         },
 
         "browser-use": {
           kind: "string",
-          value: { en: "21,000 tokens" },
+          value: { en: "92,000" },
+          highlight: "mixed",
+        },
+
+        "mobile-mcp": {
+          kind: "string",
+          value: { en: "143,000" },
           highlight: "mixed",
         },
 
         "playwright-mcp": {
           kind: "string",
-          value: { en: "79,000 tokens" },
+          value: { en: "240,000" },
           highlight: "negative",
         },
-      }),
-
-      comparisonRow({
-        metric: {
-          kind: "metric",
-          value: {
-            en: {
-              label: "Subagent context",
-              subtext: txt`
-                Browser agent context after completing the same task.
-              `,
-            },
-          },
-        },
-
-        alumnium: {
-          kind: "string",
-          value: { en: "400,000 tokens" },
-          highlight: "positive",
-        },
-
-        "browser-use": {
-          kind: "string",
-          value: { en: "400,000 tokens" },
-          highlight: "positive",
-        },
-
-        "playwright-mcp": { kind: "na" },
       }),
 
       comparisonRow({
@@ -1383,7 +1362,7 @@ const sections = {
             en: {
               label: "Duration",
               subtext: txt`
-                Time it takes to complete the same task.
+                Time it takes to complete the task.
               `,
             },
           },
@@ -1391,19 +1370,25 @@ const sections = {
 
         alumnium: {
           kind: "string",
-          value: { en: "3m 58s" },
-          highlight: "positive",
+          value: { en: "20 mins" },
+          highlight: "mixed",
         },
 
         "browser-use": {
           kind: "string",
-          value: { en: "5m 55s" },
-          highlight: "negative",
+          value: { en: "20 mins" },
+          highlight: "mixed",
+        },
+
+        "mobile-mcp": {
+          kind: "string",
+          value: { en: "16 mins" },
+          highlight: "positive",
         },
 
         "playwright-mcp": {
           kind: "string",
-          value: { en: "3m 57s" },
+          value: { en: "15 mins" },
           highlight: "positive",
         },
       }),
@@ -1415,7 +1400,7 @@ const sections = {
             en: {
               label: "Total cost",
               subtext: txt`
-                Total cost in USD of completing the same task.
+                Total cost in USD of completing the task.
               `,
             },
           },
@@ -1423,19 +1408,25 @@ const sections = {
 
         alumnium: {
           kind: "string",
-          value: { en: "$0.15" },
+          value: { en: "$3.80" },
           highlight: "positive",
         },
 
         "browser-use": {
           kind: "string",
-          value: { en: "$0.39" },
+          value: { en: "$6.76" },
           highlight: "mixed",
+        },
+
+        "mobile-mcp": {
+          kind: "string",
+          value: { en: "$12.88" },
+          highlight: "negative",
         },
 
         "playwright-mcp": {
           kind: "string",
-          value: { en: "$1.34" },
+          value: { en: "$15.47" },
           highlight: "negative",
         },
       }),
@@ -1460,6 +1451,11 @@ const sections = {
         },
 
         "browser-use": {
+          kind: "support",
+          support: "no",
+        },
+
+        "mobile-mcp": {
           kind: "support",
           support: "no",
         },
@@ -1490,7 +1486,12 @@ const sections = {
 
         "browser-use": {
           kind: "support",
-          support: "no",
+          support: "yes",
+        },
+
+        "mobile-mcp": {
+          kind: "support",
+          support: "yes",
         },
 
         "playwright-mcp": {
@@ -1522,9 +1523,14 @@ const sections = {
           support: "yes",
         },
 
-        "playwright-mcp": {
+        "mobile-mcp": {
           kind: "support",
           support: "no",
+        },
+
+        "playwright-mcp": {
+          kind: "support",
+          support: "yes",
         },
       }),
 
@@ -1551,9 +1557,14 @@ const sections = {
           support: "no",
         },
 
-        "playwright-mcp": {
+        "mobile-mcp": {
           kind: "support",
           support: "no",
+        },
+
+        "playwright-mcp": {
+          kind: "support",
+          support: "yes",
         },
       }),
 
@@ -1578,6 +1589,11 @@ const sections = {
         "browser-use": {
           kind: "support",
           support: "yes",
+        },
+
+        "mobile-mcp": {
+          kind: "support",
+          support: "no",
         },
 
         "playwright-mcp": {
@@ -1609,6 +1625,11 @@ const sections = {
           support: "no",
         },
 
+        "mobile-mcp": {
+          kind: "support",
+          support: "yes",
+        },
+
         "playwright-mcp": {
           kind: "support",
           support: "no",
@@ -1636,6 +1657,11 @@ const sections = {
         "browser-use": {
           kind: "support",
           support: "no",
+        },
+
+        "mobile-mcp": {
+          kind: "support",
+          support: "yes",
         },
 
         "playwright-mcp": {
@@ -1669,9 +1695,15 @@ const sections = {
           highlight: "positive",
         },
 
+        "mobile-mcp": {
+          kind: "string",
+          value: { en: "Apache 2.0" },
+          highlight: "positive",
+        },
+
         "playwright-mcp": {
           kind: "string",
-          value: { en: "Apache" },
+          value: { en: "Apache 2.0" },
           highlight: "positive",
         },
       }),
@@ -1939,6 +1971,7 @@ export namespace TtLandings {
     metric: I18n.FullLangsMap<string>;
     alumnium: I18n.FullLangsMap<string>;
     "browser-use": I18n.FullLangsMap<string>;
+    "mobile-mcp": I18n.FullLangsMap<string>;
     "playwright-mcp": I18n.FullLangsMap<string>;
   }
 
@@ -1946,6 +1979,7 @@ export namespace TtLandings {
     metric: ComparisonMetricCell;
     alumnium: ComparisonCell;
     "browser-use": ComparisonCell;
+    "mobile-mcp": ComparisonCell;
     "playwright-mcp": ComparisonCell;
   }
 
