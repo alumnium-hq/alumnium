@@ -1,0 +1,110 @@
+<RootWebArea name="Hands-On Selenium WebDriver with Java" id="1" focusable="true" focused="true" url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
+  <main id="4">
+    <heading id="8" level="1">
+      Hands-On Selenium WebDriver with Java
+    </heading>
+    <heading id="12" level="5">
+      Practice site
+    </heading>
+    <generic id="15">
+      <link id="16" focusable="true" url="https://github.com/bonigarcia/selenium-webdriver-java">
+        <image id="17" url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
+      </link>
+    </generic>
+    <separator id="20" settable="true" orientation="horizontal"/>
+    <heading id="23" level="1">
+      Web form
+    </heading>
+    <generic id="26">
+      <LabelText id="29">
+        Text input
+        <textbox name="Text input" id="32" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby=""/>
+      </LabelText>
+      <LabelText id="34">
+        Password
+        <textbox name="Password" id="37" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby=""/>
+      </LabelText>
+      <LabelText id="39">
+        Textarea
+        <textbox name="Textarea" id="42" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false" labelledby=""/>
+      </LabelText>
+      <LabelText id="44">
+        Disabled input
+        <textbox name="Disabled input" id="47" disabled="true" invalid="false" editable="plaintext" multiline="false" readonly="false" required="false" labelledby=""/>
+      </LabelText>
+      <LabelText id="50">
+        Readonly input
+        <textbox id="53" invalid="false" focusable="true" editable="plaintext" multiline="false" readonly="true" required="false" labelledby="">
+          <generic id="54">
+            Readonly input
+          </generic>
+        </textbox>
+      </LabelText>
+      <generic id="57">
+        <link id="58" focusable="true" url="https://bonigarcia.dev/selenium-webdriver-java/index.html">
+          Return to index
+        </link>
+      </generic>
+      <LabelText id="62">
+        Dropdown (select)
+        <combobox name="Dropdown (select)" id="65" invalid="false" focusable="true" hasPopup="menu" labelledby="">
+          <MenuListPopup id="66">
+            <option name="Open this select menu" id="68" focusable="true" selected="true"/>
+            <option name="One" id="69" focusable="true" selected="false"/>
+            <option name="Two" id="70" focusable="true" selected="false"/>
+            <option name="Three" id="71" focusable="true" selected="false"/>
+          </MenuListPopup>
+        </combobox>
+      </LabelText>
+      <LabelText id="72">
+        Dropdown (datalist)
+        <combobox name="Dropdown (datalist)" id="75" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false" labelledby=""/>
+      </LabelText>
+      <LabelText id="81">
+        File input
+        <button name="File input" id="84" invalid="false" focusable="true" labelledby=""/>
+      </LabelText>
+      <generic id="85">
+        <LabelText id="86">
+          <checkbox name="Checked checkbox" id="87" invalid="false" focusable="true" checked="true" labelledby=""/>
+          Checked checkbox
+        </LabelText>
+        <LabelText id="90">
+          <checkbox name="Default checkbox" id="91" invalid="false" focusable="true" checked="false" labelledby=""/>
+          Default checkbox
+        </LabelText>
+      </generic>
+      <generic id="94">
+        <radio name="Checked radio" id="96" invalid="false" focusable="true" checked="true" labelledby=""/>
+      </generic>
+      <generic id="98">
+        <radio name="Default radio" id="100" invalid="false" focusable="true" checked="false" labelledby=""/>
+      </generic>
+      <button id="102" invalid="false" focusable="true">
+        Submit
+      </button>
+      <generic id="105">
+        <LabelText id="106">
+          Color picker
+          <ColorWell name="Color picker" id="109" invalid="false" focusable="true" settable="true" labelledby=""/>
+        </LabelText>
+        <LabelText id="112">
+          Date picker
+          <textbox name="Date picker" id="115" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby=""/>
+        </LabelText>
+        <LabelText id="117">
+          Example range
+          <slider name="Example range " id="120" invalid="false" focusable="true" settable="true" orientation="horizontal" valuemin="0" valuemax="10" valuetext="" labelledby=""/>
+        </LabelText>
+      </generic>
+    </generic>
+  </main>
+  <contentinfo id="121">
+    <generic id="122">
+      Copyright © 2021-2026
+      <link id="125" focusable="true" url="https://bonigarcia.dev/">
+        Boni García
+      </link>
+    </generic>
+  </contentinfo>
+</RootWebArea>

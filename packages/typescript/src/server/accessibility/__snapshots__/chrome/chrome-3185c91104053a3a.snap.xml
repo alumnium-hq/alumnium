@@ -1,0 +1,26 @@
+<RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/upload">
+  <generic id="3">
+    <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+    </link>
+    <generic id="9">
+      <heading id="11" level="3">
+        File Uploaded!
+      </heading>
+      <generic id="14">
+        e990a3b7-0d61-4e1f-9260-cf03b575248d.txt
+      </generic>
+    </generic>
+    <generic id="17">
+      <generic id="18">
+        <separator id="19" settable="true" orientation="horizontal"/>
+        <generic id="20">
+          Powered by
+          <link id="23" focusable="true" url="http://elementalselenium.com/">
+            Elemental Selenium
+          </link>
+        </generic>
+      </generic>
+    </generic>
+  </generic>
+</RootWebArea>

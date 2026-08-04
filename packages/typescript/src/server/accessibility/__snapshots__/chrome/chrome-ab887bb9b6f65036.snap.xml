@@ -1,0 +1,26 @@
+<RootWebArea name="Multiple File Upload Test" id="1" focusable="true" focused="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multiple_file_upload.html">
+  <heading id="4" level="1">
+    Multiple File Upload Test
+  </heading>
+  <heading id="8" level="2">
+    📁 Upload Multiple Files
+  </heading>
+  <paragraph id="11">
+    Select multiple files to test the upload functionality
+  </paragraph>
+  <button name="Multiple File Input" id="14" invalid="false" focusable="true" focused="true"/>
+  <generic id="15">
+    <generic id="16">
+      2 files selected
+    </generic>
+  </generic>
+  <generic id="19">
+    <heading id="20" level="3">
+      Selected Files:
+    </heading>
+    1. 59252e7e-4d49-4b0a-a863-7edd738265dd.txt14 Bytes2. a12c9ecb-3296-4056-a6c0-bd5a7d129fa0.txt14 Bytes
+  </generic>
+  <button id="37" invalid="false" focusable="true">
+    Upload Files
+  </button>
+</RootWebArea>
