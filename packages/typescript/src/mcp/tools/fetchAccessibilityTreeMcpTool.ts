@@ -25,7 +25,7 @@ export const fetchAccessibilityTreeMcpTool = McpTool.define(
       // as if it's processed by Alumnium server
       const client = al.client;
       always(client instanceof NativeClient);
-      const tree = client.session.processTree(
+      const tree = client.session.parseTree(
         (await al.driver.getAccessibilityTree()).toStr(),
       );
 

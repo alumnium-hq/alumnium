@@ -94,7 +94,7 @@ export class NativeClient extends Client {
       return { explanation: goal, steps: [goal] };
     }
 
-    const tree = this.session.processTree(accessibilityTree);
+    const tree = this.session.parseTree(accessibilityTree);
     const [explanation, steps] = await this.session.plannerAgent.invoke(
       goal,
       tree.toXml(this.session.excludeAttributes),
@@ -123,7 +123,7 @@ export class NativeClient extends Client {
     const { goal, step, accessibilityTree, app } = props;
     this.session.updateContext({ app });
 
-    const tree = this.session.processTree(accessibilityTree);
+    const tree = this.session.parseTree(accessibilityTree);
     const [explanation, actions] = await this.session.actorAgent.invoke(
       goal,
       step,
@@ -146,7 +146,7 @@ export class NativeClient extends Client {
 
     this.session.updateContext({ app });
 
-    const tree = this.session.processTree(accessibilityTree);
+    const tree = this.session.parseTree(accessibilityTree);
     const excludeAttrs = new Set([
       ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
       ...this.session.excludeAttributes,
@@ -166,7 +166,7 @@ export class NativeClient extends Client {
     const { description, accessibilityTree, app } = props;
     this.session.updateContext({ app });
 
-    const tree = this.session.processTree(accessibilityTree);
+    const tree = this.session.parseTree(accessibilityTree);
     const area = await this.session.areaAgent.invoke(
       description,
       tree.toXml(this.session.excludeAttributes),
@@ -181,7 +181,7 @@ export class NativeClient extends Client {
     const { description, accessibilityTree, app } = props;
     this.session.updateContext({ app });
 
-    const tree = this.session.processTree(accessibilityTree);
+    const tree = this.session.parseTree(accessibilityTree);
     const element = (
       await this.session.locatorAgent.invoke(
         description,
@@ -204,8 +204,8 @@ export class NativeClient extends Client {
     } = props;
     this.session.updateContext({ app });
 
-    const beforeTree = this.session.processTree(beforeAccessibilityTree);
-    const afterTree = this.session.processTree(afterAccessibilityTree);
+    const beforeTree = this.session.parseTree(beforeAccessibilityTree);
+    const afterTree = this.session.parseTree(afterAccessibilityTree);
     const excludeAttrs = new Set([
       ...ChangesAnalyzerAgent.EXCLUDE_ATTRIBUTES,
       ...this.session.excludeAttributes,

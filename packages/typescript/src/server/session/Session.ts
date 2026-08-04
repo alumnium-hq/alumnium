@@ -146,19 +146,19 @@ export class Session {
   }
 
   /**
-   * Process raw platform data into a server tree.
+   * Processes accessibility tree XML into a server tree.
    *
-   * @param rawTreeData Raw tree data as string (XML for all platforms)
+   * @param xml Accessibility tree XML
    * @returns The created server tree instance
    */
-  processTree(rawTreeData: string): BaseServerAccessibilityTree {
+  parseTree(xml: string): BaseServerAccessibilityTree {
     let tree: BaseServerAccessibilityTree;
     if (this.platform === "chromium") {
-      tree = new ServerChromiumAccessibilityTree(rawTreeData);
+      tree = new ServerChromiumAccessibilityTree(xml);
     } else if (this.platform === "xcuitest") {
-      tree = new ServerXCUITestAccessibilityTree(rawTreeData);
+      tree = new ServerXCUITestAccessibilityTree(xml);
     } else if (this.platform === "uiautomator2") {
-      tree = new ServerUIAutomator2AccessibilityTree(rawTreeData);
+      tree = new ServerUIAutomator2AccessibilityTree(xml);
     } else {
       throw new Error(`Unknown platform: ${this.platform}`);
     }
