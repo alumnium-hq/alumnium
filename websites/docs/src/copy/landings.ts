@@ -1509,100 +1509,36 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "Web apps support",
+              label: "Platforms",
               subtext: txt`
-                Testing web apps support.
+                Supported testing platforms.
               `,
             },
           },
         },
 
         alumnium: {
-          kind: "support",
-          support: "yes",
+          kind: "string",
+          value: { en: "Web, iOS, Android" },
+          highlight: "positive",
         },
 
         "browser-use": {
-          kind: "support",
-          support: "yes",
+          kind: "string",
+          value: { en: "Web" },
+          highlight: "mixed",
         },
 
         "mobile-mcp": {
-          kind: "support",
-          support: "no",
+          kind: "string",
+          value: { en: "iOS, Android" },
+          highlight: "mixed",
         },
 
         "playwright-mcp": {
-          kind: "support",
-          support: "yes",
-        },
-      }),
-
-      comparisonRow({
-        metric: {
-          kind: "metric",
-          value: {
-            en: {
-              label: "Test iOS apps",
-              subtext: txt`
-                Testing iOS apps support.
-              `,
-            },
-          },
-        },
-
-        alumnium: {
-          kind: "support",
-          support: "yes",
-        },
-
-        "browser-use": {
-          kind: "support",
-          support: "no",
-        },
-
-        "mobile-mcp": {
-          kind: "support",
-          support: "yes",
-        },
-
-        "playwright-mcp": {
-          kind: "support",
-          support: "no",
-        },
-      }),
-
-      comparisonRow({
-        metric: {
-          kind: "metric",
-          value: {
-            en: {
-              label: "Test Android apps",
-              subtext: txt`
-                Testing Android apps support.
-              `,
-            },
-          },
-        },
-
-        alumnium: {
-          kind: "support",
-          support: "yes",
-        },
-
-        "browser-use": {
-          kind: "support",
-          support: "no",
-        },
-
-        "mobile-mcp": {
-          kind: "support",
-          support: "yes",
-        },
-
-        "playwright-mcp": {
-          kind: "support",
-          support: "no",
+          kind: "string",
+          value: { en: "Web" },
+          highlight: "mixed",
         },
       }),
 
