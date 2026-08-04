@@ -1,0 +1,31 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="Multi-Tab Test Page" focusable="true" focused="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multi_tab_page.html">
+  <none raw_id="2" backendDOMNodeId="2" nodeId="f0:2" ignored="true">
+    <none raw_id="3" backendDOMNodeId="5" nodeId="f0:5" ignored="true">
+      <heading raw_id="4" backendDOMNodeId="6" nodeId="f0:6" ignored="false" name="Multi-Tab Test Page" level="1">
+        <StaticText raw_id="5" backendDOMNodeId="13" nodeId="f0:13" ignored="false" name="Multi-Tab Test Page">
+          <InlineTextBox raw_id="6" nodeId="f0:-1000000002" ignored="false" name="Multi-Tab Test Page"/>
+        </StaticText>
+      </heading>
+      <paragraph raw_id="7" backendDOMNodeId="7" nodeId="f0:7" ignored="false" name="">
+        <StaticText raw_id="8" backendDOMNodeId="14" nodeId="f0:14" ignored="false" name="This page is used to test tab management functionality.">
+          <InlineTextBox raw_id="9" nodeId="f0:-1000000003" ignored="false" name="This page is used to test tab management functionality."/>
+        </StaticText>
+      </paragraph>
+      <button raw_id="10" backendDOMNodeId="8" nodeId="f0:8" ignored="false" name="Open New Tab" invalid="false" focusable="true">
+        <StaticText raw_id="11" backendDOMNodeId="15" nodeId="f0:15" ignored="false" name="Open New Tab">
+          <InlineTextBox raw_id="12" nodeId="f0:-1000000004" ignored="false" name="Open New Tab"/>
+        </StaticText>
+      </button>
+      <button raw_id="13" backendDOMNodeId="9" nodeId="f0:9" ignored="false" name="Open Popup (auto-closes)" invalid="false" focusable="true">
+        <StaticText raw_id="14" backendDOMNodeId="16" nodeId="f0:16" ignored="false" name="Open Popup (auto-closes)">
+          <InlineTextBox raw_id="15" nodeId="f0:-1000000005" ignored="false" name="Open Popup (auto-closes)"/>
+        </StaticText>
+      </button>
+      <button raw_id="16" backendDOMNodeId="11" nodeId="f0:11" ignored="false" name="Show Delayed Element" invalid="false" focusable="true">
+        <StaticText raw_id="17" backendDOMNodeId="18" nodeId="f0:18" ignored="false" name="Show Delayed Element">
+          <InlineTextBox raw_id="18" nodeId="f0:-1000000006" ignored="false" name="Show Delayed Element"/>
+        </StaticText>
+      </button>
+    </none>
+  </none>
+</RootWebArea>
