@@ -1,0 +1,286 @@
+<RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/tables">
+  <generic id="3">
+    <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+    </link>
+    <generic id="9">
+      <heading id="11" level="3">
+        Data Tables
+      </heading>
+      <paragraph id="14">
+        Often times when you see a table it contains data which is sortable -- sometimes with actions that can be taken within each row (e.g. edit, delete). And it can be challenging to automate interaction with sets of data in a table depending on how it is constructed.
+      </paragraph>
+      <heading id="18" level="4">
+        Example 1
+      </heading>
+      <paragraph id="21">
+        No Class or ID attributes to signify groupings of rows and columns
+      </paragraph>
+      <table id="24">
+        <rowgroup id="25">
+          <row id="26">
+            <columnheader id="27" readonly="false" required="false">
+              Last Name
+            </columnheader>
+            <columnheader id="30" readonly="false" required="false">
+              First Name
+            </columnheader>
+            <columnheader id="33" readonly="false" required="false">
+              Email
+            </columnheader>
+            <columnheader id="36" readonly="false" required="false">
+              Due
+            </columnheader>
+            <columnheader id="39" readonly="false" required="false">
+              Web Site
+            </columnheader>
+            <columnheader id="42" readonly="false" required="false">
+              Action
+            </columnheader>
+          </row>
+        </rowgroup>
+        <row id="46">
+          <cell id="47">
+            Bach
+          </cell>
+          <cell id="50">
+            Frank
+          </cell>
+          <cell id="53">
+            fbach@yahoo.com
+          </cell>
+          <cell id="56">
+            $51.00
+          </cell>
+          <cell id="59">
+            http://www.frank.com
+          </cell>
+          <cell id="62">
+            <link id="63" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
+              edit
+            </link>
+            <link id="68" focusable="true" url="https://the-internet.herokuapp.com/tables#delete">
+              delete
+            </link>
+          </cell>
+        </row>
+        <row id="71">
+          <cell id="72">
+            Conway
+          </cell>
+          <cell id="75">
+            Tim
+          </cell>
+          <cell id="78">
+            tconway@earthlink.net
+          </cell>
+          <cell id="81">
+            $50.00
+          </cell>
+          <cell id="84">
+            http://www.timconway.com
+          </cell>
+          <cell id="87">
+            <link id="88" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
+              edit
+            </link>
+            <link id="93" focusable="true" url="https://the-internet.herokuapp.com/tables#delete">
+              delete
+            </link>
+          </cell>
+        </row>
+        <row id="96">
+          <cell id="97">
+            Doe
+          </cell>
+          <cell id="100">
+            Jason
+          </cell>
+          <cell id="103">
+            jdoe@hotmail.com
+          </cell>
+          <cell id="106">
+            $100.00
+          </cell>
+          <cell id="109">
+            http://www.jdoe.com
+          </cell>
+          <cell id="112">
+            <link id="113" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
+              edit
+            </link>
+            <link id="118" focusable="true" url="https://the-internet.herokuapp.com/tables#delete">
+              delete
+            </link>
+          </cell>
+        </row>
+        <row id="121">
+          <cell id="122">
+            Smith
+          </cell>
+          <cell id="125">
+            John
+          </cell>
+          <cell id="128">
+            jsmith@gmail.com
+          </cell>
+          <cell id="131">
+            $50.00
+          </cell>
+          <cell id="134">
+            http://www.jsmith.com
+          </cell>
+          <cell id="137">
+            <link id="138" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
+              edit
+            </link>
+            <link id="143" focusable="true" url="https://the-internet.herokuapp.com/tables#delete">
+              delete
+            </link>
+          </cell>
+        </row>
+      </table>
+      <heading id="146" level="4">
+        Example 2
+      </heading>
+      <paragraph id="149">
+        Class and ID attributes to signify groupings of rows and columns
+      </paragraph>
+      <table id="152">
+        <rowgroup id="153">
+          <row id="154">
+            <columnheader id="155" readonly="false" required="false">
+              Last Name
+            </columnheader>
+            <columnheader id="158" readonly="false" required="false">
+              First Name
+            </columnheader>
+            <columnheader id="161" readonly="false" required="false">
+              Email
+            </columnheader>
+            <columnheader id="164" readonly="false" required="false">
+              Due
+            </columnheader>
+            <columnheader id="167" readonly="false" required="false">
+              Web Site
+            </columnheader>
+            <columnheader id="170" readonly="false" required="false">
+              Action
+            </columnheader>
+          </row>
+        </rowgroup>
+        <row id="174">
+          <cell id="175">
+            Smith
+          </cell>
+          <cell id="178">
+            John
+          </cell>
+          <cell id="181">
+            jsmith@gmail.com
+          </cell>
+          <cell id="184">
+            $50.00
+          </cell>
+          <cell id="187">
+            http://www.jsmith.com
+          </cell>
+          <cell id="190">
+            <link id="191" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
+              edit
+            </link>
+            <link id="196" focusable="true" url="https://the-internet.herokuapp.com/tables#delete">
+              delete
+            </link>
+          </cell>
+        </row>
+        <row id="199">
+          <cell id="200">
+            Bach
+          </cell>
+          <cell id="203">
+            Frank
+          </cell>
+          <cell id="206">
+            fbach@yahoo.com
+          </cell>
+          <cell id="209">
+            $51.00
+          </cell>
+          <cell id="212">
+            http://www.frank.com
+          </cell>
+          <cell id="215">
+            <link id="216" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
+              edit
+            </link>
+            <link id="221" focusable="true" url="https://the-internet.herokuapp.com/tables#delete">
+              delete
+            </link>
+          </cell>
+        </row>
+        <row id="224">
+          <cell id="225">
+            Doe
+          </cell>
+          <cell id="228">
+            Jason
+          </cell>
+          <cell id="231">
+            jdoe@hotmail.com
+          </cell>
+          <cell id="234">
+            $100.00
+          </cell>
+          <cell id="237">
+            http://www.jdoe.com
+          </cell>
+          <cell id="240">
+            <link id="241" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
+              edit
+            </link>
+            <link id="246" focusable="true" url="https://the-internet.herokuapp.com/tables#delete">
+              delete
+            </link>
+          </cell>
+        </row>
+        <row id="249">
+          <cell id="250">
+            Conway
+          </cell>
+          <cell id="253">
+            Tim
+          </cell>
+          <cell id="256">
+            tconway@earthlink.net
+          </cell>
+          <cell id="259">
+            $50.00
+          </cell>
+          <cell id="262">
+            http://www.timconway.com
+          </cell>
+          <cell id="265">
+            <link id="266" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
+              edit
+            </link>
+            <link id="271" focusable="true" url="https://the-internet.herokuapp.com/tables#delete">
+              delete
+            </link>
+          </cell>
+        </row>
+      </table>
+    </generic>
+    <generic id="274">
+      <generic id="275">
+        <separator id="276" settable="true" orientation="horizontal"/>
+        <generic id="277">
+          Powered by
+          <link id="280" focusable="true" url="http://elementalselenium.com/">
+            Elemental Selenium
+          </link>
+        </generic>
+      </generic>
+    </generic>
+  </generic>
+</RootWebArea>

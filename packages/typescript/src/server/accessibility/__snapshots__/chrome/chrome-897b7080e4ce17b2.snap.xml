@@ -1,0 +1,3269 @@
+<RootWebArea name="Overview · Cloudflare Workers docs" id="1" focusable="true" focused="true" url="https://developers.cloudflare.com/workers/">
+  <link id="4" focusable="true" url="https://developers.cloudflare.com/workers/#main-content">
+    Skip to content
+  </link>
+  <banner id="8">
+    <link name="Docs" id="11" focusable="true" url="https://developers.cloudflare.com/">
+      <image name="Cloudflare" id="13"/>
+      DOCS
+    </link>
+    <navigation name="Sections" id="17">
+      <link id="18" focusable="true" url="https://developers.cloudflare.com/directory/">
+        Directory
+      </link>
+      <link id="21" focusable="true" url="https://developers.cloudflare.com/api/">
+        API
+      </link>
+      <link id="24" focusable="true" url="https://developers.cloudflare.com/fundamentals/api/reference/sdks/">
+        SDKs
+      </link>
+      <link id="27" focusable="true" url="https://developers.cloudflare.com/changelog/">
+        Changelog
+      </link>
+    </navigation>
+    <generic id="31">
+      <button name="(Ctrl+)" id="32" invalid="false" focusable="true">
+        Search
+        <image id="39"/>
+        K
+      </button>
+    </generic>
+    <link name="GitHub" id="43" focusable="true" url="https://github.com/cloudflare/cloudflare-docs">
+      <image id="44"/>
+    </link>
+    <button name="Theme: system. Activate to switch to light." id="46" invalid="false" focusable="true">
+      <image id="49"/>
+    </button>
+    <separator id="51" settable="true" orientation="horizontal"/>
+    <link id="52" focusable="true" url="https://dash.cloudflare.com/">
+      Log in
+    </link>
+  </banner>
+  <complementary id="58">
+    <navigation id="60">
+      <generic id="61">
+        <link name="All products" id="63" focusable="true" url="https://developers.cloudflare.com/"/>
+        <link id="65" focusable="true" url="https://developers.cloudflare.com/workers/">
+          Workers
+        </link>
+        <generic id="69">
+          <searchbox name="Filter navigation" id="70" invalid="false" focusable="true" editable="plaintext" settable="true"/>
+        </generic>
+      </generic>
+      <list id="76">
+        <listitem id="77" level="1">
+          <link id="78" focusable="true" url="https://developers.cloudflare.com/workers/">
+            Overview
+          </link>
+        </listitem>
+        <listitem id="82" level="1">
+          <button id="84" invalid="false" focusable="true" controls="nb-disclosure-1">
+            Getting started
+          </button>
+          <generic id="89">
+            <generic id="90">
+              <list id="91">
+                <listitem id="92" level="2">
+                  <link id="93" focusable="true" url="https://developers.cloudflare.com/workers/get-started/guide/">
+                    CLI
+                  </link>
+                </listitem>
+                <listitem id="97" level="2">
+                  <link id="98" focusable="true" url="https://developers.cloudflare.com/workers/get-started/dashboard/">
+                    Dashboard
+                  </link>
+                </listitem>
+                <listitem id="102" level="2">
+                  <link id="103" focusable="true" url="https://developers.cloudflare.com/workers/get-started/prompting/">
+                    Prompting
+                  </link>
+                </listitem>
+                <listitem id="107" level="2">
+                  <link id="108" focusable="true" url="https://developers.cloudflare.com/workers/get-started/quickstarts/">
+                    Templates
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="112" level="1">
+          <link id="113" focusable="true" url="https://developers.cloudflare.com/workers/examples/">
+            Examples
+          </link>
+        </listitem>
+        <listitem id="117" level="1">
+          <link id="118" focusable="true" url="https://developers.cloudflare.com/workers/tutorials/">
+            Tutorials
+          </link>
+        </listitem>
+        <listitem id="122" level="1">
+          <button id="124" invalid="false" focusable="true" controls="nb-disclosure-2">
+            Best practices
+          </button>
+          <generic id="129">
+            <generic id="130">
+              <list id="131">
+                <listitem id="132" level="2">
+                  <link id="133" focusable="true" url="https://developers.cloudflare.com/workers/best-practices/workers-best-practices/">
+                    Workers Best Practices
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="137" level="1">
+          <button id="139" invalid="false" focusable="true" controls="nb-disclosure-3">
+            Demos and architectures
+          </button>
+          <generic id="144">
+            <generic id="145">
+              <list id="146">
+                <listitem id="147" level="2">
+                  <link id="148" focusable="true" url="https://developers.cloudflare.com/workers/demos/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="152" level="2">
+                  <link id="153" focusable="true" url="https://developers.cloudflare.com/workers/demos/chatgpt-app/">
+                    Build an Interactive ChatGPT App
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="157" level="1">
+          <button id="159" invalid="false" focusable="true" controls="nb-disclosure-4">
+            Local development
+          </button>
+          <generic id="164">
+            <generic id="165">
+              <list id="166">
+                <listitem id="167" level="2">
+                  <link id="168" focusable="true" url="https://developers.cloudflare.com/workers/local-development/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="172" level="2">
+                  <link id="173" focusable="true" url="https://developers.cloudflare.com/workers/local-development/environment-variables/">
+                    Environment variables and secrets
+                  </link>
+                </listitem>
+                <listitem id="178" level="2">
+                  <link id="179" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/">
+                    Vite Plugin ↗
+                  </link>
+                </listitem>
+                <listitem id="183" level="2">
+                  <link id="184" focusable="true" url="https://developers.cloudflare.com/workers/local-development/wrangler-vs-vite/">
+                    Choosing between Wrangler &amp; Vite
+                  </link>
+                </listitem>
+                <listitem id="189" level="2">
+                  <link id="190" focusable="true" url="https://developers.cloudflare.com/workers/local-development/multi-workers/">
+                    Developing with multiple Workers
+                  </link>
+                </listitem>
+                <listitem id="194" level="2">
+                  <link id="195" focusable="true" url="https://developers.cloudflare.com/workers/local-development/local-data/">
+                    Adding local data
+                  </link>
+                </listitem>
+                <listitem id="199" level="2">
+                  <link id="200" focusable="true" url="https://developers.cloudflare.com/workers/local-development/bindings-per-env/">
+                    Supported bindings per development mode
+                  </link>
+                </listitem>
+                <listitem id="205" level="2">
+                  <link id="206" focusable="true" url="https://developers.cloudflare.com/workers/local-development/local-explorer/">
+                    Local Explorer
+                  </link>
+                </listitem>
+                <listitem id="210" level="2">
+                  <link id="211" focusable="true" url="https://developers.cloudflare.com/workers/local-development/local-dev-tunnels/">
+                    Share a local dev server
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="215" level="1">
+          <link id="216" focusable="true" url="https://developers.cloudflare.com/workers/playground/">
+            Playground
+          </link>
+        </listitem>
+        <listitem id="220" level="1">
+          <button id="222" invalid="false" focusable="true" controls="nb-disclosure-5">
+            Configuration
+          </button>
+          <generic id="227">
+            <generic id="228">
+              <list id="229">
+                <listitem id="230" level="2">
+                  <link id="231" focusable="true" url="https://developers.cloudflare.com/workers/configuration/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="235" level="2">
+                  <button id="237" invalid="false" focusable="true" controls="nb-disclosure-6">
+                    Workers Sites
+                  </button>
+                  <generic id="242">
+                    <generic id="243">
+                      <list id="244">
+                        <listitem id="245" level="3">
+                          <link id="246" focusable="true" url="https://developers.cloudflare.com/workers/configuration/sites/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="250" level="3">
+                          <link id="251" focusable="true" url="https://developers.cloudflare.com/workers/configuration/sites/start-from-existing/">
+                            Start from existing
+                          </link>
+                        </listitem>
+                        <listitem id="255" level="3">
+                          <link id="256" focusable="true" url="https://developers.cloudflare.com/workers/configuration/sites/start-from-scratch/">
+                            Start from scratch
+                          </link>
+                        </listitem>
+                        <listitem id="260" level="3">
+                          <link id="261" focusable="true" url="https://developers.cloudflare.com/workers/configuration/sites/start-from-worker/">
+                            Start from Worker
+                          </link>
+                        </listitem>
+                        <listitem id="265" level="3">
+                          <link id="266" focusable="true" url="https://developers.cloudflare.com/workers/configuration/sites/configuration/">
+                            Workers Sites configuration
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="270" level="2">
+                  <link id="271" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/">
+                    Bindings ↗
+                  </link>
+                </listitem>
+                <listitem id="275" level="2">
+                  <link id="276" focusable="true" url="https://developers.cloudflare.com/workers/configuration/compatibility-dates/">
+                    Compatibility dates
+                  </link>
+                </listitem>
+                <listitem id="280" level="2">
+                  <link id="281" focusable="true" url="https://developers.cloudflare.com/workers/configuration/compatibility-flags/">
+                    Compatibility flags
+                  </link>
+                </listitem>
+                <listitem id="285" level="2">
+                  <link id="286" focusable="true" url="https://developers.cloudflare.com/workers/configuration/cron-triggers/">
+                    Cron Triggers
+                  </link>
+                </listitem>
+                <listitem id="290" level="2">
+                  <link id="291" focusable="true" url="https://developers.cloudflare.com/workers/configuration/environment-variables/">
+                    Environment variables
+                  </link>
+                </listitem>
+                <listitem id="295" level="2">
+                  <button id="297" invalid="false" focusable="true" controls="nb-disclosure-7">
+                    Integrations
+                  </button>
+                  <generic id="302">
+                    <generic id="303">
+                      <list id="304">
+                        <listitem id="305" level="3">
+                          <link id="306" focusable="true" url="https://developers.cloudflare.com/workers/configuration/integrations/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="310" level="3">
+                          <link id="311" focusable="true" url="https://developers.cloudflare.com/workers/configuration/integrations/apis/">
+                            APIs
+                          </link>
+                        </listitem>
+                        <listitem id="315" level="3">
+                          <link id="316" focusable="true" url="https://developers.cloudflare.com/workers/configuration/integrations/external-services/">
+                            External Services
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="320" level="2">
+                  <link id="321" focusable="true" url="https://developers.cloudflare.com/workers/configuration/multipart-upload-metadata/">
+                    Multipart upload metadata
+                  </link>
+                </listitem>
+                <listitem id="325" level="2">
+                  <link id="326" focusable="true" url="https://developers.cloudflare.com/workers/configuration/workers-with-page-rules/">
+                    Page Rules
+                  </link>
+                </listitem>
+                <listitem id="330" level="2">
+                  <link name="" id="331" focusable="true" url="https://developers.cloudflare.com/workers/configuration/placement/">
+                    PlacementBeta
+                  </link>
+                </listitem>
+                <listitem id="338" level="2">
+                  <button id="340" invalid="false" focusable="true" controls="nb-disclosure-8">
+                    Routes and domains
+                  </button>
+                  <generic id="345">
+                    <generic id="346">
+                      <list id="347">
+                        <listitem id="348" level="3">
+                          <link id="349" focusable="true" url="https://developers.cloudflare.com/workers/configuration/routing/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="353" level="3">
+                          <link id="354" focusable="true" url="https://developers.cloudflare.com/workers/configuration/routing/custom-domains/">
+                            Custom Domains
+                          </link>
+                        </listitem>
+                        <listitem id="358" level="3">
+                          <link id="359" focusable="true" url="https://developers.cloudflare.com/workers/configuration/routing/routes/">
+                            Routes
+                          </link>
+                        </listitem>
+                        <listitem id="363" level="3">
+                          <link id="364" focusable="true" url="https://developers.cloudflare.com/workers/configuration/routing/workers-dev/">
+                            workers.dev
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="368" level="2">
+                  <link id="369" focusable="true" url="https://developers.cloudflare.com/workers/configuration/secrets/">
+                    Secrets
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="373" level="1">
+          <button id="375" invalid="false" focusable="true" controls="nb-disclosure-9">
+            Versions &amp; deployments
+          </button>
+          <generic id="380">
+            <generic id="381">
+              <list id="382">
+                <listitem id="383" level="2">
+                  <link id="384" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="388" level="2">
+                  <link id="389" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/deployment-management/">
+                    Deployment management
+                  </link>
+                </listitem>
+                <listitem id="393" level="2">
+                  <link id="394" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/preview-urls/">
+                    Preview URLs
+                  </link>
+                </listitem>
+                <listitem id="398" level="2">
+                  <button id="400" invalid="false" focusable="true" controls="nb-disclosure-10">
+                    Gradual deployments
+                  </button>
+                  <generic id="405">
+                    <generic id="406">
+                      <list id="407">
+                        <listitem id="408" level="3">
+                          <link id="409" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/gradual-deployments/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="413" level="3">
+                          <link id="414" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/gradual-deployments/version-affinity/">
+                            Version affinity
+                          </link>
+                        </listitem>
+                        <listitem id="418" level="3">
+                          <link id="419" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/gradual-deployments/with-durable-objects/">
+                            With Durable Objects
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="423" level="2">
+                  <link id="424" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/version-overrides/">
+                    Version overrides
+                  </link>
+                </listitem>
+                <listitem id="428" level="2">
+                  <link id="429" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/">
+                    Rollbacks
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="433" level="1">
+          <button id="435" invalid="false" focusable="true" controls="nb-disclosure-11">
+            CI/CD
+          </button>
+          <generic id="440">
+            <generic id="441">
+              <list id="442">
+                <listitem id="443" level="2">
+                  <link id="444" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="448" level="2">
+                  <button id="450" invalid="false" focusable="true" controls="nb-disclosure-12">
+                    Builds
+                  </button>
+                  <generic id="455">
+                    <generic id="456">
+                      <list id="457">
+                        <listitem id="458" level="3">
+                          <link id="459" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="463" level="3">
+                          <link id="464" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/configuration/">
+                            Configuration
+                          </link>
+                        </listitem>
+                        <listitem id="468" level="3">
+                          <link id="469" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/automatic-prs/">
+                            Automatic pull requests
+                          </link>
+                        </listitem>
+                        <listitem id="473" level="3">
+                          <button id="475" invalid="false" focusable="true" controls="nb-disclosure-13">
+                            Git integration
+                          </button>
+                          <generic id="480">
+                            <generic id="481">
+                              <list id="482">
+                                <listitem id="483" level="4">
+                                  <link id="484" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/">
+                                    Overview
+                                  </link>
+                                </listitem>
+                                <listitem id="488" level="4">
+                                  <link id="489" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/github-integration/">
+                                    GitHub integration
+                                  </link>
+                                </listitem>
+                                <listitem id="493" level="4">
+                                  <link id="494" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/gitlab-integration/">
+                                    GitLab integration
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                        <listitem id="498" level="3">
+                          <link id="499" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/build-image/">
+                            Build image
+                          </link>
+                        </listitem>
+                        <listitem id="503" level="3">
+                          <link id="504" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/build-caching/">
+                            Build caching
+                          </link>
+                        </listitem>
+                        <listitem id="508" level="3">
+                          <link id="509" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/build-branches/">
+                            Build branches
+                          </link>
+                        </listitem>
+                        <listitem id="513" level="3">
+                          <link id="514" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/build-watch-paths/">
+                            Build watch paths
+                          </link>
+                        </listitem>
+                        <listitem id="518" level="3">
+                          <link id="519" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/deploy-hooks/">
+                            Deploy Hooks
+                          </link>
+                        </listitem>
+                        <listitem id="523" level="3">
+                          <link id="524" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/advanced-setups/">
+                            Advanced setups
+                          </link>
+                        </listitem>
+                        <listitem id="528" level="3">
+                          <link id="529" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/event-subscriptions/">
+                            Event subscriptions
+                          </link>
+                        </listitem>
+                        <listitem id="533" level="3">
+                          <link id="534" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/troubleshoot/">
+                            Troubleshooting builds
+                          </link>
+                        </listitem>
+                        <listitem id="538" level="3">
+                          <link id="539" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/api-reference/">
+                            Builds API reference
+                          </link>
+                        </listitem>
+                        <listitem id="543" level="3">
+                          <link id="544" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/builds/limits-and-pricing/">
+                            Limits &amp; pricing
+                          </link>
+                        </listitem>
+                        <listitem id="548" level="3">
+                          <link name="" id="549" focusable="true" url="https://github.com/cloudflare/mcp-server-cloudflare/tree/main/apps/workers-builds">
+                            MCP serverMCP
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="556" level="2">
+                  <button id="558" invalid="false" focusable="true" controls="nb-disclosure-14">
+                    External CI/CD
+                  </button>
+                  <generic id="563">
+                    <generic id="564">
+                      <list id="565">
+                        <listitem id="566" level="3">
+                          <link id="567" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/external-cicd/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="571" level="3">
+                          <link id="572" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/">
+                            GitHub Actions
+                          </link>
+                        </listitem>
+                        <listitem id="576" level="3">
+                          <link id="577" focusable="true" url="https://developers.cloudflare.com/workers/ci-cd/external-cicd/gitlab-cicd/">
+                            GitLab CI/CD
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="581" level="1">
+          <button id="583" invalid="false" focusable="true" controls="nb-disclosure-15">
+            Workers Cache
+          </button>
+          <generic id="588">
+            <generic id="589">
+              <list id="590">
+                <listitem id="591" level="2">
+                  <link id="592" focusable="true" url="https://developers.cloudflare.com/workers/cache/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="596" level="2">
+                  <link id="597" focusable="true" url="https://developers.cloudflare.com/workers/cache/configuration/">
+                    Configuration
+                  </link>
+                </listitem>
+                <listitem id="601" level="2">
+                  <link id="602" focusable="true" url="https://developers.cloudflare.com/workers/cache/cache-keys/">
+                    Cache keys
+                  </link>
+                </listitem>
+                <listitem id="606" level="2">
+                  <link id="607" focusable="true" url="https://developers.cloudflare.com/workers/cache/purge/">
+                    Purging the cache
+                  </link>
+                </listitem>
+                <listitem id="611" level="2">
+                  <link id="612" focusable="true" url="https://developers.cloudflare.com/workers/cache/examples/">
+                    Examples
+                  </link>
+                </listitem>
+                <listitem id="616" level="2">
+                  <link id="617" focusable="true" url="https://developers.cloudflare.com/workers/cache/debugging/">
+                    Debugging
+                  </link>
+                </listitem>
+                <listitem id="621" level="2">
+                  <link id="622" focusable="true" url="https://developers.cloudflare.com/workers/cache/limitations/">
+                    Limitations
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="626" level="1">
+          <button id="628" invalid="false" focusable="true" controls="nb-disclosure-16">
+            Runtime APIs
+          </button>
+          <generic id="633">
+            <generic id="634">
+              <list id="635">
+                <listitem id="636" level="2">
+                  <link id="637" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="641" level="2">
+                  <button id="643" invalid="false" focusable="true" controls="nb-disclosure-17">
+                    Remote-procedure call (RPC)
+                  </button>
+                  <generic id="648">
+                    <generic id="649">
+                      <list id="650">
+                        <listitem id="651" level="3">
+                          <link id="652" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/rpc/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="656" level="3">
+                          <link id="657" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/rpc/lifecycle/">
+                            Lifecycle
+                          </link>
+                        </listitem>
+                        <listitem id="661" level="3">
+                          <link id="662" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/rpc/reserved-methods/">
+                            Reserved Methods
+                          </link>
+                        </listitem>
+                        <listitem id="666" level="3">
+                          <link id="667" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/rpc/visibility/">
+                            Visibility and Security Model
+                          </link>
+                        </listitem>
+                        <listitem id="671" level="3">
+                          <link id="672" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/rpc/typescript/">
+                            TypeScript
+                          </link>
+                        </listitem>
+                        <listitem id="676" level="3">
+                          <link id="677" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/rpc/error-handling/">
+                            Error handling
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="681" level="2">
+                  <button id="683" invalid="false" focusable="true" controls="nb-disclosure-18">
+                    WebAssembly (Wasm)
+                  </button>
+                  <generic id="688">
+                    <generic id="689">
+                      <list id="690">
+                        <listitem id="691" level="3">
+                          <link id="692" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/webassembly/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="696" level="3">
+                          <link id="697" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/webassembly/javascript/">
+                            Wasm in JavaScript
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="701" level="2">
+                  <button id="703" invalid="false" focusable="true" controls="nb-disclosure-19">
+                    Bindings (env)
+                  </button>
+                  <generic id="708">
+                    <generic id="709">
+                      <list id="710">
+                        <listitem id="711" level="3">
+                          <link id="712" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="716" level="3">
+                          <link id="717" focusable="true" url="https://developers.cloudflare.com/workers-ai/get-started/workers-wrangler/#2-connect-your-worker-to-workers-ai">
+                            AI ↗
+                          </link>
+                        </listitem>
+                        <listitem id="721" level="3">
+                          <link id="722" focusable="true" url="https://developers.cloudflare.com/analytics/analytics-engine/">
+                            Analytics Engine ↗
+                          </link>
+                        </listitem>
+                        <listitem id="726" level="3">
+                          <link id="727" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/binding/">
+                            Assets ↗
+                          </link>
+                        </listitem>
+                        <listitem id="731" level="3">
+                          <link id="732" focusable="true" url="https://developers.cloudflare.com/browser-run/">
+                            Browser Run ↗
+                          </link>
+                        </listitem>
+                        <listitem id="736" level="3">
+                          <link id="737" focusable="true" url="https://developers.cloudflare.com/d1/worker-api/">
+                            D1 ↗
+                          </link>
+                        </listitem>
+                        <listitem id="741" level="3">
+                          <link id="742" focusable="true" url="https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/configuration/dynamic-dispatch/">
+                            Dispatcher (Workers for Platforms) ↗
+                          </link>
+                        </listitem>
+                        <listitem id="747" level="3">
+                          <link id="748" focusable="true" url="https://developers.cloudflare.com/durable-objects/api/">
+                            Durable Objects ↗
+                          </link>
+                        </listitem>
+                        <listitem id="752" level="3">
+                          <link id="753" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/worker-loader/">
+                            Dynamic Worker Loaders
+                          </link>
+                        </listitem>
+                        <listitem id="757" level="3">
+                          <link id="758" focusable="true" url="https://developers.cloudflare.com/workers/configuration/environment-variables/">
+                            Environment Variables ↗
+                          </link>
+                        </listitem>
+                        <listitem id="762" level="3">
+                          <link id="763" focusable="true" url="https://developers.cloudflare.com/hyperdrive/">
+                            Hyperdrive ↗
+                          </link>
+                        </listitem>
+                        <listitem id="767" level="3">
+                          <link id="768" focusable="true" url="https://developers.cloudflare.com/images/optimization/binding/">
+                            Images ↗
+                          </link>
+                        </listitem>
+                        <listitem id="772" level="3">
+                          <link id="773" focusable="true" url="https://developers.cloudflare.com/kv/api/">
+                            KV ↗
+                          </link>
+                        </listitem>
+                        <listitem id="777" level="3">
+                          <link id="778" focusable="true" url="https://developers.cloudflare.com/stream/transform-videos/bindings/">
+                            Media Transformations ↗
+                          </link>
+                        </listitem>
+                        <listitem id="782" level="3">
+                          <link id="783" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/mtls/">
+                            mTLS
+                          </link>
+                        </listitem>
+                        <listitem id="787" level="3">
+                          <link id="788" focusable="true" url="https://developers.cloudflare.com/queues/configuration/javascript-apis/">
+                            Queues ↗
+                          </link>
+                        </listitem>
+                        <listitem id="792" level="3">
+                          <link id="793" focusable="true" url="https://developers.cloudflare.com/r2/api/workers/workers-api-reference/">
+                            R2 ↗
+                          </link>
+                        </listitem>
+                        <listitem id="797" level="3">
+                          <link id="798" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/">
+                            Rate Limiting
+                          </link>
+                        </listitem>
+                        <listitem id="802" level="3">
+                          <link id="803" focusable="true" url="https://developers.cloudflare.com/workers/configuration/secrets/">
+                            Secrets ↗
+                          </link>
+                        </listitem>
+                        <listitem id="807" level="3">
+                          <link name="" id="808" focusable="true" url="https://developers.cloudflare.com/secrets-store/integrations/workers/">
+                            Secrets Store ↗Beta
+                          </link>
+                        </listitem>
+                        <listitem id="815" level="3">
+                          <button id="817" invalid="false" focusable="true" controls="nb-disclosure-20">
+                            Service bindings
+                          </button>
+                          <generic id="822">
+                            <generic id="823">
+                              <list id="824">
+                                <listitem id="825" level="4">
+                                  <link id="826" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/">
+                                    Overview
+                                  </link>
+                                </listitem>
+                                <listitem id="830" level="4">
+                                  <link id="831" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/http/">
+                                    HTTP
+                                  </link>
+                                </listitem>
+                                <listitem id="835" level="4">
+                                  <link id="836" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/rpc/">
+                                    RPC (WorkerEntrypoint)
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                        <listitem id="840" level="3">
+                          <link id="841" focusable="true" url="https://developers.cloudflare.com/stream/manage-video-library/bindings/">
+                            Stream ↗
+                          </link>
+                        </listitem>
+                        <listitem id="845" level="3">
+                          <link id="846" focusable="true" url="https://developers.cloudflare.com/vectorize/reference/client-api/">
+                            Vectorize ↗
+                          </link>
+                        </listitem>
+                        <listitem id="850" level="3">
+                          <link name="" id="851" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/version-metadata/">
+                            Version metadataBeta
+                          </link>
+                        </listitem>
+                        <listitem id="858" level="3">
+                          <link id="859" focusable="true" url="https://developers.cloudflare.com/workflows/">
+                            Workflows ↗
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="863" level="2">
+                  <link id="864" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/cache/">
+                    Cache
+                  </link>
+                </listitem>
+                <listitem id="868" level="2">
+                  <link id="869" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/console/">
+                    Console
+                  </link>
+                </listitem>
+                <listitem id="873" level="2">
+                  <link id="874" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/context/">
+                    Context (ctx)
+                  </link>
+                </listitem>
+                <listitem id="878" level="2">
+                  <link id="879" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/encoding/">
+                    Encoding
+                  </link>
+                </listitem>
+                <listitem id="883" level="2">
+                  <link id="884" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/eventsource/">
+                    EventSource
+                  </link>
+                </listitem>
+                <listitem id="888" level="2">
+                  <link id="889" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/fetch/">
+                    Fetch
+                  </link>
+                </listitem>
+                <listitem id="893" level="2">
+                  <button id="895" invalid="false" focusable="true" controls="nb-disclosure-21">
+                    Handlers
+                  </button>
+                  <generic id="900">
+                    <generic id="901">
+                      <list id="902">
+                        <listitem id="903" level="3">
+                          <link id="904" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/handlers/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="908" level="3">
+                          <link id="909" focusable="true" url="https://developers.cloudflare.com/durable-objects/api/alarms/">
+                            Alarm Handler ↗
+                          </link>
+                        </listitem>
+                        <listitem id="913" level="3">
+                          <link id="914" focusable="true" url="https://developers.cloudflare.com/email-service/api/route-emails/email-handler/">
+                            Email Handler ↗
+                          </link>
+                        </listitem>
+                        <listitem id="918" level="3">
+                          <link id="919" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/handlers/fetch/">
+                            Fetch Handler
+                          </link>
+                        </listitem>
+                        <listitem id="923" level="3">
+                          <link id="924" focusable="true" url="https://developers.cloudflare.com/queues/configuration/javascript-apis/#consumer">
+                            Queue Handler ↗
+                          </link>
+                        </listitem>
+                        <listitem id="928" level="3">
+                          <link id="929" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/handlers/scheduled/">
+                            Scheduled Handler
+                          </link>
+                        </listitem>
+                        <listitem id="933" level="3">
+                          <link id="934" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/handlers/tail/">
+                            Tail Handler
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="938" level="2">
+                  <link id="939" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/headers/">
+                    Headers
+                  </link>
+                </listitem>
+                <listitem id="943" level="2">
+                  <link id="944" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/html-rewriter/">
+                    HTMLRewriter
+                  </link>
+                </listitem>
+                <listitem id="948" level="2">
+                  <link id="949" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/messagechannel/">
+                    MessageChannel
+                  </link>
+                </listitem>
+                <listitem id="953" level="2">
+                  <button id="955" invalid="false" focusable="true" controls="nb-disclosure-22">
+                    Node.js compatibility
+                  </button>
+                  <generic id="960">
+                    <generic id="961">
+                      <list id="962">
+                        <listitem id="963" level="3">
+                          <link id="964" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="968" level="3">
+                          <link id="969" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/assert/">
+                            assert
+                          </link>
+                        </listitem>
+                        <listitem id="973" level="3">
+                          <link id="974" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/asynclocalstorage/">
+                            AsyncLocalStorage
+                          </link>
+                        </listitem>
+                        <listitem id="978" level="3">
+                          <link id="979" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/buffer/">
+                            Buffer
+                          </link>
+                        </listitem>
+                        <listitem id="983" level="3">
+                          <link id="984" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/crypto/">
+                            crypto
+                          </link>
+                        </listitem>
+                        <listitem id="988" level="3">
+                          <link id="989" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/diagnostics-channel/">
+                            Diagnostics Channel
+                          </link>
+                        </listitem>
+                        <listitem id="993" level="3">
+                          <link id="994" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/dns/">
+                            dns
+                          </link>
+                        </listitem>
+                        <listitem id="998" level="3">
+                          <link id="999" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/eventemitter/">
+                            EventEmitter
+                          </link>
+                        </listitem>
+                        <listitem id="1003" level="3">
+                          <link id="1004" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/fs/">
+                            fs
+                          </link>
+                        </listitem>
+                        <listitem id="1008" level="3">
+                          <link id="1009" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/http/">
+                            http
+                          </link>
+                        </listitem>
+                        <listitem id="1013" level="3">
+                          <link id="1014" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/https/">
+                            https
+                          </link>
+                        </listitem>
+                        <listitem id="1018" level="3">
+                          <link id="1019" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/net/">
+                            net
+                          </link>
+                        </listitem>
+                        <listitem id="1023" level="3">
+                          <link id="1024" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/path/">
+                            path
+                          </link>
+                        </listitem>
+                        <listitem id="1028" level="3">
+                          <link id="1029" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/process/">
+                            process
+                          </link>
+                        </listitem>
+                        <listitem id="1033" level="3">
+                          <link id="1034" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/streams/">
+                            Streams
+                          </link>
+                        </listitem>
+                        <listitem id="1038" level="3">
+                          <link id="1039" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/string-decoder/">
+                            StringDecoder
+                          </link>
+                        </listitem>
+                        <listitem id="1043" level="3">
+                          <link id="1044" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/test/">
+                            test
+                          </link>
+                        </listitem>
+                        <listitem id="1048" level="3">
+                          <link id="1049" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/timers/">
+                            timers
+                          </link>
+                        </listitem>
+                        <listitem id="1053" level="3">
+                          <link id="1054" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/tls/">
+                            tls
+                          </link>
+                        </listitem>
+                        <listitem id="1058" level="3">
+                          <link id="1059" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/url/">
+                            url
+                          </link>
+                        </listitem>
+                        <listitem id="1063" level="3">
+                          <link id="1064" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/util/">
+                            util
+                          </link>
+                        </listitem>
+                        <listitem id="1068" level="3">
+                          <link id="1069" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/nodejs/zlib/">
+                            zlib
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1073" level="2">
+                  <link id="1074" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/performance/">
+                    Performance and timers
+                  </link>
+                </listitem>
+                <listitem id="1078" level="2">
+                  <link id="1079" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/request/">
+                    Request
+                  </link>
+                </listitem>
+                <listitem id="1083" level="2">
+                  <link id="1084" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/response/">
+                    Response
+                  </link>
+                </listitem>
+                <listitem id="1088" level="2">
+                  <link id="1089" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/scheduler/">
+                    Scheduler
+                  </link>
+                </listitem>
+                <listitem id="1093" level="2">
+                  <button id="1095" invalid="false" focusable="true" controls="nb-disclosure-23">
+                    Streams
+                  </button>
+                  <generic id="1100">
+                    <generic id="1101">
+                      <list id="1102">
+                        <listitem id="1103" level="3">
+                          <link id="1104" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/streams/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1108" level="3">
+                          <link id="1109" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/streams/readablestream/">
+                            ReadableStream
+                          </link>
+                        </listitem>
+                        <listitem id="1113" level="3">
+                          <link id="1114" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/streams/readablestreambyobreader/">
+                            ReadableStream BYOBReader
+                          </link>
+                        </listitem>
+                        <listitem id="1118" level="3">
+                          <link id="1119" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/streams/readablestreamdefaultreader/">
+                            ReadableStream DefaultReader
+                          </link>
+                        </listitem>
+                        <listitem id="1124" level="3">
+                          <link id="1125" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/streams/transformstream/">
+                            TransformStream
+                          </link>
+                        </listitem>
+                        <listitem id="1129" level="3">
+                          <link id="1130" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/streams/writablestream/">
+                            WritableStream
+                          </link>
+                        </listitem>
+                        <listitem id="1134" level="3">
+                          <link id="1135" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/streams/writablestreamdefaultwriter/">
+                            WritableStream DefaultWriter
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1139" level="2">
+                  <link id="1140" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/tcp-sockets/">
+                    TCP sockets
+                  </link>
+                </listitem>
+                <listitem id="1144" level="2">
+                  <link id="1145" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/web-crypto/">
+                    Web Crypto
+                  </link>
+                </listitem>
+                <listitem id="1149" level="2">
+                  <link id="1150" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/web-standards/">
+                    Web standards
+                  </link>
+                </listitem>
+                <listitem id="1154" level="2">
+                  <link id="1155" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/websockets/">
+                    WebSockets
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="1159" level="1">
+          <button id="1161" invalid="false" focusable="true" controls="nb-disclosure-24">
+            Static Assets
+          </button>
+          <generic id="1166">
+            <generic id="1167">
+              <list id="1168">
+                <listitem id="1169" level="2">
+                  <link id="1170" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="1174" level="2">
+                  <link id="1175" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/get-started/">
+                    Get Started
+                  </link>
+                </listitem>
+                <listitem id="1179" level="2">
+                  <link id="1180" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/binding/">
+                    Configuration and Bindings
+                  </link>
+                </listitem>
+                <listitem id="1184" level="2">
+                  <button id="1186" invalid="false" focusable="true" controls="nb-disclosure-25">
+                    Routing
+                  </button>
+                  <generic id="1191">
+                    <generic id="1192">
+                      <list id="1193">
+                        <listitem id="1194" level="3">
+                          <link id="1195" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/routing/full-stack-application/">
+                            Full-stack application
+                          </link>
+                        </listitem>
+                        <listitem id="1199" level="3">
+                          <link id="1200" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/routing/single-page-application/">
+                            Single Page Application (SPA)
+                          </link>
+                        </listitem>
+                        <listitem id="1204" level="3">
+                          <link id="1205" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/">
+                            Static Site Generation (SSG) and custom 404 pages
+                          </link>
+                        </listitem>
+                        <listitem id="1210" level="3">
+                          <link id="1211" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/routing/worker-script/">
+                            Worker script
+                          </link>
+                        </listitem>
+                        <listitem id="1215" level="3">
+                          <button id="1217" invalid="false" focusable="true" controls="nb-disclosure-26">
+                            Advanced
+                          </button>
+                          <generic id="1222">
+                            <generic id="1223">
+                              <list id="1224">
+                                <listitem id="1225" level="4">
+                                  <link id="1226" focusable="true" url="https://developers.cloudflare.com/workers/versions-and-deployments/gradual-deployments/version-affinity/#static-assets">
+                                    Gradual rollouts ↗
+                                  </link>
+                                </listitem>
+                                <listitem id="1230" level="4">
+                                  <link id="1231" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/">
+                                    HTML handling
+                                  </link>
+                                </listitem>
+                                <listitem id="1235" level="4">
+                                  <link id="1236" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/routing/advanced/serving-a-subdirectory/">
+                                    Serving a subdirectory
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1240" level="2">
+                  <link id="1241" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/headers/">
+                    Headers
+                  </link>
+                </listitem>
+                <listitem id="1245" level="2">
+                  <link id="1246" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/redirects/">
+                    Redirects
+                  </link>
+                </listitem>
+                <listitem id="1250" level="2">
+                  <link id="1251" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/direct-upload/">
+                    Direct Uploads
+                  </link>
+                </listitem>
+                <listitem id="1255" level="2">
+                  <link id="1256" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/">
+                    Billing and Limitations
+                  </link>
+                </listitem>
+                <listitem id="1260" level="2">
+                  <button id="1262" invalid="false" focusable="true" controls="nb-disclosure-27">
+                    Migration Guides
+                  </button>
+                  <generic id="1267">
+                    <generic id="1268">
+                      <list id="1269">
+                        <listitem id="1270" level="3">
+                          <link id="1271" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/">
+                            Migrate from Pages to Workers
+                          </link>
+                        </listitem>
+                        <listitem id="1276" level="3">
+                          <link id="1277" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/migration-guides/netlify-to-workers/">
+                            Migrate from Netlify to Workers
+                          </link>
+                        </listitem>
+                        <listitem id="1282" level="3">
+                          <link id="1283" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/migration-guides/vercel-to-workers/">
+                            Migrate from Vercel to Workers
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="1288" level="1">
+          <button id="1290" invalid="false" focusable="true" controls="nb-disclosure-28">
+            Framework guides
+          </button>
+          <generic id="1295">
+            <generic id="1296">
+              <list id="1297">
+                <listitem id="1298" level="2">
+                  <link id="1299" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/automatic-configuration/">
+                    Deploy an existing project
+                  </link>
+                </listitem>
+                <listitem id="1303" level="2">
+                  <button id="1305" invalid="false" focusable="true" controls="nb-disclosure-29">
+                    Web applications
+                  </button>
+                  <generic id="1310">
+                    <generic id="1311">
+                      <list id="1312">
+                        <listitem id="1313" level="3">
+                          <link id="1314" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/react/">
+                            React + Vite
+                          </link>
+                        </listitem>
+                        <listitem id="1318" level="3">
+                          <link id="1319" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/">
+                            Astro
+                          </link>
+                        </listitem>
+                        <listitem id="1323" level="3">
+                          <link id="1324" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/react-router/">
+                            React Router (formerly Remix)
+                          </link>
+                        </listitem>
+                        <listitem id="1328" level="3">
+                          <link id="1329" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/">
+                            Next.js
+                          </link>
+                        </listitem>
+                        <listitem id="1333" level="3">
+                          <link id="1334" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/vue/">
+                            Vue
+                          </link>
+                        </listitem>
+                        <listitem id="1338" level="3">
+                          <link id="1339" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/redwoodsdk/">
+                            RedwoodSDK
+                          </link>
+                        </listitem>
+                        <listitem id="1343" level="3">
+                          <link id="1344" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/tanstack-start/">
+                            TanStack Start
+                          </link>
+                        </listitem>
+                        <listitem id="1348" level="3">
+                          <link id="1349" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/microfrontends/">
+                            Microfrontends
+                          </link>
+                        </listitem>
+                        <listitem id="1353" level="3">
+                          <link id="1354" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/sveltekit/">
+                            SvelteKit
+                          </link>
+                        </listitem>
+                        <listitem id="1358" level="3">
+                          <link id="1359" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/vike/">
+                            Vike
+                          </link>
+                        </listitem>
+                        <listitem id="1363" level="3">
+                          <button id="1365" invalid="false" focusable="true" controls="nb-disclosure-30">
+                            More guides...
+                          </button>
+                          <generic id="1370">
+                            <generic id="1371">
+                              <list id="1372">
+                                <listitem id="1373" level="4">
+                                  <link id="1374" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/analog/">
+                                    Analog
+                                  </link>
+                                </listitem>
+                                <listitem id="1378" level="4">
+                                  <link id="1379" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/angular/">
+                                    Angular
+                                  </link>
+                                </listitem>
+                                <listitem id="1383" level="4">
+                                  <link id="1384" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/docusaurus/">
+                                    Docusaurus
+                                  </link>
+                                </listitem>
+                                <listitem id="1388" level="4">
+                                  <link id="1389" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/gatsby/">
+                                    Gatsby
+                                  </link>
+                                </listitem>
+                                <listitem id="1393" level="4">
+                                  <link id="1394" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/hono/">
+                                    Hono
+                                  </link>
+                                </listitem>
+                                <listitem id="1398" level="4">
+                                  <link id="1399" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/nuxt/">
+                                    Nuxt
+                                  </link>
+                                </listitem>
+                                <listitem id="1403" level="4">
+                                  <link id="1404" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/qwik/">
+                                    Qwik
+                                  </link>
+                                </listitem>
+                                <listitem id="1408" level="4">
+                                  <link name="" id="1409" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/solid/">
+                                    SolidBeta
+                                  </link>
+                                </listitem>
+                                <listitem id="1416" level="4">
+                                  <link id="1417" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/waku/">
+                                    Waku
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1421" level="2">
+                  <button id="1423" invalid="false" focusable="true" controls="nb-disclosure-31">
+                    Mobile applications
+                  </button>
+                  <generic id="1428">
+                    <generic id="1429">
+                      <list id="1430">
+                        <listitem id="1431" level="3">
+                          <link id="1432" focusable="true" url="https://docs.expo.dev/eas/hosting/reference/worker-runtime/">
+                            Expo
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1436" level="2">
+                  <button id="1438" invalid="false" focusable="true" controls="nb-disclosure-32">
+                    APIs
+                  </button>
+                  <generic id="1443">
+                    <generic id="1444">
+                      <list id="1445">
+                        <listitem id="1446" level="3">
+                          <link id="1447" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/packages/fastapi/">
+                            FastAPI ↗
+                          </link>
+                        </listitem>
+                        <listitem id="1451" level="3">
+                          <link id="1452" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/hono/">
+                            Hono ↗
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1456" level="2">
+                  <button id="1458" invalid="false" focusable="true" controls="nb-disclosure-33">
+                    AI &amp; agents
+                  </button>
+                  <generic id="1463">
+                    <generic id="1464">
+                      <list id="1465">
+                        <listitem id="1466" level="3">
+                          <link id="1467" focusable="true" url="https://developers.cloudflare.com/agents/">
+                            Agents SDK ↗
+                          </link>
+                        </listitem>
+                        <listitem id="1471" level="3">
+                          <link id="1472" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/packages/langchain/">
+                            LangChain ↗
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="1476" level="1">
+          <button id="1478" invalid="false" focusable="true" controls="nb-disclosure-34">
+            Databases
+          </button>
+          <generic id="1483">
+            <generic id="1484">
+              <list id="1485">
+                <listitem id="1486" level="2">
+                  <link id="1487" focusable="true" url="https://developers.cloudflare.com/workers/databases/connecting-to-databases/">
+                    Connect to databases
+                  </link>
+                </listitem>
+                <listitem id="1491" level="2">
+                  <link id="1492" focusable="true" url="https://developers.cloudflare.com/analytics/analytics-engine/">
+                    Analytics Engine ↗
+                  </link>
+                </listitem>
+                <listitem id="1496" level="2">
+                  <link id="1497" focusable="true" url="https://developers.cloudflare.com/vectorize/">
+                    Vectorize (vector database) ↗
+                  </link>
+                </listitem>
+                <listitem id="1501" level="2">
+                  <link id="1502" focusable="true" url="https://developers.cloudflare.com/d1/">
+                    Cloudflare D1 ↗
+                  </link>
+                </listitem>
+                <listitem id="1506" level="2">
+                  <link id="1507" focusable="true" url="https://developers.cloudflare.com/hyperdrive/">
+                    Hyperdrive ↗
+                  </link>
+                </listitem>
+                <listitem id="1511" level="2">
+                  <button id="1513" invalid="false" focusable="true" controls="nb-disclosure-35">
+                    3rd Party Integrations
+                  </button>
+                  <generic id="1518">
+                    <generic id="1519">
+                      <list id="1520">
+                        <listitem id="1521" level="3">
+                          <link id="1522" focusable="true" url="https://developers.cloudflare.com/workers/databases/third-party-integrations/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1526" level="3">
+                          <link id="1527" focusable="true" url="https://developers.cloudflare.com/workers/databases/third-party-integrations/neon/">
+                            Neon
+                          </link>
+                        </listitem>
+                        <listitem id="1531" level="3">
+                          <link id="1532" focusable="true" url="https://developers.cloudflare.com/workers/databases/third-party-integrations/planetscale/">
+                            PlanetScale
+                          </link>
+                        </listitem>
+                        <listitem id="1536" level="3">
+                          <link id="1537" focusable="true" url="https://developers.cloudflare.com/workers/databases/third-party-integrations/supabase/">
+                            Supabase
+                          </link>
+                        </listitem>
+                        <listitem id="1541" level="3">
+                          <link id="1542" focusable="true" url="https://developers.cloudflare.com/workers/databases/third-party-integrations/turso/">
+                            Turso
+                          </link>
+                        </listitem>
+                        <listitem id="1546" level="3">
+                          <link id="1547" focusable="true" url="https://developers.cloudflare.com/workers/databases/third-party-integrations/upstash/">
+                            Upstash
+                          </link>
+                        </listitem>
+                        <listitem id="1551" level="3">
+                          <link id="1552" focusable="true" url="https://developers.cloudflare.com/workers/databases/third-party-integrations/xata/">
+                            Xata
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="1556" level="1">
+          <button id="1558" invalid="false" focusable="true" controls="nb-disclosure-36">
+            Observability
+          </button>
+          <generic id="1563">
+            <generic id="1564">
+              <list id="1565">
+                <listitem id="1566" level="2">
+                  <link id="1567" focusable="true" url="https://developers.cloudflare.com/workers/observability/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="1571" level="2">
+                  <link id="1572" focusable="true" url="https://developers.cloudflare.com/workers/observability/metrics-and-analytics/">
+                    Metrics and analytics
+                  </link>
+                </listitem>
+                <listitem id="1576" level="2">
+                  <button id="1578" invalid="false" focusable="true" controls="nb-disclosure-37">
+                    Logs
+                  </button>
+                  <generic id="1583">
+                    <generic id="1584">
+                      <list id="1585">
+                        <listitem id="1586" level="3">
+                          <link id="1587" focusable="true" url="https://developers.cloudflare.com/workers/observability/logs/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1591" level="3">
+                          <link id="1592" focusable="true" url="https://developers.cloudflare.com/workers/observability/logs/workers-logs/">
+                            Workers Logs
+                          </link>
+                        </listitem>
+                        <listitem id="1596" level="3">
+                          <link id="1597" focusable="true" url="https://developers.cloudflare.com/workers/observability/logs/real-time-logs/">
+                            Real-time logs
+                          </link>
+                        </listitem>
+                        <listitem id="1601" level="3">
+                          <link id="1602" focusable="true" url="https://developers.cloudflare.com/workers/observability/logs/tail-workers/">
+                            Tail Workers
+                          </link>
+                        </listitem>
+                        <listitem id="1606" level="3">
+                          <link id="1607" focusable="true" url="https://developers.cloudflare.com/workers/observability/logs/logpush/">
+                            Workers Logpush
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1611" level="2">
+                  <button name="" id="1613" invalid="false" focusable="true" controls="nb-disclosure-38">
+                    TracesBeta
+                  </button>
+                  <generic id="1621">
+                    <generic id="1622">
+                      <list id="1623">
+                        <listitem id="1624" level="3">
+                          <link id="1625" focusable="true" url="https://developers.cloudflare.com/workers/observability/traces/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1629" level="3">
+                          <link name="" id="1630" focusable="true" url="https://developers.cloudflare.com/workers/observability/traces/custom-spans/">
+                            Custom spansBeta
+                          </link>
+                        </listitem>
+                        <listitem id="1637" level="3">
+                          <link id="1638" focusable="true" url="https://developers.cloudflare.com/workers/observability/traces/spans-and-attributes/">
+                            Spans and attributes
+                          </link>
+                        </listitem>
+                        <listitem id="1642" level="3">
+                          <link id="1643" focusable="true" url="https://developers.cloudflare.com/workers/observability/traces/known-limitations/">
+                            Known limitations
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1647" level="2">
+                  <button id="1649" invalid="false" focusable="true" controls="nb-disclosure-39">
+                    DevTools
+                  </button>
+                  <generic id="1654">
+                    <generic id="1655">
+                      <list id="1656">
+                        <listitem id="1657" level="3">
+                          <link id="1658" focusable="true" url="https://developers.cloudflare.com/workers/observability/dev-tools/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1662" level="3">
+                          <link id="1663" focusable="true" url="https://developers.cloudflare.com/workers/observability/dev-tools/breakpoints/">
+                            Breakpoints
+                          </link>
+                        </listitem>
+                        <listitem id="1667" level="3">
+                          <link id="1668" focusable="true" url="https://developers.cloudflare.com/workers/observability/dev-tools/cpu-usage/">
+                            Profiling CPU usage
+                          </link>
+                        </listitem>
+                        <listitem id="1672" level="3">
+                          <link id="1673" focusable="true" url="https://developers.cloudflare.com/workers/observability/dev-tools/memory-usage/">
+                            Profiling Memory
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1677" level="2">
+                  <link id="1678" focusable="true" url="https://developers.cloudflare.com/workers/observability/query-builder/">
+                    Query Builder
+                  </link>
+                </listitem>
+                <listitem id="1682" level="2">
+                  <button id="1684" invalid="false" focusable="true" controls="nb-disclosure-40">
+                    Exporting OpenTelemetry Data
+                  </button>
+                  <generic id="1689">
+                    <generic id="1690">
+                      <list id="1691">
+                        <listitem id="1692" level="3">
+                          <link id="1693" focusable="true" url="https://developers.cloudflare.com/workers/observability/exporting-opentelemetry-data/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1697" level="3">
+                          <link id="1698" focusable="true" url="https://developers.cloudflare.com/workers/observability/exporting-opentelemetry-data/honeycomb/">
+                            Export to Honeycomb
+                          </link>
+                        </listitem>
+                        <listitem id="1702" level="3">
+                          <link id="1703" focusable="true" url="https://developers.cloudflare.com/workers/observability/exporting-opentelemetry-data/grafana-cloud/">
+                            Export to Grafana Cloud
+                          </link>
+                        </listitem>
+                        <listitem id="1707" level="3">
+                          <link id="1708" focusable="true" url="https://developers.cloudflare.com/workers/observability/exporting-opentelemetry-data/axiom/">
+                            Export to Axiom
+                          </link>
+                        </listitem>
+                        <listitem id="1712" level="3">
+                          <link id="1713" focusable="true" url="https://developers.cloudflare.com/workers/observability/exporting-opentelemetry-data/sentry/">
+                            Export to Sentry
+                          </link>
+                        </listitem>
+                        <listitem id="1717" level="3">
+                          <link id="1718" focusable="true" url="https://developers.cloudflare.com/workers/observability/exporting-opentelemetry-data/posthog/">
+                            Export to PostHog
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1722" level="2">
+                  <link name="" id="1723" focusable="true" url="https://github.com/cloudflare/mcp-server-cloudflare/tree/main/apps/workers-observability">
+                    MCP serverMCP
+                  </link>
+                </listitem>
+                <listitem id="1730" level="2">
+                  <link id="1731" focusable="true" url="https://developers.cloudflare.com/workers/observability/errors/">
+                    Errors and exceptions
+                  </link>
+                </listitem>
+                <listitem id="1735" level="2">
+                  <button id="1737" invalid="false" focusable="true" controls="nb-disclosure-41">
+                    Integrations
+                  </button>
+                  <generic id="1742">
+                    <generic id="1743">
+                      <list id="1744">
+                        <listitem id="1745" level="3">
+                          <link id="1746" focusable="true" url="https://docs.sentry.io/platforms/javascript/guides/cloudflare/">
+                            Sentry
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1750" level="2">
+                  <link id="1751" focusable="true" url="https://developers.cloudflare.com/workers/observability/source-maps/">
+                    Source maps and stack traces
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="1755" level="1">
+          <button id="1757" invalid="false" focusable="true" controls="nb-disclosure-42">
+            Testing
+          </button>
+          <generic id="1762">
+            <generic id="1763">
+              <list id="1764">
+                <listitem id="1765" level="2">
+                  <link id="1766" focusable="true" url="https://developers.cloudflare.com/workers/testing/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="1770" level="2">
+                  <button id="1772" invalid="false" focusable="true" controls="nb-disclosure-43">
+                    Vitest integration
+                  </button>
+                  <generic id="1777">
+                    <generic id="1778">
+                      <list id="1779">
+                        <listitem id="1780" level="3">
+                          <link id="1781" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1785" level="3">
+                          <link id="1786" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/write-your-first-test/">
+                            Write your first test
+                          </link>
+                        </listitem>
+                        <listitem id="1790" level="3">
+                          <link id="1791" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/recipes/">
+                            Recipes and examples
+                          </link>
+                        </listitem>
+                        <listitem id="1795" level="3">
+                          <link id="1796" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/configuration/">
+                            Configuration
+                          </link>
+                        </listitem>
+                        <listitem id="1800" level="3">
+                          <link id="1801" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/test-apis/">
+                            Test APIs
+                          </link>
+                        </listitem>
+                        <listitem id="1805" level="3">
+                          <link id="1806" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/isolation-and-concurrency/">
+                            Isolation and concurrency
+                          </link>
+                        </listitem>
+                        <listitem id="1810" level="3">
+                          <link id="1811" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/debugging/">
+                            Debugging
+                          </link>
+                        </listitem>
+                        <listitem id="1815" level="3">
+                          <link id="1816" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/known-issues/">
+                            Known issues
+                          </link>
+                        </listitem>
+                        <listitem id="1820" level="3">
+                          <button id="1822" invalid="false" focusable="true" controls="nb-disclosure-44">
+                            Migration guides
+                          </button>
+                          <generic id="1827">
+                            <generic id="1828">
+                              <list id="1829">
+                                <listitem id="1830" level="4">
+                                  <link id="1831" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/migration-guides/migrate-from-vitest-3-to-vitest-4/">
+                                    Migrate from Vitest 3 to Vitest 4
+                                  </link>
+                                </listitem>
+                                <listitem id="1836" level="4">
+                                  <link id="1837" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/migration-guides/migrate-from-miniflare-2/">
+                                    Migrate from Miniflare 2's test environments
+                                  </link>
+                                </listitem>
+                                <listitem id="1842" level="4">
+                                  <link id="1843" focusable="true" url="https://developers.cloudflare.com/workers/testing/vitest-integration/migration-guides/migrate-from-unstable-dev/">
+                                    Migrate from unstable_dev
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1847" level="2">
+                  <button id="1849" invalid="false" focusable="true" controls="nb-disclosure-45">
+                    Integration test harness
+                  </button>
+                  <generic id="1854">
+                    <generic id="1855">
+                      <list id="1856">
+                        <listitem id="1857" level="3">
+                          <link id="1858" focusable="true" url="https://developers.cloudflare.com/workers/testing/test-harness/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1862" level="3">
+                          <link id="1863" focusable="true" url="https://developers.cloudflare.com/workers/testing/test-harness/get-started/">
+                            Get started
+                          </link>
+                        </listitem>
+                        <listitem id="1867" level="3">
+                          <link id="1868" focusable="true" url="https://developers.cloudflare.com/workers/testing/test-harness/configure/">
+                            Configure the test harness
+                          </link>
+                        </listitem>
+                        <listitem id="1872" level="3">
+                          <link id="1873" focusable="true" url="https://developers.cloudflare.com/workers/testing/test-harness/prepare-test-state/">
+                            Prepare test state
+                          </link>
+                        </listitem>
+                        <listitem id="1877" level="3">
+                          <link id="1878" focusable="true" url="https://developers.cloudflare.com/workers/testing/test-harness/interact-with-workers/">
+                            Interact with Workers
+                          </link>
+                        </listitem>
+                        <listitem id="1882" level="3">
+                          <link id="1883" focusable="true" url="https://developers.cloudflare.com/workers/testing/test-harness/integrations/">
+                            Integrations
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="1887" level="2">
+                  <button id="1889" invalid="false" focusable="true" controls="nb-disclosure-46">
+                    Miniflare
+                  </button>
+                  <generic id="1894">
+                    <generic id="1895">
+                      <list id="1896">
+                        <listitem id="1897" level="3">
+                          <link id="1898" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="1902" level="3">
+                          <link id="1903" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/get-started/">
+                            Get Started
+                          </link>
+                        </listitem>
+                        <listitem id="1907" level="3">
+                          <link id="1908" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/writing-tests/">
+                            Writing tests
+                          </link>
+                        </listitem>
+                        <listitem id="1912" level="3">
+                          <button id="1914" invalid="false" focusable="true" controls="nb-disclosure-47">
+                            Core
+                          </button>
+                          <generic id="1919">
+                            <generic id="1920">
+                              <list id="1921">
+                                <listitem id="1922" level="4">
+                                  <link id="1923" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/compatibility/">
+                                    Compatibility Dates
+                                  </link>
+                                </listitem>
+                                <listitem id="1927" level="4">
+                                  <link id="1928" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/fetch/">
+                                    Fetch Events
+                                  </link>
+                                </listitem>
+                                <listitem id="1932" level="4">
+                                  <link id="1933" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/modules/">
+                                    Modules
+                                  </link>
+                                </listitem>
+                                <listitem id="1937" level="4">
+                                  <link id="1938" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/multiple-workers/">
+                                    Multiple Workers
+                                  </link>
+                                </listitem>
+                                <listitem id="1942" level="4">
+                                  <link id="1943" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/queues/">
+                                    Queues
+                                  </link>
+                                </listitem>
+                                <listitem id="1947" level="4">
+                                  <link id="1948" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/scheduled/">
+                                    Scheduled Events
+                                  </link>
+                                </listitem>
+                                <listitem id="1952" level="4">
+                                  <link id="1953" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/variables-secrets/">
+                                    Variables and Secrets
+                                  </link>
+                                </listitem>
+                                <listitem id="1957" level="4">
+                                  <link id="1958" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/standards/">
+                                    Web Standards
+                                  </link>
+                                </listitem>
+                                <listitem id="1962" level="4">
+                                  <link id="1963" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/core/web-sockets/">
+                                    WebSockets
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                        <listitem id="1967" level="3">
+                          <button id="1969" invalid="false" focusable="true" controls="nb-disclosure-48">
+                            Developing
+                          </button>
+                          <generic id="1974">
+                            <generic id="1975">
+                              <list id="1976">
+                                <listitem id="1977" level="4">
+                                  <link id="1978" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/developing/debugger/">
+                                    Attaching a Debugger
+                                  </link>
+                                </listitem>
+                                <listitem id="1982" level="4">
+                                  <link id="1983" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/developing/live-reload/">
+                                    Live Reload
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                        <listitem id="1987" level="3">
+                          <button id="1989" invalid="false" focusable="true" controls="nb-disclosure-49">
+                            Migrations
+                          </button>
+                          <generic id="1994">
+                            <generic id="1995">
+                              <list id="1996">
+                                <listitem id="1997" level="4">
+                                  <link id="1998" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/migrations/from-v2/">
+                                    Migrating from Version 2
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                        <listitem id="2002" level="3">
+                          <button id="2004" invalid="false" focusable="true" controls="nb-disclosure-50">
+                            Storage
+                          </button>
+                          <generic id="2009">
+                            <generic id="2010">
+                              <list id="2011">
+                                <listitem id="2012" level="4">
+                                  <link id="2013" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/storage/cache/">
+                                    Cache
+                                  </link>
+                                </listitem>
+                                <listitem id="2017" level="4">
+                                  <link id="2018" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/storage/d1/">
+                                    D1
+                                  </link>
+                                </listitem>
+                                <listitem id="2022" level="4">
+                                  <link id="2023" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/storage/durable-objects/">
+                                    Durable Objects
+                                  </link>
+                                </listitem>
+                                <listitem id="2027" level="4">
+                                  <link id="2028" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/storage/kv/">
+                                    KV
+                                  </link>
+                                </listitem>
+                                <listitem id="2032" level="4">
+                                  <link id="2033" focusable="true" url="https://developers.cloudflare.com/workers/testing/miniflare/storage/r2/">
+                                    R2
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="2037" level="2">
+                  <link id="2038" focusable="true" url="https://developers.cloudflare.com/workers/testing/unstable_startworker/">
+                    Wrangler's unstable_startWorker()
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="2043" level="1">
+          <button id="2045" invalid="false" focusable="true" controls="nb-disclosure-51">
+            Wrangler
+          </button>
+          <generic id="2050">
+            <generic id="2051">
+              <list id="2052">
+                <listitem id="2053" level="2">
+                  <link id="2054" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="2058" level="2">
+                  <link id="2059" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/install-and-update/">
+                    Install/Update Wrangler
+                  </link>
+                </listitem>
+                <listitem id="2063" level="2">
+                  <button id="2065" invalid="false" focusable="true" controls="nb-disclosure-52">
+                    Migrations
+                  </button>
+                  <generic id="2070">
+                    <generic id="2071">
+                      <list id="2072">
+                        <listitem id="2073" level="3">
+                          <link id="2074" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/update-v3-to-v4/">
+                            Migrate from Wrangler v3 to v4
+                          </link>
+                        </listitem>
+                        <listitem id="2079" level="3">
+                          <link id="2080" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/update-v2-to-v3/">
+                            Migrate from Wrangler v2 to v3
+                          </link>
+                        </listitem>
+                        <listitem id="2085" level="3">
+                          <button id="2087" invalid="false" focusable="true" controls="nb-disclosure-53">
+                            Migrate from Wrangler v1 to v2
+                          </button>
+                          <generic id="2093">
+                            <generic id="2094">
+                              <list id="2095">
+                                <listitem id="2096" level="4">
+                                  <button id="2098" invalid="false" focusable="true" controls="nb-disclosure-54">
+                                    Wrangler v1 (legacy)
+                                  </button>
+                                  <generic id="2103">
+                                    <generic id="2104">
+                                      <list id="2105">
+                                        <listitem id="2106" level="5">
+                                          <link id="2107" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/v1-to-v2/wrangler-legacy/">
+                                            Overview
+                                          </link>
+                                        </listitem>
+                                        <listitem id="2111" level="5">
+                                          <link id="2112" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/v1-to-v2/wrangler-legacy/install-update/">
+                                            Install / Update
+                                          </link>
+                                        </listitem>
+                                        <listitem id="2116" level="5">
+                                          <link id="2117" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/v1-to-v2/wrangler-legacy/authentication/">
+                                            Authentication
+                                          </link>
+                                        </listitem>
+                                        <listitem id="2121" level="5">
+                                          <link id="2122" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/v1-to-v2/wrangler-legacy/commands/">
+                                            Commands
+                                          </link>
+                                        </listitem>
+                                        <listitem id="2126" level="5">
+                                          <link id="2127" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/v1-to-v2/wrangler-legacy/configuration/">
+                                            Configuration
+                                          </link>
+                                        </listitem>
+                                        <listitem id="2131" level="5">
+                                          <link id="2132" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/v1-to-v2/wrangler-legacy/webpack/">
+                                            Webpack
+                                          </link>
+                                        </listitem>
+                                      </list>
+                                    </generic>
+                                  </generic>
+                                </listitem>
+                                <listitem id="2136" level="4">
+                                  <link id="2137" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/v1-to-v2/eject-webpack/">
+                                    1. Migrate webpack projects
+                                  </link>
+                                </listitem>
+                                <listitem id="2142" level="4">
+                                  <link id="2143" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/migration/v1-to-v2/update-v1-to-v2/">
+                                    2. Update to Wrangler v2
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="2147" level="2">
+                  <link id="2148" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/api/">
+                    API
+                  </link>
+                </listitem>
+                <listitem id="2152" level="2">
+                  <button id="2154" invalid="false" focusable="true" controls="nb-disclosure-55">
+                    Commands
+                  </button>
+                  <generic id="2159">
+                    <generic id="2160">
+                      <list id="2161">
+                        <listitem id="2162" level="3">
+                          <link id="2163" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="2167" level="3">
+                          <link id="2168" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/workers/">
+                            Workers
+                          </link>
+                        </listitem>
+                        <listitem id="2172" level="3">
+                          <link id="2173" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/general/">
+                            General commands
+                          </link>
+                        </listitem>
+                        <listitem id="2177" level="3">
+                          <link id="2178" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/artifacts/">
+                            Artifacts
+                          </link>
+                        </listitem>
+                        <listitem id="2182" level="3">
+                          <link id="2183" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/browser/">
+                            Browser
+                          </link>
+                        </listitem>
+                        <listitem id="2187" level="3">
+                          <link id="2188" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/certificates/">
+                            Certificates
+                          </link>
+                        </listitem>
+                        <listitem id="2192" level="3">
+                          <link id="2193" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/containers/">
+                            Containers
+                          </link>
+                        </listitem>
+                        <listitem id="2197" level="3">
+                          <link id="2198" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/d1/">
+                            D1
+                          </link>
+                        </listitem>
+                        <listitem id="2202" level="3">
+                          <link id="2203" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/flagship/">
+                            Flagship
+                          </link>
+                        </listitem>
+                        <listitem id="2207" level="3">
+                          <link id="2208" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/hyperdrive/">
+                            Hyperdrive
+                          </link>
+                        </listitem>
+                        <listitem id="2212" level="3">
+                          <link id="2213" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/kv/">
+                            KV
+                          </link>
+                        </listitem>
+                        <listitem id="2217" level="3">
+                          <link id="2218" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/pages/">
+                            Pages
+                          </link>
+                        </listitem>
+                        <listitem id="2222" level="3">
+                          <link id="2223" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/pipelines/">
+                            Pipelines
+                          </link>
+                        </listitem>
+                        <listitem id="2227" level="3">
+                          <link id="2228" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/queues/">
+                            Queues
+                          </link>
+                        </listitem>
+                        <listitem id="2232" level="3">
+                          <link id="2233" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/r2/">
+                            R2
+                          </link>
+                        </listitem>
+                        <listitem id="2237" level="3">
+                          <link id="2238" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/secrets-store/">
+                            Secrets Store
+                          </link>
+                        </listitem>
+                        <listitem id="2242" level="3">
+                          <link id="2243" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/tunnel/">
+                            Tunnel
+                          </link>
+                        </listitem>
+                        <listitem id="2247" level="3">
+                          <link id="2248" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/vectorize/">
+                            Vectorize
+                          </link>
+                        </listitem>
+                        <listitem id="2252" level="3">
+                          <link id="2253" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/vpc/">
+                            VPC
+                          </link>
+                        </listitem>
+                        <listitem id="2257" level="3">
+                          <link id="2258" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/workers-for-platforms/">
+                            Workers for Platforms
+                          </link>
+                        </listitem>
+                        <listitem id="2262" level="3">
+                          <link id="2263" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/commands/workflows/">
+                            Workflows
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="2267" level="2">
+                  <link id="2268" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/profiles/">
+                    Authentication profiles
+                  </link>
+                </listitem>
+                <listitem id="2272" level="2">
+                  <link id="2273" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/bundling/">
+                    Bundling
+                  </link>
+                </listitem>
+                <listitem id="2277" level="2">
+                  <link id="2278" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/configuration/">
+                    Configuration
+                  </link>
+                </listitem>
+                <listitem id="2282" level="2">
+                  <link id="2283" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/custom-builds/">
+                    Custom builds
+                  </link>
+                </listitem>
+                <listitem id="2287" level="2">
+                  <link id="2288" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/deprecations/">
+                    Deprecations
+                  </link>
+                </listitem>
+                <listitem id="2292" level="2">
+                  <link id="2293" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/environments/">
+                    Environments
+                  </link>
+                </listitem>
+                <listitem id="2297" level="2">
+                  <link id="2298" focusable="true" url="https://developers.cloudflare.com/workers/wrangler/system-environment-variables/">
+                    System environment variables
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="2302" level="1">
+          <button id="2304" invalid="false" focusable="true" controls="nb-disclosure-56">
+            Vite plugin
+          </button>
+          <generic id="2309">
+            <generic id="2310">
+              <list id="2311">
+                <listitem id="2312" level="2">
+                  <link id="2313" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="2317" level="2">
+                  <link id="2318" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/get-started/">
+                    Get started
+                  </link>
+                </listitem>
+                <listitem id="2322" level="2">
+                  <link id="2323" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/tutorial/">
+                    Tutorial - React SPA with an API
+                  </link>
+                </listitem>
+                <listitem id="2327" level="2">
+                  <button id="2329" invalid="false" focusable="true" controls="nb-disclosure-57">
+                    Reference
+                  </button>
+                  <generic id="2334">
+                    <generic id="2335">
+                      <list id="2336">
+                        <listitem id="2337" level="3">
+                          <link id="2338" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/api/">
+                            API
+                          </link>
+                        </listitem>
+                        <listitem id="2342" level="3">
+                          <link id="2343" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/static-assets/">
+                            Static Assets
+                          </link>
+                        </listitem>
+                        <listitem id="2347" level="3">
+                          <link id="2348" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/debugging/">
+                            Debugging
+                          </link>
+                        </listitem>
+                        <listitem id="2352" level="3">
+                          <link id="2353" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/migrating-from-wrangler-dev/">
+                            Migrating from wrangler dev
+                          </link>
+                        </listitem>
+                        <listitem id="2357" level="3">
+                          <link id="2358" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/secrets/">
+                            Secrets
+                          </link>
+                        </listitem>
+                        <listitem id="2362" level="3">
+                          <link id="2363" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/vite-environments/">
+                            Vite Environments
+                          </link>
+                        </listitem>
+                        <listitem id="2367" level="3">
+                          <link id="2368" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/cloudflare-environments/">
+                            Cloudflare Environments
+                          </link>
+                        </listitem>
+                        <listitem id="2372" level="3">
+                          <link id="2373" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/non-javascript-modules/">
+                            Non-JavaScript modules
+                          </link>
+                        </listitem>
+                        <listitem id="2377" level="3">
+                          <link id="2378" focusable="true" url="https://developers.cloudflare.com/workers/vite-plugin/reference/programmatic-configuration/">
+                            Programmatic configuration
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="2382" level="1">
+          <button id="2384" invalid="false" focusable="true" controls="nb-disclosure-58">
+            Languages
+          </button>
+          <generic id="2389">
+            <generic id="2390">
+              <list id="2391">
+                <listitem id="2392" level="2">
+                  <link id="2393" focusable="true" url="https://developers.cloudflare.com/workers/languages/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="2397" level="2">
+                  <button id="2399" invalid="false" focusable="true" controls="nb-disclosure-59">
+                    JavaScript
+                  </button>
+                  <generic id="2404">
+                    <generic id="2405">
+                      <list id="2406">
+                        <listitem id="2407" level="3">
+                          <link id="2408" focusable="true" url="https://developers.cloudflare.com/workers/languages/javascript/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="2412" level="3">
+                          <link id="2413" focusable="true" url="https://developers.cloudflare.com/workers/examples/?languages=JavaScript">
+                            Examples ↗
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="2417" level="2">
+                  <button id="2419" invalid="false" focusable="true" controls="nb-disclosure-60">
+                    TypeScript
+                  </button>
+                  <generic id="2424">
+                    <generic id="2425">
+                      <list id="2426">
+                        <listitem id="2427" level="3">
+                          <link id="2428" focusable="true" url="https://developers.cloudflare.com/workers/languages/typescript/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="2432" level="3">
+                          <link id="2433" focusable="true" url="https://developers.cloudflare.com/workers/examples/?languages=TypeScript">
+                            Examples ↗
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="2437" level="2">
+                  <button name="" id="2439" invalid="false" focusable="true" controls="nb-disclosure-61">
+                    Python WorkersBeta
+                  </button>
+                  <generic id="2447">
+                    <generic id="2448">
+                      <list id="2449">
+                        <listitem id="2450" level="3">
+                          <link id="2451" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="2455" level="3">
+                          <link id="2456" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/basics/">
+                            The Basics
+                          </link>
+                        </listitem>
+                        <listitem id="2460" level="3">
+                          <link id="2461" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/how-python-workers-work/">
+                            How Python Workers Work
+                          </link>
+                        </listitem>
+                        <listitem id="2465" level="3">
+                          <link id="2466" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/ffi/">
+                            Foreign Function Interface (FFI)
+                          </link>
+                        </listitem>
+                        <listitem id="2471" level="3">
+                          <link id="2472" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/stdlib/">
+                            Standard Library
+                          </link>
+                        </listitem>
+                        <listitem id="2476" level="3">
+                          <link id="2477" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/examples/">
+                            Examples
+                          </link>
+                        </listitem>
+                        <listitem id="2481" level="3">
+                          <button id="2483" invalid="false" focusable="true" controls="nb-disclosure-62">
+                            Packages
+                          </button>
+                          <generic id="2488">
+                            <generic id="2489">
+                              <list id="2490">
+                                <listitem id="2491" level="4">
+                                  <link id="2492" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/packages/">
+                                    Overview
+                                  </link>
+                                </listitem>
+                                <listitem id="2496" level="4">
+                                  <link id="2497" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/packages/fastapi/">
+                                    FastAPI
+                                  </link>
+                                </listitem>
+                                <listitem id="2501" level="4">
+                                  <link id="2502" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/packages/langchain/">
+                                    Langchain
+                                  </link>
+                                </listitem>
+                              </list>
+                            </generic>
+                          </generic>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="2506" level="2">
+                  <button name="" id="2508" invalid="false" focusable="true" controls="nb-disclosure-63">
+                    RustBeta
+                  </button>
+                  <generic id="2516">
+                    <generic id="2517">
+                      <list id="2518">
+                        <listitem id="2519" level="3">
+                          <link id="2520" focusable="true" url="https://developers.cloudflare.com/workers/languages/rust/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="2524" level="3">
+                          <link id="2525" focusable="true" url="https://developers.cloudflare.com/workers/languages/rust/crates/">
+                            Supported crates
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="2529" level="1">
+          <button id="2531" invalid="false" focusable="true" controls="nb-disclosure-64">
+            Platform
+          </button>
+          <generic id="2536">
+            <generic id="2537">
+              <list id="2538">
+                <listitem id="2539" level="2">
+                  <link id="2540" focusable="true" url="https://developers.cloudflare.com/workers/platform/">
+                    Overview
+                  </link>
+                </listitem>
+                <listitem id="2544" level="2">
+                  <link id="2545" focusable="true" url="https://developers.cloudflare.com/workers/platform/pricing/">
+                    Pricing
+                  </link>
+                </listitem>
+                <listitem id="2549" level="2">
+                  <button id="2551" invalid="false" focusable="true" controls="nb-disclosure-65">
+                    Changelog
+                  </button>
+                  <generic id="2556">
+                    <generic id="2557">
+                      <list id="2558">
+                        <listitem id="2559" level="3">
+                          <link id="2560" focusable="true" url="https://developers.cloudflare.com/workers/platform/changelog/">
+                            Overview
+                          </link>
+                        </listitem>
+                        <listitem id="2564" level="3">
+                          <link id="2565" focusable="true" url="https://developers.cloudflare.com/workers/platform/changelog/historical-changelog/">
+                            Workers (Historic)
+                          </link>
+                        </listitem>
+                        <listitem id="2569" level="3">
+                          <link id="2570" focusable="true" url="https://github.com/cloudflare/workers-sdk/releases">
+                            Wrangler
+                          </link>
+                        </listitem>
+                      </list>
+                    </generic>
+                  </generic>
+                </listitem>
+                <listitem id="2574" level="2">
+                  <link id="2575" focusable="true" url="https://developers.cloudflare.com/workers/platform/limits/">
+                    Limits
+                  </link>
+                </listitem>
+                <listitem id="2579" level="2">
+                  <link id="2580" focusable="true" url="https://developers.cloudflare.com/workers/platform/storage-options/">
+                    Choose a data or storage product
+                  </link>
+                </listitem>
+                <listitem id="2584" level="2">
+                  <link id="2585" focusable="true" url="https://developers.cloudflare.com/workers/platform/betas/">
+                    Betas
+                  </link>
+                </listitem>
+                <listitem id="2589" level="2">
+                  <link id="2590" focusable="true" url="https://developers.cloudflare.com/workers/platform/deploy-buttons/">
+                    Deploy to Cloudflare buttons
+                  </link>
+                </listitem>
+                <listitem id="2594" level="2">
+                  <link id="2595" focusable="true" url="https://developers.cloudflare.com/workers/platform/claim-deployments/">
+                    Claim deployments (temporary accounts)
+                  </link>
+                </listitem>
+                <listitem id="2600" level="2">
+                  <link id="2601" focusable="true" url="https://developers.cloudflare.com/workers/platform/built-with-cloudflare/">
+                    Built with Cloudflare button
+                  </link>
+                </listitem>
+                <listitem id="2605" level="2">
+                  <link id="2606" focusable="true" url="https://developers.cloudflare.com/workers/platform/known-issues/">
+                    Known issues
+                  </link>
+                </listitem>
+                <listitem id="2610" level="2">
+                  <link id="2611" focusable="true" url="https://developers.cloudflare.com/cloudflare-for-platforms/workers-for-platforms/">
+                    Workers for Platforms ↗
+                  </link>
+                </listitem>
+                <listitem id="2615" level="2">
+                  <link id="2616" focusable="true" url="https://developers.cloudflare.com/workers/platform/infrastructure-as-code/">
+                    Infrastructure as Code (IaC)
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="2620" level="1">
+          <link id="2621" focusable="true" url="https://developers.cloudflare.com/workers/glossary/">
+            Glossary
+          </link>
+        </listitem>
+        <listitem id="2625" level="1">
+          <button id="2627" invalid="false" focusable="true" controls="nb-disclosure-66">
+            Reference
+          </button>
+          <generic id="2632">
+            <generic id="2633">
+              <list id="2634">
+                <listitem id="2635" level="2">
+                  <link id="2636" focusable="true" url="https://developers.cloudflare.com/workers/reference/how-the-cache-works/">
+                    How the Cache works
+                  </link>
+                </listitem>
+                <listitem id="2640" level="2">
+                  <link id="2641" focusable="true" url="https://developers.cloudflare.com/workers/reference/how-workers-works/">
+                    How Workers works
+                  </link>
+                </listitem>
+                <listitem id="2645" level="2">
+                  <link id="2646" focusable="true" url="https://developers.cloudflare.com/workers/reference/migrate-to-module-workers/">
+                    Migrate from Service Workers to ES Modules
+                  </link>
+                </listitem>
+                <listitem id="2651" level="2">
+                  <link id="2652" focusable="true" url="https://developers.cloudflare.com/workers/reference/protocols/">
+                    Protocols
+                  </link>
+                </listitem>
+                <listitem id="2656" level="2">
+                  <link id="2657" focusable="true" url="https://developers.cloudflare.com/workers/reference/security-model/">
+                    Security model
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+        <listitem id="2661" level="1">
+          <button id="2663" invalid="false" focusable="true" controls="nb-disclosure-67">
+            Agent resources
+          </button>
+          <generic id="2668">
+            <generic id="2669">
+              <list id="2670">
+                <listitem id="2671" level="2">
+                  <link id="2672" focusable="true" url="https://developers.cloudflare.com/agent-setup/">
+                    Agent setup ↗
+                  </link>
+                </listitem>
+                <listitem id="2676" level="2">
+                  <link id="2677" focusable="true" url="https://github.com/cloudflare/skills">
+                    Cloudflare Skills ↗
+                  </link>
+                </listitem>
+                <listitem id="2681" level="2">
+                  <link id="2682" focusable="true" url="https://github.com/cloudflare/mcp">
+                    Code Mode MCP Server ↗
+                  </link>
+                </listitem>
+                <listitem id="2686" level="2">
+                  <link name="" id="2687" focusable="true" url="https://github.com/cloudflare/mcp-server-cloudflare">
+                    Domain-specific MCP Servers ↗MCP
+                  </link>
+                </listitem>
+                <listitem id="2695" level="2">
+                  <link id="2696" focusable="true" url="https://developers.cloudflare.com/workers/llms.txt">
+                    Workers llms.txt ↗
+                  </link>
+                </listitem>
+                <listitem id="2700" level="2">
+                  <link id="2701" focusable="true" url="https://developers.cloudflare.com/workers/llms-full.txt">
+                    Workers llms-full.txt ↗
+                  </link>
+                </listitem>
+                <listitem id="2705" level="2">
+                  <link id="2706" focusable="true" url="https://developers.cloudflare.com/llms.txt">
+                    Cloudflare Docs llms.txt ↗
+                  </link>
+                </listitem>
+                <listitem id="2710" level="2">
+                  <link id="2711" focusable="true" url="https://developers.cloudflare.com/llms-full.txt">
+                    Cloudflare Docs llms-full.txt ↗
+                  </link>
+                </listitem>
+              </list>
+            </generic>
+          </generic>
+        </listitem>
+      </list>
+    </navigation>
+  </complementary>
+  <main id="2718">
+    <navigation name="Breadcrumb" id="2720">
+      <list id="2721">
+        <listitem id="2722" level="1">
+          <link id="2723" focusable="true" url="https://developers.cloudflare.com/">
+            Home
+          </link>
+        </listitem>
+        <listitem id="2726" level="1">
+          /
+          <generic id="2730">
+            Workers
+          </generic>
+        </listitem>
+      </list>
+    </navigation>
+    <generic id="2733">
+      <heading id="2735" level="1">
+        Cloudflare Workers
+      </heading>
+      <image id="2740"/>
+      Last updated
+      <time id="2744">
+        Apr 23, 2026
+      </time>
+      <button name="Copy Page as Markdown" id="2747" invalid="false" focusable="true">
+        <image id="2748"/>
+        <generic id="2751" live="polite" atomic="false" relevant="additions text">
+          Copy as Markdown
+        </generic>
+      </button>
+      <link name="View Page as Markdown" id="2754" focusable="true" url="https://developers.cloudflare.com/workers/index.md">
+        <image id="2755"/>
+        View as Markdown
+      </link>
+      <link name="Setup your agent to build on Cloudflare" id="2759" focusable="true" url="https://developers.cloudflare.com/agent-setup/">
+        <image id="2760"/>
+        Agent setup
+      </link>
+      <article id="2769">
+        <paragraph id="2771">
+          A serverless platform for building, deploying, and scaling apps across
+          <link id="2774" focusable="true" url="https://www.cloudflare.com/network/">
+            Cloudflare's global network ↗
+          </link>
+          with a single command — no infrastructure to manage, no complex configuration
+        </paragraph>
+        <paragraph id="2783">
+          With Cloudflare Workers, you can expect to:
+        </paragraph>
+        <list id="2786">
+          <listitem id="2787" level="1">
+            <ListMarker name="•" id="2788"/>
+            Deliver fast performance with high reliability anywhere in the world
+          </listitem>
+          <listitem id="2792" level="1">
+            <ListMarker name="•" id="2793"/>
+            Build full-stack apps with your framework of choice, including
+            <link id="2797" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/react/">
+              React
+            </link>
+            ,
+            <link id="2802" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/vue/">
+              Vue
+            </link>
+            ,
+            <link id="2807" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/sveltekit/">
+              Svelte
+            </link>
+            ,
+            <link id="2812" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/">
+              Next
+            </link>
+            ,
+            <link id="2817" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/">
+              Astro
+            </link>
+            ,
+            <link id="2822" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/web-apps/react-router/">
+              React Router
+            </link>
+            ,
+            <link id="2827" focusable="true" url="https://developers.cloudflare.com/workers/framework-guides/">
+              and more
+            </link>
+          </listitem>
+          <listitem id="2830" level="1">
+            <ListMarker name="•" id="2831"/>
+            Use your preferred language, including
+            <link id="2835" focusable="true" url="https://developers.cloudflare.com/workers/languages/javascript/">
+              JavaScript
+            </link>
+            ,
+            <link id="2840" focusable="true" url="https://developers.cloudflare.com/workers/languages/typescript/">
+              TypeScript
+            </link>
+            ,
+            <link id="2845" focusable="true" url="https://developers.cloudflare.com/workers/languages/python/">
+              Python
+            </link>
+            ,
+            <link id="2850" focusable="true" url="https://developers.cloudflare.com/workers/languages/rust/">
+              Rust
+            </link>
+            ,
+            <link id="2855" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/webassembly/">
+              and more
+            </link>
+          </listitem>
+          <listitem id="2858" level="1">
+            <ListMarker name="•" id="2859"/>
+            Gain deep visibility and insight with built-in
+            <link id="2863" focusable="true" url="https://developers.cloudflare.com/workers/observability/logs/">
+              observability
+            </link>
+          </listitem>
+          <listitem id="2866" level="1">
+            <ListMarker name="•" id="2867"/>
+            Get started for free and grow with flexible
+            <link id="2871" focusable="true" url="https://developers.cloudflare.com/workers/platform/pricing/">
+              pricing
+            </link>
+            , affordable at any scale
+          </listitem>
+        </list>
+        <paragraph id="2876">
+          Get started with your first project:
+        </paragraph>
+        <link id="2879" focusable="true" url="https://dash.cloudflare.com/?to=/:account/workers-and-pages/templates">
+          <paragraph id="2880">
+            Deploy a template
+          </paragraph>
+        </link>
+        <link id="2883" focusable="true" url="https://developers.cloudflare.com/workers/get-started/guide/">
+          <paragraph id="2884">
+            Deploy with Wrangler CLI
+          </paragraph>
+        </link>
+        <separator id="2887" settable="true" orientation="horizontal"/>
+        <generic id="2888" focusable="true">
+          <heading id="2889" level="2">
+            Build with Workers
+          </heading>
+          <link id="2892" focusable="true" url="https://developers.cloudflare.com/workers/#build-with-workers"/>
+        </generic>
+        <generic id="2894" focusable="true">
+          <heading id="2895" level="4">
+            Front-end applications
+          </heading>
+          <link id="2898" focusable="true" url="https://developers.cloudflare.com/workers/#front-end-applications"/>
+        </generic>
+        Deploy
+        <link id="2901" focusable="true" url="https://developers.cloudflare.com/workers/static-assets/">
+          static assets
+        </link>
+        to Cloudflare's
+        <link id="2906" focusable="true" url="https://developers.cloudflare.com/cache/">
+          CDN &amp; cache
+        </link>
+        for fast rendering
+        <generic id="2912" focusable="true">
+          <heading id="2913" level="4">
+            Back-end applications
+          </heading>
+          <link id="2916" focusable="true" url="https://developers.cloudflare.com/workers/#back-end-applications"/>
+        </generic>
+        Build APIs and connect to data stores with
+        <link id="2919" focusable="true" url="https://developers.cloudflare.com/workers/configuration/placement/">
+          Smart Placement
+        </link>
+        to optimize latency
+        <generic id="2925" focusable="true">
+          <heading id="2926" level="4">
+            Serverless AI inference
+          </heading>
+          <link id="2929" focusable="true" url="https://developers.cloudflare.com/workers/#serverless-ai-inference"/>
+        </generic>
+        Run LLMs, generate images, and more with
+        <link id="2932" focusable="true" url="https://developers.cloudflare.com/workers-ai/">
+          Workers AI
+        </link>
+        <generic id="2936" focusable="true">
+          <heading id="2937" level="4">
+            Background jobs
+          </heading>
+          <link id="2940" focusable="true" url="https://developers.cloudflare.com/workers/#background-jobs"/>
+        </generic>
+        Schedule
+        <link id="2943" focusable="true" url="https://developers.cloudflare.com/workers/configuration/cron-triggers/">
+          cron jobs
+        </link>
+        , run durable
+        <link id="2948" focusable="true" url="https://developers.cloudflare.com/workflows/">
+          Workflows
+        </link>
+        , and integrate with
+        <link id="2953" focusable="true" url="https://developers.cloudflare.com/queues/">
+          Queues
+        </link>
+        <generic id="2957" focusable="true">
+          <heading id="2958" level="4">
+            Observability &amp; monitoring
+          </heading>
+          <link id="2961" focusable="true" url="https://developers.cloudflare.com/workers/#observability--monitoring"/>
+        </generic>
+        Monitor performance, debug issues, and analyze traffic with
+        <link id="2964" focusable="true" url="https://developers.cloudflare.com/workers/observability/logs/">
+          real-time logs
+        </link>
+        and
+        <link id="2969" focusable="true" url="https://developers.cloudflare.com/workers/observability/metrics-and-analytics/">
+          analytics
+        </link>
+        <separator id="2972" settable="true" orientation="horizontal"/>
+        <generic id="2973" focusable="true">
+          <heading id="2974" level="2">
+            Integrate with Workers
+          </heading>
+          <link id="2977" focusable="true" url="https://developers.cloudflare.com/workers/#integrate-with-workers"/>
+        </generic>
+        <paragraph id="2978">
+          Connect to external services like databases, APIs, and storage via
+          <link id="2981" focusable="true" url="https://developers.cloudflare.com/workers/runtime-apis/bindings/">
+            Bindings
+          </link>
+          , enabling functionality with just a few lines of code:
+        </paragraph>
+        <paragraph id="2987">
+          <strong id="2988">
+            Storage
+          </strong>
+        </paragraph>
+        <generic id="2991">
+          <link id="2995" focusable="true" url="https://developers.cloudflare.com/durable-objects/">
+            Durable Objects
+          </link>
+          <paragraph id="2999">
+            Scalable stateful storage for real-time coordination.
+          </paragraph>
+        </generic>
+        <generic id="3002">
+          <link id="3006" focusable="true" url="https://developers.cloudflare.com/d1/">
+            D1
+          </link>
+          <paragraph id="3010">
+            Serverless SQL database built for fast, global queries.
+          </paragraph>
+        </generic>
+        <generic id="3013">
+          <link id="3017" focusable="true" url="https://developers.cloudflare.com/kv/">
+            KV
+          </link>
+          <paragraph id="3021">
+            Low-latency key-value storage for fast, edge-cached reads.
+          </paragraph>
+        </generic>
+        <generic id="3024">
+          <link id="3028" focusable="true" url="https://developers.cloudflare.com/queues/">
+            Queues
+          </link>
+          <paragraph id="3032">
+            Guaranteed delivery with no charges for egress bandwidth.
+          </paragraph>
+        </generic>
+        <generic id="3035">
+          <link id="3039" focusable="true" url="https://developers.cloudflare.com/hyperdrive/">
+            Hyperdrive
+          </link>
+          <paragraph id="3043">
+            Connect to your external database with accelerated queries, cached at the edge.
+          </paragraph>
+        </generic>
+        <paragraph id="3047">
+          <strong id="3048">
+            Compute
+          </strong>
+        </paragraph>
+        <generic id="3051">
+          <link id="3055" focusable="true" url="https://developers.cloudflare.com/workers-ai/">
+            Workers AI
+          </link>
+          <paragraph id="3059">
+            Machine learning models powered by serverless GPUs.
+          </paragraph>
+        </generic>
+        <generic id="3062">
+          <link id="3066" focusable="true" url="https://developers.cloudflare.com/workflows/">
+            Workflows
+          </link>
+          <paragraph id="3070">
+            Durable, long-running operations with automatic retries.
+          </paragraph>
+        </generic>
+        <generic id="3073">
+          <link id="3077" focusable="true" url="https://developers.cloudflare.com/vectorize/">
+            Vectorize
+          </link>
+          <paragraph id="3081">
+            Vector database for AI-powered semantic search.
+          </paragraph>
+        </generic>
+        <generic id="3084">
+          <link id="3088" focusable="true" url="https://developers.cloudflare.com/r2/">
+            R2
+          </link>
+          <paragraph id="3092">
+            Zero-egress object storage for cost-efficient data access.
+          </paragraph>
+        </generic>
+        <generic id="3095">
+          <link id="3099" focusable="true" url="https://developers.cloudflare.com/browser-run/">
+            Browser Run
+          </link>
+          <paragraph id="3103">
+            Programmatic serverless browser instances.
+          </paragraph>
+        </generic>
+        <paragraph id="3106">
+          <strong id="3107">
+            Media
+          </strong>
+        </paragraph>
+        <generic id="3110">
+          <link id="3114" focusable="true" url="https://developers.cloudflare.com/cache/">
+            Cache / CDN
+          </link>
+          <paragraph id="3118">
+            Global caching for high-performance, low-latency delivery.
+          </paragraph>
+        </generic>
+        <generic id="3121">
+          <link id="3125" focusable="true" url="https://developers.cloudflare.com/images/">
+            Images
+          </link>
+          <paragraph id="3129">
+            Streamlined image infrastructure from a single API.
+          </paragraph>
+        </generic>
+        <separator id="3132" settable="true" orientation="horizontal"/>
+        <paragraph id="3133">
+          Want to connect with the Workers community?
+          <link id="3136" focusable="true" url="https://discord.cloudflare.com/">
+            Join our Discord ↗
+          </link>
+        </paragraph>
+      </article>
+    </generic>
+    <navigation name="Pagination" id="3141">
+      <link name="" id="3143" focusable="true" url="https://developers.cloudflare.com/workers/get-started/guide/">
+        NextCLI
+        <image id="3150"/>
+      </link>
+    </navigation>
+  </main>
+  <complementary id="3154">
+    <heading id="3157" level="2">
+      On this page
+    </heading>
+    <navigation name="On this page" id="3160" labelledby="">
+      <list id="3161">
+        <listitem id="3162" level="1">
+          <link id="3163" focusable="true" url="https://developers.cloudflare.com/workers/#_top">
+            Overview
+          </link>
+        </listitem>
+        <listitem id="3166" level="1">
+          <link id="3167" focusable="true" url="https://developers.cloudflare.com/workers/#build-with-workers">
+            Build with Workers
+          </link>
+        </listitem>
+        <listitem id="3170" level="1">
+          <link id="3171" focusable="true" url="https://developers.cloudflare.com/workers/#integrate-with-workers">
+            Integrate with Workers
+          </link>
+        </listitem>
+      </list>
+    </navigation>
+    <generic id="3175">
+      <generic id="3176">
+        <paragraph id="3177">
+          WAS THIS HELPFUL?
+        </paragraph>
+        <button id="3181" invalid="false" focusable="true">
+          Yes
+        </button>
+        <button id="3185" invalid="false" focusable="true">
+          No
+        </button>
+      </generic>
+    </generic>
+    <navigation name="Page actions" id="3189">
+      <link id="3190" focusable="true" url="https://github.com/cloudflare/cloudflare-docs/edit/production/src/content/docs/workers/index.mdx">
+        Edit page
+      </link>
+      <link id="3195" focusable="true" url="https://github.com/cloudflare/cloudflare-docs/issues/new/choose">
+        Report issue
+      </link>
+    </navigation>
+  </complementary>
+  <contentinfo id="3200">
+    <generic id="3201">
+      <generic id="3202">
+        <image name="Cloudflare wordmark" id="3205"/>
+        Getting started
+        <link id="3213" focusable="true" url="https://www.cloudflare.com/plans/">
+          Plans
+        </link>
+        <link id="3216" focusable="true" url="https://www.cloudflare.com/resource/contact-enterprise-sales/">
+          Contact sales
+        </link>
+        <link id="3219" focusable="true" url="https://www.cloudflare.com/partners/">
+          Partners
+        </link>
+        <link id="3222" focusable="true" url="https://partnerlocator.cloudflare.com/dashboard">
+          Find a partner
+        </link>
+        <link id="3225" focusable="true" url="https://www.cloudflare.com/startups/">
+          Startups
+        </link>
+        <link id="3228" focusable="true" url="https://www.cloudflare.com/under-attack-hotline/">
+          Under attack?
+        </link>
+        <link id="3231" focusable="true" url="https://domains.cloudflare.com/">
+          Domain name search
+        </link>
+        Company
+        <link id="3239" focusable="true" url="https://www.cloudflare.com/about/">
+          About
+        </link>
+        <link id="3242" focusable="true" url="https://www.cloudflare.com/careers/">
+          Careers
+        </link>
+        <link id="3245" focusable="true" url="https://cloudflare.net/">
+          Investors
+        </link>
+        <link id="3248" focusable="true" url="https://www.cloudflare.com/press/">
+          Press
+        </link>
+        <link id="3251" focusable="true" url="https://www.cloudflare.com/press/press-kit/">
+          Press kit
+        </link>
+        <link id="3254" focusable="true" url="https://www.cloudflare.com/network/">
+          Global network
+        </link>
+        Public interest
+        <link id="3263" focusable="true" url="https://www.cloudflare.com/galileo/">
+          Project Galileo
+        </link>
+        <link id="3266" focusable="true" url="https://www.cloudflare.com/athenian/">
+          Athenian Project
+        </link>
+        <link id="3269" focusable="true" url="https://www.cloudflare.com/campaigns/">
+          Cloudflare for Campaigns
+        </link>
+        <link id="3272" focusable="true" url="https://www.cloudflare.com/fair-shot/">
+          Project Fairshot
+        </link>
+        <link id="3275" focusable="true" url="https://www.cloudflare.com/impact/">
+          Impact/ESG
+        </link>
+        Compliance
+        <link id="3283" focusable="true" url="https://www.cloudflare.com/trust-hub/compliance-resources/">
+          Compliance resources
+        </link>
+        <link id="3286" focusable="true" url="https://www.cloudflare.com/trust-hub/">
+          Trust Hub
+        </link>
+        <link id="3289" focusable="true" url="https://www.cloudflare.com/trust-hub/gdpr/">
+          Data Protection
+        </link>
+        <link id="3292" focusable="true" url="https://www.cloudflare.com/trust-hub/responsible-ai/">
+          Responsible AI
+        </link>
+        <link id="3295" focusable="true" url="https://www.cloudflare.com/transparency/">
+          Transparency report
+        </link>
+        <link id="3298" focusable="true" url="https://www.cloudflare.com/trust-hub/abuse-approach/">
+          Report abuse
+        </link>
+        Resources
+        <link id="3307" focusable="true" url="https://www.cloudflare.com/resource/app-innovation-report/">
+          App innovation report
+        </link>
+        <link id="3310" focusable="true" url="https://radar.cloudflare.com/">
+          Cloudflare Radar
+        </link>
+        <link id="3313" focusable="true" url="https://www.cloudflare.com/case-studies/">
+          Case studies
+        </link>
+        <link id="3316" focusable="true" url="https://www.cloudflarestatus.com/">
+          Status
+        </link>
+        <link id="3319" focusable="true" url="https://support.cloudflare.com/">
+          Support
+        </link>
+        <link id="3322" focusable="true" url="https://www.cloudflare.com/events/">
+          Events
+        </link>
+        <link id="3325" focusable="true" url="https://blog.cloudflare.com/">
+          Blog
+        </link>
+        Developers
+        <link id="3333" focusable="true" url="https://developers.cloudflare.com/">
+          Documentation
+        </link>
+        <link id="3336" focusable="true" url="https://www.cloudflare.com/learning/">
+          Learning center
+        </link>
+        <link id="3339" focusable="true" url="https://community.cloudflare.com/">
+          Community
+        </link>
+        Solutions
+        <link id="3348" focusable="true" url="https://www.cloudflare.com/sase/">
+          SSE and SASE platform
+        </link>
+        <link id="3351" focusable="true" url="https://www.cloudflare.com/solutions/ai/">
+          Cloudflare AI Cloud
+        </link>
+        <link id="3354" focusable="true" url="https://www.cloudflare.com/solutions/ai-security/">
+          AI Security
+        </link>
+        <link id="3357" focusable="true" url="https://www.cloudflare.com/solutions/frontends/">
+          Frontend Development Platform
+        </link>
+        <link id="3360" focusable="true" url="https://www.cloudflare.com/solutions/platforms/">
+          Multi-Tenant Platform Development
+        </link>
+        <link id="3363" focusable="true" url="https://www.cloudflare.com/solutions/security/">
+          Web Security Platform
+        </link>
+      </generic>
+      <generic id="3368">
+        © 2026 Cloudflare, Inc.
+        <generic id="3373">
+          <link id="3374" focusable="true" url="https://www.cloudflare.com/policies/privacy/">
+            Privacy policy
+          </link>
+          |
+          <link id="3381" focusable="true" url="https://www.cloudflare.com/disclosure/">
+            Report security issues
+          </link>
+          |
+          <link id="3388" focusable="true" url="https://www.cloudflare.com/policies/terms/">
+            Terms of use
+          </link>
+          |
+          <link id="3395" focusable="true" url="https://www.cloudflare.com/trademark/">
+            Trademark
+          </link>
+        </generic>
+        <image name="privacy options" id="3399" url="https://developers.cloudflare.com/_astro/privacyoptions.BWXSiJOZ_1oqSoo.svg"/>
+        <button id="3400" invalid="false" focusable="true">
+          Cookie Preferences
+        </button>
+      </generic>
+    </generic>
+  </contentinfo>
+  <button name="Scroll to top" id="3404" invalid="false" focusable="true">
+    <image id="3405"/>
+  </button>
+</RootWebArea>

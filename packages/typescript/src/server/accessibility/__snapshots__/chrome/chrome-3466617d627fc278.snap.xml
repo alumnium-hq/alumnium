@@ -1,0 +1,2214 @@
+<RootWebArea name="lofi beats - YouTube" id="1" focusable="true" focused="true" url="https://www.youtube.com/results?search_query=lofi+beats">
+  <generic id="3">
+    <generic id="4">
+      <generic id="6">
+        <generic id="7">
+          <banner id="8">
+            <generic id="12">
+              <generic id="13">
+                <generic id="14">
+                  <button name="Guide" id="15" invalid="false" focusable="true" focused="true">
+                    <generic id="16"/>
+                  </button>
+                  <generic id="19"/>
+                </generic>
+                <generic id="22">
+                  <link name="YouTube Home" id="23" focusable="true" url="https://www.youtube.com/">
+                    <generic id="24">
+                      <generic id="25"/>
+                    </generic>
+                  </link>
+                  <generic id="28">
+                    SG
+                  </generic>
+                </generic>
+                <generic id="31">
+                  <generic id="32">
+                    <button id="34" invalid="false" focusable="true">
+                      <generic id="35">
+                        Skip navigation
+                      </generic>
+                    </button>
+                  </generic>
+                </generic>
+              </generic>
+              <generic id="39">
+                <search id="40">
+                  <generic id="42">
+                    <generic id="43">
+                      <generic id="44">
+                        <combobox name="Search" id="45" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false">
+                          <generic id="47" editable="plaintext">
+                            lofi beats
+                          </generic>
+                        </combobox>
+                      </generic>
+                      <button name="Clear search query" id="51" invalid="false" focusable="true"/>
+                    </generic>
+                    <button name="Search" id="55" invalid="false" focusable="true"/>
+                  </generic>
+                </search>
+                <generic id="58">
+                  <generic id="59">
+                    <button name="Search with your voice" id="61" invalid="false" focusable="true"/>
+                    <tooltip name="tooltip" id="62" focusable="true"/>
+                  </generic>
+                </generic>
+              </generic>
+              <generic id="63">
+                <generic id="64">
+                  <generic id="65">
+                    <generic id="66">
+                      <generic id="67" focusable="true">
+                        <generic id="68">
+                          <button name="Settings" id="69" invalid="false" focusable="true">
+                            <generic id="70"/>
+                          </button>
+                          <generic id="73"/>
+                        </generic>
+                      </generic>
+                    </generic>
+                  </generic>
+                  <generic id="76">
+                    <link id="78" focusable="true" url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3D%252Fresults%253Fsearch_query%253Dlofi%252Bbeats&amp;hl=en&amp;ec=65620">
+                      <generic id="79">
+                        Sign in
+                      </generic>
+                    </link>
+                  </generic>
+                </generic>
+              </generic>
+            </generic>
+          </banner>
+        </generic>
+        <navigation id="85">
+          <generic id="86">
+            <generic id="87">
+              <link id="88" focusable="true" url="https://www.youtube.com/">
+                <generic id="89"/>
+                Home
+                <generic id="95"/>
+              </link>
+            </generic>
+            <generic id="98">
+              <link id="99" focusable="true" url="https://www.youtube.com/shorts/">
+                <generic id="100"/>
+                Shorts
+                <generic id="106"/>
+              </link>
+            </generic>
+            <generic id="109">
+              <link id="110" focusable="true" url="https://www.youtube.com/feed/subscriptions">
+                <generic id="111"/>
+                Subscriptions
+                <generic id="117"/>
+              </link>
+            </generic>
+            <generic id="120">
+              <link id="121" focusable="true" url="https://www.youtube.com/feed/you">
+                <generic id="122"/>
+                You
+                <generic id="128"/>
+              </link>
+            </generic>
+          </generic>
+        </navigation>
+        <generic id="131">
+          <main id="192">
+            <generic id="193">
+              <generic id="194">
+                <generic id="197">
+                  <generic id="198">
+                    <generic id="199">
+                      <generic id="200">
+                        <tablist id="201" multiselectable="false" orientation="horizontal">
+                          <generic id="202">
+                            <generic id="203">
+                              <generic id="204">
+                                <tab id="205" invalid="false" focusable="true" selected="true">
+                                  <generic id="206">
+                                    <generic id="207">
+                                      All
+                                    </generic>
+                                  </generic>
+                                </tab>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="210">
+                            <generic id="211">
+                              <generic id="212">
+                                <tab id="213" invalid="false" focusable="true" selected="false">
+                                  <generic id="214">
+                                    <generic id="215">
+                                      Shorts
+                                    </generic>
+                                  </generic>
+                                </tab>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="218">
+                            <generic id="219">
+                              <generic id="220">
+                                <tab id="221" invalid="false" focusable="true" selected="false">
+                                  <generic id="222">
+                                    <generic id="223">
+                                      Unwatched
+                                    </generic>
+                                  </generic>
+                                </tab>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="226">
+                            <generic id="227">
+                              <generic id="228">
+                                <tab id="229" invalid="false" focusable="true" selected="false">
+                                  <generic id="230">
+                                    <generic id="231">
+                                      Watched
+                                    </generic>
+                                  </generic>
+                                </tab>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="234">
+                            <generic id="235">
+                              <generic id="236">
+                                <tab id="237" invalid="false" focusable="true" selected="false">
+                                  <generic id="238">
+                                    <generic id="239">
+                                      Videos
+                                    </generic>
+                                  </generic>
+                                </tab>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="242">
+                            <generic id="243">
+                              <generic id="244">
+                                <tab id="245" invalid="false" focusable="true" selected="false">
+                                  <generic id="246">
+                                    <generic id="247">
+                                      Recently uploaded
+                                    </generic>
+                                  </generic>
+                                </tab>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="250">
+                            <generic id="251">
+                              <generic id="252">
+                                <tab id="253" invalid="false" focusable="true" selected="false">
+                                  <generic id="254">
+                                    <generic id="255">
+                                      Live
+                                    </generic>
+                                  </generic>
+                                </tab>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </tablist>
+                      </generic>
+                    </generic>
+                  </generic>
+                </generic>
+                <generic id="259">
+                  <generic id="260">
+                    <button name="Search filters" id="262" invalid="false" focusable="true">
+                      <generic id="263">
+                        Filters
+                      </generic>
+                      <generic id="266"/>
+                    </button>
+                    <tooltip name="tooltip" id="269" focusable="true"/>
+                  </generic>
+                </generic>
+              </generic>
+              <generic id="271">
+                <generic id="273">
+                  <generic id="275">
+                    <generic id="277">
+                      <generic id="278">
+                        <generic id="279"/>
+                      </generic>
+                    </generic>
+                  </generic>
+                </generic>
+                <generic id="282">
+                  <generic id="286">
+                    <generic id="287">
+                      <generic id="288">
+                        <generic id="289">
+                          <generic id="290">
+                            <generic id="293">
+                              <generic id="313">
+                                <generic id="314">
+                                  <generic id="315">
+                                    <generic id="317" focusable="true">
+                                      <link id="318" focusable="true" url="https://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=CXd4aRVJxapmlCLb6svsP54nQ2QT_2OuziAG7lMDOoRVkEAEgAGC_jfQFggEXY2EtcHViLTYyMTk4MTE3NDcwNDkzNzGgAam5_8kDqAMEqgS2Ak_QpbLLyCOtpnVIWppXMB58GRlgVZuKm2nq6QM_TGBYbMBP8wx9zqZ7YulwWoVnL0Jk29T1HBncY5DJNpIkGpMej_uWeSj3671jZrZXe3ofroqhZni8SoeKWRYb2_TcjW6suI6OXOg9_LrduegrYC-V9rY17kbyhUG5XJPX1Pel_yaGXCDdDIkqU1O9gL8H24OghswL22l3FgUC1F8H7g130uSPoxFmVUkLpwG2TTIH-bcdzt5ayeBvtGD9AfeQZ6jeWTnG1e9TmG94RiVoLzR0ssn_mcNDTJ6k8OT-r0KHKzR0bif9rn19LjL8lDygfZgSCY2pR1VCtFSffCuYVfNbAkH6cp5d5KD9DaaCRP4U9NMUv-uXhsf3rwNpk5sjBvMhoTSBu1PErtuFwfhioyRrbzHKo9aIBfi-64ZXkgUMCBIwg7bvzring9hAkgUICBN4lpOzph2gBlWAB93t4IYdkAcEqAfywLECqAe4xLECqAfhtrECqAelz7ECqAfnnbECqAfonbECqAfvtbECqAfwtbECqAf507ECqAfJ2rECqAep4LECqAeECKgHptSxAqgHqNIbqAe2B6gHsdwbqAewm7ECqAeusbECqAf9srECqAfIz7ECqAfJz7ECqAfNx7ECqAfx0bECqAf81bECqAf71bECqAeM1rECqAeL1rECqAea4rECqAeb4rECqAed17ECqAed1LECqAeBxhuoB_yvsQKoB9XOG6gHvtmxAqgHq8UbqAeVCKgHnNwbqAe3obECqAfVqbECqAfn2rECqAfetbECqAfqsbECqAe-t7ECqAeZtbECqAeFwbECqAfrpbECqAfKqbECkggLUUxBTk80bmIyd02oCAHSCC4IgEEQARheMgKCAjoPgEKAwICAgICAgAKqgIAQSNmg0jVQFFiwzd2s-oWWA2ABmgkeaHR0cHM6Ly93d3cuZXBpZGVtaWNzb3VuZC5jb20vsQmyZA57vPDsv8gJF8gJjwHICZAByAnCAZgLAboLPQgDEAUYFiAHKAEwHEABSABYfWAAaABwAYgBAJgBAaIBCAoAqAIB2AICqAEB2AEBgAIBiAIJugMFdmlzaW7QCxKiDDhiFQoTY29tLmVwaWRlbWljLnBsYXllcmoaChhjb20uZXBpZGVtaWNzb3VuZC5wbGF5ZXJ4AIgBANIMAhAB2gwlCgoQwIq80vC0n-NiEgIBAxoNGPi-64ZXIJSLvujHBUABSgIQH5oNARKqDQJTR8gNAdINkQFodHRwczovL3d3dy5lcGlkZW1pY3NvdW5kLmNvbS8_dXRtX3NvdXJjZT1nb29nbGUmdXRtX21lZGl1bT1wYWlkc2VhcmNoJnV0bV9jYW1wYWlnbj0yMzM3NzMyNzM5OSZ1dG1fdGVybT0mZ2FkX3NvdXJjZT0yJmdhZF9jYW1wYWlnbmlkPTIzMzY4MjI4NzI4sA73ydHhGLgT____________AbAUA8AVgYCAQNAVAdgVAZgWAeIWAggBgBcBihcYCAMYASABKAEwATgBQAFIAVABWAFgAmgBoBcBqRcuRlI725wMPboXBigAMAA4AdAYAfAYAcIZAggB&amp;ase=2&amp;gclid=EAIaIQobChMI2dvdrPqFlgMVNr1sCR3nBDRLEAEYASAAEgL2zvD_BwE&amp;num=1&amp;cid=CAASqwHkaOaPtzVDySxqFG7GgM7ONtX6Lk00tBidmXCrBu9WbaKuU1WU3dNAVh_V2FdVriIPN3JKNYG6SfLglTE35Pv0jiCHIY0V7czpp5AzogWjvgX_4_oG0LKecVWaXfeJoFbvU8dZ6lDaSOTxRjhe5rvSkiOBimyM7sEmAWrQ4oYI9CiY_RBVh5_FihLR7L5PYCSkelDlXnmm4g4HAGCpcDfRIAXYvgnECB4jTVY&amp;ad_cpn=%5BCPN%5D&amp;sig=AOD64_2Lv4YEBpX9utM4wqDmoFj2iJrV0g&amp;ctype=110&amp;video_id=QLANO4nb2wM&amp;label=video_click_to_advertiser_site&amp;ms=%5BCLICK_MS%5D">
+                                        Looking for YouTube-approved, high-quality music for your content? Sign up today.
+                                      </link>
+                                    </generic>
+                                    <generic id="323" focusable="true">
+                                      <link id="324" focusable="true" url="https://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=CXd4aRVJxapmlCLb6svsP54nQ2QT_2OuziAG7lMDOoRVkEAEgAGC_jfQFggEXY2EtcHViLTYyMTk4MTE3NDcwNDkzNzGgAam5_8kDqAMEqgS2Ak_QpbLLyCOtpnVIWppXMB58GRlgVZuKm2nq6QM_TGBYbMBP8wx9zqZ7YulwWoVnL0Jk29T1HBncY5DJNpIkGpMej_uWeSj3671jZrZXe3ofroqhZni8SoeKWRYb2_TcjW6suI6OXOg9_LrduegrYC-V9rY17kbyhUG5XJPX1Pel_yaGXCDdDIkqU1O9gL8H24OghswL22l3FgUC1F8H7g130uSPoxFmVUkLpwG2TTIH-bcdzt5ayeBvtGD9AfeQZ6jeWTnG1e9TmG94RiVoLzR0ssn_mcNDTJ6k8OT-r0KHKzR0bif9rn19LjL8lDygfZgSCY2pR1VCtFSffCuYVfNbAkH6cp5d5KD9DaaCRP4U9NMUv-uXhsf3rwNpk5sjBvMhoTSBu1PErtuFwfhioyRrbzHKo9aIBfi-64ZXkgUMCBIwg7bvzring9hAkgUICBN4lpOzph2gBlWAB93t4IYdkAcEqAfywLECqAe4xLECqAfhtrECqAelz7ECqAfnnbECqAfonbECqAfvtbECqAfwtbECqAf507ECqAfJ2rECqAep4LECqAeECKgHptSxAqgHqNIbqAe2B6gHsdwbqAewm7ECqAeusbECqAf9srECqAfIz7ECqAfJz7ECqAfNx7ECqAfx0bECqAf81bECqAf71bECqAeM1rECqAeL1rECqAea4rECqAeb4rECqAed17ECqAed1LECqAeBxhuoB_yvsQKoB9XOG6gHvtmxAqgHq8UbqAeVCKgHnNwbqAe3obECqAfVqbECqAfn2rECqAfetbECqAfqsbECqAe-t7ECqAeZtbECqAeFwbECqAfrpbECqAfKqbECkggLUUxBTk80bmIyd02oCAHSCC4IgEEQARheMgKCAjoPgEKAwICAgICAgAKqgIAQSNmg0jVQFFiwzd2s-oWWA2ABmgkeaHR0cHM6Ly93d3cuZXBpZGVtaWNzb3VuZC5jb20vsQmyZA57vPDsv8gJF8gJjwHICZAByAnCAZgLAboLPQgDEAUYFiAHKAEwHEABSABYfWAAaABwAYgBAJgBAaIBCAoAqAIB2AICqAEB2AEBgAIBiAIJugMFdmlzaW7QCxKiDDhiFQoTY29tLmVwaWRlbWljLnBsYXllcmoaChhjb20uZXBpZGVtaWNzb3VuZC5wbGF5ZXJ4AIgBANIMAhAB2gwlCgoQwIq80vC0n-NiEgIBAxoNGPi-64ZXIJSLvujHBUABSgIQH5oNARKqDQJTR8gNAdINkQFodHRwczovL3d3dy5lcGlkZW1pY3NvdW5kLmNvbS8_dXRtX3NvdXJjZT1nb29nbGUmdXRtX21lZGl1bT1wYWlkc2VhcmNoJnV0bV9jYW1wYWlnbj0yMzM3NzMyNzM5OSZ1dG1fdGVybT0mZ2FkX3NvdXJjZT0yJmdhZF9jYW1wYWlnbmlkPTIzMzY4MjI4NzI4sA73ydHhGLgT____________AbAUA8AVgYCAQNAVAdgVAZgWAeIWAggBgBcBihcYCAMYASABKAEwATgBQAFIAVABWAFgAmgBoBcBqRcuRlI725wMPboXBigAMAA4AdAYAfAYAcIZAggB&amp;ase=2&amp;gclid=EAIaIQobChMI2dvdrPqFlgMVNr1sCR3nBDRLEAEYASAAEgL2zvD_BwE&amp;num=1&amp;cid=CAASqwHkaOaPtzVDySxqFG7GgM7ONtX6Lk00tBidmXCrBu9WbaKuU1WU3dNAVh_V2FdVriIPN3JKNYG6SfLglTE35Pv0jiCHIY0V7czpp5AzogWjvgX_4_oG0LKecVWaXfeJoFbvU8dZ6lDaSOTxRjhe5rvSkiOBimyM7sEmAWrQ4oYI9CiY_RBVh5_FihLR7L5PYCSkelDlXnmm4g4HAGCpcDfRIAXYvgnECB4jTVY&amp;ad_cpn=%5BCPN%5D&amp;sig=AOD64_2Lv4YEBpX9utM4wqDmoFj2iJrV0g&amp;ctype=110&amp;video_id=QLANO4nb2wM&amp;label=video_click_to_advertiser_site&amp;ms=%5BCLICK_MS%5D">
+                                        Sign up today and discover world class composers, artists and bands in our library.
+                                      </link>
+                                    </generic>
+                                    <generic id="329">
+                                      <button name="Epidemic Sound" id="330" focusable="true">
+                                        <generic id="332"/>
+                                      </button>
+                                    </generic>
+                                    <generic id="334">
+                                      <generic id="336">
+                                        Sponsored
+                                      </generic>
+                                      <generic id="339">
+                                        ·
+                                      </generic>
+                                    </generic>
+                                    <generic id="342">
+                                      Epidemic Sound
+                                    </generic>
+                                  </generic>
+                                  <generic id="346">
+                                    <button name="My Ad Center" id="348" invalid="false" focusable="true"/>
+                                  </generic>
+                                </generic>
+                                <link id="354" focusable="true" url="https://www.youtube.com/watch?v=QLANO4nb2wM">
+                                  <generic id="355">
+                                    Watch
+                                  </generic>
+                                </link>
+                                <link id="360" focusable="true" url="https://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=CXd4aRVJxapmlCLb6svsP54nQ2QT_2OuziAG7lMDOoRVkEAEgAGC_jfQFggEXY2EtcHViLTYyMTk4MTE3NDcwNDkzNzGgAam5_8kDqAMEqgS2Ak_QpbLLyCOtpnVIWppXMB58GRlgVZuKm2nq6QM_TGBYbMBP8wx9zqZ7YulwWoVnL0Jk29T1HBncY5DJNpIkGpMej_uWeSj3671jZrZXe3ofroqhZni8SoeKWRYb2_TcjW6suI6OXOg9_LrduegrYC-V9rY17kbyhUG5XJPX1Pel_yaGXCDdDIkqU1O9gL8H24OghswL22l3FgUC1F8H7g130uSPoxFmVUkLpwG2TTIH-bcdzt5ayeBvtGD9AfeQZ6jeWTnG1e9TmG94RiVoLzR0ssn_mcNDTJ6k8OT-r0KHKzR0bif9rn19LjL8lDygfZgSCY2pR1VCtFSffCuYVfNbAkH6cp5d5KD9DaaCRP4U9NMUv-uXhsf3rwNpk5sjBvMhoTSBu1PErtuFwfhioyRrbzHKo9aIBfi-64ZXkgUMCBIwg7bvzring9hAkgUICBN4lpOzph2gBlWAB93t4IYdkAcEqAfywLECqAe4xLECqAfhtrECqAelz7ECqAfnnbECqAfonbECqAfvtbECqAfwtbECqAf507ECqAfJ2rECqAep4LECqAeECKgHptSxAqgHqNIbqAe2B6gHsdwbqAewm7ECqAeusbECqAf9srECqAfIz7ECqAfJz7ECqAfNx7ECqAfx0bECqAf81bECqAf71bECqAeM1rECqAeL1rECqAea4rECqAeb4rECqAed17ECqAed1LECqAeBxhuoB_yvsQKoB9XOG6gHvtmxAqgHq8UbqAeVCKgHnNwbqAe3obECqAfVqbECqAfn2rECqAfetbECqAfqsbECqAe-t7ECqAeZtbECqAeFwbECqAfrpbECqAfKqbECkggLUUxBTk80bmIyd02oCAHSCC4IgEEQARheMgKCAjoPgEKAwICAgICAgAKqgIAQSNmg0jVQFFiwzd2s-oWWA2ABmgkeaHR0cHM6Ly93d3cuZXBpZGVtaWNzb3VuZC5jb20vsQmyZA57vPDsv8gJF8gJjwHICZAByAnCAZgLAboLPQgDEAUYFiAHKAEwHEABSABYfWAAaABwAYgBAJgBAaIBCAoAqAIB2AICqAEB2AEBgAIBiAIJugMFdmlzaW7QCxKiDDhiFQoTY29tLmVwaWRlbWljLnBsYXllcmoaChhjb20uZXBpZGVtaWNzb3VuZC5wbGF5ZXJ4AIgBANIMAhAB2gwlCgoQwIq80vC0n-NiEgIBAxoNGPi-64ZXIJSLvujHBUABSgIQH5oNARKqDQJTR8gNAdINkQFodHRwczovL3d3dy5lcGlkZW1pY3NvdW5kLmNvbS8_dXRtX3NvdXJjZT1nb29nbGUmdXRtX21lZGl1bT1wYWlkc2VhcmNoJnV0bV9jYW1wYWlnbj0yMzM3NzMyNzM5OSZ1dG1fdGVybT0mZ2FkX3NvdXJjZT0yJmdhZF9jYW1wYWlnbmlkPTIzMzY4MjI4NzI4sA73ydHhGLgT____________AbAUA8AVgYCAQNAVAdgVAZgWAeIWAggBgBcBihcYCAMYASABKAEwATgBQAFIAVABWAFgAmgBoBcBqRcuRlI725wMPboXBigAMAA4AdAYAfAYAcIZAggB&amp;ase=2&amp;gclid=EAIaIQobChMI2dvdrPqFlgMVNr1sCR3nBDRLEAEYASAAEgL2zvD_BwE&amp;num=1&amp;cid=CAASqwHkaOaPtzVDySxqFG7GgM7ONtX6Lk00tBidmXCrBu9WbaKuU1WU3dNAVh_V2FdVriIPN3JKNYG6SfLglTE35Pv0jiCHIY0V7czpp5AzogWjvgX_4_oG0LKecVWaXfeJoFbvU8dZ6lDaSOTxRjhe5rvSkiOBimyM7sEmAWrQ4oYI9CiY_RBVh5_FihLR7L5PYCSkelDlXnmm4g4HAGCpcDfRIAXYvgnECB4jTVY&amp;ad_cpn=%5BCPN%5D&amp;sig=AOD64_2Lv4YEBpX9utM4wqDmoFj2iJrV0g&amp;ctype=110&amp;video_id=QLANO4nb2wM&amp;label=video_click_to_advertiser_site&amp;ms=%5BCLICK_MS%5D">
+                                  <generic id="361">
+                                    Visit site
+                                  </generic>
+                                </link>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                    </generic>
+                    <generic id="365">
+                      <link name="Lo-Fi Beats @WRLDMusic • 6.64K subscribers 1 video" id="366" focusable="true"/>
+                      <generic id="367">
+                        <generic id="369">
+                          <link name="" id="371" focusable="true">
+                            <image name="Lo-Fi Beats" id="372" url="https://yt3.googleusercontent.com/Mn8Ym8XYf4NdmLu_V1YaFnYKU9F2yDLpduvVMWundhNb3QArnc37ECo6qfU9UvdetUAVV8G3=s176-c-k-c0x00ffffff-no-rj-mo"/>
+                          </link>
+                          <link id="374" focusable="true">
+                            <heading id="375" level="1">
+                              Lo-Fi Beats
+                            </heading>
+                          </link>
+                          <generic id="378">
+                            <group id="379">
+                              @WRLDMusic
+                            </group>
+                            <group id="383">
+                              6.64K subscribers1 video
+                            </group>
+                          </generic>
+                          <generic id="392">
+                            <generic id="393">
+                              <generic id="394">
+                                <button name="to Lo-Fi Beats." id="398" invalid="false" focusable="true">
+                                  <generic id="399">
+                                    Subscribe
+                                  </generic>
+                                </button>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <link id="404" focusable="true" url="https://www.youtube.com/@WRLDMusic">
+                            <generic id="405">
+                              View Channel
+                            </generic>
+                          </link>
+                          <link id="410" focusable="true" url="https://www.youtube.com/watch?v=9d3SeQviWkI&amp;list=RDEMB4pXSfqexQjAYE27XBWebA&amp;start_radio=1">
+                            <generic id="411">
+                              Mix
+                            </generic>
+                          </link>
+                          <link id="416" focusable="true" url="https://music.youtube.com/channel/UC2n9RQknDG8TQNrYTCSRmTg?ybp=mgYiCiASHhIaUkRBT0I0cFhTZnFleFFqQVlFMjdYQldlYkEYAQ%253D%253D">
+                            <generic id="417">
+                              YouTube Music
+                            </generic>
+                          </link>
+                        </generic>
+                      </generic>
+                    </generic>
+                    <generic id="423">
+                      <generic id="424">
+                        <generic id="425">
+                          <generic id="429">
+                            <generic id="449">
+                              <generic id="450">
+                                <heading id="452" level="3">
+                                  <link id="453" focusable="true" url="https://www.youtube.com/watch?v=9d3SeQviWkI&amp;list=RDEMB4pXSfqexQjAYE27XBWebA&amp;start_radio=1">
+                                    Mix - Lo-Fi Beats
+                                  </link>
+                                </heading>
+                                <group id="458">
+                                  YouTube
+                                </group>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="465">
+                            <generic id="481">
+                              <generic id="482">
+                                <heading id="484" level="3">
+                                  <link name="3 minutes, 46 seconds" id="485" focusable="true" url="https://www.youtube.com/watch?v=fWWRzCIwm98&amp;list=RDfWWRzCIwm98&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    Light at the end of the tunnel
+                                  </link>
+                                </heading>
+                                <group id="490">
+                                  <link id="492" focusable="true" url="https://www.youtube.com/channel/UCMXbppLZP_Mr8-G9XHYG9dA">
+                                    D.I.O.D.O - Topic
+                                  </link>
+                                  80K views
+                                </group>
+                                <generic id="498">
+                                  <button name="More actions" id="500" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="503">
+                            <generic id="519">
+                              <generic id="520">
+                                <heading id="522" level="3">
+                                  <link name="4 minutes, 38 seconds" id="523" focusable="true" url="https://www.youtube.com/watch?v=hgPy5SAlkSw&amp;list=RDhgPy5SAlkSw&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    Lofi For your ears
+                                  </link>
+                                </heading>
+                                <group id="528">
+                                  <link id="530" focusable="true" url="https://www.youtube.com/channel/UCMXbppLZP_Mr8-G9XHYG9dA">
+                                    D.I.O.D.O - Topic
+                                  </link>
+                                  1M views
+                                </group>
+                                <generic id="536">
+                                  <button name="More actions" id="538" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="541">
+                            <generic id="557">
+                              <generic id="558">
+                                <heading id="560" level="3">
+                                  <link name="3 minutes, 18 seconds" id="561" focusable="true" url="https://www.youtube.com/watch?v=M0ecZFXs-VM&amp;list=RDM0ecZFXs-VM&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    just with my guitar
+                                  </link>
+                                </heading>
+                                <group id="566">
+                                  <link id="568" focusable="true" url="https://www.youtube.com/channel/UCMXbppLZP_Mr8-G9XHYG9dA">
+                                    D.I.O.D.O - Topic
+                                  </link>
+                                  4.3M views
+                                </group>
+                                <generic id="574">
+                                  <button name="More actions" id="576" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="579">
+                            <generic id="595">
+                              <generic id="596">
+                                <heading id="598" level="3">
+                                  <link name="3 minutes, 28 seconds" id="599" focusable="true" url="https://www.youtube.com/watch?v=uqhkVpTIqGU&amp;list=RDuqhkVpTIqGU&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    total relax
+                                  </link>
+                                </heading>
+                                <group id="604">
+                                  <link id="606" focusable="true" url="https://www.youtube.com/channel/UCMXbppLZP_Mr8-G9XHYG9dA">
+                                    D.I.O.D.O - Topic
+                                  </link>
+                                  820K views
+                                </group>
+                                <generic id="612">
+                                  <button name="More actions" id="614" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="617">
+                            <generic id="633">
+                              <generic id="634">
+                                <heading id="636" level="3">
+                                  <link name="2 minutes, 12 seconds" id="637" focusable="true" url="https://www.youtube.com/watch?v=yWSBjFIyyJY&amp;list=RDyWSBjFIyyJY&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    Boat to drift
+                                  </link>
+                                </heading>
+                                <group id="642">
+                                  <link id="644" focusable="true" url="https://www.youtube.com/channel/UCMXbppLZP_Mr8-G9XHYG9dA">
+                                    D.I.O.D.O - Topic
+                                  </link>
+                                  13K views
+                                </group>
+                                <generic id="650">
+                                  <button name="More actions" id="652" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="655">
+                            <generic id="671">
+                              <generic id="672">
+                                <heading id="674" level="3">
+                                  <link name="2 minutes, 56 seconds" id="675" focusable="true" url="https://www.youtube.com/watch?v=ld3h8wVmUvg&amp;list=RDld3h8wVmUvg&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    Base De Rap Nostalgica
+                                  </link>
+                                </heading>
+                                <group id="680">
+                                  <link id="682" focusable="true" url="https://www.youtube.com/channel/UCaVgrZwDWb6AAH8jJBB-wMg">
+                                    Beats Instrumental Lofi - Topic
+                                  </link>
+                                  63K views
+                                </group>
+                                <generic id="688">
+                                  <button name="More actions" id="690" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="693">
+                            <generic id="709">
+                              <generic id="710">
+                                <heading id="712" level="3">
+                                  <link name="2 minutes, 13 seconds" id="713" focusable="true" url="https://www.youtube.com/watch?v=KFdmNZgCCuc&amp;list=RDKFdmNZgCCuc&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    straizo - laidback 😴 dreamy lofi jazz vibes (royalty-free music)
+                                  </link>
+                                </heading>
+                                <group id="720">
+                                  <link id="722" focusable="true" url="https://www.youtube.com/@tamamusic">
+                                    Tama's Little Music Shop
+                                  </link>
+                                  3K views
+                                  <generic id="728">
+                                    1 year ago
+                                  </generic>
+                                </group>
+                                <generic id="731">
+                                  <button name="More actions" id="733" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="736">
+                            <generic id="752">
+                              <generic id="753">
+                                <heading id="755" level="3">
+                                  <link name="2 minutes, 56 seconds" id="756" focusable="true" url="https://www.youtube.com/watch?v=kvGh9WuVdtM&amp;list=RDkvGh9WuVdtM&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    Cold night
+                                  </link>
+                                </heading>
+                                <group id="761">
+                                  <link id="763" focusable="true" url="https://www.youtube.com/channel/UCMXbppLZP_Mr8-G9XHYG9dA">
+                                    D.I.O.D.O - Topic
+                                  </link>
+                                  3.4K views
+                                </group>
+                                <generic id="769">
+                                  <button name="More actions" id="771" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="774">
+                            <generic id="790">
+                              <generic id="791">
+                                <heading id="793" level="3">
+                                  <link name="2 minutes, 3 seconds" id="794" focusable="true" url="https://www.youtube.com/watch?v=NBbb9YTnEqM&amp;list=RDNBbb9YTnEqM&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    rato - shimmering waves 🌊 chill lofi jazz vibes (royalty-free music)
+                                  </link>
+                                </heading>
+                                <group id="801">
+                                  <link id="803" focusable="true" url="https://www.youtube.com/@tamamusic">
+                                    Tama's Little Music Shop
+                                  </link>
+                                  1.2K views
+                                  <generic id="809">
+                                    10 months ago
+                                  </generic>
+                                </group>
+                                <generic id="812">
+                                  <button name="More actions" id="814" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="817">
+                            <generic id="833">
+                              <generic id="834">
+                                <heading id="836" level="3">
+                                  <link name="4 minutes, 17 seconds" id="837" focusable="true" url="https://www.youtube.com/watch?v=ChtKOKWt2qQ&amp;list=RDChtKOKWt2qQ&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                    Inner peace
+                                  </link>
+                                </heading>
+                                <group id="842">
+                                  <link id="844" focusable="true" url="https://www.youtube.com/channel/UCH_80085NMjKadl1kwdsXvg">
+                                    V I B E - Topic
+                                  </link>
+                                  83K views
+                                </group>
+                                <generic id="850">
+                                  <button name="More actions" id="852" invalid="false" focusable="true"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                        <generic id="853">
+                          <button name="Next" id="855" invalid="false" focusable="true"/>
+                        </generic>
+                      </generic>
+                    </generic>
+                    <generic id="857">
+                      <generic id="858">
+                        <generic id="859"/>
+                        <generic id="893">
+                          <generic id="894">
+                            <generic id="895">
+                              <heading name="" id="896" level="3">
+                                <link name="" id="897" focusable="true" url="https://www.youtube.com/watch?v=n61ULEU7CO0&amp;list=RDn61ULEU7CO0&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="6 hours, 10 minutes" id="898">
+                                    Best of lofi hip hop 2021 ✨ [beats to relax/study to]
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="901">
+                                <generic id="905">
+                                  <button name="Action menu" id="906" invalid="false" focusable="true">
+                                    <generic id="907"/>
+                                  </button>
+                                  <generic id="910"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="914">
+                              <generic id="915">
+                                56M views•4 years ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="926">
+                            <link name="Go to channel Lofi Girl" id="927" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow"/>
+                            <generic id="929">
+                              <generic id="930">
+                                <generic id="931">
+                                  <generic id="932">
+                                    <link id="933" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow">
+                                      Lofi Girl
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="941">
+                                <generic id="942">
+                                  <image name="Official Artist Channel" id="943"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="948">
+                            Listen on Spotify, Apple music and more → https://fanlink.tv/BestofLofi2021 The new Lofi Girl compilation “Best of 2021” is out now ...
+                            <tooltip name="tooltip" id="956" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="959"/>
+                    </generic>
+                  </generic>
+                  <generic id="966">
+                    <generic id="967">
+                      <generic id="968">
+                        <generic id="970"/>
+                        <generic id="976">
+                          <generic id="979" focusable="true">
+                            <link id="980" focusable="true" url="https://www.google.com/aclk?sa=L&amp;ai=DChsSEwiLxPas-oWWAxVEJYMDHYDMJysYACICCAEQABoCc2Y&amp;co=1&amp;ase=2&amp;gclid=EAIaIQobChMIi8T2rPqFlgMVRCWDAx2AzCcrEAEYASAAEgKwnvD_BwE&amp;num=1&amp;cid=CAASuwHkaMphMGzTMuRaJXw7k4yUFE5cpqWzQNoaY2puPEdsClCharER-vX7Mz7oxW4fMJ8aNTle6ZbxeKADbuPrRL-fooiW5Avw5zoVGLhMfJvU_GPfnlhFBTKCZfmZjbmfObiB7SCH2JrKgVf7qdSTn6RJyD8cv9G4PtjXvIYMSU7wbnOoaREKiojmPyaLh-hZkW0Pohfdl9-gynGRZFNwcY0oNqCvOvU-5MNJ2vJe3OtfZQ1DEBVNOcft5zdS&amp;cce=2&amp;category=acrcp_v1_32&amp;sig=AOD64_1gsumVXlMP96uvtZhlXtmH7jRP6w&amp;adurl=https://www.epidemicsound.com/music/genres/lo-fi%3Futm_source%3Dgoogle%26utm_medium%3Dpaidsearch%26utm_campaign%3D23377461569%26utm_term%3Dlo-fi%2520music%26gad_source%3D2%26gad_campaignid%3D23377461569&amp;ms=%5BCLICK_MS%5D&amp;nx=%5BNX%5D&amp;ny=%5BNY%5D&amp;nb=0">
+                              Royalty Free Lo-fi Music - Used by the Biggest Creators - Epidemic Sound
+                            </link>
+                          </generic>
+                          <generic id="984" focusable="true">
+                            <link id="985" focusable="true" url="https://www.google.com/aclk?sa=L&amp;ai=DChsSEwiLxPas-oWWAxVEJYMDHYDMJysYACICCAEQABoCc2Y&amp;co=1&amp;ase=2&amp;gclid=EAIaIQobChMIi8T2rPqFlgMVRCWDAx2AzCcrEAEYASAAEgKwnvD_BwE&amp;num=1&amp;cid=CAASuwHkaMphMGzTMuRaJXw7k4yUFE5cpqWzQNoaY2puPEdsClCharER-vX7Mz7oxW4fMJ8aNTle6ZbxeKADbuPrRL-fooiW5Avw5zoVGLhMfJvU_GPfnlhFBTKCZfmZjbmfObiB7SCH2JrKgVf7qdSTn6RJyD8cv9G4PtjXvIYMSU7wbnOoaREKiojmPyaLh-hZkW0Pohfdl9-gynGRZFNwcY0oNqCvOvU-5MNJ2vJe3OtfZQ1DEBVNOcft5zdS&amp;cce=2&amp;category=acrcp_v1_32&amp;sig=AOD64_1gsumVXlMP96uvtZhlXtmH7jRP6w&amp;adurl=https://www.epidemicsound.com/music/genres/lo-fi%3Futm_source%3Dgoogle%26utm_medium%3Dpaidsearch%26utm_campaign%3D23377461569%26utm_term%3Dlo-fi%2520music%26gad_source%3D2%26gad_campaignid%3D23377461569&amp;ms=%5BCLICK_MS%5D&amp;nx=%5BNX%5D&amp;ny=%5BNY%5D&amp;nb=7">
+                              Enjoy Unlimited Access to 55,000+ High-Quality Music Tracks and 250,000+ Sound Effects. No Legal Stress, Admin, or Hidden Fees...
+                            </link>
+                          </generic>
+                          <generic id="990">
+                            <generic id="992">
+                              Sponsored
+                            </generic>
+                            <generic id="995">
+                              ·
+                            </generic>
+                          </generic>
+                          <generic id="998">
+                            https://www.epidemicsound.com/rock/lo-fi+music
+                          </generic>
+                          <generic id="1002">
+                            <button name="My Ad Center" id="1004" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                    </generic>
+                  </generic>
+                  <generic id="1009">
+                    <generic id="1010">
+                      <generic id="1011">
+                        <generic id="1012"/>
+                        <generic id="1046">
+                          <generic id="1047">
+                            <generic id="1048">
+                              <heading name="" id="1049" level="3">
+                                <link name="" id="1050" focusable="true" url="https://www.youtube.com/watch?v=BCxTQq0UiFs&amp;list=RDBCxTQq0UiFs&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="1 hour, 42 minutes" id="1051">
+                                    Chill Lofi Beats Mix [chill lo-fi hip hop beats/Study &amp; Relax Music] Vol. 32
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="1054">
+                                <generic id="1058">
+                                  <button name="Action menu" id="1059" invalid="false" focusable="true">
+                                    <generic id="1060"/>
+                                  </button>
+                                  <generic id="1063"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="1067">
+                              <generic id="1068">
+                                5.7M views•1 year ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1079">
+                            <link name="Go to channel Art Is Sound" id="1080" focusable="true" url="https://www.youtube.com/@artissound7"/>
+                            <generic id="1081">
+                              <generic id="1082">
+                                <generic id="1083">
+                                  <generic id="1084">
+                                    <link id="1085" focusable="true" url="https://www.youtube.com/@artissound7">
+                                      Art Is Sound
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1091">
+                            lofimusic #chill #lofi #lofihiphop # Chill Lofi Beats [chill lo-fi hip hop beats] Chill Drive - Lofi hip hop mix - Stress Relief, Relaxing ...
+                            <tooltip name="tooltip" id="1099" focusable="true"/>
+                          </generic>
+                          <generic id="1100">
+                            <generic id="1102">
+                              <generic id="1103">
+                                <image id="1104">
+                                  <generic id="1105">
+                                    4K
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="1110"/>
+                    </generic>
+                    <generic id="1113">
+                      <generic id="1114">
+                        <generic id="1115"/>
+                        <generic id="1127">
+                          <generic id="1128">
+                            <generic id="1129">
+                              <heading id="1130" level="3">
+                                <link id="1131" focusable="true" url="https://www.youtube.com/watch?v=X4VbdwhkE10&amp;pp=ygUKbG9maSBiZWF0cw%3D%3D">
+                                  <generic id="1132">
+                                    lofi hip hop radio 📚 beats to relax/study to
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="1135">
+                                <generic id="1139">
+                                  <button name="Action menu" id="1140" invalid="false" focusable="true">
+                                    <generic id="1141"/>
+                                  </button>
+                                  <generic id="1144"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="1148">
+                              <generic id="1149">
+                                9.6K watching
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1154">
+                            <link name="Go to channel Lofi Girl" id="1155" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow"/>
+                            <generic id="1156">
+                              <generic id="1157">
+                                <generic id="1158">
+                                  <generic id="1159">
+                                    <link id="1160" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow">
+                                      Lofi Girl
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="1168">
+                                <generic id="1169">
+                                  <image name="Official Artist Channel" id="1170"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1175">
+                            Listen on Spotify, Apple music and more → https://lnk.to/lofi-hiphop-beats-to-relax-study-to02 | Lofi Girl on all social media ...
+                            <tooltip name="tooltip" id="1191" focusable="true"/>
+                          </generic>
+                          <generic id="1192">
+                            <generic id="1194">
+                              <generic id="1195">
+                                <image id="1196">
+                                  <generic id="1200">
+                                    LIVE
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="1205"/>
+                    </generic>
+                  </generic>
+                  <generic id="1212">
+                    <generic id="1213">
+                      <generic id="1214">
+                        <generic id="1216"/>
+                        <generic id="1222">
+                          <generic id="1225" focusable="true">
+                            <link id="1226" focusable="true" url="https://www.google.com/aclk?sa=L&amp;ai=DChsSEwiLxPas-oWWAxVEJYMDHYDMJysYACICCAEQAhoCc2Y&amp;co=1&amp;ase=2&amp;gclid=EAIaIQobChMIi8T2rPqFlgMVRCWDAx2AzCcrEAEYAiAAEgIQnfD_BwE&amp;num=2&amp;cid=CAASuwHkaMphMGzTMuRaJXw7k4yUFE5cpqWzQNoaY2puPEdsClCharER-vX7Mz7oxW4fMJ8aNTle6ZbxeKADbuPrRL-fooiW5Avw5zoVGLhMfJvU_GPfnlhFBTKCZfmZjbmfObiB7SCH2JrKgVf7qdSTn6RJyD8cv9G4PtjXvIYMSU7wbnOoaREKiojmPyaLh-hZkW0Pohfdl9-gynGRZFNwcY0oNqCvOvU-5MNJ2vJe3OtfZQ1DEBVNOcft5zdS&amp;cce=2&amp;category=acrcp_v1_32&amp;sig=AOD64_3_upR7S61kcyqJIMyptP-9zZvQXw&amp;adurl=https://elements.envato.com/audio/lofi%2Bbeats%3Fadposition%3D%26gad_source%3D2%26gad_campaignid%3D15350050534&amp;ms=%5BCLICK_MS%5D&amp;nx=%5BNX%5D&amp;ny=%5BNY%5D&amp;nb=0">
+                              Royalty-Free Lofi Beats Audio Tracks - Envato
+                            </link>
+                          </generic>
+                          <generic id="1230" focusable="true">
+                            <link id="1231" focusable="true" url="https://www.google.com/aclk?sa=L&amp;ai=DChsSEwiLxPas-oWWAxVEJYMDHYDMJysYACICCAEQAhoCc2Y&amp;co=1&amp;ase=2&amp;gclid=EAIaIQobChMIi8T2rPqFlgMVRCWDAx2AzCcrEAEYAiAAEgIQnfD_BwE&amp;num=2&amp;cid=CAASuwHkaMphMGzTMuRaJXw7k4yUFE5cpqWzQNoaY2puPEdsClCharER-vX7Mz7oxW4fMJ8aNTle6ZbxeKADbuPrRL-fooiW5Avw5zoVGLhMfJvU_GPfnlhFBTKCZfmZjbmfObiB7SCH2JrKgVf7qdSTn6RJyD8cv9G4PtjXvIYMSU7wbnOoaREKiojmPyaLh-hZkW0Pohfdl9-gynGRZFNwcY0oNqCvOvU-5MNJ2vJe3OtfZQ1DEBVNOcft5zdS&amp;cce=2&amp;category=acrcp_v1_32&amp;sig=AOD64_3_upR7S61kcyqJIMyptP-9zZvQXw&amp;adurl=https://elements.envato.com/audio/lofi%2Bbeats%3Fadposition%3D%26gad_source%3D2%26gad_campaignid%3D15350050534&amp;ms=%5BCLICK_MS%5D&amp;nx=%5BNX%5D&amp;ny=%5BNY%5D&amp;nb=7">
+                              1,000s of High Quality Music Tracks to Amplify your Project. Unlimited Downloads! Premium Audio Tracks, Composed by Experts to...
+                            </link>
+                          </generic>
+                          <generic id="1236">
+                            <generic id="1238">
+                              Sponsored
+                            </generic>
+                            <generic id="1241">
+                              ·
+                            </generic>
+                          </generic>
+                          <generic id="1244">
+                            https://elements.envato.com/
+                          </generic>
+                          <generic id="1248">
+                            <button name="My Ad Center" id="1250" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                    </generic>
+                  </generic>
+                  <generic id="1255">
+                    <generic id="1256">
+                      <generic id="1257">
+                        <generic id="1258"/>
+                        <generic id="1292">
+                          <generic id="1293">
+                            <generic id="1294">
+                              <heading name="" id="1295" level="3">
+                                <link name="" id="1296" focusable="true" url="https://www.youtube.com/watch?v=XVFUtEh9zrY&amp;list=RDXVFUtEh9zrY&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="1 hour, 1 minute" id="1297">
+                                    summer lofi ☀️ chill beats to relax to
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="1300">
+                                <generic id="1304">
+                                  <button name="Action menu" id="1305" invalid="false" focusable="true">
+                                    <generic id="1306"/>
+                                  </button>
+                                  <generic id="1309"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="1313">
+                              <generic id="1314">
+                                274K views•13 days ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1325">
+                            <link name="Go to channel Lofi Girl" id="1326" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow"/>
+                            <generic id="1327">
+                              <generic id="1328">
+                                <generic id="1329">
+                                  <generic id="1330">
+                                    <link id="1331" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow">
+                                      Lofi Girl
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="1339">
+                                <generic id="1340">
+                                  <image name="Official Artist Channel" id="1341"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1346">
+                            Turn the page to a warmer chapter. Part two of our 2026 Seasons Collection brings you hours of sun-kissed summer lofi and lazy ...
+                            <tooltip name="tooltip" id="1354" focusable="true"/>
+                          </generic>
+                          <generic id="1355">
+                            <generic id="1356">
+                              <generic id="1357">
+                                <generic id="1358">
+                                  <generic id="1360">
+                                    <generic id="1361">
+                                      28 chapters
+                                    </generic>
+                                  </generic>
+                                  <button id="1366">
+                                    odem medo, Theo Juarez - Ocean Mist | Lenny B - Toldo | GlobulDub, Fred Paci - Shoreline Samba | Comodo, ZENDR - Blue Waves | Toti Cisneros, D Boas - Encontros | flowray, Hans Hu$tle - voar | Cloudsurfin', Bhxa - Linen Skies | Jason Masoud, vhskid. - Sunflower Island | Sebastian Kamae, Mindr - Piña Colada | Phlocalyst, Mr. Käfer, keeplove., Viktor Minsky - Vacation Mode | Sheath, hotpotatoes, Mike Beating - Seaside | Sátyr, donkeychote - Sunwashed | Fugee - Café Saudade | Aisake, j'san - Warm sand | Lazlow - Esperanto | ØDYSSEE, Gatz2gatz - Hibiscus | Odd Panda, Hikari - Granada Breeze | softy, twofiveone - High Tide | xander., jaackson - summer heat | Swink - groves | møndberg, marsquake - Juneberry | Dani Català, dennisivnvc, Jost Esser - Copacabana | amies, Dosi - Beachday | lov sum, Beach Pomodoros - Costa Brava | Slo Loris - cashmere | iamalex, Blossum, Felty - Golden Hour | Lucid Keys - lazy afternoon | HoKø, Christophe Cravero - Tropical Ease
+                                  </button>
+                                </generic>
+                                <generic id="1382">
+                                  <generic id="1383">
+                                    <generic id="1384">
+                                      <button name="More" id="1386" invalid="false" focusable="true"/>
+                                    </generic>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="1389"/>
+                    </generic>
+                    <generic id="1392">
+                      <generic id="1393">
+                        <generic id="1394"/>
+                        <generic id="1406">
+                          <generic id="1407">
+                            <generic id="1408">
+                              <heading id="1409" level="3">
+                                <link id="1410" focusable="true" url="https://www.youtube.com/watch?v=4xDzrJKXOOY&amp;pp=ygUKbG9maSBiZWF0cw%3D%3D">
+                                  <generic id="1411">
+                                    synthwave radio 🌌 beats to chill/game to
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="1414">
+                                <generic id="1418">
+                                  <button name="Action menu" id="1419" invalid="false" focusable="true">
+                                    <generic id="1420"/>
+                                  </button>
+                                  <generic id="1423"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="1427">
+                              <generic id="1428">
+                                1.5K watching
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1433">
+                            <link name="Go to channel Lofi Girl" id="1434" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow"/>
+                            <generic id="1435">
+                              <generic id="1436">
+                                <generic id="1437">
+                                  <generic id="1438">
+                                    <link id="1439" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow">
+                                      Lofi Girl
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="1447">
+                                <generic id="1448">
+                                  <image name="Official Artist Channel" id="1449"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1454">
+                            Listen on Spotify, Apple music and more → https://fanlink.tv/ChillSynthwave | Subscribe to this channel for more synthwave ...
+                            <tooltip name="tooltip" id="1458" focusable="true"/>
+                          </generic>
+                          <generic id="1459">
+                            <generic id="1461">
+                              <generic id="1462">
+                                <image id="1463">
+                                  <generic id="1467">
+                                    LIVE
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="1472"/>
+                    </generic>
+                    <generic id="1475">
+                      <generic id="1476">
+                        <generic id="1477"/>
+                        <generic id="1511">
+                          <generic id="1512">
+                            <generic id="1513">
+                              <heading name="" id="1514" level="3">
+                                <link name="" id="1515" focusable="true" url="https://www.youtube.com/watch?v=Q89Dzox4jAE&amp;list=RDQ89Dzox4jAE&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="11 hours, 54 minutes" id="1516">
+                                    Lofi Work Space 📂 Deep Focus Study/Work Concentration [chill lo-fi hip hop beats]
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="1520">
+                                <generic id="1524">
+                                  <button name="Action menu" id="1525" invalid="false" focusable="true">
+                                    <generic id="1526"/>
+                                  </button>
+                                  <generic id="1529"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="1533">
+                              <generic id="1534">
+                                4.8M views•Streamed 2 years ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1545">
+                            <link name="Go to channel 𝗖𝗛𝗜𝗟𝗟 𝗩𝗜𝗟𝗟𝗔𝗚𝗘" id="1546" focusable="true" url="https://www.youtube.com/channel/UCsxTsDvh-xQnShEtN1M64zQ"/>
+                            <generic id="1547">
+                              <generic id="1548">
+                                <generic id="1549">
+                                  <generic id="1550">
+                                    <link id="1551" focusable="true" url="https://www.youtube.com/channel/UCsxTsDvh-xQnShEtN1M64zQ">
+                                      𝗖 𝗛 𝗜 𝗟 𝗟 𝗩 𝗜 𝗟 𝗟 𝗔 𝗚 𝗘
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="1559">
+                                <generic id="1560">
+                                  <image name="Official Artist Channel" id="1561"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1566">
+                            Lofi Work Space Deep Focus Study/Work Concentration [chill lo-fi hip hop beats] #Lofi #DeepFocus #Concentration #Daily ...
+                            <tooltip name="tooltip" id="1585" focusable="true"/>
+                          </generic>
+                          <generic id="1586">
+                            <generic id="1587">
+                              <generic id="1588">
+                                <generic id="1589">
+                                  <generic id="1591">
+                                    <generic id="1592">
+                                      16 chapters
+                                    </generic>
+                                  </generic>
+                                  <button id="1597">
+                                    1. Wind - kust | 2. Warm By The Fire - Dreamfield, Goson | 3. Touch - Løstt, aura | 4. Taste of the Sun - MujjO | 5. Take Me Home - BVG, Møndberg | 6. Satisfied - Løstt, aura | 7. Path of the Spring - aura , Hitkend ChillLab | 8. New Arturia - Uinzagui | 9. MVP - Uinzagui | 10. Just An Ordinary Day - aura | 11. Icy Lemon - aura, Hitkend ChillLab | 12. Floating Forest - Darsena, Simadì | 13. Field Of Dreamers - Dreamfield &amp; Summit One | 14. Cotton Candy - aura , Hitkend ChillLab | 15. Cherry Blossom - aura , Hitkend ChillLab | 16. Calling - kust
+                                  </button>
+                                </generic>
+                                <generic id="1607">
+                                  <generic id="1608">
+                                    <generic id="1609">
+                                      <button name="More" id="1611" invalid="false" focusable="true"/>
+                                    </generic>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="1614"/>
+                    </generic>
+                    <generic id="1617">
+                      <generic id="1618">
+                        <generic id="1619"/>
+                        <generic id="1653">
+                          <generic id="1654">
+                            <generic id="1655">
+                              <heading name="" id="1656" level="3">
+                                <link name="" id="1657" focusable="true" url="https://www.youtube.com/watch?v=ovS27OGTajs&amp;list=RDovS27OGTajs&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="3 hours, 25 minutes" id="1658">
+                                    Lofi Summer Vibes 🌊 Seaside Coffee &amp; Relaxing Lofi for a Sense of Peace ☕ Hip Hop Beats
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="1662">
+                                <generic id="1666">
+                                  <button name="Action menu" id="1667" invalid="false" focusable="true">
+                                    <generic id="1668"/>
+                                  </button>
+                                  <generic id="1671"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="1675">
+                              <generic id="1676">
+                                328K views•3 months ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1687">
+                            <link name="Go to channel Little Lofi Cute" id="1688" focusable="true" url="https://www.youtube.com/@LittleLofiCute"/>
+                            <generic id="1689">
+                              <generic id="1690">
+                                <generic id="1691">
+                                  <generic id="1692">
+                                    <link id="1693" focusable="true" url="https://www.youtube.com/@LittleLofiCute">
+                                      Little Lofi Cute
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1699">
+                            Lofi Summer Vibes Seaside Coffee &amp; Relaxing Lofi for a Sense of Peace ☕ Hip Hop Beats Hiii~ This is "Little Lofi Cute" ...
+                            <tooltip name="tooltip" id="1716" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="1719"/>
+                    </generic>
+                    <generic id="1722">
+                      <generic id="1723">
+                        <generic id="1724"/>
+                        <generic id="1758">
+                          <generic id="1759">
+                            <generic id="1760">
+                              <heading name="" id="1761" level="3">
+                                <link name="" id="1762" focusable="true" url="https://www.youtube.com/watch?v=BYTxPFj44uo&amp;list=RDBYTxPFj44uo&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="3 hours, 31 minutes" id="1763">
+                                    Why the rush? - lo-fi beats for work/study / cat jazz
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="1766">
+                                <generic id="1770">
+                                  <button name="Action menu" id="1771" invalid="false" focusable="true">
+                                    <generic id="1772"/>
+                                  </button>
+                                  <generic id="1775"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="1779">
+                              <generic id="1780">
+                                4.9M views•1 year ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1791">
+                            <link name="Go to channel chill chill journal" id="1792" focusable="true" url="https://www.youtube.com/channel/UCiC2wfbkgr8DU5uOQFz9OrQ"/>
+                            <generic id="1793">
+                              <generic id="1794">
+                                <generic id="1795">
+                                  <generic id="1796">
+                                    <link id="1797" focusable="true" url="https://www.youtube.com/channel/UCiC2wfbkgr8DU5uOQFz9OrQ">
+                                      chill chill journal
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="1805">
+                                <generic id="1806">
+                                  <image name="Official Artist Channel" id="1807"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1812">
+                            jazzhop #chillhop #citypop #rainlofi #lofirain #studymusic #studywithme #lofi #lofihiphop #lofibeats #beatstostudy #chillmusic ...
+                            <tooltip name="tooltip" id="1821" focusable="true"/>
+                          </generic>
+                          <generic id="1822">
+                            <generic id="1823">
+                              <generic id="1824">
+                                <generic id="1825">
+                                  <generic id="1827">
+                                    <generic id="1828">
+                                      53 chapters
+                                    </generic>
+                                  </generic>
+                                  <button id="1833">
+                                    Peace Moves Without Pressure | Quiet Moments Heal Best | Stillness Makes Room For Thought | You’re Allowed To Pause | Lo-fi Waits Without Worry | Calm Beats Feel Just Right | Slow Down To Feel More | Rushing Misses The Meaning | Gentle Days Build Balance | Rest Grows Stronger Roots | Soft Rhythms Settle The Mind | Pause To Hear Yourself | Ease Is A Hidden Power | The Best Pace Is Yours | Peace Doesn’t Compete | No Need To Hurry Now | Quiet Hours Speak Clearer | Lo-fi Drifts In Patience | Moments Bloom In Silence | Still Steps Feel Deeper | Tranquil Sounds Carry Farther | True Rest Resets The Focus | Soft Sounds Heal Gently | Breathe Before You Move | Wait Until You’re Ready | Less Motion More Meaning | Silent Flow Builds Clarity | Comfort Lives In Slowness | Chill Beats Bring Depth | Patience Makes Progress Possible | Don’t Rush What’s Real | Let Go Of The Clock | Relaxation Creates Rhythm | Presence Is Powerful Enough | Lo-fi Time Runs Slower | Calm Tones Say Enough | Soft Beats Don’t Rush | Peaceful Loops Guide The Way | Space Makes The Music Sing | The Moment Is Already Here | Still Doesn’t Mean Stopped | Softer Sounds Hit Deeper | Balance Doesn’t Rush In | You’re Growing Even Now | No Rush To Be Great | Quiet Days Count Too | Move When It Feels Right | Lo-fi Never Hurries | Calm Starts From Within | Peace Waits Inside You | Gentle Flow Needs Time | Take A Break For Real | Slow Moments Hold Magic
+                                  </button>
+                                </generic>
+                                <generic id="1855">
+                                  <generic id="1856">
+                                    <generic id="1857">
+                                      <button name="More" id="1859" invalid="false" focusable="true"/>
+                                    </generic>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="1862"/>
+                    </generic>
+                    <generic id="1865">
+                      <generic id="1866">
+                        <generic id="1867"/>
+                        <generic id="1901">
+                          <generic id="1902">
+                            <generic id="1903">
+                              <heading name="" id="1904" level="3">
+                                <link name="" id="1905" focusable="true" url="https://www.youtube.com/watch?v=Tlw1Oac7KxQ&amp;list=RDTlw1Oac7KxQ&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="4 hours, 33 minutes" id="1906">
+                                    Lofi Morning Vibes - Chill Beats for a Fresh Start | No Ads | Lofi by EchoLofi
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="1910">
+                                <generic id="1914">
+                                  <button name="Action menu" id="1915" invalid="false" focusable="true">
+                                    <generic id="1916"/>
+                                  </button>
+                                  <generic id="1919"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="1923">
+                              <generic id="1924">
+                                173K views•11 months ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1935">
+                            <link name="Go to channel EchoLofi" id="1936" focusable="true" url="https://www.youtube.com/@EchoLofiii"/>
+                            <generic id="1937">
+                              <generic id="1938">
+                                <generic id="1939">
+                                  <generic id="1940">
+                                    <link id="1941" focusable="true" url="https://www.youtube.com/@EchoLofiii">
+                                      EchoLofi
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="1947">
+                            Lofi Morning Vibes - Chill Beats for a Fresh Start | No Ads | Lofi by EchoLofi Start your day with warm and relaxing Lofi beats, ...
+                            <tooltip name="tooltip" id="1955" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="1958"/>
+                    </generic>
+                    <generic id="1961">
+                      <generic id="1962">
+                        <generic id="1963"/>
+                        <generic id="1997">
+                          <generic id="1998">
+                            <generic id="1999">
+                              <heading name="" id="2000" level="3">
+                                <link name="" id="2001" focusable="true" url="https://www.youtube.com/watch?v=1J4a9cT2lkw&amp;list=RD1J4a9cT2lkw&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="4 hours, 27 minutes" id="2002">
+                                    Upbeat Lofi Mix ⚡️ Beats to Boost Your Energy &amp; Focus
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2005">
+                                <generic id="2009">
+                                  <button name="Action menu" id="2010" invalid="false" focusable="true">
+                                    <generic id="2011"/>
+                                  </button>
+                                  <generic id="2014"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2018">
+                              <generic id="2019">
+                                1M views•9 months ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2030">
+                            <link name="Go to channel Lofi Shop 24h" id="2031" focusable="true" url="https://www.youtube.com/@LofiShop24h"/>
+                            <generic id="2032">
+                              <generic id="2033">
+                                <generic id="2034">
+                                  <generic id="2035">
+                                    <link id="2036" focusable="true" url="https://www.youtube.com/@LofiShop24h">
+                                      Lofi Shop 24h
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2042">
+                            Upbeat Lofi Mix ⚡️ Beats to Boost Your Energy &amp; Focus Kickstart your day with the Lofi Morning Boost ☀️. This is your daily ...
+                            <tooltip name="tooltip" id="2058" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2061"/>
+                    </generic>
+                    <generic id="2064">
+                      <generic id="2065">
+                        <generic id="2066"/>
+                        <generic id="2100">
+                          <generic id="2101">
+                            <generic id="2102">
+                              <heading name="" id="2103" level="3">
+                                <link name="" id="2104" focusable="true" url="https://www.youtube.com/watch?v=sF80I-TQiW0&amp;list=RDsF80I-TQiW0&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAdIHCQmjCwGHKiGM7w%3D%3D">
+                                  <generic name="11 hours, 53 minutes" id="2105">
+                                    90's Chill Lofi ☕️ Study Music Lofi Rain Chillhop Beats ☔️ Lofi Rain Playlist
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2109">
+                                <generic id="2113">
+                                  <button name="Action menu" id="2114" invalid="false" focusable="true">
+                                    <generic id="2115"/>
+                                  </button>
+                                  <generic id="2118"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2122">
+                              <generic id="2123">
+                                26M views•Streamed 2 years ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2134">
+                            <link name="Go to channel The Japanese Town" id="2135" focusable="true" url="https://www.youtube.com/@TheJapaneseTown-jt6fy"/>
+                            <generic id="2136">
+                              <generic id="2137">
+                                <generic id="2138">
+                                  <generic id="2139">
+                                    <link id="2140" focusable="true" url="https://www.youtube.com/@TheJapaneseTown-jt6fy">
+                                      The Japanese Town
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2146">
+                            The Japanese Town is dedicated for lofi beats &amp; lofi rain music. We present relaxing rain Atmosphere and lofi ambience which is ...
+                            <tooltip name="tooltip" id="2154" focusable="true"/>
+                          </generic>
+                          <generic id="2155">
+                            <generic id="2157">
+                              <generic id="2158">
+                                <image id="2159">
+                                  <generic id="2160">
+                                    4K
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2165"/>
+                    </generic>
+                    <generic id="2168">
+                      <generic id="2169">
+                        <generic id="2170"/>
+                        <generic id="2204">
+                          <generic id="2205">
+                            <generic id="2206">
+                              <heading name="" id="2207" level="3">
+                                <link name="" id="2208" focusable="true" url="https://www.youtube.com/watch?v=CLeZyIID9Bo&amp;list=RDCLeZyIID9Bo&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="1 hour, 44 minutes" id="2209">
+                                    Chill Lofi Mix [chill lo-fi hip hop beats]
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2212">
+                                <generic id="2216">
+                                  <button name="Action menu" id="2217" invalid="false" focusable="true">
+                                    <generic id="2218"/>
+                                  </button>
+                                  <generic id="2221"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2225">
+                              <generic id="2226">
+                                34M views•3 years ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2237">
+                            <link name="Go to channel Settle" id="2238" focusable="true" url="https://www.youtube.com/@settlefm"/>
+                            <generic id="2239">
+                              <generic id="2240">
+                                <generic id="2241">
+                                  <generic id="2242">
+                                    <link id="2243" focusable="true" url="https://www.youtube.com/@settlefm">
+                                      Settle
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2249">
+                            YouTube Playlists: http://listen.settle.fm/youtube Listen on Spotify, Apple Music &amp; more: https://listen.settle.fm/playlists Tracklist ...
+                            <tooltip name="tooltip" id="2254" focusable="true"/>
+                          </generic>
+                          <generic id="2255">
+                            <generic id="2257">
+                              <generic id="2258">
+                                <image id="2259">
+                                  <generic id="2260">
+                                    4K
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2263">
+                            <generic id="2264">
+                              <generic id="2265">
+                                <generic id="2266">
+                                  <generic id="2268">
+                                    <generic id="2269">
+                                      53 chapters
+                                    </generic>
+                                  </generic>
+                                  <button id="2274">
+                                    Sutton – Lunch Break | Noji – Exhale | home grown – out of office | Hazue – Bloom | swiftly – happy place | Thymes – Free as a Bird | Noji – On My Way | Midnight Hour – Wanderlust | Sutton – Holiday | Ninn Tendo – Let’s Fly Away | Noji – Sultry | Kid City – Down by the Lake | Hazue – Motion | drowsy – homelands | Ninn Tendo – Beyond Reach | Sutton – Breezy | Lé Mon – Memory Lane | Sutton – Brighter Days | Midnight Hour – Soul Searching | home grown - dunes | drowsy – cozy | Kid City – Evening Walk | swiftly – leap of faith | Hazue – No Rush | Thymes – Daylight | Revoir – All By Myself | wide awake – evergreen | home grown – getaway | swiftly – daydreaming | wide awake – seize the day | drowsy – lost world | Kid City – Don’t Look Down | Hazue – Rest | swiftly – a late night | home grown – End of the Road | Lé Mon – Beauty | Midnight Hour – Serenity Now | drowsy – Earl Grey | swiftly – escapism | Hazue – Into The Night | Sutton – Pristine | Revoir, Ninn Tendo - Drift | swiftly – still falls the rain | drowsy – The Final Phase | Lé Mon – Sunset in Chicago | Sutton – High Springs | Kid City – Breakfast in Bed | Hazue, Sutton, home grown – Scotch and Soda | Lé Mon – Sunrise in Paris | Kid City – Hike | Ninn Tendo, Noji – Ocean Breeze | Hazue &amp; Lé Mon – Remember | home grown – Palms of Jupiter
+                                  </button>
+                                </generic>
+                                <generic id="2294">
+                                  <generic id="2295">
+                                    <generic id="2296">
+                                      <button name="More" id="2298" invalid="false" focusable="true"/>
+                                    </generic>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2301"/>
+                    </generic>
+                    <generic id="2304">
+                      <generic id="2305">
+                        <generic id="2306"/>
+                        <generic id="2318">
+                          <generic id="2319">
+                            <generic id="2320">
+                              <heading id="2321" level="3">
+                                <link id="2322" focusable="true" url="https://www.youtube.com/watch?v=IxPANmjPaek&amp;pp=ygUKbG9maSBiZWF0cw%3D%3D">
+                                  <generic id="2323">
+                                    medieval lofi radio 🏰 - beats to scribe manuscripts to
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2326">
+                                <generic id="2330">
+                                  <button name="Action menu" id="2331" invalid="false" focusable="true">
+                                    <generic id="2332"/>
+                                  </button>
+                                  <generic id="2335"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2339">
+                              <generic id="2340">
+                                222 watching
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2345">
+                            <link name="Go to channel Lofi Girl" id="2346" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow"/>
+                            <generic id="2347">
+                              <generic id="2348">
+                                <generic id="2349">
+                                  <generic id="2350">
+                                    <link id="2351" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow">
+                                      Lofi Girl
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="2359">
+                                <generic id="2360">
+                                  <image name="Official Artist Channel" id="2361"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2366">
+                            The medieval radio makes its return! Embark on a captivating journey through the medieval ages and immerse yourself in the ...
+                            <tooltip name="tooltip" id="2370" focusable="true"/>
+                          </generic>
+                          <generic id="2371">
+                            <generic id="2373">
+                              <generic id="2374">
+                                <image id="2375">
+                                  <generic id="2379">
+                                    LIVE
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2384"/>
+                    </generic>
+                    <generic id="2387">
+                      <generic id="2388">
+                        <generic id="2389"/>
+                        <generic id="2423">
+                          <generic id="2424">
+                            <generic id="2425">
+                              <heading name="" id="2426" level="3">
+                                <link name="" id="2427" focusable="true" url="https://www.youtube.com/watch?v=CFGLoQIhmow&amp;list=RDCFGLoQIhmow&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAdIHCQmjCwGHKiGM7w%3D%3D">
+                                  <generic name="2 hours, 50 minutes" id="2428">
+                                    lofi hip hop mix 📚 beats to relax/study to (Part 1)
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2431">
+                                <generic id="2435">
+                                  <button name="Action menu" id="2436" invalid="false" focusable="true">
+                                    <generic id="2437"/>
+                                  </button>
+                                  <generic id="2440"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2444">
+                              <generic id="2445">
+                                8.1M views•1 year ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2456">
+                            <link name="Go to channel Lofi Girl" id="2457" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow"/>
+                            <generic id="2458">
+                              <generic id="2459">
+                                <generic id="2460">
+                                  <generic id="2461">
+                                    <link id="2462" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow">
+                                      Lofi Girl
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="2470">
+                                <generic id="2471">
+                                  <image name="Official Artist Channel" id="2472"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2477">
+                            Lofi Girl Limited Print → https://bit.ly/3Ytqf6o | Listen on Spotify, Apple music and more → https://fanlink.tv/lofigirl-music | New ...
+                            <tooltip name="tooltip" id="2484" focusable="true"/>
+                          </generic>
+                          <generic id="2485">
+                            <generic id="2487">
+                              <generic id="2488">
+                                <image id="2489">
+                                  <generic id="2490">
+                                    4K
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2493">
+                            <generic id="2494">
+                              <generic id="2495">
+                                <generic id="2496">
+                                  <generic id="2498">
+                                    <generic id="2499">
+                                      68 chapters
+                                    </generic>
+                                  </generic>
+                                  <button id="2504">
+                                    No Spirit - Memories We Made | S N U G, Mondo Loops - Night Coffee | Yasumu - We Met | HM Surf - Sugar Haze | Blurred Figures, another silent weekend - snowfall | trxxshed, Jhove - Ivory | Lilac - Perfume | GlobulDub - Sail | SPEECHLESS - Pure Bliss | Oatmello - Thinking of You | Ajmw - Clouds | Oatmello, Epektase, Dayn - Innocent | drkmnd - Satellite Nights | Goodnyght - time for bed | Mavine - Lockdown | Lilac - Orchid | noni - Nocturnal | Miramare, smbdy/else - Down The Port | Blumen - Going South | Bhxa - ayla | Chiccote's Beats - Away | TyLuv. - Down by the Lake | S N U G - convo | goosetaf, fantompower - Spend Some Time | Sebastian Kamae - Berlin | Slo Loris - Riverside | Your Magnolia - Ventura | Louk, Glimlip - I'll Meet You At The Station | kudo - cool winds | Chris Mazuera, tender spring - First Snow | kyu - Stargazing | Plant Guy - Towards The Mountains | Blue Wednesday - Japanese Garden | Mindeliq, Neele Harder - Birds In The Sky | WYS - Trying To Sleep | juniorodeo, Delayde, azula - Marine Layer | Spencer Hunt - willow hill | Ivylake - As Time Goes By | Pandrezz - Snowflakes | Ornithology - Swaying Trees | Blue Wednesday - Wildflower | goosetaf, Blue Wednesday - Silk | kokoro - Cailín | Project AER - Where We Are | Pandrezz - Feelin Warm | Khutko, Blue Wednesday - Walk Out | Spencer Hunt - Dreamscape | Sátyr, Drxnk - Flood | Towerz - Hearts | Bhxa, Dimension 32 - breaking point | Team Astro - Blooming | thatlofiguy - Timeless Memories | Charlee Nguyen, Mondo Loops - Heart of the Sea | stream_error - orion | Cosmic Koala, Lucid Keys - Soothe | Swink, C4C - Fiesole | Towerz, Spencer Hunt - Pillows | Laffey - inner guidance | Kainbeats, mell-ø - Aquamarine Horizon | Aisake - The only one | HoKø - Skyscraper | Krynoze, Goson - Woofing Tales | idylla, Kainbeats - Dreamwisp | Sátyr, Phlocalyst - Back2Bed | Casiio, Kainbeats - Glowing Jellyfish | Mondo Loops - Wandering Another World | Tibeauthetraveler - Tranquility | Purrple Cat - Souvenir
+                                  </button>
+                                </generic>
+                                <generic id="2532">
+                                  <generic id="2533">
+                                    <generic id="2534">
+                                      <button name="More" id="2536" invalid="false" focusable="true"/>
+                                    </generic>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2539"/>
+                    </generic>
+                    <generic id="2542">
+                      <generic id="2543">
+                        <generic id="2544"/>
+                        <generic id="2578">
+                          <generic id="2579">
+                            <generic id="2580">
+                              <heading name="" id="2581" level="3">
+                                <link name="" id="2582" focusable="true" url="https://www.youtube.com/watch?v=rhrCG0Vtx3g&amp;list=RDrhrCG0Vtx3g&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="2 hours, 1 minute" id="2583">
+                                    High-Rise Urban Studio | Neo Soul, R&amp;B Lofi Chill Mix 🌇
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2586">
+                                <generic id="2590">
+                                  <button name="Action menu" id="2591" invalid="false" focusable="true">
+                                    <generic id="2592"/>
+                                  </button>
+                                  <generic id="2595"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2599">
+                              <generic id="2600">
+                                1.6M views•1 year ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2611">
+                            <link name="Go to channel CraftCozy Room" id="2612" focusable="true" url="https://www.youtube.com/channel/UCClZiNLIqCqMAiLDLETO6Zw"/>
+                            <generic id="2613">
+                              <generic id="2614">
+                                <generic id="2615">
+                                  <generic id="2616">
+                                    <link id="2617" focusable="true" url="https://www.youtube.com/channel/UCClZiNLIqCqMAiLDLETO6Zw">
+                                      CraftCozy Room
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="2625">
+                                <generic id="2626">
+                                  <image name="Official Artist Channel" id="2627"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2632">
+                            #neosoul #lofijazz #lofi #jazzhop #lofibeats #loungemusic #focusmusic #studymusic #chillvibes #mountainview #cityview #sm.
+                            <tooltip name="tooltip" id="2641" focusable="true"/>
+                          </generic>
+                          <generic id="2642">
+                            <generic id="2644">
+                              <generic id="2645">
+                                <image id="2646">
+                                  <generic id="2647">
+                                    4K
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2650">
+                            <generic id="2651">
+                              <generic id="2652">
+                                <generic id="2653">
+                                  <generic id="2655">
+                                    <generic id="2656">
+                                      11 chapters
+                                    </generic>
+                                  </generic>
+                                  <button id="2661">
+                                    High Rise | Urban Nomad | City Stroll | Lazy Nap | Rooftop View | Downtown Drive | Good Hangout | Nice Taste | The Same Bar | Back Again | High-Rise Urban Studio Repeat…
+                                  </button>
+                                </generic>
+                                <generic id="2667">
+                                  <generic id="2668">
+                                    <generic id="2669">
+                                      <button name="More" id="2671" invalid="false" focusable="true"/>
+                                    </generic>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2674"/>
+                    </generic>
+                    <generic id="2677">
+                      <generic id="2678">
+                        <generic id="2679"/>
+                        <generic id="2691">
+                          <generic id="2692">
+                            <generic id="2693">
+                              <heading id="2694" level="3">
+                                <link id="2695" focusable="true" url="https://www.youtube.com/watch?v=sCYBVZqWvBs&amp;pp=ygUKbG9maSBiZWF0cw%3D%3D">
+                                  <generic id="2696">
+                                    Nostalgic 🫧 Lofi Hip Hop Beats &amp; Japanese Town Ambience 🌆 Retro 1980s &amp; 90s Vibes Lofi Rain Playlist
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2700">
+                                <generic id="2704">
+                                  <button name="Action menu" id="2705" invalid="false" focusable="true">
+                                    <generic id="2706"/>
+                                  </button>
+                                  <generic id="2709"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2713">
+                              <generic id="2714">
+                                453 watching
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2719">
+                            <link name="Go to channel The Japanese Town" id="2720" focusable="true" url="https://www.youtube.com/@TheJapaneseTown-jt6fy"/>
+                            <generic id="2721">
+                              <generic id="2722">
+                                <generic id="2723">
+                                  <generic id="2724">
+                                    <link id="2725" focusable="true" url="https://www.youtube.com/@TheJapaneseTown-jt6fy">
+                                      The Japanese Town
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2731">
+                            The Japanese Town is dedicated for lofi beats &amp; lofi rain music. We present relaxing rain Atmosphere and lofi ambience which is ...
+                            <tooltip name="tooltip" id="2739" focusable="true"/>
+                          </generic>
+                          <generic id="2740">
+                            <generic id="2742">
+                              <generic id="2743">
+                                <image id="2744">
+                                  <generic id="2748">
+                                    LIVE
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                            <generic id="2751">
+                              <generic id="2752">
+                                <image id="2753">
+                                  <generic id="2754">
+                                    New
+                                  </generic>
+                                </image>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2759"/>
+                    </generic>
+                    <generic id="2762">
+                      <generic id="2763">
+                        <generic id="2764"/>
+                        <generic id="2798">
+                          <generic id="2799">
+                            <generic id="2800">
+                              <heading name="" id="2801" level="3">
+                                <link name="" id="2802" focusable="true" url="https://www.youtube.com/watch?v=lTRiuFIWV54&amp;list=RDlTRiuFIWV54&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="1 hour, 1 minute" id="2803">
+                                    1 A.M Study Session 📚 [lofi hip hop]
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2806">
+                                <generic id="2810">
+                                  <button name="Action menu" id="2811" invalid="false" focusable="true">
+                                    <generic id="2812"/>
+                                  </button>
+                                  <generic id="2815"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2819">
+                              <generic id="2820">
+                                134M views•6 years ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2831">
+                            <link name="Go to channel Lofi Girl" id="2832" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow"/>
+                            <generic id="2833">
+                              <generic id="2834">
+                                <generic id="2835">
+                                  <generic id="2836">
+                                    <link id="2837" focusable="true" url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow">
+                                      Lofi Girl
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="2845">
+                                <generic id="2846">
+                                  <image name="Official Artist Channel" id="2847"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2852">
+                            Listen on Spotify, Apple music and more → https://fanlink.tv/lofigirl-music | Create your lofi avatar now ...
+                            <tooltip name="tooltip" id="2859" focusable="true"/>
+                          </generic>
+                          <generic id="2860">
+                            <generic id="2861">
+                              <generic id="2862">
+                                <generic id="2863">
+                                  <generic id="2865">
+                                    <generic id="2866">
+                                      28 chapters
+                                    </generic>
+                                  </generic>
+                                  <button id="2871">
+                                    Intro | WYS - Snowman | Fatb - Cotton Cloud | rook1e x tender spring - the places we used to walk | imagiro - wool gloves | Glimlip x Yasper - I'm sorry | mell-ø - Nova | goosetaf x the fields tape x francis - carried away | j'san x epektase - snow &amp; sand | HM Surf - Single Phial | cocabona x Glimlip - Drops | Aso - espresso | Ambulo x mell-ø - Luminescence | DLJ x BIDØ - Explorers | Sarcastic Sounds - Wish You Were Mine | BluntOne - Reflections | Purrple Cat - Alone Time | Kupla - Owls of the Night | dryhope - Steps | ENRA - amber | Psalm Trees - fever | H.1 - Circle | Pandrezz - Cuddlin | Jordy Chandra - Late Night Call | less.people - Gyoza | G Mills - Keyframe | mvdb - breeze | Mondo Loops - Lunar Drive
+                                  </button>
+                                </generic>
+                                <generic id="2884">
+                                  <generic id="2885">
+                                    <generic id="2886">
+                                      <button name="More" id="2888" invalid="false" focusable="true"/>
+                                    </generic>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2891"/>
+                    </generic>
+                    <generic id="2894">
+                      <generic id="2895">
+                        <generic id="2896"/>
+                        <generic id="2930">
+                          <generic id="2931">
+                            <generic id="2932">
+                              <heading name="" id="2933" level="3">
+                                <link name="" id="2934" focusable="true" url="https://www.youtube.com/watch?v=gUbNlN_SqpE&amp;list=RDgUbNlN_SqpE&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="11 hours, 44 minutes" id="2935">
+                                    Seaside Coffee 🍵 Feel your peace &amp; Relax 🌱 Coffee Morning | Lofi Hip Hop - Chill to work, relax
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="2939">
+                                <generic id="2943">
+                                  <button name="Action menu" id="2944" invalid="false" focusable="true">
+                                    <generic id="2945"/>
+                                  </button>
+                                  <generic id="2948"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="2952">
+                              <generic id="2953">
+                                3.2M views•Streamed 1 year ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2964">
+                            <link name="Go to channel Healing Me" id="2965" focusable="true" url="https://www.youtube.com/@HealingWithMe."/>
+                            <generic id="2966">
+                              <generic id="2967">
+                                <generic id="2968">
+                                  <generic id="2969">
+                                    <link id="2970" focusable="true" url="https://www.youtube.com/@HealingWithMe.">
+                                      Healing Me
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="2976">
+                            Healing me: https://open.spotify.com/playlist/5qjqOmpbWnorOGrD4N2lHd?si=28ccf74df96f4273 Seaside Coffee Feel your ...
+                            <tooltip name="tooltip" id="2980" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="2983"/>
+                    </generic>
+                    <generic id="2986">
+                      <heading id="2993" level="2">
+                        Shorts
+                      </heading>
+                      <generic id="2999">
+                        <generic id="3000">
+                          <link id="3007" focusable="true" url="https://www.youtube.com/shorts/OCVI3n-iR_0">
+                            The LOFI Girl Has Finally Finished Studying
+                          </link>
+                          <generic id="3012">
+                            1.3M views
+                          </generic>
+                          <generic id="3015">
+                            <button name="More actions" id="3016" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3018">
+                        <generic id="3019">
+                          <link id="3026" focusable="true" url="https://www.youtube.com/shorts/28ufM37HoWA">
+                            Lofi Beats – Chill Vibes for Study, Relax, &amp; Focus
+                          </link>
+                          <generic id="3031">
+                            930K views
+                          </generic>
+                          <generic id="3034">
+                            <button name="More actions" id="3035" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3037">
+                        <generic id="3038">
+                          <link name="Music + Study = DISTRACTING?!" id="3045" focusable="true" url="https://www.youtube.com/shorts/KQ5mPKZEtck">
+                            Music + Study  = DISTRACTING?!
+                          </link>
+                          <generic id="3050">
+                            1.1M views
+                          </generic>
+                          <generic id="3053">
+                            <button name="More actions" id="3054" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3056">
+                        <generic id="3057">
+                          <link id="3064" focusable="true" url="https://www.youtube.com/shorts/k_xzPBp14rw">
+                            girl i just graduado 🎓
+                          </link>
+                          <generic id="3067">
+                            2.5M views
+                          </generic>
+                          <generic id="3070">
+                            <button name="More actions" id="3071" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3073">
+                        <generic id="3074">
+                          <link id="3081" focusable="true" url="https://www.youtube.com/shorts/ADUTUY2Gff0">
+                            Anxiety(lyrics)✨ #lofi #music #song #lyrics
+                          </link>
+                          <generic id="3086">
+                            1.1M views
+                          </generic>
+                          <generic id="3089">
+                            <button name="More actions" id="3090" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                    </generic>
+                    <generic id="3093">
+                      <generic id="3094">
+                        <generic id="3095"/>
+                        <generic id="3129">
+                          <generic id="3130">
+                            <generic id="3131">
+                              <heading name="" id="3132" level="3">
+                                <link name="" id="3133" focusable="true" url="https://www.youtube.com/watch?v=09K79_bD6w0&amp;list=RD09K79_bD6w0&amp;start_radio=1&amp;pp=ygUKbG9maSBiZWF0c6AHAQ%3D%3D">
+                                  <generic name="3 hours, 2 minutes" id="3134">
+                                    The silence of the night makes you stronger.｜Japanese Lo-fi Night 📼 Chill Beats for Study &amp; Focus
+                                  </generic>
+                                </link>
+                              </heading>
+                              <generic id="3138">
+                                <generic id="3142">
+                                  <button name="Action menu" id="3143" invalid="false" focusable="true">
+                                    <generic id="3144"/>
+                                  </button>
+                                  <generic id="3147"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                            <generic id="3151">
+                              <generic id="3152">
+                                2.1M views•10 months ago
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="3163">
+                            <link name="Go to channel LoFi Tokyo" id="3164" focusable="true" url="https://www.youtube.com/channel/UCkK2B6D3imy6EnpqfrYm-5A"/>
+                            <generic id="3165">
+                              <generic id="3166">
+                                <generic id="3167">
+                                  <generic id="3168">
+                                    <link id="3169" focusable="true" url="https://www.youtube.com/channel/UCkK2B6D3imy6EnpqfrYm-5A">
+                                      LoFi Tokyo
+                                    </link>
+                                  </generic>
+                                </generic>
+                              </generic>
+                              <generic id="3177">
+                                <generic id="3178">
+                                  <image name="Official Artist Channel" id="3179"/>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                          <generic id="3184">
+                            We're bringing you another soothing mix to help you relax, study, or just enjoy. Don't forget to like, share, and subscribe for more ...
+                            <tooltip name="tooltip" id="3189" focusable="true"/>
+                          </generic>
+                          <generic id="3190">
+                            <generic id="3191">
+                              <generic id="3192">
+                                <generic id="3193">
+                                  <generic id="3195">
+                                    <generic id="3196">
+                                      32 chapters
+                                    </generic>
+                                  </generic>
+                                  <button id="3201">
+                                    Tokyo Dawn | Silent Veins | Tokyo Drift | Fading Lanterns | Tokyo Bloom | Hollow Steps | Tokyo Mirage | Vanished Glow | Tokyo Shadows | Broken Path | Tokyo Spectrum | Crimson Haze | Tokyo Memory | Shattered Lines | Tokyo Solitude | Blurred Horizon | Tokyo Lights | Withered Echo | Tokyo Waves | Static Bloom | Tokyo Reverie | Faint Signal | Tokyo Silence | Ashen Frame | Tokyo Currents | Distant Glow | Tokyo Trace | Phantom Lull | Tokyo Mosaic | Drift Horizon | Tokyo Whisper | Hollow Pulse
+                                  </button>
+                                </generic>
+                                <generic id="3211">
+                                  <generic id="3212">
+                                    <generic id="3213">
+                                      <button name="More" id="3215" invalid="false" focusable="true"/>
+                                    </generic>
+                                  </generic>
+                                </generic>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3218"/>
+                    </generic>
+                    <generic id="3221">
+                      <heading id="3228" level="2">
+                        Shorts
+                      </heading>
+                      <generic id="3234">
+                        <generic id="3235">
+                          <link id="3242" focusable="true" url="https://www.youtube.com/shorts/axb1HFlJBOA">
+                            MIND RELAX LOVE SONG 💕 | MIND RELAX LOFI MASHUP | LOVE MASHUP SONG 🎧
+                          </link>
+                          <generic id="3253">
+                            891K views
+                          </generic>
+                          <generic id="3256">
+                            <button name="More actions" id="3257" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3259">
+                        <generic id="3260">
+                          <link id="3267" focusable="true" url="https://www.youtube.com/shorts/Z7vH4gJTMmc">
+                            Lofi Beats – Chillhop Music to Relax, Focus &amp; Study 🎶
+                          </link>
+                          <generic id="3276">
+                            903 views
+                          </generic>
+                          <generic id="3279">
+                            <button name="More actions" id="3280" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3282">
+                        <generic id="3283">
+                          <link id="3290" focusable="true" url="https://www.youtube.com/shorts/-zWP3XVLvJU">
+                            Chill Lofi Beats Mix [chill lo-fi hip hop beats/Study &amp; Relax Music and song
+                          </link>
+                          <generic id="3299">
+                            2.2K views
+                          </generic>
+                          <generic id="3302">
+                            <button name="More actions" id="3303" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3305">
+                        <generic id="3306">
+                          <link id="3313" focusable="true" url="https://www.youtube.com/shorts/GWs2hyx2Bjs">
+                            When The Study 📚 Music… Low- key Turns Into A 🎊🍾PARTY🥳
+                          </link>
+                          <generic id="3321">
+                            1.9M views
+                          </generic>
+                          <generic id="3324">
+                            <button name="More actions" id="3325" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3327">
+                        <generic id="3328">
+                          <link id="3335" focusable="true" url="https://www.youtube.com/shorts/H3ONg7SPSWU">
+                            Chill Lofi Coffee Vibes | Relaxing Lofi Hip Hop Beats to Study/Work to
+                          </link>
+                          <generic id="3343">
+                            78K views
+                          </generic>
+                          <generic id="3346">
+                            <button name="More actions" id="3347" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3350">
+                        <generic id="3351">
+                          <link id="3358" focusable="true" url="https://www.youtube.com/shorts/vetYLpUL2Ak">
+                            Lo-Fi Chords - Lofi Piano Chords - Chill Chords
+                          </link>
+                          <generic id="3363">
+                            1M views
+                          </generic>
+                          <generic id="3366">
+                            <button name="More actions" id="3367" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3369">
+                        <generic id="3370">
+                          <link id="3377" focusable="true" url="https://www.youtube.com/shorts/D7weKHk0f7Q">
+                            Let’s make a lofi beat
+                          </link>
+                          <generic id="3380">
+                            108K views
+                          </generic>
+                          <generic id="3383">
+                            <button name="More actions" id="3384" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3386">
+                        <generic id="3387">
+                          <link id="3394" focusable="true" url="https://www.youtube.com/shorts/YYnGt-9YSNQ">
+                            lofi beat tutorial for beginners
+                          </link>
+                          <generic id="3399">
+                            51K views
+                          </generic>
+                          <generic id="3402">
+                            <button name="More actions" id="3403" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3405">
+                        <generic id="3406">
+                          <link id="3413" focusable="true" url="https://www.youtube.com/shorts/cDjJ1dTwfhE">
+                            Chill Lofi Hiphop Mix 🌏 / lofi jazzy hiphop beats / to relax study work sleep s2
+                          </link>
+                          <generic id="3424">
+                            1.9K views
+                          </generic>
+                          <generic id="3427">
+                            <button name="More actions" id="3428" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3430">
+                        <generic id="3431">
+                          <link id="3438" focusable="true" url="https://www.youtube.com/shorts/r1wn6VjlnVs">
+                            Lofi Beats to Relax &amp; Study | Background Music
+                          </link>
+                          <generic id="3446">
+                            34K views
+                          </generic>
+                          <generic id="3449">
+                            <button name="More actions" id="3450" invalid="false" focusable="true"/>
+                          </generic>
+                        </generic>
+                      </generic>
+                      <generic id="3451">
+                        <button id="3454" invalid="false" focusable="true">
+                          <generic id="3455">
+                            Show more
+                          </generic>
+                          <generic id="3458"/>
+                        </button>
+                      </generic>
+                    </generic>
+                  </generic>
+                </generic>
+              </generic>
+            </generic>
+          </main>
+        </generic>
+      </generic>
+      <generic id="3475">
+        <generic id="3476">
+          <generic id="3477">
+            <generic id="3478">
+              <generic id="3479">
+                <generic id="3480">
+                  <link name="" id="3481" focusable="true" url="https://www.googleadservices.com/pagead/aclk?sa=L&amp;ai=CXd4aRVJxapmlCLb6svsP54nQ2QT_2OuziAG7lMDOoRVkEAEgAGC_jfQFggEXY2EtcHViLTYyMTk4MTE3NDcwNDkzNzGgAam5_8kDqAMEqgS2Ak_QpbLLyCOtpnVIWppXMB58GRlgVZuKm2nq6QM_TGBYbMBP8wx9zqZ7YulwWoVnL0Jk29T1HBncY5DJNpIkGpMej_uWeSj3671jZrZXe3ofroqhZni8SoeKWRYb2_TcjW6suI6OXOg9_LrduegrYC-V9rY17kbyhUG5XJPX1Pel_yaGXCDdDIkqU1O9gL8H24OghswL22l3FgUC1F8H7g130uSPoxFmVUkLpwG2TTIH-bcdzt5ayeBvtGD9AfeQZ6jeWTnG1e9TmG94RiVoLzR0ssn_mcNDTJ6k8OT-r0KHKzR0bif9rn19LjL8lDygfZgSCY2pR1VCtFSffCuYVfNbAkH6cp5d5KD9DaaCRP4U9NMUv-uXhsf3rwNpk5sjBvMhoTSBu1PErtuFwfhioyRrbzHKo9aIBfi-64ZXkgUMCBIwg7bvzring9hAkgUICBN4lpOzph2gBlWAB93t4IYdkAcEqAfywLECqAe4xLECqAfhtrECqAelz7ECqAfnnbECqAfonbECqAfvtbECqAfwtbECqAf507ECqAfJ2rECqAep4LECqAeECKgHptSxAqgHqNIbqAe2B6gHsdwbqAewm7ECqAeusbECqAf9srECqAfIz7ECqAfJz7ECqAfNx7ECqAfx0bECqAf81bECqAf71bECqAeM1rECqAeL1rECqAea4rECqAeb4rECqAed17ECqAed1LECqAeBxhuoB_yvsQKoB9XOG6gHvtmxAqgHq8UbqAeVCKgHnNwbqAe3obECqAfVqbECqAfn2rECqAfetbECqAfqsbECqAe-t7ECqAeZtbECqAeFwbECqAfrpbECqAfKqbECkggLUUxBTk80bmIyd02oCAHSCC4IgEEQARheMgKCAjoPgEKAwICAgICAgAKqgIAQSNmg0jVQFFiwzd2s-oWWA2ABmgkeaHR0cHM6Ly93d3cuZXBpZGVtaWNzb3VuZC5jb20vsQmyZA57vPDsv8gJF8gJjwHICZAByAnCAZgLAboLPQgDEAUYFiAHKAEwHEABSABYfWAAaABwAYgBAJgBAaIBCAoAqAIB2AICqAEB2AEBgAIBiAIJugMFdmlzaW7QCxKiDDhiFQoTY29tLmVwaWRlbWljLnBsYXllcmoaChhjb20uZXBpZGVtaWNzb3VuZC5wbGF5ZXJ4AIgBANIMAhAB2gwlCgoQwIq80vC0n-NiEgIBAxoNGPi-64ZXIJSLvujHBUABSgIQH5oNARKqDQJTR8gNAdINkQFodHRwczovL3d3dy5lcGlkZW1pY3NvdW5kLmNvbS8_dXRtX3NvdXJjZT1nb29nbGUmdXRtX21lZGl1bT1wYWlkc2VhcmNoJnV0bV9jYW1wYWlnbj0yMzM3NzMyNzM5OSZ1dG1fdGVybT0mZ2FkX3NvdXJjZT0yJmdhZF9jYW1wYWlnbmlkPTIzMzY4MjI4NzI4sA73ydHhGLgT____________AbAUA8AVgYCAQNAVAdgVAZgWAeIWAggBgBcBihcYCAMYASABKAEwATgBQAFIAVABWAFgAmgBoBcBqRcuRlI725wMPboXBigAMAA4AdAYAfAYAcIZAggB&amp;ase=2&amp;gclid=EAIaIQobChMI2dvdrPqFlgMVNr1sCR3nBDRLEAEYASAAEgL2zvD_BwE&amp;num=1&amp;cid=CAASqwHkaOaPtzVDySxqFG7GgM7ONtX6Lk00tBidmXCrBu9WbaKuU1WU3dNAVh_V2FdVriIPN3JKNYG6SfLglTE35Pv0jiCHIY0V7czpp5AzogWjvgX_4_oG0LKecVWaXfeJoFbvU8dZ6lDaSOTxRjhe5rvSkiOBimyM7sEmAWrQ4oYI9CiY_RBVh5_FihLR7L5PYCSkelDlXnmm4g4HAGCpcDfRIAXYvgnECB4jTVY&amp;ad_cpn=%5BCPN%5D&amp;sig=AOD64_2Lv4YEBpX9utM4wqDmoFj2iJrV0g&amp;ctype=110&amp;video_id=QLANO4nb2wM&amp;label=video_click_to_advertiser_site&amp;ms=%5BCLICK_MS%5D">
+                    <generic id="3482">
+                      <generic id="3483">
+                        <generic id="3484">
+                          <generic id="3485">
+                            <generic name="YouTube Video Player" id="3486" focusable="true">
+                              <group id="3487">
+                                <Video id="3488" focusable="true"/>
+                              </group>
+                              <generic id="3526">
+                                <generic id="3528">
+                                  <generic id="3529"/>
+                                </generic>
+                                <generic id="3536"/>
+                                <generic id="3540"/>
+                              </generic>
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                    </generic>
+                  </link>
+                  <generic id="3555">
+                    <generic id="3556">
+                      <generic id="3560">
+                        <generic id="3561">
+                          <generic name="Time elapsed 0:06" id="3562">
+                            <generic id="3564">
+                              0:14
+                            </generic>
+                          </generic>
+                        </generic>
+                      </generic>
+                    </generic>
+                  </generic>
+                </generic>
+              </generic>
+            </generic>
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </generic>
+</RootWebArea>

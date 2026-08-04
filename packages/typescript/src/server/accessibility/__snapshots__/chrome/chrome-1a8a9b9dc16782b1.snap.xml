@@ -1,0 +1,223 @@
+<RootWebArea name="YouTube" id="1" focusable="true" focused="true" url="https://www.youtube.com/">
+  <generic id="3">
+    <generic id="4">
+      <generic id="6">
+        <generic id="7">
+          <banner id="8">
+            <generic id="12">
+              <generic id="13">
+                <generic id="14">
+                  <button name="Guide" id="15" invalid="false" focusable="true">
+                    <generic id="16"/>
+                  </button>
+                  <generic id="19"/>
+                </generic>
+                <generic id="22">
+                  <link name="YouTube Home" id="23" focusable="true" url="https://www.youtube.com/">
+                    <generic id="24">
+                      <generic id="25"/>
+                    </generic>
+                  </link>
+                  <generic id="28">
+                    SG
+                  </generic>
+                </generic>
+                <generic id="31">
+                  <generic id="32">
+                    <button id="34" invalid="false" focusable="true">
+                      <generic id="35">
+                        Skip navigation
+                      </generic>
+                    </button>
+                  </generic>
+                </generic>
+              </generic>
+              <generic id="39">
+                <search id="40">
+                  <generic id="42">
+                    <generic id="43">
+                      <generic id="44">
+                        <generic id="45"/>
+                        <combobox name="Search" id="49" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false" controls="i0">
+                          <generic id="51" editable="plaintext">
+                            lofi beats
+                          </generic>
+                        </combobox>
+                      </generic>
+                      <button name="Clear search query" id="55" invalid="false" focusable="true"/>
+                    </generic>
+                    <button name="Search" id="59" invalid="false" focusable="true"/>
+                  </generic>
+                  <listbox id="62" multiselectable="false" orientation="vertical" required="false">
+                    <option id="63" selected="false">
+                      <button id="68" focusable="true">
+                        lofi beats
+                      </button>
+                    </option>
+                    <option id="72" selected="false">
+                      <button id="77" focusable="true">
+                        lofi beats to study to
+                      </button>
+                    </option>
+                    <option id="83" selected="false">
+                      <button id="88" focusable="true">
+                        lofi beats for work
+                      </button>
+                    </option>
+                    <option id="94" selected="false">
+                      <button id="99" focusable="true">
+                        lofi beats chill
+                      </button>
+                    </option>
+                    <option id="105" selected="false">
+                      <button id="110" focusable="true">
+                        lofi beats to sleep to
+                      </button>
+                    </option>
+                    <option id="116" selected="false">
+                      <button id="121" focusable="true">
+                        lofi beats to yoyle to
+                      </button>
+                    </option>
+                    <option id="127" selected="false">
+                      <button id="132" focusable="true">
+                        lofi beats hip hop
+                      </button>
+                    </option>
+                    <option id="138" selected="false">
+                      <button id="143" focusable="true">
+                        lofi beats no ads
+                      </button>
+                    </option>
+                    <option id="149" selected="false">
+                      <button id="154" focusable="true">
+                        lofi beats for work concentration
+                      </button>
+                    </option>
+                    <option id="160" selected="false">
+                      <button id="165" focusable="true">
+                        lofi beats live
+                      </button>
+                    </option>
+                    <option id="171" selected="false">
+                      <button id="176" focusable="true">
+                        lofi beats popular songs
+                      </button>
+                    </option>
+                    <option id="182" selected="false">
+                      <button id="187" focusable="true">
+                        lofi beats royalty free
+                      </button>
+                    </option>
+                    <option id="193" selected="false">
+                      <button id="198" focusable="true">
+                        lofi beats 5 minutes
+                      </button>
+                    </option>
+                    <option id="204" selected="false">
+                      <button id="209" focusable="true">
+                        lofi beats to animate to
+                      </button>
+                    </option>
+                    <button id="215" invalid="false" focusable="true">
+                      Report search predictions
+                    </button>
+                    <generic id="218"/>
+                  </listbox>
+                </search>
+                <generic id="220">
+                  <generic id="221">
+                    <button name="Search with your voice" id="223" invalid="false" focusable="true"/>
+                    <tooltip name="tooltip" id="224" focusable="true"/>
+                  </generic>
+                </generic>
+              </generic>
+              <generic id="225">
+                <generic id="226">
+                  <generic id="227">
+                    <generic id="228">
+                      <generic id="229" focusable="true">
+                        <generic id="230">
+                          <button name="Settings" id="231" invalid="false" focusable="true">
+                            <generic id="232"/>
+                          </button>
+                          <generic id="235"/>
+                        </generic>
+                      </generic>
+                    </generic>
+                  </generic>
+                  <generic id="238">
+                    <link id="240" focusable="true" url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=en&amp;ec=65620">
+                      <generic id="241">
+                        Sign in
+                      </generic>
+                    </link>
+                  </generic>
+                </generic>
+              </generic>
+            </generic>
+          </banner>
+        </generic>
+        <navigation id="247">
+          <generic id="248">
+            <generic id="249">
+              <link id="250" focusable="true" url="https://www.youtube.com/">
+                <generic id="251"/>
+                Home
+                <generic id="257"/>
+              </link>
+            </generic>
+            <generic id="260">
+              <link id="261" focusable="true" url="https://www.youtube.com/shorts/">
+                <generic id="262"/>
+                Shorts
+                <generic id="268"/>
+              </link>
+            </generic>
+            <generic id="271">
+              <link id="272" focusable="true" url="https://www.youtube.com/feed/subscriptions">
+                <generic id="273"/>
+                Subscriptions
+                <generic id="279"/>
+              </link>
+            </generic>
+            <generic id="282">
+              <link id="283" focusable="true" url="https://www.youtube.com/feed/you">
+                <generic id="284"/>
+                You
+                <generic id="290"/>
+              </link>
+            </generic>
+          </generic>
+        </navigation>
+        <generic id="293">
+          <main id="294">
+            <generic id="301">
+              <generic id="305">
+                <generic id="307">
+                  <generic id="309">
+                    <generic id="311">
+                      <generic id="313">
+                        <heading id="314" level="2">
+                          <generic id="315">
+                            Try searching to get started
+                          </generic>
+                        </heading>
+                        <generic id="318">
+                          <generic id="319">
+                            Start watching videos to help us build a feed of videos you'll love.
+                          </generic>
+                        </generic>
+                      </generic>
+                    </generic>
+                  </generic>
+                </generic>
+              </generic>
+            </generic>
+          </main>
+        </generic>
+      </generic>
+      <generic id="389"/>
+    </generic>
+  </generic>
+</RootWebArea>

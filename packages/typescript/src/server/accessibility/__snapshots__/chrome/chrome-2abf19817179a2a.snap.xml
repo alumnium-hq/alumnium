@@ -1,0 +1,99 @@
+<RootWebArea name="TodoMVC: Vue" id="1" focusable="true" focused="true" url="https://todomvc.com/examples/vue/dist/#/">
+  <complementary id="4">
+    <sectionheader id="5">
+      <heading id="6" level="3">
+        Vue.js
+      </heading>
+      <heading id="9" level="5">
+        Example
+      </heading>
+      <link id="12" focusable="true" url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue">
+        Source
+      </link>
+    </sectionheader>
+    <separator id="15" settable="true" orientation="horizontal"/>
+    <blockquote id="16">
+      <paragraph id="17">
+        <generic id="18">
+          “
+        </generic>
+        Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `
+        <generic id="28">
+          ”
+        </generic>
+      </paragraph>
+    </blockquote>
+  </complementary>
+  <generic id="31">
+    <sectionheader id="32">
+      <link id="33" focusable="true" url="https://todomvc.com/examples/vue/dist/#/">
+        <heading id="34" level="1">
+          todos
+        </heading>
+      </link>
+      <textbox name="What needs to be done?" id="37" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false"/>
+    </sectionheader>
+    <main id="40">
+      <generic id="41">
+        <checkbox name="❯ Toggle All Input" id="42" invalid="false" focusable="true" checked="true" labelledby=""/>
+        <generic id="44">
+          ❯
+        </generic>
+        Toggle All Input
+      </generic>
+      <list id="49">
+        <listitem id="50" level="1">
+          <checkbox id="52" invalid="false" focusable="true" focused="true" checked="true"/>
+          <LabelText id="53">
+            Buy milk
+          </LabelText>
+          <button id="56" invalid="false" focusable="true">
+            <generic id="57">
+              ×
+            </generic>
+          </button>
+        </listitem>
+      </list>
+    </main>
+    <sectionfooter id="60">
+      <strong id="62">
+        0
+      </strong>
+      items left
+      <list id="67">
+        <listitem id="68" level="1">
+          <link id="69" focusable="true" url="https://todomvc.com/examples/vue/dist/#/">
+            All
+          </link>
+        </listitem>
+        <listitem id="72" level="1">
+          <link id="73" focusable="true" url="https://todomvc.com/examples/vue/dist/#/active">
+            Active
+          </link>
+        </listitem>
+        <listitem id="76" level="1">
+          <link id="77" focusable="true" url="https://todomvc.com/examples/vue/dist/#/completed">
+            Completed
+          </link>
+        </listitem>
+      </list>
+      <button id="80" invalid="false" focusable="true">
+        Clear completed
+      </button>
+    </sectionfooter>
+  </generic>
+  <contentinfo id="83">
+    <paragraph id="84">
+      Double-click to edit a todo
+    </paragraph>
+    <paragraph id="87">
+      Created by the TodoMVC Team
+    </paragraph>
+    <paragraph id="90">
+      Part of
+      <link id="93" focusable="true" url="http://todomvc.com/">
+        TodoMVC
+      </link>
+    </paragraph>
+  </contentinfo>
+</RootWebArea>
