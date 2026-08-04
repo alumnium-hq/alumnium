@@ -3,18 +3,20 @@ import { xxh64Str } from "smolxxh/str";
 import { Env } from "../../Env.ts";
 import { FileStore } from "../../FileStore/FileStore.ts";
 import type { ToolCall } from "../../tools/BaseTool.ts";
+import type { Tree } from "../../tree/Tree.ts";
+import { Xml } from "../../Xml.ts";
 
 export abstract class BaseServerAccessibilityTree {
   #simplifiedIdCounter = 0;
 
-  protected simplifiedToRawId: Record<string, number> = {};
+  protected simplifiedToRawId: Record<Tree.SimplifiedId, Tree.RawId> = {};
 
   /**
    * Convert tree to XML string, optionally excluding specified attributes.
    */
   abstract toXml(excludeAttrs?: Set<string>): string;
 
-  getRawId(simplifiedIdArg: unknown): number {
+  getRawId(simplifiedIdArg: unknown): Tree.RawId {
     const simplifiedId = this.#extractId(simplifiedIdArg);
     const rawId = this.simplifiedToRawId[simplifiedId];
     if (typeof rawId !== "number") {
@@ -22,6 +24,20 @@ export abstract class BaseServerAccessibilityTree {
     }
 
     return rawId;
+  }
+
+  // Gemini returns ids as floats
+  // Llama sometimes returns ids as strings or nested dicts
+  #extractId(id: unknown): Tree.SimplifiedId {
+    if (typeof id === "number") {
+      return Math.trunc(id) as Tree.SimplifiedId;
+    } else if (typeof id === "string") {
+      return +id as Tree.SimplifiedId;
+    } else if (typeof id === "object" && id && "value" in id) {
+      return this.#extractId(id.value);
+    }
+
+    throw new Error(`Cannot extract id from ${String(id)}`);
   }
 
   mapToolCallsToRawId(toolCalls: ToolCall[]): ToolCall[] {
@@ -47,23 +63,16 @@ export abstract class BaseServerAccessibilityTree {
     return mappedCalls;
   }
 
-  protected getNextId(): number {
+  protected getNextId(): Tree.SimplifiedId {
     this.#simplifiedIdCounter += 1;
-    return this.#simplifiedIdCounter;
+    return this.#simplifiedIdCounter as Tree.SimplifiedId;
   }
 
-  // Gemini returns ids as floats
-  // Llama sometimes returns ids as strings or nested dicts
-  #extractId(id: unknown): number {
-    if (typeof id === "number") {
-      return Math.trunc(id);
-    } else if (typeof id === "string") {
-      return +id;
-    } else if (typeof id === "object" && id && "value" in id) {
-      return this.#extractId(id.value);
-    }
-
-    throw new Error(`Cannot extract id from ${String(id)}`);
+  protected parseIgnored(xmlNode: Xml.Node): boolean {
+    const xmlEl = Xml.nodeAsTag(xmlNode);
+    // An element is considered "ignored" if it's not accessible.
+    // This aligns with ARIA principles where accessibility is key.
+    return xmlEl?.attribs.ignored === "true";
   }
 
   static #devTreesStore = FileStore.subStore(undefined, "dev", "trees");

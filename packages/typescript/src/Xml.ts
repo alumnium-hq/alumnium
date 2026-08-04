@@ -1,6 +1,6 @@
 import { always } from "alwaysly";
 import { render } from "dom-serializer";
-import { hasChildren, isTag, isText, Text, Element } from "domhandler";
+import { isTag, isText, Text, Element } from "domhandler";
 import { parseDocument } from "htmlparser2";
 import { "default" as xmlFormatter } from "xml-formatter";
 import type * as DomHandler from "domhandler";
@@ -12,8 +12,6 @@ export namespace Xml {
   export type Node = DomHandler.Node;
 
   export type ChildNode = DomHandler.ChildNode;
-
-  export type NodeWithChildren = DomHandler.NodeWithChildren;
 
   export type Element = DomHandler.Element;
 
@@ -76,24 +74,17 @@ export abstract class Xml {
     return xml;
   }
 
-  static nodeAsTag(node: Xml.Node): Xml.Element | null {
-    if (isTag(node)) {
-      return node;
-    }
-    return null;
+  static isTag(node: Xml.Node): node is Xml.Element {
+    return isTag(node);
   }
 
-  static nodeAsNodeWithChildren(node: Xml.Node): Xml.NodeWithChildren | null {
-    if (hasChildren(node)) {
-      return node;
-    }
+  static nodeAsTag(node: Xml.Node): Xml.Element | null {
+    if (isTag(node)) return node;
     return null;
   }
 
   static nodeAsText(node: Xml.Node): Xml.Text | null {
-    if (isText(node)) {
-      return node;
-    }
+    if (isText(node)) return node;
     return null;
   }
 
@@ -109,12 +100,11 @@ export abstract class Xml {
     if (isText(node)) {
       node.data = Xml.#sanitizeText(node.data);
     } else if (isTag(node)) {
-      for (const [k, v] of Object.entries(node.attribs)) {
-        node.attribs[k] = Xml.#sanitizeAttr(v);
-      }
-      for (const child of node.children) {
+      for (const [name, value] of Object.entries(node.attribs))
+        node.attribs[name] = Xml.#sanitizeAttr(value);
+
+      for (const child of node.children)
         if (isText(child) || isTag(child)) Xml.#sanitizeElement(child);
-      }
     }
   }
 
