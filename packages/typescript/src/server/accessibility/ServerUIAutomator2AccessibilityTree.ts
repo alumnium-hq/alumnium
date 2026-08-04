@@ -1,149 +1,95 @@
 import { always } from "alwaysly";
-import { Element, Node } from "domhandler";
 import { Xml } from "../../Xml.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
+import type { Tree } from "../../tree/Tree.ts";
 
 export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibilityTree {
-  #tree: InternalNode[];
-  #idToNode: Record<number, InternalNode>;
+  #tree: Tree.Node[] = [];
 
-  constructor(xmlString: string) {
+  constructor(xml: string) {
     super();
 
-    this.#tree = [];
-    this.#idToNode = {};
+    const xmlRoots = Xml.parseMultirootChildren(this.#cleanXml(xml));
 
+    for (const xmlRoot of xmlRoots) {
+      const xmlRootEl = Xml.nodeAsTag(xmlRoot);
+      always(xmlRootEl);
+
+      for (const xmlAppEl of xmlRootEl.children) {
+        const node = this.#xmlNodeToTreeNode(xmlAppEl);
+        if (node) this.#tree.push(node);
+      }
+    }
+
+    void this.devCaptureTreeInput("uiautomator2", xml);
+  }
+
+  #cleanXml(xml: string): string {
     // cleaning multiple xml declaration lines from page source
     const xmlDeclarationPattern = /^\s*<\?xml.*\?>\s*$/;
-    const lines = xmlString.split("\n");
+    const lines = xml.split("\n");
     const cleanedLines = lines.filter(
       (line) => !xmlDeclarationPattern.test(line),
     );
-    const cleanedXmlContent = cleanedLines.join("\n");
-
-    let roots: Node[];
-    try {
-      roots = Xml.parseMultirootChildren(cleanedXmlContent);
-    } catch (error) {
-      throw new Error(`Invalid XML string: ${error}`);
-    }
-
-    for (const root of roots) {
-      const rootEl = Xml.nodeAsTag(root);
-      always(rootEl);
-      for (const appElement of rootEl.children) {
-        const internalNode = this.#parseElement(appElement);
-        if (internalNode) {
-          this.#tree.push(internalNode);
-        }
-      }
-    }
-
-    void this.devCaptureTreeInput("uiautomator2", xmlString);
+    const cleanedXml = cleanedLines.join("\n");
+    return cleanedXml;
   }
 
-  #parseElement(nodeArg: Xml.Node): InternalNode | null {
-    const element = Xml.nodeAsTag(nodeArg);
+  #xmlNodeToTreeNode(xmlNode: Xml.Node): Tree.Node | null {
+    const xmlEl = Xml.nodeAsTag(xmlNode);
     // NOTE: In Python's XML implementation, non-element nodes (like text nodes)
     // aren't available as children of an element, so simply ignoring them here.
-    if (!element) return null;
+    if (!xmlEl) return null;
 
     const simplifiedId = this.getNextId();
-    const rawType = element.attribs.type ?? element.tagName;
 
     // Extract raw_id attribute
-    const rawId = element.attribs["raw_id"] ?? "";
+    const rawId = xmlEl.attribs.raw_id;
     if (rawId) {
-      const rawIdInt = parseInt(rawId);
+      const rawIdInt = parseInt(rawId) as Tree.RawId;
       this.simplifiedToRawId[simplifiedId] = rawIdInt;
     }
 
-    const ignored = element.attribs.ignored === "true";
+    const role = xmlEl.attribs.type ?? xmlEl.tagName;
 
-    const properties: InternalNodeProperty[] = [];
+    const ignored = this.parseIgnored(xmlNode);
 
-    const propXmlAttributes = [
-      "class",
-      "index",
-      "width",
-      "height",
-      "text",
-      "resource-id",
-      "content-desc",
-      "bounds",
-      "checkable",
-      "checked",
-      "clickable",
-      "displayed",
-      "enabled",
-      "focus",
-      "focused",
-      "focusable",
-      "long-clickable",
-      "password",
-      "selected",
-      "scrollable",
-    ];
+    const attrs: Tree.NodeAttrs = {};
 
-    for (const xmlAttrName of propXmlAttributes) {
-      if (element.attribs[xmlAttrName]) {
-        const propEntry: InternalNodeProperty = { name: xmlAttrName };
-        const attrValue = element.attribs[xmlAttrName];
-
-        if (
-          [
-            "checked",
-            "checkable",
-            "clickable",
-            "displayed",
-            "enabled",
-            "focus",
-            "focused",
-            "focusable",
-            "long-clickable",
-            "password",
-            "selected",
-            "scrollable",
-          ].includes(xmlAttrName)
-        ) {
-          propEntry.value = attrValue === "true";
-        } else if (["index", "width", "height"].includes(xmlAttrName)) {
-          const parsedInt = parseInt(attrValue);
-          if (Number.isNaN(parsedInt)) {
-            propEntry.value = attrValue;
-          } else {
-            propEntry.value = parsedInt;
-          }
-        } else if (
-          ["resource-id", "content-desc", "bounds"].includes(xmlAttrName)
-        ) {
-          propEntry.value = attrValue;
-        } else if (["class", "text"].includes(xmlAttrName)) {
-          propEntry.value = attrValue;
-        } else {
-          propEntry.value = attrValue;
-        }
-        properties.push(propEntry);
-      }
+    for (const attrName of xmlAttrsToExtract) {
+      const value = xmlEl.attribs[attrName];
+      if (!value) continue;
+      attrs[attrName] = value;
     }
 
-    const internalNode: InternalNode = {
+    // Ignore checked for non-checkbox roles, as it can be misleading in
+    // the context of other roles.
+    const simplifiedRole = this.#simplifyRole(role);
+    if (simplifiedRole !== "CheckBox") delete attrs.checked;
+
+    // Process children recursively
+
+    const children: Tree.Node[] = [];
+
+    for (const xmlChild of xmlEl.children) {
+      // TODO: This check is present in ServerXCUITestAccessibilityTree, but
+      // wasn't in the original ServerUIAutomator2AccessibilityTree. Adding it
+      // here doesn't change the behavior, so we might want to keep it for
+      // consistency.
+      // if (!Xml.isTag(xmlChild)) continue;
+      const childNode = this.#xmlNodeToTreeNode(xmlChild);
+      if (childNode) children.push(childNode);
+    }
+
+    const node: Tree.Node = {
       id: simplifiedId,
-      role: rawType,
+      role,
       ignored,
-      properties,
-      children: [],
+      attrs,
+      children,
     };
 
-    this.#idToNode[simplifiedId] = internalNode;
-
-    for (const childElement of element.children) {
-      const childNode = this.#parseElement(childElement);
-      if (childNode) {
-        internalNode.children.push(childNode);
-      }
-    }
-    return internalNode;
+    return node;
   }
 
   /**
@@ -151,109 +97,81 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
    *
    * @param excludeAttrs Optional set of attribute names to exclude from output.
    */
-  toXml(excludeAttrs: Set<string> = new Set()): string {
-    if (!this.#tree.length) {
-      return "";
-    }
+  override toXml(excludeAttrs: Set<string> = new Set()): string {
+    if (!this.#tree.length) return "";
 
-    function convertDictToXml(
-      ele: InternalNode,
-      parentElement: Element,
-    ): Element | null {
-      if (ele.ignored) {
-        return null;
+    const treeNodeToXmlElement = (
+      node: Tree.Node,
+      xmlParent: Xml.Element,
+    ): Xml.Element | null => {
+      if (node.ignored) return null;
+
+      for (const child of node.children) {
+        const { id } = child;
+
+        const simplifiedRole = this.#simplifyRole(child.role);
+        const xmlEl = Xml.element(simplifiedRole);
+
+        if (!excludeAttrs.has("id")) xmlEl.attribs.id = String(id);
+
+        for (const attrName of attrsToSerialize) {
+          if (excludeAttrs.has(attrName) || !child.attrs[attrName]) continue;
+          xmlEl.attribs[attrName] = child.attrs[attrName];
+        }
+
+        xmlParent.children.push(xmlEl);
+
+        if (child.children.length) treeNodeToXmlElement(child, xmlEl);
       }
 
-      for (const childElement of ele.children) {
-        const id = childElement.id;
-        const simplifiedRole = childElement.role.split(".").at(-1);
-        always(simplifiedRole);
-        let resourceId: string | number | boolean = "";
-        let contentDesc: string | number | boolean = "";
-        let textDesc: string | number | boolean = "";
-        let clickable = false;
-        let checked: string | number | boolean | undefined;
+      return xmlParent;
+    };
 
-        const role = new Element(simplifiedRole, {});
-        if (!excludeAttrs.has("id")) {
-          role.attribs.id = String(id);
-        }
+    const rootXmlEl = Xml.element("hierarchy");
+    for (const node of this.#tree) treeNodeToXmlElement(node, rootXmlEl);
 
-        for (const props of childElement.properties) {
-          if (props.name === "resource-id" && props.value) {
-            resourceId = props.value;
-          }
-          if (props.name === "content-desc" && props.value) {
-            contentDesc = props.value;
-          }
-          if (props.name === "text" && props.value) {
-            textDesc = props.value;
-          }
-          if (props.name === "clickable" && props.value) {
-            clickable = true;
-          }
-          if (props.name === "checked") {
-            checked = props.value;
-          }
-        }
-
-        if (resourceId && !excludeAttrs.has("resource-id")) {
-          role.attribs["resource-id"] = String(resourceId);
-        }
-        if (contentDesc && !excludeAttrs.has("content-desc")) {
-          role.attribs["content-desc"] = String(contentDesc);
-        }
-        if (textDesc && !excludeAttrs.has("text")) {
-          role.attribs.text = String(textDesc);
-        }
-        if (clickable !== null && !excludeAttrs.has("clickable")) {
-          role.attribs.clickable = clickable ? "true" : "false";
-        }
-        if (
-          checked != null &&
-          simplifiedRole === "CheckBox" &&
-          !excludeAttrs.has("checked")
-        ) {
-          role.attribs.checked = checked ? "true" : "false";
-        }
-
-        parentElement.children.push(role);
-        if (childElement.children.length) {
-          convertDictToXml(childElement, role);
-        }
-      }
-
-      return parentElement;
-    }
-
-    const rootXml = new Element("hierarchy", {});
-    for (const ele of this.#tree) {
-      convertDictToXml(ele, rootXml);
-    }
-
-    const xml = Xml.format([rootXml]);
+    const xml = Xml.format([rootXmlEl]);
     void this.devCaptureTreeOutput(xml);
 
     return xml;
   }
+
+  #simplifyRole(role: string): string {
+    const simplifiedRole = role.split(".").at(-1);
+    always(simplifiedRole);
+    return simplifiedRole;
+  }
 }
 
-//#region Types
+// TODO: The commented-out attributes were present in the original code but
+// never serialized. They might be useful, but currently redundant.
+const xmlAttrsToExtract = [
+  // "class",
+  // "index",
+  // "width",
+  // "height",
+  "text",
+  "resource-id",
+  "content-desc",
+  // "bounds",
+  // "checkable",
+  "checked",
+  "clickable",
+  // "displayed",
+  // "enabled",
+  // "focus",
+  // "focused",
+  // "focusable",
+  // "long-clickable",
+  // "password",
+  // "selected",
+  // "scrollable",
+];
 
-// TODO: Find a place for these types, as they might be shared between different
-// modules or even defined in an external library.
-
-interface InternalNodeProperty {
-  name: string;
-  value?: string | number | boolean;
-}
-
-interface InternalNode {
-  id: number;
-  role: string;
-  ignored: boolean;
-  properties: InternalNodeProperty[];
-  children: InternalNode[];
-}
-
-//#endregion
+const attrsToSerialize = [
+  "resource-id",
+  "content-desc",
+  "text",
+  "clickable",
+  "checked",
+];

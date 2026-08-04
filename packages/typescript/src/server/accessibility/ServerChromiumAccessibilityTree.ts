@@ -6,31 +6,17 @@ import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 import type { Tree } from "../../tree/Tree.ts";
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
-  #skipAttrs = new Set([
-    "backendDOMNodeId",
-    "ignored",
-    "name",
-    "nodeId",
-    "raw_id",
-    // We skip 'expanded' because it often leads
-    // to LLM decided to first click comboboxes to expand them,
-    // which is automatically handled by the SelectTool.
-    "expanded",
-  ]);
-
-  #tree: Record<string, Tree.Node>;
+  #tree: Record<string, Tree.Node> = {};
 
   constructor(xml: string) {
     super();
-    this.#tree = {}; // Initialize the result dictionary
 
-    // Parse the raw XML
     const xmlRoots = Xml.parseAnyRootChildren(xml);
 
-    // Process each root element
     for (const xmlRoot of xmlRoots) {
       const node = this.#xmlNodeToTreeNode(xmlRoot);
-      // Use backendId as the key
+      // TODO: See `if (!xmlEl)` comment in the beginning of `#xmlNodeToTreeNode`.
+      // if (!node) continue;
       const backendId = node.backendId ?? pythonicId(node);
       this.#tree[`${backendId}`] = node;
     }
@@ -38,77 +24,82 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     void this.devCaptureTreeInput("chrome", xml);
   }
 
-  /** Convert XML element to node dict structure with simplified IDs. */
   #xmlNodeToTreeNode(xmlNode: Xml.Node): Tree.Node {
     const xmlEl = Xml.nodeAsTag(xmlNode);
-    const text = Xml.nodeAsText(xmlNode);
+    // TODO: Having this check here doesn't affect the behavior, but it would
+    // simplify the code quite a bit. It is present in `ServerUIAutomator2AccessibilityTree`.
+    // if (!xmlEl) return null;
+    const xmlText = Xml.nodeAsText(xmlNode);
 
-    // Assign simplified ID
-    const simplifiedId = xmlEl ? this.getNextId() : -1;
+    const simplifiedId = xmlEl ? this.getNextId() : (-1 as Tree.SimplifiedId);
 
-    // Map to raw_id attribute
-    const rawId = xmlEl?.attribs["raw_id"] ?? "";
-    if (rawId) {
-      this.simplifiedToRawId[simplifiedId] = parseInt(rawId);
+    const rawId = xmlEl?.attribs.raw_id;
+    if (rawId && simplifiedId !== -1) {
+      const rawIdInt = parseInt(rawId) as Tree.RawId;
+      this.simplifiedToRawId[simplifiedId] = rawIdInt;
     }
 
-    const role = xmlEl?.tagName ?? (text ? "StaticText" : undefined);
+    const role = xmlEl?.tagName ?? (xmlText ? "StaticText" : undefined);
     always(role);
+
+    const name = xmlEl?.attribs.name;
+
+    const ignored = this.parseIgnored(xmlNode);
+
+    const attrs: Tree.NodeAttrs = {};
+
+    for (const [attrName, attrValue] of Object.entries(xmlEl?.attribs || {})) {
+      if (skipXmlAttrs.has(attrName)) continue;
+      attrs[attrName] = attrValue;
+    }
+
+    // Process children recursively
+
+    const children: Tree.Node[] = [];
+
+    for (const xmlChild of xmlEl?.children || []) {
+      // TODO: This check is present in `ServerXCUITestAccessibilityTree`, but
+      // wasn't in the original `ServerChromiumAccessibilityTree`. Adding it
+      // here doesn't change the behavior, so we might want to keep it for
+      // consistency.
+      // if (!Xml.isTag(xmlChild)) continue;
+      const childNode = this.#xmlNodeToTreeNode(xmlChild);
+      // TODO: See `if (!xmlEl)` comment in the beginning of this function.
+      // if (!childNode) continue;
+      children.push(childNode);
+    }
 
     const node: Tree.Node = {
       id: simplifiedId,
       role,
-      // NOTE: In Python implementation we had "True"/"False" strings, so we use
-      // case-insensitive comparison here to be safe.
-      ignored: xmlEl?.attribs["ignored"]?.toLowerCase() === "true",
+      name,
+      ignored,
+      attrs,
+      children,
     };
-
-    // Add name if present
-    if (xmlEl?.attribs["name"]) node.name = xmlEl.attribs["name"];
-
-    // Add properties from other attributes
-    const attrs: Tree.Attr[] = [];
-    for (const [name, value] of Object.entries(xmlEl?.attribs || {})) {
-      if (this.#skipAttrs.has(name)) continue;
-      attrs.push({ name, value });
-    }
-
-    if (attrs.length) node.attrs = attrs;
-
-    // Process children recursively
-    const xmlChildren = Xml.nodeAsNodeWithChildren(xmlNode)?.children || [];
-    const children: Tree.Node[] = [];
-    for (const xmlChild of xmlChildren) {
-      const child = this.#xmlNodeToTreeNode(xmlChild);
-      children.push(child);
-    }
-
-    if (children.length) node.children = children;
 
     return node;
   }
 
   /**
-   * Converts the nested tree to XML format using role.value as tags.
+   * Converts tree to XML string.
    *
    * @param excludeAttrs Optional set of attribute names to exclude from output.
    */
   override toXml(excludeAttrs: Set<string> = new Set()): string {
-    function treeNodeToXmlNode(
+    function treeNodeToXmlElement(
       node: Tree.Node,
       xmlParent: Xml.Element | null,
     ): Xml.Element | null {
-      const { id, role, ignored, name = "", attrs = [], children = [] } = node;
+      const { id, role, ignored, name = "", attrs, children } = node;
 
       if (role === "StaticText" && xmlParent) {
-        if (name.trim()) {
-          xmlParent.children.push(Xml.text(name));
-        }
+        if (name.trim()) xmlParent.children.push(Xml.text(name));
         return null;
       }
 
       if (role === "none" || ignored) {
-        for (const child of children) treeNodeToXmlNode(child, xmlParent);
+        for (const child of children) treeNodeToXmlElement(child, xmlParent);
         return null;
       }
 
@@ -122,14 +113,12 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
       // Assign a unique ID to the element
       if (!excludeAttrs.has("id")) xmlEl.attribs.id = String(id);
 
-      for (const attr of attrs) {
-        const attrName = attr.name;
-        if (!excludeAttrs.has(attrName))
-          xmlEl.attribs[attrName] = attr.value ?? "";
+      for (const [attrName, attrValue] of Object.entries(attrs)) {
+        if (!excludeAttrs.has(attrName)) xmlEl.attribs[attrName] = attrValue;
       }
 
       // Add children recursively
-      for (const child of children) treeNodeToXmlNode(child, xmlEl);
+      for (const child of children) treeNodeToXmlElement(child, xmlEl);
 
       // Return root XML element
       if (!xmlParent) return xmlEl;
@@ -166,7 +155,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     for (const rootId of Object.keys(this.#tree)) {
       always(this.#tree[rootId]);
 
-      const xmlRoot = treeNodeToXmlNode(this.#tree[rootId], null);
+      const xmlRoot = treeNodeToXmlElement(this.#tree[rootId], null);
 
       if (xmlRoot) {
         xmlRoots.push(xmlRoot);
@@ -255,3 +244,15 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     return Array.from(texts);
   }
 }
+
+const skipXmlAttrs = new Set([
+  "backendDOMNodeId",
+  "ignored",
+  "name",
+  "nodeId",
+  "raw_id",
+  // We skip 'expanded' because it often leads
+  // to LLM decided to first click comboboxes to expand them,
+  // which is automatically handled by the SelectTool.
+  "expanded",
+]);
