@@ -136,10 +136,15 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
 
   .table {
     @apply w-full text-left border-collapse;
+    table-layout: fixed;
 
     & th,
     & td {
       @apply border border-accent-700;
+    }
+
+    & .is-metric {
+      width: 28%;
     }
   }
 

@@ -1471,100 +1471,36 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "TypeScript client",
+              label: "Client SDKs",
               subtext: txt`
-                Native JS/TS client package.
+                Native client packages by language.
               `,
             },
           },
         },
 
         alumnium: {
-          kind: "support",
-          support: "yes",
+          kind: "string",
+          value: { en: "Java, Python, TypeScript" },
+          highlight: "positive",
         },
 
         "browser-use": {
-          kind: "support",
-          support: "yes",
+          kind: "string",
+          value: { en: "Python, TypeScript" },
+          highlight: "mixed",
         },
 
         "mobile-mcp": {
-          kind: "support",
-          support: "yes",
+          kind: "string",
+          value: { en: "TypeScript" },
+          highlight: "negative",
         },
 
         "playwright-mcp": {
-          kind: "support",
-          support: "yes",
-        },
-      }),
-
-      comparisonRow({
-        metric: {
-          kind: "metric",
-          value: {
-            en: {
-              label: "Python client",
-              subtext: txt`
-                Native Python client package.
-              `,
-            },
-          },
-        },
-
-        alumnium: {
-          kind: "support",
-          support: "yes",
-        },
-
-        "browser-use": {
-          kind: "support",
-          support: "yes",
-        },
-
-        "mobile-mcp": {
-          kind: "support",
-          support: "no",
-        },
-
-        "playwright-mcp": {
-          kind: "support",
-          support: "yes",
-        },
-      }),
-
-      comparisonRow({
-        metric: {
-          kind: "metric",
-          value: {
-            en: {
-              label: "Java client",
-              subtext: txt`
-                Native Java client package.
-              `,
-            },
-          },
-        },
-
-        alumnium: {
-          kind: "support",
-          support: "yes",
-        },
-
-        "browser-use": {
-          kind: "support",
-          support: "no",
-        },
-
-        "mobile-mcp": {
-          kind: "support",
-          support: "no",
-        },
-
-        "playwright-mcp": {
-          kind: "support",
-          support: "yes",
+          kind: "string",
+          value: { en: "Java, Python, TypeScript" },
+          highlight: "positive",
         },
       }),
 
