@@ -152,6 +152,14 @@ export class Session {
    * @returns The created server tree instance
    */
   processTree(rawTreeData: string): BaseServerAccessibilityTree {
+    logger.debug(
+      "Processing raw tree data into server tree using {platform}: {rawTree}",
+      {
+        platform: this.platform,
+        rawTree: Logger.debugExtra("raw-tree", rawTreeData),
+      },
+    );
+
     let tree: BaseServerAccessibilityTree;
     if (this.platform === "chromium") {
       tree = new ServerChromiumAccessibilityTree(rawTreeData);

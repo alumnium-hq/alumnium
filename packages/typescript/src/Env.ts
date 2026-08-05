@@ -29,6 +29,8 @@ let cachedVars: Env.VarsRecord = {};
 let envLogger: LoggerSchema.Like | undefined = undefined;
 
 export const Env = {
+  //#region Vars
+
   get ALUMNIUM_CACHE() {
     return envVar(
       "ALUMNIUM_CACHE",
@@ -206,6 +208,17 @@ export const Env = {
     return secretEnvVar("ANTHROPIC_API_KEY", z.string().optional());
   },
 
+  get ALUMNIUM_SCENARIOS_DIR() {
+    return envVar(
+      "ALUMNIUM_SCENARIOS_DIR",
+      pathString().default(".alumnium/scenarios"),
+    );
+  },
+
+  get ALUMNIUM_SHUTDOWN_TIMEOUT_MS() {
+    return envVar("ALUMNIUM_SHUTDOWN_TIMEOUT", z.coerce.number().default(5000));
+  },
+
   get AWS_ACCESS_KEY() {
     return secretEnvVar("AWS_ACCESS_KEY", z.string().optional());
   },
@@ -299,6 +312,8 @@ export const Env = {
   get GITHUB_ACTIONS() {
     return envVar("GITHUB_ACTIONS", z.stringbool().default(false));
   },
+
+  //#endregion
 
   reset(): void {
     cachedVars = {};

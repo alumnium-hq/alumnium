@@ -41,6 +41,7 @@ export abstract class LoggerSchema {
     "all",
     "langchain",
     "tree",
+    "raw-tree",
     "reasoning",
     "http",
     "scenarios",

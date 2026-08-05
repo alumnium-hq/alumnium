@@ -21,6 +21,8 @@ oxfmt = "latest" # TS formatter
 "pipx:wheel" = "latest" # Python wheel builder
 ollama = "latest"
 watchexec = "latest" # File system watcher
+claude-code = "latest" # Claude Code is needed for the test runner feature
+claude = "latest"
 
 [env]
 '_'.source = "scripts/env.sh"
@@ -81,7 +83,14 @@ depends = [
 description = "Build all"
 
 [tasks."dev/cli"]
-run = [{ task = "//packages/typescript:dev/cli" }]
+usage = '''
+arg "<args>" var=#true
+'''
+run = [
+  { task = "//packages/typescript:dev/cli", args = [
+    "{{usage.args | join(sep=' ')}}",
+  ] },
+]
 quiet = true
 raw = true
 

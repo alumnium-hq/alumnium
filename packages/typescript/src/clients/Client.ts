@@ -6,6 +6,7 @@ import { Model } from "../Model.ts";
 import type { ElementRef } from "../server/serverSchema.ts";
 import type { ToolCall, ToolClass } from "../tools/BaseTool.ts";
 import type { Data } from "./typecasting.ts";
+import { SystemProcess } from "../system/SystemProcess.ts";
 
 export namespace Client {
   export interface Props {
@@ -93,6 +94,10 @@ export abstract class Client {
   protected excludeAttributes: string[] | undefined;
 
   constructor(props: Client.Props) {
+    // Initialize process cleanup, so that Tracer and Logger can flush their
+    // buffers on process exit.
+    SystemProcess.initCleanup();
+
     this.platform = props.platform;
     this.tools = props.tools;
     this.planner = props.planner ?? true;

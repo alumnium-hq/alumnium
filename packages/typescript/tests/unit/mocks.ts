@@ -88,16 +88,48 @@ export async function clearAllMocks() {
 
 export function mockBeforeEach<Mocks extends Record<string, MockInstance<any>>>(
   fn: () => Mocks,
-) {
-  const mocksRef = { cur: {} as Mocks };
+): Mocks {
+  // Create the first mocks eagerly so callers can destructure the proxy keys
+  // while the test module is being evaluated, before any beforeEach hook runs.
+  let current = fn();
+  pushMock(...Object.values(current));
 
+  const proxies: Record<string, MockInstance<any>> = {};
+
+  for (const key of Object.keys(current)) {
+    // NONE: Vitest's matchers use this marker to recognize a function as
+    // a mock.
+    const target = Object.assign(() => {}, {
+      _isMockFunction: true,
+    }) as unknown as MockInstance<any>;
+
+    proxies[key] = new Proxy(target, {
+      // Calls and mock properties always resolve against this test's real mock.
+      apply: (_target, thisArg, args) =>
+        // MockInstance omits the call signature even though Vitest mocks
+        // are callable.
+        Reflect.apply(current[key] as unknown as Function, thisArg, args),
+
+      get: (_target, property, receiver) =>
+        Reflect.get(current[key]!, property, receiver),
+
+      set: (_target, property, value, receiver) =>
+        Reflect.set(current[key]!, property, value, receiver),
+    });
+  }
+
+  // The eager mocks belong to the first test. Later tests need fresh instances.
+  let initialized = false;
   beforeEach(() => {
-    const newMocks = fn();
-    mocksRef.cur = newMocks;
-    pushMock(...Object.values(newMocks));
+    if (initialized) {
+      current = fn();
+      pushMock(...Object.values(current));
+    } else {
+      initialized = true;
+    }
   });
 
-  return mocksRef;
+  return proxies as Mocks;
 }
 
 export interface HookRef<Type> {
