@@ -199,9 +199,9 @@ Encoding: `cl100k_base`
 
 | Statement                                                     | Before | After | Change | Change % |
 | ------------------------------------------------------------- | -----: | ----: | -----: | -------: |
-| the total number of found package links displayed on the page |    30% |   30% |     0% |       0% |
-| 7a86bde commit title                                          |    90% |   90% |     0% |       0% |
-| hash of the 'Add missing domutils' commit                     |    96% |   96% |     0% |       0% |
+| the total number of found package links displayed on the page |    34% |   34% |     0% |       0% |
+| 7a86bde commit title                                          |    82% |   82% |     0% |       0% |
+| abbreviated SHA of the 'Add missing domutils' commit          |    96% |   96% |     0% |       0% |
 
 ### Average input tokens
 
@@ -209,20 +209,20 @@ Encoding: `cl100k_base`
 | ------------------------------------------------------------- | -----: | ----: | -----: | -------: |
 | the total number of found package links displayed on the page |  10180 | 10180 |      0 |       0% |
 | 7a86bde commit title                                          |  41903 | 41903 |      0 |       0% |
-| hash of the 'Add missing domutils' commit                     |  41905 | 41905 |      0 |       0% |
+| abbreviated SHA of the 'Add missing domutils' commit          |  41906 | 41906 |      0 |       0% |
 
 ### Average output tokens
 
 | Statement                                                     | Before | After | Change | Change % |
 | ------------------------------------------------------------- | -----: | ----: | -----: | -------: |
-| the total number of found package links displayed on the page |    667 |   667 |      0 |       0% |
-| 7a86bde commit title                                          |    497 |   497 |      0 |       0% |
-| hash of the 'Add missing domutils' commit                     |    507 |   507 |      0 |       0% |
+| the total number of found package links displayed on the page |    593 |   593 |      0 |       0% |
+| 7a86bde commit title                                          |    576 |   576 |      0 |       0% |
+| abbreviated SHA of the 'Add missing domutils' commit          |    471 |   471 |      0 |       0% |
 
 ### Average total tokens
 
 | Statement                                                     | Before | After | Change | Change % |
 | ------------------------------------------------------------- | -----: | ----: | -----: | -------: |
-| the total number of found package links displayed on the page |  10847 | 10847 |      0 |       0% |
-| 7a86bde commit title                                          |  42400 | 42400 |      0 |       0% |
-| hash of the 'Add missing domutils' commit                     |  42412 | 42412 |      0 |       0% |
+| the total number of found package links displayed on the page |  10773 | 10773 |      0 |       0% |
+| 7a86bde commit title                                          |  42479 | 42479 |      0 |       0% |
+| abbreviated SHA of the 'Add missing domutils' commit          |  42377 | 42377 |      0 |       0% |
