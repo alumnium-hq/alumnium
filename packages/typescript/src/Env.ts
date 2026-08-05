@@ -206,6 +206,49 @@ export const Env = {
     return envVar("ALUMNIUM_EVAL_TRIAL_COUNT", z.coerce.number().default(25));
   },
 
+  get ALUMNIUM_EVAL_RUN_TIMEOUT_MS() {
+    return envVar(
+      "ALUMNIUM_EVAL_RUN_TIMEOUT_MS",
+      z.coerce.number().default(60000 * 20), // 20 minutes
+    );
+  },
+
+  get ALUMNIUM_EVAL_MAX_CONCURRENCY() {
+    return envVar(
+      "ALUMNIUM_EVAL_MAX_CONCURRENCY",
+      z.coerce.number().default(10),
+    );
+  },
+
+  get ALUMNIUM_EVAL_SESSION_NAME() {
+    return envVar("ALUMNIUM_EVAL_SESSION_NAME", pathString().optional());
+  },
+
+  get ALUMNIUM_EVAL_SESSION_PATH() {
+    return envVar("ALUMNIUM_EVAL_SESSION_PATH", pathString().optional());
+  },
+
+  get ALUMNIUM_EVAL_SESSION_TRIM_INPUT() {
+    return envVar(
+      "ALUMNIUM_EVAL_SESSION_TRIM_INPUT",
+      z
+        .string()
+        .default("100")
+        .transform((value): number | false =>
+          value === "false"
+            ? false
+            : z.coerce.number().int().nonnegative().parse(value),
+        ),
+    );
+  },
+
+  get ALUMNIUM_EVAL_THRESHOLD() {
+    return envVar(
+      "ALUMNIUM_EVAL_THRESHOLD",
+      z.coerce.number().min(0).max(100).default(95),
+    );
+  },
+
   get ANTHROPIC_API_KEY() {
     return secretEnvVar("ANTHROPIC_API_KEY", z.string().optional());
   },

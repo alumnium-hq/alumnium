@@ -15,6 +15,14 @@ const BASELINE_PATH = new URL(
   "../src/server/accessibility/__snapshots__/tokens.json",
   import.meta.url,
 );
+const EVAL_PATH = new URL(
+  "../src/server/accessibility/__snapshots__/eval.json",
+  import.meta.url,
+);
+const EVAL_BASE_PATH = new URL(
+  "../src/server/accessibility/__snapshots__/eval-base.json",
+  import.meta.url,
+);
 const ENCODING = "cl100k_base";
 const PLATFORMS = ["chrome", "uiautomator2", "xcuitest"];
 
@@ -34,11 +42,33 @@ interface TokenBaseline {
   platforms: Record<string, Record<string, number>>;
 }
 
+interface EvalEntry {
+  input: { statement: string };
+  expected: unknown;
+  rendered_columns: { label: string; value: unknown }[];
+}
+
+interface EvalReport {
+  evals: EvalEntry[];
+}
+
+interface StatementEval {
+  statement: string;
+  trials: number;
+  correct: number;
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+}
+
+type EvalMetric = "accuracy" | "inputTokens" | "outputTokens" | "totalTokens";
+
 const encoder = get_encoding(ENCODING);
 
 try {
   const platforms = await Promise.all(PLATFORMS.map(reportPlatform));
   const baseline = await readBaseline(platforms);
+  const [baselineEvals, currentEvals] = await readEvals();
   const totalSnapshots = platforms.reduce(
     (total, platform) => total + platform.snapshots.length,
     0,
@@ -77,6 +107,30 @@ try {
       `| **Total** | **${before}** | **${platform.total}** | **${formatChange(platform.total - before)}** | **${formatPercent(before, platform.total)}** |`,
     );
   }
+
+  lines.push(
+    "",
+    "## Eval Results",
+    ...reportEvalMetric("Accuracy", "accuracy", baselineEvals, currentEvals),
+    ...reportEvalMetric(
+      "Average input tokens",
+      "inputTokens",
+      baselineEvals,
+      currentEvals,
+    ),
+    ...reportEvalMetric(
+      "Average output tokens",
+      "outputTokens",
+      baselineEvals,
+      currentEvals,
+    ),
+    ...reportEvalMetric(
+      "Average total tokens",
+      "totalTokens",
+      baselineEvals,
+      currentEvals,
+    ),
+  );
 
   await fs.writeFile(REPORT_PATH, `${lines.join("\n")}\n`);
 
@@ -140,6 +194,104 @@ function formatPercent(before: number, after: number): string {
   const percent = ((after - before) / before) * 100;
   const formatted = `${percent.toFixed(2).replace(/\.00$/, "")}%`;
   return percent > 0 ? `+${formatted}` : formatted;
+}
+
+function formatNumber(value: number): string {
+  return value.toFixed(2).replace(/\.00$/, "");
+}
+
+async function readEvals(): Promise<[StatementEval[], StatementEval[]]> {
+  const baseline = await reportEvals(EVAL_BASE_PATH);
+  try {
+    return [baseline, await reportEvals(EVAL_PATH)];
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      return [baseline, baseline];
+    }
+    throw error;
+  }
+}
+
+async function reportEvals(path: URL): Promise<StatementEval[]> {
+  const report = JSON.parse(await fs.readFile(path, "utf-8")) as EvalReport;
+  const statements: Record<string, StatementEval> = {};
+
+  for (const entry of report.evals) {
+    const columns = Object.fromEntries(
+      entry.rendered_columns.map((column) => [column.label, column.value]),
+    );
+    const inputTokens = columns["Input tokens"];
+    const outputTokens = columns["Output tokens"];
+    const totalTokens = columns["Total tokens"];
+    if (
+      typeof inputTokens !== "number" ||
+      typeof outputTokens !== "number" ||
+      typeof totalTokens !== "number"
+    ) {
+      continue;
+    }
+
+    const statement = entry.input.statement;
+    const result = (statements[statement] ??= {
+      statement,
+      trials: 0,
+      correct: 0,
+      inputTokens: 0,
+      outputTokens: 0,
+      totalTokens: 0,
+    });
+    result.trials++;
+    if (columns.Value === entry.expected) result.correct++;
+    result.inputTokens += inputTokens;
+    result.outputTokens += outputTokens;
+    result.totalTokens += totalTokens;
+  }
+
+  return Object.values(statements);
+}
+
+function reportEvalMetric(
+  title: string,
+  metric: EvalMetric,
+  baseline: StatementEval[],
+  current: StatementEval[],
+): string[] {
+  const baselineStatements = Object.fromEntries(
+    baseline.map((entry) => [entry.statement, entry]),
+  );
+  const currentStatements = Object.fromEntries(
+    current.map((entry) => [entry.statement, entry]),
+  );
+  const statements = Array.from(
+    new Set([
+      ...Object.keys(baselineStatements),
+      ...Object.keys(currentStatements),
+    ]),
+  );
+  const percent = metric === "accuracy";
+
+  return [
+    "",
+    `### ${title}`,
+    "",
+    "| Statement | Before | After | Change | Change % |",
+    "| --- | ---: | ---: | ---: | ---: |",
+    ...statements.map((statement) => {
+      const before = evalMetric(baselineStatements[statement], metric);
+      const after = evalMetric(currentStatements[statement], metric);
+      const suffix = percent ? "%" : "";
+      return `| ${statement} | ${formatNumber(before)}${suffix} | ${formatNumber(after)}${suffix} | ${formatChange(Number(formatNumber(after - before)))}${suffix} | ${formatPercent(before, after)} |`;
+    }),
+  ];
+}
+
+function evalMetric(
+  entry: StatementEval | undefined,
+  metric: EvalMetric,
+): number {
+  if (!entry) return 0;
+  if (metric === "accuracy") return (entry.correct / entry.trials) * 100;
+  return Math.round(entry[metric] / entry.trials);
 }
 
 async function reportPlatform(name: string): Promise<PlatformTokens> {
