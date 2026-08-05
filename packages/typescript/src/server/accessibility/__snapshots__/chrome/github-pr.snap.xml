@@ -1,0 +1,3621 @@
+<RootWebArea name="Migrate server &amp; MCP to TypeScript by kossnocorp · Pull Request #256 · alumnium-hq/alumnium · GitHub" id="1" focusable="true" focused="true" url="https://github.com/alumnium-hq/alumnium/pull/256">
+  <generic id="6">
+    <link id="7" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#start-of-content">
+      Skip to content
+    </link>
+    <generic id="27">
+      <banner id="28">
+        <heading id="29" level="2">
+          Navigation Menu
+        </heading>
+        <generic id="32">
+          <link name="Homepage" id="35" focusable="true" url="https://github.com/"/>
+          <generic id="38">
+            <navigation name="Global" id="40">
+              <list id="41">
+                <listitem id="42" level="1">
+                  <generic id="43">
+                    <button id="44" invalid="false" focusable="true">
+                      Platform
+                    </button>
+                  </generic>
+                </listitem>
+                <listitem id="55" level="1">
+                  <generic id="56">
+                    <button id="57" invalid="false" focusable="true">
+                      Solutions
+                    </button>
+                  </generic>
+                </listitem>
+                <listitem id="66" level="1">
+                  <generic id="67">
+                    <button id="68" invalid="false" focusable="true">
+                      Resources
+                    </button>
+                  </generic>
+                </listitem>
+                <listitem id="77" level="1">
+                  <generic id="78">
+                    <button id="79" invalid="false" focusable="true">
+                      Open Source
+                    </button>
+                  </generic>
+                </listitem>
+                <listitem id="88" level="1">
+                  <generic id="89">
+                    <button id="90" invalid="false" focusable="true">
+                      Enterprise
+                    </button>
+                  </generic>
+                </listitem>
+                <listitem id="97" level="1">
+                  <link id="98" focusable="true" url="https://github.com/pricing">
+                    Pricing
+                  </link>
+                </listitem>
+              </list>
+            </navigation>
+            <button name="Search or jump to, type" id="104" invalid="false" focusable="true" hasPopup="dialog">
+              Type
+              <generic id="108">
+                /
+              </generic>
+              to search
+            </button>
+            <generic id="113">
+              <link id="114" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Falumnium-hq%2Falumnium%2Fpull%2F256">
+                Sign in
+              </link>
+            </generic>
+            <link id="117" focusable="true" url="https://github.com/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fvoltron%2Fpull_requests_fragments%2Fpull_request_layout&amp;source=header-repo&amp;source_repo=alumnium-hq%2Falumnium">
+              Sign up
+            </link>
+            <button name="Appearance settings" id="120" invalid="false" focusable="true" hasPopup="dialog" labelledby=""/>
+          </generic>
+        </generic>
+      </banner>
+    </generic>
+  </generic>
+  <main id="130">
+    <generic id="134">
+      <link id="139" focusable="true" url="https://github.com/alumnium-hq" keyshortcuts="Alt+ArrowUp">
+        alumnium-hq
+      </link>
+      /
+      <strong id="145">
+        <link id="146" focusable="true" url="https://github.com/alumnium-hq/alumnium">
+          alumnium
+        </link>
+      </strong>
+      Public
+      <generic id="153">
+        <list id="154">
+          <listitem id="155" level="1">
+            <link name="You must be signed in to change notification settings" id="156" focusable="true" describedby="tooltip-aaddc752-b5ff-4542-8c72-b622994cf373" url="https://github.com/login?return_to=%2Falumnium-hq%2Falumnium">
+              Notifications
+            </link>
+          </listitem>
+          <listitem id="162" level="1">
+            <link id="163" focusable="true" url="https://github.com/login?return_to=%2Falumnium-hq%2Falumnium">
+              Fork
+              <generic id="166">
+                94
+              </generic>
+            </link>
+          </listitem>
+          <listitem id="169" level="1">
+            <link name="You must be signed in to star a repository" id="171" focusable="true" url="https://github.com/login?return_to=%2Falumnium-hq%2Falumnium">
+              Star
+              <generic name="users starred this repository" id="174">
+                968
+              </generic>
+            </link>
+          </listitem>
+        </list>
+      </generic>
+      <navigation name="Repository" id="178">
+        <list id="179">
+          <listitem id="180" level="1">
+            <link id="181" focusable="true" url="https://github.com/alumnium-hq/alumnium">
+              Code
+            </link>
+          </listitem>
+          <listitem id="186" level="1">
+            <link name="" id="187" focusable="true" url="https://github.com/alumnium-hq/alumnium/issues">
+              Issues
+              <generic id="192">
+                11
+              </generic>
+            </link>
+          </listitem>
+          <listitem id="195" level="1">
+            <link name="" id="196" focusable="true" url="https://github.com/alumnium-hq/alumnium/pulls">
+              Pull requests
+              <generic id="201">
+                9
+              </generic>
+            </link>
+          </listitem>
+          <listitem id="204" level="1">
+            <link id="205" focusable="true" url="https://github.com/alumnium-hq/alumnium/discussions">
+              Discussions
+            </link>
+          </listitem>
+          <listitem id="210" level="1">
+            <link id="211" focusable="true" url="https://github.com/alumnium-hq/alumnium/actions">
+              Actions
+            </link>
+          </listitem>
+          <listitem id="216" level="1">
+            <link id="217" focusable="true" url="https://github.com/alumnium-hq/alumnium/projects">
+              Projects
+            </link>
+          </listitem>
+          <listitem id="222" level="1">
+            <link id="223" focusable="true" url="https://github.com/alumnium-hq/alumnium/security">
+              Security and quality
+            </link>
+          </listitem>
+          <listitem id="228" level="1">
+            <link id="229" focusable="true" url="https://github.com/alumnium-hq/alumnium/pulse">
+              Insights
+            </link>
+          </listitem>
+        </list>
+      </navigation>
+    </generic>
+    <generic id="241">
+      <generic id="242">
+        <generic id="244">
+          <generic id="245">
+            <sectionheader id="248">
+              <generic id="253">
+                <heading name="" id="254" level="1">
+                  Migrate server &amp; MCP to TypeScript- #256
+                </heading>
+              </generic>
+              <image name="Pull request" id="268"/>
+              Closed
+              <link id="273" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                kossnocorp
+              </link>
+              wants to merge 103 commits into
+              <link id="279" focusable="true" describedby="_R_asn2pk5_" url="https://github.com/alumnium-hq/alumnium/tree/main">
+                alumnium-hq:main
+              </link>
+              from
+              <generic id="288">
+                kossnocorp:ts
+              </generic>
+              <button name="Copy head branch name to clipboard" id="291" invalid="false" focusable="true" labelledby=""/>
+              Lines changed: 27596 additions &amp; 18320 deletions
+              <navigation name="Pull request navigation tabs" id="313">
+                <link name="(" id="315" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256">
+                  Conversation (1)
+                </link>
+                <link name="(" id="325" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits">
+                  Commits (103)
+                </link>
+                <link name="(" id="335" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/checks">
+                  Checks (7)
+                </link>
+                <link name="(" id="345" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/files">
+                  Files changed (208)
+                </link>
+              </navigation>
+              <generic id="355">
+                <image name="Pull request" id="359"/>
+                Closed
+                <heading name="" id="362" level="2">
+                  <link id="364" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#top">
+                    Migrate server &amp; MCP to TypeScript
+                  </link>
+                  #256
+                  <link id="373" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    kossnocorp
+                  </link>
+                  wants to merge 103 commits into
+                  <link id="379" focusable="true" describedby="_R_5fjapk5_" url="https://github.com/alumnium-hq/alumnium/tree/main">
+                    alumnium-hq:main
+                  </link>
+                  from
+                  <generic id="388">
+                    kossnocorp:ts
+                  </generic>
+                  <button name="Copy head branch name to clipboard" id="391" invalid="false" focusable="true" labelledby=""/>
+                </heading>
+              </generic>
+            </sectionheader>
+            <heading id="401" level="2">
+              Conversation
+            </heading>
+            <generic id="406">
+              <link name="" id="407" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                <image name="@kossnocorp" id="408" url="https://avatars.githubusercontent.com/u/52201?s=80&amp;v=4"/>
+              </link>
+              <generic id="409">
+                <generic id="410">
+                  <heading name="edited" id="412" level="3">
+                    <strong id="414">
+                      <link id="415" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                        kossnocorp
+                      </link>
+                    </strong>
+                    commented
+                    <link id="420" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#issue-3980851446">
+                      <generic name="Feb 24, 2026, 8:40 AM GMT+8" id="421">
+                        on Feb 24
+                      </generic>
+                    </link>
+                    <generic id="426">
+                      •
+                    </generic>
+                    <group id="429">
+                      <button id="431" focusable="true" hasPopup="menu">
+                        <generic id="432">
+                          edited
+                        </generic>
+                      </button>
+                    </group>
+                  </heading>
+                  <group id="438">
+                    <button name="" id="440" focusable="true" hasPopup="menu">
+                      <image name="Show options" id="443"/>
+                    </button>
+                  </group>
+                  <generic name="This user has previously committed to the alumnium repository." id="446">
+                    Contributor
+                  </generic>
+                  <generic id="450">
+                    <paragraph id="452">
+                      🚧 WIP
+                    </paragraph>
+                  </generic>
+                  <generic id="455"/>
+                  <generic id="462"/>
+                </generic>
+              </generic>
+            </generic>
+            <generic id="472">
+              <generic id="474">
+                <link id="475" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                  kossnocorp
+                </link>
+                added 30 commits
+                <link id="484" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#commits-pushed-d7ae85f">
+                  <generic name="Feb 12, 2026, 7:18 AM GMT+8" id="485">
+                    6 months ago
+                  </generic>
+                </link>
+              </generic>
+            </generic>
+            <generic id="490">
+              <generic id="496">
+                <generic id="497">
+                  <link name="" id="498" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="499" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="500">
+                <code id="501">
+                  <link id="502" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/d7ae85fe68fb8e4273f012a61b85621b405c3629">
+                    Allow using mise as the tools installer
+                  </link>
+                </code>
+                <generic id="505">
+                  <button name="Commit message body" id="506" invalid="false" focusable="true">
+                    …
+                  </button>
+                </generic>
+              </generic>
+              <generic id="509">
+                <button id="510" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="520">
+                <code id="521">
+                  <link id="522" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/d7ae85fe68fb8e4273f012a61b85621b405c3629">
+                    d7ae85f
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="525">
+              <generic id="531">
+                <generic id="532">
+                  <link name="" id="533" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="534" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="535">
+                <code id="536">
+                  <link id="537" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/fe80ea6b545b91bb66592ef89edae69680fbb5e0">
+                    Update
+                    <code id="540">
+                      package-lock.json
+                    </code>
+                  </link>
+                </code>
+                <generic id="543">
+                  <button name="Commit message body" id="544" invalid="false" focusable="true">
+                    …
+                  </button>
+                </generic>
+              </generic>
+              <generic id="547">
+                <button id="548" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="558">
+                <code id="559">
+                  <link id="560" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/fe80ea6b545b91bb66592ef89edae69680fbb5e0">
+                    fe80ea6
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="563">
+              <generic id="569">
+                <generic id="570">
+                  <link name="" id="571" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="572" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="573">
+                <code id="574">
+                  <link id="575" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0e10a0e1f1cdb0558a3e3fbdd4ca0e0fc61ed342">
+                    Add Bun v1.3.9 to tools
+                  </link>
+                </code>
+              </generic>
+              <generic id="578">
+                <button id="579" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="589">
+                <code id="590">
+                  <link id="591" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0e10a0e1f1cdb0558a3e3fbdd4ca0e0fc61ed342">
+                    0e10a0e
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="594">
+              <generic id="600">
+                <generic id="601">
+                  <link name="" id="602" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="603" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="604">
+                <code id="605">
+                  <link id="606" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/437264136cb29ec293cf054e59e7da270915647e">
+                    Set up PoC single-file executable core using Bun
+                  </link>
+                </code>
+              </generic>
+              <generic id="609">
+                <button id="610" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="620">
+                <code id="621">
+                  <link id="622" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/437264136cb29ec293cf054e59e7da270915647e">
+                    4372641
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="625">
+              <generic id="631">
+                <generic id="632">
+                  <link name="" id="633" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="634" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="635">
+                <code id="636">
+                  <link id="637" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b4e8ffb7c145733a27ff684f61e2fd34f8dfe71c">
+                    Integrate core package into the monorepo
+                  </link>
+                </code>
+              </generic>
+              <generic id="640">
+                <button id="641" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="651">
+                <code id="652">
+                  <link id="653" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b4e8ffb7c145733a27ff684f61e2fd34f8dfe71c">
+                    b4e8ffb
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="656">
+              <generic id="662">
+                <generic id="663">
+                  <link name="" id="664" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="665" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="666">
+                <code id="667">
+                  <link id="668" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/04d1ffa3b2026a985c89ccea634e8e8cabd38ff9">
+                    Outline core server proxying everything to the current version
+                  </link>
+                </code>
+              </generic>
+              <generic id="671">
+                <button id="672" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="682">
+                <code id="683">
+                  <link id="684" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/04d1ffa3b2026a985c89ccea634e8e8cabd38ff9">
+                    04d1ffa
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="687">
+              <generic id="693">
+                <generic id="694">
+                  <link name="" id="695" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="696" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="697">
+                <code id="698">
+                  <link id="699" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bccecb23542f436ed6c6dcb404f9c76d3aa52761">
+                    Refactor core proxy server to Elysia
+                  </link>
+                </code>
+              </generic>
+              <generic id="702">
+                <button id="703" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="713">
+                <code id="714">
+                  <link id="715" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bccecb23542f436ed6c6dcb404f9c76d3aa52761">
+                    bccecb2
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="718">
+              <generic id="724">
+                <generic id="725">
+                  <link name="" id="726" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="727" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="728">
+                <code id="729">
+                  <link id="730" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/343f37003d13759509541108dbd5ee971de52639">
+                    Loosen core params validation, add cors middleware
+                  </link>
+                </code>
+              </generic>
+              <generic id="733">
+                <button id="734" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="744">
+                <code id="745">
+                  <link id="746" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/343f37003d13759509541108dbd5ee971de52639">
+                    343f370
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="749">
+              <generic id="755">
+                <generic id="756">
+                  <link name="" id="757" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="758" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="759">
+                <code id="760">
+                  <link id="761" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/06eba2332d75899e8c96d5ce375d2892fbd8c865">
+                    PoC core routes modules, simplify CLI a bit
+                  </link>
+                </code>
+              </generic>
+              <generic id="764">
+                <button id="765" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="775">
+                <code id="776">
+                  <link id="777" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/06eba2332d75899e8c96d5ce375d2892fbd8c865">
+                    06eba23
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="780">
+              <generic id="786">
+                <generic id="787">
+                  <link name="" id="788" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="789" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="790">
+                <code id="791">
+                  <link id="792" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bee453c4b6c92ffdc8d8d01759288dc6bbc7e253">
+                    Introduce session state sync TS &lt;&gt; Python
+                  </link>
+                </code>
+              </generic>
+              <generic id="795">
+                <button id="796" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="806">
+                <code id="807">
+                  <link id="808" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bee453c4b6c92ffdc8d8d01759288dc6bbc7e253">
+                    bee453c
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="811">
+              <generic id="817">
+                <generic id="818">
+                  <link name="" id="819" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="820" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="821">
+                <code id="822">
+                  <link id="823" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0ce9fb1c95d21327bf1df78eba84da055c311ea0">
+                    Outline session, session manager and agent classes
+                  </link>
+                </code>
+              </generic>
+              <generic id="826">
+                <button id="827" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="837">
+                <code id="838">
+                  <link id="839" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0ce9fb1c95d21327bf1df78eba84da055c311ea0">
+                    0ce9fb1
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="842">
+              <generic id="848">
+                <generic id="849">
+                  <link name="" id="850" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="851" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="852">
+                <code id="853">
+                  <link id="854" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3f4acd088bfc40af2e83543742bcd545ada265f9">
+                    Add failing core accessibility tests
+                  </link>
+                </code>
+              </generic>
+              <generic id="857">
+                <button id="858" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="868">
+                <code id="869">
+                  <link id="870" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3f4acd088bfc40af2e83543742bcd545ada265f9">
+                    3f4acd0
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="873">
+              <generic id="879">
+                <generic id="880">
+                  <link name="" id="881" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="882" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="883">
+                <code id="884">
+                  <link id="885" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/6dcffac7c5f9f8c5b8d2f574bd98cb17c6de1795">
+                    Set up mise &amp; fnox, set dev env vars
+                  </link>
+                </code>
+              </generic>
+              <generic id="888">
+                <button id="889" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="899">
+                <code id="900">
+                  <link id="901" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/6dcffac7c5f9f8c5b8d2f574bd98cb17c6de1795">
+                    6dcffac
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="904">
+              <generic id="910">
+                <generic id="911">
+                  <link name="" id="912" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="913" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="914">
+                <code id="915">
+                  <link id="916" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/84fdab1a45eb86dd63e0b22ea0e9530fa3dceee8">
+                    Set up OpenCode
+                  </link>
+                </code>
+              </generic>
+              <generic id="919">
+                <button id="920" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="930">
+                <code id="931">
+                  <link id="932" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/84fdab1a45eb86dd63e0b22ea0e9530fa3dceee8">
+                    84fdab1
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="935">
+              <generic id="941">
+                <generic id="942">
+                  <link name="" id="943" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="944" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="945">
+                <code id="946">
+                  <link id="947" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/da11cabc533004f9bd9b5cd6272d7b0eeecc161c">
+                    Add TODO file with pending TypeScript migration list
+                  </link>
+                </code>
+              </generic>
+              <generic id="950">
+                <button id="951" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="961">
+                <code id="962">
+                  <link id="963" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/da11cabc533004f9bd9b5cd6272d7b0eeecc161c">
+                    da11cab
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="966">
+              <generic id="972">
+                <generic id="973">
+                  <link name="" id="974" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="975" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="976">
+                <code id="977">
+                  <link id="978" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bfb9f03eff67b50693ad456a08ecf2ba7e1b046e">
+                    Add dummy server accessibility tree classes
+                  </link>
+                </code>
+              </generic>
+              <generic id="981">
+                <button id="982" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="992">
+                <code id="993">
+                  <link id="994" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bfb9f03eff67b50693ad456a08ecf2ba7e1b046e">
+                    bfb9f03
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="997">
+              <generic id="1003">
+                <generic id="1004">
+                  <link name="" id="1005" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1006" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1007">
+                <code id="1008">
+                  <link id="1009" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/57e2b5f44398f5ee068403e4673d22ab97a8c1aa">
+                    Fix core types, add types script
+                  </link>
+                </code>
+              </generic>
+              <generic id="1012">
+                <button id="1013" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1023">
+                <code id="1024">
+                  <link id="1025" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/57e2b5f44398f5ee068403e4673d22ab97a8c1aa">
+                    57e2b5f
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1028">
+              <generic id="1034">
+                <generic id="1035">
+                  <link name="" id="1036" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1037" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1038">
+                <code id="1039">
+                  <link id="1040" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9a8fa73787a7c2faaf4798e8c9bc2cc8371fdf79">
+                    Set up py2ts AI agent along with basic instructions
+                  </link>
+                </code>
+              </generic>
+              <generic id="1043">
+                <button id="1044" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1054">
+                <code id="1055">
+                  <link id="1056" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9a8fa73787a7c2faaf4798e8c9bc2cc8371fdf79">
+                    9a8fa73
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1059">
+              <generic id="1065">
+                <generic id="1066">
+                  <link name="" id="1067" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1068" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1069">
+                <code id="1070">
+                  <link id="1071" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f891e810aba4d50d60ee4a0e1399987d514c6b09">
+                    Convert AccessibilityTreeDiff to TS
+                  </link>
+                </code>
+              </generic>
+              <generic id="1074">
+                <button id="1075" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1085">
+                <code id="1086">
+                  <link id="1087" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f891e810aba4d50d60ee4a0e1399987d514c6b09">
+                    f891e81
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1090">
+              <generic id="1096">
+                <generic id="1097">
+                  <link name="" id="1098" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1099" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1100">
+                <code id="1101">
+                  <link id="1102" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/20b6c53cbb67d36d4cadec80dcd766833da3728c">
+                    Convert BaseServerAccessibilityTree to TS
+                  </link>
+                </code>
+              </generic>
+              <generic id="1105">
+                <button id="1106" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1116">
+                <code id="1117">
+                  <link id="1118" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/20b6c53cbb67d36d4cadec80dcd766833da3728c">
+                    20b6c53
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1121">
+              <generic id="1127">
+                <generic id="1128">
+                  <link name="" id="1129" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1130" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1131">
+                <code id="1132">
+                  <link id="1133" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/857e64f3a5d6d26ad5ee53c4fca2be9b0df661b1">
+                    Rearrange server accessibility tree modules
+                  </link>
+                </code>
+              </generic>
+              <generic id="1136">
+                <button id="1137" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1147">
+                <code id="1148">
+                  <link id="1149" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/857e64f3a5d6d26ad5ee53c4fca2be9b0df661b1">
+                    857e64f
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1152">
+              <generic id="1158">
+                <generic id="1159">
+                  <link name="" id="1160" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1161" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1162">
+                <code id="1163">
+                  <link id="1164" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cd3d29f2fb43a60792b1fb7b7796c7fffa6c0c8a">
+                    Convert ServerChromiumAccessibilityTree to TS
+                  </link>
+                </code>
+              </generic>
+              <generic id="1167">
+                <button id="1168" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1178">
+                <code id="1179">
+                  <link id="1180" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cd3d29f2fb43a60792b1fb7b7796c7fffa6c0c8a">
+                    cd3d29f
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1183">
+              <generic id="1189">
+                <generic id="1190">
+                  <link name="" id="1191" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1192" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1193">
+                <code id="1194">
+                  <link id="1195" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/36ca21943cefc4de648cb5be24666e99c9ee4931">
+                    Convert ServerUiAutomator2AccessibilityTree to TS
+                  </link>
+                </code>
+              </generic>
+              <generic id="1198">
+                <button id="1199" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1209">
+                <code id="1210">
+                  <link id="1211" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/36ca21943cefc4de648cb5be24666e99c9ee4931">
+                    36ca219
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1214">
+              <generic id="1220">
+                <generic id="1221">
+                  <link name="" id="1222" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1223" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1224">
+                <code id="1225">
+                  <link id="1226" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ee2f60af4cc068a9a550883b62ff9a2ce5225099">
+                    Convert ServerXcuitestAccessibilityTree to TS
+                  </link>
+                </code>
+              </generic>
+              <generic id="1229">
+                <button id="1230" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1240">
+                <code id="1241">
+                  <link id="1242" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ee2f60af4cc068a9a550883b62ff9a2ce5225099">
+                    ee2f60a
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1245">
+              <generic id="1251">
+                <generic id="1252">
+                  <link name="" id="1253" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1254" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1255">
+                <code id="1256">
+                  <link id="1257" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/5d40338f9131f3189a2b139738820a0524206d04">
+                    Implement AccessibilityTreeDiff
+                  </link>
+                </code>
+              </generic>
+              <generic id="1260">
+                <button id="1261" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1271">
+                <code id="1272">
+                  <link id="1273" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/5d40338f9131f3189a2b139738820a0524206d04">
+                    5d40338
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1276">
+              <generic id="1282">
+                <generic id="1283">
+                  <link name="" id="1284" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1285" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1286">
+                <code id="1287">
+                  <link id="1288" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/8b1bfbe7290132f54aad6f7ddbcb4145ad7db401">
+                    Move accessibility modules from client to core package
+                  </link>
+                </code>
+              </generic>
+              <generic id="1291">
+                <button id="1292" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1302">
+                <code id="1303">
+                  <link id="1304" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/8b1bfbe7290132f54aad6f7ddbcb4145ad7db401">
+                    8b1bfbe
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1307">
+              <generic id="1313">
+                <generic id="1314">
+                  <link name="" id="1315" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1316" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1317">
+                <code id="1318">
+                  <link id="1319" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/d7f2af77a7c2c05daa47b4a6e2f4d6605c85baec">
+                    Implement ServerChromiumAccessibilityTree
+                  </link>
+                </code>
+              </generic>
+              <generic id="1322">
+                <button id="1323" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1333">
+                <code id="1334">
+                  <link id="1335" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/d7f2af77a7c2c05daa47b4a6e2f4d6605c85baec">
+                    d7f2af7
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1338">
+              <generic id="1344">
+                <generic id="1345">
+                  <link name="" id="1346" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1347" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1348">
+                <code id="1349">
+                  <link id="1350" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cc4dd426055b0b3c40b4ed2364b4870207b6d1b5">
+                    Rename ServerChromiumAccessibilityTree modules
+                  </link>
+                </code>
+              </generic>
+              <generic id="1353">
+                <button id="1354" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1364">
+                <code id="1365">
+                  <link id="1366" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cc4dd426055b0b3c40b4ed2364b4870207b6d1b5">
+                    cc4dd42
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1369">
+              <generic id="1375">
+                <generic id="1376">
+                  <link name="" id="1377" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1378" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1379">
+                <code id="1380">
+                  <link id="1381" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a9930806923b38df87dd3a463bb06bd91dc37c39">
+                    Rename remaining server accessibility tree files to match the convention
+                  </link>
+                </code>
+              </generic>
+              <generic id="1384">
+                <button id="1385" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1394">
+                <group id="1395">
+                  <DisclosureTriangle name="" id="1397" focusable="true">
+                    <image name="0 / 3 checks OK" id="1398"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="1400">
+                <code id="1401">
+                  <link id="1402" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a9930806923b38df87dd3a463bb06bd91dc37c39">
+                    a993080
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1405">
+              <generic id="1411">
+                <generic id="1412">
+                  <link name="" id="1413" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="1414" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1415">
+                <code id="1416">
+                  <link id="1417" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/88f3c1968801fd64aa94cb93fceba093c97e5656">
+                    Add TODO to ServerChromiumAccessibilityTree
+                  </link>
+                </code>
+              </generic>
+              <generic id="1420">
+                <button id="1421" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="1431">
+                <code id="1432">
+                  <link id="1433" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/88f3c1968801fd64aa94cb93fceba093c97e5656">
+                    88f3c19
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="1436">
+              <generic id="1439">
+                <generic id="1441">
+                  <link id="1442" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    kossnocorp
+                  </link>
+                  added 45 commits
+                  <link id="1451" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#commits-pushed-2142d03">
+                    <generic name="Feb 24, 2026, 10:28 AM GMT+8" id="1452">
+                      6 months ago
+                    </generic>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="1457">
+                <generic id="1463">
+                  <generic id="1464">
+                    <link name="" id="1465" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1466" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1467">
+                  <code id="1468">
+                    <link id="1469" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2142d0300adf35fa7f69eb8d0fc0243a0c19a3fb">
+                      Fix typos in the py2ts-dev agent
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1472">
+                  <button id="1473" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1483">
+                  <code id="1484">
+                    <link id="1485" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2142d0300adf35fa7f69eb8d0fc0243a0c19a3fb">
+                      2142d03
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1488">
+                <generic id="1494">
+                  <generic id="1495">
+                    <link name="" id="1496" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1497" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1498">
+                  <code id="1499">
+                    <link id="1500" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/fdba9ebcc6b2671b1199dd144cee01a9068f0d6a">
+                      Extract XML module from ServerChromiumAccessibilityTree
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1503">
+                  <button id="1504" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1514">
+                  <code id="1515">
+                    <link id="1516" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/fdba9ebcc6b2671b1199dd144cee01a9068f0d6a">
+                      fdba9eb
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1519">
+                <generic id="1525">
+                  <generic id="1526">
+                    <link name="" id="1527" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1528" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1529">
+                  <code id="1530">
+                    <link id="1531" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a8dbdfc7820b514220adf7e934b250c762cffdb9">
+                      Implement ServerUIAutomator2AccessibilityTree
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1534">
+                  <button id="1535" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1544">
+                  <group id="1545">
+                    <DisclosureTriangle name="" id="1547" focusable="true">
+                      <image name="0 / 3 checks OK" id="1548"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="1550">
+                  <code id="1551">
+                    <link id="1552" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a8dbdfc7820b514220adf7e934b250c762cffdb9">
+                      a8dbdfc
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1555">
+                <generic id="1561">
+                  <generic id="1562">
+                    <link name="" id="1563" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1564" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1565">
+                  <code id="1566">
+                    <link id="1567" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b5801603d5d5638328f80bed905a7da4de43d8b4">
+                      Upgrade OpenCode
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1570">
+                  <button id="1571" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1580">
+                  <group id="1581">
+                    <DisclosureTriangle name="" id="1583" focusable="true">
+                      <image name="0 / 3 checks OK" id="1584"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="1586">
+                  <code id="1587">
+                    <link id="1588" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b5801603d5d5638328f80bed905a7da4de43d8b4">
+                      b580160
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1591">
+                <generic id="1597">
+                  <generic id="1598">
+                    <link name="" id="1599" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1600" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1601">
+                  <code id="1602">
+                    <link id="1603" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/853e460737a4254491a802674473e1a0a03e836e">
+                      Ignore type errors in the imported accessibility tree classes
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1606">
+                  <button id="1607" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1616">
+                  <group id="1617">
+                    <DisclosureTriangle name="" id="1619" focusable="true">
+                      <image name="0 / 3 checks OK" id="1620"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="1622">
+                  <code id="1623">
+                    <link id="1624" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/853e460737a4254491a802674473e1a0a03e836e">
+                      853e460
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1627">
+                <generic id="1633">
+                  <generic id="1634">
+                    <link name="" id="1635" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1636" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1637">
+                  <code id="1638">
+                    <link id="1639" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a82322d1a78e33b69b3f4bea5441f380b9d293ae">
+                      Implement ServerUIAutomator2AccessibilityTree
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1642">
+                  <button id="1643" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1653">
+                  <code id="1654">
+                    <link id="1655" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a82322d1a78e33b69b3f4bea5441f380b9d293ae">
+                      a82322d
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1658">
+                <generic id="1664">
+                  <generic id="1665">
+                    <link name="" id="1666" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1667" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1668">
+                  <code id="1669">
+                    <link id="1670" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ac0bb73691d36145b05086ae8e860e72c4a65592">
+                      Fix incorrectly translated UIAutomator2AccessibilityTree test
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1673">
+                  <button id="1674" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1684">
+                  <code id="1685">
+                    <link id="1686" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ac0bb73691d36145b05086ae8e860e72c4a65592">
+                      ac0bb73
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1689">
+                <generic id="1695">
+                  <generic id="1696">
+                    <link name="" id="1697" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1698" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1699">
+                  <code id="1700">
+                    <link id="1701" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/66a075bc4883e3839784fd6debfc11d07a290533">
+                      Retranslate UIAutomator2AccessibilityTree from Python
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1704">
+                  <button id="1705" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1714">
+                  <group id="1715">
+                    <DisclosureTriangle name="" id="1717" focusable="true">
+                      <image name="0 / 3 checks OK" id="1718"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="1720">
+                  <code id="1721">
+                    <link id="1722" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/66a075bc4883e3839784fd6debfc11d07a290533">
+                      66a075b
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1725">
+                <generic id="1731">
+                  <generic id="1732">
+                    <link name="" id="1733" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1734" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1735">
+                  <code id="1736">
+                    <link id="1737" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/82663f3c47c768be52d2bd9d0e6d7a1cf963f428">
+                      Retranslate ChromiumAccessibilityTree
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1740">
+                  <button id="1741" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1751">
+                  <code id="1752">
+                    <link id="1753" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/82663f3c47c768be52d2bd9d0e6d7a1cf963f428">
+                      82663f3
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1756">
+                <generic id="1762">
+                  <generic id="1763">
+                    <link name="" id="1764" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1765" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1766">
+                  <code id="1767">
+                    <link id="1768" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/311924d2e261b9164d90f48360cefb80c15ce63d">
+                      Fix ServerXCUITestAccessibilityTree constructor
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1771">
+                  <button id="1772" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1782">
+                  <code id="1783">
+                    <link id="1784" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/311924d2e261b9164d90f48360cefb80c15ce63d">
+                      311924d
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1787">
+                <generic id="1793">
+                  <generic id="1794">
+                    <link name="" id="1795" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1796" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1797">
+                  <code id="1798">
+                    <link id="1799" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1de97662b60e5d215b0be2c77159f60a57f1ffce">
+                      Rebuild AccessibilityElement as interface
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1802">
+                  <button id="1803" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1812">
+                  <group id="1813">
+                    <DisclosureTriangle name="" id="1815" focusable="true">
+                      <image name="0 / 3 checks OK" id="1816"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="1818">
+                  <code id="1819">
+                    <link id="1820" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1de97662b60e5d215b0be2c77159f60a57f1ffce">
+                      1de9766
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1823">
+                <generic id="1829">
+                  <generic id="1830">
+                    <link name="" id="1831" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1832" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1833">
+                  <code id="1834">
+                    <link id="1835" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/05bea60b8d750be3eb7f956323537ad6bad3041b">
+                      Retranslate XCUITestAccessibilityTree
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1838">
+                  <button id="1839" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1848">
+                  <group id="1849">
+                    <DisclosureTriangle name="" id="1851" focusable="true">
+                      <image name="0 / 3 checks OK" id="1852"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="1854">
+                  <code id="1855">
+                    <link id="1856" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/05bea60b8d750be3eb7f956323537ad6bad3041b">
+                      05bea60
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1859">
+                <generic id="1865">
+                  <generic id="1866">
+                    <link name="" id="1867" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1868" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1869">
+                  <code id="1870">
+                    <link id="1871" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/df3bbecba5a1742433dfdb36fbbab54651abf61e">
+                      Move VS Code files.exclude option to workspace file
+                    </link>
+                  </code>
+                  <generic id="1874">
+                    <button name="Commit message body" id="1875" invalid="false" focusable="true">
+                      …
+                    </button>
+                  </generic>
+                </generic>
+                <generic id="1878">
+                  <button id="1879" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1889">
+                  <code id="1890">
+                    <link id="1891" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/df3bbecba5a1742433dfdb36fbbab54651abf61e">
+                      df3bbec
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1894">
+                <generic id="1900">
+                  <generic id="1901">
+                    <link name="" id="1902" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1903" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1904">
+                  <code id="1905">
+                    <link id="1906" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2957a31e4bd2a990a38b202adf988acb94835bc3">
+                      Move &amp; rename agents to match Python
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1909">
+                  <button id="1910" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1920">
+                  <code id="1921">
+                    <link id="1922" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2957a31e4bd2a990a38b202adf988acb94835bc3">
+                      2957a31
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1925">
+                <generic id="1931">
+                  <generic id="1932">
+                    <link name="" id="1933" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1934" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1935">
+                  <code id="1936">
+                    <link id="1937" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/36728fa083807f92f1e967bc92de81f6c8b594e4">
+                      Adjust module naming convention
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1940">
+                  <button id="1941" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1950">
+                  <group id="1951">
+                    <DisclosureTriangle name="" id="1953" focusable="true">
+                      <image name="0 / 3 checks OK" id="1954"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="1956">
+                  <code id="1957">
+                    <link id="1958" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/36728fa083807f92f1e967bc92de81f6c8b594e4">
+                      36728fa
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1961">
+                <generic id="1967">
+                  <generic id="1968">
+                    <link name="" id="1969" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="1970" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="1971">
+                  <code id="1972">
+                    <link id="1973" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/207e2aa7c05ccf40f9622ca769187e5d741e82c4">
+                      Move client TS code to the core package
+                    </link>
+                  </code>
+                </generic>
+                <generic id="1976">
+                  <button id="1977" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="1987">
+                  <code id="1988">
+                    <link id="1989" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/207e2aa7c05ccf40f9622ca769187e5d741e82c4">
+                      207e2aa
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="1992">
+                <generic id="1998">
+                  <generic id="1999">
+                    <link name="" id="2000" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2001" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2002">
+                  <code id="2003">
+                    <link id="2004" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3fe44e6999a51051ef5d9c7f28848c37d3cbd46d">
+                      Fix types after moving TS to a stricter setup, format some code
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2007">
+                  <button id="2008" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2017">
+                  <group id="2018">
+                    <DisclosureTriangle name="" id="2020" focusable="true">
+                      <image name="0 / 3 checks OK" id="2021"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2023">
+                  <code id="2024">
+                    <link id="2025" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3fe44e6999a51051ef5d9c7f28848c37d3cbd46d">
+                      3fe44e6
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2028">
+                <generic id="2034">
+                  <generic id="2035">
+                    <link name="" id="2036" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2037" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2038">
+                  <code id="2039">
+                    <link id="2040" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1f895331d507e73b10d70b600f0908bdec6cf139">
+                      Fix incorrect export in the TypeScript client package
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2043">
+                  <button id="2044" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2054">
+                  <code id="2055">
+                    <link id="2056" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1f895331d507e73b10d70b600f0908bdec6cf139">
+                      1f89533
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2059">
+                <generic id="2065">
+                  <generic id="2066">
+                    <link name="" id="2067" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2068" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2069">
+                  <code id="2070">
+                    <link id="2071" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2ecca4e05173fbda5e9263658865d4586d27f3f1">
+                      Set up tsify tasks
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2074">
+                  <button id="2075" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2085">
+                  <code id="2086">
+                    <link id="2087" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2ecca4e05173fbda5e9263658865d4586d27f3f1">
+                      2ecca4e
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2090">
+                <generic id="2096">
+                  <generic id="2097">
+                    <link name="" id="2098" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2099" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2100">
+                  <code id="2101">
+                    <link id="2102" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0ae2d99b0c8ada1bf0165b000e60c6c3c920f89a">
+                      Add Typos to VS Code recommendations, set up typos.toml
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2105">
+                  <button id="2106" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2115">
+                  <group id="2116">
+                    <DisclosureTriangle name="" id="2118" focusable="true">
+                      <image name="0 / 3 checks OK" id="2119"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2121">
+                  <code id="2122">
+                    <link id="2123" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0ae2d99b0c8ada1bf0165b000e60c6c3c920f89a">
+                      0ae2d99
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2126">
+                <generic id="2132">
+                  <generic id="2133">
+                    <link name="" id="2134" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2135" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2136">
+                  <code id="2137">
+                    <link id="2138" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3860d7e5c44fcf8d26dd27091b21b4af2a0166ea">
+                      Rearrange server modules
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2141">
+                  <button id="2142" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2151">
+                  <group id="2152">
+                    <DisclosureTriangle name="" id="2154" focusable="true">
+                      <image name="0 / 3 checks OK" id="2155"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2157">
+                  <code id="2158">
+                    <link id="2159" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3860d7e5c44fcf8d26dd27091b21b4af2a0166ea">
+                      3860d7e
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2162">
+                <generic id="2168">
+                  <generic id="2169">
+                    <link name="" id="2170" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2171" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2172">
+                  <code id="2173">
+                    <link id="2174" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/01a3051a6ed49ccca759506063a7fadb8595e891">
+                      Make logger work similar to Python including single-file executable
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2177">
+                  <button id="2178" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2188">
+                  <code id="2189">
+                    <link id="2190" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/01a3051a6ed49ccca759506063a7fadb8595e891">
+                      01a3051
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2193">
+                <generic id="2199">
+                  <generic id="2200">
+                    <link name="" id="2201" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2202" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2203">
+                  <code id="2204">
+                    <link id="2205" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/aa2ccfadc11fc2e03939e51724cddb0fc6402099">
+                      Move agent prompts to the core package
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2208">
+                  <button id="2209" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2219">
+                  <code id="2220">
+                    <link id="2221" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/aa2ccfadc11fc2e03939e51724cddb0fc6402099">
+                      aa2ccfa
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2224">
+                <generic id="2230">
+                  <generic id="2231">
+                    <link name="" id="2232" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2233" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2234">
+                  <code id="2235">
+                    <link id="2236" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/fe403f2c08711195837350953f183eb5ae4feb5e">
+                      Copy agent prompts to the Python package
+                    </link>
+                  </code>
+                  <generic id="2239">
+                    <button name="Commit message body" id="2240" invalid="false" focusable="true">
+                      …
+                    </button>
+                  </generic>
+                </generic>
+                <generic id="2243">
+                  <button id="2244" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2254">
+                  <code id="2255">
+                    <link id="2256" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/fe403f2c08711195837350953f183eb5ae4feb5e">
+                      fe403f2
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2259">
+                <generic id="2265">
+                  <generic id="2266">
+                    <link name="" id="2267" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2268" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2269">
+                  <code id="2270">
+                    <link id="2271" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f6fcf1791aa7950dcec74a26ebfcf50a0bcdbe6f">
+                      Reorganize prompts to match TS conventions
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2274">
+                  <button id="2275" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2285">
+                  <code id="2286">
+                    <link id="2287" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f6fcf1791aa7950dcec74a26ebfcf50a0bcdbe6f">
+                      f6fcf17
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2290">
+                <generic id="2296">
+                  <generic id="2297">
+                    <link name="" id="2298" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2299" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2300">
+                  <code id="2301">
+                    <link id="2302" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/634ad2d64ff618d082260dbc2b8a429b3cfdd324">
+                      Rename some user prompts to be consistent
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2305">
+                  <button id="2306" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2315">
+                  <group id="2316">
+                    <DisclosureTriangle name="" id="2318" focusable="true">
+                      <image name="0 / 3 checks OK" id="2319"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2321">
+                  <code id="2322">
+                    <link id="2323" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/634ad2d64ff618d082260dbc2b8a429b3cfdd324">
+                      634ad2d
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2326">
+                <generic id="2332">
+                  <generic id="2333">
+                    <link name="" id="2334" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2335" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2336">
+                  <code id="2337">
+                    <link id="2338" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1f3dd66b2facc5cd78ada98f2682cd084dcfdf52">
+                      Implement BaseAgent, load agent prompts using a macro
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2341">
+                  <button id="2342" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2352">
+                  <code id="2353">
+                    <link id="2354" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1f3dd66b2facc5cd78ada98f2682cd084dcfdf52">
+                      1f3dd66
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2357">
+                <generic id="2363">
+                  <generic id="2364">
+                    <link name="" id="2365" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2366" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2367">
+                  <code id="2368">
+                    <link id="2369" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/6f56431ae9ea03f841ed6a252b103eb923869dd5">
+                      Implement ActorAgent
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2372">
+                  <button id="2373" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2382">
+                  <group id="2383">
+                    <DisclosureTriangle name="" id="2385" focusable="true">
+                      <image name="0 / 3 checks OK" id="2386"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2388">
+                  <code id="2389">
+                    <link id="2390" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/6f56431ae9ea03f841ed6a252b103eb923869dd5">
+                      6f56431
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2393">
+                <generic id="2399">
+                  <generic id="2400">
+                    <link name="" id="2401" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2402" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2403">
+                  <code id="2404">
+                    <link id="2405" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bfcaefdf8b09306b116137ffe48f912cff6eb495">
+                      Implement ChangesAnalyzerAgent, add pythonicFormat function
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2408">
+                  <button id="2409" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2419">
+                  <code id="2420">
+                    <link id="2421" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bfcaefdf8b09306b116137ffe48f912cff6eb495">
+                      bfcaefd
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2424">
+                <generic id="2430">
+                  <generic id="2431">
+                    <link name="" id="2432" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2433" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2434">
+                  <code id="2435">
+                    <link id="2436" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/928bedf47df49122ba29977e1f014ec2d661a72b">
+                      Implement all agent classes
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2439">
+                  <button id="2440" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2449">
+                  <group id="2450">
+                    <DisclosureTriangle name="" id="2452" focusable="true">
+                      <image name="0 / 3 checks OK" id="2453"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2455">
+                  <code id="2456">
+                    <link id="2457" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/928bedf47df49122ba29977e1f014ec2d661a72b">
+                      928bedf
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2460">
+                <generic id="2466">
+                  <generic id="2467">
+                    <link name="" id="2468" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2469" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2470">
+                  <code id="2471">
+                    <link id="2472" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0c8aa302153ed42ed1817fa3c5f450cac52fddd8">
+                      Rearrange types and classes a bit
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2475">
+                  <button id="2476" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2486">
+                  <code id="2487">
+                    <link id="2488" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0c8aa302153ed42ed1817fa3c5f450cac52fddd8">
+                      0c8aa30
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2491">
+                <generic id="2497">
+                  <generic id="2498">
+                    <link name="" id="2499" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2500" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2501">
+                  <code id="2502">
+                    <link id="2503" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/83802eb417afc395baa998b254ef5a656eb393e9">
+                      Implement Session and misc internal classes
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2506">
+                  <button id="2507" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2516">
+                  <group id="2517">
+                    <DisclosureTriangle name="" id="2519" focusable="true">
+                      <image name="0 / 3 checks OK" id="2520"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2522">
+                  <code id="2523">
+                    <link id="2524" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/83802eb417afc395baa998b254ef5a656eb393e9">
+                      83802eb
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2527">
+                <generic id="2533">
+                  <generic id="2534">
+                    <link name="" id="2535" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2536" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2537">
+                  <code id="2538">
+                    <link id="2539" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/07ab63cdee970055315eaa4cd8ae26f0f016be57">
+                      Integrate Session class into TS server, make TS client examples pass
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2542">
+                  <button id="2543" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2552">
+                  <group id="2553">
+                    <DisclosureTriangle name="" id="2555" focusable="true">
+                      <image name="0 / 3 checks OK" id="2556"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2558">
+                  <code id="2559">
+                    <link id="2560" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/07ab63cdee970055315eaa4cd8ae26f0f016be57">
+                      07ab63c
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2563">
+                <generic id="2569">
+                  <generic id="2570">
+                    <link name="" id="2571" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2572" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2573">
+                  <code id="2574">
+                    <link id="2575" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/87cc019331e0a4c58db02c1be96417ba88d65b10">
+                      Rearrange server app, organize routes better
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2578">
+                  <button id="2579" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2589">
+                  <code id="2590">
+                    <link id="2591" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/87cc019331e0a4c58db02c1be96417ba88d65b10">
+                      87cc019
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2594">
+                <generic id="2600">
+                  <generic id="2601">
+                    <link name="" id="2602" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2603" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2604">
+                  <code id="2605">
+                    <link id="2606" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9e9bac3b9f021f6fb0c2b366d5459c4b4c17c083">
+                      Update logger setup
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2609">
+                  <button id="2610" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2620">
+                  <code id="2621">
+                    <link id="2622" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9e9bac3b9f021f6fb0c2b366d5459c4b4c17c083">
+                      9e9bac3
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2625">
+                <generic id="2631">
+                  <generic id="2632">
+                    <link name="" id="2633" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2634" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2635">
+                  <code id="2636">
+                    <link id="2637" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1eae385b7456b01166bd9b7199d5ce1279f39bb0">
+                      Update manual testing setup
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2640">
+                  <button id="2641" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2651">
+                  <code id="2652">
+                    <link id="2653" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1eae385b7456b01166bd9b7199d5ce1279f39bb0">
+                      1eae385
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2656">
+                <generic id="2662">
+                  <generic id="2663">
+                    <link name="" id="2664" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2665" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2666">
+                  <code id="2667">
+                    <link id="2668" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/255ffffa0f53bca25328e6161ff71479ae51aa39">
+                      Fix session state sync
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2671">
+                  <button id="2672" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2682">
+                  <code id="2683">
+                    <link id="2684" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/255ffffa0f53bca25328e6161ff71479ae51aa39">
+                      255ffff
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2687">
+                <generic id="2693">
+                  <generic id="2694">
+                    <link name="" id="2695" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2696" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2697">
+                  <code id="2698">
+                    <link id="2699" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bd31f62718d938cb91bac75b479f3fa1a8cd08b3">
+                      Update tsconfig.json configs, fix client type &amp; runtime errors
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2702">
+                  <button id="2703" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2713">
+                  <code id="2714">
+                    <link id="2715" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bd31f62718d938cb91bac75b479f3fa1a8cd08b3">
+                      bd31f62
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2718">
+                <generic id="2724">
+                  <generic id="2725">
+                    <link name="" id="2726" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2727" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2728">
+                  <code id="2729">
+                    <link id="2730" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f855e39ae681330bc08b47630615200fd333b88d">
+                      Fix client depending on server/Bun-specific code
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2733">
+                  <button id="2734" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2744">
+                  <code id="2745">
+                    <link id="2746" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f855e39ae681330bc08b47630615200fd333b88d">
+                      f855e39
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2749">
+                <generic id="2755">
+                  <generic id="2756">
+                    <link name="" id="2757" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2758" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2759">
+                  <code id="2760">
+                    <link id="2761" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2d26bc4119e6a19ebabcfad82cfe626761ef1464">
+                      Improve HTTP client errors reporting
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2764">
+                  <button id="2765" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2774">
+                  <group id="2775">
+                    <DisclosureTriangle name="" id="2777" focusable="true">
+                      <image name="0 / 3 checks OK" id="2778"/>
+                    </DisclosureTriangle>
+                  </group>
+                </generic>
+                <generic id="2780">
+                  <code id="2781">
+                    <link id="2782" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2d26bc4119e6a19ebabcfad82cfe626761ef1464">
+                      2d26bc4
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2785">
+                <generic id="2791">
+                  <generic id="2792">
+                    <link name="" id="2793" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2794" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2795">
+                  <code id="2796">
+                    <link id="2797" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/7b611e1fa49ca71c72d5912b514cad46a93e3d01">
+                      Upgrade Elysia
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2800">
+                  <button id="2801" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2811">
+                  <code id="2812">
+                    <link id="2813" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/7b611e1fa49ca71c72d5912b514cad46a93e3d01">
+                      7b611e1
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2816">
+                <generic id="2822">
+                  <generic id="2823">
+                    <link name="" id="2824" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2825" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2826">
+                  <code id="2827">
+                    <link id="2828" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c443b88831a41dd0b787c54e8d8e4a50bdd986ab">
+                      Update the LLMFactory, rollback to personal OpenAI key
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2831">
+                  <button id="2832" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2842">
+                  <code id="2843">
+                    <link id="2844" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c443b88831a41dd0b787c54e8d8e4a50bdd986ab">
+                      c443b88
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2847">
+                <generic id="2853">
+                  <generic id="2854">
+                    <link name="" id="2855" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2856" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2857">
+                  <code id="2858">
+                    <link id="2859" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/719310dade7c844cb2b465df4e43fed9a222a5ce">
+                      Fix inputVariables usage in PlannerAgent
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2862">
+                  <button id="2863" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2873">
+                  <code id="2874">
+                    <link id="2875" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/719310dade7c844cb2b465df4e43fed9a222a5ce">
+                      719310d
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2878">
+                <generic id="2884">
+                  <generic id="2885">
+                    <link name="" id="2886" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2887" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2888">
+                  <code id="2889">
+                    <link id="2890" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ed600c2725c81ab888433c4358d05e587d52cd41">
+                      Use ANSI color log formatter
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2893">
+                  <button id="2894" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2904">
+                  <code id="2905">
+                    <link id="2906" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ed600c2725c81ab888433c4358d05e587d52cd41">
+                      ed600c2
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+              <generic id="2909">
+                <generic id="2915">
+                  <generic id="2916">
+                    <link name="" id="2917" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                      <image name="@kossnocorp" id="2918" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                    </link>
+                  </generic>
+                </generic>
+                <generic id="2919">
+                  <code id="2920">
+                    <link id="2921" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cf560299bbdce39baae1922550a1dc6080f54d8f">
+                      Allow disabling retries with ALUMNIUM_NO_RETRY
+                    </link>
+                  </code>
+                </generic>
+                <generic id="2924">
+                  <button id="2925" invalid="false" focusable="true">
+                    Verified
+                  </button>
+                </generic>
+                <generic id="2935">
+                  <code id="2936">
+                    <link id="2937" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cf560299bbdce39baae1922550a1dc6080f54d8f">
+                      cf56029
+                    </link>
+                  </code>
+                </generic>
+              </generic>
+            </generic>
+            <generic id="2942">
+              <generic id="2944">
+                <link id="2945" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                  kossnocorp
+                </link>
+                added 28 commits
+                <link id="2954" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#commits-pushed-a273eac">
+                  <generic name="Feb 27, 2026, 2:12 PM GMT+8" id="2955">
+                    6 months ago
+                  </generic>
+                </link>
+              </generic>
+            </generic>
+            <generic id="2960">
+              <generic id="2966">
+                <generic id="2967">
+                  <link name="" id="2968" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="2969" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="2970">
+                <code id="2971">
+                  <link id="2972" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a273eacded6ba46785b125de64f070bd43cfd957">
+                    Add better error logging, properly handle invalid session state response
+                  </link>
+                </code>
+              </generic>
+              <generic id="2975">
+                <button id="2976" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="2986">
+                <code id="2987">
+                  <link id="2988" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a273eacded6ba46785b125de64f070bd43cfd957">
+                    a273eac
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="2991">
+              <generic id="2997">
+                <generic id="2998">
+                  <link name="" id="2999" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3000" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3001">
+                <code id="3002">
+                  <link id="3003" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2acab148ad75c7b08db2b0a48edcc208c968787e">
+                    Fix legacy session state parsing
+                  </link>
+                </code>
+              </generic>
+              <generic id="3006">
+                <button id="3007" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3017">
+                <code id="3018">
+                  <link id="3019" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2acab148ad75c7b08db2b0a48edcc208c968787e">
+                    2acab14
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3022">
+              <generic id="3028">
+                <generic id="3029">
+                  <link name="" id="3030" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3031" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3032">
+                <code id="3033">
+                  <link id="3034" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9612dbd43f18c4b11fa89ce4a9bdef51383a80ea">
+                    Implement health check, sessions list, stats and plan steps endpoints
+                  </link>
+                </code>
+              </generic>
+              <generic id="3037">
+                <button id="3038" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3048">
+                <code id="3049">
+                  <link id="3050" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9612dbd43f18c4b11fa89ce4a9bdef51383a80ea">
+                    9612dbd
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3053">
+              <generic id="3059">
+                <generic id="3060">
+                  <link name="" id="3061" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3062" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3063">
+                <code id="3064">
+                  <link id="3065" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/622fbb601d6acc19112ef521e174dceb81d5e1a8">
+                    Outline server app &amp; schema code structure
+                  </link>
+                </code>
+              </generic>
+              <generic id="3068">
+                <button id="3069" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3079">
+                <code id="3080">
+                  <link id="3081" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/622fbb601d6acc19112ef521e174dceb81d5e1a8">
+                    622fbb6
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3084">
+              <generic id="3090">
+                <generic id="3091">
+                  <link name="" id="3092" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3093" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3094">
+                <code id="3095">
+                  <link id="3096" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ee6c2762ca7ddfc095714fc3808c79472ff2ca8b">
+                    Implement add example and clear examples endpoints
+                  </link>
+                </code>
+              </generic>
+              <generic id="3099">
+                <button id="3100" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3109">
+                <group id="3110">
+                  <DisclosureTriangle name="" id="3112" focusable="true">
+                    <image name="0 / 3 checks OK" id="3113"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3115">
+                <code id="3116">
+                  <link id="3117" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ee6c2762ca7ddfc095714fc3808c79472ff2ca8b">
+                    ee6c276
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3120">
+              <generic id="3126">
+                <generic id="3127">
+                  <link name="" id="3128" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3129" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3130">
+                <code id="3131">
+                  <link id="3132" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/31194a04daf49342c651dab310a74bf743a4c797">
+                    Add schemas to all remaining endpoints
+                  </link>
+                </code>
+              </generic>
+              <generic id="3135">
+                <button id="3136" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3146">
+                <code id="3147">
+                  <link id="3148" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/31194a04daf49342c651dab310a74bf743a4c797">
+                    31194a0
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3151">
+              <generic id="3157">
+                <generic id="3158">
+                  <link name="" id="3159" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3160" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3161">
+                <code id="3162">
+                  <link id="3163" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ab9220e03fa48b52be1453a5e7b1a1e08f459e26">
+                    Implement execute statement, choose area and find element endpoints
+                  </link>
+                </code>
+              </generic>
+              <generic id="3166">
+                <button id="3167" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3177">
+                <code id="3178">
+                  <link id="3179" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ab9220e03fa48b52be1453a5e7b1a1e08f459e26">
+                    ab9220e
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3182">
+              <generic id="3188">
+                <generic id="3189">
+                  <link name="" id="3190" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3191" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3192">
+                <code id="3193">
+                  <link id="3194" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/65d9e66f7c9055530d5e706752a063b8bc3e03b4">
+                    Implement analyze changes, save and discard session cache endpoints
+                  </link>
+                </code>
+              </generic>
+              <generic id="3197">
+                <button id="3198" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3208">
+                <code id="3209">
+                  <link id="3210" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/65d9e66f7c9055530d5e706752a063b8bc3e03b4">
+                    65d9e66
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3213">
+              <generic id="3219">
+                <generic id="3220">
+                  <link name="" id="3221" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3222" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3223">
+                <code id="3224">
+                  <link id="3225" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c03d97c4aa7ef6b9f76f52b9edd49608f975966f">
+                    Get rid of legacy state syncing
+                  </link>
+                </code>
+              </generic>
+              <generic id="3228">
+                <button id="3229" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3239">
+                <code id="3240">
+                  <link id="3241" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c03d97c4aa7ef6b9f76f52b9edd49608f975966f">
+                    c03d97c
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3244">
+              <generic id="3250">
+                <generic id="3251">
+                  <link name="" id="3252" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3253" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3254">
+                <code id="3255">
+                  <link id="3256" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1212606f115daa6e588288f2269a4a8906539605">
+                    Move client code to the core package, rename it to alumnium
+                  </link>
+                </code>
+              </generic>
+              <generic id="3259">
+                <button id="3260" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3269">
+                <group id="3270">
+                  <DisclosureTriangle name="" id="3272" focusable="true">
+                    <image name="0 / 3 checks OK" id="3273"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3275">
+                <code id="3276">
+                  <link id="3277" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1212606f115daa6e588288f2269a4a8906539605">
+                    1212606
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3280">
+              <generic id="3286">
+                <generic id="3287">
+                  <link name="" id="3288" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3289" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3290">
+                <code id="3291">
+                  <link id="3292" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f1248f95c1d95a2e0721d90fee3901a18a1507cb">
+                    WIP MCP
+                  </link>
+                </code>
+              </generic>
+              <generic id="3295">
+                <button id="3296" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3305">
+                <group id="3306">
+                  <DisclosureTriangle name="" id="3308" focusable="true">
+                    <image name="0 / 3 checks OK" id="3309"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3311">
+                <code id="3312">
+                  <link id="3313" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f1248f95c1d95a2e0721d90fee3901a18a1507cb">
+                    f1248f9
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3316">
+              <generic id="3322">
+                <generic id="3323">
+                  <link name="" id="3324" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3325" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3326">
+                <code id="3327">
+                  <link id="3328" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/54b8d0071faad484537584daaa1b2922ea3a1c5d">
+                    Add proper types to HttpClient#getStats
+                  </link>
+                </code>
+              </generic>
+              <generic id="3331">
+                <button id="3332" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3342">
+                <code id="3343">
+                  <link id="3344" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/54b8d0071faad484537584daaa1b2922ea3a1c5d">
+                    54b8d00
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3347">
+              <generic id="3353">
+                <generic id="3354">
+                  <link name="" id="3355" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3356" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3357">
+                <code id="3358">
+                  <link id="3359" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/73ed2773d8bb04f0ffc9d548ed2f50af78ed11bf">
+                    Add TODO to tsconfig.json
+                  </link>
+                </code>
+              </generic>
+              <generic id="3362">
+                <button id="3363" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3372">
+                <group id="3373">
+                  <DisclosureTriangle name="" id="3375" focusable="true">
+                    <image name="0 / 3 checks OK" id="3376"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3378">
+                <code id="3379">
+                  <link id="3380" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/73ed2773d8bb04f0ffc9d548ed2f50af78ed11bf">
+                    73ed277
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3383">
+              <generic id="3389">
+                <generic id="3390">
+                  <link name="" id="3391" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3392" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3393">
+                <code id="3394">
+                  <link id="3395" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bcc36467c30b566f7421dec54742f822ace641b0">
+                    Upgrade OpenCode
+                  </link>
+                </code>
+              </generic>
+              <generic id="3398">
+                <button id="3399" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3408">
+                <group id="3409">
+                  <DisclosureTriangle name="" id="3411" focusable="true">
+                    <image name="0 / 3 checks OK" id="3412"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3414">
+                <code id="3415">
+                  <link id="3416" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bcc36467c30b566f7421dec54742f822ace641b0">
+                    bcc3646
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3419">
+              <generic id="3425">
+                <generic id="3426">
+                  <link name="" id="3427" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3428" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3429">
+                <code id="3430">
+                  <link id="3431" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3414c6291eb6561fa862a734ee535e0bf65d6568">
+                    Implement NativeClient, add missing APIs
+                  </link>
+                </code>
+              </generic>
+              <generic id="3434">
+                <button id="3435" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3445">
+                <code id="3446">
+                  <link id="3447" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3414c6291eb6561fa862a734ee535e0bf65d6568">
+                    3414c62
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3450">
+              <generic id="3456">
+                <generic id="3457">
+                  <link name="" id="3458" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3459" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3460">
+                <code id="3461">
+                  <link id="3462" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c8a452b5365693205e5f95e3bebfdd9a325759c4">
+                    Implement MCP
+                  </link>
+                </code>
+              </generic>
+              <generic id="3465">
+                <button id="3466" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3475">
+                <group id="3476">
+                  <DisclosureTriangle name="" id="3478" focusable="true">
+                    <image name="0 / 3 checks OK" id="3479"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3481">
+                <code id="3482">
+                  <link id="3483" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c8a452b5365693205e5f95e3bebfdd9a325759c4">
+                    c8a452b
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3486">
+              <generic id="3492">
+                <generic id="3493">
+                  <link name="" id="3494" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3495" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3496">
+                <code id="3497">
+                  <link id="3498" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3f6fc6ed2df665a38bf9216ef59c8f05979ae4b3">
+                    Fix PlaywrightDriver by inlining script contents
+                  </link>
+                </code>
+              </generic>
+              <generic id="3501">
+                <button id="3502" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3512">
+                <code id="3513">
+                  <link id="3514" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3f6fc6ed2df665a38bf9216ef59c8f05979ae4b3">
+                    3f6fc6e
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3517">
+              <generic id="3523">
+                <generic id="3524">
+                  <link name="" id="3525" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3526" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3527">
+                <code id="3528">
+                  <link id="3529" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/eef8c2354a95d8ecb4a646cd184ad129122968cc">
+                    Use playwright-core instead of playwright, add dev deps
+                  </link>
+                </code>
+              </generic>
+              <generic id="3532">
+                <button id="3533" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3543">
+                <code id="3544">
+                  <link id="3545" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/eef8c2354a95d8ecb4a646cd184ad129122968cc">
+                    eef8c23
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3548">
+              <generic id="3554">
+                <generic id="3555">
+                  <link name="" id="3556" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3557" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3558">
+                <code id="3559">
+                  <link id="3560" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ef5166ae6317f828e34e941bdf03b83c17cd017f">
+                    Set up root CLI
+                  </link>
+                </code>
+              </generic>
+              <generic id="3563">
+                <button id="3564" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3573">
+                <group id="3574">
+                  <DisclosureTriangle name="" id="3576" focusable="true">
+                    <image name="0 / 3 checks OK" id="3577"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3579">
+                <code id="3580">
+                  <link id="3581" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ef5166ae6317f828e34e941bdf03b83c17cd017f">
+                    ef5166a
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3584">
+              <generic id="3590">
+                <generic id="3591">
+                  <link name="" id="3592" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3593" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3594">
+                <code id="3595">
+                  <link id="3596" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b831fc4d45ec2070374c7a441b3219467db2dceb">
+                    Rewrite readScript to Node.js APIs
+                  </link>
+                </code>
+              </generic>
+              <generic id="3599">
+                <button id="3600" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3610">
+                <code id="3611">
+                  <link id="3612" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b831fc4d45ec2070374c7a441b3219467db2dceb">
+                    b831fc4
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3615">
+              <generic id="3621">
+                <generic id="3622">
+                  <link name="" id="3623" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3624" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3625">
+                <code id="3626">
+                  <link id="3627" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/945dcb59f96997ad77bd810b3bc6bb1e1c121fd4">
+                    Fix Selenium for usage with single-file executable/application (SEA)
+                  </link>
+                </code>
+              </generic>
+              <generic id="3630">
+                <button id="3631" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3641">
+                <code id="3642">
+                  <link id="3643" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/945dcb59f96997ad77bd810b3bc6bb1e1c121fd4">
+                    945dcb5
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3646">
+              <generic id="3652">
+                <generic id="3653">
+                  <link name="" id="3654" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3655" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3656">
+                <code id="3657">
+                  <link id="3658" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/5e12474dbf8b9503317ae301e41d2eea5690aeb2">
+                    Replace Bun macros with bundle files generated by scripts/generate.ts
+                  </link>
+                </code>
+              </generic>
+              <generic id="3661">
+                <button id="3662" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3672">
+                <code id="3673">
+                  <link id="3674" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/5e12474dbf8b9503317ae301e41d2eea5690aeb2">
+                    5e12474
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3677">
+              <generic id="3683">
+                <generic id="3684">
+                  <link name="" id="3685" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3686" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3687">
+                <code id="3688">
+                  <link id="3689" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/8cb260d066496cd2cbc2e55e37392f50ad9022f7">
+                    Adjust GitHub Actions
+                  </link>
+                </code>
+              </generic>
+              <generic id="3692">
+                <button id="3693" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3703">
+                <code id="3704">
+                  <link id="3705" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/8cb260d066496cd2cbc2e55e37392f50ad9022f7">
+                    8cb260d
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3708">
+              <generic id="3714">
+                <generic id="3715">
+                  <link name="" id="3716" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3717" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3718">
+                <code id="3719">
+                  <link id="3720" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/7a86bde185a8b4e76bcc7983336b968a50ea5c03">
+                    Adopt TypeScript Project References feature
+                  </link>
+                </code>
+              </generic>
+              <generic id="3723">
+                <button id="3724" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3734">
+                <code id="3735">
+                  <link id="3736" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/7a86bde185a8b4e76bcc7983336b968a50ea5c03">
+                    7a86bde
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3739">
+              <generic id="3745">
+                <generic id="3746">
+                  <link name="" id="3747" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3748" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3749">
+                <code id="3750">
+                  <link id="3751" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/495360b0c3e94846fe15a7a3fc6d0e401f1141eb">
+                    Clean up dependencies
+                  </link>
+                </code>
+              </generic>
+              <generic id="3754">
+                <button id="3755" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3764">
+                <group id="3765">
+                  <DisclosureTriangle name="" id="3767" focusable="true">
+                    <image name="0 / 3 checks OK" id="3768"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3770">
+                <code id="3771">
+                  <link id="3772" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/495360b0c3e94846fe15a7a3fc6d0e401f1141eb">
+                    495360b
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3775">
+              <generic id="3781">
+                <generic id="3782">
+                  <link name="" id="3783" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3784" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3785">
+                <code id="3786">
+                  <link id="3787" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/469c88208cf6c99f10a382192e33161ec5ef26f5">
+                    Fix typescript package TS setup
+                  </link>
+                </code>
+              </generic>
+              <generic id="3790">
+                <button id="3791" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3800">
+                <group id="3801">
+                  <DisclosureTriangle name="" id="3803" focusable="true">
+                    <image name="0 / 3 checks OK" id="3804"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3806">
+                <code id="3807">
+                  <link id="3808" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/469c88208cf6c99f10a382192e33161ec5ef26f5">
+                    469c882
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3811">
+              <generic id="3817">
+                <generic id="3818">
+                  <link name="" id="3819" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3820" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3821">
+                <code id="3822">
+                  <link id="3823" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/088f6beadbb4546fd9b563daf62c9ed6ccc3b31d">
+                    Fix npm -&gt; bun in scripts
+                  </link>
+                </code>
+              </generic>
+              <generic id="3826">
+                <button id="3827" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3836">
+                <group id="3837">
+                  <DisclosureTriangle name="" id="3839" focusable="true">
+                    <image name="0 / 3 checks OK" id="3840"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3842">
+                <code id="3843">
+                  <link id="3844" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/088f6beadbb4546fd9b563daf62c9ed6ccc3b31d">
+                    088f6be
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3847">
+              <generic id="3853">
+                <generic id="3854">
+                  <link name="" id="3855" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="3856" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+              <generic id="3857">
+                <code id="3858">
+                  <link id="3859" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/606110d388068c823a03fe3c920b75a15a919d16">
+                    Add missing domutils
+                  </link>
+                </code>
+              </generic>
+              <generic id="3862">
+                <button id="3863" invalid="false" focusable="true">
+                  Verified
+                </button>
+              </generic>
+              <generic id="3872">
+                <group id="3873">
+                  <DisclosureTriangle name="" id="3875" focusable="true">
+                    <image name="0 / 7 checks OK" id="3876"/>
+                  </DisclosureTriangle>
+                </group>
+              </generic>
+              <generic id="3878">
+                <code id="3879">
+                  <link id="3880" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256/commits/606110d388068c823a03fe3c920b75a15a919d16">
+                    606110d
+                  </link>
+                </code>
+              </generic>
+            </generic>
+            <generic id="3884">
+              <generic id="3885">
+                <link name="" id="3886" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                  <image name="@kossnocorp" id="3887" url="https://avatars.githubusercontent.com/u/52201?s=80&amp;u=b75a9168211d4d80afb556ec534f7dcc7a13006d&amp;v=4"/>
+                </link>
+              </generic>
+              <generic id="3888">
+                <generic id="3889">
+                  <heading name="" id="3891" level="3">
+                    <strong id="3893">
+                      <link id="3894" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                        kossnocorp
+                      </link>
+                    </strong>
+                    commented
+                    <link id="3899" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#issuecomment-3989131420">
+                      <generic name="Mar 3, 2026, 3:07 PM GMT+8" id="3900">
+                        on Mar 3
+                      </generic>
+                    </link>
+                  </heading>
+                  <group id="3906">
+                    <button name="" id="3908" focusable="true" hasPopup="menu">
+                      <image name="Show options" id="3911"/>
+                    </button>
+                  </group>
+                  <generic name="This user has previously committed to the alumnium repository." id="3914">
+                    Contributor
+                  </generic>
+                  <generic name="This user is the author of this pull request." id="3917">
+                    Author
+                  </generic>
+                  <LayoutTable id="3921">
+                    <LayoutTableRow id="3923">
+                      <LayoutTableCell id="3924">
+                        <paragraph id="3925">
+                          Will reopen from the repo branch instead of the fork's.
+                        </paragraph>
+                      </LayoutTableCell>
+                    </LayoutTableRow>
+                  </LayoutTable>
+                  <generic id="3934"/>
+                </generic>
+              </generic>
+            </generic>
+            <generic id="3940">
+              <generic id="3942">
+                <link name="" id="3943" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                  <image name="@kossnocorp" id="3944" url="https://avatars.githubusercontent.com/u/52201?s=40&amp;u=b75a9168211d4d80afb556ec534f7dcc7a13006d&amp;v=4"/>
+                </link>
+                <link id="3945" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                  kossnocorp
+                </link>
+                closed this
+                <link id="3950" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#event-23217166873">
+                  <generic name="Mar 3, 2026, 3:07 PM GMT+8" id="3951">
+                    on Mar 3
+                  </generic>
+                </link>
+              </generic>
+            </generic>
+            <generic id="3959">
+              <generic id="3960">
+                <link id="3961" focusable="true" url="https://github.com/join?source=comment-repo">
+                  Sign up for free
+                </link>
+                <strong id="3964">
+                  to join this conversation on GitHub
+                </strong>
+                . Already have an account?
+                <link id="3969" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Falumnium-hq%2Falumnium%2Fpull%2F256">
+                  Sign in to comment
+                </link>
+              </generic>
+            </generic>
+            <generic id="3973">
+              <generic id="3974">
+                <generic id="3975">
+                  <form name="Select reviewers" id="3976">
+                    <heading id="3978" level="3">
+                      Reviewers
+                    </heading>
+                    No reviews
+                  </form>
+                </generic>
+                <form name="Select assignees" id="3984">
+                  <heading id="3985" level="3">
+                    Assignees
+                  </heading>
+                  No one assigned
+                </form>
+                <heading id="3991" level="3">
+                  Labels
+                </heading>
+                None yet
+                <form name="Select projects" id="3998">
+                  <heading id="3999" level="3">
+                    Projects
+                  </heading>
+                  None yet
+                </form>
+                <form name="Select milestones" id="4006">
+                  <heading id="4007" level="3">
+                    Milestone
+                  </heading>
+                  No milestone
+                </form>
+                <generic id="4015">
+                  <form name="Link issues" id="4016">
+                    <heading id="4017" level="3">
+                      Development
+                    </heading>
+                    <paragraph id="4020">
+                      Successfully merging this pull request may close these issues.
+                    </paragraph>
+                    <paragraph id="4025">
+                      None yet
+                    </paragraph>
+                  </form>
+                </generic>
+                <generic id="4028">
+                  <heading id="4030" level="3">
+                    1 participant
+                  </heading>
+                  <link name="" id="4034" focusable="true" url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
+                    <image name="@kossnocorp" id="4035" url="https://avatars.githubusercontent.com/u/52201?s=52&amp;v=4"/>
+                  </link>
+                </generic>
+              </generic>
+            </generic>
+          </generic>
+        </generic>
+      </generic>
+    </generic>
+  </main>
+  <contentinfo id="4036">
+    <heading id="4037" level="2">
+      Footer
+    </heading>
+    <link name="GitHub Homepage" id="4042" focusable="true" url="https://github.com/"/>
+    © 2026 GitHub, Inc.
+    <navigation name="Footer" id="4046">
+      <heading id="4047" level="3">
+        Footer navigation
+      </heading>
+      <list name="Footer navigation" id="4051" labelledby="">
+        <listitem id="4052" level="1">
+          <link id="4053" focusable="true" url="https://docs.github.com/site-policy/github-terms/github-terms-of-service">
+            Terms
+          </link>
+        </listitem>
+        <listitem id="4056" level="1">
+          <link id="4057" focusable="true" url="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement">
+            Privacy
+          </link>
+        </listitem>
+        <listitem id="4060" level="1">
+          <link id="4061" focusable="true" url="https://github.com/security">
+            Security
+          </link>
+        </listitem>
+        <listitem id="4064" level="1">
+          <link id="4065" focusable="true" url="https://www.githubstatus.com/">
+            Status
+          </link>
+        </listitem>
+        <listitem id="4068" level="1">
+          <link id="4069" focusable="true" url="https://github.community/">
+            Community
+          </link>
+        </listitem>
+        <listitem id="4072" level="1">
+          <link id="4073" focusable="true" url="https://docs.github.com/">
+            Docs
+          </link>
+        </listitem>
+        <listitem id="4076" level="1">
+          <link id="4077" focusable="true" url="https://support.github.com/?tags=dotcom-footer">
+            Contact
+          </link>
+        </listitem>
+        <listitem id="4080" level="1">
+          <generic id="4081">
+            <button id="4082" invalid="false" focusable="true">
+              Manage cookies
+            </button>
+          </generic>
+        </listitem>
+        <listitem id="4085" level="1">
+          <generic id="4086">
+            <button id="4087" invalid="false" focusable="true">
+              Do not share my personal information
+            </button>
+          </generic>
+        </listitem>
+      </list>
+    </navigation>
+  </contentinfo>
+</RootWebArea>
