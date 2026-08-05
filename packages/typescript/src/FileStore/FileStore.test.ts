@@ -54,6 +54,24 @@ describe("FileStore", () => {
     });
   });
 
+  describe("FileStore.cwdRelStore", () => {
+    it("resolves a store relative to cwd", () => {
+      expect(FileStore.cwdRelStore("test/store").dir).toBe(
+        path.resolve("test/store"),
+      );
+    });
+
+    it("resolves cwd when the nested store is omitted", () => {
+      expect(FileStore.cwdRelStore().dir).toBe(process.cwd());
+    });
+
+    it("rejects an absolute path", () => {
+      expect(() => FileStore.cwdRelStore(path.resolve("test/store"))).toThrow(
+        "must be relative",
+      );
+    });
+  });
+
   describe("ensureFilePath", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();

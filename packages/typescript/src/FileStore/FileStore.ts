@@ -186,6 +186,18 @@ export class FileStore {
   }
 
   /**
+   * Creates a store at a path relative to the current working directory.
+   *
+   * @param nestedDir Optional directory under the current working directory.
+   * @returns FileStore instance for the resolved directory.
+   */
+  static cwdRelStore(nestedDir?: string): FileStore {
+    if (nestedDir && path.isAbsolute(nestedDir))
+      throw new RangeError(`Nested store path '${nestedDir}' must be relative`);
+    return new FileStore(path.resolve(nestedDir ?? ""));
+  }
+
+  /**
    * Resolves a subdirectory path under the global store directory, allowing
    * override via environment variable.
    *

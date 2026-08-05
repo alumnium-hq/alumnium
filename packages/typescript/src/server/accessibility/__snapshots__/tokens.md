@@ -190,3 +190,37 @@ Encoding: `cl100k_base`
 | `xcuitest-fcf60a8aab960782.snap.xml` |      1554 |      1554 |      0 |       0% |
 | _Average_                            |    _1219_ |    _1219_ |    _0_ |     _0%_ |
 | **Total**                            | **19503** | **19503** |  **0** |   **0%** |
+
+## Eval Results
+
+### Accuracy
+
+| Statement                                                                  | Before |  After | Change | Change % |
+| -------------------------------------------------------------------------- | -----: | -----: | -----: | -------: |
+| the total number of found package links displayed on the page              |    32% |    32% |     0% |       0% |
+| 7a86bde commit title                                                       | 89.80% | 89.80% |     0% |       0% |
+| how many checks passed for 606110d388068c823a03fe3c920b75a15a919d16 commit |    44% |    44% |     0% |       0% |
+
+### Average input tokens
+
+| Statement                                                                  | Before | After | Change | Change % |
+| -------------------------------------------------------------------------- | -----: | ----: | -----: | -------: |
+| the total number of found package links displayed on the page              |  10180 | 10180 |      0 |       0% |
+| 7a86bde commit title                                                       |  41903 | 41903 |      0 |       0% |
+| how many checks passed for 606110d388068c823a03fe3c920b75a15a919d16 commit |  41923 | 41923 |      0 |       0% |
+
+### Average output tokens
+
+| Statement                                                                  | Before | After | Change | Change % |
+| -------------------------------------------------------------------------- | -----: | ----: | -----: | -------: |
+| the total number of found package links displayed on the page              |    696 |   696 |      0 |       0% |
+| 7a86bde commit title                                                       |    500 |   500 |      0 |       0% |
+| how many checks passed for 606110d388068c823a03fe3c920b75a15a919d16 commit |    993 |   993 |      0 |       0% |
+
+### Average total tokens
+
+| Statement                                                                  | Before | After | Change | Change % |
+| -------------------------------------------------------------------------- | -----: | ----: | -----: | -------: |
+| the total number of found package links displayed on the page              |  10876 | 10876 |      0 |       0% |
+| 7a86bde commit title                                                       |  42403 | 42403 |      0 |       0% |
+| how many checks passed for 606110d388068c823a03fe3c920b75a15a919d16 commit |  42916 | 42916 |      0 |       0% |
