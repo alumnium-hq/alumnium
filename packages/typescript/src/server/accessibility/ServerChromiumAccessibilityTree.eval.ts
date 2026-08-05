@@ -48,14 +48,14 @@ evalite("ServerChromiumAccessibilityTree", {
 
       {
         input: {
-          statement: "hash of the 'Add missing domutils' commit",
+          statement: "abbreviated SHA of the 'Add missing domutils' commit",
           treeXml: githubPrTree.toXml(),
           title:
             "Migrate server & MCP to TypeScript by kossnocorp · Pull Request #256 · alumnium-hq/alumnium",
           url: "https://github.com/alumnium-hq/alumnium/pull/256",
           screenshot: null,
         },
-        expected: "606110d388068c823a03fe3c920b75a15a919d16",
+        expected: "606110d",
       },
     ];
   },
