@@ -1,0 +1,916 @@
+<RootWebArea name="ai - npm search" id="1" focusable="true" focused="true" url="https://www.npmjs.com/search?q=ai">
+  <generic id="4">
+    <region name="Site notifications" id="6">
+      <generic id="8">
+        ⚠️
+        <alert id="15" live="assertive" atomic="true" relevant="additions text">
+          npm tokens that bypass 2FA are being restricted — account changes (Aug 2026) and direct publishing (Jan 2027).
+          <link name="Learn how to prepare for the npm bypass 2FA token deprecation" id="18" focusable="true" url="https://github.blog/changelog/2026-07-08-npm-install-time-security-and-gat-bypass2fa-deprecation/">
+            Learn how to prepare →
+          </link>
+        </alert>
+        <button name="Close notification" id="21" invalid="false" focusable="true">
+          ×
+        </button>
+      </generic>
+    </region>
+    <generic id="24"/>
+    <banner id="27">
+      <generic id="29">
+        <generic id="30">
+          skip to:
+          <link name="skip to" id="33" focusable="true" url="https://www.npmjs.com/search?q=ai#main">
+            content
+          </link>
+          <link name="skip to" id="36" focusable="true" url="https://www.npmjs.com/search?q=ai#search">
+            package search
+          </link>
+          <link name="skip to" id="39" focusable="true" url="https://www.npmjs.com/search?q=ai#signin">
+            sign in
+          </link>
+        </generic>
+        <button name="Light mode — click for dark" id="43" invalid="false" focusable="true"/>
+        <navigation name="duct Navigation" id="44">
+          <list id="45">
+            <listitem id="46" level="1">
+              <link id="47" focusable="true" url="https://www.npmjs.com/products/pro">
+                Pro
+              </link>
+            </listitem>
+            <listitem id="50" level="1">
+              <link id="51" focusable="true" url="https://www.npmjs.com/products/teams">
+                Teams
+              </link>
+            </listitem>
+            <listitem id="54" level="1">
+              <link id="55" focusable="true" url="https://www.npmjs.com/products">
+                Pricing
+              </link>
+            </listitem>
+            <listitem id="58" level="1">
+              <link id="59" focusable="true" url="https://docs.npmjs.com/">
+                Documentation
+              </link>
+            </listitem>
+          </list>
+        </navigation>
+      </generic>
+      npm
+      <generic id="67">
+        <link name="Npm" id="68" focusable="true" url="https://www.npmjs.com/"/>
+      </generic>
+      <generic id="69">
+        <generic id="70">
+          <generic id="71">
+            <button id="72" invalid="false" focusable="true"/>
+            <generic id="73">
+              <combobox name="Search packages" id="75" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" hasPopup="listbox" required="false">
+                <generic id="78" editable="plaintext">
+                  ai
+                </generic>
+              </combobox>
+              <button name="Clear search" id="81" invalid="false" focusable="true">
+                ×
+              </button>
+            </generic>
+            <generic id="84" live="polite" atomic="true" relevant="additions text">
+              5 suggestions available.
+            </generic>
+            <generic id="89">
+              <listbox name="Search results" id="90" multiselectable="false" orientation="vertical" required="false">
+                <option name=", version ," id="91" focusable="true" selected="false">
+                  <strong id="94">
+                    ai
+                  </strong>
+                  <paragraph id="97">
+                    AI SDK by Vercel - build apps like ChatGPT, Claude, Gemini, and more with a single interface for any model using the Vercel AI Gateway or go direct to OpenAI, Anthropic, Google, or any other model provider.
+                  </paragraph>
+                  7.0.51
+                </option>
+                <option name=", version ," id="105" focusable="true" selected="false">
+                  <strong id="108">
+                    @ai-sdk/gateway
+                  </strong>
+                  <paragraph id="111">
+                    The Gateway provider for the [AI SDK](https://ai-sdk.dev/docs) allows the use of a wide variety of AI models and providers.
+                  </paragraph>
+                  4.0.40
+                </option>
+                <option name=", version ," id="119" focusable="true" selected="false">
+                  <strong id="122">
+                    @ai-sdk/google
+                  </strong>
+                  <paragraph id="125">
+                    The **[Google provider](https://ai-sdk.dev/providers/ai-sdk-providers/google)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Google Generative AI](https://ai.google/discover/generativeai/) APIs.
+                  </paragraph>
+                  4.0.33
+                </option>
+                <option name=", version ," id="133" focusable="true" selected="false">
+                  <strong id="136">
+                    @ai-sdk/deepseek
+                  </strong>
+                  <paragraph id="139">
+                    The **[DeepSeek provider](https://ai-sdk.dev/providers/ai-sdk-providers/deepseek)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [DeepSeek](https://www.deepseek.com) platform.
+                  </paragraph>
+                  3.0.21
+                </option>
+                <option name=", version ," id="147" focusable="true" selected="false">
+                  <strong id="150">
+                    @firebase/ai
+                  </strong>
+                  <paragraph id="153">
+                    The Firebase AI SDK
+                  </paragraph>
+                  2.14.0
+                </option>
+              </listbox>
+            </generic>
+          </generic>
+          <button id="159" invalid="false" focusable="true">
+            Search
+          </button>
+        </generic>
+      </generic>
+      <generic id="162">
+        <link id="164" focusable="true" url="https://www.npmjs.com/signup">
+          Sign Up
+        </link>
+        <link id="167" focusable="true" url="https://www.npmjs.com/login">
+          Sign In
+        </link>
+      </generic>
+    </banner>
+    <main id="170">
+      <heading id="173" level="1">
+        Search results
+      </heading>
+      <generic id="179">
+        <heading id="180" level="2">
+          1000+ packages found
+        </heading>
+      </generic>
+      <group id="191">
+        <DisclosureTriangle name=". Press Enter to open dropdown" id="193" focusable="true" hasPopup="listbox">
+          Sort by: Default
+        </DisclosureTriangle>
+      </group>
+      <generic id="202">
+        <link id="205" focusable="true" url="https://www.npmjs.com/package/ai">
+          <heading id="206" level="3">
+            ai
+          </heading>
+        </link>
+        <generic id="209">
+          exact match
+        </generic>
+        <paragraph id="212">
+          AI SDK by Vercel - build apps like ChatGPT, Claude, Gemini, and more with a single interface for any model using the Vercel AI Gateway or go direct to OpenAI, Anthropic, Google, or any other model provider.
+        </paragraph>
+        <list id="216">
+          <listitem id="217" level="1">
+            <link id="218" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+          <listitem id="221" level="1">
+            <link id="222" focusable="true" url="https://www.npmjs.com/search?q=keywords:vercel">
+              vercel
+            </link>
+          </listitem>
+          <listitem id="225" level="1">
+            <link id="226" focusable="true" url="https://www.npmjs.com/search?q=keywords:sdk">
+              sdk
+            </link>
+          </listitem>
+          <listitem id="229" level="1">
+            <link id="230" focusable="true" url="https://www.npmjs.com/search?q=keywords:llm">
+              llm
+            </link>
+          </listitem>
+          <listitem id="233" level="1">
+            <link id="234" focusable="true" url="https://www.npmjs.com/search?q=keywords:mcp">
+              mcp
+            </link>
+          </listitem>
+          <listitem id="237" level="1">
+            <link id="238" focusable="true" url="https://www.npmjs.com/search?q=keywords:tool-calling">
+              tool-calling
+            </link>
+          </listitem>
+          <listitem id="241" level="1">
+            <link id="242" focusable="true" url="https://www.npmjs.com/search?q=keywords:tools">
+              tools
+            </link>
+          </listitem>
+          <listitem id="245" level="1">
+            <link id="246" focusable="true" url="https://www.npmjs.com/search?q=keywords:structured-output">
+              structured-output
+            </link>
+          </listitem>
+          <listitem id="249" level="1">
+            <link id="250" focusable="true" url="https://www.npmjs.com/search?q=keywords:agent">
+              agent
+            </link>
+          </listitem>
+          <listitem id="253" level="1">
+            <link id="254" focusable="true" url="https://www.npmjs.com/search?q=keywords:agentic">
+              agentic
+            </link>
+          </listitem>
+          <listitem id="257" level="1">
+            <link id="258" focusable="true" url="https://www.npmjs.com/search?q=keywords:generative">
+              generative
+            </link>
+          </listitem>
+          <listitem id="261" level="1">
+            <link id="262" focusable="true" url="https://www.npmjs.com/search?q=keywords:genai">
+              genai
+            </link>
+          </listitem>
+          <listitem id="265" level="1">
+            <link id="266" focusable="true" url="https://www.npmjs.com/search?q=keywords:chatbot">
+              chatbot
+            </link>
+          </listitem>
+          <listitem id="269" level="1">
+            <link id="270" focusable="true" url="https://www.npmjs.com/search?q=keywords:prompt">
+              prompt
+            </link>
+          </listitem>
+          <listitem id="273" level="1">
+            <link id="274" focusable="true" url="https://www.npmjs.com/package/ai#keywords">
+              View more
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="280" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 7.0.51, 18 hours ago4926 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="307"/>
+        <generic id="308">
+          76,536,816
+        </generic>
+      </generic>
+      <generic id="311">
+        <link id="314" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/gateway">
+          <heading id="315" level="3">
+            @ai-sdk/gateway
+          </heading>
+        </link>
+        <paragraph id="318">
+          The Gateway provider for the [AI SDK](https://ai-sdk.dev/docs) allows the use of a wide variety of AI models and providers.
+        </paragraph>
+        <list id="321">
+          <listitem id="322" level="1">
+            <link id="323" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="329" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.40, 18 hours ago163 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="356"/>
+        <generic id="357">
+          70,280,917
+        </generic>
+      </generic>
+      <generic id="360">
+        <link id="363" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/google">
+          <heading id="364" level="3">
+            @ai-sdk/google
+          </heading>
+        </link>
+        <paragraph id="367">
+          The **[Google provider](https://ai-sdk.dev/providers/ai-sdk-providers/google)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Google Generative AI](https://ai.google/discover/generativeai/) APIs.
+        </paragraph>
+        <list id="371">
+          <listitem id="372" level="1">
+            <link id="373" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="379" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.33, 18 hours ago1637 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="406"/>
+        <generic id="407">
+          25,169,116
+        </generic>
+      </generic>
+      <generic id="410">
+        <link id="413" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/deepseek">
+          <heading id="414" level="3">
+            @ai-sdk/deepseek
+          </heading>
+        </link>
+        <paragraph id="417">
+          The **[DeepSeek provider](https://ai-sdk.dev/providers/ai-sdk-providers/deepseek)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [DeepSeek](https://www.deepseek.com) platform.
+        </paragraph>
+        <list id="421">
+          <listitem id="422" level="1">
+            <link id="423" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="429" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 3.0.21, 18 hours ago187 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="456"/>
+        <generic id="457">
+          6,609,436
+        </generic>
+      </generic>
+      <generic id="460">
+        <link id="463" focusable="true" url="https://www.npmjs.com/package/@firebase/ai">
+          <heading id="464" level="3">
+            @firebase/ai
+          </heading>
+        </link>
+        <paragraph id="467">
+          The Firebase AI SDK
+        </paragraph>
+        <link name="publisher" id="473" focusable="true" url="https://www.npmjs.com/~google-wombot">
+          google-wombot
+        </link>
+        published version 2.14.0, 5 days ago2 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="500"/>
+        <generic id="501">
+          24,507,171
+        </generic>
+      </generic>
+      <generic id="504">
+        <link id="507" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/openai">
+          <heading id="508" level="3">
+            @ai-sdk/openai
+          </heading>
+        </link>
+        <paragraph id="511">
+          The **[OpenAI provider](https://ai-sdk.dev/providers/ai-sdk-providers/openai)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the OpenAI chat and completion APIs and embedding model support for the OpenAI embeddings API.
+        </paragraph>
+        <list id="515">
+          <listitem id="516" level="1">
+            <link id="517" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="523" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.29, 18 hours ago2633 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="550"/>
+        <generic id="551">
+          36,751,739
+        </generic>
+      </generic>
+      <generic id="554">
+        <link id="557" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/azure">
+          <heading id="558" level="3">
+            @ai-sdk/azure
+          </heading>
+        </link>
+        <paragraph id="561">
+          The **[Azure provider](https://ai-sdk.dev/providers/ai-sdk-providers/azure)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the Azure OpenAI API.
+        </paragraph>
+        <list id="565">
+          <listitem id="566" level="1">
+            <link id="567" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="573" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.30, 18 hours ago216 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="600"/>
+        <generic id="601">
+          7,643,540
+        </generic>
+      </generic>
+      <generic id="604">
+        <link id="607" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/react">
+          <heading id="608" level="3">
+            @ai-sdk/react
+          </heading>
+        </link>
+        <paragraph id="611">
+          [React](https://react.dev/) UI components for the [AI SDK](https://ai-sdk.dev/docs):
+        </paragraph>
+        <list id="614">
+          <listitem id="615" level="1">
+            <link id="616" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+          <listitem id="619" level="1">
+            <link id="620" focusable="true" url="https://www.npmjs.com/search?q=keywords:react">
+              react
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="626" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.54, 18 hours ago434 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="653"/>
+        <generic id="654">
+          27,685,087
+        </generic>
+      </generic>
+      <generic id="657">
+        <link id="660" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/anthropic">
+          <heading id="661" level="3">
+            @ai-sdk/anthropic
+          </heading>
+        </link>
+        <paragraph id="664">
+          The **[Anthropic provider](https://ai-sdk.dev/providers/ai-sdk-providers/anthropic)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Anthropic Messages API](https://docs.anthropic.com/claude/reference/messages_post).
+        </paragraph>
+        <list id="668">
+          <listitem id="669" level="1">
+            <link id="670" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="676" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.30, a minute ago2000 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="703"/>
+        <generic id="704">
+          38,460,148
+        </generic>
+      </generic>
+      <generic id="707">
+        <link id="710" focusable="true" url="https://www.npmjs.com/package/@google/generative-ai">
+          <heading id="711" level="3">
+            @google/generative-ai
+          </heading>
+        </link>
+        <paragraph id="714">
+          Google AI JavaScript SDK
+        </paragraph>
+        <link name="publisher" id="720" focusable="true" url="https://www.npmjs.com/~google-wombot">
+          google-wombot
+        </link>
+        published version 0.24.1, a year ago1993 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="747"/>
+        <generic id="748">
+          15,907,464
+        </generic>
+      </generic>
+      <generic id="751">
+        <link id="754" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/xai">
+          <heading id="755" level="3">
+            @ai-sdk/xai
+          </heading>
+        </link>
+        <paragraph id="758">
+          The **[xAI Grok provider](https://ai-sdk.dev/providers/ai-sdk-providers/xai)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the xAI chat and completion APIs.
+        </paragraph>
+        <list id="762">
+          <listitem id="763" level="1">
+            <link id="764" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="770" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.27, 18 hours ago335 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="797"/>
+        <generic id="798">
+          7,905,734
+        </generic>
+      </generic>
+      <generic id="801">
+        <link id="804" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/google-vertex">
+          <heading id="805" level="3">
+            @ai-sdk/google-vertex
+          </heading>
+        </link>
+        <paragraph id="808">
+          The **[Google Vertex provider](https://ai-sdk.dev/providers/ai-sdk-providers/google-vertex)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Google Vertex AI](https://cloud.google.com/vertex-ai) APIs.
+        </paragraph>
+        <list id="812">
+          <listitem id="813" level="1">
+            <link id="814" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="820" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 5.0.40, 18 hours ago189 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="847"/>
+        <generic id="848">
+          11,583,708
+        </generic>
+      </generic>
+      <generic id="851">
+        <link id="854" focusable="true" url="https://www.npmjs.com/package/ai-gateway-provider">
+          <heading id="855" level="3">
+            ai-gateway-provider
+          </heading>
+        </link>
+        <paragraph id="858">
+          AI Gateway Provider for AI-SDK
+        </paragraph>
+        <list id="861">
+          <listitem id="862" level="1">
+            <link id="863" focusable="true" url="https://www.npmjs.com/search?q=keywords:agents">
+              agents
+            </link>
+          </listitem>
+          <listitem id="866" level="1">
+            <link id="867" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+          <listitem id="870" level="1">
+            <link id="871" focusable="true" url="https://www.npmjs.com/search?q=keywords:autorag">
+              autorag
+            </link>
+          </listitem>
+          <listitem id="874" level="1">
+            <link id="875" focusable="true" url="https://www.npmjs.com/search?q=keywords:cloudflare">
+              cloudflare
+            </link>
+          </listitem>
+          <listitem id="878" level="1">
+            <link id="879" focusable="true" url="https://www.npmjs.com/search?q=keywords:rag">
+              rag
+            </link>
+          </listitem>
+          <listitem id="882" level="1">
+            <link id="883" focusable="true" url="https://www.npmjs.com/search?q=keywords:workers">
+              workers
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="889" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.0, 13 days ago44 dependents licensed under $MIT
+        <image name="Download statistics" id="915"/>
+        <generic id="916">
+          520,509
+        </generic>
+      </generic>
+      <generic id="919">
+        <link id="922" focusable="true" url="https://www.npmjs.com/package/@posthog/ai">
+          <heading id="923" level="3">
+            @posthog/ai
+          </heading>
+        </link>
+        <paragraph id="926">
+          PostHog Node.js AI integrations
+        </paragraph>
+        <list id="929">
+          <listitem id="930" level="1">
+            <link id="931" focusable="true" url="https://www.npmjs.com/search?q=keywords:posthog">
+              posthog
+            </link>
+          </listitem>
+          <listitem id="934" level="1">
+            <link id="935" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+          <listitem id="938" level="1">
+            <link id="939" focusable="true" url="https://www.npmjs.com/search?q=keywords:openai">
+              openai
+            </link>
+          </listitem>
+          <listitem id="942" level="1">
+            <link id="943" focusable="true" url="https://www.npmjs.com/search?q=keywords:anthropic">
+              anthropic
+            </link>
+          </listitem>
+          <listitem id="946" level="1">
+            <link id="947" focusable="true" url="https://www.npmjs.com/search?q=keywords:gemini">
+              gemini
+            </link>
+          </listitem>
+          <listitem id="950" level="1">
+            <link id="951" focusable="true" url="https://www.npmjs.com/search?q=keywords:llm">
+              llm
+            </link>
+          </listitem>
+          <listitem id="954" level="1">
+            <link id="955" focusable="true" url="https://www.npmjs.com/search?q=keywords:observability">
+              observability
+            </link>
+          </listitem>
+          <listitem id="958" level="1">
+            <link id="959" focusable="true" url="https://www.npmjs.com/search?q=keywords:agents">
+              agents
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="965" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 8.6.6, 11 hours ago14 dependents licensed under $MIT
+        <image name="Download statistics" id="991"/>
+        <generic id="992">
+          2,096,088
+        </generic>
+      </generic>
+      <generic id="995">
+        <link id="998" focusable="true" url="https://www.npmjs.com/package/@genkit-ai/ai">
+          <heading id="999" level="3">
+            @genkit-ai/ai
+          </heading>
+        </link>
+        <paragraph id="1002">
+          Genkit AI framework generative AI APIs.
+        </paragraph>
+        <list id="1005">
+          <listitem id="1006" level="1">
+            <link id="1007" focusable="true" url="https://www.npmjs.com/search?q=keywords:genkit">
+              genkit
+            </link>
+          </listitem>
+          <listitem id="1010" level="1">
+            <link id="1011" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+          <listitem id="1014" level="1">
+            <link id="1015" focusable="true" url="https://www.npmjs.com/search?q=keywords:genai">
+              genai
+            </link>
+          </listitem>
+          <listitem id="1018" level="1">
+            <link id="1019" focusable="true" url="https://www.npmjs.com/search?q=keywords:generative-ai">
+              generative-ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="1025" focusable="true" url="https://www.npmjs.com/~google-wombot">
+          google-wombot
+        </link>
+        published version 1.40.1, 14 days ago28 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="1052"/>
+        <generic id="1053">
+          1,014,611
+        </generic>
+      </generic>
+      <generic id="1056">
+        <link id="1059" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/groq">
+          <heading id="1060" level="3">
+            @ai-sdk/groq
+          </heading>
+        </link>
+        <paragraph id="1063">
+          The **[Groq provider](https://ai-sdk.dev/providers/ai-sdk-providers/groq)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the Groq chat and completion APIs, transcription support, and browser search tool.
+        </paragraph>
+        <list id="1067">
+          <listitem id="1068" level="1">
+            <link id="1069" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="1075" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.21, 18 hours ago307 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="1102"/>
+        <generic id="1103">
+          6,775,494
+        </generic>
+      </generic>
+      <generic id="1106">
+        <link id="1109" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/cohere">
+          <heading id="1110" level="3">
+            @ai-sdk/cohere
+          </heading>
+        </link>
+        <paragraph id="1113">
+          The **[Cohere provider](https://ai-sdk.dev/providers/ai-sdk-providers/cohere)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the Cohere API.
+        </paragraph>
+        <list id="1117">
+          <listitem id="1118" level="1">
+            <link id="1119" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="1125" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.21, 2 minutes ago137 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="1152"/>
+        <generic id="1153">
+          2,315,161
+        </generic>
+      </generic>
+      <generic id="1156">
+        <link id="1159" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/amazon-bedrock">
+          <heading id="1160" level="3">
+            @ai-sdk/amazon-bedrock
+          </heading>
+        </link>
+        <paragraph id="1163">
+          The **[Amazon Bedrock provider](https://ai-sdk.dev/providers/ai-sdk-providers/amazon-bedrock)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the Amazon Bedrock [converse API](https://docs.aws.amazon.com/bedrock/latest/APIR
+        </paragraph>
+        <list id="1168">
+          <listitem id="1169" level="1">
+            <link id="1170" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="1176" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 5.0.42, 18 hours ago237 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="1203"/>
+        <generic id="1204">
+          11,075,274
+        </generic>
+      </generic>
+      <generic id="1207">
+        <link id="1210" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/mistral">
+          <heading id="1211" level="3">
+            @ai-sdk/mistral
+          </heading>
+        </link>
+        <paragraph id="1214">
+          The **[Mistral provider](https://ai-sdk.dev/providers/ai-sdk-providers/mistral)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model, embedding model, and speech model support for Mistral APIs.
+        </paragraph>
+        <list id="1218">
+          <listitem id="1219" level="1">
+            <link id="1220" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="1226" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.23, a minute ago304 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="1253"/>
+        <generic id="1254">
+          6,107,819
+        </generic>
+      </generic>
+      <generic id="1257">
+        <link id="1260" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/vue">
+          <heading id="1261" level="3">
+            @ai-sdk/vue
+          </heading>
+        </link>
+        <paragraph id="1264">
+          [Vue.js](https://vuejs.org/) UI components for the [AI SDK](https://ai-sdk.dev/docs):
+        </paragraph>
+        <list id="1267">
+          <listitem id="1268" level="1">
+            <link id="1269" focusable="true" url="https://www.npmjs.com/search?q=keywords:ai">
+              ai
+            </link>
+          </listitem>
+          <listitem id="1272" level="1">
+            <link id="1273" focusable="true" url="https://www.npmjs.com/search?q=keywords:vue">
+              vue
+            </link>
+          </listitem>
+        </list>
+        <link name="publisher" id="1279" focusable="true" url="https://gh.io/npm-docs-trusted-publishers">
+          GitHub Actions
+        </link>
+        published version 4.0.52, 2 minutes ago35 dependents licensed under $Apache-2.0
+        <image name="Download statistics" id="1306"/>
+        <generic id="1307">
+          3,752,223
+        </generic>
+      </generic>
+      <navigation name="Pagination Navigation" id="1312">
+        <generic id="1313">
+          <link name="Current page, page" id="1314" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=0&amp;perPage=20">
+            1
+          </link>
+        </generic>
+        <generic id="1317">
+          <link name="Go to page" id="1318" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=1&amp;perPage=20">
+            2
+          </link>
+        </generic>
+        <generic id="1321">
+          <link name="Go to page" id="1322" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=2&amp;perPage=20">
+            3
+          </link>
+        </generic>
+        <generic id="1325">
+          …
+        </generic>
+        <generic id="1328">
+          <link name="Go to page" id="1329" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=49&amp;perPage=20">
+            50
+          </link>
+        </generic>
+        <generic id="1332">
+          <link name="Next page" id="1333" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=1&amp;perPage=20">
+            »
+          </link>
+        </generic>
+      </navigation>
+    </main>
+    <contentinfo id="1336">
+      <heading id="1337" level="2">
+        Footer
+      </heading>
+      <generic id="1340">
+        <generic id="1342">
+          <link name="Visit npm GitHub page" id="1343" focusable="true" url="https://github.com/npm"/>
+        </generic>
+        <generic id="1344">
+          <link name="GitHub" id="1345" focusable="true" url="https://github.com/"/>
+        </generic>
+        <heading id="1347" level="3">
+          Support
+        </heading>
+        <list name="Support" id="1350" labelledby="">
+          <listitem id="1351" level="1">
+            <link id="1352" focusable="true" url="https://docs.npmjs.com/">
+              Help
+            </link>
+          </listitem>
+          <listitem id="1355" level="1">
+            <link id="1356" focusable="true" url="https://github.com/advisories">
+              Advisories
+            </link>
+          </listitem>
+          <listitem id="1359" level="1">
+            <link id="1360" focusable="true" url="http://status.npmjs.org/">
+              Status
+            </link>
+          </listitem>
+          <listitem id="1363" level="1">
+            <link id="1364" focusable="true" url="https://www.npmjs.com/support">
+              Contact npm
+            </link>
+          </listitem>
+        </list>
+        <heading id="1368" level="3">
+          Company
+        </heading>
+        <list name="Company" id="1371" labelledby="">
+          <listitem id="1372" level="1">
+            <link id="1373" focusable="true" url="https://www.npmjs.com/about">
+              About
+            </link>
+          </listitem>
+          <listitem id="1376" level="1">
+            <link id="1377" focusable="true" url="https://github.blog/tag/npm/">
+              Blog
+            </link>
+          </listitem>
+          <listitem id="1380" level="1">
+            <link id="1381" focusable="true" url="https://www.npmjs.com/press">
+              Press
+            </link>
+          </listitem>
+        </list>
+        <heading id="1385" level="3">
+          Terms &amp; Policies
+        </heading>
+        <list name="Terms &amp;" id="1388" labelledby="">
+          <listitem id="1389" level="1">
+            <link id="1390" focusable="true" url="https://www.npmjs.com/policies/">
+              Policies
+            </link>
+          </listitem>
+          <listitem id="1393" level="1">
+            <link id="1394" focusable="true" url="https://www.npmjs.com/policies/terms">
+              Terms of Use
+            </link>
+          </listitem>
+          <listitem id="1397" level="1">
+            <link id="1398" focusable="true" url="https://www.npmjs.com/policies/conduct">
+              Code of Conduct
+            </link>
+          </listitem>
+          <listitem id="1401" level="1">
+            <link id="1402" focusable="true" url="https://www.npmjs.com/policies/privacy">
+              Privacy
+            </link>
+          </listitem>
+        </list>
+      </generic>
+    </contentinfo>
+  </generic>
+</RootWebArea>

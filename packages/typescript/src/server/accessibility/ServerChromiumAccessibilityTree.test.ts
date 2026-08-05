@@ -3,6 +3,8 @@ import { readdirSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { ChromiumAccessibilityTree as ClientChromiumAccessibilityTree } from "../../accessibility/ChromiumAccessibilityTree.ts";
 import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 
 const FIXTURE_PATH = new URL(
   "./__fixtures__/chromium_accessibility_tree.json",
@@ -111,24 +113,38 @@ describe(ServerChromiumAccessibilityTree, () => {
   });
 
   describe("snapshots", () => {
-    const fixturesPath = new URL(
+    const bulkFixturesPath = new URL(
       "../../../tests/unit/fixtures/tree/web/",
       import.meta.url,
     );
-    const fixtureNames = readdirSync(fixturesPath)
+    const bulkFixtureNames = readdirSync(bulkFixturesPath)
       .filter((name) => name.startsWith("chrome-") && name.endsWith(".xml"))
       .sort();
 
-    it.for(fixtureNames)("%s", async (fixtureName) => {
-      const fixtureXml = await fs.readFile(
-        new URL(fixtureName, fixturesPath),
-        "utf-8",
-      );
+    it.for(bulkFixtureNames)("%s", (fixtureName) =>
+      test(new URL(fixtureName, bulkFixturesPath)),
+    );
+
+    const evalFixturesPath = new URL(
+      "./__fixtures__/eval/chrome/",
+      import.meta.url,
+    );
+    const evalFixtureNames = readdirSync(evalFixturesPath).sort();
+
+    it.for(evalFixtureNames)("%s", (fixtureName) =>
+      test(new URL(fixtureName, evalFixturesPath)),
+    );
+
+    async function test(fixtureUrl: URL) {
+      const fixtureXml = await fs.readFile(fixtureUrl, "utf-8");
       const tree = new ServerChromiumAccessibilityTree(fixtureXml);
 
+      const fixturePath = fileURLToPath(fixtureUrl);
+      const fixtureName = path.basename(fixturePath, ".xml");
+
       await expect(tree.toXml()).toMatchFileSnapshot(
-        `./__snapshots__/chrome/${fixtureName.replace(".xml", ".snap.xml")}`,
+        `./__snapshots__/chrome/${fixtureName}.snap.xml`,
       );
-    });
+    }
   });
 });
