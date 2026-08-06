@@ -4,11 +4,10 @@ main = "@astrojs/cloudflare/entrypoints/server"
 compatibility_date = "2026-07-20"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
-# TODO: Uncomment after configuring alumnium.ai DNS at Cloudflare
-# [[routes]]
-# pattern = "alumnium.ai"
-# custom_domain = true
-#
+[[routes]]
+pattern = "alumnium.ai"
+custom_domain = true
+
 [secrets]
 required = ["GITHUB_TOKEN"]
 
