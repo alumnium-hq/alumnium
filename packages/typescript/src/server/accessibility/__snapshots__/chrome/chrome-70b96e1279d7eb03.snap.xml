@@ -1,9 +1,9 @@
 <RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/tables">
-  <generic id="3">
+  <div id="3">
     <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
       <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
     </link>
-    <generic id="9">
+    <div id="9">
       <heading id="11" level="3">
         Data Tables
       </heading>
@@ -55,7 +55,7 @@
           <cell id="59">
             http://www.jsmith.com
           </cell>
-          <cell id="62">
+          <cell name="" id="62">
             <link id="63" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
               edit
             </link>
@@ -80,7 +80,7 @@
           <cell id="84">
             http://www.frank.com
           </cell>
-          <cell id="87">
+          <cell name="" id="87">
             <link id="88" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
               edit
             </link>
@@ -105,7 +105,7 @@
           <cell id="109">
             http://www.jdoe.com
           </cell>
-          <cell id="112">
+          <cell name="" id="112">
             <link id="113" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
               edit
             </link>
@@ -130,7 +130,7 @@
           <cell id="134">
             http://www.timconway.com
           </cell>
-          <cell id="137">
+          <cell name="" id="137">
             <link id="138" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
               edit
             </link>
@@ -185,7 +185,7 @@
           <cell id="187">
             http://www.jsmith.com
           </cell>
-          <cell id="190">
+          <cell name="" id="190">
             <link id="191" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
               edit
             </link>
@@ -210,7 +210,7 @@
           <cell id="212">
             http://www.frank.com
           </cell>
-          <cell id="215">
+          <cell name="" id="215">
             <link id="216" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
               edit
             </link>
@@ -235,7 +235,7 @@
           <cell id="237">
             http://www.jdoe.com
           </cell>
-          <cell id="240">
+          <cell name="" id="240">
             <link id="241" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
               edit
             </link>
@@ -260,7 +260,7 @@
           <cell id="262">
             http://www.timconway.com
           </cell>
-          <cell id="265">
+          <cell name="" id="265">
             <link id="266" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
               edit
             </link>
@@ -270,17 +270,15 @@
           </cell>
         </row>
       </table>
-    </generic>
-    <generic id="274">
-      <generic id="275">
-        <separator id="276" settable="true" orientation="horizontal"/>
-        <generic id="277">
-          Powered by
-          <link id="280" focusable="true" url="http://elementalselenium.com/">
-            Elemental Selenium
-          </link>
-        </generic>
-      </generic>
-    </generic>
-  </generic>
+    </div>
+    <div id="275">
+      <separator id="276" settable="true" orientation="horizontal"/>
+      <div id="277">
+        Powered by
+        <link id="280" focusable="true" url="http://elementalselenium.com/">
+          Elemental Selenium
+        </link>
+      </div>
+    </div>
+  </div>
 </RootWebArea>

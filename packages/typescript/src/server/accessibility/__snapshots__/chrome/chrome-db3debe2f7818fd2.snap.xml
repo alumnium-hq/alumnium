@@ -1,28 +1,17 @@
 <RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" id="1" focusable="true" focused="true" url="https://www.airbnb.com.sg/">
-  <generic id="3">
-    <generic id="658">
-      <generic id="661">
-        <generic id="662">
-          <dialog name="" id="663" focusable="true" focused="true" modal="true">
-            <generic id="664">
-              <button name="Close" id="665" invalid="false" focusable="true"/>
-            </generic>
-            <generic id="667">
-              <generic id="668">
-                <generic id="669">
-                  <image id="670"/>
-                </generic>
-              </generic>
-              Now you’ll see one price for your trip, all fees included.
-              <button id="677" invalid="false" focusable="true">
-                Got it
-              </button>
-            </generic>
-            <generic id="680"/>
-          </dialog>
-        </generic>
-      </generic>
-    </generic>
-  </generic>
+  <dialog name="" id="663" focusable="true" focused="true" modal="true">
+    <button name="Close" id="665" invalid="false" focusable="true"/>
+    <div id="667">
+      <image id="670"/>
+      Now you’ll see one price for your trip, all fees included.
+      <button id="677" invalid="false" focusable="true">
+        Got it
+      </button>
+    </div>
+    <div id="680">
+      <div id="681" live="polite" atomic="true" relevant="additions text"/>
+      <div id="682" live="assertive" atomic="true" relevant="additions text"/>
+    </div>
+  </dialog>
   <RootWebArea id="684" focusable="true" url="about:blank"/>
 </RootWebArea>

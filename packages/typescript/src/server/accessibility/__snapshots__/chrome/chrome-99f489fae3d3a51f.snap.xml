@@ -1,83 +1,77 @@
 <RootWebArea name="Calculator" id="1" focusable="true" focused="true" url="https://seleniumbase.io/apps/calculator">
-  <generic id="4">
-    <generic id="5">
-      <generic id="6">
-        <LabelText id="7"/>
-        Dark Mode
-        <link id="17" focusable="true" url="https://seleniumbase.io/apps/calculator">
-          Calculator
-        </link>
-        <link id="34" focusable="true" url="https://seleniumbase.io/">
-          SB
-        </link>
-      </generic>
-      <generic id="38">
-        <textbox id="39" invalid="false" focusable="true" editable="plaintext" multiline="false" readonly="true" required="false">
-          <generic id="40">
-            4
-          </generic>
-        </textbox>
-      </generic>
-      <button id="43" invalid="false" focusable="true">
-        C
-      </button>
-      <button id="46" invalid="false" focusable="true">
-        (
-      </button>
-      <button id="49" invalid="false" focusable="true">
-        )
-      </button>
-      <button id="52" invalid="false" focusable="true">
-        ÷
-      </button>
-      <button id="55" invalid="false" focusable="true">
-        7
-      </button>
-      <button id="58" invalid="false" focusable="true">
-        8
-      </button>
-      <button id="61" invalid="false" focusable="true">
-        9
-      </button>
-      <button id="64" invalid="false" focusable="true">
-        ×
-      </button>
-      <button id="67" invalid="false" focusable="true">
-        4
-      </button>
-      <button id="70" invalid="false" focusable="true">
-        5
-      </button>
-      <button id="73" invalid="false" focusable="true">
-        6
-      </button>
-      <button id="76" invalid="false" focusable="true">
-        -
-      </button>
-      <button id="79" invalid="false" focusable="true">
-        1
-      </button>
-      <button id="82" invalid="false" focusable="true">
-        2
-      </button>
-      <button id="85" invalid="false" focusable="true">
-        3
-      </button>
-      <button id="88" invalid="false" focusable="true">
-        +
-      </button>
-      <button id="91" invalid="false" focusable="true">
-        ←
-      </button>
-      <button id="94" invalid="false" focusable="true">
-        0
-      </button>
-      <button id="97" invalid="false" focusable="true">
-        .
-      </button>
-      <button id="100" invalid="false" focusable="true" focused="true">
-        =
-      </button>
-    </generic>
-  </generic>
+  <div id="5">
+    <div id="6">
+      <LabelText id="7"/>
+      Dark Mode
+      <link id="17" focusable="true" url="https://seleniumbase.io/apps/calculator">
+        Calculator
+      </link>
+      <link id="34" focusable="true" url="https://seleniumbase.io/">
+        SB
+      </link>
+    </div>
+    <textbox id="39" invalid="false" focusable="true" editable="plaintext" multiline="false" readonly="true" required="false">
+      4
+    </textbox>
+    <button id="43" invalid="false" focusable="true">
+      C
+    </button>
+    <button id="46" invalid="false" focusable="true">
+      (
+    </button>
+    <button id="49" invalid="false" focusable="true">
+      )
+    </button>
+    <button id="52" invalid="false" focusable="true">
+      ÷
+    </button>
+    <button id="55" invalid="false" focusable="true">
+      7
+    </button>
+    <button id="58" invalid="false" focusable="true">
+      8
+    </button>
+    <button id="61" invalid="false" focusable="true">
+      9
+    </button>
+    <button id="64" invalid="false" focusable="true">
+      ×
+    </button>
+    <button id="67" invalid="false" focusable="true">
+      4
+    </button>
+    <button id="70" invalid="false" focusable="true">
+      5
+    </button>
+    <button id="73" invalid="false" focusable="true">
+      6
+    </button>
+    <button id="76" invalid="false" focusable="true">
+      -
+    </button>
+    <button id="79" invalid="false" focusable="true">
+      1
+    </button>
+    <button id="82" invalid="false" focusable="true">
+      2
+    </button>
+    <button id="85" invalid="false" focusable="true">
+      3
+    </button>
+    <button id="88" invalid="false" focusable="true">
+      +
+    </button>
+    <button id="91" invalid="false" focusable="true">
+      ←
+    </button>
+    <button id="94" invalid="false" focusable="true">
+      0
+    </button>
+    <button id="97" invalid="false" focusable="true">
+      .
+    </button>
+    <button id="100" invalid="false" focusable="true" focused="true">
+      =
+    </button>
+  </div>
 </RootWebArea>

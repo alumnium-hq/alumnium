@@ -20,11 +20,9 @@
         <heading id="28" level="5">
           Practice site
         </heading>
-        <generic id="31">
-          <link id="32" focusable="true" url="https://github.com/bonigarcia/selenium-webdriver-java">
-            <image id="33" url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
-          </link>
-        </generic>
+        <link id="32" focusable="true" url="https://github.com/bonigarcia/selenium-webdriver-java">
+          <image id="33" url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
+        </link>
         <separator id="36" settable="true" orientation="horizontal"/>
         <heading id="39" level="1">
           Form submitted
@@ -34,12 +32,12 @@
         </paragraph>
       </main>
       <contentinfo id="47">
-        <generic id="48">
+        <div id="48">
           Copyright © 2021-2026
           <link id="51" focusable="true" url="https://bonigarcia.dev/">
             Boni García
           </link>
-        </generic>
+        </div>
       </contentinfo>
     </RootWebArea>
   </Iframe>

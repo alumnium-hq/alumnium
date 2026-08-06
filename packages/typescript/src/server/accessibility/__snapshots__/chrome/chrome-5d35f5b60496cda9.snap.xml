@@ -21,13 +21,11 @@
         Changelog
       </link>
     </navigation>
-    <generic id="31">
-      <button name="(Ctrl+)" id="32" invalid="false" focusable="true">
-        Search
-        <image id="39"/>
-        K
-      </button>
-    </generic>
+    <button name="(Ctrl+)" id="32" invalid="false" focusable="true">
+      Search
+      <image id="39"/>
+      K
+    </button>
     <link name="GitHub" id="43" focusable="true" url="https://github.com/cloudflare/cloudflare-docs">
       <image id="44"/>
     </link>
@@ -41,9 +39,9 @@
   </banner>
   <complementary id="59">
     <navigation name="Documentation" id="60">
-      <generic id="61">
-        <searchbox name="Filter navigation" id="62" invalid="false" focusable="true" editable="plaintext" settable="true"/>
-      </generic>
+      <searchbox name="Filter navigation" id="62" invalid="false" focusable="true" editable="plaintext" settable="true">
+        <div id="65" editable="plaintext"/>
+      </searchbox>
       GET STARTED
       <list id="71">
         <listitem id="72" level="1">
@@ -75,58 +73,50 @@
           <button id="99" invalid="false" focusable="true" controls="nb-disclosure-1">
             Resources
           </button>
-          <generic id="104">
-            <generic id="105">
-              <list id="106">
-                <listitem id="107" level="2">
-                  <link id="108" focusable="true" url="https://developers.cloudflare.com/resources/?filter-pcx_content_type=learning-path">
-                    Learning paths
-                  </link>
-                </listitem>
-                <listitem id="112" level="2">
-                  <link id="113" focusable="true" url="https://developers.cloudflare.com/use-cases/">
-                    Use cases
-                  </link>
-                </listitem>
-                <listitem id="117" level="2">
-                  <link id="118" focusable="true" url="https://developers.cloudflare.com/reference-architecture/">
-                    Reference architecture
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="106">
+            <listitem id="107" level="2">
+              <link id="108" focusable="true" url="https://developers.cloudflare.com/resources/?filter-pcx_content_type=learning-path">
+                Learning paths
+              </link>
+            </listitem>
+            <listitem id="112" level="2">
+              <link id="113" focusable="true" url="https://developers.cloudflare.com/use-cases/">
+                Use cases
+              </link>
+            </listitem>
+            <listitem id="117" level="2">
+              <link id="118" focusable="true" url="https://developers.cloudflare.com/reference-architecture/">
+                Reference architecture
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="122" level="1">
           <button id="124" invalid="false" focusable="true" controls="nb-disclosure-2">
             API &amp; IaC
           </button>
-          <generic id="129">
-            <generic id="130">
-              <list id="131">
-                <listitem id="132" level="2">
-                  <link id="133" focusable="true" url="https://developers.cloudflare.com/api/">
-                    API reference
-                  </link>
-                </listitem>
-                <listitem id="137" level="2">
-                  <link id="138" focusable="true" url="https://developers.cloudflare.com/terraform/">
-                    Terraform
-                  </link>
-                </listitem>
-                <listitem id="142" level="2">
-                  <link id="143" focusable="true" url="https://developers.cloudflare.com/pulumi/">
-                    Pulumi
-                  </link>
-                </listitem>
-                <listitem id="147" level="2">
-                  <link id="148" focusable="true" url="https://developers.cloudflare.com/fundamentals/api/reference/sdks/">
-                    SDKs
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="131">
+            <listitem id="132" level="2">
+              <link id="133" focusable="true" url="https://developers.cloudflare.com/api/">
+                API reference
+              </link>
+            </listitem>
+            <listitem id="137" level="2">
+              <link id="138" focusable="true" url="https://developers.cloudflare.com/terraform/">
+                Terraform
+              </link>
+            </listitem>
+            <listitem id="142" level="2">
+              <link id="143" focusable="true" url="https://developers.cloudflare.com/pulumi/">
+                Pulumi
+              </link>
+            </listitem>
+            <listitem id="147" level="2">
+              <link id="148" focusable="true" url="https://developers.cloudflare.com/fundamentals/api/reference/sdks/">
+                SDKs
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="152" level="1">
           <link id="153" focusable="true" url="https://developers.cloudflare.com/support/">
@@ -141,193 +131,177 @@
             <image id="166"/>
             Compute
           </button>
-          <generic id="171">
-            <generic id="172">
-              <list id="173">
-                <listitem id="174" level="2">
-                  <link id="175" focusable="true" url="https://developers.cloudflare.com/workers/">
-                    Workers
-                  </link>
-                </listitem>
-                <listitem id="179" level="2">
-                  <link id="180" focusable="true" url="https://developers.cloudflare.com/containers/">
-                    Containers
-                  </link>
-                </listitem>
-                <listitem id="184" level="2">
-                  <link id="185" focusable="true" url="https://developers.cloudflare.com/durable-objects/">
-                    Durable Objects
-                  </link>
-                </listitem>
-                <listitem id="189" level="2">
-                  <link id="190" focusable="true" url="https://developers.cloudflare.com/queues/">
-                    Queues
-                  </link>
-                </listitem>
-                <listitem id="194" level="2">
-                  <link id="195" focusable="true" url="https://developers.cloudflare.com/workflows/">
-                    Workflows
-                  </link>
-                </listitem>
-                <listitem id="199" level="2">
-                  <link id="200" focusable="true" url="https://developers.cloudflare.com/flagship/">
-                    Flagship
-                  </link>
-                </listitem>
-                <listitem id="204" level="2">
-                  <link id="205" focusable="true" url="https://developers.cloudflare.com/browser-run/">
-                    Browser Run
-                  </link>
-                </listitem>
-                <listitem id="209" level="2">
-                  <link id="210" focusable="true" url="https://developers.cloudflare.com/workers-vpc/">
-                    Workers VPC
-                  </link>
-                </listitem>
-                <listitem id="214" level="2">
-                  <link id="215" focusable="true" url="https://developers.cloudflare.com/cloudflare-for-platforms/">
-                    Cloudflare for Platforms
-                  </link>
-                </listitem>
-                <listitem id="219" level="2">
-                  <link id="220" focusable="true" url="https://developers.cloudflare.com/email-service/">
-                    Email Service
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="173">
+            <listitem id="174" level="2">
+              <link id="175" focusable="true" url="https://developers.cloudflare.com/workers/">
+                Workers
+              </link>
+            </listitem>
+            <listitem id="179" level="2">
+              <link id="180" focusable="true" url="https://developers.cloudflare.com/containers/">
+                Containers
+              </link>
+            </listitem>
+            <listitem id="184" level="2">
+              <link id="185" focusable="true" url="https://developers.cloudflare.com/durable-objects/">
+                Durable Objects
+              </link>
+            </listitem>
+            <listitem id="189" level="2">
+              <link id="190" focusable="true" url="https://developers.cloudflare.com/queues/">
+                Queues
+              </link>
+            </listitem>
+            <listitem id="194" level="2">
+              <link id="195" focusable="true" url="https://developers.cloudflare.com/workflows/">
+                Workflows
+              </link>
+            </listitem>
+            <listitem id="199" level="2">
+              <link id="200" focusable="true" url="https://developers.cloudflare.com/flagship/">
+                Flagship
+              </link>
+            </listitem>
+            <listitem id="204" level="2">
+              <link id="205" focusable="true" url="https://developers.cloudflare.com/browser-run/">
+                Browser Run
+              </link>
+            </listitem>
+            <listitem id="209" level="2">
+              <link id="210" focusable="true" url="https://developers.cloudflare.com/workers-vpc/">
+                Workers VPC
+              </link>
+            </listitem>
+            <listitem id="214" level="2">
+              <link id="215" focusable="true" url="https://developers.cloudflare.com/cloudflare-for-platforms/">
+                Cloudflare for Platforms
+              </link>
+            </listitem>
+            <listitem id="219" level="2">
+              <link id="220" focusable="true" url="https://developers.cloudflare.com/email-service/">
+                Email Service
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="224" level="1">
           <button id="226" invalid="false" focusable="true" controls="nb-disclosure-4">
             <image id="228"/>
             AI
           </button>
-          <generic id="233">
-            <generic id="234">
-              <list id="235">
-                <listitem id="236" level="2">
-                  <link id="237" focusable="true" url="https://developers.cloudflare.com/ai/models/">
-                    Models
-                  </link>
-                </listitem>
-                <listitem id="241" level="2">
-                  <link id="242" focusable="true" url="https://developers.cloudflare.com/workers-ai/">
-                    Workers AI
-                  </link>
-                </listitem>
-                <listitem id="246" level="2">
-                  <link id="247" focusable="true" url="https://developers.cloudflare.com/ai-gateway/">
-                    AI Gateway
-                  </link>
-                </listitem>
-                <listitem id="251" level="2">
-                  <link id="252" focusable="true" url="https://developers.cloudflare.com/agents/">
-                    Agents
-                  </link>
-                </listitem>
-                <listitem id="256" level="2">
-                  <link id="257" focusable="true" url="https://developers.cloudflare.com/agent-memory/">
-                    Agent Memory
-                  </link>
-                </listitem>
-                <listitem id="261" level="2">
-                  <link id="262" focusable="true" url="https://developers.cloudflare.com/sandbox/">
-                    Sandbox SDK
-                  </link>
-                </listitem>
-                <listitem id="266" level="2">
-                  <link id="267" focusable="true" url="https://developers.cloudflare.com/vectorize/">
-                    Vectorize
-                  </link>
-                </listitem>
-                <listitem id="271" level="2">
-                  <link id="272" focusable="true" url="https://developers.cloudflare.com/ai-search/">
-                    AI Search
-                  </link>
-                </listitem>
-                <listitem id="276" level="2">
-                  <link id="277" focusable="true" url="https://developers.cloudflare.com/ai-crawl-control/">
-                    AI Crawl Control
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="235">
+            <listitem id="236" level="2">
+              <link id="237" focusable="true" url="https://developers.cloudflare.com/ai/models/">
+                Models
+              </link>
+            </listitem>
+            <listitem id="241" level="2">
+              <link id="242" focusable="true" url="https://developers.cloudflare.com/workers-ai/">
+                Workers AI
+              </link>
+            </listitem>
+            <listitem id="246" level="2">
+              <link id="247" focusable="true" url="https://developers.cloudflare.com/ai-gateway/">
+                AI Gateway
+              </link>
+            </listitem>
+            <listitem id="251" level="2">
+              <link id="252" focusable="true" url="https://developers.cloudflare.com/agents/">
+                Agents
+              </link>
+            </listitem>
+            <listitem id="256" level="2">
+              <link id="257" focusable="true" url="https://developers.cloudflare.com/agent-memory/">
+                Agent Memory
+              </link>
+            </listitem>
+            <listitem id="261" level="2">
+              <link id="262" focusable="true" url="https://developers.cloudflare.com/sandbox/">
+                Sandbox SDK
+              </link>
+            </listitem>
+            <listitem id="266" level="2">
+              <link id="267" focusable="true" url="https://developers.cloudflare.com/vectorize/">
+                Vectorize
+              </link>
+            </listitem>
+            <listitem id="271" level="2">
+              <link id="272" focusable="true" url="https://developers.cloudflare.com/ai-search/">
+                AI Search
+              </link>
+            </listitem>
+            <listitem id="276" level="2">
+              <link id="277" focusable="true" url="https://developers.cloudflare.com/ai-crawl-control/">
+                AI Crawl Control
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="281" level="1">
           <button id="283" invalid="false" focusable="true" controls="nb-disclosure-5">
             <image id="285"/>
             Storage &amp; Database
           </button>
-          <generic id="290">
-            <generic id="291">
-              <list id="292">
-                <listitem id="293" level="2">
-                  <link id="294" focusable="true" url="https://developers.cloudflare.com/r2/">
-                    R2
-                  </link>
-                </listitem>
-                <listitem id="298" level="2">
-                  <link id="299" focusable="true" url="https://developers.cloudflare.com/r2/data-catalog/">
-                    R2 Data Catalog
-                  </link>
-                </listitem>
-                <listitem id="303" level="2">
-                  <link id="304" focusable="true" url="https://developers.cloudflare.com/r2-sql/">
-                    R2 SQL
-                  </link>
-                </listitem>
-                <listitem id="308" level="2">
-                  <link id="309" focusable="true" url="https://developers.cloudflare.com/pipelines/">
-                    Pipelines
-                  </link>
-                </listitem>
-                <listitem id="313" level="2">
-                  <link id="314" focusable="true" url="https://developers.cloudflare.com/d1/">
-                    D1
-                  </link>
-                </listitem>
-                <listitem id="318" level="2">
-                  <link id="319" focusable="true" url="https://developers.cloudflare.com/kv/">
-                    KV
-                  </link>
-                </listitem>
-                <listitem id="323" level="2">
-                  <link id="324" focusable="true" url="https://developers.cloudflare.com/hyperdrive/">
-                    Hyperdrive
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="292">
+            <listitem id="293" level="2">
+              <link id="294" focusable="true" url="https://developers.cloudflare.com/r2/">
+                R2
+              </link>
+            </listitem>
+            <listitem id="298" level="2">
+              <link id="299" focusable="true" url="https://developers.cloudflare.com/r2/data-catalog/">
+                R2 Data Catalog
+              </link>
+            </listitem>
+            <listitem id="303" level="2">
+              <link id="304" focusable="true" url="https://developers.cloudflare.com/r2-sql/">
+                R2 SQL
+              </link>
+            </listitem>
+            <listitem id="308" level="2">
+              <link id="309" focusable="true" url="https://developers.cloudflare.com/pipelines/">
+                Pipelines
+              </link>
+            </listitem>
+            <listitem id="313" level="2">
+              <link id="314" focusable="true" url="https://developers.cloudflare.com/d1/">
+                D1
+              </link>
+            </listitem>
+            <listitem id="318" level="2">
+              <link id="319" focusable="true" url="https://developers.cloudflare.com/kv/">
+                KV
+              </link>
+            </listitem>
+            <listitem id="323" level="2">
+              <link id="324" focusable="true" url="https://developers.cloudflare.com/hyperdrive/">
+                Hyperdrive
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="328" level="1">
           <button id="330" invalid="false" focusable="true" controls="nb-disclosure-6">
             <image id="332"/>
             Media
           </button>
-          <generic id="337">
-            <generic id="338">
-              <list id="339">
-                <listitem id="340" level="2">
-                  <link id="341" focusable="true" url="https://developers.cloudflare.com/images/">
-                    Images
-                  </link>
-                </listitem>
-                <listitem id="345" level="2">
-                  <link id="346" focusable="true" url="https://developers.cloudflare.com/stream/">
-                    Stream
-                  </link>
-                </listitem>
-                <listitem id="350" level="2">
-                  <link id="351" focusable="true" url="https://developers.cloudflare.com/realtime/">
-                    Realtime
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="339">
+            <listitem id="340" level="2">
+              <link id="341" focusable="true" url="https://developers.cloudflare.com/images/">
+                Images
+              </link>
+            </listitem>
+            <listitem id="345" level="2">
+              <link id="346" focusable="true" url="https://developers.cloudflare.com/stream/">
+                Stream
+              </link>
+            </listitem>
+            <listitem id="350" level="2">
+              <link id="351" focusable="true" url="https://developers.cloudflare.com/realtime/">
+                Realtime
+              </link>
+            </listitem>
+          </list>
         </listitem>
       </list>
       PROTECT &amp; CONNECT
@@ -337,250 +311,230 @@
             <image id="364"/>
             Application Security
           </button>
-          <generic id="369">
-            <generic id="370">
-              <list id="371">
-                <listitem id="372" level="2">
-                  <link id="373" focusable="true" url="https://developers.cloudflare.com/waf/">
-                    WAF
-                  </link>
-                </listitem>
-                <listitem id="377" level="2">
-                  <link id="378" focusable="true" url="https://developers.cloudflare.com/ddos-protection/">
-                    DDoS Protection
-                  </link>
-                </listitem>
-                <listitem id="382" level="2">
-                  <link id="383" focusable="true" url="https://developers.cloudflare.com/ssl/">
-                    SSL/TLS
-                  </link>
-                </listitem>
-                <listitem id="387" level="2">
-                  <link id="388" focusable="true" url="https://developers.cloudflare.com/bots/">
-                    Bots
-                  </link>
-                </listitem>
-                <listitem id="392" level="2">
-                  <link id="393" focusable="true" url="https://developers.cloudflare.com/api-shield/">
-                    API Shield
-                  </link>
-                </listitem>
-                <listitem id="397" level="2">
-                  <link id="398" focusable="true" url="https://developers.cloudflare.com/page-shield/">
-                    Page Shield
-                  </link>
-                </listitem>
-                <listitem id="402" level="2">
-                  <link id="403" focusable="true" url="https://developers.cloudflare.com/turnstile/">
-                    Turnstile
-                  </link>
-                </listitem>
-                <listitem id="407" level="2">
-                  <link id="408" focusable="true" url="https://developers.cloudflare.com/security-center/">
-                    Security Center
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="371">
+            <listitem id="372" level="2">
+              <link id="373" focusable="true" url="https://developers.cloudflare.com/waf/">
+                WAF
+              </link>
+            </listitem>
+            <listitem id="377" level="2">
+              <link id="378" focusable="true" url="https://developers.cloudflare.com/ddos-protection/">
+                DDoS Protection
+              </link>
+            </listitem>
+            <listitem id="382" level="2">
+              <link id="383" focusable="true" url="https://developers.cloudflare.com/ssl/">
+                SSL/TLS
+              </link>
+            </listitem>
+            <listitem id="387" level="2">
+              <link id="388" focusable="true" url="https://developers.cloudflare.com/bots/">
+                Bots
+              </link>
+            </listitem>
+            <listitem id="392" level="2">
+              <link id="393" focusable="true" url="https://developers.cloudflare.com/api-shield/">
+                API Shield
+              </link>
+            </listitem>
+            <listitem id="397" level="2">
+              <link id="398" focusable="true" url="https://developers.cloudflare.com/page-shield/">
+                Page Shield
+              </link>
+            </listitem>
+            <listitem id="402" level="2">
+              <link id="403" focusable="true" url="https://developers.cloudflare.com/turnstile/">
+                Turnstile
+              </link>
+            </listitem>
+            <listitem id="407" level="2">
+              <link id="408" focusable="true" url="https://developers.cloudflare.com/security-center/">
+                Security Center
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="412" level="1">
           <button id="414" invalid="false" focusable="true" controls="nb-disclosure-8">
             <image id="416"/>
             Cloudflare One
           </button>
-          <generic id="421">
-            <generic id="422">
-              <list id="423">
-                <listitem id="424" level="2">
-                  <link id="425" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/">
-                    Overview
-                  </link>
-                </listitem>
-                <listitem id="429" level="2">
-                  <link id="430" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/insights/">
-                    Insights &amp; Logs
-                  </link>
-                </listitem>
-                <listitem id="434" level="2">
-                  <link id="435" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/team-and-resources/">
-                    Team &amp; Resources
-                  </link>
-                </listitem>
-                <listitem id="439" level="2">
-                  <link id="440" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/networks/">
-                    Networks
-                  </link>
-                </listitem>
-                <listitem id="444" level="2">
-                  <link id="445" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/access-controls/">
-                    Access controls
-                  </link>
-                </listitem>
-                <listitem id="449" level="2">
-                  <link id="450" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/traffic-policies/">
-                    Traffic policies
-                  </link>
-                </listitem>
-                <listitem id="454" level="2">
-                  <link id="455" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/cloud-and-saas-findings/">
-                    Cloud &amp; SaaS findings
-                  </link>
-                </listitem>
-                <listitem id="459" level="2">
-                  <link id="460" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/email-security/">
-                    Email security
-                  </link>
-                </listitem>
-                <listitem id="464" level="2">
-                  <link id="465" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/data-loss-prevention/">
-                    Data loss prevention
-                  </link>
-                </listitem>
-                <listitem id="469" level="2">
-                  <link id="470" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/remote-browser-isolation/">
-                    Browser isolation
-                  </link>
-                </listitem>
-                <listitem id="474" level="2">
-                  <link id="475" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/reusable-components/">
-                    Reusable components
-                  </link>
-                </listitem>
-                <listitem id="479" level="2">
-                  <link id="480" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/integrations/">
-                    Integrations
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="423">
+            <listitem id="424" level="2">
+              <link id="425" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/">
+                Overview
+              </link>
+            </listitem>
+            <listitem id="429" level="2">
+              <link id="430" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/insights/">
+                Insights &amp; Logs
+              </link>
+            </listitem>
+            <listitem id="434" level="2">
+              <link id="435" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/team-and-resources/">
+                Team &amp; Resources
+              </link>
+            </listitem>
+            <listitem id="439" level="2">
+              <link id="440" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/networks/">
+                Networks
+              </link>
+            </listitem>
+            <listitem id="444" level="2">
+              <link id="445" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/access-controls/">
+                Access controls
+              </link>
+            </listitem>
+            <listitem id="449" level="2">
+              <link id="450" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/traffic-policies/">
+                Traffic policies
+              </link>
+            </listitem>
+            <listitem id="454" level="2">
+              <link id="455" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/cloud-and-saas-findings/">
+                Cloud &amp; SaaS findings
+              </link>
+            </listitem>
+            <listitem id="459" level="2">
+              <link id="460" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/email-security/">
+                Email security
+              </link>
+            </listitem>
+            <listitem id="464" level="2">
+              <link id="465" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/data-loss-prevention/">
+                Data loss prevention
+              </link>
+            </listitem>
+            <listitem id="469" level="2">
+              <link id="470" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/remote-browser-isolation/">
+                Browser isolation
+              </link>
+            </listitem>
+            <listitem id="474" level="2">
+              <link id="475" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/reusable-components/">
+                Reusable components
+              </link>
+            </listitem>
+            <listitem id="479" level="2">
+              <link id="480" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/integrations/">
+                Integrations
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="484" level="1">
           <button id="486" invalid="false" focusable="true" controls="nb-disclosure-9">
             <image id="488"/>
             Domains &amp; DNS
           </button>
-          <generic id="493">
-            <generic id="494">
-              <list id="495">
-                <listitem id="496" level="2">
-                  <link id="497" focusable="true" url="https://developers.cloudflare.com/dns/">
-                    DNS
-                  </link>
-                </listitem>
-                <listitem id="501" level="2">
-                  <link id="502" focusable="true" url="https://developers.cloudflare.com/1.1.1.1/">
-                    1.1.1.1
-                  </link>
-                </listitem>
-                <listitem id="506" level="2">
-                  <link id="507" focusable="true" url="https://developers.cloudflare.com/registrar/">
-                    Registrar
-                  </link>
-                </listitem>
-                <listitem id="511" level="2">
-                  <link id="512" focusable="true" url="https://developers.cloudflare.com/email-service/">
-                    Email Routing
-                  </link>
-                </listitem>
-                <listitem id="516" level="2">
-                  <link id="517" focusable="true" url="https://developers.cloudflare.com/dmarc-management/">
-                    DMARC Management
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="495">
+            <listitem id="496" level="2">
+              <link id="497" focusable="true" url="https://developers.cloudflare.com/dns/">
+                DNS
+              </link>
+            </listitem>
+            <listitem id="501" level="2">
+              <link id="502" focusable="true" url="https://developers.cloudflare.com/1.1.1.1/">
+                1.1.1.1
+              </link>
+            </listitem>
+            <listitem id="506" level="2">
+              <link id="507" focusable="true" url="https://developers.cloudflare.com/registrar/">
+                Registrar
+              </link>
+            </listitem>
+            <listitem id="511" level="2">
+              <link id="512" focusable="true" url="https://developers.cloudflare.com/email-service/">
+                Email Routing
+              </link>
+            </listitem>
+            <listitem id="516" level="2">
+              <link id="517" focusable="true" url="https://developers.cloudflare.com/dmarc-management/">
+                DMARC Management
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="521" level="1">
           <button id="523" invalid="false" focusable="true" controls="nb-disclosure-10">
             <image id="525"/>
             Networking
           </button>
-          <generic id="530">
-            <generic id="531">
-              <list id="532">
-                <listitem id="533" level="2">
-                  <link id="534" focusable="true" url="https://developers.cloudflare.com/tunnel/">
-                    Tunnel
-                  </link>
-                </listitem>
-                <listitem id="538" level="2">
-                  <link id="539" focusable="true" url="https://developers.cloudflare.com/mesh/">
-                    Mesh
-                  </link>
-                </listitem>
-                <listitem id="543" level="2">
-                  <link id="544" focusable="true" url="https://developers.cloudflare.com/magic-transit/">
-                    Magic Transit
-                  </link>
-                </listitem>
-                <listitem id="548" level="2">
-                  <link id="549" focusable="true" url="https://developers.cloudflare.com/cloudflare-wan/">
-                    Magic WAN
-                  </link>
-                </listitem>
-                <listitem id="553" level="2">
-                  <link id="554" focusable="true" url="https://developers.cloudflare.com/network-interconnect/">
-                    Network Interconnect
-                  </link>
-                </listitem>
-                <listitem id="558" level="2">
-                  <link id="559" focusable="true" url="https://developers.cloudflare.com/spectrum/">
-                    Spectrum
-                  </link>
-                </listitem>
-                <listitem id="563" level="2">
-                  <link id="564" focusable="true" url="https://developers.cloudflare.com/byoip/">
-                    BYOIP
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="532">
+            <listitem id="533" level="2">
+              <link id="534" focusable="true" url="https://developers.cloudflare.com/tunnel/">
+                Tunnel
+              </link>
+            </listitem>
+            <listitem id="538" level="2">
+              <link id="539" focusable="true" url="https://developers.cloudflare.com/mesh/">
+                Mesh
+              </link>
+            </listitem>
+            <listitem id="543" level="2">
+              <link id="544" focusable="true" url="https://developers.cloudflare.com/magic-transit/">
+                Magic Transit
+              </link>
+            </listitem>
+            <listitem id="548" level="2">
+              <link id="549" focusable="true" url="https://developers.cloudflare.com/cloudflare-wan/">
+                Magic WAN
+              </link>
+            </listitem>
+            <listitem id="553" level="2">
+              <link id="554" focusable="true" url="https://developers.cloudflare.com/network-interconnect/">
+                Network Interconnect
+              </link>
+            </listitem>
+            <listitem id="558" level="2">
+              <link id="559" focusable="true" url="https://developers.cloudflare.com/spectrum/">
+                Spectrum
+              </link>
+            </listitem>
+            <listitem id="563" level="2">
+              <link id="564" focusable="true" url="https://developers.cloudflare.com/byoip/">
+                BYOIP
+              </link>
+            </listitem>
+          </list>
         </listitem>
         <listitem id="568" level="1">
           <button id="570" invalid="false" focusable="true" controls="nb-disclosure-11">
             <image id="572"/>
             Delivery &amp; Performance
           </button>
-          <generic id="577">
-            <generic id="578">
-              <list id="579">
-                <listitem id="580" level="2">
-                  <link id="581" focusable="true" url="https://developers.cloudflare.com/cache/">
-                    Cache
-                  </link>
-                </listitem>
-                <listitem id="585" level="2">
-                  <link id="586" focusable="true" url="https://developers.cloudflare.com/speed/">
-                    Speed
-                  </link>
-                </listitem>
-                <listitem id="590" level="2">
-                  <link id="591" focusable="true" url="https://developers.cloudflare.com/load-balancing/">
-                    Load Balancing
-                  </link>
-                </listitem>
-                <listitem id="595" level="2">
-                  <link id="596" focusable="true" url="https://developers.cloudflare.com/waiting-room/">
-                    Waiting Room
-                  </link>
-                </listitem>
-                <listitem id="600" level="2">
-                  <link id="601" focusable="true" url="https://developers.cloudflare.com/argo-smart-routing/">
-                    Argo Smart Routing
-                  </link>
-                </listitem>
-                <listitem id="605" level="2">
-                  <link id="606" focusable="true" url="https://developers.cloudflare.com/zaraz/">
-                    Zaraz
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="579">
+            <listitem id="580" level="2">
+              <link id="581" focusable="true" url="https://developers.cloudflare.com/cache/">
+                Cache
+              </link>
+            </listitem>
+            <listitem id="585" level="2">
+              <link id="586" focusable="true" url="https://developers.cloudflare.com/speed/">
+                Speed
+              </link>
+            </listitem>
+            <listitem id="590" level="2">
+              <link id="591" focusable="true" url="https://developers.cloudflare.com/load-balancing/">
+                Load Balancing
+              </link>
+            </listitem>
+            <listitem id="595" level="2">
+              <link id="596" focusable="true" url="https://developers.cloudflare.com/waiting-room/">
+                Waiting Room
+              </link>
+            </listitem>
+            <listitem id="600" level="2">
+              <link id="601" focusable="true" url="https://developers.cloudflare.com/argo-smart-routing/">
+                Argo Smart Routing
+              </link>
+            </listitem>
+            <listitem id="605" level="2">
+              <link id="606" focusable="true" url="https://developers.cloudflare.com/zaraz/">
+                Zaraz
+              </link>
+            </listitem>
+          </list>
         </listitem>
       </list>
       MANAGE &amp; OBSERVE
@@ -590,674 +544,656 @@
             <image id="619"/>
             Observe
           </button>
-          <generic id="624">
-            <generic id="625">
-              <list id="626">
-                <listitem id="627" level="2">
-                  <link id="628" focusable="true" url="https://developers.cloudflare.com/analytics/">
-                    Analytics
-                  </link>
-                </listitem>
-                <listitem id="632" level="2">
-                  <link id="633" focusable="true" url="https://developers.cloudflare.com/web-analytics/">
-                    Web Analytics
-                  </link>
-                </listitem>
-                <listitem id="637" level="2">
-                  <link id="638" focusable="true" url="https://developers.cloudflare.com/logs/">
-                    Logs
-                  </link>
-                </listitem>
-                <listitem id="642" level="2">
-                  <link id="643" focusable="true" url="https://developers.cloudflare.com/log-explorer/">
-                    Log Explorer
-                  </link>
-                </listitem>
-                <listitem id="647" level="2">
-                  <link id="648" focusable="true" url="https://developers.cloudflare.com/health-checks/">
-                    Health Checks
-                  </link>
-                </listitem>
-              </list>
-            </generic>
-          </generic>
+          <list id="626">
+            <listitem id="627" level="2">
+              <link id="628" focusable="true" url="https://developers.cloudflare.com/analytics/">
+                Analytics
+              </link>
+            </listitem>
+            <listitem id="632" level="2">
+              <link id="633" focusable="true" url="https://developers.cloudflare.com/web-analytics/">
+                Web Analytics
+              </link>
+            </listitem>
+            <listitem id="637" level="2">
+              <link id="638" focusable="true" url="https://developers.cloudflare.com/logs/">
+                Logs
+              </link>
+            </listitem>
+            <listitem id="642" level="2">
+              <link id="643" focusable="true" url="https://developers.cloudflare.com/log-explorer/">
+                Log Explorer
+              </link>
+            </listitem>
+            <listitem id="647" level="2">
+              <link id="648" focusable="true" url="https://developers.cloudflare.com/health-checks/">
+                Health Checks
+              </link>
+            </listitem>
+          </list>
         </listitem>
       </list>
     </navigation>
   </complementary>
   <main id="653">
-    <generic id="654">
-      <generic id="655">
-        <generic id="656">
-          <heading id="657" level="1">
-            Cloudflare Developer Docs
+    <div id="655">
+      <div id="656">
+        <heading id="657" level="1">
+          Cloudflare Developer Docs
+        </heading>
+        <paragraph id="660">
+          Explore guides and tutorials to start building on Cloudflare's platform
+        </paragraph>
+        <link id="665" focusable="true" url="https://developers.cloudflare.com/fundamentals/get-started/">
+          Get started
+        </link>
+        <button id="668" invalid="false" focusable="true">
+          Copy prompt
+        </button>
+      </div>
+      <region name="" id="673" labelledby="">
+        <heading id="674" level="2">
+          Powerful primitives, seamlessly integrated
+        </heading>
+        <div id="677">
+          <tablist name="Build primitives" id="678" multiselectable="false" orientation="horizontal">
+            <tab id="679" invalid="false" focusable="true" selected="true" controls="build-panel-compute">
+              Compute
+            </tab>
+            <tab id="683" invalid="false" focusable="true" selected="false">
+              AI
+            </tab>
+            <tab id="687" invalid="false" focusable="true" selected="false">
+              Storage &amp; Databases
+            </tab>
+            <tab id="691" invalid="false" focusable="true" selected="false">
+              Media
+            </tab>
+          </tablist>
+          <tabpanel name="Compute" id="695" labelledby="">
+            <image id="699"/>
+            <heading id="701" level="3">
+              Deploy with one command
+            </heading>
+            <paragraph id="704">
+              Build and deploy serverless functions and full-stack apps on Cloudflare's global network. No servers to manage. No cold starts or region complexity.
+            </paragraph>
+            <code id="709">
+              npm create cloudflare@latest my-app
+            </code>
+            <button name="Copy to clipboard" id="712" invalid="false" focusable="true"/>
+            <link id="714" focusable="true" url="https://developers.cloudflare.com/workers/get-started/guide/">
+              Create your first Worker
+              <image id="717"/>
+            </link>
+            <paragraph id="719">
+              <link id="721" focusable="true" url="https://developers.cloudflare.com/workers/">
+                Workers
+              </link>
+              <link id="725" focusable="true" url="https://developers.cloudflare.com/containers/">
+                Containers
+              </link>
+              <link id="729" focusable="true" url="https://developers.cloudflare.com/durable-objects/">
+                Durable Objects
+              </link>
+              <link id="733" focusable="true" url="https://developers.cloudflare.com/queues/">
+                Queues
+              </link>
+              <link id="737" focusable="true" url="https://developers.cloudflare.com/flagship/">
+                Flagship
+              </link>
+            </paragraph>
+          </tabpanel>
+        </div>
+      </region>
+      <region name="" id="746" labelledby="">
+        <div id="747">
+          <heading id="750" level="2">
+            Build with your favorite AI agent
           </heading>
-          <paragraph id="660">
-            Explore guides and tutorials to start building on Cloudflare's platform
+          <paragraph id="753">
+            Paste into any AI coding agent to install Cloudflare agent tooling:
           </paragraph>
-          <link id="665" focusable="true" url="https://developers.cloudflare.com/fundamentals/get-started/">
-            Get started
-          </link>
-          <button id="668" invalid="false" focusable="true">
+          <button id="756" invalid="false" focusable="true">
             Copy prompt
           </button>
-        </generic>
-        <region name="" id="673" labelledby="">
-          <heading id="674" level="2">
-            Powerful primitives, seamlessly integrated
-          </heading>
-          <generic id="677">
-            <tablist name="Build primitives" id="678" multiselectable="false" orientation="horizontal">
-              <tab id="679" invalid="false" focusable="true" selected="true" controls="build-panel-compute">
-                Compute
-              </tab>
-              <tab id="683" invalid="false" focusable="true" selected="false">
-                AI
-              </tab>
-              <tab id="687" invalid="false" focusable="true" selected="false">
-                Storage &amp; Databases
-              </tab>
-              <tab id="691" invalid="false" focusable="true" selected="false">
-                Media
-              </tab>
-            </tablist>
-            <tabpanel name="Compute" id="695" labelledby="">
-              <image id="699"/>
-              <heading id="701" level="3">
-                Deploy with one command
+          <div id="761">
+            Browse all agent setup guides
+            <link id="767" focusable="true" url="https://developers.cloudflare.com/agent-setup/">
+              All agents
+            </link>
+          </div>
+        </div>
+      </region>
+      <region name="" id="770" labelledby="">
+        <heading id="773" level="2">
+          What's new
+        </heading>
+        <paragraph id="776">
+          The latest features and improvements shipping across Cloudflare.
+        </paragraph>
+        <link id="779" focusable="true" url="https://developers.cloudflare.com/changelog/">
+          View Changelog
+          <image id="782"/>
+        </link>
+        <div id="784">
+          <link name="" id="785" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-08-03-eager-redirect-cookie-setting/">
+            <div id="786">
+              <time id="788">
+                Aug 03, 2026
+              </time>
+              ACCESS
+            </div>
+            <div id="794">
+              <heading id="795" level="3">
+                Control authorization cookies for multi-domain Access applications
               </heading>
-              <paragraph id="704">
-                Build and deploy serverless functions and full-stack apps on Cloudflare's global network. No servers to manage. No cold starts or region complexity.
+              <paragraph id="800">
+                Access administrators can control whether self-hosted applications preemptively set authorization cookies across their public hostnames.
               </paragraph>
-              <code id="709">
-                npm create cloudflare@latest my-app
-              </code>
-              <button name="Copy to clipboard" id="712" invalid="false" focusable="true"/>
-              <link id="714" focusable="true" url="https://developers.cloudflare.com/workers/get-started/guide/">
-                Create your first Worker
-                <image id="717"/>
-              </link>
-              <paragraph id="719">
-                <generic id="720">
-                  <link id="721" focusable="true" url="https://developers.cloudflare.com/workers/">
-                    Workers
-                  </link>
-                </generic>
-                <generic id="724">
-                  <link id="725" focusable="true" url="https://developers.cloudflare.com/containers/">
-                    Containers
-                  </link>
-                </generic>
-                <generic id="728">
-                  <link id="729" focusable="true" url="https://developers.cloudflare.com/durable-objects/">
-                    Durable Objects
-                  </link>
-                </generic>
-                <generic id="732">
-                  <link id="733" focusable="true" url="https://developers.cloudflare.com/queues/">
-                    Queues
-                  </link>
-                </generic>
-                <generic id="736">
-                  <link id="737" focusable="true" url="https://developers.cloudflare.com/flagship/">
-                    Flagship
-                  </link>
-                </generic>
-              </paragraph>
-            </tabpanel>
-          </generic>
-        </region>
-        <region name="" id="746" labelledby="">
-          <generic id="747">
-            <heading id="750" level="2">
-              Build with your favorite AI agent
-            </heading>
-            <paragraph id="753">
-              Paste into any AI coding agent to install Cloudflare agent tooling:
-            </paragraph>
-            <button id="756" invalid="false" focusable="true">
-              Copy prompt
-            </button>
-            <generic id="761">
-              <generic id="762">
-                Browse all agent setup guides
-              </generic>
-              <link id="767" focusable="true" url="https://developers.cloudflare.com/agent-setup/">
-                All agents
-              </link>
-            </generic>
-          </generic>
-        </region>
-        <region name="" id="770" labelledby="">
-          <heading id="773" level="2">
-            What's new
-          </heading>
-          <paragraph id="776">
-            The latest features and improvements shipping across Cloudflare.
-          </paragraph>
-          <link id="779" focusable="true" url="https://developers.cloudflare.com/changelog/">
-            View Changelog
-            <image id="782"/>
+            </div>
+            Read update
+            <image id="809"/>
           </link>
-          <generic id="784">
-            <link name="" id="785" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-08-03-eager-redirect-cookie-setting/">
-              <generic id="786">
-                <time id="788">
-                  Aug 03, 2026
-                </time>
-                ACCESS
-              </generic>
-              <generic id="794">
-                <heading id="795" level="3">
-                  Control authorization cookies for multi-domain Access applications
-                </heading>
-                <paragraph id="800">
-                  Access administrators can control whether self-hosted applications preemptively set authorization cookies across their public hostnames.
-                </paragraph>
-              </generic>
-              Read update
-              <image id="809"/>
-            </link>
-            <link name="" id="811" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-08-03-cloudflare-computer/">
-              <time id="813">
-                Aug 03
-              </time>
-              AGENTS
-              <paragraph id="820">
-                Preview: @cloudflare/computer agent runtime
-              </paragraph>
-              <paragraph id="827">
-                An agent runtime that dynamically orchestrates between isolates and containers, giving every agent a virtual filesystem and execution environment.
-              </paragraph>
-              Read more
-              <image id="841"/>
-            </link>
-            <link name="" id="843" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-08-03-python-javascript-rpc/">
-              <time id="845">
-                Aug 03
-              </time>
-              WORKERS
-              <paragraph id="852">
-                Python and JavaScript Workers can now call each other via RPC
-              </paragraph>
-              <paragraph id="859">
-                Workers RPC now supports cross-language calls between Python and JavaScript Workers without additional dependencies or schema definitions.
-              </paragraph>
-              Read more
-              <image id="872"/>
-            </link>
-            <link name="" id="874" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-31-warp-windows-beta/">
-              <time id="876">
-                Jul 31
-              </time>
-              CLOUDFLARE ONE CLIENT
-              <paragraph id="885">
-                Cloudflare One Client for Windows (version 2026.7.1210.1)
-              </paragraph>
-              <paragraph id="892">
-                Cloudflare One Client for Windows (version 2026.7.1210.1)
-              </paragraph>
-              Read more
-              <image id="901"/>
-            </link>
-            <link name="" id="903" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-31-warp-macos-beta/">
-              <time id="905">
-                Jul 31
-              </time>
-              CLOUDFLARE ONE CLIENT
-              <paragraph id="914">
-                Cloudflare One Client for macOS (version 2026.7.1210.1)
-              </paragraph>
-              <paragraph id="920">
-                Cloudflare One Client for macOS (version 2026.7.1210.1)
-              </paragraph>
-              Read more
-              <image id="929"/>
-            </link>
-            <link name="" id="931" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-31-mcp-portal-manual-oauth/">
-              <time id="933">
-                Jul 31
-              </time>
-              ACCESS
-              <paragraph id="940">
-                Static OAuth client credentials for MCP server portals
-              </paragraph>
-              <paragraph id="944">
-                Connect MCP servers that require a pre-registered OAuth client to an MCP server portal.
-              </paragraph>
-              Read more
-              <image id="953"/>
-            </link>
-            <link name="" id="955" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-31-br-dashboard-playground/">
-              <time id="957">
-                Jul 31
-              </time>
-              BROWSER RUN
-              <paragraph id="964">
-                Browser Run adds a Playground to the Cloudflare dashboard
-              </paragraph>
-              <paragraph id="970">
-                Run screenshots, PDFs, data extraction, and AI extraction against a live browser from the dashboard, then copy the generated code.
-              </paragraph>
-              Read more
-              <image id="982"/>
-            </link>
-            <link name="" id="984" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-30-rotate-stream-broadcast-keys/">
-              <time id="986">
-                Jul 31
-              </time>
-              STREAM
-              <paragraph id="993">
-                Rotate Stream broadcast keys for live inputs
-              </paragraph>
-              <paragraph id="999">
-                Rotate credentials for a Stream live input without changing the live input ID or its other configuration.
-              </paragraph>
-              Read more
-              <image id="1010"/>
-            </link>
-          </generic>
-        </region>
-        <region name="" id="1012" labelledby="">
-          <heading id="1013" level="2">
-            Security that scales
-          </heading>
-          <paragraph id="1016">
-            Everything you need to secure applications, APIs, and infrastructure.
-          </paragraph>
-          <paragraph id="1021">
-            PUBLIC WEBSITES &amp; APPS
-          </paragraph>
-          <generic id="1024">
-            <link name="" id="1025" focusable="true" url="https://developers.cloudflare.com/waf/">
-              <image id="1028"/>
-              WAF
-              <paragraph id="1033">
-                Protect your applications without sacrificing performance
-              </paragraph>
-              <paragraph id="1038">
-                Identify and block malicious payloads before they can compromise your application.
-              </paragraph>
-              Harden your app with WAF
-              <image id="1046"/>
-            </link>
-            <link name="" id="1048" focusable="true" url="https://developers.cloudflare.com/ssl/">
-              <image id="1051"/>
-              SSL/TLS
-              <paragraph id="1056">
-                Encrypt your site in minutes
-              </paragraph>
-              <paragraph id="1059">
-                Streamline TLS Certificate Management.
-              </paragraph>
-              Set up SSL/TLS
-              <image id="1066"/>
-            </link>
-            <link name="" id="1068" focusable="true" url="https://developers.cloudflare.com/turnstile/">
-              <image id="1071"/>
-              TURNSTILE
-              <paragraph id="1076">
-                Verify visitors without CAPTCHA
-              </paragraph>
-              <paragraph id="1080">
-                Confirm web visitors are real and block unwanted bots without slowing down web experiences for real users.
-              </paragraph>
-              Add Turnstile protection
-              <image id="1089"/>
-            </link>
-          </generic>
-          <paragraph id="1092">
-            CORPORATE AND HOME NETWORKS
-          </paragraph>
-          <generic id="1095">
-            <link name="" id="1096" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/">
-              <image id="1099"/>
-              TUNNEL
-              <paragraph id="1104">
-                Securely connect origins with post-quantum encrypted tunnels
-              </paragraph>
-              <paragraph id="1109">
-                Outbound-only encrypted tunnels, no open ports.
-              </paragraph>
-              Create a secure Tunnel
-              <image id="1116"/>
-            </link>
-            <link name="" id="1118" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/access-controls/">
-              <image id="1121"/>
-              ACCESS
-              <paragraph id="1126">
-                Secure internal applications with Cloudflare Access
-              </paragraph>
-              <paragraph id="1130">
-                Identity-first, quantum-safe access to private applications and infrastructure.
-              </paragraph>
-              Set up Cloudflare Access
-              <image id="1138"/>
-            </link>
-            <link name="" id="1140" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/traffic-policies/">
-              <image id="1143"/>
-              GATEWAY
-              <paragraph id="1148">
-                Secure Internet browsing without disruptions
-              </paragraph>
-              <paragraph id="1152">
-                Cloud-native Secure Web Gateway (SWG) that inspects browser traffic without disruption.
-              </paragraph>
-              Create Gateway policies
-              <image id="1161"/>
-            </link>
-          </generic>
-        </region>
-        <region name="" id="1163" labelledby="">
-          <heading id="1166" level="2">
-            Faster web performance
-          </heading>
-          <paragraph id="1169">
-            Accelerate websites and applications with Cloudflare CDN caching, image optimization, smart routing, load balancing, and web analytics.
-          </paragraph>
-          <link id="1173" focusable="true" url="https://developers.cloudflare.com/directory/?product-group=Application+performance">
-            Explore Directory
-            <image id="1176"/>
+          <link name="" id="811" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-08-03-cloudflare-computer/">
+            <time id="813">
+              Aug 03
+            </time>
+            AGENTS
+            <paragraph id="820">
+              Preview: @cloudflare/computer agent runtime
+            </paragraph>
+            <paragraph id="827">
+              An agent runtime that dynamically orchestrates between isolates and containers, giving every agent a virtual filesystem and execution environment.
+            </paragraph>
+            Read more
+            <image id="841"/>
           </link>
-          <generic id="1179">
-            <link name="" id="1180" focusable="true" url="https://developers.cloudflare.com/dns/">
-              <image id="1183"/>
-              DNS
-              <paragraph id="1188">
-                Fast, reliable and resilient DNS queries
-              </paragraph>
-              <paragraph id="1192">
-                World's fastest authoritative DNS, consistently ranked #1 by DNSPerf; free, fully API-managed, DNSSEC supported.
-              </paragraph>
-              Set up Authoritative DNS
-              <image id="1201"/>
-            </link>
-            <link name="" id="1203" focusable="true" url="https://developers.cloudflare.com/smart-shield/">
-              <image id="1206"/>
-              SMART SHIELD
-              <paragraph id="1211">
-                Minimize origin load and accelerate dynamic content
-              </paragraph>
-              <paragraph id="1215">
-                Intelligently manage traffic, optimize content delivery, and safeguard origin infrastructure.
-              </paragraph>
-              Enable Smart Shield
-              <image id="1223"/>
-            </link>
-            <link name="" id="1225" focusable="true" url="https://developers.cloudflare.com/cache/get-started/">
-              <image id="1228"/>
-              CDN
-              <paragraph id="1233">
-                Default caching for static assets, with cache rules for full control
-              </paragraph>
-              <paragraph id="1238">
-                Caches content in 330+ cities worldwide, with instant purging and granular Cache Rules.
-              </paragraph>
-              Set up Cache Rules
-              <image id="1246"/>
-            </link>
-            <link name="" id="1248" focusable="true" url="https://developers.cloudflare.com/speed/">
-              <image id="1251"/>
-              SPEED
-              <paragraph id="1256">
-                Assess your site speed and apply recommended optimizations
-              </paragraph>
-              <paragraph id="1261">
-                Application delivery optimizations including minification, Brotli compression, Early Hints, and HTTP/3.
-              </paragraph>
-              Improve your site speed
-              <image id="1271"/>
-            </link>
-            <link name="" id="1273" focusable="true" url="https://developers.cloudflare.com/images/">
-              <image id="1276"/>
-              IMAGES
-              <paragraph id="1281">
-                Transform, optimize, and deliver images worldwide
-              </paragraph>
-              <paragraph id="1285">
-                Cloudflare Images handles format conversion, responsive sizing, and intelligent caching.
-              </paragraph>
-              Optimize image delivery
-              <image id="1293"/>
-            </link>
-            <link name="" id="1295" focusable="true" url="https://developers.cloudflare.com/web-analytics/">
-              <image id="1298"/>
-              WEB ANALYTICS
-              <paragraph id="1303">
-                Understand the performance of your web pages
-              </paragraph>
-              <paragraph id="1308">
-                Cloudflare Web Analytics collects Core Web Vitals and performance data from 100% of page views without cookies or sampling.
-              </paragraph>
-              Track real user metrics
-              <image id="1318"/>
-            </link>
-          </generic>
-        </region>
-        <region name="" id="1320" labelledby="">
-          <heading id="1322" level="2">
-            Connect with Cloudflare
+          <link name="" id="843" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-08-03-python-javascript-rpc/">
+            <time id="845">
+              Aug 03
+            </time>
+            WORKERS
+            <paragraph id="852">
+              Python and JavaScript Workers can now call each other via RPC
+            </paragraph>
+            <paragraph id="859">
+              Workers RPC now supports cross-language calls between Python and JavaScript Workers without additional dependencies or schema definitions.
+            </paragraph>
+            Read more
+            <image id="872"/>
+          </link>
+          <link name="" id="874" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-31-warp-windows-beta/">
+            <time id="876">
+              Jul 31
+            </time>
+            CLOUDFLARE ONE CLIENT
+            <paragraph id="885">
+              Cloudflare One Client for Windows (version 2026.7.1210.1)
+            </paragraph>
+            <paragraph id="892">
+              Cloudflare One Client for Windows (version 2026.7.1210.1)
+            </paragraph>
+            Read more
+            <image id="901"/>
+          </link>
+          <link name="" id="903" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-31-warp-macos-beta/">
+            <time id="905">
+              Jul 31
+            </time>
+            CLOUDFLARE ONE CLIENT
+            <paragraph id="914">
+              Cloudflare One Client for macOS (version 2026.7.1210.1)
+            </paragraph>
+            <paragraph id="920">
+              Cloudflare One Client for macOS (version 2026.7.1210.1)
+            </paragraph>
+            Read more
+            <image id="929"/>
+          </link>
+          <link name="" id="931" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-31-mcp-portal-manual-oauth/">
+            <time id="933">
+              Jul 31
+            </time>
+            ACCESS
+            <paragraph id="940">
+              Static OAuth client credentials for MCP server portals
+            </paragraph>
+            <paragraph id="944">
+              Connect MCP servers that require a pre-registered OAuth client to an MCP server portal.
+            </paragraph>
+            Read more
+            <image id="953"/>
+          </link>
+          <link name="" id="955" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-31-br-dashboard-playground/">
+            <time id="957">
+              Jul 31
+            </time>
+            BROWSER RUN
+            <paragraph id="964">
+              Browser Run adds a Playground to the Cloudflare dashboard
+            </paragraph>
+            <paragraph id="970">
+              Run screenshots, PDFs, data extraction, and AI extraction against a live browser from the dashboard, then copy the generated code.
+            </paragraph>
+            Read more
+            <image id="982"/>
+          </link>
+          <link name="" id="984" focusable="true" url="https://developers.cloudflare.com/changelog/post/2026-07-30-rotate-stream-broadcast-keys/">
+            <time id="986">
+              Jul 31
+            </time>
+            STREAM
+            <paragraph id="993">
+              Rotate Stream broadcast keys for live inputs
+            </paragraph>
+            <paragraph id="999">
+              Rotate credentials for a Stream live input without changing the live input ID or its other configuration.
+            </paragraph>
+            Read more
+            <image id="1010"/>
+          </link>
+        </div>
+      </region>
+      <region name="" id="1012" labelledby="">
+        <heading id="1013" level="2">
+          Security that scales
+        </heading>
+        <paragraph id="1016">
+          Everything you need to secure applications, APIs, and infrastructure.
+        </paragraph>
+        <paragraph id="1021">
+          PUBLIC WEBSITES &amp; APPS
+        </paragraph>
+        <div id="1024">
+          <link name="" id="1025" focusable="true" url="https://developers.cloudflare.com/waf/">
+            <image id="1028"/>
+            WAF
+            <paragraph id="1033">
+              Protect your applications without sacrificing performance
+            </paragraph>
+            <paragraph id="1038">
+              Identify and block malicious payloads before they can compromise your application.
+            </paragraph>
+            Harden your app with WAF
+            <image id="1046"/>
+          </link>
+          <link name="" id="1048" focusable="true" url="https://developers.cloudflare.com/ssl/">
+            <image id="1051"/>
+            SSL/TLS
+            <paragraph id="1056">
+              Encrypt your site in minutes
+            </paragraph>
+            <paragraph id="1059">
+              Streamline TLS Certificate Management.
+            </paragraph>
+            Set up SSL/TLS
+            <image id="1066"/>
+          </link>
+          <link name="" id="1068" focusable="true" url="https://developers.cloudflare.com/turnstile/">
+            <image id="1071"/>
+            TURNSTILE
+            <paragraph id="1076">
+              Verify visitors without CAPTCHA
+            </paragraph>
+            <paragraph id="1080">
+              Confirm web visitors are real and block unwanted bots without slowing down web experiences for real users.
+            </paragraph>
+            Add Turnstile protection
+            <image id="1089"/>
+          </link>
+        </div>
+        <paragraph id="1092">
+          CORPORATE AND HOME NETWORKS
+        </paragraph>
+        <div id="1095">
+          <link name="" id="1096" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/">
+            <image id="1099"/>
+            TUNNEL
+            <paragraph id="1104">
+              Securely connect origins with post-quantum encrypted tunnels
+            </paragraph>
+            <paragraph id="1109">
+              Outbound-only encrypted tunnels, no open ports.
+            </paragraph>
+            Create a secure Tunnel
+            <image id="1116"/>
+          </link>
+          <link name="" id="1118" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/access-controls/">
+            <image id="1121"/>
+            ACCESS
+            <paragraph id="1126">
+              Secure internal applications with Cloudflare Access
+            </paragraph>
+            <paragraph id="1130">
+              Identity-first, quantum-safe access to private applications and infrastructure.
+            </paragraph>
+            Set up Cloudflare Access
+            <image id="1138"/>
+          </link>
+          <link name="" id="1140" focusable="true" url="https://developers.cloudflare.com/cloudflare-one/traffic-policies/">
+            <image id="1143"/>
+            GATEWAY
+            <paragraph id="1148">
+              Secure Internet browsing without disruptions
+            </paragraph>
+            <paragraph id="1152">
+              Cloud-native Secure Web Gateway (SWG) that inspects browser traffic without disruption.
+            </paragraph>
+            Create Gateway policies
+            <image id="1161"/>
+          </link>
+        </div>
+      </region>
+      <region name="" id="1163" labelledby="">
+        <heading id="1166" level="2">
+          Faster web performance
+        </heading>
+        <paragraph id="1169">
+          Accelerate websites and applications with Cloudflare CDN caching, image optimization, smart routing, load balancing, and web analytics.
+        </paragraph>
+        <link id="1173" focusable="true" url="https://developers.cloudflare.com/directory/?product-group=Application+performance">
+          Explore Directory
+          <image id="1176"/>
+        </link>
+        <div id="1179">
+          <link name="" id="1180" focusable="true" url="https://developers.cloudflare.com/dns/">
+            <image id="1183"/>
+            DNS
+            <paragraph id="1188">
+              Fast, reliable and resilient DNS queries
+            </paragraph>
+            <paragraph id="1192">
+              World's fastest authoritative DNS, consistently ranked #1 by DNSPerf; free, fully API-managed, DNSSEC supported.
+            </paragraph>
+            Set up Authoritative DNS
+            <image id="1201"/>
+          </link>
+          <link name="" id="1203" focusable="true" url="https://developers.cloudflare.com/smart-shield/">
+            <image id="1206"/>
+            SMART SHIELD
+            <paragraph id="1211">
+              Minimize origin load and accelerate dynamic content
+            </paragraph>
+            <paragraph id="1215">
+              Intelligently manage traffic, optimize content delivery, and safeguard origin infrastructure.
+            </paragraph>
+            Enable Smart Shield
+            <image id="1223"/>
+          </link>
+          <link name="" id="1225" focusable="true" url="https://developers.cloudflare.com/cache/get-started/">
+            <image id="1228"/>
+            CDN
+            <paragraph id="1233">
+              Default caching for static assets, with cache rules for full control
+            </paragraph>
+            <paragraph id="1238">
+              Caches content in 330+ cities worldwide, with instant purging and granular Cache Rules.
+            </paragraph>
+            Set up Cache Rules
+            <image id="1246"/>
+          </link>
+          <link name="" id="1248" focusable="true" url="https://developers.cloudflare.com/speed/">
+            <image id="1251"/>
+            SPEED
+            <paragraph id="1256">
+              Assess your site speed and apply recommended optimizations
+            </paragraph>
+            <paragraph id="1261">
+              Application delivery optimizations including minification, Brotli compression, Early Hints, and HTTP/3.
+            </paragraph>
+            Improve your site speed
+            <image id="1271"/>
+          </link>
+          <link name="" id="1273" focusable="true" url="https://developers.cloudflare.com/images/">
+            <image id="1276"/>
+            IMAGES
+            <paragraph id="1281">
+              Transform, optimize, and deliver images worldwide
+            </paragraph>
+            <paragraph id="1285">
+              Cloudflare Images handles format conversion, responsive sizing, and intelligent caching.
+            </paragraph>
+            Optimize image delivery
+            <image id="1293"/>
+          </link>
+          <link name="" id="1295" focusable="true" url="https://developers.cloudflare.com/web-analytics/">
+            <image id="1298"/>
+            WEB ANALYTICS
+            <paragraph id="1303">
+              Understand the performance of your web pages
+            </paragraph>
+            <paragraph id="1308">
+              Cloudflare Web Analytics collects Core Web Vitals and performance data from 100% of page views without cookies or sampling.
+            </paragraph>
+            Track real user metrics
+            <image id="1318"/>
+          </link>
+        </div>
+      </region>
+      <region name="" id="1320" labelledby="">
+        <heading id="1322" level="2">
+          Connect with Cloudflare
+        </heading>
+        <paragraph id="1325">
+          Find community, read the blog, and explore open source projects.
+        </paragraph>
+        <div id="1328">
+          COMMUNITY
+          <heading id="1333" level="3">
+            Join the conversation
           </heading>
-          <paragraph id="1325">
-            Find community, read the blog, and explore open source projects.
+          <paragraph id="1336">
+            Share ideas, answers, and code with the Cloudflare community.
           </paragraph>
-          <generic id="1328">
-            COMMUNITY
-            <heading id="1333" level="3">
-              Join the conversation
-            </heading>
-            <paragraph id="1336">
-              Share ideas, answers, and code with the Cloudflare community.
-            </paragraph>
-            <link id="1342" focusable="true" url="https://discord.cloudflare.com/">
-              Discord
-            </link>
-            <link id="1345" focusable="true" url="https://x.com/cloudflare">
-              X
-            </link>
-            <link id="1348" focusable="true" url="https://community.cloudflare.com/">
-              Forum
-            </link>
-            OPEN SOURCE
-            <heading id="1355" level="3">
-              View the source
-            </heading>
-            <paragraph id="1358">
-              Cloudflare contributes to the open-source ecosystem in a variety of ways, including:
-            </paragraph>
-            <link id="1364" focusable="true" url="https://github.com/cloudflare">
-              GitHub
-            </link>
-            <link id="1367" focusable="true" url="https://github.com/sponsors/cloudflare">
-              Sponsors
-            </link>
-            <link id="1370" focusable="true" url="https://developers.cloudflare.com/style-guide/">
-              Style guide
-            </link>
-            BLOG
-            <heading id="1377" level="3">
-              Read the latest
-            </heading>
-            <paragraph id="1380">
-              Get the latest news on Cloudflare products, technologies, and culture.
-            </paragraph>
-            <link id="1386" focusable="true" url="https://blog.cloudflare.com/">
-              blog.cloudflare.com
-            </link>
-          </generic>
-        </region>
-      </generic>
-    </generic>
+          <link id="1342" focusable="true" url="https://discord.cloudflare.com/">
+            Discord
+          </link>
+          <link id="1345" focusable="true" url="https://x.com/cloudflare">
+            X
+          </link>
+          <link id="1348" focusable="true" url="https://community.cloudflare.com/">
+            Forum
+          </link>
+          OPEN SOURCE
+          <heading id="1355" level="3">
+            View the source
+          </heading>
+          <paragraph id="1358">
+            Cloudflare contributes to the open-source ecosystem in a variety of ways, including:
+          </paragraph>
+          <link id="1364" focusable="true" url="https://github.com/cloudflare">
+            GitHub
+          </link>
+          <link id="1367" focusable="true" url="https://github.com/sponsors/cloudflare">
+            Sponsors
+          </link>
+          <link id="1370" focusable="true" url="https://developers.cloudflare.com/style-guide/">
+            Style guide
+          </link>
+          BLOG
+          <heading id="1377" level="3">
+            Read the latest
+          </heading>
+          <paragraph id="1380">
+            Get the latest news on Cloudflare products, technologies, and culture.
+          </paragraph>
+          <link id="1386" focusable="true" url="https://blog.cloudflare.com/">
+            blog.cloudflare.com
+          </link>
+        </div>
+      </region>
+    </div>
   </main>
-  <generic id="1389">
-    <contentinfo id="1390">
-      <generic id="1391">
-        <generic id="1392">
-          <image name="Cloudflare wordmark" id="1395"/>
-          Getting started
-          <link id="1403" focusable="true" url="https://www.cloudflare.com/plans/">
-            Plans
+  <contentinfo id="1390">
+    <div id="1391">
+      <div id="1392">
+        <image name="Cloudflare wordmark" id="1395"/>
+        Getting started
+        <link id="1403" focusable="true" url="https://www.cloudflare.com/plans/">
+          Plans
+        </link>
+        <link id="1406" focusable="true" url="https://www.cloudflare.com/resource/contact-enterprise-sales/">
+          Contact sales
+        </link>
+        <link id="1409" focusable="true" url="https://www.cloudflare.com/partners/">
+          Partners
+        </link>
+        <link id="1412" focusable="true" url="https://partnerlocator.cloudflare.com/dashboard">
+          Find a partner
+        </link>
+        <link id="1415" focusable="true" url="https://www.cloudflare.com/startups/">
+          Startups
+        </link>
+        <link id="1418" focusable="true" url="https://www.cloudflare.com/under-attack-hotline/">
+          Under attack?
+        </link>
+        <link id="1421" focusable="true" url="https://domains.cloudflare.com/">
+          Domain name search
+        </link>
+        Company
+        <link id="1429" focusable="true" url="https://www.cloudflare.com/about/">
+          About
+        </link>
+        <link id="1432" focusable="true" url="https://www.cloudflare.com/careers/">
+          Careers
+        </link>
+        <link id="1435" focusable="true" url="https://cloudflare.net/">
+          Investors
+        </link>
+        <link id="1438" focusable="true" url="https://www.cloudflare.com/press/">
+          Press
+        </link>
+        <link id="1441" focusable="true" url="https://www.cloudflare.com/press/press-kit/">
+          Press kit
+        </link>
+        <link id="1444" focusable="true" url="https://www.cloudflare.com/network/">
+          Global network
+        </link>
+        Public interest
+        <link id="1453" focusable="true" url="https://www.cloudflare.com/galileo/">
+          Project Galileo
+        </link>
+        <link id="1456" focusable="true" url="https://www.cloudflare.com/athenian/">
+          Athenian Project
+        </link>
+        <link id="1459" focusable="true" url="https://www.cloudflare.com/campaigns/">
+          Cloudflare for Campaigns
+        </link>
+        <link id="1462" focusable="true" url="https://www.cloudflare.com/fair-shot/">
+          Project Fairshot
+        </link>
+        <link id="1465" focusable="true" url="https://www.cloudflare.com/impact/">
+          Impact/ESG
+        </link>
+        Compliance
+        <link id="1473" focusable="true" url="https://www.cloudflare.com/trust-hub/compliance-resources/">
+          Compliance resources
+        </link>
+        <link id="1476" focusable="true" url="https://www.cloudflare.com/trust-hub/">
+          Trust Hub
+        </link>
+        <link id="1479" focusable="true" url="https://www.cloudflare.com/trust-hub/gdpr/">
+          Data Protection
+        </link>
+        <link id="1482" focusable="true" url="https://www.cloudflare.com/trust-hub/responsible-ai/">
+          Responsible AI
+        </link>
+        <link id="1485" focusable="true" url="https://www.cloudflare.com/transparency/">
+          Transparency report
+        </link>
+        <link id="1488" focusable="true" url="https://www.cloudflare.com/trust-hub/abuse-approach/">
+          Report abuse
+        </link>
+        Resources
+        <link id="1497" focusable="true" url="https://www.cloudflare.com/resource/app-innovation-report/">
+          App innovation report
+        </link>
+        <link id="1500" focusable="true" url="https://radar.cloudflare.com/">
+          Cloudflare Radar
+        </link>
+        <link id="1503" focusable="true" url="https://www.cloudflare.com/case-studies/">
+          Case studies
+        </link>
+        <link id="1506" focusable="true" url="https://www.cloudflarestatus.com/">
+          Status
+        </link>
+        <link id="1509" focusable="true" url="https://support.cloudflare.com/">
+          Support
+        </link>
+        <link id="1512" focusable="true" url="https://www.cloudflare.com/events/">
+          Events
+        </link>
+        <link id="1515" focusable="true" url="https://blog.cloudflare.com/">
+          Blog
+        </link>
+        Developers
+        <link id="1523" focusable="true" url="https://developers.cloudflare.com/">
+          Documentation
+        </link>
+        <link id="1526" focusable="true" url="https://www.cloudflare.com/learning/">
+          Learning center
+        </link>
+        <link id="1529" focusable="true" url="https://community.cloudflare.com/">
+          Community
+        </link>
+        Solutions
+        <link id="1538" focusable="true" url="https://www.cloudflare.com/sase/">
+          SSE and SASE platform
+        </link>
+        <link id="1541" focusable="true" url="https://www.cloudflare.com/solutions/ai/">
+          Cloudflare AI Cloud
+        </link>
+        <link id="1544" focusable="true" url="https://www.cloudflare.com/solutions/ai-security/">
+          AI Security
+        </link>
+        <link id="1547" focusable="true" url="https://www.cloudflare.com/solutions/frontends/">
+          Frontend Development Platform
+        </link>
+        <link id="1550" focusable="true" url="https://www.cloudflare.com/solutions/platforms/">
+          Multi-Tenant Platform Development
+        </link>
+        <link id="1553" focusable="true" url="https://www.cloudflare.com/solutions/security/">
+          Web Security Platform
+        </link>
+      </div>
+      <div id="1558">
+        © 2026 Cloudflare, Inc.
+        <div id="1563">
+          <link id="1564" focusable="true" url="https://www.cloudflare.com/policies/privacy/">
+            Privacy policy
           </link>
-          <link id="1406" focusable="true" url="https://www.cloudflare.com/resource/contact-enterprise-sales/">
-            Contact sales
+          |
+          <link id="1571" focusable="true" url="https://www.cloudflare.com/disclosure/">
+            Report security issues
           </link>
-          <link id="1409" focusable="true" url="https://www.cloudflare.com/partners/">
-            Partners
+          |
+          <link id="1578" focusable="true" url="https://www.cloudflare.com/policies/terms/">
+            Terms of use
           </link>
-          <link id="1412" focusable="true" url="https://partnerlocator.cloudflare.com/dashboard">
-            Find a partner
+          |
+          <link id="1585" focusable="true" url="https://www.cloudflare.com/trademark/">
+            Trademark
           </link>
-          <link id="1415" focusable="true" url="https://www.cloudflare.com/startups/">
-            Startups
-          </link>
-          <link id="1418" focusable="true" url="https://www.cloudflare.com/under-attack-hotline/">
-            Under attack?
-          </link>
-          <link id="1421" focusable="true" url="https://domains.cloudflare.com/">
-            Domain name search
-          </link>
-          Company
-          <link id="1429" focusable="true" url="https://www.cloudflare.com/about/">
-            About
-          </link>
-          <link id="1432" focusable="true" url="https://www.cloudflare.com/careers/">
-            Careers
-          </link>
-          <link id="1435" focusable="true" url="https://cloudflare.net/">
-            Investors
-          </link>
-          <link id="1438" focusable="true" url="https://www.cloudflare.com/press/">
-            Press
-          </link>
-          <link id="1441" focusable="true" url="https://www.cloudflare.com/press/press-kit/">
-            Press kit
-          </link>
-          <link id="1444" focusable="true" url="https://www.cloudflare.com/network/">
-            Global network
-          </link>
-          Public interest
-          <link id="1453" focusable="true" url="https://www.cloudflare.com/galileo/">
-            Project Galileo
-          </link>
-          <link id="1456" focusable="true" url="https://www.cloudflare.com/athenian/">
-            Athenian Project
-          </link>
-          <link id="1459" focusable="true" url="https://www.cloudflare.com/campaigns/">
-            Cloudflare for Campaigns
-          </link>
-          <link id="1462" focusable="true" url="https://www.cloudflare.com/fair-shot/">
-            Project Fairshot
-          </link>
-          <link id="1465" focusable="true" url="https://www.cloudflare.com/impact/">
-            Impact/ESG
-          </link>
-          Compliance
-          <link id="1473" focusable="true" url="https://www.cloudflare.com/trust-hub/compliance-resources/">
-            Compliance resources
-          </link>
-          <link id="1476" focusable="true" url="https://www.cloudflare.com/trust-hub/">
-            Trust Hub
-          </link>
-          <link id="1479" focusable="true" url="https://www.cloudflare.com/trust-hub/gdpr/">
-            Data Protection
-          </link>
-          <link id="1482" focusable="true" url="https://www.cloudflare.com/trust-hub/responsible-ai/">
-            Responsible AI
-          </link>
-          <link id="1485" focusable="true" url="https://www.cloudflare.com/transparency/">
-            Transparency report
-          </link>
-          <link id="1488" focusable="true" url="https://www.cloudflare.com/trust-hub/abuse-approach/">
-            Report abuse
-          </link>
-          Resources
-          <link id="1497" focusable="true" url="https://www.cloudflare.com/resource/app-innovation-report/">
-            App innovation report
-          </link>
-          <link id="1500" focusable="true" url="https://radar.cloudflare.com/">
-            Cloudflare Radar
-          </link>
-          <link id="1503" focusable="true" url="https://www.cloudflare.com/case-studies/">
-            Case studies
-          </link>
-          <link id="1506" focusable="true" url="https://www.cloudflarestatus.com/">
-            Status
-          </link>
-          <link id="1509" focusable="true" url="https://support.cloudflare.com/">
-            Support
-          </link>
-          <link id="1512" focusable="true" url="https://www.cloudflare.com/events/">
-            Events
-          </link>
-          <link id="1515" focusable="true" url="https://blog.cloudflare.com/">
-            Blog
-          </link>
-          Developers
-          <link id="1523" focusable="true" url="https://developers.cloudflare.com/">
-            Documentation
-          </link>
-          <link id="1526" focusable="true" url="https://www.cloudflare.com/learning/">
-            Learning center
-          </link>
-          <link id="1529" focusable="true" url="https://community.cloudflare.com/">
-            Community
-          </link>
-          Solutions
-          <link id="1538" focusable="true" url="https://www.cloudflare.com/sase/">
-            SSE and SASE platform
-          </link>
-          <link id="1541" focusable="true" url="https://www.cloudflare.com/solutions/ai/">
-            Cloudflare AI Cloud
-          </link>
-          <link id="1544" focusable="true" url="https://www.cloudflare.com/solutions/ai-security/">
-            AI Security
-          </link>
-          <link id="1547" focusable="true" url="https://www.cloudflare.com/solutions/frontends/">
-            Frontend Development Platform
-          </link>
-          <link id="1550" focusable="true" url="https://www.cloudflare.com/solutions/platforms/">
-            Multi-Tenant Platform Development
-          </link>
-          <link id="1553" focusable="true" url="https://www.cloudflare.com/solutions/security/">
-            Web Security Platform
-          </link>
-        </generic>
-        <generic id="1558">
-          © 2026 Cloudflare, Inc.
-          <generic id="1563">
-            <link id="1564" focusable="true" url="https://www.cloudflare.com/policies/privacy/">
-              Privacy policy
-            </link>
-            |
-            <link id="1571" focusable="true" url="https://www.cloudflare.com/disclosure/">
-              Report security issues
-            </link>
-            |
-            <link id="1578" focusable="true" url="https://www.cloudflare.com/policies/terms/">
-              Terms of use
-            </link>
-            |
-            <link id="1585" focusable="true" url="https://www.cloudflare.com/trademark/">
-              Trademark
-            </link>
-          </generic>
-          <image name="privacy options" id="1589" url="https://developers.cloudflare.com/_astro/privacyoptions.BWXSiJOZ_1oqSoo.svg"/>
-          <button id="1590" invalid="false" focusable="true">
-            Cookie Preferences
-          </button>
-        </generic>
-      </generic>
-    </contentinfo>
-  </generic>
+        </div>
+        <image name="privacy options" id="1589" url="https://developers.cloudflare.com/_astro/privacyoptions.BWXSiJOZ_1oqSoo.svg"/>
+        <button id="1590" invalid="false" focusable="true">
+          Cookie Preferences
+        </button>
+      </div>
+    </div>
+  </contentinfo>
   <button name="" id="1607" focusable="true" hasPopup="listbox" labelledby="">
-    <generic id="1608">
+    <div id="1608">
       <banner id="1609">
-        <generic id="1610">
+        <div id="1610">
           <LabelText id="1611">
             Search
           </LabelText>
-          <searchbox name="Search" id="1617" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" autocomplete="both" labelledby=""/>
-        </generic>
+          <searchbox name="Search" id="1617" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" autocomplete="both" labelledby="">
+            <div id="1620" editable="plaintext"/>
+          </searchbox>
+        </div>
       </banner>
       <paragraph id="1623">
         No recent searches
@@ -1283,6 +1219,6 @@
           </listitem>
         </list>
       </contentinfo>
-    </generic>
+    </div>
   </button>
 </RootWebArea>

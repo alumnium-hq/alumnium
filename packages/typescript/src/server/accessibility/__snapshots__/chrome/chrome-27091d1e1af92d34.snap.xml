@@ -7,41 +7,21 @@
       <image name="Claude" id="10"/>
     </link>
     <navigation name="Main" id="12">
-      <generic id="13">
-        <generic id="14">
-          <button id="15" invalid="false" focusable="true" hasPopup="menu">
-            Meet Claude
-          </button>
-        </generic>
-      </generic>
-      <generic id="21">
-        <generic id="22">
-          <button id="23" invalid="false" focusable="true" hasPopup="menu">
-            Platform
-          </button>
-        </generic>
-      </generic>
-      <generic id="29">
-        <generic id="30">
-          <button id="31" invalid="false" focusable="true" hasPopup="menu">
-            Solutions
-          </button>
-        </generic>
-      </generic>
-      <generic id="37">
-        <generic id="38">
-          <button id="39" invalid="false" focusable="true" hasPopup="menu">
-            Pricing
-          </button>
-        </generic>
-      </generic>
-      <generic id="45">
-        <generic id="46">
-          <button id="47" invalid="false" focusable="true" hasPopup="menu">
-            Resources
-          </button>
-        </generic>
-      </generic>
+      <button id="15" invalid="false" focusable="true" hasPopup="menu">
+        Meet Claude
+      </button>
+      <button id="23" invalid="false" focusable="true" hasPopup="menu">
+        Platform
+      </button>
+      <button id="31" invalid="false" focusable="true" hasPopup="menu">
+        Solutions
+      </button>
+      <button id="39" invalid="false" focusable="true" hasPopup="menu">
+        Pricing
+      </button>
+      <button id="47" invalid="false" focusable="true" hasPopup="menu">
+        Resources
+      </button>
       <link id="53" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
         Login
       </link>
@@ -54,7 +34,7 @@
     </link>
   </banner>
   <main id="64">
-    <generic id="65">
+    <div id="65">
       <heading name="" id="69" level="1">
         Think fast,
         <LineBreak name="" id="72">
@@ -74,18 +54,18 @@
       <link id="90" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d?redirect=claude.com&amp;via=static_email">
         Continue with email
       </link>
-      <generic id="95">
+      <div id="95">
         By continuing, you acknowledge Anthropic's
         <link id="98" focusable="true" url="https://www.anthropic.com/legal/privacy">
           Privacy Policy
         </link>
         and agree to get occasional promotional emails and notifications.
-      </generic>
+      </div>
       <button id="105" invalid="false" focusable="true">
         Download desktop app
       </button>
-    </generic>
-    <generic id="146">
+    </div>
+    <div id="146">
       <heading name="Explore plans" id="149" level="2"/>
       <tablist id="151" multiselectable="false" orientation="horizontal">
         <tab id="152" invalid="false" focusable="true" selected="true">
@@ -102,9 +82,7 @@
         <paragraph id="164">
           Try Claude
         </paragraph>
-        <generic id="168">
-          $0
-        </generic>
+        $0
         <paragraph id="171">
           Free for everyone
         </paragraph>
@@ -149,9 +127,7 @@
         <paragraph id="241">
           For everyday productivity
         </paragraph>
-        <generic id="245">
-          $25
-        </generic>
+        $25
         <paragraph id="248">
           Per month with annual subscription discount ($300 billed up front). $30 if billed monthly.
         </paragraph>
@@ -201,9 +177,7 @@
         <paragraph id="324">
           5–20x more usage than Pro
         </paragraph>
-        <generic id="328">
-          From $149.99
-        </generic>
+        From $149.99
         <paragraph id="331">
           Per month
         </paragraph>
@@ -243,8 +217,8 @@
         </link>
         Prices and plans are subject to change at Anthropic's discretion.
       </paragraph>
-    </generic>
-    <generic id="381">
+    </div>
+    <div id="381">
       <heading name="FAQ" id="384" level="2"/>
       <heading id="387" level="3">
         <button id="388" invalid="false" focusable="true" controls="_R_6jsinpfmlb_-content">
@@ -287,16 +261,18 @@
           .
         </paragraph>
       </region>
-    </generic>
+    </div>
   </main>
   <contentinfo id="448">
     <link name="" id="453" focusable="true" url="https://claude.com/">
       <image name="Claude" id="454"/>
     </link>
-    <generic id="455">
-      <textbox name="Ask Claude" id="457" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false"/>
+    <div id="455">
+      <textbox name="Ask Claude" id="457" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false">
+        <div id="459" editable="plaintext"/>
+      </textbox>
       <button name="Submit" id="460" invalid="false" focusable="true"/>
-    </generic>
+    </div>
     <image name="By Anthropic" id="464"/>
     <paragraph id="465">
       © 2026 Anthropic PBC
@@ -751,15 +727,9 @@
     <link name="LinkedIn" id="848" focusable="true" url="https://www.linkedin.com/showcase/claude/"/>
     <link name="X (Twitter)" id="849" focusable="true" url="https://x.com/claudeai"/>
     <link name="YouTube" id="850" focusable="true" url="https://www.youtube.com/@anthropic-ai"/>
-    <generic id="851">
-      <generic id="852">
-        <button name="Language:" id="853" invalid="false" focusable="true" hasPopup="menu">
-          English
-        </button>
-      </generic>
-    </generic>
+    <button name="Language:" id="853" invalid="false" focusable="true" hasPopup="menu">
+      English
+    </button>
   </contentinfo>
-  <generic id="860">
-    <alert id="861" live="assertive" atomic="true" relevant="additions text"/>
-  </generic>
+  <alert id="861" live="assertive" atomic="true" relevant="additions text"/>
 </RootWebArea>

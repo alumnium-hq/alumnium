@@ -37,7 +37,7 @@
     <cell id="36">
       http://www.frank.com
     </cell>
-    <cell id="39">
+    <cell name="" id="39">
       <link id="40" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
         edit
       </link>
@@ -62,7 +62,7 @@
     <cell id="61">
       http://www.jdoe.com
     </cell>
-    <cell id="64">
+    <cell name="" id="64">
       <link id="65" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
         edit
       </link>
@@ -87,7 +87,7 @@
     <cell id="86">
       http://www.jsmith.com
     </cell>
-    <cell id="89">
+    <cell name="" id="89">
       <link id="90" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
         edit
       </link>
@@ -112,7 +112,7 @@
     <cell id="111">
       http://www.timconway.com
     </cell>
-    <cell id="114">
+    <cell name="" id="114">
       <link id="115" focusable="true" url="https://the-internet.herokuapp.com/tables#edit">
         edit
       </link>

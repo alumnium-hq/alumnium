@@ -14,32 +14,26 @@
     <separator id="15" settable="true" orientation="horizontal"/>
     <blockquote id="16">
       <paragraph id="17">
-        <generic id="18">
-          “
-        </generic>
-        Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `
-        <generic id="28">
-          ”
-        </generic>
+        “Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `”
       </paragraph>
     </blockquote>
   </complementary>
-  <generic id="31">
+  <div id="31">
     <sectionheader id="32">
       <link id="33" focusable="true" url="https://todomvc.com/examples/vue/dist/#/">
         <heading id="34" level="1">
           todos
         </heading>
       </link>
-      <textbox name="What needs to be done?" id="37" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false"/>
+      <textbox name="What needs to be done?" id="37" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false">
+        <div id="39" editable="plaintext"/>
+      </textbox>
     </sectionheader>
     <main id="40">
-      <generic id="41">
+      <div id="41">
         <checkbox name="❯ Toggle All Input" id="42" invalid="false" focusable="true" checked="false" labelledby=""/>
-        <generic id="44">
-          ❯
-        </generic>
-      </generic>
+        ❯
+      </div>
       <list id="48">
         <listitem id="49" level="1">
           <checkbox id="51" invalid="false" focusable="true" checked="false"/>
@@ -72,7 +66,7 @@
         </listitem>
       </list>
     </sectionfooter>
-  </generic>
+  </div>
   <contentinfo id="75">
     <paragraph id="76">
       Double-click to edit a todo

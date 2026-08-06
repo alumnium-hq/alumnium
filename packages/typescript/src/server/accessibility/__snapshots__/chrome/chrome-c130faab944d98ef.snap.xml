@@ -3,32 +3,24 @@
     <RootWebArea id="5" focusable="true" url="https://the-internet.herokuapp.com/frame_top">
       <Iframe id="8">
         <RootWebArea id="9" focusable="true" url="https://the-internet.herokuapp.com/frame_left">
-          <generic id="11">
-            LEFT
-          </generic>
+          LEFT
         </RootWebArea>
       </Iframe>
       <Iframe id="14">
         <RootWebArea id="15" focusable="true" focused="true" url="https://the-internet.herokuapp.com/frame_middle">
-          <generic id="18">
-            MIDDLE
-          </generic>
+          MIDDLE
         </RootWebArea>
       </Iframe>
       <Iframe id="21">
         <RootWebArea id="22" focusable="true" url="https://the-internet.herokuapp.com/frame_right">
-          <generic id="24">
-            RIGHT
-          </generic>
+          RIGHT
         </RootWebArea>
       </Iframe>
     </RootWebArea>
   </Iframe>
   <Iframe id="27">
     <RootWebArea id="28" focusable="true" url="https://the-internet.herokuapp.com/frame_bottom">
-      <generic id="30">
-        BOTTOM
-      </generic>
+      BOTTOM
     </RootWebArea>
   </Iframe>
 </RootWebArea>
