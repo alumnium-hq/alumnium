@@ -1,7 +1,8 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
 import { pythonicSplitlines } from "../pythonic/pythonicSplitlines.ts";
-import { Xml } from "../Xml.ts";
+import { Xml } from "../xml/Xml.ts";
+import { XmlRenderer } from "../xml/XmlRenderer.ts";
 import type { AccessibilityElement } from "./AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
 
@@ -40,7 +41,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     this.#addRawIds(root);
 
     // Serialize back to string
-    this.#raw = Xml.format([root]);
+    this.#raw = XmlRenderer.render([root]);
     return this.#raw;
   }
 
@@ -131,7 +132,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Convert the scoped element back to XML string
-    const scopedXml = Xml.format([targetElem]);
+    const scopedXml = XmlRenderer.render([targetElem]);
 
     return new UIAutomator2AccessibilityTree(scopedXml);
   }

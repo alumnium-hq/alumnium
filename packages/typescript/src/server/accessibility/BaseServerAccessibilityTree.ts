@@ -4,7 +4,7 @@ import { Env } from "../../Env.ts";
 import { FileStore } from "../../FileStore/FileStore.ts";
 import type { ToolCall } from "../../tools/BaseTool.ts";
 import type { Tree } from "../../tree/Tree.ts";
-import { Xml } from "../../Xml.ts";
+import { Xml } from "../../xml/Xml.ts";
 
 export abstract class BaseServerAccessibilityTree {
   #simplifiedIdCounter = 0;
