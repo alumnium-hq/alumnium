@@ -1,11 +1,15 @@
 ---
-import { tt } from "#/copy";
 import type { TtLandings } from "#/copy/landings";
 import type { AstroComponentInstance } from "astro/runtime/server/index.js";
 import Icon from "#/components/Icon.astro";
 import type { AstroBuiltinAttributes } from "astro";
+import type { I18n } from "#/copy/i18n";
 
-const t = tt.landings.sections.comparisonTable;
+interface Props {
+  t: TtLandings.ComparisonTable;
+}
+
+const { t } = Astro.props;
 
 const order: (keyof TtLandings.ComparisonHeader)[] = [
   "metric",
@@ -16,123 +20,133 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
 ];
 ---
 
-<table class="table">
-  <thead>
-    <tr>
-      {
-        order.map((key) => (
-          <th class={`cell is-header is-${key}`}>{t.header[key].en}</th>
-        ))
-      }
-    </tr>
-  </thead>
-
-  <tbody>
-    {
-      t.rows.map((row) => {
-        interface CellItem {
-          classList?: AstroBuiltinAttributes["class:list"] & {};
-          content: AstroComponentInstance | string;
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        {
+          order.map((key) => (
+            <th class={`cell is-header is-${key}`}>{t.header[key].en}</th>
+          ))
         }
+      </tr>
+    </thead>
 
-        const renderSuperscript = (value: string) => (
-          <sup class="superscript">{value}</sup>
-        );
-
-        const cellToItem = (
-          cell: TtLandings.ComparisonCell | TtLandings.ComparisonMetricCell,
-        ): CellItem => {
-          if ("en" in cell)
-            return {
-              classList: ["is-string"],
-              content: cell.en,
-            };
-
-          switch (cell.kind) {
-            case "metric": {
-              const valueT = cell.value.en;
-              return {
-                content: (
-                  <div class="metric">
-                    <div class="metric-label">{valueT.label}</div>
-                    <div class="metric-subtext">{valueT.subtext}</div>
-                  </div>
-                ),
-              };
-            }
-
-            case "string":
-              return {
-                classList: [
-                  "is-string",
-                  cell.highlight === "positive" && "is-positive",
-                  cell.highlight === "negative" && "is-negative",
-                  cell.highlight === "mixed" && "is-mixed",
-                ],
-                content: cell.value.en,
-              };
-
-            case "support": {
-              const content =
-                cell.support === "partial" ? (
-                  <span class="symbol">~</span>
-                ) : (
-                  <Icon
-                    id={cell.support === "yes" ? "check" : "close"}
-                    class="icon"
-                  />
-                );
-
-              return {
-                classList: [
-                  "is-support",
-                  cell.support === "yes" && "is-yes",
-                  cell.support === "no" && "is-no",
-                  cell.support === "partial" && "is-partial",
-                ],
-                content: (
-                  <>
-                    {content}
-                    {cell.superscript && renderSuperscript(cell.superscript)}
-                  </>
-                ),
-              };
-            }
-
-            case "na":
-              return {
-                classList: ["is-na"],
-                content: <span class="symbol">-</span>,
-              };
+    <tbody>
+      {
+        t.rows.map((row) => {
+          interface CellItem {
+            classList?: AstroBuiltinAttributes["class:list"] & {};
+            content: AstroComponentInstance | string;
           }
-        };
 
-        return (
-          <tr>
-            {order.map((key) => {
-              const cell = row[key];
-              const item = cellToItem(cell);
-              const classList = [
-                "cell",
-                `is-${key}`,
-                key !== "metric" && "is-product",
-                item.classList,
-              ];
-              return <td class:list={classList}>{item.content}</td>;
-            })}
-          </tr>
-        );
-      })
-    }
-  </tbody>
-</table>
+          const renderSuperscript = (value: string) => (
+            <sup class="superscript">{value}</sup>
+          );
 
-<p class="text-accent-500 text-sm px-(--section-padding-x) sm:px-0">
-  {t.disclaimer.en}
-</p>
+          const cellToItem = (
+            cell: TtLandings.ComparisonCell | TtLandings.ComparisonMetricCell,
+          ): CellItem => {
+            if ("en" in cell)
+              return {
+                classList: ["is-string"],
+                content: cell.en,
+              };
+
+            switch (cell.kind) {
+              case "metric": {
+                const valueT = cell.value.en;
+                return {
+                  content: (
+                    <div class="metric">
+                      <div class="metric-label">{valueT.label}</div>
+                      <div class="metric-subtext">{valueT.subtext}</div>
+                    </div>
+                  ),
+                };
+              }
+
+              case "string":
+                return {
+                  classList: [
+                    "is-string",
+                    cell.highlight === "positive" && "is-positive",
+                    cell.highlight === "negative" && "is-negative",
+                    cell.highlight === "mixed" && "is-mixed",
+                  ],
+                  content: cell.value.en,
+                };
+
+              case "support": {
+                const content =
+                  cell.support === "partial" ? (
+                    <span class="symbol">~</span>
+                  ) : (
+                    <Icon
+                      id={cell.support === "yes" ? "check" : "close"}
+                      class="icon"
+                    />
+                  );
+
+                return {
+                  classList: [
+                    "is-support",
+                    cell.support === "yes" && "is-yes",
+                    cell.support === "no" && "is-no",
+                    cell.support === "partial" && "is-partial",
+                  ],
+                  content: (
+                    <>
+                      {content}
+                      {cell.superscript && renderSuperscript(cell.superscript)}
+                    </>
+                  ),
+                };
+              }
+
+              case "na":
+                return {
+                  classList: ["is-na"],
+                  content: <span class="symbol">-</span>,
+                };
+            }
+          };
+
+          return (
+            <tr>
+              {order.map((key) => {
+                const cell = row[key];
+                const item = cellToItem(cell);
+                const classList = [
+                  "cell",
+                  `is-${key}`,
+                  key !== "metric" && "is-product",
+                  item.classList,
+                ];
+                return <td class:list={classList}>{item.content}</td>;
+              })}
+            </tr>
+          );
+        })
+      }
+    </tbody>
+  </table>
+
+  {
+    t.disclaimer && (
+      <p class="text-accent-500 text-sm px-(--section-padding-x) sm:px-0">
+        {t.disclaimer.en}
+      </p>
+    )
+  }
+</div>
 
 <style>
   @reference "#/styles/global.css";
+
+  .table-wrapper {
+    @apply mx-[calc(var(--section-padding-x)*-1-0.5px)] sm:mx-0 flex flex-col gap-3 overflow-x-auto scrollbar-thin;
+  }
 
   .table {
     @apply w-full text-left border-collapse;
