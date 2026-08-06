@@ -1,7 +1,7 @@
 <RootWebArea name="ai - npm search" id="1" focusable="true" focused="true" url="https://www.npmjs.com/search?q=ai">
-  <generic id="4">
+  <div id="4">
     <region name="Site notifications" id="6">
-      <generic id="8">
+      <div id="8">
         ⚠️
         <alert id="15" live="assertive" atomic="true" relevant="additions text">
           npm tokens that bypass 2FA are being restricted — account changes (Aug 2026) and direct publishing (Jan 2027).
@@ -12,12 +12,11 @@
         <button name="Close notification" id="21" invalid="false" focusable="true">
           ×
         </button>
-      </generic>
+      </div>
     </region>
-    <generic id="24"/>
     <banner id="27">
-      <generic id="29">
-        <generic id="30">
+      <div id="29">
+        <div id="30">
           skip to:
           <link name="skip to" id="33" focusable="true" url="https://www.npmjs.com/search?q=ai#main">
             content
@@ -28,7 +27,7 @@
           <link name="skip to" id="39" focusable="true" url="https://www.npmjs.com/search?q=ai#signin">
             sign in
           </link>
-        </generic>
+        </div>
         <button name="Light mode — click for dark" id="43" invalid="false" focusable="true"/>
         <navigation name="duct Navigation" id="44">
           <list id="45">
@@ -54,115 +53,105 @@
             </listitem>
           </list>
         </navigation>
-      </generic>
+      </div>
       npm
-      <generic id="67">
-        <link name="Npm" id="68" focusable="true" url="https://www.npmjs.com/"/>
-      </generic>
-      <generic id="69">
-        <generic id="70">
-          <generic id="71">
-            <button id="72" invalid="false" focusable="true"/>
-            <generic id="73">
-              <combobox name="Search packages" id="75" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" hasPopup="listbox" required="false">
-                <generic id="78" editable="plaintext">
-                  ai
-                </generic>
-              </combobox>
-              <button name="Clear search" id="81" invalid="false" focusable="true">
-                ×
-              </button>
-            </generic>
-            <generic id="84" live="polite" atomic="true" relevant="additions text">
-              5 suggestions available.
-            </generic>
-            <generic id="89">
-              <listbox name="Search results" id="90" multiselectable="false" orientation="vertical" required="false">
-                <option name=", version ," id="91" focusable="true" selected="false">
-                  <strong id="94">
-                    ai
-                  </strong>
-                  <paragraph id="97">
-                    AI SDK by Vercel - build apps like ChatGPT, Claude, Gemini, and more with a single interface for any model using the Vercel AI Gateway or go direct to OpenAI, Anthropic, Google, or any other model provider.
-                  </paragraph>
-                  7.0.51
-                </option>
-                <option name=", version ," id="105" focusable="true" selected="false">
-                  <strong id="108">
-                    @ai-sdk/gateway
-                  </strong>
-                  <paragraph id="111">
-                    The Gateway provider for the [AI SDK](https://ai-sdk.dev/docs) allows the use of a wide variety of AI models and providers.
-                  </paragraph>
-                  4.0.40
-                </option>
-                <option name=", version ," id="119" focusable="true" selected="false">
-                  <strong id="122">
-                    @ai-sdk/google
-                  </strong>
-                  <paragraph id="125">
-                    The **[Google provider](https://ai-sdk.dev/providers/ai-sdk-providers/google)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Google Generative AI](https://ai.google/discover/generativeai/) APIs.
-                  </paragraph>
-                  4.0.33
-                </option>
-                <option name=", version ," id="133" focusable="true" selected="false">
-                  <strong id="136">
-                    @ai-sdk/deepseek
-                  </strong>
-                  <paragraph id="139">
-                    The **[DeepSeek provider](https://ai-sdk.dev/providers/ai-sdk-providers/deepseek)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [DeepSeek](https://www.deepseek.com) platform.
-                  </paragraph>
-                  3.0.21
-                </option>
-                <option name=", version ," id="147" focusable="true" selected="false">
-                  <strong id="150">
-                    @firebase/ai
-                  </strong>
-                  <paragraph id="153">
-                    The Firebase AI SDK
-                  </paragraph>
-                  2.14.0
-                </option>
-              </listbox>
-            </generic>
-          </generic>
-          <button id="159" invalid="false" focusable="true">
-            Search
-          </button>
-        </generic>
-      </generic>
-      <generic id="162">
+      <link name="Npm" id="68" focusable="true" url="https://www.npmjs.com/"/>
+      <div id="70">
+        <div id="71">
+          <button id="72" invalid="false" focusable="true"/>
+          <div id="73">
+            <combobox name="Search packages" id="75" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" hasPopup="listbox" required="false">
+              <div id="78" editable="plaintext">
+                ai
+              </div>
+            </combobox>
+            <button name="Clear search" id="81" invalid="false" focusable="true">
+              ×
+            </button>
+          </div>
+          <div id="84" live="polite" atomic="true" relevant="additions text">
+            5 suggestions available.
+          </div>
+          <listbox name="Search results" id="90" multiselectable="false" orientation="vertical" required="false">
+            <option name=", version ," id="91" focusable="true" selected="false">
+              <strong id="94">
+                ai
+              </strong>
+              <paragraph id="97">
+                AI SDK by Vercel - build apps like ChatGPT, Claude, Gemini, and more with a single interface for any model using the Vercel AI Gateway or go direct to OpenAI, Anthropic, Google, or any other model provider.
+              </paragraph>
+              7.0.51
+            </option>
+            <option name=", version ," id="105" focusable="true" selected="false">
+              <strong id="108">
+                @ai-sdk/gateway
+              </strong>
+              <paragraph id="111">
+                The Gateway provider for the [AI SDK](https://ai-sdk.dev/docs) allows the use of a wide variety of AI models and providers.
+              </paragraph>
+              4.0.40
+            </option>
+            <option name=", version ," id="119" focusable="true" selected="false">
+              <strong id="122">
+                @ai-sdk/google
+              </strong>
+              <paragraph id="125">
+                The **[Google provider](https://ai-sdk.dev/providers/ai-sdk-providers/google)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Google Generative AI](https://ai.google/discover/generativeai/) APIs.
+              </paragraph>
+              4.0.33
+            </option>
+            <option name=", version ," id="133" focusable="true" selected="false">
+              <strong id="136">
+                @ai-sdk/deepseek
+              </strong>
+              <paragraph id="139">
+                The **[DeepSeek provider](https://ai-sdk.dev/providers/ai-sdk-providers/deepseek)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [DeepSeek](https://www.deepseek.com) platform.
+              </paragraph>
+              3.0.21
+            </option>
+            <option name=", version ," id="147" focusable="true" selected="false">
+              <strong id="150">
+                @firebase/ai
+              </strong>
+              <paragraph id="153">
+                The Firebase AI SDK
+              </paragraph>
+              2.14.0
+            </option>
+          </listbox>
+        </div>
+        <button id="159" invalid="false" focusable="true">
+          Search
+        </button>
+      </div>
+      <div id="162">
         <link id="164" focusable="true" url="https://www.npmjs.com/signup">
           Sign Up
         </link>
         <link id="167" focusable="true" url="https://www.npmjs.com/login">
           Sign In
         </link>
-      </generic>
+      </div>
     </banner>
     <main id="170">
       <heading id="173" level="1">
         Search results
       </heading>
-      <generic id="179">
-        <heading id="180" level="2">
-          1000+ packages found
-        </heading>
-      </generic>
+      <heading name="" id="180" level="2">
+        1000+packages found
+      </heading>
       <group id="191">
         <DisclosureTriangle name=". Press Enter to open dropdown" id="193" focusable="true" hasPopup="listbox">
           Sort by: Default
         </DisclosureTriangle>
       </group>
-      <generic id="202">
+      <div id="202">
         <link id="205" focusable="true" url="https://www.npmjs.com/package/ai">
           <heading id="206" level="3">
             ai
           </heading>
         </link>
-        <generic id="209">
-          exact match
-        </generic>
+        exact match
         <paragraph id="212">
           AI SDK by Vercel - build apps like ChatGPT, Claude, Gemini, and more with a single interface for any model using the Vercel AI Gateway or go direct to OpenAI, Anthropic, Google, or any other model provider.
         </paragraph>
@@ -248,11 +237,9 @@
         </link>
         published version 7.0.51, 18 hours ago4926 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="307"/>
-        <generic id="308">
-          76,536,816
-        </generic>
-      </generic>
-      <generic id="311">
+        76,536,816
+      </div>
+      <div id="311">
         <link id="314" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/gateway">
           <heading id="315" level="3">
             @ai-sdk/gateway
@@ -273,11 +260,9 @@
         </link>
         published version 4.0.40, 18 hours ago163 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="356"/>
-        <generic id="357">
-          70,280,917
-        </generic>
-      </generic>
-      <generic id="360">
+        70,280,917
+      </div>
+      <div id="360">
         <link id="363" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/google">
           <heading id="364" level="3">
             @ai-sdk/google
@@ -298,11 +283,9 @@
         </link>
         published version 4.0.33, 18 hours ago1637 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="406"/>
-        <generic id="407">
-          25,169,116
-        </generic>
-      </generic>
-      <generic id="410">
+        25,169,116
+      </div>
+      <div id="410">
         <link id="413" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/deepseek">
           <heading id="414" level="3">
             @ai-sdk/deepseek
@@ -323,11 +306,9 @@
         </link>
         published version 3.0.21, 18 hours ago187 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="456"/>
-        <generic id="457">
-          6,609,436
-        </generic>
-      </generic>
-      <generic id="460">
+        6,609,436
+      </div>
+      <div id="460">
         <link id="463" focusable="true" url="https://www.npmjs.com/package/@firebase/ai">
           <heading id="464" level="3">
             @firebase/ai
@@ -341,11 +322,9 @@
         </link>
         published version 2.14.0, 5 days ago2 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="500"/>
-        <generic id="501">
-          24,507,171
-        </generic>
-      </generic>
-      <generic id="504">
+        24,507,171
+      </div>
+      <div id="504">
         <link id="507" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/openai">
           <heading id="508" level="3">
             @ai-sdk/openai
@@ -366,11 +345,9 @@
         </link>
         published version 4.0.29, 18 hours ago2633 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="550"/>
-        <generic id="551">
-          36,751,739
-        </generic>
-      </generic>
-      <generic id="554">
+        36,751,739
+      </div>
+      <div id="554">
         <link id="557" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/azure">
           <heading id="558" level="3">
             @ai-sdk/azure
@@ -391,11 +368,9 @@
         </link>
         published version 4.0.30, 18 hours ago216 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="600"/>
-        <generic id="601">
-          7,643,540
-        </generic>
-      </generic>
-      <generic id="604">
+        7,643,540
+      </div>
+      <div id="604">
         <link id="607" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/react">
           <heading id="608" level="3">
             @ai-sdk/react
@@ -421,11 +396,9 @@
         </link>
         published version 4.0.54, 18 hours ago434 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="653"/>
-        <generic id="654">
-          27,685,087
-        </generic>
-      </generic>
-      <generic id="657">
+        27,685,087
+      </div>
+      <div id="657">
         <link id="660" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/anthropic">
           <heading id="661" level="3">
             @ai-sdk/anthropic
@@ -446,11 +419,9 @@
         </link>
         published version 4.0.30, a minute ago2000 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="703"/>
-        <generic id="704">
-          38,460,148
-        </generic>
-      </generic>
-      <generic id="707">
+        38,460,148
+      </div>
+      <div id="707">
         <link id="710" focusable="true" url="https://www.npmjs.com/package/@google/generative-ai">
           <heading id="711" level="3">
             @google/generative-ai
@@ -464,11 +435,9 @@
         </link>
         published version 0.24.1, a year ago1993 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="747"/>
-        <generic id="748">
-          15,907,464
-        </generic>
-      </generic>
-      <generic id="751">
+        15,907,464
+      </div>
+      <div id="751">
         <link id="754" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/xai">
           <heading id="755" level="3">
             @ai-sdk/xai
@@ -489,11 +458,9 @@
         </link>
         published version 4.0.27, 18 hours ago335 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="797"/>
-        <generic id="798">
-          7,905,734
-        </generic>
-      </generic>
-      <generic id="801">
+        7,905,734
+      </div>
+      <div id="801">
         <link id="804" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/google-vertex">
           <heading id="805" level="3">
             @ai-sdk/google-vertex
@@ -514,11 +481,9 @@
         </link>
         published version 5.0.40, 18 hours ago189 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="847"/>
-        <generic id="848">
-          11,583,708
-        </generic>
-      </generic>
-      <generic id="851">
+        11,583,708
+      </div>
+      <div id="851">
         <link id="854" focusable="true" url="https://www.npmjs.com/package/ai-gateway-provider">
           <heading id="855" level="3">
             ai-gateway-provider
@@ -564,11 +529,9 @@
         </link>
         published version 4.0.0, 13 days ago44 dependents licensed under $MIT
         <image name="Download statistics" id="915"/>
-        <generic id="916">
-          520,509
-        </generic>
-      </generic>
-      <generic id="919">
+        520,509
+      </div>
+      <div id="919">
         <link id="922" focusable="true" url="https://www.npmjs.com/package/@posthog/ai">
           <heading id="923" level="3">
             @posthog/ai
@@ -624,11 +587,9 @@
         </link>
         published version 8.6.6, 11 hours ago14 dependents licensed under $MIT
         <image name="Download statistics" id="991"/>
-        <generic id="992">
-          2,096,088
-        </generic>
-      </generic>
-      <generic id="995">
+        2,096,088
+      </div>
+      <div id="995">
         <link id="998" focusable="true" url="https://www.npmjs.com/package/@genkit-ai/ai">
           <heading id="999" level="3">
             @genkit-ai/ai
@@ -664,11 +625,9 @@
         </link>
         published version 1.40.1, 14 days ago28 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="1052"/>
-        <generic id="1053">
-          1,014,611
-        </generic>
-      </generic>
-      <generic id="1056">
+        1,014,611
+      </div>
+      <div id="1056">
         <link id="1059" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/groq">
           <heading id="1060" level="3">
             @ai-sdk/groq
@@ -689,11 +648,9 @@
         </link>
         published version 4.0.21, 18 hours ago307 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="1102"/>
-        <generic id="1103">
-          6,775,494
-        </generic>
-      </generic>
-      <generic id="1106">
+        6,775,494
+      </div>
+      <div id="1106">
         <link id="1109" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/cohere">
           <heading id="1110" level="3">
             @ai-sdk/cohere
@@ -714,11 +671,9 @@
         </link>
         published version 4.0.21, 2 minutes ago137 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="1152"/>
-        <generic id="1153">
-          2,315,161
-        </generic>
-      </generic>
-      <generic id="1156">
+        2,315,161
+      </div>
+      <div id="1156">
         <link id="1159" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/amazon-bedrock">
           <heading id="1160" level="3">
             @ai-sdk/amazon-bedrock
@@ -739,11 +694,9 @@
         </link>
         published version 5.0.42, 18 hours ago237 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="1203"/>
-        <generic id="1204">
-          11,075,274
-        </generic>
-      </generic>
-      <generic id="1207">
+        11,075,274
+      </div>
+      <div id="1207">
         <link id="1210" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/mistral">
           <heading id="1211" level="3">
             @ai-sdk/mistral
@@ -764,11 +717,9 @@
         </link>
         published version 4.0.23, a minute ago304 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="1253"/>
-        <generic id="1254">
-          6,107,819
-        </generic>
-      </generic>
-      <generic id="1257">
+        6,107,819
+      </div>
+      <div id="1257">
         <link id="1260" focusable="true" url="https://www.npmjs.com/package/@ai-sdk/vue">
           <heading id="1261" level="3">
             @ai-sdk/vue
@@ -794,52 +745,34 @@
         </link>
         published version 4.0.52, 2 minutes ago35 dependents licensed under $Apache-2.0
         <image name="Download statistics" id="1306"/>
-        <generic id="1307">
-          3,752,223
-        </generic>
-      </generic>
+        3,752,223
+      </div>
       <navigation name="Pagination Navigation" id="1312">
-        <generic id="1313">
-          <link name="Current page, page" id="1314" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=0&amp;perPage=20">
-            1
-          </link>
-        </generic>
-        <generic id="1317">
-          <link name="Go to page" id="1318" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=1&amp;perPage=20">
-            2
-          </link>
-        </generic>
-        <generic id="1321">
-          <link name="Go to page" id="1322" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=2&amp;perPage=20">
-            3
-          </link>
-        </generic>
-        <generic id="1325">
-          …
-        </generic>
-        <generic id="1328">
-          <link name="Go to page" id="1329" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=49&amp;perPage=20">
-            50
-          </link>
-        </generic>
-        <generic id="1332">
-          <link name="Next page" id="1333" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=1&amp;perPage=20">
-            »
-          </link>
-        </generic>
+        <link name="Current page, page" id="1314" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=0&amp;perPage=20">
+          1
+        </link>
+        <link name="Go to page" id="1318" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=1&amp;perPage=20">
+          2
+        </link>
+        <link name="Go to page" id="1322" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=2&amp;perPage=20">
+          3
+        </link>
+        …
+        <link name="Go to page" id="1329" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=49&amp;perPage=20">
+          50
+        </link>
+        <link name="Next page" id="1333" focusable="true" url="https://www.npmjs.com/search?q=ai&amp;page=1&amp;perPage=20">
+          »
+        </link>
       </navigation>
     </main>
     <contentinfo id="1336">
       <heading id="1337" level="2">
         Footer
       </heading>
-      <generic id="1340">
-        <generic id="1342">
-          <link name="Visit npm GitHub page" id="1343" focusable="true" url="https://github.com/npm"/>
-        </generic>
-        <generic id="1344">
-          <link name="GitHub" id="1345" focusable="true" url="https://github.com/"/>
-        </generic>
+      <div id="1340">
+        <link name="Visit npm GitHub page" id="1343" focusable="true" url="https://github.com/npm"/>
+        <link name="GitHub" id="1345" focusable="true" url="https://github.com/"/>
         <heading id="1347" level="3">
           Support
         </heading>
@@ -910,7 +843,7 @@
             </link>
           </listitem>
         </list>
-      </generic>
+      </div>
     </contentinfo>
-  </generic>
+  </div>
 </RootWebArea>

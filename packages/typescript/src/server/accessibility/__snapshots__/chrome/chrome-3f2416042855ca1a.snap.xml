@@ -1,13 +1,13 @@
 <RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/drag_and_drop">
-  <generic id="3">
+  <div id="3">
     <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
       <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
     </link>
-    <generic id="9">
+    <div id="9">
       <heading id="11" level="3">
         Drag and Drop
       </heading>
-      <generic id="14">
+      <div id="14">
         <group id="15">
           <banner id="16">
             A
@@ -18,18 +18,16 @@
             B
           </banner>
         </group>
-      </generic>
-    </generic>
-    <generic id="23">
-      <generic id="24">
-        <separator id="25" settable="true" orientation="horizontal"/>
-        <generic id="26">
-          Powered by
-          <link id="29" focusable="true" url="http://elementalselenium.com/">
-            Elemental Selenium
-          </link>
-        </generic>
-      </generic>
-    </generic>
-  </generic>
+      </div>
+    </div>
+    <div id="24">
+      <separator id="25" settable="true" orientation="horizontal"/>
+      <div id="26">
+        Powered by
+        <link id="29" focusable="true" url="http://elementalselenium.com/">
+          Elemental Selenium
+        </link>
+      </div>
+    </div>
+  </div>
 </RootWebArea>

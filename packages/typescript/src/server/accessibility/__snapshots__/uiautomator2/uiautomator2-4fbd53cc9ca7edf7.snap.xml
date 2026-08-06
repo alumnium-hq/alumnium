@@ -1,5 +1,5 @@
 <hierarchy>
-  <hierarchy id="2" clickable="false">
+  <hierarchy id="2">
     <FrameLayout id="3" clickable="false">
       <LinearLayout id="4" clickable="false">
         <FrameLayout id="5" clickable="false">

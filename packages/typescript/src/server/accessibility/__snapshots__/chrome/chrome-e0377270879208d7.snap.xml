@@ -1,51 +1,23 @@
 <RootWebArea name="YouTube" id="1" focusable="true" focused="true" url="https://www.youtube.com/">
-  <generic id="3">
-    <generic id="4">
-      <generic id="6">
-        <generic id="7">
-          <banner id="8">
-            <generic id="12">
-              <generic id="13">
-                <generic id="14">
-                  <button name="Guide" id="15" invalid="false" focusable="true">
-                    <generic id="16"/>
-                  </button>
-                  <generic id="18"/>
-                </generic>
-                <generic id="21">
-                  <link id="22" focusable="true" url="https://www.youtube.com/">
-                    <generic id="23">
-                      <generic id="24">
-                        <image id="25"/>
-                      </generic>
-                    </generic>
-                  </link>
-                </generic>
-              </generic>
-              <generic id="27">
-                <search id="28">
-                  <generic id="30">
-                    <generic id="31">
-                      <generic id="32">
-                        <combobox id="33" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false"/>
-                      </generic>
-                    </generic>
-                    <button name="Search" id="35" invalid="false" focusable="true"/>
-                  </generic>
-                </search>
-              </generic>
-              <generic id="37">
-                <generic id="38"/>
-              </generic>
-            </generic>
-          </banner>
-        </generic>
-      </generic>
-    </generic>
-    <generic id="51">
-      <generic id="53">
-        <generic id="55"/>
-      </generic>
-    </generic>
-  </generic>
+  <div id="4">
+    <banner id="8">
+      <div id="12">
+        <div id="13">
+          <button name="Guide" id="15" invalid="false" focusable="true"/>
+          <link id="22" focusable="true" url="https://www.youtube.com/">
+            <image id="25"/>
+          </link>
+        </div>
+        <search id="28">
+          <div id="30">
+            <combobox id="33" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false">
+              <div id="34" editable="plaintext"/>
+            </combobox>
+            <button name="Search" id="35" invalid="false" focusable="true"/>
+          </div>
+        </search>
+      </div>
+    </banner>
+    <div id="50" live="polite" atomic="true" relevant="additions text"/>
+  </div>
 </RootWebArea>

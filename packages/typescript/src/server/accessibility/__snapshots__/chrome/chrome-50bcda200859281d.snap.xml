@@ -11,11 +11,7 @@
   <button id="14" invalid="false" focusable="true" focused="true">
     Choose Files
   </button>
-  <generic id="17">
-    <generic id="18">
-      📄 680f6cf5-f163-4d8a-8630-7ee05fa5f734.txt (14 Bytes)
-    </generic>
-  </generic>
+  📄 680f6cf5-f163-4d8a-8630-7ee05fa5f734.txt (14 Bytes)
   <button id="21" invalid="false" focusable="true">
     Upload Files
   </button>

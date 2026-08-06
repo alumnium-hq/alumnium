@@ -3,10 +3,7 @@
     Slider Test Page
   </heading>
   <LabelText id="7">
-    Value:
-    <generic id="10">
-      33
-    </generic>
+    Value: 33
   </LabelText>
   <LineBreak name="" id="13">
     <InlineTextBox name="&#xA;" id="14"/>

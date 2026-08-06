@@ -1,10 +1,8 @@
 <RootWebArea name="Claude Code by Anthropic | AI Coding Agent, Terminal, IDE" id="1" focusable="true" focused="true" url="https://claude.com/product/claude-code">
-  <generic id="3">
-    <generic id="4">
-      <alert id="5" live="assertive" atomic="true" relevant="additions text">
-        Claude Code by Anthropic | AI Coding Agent, Terminal, IDE
-      </alert>
-    </generic>
+  <div id="3">
+    <alert id="5" live="assertive" atomic="true" relevant="additions text">
+      Claude Code by Anthropic | AI Coding Agent, Terminal, IDE
+    </alert>
     <link id="8" focusable="true" url="https://claude.com/product/claude-code#main-content">
       Skip to main content
     </link>
@@ -13,41 +11,21 @@
         <image name="Claude" id="14"/>
       </link>
       <navigation name="Main" id="16">
-        <generic id="17">
-          <generic id="18">
-            <button id="19" invalid="false" focusable="true" hasPopup="menu">
-              Meet Claude
-            </button>
-          </generic>
-        </generic>
-        <generic id="25">
-          <generic id="26">
-            <button id="27" invalid="false" focusable="true" hasPopup="menu">
-              Platform
-            </button>
-          </generic>
-        </generic>
-        <generic id="33">
-          <generic id="34">
-            <button id="35" invalid="false" focusable="true" hasPopup="menu">
-              Solutions
-            </button>
-          </generic>
-        </generic>
-        <generic id="41">
-          <generic id="42">
-            <button id="43" invalid="false" focusable="true" hasPopup="menu">
-              Pricing
-            </button>
-          </generic>
-        </generic>
-        <generic id="49">
-          <generic id="50">
-            <button id="51" invalid="false" focusable="true" hasPopup="menu">
-              Resources
-            </button>
-          </generic>
-        </generic>
+        <button id="19" invalid="false" focusable="true" hasPopup="menu">
+          Meet Claude
+        </button>
+        <button id="27" invalid="false" focusable="true" hasPopup="menu">
+          Platform
+        </button>
+        <button id="35" invalid="false" focusable="true" hasPopup="menu">
+          Solutions
+        </button>
+        <button id="43" invalid="false" focusable="true" hasPopup="menu">
+          Pricing
+        </button>
+        <button id="51" invalid="false" focusable="true" hasPopup="menu">
+          Resources
+        </button>
         <link id="57" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
           Login
         </link>
@@ -61,22 +39,16 @@
       <navigation name="Breadcrumb" id="67">
         <list id="69">
           <listitem id="70" level="1">
-            <generic id="71">
-              Claude Code
-            </generic>
+            Claude Code
           </listitem>
         </list>
-        <generic id="75">
-          <generic id="76">
-            <button id="77" invalid="false" focusable="true" hasPopup="menu">
-              Explore here
-            </button>
-          </generic>
-        </generic>
+        <button id="77" invalid="false" focusable="true" hasPopup="menu">
+          Explore here
+        </button>
       </navigation>
     </banner>
     <main id="84">
-      <generic id="85">
+      <div id="85">
         <heading id="88" level="1">
           Claude Code
         </heading>
@@ -137,307 +109,259 @@
             </link>
           </listitem>
         </list>
-      </generic>
-      <generic id="188">
-        <group name="DemooftheClaudedektopapp" id="190">
-          <generic id="191">
-            <button name="Collapse sidebar" id="193" invalid="false" focusable="true" pressed="false"/>
-            <button name="Search sessions" id="195" disabled="true" invalid="false"/>
-          </generic>
-          <generic id="197">
-            <generic id="198">
-              <button id="199" disabled="true" invalid="false" pressed="false">
-                Home
-              </button>
-              <button id="204" invalid="false" focusable="true" pressed="true">
-                Code
-              </button>
-            </generic>
-            <navigation id="209">
-              <button id="210" invalid="false" focusable="true">
-                New session
-              </button>
-              <button id="215" disabled="true" invalid="false">
-                Routines
-              </button>
-              <button id="220" disabled="true" invalid="false">
-                Customize
-              </button>
-              <button id="225" disabled="true" invalid="false">
-                More
-              </button>
-            </navigation>
-            <generic id="232">
-              Pinned
-            </generic>
-            <generic id="235">
-              <button id="236" invalid="false" focusable="true">
-                Add a dark mode toggle to settings
-              </button>
-              <button name="Options for Add a dark mode toggle to settings" id="241" invalid="false" focusable="true" hasPopup="menu"/>
-            </generic>
-            <generic id="244">
-              Scheduled
-            </generic>
-            <generic id="247">
-              <button id="248" invalid="false" focusable="true">
-                Weekly dependency audit
-              </button>
-              <button name="Options for Weekly dependency audit" id="254" invalid="false" focusable="true" hasPopup="menu"/>
-            </generic>
-            <generic id="257">
-              Recents
-            </generic>
-            <generic id="260">
-              <button id="261" invalid="false" focusable="true">
-                Fix the double-charge bug in checkout
-              </button>
-              <button name="Options for Fix the double-charge bug in checkout" id="269" invalid="false" focusable="true" hasPopup="menu"/>
-            </generic>
-            <generic id="271">
-              <button id="272" invalid="false" focusable="true">
-                Write tests for the payments module
-              </button>
-              <button name="Options for Write tests for the payments module" id="280" invalid="false" focusable="true" hasPopup="menu"/>
-            </generic>
-            <generic id="282">
-              <button id="283" invalid="false" focusable="true">
-                Explain what this repo does
-              </button>
-              <button name="Options for Explain what this repo does" id="288" invalid="false" focusable="true" hasPopup="menu"/>
-            </generic>
-            <generic id="290">
-              <button id="291" invalid="false" focusable="true">
-                Layout's broken on mobile
-              </button>
-              <button name="Options for Layout's broken on mobile" id="296" invalid="false" focusable="true" hasPopup="menu"/>
-            </generic>
-            <generic id="298">
-              <button id="299" invalid="false" focusable="true">
-                Debug flaky CI tests
-              </button>
-              <button name="Options for Debug flaky CI tests" id="304" invalid="false" focusable="true" hasPopup="menu"/>
-            </generic>
-            Susan Sample
-          </generic>
-          <generic id="313">
-            <generic id="314">
-              <generic id="316">
-                acme-dashboard/Add a dark mode toggle to settings
-              </generic>
-              <generic id="331">
-                Add a dark mode toggle to the settings page. Should remember the choice and follow the system default until they pick one.
-              </generic>
-              <generic id="340">
-                <paragraph id="341">
-                  There's already a
-                  <code id="344">
-                    ThemeProvider
-                  </code>
-                  wrapping the app but it's hard-wired to light. I'll lift the mode into context, persist it to
-                  <code id="351">
-                    localStorage
-                  </code>
-                  , and add a Light / Dark segmented control under
-                  <strong id="357">
-                    Settings → Appearance
-                  </strong>
-                  .
-                </paragraph>
-                <button name="Copy message" id="364" invalid="false" focusable="true"/>
-                just now
-              </generic>
-              <generic id="369">
-                <button id="370" invalid="false" focusable="true">
-                  Read 4 files, searched the codebase
-                </button>
-              </generic>
-              <button id="376" invalid="false" focusable="true">
-                Edited
-                <strong id="380">
-                  ThemeProvider.tsx
+      </div>
+      <group name="Demo of the Claude  dektop app" id="190">
+        <div id="191">
+          <button name="Collapse sidebar" id="193" invalid="false" focusable="true" pressed="false"/>
+          <button name="Search sessions" id="195" disabled="true" invalid="false"/>
+        </div>
+        <div id="197">
+          <div id="198">
+            <button id="199" disabled="true" invalid="false" pressed="false">
+              Home
+            </button>
+            <button id="204" invalid="false" focusable="true" pressed="true">
+              Code
+            </button>
+          </div>
+          <navigation id="209">
+            <button id="210" invalid="false" focusable="true">
+              New session
+            </button>
+            <button id="215" disabled="true" invalid="false">
+              Routines
+            </button>
+            <button id="220" disabled="true" invalid="false">
+              Customize
+            </button>
+            <button id="225" disabled="true" invalid="false">
+              More
+            </button>
+          </navigation>
+          Pinned
+          <div id="235">
+            <button id="236" invalid="false" focusable="true">
+              Add a dark mode toggle to settings
+            </button>
+            <button name="Options for Add a dark mode toggle to settings" id="241" invalid="false" focusable="true" hasPopup="menu"/>
+          </div>
+          Scheduled
+          <div id="247">
+            <button id="248" invalid="false" focusable="true">
+              Weekly dependency audit
+            </button>
+            <button name="Options for Weekly dependency audit" id="254" invalid="false" focusable="true" hasPopup="menu"/>
+          </div>
+          Recents
+          <div id="260">
+            <button id="261" invalid="false" focusable="true">
+              Fix the double-charge bug in checkout
+            </button>
+            <button name="Options for Fix the double-charge bug in checkout" id="269" invalid="false" focusable="true" hasPopup="menu"/>
+          </div>
+          <div id="271">
+            <button id="272" invalid="false" focusable="true">
+              Write tests for the payments module
+            </button>
+            <button name="Options for Write tests for the payments module" id="280" invalid="false" focusable="true" hasPopup="menu"/>
+          </div>
+          <div id="282">
+            <button id="283" invalid="false" focusable="true">
+              Explain what this repo does
+            </button>
+            <button name="Options for Explain what this repo does" id="288" invalid="false" focusable="true" hasPopup="menu"/>
+          </div>
+          <div id="290">
+            <button id="291" invalid="false" focusable="true">
+              Layout's broken on mobile
+            </button>
+            <button name="Options for Layout's broken on mobile" id="296" invalid="false" focusable="true" hasPopup="menu"/>
+          </div>
+          <div id="298">
+            <button id="299" invalid="false" focusable="true">
+              Debug flaky CI tests
+            </button>
+            <button name="Options for Debug flaky CI tests" id="304" invalid="false" focusable="true" hasPopup="menu"/>
+          </div>
+          Susan Sample
+        </div>
+        <div id="313">
+          <div id="314">
+            <div id="316">
+              acme-dashboard/Add a dark mode toggle to settings
+            </div>
+            Add a dark mode toggle to the settings page. Should remember the choice and follow the system default until they pick one.
+            <div id="340">
+              <paragraph id="341">
+                There's already a
+                <code id="344">
+                  ThemeProvider
+                </code>
+                wrapping the app but it's hard-wired to light. I'll lift the mode into context, persist it to
+                <code id="351">
+                  localStorage
+                </code>
+                , and add a Light / Dark segmented control under
+                <strong id="357">
+                  Settings → Appearance
                 </strong>
-                +18 -2
-              </button>
-              <generic id="397">
-                <generic id="398">
-                  src/theme/ThemeProvider.tsx
-                </generic>
-                <button name="Copy code" id="401" invalid="false" focusable="true"/>
-                <generic id="403">
-                  10
-                  <code id="409">
-                    export function ThemeProvider({children}: {children: ReactNode}) {
-                  </code>
-                  11+
-                  <code id="451">
-                    const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
-                  </code>
-                  12
-                  <code id="493">
-                    const stored = localStorage.getItem('theme')
-                  </code>
-                  13+
-                  <code id="527">
-                    const [mode, setMode] = useState(stored ?? (prefersDark ? 'dark' : 'light'))
-                  </code>
-                  14
-                  <code id="591">
-                  </code>
-                  15+
-                  <code id="601">
-                    useEffect(() =&gt; {
-                  </code>
-                  16+
-                  <code id="623">
-                    localStorage.setItem('theme', mode)
-                  </code>
-                  17+
-                  <code id="651">
-                    }, [mode])
-                  </code>
-                  18
-                  <code id="669">
-                  </code>
-                  19
-                  <code id="677">
-                    return (
-                  </code>
-                  20
-                  <code id="691">
-                    &lt;ThemeContext.Provider value={{mode, setMode}}&gt;
-                  </code>
-                  21
-                  <code id="723">
-                    {children}
-                  </code>
-                </generic>
-              </generic>
-              <generic id="732">
-                <button id="733" invalid="false" focusable="true">
-                  Edited
-                  <strong id="737">
-                    settings.tsx
-                  </strong>
-                  +21 -0
-                </button>
-              </generic>
-              <generic id="753">
-                <button id="754" invalid="false" focusable="true">
-                  Edited
-                  <strong id="758">
-                    tokens.css
-                  </strong>
-                  +24 -0
-                </button>
-              </generic>
-              <generic id="774">
-                <button id="775" invalid="false" focusable="true">
-                  Ran 2 commands
-                </button>
-              </generic>
-              <generic id="786">
-                <paragraph id="787">
-                  Done — the
-                  <strong id="790">
-                    Appearance
-                  </strong>
-                  section now has the toggle. Preview's on the right; flip it and the whole app should follow. Reduce-motion and density rows are stubbed so the page doesn't look bare.
-                </paragraph>
-                <button name="Copy message" id="799" invalid="false" focusable="true"/>
-                just now
-              </generic>
-              #112acme-dashboardclaude/settings-dark-mode-Xk4fqCI
-            </generic>
-            <generic id="822">
-              <textbox name="Describe a task or ask a question" id="824" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false"/>
-              <button name="Send" id="827" disabled="true" invalid="false"/>
-              <button id="831" invalid="false" focusable="true" hasPopup="menu">
-                Auto
-              </button>
-              <button name="Attach" id="835" disabled="true" invalid="false"/>
-              <button name="Dictate" id="837" disabled="true" invalid="false"/>
-              <button id="841" invalid="false" focusable="true" hasPopup="menu">
-                Opus
-              </button>
-              Extra high
-            </generic>
-          </generic>
-          <complementary name="Preview of the dashboard's  settings" id="849">
-            <button name="Pick preview source" id="851" invalid="false" focusable="true"/>
-            <generic id="853">
-              localhost:5173/settings
-            </generic>
-            <button name="Edit" id="859" invalid="false" focusable="true"/>
-            <button name="Interact" id="860" invalid="false" focusable="true"/>
-            <button name="Reload" id="861" invalid="false" focusable="true"/>
-            <button name="Close" id="862" invalid="false" focusable="true"/>
-            <generic id="875">
-              Appearance
-            </generic>
-            <generic id="880">
-              Theme
-            </generic>
-            <generic id="883">
-              Choose how the dashboard looks.
-            </generic>
-            <radiogroup name="Theme" id="886" required="false">
-              <radio id="887" invalid="false" focusable="true" checked="true">
-                Light
-              </radio>
-              <radio id="890" invalid="false" focusable="true" checked="false">
-                Dark
-              </radio>
-            </radiogroup>
-            <generic id="895">
-              Density
-            </generic>
-            <generic id="898">
-              Compact rows for power users.
-            </generic>
-            <radiogroup name="Density" id="902" required="false">
-              <radio id="903" invalid="false" focusable="true" checked="true">
-                Default
-              </radio>
-              <radio id="906" invalid="false" focusable="true" checked="false">
-                Compact
-              </radio>
-            </radiogroup>
-            <generic id="911">
-              Reduce motion
-            </generic>
-            <generic id="914">
-              Disable animations and transitions.
-            </generic>
-            <switch name="Reduce motion" id="917" invalid="false" focusable="true" checked="false"/>
-          </complementary>
-        </group>
-      </generic>
-      <generic id="919">
-        <list id="922">
-          <listitem id="923" level="1">
-            <generic id="924">
-              <image name="Stripe" id="926" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
-            </generic>
-          </listitem>
-          <listitem id="927" level="1">
-            <generic id="928">
-              <image name="NASA" id="930" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/2d5f4b13d7785425c2000776e1233ddc9747ec6a-78x64.svg"/>
-            </generic>
-          </listitem>
-          <listitem id="931" level="1">
-            <generic id="932">
-              <image name="Databricks" id="934" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/3373798a180a90d27215a26eb73b3df37ab5e497-157x24.svg"/>
-            </generic>
-          </listitem>
-          <listitem id="935" level="1">
-            <generic id="936">
-              <image name="Figma" id="938" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/bd0bd7f83f4cd7a5d5d985a5b533d4b1ad8de917-128x35.svg"/>
-            </generic>
-          </listitem>
-        </list>
-      </generic>
-      <generic id="939">
+                .
+              </paragraph>
+              <button name="Copy message" id="364" invalid="false" focusable="true"/>
+              just now
+            </div>
+            <button id="370" invalid="false" focusable="true">
+              Read 4 files, searched the codebase
+            </button>
+            <button name="" id="376" invalid="false" focusable="true">
+              Edited
+              <strong id="380">
+                ThemeProvider.tsx
+              </strong>
+              +18-2
+            </button>
+            <div id="397">
+              src/theme/ThemeProvider.tsx
+              <button name="Copy code" id="401" invalid="false" focusable="true"/>
+              <div id="403">
+                10
+                <code id="409">
+                  exportfunctionThemeProvider({children}:{children:ReactNode}){
+                </code>
+                11+
+                <code id="451">
+                  constprefersDark=useMediaQuery('(prefers-color-scheme:dark)')
+                </code>
+                12
+                <code id="493">
+                  conststored=localStorage.getItem('theme')
+                </code>
+                13+
+                <code id="527">
+                  const[mode,setMode]=useState(stored??(prefersDark?'dark':'light'))
+                </code>
+                14
+                <code id="591"/>
+                15+
+                <code id="601">
+                  useEffect(()=&gt;{
+                </code>
+                16+
+                <code id="623">
+                  localStorage.setItem('theme',mode)
+                </code>
+                17+
+                <code id="651">
+                  },[mode])
+                </code>
+                18
+                <code id="669"/>
+                19
+                <code id="677">
+                  return(
+                </code>
+                20
+                <code id="691">
+                  &lt;ThemeContext.Providervalue={{mode,setMode}}&gt;
+                </code>
+                21
+                <code id="723">
+                  {children}
+                </code>
+              </div>
+            </div>
+            <button name="" id="733" invalid="false" focusable="true">
+              Edited
+              <strong id="737">
+                settings.tsx
+              </strong>
+              +21-0
+            </button>
+            <button name="" id="754" invalid="false" focusable="true">
+              Edited
+              <strong id="758">
+                tokens.css
+              </strong>
+              +24-0
+            </button>
+            <button id="775" invalid="false" focusable="true">
+              Ran 2 commands
+            </button>
+            <div id="786">
+              <paragraph id="787">
+                Done — the
+                <strong id="790">
+                  Appearance
+                </strong>
+                section now has the toggle. Preview's on the right; flip it and the whole app should follow. Reduce-motion and density rows are stubbed so the page doesn't look bare.
+              </paragraph>
+              <button name="Copy message" id="799" invalid="false" focusable="true"/>
+              just now
+            </div>
+            #112acme-dashboardclaude/settings-dark-mode-Xk4fqCI
+          </div>
+          <div id="822">
+            <textbox name="Describe a task or ask a question" id="824" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false">
+              <div id="826" editable="plaintext"/>
+            </textbox>
+            <button name="Send" id="827" disabled="true" invalid="false"/>
+            <button id="831" invalid="false" focusable="true" hasPopup="menu">
+              Auto
+            </button>
+            <button name="Attach" id="835" disabled="true" invalid="false"/>
+            <button name="Dictate" id="837" disabled="true" invalid="false"/>
+            <button id="841" invalid="false" focusable="true" hasPopup="menu">
+              Opus
+            </button>
+            Extra high
+          </div>
+        </div>
+        <complementary name="Preview of the dashboard's  settings" id="849">
+          <button name="Pick preview source" id="851" invalid="false" focusable="true"/>
+          <div id="853">
+            localhost:5173/settings
+          </div>
+          <button name="Edit" id="859" invalid="false" focusable="true"/>
+          <button name="Interact" id="860" invalid="false" focusable="true"/>
+          <button name="Reload" id="861" invalid="false" focusable="true"/>
+          <button name="Close" id="862" invalid="false" focusable="true"/>
+          AppearanceThemeChoose how the dashboard looks.
+          <radiogroup name="Theme" id="886" required="false">
+            <radio id="887" invalid="false" focusable="true" checked="true">
+              Light
+            </radio>
+            <radio id="890" invalid="false" focusable="true" checked="false">
+              Dark
+            </radio>
+          </radiogroup>
+          DensityCompact rows for power users.
+          <radiogroup name="Density" id="902" required="false">
+            <radio id="903" invalid="false" focusable="true" checked="true">
+              Default
+            </radio>
+            <radio id="906" invalid="false" focusable="true" checked="false">
+              Compact
+            </radio>
+          </radiogroup>
+          Reduce motionDisable animations and transitions.
+          <switch name="Reduce motion" id="917" invalid="false" focusable="true" checked="false"/>
+        </complementary>
+      </group>
+      <list id="922">
+        <listitem id="923" level="1">
+          <image name="Stripe" id="926" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
+        </listitem>
+        <listitem id="927" level="1">
+          <image name="NASA" id="930" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/2d5f4b13d7785425c2000776e1233ddc9747ec6a-78x64.svg"/>
+        </listitem>
+        <listitem id="931" level="1">
+          <image name="Databricks" id="934" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/3373798a180a90d27215a26eb73b3df37ab5e497-157x24.svg"/>
+        </listitem>
+        <listitem id="935" level="1">
+          <image name="Figma" id="938" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/bd0bd7f83f4cd7a5d5d985a5b533d4b1ad8de917-128x35.svg"/>
+        </listitem>
+      </list>
+      <div id="939">
         <heading id="943" level="2">
           Get started with Claude Code
         </heading>
@@ -456,9 +380,7 @@
           <paragraph id="962">
             Claude Code is included in your Pro plan. Perfect for short coding sprints in small codebases.
           </paragraph>
-          <generic id="969">
-            $25
-          </generic>
+          $25
           <paragraph id="972">
             Per month with annual subscription discount ($300 billed up front). $30 if billed monthly.
           </paragraph>
@@ -471,9 +393,7 @@
           <paragraph id="994">
             Claude Code is included in your Max plan. Great value for everyday use in larger codebases.
           </paragraph>
-          <generic id="1001">
-            $149.99
-          </generic>
+          $149.99
           <paragraph id="1004">
             Per month
           </paragraph>
@@ -486,9 +406,7 @@
           <paragraph id="1018">
             Even more Claude Code included in your Max plan. Great value for power users with the most access to Claude models.
           </paragraph>
-          <generic id="1025">
-            $300
-          </generic>
+          $300
           <paragraph id="1028">
             Per month
           </paragraph>
@@ -505,8 +423,8 @@
           </link>
           . Price and plans are subject to change at Anthropic's discretion.
         </paragraph>
-      </generic>
-      <generic id="1048">
+      </div>
+      <div id="1048">
         <heading id="1052" level="2">
           Latest feature announcements
         </heading>
@@ -549,16 +467,14 @@
         <link name="" id="1127" focusable="true" url="https://code.claude.com/docs/en/changelog">
           View changelog(opens in new tab)
         </link>
-      </generic>
-      <generic id="1135">
+      </div>
+      <div id="1135">
         <heading id="1139" level="2">
           What could you do with Claude Code?
         </heading>
-        <generic id="1147">
-          <button id="1148" invalid="false" focusable="true" hasPopup="menu">
-            Get Claude Code
-          </button>
-        </generic>
+        <button id="1148" invalid="false" focusable="true" hasPopup="menu">
+          Get Claude Code
+        </button>
         <button name="Copy command to clipboard" id="1154" invalid="false" focusable="true">
           curl -fsSL https://claude.ai/install.sh | bash
         </button>
@@ -579,12 +495,8 @@
             Refactor code
           </tab>
         </tablist>
-        <generic id="1188">
-          <generic id="1189">
-            <code id="1190">
-              &gt; I'm new to this codebase. Can you explain it to me?
-
-⏺︎ I'll analyze the Excalidraw codebase structure and provide a high-level overview.
+        <code id="1190">
+          &gt; I'm new to this codebase. Can you explain it to me?⏺︎ I'll analyze the Excalidraw codebase structure and provide a high-level overview.
 
 ⏺︎ Analyze(what: "Excalidraw codebase structure and provide a high-level overview of what it is, its main components, and how they're organized. Focus on understanding the project's purpose, architecture, and key features.")
 
@@ -644,9 +556,7 @@ The project is organized as a monorepo with these main components:
 - IndexedDB/LocalStorage for offline storage
 
 The architecture allows for both using Excalidraw as a component in other applications and as a standalone web application with additional features.
-            </code>
-          </generic>
-        </generic>
+        </code>
         <list id="1331">
           <listitem id="1332" level="1">
             <heading id="1333" level="3">
@@ -673,8 +583,8 @@ The architecture allows for both using Excalidraw as a component in other applic
             </paragraph>
           </listitem>
         </list>
-      </generic>
-      <generic id="1361">
+      </div>
+      <div id="1361">
         <heading id="1365" level="2">
           Meets you where you code
         </heading>
@@ -724,8 +634,8 @@ The architecture allows for both using Excalidraw as a component in other applic
             Download app
           </link>
         </group>
-      </generic>
-      <generic id="1447">
+      </div>
+      <div id="1447">
         <heading id="1452" level="2">
           Kick off coding tasks in Slack
         </heading>
@@ -737,16 +647,14 @@ The architecture allows for both using Excalidraw as a component in other applic
             Learn more
           </link>
         </group>
-      </generic>
-      <generic id="1465">
+      </div>
+      <div id="1465">
         <heading id="1468" level="2">
           What developers are saying
         </heading>
         <list id="1471">
           <listitem id="1472" level="1">
-            <generic id="1474">
-              <image name="Ramp" id="1475" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/648a551dca8eaf811bd5228c852a9e65386b0904-118x32.svg"/>
-            </generic>
+            <image name="Ramp" id="1475" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/648a551dca8eaf811bd5228c852a9e65386b0904-118x32.svg"/>
             <blockquote id="1477">
               <paragraph id="1478">
                 “Claude Code has dramatically accelerated our team's coding efficiency. I can now write EDA code in a notebook—pulling data, training a model, and evaluating it with basic metrics—and then ask Claude to convert that into a Metaflow pipeline. This process saves 1-2 days of routine (and often boring!) work per model.”
@@ -760,9 +668,7 @@ The architecture allows for both using Excalidraw as a component in other applic
             </link>
           </listitem>
           <listitem id="1496" level="1">
-            <generic id="1498">
-              <image name="Intercom" id="1499" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/fa755cc324f3ead28cea084cb63c403edfccc0da-141x23.svg"/>
-            </generic>
+            <image name="Intercom" id="1499" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/fa755cc324f3ead28cea084cb63c403edfccc0da-141x23.svg"/>
             <blockquote id="1501">
               <paragraph id="1502">
                 “With Claude, we're not just automating customer service—we're elevating it to truly human quality. This lets support teams think more strategically about customer experience and what makes interactions genuinely valuable.”
@@ -776,9 +682,7 @@ The architecture allows for both using Excalidraw as a component in other applic
             </link>
           </listitem>
           <listitem id="1518" level="1">
-            <generic id="1520">
-              <image name="Notion" id="1521" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dd2c022495a4655e77541d16bc01b96e2052d6a3-128x36.svg"/>
-            </generic>
+            <image name="Notion" id="1521" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dd2c022495a4655e77541d16bc01b96e2052d6a3-128x36.svg"/>
             <blockquote id="1523">
               <paragraph id="1524">
                 “Claude Code is moving our team up a level: we decide what needs to happen, and smooth the process so it can build and verify end-to-end. A big part of my job now is to keep as many instances of Claude Code busy as possible.”
@@ -792,68 +696,44 @@ The architecture allows for both using Excalidraw as a component in other applic
             </link>
           </listitem>
         </list>
-      </generic>
-      <generic id="1540">
+      </div>
+      <div id="1540">
         <list id="1544">
           <listitem id="1545" level="1">
-            <generic id="1546">
-              <image name="New Relic" id="1548" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/381cea7f0fc11a867d2e8fa86028a1bc87fd9aad-142x28.svg"/>
-            </generic>
+            <image name="New Relic" id="1548" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/381cea7f0fc11a867d2e8fa86028a1bc87fd9aad-142x28.svg"/>
           </listitem>
           <listitem id="1549" level="1">
-            <generic id="1550">
-              <image name="Datadog" id="1552" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/5bd06742093289d7f7dd03b3945cc35d823d5388-146x36.svg"/>
-            </generic>
+            <image name="Datadog" id="1552" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/5bd06742093289d7f7dd03b3945cc35d823d5388-146x36.svg"/>
           </listitem>
           <listitem id="1553" level="1">
-            <generic id="1554">
-              <image name="Elastic" id="1556" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/4114bc17f676c85fd52661ac58205c1b7f2e52c5-117x40.svg"/>
-            </generic>
+            <image name="Elastic" id="1556" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/4114bc17f676c85fd52661ac58205c1b7f2e52c5-117x40.svg"/>
           </listitem>
           <listitem id="1557" level="1">
-            <generic id="1558">
-              <image name="Heroku" id="1560" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/14d277edf9089e2db3a1e3c5c004d25f0a496627-143x40.svg"/>
-            </generic>
+            <image name="Heroku" id="1560" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/14d277edf9089e2db3a1e3c5c004d25f0a496627-143x40.svg"/>
           </listitem>
           <listitem id="1561" level="1">
-            <generic id="1562">
-              <image name="Vercel" id="1564" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dfe2bb49cbe6a11d747deb00e01474b0ac4a8de8-120x24.svg"/>
-            </generic>
+            <image name="Vercel" id="1564" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dfe2bb49cbe6a11d747deb00e01474b0ac4a8de8-120x24.svg"/>
           </listitem>
           <listitem id="1565" level="1">
-            <generic id="1566">
-              <image name="Stripe" id="1568" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
-            </generic>
+            <image name="Stripe" id="1568" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
           </listitem>
           <listitem id="1569" level="1">
-            <generic id="1570">
-              <image name="AWS" id="1572" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/477ff12eca622016612d5837b67bec8fbd3899e8-61x36.svg"/>
-            </generic>
+            <image name="AWS" id="1572" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/477ff12eca622016612d5837b67bec8fbd3899e8-61x36.svg"/>
           </listitem>
           <listitem id="1573" level="1">
-            <generic id="1574">
-              <image name="Dynatrace" id="1576" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/05e7af628f73b9ab5ce68b47e2035d292564c421-181x32.svg"/>
-            </generic>
+            <image name="Dynatrace" id="1576" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/05e7af628f73b9ab5ce68b47e2035d292564c421-181x32.svg"/>
           </listitem>
           <listitem id="1577" level="1">
-            <generic id="1578">
-              <image name="MongoDB" id="1580" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/b7e4f274d9789cf6709450c85ee987064b78d784-156x40.svg"/>
-            </generic>
+            <image name="MongoDB" id="1580" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/b7e4f274d9789cf6709450c85ee987064b78d784-156x40.svg"/>
           </listitem>
           <listitem id="1581" level="1">
-            <generic id="1582">
-              <image name="GitHub" id="1584" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/7522fc92399dcb4a68f11c7e147e711fcadbe75b-126x36.svg"/>
-            </generic>
+            <image name="GitHub" id="1584" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/7522fc92399dcb4a68f11c7e147e711fcadbe75b-126x36.svg"/>
           </listitem>
           <listitem id="1585" level="1">
-            <generic id="1586">
-              <image name="Atlassian" id="1588" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/9cdf5ed2ae750f0b6795490071eed41576bd1e1a-189x24.svg"/>
-            </generic>
+            <image name="Atlassian" id="1588" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/9cdf5ed2ae750f0b6795490071eed41576bd1e1a-189x24.svg"/>
           </listitem>
           <listitem id="1589" level="1">
-            <generic id="1590">
-              <image name="GitLab" id="1592" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/84694a8c9a86c0b8bf37a874c675ccaeec9c6654-111x26.svg"/>
-            </generic>
+            <image name="GitLab" id="1592" url="https://cdn.sanity.io/images/4zrzovbb/claude-com/84694a8c9a86c0b8bf37a874c675ccaeec9c6654-111x26.svg"/>
           </listitem>
         </list>
         <heading id="1594" level="2">
@@ -862,8 +742,8 @@ The architecture allows for both using Excalidraw as a component in other applic
         <paragraph id="1598">
           Your terminal is where real work happens. Claude Code connects with the tools that power development—deployment, databases, monitoring, version control. Rather than adding another interface to juggle, it enhances your existing stack.
         </paragraph>
-      </generic>
-      <generic id="1605">
+      </div>
+      <div id="1605">
         <heading id="1609" level="2">
           FAQ
         </heading>
@@ -964,21 +844,21 @@ The architecture allows for both using Excalidraw as a component in other applic
           </paragraph>
           <list id="1756">
             <listitem id="1757" level="1">
-              <ListMarker name="•" id="1758"/>
+              <ListMarker name="• " id="1758"/>
               In research preview on Claude Code, and is priced at $10/$50 per million tokens.
             </listitem>
             <listitem id="1762" level="1">
-              <ListMarker name="•" id="1763"/>
+              <ListMarker name="• " id="1763"/>
               On consumption-based plans.
             </listitem>
             <listitem id="1767" level="1">
-              <ListMarker name="•" id="1768"/>
+              <ListMarker name="• " id="1768"/>
               Via usage credits for users on subscription plans.
             </listitem>
           </list>
         </region>
-      </generic>
-      <generic id="1772">
+      </div>
+      <div id="1772">
         <heading id="1777" level="2">
           Get the technical rundown
         </heading>
@@ -1018,19 +898,17 @@ The architecture allows for both using Excalidraw as a component in other applic
           </heading>
           Blog
         </link>
-      </generic>
-      <generic id="1838">
+      </div>
+      <div id="1838">
         <heading id="1842" level="2">
           Create what's exciting. Maintain what's essential.
         </heading>
         <paragraph id="1846">
           Use Claude Code where you work
         </paragraph>
-        <generic id="1853">
-          <button id="1854" invalid="false" focusable="true" hasPopup="menu">
-            Get Claude Code
-          </button>
-        </generic>
+        <button id="1854" invalid="false" focusable="true" hasPopup="menu">
+          Get Claude Code
+        </button>
         <button name="Copy command to clipboard" id="1860" invalid="false" focusable="true">
           curl -fsSL https://claude.ai/install.sh | bash
         </button>
@@ -1046,23 +924,27 @@ The architecture allows for both using Excalidraw as a component in other applic
         <paragraph id="1881">
           Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.
         </paragraph>
-        <generic id="1885">
-          <textbox name="Email address" id="1887" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="true"/>
+        <div id="1885">
+          <textbox name="Email address" id="1887" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="true">
+            <div id="1889" editable="plaintext"/>
+          </textbox>
           <button name="Subscribe" id="1890" disabled="true" invalid="false"/>
-        </generic>
+        </div>
         <paragraph id="1893">
           Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.
         </paragraph>
-      </generic>
+      </div>
     </main>
     <contentinfo id="1897">
       <link name="" id="1902" focusable="true" url="https://claude.com/">
         <image name="Claude" id="1903"/>
       </link>
-      <generic id="1904">
-        <textbox name="Ask Claude" id="1906" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false"/>
+      <div id="1904">
+        <textbox name="Ask Claude" id="1906" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false">
+          <div id="1908" editable="plaintext"/>
+        </textbox>
         <button name="Submit" id="1909" invalid="false" focusable="true"/>
-      </generic>
+      </div>
       <image name="By Anthropic" id="1913"/>
       <paragraph id="1914">
         © 2026 Anthropic PBC
@@ -1517,13 +1399,9 @@ The architecture allows for both using Excalidraw as a component in other applic
       <link name="LinkedIn" id="2297" focusable="true" url="https://www.linkedin.com/showcase/claude/"/>
       <link name="X (Twitter)" id="2298" focusable="true" url="https://x.com/claudeai"/>
       <link name="YouTube" id="2299" focusable="true" url="https://www.youtube.com/@anthropic-ai"/>
-      <generic id="2300">
-        <generic id="2301">
-          <button name="Language:" id="2302" invalid="false" focusable="true" hasPopup="menu">
-            English
-          </button>
-        </generic>
-      </generic>
+      <button name="Language:" id="2302" invalid="false" focusable="true" hasPopup="menu">
+        English
+      </button>
     </contentinfo>
-  </generic>
+  </div>
 </RootWebArea>

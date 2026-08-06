@@ -1,5 +1,5 @@
 <RootWebArea name="GitHub · Change is constant. GitHub keeps you ahead. · GitHub" id="1" focusable="true" focused="true" url="https://github.com/">
-  <generic id="8">
+  <div id="8">
     <link id="9" focusable="true" url="https://github.com/#start-of-content">
       Skip to content
     </link>
@@ -7,122 +7,92 @@
       <heading id="31" level="2">
         Navigation Menu
       </heading>
-      <generic id="35">
+      <div id="35">
         <link name="Homepage" id="38" focusable="true" url="https://github.com/"/>
-        <generic id="39">
-          <generic id="42">
-            <navigation name="Global" id="43">
-              <list id="44">
-                <listitem id="45" level="1">
-                  <generic id="46">
-                    <button id="47" invalid="false" focusable="true">
-                      Platform
-                    </button>
-                  </generic>
-                </listitem>
-                <listitem id="58" level="1">
-                  <generic id="59">
-                    <button id="60" invalid="false" focusable="true">
-                      Solutions
-                    </button>
-                  </generic>
-                </listitem>
-                <listitem id="69" level="1">
-                  <generic id="70">
-                    <button id="71" invalid="false" focusable="true">
-                      Resources
-                    </button>
-                  </generic>
-                </listitem>
-                <listitem id="80" level="1">
-                  <generic id="81">
-                    <button id="82" invalid="false" focusable="true">
-                      Open Source
-                    </button>
-                  </generic>
-                </listitem>
-                <listitem id="91" level="1">
-                  <generic id="92">
-                    <button id="93" invalid="false" focusable="true">
-                      Enterprise
-                    </button>
-                  </generic>
-                </listitem>
-                <listitem id="100" level="1">
-                  <link id="101" focusable="true" url="https://github.com/pricing">
-                    Pricing
-                  </link>
-                </listitem>
-              </list>
-            </navigation>
-          </generic>
-          <generic id="107">
+        <div id="39">
+          <navigation name="Global" id="43">
+            <list id="44">
+              <listitem id="45" level="1">
+                <button id="47" invalid="false" focusable="true">
+                  Platform
+                </button>
+              </listitem>
+              <listitem id="58" level="1">
+                <button id="60" invalid="false" focusable="true">
+                  Solutions
+                </button>
+              </listitem>
+              <listitem id="69" level="1">
+                <button id="71" invalid="false" focusable="true">
+                  Resources
+                </button>
+              </listitem>
+              <listitem id="80" level="1">
+                <button id="82" invalid="false" focusable="true">
+                  Open Source
+                </button>
+              </listitem>
+              <listitem id="91" level="1">
+                <button id="93" invalid="false" focusable="true">
+                  Enterprise
+                </button>
+              </listitem>
+              <listitem id="100" level="1">
+                <link id="101" focusable="true" url="https://github.com/pricing">
+                  Pricing
+                </link>
+              </listitem>
+            </list>
+          </navigation>
+          <div id="107">
             <button name="Search or jump to…" id="108" invalid="false" focusable="true" hasPopup="dialog"/>
             <dialog name="" id="111" modal="true" labelledby="">
               <heading id="112" level="1">
                 Search code, repositories, users, issues, pull requests...
               </heading>
-              <generic id="122">
-                <generic id="123">
-                  <generic id="124">
-                    <generic id="125">
-                      <LabelText id="127">
-                        Search
-                      </LabelText>
-                      <generic id="132">
-                        <combobox name="Search" id="134" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results" labelledby="">
-                          <generic id="135" editable="plaintext">
-                            alumnium
-                          </generic>
-                        </combobox>
-                      </generic>
-                      <generic id="139">
-                        Clear
-                      </generic>
-                      <button name="Clear Search" id="142" invalid="false" focusable="true" labelledby=""/>
-                      <generic id="143">
-                        <listbox name="Suggestions" id="144" focusable="true" multiselectable="false" orientation="vertical" required="false">
-                          <option name=", Search all of GitHub" id="145" selected="false">
-                            alumnium
-                          </option>
-                        </listbox>
-                      </generic>
-                      <generic id="157" live="polite" atomic="true" relevant="additions text">
-                        1 suggestion.
-                      </generic>
-                    </generic>
-                  </generic>
-                  <link id="162" focusable="true" url="https://docs.github.com/search-github/github-code-search/understanding-github-code-search-syntax">
-                    Search syntax tips
-                  </link>
-                </generic>
-              </generic>
+              <div id="123">
+                <div id="125">
+                  <LabelText id="127">
+                    Search
+                  </LabelText>
+                  <combobox name="Search" id="134" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results" labelledby="">
+                    <div id="135" editable="plaintext">
+                      alumnium
+                    </div>
+                  </combobox>
+                  Clear
+                  <button name="Clear Search" id="142" invalid="false" focusable="true" labelledby=""/>
+                  <listbox name="Suggestions" id="144" focusable="true" multiselectable="false" orientation="vertical" required="false">
+                    <option name=", Search all of GitHub" id="145" selected="false">
+                      alumnium
+                    </option>
+                  </listbox>
+                  <div id="157" live="polite" atomic="true" relevant="additions text">
+                    1 suggestion.
+                  </div>
+                </div>
+                <link id="162" focusable="true" url="https://docs.github.com/search-github/github-code-search/understanding-github-code-search-syntax">
+                  Search syntax tips
+                </link>
+              </div>
             </dialog>
-          </generic>
-          <generic id="173"/>
-          <generic id="186">
-            <link id="187" focusable="true" url="https://github.com/login">
-              Sign in
-            </link>
-          </generic>
+          </div>
+          <link id="187" focusable="true" url="https://github.com/login">
+            Sign in
+          </link>
           <link id="190" focusable="true" url="https://github.com/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2F&amp;source=header-home">
             Sign up
           </link>
-        </generic>
-      </generic>
+        </div>
+      </div>
     </banner>
-  </generic>
+  </div>
   <main id="199">
-    <generic id="201">
-      <generic id="204">
-        <generic id="205">
-          <generic id="207">
-            <generic id="208"/>
-            <generic id="210">
-              Mona the Octocat, Copilot, and Ducky float jubilantly upward from behind the GitHub product demo accompanied by a purple glow and a scattering of stars.
-            </generic>
-          </generic>
-          <generic id="237">
+    <div id="201">
+      <div id="204">
+        <div id="205">
+          Mona the Octocat, Copilot, and Ducky float jubilantly upward from behind the GitHub product demo accompanied by a purple glow and a scattering of stars.
+          <div id="237">
             <region name="" id="238" labelledby="">
               <heading id="242" level="1">
                 The future of building happens together
@@ -132,45 +102,38 @@
               </paragraph>
             </region>
             <form name="" id="251">
-              <generic id="252">
-                <generic id="253">
-                  <generic id="254">
-                    <LabelText id="255">
-                      Enter your email
-                    </LabelText>
-                    <textbox name="Enter your email" id="259" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby=""/>
-                  </generic>
-                  <button id="262" invalid="false" focusable="true">
-                    Sign up for GitHub
-                  </button>
-                </generic>
-              </generic>
+              <div id="253">
+                <div id="254">
+                  <LabelText id="255">
+                    Enter your email
+                  </LabelText>
+                  <textbox name="Enter your email" id="259" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
+                    <div id="261" editable="plaintext"/>
+                  </textbox>
+                </div>
+                <button id="262" invalid="false" focusable="true">
+                  Sign up for GitHub
+                </button>
+              </div>
             </form>
             <link id="266" focusable="true" url="https://github.com/github-copilot/pro">
               Try GitHub Copilot
             </link>
-          </generic>
-          <generic id="270">
+          </div>
+          <div id="270">
             <heading id="271" level="2">
               GitHub features
             </heading>
-            <generic id="275"/>
-            <generic id="278">
-              <button name="Pause" id="279" invalid="false" focusable="true"/>
-            </generic>
-            <generic id="282">
-              <generic id="283">
-                <generic id="284">
-                  A demonstration animation of a code editor using GitHub Copilot Chat, where the user requests GitHub Copilot to refactor duplicated logic and extract it into a reusable function for a given code snippet.
-                </generic>
-                <Video id="319" describedby="visual-code-0-desc"/>
-              </generic>
-            </generic>
-          </generic>
-        </generic>
-        <generic id="355">
+            <button name="Pause" id="279" invalid="false" focusable="true"/>
+            <div id="283">
+              A demonstration animation of a code editor using GitHub Copilot Chat, where the user requests GitHub Copilot to refactor duplicated logic and extract it into a reusable function for a given code snippet.
+              <Video id="319" describedby="visual-code-0-desc"/>
+            </div>
+          </div>
+        </div>
+        <div id="355">
           <tablist id="357" multiselectable="false" orientation="horizontal" controls="heroCarouselDescription">
-            <generic id="358">
+            <div id="358">
               <tab id="359" invalid="false" focusable="true" selected="false">
                 Code
               </tab>
@@ -186,18 +149,18 @@
               <tab id="375" invalid="false" focusable="true" selected="false">
                 Secure
               </tab>
-            </generic>
+            </div>
           </tablist>
           <paragraph id="379" live="polite" atomic="false" relevant="additions text">
             Write, test, and fix code quickly with GitHub Copilot, from simple boilerplate to complex features.
           </paragraph>
-        </generic>
-        <generic id="383">
+        </div>
+        <div id="383">
           <heading id="385" level="2">
             GITHUB CUSTOMERS
           </heading>
-          <generic id="389">
-            <generic id="390">
+          <div id="389">
+            <div id="390">
               <image name="American Airlines" id="392"/>
               <image name="Duolingo" id="393"/>
               <image name="Ernst and Young" id="394"/>
@@ -210,312 +173,232 @@
               <image name="Société Générale" id="401"/>
               <image name="Spotify" id="402"/>
               <image name="Vodafone" id="403"/>
-            </generic>
+            </div>
             <button name="Pause animation" id="404" invalid="false" focusable="true"/>
-          </generic>
-        </generic>
-      </generic>
-      <generic id="405">
-        <generic id="406">
-          <generic id="407">
-            <generic id="408">
-              <generic id="409">
-                <sectionheader id="412">
-                  <heading id="413" level="2">
-                    <generic id="414">
-                      Accelerate your entire workflow
-                    </generic>
-                  </heading>
-                  <paragraph id="417">
-                    From your first line of code to final deployment, GitHub provides AI and automation tools to help you build and ship better software faster.
-                  </paragraph>
-                </sectionheader>
-              </generic>
-              <generic id="422">
-                <generic id="423"/>
-                <generic id="425"/>
-                <generic id="428">
-                  <button name="Pause video" id="429" invalid="false" focusable="true"/>
-                </generic>
-                <generic id="432">
-                  <generic id="433">
-                    <generic id="434">
-                      A Copilot chat window with the 'Ask' mode enabled. The user switches from 'Ask' mode to 'Agent' mode from a dropdown menu, then sends the prompt 'Update the website to allow searching for running races by name.' Copilot analyzes the codebase, then explains the required edits for three files before generating them. Copilot then confirms completion and summarizes the implemented changes for the new functionality allowing users to search races by name and view paginated, filtered results.
-                    </generic>
-                    <Video name="Unable to play media." id="513" disabled="true" describedby="lp-SectionHero-visual-desc-0"/>
-                  </generic>
-                </generic>
-              </generic>
-            </generic>
-          </generic>
-          <generic id="549">
-            <generic id="550">
-              <heading id="554" level="3">
-                Your AI partner everywhere. Copilot is ready to work with you at each step of the software development lifecycle.
+          </div>
+        </div>
+      </div>
+      <div id="406">
+        <div id="408">
+          <sectionheader id="412">
+            <heading id="413" level="2">
+              Accelerate your entire workflow
+            </heading>
+            <paragraph id="417">
+              From your first line of code to final deployment, GitHub provides AI and automation tools to help you build and ship better software faster.
+            </paragraph>
+          </sectionheader>
+          <div id="422">
+            <button name="Pause video" id="429" invalid="false" focusable="true"/>
+            <div id="433">
+              A Copilot chat window with the 'Ask' mode enabled. The user switches from 'Ask' mode to 'Agent' mode from a dropdown menu, then sends the prompt 'Update the website to allow searching for running races by name.' Copilot analyzes the codebase, then explains the required edits for three files before generating them. Copilot then confirms completion and summarizes the implemented changes for the new functionality allowing users to search races by name and view paginated, filtered results.
+              <Video name="Unable to play media." id="513" disabled="true" describedby="lp-SectionHero-visual-desc-0"/>
+            </div>
+          </div>
+        </div>
+        <div id="550">
+          <heading id="554" level="3">
+            Your AI partner everywhere. Copilot is ready to work with you at each step of the software development lifecycle.
+          </heading>
+          <link id="561" focusable="true" url="https://github.com/features/copilot">
+            Explore GitHub Copilot
+          </link>
+          <image name="Duolingo" id="570" url="https://images.ctfassets.net/8aevphvgewt8/g1XhuDG7foMyNWIEIpGJj/b40a790b854d0803704deb7905b1bd82/logo-duolingo-14477f9e54a6.svg"/>
+          <paragraph id="571">
+            Duolingo boosts developer speed by 25% with GitHub Copilot
+          </paragraph>
+          <link id="575" focusable="true" url="https://github.com/customer-stories/duolingo">
+            Read customer story
+          </link>
+          <image name="Gartner" id="582" url="https://images.ctfassets.net/8aevphvgewt8/6Qr8Snm4JceoMFRJhapgFa/802ded1d2c486a9d0a4c073d9f8f38f4/logo-gartner-aa8c2e452b64.svg"/>
+          <paragraph id="583">
+            2025 Gartner® Magic Quadrant™ for AI Code Assistants
+          </paragraph>
+          <link id="587" focusable="true" url="https://www.gartner.com/reprints/?id=1-2LVTG7RP&amp;ct=250915&amp;st=sb">
+            Read industry report
+          </link>
+        </div>
+        <DescriptionList id="600">
+          <term id="602">
+            <button id="603" invalid="false" focusable="true" controls="_R_5p5__0">
+              <heading id="605" level="3">
+                Automate your path to production
               </heading>
-              <generic id="560">
-                <link id="561" focusable="true" url="https://github.com/features/copilot">
-                  Explore GitHub Copilot
-                </link>
-              </generic>
-              <image name="Duolingo" id="570" url="https://images.ctfassets.net/8aevphvgewt8/g1XhuDG7foMyNWIEIpGJj/b40a790b854d0803704deb7905b1bd82/logo-duolingo-14477f9e54a6.svg"/>
-              <paragraph id="571">
-                Duolingo boosts developer speed by 25% with GitHub Copilot
+            </button>
+          </term>
+          <definition id="608">
+            <div id="609">
+              <paragraph id="611">
+                Ship faster with secure, reliable CI/CD.
               </paragraph>
-              <link id="575" focusable="true" url="https://github.com/customer-stories/duolingo">
-                Read customer story
+              <link id="615" focusable="true" url="https://github.com/features/actions">
+                Explore GitHub Actions
               </link>
-              <image name="Gartner" id="582" url="https://images.ctfassets.net/8aevphvgewt8/6Qr8Snm4JceoMFRJhapgFa/802ded1d2c486a9d0a4c073d9f8f38f4/logo-gartner-aa8c2e452b64.svg"/>
-              <paragraph id="583">
-                2025 Gartner® Magic Quadrant™ for AI Code Assistants
+            </div>
+          </definition>
+          <term id="620">
+            <button id="621" invalid="false" focusable="true">
+              <heading id="623" level="3">
+                Code instantly from anywhere
+              </heading>
+            </button>
+          </term>
+          <term id="634">
+            <button id="635" invalid="false" focusable="true">
+              <heading id="637" level="3">
+                Keep momentum on the go
+              </heading>
+            </button>
+          </term>
+          <term id="648">
+            <button id="649" invalid="false" focusable="true">
+              <heading id="651" level="3">
+                Shape your toolchain
+              </heading>
+            </button>
+          </term>
+        </DescriptionList>
+      </div>
+      <div id="661">
+        <div id="663">
+          <sectionheader id="667">
+            <heading id="668" level="2">
+              Built-in application security where found means fixed
+            </heading>
+            <paragraph id="673">
+              Use AI to find and fix vulnerabilities so your team can ship more secure software faster.
+            </paragraph>
+          </sectionheader>
+          <div id="677">
+            <heading id="684" level="3">
+              Apply fixes in seconds. Spend less time debugging and more time building features with Copilot Autofix.
+            </heading>
+            <link id="692" focusable="true" url="https://github.com/security/advanced-security">
+              Explore GitHub Advanced Security
+            </link>
+            <image name="Copilot Autofix identifies vulnerable code and provides an explanation, together with a secure code suggestion to remediate the vulnerability." id="700" url="https://images.ctfassets.net/8aevphvgewt8/5mzhSO4avmXBwkFsMzgXkW/91991e6258f14f54d23840b6c13c3013/hero-64ecd484397f.webp"/>
+          </div>
+        </div>
+        <div id="702">
+          <paragraph id="707">
+            Security debt, solved. Leverage security campaigns and Copilot Autofix to reduce application vulnerabilities.
+          </paragraph>
+          <link id="714" focusable="true" url="https://github.com/security/advanced-security/code-security">
+            Learn about GitHub Code Security
+          </link>
+          <image name="A security campaign screen displays the campaign’s progress bar with 97% completed of 701 alerts. A total of 23 alerts are left with 13 in progress, and the campaign started 20 days ago. The status below shows that there are 7 days left in the campaign with a due date of November 15, 2024." id="719" url="https://images.ctfassets.net/8aevphvgewt8/6WnLu9nlnemjCltZkd8lCi/b18034be25552e118a36f6617e1f84df/pillar-1-dd667a921f55.webp"/>
+          <paragraph id="723">
+            Dependencies you can depend on. Update vulnerable dependencies with supported fixes for breaking changes.
+          </paragraph>
+          <link id="729" focusable="true" url="https://github.com/security/advanced-security/software-supply-chain">
+            Learn about Dependabot
+          </link>
+          <image name="List of dependencies defined in a requirements .txt file." id="734" url="https://images.ctfassets.net/8aevphvgewt8/1o2Eid4RQteCr6iZ7wVauW/3c04a760442c81036d98e70c0c986a8b/pillar-2-ff69e872920a.webp"/>
+          <paragraph id="738">
+            Your secrets, your business. Detect, prevent, and remediate leaked secrets across your organization.
+          </paragraph>
+          <link id="745" focusable="true" url="https://github.com/security/advanced-security/secret-protection">
+            Learn about GitHub Secret Protection
+          </link>
+          <image name="GitHub push protection confirms and displays an active secret, and blocks the push." id="750" url="https://images.ctfassets.net/8aevphvgewt8/3WaMDk5JuZzhaKfpRgibKz/c179c5841373ec1fd37c839bdb24a7b4/pillar-3-0a063e2daae2.webp"/>
+          <paragraph id="755">
+            70% MTTR reductionwith Copilot Autofix
+            <superscript id="761">
+              <link name="Footnote" id="762" focusable="true" url="https://github.com/#footnote-1">
+                1
+              </link>
+            </superscript>
+          </paragraph>
+          <paragraph id="768">
+            8.3M secret leaks stoppedin the past 12 months with push protection
+            <superscript id="774">
+              <link name="Footnote" id="775" focusable="true" url="https://github.com/#footnote-1">
+                1
+              </link>
+            </superscript>
+          </paragraph>
+        </div>
+      </div>
+      <div id="779">
+        <div id="781">
+          <sectionheader id="785">
+            <heading id="786" level="2">
+              Work together, achieve more
+            </heading>
+            <paragraph id="790">
+              From planning and discussion to code review, GitHub keeps your team’s conversation and context next to your code.
+            </paragraph>
+          </sectionheader>
+          <image name="A project management dashboard showing tasks for the ‘OctoArcade Invaders’ project, with tasks grouped under project phase categories like ‘Prototype,’ ‘Beta,’ and ‘Launch’ in a table layout. One of the columns displays sub-issue progress bars with percentages for each issue." id="804" url="https://images.ctfassets.net/8aevphvgewt8/3ip0mnsbUMonRTsbnnIkOh/a940b7a975a801c8829c113d9799873d/hero-961322485af6.webp"/>
+        </div>
+        <div id="806">
+          <heading id="810" level="3">
+            Plan with clarity. Organize everything from high-level roadmaps to everyday tasks.
+          </heading>
+          <link id="817" focusable="true" url="https://github.com/features/issues">
+            Explore GitHub Projects
+          </link>
+          <figure id="824">
+            <blockquote id="826">
+              It helps us onboard new software engineers and get them productive right away. We have all our source code, issues, and pull requests in one place... GitHub is a complete platform that frees us from menial tasks and enables us to do our best work.
+            </blockquote>
+            <Figcaption id="835">
+              FABIAN FAULHABERApplication manager at Mercedes-Benz
+            </Figcaption>
+          </figure>
+        </div>
+        <DescriptionList id="851">
+          <term id="853">
+            <button id="854" invalid="false" focusable="true" controls="_R_5q5__0">
+              <heading id="856" level="3">
+                Keep track of your tasks
+              </heading>
+            </button>
+          </term>
+          <definition id="859">
+            <div id="860">
+              <paragraph id="862">
+                Create issues and manage projects with tools that adapt to your code.
               </paragraph>
-              <link id="587" focusable="true" url="https://www.gartner.com/reprints/?id=1-2LVTG7RP&amp;ct=250915&amp;st=sb">
-                Read industry report
+              <link id="867" focusable="true" url="https://github.com/features/issues">
+                Explore GitHub Issues
               </link>
-            </generic>
-          </generic>
-          <generic id="591">
-            <generic id="592">
-              <generic id="594"/>
-              <DescriptionList id="600">
-                <term id="602">
-                  <button id="603" invalid="false" focusable="true" controls="_R_5p5__0">
-                    <heading id="605" level="3">
-                      Automate your path to production
-                    </heading>
-                  </button>
-                </term>
-                <definition id="608">
-                  <generic id="609">
-                    <paragraph id="611">
-                      Ship faster with secure, reliable CI/CD.
-                    </paragraph>
-                    <link id="615" focusable="true" url="https://github.com/features/actions">
-                      Explore GitHub Actions
-                    </link>
-                  </generic>
-                </definition>
-                <term id="620">
-                  <button id="621" invalid="false" focusable="true">
-                    <heading id="623" level="3">
-                      Code instantly from anywhere
-                    </heading>
-                  </button>
-                </term>
-                <term id="634">
-                  <button id="635" invalid="false" focusable="true">
-                    <heading id="637" level="3">
-                      Keep momentum on the go
-                    </heading>
-                  </button>
-                </term>
-                <term id="648">
-                  <button id="649" invalid="false" focusable="true">
-                    <heading id="651" level="3">
-                      Shape your toolchain
-                    </heading>
-                  </button>
-                </term>
-              </DescriptionList>
-            </generic>
-          </generic>
-        </generic>
-      </generic>
-      <generic id="661">
-        <generic id="662">
-          <generic id="663">
-            <generic id="664">
-              <sectionheader id="667">
-                <heading id="668" level="2">
-                  <generic id="669">
-                    Built-in application security where found means fixed
-                  </generic>
-                </heading>
-                <paragraph id="673">
-                  Use AI to find and fix vulnerabilities so your team can ship more secure software faster.
-                </paragraph>
-              </sectionheader>
-            </generic>
-            <generic id="677">
-              <generic id="678"/>
-              <generic id="680"/>
-              <heading id="684" level="3">
-                Apply fixes in seconds. Spend less time debugging and more time building features with Copilot Autofix.
+            </div>
+          </definition>
+          <term id="872">
+            <button id="873" invalid="false" focusable="true">
+              <heading id="875" level="3">
+                Share ideas and ask questions
               </heading>
-              <generic id="691">
-                <link id="692" focusable="true" url="https://github.com/security/advanced-security">
-                  Explore GitHub Advanced Security
-                </link>
-              </generic>
-              <generic id="698">
-                <generic id="699">
-                  <image name="Copilot Autofix identifies vulnerable code and provides an explanation, together with a secure code suggestion to remediate the vulnerability." id="700" url="https://images.ctfassets.net/8aevphvgewt8/5mzhSO4avmXBwkFsMzgXkW/91991e6258f14f54d23840b6c13c3013/hero-64ecd484397f.webp"/>
-                </generic>
-              </generic>
-            </generic>
-          </generic>
-        </generic>
-        <generic id="701">
-          <generic id="702">
-            <paragraph id="707">
-              Security debt, solved. Leverage security campaigns and Copilot Autofix to reduce application vulnerabilities.
-            </paragraph>
-            <link id="714" focusable="true" url="https://github.com/security/advanced-security/code-security">
-              Learn about GitHub Code Security
-            </link>
-            <generic id="718">
-              <image name="A security campaign screen displays the campaign’s progress bar with 97% completed of 701 alerts. A total of 23 alerts are left with 13 in progress, and the campaign started 20 days ago. The status below shows that there are 7 days left in the campaign with a due date of November 15, 2024." id="719" url="https://images.ctfassets.net/8aevphvgewt8/6WnLu9nlnemjCltZkd8lCi/b18034be25552e118a36f6617e1f84df/pillar-1-dd667a921f55.webp"/>
-            </generic>
-            <paragraph id="723">
-              Dependencies you can depend on. Update vulnerable dependencies with supported fixes for breaking changes.
-            </paragraph>
-            <link id="729" focusable="true" url="https://github.com/security/advanced-security/software-supply-chain">
-              Learn about Dependabot
-            </link>
-            <generic id="733">
-              <image name="List of dependencies defined in a requirements .txt file." id="734" url="https://images.ctfassets.net/8aevphvgewt8/1o2Eid4RQteCr6iZ7wVauW/3c04a760442c81036d98e70c0c986a8b/pillar-2-ff69e872920a.webp"/>
-            </generic>
-            <paragraph id="738">
-              Your secrets, your business. Detect, prevent, and remediate leaked secrets across your organization.
-            </paragraph>
-            <link id="745" focusable="true" url="https://github.com/security/advanced-security/secret-protection">
-              Learn about GitHub Secret Protection
-            </link>
-            <generic id="749">
-              <image name="GitHub push protection confirms and displays an active secret, and blocks the push." id="750" url="https://images.ctfassets.net/8aevphvgewt8/3WaMDk5JuZzhaKfpRgibKz/c179c5841373ec1fd37c839bdb24a7b4/pillar-3-0a063e2daae2.webp"/>
-            </generic>
-            <paragraph id="755">
-              70% MTTR reductionwith Copilot Autofix
-              <superscript id="761">
-                <link name="Footnote" id="762" focusable="true" url="https://github.com/#footnote-1">
-                  1
-                </link>
-              </superscript>
-            </paragraph>
-            <paragraph id="768">
-              8.3M secret leaks stoppedin the past 12 months with push protection
-              <superscript id="774">
-                <link name="Footnote" id="775" focusable="true" url="https://github.com/#footnote-1">
-                  1
-                </link>
-              </superscript>
-            </paragraph>
-          </generic>
-        </generic>
-      </generic>
-      <generic id="778">
-        <generic id="779">
-          <generic id="780">
-            <generic id="781">
-              <generic id="782">
-                <sectionheader id="785">
-                  <heading id="786" level="2">
-                    <generic id="787">
-                      Work together, achieve more
-                    </generic>
-                  </heading>
-                  <paragraph id="790">
-                    From planning and discussion to code review, GitHub keeps your team’s conversation and context next to your code.
-                  </paragraph>
-                </sectionheader>
-              </generic>
-              <generic id="794">
-                <generic id="795"/>
-                <generic id="797"/>
-                <generic id="802">
-                  <generic id="803">
-                    <image name="A project management dashboard showing tasks for the ‘OctoArcade Invaders’ project, with tasks grouped under project phase categories like ‘Prototype,’ ‘Beta,’ and ‘Launch’ in a table layout. One of the columns displays sub-issue progress bars with percentages for each issue." id="804" url="https://images.ctfassets.net/8aevphvgewt8/3ip0mnsbUMonRTsbnnIkOh/a940b7a975a801c8829c113d9799873d/hero-961322485af6.webp"/>
-                  </generic>
-                </generic>
-              </generic>
-            </generic>
-          </generic>
-          <generic id="805">
-            <generic id="806">
-              <heading id="810" level="3">
-                Plan with clarity. Organize everything from high-level roadmaps to everyday tasks.
+            </button>
+          </term>
+          <term id="886">
+            <button id="887" invalid="false" focusable="true">
+              <heading id="889" level="3">
+                Review code changes together
               </heading>
-              <generic id="816">
-                <link id="817" focusable="true" url="https://github.com/features/issues">
-                  Explore GitHub Projects
-                </link>
-              </generic>
-              <generic id="822">
-                <figure id="824">
-                  <blockquote id="826">
-                    It helps us onboard new software engineers and get them productive right away. We have all our source code, issues, and pull requests in one place... GitHub is a complete platform that frees us from menial tasks and enables us to do our best work.
-                  </blockquote>
-                  <Figcaption id="835">
-                    FABIAN FAULHABERApplication manager at Mercedes-Benz
-                  </Figcaption>
-                </figure>
-              </generic>
-            </generic>
-          </generic>
-          <generic id="842">
-            <generic id="843">
-              <generic id="845"/>
-              <DescriptionList id="851">
-                <term id="853">
-                  <button id="854" invalid="false" focusable="true" controls="_R_5q5__0">
-                    <heading id="856" level="3">
-                      Keep track of your tasks
-                    </heading>
-                  </button>
-                </term>
-                <definition id="859">
-                  <generic id="860">
-                    <paragraph id="862">
-                      Create issues and manage projects with tools that adapt to your code.
-                    </paragraph>
-                    <link id="867" focusable="true" url="https://github.com/features/issues">
-                      Explore GitHub Issues
-                    </link>
-                  </generic>
-                </definition>
-                <term id="872">
-                  <button id="873" invalid="false" focusable="true">
-                    <heading id="875" level="3">
-                      Share ideas and ask questions
-                    </heading>
-                  </button>
-                </term>
-                <term id="886">
-                  <button id="887" invalid="false" focusable="true">
-                    <heading id="889" level="3">
-                      Review code changes together
-                    </heading>
-                  </button>
-                </term>
-                <term id="900">
-                  <button id="901" invalid="false" focusable="true">
-                    <heading id="903" level="3">
-                      Fund open source projects
-                    </heading>
-                  </button>
-                </term>
-              </DescriptionList>
-            </generic>
-          </generic>
-        </generic>
-      </generic>
-      <generic id="913">
-        <generic id="914">
-          <generic id="915">
-            <generic id="916">
-              <generic id="917">
-                <sectionheader id="920">
-                  <heading id="921" level="2">
-                    <generic id="922">
-                      From startups to enterprises, GitHub scales with teams of any size in any industry.
-                    </generic>
-                  </heading>
-                </sectionheader>
-              </generic>
-            </generic>
-          </generic>
+            </button>
+          </term>
+          <term id="900">
+            <button id="901" invalid="false" focusable="true">
+              <heading id="903" level="3">
+                Fund open source projects
+              </heading>
+            </button>
+          </term>
+        </DescriptionList>
+      </div>
+      <div id="913">
+        <div id="914">
+          <sectionheader id="920">
+            <heading id="921" level="2">
+              <div id="922">
+                From startups to enterprises, GitHub scales with teams of any size in any industry.
+              </div>
+            </heading>
+          </sectionheader>
           <tablist id="930" multiselectable="false" orientation="horizontal">
-            <generic id="931">
+            <div id="931">
               <tab id="932" invalid="false" focusable="true" selected="false">
                 By industry
               </tab>
@@ -525,69 +408,55 @@
               <tab id="940" invalid="false" focusable="true" selected="false">
                 By use case
               </tab>
-            </generic>
+            </div>
           </tablist>
           <separator id="944" settable="true" orientation="horizontal"/>
-          <generic id="945">
-            <generic id="946">
-              <generic id="948">
-                <link name="" id="949" focusable="true" url="https://github.com/customer-stories/figma">
-                  <generic id="952">
-                    Technology
-                    <paragraph id="958">
-                      Figma streamlines development and strengthens security
-                    </paragraph>
-                    Read customer story
-                  </generic>
-                </link>
-              </generic>
-              <generic id="967">
-                <link name="" id="968" focusable="true" url="https://github.com/customer-stories/mercedes-benz">
-                  <generic id="971">
-                    Automotive
-                    <paragraph id="977">
-                      Mercedes-Benz standardizes source code and automates onboarding
-                    </paragraph>
-                    Read customer story
-                  </generic>
-                </link>
-              </generic>
-              <generic id="986">
-                <link name="" id="987" focusable="true" url="https://github.com/customer-stories/mercado-libre">
-                  <generic id="990">
-                    Financial services
-                    <paragraph id="996">
-                      Mercado Libre cuts coding time by 50%
-                    </paragraph>
-                    Read customer story
-                  </generic>
-                </link>
-              </generic>
-            </generic>
-          </generic>
-        </generic>
-        <generic id="1004">
-          <generic id="1005">
-            <link id="1008" focusable="true" url="https://github.com/customer-stories">
-              Explore customer stories
+          <div id="946">
+            <link name="" id="949" focusable="true" url="https://github.com/customer-stories/figma">
+              <div id="952">
+                Technology
+                <paragraph id="958">
+                  Figma streamlines development and strengthens security
+                </paragraph>
+                Read customer story
+              </div>
             </link>
-            <separator id="1012" settable="true" orientation="horizontal"/>
-            <link id="1014" focusable="true" url="https://github.com/solutions">
-              View all solutions
+            <link name="" id="968" focusable="true" url="https://github.com/customer-stories/mercedes-benz">
+              <div id="971">
+                Automotive
+                <paragraph id="977">
+                  Mercedes-Benz standardizes source code and automates onboarding
+                </paragraph>
+                Read customer story
+              </div>
             </link>
-          </generic>
-        </generic>
-      </generic>
-      <generic id="1018">
-        <generic id="1020">
-          <generic id="1021">
-            <generic id="1022">
-              A subtle purple glow fades in as Mona the Octocat, Copilot, and Ducky dramatically fall into place next to one another while gazing optimistically into the distance.
-            </generic>
-            <Canvas id="1051"/>
-          </generic>
-        </generic>
-        <generic id="1052">
+            <link name="" id="987" focusable="true" url="https://github.com/customer-stories/mercado-libre">
+              <div id="990">
+                Financial services
+                <paragraph id="996">
+                  Mercado Libre cuts coding time by 50%
+                </paragraph>
+                Read customer story
+              </div>
+            </link>
+          </div>
+        </div>
+        <div id="1005">
+          <link id="1008" focusable="true" url="https://github.com/customer-stories">
+            Explore customer stories
+          </link>
+          <separator id="1012" settable="true" orientation="horizontal"/>
+          <link id="1014" focusable="true" url="https://github.com/solutions">
+            View all solutions
+          </link>
+        </div>
+      </div>
+      <div id="1018">
+        <div id="1021">
+          A subtle purple glow fades in as Mona the Octocat, Copilot, and Ducky dramatically fall into place next to one another while gazing optimistically into the distance.
+          <Canvas id="1051"/>
+        </div>
+        <div id="1052">
           <heading id="1055" level="2">
             Millions of developers and businesses call GitHub home
           </heading>
@@ -595,347 +464,339 @@
             Whether you’re scaling your development process or just learning how to code, GitHub is where you belong. Join the world’s most widely adopted developer platform to build the technologies that shape what’s next.
           </paragraph>
           <form name="" id="1065">
-            <generic id="1066">
-              <generic id="1067">
-                <generic id="1068">
-                  <LabelText id="1069">
-                    Enter your email
-                  </LabelText>
-                  <textbox name="Enter your email" id="1073" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby=""/>
-                </generic>
-                <button id="1076" invalid="false" focusable="true">
-                  Sign up for GitHub
-                </button>
-              </generic>
-            </generic>
+            <div id="1067">
+              <div id="1068">
+                <LabelText id="1069">
+                  Enter your email
+                </LabelText>
+                <textbox name="Enter your email" id="1073" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
+                  <div id="1075" editable="plaintext"/>
+                </textbox>
+              </div>
+              <button id="1076" invalid="false" focusable="true">
+                Sign up for GitHub
+              </button>
+            </div>
           </form>
           <link id="1080" focusable="true" url="https://github.com/github-copilot/pro">
             Try GitHub Copilot
           </link>
-        </generic>
-      </generic>
+        </div>
+      </div>
       <heading id="1086" level="2">
         Footnotes
       </heading>
       <list id="1089">
         <listitem id="1090" level="1">
-          <ListMarker name="1." id="1091"/>
+          <ListMarker name="1. " id="1091"/>
           GitHub internal customer data, 2025.
           <link name="Back to content GitHub internal customer data, 2025." id="1095" focusable="true" url="https://github.com/#footnote-1-ref-0"/>
         </listitem>
       </list>
-      <generic id="1096">
-        <link name="Back to top" id="1097" focusable="true" url="https://github.com/#hero"/>
-      </generic>
-    </generic>
+      <link name="Back to top" id="1097" focusable="true" url="https://github.com/#hero"/>
+    </div>
   </main>
-  <generic id="1099">
-    <contentinfo id="1101">
-      <heading id="1102" level="2">
-        Site-wide Links
+  <contentinfo id="1101">
+    <heading id="1102" level="2">
+      Site-wide Links
+    </heading>
+    <region name="" id="1109" labelledby="">
+      <link name="Go to GitHub homepage" id="1110" focusable="true" url="https://github.com/"/>
+      <heading id="1111" level="3">
+        THE DEVELOPER NEWSLETTER
       </heading>
-      <region name="" id="1109" labelledby="">
-        <link name="Go to GitHub homepage" id="1110" focusable="true" url="https://github.com/"/>
-        <heading id="1111" level="3">
-          THE DEVELOPER NEWSLETTER
-        </heading>
-        <paragraph id="1115">
-          Get tips, technical guides, and best practices. Twice a month. Right in your inbox.
-        </paragraph>
-        <link id="1119" focusable="true" url="https://github.com/newsletter">
-          Subscribe
-        </link>
-      </region>
-      <navigation name="" id="1125" labelledby="">
-        <heading id="1126" level="3">
-          PLATFORM
-        </heading>
-        <list id="1129">
-          <listitem id="1130" level="1">
-            <link id="1131" focusable="true" url="https://github.com/features">
-              Features
-            </link>
-          </listitem>
-          <listitem id="1136" level="1">
-            <link id="1137" focusable="true" url="https://github.com/enterprise">
-              Enterprise
-            </link>
-          </listitem>
-          <listitem id="1142" level="1">
-            <link id="1143" focusable="true" url="https://github.com/features/copilot">
-              Copilot
-            </link>
-          </listitem>
-          <listitem id="1148" level="1">
-            <link id="1149" focusable="true" url="https://github.com/features/ai">
-              AI
-            </link>
-          </listitem>
-          <listitem id="1154" level="1">
-            <link id="1155" focusable="true" url="https://github.com/security">
-              Security
-            </link>
-          </listitem>
-          <listitem id="1160" level="1">
-            <link id="1161" focusable="true" url="https://github.com/pricing">
-              Pricing
-            </link>
-          </listitem>
-          <listitem id="1166" level="1">
-            <link id="1167" focusable="true" url="https://github.com/team">
-              Team
-            </link>
-          </listitem>
-          <listitem id="1172" level="1">
-            <link id="1173" focusable="true" url="https://github.com/resources">
-              Resources
-            </link>
-          </listitem>
-          <listitem id="1178" level="1">
-            <link id="1179" focusable="true" url="https://github.com/github/roadmap">
-              Roadmap
-            </link>
-          </listitem>
-          <listitem id="1184" level="1">
-            <link id="1185" focusable="true" url="https://github.com/resources/articles/devops-tools-comparison">
-              Compare GitHub
-            </link>
-          </listitem>
-        </list>
-      </navigation>
-      <navigation name="" id="1190" labelledby="">
-        <heading id="1191" level="3">
-          ECOSYSTEM
-        </heading>
-        <list id="1194">
-          <listitem id="1195" level="1">
-            <link id="1196" focusable="true" url="https://docs.github.com/integrations/concepts/about-building-integrations">
-              Developer API
-            </link>
-          </listitem>
-          <listitem id="1201" level="1">
-            <link id="1202" focusable="true" url="https://github.com/partners">
-              Partners
-            </link>
-          </listitem>
-          <listitem id="1207" level="1">
-            <link id="1208" focusable="true" url="https://github.com/education">
-              Education
-            </link>
-          </listitem>
-          <listitem id="1213" level="1">
-            <link id="1214" focusable="true" url="https://cli.github.com/">
-              GitHub CLI
-            </link>
-          </listitem>
-          <listitem id="1219" level="1">
-            <link id="1220" focusable="true" url="https://github.com/apps/desktop">
-              GitHub Desktop
-            </link>
-          </listitem>
-          <listitem id="1225" level="1">
-            <link id="1226" focusable="true" url="https://github.com/mobile">
-              GitHub Mobile
-            </link>
-          </listitem>
-          <listitem id="1231" level="1">
-            <link id="1232" focusable="true" url="https://github.com/marketplace">
-              GitHub Marketplace
-            </link>
-          </listitem>
-          <listitem id="1237" level="1">
-            <link id="1238" focusable="true" url="https://github.com/mcp">
-              MCP Registry
-            </link>
-          </listitem>
-        </list>
-      </navigation>
-      <navigation name="" id="1243" labelledby="">
-        <heading id="1244" level="3">
-          SUPPORT
-        </heading>
-        <list id="1247">
-          <listitem id="1248" level="1">
-            <link id="1249" focusable="true" url="https://docs.github.com/">
-              Docs
-            </link>
-          </listitem>
-          <listitem id="1254" level="1">
-            <link id="1255" focusable="true" url="https://github.community/">
-              Community Forum
-            </link>
-          </listitem>
-          <listitem id="1260" level="1">
-            <link id="1261" focusable="true" url="https://github.com/services">
-              Professional Services
-            </link>
-          </listitem>
-          <listitem id="1266" level="1">
-            <link id="1267" focusable="true" url="https://github.com/enterprise/premium-support">
-              Premium Support
-            </link>
-          </listitem>
-          <listitem id="1272" level="1">
-            <link id="1273" focusable="true" url="https://skills.github.com/">
-              Skills
-            </link>
-          </listitem>
-          <listitem id="1278" level="1">
-            <link id="1279" focusable="true" url="https://www.githubstatus.com/">
-              Status
-            </link>
-          </listitem>
-          <listitem id="1284" level="1">
-            <link id="1285" focusable="true" url="https://support.github.com/?tags=dotcom-footer">
-              Contact GitHub
-            </link>
-          </listitem>
-          <listitem id="1290" level="1">
-            <link id="1291" focusable="true" url="https://github.com/git-guides">
-              What is Git?
-            </link>
-          </listitem>
-          <listitem id="1296" level="1">
-            <link id="1297" focusable="true" url="https://github.com/sitemap">
-              Sitemap
-            </link>
-          </listitem>
-        </list>
-      </navigation>
-      <navigation name="" id="1302" labelledby="">
-        <heading id="1303" level="3">
-          COMPANY
-        </heading>
-        <list id="1306">
-          <listitem id="1307" level="1">
-            <link id="1308" focusable="true" url="https://github.com/about">
-              About
-            </link>
-          </listitem>
-          <listitem id="1313" level="1">
-            <link id="1314" focusable="true" url="https://github.com/why-github">
-              Why GitHub
-            </link>
-          </listitem>
-          <listitem id="1319" level="1">
-            <link id="1320" focusable="true" url="https://github.com/customer-stories?type=enterprise">
-              Customer Stories
-            </link>
-          </listitem>
-          <listitem id="1325" level="1">
-            <link id="1326" focusable="true" url="https://github.blog/">
-              Blog
-            </link>
-          </listitem>
-          <listitem id="1331" level="1">
-            <link id="1332" focusable="true" url="https://github.com/readme">
-              The ReadME Project
-            </link>
-          </listitem>
-          <listitem id="1337" level="1">
-            <link id="1338" focusable="true" url="https://github.careers/">
-              Careers
-            </link>
-          </listitem>
-          <listitem id="1343" level="1">
-            <link id="1344" focusable="true" url="https://github.com/newsroom">
-              Newsroom
-            </link>
-          </listitem>
-          <listitem id="1349" level="1">
-            <link id="1350" focusable="true" url="https://github.com/about/diversity">
-              Inclusion
-            </link>
-          </listitem>
-          <listitem id="1355" level="1">
-            <link id="1356" focusable="true" url="https://socialimpact.github.com/">
-              Social Impact
-            </link>
-          </listitem>
-          <listitem id="1361" level="1">
-            <link id="1362" focusable="true" url="https://thegithubshop.com/">
-              Shop
-            </link>
-          </listitem>
-        </list>
-      </navigation>
-      <navigation name="Legal and Resource Links" id="1369">
-        <list id="1370">
-          <listitem id="1371" level="1">
-            <time id="1372">
-              © 2026 GITHUB, INC.
-            </time>
-          </listitem>
-          <listitem id="1375" level="1">
-            <link id="1376" focusable="true" url="https://docs.github.com/site-policy/github-terms/github-terms-of-service">
-              TERMS
-            </link>
-          </listitem>
-          <listitem id="1379" level="1">
-            <link id="1380" focusable="true" url="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">
-              PRIVACY
-            </link>
-          </listitem>
-          <listitem id="1383" level="1">
-            <generic id="1384">
-              <button id="1385" invalid="false" focusable="true">
-                MANAGE COOKIES
-              </button>
-            </generic>
-          </listitem>
-          <listitem id="1388" level="1">
-            <generic id="1389">
-              <button id="1390" invalid="false" focusable="true">
-                DO NOT SHARE MY PERSONAL INFORMATION
-              </button>
-            </generic>
-          </listitem>
-        </list>
-      </navigation>
-      <navigation name="GitHub's Social Media Links" id="1394">
-        <list id="1395">
-          <listitem id="1396" level="1">
-            <link id="1397" focusable="true" url="https://www.linkedin.com/company/github">
-              GitHub on LinkedIn
-            </link>
-          </listitem>
-          <listitem id="1403" level="1">
-            <link id="1404" focusable="true" url="https://www.instagram.com/github">
-              GitHub on Instagram
-            </link>
-          </listitem>
-          <listitem id="1410" level="1">
-            <link id="1411" focusable="true" url="https://www.youtube.com/github">
-              GitHub on YouTube
-            </link>
-          </listitem>
-          <listitem id="1417" level="1">
-            <link id="1418" focusable="true" url="https://x.com/github">
-              GitHub on X
-            </link>
-          </listitem>
-          <listitem id="1424" level="1">
-            <link id="1425" focusable="true" url="https://www.tiktok.com/@github">
-              GitHub on TikTok
-            </link>
-          </listitem>
-          <listitem id="1431" level="1">
-            <link id="1432" focusable="true" url="https://www.twitch.tv/github">
-              GitHub on Twitch
-            </link>
-          </listitem>
-          <listitem id="1438" level="1">
-            <link id="1439" focusable="true" url="https://github.com/github">
-              GitHub’s organization on GitHub
-            </link>
-          </listitem>
-        </list>
-      </navigation>
-      <generic id="1446">
-        <button name="- Select language" id="1447" invalid="false" focusable="true" hasPopup="menu">
-          English
-        </button>
-      </generic>
-    </contentinfo>
-  </generic>
+      <paragraph id="1115">
+        Get tips, technical guides, and best practices. Twice a month. Right in your inbox.
+      </paragraph>
+      <link id="1119" focusable="true" url="https://github.com/newsletter">
+        Subscribe
+      </link>
+    </region>
+    <navigation name="" id="1125" labelledby="">
+      <heading id="1126" level="3">
+        PLATFORM
+      </heading>
+      <list id="1129">
+        <listitem id="1130" level="1">
+          <link id="1131" focusable="true" url="https://github.com/features">
+            Features
+          </link>
+        </listitem>
+        <listitem id="1136" level="1">
+          <link id="1137" focusable="true" url="https://github.com/enterprise">
+            Enterprise
+          </link>
+        </listitem>
+        <listitem id="1142" level="1">
+          <link id="1143" focusable="true" url="https://github.com/features/copilot">
+            Copilot
+          </link>
+        </listitem>
+        <listitem id="1148" level="1">
+          <link id="1149" focusable="true" url="https://github.com/features/ai">
+            AI
+          </link>
+        </listitem>
+        <listitem id="1154" level="1">
+          <link id="1155" focusable="true" url="https://github.com/security">
+            Security
+          </link>
+        </listitem>
+        <listitem id="1160" level="1">
+          <link id="1161" focusable="true" url="https://github.com/pricing">
+            Pricing
+          </link>
+        </listitem>
+        <listitem id="1166" level="1">
+          <link id="1167" focusable="true" url="https://github.com/team">
+            Team
+          </link>
+        </listitem>
+        <listitem id="1172" level="1">
+          <link id="1173" focusable="true" url="https://github.com/resources">
+            Resources
+          </link>
+        </listitem>
+        <listitem id="1178" level="1">
+          <link id="1179" focusable="true" url="https://github.com/github/roadmap">
+            Roadmap
+          </link>
+        </listitem>
+        <listitem id="1184" level="1">
+          <link id="1185" focusable="true" url="https://github.com/resources/articles/devops-tools-comparison">
+            Compare GitHub
+          </link>
+        </listitem>
+      </list>
+    </navigation>
+    <navigation name="" id="1190" labelledby="">
+      <heading id="1191" level="3">
+        ECOSYSTEM
+      </heading>
+      <list id="1194">
+        <listitem id="1195" level="1">
+          <link id="1196" focusable="true" url="https://docs.github.com/integrations/concepts/about-building-integrations">
+            Developer API
+          </link>
+        </listitem>
+        <listitem id="1201" level="1">
+          <link id="1202" focusable="true" url="https://github.com/partners">
+            Partners
+          </link>
+        </listitem>
+        <listitem id="1207" level="1">
+          <link id="1208" focusable="true" url="https://github.com/education">
+            Education
+          </link>
+        </listitem>
+        <listitem id="1213" level="1">
+          <link id="1214" focusable="true" url="https://cli.github.com/">
+            GitHub CLI
+          </link>
+        </listitem>
+        <listitem id="1219" level="1">
+          <link id="1220" focusable="true" url="https://github.com/apps/desktop">
+            GitHub Desktop
+          </link>
+        </listitem>
+        <listitem id="1225" level="1">
+          <link id="1226" focusable="true" url="https://github.com/mobile">
+            GitHub Mobile
+          </link>
+        </listitem>
+        <listitem id="1231" level="1">
+          <link id="1232" focusable="true" url="https://github.com/marketplace">
+            GitHub Marketplace
+          </link>
+        </listitem>
+        <listitem id="1237" level="1">
+          <link id="1238" focusable="true" url="https://github.com/mcp">
+            MCP Registry
+          </link>
+        </listitem>
+      </list>
+    </navigation>
+    <navigation name="" id="1243" labelledby="">
+      <heading id="1244" level="3">
+        SUPPORT
+      </heading>
+      <list id="1247">
+        <listitem id="1248" level="1">
+          <link id="1249" focusable="true" url="https://docs.github.com/">
+            Docs
+          </link>
+        </listitem>
+        <listitem id="1254" level="1">
+          <link id="1255" focusable="true" url="https://github.community/">
+            Community Forum
+          </link>
+        </listitem>
+        <listitem id="1260" level="1">
+          <link id="1261" focusable="true" url="https://github.com/services">
+            Professional Services
+          </link>
+        </listitem>
+        <listitem id="1266" level="1">
+          <link id="1267" focusable="true" url="https://github.com/enterprise/premium-support">
+            Premium Support
+          </link>
+        </listitem>
+        <listitem id="1272" level="1">
+          <link id="1273" focusable="true" url="https://skills.github.com/">
+            Skills
+          </link>
+        </listitem>
+        <listitem id="1278" level="1">
+          <link id="1279" focusable="true" url="https://www.githubstatus.com/">
+            Status
+          </link>
+        </listitem>
+        <listitem id="1284" level="1">
+          <link id="1285" focusable="true" url="https://support.github.com/?tags=dotcom-footer">
+            Contact GitHub
+          </link>
+        </listitem>
+        <listitem id="1290" level="1">
+          <link id="1291" focusable="true" url="https://github.com/git-guides">
+            What is Git?
+          </link>
+        </listitem>
+        <listitem id="1296" level="1">
+          <link id="1297" focusable="true" url="https://github.com/sitemap">
+            Sitemap
+          </link>
+        </listitem>
+      </list>
+    </navigation>
+    <navigation name="" id="1302" labelledby="">
+      <heading id="1303" level="3">
+        COMPANY
+      </heading>
+      <list id="1306">
+        <listitem id="1307" level="1">
+          <link id="1308" focusable="true" url="https://github.com/about">
+            About
+          </link>
+        </listitem>
+        <listitem id="1313" level="1">
+          <link id="1314" focusable="true" url="https://github.com/why-github">
+            Why GitHub
+          </link>
+        </listitem>
+        <listitem id="1319" level="1">
+          <link id="1320" focusable="true" url="https://github.com/customer-stories?type=enterprise">
+            Customer Stories
+          </link>
+        </listitem>
+        <listitem id="1325" level="1">
+          <link id="1326" focusable="true" url="https://github.blog/">
+            Blog
+          </link>
+        </listitem>
+        <listitem id="1331" level="1">
+          <link id="1332" focusable="true" url="https://github.com/readme">
+            The ReadME Project
+          </link>
+        </listitem>
+        <listitem id="1337" level="1">
+          <link id="1338" focusable="true" url="https://github.careers/">
+            Careers
+          </link>
+        </listitem>
+        <listitem id="1343" level="1">
+          <link id="1344" focusable="true" url="https://github.com/newsroom">
+            Newsroom
+          </link>
+        </listitem>
+        <listitem id="1349" level="1">
+          <link id="1350" focusable="true" url="https://github.com/about/diversity">
+            Inclusion
+          </link>
+        </listitem>
+        <listitem id="1355" level="1">
+          <link id="1356" focusable="true" url="https://socialimpact.github.com/">
+            Social Impact
+          </link>
+        </listitem>
+        <listitem id="1361" level="1">
+          <link id="1362" focusable="true" url="https://thegithubshop.com/">
+            Shop
+          </link>
+        </listitem>
+      </list>
+    </navigation>
+    <navigation name="Legal and Resource Links" id="1369">
+      <list id="1370">
+        <listitem id="1371" level="1">
+          <time id="1372">
+            © 2026 GITHUB, INC.
+          </time>
+        </listitem>
+        <listitem id="1375" level="1">
+          <link id="1376" focusable="true" url="https://docs.github.com/site-policy/github-terms/github-terms-of-service">
+            TERMS
+          </link>
+        </listitem>
+        <listitem id="1379" level="1">
+          <link id="1380" focusable="true" url="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">
+            PRIVACY
+          </link>
+        </listitem>
+        <listitem id="1383" level="1">
+          <button id="1385" invalid="false" focusable="true">
+            MANAGE COOKIES
+          </button>
+        </listitem>
+        <listitem id="1388" level="1">
+          <button id="1390" invalid="false" focusable="true">
+            DO NOT SHARE MY PERSONAL INFORMATION
+          </button>
+        </listitem>
+      </list>
+    </navigation>
+    <navigation name="GitHub's Social Media Links" id="1394">
+      <list id="1395">
+        <listitem id="1396" level="1">
+          <link id="1397" focusable="true" url="https://www.linkedin.com/company/github">
+            GitHub on LinkedIn
+          </link>
+        </listitem>
+        <listitem id="1403" level="1">
+          <link id="1404" focusable="true" url="https://www.instagram.com/github">
+            GitHub on Instagram
+          </link>
+        </listitem>
+        <listitem id="1410" level="1">
+          <link id="1411" focusable="true" url="https://www.youtube.com/github">
+            GitHub on YouTube
+          </link>
+        </listitem>
+        <listitem id="1417" level="1">
+          <link id="1418" focusable="true" url="https://x.com/github">
+            GitHub on X
+          </link>
+        </listitem>
+        <listitem id="1424" level="1">
+          <link id="1425" focusable="true" url="https://www.tiktok.com/@github">
+            GitHub on TikTok
+          </link>
+        </listitem>
+        <listitem id="1431" level="1">
+          <link id="1432" focusable="true" url="https://www.twitch.tv/github">
+            GitHub on Twitch
+          </link>
+        </listitem>
+        <listitem id="1438" level="1">
+          <link id="1439" focusable="true" url="https://github.com/github">
+            GitHub’s organization on GitHub
+          </link>
+        </listitem>
+      </list>
+    </navigation>
+    <button name="- Select language" id="1447" invalid="false" focusable="true" hasPopup="menu">
+      English
+    </button>
+  </contentinfo>
+  <div id="1456" live="polite" atomic="true" relevant="additions text"/>
+  <div id="1457" live="assertive" atomic="true" relevant="additions text"/>
 </RootWebArea>

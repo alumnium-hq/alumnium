@@ -1,141 +1,71 @@
 <RootWebArea name="YouTube" id="1" focusable="true" focused="true" url="https://www.youtube.com/">
-  <generic id="3">
-    <generic id="4">
-      <generic id="6">
-        <generic id="7">
-          <banner id="8">
-            <generic id="12">
-              <generic id="13">
-                <generic id="14">
-                  <button name="Guide" id="15" invalid="false" focusable="true">
-                    <generic id="16"/>
-                  </button>
-                  <generic id="19"/>
-                </generic>
-                <generic id="22">
-                  <link name="YouTube Home" id="23" focusable="true" url="https://www.youtube.com/">
-                    <generic id="24">
-                      <generic id="25"/>
-                    </generic>
-                  </link>
-                  <generic id="28">
-                    SG
-                  </generic>
-                </generic>
-                <generic id="31">
-                  <generic id="32">
-                    <button id="34" invalid="false" focusable="true">
-                      <generic id="35">
-                        Skip navigation
-                      </generic>
-                    </button>
-                  </generic>
-                </generic>
-              </generic>
-              <generic id="39">
-                <search id="40">
-                  <generic id="42">
-                    <generic id="43">
-                      <generic id="44">
-                        <combobox name="Search" id="45" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false"/>
-                      </generic>
-                    </generic>
-                    <button name="Search" id="48" invalid="false" focusable="true"/>
-                  </generic>
-                </search>
-                <generic id="51">
-                  <generic id="52">
-                    <button name="Search with your voice" id="54" invalid="false" focusable="true"/>
-                    <tooltip name="tooltip" id="55" focusable="true"/>
-                  </generic>
-                </generic>
-              </generic>
-              <generic id="56">
-                <generic id="57">
-                  <generic id="58">
-                    <generic id="59">
-                      <generic id="60" focusable="true">
-                        <generic id="61">
-                          <button name="Settings" id="62" invalid="false" focusable="true">
-                            <generic id="63"/>
-                          </button>
-                          <generic id="66"/>
-                        </generic>
-                      </generic>
-                    </generic>
-                  </generic>
-                  <generic id="69">
-                    <link id="71" focusable="true" url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=en&amp;ec=65620">
-                      <generic id="72">
-                        Sign in
-                      </generic>
-                    </link>
-                  </generic>
-                </generic>
-              </generic>
-            </generic>
-          </banner>
-        </generic>
-        <navigation id="78">
-          <generic id="79">
-            <generic id="80">
-              <link id="81" focusable="true" url="https://www.youtube.com/">
-                <generic id="82"/>
-                Home
-                <generic id="88"/>
-              </link>
-            </generic>
-            <generic id="91">
-              <link id="92" focusable="true" url="https://www.youtube.com/shorts/">
-                <generic id="93"/>
-                Shorts
-                <generic id="99"/>
-              </link>
-            </generic>
-            <generic id="102">
-              <link id="103" focusable="true" url="https://www.youtube.com/feed/subscriptions">
-                <generic id="104"/>
-                Subscriptions
-                <generic id="110"/>
-              </link>
-            </generic>
-            <generic id="113">
-              <link id="114" focusable="true" url="https://www.youtube.com/feed/you">
-                <generic id="115"/>
-                You
-                <generic id="121"/>
-              </link>
-            </generic>
-          </generic>
-        </navigation>
-        <generic id="124">
-          <main id="125">
-            <generic id="132">
-              <generic id="136">
-                <generic id="138">
-                  <generic id="140">
-                    <generic id="142">
-                      <generic id="144">
-                        <heading id="145" level="2">
-                          <generic id="146">
-                            Try searching to get started
-                          </generic>
-                        </heading>
-                        <generic id="149">
-                          <generic id="150">
-                            Start watching videos to help us build a feed of videos you'll love.
-                          </generic>
-                        </generic>
-                      </generic>
-                    </generic>
-                  </generic>
-                </generic>
-              </generic>
-            </generic>
-          </main>
-        </generic>
-      </generic>
-      <generic id="220"/>
-    </generic>
-  </generic>
+  <div id="4">
+    <div id="6">
+      <banner id="8">
+        <div id="12">
+          <div id="13">
+            <button name="Guide" id="15" invalid="false" focusable="true"/>
+            <div id="22">
+              <link name="YouTube Home" id="23" focusable="true" url="https://www.youtube.com/"/>
+              SG
+            </div>
+            <button id="34" invalid="false" focusable="true">
+              Skip navigation
+            </button>
+          </div>
+          <div id="39">
+            <search id="40">
+              <div id="42">
+                <combobox name="Search" id="45" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false">
+                  <div id="47" editable="plaintext"/>
+                </combobox>
+                <button name="Search" id="48" invalid="false" focusable="true"/>
+              </div>
+            </search>
+            <div id="52">
+              <button name="Search with your voice" id="54" invalid="false" focusable="true"/>
+              <tooltip name="tooltip" id="55" focusable="true"/>
+            </div>
+          </div>
+          <div id="57">
+            <div id="60" focusable="true">
+              <button name="Settings" id="62" invalid="false" focusable="true"/>
+            </div>
+            <link id="71" focusable="true" url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=en&amp;ec=65620">
+              Sign in
+            </link>
+          </div>
+        </div>
+      </banner>
+      <navigation id="78">
+        <div id="79">
+          <link id="81" focusable="true" url="https://www.youtube.com/">
+            Home
+          </link>
+          <link id="92" focusable="true" url="https://www.youtube.com/shorts/">
+            Shorts
+          </link>
+          <link id="103" focusable="true" url="https://www.youtube.com/feed/subscriptions">
+            Subscriptions
+          </link>
+          <link id="114" focusable="true" url="https://www.youtube.com/feed/you">
+            You
+          </link>
+        </div>
+      </navigation>
+      <main id="125">
+        <div id="144">
+          <heading id="145" level="2">
+            <div id="146">
+              Try searching to get started
+            </div>
+          </heading>
+          <div id="150">
+            Start watching videos to help us build a feed of videos you'll love.
+          </div>
+        </div>
+      </main>
+    </div>
+    <div id="222" live="polite" atomic="true" relevant="additions text"/>
+  </div>
 </RootWebArea>

@@ -5,20 +5,20 @@
   <paragraph id="7">
     This page contains Shadow DOM elements for testing Alumni support.
   </paragraph>
-  <generic id="10">
+  <div id="10">
     <paragraph id="11">
       This is inside Shadow DOM!
     </paragraph>
     <button id="14" invalid="false" focusable="true">
       First Shadow Button
     </button>
-  </generic>
-  <generic id="17">
+  </div>
+  <div id="17">
     <paragraph id="18">
       This is another text inside Shadow DOM!
     </paragraph>
     <button id="21" invalid="false" focusable="true">
       Second Shadow Button
     </button>
-  </generic>
+  </div>
 </RootWebArea>

@@ -20,27 +20,31 @@
         <heading id="28" level="5">
           Practice site
         </heading>
-        <generic id="31">
-          <link id="32" focusable="true" url="https://github.com/bonigarcia/selenium-webdriver-java">
-            <image id="33" url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
-          </link>
-        </generic>
+        <link id="32" focusable="true" url="https://github.com/bonigarcia/selenium-webdriver-java">
+          <image id="33" url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
+        </link>
         <separator id="36" settable="true" orientation="horizontal"/>
         <heading id="39" level="1">
           Web form
         </heading>
-        <generic id="42">
+        <div id="42">
           <LabelText id="45">
             Text input
-            <textbox name="Text input" id="48" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby=""/>
+            <textbox name="Text input" id="48" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
+              <div id="49" editable="plaintext"/>
+            </textbox>
           </LabelText>
           <LabelText id="50">
             Password
-            <textbox name="Password" id="53" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby=""/>
+            <textbox name="Password" id="53" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
+              <div id="54" editable="plaintext"/>
+            </textbox>
           </LabelText>
           <LabelText id="55">
             Textarea
-            <textbox name="Textarea" id="58" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false" labelledby=""/>
+            <textbox name="Textarea" id="58" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false" labelledby="">
+              <div id="59" editable="plaintext"/>
+            </textbox>
           </LabelText>
           <LabelText id="60">
             Disabled input
@@ -49,16 +53,12 @@
           <LabelText id="66">
             Readonly input
             <textbox id="69" invalid="false" focusable="true" editable="plaintext" multiline="false" readonly="true" required="false" labelledby="">
-              <generic id="70">
-                Readonly input
-              </generic>
+              Readonly input
             </textbox>
           </LabelText>
-          <generic id="73">
-            <link id="74" focusable="true" url="https://bonigarcia.dev/selenium-webdriver-java/index.html">
-              Return to index
-            </link>
-          </generic>
+          <link id="74" focusable="true" url="https://bonigarcia.dev/selenium-webdriver-java/index.html">
+            Return to index
+          </link>
           <LabelText id="78">
             Dropdown (select)
             <combobox name="Dropdown (select)" id="81" invalid="false" focusable="true" hasPopup="menu" labelledby="">
@@ -72,13 +72,15 @@
           </LabelText>
           <LabelText id="88">
             Dropdown (datalist)
-            <combobox name="Dropdown (datalist)" id="91" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false" labelledby=""/>
+            <combobox name="Dropdown (datalist)" id="91" invalid="false" focusable="true" editable="plaintext" settable="true" autocomplete="list" hasPopup="listbox" required="false" labelledby="">
+              <div id="95" editable="plaintext"/>
+            </combobox>
           </LabelText>
           <LabelText id="97">
             File input
             <button name="File input" id="100" invalid="false" focusable="true" labelledby=""/>
           </LabelText>
-          <generic id="101">
+          <div id="101">
             <LabelText id="102">
               <checkbox name="Checked checkbox" id="103" invalid="false" focusable="true" checked="true" labelledby=""/>
               Checked checkbox
@@ -87,39 +89,37 @@
               <checkbox name="Default checkbox" id="107" invalid="false" focusable="true" checked="false" labelledby=""/>
               Default checkbox
             </LabelText>
-          </generic>
-          <generic id="110">
-            <radio name="Checked radio" id="112" invalid="false" focusable="true" checked="true" labelledby=""/>
-          </generic>
-          <generic id="114">
-            <radio name="Default radio" id="116" invalid="false" focusable="true" checked="false" labelledby=""/>
-          </generic>
+          </div>
+          <radio name="Checked radio" id="112" invalid="false" focusable="true" checked="true" labelledby=""/>
+          <radio name="Default radio" id="116" invalid="false" focusable="true" checked="false" labelledby=""/>
           <button id="118" invalid="false" focusable="true">
             Submit
           </button>
-          <generic id="121">
+          <div id="121">
             <LabelText id="122">
               Color picker
               <ColorWell name="Color picker" id="125" invalid="false" focusable="true" settable="true" labelledby=""/>
             </LabelText>
             <LabelText id="128">
               Date picker
-              <textbox name="Date picker" id="131" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby=""/>
+              <textbox name="Date picker" id="131" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
+                <div id="132" editable="plaintext"/>
+              </textbox>
             </LabelText>
             <LabelText id="133">
               Example range
               <slider name="Example range " id="136" invalid="false" focusable="true" settable="true" orientation="horizontal" valuemin="0" valuemax="10" valuetext="" labelledby=""/>
             </LabelText>
-          </generic>
-        </generic>
+          </div>
+        </div>
       </main>
       <contentinfo id="137">
-        <generic id="138">
+        <div id="138">
           Copyright © 2021-2026
           <link id="141" focusable="true" url="https://bonigarcia.dev/">
             Boni García
           </link>
-        </generic>
+        </div>
       </contentinfo>
     </RootWebArea>
   </Iframe>
