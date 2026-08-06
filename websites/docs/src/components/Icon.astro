@@ -1,10 +1,7 @@
 ---
 import type { ImageMetadata } from "astro";
 import type { IconProps, IconPropsDirect } from "./Icon.types";
-// NOTE: It's `Comp` as Astro formatter trips on `| A | B` syntax so we need to
-// make it shorter.
-// TODO: Check after upgrading to Rust-based compiler.
-import type { AstroComponentFactory as Comp } from "astro/runtime/server/index.js";
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 
 type Props = IconProps;
 
@@ -17,7 +14,7 @@ const icons100 = import.meta.glob<{ default: ImageMetadata }>(
 );
 
 const icons200 = import.meta.glob<{ default: ImageMetadata }>(
-  "../../node_modules/@material-symbols/svg-200/rounded/{add_circle,more_horiz,http}.svg",
+  "../../node_modules/@material-symbols/svg-200/rounded/{add_circle,more_horiz,http,api}.svg",
 );
 
 const icons300 = import.meta.glob<{ default: ImageMetadata }>(
@@ -56,7 +53,7 @@ if ("prop" in Astro.props) {
   directProps = Astro.props;
 }
 
-let IconFactory: Comp;
+let IconFactory: AstroComponentFactory;
 if ("id" in directProps) {
   const { id, style } = directProps;
   const iconFilePath =
@@ -89,7 +86,9 @@ if ("id" in directProps) {
   if (!iconPath)
     throw new Error(`Icon ${id} has not been found at ${iconFilePath}`);
 
-  IconFactory = await iconPath().then((m) => m.default as unknown as Comp);
+  IconFactory = await iconPath().then(
+    (m) => m.default as unknown as AstroComponentFactory,
+  );
 } else {
   IconFactory = directProps.Factory;
 }

@@ -5,9 +5,9 @@ import VideoPlayer from "#/components/blocks/VideoPlayer.astro";
 import HeroBanner from "./HeroBanner.astro";
 import DecorationAtom from "../../blocks/DecorationAtom.astro";
 import Heading from "../../blocks/SectionHeading.astro";
-import HeroYourStack from "./HeroYourStack.astro";
 import HeroDemo from "./HeroDemo.astro";
 import HeroLinks from "./HeroLinks.astro";
+import SectionExtra from "../../blocks/SectionExtra.astro";
 
 const t = tt.landings.sections.hero.en;
 ---
@@ -21,7 +21,7 @@ const t = tt.landings.sections.hero.en;
 
       <Heading h={1} t={t} align />
 
-      <HeroYourStack />
+      <SectionExtra {...t.extra} />
     </div>
 
     <div class="flex flex-col gap-4 sm:gap-6 items-center max-w-full">

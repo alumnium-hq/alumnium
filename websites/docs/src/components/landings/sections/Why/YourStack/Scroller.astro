@@ -1,122 +1,90 @@
 ---
-import type { ImageMetadata } from "astro";
-import { Image } from "astro:assets";
-
 const agentLogos = Object.entries(
-  import.meta.glob<{ default: ImageMetadata }>(
+  import.meta.glob<LogoModule>(
     "../../../../../assets/logos/coding-agent-*-mono.svg",
+    { query: "?url", eager: true },
   ),
 );
-fillInLogos("coding agent", agentLogos);
+validateLogos("coding agent", agentLogos);
 
 const aiLogos = Object.entries(
-  import.meta.glob<{ default: ImageMetadata }>(
-    "../../../../../assets/logos/ai-*-mono.svg",
-  ),
+  import.meta.glob<LogoModule>("../../../../../assets/logos/ai-*-mono.svg", {
+    query: "?url",
+    eager: true,
+  }),
 );
-fillInLogos("AI", aiLogos);
+validateLogos("AI", aiLogos);
 
 const driverLogos = Object.entries(
-  import.meta.glob<{ default: ImageMetadata }>(
+  import.meta.glob<LogoModule>(
     "../../../../../assets/logos/driver-*-mono.svg",
+    { query: "?url", eager: true },
   ),
 );
-fillInLogos("driver", driverLogos);
+validateLogos("driver", driverLogos);
 
 const langLogos = Object.entries(
-  import.meta.glob<{ default: ImageMetadata }>(
-    "../../../../../assets/logos/lang-*-mono.svg",
-  ),
+  import.meta.glob<LogoModule>("../../../../../assets/logos/lang-*-mono.svg", {
+    query: "?url",
+    eager: true,
+  }),
 );
-fillInLogos("language", langLogos);
+validateLogos("language", langLogos);
 
-const alts: Record<string, string> = {
-  openai: "OpenAI",
-  anthropic: "Anthropic",
-  gemini: "Google Gemini",
-  grok: "xAI Grok",
-  meta: "Meta Llama",
-  deepseek: "DeepSeek",
-  mistral: "Mistral",
-  qwen: "Qwen",
-  ollama: "Ollama",
-  selenium: "Selenium",
-  playwright: "Playwright",
-  appium: "Appium",
-  webdriverio: "WebdriverIO",
-  python: "Python",
-  javascript: "JavaScript",
-  typescript: "TypeScript",
-};
-
-function pathToAlt(path: string) {
-  const match = path.match(/\/logos\/(driver|ai|lang)-([a-z0-9-]+)-mono\.svg$/);
-  if (match) {
-    const [, , name] = match;
-    const altBase =
-      alts[name] ||
-      name.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    return altBase;
-  }
-  return "Logo";
-}
-
-function trackStyle<Type>(logos: Type[]): Record<string, string> {
-  const count = logos.length;
+function trackStyle(count: number): Record<string, string> {
   return {
     "--scroller-count": `${count}`,
   };
 }
 
-function fillInLogos<Type>(kind: string, logos: Type[]) {
-  if (logos.length === 0) {
-    throw new Error(`No ${kind} logos found`);
-  }
-  logos.push(...logos);
+function validateLogos(kind: string, logos: LogoEntry[]) {
+  if (logos.length === 0) throw new Error(`No ${kind} logos found`);
 }
+
+function repeatLogos(logos: LogoEntry[], minimumCount: number): LogoEntry[] {
+  return Array.from(
+    { length: Math.ceil(minimumCount / logos.length) },
+    () => logos,
+  ).flat();
+}
+
+interface LogoModule {
+  default: string;
+}
+
+type LogoEntry = [path: string, module: LogoModule];
 ---
 
-<div class="group">
-  <div class="marquee" data-direction="down">
-    <div class="track" style={trackStyle(aiLogos)}>
-      {
-        agentLogos.map(([logoPath, logo]) => (
-          <Image src={logo()} alt={pathToAlt(logoPath)} />
-        ))
-      }
-    </div>
-  </div>
+{
+  () => {
+    function renderTrack(dir: "down" | "up", logos: LogoEntry[]) {
+      const cycle = repeatLogos(logos, 6);
+      const trackLogos = [...cycle, ...cycle];
 
-  <div class="marquee" data-direction="up">
-    <div class="track" style={trackStyle(aiLogos)}>
-      {
-        aiLogos.map(([logoPath, logo]) => (
-          <Image src={logo()} alt={pathToAlt(logoPath)} />
-        ))
-      }
-    </div>
-  </div>
+      return (
+        <div class="marquee" data-direction={dir}>
+          <div class="track" style={trackStyle(cycle.length)}>
+            {trackLogos.map(([_, logo]) => (
+              <img src={logo.default} aria-hidden />
+            ))}
+          </div>
+        </div>
+      );
+    }
 
-  <div class="marquee" data-direction="down">
-    <div class="track" style={trackStyle(driverLogos)}>
-      {
-        driverLogos.map(([logoPath, logo]) => (
-          <Image src={logo()} alt={pathToAlt(logoPath)} />
-        ))
-      }
-    </div>
-  </div>
+    return (
+      <div class="group">
+        {renderTrack("down", agentLogos)}
 
-  <div class="marquee" data-direction="up">
-    <div class="track" style={trackStyle(langLogos)}>
-      {
-        langLogos.map(([logoPath, logo]) => (
-          <Image src={logo()} alt={pathToAlt(logoPath)} />
-        ))
-      }
-    </div>
-  </div>
-</div>
+        {renderTrack("up", aiLogos)}
+
+        {renderTrack("down", driverLogos)}
+
+        {renderTrack("up", langLogos)}
+      </div>
+    );
+  }
+}
 
 <style>
   @reference "#/styles/global.css";
@@ -170,14 +138,14 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
   .track {
     --scroller-distance: calc(
       var(--scroller-count) *
-        (var(--scroller-logo-size) + var(--scroller-gap-y)) / -2
+        (var(--scroller-logo-size) + var(--scroller-gap-y)) * -1
     );
 
     display: flex;
     flex-direction: column;
     align-items: center;
     animation-name: logo-scroll-up;
-    animation-duration: calc(var(--scroller-count) * 3s);
+    animation-duration: calc(var(--scroller-count) * 2s);
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     will-change: transform;
@@ -196,16 +164,11 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
     margin-bottom: var(--scroller-gap-y);
   }
 
-  @property --scroller-distance {
-    syntax: "<length>";
-    inherits: false;
-    initial-value: 0px;
-  }
-
   @keyframes logo-scroll-up {
     0% {
       transform: translate3d(0, 0, 0);
     }
+
     100% {
       transform: translate3d(0, var(--scroller-distance), 0);
     }
@@ -215,6 +178,7 @@ function fillInLogos<Type>(kind: string, logos: Type[]) {
     0% {
       transform: translate3d(0, var(--scroller-distance), 0);
     }
+
     100% {
       transform: translate3d(0, 0, 0);
     }
