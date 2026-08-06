@@ -1323,8 +1323,18 @@ const sections = {
 
   comparison: langs({
     en: {
-      kicker: "Measured Example",
+      kicker: "Head to head",
 
+      headline: "Alumnium Stands Out",
+
+      subheadline: txt`
+        See how we line up with other browser agents.
+      `,
+    },
+  }),
+
+  comparisonRun: langs({
+    en: {
       headline: "Single-Task Comparison",
 
       subheadline: txt`
@@ -1334,7 +1344,7 @@ const sections = {
     },
   }),
 
-  comparisonTable: {
+  comparisonRunTable: {
     header: comparisonHeader({
       metric: { en: "" },
       alumnium: { en: "Alumnium" },
@@ -1457,7 +1467,37 @@ const sections = {
           highlight: "negative",
         },
       }),
+    ],
 
+    disclaimer: langs({
+      en: txt`
+        Results come from one task and vary with model, configuration, network
+        conditions, and website state.
+      `,
+    }),
+  },
+
+  comparisonFeatures: langs({
+    en: {
+      headline: "Features Comparison",
+
+      subheadline: txt`
+        See how Alumnium compares to other browser agents in terms of features
+        and capabilities.
+      `,
+    },
+  }),
+
+  comparisonFeaturesTable: {
+    header: comparisonHeader({
+      metric: { en: "" },
+      alumnium: { en: "Alumnium" },
+      "browser-use": { en: "Browser Use" },
+      "mobile-mcp": { en: "Mobile Next" },
+      "playwright-mcp": { en: "Playwright MCP" },
+    }),
+
+    rows: [
       comparisonRow({
         metric: {
           kind: "metric",
@@ -1498,36 +1538,30 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "Language integrations",
-              subtext: txt`
-                Languages with a native library integration.
-              `,
+              label: "TypeScript",
+              subtext: "Native JS/TS client package.",
             },
           },
         },
 
         alumnium: {
-          kind: "string",
-          value: { en: "Java, Python, TypeScript" },
-          highlight: "positive",
+          kind: "support",
+          support: "yes",
         },
 
         "browser-use": {
-          kind: "string",
-          value: { en: "Python, TypeScript" },
-          highlight: "mixed",
+          kind: "support",
+          support: "yes",
         },
 
         "mobile-mcp": {
-          kind: "string",
-          value: { en: "TypeScript" },
-          highlight: "negative",
+          kind: "support",
+          support: "yes",
         },
 
         "playwright-mcp": {
-          kind: "string",
-          value: { en: "Java, Python, TypeScript" },
-          highlight: "positive",
+          kind: "support",
+          support: "yes",
         },
       }),
 
@@ -1536,36 +1570,158 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "Platforms",
-              subtext: txt`
-                Supported testing platforms.
-              `,
+              label: "Python",
+              subtext: "Native Python client package.",
             },
           },
         },
 
         alumnium: {
-          kind: "string",
-          value: { en: "Web, iOS, Android" },
-          highlight: "positive",
+          kind: "support",
+          support: "yes",
         },
 
         "browser-use": {
-          kind: "string",
-          value: { en: "Web" },
-          highlight: "mixed",
+          kind: "support",
+          support: "yes",
         },
 
         "mobile-mcp": {
-          kind: "string",
-          value: { en: "iOS, Android" },
-          highlight: "mixed",
+          kind: "support",
+          support: "no",
         },
 
         "playwright-mcp": {
-          kind: "string",
-          value: { en: "Web" },
-          highlight: "mixed",
+          kind: "support",
+          support: "yes",
+        },
+      }),
+
+      comparisonRow({
+        metric: {
+          kind: "metric",
+          value: {
+            en: {
+              label: "Java",
+              subtext: "Native Java client package.",
+            },
+          },
+        },
+
+        alumnium: {
+          kind: "support",
+          support: "yes",
+        },
+
+        "browser-use": {
+          kind: "support",
+          support: "no",
+        },
+
+        "mobile-mcp": {
+          kind: "support",
+          support: "no",
+        },
+
+        "playwright-mcp": {
+          kind: "support",
+          support: "yes",
+        },
+      }),
+
+      comparisonRow({
+        metric: {
+          kind: "metric",
+          value: {
+            en: {
+              label: "Web apps support",
+              subtext: "Testing web apps support.",
+            },
+          },
+        },
+
+        alumnium: {
+          kind: "support",
+          support: "yes",
+        },
+
+        "browser-use": {
+          kind: "support",
+          support: "yes",
+        },
+
+        "mobile-mcp": {
+          kind: "support",
+          support: "no",
+        },
+
+        "playwright-mcp": {
+          kind: "support",
+          support: "yes",
+        },
+      }),
+
+      comparisonRow({
+        metric: {
+          kind: "metric",
+          value: {
+            en: {
+              label: "Test iOS apps",
+              subtext: "Testing iOS apps support.",
+            },
+          },
+        },
+
+        alumnium: {
+          kind: "support",
+          support: "yes",
+        },
+
+        "browser-use": {
+          kind: "support",
+          support: "no",
+        },
+
+        "mobile-mcp": {
+          kind: "support",
+          support: "yes",
+        },
+
+        "playwright-mcp": {
+          kind: "support",
+          support: "no",
+        },
+      }),
+
+      comparisonRow({
+        metric: {
+          kind: "metric",
+          value: {
+            en: {
+              label: "Test Android apps",
+              subtext: "Testing Android apps support.",
+            },
+          },
+        },
+
+        alumnium: {
+          kind: "support",
+          support: "yes",
+        },
+
+        "browser-use": {
+          kind: "support",
+          support: "no",
+        },
+
+        "mobile-mcp": {
+          kind: "support",
+          support: "yes",
+        },
+
+        "playwright-mcp": {
+          kind: "support",
+          support: "no",
         },
       }),
 
@@ -1610,9 +1766,7 @@ const sections = {
 
     disclaimer: langs({
       en: txt`
-        * The Alumnium test runner is currently in preview. Results come from one
-        task and vary with model, configuration, network conditions, and website
-        state.
+        * The Alumnium test runner is currently in preview.
       `,
     }),
   },
@@ -1890,6 +2044,12 @@ export namespace TtLandings {
 
   export interface BentoItemContentPoints extends SectionPointsContentProps {
     kind: "points";
+  }
+
+  export interface ComparisonTable {
+    header: ComparisonHeader;
+    rows: ComparisonRow[];
+    disclaimer?: I18n.FullLangsMap<string>;
   }
 
   export interface ComparisonHeader {
