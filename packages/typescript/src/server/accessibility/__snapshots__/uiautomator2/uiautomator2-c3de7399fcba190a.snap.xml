@@ -1,32 +1,32 @@
 <hierarchy>
-  <hierarchy id="2">
-    <FrameLayout id="3" clickable="false">
-      <LinearLayout id="4" clickable="false">
-        <FrameLayout id="5" clickable="false">
-          <FrameLayout id="6" clickable="false">
-            <FrameLayout id="7" resource-id="android:id/content" clickable="false">
-              <ViewGroup id="8" resource-id="com.android.chrome:id/coordinator" clickable="false">
-                <FrameLayout id="9" resource-id="com.android.chrome:id/compositor_view_holder" clickable="false">
-                  <FrameLayout id="10" clickable="false">
-                    <View id="11" clickable="false"/>
+  <hierarchy id=2>
+    <FrameLayout id=3>
+      <LinearLayout id=4>
+        <FrameLayout id=5>
+          <FrameLayout id=6>
+            <FrameLayout id=7 resource-id="android:id/content">
+              <ViewGroup id=8 resource-id="com.android.chrome:id/coordinator">
+                <FrameLayout id=9 resource-id="com.android.chrome:id/compositor_view_holder">
+                  <FrameLayout id=10>
+                    <View id=11/>
                   </FrameLayout>
-                  <FrameLayout id="12" clickable="false">
-                    <WebView id="13" text="https://www.google.com/search?q=Buy+milk&amp;oq=Buy+milk&amp;aqs=chrome..69i57j0i512l14.4810j0j4&amp;client=ms-unknown&amp;sourceid=chrome-mobile&amp;ie=UTF-8&amp;sei=qHVxasCCM6SdhvcPsOWmgQ0" clickable="false">
-                      <View id="14" clickable="false"/>
-                      <View id="15" resource-id="captcha-form" clickable="false">
-                        <View id="16" resource-id="recaptcha" clickable="false">
-                          <View id="17" clickable="false">
-                            <View id="18" clickable="false">
-                              <View id="19" text="reCAPTCHA" clickable="false">
-                                <TextView id="20" resource-id="rc-anchor-alert" clickable="false"/>
-                                <View id="21" resource-id="rc-anchor-container" clickable="false">
-                                  <View id="22" clickable="false">
-                                    <View id="23" clickable="false">
-                                      <View id="24" clickable="false">
-                                        <CheckBox id="25" resource-id="recaptcha-anchor" text="I'm not a robot" clickable="true" checked="false"/>
+                  <FrameLayout id=12>
+                    <WebView id=13 text="https://www.google.com/search?q=Buy+milk&amp;oq=Buy+milk&amp;aqs=chrome..69i57j0i512l14.4810j0j4&amp;client=ms-unknown&amp;sourceid=chrome-mobile&amp;ie=UTF-8&amp;sei=qHVxasCCM6SdhvcPsOWmgQ0">
+                      <View id=14/>
+                      <View id=15 resource-id="captcha-form">
+                        <View id=16 resource-id="recaptcha">
+                          <View id=17>
+                            <View id=18>
+                              <View id=19 text="reCAPTCHA">
+                                <TextView id=20 resource-id="rc-anchor-alert"/>
+                                <View id=21 resource-id="rc-anchor-container">
+                                  <View id=22>
+                                    <View id=23>
+                                      <View id=24>
+                                        <CheckBox id=25 resource-id="recaptcha-anchor" text="I'm not a robot" clickable/>
                                       </View>
                                     </View>
-                                    <View id="26" clickable="false"/>
+                                    <View id=26/>
                                   </View>
                                 </View>
                               </View>
@@ -34,39 +34,39 @@
                           </View>
                         </View>
                       </View>
-                      <View id="27" clickable="false"/>
-                      <TextView id="28" text="About this page" clickable="false"/>
-                      <View id="29" text="&#xA;" clickable="false"/>
-                      <TextView id="30" text="Our systems have detected unusual traffic from your computer network. This page checks to see if it's really you sending the requests, and not a robot. " clickable="false"/>
-                      <View id="31" content-desc="Why did this happen?" clickable="true">
-                        <TextView id="32" text="Why did this happen?" clickable="false"/>
+                      <View id=27/>
+                      <TextView id=28 text="About this page"/>
+                      <View id=29 text="&#xA;"/>
+                      <TextView id=30 text="Our systems have detected unusual traffic from your computer network. This page checks to see if it's really you sending the requests, and not a robot. "/>
+                      <View id=31 content-desc="Why did this happen?" clickable>
+                        <TextView id=32 text="Why did this happen?"/>
                       </View>
-                      <TextView id="33" text="IP address: 158.140.129.251&#xA;Time: 2026-08-04T05:16:25Z&#xA;URL: https://www.google.com/search?q=Buy+milk&amp;oq=Buy+milk&amp;aqs=chrome..69i57j0i512l14.4810j0j4&amp;client=ms-unknown&amp;sourceid=chrome-mobile&amp;ie=UTF-8&amp;sei=qHVxasCCM6SdhvcPsOWmgQ0&#xA;" clickable="false"/>
+                      <TextView id=33 text="IP address: 158.140.129.251&#xA;Time: 2026-08-04T05:16:25Z&#xA;URL: https://www.google.com/search?q=Buy+milk&amp;oq=Buy+milk&amp;aqs=chrome..69i57j0i512l14.4810j0j4&amp;client=ms-unknown&amp;sourceid=chrome-mobile&amp;ie=UTF-8&amp;sei=qHVxasCCM6SdhvcPsOWmgQ0&#xA;"/>
                     </WebView>
                   </FrameLayout>
                 </FrameLayout>
-                <FrameLayout id="34" resource-id="com.android.chrome:id/control_container" clickable="false">
-                  <FrameLayout id="35" resource-id="com.android.chrome:id/toolbar_container" clickable="false">
-                    <FrameLayout id="36" resource-id="com.android.chrome:id/toolbar" clickable="false">
-                      <ImageButton id="37" resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable="true"/>
-                      <FrameLayout id="38" resource-id="com.android.chrome:id/location_bar" clickable="false">
-                        <LinearLayout id="39" resource-id="com.android.chrome:id/location_bar_status" clickable="true">
-                          <LinearLayout id="40" resource-id="com.android.chrome:id/location_bar_status_icon_view" clickable="false">
-                            <FrameLayout id="41" resource-id="com.android.chrome:id/location_bar_status_icon_frame" clickable="false">
-                              <ImageView id="42" resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure" clickable="false"/>
+                <FrameLayout id=34 resource-id="com.android.chrome:id/control_container">
+                  <FrameLayout id=35 resource-id="com.android.chrome:id/toolbar_container">
+                    <FrameLayout id=36 resource-id="com.android.chrome:id/toolbar">
+                      <ImageButton id=37 resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable/>
+                      <FrameLayout id=38 resource-id="com.android.chrome:id/location_bar">
+                        <LinearLayout id=39 resource-id="com.android.chrome:id/location_bar_status" clickable>
+                          <LinearLayout id=40 resource-id="com.android.chrome:id/location_bar_status_icon_view">
+                            <FrameLayout id=41 resource-id="com.android.chrome:id/location_bar_status_icon_frame">
+                              <ImageView id=42 resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure"/>
                             </FrameLayout>
                           </LinearLayout>
                         </LinearLayout>
-                        <EditText id="43" resource-id="com.android.chrome:id/url_bar" text="google.com/sorry/index?continue=https://www.google.com/search%3Fq%3DBuy%2Bmilk%26oq%3DBuy%2Bmilk%26aqs%3Dchrome..69i57j0i512l14.4810j0j4%26client%3Dms-unknown%26sourceid%3Dchrome-mobile%26ie%3DUTF-8%26sei%3DqHVxasCCM6SdhvcPsOWmgQ0&amp;q=EgSejIH7GKnrxdMGIjCsQnOthoeqsNCgIrb_Ss__gPuXHENb9TRP1MZfM1UhcXjrA7j28EPkdN39qQp0rpsyAVJaAUM" clickable="true"/>
+                        <EditText id=43 resource-id="com.android.chrome:id/url_bar" text="google.com/sorry/index?continue=https://www.google.com/search%3Fq%3DBuy%2Bmilk%26oq%3DBuy%2Bmilk%26aqs%3Dchrome..69i57j0i512l14.4810j0j4%26client%3Dms-unknown%26sourceid%3Dchrome-mobile%26ie%3DUTF-8%26sei%3DqHVxasCCM6SdhvcPsOWmgQ0&amp;q=EgSejIH7GKnrxdMGIjCsQnOthoeqsNCgIrb_Ss__gPuXHENb9TRP1MZfM1UhcXjrA7j28EPkdN39qQp0rpsyAVJaAUM" clickable/>
                       </FrameLayout>
-                      <LinearLayout id="44" resource-id="com.android.chrome:id/toolbar_buttons" clickable="false">
-                        <ImageButton id="45" resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable="true"/>
-                        <FrameLayout id="46" resource-id="com.android.chrome:id/menu_button_wrapper" clickable="false">
-                          <ImageButton id="47" resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable="true"/>
+                      <LinearLayout id=44 resource-id="com.android.chrome:id/toolbar_buttons">
+                        <ImageButton id=45 resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable/>
+                        <FrameLayout id=46 resource-id="com.android.chrome:id/menu_button_wrapper">
+                          <ImageButton id=47 resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable/>
                         </FrameLayout>
                       </LinearLayout>
                     </FrameLayout>
-                    <ImageView id="48" resource-id="com.android.chrome:id/toolbar_hairline" clickable="false"/>
+                    <ImageView id=48 resource-id="com.android.chrome:id/toolbar_hairline"/>
                   </FrameLayout>
                 </FrameLayout>
               </ViewGroup>
@@ -74,7 +74,7 @@
           </FrameLayout>
         </FrameLayout>
       </LinearLayout>
-      <View id="49" resource-id="android:id/navigationBarBackground" clickable="false"/>
+      <View id=49 resource-id="android:id/navigationBarBackground"/>
     </FrameLayout>
   </hierarchy>
 </hierarchy>

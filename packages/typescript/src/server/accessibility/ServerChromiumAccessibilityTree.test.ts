@@ -174,15 +174,15 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       const xml = tree.toXml();
       expect(xml).toMatchInlineSnapshot(`
-        "<RootWebArea name="YouTube" id="1" focusable="true" url="https://www.youtube.com/">
-          <banner id="8">
-            <div id="13">
-              <button name="Guide" id="15" invalid="false" focusable="true" pressed="true"/>
-              <div id="22">
-                <link name="YouTube Home" id="23" focusable="true" url="https://www.youtube.com/"/>
+        "<RootWebArea name="YouTube" id=1 focusable url="https://www.youtube.com/">
+          <banner id=8>
+            <div id=13>
+              <button name="Guide" id=15 focusable pressed/>
+              <div id=22>
+                <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/"/>
                 SG
               </div>
-              <button id="34" invalid="false" focusable="true">
+              <button id=34 focusable>
                 Skip navigation
               </button>
             </div>

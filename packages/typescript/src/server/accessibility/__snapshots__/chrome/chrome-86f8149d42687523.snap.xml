@@ -1,76 +1,76 @@
-<RootWebArea name="Calculator" id="1" focusable="true" focused="true" url="https://seleniumbase.io/apps/calculator">
-  <div id="5">
-    <div id="6">
-      <LabelText id="7"/>
+<RootWebArea name="Calculator" id=1 focusable focused url="https://seleniumbase.io/apps/calculator">
+  <div id=5>
+    <div id=6>
+      <LabelText id=7/>
       Dark Mode
-      <link id="17" focusable="true" url="https://seleniumbase.io/apps/calculator">
+      <link id=17 focusable url="https://seleniumbase.io/apps/calculator">
         Calculator
       </link>
-      <link id="34" focusable="true" url="https://seleniumbase.io/">
+      <link id=34 focusable url="https://seleniumbase.io/">
         SB
       </link>
     </div>
-    <textbox id="39" invalid="false" focusable="true" editable="plaintext" multiline="false" readonly="true" required="false">
+    <textbox id=39 focusable editable="plaintext" readonly>
       2+2
     </textbox>
-    <button id="43" invalid="false" focusable="true">
+    <button id=43 focusable>
       C
     </button>
-    <button id="46" invalid="false" focusable="true">
+    <button id=46 focusable>
       (
     </button>
-    <button id="49" invalid="false" focusable="true">
+    <button id=49 focusable>
       )
     </button>
-    <button id="52" invalid="false" focusable="true">
+    <button id=52 focusable>
       ÷
     </button>
-    <button id="55" invalid="false" focusable="true">
+    <button id=55 focusable>
       7
     </button>
-    <button id="58" invalid="false" focusable="true">
+    <button id=58 focusable>
       8
     </button>
-    <button id="61" invalid="false" focusable="true">
+    <button id=61 focusable>
       9
     </button>
-    <button id="64" invalid="false" focusable="true">
+    <button id=64 focusable>
       ×
     </button>
-    <button id="67" invalid="false" focusable="true">
+    <button id=67 focusable>
       4
     </button>
-    <button id="70" invalid="false" focusable="true">
+    <button id=70 focusable>
       5
     </button>
-    <button id="73" invalid="false" focusable="true">
+    <button id=73 focusable>
       6
     </button>
-    <button id="76" invalid="false" focusable="true">
+    <button id=76 focusable>
       -
     </button>
-    <button id="79" invalid="false" focusable="true">
+    <button id=79 focusable>
       1
     </button>
-    <button id="82" invalid="false" focusable="true" focused="true">
+    <button id=82 focusable focused>
       2
     </button>
-    <button id="85" invalid="false" focusable="true">
+    <button id=85 focusable>
       3
     </button>
-    <button id="88" invalid="false" focusable="true">
+    <button id=88 focusable>
       +
     </button>
-    <button id="91" invalid="false" focusable="true">
+    <button id=91 focusable>
       ←
     </button>
-    <button id="94" invalid="false" focusable="true">
+    <button id=94 focusable>
       0
     </button>
-    <button id="97" invalid="false" focusable="true">
+    <button id=97 focusable>
       .
     </button>
-    <button id="100" invalid="false" focusable="true">
+    <button id=100 focusable>
       =
     </button>
   </div>

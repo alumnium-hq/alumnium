@@ -1,40 +1,40 @@
-<RootWebArea name="Cross-Origin Test" id="1" focusable="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
-  <heading id="4" level="1">
+<RootWebArea name="Cross-Origin Test" id=1 focusable url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
+  <heading id=4 level=1>
     Main Page
   </heading>
-  <paragraph id="7">
+  <paragraph id=7>
     This page embeds a real cross-origin iframe.
   </paragraph>
-  <button id="10" invalid="false" focusable="true">
+  <button id=10 focusable>
     Main Page Button
   </button>
-  <heading id="13" level="2">
+  <heading id=13 level=2>
     Cross-Origin Iframe Below:
   </heading>
-  <Iframe id="16">
-    <RootWebArea name="Hands-On Selenium WebDriver with Java" id="17" focusable="true" focused="true" url="https://bonigarcia.dev/selenium-webdriver-java/submitted-form.html?my-text=testuser&amp;my-password=&amp;my-textarea=&amp;my-readonly=Readonly+input&amp;my-select=Open+this+select+menu&amp;my-datalist=&amp;my-file=&amp;my-check=on&amp;my-radio=on&amp;my-colors=%23563d7c&amp;my-date=&amp;my-range=5&amp;my-hidden=">
-      <main id="20">
-        <heading id="24" level="1">
+  <Iframe id=16>
+    <RootWebArea name="Hands-On Selenium WebDriver with Java" id=17 focusable focused url="https://bonigarcia.dev/selenium-webdriver-java/submitted-form.html?my-text=testuser&amp;my-password=&amp;my-textarea=&amp;my-readonly=Readonly+input&amp;my-select=Open+this+select+menu&amp;my-datalist=&amp;my-file=&amp;my-check=on&amp;my-radio=on&amp;my-colors=%23563d7c&amp;my-date=&amp;my-range=5&amp;my-hidden=">
+      <main id=20>
+        <heading id=24 level=1>
           Hands-On Selenium WebDriver with Java
         </heading>
-        <heading id="28" level="5">
+        <heading id=28 level=5>
           Practice site
         </heading>
-        <link id="32" focusable="true" url="https://github.com/bonigarcia/selenium-webdriver-java">
-          <image id="33" url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
+        <link id=32 focusable url="https://github.com/bonigarcia/selenium-webdriver-java">
+          <image id=33 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
         </link>
-        <separator id="36" settable="true" orientation="horizontal"/>
-        <heading id="39" level="1">
+        <separator id=36 settable orientation="horizontal"/>
+        <heading id=39 level=1>
           Form submitted
         </heading>
-        <paragraph id="44">
+        <paragraph id=44>
           Received!
         </paragraph>
       </main>
-      <contentinfo id="47">
-        <div id="48">
+      <contentinfo id=47>
+        <div id=48>
           Copyright © 2021-2026
-          <link id="51" focusable="true" url="https://bonigarcia.dev/">
+          <link id=51 focusable url="https://bonigarcia.dev/">
             Boni García
           </link>
         </div>

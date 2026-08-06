@@ -1,34 +1,34 @@
-<RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/forgot_password">
-  <div id="3">
-    <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
-      <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/forgot_password">
+  <div id=3>
+    <link id=7 focusable url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
     </link>
-    <div id="9">
-      <heading id="11" level="2">
+    <div id=9>
+      <heading id=11 level=2>
         Forgot Password
       </heading>
-      <heading id="14" level="4"/>
-      <div id="15">
-        <div id="17">
-          <LabelText id="18">
+      <heading id=14 level=4/>
+      <div id=15>
+        <div id=17>
+          <LabelText id=18>
             E-mail
           </LabelText>
-          <textbox name="E-mail" id="21" invalid="false" focusable="true" focused="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
-            <div id="22" editable="plaintext">
+          <textbox name="E-mail" id=21 focusable focused editable="plaintext" settable>
+            <div id=22 editable="plaintext">
               test@example.com
             </div>
           </textbox>
         </div>
-        <button id="25" invalid="false" focusable="true">
+        <button id=25 focusable>
           Retrieve password
         </button>
       </div>
     </div>
-    <div id="29">
-      <separator id="30" settable="true" orientation="horizontal"/>
-      <div id="31">
+    <div id=29>
+      <separator id=30 settable orientation="horizontal"/>
+      <div id=31>
         Powered by
-        <link id="34" focusable="true" url="http://elementalselenium.com/">
+        <link id=34 focusable url="http://elementalselenium.com/">
           Elemental Selenium
         </link>
       </div>

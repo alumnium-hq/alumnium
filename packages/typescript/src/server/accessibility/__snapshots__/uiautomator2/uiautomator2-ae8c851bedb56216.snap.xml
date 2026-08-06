@@ -1,98 +1,98 @@
 <hierarchy>
-  <hierarchy id="2">
-    <FrameLayout id="3" clickable="false">
-      <LinearLayout id="4" clickable="false">
-        <FrameLayout id="5" clickable="false">
-          <FrameLayout id="6" clickable="false">
-            <FrameLayout id="7" resource-id="android:id/content" clickable="false">
-              <ViewGroup id="8" resource-id="com.android.chrome:id/coordinator" clickable="false">
-                <View id="9" clickable="true"/>
-                <FrameLayout id="10" resource-id="com.android.chrome:id/compositor_view_holder" clickable="false">
-                  <FrameLayout id="11" clickable="false">
-                    <View id="12" clickable="false"/>
+  <hierarchy id=2>
+    <FrameLayout id=3>
+      <LinearLayout id=4>
+        <FrameLayout id=5>
+          <FrameLayout id=6>
+            <FrameLayout id=7 resource-id="android:id/content">
+              <ViewGroup id=8 resource-id="com.android.chrome:id/coordinator">
+                <View id=9 clickable/>
+                <FrameLayout id=10 resource-id="com.android.chrome:id/compositor_view_holder">
+                  <FrameLayout id=11>
+                    <View id=12/>
                   </FrameLayout>
-                  <FrameLayout id="13" content-desc="Web View" clickable="false"/>
+                  <FrameLayout id=13 content-desc="Web View"/>
                 </FrameLayout>
-                <FrameLayout id="14" resource-id="com.android.chrome:id/omnibox_results_container" clickable="false">
-                  <RecyclerView id="15" clickable="false">
-                    <ViewGroup id="16" clickable="true">
-                      <ImageView id="17" clickable="false"/>
-                      <LinearLayout id="18" clickable="false">
-                        <TextView id="19" resource-id="com.android.chrome:id/line_1" text="Buy milk" clickable="false"/>
+                <FrameLayout id=14 resource-id="com.android.chrome:id/omnibox_results_container">
+                  <RecyclerView id=15>
+                    <ViewGroup id=16 clickable>
+                      <ImageView id=17/>
+                      <LinearLayout id=18>
+                        <TextView id=19 resource-id="com.android.chrome:id/line_1" text="Buy milk"/>
                       </LinearLayout>
                     </ViewGroup>
-                    <ViewGroup id="20" clickable="true">
-                      <ImageView id="21" clickable="false"/>
-                      <LinearLayout id="22" clickable="false">
-                        <TextView id="23" resource-id="com.android.chrome:id/line_1" text="buy milk near me" clickable="false"/>
+                    <ViewGroup id=20 clickable>
+                      <ImageView id=21/>
+                      <LinearLayout id=22>
+                        <TextView id=23 resource-id="com.android.chrome:id/line_1" text="buy milk near me"/>
                       </LinearLayout>
-                      <ImageView id="24" content-desc="Refine: buy milk near me" clickable="true"/>
+                      <ImageView id=24 content-desc="Refine: buy milk near me" clickable/>
                     </ViewGroup>
-                    <ViewGroup id="25" clickable="true">
-                      <ImageView id="26" clickable="false"/>
-                      <LinearLayout id="27" clickable="false">
-                        <TextView id="28" resource-id="com.android.chrome:id/line_1" text="buy milk online" clickable="false"/>
+                    <ViewGroup id=25 clickable>
+                      <ImageView id=26/>
+                      <LinearLayout id=27>
+                        <TextView id=28 resource-id="com.android.chrome:id/line_1" text="buy milk online"/>
                       </LinearLayout>
-                      <ImageView id="29" content-desc="Refine: buy milk online" clickable="true"/>
+                      <ImageView id=29 content-desc="Refine: buy milk online" clickable/>
                     </ViewGroup>
-                    <ViewGroup id="30" clickable="true">
-                      <ImageView id="31" clickable="false"/>
-                      <LinearLayout id="32" clickable="false">
-                        <TextView id="33" resource-id="com.android.chrome:id/line_1" text="buy milkweed plant" clickable="false"/>
+                    <ViewGroup id=30 clickable>
+                      <ImageView id=31/>
+                      <LinearLayout id=32>
+                        <TextView id=33 resource-id="com.android.chrome:id/line_1" text="buy milkweed plant"/>
                       </LinearLayout>
-                      <ImageView id="34" content-desc="Refine: buy milkweed plant" clickable="true"/>
+                      <ImageView id=34 content-desc="Refine: buy milkweed plant" clickable/>
                     </ViewGroup>
-                    <ViewGroup id="35" clickable="true">
-                      <ImageView id="36" clickable="false"/>
-                      <LinearLayout id="37" clickable="false">
-                        <TextView id="38" resource-id="com.android.chrome:id/line_1" text="buy milk crates" clickable="false"/>
+                    <ViewGroup id=35 clickable>
+                      <ImageView id=36/>
+                      <LinearLayout id=37>
+                        <TextView id=38 resource-id="com.android.chrome:id/line_1" text="buy milk crates"/>
                       </LinearLayout>
-                      <ImageView id="39" content-desc="Refine: buy milk crates" clickable="true"/>
+                      <ImageView id=39 content-desc="Refine: buy milk crates" clickable/>
                     </ViewGroup>
-                    <ViewGroup id="40" clickable="true">
-                      <ImageView id="41" clickable="false"/>
-                      <LinearLayout id="42" clickable="false">
-                        <TextView id="43" resource-id="com.android.chrome:id/line_1" text="buy milk thistle" clickable="false"/>
+                    <ViewGroup id=40 clickable>
+                      <ImageView id=41/>
+                      <LinearLayout id=42>
+                        <TextView id=43 resource-id="com.android.chrome:id/line_1" text="buy milk thistle"/>
                       </LinearLayout>
-                      <ImageView id="44" content-desc="Refine: buy milk thistle" clickable="true"/>
+                      <ImageView id=44 content-desc="Refine: buy milk thistle" clickable/>
                     </ViewGroup>
-                    <ViewGroup id="45" clickable="true">
-                      <ImageView id="46" clickable="false"/>
-                      <LinearLayout id="47" clickable="false">
-                        <TextView id="48" resource-id="com.android.chrome:id/line_1" text="buy milk frother" clickable="false"/>
+                    <ViewGroup id=45 clickable>
+                      <ImageView id=46/>
+                      <LinearLayout id=47>
+                        <TextView id=48 resource-id="com.android.chrome:id/line_1" text="buy milk frother"/>
                       </LinearLayout>
-                      <ImageView id="49" content-desc="Refine: buy milk frother" clickable="true"/>
+                      <ImageView id=49 content-desc="Refine: buy milk frother" clickable/>
                     </ViewGroup>
-                    <ViewGroup id="50" clickable="true">
-                      <ImageView id="51" clickable="false"/>
-                      <LinearLayout id="52" clickable="false">
-                        <TextView id="53" resource-id="com.android.chrome:id/line_1" text="buy milk powder" clickable="false"/>
+                    <ViewGroup id=50 clickable>
+                      <ImageView id=51/>
+                      <LinearLayout id=52>
+                        <TextView id=53 resource-id="com.android.chrome:id/line_1" text="buy milk powder"/>
                       </LinearLayout>
-                      <ImageView id="54" content-desc="Refine: buy milk powder" clickable="true"/>
+                      <ImageView id=54 content-desc="Refine: buy milk powder" clickable/>
                     </ViewGroup>
-                    <ViewGroup id="55" clickable="true">
-                      <ImageView id="56" clickable="false"/>
-                      <LinearLayout id="57" clickable="false">
-                        <TextView id="58" resource-id="com.android.chrome:id/line_1" text="buy milkweed plant near me" clickable="false"/>
+                    <ViewGroup id=55 clickable>
+                      <ImageView id=56/>
+                      <LinearLayout id=57>
+                        <TextView id=58 resource-id="com.android.chrome:id/line_1" text="buy milkweed plant near me"/>
                       </LinearLayout>
-                      <ImageView id="59" content-desc="Refine: buy milkweed plant near me" clickable="true"/>
+                      <ImageView id=59 content-desc="Refine: buy milkweed plant near me" clickable/>
                     </ViewGroup>
                   </RecyclerView>
                 </FrameLayout>
-                <FrameLayout id="60" resource-id="com.android.chrome:id/control_container" clickable="false">
-                  <FrameLayout id="61" resource-id="com.android.chrome:id/toolbar_container" clickable="false">
-                    <FrameLayout id="62" resource-id="com.android.chrome:id/toolbar" clickable="false">
-                      <FrameLayout id="63" resource-id="com.android.chrome:id/location_bar" clickable="false">
-                        <LinearLayout id="64" resource-id="com.android.chrome:id/location_bar_status" clickable="true">
-                          <LinearLayout id="65" resource-id="com.android.chrome:id/location_bar_status_icon_view" clickable="false">
-                            <FrameLayout id="66" resource-id="com.android.chrome:id/location_bar_status_icon_frame" clickable="false">
-                              <ImageView id="67" resource-id="com.android.chrome:id/location_bar_status_icon" clickable="false"/>
+                <FrameLayout id=60 resource-id="com.android.chrome:id/control_container">
+                  <FrameLayout id=61 resource-id="com.android.chrome:id/toolbar_container">
+                    <FrameLayout id=62 resource-id="com.android.chrome:id/toolbar">
+                      <FrameLayout id=63 resource-id="com.android.chrome:id/location_bar">
+                        <LinearLayout id=64 resource-id="com.android.chrome:id/location_bar_status" clickable>
+                          <LinearLayout id=65 resource-id="com.android.chrome:id/location_bar_status_icon_view">
+                            <FrameLayout id=66 resource-id="com.android.chrome:id/location_bar_status_icon_frame">
+                              <ImageView id=67 resource-id="com.android.chrome:id/location_bar_status_icon"/>
                             </FrameLayout>
                           </LinearLayout>
                         </LinearLayout>
-                        <EditText id="68" resource-id="com.android.chrome:id/url_bar" text="Buy milk" clickable="true"/>
-                        <LinearLayout id="69" resource-id="com.android.chrome:id/url_action_container" clickable="false">
-                          <ImageButton id="70" resource-id="com.android.chrome:id/delete_button" content-desc="Clear input" clickable="true"/>
+                        <EditText id=68 resource-id="com.android.chrome:id/url_bar" text="Buy milk" clickable/>
+                        <LinearLayout id=69 resource-id="com.android.chrome:id/url_action_container">
+                          <ImageButton id=70 resource-id="com.android.chrome:id/delete_button" content-desc="Clear input" clickable/>
                         </LinearLayout>
                       </FrameLayout>
                     </FrameLayout>

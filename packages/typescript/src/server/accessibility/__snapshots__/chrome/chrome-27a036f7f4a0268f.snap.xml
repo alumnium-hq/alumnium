@@ -1,604 +1,604 @@
-<RootWebArea name="Repository search results · GitHub" id="1" focusable="true" focused="true" url="https://github.com/search?q=alumnium&amp;type=repositories">
-  <div id="6">
-    <link id="7" focusable="true" url="https://github.com/search?q=alumnium&amp;type=repositories#start-of-content">
+<RootWebArea name="Repository search results · GitHub" id=1 focusable focused url="https://github.com/search?q=alumnium&amp;type=repositories">
+  <div id=6>
+    <link id=7 focusable url="https://github.com/search?q=alumnium&amp;type=repositories#start-of-content">
       Skip to content
     </link>
-    <banner id="26">
-      <heading id="27" level="2">
+    <banner id=26>
+      <heading id=27 level=2>
         Navigation Menu
       </heading>
-      <div id="31">
-        <link name="Homepage" id="34" focusable="true" url="https://github.com/"/>
-        <div id="38">
-          <navigation name="Global" id="42">
-            <list id="43">
-              <listitem id="44" level="1">
-                <button id="46" invalid="false" focusable="true">
+      <div id=31>
+        <link name="Homepage" id=34 focusable url="https://github.com/"/>
+        <div id=38>
+          <navigation name="Global" id=42>
+            <list id=43>
+              <listitem id=44 level=1>
+                <button id=46 focusable>
                   Platform
                 </button>
               </listitem>
-              <listitem id="57" level="1">
-                <button id="59" invalid="false" focusable="true">
+              <listitem id=57 level=1>
+                <button id=59 focusable>
                   Solutions
                 </button>
               </listitem>
-              <listitem id="68" level="1">
-                <button id="70" invalid="false" focusable="true">
+              <listitem id=68 level=1>
+                <button id=70 focusable>
                   Resources
                 </button>
               </listitem>
-              <listitem id="79" level="1">
-                <button id="81" invalid="false" focusable="true">
+              <listitem id=79 level=1>
+                <button id=81 focusable>
                   Open Source
                 </button>
               </listitem>
-              <listitem id="90" level="1">
-                <button id="92" invalid="false" focusable="true">
+              <listitem id=90 level=1>
+                <button id=92 focusable>
                   Enterprise
                 </button>
               </listitem>
-              <listitem id="99" level="1">
-                <link id="100" focusable="true" url="https://github.com/pricing">
+              <listitem id=99 level=1>
+                <link id=100 focusable url="https://github.com/pricing">
                   Pricing
                 </link>
               </listitem>
             </list>
           </navigation>
-          <button name="Search or jump to…" id="107" invalid="false" focusable="true" hasPopup="dialog"/>
-          <link id="141" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+          <button name="Search or jump to…" id=107 focusable hasPopup="dialog"/>
+          <link id=141 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
             Sign in
           </link>
-          <link id="144" focusable="true" url="https://github.com/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2Fsearch&amp;source=header">
+          <link id=144 focusable url="https://github.com/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2Fsearch&amp;source=header">
             Sign up
           </link>
-          <button name="Appearance settings" id="149" invalid="false" focusable="true" hasPopup="menu" labelledby=""/>
+          <button name="Appearance settings" id=149 focusable hasPopup="menu"/>
         </div>
       </div>
     </banner>
   </div>
-  <main id="161">
-    <div id="163">
-      <heading id="165" level="1">
+  <main id=161>
+    <div id=163>
+      <heading id=165 level=1>
         repositories Search Results · alumnium
       </heading>
-      <div id="175">
-        <region name="" id="176" focusable="true" labelledby="">
-          <heading id="177" level="2">
+      <div id=175>
+        <region id=176 focusable>
+          <heading id=177 level=2>
             Filter by
           </heading>
-          <list name="Filter by" id="184" labelledby="">
-            <listitem id="185" level="1">
-              <list id="186">
-                <listitem id="187" level="2">
-                  <link name="(" id="188" focusable="true" url="https://github.com/search?q=alumnium&amp;type=code" labelledby="">
+          <list name="Filter by" id=184>
+            <listitem id=185 level=1>
+              <list id=186>
+                <listitem id=187 level=2>
+                  <link name="(" id=188 focusable url="https://github.com/search?q=alumnium&amp;type=code">
                     Code
-                    <div id="194">
+                    <div id=194>
                       (...)results
                     </div>
                   </link>
                 </listitem>
-                <listitem id="207" level="2">
-                  <link name="(" id="208" focusable="true" url="https://github.com/search?q=alumnium&amp;type=repositories" labelledby="">
+                <listitem id=207 level=2>
+                  <link name="(" id=208 focusable url="https://github.com/search?q=alumnium&amp;type=repositories">
                     Repositories
-                    <div id="214">
+                    <div id=214>
                       (28)results
                     </div>
                   </link>
                 </listitem>
-                <listitem id="228" level="2">
-                  <link name="(" id="229" focusable="true" url="https://github.com/search?q=alumnium&amp;type=issues" labelledby="">
+                <listitem id=228 level=2>
+                  <link name="(" id=229 focusable url="https://github.com/search?q=alumnium&amp;type=issues">
                     Issues
-                    <div id="235">
+                    <div id=235>
                       (93)results
                     </div>
                   </link>
                 </listitem>
-                <listitem id="249" level="2">
-                  <link name="(" id="250" focusable="true" url="https://github.com/search?q=alumnium&amp;type=pullrequests" labelledby="">
+                <listitem id=249 level=2>
+                  <link name="(" id=250 focusable url="https://github.com/search?q=alumnium&amp;type=pullrequests">
                     Pull requests
-                    <div id="256">
+                    <div id=256>
                       (187)results
                     </div>
                   </link>
                 </listitem>
-                <listitem id="270" level="2">
-                  <link name="(" id="271" focusable="true" url="https://github.com/search?q=alumnium&amp;type=discussions" labelledby="">
+                <listitem id=270 level=2>
+                  <link name="(" id=271 focusable url="https://github.com/search?q=alumnium&amp;type=discussions">
                     Discussions
-                    <div id="277">
+                    <div id=277>
                       (8)results
                     </div>
                   </link>
                 </listitem>
-                <listitem id="291" level="2">
-                  <link name="(" id="292" focusable="true" url="https://github.com/search?q=alumnium&amp;type=users" labelledby="">
+                <listitem id=291 level=2>
+                  <link name="(" id=292 focusable url="https://github.com/search?q=alumnium&amp;type=users">
                     Users
-                    <div id="298">
+                    <div id=298>
                       (5)results
                     </div>
                   </link>
                 </listitem>
-                <listitem id="312" level="2">
-                  <button id="313" invalid="false" focusable="true" labelledby="">
+                <listitem id=312 level=2>
+                  <button id=313 focusable>
                     More
                   </button>
                 </listitem>
               </list>
             </listitem>
-            <listitem id="319" level="1">
-              <heading id="321" level="3">
+            <listitem id=319 level=1>
+              <heading id=321 level=3>
                 Languages
               </heading>
-              <list name="Languages" id="324" labelledby="">
-                <listitem id="325" level="2">
-                  <link id="326" focusable="true" url="https://github.com/search?q=alumnium+language%3APython&amp;type=repositories" labelledby="">
+              <list name="Languages" id=324>
+                <listitem id=325 level=2>
+                  <link id=326 focusable url="https://github.com/search?q=alumnium+language%3APython&amp;type=repositories">
                     Python
                   </link>
                 </listitem>
-                <listitem id="335" level="2">
-                  <link id="336" focusable="true" url="https://github.com/search?q=alumnium+language%3AHTML&amp;type=repositories" labelledby="">
+                <listitem id=335 level=2>
+                  <link id=336 focusable url="https://github.com/search?q=alumnium+language%3AHTML&amp;type=repositories">
                     HTML
                   </link>
                 </listitem>
-                <listitem id="345" level="2">
-                  <link id="346" focusable="true" url="https://github.com/search?q=alumnium+language%3AJupyter+Notebook&amp;type=repositories" labelledby="">
+                <listitem id=345 level=2>
+                  <link id=346 focusable url="https://github.com/search?q=alumnium+language%3AJupyter+Notebook&amp;type=repositories">
                     Jupyter Notebook
                   </link>
                 </listitem>
-                <listitem id="355" level="2">
-                  <link id="356" focusable="true" url="https://github.com/search?q=alumnium+language%3APHP&amp;type=repositories" labelledby="">
+                <listitem id=355 level=2>
+                  <link id=356 focusable url="https://github.com/search?q=alumnium+language%3APHP&amp;type=repositories">
                     PHP
                   </link>
                 </listitem>
-                <listitem id="365" level="2">
-                  <link id="366" focusable="true" url="https://github.com/search?q=alumnium+language%3ACSS&amp;type=repositories" labelledby="">
+                <listitem id=365 level=2>
+                  <link id=366 focusable url="https://github.com/search?q=alumnium+language%3ACSS&amp;type=repositories">
                     CSS
                   </link>
                 </listitem>
-                <listitem id="375" level="2">
-                  <link id="376" focusable="true" url="https://github.com/search?q=alumnium+language%3AJava&amp;type=repositories" labelledby="">
+                <listitem id=375 level=2>
+                  <link id=376 focusable url="https://github.com/search?q=alumnium+language%3AJava&amp;type=repositories">
                     Java
                   </link>
                 </listitem>
-                <listitem id="385" level="2">
-                  <link id="386" focusable="true" url="https://github.com/search?q=alumnium+language%3AJavaScript&amp;type=repositories" labelledby="">
+                <listitem id=385 level=2>
+                  <link id=386 focusable url="https://github.com/search?q=alumnium+language%3AJavaScript&amp;type=repositories">
                     JavaScript
                   </link>
                 </listitem>
-                <listitem id="395" level="2">
-                  <link id="396" focusable="true" url="https://github.com/search?q=alumnium+language%3ARobotFramework&amp;type=repositories" labelledby="">
+                <listitem id=395 level=2>
+                  <link id=396 focusable url="https://github.com/search?q=alumnium+language%3ARobotFramework&amp;type=repositories">
                     RobotFramework
                   </link>
                 </listitem>
-                <listitem id="405" level="2">
-                  <link id="406" focusable="true" url="https://github.com/search?q=alumnium+language%3ATypeScript&amp;type=repositories" labelledby="">
+                <listitem id=405 level=2>
+                  <link id=406 focusable url="https://github.com/search?q=alumnium+language%3ATypeScript&amp;type=repositories">
                     TypeScript
                   </link>
                 </listitem>
-                <listitem id="415" level="2">
-                  <link id="416" focusable="true" url="https://github.com/search?q=alumnium+language%3AMDX&amp;type=repositories" labelledby="">
+                <listitem id=415 level=2>
+                  <link id=416 focusable url="https://github.com/search?q=alumnium+language%3AMDX&amp;type=repositories">
                     MDX
                   </link>
                 </listitem>
-                <listitem id="425" level="2">
-                  <button id="426" invalid="false" focusable="true" labelledby="">
+                <listitem id=425 level=2>
+                  <button id=426 focusable>
                     More languages...
                   </button>
                 </listitem>
               </list>
             </listitem>
-            <listitem id="433" level="1">
-              <heading id="435" level="3">
+            <listitem id=433 level=1>
+              <heading id=435 level=3>
                 Advanced
               </heading>
-              <list name="Advanced" id="438" labelledby="">
-                <listitem id="439" level="2">
-                  <button id="440" invalid="false" focusable="true" labelledby="">
+              <list name="Advanced" id=438>
+                <listitem id=439 level=2>
+                  <button id=440 focusable>
                     Owner
                   </button>
                 </listitem>
-                <listitem id="448" level="2">
-                  <button id="449" invalid="false" focusable="true" labelledby="">
+                <listitem id=448 level=2>
+                  <button id=449 focusable>
                     Size
                   </button>
                 </listitem>
-                <listitem id="457" level="2">
-                  <button id="458" invalid="false" focusable="true" labelledby="">
+                <listitem id=457 level=2>
+                  <button id=458 focusable>
                     Number of followers
                   </button>
                 </listitem>
-                <listitem id="466" level="2">
-                  <button id="467" invalid="false" focusable="true" labelledby="">
+                <listitem id=466 level=2>
+                  <button id=467 focusable>
                     Number of forks
                   </button>
                 </listitem>
-                <listitem id="475" level="2">
-                  <button id="476" invalid="false" focusable="true" labelledby="">
+                <listitem id=475 level=2>
+                  <button id=476 focusable>
                     Number of stars
                   </button>
                 </listitem>
-                <listitem id="484" level="2">
-                  <button id="485" invalid="false" focusable="true" labelledby="">
+                <listitem id=484 level=2>
+                  <button id=485 focusable>
                     Date created
                   </button>
                 </listitem>
-                <listitem id="493" level="2">
-                  <button id="494" invalid="false" focusable="true" labelledby="">
+                <listitem id=493 level=2>
+                  <button id=494 focusable>
                     Date pushed
                   </button>
                 </listitem>
-                <listitem id="502" level="2">
-                  <button id="503" invalid="false" focusable="true" labelledby="">
+                <listitem id=502 level=2>
+                  <button id=503 focusable>
                     Topic
                   </button>
                 </listitem>
-                <listitem id="511" level="2">
-                  <button id="512" invalid="false" focusable="true" labelledby="">
+                <listitem id=511 level=2>
+                  <button id=512 focusable>
                     License
                   </button>
                 </listitem>
-                <listitem id="520" level="2">
-                  <button id="521" invalid="false" focusable="true" labelledby="">
+                <listitem id=520 level=2>
+                  <button id=521 focusable>
                     Archived
                   </button>
                 </listitem>
-                <listitem id="529" level="2">
-                  <link id="530" focusable="true" url="https://github.com/search?q=alumnium+is%3Apublic&amp;type=repositories" labelledby="">
+                <listitem id=529 level=2>
+                  <link id=530 focusable url="https://github.com/search?q=alumnium+is%3Apublic&amp;type=repositories">
                     Public
                   </link>
                 </listitem>
-                <listitem id="538" level="2">
-                  <link id="539" focusable="true" url="https://github.com/search?q=alumnium+is%3Aprivate&amp;type=repositories" labelledby="">
+                <listitem id=538 level=2>
+                  <link id=539 focusable url="https://github.com/search?q=alumnium+is%3Aprivate&amp;type=repositories">
                     Private
                   </link>
                 </listitem>
               </list>
             </listitem>
-            <listitem id="547" level="1">
-              <link id="548" focusable="true" url="https://github.com/search/advanced" labelledby="">
+            <listitem id=547 level=1>
+              <link id=548 focusable url="https://github.com/search/advanced">
                 Advanced search
               </link>
             </listitem>
           </list>
         </region>
-        <slider name="Draggable pane splitter" id="555" focusable="true" settable="true" orientation="horizontal" valuemin="256" valuemax="321" valuetext="Pane width 296 pixels"/>
+        <slider name="Draggable pane splitter" id=555 focusable settable orientation="horizontal" valuemin=256 valuemax=321 valuetext="Pane width 296 pixels"/>
       </div>
       28 results (142ms)
-      <heading id="578" focusable="true" focused="true" level="2">
+      <heading id=578 focusable focused level=2>
         28 results
       </heading>
-      <button id="584" invalid="false" focusable="true" hasPopup="menu">
+      <button id=584 focusable hasPopup="menu">
         Sort by: Best match
       </button>
-      <button name="Open column options" id="593" invalid="false" focusable="true" hasPopup="menu"/>
-      <heading id="600" level="3">
-        <link id="605" focusable="true" url="https://github.com/alumnium-hq/alumnium">
+      <button name="Open column options" id=593 focusable hasPopup="menu"/>
+      <heading id=600 level=3>
+        <link id=605 focusable url="https://github.com/alumnium-hq/alumnium">
           alumnium-hq/
-          <emphasis id="608">
+          <emphasis id=608>
             alumnium
           </emphasis>
         </link>
       </heading>
       End-to-end testing with AI
-      <link id="616" focusable="true" url="https://github.com/topics/javascript">
+      <link id=616 focusable url="https://github.com/topics/javascript">
         javascript
       </link>
-      <link id="620" focusable="true" url="https://github.com/topics/python">
+      <link id=620 focusable url="https://github.com/topics/python">
         python
       </link>
-      <link id="624" focusable="true" url="https://github.com/topics/java">
+      <link id=624 focusable url="https://github.com/topics/java">
         java
       </link>
-      <link id="628" focusable="true" url="https://github.com/topics/testing">
+      <link id=628 focusable url="https://github.com/topics/testing">
         testing
       </link>
-      <link id="632" focusable="true" url="https://github.com/topics/typescript">
+      <link id=632 focusable url="https://github.com/topics/typescript">
         typescript
       </link>
-      <list id="635">
-        <listitem id="636" level="1">
-          <div name="language" id="639">
+      <list id=635>
+        <listitem id=636 level=1>
+          <div name="language" id=639>
             TypeScript
           </div>
         </listitem>
-        <listitem id="642" level="1">
-          <link name="stars" id="643" focusable="true" url="https://github.com/alumnium-hq/alumnium/stargazers">
+        <listitem id=642 level=1>
+          <link name="stars" id=643 focusable url="https://github.com/alumnium-hq/alumnium/stargazers">
             967
           </link>
         </listitem>
-        <listitem id="647" level="1">
+        <listitem id=647 level=1>
           Updated 2 hours ago
         </listitem>
       </list>
-      <link id="657" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=657 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading name="" id="666" level="3">
-        <link id="671" focusable="true" url="https://github.com/alumnium-hq/alumnium.github.io">
+      <heading id=666 level=3>
+        <link id=671 focusable url="https://github.com/alumnium-hq/alumnium.github.io">
           alumnium-hq/
-          <emphasis id="674">
+          <emphasis id=674>
             alumnium
           </emphasis>
           .github.io
         </link>
         Public archive
       </heading>
-      <div id="682">
-        <emphasis id="683">
+      <div id=682>
+        <emphasis id=683>
           Alumnium
         </emphasis>
         website
       </div>
-      <list id="688">
-        <listitem id="689" level="1">
-          <div name="language" id="692">
+      <list id=688>
+        <listitem id=689 level=1>
+          <div name="language" id=692>
             MDX
           </div>
         </listitem>
-        <listitem id="695" level="1">
-          <link name="stars" id="696" focusable="true" url="https://github.com/alumnium-hq/alumnium.github.io/stargazers">
+        <listitem id=695 level=1>
+          <link name="stars" id=696 focusable url="https://github.com/alumnium-hq/alumnium.github.io/stargazers">
             3
           </link>
         </listitem>
-        <listitem id="700" level="1">
+        <listitem id=700 level=1>
           Updated on Mar 27
         </listitem>
       </list>
-      <link id="710" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=710 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading id="719" level="3">
-        <link id="724" focusable="true" url="https://github.com/iammac2/alumnium-cucumber">
+      <heading id=719 level=3>
+        <link id=724 focusable url="https://github.com/iammac2/alumnium-cucumber">
           iammac2/
-          <emphasis id="727">
+          <emphasis id=727>
             alumnium
           </emphasis>
           -cucumber
         </link>
       </heading>
-      <div id="732">
+      <div id=732>
         A Cucumber adapter for zero-code BDD scenarios with
-        <emphasis id="735">
+        <emphasis id=735>
           Alumnium
         </emphasis>
       </div>
-      <list id="738">
-        <listitem id="739" level="1">
-          <div name="language" id="742">
+      <list id=738>
+        <listitem id=739 level=1>
+          <div name="language" id=742>
             Python
           </div>
         </listitem>
-        <listitem id="745" level="1">
-          <link name="stars" id="746" focusable="true" url="https://github.com/iammac2/alumnium-cucumber/stargazers">
+        <listitem id=745 level=1>
+          <link name="stars" id=746 focusable url="https://github.com/iammac2/alumnium-cucumber/stargazers">
             6
           </link>
         </listitem>
-        <listitem id="750" level="1">
+        <listitem id=750 level=1>
           Updated on Apr 19
         </listitem>
       </list>
-      <link id="760" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=760 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading id="769" level="3">
-        <link id="774" focusable="true" url="https://github.com/jamboljack/AlumniUMK">
+      <heading id=769 level=3>
+        <link id=774 focusable url="https://github.com/jamboljack/AlumniUMK">
           jamboljack/
-          <emphasis id="777">
+          <emphasis id=777>
             AlumniUMK
           </emphasis>
         </link>
       </heading>
       Web Data Alumni UMK
-      <list id="783">
-        <listitem id="784" level="1">
-          <div name="language" id="787">
+      <list id=783>
+        <listitem id=784 level=1>
+          <div name="language" id=787>
             PHP
           </div>
         </listitem>
-        <listitem id="790" level="1">
-          <link name="stars" id="791" focusable="true" url="https://github.com/jamboljack/AlumniUMK/stargazers">
+        <listitem id=790 level=1>
+          <link name="stars" id=791 focusable url="https://github.com/jamboljack/AlumniUMK/stargazers">
             0
           </link>
         </listitem>
-        <listitem id="795" level="1">
+        <listitem id=795 level=1>
           Updated on May 15, 2017
         </listitem>
       </list>
-      <link id="805" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=805 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading id="814" level="3">
-        <link id="819" focusable="true" url="https://github.com/JoanEsquivel/alumnium-framework">
+      <heading id=814 level=3>
+        <link id=819 focusable url="https://github.com/JoanEsquivel/alumnium-framework">
           JoanEsquivel/
-          <emphasis id="822">
+          <emphasis id=822>
             alumnium
           </emphasis>
           -framework
         </link>
       </heading>
-      <div id="827">
+      <div id=827>
         Discovery project to learn
-        <emphasis id="830">
+        <emphasis id=830>
           alumnium
         </emphasis>
       </div>
-      <list id="833">
-        <listitem id="834" level="1">
-          <div name="language" id="837">
+      <list id=833>
+        <listitem id=834 level=1>
+          <div name="language" id=837>
             Python
           </div>
         </listitem>
-        <listitem id="840" level="1">
-          <link name="stars" id="841" focusable="true" url="https://github.com/JoanEsquivel/alumnium-framework/stargazers">
+        <listitem id=840 level=1>
+          <link name="stars" id=841 focusable url="https://github.com/JoanEsquivel/alumnium-framework/stargazers">
             3
           </link>
         </listitem>
-        <listitem id="845" level="1">
+        <listitem id=845 level=1>
           Updated on Aug 25, 2025
         </listitem>
       </list>
-      <link id="855" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=855 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading id="864" level="3">
-        <link id="869" focusable="true" url="https://github.com/lovemazaziko-commits/alumnium">
+      <heading id=864 level=3>
+        <link id=869 focusable url="https://github.com/lovemazaziko-commits/alumnium">
           lovemazaziko-commits/
-          <emphasis id="872">
+          <emphasis id=872>
             alumnium
           </emphasis>
         </link>
       </heading>
-      <emphasis id="876">
+      <emphasis id=876>
         alumnium
       </emphasis>
-      <list id="879">
-        <listitem id="880" level="1">
-          <div name="language" id="883">
+      <list id=879>
+        <listitem id=880 level=1>
+          <div name="language" id=883>
             HTML
           </div>
         </listitem>
-        <listitem id="886" level="1">
-          <link name="stars" id="887" focusable="true" url="https://github.com/lovemazaziko-commits/alumnium/stargazers">
+        <listitem id=886 level=1>
+          <link name="stars" id=887 focusable url="https://github.com/lovemazaziko-commits/alumnium/stargazers">
             0
           </link>
         </listitem>
-        <listitem id="891" level="1">
+        <listitem id=891 level=1>
           Updated on Feb 9
         </listitem>
       </list>
-      <link id="901" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=901 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading id="910" level="3">
-        <link id="915" focusable="true" url="https://github.com/Amiraizt/AlumniumWorkshop">
+      <heading id=910 level=3>
+        <link id=915 focusable url="https://github.com/Amiraizt/AlumniumWorkshop">
           Amiraizt/
-          <emphasis id="918">
+          <emphasis id=918>
             Alumnium
           </emphasis>
           Workshop
         </link>
       </heading>
-      <list id="923">
-        <listitem id="924" level="1">
-          <div name="language" id="927">
+      <list id=923>
+        <listitem id=924 level=1>
+          <div name="language" id=927>
             CSS
           </div>
         </listitem>
-        <listitem id="930" level="1">
-          <link name="stars" id="931" focusable="true" url="https://github.com/Amiraizt/AlumniumWorkshop/stargazers">
+        <listitem id=930 level=1>
+          <link name="stars" id=931 focusable url="https://github.com/Amiraizt/AlumniumWorkshop/stargazers">
             0
           </link>
         </listitem>
-        <listitem id="935" level="1">
+        <listitem id=935 level=1>
           Updated on Apr 26, 2024
         </listitem>
       </list>
-      <link id="945" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=945 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading id="954" level="3">
-        <link id="959" focusable="true" url="https://github.com/ameyanatu/alumniumPOC">
+      <heading id=954 level=3>
+        <link id=959 focusable url="https://github.com/ameyanatu/alumniumPOC">
           ameyanatu/
-          <emphasis id="962">
+          <emphasis id=962>
             alumnium
           </emphasis>
           POC
         </link>
       </heading>
-      <list id="967">
-        <listitem id="968" level="1">
-          <link name="stars" id="969" focusable="true" url="https://github.com/ameyanatu/alumniumPOC/stargazers">
+      <list id=967>
+        <listitem id=968 level=1>
+          <link name="stars" id=969 focusable url="https://github.com/ameyanatu/alumniumPOC/stargazers">
             0
           </link>
         </listitem>
-        <listitem id="973" level="1">
+        <listitem id=973 level=1>
           Updated on May 15, 2025
         </listitem>
       </list>
-      <link id="983" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=983 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading id="992" level="3">
-        <link id="997" focusable="true" url="https://github.com/vochicuong18/alumnium">
+      <heading id=992 level=3>
+        <link id=997 focusable url="https://github.com/vochicuong18/alumnium">
           vochicuong18/
-          <emphasis id="1000">
+          <emphasis id=1000>
             alumnium
           </emphasis>
         </link>
       </heading>
-      <list id="1003">
-        <listitem id="1004" level="1">
-          <div name="language" id="1007">
+      <list id=1003>
+        <listitem id=1004 level=1>
+          <div name="language" id=1007>
             Python
           </div>
         </listitem>
-        <listitem id="1010" level="1">
-          <link name="stars" id="1011" focusable="true" url="https://github.com/vochicuong18/alumnium/stargazers">
+        <listitem id=1010 level=1>
+          <link name="stars" id=1011 focusable url="https://github.com/vochicuong18/alumnium/stargazers">
             0
           </link>
         </listitem>
-        <listitem id="1015" level="1">
+        <listitem id=1015 level=1>
           Updated on May 12, 2025
         </listitem>
       </list>
-      <link id="1025" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=1025 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <heading id="1034" level="3">
-        <link id="1039" focusable="true" url="https://github.com/JoanEsquivel/alumnium">
+      <heading id=1034 level=3>
+        <link id=1039 focusable url="https://github.com/JoanEsquivel/alumnium">
           JoanEsquivel/
-          <emphasis id="1042">
+          <emphasis id=1042>
             alumnium
           </emphasis>
         </link>
       </heading>
-      <div id="1045">
+      <div id=1045>
         Discovery project to learn
-        <emphasis id="1048">
+        <emphasis id=1048>
           alumnium
         </emphasis>
       </div>
-      <list id="1051">
-        <listitem id="1052" level="1">
-          <link name="stars" id="1053" focusable="true" url="https://github.com/JoanEsquivel/alumnium/stargazers">
+      <list id=1051>
+        <listitem id=1052 level=1>
+          <link name="stars" id=1053 focusable url="https://github.com/JoanEsquivel/alumnium/stargazers">
             0
           </link>
         </listitem>
-        <listitem id="1057" level="1">
+        <listitem id=1057 level=1>
           Updated on Aug 21, 2025
         </listitem>
       </list>
-      <link id="1067" focusable="true" url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
+      <link id=1067 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">
         Star
       </link>
-      <navigation name="Pagination" id="1075">
-        <div id="1076">
-          <link name="Page" id="1077" focusable="true" url="https://github.com/search?q=alumnium&amp;type=repositories&amp;p=1">
+      <navigation name="Pagination" id=1075>
+        <div id=1076>
+          <link name="Page" id=1077 focusable url="https://github.com/search?q=alumnium&amp;type=repositories&amp;p=1">
             1
           </link>
-          <link name="Page" id="1080" focusable="true" url="https://github.com/search?q=alumnium&amp;type=repositories&amp;p=2">
+          <link name="Page" id=1080 focusable url="https://github.com/search?q=alumnium&amp;type=repositories&amp;p=2">
             2
           </link>
-          <link name="Page" id="1083" focusable="true" url="https://github.com/search?q=alumnium&amp;type=repositories&amp;p=3">
+          <link name="Page" id=1083 focusable url="https://github.com/search?q=alumnium&amp;type=repositories&amp;p=3">
             3
           </link>
-          <link name="Page" id="1086" focusable="true" url="https://github.com/search?q=alumnium&amp;type=repositories&amp;p=2">
+          <link name="Page" id=1086 focusable url="https://github.com/search?q=alumnium&amp;type=repositories&amp;p=2">
             Next
           </link>
         </div>
       </navigation>
-      <image name="Package icon" id="1093" url="https://github.com/images/modules/search/mona-love.png"/>
-      <heading id="1094" level="2">
+      <image name="Package icon" id=1093 url="https://github.com/images/modules/search/mona-love.png"/>
+      <heading id=1094 level=2>
         Sponsor open source projects you depend on
       </heading>
       Contributors are working behind the scenes to make open source better for everyone—give them the help and recognition they deserve.
-      <link id="1103" focusable="true" url="https://github.com/sponsors/explore">
+      <link id=1103 focusable url="https://github.com/sponsors/explore">
         Explore sponsorable projects
       </link>
-      <div id="1106">
+      <div id=1106>
         ProTip!Press the / key to activate the search input again and adjust your query.
       </div>
     </div>
   </main>
-  <div id="1120" live="polite" atomic="true" relevant="additions text"/>
-  <div id="1121" live="assertive" atomic="true" relevant="additions text"/>
+  <div id=1120 live="polite" atomic relevant="additions text"/>
+  <div id=1121 live="assertive" atomic relevant="additions text"/>
 </RootWebArea>

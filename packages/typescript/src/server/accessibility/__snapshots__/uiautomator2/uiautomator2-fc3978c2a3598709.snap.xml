@@ -1,39 +1,39 @@
 <hierarchy>
-  <hierarchy id="2">
-    <FrameLayout id="3" clickable="false">
-      <LinearLayout id="4" clickable="false">
-        <FrameLayout id="5" clickable="false">
-          <FrameLayout id="6" clickable="false">
-            <FrameLayout id="7" resource-id="android:id/content" clickable="false">
-              <ViewGroup id="8" resource-id="com.android.chrome:id/coordinator" clickable="false">
-                <FrameLayout id="9" resource-id="com.android.chrome:id/compositor_view_holder" clickable="false">
-                  <FrameLayout id="10" clickable="false">
-                    <View id="11" clickable="false"/>
+  <hierarchy id=2>
+    <FrameLayout id=3>
+      <LinearLayout id=4>
+        <FrameLayout id=5>
+          <FrameLayout id=6>
+            <FrameLayout id=7 resource-id="android:id/content">
+              <ViewGroup id=8 resource-id="com.android.chrome:id/coordinator">
+                <FrameLayout id=9 resource-id="com.android.chrome:id/compositor_view_holder">
+                  <FrameLayout id=10>
+                    <View id=11/>
                   </FrameLayout>
-                  <FrameLayout id="12" clickable="false">
-                    <WebView id="13" text="The Internet" clickable="false">
-                      <View id="14" clickable="false">
-                        <TextView id="15" resource-id="flash-messages" clickable="false"/>
-                        <View id="16" content-desc="Fork me on GitHub" clickable="true">
-                          <Image id="17" text="Fork me on GitHub" clickable="false"/>
+                  <FrameLayout id=12>
+                    <WebView id=13 text="The Internet">
+                      <View id=14>
+                        <TextView id=15 resource-id="flash-messages"/>
+                        <View id=16 content-desc="Fork me on GitHub" clickable>
+                          <Image id=17 text="Fork me on GitHub"/>
                         </View>
-                        <View id="18" resource-id="content" clickable="false">
-                          <TextView id="19" text="Forgot Password" clickable="false"/>
-                          <View id="20" resource-id="forgot_password" clickable="false">
-                            <View id="21" clickable="false">
-                              <View id="22" text="E-mail" clickable="false"/>
-                              <EditText id="23" resource-id="email" text="test@example.com" clickable="true"/>
+                        <View id=18 resource-id="content">
+                          <TextView id=19 text="Forgot Password"/>
+                          <View id=20 resource-id="forgot_password">
+                            <View id=21>
+                              <View id=22 text="E-mail"/>
+                              <EditText id=23 resource-id="email" text="test@example.com" clickable/>
                             </View>
-                            <Button id="24" resource-id="form_submit" text="Retrieve password" clickable="true"/>
+                            <Button id=24 resource-id="form_submit" text="Retrieve password" clickable/>
                           </View>
                         </View>
-                        <View id="25" resource-id="page-footer" clickable="false">
-                          <View id="26" clickable="false">
-                            <View id="27" clickable="false"/>
-                            <View id="28" clickable="false">
-                              <TextView id="29" text="Powered by " clickable="false"/>
-                              <View id="30" content-desc="Elemental Selenium" clickable="true">
-                                <TextView id="31" text="Elemental Selenium" clickable="false"/>
+                        <View id=25 resource-id="page-footer">
+                          <View id=26>
+                            <View id=27/>
+                            <View id=28>
+                              <TextView id=29 text="Powered by "/>
+                              <View id=30 content-desc="Elemental Selenium" clickable>
+                                <TextView id=31 text="Elemental Selenium"/>
                               </View>
                             </View>
                           </View>
@@ -42,28 +42,28 @@
                     </WebView>
                   </FrameLayout>
                 </FrameLayout>
-                <FrameLayout id="32" resource-id="com.android.chrome:id/control_container" clickable="false">
-                  <FrameLayout id="33" resource-id="com.android.chrome:id/toolbar_container" clickable="false">
-                    <FrameLayout id="34" resource-id="com.android.chrome:id/toolbar" clickable="false">
-                      <ImageButton id="35" resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable="true"/>
-                      <FrameLayout id="36" resource-id="com.android.chrome:id/location_bar" clickable="false">
-                        <LinearLayout id="37" resource-id="com.android.chrome:id/location_bar_status" clickable="true">
-                          <LinearLayout id="38" resource-id="com.android.chrome:id/location_bar_status_icon_view" clickable="false">
-                            <FrameLayout id="39" resource-id="com.android.chrome:id/location_bar_status_icon_frame" clickable="false">
-                              <ImageView id="40" resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure" clickable="false"/>
+                <FrameLayout id=32 resource-id="com.android.chrome:id/control_container">
+                  <FrameLayout id=33 resource-id="com.android.chrome:id/toolbar_container">
+                    <FrameLayout id=34 resource-id="com.android.chrome:id/toolbar">
+                      <ImageButton id=35 resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable/>
+                      <FrameLayout id=36 resource-id="com.android.chrome:id/location_bar">
+                        <LinearLayout id=37 resource-id="com.android.chrome:id/location_bar_status" clickable>
+                          <LinearLayout id=38 resource-id="com.android.chrome:id/location_bar_status_icon_view">
+                            <FrameLayout id=39 resource-id="com.android.chrome:id/location_bar_status_icon_frame">
+                              <ImageView id=40 resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure"/>
                             </FrameLayout>
                           </LinearLayout>
                         </LinearLayout>
-                        <EditText id="41" resource-id="com.android.chrome:id/url_bar" text="the-internet.herokuapp.com/forgot_password" clickable="true"/>
+                        <EditText id=41 resource-id="com.android.chrome:id/url_bar" text="the-internet.herokuapp.com/forgot_password" clickable/>
                       </FrameLayout>
-                      <LinearLayout id="42" resource-id="com.android.chrome:id/toolbar_buttons" clickable="false">
-                        <ImageButton id="43" resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable="true"/>
-                        <FrameLayout id="44" resource-id="com.android.chrome:id/menu_button_wrapper" clickable="false">
-                          <ImageButton id="45" resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable="true"/>
+                      <LinearLayout id=42 resource-id="com.android.chrome:id/toolbar_buttons">
+                        <ImageButton id=43 resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable/>
+                        <FrameLayout id=44 resource-id="com.android.chrome:id/menu_button_wrapper">
+                          <ImageButton id=45 resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable/>
                         </FrameLayout>
                       </LinearLayout>
                     </FrameLayout>
-                    <ImageView id="46" resource-id="com.android.chrome:id/toolbar_hairline" clickable="false"/>
+                    <ImageView id=46 resource-id="com.android.chrome:id/toolbar_hairline"/>
                   </FrameLayout>
                 </FrameLayout>
               </ViewGroup>

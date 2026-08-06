@@ -18,13 +18,18 @@ export namespace XmlRenderer {
   export interface Options {
     minify?: boolean;
     indentation?: string;
+    compactAttrs?: boolean;
   }
 }
 
 export abstract class XmlRenderer {
+  static defaultOptions: XmlRenderer.Options = {
+    compactAttrs: true,
+  };
+
   static render(
     node: AnyNode | ArrayLike<AnyNode>,
-    options: XmlRenderer.Options = {},
+    options: XmlRenderer.Options = this.defaultOptions,
   ): string {
     const nodes = "length" in node ? node : [node];
     const output = this.#renderFormattedChildren(nodes, options, 0, false);
@@ -128,7 +133,7 @@ export abstract class XmlRenderer {
   ): string {
     const name = element.name;
     const prefix = preserveSpace ? "" : this.#indent(depth, options);
-    const attributes = this.#formatAttributes(element.attribs);
+    const attributes = this.#formatAttributes(element.attribs, options);
     const children = element.children;
 
     if (!children.length) return `${prefix}<${name}${attributes}/>`;
@@ -154,6 +159,7 @@ export abstract class XmlRenderer {
 
   static #formatAttributes(
     attributes: Record<string, unknown> | undefined,
+    options: XmlRenderer.Options,
   ): string {
     if (!attributes) return "";
 
@@ -161,7 +167,21 @@ export abstract class XmlRenderer {
 
     for (const key in attributes) {
       const value = attributes[key];
-      result += ` ${key}="${this.#sanitizeAttr(value == null ? "" : String(value))}"`;
+      const stringValue = value == null ? "" : String(value);
+
+      if (options.compactAttrs) {
+        if (!stringValue || stringValue === "false") continue;
+        if (stringValue === "true") {
+          result += ` ${key}`;
+          continue;
+        }
+        if (/^-?(?:0|[1-9]\d*)(?:\.\d+)?$/.test(stringValue)) {
+          result += ` ${key}=${stringValue}`;
+          continue;
+        }
+      }
+
+      result += ` ${key}="${this.#sanitizeAttr(stringValue)}"`;
     }
 
     return result;

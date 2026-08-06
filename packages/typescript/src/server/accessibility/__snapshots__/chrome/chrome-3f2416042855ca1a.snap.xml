@@ -1,30 +1,30 @@
-<RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/drag_and_drop">
-  <div id="3">
-    <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
-      <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/drag_and_drop">
+  <div id=3>
+    <link id=7 focusable url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
     </link>
-    <div id="9">
-      <heading id="11" level="3">
+    <div id=9>
+      <heading id=11 level=3>
         Drag and Drop
       </heading>
-      <div id="14">
-        <group id="15">
-          <banner id="16">
+      <div id=14>
+        <group id=15>
+          <banner id=16>
             A
           </banner>
         </group>
-        <group id="19">
-          <banner id="20">
+        <group id=19>
+          <banner id=20>
             B
           </banner>
         </group>
       </div>
     </div>
-    <div id="24">
-      <separator id="25" settable="true" orientation="horizontal"/>
-      <div id="26">
+    <div id=24>
+      <separator id=25 settable orientation="horizontal"/>
+      <div id=26>
         Powered by
-        <link id="29" focusable="true" url="http://elementalselenium.com/">
+        <link id=29 focusable url="http://elementalselenium.com/">
           Elemental Selenium
         </link>
       </div>

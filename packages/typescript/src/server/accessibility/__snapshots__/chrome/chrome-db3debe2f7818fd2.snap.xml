@@ -1,17 +1,17 @@
-<RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" id="1" focusable="true" focused="true" url="https://www.airbnb.com.sg/">
-  <dialog name="" id="663" focusable="true" focused="true" modal="true">
-    <button name="Close" id="665" invalid="false" focusable="true"/>
-    <div id="667">
-      <image id="670"/>
+<RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" id=1 focusable focused url="https://www.airbnb.com.sg/">
+  <dialog id=663 focusable focused modal>
+    <button name="Close" id=665 focusable/>
+    <div id=667>
+      <image id=670/>
       Now you’ll see one price for your trip, all fees included.
-      <button id="677" invalid="false" focusable="true">
+      <button id=677 focusable>
         Got it
       </button>
     </div>
-    <div id="680">
-      <div id="681" live="polite" atomic="true" relevant="additions text"/>
-      <div id="682" live="assertive" atomic="true" relevant="additions text"/>
+    <div id=680>
+      <div id=681 live="polite" atomic relevant="additions text"/>
+      <div id=682 live="assertive" atomic relevant="additions text"/>
     </div>
   </dialog>
-  <RootWebArea id="684" focusable="true" url="about:blank"/>
+  <RootWebArea id=684 focusable url="about:blank"/>
 </RootWebArea>

@@ -1,261 +1,261 @@
-<RootWebArea name="Claude" id="1" focusable="true" focused="true" url="https://claude.com/">
-  <link id="4" focusable="true" url="https://claude.com/#main-content">
+<RootWebArea name="Claude" id=1 focusable focused url="https://claude.com/">
+  <link id=4 focusable url="https://claude.com/#main-content">
     Skip to main content
   </link>
-  <banner id="7">
-    <link name="" id="9" focusable="true" url="https://claude.com/">
-      <image name="Claude" id="10"/>
+  <banner id=7>
+    <link id=9 focusable url="https://claude.com/">
+      <image name="Claude" id=10/>
     </link>
-    <navigation name="Main" id="12">
-      <button id="15" invalid="false" focusable="true" hasPopup="menu">
+    <navigation name="Main" id=12>
+      <button id=15 focusable hasPopup="menu">
         Meet Claude
       </button>
-      <button id="23" invalid="false" focusable="true" hasPopup="menu">
+      <button id=23 focusable hasPopup="menu">
         Platform
       </button>
-      <button id="31" invalid="false" focusable="true" hasPopup="menu">
+      <button id=31 focusable hasPopup="menu">
         Solutions
       </button>
-      <button id="39" invalid="false" focusable="true" hasPopup="menu">
+      <button id=39 focusable hasPopup="menu">
         Pricing
       </button>
-      <button id="47" invalid="false" focusable="true" hasPopup="menu">
+      <button id=47 focusable hasPopup="menu">
         Resources
       </button>
-      <link id="53" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
+      <link id=53 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
         Login
       </link>
     </navigation>
-    <link id="57" focusable="true" url="https://claude.com/contact-sales">
+    <link id=57 focusable url="https://claude.com/contact-sales">
       Contact sales
     </link>
-    <link id="60" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d">
+    <link id=60 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d">
       Try Claude
     </link>
   </banner>
-  <main id="64">
-    <div id="65">
-      <heading name="" id="69" level="1">
+  <main id=64>
+    <div id=65>
+      <heading id=69 level=1>
         Think fast,
-        <LineBreak name="" id="72">
-          <InlineTextBox name="&#xA;" id="73"/>
+        <LineBreak id=72>
+          <InlineTextBox name="&#xA;" id=73/>
         </LineBreak>
         build faster
       </heading>
-      <paragraph id="76">
+      <paragraph id=76>
         Brainstorm in chat, build in Cowork
       </paragraph>
-      <button id="84" invalid="false" focusable="true">
+      <button id=84 focusable>
         Continue with Google
       </button>
-      <paragraph id="87">
+      <paragraph id=87>
         OR
       </paragraph>
-      <link id="90" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d?redirect=claude.com&amp;via=static_email">
+      <link id=90 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d?redirect=claude.com&amp;via=static_email">
         Continue with email
       </link>
-      <div id="95">
+      <div id=95>
         By continuing, you acknowledge Anthropic's
-        <link id="98" focusable="true" url="https://www.anthropic.com/legal/privacy">
+        <link id=98 focusable url="https://www.anthropic.com/legal/privacy">
           Privacy Policy
         </link>
         and agree to get occasional promotional emails and notifications.
       </div>
-      <button id="105" invalid="false" focusable="true">
+      <button id=105 focusable>
         Download desktop app
       </button>
     </div>
-    <div id="146">
-      <heading name="Explore plans" id="149" level="2"/>
-      <tablist id="151" multiselectable="false" orientation="horizontal">
-        <tab id="152" invalid="false" focusable="true" selected="true">
+    <div id=146>
+      <heading name="Explore plans" id=149 level=2/>
+      <tablist id=151 orientation="horizontal">
+        <tab id=152 focusable selected>
           Individual
         </tab>
-        <tab id="155" invalid="false" focusable="true" selected="false">
+        <tab id=155 focusable>
           Team and Enterprise
         </tab>
       </tablist>
-      <tabpanel name="Individual" id="158">
-        <heading id="161" level="3">
+      <tabpanel name="Individual" id=158>
+        <heading id=161 level=3>
           Free
         </heading>
-        <paragraph id="164">
+        <paragraph id=164>
           Try Claude
         </paragraph>
         $0
-        <paragraph id="171">
+        <paragraph id=171>
           Free for everyone
         </paragraph>
-        <link id="175" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=free">
+        <link id=175 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=free">
           Try Claude
         </link>
-        <list id="179">
-          <listitem id="180" level="1">
+        <list id=179>
+          <listitem id=180 level=1>
             Chat on web, iOS, Android, and on your desktop
           </listitem>
-          <listitem id="186" level="1">
+          <listitem id=186 level=1>
             Generate code and visualize data
           </listitem>
-          <listitem id="191" level="1">
+          <listitem id=191 level=1>
             Write, edit, and create content
           </listitem>
-          <listitem id="196" level="1">
+          <listitem id=196 level=1>
             Ability to search the web
           </listitem>
-          <listitem id="201" level="1">
+          <listitem id=201 level=1>
             Memory across conversations
           </listitem>
-          <listitem id="206" level="1">
+          <listitem id=206 level=1>
             Create files and execute code
           </listitem>
-          <listitem id="211" level="1">
+          <listitem id=211 level=1>
             Unlock more from Claude with desktop extensions
           </listitem>
-          <listitem id="217" level="1">
+          <listitem id=217 level=1>
             Connect Slack and Google Workspace services
           </listitem>
-          <listitem id="223" level="1">
+          <listitem id=223 level=1>
             Integrate any context or tool through connectors with remote MCP
           </listitem>
-          <listitem id="230" level="1">
+          <listitem id=230 level=1>
             Extended thinking for complex work
           </listitem>
         </list>
-        <heading id="238" level="3">
+        <heading id=238 level=3>
           Pro
         </heading>
-        <paragraph id="241">
+        <paragraph id=241>
           For everyday productivity
         </paragraph>
         $25
-        <paragraph id="248">
+        <paragraph id=248>
           Per month with annual subscription discount ($300 billed up front). $30 if billed monthly.
         </paragraph>
-        <link id="261" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=pro">
+        <link id=261 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=pro">
           Try Claude
         </link>
-        <paragraph id="264">
+        <paragraph id=264>
           No commitment · Cancel anytime
         </paragraph>
-        <paragraph id="268">
-          <strong id="269">
+        <paragraph id=268>
+          <strong id=269>
             Everything in Free, plus:
           </strong>
         </paragraph>
-        <list id="272">
-          <listitem id="273" level="1">
+        <list id=272>
+          <listitem id=273 level=1>
             More usage*
           </listitem>
-          <listitem id="278" level="1">
+          <listitem id=278 level=1>
             Includes Claude Code
           </listitem>
-          <listitem id="283" level="1">
+          <listitem id=283 level=1>
             Includes Claude Cowork
           </listitem>
-          <listitem id="288" level="1">
+          <listitem id=288 level=1>
             Includes Claude Design
           </listitem>
-          <listitem id="293" level="1">
+          <listitem id=293 level=1>
             Includes Claude Science
           </listitem>
-          <listitem id="298" level="1">
+          <listitem id=298 level=1>
             Access to unlimited projects to organize chats and documents
           </listitem>
-          <listitem id="304" level="1">
+          <listitem id=304 level=1>
             Access to Research
           </listitem>
-          <listitem id="309" level="1">
+          <listitem id=309 level=1>
             Ability to use more Claude models
           </listitem>
-          <listitem id="314" level="1">
+          <listitem id=314 level=1>
             Claude for Microsoft 365
           </listitem>
         </list>
-        <heading id="321" level="3">
+        <heading id=321 level=3>
           Max
         </heading>
-        <paragraph id="324">
+        <paragraph id=324>
           5–20x more usage than Pro
         </paragraph>
         From $149.99
-        <paragraph id="331">
+        <paragraph id=331>
           Per month
         </paragraph>
-        <link id="335" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
+        <link id=335 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
           Try Claude
         </link>
-        <paragraph id="338">
+        <paragraph id=338>
           No commitment · Cancel anytime
         </paragraph>
-        <paragraph id="342">
-          <strong id="343">
+        <paragraph id=342>
+          <strong id=343>
             Everything in Pro, plus:
           </strong>
         </paragraph>
-        <list id="346">
-          <listitem id="347" level="1">
+        <list id=346>
+          <listitem id=347 level=1>
             Choose 5x or 20x more usage than Pro*
           </listitem>
-          <listitem id="353" level="1">
+          <listitem id=353 level=1>
             Higher output limits for all tasks
           </listitem>
-          <listitem id="358" level="1">
+          <listitem id=358 level=1>
             Early access to advanced Claude features
           </listitem>
-          <listitem id="364" level="1">
+          <listitem id=364 level=1>
             Priority access at high traffic times
           </listitem>
         </list>
       </tabpanel>
-      <paragraph id="370">
+      <paragraph id=370>
         Prices include 9% GST
       </paragraph>
-      <paragraph id="373">
+      <paragraph id=373>
         *
-        <link id="376" focusable="true" url="https://support.anthropic.com/en/articles/9797557-usage-limit-best-practices">
+        <link id=376 focusable url="https://support.anthropic.com/en/articles/9797557-usage-limit-best-practices">
           Usage limits apply.
         </link>
         Prices and plans are subject to change at Anthropic's discretion.
       </paragraph>
     </div>
-    <div id="381">
-      <heading name="FAQ" id="384" level="2"/>
-      <heading id="387" level="3">
-        <button id="388" invalid="false" focusable="true" controls="_R_6jsinpfmlb_-content">
+    <div id=381>
+      <heading name="FAQ" id=384 level=2/>
+      <heading id=387 level=3>
+        <button id=388 focusable controls="_R_6jsinpfmlb_-content">
           What is Claude and how does it work?
         </button>
       </heading>
-      <region name="What is Claude and how does it work?" id="395" labelledby="">
-        <paragraph id="397">
+      <region name="What is Claude and how does it work?" id=395>
+        <paragraph id=397>
           Claude is an artificial intelligence, trained by Anthropic using Constitutional AI to be safe, accurate, and secure — the trusted assistant for you to do your best work.
         </paragraph>
-        <paragraph id="401">
+        <paragraph id=401>
           You can use Claude for your own personal use or create a Team account to collaborate with your teammates.
-          <link id="405" focusable="true" url="https://claude.com/product/overview">
+          <link id=405 focusable url="https://claude.com/product/overview">
             Learn more about Claude
           </link>
           .
         </paragraph>
       </region>
-      <heading id="411" level="3">
-        <button id="412" invalid="false" focusable="true" controls="_R_ajsinpfmlb_-content">
+      <heading id=411 level=3>
+        <button id=412 focusable controls="_R_ajsinpfmlb_-content">
           What should I use Claude for?
         </button>
       </heading>
-      <region name="What should I use Claude for?" id="419" labelledby="">
-        <paragraph id="421">
+      <region name="What should I use Claude for?" id=419>
+        <paragraph id=421>
           If you can dream it, Claude can help you do it. Claude can process large amounts of information, brainstorm ideas, generate text and code, help you understand subjects, coach you through difficult situations, simplify your busywork so you can focus on what matters most, and so much more.
         </paragraph>
       </region>
-      <heading id="428" level="3">
-        <button id="429" invalid="false" focusable="true" controls="_R_ejsinpfmlb_-content">
+      <heading id=428 level=3>
+        <button id=429 focusable controls="_R_ejsinpfmlb_-content">
           How much does it cost to use?
         </button>
       </heading>
-      <region name="How much does it cost to use?" id="436" labelledby="">
-        <paragraph id="438">
+      <region name="How much does it cost to use?" id=436>
+        <paragraph id=438>
           Claude has five pricing plans available — Free, Pro, Max, Team, and Enterprise. The Free plan offers limited use with no payment required.
-          <link id="442" focusable="true" url="https://claude.com/pricing">
+          <link id=442 focusable url="https://claude.com/pricing">
             Learn more about available pricing plans
           </link>
           .
@@ -263,473 +263,473 @@
       </region>
     </div>
   </main>
-  <contentinfo id="448">
-    <link name="" id="453" focusable="true" url="https://claude.com/">
-      <image name="Claude" id="454"/>
+  <contentinfo id=448>
+    <link id=453 focusable url="https://claude.com/">
+      <image name="Claude" id=454/>
     </link>
-    <div id="455">
-      <textbox name="Ask Claude" id="457" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="true" readonly="false" required="false">
-        <div id="459" editable="plaintext"/>
+    <div id=455>
+      <textbox name="Ask Claude" id=457 focusable editable="plaintext" settable multiline>
+        <div id=459 editable="plaintext"/>
       </textbox>
-      <button name="Submit" id="460" invalid="false" focusable="true"/>
+      <button name="Submit" id=460 focusable/>
     </div>
-    <image name="By Anthropic" id="464"/>
-    <paragraph id="465">
+    <image name="By Anthropic" id=464/>
+    <paragraph id=465>
       © 2026 Anthropic PBC
     </paragraph>
-    <heading id="472" level="2">
+    <heading id=472 level=2>
       Products
     </heading>
-    <list id="475">
-      <listitem id="476" level="1">
-        <link id="477" focusable="true" url="https://claude.com/product/overview">
+    <list id=475>
+      <listitem id=476 level=1>
+        <link id=477 focusable url="https://claude.com/product/overview">
           Claude
         </link>
       </listitem>
-      <listitem id="480" level="1">
-        <link id="481" focusable="true" url="https://claude.com/product/claude-code">
+      <listitem id=480 level=1>
+        <link id=481 focusable url="https://claude.com/product/claude-code">
           Claude Code
         </link>
       </listitem>
-      <listitem id="484" level="1">
-        <link id="485" focusable="true" url="https://claude.com/product/claude-code/enterprise">
+      <listitem id=484 level=1>
+        <link id=485 focusable url="https://claude.com/product/claude-code/enterprise">
           Claude Code for Enterprise
         </link>
       </listitem>
-      <listitem id="488" level="1">
-        <link id="489" focusable="true" url="https://claude.com/product/cowork">
+      <listitem id=488 level=1>
+        <link id=489 focusable url="https://claude.com/product/cowork">
           Claude Cowork
         </link>
       </listitem>
-      <listitem id="492" level="1">
-        <link id="493" focusable="true" url="https://claude.com/product/tag">
+      <listitem id=492 level=1>
+        <link id=493 focusable url="https://claude.com/product/tag">
           @Claude
         </link>
       </listitem>
-      <listitem id="496" level="1">
-        <link id="497" focusable="true" url="https://claude.com/product/design">
+      <listitem id=496 level=1>
+        <link id=497 focusable url="https://claude.com/product/design">
           Claude Design
         </link>
       </listitem>
-      <listitem id="500" level="1">
-        <link id="501" focusable="true" url="https://claude.com/product/claude-science">
+      <listitem id=500 level=1>
+        <link id=501 focusable url="https://claude.com/product/claude-science">
           Claude Science
         </link>
       </listitem>
-      <listitem id="504" level="1">
-        <link id="505" focusable="true" url="https://claude.com/product/claude-security">
+      <listitem id=504 level=1>
+        <link id=505 focusable url="https://claude.com/product/claude-security">
           Claude Security
         </link>
       </listitem>
-      <listitem id="508" level="1">
-        <link id="509" focusable="true" url="https://claude.com/download">
+      <listitem id=508 level=1>
+        <link id=509 focusable url="https://claude.com/download">
           Download app
         </link>
       </listitem>
-      <listitem id="512" level="1">
-        <link id="513" focusable="true" url="https://claude.com/pricing">
+      <listitem id=512 level=1>
+        <link id=513 focusable url="https://claude.com/pricing">
           Pricing
         </link>
       </listitem>
-      <listitem id="516" level="1">
-        <link id="517" focusable="true" url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
+      <listitem id=516 level=1>
+        <link id=517 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
           Log in
         </link>
       </listitem>
     </list>
-    <heading id="521" level="2">
+    <heading id=521 level=2>
       Features
     </heading>
-    <list id="524">
-      <listitem id="525" level="1">
-        <link id="526" focusable="true" url="https://claude.com/claude-for-chrome">
+    <list id=524>
+      <listitem id=525 level=1>
+        <link id=526 focusable url="https://claude.com/claude-for-chrome">
           Claude for Chrome
         </link>
       </listitem>
-      <listitem id="529" level="1">
-        <link id="530" focusable="true" url="https://claude.com/claude-for-slack">
+      <listitem id=529 level=1>
+        <link id=530 focusable url="https://claude.com/claude-for-slack">
           Claude for Slack
         </link>
       </listitem>
-      <listitem id="533" level="1">
-        <link id="534" focusable="true" url="https://claude.com/claude-for-microsoft-365">
+      <listitem id=533 level=1>
+        <link id=534 focusable url="https://claude.com/claude-for-microsoft-365">
           Claude for Microsoft 365
         </link>
       </listitem>
-      <listitem id="537" level="1">
-        <link id="538" focusable="true" url="https://claude.com/skills">
+      <listitem id=537 level=1>
+        <link id=538 focusable url="https://claude.com/skills">
           Skills
         </link>
       </listitem>
     </list>
-    <heading id="542" level="2">
+    <heading id=542 level=2>
       Models
     </heading>
-    <list id="545">
-      <listitem id="546" level="1">
-        <link id="547" focusable="true" url="https://www.anthropic.com/claude/mythos">
+    <list id=545>
+      <listitem id=546 level=1>
+        <link id=547 focusable url="https://www.anthropic.com/claude/mythos">
           Mythos
         </link>
       </listitem>
-      <listitem id="550" level="1">
-        <link id="551" focusable="true" url="https://www.anthropic.com/claude/fable">
+      <listitem id=550 level=1>
+        <link id=551 focusable url="https://www.anthropic.com/claude/fable">
           Fable
         </link>
       </listitem>
-      <listitem id="554" level="1">
-        <link id="555" focusable="true" url="https://www.anthropic.com/claude/opus">
+      <listitem id=554 level=1>
+        <link id=555 focusable url="https://www.anthropic.com/claude/opus">
           Opus
         </link>
       </listitem>
-      <listitem id="558" level="1">
-        <link id="559" focusable="true" url="https://www.anthropic.com/claude/sonnet">
+      <listitem id=558 level=1>
+        <link id=559 focusable url="https://www.anthropic.com/claude/sonnet">
           Sonnet
         </link>
       </listitem>
-      <listitem id="562" level="1">
-        <link id="563" focusable="true" url="https://www.anthropic.com/claude/haiku">
+      <listitem id=562 level=1>
+        <link id=563 focusable url="https://www.anthropic.com/claude/haiku">
           Haiku
         </link>
       </listitem>
     </list>
-    <heading id="568" level="2">
+    <heading id=568 level=2>
       Solutions
     </heading>
-    <list id="571">
-      <listitem id="572" level="1">
-        <link id="573" focusable="true" url="https://claude.com/solutions/agents">
+    <list id=571>
+      <listitem id=572 level=1>
+        <link id=573 focusable url="https://claude.com/solutions/agents">
           AI agents
         </link>
       </listitem>
-      <listitem id="576" level="1">
-        <link id="577" focusable="true" url="https://claude.com/solutions/code-modernization">
+      <listitem id=576 level=1>
+        <link id=577 focusable url="https://claude.com/solutions/code-modernization">
           Code modernization
         </link>
       </listitem>
-      <listitem id="580" level="1">
-        <link id="581" focusable="true" url="https://claude.com/solutions/coding">
+      <listitem id=580 level=1>
+        <link id=581 focusable url="https://claude.com/solutions/coding">
           Coding
         </link>
       </listitem>
-      <listitem id="584" level="1">
-        <link id="585" focusable="true" url="https://claude.com/solutions/customer-support">
+      <listitem id=584 level=1>
+        <link id=585 focusable url="https://claude.com/solutions/customer-support">
           Customer support
         </link>
       </listitem>
-      <listitem id="588" level="1">
-        <link id="589" focusable="true" url="https://claude.com/solutions/cybersecurity">
+      <listitem id=588 level=1>
+        <link id=589 focusable url="https://claude.com/solutions/cybersecurity">
           Cybersecurity
         </link>
       </listitem>
-      <listitem id="592" level="1">
-        <link id="593" focusable="true" url="https://claude.com/solutions/enterprise">
+      <listitem id=592 level=1>
+        <link id=593 focusable url="https://claude.com/solutions/enterprise">
           Enterprise
         </link>
       </listitem>
-      <listitem id="596" level="1">
-        <link id="597" focusable="true" url="https://claude.com/solutions/financial-services">
+      <listitem id=596 level=1>
+        <link id=597 focusable url="https://claude.com/solutions/financial-services">
           Financial services
         </link>
       </listitem>
-      <listitem id="600" level="1">
-        <link id="601" focusable="true" url="https://claude.com/solutions/government">
+      <listitem id=600 level=1>
+        <link id=601 focusable url="https://claude.com/solutions/government">
           Government
         </link>
       </listitem>
-      <listitem id="604" level="1">
-        <link id="605" focusable="true" url="https://claude.com/solutions/healthcare">
+      <listitem id=604 level=1>
+        <link id=605 focusable url="https://claude.com/solutions/healthcare">
           Healthcare
         </link>
       </listitem>
-      <listitem id="608" level="1">
-        <link id="609" focusable="true" url="https://claude.com/solutions/education">
+      <listitem id=608 level=1>
+        <link id=609 focusable url="https://claude.com/solutions/education">
           Higher education
         </link>
       </listitem>
-      <listitem id="612" level="1">
-        <link id="613" focusable="true" url="https://claude.com/solutions/teachers">
+      <listitem id=612 level=1>
+        <link id=613 focusable url="https://claude.com/solutions/teachers">
           K-12 teachers
         </link>
       </listitem>
-      <listitem id="616" level="1">
-        <link id="617" focusable="true" url="https://claude.com/solutions/legal">
+      <listitem id=616 level=1>
+        <link id=617 focusable url="https://claude.com/solutions/legal">
           Legal
         </link>
       </listitem>
-      <listitem id="620" level="1">
-        <link id="621" focusable="true" url="https://claude.com/solutions/life-sciences">
+      <listitem id=620 level=1>
+        <link id=621 focusable url="https://claude.com/solutions/life-sciences">
           Life sciences
         </link>
       </listitem>
-      <listitem id="624" level="1">
-        <link id="625" focusable="true" url="https://claude.com/solutions/nonprofits">
+      <listitem id=624 level=1>
+        <link id=625 focusable url="https://claude.com/solutions/nonprofits">
           Nonprofits
         </link>
       </listitem>
-      <listitem id="628" level="1">
-        <link id="629" focusable="true" url="https://claude.com/solutions/small-business">
+      <listitem id=628 level=1>
+        <link id=629 focusable url="https://claude.com/solutions/small-business">
           Small business
         </link>
       </listitem>
     </list>
-    <heading id="633" level="2">
+    <heading id=633 level=2>
       Claude Platform
     </heading>
-    <list id="636">
-      <listitem id="637" level="1">
-        <link id="638" focusable="true" url="https://claude.com/platform/api">
+    <list id=636>
+      <listitem id=637 level=1>
+        <link id=638 focusable url="https://claude.com/platform/api">
           Overview
         </link>
       </listitem>
-      <listitem id="641" level="1">
-        <link id="642" focusable="true" url="https://platform.claude.com/docs">
+      <listitem id=641 level=1>
+        <link id=642 focusable url="https://platform.claude.com/docs">
           Developer docs
         </link>
       </listitem>
-      <listitem id="645" level="1">
-        <link id="646" focusable="true" url="https://claude.com/pricing#api">
+      <listitem id=645 level=1>
+        <link id=646 focusable url="https://claude.com/pricing#api">
           Pricing
         </link>
       </listitem>
-      <listitem id="649" level="1">
-        <link id="650" focusable="true" url="https://claude.com/ecosystem">
+      <listitem id=649 level=1>
+        <link id=650 focusable url="https://claude.com/ecosystem">
           Ecosystem
         </link>
       </listitem>
-      <listitem id="653" level="1">
-        <link id="654" focusable="true" url="https://claude.com/platform/marketplace">
+      <listitem id=653 level=1>
+        <link id=654 focusable url="https://claude.com/platform/marketplace">
           Marketplace
         </link>
       </listitem>
-      <listitem id="657" level="1">
-        <link id="658" focusable="true" url="https://claude.com/partners/amazon-bedrock">
+      <listitem id=657 level=1>
+        <link id=658 focusable url="https://claude.com/partners/amazon-bedrock">
           Claude on AWS
         </link>
       </listitem>
-      <listitem id="661" level="1">
-        <link id="662" focusable="true" url="https://claude.com/partners/google-cloud-vertex-ai">
+      <listitem id=661 level=1>
+        <link id=662 focusable url="https://claude.com/partners/google-cloud-vertex-ai">
           Google Cloud's Vertex AI
         </link>
       </listitem>
-      <listitem id="665" level="1">
-        <link id="666" focusable="true" url="https://claude.com/partners/microsoft-foundry">
+      <listitem id=665 level=1>
+        <link id=666 focusable url="https://claude.com/partners/microsoft-foundry">
           Microsoft Foundry
         </link>
       </listitem>
-      <listitem id="669" level="1">
-        <link id="670" focusable="true" url="https://claude.com/regional-compliance">
+      <listitem id=669 level=1>
+        <link id=670 focusable url="https://claude.com/regional-compliance">
           Regional compliance
         </link>
       </listitem>
-      <listitem id="673" level="1">
-        <link id="674" focusable="true" url="https://platform.claude.com/">
+      <listitem id=673 level=1>
+        <link id=674 focusable url="https://platform.claude.com/">
           Console login
         </link>
       </listitem>
     </list>
-    <heading id="679" level="2">
+    <heading id=679 level=2>
       Resources
     </heading>
-    <list id="682">
-      <listitem id="683" level="1">
-        <link id="684" focusable="true" url="https://claude.com/blog">
+    <list id=682>
+      <listitem id=683 level=1>
+        <link id=684 focusable url="https://claude.com/blog">
           Blog
         </link>
       </listitem>
-      <listitem id="687" level="1">
-        <link id="688" focusable="true" url="https://claude.com/partners">
+      <listitem id=687 level=1>
+        <link id=688 focusable url="https://claude.com/partners">
           Claude partner network
         </link>
       </listitem>
-      <listitem id="691" level="1">
-        <link id="692" focusable="true" url="https://claude.com/community">
+      <listitem id=691 level=1>
+        <link id=692 focusable url="https://claude.com/community">
           Community
         </link>
       </listitem>
-      <listitem id="695" level="1">
-        <link id="696" focusable="true" url="https://claude.com/connectors">
+      <listitem id=695 level=1>
+        <link id=696 focusable url="https://claude.com/connectors">
           Connectors
         </link>
       </listitem>
-      <listitem id="699" level="1">
-        <link id="700" focusable="true" url="https://claude.com/resources/courses">
+      <listitem id=699 level=1>
+        <link id=700 focusable url="https://claude.com/resources/courses">
           Courses
         </link>
       </listitem>
-      <listitem id="703" level="1">
-        <link id="704" focusable="true" url="https://claude.com/customers">
+      <listitem id=703 level=1>
+        <link id=704 focusable url="https://claude.com/customers">
           Customer stories
         </link>
       </listitem>
-      <listitem id="707" level="1">
-        <link id="708" focusable="true" url="https://claude.com/engineering">
+      <listitem id=707 level=1>
+        <link id=708 focusable url="https://claude.com/engineering">
           Engineering at Anthropic
         </link>
       </listitem>
-      <listitem id="711" level="1">
-        <link id="712" focusable="true" url="https://claude.com/events">
+      <listitem id=711 level=1>
+        <link id=712 focusable url="https://claude.com/events">
           Events
         </link>
       </listitem>
-      <listitem id="715" level="1">
-        <link id="716" focusable="true" url="https://claude.com/plugins">
+      <listitem id=715 level=1>
+        <link id=716 focusable url="https://claude.com/plugins">
           Plugins
         </link>
       </listitem>
-      <listitem id="719" level="1">
-        <link id="720" focusable="true" url="https://claude.com/partners/powered-by-claude">
+      <listitem id=719 level=1>
+        <link id=720 focusable url="https://claude.com/partners/powered-by-claude">
           Powered by Claude
         </link>
       </listitem>
-      <listitem id="723" level="1">
-        <link id="724" focusable="true" url="https://claude.com/service-partners">
+      <listitem id=723 level=1>
+        <link id=724 focusable url="https://claude.com/service-partners">
           Service partners
         </link>
       </listitem>
-      <listitem id="727" level="1">
-        <link id="728" focusable="true" url="https://claude.com/resources/tutorials">
+      <listitem id=727 level=1>
+        <link id=728 focusable url="https://claude.com/resources/tutorials">
           Tutorials
         </link>
       </listitem>
-      <listitem id="731" level="1">
-        <link id="732" focusable="true" url="https://claude.com/resources/use-cases">
+      <listitem id=731 level=1>
+        <link id=732 focusable url="https://claude.com/resources/use-cases">
           Use cases
         </link>
       </listitem>
     </list>
-    <heading id="736" level="2">
+    <heading id=736 level=2>
       Company
     </heading>
-    <list id="739">
-      <listitem id="740" level="1">
-        <link id="741" focusable="true" url="https://www.anthropic.com/">
+    <list id=739>
+      <listitem id=740 level=1>
+        <link id=741 focusable url="https://www.anthropic.com/">
           Anthropic
         </link>
       </listitem>
-      <listitem id="744" level="1">
-        <link id="745" focusable="true" url="https://www.anthropic.com/careers">
+      <listitem id=744 level=1>
+        <link id=745 focusable url="https://www.anthropic.com/careers">
           Careers
         </link>
       </listitem>
-      <listitem id="748" level="1">
-        <link id="749" focusable="true" url="https://www.anthropic.com/economic-futures">
+      <listitem id=748 level=1>
+        <link id=749 focusable url="https://www.anthropic.com/economic-futures">
           Economic Futures
         </link>
       </listitem>
-      <listitem id="752" level="1">
-        <link id="753" focusable="true" url="https://www.anthropic.com/research">
+      <listitem id=752 level=1>
+        <link id=753 focusable url="https://www.anthropic.com/research">
           Research
         </link>
       </listitem>
-      <listitem id="756" level="1">
-        <link id="757" focusable="true" url="https://www.anthropic.com/news">
+      <listitem id=756 level=1>
+        <link id=757 focusable url="https://www.anthropic.com/news">
           News
         </link>
       </listitem>
-      <listitem id="760" level="1">
-        <link id="761" focusable="true" url="https://www.anthropic.com/responsible-scaling-policy">
+      <listitem id=760 level=1>
+        <link id=761 focusable url="https://www.anthropic.com/responsible-scaling-policy">
           Responsible Scaling Policy
         </link>
       </listitem>
-      <listitem id="764" level="1">
-        <link id="765" focusable="true" url="https://claude.com/security">
+      <listitem id=764 level=1>
+        <link id=765 focusable url="https://claude.com/security">
           Security and compliance
         </link>
       </listitem>
-      <listitem id="768" level="1">
-        <link id="769" focusable="true" url="https://www.anthropic.com/transparency">
+      <listitem id=768 level=1>
+        <link id=769 focusable url="https://www.anthropic.com/transparency">
           Transparency
         </link>
       </listitem>
     </list>
-    <heading id="774" level="2">
+    <heading id=774 level=2>
       Programs
     </heading>
-    <list id="777">
-      <listitem id="778" level="1">
-        <link id="779" focusable="true" url="https://claude.com/programs/startups">
+    <list id=777>
+      <listitem id=778 level=1>
+        <link id=779 focusable url="https://claude.com/programs/startups">
           Startups
         </link>
       </listitem>
-      <listitem id="782" level="1">
-        <link id="783" focusable="true" url="https://claude.com/programs/claude-team-plan-for-research-labs">
+      <listitem id=782 level=1>
+        <link id=783 focusable url="https://claude.com/programs/claude-team-plan-for-research-labs">
           Research Labs
         </link>
       </listitem>
     </list>
-    <heading id="787" level="2">
+    <heading id=787 level=2>
       Help and security
     </heading>
-    <list id="790">
-      <listitem id="791" level="1">
-        <link id="792" focusable="true" url="https://claude.com/availability">
+    <list id=790>
+      <listitem id=791 level=1>
+        <link id=792 focusable url="https://claude.com/availability">
           Availability
         </link>
       </listitem>
-      <listitem id="795" level="1">
-        <link id="796" focusable="true" url="https://status.anthropic.com/">
+      <listitem id=795 level=1>
+        <link id=796 focusable url="https://status.anthropic.com/">
           Status
         </link>
       </listitem>
-      <listitem id="799" level="1">
-        <link id="800" focusable="true" url="https://support.anthropic.com/">
+      <listitem id=799 level=1>
+        <link id=800 focusable url="https://support.anthropic.com/">
           Support center
         </link>
       </listitem>
     </list>
-    <heading id="804" level="2">
+    <heading id=804 level=2>
       Terms and policies
     </heading>
-    <list id="807">
-      <listitem id="808" level="1">
-        <button id="809" invalid="false" focusable="true">
+    <list id=807>
+      <listitem id=808 level=1>
+        <button id=809 focusable>
           Privacy choices
         </button>
       </listitem>
-      <listitem id="812" level="1">
-        <link id="813" focusable="true" url="https://www.anthropic.com/policies/privacy">
+      <listitem id=812 level=1>
+        <link id=813 focusable url="https://www.anthropic.com/policies/privacy">
           Privacy policy
         </link>
       </listitem>
-      <listitem id="816" level="1">
-        <link id="817" focusable="true" url="https://www.anthropic.com/policies/responsible-disclosure">
+      <listitem id=816 level=1>
+        <link id=817 focusable url="https://www.anthropic.com/policies/responsible-disclosure">
           Responsible disclosure policy
         </link>
       </listitem>
-      <listitem id="821" level="1">
-        <link id="822" focusable="true" url="https://www.anthropic.com/policies/commercial-terms">
+      <listitem id=821 level=1>
+        <link id=822 focusable url="https://www.anthropic.com/policies/commercial-terms">
           Terms of service: Commercial
         </link>
       </listitem>
-      <listitem id="826" level="1">
-        <link id="827" focusable="true" url="https://www.anthropic.com/policies/consumer-terms">
+      <listitem id=826 level=1>
+        <link id=827 focusable url="https://www.anthropic.com/policies/consumer-terms">
           Terms of service: Consumer
         </link>
       </listitem>
-      <listitem id="830" level="1">
-        <link id="831" focusable="true" url="https://anthropic.com/legal/k12-terms">
+      <listitem id=830 level=1>
+        <link id=831 focusable url="https://anthropic.com/legal/k12-terms">
           Terms of Service: US K-12
         </link>
       </listitem>
-      <listitem id="834" level="1">
-        <link id="835" focusable="true" url="https://anthropic.com/legal/k12-dpa">
+      <listitem id=834 level=1>
+        <link id=835 focusable url="https://anthropic.com/legal/k12-dpa">
           Data Processing Agreement: US K-12
         </link>
       </listitem>
-      <listitem id="839" level="1">
-        <link id="840" focusable="true" url="https://www.anthropic.com/policies/aup">
+      <listitem id=839 level=1>
+        <link id=840 focusable url="https://www.anthropic.com/policies/aup">
           Usage policy
         </link>
       </listitem>
     </list>
-    <separator id="844" settable="true" orientation="horizontal"/>
-    <link name="Instagram" id="847" focusable="true" url="https://www.instagram.com/claudeai"/>
-    <link name="LinkedIn" id="848" focusable="true" url="https://www.linkedin.com/showcase/claude/"/>
-    <link name="X (Twitter)" id="849" focusable="true" url="https://x.com/claudeai"/>
-    <link name="YouTube" id="850" focusable="true" url="https://www.youtube.com/@anthropic-ai"/>
-    <button name="Language:" id="853" invalid="false" focusable="true" hasPopup="menu">
+    <separator id=844 settable orientation="horizontal"/>
+    <link name="Instagram" id=847 focusable url="https://www.instagram.com/claudeai"/>
+    <link name="LinkedIn" id=848 focusable url="https://www.linkedin.com/showcase/claude/"/>
+    <link name="X (Twitter)" id=849 focusable url="https://x.com/claudeai"/>
+    <link name="YouTube" id=850 focusable url="https://www.youtube.com/@anthropic-ai"/>
+    <button name="Language:" id=853 focusable hasPopup="menu">
       English
     </button>
   </contentinfo>
-  <alert id="861" live="assertive" atomic="true" relevant="additions text"/>
+  <alert id=861 live="assertive" atomic relevant="additions text"/>
 </RootWebArea>
