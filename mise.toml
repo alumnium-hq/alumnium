@@ -1,6 +1,6 @@
 monorepo_root = true
 [monorepo]
-config_roots = [".", "packages/*", "websites/*", "telemetry"]
+config_roots = [".", "packages/*", "websites/*", "telemetry", "assets"]
 
 [tools]
 # TypeScript

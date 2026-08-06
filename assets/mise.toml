@@ -3,6 +3,9 @@ ffmpeg = "latest" # Media processing
 oxipng = "latest" # PNG optimizer
 svgo = "latest" # SVG optimizer
 
+[tasks.build]
+depends = ["generate/symlinks"]
+
 [tasks.process]
 run = [{ task = "optimize" }, { task = "generate/ico" }]
 
