@@ -47,3 +47,15 @@ Local deployment requires authentication from `wrangler login`. The release work
 - `CLOUDFLARE_API_TOKEN`
 
 The API token must have permission to edit Workers and the `alumnium.ai` zone must be managed by the configured Cloudflare account.
+
+## Assets
+
+Along with [the custom assets](../../assets/README.md), the website uses the following third-party assets:
+
+- [Devicon](https://devicon.dev/), installed via `devicon` npm package.
+- [Material Symbols](https://fonts.google.com/icons?icon.set=Material+Symbols), installed via `@material-symbols/svg-*` npm packages.
+- [Font Awesome Free](https://fontawesome.com/search?ic=free-collection), installed via `@fortawesome/fontawesome-free` npm package.
+
+Use [`Icon`](./src/components/Icon.astro) component to render icons from these libraries.
+
+When adding new icons, make sure to add the `id` to the corresponding `import.meta.glob` pattern in `./src/components/Icon.astro`, so Astro can include the icon in the build.

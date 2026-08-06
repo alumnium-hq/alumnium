@@ -30,6 +30,7 @@ const frameworkIcons: IconProp[] = [
   { id: "selenium", style: "logo" },
   { id: "playwright", style: "logo" },
   { id: "appium", style: "logo" },
+  { id: "webdriverio", style: "logo" },
 ];
 
 const sections = {
@@ -61,8 +62,6 @@ const sections = {
         ],
         align: true,
       } satisfies SectionExtraProps,
-
-      // integrates: "Meets You Where You Are",
 
       watchDemo: "Watch Demo",
 
@@ -277,11 +276,6 @@ const sections = {
           value: "1/4",
           label: "of Playwright MCP's cost",
         },
-        // {
-        //   id: "task",
-        //   value: "$0.15",
-        //   label: "Main-agent cost vs. $1.34*",
-        // },
         {
           id: "context",
           value: "5×",
@@ -289,8 +283,7 @@ const sections = {
         },
       ],
 
-      // statsDisclaimer:
-      //   "* Results from a separate benchmark task compared with Playwright MCP; workload and model choice affect cost and token usage.",
+      statsDisclaimer: "",
 
       points: [
         {
@@ -619,7 +612,7 @@ const sections = {
 
           extra: {
             kind: "icons",
-            icons: [{ id: "http", style: "200" }],
+            icons: [{ id: "api", style: "200" }],
             size: "lg",
           },
         }),

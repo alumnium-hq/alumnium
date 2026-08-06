@@ -7,7 +7,7 @@ const t = tt.landings.sections.efficient.en;
 ---
 
 <Section heading={{ h: 2 }} t={t} cols={2} style="header" adjust continue>
-  <div class="stats">
+  <div class:list={["stats", `has-${t.stats.length}`]}>
     <div class="stats-list">
       {
         t.stats.map((stat) => (
@@ -19,7 +19,7 @@ const t = tt.landings.sections.efficient.en;
       }
     </div>
 
-    <p class="stats-disclaimer">{t.statsDisclaimer}</p>
+    {t.statsDisclaimer && <p class="stats-disclaimer">{t.statsDisclaimer}</p>}
   </div>
 </Section>
 
@@ -37,7 +37,7 @@ const t = tt.landings.sections.efficient.en;
   }
 
   .stats-list {
-    @apply grid grid-cols-3 gap-6;
+    @apply flex md:justify-center;
   }
 
   .stat {
@@ -45,11 +45,39 @@ const t = tt.landings.sections.efficient.en;
   }
 
   .stat-value {
-    @apply text-3xl font-mono leading-none capsize;
+    @apply font-mono leading-none capsize;
   }
 
   .stat-label {
-    @apply text-sm text-accent-400 text-balance;
+    @apply text-accent-400 text-balance max-w-[8rem];
+  }
+
+  .stats.has-2 {
+    & .stats-list {
+      @apply gap-3 md:gap-10;
+    }
+
+    & .stat-value {
+      @apply text-3xl sm:text-4xl md:text-5xl;
+    }
+
+    & .stat-label {
+      @apply text-sm sm:text-ms;
+    }
+  }
+
+  .stats.has-3 {
+    & .stats-list {
+      @apply gap-6;
+    }
+
+    & .stat-value {
+      @apply text-4xl;
+    }
+
+    & .stat-label {
+      @apply text-sm;
+    }
   }
 
   .stats-disclaimer {

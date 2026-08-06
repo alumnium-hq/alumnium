@@ -179,6 +179,10 @@ export default defineConfig({
 
   vite: {
     plugins: [...tailwindcss()],
+    build: {
+      // Prevent Vite from inlining assets, i.e. giving data URLs for small SVGs.
+      assetsInlineLimit: 0,
+    },
   },
 
   redirects: {

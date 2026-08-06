@@ -131,7 +131,10 @@ const { items } = Astro.props;
       @apply rotate-45;
     }
 
-    & .accordion-content {
+    /* NOTE: .copy needed here for specificity level increase, as .copy applies
+    .flex which overrides .hidden. */
+    /* TODO: Use layers to avoid specificity issues. */
+    & .accordion-content.copy {
       @apply flex;
     }
   }
@@ -140,7 +143,10 @@ const { items } = Astro.props;
     @apply text-2xl text-accent-500 rotate-90;
   }
 
-  .accordion-content {
+  /* NOTE: .copy needed here for specificity level increase, as .copy applies
+  .flex which overrides .hidden. */
+  /* TODO: Use layers to avoid specificity issues. */
+  .accordion-content.copy {
     @apply hidden flex-col py-7 border-t;
     border-color: var(--accordion-border-color);
   }
