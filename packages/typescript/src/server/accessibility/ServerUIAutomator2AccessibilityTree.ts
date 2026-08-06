@@ -1,5 +1,6 @@
 import { always } from "alwaysly";
-import { Xml } from "../../Xml.ts";
+import { Xml } from "../../xml/Xml.ts";
+import { XmlRenderer } from "../../xml/XmlRenderer.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 import type { Tree } from "../../tree/Tree.ts";
 
@@ -130,7 +131,7 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
     const rootXmlEl = Xml.element("hierarchy");
     for (const node of this.#tree) treeNodeToXmlElement(node, rootXmlEl);
 
-    const xml = Xml.format([rootXmlEl]);
+    const xml = XmlRenderer.render([rootXmlEl]);
     void this.devCaptureTreeOutput(xml);
 
     return xml;

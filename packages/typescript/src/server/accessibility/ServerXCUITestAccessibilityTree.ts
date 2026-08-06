@@ -1,5 +1,6 @@
 import { always } from "alwaysly";
-import { Xml } from "../../Xml.ts";
+import { Xml } from "../../xml/Xml.ts";
+import { XmlRenderer } from "../../xml/XmlRenderer.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 import type { Tree } from "../../tree/Tree.ts";
 
@@ -289,7 +290,7 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
     // Root itself was filtered out
     if (!rootXmlEl) return "";
 
-    const xml = Xml.format([rootXmlEl]);
+    const xml = XmlRenderer.render([rootXmlEl]);
     void this.devCaptureTreeOutput(xml);
 
     return xml;

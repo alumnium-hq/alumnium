@@ -1,7 +1,8 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import { Xml } from "../Xml.ts";
+import { Xml } from "../xml/Xml.ts";
+import { XmlRenderer } from "../xml/XmlRenderer.ts";
 import type { AccessibilityElement } from "./AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
 
@@ -102,7 +103,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     // Combine all root nodes into a single XML string
     let xmlString = "";
     for (const root of rootNodes) {
-      xmlString += Xml.format([root]);
+      xmlString += XmlRenderer.render([root]);
     }
 
     this.#raw = xmlString;
@@ -302,7 +303,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Convert the scoped element back to XML string
-    const scopedXml = Xml.format([targetElem]);
+    const scopedXml = XmlRenderer.render([targetElem]);
 
     return ChromiumAccessibilityTree.#fromXml(scopedXml, this.#frameMap);
   }

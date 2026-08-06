@@ -1,7 +1,8 @@
 import { always } from "alwaysly";
 import { textContent } from "domutils";
 import { pythonicId } from "../../pythonic/pythonicId.ts";
-import { Xml } from "../../Xml.ts";
+import { Xml } from "../../xml/Xml.ts";
+import { XmlRenderer } from "../../xml/XmlRenderer.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 import type { Tree } from "../../tree/Tree.ts";
 
@@ -163,7 +164,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
       }
     }
 
-    const xml = Xml.format(xmlRoots);
+    const xml = XmlRenderer.render(xmlRoots);
     void this.devCaptureTreeOutput(xml);
 
     return xml;
@@ -238,8 +239,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
     if (xmlEl?.attribs.label) texts.add(xmlEl.attribs.label);
 
-    const text = Xml.nodeAsText(xmlChild);
-    if (text) texts.add(text.data);
+    const xmlText = Xml.nodeAsText(xmlChild);
+    if (xmlText) texts.add(xmlText.data);
 
     return Array.from(texts);
   }
