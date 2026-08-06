@@ -1029,7 +1029,7 @@ const sections = {
             icons: [
               { id: "ollama", style: "logo" },
               { id: "mistral", style: "logo" },
-              // { id: "qwen", style: "logo" },
+              { id: "qwen", style: "logo" },
             ],
           },
         }),
