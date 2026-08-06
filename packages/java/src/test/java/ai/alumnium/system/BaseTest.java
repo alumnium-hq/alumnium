@@ -100,10 +100,8 @@ public class BaseTest {
     }
 
     AndroidDriver driver = new AndroidDriver(appiumUrl(), options);
-    if (!IS_LAMBDA_TEST) {
-      driver.setSettings(
-          Map.<String, Object>of("allowInvisibleElements", true, "ignoreUnimportantViews", true));
-    }
+    driver.setSettings(
+        Map.<String, Object>of("allowInvisibleElements", true, "ignoreUnimportantViews", true));
     return driver;
   }
 
@@ -139,7 +137,9 @@ public class BaseTest {
       }
       case "appium-android" -> {
         al = new Alumni(buildAndroidDriver(), options);
-        ((AppiumDriver) al.driver()).delay = 0.1;
+        AppiumDriver appiumDriver = (AppiumDriver) al.driver();
+        appiumDriver.delay = 0.1;
+        appiumDriver.doubleFetchPageSource = true;
       }
       default -> al = new Alumni(new ChromeDriver(), options);
     }
