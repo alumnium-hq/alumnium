@@ -2,9 +2,11 @@
 import { tt } from "#/copy";
 import Section from "../../blocks/Section.astro";
 import SharedCache from "./SharedCache.astro";
-import CloseToNative from "./CloseToNative.astro";
+import Server from "./Server.astro";
+import DeviceCloud from "./DeviceCloud.astro";
 import Telemetry from "./Telemetry.astro";
 import Ci from "./Ci.astro";
+import Parallelism from "./Parallelism.astro";
 
 const t = tt.landings.sections.scalable.en;
 ---
@@ -17,11 +19,15 @@ const t = tt.landings.sections.scalable.en;
     style="header"
   />
 
-  <CloseToNative />
+  <Server />
 
   <SharedCache />
 
   <Ci />
+
+  <Parallelism />
+
+  <DeviceCloud />
 
   <Telemetry />
 </div>

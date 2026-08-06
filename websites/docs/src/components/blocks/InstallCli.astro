@@ -4,7 +4,7 @@ import HowTabContent from "./HowTabContent.astro";
 import { createHowTab } from "./howTabs";
 
 // TODO: Detect OS
-const os: "windows" | "xnix" = "windows";
+const os: "windows" | "xnix" = "xnix";
 const defaultTab = `install-cli-bin-${os}` as const;
 
 const tab = createHowTab<"install-cli">();
