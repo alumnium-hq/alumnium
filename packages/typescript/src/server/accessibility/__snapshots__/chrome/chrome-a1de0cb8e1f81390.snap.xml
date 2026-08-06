@@ -1,65 +1,65 @@
-<RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/dynamic_content">
-  <div id="3">
-    <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
-      <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/dynamic_content">
+  <div id=3>
+    <link id=7 focusable url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
     </link>
-    <div id="9">
-      <heading id="11" level="3">
+    <div id=9>
+      <heading id=11 level=3>
         Dynamic Content
       </heading>
-      <paragraph id="14">
+      <paragraph id=14>
         This example demonstrates the ever-evolving nature of content by loading new text and images on each page refresh.
       </paragraph>
-      <paragraph id="17">
+      <paragraph id=17>
         To make some of the content static append
-        <code id="20">
+        <code id=20>
           ?with_content=static
         </code>
         or
-        <link id="25" focusable="true" url="https://the-internet.herokuapp.com/dynamic_content?with_content=static">
+        <link id=25 focusable url="https://the-internet.herokuapp.com/dynamic_content?with_content=static">
           click here
         </link>
         .
       </paragraph>
-      <separator id="30" settable="true" orientation="horizontal"/>
-      <LineBreak name="" id="31">
-        <InlineTextBox name="&#xA;" id="32"/>
+      <separator id=30 settable orientation="horizontal"/>
+      <LineBreak id=31>
+        <InlineTextBox name="&#xA;" id=32/>
       </LineBreak>
-      <LineBreak name="" id="33">
-        <InlineTextBox name="&#xA;" id="34"/>
+      <LineBreak id=33>
+        <InlineTextBox name="&#xA;" id=34/>
       </LineBreak>
-      <div id="36">
-        <image id="39" url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
+      <div id=36>
+        <image id=39 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
         Temporibus quia eum ipsum delectus alias aperiam occaecati omnis voluptatem fugit facere vero ut qui neque labore eos atque consequatur qui reprehenderit adipisci deleniti totam ea qui aliquid ut sapiente nostrum quasi voluptas dignissimos quia.
-        <LineBreak name="" id="45">
-          <InlineTextBox name="&#xA;" id="46"/>
+        <LineBreak id=45>
+          <InlineTextBox name="&#xA;" id=46/>
         </LineBreak>
-        <LineBreak name="" id="47">
-          <InlineTextBox name="&#xA;" id="48"/>
+        <LineBreak id=47>
+          <InlineTextBox name="&#xA;" id=48/>
         </LineBreak>
-        <image id="51" url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
+        <image id=51 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
         Eos labore rem qui et dolore est necessitatibus at blanditiis corrupti hic et sed id distinctio rerum sed a dolorum cum veniam eius optio cumque laboriosam eaque quibusdam quisquam consequatur error voluptate ut accusantium.
-        <LineBreak name="" id="57">
-          <InlineTextBox name="&#xA;" id="58"/>
+        <LineBreak id=57>
+          <InlineTextBox name="&#xA;" id=58/>
         </LineBreak>
-        <LineBreak name="" id="59">
-          <InlineTextBox name="&#xA;" id="60"/>
+        <LineBreak id=59>
+          <InlineTextBox name="&#xA;" id=60/>
         </LineBreak>
-        <image id="63" url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
+        <image id=63 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
         Sunt ut placeat rerum reprehenderit sed voluptas incidunt occaecati voluptas facilis veniam autem voluptas quis veritatis eligendi sapiente id soluta explicabo voluptatem consectetur tenetur at accusantium et excepturi et aut quos ut.
-        <LineBreak name="" id="69">
-          <InlineTextBox name="&#xA;" id="70"/>
+        <LineBreak id=69>
+          <InlineTextBox name="&#xA;" id=70/>
         </LineBreak>
-        <LineBreak name="" id="71">
-          <InlineTextBox name="&#xA;" id="72"/>
+        <LineBreak id=71>
+          <InlineTextBox name="&#xA;" id=72/>
         </LineBreak>
       </div>
     </div>
-    <div id="74">
-      <separator id="75" settable="true" orientation="horizontal"/>
-      <div id="76">
+    <div id=74>
+      <separator id=75 settable orientation="horizontal"/>
+      <div id=76>
         Powered by
-        <link id="79" focusable="true" url="http://elementalselenium.com/">
+        <link id=79 focusable url="http://elementalselenium.com/">
           Elemental Selenium
         </link>
       </div>

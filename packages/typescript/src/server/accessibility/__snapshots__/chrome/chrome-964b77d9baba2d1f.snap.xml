@@ -1,24 +1,24 @@
-<RootWebArea name="The Internet" id="1" focusable="true" focused="true" url="https://the-internet.herokuapp.com/typos">
-  <div id="3">
-    <link name="" id="7" focusable="true" url="https://github.com/tourdedave/the-internet">
-      <image name="Fork me on GitHub" id="8" url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/typos">
+  <div id=3>
+    <link id=7 focusable url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
     </link>
-    <div id="9">
-      <heading id="11" level="3">
+    <div id=9>
+      <heading id=11 level=3>
         Typos
       </heading>
-      <paragraph id="14">
+      <paragraph id=14>
         This example demonstrates a typo being introduced. It does it randomly on each page load.
       </paragraph>
-      <paragraph id="17">
+      <paragraph id=17>
         Sometimes you'll see a typo, other times you won't.
       </paragraph>
     </div>
-    <div id="21">
-      <separator id="22" settable="true" orientation="horizontal"/>
-      <div id="23">
+    <div id=21>
+      <separator id=22 settable orientation="horizontal"/>
+      <div id=23>
         Powered by
-        <link id="26" focusable="true" url="http://elementalselenium.com/">
+        <link id=26 focusable url="http://elementalselenium.com/">
           Elemental Selenium
         </link>
       </div>

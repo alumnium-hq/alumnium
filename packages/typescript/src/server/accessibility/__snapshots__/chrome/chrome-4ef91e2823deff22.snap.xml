@@ -1,165 +1,165 @@
-<RootWebArea name="Cloudflare: Build for the agent era" id="1" focusable="true" focused="true" url="https://www.cloudflare.com/">
-  <div id="3">
-    <banner id="5">
-      <div id="6">
-        <link name="Cloudflare logo" id="8" focusable="true" url="https://www.cloudflare.com/">
-          <image id="9"/>
-          <image name="Cloudflare wordmark" id="11"/>
+<RootWebArea name="Cloudflare: Build for the agent era" id=1 focusable focused url="https://www.cloudflare.com/">
+  <div id=3>
+    <banner id=5>
+      <div id=6>
+        <link name="Cloudflare logo" id=8 focusable url="https://www.cloudflare.com/">
+          <image id=9/>
+          <image name="Cloudflare wordmark" id=11/>
         </link>
-        <navigation name="Main navigation" id="16">
-          <div id="18">
-            <link id="20" focusable="true" hasPopup="menu" url="https://www.cloudflare.com/products/">
+        <navigation name="Main navigation" id=16>
+          <div id=18>
+            <link id=20 focusable hasPopup="menu" url="https://www.cloudflare.com/products/">
               Products
             </link>
-            <link id="24" focusable="true" hasPopup="menu" url="https://www.cloudflare.com/solutions/">
+            <link id=24 focusable hasPopup="menu" url="https://www.cloudflare.com/solutions/">
               Solutions
             </link>
-            <link id="28" focusable="true" hasPopup="menu" url="https://www.cloudflare.com/resource-hub/">
+            <link id=28 focusable hasPopup="menu" url="https://www.cloudflare.com/resource-hub/">
               Resources
             </link>
-            <link id="32" focusable="true" url="https://www.cloudflare.com/plans/">
+            <link id=32 focusable url="https://www.cloudflare.com/plans/">
               Pricing
             </link>
           </div>
         </navigation>
-        <div id="37">
-          <link id="38" focusable="true" url="https://www.cloudflare.com/under-attack-hotline/">
+        <div id=37>
+          <link id=38 focusable url="https://www.cloudflare.com/under-attack-hotline/">
             Under attack?
           </link>
-          <link id="43" focusable="true" url="https://dash.cloudflare.com/login">
+          <link id=43 focusable url="https://dash.cloudflare.com/login">
             Login
           </link>
-          <link id="46" focusable="true" url="https://www.cloudflare.com/resource/contact-enterprise-sales/">
+          <link id=46 focusable url="https://www.cloudflare.com/resource/contact-enterprise-sales/">
             Contact sales
           </link>
         </div>
       </div>
     </banner>
-    <main id="55" focusable="true">
-      <div id="100">
-        <group id="103">
-          <Canvas id="105"/>
+    <main id=55 focusable>
+      <div id=100>
+        <group id=103>
+          <Canvas id=105/>
           Connect 2026 · The Agentic Conference of the Year · Oct 19-21 ·
-          <link name="— Connect 2026 · The Agentic Conference of the Year · Oct 19-21 ·" id="109" focusable="true" url="https://www.cloudflare.com/connect/">
+          <link name="— Connect 2026 · The Agentic Conference of the Year · Oct 19-21 ·" id=109 focusable url="https://www.cloudflare.com/connect/">
             Register
           </link>
         </group>
-        <heading id="112" level="1">
+        <heading id=112 level=1>
           Everything we learned from powering 20% of the Internet—yours by default
         </heading>
-        <paragraph id="117">
+        <paragraph id=117>
           One platform for your apps, agents, and workforce.
 Build, secure, and scale without managing infrastructure.
         </paragraph>
-        <link id="122" focusable="true" url="https://dash.cloudflare.com/sign-up">
+        <link id=122 focusable url="https://dash.cloudflare.com/sign-up">
           Start building for free
         </link>
       </div>
-      <div id="126">
-        <div id="128">
-          <heading id="129" level="2">
+      <div id=126>
+        <div id=128>
+          <heading id=129 level=2>
             Region: Earth
           </heading>
-          <paragraph id="140">
+          <paragraph id=140>
             One smart network for workloads + security — close to users, close to data.
           </paragraph>
         </div>
-        <Canvas id="147"/>
-        <div id="192">
-          <heading id="197" level="3">
+        <Canvas id=147/>
+        <div id=192>
+          <heading id=197 level=3>
             Run everywhere
           </heading>
-          <paragraph id="200">
+          <paragraph id=200>
             Security, connectivity, and code run in 335+ cities around the world, within 50ms of 95% of the world's population.
           </paragraph>
-          <heading id="209" level="3">
+          <heading id=209 level=3>
             Run anywhere
           </heading>
-          <paragraph id="212">
+          <paragraph id=212>
             Our network is close to your users, applications, and sites. It optimizes all your traffic from source to destination for low latency.
           </paragraph>
-          <heading id="221" level="3">
+          <heading id=221 level=3>
             Run at massive scale
           </heading>
-          <paragraph id="224">
+          <paragraph id=224>
             No more capacity planning. Ever.
           </paragraph>
         </div>
       </div>
-      <div id="227">
-        <heading name="Cloudflare powers 42% of the Fortune 500" id="230" level="2">
+      <div id=227>
+        <heading name="Cloudflare powers 42% of the Fortune 500" id=230 level=2>
           Cloudflare powers
 42% of the Fortune 500
         </heading>
-        <paragraph id="238">
+        <paragraph id=238>
           Trusted by the teams you trust.
         </paragraph>
-        <div id="241">
-          <region name="Cmer stories" id="243" roledescription="carousel">
-            <div id="244">
-              <navigation name="Choose a customer story" id="247">
-                <button name="Currently showing the  customer story" id="249" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+        <div id=241>
+          <region name="Cmer stories" id=243 roledescription="carousel">
+            <div id=244>
+              <navigation name="Choose a customer story" id=247>
+                <button name="Currently showing the  customer story" id=249 focusable controls="_r126R_0_-customer-story-panel">
                   Shopify
                 </button>
-                <button name="Show the  customer story" id="255" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=255 focusable controls="_r126R_0_-customer-story-panel">
                   Character.AI
                 </button>
-                <button name="Show the  customer story" id="261" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=261 focusable controls="_r126R_0_-customer-story-panel">
                   Intercom
                 </button>
-                <button name="Show the  customer story" id="267" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=267 focusable controls="_r126R_0_-customer-story-panel">
                   DoorDash
                 </button>
-                <button name="Show the  customer story" id="273" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=273 focusable controls="_r126R_0_-customer-story-panel">
                   Discord
                 </button>
-                <button name="Show the  customer story" id="278" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=278 focusable controls="_r126R_0_-customer-story-panel">
                   Zendesk
                 </button>
-                <button name="Show the  customer story" id="284" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=284 focusable controls="_r126R_0_-customer-story-panel">
                   Lovable
                 </button>
-                <button name="Show the  customer story" id="290" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=290 focusable controls="_r126R_0_-customer-story-panel">
                   npm
                 </button>
-                <button name="Show the  customer story" id="296" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=296 focusable controls="_r126R_0_-customer-story-panel">
                   SiteGPT
                 </button>
-                <button name="Show the  customer story" id="302" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=302 focusable controls="_r126R_0_-customer-story-panel">
                   Liveblocks
                 </button>
-                <button name="Show the  customer story" id="308" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=308 focusable controls="_r126R_0_-customer-story-panel">
                   Leagued
                 </button>
-                <button name="Show the  customer story" id="314" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=314 focusable controls="_r126R_0_-customer-story-panel">
                   Seated
                 </button>
-                <button name="Show the  customer story" id="319" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=319 focusable controls="_r126R_0_-customer-story-panel">
                   Shopify
                 </button>
-                <button name="Show the  customer story" id="325" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=325 focusable controls="_r126R_0_-customer-story-panel">
                   Character.AI
                 </button>
-                <button name="Show the  customer story" id="331" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=331 focusable controls="_r126R_0_-customer-story-panel">
                   Intercom
                 </button>
-                <button name="Show the  customer story" id="337" invalid="false" focusable="true" controls="_r126R_0_-customer-story-panel">
+                <button name="Show the  customer story" id=337 focusable controls="_r126R_0_-customer-story-panel">
                   DoorDash
                 </button>
               </navigation>
-              <region name="Sry:" id="343" roledescription="slide">
-                <button name="customer story and logo rotation" id="344" invalid="false" focusable="true" pressed="false">
+              <region name="Sry:" id=343 roledescription="slide">
+                <button name="customer story and logo rotation" id=344 focusable>
                   Pause
                 </button>
-                <div id="353">
-                  <image name="Duncan Davidson" id="360" url="https://www.cloudflare.com/people/duncan-davidson.png"/>
-                  <blockquote id="362">
-                    <heading name="" id="363" level="3">
+                <div id=353>
+                  <image name="Duncan Davidson" id=360 url="https://www.cloudflare.com/people/duncan-davidson.png"/>
+                  <blockquote id=362>
+                    <heading id=363 level=3>
                       ForShopify,therealchallengeisnotabouthowmanydifferentpiecesofcomplextechnologywecanusebuttheopposite.Cloudflarehelpsusfindasimplewaytoachievesomethingverycomplexthatwecanscaleandmaintain.
                     </heading>
                   </blockquote>
-                  <paragraph id="515">
-                    <strong id="516">
+                  <paragraph id=515>
+                    <strong id=516>
                       Duncan Davidson
                     </strong>
                     , VP of Developer Productivity, Shopify
@@ -168,79 +168,79 @@ Build, secure, and scale without managing infrastructure.
               </region>
             </div>
           </region>
-          <paragraph id="527">
+          <paragraph id=527>
             And thousands more...
           </paragraph>
         </div>
       </div>
-      <div id="535">
-        <heading id="538" level="2">
+      <div id=535>
+        <heading id=538 level=2>
           Why choose Cloudflare
         </heading>
-        <paragraph id="549">
+        <paragraph id=549>
           Everything needed to
-          <div id="552">
+          <div id=552>
             buildsecure,performantapplications
           </div>
         </paragraph>
       </div>
-      <div id="579">
-        <div id="580">
-          <heading id="581" level="3">
+      <div id=579>
+        <div id=580>
+          <heading id=581 level=3>
             Fighting infra with “cloud”
           </heading>
-          <div id="586">
+          <div id=586>
             "Egress costs just doubled this week — caching not working at edge. Can we fix this by EOD?"STATUS: UNRESOLVED2931 Open incidents2931 Open incidents
-            <div id="625">
+            <div id=625>
               P0High Latency!!!!!!~150–250ms RTT per request
             </div>
-            <div id="639">
+            <div id=639>
               P0High Latency!!!!!!~150–250ms RTT per request
             </div>
-            <div id="653">
+            <div id=653>
               P0High Latency!!!!!!~150–250ms RTT per request
             </div>
             "Origin IP exposed, getting hit with direct DDoS traffic. Need to lock down ASAP."
-            <div id="677">
+            <div id=677>
               Bandwidth usage alertYou have exceeded your bandwidth limit for the month.
             </div>
-            <div id="689">
+            <div id=689>
               Bandwidth usage alertYou have exceeded your bandwidth limit for the month.
             </div>
-            <div id="701">
+            <div id=701>
               Summer Intern"I fixed the errors by pushing the env file to production."
             </div>
             "Cache hit ratio just tanked to 12%. Origin egress is 14× normal — this month's bill is going to be brutal."
-            <div id="723">
+            <div id=723>
               P0Credential stuffing detected142K login attempts from 38K IPs in the last 5 minutes.
             </div>
-            <div id="739">
+            <div id=739>
               P0Credential stuffing detected142K login attempts from 38K IPs in the last 5 minutes.
             </div>
             "VPN concentrator pegged at 98% — APAC engineering can't reach staging again."
-            <div id="765">
+            <div id=765>
               Sensitive data exfiltration12 customer records pasted into a public AI tool in the last hour.
             </div>
             Employee clicked phishing link. SSO session may be compromised.
-            <div id="787">
+            <div id=787>
               MPLS circuit downSingapore ↔ Frankfurt. Carrier ETA: 4–6 hours.
             </div>
           </div>
         </div>
-        <div id="796">
-          <heading name="" id="949" level="3">
+        <div id=796>
+          <heading id=949 level=3>
             Shipping with
-            <LineBreak name="" id="952">
-              <InlineTextBox name="&#xA;" id="953"/>
+            <LineBreak id=952>
+              <InlineTextBox name="&#xA;" id=953/>
             </LineBreak>
             Cloudflare
           </heading>
-          <div id="957">
+          <div id=957>
             Pushed
-            <image name="" id="965">
+            <image id=965>
               ​
-              <div id="970">
-                <div id="971">
+              <div id=970>
+                <div id=971>
                   187​
                 </div>
                 ​
@@ -251,150 +251,150 @@ Build, secure, and scale without managing infrastructure.
           </div>
         </div>
       </div>
-      <div id="999">
-        <heading name="" id="1002" level="2">
+      <div id=999>
+        <heading id=1002 level=2>
           Pay only
-          <div id="1005">
+          <div id=1005>
             whenyourcoderuns
           </div>
         </heading>
-        <paragraph id="1030">
+        <paragraph id=1030>
           (Not to keep servers warm.)
         </paragraph>
       </div>
-      <div id="1035">
-        <tablist name="Platform categories" id="1043" multiselectable="false" orientation="horizontal">
-          <div id="1044">
-            <tab name="tab" id="1045" invalid="false" focusable="true" selected="true" controls="home-pricing-platform-panel-0">
-              <image id="1046"/>
+      <div id=1035>
+        <tablist name="Platform categories" id=1043 orientation="horizontal">
+          <div id=1044>
+            <tab name="tab" id=1045 focusable selected controls="home-pricing-platform-panel-0">
+              <image id=1046/>
               Network &amp; CDN
             </tab>
-            <tab name="tab" id="1049" invalid="false" focusable="true" selected="false">
-              <image id="1050"/>
+            <tab name="tab" id=1049 focusable>
+              <image id=1050/>
               SASE / Zero Trust
             </tab>
-            <tab name="tab" id="1053" invalid="false" focusable="true" selected="false">
-              <image id="1054"/>
+            <tab name="tab" id=1053 focusable>
+              <image id=1054/>
               Compute &amp; Storage
             </tab>
           </div>
         </tablist>
-        <tabpanel name="Network &amp;  tab" id="1060" labelledby="">
-          <heading id="1064" level="3">
+        <tabpanel name="Network &amp;  tab" id=1060>
+          <heading id=1064 level=3>
             Pay for clean traffic
           </heading>
-          <paragraph id="1067">
+          <paragraph id=1067>
             One stack of security and performance for every site — same DDoS mitigation, same global CDN, same network at every tier. You only pay for the depth your site needs.
           </paragraph>
-          <div id="1073">
+          <div id=1073>
             Visitor trafficYour siteCDNDDoSSSLWAFBotSame protection at every tier — paid plans add depth
           </div>
-          <paragraph id="1126">
-            <strong id="1127">
+          <paragraph id=1126>
+            <strong id=1127>
               Free
             </strong>
-            <LineBreak name="" id="1130">
-              <InlineTextBox name="&#xA;" id="1131"/>
+            <LineBreak id=1130>
+              <InlineTextBox name="&#xA;" id=1131/>
             </LineBreak>
             for hobby projects
           </paragraph>
-          <heading id="1136" level="4">
+          <heading id=1136 level=4>
             $0
           </heading>
           /monthUnmetered DDoSUniversal SSLGlobal CDN
-          <link id="1155" focusable="true" url="https://www.cloudflare.com/plans#application-services">
+          <link id=1155 focusable url="https://www.cloudflare.com/plans#application-services">
             See Free plan
           </link>
-          <paragraph id="1163">
-            <strong id="1164">
+          <paragraph id=1163>
+            <strong id=1164>
               Pro
             </strong>
-            <LineBreak name="" id="1167">
-              <InlineTextBox name="&#xA;" id="1168"/>
+            <LineBreak id=1167>
+              <InlineTextBox name="&#xA;" id=1168/>
             </LineBreak>
             for pro websites
           </paragraph>
-          <heading id="1173" level="4">
+          <heading id=1173 level=4>
             $20
           </heading>
           /mo billed annuallyor $25/mo billed monthlyImage optimizationBot protectionTicket support
-          <link id="1195" focusable="true" url="https://www.cloudflare.com/plans#application-services">
+          <link id=1195 focusable url="https://www.cloudflare.com/plans#application-services">
             See Pro plan
           </link>
-          <paragraph id="1203">
-            <strong id="1204">
+          <paragraph id=1203>
+            <strong id=1204>
               Business
             </strong>
-            <LineBreak name="" id="1207">
-              <InlineTextBox name="&#xA;" id="1208"/>
+            <LineBreak id=1207>
+              <InlineTextBox name="&#xA;" id=1208/>
             </LineBreak>
             for small business
           </paragraph>
-          <heading id="1213" level="4">
+          <heading id=1213 level=4>
             $200
           </heading>
           /mo billed annuallyor $250/mo billed monthlyPCI DSS 4.0100% uptime SLAChat support
-          <link id="1235" focusable="true" url="https://www.cloudflare.com/plans#application-services">
+          <link id=1235 focusable url="https://www.cloudflare.com/plans#application-services">
             See Business plan
           </link>
-          <paragraph id="1243">
-            <strong id="1244">
+          <paragraph id=1243>
+            <strong id=1244>
               Contract
             </strong>
-            <LineBreak name="" id="1247">
-              <InlineTextBox name="&#xA;" id="1248"/>
+            <LineBreak id=1247>
+              <InlineTextBox name="&#xA;" id=1248/>
             </LineBreak>
             for mission-critical
           </paragraph>
-          <heading id="1253" level="4">
+          <heading id=1253 level=4>
             Custom
           </heading>
           Billed annuallyNetwork priority24/7 supportCustom contracts
-          <link id="1272" focusable="true" url="https://www.cloudflare.com/plans#application-services">
+          <link id=1272 focusable url="https://www.cloudflare.com/plans#application-services">
             See Contract plan
           </link>
         </tabpanel>
       </div>
-      <div id="1296">
-        <heading id="1299" level="3">
+      <div id=1296>
+        <heading id=1299 level=3>
           Tailored to your team
         </heading>
-        <paragraph id="1310">
+        <paragraph id=1310>
           Easy to use for both startups and the world’s largest enterprises.
         </paragraph>
       </div>
-      <div id="1314">
-        <heading id="1325" level="3">
+      <div id=1314>
+        <heading id=1325 level=3>
           Fits into your existing workflows
         </heading>
-        <paragraph id="1328">
+        <paragraph id=1328>
           Git, GitHub Actions, VS Code, and any framework. No proprietary tools or vendor lock-in.
         </paragraph>
-        <div id="1333">
-          <heading id="1335" level="3">
+        <div id=1333>
+          <heading id=1335 level=3>
             One network for users, apps, and data
           </heading>
-          <paragraph id="1338">
+          <paragraph id=1338>
             Whether you're shipping code, securing employees, or connecting branches, it all runs on the same global network — managed from one dashboard, billed as one platform.
           </paragraph>
         </div>
-        <heading id="1347" level="3">
+        <heading id=1347 level=3>
           Secure by default
         </heading>
-        <paragraph id="1350">
+        <paragraph id=1350>
           DDoS protection, WAF, bot management, and Zero Trust controls are built into the network and run on every request from day one.
         </paragraph>
-        <div id="1356">
-          <heading id="1358" level="3">
+        <div id=1356>
+          <heading id=1358 level=3>
             Fast path to AI adoption
           </heading>
-          <paragraph id="1361">
+          <paragraph id=1361>
             Build, deploy, and govern AI agents on the same network. Secure MCP portals, identity-aware access, and built-in inference make production AI a one-step deploy.
           </paragraph>
-          <div id="1367">
-            <div id="1369">
+          <div id=1367>
+            <div id=1369>
               Launching agents to analyze repository…3 background agents launched
-              <div id="1380">
+              <div id=1380>
                 review-agentscanning PRs179.6k tokenstest-agentrunning checks8k tokensdocs-agentfixed documentation56 tokens
               </div>
               Agents frontend analysis loading
@@ -403,174 +403,174 @@ Build, secure, and scale without managing infrastructure.
           </div>
         </div>
       </div>
-      <div id="1452">
-        <heading id="1453" level="1">
+      <div id=1452>
+        <heading id=1453 level=1>
           Build without boundaries
         </heading>
-        <paragraph id="1456">
+        <paragraph id=1456>
           Join thousands of developers who've eliminated infrastructure complexity and deployed globally with Cloudflare. Start building for free — no credit card required.
         </paragraph>
-        <link id="1462" focusable="true" url="https://dash.cloudflare.com/sign-up">
+        <link id=1462 focusable url="https://dash.cloudflare.com/sign-up">
           Start building for free
         </link>
-        <link id="1468" focusable="true" url="https://developers.cloudflare.com/">
+        <link id=1468 focusable url="https://developers.cloudflare.com/">
           View docs
         </link>
       </div>
     </main>
-    <contentinfo id="1506">
-      <div id="1507">
-        <div id="1508">
-          <image name="Cloudflare wordmark" id="1511"/>
+    <contentinfo id=1506>
+      <div id=1507>
+        <div id=1508>
+          <image name="Cloudflare wordmark" id=1511/>
           Getting started
-          <link id="1519" focusable="true" url="https://www.cloudflare.com/plans/">
+          <link id=1519 focusable url="https://www.cloudflare.com/plans/">
             Plans
           </link>
-          <link id="1522" focusable="true" url="https://www.cloudflare.com/resource/contact-enterprise-sales/">
+          <link id=1522 focusable url="https://www.cloudflare.com/resource/contact-enterprise-sales/">
             Contact sales
           </link>
-          <link id="1525" focusable="true" url="https://www.cloudflare.com/partners/">
+          <link id=1525 focusable url="https://www.cloudflare.com/partners/">
             Partners
           </link>
-          <link id="1528" focusable="true" url="https://partnerlocator.cloudflare.com/dashboard">
+          <link id=1528 focusable url="https://partnerlocator.cloudflare.com/dashboard">
             Find a partner
           </link>
-          <link id="1531" focusable="true" url="https://www.cloudflare.com/startups/">
+          <link id=1531 focusable url="https://www.cloudflare.com/startups/">
             Startups
           </link>
-          <link id="1534" focusable="true" url="https://www.cloudflare.com/under-attack-hotline/">
+          <link id=1534 focusable url="https://www.cloudflare.com/under-attack-hotline/">
             Under attack?
           </link>
-          <link id="1537" focusable="true" url="https://domains.cloudflare.com/">
+          <link id=1537 focusable url="https://domains.cloudflare.com/">
             Domain name search
           </link>
           Company
-          <link id="1545" focusable="true" url="https://www.cloudflare.com/about/">
+          <link id=1545 focusable url="https://www.cloudflare.com/about/">
             About
           </link>
-          <link id="1548" focusable="true" url="https://www.cloudflare.com/careers/">
+          <link id=1548 focusable url="https://www.cloudflare.com/careers/">
             Careers
           </link>
-          <link id="1551" focusable="true" url="https://cloudflare.net/">
+          <link id=1551 focusable url="https://cloudflare.net/">
             Investors
           </link>
-          <link id="1554" focusable="true" url="https://www.cloudflare.com/press/">
+          <link id=1554 focusable url="https://www.cloudflare.com/press/">
             Press
           </link>
-          <link id="1557" focusable="true" url="https://www.cloudflare.com/press/press-kit/">
+          <link id=1557 focusable url="https://www.cloudflare.com/press/press-kit/">
             Press kit
           </link>
-          <link id="1560" focusable="true" url="https://www.cloudflare.com/network/">
+          <link id=1560 focusable url="https://www.cloudflare.com/network/">
             Global network
           </link>
           Public interest
-          <link id="1569" focusable="true" url="https://www.cloudflare.com/galileo/">
+          <link id=1569 focusable url="https://www.cloudflare.com/galileo/">
             Project Galileo
           </link>
-          <link id="1572" focusable="true" url="https://www.cloudflare.com/athenian/">
+          <link id=1572 focusable url="https://www.cloudflare.com/athenian/">
             Athenian Project
           </link>
-          <link id="1575" focusable="true" url="https://www.cloudflare.com/campaigns/">
+          <link id=1575 focusable url="https://www.cloudflare.com/campaigns/">
             Cloudflare for Campaigns
           </link>
-          <link id="1578" focusable="true" url="https://www.cloudflare.com/fair-shot/">
+          <link id=1578 focusable url="https://www.cloudflare.com/fair-shot/">
             Project Fairshot
           </link>
-          <link id="1581" focusable="true" url="https://www.cloudflare.com/impact/">
+          <link id=1581 focusable url="https://www.cloudflare.com/impact/">
             Impact/ESG
           </link>
           Compliance
-          <link id="1589" focusable="true" url="https://www.cloudflare.com/trust-hub/compliance-resources/">
+          <link id=1589 focusable url="https://www.cloudflare.com/trust-hub/compliance-resources/">
             Compliance resources
           </link>
-          <link id="1592" focusable="true" url="https://www.cloudflare.com/trust-hub/">
+          <link id=1592 focusable url="https://www.cloudflare.com/trust-hub/">
             Trust Hub
           </link>
-          <link id="1595" focusable="true" url="https://www.cloudflare.com/trust-hub/gdpr/">
+          <link id=1595 focusable url="https://www.cloudflare.com/trust-hub/gdpr/">
             Data Protection
           </link>
-          <link id="1598" focusable="true" url="https://www.cloudflare.com/trust-hub/responsible-ai/">
+          <link id=1598 focusable url="https://www.cloudflare.com/trust-hub/responsible-ai/">
             Responsible AI
           </link>
-          <link id="1601" focusable="true" url="https://www.cloudflare.com/transparency/">
+          <link id=1601 focusable url="https://www.cloudflare.com/transparency/">
             Transparency report
           </link>
-          <link id="1604" focusable="true" url="https://www.cloudflare.com/trust-hub/abuse-approach/">
+          <link id=1604 focusable url="https://www.cloudflare.com/trust-hub/abuse-approach/">
             Report abuse
           </link>
           Resources
-          <link id="1613" focusable="true" url="https://www.cloudflare.com/resource/app-innovation-report/">
+          <link id=1613 focusable url="https://www.cloudflare.com/resource/app-innovation-report/">
             App innovation report
           </link>
-          <link id="1616" focusable="true" url="https://radar.cloudflare.com/">
+          <link id=1616 focusable url="https://radar.cloudflare.com/">
             Cloudflare Radar
           </link>
-          <link id="1619" focusable="true" url="https://www.cloudflare.com/case-studies/">
+          <link id=1619 focusable url="https://www.cloudflare.com/case-studies/">
             Case studies
           </link>
-          <link id="1622" focusable="true" url="https://www.cloudflarestatus.com/">
+          <link id=1622 focusable url="https://www.cloudflarestatus.com/">
             Status
           </link>
-          <link id="1625" focusable="true" url="https://support.cloudflare.com/">
+          <link id=1625 focusable url="https://support.cloudflare.com/">
             Support
           </link>
-          <link id="1628" focusable="true" url="https://www.cloudflare.com/events/">
+          <link id=1628 focusable url="https://www.cloudflare.com/events/">
             Events
           </link>
-          <link id="1631" focusable="true" url="https://blog.cloudflare.com/">
+          <link id=1631 focusable url="https://blog.cloudflare.com/">
             Blog
           </link>
           Developers
-          <link id="1639" focusable="true" url="https://developers.cloudflare.com/">
+          <link id=1639 focusable url="https://developers.cloudflare.com/">
             Documentation
           </link>
-          <link id="1642" focusable="true" url="https://www.cloudflare.com/learning/">
+          <link id=1642 focusable url="https://www.cloudflare.com/learning/">
             Learning center
           </link>
-          <link id="1645" focusable="true" url="https://community.cloudflare.com/">
+          <link id=1645 focusable url="https://community.cloudflare.com/">
             Community
           </link>
           Solutions
-          <link id="1654" focusable="true" url="https://www.cloudflare.com/sase/">
+          <link id=1654 focusable url="https://www.cloudflare.com/sase/">
             SSE and SASE platform
           </link>
-          <link id="1657" focusable="true" url="https://www.cloudflare.com/solutions/ai/">
+          <link id=1657 focusable url="https://www.cloudflare.com/solutions/ai/">
             Cloudflare AI Cloud
           </link>
-          <link id="1660" focusable="true" url="https://www.cloudflare.com/solutions/ai-security/">
+          <link id=1660 focusable url="https://www.cloudflare.com/solutions/ai-security/">
             AI Security
           </link>
-          <link id="1663" focusable="true" url="https://www.cloudflare.com/solutions/frontends/">
+          <link id=1663 focusable url="https://www.cloudflare.com/solutions/frontends/">
             Frontend Development Platform
           </link>
-          <link id="1666" focusable="true" url="https://www.cloudflare.com/solutions/platforms/">
+          <link id=1666 focusable url="https://www.cloudflare.com/solutions/platforms/">
             Multi-Tenant Platform Development
           </link>
-          <link id="1669" focusable="true" url="https://www.cloudflare.com/solutions/security/">
+          <link id=1669 focusable url="https://www.cloudflare.com/solutions/security/">
             Web Security Platform
           </link>
         </div>
-        <div id="1674">
+        <div id=1674>
           © 2026 Cloudflare, Inc.
-          <div id="1679">
-            <link id="1680" focusable="true" url="https://www.cloudflare.com/policies/privacy/">
+          <div id=1679>
+            <link id=1680 focusable url="https://www.cloudflare.com/policies/privacy/">
               Privacy policy
             </link>
             |
-            <link id="1687" focusable="true" url="https://www.cloudflare.com/disclosure/">
+            <link id=1687 focusable url="https://www.cloudflare.com/disclosure/">
               Report security issues
             </link>
             |
-            <link id="1694" focusable="true" url="https://www.cloudflare.com/policies/terms/">
+            <link id=1694 focusable url="https://www.cloudflare.com/policies/terms/">
               Terms of use
             </link>
             |
-            <link id="1701" focusable="true" url="https://www.cloudflare.com/trademark/">
+            <link id=1701 focusable url="https://www.cloudflare.com/trademark/">
               Trademark
             </link>
           </div>
           |
-          <button id="1707" invalid="false" focusable="true">
+          <button id=1707 focusable>
             Your privacy choices
           </button>
         </div>

@@ -9,7 +9,7 @@ describe("XmlRenderer", () => {
     ]);
 
     expect(XmlRenderer.render([root])).toMatchInlineSnapshot(`
-      "<root id="1">
+      "<root id=1>
         <button name="OK"/>
       </root>"
     `);
@@ -50,7 +50,29 @@ describe("XmlRenderer", () => {
     const root = Xml.element("root", { empty: "" });
 
     expect(XmlRenderer.render([root])).toMatchInlineSnapshot(
-      `"<root empty=""/>"`,
+      `"<root/>"`,
+    );
+  });
+
+  it("renders compact attributes", () => {
+    const root = Xml.element("root", {
+      enabled: "true",
+      disabled: "false",
+      empty: "",
+      count: "123",
+      offset: "-12",
+      ratio: "1.25",
+      paddedId: "00123",
+      trailingDecimal: "1.",
+      leadingDecimal: ".5",
+      exponent: "1e3",
+      label: "Hello world",
+    });
+
+    expect(
+      XmlRenderer.render([root], { compactAttrs: true }),
+    ).toMatchInlineSnapshot(
+      `"<root enabled count=123 offset=-12 ratio=1.25 paddedId="00123" trailingDecimal="1." leadingDecimal=".5" exponent="1e3" label="Hello world"/>"`,
     );
   });
 

@@ -1,75 +1,75 @@
-<Application id="1" name="Safari">
-  <Window id="2">
-    <generic id="6">
-      <generic id="9">
-        <generic id="11">
-          <generic id="12" name="SafariWindow?View=Narrow&amp;BarsKeptMinimized=false&amp;UUID=22EF9D86-B658-4063-9AA0-90A6B50B4BEC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false">
-            <generic id="14">
-              <ScrollView id="19">
-                <generic id="20" name="TabDocument?IsLoadedUsingDesktopUserAgent=false&amp;InReaderMode=false&amp;UUID=02185351-127F-4127-B0D1-5F875A2B6EA1&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=40171">
-                  <WebView id="21" name="WebView">
-                    <WebView id="22">
-                      <WebView id="24">
-                        <generic id="27">
-                          <generic id="28" name=": Vue">
-                            <generic id="29" name="complementary">
-                              <generic id="30" name="section header">
-                                <generic id="31" value="3">
-                                  <StaticText id="32">
+<Application id=1 name="Safari">
+  <Window id=2>
+    <generic id=6>
+      <generic id=9>
+        <generic id=11>
+          <generic id=12 name="SafariWindow?View=Narrow&amp;BarsKeptMinimized=false&amp;UUID=22EF9D86-B658-4063-9AA0-90A6B50B4BEC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false">
+            <generic id=14>
+              <ScrollView id=19>
+                <generic id=20 name="TabDocument?IsLoadedUsingDesktopUserAgent=false&amp;InReaderMode=false&amp;UUID=02185351-127F-4127-B0D1-5F875A2B6EA1&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=40171">
+                  <WebView id=21 name="WebView">
+                    <WebView id=22>
+                      <WebView id=24>
+                        <generic id=27>
+                          <generic id=28 name=": Vue">
+                            <generic id=29 name="complementary">
+                              <generic id=30 name="section header">
+                                <generic id=31 value=3>
+                                  <StaticText id=32>
                                     Vue.js
                                   </StaticText>
                                 </generic>
-                                <generic id="33" value="5">
-                                  <StaticText id="34">
+                                <generic id=33 value=5>
+                                  <StaticText id=34>
                                     Example
                                   </StaticText>
                                 </generic>
-                                <Link id="35">
-                                  <StaticText id="36">
+                                <Link id=35>
+                                  <StaticText id=36>
                                     Source
                                   </StaticText>
                                 </Link>
                               </generic>
-                              <generic id="37" name="separator" enabled="false"/>
-                              <generic id="38">
-                                <StaticText id="39">
+                              <generic id=37 name="separator"/>
+                              <generic id=38>
+                                <StaticText id=39>
                                   “
                                 </StaticText>
-                                <StaticText id="40">
+                                <StaticText id=40>
                                   Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `
                                 </StaticText>
-                                <StaticText id="41">
+                                <StaticText id=41>
                                   ”
                                 </StaticText>
                               </generic>
                             </generic>
-                            <generic id="42" name="section header">
-                              <Link id="43">
-                                <Link id="44" value="1">
-                                  <StaticText id="45">
+                            <generic id=42 name="section header">
+                              <Link id=43>
+                                <Link id=44 value=1>
+                                  <StaticText id=45>
                                     todos
                                   </StaticText>
                                 </Link>
                               </Link>
-                              <TextField id="46" value="What needs to be done?"/>
+                              <TextField id=46 value="What needs to be done?"/>
                             </generic>
-                            <generic id="47" name="content information">
-                              <generic id="48">
-                                <StaticText id="49">
+                            <generic id=47 name="content information">
+                              <generic id=48>
+                                <StaticText id=49>
                                   Double-click to edit a todo
                                 </StaticText>
                               </generic>
-                              <generic id="50">
-                                <StaticText id="51">
+                              <generic id=50>
+                                <StaticText id=51>
                                   Created by the TodoMVC Team
                                 </StaticText>
                               </generic>
-                              <generic id="52">
-                                <StaticText id="53" value="Part of ">
+                              <generic id=52>
+                                <StaticText id=53 value="Part of ">
                                   Part of
                                 </StaticText>
-                                <Link id="54">
-                                  <StaticText id="55">
+                                <Link id=54>
+                                  <StaticText id=55>
                                     TodoMVC
                                   </StaticText>
                                 </Link>
@@ -78,64 +78,64 @@
                           </generic>
                         </generic>
                       </WebView>
-                      <generic id="58" name="Vertical scroll bar, 1 page"/>
-                      <generic id="60" name="Horizontal scroll bar, 1 page"/>
-                      <generic id="62" name="Vertical scroll bar, 1 page"/>
-                      <generic id="64" name="Horizontal scroll bar, 1 page"/>
+                      <generic id=58 name="Vertical scroll bar, 1 page"/>
+                      <generic id=60 name="Horizontal scroll bar, 1 page"/>
+                      <generic id=62 name="Vertical scroll bar, 1 page"/>
+                      <generic id=64 name="Horizontal scroll bar, 1 page"/>
                     </WebView>
                   </WebView>
                 </generic>
-                <generic id="66" name="Horizontal scroll bar, 1 page"/>
-                <generic id="68" name="Horizontal scroll bar, 1 page"/>
+                <generic id=66 name="Horizontal scroll bar, 1 page"/>
+                <generic id=68 name="Horizontal scroll bar, 1 page"/>
               </ScrollView>
             </generic>
-            <generic id="70" name="CapsuleViewController">
-              <generic id="80">
-                <Button id="81" name="BackButton" label="Back"/>
+            <generic id=70 name="CapsuleViewController">
+              <generic id=80>
+                <Button id=81 name="BackButton" label="Back"/>
               </generic>
-              <generic id="84">
-                <generic id="85" name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false">
-                  <Button id="86" name="PageFormatMenuButton" label="Page Menu">
-                    <StaticText id="87"/>
+              <generic id=84>
+                <generic id=85 name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false">
+                  <Button id=86 name="PageFormatMenuButton" label="Page Menu">
+                    <StaticText id=87/>
                   </Button>
-                  <TextField id="88" name="TabBarItemTitle" label="Address" value="‎todomvc.com"/>
-                  <Button id="89" name="ReloadButton" label="refresh"/>
+                  <TextField id=88 name="TabBarItemTitle" label="Address" value="‎todomvc.com"/>
+                  <Button id=89 name="ReloadButton" label="refresh"/>
                 </generic>
               </generic>
-              <generic id="91">
-                <Button id="92" name="MoreMenuButton" label="More"/>
+              <generic id=91>
+                <Button id=92 name="MoreMenuButton" label="More"/>
               </generic>
             </generic>
           </generic>
         </generic>
       </generic>
     </generic>
-    <generic id="97">
-      <generic id="98" name="PopoverDismissRegion" label="dismiss pop-up"/>
-      <Popover id="99">
-        <Image id="100"/>
-        <generic id="101">
-          <generic id="115">
-            <generic id="116" name="TipView">
-              <ScrollView id="117">
-                <generic id="118">
-                  <StaticText id="119">
+    <generic id=97>
+      <generic id=98 name="PopoverDismissRegion" label="dismiss pop-up"/>
+      <Popover id=99>
+        <Image id=100/>
+        <generic id=101>
+          <generic id=115>
+            <generic id=116 name="TipView">
+              <ScrollView id=117>
+                <generic id=118>
+                  <StaticText id=119>
                     View Bookmarks, Share Menu and Open Tabs
                   </StaticText>
-                  <StaticText id="120">
+                  <StaticText id=120>
                     You can now view these items in the  menu.
 You can change this at any time in Safari settings.
                   </StaticText>
                 </generic>
-                <generic id="122" name="Vertical scroll bar, 1 page"/>
-                <generic id="124" name="Vertical scroll bar, 1 page"/>
+                <generic id=122 name="Vertical scroll bar, 1 page"/>
+                <generic id=124 name="Vertical scroll bar, 1 page"/>
               </ScrollView>
-              <Button id="125" name="xmark.circle.fill" label="Close"/>
+              <Button id=125 name="xmark.circle.fill" label="Close"/>
             </generic>
           </generic>
         </generic>
       </Popover>
     </generic>
   </Window>
-  <Window id="126"/>
+  <Window id=126/>
 </Application>

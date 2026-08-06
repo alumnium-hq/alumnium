@@ -1,73 +1,73 @@
 <hierarchy>
-  <hierarchy id="2">
-    <FrameLayout id="3" clickable="false">
-      <LinearLayout id="4" clickable="false">
-        <FrameLayout id="5" clickable="false">
-          <FrameLayout id="6" clickable="false">
-            <FrameLayout id="7" resource-id="android:id/content" clickable="false">
-              <ViewGroup id="8" resource-id="com.android.chrome:id/coordinator" clickable="false">
-                <FrameLayout id="9" resource-id="com.android.chrome:id/compositor_view_holder" clickable="false">
-                  <FrameLayout id="10" clickable="false">
-                    <View id="11" clickable="false"/>
+  <hierarchy id=2>
+    <FrameLayout id=3>
+      <LinearLayout id=4>
+        <FrameLayout id=5>
+          <FrameLayout id=6>
+            <FrameLayout id=7 resource-id="android:id/content">
+              <ViewGroup id=8 resource-id="com.android.chrome:id/coordinator">
+                <FrameLayout id=9 resource-id="com.android.chrome:id/compositor_view_holder">
+                  <FrameLayout id=10>
+                    <View id=11/>
                   </FrameLayout>
-                  <FrameLayout id="12" clickable="false">
-                    <WebView id="13" text="TodoMVC" clickable="false">
-                      <View id="14" clickable="false">
-                        <View id="15" clickable="false">
-                          <Image id="16" text="TodoMVC" clickable="false"/>
-                          <TextView id="17" text="Helping you select an MV* framework" clickable="false"/>
-                          <View id="18" clickable="false">
-                            <View id="19" content-desc="Download" clickable="true">
-                              <TextView id="20" text="Download" clickable="false"/>
+                  <FrameLayout id=12>
+                    <WebView id=13 text="TodoMVC">
+                      <View id=14>
+                        <View id=15>
+                          <Image id=16 text="TodoMVC"/>
+                          <TextView id=17 text="Helping you select an MV* framework"/>
+                          <View id=18>
+                            <View id=19 content-desc="Download" clickable>
+                              <TextView id=20 text="Download"/>
                             </View>
-                            <View id="21" content-desc="View on GitHub" clickable="true">
-                              <TextView id="22" text="View on GitHub" clickable="false"/>
+                            <View id=21 content-desc="View on GitHub" clickable>
+                              <TextView id=22 text="View on GitHub"/>
                             </View>
-                            <View id="23" content-desc="Blog" clickable="true">
-                              <TextView id="24" text="Blog" clickable="false"/>
+                            <View id=23 content-desc="Blog" clickable>
+                              <TextView id=24 text="Blog"/>
                             </View>
                           </View>
                         </View>
-                        <TextView id="25" clickable="false"/>
+                        <TextView id=25/>
                       </View>
-                      <View id="26" clickable="false">
-                        <TextView id="27" text="Introduction" clickable="false"/>
-                        <TextView id="28" text="Developers have a number of choices today when it comes to selecting a JavaScript framework or UI library for building scalable web apps." clickable="false"/>
-                        <TextView id="29" text="React, Vue, Svelte, Angular, Solid, Lit…the list of solutions continues to grow, but just how do you decide on which to use in a sea of so many options?" clickable="false"/>
-                        <TextView id="30" text="To help you understand the options, we created TodoMVC - a project which has offered the same Todo applications implemented in popular JavaScript frameworks for over a decade." clickable="false"/>
-                        <View id="31" clickable="false">
-                          <TextView id="32" text="TodoMVC is useful for comparing syntax and solutions, is officially used in cross-browser benchmarks (e.g. " clickable="false"/>
-                          <View id="33" content-desc="Speedometer" clickable="true">
-                            <TextView id="34" text="Speedometer" clickable="false"/>
+                      <View id=26>
+                        <TextView id=27 text="Introduction"/>
+                        <TextView id=28 text="Developers have a number of choices today when it comes to selecting a JavaScript framework or UI library for building scalable web apps."/>
+                        <TextView id=29 text="React, Vue, Svelte, Angular, Solid, Lit…the list of solutions continues to grow, but just how do you decide on which to use in a sea of so many options?"/>
+                        <TextView id=30 text="To help you understand the options, we created TodoMVC - a project which has offered the same Todo applications implemented in popular JavaScript frameworks for over a decade."/>
+                        <View id=31>
+                          <TextView id=32 text="TodoMVC is useful for comparing syntax and solutions, is officially used in cross-browser benchmarks (e.g. "/>
+                          <View id=33 content-desc="Speedometer" clickable>
+                            <TextView id=34 text="Speedometer"/>
                           </View>
-                          <TextView id="35" text=") and aims to stay up to date as trends change over time." clickable="false"/>
+                          <TextView id=35 text=") and aims to stay up to date as trends change over time."/>
                         </View>
                       </View>
                     </WebView>
                   </FrameLayout>
                 </FrameLayout>
-                <FrameLayout id="36" resource-id="com.android.chrome:id/control_container" clickable="false">
-                  <FrameLayout id="37" resource-id="com.android.chrome:id/toolbar_container" clickable="false">
-                    <FrameLayout id="38" resource-id="com.android.chrome:id/toolbar" clickable="false">
-                      <ImageButton id="39" resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable="true"/>
-                      <FrameLayout id="40" resource-id="com.android.chrome:id/location_bar" clickable="false">
-                        <LinearLayout id="41" resource-id="com.android.chrome:id/location_bar_status" clickable="true">
-                          <LinearLayout id="42" resource-id="com.android.chrome:id/location_bar_status_icon_view" clickable="false">
-                            <FrameLayout id="43" resource-id="com.android.chrome:id/location_bar_status_icon_frame" clickable="false">
-                              <ImageView id="44" resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure" clickable="false"/>
+                <FrameLayout id=36 resource-id="com.android.chrome:id/control_container">
+                  <FrameLayout id=37 resource-id="com.android.chrome:id/toolbar_container">
+                    <FrameLayout id=38 resource-id="com.android.chrome:id/toolbar">
+                      <ImageButton id=39 resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable/>
+                      <FrameLayout id=40 resource-id="com.android.chrome:id/location_bar">
+                        <LinearLayout id=41 resource-id="com.android.chrome:id/location_bar_status" clickable>
+                          <LinearLayout id=42 resource-id="com.android.chrome:id/location_bar_status_icon_view">
+                            <FrameLayout id=43 resource-id="com.android.chrome:id/location_bar_status_icon_frame">
+                              <ImageView id=44 resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure"/>
                             </FrameLayout>
                           </LinearLayout>
                         </LinearLayout>
-                        <EditText id="45" resource-id="com.android.chrome:id/url_bar" text="todomvc.com" clickable="true"/>
+                        <EditText id=45 resource-id="com.android.chrome:id/url_bar" text="todomvc.com" clickable/>
                       </FrameLayout>
-                      <LinearLayout id="46" resource-id="com.android.chrome:id/toolbar_buttons" clickable="false">
-                        <ImageButton id="47" resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable="true"/>
-                        <FrameLayout id="48" resource-id="com.android.chrome:id/menu_button_wrapper" clickable="false">
-                          <ImageButton id="49" resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable="true"/>
+                      <LinearLayout id=46 resource-id="com.android.chrome:id/toolbar_buttons">
+                        <ImageButton id=47 resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable/>
+                        <FrameLayout id=48 resource-id="com.android.chrome:id/menu_button_wrapper">
+                          <ImageButton id=49 resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable/>
                         </FrameLayout>
                       </LinearLayout>
                     </FrameLayout>
-                    <ImageView id="50" resource-id="com.android.chrome:id/toolbar_hairline" clickable="false"/>
+                    <ImageView id=50 resource-id="com.android.chrome:id/toolbar_hairline"/>
                   </FrameLayout>
                 </FrameLayout>
               </ViewGroup>
@@ -75,7 +75,7 @@
           </FrameLayout>
         </FrameLayout>
       </LinearLayout>
-      <View id="51" resource-id="android:id/navigationBarBackground" clickable="false"/>
+      <View id=51 resource-id="android:id/navigationBarBackground"/>
     </FrameLayout>
   </hierarchy>
 </hierarchy>
