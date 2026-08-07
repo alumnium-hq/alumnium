@@ -1,101 +1,53 @@
-<hierarchy>
-  <hierarchy id=2>
-    <FrameLayout id=3>
-      <LinearLayout id=4>
-        <FrameLayout id=5>
-          <FrameLayout id=6>
-            <FrameLayout id=7 resource-id="android:id/content">
-              <ViewGroup id=8 resource-id="com.android.chrome:id/coordinator">
-                <FrameLayout id=9 resource-id="com.android.chrome:id/compositor_view_holder">
-                  <FrameLayout id=10>
-                    <View id=11/>
-                  </FrameLayout>
-                  <FrameLayout id=12>
-                    <WebView id=13 text="TodoMVC: Vue">
-                      <View id=14>
-                        <View id=15>
-                          <View id=16 content-desc="todos" clickable>
-                            <TextView id=17 text="todos"/>
-                          </View>
-                          <EditText id=18 clickable/>
-                        </View>
-                        <View id=19>
-                          <CheckBox id=20 resource-id="toggle-all-input" text="❯ Toggle All Input" clickable checked/>
-                          <TextView id=21 text="❯"/>
-                          <ListView id=22>
-                            <View id=23>
-                              <CheckBox id=24 clickable checked/>
-                              <View id=25 text="Buy milk"/>
-                              <Button id=26 text="×" clickable/>
-                            </View>
-                          </ListView>
-                        </View>
-                        <View id=27>
-                          <TextView id=28 text=0/>
-                          <TextView id=29 text=" items left"/>
-                          <ListView id=30>
-                            <View id=31>
-                              <View id=32 content-desc="All" clickable>
-                                <TextView id=33 text="All"/>
-                              </View>
-                            </View>
-                            <View id=34>
-                              <View id=35 content-desc="Active" clickable>
-                                <TextView id=36 text="Active"/>
-                              </View>
-                            </View>
-                            <View id=37>
-                              <View id=38 content-desc="Completed" clickable>
-                                <TextView id=39 text="Completed"/>
-                              </View>
-                            </View>
-                          </ListView>
-                          <Button id=40 text="Clear completed" clickable/>
-                        </View>
-                      </View>
-                      <View id=41>
-                        <TextView id=42 text="Double-click to edit a todo"/>
-                        <TextView id=43 text="Created by the TodoMVC Team"/>
-                        <View id=44>
-                          <TextView id=45 text="Part of "/>
-                          <View id=46 content-desc="TodoMVC" clickable>
-                            <TextView id=47 text="TodoMVC"/>
-                          </View>
-                        </View>
-                      </View>
-                    </WebView>
-                  </FrameLayout>
-                </FrameLayout>
-                <FrameLayout id=48 resource-id="com.android.chrome:id/control_container">
-                  <FrameLayout id=49 resource-id="com.android.chrome:id/toolbar_container">
-                    <FrameLayout id=50 resource-id="com.android.chrome:id/toolbar">
-                      <ImageButton id=51 resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable/>
-                      <FrameLayout id=52 resource-id="com.android.chrome:id/location_bar">
-                        <LinearLayout id=53 resource-id="com.android.chrome:id/location_bar_status" clickable>
-                          <LinearLayout id=54 resource-id="com.android.chrome:id/location_bar_status_icon_view">
-                            <FrameLayout id=55 resource-id="com.android.chrome:id/location_bar_status_icon_frame">
-                              <ImageView id=56 resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure"/>
-                            </FrameLayout>
-                          </LinearLayout>
-                        </LinearLayout>
-                        <EditText id=57 resource-id="com.android.chrome:id/url_bar" text="todomvc.com/examples/vue/dist/#/" clickable/>
-                      </FrameLayout>
-                      <LinearLayout id=58 resource-id="com.android.chrome:id/toolbar_buttons">
-                        <ImageButton id=59 resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable/>
-                        <FrameLayout id=60 resource-id="com.android.chrome:id/menu_button_wrapper">
-                          <ImageButton id=61 resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable/>
-                        </FrameLayout>
-                      </LinearLayout>
-                    </FrameLayout>
-                    <ImageView id=62 resource-id="com.android.chrome:id/toolbar_hairline"/>
-                  </FrameLayout>
-                </FrameLayout>
-              </ViewGroup>
-            </FrameLayout>
-          </FrameLayout>
-        </FrameLayout>
-      </LinearLayout>
-      <View id=63 resource-id="android:id/navigationBarBackground"/>
-    </FrameLayout>
-  </hierarchy>
-</hierarchy>
+<div id=1>
+  <WebView id=13 text="TodoMVC: Vue">
+    <div id=14>
+      <div id=15>
+        <div id=16 content-desc="todos" clickable/>
+        <EditText id=18 clickable/>
+      </div>
+      <div id=19>
+        <CheckBox id=20 resource-id="toggle-all-input" checked clickable>❯ Toggle All Input</CheckBox>
+        <div id=21>❯</div>
+        <ListView id=22>
+          <CheckBox id=24 checked clickable/>
+          <div id=25>Buy milk</div>
+          <Button id=26 clickable>×</Button>
+        </ListView>
+      </div>
+      <div id=27>
+        <div id=28>0</div>
+        <div id=29>items left</div>
+        <ListView id=30>
+          <div id=32 content-desc="All" clickable/>
+          <div id=35 content-desc="Active" clickable/>
+          <div id=38 content-desc="Completed" clickable/>
+        </ListView>
+        <Button id=40 clickable>Clear completed</Button>
+      </div>
+    </div>
+    <div id=41>
+      <div id=42>Double-click to edit a todo</div>
+      <div id=43>Created by the TodoMVC Team</div>
+      <div id=44>
+        <div id=45>Part of</div>
+        <div id=46 content-desc="TodoMVC" clickable/>
+      </div>
+    </div>
+  </WebView>
+  <div id=49 resource-id="toolbar_container">
+    <div id=50 resource-id="toolbar">
+      <ImageButton id=51 content-desc="Home" resource-id="home_button" clickable/>
+      <div id=52 resource-id="location_bar">
+        <div id=53 resource-id="location_bar_status" clickable>
+          <ImageView id=56 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+        </div>
+        <EditText id=57 resource-id="url_bar" clickable>todomvc.com/examples/vue/dist/#/</EditText>
+      </div>
+      <div id=58 resource-id="toolbar_buttons">
+        <ImageButton id=59 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
+        <ImageButton id=61 content-desc="More options" resource-id="menu_button" clickable/>
+      </div>
+    </div>
+    <ImageView id=62 resource-id="toolbar_hairline"/>
+  </div>
+</div>

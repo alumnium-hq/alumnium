@@ -1,71 +1,40 @@
 <RootWebArea name="YouTube" id=1 focusable focused url="https://www.youtube.com/">
-  <div id=4>
-    <div id=6>
-      <banner id=8>
-        <div id=12>
-          <div id=13>
-            <button name="Guide" id=15 focusable/>
-            <div id=22>
-              <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/"/>
-              SG
-            </div>
-            <button id=34 focusable>
-              Skip navigation
-            </button>
-          </div>
-          <div id=39>
-            <search id=40>
-              <div id=42>
-                <combobox name="Search" id=45 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox">
-                  <div id=47 editable="plaintext"/>
-                </combobox>
-                <button name="Search" id=48 focusable/>
-              </div>
-            </search>
-            <div id=52>
-              <button name="Search with your voice" id=54 focusable/>
-              <tooltip name="tooltip" id=55 focusable/>
-            </div>
-          </div>
-          <div id=57>
-            <div id=60 focusable>
-              <button name="Settings" id=62 focusable/>
-            </div>
-            <link id=71 focusable url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=en&amp;ec=65620">
-              Sign in
-            </link>
-          </div>
-        </div>
-      </banner>
-      <navigation id=78>
-        <div id=79>
-          <link id=81 focusable url="https://www.youtube.com/">
-            Home
-          </link>
-          <link id=92 focusable url="https://www.youtube.com/shorts/">
-            Shorts
-          </link>
-          <link id=103 focusable url="https://www.youtube.com/feed/subscriptions">
-            Subscriptions
-          </link>
-          <link id=114 focusable url="https://www.youtube.com/feed/you">
-            You
-          </link>
-        </div>
-      </navigation>
-      <main id=125>
-        <div id=144>
-          <heading id=145 level=2>
-            <div id=146>
-              Try searching to get started
-            </div>
-          </heading>
-          <div id=150>
-            Start watching videos to help us build a feed of videos you'll love.
-          </div>
-        </div>
-      </main>
+  <banner id=8>
+    <div id=13>
+      <button name="Guide" id=15 focusable/>
+      <div id=22>
+        <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/"/>
+        SG
+      </div>
+      <button id=34 focusable>Skip navigation</button>
     </div>
-    <div id=222 live="polite" atomic relevant="additions text"/>
-  </div>
+    <div id=39>
+      <search id=40>
+        <combobox name="Search" id=45 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox">
+          <div id=47 editable="plaintext"/>
+        </combobox>
+        <button name="Search" id=48 focusable/>
+      </search>
+      <div id=52>
+        <button name="Search with your voice" id=54 focusable/>
+        <tooltip name="tooltip" id=55 focusable/>
+      </div>
+    </div>
+    <div id=57>
+      <div id=60 focusable>
+        <button name="Settings" id=62 focusable/>
+      </div>
+      <link id=71 focusable url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=en&amp;ec=65620">Sign in</link>
+    </div>
+  </banner>
+  <navigation id=78>
+    <link id=81 focusable url="https://www.youtube.com/">Home</link>
+    <link id=92 focusable url="https://www.youtube.com/shorts/">Shorts</link>
+    <link id=103 focusable url="https://www.youtube.com/feed/subscriptions">Subscriptions</link>
+    <link id=114 focusable url="https://www.youtube.com/feed/you">You</link>
+  </navigation>
+  <main id=125>
+    <heading id=145 level=2>Try searching to get started</heading>
+    <div id=150>Start watching videos to help us build a feed of videos you'll love.</div>
+  </main>
 </RootWebArea>

@@ -1,1407 +1,1347 @@
 <RootWebArea name="Claude Code by Anthropic | AI Coding Agent, Terminal, IDE" id=1 focusable focused url="https://claude.com/product/claude-code">
-  <div id=3>
-    <alert id=5 live="assertive" atomic relevant="additions text">
-      Claude Code by Anthropic | AI Coding Agent, Terminal, IDE
-    </alert>
-    <link id=8 focusable url="https://claude.com/product/claude-code#main-content">
-      Skip to main content
-    </link>
-    <banner id=11>
+  <alert id=5 live="assertive" atomic relevant="additions text">Claude Code by Anthropic | AI Coding Agent, Terminal, IDE</alert>
+  <link id=8 focusable url="https://claude.com/product/claude-code#main-content">Skip to main content</link>
+  <banner id=11>
+    <div id=12>
       <link id=13 focusable url="https://claude.com/">
         <image name="Claude" id=14/>
       </link>
-      <navigation name="Main" id=16>
-        <button id=19 focusable hasPopup="menu">
-          Meet Claude
-        </button>
-        <button id=27 focusable hasPopup="menu">
-          Platform
-        </button>
-        <button id=35 focusable hasPopup="menu">
-          Solutions
-        </button>
-        <button id=43 focusable hasPopup="menu">
-          Pricing
-        </button>
-        <button id=51 focusable hasPopup="menu">
-          Resources
-        </button>
-        <link id=57 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
-          Login
-        </link>
-      </navigation>
-      <link id=61 focusable url="https://claude.com/contact-sales">
-        Contact sales
-      </link>
-      <link id=64 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d">
-        Try Claude
-      </link>
-      <navigation name="Breadcrumb" id=67>
-        <list id=69>
-          <listitem id=70 level=1>
-            Claude Code
-          </listitem>
-        </list>
-        <button id=77 focusable hasPopup="menu">
-          Explore here
-        </button>
-      </navigation>
-    </banner>
-    <main id=84>
-      <div id=85>
-        <heading id=88 level=1>
-          Claude Code
-        </heading>
-        <paragraph id=91>
-          Work with Claude directly in your codebase. Build, debug, and ship from your terminal, IDE, Slack, web, and more.
-        </paragraph>
-        <link id=97 focusable url="https://code.claude.com/docs/en/desktop-linux">
-          Download for Linux
-        </link>
-        <link id=100 focusable url="https://code.claude.com/docs/en/overview">
-          Read documentation(opens in new tab)
-        </link>
-        <paragraph id=108>
-          Available for macOS, Linux, and Windows.
-        </paragraph>
-        <paragraph id=112>
-          Other ways to use Claude Code:
-        </paragraph>
+      <div id=15>
+        <navigation name="Main" id=16>
+          <button id=19 focusable hasPopup="menu">Meet Claude</button>
+          <button id=27 focusable hasPopup="menu">Platform</button>
+          <button id=35 focusable hasPopup="menu">Solutions</button>
+          <button id=43 focusable hasPopup="menu">Pricing</button>
+          <button id=51 focusable hasPopup="menu">Resources</button>
+          <link id=57 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">Login</link>
+        </navigation>
+        <div id=60>
+          <link id=61 focusable url="https://claude.com/contact-sales">Contact sales</link>
+          <link id=64 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d">Try Claude</link>
+        </div>
+      </div>
+    </div>
+    <navigation name="Breadcrumb" id=67>
+      <list id=69>
+        <listitem id=70 level=1>Claude Code</listitem>
+      </list>
+      <button id=77 focusable hasPopup="menu">Explore here</button>
+    </navigation>
+  </banner>
+  <main id=84>
+    <div id=87>
+      <heading id=88 level=1>Claude Code</heading>
+      <paragraph id=91>Work with Claude directly in your codebase. Build, debug, and ship from your terminal, IDE, Slack, web, and more.</paragraph>
+      <div id=95>
+        <div id=96>
+          <link id=97 focusable url="https://code.claude.com/docs/en/desktop-linux">Download for Linux</link>
+          <link id=100 focusable url="https://code.claude.com/docs/en/overview">
+            <div id=101>Read documentation</div>
+            <div id=106>(opens in new tab)</div>
+          </link>
+        </div>
+        <paragraph id=108>Available for macOS, Linux, and Windows.</paragraph>
+      </div>
+      <div id=111>
+        <paragraph id=112>Other ways to use Claude Code:</paragraph>
         <list id=115>
           <listitem id=116 level=1>
             <link id=117 focusable url="https://code.claude.com/docs/en/quickstart#step-1-install-claude-code">
-              Terminal(opens in new tab)
+              <div id=120>Terminal</div>
+              <div id=123>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=125 level=1>
             <link id=126 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/code">
-              Web(opens in new tab)
+              <div id=129>Web</div>
+              <div id=132>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=134 level=1>
             <link id=135 focusable url="https://apps.apple.com/us/app/claude-by-anthropic/id6473753684">
-              iOS(opens in new tab)
+              <div id=138>iOS</div>
+              <div id=141>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=143 level=1>
             <link id=144 focusable url="https://play.google.com/store/apps/details?id=com.anthropic.claude">
-              Android(opens in new tab)
+              <div id=147>Android</div>
+              <div id=150>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=152 level=1>
             <link id=153 focusable url="https://code.claude.com/docs/en/github-actions">
-              GitHub(opens in new tab)
+              <div id=156>GitHub</div>
+              <div id=159>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=161 level=1>
             <link id=162 focusable url="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">
-              VS Code(opens in new tab)
+              <div id=165>VS Code</div>
+              <div id=168>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=170 level=1>
             <link id=171 focusable url="https://plugins.jetbrains.com/plugin/27310-claude-code-beta-">
-              JetBrains(opens in new tab)
+              <div id=174>JetBrains</div>
+              <div id=177>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=179 level=1>
             <link id=180 focusable url="https://slack.com/oauth/v2/authorize?client_id=1601185624273.8899143856786&amp;scope=app_mentions:read,assistant:write,channels:history,channels:read,chat:write,files:read,files:write,groups:history,groups:read,im:history,im:read,im:write,mpim:history,reactions:write,users:read,users:read.email,commands,search:read.public&amp;user_scope=bookmarks:read,channels:history,channels:read,chat:write,emoji:read,files:read,groups:history,groups:read,groups:write,im:history,im:read,im:write,links:read,mpim:history,mpim:read,mpim:write,mpim:write.topic,pins:read,reactions:read,reactions:write,remote_files:read,team:read,users:read,users:read.email,search:read.public,search:read.private,search:read.im,search:read.mpim,search:read.files,search:read.users,canvases:read,canvases:write">
-              Slack(opens in new tab)
+              <div id=183>Slack</div>
+              <div id=186>(opens in new tab)</div>
             </link>
           </listitem>
         </list>
       </div>
-      <group name="Demo of the Claude  dektop app" id=190>
-        <div id=191>
-          <button name="Collapse sidebar" id=193 focusable/>
-          <button name="Search sessions" id=195 disabled/>
+    </div>
+    <group name="Demo of the Claude  dektop app" id=190>
+      <div id=192>
+        <button name="Collapse sidebar" id=193 focusable/>
+        <button name="Search sessions" id=195 disabled/>
+      </div>
+      <div id=197>
+        <div id=198>
+          <button id=199 disabled>Home</button>
+          <button id=204 focusable pressed>Code</button>
         </div>
-        <div id=197>
-          <div id=198>
-            <button id=199 disabled>
-              Home
-            </button>
-            <button id=204 focusable pressed>
-              Code
-            </button>
-          </div>
-          <navigation id=209>
-            <button id=210 focusable>
-              New session
-            </button>
-            <button id=215 disabled>
-              Routines
-            </button>
-            <button id=220 disabled>
-              Customize
-            </button>
-            <button id=225 disabled>
-              More
-            </button>
-          </navigation>
-          Pinned
-          <div id=235>
-            <button id=236 focusable>
-              Add a dark mode toggle to settings
-            </button>
-            <button name="Options for Add a dark mode toggle to settings" id=241 focusable hasPopup="menu"/>
-          </div>
-          Scheduled
-          <div id=247>
-            <button id=248 focusable>
-              Weekly dependency audit
-            </button>
-            <button name="Options for Weekly dependency audit" id=254 focusable hasPopup="menu"/>
-          </div>
-          Recents
-          <div id=260>
-            <button id=261 focusable>
-              Fix the double-charge bug in checkout
-            </button>
-            <button name="Options for Fix the double-charge bug in checkout" id=269 focusable hasPopup="menu"/>
-          </div>
-          <div id=271>
-            <button id=272 focusable>
-              Write tests for the payments module
-            </button>
-            <button name="Options for Write tests for the payments module" id=280 focusable hasPopup="menu"/>
-          </div>
-          <div id=282>
-            <button id=283 focusable>
-              Explain what this repo does
-            </button>
-            <button name="Options for Explain what this repo does" id=288 focusable hasPopup="menu"/>
-          </div>
-          <div id=290>
-            <button id=291 focusable>
-              Layout's broken on mobile
-            </button>
-            <button name="Options for Layout's broken on mobile" id=296 focusable hasPopup="menu"/>
-          </div>
-          <div id=298>
-            <button id=299 focusable>
-              Debug flaky CI tests
-            </button>
-            <button name="Options for Debug flaky CI tests" id=304 focusable hasPopup="menu"/>
-          </div>
-          Susan Sample
-        </div>
-        <div id=313>
-          <div id=314>
-            <div id=316>
-              acme-dashboard/Add a dark mode toggle to settings
+        <navigation id=209>
+          <button id=210 focusable>New session</button>
+          <button id=215 disabled>Routines</button>
+          <button id=220 disabled>Customize</button>
+          <button id=225 disabled>More</button>
+        </navigation>
+        <div id=230>
+          <div id=231>
+            Pinned
+            <div id=235>
+              <button id=236 focusable>Add a dark mode toggle to settings</button>
+              <button name="Options for Add a dark mode toggle to settings" id=241 focusable hasPopup="menu"/>
             </div>
+          </div>
+          <div id=243>
+            Scheduled
+            <div id=247>
+              <button id=248 focusable>Weekly dependency audit</button>
+              <button name="Options for Weekly dependency audit" id=254 focusable hasPopup="menu"/>
+            </div>
+          </div>
+          <div id=256>
+            Recents
+            <div id=260>
+              <button id=261 focusable>Fix the double-charge bug in checkout</button>
+              <button name="Options for Fix the double-charge bug in checkout" id=269 focusable hasPopup="menu"/>
+            </div>
+            <div id=271>
+              <button id=272 focusable>Write tests for the payments module</button>
+              <button name="Options for Write tests for the payments module" id=280 focusable hasPopup="menu"/>
+            </div>
+            <div id=282>
+              <button id=283 focusable>Explain what this repo does</button>
+              <button name="Options for Explain what this repo does" id=288 focusable hasPopup="menu"/>
+            </div>
+            <div id=290>
+              <button id=291 focusable>Layout's broken on mobile</button>
+              <button name="Options for Layout's broken on mobile" id=296 focusable hasPopup="menu"/>
+            </div>
+            <div id=298>
+              <button id=299 focusable>Debug flaky CI tests</button>
+              <button name="Options for Debug flaky CI tests" id=304 focusable hasPopup="menu"/>
+            </div>
+          </div>
+        </div>
+        Susan Sample
+      </div>
+      <div id=313>
+        <div id=315>
+          <div id=316>
+            <div id=318>acme-dashboard</div>
+            <div id=321>/</div>
+            <div id=324>Add a dark mode toggle to settings</div>
+          </div>
+          <div id=329>
             Add a dark mode toggle to the settings page. Should remember the choice and follow the system default until they pick one.
             <div id=340>
               <paragraph id=341>
                 There's already a
-                <code id=344>
-                  ThemeProvider
-                </code>
+                <code id=344>ThemeProvider</code>
                 wrapping the app but it's hard-wired to light. I'll lift the mode into context, persist it to
-                <code id=351>
-                  localStorage
-                </code>
+                <code id=351>localStorage</code>
                 , and add a Light / Dark segmented control under
-                <strong id=357>
-                  Settings → Appearance
-                </strong>
+                <strong id=357>Settings → Appearance</strong>
                 .
               </paragraph>
-              <button name="Copy message" id=364 focusable/>
-              just now
+              <div id=363>
+                <button name="Copy message" id=364 focusable/>
+                just now
+              </div>
             </div>
-            <button id=370 focusable>
-              Read 4 files, searched the codebase
-            </button>
-            <button id=376 focusable>
-              Edited
-              <strong id=380>
-                ThemeProvider.tsx
-              </strong>
-              +18-2
-            </button>
-            <div id=397>
-              src/theme/ThemeProvider.tsx
-              <button name="Copy code" id=401 focusable/>
-              <div id=403>
-                10
-                <code id=409>
-                  exportfunctionThemeProvider({children}:{children:ReactNode}){
-                </code>
-                11+
-                <code id=451>
-                  constprefersDark=useMediaQuery('(prefers-color-scheme:dark)')
-                </code>
-                12
-                <code id=493>
-                  conststored=localStorage.getItem('theme')
-                </code>
-                13+
-                <code id=527>
-                  const[mode,setMode]=useState(stored??(prefersDark?'dark':'light'))
-                </code>
-                14
-                <code id=591/>
-                15+
-                <code id=601>
-                  useEffect(()=&gt;{
-                </code>
-                16+
-                <code id=623>
-                  localStorage.setItem('theme',mode)
-                </code>
-                17+
-                <code id=651>
-                  },[mode])
-                </code>
-                18
-                <code id=669/>
-                19
-                <code id=677>
-                  return(
-                </code>
-                20
-                <code id=691>
-                  &lt;ThemeContext.Providervalue={{mode,setMode}}&gt;
-                </code>
-                21
-                <code id=723>
-                  {children}
-                </code>
+            <button id=370 focusable>Read 4 files, searched the codebase</button>
+            <div id=375>
+              <button id=376 focusable>
+                <div id=377>
+                  Edited
+                  <strong id=380>ThemeProvider.tsx</strong>
+                  <div id=385>+</div>
+                  <div id=387>18</div>
+                  <div id=391>-</div>
+                  <div id=393>2</div>
+                </div>
+              </button>
+              <div id=397>
+                src/theme/ThemeProvider.tsx
+                <button name="Copy code" id=401 focusable/>
+                <div id=403>
+                  <div id=404>
+                    10
+                    <code id=409>
+                      <div id=410>export</div>
+                      <div id=414>function</div>
+                      <div id=418>ThemeProvider</div>
+                      <div id=420>({</div>
+                      <div id=422>children</div>
+                      <div id=424>}:</div>
+                      <div id=428>{</div>
+                      <div id=430>children</div>
+                      <div id=432>:</div>
+                      <div id=436>ReactNode</div>
+                      <div id=438>})</div>
+                      <div id=442>{</div>
+                    </code>
+                  </div>
+                  <div id=444>
+                    <div id=446>11</div>
+                    <div id=449>+</div>
+                    <code id=451>
+                      <div id=454>const</div>
+                      <div id=458>prefersDark</div>
+                      <div id=462>=</div>
+                      <div id=466>useMediaQuery</div>
+                      <div id=468>('(</div>
+                      <div id=470>prefers</div>
+                      <div id=472>-</div>
+                      <div id=474>color</div>
+                      <div id=476>-</div>
+                      <div id=478>scheme</div>
+                      <div id=480>:</div>
+                      <div id=484>dark</div>
+                      <div id=486>)')</div>
+                    </code>
+                  </div>
+                  <div id=488>
+                    12
+                    <code id=493>
+                      <div id=496>const</div>
+                      <div id=500>stored</div>
+                      <div id=504>=</div>
+                      <div id=508>localStorage</div>
+                      <div id=510>.</div>
+                      <div id=512>getItem</div>
+                      <div id=514>('</div>
+                      <div id=516>theme</div>
+                      <div id=518>')</div>
+                    </code>
+                  </div>
+                  <div id=520>
+                    <div id=522>13</div>
+                    <div id=525>+</div>
+                    <code id=527>
+                      <div id=530>const</div>
+                      <div id=534>[</div>
+                      <div id=536>mode</div>
+                      <div id=538>,</div>
+                      <div id=542>setMode</div>
+                      <div id=544>]</div>
+                      <div id=548>=</div>
+                      <div id=552>useState</div>
+                      <div id=554>(</div>
+                      <div id=556>stored</div>
+                      <div id=560>??</div>
+                      <div id=564>(</div>
+                      <div id=566>prefersDark</div>
+                      <div id=570>?</div>
+                      <div id=574>'dark'</div>
+                      <div id=578>:</div>
+                      <div id=582>'light'</div>
+                      <div id=584>))</div>
+                    </code>
+                  </div>
+                  <div id=586>
+                    14
+                    <code id=591/>
+                  </div>
+                  <div id=594>
+                    <div id=596>15</div>
+                    <div id=599>+</div>
+                    <code id=601>
+                      <div id=604>useEffect</div>
+                      <div id=606>(()</div>
+                      <div id=610>=&gt;</div>
+                      <div id=614>{</div>
+                    </code>
+                  </div>
+                  <div id=616>
+                    <div id=618>16</div>
+                    <div id=621>+</div>
+                    <code id=623>
+                      <div id=626>localStorage</div>
+                      <div id=628>.</div>
+                      <div id=630>setItem</div>
+                      <div id=632>('</div>
+                      <div id=634>theme</div>
+                      <div id=636>',</div>
+                      <div id=640>mode</div>
+                      <div id=642>)</div>
+                    </code>
+                  </div>
+                  <div id=644>
+                    <div id=646>17</div>
+                    <div id=649>+</div>
+                    <code id=651>
+                      <div id=654>},</div>
+                      <div id=658>[</div>
+                      <div id=660>mode</div>
+                      <div id=662>])</div>
+                    </code>
+                  </div>
+                  <div id=664>
+                    18
+                    <code id=669/>
+                  </div>
+                  <div id=672>
+                    19
+                    <code id=677>
+                      <div id=680>return</div>
+                      <div id=684>(</div>
+                    </code>
+                  </div>
+                  <div id=686>
+                    20
+                    <code id=691>
+                      <div id=694>&lt;</div>
+                      <div id=696>ThemeContext</div>
+                      <div id=698>.</div>
+                      <div id=700>Provider</div>
+                      <div id=704>value</div>
+                      <div id=706>={{</div>
+                      <div id=708>mode</div>
+                      <div id=710>,</div>
+                      <div id=714>setMode</div>
+                      <div id=716>}}&gt;</div>
+                    </code>
+                  </div>
+                  <div id=718>
+                    21
+                    <code id=723>
+                      <div id=726>{</div>
+                      <div id=728>children</div>
+                      <div id=730>}</div>
+                    </code>
+                  </div>
+                </div>
               </div>
             </div>
             <button id=733 focusable>
-              Edited
-              <strong id=737>
-                settings.tsx
-              </strong>
-              +21-0
+              <div id=734>
+                Edited
+                <strong id=737>settings.tsx</strong>
+                <div id=742>+</div>
+                <div id=744>21</div>
+                <div id=748>-</div>
+                <div id=750>0</div>
+              </div>
             </button>
             <button id=754 focusable>
-              Edited
-              <strong id=758>
-                tokens.css
-              </strong>
-              +24-0
+              <div id=755>
+                Edited
+                <strong id=758>tokens.css</strong>
+                <div id=763>+</div>
+                <div id=765>24</div>
+                <div id=769>-</div>
+                <div id=771>0</div>
+              </div>
             </button>
             <button id=775 focusable>
-              Ran 2 commands
+              <div id=777>Ran</div>
+              <div id=779>2</div>
+              <div id=781>command</div>
+              <div id=783>s</div>
             </button>
             <div id=786>
               <paragraph id=787>
                 Done — the
-                <strong id=790>
-                  Appearance
-                </strong>
+                <strong id=790>Appearance</strong>
                 section now has the toggle. Preview's on the right; flip it and the whole app should follow. Reduce-motion and density rows are stubbed so the page doesn't look bare.
               </paragraph>
-              <button name="Copy message" id=799 focusable/>
-              just now
+              <div id=798>
+                <button name="Copy message" id=799 focusable/>
+                just now
+              </div>
             </div>
-            #112acme-dashboardclaude/settings-dark-mode-Xk4fqCI
+            <div id=804>
+              <div id=805>
+                <div id=806>#</div>
+                <div id=808>112</div>
+              </div>
+              <div id=811>acme-dashboard</div>
+              <div id=814>claude/settings-dark-mode-Xk4fq</div>
+              <div id=820>CI</div>
+            </div>
           </div>
-          <div id=822>
+        </div>
+        <div id=822>
+          <div id=823>
             <textbox name="Describe a task or ask a question" id=824 focusable editable="plaintext" settable multiline>
               <div id=826 editable="plaintext"/>
             </textbox>
             <button name="Send" id=827 disabled/>
-            <button id=831 focusable hasPopup="menu">
-              Auto
-            </button>
-            <button name="Attach" id=835 disabled/>
-            <button name="Dictate" id=837 disabled/>
-            <button id=841 focusable hasPopup="menu">
-              Opus
-            </button>
-            Extra high
+          </div>
+          <div id=828>
+            <div id=829>
+              <button id=831 focusable hasPopup="menu">Auto</button>
+              <div id=834>
+                <button name="Attach" id=835 disabled/>
+                <button name="Dictate" id=837 disabled/>
+              </div>
+            </div>
+            <div id=839>
+              <button id=841 focusable hasPopup="menu">Opus</button>
+              Extra high
+            </div>
           </div>
         </div>
-        <complementary name="Preview of the dashboard's  settings" id=849>
+      </div>
+      <complementary name="Preview of the dashboard's  settings" id=849>
+        <div id=850>
           <button name="Pick preview source" id=851 focusable/>
           <div id=853>
-            localhost:5173/settings
+            <div id=854>localhost:5173</div>
+            <div id=856>/settings</div>
           </div>
-          <button name="Edit" id=859 focusable/>
-          <button name="Interact" id=860 focusable/>
-          <button name="Reload" id=861 focusable/>
-          <button name="Close" id=862 focusable/>
-          AppearanceThemeChoose how the dashboard looks.
-          <radiogroup name="Theme" id=886>
-            <radio id=887 focusable checked>
-              Light
-            </radio>
-            <radio id=890 focusable>
-              Dark
-            </radio>
-          </radiogroup>
-          DensityCompact rows for power users.
-          <radiogroup name="Density" id=902>
-            <radio id=903 focusable checked>
-              Default
-            </radio>
-            <radio id=906 focusable>
-              Compact
-            </radio>
-          </radiogroup>
-          Reduce motionDisable animations and transitions.
-          <switch name="Reduce motion" id=917 focusable/>
-        </complementary>
-      </group>
-      <list id=922>
-        <listitem id=923 level=1>
-          <image name="Stripe" id=926 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
-        </listitem>
-        <listitem id=927 level=1>
-          <image name="NASA" id=930 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/2d5f4b13d7785425c2000776e1233ddc9747ec6a-78x64.svg"/>
-        </listitem>
-        <listitem id=931 level=1>
-          <image name="Databricks" id=934 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/3373798a180a90d27215a26eb73b3df37ab5e497-157x24.svg"/>
-        </listitem>
-        <listitem id=935 level=1>
-          <image name="Figma" id=938 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/bd0bd7f83f4cd7a5d5d985a5b533d4b1ad8de917-128x35.svg"/>
-        </listitem>
-      </list>
-      <div id=939>
-        <heading id=943 level=2>
-          Get started with Claude Code
-        </heading>
-        <tablist id=947 orientation="horizontal">
-          <tab id=948 focusable selected>
-            Individual
-          </tab>
-          <tab id=952 focusable>
-            Team &amp; Enterprise
-          </tab>
-        </tablist>
-        <tabpanel name="Individual" id=956>
-          <heading id=959 level=3>
-            Pro
-          </heading>
-          <paragraph id=962>
-            Claude Code is included in your Pro plan. Perfect for short coding sprints in small codebases.
-          </paragraph>
-          $25
-          <paragraph id=972>
-            Per month with annual subscription discount ($300 billed up front). $30 if billed monthly.
-          </paragraph>
-          <link id=983 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=pro">
-            Try Claude(opens in new tab)
-          </link>
-          <heading id=991 level=3>
-            Max 5x
-          </heading>
-          <paragraph id=994>
-            Claude Code is included in your Max plan. Great value for everyday use in larger codebases.
-          </paragraph>
-          $149.99
-          <paragraph id=1004>
-            Per month
-          </paragraph>
-          <link id=1007 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
-            Try Claude(opens in new tab)
-          </link>
-          <heading id=1015 level=3>
-            Max 20x
-          </heading>
-          <paragraph id=1018>
-            Even more Claude Code included in your Max plan. Great value for power users with the most access to Claude models.
-          </paragraph>
-          $300
-          <paragraph id=1028>
-            Per month
-          </paragraph>
-          <link id=1031 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
-            Try Claude(opens in new tab)
-          </link>
-        </tabpanel>
-        <paragraph id=1038>
-          Prices include 9% GST
-        </paragraph>
+          <div id=858>
+            <button name="Edit" id=859 focusable/>
+            <button name="Interact" id=860 focusable/>
+            <button name="Reload" id=861 focusable/>
+            <button name="Close" id=862 focusable/>
+          </div>
+        </div>
+        <div id=874>
+          Appearance
+          <div id=878>
+            <div id=879>
+              <div id=881>Theme</div>
+              <div id=884>Choose how the dashboard looks.</div>
+            </div>
+            <radiogroup name="Theme" id=886>
+              <radio id=887 focusable checked>Light</radio>
+              <radio id=890 focusable>Dark</radio>
+            </radiogroup>
+          </div>
+          <div id=893>
+            <div id=894>
+              <div id=896>Density</div>
+              <div id=899>Compact rows for power users.</div>
+            </div>
+            <radiogroup name="Density" id=902>
+              <radio id=903 focusable checked>Default</radio>
+              <radio id=906 focusable>Compact</radio>
+            </radiogroup>
+          </div>
+          <div id=909>
+            <div id=910>
+              <div id=912>Reduce motion</div>
+              <div id=915>Disable animations and transitions.</div>
+            </div>
+            <switch name="Reduce motion" id=917 focusable/>
+          </div>
+        </div>
+      </complementary>
+    </group>
+    <list id=922>
+      <listitem id=923 level=1>
+        <image name="Stripe" id=926 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
+      </listitem>
+      <listitem id=927 level=1>
+        <image name="NASA" id=930 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/2d5f4b13d7785425c2000776e1233ddc9747ec6a-78x64.svg"/>
+      </listitem>
+      <listitem id=931 level=1>
+        <image name="Databricks" id=934 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/3373798a180a90d27215a26eb73b3df37ab5e497-157x24.svg"/>
+      </listitem>
+      <listitem id=935 level=1>
+        <image name="Figma" id=938 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/bd0bd7f83f4cd7a5d5d985a5b533d4b1ad8de917-128x35.svg"/>
+      </listitem>
+    </list>
+    <div id=941>
+      <heading id=943 level=2>Get started with Claude Code</heading>
+      <tablist id=947 orientation="horizontal">
+        <tab id=948 focusable selected>Individual</tab>
+        <tab id=952 focusable>Team &amp; Enterprise</tab>
+      </tablist>
+      <tabpanel name="Individual" id=956>
+        <div id=957>
+          <div id=958>
+            <heading id=959 level=3>Pro</heading>
+            <paragraph id=962>Claude Code is included in your Pro plan. Perfect for short coding sprints in small codebases.</paragraph>
+          </div>
+          <div id=967>
+            <div id=968>
+              $25
+              <paragraph id=972>
+                <div id=973>Per month with annual subscription discount (</div>
+                <div id=975>$300</div>
+                <div id=977>billed up front).</div>
+                <div id=979>$30</div>
+                <div id=981>if billed monthly.</div>
+              </paragraph>
+            </div>
+            <link id=983 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=pro">
+              <div id=984>Try Claude</div>
+              <div id=987>(opens in new tab)</div>
+            </link>
+          </div>
+        </div>
+        <div id=989>
+          <div id=990>
+            <heading id=991 level=3>Max 5x</heading>
+            <paragraph id=994>Claude Code is included in your Max plan. Great value for everyday use in larger codebases.</paragraph>
+          </div>
+          <div id=999>
+            <div id=1000>
+              $149.99
+              <paragraph id=1004>Per month</paragraph>
+            </div>
+            <link id=1007 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
+              <div id=1008>Try Claude</div>
+              <div id=1011>(opens in new tab)</div>
+            </link>
+          </div>
+        </div>
+        <div id=1013>
+          <div id=1014>
+            <heading id=1015 level=3>Max 20x</heading>
+            <paragraph id=1018>Even more Claude Code included in your Max plan. Great value for power users with the most access to Claude models.</paragraph>
+          </div>
+          <div id=1023>
+            <div id=1024>
+              $300
+              <paragraph id=1028>Per month</paragraph>
+            </div>
+            <link id=1031 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
+              <div id=1032>Try Claude</div>
+              <div id=1035>(opens in new tab)</div>
+            </link>
+          </div>
+        </div>
+      </tabpanel>
+      <div id=1037>
+        <paragraph id=1038>Prices include 9% GST</paragraph>
         <paragraph id=1041>
-          <link id=1042 focusable url="https://support.anthropic.com/en/articles/9797557-usage-limit-best-practices">
-            Usage limits apply
-          </link>
+          <link id=1042 focusable url="https://support.anthropic.com/en/articles/9797557-usage-limit-best-practices">Usage limits apply</link>
           . Price and plans are subject to change at Anthropic's discretion.
         </paragraph>
       </div>
-      <div id=1048>
-        <heading id=1052 level=2>
-          Latest feature announcements
-        </heading>
-        <link id=1059 focusable url="https://claude.com/blog/introducing-dynamic-workflows-in-claude-code">
-          <heading id=1060 level=3>
-            <strong id=1061>
-              Dynamic workflows:
-            </strong>
-            Tackle the most challenging tasks by executing across 10s to 100s of parallel subagents, and checking its work before anything reaches you.
-          </heading>
-          BlogMay 28, 2026
-        </link>
-        <link id=1077 focusable url="https://claude.com/blog/agent-view-in-claude-code">
-          <heading id=1078 level=3>
-            <strong id=1079>
-              Agent view:
-            </strong>
-            One place to manage all your Claude Code sessions.
-          </heading>
-          BlogMay 11, 2026
-        </link>
-        <link id=1093 focusable url="https://claude.com/blog/introducing-routines-in-claude-code">
-          <heading id=1094 level=3>
-            <strong id=1095>
-              Routines:
-            </strong>
-            Configure a routine once, and it can run on a schedule, from an API call, or in response to an event.
-          </heading>
-          BlogApr 14, 2026
-        </link>
-        <link id=1110 focusable url="https://claude.com/blog/dispatch-and-computer-use">
-          <heading id=1111 level=3>
-            <strong id=1112>
-              Computer use:
-            </strong>
-            Claude now opens your apps, navigates your browser, and runs your dev tools to complete tasks.
-          </heading>
-          BlogMar 23, 2026
-        </link>
+    </div>
+    <div id=1050>
+      <heading id=1052 level=2>Latest feature announcements</heading>
+      <div id=1056>
+        <div id=1057>
+          <link id=1059 focusable url="https://claude.com/blog/introducing-dynamic-workflows-in-claude-code">
+            <heading id=1060 level=3>
+              <strong id=1061>Dynamic workflows:</strong>
+              Tackle the most challenging tasks by executing across 10s to 100s of parallel subagents, and checking its work before anything reaches you.
+            </heading>
+            <div id=1069>
+              <div id=1071>Blog</div>
+              <div id=1074>May 28, 2026</div>
+            </div>
+          </link>
+          <link id=1077 focusable url="https://claude.com/blog/agent-view-in-claude-code">
+            <heading id=1078 level=3>
+              <strong id=1079>Agent view:</strong>
+              One place to manage all your Claude Code sessions.
+            </heading>
+            <div id=1085>
+              <div id=1087>Blog</div>
+              <div id=1090>May 11, 2026</div>
+            </div>
+          </link>
+          <link id=1093 focusable url="https://claude.com/blog/introducing-routines-in-claude-code">
+            <heading id=1094 level=3>
+              <strong id=1095>Routines:</strong>
+              Configure a routine once, and it can run on a schedule, from an API call, or in response to an event.
+            </heading>
+            <div id=1102>
+              <div id=1104>Blog</div>
+              <div id=1107>Apr 14, 2026</div>
+            </div>
+          </link>
+          <link id=1110 focusable url="https://claude.com/blog/dispatch-and-computer-use">
+            <heading id=1111 level=3>
+              <strong id=1112>Computer use:</strong>
+              Claude now opens your apps, navigates your browser, and runs your dev tools to complete tasks.
+            </heading>
+            <div id=1119>
+              <div id=1121>Blog</div>
+              <div id=1124>Mar 23, 2026</div>
+            </div>
+          </link>
+        </div>
         <link id=1127 focusable url="https://code.claude.com/docs/en/changelog">
-          View changelog(opens in new tab)
+          <div id=1128>View changelog</div>
+          <div id=1133>(opens in new tab)</div>
         </link>
       </div>
-      <div id=1135>
-        <heading id=1139 level=2>
-          What could you do with Claude Code?
-        </heading>
-        <button id=1148 focusable hasPopup="menu">
-          Get Claude Code
-        </button>
-        <button name="Copy command to clipboard" id=1154 focusable>
-          curl -fsSL https://claude.ai/install.sh | bash
-        </button>
+    </div>
+    <div id=1137>
+      <heading id=1139 level=2>What could you do with Claude Code?</heading>
+      <div id=1145>
+        <div id=1146>
+          <button id=1148 focusable hasPopup="menu">Get Claude Code</button>
+          <button name="Copy command to clipboard" id=1154 focusable>
+            <div id=1156>curl -fsSL</div>
+            <div id=1158>https://claude.ai/install.sh</div>
+            <div id=1160>| bash</div>
+          </button>
+        </div>
         <paragraph id=1163>
           Or read the
-          <link id=1166 focusable url="https://code.claude.com/docs/en/overview">
-            documentation
-          </link>
+          <link id=1166 focusable url="https://code.claude.com/docs/en/overview">documentation</link>
         </paragraph>
-        <tablist id=1172 orientation="horizontal">
-          <tab id=1173 focusable selected>
-            Onboarding
-          </tab>
-          <tab id=1177 focusable>
-            Triage issues
-          </tab>
-          <tab id=1181 focusable>
-            Refactor code
-          </tab>
-        </tablist>
-        <code id=1190>
-          &gt; I'm new to this codebase. Can you explain it to me?⏺︎ I'll analyze the Excalidraw codebase structure and provide a high-level overview.
-
-⏺︎ Analyze(what: "Excalidraw codebase structure and provide a high-level overview of what it is, its main components, and how they're organized. Focus on understanding the project's purpose, architecture, and key features.")
-
-Excalidraw is an open-source virtual whiteboard application with a hand-drawn style. It's designed for creating diagrams, wireframes, and collaborative drawings.
-
-## Purpose
-- Web-based drawing tool with infinite canvas
-- Hand-drawn aesthetic with support for shapes, arrows, text
-- End-to-end encrypted collaboration
-- Works offline as a PWA (Progressive Web App)
-
-## Architecture
-The project is organized as a monorepo with these main components:
-
-1. Core Package (packages/excalidraw)
-- React component library for embedding Excalidraw in any application
-- Handles drawing, rendering, and core functionality
-- Uses roughjs for the hand-drawn style
-- Includes export capabilities (PNG, SVG)
-
-2. Web Application (excalidraw-app/)
-- Full-featured web app at excalidraw.com
-- Built on top of the core package
-- Adds collaboration features, local storage, sharing
-
-3. Support Packages
-- common - Shared utilities and constants
-- element - Element manipulation and type definitions
-- math - Mathematical functions for drawing
-- utils - General utility functions
-
-4. Examples
-- Integration examples (Next.js, browser script)
-- Shows how to embed Excalidraw in different environments
-
-5. Documentation (dev-docs/)
-- API documentation
-- Integration guides
-- Component documentation
-
-## Key Features
-- Real-time collaboration with end-to-end encryption
-- Export to various formats (PNG, SVG, JSON)
-- Customizable drawing tools (rectangle, circle, arrows, freehand)
-- Dark mode support
-- Localization
-- Library of shapes and components
-- Arrow bindings and labels
-- Image support
-
-## Technology Stack
-- React for UI
-- TypeScript for type safety
-- Firebase for collaboration backend
-- Jotai for state management
-- Vite for development and building
-- IndexedDB/LocalStorage for offline storage
-
-The architecture allows for both using Excalidraw as a component in other applications and as a standalone web application with additional features.
-        </code>
+      </div>
+      <div id=1169>
+        <div id=1170>
+          <tablist id=1172 orientation="horizontal">
+            <tab id=1173 focusable selected>Onboarding</tab>
+            <tab id=1177 focusable>Triage issues</tab>
+            <tab id=1181 focusable>Refactor code</tab>
+          </tablist>
+          <code id=1190>
+            <div id=1191>
+              <div id=1193>&gt;</div>
+              <div id=1195>I'm new to this codebase. Can you explain it to me?</div>
+            </div>
+            ⏺︎ I'll analyze the Excalidraw codebase structure and provide a high-level overview.
+            
+            ⏺︎ Analyze(what: "Excalidraw codebase structure and provide a high-level overview of what it is, its main components, and how they're organized. Focus on understanding the project's purpose, architecture, and key features.")
+            
+            Excalidraw is an open-source virtual whiteboard application with a hand-drawn style. It's designed for creating diagrams, wireframes, and collaborative drawings.
+            
+            ## Purpose
+            - Web-based drawing tool with infinite canvas
+            - Hand-drawn aesthetic with support for shapes, arrows, text
+            - End-to-end encrypted collaboration
+            - Works offline as a PWA (Progressive Web App)
+            
+            ## Architecture
+            The project is organized as a monorepo with these main components:
+            
+            1. Core Package (packages/excalidraw)
+            - React component library for embedding Excalidraw in any application
+            - Handles drawing, rendering, and core functionality
+            - Uses roughjs for the hand-drawn style
+            - Includes export capabilities (PNG, SVG)
+            
+            2. Web Application (excalidraw-app/)
+            - Full-featured web app at excalidraw.com
+            - Built on top of the core package
+            - Adds collaboration features, local storage, sharing
+            
+            3. Support Packages
+            - common - Shared utilities and constants
+            - element - Element manipulation and type definitions
+            - math - Mathematical functions for drawing
+            - utils - General utility functions
+            
+            4. Examples
+            - Integration examples (Next.js, browser script)
+            - Shows how to embed Excalidraw in different environments
+            
+            5. Documentation (dev-docs/)
+            - API documentation
+            - Integration guides
+            - Component documentation
+            
+            ## Key Features
+            - Real-time collaboration with end-to-end encryption
+            - Export to various formats (PNG, SVG, JSON)
+            - Customizable drawing tools (rectangle, circle, arrows, freehand)
+            - Dark mode support
+            - Localization
+            - Library of shapes and components
+            - Arrow bindings and labels
+            - Image support
+            
+            ## Technology Stack
+            - React for UI
+            - TypeScript for type safety
+            - Firebase for collaboration backend
+            - Jotai for state management
+            - Vite for development and building
+            - IndexedDB/LocalStorage for offline storage
+            
+            The architecture allows for both using Excalidraw as a component in other applications and as a standalone web application with additional features.
+          </code>
+        </div>
         <list id=1331>
           <listitem id=1332 level=1>
-            <heading id=1333 level=3>
-              Code onboarding
-            </heading>
-            <paragraph id=1336>
-              Claude Code maps and explains entire codebases in a few seconds. It uses agentic search to understand project structure and dependencies without you having to manually select context files.
-            </paragraph>
+            <heading id=1333 level=3>Code onboarding</heading>
+            <paragraph id=1336>Claude Code maps and explains entire codebases in a few seconds. It uses agentic search to understand project structure and dependencies without you having to manually select context files.</paragraph>
           </listitem>
           <listitem id=1342 level=1>
-            <heading id=1343 level=3>
-              Turn issues into PRs
-            </heading>
-            <paragraph id=1346>
-              Stop bouncing between tools. Claude Code integrates with GitHub, GitLab, and your command line tools to handle the entire workflow—reading issues, writing code, running tests, and submitting PRs—all from your terminal.
-            </paragraph>
+            <heading id=1343 level=3>Turn issues into PRs</heading>
+            <paragraph id=1346>Stop bouncing between tools. Claude Code integrates with GitHub, GitLab, and your command line tools to handle the entire workflow—reading issues, writing code, running tests, and submitting PRs—all from your terminal.</paragraph>
           </listitem>
           <listitem id=1352 level=1>
-            <heading id=1353 level=3>
-              Make powerful edits
-            </heading>
-            <paragraph id=1356>
-              Claude Code's understanding of your codebase and dependencies enables it to make powerful, multi-file edits that work.
-            </paragraph>
+            <heading id=1353 level=3>Make powerful edits</heading>
+            <paragraph id=1356>Claude Code's understanding of your codebase and dependencies enables it to make powerful, multi-file edits that work.</paragraph>
           </listitem>
         </list>
       </div>
-      <div id=1361>
-        <heading id=1365 level=2>
-          Meets you where you code
-        </heading>
-        <image name="Claude Code running in a terminal" id=1371 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/414e92e0a09c3fb2b45b93a9fcfaa8cb3531a341-920x920.webp"/>
-        <heading id=1373 level=3>
-          Start in your terminal
-        </heading>
-        <paragraph id=1376>
-          Super powerful terminal integration. Works with all your CLI tools alongside any IDE.
-        </paragraph>
-        <button name="Copy command to clipboard" id=1384 focusable>
-          curl -fsSL https://claude.ai/install.sh | bash
-        </button>
-        <paragraph id=1393>
-          Or read the
-          <link id=1396 focusable url="https://code.claude.com/docs/en/overview">
-            documentation
-          </link>
-        </paragraph>
-        <image name="Claude Code extension in VS Code" id=1401 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/ad5647024b50754209ac108ad151339a32fde625-920x920.webp"/>
-        <heading id=1403 level=3>
-          Integrate with your editor
-        </heading>
-        <paragraph id=1406>
-          Native extensions for VS Code (+ Cursor, Devin Desktop) and JetBrains IDEs.
-        </paragraph>
-        <group id=1411>
-          <link id=1412 focusable url="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">
-            VS Code(opens in new tab)
-          </link>
-          <link id=1418 focusable url="https://plugins.jetbrains.com/plugin/27310-claude-code-beta-">
-            JetBrains(opens in new tab)
-          </link>
-        </group>
-        <image name="Claude Code on the web" id=1426 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/050b07bf101bc4712abb3a7e1ba6f4d8dde33fcd-920x920.webp"/>
-        <heading id=1428 level=3>
-          Access anywhere
-        </heading>
-        <paragraph id=1431>
-          Quick access from browser, mobile app, or Claude on desktop. Great for parallel work or on-the-go coding.
-        </paragraph>
-        <group id=1437>
-          <link id=1438 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/code">
-            Open in browser(opens in new tab)
-          </link>
-          <link id=1444 focusable url="https://claude.com/download">
-            Download app
-          </link>
-        </group>
+    </div>
+    <div id=1363>
+      <heading id=1365 level=2>Meets you where you code</heading>
+      <div id=1368>
+        <div id=1369>
+          <image name="Claude Code running in a terminal" id=1371 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/414e92e0a09c3fb2b45b93a9fcfaa8cb3531a341-920x920.webp"/>
+          <div id=1372>
+            <heading id=1373 level=3>Start in your terminal</heading>
+            <paragraph id=1376>Super powerful terminal integration. Works with all your CLI tools alongside any IDE.</paragraph>
+            <div id=1382>
+              <button name="Copy command to clipboard" id=1384 focusable>
+                <div id=1386>curl -fsSL</div>
+                <div id=1388>https://claude.ai/install.sh</div>
+                <div id=1390>| bash</div>
+              </button>
+              <paragraph id=1393>
+                Or read the
+                <link id=1396 focusable url="https://code.claude.com/docs/en/overview">documentation</link>
+              </paragraph>
+            </div>
+          </div>
+        </div>
+        <div id=1399>
+          <image name="Claude Code extension in VS Code" id=1401 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/ad5647024b50754209ac108ad151339a32fde625-920x920.webp"/>
+          <div id=1402>
+            <heading id=1403 level=3>Integrate with your editor</heading>
+            <paragraph id=1406>Native extensions for VS Code (+ Cursor, Devin Desktop) and JetBrains IDEs.</paragraph>
+            <group id=1411>
+              <link id=1412 focusable url="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">
+                <div id=1413>VS Code</div>
+                <div id=1416>(opens in new tab)</div>
+              </link>
+              <link id=1418 focusable url="https://plugins.jetbrains.com/plugin/27310-claude-code-beta-">
+                <div id=1419>JetBrains</div>
+                <div id=1422>(opens in new tab)</div>
+              </link>
+            </group>
+          </div>
+        </div>
+        <div id=1424>
+          <image name="Claude Code on the web" id=1426 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/050b07bf101bc4712abb3a7e1ba6f4d8dde33fcd-920x920.webp"/>
+          <div id=1427>
+            <heading id=1428 level=3>Access anywhere</heading>
+            <paragraph id=1431>Quick access from browser, mobile app, or Claude on desktop. Great for parallel work or on-the-go coding.</paragraph>
+            <group id=1437>
+              <link id=1438 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/code">
+                <div id=1439>Open in browser</div>
+                <div id=1442>(opens in new tab)</div>
+              </link>
+              <link id=1444 focusable url="https://claude.com/download">Download app</link>
+            </group>
+          </div>
+        </div>
       </div>
-      <div id=1447>
-        <heading id=1452 level=2>
-          Kick off coding tasks in Slack
-        </heading>
-        <group id=1455>
-          <link id=1456 focusable url="https://slack.com/oauth/v2/authorize?client_id=1601185624273.8899143856786&amp;scope=app_mentions:read,assistant:write,channels:history,channels:read,chat:write,files:read,files:write,groups:history,groups:read,im:history,im:read,im:write,mpim:history,reactions:write,users:read,users:read.email,commands,search:read.public&amp;user_scope=bookmarks:read,channels:history,channels:read,chat:write,emoji:read,files:read,groups:history,groups:read,groups:write,im:history,im:read,im:write,links:read,mpim:history,mpim:read,mpim:write,mpim:write.topic,pins:read,reactions:read,reactions:write,remote_files:read,team:read,users:read,users:read.email,search:read.public,search:read.private,search:read.im,search:read.mpim,search:read.files,search:read.users,canvases:read,canvases:write">
-            Add to Slack(opens in new tab)
-          </link>
-          <link id=1462 focusable url="https://claude.com/claude-for-slack">
-            Learn more
-          </link>
-        </group>
-      </div>
-      <div id=1465>
-        <heading id=1468 level=2>
-          What developers are saying
-        </heading>
-        <list id=1471>
-          <listitem id=1472 level=1>
-            <image name="Ramp" id=1475 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/648a551dca8eaf811bd5228c852a9e65386b0904-118x32.svg"/>
+    </div>
+    <div id=1450>
+      <heading id=1452 level=2>Kick off coding tasks in Slack</heading>
+      <group id=1455>
+        <link id=1456 focusable url="https://slack.com/oauth/v2/authorize?client_id=1601185624273.8899143856786&amp;scope=app_mentions:read,assistant:write,channels:history,channels:read,chat:write,files:read,files:write,groups:history,groups:read,im:history,im:read,im:write,mpim:history,reactions:write,users:read,users:read.email,commands,search:read.public&amp;user_scope=bookmarks:read,channels:history,channels:read,chat:write,emoji:read,files:read,groups:history,groups:read,groups:write,im:history,im:read,im:write,links:read,mpim:history,mpim:read,mpim:write,mpim:write.topic,pins:read,reactions:read,reactions:write,remote_files:read,team:read,users:read,users:read.email,search:read.public,search:read.private,search:read.im,search:read.mpim,search:read.files,search:read.users,canvases:read,canvases:write">
+          <div id=1457>Add to Slack</div>
+          <div id=1460>(opens in new tab)</div>
+        </link>
+        <link id=1462 focusable url="https://claude.com/claude-for-slack">Learn more</link>
+      </group>
+    </div>
+    <div id=1466>
+      <heading id=1468 level=2>What developers are saying</heading>
+      <list id=1471>
+        <listitem id=1472 level=1>
+          <image name="Ramp" id=1475 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/648a551dca8eaf811bd5228c852a9e65386b0904-118x32.svg"/>
+          <div id=1476>
             <blockquote id=1477>
               <paragraph id=1478>
-                “Claude Code has dramatically accelerated our team's coding efficiency. I can now write EDA code in a notebook—pulling data, training a model, and evaluating it with basic metrics—and then ask Claude to convert that into a Metaflow pipeline. This process saves 1-2 days of routine (and often boring!) work per model.”
+                <div id=1479>“</div>
+                <div id=1481>Claude Code has dramatically accelerated our team's coding efficiency. I can now write EDA code in a notebook—pulling data, training a model, and evaluating it with basic metrics—and then ask Claude to convert that into a Metaflow pipeline. This process saves 1-2 days of routine (and often boring!) work per model.</div>
+                <div id=1488>”</div>
               </paragraph>
             </blockquote>
-            <paragraph id=1490>
-              Anton Biryukov, Staff Software Engineer
-            </paragraph>
-            <link id=1493 focusable url="https://claude.com/customers/ramp">
-              Read story
-            </link>
-          </listitem>
-          <listitem id=1496 level=1>
-            <image name="Intercom" id=1499 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/fa755cc324f3ead28cea084cb63c403edfccc0da-141x23.svg"/>
+            <paragraph id=1490>Anton Biryukov, Staff Software Engineer</paragraph>
+            <link id=1493 focusable url="https://claude.com/customers/ramp">Read story</link>
+          </div>
+        </listitem>
+        <listitem id=1496 level=1>
+          <image name="Intercom" id=1499 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/fa755cc324f3ead28cea084cb63c403edfccc0da-141x23.svg"/>
+          <div id=1500>
             <blockquote id=1501>
               <paragraph id=1502>
-                “With Claude, we're not just automating customer service—we're elevating it to truly human quality. This lets support teams think more strategically about customer experience and what makes interactions genuinely valuable.”
+                <div id=1503>“</div>
+                <div id=1505>With Claude, we're not just automating customer service—we're elevating it to truly human quality. This lets support teams think more strategically about customer experience and what makes interactions genuinely valuable.</div>
+                <div id=1510>”</div>
               </paragraph>
             </blockquote>
-            <paragraph id=1512>
-              Fergal Reid, VP of AI
-            </paragraph>
-            <link id=1515 focusable url="https://claude.com/customers/intercom">
-              Read story
-            </link>
-          </listitem>
-          <listitem id=1518 level=1>
-            <image name="Notion" id=1521 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dd2c022495a4655e77541d16bc01b96e2052d6a3-128x36.svg"/>
+            <paragraph id=1512>Fergal Reid, VP of AI</paragraph>
+            <link id=1515 focusable url="https://claude.com/customers/intercom">Read story</link>
+          </div>
+        </listitem>
+        <listitem id=1518 level=1>
+          <image name="Notion" id=1521 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dd2c022495a4655e77541d16bc01b96e2052d6a3-128x36.svg"/>
+          <div id=1522>
             <blockquote id=1523>
               <paragraph id=1524>
-                “Claude Code is moving our team up a level: we decide what needs to happen, and smooth the process so it can build and verify end-to-end. A big part of my job now is to keep as many instances of Claude Code busy as possible.”
+                <div id=1525>“</div>
+                <div id=1527>Claude Code is moving our team up a level: we decide what needs to happen, and smooth the process so it can build and verify end-to-end. A big part of my job now is to keep as many instances of Claude Code busy as possible.</div>
+                <div id=1532>”</div>
               </paragraph>
             </blockquote>
-            <paragraph id=1534>
-              Simon Last, Co-founder
-            </paragraph>
-            <link id=1537 focusable url="https://claude.com/customers/notion">
-              Read story
-            </link>
-          </listitem>
-        </list>
+            <paragraph id=1534>Simon Last, Co-founder</paragraph>
+            <link id=1537 focusable url="https://claude.com/customers/notion">Read story</link>
+          </div>
+        </listitem>
+      </list>
+    </div>
+    <div id=1542>
+      <list id=1544>
+        <listitem id=1545 level=1>
+          <image name="New Relic" id=1548 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/381cea7f0fc11a867d2e8fa86028a1bc87fd9aad-142x28.svg"/>
+        </listitem>
+        <listitem id=1549 level=1>
+          <image name="Datadog" id=1552 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/5bd06742093289d7f7dd03b3945cc35d823d5388-146x36.svg"/>
+        </listitem>
+        <listitem id=1553 level=1>
+          <image name="Elastic" id=1556 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/4114bc17f676c85fd52661ac58205c1b7f2e52c5-117x40.svg"/>
+        </listitem>
+        <listitem id=1557 level=1>
+          <image name="Heroku" id=1560 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/14d277edf9089e2db3a1e3c5c004d25f0a496627-143x40.svg"/>
+        </listitem>
+        <listitem id=1561 level=1>
+          <image name="Vercel" id=1564 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dfe2bb49cbe6a11d747deb00e01474b0ac4a8de8-120x24.svg"/>
+        </listitem>
+        <listitem id=1565 level=1>
+          <image name="Stripe" id=1568 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
+        </listitem>
+        <listitem id=1569 level=1>
+          <image name="AWS" id=1572 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/477ff12eca622016612d5837b67bec8fbd3899e8-61x36.svg"/>
+        </listitem>
+        <listitem id=1573 level=1>
+          <image name="Dynatrace" id=1576 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/05e7af628f73b9ab5ce68b47e2035d292564c421-181x32.svg"/>
+        </listitem>
+        <listitem id=1577 level=1>
+          <image name="MongoDB" id=1580 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/b7e4f274d9789cf6709450c85ee987064b78d784-156x40.svg"/>
+        </listitem>
+        <listitem id=1581 level=1>
+          <image name="GitHub" id=1584 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/7522fc92399dcb4a68f11c7e147e711fcadbe75b-126x36.svg"/>
+        </listitem>
+        <listitem id=1585 level=1>
+          <image name="Atlassian" id=1588 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/9cdf5ed2ae750f0b6795490071eed41576bd1e1a-189x24.svg"/>
+        </listitem>
+        <listitem id=1589 level=1>
+          <image name="GitLab" id=1592 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/84694a8c9a86c0b8bf37a874c675ccaeec9c6654-111x26.svg"/>
+        </listitem>
+      </list>
+      <div id=1593>
+        <heading id=1594 level=2>Connects with your favorite command line tools</heading>
+        <paragraph id=1598>Your terminal is where real work happens. Claude Code connects with the tools that power development—deployment, databases, monitoring, version control. Rather than adding another interface to juggle, it enhances your existing stack.</paragraph>
       </div>
-      <div id=1540>
-        <list id=1544>
-          <listitem id=1545 level=1>
-            <image name="New Relic" id=1548 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/381cea7f0fc11a867d2e8fa86028a1bc87fd9aad-142x28.svg"/>
-          </listitem>
-          <listitem id=1549 level=1>
-            <image name="Datadog" id=1552 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/5bd06742093289d7f7dd03b3945cc35d823d5388-146x36.svg"/>
-          </listitem>
-          <listitem id=1553 level=1>
-            <image name="Elastic" id=1556 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/4114bc17f676c85fd52661ac58205c1b7f2e52c5-117x40.svg"/>
-          </listitem>
-          <listitem id=1557 level=1>
-            <image name="Heroku" id=1560 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/14d277edf9089e2db3a1e3c5c004d25f0a496627-143x40.svg"/>
-          </listitem>
-          <listitem id=1561 level=1>
-            <image name="Vercel" id=1564 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dfe2bb49cbe6a11d747deb00e01474b0ac4a8de8-120x24.svg"/>
-          </listitem>
-          <listitem id=1565 level=1>
-            <image name="Stripe" id=1568 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
-          </listitem>
-          <listitem id=1569 level=1>
-            <image name="AWS" id=1572 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/477ff12eca622016612d5837b67bec8fbd3899e8-61x36.svg"/>
-          </listitem>
-          <listitem id=1573 level=1>
-            <image name="Dynatrace" id=1576 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/05e7af628f73b9ab5ce68b47e2035d292564c421-181x32.svg"/>
-          </listitem>
-          <listitem id=1577 level=1>
-            <image name="MongoDB" id=1580 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/b7e4f274d9789cf6709450c85ee987064b78d784-156x40.svg"/>
-          </listitem>
-          <listitem id=1581 level=1>
-            <image name="GitHub" id=1584 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/7522fc92399dcb4a68f11c7e147e711fcadbe75b-126x36.svg"/>
-          </listitem>
-          <listitem id=1585 level=1>
-            <image name="Atlassian" id=1588 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/9cdf5ed2ae750f0b6795490071eed41576bd1e1a-189x24.svg"/>
-          </listitem>
-          <listitem id=1589 level=1>
-            <image name="GitLab" id=1592 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/84694a8c9a86c0b8bf37a874c675ccaeec9c6654-111x26.svg"/>
-          </listitem>
-        </list>
-        <heading id=1594 level=2>
-          Connects with your favorite command line tools
-        </heading>
-        <paragraph id=1598>
-          Your terminal is where real work happens. Claude Code connects with the tools that power development—deployment, databases, monitoring, version control. Rather than adding another interface to juggle, it enhances your existing stack.
-        </paragraph>
-      </div>
-      <div id=1605>
-        <heading id=1609 level=2>
-          FAQ
-        </heading>
-        <heading id=1614 level=3>
-          <button id=1615 focusable controls="_r_2_-content">
-            How do I get started with Claude?
-          </button>
-        </heading>
-        <region name="How do I get started with Claude?" id=1622>
-          <paragraph id=1624>
-            You can access Claude Code with a Claude Pro or Max plan, a Team or Enterprise plan premium seat, or a Claude Console account.
-            <link id=1628 focusable url="https://code.claude.com/docs/en/overview">
-              Download Claude Code
-            </link>
-            and sign in with your respective Claude or Console credentials.
-          </paragraph>
-        </region>
-        <heading id=1635 level=3>
-          <button id=1636 focusable controls="_r_3_-content">
-            What kinds of tasks can Claude Code handle?
-          </button>
-        </heading>
-        <region name="What kinds of tasks can Claude Code handle?" id=1643>
-          <paragraph id=1645>
-            Claude Code excels at both routine development tasks like bug fixes and testing, as well as transformative work like refactors and feature implementation that require deep codebase understanding.
-          </paragraph>
-        </region>
-        <heading id=1651 level=3>
-          <button id=1652 focusable controls="_r_4_-content">
-            How does Claude Code work with my existing tools?
-          </button>
-        </heading>
-        <region name="How does Claude Code work with my existing tools?" id=1659>
-          <paragraph id=1661>
-            Claude Code runs in your terminal and works alongside your preferred IDE and development tools without requiring you to change your workflow. Claude Code can also use command line tools (like Git) and MCP servers (like GitHub) to extend its own capabilities using your tools.
-          </paragraph>
-        </region>
-        <heading id=1668 level=3>
-          <button id=1669 focusable controls="_r_5_-content">
-            Is Claude Code secure?
-          </button>
-        </heading>
-        <region name="Is Claude Code secure?" id=1676>
-          <paragraph id=1678>
-            Yes. Claude Code runs locally in your terminal and talks directly to model APIs without requiring a backend server or remote code index. It also asks for permission before making changes to your files or running commands.
-          </paragraph>
-        </region>
-        <heading id=1684 level=3>
-          <button id=1685 focusable controls="_r_6_-content">
-            What are the system requirements to run Claude Code?
-          </button>
-        </heading>
-        <region name="What are the system requirements to run Claude Code?" id=1692>
-          <paragraph id=1694>
-            Claude Code works on macOS, Linux, and Windows.
-            <link id=1697 focusable url="https://docs.claude.com/en/docs/claude-code/setup#system-requirements">
-              See full system requirements
-            </link>
-            .
-          </paragraph>
-        </region>
-        <heading id=1703 level=3>
-          <button id=1704 focusable controls="_r_7_-content">
-            How much does Claude Code cost?
-          </button>
-        </heading>
-        <region name="How much does Claude Code cost?" id=1711>
-          <paragraph id=1713>
-            When used with a Claude Console account, Claude Code consumes API tokens at
-            <link id=1716 focusable url="https://claude.com/pricing#api">
-              standard API pricing
-            </link>
-            .
-          </paragraph>
-        </region>
-        <heading id=1722 level=3>
-          <button id=1723 focusable controls="_r_8_-content">
-            Does Claude Code work with the Claude desktop app?
-          </button>
-        </heading>
-        <region name="Does Claude Code work with the ?" id=1730>
-          <paragraph id=1732>
-            Yes. Max, Pro, Team, and Enterprise users can access Claude Code on the
-            <link id=1735 focusable url="https://claude.com/download">
-              Claude desktop app
-            </link>
-            .
-          </paragraph>
-        </region>
-        <heading id=1742 level=3>
-          <button id=1743 focusable controls="_r_9_-content">
-            What is fast mode on Claude Code?
-          </button>
-        </heading>
-        <region name="What is fast mode on Claude Code?" id=1750>
-          <paragraph id=1752>
-            Fast mode is a high-speed configuration for Opus 5, making the model 2.5x faster at a higher cost per token. Fast mode is available:
-          </paragraph>
-          <list id=1756>
-            <listitem id=1757 level=1>
-              <ListMarker name="• " id=1758/>
-              In research preview on Claude Code, and is priced at $10/$50 per million tokens.
-            </listitem>
-            <listitem id=1762 level=1>
-              <ListMarker name="• " id=1763/>
-              On consumption-based plans.
-            </listitem>
-            <listitem id=1767 level=1>
-              <ListMarker name="• " id=1768/>
-              Via usage credits for users on subscription plans.
-            </listitem>
-          </list>
-        </region>
-      </div>
-      <div id=1772>
-        <heading id=1777 level=2>
-          Get the technical rundown
-        </heading>
-        <link id=1782 focusable url="https://code.claude.com/docs/en/overview">
-          <heading id=1783 level=3>
-            Claude Code documentation
+    </div>
+    <div id=1607>
+      <heading id=1609 level=2>FAQ</heading>
+      <div id=1612>
+        <div id=1613>
+          <heading id=1614 level=3>
+            <button id=1615 focusable controls="_r_2_-content">How do I get started with Claude?</button>
           </heading>
+          <region name="How do I get started with Claude?" id=1622>
+            <paragraph id=1624>
+              You can access Claude Code with a Claude Pro or Max plan, a Team or Enterprise plan premium seat, or a Claude Console account.
+              <link id=1628 focusable url="https://code.claude.com/docs/en/overview">Download Claude Code</link>
+              and sign in with your respective Claude or Console credentials.
+            </paragraph>
+          </region>
+        </div>
+        <div id=1634>
+          <heading id=1635 level=3>
+            <button id=1636 focusable controls="_r_3_-content">What kinds of tasks can Claude Code handle?</button>
+          </heading>
+          <region name="What kinds of tasks can Claude Code handle?" id=1643>
+            <paragraph id=1645>Claude Code excels at both routine development tasks like bug fixes and testing, as well as transformative work like refactors and feature implementation that require deep codebase understanding.</paragraph>
+          </region>
+        </div>
+        <div id=1650>
+          <heading id=1651 level=3>
+            <button id=1652 focusable controls="_r_4_-content">How does Claude Code work with my existing tools?</button>
+          </heading>
+          <region name="How does Claude Code work with my existing tools?" id=1659>
+            <paragraph id=1661>Claude Code runs in your terminal and works alongside your preferred IDE and development tools without requiring you to change your workflow. Claude Code can also use command line tools (like Git) and MCP servers (like GitHub) to extend its own capabilities using your tools.</paragraph>
+          </region>
+        </div>
+        <div id=1667>
+          <heading id=1668 level=3>
+            <button id=1669 focusable controls="_r_5_-content">Is Claude Code secure?</button>
+          </heading>
+          <region name="Is Claude Code secure?" id=1676>
+            <paragraph id=1678>Yes. Claude Code runs locally in your terminal and talks directly to model APIs without requiring a backend server or remote code index. It also asks for permission before making changes to your files or running commands.</paragraph>
+          </region>
+        </div>
+        <div id=1683>
+          <heading id=1684 level=3>
+            <button id=1685 focusable controls="_r_6_-content">What are the system requirements to run Claude Code?</button>
+          </heading>
+          <region name="What are the system requirements to run Claude Code?" id=1692>
+            <paragraph id=1694>
+              Claude Code works on macOS, Linux, and Windows.
+              <link id=1697 focusable url="https://docs.claude.com/en/docs/claude-code/setup#system-requirements">See full system requirements</link>
+              .
+            </paragraph>
+          </region>
+        </div>
+        <div id=1702>
+          <heading id=1703 level=3>
+            <button id=1704 focusable controls="_r_7_-content">How much does Claude Code cost?</button>
+          </heading>
+          <region name="How much does Claude Code cost?" id=1711>
+            <paragraph id=1713>
+              When used with a Claude Console account, Claude Code consumes API tokens at
+              <link id=1716 focusable url="https://claude.com/pricing#api">standard API pricing</link>
+              .
+            </paragraph>
+          </region>
+        </div>
+        <div id=1721>
+          <heading id=1722 level=3>
+            <button id=1723 focusable controls="_r_8_-content">Does Claude Code work with the Claude desktop app?</button>
+          </heading>
+          <region name="Does Claude Code work with the ?" id=1730>
+            <paragraph id=1732>
+              Yes. Max, Pro, Team, and Enterprise users can access Claude Code on the
+              <link id=1735 focusable url="https://claude.com/download">Claude desktop app</link>
+              .
+            </paragraph>
+          </region>
+        </div>
+        <div id=1741>
+          <heading id=1742 level=3>
+            <button id=1743 focusable controls="_r_9_-content">What is fast mode on Claude Code?</button>
+          </heading>
+          <region name="What is fast mode on Claude Code?" id=1750>
+            <paragraph id=1752>Fast mode is a high-speed configuration for Opus 5, making the model 2.5x faster at a higher cost per token. Fast mode is available:</paragraph>
+            <list id=1756>
+              <listitem id=1757 level=1>
+                <ListMarker name="•" id=1758/>
+                In research preview on Claude Code, and is priced at $10/$50 per million tokens.
+              </listitem>
+              <listitem id=1762 level=1>
+                <ListMarker name="•" id=1763/>
+                On consumption-based plans.
+              </listitem>
+              <listitem id=1767 level=1>
+                <ListMarker name="•" id=1768/>
+                Via usage credits for users on subscription plans.
+              </listitem>
+            </list>
+          </region>
+        </div>
+      </div>
+    </div>
+    <div id=1775>
+      <heading id=1777 level=2>Get the technical rundown</heading>
+      <div id=1780>
+        <link id=1782 focusable url="https://code.claude.com/docs/en/overview">
+          <heading id=1783 level=3>Claude Code documentation</heading>
           Developer docs
         </link>
         <link id=1791 focusable url="https://code.claude.com/docs/en/common-workflows">
-          <heading id=1792 level=3>
-            Common workflows
-          </heading>
+          <heading id=1792 level=3>Common workflows</heading>
           Developer docs
         </link>
         <link id=1800 focusable url="https://claude.com/blog/using-claude-md-files">
-          <heading id=1801 level=3>
-            Using CLAUDE.md files
-          </heading>
+          <heading id=1801 level=3>Using CLAUDE.md files</heading>
           Blog
         </link>
         <link id=1809 focusable url="https://claude.com/blog/introduction-to-agentic-coding">
-          <heading id=1810 level=3>
-            Introduction to agentic coding
-          </heading>
+          <heading id=1810 level=3>Introduction to agentic coding</heading>
           Blog
         </link>
         <link id=1819 focusable url="https://www.anthropic.com/news/how-anthropic-teams-use-claude-code">
-          <heading id=1820 level=3>
-            How Anthropic teams use Claude Code
-          </heading>
+          <heading id=1820 level=3>How Anthropic teams use Claude Code</heading>
           Blog
         </link>
         <link id=1829 focusable url="https://claude.com/blog/fix-software-bugs-faster-with-claude">
-          <heading id=1830 level=3>
-            Fix software bugs faster with Claude
-          </heading>
+          <heading id=1830 level=3>Fix software bugs faster with Claude</heading>
           Blog
         </link>
       </div>
-      <div id=1838>
-        <heading id=1842 level=2>
-          Create what's exciting. Maintain what's essential.
-        </heading>
-        <paragraph id=1846>
-          Use Claude Code where you work
-        </paragraph>
-        <button id=1854 focusable hasPopup="menu">
-          Get Claude Code
-        </button>
-        <button name="Copy command to clipboard" id=1860 focusable>
-          curl -fsSL https://claude.ai/install.sh | bash
-        </button>
-        <paragraph id=1871>
-          Or read the
-          <link id=1874 focusable url="https://code.claude.com/docs/en/overview">
-            documentation
-          </link>
-        </paragraph>
-        <heading id=1878 level=3>
-          Get the developer newsletter
-        </heading>
-        <paragraph id=1881>
-          Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.
-        </paragraph>
-        <div id=1885>
+    </div>
+    <div id=1840>
+      <div id=1841>
+        <heading id=1842 level=2>Create what's exciting. Maintain what's essential.</heading>
+        <paragraph id=1846>Use Claude Code where you work</paragraph>
+        <div id=1851>
+          <div id=1852>
+            <button id=1854 focusable hasPopup="menu">Get Claude Code</button>
+            <button name="Copy command to clipboard" id=1860 focusable>
+              <div id=1862>curl -fsSL</div>
+              <div id=1864>https://claude.ai/install.sh</div>
+              <div id=1868>| bash</div>
+            </button>
+          </div>
+          <paragraph id=1871>
+            Or read the
+            <link id=1874 focusable url="https://code.claude.com/docs/en/overview">documentation</link>
+          </paragraph>
+        </div>
+      </div>
+      <div id=1877>
+        <heading id=1878 level=3>Get the developer newsletter</heading>
+        <paragraph id=1881>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</paragraph>
+        <div id=1886>
           <textbox name="Email address" id=1887 focusable editable="plaintext" settable required>
             <div id=1889 editable="plaintext"/>
           </textbox>
           <button name="Subscribe" id=1890 disabled/>
         </div>
-        <paragraph id=1893>
-          Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.
-        </paragraph>
+        <paragraph id=1893>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</paragraph>
       </div>
-    </main>
-    <contentinfo id=1897>
-      <link id=1902 focusable url="https://claude.com/">
-        <image name="Claude" id=1903/>
-      </link>
-      <div id=1904>
-        <textbox name="Ask Claude" id=1906 focusable editable="plaintext" settable multiline>
-          <div id=1908 editable="plaintext"/>
-        </textbox>
-        <button name="Submit" id=1909 focusable/>
+    </div>
+  </main>
+  <contentinfo id=1897>
+    <div id=1899>
+      <div id=1900>
+        <div id=1901>
+          <link id=1902 focusable url="https://claude.com/">
+            <image name="Claude" id=1903/>
+          </link>
+          <div id=1905>
+            <textbox name="Ask Claude" id=1906 focusable editable="plaintext" settable multiline>
+              <div id=1908 editable="plaintext"/>
+            </textbox>
+            <button name="Submit" id=1909 focusable/>
+          </div>
+        </div>
+        <div id=1912>
+          <image name="By Anthropic" id=1913/>
+          <paragraph id=1914>© 2026 Anthropic PBC</paragraph>
+        </div>
       </div>
-      <image name="By Anthropic" id=1913/>
-      <paragraph id=1914>
-        © 2026 Anthropic PBC
-      </paragraph>
-      <heading id=1921 level=2>
-        Products
-      </heading>
-      <list id=1924>
-        <listitem id=1925 level=1>
-          <link id=1926 focusable url="https://claude.com/product/overview">
-            Claude
-          </link>
-        </listitem>
-        <listitem id=1929 level=1>
-          <link id=1930 focusable url="https://claude.com/product/claude-code">
-            Claude Code
-          </link>
-        </listitem>
-        <listitem id=1933 level=1>
-          <link id=1934 focusable url="https://claude.com/product/claude-code/enterprise">
-            Claude Code for Enterprise
-          </link>
-        </listitem>
-        <listitem id=1937 level=1>
-          <link id=1938 focusable url="https://claude.com/product/cowork">
-            Claude Cowork
-          </link>
-        </listitem>
-        <listitem id=1941 level=1>
-          <link id=1942 focusable url="https://claude.com/product/tag">
-            @Claude
-          </link>
-        </listitem>
-        <listitem id=1945 level=1>
-          <link id=1946 focusable url="https://claude.com/product/design">
-            Claude Design
-          </link>
-        </listitem>
-        <listitem id=1949 level=1>
-          <link id=1950 focusable url="https://claude.com/product/claude-science">
-            Claude Science
-          </link>
-        </listitem>
-        <listitem id=1953 level=1>
-          <link id=1954 focusable url="https://claude.com/product/claude-security">
-            Claude Security
-          </link>
-        </listitem>
-        <listitem id=1957 level=1>
-          <link id=1958 focusable url="https://claude.com/download">
-            Download app
-          </link>
-        </listitem>
-        <listitem id=1961 level=1>
-          <link id=1962 focusable url="https://claude.com/pricing">
-            Pricing
-          </link>
-        </listitem>
-        <listitem id=1965 level=1>
-          <link id=1966 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">
-            Log in
-          </link>
-        </listitem>
-      </list>
-      <heading id=1970 level=2>
-        Features
-      </heading>
-      <list id=1973>
-        <listitem id=1974 level=1>
-          <link id=1975 focusable url="https://claude.com/claude-for-chrome">
-            Claude for Chrome
-          </link>
-        </listitem>
-        <listitem id=1978 level=1>
-          <link id=1979 focusable url="https://claude.com/claude-for-slack">
-            Claude for Slack
-          </link>
-        </listitem>
-        <listitem id=1982 level=1>
-          <link id=1983 focusable url="https://claude.com/claude-for-microsoft-365">
-            Claude for Microsoft 365
-          </link>
-        </listitem>
-        <listitem id=1986 level=1>
-          <link id=1987 focusable url="https://claude.com/skills">
-            Skills
-          </link>
-        </listitem>
-      </list>
-      <heading id=1991 level=2>
-        Models
-      </heading>
-      <list id=1994>
-        <listitem id=1995 level=1>
-          <link id=1996 focusable url="https://www.anthropic.com/claude/mythos">
-            Mythos
-          </link>
-        </listitem>
-        <listitem id=1999 level=1>
-          <link id=2000 focusable url="https://www.anthropic.com/claude/fable">
-            Fable
-          </link>
-        </listitem>
-        <listitem id=2003 level=1>
-          <link id=2004 focusable url="https://www.anthropic.com/claude/opus">
-            Opus
-          </link>
-        </listitem>
-        <listitem id=2007 level=1>
-          <link id=2008 focusable url="https://www.anthropic.com/claude/sonnet">
-            Sonnet
-          </link>
-        </listitem>
-        <listitem id=2011 level=1>
-          <link id=2012 focusable url="https://www.anthropic.com/claude/haiku">
-            Haiku
-          </link>
-        </listitem>
-      </list>
-      <heading id=2017 level=2>
-        Solutions
-      </heading>
-      <list id=2020>
-        <listitem id=2021 level=1>
-          <link id=2022 focusable url="https://claude.com/solutions/agents">
-            AI agents
-          </link>
-        </listitem>
-        <listitem id=2025 level=1>
-          <link id=2026 focusable url="https://claude.com/solutions/code-modernization">
-            Code modernization
-          </link>
-        </listitem>
-        <listitem id=2029 level=1>
-          <link id=2030 focusable url="https://claude.com/solutions/coding">
-            Coding
-          </link>
-        </listitem>
-        <listitem id=2033 level=1>
-          <link id=2034 focusable url="https://claude.com/solutions/customer-support">
-            Customer support
-          </link>
-        </listitem>
-        <listitem id=2037 level=1>
-          <link id=2038 focusable url="https://claude.com/solutions/cybersecurity">
-            Cybersecurity
-          </link>
-        </listitem>
-        <listitem id=2041 level=1>
-          <link id=2042 focusable url="https://claude.com/solutions/enterprise">
-            Enterprise
-          </link>
-        </listitem>
-        <listitem id=2045 level=1>
-          <link id=2046 focusable url="https://claude.com/solutions/financial-services">
-            Financial services
-          </link>
-        </listitem>
-        <listitem id=2049 level=1>
-          <link id=2050 focusable url="https://claude.com/solutions/government">
-            Government
-          </link>
-        </listitem>
-        <listitem id=2053 level=1>
-          <link id=2054 focusable url="https://claude.com/solutions/healthcare">
-            Healthcare
-          </link>
-        </listitem>
-        <listitem id=2057 level=1>
-          <link id=2058 focusable url="https://claude.com/solutions/education">
-            Higher education
-          </link>
-        </listitem>
-        <listitem id=2061 level=1>
-          <link id=2062 focusable url="https://claude.com/solutions/teachers">
-            K-12 teachers
-          </link>
-        </listitem>
-        <listitem id=2065 level=1>
-          <link id=2066 focusable url="https://claude.com/solutions/legal">
-            Legal
-          </link>
-        </listitem>
-        <listitem id=2069 level=1>
-          <link id=2070 focusable url="https://claude.com/solutions/life-sciences">
-            Life sciences
-          </link>
-        </listitem>
-        <listitem id=2073 level=1>
-          <link id=2074 focusable url="https://claude.com/solutions/nonprofits">
-            Nonprofits
-          </link>
-        </listitem>
-        <listitem id=2077 level=1>
-          <link id=2078 focusable url="https://claude.com/solutions/small-business">
-            Small business
-          </link>
-        </listitem>
-      </list>
-      <heading id=2082 level=2>
-        Claude Platform
-      </heading>
-      <list id=2085>
-        <listitem id=2086 level=1>
-          <link id=2087 focusable url="https://claude.com/platform/api">
-            Overview
-          </link>
-        </listitem>
-        <listitem id=2090 level=1>
-          <link id=2091 focusable url="https://platform.claude.com/docs">
-            Developer docs
-          </link>
-        </listitem>
-        <listitem id=2094 level=1>
-          <link id=2095 focusable url="https://claude.com/pricing#api">
-            Pricing
-          </link>
-        </listitem>
-        <listitem id=2098 level=1>
-          <link id=2099 focusable url="https://claude.com/ecosystem">
-            Ecosystem
-          </link>
-        </listitem>
-        <listitem id=2102 level=1>
-          <link id=2103 focusable url="https://claude.com/platform/marketplace">
-            Marketplace
-          </link>
-        </listitem>
-        <listitem id=2106 level=1>
-          <link id=2107 focusable url="https://claude.com/partners/amazon-bedrock">
-            Claude on AWS
-          </link>
-        </listitem>
-        <listitem id=2110 level=1>
-          <link id=2111 focusable url="https://claude.com/partners/google-cloud-vertex-ai">
-            Google Cloud's Vertex AI
-          </link>
-        </listitem>
-        <listitem id=2114 level=1>
-          <link id=2115 focusable url="https://claude.com/partners/microsoft-foundry">
-            Microsoft Foundry
-          </link>
-        </listitem>
-        <listitem id=2118 level=1>
-          <link id=2119 focusable url="https://claude.com/regional-compliance">
-            Regional compliance
-          </link>
-        </listitem>
-        <listitem id=2122 level=1>
-          <link id=2123 focusable url="https://platform.claude.com/">
-            Console login
-          </link>
-        </listitem>
-      </list>
-      <heading id=2128 level=2>
-        Resources
-      </heading>
-      <list id=2131>
-        <listitem id=2132 level=1>
-          <link id=2133 focusable url="https://claude.com/blog">
-            Blog
-          </link>
-        </listitem>
-        <listitem id=2136 level=1>
-          <link id=2137 focusable url="https://claude.com/partners">
-            Claude partner network
-          </link>
-        </listitem>
-        <listitem id=2140 level=1>
-          <link id=2141 focusable url="https://claude.com/community">
-            Community
-          </link>
-        </listitem>
-        <listitem id=2144 level=1>
-          <link id=2145 focusable url="https://claude.com/connectors">
-            Connectors
-          </link>
-        </listitem>
-        <listitem id=2148 level=1>
-          <link id=2149 focusable url="https://claude.com/resources/courses">
-            Courses
-          </link>
-        </listitem>
-        <listitem id=2152 level=1>
-          <link id=2153 focusable url="https://claude.com/customers">
-            Customer stories
-          </link>
-        </listitem>
-        <listitem id=2156 level=1>
-          <link id=2157 focusable url="https://claude.com/engineering">
-            Engineering at Anthropic
-          </link>
-        </listitem>
-        <listitem id=2160 level=1>
-          <link id=2161 focusable url="https://claude.com/events">
-            Events
-          </link>
-        </listitem>
-        <listitem id=2164 level=1>
-          <link id=2165 focusable url="https://claude.com/plugins">
-            Plugins
-          </link>
-        </listitem>
-        <listitem id=2168 level=1>
-          <link id=2169 focusable url="https://claude.com/partners/powered-by-claude">
-            Powered by Claude
-          </link>
-        </listitem>
-        <listitem id=2172 level=1>
-          <link id=2173 focusable url="https://claude.com/service-partners">
-            Service partners
-          </link>
-        </listitem>
-        <listitem id=2176 level=1>
-          <link id=2177 focusable url="https://claude.com/resources/tutorials">
-            Tutorials
-          </link>
-        </listitem>
-        <listitem id=2180 level=1>
-          <link id=2181 focusable url="https://claude.com/resources/use-cases">
-            Use cases
-          </link>
-        </listitem>
-      </list>
-      <heading id=2185 level=2>
-        Company
-      </heading>
-      <list id=2188>
-        <listitem id=2189 level=1>
-          <link id=2190 focusable url="https://www.anthropic.com/">
-            Anthropic
-          </link>
-        </listitem>
-        <listitem id=2193 level=1>
-          <link id=2194 focusable url="https://www.anthropic.com/careers">
-            Careers
-          </link>
-        </listitem>
-        <listitem id=2197 level=1>
-          <link id=2198 focusable url="https://www.anthropic.com/economic-futures">
-            Economic Futures
-          </link>
-        </listitem>
-        <listitem id=2201 level=1>
-          <link id=2202 focusable url="https://www.anthropic.com/research">
-            Research
-          </link>
-        </listitem>
-        <listitem id=2205 level=1>
-          <link id=2206 focusable url="https://www.anthropic.com/news">
-            News
-          </link>
-        </listitem>
-        <listitem id=2209 level=1>
-          <link id=2210 focusable url="https://www.anthropic.com/responsible-scaling-policy">
-            Responsible Scaling Policy
-          </link>
-        </listitem>
-        <listitem id=2213 level=1>
-          <link id=2214 focusable url="https://claude.com/security">
-            Security and compliance
-          </link>
-        </listitem>
-        <listitem id=2217 level=1>
-          <link id=2218 focusable url="https://www.anthropic.com/transparency">
-            Transparency
-          </link>
-        </listitem>
-      </list>
-      <heading id=2223 level=2>
-        Programs
-      </heading>
-      <list id=2226>
-        <listitem id=2227 level=1>
-          <link id=2228 focusable url="https://claude.com/programs/startups">
-            Startups
-          </link>
-        </listitem>
-        <listitem id=2231 level=1>
-          <link id=2232 focusable url="https://claude.com/programs/claude-team-plan-for-research-labs">
-            Research Labs
-          </link>
-        </listitem>
-      </list>
-      <heading id=2236 level=2>
-        Help and security
-      </heading>
-      <list id=2239>
-        <listitem id=2240 level=1>
-          <link id=2241 focusable url="https://claude.com/availability">
-            Availability
-          </link>
-        </listitem>
-        <listitem id=2244 level=1>
-          <link id=2245 focusable url="https://status.anthropic.com/">
-            Status
-          </link>
-        </listitem>
-        <listitem id=2248 level=1>
-          <link id=2249 focusable url="https://support.anthropic.com/">
-            Support center
-          </link>
-        </listitem>
-      </list>
-      <heading id=2253 level=2>
-        Terms and policies
-      </heading>
-      <list id=2256>
-        <listitem id=2257 level=1>
-          <button id=2258 focusable>
-            Privacy choices
-          </button>
-        </listitem>
-        <listitem id=2261 level=1>
-          <link id=2262 focusable url="https://www.anthropic.com/policies/privacy">
-            Privacy policy
-          </link>
-        </listitem>
-        <listitem id=2265 level=1>
-          <link id=2266 focusable url="https://www.anthropic.com/policies/responsible-disclosure">
-            Responsible disclosure policy
-          </link>
-        </listitem>
-        <listitem id=2270 level=1>
-          <link id=2271 focusable url="https://www.anthropic.com/policies/commercial-terms">
-            Terms of service: Commercial
-          </link>
-        </listitem>
-        <listitem id=2275 level=1>
-          <link id=2276 focusable url="https://www.anthropic.com/policies/consumer-terms">
-            Terms of service: Consumer
-          </link>
-        </listitem>
-        <listitem id=2279 level=1>
-          <link id=2280 focusable url="https://anthropic.com/legal/k12-terms">
-            Terms of Service: US K-12
-          </link>
-        </listitem>
-        <listitem id=2283 level=1>
-          <link id=2284 focusable url="https://anthropic.com/legal/k12-dpa">
-            Data Processing Agreement: US K-12
-          </link>
-        </listitem>
-        <listitem id=2288 level=1>
-          <link id=2289 focusable url="https://www.anthropic.com/policies/aup">
-            Usage policy
-          </link>
-        </listitem>
-      </list>
+      <div id=1918>
+        <div id=1919>
+          <div id=1920>
+            <heading id=1921 level=2>Products</heading>
+            <list id=1924>
+              <listitem id=1925 level=1>
+                <link id=1926 focusable url="https://claude.com/product/overview">Claude</link>
+              </listitem>
+              <listitem id=1929 level=1>
+                <link id=1930 focusable url="https://claude.com/product/claude-code">Claude Code</link>
+              </listitem>
+              <listitem id=1933 level=1>
+                <link id=1934 focusable url="https://claude.com/product/claude-code/enterprise">Claude Code for Enterprise</link>
+              </listitem>
+              <listitem id=1937 level=1>
+                <link id=1938 focusable url="https://claude.com/product/cowork">Claude Cowork</link>
+              </listitem>
+              <listitem id=1941 level=1>
+                <link id=1942 focusable url="https://claude.com/product/tag">@Claude</link>
+              </listitem>
+              <listitem id=1945 level=1>
+                <link id=1946 focusable url="https://claude.com/product/design">Claude Design</link>
+              </listitem>
+              <listitem id=1949 level=1>
+                <link id=1950 focusable url="https://claude.com/product/claude-science">Claude Science</link>
+              </listitem>
+              <listitem id=1953 level=1>
+                <link id=1954 focusable url="https://claude.com/product/claude-security">Claude Security</link>
+              </listitem>
+              <listitem id=1957 level=1>
+                <link id=1958 focusable url="https://claude.com/download">Download app</link>
+              </listitem>
+              <listitem id=1961 level=1>
+                <link id=1962 focusable url="https://claude.com/pricing">Pricing</link>
+              </listitem>
+              <listitem id=1965 level=1>
+                <link id=1966 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login">Log in</link>
+              </listitem>
+            </list>
+          </div>
+          <div id=1969>
+            <heading id=1970 level=2>Features</heading>
+            <list id=1973>
+              <listitem id=1974 level=1>
+                <link id=1975 focusable url="https://claude.com/claude-for-chrome">Claude for Chrome</link>
+              </listitem>
+              <listitem id=1978 level=1>
+                <link id=1979 focusable url="https://claude.com/claude-for-slack">Claude for Slack</link>
+              </listitem>
+              <listitem id=1982 level=1>
+                <link id=1983 focusable url="https://claude.com/claude-for-microsoft-365">Claude for Microsoft 365</link>
+              </listitem>
+              <listitem id=1986 level=1>
+                <link id=1987 focusable url="https://claude.com/skills">Skills</link>
+              </listitem>
+            </list>
+          </div>
+          <div id=1990>
+            <heading id=1991 level=2>Models</heading>
+            <list id=1994>
+              <listitem id=1995 level=1>
+                <link id=1996 focusable url="https://www.anthropic.com/claude/mythos">Mythos</link>
+              </listitem>
+              <listitem id=1999 level=1>
+                <link id=2000 focusable url="https://www.anthropic.com/claude/fable">Fable</link>
+              </listitem>
+              <listitem id=2003 level=1>
+                <link id=2004 focusable url="https://www.anthropic.com/claude/opus">Opus</link>
+              </listitem>
+              <listitem id=2007 level=1>
+                <link id=2008 focusable url="https://www.anthropic.com/claude/sonnet">Sonnet</link>
+              </listitem>
+              <listitem id=2011 level=1>
+                <link id=2012 focusable url="https://www.anthropic.com/claude/haiku">Haiku</link>
+              </listitem>
+            </list>
+          </div>
+        </div>
+        <div id=2015>
+          <div id=2016>
+            <heading id=2017 level=2>Solutions</heading>
+            <list id=2020>
+              <listitem id=2021 level=1>
+                <link id=2022 focusable url="https://claude.com/solutions/agents">AI agents</link>
+              </listitem>
+              <listitem id=2025 level=1>
+                <link id=2026 focusable url="https://claude.com/solutions/code-modernization">Code modernization</link>
+              </listitem>
+              <listitem id=2029 level=1>
+                <link id=2030 focusable url="https://claude.com/solutions/coding">Coding</link>
+              </listitem>
+              <listitem id=2033 level=1>
+                <link id=2034 focusable url="https://claude.com/solutions/customer-support">Customer support</link>
+              </listitem>
+              <listitem id=2037 level=1>
+                <link id=2038 focusable url="https://claude.com/solutions/cybersecurity">Cybersecurity</link>
+              </listitem>
+              <listitem id=2041 level=1>
+                <link id=2042 focusable url="https://claude.com/solutions/enterprise">Enterprise</link>
+              </listitem>
+              <listitem id=2045 level=1>
+                <link id=2046 focusable url="https://claude.com/solutions/financial-services">Financial services</link>
+              </listitem>
+              <listitem id=2049 level=1>
+                <link id=2050 focusable url="https://claude.com/solutions/government">Government</link>
+              </listitem>
+              <listitem id=2053 level=1>
+                <link id=2054 focusable url="https://claude.com/solutions/healthcare">Healthcare</link>
+              </listitem>
+              <listitem id=2057 level=1>
+                <link id=2058 focusable url="https://claude.com/solutions/education">Higher education</link>
+              </listitem>
+              <listitem id=2061 level=1>
+                <link id=2062 focusable url="https://claude.com/solutions/teachers">K-12 teachers</link>
+              </listitem>
+              <listitem id=2065 level=1>
+                <link id=2066 focusable url="https://claude.com/solutions/legal">Legal</link>
+              </listitem>
+              <listitem id=2069 level=1>
+                <link id=2070 focusable url="https://claude.com/solutions/life-sciences">Life sciences</link>
+              </listitem>
+              <listitem id=2073 level=1>
+                <link id=2074 focusable url="https://claude.com/solutions/nonprofits">Nonprofits</link>
+              </listitem>
+              <listitem id=2077 level=1>
+                <link id=2078 focusable url="https://claude.com/solutions/small-business">Small business</link>
+              </listitem>
+            </list>
+          </div>
+          <div id=2081>
+            <heading id=2082 level=2>Claude Platform</heading>
+            <list id=2085>
+              <listitem id=2086 level=1>
+                <link id=2087 focusable url="https://claude.com/platform/api">Overview</link>
+              </listitem>
+              <listitem id=2090 level=1>
+                <link id=2091 focusable url="https://platform.claude.com/docs">Developer docs</link>
+              </listitem>
+              <listitem id=2094 level=1>
+                <link id=2095 focusable url="https://claude.com/pricing#api">Pricing</link>
+              </listitem>
+              <listitem id=2098 level=1>
+                <link id=2099 focusable url="https://claude.com/ecosystem">Ecosystem</link>
+              </listitem>
+              <listitem id=2102 level=1>
+                <link id=2103 focusable url="https://claude.com/platform/marketplace">Marketplace</link>
+              </listitem>
+              <listitem id=2106 level=1>
+                <link id=2107 focusable url="https://claude.com/partners/amazon-bedrock">Claude on AWS</link>
+              </listitem>
+              <listitem id=2110 level=1>
+                <link id=2111 focusable url="https://claude.com/partners/google-cloud-vertex-ai">Google Cloud's Vertex AI</link>
+              </listitem>
+              <listitem id=2114 level=1>
+                <link id=2115 focusable url="https://claude.com/partners/microsoft-foundry">Microsoft Foundry</link>
+              </listitem>
+              <listitem id=2118 level=1>
+                <link id=2119 focusable url="https://claude.com/regional-compliance">Regional compliance</link>
+              </listitem>
+              <listitem id=2122 level=1>
+                <link id=2123 focusable url="https://platform.claude.com/">Console login</link>
+              </listitem>
+            </list>
+          </div>
+        </div>
+        <div id=2126>
+          <div id=2127>
+            <heading id=2128 level=2>Resources</heading>
+            <list id=2131>
+              <listitem id=2132 level=1>
+                <link id=2133 focusable url="https://claude.com/blog">Blog</link>
+              </listitem>
+              <listitem id=2136 level=1>
+                <link id=2137 focusable url="https://claude.com/partners">Claude partner network</link>
+              </listitem>
+              <listitem id=2140 level=1>
+                <link id=2141 focusable url="https://claude.com/community">Community</link>
+              </listitem>
+              <listitem id=2144 level=1>
+                <link id=2145 focusable url="https://claude.com/connectors">Connectors</link>
+              </listitem>
+              <listitem id=2148 level=1>
+                <link id=2149 focusable url="https://claude.com/resources/courses">Courses</link>
+              </listitem>
+              <listitem id=2152 level=1>
+                <link id=2153 focusable url="https://claude.com/customers">Customer stories</link>
+              </listitem>
+              <listitem id=2156 level=1>
+                <link id=2157 focusable url="https://claude.com/engineering">Engineering at Anthropic</link>
+              </listitem>
+              <listitem id=2160 level=1>
+                <link id=2161 focusable url="https://claude.com/events">Events</link>
+              </listitem>
+              <listitem id=2164 level=1>
+                <link id=2165 focusable url="https://claude.com/plugins">Plugins</link>
+              </listitem>
+              <listitem id=2168 level=1>
+                <link id=2169 focusable url="https://claude.com/partners/powered-by-claude">Powered by Claude</link>
+              </listitem>
+              <listitem id=2172 level=1>
+                <link id=2173 focusable url="https://claude.com/service-partners">Service partners</link>
+              </listitem>
+              <listitem id=2176 level=1>
+                <link id=2177 focusable url="https://claude.com/resources/tutorials">Tutorials</link>
+              </listitem>
+              <listitem id=2180 level=1>
+                <link id=2181 focusable url="https://claude.com/resources/use-cases">Use cases</link>
+              </listitem>
+            </list>
+          </div>
+          <div id=2184>
+            <heading id=2185 level=2>Company</heading>
+            <list id=2188>
+              <listitem id=2189 level=1>
+                <link id=2190 focusable url="https://www.anthropic.com/">Anthropic</link>
+              </listitem>
+              <listitem id=2193 level=1>
+                <link id=2194 focusable url="https://www.anthropic.com/careers">Careers</link>
+              </listitem>
+              <listitem id=2197 level=1>
+                <link id=2198 focusable url="https://www.anthropic.com/economic-futures">Economic Futures</link>
+              </listitem>
+              <listitem id=2201 level=1>
+                <link id=2202 focusable url="https://www.anthropic.com/research">Research</link>
+              </listitem>
+              <listitem id=2205 level=1>
+                <link id=2206 focusable url="https://www.anthropic.com/news">News</link>
+              </listitem>
+              <listitem id=2209 level=1>
+                <link id=2210 focusable url="https://www.anthropic.com/responsible-scaling-policy">Responsible Scaling Policy</link>
+              </listitem>
+              <listitem id=2213 level=1>
+                <link id=2214 focusable url="https://claude.com/security">Security and compliance</link>
+              </listitem>
+              <listitem id=2217 level=1>
+                <link id=2218 focusable url="https://www.anthropic.com/transparency">Transparency</link>
+              </listitem>
+            </list>
+          </div>
+        </div>
+        <div id=2221>
+          <div id=2222>
+            <heading id=2223 level=2>Programs</heading>
+            <list id=2226>
+              <listitem id=2227 level=1>
+                <link id=2228 focusable url="https://claude.com/programs/startups">Startups</link>
+              </listitem>
+              <listitem id=2231 level=1>
+                <link id=2232 focusable url="https://claude.com/programs/claude-team-plan-for-research-labs">Research Labs</link>
+              </listitem>
+            </list>
+          </div>
+          <div id=2235>
+            <heading id=2236 level=2>Help and security</heading>
+            <list id=2239>
+              <listitem id=2240 level=1>
+                <link id=2241 focusable url="https://claude.com/availability">Availability</link>
+              </listitem>
+              <listitem id=2244 level=1>
+                <link id=2245 focusable url="https://status.anthropic.com/">Status</link>
+              </listitem>
+              <listitem id=2248 level=1>
+                <link id=2249 focusable url="https://support.anthropic.com/">Support center</link>
+              </listitem>
+            </list>
+          </div>
+          <div id=2252>
+            <heading id=2253 level=2>Terms and policies</heading>
+            <list id=2256>
+              <listitem id=2257 level=1>
+                <button id=2258 focusable>Privacy choices</button>
+              </listitem>
+              <listitem id=2261 level=1>
+                <link id=2262 focusable url="https://www.anthropic.com/policies/privacy">Privacy policy</link>
+              </listitem>
+              <listitem id=2265 level=1>
+                <link id=2266 focusable url="https://www.anthropic.com/policies/responsible-disclosure">Responsible disclosure policy</link>
+              </listitem>
+              <listitem id=2270 level=1>
+                <link id=2271 focusable url="https://www.anthropic.com/policies/commercial-terms">Terms of service: Commercial</link>
+              </listitem>
+              <listitem id=2275 level=1>
+                <link id=2276 focusable url="https://www.anthropic.com/policies/consumer-terms">Terms of service: Consumer</link>
+              </listitem>
+              <listitem id=2279 level=1>
+                <link id=2280 focusable url="https://anthropic.com/legal/k12-terms">Terms of Service: US K-12</link>
+              </listitem>
+              <listitem id=2283 level=1>
+                <link id=2284 focusable url="https://anthropic.com/legal/k12-dpa">Data Processing Agreement: US K-12</link>
+              </listitem>
+              <listitem id=2288 level=1>
+                <link id=2289 focusable url="https://www.anthropic.com/policies/aup">Usage policy</link>
+              </listitem>
+            </list>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id=2292>
       <separator id=2293 settable orientation="horizontal"/>
-      <link name="Instagram" id=2296 focusable url="https://www.instagram.com/claudeai"/>
-      <link name="LinkedIn" id=2297 focusable url="https://www.linkedin.com/showcase/claude/"/>
-      <link name="X (Twitter)" id=2298 focusable url="https://x.com/claudeai"/>
-      <link name="YouTube" id=2299 focusable url="https://www.youtube.com/@anthropic-ai"/>
-      <button name="Language:" id=2302 focusable hasPopup="menu">
-        English
-      </button>
-    </contentinfo>
-  </div>
+      <div id=2294>
+        <div id=2295>
+          <link name="Instagram" id=2296 focusable url="https://www.instagram.com/claudeai"/>
+          <link name="LinkedIn" id=2297 focusable url="https://www.linkedin.com/showcase/claude/"/>
+          <link name="X (Twitter)" id=2298 focusable url="https://x.com/claudeai"/>
+          <link name="YouTube" id=2299 focusable url="https://www.youtube.com/@anthropic-ai"/>
+        </div>
+        <button name="Language:" id=2302 focusable hasPopup="menu">English</button>
+      </div>
+    </div>
+  </contentinfo>
 </RootWebArea>

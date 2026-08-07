@@ -1,17 +1,9 @@
 <RootWebArea name="Hidden File Upload Test" id=1 focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/hidden_file_upload.html">
-  <heading id=4 level=1>
-    File Upload Test
-  </heading>
-  <heading id=8 level=2>
-    Upload Files
-  </heading>
-  <paragraph id=11>
-    Click the button below to select files
-  </paragraph>
-  <button id=14 focusable>
-    Choose Files
-  </button>
-  <button id=18 disabled>
-    Upload Files
-  </button>
+  <heading id=4 level=1>File Upload Test</heading>
+  <div id=7>
+    <heading id=8 level=2>Upload Files</heading>
+    <paragraph id=11>Click the button below to select files</paragraph>
+    <button id=14 focusable>Choose Files</button>
+    <button id=18 disabled>Upload Files</button>
+  </div>
 </RootWebArea>

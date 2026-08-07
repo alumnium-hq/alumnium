@@ -1,95 +1,46 @@
-<hierarchy>
-  <hierarchy id=2>
-    <FrameLayout id=3>
-      <LinearLayout id=4>
-        <FrameLayout id=5>
-          <FrameLayout id=6>
-            <FrameLayout id=7 resource-id="android:id/content">
-              <ViewGroup id=8 resource-id="com.android.chrome:id/coordinator">
-                <FrameLayout id=9 resource-id="com.android.chrome:id/compositor_view_holder">
-                  <FrameLayout id=10>
-                    <View id=11/>
-                  </FrameLayout>
-                  <FrameLayout id=12>
-                    <WebView id=13 text="Calculator">
-                      <View id=14 resource-id="calculator">
-                        <View id=15>
-                          <View id=16>
-                            <View id=17/>
-                            <TextView id=18 text="Dark Mode"/>
-                            <TextView id=19 text=" "/>
-                            <TextView id=20 text="    "/>
-                            <TextView id=21 text=" "/>
-                            <View id=22 content-desc="Calculator" clickable>
-                              <TextView id=23 text="Calculator"/>
-                            </View>
-                            <TextView id=24 text=" "/>
-                            <TextView id=25 text="      "/>
-                            <TextView id=26 text=" "/>
-                            <TextView id=27 text="      "/>
-                            <TextView id=28 text=" "/>
-                            <TextView id=29 text="     "/>
-                            <TextView id=30 text=" "/>
-                            <View id=31 content-desc="SB" clickable>
-                              <TextView id=32 text="SB"/>
-                            </View>
-                          </View>
-                          <EditText id=33 resource-id="output" text="3×" clickable/>
-                          <Button id=34 resource-id="clear" text="C" clickable/>
-                          <Button id=35 resource-id="(" text="(" clickable/>
-                          <Button id=36 resource-id=")" text=")" clickable/>
-                          <Button id=37 resource-id="divide" text="÷" clickable/>
-                          <Button id=38 resource-id=7 text=7 clickable/>
-                          <Button id=39 resource-id=8 text=8 clickable/>
-                          <Button id=40 resource-id=9 text=9 clickable/>
-                          <Button id=41 resource-id="multiply" text="×" clickable/>
-                          <Button id=42 resource-id=4 text=4 clickable/>
-                          <Button id=43 resource-id=5 text=5 clickable/>
-                          <Button id=44 resource-id=6 text=6 clickable/>
-                          <Button id=45 resource-id="subtract" text="-" clickable/>
-                          <Button id=46 resource-id=1 text=1 clickable/>
-                          <Button id=47 resource-id=2 text=2 clickable/>
-                          <Button id=48 resource-id=3 text=3 clickable/>
-                          <Button id=49 resource-id="add" text="+" clickable/>
-                          <Button id=50 resource-id="←" text="←" clickable/>
-                          <Button id=51 resource-id=0 text=0 clickable/>
-                          <Button id=52 resource-id="." text="." clickable/>
-                          <Button id=53 resource-id="equal" text="=" clickable/>
-                        </View>
-                      </View>
-                    </WebView>
-                  </FrameLayout>
-                </FrameLayout>
-                <FrameLayout id=54 resource-id="com.android.chrome:id/control_container">
-                  <FrameLayout id=55 resource-id="com.android.chrome:id/toolbar_container">
-                    <FrameLayout id=56 resource-id="com.android.chrome:id/toolbar">
-                      <ImageButton id=57 resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable/>
-                      <FrameLayout id=58 resource-id="com.android.chrome:id/location_bar">
-                        <LinearLayout id=59 resource-id="com.android.chrome:id/location_bar_status" clickable>
-                          <LinearLayout id=60 resource-id="com.android.chrome:id/location_bar_status_icon_view">
-                            <FrameLayout id=61 resource-id="com.android.chrome:id/location_bar_status_icon_frame">
-                              <ImageView id=62 resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure"/>
-                            </FrameLayout>
-                          </LinearLayout>
-                        </LinearLayout>
-                        <EditText id=63 resource-id="com.android.chrome:id/url_bar" text="seleniumbase.io/apps/calculator" clickable/>
-                      </FrameLayout>
-                      <LinearLayout id=64 resource-id="com.android.chrome:id/toolbar_buttons">
-                        <ImageButton id=65 resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable/>
-                        <FrameLayout id=66 resource-id="com.android.chrome:id/menu_button_wrapper">
-                          <ImageButton id=67 resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable/>
-                        </FrameLayout>
-                      </LinearLayout>
-                    </FrameLayout>
-                    <ImageView id=68 resource-id="com.android.chrome:id/toolbar_hairline"/>
-                  </FrameLayout>
-                </FrameLayout>
-              </ViewGroup>
-            </FrameLayout>
-          </FrameLayout>
-        </FrameLayout>
-      </LinearLayout>
-      <View id=69 resource-id="android:id/navigationBarBackground"/>
-    </FrameLayout>
-  </hierarchy>
-</hierarchy>
+<div id=1>
+  <WebView id=13 text="Calculator">
+    <div id=16>
+      <div id=18>Dark Mode</div>
+      <div id=22 content-desc="Calculator" clickable/>
+      <div id=31 content-desc="SB" clickable/>
+    </div>
+    <EditText id=33 resource-id="output" clickable>3×</EditText>
+    <Button id=34 resource-id="clear" clickable>C</Button>
+    <Button id=35 resource-id="(" clickable>(</Button>
+    <Button id=36 resource-id=")" clickable>)</Button>
+    <Button id=37 resource-id="divide" clickable>÷</Button>
+    <Button id=38 resource-id=7 clickable>7</Button>
+    <Button id=39 resource-id=8 clickable>8</Button>
+    <Button id=40 resource-id=9 clickable>9</Button>
+    <Button id=41 resource-id="multiply" clickable>×</Button>
+    <Button id=42 resource-id=4 clickable>4</Button>
+    <Button id=43 resource-id=5 clickable>5</Button>
+    <Button id=44 resource-id=6 clickable>6</Button>
+    <Button id=45 resource-id="subtract" clickable>-</Button>
+    <Button id=46 resource-id=1 clickable>1</Button>
+    <Button id=47 resource-id=2 clickable>2</Button>
+    <Button id=48 resource-id=3 clickable>3</Button>
+    <Button id=49 resource-id="add" clickable>+</Button>
+    <Button id=50 resource-id="←" clickable>←</Button>
+    <Button id=51 resource-id=0 clickable>0</Button>
+    <Button id=52 resource-id="." clickable>.</Button>
+    <Button id=53 resource-id="equal" clickable>=</Button>
+  </WebView>
+  <div id=55 resource-id="toolbar_container">
+    <div id=56 resource-id="toolbar">
+      <ImageButton id=57 content-desc="Home" resource-id="home_button" clickable/>
+      <div id=58 resource-id="location_bar">
+        <div id=59 resource-id="location_bar_status" clickable>
+          <ImageView id=62 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+        </div>
+        <EditText id=63 resource-id="url_bar" clickable>seleniumbase.io/apps/calculator</EditText>
+      </div>
+      <div id=64 resource-id="toolbar_buttons">
+        <ImageButton id=65 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
+        <ImageButton id=67 content-desc="More options" resource-id="menu_button" clickable/>
+      </div>
+    </div>
+    <ImageView id=68 resource-id="toolbar_hairline"/>
+  </div>
+</div>

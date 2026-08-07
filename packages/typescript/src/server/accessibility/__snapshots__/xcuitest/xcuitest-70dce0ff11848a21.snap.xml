@@ -1,94 +1,58 @@
-<Application id=1 name="Safari">
+<Application name="Safari" id=1>
   <Window id=2>
-    <generic id=5>
-      <generic id=8>
-        <generic id=10>
-          <generic id=11 name="SafariWindow?ViewNarrow&amp;BarsKeptMinimized=false&amp;UUID=FAD3-4E-8848-F5DD4EFFCC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false">
-            <generic id=13>
-              <ScrollView id=18>
-                <generic id=19 name="TabDocument?IsLoadedUsingDesktopUserAgentfalse&amp;InReaderMode=false&amp;UUID=A7B7ADA-4B7-8-9D51A84C8&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=44812">
-                  <WebView id=20 name="WebView">
-                    <WebView id=21>
-                      <WebView id=23>
-                        <generic id=27>
-                          <generic id=28>
-                            <StaticText id=30>
-                              Dark Mode
-                            </StaticText>
-                            <StaticText id=31>
-                            </StaticText>
-                            <Link id=32>
-                              <StaticText id=33>
-                                Calculator
-                              </StaticText>
-                            </Link>
-                            <StaticText id=34>
-                            </StaticText>
-                            <StaticText id=35>
-                            </StaticText>
-                            <StaticText id=36>
-                            </StaticText>
-                            <Link id=37>
-                              <StaticText id=38>
-                                SB
-                              </StaticText>
-                            </Link>
-                          </generic>
-                          <TextField id=39 value=0/>
-                          <Button id=40 name="C"/>
-                          <Button id=41 name="("/>
-                          <Button id=42 name=")"/>
-                          <Button id=43 name="÷"/>
-                          <Button id=44 name=7/>
-                          <Button id=45 name=8/>
-                          <Button id=46 name=9/>
-                          <Button id=47 name="×"/>
-                          <Button id=48 name=4/>
-                          <Button id=49 name=5/>
-                          <Button id=50 name=6/>
-                          <Button id=51 name="-"/>
-                          <Button id=52 name=1/>
-                          <Button id=53 name=2/>
-                          <Button id=54 name=3/>
-                          <Button id=55 name="+"/>
-                          <Button id=56 name="←"/>
-                          <Button id=57 name=0/>
-                          <Button id=58 name="."/>
-                          <Button id=59 name="="/>
-                        </generic>
-                      </WebView>
-                      <generic id=62 name="Vertical scroll bar, 1 page"/>
-                      <generic id=64 name="Horizontal scroll bar, 1 page"/>
-                      <generic id=66 name="Vertical scroll bar, 1 page"/>
-                      <generic id=68 name="Horizontal scroll bar, 1 page"/>
-                    </WebView>
-                  </WebView>
-                </generic>
-                <generic id=70 name="Horizontal scroll bar, 1 page"/>
-                <generic id=72 name="Horizontal scroll bar, 1 page"/>
-              </ScrollView>
-            </generic>
-            <generic id=74 name="CapsuleViewController">
-              <generic id=84>
-                <Button id=85 name="BackButton" label="Back"/>
-              </generic>
-              <generic id=88>
-                <generic id=89 name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false">
-                  <Button id=90 name="PageFormatMenuButton" label="Page Menu">
-                    <StaticText id=91/>
-                  </Button>
-                  <TextField id=92 name="TabBarItemTitle" label="Address" value="‎seleniumbase.io"/>
-                  <Button id=93 name="ReloadButton" label="refresh"/>
-                </generic>
-              </generic>
-              <generic id=95>
-                <Button id=96 name="MoreMenuButton" label="More"/>
-              </generic>
-            </generic>
-          </generic>
-        </generic>
-      </generic>
-    </generic>
+    <div name="SafariWindow?ViewNarrow&amp;BarsKeptMinimized=false&amp;UUID=FAD3-4E-8848-F5DD4EFFCC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false" id=11>
+      <ScrollView id=18>
+        <div name="TabDocument?IsLoadedUsingDesktopUserAgentfalse&amp;InReaderMode=false&amp;UUID=A7B7ADA-4B7-8-9D51A84C8&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=44812" id=19>
+          <WebView name="WebView" id=20>
+            <WebView id=21>
+              <WebView id=23>
+                <div id=28>
+                  <div id=30>Dark Mode</div>
+                  <Link id=32>Calculator</Link>
+                  <Link id=37>SB</Link>
+                </div>
+                <TextField id=39 value=0/>
+                <Button name="C" id=40/>
+                <Button name="(" id=41/>
+                <Button name=")" id=42/>
+                <Button name="÷" id=43/>
+                <Button name=7 id=44/>
+                <Button name=8 id=45/>
+                <Button name=9 id=46/>
+                <Button name="×" id=47/>
+                <Button name=4 id=48/>
+                <Button name=5 id=49/>
+                <Button name=6 id=50/>
+                <Button name="-" id=51/>
+                <Button name=1 id=52/>
+                <Button name=2 id=53/>
+                <Button name=3 id=54/>
+                <Button name="+" id=55/>
+                <Button name="←" id=56/>
+                <Button name=0 id=57/>
+                <Button name="." id=58/>
+                <Button name="=" id=59/>
+              </WebView>
+              <div name="Vertical scroll bar, 1 page" id=61 value="0 %"/>
+              <div name="Horizontal scroll bar, 1 page" id=63 value="0 %"/>
+              <div name="Vertical scroll bar, 1 page" id=65 value="0 %"/>
+              <div name="Horizontal scroll bar, 1 page" id=67 value="0 %"/>
+            </WebView>
+          </WebView>
+        </div>
+        <div name="Horizontal scroll bar, 1 page" id=69 value="0 %"/>
+        <div name="Horizontal scroll bar, 1 page" id=71 value="0 %"/>
+      </ScrollView>
+      <div name="CapsuleViewController" id=73>
+        <Button name="BackButton" id=85 label="Back"/>
+        <div name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" id=89>
+          <Button name="PageFormatMenuButton" id=90 label="Page Menu"/>
+          <TextField name="TabBarItemTitle" id=92 value="‎seleniumbase.io" label="Address"/>
+          <Button name="ReloadButton" id=93 label="refresh"/>
+        </div>
+        <Button name="MoreMenuButton" id=96 label="More"/>
+      </div>
+    </div>
   </Window>
   <Window id=101/>
 </Application>

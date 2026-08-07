@@ -1,47 +1,33 @@
 <RootWebArea name="TodoMVC: Vue" id=1 focusable focused url="https://todomvc.com/examples/vue/dist/#/">
   <complementary id=4>
     <sectionheader id=5>
-      <heading id=6 level=3>
-        Vue.js
-      </heading>
-      <heading id=9 level=5>
-        Example
-      </heading>
-      <link id=12 focusable url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue">
-        Source
-      </link>
+      <heading id=6 level=3>Vue.js</heading>
+      <heading id=9 level=5>Example</heading>
+      <link id=12 focusable url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue">Source</link>
     </sectionheader>
     <separator id=15 settable orientation="horizontal"/>
     <blockquote id=16>
       <paragraph id=17>
-        “Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `”
+        <div id=19>“</div>
+        <div id=21>Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `</div>
+        <div id=29>”</div>
       </paragraph>
     </blockquote>
   </complementary>
   <sectionheader id=32>
     <link id=33 focusable url="https://todomvc.com/examples/vue/dist/#/">
-      <heading id=34 level=1>
-        todos
-      </heading>
+      <heading id=34 level=1>todos</heading>
     </link>
     <textbox name="What needs to be done?" id=37 focusable focused editable="plaintext" settable>
-      <div id=39 editable="plaintext">
-        Buy milk
-      </div>
+      <div id=39 editable="plaintext">Buy milk</div>
     </textbox>
   </sectionheader>
   <contentinfo id=44>
-    <paragraph id=45>
-      Double-click to edit a todo
-    </paragraph>
-    <paragraph id=48>
-      Created by the TodoMVC Team
-    </paragraph>
+    <paragraph id=45>Double-click to edit a todo</paragraph>
+    <paragraph id=48>Created by the TodoMVC Team</paragraph>
     <paragraph id=51>
       Part of
-      <link id=54 focusable url="http://todomvc.com/">
-        TodoMVC
-      </link>
+      <link id=54 focusable url="http://todomvc.com/">TodoMVC</link>
     </paragraph>
   </contentinfo>
 </RootWebArea>

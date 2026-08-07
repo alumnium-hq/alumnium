@@ -1,124 +1,58 @@
 <table id=1>
   <rowgroup id=2>
     <row id=3>
-      <columnheader id=4>
-        Last Name
-      </columnheader>
-      <columnheader id=7>
-        First Name
-      </columnheader>
-      <columnheader id=10>
-        Email
-      </columnheader>
-      <columnheader id=13>
-        Due
-      </columnheader>
-      <columnheader id=16>
-        Web Site
-      </columnheader>
-      <columnheader id=19>
-        Action
-      </columnheader>
+      <columnheader id=4>Last Name</columnheader>
+      <columnheader id=7>First Name</columnheader>
+      <columnheader id=10>Email</columnheader>
+      <columnheader id=13>Due</columnheader>
+      <columnheader id=16>Web Site</columnheader>
+      <columnheader id=19>Action</columnheader>
     </row>
   </rowgroup>
-  <row id=23>
-    <cell id=24>
-      Bach
-    </cell>
-    <cell id=27>
-      Frank
-    </cell>
-    <cell id=30>
-      fbach@yahoo.com
-    </cell>
-    <cell id=33>
-      $51.00
-    </cell>
-    <cell id=36>
-      http://www.frank.com
-    </cell>
-    <cell id=39>
-      <link id=40 focusable url="https://the-internet.herokuapp.com/tables#edit">
-        edit
-      </link>
-      <link id=45 focusable url="https://the-internet.herokuapp.com/tables#delete">
-        delete
-      </link>
-    </cell>
-  </row>
-  <row id=48>
-    <cell id=49>
-      Conway
-    </cell>
-    <cell id=52>
-      Tim
-    </cell>
-    <cell id=55>
-      tconway@earthlink.net
-    </cell>
-    <cell id=58>
-      $50.00
-    </cell>
-    <cell id=61>
-      http://www.timconway.com
-    </cell>
-    <cell id=64>
-      <link id=65 focusable url="https://the-internet.herokuapp.com/tables#edit">
-        edit
-      </link>
-      <link id=70 focusable url="https://the-internet.herokuapp.com/tables#delete">
-        delete
-      </link>
-    </cell>
-  </row>
-  <row id=73>
-    <cell id=74>
-      Doe
-    </cell>
-    <cell id=77>
-      Jason
-    </cell>
-    <cell id=80>
-      jdoe@hotmail.com
-    </cell>
-    <cell id=83>
-      $100.00
-    </cell>
-    <cell id=86>
-      http://www.jdoe.com
-    </cell>
-    <cell id=89>
-      <link id=90 focusable url="https://the-internet.herokuapp.com/tables#edit">
-        edit
-      </link>
-      <link id=95 focusable url="https://the-internet.herokuapp.com/tables#delete">
-        delete
-      </link>
-    </cell>
-  </row>
-  <row id=98>
-    <cell id=99>
-      Smith
-    </cell>
-    <cell id=102>
-      John
-    </cell>
-    <cell id=105>
-      jsmith@gmail.com
-    </cell>
-    <cell id=108>
-      $50.00
-    </cell>
-    <cell id=111>
-      http://www.jsmith.com
-    </cell>
-    <cell id=114>
-      <link id=115 focusable url="https://the-internet.herokuapp.com/tables#edit">
-        edit
-      </link>
-      <link id=120 focusable url="https://the-internet.herokuapp.com/tables#delete">
-        delete
-      </link>
-    </cell>
-  </row>
+  <div id=22>
+    <row id=23>
+      <cell id=24>Bach</cell>
+      <cell id=27>Frank</cell>
+      <cell id=30>fbach@yahoo.com</cell>
+      <cell id=33>$51.00</cell>
+      <cell id=36>http://www.frank.com</cell>
+      <cell id=39>
+        <link id=40 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+        <link id=45 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+      </cell>
+    </row>
+    <row id=48>
+      <cell id=49>Conway</cell>
+      <cell id=52>Tim</cell>
+      <cell id=55>tconway@earthlink.net</cell>
+      <cell id=58>$50.00</cell>
+      <cell id=61>http://www.timconway.com</cell>
+      <cell id=64>
+        <link id=65 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+        <link id=70 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+      </cell>
+    </row>
+    <row id=73>
+      <cell id=74>Doe</cell>
+      <cell id=77>Jason</cell>
+      <cell id=80>jdoe@hotmail.com</cell>
+      <cell id=83>$100.00</cell>
+      <cell id=86>http://www.jdoe.com</cell>
+      <cell id=89>
+        <link id=90 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+        <link id=95 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+      </cell>
+    </row>
+    <row id=98>
+      <cell id=99>Smith</cell>
+      <cell id=102>John</cell>
+      <cell id=105>jsmith@gmail.com</cell>
+      <cell id=108>$50.00</cell>
+      <cell id=111>http://www.jsmith.com</cell>
+      <cell id=114>
+        <link id=115 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+        <link id=120 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+      </cell>
+    </row>
+  </div>
 </table>

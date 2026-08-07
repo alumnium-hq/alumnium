@@ -3,15 +3,12 @@
     <button name="Close" id=665 focusable/>
     <div id=667>
       <image id=670/>
-      Now you’ll see one price for your trip, all fees included.
-      <button id=677 focusable>
-        Got it
-      </button>
+      <div id=672>
+        Now you’ll see one price for your trip, all fees included.
+        <button id=677 focusable>Got it</button>
+      </div>
     </div>
-    <div id=680>
-      <div id=681 live="polite" atomic relevant="additions text"/>
-      <div id=682 live="assertive" atomic relevant="additions text"/>
-    </div>
+    <div id=680/>
   </dialog>
   <RootWebArea id=684 focusable url="about:blank"/>
 </RootWebArea>
