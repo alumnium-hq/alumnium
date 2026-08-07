@@ -26,6 +26,11 @@ jobs:
       python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
       typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
 
+    permissions:
+      contents: read
+      # NOTE: Needed for cache save
+      actions: write
+
     # Prevent running the workflow for PRs from ci/ or ci- branches, since those
     # trigger the workflow on branch push events.
     if: >
