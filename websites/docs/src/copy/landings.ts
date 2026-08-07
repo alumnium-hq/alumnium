@@ -230,7 +230,6 @@ const sections = {
       headline: "Why Alumnium",
 
       subheadline: txt`
-        TODO
         Alumnium combines high-level AI tools with the automation frameworks you
         already use, so you can adopt AI without replacing your test stack.
       `,
@@ -482,7 +481,7 @@ const sections = {
             headline: "What's in Alumnium",
 
             subheadline: txt`
-              TODO Three entry points for agents, existing testing suites and
+              Three entry points for agents, existing testing suites and
               brand new Markdown testing workflows.
             `,
           },
@@ -1971,7 +1970,7 @@ export const ttLandings = {
       href: "/blog/webvoyager-benchmark/",
 
       headline: langs({
-        en: "Alumnium achieves SOTA on WebVoyager with 98.5%.",
+        en: "SOTA on WebVoyager with 98.5%",
       }),
     },
   },

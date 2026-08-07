@@ -113,7 +113,7 @@ const { items } = Astro.props;
   }
 
   .accordion-button {
-    @apply text-left flex items-center justify-between gap-2  bg-accent-950/40 py-3 sm:py-4 text-accent-300 font-medium sm:text-lg font-display;
+    @apply text-left leading-snug flex items-center justify-between gap-2  bg-accent-950/40 py-3 sm:py-4 text-accent-300 font-medium sm:text-lg font-display;
 
     &:hover {
       & .accordion-button-icon {
@@ -140,7 +140,7 @@ const { items } = Astro.props;
   }
 
   .accordion-button-icon {
-    @apply text-2xl text-accent-500 rotate-90;
+    @apply text-2xl text-accent-500 rotate-90 shrink-0;
   }
 
   /* NOTE: .copy needed here for specificity level increase, as .copy applies
