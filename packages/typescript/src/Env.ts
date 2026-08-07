@@ -244,6 +244,13 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_TEST_PASS_THRESHOLD_PCT() {
+    return envVar(
+      "ALUMNIUM_TEST_PASS_THRESHOLD_PCT",
+      z.coerce.number().min(0).max(100).default(100),
+    );
+  },
+
   get ALUMNIUM_EVAL_TRIAL_COUNT() {
     return envVar("ALUMNIUM_EVAL_TRIAL_COUNT", z.coerce.number().default(25));
   },

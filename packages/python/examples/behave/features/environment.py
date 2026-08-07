@@ -15,11 +15,13 @@ from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
 from alumnium import Alumni
 from alumnium.drivers.appium_driver import AppiumDriver
+from examples.test_threshold import get_pass_threshold, process_pass_threshold
 
 driver_name = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 model_label = getenv("ALUMNIUM_MODEL")
 run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
+get_pass_threshold()
 
 
 @fixture
@@ -218,6 +220,7 @@ def alumnium(context):
 
 
 def before_all(context):
+    context.test_results = {"passed": 0, "failed": 0, "errors": 0}
     use_fixture(driver, context)
     use_fixture(alumnium, context)
 
@@ -234,8 +237,13 @@ def before_feature(_, feature):
 
 def after_scenario(context, scenario):
     if scenario.status == "passed":
+        context.test_results["passed"] += 1
         context.al.cache.save()
     else:
+        if scenario.hook_failed:
+            context.test_results["errors"] += 1
+        else:
+            context.test_results["failed"] += 1
         context.al.cache.discard()
 
     for formatter in context._runner.formatters:
@@ -267,3 +275,10 @@ def after_scenario(context, scenario):
             context.driver.install_app(context.app)
             context.driver.activate_app("com.example.android.architecture.blueprints.main")
             sleep(2)
+
+
+def after_all(context):
+    if context.aborted or context.test_results["errors"]:
+        return
+    threshold_status = process_pass_threshold(context.test_results["passed"], context.test_results["failed"])
+    context._runner.failed = threshold_status != 0

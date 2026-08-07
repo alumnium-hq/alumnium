@@ -3,14 +3,24 @@ import { defineConfig } from "vitest/config";
 import { Driver } from "./src/drivers/Driver.ts";
 import { Env } from "./src/Env.ts";
 import { Logger } from "./src/telemetry/Logger.ts";
+import PassThresholdReporter from "./tests/utils/PassThresholdReporter.ts";
+import type { InlineConfig } from "vitest/node";
 
 const driverKind = Env.ALUMNIUM_DRIVER;
 const isAppium = Driver.isAppium(driverKind);
 
 await Logger.initEnv();
 
+const reporters: InlineConfig["reporters"] & {} = ["default"];
+if (Env.ALUMNIUM_TEST_PASS_THRESHOLD_PCT < 100)
+  reporters.push(
+    new PassThresholdReporter(Env.ALUMNIUM_TEST_PASS_THRESHOLD_PCT),
+  );
+
 export default defineConfig({
   test: {
+    reporters,
+
     projects: [
       {
         test: {
@@ -21,6 +31,7 @@ export default defineConfig({
           maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,
         },
       },
+
       {
         test: {
           name: "system",

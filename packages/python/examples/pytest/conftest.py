@@ -15,6 +15,7 @@ from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
 from alumnium import Alumni
 from alumnium.drivers.appium_driver import AppiumDriver
+from examples.test_threshold import get_pass_threshold, process_pass_threshold
 
 load_dotenv()
 
@@ -22,6 +23,8 @@ driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
 model_label = getenv("ALUMNIUM_MODEL")
 run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
+test_results = {"passed": 0, "failed": 0, "errors": 0}
+get_pass_threshold()
 
 
 @fixture(scope="session")
@@ -233,3 +236,16 @@ def pytest_runtest_makereport(item):
             al.cache.save()
         else:
             al.cache.discard()
+
+        if report.passed:
+            test_results["passed"] += 1
+        elif report.failed:
+            test_results["failed"] += 1
+    elif report.failed:
+        test_results["errors"] += 1
+
+
+def pytest_sessionfinish(session, exitstatus):
+    if exitstatus != 1 or test_results["errors"]:
+        return
+    session.exitstatus = process_pass_threshold(test_results["passed"], test_results["failed"])
