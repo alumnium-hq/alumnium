@@ -53,8 +53,7 @@ class SeleniumDriver(BaseDriver):
     def platform(self) -> str:
         return "chromium"
 
-    @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def _fetch_accessibility_tree(self) -> ChromiumAccessibilityTree:
         # Switch to default content to ensure we're at the top level for frame enumeration
         self.driver.switch_to.default_content()
         self._wait_for_page_to_load()

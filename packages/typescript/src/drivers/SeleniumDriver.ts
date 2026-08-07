@@ -92,7 +92,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.get_accessibility_tree", spanAttrs)
-  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+  protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     // Switch to default content to ensure we're at the top level for frame enumeration
     await this.driver.switchTo().defaultContent();
     logger.debug("Waiting for page to load before getting accessibility tree");
