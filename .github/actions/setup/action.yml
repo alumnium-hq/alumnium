@@ -47,6 +47,15 @@ runs:
         path: ~/.cache/ms-playwright
         key: playwright-${{ runner.os }}
 
+    - name: Restore Gradle Cache
+      uses: actions/cache/restore@v5
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle-wrapper.properties', '**/gradle.properties') }}
+        restore-keys: gradle-${{ runner.os }}-
+
     - name: Cache Dist
       uses: actions/cache@v5
       with:
