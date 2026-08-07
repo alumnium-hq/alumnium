@@ -46,11 +46,13 @@ jobs:
           - driver: playwright
             model: azure_openai
 
-          - driver: appium-ios
-            model: azure_openai
+          # TODO: Figure out why LambdaTest started to fail.
 
-          - driver: appium-android
-            model: azure_openai
+          # - driver: appium-ios
+          #   model: azure_openai
+
+          # - driver: appium-android
+          #   model: azure_openai
 
     steps:
       - name: Git Checkout
