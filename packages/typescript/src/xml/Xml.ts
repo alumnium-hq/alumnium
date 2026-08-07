@@ -8,13 +8,13 @@ export namespace Xml {
 
   export type ChildNode = DomHandler.ChildNode;
 
-  export type Element = DomHandler.Element;
+  export type Tag = DomHandler.Element;
 
-  export type ElementAttrs = Record<string, string>;
+  export type TagAttrs = Record<string, string>;
 
   export type Text = DomHandler.Text;
 
-  export type AnyElement = Element | Text;
+  export type AnyElement = Tag | Text;
 }
 
 export abstract class Xml {
@@ -40,9 +40,9 @@ export abstract class Xml {
     const roots = Xml.parseRootChildren(xml);
     let root: DomHandler.Element | null = null;
     for (const node of roots) {
-      const element = Xml.nodeAsTag(node);
-      if (element?.tagName === "root") {
-        root = element;
+      const tag = Xml.nodeAsTag(node);
+      if (tag?.tagName === "root") {
+        root = tag;
         break;
       }
     }
@@ -50,11 +50,11 @@ export abstract class Xml {
     return root;
   }
 
-  static isTag(node: Xml.Node): node is Xml.Element {
+  static isTag(node: Xml.Node): node is Xml.Tag {
     return isTag(node);
   }
 
-  static nodeAsTag(node: Xml.Node): Xml.Element | null {
+  static nodeAsTag(node: Xml.Node): Xml.Tag | null {
     if (isTag(node)) return node;
     return null;
   }
@@ -68,13 +68,13 @@ export abstract class Xml {
     return new Text(content);
   }
 
-  static element(
+  static tag(
     content: string,
-    attrs: Xml.ElementAttrs = {},
+    attrs: Xml.TagAttrs = {},
     children: Xml.AnyElement[] = [],
-  ): Xml.Element {
-    const element = new Element(content, attrs);
-    element.children = children;
-    return element;
+  ): Xml.Tag {
+    const tag = new Element(content, attrs);
+    tag.children = children;
+    return tag;
   }
 }

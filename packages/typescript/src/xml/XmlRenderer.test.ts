@@ -4,8 +4,8 @@ import { XmlRenderer } from "./XmlRenderer.ts";
 
 describe("XmlRenderer", () => {
   it("formats nested elements with two spaces by default", () => {
-    const root = Xml.element("root", { id: "1" }, [
-      Xml.element("button", { name: "OK" }),
+    const root = Xml.tag("root", { id: "1" }, [
+      Xml.tag("button", { name: "OK" }),
     ]);
 
     expect(XmlRenderer.render([root])).toMatchInlineSnapshot(`
@@ -16,7 +16,7 @@ describe("XmlRenderer", () => {
   });
 
   it("supports custom indentation", () => {
-    const root = Xml.element("root", {}, [Xml.element("child")]);
+    const root = Xml.tag("root", {}, [Xml.tag("child")]);
 
     expect(XmlRenderer.render([root], { indentation: "\t" }))
       .toMatchInlineSnapshot(`
@@ -27,7 +27,7 @@ describe("XmlRenderer", () => {
   });
 
   it("removes formatting whitespace when minified", () => {
-    const root = Xml.element("root", {}, [Xml.element("child")]);
+    const root = Xml.tag("root", {}, [Xml.tag("child")]);
 
     expect(XmlRenderer.render([root], { minify: true })).toMatchInlineSnapshot(
       `"<root><child/></root>"`,
@@ -35,27 +35,62 @@ describe("XmlRenderer", () => {
   });
 
   it("sanitizes raw text and attributes", () => {
-    const root = Xml.element("root", { label: 'a < b & "c"\n' }, [
+    const root = Xml.tag("root", { label: 'a < b & "c"\n' }, [
       Xml.text("<< Back & done"),
     ]);
 
-    expect(XmlRenderer.render([root])).toMatchInlineSnapshot(`
-      "<root label="a &lt; b &amp; &quot;c&quot;&#xA;">
-        &lt;&lt; Back &amp; done
+    expect(XmlRenderer.render([root])).toMatchInlineSnapshot(
+      `"<root label="a &lt; b &amp; &quot;c&quot;&#xA;">&lt;&lt; Back &amp; done</root>"`,
+    );
+  });
+
+  it("renders a sole single-line text child inline", () => {
+    const button = Xml.tag("Button", { id: "53", clickable: "true" }, [
+      Xml.text(" = "),
+    ]);
+
+    expect(XmlRenderer.render(button)).toBe(
+      "<Button id=53 clickable>=</Button>",
+    );
+  });
+
+  it("sanitizes sole single-line text rendered inline", () => {
+    const button = Xml.tag("Button", {}, [Xml.text("< Back & done")]);
+
+    expect(XmlRenderer.render(button)).toBe(
+      "<Button>&lt; Back &amp; done</Button>",
+    );
+  });
+
+  it("indents every line of a sole multiline text child", () => {
+    const root = Xml.tag("root", {}, [
+      Xml.tag("div", { id: "33" }, [
+        Xml.text(
+          "IP address: 158.140.129.251\r\nTime: now\r\n\r\nURL: example\n",
+        ),
+      ]),
+    ]);
+
+    expect(XmlRenderer.render(root)).toMatchInlineSnapshot(`
+      "<root>
+        <div id=33>
+          IP address: 158.140.129.251
+          Time: now
+          
+          URL: example
+        </div>
       </root>"
     `);
   });
 
   it("renders empty attributes explicitly", () => {
-    const root = Xml.element("root", { empty: "" });
+    const root = Xml.tag("root", { empty: "" });
 
-    expect(XmlRenderer.render([root])).toMatchInlineSnapshot(
-      `"<root/>"`,
-    );
+    expect(XmlRenderer.render([root])).toMatchInlineSnapshot(`"<root/>"`);
   });
 
   it("renders compact attributes", () => {
-    const root = Xml.element("root", {
+    const root = Xml.tag("root", {
       enabled: "true",
       disabled: "false",
       empty: "",

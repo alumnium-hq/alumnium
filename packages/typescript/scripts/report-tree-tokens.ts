@@ -90,7 +90,14 @@ try {
         ...Object.keys(currentSnapshots),
       ]),
     ).sort();
-    const before = sumTokens(baselineSnapshots);
+    const comparedSnapshotNames = snapshotNames.filter(
+      (snapshotName) =>
+        snapshotName in baselineSnapshots && snapshotName in currentSnapshots,
+    );
+    const before = sumTokens(baselineSnapshots, comparedSnapshotNames);
+    const after = sumTokens(currentSnapshots, comparedSnapshotNames);
+    const averageBefore = Math.round(before / comparedSnapshotNames.length);
+    const averageAfter = Math.round(after / comparedSnapshotNames.length);
 
     lines.push(
       "",
@@ -103,8 +110,8 @@ try {
         const currentTokens = currentSnapshots[snapshotName] ?? 0;
         return `| \`${snapshotName}\` | ${baselineTokens} | ${currentTokens} | ${formatChange(currentTokens - baselineTokens)} | ${formatPercent(baselineTokens, currentTokens)} |`;
       }),
-      `| _Average_ | _${Math.round(before / Object.keys(baselineSnapshots).length)}_ | _${Math.round(platform.total / platform.snapshots.length)}_ | _${formatChange(Math.round(platform.total / platform.snapshots.length) - Math.round(before / Object.keys(baselineSnapshots).length))}_ | _${formatPercent(Math.round(before / Object.keys(baselineSnapshots).length), Math.round(platform.total / platform.snapshots.length))}_ |`,
-      `| **Total** | **${before}** | **${platform.total}** | **${formatChange(platform.total - before)}** | **${formatPercent(before, platform.total)}** |`,
+      `| _Average_ | _${averageBefore}_ | _${averageAfter}_ | _${formatChange(averageAfter - averageBefore)}_ | _${formatPercent(averageBefore, averageAfter)}_ |`,
+      `| **Total** | **${before}** | **${after}** | **${formatChange(after - before)}** | **${formatPercent(before, after)}** |`,
     );
   }
 
@@ -181,8 +188,14 @@ async function readBaseline(
   }
 }
 
-function sumTokens(snapshots: Record<string, number>): number {
-  return Object.values(snapshots).reduce((total, tokens) => total + tokens, 0);
+function sumTokens(
+  snapshots: Record<string, number>,
+  snapshotNames: string[],
+): number {
+  return snapshotNames.reduce(
+    (total, snapshotName) => total + snapshots[snapshotName]!,
+    0,
+  );
 }
 
 function formatChange(change: number): string {
