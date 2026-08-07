@@ -24,9 +24,13 @@ public abstract sealed class BaseDriver permits SeleniumDriver, PlaywrightDriver
 
   public BaseAccessibilityTree accessibilityTree() {
     if (cachedAccessibilityTree == null) {
-      cachedAccessibilityTree = fetchAccessibilityTree();
+      setAccessibilityTree(fetchAccessibilityTree());
     }
     return cachedAccessibilityTree;
+  }
+
+  public void setAccessibilityTree(BaseAccessibilityTree tree) {
+    cachedAccessibilityTree = tree;
   }
 
   public void resetAccessibilityTree() {
