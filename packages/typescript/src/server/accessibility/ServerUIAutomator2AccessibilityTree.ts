@@ -2,7 +2,6 @@ import { always } from "alwaysly";
 import { Element, Node } from "domhandler";
 import { Xml } from "../../Xml.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
-import { Env } from "../../Env.ts";
 
 export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibilityTree {
   #tree: InternalNode[];
