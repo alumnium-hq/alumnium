@@ -17,6 +17,10 @@ export abstract class BaseDriver {
     return this.#cachedAccessibilityTree;
   }
 
+  setAccessibilityTree(tree: BaseAccessibilityTree) {
+    this.#cachedAccessibilityTree = tree;
+  }
+
   resetAccessibilityTree() {
     this.#cachedAccessibilityTree = null;
   }

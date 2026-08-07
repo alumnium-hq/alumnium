@@ -11,8 +11,11 @@ class BaseDriver(ABC):
         cached = getattr(self, "_cached_accessibility_tree", None)
         if cached is None:
             cached = self._fetch_accessibility_tree()
-            self._cached_accessibility_tree = cached
+            self.set_accessibility_tree(cached)
         return cached
+
+    def set_accessibility_tree(self, tree: BaseAccessibilityTree):
+        self._cached_accessibility_tree = tree
 
     def reset_accessibility_tree(self):
         self._cached_accessibility_tree = None

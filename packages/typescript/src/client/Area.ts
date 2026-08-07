@@ -41,6 +41,7 @@ export class Area {
   async do(goal: string): Promise<DoResult> {
     return retry(async () => {
       const app = await this.driver.app();
+      this.driver.setAccessibilityTree(this.accessibilityTree);
 
       const { explanation, steps } = await this.client.planActions({
         goal,
@@ -139,6 +140,7 @@ export class Area {
   @span("alumni.find", spanAttrs)
   async find(description: string): Promise<Element | undefined> {
     return retry(async () => {
+      this.driver.setAccessibilityTree(this.accessibilityTree);
       const response = await this.client.findElement({
         description,
         accessibilityTree: this.accessibilityTree.toStr(),
