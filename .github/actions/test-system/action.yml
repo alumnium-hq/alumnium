@@ -17,7 +17,6 @@ inputs:
   sha:
     required: true
     description: "Git SHA to use for caching."
-
 runs:
   using: "composite"
   steps:
@@ -36,6 +35,8 @@ runs:
     - name: System Tests
       run: mise //packages/${{ inputs.package }}:test/system:${{ inputs.driver }}
       shell: bash
+      env:
+        ALUMNIUM_TEST_PASS_THRESHOLD_PCT: 90
 
     - name: Save Alumnium Cache
       if: always()

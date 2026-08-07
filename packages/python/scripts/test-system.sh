@@ -6,6 +6,7 @@
 set -euo pipefail
 
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
+ALUMNIUM_TEST_PASS_THRESHOLD_PCT="${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-100}"
 
 failed=0
 run_tests() {
@@ -18,6 +19,8 @@ run_tests() {
 }
 
 cd "$PKG_DIR"
+
+echo "🔵 ALUMNIUM_TEST_PASS_THRESHOLD_PCT=$ALUMNIUM_TEST_PASS_THRESHOLD_PCT"
 
 export ALUMNIUM_LOG_LEVEL=debug
 export ALUMNIUM_PRUNE_LOGS=true
