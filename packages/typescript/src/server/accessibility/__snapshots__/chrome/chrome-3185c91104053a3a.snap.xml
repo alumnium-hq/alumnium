@@ -1,22 +1,18 @@
 <RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/upload">
-  <div id=3>
+  <div id=6>
     <link id=7 focusable url="https://github.com/tourdedave/the-internet">
       <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
     </link>
-    <div id=9>
-      <heading id=11 level=3>
-        File Uploaded!
-      </heading>
+    <div id=10>
+      <heading id=11 level=3>File Uploaded!</heading>
       e990a3b7-0d61-4e1f-9260-cf03b575248d.txt
     </div>
-    <div id=18>
-      <separator id=19 settable orientation="horizontal"/>
-      <div id=20>
-        Powered by
-        <link id=23 focusable url="http://elementalselenium.com/">
-          Elemental Selenium
-        </link>
-      </div>
+  </div>
+  <div id=18>
+    <separator id=19 settable orientation="horizontal"/>
+    <div id=20>
+      Powered by
+      <link id=23 focusable url="http://elementalselenium.com/">Elemental Selenium</link>
     </div>
   </div>
 </RootWebArea>

@@ -1,108 +1,57 @@
-<hierarchy>
-  <hierarchy id=2>
-    <FrameLayout id=3>
-      <LinearLayout id=4>
-        <FrameLayout id=5>
-          <FrameLayout id=6>
-            <FrameLayout id=7 resource-id="android:id/content">
-              <ViewGroup id=8 resource-id="com.android.chrome:id/coordinator">
-                <View id=9 clickable/>
-                <FrameLayout id=10 resource-id="com.android.chrome:id/compositor_view_holder">
-                  <FrameLayout id=11>
-                    <View id=12/>
-                  </FrameLayout>
-                  <FrameLayout id=13 content-desc="Web View"/>
-                </FrameLayout>
-                <FrameLayout id=14 resource-id="com.android.chrome:id/omnibox_results_container">
-                  <RecyclerView id=15>
-                    <ViewGroup id=16 clickable>
-                      <ImageView id=17/>
-                      <LinearLayout id=18>
-                        <TextView id=19 resource-id="com.android.chrome:id/line_1" text="Buy milk"/>
-                      </LinearLayout>
-                    </ViewGroup>
-                    <ViewGroup id=20 clickable>
-                      <ImageView id=21/>
-                      <LinearLayout id=22>
-                        <TextView id=23 resource-id="com.android.chrome:id/line_1" text="buy milk near me"/>
-                      </LinearLayout>
-                      <ImageView id=24 content-desc="Refine: buy milk near me" clickable/>
-                    </ViewGroup>
-                    <ViewGroup id=25 clickable>
-                      <ImageView id=26/>
-                      <LinearLayout id=27>
-                        <TextView id=28 resource-id="com.android.chrome:id/line_1" text="buy milk online"/>
-                      </LinearLayout>
-                      <ImageView id=29 content-desc="Refine: buy milk online" clickable/>
-                    </ViewGroup>
-                    <ViewGroup id=30 clickable>
-                      <ImageView id=31/>
-                      <LinearLayout id=32>
-                        <TextView id=33 resource-id="com.android.chrome:id/line_1" text="buy milkweed plant"/>
-                      </LinearLayout>
-                      <ImageView id=34 content-desc="Refine: buy milkweed plant" clickable/>
-                    </ViewGroup>
-                    <ViewGroup id=35 clickable>
-                      <ImageView id=36/>
-                      <LinearLayout id=37>
-                        <TextView id=38 resource-id="com.android.chrome:id/line_1" text="buy milk crates"/>
-                      </LinearLayout>
-                      <ImageView id=39 content-desc="Refine: buy milk crates" clickable/>
-                    </ViewGroup>
-                    <ViewGroup id=40 clickable>
-                      <ImageView id=41/>
-                      <LinearLayout id=42>
-                        <TextView id=43 resource-id="com.android.chrome:id/line_1" text="buy milk thistle"/>
-                      </LinearLayout>
-                      <ImageView id=44 content-desc="Refine: buy milk thistle" clickable/>
-                    </ViewGroup>
-                    <ViewGroup id=45 clickable>
-                      <ImageView id=46/>
-                      <LinearLayout id=47>
-                        <TextView id=48 resource-id="com.android.chrome:id/line_1" text="buy milk frother"/>
-                      </LinearLayout>
-                      <ImageView id=49 content-desc="Refine: buy milk frother" clickable/>
-                    </ViewGroup>
-                    <ViewGroup id=50 clickable>
-                      <ImageView id=51/>
-                      <LinearLayout id=52>
-                        <TextView id=53 resource-id="com.android.chrome:id/line_1" text="buy milk powder"/>
-                      </LinearLayout>
-                      <ImageView id=54 content-desc="Refine: buy milk powder" clickable/>
-                    </ViewGroup>
-                    <ViewGroup id=55 clickable>
-                      <ImageView id=56/>
-                      <LinearLayout id=57>
-                        <TextView id=58 resource-id="com.android.chrome:id/line_1" text="buy milkweed plant near me"/>
-                      </LinearLayout>
-                      <ImageView id=59 content-desc="Refine: buy milkweed plant near me" clickable/>
-                    </ViewGroup>
-                  </RecyclerView>
-                </FrameLayout>
-                <FrameLayout id=60 resource-id="com.android.chrome:id/control_container">
-                  <FrameLayout id=61 resource-id="com.android.chrome:id/toolbar_container">
-                    <FrameLayout id=62 resource-id="com.android.chrome:id/toolbar">
-                      <FrameLayout id=63 resource-id="com.android.chrome:id/location_bar">
-                        <LinearLayout id=64 resource-id="com.android.chrome:id/location_bar_status" clickable>
-                          <LinearLayout id=65 resource-id="com.android.chrome:id/location_bar_status_icon_view">
-                            <FrameLayout id=66 resource-id="com.android.chrome:id/location_bar_status_icon_frame">
-                              <ImageView id=67 resource-id="com.android.chrome:id/location_bar_status_icon"/>
-                            </FrameLayout>
-                          </LinearLayout>
-                        </LinearLayout>
-                        <EditText id=68 resource-id="com.android.chrome:id/url_bar" text="Buy milk" clickable/>
-                        <LinearLayout id=69 resource-id="com.android.chrome:id/url_action_container">
-                          <ImageButton id=70 resource-id="com.android.chrome:id/delete_button" content-desc="Clear input" clickable/>
-                        </LinearLayout>
-                      </FrameLayout>
-                    </FrameLayout>
-                  </FrameLayout>
-                </FrameLayout>
-              </ViewGroup>
-            </FrameLayout>
-          </FrameLayout>
-        </FrameLayout>
-      </LinearLayout>
-    </FrameLayout>
-  </hierarchy>
-</hierarchy>
+<div id=1>
+  <div id=9 clickable/>
+  <div id=13 content-desc="Web View"/>
+  <RecyclerView id=15>
+    <div id=16 clickable>
+      <ImageView id=17/>
+      <div id=19 resource-id="line_1">Buy milk</div>
+    </div>
+    <div id=20 clickable>
+      <ImageView id=21/>
+      <div id=23 resource-id="line_1">buy milk near me</div>
+      <ImageView id=24 content-desc="Refine: buy milk near me" clickable/>
+    </div>
+    <div id=25 clickable>
+      <ImageView id=26/>
+      <div id=28 resource-id="line_1">buy milk online</div>
+      <ImageView id=29 content-desc="Refine: buy milk online" clickable/>
+    </div>
+    <div id=30 clickable>
+      <ImageView id=31/>
+      <div id=33 resource-id="line_1">buy milkweed plant</div>
+      <ImageView id=34 content-desc="Refine: buy milkweed plant" clickable/>
+    </div>
+    <div id=35 clickable>
+      <ImageView id=36/>
+      <div id=38 resource-id="line_1">buy milk crates</div>
+      <ImageView id=39 content-desc="Refine: buy milk crates" clickable/>
+    </div>
+    <div id=40 clickable>
+      <ImageView id=41/>
+      <div id=43 resource-id="line_1">buy milk thistle</div>
+      <ImageView id=44 content-desc="Refine: buy milk thistle" clickable/>
+    </div>
+    <div id=45 clickable>
+      <ImageView id=46/>
+      <div id=48 resource-id="line_1">buy milk frother</div>
+      <ImageView id=49 content-desc="Refine: buy milk frother" clickable/>
+    </div>
+    <div id=50 clickable>
+      <ImageView id=51/>
+      <div id=53 resource-id="line_1">buy milk powder</div>
+      <ImageView id=54 content-desc="Refine: buy milk powder" clickable/>
+    </div>
+    <div id=55 clickable>
+      <ImageView id=56/>
+      <div id=58 resource-id="line_1">buy milkweed plant near me</div>
+      <ImageView id=59 content-desc="Refine: buy milkweed plant near me" clickable/>
+    </div>
+  </RecyclerView>
+  <div id=63 resource-id="location_bar">
+    <div id=64 resource-id="location_bar_status" clickable>
+      <ImageView id=67 resource-id="location_bar_status_icon"/>
+    </div>
+    <EditText id=68 resource-id="url_bar" clickable>Buy milk</EditText>
+    <ImageButton id=70 content-desc="Clear input" resource-id="delete_button" clickable/>
+  </div>
+</div>

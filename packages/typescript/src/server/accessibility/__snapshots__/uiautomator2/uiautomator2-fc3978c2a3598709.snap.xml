@@ -1,76 +1,37 @@
-<hierarchy>
-  <hierarchy id=2>
-    <FrameLayout id=3>
-      <LinearLayout id=4>
-        <FrameLayout id=5>
-          <FrameLayout id=6>
-            <FrameLayout id=7 resource-id="android:id/content">
-              <ViewGroup id=8 resource-id="com.android.chrome:id/coordinator">
-                <FrameLayout id=9 resource-id="com.android.chrome:id/compositor_view_holder">
-                  <FrameLayout id=10>
-                    <View id=11/>
-                  </FrameLayout>
-                  <FrameLayout id=12>
-                    <WebView id=13 text="The Internet">
-                      <View id=14>
-                        <TextView id=15 resource-id="flash-messages"/>
-                        <View id=16 content-desc="Fork me on GitHub" clickable>
-                          <Image id=17 text="Fork me on GitHub"/>
-                        </View>
-                        <View id=18 resource-id="content">
-                          <TextView id=19 text="Forgot Password"/>
-                          <View id=20 resource-id="forgot_password">
-                            <View id=21>
-                              <View id=22 text="E-mail"/>
-                              <EditText id=23 resource-id="email" text="test@example.com" clickable/>
-                            </View>
-                            <Button id=24 resource-id="form_submit" text="Retrieve password" clickable/>
-                          </View>
-                        </View>
-                        <View id=25 resource-id="page-footer">
-                          <View id=26>
-                            <View id=27/>
-                            <View id=28>
-                              <TextView id=29 text="Powered by "/>
-                              <View id=30 content-desc="Elemental Selenium" clickable>
-                                <TextView id=31 text="Elemental Selenium"/>
-                              </View>
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </WebView>
-                  </FrameLayout>
-                </FrameLayout>
-                <FrameLayout id=32 resource-id="com.android.chrome:id/control_container">
-                  <FrameLayout id=33 resource-id="com.android.chrome:id/toolbar_container">
-                    <FrameLayout id=34 resource-id="com.android.chrome:id/toolbar">
-                      <ImageButton id=35 resource-id="com.android.chrome:id/home_button" content-desc="Home" clickable/>
-                      <FrameLayout id=36 resource-id="com.android.chrome:id/location_bar">
-                        <LinearLayout id=37 resource-id="com.android.chrome:id/location_bar_status" clickable>
-                          <LinearLayout id=38 resource-id="com.android.chrome:id/location_bar_status_icon_view">
-                            <FrameLayout id=39 resource-id="com.android.chrome:id/location_bar_status_icon_frame">
-                              <ImageView id=40 resource-id="com.android.chrome:id/location_bar_status_icon" content-desc="Connection is secure"/>
-                            </FrameLayout>
-                          </LinearLayout>
-                        </LinearLayout>
-                        <EditText id=41 resource-id="com.android.chrome:id/url_bar" text="the-internet.herokuapp.com/forgot_password" clickable/>
-                      </FrameLayout>
-                      <LinearLayout id=42 resource-id="com.android.chrome:id/toolbar_buttons">
-                        <ImageButton id=43 resource-id="com.android.chrome:id/tab_switcher_button" content-desc="Switch or close tabs" clickable/>
-                        <FrameLayout id=44 resource-id="com.android.chrome:id/menu_button_wrapper">
-                          <ImageButton id=45 resource-id="com.android.chrome:id/menu_button" content-desc="More options" clickable/>
-                        </FrameLayout>
-                      </LinearLayout>
-                    </FrameLayout>
-                    <ImageView id=46 resource-id="com.android.chrome:id/toolbar_hairline"/>
-                  </FrameLayout>
-                </FrameLayout>
-              </ViewGroup>
-            </FrameLayout>
-          </FrameLayout>
-        </FrameLayout>
-      </LinearLayout>
-    </FrameLayout>
-  </hierarchy>
-</hierarchy>
+<div id=1>
+  <WebView id=13 text="The Internet">
+    <div id=16 content-desc="Fork me on GitHub" clickable>
+      <Image id=17>Fork me on GitHub</Image>
+    </div>
+    <div id=18 resource-id="content">
+      <div id=19>Forgot Password</div>
+      <div id=20 resource-id="forgot_password">
+        <div id=21>
+          <div id=22>E-mail</div>
+          <EditText id=23 resource-id="email" clickable>test@example.com</EditText>
+        </div>
+        <Button id=24 resource-id="form_submit" clickable>Retrieve password</Button>
+      </div>
+    </div>
+    <div id=28>
+      <div id=29>Powered by</div>
+      <div id=30 content-desc="Elemental Selenium" clickable/>
+    </div>
+  </WebView>
+  <div id=33 resource-id="toolbar_container">
+    <div id=34 resource-id="toolbar">
+      <ImageButton id=35 content-desc="Home" resource-id="home_button" clickable/>
+      <div id=36 resource-id="location_bar">
+        <div id=37 resource-id="location_bar_status" clickable>
+          <ImageView id=40 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+        </div>
+        <EditText id=41 resource-id="url_bar" clickable>the-internet.herokuapp.com/forgot_password</EditText>
+      </div>
+      <div id=42 resource-id="toolbar_buttons">
+        <ImageButton id=43 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
+        <ImageButton id=45 content-desc="More options" resource-id="menu_button" clickable/>
+      </div>
+    </div>
+    <ImageView id=46 resource-id="toolbar_hairline"/>
+  </div>
+</div>
