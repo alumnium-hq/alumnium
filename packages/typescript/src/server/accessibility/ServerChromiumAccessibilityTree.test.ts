@@ -12,86 +12,63 @@ describe(ServerChromiumAccessibilityTree, () => {
     it("toXml converts tree to expected XML", async () => {
       const tree = await basicChromiumTree();
 
-      expect(tree.toXml()).toBe(
-        `
-<RootWebArea name="TodoMVC: React" id="1" focusable="true">
-  <div id="4">
-    <div id="5">
-      <heading id="6" level="1">
-        todos
-      </heading>
-      <div id="8">
-        <textbox name="New Todo Input" id="9" invalid="false" focusable="true" editable="plaintext" settable="true" multiline="false" readonly="false" required="false" labelledby="">
-          <div id="11" editable="plaintext"/>
-        </textbox>
-        <LabelText id="12">
-          New Todo Input
-        </LabelText>
-      </div>
-    </div>
-    <main id="14">
-      <div id="15">
-        <checkbox id="16" invalid="false" focusable="true" checked="false"/>
-        <LabelText id="17">
-          \\u276fToggle All Input
-        </LabelText>
-      </div>
-      <list id="21">
-        <listitem id="22" level="1">
-          <checkbox id="24" invalid="false" focusable="true" focused="true" checked="true"/>
-          <LabelText id="25">
-            hello
-          </LabelText>
-        </listitem>
-        <listitem id="27" level="1">
-          <checkbox id="29" invalid="false" focusable="true" checked="false"/>
-          <LabelText id="30">
-            he
-          </LabelText>
-        </listitem>
-      </list>
-    </main>
-    <div id="32">
-      1 item left!
-      <list id="35">
-        <listitem id="36" level="1">
-          <link id="37" focusable="true">
-            All
-          </link>
-        </listitem>
-        <listitem id="39" level="1">
-          <link id="40" focusable="true">
-            Active
-          </link>
-        </listitem>
-        <listitem id="42" level="1">
-          <link id="43" focusable="true">
-            Completed
-          </link>
-        </listitem>
-      </list>
-      <button id="45" invalid="false" focusable="true">
-        Clear completed
-      </button>
-    </div>
-  </div>
-  <contentinfo id="47">
-    <paragraph id="48">
-      Double-click to edit a todo
-    </paragraph>
-    <paragraph id="50">
-      Created by the TodoMVC Team
-    </paragraph>
-    <paragraph id="52">
-      Part of
-      <link id="54" focusable="true">
-        TodoMVC
-      </link>
-    </paragraph>
-  </contentinfo>
-</RootWebArea>
-`.trim(),
-      );
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<RootWebArea name="TodoMVC: React" id=1>
+          <div id=4>
+            <div id=5>
+              <heading id=6 level=1>todos</heading>
+              <div id=8>
+                <textbox name="New Todo Input" id=9 editable="plaintext">
+                  <div id=11 editable="plaintext"/>
+                </textbox>
+                <LabelText id=12>New Todo Input</LabelText>
+              </div>
+            </div>
+            <main id=14>
+              <div id=15>
+                <checkbox id=16/>
+                <LabelText id=17>
+                  <div id=19>\\u276f</div>
+                  <div id=20>Toggle All Input</div>
+                </LabelText>
+              </div>
+              <list id=21>
+                <listitem id=22 level=1>
+                  <checkbox id=24/>
+                  <LabelText id=25>hello</LabelText>
+                </listitem>
+                <listitem id=27 level=1>
+                  <checkbox id=29/>
+                  <LabelText id=30>he</LabelText>
+                </listitem>
+              </list>
+            </main>
+            <div id=32>
+              1 item left!
+              <list id=35>
+                <listitem id=36 level=1>
+                  <link id=37>All</link>
+                </listitem>
+                <listitem id=39 level=1>
+                  <link id=40>Active</link>
+                </listitem>
+                <listitem id=42 level=1>
+                  <link id=43>Completed</link>
+                </listitem>
+              </list>
+              <button id=45>Clear completed</button>
+            </div>
+          </div>
+          <contentinfo id=47>
+            <paragraph id=48>Double-click to edit a todo</paragraph>
+            <paragraph id=50>Created by the TodoMVC Team</paragraph>
+            <paragraph id=52>
+              Part of
+              <link id=54>TodoMVC</link>
+            </paragraph>
+          </contentinfo>
+        </RootWebArea>"
+      `);
     });
 
     it("toXml supports excluding attributes", async () => {
@@ -100,6 +77,193 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       expect(xml.includes(" id=")).toBe(false);
       expect(xml.includes(" focusable=")).toBe(false);
+    });
+
+    it("preserves adjacent text sibling boundaries", () => {
+      const rawXml = lit`
+        <group raw_id="801" ignored="false" name="">
+          <none raw_id="802" ignored="true">
+            <link raw_id="803" ignored="false" name="Tama's Little Music Shop" focusable="true" url="https://www.youtube.com/@tamamusic">
+              <StaticText raw_id="804" ignored="false" name="Tama's Little Music Shop"/>
+            </link>
+          </none>
+          <none raw_id="806" ignored="true">
+            <StaticText raw_id="807" ignored="false" name="1.2K views"/>
+          </none>
+          <generic raw_id="809" ignored="false" name="10 months ago">
+            <StaticText raw_id="810" ignored="false" name="10 months ago"/>
+          </generic>
+        </group>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<group id=1>
+          <link id=3 focusable url="https://www.youtube.com/@tamamusic">Tama's Little Music Shop</link>
+          1.2K views
+          <div id=7>10 months ago</div>
+        </group>"
+      `);
+    });
+
+    it("inlines StaticText and ignores fragmented InlineTextBox children", () => {
+      const rawXml = lit`
+        <link raw_id="7" ignored="false" name="Skip to content" focusable="true" url="https://github.com/alumnium-hq/alumnium/pull/256#start-of-content">
+          <StaticText raw_id="8" ignored="false" name="Skip to content">
+            <InlineTextBox raw_id="9" ignored="false" name="S"/>
+            <InlineTextBox raw_id="10" ignored="false" name="k"/>
+            <InlineTextBox raw_id="11" ignored="false" name="ip "/>
+            <InlineTextBox raw_id="12" ignored="false" name="to content"/>
+          </StaticText>
+        </link>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(
+        `"<link id=1 focusable url="https://github.com/alumnium-hq/alumnium/pull/256#start-of-content">Skip to content</link>"`,
+      );
+    });
+
+    it("trims names and whitespace-only generic nodes", () => {
+      const rawXml = lit`
+        <generic raw_id="1" ignored="false" name="">
+          <generic raw_id="2" ignored="false" name="  Dark Mode  "/>
+          <generic raw_id="3" ignored="false" name="      "/>
+          <link raw_id="4" ignored="false" name="  Calculator  "/>
+        </generic>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<div id=1>
+          <div name="Dark Mode" id=2/>
+          <link name="Calculator" id=4/>
+        </div>"
+      `);
+    });
+
+    it("removes empty generic live regions", () => {
+      const rawXml = lit`
+        <group raw_id="1" ignored="false" name="">
+          <generic raw_id="2" ignored="false" name="" live="polite" atomic="true" relevant="additions text"/>
+          <generic raw_id="3" ignored="false" name="" live="assertive" atomic="true" relevant="additions text"/>
+          <generic raw_id="4" ignored="false" name="Update" live="polite" atomic="true" relevant="additions text"/>
+          <generic raw_id="5" ignored="false" name="" live="polite" focusable="true"/>
+          <alert raw_id="6" ignored="false" name="" live="assertive" atomic="true" relevant="additions text"/>
+        </group>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<group id=1>
+          <div name="Update" id=4 live="polite" atomic relevant="additions text"/>
+          <div id=5 live="polite" focusable/>
+          <alert id=6 live="assertive" atomic relevant="additions text"/>
+        </group>"
+      `);
+    });
+
+    it("unwraps an only generic child with multiple children", () => {
+      const rawXml = lit`
+        <listitem raw_id="1" ignored="false" name="" level="1">
+          <generic raw_id="2" ignored="false" name="">
+            <button raw_id="3" ignored="false" name="API &amp; IaC" focusable="true"/>
+            <list raw_id="4" ignored="false" name=""/>
+          </generic>
+        </listitem>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<listitem id=1 level=1>
+          <button name="API &amp; IaC" id=3 focusable/>
+          <list id=4/>
+        </listitem>"
+      `);
+    });
+
+    it("preserves generic wrappers around mixed text and element children", () => {
+      const rawXml = lit`
+        <contentinfo raw_id="1" ignored="false" name="">
+          <generic raw_id="2" ignored="false" name="">
+            <StaticText raw_id="3" ignored="false" name="Copyright © 2021-2026 "/>
+            <link raw_id="4" ignored="false" name="Boni García" focusable="true" url="https://bonigarcia.dev/">
+              <StaticText raw_id="5" ignored="false" name="Boni García"/>
+            </link>
+          </generic>
+        </contentinfo>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<contentinfo id=1>
+          <div id=2>
+            Copyright © 2021-2026
+            <link id=4 focusable url="https://bonigarcia.dev/">Boni García</link>
+          </div>
+        </contentinfo>"
+      `);
+    });
+
+    it("removes wrappers retained only by empty generic siblings", () => {
+      const rawXml = lit`
+        <none raw_id="1" ignored="true">
+          <none raw_id="2" ignored="true">
+            <StaticText raw_id="3" ignored="false" name="Footer section"/>
+          </none>
+          <generic raw_id="4" ignored="false" name="">
+            <none raw_id="5" ignored="true">
+              <none raw_id="6" ignored="true">
+                <generic raw_id="7" ignored="false" name="">
+                  <generic raw_id="8" ignored="false" name="">
+                    <StaticText raw_id="9" ignored="false" name="© 2026 Airbnb, Inc."/>
+                  </generic>
+                  <generic raw_id="10" ignored="false" name="">
+                    <generic raw_id="11" ignored="false" name=""/>
+                    <generic raw_id="12" ignored="false" name="">
+                      <list raw_id="13" ignored="false" name=""/>
+                    </generic>
+                  </generic>
+                </generic>
+              </none>
+            </none>
+          </generic>
+        </none>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<div id=1>
+          Footer section
+          <div id=7>
+            © 2026 Airbnb, Inc.
+            <list id=13/>
+          </div>
+        </div>"
+      `);
+    });
+
+    it("preserves generic wrappers alongside siblings", () => {
+      const rawXml = lit`
+        <group raw_id="1" ignored="false" name="">
+          <generic raw_id="2" ignored="false" name="">
+            <button raw_id="3" ignored="false" name="First"/>
+            <button raw_id="4" ignored="false" name="Second"/>
+          </generic>
+          <button raw_id="5" ignored="false" name="Sibling"/>
+        </group>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<group id=1>
+          <div id=2>
+            <button name="First" id=3/>
+            <button name="Second" id=4/>
+          </div>
+          <button name="Sibling" id=5/>
+        </group>"
+      `);
     });
 
     it("trims tree", async () => {
@@ -176,16 +340,12 @@ describe(ServerChromiumAccessibilityTree, () => {
       expect(xml).toMatchInlineSnapshot(`
         "<RootWebArea name="YouTube" id=1 focusable url="https://www.youtube.com/">
           <banner id=8>
-            <div id=13>
-              <button name="Guide" id=15 focusable pressed/>
-              <div id=22>
-                <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/"/>
-                SG
-              </div>
-              <button id=34 focusable>
-                Skip navigation
-              </button>
+            <button name="Guide" id=15 focusable pressed/>
+            <div id=22>
+              <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/"/>
+              SG
             </div>
+            <button id=34 focusable>Skip navigation</button>
           </banner>
         </RootWebArea>"
       `);

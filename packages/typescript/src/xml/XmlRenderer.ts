@@ -55,7 +55,9 @@ export abstract class XmlRenderer {
         const trimmed = this.#sanitizeText(data.trim());
         if (!trimmed) continue;
         if (output) output += "\n";
-        output += `${this.#indent(depth, options)}${trimmed}`;
+        const indentation = this.#indent(depth, options);
+        output +=
+          indentation + trimmed.replace(/\r\n?|\n/g, `\n${indentation}`);
         continue;
       }
 
@@ -140,6 +142,17 @@ export abstract class XmlRenderer {
 
     const nodePreserveSpace =
       preserveSpace || element.attribs["xml:space"] === "preserve";
+    const onlyChild = children.length === 1 ? children[0] : undefined;
+    if (
+      !nodePreserveSpace &&
+      onlyChild?.type === ElementType.Text &&
+      !/[\r\n]/.test(onlyChild.data)
+    ) {
+      const renderedText = this.#sanitizeText(onlyChild.data.trim());
+      if (renderedText)
+        return `${prefix}<${name}${attributes}>${renderedText}</${name}>`;
+    }
+
     const renderedChildren = this.#renderFormattedChildren(
       children,
       options,
