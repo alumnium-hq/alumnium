@@ -8,7 +8,19 @@ import type { Keys } from "./keys.ts";
 export abstract class BaseDriver {
   abstract platform: Driver.Platform;
   abstract supportedTools: Set<ToolClass>;
-  abstract getAccessibilityTree(): Promise<BaseAccessibilityTree>;
+  protected abstract fetchAccessibilityTree(): Promise<BaseAccessibilityTree>;
+
+  #cachedAccessibilityTree: BaseAccessibilityTree | null = null;
+
+  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+    this.#cachedAccessibilityTree ??= await this.fetchAccessibilityTree();
+    return this.#cachedAccessibilityTree;
+  }
+
+  resetAccessibilityTree() {
+    this.#cachedAccessibilityTree = null;
+  }
+
   abstract click(id: number): Promise<void>;
   abstract dragSlider(id: number, value: number): void | Promise<void>;
   abstract dragAndDrop(fromId: number, toId: number): Promise<void>;

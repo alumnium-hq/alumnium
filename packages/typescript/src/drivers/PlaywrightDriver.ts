@@ -183,7 +183,7 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   @span("driver.get_accessibility_tree", spanAttrs)
-  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+  protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.waitForPageToLoad();
 
     const frameTree = (await this.client.send(

@@ -138,6 +138,7 @@ public final class Alumni implements AutoCloseable {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
+          driver.resetAccessibilityTree();
           HttpClient.RetrieveResult result =
               client.retrieve(
                   "Is the following true or false - " + statement,
@@ -162,6 +163,7 @@ public final class Alumni implements AutoCloseable {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
+          driver.resetAccessibilityTree();
           HttpClient.RetrieveResult result =
               client.retrieve(
                   data,
@@ -187,6 +189,7 @@ public final class Alumni implements AutoCloseable {
   public Object find(String description) {
     return Retry.execute(
         () -> {
+          driver.resetAccessibilityTree();
           FindElementResult response =
               client.findElement(description, driver.accessibilityTree().toStr(), driver.app());
           int id = response.id();
@@ -206,6 +209,7 @@ public final class Alumni implements AutoCloseable {
    *     use.
    */
   public Area area(String description) {
+    driver.resetAccessibilityTree();
     FindElementResult response =
         client.findArea(description, driver.accessibilityTree().toStr(), driver.app());
     int id = response.id();
@@ -259,6 +263,8 @@ public final class Alumni implements AutoCloseable {
     return Retry.execute(
         () -> {
           String app = driver.app();
+          // Start from a fresh snapshot; it stays cached until the next step resets it.
+          driver.resetAccessibilityTree();
           BaseAccessibilityTree initial = driver.accessibilityTree();
           String beforeTree = changeAnalysis ? initial.toStr() : null;
           String beforeUrl = changeAnalysis ? driver.url() : null;
@@ -270,7 +276,11 @@ public final class Alumni implements AutoCloseable {
           List<String> steps = plan.steps();
           for (int idx = 0; idx < steps.size(); idx++) {
             String step = steps.get(idx);
-            BaseAccessibilityTree tree = idx == 0 ? initial : driver.accessibilityTree();
+            // Use the initial tree for the first step, a fresh tree afterwards.
+            if (idx > 0) {
+              driver.resetAccessibilityTree();
+            }
+            BaseAccessibilityTree tree = driver.accessibilityTree();
             HttpClient.ActionResult action = client.executeAction(goal, step, tree.toStr(), app);
 
             if (explanation.equals(goal)) {
@@ -287,6 +297,7 @@ public final class Alumni implements AutoCloseable {
           String changes = "";
           if (changeAnalysis && !executedSteps.isEmpty()) {
             try {
+              driver.resetAccessibilityTree();
               changes =
                   client.analyzeChanges(
                       beforeTree, beforeUrl, driver.accessibilityTree().toStr(), driver.url(), app);

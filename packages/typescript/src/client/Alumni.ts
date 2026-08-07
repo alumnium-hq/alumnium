@@ -150,6 +150,7 @@ export class Alumni {
     return retry(async () => {
       const app = await this.driver.app();
 
+      this.driver.resetAccessibilityTree();
       const initialAccessibilityTree = await this.driver.getAccessibilityTree();
       const beforeTree = this.changeAnalysis
         ? initialAccessibilityTree.toStr()
@@ -167,11 +168,9 @@ export class Alumni {
         const step = steps[idx];
         always(step);
 
-        // Use initial tree for first step, fresh tree for subsequent steps
-        const accessibilityTree =
-          idx === 0
-            ? initialAccessibilityTree
-            : await this.driver.getAccessibilityTree();
+        // Use initial tree for first step, fresh tree for subsequent steps.
+        if (idx > 0) this.driver.resetAccessibilityTree();
+        const accessibilityTree = await this.driver.getAccessibilityTree();
         const { explanation: actorExplanation, actions } =
           await this.client.executeAction({
             goal,
@@ -200,6 +199,7 @@ export class Alumni {
 
       let changes = "";
       if (this.changeAnalysis && executedSteps.length > 0) {
+        this.driver.resetAccessibilityTree();
         changes = await this.client.analyzeChanges({
           beforeAccessibilityTree: beforeTree!,
           beforeUrl: beforeUrl!,
@@ -231,6 +231,7 @@ export class Alumni {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
+      this.driver.resetAccessibilityTree();
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
         statement: `Is the following true or false - ${statement}`,
@@ -263,6 +264,7 @@ export class Alumni {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
+      this.driver.resetAccessibilityTree();
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
         statement: data,
@@ -280,6 +282,7 @@ export class Alumni {
   @span("alumni.find", spanAttrs)
   async find(description: string): Promise<Element | undefined> {
     return retry(async () => {
+      this.driver.resetAccessibilityTree();
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const response = await this.client.findElement({
         description,
@@ -293,6 +296,7 @@ export class Alumni {
 
   @span("alumni.area", spanAttrs)
   async area(description: string): Promise<Area> {
+    this.driver.resetAccessibilityTree();
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findArea({
       description,

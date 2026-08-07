@@ -54,8 +54,7 @@ class PlaywrightDriver(BaseDriver):
     def platform(self) -> str:
         return "chromium"
 
-    @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def _fetch_accessibility_tree(self) -> ChromiumAccessibilityTree:
         self._wait_for_page_to_load()
 
         frame_tree = self._send_cdp_command("Page.getFrameTree")

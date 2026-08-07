@@ -77,7 +77,7 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   @Override
-  public ChromiumAccessibilityTree accessibilityTree() {
+  protected ChromiumAccessibilityTree fetchAccessibilityTree() {
     waitForPageToLoad();
 
     Map<String, Object> frameTreeResp = sendCdp("Page.getFrameTree", null);

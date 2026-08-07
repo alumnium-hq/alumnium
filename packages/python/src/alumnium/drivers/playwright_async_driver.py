@@ -44,9 +44,15 @@ class PlaywrightAsyncDriver(BaseDriver):
     def platform(self) -> str:
         return "chromium"
 
-    @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def _fetch_accessibility_tree(self) -> ChromiumAccessibilityTree:
         return self._run_async(self._accessibility_tree)
+
+    async def _cached_or_fetched_accessibility_tree(self) -> ChromiumAccessibilityTree:
+        cached = getattr(self, "_cached_accessibility_tree", None)
+        if cached is None:
+            cached = await self._accessibility_tree
+            self._cached_accessibility_tree = cached
+        return cached
 
     @property
     async def _accessibility_tree(self) -> ChromiumAccessibilityTree:
@@ -195,7 +201,7 @@ class PlaywrightAsyncDriver(BaseDriver):
         return self._run_async(self._find_element(id))
 
     async def _find_element(self, id: int) -> Locator:
-        accessibility_tree = await self._accessibility_tree
+        accessibility_tree = await self._cached_or_fetched_accessibility_tree()
         accessibility_element = accessibility_tree.element_by_id(id)
         frame = accessibility_element.frame or self.page.main_frame
 

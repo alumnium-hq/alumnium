@@ -53,7 +53,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   @span("driver.get_accessibility_tree", spanAttrs)
-  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+  protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.ensureNativeAppContext();
     if (this.delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, this.delay * 1000));

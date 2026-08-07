@@ -40,8 +40,7 @@ class AppiumDriver(BaseDriver):
         else:
             self.platform = "xcuitest"
 
-    @property
-    def accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibilityTree:
+    def _fetch_accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibilityTree:
         self._ensure_native_app_context()
         sleep(self.delay)
         # Hacky workaround for cloud providers reporting stale page source.
