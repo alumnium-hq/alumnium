@@ -145,11 +145,11 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
   @reference "#/styles/global.css";
 
   .table-wrapper {
-    @apply mx-[calc(var(--section-padding-x)*-1-0.5px)] sm:mx-0 flex flex-col gap-3 overflow-x-auto scrollbar-thin;
+    @apply mx-[calc(var(--section-padding-x)*-1-0.5px)] md:mx-0 flex flex-col gap-3 overflow-x-auto scrollbar-thin;
   }
 
   .table {
-    @apply w-full text-left border-collapse;
+    @apply text-left border-collapse shrink-0 min-w-full w-max md:w-full;
     table-layout: fixed;
 
     & th,
@@ -158,12 +158,12 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
     }
 
     & .is-metric {
-      width: 28%;
+      @apply w-[20%] sm:w-[28%];
     }
   }
 
   .cell {
-    @apply px-1.5 py-1.5 sm:px-5 sm:py-2 relative;
+    @apply px-1.5 py-1.5 sm:px-2 sm:py-2 md:px-5 md:py-2 relative;
 
     &.is-header,
     &.is-metric {
@@ -171,7 +171,7 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
     }
 
     &.is-header {
-      @apply py-2 sm:py-5 text-sm sm:text-base text-accent-200 leading-snug text-center;
+      @apply py-2 sm:py-5 text-xs sm:text-sm md:text-base text-accent-200 leading-snug text-center;
 
       &.is-alumnium {
         @apply bg-accent-800/70 text-ink-dark font-bold;
@@ -179,11 +179,11 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
     }
 
     &.is-metric {
-      @apply text-accent-400 min-w-[10rem];
+      @apply text-accent-400;
     }
 
     &:not(.is-header):not(.is-metric) {
-      @apply text-center text-sm sm:text-base leading-snug;
+      @apply text-center text-xs sm:text-sm md:text-base leading-snug;
     }
 
     &.is-alumnium {
@@ -191,7 +191,7 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
     }
 
     &.is-product {
-      @apply font-mono leading-none capsize px-5 py-3 font-light;
+      @apply font-mono leading-none capsize px-1.5 py-1.5 sm:px-5 sm:py-3 font-light;
     }
 
     & .icon {
@@ -244,7 +244,7 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
   }
 
   .metric-subtext {
-    @apply text-sm text-accent-500 max-w-[15rem];
+    @apply text-xs sm:text-sm text-accent-500 max-w-[15rem];
   }
 
   .superscript {
