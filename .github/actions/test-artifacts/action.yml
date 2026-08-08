@@ -16,6 +16,11 @@ inputs:
     default: "false"
     description: "Whether to upload Python test artifacts."
 
+  java:
+    required: false
+    default: "false"
+    description: "Whether to upload Java test artifacts."
+
 runs:
   using: "composite"
   steps:

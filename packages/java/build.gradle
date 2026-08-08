@@ -116,6 +116,55 @@ testing {
     }
 }
 
+def passThresholdResults = layout.buildDirectory.file('test-results/systemTest/pass-threshold.txt')
+def passThreshold = providers.environmentVariable('ALUMNIUM_TEST_PASS_THRESHOLD_PCT').orElse('100')
+
+tasks.register('systemTest', Test) {
+    description = 'Runs Java system tests.'
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching 'ai.alumnium.system.*'
+    }
+    environment System.getenv()
+    environment 'ALUMNIUM_DRIVER', System.getenv('ALUMNIUM_DRIVER') ?: 'selenium'
+    environment 'ALUMNIUM_PLAYWRIGHT_HEADLESS', System.getenv('ALUMNIUM_PLAYWRIGHT_HEADLESS') ?: 'true'
+    environment 'ALUMNIUM_TEST_PASS_RESULTS_PATH', passThresholdResults.get().asFile.absolutePath
+    ignoreFailures = true
+    def gradleFailures = 0L
+    afterSuite { descriptor, result ->
+        if (descriptor.parent == null) {
+            gradleFailures = result.failedTestCount
+        }
+    }
+    doFirst {
+        passThresholdResults.get().asFile.delete()
+        PassThreshold.parse(passThreshold.get())
+    }
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+    doLast {
+        def resultsFile = passThresholdResults.get().asFile
+        def results = resultsFile.exists() ? resultsFile.readLines() : []
+        def passed = results.count { it == 'passed' }
+        def failed = results.count { it == 'failed' }
+        try {
+            PassThreshold.apply(
+                    passed,
+                    failed,
+                    gradleFailures,
+                    PassThreshold.parse(passThreshold.get()),
+                    System.getenv('GITHUB_ACTIONS') == 'true'
+                    )
+        } catch (IllegalStateException error) {
+            throw new GradleException(error.message)
+        }
+    }
+}
+
 mavenPublishing {
     publishToMavenCentral(true)
     signAllPublications()

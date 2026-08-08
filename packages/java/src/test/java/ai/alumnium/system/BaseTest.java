@@ -43,6 +43,9 @@ public class BaseTest {
   @RegisterExtension
   static final AlumniCacheExtension cacheAfterEach = new AlumniCacheExtension(() -> al);
 
+  @RegisterExtension
+  static final PassThresholdExtension passThreshold = new PassThresholdExtension();
+
   private static URL appiumUrl() throws MalformedURLException {
     String url =
         IS_LAMBDA_TEST

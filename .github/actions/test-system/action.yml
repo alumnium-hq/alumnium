@@ -4,7 +4,7 @@ description: Run system tests for a given package, driver, and model.
 inputs:
   package:
     required: true
-    description: "Package to test (typescript, python)."
+    description: "Package to test (typescript, python, java)."
 
   driver:
     required: true
