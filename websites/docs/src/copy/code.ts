@@ -449,7 +449,9 @@ export const ttCode = {
     lang: "bash",
 
     code: lit`
-      claude mcp add alumnium --env OPENAI_API_KEY=... -- \\
+      claude mcp add alumnium \\
+          --env ALUMNIUM_MODEL=anthropic \\
+          --env ANTHROPIC_API_KEY=... -- \\
           alumnium mcp
     `,
   }),
@@ -460,11 +462,24 @@ export const ttCode = {
     lang: "bash",
 
     code: lit`
-      codex mcp add alumnium --env ALUMNIUM_MODEL=codex -- \\
+      codex mcp add alumnium \\
+          --env ALUMNIUM_MODEL=codex -- \\
           alumnium mcp
     `,
   }),
 
+  "set-up-mcp-grok": setUpMcpVar({
+    tab: "Grok Build",
+
+    lang: "bash",
+
+    code: lit`
+      grok mcp add alumnium \\
+          --env ALUMNIUM_MODEL=xai \\
+          --env XAI_API_KEY=... -- \\
+          alumnium mcp
+    `,
+  }),
   //#endregion
 
   //#region Test
