@@ -262,23 +262,23 @@ const sections = {
     en: {
       kicker: "Efficient",
 
-      headline: "Use Less of Your Agent's Context",
+      headline: "Free Up Your Agent's Context",
 
       subheadline: txt`
-        Keep browser details out of the coding agent's context and reuse AI work
+        Keep browser/mobile details out of the agent's context and reuse AI work
         across repeated test runs.
       `,
 
       stats: [
         {
-          id: "bill",
-          value: "1/4",
-          label: "of Playwright MCP's cost",
-        },
-        {
           id: "context",
           value: "5×",
           label: "Fewer tokens: 45K vs. 240K",
+        },
+        {
+          id: "bill",
+          value: "1/4",
+          label: "of Playwright's cost",
         },
       ],
 
@@ -1005,7 +1005,7 @@ const sections = {
 
         content: langs({
           en: {
-            headline: "Local Model Support",
+            headline: "Local Models",
 
             subheadline: "Keep model inference on your infrastructure.",
 
@@ -1327,7 +1327,7 @@ const sections = {
       headline: "Alumnium Stands Out",
 
       subheadline: txt`
-        See how we line up with other browser agents.
+        See how we line up with other projects.
       `,
     },
   }),
@@ -1337,8 +1337,7 @@ const sections = {
       headline: "Single-Task Comparison",
 
       subheadline: txt`
-        We asked Claude Code to "test all YouTube search filters end-to-end as
-        a user." These figures describe that task, not overall product performance.
+        We asked Claude Code with Opus 4.8 to test all YouTube search filters end-to-end as a user on web and Android.
       `,
     },
   }),
@@ -1349,7 +1348,7 @@ const sections = {
       alumnium: { en: "Alumnium" },
       "browser-use": { en: "Browser Use" },
       "mobile-mcp": { en: "Mobile Next" },
-      "playwright-mcp": { en: "Playwright MCP" },
+      "playwright-mcp": { en: "Playwright" },
     }),
 
     rows: [
@@ -1370,6 +1369,11 @@ const sections = {
           kind: "string",
           value: { en: "45,000" },
           highlight: "positive",
+          note: {
+            en: txt`
+              Excluding ~1.7M tokens of GPT-5 Nano used by Alumnium MCP.
+            `,
+          },
         },
 
         "browser-use": {
@@ -1408,6 +1412,11 @@ const sections = {
           kind: "string",
           value: { en: "20 mins" },
           highlight: "mixed",
+          note: {
+            en: md`
+              Average of two session: 18 minutes on Android, 22 minutes on web.
+            `,
+          },
         },
 
         "browser-use": {
@@ -1434,9 +1443,9 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "Reported cost",
+              label: "Cost",
               subtext: txt`
-                Model usage cost in USD for the task.
+                Agent usage cost in USD for the task.
               `,
             },
           },
@@ -1444,34 +1453,41 @@ const sections = {
 
         alumnium: {
           kind: "string",
-          value: { en: "$3.80" },
+          value: { en: "$3.73" },
           highlight: "positive",
+          note: {
+            en: md`
+              Avereage of two sessions:<br>
+
+              - **Web:** $4.10 (Claude) + $0.08 (Alumnium MCP) = $4.18<br>
+              - **Android:** $3.27 (Claude) + $0.02 (Alumnium MCP) = $3.29
+            `,
+          },
         },
 
         "browser-use": {
           kind: "string",
-          value: { en: "$6.76" },
+          value: { en: "$6.57" },
           highlight: "mixed",
         },
 
         "mobile-mcp": {
           kind: "string",
-          value: { en: "$12.88" },
+          value: { en: "$12.79" },
           highlight: "negative",
         },
 
         "playwright-mcp": {
           kind: "string",
-          value: { en: "$15.47" },
+          value: { en: "$15.05" },
           highlight: "negative",
         },
       }),
     ],
 
     disclaimer: langs({
-      en: txt`
-        Results come from one task and vary with model, configuration, network
-        conditions, and website state.
+      en: md`
+        Raw transcripts are available [here](https://gist.github.com/p0deje/fb5c8082cdd0542f74a30df93abfe018).
       `,
     }),
   },
@@ -1481,7 +1497,7 @@ const sections = {
       headline: "Features Comparison",
 
       subheadline: txt`
-        See how Alumnium compares to other browser agents in terms of features
+        See how Alumnium compares to other projects in terms of features
         and capabilities.
       `,
     },
@@ -1493,7 +1509,7 @@ const sections = {
       alumnium: { en: "Alumnium" },
       "browser-use": { en: "Browser Use" },
       "mobile-mcp": { en: "Mobile Next" },
-      "playwright-mcp": { en: "Playwright MCP" },
+      "playwright-mcp": { en: "Playwright" },
     }),
 
     rows: [
@@ -1633,8 +1649,8 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "Web apps support",
-              subtext: "Testing web apps support.",
+              label: "Web",
+              subtext: "Test web applications.",
             },
           },
         },
@@ -1665,8 +1681,8 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "Test iOS apps",
-              subtext: "Testing iOS apps support.",
+              label: "iOS",
+              subtext: "Test iOS applications.",
             },
           },
         },
@@ -1697,8 +1713,8 @@ const sections = {
           kind: "metric",
           value: {
             en: {
-              label: "Test Android apps",
-              subtext: "Testing Android apps support.",
+              label: "Android",
+              subtext: "Test Android applications.",
             },
           },
         },
@@ -2093,6 +2109,7 @@ export namespace TtLandings {
     kind: "string";
     value: I18n.FullLangsMap<string>;
     highlight?: "positive" | "negative" | "mixed";
+    note?: I18n.FullLangsMap<string>;
   }
 
   export interface ComparisonCellNa {
