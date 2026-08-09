@@ -1,7 +1,9 @@
 ---
+import { tt } from "#/copy";
 import type { TtLandings } from "#/copy/landings";
 import type { AstroComponentInstance } from "astro/runtime/server/index.js";
 import Icon from "#/components/Icon.astro";
+import InfoNote from "#/components/landings/blocks/InfoNote.astro";
 import type { AstroBuiltinAttributes } from "astro";
 import type { I18n } from "#/copy/i18n";
 
@@ -66,16 +68,25 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
                 };
               }
 
-              case "string":
+              case "string": {
+                const classList = [
+                  "is-string",
+                  cell.highlight === "positive" && "is-positive",
+                  cell.highlight === "negative" && "is-negative",
+                  cell.highlight === "mixed" && "is-mixed",
+                ];
+
+                if (!cell.note) {
+                  return { classList, content: cell.value.en };
+                }
+
                 return {
-                  classList: [
-                    "is-string",
-                    cell.highlight === "positive" && "is-positive",
-                    cell.highlight === "negative" && "is-negative",
-                    cell.highlight === "mixed" && "is-mixed",
-                  ],
-                  content: cell.value.en,
+                  classList,
+                  content: (
+                    <InfoNote content={cell.note.en}>{cell.value.en}</InfoNote>
+                  ),
                 };
+              }
 
               case "support": {
                 const content =
@@ -134,9 +145,10 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
 
   {
     t.disclaimer && (
-      <p class="text-accent-500 text-sm px-(--section-padding-x) sm:px-0">
-        {t.disclaimer.en}
-      </p>
+      <p
+        class="text-accent-500 text-sm px-(--section-padding-x) sm:px-0"
+        set:html={tt.md(t.disclaimer.en, true)}
+      />
     )
   }
 </div>
