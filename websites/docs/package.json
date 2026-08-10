@@ -22,7 +22,7 @@
     "devicon": "^2.17.0",
     "gl-matrix": "^3.4.4",
     "marked": "^18.0.4",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.3",
     "smollit": "^0.3.0",
     "tailwindcss": "^4.3.0",
     "zod": "^4.4.3"
