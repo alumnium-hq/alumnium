@@ -41,9 +41,7 @@
                 <link name="All products" id=63 focusable url="https://developers.cloudflare.com/"/>
                 <link id=65 focusable url="https://developers.cloudflare.com/workers/">Workers</link>
               </div>
-              <searchbox name="Filter navigation" id=70 focusable editable="plaintext" settable>
-                <div id=73 editable="plaintext"/>
-              </searchbox>
+              <searchbox name="Filter navigation" id=70 focusable editable="plaintext" settable/>
             </div>
             <list id=76>
               <listitem id=77 level=1>

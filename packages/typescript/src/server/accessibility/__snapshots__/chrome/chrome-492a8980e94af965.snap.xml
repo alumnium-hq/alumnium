@@ -50,9 +50,7 @@
             <form id=206>
               <div id=209>
                 <LabelText id=210>Enter your email</LabelText>
-                <textbox name="Enter your email" id=214 focusable editable="plaintext" settable>
-                  <div id=216 editable="plaintext"/>
-                </textbox>
+                <textbox name="Enter your email" id=214 focusable editable="plaintext" settable/>
               </div>
               <button id=217 focusable>Sign up for GitHub</button>
             </form>
@@ -344,9 +342,7 @@
           <form id=1020>
             <div id=1023>
               <LabelText id=1024>Enter your email</LabelText>
-              <textbox name="Enter your email" id=1028 focusable editable="plaintext" settable>
-                <div id=1030 editable="plaintext"/>
-              </textbox>
+              <textbox name="Enter your email" id=1028 focusable editable="plaintext" settable/>
             </div>
             <button id=1031 focusable>Sign up for GitHub</button>
           </form>

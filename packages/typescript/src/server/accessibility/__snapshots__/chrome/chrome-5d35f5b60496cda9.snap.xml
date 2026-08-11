@@ -36,9 +36,7 @@
       <div id=57>
         <complementary id=59>
           <navigation name="Documentation" id=60>
-            <searchbox name="Filter navigation" id=62 focusable editable="plaintext" settable>
-              <div id=65 editable="plaintext"/>
-            </searchbox>
+            <searchbox name="Filter navigation" id=62 focusable editable="plaintext" settable/>
             <div id=66>
               <div id=67>
                 GET STARTED
@@ -916,9 +914,7 @@
   <button id=1607 focusable hasPopup="listbox">
     <banner id=1609>
       <LabelText id=1611>Search</LabelText>
-      <searchbox name="Search" id=1617 focusable focused editable="plaintext" settable autocomplete="both">
-        <div id=1620 editable="plaintext"/>
-      </searchbox>
+      <searchbox name="Search" id=1617 focusable focused editable="plaintext" settable autocomplete="both"/>
     </banner>
     <paragraph id=1623>No recent searches</paragraph>
     <contentinfo id=1626>

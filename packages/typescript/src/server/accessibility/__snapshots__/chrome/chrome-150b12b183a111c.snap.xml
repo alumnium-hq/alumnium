@@ -392,9 +392,7 @@
         </div>
         <div id=822>
           <div id=823>
-            <textbox name="Describe a task or ask a question" id=824 focusable editable="plaintext" settable multiline>
-              <div id=826 editable="plaintext"/>
-            </textbox>
+            <textbox name="Describe a task or ask a question" id=824 focusable editable="plaintext" settable multiline/>
             <button name="Send" id=827 disabled/>
           </div>
           <div id=828>
@@ -1005,9 +1003,7 @@
         <heading id=1878 level=3>Get the developer newsletter</heading>
         <paragraph id=1881>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</paragraph>
         <div id=1886>
-          <textbox name="Email address" id=1887 focusable editable="plaintext" settable required>
-            <div id=1889 editable="plaintext"/>
-          </textbox>
+          <textbox name="Email address" id=1887 focusable editable="plaintext" settable required/>
           <button name="Subscribe" id=1890 disabled/>
         </div>
         <paragraph id=1893>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</paragraph>
@@ -1022,9 +1018,7 @@
             <image name="Claude" id=1903/>
           </link>
           <div id=1905>
-            <textbox name="Ask Claude" id=1906 focusable editable="plaintext" settable multiline>
-              <div id=1908 editable="plaintext"/>
-            </textbox>
+            <textbox name="Ask Claude" id=1906 focusable editable="plaintext" settable multiline/>
             <button name="Submit" id=1909 focusable/>
           </div>
         </div>

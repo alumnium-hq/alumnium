@@ -104,5 +104,28 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     );
   }
 
+  protected override pruneBackendRedundantNodes(xmlTag: Xml.Tag): void {
+    for (const child of xmlTag.children) {
+      const childTag = Xml.nodeAsTag(child);
+      if (childTag) this.pruneBackendRedundantNodes(childTag);
+    }
+
+    if (!("editable" in xmlTag.attribs || "settable" in xmlTag.attribs)) return;
+
+    xmlTag.children = xmlTag.children.filter((child) => {
+      const childTag = Xml.nodeAsTag(child);
+      if (!childTag || !this.isGenericRole(childTag.tagName)) return true;
+
+      const attrs = Object.keys(childTag.attribs).filter(
+        (attrName) => attrName !== "id" && attrName !== "editable",
+      );
+      return (
+        !!childTag.children.length ||
+        attrs.length > 0 ||
+        childTag.attribs.editable !== xmlTag.attribs.editable
+      );
+    });
+  }
+
   //#endregion
 }
