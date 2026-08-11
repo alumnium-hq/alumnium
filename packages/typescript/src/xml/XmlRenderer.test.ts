@@ -26,6 +26,15 @@ describe("XmlRenderer", () => {
       `);
   });
 
+  it("aliases tag names when rendering", () => {
+    const generic = Xml.tag("generic", { id: "1" }, [Xml.text("Text")]);
+
+    expect(
+      XmlRenderer.render(generic, { tagAliases: { generic: "div" } }),
+    ).toBe("<div id=1>Text</div>");
+    expect(generic.tagName).toBe("generic");
+  });
+
   it("removes formatting whitespace when minified", () => {
     const root = Xml.tag("root", {}, [Xml.tag("child")]);
 

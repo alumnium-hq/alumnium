@@ -49,19 +49,11 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
       .join("\n");
   }
 
-  #genericRoles = new Set([
-    "FrameLayout",
-    "LinearLayout",
-    "LinearLayoutCompat",
-    "RelativeLayout",
-    "ViewGroup",
-  ]);
-
   protected override parseRole(xmlTag: Xml.Tag): string {
     const role = xmlTag.attribs.type ?? xmlTag.tagName;
     const simplifiedRole = role.split(".").at(-1);
     always(simplifiedRole);
-    return this.#genericRoles.has(simplifiedRole) ? "generic" : simplifiedRole;
+    return simplifiedRole;
   }
 
   protected override parseName(
@@ -121,11 +113,15 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
   }
 
   protected override genericRoles = new Set([
-    "generic",
+    "FrameLayout",
+    "LinearLayout",
+    "LinearLayoutCompat",
+    "RelativeLayout",
+    "ViewGroup",
     "root",
     "hierarchy",
-    "TextView",
     "View",
+    "TextView",
   ]);
 
   protected override genericAttrs = new Set(["id", "resource-id"]);
@@ -151,7 +147,8 @@ export class ServerUIAutomator2AccessibilityTree extends BaseServerAccessibility
         ? Xml.nodeAsText(childTag.children[0])
         : null;
       return !(
-        childTag?.tagName === "div" &&
+        childTag &&
+        this.isGenericRole(childTag.tagName) &&
         childText?.data === contentDescription &&
         childTag.children.length === 1 &&
         Object.keys(childTag.attribs).every((attrName) =>

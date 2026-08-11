@@ -19,6 +19,7 @@ export namespace XmlRenderer {
     minify?: boolean;
     indentation?: string;
     compactAttrs?: boolean;
+    tagAliases?: Readonly<Record<string, string>>;
   }
 }
 
@@ -31,6 +32,7 @@ export abstract class XmlRenderer {
     node: AnyNode | ArrayLike<AnyNode>,
     options: XmlRenderer.Options = this.defaultOptions,
   ): string {
+    options = { ...this.defaultOptions, ...options };
     const nodes = "length" in node ? node : [node];
     const output = this.#renderFormattedChildren(nodes, options, 0, false);
     return options.minify ? output.replace(/\n\s*/g, "") : output;
@@ -133,7 +135,7 @@ export abstract class XmlRenderer {
     depth: number,
     preserveSpace: boolean,
   ): string {
-    const name = element.name;
+    const name = options.tagAliases?.[element.name] ?? element.name;
     const prefix = preserveSpace ? "" : this.#indent(depth, options);
     const attributes = this.#formatAttributes(element.attribs, options);
     const children = element.children;
