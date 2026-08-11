@@ -123,6 +123,18 @@ describe("XmlRenderer", () => {
     );
   });
 
+  it("parses valueless attributes without nesting self-closing siblings", () => {
+    const elements = Xml.parseRootChildren(
+      '<link focusable/><StaticText name="Explore GitHub Copilot"/>',
+    );
+
+    expect(XmlRenderer.render(elements as Xml.AnyElement[]))
+      .toMatchInlineSnapshot(`
+        "<link focusable/>
+        <StaticText name="Explore GitHub Copilot"/>"
+      `);
+  });
+
   it("formats multiple roots, comments, CDATA, and directives", () => {
     const elements = Xml.parseRootChildren(
       "<?target value?><one><!-- note --><![CDATA[ content ]]></one><two/>",

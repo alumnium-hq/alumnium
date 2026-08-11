@@ -13,12 +13,12 @@ describe(ServerChromiumAccessibilityTree, () => {
       const tree = await basicChromiumTree();
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
-        "<RootWebArea name="TodoMVC: React" id=1>
+        "<RootWebArea name="TodoMVC: React" id=1 focusable>
           <div id=4>
             <div id=5>
               <heading id=6 level=1>todos</heading>
               <div id=8>
-                <textbox name="New Todo Input" id=9 editable="plaintext">
+                <textbox name="New Todo Input" id=9 focusable editable="plaintext" settable>
                   <div id=11 editable="plaintext"/>
                 </textbox>
                 <LabelText id=12>New Todo Input</LabelText>
@@ -26,7 +26,7 @@ describe(ServerChromiumAccessibilityTree, () => {
             </div>
             <main id=14>
               <div id=15>
-                <checkbox id=16/>
+                <checkbox id=16 focusable/>
                 <LabelText id=17>
                   <div id=19>\\u276f</div>
                   <div id=20>Toggle All Input</div>
@@ -34,11 +34,11 @@ describe(ServerChromiumAccessibilityTree, () => {
               </div>
               <list id=21>
                 <listitem id=22 level=1>
-                  <checkbox id=24/>
+                  <checkbox id=24 focusable focused checked/>
                   <LabelText id=25>hello</LabelText>
                 </listitem>
                 <listitem id=27 level=1>
-                  <checkbox id=29/>
+                  <checkbox id=29 focusable/>
                   <LabelText id=30>he</LabelText>
                 </listitem>
               </list>
@@ -47,16 +47,16 @@ describe(ServerChromiumAccessibilityTree, () => {
               1 item left!
               <list id=35>
                 <listitem id=36 level=1>
-                  <link id=37>All</link>
+                  <link id=37 focusable>All</link>
                 </listitem>
                 <listitem id=39 level=1>
-                  <link id=40>Active</link>
+                  <link id=40 focusable>Active</link>
                 </listitem>
                 <listitem id=42 level=1>
-                  <link id=43>Completed</link>
+                  <link id=43 focusable>Completed</link>
                 </listitem>
               </list>
-              <button id=45>Clear completed</button>
+              <button id=45 focusable>Clear completed</button>
             </div>
           </div>
           <contentinfo id=47>
@@ -64,7 +64,7 @@ describe(ServerChromiumAccessibilityTree, () => {
             <paragraph id=50>Created by the TodoMVC Team</paragraph>
             <paragraph id=52>
               Part of
-              <link id=54>TodoMVC</link>
+              <link id=54 focusable>TodoMVC</link>
             </paragraph>
           </contentinfo>
         </RootWebArea>"
@@ -103,6 +103,71 @@ describe(ServerChromiumAccessibilityTree, () => {
           1.2K views
           <div id=7>10 months ago</div>
         </group>"
+      `);
+    });
+
+    it("preserves checkbox checked attribute", () => {
+      const rawXml = lit`
+        <main raw_id=40 backendDOMNodeId=32 nodeId="f0:32">
+          <generic raw_id=41 backendDOMNodeId=33 nodeId="f0:33">
+            <checkbox raw_id=42 backendDOMNodeId=34 nodeId="f0:34" name="❯ Toggle All Input" focusable focused checked/>
+            <none raw_id=43 backendDOMNodeId=35 nodeId="f0:35" ignored>
+              <generic raw_id=44 backendDOMNodeId=84 nodeId="f0:84">
+                <StaticText raw_id=45 nodeId="f0:-1000000047" name="❯">
+                  <InlineTextBox raw_id=46 nodeId="f0:-1000000048" name="❯"/>
+                </StaticText>
+              </generic>
+              <StaticText raw_id=47 backendDOMNodeId=61 nodeId="f0:61" name="Toggle All Input">
+                <InlineTextBox raw_id=48 nodeId="f0:-1000000049" name="Toggle All Input"/>
+              </StaticText>
+            </none>
+          </generic>
+          <list raw_id=49 backendDOMNodeId=36 nodeId="f0:36">
+            <listitem raw_id=50 backendDOMNodeId=82 nodeId="f0:82" level=1>
+              <none raw_id=51 backendDOMNodeId=81 nodeId="f0:81" ignored>
+                <checkbox raw_id=52 backendDOMNodeId=78 nodeId="f0:78" focusable checked/>
+                <LabelText raw_id=53 backendDOMNodeId=79 nodeId="f0:79">
+                  <StaticText raw_id=54 backendDOMNodeId=88 nodeId="f0:88" name="Buy milk">
+                    <InlineTextBox raw_id=55 nodeId="f0:-1000000033" name="Buy milk"/>
+                  </StaticText>
+                </LabelText>
+              </none>
+            </listitem>
+            <listitem raw_id=56 backendDOMNodeId=96 nodeId="f0:96" level=1>
+              <none raw_id=57 backendDOMNodeId=95 nodeId="f0:95" ignored>
+                <checkbox raw_id=58 backendDOMNodeId=92 nodeId="f0:92" focusable checked/>
+                <LabelText raw_id=59 backendDOMNodeId=93 nodeId="f0:93">
+                  <StaticText raw_id=60 backendDOMNodeId=99 nodeId="f0:99" name="Buy bread">
+                    <InlineTextBox raw_id=61 nodeId="f0:-1000000044" name="Buy bread"/>
+                  </StaticText>
+                </LabelText>
+              </none>
+            </listitem>
+          </list>
+        </main>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<main id=1>
+          <div id=2>
+            <checkbox name="❯ Toggle All Input" id=3 focusable focused checked/>
+            <div id=4>
+              <div id=6>❯</div>
+              <div id=8>Toggle All Input</div>
+            </div>
+          </div>
+          <list id=10>
+            <listitem id=11 level=1>
+              <checkbox id=13 focusable checked/>
+              <LabelText id=14>Buy milk</LabelText>
+            </listitem>
+            <listitem id=17 level=1>
+              <checkbox id=19 focusable checked/>
+              <LabelText id=20>Buy bread</LabelText>
+            </listitem>
+          </list>
+        </main>"
       `);
     });
 
