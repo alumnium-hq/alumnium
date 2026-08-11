@@ -21,21 +21,15 @@
           <div id=44>
             <LabelText id=45>
               Text input
-              <textbox name="Text input" id=48 focusable editable="plaintext" settable>
-                <div id=49 editable="plaintext"/>
-              </textbox>
+              <textbox name="Text input" id=48 focusable editable="plaintext" settable/>
             </LabelText>
             <LabelText id=50>
               Password
-              <textbox name="Password" id=53 focusable editable="plaintext" settable>
-                <div id=54 editable="plaintext"/>
-              </textbox>
+              <textbox name="Password" id=53 focusable editable="plaintext" settable/>
             </LabelText>
             <LabelText id=55>
               Textarea
-              <textbox name="Textarea" id=58 focusable editable="plaintext" settable multiline>
-                <div id=59 editable="plaintext"/>
-              </textbox>
+              <textbox name="Textarea" id=58 focusable editable="plaintext" settable multiline/>
             </LabelText>
             <LabelText id=60>
               Disabled input
@@ -61,9 +55,7 @@
             </LabelText>
             <LabelText id=88>
               Dropdown (datalist)
-              <combobox name="Dropdown (datalist)" id=91 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox">
-                <div id=95 editable="plaintext"/>
-              </combobox>
+              <combobox name="Dropdown (datalist)" id=91 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox"/>
             </LabelText>
             <LabelText id=97>
               File input
@@ -90,9 +82,7 @@
             </LabelText>
             <LabelText id=128>
               Date picker
-              <textbox name="Date picker" id=131 focusable editable="plaintext" settable>
-                <div id=132 editable="plaintext"/>
-              </textbox>
+              <textbox name="Date picker" id=131 focusable editable="plaintext" settable/>
             </LabelText>
             <LabelText id=133>
               Example range

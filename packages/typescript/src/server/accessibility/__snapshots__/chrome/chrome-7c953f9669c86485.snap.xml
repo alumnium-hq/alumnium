@@ -21,15 +21,11 @@
         </LabelText>
         <LabelText id=36>
           Password
-          <textbox name="Password" id=39 focusable editable="plaintext" settable>
-            <div id=40 editable="plaintext"/>
-          </textbox>
+          <textbox name="Password" id=39 focusable editable="plaintext" settable/>
         </LabelText>
         <LabelText id=41>
           Textarea
-          <textbox name="Textarea" id=44 focusable editable="plaintext" settable multiline>
-            <div id=45 editable="plaintext"/>
-          </textbox>
+          <textbox name="Textarea" id=44 focusable editable="plaintext" settable multiline/>
         </LabelText>
         <LabelText id=46>
           Disabled input
@@ -55,9 +51,7 @@
         </LabelText>
         <LabelText id=74>
           Dropdown (datalist)
-          <combobox name="Dropdown (datalist)" id=77 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox">
-            <div id=81 editable="plaintext"/>
-          </combobox>
+          <combobox name="Dropdown (datalist)" id=77 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox"/>
         </LabelText>
         <LabelText id=83>
           File input
@@ -84,9 +78,7 @@
         </LabelText>
         <LabelText id=114>
           Date picker
-          <textbox name="Date picker" id=117 focusable editable="plaintext" settable>
-            <div id=118 editable="plaintext"/>
-          </textbox>
+          <textbox name="Date picker" id=117 focusable editable="plaintext" settable/>
         </LabelText>
         <LabelText id=119>
           Example range

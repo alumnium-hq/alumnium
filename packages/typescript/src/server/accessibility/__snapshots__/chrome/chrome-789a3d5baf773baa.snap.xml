@@ -37,9 +37,7 @@
                   <div id=125>
                     <div id=126>
                       <LabelText id=127>Search</LabelText>
-                      <combobox name="Search" id=134 focusable focused editable="plaintext" settable autocomplete="list" hasPopup="listbox" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results">
-                        <div id=135 editable="plaintext"/>
-                      </combobox>
+                      <combobox name="Search" id=134 focusable focused editable="plaintext" settable autocomplete="list" hasPopup="listbox" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results"/>
                       <listbox name="Suggestions" id=139 focusable orientation="vertical">
                         <option name=", jump to this explore page" id=140>Enterprise</option>
                         <option name=", jump to this explore page" id=147>Security</option>
@@ -73,9 +71,7 @@
             <form id=267>
               <div id=270>
                 <LabelText id=271>Enter your email</LabelText>
-                <textbox name="Enter your email" id=275 focusable editable="plaintext" settable>
-                  <div id=277 editable="plaintext"/>
-                </textbox>
+                <textbox name="Enter your email" id=275 focusable editable="plaintext" settable/>
               </div>
               <button id=278 focusable>Sign up for GitHub</button>
             </form>
@@ -367,9 +363,7 @@
           <form id=1081>
             <div id=1084>
               <LabelText id=1085>Enter your email</LabelText>
-              <textbox name="Enter your email" id=1089 focusable editable="plaintext" settable>
-                <div id=1091 editable="plaintext"/>
-              </textbox>
+              <textbox name="Enter your email" id=1089 focusable editable="plaintext" settable/>
             </div>
             <button id=1092 focusable>Sign up for GitHub</button>
           </form>

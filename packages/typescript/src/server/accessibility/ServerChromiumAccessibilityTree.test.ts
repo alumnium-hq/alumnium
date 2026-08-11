@@ -18,9 +18,7 @@ describe(ServerChromiumAccessibilityTree, () => {
             <div id=5>
               <heading id=6 level=1>todos</heading>
               <div id=8>
-                <textbox name="New Todo Input" id=9 focusable editable="plaintext" settable>
-                  <div id=11 editable="plaintext"/>
-                </textbox>
+                <textbox name="New Todo Input" id=9 focusable editable="plaintext" settable/>
                 <LabelText id=12>New Todo Input</LabelText>
               </div>
             </div>
@@ -253,6 +251,23 @@ describe(ServerChromiumAccessibilityTree, () => {
           <div id=5 live="polite" focusable/>
           <alert id=6 live="assertive" atomic relevant="additions text"/>
         </group>"
+      `);
+    });
+
+    it("removes internal editable children", () => {
+      const rawXml = lit`
+        <RootWebArea raw_id="1" backendDOMNodeId="1" name="Search">
+          <combobox raw_id="2" backendDOMNodeId="2" name="Search" focusable="true" editable="plaintext" settable="true">
+            <generic raw_id="3" backendDOMNodeId="3" editable="plaintext"/>
+          </combobox>
+        </RootWebArea>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toBe(lit`
+        <RootWebArea name="Search" id=1>
+          <combobox name="Search" id=2 focusable editable="plaintext" settable/>
+        </RootWebArea>
       `);
     });
 

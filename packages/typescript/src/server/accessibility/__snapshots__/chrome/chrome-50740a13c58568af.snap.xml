@@ -18,9 +18,7 @@
     <link id=33 focusable url="https://todomvc.com/examples/vue/dist/#/">
       <heading id=34 level=1>todos</heading>
     </link>
-    <textbox name="What needs to be done?" id=37 focusable focused editable="plaintext" settable>
-      <div id=39 editable="plaintext"/>
-    </textbox>
+    <textbox name="What needs to be done?" id=37 focusable focused editable="plaintext" settable/>
   </sectionheader>
   <contentinfo id=42>
     <paragraph id=43>Double-click to edit a todo</paragraph>

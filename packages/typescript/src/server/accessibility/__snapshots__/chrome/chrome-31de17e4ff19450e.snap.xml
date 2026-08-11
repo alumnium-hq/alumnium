@@ -20,9 +20,7 @@
               <div id=63>
                 <div id=65>
                   Where
-                  <searchbox name="Where" id=70 focusable editable="plaintext" settable>
-                    <div id=73 editable="plaintext"/>
-                  </searchbox>
+                  <searchbox name="Where" id=70 focusable editable="plaintext" settable/>
                 </div>
                 <button id=75 focusable>
                   <div id=78>When</div>

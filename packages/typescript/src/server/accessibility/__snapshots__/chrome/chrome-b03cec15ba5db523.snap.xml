@@ -10,9 +10,7 @@
     </div>
     <div id=39>
       <search id=40>
-        <combobox name="Search" id=45 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox">
-          <div id=47 editable="plaintext"/>
-        </combobox>
+        <combobox name="Search" id=45 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox"/>
         <button name="Search" id=48 focusable/>
       </search>
       <div id=52>

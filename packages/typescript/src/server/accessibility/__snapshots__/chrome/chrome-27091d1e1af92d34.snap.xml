@@ -187,9 +187,7 @@
             <image name="Claude" id=454/>
           </link>
           <div id=456>
-            <textbox name="Ask Claude" id=457 focusable editable="plaintext" settable multiline>
-              <div id=459 editable="plaintext"/>
-            </textbox>
+            <textbox name="Ask Claude" id=457 focusable editable="plaintext" settable multiline/>
             <button name="Submit" id=460 focusable/>
           </div>
         </div>
