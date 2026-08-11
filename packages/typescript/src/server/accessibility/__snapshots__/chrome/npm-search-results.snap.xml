@@ -19,7 +19,7 @@
           <link name="skip to" id=39 focusable url="https://www.npmjs.com/search?q=ai#signin">sign in</link>
         </div>
         <div id=42>
-          <button name="Light mode — click for dark" id=43 focusable/>
+          <button name="Light mode — click for dark" id=43 focusable />
           <navigation name="duct Navigation" id=44>
             <list id=45>
               <listitem id=46 level=1>
@@ -40,10 +40,10 @@
       </div>
       <div id=63>
         npm
-        <link name="Npm" id=68 focusable url="https://www.npmjs.com/"/>
+        <link name="Npm" id=68 focusable url="https://www.npmjs.com/" />
         <div id=70>
           <div id=71>
-            <button id=72 focusable/>
+            <button id=72 focusable />
             <div id=73>
               <combobox name="Search packages" id=75 focusable focused editable="plaintext" settable hasPopup="listbox">
                 <div id=78 editable="plaintext">ai</div>
@@ -198,7 +198,7 @@
               </div>
             </div>
             <div id=306>
-              <image name="Download statistics" id=307/>
+              <image name="Download statistics" id=307 />
               76,536,816
             </div>
           </div>
@@ -228,7 +228,7 @@
               </div>
             </div>
             <div id=355>
-              <image name="Download statistics" id=356/>
+              <image name="Download statistics" id=356 />
               70,280,917
             </div>
           </div>
@@ -258,7 +258,7 @@
               </div>
             </div>
             <div id=405>
-              <image name="Download statistics" id=406/>
+              <image name="Download statistics" id=406 />
               25,169,116
             </div>
           </div>
@@ -288,7 +288,7 @@
               </div>
             </div>
             <div id=455>
-              <image name="Download statistics" id=456/>
+              <image name="Download statistics" id=456 />
               6,609,436
             </div>
           </div>
@@ -313,7 +313,7 @@
               </div>
             </div>
             <div id=499>
-              <image name="Download statistics" id=500/>
+              <image name="Download statistics" id=500 />
               24,507,171
             </div>
           </div>
@@ -343,7 +343,7 @@
               </div>
             </div>
             <div id=549>
-              <image name="Download statistics" id=550/>
+              <image name="Download statistics" id=550 />
               36,751,739
             </div>
           </div>
@@ -373,7 +373,7 @@
               </div>
             </div>
             <div id=599>
-              <image name="Download statistics" id=600/>
+              <image name="Download statistics" id=600 />
               7,643,540
             </div>
           </div>
@@ -406,7 +406,7 @@
               </div>
             </div>
             <div id=652>
-              <image name="Download statistics" id=653/>
+              <image name="Download statistics" id=653 />
               27,685,087
             </div>
           </div>
@@ -436,7 +436,7 @@
               </div>
             </div>
             <div id=702>
-              <image name="Download statistics" id=703/>
+              <image name="Download statistics" id=703 />
               38,460,148
             </div>
           </div>
@@ -461,7 +461,7 @@
               </div>
             </div>
             <div id=746>
-              <image name="Download statistics" id=747/>
+              <image name="Download statistics" id=747 />
               15,907,464
             </div>
           </div>
@@ -491,7 +491,7 @@
               </div>
             </div>
             <div id=796>
-              <image name="Download statistics" id=797/>
+              <image name="Download statistics" id=797 />
               7,905,734
             </div>
           </div>
@@ -521,7 +521,7 @@
               </div>
             </div>
             <div id=846>
-              <image name="Download statistics" id=847/>
+              <image name="Download statistics" id=847 />
               11,583,708
             </div>
           </div>
@@ -566,7 +566,7 @@
               </div>
             </div>
             <div id=914>
-              <image name="Download statistics" id=915/>
+              <image name="Download statistics" id=915 />
               520,509
             </div>
           </div>
@@ -617,7 +617,7 @@
               </div>
             </div>
             <div id=990>
-              <image name="Download statistics" id=991/>
+              <image name="Download statistics" id=991 />
               2,096,088
             </div>
           </div>
@@ -656,7 +656,7 @@
               </div>
             </div>
             <div id=1051>
-              <image name="Download statistics" id=1052/>
+              <image name="Download statistics" id=1052 />
               1,014,611
             </div>
           </div>
@@ -686,7 +686,7 @@
               </div>
             </div>
             <div id=1101>
-              <image name="Download statistics" id=1102/>
+              <image name="Download statistics" id=1102 />
               6,775,494
             </div>
           </div>
@@ -716,7 +716,7 @@
               </div>
             </div>
             <div id=1151>
-              <image name="Download statistics" id=1152/>
+              <image name="Download statistics" id=1152 />
               2,315,161
             </div>
           </div>
@@ -746,7 +746,7 @@
               </div>
             </div>
             <div id=1202>
-              <image name="Download statistics" id=1203/>
+              <image name="Download statistics" id=1203 />
               11,075,274
             </div>
           </div>
@@ -776,7 +776,7 @@
               </div>
             </div>
             <div id=1252>
-              <image name="Download statistics" id=1253/>
+              <image name="Download statistics" id=1253 />
               6,107,819
             </div>
           </div>
@@ -809,7 +809,7 @@
               </div>
             </div>
             <div id=1305>
-              <image name="Download statistics" id=1306/>
+              <image name="Download statistics" id=1306 />
               3,752,223
             </div>
           </div>
@@ -828,8 +828,8 @@
       <heading id=1337 level=2>Footer</heading>
       <div id=1340>
         <div id=1341>
-          <link name="Visit npm GitHub page" id=1343 focusable url="https://github.com/npm"/>
-          <link name="GitHub" id=1345 focusable url="https://github.com/"/>
+          <link name="Visit npm GitHub page" id=1343 focusable url="https://github.com/npm" />
+          <link name="GitHub" id=1345 focusable url="https://github.com/" />
         </div>
         <div id=1346>
           <heading id=1347 level=3>Support</heading>

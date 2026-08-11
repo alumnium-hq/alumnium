@@ -5,7 +5,7 @@
       <heading id=9 level=5>Example</heading>
       <link id=12 focusable url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue">Source</link>
     </sectionheader>
-    <separator id=15 settable orientation="horizontal"/>
+    <separator id=15 settable orientation="horizontal" />
     <blockquote id=16>
       <paragraph id=17>
         <div id=19>“</div>
@@ -18,7 +18,7 @@
     <link id=33 focusable url="https://todomvc.com/examples/vue/dist/#/">
       <heading id=34 level=1>todos</heading>
     </link>
-    <textbox name="What needs to be done?" id=37 focusable focused editable="plaintext" settable/>
+    <textbox name="What needs to be done?" id=37 focusable focused editable="plaintext" settable />
   </sectionheader>
   <contentinfo id=42>
     <paragraph id=43>Double-click to edit a todo</paragraph>

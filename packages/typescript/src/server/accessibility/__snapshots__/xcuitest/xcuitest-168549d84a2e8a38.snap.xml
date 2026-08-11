@@ -10,75 +10,75 @@
                   <div id=29 value=1>Hands-On Selenium WebDriver with Java</div>
                   <div id=31 value=5>Practice site</div>
                   <Link id=34>
-                    <Image id=35/>
+                    <Image id=35 />
                   </Link>
-                  <div name="separator" id=36/>
+                  <div name="separator" id=36 />
                   <div id=37 value=1>Web form</div>
                   <div name="form" id=39>
                     <div id=40>
                       <div id=41>Text input</div>
-                      <TextField name="Text input" id=42 value="Hello Alumnium!"/>
+                      <TextField name="Text input" id=42 value="Hello Alumnium!" />
                     </div>
                     <div id=43>
                       <div id=44>Password</div>
-                      <SecureTextField name="Password" id=45/>
+                      <SecureTextField name="Password" id=45 />
                     </div>
                     <div id=46>
                       <div id=47>Textarea</div>
-                      <TextView name="Textarea" id=48/>
+                      <TextView name="Textarea" id=48 />
                     </div>
                     <div id=49>
                       <div id=50>Disabled input</div>
-                      <TextField name="Disabled input" id=51/>
+                      <TextField name="Disabled input" id=51 />
                     </div>
                     <div id=52>
                       <div id=53>Readonly input</div>
-                      <TextField name="Readonly input" id=54/>
+                      <TextField name="Readonly input" id=54 />
                     </div>
                     <Link id=56>Return to index</Link>
                     <div id=58>
                       <div id=59>Dropdown (select)</div>
-                      <div name="Dropdown (select)" id=60 value="Open this select menu"/>
+                      <div name="Dropdown (select)" id=60 value="Open this select menu" />
                     </div>
                     <div id=61>
                       <div id=62>Dropdown (datalist)</div>
-                      <TextField name="Dropdown (datalist)" id=63 value="Type to search..."/>
+                      <TextField name="Dropdown (datalist)" id=63 value="Type to search..." />
                     </div>
                     <div id=64>
                       <div id=65>File input</div>
-                      <Button name="File input" id=66 value="no file selected"/>
+                      <Button name="File input" id=66 value="no file selected" />
                     </div>
                     <div id=67>
                       <div id=68>
-                        <Switch name="Checked checkbox" id=69 value=1/>
+                        <Switch name="Checked checkbox" id=69 value=1 />
                         <div id=70>Checked checkbox</div>
                       </div>
                       <div id=71>
-                        <Switch name="Default checkbox" id=72 value=0/>
+                        <Switch name="Default checkbox" id=72 value=0 />
                         <div id=73>Default checkbox</div>
                       </div>
                     </div>
                     <div id=75>
-                      <div name="Checked radio" id=76 value=1/>
+                      <div name="Checked radio" id=76 value=1 />
                       <div id=77>Checked radio</div>
                     </div>
                     <div id=79>
-                      <div name="Default radio" id=80 value=0/>
+                      <div name="Default radio" id=80 value=0 />
                       <div id=81>Default radio</div>
                     </div>
-                    <Button name="Submit" id=82/>
+                    <Button name="Submit" id=82 />
                     <div id=83>
                       <div id=84>
                         <div id=85>Color picker</div>
-                        <ColorWell name="Color picker" id=86 value="dark indigo"/>
+                        <ColorWell name="Color picker" id=86 value="dark indigo" />
                       </div>
                       <div id=87>
                         <div id=88>Date picker</div>
-                        <TextField name="Date picker" id=89/>
+                        <TextField name="Date picker" id=89 />
                       </div>
                       <div id=90>
                         <div id=91>Example range</div>
-                        <Slider name="Example range" id=92 value=5.00/>
+                        <Slider name="Example range" id=92 value=5.00 />
                       </div>
                     </div>
                   </div>
@@ -88,88 +88,88 @@
                   <Link id=96>Boni García</Link>
                 </div>
               </WebView>
-              <div name="Vertical scroll bar, 2 pages" id=99 value="0 %"/>
-              <div name="Horizontal scroll bar, 1 page" id=101 value="0 %"/>
-              <div name="Vertical scroll bar, 2 pages" id=103 value="0 %"/>
-              <div name="Horizontal scroll bar, 1 page" id=105 value="0 %"/>
+              <div name="Vertical scroll bar, 2 pages" id=99 value="0 %" />
+              <div name="Horizontal scroll bar, 1 page" id=101 value="0 %" />
+              <div name="Vertical scroll bar, 2 pages" id=103 value="0 %" />
+              <div name="Horizontal scroll bar, 1 page" id=105 value="0 %" />
             </WebView>
           </WebView>
         </div>
-        <div name="Horizontal scroll bar, 1 page" id=107 value="0 %"/>
-        <div name="Horizontal scroll bar, 1 page" id=109 value="0 %"/>
+        <div name="Horizontal scroll bar, 1 page" id=107 value="0 %" />
+        <div name="Horizontal scroll bar, 1 page" id=109 value="0 %" />
       </ScrollView>
       <div name="CapsuleViewController" id=111>
         <div name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" id=124>
-          <div name="TabBarItemTitle" id=125 value="‎bonigarcia.dev" label="Address"/>
+          <div name="TabBarItemTitle" id=125 value="‎bonigarcia.dev" label="Address" />
         </div>
       </div>
     </div>
   </Window>
   <Window id=130>
     <Toolbar name="Toolbar" id=137>
-      <Button name="Previous" id=146/>
-      <Button name="Next" id=150/>
-      <Button name="Done" id=154/>
+      <Button name="Previous" id=146 />
+      <Button name="Next" id=150 />
+      <Button name="Done" id=154 />
     </Toolbar>
-    <div name="inputView" id=155/>
+    <div name="inputView" id=155 />
   </Window>
   <Window id=156>
     <div name="SystemInputAssistantView" id=160>
       <div name="CenterPageView" id=162>
-        <ScrollView id=164/>
+        <ScrollView id=164 />
         <div name="Typing Predictions" id=166>
           <Button name="Passwords" id=169>
-            <Image name="kb-autofill-key" id=170/>
+            <Image name="kb-autofill-key" id=170 />
           </Button>
         </div>
       </div>
     </div>
     <Keyboard id=175>
       <div name="eyboardayouttar review" id=177>
-        <Key name="Padding-Left" id=178/>
-        <Key name="Padding-Right" id=179/>
-        <Key name="Padding-Left" id=180/>
-        <Key name="Padding-Right" id=181/>
-        <Key name="Padding-Left" id=182/>
-        <Key name="Padding-Right" id=183/>
-        <Key name="Q" id=184/>
-        <Key name="W" id=185/>
-        <Key name="E" id=186/>
-        <Key name="R" id=187/>
-        <Key name="T" id=188/>
-        <Key name="Y" id=189/>
-        <Key name="U" id=190/>
-        <Key name="I" id=191/>
-        <Key name="O" id=192/>
-        <Key name="P" id=193/>
-        <Key name="A" id=194/>
-        <Key name="S" id=195/>
-        <Key name="D" id=196/>
-        <Key name="F" id=197/>
-        <Key name="G" id=198/>
-        <Key name="H" id=199/>
-        <Key name="J" id=200/>
-        <Key name="K" id=201/>
-        <Key name="L" id=202/>
-        <Button name="shift" id=203 value=1/>
-        <Key name="Z" id=204/>
-        <Key name="X" id=205/>
-        <Key name="C" id=206/>
-        <Key name="V" id=207/>
-        <Key name="B" id=208/>
-        <Key name="N" id=209/>
-        <Key name="M" id=210/>
-        <Key name="delete" id=211/>
-        <Key name="more" id=212 label="numbers"/>
-        <Button name="emoji" id=213 label="Emoji"/>
-        <Key name="space" id=214/>
-        <Button name="Go" id=215 label="go"/>
+        <Key name="Padding-Left" id=178 />
+        <Key name="Padding-Right" id=179 />
+        <Key name="Padding-Left" id=180 />
+        <Key name="Padding-Right" id=181 />
+        <Key name="Padding-Left" id=182 />
+        <Key name="Padding-Right" id=183 />
+        <Key name="Q" id=184 />
+        <Key name="W" id=185 />
+        <Key name="E" id=186 />
+        <Key name="R" id=187 />
+        <Key name="T" id=188 />
+        <Key name="Y" id=189 />
+        <Key name="U" id=190 />
+        <Key name="I" id=191 />
+        <Key name="O" id=192 />
+        <Key name="P" id=193 />
+        <Key name="A" id=194 />
+        <Key name="S" id=195 />
+        <Key name="D" id=196 />
+        <Key name="F" id=197 />
+        <Key name="G" id=198 />
+        <Key name="H" id=199 />
+        <Key name="J" id=200 />
+        <Key name="K" id=201 />
+        <Key name="L" id=202 />
+        <Button name="shift" id=203 value=1 />
+        <Key name="Z" id=204 />
+        <Key name="X" id=205 />
+        <Key name="C" id=206 />
+        <Key name="V" id=207 />
+        <Key name="B" id=208 />
+        <Key name="N" id=209 />
+        <Key name="M" id=210 />
+        <Key name="delete" id=211 />
+        <Key name="more" id=212 label="numbers" />
+        <Button name="emoji" id=213 label="Emoji" />
+        <Key name="space" id=214 />
+        <Button name="Go" id=215 label="go" />
       </div>
     </Keyboard>
     <div id=216>
-      <Button name="Next keyboard" id=217 value="Русская"/>
-      <Button name="dictation" id=219 label="Dictate"/>
-      <Button name="dictation" id=221 label="Dictate"/>
+      <Button name="Next keyboard" id=217 value="Русская" />
+      <Button name="dictation" id=219 label="Dictate" />
+      <Button name="dictation" id=221 label="Dictate" />
     </div>
   </Window>
 </Application>

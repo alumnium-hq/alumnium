@@ -4,7 +4,7 @@
     <banner id=26>
       <heading id=27 level=2>Navigation Menu</heading>
       <div id=31>
-        <link name="Homepage" id=34 focusable url="https://github.com/"/>
+        <link name="Homepage" id=34 focusable url="https://github.com/" />
         <div id=39>
           <navigation name="Global" id=42>
             <list id=43>
@@ -29,10 +29,10 @@
             </list>
           </navigation>
           <div id=104>
-            <button name="Search or jump to…" id=107 focusable hasPopup="dialog"/>
+            <button name="Search or jump to…" id=107 focusable hasPopup="dialog" />
             <link id=141 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsearch%3Fq%3Dalumnium%26type%3Drepositories">Sign in</link>
             <link id=144 focusable url="https://github.com/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2Fsearch&amp;source=header">Sign up</link>
-            <button name="Appearance settings" id=149 focusable hasPopup="menu"/>
+            <button name="Appearance settings" id=149 focusable hasPopup="menu" />
           </div>
         </div>
       </div>
@@ -226,7 +226,7 @@
             </listitem>
           </list>
         </region>
-        <slider name="Draggable pane splitter" id=555 focusable settable orientation="horizontal" valuemin=256 valuemax=321 valuetext="Pane width 296 pixels"/>
+        <slider name="Draggable pane splitter" id=555 focusable settable orientation="horizontal" valuemin=256 valuemax=321 valuetext="Pane width 296 pixels" />
       </div>
       <div id=558>
         <div id=559>
@@ -248,7 +248,7 @@
                 <div id=587>Sort by:</div>
                 <div id=589>Best match</div>
               </button>
-              <button name="Open column options" id=593 focusable hasPopup="menu"/>
+              <button name="Open column options" id=593 focusable hasPopup="menu" />
             </div>
           </div>
           <div id=596>
@@ -520,7 +520,7 @@
         </div>
         <div id=1090>
           <div id=1091>
-            <image name="Package icon" id=1093 url="https://github.com/images/modules/search/mona-love.png"/>
+            <image name="Package icon" id=1093 url="https://github.com/images/modules/search/mona-love.png" />
             <heading id=1094 level=2>Sponsor open source projects you depend on</heading>
             Contributors are working behind the scenes to make open source better for everyone—give them the help and recognition they deserve.
             <link id=1103 focusable url="https://github.com/sponsors/explore">Explore sponsorable projects</link>

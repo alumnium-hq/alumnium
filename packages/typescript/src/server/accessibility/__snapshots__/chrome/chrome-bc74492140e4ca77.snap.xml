@@ -1,6 +1,6 @@
 <RootWebArea name="Calculator" id=1 focusable focused url="https://seleniumbase.io/apps/calculator">
   <div id=6>
-    <LabelText id=7/>
+    <LabelText id=7 />
     Dark Mode
     <link id=17 focusable url="https://seleniumbase.io/apps/calculator">Calculator</link>
     <link id=34 focusable url="https://seleniumbase.io/">SB</link>

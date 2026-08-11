@@ -10,7 +10,7 @@ describe("XmlRenderer", () => {
 
     expect(XmlRenderer.render([root])).toMatchInlineSnapshot(`
       "<root id=1>
-        <button name="OK"/>
+        <button name="OK" />
       </root>"
     `);
   });
@@ -21,7 +21,7 @@ describe("XmlRenderer", () => {
     expect(XmlRenderer.render([root], { indentation: "\t" }))
       .toMatchInlineSnapshot(`
         "<root>
-        \t<child/>
+        	<child />
         </root>"
       `);
   });
@@ -39,7 +39,7 @@ describe("XmlRenderer", () => {
     const root = Xml.tag("root", {}, [Xml.tag("child")]);
 
     expect(XmlRenderer.render([root], { minify: true })).toMatchInlineSnapshot(
-      `"<root><child/></root>"`,
+      `"<root><child /></root>"`,
     );
   });
 
@@ -95,7 +95,7 @@ describe("XmlRenderer", () => {
   it("renders empty attributes explicitly", () => {
     const root = Xml.tag("root", { empty: "" });
 
-    expect(XmlRenderer.render([root])).toMatchInlineSnapshot(`"<root/>"`);
+    expect(XmlRenderer.render([root])).toMatchInlineSnapshot(`"<root />"`);
   });
 
   it("renders compact attributes", () => {
@@ -116,7 +116,7 @@ describe("XmlRenderer", () => {
     expect(
       XmlRenderer.render([root], { compactAttrs: true }),
     ).toMatchInlineSnapshot(
-      `"<root enabled count=123 offset=-12 ratio=1.25 paddedId="00123" trailingDecimal="1." leadingDecimal=".5" exponent="1e3" label="Hello world"/>"`,
+      `"<root enabled count=123 offset=-12 ratio=1.25 paddedId="00123" trailingDecimal="1." leadingDecimal=".5" exponent="1e3" label="Hello world" />"`,
     );
   });
 
@@ -139,9 +139,24 @@ describe("XmlRenderer", () => {
 
     expect(XmlRenderer.render(elements as Xml.AnyElement[]))
       .toMatchInlineSnapshot(`
-        "<link focusable/>
-        <StaticText name="Explore GitHub Copilot"/>"
+        "<link focusable />
+        <StaticText name="Explore GitHub Copilot" />"
       `);
+  });
+
+  it("round-trips compact unquoted numeric IDs as sibling self-closing tags", () => {
+    const rendered = XmlRenderer.render(
+      [Xml.tag("LineBreak", { id: "13" }), Xml.tag("button", { id: "14" })],
+      { minify: true },
+    );
+
+    const elements = Xml.parseRootChildren(rendered);
+    const first = Xml.nodeAsTag(elements[0]!);
+    const second = Xml.nodeAsTag(elements[1]!);
+
+    expect(first?.attribs.id).toBe("13");
+    expect(second?.attribs.id).toBe("14");
+    expect(second?.children).toHaveLength(0);
   });
 
   it("formats multiple roots, comments, CDATA, and directives", () => {
@@ -156,7 +171,7 @@ describe("XmlRenderer", () => {
           <!-- note -->
           <![CDATA[ content ]]>
         </one>
-        <two/>"
+        <two />"
       `);
   });
 
@@ -168,7 +183,7 @@ describe("XmlRenderer", () => {
     expect(
       XmlRenderer.render(elements as Xml.AnyElement[], { minify: true }),
     ).toMatchInlineSnapshot(
-      `"<?target value?><one><!-- note --><![CDATA[ content ]]></one><two/>"`,
+      `"<?target value?><one><!-- note --><![CDATA[ content ]]></one><two />"`,
     );
   });
 });

@@ -15,23 +15,23 @@
     </div>
     <div id=28>
       <div id=29>Powered by</div>
-      <div id=30 content-desc="Elemental Selenium" clickable/>
+      <div id=30 content-desc="Elemental Selenium" clickable />
     </div>
   </WebView>
   <div id=33 resource-id="toolbar_container">
     <div id=34 resource-id="toolbar">
-      <ImageButton id=35 content-desc="Home" resource-id="home_button" clickable/>
+      <ImageButton id=35 content-desc="Home" resource-id="home_button" clickable />
       <div id=36 resource-id="location_bar">
         <div id=37 resource-id="location_bar_status" clickable>
-          <ImageView id=40 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+          <ImageView id=40 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
         </div>
         <EditText id=41 resource-id="url_bar" clickable>the-internet.herokuapp.com/forgot_password</EditText>
       </div>
       <div id=42 resource-id="toolbar_buttons">
-        <ImageButton id=43 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
-        <ImageButton id=45 content-desc="More options" resource-id="menu_button" clickable/>
+        <ImageButton id=43 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=45 content-desc="More options" resource-id="menu_button" clickable />
       </div>
     </div>
-    <ImageView id=46 resource-id="toolbar_hairline"/>
+    <ImageView id=46 resource-id="toolbar_hairline" />
   </div>
 </div>

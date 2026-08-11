@@ -4,7 +4,7 @@
     <banner id=8>
       <div id=10>
         <link name="Docs" id=11 focusable url="https://developers.cloudflare.com/">
-          <image name="Cloudflare" id=13/>
+          <image name="Cloudflare" id=13 />
           DOCS
         </link>
         <navigation name="Sections" id=17>
@@ -18,17 +18,17 @@
         <button name="(Ctrl+)" id=32 focusable>
           Search
           <div id=37>
-            <image id=39/>
+            <image id=39 />
             K
           </div>
         </button>
         <link name="GitHub" id=43 focusable url="https://github.com/cloudflare/cloudflare-docs">
-          <image id=44/>
+          <image id=44 />
         </link>
         <button name="Theme: system. Activate to switch to light." id=46 focusable>
-          <image id=49/>
+          <image id=49 />
         </button>
-        <separator id=51 settable orientation="horizontal"/>
+        <separator id=51 settable orientation="horizontal" />
         <link id=52 focusable url="https://dash.cloudflare.com/">Log in</link>
       </div>
     </banner>
@@ -36,7 +36,7 @@
       <div id=57>
         <complementary id=59>
           <navigation name="Documentation" id=60>
-            <searchbox name="Filter navigation" id=62 focusable editable="plaintext" settable/>
+            <searchbox name="Filter navigation" id=62 focusable editable="plaintext" settable />
             <div id=66>
               <div id=67>
                 GET STARTED
@@ -98,7 +98,7 @@
                   <listitem id=162 level=1>
                     <button id=164 focusable controls="nb-disclosure-3">
                       <div id=165>
-                        <image id=166/>
+                        <image id=166 />
                         Compute
                       </div>
                     </button>
@@ -138,7 +138,7 @@
                   <listitem id=224 level=1>
                     <button id=226 focusable controls="nb-disclosure-4">
                       <div id=227>
-                        <image id=228/>
+                        <image id=228 />
                         AI
                       </div>
                     </button>
@@ -175,7 +175,7 @@
                   <listitem id=281 level=1>
                     <button id=283 focusable controls="nb-disclosure-5">
                       <div id=284>
-                        <image id=285/>
+                        <image id=285 />
                         Storage &amp; Database
                       </div>
                     </button>
@@ -206,7 +206,7 @@
                   <listitem id=328 level=1>
                     <button id=330 focusable controls="nb-disclosure-6">
                       <div id=331>
-                        <image id=332/>
+                        <image id=332 />
                         Media
                       </div>
                     </button>
@@ -230,7 +230,7 @@
                   <listitem id=360 level=1>
                     <button id=362 focusable controls="nb-disclosure-7">
                       <div id=363>
-                        <image id=364/>
+                        <image id=364 />
                         Application Security
                       </div>
                     </button>
@@ -264,7 +264,7 @@
                   <listitem id=412 level=1>
                     <button id=414 focusable controls="nb-disclosure-8">
                       <div id=415>
-                        <image id=416/>
+                        <image id=416 />
                         Cloudflare One
                       </div>
                     </button>
@@ -310,7 +310,7 @@
                   <listitem id=484 level=1>
                     <button id=486 focusable controls="nb-disclosure-9">
                       <div id=487>
-                        <image id=488/>
+                        <image id=488 />
                         Domains &amp; DNS
                       </div>
                     </button>
@@ -335,7 +335,7 @@
                   <listitem id=521 level=1>
                     <button id=523 focusable controls="nb-disclosure-10">
                       <div id=524>
-                        <image id=525/>
+                        <image id=525 />
                         Networking
                       </div>
                     </button>
@@ -366,7 +366,7 @@
                   <listitem id=568 level=1>
                     <button id=570 focusable controls="nb-disclosure-11">
                       <div id=571>
-                        <image id=572/>
+                        <image id=572 />
                         Delivery &amp; Performance
                       </div>
                     </button>
@@ -399,7 +399,7 @@
                   <listitem id=615 level=1>
                     <button id=617 focusable controls="nb-disclosure-12">
                       <div id=618>
-                        <image id=619/>
+                        <image id=619 />
                         Observe
                       </div>
                     </button>
@@ -446,18 +446,18 @@
               </tablist>
               <tabpanel name="Compute" id=695>
                 <div id=697>
-                  <image id=699/>
+                  <image id=699 />
                   <heading id=701 level=3>Deploy with one command</heading>
                 </div>
                 <paragraph id=704>Build and deploy serverless functions and full-stack apps on Cloudflare's global network. No servers to manage. No cold starts or region complexity.</paragraph>
                 <div id=708>
                   <code id=709>npm create cloudflare@latest my-app</code>
-                  <button name="Copy to clipboard" id=712 focusable/>
+                  <button name="Copy to clipboard" id=712 focusable />
                 </div>
                 <div id=713>
                   <link id=714 focusable url="https://developers.cloudflare.com/workers/get-started/guide/">
                     Create your first Worker
-                    <image id=717/>
+                    <image id=717 />
                   </link>
                   <paragraph id=719>
                     <link id=721 focusable url="https://developers.cloudflare.com/workers/">Workers</link>
@@ -489,7 +489,7 @@
               </div>
               <link id=779 focusable url="https://developers.cloudflare.com/changelog/">
                 View Changelog
-                <image id=782/>
+                <image id=782 />
               </link>
             </div>
             <div id=784>
@@ -504,7 +504,7 @@
                 </div>
                 <div id=806>
                   Read update
-                  <image id=809/>
+                  <image id=809 />
                 </div>
               </link>
               <link id=811 focusable url="https://developers.cloudflare.com/changelog/post/2026-08-03-cloudflare-computer/">
@@ -518,7 +518,7 @@
                 </div>
                 <div id=838>
                   Read more
-                  <image id=841/>
+                  <image id=841 />
                 </div>
               </link>
               <link id=843 focusable url="https://developers.cloudflare.com/changelog/post/2026-08-03-python-javascript-rpc/">
@@ -532,7 +532,7 @@
                 </div>
                 <div id=869>
                   Read more
-                  <image id=872/>
+                  <image id=872 />
                 </div>
               </link>
               <link id=874 focusable url="https://developers.cloudflare.com/changelog/post/2026-07-31-warp-windows-beta/">
@@ -546,7 +546,7 @@
                 </div>
                 <div id=898>
                   Read more
-                  <image id=901/>
+                  <image id=901 />
                 </div>
               </link>
               <link id=903 focusable url="https://developers.cloudflare.com/changelog/post/2026-07-31-warp-macos-beta/">
@@ -560,7 +560,7 @@
                 </div>
                 <div id=926>
                   Read more
-                  <image id=929/>
+                  <image id=929 />
                 </div>
               </link>
               <link id=931 focusable url="https://developers.cloudflare.com/changelog/post/2026-07-31-mcp-portal-manual-oauth/">
@@ -574,7 +574,7 @@
                 </div>
                 <div id=950>
                   Read more
-                  <image id=953/>
+                  <image id=953 />
                 </div>
               </link>
               <link id=955 focusable url="https://developers.cloudflare.com/changelog/post/2026-07-31-br-dashboard-playground/">
@@ -588,7 +588,7 @@
                 </div>
                 <div id=979>
                   Read more
-                  <image id=982/>
+                  <image id=982 />
                 </div>
               </link>
               <link id=984 focusable url="https://developers.cloudflare.com/changelog/post/2026-07-30-rotate-stream-broadcast-keys/">
@@ -602,7 +602,7 @@
                 </div>
                 <div id=1007>
                   Read more
-                  <image id=1010/>
+                  <image id=1010 />
                 </div>
               </link>
             </div>
@@ -616,38 +616,38 @@
                 <div id=1024>
                   <link id=1025 focusable url="https://developers.cloudflare.com/waf/">
                     <div id=1026>
-                      <image id=1028/>
+                      <image id=1028 />
                       WAF
                     </div>
                     <paragraph id=1033>Protect your applications without sacrificing performance</paragraph>
                     <paragraph id=1038>Identify and block malicious payloads before they can compromise your application.</paragraph>
                     <div id=1043>
                       Harden your app with WAF
-                      <image id=1046/>
+                      <image id=1046 />
                     </div>
                   </link>
                   <link id=1048 focusable url="https://developers.cloudflare.com/ssl/">
                     <div id=1049>
-                      <image id=1051/>
+                      <image id=1051 />
                       SSL/TLS
                     </div>
                     <paragraph id=1056>Encrypt your site in minutes</paragraph>
                     <paragraph id=1059>Streamline TLS Certificate Management.</paragraph>
                     <div id=1063>
                       Set up SSL/TLS
-                      <image id=1066/>
+                      <image id=1066 />
                     </div>
                   </link>
                   <link id=1068 focusable url="https://developers.cloudflare.com/turnstile/">
                     <div id=1069>
-                      <image id=1071/>
+                      <image id=1071 />
                       TURNSTILE
                     </div>
                     <paragraph id=1076>Verify visitors without CAPTCHA</paragraph>
                     <paragraph id=1080>Confirm web visitors are real and block unwanted bots without slowing down web experiences for real users.</paragraph>
                     <div id=1086>
                       Add Turnstile protection
-                      <image id=1089/>
+                      <image id=1089 />
                     </div>
                   </link>
                 </div>
@@ -657,38 +657,38 @@
                 <div id=1095>
                   <link id=1096 focusable url="https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/">
                     <div id=1097>
-                      <image id=1099/>
+                      <image id=1099 />
                       TUNNEL
                     </div>
                     <paragraph id=1104>Securely connect origins with post-quantum encrypted tunnels</paragraph>
                     <paragraph id=1109>Outbound-only encrypted tunnels, no open ports.</paragraph>
                     <div id=1113>
                       Create a secure Tunnel
-                      <image id=1116/>
+                      <image id=1116 />
                     </div>
                   </link>
                   <link id=1118 focusable url="https://developers.cloudflare.com/cloudflare-one/access-controls/">
                     <div id=1119>
-                      <image id=1121/>
+                      <image id=1121 />
                       ACCESS
                     </div>
                     <paragraph id=1126>Secure internal applications with Cloudflare Access</paragraph>
                     <paragraph id=1130>Identity-first, quantum-safe access to private applications and infrastructure.</paragraph>
                     <div id=1135>
                       Set up Cloudflare Access
-                      <image id=1138/>
+                      <image id=1138 />
                     </div>
                   </link>
                   <link id=1140 focusable url="https://developers.cloudflare.com/cloudflare-one/traffic-policies/">
                     <div id=1141>
-                      <image id=1143/>
+                      <image id=1143 />
                       GATEWAY
                     </div>
                     <paragraph id=1148>Secure Internet browsing without disruptions</paragraph>
                     <paragraph id=1152>Cloud-native Secure Web Gateway (SWG) that inspects browser traffic without disruption.</paragraph>
                     <div id=1158>
                       Create Gateway policies
-                      <image id=1161/>
+                      <image id=1161 />
                     </div>
                   </link>
                 </div>
@@ -703,80 +703,80 @@
               </div>
               <link id=1173 focusable url="https://developers.cloudflare.com/directory/?product-group=Application+performance">
                 Explore Directory
-                <image id=1176/>
+                <image id=1176 />
               </link>
             </div>
             <div id=1179>
               <link id=1180 focusable url="https://developers.cloudflare.com/dns/">
                 <div id=1181>
-                  <image id=1183/>
+                  <image id=1183 />
                   DNS
                 </div>
                 <paragraph id=1188>Fast, reliable and resilient DNS queries</paragraph>
                 <paragraph id=1192>World's fastest authoritative DNS, consistently ranked #1 by DNSPerf; free, fully API-managed, DNSSEC supported.</paragraph>
                 <div id=1198>
                   Set up Authoritative DNS
-                  <image id=1201/>
+                  <image id=1201 />
                 </div>
               </link>
               <link id=1203 focusable url="https://developers.cloudflare.com/smart-shield/">
                 <div id=1204>
-                  <image id=1206/>
+                  <image id=1206 />
                   SMART SHIELD
                 </div>
                 <paragraph id=1211>Minimize origin load and accelerate dynamic content</paragraph>
                 <paragraph id=1215>Intelligently manage traffic, optimize content delivery, and safeguard origin infrastructure.</paragraph>
                 <div id=1220>
                   Enable Smart Shield
-                  <image id=1223/>
+                  <image id=1223 />
                 </div>
               </link>
               <link id=1225 focusable url="https://developers.cloudflare.com/cache/get-started/">
                 <div id=1226>
-                  <image id=1228/>
+                  <image id=1228 />
                   CDN
                 </div>
                 <paragraph id=1233>Default caching for static assets, with cache rules for full control</paragraph>
                 <paragraph id=1238>Caches content in 330+ cities worldwide, with instant purging and granular Cache Rules.</paragraph>
                 <div id=1243>
                   Set up Cache Rules
-                  <image id=1246/>
+                  <image id=1246 />
                 </div>
               </link>
               <link id=1248 focusable url="https://developers.cloudflare.com/speed/">
                 <div id=1249>
-                  <image id=1251/>
+                  <image id=1251 />
                   SPEED
                 </div>
                 <paragraph id=1256>Assess your site speed and apply recommended optimizations</paragraph>
                 <paragraph id=1261>Application delivery optimizations including minification, Brotli compression, Early Hints, and HTTP/3.</paragraph>
                 <div id=1268>
                   Improve your site speed
-                  <image id=1271/>
+                  <image id=1271 />
                 </div>
               </link>
               <link id=1273 focusable url="https://developers.cloudflare.com/images/">
                 <div id=1274>
-                  <image id=1276/>
+                  <image id=1276 />
                   IMAGES
                 </div>
                 <paragraph id=1281>Transform, optimize, and deliver images worldwide</paragraph>
                 <paragraph id=1285>Cloudflare Images handles format conversion, responsive sizing, and intelligent caching.</paragraph>
                 <div id=1290>
                   Optimize image delivery
-                  <image id=1293/>
+                  <image id=1293 />
                 </div>
               </link>
               <link id=1295 focusable url="https://developers.cloudflare.com/web-analytics/">
                 <div id=1296>
-                  <image id=1298/>
+                  <image id=1298 />
                   WEB ANALYTICS
                 </div>
                 <paragraph id=1303>Understand the performance of your web pages</paragraph>
                 <paragraph id=1308>Cloudflare Web Analytics collects Core Web Vitals and performance data from 100% of page views without cookies or sampling.</paragraph>
                 <div id=1315>
                   Track real user metrics
-                  <image id=1318/>
+                  <image id=1318 />
                 </div>
               </link>
             </div>
@@ -819,7 +819,7 @@
       </div>
       <contentinfo id=1390>
         <div id=1392>
-          <image name="Cloudflare wordmark" id=1395/>
+          <image name="Cloudflare wordmark" id=1395 />
           <div id=1396>
             <div id=1397>
               <div id=1398>
@@ -903,7 +903,7 @@
               <link id=1585 focusable url="https://www.cloudflare.com/trademark/">Trademark</link>
             </div>
             <div id=1588>
-              <image name="privacy options" id=1589 url="https://developers.cloudflare.com/_astro/privacyoptions.BWXSiJOZ_1oqSoo.svg"/>
+              <image name="privacy options" id=1589 url="https://developers.cloudflare.com/_astro/privacyoptions.BWXSiJOZ_1oqSoo.svg" />
               <button id=1590 focusable>Cookie Preferences</button>
             </div>
           </div>

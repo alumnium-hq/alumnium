@@ -6,10 +6,10 @@
         <heading id=12 level=5>Practice site</heading>
       </div>
       <link id=16 focusable url="https://github.com/bonigarcia/selenium-webdriver-java">
-        <image id=17 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
+        <image id=17 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png" />
       </link>
     </div>
-    <separator id=20 settable orientation="horizontal"/>
+    <separator id=20 settable orientation="horizontal" />
     <heading id=23 level=1>Web form</heading>
     <div id=27>
       <div id=28>
@@ -21,15 +21,15 @@
         </LabelText>
         <LabelText id=36>
           Password
-          <textbox name="Password" id=39 focusable editable="plaintext" settable/>
+          <textbox name="Password" id=39 focusable editable="plaintext" settable />
         </LabelText>
         <LabelText id=41>
           Textarea
-          <textbox name="Textarea" id=44 focusable editable="plaintext" settable multiline/>
+          <textbox name="Textarea" id=44 focusable editable="plaintext" settable multiline />
         </LabelText>
         <LabelText id=46>
           Disabled input
-          <textbox name="Disabled input" id=49 disabled editable="plaintext"/>
+          <textbox name="Disabled input" id=49 disabled editable="plaintext" />
         </LabelText>
         <LabelText id=52>
           Readonly input
@@ -42,47 +42,47 @@
           Dropdown (select)
           <combobox name="Dropdown (select)" id=67 focusable hasPopup="menu">
             <MenuListPopup id=68>
-              <option name="Open this select menu" id=70 focusable selected/>
-              <option name="One" id=71 focusable/>
-              <option name="Two" id=72 focusable/>
-              <option name="Three" id=73 focusable/>
+              <option name="Open this select menu" id=70 focusable selected />
+              <option name="One" id=71 focusable />
+              <option name="Two" id=72 focusable />
+              <option name="Three" id=73 focusable />
             </MenuListPopup>
           </combobox>
         </LabelText>
         <LabelText id=74>
           Dropdown (datalist)
-          <combobox name="Dropdown (datalist)" id=77 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox"/>
+          <combobox name="Dropdown (datalist)" id=77 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox" />
         </LabelText>
         <LabelText id=83>
           File input
-          <button name="File input" id=86 focusable/>
+          <button name="File input" id=86 focusable />
         </LabelText>
         <div id=87>
           <LabelText id=88>
-            <checkbox name="Checked checkbox" id=89 focusable checked/>
+            <checkbox name="Checked checkbox" id=89 focusable checked />
             Checked checkbox
           </LabelText>
           <LabelText id=92>
-            <checkbox name="Default checkbox" id=93 focusable/>
+            <checkbox name="Default checkbox" id=93 focusable />
             Default checkbox
           </LabelText>
         </div>
-        <radio name="Checked radio" id=98 focusable checked/>
-        <radio name="Default radio" id=102 focusable/>
+        <radio name="Checked radio" id=98 focusable checked />
+        <radio name="Default radio" id=102 focusable />
         <button id=104 focusable>Submit</button>
       </div>
       <div id=107>
         <LabelText id=108>
           Color picker
-          <ColorWell name="Color picker" id=111 focusable settable/>
+          <ColorWell name="Color picker" id=111 focusable settable />
         </LabelText>
         <LabelText id=114>
           Date picker
-          <textbox name="Date picker" id=117 focusable editable="plaintext" settable/>
+          <textbox name="Date picker" id=117 focusable editable="plaintext" settable />
         </LabelText>
         <LabelText id=119>
           Example range
-          <slider name="Example range" id=122 focusable settable orientation="horizontal" valuemin=0 valuemax=10/>
+          <slider name="Example range" id=122 focusable settable orientation="horizontal" valuemin=0 valuemax=10 />
         </LabelText>
       </div>
     </div>

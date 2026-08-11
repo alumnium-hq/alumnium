@@ -4,7 +4,7 @@
     <banner id=30>
       <heading id=31 level=2>Navigation Menu</heading>
       <div id=35>
-        <link name="Homepage" id=38 focusable url="https://github.com/"/>
+        <link name="Homepage" id=38 focusable url="https://github.com/" />
         <div id=40>
           <navigation name="Global" id=43>
             <list id=44>
@@ -30,7 +30,7 @@
           </navigation>
           <div id=105>
             <div id=107>
-              <button name="Search or jump to…" id=108 focusable hasPopup="dialog"/>
+              <button name="Search or jump to…" id=108 focusable hasPopup="dialog" />
               <dialog id=111 modal>
                 <heading id=112 level=1>Search code, repositories, users, issues, pull requests...</heading>
                 <div id=123>
@@ -43,7 +43,7 @@
                         </combobox>
                         <div id=138>
                           Clear
-                          <button name="Clear Search" id=142 focusable/>
+                          <button name="Clear Search" id=142 focusable />
                         </div>
                       </div>
                       <listbox name="Suggestions" id=144 focusable orientation="vertical">
@@ -76,7 +76,7 @@
             <form id=251>
               <div id=254>
                 <LabelText id=255>Enter your email</LabelText>
-                <textbox name="Enter your email" id=259 focusable editable="plaintext" settable/>
+                <textbox name="Enter your email" id=259 focusable editable="plaintext" settable />
               </div>
               <button id=262 focusable>Sign up for GitHub</button>
             </form>
@@ -85,10 +85,10 @@
         </div>
         <div id=270>
           <heading id=271 level=2>GitHub features</heading>
-          <button name="Pause" id=279 focusable/>
+          <button name="Pause" id=279 focusable />
           <div id=283>
             A demonstration animation of a code editor using GitHub Copilot Chat, where the user requests GitHub Copilot to refactor duplicated logic and extract it into a reusable function for a given code snippet.
-            <Video id=319 describedby="visual-code-0-desc"/>
+            <Video id=319 describedby="visual-code-0-desc" />
           </div>
         </div>
       </div>
@@ -106,20 +106,20 @@
         <heading id=385 level=2>GITHUB CUSTOMERS</heading>
         <div id=389>
           <div id=391>
-            <image name="American Airlines" id=392/>
-            <image name="Duolingo" id=393/>
-            <image name="Ernst and Young" id=394/>
-            <image name="Ford" id=395/>
-            <image name="InfoSys" id=396/>
-            <image name="Mercado Libre" id=397/>
-            <image name="Mercedes-Benz" id=398/>
-            <image name="Shopify" id=399/>
-            <image name="Philips" id=400/>
-            <image name="Société Générale" id=401/>
-            <image name="Spotify" id=402/>
-            <image name="Vodafone" id=403/>
+            <image name="American Airlines" id=392 />
+            <image name="Duolingo" id=393 />
+            <image name="Ernst and Young" id=394 />
+            <image name="Ford" id=395 />
+            <image name="InfoSys" id=396 />
+            <image name="Mercado Libre" id=397 />
+            <image name="Mercedes-Benz" id=398 />
+            <image name="Shopify" id=399 />
+            <image name="Philips" id=400 />
+            <image name="Société Générale" id=401 />
+            <image name="Spotify" id=402 />
+            <image name="Vodafone" id=403 />
           </div>
-          <button name="Pause animation" id=404 focusable/>
+          <button name="Pause animation" id=404 focusable />
         </div>
       </div>
     </div>
@@ -130,10 +130,10 @@
           <paragraph id=417>From your first line of code to final deployment, GitHub provides AI and automation tools to help you build and ship better software faster.</paragraph>
         </sectionheader>
         <div id=422>
-          <button name="Pause video" id=429 focusable/>
+          <button name="Pause video" id=429 focusable />
           <div id=433>
             A Copilot chat window with the 'Ask' mode enabled. The user switches from 'Ask' mode to 'Agent' mode from a dropdown menu, then sends the prompt 'Update the website to allow searching for running races by name.' Copilot analyzes the codebase, then explains the required edits for three files before generating them. Copilot then confirms completion and summarizes the implemented changes for the new functionality allowing users to search races by name and view paginated, filtered results.
-            <Video name="Unable to play media." id=513 disabled describedby="lp-SectionHero-visual-desc-0"/>
+            <Video name="Unable to play media." id=513 disabled describedby="lp-SectionHero-visual-desc-0" />
           </div>
         </div>
       </div>
@@ -147,12 +147,12 @@
         </div>
         <div id=566>
           <div id=568>
-            <image name="Duolingo" id=570 url="https://images.ctfassets.net/8aevphvgewt8/g1XhuDG7foMyNWIEIpGJj/b40a790b854d0803704deb7905b1bd82/logo-duolingo-14477f9e54a6.svg"/>
+            <image name="Duolingo" id=570 url="https://images.ctfassets.net/8aevphvgewt8/g1XhuDG7foMyNWIEIpGJj/b40a790b854d0803704deb7905b1bd82/logo-duolingo-14477f9e54a6.svg" />
             <paragraph id=571>Duolingo boosts developer speed by 25% with GitHub Copilot</paragraph>
             <link id=575 focusable url="https://github.com/customer-stories/duolingo">Read customer story</link>
           </div>
           <div id=580>
-            <image name="Gartner" id=582 url="https://images.ctfassets.net/8aevphvgewt8/6Qr8Snm4JceoMFRJhapgFa/802ded1d2c486a9d0a4c073d9f8f38f4/logo-gartner-aa8c2e452b64.svg"/>
+            <image name="Gartner" id=582 url="https://images.ctfassets.net/8aevphvgewt8/6Qr8Snm4JceoMFRJhapgFa/802ded1d2c486a9d0a4c073d9f8f38f4/logo-gartner-aa8c2e452b64.svg" />
             <paragraph id=583>2025 Gartner® Magic Quadrant™ for AI Code Assistants</paragraph>
             <link id=587 focusable url="https://www.gartner.com/reprints/?id=1-2LVTG7RP&amp;ct=250915&amp;st=sb">Read industry report</link>
           </div>
@@ -201,7 +201,7 @@
             </heading>
             <link id=692 focusable url="https://github.com/security/advanced-security">Explore GitHub Advanced Security</link>
           </div>
-          <image name="Copilot Autofix identifies vulnerable code and provides an explanation, together with a secure code suggestion to remediate the vulnerability." id=700 url="https://images.ctfassets.net/8aevphvgewt8/5mzhSO4avmXBwkFsMzgXkW/91991e6258f14f54d23840b6c13c3013/hero-64ecd484397f.webp"/>
+          <image name="Copilot Autofix identifies vulnerable code and provides an explanation, together with a secure code suggestion to remediate the vulnerability." id=700 url="https://images.ctfassets.net/8aevphvgewt8/5mzhSO4avmXBwkFsMzgXkW/91991e6258f14f54d23840b6c13c3013/hero-64ecd484397f.webp" />
         </div>
       </div>
       <div id=702>
@@ -214,7 +214,7 @@
               </paragraph>
               <link id=714 focusable url="https://github.com/security/advanced-security/code-security">Learn about GitHub Code Security</link>
             </div>
-            <image name="A security campaign screen displays the campaign’s progress bar with 97% completed of 701 alerts. A total of 23 alerts are left with 13 in progress, and the campaign started 20 days ago. The status below shows that there are 7 days left in the campaign with a due date of November 15, 2024." id=719 url="https://images.ctfassets.net/8aevphvgewt8/6WnLu9nlnemjCltZkd8lCi/b18034be25552e118a36f6617e1f84df/pillar-1-dd667a921f55.webp"/>
+            <image name="A security campaign screen displays the campaign’s progress bar with 97% completed of 701 alerts. A total of 23 alerts are left with 13 in progress, and the campaign started 20 days ago. The status below shows that there are 7 days left in the campaign with a due date of November 15, 2024." id=719 url="https://images.ctfassets.net/8aevphvgewt8/6WnLu9nlnemjCltZkd8lCi/b18034be25552e118a36f6617e1f84df/pillar-1-dd667a921f55.webp" />
           </div>
           <div id=721>
             <div id=722>
@@ -224,7 +224,7 @@
               </paragraph>
               <link id=729 focusable url="https://github.com/security/advanced-security/software-supply-chain">Learn about Dependabot</link>
             </div>
-            <image name="List of dependencies defined in a requirements .txt file." id=734 url="https://images.ctfassets.net/8aevphvgewt8/1o2Eid4RQteCr6iZ7wVauW/3c04a760442c81036d98e70c0c986a8b/pillar-2-ff69e872920a.webp"/>
+            <image name="List of dependencies defined in a requirements .txt file." id=734 url="https://images.ctfassets.net/8aevphvgewt8/1o2Eid4RQteCr6iZ7wVauW/3c04a760442c81036d98e70c0c986a8b/pillar-2-ff69e872920a.webp" />
           </div>
           <div id=736>
             <div id=737>
@@ -234,7 +234,7 @@
               </paragraph>
               <link id=745 focusable url="https://github.com/security/advanced-security/secret-protection">Learn about GitHub Secret Protection</link>
             </div>
-            <image name="GitHub push protection confirms and displays an active secret, and blocks the push." id=750 url="https://images.ctfassets.net/8aevphvgewt8/3WaMDk5JuZzhaKfpRgibKz/c179c5841373ec1fd37c839bdb24a7b4/pillar-3-0a063e2daae2.webp"/>
+            <image name="GitHub push protection confirms and displays an active secret, and blocks the push." id=750 url="https://images.ctfassets.net/8aevphvgewt8/3WaMDk5JuZzhaKfpRgibKz/c179c5841373ec1fd37c839bdb24a7b4/pillar-3-0a063e2daae2.webp" />
           </div>
         </div>
         <div id=751>
@@ -265,7 +265,7 @@
           <heading id=786 level=2>Work together, achieve more</heading>
           <paragraph id=790>From planning and discussion to code review, GitHub keeps your team’s conversation and context next to your code.</paragraph>
         </sectionheader>
-        <image name="A project management dashboard showing tasks for the ‘OctoArcade Invaders’ project, with tasks grouped under project phase categories like ‘Prototype,’ ‘Beta,’ and ‘Launch’ in a table layout. One of the columns displays sub-issue progress bars with percentages for each issue." id=804 url="https://images.ctfassets.net/8aevphvgewt8/3ip0mnsbUMonRTsbnnIkOh/a940b7a975a801c8829c113d9799873d/hero-961322485af6.webp"/>
+        <image name="A project management dashboard showing tasks for the ‘OctoArcade Invaders’ project, with tasks grouped under project phase categories like ‘Prototype,’ ‘Beta,’ and ‘Launch’ in a table layout. One of the columns displays sub-issue progress bars with percentages for each issue." id=804 url="https://images.ctfassets.net/8aevphvgewt8/3ip0mnsbUMonRTsbnnIkOh/a940b7a975a801c8829c113d9799873d/hero-961322485af6.webp" />
       </div>
       <div id=807>
         <div id=809>
@@ -325,7 +325,7 @@
           <tab id=936 focusable>By size</tab>
           <tab id=940 focusable>By use case</tab>
         </tablist>
-        <separator id=944 settable orientation="horizontal"/>
+        <separator id=944 settable orientation="horizontal" />
         <div id=947>
           <link id=949 focusable url="https://github.com/customer-stories/figma">
             <div id=954>
@@ -352,14 +352,14 @@
       </div>
       <div id=1006>
         <link id=1008 focusable url="https://github.com/customer-stories">Explore customer stories</link>
-        <separator id=1012 settable orientation="horizontal"/>
+        <separator id=1012 settable orientation="horizontal" />
         <link id=1014 focusable url="https://github.com/solutions">View all solutions</link>
       </div>
     </div>
     <div id=1019>
       <div id=1021>
         A subtle purple glow fades in as Mona the Octocat, Copilot, and Ducky dramatically fall into place next to one another while gazing optimistically into the distance.
-        <Canvas id=1051/>
+        <Canvas id=1051 />
       </div>
       <div id=1054>
         <heading id=1055 level=2>Millions of developers and businesses call GitHub home</heading>
@@ -368,7 +368,7 @@
           <form id=1065>
             <div id=1068>
               <LabelText id=1069>Enter your email</LabelText>
-              <textbox name="Enter your email" id=1073 focusable editable="plaintext" settable/>
+              <textbox name="Enter your email" id=1073 focusable editable="plaintext" settable />
             </div>
             <button id=1076 focusable>Sign up for GitHub</button>
           </form>
@@ -380,19 +380,19 @@
       <heading id=1086 level=2>Footnotes</heading>
       <list id=1089>
         <listitem id=1090 level=1>
-          <ListMarker name="1." id=1091/>
+          <ListMarker name="1." id=1091 />
           GitHub internal customer data, 2025.
-          <link name="Back to content GitHub internal customer data, 2025." id=1095 focusable url="https://github.com/#footnote-1-ref-0"/>
+          <link name="Back to content GitHub internal customer data, 2025." id=1095 focusable url="https://github.com/#footnote-1-ref-0" />
         </listitem>
       </list>
     </div>
-    <link name="Back to top" id=1097 focusable url="https://github.com/#hero"/>
+    <link name="Back to top" id=1097 focusable url="https://github.com/#hero" />
   </main>
   <contentinfo id=1101>
     <heading id=1102 level=2>Site-wide Links</heading>
     <div id=1108>
       <region id=1109>
-        <link name="Go to GitHub homepage" id=1110 focusable url="https://github.com/"/>
+        <link name="Go to GitHub homepage" id=1110 focusable url="https://github.com/" />
         <heading id=1111 level=3>THE DEVELOPER NEWSLETTER</heading>
         <paragraph id=1115>Get tips, technical guides, and best practices. Twice a month. Right in your inbox.</paragraph>
         <link id=1119 focusable url="https://github.com/newsletter">Subscribe</link>

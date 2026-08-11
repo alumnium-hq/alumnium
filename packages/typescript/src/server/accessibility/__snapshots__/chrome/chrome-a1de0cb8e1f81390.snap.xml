@@ -1,7 +1,7 @@
 <RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/dynamic_content">
   <div id=6>
     <link id=7 focusable url="https://github.com/tourdedave/the-internet">
-      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />
     </link>
     <div id=10>
       <heading id=11 level=3>Dynamic Content</heading>
@@ -13,33 +13,33 @@
         <link id=25 focusable url="https://the-internet.herokuapp.com/dynamic_content?with_content=static">click here</link>
         .
       </paragraph>
-      <separator id=30 settable orientation="horizontal"/>
-      <LineBreak id=31/>
-      <LineBreak id=33/>
+      <separator id=30 settable orientation="horizontal" />
+      <LineBreak id=31 />
+      <LineBreak id=33 />
       <div id=36>
         <div id=37>
-          <image id=39 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
+          <image id=39 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg" />
           Temporibus quia eum ipsum delectus alias aperiam occaecati omnis voluptatem fugit facere vero ut qui neque labore eos atque consequatur qui reprehenderit adipisci deleniti totam ea qui aliquid ut sapiente nostrum quasi voluptas dignissimos quia.
         </div>
-        <LineBreak id=45/>
-        <LineBreak id=47/>
+        <LineBreak id=45 />
+        <LineBreak id=47 />
         <div id=49>
-          <image id=51 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
+          <image id=51 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg" />
           Eos labore rem qui et dolore est necessitatibus at blanditiis corrupti hic et sed id distinctio rerum sed a dolorum cum veniam eius optio cumque laboriosam eaque quibusdam quisquam consequatur error voluptate ut accusantium.
         </div>
-        <LineBreak id=57/>
-        <LineBreak id=59/>
+        <LineBreak id=57 />
+        <LineBreak id=59 />
         <div id=61>
-          <image id=63 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg"/>
+          <image id=63 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg" />
           Sunt ut placeat rerum reprehenderit sed voluptas incidunt occaecati voluptas facilis veniam autem voluptas quis veritatis eligendi sapiente id soluta explicabo voluptatem consectetur tenetur at accusantium et excepturi et aut quos ut.
         </div>
-        <LineBreak id=69/>
-        <LineBreak id=71/>
+        <LineBreak id=69 />
+        <LineBreak id=71 />
       </div>
     </div>
   </div>
   <div id=74>
-    <separator id=75 settable orientation="horizontal"/>
+    <separator id=75 settable orientation="horizontal" />
     <div id=76>
       Powered by
       <link id=79 focusable url="http://elementalselenium.com/">Elemental Selenium</link>

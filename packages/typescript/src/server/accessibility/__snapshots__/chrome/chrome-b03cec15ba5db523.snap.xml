@@ -1,26 +1,26 @@
 <RootWebArea name="YouTube" id=1 focusable focused url="https://www.youtube.com/">
   <banner id=8>
     <div id=13>
-      <button name="Guide" id=15 focusable/>
+      <button name="Guide" id=15 focusable />
       <div id=22>
-        <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/"/>
+        <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/" />
         SG
       </div>
       <button id=34 focusable>Skip navigation</button>
     </div>
     <div id=39>
       <search id=40>
-        <combobox name="Search" id=45 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox"/>
-        <button name="Search" id=48 focusable/>
+        <combobox name="Search" id=45 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox" />
+        <button name="Search" id=48 focusable />
       </search>
       <div id=52>
-        <button name="Search with your voice" id=54 focusable/>
-        <tooltip name="tooltip" id=55 focusable/>
+        <button name="Search with your voice" id=54 focusable />
+        <tooltip name="tooltip" id=55 focusable />
       </div>
     </div>
     <div id=57>
       <div id=60 focusable>
-        <button name="Settings" id=62 focusable/>
+        <button name="Settings" id=62 focusable />
       </div>
       <link id=71 focusable url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=en&amp;ec=65620">Sign in</link>
     </div>

@@ -2,19 +2,19 @@
   <WebView id=13 text="TodoMVC: Vue">
     <div id=14>
       <div id=15>
-        <div id=16 content-desc="todos" clickable/>
-        <EditText id=18 clickable/>
+        <div id=16 content-desc="todos" clickable />
+        <EditText id=18 clickable />
       </div>
       <div id=19>
         <CheckBox id=20 resource-id="toggle-all-input" clickable>❯ Toggle All Input</CheckBox>
         <div id=21>❯</div>
         <ListView id=22>
           <div id=23>
-            <CheckBox id=24 clickable/>
+            <CheckBox id=24 clickable />
             <div id=25>Buy milk</div>
           </div>
           <div id=26>
-            <CheckBox id=27 clickable/>
+            <CheckBox id=27 clickable />
             <div id=28>Buy bread</div>
           </div>
         </ListView>
@@ -23,9 +23,9 @@
         <div id=30>2</div>
         <div id=31>items left</div>
         <ListView id=32>
-          <div id=34 content-desc="All" clickable/>
-          <div id=37 content-desc="Active" clickable/>
-          <div id=40 content-desc="Completed" clickable/>
+          <div id=34 content-desc="All" clickable />
+          <div id=37 content-desc="Active" clickable />
+          <div id=40 content-desc="Completed" clickable />
         </ListView>
       </div>
     </div>
@@ -36,18 +36,18 @@
   </WebView>
   <div id=46 resource-id="toolbar_container">
     <div id=47 resource-id="toolbar">
-      <ImageButton id=48 content-desc="Home" resource-id="home_button" clickable/>
+      <ImageButton id=48 content-desc="Home" resource-id="home_button" clickable />
       <div id=49 resource-id="location_bar">
         <div id=50 resource-id="location_bar_status" clickable>
-          <ImageView id=53 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+          <ImageView id=53 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
         </div>
         <EditText id=54 resource-id="url_bar" clickable>todomvc.com/examples/vue/dist/#/</EditText>
       </div>
       <div id=55 resource-id="toolbar_buttons">
-        <ImageButton id=56 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
-        <ImageButton id=58 content-desc="More options" resource-id="menu_button" clickable/>
+        <ImageButton id=56 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=58 content-desc="More options" resource-id="menu_button" clickable />
       </div>
     </div>
-    <ImageView id=59 resource-id="toolbar_hairline"/>
+    <ImageView id=59 resource-id="toolbar_hairline" />
   </div>
 </div>

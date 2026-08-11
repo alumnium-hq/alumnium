@@ -2,7 +2,7 @@
   <link id=4 focusable url="https://claude.com/#main-content">Skip to main content</link>
   <banner id=7>
     <link id=9 focusable url="https://claude.com/">
-      <image name="Claude" id=10/>
+      <image name="Claude" id=10 />
     </link>
     <div id=11>
       <navigation name="Main" id=12>
@@ -23,7 +23,7 @@
     <div id=68>
       <heading id=69 level=1>
         Think fast,
-        <LineBreak id=72/>
+        <LineBreak id=72 />
         build faster
       </heading>
       <paragraph id=76>Brainstorm in chat, build in Cowork</paragraph>
@@ -44,7 +44,7 @@
       </div>
     </div>
     <div id=147>
-      <heading name="Explore plans" id=149 level=2/>
+      <heading name="Explore plans" id=149 level=2 />
       <tablist id=151 orientation="horizontal">
         <tab id=152 focusable selected>Individual</tab>
         <tab id=155 focusable>Team and Enterprise</tab>
@@ -141,7 +141,7 @@
       </div>
     </div>
     <div id=382>
-      <heading name="FAQ" id=384 level=2/>
+      <heading name="FAQ" id=384 level=2 />
       <div id=385>
         <div id=386>
           <heading id=387 level=3>
@@ -184,15 +184,15 @@
       <div id=451>
         <div id=452>
           <link id=453 focusable url="https://claude.com/">
-            <image name="Claude" id=454/>
+            <image name="Claude" id=454 />
           </link>
           <div id=456>
-            <textbox name="Ask Claude" id=457 focusable editable="plaintext" settable multiline/>
-            <button name="Submit" id=460 focusable/>
+            <textbox name="Ask Claude" id=457 focusable editable="plaintext" settable multiline />
+            <button name="Submit" id=460 focusable />
           </div>
         </div>
         <div id=463>
-          <image name="By Anthropic" id=464/>
+          <image name="By Anthropic" id=464 />
           <paragraph id=465>© 2026 Anthropic PBC</paragraph>
         </div>
       </div>
@@ -495,17 +495,17 @@
       </div>
     </div>
     <div id=843>
-      <separator id=844 settable orientation="horizontal"/>
+      <separator id=844 settable orientation="horizontal" />
       <div id=845>
         <div id=846>
-          <link name="Instagram" id=847 focusable url="https://www.instagram.com/claudeai"/>
-          <link name="LinkedIn" id=848 focusable url="https://www.linkedin.com/showcase/claude/"/>
-          <link name="X (Twitter)" id=849 focusable url="https://x.com/claudeai"/>
-          <link name="YouTube" id=850 focusable url="https://www.youtube.com/@anthropic-ai"/>
+          <link name="Instagram" id=847 focusable url="https://www.instagram.com/claudeai" />
+          <link name="LinkedIn" id=848 focusable url="https://www.linkedin.com/showcase/claude/" />
+          <link name="X (Twitter)" id=849 focusable url="https://x.com/claudeai" />
+          <link name="YouTube" id=850 focusable url="https://www.youtube.com/@anthropic-ai" />
         </div>
         <button name="Language:" id=853 focusable hasPopup="menu">English</button>
       </div>
     </div>
   </contentinfo>
-  <alert id=861 live="assertive" atomic relevant="additions text"/>
+  <alert id=861 live="assertive" atomic relevant="additions text" />
 </RootWebArea>

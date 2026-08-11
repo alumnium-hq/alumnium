@@ -1,57 +1,57 @@
 <div id=1>
-  <div id=9 clickable/>
-  <div id=13 content-desc="Web View"/>
+  <div id=9 clickable />
+  <div id=13 content-desc="Web View" />
   <RecyclerView id=15>
     <div id=16 clickable>
-      <ImageView id=17/>
+      <ImageView id=17 />
       <div id=19 resource-id="line_1">Buy milk</div>
     </div>
     <div id=20 clickable>
-      <ImageView id=21/>
+      <ImageView id=21 />
       <div id=23 resource-id="line_1">buy milk near me</div>
-      <ImageView id=24 content-desc="Refine: buy milk near me" clickable/>
+      <ImageView id=24 content-desc="Refine: buy milk near me" clickable />
     </div>
     <div id=25 clickable>
-      <ImageView id=26/>
+      <ImageView id=26 />
       <div id=28 resource-id="line_1">buy milk online</div>
-      <ImageView id=29 content-desc="Refine: buy milk online" clickable/>
+      <ImageView id=29 content-desc="Refine: buy milk online" clickable />
     </div>
     <div id=30 clickable>
-      <ImageView id=31/>
+      <ImageView id=31 />
       <div id=33 resource-id="line_1">buy milkweed plant</div>
-      <ImageView id=34 content-desc="Refine: buy milkweed plant" clickable/>
+      <ImageView id=34 content-desc="Refine: buy milkweed plant" clickable />
     </div>
     <div id=35 clickable>
-      <ImageView id=36/>
+      <ImageView id=36 />
       <div id=38 resource-id="line_1">buy milk crates</div>
-      <ImageView id=39 content-desc="Refine: buy milk crates" clickable/>
+      <ImageView id=39 content-desc="Refine: buy milk crates" clickable />
     </div>
     <div id=40 clickable>
-      <ImageView id=41/>
+      <ImageView id=41 />
       <div id=43 resource-id="line_1">buy milk thistle</div>
-      <ImageView id=44 content-desc="Refine: buy milk thistle" clickable/>
+      <ImageView id=44 content-desc="Refine: buy milk thistle" clickable />
     </div>
     <div id=45 clickable>
-      <ImageView id=46/>
+      <ImageView id=46 />
       <div id=48 resource-id="line_1">buy milk frother</div>
-      <ImageView id=49 content-desc="Refine: buy milk frother" clickable/>
+      <ImageView id=49 content-desc="Refine: buy milk frother" clickable />
     </div>
     <div id=50 clickable>
-      <ImageView id=51/>
+      <ImageView id=51 />
       <div id=53 resource-id="line_1">buy milk powder</div>
-      <ImageView id=54 content-desc="Refine: buy milk powder" clickable/>
+      <ImageView id=54 content-desc="Refine: buy milk powder" clickable />
     </div>
     <div id=55 clickable>
-      <ImageView id=56/>
+      <ImageView id=56 />
       <div id=58 resource-id="line_1">buy milkweed plant near me</div>
-      <ImageView id=59 content-desc="Refine: buy milkweed plant near me" clickable/>
+      <ImageView id=59 content-desc="Refine: buy milkweed plant near me" clickable />
     </div>
   </RecyclerView>
   <div id=63 resource-id="location_bar">
     <div id=64 resource-id="location_bar_status" clickable>
-      <ImageView id=67 resource-id="location_bar_status_icon"/>
+      <ImageView id=67 resource-id="location_bar_status_icon" />
     </div>
     <EditText id=68 resource-id="url_bar" clickable>Buy milk</EditText>
-    <ImageButton id=70 content-desc="Clear input" resource-id="delete_button" clickable/>
+    <ImageButton id=70 content-desc="Clear input" resource-id="delete_button" clickable />
   </div>
 </div>

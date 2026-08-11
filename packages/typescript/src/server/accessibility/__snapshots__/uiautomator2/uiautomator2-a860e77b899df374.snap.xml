@@ -2,14 +2,14 @@
   <WebView id=13 text="TodoMVC: Vue">
     <div id=14>
       <div id=15>
-        <div id=16 content-desc="todos" clickable/>
-        <EditText id=18 clickable/>
+        <div id=16 content-desc="todos" clickable />
+        <EditText id=18 clickable />
       </div>
       <div id=19>
         <CheckBox id=20 resource-id="toggle-all-input" clickable>❯ Toggle All Input</CheckBox>
         <div id=21>❯</div>
         <ListView id=22>
-          <CheckBox id=24 clickable/>
+          <CheckBox id=24 clickable />
           <div id=25>Buy bread</div>
         </ListView>
       </div>
@@ -17,9 +17,9 @@
         <div id=27>1</div>
         <div id=28>item left</div>
         <ListView id=29>
-          <div id=31 content-desc="All" clickable/>
-          <div id=34 content-desc="Active" clickable/>
-          <div id=37 content-desc="Completed" clickable/>
+          <div id=31 content-desc="All" clickable />
+          <div id=34 content-desc="Active" clickable />
+          <div id=37 content-desc="Completed" clickable />
         </ListView>
         <Button id=39 clickable>Clear completed</Button>
       </div>
@@ -29,24 +29,24 @@
       <div id=42>Created by the TodoMVC Team</div>
       <div id=43>
         <div id=44>Part of</div>
-        <div id=45 content-desc="TodoMVC" clickable/>
+        <div id=45 content-desc="TodoMVC" clickable />
       </div>
     </div>
   </WebView>
   <div id=48 resource-id="toolbar_container">
     <div id=49 resource-id="toolbar">
-      <ImageButton id=50 content-desc="Home" resource-id="home_button" clickable/>
+      <ImageButton id=50 content-desc="Home" resource-id="home_button" clickable />
       <div id=51 resource-id="location_bar">
         <div id=52 resource-id="location_bar_status" clickable>
-          <ImageView id=55 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+          <ImageView id=55 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
         </div>
         <EditText id=56 resource-id="url_bar" clickable>todomvc.com/examples/vue/dist/#/active</EditText>
       </div>
       <div id=57 resource-id="toolbar_buttons">
-        <ImageButton id=58 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
-        <ImageButton id=60 content-desc="More options" resource-id="menu_button" clickable/>
+        <ImageButton id=58 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=60 content-desc="More options" resource-id="menu_button" clickable />
       </div>
     </div>
-    <ImageView id=61 resource-id="toolbar_hairline"/>
+    <ImageView id=61 resource-id="toolbar_hairline" />
   </div>
 </div>

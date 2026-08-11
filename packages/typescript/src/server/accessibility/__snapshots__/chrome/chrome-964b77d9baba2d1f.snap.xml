@@ -1,7 +1,7 @@
 <RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/typos">
   <div id=6>
     <link id=7 focusable url="https://github.com/tourdedave/the-internet">
-      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />
     </link>
     <div id=10>
       <heading id=11 level=3>Typos</heading>
@@ -10,7 +10,7 @@
     </div>
   </div>
   <div id=21>
-    <separator id=22 settable orientation="horizontal"/>
+    <separator id=22 settable orientation="horizontal" />
     <div id=23>
       Powered by
       <link id=26 focusable url="http://elementalselenium.com/">Elemental Selenium</link>

@@ -140,7 +140,7 @@ export abstract class XmlRenderer {
     const attributes = this.#formatAttributes(element.attribs, options);
     const children = element.children;
 
-    if (!children.length) return `${prefix}<${name}${attributes}/>`;
+    if (!children.length) return `${prefix}<${name}${attributes} />`;
 
     const nodePreserveSpace =
       preserveSpace || element.attribs["xml:space"] === "preserve";

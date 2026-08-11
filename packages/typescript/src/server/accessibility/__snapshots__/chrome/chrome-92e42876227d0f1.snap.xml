@@ -12,10 +12,10 @@
             <heading id=28 level=5>Practice site</heading>
           </div>
           <link id=32 focusable url="https://github.com/bonigarcia/selenium-webdriver-java">
-            <image id=33 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
+            <image id=33 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png" />
           </link>
         </div>
-        <separator id=36 settable orientation="horizontal"/>
+        <separator id=36 settable orientation="horizontal" />
         <heading id=39 level=1>Form submitted</heading>
         <paragraph id=44>Received!</paragraph>
       </main>
