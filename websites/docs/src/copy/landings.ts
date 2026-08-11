@@ -1457,9 +1457,10 @@ const sections = {
           highlight: "positive",
           note: {
             en: md`
-              Avereage of two sessions:<br>
+              Avereage of two sessions:
 
-              - **Web:** $4.10 (Claude) + $0.08 (Alumnium MCP) = $4.18<br>
+              - **Web:** $4.10 (Claude) + $0.08 (Alumnium MCP) = $4.18
+
               - **Android:** $3.27 (Claude) + $0.02 (Alumnium MCP) = $3.29
             `,
           },

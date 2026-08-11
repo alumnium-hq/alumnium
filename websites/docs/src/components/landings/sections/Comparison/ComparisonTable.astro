@@ -5,7 +5,6 @@ import type { AstroComponentInstance } from "astro/runtime/server/index.js";
 import Icon from "#/components/Icon.astro";
 import InfoNote from "#/components/landings/blocks/InfoNote.astro";
 import type { AstroBuiltinAttributes } from "astro";
-import type { I18n } from "#/copy/i18n";
 
 interface Props {
   t: TtLandings.ComparisonTable;
@@ -82,8 +81,10 @@ const order: (keyof TtLandings.ComparisonHeader)[] = [
 
                 return {
                   classList,
-                  content: (
-                    <InfoNote content={cell.note.en}>{cell.value.en}</InfoNote>
+                  content: cell.note.en ? (
+                    <InfoNote tooltip={cell.note.en}>{cell.value.en}</InfoNote>
+                  ) : (
+                    cell.value.en
                   ),
                 };
               }
