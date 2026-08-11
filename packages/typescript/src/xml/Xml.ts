@@ -1,7 +1,7 @@
 import { always } from "alwaysly";
 import { Element, isTag, isText, Text } from "domhandler";
-import { parseDocument } from "htmlparser2";
-import type * as DomHandler from "domhandler";
+import { Parser } from "htmlparser2";
+import * as DomHandler from "domhandler";
 
 export namespace Xml {
   export type Node = DomHandler.Node;
@@ -19,8 +19,40 @@ export namespace Xml {
 
 export abstract class Xml {
   static parseRootChildren(xml: string): Xml.Node[] {
-    const root = parseDocument(xml.trim(), { xmlMode: true });
-    return root.children;
+    const handler = new DomHandler.DomHandler();
+
+    const originalOnopentag = handler.onopentag;
+    let truishAttrs: Record<string, string> = {};
+
+    // @ts-expect-error: DomHandler is poorly typed.
+    handler.onopentagname = () => (truishAttrs = {});
+
+    // @ts-expect-error: See above.
+    handler.onattribute = (
+      name: string,
+      value: string,
+      quote: string | undefined,
+    ) => {
+      if (value === "" && quote === undefined) truishAttrs[name] = "true";
+    };
+
+    handler.onopentag = (name, attribs) => {
+      // NOTE: Weirdly this is the way to parse no-value attributes,
+      // i.e., `checked`. See: https://github.com/fb55/htmlparser2/issues/974
+      originalOnopentag.call(handler, name, { ...attribs, ...truishAttrs });
+    };
+
+    const parser = new Parser(handler, {
+      xmlMode: true,
+      lowerCaseTags: false,
+      lowerCaseAttributeNames: false,
+      recognizeSelfClosing: true,
+    });
+
+    parser.write(xml.trim());
+    parser.end();
+
+    return handler.root.children;
   }
 
   static parseMultirootChildren(xml: string): Xml.Node[] {
