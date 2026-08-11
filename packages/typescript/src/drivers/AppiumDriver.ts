@@ -1,12 +1,14 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
 import z from "zod";
+import type { AccessibilityElement } from "../accessibility/AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.ts";
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.ts";
 import { AppId } from "../AppId.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
+import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { ClickTool } from "../tools/ClickTool.ts";
 import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
@@ -17,6 +19,7 @@ import type { Keys } from "./keys.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
+const stateful = BaseDriver.stateful;
 
 export namespace AppiumDriver {
   export type Platform = z.infer<typeof AppiumDriver.Platform>;
@@ -73,6 +76,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   @span("driver.click", spanAttrs)
+  @stateful
   async click(id: number): Promise<void> {
     await this.ensureNativeAppContext();
     const element = await this.findElement(id);
@@ -86,6 +90,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   @span("driver.drag_and_drop", spanAttrs)
+  @stateful
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     await this.ensureNativeAppContext();
     const fromElement = await this.findElement(fromId);
@@ -95,6 +100,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   @span("driver.press_key", spanAttrs)
+  @stateful
   async pressKey(key: Keys.Key): Promise<void> {
     await this.ensureNativeAppContext();
     const keyMap: Record<Keys.Key, string> = {
@@ -118,16 +124,19 @@ export class AppiumDriver extends BaseDriver {
   }
 
   @span("driver.back", spanAttrs)
+  @stateful
   async back(): Promise<void> {
-    return this.driver.back();
+    await this.driver.back();
   }
 
   @span("driver.visit", spanAttrs)
+  @stateful
   async visit(url: string): Promise<void> {
     await this.driver.url(url);
   }
 
   @span("driver.scroll_to", spanAttrs)
+  @stateful
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await this.scrollIntoView(element);
@@ -155,6 +164,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   @span("driver.type", spanAttrs)
+  @stateful
   async type(id: number, text: string): Promise<void> {
     await this.ensureNativeAppContext();
     const element = await this.findElement(id);
@@ -191,48 +201,13 @@ export class AppiumDriver extends BaseDriver {
   async findElement(id: number): Promise<WebdriverIO.Element> {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);
-
-    if (this.platform === "xcuitest") {
-      // Use iOS Predicate locators for XCUITest
-      let predicate = `type == "${element.type}"`;
-
-      const props: Record<string, string> = {};
-      if (element.name) props["name"] = element.name;
-      if (element.value) props["value"] = element.value;
-      if (element.label) props["label"] = element.label;
-
-      if (Object.keys(props).length > 0) {
-        const conditions = Object.entries(props).map(
-          ([k, v]) => `${k} == "${v}"`,
-        );
-        const propsStr = conditions.join(" AND ");
-        predicate += ` AND ${propsStr}`;
-      }
-
-      logger.debug(`Finding element by predicate: ${predicate}`);
-      return this.driver.$(`-ios predicate string:${predicate}`).getElement();
-    } else {
-      // Use XPath for UIAutomator2
-      let xpath = `//${element.type}`;
-
-      const props: Record<string, string> = {};
-      if (element.androidResourceId)
-        props["resource-id"] = element.androidResourceId;
-      if (element.androidBounds) props["bounds"] = element.androidBounds;
-
-      if (Object.keys(props).length > 0) {
-        const conditions = Object.entries(props).map(
-          ([k, v]) => `@${k}="${v}"`,
-        );
-        xpath += `[${conditions.join(" and ")}]`;
-      }
-
-      logger.debug(`Finding element by xpath: ${xpath}`);
-      return this.driver.$(xpath).getElement();
-    }
+    const locator = this.#elementLocator(element);
+    logger.debug(`Finding element by locator: ${locator}`);
+    return this.driver.$(locator).getElement();
   }
 
   @span("driver.execute_script", spanAttrs)
+  @stateful
   async executeScript(script: string): Promise<void> {
     await this.ensureWebviewContext();
     await this.driver.execute(script);
@@ -249,6 +224,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   @span("driver.wait", spanAttrs)
+  @stateful
   async wait(seconds: number): Promise<void> {
     const clampedSeconds = Math.max(1, Math.min(30, seconds));
     await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
@@ -314,6 +290,66 @@ export class AppiumDriver extends BaseDriver {
       });
     }
   }
+
+  #elementLocator(element: AccessibilityElement): string {
+    if (this.platform === "xcuitest") {
+      // Use iOS Predicate locators for XCUITest
+
+      let predicate = `type == "${element.type}"`;
+
+      const props: Record<string, string> = {};
+      if (element.name) props.name = element.name;
+      if (element.value) props.value = element.value;
+      if (element.label) props.label = element.label;
+
+      if (Object.keys(props).length) {
+        predicate += ` AND ${Object.entries(props)
+          .map(([key, value]) => `${key} == "${value}"`)
+          .join(" AND ")}`;
+      }
+
+      return `-ios predicate string:${predicate}`;
+    }
+
+    // Use XPath for UIAutomator2
+
+    let xpath = `//${element.type}`;
+    const props: Record<string, string> = {};
+    if (element.androidResourceId)
+      props["resource-id"] = element.androidResourceId;
+    if (element.androidBounds) props.bounds = element.androidBounds;
+    if (Object.keys(props).length) {
+      xpath += `[${Object.entries(props)
+        .map(([key, value]) => `@${key}="${value}"`)
+        .join(" and ")}]`;
+    }
+    return xpath;
+  }
+
+  //#region Dev
+
+  protected override async devDrillProbeTree(
+    tree: BaseAccessibilityTree,
+    rawId: number,
+  ): Promise<string> {
+    let element: AccessibilityElement;
+    try {
+      element = tree.elementById(rawId);
+    } catch (error) {
+      throw new TreeDevDrillError("resolve", error);
+    }
+
+    const locator = this.#elementLocator(element);
+    try {
+      const exists = await this.driver.$(locator).isExisting();
+      if (!exists) throw new Error(`No element found by locator: ${locator}`);
+      return locator;
+    } catch (error) {
+      throw new TreeDevDrillError("probe", error, locator);
+    }
+  }
+
+  //#endregion
 }
 
 function spanAttrs(this: AppiumDriver): Tracer.SpansDriverAttrs {

@@ -11,9 +11,7 @@ import {
 import { Model } from "../../Model.ts";
 import { Logger } from "../../telemetry/Logger.ts";
 import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.ts";
-import { ServerChromiumAccessibilityTree } from "../accessibility/ServerChromiumAccessibilityTree.ts";
-import { ServerUIAutomator2AccessibilityTree } from "../accessibility/ServerUIAutomator2AccessibilityTree.ts";
-import { ServerXCUITestAccessibilityTree } from "../accessibility/ServerXCUITestAccessibilityTree.ts";
+import { TreeFactory } from "../../tree/TreeFactory.ts";
 import { ActorAgent } from "../agents/ActorAgent.ts";
 import { AreaAgent } from "../agents/AreaAgent.ts";
 import { ChangesAnalyzerAgent } from "../agents/ChangesAnalyzerAgent.ts";
@@ -152,17 +150,7 @@ export class Session {
    * @returns The created server tree instance
    */
   parseTree(xml: string): BaseServerAccessibilityTree {
-    let tree: BaseServerAccessibilityTree;
-    if (this.platform === "chromium") {
-      tree = new ServerChromiumAccessibilityTree(xml);
-    } else if (this.platform === "xcuitest") {
-      tree = new ServerXCUITestAccessibilityTree(xml);
-    } else if (this.platform === "uiautomator2") {
-      tree = new ServerUIAutomator2AccessibilityTree(xml);
-    } else {
-      throw new Error(`Unknown platform: ${this.platform}`);
-    }
-
+    const tree = TreeFactory.create(this.platform, xml);
     logger.debug(`Processed tree for session ${this.sessionId}`);
     return tree;
   }
