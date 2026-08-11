@@ -150,7 +150,7 @@ export abstract class BaseServerAccessibilityTree {
     const xmlRoots: Xml.Tag[] = [];
 
     for (const root of roots) {
-      const xmlRoot = this.#treeNodeToXmlTag(root, null, options);
+      const xmlRoot = this.#treeNodeToXmlTag(root, null, null, options);
       if (!xmlRoot) continue;
 
       xmlRoots.push(xmlRoot);
@@ -163,13 +163,14 @@ export abstract class BaseServerAccessibilityTree {
 
       this.pruneBackendRedundantNodes(xmlRoot);
       this.#trimGenericChildren(xmlRoot);
-      this.#preserveTextAtTrimmingBorders(xmlRoot);
     }
 
-    return XmlRenderer.render(xmlRoots);
+    return XmlRenderer.render(xmlRoots, {
+      tagAliases: Object.fromEntries(
+        Array.from(this.genericRoles, (role) => [role, "div"]),
+      ),
+    });
   }
-
-  #commonGenericRole = "div";
 
   protected genericRoles = new Set(["generic"]);
 
@@ -182,6 +183,8 @@ export abstract class BaseServerAccessibilityTree {
   protected preserveNameRoles = new Set<string>();
 
   protected trimmingBorderRoles = new Set<string>();
+
+  protected trimmingBorderChildRoles = new Set<string>();
 
   protected deduplicateAttrs = new Set<string>();
 
@@ -197,8 +200,8 @@ export abstract class BaseServerAccessibilityTree {
 
   protected pruneBackendRedundantNodes(_xmlTag: Xml.Tag): void {}
 
-  #isGenericRole(role: string): boolean {
-    return role === this.#commonGenericRole || this.genericRoles.has(role);
+  protected isGenericRole(role: string): boolean {
+    return this.genericRoles.has(role);
   }
 
   protected genericAttrs = new Set(["id"]);
@@ -223,6 +226,7 @@ export abstract class BaseServerAccessibilityTree {
   #treeNodeToXmlTag(
     node: Tree.Node,
     xmlParent: Xml.Tag | null,
+    trimmingBorder: Xml.Tag | null,
     options: BaseServerAccessibilityTree.TreeToXmlOptions,
   ): Xml.Tag | null {
     const { role, name = "", children } = node;
@@ -240,9 +244,8 @@ export abstract class BaseServerAccessibilityTree {
       return null;
     }
 
-    const isGeneric = this.#isGenericRole(role);
-    const tag = isGeneric ? this.#commonGenericRole : role;
-    const xmlTag = Xml.tag(tag);
+    const isGeneric = this.isGenericRole(role);
+    const xmlTag = Xml.tag(role);
 
     if (!excludeAttrs.has("name") && name) xmlTag.attribs.name = name;
 
@@ -254,8 +257,13 @@ export abstract class BaseServerAccessibilityTree {
 
     this.#removeDuplicateAttrs(xmlTag);
 
+    const childTrimmingBorder = this.trimmingBorderRoles.has(xmlTag.tagName)
+      ? xmlTag
+      : isGeneric && children.length === 1
+        ? trimmingBorder
+        : null;
     for (const child of children)
-      this.#treeNodeToXmlTag(child, xmlTag, options);
+      this.#treeNodeToXmlTag(child, xmlTag, childTrimmingBorder, options);
 
     const textContentAttr = this.textContentAttr(role);
     const textContentValue = textContentAttr
@@ -280,7 +288,8 @@ export abstract class BaseServerAccessibilityTree {
       if (
         xmlTag.children.length === 1 &&
         !hasNonGenericAttrs &&
-        !this.#textPromotedTags.has(xmlTag)
+        !this.#textPromotedTags.has(xmlTag) &&
+        !this.#isTextOnlyTrimmingBorderChild(xmlTag, trimmingBorder)
       ) {
         const child = xmlTag.children[0];
         always(child);
@@ -293,25 +302,18 @@ export abstract class BaseServerAccessibilityTree {
     return null;
   }
 
-  #preserveTextAtTrimmingBorders(xmlTag: Xml.Tag): void {
-    for (const child of xmlTag.children) {
-      const childTag = Xml.nodeAsTag(child);
-      if (childTag) this.#preserveTextAtTrimmingBorders(childTag);
-    }
-
-    if (!this.trimmingBorderRoles.has(xmlTag.tagName)) return;
-    if (xmlTag.children.length !== 1) return;
-
+  #isTextOnlyTrimmingBorderChild(
+    xmlTag: Xml.Tag,
+    trimmingBorder: Xml.Tag | null,
+  ): boolean {
     const child = xmlTag.children[0];
-    const text = child && Xml.nodeAsText(child);
-    if (!text) return;
-
-    const sourceId = this.#sourceIdsByRenderedNode.get(child);
-    if (!sourceId) return;
-
-    xmlTag.children = [
-      Xml.tag(this.#commonGenericRole, { id: String(sourceId) }, [text]),
-    ];
+    return (
+      !!trimmingBorder &&
+      this.trimmingBorderChildRoles.has(xmlTag.tagName) &&
+      xmlTag.children.length === 1 &&
+      !!child &&
+      !!Xml.nodeAsText(child)
+    );
   }
 
   #trimGenericChildren(xmlParent: Xml.Tag): void {
@@ -322,7 +324,7 @@ export abstract class BaseServerAccessibilityTree {
       this.#trimGenericChildren(xmlTag);
       if (this.shouldTrimEmptyNode(xmlTag)) return false;
       return !(
-        this.#isGenericRole(xmlTag.tagName) &&
+        this.isGenericRole(xmlTag.tagName) &&
         this.shouldTrimEmptyGeneric(xmlTag)
       );
     });
@@ -331,7 +333,12 @@ export abstract class BaseServerAccessibilityTree {
       const xmlTag = Xml.nodeAsTag(xmlChild);
       if (!xmlTag) return [xmlChild];
 
-      if (!this.#isGenericRole(xmlTag.tagName)) return [xmlTag];
+      if (!this.isGenericRole(xmlTag.tagName)) return [xmlTag];
+      const trimmingBorder = this.trimmingBorderRoles.has(xmlParent.tagName)
+        ? xmlParent
+        : null;
+      if (this.#isTextOnlyTrimmingBorderChild(xmlTag, trimmingBorder))
+        return [xmlTag];
 
       const hasTextChild = xmlTag.children.some((child) =>
         Xml.nodeAsText(child),
@@ -368,7 +375,7 @@ export abstract class BaseServerAccessibilityTree {
 
       const id = this.#sourceIdsByRenderedNode.get(child);
       if (!id) return [child];
-      return [Xml.tag(this.#commonGenericRole, { id: String(id) }, [text])];
+      return [Xml.tag("generic", { id: String(id) }, [text])];
     });
   }
 

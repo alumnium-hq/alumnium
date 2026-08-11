@@ -102,7 +102,7 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
     return xml;
   }
 
-  override genericRoles = new Set(["generic", "StaticText"]);
+  protected override genericRoles = new Set(["generic", "StaticText"]);
 
   protected override redundantTextAttrs = new Set(["name", "label", "value"]);
 
@@ -122,7 +122,7 @@ export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree
     const onlyChild = xmlTag.children[0];
     always(onlyChild);
     const childTag = Xml.nodeAsTag(onlyChild);
-    if (!childTag || childTag.tagName !== "div") return;
+    if (!childTag || !this.isGenericRole(childTag.tagName)) return;
     if (Object.keys(childTag.attribs).some((attrName) => attrName !== "id"))
       return;
     if (childTag.children.length !== 1) return;

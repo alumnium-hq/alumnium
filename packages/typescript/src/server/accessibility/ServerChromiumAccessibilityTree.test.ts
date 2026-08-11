@@ -189,7 +189,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       );
     });
 
-    it("maps text-only web-area borders to their StaticText node", () => {
+    it("preserves an element inside text-only web-area borders", () => {
       const rawXml = lit`
         <Iframe raw_id=14 backendDOMNodeId=15 nodeId="f1:15">
           <RootWebArea raw_id=15 backendDOMNodeId=11 nodeId="f3:11" focusable url="https://the-internet.herokuapp.com/frame_middle">
@@ -209,12 +209,12 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
         "<Iframe id=1>
-          <RootWebArea id=2 focusable url=\"https://the-internet.herokuapp.com/frame_middle\">
-            <div id=6>MIDDLE</div>
+          <RootWebArea id=2 focusable url="https://the-internet.herokuapp.com/frame_middle">
+            <div id=5>MIDDLE</div>
           </RootWebArea>
         </Iframe>"
       `);
-      expect(tree.getRawId(6)).toBe(19);
+      expect(tree.getRawId(5)).toBe(18);
     });
 
     it("trims names and whitespace-only generic nodes", () => {

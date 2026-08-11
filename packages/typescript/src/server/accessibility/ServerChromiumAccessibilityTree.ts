@@ -85,6 +85,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
   protected override trimmingBorderRoles = new Set(["RootWebArea"]);
 
+  protected override trimmingBorderChildRoles = new Set(["generic"]);
+
   protected override textContentAttr(_role: string): string | undefined {
     return undefined;
   }
