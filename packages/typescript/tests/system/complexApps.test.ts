@@ -61,7 +61,7 @@ describe("Complex apps", () => {
 
       await al.do("type in 'alumnium' in the search input");
 
-      await al.do("select 'alumnium' from the search suggestions");
+      await al.do("press 'Enter' in the search input");
 
       await al.check("search results are relevant to 'alumnium' query", {
         assert: expect.assert,
