@@ -2006,7 +2006,7 @@ export const ttLandings = {
 
       comparison: "Comparison",
 
-      needMore: "Need More?",
+      needMore: "Open Source",
 
       faq: "FAQ",
     },
