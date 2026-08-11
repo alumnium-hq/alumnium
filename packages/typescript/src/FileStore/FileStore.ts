@@ -153,6 +153,41 @@ export class FileStore {
   }
 
   /**
+   * Removes a single file at the specified relative path. Doesn't throw if
+   * the file doesn't exist.
+   *
+   * @param relPath Store-relative file path
+   */
+  async remove(relPath: string): Promise<void> {
+    const filePath = this.resolve(relPath);
+    await fs.rm(filePath, { force: true });
+  }
+
+  /**
+   * Renames (moves) a file from one store-relative path to another.
+   *
+   * @param fromRelPath Store-relative source file path
+   * @param toRelPath Store-relative destination file path
+   */
+  async rename(fromRelPath: string, toRelPath: string): Promise<void> {
+    await fs.rename(this.resolve(fromRelPath), this.resolve(toRelPath));
+  }
+
+  /**
+   * Returns the last-modified time (in milliseconds since epoch) of the file
+   * at the specified relative path, or `null` if it doesn't exist.
+   *
+   * @param relPath Store-relative file path
+   */
+  async mtime(relPath: string): Promise<number | null> {
+    const filePath = this.resolve(relPath);
+    return await fs
+      .stat(filePath)
+      .then((stat) => stat.mtimeMs)
+      .catch(() => null);
+  }
+
+  /**
    * Creates a sub-store under the current store directory. The subdirectory is
    * resolved from the specified relative (to the current store directory) path.
    *

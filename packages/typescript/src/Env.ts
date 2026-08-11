@@ -202,6 +202,13 @@ export const Env = {
     return envVar("ALUMNIUM_DEV_CAPTURE_TREES", z.stringbool().default(false));
   },
 
+  get ALUMNIUM_DEV_DRILL_TEST_TREES() {
+    return envVar(
+      "ALUMNIUM_DEV_DRILL_TEST_TREES",
+      z.stringbool().default(false),
+    );
+  },
+
   get ALUMNIUM_EVAL_TRIAL_COUNT() {
     return envVar("ALUMNIUM_EVAL_TRIAL_COUNT", z.coerce.number().default(25));
   },
