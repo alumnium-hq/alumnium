@@ -163,6 +163,7 @@ export abstract class BaseServerAccessibilityTree {
 
       this.pruneBackendRedundantNodes(xmlRoot);
       this.#trimGenericChildren(xmlRoot);
+      this.#preserveTextAtTrimmingBorders(xmlRoot);
     }
 
     return XmlRenderer.render(xmlRoots);
@@ -179,6 +180,8 @@ export abstract class BaseServerAccessibilityTree {
   protected redundantTextAttrs = new Set(["name", "label"]);
 
   protected preserveNameRoles = new Set<string>();
+
+  protected trimmingBorderRoles = new Set<string>();
 
   protected deduplicateAttrs = new Set<string>();
 
@@ -288,6 +291,27 @@ export abstract class BaseServerAccessibilityTree {
 
     xmlParent.children.push(xmlTag);
     return null;
+  }
+
+  #preserveTextAtTrimmingBorders(xmlTag: Xml.Tag): void {
+    for (const child of xmlTag.children) {
+      const childTag = Xml.nodeAsTag(child);
+      if (childTag) this.#preserveTextAtTrimmingBorders(childTag);
+    }
+
+    if (!this.trimmingBorderRoles.has(xmlTag.tagName)) return;
+    if (xmlTag.children.length !== 1) return;
+
+    const child = xmlTag.children[0];
+    const text = child && Xml.nodeAsText(child);
+    if (!text) return;
+
+    const sourceId = this.#sourceIdsByRenderedNode.get(child);
+    if (!sourceId) return;
+
+    xmlTag.children = [
+      Xml.tag(this.#commonGenericRole, { id: String(sourceId) }, [text]),
+    ];
   }
 
   #trimGenericChildren(xmlParent: Xml.Tag): void {
