@@ -1,13 +1,13 @@
 <RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" id=1 focusable focused url="https://www.airbnb.com.sg/">
   <div id=3 focusable>
     <link id=5 focusable url="https://www.airbnb.com.sg/#site-content">Skip to content</link>
-    <alert id=12 live="assertive" atomic relevant="additions text"/>
+    <alert id=12 live="assertive" atomic relevant="additions text" />
     <div id=15>
       <div id=23>
         <heading id=24 level=1>Airbnb homepage</heading>
         <banner id=29>
           <link name="Airbnb homepage" id=30 focusable url="https://www.airbnb.com.sg/">
-            <image id=32/>
+            <image id=32 />
           </link>
           <search id=33>
             <tablist id=37 orientation="horizontal">
@@ -29,7 +29,7 @@
                     <div id=81>When</div>
                     <div id=85>5 Aug</div>
                   </div>
-                  <button name="Clear Input" id=88 focusable/>
+                  <button name="Clear Input" id=88 focusable />
                 </button>
                 <button id=91 focusable>
                   <div id=94>Who</div>
@@ -39,7 +39,7 @@
               <button id=101 focusable>Search</button>
               <div id=115>
                 <div id=118 hasPopup="dialog">
-                  <button name="Information about price" id=119 focusable/>
+                  <button name="Information about price" id=119 focusable />
                 </div>
                 <div id=124>
                   <tablist id=128 orientation="horizontal">
@@ -53,8 +53,8 @@
                         <heading id=145 level=2>September 2026</heading>
                       </div>
                       <div id=148>
-                        <button name="Go back to switch to the previous month." id=149 disabled/>
-                        <button name="Move forward to change to the next month." id=151 focusable/>
+                        <button name="Go back to switch to the previous month." id=149 disabled />
+                        <button name="Move forward to change to the next month." id=151 focusable />
                       </div>
                       To navigate this calendar with a keyboard use the right or left arrow keys to move by day, up or down to move by week, page up or page down to move by month, activate to select the date in focus and escape to clear your selections.
                       <div id=159>
@@ -126,12 +126,12 @@
                       </div>
                     </application>
                     <radiogroup name="Flexible dates" id=668>
-                      <radio name="Exact dates" id=671 focusable checked/>
-                      <radio name="1 day ±1 day" id=677 focusable/>
-                      <radio name="2 days ±2 days" id=686 focusable/>
-                      <radio name="3 days ±3 days" id=695 focusable/>
-                      <radio name="7 days ±7 days" id=704 focusable/>
-                      <radio name="14 days ±14 days" id=713 focusable/>
+                      <radio name="Exact dates" id=671 focusable checked />
+                      <radio name="1 day ±1 day" id=677 focusable />
+                      <radio name="2 days ±2 days" id=686 focusable />
+                      <radio name="3 days ±3 days" id=695 focusable />
+                      <radio name="7 days ±7 days" id=704 focusable />
+                      <radio name="14 days ±14 days" id=713 focusable />
                     </radiogroup>
                   </tabpanel>
                 </div>
@@ -141,9 +141,9 @@
           <navigation name="Profile" id=738>
             <div id=739>
               <button id=740 focusable>Become a host</button>
-              <button name="Choose a language and currency" id=744 focusable/>
+              <button name="Choose a language and currency" id=744 focusable />
             </div>
-            <button name="Main navigation menu" id=749 focusable/>
+            <button name="Main navigation menu" id=749 focusable />
           </navigation>
         </banner>
         <div id=753>
@@ -159,9 +159,9 @@
               </div>
               <div id=790 focusable>
                 <group id=792>
-                  <link name="Apartment in Cheras" id=793 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1715858489639329673&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2696858512"/>
+                  <link name="Apartment in Cheras" id=793 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1715858489639329673&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2696858512" />
                   <div id=794>
-                    <button name="Add to wishlist: Apartment in Cheras" id=804 focusable/>
+                    <button name="Add to wishlist: Apartment in Cheras" id=804 focusable />
                     <div id=813>
                       Apartment in Cheras
                       <div id=818>
@@ -173,11 +173,11 @@
                   </div>
                 </group>
                 <group id=838>
-                  <link name="Home in Kuala Lumpur" id=839 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1404074202202294280&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2332364251"/>
+                  <link name="Home in Kuala Lumpur" id=839 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1404074202202294280&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2332364251" />
                   <div id=840>
                     <div id=846>
                       Guest favourite
-                      <button name="Add to wishlist: Home in Kuala Lumpur" id=854 focusable/>
+                      <button name="Add to wishlist: Home in Kuala Lumpur" id=854 focusable />
                     </div>
                     <div id=863>
                       Home in Kuala Lumpur
@@ -190,9 +190,9 @@
                   </div>
                 </group>
                 <group id=888>
-                  <link name="Flat in Kuala Lumpur" id=889 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1712174061339499750&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2688896404"/>
+                  <link name="Flat in Kuala Lumpur" id=889 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1712174061339499750&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2688896404" />
                   <div id=890>
-                    <button name="Add to wishlist: Flat in Kuala Lumpur" id=900 focusable/>
+                    <button name="Add to wishlist: Flat in Kuala Lumpur" id=900 focusable />
                     <div id=909>
                       Flat in Kuala Lumpur
                       <div id=914>
@@ -204,9 +204,9 @@
                   </div>
                 </group>
                 <group id=934>
-                  <link name="Flat in Bukit Bintang" id=935 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1456967048393461365&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2238161270"/>
+                  <link name="Flat in Bukit Bintang" id=935 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1456967048393461365&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2238161270" />
                   <div id=936>
-                    <button name="Add to wishlist: Flat in Bukit Bintang" id=946 focusable/>
+                    <button name="Add to wishlist: Flat in Bukit Bintang" id=946 focusable />
                     <div id=955>
                       Flat in Bukit Bintang
                       <div id=960>
@@ -218,11 +218,11 @@
                   </div>
                 </group>
                 <group id=980>
-                  <link name="Apartment in Cheras" id=981 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1661499740461247110&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2623371594"/>
+                  <link name="Apartment in Cheras" id=981 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1661499740461247110&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2623371594" />
                   <div id=982>
                     <div id=988>
                       Guest favourite
-                      <button name="Add to wishlist: Apartment in Cheras" id=996 focusable/>
+                      <button name="Add to wishlist: Apartment in Cheras" id=996 focusable />
                     </div>
                     <div id=1005>
                       Apartment in Cheras
@@ -235,9 +235,9 @@
                   </div>
                 </group>
                 <group id=1030>
-                  <link name="Flat in Kuala Lumpur" id=1031 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1667460160375756434&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2599135704"/>
+                  <link name="Flat in Kuala Lumpur" id=1031 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1667460160375756434&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2599135704" />
                   <div id=1032>
-                    <button name="Add to wishlist: Flat in Kuala Lumpur" id=1042 focusable/>
+                    <button name="Add to wishlist: Flat in Kuala Lumpur" id=1042 focusable />
                     <div id=1051>
                       Flat in Kuala Lumpur
                       <div id=1056>
@@ -261,11 +261,11 @@
               </div>
               <div id=1131 focusable>
                 <group id=1133>
-                  <link name="Flat in Toshima-k" id=1134 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1568365942167102163&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2524123622"/>
+                  <link name="Flat in Toshima-k" id=1134 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1568365942167102163&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2524123622" />
                   <div id=1135>
                     <div id=1141>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Toshima-k" id=1149 focusable/>
+                      <button name="Add to wishlist: Flat in Toshima-k" id=1149 focusable />
                     </div>
                     <div id=1158>
                       Flat in Toshima-k
@@ -278,11 +278,11 @@
                   </div>
                 </group>
                 <group id=1183>
-                  <link name="Flat in Taitō-ku" id=1184 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1001691188527653306&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2096923170"/>
+                  <link name="Flat in Taitō-ku" id=1184 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1001691188527653306&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2096923170" />
                   <div id=1185>
                     <div id=1191>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Taitō-ku" id=1199 focusable/>
+                      <button name="Add to wishlist: Flat in Taitō-ku" id=1199 focusable />
                     </div>
                     <div id=1208>
                       Flat in Taitō-ku
@@ -295,11 +295,11 @@
                   </div>
                 </group>
                 <group id=1233>
-                  <link name="Home in Shibuya" id=1234 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1709820137125697917&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2683925446"/>
+                  <link name="Home in Shibuya" id=1234 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1709820137125697917&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2683925446" />
                   <div id=1235>
                     <div id=1241>
                       Guest favourite
-                      <button name="Add to wishlist: Home in Shibuya" id=1249 focusable/>
+                      <button name="Add to wishlist: Home in Shibuya" id=1249 focusable />
                     </div>
                     <div id=1258>
                       Home in Shibuya
@@ -312,11 +312,11 @@
                   </div>
                 </group>
                 <group id=1283>
-                  <link name="Home in Setagaya-ku" id=1284 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1478310554999572994&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2282535684"/>
+                  <link name="Home in Setagaya-ku" id=1284 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1478310554999572994&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2282535684" />
                   <div id=1285>
                     <div id=1291>
                       Guest favourite
-                      <button name="Add to wishlist: Home in Setagaya-ku" id=1299 focusable/>
+                      <button name="Add to wishlist: Home in Setagaya-ku" id=1299 focusable />
                     </div>
                     <div id=1308>
                       Home in Setagaya-ku
@@ -329,9 +329,9 @@
                   </div>
                 </group>
                 <group id=1333>
-                  <link name="Home in Katsushika-ku" id=1334 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1671799297382979704&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2688051684"/>
+                  <link name="Home in Katsushika-ku" id=1334 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1671799297382979704&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2688051684" />
                   <div id=1335>
-                    <button name="Add to wishlist: Home in Katsushika-ku" id=1345 focusable/>
+                    <button name="Add to wishlist: Home in Katsushika-ku" id=1345 focusable />
                     <div id=1354>
                       Home in Katsushika-ku
                       <div id=1359>
@@ -343,11 +343,11 @@
                   </div>
                 </group>
                 <group id=1379>
-                  <link name="Home in Sumida-ku" id=1380 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=839524019203261451&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2547893380"/>
+                  <link name="Home in Sumida-ku" id=1380 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=839524019203261451&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2547893380" />
                   <div id=1381>
                     <div id=1387>
                       Guest favourite
-                      <button name="Add to wishlist: Home in Sumida-ku" id=1395 focusable/>
+                      <button name="Add to wishlist: Home in Sumida-ku" id=1395 focusable />
                     </div>
                     <div id=1404>
                       Home in Sumida-ku
@@ -372,11 +372,11 @@
               </div>
               <div id=1484 focusable>
                 <group id=1486>
-                  <link name="Flat in Osaka" id=1487 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=851126866230415015&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2158976825"/>
+                  <link name="Flat in Osaka" id=1487 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=851126866230415015&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2158976825" />
                   <div id=1488>
                     <div id=1494>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Osaka" id=1502 focusable/>
+                      <button name="Add to wishlist: Flat in Osaka" id=1502 focusable />
                     </div>
                     <div id=1511>
                       Flat in Osaka
@@ -389,11 +389,11 @@
                   </div>
                 </group>
                 <group id=1536>
-                  <link name="Flat in Naniwa Ward" id=1537 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=32073378&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1855883622"/>
+                  <link name="Flat in Naniwa Ward" id=1537 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=32073378&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1855883622" />
                   <div id=1538>
                     <div id=1544>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Naniwa Ward" id=1552 focusable/>
+                      <button name="Add to wishlist: Flat in Naniwa Ward" id=1552 focusable />
                     </div>
                     <div id=1561>
                       Flat in Naniwa Ward
@@ -406,11 +406,11 @@
                   </div>
                 </group>
                 <group id=1586>
-                  <link name="Flat in Osaka" id=1587 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=32075321&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1855877915"/>
+                  <link name="Flat in Osaka" id=1587 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=32075321&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1855877915" />
                   <div id=1588>
                     <div id=1594>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Osaka" id=1602 focusable/>
+                      <button name="Add to wishlist: Flat in Osaka" id=1602 focusable />
                     </div>
                     <div id=1611>
                       Flat in Osaka
@@ -423,11 +423,11 @@
                   </div>
                 </group>
                 <group id=1636>
-                  <link name="Flat in Chuo" id=1637 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1283852490431293089&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2025475005"/>
+                  <link name="Flat in Chuo" id=1637 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1283852490431293089&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2025475005" />
                   <div id=1638>
                     <div id=1644>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Chuo" id=1652 focusable/>
+                      <button name="Add to wishlist: Flat in Chuo" id=1652 focusable />
                     </div>
                     <div id=1661>
                       Flat in Chuo
@@ -440,11 +440,11 @@
                   </div>
                 </group>
                 <group id=1686>
-                  <link name="Flat in Ikuno Ward" id=1687 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1239451570720982630&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1990167460"/>
+                  <link name="Flat in Ikuno Ward" id=1687 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1239451570720982630&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1990167460" />
                   <div id=1688>
                     <div id=1694>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Ikuno Ward" id=1702 focusable/>
+                      <button name="Add to wishlist: Flat in Ikuno Ward" id=1702 focusable />
                     </div>
                     <div id=1711>
                       Flat in Ikuno Ward
@@ -457,11 +457,11 @@
                   </div>
                 </group>
                 <group id=1736>
-                  <link name="Flat in Osaka" id=1737 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=891702610935148042&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2601377129"/>
+                  <link name="Flat in Osaka" id=1737 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=891702610935148042&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2601377129" />
                   <div id=1738>
                     <div id=1744>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Osaka" id=1752 focusable/>
+                      <button name="Add to wishlist: Flat in Osaka" id=1752 focusable />
                     </div>
                     <div id=1761>
                       Flat in Osaka
@@ -486,11 +486,11 @@
               </div>
               <div id=1841 focusable>
                 <group id=1843>
-                  <link name="Home in Khet Khlong San" id=1844 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1363473448168628845&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2095284534"/>
+                  <link name="Home in Khet Khlong San" id=1844 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1363473448168628845&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2095284534" />
                   <div id=1845>
                     <div id=1851>
                       Guest favourite
-                      <button name="Add to wishlist: Home in Khet Khlong San" id=1859 focusable/>
+                      <button name="Add to wishlist: Home in Khet Khlong San" id=1859 focusable />
                     </div>
                     <div id=1868>
                       Home in Khet Khlong San
@@ -503,11 +503,11 @@
                   </div>
                 </group>
                 <group id=1893>
-                  <link name="Place to stay in Khet Ratchathewi" id=1894 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=835377390388055017&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=1595768958"/>
+                  <link name="Place to stay in Khet Ratchathewi" id=1894 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=835377390388055017&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=1595768958" />
                   <div id=1895>
                     <div id=1901>
                       Guest favourite
-                      <button name="Add to wishlist: Place to stay in Khet Ratchathewi" id=1909 focusable/>
+                      <button name="Add to wishlist: Place to stay in Khet Ratchathewi" id=1909 focusable />
                     </div>
                     <div id=1918>
                       Place to stay in Khet Ratchathewi
@@ -520,11 +520,11 @@
                   </div>
                 </group>
                 <group id=1944>
-                  <link name="Flat in Yan Nawa" id=1945 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1687949203742815160&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2637775943"/>
+                  <link name="Flat in Yan Nawa" id=1945 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1687949203742815160&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2637775943" />
                   <div id=1946>
                     <div id=1952>
                       Guest favourite
-                      <button name="Add to wishlist: Flat in Yan Nawa" id=1960 focusable/>
+                      <button name="Add to wishlist: Flat in Yan Nawa" id=1960 focusable />
                     </div>
                     <div id=1969>
                       Flat in Yan Nawa
@@ -537,11 +537,11 @@
                   </div>
                 </group>
                 <group id=1994>
-                  <link name="Apartment in Bangkok" id=1995 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=757099645521464263&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=1524604830"/>
+                  <link name="Apartment in Bangkok" id=1995 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=757099645521464263&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=1524604830" />
                   <div id=1996>
                     <div id=2002>
                       Guest favourite
-                      <button name="Add to wishlist: Apartment in Bangkok" id=2010 focusable/>
+                      <button name="Add to wishlist: Apartment in Bangkok" id=2010 focusable />
                     </div>
                     <div id=2019>
                       Apartment in Bangkok
@@ -554,11 +554,11 @@
                   </div>
                 </group>
                 <group id=2044>
-                  <link name="Home in Watthana" id=2045 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1567144478059856018&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2435673754"/>
+                  <link name="Home in Watthana" id=2045 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1567144478059856018&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2435673754" />
                   <div id=2046>
                     <div id=2052>
                       Guest favourite
-                      <button name="Add to wishlist: Home in Watthana" id=2060 focusable/>
+                      <button name="Add to wishlist: Home in Watthana" id=2060 focusable />
                     </div>
                     <div id=2069>
                       Home in Watthana
@@ -571,11 +571,11 @@
                   </div>
                 </group>
                 <group id=2094>
-                  <link name="Townhouse in Watthana" id=2095 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1590236263966349488&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2465114882"/>
+                  <link name="Townhouse in Watthana" id=2095 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1590236263966349488&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2465114882" />
                   <div id=2096>
                     <div id=2102>
                       Guest favourite
-                      <button name="Add to wishlist: Townhouse in Watthana" id=2110 focusable/>
+                      <button name="Add to wishlist: Townhouse in Watthana" id=2110 focusable />
                     </div>
                     <div id=2119>
                       Townhouse in Watthana
@@ -821,13 +821,13 @@
                   </div>
                   <list id=2551>
                     <listitem id=2552 level=1>
-                      <link name="Navigate to Facebook" id=2553 focusable url="https://www.facebook.com/AirbnbSingapore"/>
+                      <link name="Navigate to Facebook" id=2553 focusable url="https://www.facebook.com/AirbnbSingapore" />
                     </listitem>
                     <listitem id=2556 level=1>
-                      <link name="Navigate to Twitter" id=2557 focusable url="https://twitter.com/airbnb"/>
+                      <link name="Navigate to Twitter" id=2557 focusable url="https://twitter.com/airbnb" />
                     </listitem>
                     <listitem id=2560 level=1>
-                      <link name="Navigate to Instagram" id=2561 focusable url="https://instagram.com/airbnb"/>
+                      <link name="Navigate to Instagram" id=2561 focusable url="https://instagram.com/airbnb" />
                     </listitem>
                   </list>
                 </div>
@@ -836,13 +836,13 @@
           </contentinfo>
         </div>
       </div>
-      <div id=2566/>
+      <div id=2566 />
     </div>
     <div id=2577>
-      <image id=2580/>
+      <image id=2580 />
       <div id=2583>Prices include all fees</div>
       <div id=2586>Prices include all fees</div>
     </div>
   </div>
-  <RootWebArea id=2589 focusable url="about:blank"/>
+  <RootWebArea id=2589 focusable url="about:blank" />
 </RootWebArea>

@@ -18,13 +18,13 @@ describe(ServerChromiumAccessibilityTree, () => {
             <div id=5>
               <heading id=6 level=1>todos</heading>
               <div id=8>
-                <textbox name="New Todo Input" id=9 focusable editable="plaintext" settable/>
+                <textbox name="New Todo Input" id=9 focusable editable="plaintext" settable />
                 <LabelText id=12>New Todo Input</LabelText>
               </div>
             </div>
             <main id=14>
               <div id=15>
-                <checkbox id=16 focusable/>
+                <checkbox id=16 focusable />
                 <LabelText id=17>
                   <div id=19>\\u276f</div>
                   <div id=20>Toggle All Input</div>
@@ -32,11 +32,11 @@ describe(ServerChromiumAccessibilityTree, () => {
               </div>
               <list id=21>
                 <listitem id=22 level=1>
-                  <checkbox id=24 focusable focused checked/>
+                  <checkbox id=24 focusable focused checked />
                   <LabelText id=25>hello</LabelText>
                 </listitem>
                 <listitem id=27 level=1>
-                  <checkbox id=29 focusable/>
+                  <checkbox id=29 focusable />
                   <LabelText id=30>he</LabelText>
                 </listitem>
               </list>
@@ -149,7 +149,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       expect(tree.toXml()).toMatchInlineSnapshot(`
         "<main id=1>
           <div id=2>
-            <checkbox name="❯ Toggle All Input" id=3 focusable focused checked/>
+            <checkbox name="❯ Toggle All Input" id=3 focusable focused checked />
             <div id=4>
               <div id=6>❯</div>
               <div id=8>Toggle All Input</div>
@@ -157,11 +157,11 @@ describe(ServerChromiumAccessibilityTree, () => {
           </div>
           <list id=10>
             <listitem id=11 level=1>
-              <checkbox id=13 focusable checked/>
+              <checkbox id=13 focusable checked />
               <LabelText id=14>Buy milk</LabelText>
             </listitem>
             <listitem id=17 level=1>
-              <checkbox id=19 focusable checked/>
+              <checkbox id=19 focusable checked />
               <LabelText id=20>Buy bread</LabelText>
             </listitem>
           </list>
@@ -227,8 +227,8 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
         "<div id=1>
-          <div name="Dark Mode" id=2/>
-          <link name="Calculator" id=4/>
+          <div name="Dark Mode" id=2 />
+          <link name="Calculator" id=4 />
         </div>"
       `);
     });
@@ -247,9 +247,9 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
         "<group id=1>
-          <div name="Update" id=4 live="polite" atomic relevant="additions text"/>
-          <div id=5 live="polite" focusable/>
-          <alert id=6 live="assertive" atomic relevant="additions text"/>
+          <div name="Update" id=4 live="polite" atomic relevant="additions text" />
+          <div id=5 live="polite" focusable />
+          <alert id=6 live="assertive" atomic relevant="additions text" />
         </group>"
       `);
     });
@@ -266,7 +266,7 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       expect(tree.toXml()).toBe(lit`
         <RootWebArea name="Search" id=1>
-          <combobox name="Search" id=2 focusable editable="plaintext" settable/>
+          <combobox name="Search" id=2 focusable editable="plaintext" settable />
         </RootWebArea>
       `);
     });
@@ -284,8 +284,8 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
         "<listitem id=1 level=1>
-          <button name="API &amp; IaC" id=3 focusable/>
-          <list id=4/>
+          <button name="API &amp; IaC" id=3 focusable />
+          <list id=4 />
         </listitem>"
       `);
     });
@@ -345,7 +345,7 @@ describe(ServerChromiumAccessibilityTree, () => {
           Footer section
           <div id=7>
             © 2026 Airbnb, Inc.
-            <list id=13/>
+            <list id=13 />
           </div>
         </div>"
       `);
@@ -366,10 +366,10 @@ describe(ServerChromiumAccessibilityTree, () => {
       expect(tree.toXml()).toMatchInlineSnapshot(`
         "<group id=1>
           <div id=2>
-            <button name="First" id=3/>
-            <button name="Second" id=4/>
+            <button name="First" id=3 />
+            <button name="Second" id=4 />
           </div>
-          <button name="Sibling" id=5/>
+          <button name="Sibling" id=5 />
         </group>"
       `);
     });
@@ -448,9 +448,9 @@ describe(ServerChromiumAccessibilityTree, () => {
       expect(xml).toMatchInlineSnapshot(`
         "<RootWebArea name="YouTube" id=1 focusable url="https://www.youtube.com/">
           <banner id=8>
-            <button name="Guide" id=15 focusable pressed/>
+            <button name="Guide" id=15 focusable pressed />
             <div id=22>
-              <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/"/>
+              <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/" />
               SG
             </div>
             <button id=34 focusable>Skip navigation</button>

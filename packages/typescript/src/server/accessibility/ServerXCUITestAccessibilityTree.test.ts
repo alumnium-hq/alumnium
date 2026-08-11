@@ -14,8 +14,8 @@ describe(ServerXCUITestAccessibilityTree, () => {
         <Window id=2>
           <div id=5>
             <NavigationBar name="BLTNBoard.BulletinView" id=6>
-              <Button name="ToDoList" id=7/>
-              <Button name="settingsIcon" id=8/>
+              <Button name="ToDoList" id=7 />
+              <Button name="settingsIcon" id=8 />
             </NavigationBar>
             <div id=11>
               <Table id=12>
@@ -40,20 +40,20 @@ describe(ServerXCUITestAccessibilityTree, () => {
                   <div id=49>0</div>
                   <div id=52>Completed</div>
                 </Cell>
-                <div name="Vertical scroll bar, 1 page" id=55 value="0%"/>
-                <div name="Horizontal scroll bar, 1 page" id=57 value="0%"/>
+                <div name="Vertical scroll bar, 1 page" id=55 value="0%" />
+                <div name="Horizontal scroll bar, 1 page" id=57 value="0%" />
               </Table>
               <Button id=59>Add Task</Button>
             </div>
           </div>
           <div id=66>
             <div id=68>Welcome to ToDoList</div>
-            <Image name="roundedIcon" id=69/>
+            <Image name="roundedIcon" id=69 />
             <div id=70>Start with a quick onboarding</div>
             <Button id=73>
               <div id=74>Continue</div>
-              <Image name="checkmark.circle" id=75 label="Selected"/>
-              <TextField name="maskedElement" id=76 value="Entered value" label="Enter Code"/>
+              <Image name="checkmark.circle" id=75 label="Selected" />
+              <TextField name="maskedElement" id=76 value="Entered value" label="Enter Code" />
             </Button>
           </div>
         </Window>
@@ -68,13 +68,13 @@ describe(ServerXCUITestAccessibilityTree, () => {
       "<Application name="FooBar" id=1>
         <Window id=2>
           <div id=40>
-            <div name="IconFooBar" id=47/>
+            <div name="IconFooBar" id=47 />
             <div id=50>Welcome to the new FooBar app!</div>
             <div id=51>We're happy to have you!</div>
           </div>
           <div id=52>Reveal exclusive perks, save lots on stuff, and find gifts for everyone. Start acting today!</div>
           <div name="onboarding-footer-button" id=54>
-            <Button name="Start Now" id=56/>
+            <Button name="Start Now" id=56 />
           </div>
         </Window>
       </Application>"
@@ -104,7 +104,7 @@ describe(ServerXCUITestAccessibilityTree, () => {
     expect(tree.toXml()).toMatchInlineSnapshot(`
       "<Application id=1>
         <div id=3 value="Value">Label</div>
-        <div name="Value" id=4/>
+        <div name="Value" id=4 />
       </Application>"
     `);
   });
@@ -123,7 +123,7 @@ describe(ServerXCUITestAccessibilityTree, () => {
     expect(tree.toXml()).toMatchInlineSnapshot(`
       "<Application id=1>
         <div name="TrackersPreventedCount?TrackingPreventionDataExists=false" id=2>In the last seven days, Safari has prevented 0 trackers from profiling you.</div>
-        <div name="InternalName" id=3 value="Visible value"/>
+        <div name="InternalName" id=3 value="Visible value" />
       </Application>"
     `);
   });
@@ -144,7 +144,7 @@ describe(ServerXCUITestAccessibilityTree, () => {
       "<Application id=1>
         <Link id=2>Calculator</Link>
         <Link name="Parent" id=4>
-          <div name="Child" id=5/>
+          <div name="Child" id=5 />
         </Link>
       </Application>"
     `);
@@ -159,7 +159,7 @@ describe(ServerXCUITestAccessibilityTree, () => {
 
     expect(tree.toXml()).toMatchInlineSnapshot(`
       "<Application id=1>
-        <div name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" id=2/>
+        <div name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" id=2 />
       </Application>"
     `);
   });

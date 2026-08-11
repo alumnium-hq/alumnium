@@ -4,6 +4,6 @@
     <div id=8>Value:</div>
     <div id=11>50</div>
   </LabelText>
-  <LineBreak id=13/>
-  <slider name="Value: 50" id=15 focusable settable orientation="horizontal" valuemin=0 valuemax=100/>
+  <LineBreak id=13 />
+  <slider name="Value: 50" id=15 focusable settable orientation="horizontal" valuemin=0 valuemax=100 />
 </RootWebArea>

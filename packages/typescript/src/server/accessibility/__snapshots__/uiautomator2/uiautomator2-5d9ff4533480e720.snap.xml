@@ -4,9 +4,9 @@
       <Image id=16>TodoMVC</Image>
       <div id=17>Helping you select an MV* framework</div>
       <div id=18>
-        <div id=19 content-desc="Download" clickable/>
-        <div id=21 content-desc="View on GitHub" clickable/>
-        <div id=23 content-desc="Blog" clickable/>
+        <div id=19 content-desc="Download" clickable />
+        <div id=21 content-desc="View on GitHub" clickable />
+        <div id=23 content-desc="Blog" clickable />
       </div>
     </div>
     <div id=26>
@@ -16,25 +16,25 @@
       <div id=30>To help you understand the options, we created TodoMVC - a project which has offered the same Todo applications implemented in popular JavaScript frameworks for over a decade.</div>
       <div id=31>
         <div id=32>TodoMVC is useful for comparing syntax and solutions, is officially used in cross-browser benchmarks (e.g.</div>
-        <div id=33 content-desc="Speedometer" clickable/>
+        <div id=33 content-desc="Speedometer" clickable />
         <div id=35>) and aims to stay up to date as trends change over time.</div>
       </div>
     </div>
   </WebView>
   <div id=37 resource-id="toolbar_container">
     <div id=38 resource-id="toolbar">
-      <ImageButton id=39 content-desc="Home" resource-id="home_button" clickable/>
+      <ImageButton id=39 content-desc="Home" resource-id="home_button" clickable />
       <div id=40 resource-id="location_bar">
         <div id=41 resource-id="location_bar_status" clickable>
-          <ImageView id=44 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+          <ImageView id=44 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
         </div>
         <EditText id=45 resource-id="url_bar" clickable>todomvc.com</EditText>
       </div>
       <div id=46 resource-id="toolbar_buttons">
-        <ImageButton id=47 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
-        <ImageButton id=49 content-desc="More options" resource-id="menu_button" clickable/>
+        <ImageButton id=47 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=49 content-desc="More options" resource-id="menu_button" clickable />
       </div>
     </div>
-    <ImageView id=50 resource-id="toolbar_hairline"/>
+    <ImageView id=50 resource-id="toolbar_hairline" />
   </div>
 </div>

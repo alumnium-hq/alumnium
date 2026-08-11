@@ -4,7 +4,7 @@
   <banner id=11>
     <div id=12>
       <link id=13 focusable url="https://claude.com/">
-        <image name="Claude" id=14/>
+        <image name="Claude" id=14 />
       </link>
       <div id=15>
         <navigation name="Main" id=16>
@@ -98,8 +98,8 @@
     </div>
     <group name="Demo of the Claude  dektop app" id=190>
       <div id=192>
-        <button name="Collapse sidebar" id=193 focusable/>
-        <button name="Search sessions" id=195 disabled/>
+        <button name="Collapse sidebar" id=193 focusable />
+        <button name="Search sessions" id=195 disabled />
       </div>
       <div id=197>
         <div id=198>
@@ -117,37 +117,37 @@
             Pinned
             <div id=235>
               <button id=236 focusable>Add a dark mode toggle to settings</button>
-              <button name="Options for Add a dark mode toggle to settings" id=241 focusable hasPopup="menu"/>
+              <button name="Options for Add a dark mode toggle to settings" id=241 focusable hasPopup="menu" />
             </div>
           </div>
           <div id=243>
             Scheduled
             <div id=247>
               <button id=248 focusable>Weekly dependency audit</button>
-              <button name="Options for Weekly dependency audit" id=254 focusable hasPopup="menu"/>
+              <button name="Options for Weekly dependency audit" id=254 focusable hasPopup="menu" />
             </div>
           </div>
           <div id=256>
             Recents
             <div id=260>
               <button id=261 focusable>Fix the double-charge bug in checkout</button>
-              <button name="Options for Fix the double-charge bug in checkout" id=269 focusable hasPopup="menu"/>
+              <button name="Options for Fix the double-charge bug in checkout" id=269 focusable hasPopup="menu" />
             </div>
             <div id=271>
               <button id=272 focusable>Write tests for the payments module</button>
-              <button name="Options for Write tests for the payments module" id=280 focusable hasPopup="menu"/>
+              <button name="Options for Write tests for the payments module" id=280 focusable hasPopup="menu" />
             </div>
             <div id=282>
               <button id=283 focusable>Explain what this repo does</button>
-              <button name="Options for Explain what this repo does" id=288 focusable hasPopup="menu"/>
+              <button name="Options for Explain what this repo does" id=288 focusable hasPopup="menu" />
             </div>
             <div id=290>
               <button id=291 focusable>Layout's broken on mobile</button>
-              <button name="Options for Layout's broken on mobile" id=296 focusable hasPopup="menu"/>
+              <button name="Options for Layout's broken on mobile" id=296 focusable hasPopup="menu" />
             </div>
             <div id=298>
               <button id=299 focusable>Debug flaky CI tests</button>
-              <button name="Options for Debug flaky CI tests" id=304 focusable hasPopup="menu"/>
+              <button name="Options for Debug flaky CI tests" id=304 focusable hasPopup="menu" />
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@
                 .
               </paragraph>
               <div id=363>
-                <button name="Copy message" id=364 focusable/>
+                <button name="Copy message" id=364 focusable />
                 just now
               </div>
             </div>
@@ -191,7 +191,7 @@
               </button>
               <div id=397>
                 src/theme/ThemeProvider.tsx
-                <button name="Copy code" id=401 focusable/>
+                <button name="Copy code" id=401 focusable />
                 <div id=403>
                   <div id=404>
                     10
@@ -269,7 +269,7 @@
                   </div>
                   <div id=586>
                     14
-                    <code id=591/>
+                    <code id=591 />
                   </div>
                   <div id=594>
                     <div id=596>15</div>
@@ -307,7 +307,7 @@
                   </div>
                   <div id=664>
                     18
-                    <code id=669/>
+                    <code id=669 />
                   </div>
                   <div id=672>
                     19
@@ -375,7 +375,7 @@
                 section now has the toggle. Preview's on the right; flip it and the whole app should follow. Reduce-motion and density rows are stubbed so the page doesn't look bare.
               </paragraph>
               <div id=798>
-                <button name="Copy message" id=799 focusable/>
+                <button name="Copy message" id=799 focusable />
                 just now
               </div>
             </div>
@@ -392,15 +392,15 @@
         </div>
         <div id=822>
           <div id=823>
-            <textbox name="Describe a task or ask a question" id=824 focusable editable="plaintext" settable multiline/>
-            <button name="Send" id=827 disabled/>
+            <textbox name="Describe a task or ask a question" id=824 focusable editable="plaintext" settable multiline />
+            <button name="Send" id=827 disabled />
           </div>
           <div id=828>
             <div id=829>
               <button id=831 focusable hasPopup="menu">Auto</button>
               <div id=834>
-                <button name="Attach" id=835 disabled/>
-                <button name="Dictate" id=837 disabled/>
+                <button name="Attach" id=835 disabled />
+                <button name="Dictate" id=837 disabled />
               </div>
             </div>
             <div id=839>
@@ -412,16 +412,16 @@
       </div>
       <complementary name="Preview of the dashboard's  settings" id=849>
         <div id=850>
-          <button name="Pick preview source" id=851 focusable/>
+          <button name="Pick preview source" id=851 focusable />
           <div id=853>
             <div id=854>localhost:5173</div>
             <div id=856>/settings</div>
           </div>
           <div id=858>
-            <button name="Edit" id=859 focusable/>
-            <button name="Interact" id=860 focusable/>
-            <button name="Reload" id=861 focusable/>
-            <button name="Close" id=862 focusable/>
+            <button name="Edit" id=859 focusable />
+            <button name="Interact" id=860 focusable />
+            <button name="Reload" id=861 focusable />
+            <button name="Close" id=862 focusable />
           </div>
         </div>
         <div id=874>
@@ -451,23 +451,23 @@
               <div id=912>Reduce motion</div>
               <div id=915>Disable animations and transitions.</div>
             </div>
-            <switch name="Reduce motion" id=917 focusable/>
+            <switch name="Reduce motion" id=917 focusable />
           </div>
         </div>
       </complementary>
     </group>
     <list id=922>
       <listitem id=923 level=1>
-        <image name="Stripe" id=926 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
+        <image name="Stripe" id=926 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg" />
       </listitem>
       <listitem id=927 level=1>
-        <image name="NASA" id=930 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/2d5f4b13d7785425c2000776e1233ddc9747ec6a-78x64.svg"/>
+        <image name="NASA" id=930 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/2d5f4b13d7785425c2000776e1233ddc9747ec6a-78x64.svg" />
       </listitem>
       <listitem id=931 level=1>
-        <image name="Databricks" id=934 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/3373798a180a90d27215a26eb73b3df37ab5e497-157x24.svg"/>
+        <image name="Databricks" id=934 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/3373798a180a90d27215a26eb73b3df37ab5e497-157x24.svg" />
       </listitem>
       <listitem id=935 level=1>
-        <image name="Figma" id=938 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/bd0bd7f83f4cd7a5d5d985a5b533d4b1ad8de917-128x35.svg"/>
+        <image name="Figma" id=938 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/bd0bd7f83f4cd7a5d5d985a5b533d4b1ad8de917-128x35.svg" />
       </listitem>
     </list>
     <div id=941>
@@ -701,7 +701,7 @@
       <heading id=1365 level=2>Meets you where you code</heading>
       <div id=1368>
         <div id=1369>
-          <image name="Claude Code running in a terminal" id=1371 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/414e92e0a09c3fb2b45b93a9fcfaa8cb3531a341-920x920.webp"/>
+          <image name="Claude Code running in a terminal" id=1371 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/414e92e0a09c3fb2b45b93a9fcfaa8cb3531a341-920x920.webp" />
           <div id=1372>
             <heading id=1373 level=3>Start in your terminal</heading>
             <paragraph id=1376>Super powerful terminal integration. Works with all your CLI tools alongside any IDE.</paragraph>
@@ -719,7 +719,7 @@
           </div>
         </div>
         <div id=1399>
-          <image name="Claude Code extension in VS Code" id=1401 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/ad5647024b50754209ac108ad151339a32fde625-920x920.webp"/>
+          <image name="Claude Code extension in VS Code" id=1401 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/ad5647024b50754209ac108ad151339a32fde625-920x920.webp" />
           <div id=1402>
             <heading id=1403 level=3>Integrate with your editor</heading>
             <paragraph id=1406>Native extensions for VS Code (+ Cursor, Devin Desktop) and JetBrains IDEs.</paragraph>
@@ -736,7 +736,7 @@
           </div>
         </div>
         <div id=1424>
-          <image name="Claude Code on the web" id=1426 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/050b07bf101bc4712abb3a7e1ba6f4d8dde33fcd-920x920.webp"/>
+          <image name="Claude Code on the web" id=1426 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/050b07bf101bc4712abb3a7e1ba6f4d8dde33fcd-920x920.webp" />
           <div id=1427>
             <heading id=1428 level=3>Access anywhere</heading>
             <paragraph id=1431>Quick access from browser, mobile app, or Claude on desktop. Great for parallel work or on-the-go coding.</paragraph>
@@ -765,7 +765,7 @@
       <heading id=1468 level=2>What developers are saying</heading>
       <list id=1471>
         <listitem id=1472 level=1>
-          <image name="Ramp" id=1475 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/648a551dca8eaf811bd5228c852a9e65386b0904-118x32.svg"/>
+          <image name="Ramp" id=1475 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/648a551dca8eaf811bd5228c852a9e65386b0904-118x32.svg" />
           <div id=1476>
             <blockquote id=1477>
               <paragraph id=1478>
@@ -779,7 +779,7 @@
           </div>
         </listitem>
         <listitem id=1496 level=1>
-          <image name="Intercom" id=1499 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/fa755cc324f3ead28cea084cb63c403edfccc0da-141x23.svg"/>
+          <image name="Intercom" id=1499 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/fa755cc324f3ead28cea084cb63c403edfccc0da-141x23.svg" />
           <div id=1500>
             <blockquote id=1501>
               <paragraph id=1502>
@@ -793,7 +793,7 @@
           </div>
         </listitem>
         <listitem id=1518 level=1>
-          <image name="Notion" id=1521 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dd2c022495a4655e77541d16bc01b96e2052d6a3-128x36.svg"/>
+          <image name="Notion" id=1521 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dd2c022495a4655e77541d16bc01b96e2052d6a3-128x36.svg" />
           <div id=1522>
             <blockquote id=1523>
               <paragraph id=1524>
@@ -811,40 +811,40 @@
     <div id=1542>
       <list id=1544>
         <listitem id=1545 level=1>
-          <image name="New Relic" id=1548 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/381cea7f0fc11a867d2e8fa86028a1bc87fd9aad-142x28.svg"/>
+          <image name="New Relic" id=1548 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/381cea7f0fc11a867d2e8fa86028a1bc87fd9aad-142x28.svg" />
         </listitem>
         <listitem id=1549 level=1>
-          <image name="Datadog" id=1552 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/5bd06742093289d7f7dd03b3945cc35d823d5388-146x36.svg"/>
+          <image name="Datadog" id=1552 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/5bd06742093289d7f7dd03b3945cc35d823d5388-146x36.svg" />
         </listitem>
         <listitem id=1553 level=1>
-          <image name="Elastic" id=1556 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/4114bc17f676c85fd52661ac58205c1b7f2e52c5-117x40.svg"/>
+          <image name="Elastic" id=1556 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/4114bc17f676c85fd52661ac58205c1b7f2e52c5-117x40.svg" />
         </listitem>
         <listitem id=1557 level=1>
-          <image name="Heroku" id=1560 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/14d277edf9089e2db3a1e3c5c004d25f0a496627-143x40.svg"/>
+          <image name="Heroku" id=1560 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/14d277edf9089e2db3a1e3c5c004d25f0a496627-143x40.svg" />
         </listitem>
         <listitem id=1561 level=1>
-          <image name="Vercel" id=1564 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dfe2bb49cbe6a11d747deb00e01474b0ac4a8de8-120x24.svg"/>
+          <image name="Vercel" id=1564 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/dfe2bb49cbe6a11d747deb00e01474b0ac4a8de8-120x24.svg" />
         </listitem>
         <listitem id=1565 level=1>
-          <image name="Stripe" id=1568 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg"/>
+          <image name="Stripe" id=1568 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/d7562d1ee0d6c94849f245da7617a1095bb23f21-92x38.svg" />
         </listitem>
         <listitem id=1569 level=1>
-          <image name="AWS" id=1572 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/477ff12eca622016612d5837b67bec8fbd3899e8-61x36.svg"/>
+          <image name="AWS" id=1572 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/477ff12eca622016612d5837b67bec8fbd3899e8-61x36.svg" />
         </listitem>
         <listitem id=1573 level=1>
-          <image name="Dynatrace" id=1576 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/05e7af628f73b9ab5ce68b47e2035d292564c421-181x32.svg"/>
+          <image name="Dynatrace" id=1576 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/05e7af628f73b9ab5ce68b47e2035d292564c421-181x32.svg" />
         </listitem>
         <listitem id=1577 level=1>
-          <image name="MongoDB" id=1580 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/b7e4f274d9789cf6709450c85ee987064b78d784-156x40.svg"/>
+          <image name="MongoDB" id=1580 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/b7e4f274d9789cf6709450c85ee987064b78d784-156x40.svg" />
         </listitem>
         <listitem id=1581 level=1>
-          <image name="GitHub" id=1584 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/7522fc92399dcb4a68f11c7e147e711fcadbe75b-126x36.svg"/>
+          <image name="GitHub" id=1584 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/7522fc92399dcb4a68f11c7e147e711fcadbe75b-126x36.svg" />
         </listitem>
         <listitem id=1585 level=1>
-          <image name="Atlassian" id=1588 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/9cdf5ed2ae750f0b6795490071eed41576bd1e1a-189x24.svg"/>
+          <image name="Atlassian" id=1588 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/9cdf5ed2ae750f0b6795490071eed41576bd1e1a-189x24.svg" />
         </listitem>
         <listitem id=1589 level=1>
-          <image name="GitLab" id=1592 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/84694a8c9a86c0b8bf37a874c675ccaeec9c6654-111x26.svg"/>
+          <image name="GitLab" id=1592 url="https://cdn.sanity.io/images/4zrzovbb/claude-com/84694a8c9a86c0b8bf37a874c675ccaeec9c6654-111x26.svg" />
         </listitem>
       </list>
       <div id=1593>
@@ -935,15 +935,15 @@
             <paragraph id=1752>Fast mode is a high-speed configuration for Opus 5, making the model 2.5x faster at a higher cost per token. Fast mode is available:</paragraph>
             <list id=1756>
               <listitem id=1757 level=1>
-                <ListMarker name="•" id=1758/>
+                <ListMarker name="•" id=1758 />
                 In research preview on Claude Code, and is priced at $10/$50 per million tokens.
               </listitem>
               <listitem id=1762 level=1>
-                <ListMarker name="•" id=1763/>
+                <ListMarker name="•" id=1763 />
                 On consumption-based plans.
               </listitem>
               <listitem id=1767 level=1>
-                <ListMarker name="•" id=1768/>
+                <ListMarker name="•" id=1768 />
                 Via usage credits for users on subscription plans.
               </listitem>
             </list>
@@ -1003,8 +1003,8 @@
         <heading id=1878 level=3>Get the developer newsletter</heading>
         <paragraph id=1881>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</paragraph>
         <div id=1886>
-          <textbox name="Email address" id=1887 focusable editable="plaintext" settable required/>
-          <button name="Subscribe" id=1890 disabled/>
+          <textbox name="Email address" id=1887 focusable editable="plaintext" settable required />
+          <button name="Subscribe" id=1890 disabled />
         </div>
         <paragraph id=1893>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</paragraph>
       </div>
@@ -1015,15 +1015,15 @@
       <div id=1900>
         <div id=1901>
           <link id=1902 focusable url="https://claude.com/">
-            <image name="Claude" id=1903/>
+            <image name="Claude" id=1903 />
           </link>
           <div id=1905>
-            <textbox name="Ask Claude" id=1906 focusable editable="plaintext" settable multiline/>
-            <button name="Submit" id=1909 focusable/>
+            <textbox name="Ask Claude" id=1906 focusable editable="plaintext" settable multiline />
+            <button name="Submit" id=1909 focusable />
           </div>
         </div>
         <div id=1912>
-          <image name="By Anthropic" id=1913/>
+          <image name="By Anthropic" id=1913 />
           <paragraph id=1914>© 2026 Anthropic PBC</paragraph>
         </div>
       </div>
@@ -1326,13 +1326,13 @@
       </div>
     </div>
     <div id=2292>
-      <separator id=2293 settable orientation="horizontal"/>
+      <separator id=2293 settable orientation="horizontal" />
       <div id=2294>
         <div id=2295>
-          <link name="Instagram" id=2296 focusable url="https://www.instagram.com/claudeai"/>
-          <link name="LinkedIn" id=2297 focusable url="https://www.linkedin.com/showcase/claude/"/>
-          <link name="X (Twitter)" id=2298 focusable url="https://x.com/claudeai"/>
-          <link name="YouTube" id=2299 focusable url="https://www.youtube.com/@anthropic-ai"/>
+          <link name="Instagram" id=2296 focusable url="https://www.instagram.com/claudeai" />
+          <link name="LinkedIn" id=2297 focusable url="https://www.linkedin.com/showcase/claude/" />
+          <link name="X (Twitter)" id=2298 focusable url="https://x.com/claudeai" />
+          <link name="YouTube" id=2299 focusable url="https://www.youtube.com/@anthropic-ai" />
         </div>
         <button name="Language:" id=2302 focusable hasPopup="menu">English</button>
       </div>

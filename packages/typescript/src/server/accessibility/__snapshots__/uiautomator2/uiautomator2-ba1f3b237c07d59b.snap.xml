@@ -2,8 +2,8 @@
   <WebView id=13 text="Calculator">
     <div id=16>
       <div id=18>Dark Mode</div>
-      <div id=22 content-desc="Calculator" clickable/>
-      <div id=31 content-desc="SB" clickable/>
+      <div id=22 content-desc="Calculator" clickable />
+      <div id=31 content-desc="SB" clickable />
     </div>
     <EditText id=33 resource-id="output" clickable>8</EditText>
     <Button id=34 resource-id="clear" clickable>C</Button>
@@ -29,18 +29,18 @@
   </WebView>
   <div id=55 resource-id="toolbar_container">
     <div id=56 resource-id="toolbar">
-      <ImageButton id=57 content-desc="Home" resource-id="home_button" clickable/>
+      <ImageButton id=57 content-desc="Home" resource-id="home_button" clickable />
       <div id=58 resource-id="location_bar">
         <div id=59 resource-id="location_bar_status" clickable>
-          <ImageView id=62 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+          <ImageView id=62 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
         </div>
         <EditText id=63 resource-id="url_bar" clickable>seleniumbase.io/apps/calculator</EditText>
       </div>
       <div id=64 resource-id="toolbar_buttons">
-        <ImageButton id=65 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
-        <ImageButton id=67 content-desc="More options" resource-id="menu_button" clickable/>
+        <ImageButton id=65 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=67 content-desc="More options" resource-id="menu_button" clickable />
       </div>
     </div>
-    <ImageView id=68 resource-id="toolbar_hairline"/>
+    <ImageView id=68 resource-id="toolbar_hairline" />
   </div>
 </div>

@@ -4,7 +4,7 @@
     <banner id=8>
       <div id=10>
         <link name="Docs" id=11 focusable url="https://developers.cloudflare.com/">
-          <image name="Cloudflare" id=13/>
+          <image name="Cloudflare" id=13 />
           DOCS
         </link>
         <navigation name="Sections" id=17>
@@ -18,17 +18,17 @@
         <button name="(Ctrl+)" id=32 focusable>
           Search
           <div id=37>
-            <image id=39/>
+            <image id=39 />
             K
           </div>
         </button>
         <link name="GitHub" id=43 focusable url="https://github.com/cloudflare/cloudflare-docs">
-          <image id=44/>
+          <image id=44 />
         </link>
         <button name="Theme: system. Activate to switch to light." id=46 focusable>
-          <image id=49/>
+          <image id=49 />
         </button>
-        <separator id=51 settable orientation="horizontal"/>
+        <separator id=51 settable orientation="horizontal" />
         <link id=52 focusable url="https://dash.cloudflare.com/">Log in</link>
       </div>
     </banner>
@@ -38,10 +38,10 @@
           <navigation id=60>
             <div id=61>
               <div id=62>
-                <link name="All products" id=63 focusable url="https://developers.cloudflare.com/"/>
+                <link name="All products" id=63 focusable url="https://developers.cloudflare.com/" />
                 <link id=65 focusable url="https://developers.cloudflare.com/workers/">Workers</link>
               </div>
-              <searchbox name="Filter navigation" id=70 focusable editable="plaintext" settable/>
+              <searchbox name="Filter navigation" id=70 focusable editable="plaintext" settable />
             </div>
             <list id=76>
               <listitem id=77 level=1>
@@ -1581,20 +1581,20 @@
               <heading id=2735 level=1>Cloudflare Workers</heading>
               <div id=2738>
                 <div id=2739>
-                  <image id=2740/>
+                  <image id=2740 />
                   Last updated
                   <time id=2744>Apr 23, 2026</time>
                 </div>
                 <button name="Copy Page as Markdown" id=2747 focusable>
-                  <image id=2748/>
+                  <image id=2748 />
                   <div id=2751 live="polite" relevant="additions text">Copy as Markdown</div>
                 </button>
                 <link name="View Page as Markdown" id=2754 focusable url="https://developers.cloudflare.com/workers/index.md">
-                  <image id=2755/>
+                  <image id=2755 />
                   View as Markdown
                 </link>
                 <link name="Setup your agent to build on Cloudflare" id=2759 focusable url="https://developers.cloudflare.com/agent-setup/">
-                  <image id=2760/>
+                  <image id=2760 />
                   Agent setup
                 </link>
               </div>
@@ -1610,11 +1610,11 @@
                 <paragraph id=2783>With Cloudflare Workers, you can expect to:</paragraph>
                 <list id=2786>
                   <listitem id=2787 level=1>
-                    <ListMarker name="•" id=2788/>
+                    <ListMarker name="•" id=2788 />
                     Deliver fast performance with high reliability anywhere in the world
                   </listitem>
                   <listitem id=2792 level=1>
-                    <ListMarker name="•" id=2793/>
+                    <ListMarker name="•" id=2793 />
                     Build full-stack apps with your framework of choice, including
                     <link id=2797 focusable url="https://developers.cloudflare.com/workers/framework-guides/web-apps/react/">React</link>
                     ,
@@ -1631,7 +1631,7 @@
                     <link id=2827 focusable url="https://developers.cloudflare.com/workers/framework-guides/">and more</link>
                   </listitem>
                   <listitem id=2830 level=1>
-                    <ListMarker name="•" id=2831/>
+                    <ListMarker name="•" id=2831 />
                     Use your preferred language, including
                     <link id=2835 focusable url="https://developers.cloudflare.com/workers/languages/javascript/">JavaScript</link>
                     ,
@@ -1644,12 +1644,12 @@
                     <link id=2855 focusable url="https://developers.cloudflare.com/workers/runtime-apis/webassembly/">and more</link>
                   </listitem>
                   <listitem id=2858 level=1>
-                    <ListMarker name="•" id=2859/>
+                    <ListMarker name="•" id=2859 />
                     Gain deep visibility and insight with built-in
                     <link id=2863 focusable url="https://developers.cloudflare.com/workers/observability/logs/">observability</link>
                   </listitem>
                   <listitem id=2866 level=1>
-                    <ListMarker name="•" id=2867/>
+                    <ListMarker name="•" id=2867 />
                     Get started for free and grow with flexible
                     <link id=2871 focusable url="https://developers.cloudflare.com/workers/platform/pricing/">pricing</link>
                     , affordable at any scale
@@ -1662,15 +1662,15 @@
                 <link id=2883 focusable url="https://developers.cloudflare.com/workers/get-started/guide/">
                   <paragraph id=2884>Deploy with Wrangler CLI</paragraph>
                 </link>
-                <separator id=2887 settable orientation="horizontal"/>
+                <separator id=2887 settable orientation="horizontal" />
                 <div id=2888 focusable>
                   <heading id=2889 level=2>Build with Workers</heading>
-                  <link id=2892 focusable url="https://developers.cloudflare.com/workers/#build-with-workers"/>
+                  <link id=2892 focusable url="https://developers.cloudflare.com/workers/#build-with-workers" />
                 </div>
                 <div id=2893>
                   <div id=2894 focusable>
                     <heading id=2895 level=4>Front-end applications</heading>
-                    <link id=2898 focusable url="https://developers.cloudflare.com/workers/#front-end-applications"/>
+                    <link id=2898 focusable url="https://developers.cloudflare.com/workers/#front-end-applications" />
                   </div>
                   Deploy
                   <link id=2901 focusable url="https://developers.cloudflare.com/workers/static-assets/">static assets</link>
@@ -1681,7 +1681,7 @@
                 <div id=2911>
                   <div id=2912 focusable>
                     <heading id=2913 level=4>Back-end applications</heading>
-                    <link id=2916 focusable url="https://developers.cloudflare.com/workers/#back-end-applications"/>
+                    <link id=2916 focusable url="https://developers.cloudflare.com/workers/#back-end-applications" />
                   </div>
                   Build APIs and connect to data stores with
                   <link id=2919 focusable url="https://developers.cloudflare.com/workers/configuration/placement/">Smart Placement</link>
@@ -1690,7 +1690,7 @@
                 <div id=2924>
                   <div id=2925 focusable>
                     <heading id=2926 level=4>Serverless AI inference</heading>
-                    <link id=2929 focusable url="https://developers.cloudflare.com/workers/#serverless-ai-inference"/>
+                    <link id=2929 focusable url="https://developers.cloudflare.com/workers/#serverless-ai-inference" />
                   </div>
                   Run LLMs, generate images, and more with
                   <link id=2932 focusable url="https://developers.cloudflare.com/workers-ai/">Workers AI</link>
@@ -1698,7 +1698,7 @@
                 <div id=2935>
                   <div id=2936 focusable>
                     <heading id=2937 level=4>Background jobs</heading>
-                    <link id=2940 focusable url="https://developers.cloudflare.com/workers/#background-jobs"/>
+                    <link id=2940 focusable url="https://developers.cloudflare.com/workers/#background-jobs" />
                   </div>
                   Schedule
                   <link id=2943 focusable url="https://developers.cloudflare.com/workers/configuration/cron-triggers/">cron jobs</link>
@@ -1710,17 +1710,17 @@
                 <div id=2956>
                   <div id=2957 focusable>
                     <heading id=2958 level=4>Observability &amp; monitoring</heading>
-                    <link id=2961 focusable url="https://developers.cloudflare.com/workers/#observability--monitoring"/>
+                    <link id=2961 focusable url="https://developers.cloudflare.com/workers/#observability--monitoring" />
                   </div>
                   Monitor performance, debug issues, and analyze traffic with
                   <link id=2964 focusable url="https://developers.cloudflare.com/workers/observability/logs/">real-time logs</link>
                   and
                   <link id=2969 focusable url="https://developers.cloudflare.com/workers/observability/metrics-and-analytics/">analytics</link>
                 </div>
-                <separator id=2972 settable orientation="horizontal"/>
+                <separator id=2972 settable orientation="horizontal" />
                 <div id=2973 focusable>
                   <heading id=2974 level=2>Integrate with Workers</heading>
-                  <link id=2977 focusable url="https://developers.cloudflare.com/workers/#integrate-with-workers"/>
+                  <link id=2977 focusable url="https://developers.cloudflare.com/workers/#integrate-with-workers" />
                 </div>
                 <paragraph id=2978>
                   Connect to external services like databases, APIs, and storage via
@@ -1784,7 +1784,7 @@
                   <link id=3125 focusable url="https://developers.cloudflare.com/images/">Images</link>
                   <paragraph id=3129>Streamlined image infrastructure from a single API.</paragraph>
                 </div>
-                <separator id=3132 settable orientation="horizontal"/>
+                <separator id=3132 settable orientation="horizontal" />
                 <paragraph id=3133>
                   Want to connect with the Workers community?
                   <link id=3136 focusable url="https://discord.cloudflare.com/">
@@ -1800,7 +1800,7 @@
                   <div id=3146>Next</div>
                   <div id=3148>CLI</div>
                 </div>
-                <image id=3150/>
+                <image id=3150 />
               </link>
             </navigation>
           </main>
@@ -1839,7 +1839,7 @@
       </div>
       <contentinfo id=3200>
         <div id=3202>
-          <image name="Cloudflare wordmark" id=3205/>
+          <image name="Cloudflare wordmark" id=3205 />
           <div id=3206>
             <div id=3207>
               <div id=3208>
@@ -1923,7 +1923,7 @@
               <link id=3395 focusable url="https://www.cloudflare.com/trademark/">Trademark</link>
             </div>
             <div id=3398>
-              <image name="privacy options" id=3399 url="https://developers.cloudflare.com/_astro/privacyoptions.BWXSiJOZ_1oqSoo.svg"/>
+              <image name="privacy options" id=3399 url="https://developers.cloudflare.com/_astro/privacyoptions.BWXSiJOZ_1oqSoo.svg" />
               <button id=3400 focusable>Cookie Preferences</button>
             </div>
           </div>
@@ -1932,6 +1932,6 @@
     </div>
   </div>
   <button name="Scroll to top" id=3404 focusable>
-    <image id=3405/>
+    <image id=3405 />
   </button>
 </RootWebArea>

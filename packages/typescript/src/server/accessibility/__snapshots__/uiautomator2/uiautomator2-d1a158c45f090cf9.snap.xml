@@ -1,32 +1,32 @@
 <div id=1>
   <WebView id=13 text="TodoMVC: Vue">
     <div id=15>
-      <div id=16 content-desc="todos" clickable/>
-      <EditText id=18 clickable/>
+      <div id=16 content-desc="todos" clickable />
+      <EditText id=18 clickable />
     </div>
     <div id=19>
       <div id=20>Double-click to edit a todo</div>
       <div id=21>Created by the TodoMVC Team</div>
       <div id=22>
         <div id=23>Part of</div>
-        <div id=24 content-desc="TodoMVC" clickable/>
+        <div id=24 content-desc="TodoMVC" clickable />
       </div>
     </div>
   </WebView>
   <div id=27 resource-id="toolbar_container">
     <div id=28 resource-id="toolbar">
-      <ImageButton id=29 content-desc="Home" resource-id="home_button" clickable/>
+      <ImageButton id=29 content-desc="Home" resource-id="home_button" clickable />
       <div id=30 resource-id="location_bar">
         <div id=31 resource-id="location_bar_status" clickable>
-          <ImageView id=34 content-desc="Connection is secure" resource-id="location_bar_status_icon"/>
+          <ImageView id=34 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
         </div>
         <EditText id=35 resource-id="url_bar" clickable>todomvc.com/examples/vue/dist/#/</EditText>
       </div>
       <div id=36 resource-id="toolbar_buttons">
-        <ImageButton id=37 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable/>
-        <ImageButton id=39 content-desc="More options" resource-id="menu_button" clickable/>
+        <ImageButton id=37 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=39 content-desc="More options" resource-id="menu_button" clickable />
       </div>
     </div>
-    <ImageView id=40 resource-id="toolbar_hairline"/>
+    <ImageView id=40 resource-id="toolbar_hairline" />
   </div>
 </div>

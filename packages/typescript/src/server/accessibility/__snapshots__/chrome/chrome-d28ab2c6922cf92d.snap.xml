@@ -1,20 +1,20 @@
 <RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/upload">
   <div id=6>
     <link id=7 focusable url="https://github.com/tourdedave/the-internet">
-      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png"/>
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />
     </link>
     <div id=10>
       <heading id=11 level=3>File Uploader</heading>
       <paragraph id=14>Choose a file on your system and then click upload. Or, drag and drop a file into the area below.</paragraph>
       <div id=17>
-        <button name="Choose File" id=18 focusable focused/>
-        <LineBreak id=19/>
+        <button name="Choose File" id=18 focusable focused />
+        <LineBreak id=19 />
         <button id=21 focusable>Upload</button>
       </div>
     </div>
   </div>
   <div id=26>
-    <separator id=27 settable orientation="horizontal"/>
+    <separator id=27 settable orientation="horizontal" />
     <div id=28>
       Powered by
       <link id=31 focusable url="http://elementalselenium.com/">Elemental Selenium</link>

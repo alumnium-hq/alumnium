@@ -1,8 +1,8 @@
 <RootWebArea name="Cloudflare: Build for the agent era" id=1 focusable focused url="https://www.cloudflare.com/">
   <banner id=5>
     <link name="Cloudflare logo" id=8 focusable url="https://www.cloudflare.com/">
-      <image id=9/>
-      <image name="Cloudflare wordmark" id=11/>
+      <image id=9 />
+      <image name="Cloudflare wordmark" id=11 />
     </link>
     <navigation name="Main navigation" id=16>
       <link id=20 focusable hasPopup="menu" url="https://www.cloudflare.com/products/">Products</link>
@@ -19,7 +19,7 @@
   <main id=55 focusable>
     <div id=100>
       <group id=103>
-        <Canvas id=105/>
+        <Canvas id=105 />
         <div id=106>
           Connect 2026 · The Agentic Conference of the Year · Oct 19-21 ·
           <link name="— Connect 2026 · The Agentic Conference of the Year · Oct 19-21 ·" id=109 focusable url="https://www.cloudflare.com/connect/">Register</link>
@@ -37,7 +37,7 @@
         <heading id=129 level=2>Region: Earth</heading>
         <paragraph id=140>One smart network for workloads + security — close to users, close to data.</paragraph>
       </div>
-      <Canvas id=147/>
+      <Canvas id=147 />
       <div id=192>
         <div id=194>
           <heading id=197 level=3>Run everywhere</heading>
@@ -84,7 +84,7 @@
           <region name="Sry:" id=343 roledescription="slide">
             <button name="customer story and logo rotation" id=344 focusable>Pause</button>
             <div id=354>
-              <image name="Duncan Davidson" id=360 url="https://www.cloudflare.com/people/duncan-davidson.png"/>
+              <image name="Duncan Davidson" id=360 url="https://www.cloudflare.com/people/duncan-davidson.png" />
               <blockquote id=362>
                 <heading id=363 level=3>
                   <div id=364>For</div>
@@ -215,7 +215,7 @@
       <div id=796>
         <heading id=949 level=3>
           Shipping with
-          <LineBreak id=952/>
+          <LineBreak id=952 />
           Cloudflare
         </heading>
         <div id=958>
@@ -252,15 +252,15 @@
     <div id=1035>
       <tablist name="Platform categories" id=1043 orientation="horizontal">
         <tab name="tab" id=1045 focusable selected controls="home-pricing-platform-panel-0">
-          <image id=1046/>
+          <image id=1046 />
           Network &amp; CDN
         </tab>
         <tab name="tab" id=1049 focusable>
-          <image id=1050/>
+          <image id=1050 />
           SASE / Zero Trust
         </tab>
         <tab name="tab" id=1053 focusable>
-          <image id=1054/>
+          <image id=1054 />
           Compute &amp; Storage
         </tab>
       </tablist>
@@ -289,7 +289,7 @@
           <div id=1125>
             <paragraph id=1126>
               <strong id=1127>Free</strong>
-              <LineBreak id=1130/>
+              <LineBreak id=1130 />
               for hobby projects
             </paragraph>
             <div id=1135>
@@ -310,7 +310,7 @@
           <div id=1162>
             <paragraph id=1163>
               <strong id=1164>Pro</strong>
-              <LineBreak id=1167/>
+              <LineBreak id=1167 />
               for pro websites
             </paragraph>
             <div id=1171>
@@ -334,7 +334,7 @@
           <div id=1202>
             <paragraph id=1203>
               <strong id=1204>Business</strong>
-              <LineBreak id=1207/>
+              <LineBreak id=1207 />
               for small business
             </paragraph>
             <div id=1211>
@@ -358,7 +358,7 @@
           <div id=1242>
             <paragraph id=1243>
               <strong id=1244>Contract</strong>
-              <LineBreak id=1247/>
+              <LineBreak id=1247 />
               for mission-critical
             </paragraph>
             <div id=1251>
@@ -447,7 +447,7 @@
   </main>
   <contentinfo id=1506>
     <div id=1508>
-      <image name="Cloudflare wordmark" id=1511/>
+      <image name="Cloudflare wordmark" id=1511 />
       <div id=1512>
         <div id=1513>
           <div id=1514>

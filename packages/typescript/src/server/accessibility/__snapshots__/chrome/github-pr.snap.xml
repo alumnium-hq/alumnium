@@ -4,7 +4,7 @@
     <banner id=28>
       <heading id=29 level=2>Navigation Menu</heading>
       <div id=32>
-        <link name="Homepage" id=35 focusable url="https://github.com/"/>
+        <link name="Homepage" id=35 focusable url="https://github.com/" />
         <div id=39>
           <navigation name="Global" id=40>
             <list id=41>
@@ -36,7 +36,7 @@
             </button>
             <link id=114 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Falumnium-hq%2Falumnium%2Fpull%2F256">Sign in</link>
             <link id=117 focusable url="https://github.com/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fvoltron%2Fpull_requests_fragments%2Fpull_request_layout&amp;source=header-repo&amp;source_repo=alumnium-hq%2Falumnium">Sign up</link>
-            <button name="Appearance settings" id=120 focusable hasPopup="dialog"/>
+            <button name="Appearance settings" id=120 focusable hasPopup="dialog" />
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@
           </heading>
           <div id=265>
             <div id=267>
-              <image name="Pull request" id=268/>
+              <image name="Pull request" id=268 />
               Closed
             </div>
             <div id=272>
@@ -129,7 +129,7 @@
                 from
                 <div id=287>
                   kossnocorp:ts
-                  <button name="Copy head branch name to clipboard" id=291 focusable/>
+                  <button name="Copy head branch name to clipboard" id=291 focusable />
                 </div>
               </div>
             </div>
@@ -174,7 +174,7 @@
         </div>
         <div id=356>
           <div id=358>
-            <image name="Pull request" id=359/>
+            <image name="Pull request" id=359 />
             Closed
           </div>
           <heading id=362 level=2>
@@ -189,7 +189,7 @@
                 from
                 <div id=387>
                   kossnocorp:ts
-                  <button name="Copy head branch name to clipboard" id=391 focusable/>
+                  <button name="Copy head branch name to clipboard" id=391 focusable />
                 </div>
               </div>
             </div>
@@ -203,7 +203,7 @@
             <div id=405>
               <div id=406>
                 <link id=407 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                  <image name="@kossnocorp" id=408 url="https://avatars.githubusercontent.com/u/52201?s=80&amp;v=4"/>
+                  <image name="@kossnocorp" id=408 url="https://avatars.githubusercontent.com/u/52201?s=80&amp;v=4" />
                 </link>
                 <div id=410>
                   <div id=411>
@@ -227,7 +227,7 @@
                     <div id=436>
                       <group id=438>
                         <button id=440 focusable hasPopup="menu">
-                          <image name="Show options" id=443/>
+                          <image name="Show options" id=443 />
                         </button>
                       </group>
                       <div name="This user has previously committed to the alumnium repository." id=446>Contributor</div>
@@ -249,7 +249,7 @@
                 <div id=489>
                   <div id=495>
                     <link id=498 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=499 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=499 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <div id=500>
                       <code id=501>
@@ -264,7 +264,7 @@
                   </div>
                   <div id=530>
                     <link id=533 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=534 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=534 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <div id=535>
                       <code id=536>
@@ -282,7 +282,7 @@
                   </div>
                   <div id=568>
                     <link id=571 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=572 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=572 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=574>
                       <link id=575 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0e10a0e1f1cdb0558a3e3fbdd4ca0e0fc61ed342">Add Bun v1.3.9 to tools</link>
@@ -294,7 +294,7 @@
                   </div>
                   <div id=599>
                     <link id=602 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=603 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=603 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=605>
                       <link id=606 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/437264136cb29ec293cf054e59e7da270915647e">Set up PoC single-file executable core using Bun</link>
@@ -306,7 +306,7 @@
                   </div>
                   <div id=630>
                     <link id=633 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=634 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=634 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=636>
                       <link id=637 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b4e8ffb7c145733a27ff684f61e2fd34f8dfe71c">Integrate core package into the monorepo</link>
@@ -318,7 +318,7 @@
                   </div>
                   <div id=661>
                     <link id=664 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=665 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=665 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=667>
                       <link id=668 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/04d1ffa3b2026a985c89ccea634e8e8cabd38ff9">Outline core server proxying everything to the current version</link>
@@ -330,7 +330,7 @@
                   </div>
                   <div id=692>
                     <link id=695 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=696 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=696 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=698>
                       <link id=699 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bccecb23542f436ed6c6dcb404f9c76d3aa52761">Refactor core proxy server to Elysia</link>
@@ -342,7 +342,7 @@
                   </div>
                   <div id=723>
                     <link id=726 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=727 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=727 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=729>
                       <link id=730 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/343f37003d13759509541108dbd5ee971de52639">Loosen core params validation, add cors middleware</link>
@@ -354,7 +354,7 @@
                   </div>
                   <div id=754>
                     <link id=757 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=758 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=758 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=760>
                       <link id=761 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/06eba2332d75899e8c96d5ce375d2892fbd8c865">PoC core routes modules, simplify CLI a bit</link>
@@ -366,7 +366,7 @@
                   </div>
                   <div id=785>
                     <link id=788 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=789 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=789 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=791>
                       <link id=792 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bee453c4b6c92ffdc8d8d01759288dc6bbc7e253">Introduce session state sync TS &lt;&gt; Python</link>
@@ -378,7 +378,7 @@
                   </div>
                   <div id=816>
                     <link id=819 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=820 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=820 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=822>
                       <link id=823 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0ce9fb1c95d21327bf1df78eba84da055c311ea0">Outline session, session manager and agent classes</link>
@@ -390,7 +390,7 @@
                   </div>
                   <div id=847>
                     <link id=850 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=851 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=851 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=853>
                       <link id=854 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3f4acd088bfc40af2e83543742bcd545ada265f9">Add failing core accessibility tests</link>
@@ -402,7 +402,7 @@
                   </div>
                   <div id=878>
                     <link id=881 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=882 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=882 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=884>
                       <link id=885 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/6dcffac7c5f9f8c5b8d2f574bd98cb17c6de1795">Set up mise &amp; fnox, set dev env vars</link>
@@ -414,7 +414,7 @@
                   </div>
                   <div id=909>
                     <link id=912 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=913 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=913 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=915>
                       <link id=916 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/84fdab1a45eb86dd63e0b22ea0e9530fa3dceee8">Set up OpenCode</link>
@@ -426,7 +426,7 @@
                   </div>
                   <div id=940>
                     <link id=943 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=944 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=944 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=946>
                       <link id=947 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/da11cabc533004f9bd9b5cd6272d7b0eeecc161c">Add TODO file with pending TypeScript migration list</link>
@@ -438,7 +438,7 @@
                   </div>
                   <div id=971>
                     <link id=974 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=975 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=975 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=977>
                       <link id=978 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bfb9f03eff67b50693ad456a08ecf2ba7e1b046e">Add dummy server accessibility tree classes</link>
@@ -450,7 +450,7 @@
                   </div>
                   <div id=1002>
                     <link id=1005 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1006 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1006 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1008>
                       <link id=1009 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/57e2b5f44398f5ee068403e4673d22ab97a8c1aa">Fix core types, add types script</link>
@@ -462,7 +462,7 @@
                   </div>
                   <div id=1033>
                     <link id=1036 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1037 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1037 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1039>
                       <link id=1040 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9a8fa73787a7c2faaf4798e8c9bc2cc8371fdf79">Set up py2ts AI agent along with basic instructions</link>
@@ -474,7 +474,7 @@
                   </div>
                   <div id=1064>
                     <link id=1067 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1068 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1068 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1070>
                       <link id=1071 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f891e810aba4d50d60ee4a0e1399987d514c6b09">Convert AccessibilityTreeDiff to TS</link>
@@ -486,7 +486,7 @@
                   </div>
                   <div id=1095>
                     <link id=1098 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1099 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1099 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1101>
                       <link id=1102 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/20b6c53cbb67d36d4cadec80dcd766833da3728c">Convert BaseServerAccessibilityTree to TS</link>
@@ -498,7 +498,7 @@
                   </div>
                   <div id=1126>
                     <link id=1129 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1130 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1130 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1132>
                       <link id=1133 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/857e64f3a5d6d26ad5ee53c4fca2be9b0df661b1">Rearrange server accessibility tree modules</link>
@@ -510,7 +510,7 @@
                   </div>
                   <div id=1157>
                     <link id=1160 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1161 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1161 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1163>
                       <link id=1164 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cd3d29f2fb43a60792b1fb7b7796c7fffa6c0c8a">Convert ServerChromiumAccessibilityTree to TS</link>
@@ -522,7 +522,7 @@
                   </div>
                   <div id=1188>
                     <link id=1191 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1192 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1192 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1194>
                       <link id=1195 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/36ca21943cefc4de648cb5be24666e99c9ee4931">Convert ServerUiAutomator2AccessibilityTree to TS</link>
@@ -534,7 +534,7 @@
                   </div>
                   <div id=1219>
                     <link id=1222 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1223 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1223 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1225>
                       <link id=1226 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ee2f60af4cc068a9a550883b62ff9a2ce5225099">Convert ServerXcuitestAccessibilityTree to TS</link>
@@ -546,7 +546,7 @@
                   </div>
                   <div id=1250>
                     <link id=1253 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1254 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1254 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1256>
                       <link id=1257 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/5d40338f9131f3189a2b139738820a0524206d04">Implement AccessibilityTreeDiff</link>
@@ -558,7 +558,7 @@
                   </div>
                   <div id=1281>
                     <link id=1284 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1285 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1285 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1287>
                       <link id=1288 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/8b1bfbe7290132f54aad6f7ddbcb4145ad7db401">Move accessibility modules from client to core package</link>
@@ -570,7 +570,7 @@
                   </div>
                   <div id=1312>
                     <link id=1315 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1316 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1316 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1318>
                       <link id=1319 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/d7f2af77a7c2c05daa47b4a6e2f4d6605c85baec">Implement ServerChromiumAccessibilityTree</link>
@@ -582,7 +582,7 @@
                   </div>
                   <div id=1343>
                     <link id=1346 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1347 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1347 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1349>
                       <link id=1350 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cc4dd426055b0b3c40b4ed2364b4870207b6d1b5">Rename ServerChromiumAccessibilityTree modules</link>
@@ -594,7 +594,7 @@
                   </div>
                   <div id=1374>
                     <link id=1377 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1378 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1378 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1380>
                       <link id=1381 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a9930806923b38df87dd3a463bb06bd91dc37c39">Rename remaining server accessibility tree files to match the convention</link>
@@ -602,7 +602,7 @@
                     <button id=1385 focusable>Verified</button>
                     <group id=1395>
                       <DisclosureTriangle id=1397 focusable>
-                        <image name="0 / 3 checks OK" id=1398/>
+                        <image name="0 / 3 checks OK" id=1398 />
                       </DisclosureTriangle>
                     </group>
                     <code id=1401>
@@ -611,7 +611,7 @@
                   </div>
                   <div id=1410>
                     <link id=1413 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1414 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1414 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1416>
                       <link id=1417 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/88f3c1968801fd64aa94cb93fceba093c97e5656">Add TODO to ServerChromiumAccessibilityTree</link>
@@ -636,7 +636,7 @@
                 <div id=1456>
                   <div id=1462>
                     <link id=1465 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1466 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1466 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1468>
                       <link id=1469 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2142d0300adf35fa7f69eb8d0fc0243a0c19a3fb">Fix typos in the py2ts-dev agent</link>
@@ -648,7 +648,7 @@
                   </div>
                   <div id=1493>
                     <link id=1496 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1497 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1497 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1499>
                       <link id=1500 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/fdba9ebcc6b2671b1199dd144cee01a9068f0d6a">Extract XML module from ServerChromiumAccessibilityTree</link>
@@ -660,7 +660,7 @@
                   </div>
                   <div id=1524>
                     <link id=1527 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1528 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1528 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1530>
                       <link id=1531 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a8dbdfc7820b514220adf7e934b250c762cffdb9">Implement ServerUIAutomator2AccessibilityTree</link>
@@ -668,7 +668,7 @@
                     <button id=1535 focusable>Verified</button>
                     <group id=1545>
                       <DisclosureTriangle id=1547 focusable>
-                        <image name="0 / 3 checks OK" id=1548/>
+                        <image name="0 / 3 checks OK" id=1548 />
                       </DisclosureTriangle>
                     </group>
                     <code id=1551>
@@ -677,7 +677,7 @@
                   </div>
                   <div id=1560>
                     <link id=1563 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1564 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1564 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1566>
                       <link id=1567 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b5801603d5d5638328f80bed905a7da4de43d8b4">Upgrade OpenCode</link>
@@ -685,7 +685,7 @@
                     <button id=1571 focusable>Verified</button>
                     <group id=1581>
                       <DisclosureTriangle id=1583 focusable>
-                        <image name="0 / 3 checks OK" id=1584/>
+                        <image name="0 / 3 checks OK" id=1584 />
                       </DisclosureTriangle>
                     </group>
                     <code id=1587>
@@ -694,7 +694,7 @@
                   </div>
                   <div id=1596>
                     <link id=1599 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1600 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1600 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1602>
                       <link id=1603 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/853e460737a4254491a802674473e1a0a03e836e">Ignore type errors in the imported accessibility tree classes</link>
@@ -702,7 +702,7 @@
                     <button id=1607 focusable>Verified</button>
                     <group id=1617>
                       <DisclosureTriangle id=1619 focusable>
-                        <image name="0 / 3 checks OK" id=1620/>
+                        <image name="0 / 3 checks OK" id=1620 />
                       </DisclosureTriangle>
                     </group>
                     <code id=1623>
@@ -711,7 +711,7 @@
                   </div>
                   <div id=1632>
                     <link id=1635 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1636 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1636 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1638>
                       <link id=1639 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a82322d1a78e33b69b3f4bea5441f380b9d293ae">Implement ServerUIAutomator2AccessibilityTree</link>
@@ -723,7 +723,7 @@
                   </div>
                   <div id=1663>
                     <link id=1666 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1667 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1667 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1669>
                       <link id=1670 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ac0bb73691d36145b05086ae8e860e72c4a65592">Fix incorrectly translated UIAutomator2AccessibilityTree test</link>
@@ -735,7 +735,7 @@
                   </div>
                   <div id=1694>
                     <link id=1697 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1698 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1698 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1700>
                       <link id=1701 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/66a075bc4883e3839784fd6debfc11d07a290533">Retranslate UIAutomator2AccessibilityTree from Python</link>
@@ -743,7 +743,7 @@
                     <button id=1705 focusable>Verified</button>
                     <group id=1715>
                       <DisclosureTriangle id=1717 focusable>
-                        <image name="0 / 3 checks OK" id=1718/>
+                        <image name="0 / 3 checks OK" id=1718 />
                       </DisclosureTriangle>
                     </group>
                     <code id=1721>
@@ -752,7 +752,7 @@
                   </div>
                   <div id=1730>
                     <link id=1733 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1734 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1734 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1736>
                       <link id=1737 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/82663f3c47c768be52d2bd9d0e6d7a1cf963f428">Retranslate ChromiumAccessibilityTree</link>
@@ -764,7 +764,7 @@
                   </div>
                   <div id=1761>
                     <link id=1764 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1765 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1765 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1767>
                       <link id=1768 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/311924d2e261b9164d90f48360cefb80c15ce63d">Fix ServerXCUITestAccessibilityTree constructor</link>
@@ -776,7 +776,7 @@
                   </div>
                   <div id=1792>
                     <link id=1795 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1796 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1796 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1798>
                       <link id=1799 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1de97662b60e5d215b0be2c77159f60a57f1ffce">Rebuild AccessibilityElement as interface</link>
@@ -784,7 +784,7 @@
                     <button id=1803 focusable>Verified</button>
                     <group id=1813>
                       <DisclosureTriangle id=1815 focusable>
-                        <image name="0 / 3 checks OK" id=1816/>
+                        <image name="0 / 3 checks OK" id=1816 />
                       </DisclosureTriangle>
                     </group>
                     <code id=1819>
@@ -793,7 +793,7 @@
                   </div>
                   <div id=1828>
                     <link id=1831 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1832 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1832 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1834>
                       <link id=1835 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/05bea60b8d750be3eb7f956323537ad6bad3041b">Retranslate XCUITestAccessibilityTree</link>
@@ -801,7 +801,7 @@
                     <button id=1839 focusable>Verified</button>
                     <group id=1849>
                       <DisclosureTriangle id=1851 focusable>
-                        <image name="0 / 3 checks OK" id=1852/>
+                        <image name="0 / 3 checks OK" id=1852 />
                       </DisclosureTriangle>
                     </group>
                     <code id=1855>
@@ -810,7 +810,7 @@
                   </div>
                   <div id=1864>
                     <link id=1867 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1868 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1868 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <div id=1869>
                       <code id=1870>
@@ -825,7 +825,7 @@
                   </div>
                   <div id=1899>
                     <link id=1902 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1903 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1903 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1905>
                       <link id=1906 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2957a31e4bd2a990a38b202adf988acb94835bc3">Move &amp; rename agents to match Python</link>
@@ -837,7 +837,7 @@
                   </div>
                   <div id=1930>
                     <link id=1933 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1934 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1934 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1936>
                       <link id=1937 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/36728fa083807f92f1e967bc92de81f6c8b594e4">Adjust module naming convention</link>
@@ -845,7 +845,7 @@
                     <button id=1941 focusable>Verified</button>
                     <group id=1951>
                       <DisclosureTriangle id=1953 focusable>
-                        <image name="0 / 3 checks OK" id=1954/>
+                        <image name="0 / 3 checks OK" id=1954 />
                       </DisclosureTriangle>
                     </group>
                     <code id=1957>
@@ -854,7 +854,7 @@
                   </div>
                   <div id=1966>
                     <link id=1969 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=1970 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=1970 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=1972>
                       <link id=1973 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/207e2aa7c05ccf40f9622ca769187e5d741e82c4">Move client TS code to the core package</link>
@@ -866,7 +866,7 @@
                   </div>
                   <div id=1997>
                     <link id=2000 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2001 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2001 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2003>
                       <link id=2004 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3fe44e6999a51051ef5d9c7f28848c37d3cbd46d">Fix types after moving TS to a stricter setup, format some code</link>
@@ -874,7 +874,7 @@
                     <button id=2008 focusable>Verified</button>
                     <group id=2018>
                       <DisclosureTriangle id=2020 focusable>
-                        <image name="0 / 3 checks OK" id=2021/>
+                        <image name="0 / 3 checks OK" id=2021 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2024>
@@ -883,7 +883,7 @@
                   </div>
                   <div id=2033>
                     <link id=2036 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2037 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2037 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2039>
                       <link id=2040 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1f895331d507e73b10d70b600f0908bdec6cf139">Fix incorrect export in the TypeScript client package</link>
@@ -895,7 +895,7 @@
                   </div>
                   <div id=2064>
                     <link id=2067 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2068 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2068 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2070>
                       <link id=2071 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2ecca4e05173fbda5e9263658865d4586d27f3f1">Set up tsify tasks</link>
@@ -907,7 +907,7 @@
                   </div>
                   <div id=2095>
                     <link id=2098 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2099 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2099 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2101>
                       <link id=2102 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0ae2d99b0c8ada1bf0165b000e60c6c3c920f89a">Add Typos to VS Code recommendations, set up typos.toml</link>
@@ -915,7 +915,7 @@
                     <button id=2106 focusable>Verified</button>
                     <group id=2116>
                       <DisclosureTriangle id=2118 focusable>
-                        <image name="0 / 3 checks OK" id=2119/>
+                        <image name="0 / 3 checks OK" id=2119 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2122>
@@ -924,7 +924,7 @@
                   </div>
                   <div id=2131>
                     <link id=2134 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2135 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2135 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2137>
                       <link id=2138 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3860d7e5c44fcf8d26dd27091b21b4af2a0166ea">Rearrange server modules</link>
@@ -932,7 +932,7 @@
                     <button id=2142 focusable>Verified</button>
                     <group id=2152>
                       <DisclosureTriangle id=2154 focusable>
-                        <image name="0 / 3 checks OK" id=2155/>
+                        <image name="0 / 3 checks OK" id=2155 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2158>
@@ -941,7 +941,7 @@
                   </div>
                   <div id=2167>
                     <link id=2170 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2171 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2171 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2173>
                       <link id=2174 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/01a3051a6ed49ccca759506063a7fadb8595e891">Make logger work similar to Python including single-file executable</link>
@@ -953,7 +953,7 @@
                   </div>
                   <div id=2198>
                     <link id=2201 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2202 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2202 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2204>
                       <link id=2205 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/aa2ccfadc11fc2e03939e51724cddb0fc6402099">Move agent prompts to the core package</link>
@@ -965,7 +965,7 @@
                   </div>
                   <div id=2229>
                     <link id=2232 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2233 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2233 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <div id=2234>
                       <code id=2235>
@@ -980,7 +980,7 @@
                   </div>
                   <div id=2264>
                     <link id=2267 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2268 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2268 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2270>
                       <link id=2271 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f6fcf1791aa7950dcec74a26ebfcf50a0bcdbe6f">Reorganize prompts to match TS conventions</link>
@@ -992,7 +992,7 @@
                   </div>
                   <div id=2295>
                     <link id=2298 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2299 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2299 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2301>
                       <link id=2302 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/634ad2d64ff618d082260dbc2b8a429b3cfdd324">Rename some user prompts to be consistent</link>
@@ -1000,7 +1000,7 @@
                     <button id=2306 focusable>Verified</button>
                     <group id=2316>
                       <DisclosureTriangle id=2318 focusable>
-                        <image name="0 / 3 checks OK" id=2319/>
+                        <image name="0 / 3 checks OK" id=2319 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2322>
@@ -1009,7 +1009,7 @@
                   </div>
                   <div id=2331>
                     <link id=2334 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2335 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2335 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2337>
                       <link id=2338 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1f3dd66b2facc5cd78ada98f2682cd084dcfdf52">Implement BaseAgent, load agent prompts using a macro</link>
@@ -1021,7 +1021,7 @@
                   </div>
                   <div id=2362>
                     <link id=2365 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2366 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2366 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2368>
                       <link id=2369 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/6f56431ae9ea03f841ed6a252b103eb923869dd5">Implement ActorAgent</link>
@@ -1029,7 +1029,7 @@
                     <button id=2373 focusable>Verified</button>
                     <group id=2383>
                       <DisclosureTriangle id=2385 focusable>
-                        <image name="0 / 3 checks OK" id=2386/>
+                        <image name="0 / 3 checks OK" id=2386 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2389>
@@ -1038,7 +1038,7 @@
                   </div>
                   <div id=2398>
                     <link id=2401 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2402 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2402 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2404>
                       <link id=2405 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bfcaefdf8b09306b116137ffe48f912cff6eb495">Implement ChangesAnalyzerAgent, add pythonicFormat function</link>
@@ -1050,7 +1050,7 @@
                   </div>
                   <div id=2429>
                     <link id=2432 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2433 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2433 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2435>
                       <link id=2436 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/928bedf47df49122ba29977e1f014ec2d661a72b">Implement all agent classes</link>
@@ -1058,7 +1058,7 @@
                     <button id=2440 focusable>Verified</button>
                     <group id=2450>
                       <DisclosureTriangle id=2452 focusable>
-                        <image name="0 / 3 checks OK" id=2453/>
+                        <image name="0 / 3 checks OK" id=2453 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2456>
@@ -1067,7 +1067,7 @@
                   </div>
                   <div id=2465>
                     <link id=2468 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2469 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2469 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2471>
                       <link id=2472 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/0c8aa302153ed42ed1817fa3c5f450cac52fddd8">Rearrange types and classes a bit</link>
@@ -1079,7 +1079,7 @@
                   </div>
                   <div id=2496>
                     <link id=2499 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2500 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2500 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2502>
                       <link id=2503 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/83802eb417afc395baa998b254ef5a656eb393e9">Implement Session and misc internal classes</link>
@@ -1087,7 +1087,7 @@
                     <button id=2507 focusable>Verified</button>
                     <group id=2517>
                       <DisclosureTriangle id=2519 focusable>
-                        <image name="0 / 3 checks OK" id=2520/>
+                        <image name="0 / 3 checks OK" id=2520 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2523>
@@ -1096,7 +1096,7 @@
                   </div>
                   <div id=2532>
                     <link id=2535 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2536 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2536 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2538>
                       <link id=2539 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/07ab63cdee970055315eaa4cd8ae26f0f016be57">Integrate Session class into TS server, make TS client examples pass</link>
@@ -1104,7 +1104,7 @@
                     <button id=2543 focusable>Verified</button>
                     <group id=2553>
                       <DisclosureTriangle id=2555 focusable>
-                        <image name="0 / 3 checks OK" id=2556/>
+                        <image name="0 / 3 checks OK" id=2556 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2559>
@@ -1113,7 +1113,7 @@
                   </div>
                   <div id=2568>
                     <link id=2571 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2572 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2572 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2574>
                       <link id=2575 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/87cc019331e0a4c58db02c1be96417ba88d65b10">Rearrange server app, organize routes better</link>
@@ -1125,7 +1125,7 @@
                   </div>
                   <div id=2599>
                     <link id=2602 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2603 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2603 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2605>
                       <link id=2606 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9e9bac3b9f021f6fb0c2b366d5459c4b4c17c083">Update logger setup</link>
@@ -1137,7 +1137,7 @@
                   </div>
                   <div id=2630>
                     <link id=2633 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2634 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2634 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2636>
                       <link id=2637 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1eae385b7456b01166bd9b7199d5ce1279f39bb0">Update manual testing setup</link>
@@ -1149,7 +1149,7 @@
                   </div>
                   <div id=2661>
                     <link id=2664 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2665 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2665 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2667>
                       <link id=2668 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/255ffffa0f53bca25328e6161ff71479ae51aa39">Fix session state sync</link>
@@ -1161,7 +1161,7 @@
                   </div>
                   <div id=2692>
                     <link id=2695 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2696 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2696 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2698>
                       <link id=2699 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bd31f62718d938cb91bac75b479f3fa1a8cd08b3">Update tsconfig.json configs, fix client type &amp; runtime errors</link>
@@ -1173,7 +1173,7 @@
                   </div>
                   <div id=2723>
                     <link id=2726 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2727 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2727 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2729>
                       <link id=2730 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f855e39ae681330bc08b47630615200fd333b88d">Fix client depending on server/Bun-specific code</link>
@@ -1185,7 +1185,7 @@
                   </div>
                   <div id=2754>
                     <link id=2757 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2758 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2758 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2760>
                       <link id=2761 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2d26bc4119e6a19ebabcfad82cfe626761ef1464">Improve HTTP client errors reporting</link>
@@ -1193,7 +1193,7 @@
                     <button id=2765 focusable>Verified</button>
                     <group id=2775>
                       <DisclosureTriangle id=2777 focusable>
-                        <image name="0 / 3 checks OK" id=2778/>
+                        <image name="0 / 3 checks OK" id=2778 />
                       </DisclosureTriangle>
                     </group>
                     <code id=2781>
@@ -1202,7 +1202,7 @@
                   </div>
                   <div id=2790>
                     <link id=2793 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2794 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2794 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2796>
                       <link id=2797 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/7b611e1fa49ca71c72d5912b514cad46a93e3d01">Upgrade Elysia</link>
@@ -1214,7 +1214,7 @@
                   </div>
                   <div id=2821>
                     <link id=2824 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2825 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2825 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2827>
                       <link id=2828 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c443b88831a41dd0b787c54e8d8e4a50bdd986ab">Update the LLMFactory, rollback to personal OpenAI key</link>
@@ -1226,7 +1226,7 @@
                   </div>
                   <div id=2852>
                     <link id=2855 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2856 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2856 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2858>
                       <link id=2859 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/719310dade7c844cb2b465df4e43fed9a222a5ce">Fix inputVariables usage in PlannerAgent</link>
@@ -1238,7 +1238,7 @@
                   </div>
                   <div id=2883>
                     <link id=2886 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2887 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2887 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2889>
                       <link id=2890 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ed600c2725c81ab888433c4358d05e587d52cd41">Use ANSI color log formatter</link>
@@ -1250,7 +1250,7 @@
                   </div>
                   <div id=2914>
                     <link id=2917 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2918 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2918 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2920>
                       <link id=2921 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/cf560299bbdce39baae1922550a1dc6080f54d8f">Allow disabling retries with ALUMNIUM_NO_RETRY</link>
@@ -1275,7 +1275,7 @@
                 <div id=2959>
                   <div id=2965>
                     <link id=2968 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=2969 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=2969 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=2971>
                       <link id=2972 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/a273eacded6ba46785b125de64f070bd43cfd957">Add better error logging, properly handle invalid session state response</link>
@@ -1287,7 +1287,7 @@
                   </div>
                   <div id=2996>
                     <link id=2999 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3000 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3000 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3002>
                       <link id=3003 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/2acab148ad75c7b08db2b0a48edcc208c968787e">Fix legacy session state parsing</link>
@@ -1299,7 +1299,7 @@
                   </div>
                   <div id=3027>
                     <link id=3030 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3031 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3031 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3033>
                       <link id=3034 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/9612dbd43f18c4b11fa89ce4a9bdef51383a80ea">Implement health check, sessions list, stats and plan steps endpoints</link>
@@ -1311,7 +1311,7 @@
                   </div>
                   <div id=3058>
                     <link id=3061 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3062 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3062 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3064>
                       <link id=3065 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/622fbb601d6acc19112ef521e174dceb81d5e1a8">Outline server app &amp; schema code structure</link>
@@ -1323,7 +1323,7 @@
                   </div>
                   <div id=3089>
                     <link id=3092 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3093 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3093 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3095>
                       <link id=3096 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ee6c2762ca7ddfc095714fc3808c79472ff2ca8b">Implement add example and clear examples endpoints</link>
@@ -1331,7 +1331,7 @@
                     <button id=3100 focusable>Verified</button>
                     <group id=3110>
                       <DisclosureTriangle id=3112 focusable>
-                        <image name="0 / 3 checks OK" id=3113/>
+                        <image name="0 / 3 checks OK" id=3113 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3116>
@@ -1340,7 +1340,7 @@
                   </div>
                   <div id=3125>
                     <link id=3128 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3129 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3129 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3131>
                       <link id=3132 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/31194a04daf49342c651dab310a74bf743a4c797">Add schemas to all remaining endpoints</link>
@@ -1352,7 +1352,7 @@
                   </div>
                   <div id=3156>
                     <link id=3159 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3160 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3160 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3162>
                       <link id=3163 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ab9220e03fa48b52be1453a5e7b1a1e08f459e26">Implement execute statement, choose area and find element endpoints</link>
@@ -1364,7 +1364,7 @@
                   </div>
                   <div id=3187>
                     <link id=3190 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3191 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3191 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3193>
                       <link id=3194 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/65d9e66f7c9055530d5e706752a063b8bc3e03b4">Implement analyze changes, save and discard session cache endpoints</link>
@@ -1376,7 +1376,7 @@
                   </div>
                   <div id=3218>
                     <link id=3221 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3222 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3222 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3224>
                       <link id=3225 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c03d97c4aa7ef6b9f76f52b9edd49608f975966f">Get rid of legacy state syncing</link>
@@ -1388,7 +1388,7 @@
                   </div>
                   <div id=3249>
                     <link id=3252 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3253 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3253 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3255>
                       <link id=3256 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/1212606f115daa6e588288f2269a4a8906539605">Move client code to the core package, rename it to alumnium</link>
@@ -1396,7 +1396,7 @@
                     <button id=3260 focusable>Verified</button>
                     <group id=3270>
                       <DisclosureTriangle id=3272 focusable>
-                        <image name="0 / 3 checks OK" id=3273/>
+                        <image name="0 / 3 checks OK" id=3273 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3276>
@@ -1405,7 +1405,7 @@
                   </div>
                   <div id=3285>
                     <link id=3288 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3289 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3289 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3291>
                       <link id=3292 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/f1248f95c1d95a2e0721d90fee3901a18a1507cb">WIP MCP</link>
@@ -1413,7 +1413,7 @@
                     <button id=3296 focusable>Verified</button>
                     <group id=3306>
                       <DisclosureTriangle id=3308 focusable>
-                        <image name="0 / 3 checks OK" id=3309/>
+                        <image name="0 / 3 checks OK" id=3309 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3312>
@@ -1422,7 +1422,7 @@
                   </div>
                   <div id=3321>
                     <link id=3324 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3325 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3325 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3327>
                       <link id=3328 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/54b8d0071faad484537584daaa1b2922ea3a1c5d">Add proper types to HttpClient#getStats</link>
@@ -1434,7 +1434,7 @@
                   </div>
                   <div id=3352>
                     <link id=3355 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3356 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3356 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3358>
                       <link id=3359 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/73ed2773d8bb04f0ffc9d548ed2f50af78ed11bf">Add TODO to tsconfig.json</link>
@@ -1442,7 +1442,7 @@
                     <button id=3363 focusable>Verified</button>
                     <group id=3373>
                       <DisclosureTriangle id=3375 focusable>
-                        <image name="0 / 3 checks OK" id=3376/>
+                        <image name="0 / 3 checks OK" id=3376 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3379>
@@ -1451,7 +1451,7 @@
                   </div>
                   <div id=3388>
                     <link id=3391 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3392 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3392 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3394>
                       <link id=3395 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/bcc36467c30b566f7421dec54742f822ace641b0">Upgrade OpenCode</link>
@@ -1459,7 +1459,7 @@
                     <button id=3399 focusable>Verified</button>
                     <group id=3409>
                       <DisclosureTriangle id=3411 focusable>
-                        <image name="0 / 3 checks OK" id=3412/>
+                        <image name="0 / 3 checks OK" id=3412 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3415>
@@ -1468,7 +1468,7 @@
                   </div>
                   <div id=3424>
                     <link id=3427 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3428 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3428 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3430>
                       <link id=3431 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3414c6291eb6561fa862a734ee535e0bf65d6568">Implement NativeClient, add missing APIs</link>
@@ -1480,7 +1480,7 @@
                   </div>
                   <div id=3455>
                     <link id=3458 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3459 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3459 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3461>
                       <link id=3462 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/c8a452b5365693205e5f95e3bebfdd9a325759c4">Implement MCP</link>
@@ -1488,7 +1488,7 @@
                     <button id=3466 focusable>Verified</button>
                     <group id=3476>
                       <DisclosureTriangle id=3478 focusable>
-                        <image name="0 / 3 checks OK" id=3479/>
+                        <image name="0 / 3 checks OK" id=3479 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3482>
@@ -1497,7 +1497,7 @@
                   </div>
                   <div id=3491>
                     <link id=3494 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3495 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3495 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3497>
                       <link id=3498 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/3f6fc6ed2df665a38bf9216ef59c8f05979ae4b3">Fix PlaywrightDriver by inlining script contents</link>
@@ -1509,7 +1509,7 @@
                   </div>
                   <div id=3522>
                     <link id=3525 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3526 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3526 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3528>
                       <link id=3529 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/eef8c2354a95d8ecb4a646cd184ad129122968cc">Use playwright-core instead of playwright, add dev deps</link>
@@ -1521,7 +1521,7 @@
                   </div>
                   <div id=3553>
                     <link id=3556 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3557 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3557 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3559>
                       <link id=3560 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/ef5166ae6317f828e34e941bdf03b83c17cd017f">Set up root CLI</link>
@@ -1529,7 +1529,7 @@
                     <button id=3564 focusable>Verified</button>
                     <group id=3574>
                       <DisclosureTriangle id=3576 focusable>
-                        <image name="0 / 3 checks OK" id=3577/>
+                        <image name="0 / 3 checks OK" id=3577 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3580>
@@ -1538,7 +1538,7 @@
                   </div>
                   <div id=3589>
                     <link id=3592 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3593 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3593 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3595>
                       <link id=3596 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/b831fc4d45ec2070374c7a441b3219467db2dceb">Rewrite readScript to Node.js APIs</link>
@@ -1550,7 +1550,7 @@
                   </div>
                   <div id=3620>
                     <link id=3623 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3624 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3624 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3626>
                       <link id=3627 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/945dcb59f96997ad77bd810b3bc6bb1e1c121fd4">Fix Selenium for usage with single-file executable/application (SEA)</link>
@@ -1562,7 +1562,7 @@
                   </div>
                   <div id=3651>
                     <link id=3654 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3655 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3655 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3657>
                       <link id=3658 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/5e12474dbf8b9503317ae301e41d2eea5690aeb2">Replace Bun macros with bundle files generated by scripts/generate.ts</link>
@@ -1574,7 +1574,7 @@
                   </div>
                   <div id=3682>
                     <link id=3685 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3686 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3686 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3688>
                       <link id=3689 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/8cb260d066496cd2cbc2e55e37392f50ad9022f7">Adjust GitHub Actions</link>
@@ -1586,7 +1586,7 @@
                   </div>
                   <div id=3713>
                     <link id=3716 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3717 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3717 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3719>
                       <link id=3720 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/7a86bde185a8b4e76bcc7983336b968a50ea5c03">Adopt TypeScript Project References feature</link>
@@ -1598,7 +1598,7 @@
                   </div>
                   <div id=3744>
                     <link id=3747 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3748 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3748 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3750>
                       <link id=3751 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/495360b0c3e94846fe15a7a3fc6d0e401f1141eb">Clean up dependencies</link>
@@ -1606,7 +1606,7 @@
                     <button id=3755 focusable>Verified</button>
                     <group id=3765>
                       <DisclosureTriangle id=3767 focusable>
-                        <image name="0 / 3 checks OK" id=3768/>
+                        <image name="0 / 3 checks OK" id=3768 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3771>
@@ -1615,7 +1615,7 @@
                   </div>
                   <div id=3780>
                     <link id=3783 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3784 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3784 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3786>
                       <link id=3787 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/469c88208cf6c99f10a382192e33161ec5ef26f5">Fix typescript package TS setup</link>
@@ -1623,7 +1623,7 @@
                     <button id=3791 focusable>Verified</button>
                     <group id=3801>
                       <DisclosureTriangle id=3803 focusable>
-                        <image name="0 / 3 checks OK" id=3804/>
+                        <image name="0 / 3 checks OK" id=3804 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3807>
@@ -1632,7 +1632,7 @@
                   </div>
                   <div id=3816>
                     <link id=3819 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3820 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3820 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3822>
                       <link id=3823 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/088f6beadbb4546fd9b563daf62c9ed6ccc3b31d">Fix npm -&gt; bun in scripts</link>
@@ -1640,7 +1640,7 @@
                     <button id=3827 focusable>Verified</button>
                     <group id=3837>
                       <DisclosureTriangle id=3839 focusable>
-                        <image name="0 / 3 checks OK" id=3840/>
+                        <image name="0 / 3 checks OK" id=3840 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3843>
@@ -1649,7 +1649,7 @@
                   </div>
                   <div id=3852>
                     <link id=3855 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                      <image name="@kossnocorp" id=3856 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4"/>
+                      <image name="@kossnocorp" id=3856 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;v=4" />
                     </link>
                     <code id=3858>
                       <link id=3859 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits/606110d388068c823a03fe3c920b75a15a919d16">Add missing domutils</link>
@@ -1657,7 +1657,7 @@
                     <button id=3863 focusable>Verified</button>
                     <group id=3873>
                       <DisclosureTriangle id=3875 focusable>
-                        <image name="0 / 7 checks OK" id=3876/>
+                        <image name="0 / 7 checks OK" id=3876 />
                       </DisclosureTriangle>
                     </group>
                     <code id=3879>
@@ -1668,7 +1668,7 @@
               </div>
               <div id=3884>
                 <link id=3886 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                  <image name="@kossnocorp" id=3887 url="https://avatars.githubusercontent.com/u/52201?s=80&amp;u=b75a9168211d4d80afb556ec534f7dcc7a13006d&amp;v=4"/>
+                  <image name="@kossnocorp" id=3887 url="https://avatars.githubusercontent.com/u/52201?s=80&amp;u=b75a9168211d4d80afb556ec534f7dcc7a13006d&amp;v=4" />
                 </link>
                 <div id=3889>
                   <div id=3890>
@@ -1686,7 +1686,7 @@
                     <div id=3904>
                       <group id=3906>
                         <button id=3908 focusable hasPopup="menu">
-                          <image name="Show options" id=3911/>
+                          <image name="Show options" id=3911 />
                         </button>
                       </group>
                       <div id=3913>
@@ -1706,7 +1706,7 @@
               </div>
               <div id=3942>
                 <link id=3943 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-                  <image name="@kossnocorp" id=3944 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;u=b75a9168211d4d80afb556ec534f7dcc7a13006d&amp;v=4"/>
+                  <image name="@kossnocorp" id=3944 url="https://avatars.githubusercontent.com/u/52201?s=40&amp;u=b75a9168211d4d80afb556ec534f7dcc7a13006d&amp;v=4" />
                 </link>
                 <link id=3945 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">kossnocorp</link>
                 closed this
@@ -1752,7 +1752,7 @@
           <div id=4029>
             <heading id=4030 level=3>1 participant</heading>
             <link id=4034 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">
-              <image name="@kossnocorp" id=4035 url="https://avatars.githubusercontent.com/u/52201?s=52&amp;v=4"/>
+              <image name="@kossnocorp" id=4035 url="https://avatars.githubusercontent.com/u/52201?s=52&amp;v=4" />
             </link>
           </div>
         </div>
@@ -1763,7 +1763,7 @@
     <heading id=4037 level=2>Footer</heading>
     <div id=4040>
       <div id=4041>
-        <link name="GitHub Homepage" id=4042 focusable url="https://github.com/"/>
+        <link name="GitHub Homepage" id=4042 focusable url="https://github.com/" />
         © 2026 GitHub, Inc.
       </div>
       <navigation name="Footer" id=4046>

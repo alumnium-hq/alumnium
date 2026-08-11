@@ -5,7 +5,7 @@
       <heading id=9 level=5>Example</heading>
       <link id=12 focusable url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue">Source</link>
     </sectionheader>
-    <separator id=15 settable orientation="horizontal"/>
+    <separator id=15 settable orientation="horizontal" />
     <blockquote id=16>
       <paragraph id=17>
         <div id=19>“</div>
