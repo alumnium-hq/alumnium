@@ -189,6 +189,34 @@ describe(ServerChromiumAccessibilityTree, () => {
       );
     });
 
+    it("maps text-only web-area borders to their StaticText node", () => {
+      const rawXml = lit`
+        <Iframe raw_id=14 backendDOMNodeId=15 nodeId="f1:15">
+          <RootWebArea raw_id=15 backendDOMNodeId=11 nodeId="f3:11" focusable url="https://the-internet.herokuapp.com/frame_middle">
+            <none raw_id=16 backendDOMNodeId=29 nodeId="f3:29" ignored>
+              <none raw_id=17 backendDOMNodeId=31 nodeId="f3:31" ignored>
+                <generic raw_id=18 backendDOMNodeId=32 nodeId="f3:32">
+                  <StaticText raw_id=19 backendDOMNodeId=33 nodeId="f3:33" name="MIDDLE">
+                    <InlineTextBox raw_id=20 nodeId="f3:-1000000003" name="MIDDLE"/>
+                  </StaticText>
+                </generic>
+              </none>
+            </none>
+          </RootWebArea>
+        </Iframe>
+      `;
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<Iframe id=1>
+          <RootWebArea id=2 focusable url=\"https://the-internet.herokuapp.com/frame_middle\">
+            <div id=6>MIDDLE</div>
+          </RootWebArea>
+        </Iframe>"
+      `);
+      expect(tree.getRawId(6)).toBe(19);
+    });
+
     it("trims names and whitespace-only generic nodes", () => {
       const rawXml = lit`
         <generic raw_id="1" ignored="false" name="">
