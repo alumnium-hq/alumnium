@@ -33,6 +33,15 @@ export default defineConfig({
         },
       },
     ],
+
+    tags: [
+      {
+        name: "external",
+        description:
+          "Unstable tests that rely on external services and may fail just because of that.",
+        skip: true,
+      },
+    ],
   },
   plugins: [
     // TODO: Get rid of it when this is closed and shipped with Vite:
