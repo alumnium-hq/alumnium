@@ -1,12 +1,12 @@
-<RootWebArea name="Shadow DOM Test Page" focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/shadow_dom.html">
+<RootWebArea name="Shadow DOM Test Page" id=1 focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/shadow_dom.html">
   <heading id=4 level=1>Shadow DOM Test Page</heading>
-  <paragraph id=7>This page contains Shadow DOM elements for testing Alumni support.</paragraph>
-  <div id=10>
-    <paragraph id=11>This is inside Shadow DOM!</paragraph>
-    <button id=14 focusable>First Shadow Button</button>
+  <paragraph id=6>This page contains Shadow DOM elements for testing Alumni support.</paragraph>
+  <div id=8>
+    <paragraph id=9>This is inside Shadow DOM!</paragraph>
+    <button id=11 focusable>First Shadow Button</button>
   </div>
-  <div id=17>
-    <paragraph id=18>This is another text inside Shadow DOM!</paragraph>
-    <button id=21 focusable>Second Shadow Button</button>
+  <div id=13>
+    <paragraph id=14>This is another text inside Shadow DOM!</paragraph>
+    <button id=16 focusable>Second Shadow Button</button>
   </div>
 </RootWebArea>

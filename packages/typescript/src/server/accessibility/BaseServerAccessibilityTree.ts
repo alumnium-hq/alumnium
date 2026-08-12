@@ -92,6 +92,7 @@ export abstract class BaseServerAccessibilityTree {
     const children: Tree.Node[] = [];
     for (const xmlChild of xmlTag.children) {
       if (!Xml.isTag(xmlChild)) continue;
+      if (this.skipXmlNode(xmlChild)) continue;
       children.push(this.xmlNodeToTreeNode(xmlChild));
     }
 
@@ -112,6 +113,10 @@ export abstract class BaseServerAccessibilityTree {
   }
 
   protected abstract parseRole(xmlTag: Xml.Tag): string;
+
+  protected skipXmlNode(_xmlTag: Xml.Tag): boolean {
+    return false;
+  }
 
   protected abstract parseName(
     role: string,

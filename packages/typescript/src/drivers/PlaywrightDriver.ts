@@ -2,10 +2,6 @@ import { always, ensure } from "alwaysly";
 import type { CDPSession, Frame, Locator, Page } from "playwright-core";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
-import {
-  enrichChromiumAXNodes,
-  type ChromiumDOMNodeMetadata,
-} from "../accessibility/enrichChromiumAXNodes.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { ClickTool } from "../tools/ClickTool.ts";
 import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
@@ -44,7 +40,6 @@ interface CDPNode {
   _frame?: object;
   _parent_iframe_backend_node_id?: number | undefined;
   backendDOMNodeId?: number;
-  _mutable?: boolean;
 }
 
 interface CDPFrameInfo {
@@ -692,19 +687,7 @@ export class PlaywrightDriver extends BaseDriver {
       return [];
     }
 
-    try {
-      await this.client.send("DOM.enable");
-      const domResponse = (await this.client.send("DOM.getFlattenedDocument", {
-        depth: -1,
-        pierce: true,
-      })) as { nodes: ChromiumDOMNodeMetadata[] };
-      return enrichChromiumAXNodes(nodes, domResponse.nodes || []);
-    } catch (error) {
-      logger.debug(
-        `  -> Frame ${frameId.slice(0, 20)}...: DOM metadata failed (${error instanceof Error ? error.message : String(error)})`,
-      );
-      return enrichChromiumAXNodes(nodes, []);
-    }
+    return nodes;
   }
 
   private async getOopifNodes(
@@ -725,19 +708,7 @@ export class PlaywrightDriver extends BaseDriver {
         `  -> OOPIF ${frameId.slice(0, 20)}...: got ${nodes.length} nodes`,
       );
 
-      try {
-        await frameSession.send("DOM.enable");
-        const domResponse = (await frameSession.send(
-          "DOM.getFlattenedDocument",
-          { depth: -1, pierce: true },
-        )) as { nodes: ChromiumDOMNodeMetadata[] };
-        return enrichChromiumAXNodes(nodes, domResponse.nodes || []);
-      } catch (error) {
-        logger.debug(
-          `  -> OOPIF ${frameId.slice(0, 20)}...: DOM metadata failed (${error instanceof Error ? error.message : String(error)})`,
-        );
-        return enrichChromiumAXNodes(nodes, []);
-      }
+      return nodes;
     } catch (oopifError) {
       logger.debug(
         `  -> OOPIF ${frameId.slice(0, 20)}...: failed (${oopifError instanceof Error ? oopifError.message : String(oopifError)})`,

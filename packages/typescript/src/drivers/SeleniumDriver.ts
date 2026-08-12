@@ -14,10 +14,6 @@ import {
 import { always } from "alwaysly";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
-import {
-  enrichChromiumAXNodes,
-  type ChromiumDOMNodeMetadata,
-} from "../accessibility/enrichChromiumAXNodes.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { ClickTool } from "../tools/ClickTool.ts";
 import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
@@ -55,11 +51,13 @@ interface CDPNode {
   _parent_iframe_backend_node_id?: number;
   _frame_chain?: number[];
   _is_shadow_dom?: boolean;
-  _mutable?: boolean;
   [key: string]: unknown;
 }
 
-interface CDPDomNode extends ChromiumDOMNodeMetadata {
+interface CDPDomNode {
+  nodeId: number;
+  backendNodeId: number;
+  parentId?: number;
   nodeName?: string;
   shadowRoots?: CDPDomNode[];
 }
@@ -121,23 +119,6 @@ export class SeleniumDriver extends BaseDriver {
     )) as { nodes: CDPDomNode[] };
     const domNodes = domResponse.nodes || [];
 
-    let oopifFrameIds = new Set<string>();
-    try {
-      const targets = (await this.executeCdpCommand(
-        "Target.getTargets",
-        {},
-      )) as {
-        targetInfos?: Array<{ targetId: string; type: string }>;
-      };
-      oopifFrameIds = new Set(
-        targets.targetInfos
-          ?.filter((target) => target.type === "iframe")
-          .map((target) => target.targetId) ?? [],
-      );
-    } catch {
-      // Older Chromium versions may not expose target discovery through WebDriver.
-    }
-
     // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
     const frameToIframeMap: Map<string, number> = new Map();
     // Build mapping: frameId -> parent frameId (for nested frames)
@@ -158,10 +139,6 @@ export class SeleniumDriver extends BaseDriver {
           { frameId },
         )) as { nodes: CDPNode[] };
         const nodes = response.nodes || [];
-        enrichChromiumAXNodes(
-          nodes,
-          oopifFrameIds.has(frameId) ? [] : domNodes,
-        );
         logger.debug(
           `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
         );
@@ -197,7 +174,6 @@ export class SeleniumDriver extends BaseDriver {
         domNodes,
         frameChainsByBackendId,
       );
-      enrichChromiumAXNodes(shadowNodes, domNodes);
       allNodes.push(...shadowNodes);
       if (shadowNodes.length > 0) {
         logger.debug(`  -> Shadow DOM: ${shadowNodes.length} nodes added`);

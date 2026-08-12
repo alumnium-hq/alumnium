@@ -1,25 +1,25 @@
-<RootWebArea name="The Internet" focusable focused url="https://the-internet.herokuapp.com/drag_and_drop">
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/drag_and_drop">
   <div id=6>
     <link id=7 focusable url="https://github.com/tourdedave/the-internet">
       <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />
     </link>
     <div id=10>
       <heading id=11 level=3>Drag and Drop</heading>
-      <div id=14>
-        <group id=15>
-          <banner id=16>B</banner>
+      <div id=13>
+        <group id=14>
+          <banner id=15>B</banner>
         </group>
-        <group id=19>
-          <banner id=20>A</banner>
+        <group id=17>
+          <banner id=18>A</banner>
         </group>
       </div>
     </div>
   </div>
-  <div id=24>
-    <separator id=25 settable orientation="horizontal" />
-    <div id=26>
+  <div id=21>
+    <separator id=22 settable orientation="horizontal" />
+    <div id=23>
       Powered by
-      <link id=29 focusable url="http://elementalselenium.com/">Elemental Selenium</link>
+      <link id=25 focusable url="http://elementalselenium.com/">Elemental Selenium</link>
     </div>
   </div>
 </RootWebArea>

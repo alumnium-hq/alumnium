@@ -1,21 +1,21 @@
-<RootWebArea name="Multiple File Upload Test" focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multiple_file_upload.html">
+<RootWebArea name="Multiple File Upload Test" id=1 focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multiple_file_upload.html">
   <heading id=4 level=1>Multiple File Upload Test</heading>
-  <div id=7>
-    <heading id=8 level=2>📁 Upload Multiple Files</heading>
-    <paragraph id=11>Select multiple files to test the upload functionality</paragraph>
-    <button name="Multiple File Input" id=14 focusable focused />
+  <div id=6>
+    <heading id=7 level=2>📁 Upload Multiple Files</heading>
+    <paragraph id=9>Select multiple files to test the upload functionality</paragraph>
+    <button name="Multiple File Input" id=11 focusable focused />
     2 files selected
-    <div id=19>
-      <heading id=20 level=3>Selected Files:</heading>
+    <div id=15>
+      <heading id=16 level=3>Selected Files:</heading>
+      <div id=18>
+        <div id=20>1. 59252e7e-4d49-4b0a-a863-7edd738265dd.txt</div>
+        <div id=22>14 Bytes</div>
+      </div>
       <div id=23>
-        <div id=24>1. 59252e7e-4d49-4b0a-a863-7edd738265dd.txt</div>
+        <div id=25>2. a12c9ecb-3296-4056-a6c0-bd5a7d129fa0.txt</div>
         <div id=27>14 Bytes</div>
       </div>
-      <div id=30>
-        <div id=31>2. a12c9ecb-3296-4056-a6c0-bd5a7d129fa0.txt</div>
-        <div id=34>14 Bytes</div>
-      </div>
     </div>
-    <button id=37 focusable>Upload Files</button>
+    <button id=28 focusable>Upload Files</button>
   </div>
 </RootWebArea>
