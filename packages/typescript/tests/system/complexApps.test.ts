@@ -1,7 +1,7 @@
 import { describe } from "vitest";
 import { baseIt } from "./helpers.ts";
 
-describe("Complex apps", () => {
+describe("Complex apps", { tags: ["external"] }, () => {
   describe("web", () => {
     const it = baseIt.override("setup", async ({ setup, skip }) => {
       return async (options) => {
