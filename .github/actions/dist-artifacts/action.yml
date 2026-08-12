@@ -1,4 +1,5 @@
 name: Upload Publish Artifacts
+description: Uploads artifacts for the release workflow.
 
 inputs:
   name:
