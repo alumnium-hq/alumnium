@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-      - "ci[-/]*"
+      - "ci-**"
+      - "ci/**"
   schedule:
     - cron: 0 0 * * *
   workflow_dispatch:
@@ -83,6 +84,7 @@ jobs:
 
   preflight:
     name: Preflight
+
     runs-on: ubuntu-latest
     outputs:
       permitted: ${{ steps.check-access.outputs.require-result }}
@@ -93,6 +95,13 @@ jobs:
 
     permissions:
       contents: read
+
+    # Prevent running the workflow for PRs from ci/ or ci- branches, since those
+    # trigger the workflow on branch push events.
+    if: >
+      github.event_name != 'pull_request_target'
+        || (!startsWith(github.event.pull_request.head.ref, 'ci/')
+          && !startsWith(github.event.pull_request.head.ref, 'ci-'))
 
     steps:
       - name: Git Checkout
@@ -134,7 +143,8 @@ jobs:
     secrets: inherit
     if: >
       needs.preflight.outputs.permitted == 'true'
-        && (needs.preflight.outputs.ignore-changes == 'true' || needs.preflight.outputs.java-changed == 'true')
+        && (needs.preflight.outputs.ignore-changes == 'true'
+          || needs.preflight.outputs.java-changed == 'true')
     uses: ./.github/workflows/ci-java.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -158,7 +168,8 @@ jobs:
     secrets: inherit
     if: >
       needs.preflight.outputs.permitted == 'true'
-        && (needs.preflight.outputs.ignore-changes == 'true' || needs.preflight.outputs.typescript-changed == 'true')
+        && (needs.preflight.outputs.ignore-changes == 'true'
+          || needs.preflight.outputs.typescript-changed == 'true')
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
