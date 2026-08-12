@@ -87,8 +87,8 @@ describe(TreeDevDrill, () => {
       probe,
     });
 
-    expect(probed).toEqual([1, 2, 3]);
-    expect(drill.tested).toBe(3);
+    expect(probed).toEqual([2, 3]);
+    expect(drill.tested).toBe(2);
     expect(drill.result.failures).toContainEqual({
       action: "click",
       stage: "probe",
@@ -119,7 +119,7 @@ describe(TreeDevDrill, () => {
   });
 
   it("records missing simplified-to-raw mappings", async () => {
-    const tree = new TestTree('<RootWebArea name="Root"/>');
+    const tree = new TestTree('<button backendDOMNodeId="10" name="Go"/>');
     const probe = vi.fn(async () => 1);
     const drill = await TreeDevDrill.run({
       action: "wait",

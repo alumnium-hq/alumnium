@@ -1,25 +1,25 @@
-<RootWebArea id=1 focusable url="https://the-internet.herokuapp.com/nested_frames">
+<RootWebArea focusable url="https://the-internet.herokuapp.com/nested_frames">
   <Iframe id=4>
-    <RootWebArea id=5 focusable url="https://the-internet.herokuapp.com/frame_top">
+    <RootWebArea focusable url="https://the-internet.herokuapp.com/frame_top">
       <Iframe id=8>
-        <RootWebArea id=9 focusable url="https://the-internet.herokuapp.com/frame_left">
+        <RootWebArea focusable url="https://the-internet.herokuapp.com/frame_left">
           <div id=11>LEFT</div>
         </RootWebArea>
       </Iframe>
       <Iframe id=14>
-        <RootWebArea id=15 focusable focused url="https://the-internet.herokuapp.com/frame_middle">
+        <RootWebArea focusable focused url="https://the-internet.herokuapp.com/frame_middle">
           <div id=18>MIDDLE</div>
         </RootWebArea>
       </Iframe>
       <Iframe id=21>
-        <RootWebArea id=22 focusable url="https://the-internet.herokuapp.com/frame_right">
+        <RootWebArea focusable url="https://the-internet.herokuapp.com/frame_right">
           <div id=24>RIGHT</div>
         </RootWebArea>
       </Iframe>
     </RootWebArea>
   </Iframe>
   <Iframe id=27>
-    <RootWebArea id=28 focusable url="https://the-internet.herokuapp.com/frame_bottom">
+    <RootWebArea focusable url="https://the-internet.herokuapp.com/frame_bottom">
       <div id=30>BOTTOM</div>
     </RootWebArea>
   </Iframe>

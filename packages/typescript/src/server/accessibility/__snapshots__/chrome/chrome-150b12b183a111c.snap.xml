@@ -1,4 +1,4 @@
-<RootWebArea name="Claude Code by Anthropic | AI Coding Agent, Terminal, IDE" id=1 focusable focused url="https://claude.com/product/claude-code">
+<RootWebArea name="Claude Code by Anthropic | AI Coding Agent, Terminal, IDE" focusable focused url="https://claude.com/product/claude-code">
   <alert id=5 live="assertive" atomic relevant="additions text">Claude Code by Anthropic | AI Coding Agent, Terminal, IDE</alert>
   <link id=8 focusable url="https://claude.com/product/claude-code#main-content">Skip to main content</link>
   <banner id=11>
@@ -36,8 +36,8 @@
         <div id=96>
           <link id=97 focusable url="https://code.claude.com/docs/en/desktop-linux">Download for Linux</link>
           <link id=100 focusable url="https://code.claude.com/docs/en/overview">
-            <div id=101>Read documentation</div>
-            <div id=106>(opens in new tab)</div>
+            <div>Read documentation</div>
+            <div id=105>(opens in new tab)</div>
           </link>
         </div>
         <paragraph id=108>Available for macOS, Linux, and Windows.</paragraph>
@@ -47,50 +47,50 @@
         <list id=115>
           <listitem id=116 level=1>
             <link id=117 focusable url="https://code.claude.com/docs/en/quickstart#step-1-install-claude-code">
-              <div id=120>Terminal</div>
-              <div id=123>(opens in new tab)</div>
+              <div id=119>Terminal</div>
+              <div id=122>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=125 level=1>
             <link id=126 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/code">
-              <div id=129>Web</div>
-              <div id=132>(opens in new tab)</div>
+              <div id=128>Web</div>
+              <div id=131>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=134 level=1>
             <link id=135 focusable url="https://apps.apple.com/us/app/claude-by-anthropic/id6473753684">
-              <div id=138>iOS</div>
-              <div id=141>(opens in new tab)</div>
+              <div id=137>iOS</div>
+              <div id=140>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=143 level=1>
             <link id=144 focusable url="https://play.google.com/store/apps/details?id=com.anthropic.claude">
-              <div id=147>Android</div>
-              <div id=150>(opens in new tab)</div>
+              <div id=146>Android</div>
+              <div id=149>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=152 level=1>
             <link id=153 focusable url="https://code.claude.com/docs/en/github-actions">
-              <div id=156>GitHub</div>
-              <div id=159>(opens in new tab)</div>
+              <div id=155>GitHub</div>
+              <div id=158>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=161 level=1>
             <link id=162 focusable url="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">
-              <div id=165>VS Code</div>
-              <div id=168>(opens in new tab)</div>
+              <div id=164>VS Code</div>
+              <div id=167>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=170 level=1>
             <link id=171 focusable url="https://plugins.jetbrains.com/plugin/27310-claude-code-beta-">
-              <div id=174>JetBrains</div>
-              <div id=177>(opens in new tab)</div>
+              <div id=173>JetBrains</div>
+              <div id=176>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=179 level=1>
             <link id=180 focusable url="https://slack.com/oauth/v2/authorize?client_id=1601185624273.8899143856786&amp;scope=app_mentions:read,assistant:write,channels:history,channels:read,chat:write,files:read,files:write,groups:history,groups:read,im:history,im:read,im:write,mpim:history,reactions:write,users:read,users:read.email,commands,search:read.public&amp;user_scope=bookmarks:read,channels:history,channels:read,chat:write,emoji:read,files:read,groups:history,groups:read,groups:write,im:history,im:read,im:write,links:read,mpim:history,mpim:read,mpim:write,mpim:write.topic,pins:read,reactions:read,reactions:write,remote_files:read,team:read,users:read,users:read.email,search:read.public,search:read.private,search:read.im,search:read.mpim,search:read.files,search:read.users,canvases:read,canvases:write">
-              <div id=183>Slack</div>
-              <div id=186>(opens in new tab)</div>
+              <div id=182>Slack</div>
+              <div id=185>(opens in new tab)</div>
             </link>
           </listitem>
         </list>
@@ -156,9 +156,9 @@
       <div id=313>
         <div id=315>
           <div id=316>
-            <div id=318>acme-dashboard</div>
-            <div id=321>/</div>
-            <div id=324>Add a dark mode toggle to settings</div>
+            <div id=317>acme-dashboard</div>
+            <div id=320>/</div>
+            <div id=323>Add a dark mode toggle to settings</div>
           </div>
           <div id=329>
             Add a dark mode toggle to the settings page. Should remember the choice and follow the system default until they pick one.
@@ -183,10 +183,10 @@
                 <div id=377>
                   Edited
                   <strong id=380>ThemeProvider.tsx</strong>
-                  <div id=385>+</div>
-                  <div id=387>18</div>
-                  <div id=391>-</div>
-                  <div id=393>2</div>
+                  <div>+</div>
+                  <div>18</div>
+                  <div>-</div>
+                  <div>2</div>
                 </div>
               </button>
               <div id=397>
@@ -196,75 +196,75 @@
                   <div id=404>
                     10
                     <code id=409>
-                      <div id=410>export</div>
-                      <div id=414>function</div>
-                      <div id=418>ThemeProvider</div>
-                      <div id=420>({</div>
-                      <div id=422>children</div>
-                      <div id=424>}:</div>
-                      <div id=428>{</div>
-                      <div id=430>children</div>
-                      <div id=432>:</div>
-                      <div id=436>ReactNode</div>
-                      <div id=438>})</div>
-                      <div id=442>{</div>
+                      <div>export</div>
+                      <div>function</div>
+                      <div>ThemeProvider</div>
+                      <div>({</div>
+                      <div>children</div>
+                      <div>}:</div>
+                      <div>{</div>
+                      <div>children</div>
+                      <div>:</div>
+                      <div>ReactNode</div>
+                      <div>})</div>
+                      <div>{</div>
                     </code>
                   </div>
                   <div id=444>
-                    <div id=446>11</div>
-                    <div id=449>+</div>
+                    <div id=445>11</div>
+                    <div id=448>+</div>
                     <code id=451>
-                      <div id=454>const</div>
-                      <div id=458>prefersDark</div>
-                      <div id=462>=</div>
-                      <div id=466>useMediaQuery</div>
-                      <div id=468>('(</div>
-                      <div id=470>prefers</div>
-                      <div id=472>-</div>
-                      <div id=474>color</div>
-                      <div id=476>-</div>
-                      <div id=478>scheme</div>
-                      <div id=480>:</div>
-                      <div id=484>dark</div>
-                      <div id=486>)')</div>
+                      <div>const</div>
+                      <div>prefersDark</div>
+                      <div>=</div>
+                      <div>useMediaQuery</div>
+                      <div>('(</div>
+                      <div>prefers</div>
+                      <div>-</div>
+                      <div>color</div>
+                      <div>-</div>
+                      <div>scheme</div>
+                      <div>:</div>
+                      <div>dark</div>
+                      <div>)')</div>
                     </code>
                   </div>
                   <div id=488>
                     12
                     <code id=493>
-                      <div id=496>const</div>
-                      <div id=500>stored</div>
-                      <div id=504>=</div>
-                      <div id=508>localStorage</div>
-                      <div id=510>.</div>
-                      <div id=512>getItem</div>
-                      <div id=514>('</div>
-                      <div id=516>theme</div>
-                      <div id=518>')</div>
+                      <div>const</div>
+                      <div>stored</div>
+                      <div>=</div>
+                      <div>localStorage</div>
+                      <div>.</div>
+                      <div>getItem</div>
+                      <div>('</div>
+                      <div>theme</div>
+                      <div>')</div>
                     </code>
                   </div>
                   <div id=520>
-                    <div id=522>13</div>
-                    <div id=525>+</div>
+                    <div id=521>13</div>
+                    <div id=524>+</div>
                     <code id=527>
-                      <div id=530>const</div>
-                      <div id=534>[</div>
-                      <div id=536>mode</div>
-                      <div id=538>,</div>
-                      <div id=542>setMode</div>
-                      <div id=544>]</div>
-                      <div id=548>=</div>
-                      <div id=552>useState</div>
-                      <div id=554>(</div>
-                      <div id=556>stored</div>
-                      <div id=560>??</div>
-                      <div id=564>(</div>
-                      <div id=566>prefersDark</div>
-                      <div id=570>?</div>
-                      <div id=574>'dark'</div>
-                      <div id=578>:</div>
-                      <div id=582>'light'</div>
-                      <div id=584>))</div>
+                      <div>const</div>
+                      <div>[</div>
+                      <div>mode</div>
+                      <div>,</div>
+                      <div>setMode</div>
+                      <div>]</div>
+                      <div>=</div>
+                      <div>useState</div>
+                      <div>(</div>
+                      <div>stored</div>
+                      <div>??</div>
+                      <div>(</div>
+                      <div>prefersDark</div>
+                      <div>?</div>
+                      <div>'dark'</div>
+                      <div>:</div>
+                      <div>'light'</div>
+                      <div>))</div>
                     </code>
                   </div>
                   <div id=586>
@@ -272,37 +272,37 @@
                     <code id=591 />
                   </div>
                   <div id=594>
-                    <div id=596>15</div>
-                    <div id=599>+</div>
+                    <div id=595>15</div>
+                    <div id=598>+</div>
                     <code id=601>
-                      <div id=604>useEffect</div>
-                      <div id=606>(()</div>
-                      <div id=610>=&gt;</div>
-                      <div id=614>{</div>
+                      <div>useEffect</div>
+                      <div>(()</div>
+                      <div>=&gt;</div>
+                      <div>{</div>
                     </code>
                   </div>
                   <div id=616>
-                    <div id=618>16</div>
-                    <div id=621>+</div>
+                    <div id=617>16</div>
+                    <div id=620>+</div>
                     <code id=623>
-                      <div id=626>localStorage</div>
-                      <div id=628>.</div>
-                      <div id=630>setItem</div>
-                      <div id=632>('</div>
-                      <div id=634>theme</div>
-                      <div id=636>',</div>
-                      <div id=640>mode</div>
-                      <div id=642>)</div>
+                      <div>localStorage</div>
+                      <div>.</div>
+                      <div>setItem</div>
+                      <div>('</div>
+                      <div>theme</div>
+                      <div>',</div>
+                      <div>mode</div>
+                      <div>)</div>
                     </code>
                   </div>
                   <div id=644>
-                    <div id=646>17</div>
-                    <div id=649>+</div>
+                    <div id=645>17</div>
+                    <div id=648>+</div>
                     <code id=651>
-                      <div id=654>},</div>
-                      <div id=658>[</div>
-                      <div id=660>mode</div>
-                      <div id=662>])</div>
+                      <div>},</div>
+                      <div>[</div>
+                      <div>mode</div>
+                      <div>])</div>
                     </code>
                   </div>
                   <div id=664>
@@ -312,31 +312,31 @@
                   <div id=672>
                     19
                     <code id=677>
-                      <div id=680>return</div>
-                      <div id=684>(</div>
+                      <div>return</div>
+                      <div>(</div>
                     </code>
                   </div>
                   <div id=686>
                     20
                     <code id=691>
-                      <div id=694>&lt;</div>
-                      <div id=696>ThemeContext</div>
-                      <div id=698>.</div>
-                      <div id=700>Provider</div>
-                      <div id=704>value</div>
-                      <div id=706>={{</div>
-                      <div id=708>mode</div>
-                      <div id=710>,</div>
-                      <div id=714>setMode</div>
-                      <div id=716>}}&gt;</div>
+                      <div>&lt;</div>
+                      <div>ThemeContext</div>
+                      <div>.</div>
+                      <div>Provider</div>
+                      <div>value</div>
+                      <div>={{</div>
+                      <div>mode</div>
+                      <div>,</div>
+                      <div>setMode</div>
+                      <div>}}&gt;</div>
                     </code>
                   </div>
                   <div id=718>
                     21
                     <code id=723>
-                      <div id=726>{</div>
-                      <div id=728>children</div>
-                      <div id=730>}</div>
+                      <div>{</div>
+                      <div>children</div>
+                      <div>}</div>
                     </code>
                   </div>
                 </div>
@@ -346,27 +346,27 @@
               <div id=734>
                 Edited
                 <strong id=737>settings.tsx</strong>
-                <div id=742>+</div>
-                <div id=744>21</div>
-                <div id=748>-</div>
-                <div id=750>0</div>
+                <div>+</div>
+                <div>21</div>
+                <div>-</div>
+                <div>0</div>
               </div>
             </button>
             <button id=754 focusable>
               <div id=755>
                 Edited
                 <strong id=758>tokens.css</strong>
-                <div id=763>+</div>
-                <div id=765>24</div>
-                <div id=769>-</div>
-                <div id=771>0</div>
+                <div>+</div>
+                <div>24</div>
+                <div>-</div>
+                <div>0</div>
               </div>
             </button>
             <button id=775 focusable>
-              <div id=777>Ran</div>
-              <div id=779>2</div>
-              <div id=781>command</div>
-              <div id=783>s</div>
+              <div>Ran</div>
+              <div>2</div>
+              <div>command</div>
+              <div>s</div>
             </button>
             <div id=786>
               <paragraph id=787>
@@ -381,12 +381,12 @@
             </div>
             <div id=804>
               <div id=805>
-                <div id=806>#</div>
-                <div id=808>112</div>
+                <div>#</div>
+                <div>112</div>
               </div>
-              <div id=811>acme-dashboard</div>
-              <div id=814>claude/settings-dark-mode-Xk4fq</div>
-              <div id=820>CI</div>
+              <div id=810>acme-dashboard</div>
+              <div id=813>claude/settings-dark-mode-Xk4fq</div>
+              <div id=818>CI</div>
             </div>
           </div>
         </div>
@@ -414,8 +414,8 @@
         <div id=850>
           <button name="Pick preview source" id=851 focusable />
           <div id=853>
-            <div id=854>localhost:5173</div>
-            <div id=856>/settings</div>
+            <div>localhost:5173</div>
+            <div>/settings</div>
           </div>
           <div id=858>
             <button name="Edit" id=859 focusable />
@@ -428,8 +428,8 @@
           Appearance
           <div id=878>
             <div id=879>
-              <div id=881>Theme</div>
-              <div id=884>Choose how the dashboard looks.</div>
+              <div id=880>Theme</div>
+              <div id=883>Choose how the dashboard looks.</div>
             </div>
             <radiogroup name="Theme" id=886>
               <radio id=887 focusable checked>Light</radio>
@@ -438,8 +438,8 @@
           </div>
           <div id=893>
             <div id=894>
-              <div id=896>Density</div>
-              <div id=899>Compact rows for power users.</div>
+              <div id=895>Density</div>
+              <div id=898>Compact rows for power users.</div>
             </div>
             <radiogroup name="Density" id=902>
               <radio id=903 focusable checked>Default</radio>
@@ -448,8 +448,8 @@
           </div>
           <div id=909>
             <div id=910>
-              <div id=912>Reduce motion</div>
-              <div id=915>Disable animations and transitions.</div>
+              <div id=911>Reduce motion</div>
+              <div id=914>Disable animations and transitions.</div>
             </div>
             <switch name="Reduce motion" id=917 focusable />
           </div>
@@ -486,16 +486,16 @@
             <div id=968>
               $25
               <paragraph id=972>
-                <div id=973>Per month with annual subscription discount (</div>
-                <div id=975>$300</div>
-                <div id=977>billed up front).</div>
-                <div id=979>$30</div>
-                <div id=981>if billed monthly.</div>
+                <div>Per month with annual subscription discount (</div>
+                <div>$300</div>
+                <div>billed up front).</div>
+                <div>$30</div>
+                <div>if billed monthly.</div>
               </paragraph>
             </div>
             <link id=983 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=pro">
-              <div id=984>Try Claude</div>
-              <div id=987>(opens in new tab)</div>
+              <div>Try Claude</div>
+              <div id=986>(opens in new tab)</div>
             </link>
           </div>
         </div>
@@ -510,8 +510,8 @@
               <paragraph id=1004>Per month</paragraph>
             </div>
             <link id=1007 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
-              <div id=1008>Try Claude</div>
-              <div id=1011>(opens in new tab)</div>
+              <div>Try Claude</div>
+              <div id=1010>(opens in new tab)</div>
             </link>
           </div>
         </div>
@@ -526,8 +526,8 @@
               <paragraph id=1028>Per month</paragraph>
             </div>
             <link id=1031 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
-              <div id=1032>Try Claude</div>
-              <div id=1035>(opens in new tab)</div>
+              <div>Try Claude</div>
+              <div id=1034>(opens in new tab)</div>
             </link>
           </div>
         </div>
@@ -550,8 +550,8 @@
               Tackle the most challenging tasks by executing across 10s to 100s of parallel subagents, and checking its work before anything reaches you.
             </heading>
             <div id=1069>
-              <div id=1071>Blog</div>
-              <div id=1074>May 28, 2026</div>
+              <div>Blog</div>
+              <div id=1073>May 28, 2026</div>
             </div>
           </link>
           <link id=1077 focusable url="https://claude.com/blog/agent-view-in-claude-code">
@@ -560,8 +560,8 @@
               One place to manage all your Claude Code sessions.
             </heading>
             <div id=1085>
-              <div id=1087>Blog</div>
-              <div id=1090>May 11, 2026</div>
+              <div>Blog</div>
+              <div id=1089>May 11, 2026</div>
             </div>
           </link>
           <link id=1093 focusable url="https://claude.com/blog/introducing-routines-in-claude-code">
@@ -570,8 +570,8 @@
               Configure a routine once, and it can run on a schedule, from an API call, or in response to an event.
             </heading>
             <div id=1102>
-              <div id=1104>Blog</div>
-              <div id=1107>Apr 14, 2026</div>
+              <div>Blog</div>
+              <div id=1106>Apr 14, 2026</div>
             </div>
           </link>
           <link id=1110 focusable url="https://claude.com/blog/dispatch-and-computer-use">
@@ -580,14 +580,14 @@
               Claude now opens your apps, navigates your browser, and runs your dev tools to complete tasks.
             </heading>
             <div id=1119>
-              <div id=1121>Blog</div>
-              <div id=1124>Mar 23, 2026</div>
+              <div>Blog</div>
+              <div id=1123>Mar 23, 2026</div>
             </div>
           </link>
         </div>
         <link id=1127 focusable url="https://code.claude.com/docs/en/changelog">
-          <div id=1128>View changelog</div>
-          <div id=1133>(opens in new tab)</div>
+          <div>View changelog</div>
+          <div id=1132>(opens in new tab)</div>
         </link>
       </div>
     </div>
@@ -597,9 +597,9 @@
         <div id=1146>
           <button id=1148 focusable hasPopup="menu">Get Claude Code</button>
           <button name="Copy command to clipboard" id=1154 focusable>
-            <div id=1156>curl -fsSL</div>
-            <div id=1158>https://claude.ai/install.sh</div>
-            <div id=1160>| bash</div>
+            <div>curl -fsSL</div>
+            <div>https://claude.ai/install.sh</div>
+            <div>| bash</div>
           </button>
         </div>
         <paragraph id=1163>
@@ -616,8 +616,8 @@
           </tablist>
           <code id=1190>
             <div id=1191>
-              <div id=1193>&gt;</div>
-              <div id=1195>I'm new to this codebase. Can you explain it to me?</div>
+              <div id=1192>&gt;</div>
+              <div>I'm new to this codebase. Can you explain it to me?</div>
             </div>
             ⏺︎ I'll analyze the Excalidraw codebase structure and provide a high-level overview.
             
@@ -707,9 +707,9 @@
             <paragraph id=1376>Super powerful terminal integration. Works with all your CLI tools alongside any IDE.</paragraph>
             <div id=1382>
               <button name="Copy command to clipboard" id=1384 focusable>
-                <div id=1386>curl -fsSL</div>
-                <div id=1388>https://claude.ai/install.sh</div>
-                <div id=1390>| bash</div>
+                <div>curl -fsSL</div>
+                <div>https://claude.ai/install.sh</div>
+                <div>| bash</div>
               </button>
               <paragraph id=1393>
                 Or read the
@@ -725,12 +725,12 @@
             <paragraph id=1406>Native extensions for VS Code (+ Cursor, Devin Desktop) and JetBrains IDEs.</paragraph>
             <group id=1411>
               <link id=1412 focusable url="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">
-                <div id=1413>VS Code</div>
-                <div id=1416>(opens in new tab)</div>
+                <div>VS Code</div>
+                <div id=1415>(opens in new tab)</div>
               </link>
               <link id=1418 focusable url="https://plugins.jetbrains.com/plugin/27310-claude-code-beta-">
-                <div id=1419>JetBrains</div>
-                <div id=1422>(opens in new tab)</div>
+                <div>JetBrains</div>
+                <div id=1421>(opens in new tab)</div>
               </link>
             </group>
           </div>
@@ -742,8 +742,8 @@
             <paragraph id=1431>Quick access from browser, mobile app, or Claude on desktop. Great for parallel work or on-the-go coding.</paragraph>
             <group id=1437>
               <link id=1438 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/code">
-                <div id=1439>Open in browser</div>
-                <div id=1442>(opens in new tab)</div>
+                <div>Open in browser</div>
+                <div id=1441>(opens in new tab)</div>
               </link>
               <link id=1444 focusable url="https://claude.com/download">Download app</link>
             </group>
@@ -755,8 +755,8 @@
       <heading id=1452 level=2>Kick off coding tasks in Slack</heading>
       <group id=1455>
         <link id=1456 focusable url="https://slack.com/oauth/v2/authorize?client_id=1601185624273.8899143856786&amp;scope=app_mentions:read,assistant:write,channels:history,channels:read,chat:write,files:read,files:write,groups:history,groups:read,im:history,im:read,im:write,mpim:history,reactions:write,users:read,users:read.email,commands,search:read.public&amp;user_scope=bookmarks:read,channels:history,channels:read,chat:write,emoji:read,files:read,groups:history,groups:read,groups:write,im:history,im:read,im:write,links:read,mpim:history,mpim:read,mpim:write,mpim:write.topic,pins:read,reactions:read,reactions:write,remote_files:read,team:read,users:read,users:read.email,search:read.public,search:read.private,search:read.im,search:read.mpim,search:read.files,search:read.users,canvases:read,canvases:write">
-          <div id=1457>Add to Slack</div>
-          <div id=1460>(opens in new tab)</div>
+          <div>Add to Slack</div>
+          <div id=1459>(opens in new tab)</div>
         </link>
         <link id=1462 focusable url="https://claude.com/claude-for-slack">Learn more</link>
       </group>
@@ -769,9 +769,9 @@
           <div id=1476>
             <blockquote id=1477>
               <paragraph id=1478>
-                <div id=1479>“</div>
-                <div id=1481>Claude Code has dramatically accelerated our team's coding efficiency. I can now write EDA code in a notebook—pulling data, training a model, and evaluating it with basic metrics—and then ask Claude to convert that into a Metaflow pipeline. This process saves 1-2 days of routine (and often boring!) work per model.</div>
-                <div id=1488>”</div>
+                <div>“</div>
+                <div>Claude Code has dramatically accelerated our team's coding efficiency. I can now write EDA code in a notebook—pulling data, training a model, and evaluating it with basic metrics—and then ask Claude to convert that into a Metaflow pipeline. This process saves 1-2 days of routine (and often boring!) work per model.</div>
+                <div>”</div>
               </paragraph>
             </blockquote>
             <paragraph id=1490>Anton Biryukov, Staff Software Engineer</paragraph>
@@ -783,9 +783,9 @@
           <div id=1500>
             <blockquote id=1501>
               <paragraph id=1502>
-                <div id=1503>“</div>
-                <div id=1505>With Claude, we're not just automating customer service—we're elevating it to truly human quality. This lets support teams think more strategically about customer experience and what makes interactions genuinely valuable.</div>
-                <div id=1510>”</div>
+                <div>“</div>
+                <div>With Claude, we're not just automating customer service—we're elevating it to truly human quality. This lets support teams think more strategically about customer experience and what makes interactions genuinely valuable.</div>
+                <div>”</div>
               </paragraph>
             </blockquote>
             <paragraph id=1512>Fergal Reid, VP of AI</paragraph>
@@ -797,9 +797,9 @@
           <div id=1522>
             <blockquote id=1523>
               <paragraph id=1524>
-                <div id=1525>“</div>
-                <div id=1527>Claude Code is moving our team up a level: we decide what needs to happen, and smooth the process so it can build and verify end-to-end. A big part of my job now is to keep as many instances of Claude Code busy as possible.</div>
-                <div id=1532>”</div>
+                <div>“</div>
+                <div>Claude Code is moving our team up a level: we decide what needs to happen, and smooth the process so it can build and verify end-to-end. A big part of my job now is to keep as many instances of Claude Code busy as possible.</div>
+                <div>”</div>
               </paragraph>
             </blockquote>
             <paragraph id=1534>Simon Last, Co-founder</paragraph>
@@ -935,16 +935,16 @@
             <paragraph id=1752>Fast mode is a high-speed configuration for Opus 5, making the model 2.5x faster at a higher cost per token. Fast mode is available:</paragraph>
             <list id=1756>
               <listitem id=1757 level=1>
-                <ListMarker name="•" id=1758 />
-                In research preview on Claude Code, and is priced at $10/$50 per million tokens.
+                <div>•</div>
+                <div>In research preview on Claude Code, and is priced at $10/$50 per million tokens.</div>
               </listitem>
               <listitem id=1762 level=1>
-                <ListMarker name="•" id=1763 />
-                On consumption-based plans.
+                <div>•</div>
+                <div>On consumption-based plans.</div>
               </listitem>
               <listitem id=1767 level=1>
-                <ListMarker name="•" id=1768 />
-                Via usage credits for users on subscription plans.
+                <div>•</div>
+                <div>Via usage credits for users on subscription plans.</div>
               </listitem>
             </list>
           </region>
@@ -988,9 +988,9 @@
           <div id=1852>
             <button id=1854 focusable hasPopup="menu">Get Claude Code</button>
             <button name="Copy command to clipboard" id=1860 focusable>
-              <div id=1862>curl -fsSL</div>
-              <div id=1864>https://claude.ai/install.sh</div>
-              <div id=1868>| bash</div>
+              <div>curl -fsSL</div>
+              <div>https://claude.ai/install.sh</div>
+              <div>| bash</div>
             </button>
           </div>
           <paragraph id=1871>

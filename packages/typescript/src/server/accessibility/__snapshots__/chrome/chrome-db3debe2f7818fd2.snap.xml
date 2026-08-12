@@ -1,4 +1,4 @@
-<RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" id=1 focusable focused url="https://www.airbnb.com.sg/">
+<RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" focusable focused url="https://www.airbnb.com.sg/">
   <dialog id=663 focusable focused modal>
     <button name="Close" id=665 focusable />
     <div id=667>
@@ -10,5 +10,5 @@
     </div>
     <div id=680 />
   </dialog>
-  <RootWebArea id=684 focusable url="about:blank" />
+  <RootWebArea focusable url="about:blank" />
 </RootWebArea>

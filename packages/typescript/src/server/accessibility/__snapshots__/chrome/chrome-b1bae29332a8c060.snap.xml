@@ -1,4 +1,4 @@
-<RootWebArea name="Multiple File Upload Test" id=1 focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multiple_file_upload.html">
+<RootWebArea name="Multiple File Upload Test" focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multiple_file_upload.html">
   <heading id=4 level=1>Multiple File Upload Test</heading>
   <div id=7>
     <heading id=8 level=2>📁 Upload Multiple Files</heading>

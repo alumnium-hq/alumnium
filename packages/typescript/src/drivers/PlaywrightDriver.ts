@@ -2,6 +2,10 @@ import { always, ensure } from "alwaysly";
 import type { CDPSession, Frame, Locator, Page } from "playwright-core";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
+import {
+  enrichChromiumAXNodes,
+  type ChromiumDOMNodeMetadata,
+} from "../accessibility/enrichChromiumAXNodes.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { ClickTool } from "../tools/ClickTool.ts";
 import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
@@ -39,6 +43,8 @@ interface CDPNode {
   childIds?: string[];
   _frame?: object;
   _parent_iframe_backend_node_id?: number | undefined;
+  backendDOMNodeId?: number;
+  _mutable?: boolean;
 }
 
 interface CDPFrameInfo {
@@ -379,21 +385,26 @@ export class PlaywrightDriver extends BaseDriver {
       ? await this.page.context().newCDPSession(frame)
       : this.client;
 
-    // Beware!
-    await session.send("DOM.enable");
-    await session.send("DOM.getFlattenedDocument");
-    const nodeIds = await session.send("DOM.pushNodesByBackendIdsToFrontend", {
-      backendNodeIds: [backendNodeId],
-    });
-    const nodeId = nodeIds.nodeIds[0];
-    ensure(nodeId);
-    await session.send("DOM.setAttributeValue", {
-      nodeId,
-      name: "data-alumnium-id",
-      value: String(backendNodeId),
-    });
-
-    if (isOopif) await session.detach();
+    try {
+      // Beware!
+      await session.send("DOM.enable");
+      await session.send("DOM.getFlattenedDocument");
+      const nodeIds = await session.send(
+        "DOM.pushNodesByBackendIdsToFrontend",
+        {
+          backendNodeIds: [backendNodeId],
+        },
+      );
+      const nodeId = nodeIds.nodeIds[0];
+      ensure(nodeId);
+      await session.send("DOM.setAttributeValue", {
+        nodeId,
+        name: "data-alumnium-id",
+        value: String(backendNodeId),
+      });
+    } finally {
+      if (isOopif) await session.detach();
+    }
 
     // TODO: We need to remove the attribute after we are done with the element,
     // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
@@ -474,14 +485,14 @@ export class PlaywrightDriver extends BaseDriver {
         if (playwrightFrame === this.page.mainFrame()) continue;
         if ([...map.values()].includes(playwrightFrame)) continue;
 
+        let frameSession: CDPSession | undefined;
         try {
-          const frameSession = await this.page
+          frameSession = await this.page
             .context()
             .newCDPSession(playwrightFrame);
           const ft = (await frameSession.send(
             "Page.getFrameTree",
           )) as CDPFrameTree;
-          await frameSession.detach();
 
           const rootFrameId = ft.frameTree.frame.id;
           if (unmappedOopifs.has(rootFrameId)) {
@@ -494,6 +505,8 @@ export class PlaywrightDriver extends BaseDriver {
           }
         } catch {
           // frame may have been destroyed
+        } finally {
+          await frameSession?.detach().catch(() => undefined);
         }
       }
     }
@@ -663,20 +676,34 @@ export class PlaywrightDriver extends BaseDriver {
     frameId: string,
     _playwrightFrame: Frame,
   ): Promise<CDPNode[]> {
+    let nodes: CDPNode[];
     try {
       const response = (await this.client.send("Accessibility.getFullAXTree", {
         frameId,
       })) as { nodes: CDPNode[] };
-      const nodes = response.nodes || [];
+      nodes = response.nodes || [];
       logger.debug(
         `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
       );
-      return nodes;
     } catch (error) {
       logger.debug(
         `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
       );
       return [];
+    }
+
+    try {
+      await this.client.send("DOM.enable");
+      const domResponse = (await this.client.send("DOM.getFlattenedDocument", {
+        depth: -1,
+        pierce: true,
+      })) as { nodes: ChromiumDOMNodeMetadata[] };
+      return enrichChromiumAXNodes(nodes, domResponse.nodes || []);
+    } catch (error) {
+      logger.debug(
+        `  -> Frame ${frameId.slice(0, 20)}...: DOM metadata failed (${error instanceof Error ? error.message : String(error)})`,
+      );
+      return enrichChromiumAXNodes(nodes, []);
     }
   }
 
@@ -684,12 +711,11 @@ export class PlaywrightDriver extends BaseDriver {
     frameId: string,
     playwrightFrame: Frame,
   ): Promise<CDPNode[]> {
+    let frameSession: CDPSession | undefined;
     try {
       // OOPIFs run in a separate renderer process — open a per-frame CDP session
       // scoped to that target, then call getFullAXTree without a frameId parameter.
-      const frameSession = await this.page
-        .context()
-        .newCDPSession(playwrightFrame);
+      frameSession = await this.page.context().newCDPSession(playwrightFrame);
       const response = (await frameSession.send(
         "Accessibility.getFullAXTree",
         {},
@@ -698,13 +724,27 @@ export class PlaywrightDriver extends BaseDriver {
       logger.debug(
         `  -> OOPIF ${frameId.slice(0, 20)}...: got ${nodes.length} nodes`,
       );
-      await frameSession.detach();
-      return nodes;
+
+      try {
+        await frameSession.send("DOM.enable");
+        const domResponse = (await frameSession.send(
+          "DOM.getFlattenedDocument",
+          { depth: -1, pierce: true },
+        )) as { nodes: ChromiumDOMNodeMetadata[] };
+        return enrichChromiumAXNodes(nodes, domResponse.nodes || []);
+      } catch (error) {
+        logger.debug(
+          `  -> OOPIF ${frameId.slice(0, 20)}...: DOM metadata failed (${error instanceof Error ? error.message : String(error)})`,
+        );
+        return enrichChromiumAXNodes(nodes, []);
+      }
     } catch (oopifError) {
       logger.debug(
         `  -> OOPIF ${frameId.slice(0, 20)}...: failed (${oopifError instanceof Error ? oopifError.message : String(oopifError)})`,
       );
       return [];
+    } finally {
+      await frameSession?.detach().catch(() => undefined);
     }
   }
 

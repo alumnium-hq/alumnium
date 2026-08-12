@@ -1,4 +1,4 @@
-<RootWebArea name="Migrate server &amp; MCP to TypeScript by kossnocorp · Pull Request #256 · alumnium-hq/alumnium · GitHub" id=1 focusable focused url="https://github.com/alumnium-hq/alumnium/pull/256">
+<RootWebArea name="Migrate server &amp; MCP to TypeScript by kossnocorp · Pull Request #256 · alumnium-hq/alumnium · GitHub" focusable focused url="https://github.com/alumnium-hq/alumnium/pull/256">
   <div id=6>
     <link id=7 focusable url="https://github.com/alumnium-hq/alumnium/pull/256#start-of-content">Skip to content</link>
     <banner id=28>
@@ -30,9 +30,9 @@
           </navigation>
           <div id=102>
             <button name="Search or jump to, type" id=104 focusable hasPopup="dialog">
-              <div id=106>Type</div>
-              <div id=109>/</div>
-              <div id=111>to search</div>
+              <div>Type</div>
+              <div id=108>/</div>
+              <div>to search</div>
             </button>
             <link id=114 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Falumnium-hq%2Falumnium%2Fpull%2F256">Sign in</link>
             <link id=117 focusable url="https://github.com/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fvoltron%2Fpull_requests_fragments%2Fpull_request_layout&amp;source=header-repo&amp;source_repo=alumnium-hq%2Falumnium">Sign up</link>
@@ -59,8 +59,8 @@
           </listitem>
           <listitem id=162 level=1>
             <link id=163 focusable url="https://github.com/login?return_to=%2Falumnium-hq%2Falumnium">
-              <div id=164>Fork</div>
-              <div id=167>94</div>
+              <div>Fork</div>
+              <div id=166>94</div>
             </link>
           </listitem>
           <listitem id=169 level=1>
@@ -78,14 +78,14 @@
           </listitem>
           <listitem id=186 level=1>
             <link id=187 focusable url="https://github.com/alumnium-hq/alumnium/issues">
-              <div id=190>Issues</div>
-              <div id=193>11</div>
+              <div id=188>Issues</div>
+              <div id=192>11</div>
             </link>
           </listitem>
           <listitem id=195 level=1>
             <link id=196 focusable url="https://github.com/alumnium-hq/alumnium/pulls">
-              <div id=199>Pull requests</div>
-              <div id=202>9</div>
+              <div id=197>Pull requests</div>
+              <div id=201>9</div>
             </link>
           </listitem>
           <listitem id=204 level=1>
@@ -112,8 +112,8 @@
           <heading id=254 level=1>
             Migrate server &amp; MCP to TypeScript
             <div id=257>
-              <div id=258>- #</div>
-              <div id=261>256</div>
+              <div>- #</div>
+              <div>256</div>
             </div>
           </heading>
           <div id=265>
@@ -140,33 +140,33 @@
               <link id=315 focusable url="https://github.com/alumnium-hq/alumnium/pull/256">
                 Conversation
                 <div id=318>
-                  <div id=319>(</div>
-                  <div id=321>1</div>
-                  <div id=323>)</div>
+                  <div>(</div>
+                  <div>1</div>
+                  <div>)</div>
                 </div>
               </link>
               <link id=325 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/commits">
                 Commits
                 <div id=328>
-                  <div id=329>(</div>
-                  <div id=331>103</div>
-                  <div id=333>)</div>
+                  <div>(</div>
+                  <div>103</div>
+                  <div>)</div>
                 </div>
               </link>
               <link id=335 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/checks">
                 Checks
                 <div id=338>
-                  <div id=339>(</div>
-                  <div id=341>7</div>
-                  <div id=343>)</div>
+                  <div>(</div>
+                  <div>7</div>
+                  <div>)</div>
                 </div>
               </link>
               <link id=345 focusable url="https://github.com/alumnium-hq/alumnium/pull/256/files">
                 Files changed
                 <div id=348>
-                  <div id=349>(</div>
-                  <div id=351>208</div>
-                  <div id=353>)</div>
+                  <div>(</div>
+                  <div>208</div>
+                  <div>)</div>
                 </div>
               </link>
             </navigation>
@@ -179,8 +179,8 @@
           </div>
           <heading id=362 level=2>
             <link id=364 focusable url="https://github.com/alumnium-hq/alumnium/pull/256#top">Migrate server &amp; MCP to TypeScript</link>
-            <div id=367>#</div>
-            <div id=369>256</div>
+            <div>#</div>
+            <div>256</div>
             <div id=372>
               <link id=373 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">kossnocorp</link>
               wants to merge 103 commits into
@@ -239,9 +239,9 @@
               <div id=471>
                 <div id=474>
                   <link id=475 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">kossnocorp</link>
-                  <div id=478>added</div>
-                  <div id=480>30</div>
-                  <div id=482>commits</div>
+                  <div>added</div>
+                  <div>30</div>
+                  <div>commits</div>
                   <link id=484 focusable url="https://github.com/alumnium-hq/alumnium/pull/256#commits-pushed-d7ae85f">
                     <div name="Feb 12, 2026, 7:18 AM GMT+8" id=485>6 months ago</div>
                   </link>
@@ -626,9 +626,9 @@
               <div id=1438>
                 <div id=1441>
                   <link id=1442 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">kossnocorp</link>
-                  <div id=1445>added</div>
-                  <div id=1447>45</div>
-                  <div id=1449>commits</div>
+                  <div>added</div>
+                  <div>45</div>
+                  <div>commits</div>
                   <link id=1451 focusable url="https://github.com/alumnium-hq/alumnium/pull/256#commits-pushed-2142d03">
                     <div name="Feb 24, 2026, 10:28 AM GMT+8" id=1452>6 months ago</div>
                   </link>
@@ -1265,9 +1265,9 @@
               <div id=2941>
                 <div id=2944>
                   <link id=2945 focusable url="https://github.com/kossnocorp" keyshortcuts="Alt+ArrowUp">kossnocorp</link>
-                  <div id=2948>added</div>
-                  <div id=2950>28</div>
-                  <div id=2952>commits</div>
+                  <div>added</div>
+                  <div>28</div>
+                  <div>commits</div>
                   <link id=2954 focusable url="https://github.com/alumnium-hq/alumnium/pull/256#commits-pushed-a273eac">
                     <div name="Feb 27, 2026, 2:12 PM GMT+8" id=2955>6 months ago</div>
                   </link>

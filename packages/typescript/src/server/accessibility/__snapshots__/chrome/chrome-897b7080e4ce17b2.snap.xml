@@ -1,4 +1,4 @@
-<RootWebArea name="Overview · Cloudflare Workers docs" id=1 focusable focused url="https://developers.cloudflare.com/workers/">
+<RootWebArea name="Overview · Cloudflare Workers docs" focusable focused url="https://developers.cloudflare.com/workers/">
   <link id=4 focusable url="https://developers.cloudflare.com/workers/#main-content">Skip to content</link>
   <div id=7>
     <banner id=8>
@@ -187,8 +187,8 @@
                   </listitem>
                   <listitem id=330 level=2>
                     <link id=331 focusable url="https://developers.cloudflare.com/workers/configuration/placement/">
-                      <div id=333>Placement</div>
-                      <div id=336>Beta</div>
+                      <div id=332>Placement</div>
+                      <div id=335>Beta</div>
                     </link>
                   </listitem>
                   <listitem id=338 level=2>
@@ -311,8 +311,8 @@
                       </listitem>
                       <listitem id=548 level=3>
                         <link id=549 focusable url="https://github.com/cloudflare/mcp-server-cloudflare/tree/main/apps/workers-builds">
-                          <div id=551>MCP server</div>
-                          <div id=554>MCP</div>
+                          <div id=550>MCP server</div>
+                          <div id=553>MCP</div>
                         </link>
                       </listitem>
                     </list>
@@ -461,8 +461,8 @@
                       </listitem>
                       <listitem id=807 level=3>
                         <link id=808 focusable url="https://developers.cloudflare.com/secrets-store/integrations/workers/">
-                          <div id=810>Secrets Store ↗</div>
-                          <div id=813>Beta</div>
+                          <div id=809>Secrets Store ↗</div>
+                          <div id=812>Beta</div>
                         </link>
                       </listitem>
                       <listitem id=815 level=3>
@@ -487,8 +487,8 @@
                       </listitem>
                       <listitem id=850 level=3>
                         <link id=851 focusable url="https://developers.cloudflare.com/workers/runtime-apis/bindings/version-metadata/">
-                          <div id=853>Version metadata</div>
-                          <div id=856>Beta</div>
+                          <div id=852>Version metadata</div>
+                          <div id=855>Beta</div>
                         </link>
                       </listitem>
                       <listitem id=858 level=3>
@@ -808,8 +808,8 @@
                           </listitem>
                           <listitem id=1408 level=4>
                             <link id=1409 focusable url="https://developers.cloudflare.com/workers/framework-guides/web-apps/more-web-frameworks/solid/">
-                              <div id=1411>Solid</div>
-                              <div id=1414>Beta</div>
+                              <div id=1410>Solid</div>
+                              <div id=1413>Beta</div>
                             </link>
                           </listitem>
                           <listitem id=1416 level=4>
@@ -928,8 +928,8 @@
                   </listitem>
                   <listitem id=1611 level=2>
                     <button id=1613 focusable controls="nb-disclosure-38">
-                      <div id=1616>Traces</div>
-                      <div id=1619>Beta</div>
+                      <div id=1615>Traces</div>
+                      <div id=1618>Beta</div>
                     </button>
                     <list id=1623>
                       <listitem id=1624 level=3>
@@ -937,8 +937,8 @@
                       </listitem>
                       <listitem id=1629 level=3>
                         <link id=1630 focusable url="https://developers.cloudflare.com/workers/observability/traces/custom-spans/">
-                          <div id=1632>Custom spans</div>
-                          <div id=1635>Beta</div>
+                          <div id=1631>Custom spans</div>
+                          <div id=1634>Beta</div>
                         </link>
                       </listitem>
                       <listitem id=1637 level=3>
@@ -994,8 +994,8 @@
                   </listitem>
                   <listitem id=1722 level=2>
                     <link id=1723 focusable url="https://github.com/cloudflare/mcp-server-cloudflare/tree/main/apps/workers-observability">
-                      <div id=1725>MCP server</div>
-                      <div id=1728>MCP</div>
+                      <div id=1724>MCP server</div>
+                      <div id=1727>MCP</div>
                     </link>
                   </listitem>
                   <listitem id=1730 level=2>
@@ -1400,8 +1400,8 @@
                   </listitem>
                   <listitem id=2437 level=2>
                     <button id=2439 focusable controls="nb-disclosure-61">
-                      <div id=2442>Python Workers</div>
-                      <div id=2445>Beta</div>
+                      <div id=2441>Python Workers</div>
+                      <div id=2444>Beta</div>
                     </button>
                     <list id=2449>
                       <listitem id=2450 level=3>
@@ -1440,8 +1440,8 @@
                   </listitem>
                   <listitem id=2506 level=2>
                     <button id=2508 focusable controls="nb-disclosure-63">
-                      <div id=2511>Rust</div>
-                      <div id=2514>Beta</div>
+                      <div id=2510>Rust</div>
+                      <div id=2513>Beta</div>
                     </button>
                     <list id=2518>
                       <listitem id=2519 level=3>
@@ -1543,8 +1543,8 @@
                   </listitem>
                   <listitem id=2686 level=2>
                     <link id=2687 focusable url="https://github.com/cloudflare/mcp-server-cloudflare">
-                      <div id=2689>Domain-specific MCP Servers ↗</div>
-                      <div id=2693>MCP</div>
+                      <div id=2688>Domain-specific MCP Servers ↗</div>
+                      <div id=2692>MCP</div>
                     </link>
                   </listitem>
                   <listitem id=2695 level=2>
@@ -1572,8 +1572,8 @@
                   <link id=2723 focusable url="https://developers.cloudflare.com/">Home</link>
                 </listitem>
                 <listitem id=2726 level=1>
-                  <div id=2728>/</div>
-                  <div id=2731>Workers</div>
+                  <div id=2727>/</div>
+                  <div id=2730>Workers</div>
                 </listitem>
               </list>
             </navigation>
@@ -1602,20 +1602,20 @@
                 <paragraph id=2771>
                   A serverless platform for building, deploying, and scaling apps across
                   <link id=2774 focusable url="https://www.cloudflare.com/network/">
-                    <div id=2775>Cloudflare's global network</div>
-                    <div id=2778>↗</div>
+                    <div>Cloudflare's global network</div>
+                    <div>↗</div>
                   </link>
                   with a single command — no infrastructure to manage, no complex configuration
                 </paragraph>
                 <paragraph id=2783>With Cloudflare Workers, you can expect to:</paragraph>
                 <list id=2786>
                   <listitem id=2787 level=1>
-                    <ListMarker name="•" id=2788 />
-                    Deliver fast performance with high reliability anywhere in the world
+                    <div>•</div>
+                    <div>Deliver fast performance with high reliability anywhere in the world</div>
                   </listitem>
                   <listitem id=2792 level=1>
-                    <ListMarker name="•" id=2793 />
-                    Build full-stack apps with your framework of choice, including
+                    <div>•</div>
+                    <div>Build full-stack apps with your framework of choice, including</div>
                     <link id=2797 focusable url="https://developers.cloudflare.com/workers/framework-guides/web-apps/react/">React</link>
                     ,
                     <link id=2802 focusable url="https://developers.cloudflare.com/workers/framework-guides/web-apps/vue/">Vue</link>
@@ -1631,8 +1631,8 @@
                     <link id=2827 focusable url="https://developers.cloudflare.com/workers/framework-guides/">and more</link>
                   </listitem>
                   <listitem id=2830 level=1>
-                    <ListMarker name="•" id=2831 />
-                    Use your preferred language, including
+                    <div>•</div>
+                    <div>Use your preferred language, including</div>
                     <link id=2835 focusable url="https://developers.cloudflare.com/workers/languages/javascript/">JavaScript</link>
                     ,
                     <link id=2840 focusable url="https://developers.cloudflare.com/workers/languages/typescript/">TypeScript</link>
@@ -1644,13 +1644,13 @@
                     <link id=2855 focusable url="https://developers.cloudflare.com/workers/runtime-apis/webassembly/">and more</link>
                   </listitem>
                   <listitem id=2858 level=1>
-                    <ListMarker name="•" id=2859 />
-                    Gain deep visibility and insight with built-in
+                    <div>•</div>
+                    <div>Gain deep visibility and insight with built-in</div>
                     <link id=2863 focusable url="https://developers.cloudflare.com/workers/observability/logs/">observability</link>
                   </listitem>
                   <listitem id=2866 level=1>
-                    <ListMarker name="•" id=2867 />
-                    Get started for free and grow with flexible
+                    <div>•</div>
+                    <div>Get started for free and grow with flexible</div>
                     <link id=2871 focusable url="https://developers.cloudflare.com/workers/platform/pricing/">pricing</link>
                     , affordable at any scale
                   </listitem>
@@ -1788,8 +1788,8 @@
                 <paragraph id=3133>
                   Want to connect with the Workers community?
                   <link id=3136 focusable url="https://discord.cloudflare.com/">
-                    <div id=3137>Join our Discord</div>
-                    <div id=3139>↗</div>
+                    <div>Join our Discord</div>
+                    <div>↗</div>
                   </link>
                 </paragraph>
               </article>
@@ -1797,8 +1797,8 @@
             <navigation name="Pagination" id=3141>
               <link id=3143 focusable url="https://developers.cloudflare.com/workers/get-started/guide/">
                 <div id=3144>
-                  <div id=3146>Next</div>
-                  <div id=3148>CLI</div>
+                  <div id=3145>Next</div>
+                  <div>CLI</div>
                 </div>
                 <image id=3150 />
               </link>

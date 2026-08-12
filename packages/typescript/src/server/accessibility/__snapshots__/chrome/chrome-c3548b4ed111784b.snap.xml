@@ -1,4 +1,4 @@
-<RootWebArea name="TodoMVC: Vue" id=1 focusable focused url="https://todomvc.com/examples/vue/dist/#/completed">
+<RootWebArea name="TodoMVC: Vue" focusable focused url="https://todomvc.com/examples/vue/dist/#/completed">
   <complementary id=4>
     <sectionheader id=5>
       <heading id=6 level=3>Vue.js</heading>
@@ -8,9 +8,9 @@
     <separator id=15 settable orientation="horizontal" />
     <blockquote id=16>
       <paragraph id=17>
-        <div id=19>“</div>
-        <div id=21>Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `</div>
-        <div id=29>”</div>
+        <div id=18>“</div>
+        <div>Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `</div>
+        <div id=28>”</div>
       </paragraph>
     </blockquote>
   </complementary>

@@ -14,6 +14,10 @@ import {
 import { always } from "alwaysly";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
+import {
+  enrichChromiumAXNodes,
+  type ChromiumDOMNodeMetadata,
+} from "../accessibility/enrichChromiumAXNodes.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { ClickTool } from "../tools/ClickTool.ts";
 import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
@@ -51,13 +55,11 @@ interface CDPNode {
   _parent_iframe_backend_node_id?: number;
   _frame_chain?: number[];
   _is_shadow_dom?: boolean;
+  _mutable?: boolean;
   [key: string]: unknown;
 }
 
-interface CDPDomNode {
-  nodeId: number;
-  backendNodeId: number;
-  parentId?: number;
+interface CDPDomNode extends ChromiumDOMNodeMetadata {
   nodeName?: string;
   shadowRoots?: CDPDomNode[];
 }
@@ -112,6 +114,30 @@ export class SeleniumDriver extends BaseDriver {
     const mainFrameId = frameTree.frameTree.frame.id;
     logger.debug(`Found ${frameIds.length} frames`);
 
+    await this.executeCdpCommand("DOM.enable", {});
+    const domResponse = (await this.executeCdpCommand(
+      "DOM.getFlattenedDocument",
+      { depth: -1, pierce: true },
+    )) as { nodes: CDPDomNode[] };
+    const domNodes = domResponse.nodes || [];
+
+    let oopifFrameIds = new Set<string>();
+    try {
+      const targets = (await this.executeCdpCommand(
+        "Target.getTargets",
+        {},
+      )) as {
+        targetInfos?: Array<{ targetId: string; type: string }>;
+      };
+      oopifFrameIds = new Set(
+        targets.targetInfos
+          ?.filter((target) => target.type === "iframe")
+          .map((target) => target.targetId) ?? [],
+      );
+    } catch {
+      // Older Chromium versions may not expose target discovery through WebDriver.
+    }
+
     // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
     const frameToIframeMap: Map<string, number> = new Map();
     // Build mapping: frameId -> parent frameId (for nested frames)
@@ -132,6 +158,10 @@ export class SeleniumDriver extends BaseDriver {
           { frameId },
         )) as { nodes: CDPNode[] };
         const nodes = response.nodes || [];
+        enrichChromiumAXNodes(
+          nodes,
+          oopifFrameIds.has(frameId) ? [] : domNodes,
+        );
         logger.debug(
           `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
         );
@@ -158,7 +188,16 @@ export class SeleniumDriver extends BaseDriver {
     logger.debug(`Total accessibility nodes collected: ${allNodes.length}`);
 
     try {
-      const shadowNodes = await this.buildShadowHierarchy();
+      const frameChainsByBackendId: Partial<Record<number, number[]>> = {};
+      for (const node of allNodes) {
+        if (node.backendDOMNodeId && node._frame_chain)
+          frameChainsByBackendId[node.backendDOMNodeId] = node._frame_chain;
+      }
+      const shadowNodes = await this.buildShadowHierarchy(
+        domNodes,
+        frameChainsByBackendId,
+      );
+      enrichChromiumAXNodes(shadowNodes, domNodes);
       allNodes.push(...shadowNodes);
       if (shadowNodes.length > 0) {
         logger.debug(`  -> Shadow DOM: ${shadowNodes.length} nodes added`);
@@ -656,27 +695,19 @@ export class SeleniumDriver extends BaseDriver {
     return hostElement.getShadowRoot();
   }
 
-  private async buildShadowHierarchy(): Promise<CDPNode[]> {
+  private async buildShadowHierarchy(
+    domNodes: CDPDomNode[],
+    frameChainsByBackendId: Partial<Record<number, number[]>>,
+  ): Promise<CDPNode[]> {
     const shadowNodes: CDPNode[] = [];
     const processedNodes = new Set<string>();
-
-    // Enable DOM domain for node operations
-    await this.executeCdpCommand("DOM.enable", {});
-
-    // Get all DOM nodes including shadow DOM content
-    const domResponse = (await this.executeCdpCommand(
-      "DOM.getFlattenedDocument",
-      { depth: -1, pierce: true },
-    )) as { nodes: CDPDomNode[] };
-
-    if (!domResponse.nodes) return shadowNodes;
 
     // Build maps from the DOM tree
     const nodeIdToBackendId: Record<number, number> = {};
     const parentIdMap: Record<number, number> = {};
     const shadowRootToHostBackendId: Record<number, number> = {};
 
-    for (const domNode of domResponse.nodes) {
+    for (const domNode of domNodes) {
       nodeIdToBackendId[domNode.nodeId] = domNode.backendNodeId;
       if (domNode.parentId !== undefined) {
         parentIdMap[domNode.nodeId] = domNode.parentId;
@@ -693,7 +724,7 @@ export class SeleniumDriver extends BaseDriver {
 
     // Build childBackendNodeId -> hostBackendNodeId map by walking parent chains
     this.#shadowChildToHostMap = {};
-    for (const domNode of domResponse.nodes) {
+    for (const domNode of domNodes) {
       const nodeBackendId = domNode.backendNodeId;
       let currentId: number | undefined = domNode.nodeId;
       while (currentId !== undefined) {
@@ -707,8 +738,9 @@ export class SeleniumDriver extends BaseDriver {
     }
 
     // Find shadow hosts and collect their accessibility nodes
-    for (const domNode of domResponse.nodes) {
+    for (const domNode of domNodes) {
       if (domNode.shadowRoots && domNode.shadowRoots.length > 0) {
+        const frameChain = frameChainsByBackendId[domNode.backendNodeId];
         try {
           const axResponse = (await this.executeCdpCommand(
             "Accessibility.queryAXTree",
@@ -721,6 +753,7 @@ export class SeleniumDriver extends BaseDriver {
               processedNodes.add(axNode.nodeId);
 
               axNode._is_shadow_dom = true;
+              if (frameChain) axNode._frame_chain = frameChain;
               if (!axNode.backendDOMNodeId) {
                 const backendId =
                   nodeIdToBackendId[Number.parseInt(axNode.nodeId)];
@@ -737,6 +770,7 @@ export class SeleniumDriver extends BaseDriver {
                     String(childId),
                     processedNodes,
                     nodeIdToBackendId,
+                    frameChain,
                   );
                   shadowNodes.push(...childNodes);
                 }
@@ -756,6 +790,7 @@ export class SeleniumDriver extends BaseDriver {
     nodeId: string,
     processedNodes: Set<string>,
     nodeIdToBackendId: Record<number, number>,
+    frameChain?: number[],
   ): Promise<CDPNode[]> {
     const nodes: CDPNode[] = [];
 
@@ -771,6 +806,7 @@ export class SeleniumDriver extends BaseDriver {
       if (response.nodes) {
         for (const node of response.nodes) {
           node._is_shadow_dom = true;
+          if (frameChain) node._frame_chain = frameChain;
 
           if (!node.backendDOMNodeId) {
             const backendId = nodeIdToBackendId[Number.parseInt(node.nodeId)];
@@ -787,6 +823,7 @@ export class SeleniumDriver extends BaseDriver {
                 String(childId),
                 processedNodes,
                 nodeIdToBackendId,
+                frameChain,
               );
               nodes.push(...childNodes);
             }

@@ -1,10 +1,10 @@
-<RootWebArea name="Cross-Origin Test" id=1 focusable url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
+<RootWebArea name="Cross-Origin Test" focusable url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
   <heading id=4 level=1>Main Page</heading>
   <paragraph id=7>This page embeds a real cross-origin iframe.</paragraph>
   <button id=10 focusable>Main Page Button</button>
   <heading id=13 level=2>Cross-Origin Iframe Below:</heading>
   <Iframe id=16>
-    <RootWebArea name="Hands-On Selenium WebDriver with Java" id=17 focusable focused url="https://bonigarcia.dev/selenium-webdriver-java/submitted-form.html?my-text=testuser&amp;my-password=&amp;my-textarea=&amp;my-readonly=Readonly+input&amp;my-select=Open+this+select+menu&amp;my-datalist=&amp;my-file=&amp;my-check=on&amp;my-radio=on&amp;my-colors=%23563d7c&amp;my-date=&amp;my-range=5&amp;my-hidden=">
+    <RootWebArea name="Hands-On Selenium WebDriver with Java" focusable focused url="https://bonigarcia.dev/selenium-webdriver-java/submitted-form.html?my-text=testuser&amp;my-password=&amp;my-textarea=&amp;my-readonly=Readonly+input&amp;my-select=Open+this+select+menu&amp;my-datalist=&amp;my-file=&amp;my-check=on&amp;my-radio=on&amp;my-colors=%23563d7c&amp;my-date=&amp;my-range=5&amp;my-hidden=">
       <main id=20>
         <div id=22>
           <div id=23>

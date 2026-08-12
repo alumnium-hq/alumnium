@@ -1,4 +1,4 @@
-<RootWebArea name="GitHub · Change is constant. GitHub keeps you ahead. · GitHub" id=1 focusable focused url="https://github.com/">
+<RootWebArea name="GitHub · Change is constant. GitHub keeps you ahead. · GitHub" focusable focused url="https://github.com/">
   <div id=8>
     <link id=9 focusable url="https://github.com/#start-of-content">Skip to content</link>
     <banner id=30>
@@ -140,8 +140,8 @@
       <div id=551>
         <div id=553>
           <heading id=554 level=3>
-            <div id=555>Your AI partner everywhere.</div>
-            <div id=557>Copilot is ready to work with you at each step of the software development lifecycle.</div>
+            <div>Your AI partner everywhere.</div>
+            <div>Copilot is ready to work with you at each step of the software development lifecycle.</div>
           </heading>
           <link id=561 focusable url="https://github.com/features/copilot">Explore GitHub Copilot</link>
         </div>
@@ -196,8 +196,8 @@
         <div id=682>
           <div id=683>
             <heading id=684 level=3>
-              <div id=685>Apply fixes in seconds.</div>
-              <div id=687>Spend less time debugging and more time building features with Copilot Autofix.</div>
+              <div>Apply fixes in seconds.</div>
+              <div>Spend less time debugging and more time building features with Copilot Autofix.</div>
             </heading>
             <link id=692 focusable url="https://github.com/security/advanced-security">Explore GitHub Advanced Security</link>
           </div>
@@ -209,8 +209,8 @@
           <div id=705>
             <div id=706>
               <paragraph id=707>
-                <div id=708>Security debt, solved.</div>
-                <div id=710>Leverage security campaigns and Copilot Autofix to reduce application vulnerabilities.</div>
+                <div>Security debt, solved.</div>
+                <div>Leverage security campaigns and Copilot Autofix to reduce application vulnerabilities.</div>
               </paragraph>
               <link id=714 focusable url="https://github.com/security/advanced-security/code-security">Learn about GitHub Code Security</link>
             </div>
@@ -219,8 +219,8 @@
           <div id=721>
             <div id=722>
               <paragraph id=723>
-                <div id=724>Dependencies you can depend on.</div>
-                <div id=726>Update vulnerable dependencies with supported fixes for breaking changes.</div>
+                <div>Dependencies you can depend on.</div>
+                <div>Update vulnerable dependencies with supported fixes for breaking changes.</div>
               </paragraph>
               <link id=729 focusable url="https://github.com/security/advanced-security/software-supply-chain">Learn about Dependabot</link>
             </div>
@@ -229,8 +229,8 @@
           <div id=736>
             <div id=737>
               <paragraph id=738>
-                <div id=739>Your secrets, your business.</div>
-                <div id=741>Detect, prevent, and remediate leaked secrets across your organization.</div>
+                <div>Your secrets, your business.</div>
+                <div>Detect, prevent, and remediate leaked secrets across your organization.</div>
               </paragraph>
               <link id=745 focusable url="https://github.com/security/advanced-security/secret-protection">Learn about GitHub Secret Protection</link>
             </div>
@@ -270,16 +270,16 @@
       <div id=807>
         <div id=809>
           <heading id=810 level=3>
-            <div id=811>Plan with clarity.</div>
-            <div id=813>Organize everything from high-level roadmaps to everyday tasks.</div>
+            <div>Plan with clarity.</div>
+            <div>Organize everything from high-level roadmaps to everyday tasks.</div>
           </heading>
           <link id=817 focusable url="https://github.com/features/issues">Explore GitHub Projects</link>
         </div>
         <figure id=824>
           <blockquote id=826>It helps us onboard new software engineers and get them productive right away. We have all our source code, issues, and pull requests in one place... GitHub is a complete platform that frees us from menial tasks and enables us to do our best work.</blockquote>
           <Figcaption id=835>
-            <div id=837>FABIAN FAULHABER</div>
-            <div id=840>Application manager at Mercedes-Benz</div>
+            <div id=836>FABIAN FAULHABER</div>
+            <div id=839>Application manager at Mercedes-Benz</div>
           </Figcaption>
         </figure>
       </div>
@@ -316,8 +316,8 @@
       <div id=914>
         <sectionheader id=920>
           <heading id=921 level=2>
-            <div id=923>From startups to enterprises,</div>
-            <div id=925>GitHub scales with teams of any size in any industry.</div>
+            <div>From startups to enterprises,</div>
+            <div>GitHub scales with teams of any size in any industry.</div>
           </heading>
         </sectionheader>
         <tablist id=930 orientation="horizontal">
@@ -380,8 +380,8 @@
       <heading id=1086 level=2>Footnotes</heading>
       <list id=1089>
         <listitem id=1090 level=1>
-          <ListMarker name="1." id=1091 />
-          GitHub internal customer data, 2025.
+          <div>1.</div>
+          <div>GitHub internal customer data, 2025.</div>
           <link name="Back to content GitHub internal customer data, 2025." id=1095 focusable url="https://github.com/#footnote-1-ref-0" />
         </listitem>
       </list>
