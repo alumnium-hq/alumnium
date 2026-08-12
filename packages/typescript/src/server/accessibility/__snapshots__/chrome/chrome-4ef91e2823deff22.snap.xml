@@ -1,4 +1,4 @@
-<RootWebArea name="Cloudflare: Build for the agent era" id=1 focusable focused url="https://www.cloudflare.com/">
+<RootWebArea name="Cloudflare: Build for the agent era" focusable focused url="https://www.cloudflare.com/">
   <banner id=5>
     <link name="Cloudflare logo" id=8 focusable url="https://www.cloudflare.com/">
       <image id=9 />
@@ -87,53 +87,53 @@
               <image name="Duncan Davidson" id=360 url="https://www.cloudflare.com/people/duncan-davidson.png" />
               <blockquote id=362>
                 <heading id=363 level=3>
-                  <div id=364>For</div>
-                  <div id=368>Shopify,</div>
-                  <div id=372>the</div>
-                  <div id=376>real</div>
-                  <div id=380>challenge</div>
-                  <div id=384>is</div>
-                  <div id=388>not</div>
-                  <div id=392>about</div>
-                  <div id=396>how</div>
-                  <div id=399>many</div>
-                  <div id=403>different</div>
-                  <div id=407>pieces</div>
-                  <div id=411>of</div>
-                  <div id=415>complex</div>
-                  <div id=419>technology</div>
-                  <div id=422>we</div>
-                  <div id=426>can</div>
-                  <div id=430>use</div>
-                  <div id=434>but</div>
-                  <div id=438>the</div>
-                  <div id=442>opposite.</div>
-                  <div id=446>Cloudflare</div>
-                  <div id=450>helps</div>
-                  <div id=453>us</div>
-                  <div id=457>find</div>
-                  <div id=461>a</div>
-                  <div id=465>simple</div>
-                  <div id=469>way</div>
-                  <div id=473>to</div>
-                  <div id=477>achieve</div>
-                  <div id=481>something</div>
-                  <div id=484>very</div>
-                  <div id=488>complex</div>
-                  <div id=492>that</div>
-                  <div id=496>we</div>
-                  <div id=500>can</div>
-                  <div id=504>scale</div>
-                  <div id=508>and</div>
-                  <div id=512>maintain.</div>
+                  <div>For</div>
+                  <div>Shopify,</div>
+                  <div>the</div>
+                  <div>real</div>
+                  <div>challenge</div>
+                  <div>is</div>
+                  <div>not</div>
+                  <div>about</div>
+                  <div>how</div>
+                  <div>many</div>
+                  <div>different</div>
+                  <div>pieces</div>
+                  <div>of</div>
+                  <div>complex</div>
+                  <div>technology</div>
+                  <div>we</div>
+                  <div>can</div>
+                  <div>use</div>
+                  <div>but</div>
+                  <div>the</div>
+                  <div>opposite.</div>
+                  <div>Cloudflare</div>
+                  <div>helps</div>
+                  <div>us</div>
+                  <div>find</div>
+                  <div>a</div>
+                  <div>simple</div>
+                  <div>way</div>
+                  <div>to</div>
+                  <div>achieve</div>
+                  <div>something</div>
+                  <div>very</div>
+                  <div>complex</div>
+                  <div>that</div>
+                  <div>we</div>
+                  <div>can</div>
+                  <div>scale</div>
+                  <div>and</div>
+                  <div>maintain.</div>
                 </heading>
               </blockquote>
               <paragraph id=515>
                 <strong id=516>Duncan Davidson</strong>
-                <div id=519>,</div>
-                <div id=521>VP of Developer Productivity</div>
-                <div id=523>,</div>
-                <div id=525>Shopify</div>
+                <div>,</div>
+                <div>VP of Developer Productivity</div>
+                <div>,</div>
+                <div>Shopify</div>
               </paragraph>
             </div>
           </region>
@@ -146,10 +146,10 @@
       <paragraph id=549>
         Everything needed to
         <div id=552>
-          <div id=554>build</div>
-          <div id=560>secure,</div>
-          <div id=566>performant</div>
-          <div id=572>applications</div>
+          <div id=553>build</div>
+          <div id=559>secure,</div>
+          <div id=565>performant</div>
+          <div id=571>applications</div>
         </div>
       </paragraph>
     </div>
@@ -157,58 +157,58 @@
       <div id=580>
         <heading id=581 level=3>Fighting infra with “cloud”</heading>
         <div id=586>
-          <div id=593>"Egress costs just doubled this week — caching not working at edge. Can we fix this by EOD?"</div>
-          <div id=603>STATUS: UNRESOLVED</div>
-          <div id=612>2931 Open incidents</div>
-          <div id=621>2931 Open incidents</div>
+          <div id=592>"Egress costs just doubled this week — caching not working at edge. Can we fix this by EOD?"</div>
+          <div id=602>STATUS: UNRESOLVED</div>
+          <div id=611>2931 Open incidents</div>
+          <div id=620>2931 Open incidents</div>
           <div id=626>
-            <div id=629>P0</div>
-            <div id=632>High Latency!!!!!!</div>
-            <div id=635>~150–250ms RTT per request</div>
+            <div id=628>P0</div>
+            <div id=631>High Latency!!!!!!</div>
+            <div id=634>~150–250ms RTT per request</div>
           </div>
           <div id=640>
-            <div id=643>P0</div>
-            <div id=646>High Latency!!!!!!</div>
-            <div id=649>~150–250ms RTT per request</div>
+            <div id=642>P0</div>
+            <div id=645>High Latency!!!!!!</div>
+            <div id=648>~150–250ms RTT per request</div>
           </div>
           <div id=654>
-            <div id=657>P0</div>
-            <div id=660>High Latency!!!!!!</div>
-            <div id=663>~150–250ms RTT per request</div>
+            <div id=656>P0</div>
+            <div id=659>High Latency!!!!!!</div>
+            <div id=662>~150–250ms RTT per request</div>
           </div>
           "Origin IP exposed, getting hit with direct DDoS traffic. Need to lock down ASAP."
           <div id=678>
-            <div id=681>Bandwidth usage alert</div>
-            <div id=684>You have exceeded your bandwidth limit for the month.</div>
+            <div id=680>Bandwidth usage alert</div>
+            <div id=683>You have exceeded your bandwidth limit for the month.</div>
           </div>
           <div id=690>
-            <div id=693>Bandwidth usage alert</div>
-            <div id=696>You have exceeded your bandwidth limit for the month.</div>
+            <div id=692>Bandwidth usage alert</div>
+            <div id=695>You have exceeded your bandwidth limit for the month.</div>
           </div>
           <div id=702>
-            <div id=705>Summer Intern</div>
-            <div id=708>"I fixed the errors by pushing the env file to production."</div>
+            <div id=704>Summer Intern</div>
+            <div id=707>"I fixed the errors by pushing the env file to production."</div>
           </div>
           "Cache hit ratio just tanked to 12%. Origin egress is 14× normal — this month's bill is going to be brutal."
           <div id=724>
-            <div id=728>P0</div>
-            <div id=731>Credential stuffing detected</div>
-            <div id=734>142K login attempts from 38K IPs in the last 5 minutes.</div>
+            <div id=727>P0</div>
+            <div id=730>Credential stuffing detected</div>
+            <div id=733>142K login attempts from 38K IPs in the last 5 minutes.</div>
           </div>
           <div id=740>
-            <div id=744>P0</div>
-            <div id=747>Credential stuffing detected</div>
-            <div id=750>142K login attempts from 38K IPs in the last 5 minutes.</div>
+            <div id=743>P0</div>
+            <div id=746>Credential stuffing detected</div>
+            <div id=749>142K login attempts from 38K IPs in the last 5 minutes.</div>
           </div>
           "VPN concentrator pegged at 98% — APAC engineering can't reach staging again."
           <div id=766>
-            <div id=769>Sensitive data exfiltration</div>
-            <div id=772>12 customer records pasted into a public AI tool in the last hour.</div>
+            <div id=768>Sensitive data exfiltration</div>
+            <div id=771>12 customer records pasted into a public AI tool in the last hour.</div>
           </div>
           Employee clicked phishing link. SSO session may be compromised.
           <div id=788>
-            <div id=791>MPLS circuit down</div>
-            <div id=794>Singapore ↔ Frankfurt. Carrier ETA: 4–6 hours.</div>
+            <div id=790>MPLS circuit down</div>
+            <div id=793>Singapore ↔ Frankfurt. Carrier ETA: 4–6 hours.</div>
           </div>
         </div>
       </div>
@@ -224,10 +224,10 @@
             ​
             <div id=970>
               <div id=971>
-                <div id=974>1</div>
-                <div id=978>8</div>
-                <div id=982>7</div>
-                <div id=985>​</div>
+                <div id=973>1</div>
+                <div id=977>8</div>
+                <div id=981>7</div>
+                <div id=984>​</div>
               </div>
               ​
             </div>
@@ -241,10 +241,10 @@
       <heading id=1002 level=2>
         Pay only
         <div id=1005>
-          <div id=1007>when</div>
-          <div id=1013>your</div>
-          <div id=1019>code</div>
-          <div id=1025>runs</div>
+          <div id=1006>when</div>
+          <div id=1012>your</div>
+          <div id=1018>code</div>
+          <div id=1024>runs</div>
         </div>
       </heading>
       <paragraph id=1030>(Not to keep servers warm.)</paragraph>
@@ -272,15 +272,15 @@
           </div>
           <div id=1073>
             <div id=1074>
-              <div id=1076>Visitor traffic</div>
-              <div id=1079>Your site</div>
+              <div id=1075>Visitor traffic</div>
+              <div id=1078>Your site</div>
             </div>
             <div id=1081>
-              <div id=1087>CDN</div>
-              <div id=1095>DDoS</div>
-              <div id=1103>SSL</div>
-              <div id=1111>WAF</div>
-              <div id=1119>Bot</div>
+              <div id=1086>CDN</div>
+              <div id=1094>DDoS</div>
+              <div id=1102>SSL</div>
+              <div id=1110>WAF</div>
+              <div id=1118>Bot</div>
             </div>
             Same protection at every tier — paid plans add depth
           </div>
@@ -297,14 +297,14 @@
               /month
             </div>
             <div id=1142>
-              <div id=1145>Unmetered DDoS</div>
-              <div id=1149>Universal SSL</div>
-              <div id=1153>Global CDN</div>
+              <div id=1144>Unmetered DDoS</div>
+              <div id=1148>Universal SSL</div>
+              <div id=1152>Global CDN</div>
             </div>
             <link id=1155 focusable url="https://www.cloudflare.com/plans#application-services">
-              <div id=1156>See</div>
-              <div id=1158>Free</div>
-              <div id=1160>plan</div>
+              <div>See</div>
+              <div>Free</div>
+              <div>plan</div>
             </link>
           </div>
           <div id=1162>
@@ -321,14 +321,14 @@
               or $25/mo billed monthly
             </div>
             <div id=1182>
-              <div id=1185>Image optimization</div>
-              <div id=1189>Bot protection</div>
-              <div id=1193>Ticket support</div>
+              <div id=1184>Image optimization</div>
+              <div id=1188>Bot protection</div>
+              <div id=1192>Ticket support</div>
             </div>
             <link id=1195 focusable url="https://www.cloudflare.com/plans#application-services">
-              <div id=1196>See</div>
-              <div id=1198>Pro</div>
-              <div id=1200>plan</div>
+              <div>See</div>
+              <div>Pro</div>
+              <div>plan</div>
             </link>
           </div>
           <div id=1202>
@@ -345,14 +345,14 @@
               or $250/mo billed monthly
             </div>
             <div id=1222>
-              <div id=1225>PCI DSS 4.0</div>
-              <div id=1229>100% uptime SLA</div>
-              <div id=1233>Chat support</div>
+              <div id=1224>PCI DSS 4.0</div>
+              <div id=1228>100% uptime SLA</div>
+              <div id=1232>Chat support</div>
             </div>
             <link id=1235 focusable url="https://www.cloudflare.com/plans#application-services">
-              <div id=1236>See</div>
-              <div id=1238>Business</div>
-              <div id=1240>plan</div>
+              <div>See</div>
+              <div>Business</div>
+              <div>plan</div>
             </link>
           </div>
           <div id=1242>
@@ -366,14 +366,14 @@
               Billed annually
             </div>
             <div id=1259>
-              <div id=1262>Network priority</div>
-              <div id=1266>24/7 support</div>
-              <div id=1270>Custom contracts</div>
+              <div id=1261>Network priority</div>
+              <div id=1265>24/7 support</div>
+              <div id=1269>Custom contracts</div>
             </div>
             <link id=1272 focusable url="https://www.cloudflare.com/plans#application-services">
-              <div id=1273>See</div>
-              <div id=1275>Contract</div>
-              <div id=1277>plan</div>
+              <div>See</div>
+              <div>Contract</div>
+              <div>plan</div>
             </link>
           </div>
         </div>
@@ -410,22 +410,22 @@
                 <div id=1382>
                   review-agent
                   <div id=1388>
-                    <div id=1390>scanning PRs</div>
-                    <div id=1395>179.6k tokens</div>
+                    <div id=1389>scanning PRs</div>
+                    <div id=1394>179.6k tokens</div>
                   </div>
                 </div>
                 <div id=1398>
                   test-agent
                   <div id=1404>
-                    <div id=1406>running checks</div>
-                    <div id=1411>8k tokens</div>
+                    <div id=1405>running checks</div>
+                    <div id=1410>8k tokens</div>
                   </div>
                 </div>
                 <div id=1414>
                   docs-agent
                   <div id=1420>
-                    <div id=1422>fixed documentation</div>
-                    <div id=1427>56 tokens</div>
+                    <div id=1421>fixed documentation</div>
+                    <div id=1426>56 tokens</div>
                   </div>
                 </div>
               </div>

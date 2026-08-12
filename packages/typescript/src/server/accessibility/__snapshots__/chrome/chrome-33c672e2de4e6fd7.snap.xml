@@ -1,4 +1,4 @@
-<RootWebArea name="Hands-On Selenium WebDriver with Java" id=1 focusable focused url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
+<RootWebArea name="Hands-On Selenium WebDriver with Java" focusable focused url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
   <main id=4>
     <div id=6>
       <div id=7>
@@ -39,12 +39,10 @@
         <LabelText id=62>
           Dropdown (select)
           <combobox name="Dropdown (select)" id=65 focusable hasPopup="menu">
-            <MenuListPopup id=66>
-              <option name="Open this select menu" id=68 focusable selected />
-              <option name="One" id=69 focusable />
-              <option name="Two" id=70 focusable />
-              <option name="Three" id=71 focusable />
-            </MenuListPopup>
+            <option name="Open this select menu" id=68 focusable selected />
+            <option name="One" id=69 focusable />
+            <option name="Two" id=70 focusable />
+            <option name="Three" id=71 focusable />
           </combobox>
         </LabelText>
         <LabelText id=72>

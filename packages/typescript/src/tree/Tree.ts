@@ -10,6 +10,7 @@ export namespace Tree {
     name?: string | undefined;
     attrs: NodeAttrs;
     children: Node[];
+    addressable: boolean;
     backendId?: number | undefined;
   }
 

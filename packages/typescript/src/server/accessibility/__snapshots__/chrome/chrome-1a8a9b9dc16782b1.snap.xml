@@ -1,4 +1,4 @@
-<RootWebArea name="YouTube" id=1 focusable focused url="https://www.youtube.com/">
+<RootWebArea name="YouTube" focusable focused url="https://www.youtube.com/">
   <banner id=8>
     <div id=13>
       <button name="Guide" id=15 focusable />
@@ -25,80 +25,80 @@
           </option>
           <option id=72>
             <button id=77 focusable>
-              <div id=78>lofi beats</div>
-              <div id=80>to study to</div>
+              <div>lofi beats</div>
+              <div>to study to</div>
             </button>
           </option>
           <option id=83>
             <button id=88 focusable>
-              <div id=89>lofi beats</div>
-              <div id=91>for work</div>
+              <div>lofi beats</div>
+              <div>for work</div>
             </button>
           </option>
           <option id=94>
             <button id=99 focusable>
-              <div id=100>lofi beats</div>
-              <div id=102>chill</div>
+              <div>lofi beats</div>
+              <div>chill</div>
             </button>
           </option>
           <option id=105>
             <button id=110 focusable>
-              <div id=111>lofi beats</div>
-              <div id=113>to sleep to</div>
+              <div>lofi beats</div>
+              <div>to sleep to</div>
             </button>
           </option>
           <option id=116>
             <button id=121 focusable>
-              <div id=122>lofi beats</div>
-              <div id=124>to yoyle to</div>
+              <div>lofi beats</div>
+              <div>to yoyle to</div>
             </button>
           </option>
           <option id=127>
             <button id=132 focusable>
-              <div id=133>lofi beats</div>
-              <div id=135>hip hop</div>
+              <div>lofi beats</div>
+              <div>hip hop</div>
             </button>
           </option>
           <option id=138>
             <button id=143 focusable>
-              <div id=144>lofi beats</div>
-              <div id=146>no ads</div>
+              <div>lofi beats</div>
+              <div>no ads</div>
             </button>
           </option>
           <option id=149>
             <button id=154 focusable>
-              <div id=155>lofi beats</div>
-              <div id=157>for work concentration</div>
+              <div>lofi beats</div>
+              <div>for work concentration</div>
             </button>
           </option>
           <option id=160>
             <button id=165 focusable>
-              <div id=166>lofi beats</div>
-              <div id=168>live</div>
+              <div>lofi beats</div>
+              <div>live</div>
             </button>
           </option>
           <option id=171>
             <button id=176 focusable>
-              <div id=177>lofi beats</div>
-              <div id=179>popular songs</div>
+              <div>lofi beats</div>
+              <div>popular songs</div>
             </button>
           </option>
           <option id=182>
             <button id=187 focusable>
-              <div id=188>lofi beats</div>
-              <div id=190>royalty free</div>
+              <div>lofi beats</div>
+              <div>royalty free</div>
             </button>
           </option>
           <option id=193>
             <button id=198 focusable>
-              <div id=199>lofi beats</div>
-              <div id=201>5 minutes</div>
+              <div>lofi beats</div>
+              <div>5 minutes</div>
             </button>
           </option>
           <option id=204>
             <button id=209 focusable>
-              <div id=210>lofi beats</div>
-              <div id=212>to animate to</div>
+              <div>lofi beats</div>
+              <div>to animate to</div>
             </button>
           </option>
           <button id=215 focusable>Report search predictions</button>

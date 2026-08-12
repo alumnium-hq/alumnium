@@ -1,4 +1,4 @@
-<RootWebArea name="Airbnb | Singapore – Holiday Rentals &amp; Places to Stay" id=1 focusable focused url="https://www.airbnb.com.sg/s/Singapore/homes?refinement_paths%5B%5D=%2Fhomes&amp;date_picker_type=calendar&amp;checkin=2026-08-05&amp;checkout=2026-08-06&amp;search_type=search_query">
+<RootWebArea name="Airbnb | Singapore – Holiday Rentals &amp; Places to Stay" focusable focused url="https://www.airbnb.com.sg/s/Singapore/homes?refinement_paths%5B%5D=%2Fhomes&amp;date_picker_type=calendar&amp;checkin=2026-08-05&amp;checkout=2026-08-06&amp;search_type=search_query">
   <div id=3 focusable>
     <div id=8>
       <div id=15>
@@ -12,16 +12,16 @@
                 Start your search
                 <div id=249>
                   <button id=250 focusable>
-                    <div id=252>Location</div>
-                    <div id=256>Homes in Singapore</div>
+                    <div id=251>Location</div>
+                    <div id=255>Homes in Singapore</div>
                   </button>
                   <button id=259 focusable>
-                    <div id=261>Check in / Check out</div>
-                    <div id=264>5–6 Aug</div>
+                    <div id=260>Check in / Check out</div>
+                    <div id=263>5–6 Aug</div>
                   </button>
                   <button id=267 focusable>
-                    <div id=269>Guests</div>
-                    <div id=273>Add guests</div>
+                    <div id=268>Guests</div>
+                    <div id=272>Add guests</div>
                   </button>
                 </div>
               </search>
@@ -77,17 +77,17 @@
                     <div id=416 focusable />
                   </group>
                   <div id=427>
-                    <div id=429>Shared room in Singapore</div>
-                    <div id=433>Your Capsule Pod in Singapore (FP-API-401)</div>
+                    <div id=428>Shared room in Singapore</div>
+                    <div id=432>Your Capsule Pod in Singapore (FP-API-401)</div>
                     <div id=435>
-                      <div id=437>1 bedroom</div>
-                      <div id=440>,</div>
-                      <div id=443>1 bed</div>
-                      <div id=446>,</div>
-                      <div id=449>4 shared bathrooms</div>
+                      <div id=436>1 bedroom</div>
+                      <div id=439>,</div>
+                      <div id=442>1 bed</div>
+                      <div id=445>,</div>
+                      <div id=448>4 shared bathrooms</div>
                     </div>
-                    <div id=463>$35 SGD for 1 night</div>
-                    <div id=468>4.78 out of 5 average rating, 693 reviews</div>
+                    <div id=462>$35 SGD for 1 night</div>
+                    <div id=467>4.78 out of 5 average rating, 693 reviews</div>
                   </div>
                 </div>
               </group>
@@ -103,15 +103,15 @@
                     <div id=509 focusable />
                   </group>
                   <div id=520>
-                    <div id=522>Shared room in Singapore</div>
-                    <div id=526>Your Female Pod In SG(FP-A-301B)</div>
+                    <div id=521>Shared room in Singapore</div>
+                    <div id=525>Your Female Pod In SG(FP-A-301B)</div>
                     <div id=528>
-                      <div id=530>22 beds</div>
-                      <div id=533>,</div>
-                      <div id=536>13 shared bathrooms</div>
+                      <div id=529>22 beds</div>
+                      <div id=532>,</div>
+                      <div id=535>13 shared bathrooms</div>
                     </div>
-                    <div id=550>$38 SGD for 1 night</div>
-                    <div id=555>4.73 out of 5 average rating, 230 reviews</div>
+                    <div id=549>$38 SGD for 1 night</div>
+                    <div id=554>4.73 out of 5 average rating, 230 reviews</div>
                   </div>
                 </div>
               </group>
@@ -130,8 +130,8 @@
                     <div id=600 focusable />
                   </group>
                   <div id=611>
-                    <div id=613>Jyu Capsule Hotel</div>
-                    <div id=617>Hotel in Singapore</div>
+                    <div id=612>Jyu Capsule Hotel</div>
+                    <div id=616>Hotel in Singapore</div>
                     <div id=619>
                       <button id=626 focusable hasPopup="dialog">$61 SGD for 1 night</button>
                       +$9 SGD Airbnb credit
@@ -152,15 +152,15 @@
                     <div id=680 focusable />
                   </group>
                   <div id=691>
-                    <div id=693>Shared room in Singapore</div>
-                    <div id=697>Capsule in the heart of City, Singapore Riverside</div>
+                    <div id=692>Shared room in Singapore</div>
+                    <div id=696>Capsule in the heart of City, Singapore Riverside</div>
                     <div id=701>
-                      <div id=703>1 bed</div>
-                      <div id=706>,</div>
-                      <div id=709>1 shared bathroom</div>
+                      <div id=702>1 bed</div>
+                      <div id=705>,</div>
+                      <div id=708>1 shared bathroom</div>
                     </div>
-                    <div id=723>$44 SGD for 1 night</div>
-                    <div id=728>4.62 out of 5 average rating, 61 reviews</div>
+                    <div id=722>$44 SGD for 1 night</div>
+                    <div id=727>4.62 out of 5 average rating, 61 reviews</div>
                   </div>
                 </div>
               </group>
@@ -179,8 +179,8 @@
                     <div id=773 focusable />
                   </group>
                   <div id=784>
-                    <div id=786>Hotel 81 Princess</div>
-                    <div id=790>Hotel in Singapore</div>
+                    <div id=785>Hotel 81 Princess</div>
+                    <div id=789>Hotel in Singapore</div>
                     <div id=792>
                       <button id=799 focusable hasPopup="dialog">$84 SGD for 1 night</button>
                       +$12 SGD Airbnb credit
@@ -201,14 +201,14 @@
                     <div id=853 focusable />
                   </group>
                   <div id=864>
-                    <div id=866>Serviced apartment in Singapore</div>
-                    <div id=870>New City Cozy Studio/Balcony@ Somerset/OrchardArea</div>
+                    <div id=865>Serviced apartment in Singapore</div>
+                    <div id=869>New City Cozy Studio/Balcony@ Somerset/OrchardArea</div>
                     <div id=874>
-                      <div id=876>1 bedroom</div>
-                      <div id=879>,</div>
-                      <div id=882>1 queen bed</div>
-                      <div id=885>,</div>
-                      <div id=888>1 bathroom</div>
+                      <div id=875>1 bedroom</div>
+                      <div id=878>,</div>
+                      <div id=881>1 queen bed</div>
+                      <div id=884>,</div>
+                      <div id=887>1 bathroom</div>
                     </div>
                     $228 SGD for 1 night
                   </div>
@@ -242,8 +242,8 @@
                             <div id=973 focusable />
                           </group>
                           <div id=984>
-                            <div id=986>The Aurum Royal</div>
-                            <div id=990>Hotel in Singapore</div>
+                            <div id=985>The Aurum Royal</div>
+                            <div id=989>Hotel in Singapore</div>
                             <div id=992>
                               <button id=999 focusable hasPopup="dialog">$230 SGD for 1 night</button>
                               +$34 SGD Airbnb credit
@@ -267,8 +267,8 @@
                             <div id=1058 focusable />
                           </group>
                           <div id=1069>
-                            <div id=1071>Check Inn Hotel</div>
-                            <div id=1075>Hotel in Singapore</div>
+                            <div id=1070>Check Inn Hotel</div>
+                            <div id=1074>Hotel in Singapore</div>
                             <div id=1077>
                               <button id=1084 focusable hasPopup="dialog">$115 SGD for 1 night</button>
                               +$17 SGD Airbnb credit
@@ -298,15 +298,15 @@
                     <div id=1392 focusable />
                   </group>
                   <div id=1403>
-                    <div id=1405>Boutique hotel in Tanjong Pagar</div>
-                    <div id=1409>Single room, shared bathroom in Tanjong Pagar</div>
+                    <div id=1404>Boutique hotel in Tanjong Pagar</div>
+                    <div id=1408>Single room, shared bathroom in Tanjong Pagar</div>
                     <div id=1413>
-                      <div id=1415>1 single bed</div>
-                      <div id=1418>,</div>
-                      <div id=1421>1 bathroom</div>
+                      <div id=1414>1 single bed</div>
+                      <div id=1417>,</div>
+                      <div id=1420>1 bathroom</div>
                     </div>
-                    <div id=1435>$88 SGD for 1 night</div>
-                    <div id=1440>4.78 out of 5 average rating, 1504 reviews</div>
+                    <div id=1434>$88 SGD for 1 night</div>
+                    <div id=1439>4.78 out of 5 average rating, 1504 reviews</div>
                   </div>
                 </div>
               </group>
@@ -325,17 +325,17 @@
                     <div id=1484 focusable />
                   </group>
                   <div id=1495>
-                    <div id=1497>Hotel in Singapore</div>
-                    <div id=1501>Double Room,Window,Short Overnight,11hours:8PM-7AM</div>
+                    <div id=1496>Hotel in Singapore</div>
+                    <div id=1500>Double Room,Window,Short Overnight,11hours:8PM-7AM</div>
                     <div id=1505>
-                      <div id=1507>1 bedroom</div>
-                      <div id=1510>,</div>
-                      <div id=1513>1 bed</div>
-                      <div id=1516>,</div>
-                      <div id=1519>1 bathroom</div>
+                      <div id=1506>1 bedroom</div>
+                      <div id=1509>,</div>
+                      <div id=1512>1 bed</div>
+                      <div id=1515>,</div>
+                      <div id=1518>1 bathroom</div>
                     </div>
-                    <div id=1533>$120 SGD for 1 night</div>
-                    <div id=1538>4.95 out of 5 average rating, 20 reviews</div>
+                    <div id=1532>$120 SGD for 1 night</div>
+                    <div id=1537>4.95 out of 5 average rating, 20 reviews</div>
                   </div>
                 </div>
               </group>
@@ -351,14 +351,14 @@
                     <div id=1579 focusable />
                   </group>
                   <div id=1590>
-                    <div id=1592>Serviced apartment in Singapore</div>
-                    <div id=1596>New City Compact Loft Studio-Somerset/Orch. Area</div>
+                    <div id=1591>Serviced apartment in Singapore</div>
+                    <div id=1595>New City Compact Loft Studio-Somerset/Orch. Area</div>
                     <div id=1600>
-                      <div id=1602>1 bedroom</div>
-                      <div id=1605>,</div>
-                      <div id=1608>1 queen bed</div>
-                      <div id=1611>,</div>
-                      <div id=1614>1 bathroom</div>
+                      <div id=1601>1 bedroom</div>
+                      <div id=1604>,</div>
+                      <div id=1607>1 queen bed</div>
+                      <div id=1610>,</div>
+                      <div id=1613>1 bathroom</div>
                     </div>
                     <div name="$176 SGD for 1 night, originally $214 SGD" id=1620 />
                     4.6 out of 5 average rating, 25 reviews
@@ -377,14 +377,14 @@
                     <div id=1670 focusable />
                   </group>
                   <div id=1681>
-                    <div id=1683>Serviced apartment in Singapore</div>
-                    <div id=1687>New Cozy Compact Loft Studio-Somerset/Orchard Area</div>
+                    <div id=1682>Serviced apartment in Singapore</div>
+                    <div id=1686>New Cozy Compact Loft Studio-Somerset/Orchard Area</div>
                     <div id=1691>
-                      <div id=1693>1 bedroom</div>
-                      <div id=1696>,</div>
-                      <div id=1699>1 queen bed</div>
-                      <div id=1702>,</div>
-                      <div id=1705>1 bathroom</div>
+                      <div id=1692>1 bedroom</div>
+                      <div id=1695>,</div>
+                      <div id=1698>1 queen bed</div>
+                      <div id=1701>,</div>
+                      <div id=1704>1 bathroom</div>
                     </div>
                     <div name="$150 SGD for 1 night, originally $164 SGD" id=1711 />
                     4.4 out of 5 average rating, 5 reviews
@@ -406,9 +406,9 @@
                     <div id=1764 focusable />
                   </group>
                   <div id=1773>
-                    <div id=1775>Shared room in Singapore</div>
-                    <div id=1779>8-Bed Mixed Dormitory Room near MRT |Quiet &amp; Clean</div>
-                    <div id=1786>1 bed</div>
+                    <div id=1774>Shared room in Singapore</div>
+                    <div id=1778>8-Bed Mixed Dormitory Room near MRT |Quiet &amp; Clean</div>
+                    <div id=1785>1 bed</div>
                     <div name="$46 SGD for 1 night, originally $60 SGD" id=1792 />
                     4.83 out of 5 average rating, 30 reviews
                   </div>
@@ -429,15 +429,15 @@
                     <div id=1845 focusable />
                   </group>
                   <div id=1854>
-                    <div id=1856>Boutique hotel in Chinatown</div>
-                    <div id=1860>Single room, shared bathroom in Chinatown</div>
+                    <div id=1855>Boutique hotel in Chinatown</div>
+                    <div id=1859>Single room, shared bathroom in Chinatown</div>
                     <div id=1862>
-                      <div id=1864>1 single bed</div>
-                      <div id=1867>,</div>
-                      <div id=1870>1 bathroom</div>
+                      <div id=1863>1 single bed</div>
+                      <div id=1866>,</div>
+                      <div id=1869>1 bathroom</div>
                     </div>
-                    <div id=1884>$85 SGD for 1 night</div>
-                    <div id=1889>4.78 out of 5 average rating, 904 reviews</div>
+                    <div id=1883>$85 SGD for 1 night</div>
+                    <div id=1888>4.78 out of 5 average rating, 904 reviews</div>
                   </div>
                 </div>
               </group>
@@ -453,17 +453,17 @@
                     <div id=1930 focusable />
                   </group>
                   <div id=1939>
-                    <div id=1941>Serviced apartment in Singapore</div>
-                    <div id=1945>New Cozy Studio w Balcony @ Somerset/Orchard Area</div>
+                    <div id=1940>Serviced apartment in Singapore</div>
+                    <div id=1944>New Cozy Studio w Balcony @ Somerset/Orchard Area</div>
                     <div id=1949>
-                      <div id=1951>1 bedroom</div>
-                      <div id=1954>,</div>
-                      <div id=1957>1 queen bed</div>
-                      <div id=1960>,</div>
-                      <div id=1963>1 bathroom</div>
+                      <div id=1950>1 bedroom</div>
+                      <div id=1953>,</div>
+                      <div id=1956>1 queen bed</div>
+                      <div id=1959>,</div>
+                      <div id=1962>1 bathroom</div>
                     </div>
-                    <div id=1977>$238 SGD for 1 night</div>
-                    <div id=1982>4.75 out of 5 average rating, 8 reviews</div>
+                    <div id=1976>$238 SGD for 1 night</div>
+                    <div id=1981>4.75 out of 5 average rating, 8 reviews</div>
                   </div>
                 </div>
               </group>
@@ -482,17 +482,17 @@
                     <div id=2026 focusable />
                   </group>
                   <div id=2035>
-                    <div id=2037>Hotel in Singapore</div>
-                    <div id=2041>Single Cabin Pod w Shared Bathroom (Cloudbeds)</div>
+                    <div id=2036>Hotel in Singapore</div>
+                    <div id=2040>Single Cabin Pod w Shared Bathroom (Cloudbeds)</div>
                     <div id=2045>
-                      <div id=2047>1 bedroom</div>
-                      <div id=2050>,</div>
-                      <div id=2053>1 bed</div>
-                      <div id=2056>,</div>
-                      <div id=2059>5 bathrooms</div>
+                      <div id=2046>1 bedroom</div>
+                      <div id=2049>,</div>
+                      <div id=2052>1 bed</div>
+                      <div id=2055>,</div>
+                      <div id=2058>5 bathrooms</div>
                     </div>
-                    <div id=2073>$76 SGD for 1 night</div>
-                    <div id=2078>4.87 out of 5 average rating, 115 reviews</div>
+                    <div id=2072>$76 SGD for 1 night</div>
+                    <div id=2077>4.87 out of 5 average rating, 115 reviews</div>
                   </div>
                 </div>
               </group>
@@ -508,17 +508,17 @@
                     <div id=2119 focusable />
                   </group>
                   <div id=2128>
-                    <div id=2130>Shared room in Singapore</div>
-                    <div id=2134>Instant Single capsule mix Dorm</div>
+                    <div id=2129>Shared room in Singapore</div>
+                    <div id=2133>Instant Single capsule mix Dorm</div>
                     <div id=2136>
-                      <div id=2138>1 bedroom</div>
-                      <div id=2141>,</div>
-                      <div id=2144>6 beds</div>
-                      <div id=2147>,</div>
-                      <div id=2150>4 shared bathrooms</div>
+                      <div id=2137>1 bedroom</div>
+                      <div id=2140>,</div>
+                      <div id=2143>6 beds</div>
+                      <div id=2146>,</div>
+                      <div id=2149>4 shared bathrooms</div>
                     </div>
-                    <div id=2164>$40 SGD for 1 night</div>
-                    <div id=2169>4.6 out of 5 average rating, 102 reviews</div>
+                    <div id=2163>$40 SGD for 1 night</div>
+                    <div id=2168>4.6 out of 5 average rating, 102 reviews</div>
                   </div>
                 </div>
               </group>
@@ -537,8 +537,8 @@
                     <div id=2214 focusable />
                   </group>
                   <div id=2222>
-                    <div id=2224>Hotel 81 Selegie</div>
-                    <div id=2228>Hotel in Singapore</div>
+                    <div id=2223>Hotel 81 Selegie</div>
+                    <div id=2227>Hotel in Singapore</div>
                     <div id=2230>
                       <button id=2237 focusable hasPopup="dialog">$78 SGD for 1 night</button>
                       +$11 SGD Airbnb credit
@@ -559,17 +559,17 @@
                     <div id=2291 focusable />
                   </group>
                   <div id=2300>
-                    <div id=2302>Serviced apartment in Singapore</div>
-                    <div id=2306>New Cozy Deluxe Studio/Balcony-Somerset/City Area</div>
+                    <div id=2301>Serviced apartment in Singapore</div>
+                    <div id=2305>New Cozy Deluxe Studio/Balcony-Somerset/City Area</div>
                     <div id=2310>
-                      <div id=2312>1 bedroom</div>
-                      <div id=2315>,</div>
-                      <div id=2318>1 queen bed</div>
-                      <div id=2321>,</div>
-                      <div id=2324>1 bathroom</div>
+                      <div id=2311>1 bedroom</div>
+                      <div id=2314>,</div>
+                      <div id=2317>1 queen bed</div>
+                      <div id=2320>,</div>
+                      <div id=2323>1 bathroom</div>
                     </div>
-                    <div id=2338>$238 SGD for 1 night</div>
-                    <div id=2343>4.5 out of 5 average rating, 8 reviews</div>
+                    <div id=2337>$238 SGD for 1 night</div>
+                    <div id=2342>4.5 out of 5 average rating, 8 reviews</div>
                   </div>
                 </div>
               </group>
@@ -585,17 +585,17 @@
                     <div id=2384 focusable />
                   </group>
                   <div id=2393>
-                    <div id=2395>Serviced apartment in Singapore</div>
-                    <div id=2399>New Cozy Studio Apt w WIFI@ Somerset/Orchard Area</div>
+                    <div id=2394>Serviced apartment in Singapore</div>
+                    <div id=2398>New Cozy Studio Apt w WIFI@ Somerset/Orchard Area</div>
                     <div id=2403>
-                      <div id=2405>1 bedroom</div>
-                      <div id=2408>,</div>
-                      <div id=2411>1 queen bed</div>
-                      <div id=2414>,</div>
-                      <div id=2417>1 bathroom</div>
+                      <div id=2404>1 bedroom</div>
+                      <div id=2407>,</div>
+                      <div id=2410>1 queen bed</div>
+                      <div id=2413>,</div>
+                      <div id=2416>1 bathroom</div>
                     </div>
-                    <div id=2431>$249 SGD for 1 night</div>
-                    <div id=2436>4.68 out of 5 average rating, 19 reviews</div>
+                    <div id=2430>$249 SGD for 1 night</div>
+                    <div id=2435>4.68 out of 5 average rating, 19 reviews</div>
                   </div>
                 </div>
               </group>
@@ -779,8 +779,8 @@
                 <div id=3085>
                   <button name="Choose a language" id=3087 focusable>English (SG)</button>
                   <button name="Choose a currency" id=3091 focusable>
-                    <div id=3094>$</div>
-                    <div id=3097>SGD</div>
+                    <div id=3093>$</div>
+                    <div id=3096>SGD</div>
                   </button>
                 </div>
                 <list id=3100>
@@ -810,15 +810,15 @@
       <sectionfooter id=3141>
         <button id=3142 focusable>Browse hotels</button>
         <paragraph id=3145>
-          <div id=3147>Excludes fees &amp; taxes</div>
-          <div id=3149>·</div>
-          <div id=3151>Valid for 1 year</div>
-          <div id=3153>·</div>
+          <div>Excludes fees &amp; taxes</div>
+          <div>·</div>
+          <div>Valid for 1 year</div>
+          <div>·</div>
           <link id=3155 focusable url="https://www.airbnb.com.sg/help/article/4132">Terms apply</link>
         </paragraph>
       </sectionfooter>
       <div id=3158 />
     </dialog>
   </div>
-  <RootWebArea id=3216 focusable url="about:blank" />
+  <RootWebArea focusable url="about:blank" />
 </RootWebArea>

@@ -1,10 +1,10 @@
-<RootWebArea name="Cross-Origin Test" id=1 focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
+<RootWebArea name="Cross-Origin Test" focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
   <heading id=4 level=1>Main Page</heading>
   <paragraph id=7>This page embeds a real cross-origin iframe.</paragraph>
   <button id=10 focusable>Main Page Button</button>
   <heading id=13 level=2>Cross-Origin Iframe Below:</heading>
   <Iframe id=16>
-    <RootWebArea name="Hands-On Selenium WebDriver with Java" id=17 focusable url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
+    <RootWebArea name="Hands-On Selenium WebDriver with Java" focusable url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
       <main id=20>
         <div id=22>
           <div id=23>
@@ -45,12 +45,10 @@
             <LabelText id=78>
               Dropdown (select)
               <combobox name="Dropdown (select)" id=81 focusable hasPopup="menu">
-                <MenuListPopup id=82>
-                  <option name="Open this select menu" id=84 focusable selected />
-                  <option name="One" id=85 focusable />
-                  <option name="Two" id=86 focusable />
-                  <option name="Three" id=87 focusable />
-                </MenuListPopup>
+                <option name="Open this select menu" id=84 focusable selected />
+                <option name="One" id=85 focusable />
+                <option name="Two" id=86 focusable />
+                <option name="Three" id=87 focusable />
               </combobox>
             </LabelText>
             <LabelText id=88>

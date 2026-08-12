@@ -1,4 +1,4 @@
-<RootWebArea name="Shadow DOM Test Page" id=1 focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/shadow_dom.html">
+<RootWebArea name="Shadow DOM Test Page" focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/shadow_dom.html">
   <heading id=4 level=1>Shadow DOM Test Page</heading>
   <paragraph id=7>This page contains Shadow DOM elements for testing Alumni support.</paragraph>
   <div id=10>

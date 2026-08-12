@@ -6,6 +6,7 @@ import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTr
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { lit } from "smollit";
+import { Xml } from "../../xml/Xml.ts";
 
 describe(ServerChromiumAccessibilityTree, () => {
   describe("toXml", () => {
@@ -13,7 +14,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       const tree = await basicChromiumTree();
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
-        "<RootWebArea name="TodoMVC: React" id=1 focusable>
+        "<RootWebArea name="TodoMVC: React" focusable>
           <div id=4>
             <div id=5>
               <heading id=6 level=1>todos</heading>
@@ -26,8 +27,8 @@ describe(ServerChromiumAccessibilityTree, () => {
               <div id=15>
                 <checkbox id=16 focusable />
                 <LabelText id=17>
-                  <div id=19>\\u276f</div>
-                  <div id=20>Toggle All Input</div>
+                  <div id=18>\\u276f</div>
+                  <div>Toggle All Input</div>
                 </LabelText>
               </div>
               <list id=21>
@@ -151,8 +152,8 @@ describe(ServerChromiumAccessibilityTree, () => {
           <div id=2>
             <checkbox name="❯ Toggle All Input" id=3 focusable focused checked />
             <div id=4>
-              <div id=6>❯</div>
-              <div id=8>Toggle All Input</div>
+              <div id=5>❯</div>
+              <div>Toggle All Input</div>
             </div>
           </div>
           <list id=10>
@@ -187,6 +188,92 @@ describe(ServerChromiumAccessibilityTree, () => {
       );
     });
 
+    it("merges backend-backed StaticText into its mutable parent", () => {
+      const tree = new ServerChromiumAccessibilityTree(lit`
+        <paragraph raw_id=10 backendDOMNodeId=20 mutable>
+          <StaticText raw_id=11 backendDOMNodeId=21 mutable="false" name="Text" />
+        </paragraph>
+      `);
+
+      const xml = tree.toXml();
+      expect(xml).toBe("<paragraph id=1>Text</paragraph>");
+      expectVisibleMappings(tree, xml, { 1: 10 });
+    });
+
+    it("merges backend-less StaticText into its mutable parent", () => {
+      const tree = new ServerChromiumAccessibilityTree(lit`
+        <paragraph raw_id=10 backendDOMNodeId=20 mutable>
+          <StaticText raw_id=11 mutable="false" name="Text" />
+        </paragraph>
+      `);
+
+      const xml = tree.toXml();
+      expect(xml).toBe("<paragraph id=1>Text</paragraph>");
+      expectVisibleMappings(tree, xml, { 1: 10 });
+    });
+
+    it("retains a document root without an addressable ID", () => {
+      const tree = new ServerChromiumAccessibilityTree(lit`
+        <RootWebArea raw_id=10 backendDOMNodeId=20 mutable="false" focusable focused url="about:blank" />
+      `);
+
+      const xml = tree.toXml();
+      expect(xml).toBe('<RootWebArea focusable focused url="about:blank" />');
+      expectVisibleMappings(tree, xml, {});
+    });
+
+    it("merges an editable user-agent shadow child into its textbox", () => {
+      const tree = new ServerChromiumAccessibilityTree(lit`
+        <textbox raw_id=10 backendDOMNodeId=20 mutable editable="plaintext" settable>
+          <generic raw_id=11 backendDOMNodeId=21 mutable="false" editable="plaintext">
+            <StaticText raw_id=12 backendDOMNodeId=22 mutable="false" name="Text" editable="plaintext" />
+          </generic>
+        </textbox>
+      `);
+
+      const xml = tree.toXml();
+      expect(xml).toBe(
+        '<textbox id=1 editable="plaintext" settable>Text</textbox>',
+      );
+      expectVisibleMappings(tree, xml, { 1: 10 });
+    });
+
+    it("unwraps an unaddressable user-agent MenuListPopup", () => {
+      const tree = new ServerChromiumAccessibilityTree(lit`
+        <combobox raw_id=10 backendDOMNodeId=20 mutable focusable hasPopup="menu">
+          <MenuListPopup raw_id=11 backendDOMNodeId=21 mutable="false">
+            <option raw_id=12 backendDOMNodeId=22 mutable name="One" focusable />
+          </MenuListPopup>
+        </combobox>
+      `);
+
+      const xml = tree.toXml();
+      expect(xml).toBe(lit`
+        <combobox id=1 focusable hasPopup="menu">
+          <option name="One" id=3 focusable />
+        </combobox>
+      `);
+      expectVisibleMappings(tree, xml, { 1: 10, 3: 12 });
+    });
+
+    it("merges an unaddressable pseudo ListMarker as ID-less text", () => {
+      const tree = new ServerChromiumAccessibilityTree(lit`
+        <listitem raw_id=10 backendDOMNodeId=20 mutable level=1>
+          <ListMarker raw_id=11 backendDOMNodeId=21 mutable="false" name="1. " />
+          <StaticText raw_id=12 backendDOMNodeId=22 mutable="false" name="Text" />
+        </listitem>
+      `);
+
+      const xml = tree.toXml();
+      expect(xml).toBe(lit`
+        <listitem id=1 level=1>
+          <div>1.</div>
+          <div>Text</div>
+        </listitem>
+      `);
+      expectVisibleMappings(tree, xml, { 1: 10 });
+    });
+
     it("preserves an element inside text-only web-area borders", () => {
       const rawXml = lit`
         <Iframe raw_id=14 backendDOMNodeId=15 nodeId="f1:15">
@@ -207,7 +294,7 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
         "<Iframe id=1>
-          <RootWebArea id=2 focusable url="https://the-internet.herokuapp.com/frame_middle">
+          <RootWebArea focusable url="https://the-internet.herokuapp.com/frame_middle">
             <div id=5>MIDDLE</div>
           </RootWebArea>
         </Iframe>"
@@ -265,7 +352,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       const tree = new ServerChromiumAccessibilityTree(rawXml);
 
       expect(tree.toXml()).toBe(lit`
-        <RootWebArea name="Search" id=1>
+        <RootWebArea name="Search">
           <combobox name="Search" id=2 focusable editable="plaintext" settable />
         </RootWebArea>
       `);
@@ -446,7 +533,7 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       const xml = tree.toXml();
       expect(xml).toMatchInlineSnapshot(`
-        "<RootWebArea name="YouTube" id=1 focusable url="https://www.youtube.com/">
+        "<RootWebArea name="YouTube" focusable url="https://www.youtube.com/">
           <banner id=8>
             <button name="Guide" id=15 focusable pressed />
             <div id=22>
@@ -495,6 +582,26 @@ describe(ServerChromiumAccessibilityTree, () => {
       );
     }
   });
+
+  describe("visible ID audit", () => {
+    const fixturesPath = new URL(
+      "../../../tests/unit/fixtures/tree/web/",
+      import.meta.url,
+    );
+    const fixtureNames = readdirSync(fixturesPath)
+      .filter((name) => name.startsWith("chrome-") && name.endsWith(".xml"))
+      .sort();
+
+    it.for(fixtureNames)("%s", async (fixtureName) => {
+      const rawXml = await fs.readFile(
+        new URL(fixtureName, fixturesPath),
+        "utf-8",
+      );
+      const tree = new ServerChromiumAccessibilityTree(rawXml);
+
+      expectInvalidVisibleMappings(tree, rawXml, tree.toXml());
+    });
+  });
 });
 
 async function basicChromiumTree(): Promise<ServerChromiumAccessibilityTree> {
@@ -505,4 +612,78 @@ async function basicChromiumTree(): Promise<ServerChromiumAccessibilityTree> {
   const json = JSON.parse(await fs.readFile(path, "utf-8"));
   const clientAccessibilityTree = new ClientChromiumAccessibilityTree(json);
   return new ServerChromiumAccessibilityTree(clientAccessibilityTree.toStr());
+}
+
+function expectVisibleMappings(
+  tree: ServerChromiumAccessibilityTree,
+  xml: string,
+  expected: Record<number, number>,
+): void {
+  const mappings: Record<number, number> = {};
+  for (const root of Xml.parseAnyRootChildren(xml)) collect(root);
+  expect(mappings).toEqual(expected);
+
+  function collect(node: Xml.Node): void {
+    const tag = Xml.nodeAsTag(node);
+    if (!tag) return;
+    const id = tag.attribs.id;
+    if (id) mappings[+id] = tree.getRawId(id);
+    for (const child of tag.children) collect(child);
+  }
+}
+
+function expectInvalidVisibleMappings(
+  tree: ServerChromiumAccessibilityTree,
+  rawXml: string,
+  outputXml: string,
+): void {
+  const rawTags: Record<number, Xml.Tag> = {};
+  for (const root of Xml.parseAnyRootChildren(rawXml)) collectRaw(root);
+
+  const invalid: string[] = [];
+  const visibleIds = new Set<string>();
+  for (const root of Xml.parseAnyRootChildren(outputXml)) collectOutput(root);
+  expect(invalid).toEqual([]);
+
+  function collectRaw(node: Xml.Node): void {
+    const tag = Xml.nodeAsTag(node);
+    if (!tag) return;
+    const rawId = tag.attribs.raw_id;
+    if (rawId) rawTags[+rawId] = tag;
+    for (const child of tag.children) collectRaw(child);
+  }
+
+  function collectOutput(node: Xml.Node): void {
+    const tag = Xml.nodeAsTag(node);
+    if (!tag) return;
+    const id = tag.attribs.id;
+    if (id) {
+      if (visibleIds.has(id)) invalid.push(`duplicate visible id=${id}`);
+      visibleIds.add(id);
+      const rawId = tree.getRawId(id);
+      const rawTag = rawTags[rawId];
+      if (!rawTag) invalid.push(`id=${id} maps to missing raw_id=${rawId}`);
+      else if (!rawTag.attribs.backendDOMNodeId)
+        invalid.push(
+          `id=${id} maps to backend-less ${rawTag.tagName} raw_id=${rawId}`,
+        );
+      else if (rawTag.attribs.mutable && rawTag.attribs.mutable !== "true")
+        invalid.push(
+          `id=${id} maps to unaddressable ${rawTag.tagName} raw_id=${rawId}`,
+        );
+      else if (
+        [
+          "InlineTextBox",
+          "ListMarker",
+          "MenuListPopup",
+          "RootWebArea",
+          "StaticText",
+        ].includes(rawTag.tagName)
+      )
+        invalid.push(
+          `id=${id} maps to unsupported ${rawTag.tagName} raw_id=${rawId}`,
+        );
+    }
+    for (const child of tag.children) collectOutput(child);
+  }
 }

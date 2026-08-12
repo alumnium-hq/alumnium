@@ -100,6 +100,7 @@ export abstract class BaseServerAccessibilityTree {
       role,
       name: this.parseName(role, xmlTag),
       ignored: this.parseIgnored(xmlTag),
+      addressable: this.parseAddressable(xmlTag),
       attrs,
       children,
     };
@@ -132,6 +133,10 @@ export abstract class BaseServerAccessibilityTree {
     // An element is considered "ignored" if it's not accessible.
     // This aligns with ARIA principles where accessibility is key.
     return xmlTag?.attribs.ignored === "true";
+  }
+
+  protected parseAddressable(_xmlTag: Xml.Tag): boolean {
+    return true;
   }
 
   //#endregion
@@ -178,6 +183,8 @@ export abstract class BaseServerAccessibilityTree {
 
   protected ignoredRoles = new Set<string>();
 
+  protected unwrappedUnaddressableRoles = new Set<string>();
+
   protected redundantTextAttrs = new Set(["name", "label"]);
 
   protected preserveNameRoles = new Set<string>();
@@ -214,6 +221,12 @@ export abstract class BaseServerAccessibilityTree {
 
   #textPromotedTags = new WeakSet<Xml.Tag>();
 
+  #unaddressableTags = new WeakSet<Xml.Tag>();
+
+  protected isRenderedAddressable(xmlTag: Xml.Tag): boolean {
+    return !this.#unaddressableTags.has(xmlTag);
+  }
+
   #isGenericAttr(attrName: string): boolean {
     return this.genericAttrs.has(attrName);
   }
@@ -237,7 +250,7 @@ export abstract class BaseServerAccessibilityTree {
     if (this.inlineTextRoles.has(role) && xmlParent) {
       if (name.trim()) {
         const text = Xml.text(name);
-        if (!excludeAttrs.has("id"))
+        if (!excludeAttrs.has("id") && node.addressable)
           this.#sourceIdsByRenderedNode.set(text, node.id);
         xmlParent.children.push(text);
       }
@@ -246,10 +259,12 @@ export abstract class BaseServerAccessibilityTree {
 
     const isGeneric = this.isGenericRole(role);
     const xmlTag = Xml.tag(role);
+    if (!node.addressable) this.#unaddressableTags.add(xmlTag);
 
     if (!excludeAttrs.has("name") && name) xmlTag.attribs.name = name;
 
-    if (!excludeAttrs.has("id")) xmlTag.attribs.id = String(node.id);
+    if (!excludeAttrs.has("id") && node.addressable)
+      xmlTag.attribs.id = String(node.id);
 
     for (const [attrName, attrValue] of Object.entries(node.attrs)) {
       if (!excludeAttrs.has(attrName)) xmlTag.attribs[attrName] = attrValue;
@@ -282,6 +297,13 @@ export abstract class BaseServerAccessibilityTree {
 
     const hasNonGenericAttrs = this.#hasNonGenericAttrs(xmlTag);
 
+    if (!node.addressable && this.unwrappedUnaddressableRoles.has(role)) {
+      const child = xmlTag.children[0];
+      if (child) this.#transferSourceId(xmlTag, child);
+      xmlParent.children.push(...xmlTag.children);
+      return null;
+    }
+
     if (isGeneric) {
       if (!xmlTag.children.length && !hasNonGenericAttrs) return null;
 
@@ -293,6 +315,7 @@ export abstract class BaseServerAccessibilityTree {
       ) {
         const child = xmlTag.children[0];
         always(child);
+        this.#transferSourceId(xmlTag, child);
         xmlParent.children.push(child);
         return null;
       }
@@ -353,12 +376,7 @@ export abstract class BaseServerAccessibilityTree {
         return [xmlTag];
 
       const child = xmlTag.children[0];
-      if (
-        child &&
-        xmlTag.attribs.id &&
-        !this.#sourceIdsByRenderedNode.has(child)
-      )
-        this.#sourceIdsByRenderedNode.set(child, xmlTag.attribs.id);
+      if (child) this.#transferSourceId(xmlTag, child);
       return xmlTag.children;
     });
 
@@ -374,9 +392,13 @@ export abstract class BaseServerAccessibilityTree {
       if (!hasAdjacentText) return [child];
 
       const id = this.#sourceIdsByRenderedNode.get(child);
-      if (!id) return [child];
-      return [Xml.tag("generic", { id: String(id) }, [text])];
+      return [Xml.tag("generic", id ? { id: String(id) } : undefined, [text])];
     });
+  }
+
+  #transferSourceId(xmlTag: Xml.Tag, child: Xml.Node): void {
+    if (xmlTag.attribs.id && !this.#sourceIdsByRenderedNode.has(child))
+      this.#sourceIdsByRenderedNode.set(child, xmlTag.attribs.id);
   }
 
   #removeDuplicateAttrs(xmlTag: Xml.Tag): void {

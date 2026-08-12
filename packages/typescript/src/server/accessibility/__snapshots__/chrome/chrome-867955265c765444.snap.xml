@@ -1,4 +1,4 @@
-<RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" id=1 focusable focused url="https://www.airbnb.com.sg/">
+<RootWebArea name="Airbnb | Holiday rentals, cabins, beach houses &amp; more" focusable focused url="https://www.airbnb.com.sg/">
   <div id=3 focusable>
     <link id=5 focusable url="https://www.airbnb.com.sg/#site-content">Skip to content</link>
     <alert id=12 live="assertive" atomic relevant="additions text" />
@@ -25,12 +25,12 @@
                   </combobox>
                 </div>
                 <button id=77 focusable focused>
-                  <div id=81>When</div>
-                  <div id=85>Add dates</div>
+                  <div id=80>When</div>
+                  <div id=84>Add dates</div>
                 </button>
                 <button id=88 focusable>
-                  <div id=91>Who</div>
-                  <div id=95>Add guests</div>
+                  <div id=90>Who</div>
+                  <div id=94>Add guests</div>
                 </button>
               </div>
               <button id=98 focusable>Search</button>
@@ -162,9 +162,9 @@
                     <div id=810>
                       Apartment in Cheras
                       <div id=815>
-                        <div id=823>$295 SGD for 2 nights</div>
-                        <div id=827>,</div>
-                        <div id=831>5.0 out of 5 average rating</div>
+                        <div id=822>$295 SGD for 2 nights</div>
+                        <div id=826>,</div>
+                        <div id=830>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -179,9 +179,9 @@
                     <div id=860>
                       Home in Kuala Lumpur
                       <div id=865>
-                        <div id=873>$358 SGD for 2 nights</div>
-                        <div id=877>,</div>
-                        <div id=881>5.0 out of 5 average rating</div>
+                        <div id=872>$358 SGD for 2 nights</div>
+                        <div id=876>,</div>
+                        <div id=880>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -193,9 +193,9 @@
                     <div id=906>
                       Flat in Kuala Lumpur
                       <div id=911>
-                        <div id=919>$116 SGD for 2 nights</div>
-                        <div id=923>,</div>
-                        <div id=927>5.0 out of 5 average rating</div>
+                        <div id=918>$116 SGD for 2 nights</div>
+                        <div id=922>,</div>
+                        <div id=926>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -207,9 +207,9 @@
                     <div id=952>
                       Flat in Bukit Bintang
                       <div id=957>
-                        <div id=965>$445 SGD for 2 nights</div>
-                        <div id=969>,</div>
-                        <div id=973>4.78 out of 5 average rating</div>
+                        <div id=964>$445 SGD for 2 nights</div>
+                        <div id=968>,</div>
+                        <div id=972>4.78 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -224,9 +224,9 @@
                     <div id=1002>
                       Apartment in Cheras
                       <div id=1007>
-                        <div id=1015>$364 SGD for 2 nights</div>
-                        <div id=1019>,</div>
-                        <div id=1023>5.0 out of 5 average rating</div>
+                        <div id=1014>$364 SGD for 2 nights</div>
+                        <div id=1018>,</div>
+                        <div id=1022>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -238,9 +238,9 @@
                     <div id=1048>
                       Flat in Kuala Lumpur
                       <div id=1053>
-                        <div id=1061>$317 SGD for 2 nights</div>
-                        <div id=1065>,</div>
-                        <div id=1069>5.0 out of 5 average rating</div>
+                        <div id=1060>$317 SGD for 2 nights</div>
+                        <div id=1064>,</div>
+                        <div id=1068>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -267,9 +267,9 @@
                     <div id=1155>
                       Flat in Toshima-k
                       <div id=1160>
-                        <div id=1168>$253 SGD for 2 nights</div>
-                        <div id=1172>,</div>
-                        <div id=1176>5.0 out of 5 average rating</div>
+                        <div id=1167>$253 SGD for 2 nights</div>
+                        <div id=1171>,</div>
+                        <div id=1175>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -284,9 +284,9 @@
                     <div id=1205>
                       Flat in Taitō-ku
                       <div id=1210>
-                        <div id=1218>$204 SGD for 2 nights</div>
-                        <div id=1222>,</div>
-                        <div id=1226>4.93 out of 5 average rating</div>
+                        <div id=1217>$204 SGD for 2 nights</div>
+                        <div id=1221>,</div>
+                        <div id=1225>4.93 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -301,9 +301,9 @@
                     <div id=1255>
                       Home in Shibuya
                       <div id=1260>
-                        <div id=1268>$744 SGD for 2 nights</div>
-                        <div id=1272>,</div>
-                        <div id=1276>5.0 out of 5 average rating</div>
+                        <div id=1267>$744 SGD for 2 nights</div>
+                        <div id=1271>,</div>
+                        <div id=1275>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -318,9 +318,9 @@
                     <div id=1305>
                       Home in Setagaya-ku
                       <div id=1310>
-                        <div id=1318>$941 SGD for 2 nights</div>
-                        <div id=1322>,</div>
-                        <div id=1326>5.0 out of 5 average rating</div>
+                        <div id=1317>$941 SGD for 2 nights</div>
+                        <div id=1321>,</div>
+                        <div id=1325>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -332,9 +332,9 @@
                     <div id=1351>
                       Home in Katsushika-ku
                       <div id=1356>
-                        <div id=1364>$361 SGD for 2 nights</div>
-                        <div id=1368>,</div>
-                        <div id=1372>5.0 out of 5 average rating</div>
+                        <div id=1363>$361 SGD for 2 nights</div>
+                        <div id=1367>,</div>
+                        <div id=1371>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -349,9 +349,9 @@
                     <div id=1401>
                       Home in Sumida-ku
                       <div id=1406>
-                        <div id=1414>$525 SGD for 2 nights</div>
-                        <div id=1418>,</div>
-                        <div id=1422>4.95 out of 5 average rating</div>
+                        <div id=1413>$525 SGD for 2 nights</div>
+                        <div id=1417>,</div>
+                        <div id=1421>4.95 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -378,9 +378,9 @@
                     <div id=1508>
                       Flat in Osaka
                       <div id=1513>
-                        <div id=1521>$152 SGD for 2 nights</div>
-                        <div id=1525>,</div>
-                        <div id=1529>4.89 out of 5 average rating</div>
+                        <div id=1520>$152 SGD for 2 nights</div>
+                        <div id=1524>,</div>
+                        <div id=1528>4.89 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -395,9 +395,9 @@
                     <div id=1558>
                       Flat in Naniwa Ward
                       <div id=1563>
-                        <div id=1571>$101 SGD for 2 nights</div>
-                        <div id=1575>,</div>
-                        <div id=1579>4.91 out of 5 average rating</div>
+                        <div id=1570>$101 SGD for 2 nights</div>
+                        <div id=1574>,</div>
+                        <div id=1578>4.91 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -412,9 +412,9 @@
                     <div id=1608>
                       Flat in Osaka
                       <div id=1613>
-                        <div id=1621>$116 SGD for 2 nights</div>
-                        <div id=1625>,</div>
-                        <div id=1629>4.89 out of 5 average rating</div>
+                        <div id=1620>$116 SGD for 2 nights</div>
+                        <div id=1624>,</div>
+                        <div id=1628>4.89 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -429,9 +429,9 @@
                     <div id=1658>
                       Flat in Chuo
                       <div id=1663>
-                        <div id=1671>$104 SGD for 2 nights</div>
-                        <div id=1675>,</div>
-                        <div id=1679>4.92 out of 5 average rating</div>
+                        <div id=1670>$104 SGD for 2 nights</div>
+                        <div id=1674>,</div>
+                        <div id=1678>4.92 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -446,9 +446,9 @@
                     <div id=1708>
                       Flat in Ikuno Ward
                       <div id=1713>
-                        <div id=1721>$105 SGD for 2 nights</div>
-                        <div id=1725>,</div>
-                        <div id=1729>4.84 out of 5 average rating</div>
+                        <div id=1720>$105 SGD for 2 nights</div>
+                        <div id=1724>,</div>
+                        <div id=1728>4.84 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -463,9 +463,9 @@
                     <div id=1758>
                       Flat in Osaka
                       <div id=1763>
-                        <div id=1771>$136 SGD for 2 nights</div>
-                        <div id=1775>,</div>
-                        <div id=1779>4.91 out of 5 average rating</div>
+                        <div id=1770>$136 SGD for 2 nights</div>
+                        <div id=1774>,</div>
+                        <div id=1778>4.91 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -492,9 +492,9 @@
                     <div id=1865>
                       Home in Khet Khlong San
                       <div id=1870>
-                        <div id=1878>$177 SGD for 2 nights</div>
-                        <div id=1882>,</div>
-                        <div id=1886>5.0 out of 5 average rating</div>
+                        <div id=1877>$177 SGD for 2 nights</div>
+                        <div id=1881>,</div>
+                        <div id=1885>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -509,9 +509,9 @@
                     <div id=1915>
                       Place to stay in Khet Ratchathewi
                       <div id=1921>
-                        <div id=1929>$101 SGD for 2 nights</div>
-                        <div id=1933>,</div>
-                        <div id=1937>4.94 out of 5 average rating</div>
+                        <div id=1928>$101 SGD for 2 nights</div>
+                        <div id=1932>,</div>
+                        <div id=1936>4.94 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -526,9 +526,9 @@
                     <div id=1966>
                       Flat in Yan Nawa
                       <div id=1971>
-                        <div id=1979>$136 SGD for 2 nights</div>
-                        <div id=1983>,</div>
-                        <div id=1987>4.94 out of 5 average rating</div>
+                        <div id=1978>$136 SGD for 2 nights</div>
+                        <div id=1982>,</div>
+                        <div id=1986>4.94 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -543,9 +543,9 @@
                     <div id=2016>
                       Apartment in Bangkok
                       <div id=2021>
-                        <div id=2029>$354 SGD for 2 nights</div>
-                        <div id=2033>,</div>
-                        <div id=2037>4.95 out of 5 average rating</div>
+                        <div id=2028>$354 SGD for 2 nights</div>
+                        <div id=2032>,</div>
+                        <div id=2036>4.95 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -560,9 +560,9 @@
                     <div id=2066>
                       Home in Watthana
                       <div id=2071>
-                        <div id=2079>$687 SGD for 2 nights</div>
-                        <div id=2083>,</div>
-                        <div id=2087>5.0 out of 5 average rating</div>
+                        <div id=2078>$687 SGD for 2 nights</div>
+                        <div id=2082>,</div>
+                        <div id=2086>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -577,9 +577,9 @@
                     <div id=2116>
                       Townhouse in Watthana
                       <div id=2121>
-                        <div id=2129>$764 SGD for 2 nights</div>
-                        <div id=2133>,</div>
-                        <div id=2137>5.0 out of 5 average rating</div>
+                        <div id=2128>$764 SGD for 2 nights</div>
+                        <div id=2132>,</div>
+                        <div id=2136>5.0 out of 5 average rating</div>
                       </div>
                     </div>
                   </div>
@@ -602,104 +602,104 @@
                 <list id=2194>
                   <listitem id=2195 level=1>
                     <link id=2196 focusable url="https://www.airbnb.com.sg/cleveland-oh/stays/apartments">
-                      <div id=2198>Cleveland</div>
-                      <div id=2203>Flat rentals</div>
+                      <div id=2197>Cleveland</div>
+                      <div id=2202>Flat rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2205 level=1>
                     <link id=2206 focusable url="https://www.airbnb.com.sg/galveston-tx/stays/cabins">
-                      <div id=2208>Galveston</div>
-                      <div id=2213>Cabin rentals</div>
+                      <div id=2207>Galveston</div>
+                      <div id=2212>Cabin rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2215 level=1>
                     <link id=2216 focusable url="https://www.airbnb.com.sg/portland-or/stays">
-                      <div id=2218>Portland</div>
-                      <div id=2223>Holiday rentals</div>
+                      <div id=2217>Portland</div>
+                      <div id=2222>Holiday rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2225 level=1>
                     <link id=2226 focusable url="https://www.airbnb.com.sg/minneapolis-mn/stays/monthly">
-                      <div id=2228>Minneapolis</div>
-                      <div id=2233>Monthly Rentals</div>
+                      <div id=2227>Minneapolis</div>
+                      <div id=2232>Monthly Rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2235 level=1>
                     <link id=2236 focusable url="https://www.airbnb.com.sg/north-myrtle-beach-sc/stays/villas">
-                      <div id=2238>North Myrtle Beach</div>
-                      <div id=2243>Villa rentals</div>
+                      <div id=2237>North Myrtle Beach</div>
+                      <div id=2242>Villa rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2245 level=1>
                     <link id=2246 focusable url="https://www.airbnb.com.sg/portland-me/stays/apartments">
-                      <div id=2248>Portland</div>
-                      <div id=2253>Flat rentals</div>
+                      <div id=2247>Portland</div>
+                      <div id=2252>Flat rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2255 level=1>
                     <link id=2256 focusable url="https://www.airbnb.com.sg/nice-france/stays/cabins">
-                      <div id=2258>Nice</div>
-                      <div id=2263>Cabin rentals</div>
+                      <div id=2257>Nice</div>
+                      <div id=2262>Cabin rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2265 level=1>
                     <link id=2266 focusable url="https://www.airbnb.com.sg/raleigh-nc/stays">
-                      <div id=2268>Raleigh</div>
-                      <div id=2273>Holiday rentals</div>
+                      <div id=2267>Raleigh</div>
+                      <div id=2272>Holiday rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2275 level=1>
                     <link id=2276 focusable url="https://www.airbnb.com.sg/kauai-hi/stays/villas">
-                      <div id=2278>Kauai</div>
-                      <div id=2283>Villa rentals</div>
+                      <div id=2277>Kauai</div>
+                      <div id=2282>Villa rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2285 level=1>
                     <link id=2286 focusable url="https://www.airbnb.com.sg/dallas-tx/stays/villas">
-                      <div id=2288>Dallas</div>
-                      <div id=2293>Villa rentals</div>
+                      <div id=2287>Dallas</div>
+                      <div id=2292>Villa rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2295 level=1>
                     <link id=2296 focusable url="https://www.airbnb.com.sg/lake-michigan/stays">
-                      <div id=2298>Lake Michigan</div>
-                      <div id=2303>Holiday rentals</div>
+                      <div id=2297>Lake Michigan</div>
+                      <div id=2302>Holiday rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2305 level=1>
                     <link id=2306 focusable url="https://www.airbnb.com.sg/barcelona-spain/stays/condos">
-                      <div id=2308>Barcelona</div>
-                      <div id=2313>Apartment rentals</div>
+                      <div id=2307>Barcelona</div>
+                      <div id=2312>Apartment rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2315 level=1>
                     <link id=2316 focusable url="https://www.airbnb.com.sg/tokyo-japan/stays/villas">
-                      <div id=2318>Tokyo</div>
-                      <div id=2323>Villa rentals</div>
+                      <div id=2317>Tokyo</div>
+                      <div id=2322>Villa rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2325 level=1>
                     <link id=2326 focusable url="https://www.airbnb.com.sg/charlotte-nc/stays/houses">
-                      <div id=2328>Charlotte</div>
-                      <div id=2333>House rentals</div>
+                      <div id=2327>Charlotte</div>
+                      <div id=2332>House rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2335 level=1>
                     <link id=2336 focusable url="https://www.airbnb.com.sg/amsterdam-netherlands/stays/monthly">
-                      <div id=2338>Amsterdam</div>
-                      <div id=2343>Monthly Rentals</div>
+                      <div id=2337>Amsterdam</div>
+                      <div id=2342>Monthly Rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2345 level=1>
                     <link id=2346 focusable url="https://www.airbnb.com.sg/philadelphia-pa/stays">
-                      <div id=2348>Philadelphia</div>
-                      <div id=2353>Holiday rentals</div>
+                      <div id=2347>Philadelphia</div>
+                      <div id=2352>Holiday rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2355 level=1>
                     <link id=2356 focusable url="https://www.airbnb.com.sg/orange-beach-al/stays">
-                      <div id=2358>Orange Beach</div>
-                      <div id=2363>Holiday rentals</div>
+                      <div id=2357>Orange Beach</div>
+                      <div id=2362>Holiday rentals</div>
                     </link>
                   </listitem>
                   <listitem id=2365 level=1>
@@ -812,8 +812,8 @@
                   <div id=2533>
                     <button name="Choose a language" id=2535 focusable>English (SG)</button>
                     <button name="Choose a currency" id=2539 focusable>
-                      <div id=2542>$</div>
-                      <div id=2545>SGD</div>
+                      <div id=2541>$</div>
+                      <div id=2544>SGD</div>
                     </button>
                   </div>
                   <list id=2548>
@@ -837,9 +837,9 @@
     </div>
     <div id=2574>
       <image id=2577 />
-      <div id=2580>Prices include all fees</div>
-      <div id=2583>Prices include all fees</div>
+      <div id=2579>Prices include all fees</div>
+      <div id=2582>Prices include all fees</div>
     </div>
   </div>
-  <RootWebArea id=2586 focusable url="about:blank" />
+  <RootWebArea focusable url="about:blank" />
 </RootWebArea>

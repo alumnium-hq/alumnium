@@ -45,6 +45,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     "name",
     "nodeId",
     "raw_id",
+    "mutable",
     // We skip 'expanded' because it often leads LLMs to click comboboxes
     // before selecting, which is automatically handled by the SelectTool.
     "expanded",
@@ -56,6 +57,21 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     _attrValue: string,
   ): boolean {
     return this.#skipXmlAttrs.has(attrName);
+  }
+
+  #alwaysUnaddressableRoles = new Set([
+    "InlineTextBox",
+    "ListMarker",
+    "MenuListPopup",
+    "RootWebArea",
+    "StaticText",
+  ]);
+
+  protected override parseAddressable(xmlTag: Xml.Tag): boolean {
+    if (this.#alwaysUnaddressableRoles.has(xmlTag.tagName)) return false;
+
+    const mutable = xmlTag.attribs.mutable;
+    return mutable === undefined || mutable === "true";
   }
 
   //#endregion
@@ -77,9 +93,11 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
   protected override genericRoles: Set<string> = new Set(["generic", "none"]);
 
-  protected override inlineTextRoles = new Set(["StaticText"]);
+  protected override inlineTextRoles = new Set(["ListMarker", "StaticText"]);
 
   protected override ignoredRoles = new Set(["InlineTextBox"]);
+
+  protected override unwrappedUnaddressableRoles = new Set(["MenuListPopup"]);
 
   protected override preserveNameRoles = new Set(["RootWebArea"]);
 
@@ -112,18 +130,19 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
     if (!("editable" in xmlTag.attribs || "settable" in xmlTag.attribs)) return;
 
-    xmlTag.children = xmlTag.children.filter((child) => {
+    xmlTag.children = xmlTag.children.flatMap((child) => {
       const childTag = Xml.nodeAsTag(child);
-      if (!childTag || !this.isGenericRole(childTag.tagName)) return true;
+      if (!childTag || !this.isGenericRole(childTag.tagName)) return [child];
 
       const attrs = Object.keys(childTag.attribs).filter(
         (attrName) => attrName !== "id" && attrName !== "editable",
       );
-      return (
-        !!childTag.children.length ||
+      const keep =
         attrs.length > 0 ||
-        childTag.attribs.editable !== xmlTag.attribs.editable
-      );
+        childTag.attribs.editable !== xmlTag.attribs.editable;
+      if (keep) return [childTag];
+      if (!this.isRenderedAddressable(childTag)) return childTag.children;
+      return childTag.children.length ? [childTag] : [];
     });
   }
 

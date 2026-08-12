@@ -6,6 +6,59 @@ import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 import { PlaywrightDriver } from "./PlaywrightDriver.ts";
 
 describe("PlaywrightDriver", () => {
+  it("enriches AX nodes with flattened DOM metadata", async () => {
+    const frame = { url: () => "https://example.com" };
+    const send = vi.fn(async (command: string) => {
+      if (command === "Page.getFrameTree") {
+        return {
+          frameTree: {
+            frame: { id: "main", url: "https://example.com" },
+          },
+        };
+      }
+      if (command === "DOM.getFlattenedDocument") {
+        return {
+          nodes: [{ nodeId: 1, backendNodeId: 42, nodeType: 1 }],
+        };
+      }
+      if (command === "Accessibility.getFullAXTree") {
+        return {
+          nodes: [
+            {
+              nodeId: "ax-1",
+              backendDOMNodeId: 42,
+              role: { value: "button" },
+            },
+          ],
+        };
+      }
+      return {};
+    });
+    const session = { send, on: vi.fn(), detach: vi.fn() };
+    const page = {
+      on: vi.fn(),
+      context: () => ({ newCDPSession: vi.fn(async () => session) }),
+      mainFrame: () => frame,
+      frames: () => [frame],
+      evaluate: vi.fn(async () => undefined),
+    };
+    const driver = new FetchTestPlaywrightDriver(page as unknown as Page);
+    await vi.waitFor(() =>
+      expect(send).toHaveBeenCalledWith(
+        "Target.setAutoAttach",
+        expect.anything(),
+      ),
+    );
+
+    await expect(driver.fetchTree().then((tree) => tree.toStr())).resolves.toBe(
+      '<button raw_id=1 backendDOMNodeId=42 nodeId="f0:ax-1" mutable />',
+    );
+    expect(send).toHaveBeenCalledWith("DOM.getFlattenedDocument", {
+      depth: -1,
+      pierce: true,
+    });
+  });
+
   describe("drill probe", () => {
     it("runs the exact Playwright set/remove CDP probe", async () => {
       const send = vi.fn(async (command: string) => {
@@ -140,3 +193,9 @@ describe("PlaywrightDriver", () => {
     }
   });
 });
+
+class FetchTestPlaywrightDriver extends PlaywrightDriver {
+  fetchTree(): Promise<BaseAccessibilityTree> {
+    return this.fetchAccessibilityTree();
+  }
+}

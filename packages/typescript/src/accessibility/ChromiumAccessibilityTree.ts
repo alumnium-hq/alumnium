@@ -24,6 +24,7 @@ interface CDPNode {
   _frame?: object;
   _parent_iframe_backend_node_id?: number;
   _frame_chain?: number[];
+  _mutable?: boolean;
 }
 
 export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
@@ -143,6 +144,9 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     }
     if ("ignored" in node && node.ignored !== undefined) {
       elem.attribs["ignored"] = String(node.ignored);
+    }
+    if (node._mutable !== undefined) {
+      elem.attribs["mutable"] = node._mutable ? "true" : "no";
     }
 
     // Add name as attribute if present

@@ -1,4 +1,4 @@
-<RootWebArea name="Calculator" id=1 focusable focused url="https://seleniumbase.io/apps/calculator">
+<RootWebArea name="Calculator" focusable focused url="https://seleniumbase.io/apps/calculator">
   <div id=6>
     <LabelText id=7 />
     Dark Mode

@@ -1,4 +1,4 @@
-<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/dynamic_content">
+<RootWebArea name="The Internet" focusable focused url="https://the-internet.herokuapp.com/dynamic_content">
   <div id=6>
     <link id=7 focusable url="https://github.com/tourdedave/the-internet">
       <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />

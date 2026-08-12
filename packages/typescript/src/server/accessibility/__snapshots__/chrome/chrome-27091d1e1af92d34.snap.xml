@@ -1,4 +1,4 @@
-<RootWebArea name="Claude" id=1 focusable focused url="https://claude.com/">
+<RootWebArea name="Claude" focusable focused url="https://claude.com/">
   <link id=4 focusable url="https://claude.com/#main-content">Skip to main content</link>
   <banner id=7>
     <link id=9 focusable url="https://claude.com/">
@@ -81,11 +81,11 @@
           <div id=244>
             $25
             <paragraph id=248>
-              <div id=249>Per month with annual subscription discount (</div>
-              <div id=252>$300</div>
-              <div id=254>billed up front).</div>
-              <div id=256>$30</div>
-              <div id=258>if billed monthly.</div>
+              <div>Per month with annual subscription discount (</div>
+              <div>$300</div>
+              <div>billed up front).</div>
+              <div>$30</div>
+              <div>if billed monthly.</div>
             </paragraph>
           </div>
           <div id=260>
