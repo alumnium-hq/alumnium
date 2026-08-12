@@ -22,6 +22,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
     for (const xmlRoot of xmlRoots) {
       if (!Xml.isTag(xmlRoot)) continue;
+      if (this.skipXmlNode(xmlRoot)) continue;
       tree.push(this.xmlNodeToTreeNode(xmlRoot));
     }
 
@@ -30,6 +31,10 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
   protected override parseRole(xmlTag: Xml.Tag): string {
     return xmlTag.tagName;
+  }
+
+  protected override skipXmlNode(xmlTag: Xml.Tag): boolean {
+    return xmlTag.tagName === "InlineTextBox";
   }
 
   protected override parseName(
@@ -59,19 +64,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     return this.#skipXmlAttrs.has(attrName);
   }
 
-  #alwaysUnaddressableRoles = new Set([
-    "InlineTextBox",
-    "ListMarker",
-    "MenuListPopup",
-    "RootWebArea",
-    "StaticText",
-  ]);
-
   protected override parseAddressable(xmlTag: Xml.Tag): boolean {
-    if (this.#alwaysUnaddressableRoles.has(xmlTag.tagName)) return false;
-
-    const mutable = xmlTag.attribs.mutable;
-    return mutable === undefined || mutable === "true";
+    return xmlTag.attribs.backendDOMNodeId !== undefined;
   }
 
   //#endregion
@@ -94,8 +88,6 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
   protected override genericRoles: Set<string> = new Set(["generic", "none"]);
 
   protected override inlineTextRoles = new Set(["ListMarker", "StaticText"]);
-
-  protected override ignoredRoles = new Set(["InlineTextBox"]);
 
   protected override unwrappedUnaddressableRoles = new Set(["MenuListPopup"]);
 

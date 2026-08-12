@@ -47,7 +47,7 @@ describe(BaseDriver, () => {
       await driver.act(async () => 42);
 
       expect(driver.fetches).toBe(1);
-      expect(driver.probes.map((probe) => probe.tree)).toEqual([fresh]);
+      expect(driver.probes.map((probe) => probe.tree)).toEqual([fresh, fresh]);
       await expect(driver.getAccessibilityTree()).resolves.toBe(previous);
       expect(driver.fetches).toBe(1);
     });

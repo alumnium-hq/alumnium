@@ -5,7 +5,7 @@ import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 import { SeleniumDriver } from "./SeleniumDriver.ts";
 
 describe("SeleniumDriver", () => {
-  it("enriches AX nodes with flattened DOM metadata", async () => {
+  it("serializes AX nodes without mutable metadata", async () => {
     const sendAndGetDevToolsCommand = vi.fn(async (command: string) => {
       if (command === "Page.getFrameTree") {
         return {
@@ -43,7 +43,7 @@ describe("SeleniumDriver", () => {
     );
 
     await expect(driver.fetchTree().then((tree) => tree.toStr())).resolves.toBe(
-      '<button raw_id=1 backendDOMNodeId=43 nodeId="ax-1" mutable />',
+      '<button raw_id=1 backendDOMNodeId=43 nodeId="ax-1" />',
     );
     expect(sendAndGetDevToolsCommand).toHaveBeenCalledWith(
       "DOM.getFlattenedDocument",

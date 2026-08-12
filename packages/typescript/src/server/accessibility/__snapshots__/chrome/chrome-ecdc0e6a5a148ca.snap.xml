@@ -1,100 +1,102 @@
-<RootWebArea name="Cross-Origin Test" focusable url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
+<RootWebArea name="Cross-Origin Test" id=1 focusable url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
   <heading id=4 level=1>Main Page</heading>
-  <paragraph id=7>This page embeds a real cross-origin iframe.</paragraph>
-  <button id=10 focusable>Main Page Button</button>
-  <heading id=13 level=2>Cross-Origin Iframe Below:</heading>
-  <Iframe id=16>
-    <RootWebArea name="Hands-On Selenium WebDriver with Java" focusable focused url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
-      <main id=20>
-        <div id=22>
-          <div id=23>
-            <heading id=24 level=1>Hands-On Selenium WebDriver with Java</heading>
-            <heading id=28 level=5>Practice site</heading>
+  <paragraph id=6>This page embeds a real cross-origin iframe.</paragraph>
+  <button id=8 focusable>Main Page Button</button>
+  <heading id=10 level=2>Cross-Origin Iframe Below:</heading>
+  <Iframe id=12>
+    <RootWebArea name="Hands-On Selenium WebDriver with Java" id=13 focusable focused url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
+      <main id=16>
+        <div id=18>
+          <div id=19>
+            <heading id=20 level=1>Hands-On Selenium WebDriver with Java</heading>
+            <heading id=22 level=5>Practice site</heading>
           </div>
-          <link id=32 focusable url="https://github.com/bonigarcia/selenium-webdriver-java">
-            <image id=33 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png" />
+          <link id=25 focusable url="https://github.com/bonigarcia/selenium-webdriver-java">
+            <image id=26 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png" />
           </link>
         </div>
-        <separator id=36 settable orientation="horizontal" />
-        <heading id=39 level=1>Web form</heading>
-        <div id=43>
-          <div id=44>
-            <LabelText id=45>
+        <separator id=29 settable orientation="horizontal" />
+        <heading id=32 level=1>Web form</heading>
+        <div id=35>
+          <div id=36>
+            <LabelText id=37>
               Text input
-              <textbox name="Text input" id=48 focusable focused editable="plaintext" settable>
-                <div id=49 editable="plaintext">testuser</div>
+              <textbox name="Text input" id=39 focusable focused editable="plaintext" settable>
+                <div id=40 editable="plaintext">testuser</div>
               </textbox>
             </LabelText>
-            <LabelText id=52>
+            <LabelText id=42>
               Password
-              <textbox name="Password" id=55 focusable editable="plaintext" settable />
+              <textbox name="Password" id=44 focusable editable="plaintext" settable />
             </LabelText>
-            <LabelText id=57>
+            <LabelText id=46>
               Textarea
-              <textbox name="Textarea" id=60 focusable editable="plaintext" settable multiline />
+              <textbox name="Textarea" id=48 focusable editable="plaintext" settable multiline />
             </LabelText>
-            <LabelText id=62>
+            <LabelText id=50>
               Disabled input
-              <textbox name="Disabled input" id=65 disabled editable="plaintext" />
+              <textbox name="Disabled input" id=52 disabled editable="plaintext" />
             </LabelText>
-            <LabelText id=68>
+            <LabelText id=55>
               Readonly input
-              <textbox id=71 focusable editable="plaintext" readonly>Readonly input</textbox>
+              <textbox id=57 focusable editable="plaintext" readonly>Readonly input</textbox>
             </LabelText>
-            <link id=76 focusable url="https://bonigarcia.dev/selenium-webdriver-java/index.html">Return to index</link>
+            <link id=61 focusable url="https://bonigarcia.dev/selenium-webdriver-java/index.html">Return to index</link>
           </div>
-          <div id=79>
-            <LabelText id=80>
+          <div id=63>
+            <LabelText id=64>
               Dropdown (select)
-              <combobox name="Dropdown (select)" id=83 focusable hasPopup="menu">
-                <option name="Open this select menu" id=86 focusable selected />
-                <option name="One" id=87 focusable />
-                <option name="Two" id=88 focusable />
-                <option name="Three" id=89 focusable />
+              <combobox name="Dropdown (select)" id=66 focusable hasPopup="menu">
+                <MenuListPopup id=67>
+                  <option name="Open this select menu" id=69 focusable selected />
+                  <option name="One" id=70 focusable />
+                  <option name="Two" id=71 focusable />
+                  <option name="Three" id=72 focusable />
+                </MenuListPopup>
               </combobox>
             </LabelText>
-            <LabelText id=90>
+            <LabelText id=73>
               Dropdown (datalist)
-              <combobox name="Dropdown (datalist)" id=93 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox" />
+              <combobox name="Dropdown (datalist)" id=75 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox" />
             </LabelText>
-            <LabelText id=99>
+            <LabelText id=81>
               File input
-              <button name="File input" id=102 focusable />
+              <button name="File input" id=83 focusable />
             </LabelText>
-            <div id=103>
-              <LabelText id=104>
-                <checkbox name="Checked checkbox" id=105 focusable checked />
+            <div id=84>
+              <LabelText id=85>
+                <checkbox name="Checked checkbox" id=86 focusable checked />
                 Checked checkbox
               </LabelText>
-              <LabelText id=108>
-                <checkbox name="Default checkbox" id=109 focusable />
+              <LabelText id=88>
+                <checkbox name="Default checkbox" id=89 focusable />
                 Default checkbox
               </LabelText>
             </div>
-            <radio name="Checked radio" id=114 focusable checked />
-            <radio name="Default radio" id=118 focusable />
-            <button id=120 focusable>Submit</button>
+            <radio name="Checked radio" id=93 focusable checked />
+            <radio name="Default radio" id=97 focusable />
+            <button id=99 focusable>Submit</button>
           </div>
-          <div id=123>
-            <LabelText id=124>
+          <div id=101>
+            <LabelText id=102>
               Color picker
-              <ColorWell name="Color picker" id=127 focusable settable />
+              <ColorWell name="Color picker" id=104 focusable settable />
             </LabelText>
-            <LabelText id=130>
+            <LabelText id=107>
               Date picker
-              <textbox name="Date picker" id=133 focusable editable="plaintext" settable />
+              <textbox name="Date picker" id=109 focusable editable="plaintext" settable />
             </LabelText>
-            <LabelText id=135>
+            <LabelText id=111>
               Example range
-              <slider name="Example range" id=138 focusable settable orientation="horizontal" valuemin=0 valuemax=10 />
+              <slider name="Example range" id=113 focusable settable orientation="horizontal" valuemin=0 valuemax=10 />
             </LabelText>
           </div>
         </div>
       </main>
-      <contentinfo id=139>
-        <div id=140>
+      <contentinfo id=114>
+        <div id=115>
           Copyright © 2021-2026
-          <link id=143 focusable url="https://bonigarcia.dev/">Boni García</link>
+          <link id=117 focusable url="https://bonigarcia.dev/">Boni García</link>
         </div>
       </contentinfo>
     </RootWebArea>

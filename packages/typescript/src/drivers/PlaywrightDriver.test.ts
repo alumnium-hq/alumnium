@@ -6,7 +6,7 @@ import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 import { PlaywrightDriver } from "./PlaywrightDriver.ts";
 
 describe("PlaywrightDriver", () => {
-  it("enriches AX nodes with flattened DOM metadata", async () => {
+  it("serializes AX nodes without fetching DOM metadata", async () => {
     const frame = { url: () => "https://example.com" };
     const send = vi.fn(async (command: string) => {
       if (command === "Page.getFrameTree") {
@@ -51,12 +51,12 @@ describe("PlaywrightDriver", () => {
     );
 
     await expect(driver.fetchTree().then((tree) => tree.toStr())).resolves.toBe(
-      '<button raw_id=1 backendDOMNodeId=42 nodeId="f0:ax-1" mutable />',
+      '<button raw_id=1 backendDOMNodeId=42 nodeId="f0:ax-1" />',
     );
-    expect(send).toHaveBeenCalledWith("DOM.getFlattenedDocument", {
-      depth: -1,
-      pierce: true,
-    });
+    expect(send).not.toHaveBeenCalledWith(
+      "DOM.getFlattenedDocument",
+      expect.anything(),
+    );
   });
 
   describe("drill probe", () => {

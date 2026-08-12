@@ -1,4 +1,4 @@
-<RootWebArea name="YouTube" focusable focused url="https://www.youtube.com/">
+<RootWebArea name="YouTube" id=1 focusable focused url="https://www.youtube.com/">
   <banner id=8>
     <div id=13>
       <button name="Guide" id=15 focusable />
@@ -6,124 +6,124 @@
         <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/" />
         SG
       </div>
-      <button id=34 focusable>Skip navigation</button>
+      <button id=33 focusable>Skip navigation</button>
     </div>
-    <div id=39>
-      <search id=40>
-        <div id=42>
-          <div id=43>
-            <combobox name="Search" id=49 focusable focused editable="plaintext" settable autocomplete="list" hasPopup="listbox" controls="i0">
-              <div id=51 editable="plaintext">lofi beats</div>
+    <div id=37>
+      <search id=38>
+        <div id=40>
+          <div id=41>
+            <combobox name="Search" id=47 focusable focused editable="plaintext" settable autocomplete="list" hasPopup="listbox" controls="i0">
+              <div id=49 editable="plaintext">lofi beats</div>
             </combobox>
-            <button name="Clear search query" id=55 focusable />
+            <button name="Clear search query" id=52 focusable />
           </div>
-          <button name="Search" id=59 focusable />
+          <button name="Search" id=56 focusable />
         </div>
-        <listbox id=62 orientation="vertical">
-          <option id=63>
-            <button id=68 focusable>lofi beats</button>
+        <listbox id=59 orientation="vertical">
+          <option id=60>
+            <button id=65 focusable>lofi beats</button>
           </option>
-          <option id=72>
-            <button id=77 focusable>
-              <div>lofi beats</div>
-              <div>to study to</div>
+          <option id=68>
+            <button id=73 focusable>
+              <div id=74>lofi beats</div>
+              <div id=75>to study to</div>
             </button>
           </option>
-          <option id=83>
-            <button id=88 focusable>
-              <div>lofi beats</div>
-              <div>for work</div>
+          <option id=77>
+            <button id=82 focusable>
+              <div id=83>lofi beats</div>
+              <div id=84>for work</div>
             </button>
           </option>
-          <option id=94>
-            <button id=99 focusable>
-              <div>lofi beats</div>
-              <div>chill</div>
+          <option id=86>
+            <button id=91 focusable>
+              <div id=92>lofi beats</div>
+              <div id=93>chill</div>
             </button>
           </option>
-          <option id=105>
-            <button id=110 focusable>
-              <div>lofi beats</div>
-              <div>to sleep to</div>
+          <option id=95>
+            <button id=100 focusable>
+              <div id=101>lofi beats</div>
+              <div id=102>to sleep to</div>
             </button>
           </option>
-          <option id=116>
-            <button id=121 focusable>
-              <div>lofi beats</div>
-              <div>to yoyle to</div>
+          <option id=104>
+            <button id=109 focusable>
+              <div id=110>lofi beats</div>
+              <div id=111>to yoyle to</div>
             </button>
           </option>
-          <option id=127>
-            <button id=132 focusable>
-              <div>lofi beats</div>
-              <div>hip hop</div>
+          <option id=113>
+            <button id=118 focusable>
+              <div id=119>lofi beats</div>
+              <div id=120>hip hop</div>
             </button>
           </option>
-          <option id=138>
-            <button id=143 focusable>
-              <div>lofi beats</div>
-              <div>no ads</div>
+          <option id=122>
+            <button id=127 focusable>
+              <div id=128>lofi beats</div>
+              <div id=129>no ads</div>
+            </button>
+          </option>
+          <option id=131>
+            <button id=136 focusable>
+              <div id=137>lofi beats</div>
+              <div id=138>for work concentration</div>
+            </button>
+          </option>
+          <option id=140>
+            <button id=145 focusable>
+              <div id=146>lofi beats</div>
+              <div id=147>live</div>
             </button>
           </option>
           <option id=149>
             <button id=154 focusable>
-              <div>lofi beats</div>
-              <div>for work concentration</div>
+              <div id=155>lofi beats</div>
+              <div id=156>popular songs</div>
             </button>
           </option>
-          <option id=160>
-            <button id=165 focusable>
-              <div>lofi beats</div>
-              <div>live</div>
+          <option id=158>
+            <button id=163 focusable>
+              <div id=164>lofi beats</div>
+              <div id=165>royalty free</div>
             </button>
           </option>
-          <option id=171>
-            <button id=176 focusable>
-              <div>lofi beats</div>
-              <div>popular songs</div>
+          <option id=167>
+            <button id=172 focusable>
+              <div id=173>lofi beats</div>
+              <div id=174>5 minutes</div>
             </button>
           </option>
-          <option id=182>
-            <button id=187 focusable>
-              <div>lofi beats</div>
-              <div>royalty free</div>
+          <option id=176>
+            <button id=181 focusable>
+              <div id=182>lofi beats</div>
+              <div id=183>to animate to</div>
             </button>
           </option>
-          <option id=193>
-            <button id=198 focusable>
-              <div>lofi beats</div>
-              <div>5 minutes</div>
-            </button>
-          </option>
-          <option id=204>
-            <button id=209 focusable>
-              <div>lofi beats</div>
-              <div>to animate to</div>
-            </button>
-          </option>
-          <button id=215 focusable>Report search predictions</button>
+          <button id=185 focusable>Report search predictions</button>
         </listbox>
       </search>
-      <div id=221>
-        <button name="Search with your voice" id=223 focusable />
-        <tooltip name="tooltip" id=224 focusable />
+      <div id=190>
+        <button name="Search with your voice" id=192 focusable />
+        <tooltip name="tooltip" id=193 focusable />
       </div>
     </div>
-    <div id=226>
-      <div id=229 focusable>
-        <button name="Settings" id=231 focusable />
+    <div id=195>
+      <div id=198 focusable>
+        <button name="Settings" id=200 focusable />
       </div>
-      <link id=240 focusable url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=en&amp;ec=65620">Sign in</link>
+      <link id=209 focusable url="https://accounts.google.com/ServiceLogin?service=youtube&amp;uilel=3&amp;passive=true&amp;continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&amp;hl=en&amp;ec=65620">Sign in</link>
     </div>
   </banner>
-  <navigation id=247>
-    <link id=250 focusable url="https://www.youtube.com/">Home</link>
-    <link id=261 focusable url="https://www.youtube.com/shorts/">Shorts</link>
-    <link id=272 focusable url="https://www.youtube.com/feed/subscriptions">Subscriptions</link>
-    <link id=283 focusable url="https://www.youtube.com/feed/you">You</link>
+  <navigation id=215>
+    <link id=218 focusable url="https://www.youtube.com/">Home</link>
+    <link id=228 focusable url="https://www.youtube.com/shorts/">Shorts</link>
+    <link id=238 focusable url="https://www.youtube.com/feed/subscriptions">Subscriptions</link>
+    <link id=248 focusable url="https://www.youtube.com/feed/you">You</link>
   </navigation>
-  <main id=294>
-    <heading id=314 level=2>Try searching to get started</heading>
-    <div id=319>Start watching videos to help us build a feed of videos you'll love.</div>
+  <main id=258>
+    <heading id=278 level=2>Try searching to get started</heading>
+    <div id=282>Start watching videos to help us build a feed of videos you'll love.</div>
   </main>
 </RootWebArea>
