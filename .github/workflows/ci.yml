@@ -25,6 +25,13 @@ jobs:
       python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
       typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
 
+    # Prevent running the workflow for PRs from ci/ or ci- branches, since those
+    # trigger the workflow on branch push events.
+    if: >
+      github.event_name != 'pull_request_target'
+        || (!startsWith(github.event.pull_request.head.ref, 'ci/')
+          && !startsWith(github.event.pull_request.head.ref, 'ci-'))
+
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
