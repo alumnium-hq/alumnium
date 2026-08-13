@@ -19,18 +19,18 @@
             <div id=51>
               <div id=55>
                 <div id=57>
-                  Where
+                  <div id=58>Where</div>
                   <combobox name="Where" id=61 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox">
                     <div id=64 editable="plaintext">Singapore</div>
                   </combobox>
                 </div>
                 <button id=67 focusable>
-                  <div id=70>When</div>
-                  <div id=73>5 Aug</div>
+                  <div id=69>When</div>
+                  <div id=72>5 Aug</div>
                 </button>
                 <button id=75 focusable focused>
-                  <div id=79>Who</div>
-                  <div id=82>Add guests</div>
+                  <div id=78>Who</div>
+                  <div id=81>Add guests</div>
                 </button>
               </div>
               <button id=84 focusable>Search</button>
@@ -38,33 +38,33 @@
                 <div id=99>
                   <div id=100>
                     <heading id=102 focusable level=3>Adults</heading>
-                    Ages 13 or above
+                    <div id=104>Ages 13 or above</div>
                   </div>
                   <div id=106>
                     <button name="Decrease Adults" id=107 disabled />
-                    0 Adults
+                    <div id=109>0 Adults</div>
                     <button name="Increase Adults" id=112 focusable />
                   </div>
                 </div>
                 <div id=114>
                   <div id=115>
                     <heading id=117 focusable level=3>Children</heading>
-                    Ages 2–12
+                    <div id=119>Ages 2–12</div>
                   </div>
                   <div id=121>
                     <button name="Decrease Children" id=122 disabled />
-                    0 Children
+                    <div id=124>0 Children</div>
                     <button name="Increase Children" id=127 focusable />
                   </div>
                 </div>
                 <div id=129>
                   <div id=130>
                     <heading id=132 focusable level=3>Infants</heading>
-                    Under 2
+                    <div id=134>Under 2</div>
                   </div>
                   <div id=136>
                     <button name="Decrease Infants" id=137 disabled />
-                    0 Infants
+                    <div id=139>0 Infants</div>
                     <button name="Increase Infants" id=142 focusable />
                   </div>
                 </div>
@@ -75,7 +75,7 @@
                   </div>
                   <div id=152>
                     <button name="Decrease Pets" id=153 disabled />
-                    0 Pets
+                    <div id=155>0 Pets</div>
                     <button name="Increase Pets" id=158 focusable />
                   </div>
                 </div>
@@ -107,7 +107,7 @@
                   <div id=213>
                     <button name="Add to wishlist: Apartment in Cheras" id=223 focusable />
                     <div id=232>
-                      Apartment in Cheras
+                      <div id=234>Apartment in Cheras</div>
                       <div id=236>
                         <div id=244>$295 SGD for 2 nights</div>
                         <div id=247>,</div>
@@ -120,11 +120,11 @@
                   <link name="Home in Kuala Lumpur" id=254 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1404074202202294280&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2332364251" />
                   <div id=255>
                     <div id=261>
-                      Guest favourite
+                      <div id=262>Guest favourite</div>
                       <button name="Add to wishlist: Home in Kuala Lumpur" id=268 focusable />
                     </div>
                     <div id=277>
-                      Home in Kuala Lumpur
+                      <div id=279>Home in Kuala Lumpur</div>
                       <div id=281>
                         <div id=289>$358 SGD for 2 nights</div>
                         <div id=292>,</div>
@@ -138,7 +138,7 @@
                   <div id=300>
                     <button name="Add to wishlist: Flat in Kuala Lumpur" id=310 focusable />
                     <div id=319>
-                      Flat in Kuala Lumpur
+                      <div id=321>Flat in Kuala Lumpur</div>
                       <div id=323>
                         <div id=331>$116 SGD for 2 nights</div>
                         <div id=334>,</div>
@@ -152,7 +152,7 @@
                   <div id=342>
                     <button name="Add to wishlist: Flat in Bukit Bintang" id=352 focusable />
                     <div id=361>
-                      Flat in Bukit Bintang
+                      <div id=363>Flat in Bukit Bintang</div>
                       <div id=365>
                         <div id=373>$445 SGD for 2 nights</div>
                         <div id=376>,</div>
@@ -165,11 +165,11 @@
                   <link name="Apartment in Cheras" id=383 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1661499740461247110&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ5-rvAcdJzDERfSgcL1uO2fQ&amp;query=Kuala%20Lumpur&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2623371594" />
                   <div id=384>
                     <div id=390>
-                      Guest favourite
+                      <div id=391>Guest favourite</div>
                       <button name="Add to wishlist: Apartment in Cheras" id=397 focusable />
                     </div>
                     <div id=406>
-                      Apartment in Cheras
+                      <div id=408>Apartment in Cheras</div>
                       <div id=410>
                         <div id=418>$364 SGD for 2 nights</div>
                         <div id=421>,</div>
@@ -183,7 +183,7 @@
                   <div id=429>
                     <button name="Add to wishlist: Flat in Kuala Lumpur" id=439 focusable />
                     <div id=448>
-                      Flat in Kuala Lumpur
+                      <div id=450>Flat in Kuala Lumpur</div>
                       <div id=452>
                         <div id=460>$317 SGD for 2 nights</div>
                         <div id=463>,</div>
@@ -208,11 +208,11 @@
                   <link name="Flat in Toshima-k" id=523 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1568365942167102163&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2524123622" />
                   <div id=524>
                     <div id=530>
-                      Guest favourite
+                      <div id=531>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Toshima-k" id=537 focusable />
                     </div>
                     <div id=546>
-                      Flat in Toshima-k
+                      <div id=548>Flat in Toshima-k</div>
                       <div id=550>
                         <div id=558>$253 SGD for 2 nights</div>
                         <div id=561>,</div>
@@ -225,11 +225,11 @@
                   <link name="Flat in Taitō-ku" id=568 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1001691188527653306&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2096923170" />
                   <div id=569>
                     <div id=575>
-                      Guest favourite
+                      <div id=576>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Taitō-ku" id=582 focusable />
                     </div>
                     <div id=591>
-                      Flat in Taitō-ku
+                      <div id=593>Flat in Taitō-ku</div>
                       <div id=595>
                         <div id=603>$204 SGD for 2 nights</div>
                         <div id=606>,</div>
@@ -242,11 +242,11 @@
                   <link name="Home in Shibuya" id=613 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1709820137125697917&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2683925446" />
                   <div id=614>
                     <div id=620>
-                      Guest favourite
+                      <div id=621>Guest favourite</div>
                       <button name="Add to wishlist: Home in Shibuya" id=627 focusable />
                     </div>
                     <div id=636>
-                      Home in Shibuya
+                      <div id=638>Home in Shibuya</div>
                       <div id=640>
                         <div id=648>$744 SGD for 2 nights</div>
                         <div id=651>,</div>
@@ -259,11 +259,11 @@
                   <link name="Home in Setagaya-ku" id=658 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1478310554999572994&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2282535684" />
                   <div id=659>
                     <div id=665>
-                      Guest favourite
+                      <div id=666>Guest favourite</div>
                       <button name="Add to wishlist: Home in Setagaya-ku" id=672 focusable />
                     </div>
                     <div id=681>
-                      Home in Setagaya-ku
+                      <div id=683>Home in Setagaya-ku</div>
                       <div id=685>
                         <div id=693>$941 SGD for 2 nights</div>
                         <div id=696>,</div>
@@ -277,7 +277,7 @@
                   <div id=704>
                     <button name="Add to wishlist: Home in Katsushika-ku" id=714 focusable />
                     <div id=723>
-                      Home in Katsushika-ku
+                      <div id=725>Home in Katsushika-ku</div>
                       <div id=727>
                         <div id=735>$361 SGD for 2 nights</div>
                         <div id=738>,</div>
@@ -290,11 +290,11 @@
                   <link name="Home in Sumida-ku" id=745 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=839524019203261451&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJXSModoWLGGARILWiCfeu2M0&amp;query=Tokyo&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2547893380" />
                   <div id=746>
                     <div id=752>
-                      Guest favourite
+                      <div id=753>Guest favourite</div>
                       <button name="Add to wishlist: Home in Sumida-ku" id=759 focusable />
                     </div>
                     <div id=768>
-                      Home in Sumida-ku
+                      <div id=770>Home in Sumida-ku</div>
                       <div id=772>
                         <div id=780>$525 SGD for 2 nights</div>
                         <div id=783>,</div>
@@ -319,11 +319,11 @@
                   <link name="Flat in Osaka" id=843 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=851126866230415015&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2158976825" />
                   <div id=844>
                     <div id=850>
-                      Guest favourite
+                      <div id=851>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Osaka" id=857 focusable />
                     </div>
                     <div id=866>
-                      Flat in Osaka
+                      <div id=868>Flat in Osaka</div>
                       <div id=870>
                         <div id=878>$152 SGD for 2 nights</div>
                         <div id=881>,</div>
@@ -336,11 +336,11 @@
                   <link name="Flat in Naniwa Ward" id=888 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=32073378&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1855883622" />
                   <div id=889>
                     <div id=895>
-                      Guest favourite
+                      <div id=896>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Naniwa Ward" id=902 focusable />
                     </div>
                     <div id=911>
-                      Flat in Naniwa Ward
+                      <div id=913>Flat in Naniwa Ward</div>
                       <div id=915>
                         <div id=923>$101 SGD for 2 nights</div>
                         <div id=926>,</div>
@@ -353,11 +353,11 @@
                   <link name="Flat in Osaka" id=933 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=32075321&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1855877915" />
                   <div id=934>
                     <div id=940>
-                      Guest favourite
+                      <div id=941>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Osaka" id=947 focusable />
                     </div>
                     <div id=956>
-                      Flat in Osaka
+                      <div id=958>Flat in Osaka</div>
                       <div id=960>
                         <div id=968>$116 SGD for 2 nights</div>
                         <div id=971>,</div>
@@ -370,11 +370,11 @@
                   <link name="Flat in Chuo" id=978 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1283852490431293089&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2025475005" />
                   <div id=979>
                     <div id=985>
-                      Guest favourite
+                      <div id=986>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Chuo" id=992 focusable />
                     </div>
                     <div id=1001>
-                      Flat in Chuo
+                      <div id=1003>Flat in Chuo</div>
                       <div id=1005>
                         <div id=1013>$104 SGD for 2 nights</div>
                         <div id=1016>,</div>
@@ -387,11 +387,11 @@
                   <link name="Flat in Ikuno Ward" id=1023 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1239451570720982630&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=1990167460" />
                   <div id=1024>
                     <div id=1030>
-                      Guest favourite
+                      <div id=1031>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Ikuno Ward" id=1037 focusable />
                     </div>
                     <div id=1046>
-                      Flat in Ikuno Ward
+                      <div id=1048>Flat in Ikuno Ward</div>
                       <div id=1050>
                         <div id=1058>$105 SGD for 2 nights</div>
                         <div id=1061>,</div>
@@ -404,11 +404,11 @@
                   <link name="Flat in Osaka" id=1068 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=891702610935148042&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ4eIGNFXmAGAR5y9q5G7BW8U&amp;query=Osaka&amp;refinement_paths=%2Fhomes&amp;flexible_trip_lengths=weekend_trip&amp;date_picker_type=FLEXIBLE_DATES&amp;photo_id=2601377129" />
                   <div id=1069>
                     <div id=1075>
-                      Guest favourite
+                      <div id=1076>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Osaka" id=1082 focusable />
                     </div>
                     <div id=1091>
-                      Flat in Osaka
+                      <div id=1093>Flat in Osaka</div>
                       <div id=1095>
                         <div id=1103>$136 SGD for 2 nights</div>
                         <div id=1106>,</div>
@@ -433,11 +433,11 @@
                   <link name="Home in Khet Khlong San" id=1166 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1363473448168628845&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2095284534" />
                   <div id=1167>
                     <div id=1173>
-                      Guest favourite
+                      <div id=1174>Guest favourite</div>
                       <button name="Add to wishlist: Home in Khet Khlong San" id=1180 focusable />
                     </div>
                     <div id=1189>
-                      Home in Khet Khlong San
+                      <div id=1191>Home in Khet Khlong San</div>
                       <div id=1193>
                         <div id=1201>$177 SGD for 2 nights</div>
                         <div id=1204>,</div>
@@ -450,11 +450,11 @@
                   <link name="Place to stay in Khet Ratchathewi" id=1211 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=835377390388055017&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=1595768958" />
                   <div id=1212>
                     <div id=1218>
-                      Guest favourite
+                      <div id=1219>Guest favourite</div>
                       <button name="Add to wishlist: Place to stay in Khet Ratchathewi" id=1225 focusable />
                     </div>
                     <div id=1234>
-                      Place to stay in Khet Ratchathewi
+                      <div id=1236>Place to stay in Khet Ratchathewi</div>
                       <div id=1238>
                         <div id=1246>$101 SGD for 2 nights</div>
                         <div id=1249>,</div>
@@ -467,11 +467,11 @@
                   <link name="Flat in Yan Nawa" id=1256 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1687949203742815160&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2637775943" />
                   <div id=1257>
                     <div id=1263>
-                      Guest favourite
+                      <div id=1264>Guest favourite</div>
                       <button name="Add to wishlist: Flat in Yan Nawa" id=1270 focusable />
                     </div>
                     <div id=1279>
-                      Flat in Yan Nawa
+                      <div id=1281>Flat in Yan Nawa</div>
                       <div id=1283>
                         <div id=1291>$136 SGD for 2 nights</div>
                         <div id=1294>,</div>
@@ -484,11 +484,11 @@
                   <link name="Apartment in Bangkok" id=1301 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=757099645521464263&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=1524604830" />
                   <div id=1302>
                     <div id=1308>
-                      Guest favourite
+                      <div id=1309>Guest favourite</div>
                       <button name="Add to wishlist: Apartment in Bangkok" id=1315 focusable />
                     </div>
                     <div id=1324>
-                      Apartment in Bangkok
+                      <div id=1326>Apartment in Bangkok</div>
                       <div id=1328>
                         <div id=1336>$354 SGD for 2 nights</div>
                         <div id=1339>,</div>
@@ -501,11 +501,11 @@
                   <link name="Home in Watthana" id=1346 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1567144478059856018&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2435673754" />
                   <div id=1347>
                     <div id=1353>
-                      Guest favourite
+                      <div id=1354>Guest favourite</div>
                       <button name="Add to wishlist: Home in Watthana" id=1360 focusable />
                     </div>
                     <div id=1369>
-                      Home in Watthana
+                      <div id=1371>Home in Watthana</div>
                       <div id=1373>
                         <div id=1381>$687 SGD for 2 nights</div>
                         <div id=1384>,</div>
@@ -518,11 +518,11 @@
                   <link name="Townhouse in Watthana" id=1391 focusable url="https://www.airbnb.com.sg/s/homes?pinned_listings%5B%5D=1590236263966349488&amp;pinned_reason=HOMEPAGE&amp;search_type=HOMEPAGE_CAROUSEL_CLICK&amp;place_id=ChIJ82ENKDJgHTERIEjiXbIAAQE&amp;query=Bangkok&amp;refinement_paths=%2Fhomes&amp;date_picker_type=FLEXIBLE_DATES&amp;flexible_trip_lengths=WEEKEND_TRIP&amp;flexible_trip_dates=september&amp;photo_id=2465114882" />
                   <div id=1392>
                     <div id=1398>
-                      Guest favourite
+                      <div id=1399>Guest favourite</div>
                       <button name="Add to wishlist: Townhouse in Watthana" id=1405 focusable />
                     </div>
                     <div id=1414>
-                      Townhouse in Watthana
+                      <div id=1416>Townhouse in Watthana</div>
                       <div id=1418>
                         <div id=1426>$764 SGD for 2 nights</div>
                         <div id=1429>,</div>
@@ -745,7 +745,7 @@
               Footer section
               <div id=1721>
                 <div id=1723>
-                  © 2026 Airbnb, Inc.
+                  <div id=1724>© 2026 Airbnb, Inc.</div>
                   <list id=1729>
                     <listitem id=1730 level=1>
                       <link id=1731 focusable url="https://www.airbnb.com.sg/terms/privacy_policy">Privacy</link>

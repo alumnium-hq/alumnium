@@ -26,7 +26,7 @@
         <checkbox name="❯ Toggle All Input" id=30 focusable />
         <div id=31>
           <div id=32>❯</div>
-          <div id=34>Toggle All Input</div>
+          Toggle All Input
         </div>
       </div>
       <list id=35>

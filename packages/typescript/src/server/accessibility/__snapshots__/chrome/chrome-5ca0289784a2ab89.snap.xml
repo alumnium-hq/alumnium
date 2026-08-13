@@ -26,7 +26,7 @@
     <main id=29>
       <div id=30>
         <checkbox name="❯ Toggle All Input" id=31 focusable />
-        ❯
+        <div id=33>❯</div>
       </div>
       <list id=36>
         <listitem id=37 level=1>

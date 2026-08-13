@@ -114,6 +114,19 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     );
   }
 
+  protected override shouldPreserveTextOnlyGeneric(
+    xmlTag: Xml.Tag,
+    xmlParent: Xml.Tag,
+  ): boolean {
+    return (
+      xmlTag.tagName === "generic" &&
+      this.isGenericRole(xmlParent.tagName) &&
+      this.isRenderedAddressable(xmlTag) &&
+      xmlTag.children.length === 1 &&
+      !!Xml.nodeAsText(xmlTag.children[0]!)
+    );
+  }
+
   protected override pruneBackendRedundantNodes(xmlTag: Xml.Tag): void {
     for (const child of xmlTag.children) {
       const childTag = Xml.nodeAsTag(child);

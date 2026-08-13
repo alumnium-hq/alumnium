@@ -133,7 +133,7 @@
                 <link id=152 focusable url="https://www.npmjs.com/package/ai">
                   <heading id=153 level=3>ai</heading>
                 </link>
-                exact match
+                <div id=155>exact match</div>
               </div>
               <paragraph id=157>AI SDK by Vercel - build apps like ChatGPT, Claude, Gemini, and more with a single interface for any model using the Vercel AI Gateway or go direct to OpenAI, Anthropic, Google, or any other model provider.</paragraph>
               <list id=159>
@@ -199,7 +199,7 @@
             </div>
             <div id=219>
               <image name="Download statistics" id=220 />
-              76,536,816
+              <div id=221>76,536,816</div>
             </div>
           </div>
           <div id=223>
@@ -229,7 +229,7 @@
             </div>
             <div id=249>
               <image name="Download statistics" id=250 />
-              70,280,917
+              <div id=251>70,280,917</div>
             </div>
           </div>
           <div id=253>
@@ -259,7 +259,7 @@
             </div>
             <div id=279>
               <image name="Download statistics" id=280 />
-              25,169,116
+              <div id=281>25,169,116</div>
             </div>
           </div>
           <div id=283>
@@ -289,7 +289,7 @@
             </div>
             <div id=309>
               <image name="Download statistics" id=310 />
-              6,609,436
+              <div id=311>6,609,436</div>
             </div>
           </div>
           <div id=313>
@@ -314,7 +314,7 @@
             </div>
             <div id=335>
               <image name="Download statistics" id=336 />
-              24,507,171
+              <div id=337>24,507,171</div>
             </div>
           </div>
           <div id=339>
@@ -344,7 +344,7 @@
             </div>
             <div id=365>
               <image name="Download statistics" id=366 />
-              36,751,739
+              <div id=367>36,751,739</div>
             </div>
           </div>
           <div id=369>
@@ -374,7 +374,7 @@
             </div>
             <div id=395>
               <image name="Download statistics" id=396 />
-              7,643,540
+              <div id=397>7,643,540</div>
             </div>
           </div>
           <div id=399>
@@ -407,7 +407,7 @@
             </div>
             <div id=428>
               <image name="Download statistics" id=429 />
-              27,685,087
+              <div id=430>27,685,087</div>
             </div>
           </div>
           <div id=432>
@@ -437,7 +437,7 @@
             </div>
             <div id=458>
               <image name="Download statistics" id=459 />
-              38,460,148
+              <div id=460>38,460,148</div>
             </div>
           </div>
           <div id=462>
@@ -462,7 +462,7 @@
             </div>
             <div id=484>
               <image name="Download statistics" id=485 />
-              15,907,464
+              <div id=486>15,907,464</div>
             </div>
           </div>
           <div id=488>
@@ -492,7 +492,7 @@
             </div>
             <div id=514>
               <image name="Download statistics" id=515 />
-              7,905,734
+              <div id=516>7,905,734</div>
             </div>
           </div>
           <div id=518>
@@ -522,7 +522,7 @@
             </div>
             <div id=544>
               <image name="Download statistics" id=545 />
-              11,583,708
+              <div id=546>11,583,708</div>
             </div>
           </div>
           <div id=548>
@@ -567,7 +567,7 @@
             </div>
             <div id=589>
               <image name="Download statistics" id=590 />
-              520,509
+              <div id=591>520,509</div>
             </div>
           </div>
           <div id=593>
@@ -618,7 +618,7 @@
             </div>
             <div id=640>
               <image name="Download statistics" id=641 />
-              2,096,088
+              <div id=642>2,096,088</div>
             </div>
           </div>
           <div id=644>
@@ -657,7 +657,7 @@
             </div>
             <div id=679>
               <image name="Download statistics" id=680 />
-              1,014,611
+              <div id=681>1,014,611</div>
             </div>
           </div>
           <div id=683>
@@ -687,7 +687,7 @@
             </div>
             <div id=709>
               <image name="Download statistics" id=710 />
-              6,775,494
+              <div id=711>6,775,494</div>
             </div>
           </div>
           <div id=713>
@@ -717,7 +717,7 @@
             </div>
             <div id=739>
               <image name="Download statistics" id=740 />
-              2,315,161
+              <div id=741>2,315,161</div>
             </div>
           </div>
           <div id=743>
@@ -747,7 +747,7 @@
             </div>
             <div id=769>
               <image name="Download statistics" id=770 />
-              11,075,274
+              <div id=771>11,075,274</div>
             </div>
           </div>
           <div id=773>
@@ -777,7 +777,7 @@
             </div>
             <div id=799>
               <image name="Download statistics" id=800 />
-              6,107,819
+              <div id=801>6,107,819</div>
             </div>
           </div>
           <div id=803>
@@ -810,7 +810,7 @@
             </div>
             <div id=832>
               <image name="Download statistics" id=833 />
-              3,752,223
+              <div id=834>3,752,223</div>
             </div>
           </div>
         </div>

@@ -56,7 +56,7 @@
             <paragraph id=140>Try Claude</paragraph>
           </div>
           <div id=142>
-            $0
+            <div id=143>$0</div>
             <paragraph id=145>Free for everyone</paragraph>
           </div>
           <link id=148 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=free">Try Claude</link>
@@ -79,7 +79,7 @@
             <paragraph id=196>For everyday productivity</paragraph>
           </div>
           <div id=198>
-            $25
+            <div id=199>$25</div>
             <paragraph id=201>
               <div id=202>Per month with annual subscription discount (</div>
               <div id=203>$300</div>
@@ -113,7 +113,7 @@
             <paragraph id=257>5–20x more usage than Pro</paragraph>
           </div>
           <div id=259>
-            From $149.99
+            <div id=260>From $149.99</div>
             <paragraph id=262>Per month</paragraph>
           </div>
           <div id=264>

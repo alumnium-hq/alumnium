@@ -210,6 +210,13 @@ export abstract class BaseServerAccessibilityTree {
     return false;
   }
 
+  protected shouldPreserveTextOnlyGeneric(
+    _xmlTag: Xml.Tag,
+    _xmlParent: Xml.Tag,
+  ): boolean {
+    return false;
+  }
+
   protected pruneBackendRedundantNodes(_xmlTag: Xml.Tag): void {}
 
   protected isGenericRole(role: string): boolean {
@@ -316,6 +323,7 @@ export abstract class BaseServerAccessibilityTree {
         xmlTag.children.length === 1 &&
         !hasNonGenericAttrs &&
         !this.#textPromotedTags.has(xmlTag) &&
+        !this.shouldPreserveTextOnlyGeneric(xmlTag, xmlParent) &&
         !this.#isTextOnlyTrimmingBorderChild(xmlTag, trimmingBorder)
       ) {
         const child = xmlTag.children[0];

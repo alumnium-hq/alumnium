@@ -157,58 +157,58 @@
       <div id=444>
         <heading id=445 level=3>Fighting infra with “cloud”</heading>
         <div id=448>
-          <div id=455>"Egress costs just doubled this week — caching not working at edge. Can we fix this by EOD?"</div>
-          <div id=463>STATUS: UNRESOLVED</div>
-          <div id=471>2931 Open incidents</div>
-          <div id=479>2931 Open incidents</div>
+          <div id=454>"Egress costs just doubled this week — caching not working at edge. Can we fix this by EOD?"</div>
+          <div id=462>STATUS: UNRESOLVED</div>
+          <div id=470>2931 Open incidents</div>
+          <div id=478>2931 Open incidents</div>
           <div id=483>
-            <div id=486>P0</div>
-            <div id=488>High Latency!!!!!!</div>
-            <div id=490>~150–250ms RTT per request</div>
+            <div id=485>P0</div>
+            <div id=487>High Latency!!!!!!</div>
+            <div id=489>~150–250ms RTT per request</div>
           </div>
           <div id=494>
-            <div id=497>P0</div>
-            <div id=499>High Latency!!!!!!</div>
-            <div id=501>~150–250ms RTT per request</div>
+            <div id=496>P0</div>
+            <div id=498>High Latency!!!!!!</div>
+            <div id=500>~150–250ms RTT per request</div>
           </div>
           <div id=505>
-            <div id=508>P0</div>
-            <div id=510>High Latency!!!!!!</div>
-            <div id=512>~150–250ms RTT per request</div>
+            <div id=507>P0</div>
+            <div id=509>High Latency!!!!!!</div>
+            <div id=511>~150–250ms RTT per request</div>
           </div>
-          "Origin IP exposed, getting hit with direct DDoS traffic. Need to lock down ASAP."
+          <div id=519>"Origin IP exposed, getting hit with direct DDoS traffic. Need to lock down ASAP."</div>
           <div id=524>
-            <div id=527>Bandwidth usage alert</div>
-            <div id=529>You have exceeded your bandwidth limit for the month.</div>
+            <div id=526>Bandwidth usage alert</div>
+            <div id=528>You have exceeded your bandwidth limit for the month.</div>
           </div>
           <div id=533>
-            <div id=536>Bandwidth usage alert</div>
-            <div id=538>You have exceeded your bandwidth limit for the month.</div>
+            <div id=535>Bandwidth usage alert</div>
+            <div id=537>You have exceeded your bandwidth limit for the month.</div>
           </div>
           <div id=542>
-            <div id=545>Summer Intern</div>
-            <div id=547>"I fixed the errors by pushing the env file to production."</div>
+            <div id=544>Summer Intern</div>
+            <div id=546>"I fixed the errors by pushing the env file to production."</div>
           </div>
-          "Cache hit ratio just tanked to 12%. Origin egress is 14× normal — this month's bill is going to be brutal."
+          <div id=553>"Cache hit ratio just tanked to 12%. Origin egress is 14× normal — this month's bill is going to be brutal."</div>
           <div id=558>
-            <div id=562>P0</div>
-            <div id=564>Credential stuffing detected</div>
-            <div id=566>142K login attempts from 38K IPs in the last 5 minutes.</div>
+            <div id=561>P0</div>
+            <div id=563>Credential stuffing detected</div>
+            <div id=565>142K login attempts from 38K IPs in the last 5 minutes.</div>
           </div>
           <div id=570>
-            <div id=574>P0</div>
-            <div id=576>Credential stuffing detected</div>
-            <div id=578>142K login attempts from 38K IPs in the last 5 minutes.</div>
+            <div id=573>P0</div>
+            <div id=575>Credential stuffing detected</div>
+            <div id=577>142K login attempts from 38K IPs in the last 5 minutes.</div>
           </div>
-          "VPN concentrator pegged at 98% — APAC engineering can't reach staging again."
+          <div id=585>"VPN concentrator pegged at 98% — APAC engineering can't reach staging again."</div>
           <div id=590>
-            <div id=593>Sensitive data exfiltration</div>
-            <div id=595>12 customer records pasted into a public AI tool in the last hour.</div>
+            <div id=592>Sensitive data exfiltration</div>
+            <div id=594>12 customer records pasted into a public AI tool in the last hour.</div>
           </div>
-          Employee clicked phishing link. SSO session may be compromised.
+          <div id=602>Employee clicked phishing link. SSO session may be compromised.</div>
           <div id=607>
-            <div id=610>MPLS circuit down</div>
-            <div id=612>Singapore ↔ Frankfurt. Carrier ETA: 4–6 hours.</div>
+            <div id=609>MPLS circuit down</div>
+            <div id=611>Singapore ↔ Frankfurt. Carrier ETA: 4–6 hours.</div>
           </div>
         </div>
       </div>
@@ -219,21 +219,21 @@
           Cloudflare
         </heading>
         <div id=772>
-          Pushed
+          <div id=775>Pushed</div>
           <image id=778>
-            ​
+            <div id=780>​</div>
             <div id=782>
               <div id=783>
-                <div id=786>1</div>
-                <div id=789>8</div>
-                <div id=792>7</div>
+                <div id=785>1</div>
+                <div id=788>8</div>
+                <div id=791>7</div>
                 <div id=793>​</div>
               </div>
-              ​
+              <div id=796>​</div>
             </div>
-            ​
+            <div id=799>​</div>
           </image>
-          new updates today
+          <div id=802>new updates today</div>
         </div>
       </div>
     </div>
@@ -272,17 +272,17 @@
           </div>
           <div id=862>
             <div id=863>
-              <div id=865>Visitor traffic</div>
-              <div id=867>Your site</div>
+              <div id=864>Visitor traffic</div>
+              <div id=866>Your site</div>
             </div>
             <div id=868>
-              <div id=874>CDN</div>
-              <div id=881>DDoS</div>
-              <div id=888>SSL</div>
-              <div id=895>WAF</div>
-              <div id=902>Bot</div>
+              <div id=873>CDN</div>
+              <div id=880>DDoS</div>
+              <div id=887>SSL</div>
+              <div id=894>WAF</div>
+              <div id=901>Bot</div>
             </div>
-            Same protection at every tier — paid plans add depth
+            <div id=903>Same protection at every tier — paid plans add depth</div>
           </div>
         </div>
         <div id=905>
@@ -294,12 +294,12 @@
             </paragraph>
             <div id=913>
               <heading id=914 level=4>$0</heading>
-              /month
+              <div id=916>/month</div>
             </div>
             <div id=918>
-              <div id=921>Unmetered DDoS</div>
-              <div id=924>Universal SSL</div>
-              <div id=927>Global CDN</div>
+              <div id=920>Unmetered DDoS</div>
+              <div id=923>Universal SSL</div>
+              <div id=926>Global CDN</div>
             </div>
             <link id=928 focusable url="https://www.cloudflare.com/plans#application-services">
               <div id=929>See</div>
@@ -316,14 +316,14 @@
             <div id=938>
               <div id=939>
                 <heading id=940 level=4>$20</heading>
-                /mo billed annually
+                <div id=942>/mo billed annually</div>
               </div>
-              or $25/mo billed monthly
+              <div id=944>or $25/mo billed monthly</div>
             </div>
             <div id=946>
-              <div id=949>Image optimization</div>
-              <div id=952>Bot protection</div>
-              <div id=955>Ticket support</div>
+              <div id=948>Image optimization</div>
+              <div id=951>Bot protection</div>
+              <div id=954>Ticket support</div>
             </div>
             <link id=956 focusable url="https://www.cloudflare.com/plans#application-services">
               <div id=957>See</div>
@@ -340,14 +340,14 @@
             <div id=966>
               <div id=967>
                 <heading id=968 level=4>$200</heading>
-                /mo billed annually
+                <div id=970>/mo billed annually</div>
               </div>
-              or $250/mo billed monthly
+              <div id=972>or $250/mo billed monthly</div>
             </div>
             <div id=974>
-              <div id=977>PCI DSS 4.0</div>
-              <div id=980>100% uptime SLA</div>
-              <div id=983>Chat support</div>
+              <div id=976>PCI DSS 4.0</div>
+              <div id=979>100% uptime SLA</div>
+              <div id=982>Chat support</div>
             </div>
             <link id=984 focusable url="https://www.cloudflare.com/plans#application-services">
               <div id=985>See</div>
@@ -363,12 +363,12 @@
             </paragraph>
             <div id=994>
               <heading id=996 level=4>Custom</heading>
-              Billed annually
+              <div id=998>Billed annually</div>
             </div>
             <div id=1000>
-              <div id=1003>Network priority</div>
-              <div id=1006>24/7 support</div>
-              <div id=1009>Custom contracts</div>
+              <div id=1002>Network priority</div>
+              <div id=1005>24/7 support</div>
+              <div id=1008>Custom contracts</div>
             </div>
             <link id=1010 focusable url="https://www.cloudflare.com/plans#application-services">
               <div id=1011>See</div>
@@ -403,9 +403,9 @@
         </div>
         <div id=1083>
           <div id=1086>
-            Launching agents to analyze repository…
+            <div id=1087>Launching agents to analyze repository…</div>
             <div id=1089>
-              3 background agents launched
+              <div id=1092>3 background agents launched</div>
               <div id=1094>
                 <div id=1096>
                   review-agent
@@ -430,9 +430,9 @@
                 </div>
               </div>
             </div>
-            Agents frontend analysis loading
+            <div id=1135>Agents frontend analysis loading</div>
           </div>
-          &gt;
+          <div id=1138>&gt;</div>
         </div>
       </div>
     </div>

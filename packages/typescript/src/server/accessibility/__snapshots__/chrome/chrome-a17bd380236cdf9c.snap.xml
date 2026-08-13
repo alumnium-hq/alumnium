@@ -4,8 +4,8 @@
     <heading id=7 level=2>Upload Files</heading>
     <paragraph id=9>Click the button below to select files</paragraph>
     <button id=11 focusable>Choose Files</button>
-    📄 680f6cf5-f163-4d8a-8630-7ee05fa5f734.txt (14 Bytes)
+    <div id=14>📄 680f6cf5-f163-4d8a-8630-7ee05fa5f734.txt (14 Bytes)</div>
     <button id=16 disabled>Upload Files</button>
-    Files Uploaded Successfully!
+    <div id=18>Files Uploaded Successfully!</div>
   </div>
 </RootWebArea>
