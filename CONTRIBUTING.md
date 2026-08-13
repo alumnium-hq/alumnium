@@ -166,6 +166,7 @@ For local development, you may need to configure the following environment varia
 | `ALUMNIUM_LOG_PATH`  | Path to the alumnium log directory                     | `stdout(logs to console)` |
 | `ALUMNIUM_LOG_LEVEL` | Log level or configuration value                       | `WARNING`                 |
 | `ALUMNIUM_CACHE`     | Cache provider or disable it                           | `filesystem`              |
+| `ALUMNIUM_ARTIFACTS_DIR` | Base dir for library execution artifacts (`al.artifacts_dir`) | `~/.alumnium/artifacts` |
 
 ### 5. Pull Request Process
 

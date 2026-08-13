@@ -13,11 +13,39 @@ Playwright driver supports both _headful_ and _headless_ modes, while Selenium d
 
 Alumnium currently supports Appium with XCUITest driver for iOS automation and UiAutomator2 driver for Android automation.
 
+## Execution Metrics & Artifacts
+
+After running `do()`, `check()`, or `get()`, per-step execution metrics are available on `al.metrics` (for third-party reporters and cost/performance analysis). Correlation is positional — `al.metrics.steps[i]` is the i-th call, in order:
+
+```python
+al.do("add a todo 'Buy milk'")
+al.check("the todo list contains 'Buy milk'")
+
+m = al.metrics
+m.duration               # total session duration (seconds)
+m.tokens.total           # session token usage (input_tokens, output_tokens, total_tokens, ...)
+
+step = m.steps[0]        # first call (the do())
+step.kind                # "do" | "check" | "get"
+step.outcome             # "passed" | "failed" (failed = the call raised)
+step.duration            # seconds
+step.tokens.input_tokens # per-step token usage
+step.artifacts           # list[Artifact(path, kind, mime)] — screenshots (+ trace)
+
+m.last                   # the most recent step (== m.steps[-1])
+```
+
+Screenshots (and, for the Playwright driver, a `trace.zip`) are written under `al.artifacts_dir`; see [`ALUMNIUM_ARTIFACTS_DIR`](#alumnium_artifacts_dir). Read `al.metrics` before calling `al.quit()` for server-authoritative session token totals. The existing `al.stats` property is unchanged.
+
 ## Environment Variables
 
 The following environment variables can be used to control the behavior of Alumnium.
 
 Any environment variable listed below may be set to a command substitution of the form `$(command)`. On startup Alumnium runs `command`, trims trailing newlines from its output, and uses the result as the variable's value.
+
+### `ALUMNIUM_ARTIFACTS_DIR`
+
+Sets the base directory where the library stores per-session execution artifacts (step screenshots and, for Playwright, a `trace.zip`) exposed via `al.artifacts_dir` and `al.metrics`. Files are written under `<dir>/<session_id>/`. Default is `~/.alumnium/artifacts`. (For the MCP server, see `ALUMNIUM_MCP_ARTIFACTS_DIR`.)
 
 ### `ALUMNIUM_CACHE`
 
