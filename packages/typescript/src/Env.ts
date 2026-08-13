@@ -80,6 +80,28 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_LOG_OBJECTS_DEPTH() {
+    const defaultValue = 4;
+    return envVar(
+      "ALUMNIUM_LOG_OBJECTS_DEPTH",
+      z.union([
+        z.stringbool().transform((val) => (val ? defaultValue : Infinity)),
+        z.coerce.number().default(defaultValue),
+      ]),
+    );
+  },
+
+  get ALUMNIUM_LOG_MAX_STR_LENGTH() {
+    const defaultValue = 10_000;
+    return envVar(
+      "ALUMNIUM_LOG_MAX_STR_LENGTH",
+      z.union([
+        z.stringbool().transform((val) => (val ? defaultValue : Infinity)),
+        z.coerce.number().default(defaultValue),
+      ]),
+    );
+  },
+
   get ALUMNIUM_PRUNE_LOGS() {
     // NOTE: We ignore invalid values here to avoid missing logs due to misconfiguration.
     return envVar("ALUMNIUM_PRUNE_LOGS", z.stringbool().catch(true));
