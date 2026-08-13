@@ -5,7 +5,7 @@
         <button name="Guide" id=15 focusable focused />
         <div id=22>
           <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/" />
-          SG
+          <div id=28>SG</div>
         </div>
         <button id=33 focusable>Skip navigation</button>
       </div>
@@ -67,10 +67,10 @@
                 <div id=308>
                   <button name="Epidemic Sound" id=311 focusable />
                   <div id=316>
-                    <div id=318>Sponsored</div>
+                    <div id=317>Sponsored</div>
                     <div id=319>·</div>
                   </div>
-                  Epidemic Sound
+                  <div id=321>Epidemic Sound</div>
                 </div>
               </div>
               <button name="My Ad Center" id=326 focusable />
@@ -284,10 +284,10 @@
             </div>
             <div id=907>
               <div id=909>
-                <div id=911>Sponsored</div>
+                <div id=910>Sponsored</div>
                 <div id=912>·</div>
               </div>
-              https://www.epidemicsound.com/rock/lo-fi+music
+              <div id=914>https://www.epidemicsound.com/rock/lo-fi+music</div>
             </div>
           </div>
           <button name="My Ad Center" id=919 focusable />
@@ -331,7 +331,7 @@
                 </heading>
                 <button name="Action menu" id=1044 focusable />
               </div>
-              9.6K watching
+              <div id=1053>9.6K watching</div>
             </div>
             <div id=1057>
               <link name="Go to channel Lofi Girl" id=1058 focusable url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow" />
@@ -363,10 +363,10 @@
             </div>
             <div id=1125>
               <div id=1127>
-                <div id=1129>Sponsored</div>
+                <div id=1128>Sponsored</div>
                 <div id=1130>·</div>
               </div>
-              https://elements.envato.com/
+              <div id=1132>https://elements.envato.com/</div>
             </div>
           </div>
           <button name="My Ad Center" id=1137 focusable />
@@ -422,7 +422,7 @@
                 </heading>
                 <button name="Action menu" id=1280 focusable />
               </div>
-              1.5K watching
+              <div id=1289>1.5K watching</div>
             </div>
             <div id=1293>
               <link name="Go to channel Lofi Girl" id=1294 focusable url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow" />
@@ -698,7 +698,7 @@
                 </heading>
                 <button name="Action menu" id=2051 focusable />
               </div>
-              222 watching
+              <div id=2060>222 watching</div>
             </div>
             <div id=2064>
               <link name="Go to channel Lofi Girl" id=2065 focusable url="https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow" />
@@ -806,7 +806,7 @@
                 </heading>
                 <button name="Action menu" id=2363 focusable />
               </div>
-              453 watching
+              <div id=2372>453 watching</div>
             </div>
             <div id=2376>
               <link name="Go to channel The Japanese Town" id=2377 focusable url="https://www.youtube.com/@TheJapaneseTown-jt6fy" />
@@ -898,35 +898,35 @@
               <div id=2620>
                 <div id=2626>
                   <link id=2627 focusable url="https://www.youtube.com/shorts/OCVI3n-iR_0">The LOFI Girl Has Finally Finished Studying</link>
-                  1.3M views
+                  <div id=2629>1.3M views</div>
                 </div>
                 <button name="More actions" id=2632 focusable />
               </div>
               <div id=2635>
                 <div id=2641>
                   <link id=2642 focusable url="https://www.youtube.com/shorts/28ufM37HoWA">Lofi Beats – Chill Vibes for Study, Relax, &amp; Focus</link>
-                  930K views
+                  <div id=2644>930K views</div>
                 </div>
                 <button name="More actions" id=2647 focusable />
               </div>
               <div id=2650>
                 <div id=2656>
                   <link name="Music + Study = DISTRACTING?!" id=2657 focusable url="https://www.youtube.com/shorts/KQ5mPKZEtck">Music + Study  = DISTRACTING?!</link>
-                  1.1M views
+                  <div id=2659>1.1M views</div>
                 </div>
                 <button name="More actions" id=2662 focusable />
               </div>
               <div id=2665>
                 <div id=2671>
                   <link id=2672 focusable url="https://www.youtube.com/shorts/k_xzPBp14rw">girl i just graduado 🎓</link>
-                  2.5M views
+                  <div id=2674>2.5M views</div>
                 </div>
                 <button name="More actions" id=2677 focusable />
               </div>
               <div id=2680>
                 <div id=2686>
                   <link id=2687 focusable url="https://www.youtube.com/shorts/ADUTUY2Gff0">Anxiety(lyrics)✨ #lofi #music #song #lyrics</link>
-                  1.1M views
+                  <div id=2689>1.1M views</div>
                 </div>
                 <button name="More actions" id=2692 focusable />
               </div>
@@ -979,35 +979,35 @@
                 <div id=2817>
                   <div id=2823>
                     <link id=2824 focusable url="https://www.youtube.com/shorts/axb1HFlJBOA">MIND RELAX LOVE SONG 💕 | MIND RELAX LOFI MASHUP | LOVE MASHUP SONG 🎧</link>
-                    891K views
+                    <div id=2826>891K views</div>
                   </div>
                   <button name="More actions" id=2829 focusable />
                 </div>
                 <div id=2832>
                   <div id=2838>
                     <link id=2839 focusable url="https://www.youtube.com/shorts/Z7vH4gJTMmc">Lofi Beats – Chillhop Music to Relax, Focus &amp; Study 🎶</link>
-                    903 views
+                    <div id=2841>903 views</div>
                   </div>
                   <button name="More actions" id=2844 focusable />
                 </div>
                 <div id=2847>
                   <div id=2853>
                     <link id=2854 focusable url="https://www.youtube.com/shorts/-zWP3XVLvJU">Chill Lofi Beats Mix [chill lo-fi hip hop beats/Study &amp; Relax Music and song</link>
-                    2.2K views
+                    <div id=2856>2.2K views</div>
                   </div>
                   <button name="More actions" id=2859 focusable />
                 </div>
                 <div id=2862>
                   <div id=2868>
                     <link id=2869 focusable url="https://www.youtube.com/shorts/GWs2hyx2Bjs">When The Study 📚 Music… Low- key Turns Into A 🎊🍾PARTY🥳</link>
-                    1.9M views
+                    <div id=2871>1.9M views</div>
                   </div>
                   <button name="More actions" id=2874 focusable />
                 </div>
                 <div id=2877>
                   <div id=2883>
                     <link id=2884 focusable url="https://www.youtube.com/shorts/H3ONg7SPSWU">Chill Lofi Coffee Vibes | Relaxing Lofi Hip Hop Beats to Study/Work to</link>
-                    78K views
+                    <div id=2886>78K views</div>
                   </div>
                   <button name="More actions" id=2889 focusable />
                 </div>
@@ -1016,35 +1016,35 @@
                 <div id=2893>
                   <div id=2899>
                     <link id=2900 focusable url="https://www.youtube.com/shorts/vetYLpUL2Ak">Lo-Fi Chords - Lofi Piano Chords - Chill Chords</link>
-                    1M views
+                    <div id=2902>1M views</div>
                   </div>
                   <button name="More actions" id=2905 focusable />
                 </div>
                 <div id=2908>
                   <div id=2914>
                     <link id=2915 focusable url="https://www.youtube.com/shorts/D7weKHk0f7Q">Let’s make a lofi beat</link>
-                    108K views
+                    <div id=2917>108K views</div>
                   </div>
                   <button name="More actions" id=2920 focusable />
                 </div>
                 <div id=2923>
                   <div id=2929>
                     <link id=2930 focusable url="https://www.youtube.com/shorts/YYnGt-9YSNQ">lofi beat tutorial for beginners</link>
-                    51K views
+                    <div id=2932>51K views</div>
                   </div>
                   <button name="More actions" id=2935 focusable />
                 </div>
                 <div id=2938>
                   <div id=2944>
                     <link id=2945 focusable url="https://www.youtube.com/shorts/cDjJ1dTwfhE">Chill Lofi Hiphop Mix 🌏 / lofi jazzy hiphop beats / to relax study work sleep s2</link>
-                    1.9K views
+                    <div id=2947>1.9K views</div>
                   </div>
                   <button name="More actions" id=2950 focusable />
                 </div>
                 <div id=2953>
                   <div id=2959>
                     <link id=2960 focusable url="https://www.youtube.com/shorts/r1wn6VjlnVs">Lofi Beats to Relax &amp; Study | Background Music</link>
-                    34K views
+                    <div id=2962>34K views</div>
                   </div>
                   <button name="More actions" id=2965 focusable />
                 </div>

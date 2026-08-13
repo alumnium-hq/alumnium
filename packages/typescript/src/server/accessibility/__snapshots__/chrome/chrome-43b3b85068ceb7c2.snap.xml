@@ -477,7 +477,7 @@
               <button id=624 focusable>Copy prompt</button>
             </div>
             <div id=628>
-              Browse all agent setup guides
+              <div id=629>Browse all agent setup guides</div>
               <link id=632 focusable url="https://developers.cloudflare.com/agent-setup/">All agents</link>
             </div>
           </region>
@@ -923,7 +923,7 @@
     </banner>
     <div id=1195>
       <div id=1196>
-        Workers
+        <div id=1197>Workers</div>
         <listbox name="Search" id=1199 orientation="vertical">
           <option id=1200 selected>
             <link id=1201 focusable url="https://developers.cloudflare.com/workers/">
@@ -946,32 +946,26 @@
           </option>
           <option id=1223>
             <link id=1224 focusable url="https://developers.cloudflare.com/workers/wrangler/">
-              <div id=1225>
-                <image id=1227 />
-                Wrangler
-              </div>
+              <image id=1227 />
+              <div id=1228>Wrangler</div>
             </link>
           </option>
           <option id=1232>
             <link id=1233 focusable url="https://developers.cloudflare.com/workers/vite-plugin/">
-              <div id=1234>
-                <image id=1236 />
-                Vite plugin
-              </div>
+              <image id=1236 />
+              <div id=1237>Vite plugin</div>
             </link>
           </option>
           <option id=1241>
             <link id=1242 focusable url="https://developers.cloudflare.com/workers/versions-and-deployments/">
-              <div id=1243>
-                <image id=1245 />
-                Versions &amp; deployments
-              </div>
+              <image id=1245 />
+              <div id=1246>Versions &amp; deployments</div>
             </link>
           </option>
         </listbox>
       </div>
       <div id=1250>
-        Workers VPC
+        <div id=1251>Workers VPC</div>
         <listbox name="Search" id=1253 orientation="vertical">
           <option id=1254>
             <link id=1255 focusable url="https://developers.cloudflare.com/workers-vpc/">
@@ -986,7 +980,7 @@
         </listbox>
       </div>
       <div id=1266>
-        Workers AI
+        <div id=1267>Workers AI</div>
         <listbox name="Search" id=1269 orientation="vertical">
           <option id=1270>
             <link id=1271 focusable url="https://developers.cloudflare.com/workers-ai/">
@@ -1001,7 +995,7 @@
         </listbox>
       </div>
       <div id=1282>
-        Dynamic Workers
+        <div id=1283>Dynamic Workers</div>
         <listbox name="Search" id=1285 orientation="vertical">
           <option id=1286>
             <link id=1287 focusable url="https://developers.cloudflare.com/dynamic-workers/">

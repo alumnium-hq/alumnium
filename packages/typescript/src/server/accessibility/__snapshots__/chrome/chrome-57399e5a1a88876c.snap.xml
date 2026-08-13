@@ -477,7 +477,7 @@
               <button id=624 focusable>Copy prompt</button>
             </div>
             <div id=628>
-              Browse all agent setup guides
+              <div id=629>Browse all agent setup guides</div>
               <link id=632 focusable url="https://developers.cloudflare.com/agent-setup/">All agents</link>
             </div>
           </region>

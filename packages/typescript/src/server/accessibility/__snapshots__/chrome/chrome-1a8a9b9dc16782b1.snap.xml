@@ -4,7 +4,7 @@
       <button name="Guide" id=15 focusable />
       <div id=22>
         <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/" />
-        SG
+        <div id=28>SG</div>
       </div>
       <button id=33 focusable>Skip navigation</button>
     </div>

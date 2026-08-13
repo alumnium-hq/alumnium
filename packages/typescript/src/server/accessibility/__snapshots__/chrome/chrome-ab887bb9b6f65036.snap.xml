@@ -4,7 +4,7 @@
     <heading id=7 level=2>📁 Upload Multiple Files</heading>
     <paragraph id=9>Select multiple files to test the upload functionality</paragraph>
     <button name="Multiple File Input" id=11 focusable focused />
-    2 files selected
+    <div id=13>2 files selected</div>
     <div id=15>
       <heading id=16 level=3>Selected Files:</heading>
       <div id=18>

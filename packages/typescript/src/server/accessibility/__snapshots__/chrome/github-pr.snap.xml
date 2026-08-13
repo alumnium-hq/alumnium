@@ -30,9 +30,11 @@
           </navigation>
           <div id=82>
             <button name="Search or jump to, type" id=84 focusable hasPopup="dialog">
-              <div id=86>Type</div>
-              <div id=88>/</div>
-              <div id=89>to search</div>
+              <div id=85>
+                Type
+                <div id=87>/</div>
+                to search
+              </div>
             </button>
             <link id=91 focusable url="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Falumnium-hq%2Falumnium%2Fpull%2F256">Sign in</link>
             <link id=93 focusable url="https://github.com/signup?ref_cta=Sign+up&amp;ref_loc=header+logged+out&amp;ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Fvoltron%2Fpull_requests_fragments%2Fpull_request_layout&amp;source=header-repo&amp;source_repo=alumnium-hq%2Falumnium">Sign up</link>
@@ -128,7 +130,7 @@
                 <link id=228 focusable describedby="_R_asn2pk5_" url="https://github.com/alumnium-hq/alumnium/tree/main">alumnium-hq:main</link>
                 from
                 <div id=234>
-                  kossnocorp:ts
+                  <div id=235>kossnocorp:ts</div>
                   <button name="Copy head branch name to clipboard" id=237 focusable />
                 </div>
               </div>
@@ -188,7 +190,7 @@
                 <link id=296 focusable describedby="_R_5fjapk5_" url="https://github.com/alumnium-hq/alumnium/tree/main">alumnium-hq:main</link>
                 from
                 <div id=302>
-                  kossnocorp:ts
+                  <div id=303>kossnocorp:ts</div>
                   <button name="Copy head branch name to clipboard" id=305 focusable />
                 </div>
               </div>
@@ -217,7 +219,7 @@
                           <div name="Feb 24, 2026, 8:40 AM GMT+8" id=332>on Feb 24</div>
                         </link>
                         <div id=335>
-                          •
+                          <div id=336>•</div>
                           <group id=338>
                             <button id=340 focusable hasPopup="menu">edited</button>
                           </group>

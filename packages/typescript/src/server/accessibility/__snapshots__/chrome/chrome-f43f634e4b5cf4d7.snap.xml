@@ -59,7 +59,7 @@
               <div id=339 live="polite" atomic relevant="additions text">
                 <heading id=340 focusable level=1>Search results; 326 homes</heading>
               </div>
-              Prices include all fees
+              <div id=344>Prices include all fees</div>
             </div>
             <div id=352>
               <group id=358>
@@ -68,7 +68,7 @@
                   <group id=363>
                     <div id=365>
                       <div id=366>
-                        Guest favourite
+                        <div id=367>Guest favourite</div>
                         <button name="Add to wishlist: Shared room in Singapore" id=372 focusable />
                       </div>
                       <button name="Next photo: Shared room in Singapore" id=382 focusable />
@@ -77,8 +77,8 @@
                     <div id=393 focusable />
                   </group>
                   <div id=404>
-                    <div id=406>Shared room in Singapore</div>
-                    <div id=409>Your Capsule Pod in Singapore (FP-API-401)</div>
+                    <div id=405>Shared room in Singapore</div>
+                    Your Capsule Pod in Singapore (FP-API-401)
                     <div id=410>
                       <div id=412>1 bedroom</div>
                       <div id=414>,</div>
@@ -103,8 +103,8 @@
                     <div id=477 focusable />
                   </group>
                   <div id=488>
-                    <div id=490>Shared room in Singapore</div>
-                    <div id=493>Your Female Pod In SG(FP-A-301B)</div>
+                    <div id=489>Shared room in Singapore</div>
+                    Your Female Pod In SG(FP-A-301B)
                     <div id=494>
                       <div id=496>22 beds</div>
                       <div id=498>,</div>
@@ -121,7 +121,7 @@
                   <group id=529>
                     <div id=531>
                       <div id=532>
-                        Featured hotel
+                        <div id=533>Featured hotel</div>
                         <button name="Add to wishlist: Jyu Capsule Hotel" id=539 focusable />
                       </div>
                       <button name="Next photo: Jyu Capsule Hotel" id=549 focusable />
@@ -130,11 +130,11 @@
                     <div id=560 focusable />
                   </group>
                   <div id=571>
-                    <div id=573>Jyu Capsule Hotel</div>
-                    <div id=576>Hotel in Singapore</div>
+                    <div id=572>Jyu Capsule Hotel</div>
+                    Hotel in Singapore
                     <div id=577>
                       <button id=584 focusable hasPopup="dialog">$61 SGD for 1 night</button>
-                      +$9 SGD Airbnb credit
+                      <div id=589>+$9 SGD Airbnb credit</div>
                     </div>
                     4.77 out of 5 average rating, 97 reviews
                   </div>
@@ -152,8 +152,8 @@
                     <div id=634 focusable />
                   </group>
                   <div id=645>
-                    <div id=647>Shared room in Singapore</div>
-                    <div id=650>Capsule in the heart of City, Singapore Riverside</div>
+                    <div id=646>Shared room in Singapore</div>
+                    Capsule in the heart of City, Singapore Riverside
                     <div id=651>
                       <div id=653>1 bed</div>
                       <div id=655>,</div>
@@ -170,7 +170,7 @@
                   <group id=686>
                     <div id=688>
                       <div id=689>
-                        Featured hotel
+                        <div id=690>Featured hotel</div>
                         <button name="Add to wishlist: Hotel 81 Princess" id=696 focusable />
                       </div>
                       <button name="Next photo: Hotel 81 Princess" id=706 focusable />
@@ -179,11 +179,11 @@
                     <div id=717 focusable />
                   </group>
                   <div id=728>
-                    <div id=730>Hotel 81 Princess</div>
-                    <div id=733>Hotel in Singapore</div>
+                    <div id=729>Hotel 81 Princess</div>
+                    Hotel in Singapore
                     <div id=734>
                       <button id=741 focusable hasPopup="dialog">$84 SGD for 1 night</button>
-                      +$12 SGD Airbnb credit
+                      <div id=746>+$12 SGD Airbnb credit</div>
                     </div>
                     4.53 out of 5 average rating, 1072 reviews
                   </div>
@@ -201,8 +201,8 @@
                     <div id=791 focusable />
                   </group>
                   <div id=802>
-                    <div id=804>Serviced apartment in Singapore</div>
-                    <div id=807>New City Cozy Studio/Balcony@ Somerset/OrchardArea</div>
+                    <div id=803>Serviced apartment in Singapore</div>
+                    New City Cozy Studio/Balcony@ Somerset/OrchardArea
                     <div id=808>
                       <div id=810>1 bedroom</div>
                       <div id=812>,</div>
@@ -233,7 +233,7 @@
                           <group id=866>
                             <div id=868>
                               <div id=869>
-                                Featured hotel
+                                <div id=870>Featured hotel</div>
                                 <button name="Add to wishlist: The Aurum Royal" id=876 focusable />
                               </div>
                               <button name="Next photo: The Aurum Royal" id=886 focusable />
@@ -242,11 +242,11 @@
                             <div id=897 focusable />
                           </group>
                           <div id=908>
-                            <div id=910>The Aurum Royal</div>
-                            <div id=913>Hotel in Singapore</div>
+                            <div id=909>The Aurum Royal</div>
+                            Hotel in Singapore
                             <div id=914>
                               <button id=921 focusable hasPopup="dialog">$230 SGD for 1 night</button>
-                              +$34 SGD Airbnb credit
+                              <div id=926>+$34 SGD Airbnb credit</div>
                             </div>
                             4.89 out of 5 average rating, 9 reviews
                           </div>
@@ -258,7 +258,7 @@
                           <group id=944>
                             <div id=946>
                               <div id=947>
-                                Featured hotel
+                                <div id=948>Featured hotel</div>
                                 <button name="Add to wishlist: Check Inn Hotel" id=954 focusable />
                               </div>
                               <button name="Next photo: Check Inn Hotel" id=964 focusable />
@@ -267,11 +267,11 @@
                             <div id=975 focusable />
                           </group>
                           <div id=986>
-                            <div id=988>Check Inn Hotel</div>
-                            <div id=991>Hotel in Singapore</div>
+                            <div id=987>Check Inn Hotel</div>
+                            Hotel in Singapore
                             <div id=992>
                               <button id=999 focusable hasPopup="dialog">$115 SGD for 1 night</button>
-                              +$17 SGD Airbnb credit
+                              <div id=1004>+$17 SGD Airbnb credit</div>
                             </div>
                             4.57 out of 5 average rating, 21 reviews
                           </div>
@@ -289,7 +289,7 @@
                   <group id=1270>
                     <div id=1272>
                       <div id=1273>
-                        Superhost
+                        <div id=1274>Superhost</div>
                         <button name="Add to wishlist: Boutique hotel in Tanjong Pagar" id=1279 focusable />
                       </div>
                       <button name="Next photo: Boutique hotel in Tanjong Pagar" id=1289 focusable />
@@ -298,8 +298,8 @@
                     <div id=1300 focusable />
                   </group>
                   <div id=1311>
-                    <div id=1313>Boutique hotel in Tanjong Pagar</div>
-                    <div id=1316>Single room, shared bathroom in Tanjong Pagar</div>
+                    <div id=1312>Boutique hotel in Tanjong Pagar</div>
+                    Single room, shared bathroom in Tanjong Pagar
                     <div id=1317>
                       <div id=1319>1 single bed</div>
                       <div id=1321>,</div>
@@ -316,7 +316,7 @@
                   <group id=1352>
                     <div id=1354>
                       <div id=1355>
-                        Guest favourite
+                        <div id=1356>Guest favourite</div>
                         <button name="Add to wishlist: Hotel in Singapore" id=1361 focusable />
                       </div>
                       <button name="Next photo: Hotel in Singapore" id=1371 focusable />
@@ -325,8 +325,8 @@
                     <div id=1382 focusable />
                   </group>
                   <div id=1393>
-                    <div id=1395>Hotel in Singapore</div>
-                    <div id=1398>Double Room,Window,Short Overnight,11hours:8PM-7AM</div>
+                    <div id=1394>Hotel in Singapore</div>
+                    Double Room,Window,Short Overnight,11hours:8PM-7AM
                     <div id=1399>
                       <div id=1401>1 bedroom</div>
                       <div id=1403>,</div>
@@ -351,8 +351,8 @@
                     <div id=1466 focusable />
                   </group>
                   <div id=1477>
-                    <div id=1479>Serviced apartment in Singapore</div>
-                    <div id=1482>New City Compact Loft Studio-Somerset/Orch. Area</div>
+                    <div id=1478>Serviced apartment in Singapore</div>
+                    New City Compact Loft Studio-Somerset/Orch. Area
                     <div id=1483>
                       <div id=1485>1 bedroom</div>
                       <div id=1487>,</div>
@@ -377,8 +377,8 @@
                     <div id=1547 focusable />
                   </group>
                   <div id=1558>
-                    <div id=1560>Serviced apartment in Singapore</div>
-                    <div id=1563>New Cozy Compact Loft Studio-Somerset/Orchard Area</div>
+                    <div id=1559>Serviced apartment in Singapore</div>
+                    New Cozy Compact Loft Studio-Somerset/Orchard Area
                     <div id=1564>
                       <div id=1566>1 bedroom</div>
                       <div id=1568>,</div>
@@ -397,7 +397,7 @@
                   <group id=1600>
                     <div id=1602>
                       <div id=1603>
-                        Guest favourite
+                        <div id=1604>Guest favourite</div>
                         <button name="Add to wishlist: Shared room in Singapore" id=1609 focusable />
                       </div>
                       <button name="Next photo: Shared room in Singapore" id=1619 focusable />
@@ -406,9 +406,9 @@
                     <div id=1630 focusable />
                   </group>
                   <div id=1639>
-                    <div id=1641>Shared room in Singapore</div>
-                    <div id=1644>8-Bed Mixed Dormitory Room near MRT |Quiet &amp; Clean</div>
-                    <div id=1647>1 bed</div>
+                    <div id=1640>Shared room in Singapore</div>
+                    8-Bed Mixed Dormitory Room near MRT |Quiet &amp; Clean
+                    <div id=1645>1 bed</div>
                     <div name="$46 SGD for 1 night, originally $60 SGD" id=1652 />
                     4.83 out of 5 average rating, 30 reviews
                   </div>
@@ -420,7 +420,7 @@
                   <group id=1673>
                     <div id=1675>
                       <div id=1676>
-                        Guest favourite
+                        <div id=1677>Guest favourite</div>
                         <button name="Add to wishlist: Boutique hotel in Chinatown" id=1682 focusable />
                       </div>
                       <button name="Next photo: Boutique hotel in Chinatown" id=1692 focusable />
@@ -429,8 +429,8 @@
                     <div id=1703 focusable />
                   </group>
                   <div id=1712>
-                    <div id=1714>Boutique hotel in Chinatown</div>
-                    <div id=1717>Single room, shared bathroom in Chinatown</div>
+                    <div id=1713>Boutique hotel in Chinatown</div>
+                    Single room, shared bathroom in Chinatown
                     <div id=1718>
                       <div id=1720>1 single bed</div>
                       <div id=1722>,</div>
@@ -453,8 +453,8 @@
                     <div id=1781 focusable />
                   </group>
                   <div id=1790>
-                    <div id=1792>Serviced apartment in Singapore</div>
-                    <div id=1795>New Cozy Studio w Balcony @ Somerset/Orchard Area</div>
+                    <div id=1791>Serviced apartment in Singapore</div>
+                    New Cozy Studio w Balcony @ Somerset/Orchard Area
                     <div id=1796>
                       <div id=1798>1 bedroom</div>
                       <div id=1800>,</div>
@@ -473,7 +473,7 @@
                   <group id=1835>
                     <div id=1837>
                       <div id=1838>
-                        Superhost
+                        <div id=1839>Superhost</div>
                         <button name="Add to wishlist: Hotel in Singapore" id=1844 focusable />
                       </div>
                       <button name="Next photo: Hotel in Singapore" id=1854 focusable />
@@ -482,8 +482,8 @@
                     <div id=1865 focusable />
                   </group>
                   <div id=1874>
-                    <div id=1876>Hotel in Singapore</div>
-                    <div id=1879>Single Cabin Pod w Shared Bathroom (Cloudbeds)</div>
+                    <div id=1875>Hotel in Singapore</div>
+                    Single Cabin Pod w Shared Bathroom (Cloudbeds)
                     <div id=1880>
                       <div id=1882>1 bedroom</div>
                       <div id=1884>,</div>
@@ -508,8 +508,8 @@
                     <div id=1947 focusable />
                   </group>
                   <div id=1956>
-                    <div id=1958>Shared room in Singapore</div>
-                    <div id=1961>Instant Single capsule mix Dorm</div>
+                    <div id=1957>Shared room in Singapore</div>
+                    Instant Single capsule mix Dorm
                     <div id=1962>
                       <div id=1964>1 bedroom</div>
                       <div id=1966>,</div>
@@ -528,7 +528,7 @@
                   <group id=2001>
                     <div id=2003>
                       <div id=2004>
-                        Featured hotel
+                        <div id=2005>Featured hotel</div>
                         <button name="Add to wishlist: Hotel 81 Selegie" id=2011 focusable />
                       </div>
                       <button name="Next photo: Hotel 81 Selegie" id=2021 focusable />
@@ -537,11 +537,11 @@
                     <div id=2032 focusable />
                   </group>
                   <div id=2040>
-                    <div id=2042>Hotel 81 Selegie</div>
-                    <div id=2045>Hotel in Singapore</div>
+                    <div id=2041>Hotel 81 Selegie</div>
+                    Hotel in Singapore
                     <div id=2046>
                       <button id=2053 focusable hasPopup="dialog">$78 SGD for 1 night</button>
-                      +$11 SGD Airbnb credit
+                      <div id=2058>+$11 SGD Airbnb credit</div>
                     </div>
                     4.24 out of 5 average rating, 83 reviews
                   </div>
@@ -559,8 +559,8 @@
                     <div id=2103 focusable />
                   </group>
                   <div id=2112>
-                    <div id=2114>Serviced apartment in Singapore</div>
-                    <div id=2117>New Cozy Deluxe Studio/Balcony-Somerset/City Area</div>
+                    <div id=2113>Serviced apartment in Singapore</div>
+                    New Cozy Deluxe Studio/Balcony-Somerset/City Area
                     <div id=2118>
                       <div id=2120>1 bedroom</div>
                       <div id=2122>,</div>
@@ -585,8 +585,8 @@
                     <div id=2185 focusable />
                   </group>
                   <div id=2194>
-                    <div id=2196>Serviced apartment in Singapore</div>
-                    <div id=2199>New Cozy Studio Apt w WIFI@ Somerset/Orchard Area</div>
+                    <div id=2195>Serviced apartment in Singapore</div>
+                    New Cozy Studio Apt w WIFI@ Somerset/Orchard Area
                     <div id=2200>
                       <div id=2202>1 bedroom</div>
                       <div id=2204>,</div>
@@ -765,7 +765,7 @@
             Footer section
             <div id=2795>
               <div id=2797>
-                © 2026 Airbnb, Inc.
+                <div id=2798>© 2026 Airbnb, Inc.</div>
                 <list id=2803>
                   <listitem id=2804 level=1>
                     <link id=2805 focusable url="https://www.airbnb.com.sg/terms/privacy_policy">Privacy</link>

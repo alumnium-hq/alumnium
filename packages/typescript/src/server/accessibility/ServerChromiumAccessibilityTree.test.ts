@@ -153,7 +153,7 @@ describe(ServerChromiumAccessibilityTree, () => {
             <checkbox name="❯ Toggle All Input" id=3 focusable focused checked />
             <div id=4>
               <div id=5>❯</div>
-              <div id=7>Toggle All Input</div>
+              Toggle All Input
             </div>
           </div>
           <list id=8>
@@ -212,6 +212,28 @@ describe(ServerChromiumAccessibilityTree, () => {
         </div>
       `);
       expectVisibleMappings(tree, xml, { 1: 283, 2: 284, 3: 291 });
+    });
+
+    it("preserves an addressable generic containing only text", () => {
+      const tree = new ServerChromiumAccessibilityTree(lit`
+        <generic raw_id=90 backendDOMNodeId=156>
+          <paragraph raw_id=97 backendDOMNodeId=35>
+            <StaticText raw_id=98 backendDOMNodeId=675 name="iPhone 12" />
+          </paragraph>
+          <generic raw_id=123 backendDOMNodeId=38>
+            <StaticText raw_id=124 backendDOMNodeId=686 name="Add to cart" />
+          </generic>
+        </generic>
+      `);
+
+      const xml = tree.toXml();
+      expect(xml).toBe(lit`
+        <div id=1>
+          <paragraph id=2>iPhone 12</paragraph>
+          <div id=4>Add to cart</div>
+        </div>
+      `);
+      expectVisibleMappings(tree, xml, { 1: 90, 2: 97, 4: 123 });
     });
 
     it("does not assign IDs without backendDOMNodeId", () => {
@@ -588,7 +610,7 @@ describe(ServerChromiumAccessibilityTree, () => {
             <button name="Guide" id=15 focusable pressed />
             <div id=22>
               <link name="YouTube Home" id=23 focusable url="https://www.youtube.com/" />
-              SG
+              <div id=28>SG</div>
             </div>
             <button id=33 focusable>Skip navigation</button>
           </banner>

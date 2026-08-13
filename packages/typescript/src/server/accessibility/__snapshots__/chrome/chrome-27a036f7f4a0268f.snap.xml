@@ -49,91 +49,79 @@
               <list id=157>
                 <listitem id=158 level=2>
                   <link id=159 focusable url="https://github.com/search?q=alumnium&amp;type=code">
-                    <div id=161>
-                      Code
-                      <div id=164>
-                        <div id=167>
-                          <div id=168>(</div>
-                          <div id=169>...</div>
-                          <div id=170>)</div>
-                        </div>
-                        results
+                    <div id=162>Code</div>
+                    <div id=164>
+                      <div id=167>
+                        <div id=168>(</div>
+                        <div id=169>...</div>
+                        <div id=170>)</div>
                       </div>
+                      results
                     </div>
                   </link>
                 </listitem>
                 <listitem id=173 level=2>
                   <link id=174 focusable url="https://github.com/search?q=alumnium&amp;type=repositories">
-                    <div id=176>
-                      Repositories
-                      <div id=179>
-                        <div id=183>
-                          <div id=184>(</div>
-                          <div id=185>28</div>
-                          <div id=186>)</div>
-                        </div>
-                        results
+                    <div id=177>Repositories</div>
+                    <div id=179>
+                      <div id=183>
+                        <div id=184>(</div>
+                        <div id=185>28</div>
+                        <div id=186>)</div>
                       </div>
+                      results
                     </div>
                   </link>
                 </listitem>
                 <listitem id=189 level=2>
                   <link id=190 focusable url="https://github.com/search?q=alumnium&amp;type=issues">
-                    <div id=192>
-                      Issues
-                      <div id=195>
-                        <div id=199>
-                          <div id=200>(</div>
-                          <div id=201>93</div>
-                          <div id=202>)</div>
-                        </div>
-                        results
+                    <div id=193>Issues</div>
+                    <div id=195>
+                      <div id=199>
+                        <div id=200>(</div>
+                        <div id=201>93</div>
+                        <div id=202>)</div>
                       </div>
+                      results
                     </div>
                   </link>
                 </listitem>
                 <listitem id=205 level=2>
                   <link id=206 focusable url="https://github.com/search?q=alumnium&amp;type=pullrequests">
-                    <div id=208>
-                      Pull requests
-                      <div id=211>
-                        <div id=215>
-                          <div id=216>(</div>
-                          <div id=217>187</div>
-                          <div id=218>)</div>
-                        </div>
-                        results
+                    <div id=209>Pull requests</div>
+                    <div id=211>
+                      <div id=215>
+                        <div id=216>(</div>
+                        <div id=217>187</div>
+                        <div id=218>)</div>
                       </div>
+                      results
                     </div>
                   </link>
                 </listitem>
                 <listitem id=221 level=2>
                   <link id=222 focusable url="https://github.com/search?q=alumnium&amp;type=discussions">
-                    <div id=224>
-                      Discussions
-                      <div id=227>
-                        <div id=231>
-                          <div id=232>(</div>
-                          <div id=233>8</div>
-                          <div id=234>)</div>
-                        </div>
-                        results
+                    <div id=225>Discussions</div>
+                    <div id=227>
+                      <div id=231>
+                        <div id=232>(</div>
+                        <div id=233>8</div>
+                        <div id=234>)</div>
                       </div>
+                      results
                     </div>
                   </link>
                 </listitem>
                 <listitem id=237 level=2>
                   <link id=238 focusable url="https://github.com/search?q=alumnium&amp;type=users">
-                    <div id=240>
-                      Users
-                      <div id=243>
-                        <div id=247>
-                          <div id=248>(</div>
-                          <div id=249>5</div>
-                          <div id=250>)</div>
-                        </div>
-                        results
+                    <div id=241>Users</div>
+                    <div id=243>
+                      <div id=247>
+                        <div id=248>(</div>
+                        <div id=249>5</div>
+                        <div id=250>)</div>
                       </div>
+                      results
                     </div>
                   </link>
                 </listitem>
@@ -260,7 +248,7 @@
                     <emphasis id=511>alumnium</emphasis>
                   </link>
                 </heading>
-                End-to-end testing with AI
+                <div id=513>End-to-end testing with AI</div>
                 <div id=515>
                   <link id=517 focusable url="https://github.com/topics/javascript">javascript</link>
                   <link id=520 focusable url="https://github.com/topics/python">python</link>
@@ -276,8 +264,10 @@
                     <link name="stars" id=538 focusable url="https://github.com/alumnium-hq/alumnium/stargazers">967</link>
                   </listitem>
                   <listitem id=541 level=1>
-                    <div id=543>Updated</div>
-                    <div id=546>2 hours ago</div>
+                    <div id=542>
+                      Updated
+                      <div id=545>2 hours ago</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -307,8 +297,10 @@
                     <link name="stars" id=580 focusable url="https://github.com/alumnium-hq/alumnium.github.io/stargazers">3</link>
                   </listitem>
                   <listitem id=583 level=1>
-                    <div id=585>Updated</div>
-                    <div id=588>on Mar 27</div>
+                    <div id=584>
+                      Updated
+                      <div id=587>on Mar 27</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -335,8 +327,10 @@
                     <link name="stars" id=620 focusable url="https://github.com/iammac2/alumnium-cucumber/stargazers">6</link>
                   </listitem>
                   <listitem id=623 level=1>
-                    <div id=625>Updated</div>
-                    <div id=628>on Apr 19</div>
+                    <div id=624>
+                      Updated
+                      <div id=627>on Apr 19</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -350,7 +344,7 @@
                     <emphasis id=646>AlumniUMK</emphasis>
                   </link>
                 </heading>
-                Web Data Alumni UMK
+                <div id=648>Web Data Alumni UMK</div>
                 <list id=650>
                   <listitem id=651 level=1>
                     <div name="language" id=654>PHP</div>
@@ -359,8 +353,10 @@
                     <link name="stars" id=657 focusable url="https://github.com/jamboljack/AlumniUMK/stargazers">0</link>
                   </listitem>
                   <listitem id=660 level=1>
-                    <div id=662>Updated</div>
-                    <div id=665>on May 15, 2017</div>
+                    <div id=661>
+                      Updated
+                      <div id=664>on May 15, 2017</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -387,8 +383,10 @@
                     <link name="stars" id=697 focusable url="https://github.com/JoanEsquivel/alumnium-framework/stargazers">3</link>
                   </listitem>
                   <listitem id=700 level=1>
-                    <div id=702>Updated</div>
-                    <div id=705>on Aug 25, 2025</div>
+                    <div id=701>
+                      Updated
+                      <div id=704>on Aug 25, 2025</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -411,8 +409,10 @@
                     <link name="stars" id=735 focusable url="https://github.com/lovemazaziko-commits/alumnium/stargazers">0</link>
                   </listitem>
                   <listitem id=738 level=1>
-                    <div id=740>Updated</div>
-                    <div id=743>on Feb 9</div>
+                    <div id=739>
+                      Updated
+                      <div id=742>on Feb 9</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -435,8 +435,10 @@
                     <link name="stars" id=771 focusable url="https://github.com/Amiraizt/AlumniumWorkshop/stargazers">0</link>
                   </listitem>
                   <listitem id=774 level=1>
-                    <div id=776>Updated</div>
-                    <div id=779>on Apr 26, 2024</div>
+                    <div id=775>
+                      Updated
+                      <div id=778>on Apr 26, 2024</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -456,8 +458,10 @@
                     <link name="stars" id=802 focusable url="https://github.com/ameyanatu/alumniumPOC/stargazers">0</link>
                   </listitem>
                   <listitem id=805 level=1>
-                    <div id=807>Updated</div>
-                    <div id=810>on May 15, 2025</div>
+                    <div id=806>
+                      Updated
+                      <div id=809>on May 15, 2025</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -479,8 +483,10 @@
                     <link name="stars" id=837 focusable url="https://github.com/vochicuong18/alumnium/stargazers">0</link>
                   </listitem>
                   <listitem id=840 level=1>
-                    <div id=842>Updated</div>
-                    <div id=845>on May 12, 2025</div>
+                    <div id=841>
+                      Updated
+                      <div id=844>on May 12, 2025</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -503,8 +509,10 @@
                     <link name="stars" id=871 focusable url="https://github.com/JoanEsquivel/alumnium/stargazers">0</link>
                   </listitem>
                   <listitem id=874 level=1>
-                    <div id=876>Updated</div>
-                    <div id=879>on Aug 21, 2025</div>
+                    <div id=875>
+                      Updated
+                      <div id=878>on Aug 21, 2025</div>
+                    </div>
                   </listitem>
                 </list>
               </div>
@@ -526,7 +534,7 @@
             <link id=908 focusable url="https://github.com/sponsors/explore">Explore sponsorable projects</link>
           </div>
           <div id=910>
-            <div id=912>ProTip!</div>
+            <div id=911>ProTip!</div>
             <div id=914>Press the</div>
             <div id=915>/</div>
             <div id=916>key to activate the search input again and adjust your query.</div>

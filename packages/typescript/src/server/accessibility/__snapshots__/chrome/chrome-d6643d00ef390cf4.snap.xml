@@ -42,7 +42,7 @@
                           <div id=106 editable="plaintext">alumnium</div>
                         </combobox>
                         <div id=108>
-                          Clear
+                          <div id=109>Clear</div>
                           <button name="Clear Search" id=111 focusable />
                         </div>
                       </div>
@@ -66,7 +66,7 @@
   <main id=162>
     <div id=167>
       <div id=168>
-        Mona the Octocat, Copilot, and Ducky float jubilantly upward from behind the GitHub product demo accompanied by a purple glow and a scattering of stars.
+        <div id=173>Mona the Octocat, Copilot, and Ducky float jubilantly upward from behind the GitHub product demo accompanied by a purple glow and a scattering of stars.</div>
         <div id=175>
           <region id=176>
             <heading id=180 level=1>The future of building happens together</heading>
@@ -87,7 +87,7 @@
           <heading id=202 level=2>GitHub features</heading>
           <button name="Pause" id=208 focusable />
           <div id=212>
-            A demonstration animation of a code editor using GitHub Copilot Chat, where the user requests GitHub Copilot to refactor duplicated logic and extract it into a reusable function for a given code snippet.
+            <div id=213>A demonstration animation of a code editor using GitHub Copilot Chat, where the user requests GitHub Copilot to refactor duplicated logic and extract it into a reusable function for a given code snippet.</div>
             <Video id=215 describedby="visual-code-0-desc" />
           </div>
         </div>
@@ -132,7 +132,7 @@
         <div id=305>
           <button name="Pause video" id=312 focusable />
           <div id=316>
-            A Copilot chat window with the 'Ask' mode enabled. The user switches from 'Ask' mode to 'Agent' mode from a dropdown menu, then sends the prompt 'Update the website to allow searching for running races by name.' Copilot analyzes the codebase, then explains the required edits for three files before generating them. Copilot then confirms completion and summarizes the implemented changes for the new functionality allowing users to search races by name and view paginated, filtered results.
+            <div id=317>A Copilot chat window with the 'Ask' mode enabled. The user switches from 'Ask' mode to 'Agent' mode from a dropdown menu, then sends the prompt 'Update the website to allow searching for running races by name.' Copilot analyzes the codebase, then explains the required edits for three files before generating them. Copilot then confirms completion and summarizes the implemented changes for the new functionality allowing users to search races by name and view paginated, filtered results.</div>
             <Video name="Unable to play media." id=319 disabled describedby="lp-SectionHero-visual-desc-0" />
           </div>
         </div>
@@ -358,7 +358,7 @@
     </div>
     <div id=737>
       <div id=739>
-        A subtle purple glow fades in as Mona the Octocat, Copilot, and Ducky dramatically fall into place next to one another while gazing optimistically into the distance.
+        <div id=740>A subtle purple glow fades in as Mona the Octocat, Copilot, and Ducky dramatically fall into place next to one another while gazing optimistically into the distance.</div>
         <Canvas id=742 />
       </div>
       <div id=745>

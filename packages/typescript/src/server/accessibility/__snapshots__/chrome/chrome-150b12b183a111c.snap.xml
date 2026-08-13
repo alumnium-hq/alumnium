@@ -114,21 +114,21 @@
         </navigation>
         <div id=188>
           <div id=189>
-            Pinned
+            <div id=190>Pinned</div>
             <div id=192>
               <button id=193 focusable>Add a dark mode toggle to settings</button>
               <button name="Options for Add a dark mode toggle to settings" id=197 focusable hasPopup="menu" />
             </div>
           </div>
           <div id=199>
-            Scheduled
+            <div id=200>Scheduled</div>
             <div id=202>
               <button id=203 focusable>Weekly dependency audit</button>
               <button name="Options for Weekly dependency audit" id=208 focusable hasPopup="menu" />
             </div>
           </div>
           <div id=210>
-            Recents
+            <div id=211>Recents</div>
             <div id=213>
               <button id=214 focusable>Fix the double-charge bug in checkout</button>
               <button name="Options for Fix the double-charge bug in checkout" id=221 focusable hasPopup="menu" />
@@ -161,7 +161,7 @@
             <div id=269>Add a dark mode toggle to settings</div>
           </div>
           <div id=271>
-            Add a dark mode toggle to the settings page. Should remember the choice and follow the system default until they pick one.
+            <div id=273>Add a dark mode toggle to the settings page. Should remember the choice and follow the system default until they pick one.</div>
             <div id=275>
               <paragraph id=276>
                 There's already a
@@ -190,7 +190,7 @@
                 </div>
               </button>
               <div id=311>
-                src/theme/ThemeProvider.tsx
+                <div id=312>src/theme/ThemeProvider.tsx</div>
                 <button name="Copy code" id=314 focusable />
                 <div id=316>
                   <div id=317>
@@ -425,11 +425,11 @@
           </div>
         </div>
         <div id=608>
-          Appearance
+          <div id=609>Appearance</div>
           <div id=611>
             <div id=612>
-              <div id=614>Theme</div>
-              <div id=616>Choose how the dashboard looks.</div>
+              <div id=613>Theme</div>
+              <div id=615>Choose how the dashboard looks.</div>
             </div>
             <radiogroup name="Theme" id=617>
               <radio id=618 focusable checked>Light</radio>
@@ -438,8 +438,8 @@
           </div>
           <div id=622>
             <div id=623>
-              <div id=625>Density</div>
-              <div id=627>Compact rows for power users.</div>
+              <div id=624>Density</div>
+              <div id=626>Compact rows for power users.</div>
             </div>
             <radiogroup name="Density" id=628>
               <radio id=629 focusable checked>Default</radio>
@@ -448,8 +448,8 @@
           </div>
           <div id=633>
             <div id=634>
-              <div id=636>Reduce motion</div>
-              <div id=638>Disable animations and transitions.</div>
+              <div id=635>Reduce motion</div>
+              <div id=637>Disable animations and transitions.</div>
             </div>
             <switch name="Reduce motion" id=639 focusable />
           </div>
@@ -484,7 +484,7 @@
           </div>
           <div id=682>
             <div id=683>
-              $25
+              <div id=684>$25</div>
               <paragraph id=686>
                 <div id=687>Per month with annual subscription discount (</div>
                 <div id=688>$300</div>
@@ -506,7 +506,7 @@
           </div>
           <div id=702>
             <div id=703>
-              $149.99
+              <div id=704>$149.99</div>
               <paragraph id=706>Per month</paragraph>
             </div>
             <link id=708 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
@@ -522,7 +522,7 @@
           </div>
           <div id=718>
             <div id=719>
-              $300
+              <div id=720>$300</div>
               <paragraph id=722>Per month</paragraph>
             </div>
             <link id=724 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
