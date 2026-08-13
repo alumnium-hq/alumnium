@@ -1,4 +1,4 @@
-import { xxh64Str } from "smolxxh/str";
+import { xxh64Str } from "@js-fns/xxhash/str";
 import type { BaseAccessibilityTree } from "../../accessibility/BaseAccessibilityTree.ts";
 import type { Driver } from "../../drivers/Driver.ts";
 import { Xml } from "../../xml/Xml.ts";

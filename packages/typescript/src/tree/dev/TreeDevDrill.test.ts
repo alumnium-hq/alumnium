@@ -5,6 +5,7 @@ import type { BaseServerAccessibilityTree } from "../../server/accessibility/Bas
 import { TreeFactory } from "../TreeFactory.ts";
 import { TreeDevDrill } from "./TreeDevDrill.ts";
 import { TreeDevDrillError } from "./TreeDevDrillError.ts";
+import { always } from "alwaysly";
 
 describe(TreeDevDrill, () => {
   it("walks multiple roots and nested tags in output order", async () => {
@@ -136,14 +137,13 @@ describe(TreeDevDrill, () => {
 });
 
 class TestTree extends BaseAccessibilityTree {
-  readonly xml: string;
-
   constructor(xml: string) {
-    super();
+    super(xml);
     this.xml = xml;
   }
 
   toStr(): string {
+    always(this.xml);
     return this.xml;
   }
 

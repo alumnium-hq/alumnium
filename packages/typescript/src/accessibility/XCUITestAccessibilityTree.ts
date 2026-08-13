@@ -5,20 +5,21 @@ import { XmlRenderer } from "../xml/XmlRenderer.ts";
 import type { AccessibilityElement } from "./AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
 
-export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
+export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
   #xmlString: string;
   #nextRawId: number = 0;
-  #raw: string | null = null;
+
+  protected override kind: string = "xcuitest";
 
   constructor(xmlString: string) {
-    super();
+    super(xmlString);
     this.#xmlString = xmlString;
   }
 
   /** Parse XML and add raw_id attributes to all elements. */
   toStr(): string {
-    if (this.#raw !== null) {
-      return this.#raw;
+    if (this.xml !== null) {
+      return this.xml;
     }
 
     // Parse the XML
@@ -28,8 +29,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     this.#addRawIds(root);
 
     // Serialize back to string
-    this.#raw = XmlRenderer.render([root]);
-    return this.#raw;
+    return (this.xml = XmlRenderer.render([root]));
   }
 
   /** Recursively add raw_id attribute to element and its children. */

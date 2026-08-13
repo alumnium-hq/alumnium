@@ -27,46 +27,48 @@ interface CDPNode {
   _frame_chain?: number[];
 }
 
-export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
+export class ChromiumAccessibilityTree extends BaseAccessibilityTree<
+  Record<string, unknown> | string
+> {
   #cdpResponse: Record<string, unknown>;
   // TODO: There's a bug in Bun that results in `#nextRawId` compiled to
   // `__privateGet(this, _nextRawId)++;` which causes a runtime error.
   // Figure out a solution to use private fields without breaking Bun
   // compatibility.
   private nextRawId: number = 0;
-  #raw: string | null = null;
   #frameMap: Record<number, object> = {}; // raw_id -> Frame object for iframe support
   #frameChainMap: Record<number, number[]> = {}; // raw_id -> frame chain (list of iframe backendNodeIds)
 
-  constructor(cdpResponse: Record<string, unknown>) {
-    super();
-    this.#cdpResponse = cdpResponse;
+  protected override get kind(): string {
+    return "chromium";
   }
 
-  /** Create a ChromiumAccessibilityTree instance from pre-computed XML. */
-  static #fromXml(
-    xmlString: string,
+  constructor(
+    cdpResponseOrXml: Record<string, unknown> | string,
     frameMap?: Record<number, object>,
-  ): ChromiumAccessibilityTree {
-    const instance = new ChromiumAccessibilityTree({});
-    instance.#raw = xmlString;
-    if (frameMap) {
-      instance.#frameMap = frameMap;
+  ) {
+    super(cdpResponseOrXml);
+
+    if (typeof cdpResponseOrXml === "object") {
+      this.#cdpResponse = cdpResponseOrXml;
+      return;
     }
-    return instance;
+
+    this.#cdpResponse = {};
+    this.xml = cdpResponseOrXml;
+    if (frameMap) this.#frameMap = frameMap;
   }
 
   /** Convert CDP response to raw XML format preserving all data. */
   @span("driver.tree.to_str", { "driver.tree.platform": "chromium" })
   toStr(): string {
-    if (this.#raw !== null) {
-      return this.#raw;
+    if (this.xml !== null) {
+      return this.xml;
     }
 
     const nodes = (this.#cdpResponse.nodes as CDPNode[] | undefined) ?? [];
     if (nodes.length === 0) {
-      this.#raw = "";
-      return this.#raw;
+      return (this.xml = "");
     }
 
     // Create a lookup table for nodes by their ID
@@ -109,8 +111,8 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       });
     }
 
-    this.#raw = xmlString;
-    return this.#raw;
+    this.xml = xmlString;
+    return this.xml;
   }
 
   /** Convert a CDP node to XML element, recursively processing children. */
@@ -320,6 +322,6 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       preserveFalseAttrs: PRESERVE_FALSE_ATTRS,
     });
 
-    return ChromiumAccessibilityTree.#fromXml(scopedXml, this.#frameMap);
+    return new ChromiumAccessibilityTree(scopedXml, this.#frameMap);
   }
 }

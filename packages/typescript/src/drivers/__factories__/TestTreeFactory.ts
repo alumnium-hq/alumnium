@@ -2,28 +2,30 @@ import type { AccessibilityElement } from "../../accessibility/AccessibilityElem
 import { BaseAccessibilityTree } from "../../accessibility/BaseAccessibilityTree.ts";
 
 export abstract class TestTreeFactory {
-  static tree(element: AccessibilityElement): BaseAccessibilityTree {
-    return new this.Tree(element);
+  static tree(
+    element: AccessibilityElement,
+  ): BaseAccessibilityTree<AccessibilityElement> {
+    return new TestTree(element);
+  }
+}
+
+class TestTree extends BaseAccessibilityTree<AccessibilityElement> {
+  readonly element: AccessibilityElement;
+
+  constructor(element: AccessibilityElement) {
+    super(element);
+    this.element = element;
   }
 
-  static Tree = class TestTree extends BaseAccessibilityTree {
-    readonly element: AccessibilityElement;
+  toStr(): string {
+    return "";
+  }
 
-    constructor(element: AccessibilityElement) {
-      super();
-      this.element = element;
-    }
+  elementById(): AccessibilityElement {
+    return this.element;
+  }
 
-    toStr(): string {
-      return "";
-    }
-
-    elementById(): AccessibilityElement {
-      return this.element;
-    }
-
-    scopeToArea(): BaseAccessibilityTree {
-      return this;
-    }
-  };
+  scopeToArea(): BaseAccessibilityTree<AccessibilityElement> {
+    return this;
+  }
 }
