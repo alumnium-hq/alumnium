@@ -1,6 +1,6 @@
 import type { Generation } from "@langchain/core/outputs";
-import { canonize } from "smolcanon";
-import { xxh64Str } from "smolxxh/str";
+import { canonize } from "@js-fns/canon";
+import { xxh64Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Lchain } from "../../llm/Lchain.ts";

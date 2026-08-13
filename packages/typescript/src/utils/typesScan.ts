@@ -6,8 +6,8 @@ import fs from "fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { format } from "oxfmt";
-import { canonize } from "smolcanon";
-import { xxh64Str } from "smolxxh/str";
+import { canonize } from "@js-fns/canon";
+import { xxh64Str } from "@js-fns/xxhash/str";
 import { Env } from "../Env.ts";
 
 export namespace TypesScan {

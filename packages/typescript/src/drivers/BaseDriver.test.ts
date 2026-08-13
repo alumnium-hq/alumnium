@@ -77,7 +77,7 @@ describe(BaseDriver, () => {
       readonly name: string;
 
       constructor(name: string) {
-        super();
+        super(name);
         this.name = name;
       }
 

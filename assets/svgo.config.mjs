@@ -1,4 +1,4 @@
-import { xxh32Str } from "smolxxh/str";
+import { xxh32Str } from "@js-fns/xxhash/str";
 
 export default {
   multipass: true,

@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import ansi from "picocolors";
-import { canonize } from "smolcanon";
-import { xxh32Str } from "smolxxh/str";
+import { canonize } from "@js-fns/canon";
+import { xxh32Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { Driver } from "./drivers/Driver.ts";
 import { Model } from "./Model.ts";

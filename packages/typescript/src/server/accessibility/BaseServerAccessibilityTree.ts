@@ -1,12 +1,14 @@
 import { always } from "alwaysly";
-import { xxh64Str } from "smolxxh/str";
 import { Env } from "../../Env.ts";
-import { FileStore } from "../../FileStore/FileStore.ts";
 import type { ToolCall } from "../../tools/BaseTool.ts";
 import type { Tree } from "../../tree/Tree.ts";
 import { Xml } from "../../xml/Xml.ts";
 import { XmlRenderer } from "../../xml/XmlRenderer.ts";
 import { textContent } from "domutils";
+import { Logger } from "../../telemetry/Logger.ts";
+import { BaseAccessibilityTree } from "../../accessibility/BaseAccessibilityTree.ts";
+
+const logger = Logger.get(import.meta.url);
 
 export abstract class BaseServerAccessibilityTree {
   //#region Id Mapping
@@ -493,9 +495,7 @@ export abstract class BaseServerAccessibilityTree {
 
   //#region Dev
 
-  static #devTreesStore = FileStore.subStore(undefined, "dev", "trees");
-
-  #devCapturedTreeName?: string;
+  #devCapturedTreeName?: BaseAccessibilityTree.SourceId;
 
   protected async devCaptureTreeInput(
     kind: string,
@@ -503,8 +503,15 @@ export abstract class BaseServerAccessibilityTree {
   ): Promise<void> {
     if (!Env.ALUMNIUM_DEV_CAPTURE_TREES) return;
 
-    const hash = xxh64Str(xml);
-    this.#devCapturedTreeName = `${kind}-${hash}`;
+    this.#devCapturedTreeName =
+      BaseAccessibilityTree.devSourceIdForXml(xml) ||
+      BaseAccessibilityTree.sourceIdFor(kind, xml);
+
+    logger.debug("Capturing tree map {name}: {map}", {
+      name: this.#devCapturedTreeName,
+      map: this.simplifiedToRawId,
+    });
+
     await this.#devWriteTree("in", xml);
   }
 
@@ -516,8 +523,12 @@ export abstract class BaseServerAccessibilityTree {
 
   async #devWriteTree(inOut: "in" | "out", xml: string): Promise<void> {
     always(this.#devCapturedTreeName);
+
     const name = `${this.#devCapturedTreeName}-${inOut}.xml`;
-    await BaseServerAccessibilityTree.#devTreesStore.writeFile(name, xml);
+
+    logger.debug(`Captured tree ${inOut} {name}`, { name });
+
+    await BaseAccessibilityTree.devTreesStore.writeFile(name, xml);
   }
 
   //#endregion
