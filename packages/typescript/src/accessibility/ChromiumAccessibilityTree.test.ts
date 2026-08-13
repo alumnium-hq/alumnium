@@ -24,6 +24,24 @@ describe("ChromiumAccessibilityTree", () => {
     expect(tree.toStr()).toContain('value="Option 2"');
   });
 
+  it("preserves unchecked state", () => {
+    const tree = new ChromiumAccessibilityTree({
+      nodes: [
+        {
+          nodeId: "1",
+          role: { value: "checkbox" },
+          properties: [
+            { name: "invalid", value: { value: "false" } },
+            { name: "checked", value: { value: "false" } },
+          ],
+        },
+      ],
+    });
+
+    expect(tree.toStr()).toContain('checked="false"');
+    expect(tree.toStr()).not.toContain("invalid");
+  });
+
   describe("elementById", () => {
     it("returns correct element for given ID", async () => {
       const json = await fs.readFile(FIXTURE_PATH, "utf-8").then(JSON.parse);
@@ -40,6 +58,23 @@ describe("ChromiumAccessibilityTree", () => {
       const tree = new ChromiumAccessibilityTree(json);
 
       expect(tree.scopeToArea(99999).toStr()).toBe(tree.toStr());
+    });
+
+    it("preserves unchecked state in a scoped tree", () => {
+      const tree = new ChromiumAccessibilityTree({
+        nodes: [
+          {
+            nodeId: "1",
+            backendDOMNodeId: 1,
+            role: { value: "checkbox" },
+            properties: [
+              { name: "checked", value: { value: "false" } },
+            ],
+          },
+        ],
+      });
+
+      expect(tree.scopeToArea(1).toStr()).toContain('checked="false"');
     });
   });
 });

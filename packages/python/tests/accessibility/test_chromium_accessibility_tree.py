@@ -43,3 +43,23 @@ def test_renders_node_value_as_attribute():
     )
 
     assert 'value="Option 2"' in tree.to_str()
+
+
+def test_preserves_unchecked_state():
+    tree = ChromiumAccessibilityTree(
+        {
+            "nodes": [
+                {
+                    "nodeId": "1",
+                    "backendDOMNodeId": 1,
+                    "role": {"value": "checkbox"},
+                    "properties": [
+                        {"name": "checked", "value": {"value": "false"}},
+                    ],
+                }
+            ]
+        }
+    )
+
+    assert 'checked="false"' in tree.to_str()
+    assert 'checked="false"' in tree.scope_to_area(1).to_str()

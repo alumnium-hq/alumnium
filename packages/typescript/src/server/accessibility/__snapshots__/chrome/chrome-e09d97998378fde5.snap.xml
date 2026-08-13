@@ -65,12 +65,12 @@
             Checked checkbox
           </LabelText>
           <LabelText id=77>
-            <checkbox name="Default checkbox" id=78 focusable />
+            <checkbox name="Default checkbox" id=78 focusable checked="false" />
             Default checkbox
           </LabelText>
         </div>
         <radio name="Checked radio" id=82 focusable checked />
-        <radio name="Default radio" id=86 focusable />
+        <radio name="Default radio" id=86 focusable checked="false" />
         <button id=88 focusable>Submit</button>
       </div>
       <div id=90>

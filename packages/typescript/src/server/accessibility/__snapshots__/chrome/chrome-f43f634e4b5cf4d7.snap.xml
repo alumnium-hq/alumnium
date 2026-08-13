@@ -39,16 +39,16 @@
             <div id=294>
               <button id=297 focusable>Filters</button>
               <div id=302>
-                <checkbox id=304 focusable>Hotel</checkbox>
-                <checkbox id=307 focusable>Self check-in</checkbox>
-                <checkbox id=310 focusable>Instant Book</checkbox>
-                <checkbox id=313 focusable>Wifi</checkbox>
-                <checkbox id=316 focusable>1+ beds</checkbox>
-                <checkbox id=319 focusable>Air conditioning</checkbox>
-                <checkbox id=322 focusable>Washing machine</checkbox>
-                <checkbox id=325 focusable>Kitchen</checkbox>
-                <checkbox id=328 focusable>Guest favourite</checkbox>
-                <checkbox id=331 focusable>TV</checkbox>
+                <checkbox id=304 focusable checked="false">Hotel</checkbox>
+                <checkbox id=307 focusable checked="false">Self check-in</checkbox>
+                <checkbox id=310 focusable checked="false">Instant Book</checkbox>
+                <checkbox id=313 focusable checked="false">Wifi</checkbox>
+                <checkbox id=316 focusable checked="false">1+ beds</checkbox>
+                <checkbox id=319 focusable checked="false">Air conditioning</checkbox>
+                <checkbox id=322 focusable checked="false">Washing machine</checkbox>
+                <checkbox id=325 focusable checked="false">Kitchen</checkbox>
+                <checkbox id=328 focusable checked="false">Guest favourite</checkbox>
+                <checkbox id=331 focusable checked="false">TV</checkbox>
               </div>
             </div>
           </group>

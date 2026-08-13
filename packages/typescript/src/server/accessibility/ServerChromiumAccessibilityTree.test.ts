@@ -25,7 +25,7 @@ describe(ServerChromiumAccessibilityTree, () => {
             </div>
             <main id=14>
               <div id=15>
-                <checkbox id=16 focusable />
+                <checkbox id=16 focusable checked="false" />
                 <LabelText id=17>
                   <div id=18>\\u276f</div>
                   <div id=20>Toggle All Input</div>
@@ -37,7 +37,7 @@ describe(ServerChromiumAccessibilityTree, () => {
                   <LabelText id=25>hello</LabelText>
                 </listitem>
                 <listitem id=27 level=1>
-                  <checkbox id=29 focusable />
+                  <checkbox id=29 focusable checked="false" />
                   <LabelText id=30>he</LabelText>
                 </listitem>
               </list>
@@ -105,7 +105,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       `);
     });
 
-    it("preserves checkbox checked attribute", () => {
+    it("preserves checkbox checked state", () => {
       const rawXml = lit`
         <main raw_id=40 backendDOMNodeId=32 nodeId="f0:32">
           <generic raw_id=41 backendDOMNodeId=33 nodeId="f0:33">
@@ -124,7 +124,7 @@ describe(ServerChromiumAccessibilityTree, () => {
           <list raw_id=49 backendDOMNodeId=36 nodeId="f0:36">
             <listitem raw_id=50 backendDOMNodeId=82 nodeId="f0:82" level=1>
               <none raw_id=51 backendDOMNodeId=81 nodeId="f0:81" ignored>
-                <checkbox raw_id=52 backendDOMNodeId=78 nodeId="f0:78" focusable checked/>
+                <checkbox raw_id=52 backendDOMNodeId=78 nodeId="f0:78" focusable checked="false"/>
                 <LabelText raw_id=53 backendDOMNodeId=79 nodeId="f0:79">
                   <StaticText raw_id=54 backendDOMNodeId=88 nodeId="f0:88" name="Buy milk">
                     <InlineTextBox raw_id=55 nodeId="f0:-1000000033" name="Buy milk"/>
@@ -158,7 +158,7 @@ describe(ServerChromiumAccessibilityTree, () => {
           </div>
           <list id=8>
             <listitem id=9 level=1>
-              <checkbox id=11 focusable checked />
+              <checkbox id=11 focusable checked="false" />
               <LabelText id=12>Buy milk</LabelText>
             </listitem>
             <listitem id=14 level=1>

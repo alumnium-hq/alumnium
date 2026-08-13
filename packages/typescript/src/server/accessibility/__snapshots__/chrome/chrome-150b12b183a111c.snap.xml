@@ -433,7 +433,7 @@
             </div>
             <radiogroup name="Theme" id=617>
               <radio id=618 focusable checked>Light</radio>
-              <radio id=620 focusable>Dark</radio>
+              <radio id=620 focusable checked="false">Dark</radio>
             </radiogroup>
           </div>
           <div id=622>
@@ -443,7 +443,7 @@
             </div>
             <radiogroup name="Density" id=628>
               <radio id=629 focusable checked>Default</radio>
-              <radio id=631 focusable>Compact</radio>
+              <radio id=631 focusable checked="false">Compact</radio>
             </radiogroup>
           </div>
           <div id=633>
@@ -451,7 +451,7 @@
               <div id=635>Reduce motion</div>
               <div id=637>Disable animations and transitions.</div>
             </div>
-            <switch name="Reduce motion" id=639 focusable />
+            <switch name="Reduce motion" id=639 focusable checked="false" />
           </div>
         </div>
       </complementary>

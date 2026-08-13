@@ -97,6 +97,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
   protected override trimmingBorderChildRoles = new Set(["generic"]);
 
+  protected override preserveFalseAttrs = new Set(["checked"]);
+
   protected override textContentAttr(_role: string): string | undefined {
     return undefined;
   }

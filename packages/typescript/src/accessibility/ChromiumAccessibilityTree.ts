@@ -8,6 +8,7 @@ import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
 
 const { tracer } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
+const PRESERVE_FALSE_ATTRS = new Set(["checked"]);
 
 interface CDPNode {
   nodeId?: string | number;
@@ -103,7 +104,9 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     // Combine all root nodes into a single XML string
     let xmlString = "";
     for (const root of rootNodes) {
-      xmlString += XmlRenderer.render([root]);
+      xmlString += XmlRenderer.render([root], {
+        preserveFalseAttrs: PRESERVE_FALSE_ATTRS,
+      });
     }
 
     this.#raw = xmlString;
@@ -313,7 +316,9 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Convert the scoped element back to XML string
-    const scopedXml = XmlRenderer.render([targetElem]);
+    const scopedXml = XmlRenderer.render([targetElem], {
+      preserveFalseAttrs: PRESERVE_FALSE_ATTRS,
+    });
 
     return ChromiumAccessibilityTree.#fromXml(scopedXml, this.#frameMap);
   }
