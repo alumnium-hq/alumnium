@@ -10,7 +10,6 @@ on:
 env:
   ALUMNIUM_LOG_LEVEL: debug
   ALUMNIUM_LOG_DEBUG_EXTRA: all
-  ALUMNIUM_LOG_PATH: alumnium.log
   ALUMNIUM_PLAYWRIGHT_HEADLESS: false
   DISPLAY: :99
   LT_USERNAME: ${{ secrets.LT_USERNAME }}
@@ -80,6 +79,13 @@ jobs:
           name: system-${{ matrix.driver }}-${{ matrix.model }}
           typescript: true
 
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-typescript-test-system-${{ matrix.driver }}-${{ matrix.model }}
+          package: typescript
+
       - name: Debug Session
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
@@ -104,6 +110,13 @@ jobs:
 
       - name: Run npm Tests
         run: mise //packages/typescript:test/package
+
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-typescript-test-pkg-${{ matrix.model }}
+          package: typescript
 
       - name: Debug Session
         if: failure() && runner.debug == '1'

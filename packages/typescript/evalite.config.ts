@@ -11,9 +11,9 @@ const storage = createJsonStorage();
 Logger.level = "warning";
 
 export default defineConfig({
-  testTimeout: Env.ALUMNIUM_EVAL_RUN_TIMEOUT_MS,
+  testTimeout: Env.ALUMNIUM_EVAL_RUN_TIMEOUT_MIN * 60_000,
   maxConcurrency: Env.ALUMNIUM_EVAL_MAX_CONCURRENCY,
-  scoreThreshold: Env.ALUMNIUM_EVAL_THRESHOLD,
+  scoreThreshold: Env.ALUMNIUM_EVAL_THRESHOLD_PCT,
   storage: () => storage,
 });
 

@@ -10,7 +10,6 @@ on:
 env:
   ALUMNIUM_LOG_LEVEL: debug
   ALUMNIUM_LOG_DEBUG_EXTRA: all
-  ALUMNIUM_LOG_PATH: alumnium.log
   LT_USERNAME: ${{ secrets.LT_USERNAME }}
   LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -31,6 +30,10 @@ jobs:
     timeout-minutes: 60
     env:
       ALUMNIUM_MODEL: ${{ matrix.model }}
+      ALUMNIUM_EVAL_RUN_TIMEOUT_MIN: 5
+      ALUMNIUM_EVAL_TRIAL_COUNT: 15
+      ALUMNIUM_EVAL_MAX_CONCURRENCY: 5
+      ALUMNIUM_EVAL_THRESHOLD_PCT: 80
 
     strategy:
       fail-fast: false
@@ -50,6 +53,13 @@ jobs:
 
       - name: Eval
         run: mise //packages/typescript:eval
+
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-eval-${{ matrix.model }}
+          package: typescript
 
       - name: Debug Session
         if: failure() && runner.debug == '1'

@@ -10,7 +10,6 @@ on:
 env:
   ALUMNIUM_LOG_LEVEL: debug
   ALUMNIUM_LOG_DEBUG_EXTRA: all
-  ALUMNIUM_LOG_PATH: alumnium.log
   ALUMNIUM_PLAYWRIGHT_HEADLESS: false
   DISPLAY: :99
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
@@ -82,6 +81,13 @@ jobs:
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-java-test-system-${{ matrix.driver }}-${{ matrix.model }}
+          package: java
+
   test-pkg:
     name: Package Tests
     runs-on: ubuntu-latest
@@ -102,6 +108,13 @@ jobs:
 
       - name: Run Maven Tests
         run: mise //packages/java:test/package
+
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-java-test-pkg-${{ matrix.model }}
+          package: java
 
       - name: Debug Session
         if: failure() && runner.debug == '1'
