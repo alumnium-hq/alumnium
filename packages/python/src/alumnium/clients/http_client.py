@@ -32,6 +32,8 @@ class HttpClient:
         self._server_pid: str | None = None
         self.base_url = self._resolve_url(url)
         self.session_id = None
+        # Token usage reported by the most recent plan/step/statement call.
+        self.last_usage: dict[str, int] = {}
 
         tool_schemas = convert_tools_to_schemas(tools)
 
@@ -98,6 +100,7 @@ class HttpClient:
         )
         response.raise_for_status()
         response_data = response.json()
+        self.last_usage = response_data.get("usage") or {}
         return (response_data["explanation"], response_data["steps"])
 
     def add_example(self, goal: str, actions: list[str]):
@@ -126,6 +129,7 @@ class HttpClient:
         )
         response.raise_for_status()
         data = response.json()
+        self.last_usage = data.get("usage") or {}
         return data["explanation"], data["actions"]
 
     def retrieve(
@@ -151,6 +155,7 @@ class HttpClient:
         )
         response.raise_for_status()
         data = response.json()
+        self.last_usage = data.get("usage") or {}
         return data["explanation"], loosely_typecast(data["result"])
 
     def find_area(self, description: str, accessibility_tree: str, app: str = "unknown"):

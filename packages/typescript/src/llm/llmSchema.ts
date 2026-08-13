@@ -30,6 +30,18 @@ export function createLlmUsage(): LlmUsage {
   };
 }
 
+/**
+ * Compute the per-call token usage as the difference between two cumulative
+ * usage snapshots (taken before and after an agent invocation).
+ */
+export function subtractLlmUsage(after: LlmUsage, before: LlmUsage): LlmUsage {
+  const delta = createLlmUsage();
+  (Object.keys(delta) as (keyof LlmUsage)[]).forEach((key) => {
+    delta[key] = after[key] - before[key];
+  });
+  return delta;
+}
+
 export const LlmUsageStats = z.object({
   total: LlmUsage,
   cache: LlmUsage,

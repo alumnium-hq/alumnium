@@ -6,6 +6,7 @@ from .logutils import configure_logging, get_logger
 logger: logging.Logger = get_logger(__name__)
 logger.addHandler(logging.NullHandler())
 
+ARTIFACTS_DIR = getenv("ALUMNIUM_ARTIFACTS_DIR", "")
 CHANGE_ANALYSIS = getenv("ALUMNIUM_CHANGE_ANALYSIS", "false").lower() == "true"
 DELAY = float(getenv("ALUMNIUM_DELAY", 0.5))
 EXCLUDE_ATTRIBUTES = set(filter(None, getenv("ALUMNIUM_EXCLUDE_ATTRIBUTES", "").split(",")))

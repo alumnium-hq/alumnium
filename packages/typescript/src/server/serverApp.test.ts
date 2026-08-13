@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { pushMock } from "../../tests/unit/mocks.ts";
+import { createLlmUsage } from "../llm/llmSchema.ts";
 import type { Http } from "../Http.ts";
 import { ActorAgent } from "./agents/ActorAgent.ts";
 import { AreaAgent } from "./agents/AreaAgent.ts";
@@ -199,6 +200,7 @@ describe("serverApp", () => {
           "Step 2: Enter 'Buy milk'",
           "Step 3: Press Enter",
         ],
+        usage: createLlmUsage(),
       });
     });
 
@@ -249,6 +251,7 @@ describe("serverApp", () => {
           { args: { id: 9, text: "Buy milk" }, name: "type" },
         ],
         explanation: "Clicking the element and typing text",
+        usage: createLlmUsage(),
       });
     });
   });
@@ -270,6 +273,7 @@ describe("serverApp", () => {
         explanation:
           "Found the requested information in the accessibility tree",
         result: "true",
+        usage: createLlmUsage(),
       });
     });
   });
