@@ -20,6 +20,7 @@ export namespace XmlRenderer {
     indentation?: string;
     compactAttrs?: boolean;
     tagAliases?: Readonly<Record<string, string>>;
+    preserveFalseAttrs?: ReadonlySet<string>;
   }
 }
 
@@ -185,7 +186,12 @@ export abstract class XmlRenderer {
       const stringValue = value == null ? "" : String(value);
 
       if (options.compactAttrs) {
-        if (!stringValue || stringValue === "false") continue;
+        if (!stringValue) continue;
+        if (
+          stringValue === "false" &&
+          !options.preserveFalseAttrs?.has(key)
+        )
+          continue;
         if (stringValue === "true") {
           result += ` ${key}`;
           continue;

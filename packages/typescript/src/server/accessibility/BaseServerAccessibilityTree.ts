@@ -82,7 +82,8 @@ export abstract class BaseServerAccessibilityTree {
       const normalizedAttrValue = this.normalizeXmlAttr(attrName, attrValue);
       if (
         !normalizedAttrValue ||
-        normalizedAttrValue === "false" ||
+        (normalizedAttrValue === "false" &&
+          !this.preserveFalseAttrs.has(attrName)) ||
         this.skipXmlAttr(role, attrName, normalizedAttrValue)
       )
         continue;
@@ -179,6 +180,7 @@ export abstract class BaseServerAccessibilityTree {
       tagAliases: Object.fromEntries(
         Array.from(this.genericRoles, (role) => [role, "div"]),
       ),
+      preserveFalseAttrs: this.preserveFalseAttrs,
     });
   }
 
@@ -199,6 +201,8 @@ export abstract class BaseServerAccessibilityTree {
   protected trimmingBorderChildRoles = new Set<string>();
 
   protected deduplicateAttrs = new Set<string>();
+
+  protected preserveFalseAttrs = new Set<string>();
 
   protected abstract textContentAttr(role: string): string | undefined;
 

@@ -124,11 +124,11 @@
                     </application>
                     <radiogroup name="Flexible dates" id=584>
                       <radio name="Exact dates" id=587 focusable checked />
-                      <radio name="1 day ±1 day" id=593 focusable />
-                      <radio name="2 days ±2 days" id=602 focusable />
-                      <radio name="3 days ±3 days" id=611 focusable />
-                      <radio name="7 days ±7 days" id=620 focusable />
-                      <radio name="14 days ±14 days" id=629 focusable />
+                      <radio name="1 day ±1 day" id=593 focusable checked="false" />
+                      <radio name="2 days ±2 days" id=602 focusable checked="false" />
+                      <radio name="3 days ±3 days" id=611 focusable checked="false" />
+                      <radio name="7 days ±7 days" id=620 focusable checked="false" />
+                      <radio name="14 days ±14 days" id=629 focusable checked="false" />
                     </radiogroup>
                   </tabpanel>
                 </div>

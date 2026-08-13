@@ -21,4 +21,20 @@ class ChromiumAccessibilityTreeTest {
 
     assertThat(xml).contains("value=\"Option 2\"");
   }
+
+  @Test
+  void preservesUncheckedState() {
+    Map<String, Object> node =
+        Map.of(
+            "nodeId", "1",
+            "backendDOMNodeId", 1,
+            "role", Map.of("value", "checkbox"),
+            "properties",
+                List.of(Map.of("name", "checked", "value", Map.of("value", "false"))));
+    ChromiumAccessibilityTree tree =
+        new ChromiumAccessibilityTree(Map.of("nodes", List.of(node)));
+
+    assertThat(tree.toStr()).contains("checked=\"false\"");
+    assertThat(tree.scopeToArea(1).toStr()).contains("checked=\"false\"");
+  }
 }

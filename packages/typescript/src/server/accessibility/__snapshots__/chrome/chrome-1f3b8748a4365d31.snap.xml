@@ -23,7 +23,7 @@
     </sectionheader>
     <main id=28>
       <div id=29>
-        <checkbox name="❯ Toggle All Input" id=30 focusable />
+        <checkbox name="❯ Toggle All Input" id=30 focusable checked="false" />
         <div id=31>
           <div id=32>❯</div>
           Toggle All Input
@@ -31,7 +31,7 @@
       </div>
       <list id=35>
         <listitem id=36 level=1>
-          <checkbox id=38 focusable focused />
+          <checkbox id=38 focusable focused checked="false" />
           <LabelText id=39>Buy milk</LabelText>
           <button id=41 focusable>×</button>
         </listitem>
