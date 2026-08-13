@@ -21,4 +21,13 @@ describe("UIAutomator2AccessibilityTree", () => {
       });
     });
   });
+
+  describe("scopeToArea", () => {
+    it("returns the original tree when the element is not found", async () => {
+      const xml = await fs.readFile(FIXTURE_PATH, "utf-8");
+      const tree = new UIAutomator2AccessibilityTree(xml);
+
+      expect(tree.scopeToArea(99999).toStr()).toBe(tree.toStr());
+    });
+  });
 });

@@ -35,7 +35,7 @@ describe("Frames", () => {
 
     await $.navigate("cross_origin_iframe.html");
 
-    await al.check("'Main Page Button' is present", { assert });
+    await al.check("button 'Main Page Button' is present", { assert });
     await al.check("'Password' field is present", { assert });
 
     await al.do("type 'testuser' in the text input field");
