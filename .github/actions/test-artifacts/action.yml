@@ -26,20 +26,18 @@ runs:
   steps:
     - name: Upload TypeScript Test Artifacts
       if: inputs.typescript == 'true'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: test-typescript-${{ inputs.name }}
         path: |
-          packages/typescript/alumnium.log
           packages/typescript/tests/artifacts/
 
     - name: Upload Python Test Artifacts
       if: inputs.python == 'true'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: test-python-${{ inputs.name }}
         path: |
-          packages/python/alumnium.log
           packages/python/reports/
           packages/python/test-results/
           packages/python/htmlcov/
@@ -47,9 +45,8 @@ runs:
 
     - name: Upload Java Test Artifacts
       if: inputs.java == 'true'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: test-java-${{ inputs.name }}
         path: |
-          packages/java/alumnium.log
           packages/java/build/reports/

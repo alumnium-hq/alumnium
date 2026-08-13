@@ -6,16 +6,10 @@ import { chromium } from "playwright";
 import type { Locator } from "playwright-core";
 import { Builder, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { afterAll, inject, it as vitestIt } from "vitest";
+import { inject, it as vitestIt } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
-import { Tracer } from "../../src/telemetry/Tracer.ts";
-
-// Make sure to flush the telemetry data after all tests are done.
-afterAll(() => {
-  return Tracer.flush();
-});
 
 export namespace Setup {
   export interface Helpers {

@@ -42,6 +42,7 @@ export default defineConfig({
             delay: 1000,
           },
           globalSetup: isAppium ? ["tests/system/setup.appium.ts"] : [],
+          setupFiles: ["tests/system/setup.ts"],
           pool: "threads",
           fileParallelism: !isAppium,
           maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,

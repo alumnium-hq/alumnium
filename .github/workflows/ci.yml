@@ -74,6 +74,13 @@ jobs:
           typescript: true
           python: true
 
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-test
+          package: typescript
+
       - name: Run Post-Setup
         if: always()
         uses: ./.github/actions/setup/post

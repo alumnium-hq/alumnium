@@ -17,6 +17,7 @@ inputs:
   sha:
     required: true
     description: "Git SHA to use for caching."
+
 runs:
   using: "composite"
   steps:
@@ -37,6 +38,11 @@ runs:
       shell: bash
       env:
         ALUMNIUM_TEST_PASS_THRESHOLD_PCT: 90
+        ALUMNIUM_LOG_DEBUG_EXTRA: all
+        ALUMNIUM_LOG_OBJECTS_DEPTH: false
+        ALUMNIUM_LOG_MAX_STR_LENGTH: false
+        ALUMNIUM_DEV_CAPTURE_TREES: true
+        ALUMNIUM_TEST_MAX_CONCURRENCY: 1
 
     - name: Save Alumnium Cache
       if: always()
@@ -44,12 +50,3 @@ runs:
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
         key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
-
-    - name: Upload Alumnium Artifacts
-      if: always()
-      uses: actions/upload-artifact@v6
-      with:
-        name: ci-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}
-        path: |
-          packages/${{ inputs.package }}/.alumnium/logs/*.log
-          packages/${{ inputs.package }}/.alumnium/cache/

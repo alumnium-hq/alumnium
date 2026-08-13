@@ -37,6 +37,8 @@ export namespace Logger {
   export type Sinks = Record<string, Sink>;
 }
 
+const logPathTemplateVars = new Set<Env.Var>(["VITEST_WORKER_ID"]);
+
 export abstract class Logger {
   //#region API
 
@@ -127,6 +129,17 @@ export abstract class Logger {
   }
 
   static #resolvePath(
+    propsOrPathStr?: string | Logger.PathObj,
+  ): string | undefined {
+    const path = this.#resolvePathStr(propsOrPathStr);
+    return path?.replace(/{{(\w+)}}/g, (matchStr, varName) =>
+      logPathTemplateVars.has(varName)
+        ? String(Env[varName as Env.Var] || "none")
+        : matchStr,
+    );
+  }
+
+  static #resolvePathStr(
     propsOrPathStr?: string | Logger.PathObj,
   ): string | undefined {
     const props: Logger.PathObj =

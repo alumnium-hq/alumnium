@@ -1,0 +1,21 @@
+name: Upload Alumnium Artifacts
+description: Uploads Alumnium artifacts
+
+inputs:
+  name:
+    required: true
+    description: "Name of the workflow to upload artifacts for."
+
+  package:
+    required: true
+    description: "Package to upload artifacts for (typescript, python, java)."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upload Alumnium Artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: alumnium-${{ inputs.name }}
+        path: packages/${{ inputs.package }}/.alumnium
+        include-hidden-files: true
