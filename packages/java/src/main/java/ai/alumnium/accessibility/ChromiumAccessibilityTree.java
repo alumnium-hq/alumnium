@@ -137,6 +137,11 @@ public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
       elem.setAttribute("name", toStr(name.get("value")));
     }
 
+    Object value = node.get("value");
+    if (value instanceof Map<?, ?> valueMap && valueMap.containsKey("value")) {
+      elem.setAttribute("value", toStr(valueMap.get("value")));
+    }
+
     @SuppressWarnings("unchecked")
     List<Map<String, Object>> properties = (List<Map<String, Object>>) node.get("properties");
     if (properties != null) {

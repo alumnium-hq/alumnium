@@ -10,6 +10,20 @@ const FIXTURE_PATH = path.resolve(
 );
 
 describe("ChromiumAccessibilityTree", () => {
+  it("renders node value as an attribute", () => {
+    const tree = new ChromiumAccessibilityTree({
+      nodes: [
+        {
+          nodeId: "1",
+          role: { value: "combobox" },
+          value: { value: "Option 2" },
+        },
+      ],
+    });
+
+    expect(tree.toStr()).toContain('value="Option 2"');
+  });
+
   describe("elementById", () => {
     it("returns correct element for given ID", async () => {
       const json = await fs.readFile(FIXTURE_PATH, "utf-8").then(JSON.parse);

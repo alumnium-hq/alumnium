@@ -144,9 +144,20 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     if ("ignored" in node && node.ignored !== undefined) {
       elem.attribs["ignored"] = String(node.ignored);
     }
+
     // Add name as attribute if present
     if ("name" in node && node.name && "value" in node.name) {
       elem.attribs["name"] = String(node.name.value);
+    }
+
+    // Add value as attribute if present
+    if (
+      "value" in node &&
+      typeof node.value === "object" &&
+      node.value &&
+      "value" in node.value
+    ) {
+      elem.attribs["value"] = String(node.value.value);
     }
 
     // Add properties as attributes
