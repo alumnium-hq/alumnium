@@ -253,7 +253,7 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void executeScript(String script) {
-    page.evaluate("() => { " + script + " }");
+    page.evaluate(script);
   }
 
   @Override

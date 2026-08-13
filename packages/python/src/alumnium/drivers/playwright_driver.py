@@ -192,7 +192,7 @@ class PlaywrightDriver(BaseDriver):
         return frame.locator(f"css=[data-alumnium-id='{backend_node_id}']")
 
     def execute_script(self, script: str):
-        self.page.evaluate(f"() => {{ {script} }}")
+        self.page.evaluate(script)
 
     def print_to_pdf(self, filepath: str):
         self.page.pdf(path=filepath)

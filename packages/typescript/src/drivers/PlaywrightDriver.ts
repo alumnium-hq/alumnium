@@ -534,7 +534,7 @@ export class PlaywrightDriver extends BaseDriver {
   @span("driver.execute_script", spanAttrs)
   @stateful
   async executeScript(script: string): Promise<void> {
-    await this.page.evaluate(`() => { ${script} }`);
+    await this.page.evaluate(script);
   }
 
   @span("driver.print_to_pdf", spanAttrs)
