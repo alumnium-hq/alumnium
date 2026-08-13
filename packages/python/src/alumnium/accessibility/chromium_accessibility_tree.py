@@ -92,6 +92,10 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         if "name" in node and "value" in node["name"]:
             elem.set("name", node["name"]["value"])
 
+        # Add value as attribute if present
+        if "value" in node and isinstance(node["value"], dict) and "value" in node["value"]:
+            elem.set("value", self._to_str(node["value"]["value"]))
+
         # Add properties as attributes
         if "properties" in node:
             for prop in node["properties"]:

@@ -27,3 +27,19 @@ def test_scope_to_area_returns_original_if_not_found(chromium_tree: ChromiumAcce
 
     # Should return the original tree when element not found
     assert result.to_str() == chromium_tree.to_str()
+
+
+def test_renders_node_value_as_attribute():
+    tree = ChromiumAccessibilityTree(
+        {
+            "nodes": [
+                {
+                    "nodeId": "1",
+                    "role": {"value": "combobox"},
+                    "value": {"value": "Option 2"},
+                }
+            ]
+        }
+    )
+
+    assert 'value="Option 2"' in tree.to_str()
