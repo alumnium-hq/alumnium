@@ -19,4 +19,13 @@ describe("ChromiumAccessibilityTree", () => {
       expect(tree.elementById(3).backendNodeId).toBe(5);
     });
   });
+
+  describe("scopeToArea", () => {
+    it("returns the original tree when the element is not found", async () => {
+      const json = await fs.readFile(FIXTURE_PATH, "utf-8").then(JSON.parse);
+      const tree = new ChromiumAccessibilityTree(json);
+
+      expect(tree.scopeToArea(99999).toStr()).toBe(tree.toStr());
+    });
+  });
 });
