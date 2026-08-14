@@ -17,6 +17,8 @@ export default defineConfig({
           name: "unit",
           include: ["src/**/*.test.ts"],
           setupFiles: ["tests/unit/setup.ts"],
+          pool: "threads",
+          maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,
         },
       },
       {
@@ -29,7 +31,9 @@ export default defineConfig({
             delay: 1000,
           },
           globalSetup: isAppium ? ["tests/system/setup.appium.ts"] : [],
+          pool: "threads",
           fileParallelism: !isAppium,
+          maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,
         },
       },
     ],
