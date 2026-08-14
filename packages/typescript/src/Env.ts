@@ -13,6 +13,7 @@ import {
   pathString,
 } from "./utils/schema.ts";
 import { maskString } from "./utils/string.ts";
+import os from "node:os";
 
 export namespace Env {
   export type VarsRecord = Record<string, unknown>;
@@ -210,6 +211,18 @@ export const Env = {
     return envVar(
       "ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT",
       z.coerce.number().default(200),
+    );
+  },
+
+  get ALUMNIUM_TEST_MAX_CONCURRENCY() {
+    const defaultValue = 4;
+    const cpusCount = os.cpus().length;
+    return envVar(
+      "ALUMNIUM_TEST_MAX_CONCURRENCY",
+      z.union([
+        z.stringbool().transform((val) => (val ? defaultValue : cpusCount)),
+        z.coerce.number().min(1).max(cpusCount).default(defaultValue),
+      ]),
     );
   },
 
