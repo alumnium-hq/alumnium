@@ -46,18 +46,16 @@
           <div id=63>
             <LabelText id=64>
               Dropdown (select)
-              <combobox name="Dropdown (select)" id=66 focusable hasPopup="menu">
-                <MenuListPopup id=67>
-                  <option name="Open this select menu" id=69 focusable selected />
-                  <option name="One" id=70 focusable />
-                  <option name="Two" id=71 focusable />
-                  <option name="Three" id=72 focusable />
-                </MenuListPopup>
+              <combobox name="Dropdown (select)" id=66 focusable>
+                <option name="Open this select menu" id=69 focusable selected="false" />
+                <option name="One" id=70 focusable selected="false" />
+                <option name="Two" id=71 focusable selected="false" />
+                <option name="Three" id=72 focusable selected="false" />
               </combobox>
             </LabelText>
             <LabelText id=73>
               Dropdown (datalist)
-              <combobox name="Dropdown (datalist)" id=75 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox" />
+              <combobox name="Dropdown (datalist)" id=75 focusable editable="plaintext" settable autocomplete="list" />
             </LabelText>
             <LabelText id=81>
               File input

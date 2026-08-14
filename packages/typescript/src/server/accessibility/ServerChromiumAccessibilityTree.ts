@@ -1,6 +1,7 @@
 import { Xml } from "../../xml/Xml.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
 import type { Tree } from "../../tree/Tree.ts";
+import { textContent } from "domutils";
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
   #tree: Tree.Node[] = [];
@@ -65,7 +66,10 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
   }
 
   protected override parseAddressable(xmlTag: Xml.Tag): boolean {
-    return xmlTag.attribs.backendDOMNodeId !== undefined;
+    return (
+      xmlTag.tagName !== "MenuListPopup" &&
+      xmlTag.attribs.backendDOMNodeId !== undefined
+    );
   }
 
   //#endregion
@@ -98,6 +102,10 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
   protected override trimmingBorderChildRoles = new Set(["generic"]);
 
   protected override preserveFalseAttrs = new Set(["checked"]);
+
+  protected override get renderPreserveFalseAttrs(): ReadonlySet<string> {
+    return new Set([...this.preserveFalseAttrs, "selected"]);
+  }
 
   protected override textContentAttr(_role: string): string | undefined {
     return undefined;
@@ -151,6 +159,72 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
       if (!this.isRenderedAddressable(childTag)) return childTag.children;
       return childTag.children.length ? [childTag] : [];
     });
+  }
+
+  protected override postTransform(xmlTag: Xml.Tag): void {
+    switch (xmlTag.tagName) {
+      case "combobox":
+        return this.#postTransformCombobox(xmlTag);
+
+      case "listbox":
+        return this.#postTransformListbox(xmlTag);
+    }
+  }
+
+  #postTransformCombobox(xmlTag: Xml.Tag): void {
+    this.#postTransformList(xmlTag);
+
+    const value = xmlTag.attribs.value || null;
+
+    this.#traverseListOptions(xmlTag, (option) => {
+      if (value === undefined) return;
+
+      const optionValue = option.attribs.name || textContent(option).trim();
+      option.attribs.selected = String(optionValue === value);
+    });
+  }
+
+  #postTransformListbox(xmlTag: Xml.Tag): void {
+    this.#postTransformList(xmlTag);
+
+    this.#traverseListOptions(xmlTag, (option) => {
+      option.attribs.selected = String(option.attribs.selected === "true");
+    });
+  }
+
+  #postTransformList(xmlTag: Xml.Tag): void {
+    delete xmlTag.attribs.hasPopup;
+  }
+
+  #listRoles = new Set(["combobox", "listbox"]);
+
+  #traverseListOptions(
+    xmlTag: Xml.Tag,
+    transform: (option: Xml.Tag) => void,
+  ): void {
+    const descendantNodes = [...xmlTag.children];
+
+    while (descendantNodes.length) {
+      const descendant = descendantNodes.pop();
+      if (!descendant) continue;
+
+      const descendantTag = Xml.nodeAsTag(descendant);
+      if (!descendantTag) continue;
+
+      if (this.#listRoles.has(descendantTag.tagName)) continue;
+
+      if (descendantTag.tagName !== "option") {
+        descendantNodes.push(...descendantTag.children);
+        continue;
+      }
+
+      if (descendantTag.attribs.disabled === "true") {
+        delete descendantTag.attribs.selected;
+        continue;
+      }
+
+      transform(descendantTag);
+    }
   }
 
   //#endregion

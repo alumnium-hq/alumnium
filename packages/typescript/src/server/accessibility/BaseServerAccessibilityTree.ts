@@ -178,11 +178,15 @@ export abstract class BaseServerAccessibilityTree {
       this.#trimGenericChildren(xmlRoot);
     }
 
+    for (const xmlRoot of xmlRoots) this.#postTransform(xmlRoot);
+    for (const xmlRoot of xmlRoots)
+      this.#removeExcludedAttrs(xmlRoot, options.excludeAttrs);
+
     return XmlRenderer.render(xmlRoots, {
       tagAliases: Object.fromEntries(
         Array.from(this.genericRoles, (role) => [role, "div"]),
       ),
-      preserveFalseAttrs: this.preserveFalseAttrs,
+      preserveFalseAttrs: this.renderPreserveFalseAttrs,
     });
   }
 
@@ -206,6 +210,10 @@ export abstract class BaseServerAccessibilityTree {
 
   protected preserveFalseAttrs = new Set<string>();
 
+  protected get renderPreserveFalseAttrs(): ReadonlySet<string> {
+    return this.preserveFalseAttrs;
+  }
+
   protected abstract textContentAttr(role: string): string | undefined;
 
   protected shouldTrimEmptyGeneric(_xmlTag: Xml.Tag): boolean {
@@ -224,6 +232,8 @@ export abstract class BaseServerAccessibilityTree {
   }
 
   protected pruneBackendRedundantNodes(_xmlTag: Xml.Tag): void {}
+
+  protected postTransform(_xmlTag: Xml.Tag): void {}
 
   protected isGenericRole(role: string): boolean {
     return this.genericRoles.has(role);
@@ -418,6 +428,23 @@ export abstract class BaseServerAccessibilityTree {
   #transferSourceId(xmlTag: Xml.Tag, child: Xml.Node): void {
     if (xmlTag.attribs.id && !this.#sourceIdsByRenderedNode.has(child))
       this.#sourceIdsByRenderedNode.set(child, xmlTag.attribs.id);
+  }
+
+  #postTransform(xmlTag: Xml.Tag): void {
+    for (const child of xmlTag.children) {
+      const childTag = Xml.nodeAsTag(child);
+      if (childTag) this.#postTransform(childTag);
+    }
+
+    this.postTransform(xmlTag);
+  }
+
+  #removeExcludedAttrs(xmlTag: Xml.Tag, excludeAttrs: Set<string>): void {
+    for (const attrName of excludeAttrs) delete xmlTag.attribs[attrName];
+    for (const child of xmlTag.children) {
+      const childTag = Xml.nodeAsTag(child);
+      if (childTag) this.#removeExcludedAttrs(childTag, excludeAttrs);
+    }
   }
 
   #removeDuplicateAttrs(xmlTag: Xml.Tag): void {

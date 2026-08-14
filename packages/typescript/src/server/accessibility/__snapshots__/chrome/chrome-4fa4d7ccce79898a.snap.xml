@@ -21,7 +21,7 @@
                 <div id=56>
                   <div id=58>
                     <div id=59>Where</div>
-                    <combobox name="Where" id=62 focusable focused editable="plaintext" settable autocomplete="list" hasPopup="listbox" controls="bigsearch-query-location-listbox">
+                    <combobox name="Where" id=62 focusable focused editable="plaintext" settable autocomplete="list" controls="bigsearch-query-location-listbox">
                       <div id=65 editable="plaintext">Singapore</div>
                     </combobox>
                   </div>
@@ -38,26 +38,26 @@
               </div>
               <button id=87 focusable>Search</button>
               <listbox name="Search suggestions" id=99 focusable orientation="vertical">
-                <option id=100 focusable>Singapore</option>
-                <option id=106 focusable>
+                <option id=100 focusable selected="false">Singapore</option>
+                <option id=106 focusable selected="false">
                   <div id=109>
                     <div id=110>Little India</div>
                     Neighbourhood
                   </div>
                 </option>
-                <option id=114 focusable>
+                <option id=114 focusable selected="false">
                   <div id=117>
                     <div id=118>Chinatown</div>
                     Neighbourhood
                   </div>
                 </option>
-                <option id=122 focusable>
+                <option id=122 focusable selected="false">
                   <div id=125>
                     <div id=126>Orchard</div>
                     Shopping plaza
                   </div>
                 </option>
-                <option id=130 focusable>
+                <option id=130 focusable selected="false">
                   <div id=133>
                     <div id=134>Changi Airport (SIN)</div>
                     Airport

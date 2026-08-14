@@ -5,6 +5,7 @@ import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
+import { txt } from "smollit";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -13,18 +14,16 @@ const { span } = tracer.dec();
  * Retrieved information.
  */
 export const RetrievedInformation = z.object({
-  explanation: z
-    .string()
-    .describe(
-      "Explanation how information was retrieved and why it's related to the requested information." +
-        "Always include the requested information and its value in the explanation.",
-    ),
-  value: z
-    .string()
-    .describe(
-      "The precise retrieved information value without additional data. If the information is not" +
-        "present in context, reply NOOP.",
-    ),
+  explanation: z.string().describe(txt`
+    Explanation how information was retrieved and why it's related to
+    the requested information. Always include the requested information and
+    its value in the explanation
+  `),
+
+  value: z.string().describe(txt`
+    The precise retrieved information value without additional data. If
+    the information is not present in context, reply NOOP.
+  `),
 });
 
 export type RetrievedInformation = z.infer<typeof RetrievedInformation>;
