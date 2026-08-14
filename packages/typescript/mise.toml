@@ -26,6 +26,7 @@ sources = [
   "*.md",
 ]
 outputs = ["dist/**/*"]
+tools = { java = "21" }
 
 [tasks."build/generate"]
 run = { task = "build/generate:bundles" }
