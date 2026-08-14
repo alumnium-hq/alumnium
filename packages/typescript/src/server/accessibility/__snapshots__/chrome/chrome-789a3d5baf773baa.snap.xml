@@ -37,12 +37,12 @@
                   <div id=97>
                     <div id=98>
                       <LabelText id=99>Search</LabelText>
-                      <combobox name="Search" id=105 focusable focused editable="plaintext" settable autocomplete="list" hasPopup="listbox" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results" />
+                      <combobox name="Search" id=105 focusable focused editable="plaintext" settable autocomplete="list" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results" />
                       <listbox name="Suggestions" id=110 focusable orientation="vertical">
-                        <option name=", jump to this explore page" id=111>Enterprise</option>
-                        <option name=", jump to this explore page" id=117>Security</option>
-                        <option name=", jump to this explore page" id=123>Copilot</option>
-                        <option name=", jump to this explore page" id=129>Pricing</option>
+                        <option name=", jump to this explore page" id=111 selected="false">Enterprise</option>
+                        <option name=", jump to this explore page" id=117 selected="false">Security</option>
+                        <option name=", jump to this explore page" id=123 selected="false">Copilot</option>
+                        <option name=", jump to this explore page" id=129 selected="false">Pricing</option>
                       </listbox>
                     </div>
                     <div id=140 live="polite" atomic relevant="additions text">4 suggestions.</div>

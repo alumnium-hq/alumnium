@@ -45,14 +45,14 @@
           <div id=58>
             <button id=59 focusable />
             <div id=60>
-              <combobox name="Search packages" id=62 focusable focused editable="plaintext" settable hasPopup="listbox">
+              <combobox name="Search packages" id=62 focusable focused editable="plaintext" settable>
                 <div id=65 editable="plaintext">ai</div>
               </combobox>
               <button name="Clear search" id=67 focusable>×</button>
             </div>
             <div id=69 live="polite" atomic relevant="additions text">5 suggestions available.</div>
             <listbox name="Search results" id=72 orientation="vertical">
-              <option name=", version ," id=73 focusable>
+              <option name=", version ," id=73 focusable selected="false">
                 <div id=74>
                   <div id=75>
                     <strong id=76>ai</strong>
@@ -61,7 +61,7 @@
                   7.0.51
                 </div>
               </option>
-              <option name=", version ," id=82 focusable>
+              <option name=", version ," id=82 focusable selected="false">
                 <div id=83>
                   <div id=84>
                     <strong id=85>@ai-sdk/gateway</strong>
@@ -70,7 +70,7 @@
                   4.0.40
                 </div>
               </option>
-              <option name=", version ," id=91 focusable>
+              <option name=", version ," id=91 focusable selected="false">
                 <div id=92>
                   <div id=93>
                     <strong id=94>@ai-sdk/google</strong>
@@ -79,7 +79,7 @@
                   4.0.33
                 </div>
               </option>
-              <option name=", version ," id=100 focusable>
+              <option name=", version ," id=100 focusable selected="false">
                 <div id=101>
                   <div id=102>
                     <strong id=103>@ai-sdk/deepseek</strong>
@@ -88,7 +88,7 @@
                   3.0.21
                 </div>
               </option>
-              <option name=", version ," id=109 focusable>
+              <option name=", version ," id=109 focusable selected="false">
                 <div id=110>
                   <div id=111>
                     <strong id=112>@firebase/ai</strong>

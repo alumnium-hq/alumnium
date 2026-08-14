@@ -20,7 +20,7 @@
               <div id=55>
                 <div id=57>
                   <div id=58>Where</div>
-                  <combobox name="Where" id=61 focusable editable="plaintext" settable autocomplete="list" hasPopup="listbox">
+                  <combobox name="Where" id=61 focusable editable="plaintext" settable autocomplete="list">
                     <div id=64 editable="plaintext">Singapore</div>
                   </combobox>
                 </div>

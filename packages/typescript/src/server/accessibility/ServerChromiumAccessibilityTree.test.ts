@@ -308,7 +308,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       expectVisibleMappings(tree, xml, { 1: 10, 2: 11 });
     });
 
-    it("keeps a backend-backed MenuListPopup addressable", () => {
+    it("unwraps a backend-backed MenuListPopup", () => {
       const tree = new ServerChromiumAccessibilityTree(lit`
         <combobox raw_id=10 backendDOMNodeId=20 mutable focusable hasPopup="menu">
           <MenuListPopup raw_id=11 backendDOMNodeId=21 mutable="false">
@@ -318,14 +318,49 @@ describe(ServerChromiumAccessibilityTree, () => {
       `);
 
       const xml = tree.toXml();
-      expect(xml).toBe(lit`
-        <combobox id=1 focusable hasPopup="menu">
-          <MenuListPopup id=2>
-            <option name="One" id=3 focusable />
+
+      expect(tree.toXml()).toMatchInlineSnapshot(`
+        "<combobox id=1 focusable>
+          <option name="One" id=3 focusable selected="false" />
+        </combobox>"
+      `);
+
+      expectVisibleMappings(tree, xml, { 1: 10, 3: 12 });
+    });
+
+    it("sets option selection from the options list value", () => {
+      const tree = new ServerChromiumAccessibilityTree(lit`
+        <combobox raw_id=10 value="Two">
+          <MenuListPopup raw_id=11>
+            <option raw_id=12 name="One" selected />
+            <option raw_id=13 name="Two" selected="false">
+              <StaticText raw_id=14 name="Two" />
+            </option>
+            <option raw_id=15 name="Three" />
+            <option raw_id=16 name="Two" disabled selected />
+            <listbox raw_id=17 value="Nested">
+              <option raw_id=18 name="Nested" selected />
+              <option raw_id=19 name="Other" />
+              <option raw_id=20 name="Disabled" disabled selected />
+            </listbox>
           </MenuListPopup>
         </combobox>
       `);
-      expectVisibleMappings(tree, xml, { 1: 10, 2: 11, 3: 12 });
+
+      expect(tree.toXml()).toBe(lit`
+        <combobox value="Two">
+          <option name="One" selected="false" />
+          <option selected>Two</option>
+          <option name="Three" selected="false" />
+          <option name="Two" disabled />
+          <listbox value="Nested">
+            <option name="Nested" selected />
+            <option name="Other" selected="false" />
+            <option name="Disabled" disabled />
+          </listbox>
+        </combobox>
+      `);
+      expect(tree.toXml(new Set(["selected"]))).not.toContain("selected");
     });
 
     it("preserves a backend-backed ListMarker ID", () => {

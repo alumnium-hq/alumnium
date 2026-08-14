@@ -38,7 +38,7 @@
                     <div id=98>
                       <LabelText id=99>Search</LabelText>
                       <div id=101>
-                        <combobox name="Search" id=105 focusable focused editable="plaintext" settable autocomplete="list" hasPopup="listbox" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results">
+                        <combobox name="Search" id=105 focusable focused editable="plaintext" settable autocomplete="list" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results">
                           <div id=106 editable="plaintext">alumnium</div>
                         </combobox>
                         <div id=108>
@@ -47,7 +47,7 @@
                         </div>
                       </div>
                       <listbox name="Suggestions" id=113 focusable orientation="vertical">
-                        <option name=", Search all of GitHub" id=114>alumnium</option>
+                        <option name=", Search all of GitHub" id=114 selected="false">alumnium</option>
                       </listbox>
                     </div>
                     <div id=125 live="polite" atomic relevant="additions text">1 suggestion.</div>
