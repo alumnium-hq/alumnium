@@ -177,8 +177,7 @@ export abstract class Logger {
         ? getFileSink(this.#path, {
             bufferSize: Env.ALUMNIUM_LOG_BUFFER_SIZE,
             formatter: getTextFormatter({
-              value: (value) =>
-                inspect(value, { depth, maxStringLength }),
+              value: (value) => inspect(value, { depth, maxStringLength }),
             }),
             flushInterval,
           })

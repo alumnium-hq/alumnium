@@ -187,10 +187,7 @@ export abstract class XmlRenderer {
 
       if (options.compactAttrs) {
         if (!stringValue) continue;
-        if (
-          stringValue === "false" &&
-          !options.preserveFalseAttrs?.has(key)
-        )
+        if (stringValue === "false" && !options.preserveFalseAttrs?.has(key))
           continue;
         if (stringValue === "true") {
           result += ` ${key}`;

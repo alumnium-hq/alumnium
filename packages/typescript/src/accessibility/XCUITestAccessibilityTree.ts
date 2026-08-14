@@ -9,7 +9,9 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
   #xmlString: string;
   #nextRawId: number = 0;
 
-  protected override kind: string = "xcuitest";
+  protected override get kind(): string {
+    return "xcuitest";
+  }
 
   constructor(xmlString: string) {
     super(xmlString);

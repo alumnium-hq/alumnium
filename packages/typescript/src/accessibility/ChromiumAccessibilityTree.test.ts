@@ -67,9 +67,7 @@ describe("ChromiumAccessibilityTree", () => {
             nodeId: "1",
             backendDOMNodeId: 1,
             role: { value: "checkbox" },
-            properties: [
-              { name: "checked", value: { value: "false" } },
-            ],
+            properties: [{ name: "checked", value: { value: "false" } }],
           },
         ],
       });
