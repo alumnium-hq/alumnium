@@ -1,4 +1,3 @@
-import { always } from "alwaysly";
 import { Element } from "domhandler";
 import { pythonicSplitlines } from "../pythonic/pythonicSplitlines.ts";
 import { Xml } from "../xml/Xml.ts";
@@ -116,7 +115,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree<string>
       }
       for (const child of Array.from(elem.children)) {
         const childEl = Xml.nodeAsTag(child);
-        always(childEl);
+        if (!childEl) continue; // Skip non-element nodes, e.g., text nodes
         const result = findElement(childEl, targetId);
         if (result !== null) {
           return result;
