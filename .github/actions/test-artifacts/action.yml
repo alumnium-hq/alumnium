@@ -31,6 +31,7 @@ runs:
         name: test-typescript-${{ inputs.name }}
         path: |
           packages/typescript/tests/artifacts/
+        if-no-files-found: ignore
 
     - name: Upload Python Test Artifacts
       if: inputs.python == 'true'
@@ -42,6 +43,7 @@ runs:
           packages/python/test-results/
           packages/python/htmlcov/
           packages/python/coverage.xml
+        if-no-files-found: ignore
 
     - name: Upload Java Test Artifacts
       if: inputs.java == 'true'
@@ -50,3 +52,4 @@ runs:
         name: test-java-${{ inputs.name }}
         path: |
           packages/java/build/reports/
+        if-no-files-found: ignore
