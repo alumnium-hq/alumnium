@@ -35,12 +35,6 @@ runs:
         path: packages/python/.venv
         key: venv-${{ runner.os }}-${{ hashFiles('packages/python/uv.lock') }}
 
-    - name: Save Playwright Cache
-      uses: actions/cache/save@v5
-      with:
-        path: ~/.cache/ms-playwright
-        key: playwright-${{ runner.os }}
-
     - name: Save Gradle Cache
       uses: actions/cache/save@v5
       with:

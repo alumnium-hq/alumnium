@@ -21,6 +21,12 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Set Up Playwright
+      uses: ./.github/actions/setup-playwright
+      if: inputs.driver == 'playwright'
+      with:
+        package: ${{ inputs.package }}
+
     - name: Restore Alumnium Cache
       uses: actions/cache/restore@v5
       with:
@@ -50,3 +56,9 @@ runs:
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
         key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
+
+    - name: Run Playwright Post-Setup
+      uses: ./.github/actions/setup-playwright/post
+      if: inputs.driver == 'playwright'
+      with:
+        package: ${{ inputs.package }}

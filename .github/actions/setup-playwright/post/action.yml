@@ -1,0 +1,17 @@
+name: Playwright Post-Setup
+description: Saves Playwright cache
+
+inputs:
+  package:
+    required: true
+    description: "Package to install Playwright for (typescript, python, java)."
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Save Playwright Cache
+      uses: actions/cache/save@v5
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ inputs.package }}

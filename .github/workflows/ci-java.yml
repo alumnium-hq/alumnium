@@ -103,6 +103,11 @@ jobs:
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
 
+      - name: Set Up Playwright
+        uses: ./.github/actions/setup-playwright
+        with:
+          package: java
+
       - name: Build Dist
         run: mise //packages/typescript:build
 
@@ -114,6 +119,12 @@ jobs:
         uses: ./.github/actions/alumnium-artifacts
         with:
           name: ci-java-test-pkg-${{ matrix.model }}
+          package: java
+
+      - name: Run Playwright Post-Setup
+        if: always()
+        uses: ./.github/actions/setup-playwright/post
+        with:
           package: java
 
       - name: Debug Session
