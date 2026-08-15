@@ -5,7 +5,7 @@ from typing import Literal
 from appium.webdriver import Remote
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.webelement import WebElement
-from selenium.common.exceptions import UnknownMethodException
+from selenium.common.exceptions import NoSuchElementException, UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -182,6 +182,14 @@ class AppiumDriver(BaseDriver):
             predicate += f" AND {props_str}"
 
         logger.debug(f"Finding element by predicate: {predicate}")
+        if element.match_count and element.match_count > 1:
+            matches = self.driver.find_elements(By.IOS_PREDICATE, predicate)
+            if element.index is None or element.index < 0 or element.index >= len(matches):
+                raise NoSuchElementException(
+                    f"Could not resolve XCUITest locator occurrence {element.index} "
+                    f"for {predicate}; Appium returned {len(matches)} matches"
+                )
+            return matches[element.index]
         return self.driver.find_element(By.IOS_PREDICATE, predicate)  # type: ignore[reportReturnType]
 
     # Use XPath for UIAutomator2

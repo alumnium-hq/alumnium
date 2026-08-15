@@ -9,6 +9,7 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         self.xml_string = xml_string
         self._next_raw_id = 0
         self._raw = None
+        self._lookup_xml = None
 
     def to_str(self) -> str:
         """Parse XML and add raw_id attributes to all elements."""
@@ -24,6 +25,7 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         # Serialize back to string
         indent(root)
         self._raw = tostring(root, encoding="unicode")
+        self._lookup_xml = self._raw
         return self._raw
 
     def _add_raw_ids(self, elem: Element) -> None:
@@ -44,8 +46,9 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
             AccessibilityElement with type, name, value, label attributes
         """
         # Get raw XML with raw_id attributes
-        raw_xml = self.to_str()
-        root = fromstring(raw_xml)
+        self.to_str()
+        assert self._lookup_xml is not None
+        root = fromstring(self._lookup_xml)
 
         # Find element with matching raw_id
         def find_element(elem: Element, target_id: str) -> Element | None:
@@ -61,6 +64,14 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         if element is None:
             raise KeyError(f"No element with raw_id={raw_id} found")
 
+        attrs = ("name", "value", "label")
+        matches = [
+            candidate
+            for candidate in root.iter()
+            if candidate.tag == element.tag
+            and all(not element.get(attr) or candidate.get(attr) == element.get(attr) for attr in attrs)
+        ]
+
         # Extract properties for XCUITest
         return AccessibilityElement(
             id=raw_id,
@@ -68,6 +79,8 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
             name=element.get("name"),
             value=element.get("value"),
             label=element.get("label"),
+            index=matches.index(element),
+            match_count=len(matches),
         )
 
     def scope_to_area(self, raw_id: int) -> "XCUITestAccessibilityTree":
@@ -97,4 +110,8 @@ class XCUITestAccessibilityTree(BaseAccessibilityTree):
         indent(target_elem)
         scoped_xml = tostring(target_elem, encoding="unicode")
 
-        return XCUITestAccessibilityTree(scoped_xml)
+        assert self._lookup_xml is not None
+        scoped_tree = XCUITestAccessibilityTree(scoped_xml)
+        scoped_tree._raw = scoped_xml
+        scoped_tree._lookup_xml = self._lookup_xml
+        return scoped_tree

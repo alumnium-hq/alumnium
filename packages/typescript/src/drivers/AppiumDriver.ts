@@ -210,7 +210,20 @@ export class AppiumDriver extends BaseDriver {
       }
 
       logger.debug(`Finding element by predicate: ${predicate}`);
-      return this.driver.$(`-ios predicate string:${predicate}`).getElement();
+      const selector = `-ios predicate string:${predicate}`;
+      if (element.matchCount && element.matchCount > 1) {
+        const matches = await this.driver.$$(selector);
+        const match =
+          element.index === undefined ? undefined : matches[element.index];
+        if (!match) {
+          throw new Error(
+            `Could not resolve XCUITest locator occurrence ${element.index} ` +
+              `for ${predicate}; Appium returned ${matches.length} matches`,
+          );
+        }
+        return match.getElement();
+      }
+      return this.driver.$(selector).getElement();
     } else {
       // Use XPath for UIAutomator2
       let xpath = `//${element.type}`;

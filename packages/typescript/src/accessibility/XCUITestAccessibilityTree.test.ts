@@ -20,5 +20,39 @@ describe("XCUITestAccessibilityTree", () => {
         type: "XCUIElementTypeButton",
       });
     });
+
+    it("tracks positions among elements with the same locator attributes", () => {
+      const tree = duplicateElementsTree();
+
+      expect(tree.elementById(2)).toMatchObject({ index: 0, matchCount: 3 });
+      expect(tree.elementById(5)).toMatchObject({ index: 1, matchCount: 3 });
+      expect(tree.elementById(7)).toMatchObject({ index: 2, matchCount: 3 });
+    });
+  });
+
+  describe("scopeToArea", () => {
+    it("preserves full-tree IDs and locator positions", () => {
+      const tree = duplicateElementsTree();
+      const area = tree.scopeToArea(4);
+
+      expect(area.toStr()).toContain("raw_id=7");
+      expect(area.elementById(7)).toMatchObject({ index: 2, matchCount: 3 });
+    });
   });
 });
+
+function duplicateElementsTree(): XCUITestAccessibilityTree {
+  return new XCUITestAccessibilityTree(`<XCUIElementTypeApplication>
+    <XCUIElementTypeButton name="Action" label="Action">
+      <XCUIElementTypeStaticText name="First"></XCUIElementTypeStaticText>
+    </XCUIElementTypeButton>
+    <XCUIElementTypeOther name="Area">
+      <XCUIElementTypeButton name="Action" label="Action">
+        <XCUIElementTypeStaticText name="Second"></XCUIElementTypeStaticText>
+      </XCUIElementTypeButton>
+      <XCUIElementTypeButton name="Action" label="Action">
+        <XCUIElementTypeStaticText name="Third"></XCUIElementTypeStaticText>
+      </XCUIElementTypeButton>
+    </XCUIElementTypeOther>
+  </XCUIElementTypeApplication>`);
+}

@@ -9,10 +9,12 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
   #xmlString: string;
   #nextRawId: number = 0;
   #raw: string | null = null;
+  #lookupXml: string | null;
 
   constructor(xmlString: string) {
     super();
     this.#xmlString = xmlString;
+    this.#lookupXml = null;
   }
 
   /** Parse XML and add raw_id attributes to all elements. */
@@ -29,6 +31,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
 
     // Serialize back to string
     this.#raw = XmlRenderer.render([root]);
+    this.#lookupXml = this.#raw;
     return this.#raw;
   }
 
@@ -53,8 +56,9 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
    */
   elementById(rawId: number): AccessibilityElement {
     // Get raw XML with raw_id attributes
-    const rawXml = this.toStr();
-    const root = this.#parseRoot(rawXml);
+    this.toStr();
+    always(this.#lookupXml);
+    const root = this.#parseRoot(this.#lookupXml);
 
     // Find element with matching raw_id
     const findElement = (elem: Element, targetId: string): Element | null => {
@@ -79,6 +83,27 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
       throw new Error(`No element with raw_id=${rawId} found`);
     }
 
+    const attrs = ["name", "value", "label"];
+    const matches: Element[] = [];
+    const collectMatches = (candidate: Element): void => {
+      const matchesTarget =
+        candidate.tagName === element.tagName &&
+        attrs.every((attr) => {
+          const value = element.attribs[attr];
+          return !value || candidate.attribs[attr] === value;
+        });
+      if (matchesTarget) {
+        matches.push(candidate);
+      }
+      for (const child of candidate.children) {
+        const childEl = Xml.nodeAsTag(child);
+        if (childEl) {
+          collectMatches(childEl);
+        }
+      }
+    };
+    collectMatches(root);
+
     // Extract properties for XCUITest
     return {
       id: rawId,
@@ -86,6 +111,8 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
       name: element.attribs["name"],
       value: element.attribs["value"],
       label: element.attribs["label"],
+      index: matches.indexOf(element),
+      matchCount: matches.length,
     };
   }
 
@@ -124,7 +151,11 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     // Convert the scoped element back to XML string
     const scopedXml = XmlRenderer.render([targetElem]);
 
-    return new XCUITestAccessibilityTree(scopedXml);
+    always(this.#lookupXml);
+    const scopedTree = new XCUITestAccessibilityTree(scopedXml);
+    scopedTree.#raw = scopedXml;
+    scopedTree.#lookupXml = this.#lookupXml;
+    return scopedTree;
   }
 
   #parseRoot(xml: string): Element {
