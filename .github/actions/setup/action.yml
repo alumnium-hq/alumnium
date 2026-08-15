@@ -7,6 +7,10 @@ inputs:
     default: false
     description: "If to cache Python-specific artifacts, i.e., venv."
 
+  playwright:
+    required: false
+    description: "Set to install Playwright for specific "
+
 runs:
   using: "composite"
   steps:
@@ -42,12 +46,6 @@ runs:
         key: venv-${{ runner.os }}-${{ hashFiles('packages/python/uv.lock') }}
         restore-keys: venv-${{ runner.os }}-
 
-    - name: Restore Playwright Cache
-      uses: actions/cache/restore@v5
-      with:
-        path: ~/.cache/ms-playwright
-        key: playwright-${{ runner.os }}
-
     - name: Restore Gradle Cache
       uses: actions/cache/restore@v5
       with:
@@ -66,8 +64,4 @@ runs:
 
     - name: Install
       run: mise :install
-      shell: bash
-
-    - name: Install Playwright
-      run: mise :install/playwright
       shell: bash

@@ -114,6 +114,11 @@ jobs:
         with:
           python-cache: true
 
+      - name: Set Up Playwright
+        uses: ./.github/actions/setup-playwright
+        with:
+          package: python
+
       - name: Build Dist
         run: mise //packages/typescript:build
 
@@ -125,6 +130,12 @@ jobs:
         uses: ./.github/actions/alumnium-artifacts
         with:
           name: ci-python-test-pkg-${{ matrix.model }}
+          package: python
+
+      - name: Run Playwright Post-Setup
+        if: always()
+        uses: ./.github/actions/setup-playwright/post
+        with:
           package: python
 
       - name: Debug Session
