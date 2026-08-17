@@ -22,6 +22,9 @@ DIST_DIR="$PKG_DIR/dist"
 DIST_NPM_DIR="$DIST_DIR/npm"
 FIXTURES_DIR="$PKG_DIR/tests/npm"
 FNOX_CONFIG="$REPO_ROOT/fnox.toml"
+PLAYWRIGHT_VERSION="$(bun -e \
+	'console.log(require("./packages/typescript/node_modules/playwright/package.json").version)' \
+	--cwd "$REPO_ROOT")"
 
 # The CLI ships as a platform-specific package; `alumnium --version` loads its
 # prebuilt binary. Install the tarball matching the host so the binary resolves.
@@ -81,13 +84,23 @@ for module in "${MODULES[@]}"; do
 	# Install the fixture's registry deps plus the freshly built `alumnium` and
 	# its host CLI from tarballs (`pnpm add` runs a full install, so
 	# @playwright/test from package.json is installed too).
-	if pnpm_output=$(pnpm add "$ALUMNIUM_TARBALL" "$CLI_TARBALL" 2>&1); then
+	if pnpm_output=$(pnpm add --save-exact \
+		"@playwright/test@$PLAYWRIGHT_VERSION" \
+		"$ALUMNIUM_TARBALL" \
+		"$CLI_TARBALL" 2>&1); then
 		echo "🟢 Package OK: dependencies installed successfully"
 	else
 		echo -e "🔴 Package FAIL: 'pnpm add' failed\n"
 		echo "--- Output ------------------------------------------"
 		echo "$pnpm_output"
 		echo "-----------------------------------------------------"
+		exit 1
+	fi
+
+	SMOKE_PLAYWRIGHT_VERSION="$(pnpm exec playwright --version)"
+	SMOKE_PLAYWRIGHT_VERSION="${SMOKE_PLAYWRIGHT_VERSION#Version }"
+	if [[ "$SMOKE_PLAYWRIGHT_VERSION" != "$PLAYWRIGHT_VERSION" ]]; then
+		echo "🔴 Playwright version mismatch: expected $PLAYWRIGHT_VERSION, got $SMOKE_PLAYWRIGHT_VERSION"
 		exit 1
 	fi
 
@@ -108,7 +121,6 @@ for module in "${MODULES[@]}"; do
 
 	echo -e "\n🌀 Running Playwright with $module module"
 
-	pnpm exec playwright install chromium
 	ALUMNIUM_LOG_LEVEL=warning fnox exec -c "$FNOX_CONFIG" -- pnpm exec playwright test --retries=3
 
 	echo -e "\n🟢 Playwright OK: Tests executed successfully"

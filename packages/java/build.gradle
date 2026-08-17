@@ -59,6 +59,13 @@ ext {
     slf4jVersion = '2.0.16'
 }
 
+tasks.register('printPlaywrightVersion') {
+    def version = playwrightVersion
+    doLast {
+        println version
+    }
+}
+
 dependencies {
     // JSON
     api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
