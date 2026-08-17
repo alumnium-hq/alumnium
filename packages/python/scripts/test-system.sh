@@ -12,6 +12,7 @@ ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
 ALUMNIUM_TEST_RETRY_DELAY_SECONDS="$(printf '%s.%03d' \
 	"$((ALUMNIUM_TEST_RETRY_DELAY / 1000))" \
 	"$((ALUMNIUM_TEST_RETRY_DELAY % 1000))")"
+ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}"
 
 failed=0
 run_tests() {
@@ -30,7 +31,11 @@ echo "🔵 ALUMNIUM_TEST_RETRY_COUNT=$ALUMNIUM_TEST_RETRY_COUNT"
 echo "🔵 ALUMNIUM_TEST_RETRY_DELAY=$ALUMNIUM_TEST_RETRY_DELAY"
 
 export ALUMNIUM_LOG_LEVEL=debug
-export ALUMNIUM_PRUNE_LOGS=true
+export ALUMNIUM_PRUNE_LOGS=false
+export ALUMNIUM_LOG_BUFFER_SIZE=0
+export ALUMNIUM_LOG_FLUSH_INTERVAL=0
+
+rm -f ".alumnium/logs/${ALUMNIUM_LOG_FILENAME_BASE}"*
 
 TEST_ONLY=${TEST_ONLY:-behave,pytest}
 
@@ -38,7 +43,7 @@ TEST_ONLY=${TEST_ONLY:-behave,pytest}
 if [[ "$TEST_ONLY" == *"behave"* ]]; then
 	echo -e "🌀 Running behave tests\n"
 	run_tests fnox exec -- \
-		env ALUMNIUM_LOG_FILENAME=test-system-behave-$ALUMNIUM_DRIVER.log \
+		env ALUMNIUM_LOG_FILENAME="${ALUMNIUM_LOG_FILENAME_BASE}-behave.log" \
 		uv run behave -t "@$ALUMNIUM_DRIVER" -f html-pretty -o reports/behave.html -f pretty
 fi
 
@@ -48,7 +53,7 @@ if [[ "$TEST_ONLY" == *"pytest"* ]]; then
 	else
 		echo -e "🌀 Running pytest tests\n"
 		run_tests fnox exec -- \
-			env ALUMNIUM_LOG_FILENAME=test-system-pytest-$ALUMNIUM_DRIVER.log \
+			env ALUMNIUM_LOG_FILENAME="${ALUMNIUM_LOG_FILENAME_BASE}-pytest.log" \
 			uv run pytest --retries "$ALUMNIUM_TEST_RETRY_COUNT" \
 			--retry-delay "$ALUMNIUM_TEST_RETRY_DELAY_SECONDS" \
 			--html reports/pytest.html examples/pytest
