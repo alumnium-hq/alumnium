@@ -1,7 +1,8 @@
 package ai.alumnium.system;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.File;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
@@ -15,18 +16,23 @@ public class ShadowDomTest extends BaseTest {
   void testShadowDom() {
     navigate(SHADOW_DOM_URL);
 
-    String pageText = (String) al.get("page text string");
-    Assertions.assertTrue(pageText.contains("This is inside Shadow DOM!"));
-    Assertions.assertTrue(pageText.contains("This is another text inside Shadow DOM!"));
+    Object pageText = al.get("page text");
+    assertThat(pageText)
+        .asString()
+        .contains("This is inside Shadow DOM!", "This is another text inside Shadow DOM!");
 
     al.act("click first shadow button");
-    pageText = (String) al.get("page text string");
-    Assertions.assertTrue(pageText.contains("Shadow Button 1 was clicked!"));
-    Assertions.assertFalse(pageText.contains("This is inside Shadow DOM!"));
+    pageText = al.get("page text");
+    assertThat(pageText)
+        .asString()
+        .contains("Shadow Button 1 was clicked!")
+        .doesNotContain("This is inside Shadow DOM!");
 
     al.act("click second shadow button");
-    pageText = (String) al.get("page text string");
-    Assertions.assertTrue(pageText.contains("Shadow Button 2 was clicked!"));
-    Assertions.assertFalse(pageText.contains("This is another text inside Shadow DOM!"));
+    pageText = al.get("page text");
+    assertThat(pageText)
+        .asString()
+        .contains("Shadow Button 2 was clicked!")
+        .doesNotContain("This is another text inside Shadow DOM!");
   }
 }
