@@ -35,9 +35,11 @@ echo "🔵 ALUMNIUM_LOG_FILENAME=$ALUMNIUM_LOG_FILENAME"
 echo "🔵 ALUMNIUM_TEST_PASS_THRESHOLD_PCT=${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-}"
 echo "🔵 ALUMNIUM_TEST_RETRY_COUNT=${ALUMNIUM_TEST_RETRY_COUNT:-}"
 echo "🔵 ALUMNIUM_TEST_RETRY_DELAY=${ALUMNIUM_TEST_RETRY_DELAY:-}"
+echo "🔵 ALUMNIUM_TEST_GRADLE_ARGS=${ALUMNIUM_TEST_GRADLE_ARGS:-}"
 
 echo -e "\n🌀 Running JUnit tests\n"
-run_tests fnox exec -- ./gradlew clean systemTest
+read -r -a gradle_args <<<"${ALUMNIUM_TEST_GRADLE_ARGS:-}"
+run_tests fnox exec -- ./gradlew clean systemTest --rerun-tasks "${gradle_args[@]}"
 
 if [ $failed -ne 0 ]; then
 	echo "👎 Some tests failed"
