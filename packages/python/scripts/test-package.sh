@@ -14,6 +14,8 @@ ALUMNIUM_TEST_RETRY_DELAY_SEC="$(printf '%s.%03d' \
 
 VERSION="$(mise //:version)"
 VERSION="${VERSION//-alpha./a}"
+PLAYWRIGHT_VERSION="$(uv run --project "$PKG_DIR" python -c \
+	'import importlib.metadata; print(importlib.metadata.version("playwright"))')"
 
 write_pyproject_toml() {
 	cat >"$TEST_DIR/pyproject.toml" <<EOF
@@ -25,7 +27,7 @@ requires-python = ">=3.10"
 dependencies = [
 	"alumnium==$VERSION",
 	"alumnium-cli==$VERSION; (sys_platform == 'linux' or sys_platform == 'darwin' or sys_platform == 'win32') and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')",
-	"playwright>=1.49,<2.0",
+	"playwright==$PLAYWRIGHT_VERSION",
 	"pytest-retry>=1.7.0,<2.0.0",
 	"pytest>=8.3.3,<9.0.0",
 ]
@@ -76,6 +78,13 @@ else
 	echo "--- Output ------------------------------------------"
 	echo "$uv_output"
 	echo "-----------------------------------------------------"
+	exit 1
+fi
+
+SMOKE_PLAYWRIGHT_VERSION="$(uv run python -c \
+	'import importlib.metadata; print(importlib.metadata.version("playwright"))')"
+if [[ "$SMOKE_PLAYWRIGHT_VERSION" != "$PLAYWRIGHT_VERSION" ]]; then
+	echo "🔴 Playwright version mismatch: expected $PLAYWRIGHT_VERSION, got $SMOKE_PLAYWRIGHT_VERSION"
 	exit 1
 fi
 
