@@ -10,6 +10,7 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'maven-publish'
+    id 'org.gradle.test-retry' version '1.6.2'
     id 'com.vanniktech.maven.publish' version '0.36.0'
     id 'com.diffplug.spotless' version '8.5.1'
 }
@@ -96,6 +97,20 @@ tasks.withType(JavaCompile).configureEach {
     ])
 }
 
+def testRetryCount = providers.environmentVariable('ALUMNIUM_TEST_RETRY_COUNT').orElse('0')
+def testRetryDelay = providers.environmentVariable('ALUMNIUM_TEST_RETRY_DELAY').orElse('1000')
+
+tasks.withType(Test).configureEach {
+    retry {
+        maxRetries = testRetryCount.get().toInteger()
+    }
+    beforeSuite { descriptor ->
+        if (descriptor.parent == null && descriptor.displayName.startsWith('Gradle Test Run :')) {
+            sleep(testRetryDelay.get().toLong())
+        }
+    }
+}
+
 testing {
     suites {
         test {
@@ -148,14 +163,14 @@ tasks.register('systemTest', Test) {
     }
     doLast {
         def resultsFile = passThresholdResults.get().asFile
-        def results = resultsFile.exists() ? resultsFile.readLines() : []
+        def results = resultsFile.exists() ? resultsFile.readLines().collect { it.substring(it.lastIndexOf('=') + 1) } : []
         def passed = results.count { it == 'passed' }
         def failed = results.count { it == 'failed' }
         try {
             PassThreshold.apply(
                     passed,
                     failed,
-                    gradleFailures,
+                    gradleFailures > 0,
                     PassThreshold.parse(passThreshold.get()),
                     System.getenv('GITHUB_ACTIONS') == 'true'
                     )

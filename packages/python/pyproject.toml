@@ -87,7 +87,6 @@ addopts = "-v --ignore tests/pip"
 asyncio_default_fixture_loop_scope = "function"
 generate_report_on_test = true
 pythonpath = "."
-retry_delay = 0.5
 
 [tool.ruff]
 extend-exclude = [

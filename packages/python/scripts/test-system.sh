@@ -7,6 +7,11 @@ set -euo pipefail
 
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
 ALUMNIUM_TEST_PASS_THRESHOLD_PCT="${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-100}"
+ALUMNIUM_TEST_RETRY_COUNT="${ALUMNIUM_TEST_RETRY_COUNT:-0}"
+ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
+ALUMNIUM_TEST_RETRY_DELAY_SECONDS="$(printf '%s.%03d' \
+	"$((ALUMNIUM_TEST_RETRY_DELAY / 1000))" \
+	"$((ALUMNIUM_TEST_RETRY_DELAY % 1000))")"
 
 failed=0
 run_tests() {
@@ -21,6 +26,8 @@ run_tests() {
 cd "$PKG_DIR"
 
 echo "🔵 ALUMNIUM_TEST_PASS_THRESHOLD_PCT=$ALUMNIUM_TEST_PASS_THRESHOLD_PCT"
+echo "🔵 ALUMNIUM_TEST_RETRY_COUNT=$ALUMNIUM_TEST_RETRY_COUNT"
+echo "🔵 ALUMNIUM_TEST_RETRY_DELAY=$ALUMNIUM_TEST_RETRY_DELAY"
 
 export ALUMNIUM_LOG_LEVEL=debug
 export ALUMNIUM_PRUNE_LOGS=true
@@ -42,7 +49,9 @@ if [[ "$TEST_ONLY" == *"pytest"* ]]; then
 		echo -e "🌀 Running pytest tests\n"
 		run_tests fnox exec -- \
 			env ALUMNIUM_LOG_FILENAME=test-system-pytest-$ALUMNIUM_DRIVER.log \
-			uv run pytest --retries 3 --html reports/pytest.html examples/pytest
+			uv run pytest --retries "$ALUMNIUM_TEST_RETRY_COUNT" \
+			--retry-delay "$ALUMNIUM_TEST_RETRY_DELAY_SECONDS" \
+			--html reports/pytest.html examples/pytest
 	fi
 fi
 

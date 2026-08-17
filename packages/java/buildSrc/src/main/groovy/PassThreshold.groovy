@@ -42,10 +42,10 @@ final class PassThreshold {
      *
      * @return the list of printed lines, for testing purposes.
      */
-    static List<String> apply(int passed, int failed, long gradleFailures, double threshold, boolean githubActions) {
+    static List<String> apply(int passed, int failed, boolean hasGradleFailures, double threshold, boolean githubActions) {
         List<String> lines = []
 
-        if (gradleFailures > failed) {
+        if (hasGradleFailures && failed == 0) {
             throw new IllegalStateException('System tests had setup or infrastructure errors')
         }
 

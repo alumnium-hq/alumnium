@@ -228,6 +228,20 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_TEST_RETRY_COUNT() {
+    return envVar(
+      "ALUMNIUM_TEST_RETRY_COUNT",
+      z.coerce.number().int().nonnegative().default(0),
+    );
+  },
+
+  get ALUMNIUM_TEST_RETRY_DELAY() {
+    return envVar(
+      "ALUMNIUM_TEST_RETRY_DELAY",
+      z.coerce.number().int().nonnegative().default(1000),
+    );
+  },
+
   get ALUMNIUM_DEV_DATA_TYPES_SCAN() {
     return envVar(
       "ALUMNIUM_DEV_DATA_TYPES_SCAN",
