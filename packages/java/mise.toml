@@ -44,7 +44,7 @@ arg "<driver>" help="Driver to use for system tests" {
   default "selenium"
 }
 '''
-run = "ALUMNIUM_DRIVER={{usage.driver}} ./gradlew clean systemTest"
+run = "ALUMNIUM_DRIVER={{usage.driver}} ./scripts/test-system.sh"
 
 [tasks."test/system:playwright"]
 run = [{ task = "test/system playwright" }]
