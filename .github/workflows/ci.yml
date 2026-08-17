@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       permitted: ${{ steps.check-access.outputs.require-result }}
-      ignore-changes: ${{ startsWith(github.ref_name, 'ci/') || startsWith(github.ref_name, 'ci-') }}
+      ignore-changes: ${{ github.event_name == 'push' }}
       java-changed: ${{ steps.changed-files.outputs.java_any_changed }}
       python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
       typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
@@ -151,6 +151,7 @@ jobs:
     if: >
       needs.preflight.outputs.permitted == 'true'
         && (needs.preflight.outputs.ignore-changes == 'true'
+          || needs.preflight.outputs.typescript-changed == 'true'
           || needs.preflight.outputs.java-changed == 'true')
     uses: ./.github/workflows/ci-java.yml
     with:
