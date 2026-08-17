@@ -6,6 +6,11 @@ set -euo pipefail
 
 PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TEST_DIR="$PKG_DIR/tests/pip"
+ALUMNIUM_TEST_RETRY_COUNT="${ALUMNIUM_TEST_RETRY_COUNT:-0}"
+ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
+ALUMNIUM_TEST_RETRY_DELAY_SEC="$(printf '%s.%03d' \
+	"$((ALUMNIUM_TEST_RETRY_DELAY / 1000))" \
+	"$((ALUMNIUM_TEST_RETRY_DELAY % 1000))")"
 
 VERSION="$(mise //:version)"
 VERSION="${VERSION//-alpha./a}"
@@ -91,7 +96,9 @@ fi
 
 echo -e "\n🌀 Running pytest Playwright smoke test\n"
 
-ALUMNIUM_LOG_LEVEL=warning fnox exec -- uv run pytest --retries=3
+ALUMNIUM_LOG_LEVEL=warning fnox exec -- uv run pytest \
+	--retries "$ALUMNIUM_TEST_RETRY_COUNT" \
+	--retry-delay "$ALUMNIUM_TEST_RETRY_DELAY_SEC"
 
 echo -e "\n🟢 Pytest OK: Tests executed successfully"
 echo -e "\n🎉 All pip package tests passed!\n"

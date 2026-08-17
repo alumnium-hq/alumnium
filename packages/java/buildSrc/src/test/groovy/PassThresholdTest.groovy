@@ -48,13 +48,13 @@ class PassThresholdTest extends Specification {
 
     def 'apply accepts failures within threshold and returns printed lines'() {
         expect:
-        PassThreshold.apply(9, 1, 1, 90, false) ==
+        PassThreshold.apply(9, 1, true, 90, false) ==
             ['\nTest failures accepted: 9/10 tests passed (90.00%, required 90%)']
     }
 
     def 'apply includes GitHub annotation when accepted on CI'() {
         expect:
-        PassThreshold.apply(9, 1, 1, 90, true) ==
+        PassThreshold.apply(9, 1, true, 90, true) ==
             [
                 '\nTest failures accepted: 9/10 tests passed (90.00%, required 90%)',
                 '::warning title=Test failures accepted::9/10 tests passed (90.00%, required 90%)'
@@ -63,7 +63,7 @@ class PassThresholdTest extends Specification {
 
     def 'apply throws when failures exceed threshold'() {
         when:
-        PassThreshold.apply(9, 1, 1, 95, false)
+        PassThreshold.apply(9, 1, true, 95, false)
 
         then:
         def error = thrown(IllegalStateException)
@@ -72,7 +72,7 @@ class PassThresholdTest extends Specification {
 
     def 'apply throws for setup or infrastructure errors regardless of threshold'() {
         when:
-        PassThreshold.apply(9, 0, 1, 0, false)
+        PassThreshold.apply(9, 0, true, 0, false)
 
         then:
         def error = thrown(IllegalStateException)
@@ -81,6 +81,6 @@ class PassThresholdTest extends Specification {
 
     def 'apply returns no lines when there are no failures'() {
         expect:
-        PassThreshold.apply(10, 0, 0, 100, false) == []
+        PassThreshold.apply(10, 0, false, 100, false) == []
     }
 }

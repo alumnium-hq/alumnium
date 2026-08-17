@@ -6,6 +6,8 @@ set -euo pipefail
 
 PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TEST_DIR="$PKG_DIR/test/maven"
+ALUMNIUM_TEST_RETRY_COUNT="${ALUMNIUM_TEST_RETRY_COUNT:-0}"
+ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
 
 ALUMNIUM_VERSION="$(grep "^version" "$PKG_DIR/build.gradle" | sed "s/.*= '//;s/'//")"
 
@@ -47,6 +49,7 @@ fi
 cat >"$TEST_DIR/build.gradle" <<EOF
 plugins {
     id 'java'
+    id 'org.gradle.test-retry' version '1.6.2'
 }
 
 group = 'ai.alumnium.test'
@@ -80,6 +83,14 @@ tasks.register('installPlaywright', JavaExec) {
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+    retry {
+        maxRetries = Integer.parseInt(System.getenv().getOrDefault('ALUMNIUM_TEST_RETRY_COUNT', '0'))
+    }
+    beforeSuite {
+        if (it.parent == null && it.displayName.startsWith('Gradle Test Run :')) {
+            sleep(Long.parseLong(System.getenv().getOrDefault('ALUMNIUM_TEST_RETRY_DELAY', '1000')))
+        }
+    }
     testLogging {
         events 'passed', 'skipped', 'failed'
         showExceptions true

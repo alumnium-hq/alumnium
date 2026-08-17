@@ -38,8 +38,8 @@ export default defineConfig({
           include: ["tests/system/**/*.test.ts"],
           testTimeout: 5 * 60_000, // 5 minutes
           retry: {
-            count: Env.CI ? 1 : 0,
-            delay: 1000,
+            count: Env.ALUMNIUM_TEST_RETRY_COUNT,
+            delay: Env.ALUMNIUM_TEST_RETRY_DELAY,
           },
           globalSetup: isAppium ? ["tests/system/setup.appium.ts"] : [],
           setupFiles: ["tests/system/setup.ts"],
