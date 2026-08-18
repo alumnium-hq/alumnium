@@ -37,4 +37,16 @@ describe("Tabs", () => {
     await al.do("switch to previous browser tab");
     expect(await al.get("current page URL")).toBe("about:blank");
   });
+
+  it("switches to a tab that opens slowly", async ({ expect, setup }) => {
+    const { al, $ } = await setup();
+    const { url, slowTabUrl } = await $.serveSlowTabPage();
+
+    await $.navigate(url);
+    await al.do("click on 'Open Slow Tab' button");
+
+    // An LLM-backed assertion is slow enough to hide the tab detection race.
+    expect(await al.driver.url()).toBe(slowTabUrl);
+    expect(await al.get("header text")).toBe("Slow Tab");
+  });
 });

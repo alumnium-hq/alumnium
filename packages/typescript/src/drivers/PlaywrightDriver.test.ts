@@ -1,4 +1,4 @@
-import type { Page } from "playwright-core";
+import type { Locator, Page } from "playwright-core";
 import { describe, expect, it, vi } from "vitest";
 import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
@@ -20,6 +20,7 @@ describe("PlaywrightDriver", () => {
       context: () => ({
         addInitScript: vi.fn(() => initScript.promise),
         newCDPSession: vi.fn(async () => session),
+        on: vi.fn(),
       }),
       mainFrame: () => frame,
       frames: () => [frame],
@@ -34,6 +35,97 @@ describe("PlaywrightDriver", () => {
     initScript.resolve();
     await quitting;
     expect(close).toHaveBeenCalledOnce();
+  });
+
+  it("waits for a page only after CDP announces a new tab", async () => {
+    let onPage: (page: Page) => void = () => {};
+    let onWindowOpen: () => void = () => {};
+    const session = {
+      send: vi.fn(async () => ({})),
+      on: vi.fn((event: string, listener: () => void) => {
+        if (event === "Page.windowOpen") onWindowOpen = listener;
+      }),
+      detach: vi.fn(),
+    };
+    const context = {
+      addInitScript: vi.fn(),
+      newCDPSession: vi.fn(async () => session),
+      on: vi.fn((event: string, listener: (page: Page) => void) => {
+        if (event === "page") onPage = listener;
+      }),
+      waitForEvent: vi.fn(async () => {
+        onPage(newPage as unknown as Page);
+        throw new Error("one-shot listener missed the page event");
+      }),
+    };
+    const frame = {};
+    const initialPage = {
+      on: vi.fn(),
+      context: () => context,
+      mainFrame: () => frame,
+      frames: () => [frame],
+      waitForTimeout: vi.fn(),
+      isClosed: () => false,
+    };
+    const newPage = {
+      on: vi.fn(),
+      context: () => context,
+      mainFrame: () => frame,
+      frames: () => [frame],
+      isClosed: () => false,
+      url: () => "https://example.com/slow",
+    };
+    const element = {
+      evaluate: vi.fn(async () => "BUTTON"),
+      click: vi.fn(async () => onWindowOpen()),
+    };
+    const driver = new ClickTestPlaywrightDriver(
+      initialPage as unknown as Page,
+      element as unknown as Locator,
+    );
+
+    await driver.click(1);
+
+    expect(context.waitForEvent).toHaveBeenCalledWith("page", {
+      timeout: 100,
+    });
+    expect(driver.page).toBe(newPage);
+  });
+
+  it("does not wait for a page when no tab is announced", async () => {
+    const session = {
+      send: vi.fn(async () => ({})),
+      on: vi.fn(),
+      detach: vi.fn(),
+    };
+    const context = {
+      addInitScript: vi.fn(),
+      newCDPSession: vi.fn(async () => session),
+      on: vi.fn(),
+      waitForEvent: vi.fn(),
+    };
+    const frame = {};
+    const page = {
+      on: vi.fn(),
+      context: () => context,
+      mainFrame: () => frame,
+      frames: () => [frame],
+      waitForTimeout: vi.fn(),
+      isClosed: () => false,
+    };
+    const element = {
+      evaluate: vi.fn(async () => "BUTTON"),
+      click: vi.fn(),
+    };
+    const driver = new ClickTestPlaywrightDriver(
+      page as unknown as Page,
+      element as unknown as Locator,
+    );
+
+    await driver.click(1);
+
+    expect(context.waitForEvent).not.toHaveBeenCalled();
+    expect(driver.page).toBe(page);
   });
 
   it("serializes AX nodes without fetching DOM metadata", async () => {
@@ -70,6 +162,7 @@ describe("PlaywrightDriver", () => {
       context: () => ({
         addInitScript: vi.fn(),
         newCDPSession: vi.fn(async () => session),
+        on: vi.fn(),
       }),
       mainFrame: () => frame,
       frames: () => [frame],
@@ -110,6 +203,7 @@ describe("PlaywrightDriver", () => {
       const context = {
         addInitScript: vi.fn(),
         newCDPSession: vi.fn(async () => session),
+        on: vi.fn(),
       };
       const page = {
         on: vi.fn(),
@@ -157,6 +251,7 @@ describe("PlaywrightDriver", () => {
         context: () => ({
           addInitScript: vi.fn(),
           newCDPSession: vi.fn(async () => session),
+          on: vi.fn(),
         }),
         mainFrame: () => frame,
         frames: () => [frame],
@@ -188,6 +283,7 @@ describe("PlaywrightDriver", () => {
         context: () => ({
           addInitScript: vi.fn(),
           newCDPSession: vi.fn(async () => session),
+          on: vi.fn(),
         }),
         mainFrame: () => frame,
         frames: () => [frame],
@@ -223,6 +319,7 @@ describe("PlaywrightDriver", () => {
         context: () => ({
           addInitScript: vi.fn(),
           newCDPSession: vi.fn(async () => session),
+          on: vi.fn(),
         }),
         mainFrame: () => mainFrame,
         frames: () => [mainFrame],
@@ -256,5 +353,18 @@ describe("PlaywrightDriver", () => {
 class FetchTestPlaywrightDriver extends PlaywrightDriver {
   fetchTree(): Promise<BaseAccessibilityTree> {
     return this.fetchAccessibilityTree();
+  }
+}
+
+class ClickTestPlaywrightDriver extends PlaywrightDriver {
+  readonly #element: Locator;
+
+  constructor(page: Page, element: Locator) {
+    super(page);
+    this.#element = element;
+  }
+
+  override async findElement(): Promise<Locator> {
+    return this.#element;
   }
 }
