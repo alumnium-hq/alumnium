@@ -1,7 +1,6 @@
 from base64 import b64encode
 from contextlib import contextmanager
 from os import getenv
-from pathlib import Path
 from urllib.parse import urlparse
 
 from playwright.sync_api import Error, Frame, Locator, Page, TimeoutError
@@ -16,7 +15,9 @@ from ..tools.press_key_tool import PressKeyTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
+from .cdp_network_monitor import CdpNetworkMonitor
 from .keys import Key
+from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
 logger = get_logger(__name__)
 
@@ -25,14 +26,6 @@ class PlaywrightDriver(BaseDriver):
     NEW_TAB_TIMEOUT = int(getenv("ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT", "200"))
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
-
-    with open(Path(__file__).parent / "scripts/waiter.js") as f:
-        WAITER_SCRIPT = f.read()
-    with open(Path(__file__).parent / "scripts/waitFor.js") as f:
-        WAIT_FOR_SCRIPT = (
-            f"(...scriptArgs) => new Promise((resolve) => "
-            f"{{ const arguments = [...scriptArgs, resolve]; {f.read()} }})"
-        )
 
     def __init__(self, page: Page):
         self.page = page
@@ -47,6 +40,10 @@ class PlaywrightDriver(BaseDriver):
             UploadTool,
         }
         self.oopif_frames: set[Frame] = set()
+        self.network_monitor = CdpNetworkMonitor()
+        self.network_sessions = []
+        self.network_frames: set[Frame] = set()
+        self.page.context.add_init_script(script=WAITER_SCRIPT)
         self._init_cdp_session()
         self._setup_page_tracking(page)
 
@@ -200,10 +197,12 @@ class PlaywrightDriver(BaseDriver):
     def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         try:
-            self.page.evaluate(self.WAITER_SCRIPT)
-            error = self.page.evaluate(f"({self.WAIT_FOR_SCRIPT})()")
-            if error is not None:
-                logger.debug(f"  <- Failed to wait for page to load: {error}")
+            loaded, pending = wait_for_page_to_load(
+                self.network_monitor,
+                lambda: self.page.evaluate(WAITER_SNAPSHOT_SCRIPT),
+            )
+            if not loaded:
+                logger.debug(f"  <- Timed out waiting for page to load; pending requests: {pending}")
             else:
                 logger.debug("  <- Page finished loading")
         except Error as error:
@@ -235,8 +234,51 @@ class PlaywrightDriver(BaseDriver):
 
     def _init_cdp_session(self):
         self.oopif_frames.clear()
+        for session in self.network_sessions:
+            try:
+                session.detach()
+            except Error:
+                pass
+        self.network_sessions = []
+        self.network_frames.clear()
+        self.network_monitor.clear()
         self.client = self.page.context.new_cdp_session(self.page)
+        self._configure_network_session(self.client)
         self._enable_target_auto_attach()
+        for frame in self.page.frames:
+            if frame != self.page.main_frame:
+                self._attach_oopif_network_session(frame)
+
+    def _configure_network_session(self, session, session_id: str = ""):
+        session.send("Page.enable")
+        session.send("Network.enable")
+        session.send(
+            "Page.addScriptToEvaluateOnNewDocument",
+            {"source": WAITER_SCRIPT, "runImmediately": True},
+        )
+        for event in (
+            "Network.requestWillBeSent",
+            "Network.responseReceived",
+            "Network.loadingFinished",
+            "Network.loadingFailed",
+        ):
+            session.on(event, lambda params, event=event: self.network_monitor.process(event, params, session_id))
+
+    def _attach_oopif_network_session(self, frame: Frame):
+        if frame.page != self.page or frame in self.network_frames:
+            return
+        try:
+            frame_tree = self._send_cdp_command("Page.getFrameTree")
+            if self._find_cdp_frame_id_by_url(frame_tree, frame.url):
+                return
+            session = self.page.context.new_cdp_session(frame)
+            session_id = f"frame:{id(frame)}"
+            self._configure_network_session(session, session_id)
+            self.network_frames.add(frame)
+            self.network_sessions.append(session)
+        except Error:
+            # Same-process frames are already covered by the page session.
+            pass
 
     def _enable_target_auto_attach(self):
         try:
@@ -368,6 +410,12 @@ class PlaywrightDriver(BaseDriver):
     def _attach_page_listeners(self, page: Page):
         page.on("popup", self._on_popup)
         page.on("close", self._on_page_close)
+        page.on("frameattached", self._attach_oopif_network_session)
+        page.on("framedetached", self._on_frame_detached)
+
+    def _on_frame_detached(self, frame: Frame):
+        self.network_frames.discard(frame)
+        self.network_monitor.clear_session(f"frame:{id(frame)}")
 
     def _on_popup(self, popup: Page):
         logger.debug(f"New popup opened: {popup.url}")

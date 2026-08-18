@@ -6,6 +6,36 @@ import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 import { PlaywrightDriver } from "./PlaywrightDriver.ts";
 
 describe("PlaywrightDriver", () => {
+  it("waits for CDP initialization before closing the page", async () => {
+    const initScript = Promise.withResolvers<void>();
+    const frame = {};
+    const session = {
+      send: vi.fn(async () => ({})),
+      on: vi.fn(),
+      detach: vi.fn(),
+    };
+    const close = vi.fn(async () => undefined);
+    const page = {
+      on: vi.fn(),
+      context: () => ({
+        addInitScript: vi.fn(() => initScript.promise),
+        newCDPSession: vi.fn(async () => session),
+      }),
+      mainFrame: () => frame,
+      frames: () => [frame],
+      close,
+    };
+    const driver = new PlaywrightDriver(page as unknown as Page);
+
+    const quitting = driver.quit();
+    await Promise.resolve();
+    expect(close).not.toHaveBeenCalled();
+
+    initScript.resolve();
+    await quitting;
+    expect(close).toHaveBeenCalledOnce();
+  });
+
   it("serializes AX nodes without fetching DOM metadata", async () => {
     const frame = { url: () => "https://example.com" };
     const send = vi.fn(async (command: string) => {
@@ -37,10 +67,18 @@ describe("PlaywrightDriver", () => {
     const session = { send, on: vi.fn(), detach: vi.fn() };
     const page = {
       on: vi.fn(),
-      context: () => ({ newCDPSession: vi.fn(async () => session) }),
+      context: () => ({
+        addInitScript: vi.fn(),
+        newCDPSession: vi.fn(async () => session),
+      }),
       mainFrame: () => frame,
       frames: () => [frame],
-      evaluate: vi.fn(async () => undefined),
+      evaluate: vi.fn(async () => ({
+        lastMutationAt: 0,
+        now: performance.now(),
+        pendingTimeouts: 0,
+        readyState: "complete",
+      })),
     };
     const driver = new FetchTestPlaywrightDriver(page as unknown as Page);
     await vi.waitFor(() =>
@@ -69,11 +107,15 @@ describe("PlaywrightDriver", () => {
       });
       const session = { send, on: vi.fn(), detach: vi.fn() };
       const frame = {};
-      const context = { newCDPSession: vi.fn(async () => session) };
+      const context = {
+        addInitScript: vi.fn(),
+        newCDPSession: vi.fn(async () => session),
+      };
       const page = {
         on: vi.fn(),
         context: () => context,
         mainFrame: () => frame,
+        frames: () => [frame],
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
       await vi.waitFor(() =>
@@ -112,8 +154,12 @@ describe("PlaywrightDriver", () => {
       const frame = {};
       const page = {
         on: vi.fn(),
-        context: () => ({ newCDPSession: vi.fn(async () => session) }),
+        context: () => ({
+          addInitScript: vi.fn(),
+          newCDPSession: vi.fn(async () => session),
+        }),
         mainFrame: () => frame,
+        frames: () => [frame],
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
       await vi.waitFor(() => expect(send).toHaveBeenCalled());
@@ -139,8 +185,12 @@ describe("PlaywrightDriver", () => {
       const frame = {};
       const page = {
         on: vi.fn(),
-        context: () => ({ newCDPSession: vi.fn(async () => session) }),
+        context: () => ({
+          addInitScript: vi.fn(),
+          newCDPSession: vi.fn(async () => session),
+        }),
         mainFrame: () => frame,
+        frames: () => [frame],
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
       await vi.waitFor(() => expect(send).toHaveBeenCalled());
@@ -170,12 +220,21 @@ describe("PlaywrightDriver", () => {
       const oopifFrame = {};
       const page = {
         on: vi.fn(),
-        context: () => ({ newCDPSession: vi.fn(async () => session) }),
+        context: () => ({
+          addInitScript: vi.fn(),
+          newCDPSession: vi.fn(async () => session),
+        }),
         mainFrame: () => mainFrame,
+        frames: () => [mainFrame],
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
+      await vi.waitFor(() =>
+        expect(send).toHaveBeenCalledWith(
+          "Target.setAutoAttach",
+          expect.anything(),
+        ),
+      );
       Object.assign(driver, { oopifFrames: new Set([oopifFrame]) });
-      await vi.waitFor(() => expect(send).toHaveBeenCalled());
 
       await expect(
         driver.probe(

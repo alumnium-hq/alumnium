@@ -23,9 +23,11 @@ import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { retry } from "../utils/retry.ts";
 import type { Driver } from "./Driver.ts";
 import {
-  waiterScriptSource,
-  waitForScriptSource,
-} from "./scripts/bundledScripts.ts";
+  CdpNetworkMonitor,
+  WAITER_SNAPSHOT_SCRIPT,
+  waitForPageStability,
+} from "./CdpNetworkMonitor.ts";
+import { waiterScriptSource } from "./scripts/bundledScripts.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -57,7 +59,12 @@ interface CDPFrameTree {
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
 const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
-const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${waitForScriptSource /* await readScript("waitFor.js") */} })`;
+const NETWORK_EVENTS = [
+  "Network.requestWillBeSent",
+  "Network.responseReceived",
+  "Network.loadingFinished",
+  "Network.loadingFailed",
+] as const;
 
 const RETRY_OPTIONS: retry.Options = {
   maxAttempts: 2,
@@ -67,6 +74,12 @@ const RETRY_OPTIONS: retry.Options = {
 
 export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
+  private cdpReady: Promise<void>;
+  private networkMonitor = new CdpNetworkMonitor();
+  private networkSessions = new Map<Frame, CDPSession>();
+  private networkFrameIds = new WeakMap<Frame, number>();
+  private nextNetworkFrameId = 1;
+  private cdpGeneration = 0;
   page: Page;
   private _pages: Page[] = [];
   // frameId → url for OOPIF frames tracked via Target.attachedToTarget events
@@ -89,8 +102,10 @@ export class PlaywrightDriver extends BaseDriver {
   constructor(page: Page) {
     super();
     this.page = page;
+    this.cdpReady = Promise.resolve(
+      this.page.context().addInitScript({ content: WAITER_SCRIPT }),
+    ).then(() => this.initCDPSession());
     this.setupPageTracking(page);
-    void this.initCDPSession();
   }
 
   private setupPageTracking(initialPage: Page): void {
@@ -101,6 +116,9 @@ export class PlaywrightDriver extends BaseDriver {
   private attachPageListeners(page: Page): void {
     page.on("popup", (popup) => this.onPopup(popup));
     page.on("close", (popup) => this.onPageClose(popup));
+    page.on("frameattached", (frame) => void this.attachNetworkFrame(frame));
+    page.on("framenavigated", (frame) => void this.attachNetworkFrame(frame));
+    page.on("framedetached", (frame) => this.detachNetworkFrame(frame));
   }
 
   private onPopup(popup: Page) {
@@ -118,10 +136,84 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   private async initCDPSession(): Promise<void> {
+    const generation = ++this.cdpGeneration;
+    const page = this.page;
     this.oopifFrameIds.clear();
     this.oopifFrames.clear();
-    this.client = await this.page.context().newCDPSession(this.page);
+    for (const session of this.networkSessions.values()) {
+      await session.detach().catch(() => undefined);
+    }
+    this.networkSessions.clear();
+    this.networkMonitor.clear();
+    const client = await page.context().newCDPSession(page);
+    if (generation !== this.cdpGeneration || page !== this.page) {
+      await client.detach();
+      return;
+    }
+    this.client = client;
+    await this.configureNetworkSession(client);
     await this.enableTargetAutoAttach();
+    for (const frame of this.page.frames()) {
+      if (frame !== this.page.mainFrame()) await this.attachNetworkFrame(frame);
+    }
+  }
+
+  private async configureNetworkSession(
+    session: CDPSession,
+    sessionId = "",
+  ): Promise<void> {
+    await session.send("Page.enable");
+    await session.send("Network.enable");
+    await session.send("Page.addScriptToEvaluateOnNewDocument", {
+      source: WAITER_SCRIPT,
+      runImmediately: true,
+    });
+    for (const event of NETWORK_EVENTS) {
+      session.on(event, (params) =>
+        this.networkMonitor.process(event, params, sessionId),
+      );
+    }
+  }
+
+  private async attachNetworkFrame(frame: Frame): Promise<void> {
+    if (frame.page() !== this.page || this.networkSessions.has(frame)) return;
+    try {
+      const frameTree = (await this.client.send(
+        "Page.getFrameTree",
+      )) as CDPFrameTree;
+      const session = await this.page.context().newCDPSession(frame);
+      const sessionFrameTree = (await session.send(
+        "Page.getFrameTree",
+      )) as CDPFrameTree;
+      const sameProcessFrameIds = new Set(
+        this.getAllFrameIds(frameTree.frameTree),
+      );
+      if (sameProcessFrameIds.has(sessionFrameTree.frameTree.frame.id)) {
+        await session.detach();
+        return;
+      }
+      await this.configureNetworkSession(session, this.networkFrameId(frame));
+      this.networkSessions.set(frame, session);
+    } catch {
+      // Same-process or destroyed frames are covered by the page session.
+    }
+  }
+
+  private detachNetworkFrame(frame: Frame): void {
+    const sessionId = this.networkFrameId(frame);
+    this.networkMonitor.clearSession(sessionId);
+    const session = this.networkSessions.get(frame);
+    if (session) void session.detach().catch(() => undefined);
+    this.networkSessions.delete(frame);
+  }
+
+  private networkFrameId(frame: Frame): string {
+    let id = this.networkFrameIds.get(frame);
+    if (!id) {
+      id = this.nextNetworkFrameId++;
+      this.networkFrameIds.set(frame, id);
+    }
+    return `frame:${id}`;
   }
 
   private async enableTargetAutoAttach(): Promise<void> {
@@ -187,6 +279,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.get_accessibility_tree", spanAttrs)
   protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
+    await this.cdpReady;
     await this.waitForPageToLoad();
 
     const frameTree = (await this.client.send(
@@ -297,7 +390,8 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.quit", spanAttrs)
   async quit(): Promise<void> {
-    return this.page.close();
+    await this.cdpReady;
+    await this.page.close();
   }
 
   @span("driver.back", spanAttrs)
@@ -575,7 +669,8 @@ export class PlaywrightDriver extends BaseDriver {
   private async switchToTab(tabIndex: number): Promise<void> {
     always(this._pages[tabIndex]);
     this.page = this._pages[tabIndex];
-    await this.initCDPSession();
+    this.cdpReady = this.initCDPSession();
+    await this.cdpReady;
     await this.page.waitForLoadState();
   }
 
@@ -604,11 +699,15 @@ export class PlaywrightDriver extends BaseDriver {
   @span("driver.wait_for_page_to_load", spanAttrs)
   private async waitForPageToLoad(): Promise<void> {
     return retry(RETRY_OPTIONS, async () => {
+      await this.cdpReady;
       logger.debug("Waiting for page to finish loading:");
-      await this.page.evaluate(WAITER_SCRIPT);
-      const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`);
-      if (error) {
-        logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
+      const result = await waitForPageStability(this.networkMonitor, () =>
+        this.page.evaluate(WAITER_SNAPSHOT_SCRIPT),
+      );
+      if (!result.loaded) {
+        logger.debug(
+          `  <- Timed out waiting for page to load; pending requests: ${result.pending.join(", ")}`,
+        );
       } else {
         logger.debug("  <- Page finished loading");
       }
@@ -636,7 +735,8 @@ export class PlaywrightDriver extends BaseDriver {
         `Auto-switching to new tab ${newPage.url()} (${await newPage.title()})`,
       );
       this.page = newPage;
-      await this.initCDPSession();
+      this.cdpReady = this.initCDPSession();
+      await this.cdpReady;
     }
   }
 

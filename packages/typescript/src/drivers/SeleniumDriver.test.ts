@@ -34,7 +34,12 @@ describe("SeleniumDriver", () => {
     });
     const webdriver = {
       switchTo: () => ({ defaultContent: vi.fn(async () => undefined) }),
-      executeScript: vi.fn(async () => undefined),
+      executeScript: vi.fn(async () => ({
+        lastMutationAt: 0,
+        now: performance.now(),
+        pendingTimeouts: 0,
+        readyState: "complete",
+      })),
       executeAsyncScript: vi.fn(async () => undefined),
       sendAndGetDevToolsCommand,
     };

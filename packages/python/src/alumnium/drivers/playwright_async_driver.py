@@ -15,8 +15,10 @@ from ..tools.press_key_tool import PressKeyTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
+from .cdp_network_monitor import CdpNetworkMonitor
 from .keys import Key
 from .playwright_driver import PlaywrightDriver
+from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load_async
 
 logger = get_logger(__name__)
 
@@ -37,6 +39,10 @@ class PlaywrightAsyncDriver(BaseDriver):
             UploadTool,
         }
         self.oopif_frames: set[Frame] = set()
+        self.network_monitor = CdpNetworkMonitor()
+        self.network_sessions = []
+        self.network_frames: set[Frame] = set()
+        self._run_async(self.page.context.add_init_script(script=WAITER_SCRIPT))
         self._run_async(self._init_cdp_session())
         self._run_async(self._setup_page_tracking(page))
 
@@ -256,10 +262,12 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
         try:
-            await self.page.evaluate(PlaywrightDriver.WAITER_SCRIPT)
-            error = await self.page.evaluate(f"({PlaywrightDriver.WAIT_FOR_SCRIPT})()")
-            if error is not None:
-                logger.debug(f"  <- Failed to wait for page to load: {error}")
+            loaded, pending = await wait_for_page_to_load_async(
+                self.network_monitor,
+                lambda: self.page.evaluate(WAITER_SNAPSHOT_SCRIPT),
+            )
+            if not loaded:
+                logger.debug(f"  <- Timed out waiting for page to load; pending requests: {pending}")
             else:
                 logger.debug("  <- Page finished loading")
         except Error as error:
@@ -294,8 +302,50 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     async def _init_cdp_session(self):
         self.oopif_frames.clear()
+        for session in self.network_sessions:
+            try:
+                await session.detach()
+            except Error:
+                pass
+        self.network_sessions = []
+        self.network_frames.clear()
+        self.network_monitor.clear()
         self.client = await self.page.context.new_cdp_session(self.page)
+        await self._configure_network_session(self.client)
         await self._enable_target_auto_attach()
+        for frame in self.page.frames:
+            if frame != self.page.main_frame:
+                await self._attach_oopif_network_session(frame)
+
+    async def _configure_network_session(self, session, session_id: str = ""):
+        await session.send("Page.enable")
+        await session.send("Network.enable")
+        await session.send(
+            "Page.addScriptToEvaluateOnNewDocument",
+            {"source": WAITER_SCRIPT, "runImmediately": True},
+        )
+        for event in (
+            "Network.requestWillBeSent",
+            "Network.responseReceived",
+            "Network.loadingFinished",
+            "Network.loadingFailed",
+        ):
+            session.on(event, lambda params, event=event: self.network_monitor.process(event, params, session_id))
+
+    async def _attach_oopif_network_session(self, frame: Frame):
+        if frame.page != self.page or frame in self.network_frames:
+            return
+        try:
+            frame_tree = await self._send_cdp_command("Page.getFrameTree")
+            if self._find_cdp_frame_id_by_url(frame_tree, frame.url):
+                return
+            session = await self.page.context.new_cdp_session(frame)
+            session_id = f"frame:{id(frame)}"
+            await self._configure_network_session(session, session_id)
+            self.network_frames.add(frame)
+            self.network_sessions.append(session)
+        except Error:
+            pass
 
     async def _enable_target_auto_attach(self):
         try:
@@ -425,6 +475,12 @@ class PlaywrightAsyncDriver(BaseDriver):
     def _attach_page_listeners(self, page: Page):
         page.on("popup", self._on_popup_sync)
         page.on("close", self._on_page_close)
+        page.on("frameattached", self._attach_oopif_network_session)
+        page.on("framedetached", self._on_frame_detached)
+
+    def _on_frame_detached(self, frame: Frame):
+        self.network_frames.discard(frame)
+        self.network_monitor.clear_session(f"frame:{id(frame)}")
 
     def _on_popup_sync(self, popup: Page):
         logger.debug(f"New popup opened: {popup.url}")
