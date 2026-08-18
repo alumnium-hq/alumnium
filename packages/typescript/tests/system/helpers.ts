@@ -222,7 +222,7 @@ function createHelpers(
           );
         };
 
-        if (isSlowTab) setTimeout(send, 2000);
+        if (isSlowTab) setTimeout(send, 2_000);
         else send();
       });
 

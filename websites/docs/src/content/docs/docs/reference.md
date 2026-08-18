@@ -169,6 +169,10 @@ Set to `false` to start Playwright in headed mode. Only used in the [MCP server]
 
 Sets the `browserVersion` capability for Selenium, e.g. `stable`. Selenium Manager then downloads a matching Chrome for Testing build instead of using the locally installed Chrome. Only used in the [MCP server][3].
 
+### `ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT`
+
+Maximum time in milliseconds to wait when Playwright announces a new tab that has not appeared yet. Ordinary interactions do not wait for this timeout. The TypeScript and Python default is 10000.
+
 ### `ANTHROPIC_API_KEY`
 
 API key used when `ALUMNIUM_MODEL` is set to `anthropic`.

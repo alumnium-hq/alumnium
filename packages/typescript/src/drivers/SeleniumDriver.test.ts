@@ -38,7 +38,12 @@ describe("SeleniumDriver", () => {
         window: vi.fn(async () => undefined),
       }),
       getWindowHandle: vi.fn(async () => "window-1"),
-      executeScript: vi.fn(async () => undefined),
+      executeScript: vi.fn(async () => ({
+        lastMutationAt: 0,
+        now: performance.now(),
+        pendingTimeouts: 0,
+        readyState: "complete",
+      })),
       executeAsyncScript: vi.fn(async () => undefined),
       sendAndGetDevToolsCommand,
     };
