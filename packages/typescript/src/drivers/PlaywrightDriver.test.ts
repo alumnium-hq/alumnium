@@ -37,7 +37,11 @@ describe("PlaywrightDriver", () => {
     const session = { send, on: vi.fn(), detach: vi.fn() };
     const page = {
       on: vi.fn(),
-      context: () => ({ newCDPSession: vi.fn(async () => session) }),
+      context: () => ({
+        newCDPSession: vi.fn(async () => session),
+        on: vi.fn(),
+        cookies: vi.fn(async () => []),
+      }),
       mainFrame: () => frame,
       frames: () => [frame],
       evaluate: vi.fn(async () => undefined),
@@ -69,7 +73,11 @@ describe("PlaywrightDriver", () => {
       });
       const session = { send, on: vi.fn(), detach: vi.fn() };
       const frame = {};
-      const context = { newCDPSession: vi.fn(async () => session) };
+      const context = {
+        newCDPSession: vi.fn(async () => session),
+        on: vi.fn(),
+        cookies: vi.fn(async () => []),
+      };
       const page = {
         on: vi.fn(),
         context: () => context,
@@ -112,7 +120,11 @@ describe("PlaywrightDriver", () => {
       const frame = {};
       const page = {
         on: vi.fn(),
-        context: () => ({ newCDPSession: vi.fn(async () => session) }),
+        context: () => ({
+          newCDPSession: vi.fn(async () => session),
+          on: vi.fn(),
+          cookies: vi.fn(async () => []),
+        }),
         mainFrame: () => frame,
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
@@ -139,7 +151,11 @@ describe("PlaywrightDriver", () => {
       const frame = {};
       const page = {
         on: vi.fn(),
-        context: () => ({ newCDPSession: vi.fn(async () => session) }),
+        context: () => ({
+          newCDPSession: vi.fn(async () => session),
+          on: vi.fn(),
+          cookies: vi.fn(async () => []),
+        }),
         mainFrame: () => frame,
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
@@ -170,7 +186,11 @@ describe("PlaywrightDriver", () => {
       const oopifFrame = {};
       const page = {
         on: vi.fn(),
-        context: () => ({ newCDPSession: vi.fn(async () => session) }),
+        context: () => ({
+          newCDPSession: vi.fn(async () => session),
+          on: vi.fn(),
+          cookies: vi.fn(async () => []),
+        }),
         mainFrame: () => mainFrame,
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
