@@ -228,11 +228,36 @@ export const Env = {
     return envVar("ALUMNIUM_CHECK_CONFIRMATIONS", z.coerce.number().default(2));
   },
 
+  /**
+   * Whether a failed scenario playback re-records itself. See `Runner`.
+   *
+   * Set to `false` to have a failed playback report the failure and stop. The run
+   * then ends where recovery would have started, which is what measuring playback
+   * costs: a recovery is a full recording, so letting it run doubles the price of
+   * every failed iteration to learn something already known.
+   */
+  get ALUMNIUM_SCENARIO_RECOVERY() {
+    return envVar("ALUMNIUM_SCENARIO_RECOVERY", z.stringbool().default(true));
+  },
+
   get ALUMNIUM_SCENARIOS_DIR() {
     return envVar(
       "ALUMNIUM_SCENARIOS_DIR",
       pathString().default(".alumnium/scenarios"),
     );
+  },
+
+  /**
+   * File to write a machine-readable summary of a scenario run to. See
+   * `ScenarioSummary`.
+   *
+   * NOTE: Unset by default, since the console reporter is what a person running
+   * one scenario reads. It is a harness running many that needs the numbers back,
+   * and it is the only thing that can say where they should go - one file per run,
+   * or the runs overwrite each other.
+   */
+  get ALUMNIUM_RUN_SUMMARY_FILE() {
+    return envVar("ALUMNIUM_RUN_SUMMARY_FILE", pathString().optional());
   },
 
   get ANTHROPIC_API_KEY() {

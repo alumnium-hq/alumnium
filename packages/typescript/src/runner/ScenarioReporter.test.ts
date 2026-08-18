@@ -111,6 +111,55 @@ describe(ScenarioReporter, () => {
     });
   });
 
+  describe("notRecovering", () => {
+    it("says the playback failed and recovery was off", () => {
+      ScenarioReporter.notRecovering();
+
+      expect(printedLine()).toContain(
+        "● not recovering playback failed, recovery is off",
+      );
+    });
+  });
+
+  describe("cost", () => {
+    it("reports the total and the split behind it", () => {
+      ScenarioReporter.cost({
+        mainUsd: 0.4,
+        alumniumUsd: 0.0412,
+        totalUsd: 0.4412,
+      });
+
+      expect(printedLine()).toContain(
+        "● cost $0.4412 (main $0.4000 · alumnium $0.0412)",
+      );
+    });
+
+    // NOTE: A playback runs no main agent, which is the whole point of the line.
+    it("reports a free main agent on a playback", () => {
+      ScenarioReporter.cost({
+        mainUsd: 0,
+        alumniumUsd: 0.0412,
+        totalUsd: 0.0412,
+      });
+
+      expect(printedLine()).toContain(
+        "● cost $0.0412 (main $0.0000 · alumnium $0.0412)",
+      );
+    });
+
+    it("does not round a cheap run down to free", () => {
+      ScenarioReporter.cost({
+        mainUsd: 0,
+        alumniumUsd: 0.00002,
+        totalUsd: 0.00002,
+      });
+
+      expect(printedLine()).toContain(
+        "● cost <$0.0001 (main $0.0000 · alumnium <$0.0001)",
+      );
+    });
+  });
+
   describe("toolResult", () => {
     it("breaks a do output into reasoning, steps and changes", () => {
       ScenarioReporter.toolResult("mcp__alumnium__do", [

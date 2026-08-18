@@ -5,7 +5,15 @@ import {
   MCP_CACHE_LOOKUPS_META_KEY,
   parseMcpCacheLookups,
 } from "../mcp/mcpCacheLookups.ts";
+import {
+  addMcpTokenUsage,
+  createMcpTokenUsage,
+  MCP_TOKEN_USAGE_META_KEY,
+  type McpTokenUsage,
+  parseMcpTokenUsage,
+} from "../mcp/mcpTokenUsage.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
+import { McpTool } from "../mcp/tools/McpTool.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 import { ScenarioExternalMcp } from "./ScenarioExternalMcp.ts";
@@ -16,6 +24,8 @@ import { ScenarioReporter } from "./ScenarioReporter.ts";
 const { logger } = Telemetry.get(import.meta.url);
 
 const ALUMNIUM_OPTIONS_KEY = "alumnium:options";
+
+const STOP_TOOL_NAME = "stop";
 
 // NOTE: How a failed tool call reads when the flag isn't there to tell it by.
 // See `ScenarioPlayer.readOutputError`.
@@ -97,7 +107,11 @@ export class ScenarioPlayer {
   #masker = new ScenarioMasker();
   #externalCallsCount = 0;
   #lookups = createCacheLookups();
+  #alumniumUsage = createMcpTokenUsage();
   #unstableChecks: ScenarioPlayer.UnstableCheck[] = [];
+  // Drivers a played `stop` has already closed, so the cleanup on the way out
+  // leaves them alone.
+  #stoppedDriverIds = new Set<string>();
 
   constructor(scenario: Scenario.Type) {
     this.#scenario = scenario;
@@ -108,6 +122,23 @@ export class ScenarioPlayer {
    */
   get lookups(): CacheLookups {
     return { ...this.#lookups };
+  }
+
+  /**
+   * Token usage of the Alumnium session the playback drove, summed from the
+   * per-call deltas in each tool result's `_meta`.
+   *
+   * NOTE: Per-call rather than the session totals `stop` reports, so that a
+   * playback that fails still accounts for what it spent getting there - a
+   * re-asked check bypasses the cache and does reach the model. A failed playback
+   * never reaches its recorded `stop`, so reading the totals from there would
+   * report every failed run as free.
+   *
+   * NOTE: And so only the deltas, never both. `stop` reports the same tokens a
+   * second time, as the session total.
+   */
+  get alumniumUsage(): McpTokenUsage {
+    return structuredClone(this.#alumniumUsage);
   }
 
   /**
@@ -194,6 +225,13 @@ export class ScenarioPlayer {
           this.#lookups.misses += lookups.misses;
           ScenarioReporter.stepCache(lookups);
         }
+
+        this.#accumulateUsage(mcpOutput);
+
+        // NOTE: Before the error checks below, so that a `stop` the recording has
+        // failing still counts as this driver having been stopped. What must not
+        // happen is stopping it a second time on the way out.
+        if (mcpName === STOP_TOOL_NAME) this.#rememberStopped(input);
 
         ScenarioReporter.toolResult(mcpName, mcpOutput.content);
 
@@ -329,8 +367,70 @@ export class ScenarioPlayer {
 
       return { status: "failure", error: message, logs };
     } finally {
+      await this.#stopUnstoppedDrivers(mcp);
       await externalMcp.close();
       await mcp.close();
+    }
+  }
+
+  /**
+   * Accumulates what one tool call spent, as its result reports it.
+   *
+   * NOTE: Every call the playback makes goes through here, recorded step or not.
+   * Cost is a property of the run rather than of the recording.
+   *
+   * @param mcpOutput - Result of the call.
+   */
+  #accumulateUsage(mcpOutput: ScenarioAlumniumMcp.Output) {
+    const usage = parseMcpTokenUsage(
+      mcpOutput._meta?.[MCP_TOKEN_USAGE_META_KEY],
+    );
+    if (usage) addMcpTokenUsage(this.#alumniumUsage, usage);
+  }
+
+  /**
+   * Notes that a played `stop` closed a driver.
+   *
+   * @param input - The `stop` call's input, with the driver id unmasked.
+   */
+  #rememberStopped(input: ScenarioAlumniumMcp.Input) {
+    const parseResult = McpTool.WithDriverId.safeParse(input);
+    if (parseResult.success) this.#stoppedDriverIds.add(parseResult.data.id);
+  }
+
+  /**
+   * Stops every driver the playback started and did not get to stop.
+   *
+   * A playback that fails returns where it failed, which is usually before the
+   * recorded `stop`. Closing the MCP client then takes the browser down with the
+   * server process, but nothing runs the driver's own teardown: no artifacts are
+   * finalized and, on the Alumnium side, the session is never asked to wind down.
+   *
+   * NOTE: `save_cache` stays off. The responses this playback produced are the
+   * ones it failed on - a re-asked check bypasses the cache precisely to get a
+   * fresh verdict - and persisting them would serve that verdict to the next run
+   * from the cache, making a failure stick for reasons that have nothing to do
+   * with the application. The recorded `stop` of a playback that passes saves the
+   * cache as it always did.
+   *
+   * NOTE: Never throws. This runs in a `finally`, after the verdict is decided, so
+   * a driver that cannot be stopped is logged and left to the process teardown
+   * rather than replacing the run's real outcome.
+   *
+   * @param mcp - Client the playback ran its calls through.
+   */
+  async #stopUnstoppedDrivers(mcp: ScenarioAlumniumMcp) {
+    const ids = this.#masker.driverIds.filter(
+      (id) => !this.#stoppedDriverIds.has(id),
+    );
+
+    for (const id of ids) {
+      try {
+        logger.info(`Stopping driver ${id} the playback did not stop`);
+        await mcp.call(STOP_TOOL_NAME, { id, save_cache: false });
+      } catch (error) {
+        logger.warn(`Failed to stop driver ${id}: {error}`, { error });
+      }
     }
   }
 
@@ -439,6 +539,11 @@ export class ScenarioPlayer {
    * - counting it would let one flaky check drag down the rate and make it
    * incomparable between runs. The outcome lines say re-asks happened instead.
    *
+   * NOTE: Their token usage, on the other hand, is counted. Cost asks what the run
+   * spent rather than how much of the recording came for free, and a re-ask is the
+   * one call here guaranteed to reach the model - on a playback that fails, these
+   * are most of what it spent.
+   *
    * @param mcp - Client to re-issue the call through.
    * @param input - The `check` input, unmasked, as the step was played with.
    * @param recordedContent - Recorded output to compare each re-ask against.
@@ -460,6 +565,8 @@ export class ScenarioPlayer {
         `Re-asked check ${attempt}/${confirmations}, got: {mcpOutput}`,
         { mcpOutput },
       );
+
+      this.#accumulateUsage(mcpOutput);
 
       const comparison = ScenarioPlayer.compareCheckOutput(
         recordedContent,

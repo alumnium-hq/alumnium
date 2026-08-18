@@ -11,11 +11,15 @@ import type {
   ServerNotification,
   ServerRequest,
 } from "@modelcontextprotocol/sdk/types.js";
-import type { CacheLookups } from "../llm/llmSchema.ts";
+import type { LlmUsageStats } from "../llm/llmSchema.ts";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { MCP_CACHE_LOOKUPS_META_KEY } from "./mcpCacheLookups.ts";
 import { parseMcpNoCache } from "./mcpNoCache.ts";
+import {
+  diffMcpTokenUsage,
+  MCP_TOKEN_USAGE_META_KEY,
+} from "./mcpTokenUsage.ts";
 import { McpState } from "./McpState.ts";
 import { checkMcpTool } from "./tools/checkMcpTool.ts";
 import { doMcpTool } from "./tools/doMcpTool.ts";
@@ -65,7 +69,7 @@ export class McpServer {
           extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
         ) => {
           const id = McpTool.WithDriverId.safeParse(input).data?.id;
-          const lookupsBefore = await readCacheLookups(id);
+          const statsBefore = await readStats(id);
 
           try {
             // NOTE: Read off the request `_meta` rather than the input, so that
@@ -74,10 +78,7 @@ export class McpServer {
             const content = await execute(input, {
               noCache: parseMcpNoCache(extra._meta),
             });
-            const meta = buildCacheLookupsMeta(
-              lookupsBefore,
-              await readCacheLookups(id),
-            );
+            const meta = buildStatsMeta(statsBefore, await readStats(id));
 
             return meta ? { content, _meta: meta } : { content };
           } catch (error) {
@@ -120,20 +121,20 @@ export class McpServer {
  * @param id - Driver ID, absent for tools that don't operate on a driver.
  * @returns Counters, or `undefined` when there is no driver to ask.
  */
-async function readCacheLookups(
+async function readStats(
   id: string | undefined,
-): Promise<CacheLookups | undefined> {
+): Promise<LlmUsageStats | undefined> {
   if (!id) return undefined;
 
   const al = McpState.findDriverAlumni(id);
   if (!al) return undefined;
 
   try {
-    return (await al.getStats()).lookups;
+    return await al.getStats();
   } catch (error) {
-    // NOTE: Reporting cache lookups is purely informational, so it must never
-    // fail a tool call.
-    logger.debug(`Failed to read cache lookups for driver ${id}: {error}`, {
+    // NOTE: Reporting the counters is purely informational, so it must never fail
+    // a tool call.
+    logger.debug(`Failed to read stats for driver ${id}: {error}`, {
       error,
     });
     return undefined;
@@ -141,25 +142,39 @@ async function readCacheLookups(
 }
 
 /**
- * Builds the tool result `_meta` describing the cache lookups a call made.
+ * Builds the tool result `_meta` describing what a call spent - the cache lookups
+ * it made and the tokens they cost.
+ *
+ * NOTE: Both come from the one pair of readings around the call, which is why
+ * they are built together. In HTTP client mode a reading is a request, so asking
+ * twice would double the cost of every tool call.
  *
  * @param before - Counters before the call.
  * @param after - Counters after the call.
- * @returns Meta object, or `undefined` when the call made no lookups (e.g.
- *   `wait` for a number of seconds) or the counters are unavailable (`start`
- *   has no driver yet, `stop` has already disposed of it).
+ * @returns Meta object, or `undefined` when the call spent nothing (e.g. `wait`
+ *   for a number of seconds) or the counters are unavailable (`start` has no
+ *   driver yet, `stop` has already disposed of it).
  */
-function buildCacheLookupsMeta(
-  before: CacheLookups | undefined,
-  after: CacheLookups | undefined,
-): Record<string, CacheLookups> | undefined {
+function buildStatsMeta(
+  before: LlmUsageStats | undefined,
+  after: LlmUsageStats | undefined,
+): Record<string, unknown> | undefined {
   if (!before || !after) return undefined;
 
-  const lookups: CacheLookups = {
-    hits: after.hits - before.hits,
-    misses: after.misses - before.misses,
-  };
-  if (lookups.hits + lookups.misses <= 0) return undefined;
+  const meta: Record<string, unknown> = {};
 
-  return { [MCP_CACHE_LOOKUPS_META_KEY]: lookups };
+  const lookups = {
+    hits: after.lookups.hits - before.lookups.hits,
+    misses: after.lookups.misses - before.lookups.misses,
+  };
+  if (lookups.hits + lookups.misses > 0)
+    meta[MCP_CACHE_LOOKUPS_META_KEY] = lookups;
+
+  const usage = diffMcpTokenUsage(
+    { total: before.total, cached: before.cache },
+    { total: after.total, cached: after.cache },
+  );
+  if (usage) meta[MCP_TOKEN_USAGE_META_KEY] = usage;
+
+  return Object.keys(meta).length ? meta : undefined;
 }

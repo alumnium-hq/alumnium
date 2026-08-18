@@ -5,6 +5,7 @@ import type { CacheLookups } from "../llm/llmSchema.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { formatDuration } from "../utils/timers.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
+import { ScenarioCost } from "./ScenarioCost.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
 
@@ -68,7 +69,21 @@ export abstract class ScenarioReporter {
   static playing(path: string, fileName: string) {
     this.#todoStatuses.clear();
     this.#print(
-      `${ansi.green("● testing")} ${path} ${ansi.dim(`(replaying from ${fileName})`)}`,
+      `${ansi.green("▶ testing")} ${path} ${ansi.dim(`(replaying from ${fileName})`)}`,
+    );
+  }
+
+  /**
+   * Prints that a playback failed where a recovery would have started, and that
+   * it was not started.
+   *
+   * NOTE: Its own line rather than a `failed` one. Where the playback failed is
+   * already reported, and what this adds is that the run stopped there by
+   * configuration rather than because re-recording was tried and did not help.
+   */
+  static notRecovering() {
+    this.#print(
+      `${ansi.red("● not recovering")} ${ansi.dim("playback failed, recovery is off")}`,
     );
   }
 
@@ -145,6 +160,29 @@ export abstract class ScenarioReporter {
 
     this.#print(
       `${ansi.yellow(`● unstable ${count} ${checks}`)} ${ansi.dim("(agreed with the recording only when re-asked)")}`,
+    );
+  }
+
+  /**
+   * Prints what the run cost, split by the model that spent it.
+   *
+   * NOTE: The split is the point of the line rather than a detail of it. A
+   * playback runs no main agent at all, so `main $0.0000` next to a non-zero
+   * Alumnium figure is what tells a replay apart from a recording at a glance -
+   * and a recovered playback is the one case where a replay shows both.
+   *
+   * @param cost - What the run cost.
+   */
+  static cost(cost: ScenarioCost.Type) {
+    const { mainUsd, alumniumUsd, totalUsd } = cost;
+
+    const breakdown = [
+      `main ${ScenarioCost.formatUsd(mainUsd)}`,
+      `alumnium ${ScenarioCost.formatUsd(alumniumUsd)}`,
+    ].join(" · ");
+
+    this.#print(
+      `${ansi.dim("● cost")} ${ScenarioCost.formatUsd(totalUsd)} ${ansi.dim(`(${breakdown})`)}`,
     );
   }
 

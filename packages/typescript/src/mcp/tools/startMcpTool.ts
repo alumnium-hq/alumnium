@@ -180,6 +180,8 @@ export const startMcpTool = McpTool.define("start", {
       throw new Error(message);
     }
 
+    logger.info(`Resolved capabilities: ${JSON.stringify(capabilities)}`);
+
     // Extract and validate platformName
     if (
       typeof capabilities.platformName !== "string" ||
@@ -220,6 +222,10 @@ export const startMcpTool = McpTool.define("start", {
           (value): value is string => typeof value === "string",
         )
       : undefined;
+
+    logger.info(
+      `Resolved Alumnium options: ${JSON.stringify(alumniumOptions)}`,
+    );
 
     // Generate driver ID from current directory and timestamp
     const cwdName = path.basename(process.cwd());
@@ -269,6 +275,8 @@ export const startMcpTool = McpTool.define("start", {
       }),
     };
 
+    logger.info(`Resolved driver options: ${JSON.stringify(driverOptions)}`);
+
     const alumniumOptionsNonDriverKeys = new Set([
       "baseUrl",
       "changeAnalysis",
@@ -289,6 +297,7 @@ export const startMcpTool = McpTool.define("start", {
         driverSettings[key] = value;
       }
     }
+    logger.info(`Resolved driver settings: ${JSON.stringify(driverSettings)}`);
 
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 

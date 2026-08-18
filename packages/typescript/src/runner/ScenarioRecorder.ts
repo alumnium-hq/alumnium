@@ -12,12 +12,19 @@ import { $ } from "bun";
 import { txts } from "smollit";
 import { type CacheLookups, createCacheLookups } from "../llm/llmSchema.ts";
 import { parseMcpCacheLookupsOutput } from "../mcp/mcpCacheLookups.ts";
+import {
+  addMcpTokenUsage,
+  createMcpTokenUsage,
+  type McpTokenUsage,
+  parseMcpTokenUsageOutput,
+} from "../mcp/mcpTokenUsage.ts";
 import { SystemProcess } from "../system/SystemProcess.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { TypeUtils } from "../typeUtils.ts";
 import { Scenario } from "./Scenario.ts";
 import { ScenarioAlumniumMcp } from "./ScenarioAlumniumMcp.ts";
 import { ScenarioClaudeCodeSessionStore } from "./ScenarioClaudeCodeSessionStore.ts";
+import type { ScenarioCost } from "./ScenarioCost.ts";
 import { ScenarioExternalMcp } from "./ScenarioExternalMcp.ts";
 import { ScenarioMasker } from "./ScenarioMasker.ts";
 import { ScenarioRecovery } from "./ScenarioRecovery.ts";
@@ -64,6 +71,7 @@ export class ScenarioRecorder {
   #sessionId: string | undefined;
   #resultMessage: SDKResultMessage | undefined;
   #lookups = createCacheLookups();
+  #alumniumUsage = createMcpTokenUsage();
 
   constructor(props: ScenarioRecorder.Props) {
     const { text, path, recovery } = props;
@@ -96,6 +104,24 @@ export class ScenarioRecorder {
    */
   get lookups(): CacheLookups {
     return { ...this.#lookups };
+  }
+
+  /**
+   * Token usage of the Alumnium session the recording drove, as reported by the
+   * `stop` tool - and, like `lookups`, read out of its output text.
+   */
+  get alumniumUsage(): McpTokenUsage {
+    return structuredClone(this.#alumniumUsage);
+  }
+
+  /**
+   * Token usage of the main agent that recorded the scenario.
+   *
+   * @returns The usage, or `undefined` when the query ended without a result
+   *   message to report it.
+   */
+  get mainAgentUsage(): ScenarioCost.MainAgentUsage | undefined {
+    return this.#resultMessage?.usage;
   }
 
   //#region Recording
@@ -495,15 +521,16 @@ ${this.#scenario.text}
     // the user sees.
     ScenarioReporter.toolResult(pending.use.name, toolResult.content);
 
-    this.#accumulateCacheLookups(toolResult);
+    this.#accumulateToolStats(toolResult);
   }
 
   /**
-   * Accumulates the cache lookups an MCP tool result reports, if any.
+   * Accumulates the session counters an MCP tool result reports, if any. Only
+   * `stop` reports them, and it reports both at once.
    *
    * @param toolResult - MCP tool result to read the counters from.
    */
-  #accumulateCacheLookups(toolResult: Scenario.ClaudeCodeStepToolResult) {
+  #accumulateToolStats(toolResult: Scenario.ClaudeCodeStepToolResult) {
     const { content } = toolResult;
     const texts =
       typeof content === "string"
@@ -514,11 +541,17 @@ ${this.#scenario.text}
 
     texts.forEach((text) => {
       const lookups = parseMcpCacheLookupsOutput(text);
-      if (!lookups) return;
+      if (lookups) {
+        logger.debug(`Recorded cache lookups: {lookups}`, { lookups });
+        this.#lookups.hits += lookups.hits;
+        this.#lookups.misses += lookups.misses;
+      }
 
-      logger.debug(`Recorded cache lookups: {lookups}`, { lookups });
-      this.#lookups.hits += lookups.hits;
-      this.#lookups.misses += lookups.misses;
+      const usage = parseMcpTokenUsageOutput(text);
+      if (usage) {
+        logger.debug(`Recorded Alumnium token usage: {usage}`, { usage });
+        addMcpTokenUsage(this.#alumniumUsage, usage);
+      }
     });
   }
 

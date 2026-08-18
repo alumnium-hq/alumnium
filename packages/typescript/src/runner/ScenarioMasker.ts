@@ -79,6 +79,18 @@ export class ScenarioMasker {
   // JSON number 7 in the output matches a `params` value "7" in the input.
   #maskByExternalValue = new Map<string, string>();
 
+  /**
+   * Driver ids the run has started so far, in the order `start` returned them.
+   *
+   * NOTE: The mask map is where they live, since masking them is what needed
+   * collecting them in the first place. A caller that has to reach a driver
+   * without a recorded step to unmask - to stop one the playback never got to -
+   * reads them here.
+   */
+  get driverIds(): string[] {
+    return Object.values(this.#map);
+  }
+
   //#region Masking
 
   maskInput(input: unknown): ScenarioAlumniumMcp.Input {

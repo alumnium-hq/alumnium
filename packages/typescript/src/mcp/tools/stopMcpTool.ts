@@ -1,6 +1,7 @@
 import path from "node:path";
 import z from "zod";
 import { MCP_CACHE_LOOKUPS_OUTPUT_KEY } from "../mcpCacheLookups.ts";
+import { MCP_TOKEN_USAGE_OUTPUT_KEY } from "../mcpTokenUsage.ts";
 import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
 
@@ -41,7 +42,7 @@ export const stopMcpTool = McpTool.define("stop", {
         text: JSON.stringify({
           id: id,
           artifacts_dir: path.resolve(artifactsDir),
-          token_usage: {
+          [MCP_TOKEN_USAGE_OUTPUT_KEY]: {
             total: stats["total"],
             cached: stats["cache"],
           },
