@@ -1,5 +1,7 @@
 import { Alumni, AppiumDriver, Model, type Element } from "alumnium";
 import { never } from "alwaysly";
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -17,6 +19,12 @@ export namespace Setup {
     navigate: (url: string) => Promise<void>;
     type: (element: Element | undefined, text: string) => Promise<void>;
     click: (element: Element | undefined) => Promise<void>;
+    serveSlowTabPage: () => Promise<Setup.SlowTabPage>;
+  }
+
+  export interface SlowTabPage {
+    url: string;
+    slowTabUrl: string;
   }
 }
 
@@ -49,7 +57,7 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   };
 
   const al = new Alumni(driver, options);
-  const $ = createHelpers(driverId, driver, al);
+  const $ = createHelpers(driverId, driver, al, onTestFinished);
 
   if (isAppiumDriver) {
     (al.driver as AppiumDriver).delay = 0.1;
@@ -124,6 +132,7 @@ function createHelpers(
   driverId: Driver.Id,
   driver: Alumni.Driver,
   al: Alumni,
+  onTestFinished: useSetup.Props["onTestFinished"],
 ): Setup.Helpers {
   const $: Setup.Helpers = {
     resolveUrl(url: string): string {
@@ -142,6 +151,40 @@ function createHelpers(
 
     async navigate(url: string) {
       await al.driver.visit($.resolveUrl(url));
+    },
+
+    async serveSlowTabPage() {
+      const server = createServer((request, response) => {
+        const isSlowTab = request.url === "/slow-tab";
+        const send = () => {
+          response.writeHead(200, {
+            "content-type": "text/html",
+            "cache-control": "no-store",
+          });
+          response.end(
+            isSlowTab
+              ? "<title>Slow Tab</title><h1>Slow Tab</h1>"
+              : `<title>Opener</title><h1>Opener</h1>
+                 <button onclick="window.open('/slow-tab', '_blank')">Open Slow Tab</button>`,
+          );
+        };
+
+        if (isSlowTab) setTimeout(send, 2000);
+        else send();
+      });
+
+      await new Promise<void>((resolve) =>
+        server.listen(0, "127.0.0.1", resolve),
+      );
+      onTestFinished(
+        () => new Promise<void>((resolve) => server.close(() => resolve())),
+      );
+
+      const { port } = server.address() as AddressInfo;
+      return {
+        url: `http://127.0.0.1:${port}/`,
+        slowTabUrl: `http://127.0.0.1:${port}/slow-tab`,
+      };
     },
 
     async type(element: Element | undefined, text: string) {

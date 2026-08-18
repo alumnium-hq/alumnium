@@ -76,7 +76,6 @@ export const startMcpTool = McpTool.define("start", {
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
             - "headers" (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"};
             - "headless" (boolean, default false) — run browser headless, supported for Selenium and Playwright;
-            - "newTabTimeout" (number, default 200) — ms to wait for new tab detection, Playwright only;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
             - "planner" (boolean) — enable/disable planner agent;
             - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal";

@@ -209,13 +209,6 @@ export const Env = {
     return envVar("ALUMNIUM_PLAYWRIGHT_HEADLESS", z.stringbool().default(true));
   },
 
-  get ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT() {
-    return envVar(
-      "ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT",
-      z.coerce.number().default(200),
-    );
-  },
-
   get ALUMNIUM_TEST_MAX_CONCURRENCY() {
     const defaultValue = 4;
     const cpusCount = os.cpus().length;
