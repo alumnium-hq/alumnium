@@ -20,7 +20,7 @@ describe("Tabs", () => {
     };
   });
 
-  it("switches tabs", async ({ expect, setup }) => {
+  it("switching tabs", async ({ expect, setup }) => {
     const { al, $ } = await setup({
       extraTools: [SwitchToNextTabTool, SwitchToPreviousTabTool],
     });
@@ -50,7 +50,7 @@ describe("Tabs", () => {
     await $.navigate(url);
     await al.do("click on 'Open Slow Tab' button");
 
-    // al.get() is too slow which gives tab enough time to arrive on its own
+    // An LLM-backed assertion is slow enough to hide the tab detection race.
     expect(await al.driver.url()).toBe(slowTabUrl);
     expect(await al.get("header text")).toBe("Slow Tab");
   });
