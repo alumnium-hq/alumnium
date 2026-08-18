@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
@@ -37,11 +39,11 @@ public final class SeleniumDriver extends BaseDriver {
   private static final Logger LOG = LoggerFactory.getLogger(SeleniumDriver.class);
 
   private static final String WAITER_SCRIPT = loadScript("/ai/alumnium/driver/scripts/waiter.js");
-  private static final String WAIT_FOR_SCRIPT =
-      loadScript("/ai/alumnium/driver/scripts/waitFor.js");
 
   private final WebDriver driver;
   private final HasCdp cdp;
+  private final CdpNetworkMonitor networkMonitor = new CdpNetworkMonitor();
+  private SeleniumCdpConnection cdpConnection;
   private Map<Long, Long> shadowChildToHostMap = new HashMap<>();
   public boolean autoswitchToNewTab = true;
   public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
@@ -61,7 +63,7 @@ public final class SeleniumDriver extends BaseDriver {
           "SeleniumDriver requires a Chromium-family driver that implements HasCdp");
     }
     this.cdp = hasCdp;
-    enableTargetAutoAttach();
+    initCdpConnection();
   }
 
   @Override
@@ -182,6 +184,7 @@ public final class SeleniumDriver extends BaseDriver {
 
   @Override
   public void quit() {
+    if (cdpConnection != null) cdpConnection.close();
     driver.quit();
   }
 
@@ -364,17 +367,25 @@ public final class SeleniumDriver extends BaseDriver {
     return result == null ? Map.of() : result;
   }
 
-  private void enableTargetAutoAttach() {
+  private void initCdpConnection() {
     try {
+      if (!(driver instanceof HasCapabilities hasCapabilities)) {
+        throw new IllegalStateException("Selenium driver did not expose capabilities");
+      }
+      Capabilities capabilities = hasCapabilities.getCapabilities();
+      cdpConnection = SeleniumCdpConnection.connect(capabilities, WAITER_SCRIPT);
+    } catch (RuntimeException error) {
+      LOG.debug("Could not subscribe to CDP network events", error);
       executeCdp(
-          "Target.setAutoAttach",
-          Map.of("autoAttach", true, "waitForDebuggerOnStart", false, "flatten", true));
-    } catch (RuntimeException e) {
-      LOG.debug("Could not enable Target.setAutoAttach", e);
+          "Page.addScriptToEvaluateOnNewDocument",
+          Map.of("source", WAITER_SCRIPT, "runImmediately", true));
     }
   }
 
   private void waitForPageToLoad() {
+    if (cdpConnection != null) cdpConnection.activate(driver.getWindowHandle());
+    CdpNetworkMonitor activeMonitor =
+        cdpConnection == null ? networkMonitor : cdpConnection.activeMonitor();
     Retry.Options options = new Retry.Options();
     options.maxAttempts = 2;
     options.backOffMillis = 0L;
@@ -382,16 +393,35 @@ public final class SeleniumDriver extends BaseDriver {
       Retry.execute(
           options,
           () -> {
-            ((JavascriptExecutor) driver).executeScript(WAITER_SCRIPT);
-            Object err = ((JavascriptExecutor) driver).executeAsyncScript(WAIT_FOR_SCRIPT);
-            if (err != null) {
-              LOG.debug("Failed to wait for page: {}", err);
+            PageWaiter.Result result =
+                new PageWaiter(activeMonitor, this::waiterSnapshot).waitForPageStability();
+            if (!result.loaded()) {
+              LOG.debug("Timed out waiting for page; pending requests: {}", result.pending());
             }
             return null;
           });
     } catch (RuntimeException e) {
       LOG.debug("waitForPageToLoad threw after retry", e);
     }
+  }
+
+  private PageWaiter.Snapshot waiterSnapshot() {
+    JavascriptExecutor javascript = (JavascriptExecutor) driver;
+    Object value = javascript.executeScript("return " + PageWaiter.WAITER_SNAPSHOT_SCRIPT);
+    if (value == null) {
+      javascript.executeScript(WAITER_SCRIPT);
+      value = javascript.executeScript("return " + PageWaiter.WAITER_SNAPSHOT_SCRIPT);
+    }
+    if (!(value instanceof Map<?, ?> snapshot)) return null;
+    return new PageWaiter.Snapshot(
+        number(snapshot.get("lastMutationAt")),
+        number(snapshot.get("now")),
+        (int) number(snapshot.get("pendingTimeouts")),
+        String.valueOf(snapshot.get("readyState")));
+  }
+
+  private static long number(Object value) {
+    return value instanceof Number number ? number.longValue() : 0;
   }
 
   private void withTabAutoswitch(Runnable action) {

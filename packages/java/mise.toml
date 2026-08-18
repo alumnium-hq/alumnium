@@ -34,7 +34,7 @@ run = "./gradlew publishAndReleaseToMavenCentral --no-configuration-cache"
 description = "Publish main + CLI artifacts to Maven Central (auto-release)"
 
 [tasks."test/unit"]
-run = "./gradlew clean test --tests 'ai.alumnium.unit.*'"
+run = "./gradlew clean test --tests 'ai.alumnium.unit.*' --tests 'ai.alumnium.driver.*Test'"
 description = "Run unit tests"
 
 [tasks."test/system"]
