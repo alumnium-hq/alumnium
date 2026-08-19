@@ -29,6 +29,11 @@ cd "$PKG_DIR"
 echo "🔵 ALUMNIUM_TEST_PASS_THRESHOLD_PCT=$ALUMNIUM_TEST_PASS_THRESHOLD_PCT"
 echo "🔵 ALUMNIUM_TEST_RETRY_COUNT=$ALUMNIUM_TEST_RETRY_COUNT"
 echo "🔵 ALUMNIUM_TEST_RETRY_DELAY=$ALUMNIUM_TEST_RETRY_DELAY"
+echo "🔵 ALUMNIUM_TEST_BEHAVE_ARGS=${ALUMNIUM_TEST_BEHAVE_ARGS:-}"
+echo "🔵 ALUMNIUM_TEST_PYTEST_ARGS=${ALUMNIUM_TEST_PYTEST_ARGS:-}"
+
+read -r -a behave_args <<<"${ALUMNIUM_TEST_BEHAVE_ARGS:-}"
+read -r -a pytest_args <<<"${ALUMNIUM_TEST_PYTEST_ARGS:-}"
 
 export ALUMNIUM_LOG_LEVEL=debug
 export ALUMNIUM_PRUNE_LOGS=false
@@ -44,7 +49,8 @@ if [[ "$TEST_ONLY" == *"behave"* ]]; then
 	echo -e "🌀 Running behave tests\n"
 	run_tests fnox exec -- \
 		env ALUMNIUM_LOG_FILENAME="${ALUMNIUM_LOG_FILENAME_BASE}-behave.log" \
-		uv run behave -t "@$ALUMNIUM_DRIVER" -f html-pretty -o reports/behave.html -f pretty
+		uv run behave -t "@$ALUMNIUM_DRIVER" -f html-pretty -o reports/behave.html \
+		-f pretty "${behave_args[@]}"
 fi
 
 if [[ "$TEST_ONLY" == *"pytest"* ]]; then
@@ -56,7 +62,7 @@ if [[ "$TEST_ONLY" == *"pytest"* ]]; then
 			env ALUMNIUM_LOG_FILENAME="${ALUMNIUM_LOG_FILENAME_BASE}-pytest.log" \
 			uv run pytest --retries "$ALUMNIUM_TEST_RETRY_COUNT" \
 			--retry-delay "$ALUMNIUM_TEST_RETRY_DELAY_SECONDS" \
-			--html reports/pytest.html examples/pytest
+			--html reports/pytest.html "${pytest_args[@]}" examples/pytest
 	fi
 fi
 
