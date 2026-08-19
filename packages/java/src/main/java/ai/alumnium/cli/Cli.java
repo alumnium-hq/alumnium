@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +27,7 @@ public final class Cli {
   }
 
   public static ProcessResult run(List<String> args) {
-    Path binary = BinaryResolver.resolve();
-    List<String> command = new ArrayList<>(args.size() + 1);
-    command.add(binary.toString());
+    List<String> command = new ArrayList<>(command());
     command.addAll(args);
 
     LOG.debug("Running CLI: {}", command);
@@ -58,6 +55,14 @@ public final class Cli {
 
   public static ProcessResult runServer(Map<String, Object> options) {
     return run(buildArgs("server", options));
+  }
+
+  private static List<String> command() {
+    String testCommand = System.getenv("ALUMNIUM_CLI_CMD");
+    if (testCommand == null || testCommand.isBlank()) {
+      return List.of(BinaryResolver.resolve().toString());
+    }
+    return List.of(testCommand.trim().split("\\s+"));
   }
 
   static List<String> buildArgs(String subcommand, Map<String, Object> options) {
