@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import asyncio
+import os
+import shlex
 import subprocess
 import sys
 from collections.abc import Sequence
@@ -34,7 +36,7 @@ def run(
     env: subprocess._ENV | None = None,
     cwd: str | None = None,
 ) -> subprocess.CompletedProcess[str]:
-    command = [str(bin_path()), *args]
+    command = [*_command(), *args]
     return subprocess.run(command, check=check, capture_output=capture_output, text=text, env=env, cwd=cwd)
 
 
@@ -94,6 +96,11 @@ async def run_mcp_async(**kwargs: Any) -> subprocess.CompletedProcess[str]:
 
 
 # region Internals
+
+
+def _command() -> list[str]:
+    command = os.environ.get("ALUMNIUM_CLI_CMD")
+    return shlex.split(command) if command else [str(bin_path())]
 
 
 def _split_kwargs(kwargs: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
