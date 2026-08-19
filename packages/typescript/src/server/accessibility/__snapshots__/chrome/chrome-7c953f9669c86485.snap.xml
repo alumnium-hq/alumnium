@@ -40,7 +40,7 @@
       <div id=51>
         <LabelText id=52>
           Dropdown (select)
-          <combobox name="Dropdown (select)" id=54 focusable>
+          <combobox name="Dropdown (select)" expanded>
             <option name="Open this select menu" id=57 focusable selected="false" />
             <option name="One" id=58 focusable selected="false" />
             <option name="Two" id=59 focusable selected="false" />

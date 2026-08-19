@@ -320,12 +320,13 @@ describe(ServerChromiumAccessibilityTree, () => {
       const xml = tree.toXml();
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
-        "<combobox id=1 focusable>
+        "<combobox expanded>
           <option name="One" id=3 focusable selected="false" />
         </combobox>"
       `);
 
-      expectVisibleMappings(tree, xml, { 1: 10, 3: 12 });
+      // The combobox itself is unaddressable, only its options are.
+      expectVisibleMappings(tree, xml, { 3: 12 });
     });
 
     it("sets option selection from the options list value", () => {
@@ -348,7 +349,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       `);
 
       expect(tree.toXml()).toBe(lit`
-        <combobox value="Two">
+        <combobox value="Two" expanded>
           <option name="One" selected="false" />
           <option selected>Two</option>
           <option name="Three" selected="false" />

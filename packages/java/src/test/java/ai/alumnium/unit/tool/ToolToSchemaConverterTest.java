@@ -23,7 +23,9 @@ class ToolToSchemaConverterTest {
         .containsEntry("name", "ClickTool")
         .containsEntry(
             "description",
-            "Click an element. NEVER use ClickTool to upload files - use UploadTool" + " instead.");
+            "Click an element. NEVER use ClickTool on comboboxes, instead proceed to click"
+                + " the desired option directly. NEVER use ClickTool to upload files - use"
+                + " UploadTool instead.");
 
     @SuppressWarnings("unchecked")
     Map<String, Object> parameters = (Map<String, Object>) function.get("parameters");

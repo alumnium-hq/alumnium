@@ -4,7 +4,10 @@ import ai.alumnium.driver.BaseDriver;
 import ai.alumnium.tool.annotation.ToolDescription;
 import ai.alumnium.tool.annotation.ToolField;
 
-@ToolDescription("Click an element. NEVER use ClickTool to upload files - use UploadTool instead.")
+@ToolDescription(
+    "Click an element. NEVER use ClickTool on comboboxes, instead proceed to click the"
+        + " desired option directly. NEVER use ClickTool to upload files - use UploadTool"
+        + " instead.")
 public record ClickTool(@ToolField(description = "Element identifier (ID)") int id)
     implements BaseTool {
   @Override

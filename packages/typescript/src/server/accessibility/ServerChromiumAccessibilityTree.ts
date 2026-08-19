@@ -52,8 +52,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     "nodeId",
     "raw_id",
     "mutable",
-    // We skip 'expanded' because it often leads LLMs to click comboboxes
-    // before selecting, which is automatically handled by the SelectTool.
+    // Select comboboxes are forced to have the expanded=true.
+    // This prevents LLM from clicking to open it before selecting an option.
     "expanded",
   ]);
 
@@ -68,8 +68,25 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
   protected override parseAddressable(xmlTag: Xml.Tag): boolean {
     return (
       xmlTag.tagName !== "MenuListPopup" &&
+      !this.#isSelectCombobox(xmlTag) &&
       xmlTag.attribs.backendDOMNodeId !== undefined
     );
+  }
+
+  #isSelectCombobox(xmlTag: Xml.Tag): boolean {
+    if (xmlTag.tagName !== "combobox") return false;
+    return this.#hasDescendantTag(xmlTag, "MenuListPopup");
+  }
+
+  #hasDescendantTag(xmlTag: Xml.Tag, tagName: string): boolean {
+    return xmlTag.children.some((child) => {
+      const childTag = Xml.nodeAsTag(child);
+      if (!childTag) return false;
+      return (
+        childTag.tagName === tagName ||
+        this.#hasDescendantTag(childTag, tagName)
+      );
+    });
   }
 
   //#endregion
@@ -173,6 +190,13 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
 
   #postTransformCombobox(xmlTag: Xml.Tag): void {
     this.#postTransformList(xmlTag);
+
+    // Force to have expanded=true, so that LLMs don't
+    // click to open it before selecting an option.
+    if (!this.isRenderedAddressable(xmlTag)) {
+      delete xmlTag.attribs.focusable;
+      xmlTag.attribs.expanded = "true";
+    }
 
     const value = xmlTag.attribs.value || null;
 
