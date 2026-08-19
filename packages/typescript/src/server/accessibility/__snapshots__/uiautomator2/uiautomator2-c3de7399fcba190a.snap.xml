@@ -1,0 +1,31 @@
+<div id=1>
+  <WebView id=13 text="https://www.google.com/search?q=Buy+milk&amp;oq=Buy+milk&amp;aqs=chrome..69i57j0i512l14.4810j0j4&amp;client=ms-unknown&amp;sourceid=chrome-mobile&amp;ie=UTF-8&amp;sei=qHVxasCCM6SdhvcPsOWmgQ0">
+    <div id=19 text="reCAPTCHA">
+      <CheckBox id=25 resource-id="recaptcha-anchor" clickable>I'm not a robot</CheckBox>
+    </div>
+    <div id=28>About this page</div>
+    <div id=30>Our systems have detected unusual traffic from your computer network. This page checks to see if it's really you sending the requests, and not a robot.</div>
+    <div id=31 content-desc="Why did this happen?" clickable />
+    <div id=33>
+      IP address: 158.140.129.251
+      Time: 2026-08-04T05:16:25Z
+      URL: https://www.google.com/search?q=Buy+milk&amp;oq=Buy+milk&amp;aqs=chrome..69i57j0i512l14.4810j0j4&amp;client=ms-unknown&amp;sourceid=chrome-mobile&amp;ie=UTF-8&amp;sei=qHVxasCCM6SdhvcPsOWmgQ0
+    </div>
+  </WebView>
+  <div id=35 resource-id="toolbar_container">
+    <div id=36 resource-id="toolbar">
+      <ImageButton id=37 content-desc="Home" resource-id="home_button" clickable />
+      <div id=38 resource-id="location_bar">
+        <div id=39 resource-id="location_bar_status" clickable>
+          <ImageView id=42 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
+        </div>
+        <EditText id=43 resource-id="url_bar" clickable>google.com/sorry/index?continue=https://www.google.com/search%3Fq%3DBuy%2Bmilk%26oq%3DBuy%2Bmilk%26aqs%3Dchrome..69i57j0i512l14.4810j0j4%26client%3Dms-unknown%26sourceid%3Dchrome-mobile%26ie%3DUTF-8%26sei%3DqHVxasCCM6SdhvcPsOWmgQ0&amp;q=EgSejIH7GKnrxdMGIjCsQnOthoeqsNCgIrb_Ss__gPuXHENb9TRP1MZfM1UhcXjrA7j28EPkdN39qQp0rpsyAVJaAUM</EditText>
+      </div>
+      <div id=44 resource-id="toolbar_buttons">
+        <ImageButton id=45 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=47 content-desc="More options" resource-id="menu_button" clickable />
+      </div>
+    </div>
+    <ImageView id=48 resource-id="toolbar_hairline" />
+  </div>
+</div>

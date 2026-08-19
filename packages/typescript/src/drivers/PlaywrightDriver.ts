@@ -19,6 +19,7 @@ import { AppId } from "../AppId.ts";
 import { Env } from "../Env.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
+import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { retry } from "../utils/retry.ts";
 import type { Driver } from "./Driver.ts";
 import {
@@ -28,6 +29,7 @@ import {
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
+const stateful = BaseDriver.stateful;
 
 interface CDPNode {
   nodeId: string;
@@ -37,6 +39,7 @@ interface CDPNode {
   childIds?: string[];
   _frame?: object;
   _parent_iframe_backend_node_id?: number | undefined;
+  backendDOMNodeId?: number;
 }
 
 interface CDPFrameInfo {
@@ -183,7 +186,7 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   @span("driver.get_accessibility_tree", spanAttrs)
-  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+  protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.waitForPageToLoad();
 
     const frameTree = (await this.client.send(
@@ -237,6 +240,7 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   @span("driver.click", spanAttrs)
+  @stateful
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
     const tagName = await element.evaluate(
@@ -255,12 +259,14 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   @span("driver.drag_slider", spanAttrs)
+  @stateful
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
     await element.fill(String(value));
   }
 
   @span("driver.drag_and_drop", spanAttrs)
+  @stateful
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);
@@ -268,12 +274,14 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   @span("driver.hover", spanAttrs)
+  @stateful
   async hover(id: number): Promise<void> {
     const element = await this.findElement(id);
     await element.hover();
   }
 
   @span("driver.press_key", spanAttrs)
+  @stateful
   async pressKey(key: Keys.Key): Promise<void> {
     const keyMap: Record<Keys.Key, string> = {
       Backspace: "Backspace",
@@ -293,16 +301,19 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   @span("driver.back", spanAttrs)
+  @stateful
   async back(): Promise<void> {
     await this.page.goBack();
   }
 
   @span("driver.visit", spanAttrs)
+  @stateful
   async visit(url: string): Promise<void> {
     await this.page.goto(url);
   }
 
   @span("driver.scroll_to", spanAttrs)
+  @stateful
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await element.scrollIntoViewIfNeeded();
@@ -324,12 +335,14 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   @span("driver.type", spanAttrs)
+  @stateful
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
     await element.fill(text);
   }
 
   @span("driver.upload", spanAttrs)
+  @stateful
   async upload(id: number, paths: string[]): Promise<void> {
     const element = await this.findElement(id);
     const [fileChooser] = await Promise.all([
@@ -367,21 +380,26 @@ export class PlaywrightDriver extends BaseDriver {
       ? await this.page.context().newCDPSession(frame)
       : this.client;
 
-    // Beware!
-    await session.send("DOM.enable");
-    await session.send("DOM.getFlattenedDocument");
-    const nodeIds = await session.send("DOM.pushNodesByBackendIdsToFrontend", {
-      backendNodeIds: [backendNodeId],
-    });
-    const nodeId = nodeIds.nodeIds[0];
-    ensure(nodeId);
-    await session.send("DOM.setAttributeValue", {
-      nodeId,
-      name: "data-alumnium-id",
-      value: String(backendNodeId),
-    });
-
-    if (isOopif) await session.detach();
+    try {
+      // Beware!
+      await session.send("DOM.enable");
+      await session.send("DOM.getFlattenedDocument");
+      const nodeIds = await session.send(
+        "DOM.pushNodesByBackendIdsToFrontend",
+        {
+          backendNodeIds: [backendNodeId],
+        },
+      );
+      const nodeId = nodeIds.nodeIds[0];
+      ensure(nodeId);
+      await session.send("DOM.setAttributeValue", {
+        nodeId,
+        name: "data-alumnium-id",
+        value: String(backendNodeId),
+      });
+    } finally {
+      if (isOopif) await session.detach();
+    }
 
     // TODO: We need to remove the attribute after we are done with the element,
     // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
@@ -462,14 +480,14 @@ export class PlaywrightDriver extends BaseDriver {
         if (playwrightFrame === this.page.mainFrame()) continue;
         if ([...map.values()].includes(playwrightFrame)) continue;
 
+        let frameSession: CDPSession | undefined;
         try {
-          const frameSession = await this.page
+          frameSession = await this.page
             .context()
             .newCDPSession(playwrightFrame);
           const ft = (await frameSession.send(
             "Page.getFrameTree",
           )) as CDPFrameTree;
-          await frameSession.detach();
 
           const rootFrameId = ft.frameTree.frame.id;
           if (unmappedOopifs.has(rootFrameId)) {
@@ -482,6 +500,8 @@ export class PlaywrightDriver extends BaseDriver {
           }
         } catch {
           // frame may have been destroyed
+        } finally {
+          await frameSession?.detach().catch(() => undefined);
         }
       }
     }
@@ -512,8 +532,9 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   @span("driver.execute_script", spanAttrs)
+  @stateful
   async executeScript(script: string): Promise<void> {
-    await this.page.evaluate(`() => { ${script} }`);
+    await this.page.evaluate(script);
   }
 
   @span("driver.print_to_pdf", spanAttrs)
@@ -532,10 +553,7 @@ export class PlaywrightDriver extends BaseDriver {
     const currentIndex = this._pages.indexOf(this.page);
     const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
 
-    always(this._pages[nextIndex]);
-    this.page = this._pages[nextIndex];
-    await this.initCDPSession();
-    await this.page.waitForLoadState();
+    await this.switchToTab(nextIndex);
   }
 
   @span("driver.switch_to_previous_tab", spanAttrs)
@@ -550,19 +568,26 @@ export class PlaywrightDriver extends BaseDriver {
     const prevIndex =
       (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
 
-    always(this._pages[prevIndex]);
-    this.page = this._pages[prevIndex];
+    await this.switchToTab(prevIndex);
+  }
+
+  @stateful("switchToTab")
+  private async switchToTab(tabIndex: number): Promise<void> {
+    always(this._pages[tabIndex]);
+    this.page = this._pages[tabIndex];
     await this.initCDPSession();
     await this.page.waitForLoadState();
   }
 
   @span("driver.wait", spanAttrs)
+  @stateful
   async wait(seconds: number): Promise<void> {
     const clampedSeconds = Math.max(1, Math.min(30, seconds));
     await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
   }
 
   @span("driver.wait_for_selector", spanAttrs)
+  @stateful
   async waitForSelector(selector: string, timeout?: number): Promise<void> {
     const timeoutMs = (timeout ?? 10) * 1000;
     await this.page.waitForSelector(selector, {
@@ -571,6 +596,7 @@ export class PlaywrightDriver extends BaseDriver {
     });
   }
 
+  @stateful
   async grantPermissions(permissions: string[]): Promise<void> {
     await this.page.context().grantPermissions(permissions);
   }
@@ -645,33 +671,34 @@ export class PlaywrightDriver extends BaseDriver {
     frameId: string,
     _playwrightFrame: Frame,
   ): Promise<CDPNode[]> {
+    let nodes: CDPNode[];
     try {
       const response = (await this.client.send("Accessibility.getFullAXTree", {
         frameId,
       })) as { nodes: CDPNode[] };
-      const nodes = response.nodes || [];
+      nodes = response.nodes || [];
       logger.debug(
         `  -> Frame ${frameId.slice(0, 20)}...: ${nodes.length} nodes`,
       );
-      return nodes;
     } catch (error) {
       logger.debug(
         `  -> Frame ${frameId.slice(0, 20)}...: failed (${error instanceof Error ? error.message : String(error)})`,
       );
       return [];
     }
+
+    return nodes;
   }
 
   private async getOopifNodes(
     frameId: string,
     playwrightFrame: Frame,
   ): Promise<CDPNode[]> {
+    let frameSession: CDPSession | undefined;
     try {
       // OOPIFs run in a separate renderer process — open a per-frame CDP session
       // scoped to that target, then call getFullAXTree without a frameId parameter.
-      const frameSession = await this.page
-        .context()
-        .newCDPSession(playwrightFrame);
+      frameSession = await this.page.context().newCDPSession(playwrightFrame);
       const response = (await frameSession.send(
         "Accessibility.getFullAXTree",
         {},
@@ -680,15 +707,110 @@ export class PlaywrightDriver extends BaseDriver {
       logger.debug(
         `  -> OOPIF ${frameId.slice(0, 20)}...: got ${nodes.length} nodes`,
       );
-      await frameSession.detach();
+
       return nodes;
     } catch (oopifError) {
       logger.debug(
         `  -> OOPIF ${frameId.slice(0, 20)}...: failed (${oopifError instanceof Error ? oopifError.message : String(oopifError)})`,
       );
       return [];
+    } finally {
+      await frameSession?.detach().catch(() => undefined);
     }
   }
+
+  //#region Dev
+
+  protected override async devDrillProbeTree(
+    tree: BaseAccessibilityTree,
+    rawId: number,
+  ): Promise<number> {
+    let accessibilityElement;
+    try {
+      accessibilityElement = tree.elementById(rawId);
+    } catch (error) {
+      throw new TreeDevDrillError("resolve", error);
+    }
+
+    const backendNodeId = accessibilityElement.backendNodeId;
+    if (backendNodeId === undefined) {
+      throw new TreeDevDrillError(
+        "resolve",
+        new Error(`Element with raw_id=${rawId} has no backend node ID`),
+      );
+    }
+
+    const frame = (accessibilityElement.frame ??
+      this.page.mainFrame()) as Frame;
+    const isOopif = frame !== this.page.mainFrame() && this.isOopifFrame(frame);
+    let session: CDPSession;
+    try {
+      session = isOopif
+        ? await this.page.context().newCDPSession(frame)
+        : this.client;
+    } catch (error) {
+      throw new TreeDevDrillError("resolve", error, backendNodeId);
+    }
+
+    const attribute = "data-alumnium-drill";
+    let nodeId: number | undefined;
+    let set = false;
+    let failure: unknown;
+    try {
+      try {
+        await session.send("DOM.enable");
+        await session.send("DOM.getFlattenedDocument");
+        const response = await session.send(
+          "DOM.pushNodesByBackendIdsToFrontend",
+          { backendNodeIds: [backendNodeId] },
+        );
+        nodeId = response.nodeIds[0];
+        if (!nodeId) {
+          throw new Error(
+            `No frontend node for backend node ID ${backendNodeId}`,
+          );
+        }
+      } catch (error) {
+        throw new TreeDevDrillError("resolve", error, backendNodeId);
+      }
+
+      try {
+        await session.send("DOM.setAttributeValue", {
+          nodeId,
+          name: attribute,
+          value: crypto.randomUUID(),
+        });
+        set = true;
+      } catch (error) {
+        throw new TreeDevDrillError("probe", error, backendNodeId);
+      }
+    } catch (error) {
+      failure = error;
+    } finally {
+      if (set && nodeId) {
+        try {
+          await session.send("DOM.removeAttribute", {
+            nodeId,
+            name: attribute,
+          });
+        } catch (error) {
+          failure ??= new TreeDevDrillError("probe", error, backendNodeId);
+        }
+      }
+      if (isOopif) {
+        try {
+          await session.detach();
+        } catch (error) {
+          failure ??= new TreeDevDrillError("resolve", error, backendNodeId);
+        }
+      }
+    }
+
+    if (failure) throw failure;
+    return backendNodeId;
+  }
+
+  //#endregion
 }
 
 function spanAttrs(this: PlaywrightDriver): Tracer.SpansDriverAttrs {

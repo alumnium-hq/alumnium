@@ -1,0 +1,25 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="Slider Test Page" focusable="true" focused="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/slider.html">
+  <none raw_id="2" backendDOMNodeId="2" nodeId="f0:2" ignored="true">
+    <none raw_id="3" backendDOMNodeId="5" nodeId="f0:5" ignored="true">
+      <heading raw_id="4" backendDOMNodeId="6" nodeId="f0:6" ignored="false" name="Slider Test Page" level="1">
+        <StaticText raw_id="5" backendDOMNodeId="14" nodeId="f0:14" ignored="false" name="Slider Test Page">
+          <InlineTextBox raw_id="6" nodeId="f0:-1000000002" ignored="false" name="Slider Test Page"/>
+        </StaticText>
+      </heading>
+      <LabelText raw_id="7" backendDOMNodeId="7" nodeId="f0:7" ignored="false" name="">
+        <StaticText raw_id="8" backendDOMNodeId="15" nodeId="f0:15" ignored="false" name="Value: ">
+          <InlineTextBox raw_id="9" nodeId="f0:-1000000011" ignored="false" name="Value: "/>
+        </StaticText>
+        <generic raw_id="10" backendDOMNodeId="8" nodeId="f0:8" ignored="false" name="">
+          <StaticText raw_id="11" backendDOMNodeId="21" nodeId="f0:21" ignored="false" name="33">
+            <InlineTextBox raw_id="12" nodeId="f0:-1000000013" ignored="false" name="33"/>
+          </StaticText>
+        </generic>
+      </LabelText>
+      <LineBreak raw_id="13" backendDOMNodeId="9" nodeId="f0:9" ignored="false" name="&#xA;">
+        <InlineTextBox raw_id="14" nodeId="f0:-1000000012" ignored="false" name="&#xA;"/>
+      </LineBreak>
+      <slider raw_id="15" backendDOMNodeId="10" nodeId="f0:10" ignored="false" name="Value: 33" invalid="false" focusable="true" focused="true" settable="true" orientation="horizontal" valuemin="0" valuemax="100" valuetext="" labelledby=""/>
+    </none>
+  </none>
+</RootWebArea>

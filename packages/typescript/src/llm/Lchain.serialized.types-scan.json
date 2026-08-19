@@ -137,6 +137,10 @@
                                         "type": [
                                           {
                                             "kind": "undefined"
+                                          },
+                                          {
+                                            "kind": "string",
+                                            "literal": false
                                           }
                                         ]
                                       }
@@ -576,6 +580,26 @@
                                                     }
                                                   }
                                                 ]
+                                              }
+                                            ]
+                                          },
+                                          "content": {
+                                            "kind": "field",
+                                            "optional": true,
+                                            "type": [
+                                              {
+                                                "kind": "array",
+                                                "type": []
+                                              }
+                                            ]
+                                          },
+                                          "encrypted_content": {
+                                            "kind": "field",
+                                            "optional": true,
+                                            "type": [
+                                              {
+                                                "kind": "string",
+                                                "literal": false
                                               }
                                             ]
                                           }
@@ -1478,6 +1502,26 @@
                                                     ]
                                                   }
                                                 ]
+                                              },
+                                              "content": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "array",
+                                                    "type": []
+                                                  }
+                                                ]
+                                              },
+                                              "encrypted_content": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
                                               }
                                             }
                                           },
@@ -1617,6 +1661,16 @@
                                                     },
                                                     "kind": "string",
                                                     "values": ["assistant"]
+                                                  }
+                                                ]
+                                              },
+                                              "phase": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
                                                   }
                                                 ]
                                               }

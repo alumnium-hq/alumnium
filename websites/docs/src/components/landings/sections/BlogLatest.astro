@@ -1,0 +1,50 @@
+---
+import { getCollection } from "astro:content";
+import { tt } from "#/copy";
+import PostCard from "#/components/PostCard.astro";
+import Section from "../blocks/Section.astro";
+import Heading from "../blocks/SectionHeading.astro";
+import Link from "#/components/Link.astro";
+
+const t = tt.landings.sections.blogLatest.en;
+const tBlog = tt.blog;
+const posts = (await getCollection("blog"))
+  .sort((a, b) => +b.data.pubDate - +a.data.pubDate)
+  .slice(0, 3);
+---
+
+<div class="bento">
+  <Section style="compact">
+    <Heading h={2} t={t} align>
+      <div class="text-sm sm:text-base">
+        <Link
+          t={{ ...tt.links.blog, label: tBlog.seeAllLink }}
+          icon={{ id: "chevron_right", style: "300", pos: "after" }}
+        />
+      </div>
+    </Heading>
+
+    <div>
+      <div
+        class="grid md:grid-cols-3 gap-3 md:gap-5 lg:gap-8 xl:gap-10 md:min-h-[18rem]"
+      >
+        {
+          posts.map((post) => (
+            <a
+              href={`/blog/${post.id.slice(11)}/`}
+              class="no-underline inline-flex"
+            >
+              <PostCard
+                title={post.data.title}
+                date={post.data.pubDate}
+                author={post.data.author}
+                tags={post.data.tags}
+                style="preview"
+              />
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </Section>
+</div>

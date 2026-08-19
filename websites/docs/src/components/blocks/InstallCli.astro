@@ -1,0 +1,53 @@
+---
+import Tabs from "./Tabs.astro";
+import HowTabContent from "./HowTabContent.astro";
+import { createHowTab } from "./howTabs";
+
+// TODO: Detect OS
+const os: "windows" | "xnix" = "xnix";
+const defaultTab = `install-cli-bin-${os}` as const;
+
+const tab = createHowTab<"install-cli">();
+---
+
+<Tabs
+  items={[
+    tab("install-cli-bin", ["xnix", "windows"]),
+    tab("install-cli-npm", ["npm", "pnpm", "yarn", "bun"]),
+    tab("install-cli-pip", ["pip", "uv"]),
+  ]}
+  active={defaultTab}
+  style="code"
+>
+  <Fragment slot="install-cli-bin-xnix">
+    <HowTabContent key="install-cli-bin-xnix" />
+  </Fragment>
+
+  <Fragment slot="install-cli-bin-windows">
+    <HowTabContent key="install-cli-bin-windows" />
+  </Fragment>
+
+  <Fragment slot="install-cli-npm-npm">
+    <HowTabContent key="install-cli-npm-npm" />
+  </Fragment>
+
+  <Fragment slot="install-cli-npm-pnpm">
+    <HowTabContent key="install-cli-npm-pnpm" />
+  </Fragment>
+
+  <Fragment slot="install-cli-npm-yarn">
+    <HowTabContent key="install-cli-npm-yarn" />
+  </Fragment>
+
+  <Fragment slot="install-cli-npm-bun">
+    <HowTabContent key="install-cli-npm-bun" />
+  </Fragment>
+
+  <Fragment slot="install-cli-pip-pip">
+    <HowTabContent key="install-cli-pip-pip" />
+  </Fragment>
+
+  <Fragment slot="install-cli-pip-uv">
+    <HowTabContent key="install-cli-pip-uv" />
+  </Fragment>
+</Tabs>

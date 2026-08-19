@@ -18,8 +18,24 @@ public abstract sealed class BaseDriver permits SeleniumDriver, PlaywrightDriver
 
   public abstract String platform();
 
-  /** Full accessibility tree snapshot for the current view. */
-  public abstract BaseAccessibilityTree accessibilityTree();
+  protected abstract BaseAccessibilityTree fetchAccessibilityTree();
+
+  private BaseAccessibilityTree cachedAccessibilityTree;
+
+  public BaseAccessibilityTree accessibilityTree() {
+    if (cachedAccessibilityTree == null) {
+      setAccessibilityTree(fetchAccessibilityTree());
+    }
+    return cachedAccessibilityTree;
+  }
+
+  public void setAccessibilityTree(BaseAccessibilityTree tree) {
+    cachedAccessibilityTree = tree;
+  }
+
+  public void resetAccessibilityTree() {
+    cachedAccessibilityTree = null;
+  }
 
   public abstract Set<Class<? extends BaseTool>> supportedTools();
 

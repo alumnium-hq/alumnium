@@ -1,0 +1,138 @@
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/tables">
+  <div id=6>
+    <link id=7 focusable url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />
+    </link>
+    <div id=10>
+      <heading id=11 level=3>Data Tables</heading>
+      <paragraph id=13>Often times when you see a table it contains data which is sortable -- sometimes with actions that can be taken within each row (e.g. edit, delete). And it can be challenging to automate interaction with sets of data in a table depending on how it is constructed.</paragraph>
+      <heading id=15 level=4>Example 1</heading>
+      <paragraph id=17>No Class or ID attributes to signify groupings of rows and columns</paragraph>
+      <table id=19>
+        <rowgroup id=20>
+          <row id=21>
+            <columnheader id=22>Last Name</columnheader>
+            <columnheader id=24>First Name</columnheader>
+            <columnheader id=26>Email</columnheader>
+            <columnheader id=28>Due</columnheader>
+            <columnheader id=30>Web Site</columnheader>
+            <columnheader id=32>Action</columnheader>
+          </row>
+        </rowgroup>
+        <div id=34>
+          <row id=35>
+            <cell id=36>Bach</cell>
+            <cell id=38>Frank</cell>
+            <cell id=40>fbach@yahoo.com</cell>
+            <cell id=42>$51.00</cell>
+            <cell id=44>http://www.frank.com</cell>
+            <cell id=46>
+              <link id=47 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+              <link id=50 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+            </cell>
+          </row>
+          <row id=52>
+            <cell id=53>Conway</cell>
+            <cell id=55>Tim</cell>
+            <cell id=57>tconway@earthlink.net</cell>
+            <cell id=59>$50.00</cell>
+            <cell id=61>http://www.timconway.com</cell>
+            <cell id=63>
+              <link id=64 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+              <link id=67 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+            </cell>
+          </row>
+          <row id=69>
+            <cell id=70>Doe</cell>
+            <cell id=72>Jason</cell>
+            <cell id=74>jdoe@hotmail.com</cell>
+            <cell id=76>$100.00</cell>
+            <cell id=78>http://www.jdoe.com</cell>
+            <cell id=80>
+              <link id=81 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+              <link id=84 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+            </cell>
+          </row>
+          <row id=86>
+            <cell id=87>Smith</cell>
+            <cell id=89>John</cell>
+            <cell id=91>jsmith@gmail.com</cell>
+            <cell id=93>$50.00</cell>
+            <cell id=95>http://www.jsmith.com</cell>
+            <cell id=97>
+              <link id=98 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+              <link id=101 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+            </cell>
+          </row>
+        </div>
+      </table>
+      <heading id=103 level=4>Example 2</heading>
+      <paragraph id=105>Class and ID attributes to signify groupings of rows and columns</paragraph>
+      <table id=107>
+        <rowgroup id=108>
+          <row id=109>
+            <columnheader id=110>Last Name</columnheader>
+            <columnheader id=112>First Name</columnheader>
+            <columnheader id=114>Email</columnheader>
+            <columnheader id=116>Due</columnheader>
+            <columnheader id=118>Web Site</columnheader>
+            <columnheader id=120>Action</columnheader>
+          </row>
+        </rowgroup>
+        <div id=122>
+          <row id=123>
+            <cell id=124>Bach</cell>
+            <cell id=126>Frank</cell>
+            <cell id=128>fbach@yahoo.com</cell>
+            <cell id=130>$51.00</cell>
+            <cell id=132>http://www.frank.com</cell>
+            <cell id=134>
+              <link id=135 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+              <link id=138 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+            </cell>
+          </row>
+          <row id=140>
+            <cell id=141>Doe</cell>
+            <cell id=143>Jason</cell>
+            <cell id=145>jdoe@hotmail.com</cell>
+            <cell id=147>$100.00</cell>
+            <cell id=149>http://www.jdoe.com</cell>
+            <cell id=151>
+              <link id=152 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+              <link id=155 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+            </cell>
+          </row>
+          <row id=157>
+            <cell id=158>Smith</cell>
+            <cell id=160>John</cell>
+            <cell id=162>jsmith@gmail.com</cell>
+            <cell id=164>$50.00</cell>
+            <cell id=166>http://www.jsmith.com</cell>
+            <cell id=168>
+              <link id=169 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+              <link id=172 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+            </cell>
+          </row>
+          <row id=174>
+            <cell id=175>Conway</cell>
+            <cell id=177>Tim</cell>
+            <cell id=179>tconway@earthlink.net</cell>
+            <cell id=181>$50.00</cell>
+            <cell id=183>http://www.timconway.com</cell>
+            <cell id=185>
+              <link id=186 focusable url="https://the-internet.herokuapp.com/tables#edit">edit</link>
+              <link id=189 focusable url="https://the-internet.herokuapp.com/tables#delete">delete</link>
+            </cell>
+          </row>
+        </div>
+      </table>
+    </div>
+  </div>
+  <div id=192>
+    <separator id=193 settable orientation="horizontal" />
+    <div id=194>
+      Powered by
+      <link id=196 focusable url="http://elementalselenium.com/">Elemental Selenium</link>
+    </div>
+  </div>
+</RootWebArea>

@@ -77,7 +77,7 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   @Override
-  public ChromiumAccessibilityTree accessibilityTree() {
+  protected ChromiumAccessibilityTree fetchAccessibilityTree() {
     waitForPageToLoad();
 
     Map<String, Object> frameTreeResp = sendCdp("Page.getFrameTree", null);
@@ -253,7 +253,7 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void executeScript(String script) {
-    page.evaluate("() => { " + script + " }");
+    page.evaluate(script);
   }
 
   @Override

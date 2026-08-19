@@ -1,284 +1,231 @@
-import { always } from "alwaysly";
-import { type ChildNode, Element, Node, Text } from "domhandler";
-import { textContent } from "domutils";
-import { pythonicId } from "../../pythonic/pythonicId.ts";
-import { Xml } from "../../Xml.ts";
+import { Xml } from "../../xml/Xml.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
+import type { Tree } from "../../tree/Tree.ts";
+import { textContent } from "domutils";
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
-  readonly SKIPPED_PROPERTIES = new Set([
+  #tree: Tree.Node[] = [];
+
+  constructor(xml: string) {
+    super();
+
+    this.#tree = this.#parseTree(xml);
+
+    void this.devCaptureTreeInput("chrome", xml);
+  }
+
+  //#region Parsing
+
+  #parseTree(xml: string): Tree.Node[] {
+    const tree: Tree.Node[] = [];
+
+    const xmlRoots = Xml.parseAnyRootChildren(xml);
+
+    for (const xmlRoot of xmlRoots) {
+      if (!Xml.isTag(xmlRoot)) continue;
+      if (this.skipXmlNode(xmlRoot)) continue;
+      tree.push(this.xmlNodeToTreeNode(xmlRoot));
+    }
+
+    return tree;
+  }
+
+  protected override parseRole(xmlTag: Xml.Tag): string {
+    return xmlTag.tagName;
+  }
+
+  protected override skipXmlNode(xmlTag: Xml.Tag): boolean {
+    return xmlTag.tagName === "InlineTextBox";
+  }
+
+  protected override parseName(
+    _role: string,
+    xmlTag: Xml.Tag,
+  ): string | undefined {
+    return xmlTag.attribs.name?.trim() || undefined;
+  }
+
+  #skipXmlAttrs = new Set([
     "backendDOMNodeId",
     "ignored",
     "name",
     "nodeId",
     "raw_id",
-    // We skip 'expanded' because it often leads
-    // to LLM decided to first click comboboxes to expand them,
-    // which is automatically handled by the SelectTool.
+    "mutable",
+    // We skip 'expanded' because it often leads LLMs to click comboboxes
+    // before selecting, which is automatically handled by the SelectTool.
     "expanded",
   ]);
 
-  tree: Record<string, ChromiumNode>;
-
-  constructor(xml: string) {
-    super();
-    this.tree = {}; // Initialize the result dictionary
-
-    // Parse the raw XML
-    const roots = Xml.parseAnyRootChildren(xml);
-
-    // Process each root element
-    for (const rootElem of roots) {
-      const node = this.#xmlToNode(rootElem);
-      // Use backendDOMNodeId as the key
-      const nodeId = node.backendDOMNodeId ?? pythonicId(node);
-      this.tree[`${nodeId}`] = node;
-    }
+  protected override skipXmlAttr(
+    _role: string,
+    attrName: string,
+    _attrValue: string,
+  ): boolean {
+    return this.#skipXmlAttrs.has(attrName);
   }
 
-  /** Convert XML element to node dict structure with simplified IDs. */
-  #xmlToNode(node: Node): ChromiumNode {
-    const elem = Xml.nodeAsTag(node);
-    const text = Xml.nodeAsText(node);
-
-    // Assign simplified ID
-    const simplifiedId = elem ? this.getNextId() : -1;
-
-    // Map to raw_id attribute
-    const rawId = elem?.attribs["raw_id"] ?? "";
-    if (rawId) {
-      this.simplifiedToRawId[simplifiedId] = parseInt(rawId);
-    }
-
-    const role = elem?.tagName ?? (text ? "StaticText" : undefined);
-    always(role);
-
-    const chromiumNode: ChromiumNode = {
-      id: simplifiedId,
-      role: { value: role },
-      // NOTE: In Python implementation we had "True"/"False" strings, so we use
-      // case-insensitive comparison here to be safe.
-      ignored: elem?.attribs["ignored"]?.toLowerCase() === "true",
-    };
-
-    // Add name if present
-    if (elem?.attribs["name"]) {
-      chromiumNode.name = { value: elem.attribs["name"] };
-    }
-
-    // Add properties from other attributes
-    const properties: ChromiumNodeProperty[] = [];
-    for (const [attrName, attrValue] of Object.entries(elem?.attribs || {})) {
-      if (!this.SKIPPED_PROPERTIES.has(attrName)) {
-        properties.push({
-          name: attrName,
-          value: { value: attrValue },
-        });
-      }
-    }
-
-    if (properties.length) {
-      chromiumNode.properties = properties;
-    }
-
-    // Process children recursively
-    const nodeChildren = Xml.nodeAsNodeWithChildren(node)?.children || [];
-    const children: ChromiumNode[] = [];
-    for (const childElem of nodeChildren) {
-      const childNode = this.#xmlToNode(childElem);
-      children.push(childNode);
-    }
-
-    if (children.length) {
-      chromiumNode.nodes = children;
-    }
-
-    return chromiumNode;
+  protected override parseAddressable(xmlTag: Xml.Tag): boolean {
+    return (
+      xmlTag.tagName !== "MenuListPopup" &&
+      xmlTag.attribs.backendDOMNodeId !== undefined
+    );
   }
+
+  //#endregion
+
+  //#region Rendering
 
   /**
-   * Converts the nested tree to XML format using role.value as tags.
+   * Converts tree to XML string.
    *
    * @param excludeAttrs Optional set of attribute names to exclude from output.
    */
   override toXml(excludeAttrs: Set<string> = new Set()): string {
-    function convertNodeToXml(
-      node: ChromiumNode,
-      parent: Element | null = null,
-    ): Element | null {
-      // Extract the desired information
-      const roleValue = node.role.value;
-      const nodeId = node.id ?? "";
-      const ignored = node.ignored ?? false;
-      const nameValue = node.name?.value ?? "";
-      const properties = node.properties ?? [];
-      const children = node.nodes ?? [];
+    const xml = this.renderXml(this.#tree, { excludeAttrs });
 
-      if (roleValue === "StaticText" && parent) {
-        parent.children.push(new Text(nameValue));
-      } else if (roleValue === "none" || ignored) {
-        if (children.length) {
-          for (const child of children) {
-            convertNodeToXml(child, parent);
-          }
-        }
-      } else if (roleValue === "generic" && !children.length) {
-        return null;
-      } else {
-        // Create the XML element for the node
-        const xmlElement = new Element(roleValue, {});
+    void this.devCaptureTreeOutput(xml);
 
-        if (nameValue && !excludeAttrs.has("name")) {
-          xmlElement.attribs.name = nameValue;
-        }
-
-        // Assign a unique ID to the element
-        if (!excludeAttrs.has("id")) {
-          xmlElement.attribs.id = String(nodeId);
-        }
-
-        for (const property of properties) {
-          const propName = property.name;
-          if (!excludeAttrs.has(propName)) {
-            xmlElement.attribs[propName] = property.value.value ?? "";
-          }
-        }
-
-        // Add children recursively
-        for (const child of children) {
-          convertNodeToXml(child, xmlElement);
-        }
-
-        if (parent) {
-          parent.children.push(xmlElement);
-        }
-
-        return xmlElement;
-      }
-
-      return null;
-    }
-
-    // Create the root XML element
-    const rootElements: Element[] = [];
-    for (const rootId of Object.keys(this.tree)) {
-      always(this.tree[rootId]);
-      const element = convertNodeToXml(this.tree[rootId]);
-      if (element) {
-        rootElements.push(element);
-        this.#pruneRedundantName(element);
-      }
-    }
-
-    // Convert the XML elements to a string
-    const xmlString = Xml.format(rootElements);
-
-    return xmlString;
+    return xml;
   }
 
-  /**
-   * Recursively traverses the tree, removes redundant name information from parent nodes,
-   * and returns a list of all content (names) in the current subtree.
-   */
-  #pruneRedundantName(node: ChildNode): string[] {
-    const elem = Xml.nodeAsTag(node);
-    // RootWebArea should remain untouched - only process children
-    if (elem?.tagName === "RootWebArea") {
-      const descendantContent: string[] = [];
-      for (const child of elem.children) {
-        descendantContent.push(...this.#pruneRedundantName(child));
-      }
-      return this.#getTexts(elem).concat(descendantContent);
-    }
+  protected override genericRoles: Set<string> = new Set(["generic", "none"]);
 
-    // Remove name if it equals text
-    // TODO: This is incorrect, Python's `node.text` gives only direct text nodes,
-    // while `textContent(node)` gives all descendant text.
-    const nodeText = textContent(node);
-    if (elem?.attribs.name && nodeText && elem.attribs.name === nodeText) {
-      delete elem.attribs.name;
-    }
+  protected override inlineTextRoles = new Set(["ListMarker", "StaticText"]);
 
-    if (!(elem?.children || []).length) {
-      return this.#getTexts(node);
-    }
+  protected override unwrappedUnaddressableRoles = new Set(["MenuListPopup"]);
 
-    // Recursively process children and gather all descendant content
-    const descendantContent: string[] = [];
-    for (const child of elem?.children || []) {
-      descendantContent.push(...this.#pruneRedundantName(child));
-    }
+  protected override preserveNameRoles = new Set(["RootWebArea"]);
 
-    // Sort by length, longest first, to handle overlapping substrings correctly
-    descendantContent.sort((left, right) => right.length - left.length);
+  protected override trimmingBorderRoles = new Set(["RootWebArea"]);
 
-    for (const content of descendantContent) {
-      if (elem?.attribs.name) {
-        elem.attribs.name = elem.attribs.name.replace(content, "").trim();
-      }
-      if (elem?.attribs.label) {
-        elem.attribs.label = elem.attribs.label.replace(content, "").trim();
-      }
-      // TODO: Figure out how to handle that properly, trimming text nodes in
-      // the middle of children list can lead to removing spaces and merging
-      // words together. It is unclear what problem this solved in Python,
-      // so it might as well be not needed at all.
-      //     if node.text:
-      //        node.text = node.text.replace(content, "").strip()
-    }
+  protected override trimmingBorderChildRoles = new Set(["generic"]);
 
-    // The content of the current subtree is its own (potentially pruned) name
-    // plus all the content from its descendants.
-    const currentSubtreeContent = descendantContent;
-    if (elem?.attribs.name) {
-      currentSubtreeContent.push(...this.#getTexts(node));
-    }
+  protected override preserveFalseAttrs = new Set(["checked"]);
 
-    return currentSubtreeContent;
+  protected override get renderPreserveFalseAttrs(): ReadonlySet<string> {
+    return new Set([...this.preserveFalseAttrs, "selected"]);
   }
 
-  #getTexts(node: ChildNode): string[] {
-    const elem = Xml.nodeAsTag(node);
-    const text = Xml.nodeAsText(node);
-    const texts = new Set<string>();
-    if (elem?.attribs.name) {
-      texts.add(elem.attribs.name);
-    }
-    if (elem?.attribs.label) {
-      texts.add(elem.attribs.label);
-    }
-    if (text) {
-      texts.add(text.data);
-    }
-
-    return Array.from(texts);
+  protected override textContentAttr(_role: string): string | undefined {
+    return undefined;
   }
+
+  #liveRegionAttrs = new Set(["atomic", "live", "relevant"]);
+
+  protected override shouldTrimEmptyGeneric(xmlTag: Xml.Tag): boolean {
+    const attrNames = Object.keys(xmlTag.attribs).filter(
+      (attrName) => attrName !== "id",
+    );
+    return (
+      !xmlTag.children.length &&
+      attrNames.length > 0 &&
+      attrNames.every((attrName) => this.#liveRegionAttrs.has(attrName))
+    );
+  }
+
+  protected override shouldPreserveTextOnlyGeneric(
+    xmlTag: Xml.Tag,
+    xmlParent: Xml.Tag,
+  ): boolean {
+    return (
+      xmlTag.tagName === "generic" &&
+      this.isGenericRole(xmlParent.tagName) &&
+      this.isRenderedAddressable(xmlTag) &&
+      xmlTag.children.length === 1 &&
+      !!Xml.nodeAsText(xmlTag.children[0]!)
+    );
+  }
+
+  protected override pruneBackendRedundantNodes(xmlTag: Xml.Tag): void {
+    for (const child of xmlTag.children) {
+      const childTag = Xml.nodeAsTag(child);
+      if (childTag) this.pruneBackendRedundantNodes(childTag);
+    }
+
+    if (!("editable" in xmlTag.attribs || "settable" in xmlTag.attribs)) return;
+
+    xmlTag.children = xmlTag.children.flatMap((child) => {
+      const childTag = Xml.nodeAsTag(child);
+      if (!childTag || !this.isGenericRole(childTag.tagName)) return [child];
+
+      const attrs = Object.keys(childTag.attribs).filter(
+        (attrName) => attrName !== "id" && attrName !== "editable",
+      );
+      const keep =
+        attrs.length > 0 ||
+        childTag.attribs.editable !== xmlTag.attribs.editable;
+      if (keep) return [childTag];
+      if (!this.isRenderedAddressable(childTag)) return childTag.children;
+      return childTag.children.length ? [childTag] : [];
+    });
+  }
+
+  protected override postTransform(xmlTag: Xml.Tag): void {
+    switch (xmlTag.tagName) {
+      case "combobox":
+        return this.#postTransformCombobox(xmlTag);
+
+      case "listbox":
+        return this.#postTransformListbox(xmlTag);
+    }
+  }
+
+  #postTransformCombobox(xmlTag: Xml.Tag): void {
+    this.#postTransformList(xmlTag);
+
+    const value = xmlTag.attribs.value || null;
+
+    this.#traverseListOptions(xmlTag, (option) => {
+      if (value === undefined) return;
+
+      const optionValue = option.attribs.name || textContent(option).trim();
+      option.attribs.selected = String(optionValue === value);
+    });
+  }
+
+  #postTransformListbox(xmlTag: Xml.Tag): void {
+    this.#postTransformList(xmlTag);
+
+    this.#traverseListOptions(xmlTag, (option) => {
+      option.attribs.selected = String(option.attribs.selected === "true");
+    });
+  }
+
+  #postTransformList(xmlTag: Xml.Tag): void {
+    delete xmlTag.attribs.hasPopup;
+  }
+
+  #listRoles = new Set(["combobox", "listbox"]);
+
+  #traverseListOptions(
+    xmlTag: Xml.Tag,
+    transform: (option: Xml.Tag) => void,
+  ): void {
+    const descendantNodes = [...xmlTag.children];
+
+    while (descendantNodes.length) {
+      const descendant = descendantNodes.pop();
+      if (!descendant) continue;
+
+      const descendantTag = Xml.nodeAsTag(descendant);
+      if (!descendantTag) continue;
+
+      if (this.#listRoles.has(descendantTag.tagName)) continue;
+
+      if (descendantTag.tagName !== "option") {
+        descendantNodes.push(...descendantTag.children);
+        continue;
+      }
+
+      if (descendantTag.attribs.disabled === "true") {
+        delete descendantTag.attribs.selected;
+        continue;
+      }
+
+      transform(descendantTag);
+    }
+  }
+
+  //#endregion
 }
-
-//#region Types
-
-// TODO: Find a place for these types, as they might be shared between different
-// modules or even defined in an external library.
-
-interface ChromiumNodeProperty {
-  name: string;
-  value: {
-    value: string;
-  };
-}
-
-interface ChromiumNode {
-  id: number;
-  role: {
-    value: string;
-  };
-  ignored: boolean;
-  name?: {
-    value: string;
-  };
-  properties?: ChromiumNodeProperty[];
-  nodes?: ChromiumNode[];
-  backendDOMNodeId?: string | number;
-}
-
-//#endregion

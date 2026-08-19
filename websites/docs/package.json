@@ -2,29 +2,42 @@
   "name": "alumnium-website",
   "version": "0.0.1",
   "type": "module",
-  "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+  "imports": {
+    "#/*": "./src/*"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.9",
-    "@astrojs/sitemap": "3.7.2",
-    "@astrojs/starlight": "0.39.2",
-    "@astrojs/starlight-tailwind": "5.0.0",
+    "@astrojs/cloudflare": "^14.2.0",
+    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/starlight": "^0.41.7",
+    "@astrojs/starlight-tailwind": "^5.0.0",
+    "@fontsource-variable/hubot-sans": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@fontsource-variable/mona-sans": "^5.2.8",
-    "@fontsource/monaspace-neon": "^5.2.5",
-    "astro": "6.4.6",
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "@material-symbols/svg-100": "^0.45.4",
+    "@material-symbols/svg-200": "^0.45.4",
+    "@material-symbols/svg-300": "^0.45.4",
+    "asciinema-player": "^3.15.1",
+    "astro": "^7.2.0",
+    "devicon": "^2.17.0",
+    "gl-matrix": "^3.4.4",
+    "marked": "^18.0.4",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4.3.0"
+    "smollit": "^0.3.0",
+    "tailwindcss": "^4.3.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/ts-plugin": "^1.10.10",
+    "@capsizecss/metrics": "^4.1.0",
+    "@cloudflare/workers-types": "^5.20260728.1",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.3.0",
+    "@types/node": "^24",
     "mdast-util-to-hast": "^13.2.1",
-    "typescript": "^6.0.3",
-    "vite": "7.3.5"
+    "tailwindcss-capsize": "^4.0.1",
+    "typescript": "6",
+    "wrangler": "^4.114.0"
   }
 }

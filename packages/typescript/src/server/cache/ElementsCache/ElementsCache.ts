@@ -1,6 +1,6 @@
 import type { Generation } from "@langchain/core/outputs";
 import { always } from "alwaysly";
-import { xxh64Str } from "smolxxh/str";
+import { xxh64Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { AppId } from "../../../AppId.ts";
 import { Lchain } from "../../../llm/Lchain.ts";

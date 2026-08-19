@@ -1,0 +1,53 @@
+---
+import Tabs from "./Tabs.astro";
+import HowTabContent from "./HowTabContent.astro";
+import { createHowTab } from "./howTabs";
+
+const tab = createHowTab<"set-up-client">();
+---
+
+<Tabs
+  items={[
+    tab("set-up-client-ts", ["selenium", "playwright", "appium"]),
+    tab("set-up-client-python", ["selenium", "playwright", "appium"]),
+    tab("set-up-client-java", ["selenium", "playwright", "appium"]),
+  ]}
+  active="set-up-client-ts-selenium"
+  style="code"
+>
+  <Fragment slot="set-up-client-ts-selenium">
+    <HowTabContent key="set-up-client-ts-selenium" />
+  </Fragment>
+
+  <Fragment slot="set-up-client-ts-playwright">
+    <HowTabContent key="set-up-client-ts-playwright" />
+  </Fragment>
+
+  <Fragment slot="set-up-client-ts-appium">
+    <HowTabContent key="set-up-client-ts-appium" />
+  </Fragment>
+
+  <Fragment slot="set-up-client-python-selenium">
+    <HowTabContent key="set-up-client-python-selenium" />
+  </Fragment>
+
+  <Fragment slot="set-up-client-python-playwright">
+    <HowTabContent key="set-up-client-python-playwright" />
+  </Fragment>
+
+  <Fragment slot="set-up-client-python-appium">
+    <HowTabContent key="set-up-client-python-appium" />
+  </Fragment>
+
+  <Fragment slot="set-up-client-java-selenium">
+    <HowTabContent key="set-up-client-java-selenium" />
+  </Fragment>
+
+  <Fragment slot="set-up-client-java-playwright">
+    <HowTabContent key="set-up-client-java-playwright" />
+  </Fragment>
+
+  <Fragment slot="set-up-client-java-appium">
+    <HowTabContent key="set-up-client-java-appium" />
+  </Fragment>
+</Tabs>

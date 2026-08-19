@@ -1,0 +1,46 @@
+<div id=1>
+  <WebView id=13 text="Calculator">
+    <div id=16>
+      <div id=18>Dark Mode</div>
+      <div id=22 content-desc="Calculator" clickable />
+      <div id=31 content-desc="SB" clickable />
+    </div>
+    <EditText id=33 resource-id="output" clickable>3×4</EditText>
+    <Button id=34 resource-id="clear" clickable>C</Button>
+    <Button id=35 resource-id="(" clickable>(</Button>
+    <Button id=36 resource-id=")" clickable>)</Button>
+    <Button id=37 resource-id="divide" clickable>÷</Button>
+    <Button id=38 resource-id=7 clickable>7</Button>
+    <Button id=39 resource-id=8 clickable>8</Button>
+    <Button id=40 resource-id=9 clickable>9</Button>
+    <Button id=41 resource-id="multiply" clickable>×</Button>
+    <Button id=42 resource-id=4 clickable>4</Button>
+    <Button id=43 resource-id=5 clickable>5</Button>
+    <Button id=44 resource-id=6 clickable>6</Button>
+    <Button id=45 resource-id="subtract" clickable>-</Button>
+    <Button id=46 resource-id=1 clickable>1</Button>
+    <Button id=47 resource-id=2 clickable>2</Button>
+    <Button id=48 resource-id=3 clickable>3</Button>
+    <Button id=49 resource-id="add" clickable>+</Button>
+    <Button id=50 resource-id="←" clickable>←</Button>
+    <Button id=51 resource-id=0 clickable>0</Button>
+    <Button id=52 resource-id="." clickable>.</Button>
+    <Button id=53 resource-id="equal" clickable>=</Button>
+  </WebView>
+  <div id=55 resource-id="toolbar_container">
+    <div id=56 resource-id="toolbar">
+      <ImageButton id=57 content-desc="Home" resource-id="home_button" clickable />
+      <div id=58 resource-id="location_bar">
+        <div id=59 resource-id="location_bar_status" clickable>
+          <ImageView id=62 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
+        </div>
+        <EditText id=63 resource-id="url_bar" clickable>seleniumbase.io/apps/calculator</EditText>
+      </div>
+      <div id=64 resource-id="toolbar_buttons">
+        <ImageButton id=65 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=67 content-desc="More options" resource-id="menu_button" clickable />
+      </div>
+    </div>
+    <ImageView id=68 resource-id="toolbar_hairline" />
+  </div>
+</div>

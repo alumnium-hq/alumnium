@@ -1,0 +1,212 @@
+---
+export interface Props {
+  supersections: Record<string, { link: string }>;
+}
+
+const { supersections } = Astro.props;
+---
+
+<div class="sections-nav-sentinel"></div>
+
+<nav id="sections-nav">
+  <div class="wrapper">
+    <div class="inner">
+      {
+        Object.entries(supersections).map(([id, { link }]) => (
+          <a href={`#${id}`} data-supersection-id={id}>
+            {link}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</nav>
+
+<script>
+  const navEl = document.getElementById("sections-nav");
+  if (!navEl) throw new Error("Sections nav element not found");
+
+  //#region Section active state
+
+  const modifierClass = "is-active";
+
+  let activeLink: Element | null = null;
+  const linksState: Record<string, boolean> = {};
+  let clickedId: string | null = null;
+
+  // Handle supersection events
+
+  const queryLinkEl = (id: string) =>
+    navEl.querySelector(`a[data-supersection-id="${id}"]`) || null;
+
+  type SupersectionEvent = CustomEvent<{ id: string }>;
+
+  function setHash(id?: string) {
+    // NOTE: We use History API instead of `window.location.href` to avoid
+    // built-in browser scroll behavior.
+    history.replaceState(undefined, "", `#${id || ""}`);
+  }
+
+  function onEnter(id: string) {
+    linksState[id] = true;
+
+    // When a click is registered, ignore non-clicked id enter events
+    if (clickedId && clickedId !== id) {
+      return;
+    }
+
+    const enteredFromClick = clickedId === id;
+    if (enteredFromClick) clickedId = null;
+
+    const enterEl = queryLinkEl(id);
+    if (enterEl === activeLink) {
+      return;
+    }
+
+    // Update hash unless there's a click registered.
+    if (!enteredFromClick) setHash(id);
+
+    activeLink?.classList.remove(modifierClass);
+
+    activeLink = enterEl;
+    activeLink?.classList.add(modifierClass);
+  }
+
+  function onLeave(id: string) {
+    linksState[id] = false;
+
+    const leftEl = queryLinkEl(id);
+    if (leftEl !== activeLink) {
+      return;
+    }
+
+    activeLink?.classList.remove(modifierClass);
+
+    const restoreId = Object.keys(linksState).find(
+      (stateId) => linksState[stateId],
+    );
+    // If not active link to restore found, clear the hash
+    if (!restoreId) {
+      activeLink = null;
+      return setHash();
+    }
+
+    const restoreEl = queryLinkEl(restoreId);
+
+    activeLink = restoreEl;
+    activeLink?.classList.add(modifierClass);
+  }
+
+  document.body.addEventListener("landing-supersection-enter", (e) => {
+    const id = (e as SupersectionEvent).detail.id;
+    onEnter(id);
+  });
+
+  document.body.addEventListener("landing-supersection-leave", (e) => {
+    const id = (e as SupersectionEvent).detail.id;
+    onLeave(id);
+  });
+
+  // Handle click link edge case where multiple blocks gets activated at
+  // the same time. The hash should not change and the priority must be given
+  // to the active hash.
+
+  navEl.querySelectorAll("a[data-supersection-id]").forEach((linkEl) => {
+    linkEl.addEventListener("click", (e) => {
+      const { target } = e;
+      if (!(target instanceof HTMLAnchorElement)) return;
+
+      // NOTE: `target.href` contains full URL rather than just a hash
+      const linkId = target.getAttribute("href")?.slice(1) || null;
+      if (!linkId) return;
+
+      const sectionEl = document.getElementById(linkId);
+      if (!sectionEl) return;
+
+      e.preventDefault();
+
+      clickedId = linkId;
+      setHash(linkId);
+
+      sectionEl.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      });
+
+      // If link is already active, we're not going to receive the supersection
+      // event, in this case we have to trigger the event handler manually.
+      if (linksState[linkId]) onEnter(linkId);
+
+      // Release the click lock if the user interrupts the scroll.
+      setTimeout(() => {
+        if (clickedId === linkId) clickedId = null;
+      }, 2_000);
+    });
+  });
+
+  //#endregion
+
+  //#region Stuck state
+
+  const sentinelEl = prevSibling(navEl, ".sections-nav-sentinel");
+  if (!sentinelEl) throw new Error("Sections nav sentinel element not found");
+
+  const observer = new IntersectionObserver(
+    ([e]) => navEl.classList.toggle("has-stuck", e.intersectionRatio < 1),
+    { root: null, threshold: 1 },
+  );
+  observer.observe(sentinelEl);
+
+  //#endregion
+
+  function prevSibling(element: Element, selector: string) {
+    let sibling = element.previousElementSibling;
+
+    while (sibling) {
+      if (sibling.matches(selector)) return sibling;
+      sibling = sibling.previousElementSibling;
+    }
+
+    return null;
+  }
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  nav {
+    @apply md:sticky z-40 border-t border-t-accent-600 border-b border-b-accent-600;
+    top: calc(var(--sl-nav-height) - 1px);
+  }
+
+  .sections-nav-sentinel {
+    @apply pointer-events-none invisible;
+    height: var(--sl-nav-height);
+    margin-top: calc(-1 * var(--sl-nav-height) + 1px);
+  }
+
+  .wrapper {
+    @apply relative flex items-center px-(--supersection-padding-x) py-3 md:py-0 md:h-(--landing-nav-height);
+  }
+
+  .inner {
+    @apply content-wrapper-lg flex flex-wrap justify-center gap-x-3 gap-y-2;
+  }
+
+  .inner > a {
+    @apply no-underline text-accent-400 bg-accent-800/60 hover:bg-accent-800 rounded-xl px-2 sm:px-3 py-0.5 sm:py-1 text-sm line-clamp-1;
+
+    &.is-active {
+      @apply bg-accent-700 text-ink-dark;
+    }
+  }
+
+  nav:global(.has-stuck) {
+    @variant md {
+      & .wrapper {
+        @apply pattern-canvas-content;
+      }
+    }
+  }
+</style>

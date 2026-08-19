@@ -21,4 +21,13 @@ describe("XCUITestAccessibilityTree", () => {
       });
     });
   });
+
+  describe("scopeToArea", () => {
+    it("returns the original tree when the element is not found", async () => {
+      const xml = await fs.readFile(SIMPLE_FIXTURE_PATH, "utf-8");
+      const tree = new XCUITestAccessibilityTree(xml);
+
+      expect(tree.scopeToArea(99999).toStr()).toBe(tree.toStr());
+    });
+  });
 });

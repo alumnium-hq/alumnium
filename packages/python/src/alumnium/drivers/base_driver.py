@@ -7,8 +7,21 @@ from .keys import Key
 
 class BaseDriver(ABC):
     @property
-    @abstractmethod
     def accessibility_tree(self) -> BaseAccessibilityTree:
+        cached = getattr(self, "_cached_accessibility_tree", None)
+        if cached is None:
+            cached = self._fetch_accessibility_tree()
+            self.set_accessibility_tree(cached)
+        return cached
+
+    def set_accessibility_tree(self, tree: BaseAccessibilityTree):
+        self._cached_accessibility_tree = tree
+
+    def reset_accessibility_tree(self):
+        self._cached_accessibility_tree = None
+
+    @abstractmethod
+    def _fetch_accessibility_tree(self) -> BaseAccessibilityTree:
         pass
 
     @abstractmethod

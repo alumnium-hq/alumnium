@@ -13,6 +13,8 @@ import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
+import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
+import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -69,6 +71,19 @@ Explanation: In order to open URL, I am going to directly navigate to the reques
 Actions: ['navigate to "http://foo.bar/baz/123" URL']
 `.trim();
 
+  static readonly #SWITCH_TAB_EXAMPLE = `
+Example:
+Input:
+Given the following XML accessibility tree:
+\`\`\`xml
+<RootWebArea id=1 focusable focused url="about:blank" />
+\`\`\`
+Outline the actions needed to achieve the following goal: switch to <previous|next> browser tab
+Output:
+Explanation: In order to switch to the <previous|next> browser tab, I am going to use the switch tab action.
+Actions: ['switch to the <previous|next> browser tab']
+`.trim();
+
   static readonly #UPLOAD_EXAMPLE = `
 Example:
 Input:
@@ -109,9 +124,18 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     if (toolNames.includes(NavigateToUrlTool.name)) {
       this.baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
     }
+
     if (toolNames.includes(UploadTool.name)) {
       this.baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
     }
+
+    if (
+      toolNames.includes(SwitchToPreviousTabTool.name) ||
+      toolNames.includes(SwitchToNextTabTool.name)
+    ) {
+      this.baseExamples += `\n\n${PlannerAgent.#SWITCH_TAB_EXAMPLE}`;
+    }
+
     this.extraExamples = this.baseExamples;
 
     this.#generateChain();

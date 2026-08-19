@@ -1,0 +1,12 @@
+allowBuilds:
+  edgedriver: false
+  geckodriver: false
+  protobufjs: false
+
+overrides:
+  "@alumnium/cli-darwin-arm64": "file:../../dist/npm-alumnium-cli-darwin-arm64"
+  "@alumnium/cli-darwin-x64": "file:../../dist/npm-alumnium-cli-darwin-x64"
+  "@alumnium/cli-linux-arm64": "file:../../dist/npm-alumnium-cli-linux-arm64"
+  "@alumnium/cli-linux-x64": "file:../../dist/npm-alumnium-cli-linux-x64"
+  "@alumnium/cli-windows-arm64": "file:../../dist/npm-alumnium-cli-windows-arm64"
+  "@alumnium/cli-windows-x64": "file:../../dist/npm-alumnium-cli-windows-x64"

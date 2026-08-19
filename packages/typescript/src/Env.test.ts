@@ -30,6 +30,28 @@ describe("Env", () => {
     expect(() => Env.ALUMNIUM_RETRIES).toThrow();
   });
 
+  describe("eval session", () => {
+    it("defaults input trimming to 100", () => {
+      vi.stubEnv("ALUMNIUM_EVAL_SESSION_TRIM_INPUT", undefined);
+      expect(Env.ALUMNIUM_EVAL_SESSION_TRIM_INPUT).toBe(100);
+    });
+
+    it("accepts an input trimming length", () => {
+      vi.stubEnv("ALUMNIUM_EVAL_SESSION_TRIM_INPUT", "100");
+      expect(Env.ALUMNIUM_EVAL_SESSION_TRIM_INPUT).toBe(100);
+    });
+
+    it("allows input trimming to be disabled", () => {
+      vi.stubEnv("ALUMNIUM_EVAL_SESSION_TRIM_INPUT", "false");
+      expect(Env.ALUMNIUM_EVAL_SESSION_TRIM_INPUT).toBe(false);
+    });
+
+    it("normalizes the session path", () => {
+      vi.stubEnv("ALUMNIUM_EVAL_SESSION_PATH", "test\\sessions");
+      expect(Env.ALUMNIUM_EVAL_SESSION_PATH).toBe("test/sessions");
+    });
+  });
+
   describe("command expansion", () => {
     it("expands a whole-value command substitution", () => {
       vi.stubEnv("OPENAI_API_KEY", "$(echo hello)");

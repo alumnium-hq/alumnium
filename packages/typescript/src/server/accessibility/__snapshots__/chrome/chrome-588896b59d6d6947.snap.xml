@@ -1,0 +1,25 @@
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/forgot_password">
+  <div id=6>
+    <link id=7 focusable url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />
+    </link>
+    <div id=10>
+      <heading id=11 level=2>Forgot Password</heading>
+      <heading id=13 level=4 />
+      <div id=14>
+        <div id=16>
+          <LabelText id=17>E-mail</LabelText>
+          <textbox name="E-mail" id=19 focusable editable="plaintext" settable />
+        </div>
+        <button id=21 focusable>Retrieve password</button>
+      </div>
+    </div>
+  </div>
+  <div id=24>
+    <separator id=25 settable orientation="horizontal" />
+    <div id=26>
+      Powered by
+      <link id=28 focusable url="http://elementalselenium.com/">Elemental Selenium</link>
+    </div>
+  </div>
+</RootWebArea>

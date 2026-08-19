@@ -3,19 +3,13 @@ import { never } from "alwaysly";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
-import type { Locator, Page } from "playwright-core";
-import { Builder, WebDriver, WebElement } from "selenium-webdriver";
+import type { Locator } from "playwright-core";
+import { Builder, WebElement } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { afterAll, inject, it as vitestIt } from "vitest";
+import { inject, it as vitestIt } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
-import { Tracer } from "../../src/telemetry/Tracer.ts";
-
-// Make sure to flush the telemetry data after all tests are done.
-afterAll(() => {
-  return Tracer.flush();
-});
 
 export namespace Setup {
   export interface Helpers {
@@ -49,14 +43,13 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   const driver = await createDriver(driverId);
   const isAppiumDriver = Driver.isAppium(driverId);
 
-  const $ = createHelpers(driverId, driver);
-
   const options: Alumni.Options = {
     ...props.options,
     url: Env.ALUMNIUM_SERVER_URL,
   };
 
   const al = new Alumni(driver, options);
+  const $ = createHelpers(driverId, driver, al);
 
   if (isAppiumDriver) {
     (al.driver as AppiumDriver).delay = 0.1;
@@ -130,6 +123,7 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
 function createHelpers(
   driverId: Driver.Id,
   driver: Alumni.Driver,
+  al: Alumni,
 ): Setup.Helpers {
   const $: Setup.Helpers = {
     resolveUrl(url: string): string {
@@ -147,23 +141,7 @@ function createHelpers(
     },
 
     async navigate(url: string) {
-      switch (driverId) {
-        case "selenium":
-          await (driver as WebDriver).get($.resolveUrl(url));
-          return;
-
-        case "playwright":
-          await (driver as Page).goto($.resolveUrl(url));
-          return;
-
-        case "appium-ios":
-        case "appium-android":
-          await (driver as Browser).url($.resolveUrl(url));
-          return;
-
-        default:
-          driverId satisfies never;
-      }
+      await al.driver.visit($.resolveUrl(url));
     },
 
     async type(element: Element | undefined, text: string) {

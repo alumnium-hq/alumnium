@@ -1,0 +1,85 @@
+---
+import { lit } from "smollit";
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import Tabs from "#/components/blocks/Tabs.astro";
+import Code from "#/components/blocks/Code.astro";
+
+const t = tt.landings.sections.naturalLanguageTests.en;
+---
+
+<Section heading={{ h: 2 }} t={t} cols={2} span={2}>
+  <Tabs
+    active="md"
+    items={[
+      { id: "md", label: t.tabs.md },
+      { id: "ts", label: t.tabs.ts },
+      { id: "python", label: t.tabs.python },
+      { id: "java", label: t.tabs.java },
+    ]}
+    style="code"
+  >
+    <Fragment slot="md">
+      <Code
+        code={lit`
+          # YouTube Search
+
+          Test the https://www.youtube.com search feature.
+
+          Search for "lofi beats" and check that:
+
+          1. The screen title contains the query.
+          2. The displayed search results are relevant
+             to the query.
+      `}
+        lang="md"
+      />
+    </Fragment>
+
+    <Fragment slot="ts">
+      <Code
+        code={lit`
+          describe("YouTube Search", () => {
+            it("queries videos", async () => {
+              await driver.get("https://youtube.com");
+              await al.do("search for 'lofi beats' and press Enter");
+              await al.check("page title contains 'lofi beats'");
+              await al.check("search results contain lofi videos");
+            });
+          });
+        `}
+        lang="ts"
+      />
+    </Fragment>
+
+    <Fragment slot="python">
+      <Code
+        code={lit`
+          def test_search(al, driver):
+              driver.get("https://youtube.com")
+              al.do("search for 'lofi beats' and press Enter")
+              al.check("page title contains 'lofi beats'")
+              al.check("search results contain lofi videos")
+        `}
+        lang="python"
+      />
+    </Fragment>
+
+    <Fragment slot="java">
+      <Code
+        code={lit`
+          class YouTubeSearchTest {
+            @Test
+            void queriesVideos() {
+              driver.get("https://youtube.com");
+              al.act("search for 'lofi beats' and press Enter");
+              al.check("page title contains 'lofi beats'");
+              al.check("search results contain lofi videos");
+            }
+          }
+        `}
+        lang="java"
+      />
+    </Fragment>
+  </Tabs>
+</Section>

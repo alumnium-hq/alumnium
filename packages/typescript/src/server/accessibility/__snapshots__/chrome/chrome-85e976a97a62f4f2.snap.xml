@@ -1,0 +1,31 @@
+<RootWebArea name="Calculator" id=1 focusable focused url="https://seleniumbase.io/apps/calculator">
+  <div id=6>
+    <LabelText id=7 />
+    Dark Mode
+    <link id=13 focusable url="https://seleniumbase.io/apps/calculator">Calculator</link>
+    <link id=22 focusable url="https://seleniumbase.io/">SB</link>
+  </div>
+  <div id=24>
+    <textbox id=26 focusable editable="plaintext" readonly>2+</textbox>
+    <button id=29 focusable>C</button>
+    <button id=31 focusable>(</button>
+    <button id=33 focusable>)</button>
+    <button id=35 focusable>÷</button>
+    <button id=37 focusable>7</button>
+    <button id=39 focusable>8</button>
+    <button id=41 focusable>9</button>
+    <button id=43 focusable>×</button>
+    <button id=45 focusable>4</button>
+    <button id=47 focusable>5</button>
+    <button id=49 focusable>6</button>
+    <button id=51 focusable>-</button>
+    <button id=53 focusable>1</button>
+    <button id=55 focusable>2</button>
+    <button id=57 focusable>3</button>
+    <button id=59 focusable focused>+</button>
+    <button id=61 focusable>←</button>
+    <button id=63 focusable>0</button>
+    <button id=65 focusable>.</button>
+    <button id=67 focusable>=</button>
+  </div>
+</RootWebArea>

@@ -30,6 +30,10 @@
 # Environment variables
 .env
 .envrc
+**/.dev.vars
+
+# Cloudflare
+**/.wrangler/
 
 # Local mise
 mise.local.toml
@@ -43,6 +47,12 @@ mise.local.toml
 # AIs
 **/.claude/settings.local.json
 
+# Playwright
+**/.agents/skills/playwright-cli/
+**/.claude/skills/playwright-cli/
+**/.playwright-cli/
+**/.playwright-mcp/
+
 # OS
 .DS_Store
 Thumbs.db
@@ -50,5 +60,6 @@ Thumbs.db
 
 # Assets
 *~lock~*
+
 # Managed by VS Code Orchardist extension:
 alumnium.wt.code-workspace

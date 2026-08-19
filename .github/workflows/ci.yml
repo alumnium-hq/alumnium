@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - "ci-**"
+      - "ci/**"
   schedule:
     - cron: 0 0 * * *
   workflow_dispatch:
@@ -19,11 +21,18 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    outputs:
-      permitted: ${{ steps.check-access.outputs.require-result }}
-      java-changed: ${{ steps.changed-files.outputs.java_any_changed }}
-      python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
-      typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
+
+    permissions:
+      contents: read
+      # NOTE: Needed for cache save
+      actions: write
+
+    # Prevent running the workflow for PRs from ci/ or ci- branches, since those
+    # trigger the workflow on branch push events.
+    if: >
+      github.event_name != 'pull_request_target'
+        || (!startsWith(github.event.pull_request.head.ref, 'ci/')
+          && !startsWith(github.event.pull_request.head.ref, 'ci-'))
 
     steps:
       - name: Git Checkout
@@ -35,25 +44,6 @@ jobs:
         uses: ./.github/actions/setup
         with:
           python-cache: true
-
-      - name: Check Access
-        id: check-access
-        uses: actions-cool/check-user-permission@v2
-        with:
-          require: write
-          username: ${{ github.triggering_actor }}
-
-      - name: Determine Changed Files
-        id: changed-files
-        uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323 # v47.0.5
-        with:
-          files_yaml: |
-            java:
-              - packages/java/**
-            python:
-              - packages/python/**
-            typescript:
-              - packages/typescript/**
 
       - name: Build
         run: mise :build
@@ -84,6 +74,13 @@ jobs:
           typescript: true
           python: true
 
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-test
+          package: typescript
+
       - name: Run Post-Setup
         if: always()
         uses: ./.github/actions/setup/post
@@ -92,44 +89,95 @@ jobs:
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
+  preflight:
+    name: Preflight
+
+    runs-on: ubuntu-latest
+    outputs:
+      permitted: ${{ steps.check-access.outputs.require-result }}
+      ignore-changes: ${{ github.event_name == 'push' }}
+      java-changed: ${{ steps.changed-files.outputs.java_any_changed }}
+      python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
+      typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
+
+    permissions:
+      contents: read
+
+    # Prevent running the workflow for PRs from ci/ or ci- branches, since those
+    # trigger the workflow on branch push events.
+    if: >
+      github.event_name != 'pull_request_target'
+        || (!startsWith(github.event.pull_request.head.ref, 'ci/')
+          && !startsWith(github.event.pull_request.head.ref, 'ci-'))
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Check Access
+        id: check-access
+        uses: actions-cool/check-user-permission@v2
+        with:
+          require: write
+          username: ${{ github.triggering_actor }}
+
+      - name: Determine Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323 # v47.0.5
+        with:
+          files_yaml: |
+            java:
+              - packages/java/**
+            python:
+              - packages/python/**
+            typescript:
+              - packages/typescript/**
+
   eval:
     name: Eval
-    needs: test
+    needs: preflight
     secrets: inherit
-    if: needs.test.outputs.permitted == 'true'
+    if: needs.preflight.outputs.permitted == 'true'
     uses: ./.github/workflows/ci-eval.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
   java:
     name: Java
-    needs: test
+    needs: preflight
     secrets: inherit
     if: >
-      needs.test.outputs.permitted == 'true'
-        && needs.test.outputs.java-changed == 'true'
+      needs.preflight.outputs.permitted == 'true'
+        && (needs.preflight.outputs.ignore-changes == 'true'
+          || needs.preflight.outputs.typescript-changed == 'true'
+          || needs.preflight.outputs.java-changed == 'true')
     uses: ./.github/workflows/ci-java.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
   python:
     name: Python
-    needs: test
+    needs: preflight
     secrets: inherit
     if: >
-      needs.test.outputs.permitted == 'true'
-        && (needs.test.outputs.typescript-changed == 'true' || needs.test.outputs.python-changed == 'true')
+      needs.preflight.outputs.permitted == 'true'
+        && (needs.preflight.outputs.ignore-changes == 'true'
+          || needs.preflight.outputs.typescript-changed == 'true'
+          || needs.preflight.outputs.python-changed == 'true')
     uses: ./.github/workflows/ci-python.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
   typescript:
     name: TypeScript
-    needs: test
+    needs: preflight
     secrets: inherit
     if: >
-      needs.test.outputs.permitted == 'true'
-        && needs.test.outputs.typescript-changed == 'true'
+      needs.preflight.outputs.permitted == 'true'
+        && (needs.preflight.outputs.ignore-changes == 'true'
+          || needs.preflight.outputs.typescript-changed == 'true')
     uses: ./.github/workflows/ci-typescript.yml
     with:
       sha: ${{ github.event.pull_request.head.sha || github.sha }}

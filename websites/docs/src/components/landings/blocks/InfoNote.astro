@@ -1,0 +1,72 @@
+---
+import { tt } from "#/copy";
+import Icon from "#/components/Icon.astro";
+
+interface Props {
+  tooltip: string;
+  label?: string;
+}
+
+const { tooltip, label = "More details" } = Astro.props;
+const noteId = `note-${crypto.randomUUID()}`;
+---
+
+<div class="with-note">
+  <slot />
+
+  <button
+    type="button"
+    class="trigger"
+    popovertarget={noteId}
+    aria-label={label}
+    style={`anchor-name: --${noteId}`}
+  >
+    <Icon id="info" class="icon" style="300" />
+  </button>
+
+  <div
+    id={noteId}
+    popover="auto"
+    class="bubble"
+    role="tooltip"
+    style={`position-anchor: --${noteId}`}
+    set:html={tt.md(tooltip)}
+  />
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .with-note {
+    @apply inline-flex items-center gap-1;
+  }
+
+  .trigger {
+    @apply inline-flex items-center justify-center cursor-pointer bg-transparent border-0 p-0 appearance-none leading-none;
+    --icon-color: var(--color-accent-400);
+
+    &:hover,
+    &:focus-visible {
+      --icon-color: var(--color-accent-100);
+    }
+
+    & .icon {
+      font-size: 1.1rem !important;
+    }
+  }
+
+  .bubble {
+    @apply bg-accent-900 border border-accent-700 rounded-md shadow-lg text-sm font-normal font-sans text-left px-4 prose prose-sm prose-invert prose-gray z-10;
+    margin: 0;
+    inset: auto;
+    position-try-fallbacks: flip-block;
+    position-visibility: anchors-visible;
+    position-area: block-start;
+    margin-block: 0.5rem;
+    max-width: min(18rem, calc(100vw - 1rem));
+
+    & a {
+      @apply text-accent-300 underline;
+    }
+  }
+</style>

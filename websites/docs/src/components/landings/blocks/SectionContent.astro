@@ -1,0 +1,28 @@
+---
+import Heading from "./SectionHeading.astro";
+import Copy from "./Copy.astro";
+import Icon from "#/components/Icon.astro";
+import type { SectionContentProps } from "./Section.types";
+
+type Props = SectionContentProps;
+
+const { t, heading, icon: iconProp } = Astro.props;
+
+const icon = iconProp || t.icon;
+---
+
+<div class="section-content">
+  {
+    icon && (
+      <div class="section-content-icon">
+        <Icon prop={icon} class="icon" />
+      </div>
+    )
+  }
+
+  <Heading {...heading} t={t} />
+
+  {t.copy && <Copy t={t.copy} />}
+
+  <slot />
+</div>

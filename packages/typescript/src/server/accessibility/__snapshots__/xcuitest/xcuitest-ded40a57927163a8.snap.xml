@@ -1,0 +1,62 @@
+<Application name="Safari" id=1>
+  <Window id=2>
+    <div name="SafariWindow?View=Narrow&amp;BarsKeptMinimized=false&amp;UUID=22EF9D86-B658-4063-9AA0-90A6B50B4BEC&amp;UsingLoweredBar=true&amp;IsSecure=false&amp;IsTabBarAvailable=false" id=11>
+      <div id=13>
+        <ScrollView id=18>
+          <div name="TabDocument?IsLoadedUsingDesktopUserAgent=false&amp;InReaderMode=false&amp;UUID=02185351-127F-4127-B0D1-5F875A2B6EA1&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=40171" id=19>
+            <WebView name="WebView" id=20>
+              <WebView id=21>
+                <WebView id=22 />
+                <div name="Vertical scroll bar, 1 page" id=27 value="0 %" />
+                <div name="Horizontal scroll bar, 1 page" id=29 value="0 %" />
+                <div name="Vertical scroll bar, 1 page" id=31 value="0 %" />
+                <div name="Horizontal scroll bar, 1 page" id=33 value="0 %" />
+              </WebView>
+            </WebView>
+          </div>
+          <div name="Horizontal scroll bar, 1 page" id=35 value="0 %" />
+          <div name="Horizontal scroll bar, 1 page" id=37 value="0 %" />
+        </ScrollView>
+        <CollectionView name="StartPageCollectionView" id=46>
+          <Cell name="onboardingItemIdentifierContent-CustomizeStartPage" id=49>
+            <div id=53>
+              <div id=54>Start Page</div>
+              <Image name="SafariOnboardingCustomizeStartPage" id=56 />
+              <div id=57>Customise your wallpaper and sections that appear when creating new tabs.</div>
+              <Button name="onboardingButton-CustomizeStartPage" id=58>
+                <div id=59>Customise Start Page</div>
+              </Button>
+            </div>
+            <Button name="close" id=60 />
+          </Cell>
+          <div name="privacyReportIdentifierHeader" id=61>
+            <div id=63>Privacy Report</div>
+          </div>
+          <Cell name="privacyReportIdentifierContent" id=64>
+            <div id=68>0 blocked trackers</div>
+            <div name="TrackersPreventedCount?TrackingPreventionDataExists=false" id=69>In the last seven days, Safari has prevented 0 trackers from profiling you.</div>
+          </Cell>
+          <Cell name="com.apple.mobilesafari.framework-customization-sectionContent" id=70>
+            <Button name="customizationsSheetButton" id=73>
+              <div id=74>Edit</div>
+            </Button>
+          </Cell>
+          <div name="Vertical scroll bar, 1 page" id=75 value="0 %" />
+          <div name="Horizontal scroll bar, 1 page" id=77 value="0 %" />
+          <div name="Vertical scroll bar, 1 page" id=79 value="0 %" />
+          <div name="Horizontal scroll bar, 1 page" id=81 value="0 %" />
+        </CollectionView>
+      </div>
+      <div name="CapsuleViewController" id=85>
+        <Button name="BackButton" id=97 label="Back" />
+        <div name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" id=101>
+          <Button name="PageFormatMenuButton" id=102 label="Page Menu" />
+          <TextField name="TabBarItemTitle" id=104 value="‎todomvc.com" label="Address" />
+          <Button name="StopButton" id=105 label="Close" />
+        </div>
+        <Button name="MoreMenuButton" id=108 label="More" />
+      </div>
+    </div>
+  </Window>
+  <Window id=113 />
+</Application>

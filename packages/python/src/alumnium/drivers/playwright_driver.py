@@ -54,8 +54,7 @@ class PlaywrightDriver(BaseDriver):
     def platform(self) -> str:
         return "chromium"
 
-    @property
-    def accessibility_tree(self) -> ChromiumAccessibilityTree:
+    def _fetch_accessibility_tree(self) -> ChromiumAccessibilityTree:
         self._wait_for_page_to_load()
 
         frame_tree = self._send_cdp_command("Page.getFrameTree")
@@ -193,7 +192,7 @@ class PlaywrightDriver(BaseDriver):
         return frame.locator(f"css=[data-alumnium-id='{backend_node_id}']")
 
     def execute_script(self, script: str):
-        self.page.evaluate(f"() => {{ {script} }}")
+        self.page.evaluate(script)
 
     def print_to_pdf(self, filepath: str):
         self.page.pdf(path=filepath)

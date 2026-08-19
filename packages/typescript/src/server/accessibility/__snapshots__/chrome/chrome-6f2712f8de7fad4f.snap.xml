@@ -1,0 +1,9 @@
+<RootWebArea name="Slider Test Page" id=1 focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/slider.html">
+  <heading id=4 level=1>Slider Test Page</heading>
+  <LabelText id=6>
+    <div id=7>Value:</div>
+    <div id=9>70</div>
+  </LabelText>
+  <LineBreak id=10 />
+  <slider name="Value: 70" id=11 focusable focused settable orientation="horizontal" valuemin=0 valuemax=100 />
+</RootWebArea>

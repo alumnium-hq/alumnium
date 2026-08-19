@@ -9,9 +9,9 @@ import { Runnable } from "@langchain/core/runnables";
 import { always } from "alwaysly";
 import z from "zod";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
-import type { ToolCall } from "../accessibility/BaseServerAccessibilityTree.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
+import type { ToolCall } from "../../tools/BaseTool.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();

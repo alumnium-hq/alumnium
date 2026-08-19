@@ -1,0 +1,29 @@
+---
+import { tt } from "#/copy";
+import Heading from "../../blocks/SectionHeading.astro";
+import Section from "../../blocks/Section.astro";
+import ComparisonTable from "./ComparisonTable.astro";
+---
+
+<div class="bento">
+  <Section style="compact">
+    <Heading
+      h={2}
+      style="enlarge"
+      align
+      t={tt.landings.sections.comparison.en}
+    />
+  </Section>
+
+  <Section style="compact" continue>
+    <Heading h={3} t={tt.landings.sections.comparisonRun.en} />
+
+    <ComparisonTable t={tt.landings.sections.comparisonRunTable} />
+  </Section>
+
+  <Section style="compact">
+    <Heading h={3} t={tt.landings.sections.comparisonFeatures.en} />
+
+    <ComparisonTable t={tt.landings.sections.comparisonFeaturesTable} />
+  </Section>
+</div>

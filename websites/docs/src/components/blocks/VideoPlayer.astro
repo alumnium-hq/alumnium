@@ -1,0 +1,124 @@
+---
+export interface Props {
+  src: string;
+  label?: string;
+  aspectRatio?: string;
+  musicLicense?: string;
+  muted?: boolean;
+}
+
+const { src, label, aspectRatio = "4 / 3", musicLicense, muted } = Astro.props;
+---
+
+<al-video class="video-player" style={{ "aspect-ratio": aspectRatio }}>
+  <video
+    controls
+    playsinline
+    preload="metadata"
+    aria-label={label}
+    muted={!!muted}
+  >
+    <source src={src} />
+  </video>
+
+  <button class="play" type="button" aria-label={label}>
+    <svg version="1.1" viewBox="0 0 1000 1000" class="play-icon">
+      <polygon
+        points="1000 500, 250 66.98729810778059, 250 933.0127018922192"
+        fill="white"
+        class="play-fill"
+      >
+      </polygon>
+    </svg>
+  </button>
+
+  {
+    musicLicense && (
+      <small class="music-license">
+        <a
+          href={musicLicense}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-content-light hover:text-content"
+        >
+          Music License
+        </a>
+      </small>
+    )
+  }
+</al-video>
+
+<script>
+  class VideoPlayer extends HTMLElement {
+    connectedCallback() {
+      const video = this.querySelector("video");
+      const playButton = this.querySelector("button");
+      if (!video || !playButton) return;
+
+      playButton.addEventListener("click", () => video.play());
+
+      video.addEventListener("playing", () => {
+        this.classList.add("is-playing");
+        this.classList.add("has-started");
+      });
+
+      video.addEventListener("pause", () =>
+        this.classList.remove("is-playing"),
+      );
+
+      video.addEventListener("ended", () =>
+        this.classList.remove("is-playing"),
+      );
+    }
+  }
+
+  if (!customElements.get("al-video"))
+    customElements.define("al-video", VideoPlayer);
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .video-player {
+    @apply block relative overflow-hidden rounded-md transition-colors;
+    background: var(--video-player-bg, var(--color-content-dark));
+
+    &.has-started .play {
+      @apply opacity-0 pointer-events-none;
+    }
+  }
+
+  video {
+    @apply block size-full transition-opacity;
+    object-fit: contain;
+  }
+
+  .play {
+    @apply absolute border-0 bg-transparent cursor-pointer p-0 transition-all;
+    width: 80px;
+    height: 80px;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+  }
+
+  .play-icon {
+    @apply block size-full;
+  }
+
+  .play-fill {
+    @apply shadow-xl drop-shadow-2xl;
+  }
+
+  .video-player.is-playing .play {
+    @apply opacity-0 pointer-events-none;
+  }
+
+  .video-player:hover .music-license {
+    @apply opacity-80;
+  }
+
+  .music-license {
+    @apply absolute bottom-0 right-0 text-xs text-content-light p-2 opacity-0 hover:opacity-100 transition-opacity;
+  }
+</style>

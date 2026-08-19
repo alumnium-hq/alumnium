@@ -75,7 +75,7 @@ public final class SeleniumDriver extends BaseDriver {
   }
 
   @Override
-  public ChromiumAccessibilityTree accessibilityTree() {
+  protected ChromiumAccessibilityTree fetchAccessibilityTree() {
     driver.switchTo().defaultContent();
     waitForPageToLoad();
 

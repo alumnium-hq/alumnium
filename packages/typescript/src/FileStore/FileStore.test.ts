@@ -54,6 +54,24 @@ describe("FileStore", () => {
     });
   });
 
+  describe("FileStore.cwdRelStore", () => {
+    it("resolves a store relative to cwd", () => {
+      expect(FileStore.cwdRelStore("test/store").dir).toBe(
+        path.resolve("test/store"),
+      );
+    });
+
+    it("resolves cwd when the nested store is omitted", () => {
+      expect(FileStore.cwdRelStore().dir).toBe(process.cwd());
+    });
+
+    it("rejects an absolute path", () => {
+      expect(() => FileStore.cwdRelStore(path.resolve("test/store"))).toThrow(
+        "must be relative",
+      );
+    });
+  });
+
   describe("ensureFilePath", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
@@ -223,6 +241,72 @@ describe("FileStore", () => {
       const data = { age: 30 };
       await fs.writeFile(filePath, JSON.stringify(data));
       await expect(store.readJson("data.json", Schema)).rejects.toThrow();
+    });
+  });
+
+  describe("remove", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("removes an existing file", async () => {
+      const { store } = setup.cur;
+      const filePath = await store.writeFile("sub/dir/file.txt", "Hello");
+      await store.remove("sub/dir/file.txt");
+      await expect(fs.stat(filePath)).rejects.toThrow("ENOENT");
+    });
+
+    it("doesn't throw if the file doesn't exist", async () => {
+      const { store } = setup.cur;
+      await expect(store.remove("nonexistent.txt")).resolves.toBeUndefined();
+    });
+  });
+
+  describe("mtime", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("returns the last-modified time of an existing file", async () => {
+      const { store } = setup.cur;
+      const filePath = await store.writeFile("file.txt", "Hello");
+      const stat = await fs.stat(filePath);
+      const mtime = await store.mtime("file.txt");
+      expect(mtime).toBe(stat.mtimeMs);
+    });
+
+    it("returns null if the file doesn't exist", async () => {
+      const { store } = setup.cur;
+      const mtime = await store.mtime("nonexistent.txt");
+      expect(mtime).toBeNull();
+    });
+  });
+
+  describe("rename", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("renames an existing file", async () => {
+      const { store } = setup.cur;
+      const fromPath = await store.writeFile("sub/dir/from.txt", "Hello");
+      await store.rename("sub/dir/from.txt", "sub/dir/to.txt");
+      await expect(fs.stat(fromPath)).rejects.toThrow("ENOENT");
+      const content = await store.readText("sub/dir/to.txt");
+      expect(content).toBe("Hello");
+    });
+
+    it("throws if the source file doesn't exist", async () => {
+      const { store } = setup.cur;
+      await expect(
+        store.rename("nonexistent.txt", "destination.txt"),
+      ).rejects.toThrow();
     });
   });
 

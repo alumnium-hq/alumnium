@@ -1,0 +1,40 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="Shadow DOM Test Page" focusable="true" focused="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/shadow_dom.html">
+  <none raw_id="2" backendDOMNodeId="2" nodeId="f0:2" ignored="true">
+    <none raw_id="3" backendDOMNodeId="7" nodeId="f0:7" ignored="true">
+      <heading raw_id="4" backendDOMNodeId="8" nodeId="f0:8" ignored="false" name="Shadow DOM Test Page" level="1">
+        <StaticText raw_id="5" backendDOMNodeId="19" nodeId="f0:19" ignored="false" name="Shadow DOM Test Page">
+          <InlineTextBox raw_id="6" nodeId="f0:-1000000002" ignored="false" name="Shadow DOM Test Page"/>
+        </StaticText>
+      </heading>
+      <paragraph raw_id="7" backendDOMNodeId="9" nodeId="f0:9" ignored="false" name="">
+        <StaticText raw_id="8" backendDOMNodeId="20" nodeId="f0:20" ignored="false" name="This page contains Shadow DOM elements for testing Alumni support.">
+          <InlineTextBox raw_id="9" nodeId="f0:-1000000003" ignored="false" name="This page contains Shadow DOM elements for testing Alumni support."/>
+        </StaticText>
+      </paragraph>
+      <generic raw_id="10" backendDOMNodeId="10" nodeId="f0:10" ignored="false" name="">
+        <paragraph raw_id="11" backendDOMNodeId="12" nodeId="f0:12" ignored="false" name="">
+          <StaticText raw_id="12" backendDOMNodeId="31" nodeId="f0:31" ignored="false" name="Shadow Button 1 was clicked!">
+            <InlineTextBox raw_id="13" nodeId="f0:-1000000009" ignored="false" name="Shadow Button 1 was clicked!"/>
+          </StaticText>
+        </paragraph>
+        <button raw_id="14" backendDOMNodeId="13" nodeId="f0:13" ignored="false" name="First Shadow Button" invalid="false" focusable="true">
+          <StaticText raw_id="15" backendDOMNodeId="22" nodeId="f0:22" ignored="false" name="First Shadow Button">
+            <InlineTextBox raw_id="16" nodeId="f0:-1000000005" ignored="false" name="First Shadow Button"/>
+          </StaticText>
+        </button>
+      </generic>
+      <generic raw_id="17" backendDOMNodeId="14" nodeId="f0:14" ignored="false" name="">
+        <paragraph raw_id="18" backendDOMNodeId="16" nodeId="f0:16" ignored="false" name="">
+          <StaticText raw_id="19" backendDOMNodeId="33" nodeId="f0:33" ignored="false" name="Shadow Button 2 was clicked!">
+            <InlineTextBox raw_id="20" nodeId="f0:-1000000011" ignored="false" name="Shadow Button 2 was clicked!"/>
+          </StaticText>
+        </paragraph>
+        <button raw_id="21" backendDOMNodeId="17" nodeId="f0:17" ignored="false" name="Second Shadow Button" invalid="false" focusable="true" focused="true">
+          <StaticText raw_id="22" backendDOMNodeId="24" nodeId="f0:24" ignored="false" name="Second Shadow Button">
+            <InlineTextBox raw_id="23" nodeId="f0:-1000000007" ignored="false" name="Second Shadow Button"/>
+          </StaticText>
+        </button>
+      </generic>
+    </none>
+  </none>
+</RootWebArea>

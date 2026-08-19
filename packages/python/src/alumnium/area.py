@@ -41,6 +41,8 @@ class Area:
         Returns:
             DoResult containing the explanation and executed steps with their actions.
         """
+        self.driver.set_accessibility_tree(self.accessibility_tree)
+
         explanation, steps = self.client.plan_actions(goal, self.accessibility_tree.to_str(), app=self.driver.app)
 
         executed_steps = []
@@ -121,5 +123,6 @@ class Area:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
+        self.driver.set_accessibility_tree(self.accessibility_tree)
         response = self.client.find_element(description, self.accessibility_tree.to_str(), app=self.driver.app)
         return self.driver.find_element(response["id"])

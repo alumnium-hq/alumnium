@@ -6,9 +6,16 @@ set -euo pipefail
 
 PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TEST_DIR="$PKG_DIR/tests/pip"
+ALUMNIUM_TEST_RETRY_COUNT="${ALUMNIUM_TEST_RETRY_COUNT:-0}"
+ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
+ALUMNIUM_TEST_RETRY_DELAY_SEC="$(printf '%s.%03d' \
+	"$((ALUMNIUM_TEST_RETRY_DELAY / 1000))" \
+	"$((ALUMNIUM_TEST_RETRY_DELAY % 1000))")"
 
 VERSION="$(mise //:version)"
 VERSION="${VERSION//-alpha./a}"
+PLAYWRIGHT_VERSION="$(uv run --project "$PKG_DIR" python -c \
+	'import importlib.metadata; print(importlib.metadata.version("playwright"))')"
 
 write_pyproject_toml() {
 	cat >"$TEST_DIR/pyproject.toml" <<EOF
@@ -20,7 +27,7 @@ requires-python = ">=3.10"
 dependencies = [
 	"alumnium==$VERSION",
 	"alumnium-cli==$VERSION; (sys_platform == 'linux' or sys_platform == 'darwin' or sys_platform == 'win32') and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')",
-	"playwright>=1.49,<2.0",
+	"playwright==$PLAYWRIGHT_VERSION",
 	"pytest-retry>=1.7.0,<2.0.0",
 	"pytest>=8.3.3,<9.0.0",
 ]
@@ -74,6 +81,13 @@ else
 	exit 1
 fi
 
+SMOKE_PLAYWRIGHT_VERSION="$(uv run python -c \
+	'import importlib.metadata; print(importlib.metadata.version("playwright"))')"
+if [[ "$SMOKE_PLAYWRIGHT_VERSION" != "$PLAYWRIGHT_VERSION" ]]; then
+	echo "🔴 Playwright version mismatch: expected $PLAYWRIGHT_VERSION, got $SMOKE_PLAYWRIGHT_VERSION"
+	exit 1
+fi
+
 if version_output=$(uv run alumnium --version 2>&1); then
 	if [[ "$version_output" == *"alumnium/"* ]]; then
 		echo "🟢 Binary OK: 'alumnium --version' printed '$version_output'"
@@ -91,7 +105,9 @@ fi
 
 echo -e "\n🌀 Running pytest Playwright smoke test\n"
 
-ALUMNIUM_LOG_LEVEL=warning fnox exec -- uv run pytest --retries=3
+ALUMNIUM_LOG_LEVEL=warning fnox exec -- uv run pytest \
+	--retries "$ALUMNIUM_TEST_RETRY_COUNT" \
+	--retry-delay "$ALUMNIUM_TEST_RETRY_DELAY_SEC"
 
 echo -e "\n🟢 Pytest OK: Tests executed successfully"
 echo -e "\n🎉 All pip package tests passed!\n"

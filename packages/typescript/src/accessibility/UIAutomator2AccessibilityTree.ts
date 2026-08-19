@@ -1,17 +1,20 @@
-import { always } from "alwaysly";
 import { Element } from "domhandler";
 import { pythonicSplitlines } from "../pythonic/pythonicSplitlines.ts";
-import { Xml } from "../Xml.ts";
+import { Xml } from "../xml/Xml.ts";
+import { XmlRenderer } from "../xml/XmlRenderer.ts";
 import type { AccessibilityElement } from "./AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
 
-export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
+export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree<string> {
   #xmlString: string;
   #nextRawId: number;
-  #raw: string | null;
+
+  protected override get kind(): string {
+    return "uiautomator2";
+  }
 
   constructor(xmlString: string) {
-    super();
+    super(xmlString);
     // cleaning multiple xml declaration lines from page source
     const xmlDeclarationPattern = /^\s*<\?xml.*\?>\s*$/;
     const lines = pythonicSplitlines(xmlString);
@@ -22,13 +25,12 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     this.#xmlString = `<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n <root>\n${cleanedXmlContent}\n</root>`;
 
     this.#nextRawId = 0;
-    this.#raw = null;
   }
 
   /** Parse XML and add raw_id attributes to all elements. */
   toStr(): string {
-    if (this.#raw !== null) {
-      return this.#raw;
+    if (this.xml !== null) {
+      return this.xml;
     }
 
     // Parse the XML
@@ -40,8 +42,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     this.#addRawIds(root);
 
     // Serialize back to string
-    this.#raw = Xml.format([root]);
-    return this.#raw;
+    return (this.xml = XmlRenderer.render([root]));
   }
 
   /** Recursively add raw_id attribute to element and its children. */
@@ -114,7 +115,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
       }
       for (const child of Array.from(elem.children)) {
         const childEl = Xml.nodeAsTag(child);
-        always(childEl);
+        if (!childEl) continue; // Skip non-element nodes, e.g., text nodes
         const result = findElement(childEl, targetId);
         if (result !== null) {
           return result;
@@ -131,7 +132,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree {
     }
 
     // Convert the scoped element back to XML string
-    const scopedXml = Xml.format([targetElem]);
+    const scopedXml = XmlRenderer.render([targetElem]);
 
     return new UIAutomator2AccessibilityTree(scopedXml);
   }

@@ -1,0 +1,186 @@
+---
+const agentLogos = Object.entries(
+  import.meta.glob<LogoModule>(
+    "../../../../../assets/logos/coding-agent-*-mono.svg",
+    { query: "?url", eager: true },
+  ),
+);
+validateLogos("coding agent", agentLogos);
+
+const aiLogos = Object.entries(
+  import.meta.glob<LogoModule>("../../../../../assets/logos/ai-*-mono.svg", {
+    query: "?url",
+    eager: true,
+  }),
+);
+validateLogos("AI", aiLogos);
+
+const driverLogos = Object.entries(
+  import.meta.glob<LogoModule>(
+    "../../../../../assets/logos/driver-*-mono.svg",
+    { query: "?url", eager: true },
+  ),
+);
+validateLogos("driver", driverLogos);
+
+const langLogos = Object.entries(
+  import.meta.glob<LogoModule>("../../../../../assets/logos/lang-*-mono.svg", {
+    query: "?url",
+    eager: true,
+  }),
+);
+validateLogos("language", langLogos);
+
+function trackStyle(count: number): Record<string, string> {
+  return {
+    "--scroller-count": `${count}`,
+  };
+}
+
+function validateLogos(kind: string, logos: LogoEntry[]) {
+  if (logos.length === 0) throw new Error(`No ${kind} logos found`);
+}
+
+function repeatLogos(logos: LogoEntry[], minimumCount: number): LogoEntry[] {
+  return Array.from(
+    { length: Math.ceil(minimumCount / logos.length) },
+    () => logos,
+  ).flat();
+}
+
+interface LogoModule {
+  default: string;
+}
+
+type LogoEntry = [path: string, module: LogoModule];
+---
+
+{
+  () => {
+    function renderTrack(dir: "down" | "up", logos: LogoEntry[]) {
+      const cycle = repeatLogos(logos, 6);
+      const trackLogos = [...cycle, ...cycle];
+
+      return (
+        <div class="marquee" data-direction={dir}>
+          <div class="track" style={trackStyle(cycle.length)}>
+            {trackLogos.map(([_, logo]) => (
+              <img src={logo.default} aria-hidden />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div class="group">
+        {renderTrack("down", agentLogos)}
+
+        {renderTrack("up", aiLogos)}
+
+        {renderTrack("down", driverLogos)}
+
+        {renderTrack("up", langLogos)}
+      </div>
+    );
+  }
+}
+
+<style>
+  @reference "#/styles/global.css";
+
+  .group {
+    @apply flex items-stretch gap-2 md:gap-3;
+
+    --scroller-height: calc(
+      (var(--scroller-logo-size) + var(--scroller-gap-y)) *
+        var(--scroller-visible-count)
+    );
+
+    --scroller-visible-count: 3;
+    --scroller-logo-size: 40px;
+    --scroller-gap-y: calc(var(--scroller-logo-size) / 1.6);
+
+    @variant md {
+      --scroller-visible-count: 5;
+      --scroller-gap-y: 28px;
+      --scroller-logo-size: 50px;
+    }
+
+    @variant lg {
+      --scroller-visible-count: 5;
+      --scroller-gap-y: 32px;
+      --scroller-logo-size: 60px;
+    }
+  }
+
+  .marquee {
+    flex: 0 0 calc(var(--scroller-logo-size) * 1.5);
+    height: var(--scroller-height);
+    overflow: hidden;
+    position: relative;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+  }
+
+  .track {
+    --scroller-distance: calc(
+      var(--scroller-count) *
+        (var(--scroller-logo-size) + var(--scroller-gap-y)) * -1
+    );
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation-name: logo-scroll-up;
+    animation-duration: calc(var(--scroller-count) * 2s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+
+  .marquee[data-direction="down"] .track {
+    animation-name: logo-scroll-down;
+  }
+
+  .track img {
+    height: var(--scroller-logo-size);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-bottom: var(--scroller-gap-y);
+  }
+
+  @keyframes logo-scroll-up {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+      transform: translate3d(0, var(--scroller-distance), 0);
+    }
+  }
+
+  @keyframes logo-scroll-down {
+    0% {
+      transform: translate3d(0, var(--scroller-distance), 0);
+    }
+
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+</style>

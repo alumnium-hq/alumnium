@@ -1,0 +1,22 @@
+<div id=1>
+  <div id=12 content-desc="Web View" />
+  <div id=13 resource-id="control_container">
+    <div id=14 resource-id="toolbar_container">
+      <div id=15 resource-id="toolbar">
+        <ImageButton id=16 content-desc="Home" resource-id="home_button" clickable />
+        <div id=17 resource-id="location_bar">
+          <div id=18 resource-id="location_bar_status" clickable>
+            <ImageView id=21 content-desc="Your connection to this site is not secure" resource-id="location_bar_status_icon" />
+          </div>
+          <EditText id=22 resource-id="url_bar" clickable>bonigarcia.dev/selenium-webdriver-java/web-form.html</EditText>
+        </div>
+        <div id=23 resource-id="toolbar_buttons">
+          <ImageButton id=24 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+          <ImageButton id=26 content-desc="More options" resource-id="menu_button" clickable />
+        </div>
+      </div>
+      <ImageView id=27 resource-id="toolbar_hairline" />
+    </div>
+    <ProgressBar id=28 />
+  </div>
+</div>

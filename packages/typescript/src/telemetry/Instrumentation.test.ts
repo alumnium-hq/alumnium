@@ -14,6 +14,11 @@ describe("Instrumentation", () => {
           "file:///home/koss/code/alumnium/packages/typescript/src/server/agents/AreaAgent.ts",
         ),
       ).toBe("server.agents.area_agent");
+      expect(
+        Instrumentation.moduleUrlToName(
+          "file:///home/koss/code/alumnium/packages/typescript/tests/system/setup.ts",
+        ),
+      ).toBe("tests.system.setup");
     });
   });
 });

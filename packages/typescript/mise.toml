@@ -26,6 +26,7 @@ sources = [
   "*.md",
 ]
 outputs = ["dist/**/*"]
+tools = { java = "21" }
 
 [tasks."build/generate"]
 run = { task = "build/generate:bundles" }
@@ -211,6 +212,7 @@ run = { task = "test/cache", args = ["xai"] }
 
 [tasks."test/package"]
 run = "./scripts/test-package.sh"
+tools = { pnpm = "latest" }
 
 [tasks.eval]
 run = "fnox exec -- bun evalite"
@@ -268,3 +270,7 @@ description = "Generates LchainSchema from scanned types. See docs/contributing/
 run = '''
 mise :generate/types-scan-schema:class ./src/llm/Lchain.serialized.types-scan.json LchainSchema > ./src/llm/LchainSchema.ts
 '''
+
+[tasks."bench/tree-tokens"]
+description = "Benchmarks tree tokens."
+run = "bun scripts/report-tree-tokens.ts"

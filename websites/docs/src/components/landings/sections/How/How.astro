@@ -1,0 +1,103 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import Timeline from "../../blocks/Timeline.astro";
+import Heading from "../../blocks/SectionHeading.astro";
+import Install from "./Install.astro";
+import SetUp from "./SetUp.astro";
+import Test from "./Test.astro";
+import Run from "./Run.astro";
+import Icon from "#/components/Icon.astro";
+
+export const id = "get-started";
+
+const t = tt.landings.sections.how.en;
+const tSteps = tt.landings.sections.howSteps;
+---
+
+<div class="bento">
+  <Section style="compact">
+    <Heading h={2} t={t} style="enlarge" align />
+
+    <div class="get-started-timeline">
+      <Timeline
+        id="how"
+        items={[
+          {
+            id: "heading",
+            style: "header",
+          },
+
+          ...Object.entries(tSteps).map(([id, step]) => ({
+            id,
+
+            heading: { h: 3 },
+            t: step.heading.en,
+          })),
+        ]}
+        style="center"
+        cols={2}
+      >
+        <Fragment slot="heading">
+          <div class="timeline-header get-started-for is-left">
+            <h3>
+              <Icon id="robot" style="300" />
+              <span class="text">{t.agents.headline}</span>
+            </h3>
+          </div>
+
+          <div class="timeline-header get-started-for is-right">
+            <h3>
+              <Icon id="face" style="300" />
+              <span class="text">{t.engineers.headline}</span>
+            </h3>
+          </div>
+        </Fragment>
+
+        <Fragment slot="install">
+          <Install />
+        </Fragment>
+
+        <Fragment slot="set-up">
+          <SetUp />
+        </Fragment>
+
+        <Fragment slot="test">
+          <Test />
+        </Fragment>
+
+        <Fragment slot="run">
+          <Run />
+        </Fragment>
+      </Timeline>
+    </div>
+  </Section>
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .get-started-timeline {
+    @apply pt-[0.5rem];
+  }
+
+  .get-started-for {
+    &.is-left > h3 {
+      @apply md:justify-end;
+    }
+
+    &.is-right > h3 {
+      & .icon {
+        @apply md:order-2;
+      }
+    }
+
+    & > h3 {
+      @apply text-accent-400 font-display text-ms md:text-base font-medium text-base relative top-[-2px] flex items-center gap-2;
+
+      & .text {
+        @apply leading-none capsize;
+      }
+    }
+  }
+</style>

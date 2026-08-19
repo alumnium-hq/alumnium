@@ -1,0 +1,66 @@
+---
+import { tt } from "#/copy";
+import Logotype from "#/assets/logotype.svg";
+import VideoPlayer from "#/components/blocks/VideoPlayer.astro";
+import HeroBanner from "./HeroBanner.astro";
+import DecorationAtom from "../../blocks/DecorationAtom.astro";
+import Heading from "../../blocks/SectionHeading.astro";
+import HeroDemo from "./HeroDemo.astro";
+import HeroLinks from "./HeroLinks.astro";
+import SectionExtra from "../../blocks/SectionExtra.astro";
+
+const t = tt.landings.sections.hero.en;
+---
+
+<div class="content-inner hero overflow-hidden sm:overflow-visible">
+  <HeroBanner />
+
+  <div class="flex flex-col items-center gap-5 md:gap-10 max-w-full">
+    <div class="flex flex-col items-center gap-4 sm:gap-6 max-w-full">
+      <Logotype class="h-8 sm:h-10" />
+
+      <Heading h={1} t={t} align />
+
+      <SectionExtra {...t.extra} />
+    </div>
+
+    <div class="flex flex-col gap-4 sm:gap-6 items-center max-w-full">
+      <HeroDemo>
+        <DecorationAtom />
+
+        <VideoPlayer
+          slot="player"
+          src="/videos/landing-demo-hero.mov"
+          label={t.watchDemo}
+          aspectRatio="1920 / 1080"
+          musicLicense="videos/landing-demo-hero-music-license.txt"
+        />
+      </HeroDemo>
+
+      <HeroLinks />
+    </div>
+
+    <a
+      href="#how-install"
+      class="bg-accent-800 rounded-md px-5 py-2 text-white font-medium text-sm no-underline"
+    >
+      {t.ctaGetStarted}
+    </a>
+  </div>
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .hero {
+    @apply relative flex flex-col items-center gap-10 md:gap-16;
+
+    padding-bottom: calc(var(--supersection-padding-y) * 2);
+
+    & :global(.decoration-atom) {
+      @apply absolute;
+      left: calc(50% - var(--atom-size) / 2);
+      top: calc(50% - var(--atom-size) / 2);
+    }
+  }
+</style>

@@ -1,0 +1,67 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="Multiple File Upload Test" focusable="true" focused="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/multiple_file_upload.html">
+  <none raw_id="2" backendDOMNodeId="3" nodeId="f0:3" ignored="true">
+    <none raw_id="3" backendDOMNodeId="9" nodeId="f0:9" ignored="true">
+      <heading raw_id="4" backendDOMNodeId="10" nodeId="f0:10" ignored="false" name="Multiple File Upload Test" level="1">
+        <StaticText raw_id="5" backendDOMNodeId="24" nodeId="f0:24" ignored="false" name="Multiple File Upload Test">
+          <InlineTextBox raw_id="6" nodeId="f0:-1000000002" ignored="false" name="Multiple File Upload Test"/>
+        </StaticText>
+      </heading>
+      <none raw_id="7" backendDOMNodeId="2" nodeId="f0:2" ignored="true">
+        <heading raw_id="8" backendDOMNodeId="11" nodeId="f0:11" ignored="false" name="📁 Upload Multiple Files" level="2">
+          <StaticText raw_id="9" backendDOMNodeId="25" nodeId="f0:25" ignored="false" name="📁 Upload Multiple Files">
+            <InlineTextBox raw_id="10" nodeId="f0:-1000000003" ignored="false" name="📁 Upload Multiple Files"/>
+          </StaticText>
+        </heading>
+        <paragraph raw_id="11" backendDOMNodeId="12" nodeId="f0:12" ignored="false" name="">
+          <StaticText raw_id="12" backendDOMNodeId="26" nodeId="f0:26" ignored="false" name="Select multiple files to test the upload functionality">
+            <InlineTextBox raw_id="13" nodeId="f0:-1000000004" ignored="false" name="Select multiple files to test the upload functionality"/>
+          </StaticText>
+        </paragraph>
+        <button raw_id="14" backendDOMNodeId="13" nodeId="f0:13" ignored="false" name="Multiple File Input" invalid="false" focusable="true" focused="true"/>
+        <generic raw_id="15" backendDOMNodeId="16" nodeId="f0:16" ignored="false" name="">
+          <generic raw_id="16" backendDOMNodeId="48" nodeId="f0:48" ignored="false" name="">
+            <StaticText raw_id="17" backendDOMNodeId="49" nodeId="f0:49" ignored="false" name="2 files selected">
+              <InlineTextBox raw_id="18" nodeId="f0:-1000000012" ignored="false" name="2 files selected"/>
+            </StaticText>
+          </generic>
+        </generic>
+        <generic raw_id="19" backendDOMNodeId="17" nodeId="f0:17" ignored="false" name="">
+          <heading raw_id="20" backendDOMNodeId="40" nodeId="f0:40" ignored="false" name="Selected Files:" level="3">
+            <StaticText raw_id="21" backendDOMNodeId="41" nodeId="f0:41" ignored="false" name="Selected Files:">
+              <InlineTextBox raw_id="22" nodeId="f0:-1000000013" ignored="false" name="Selected Files:"/>
+            </StaticText>
+          </heading>
+          <none raw_id="23" backendDOMNodeId="44" nodeId="f0:44" ignored="true">
+            <none raw_id="24" backendDOMNodeId="42" nodeId="f0:42" ignored="true">
+              <StaticText raw_id="25" backendDOMNodeId="51" nodeId="f0:51" ignored="false" name="1. 59252e7e-4d49-4b0a-a863-7edd738265dd.txt">
+                <InlineTextBox raw_id="26" nodeId="f0:-1000000014" ignored="false" name="1. 59252e7e-4d49-4b0a-a863-7edd738265dd.txt"/>
+              </StaticText>
+            </none>
+            <none raw_id="27" backendDOMNodeId="43" nodeId="f0:43" ignored="true">
+              <StaticText raw_id="28" backendDOMNodeId="52" nodeId="f0:52" ignored="false" name="14 Bytes">
+                <InlineTextBox raw_id="29" nodeId="f0:-1000000015" ignored="false" name="14 Bytes"/>
+              </StaticText>
+            </none>
+          </none>
+          <none raw_id="30" backendDOMNodeId="47" nodeId="f0:47" ignored="true">
+            <none raw_id="31" backendDOMNodeId="45" nodeId="f0:45" ignored="true">
+              <StaticText raw_id="32" backendDOMNodeId="53" nodeId="f0:53" ignored="false" name="2. a12c9ecb-3296-4056-a6c0-bd5a7d129fa0.txt">
+                <InlineTextBox raw_id="33" nodeId="f0:-1000000016" ignored="false" name="2. a12c9ecb-3296-4056-a6c0-bd5a7d129fa0.txt"/>
+              </StaticText>
+            </none>
+            <none raw_id="34" backendDOMNodeId="46" nodeId="f0:46" ignored="true">
+              <StaticText raw_id="35" backendDOMNodeId="54" nodeId="f0:54" ignored="false" name="14 Bytes">
+                <InlineTextBox raw_id="36" nodeId="f0:-1000000017" ignored="false" name="14 Bytes"/>
+              </StaticText>
+            </none>
+          </none>
+        </generic>
+        <button raw_id="37" backendDOMNodeId="18" nodeId="f0:18" ignored="false" name="Upload Files" invalid="false" focusable="true">
+          <StaticText raw_id="38" backendDOMNodeId="27" nodeId="f0:27" ignored="false" name="Upload Files">
+            <InlineTextBox raw_id="39" nodeId="f0:-1000000005" ignored="false" name="Upload Files"/>
+          </StaticText>
+        </button>
+      </none>
+    </none>
+  </none>
+</RootWebArea>

@@ -30,6 +30,7 @@ describe("To Do application", () => {
     await $.navigate("https://todomvc.com/examples/vue/dist");
     await al.do('create a new task "Buy milk"');
     expect(await al.get("titles of tasks")).toContain("Buy milk");
+    await al.check("tasks counter is 1", { assert: expect.assert });
     await al.check('"Buy milk" task is not marked as completed', {
       assert: expect.assert,
     });
@@ -63,7 +64,7 @@ describe("To Do application", () => {
     await $.navigate("https://todomvc.com/examples/vue/dist");
     await al.do('create a new task "Buy milk"');
     await al.do('create a new task "Buy bread"');
-    await al.do("mark all tasks as completed");
+    await al.do("mark all tasks as completed using the 'Toggle All' button");
     await al.check('"Buy milk" task is marked as completed', {
       assert: expect.assert,
     });

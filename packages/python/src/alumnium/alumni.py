@@ -94,6 +94,7 @@ class Alumni:
             DoResult containing the explanation and executed steps with their actions.
         """
         app = self.driver.app
+        self.driver.reset_accessibility_tree()
         initial_accessibility_tree = self.driver.accessibility_tree
         before_tree = initial_accessibility_tree.to_str() if self.change_analysis else None
         before_url = self.driver.url if self.change_analysis else None
@@ -101,8 +102,10 @@ class Alumni:
 
         executed_steps = []
         for idx, step in enumerate(steps):
-            # If the step is the first step, use the initial accessibility tree.
-            accessibility_tree = initial_accessibility_tree if idx == 0 else self.driver.accessibility_tree
+            # Use the initial tree for the first step, a fresh tree afterwards.
+            if idx > 0:
+                self.driver.reset_accessibility_tree()
+            accessibility_tree = self.driver.accessibility_tree
             actor_explanation, actions = self.client.execute_action(goal, step, accessibility_tree.to_str(), app=app)
 
             # When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -121,6 +124,7 @@ class Alumni:
             try:
                 assert before_tree is not None
                 assert before_url is not None
+                self.driver.reset_accessibility_tree()
                 changes = self.client.analyze_changes(
                     before_accessibility_tree=before_tree,
                     before_url=before_url,
@@ -147,6 +151,7 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
+        self.driver.reset_accessibility_tree()
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
             self.driver.accessibility_tree.to_str(),
@@ -170,6 +175,7 @@ class Alumni:
         Returns:
             The extracted data. If data cannot be extracted, returns the explanation string.
         """
+        self.driver.reset_accessibility_tree()
         explanation, value = self.client.retrieve(
             data,
             self.driver.accessibility_tree.to_str(),
@@ -191,6 +197,7 @@ class Alumni:
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
+        self.driver.reset_accessibility_tree()
         response = self.client.find_element(description, self.driver.accessibility_tree.to_str(), app=self.driver.app)
         return self.driver.find_element(response["id"])
 
@@ -208,6 +215,7 @@ class Alumni:
         Returns:
             Area: An instance of the Area class that represents the area of the accessibility tree to use.
         """
+        self.driver.reset_accessibility_tree()
         accessibility_tree = self.driver.accessibility_tree
         response = self.client.find_area(description, accessibility_tree.to_str(), app=self.driver.app)
         return Area(

@@ -1,0 +1,92 @@
+<RootWebArea name="Hands-On Selenium WebDriver with Java" id=1 focusable focused url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
+  <main id=4>
+    <div id=6>
+      <div id=7>
+        <heading id=8 level=1>Hands-On Selenium WebDriver with Java</heading>
+        <heading id=10 level=5>Practice site</heading>
+      </div>
+      <link id=13 focusable url="https://github.com/bonigarcia/selenium-webdriver-java">
+        <image id=14 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png" />
+      </link>
+    </div>
+    <separator id=17 settable orientation="horizontal" />
+    <heading id=20 level=1>Web form</heading>
+    <div id=23>
+      <div id=24>
+        <LabelText id=25>
+          Text input
+          <textbox name="Text input" id=27 focusable editable="plaintext" settable />
+        </LabelText>
+        <LabelText id=29>
+          Password
+          <textbox name="Password" id=31 focusable editable="plaintext" settable />
+        </LabelText>
+        <LabelText id=33>
+          Textarea
+          <textbox name="Textarea" id=35 focusable editable="plaintext" settable multiline />
+        </LabelText>
+        <LabelText id=37>
+          Disabled input
+          <textbox name="Disabled input" id=39 disabled editable="plaintext" />
+        </LabelText>
+        <LabelText id=42>
+          Readonly input
+          <textbox id=44 focusable editable="plaintext" readonly>Readonly input</textbox>
+        </LabelText>
+        <link id=48 focusable url="https://bonigarcia.dev/selenium-webdriver-java/index.html">Return to index</link>
+      </div>
+      <div id=50>
+        <LabelText id=51>
+          Dropdown (select)
+          <combobox name="Dropdown (select)" id=53 focusable>
+            <option name="Open this select menu" id=56 focusable selected="false" />
+            <option name="One" id=57 focusable selected="false" />
+            <option name="Two" id=58 focusable selected="false" />
+            <option name="Three" id=59 focusable selected="false" />
+          </combobox>
+        </LabelText>
+        <LabelText id=60>
+          Dropdown (datalist)
+          <combobox name="Dropdown (datalist)" id=62 focusable editable="plaintext" settable autocomplete="list" />
+        </LabelText>
+        <LabelText id=68>
+          File input
+          <button name="File input" id=70 focusable />
+        </LabelText>
+        <div id=71>
+          <LabelText id=72>
+            <checkbox name="Checked checkbox" id=73 focusable checked />
+            Checked checkbox
+          </LabelText>
+          <LabelText id=75>
+            <checkbox name="Default checkbox" id=76 focusable checked="false" />
+            Default checkbox
+          </LabelText>
+        </div>
+        <radio name="Checked radio" id=80 focusable checked />
+        <radio name="Default radio" id=84 focusable checked="false" />
+        <button id=86 focusable>Submit</button>
+      </div>
+      <div id=88>
+        <LabelText id=89>
+          Color picker
+          <ColorWell name="Color picker" id=91 focusable settable />
+        </LabelText>
+        <LabelText id=94>
+          Date picker
+          <textbox name="Date picker" id=96 focusable editable="plaintext" settable />
+        </LabelText>
+        <LabelText id=98>
+          Example range
+          <slider name="Example range" id=100 focusable settable orientation="horizontal" valuemin=0 valuemax=10 />
+        </LabelText>
+      </div>
+    </div>
+  </main>
+  <contentinfo id=101>
+    <div id=102>
+      Copyright © 2021-2026
+      <link id=104 focusable url="https://bonigarcia.dev/">Boni García</link>
+    </div>
+  </contentinfo>
+</RootWebArea>

@@ -1,0 +1,114 @@
+<Application name="Safari" id=1>
+  <Window id=2>
+    <div name="SafariWindow?View=Narrow&amp;BarsKeptMinimized=false&amp;UUID=93F2A78-D34-45E-8848-FC5DD46EFFCC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false" id=11>
+      <ScrollView id=18>
+        <div name="TabDocument?IsLoadedUsingDesktopUserAgent=false&amp;InReaderMode=false&amp;UUID=A77B726A-4DA-4B7-988C-95D5A384C8&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=44861" id=19>
+          <WebView name="WebView" id=20>
+            <WebView id=21>
+              <WebView id=23>
+                <div name="main" id=28>
+                  <div id=29 value=1>Hands-On Selenium WebDriver with Java</div>
+                  <div id=31 value=5>Practice site</div>
+                  <Link id=34>
+                    <Image id=35 />
+                  </Link>
+                  <div name="separator" id=36 />
+                  <div id=37 value=1>Web form</div>
+                  <div name="form" id=39>
+                    <div id=40>
+                      <div id=41>Text input</div>
+                      <TextField name="Text input" id=42 />
+                    </div>
+                    <div id=43>
+                      <div id=44>Password</div>
+                      <SecureTextField name="Password" id=45 />
+                    </div>
+                    <div id=46>
+                      <div id=47>Textarea</div>
+                      <TextView name="Textarea" id=48 />
+                    </div>
+                    <div id=49>
+                      <div id=50>Disabled input</div>
+                      <TextField name="Disabled input" id=51 />
+                    </div>
+                    <div id=52>
+                      <div id=53>Readonly input</div>
+                      <TextField name="Readonly input" id=54 />
+                    </div>
+                    <Link id=56>Return to index</Link>
+                    <div id=58>
+                      <div id=59>Dropdown (select)</div>
+                      <div name="Dropdown (select)" id=60 value="Open this select menu" />
+                    </div>
+                    <div id=61>
+                      <div id=62>Dropdown (datalist)</div>
+                      <TextField name="Dropdown (datalist)" id=63 value="Type to search..." />
+                    </div>
+                    <div id=64>
+                      <div id=65>File input</div>
+                      <Button name="File input" id=66 value="no file selected" />
+                    </div>
+                    <div id=67>
+                      <div id=68>
+                        <Switch name="Checked checkbox" id=69 value=1 />
+                        <div id=70>Checked checkbox</div>
+                      </div>
+                      <div id=71>
+                        <Switch name="Default checkbox" id=72 value=0 />
+                        <div id=73>Default checkbox</div>
+                      </div>
+                    </div>
+                    <div id=75>
+                      <div name="Checked radio" id=76 value=1 />
+                      <div id=77>Checked radio</div>
+                    </div>
+                    <div id=79>
+                      <div name="Default radio" id=80 value=0 />
+                      <div id=81>Default radio</div>
+                    </div>
+                    <Button name="Submit" id=82 />
+                    <div id=83>
+                      <div id=84>
+                        <div id=85>Color picker</div>
+                        <ColorWell name="Color picker" id=86 value="dark indigo" />
+                      </div>
+                      <div id=87>
+                        <div id=88>Date picker</div>
+                        <TextField name="Date picker" id=89 />
+                      </div>
+                      <div id=90>
+                        <div id=91>Example range</div>
+                        <Slider name="Example range" id=92 value=5.00 />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div name="content information" id=93>
+                  <div id=95>Copyright © 2021-2026</div>
+                  <Link id=96>Boni García</Link>
+                </div>
+              </WebView>
+              <Image name="AdditionalDimmingOverlay" id=100 />
+              <div name="Vertical scroll bar, 2 pages" id=106 value="0 %" />
+              <div name="Horizontal scroll bar, 1 page" id=108 value="0 %" />
+              <div name="Vertical scroll bar, 2 pages" id=110 value="0 %" />
+              <div name="Horizontal scroll bar, 1 page" id=112 value="0 %" />
+            </WebView>
+          </WebView>
+        </div>
+        <div name="Horizontal scroll bar, 1 page" id=114 value="0 %" />
+        <div name="Horizontal scroll bar, 1 page" id=116 value="0 %" />
+      </ScrollView>
+      <div name="CapsuleViewController" id=118>
+        <Button name="BackButton" id=130 label="Back" />
+        <div name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" id=134>
+          <Button name="PageFormatMenuButton" id=135 label="Page Menu" />
+          <TextField name="TabBarItemTitle" id=137 value="‎bonigarcia.dev" label="Address" />
+          <Button name="ReloadButton" id=138 label="refresh" />
+        </div>
+        <Button name="MoreMenuButton" id=141 label="More" />
+      </div>
+    </div>
+  </Window>
+  <Window id=146 />
+</Application>

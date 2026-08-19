@@ -36,13 +36,14 @@ export class UploadTool extends BaseTool {
   }
 
   private normalizePaths(paths: string[]): string[] {
-    // Planner often attempts to "escape" file paths by adding backslashes.
-    // It also often surrounds paths with quotes.
+    // Planner often attempts to "escape" file paths by adding backslashes or
+    // a leading plus. It also often surrounds paths with quotes.
     return paths.map((path) => {
       return path
         .replace(/\\+\//g, "/")
         .replace(/^["']|["']$/g, "")
-        .trim();
+        .trim()
+        .replace(/^\+\//, "/");
     });
   }
 }

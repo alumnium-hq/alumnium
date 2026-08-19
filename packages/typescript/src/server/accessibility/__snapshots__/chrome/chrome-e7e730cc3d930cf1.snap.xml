@@ -1,0 +1,100 @@
+<RootWebArea name="Cross-Origin Test" id=1 focusable focused url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
+  <heading id=4 level=1>Main Page</heading>
+  <paragraph id=6>This page embeds a real cross-origin iframe.</paragraph>
+  <button id=8 focusable>Main Page Button</button>
+  <heading id=10 level=2>Cross-Origin Iframe Below:</heading>
+  <Iframe id=12>
+    <RootWebArea name="Hands-On Selenium WebDriver with Java" id=13 focusable url="https://bonigarcia.dev/selenium-webdriver-java/web-form.html">
+      <main id=16>
+        <div id=18>
+          <div id=19>
+            <heading id=20 level=1>Hands-On Selenium WebDriver with Java</heading>
+            <heading id=22 level=5>Practice site</heading>
+          </div>
+          <link id=25 focusable url="https://github.com/bonigarcia/selenium-webdriver-java">
+            <image id=26 url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png" />
+          </link>
+        </div>
+        <separator id=29 settable orientation="horizontal" />
+        <heading id=32 level=1>Web form</heading>
+        <div id=35>
+          <div id=36>
+            <LabelText id=37>
+              Text input
+              <textbox name="Text input" id=39 focusable editable="plaintext" settable />
+            </LabelText>
+            <LabelText id=41>
+              Password
+              <textbox name="Password" id=43 focusable editable="plaintext" settable />
+            </LabelText>
+            <LabelText id=45>
+              Textarea
+              <textbox name="Textarea" id=47 focusable editable="plaintext" settable multiline />
+            </LabelText>
+            <LabelText id=49>
+              Disabled input
+              <textbox name="Disabled input" id=51 disabled editable="plaintext" />
+            </LabelText>
+            <LabelText id=54>
+              Readonly input
+              <textbox id=56 focusable editable="plaintext" readonly>Readonly input</textbox>
+            </LabelText>
+            <link id=60 focusable url="https://bonigarcia.dev/selenium-webdriver-java/index.html">Return to index</link>
+          </div>
+          <div id=62>
+            <LabelText id=63>
+              Dropdown (select)
+              <combobox name="Dropdown (select)" id=65 focusable>
+                <option name="Open this select menu" id=68 focusable selected="false" />
+                <option name="One" id=69 focusable selected="false" />
+                <option name="Two" id=70 focusable selected="false" />
+                <option name="Three" id=71 focusable selected="false" />
+              </combobox>
+            </LabelText>
+            <LabelText id=72>
+              Dropdown (datalist)
+              <combobox name="Dropdown (datalist)" id=74 focusable editable="plaintext" settable autocomplete="list" />
+            </LabelText>
+            <LabelText id=80>
+              File input
+              <button name="File input" id=82 focusable />
+            </LabelText>
+            <div id=83>
+              <LabelText id=84>
+                <checkbox name="Checked checkbox" id=85 focusable checked />
+                Checked checkbox
+              </LabelText>
+              <LabelText id=87>
+                <checkbox name="Default checkbox" id=88 focusable checked="false" />
+                Default checkbox
+              </LabelText>
+            </div>
+            <radio name="Checked radio" id=92 focusable checked />
+            <radio name="Default radio" id=96 focusable checked="false" />
+            <button id=98 focusable>Submit</button>
+          </div>
+          <div id=100>
+            <LabelText id=101>
+              Color picker
+              <ColorWell name="Color picker" id=103 focusable settable />
+            </LabelText>
+            <LabelText id=106>
+              Date picker
+              <textbox name="Date picker" id=108 focusable editable="plaintext" settable />
+            </LabelText>
+            <LabelText id=110>
+              Example range
+              <slider name="Example range" id=112 focusable settable orientation="horizontal" valuemin=0 valuemax=10 />
+            </LabelText>
+          </div>
+        </div>
+      </main>
+      <contentinfo id=113>
+        <div id=114>
+          Copyright © 2021-2026
+          <link id=116 focusable url="https://bonigarcia.dev/">Boni García</link>
+        </div>
+      </contentinfo>
+    </RootWebArea>
+  </Iframe>
+</RootWebArea>

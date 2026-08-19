@@ -1,0 +1,885 @@
+<RootWebArea name="ai - npm search" id=1 focusable focused url="https://www.npmjs.com/search?q=ai">
+  <region name="Site notifications" id=6>
+    <div id=10>
+      ⚠️
+      <alert id=14 live="assertive" atomic relevant="additions text">
+        npm tokens that bypass 2FA are being restricted — account changes (Aug 2026) and direct publishing (Jan 2027).
+        <link name="Learn how to prepare for the npm bypass 2FA token deprecation" id=16 focusable url="https://github.blog/changelog/2026-07-08-npm-install-time-security-and-gat-bypass2fa-deprecation/">Learn how to prepare →</link>
+      </alert>
+      <button name="Close notification" id=18 focusable>×</button>
+    </div>
+  </region>
+  <div id=22>
+    <banner id=23>
+      <div id=25>
+        <div id=26>
+          skip to:
+          <link name="skip to" id=28 focusable url="https://www.npmjs.com/search?q=ai#main">content</link>
+          <link name="skip to" id=30 focusable url="https://www.npmjs.com/search?q=ai#search">package search</link>
+          <link name="skip to" id=32 focusable url="https://www.npmjs.com/search?q=ai#signin">sign in</link>
+        </div>
+        <div id=34>
+          <button name="Light mode — click for dark" id=35 focusable />
+          <navigation name="duct Navigation" id=36>
+            <list id=37>
+              <listitem id=38 level=1>
+                <link id=39 focusable url="https://www.npmjs.com/products/pro">Pro</link>
+              </listitem>
+              <listitem id=41 level=1>
+                <link id=42 focusable url="https://www.npmjs.com/products/teams">Teams</link>
+              </listitem>
+              <listitem id=44 level=1>
+                <link id=45 focusable url="https://www.npmjs.com/products">Pricing</link>
+              </listitem>
+              <listitem id=47 level=1>
+                <link id=48 focusable url="https://docs.npmjs.com/">Documentation</link>
+              </listitem>
+            </list>
+          </navigation>
+        </div>
+      </div>
+      <div id=51>
+        npm
+        <link name="Npm" id=55 focusable url="https://www.npmjs.com/" />
+        <div id=57>
+          <div id=58>
+            <button id=59 focusable />
+            <div id=60>
+              <combobox name="Search packages" id=62 focusable focused editable="plaintext" settable>
+                <div id=65 editable="plaintext">ai</div>
+              </combobox>
+              <button name="Clear search" id=67 focusable>×</button>
+            </div>
+            <div id=69 live="polite" atomic relevant="additions text">5 suggestions available.</div>
+            <listbox name="Search results" id=72 orientation="vertical">
+              <option name=", version ," id=73 focusable selected="false">
+                <div id=74>
+                  <div id=75>
+                    <strong id=76>ai</strong>
+                    <paragraph id=78>AI SDK by Vercel - build apps like ChatGPT, Claude, Gemini, and more with a single interface for any model using the Vercel AI Gateway or go direct to OpenAI, Anthropic, Google, or any other model provider.</paragraph>
+                  </div>
+                  7.0.51
+                </div>
+              </option>
+              <option name=", version ," id=82 focusable selected="false">
+                <div id=83>
+                  <div id=84>
+                    <strong id=85>@ai-sdk/gateway</strong>
+                    <paragraph id=87>The Gateway provider for the [AI SDK](https://ai-sdk.dev/docs) allows the use of a wide variety of AI models and providers.</paragraph>
+                  </div>
+                  4.0.40
+                </div>
+              </option>
+              <option name=", version ," id=91 focusable selected="false">
+                <div id=92>
+                  <div id=93>
+                    <strong id=94>@ai-sdk/google</strong>
+                    <paragraph id=96>The **[Google provider](https://ai-sdk.dev/providers/ai-sdk-providers/google)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Google Generative AI](https://ai.google/discover/generativeai/) APIs.</paragraph>
+                  </div>
+                  4.0.33
+                </div>
+              </option>
+              <option name=", version ," id=100 focusable selected="false">
+                <div id=101>
+                  <div id=102>
+                    <strong id=103>@ai-sdk/deepseek</strong>
+                    <paragraph id=105>The **[DeepSeek provider](https://ai-sdk.dev/providers/ai-sdk-providers/deepseek)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [DeepSeek](https://www.deepseek.com) platform.</paragraph>
+                  </div>
+                  3.0.21
+                </div>
+              </option>
+              <option name=", version ," id=109 focusable selected="false">
+                <div id=110>
+                  <div id=111>
+                    <strong id=112>@firebase/ai</strong>
+                    <paragraph id=114>The Firebase AI SDK</paragraph>
+                  </div>
+                  2.14.0
+                </div>
+              </option>
+            </listbox>
+          </div>
+          <button id=118 focusable>Search</button>
+        </div>
+        <div id=121>
+          <link id=122 focusable url="https://www.npmjs.com/signup">Sign Up</link>
+          <link id=124 focusable url="https://www.npmjs.com/login">Sign In</link>
+        </div>
+      </div>
+    </banner>
+    <main id=126>
+      <div id=128>
+        <heading id=129 level=1>Search results</heading>
+        <div id=132>
+          <heading id=134 level=2>
+            <div id=135>1000</div>
+            <div id=136>+</div>
+            <div id=138>packages</div>
+            <div id=139>found</div>
+          </heading>
+          <group id=140>
+            <DisclosureTriangle name=". Press Enter to open dropdown" id=142 focusable hasPopup="listbox">
+              <div id=143>Sort by:</div>
+              <div id=144>Default</div>
+            </DisclosureTriangle>
+          </group>
+        </div>
+      </div>
+      <div id=147>
+        <div id=148>
+          <div id=149>
+            <div id=150>
+              <div id=151>
+                <link id=152 focusable url="https://www.npmjs.com/package/ai">
+                  <heading id=153 level=3>ai</heading>
+                </link>
+                <div id=155>exact match</div>
+              </div>
+              <paragraph id=157>AI SDK by Vercel - build apps like ChatGPT, Claude, Gemini, and more with a single interface for any model using the Vercel AI Gateway or go direct to OpenAI, Anthropic, Google, or any other model provider.</paragraph>
+              <list id=159>
+                <listitem id=160 level=1>
+                  <link id=161 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+                <listitem id=163 level=1>
+                  <link id=164 focusable url="https://www.npmjs.com/search?q=keywords:vercel">vercel</link>
+                </listitem>
+                <listitem id=166 level=1>
+                  <link id=167 focusable url="https://www.npmjs.com/search?q=keywords:sdk">sdk</link>
+                </listitem>
+                <listitem id=169 level=1>
+                  <link id=170 focusable url="https://www.npmjs.com/search?q=keywords:llm">llm</link>
+                </listitem>
+                <listitem id=172 level=1>
+                  <link id=173 focusable url="https://www.npmjs.com/search?q=keywords:mcp">mcp</link>
+                </listitem>
+                <listitem id=175 level=1>
+                  <link id=176 focusable url="https://www.npmjs.com/search?q=keywords:tool-calling">tool-calling</link>
+                </listitem>
+                <listitem id=178 level=1>
+                  <link id=179 focusable url="https://www.npmjs.com/search?q=keywords:tools">tools</link>
+                </listitem>
+                <listitem id=181 level=1>
+                  <link id=182 focusable url="https://www.npmjs.com/search?q=keywords:structured-output">structured-output</link>
+                </listitem>
+                <listitem id=184 level=1>
+                  <link id=185 focusable url="https://www.npmjs.com/search?q=keywords:agent">agent</link>
+                </listitem>
+                <listitem id=187 level=1>
+                  <link id=188 focusable url="https://www.npmjs.com/search?q=keywords:agentic">agentic</link>
+                </listitem>
+                <listitem id=190 level=1>
+                  <link id=191 focusable url="https://www.npmjs.com/search?q=keywords:generative">generative</link>
+                </listitem>
+                <listitem id=193 level=1>
+                  <link id=194 focusable url="https://www.npmjs.com/search?q=keywords:genai">genai</link>
+                </listitem>
+                <listitem id=196 level=1>
+                  <link id=197 focusable url="https://www.npmjs.com/search?q=keywords:chatbot">chatbot</link>
+                </listitem>
+                <listitem id=199 level=1>
+                  <link id=200 focusable url="https://www.npmjs.com/search?q=keywords:prompt">prompt</link>
+                </listitem>
+                <listitem id=202 level=1>
+                  <link id=203 focusable url="https://www.npmjs.com/package/ai#keywords">View more</link>
+                </listitem>
+              </list>
+              <div id=205>
+                <link name="publisher" id=208 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=210>
+                  <div id=211>published version</div>
+                  <div id=212>7.0.51</div>
+                  <div id=213>,</div>
+                  <div id=214>18 hours ago</div>
+                  <div id=215>4926</div>
+                  <div id=216>dependents</div>
+                  <div id=217>licensed under $</div>
+                  <div id=218>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=219>
+              <image name="Download statistics" id=220 />
+              <div id=221>76,536,816</div>
+            </div>
+          </div>
+          <div id=223>
+            <div id=224>
+              <link id=226 focusable url="https://www.npmjs.com/package/@ai-sdk/gateway">
+                <heading id=227 level=3>@ai-sdk/gateway</heading>
+              </link>
+              <paragraph id=229>The Gateway provider for the [AI SDK](https://ai-sdk.dev/docs) allows the use of a wide variety of AI models and providers.</paragraph>
+              <list id=231>
+                <listitem id=232 level=1>
+                  <link id=233 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=235>
+                <link name="publisher" id=238 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=240>
+                  <div id=241>published version</div>
+                  <div id=242>4.0.40</div>
+                  <div id=243>,</div>
+                  <div id=244>18 hours ago</div>
+                  <div id=245>163</div>
+                  <div id=246>dependents</div>
+                  <div id=247>licensed under $</div>
+                  <div id=248>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=249>
+              <image name="Download statistics" id=250 />
+              <div id=251>70,280,917</div>
+            </div>
+          </div>
+          <div id=253>
+            <div id=254>
+              <link id=256 focusable url="https://www.npmjs.com/package/@ai-sdk/google">
+                <heading id=257 level=3>@ai-sdk/google</heading>
+              </link>
+              <paragraph id=259>The **[Google provider](https://ai-sdk.dev/providers/ai-sdk-providers/google)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Google Generative AI](https://ai.google/discover/generativeai/) APIs.</paragraph>
+              <list id=261>
+                <listitem id=262 level=1>
+                  <link id=263 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=265>
+                <link name="publisher" id=268 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=270>
+                  <div id=271>published version</div>
+                  <div id=272>4.0.33</div>
+                  <div id=273>,</div>
+                  <div id=274>18 hours ago</div>
+                  <div id=275>1637</div>
+                  <div id=276>dependents</div>
+                  <div id=277>licensed under $</div>
+                  <div id=278>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=279>
+              <image name="Download statistics" id=280 />
+              <div id=281>25,169,116</div>
+            </div>
+          </div>
+          <div id=283>
+            <div id=284>
+              <link id=286 focusable url="https://www.npmjs.com/package/@ai-sdk/deepseek">
+                <heading id=287 level=3>@ai-sdk/deepseek</heading>
+              </link>
+              <paragraph id=289>The **[DeepSeek provider](https://ai-sdk.dev/providers/ai-sdk-providers/deepseek)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [DeepSeek](https://www.deepseek.com) platform.</paragraph>
+              <list id=291>
+                <listitem id=292 level=1>
+                  <link id=293 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=295>
+                <link name="publisher" id=298 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=300>
+                  <div id=301>published version</div>
+                  <div id=302>3.0.21</div>
+                  <div id=303>,</div>
+                  <div id=304>18 hours ago</div>
+                  <div id=305>187</div>
+                  <div id=306>dependents</div>
+                  <div id=307>licensed under $</div>
+                  <div id=308>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=309>
+              <image name="Download statistics" id=310 />
+              <div id=311>6,609,436</div>
+            </div>
+          </div>
+          <div id=313>
+            <div id=314>
+              <link id=316 focusable url="https://www.npmjs.com/package/@firebase/ai">
+                <heading id=317 level=3>@firebase/ai</heading>
+              </link>
+              <paragraph id=319>The Firebase AI SDK</paragraph>
+              <div id=321>
+                <link name="publisher" id=324 focusable url="https://www.npmjs.com/~google-wombot">google-wombot</link>
+                <div id=326>
+                  <div id=327>published version</div>
+                  <div id=328>2.14.0</div>
+                  <div id=329>,</div>
+                  <div id=330>5 days ago</div>
+                  <div id=331>2</div>
+                  <div id=332>dependents</div>
+                  <div id=333>licensed under $</div>
+                  <div id=334>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=335>
+              <image name="Download statistics" id=336 />
+              <div id=337>24,507,171</div>
+            </div>
+          </div>
+          <div id=339>
+            <div id=340>
+              <link id=342 focusable url="https://www.npmjs.com/package/@ai-sdk/openai">
+                <heading id=343 level=3>@ai-sdk/openai</heading>
+              </link>
+              <paragraph id=345>The **[OpenAI provider](https://ai-sdk.dev/providers/ai-sdk-providers/openai)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the OpenAI chat and completion APIs and embedding model support for the OpenAI embeddings API.</paragraph>
+              <list id=347>
+                <listitem id=348 level=1>
+                  <link id=349 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=351>
+                <link name="publisher" id=354 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=356>
+                  <div id=357>published version</div>
+                  <div id=358>4.0.29</div>
+                  <div id=359>,</div>
+                  <div id=360>18 hours ago</div>
+                  <div id=361>2633</div>
+                  <div id=362>dependents</div>
+                  <div id=363>licensed under $</div>
+                  <div id=364>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=365>
+              <image name="Download statistics" id=366 />
+              <div id=367>36,751,739</div>
+            </div>
+          </div>
+          <div id=369>
+            <div id=370>
+              <link id=372 focusable url="https://www.npmjs.com/package/@ai-sdk/azure">
+                <heading id=373 level=3>@ai-sdk/azure</heading>
+              </link>
+              <paragraph id=375>The **[Azure provider](https://ai-sdk.dev/providers/ai-sdk-providers/azure)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the Azure OpenAI API.</paragraph>
+              <list id=377>
+                <listitem id=378 level=1>
+                  <link id=379 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=381>
+                <link name="publisher" id=384 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=386>
+                  <div id=387>published version</div>
+                  <div id=388>4.0.30</div>
+                  <div id=389>,</div>
+                  <div id=390>18 hours ago</div>
+                  <div id=391>216</div>
+                  <div id=392>dependents</div>
+                  <div id=393>licensed under $</div>
+                  <div id=394>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=395>
+              <image name="Download statistics" id=396 />
+              <div id=397>7,643,540</div>
+            </div>
+          </div>
+          <div id=399>
+            <div id=400>
+              <link id=402 focusable url="https://www.npmjs.com/package/@ai-sdk/react">
+                <heading id=403 level=3>@ai-sdk/react</heading>
+              </link>
+              <paragraph id=405>[React](https://react.dev/) UI components for the [AI SDK](https://ai-sdk.dev/docs):</paragraph>
+              <list id=407>
+                <listitem id=408 level=1>
+                  <link id=409 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+                <listitem id=411 level=1>
+                  <link id=412 focusable url="https://www.npmjs.com/search?q=keywords:react">react</link>
+                </listitem>
+              </list>
+              <div id=414>
+                <link name="publisher" id=417 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=419>
+                  <div id=420>published version</div>
+                  <div id=421>4.0.54</div>
+                  <div id=422>,</div>
+                  <div id=423>18 hours ago</div>
+                  <div id=424>434</div>
+                  <div id=425>dependents</div>
+                  <div id=426>licensed under $</div>
+                  <div id=427>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=428>
+              <image name="Download statistics" id=429 />
+              <div id=430>27,685,087</div>
+            </div>
+          </div>
+          <div id=432>
+            <div id=433>
+              <link id=435 focusable url="https://www.npmjs.com/package/@ai-sdk/anthropic">
+                <heading id=436 level=3>@ai-sdk/anthropic</heading>
+              </link>
+              <paragraph id=438>The **[Anthropic provider](https://ai-sdk.dev/providers/ai-sdk-providers/anthropic)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Anthropic Messages API](https://docs.anthropic.com/claude/reference/messages_post).</paragraph>
+              <list id=440>
+                <listitem id=441 level=1>
+                  <link id=442 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=444>
+                <link name="publisher" id=447 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=449>
+                  <div id=450>published version</div>
+                  <div id=451>4.0.30</div>
+                  <div id=452>,</div>
+                  <div id=453>a minute ago</div>
+                  <div id=454>2000</div>
+                  <div id=455>dependents</div>
+                  <div id=456>licensed under $</div>
+                  <div id=457>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=458>
+              <image name="Download statistics" id=459 />
+              <div id=460>38,460,148</div>
+            </div>
+          </div>
+          <div id=462>
+            <div id=463>
+              <link id=465 focusable url="https://www.npmjs.com/package/@google/generative-ai">
+                <heading id=466 level=3>@google/generative-ai</heading>
+              </link>
+              <paragraph id=468>Google AI JavaScript SDK</paragraph>
+              <div id=470>
+                <link name="publisher" id=473 focusable url="https://www.npmjs.com/~google-wombot">google-wombot</link>
+                <div id=475>
+                  <div id=476>published version</div>
+                  <div id=477>0.24.1</div>
+                  <div id=478>,</div>
+                  <div id=479>a year ago</div>
+                  <div id=480>1993</div>
+                  <div id=481>dependents</div>
+                  <div id=482>licensed under $</div>
+                  <div id=483>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=484>
+              <image name="Download statistics" id=485 />
+              <div id=486>15,907,464</div>
+            </div>
+          </div>
+          <div id=488>
+            <div id=489>
+              <link id=491 focusable url="https://www.npmjs.com/package/@ai-sdk/xai">
+                <heading id=492 level=3>@ai-sdk/xai</heading>
+              </link>
+              <paragraph id=494>The **[xAI Grok provider](https://ai-sdk.dev/providers/ai-sdk-providers/xai)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the xAI chat and completion APIs.</paragraph>
+              <list id=496>
+                <listitem id=497 level=1>
+                  <link id=498 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=500>
+                <link name="publisher" id=503 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=505>
+                  <div id=506>published version</div>
+                  <div id=507>4.0.27</div>
+                  <div id=508>,</div>
+                  <div id=509>18 hours ago</div>
+                  <div id=510>335</div>
+                  <div id=511>dependents</div>
+                  <div id=512>licensed under $</div>
+                  <div id=513>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=514>
+              <image name="Download statistics" id=515 />
+              <div id=516>7,905,734</div>
+            </div>
+          </div>
+          <div id=518>
+            <div id=519>
+              <link id=521 focusable url="https://www.npmjs.com/package/@ai-sdk/google-vertex">
+                <heading id=522 level=3>@ai-sdk/google-vertex</heading>
+              </link>
+              <paragraph id=524>The **[Google Vertex provider](https://ai-sdk.dev/providers/ai-sdk-providers/google-vertex)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the [Google Vertex AI](https://cloud.google.com/vertex-ai) APIs.</paragraph>
+              <list id=526>
+                <listitem id=527 level=1>
+                  <link id=528 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=530>
+                <link name="publisher" id=533 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=535>
+                  <div id=536>published version</div>
+                  <div id=537>5.0.40</div>
+                  <div id=538>,</div>
+                  <div id=539>18 hours ago</div>
+                  <div id=540>189</div>
+                  <div id=541>dependents</div>
+                  <div id=542>licensed under $</div>
+                  <div id=543>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=544>
+              <image name="Download statistics" id=545 />
+              <div id=546>11,583,708</div>
+            </div>
+          </div>
+          <div id=548>
+            <div id=549>
+              <link id=551 focusable url="https://www.npmjs.com/package/ai-gateway-provider">
+                <heading id=552 level=3>ai-gateway-provider</heading>
+              </link>
+              <paragraph id=554>AI Gateway Provider for AI-SDK</paragraph>
+              <list id=556>
+                <listitem id=557 level=1>
+                  <link id=558 focusable url="https://www.npmjs.com/search?q=keywords:agents">agents</link>
+                </listitem>
+                <listitem id=560 level=1>
+                  <link id=561 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+                <listitem id=563 level=1>
+                  <link id=564 focusable url="https://www.npmjs.com/search?q=keywords:autorag">autorag</link>
+                </listitem>
+                <listitem id=566 level=1>
+                  <link id=567 focusable url="https://www.npmjs.com/search?q=keywords:cloudflare">cloudflare</link>
+                </listitem>
+                <listitem id=569 level=1>
+                  <link id=570 focusable url="https://www.npmjs.com/search?q=keywords:rag">rag</link>
+                </listitem>
+                <listitem id=572 level=1>
+                  <link id=573 focusable url="https://www.npmjs.com/search?q=keywords:workers">workers</link>
+                </listitem>
+              </list>
+              <div id=575>
+                <link name="publisher" id=578 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=580>
+                  <div id=581>published version</div>
+                  <div id=582>4.0.0</div>
+                  <div id=583>,</div>
+                  <div id=584>13 days ago</div>
+                  <div id=585>44</div>
+                  <div id=586>dependents</div>
+                  <div id=587>licensed under $</div>
+                  <div id=588>MIT</div>
+                </div>
+              </div>
+            </div>
+            <div id=589>
+              <image name="Download statistics" id=590 />
+              <div id=591>520,509</div>
+            </div>
+          </div>
+          <div id=593>
+            <div id=594>
+              <link id=596 focusable url="https://www.npmjs.com/package/@posthog/ai">
+                <heading id=597 level=3>@posthog/ai</heading>
+              </link>
+              <paragraph id=599>PostHog Node.js AI integrations</paragraph>
+              <list id=601>
+                <listitem id=602 level=1>
+                  <link id=603 focusable url="https://www.npmjs.com/search?q=keywords:posthog">posthog</link>
+                </listitem>
+                <listitem id=605 level=1>
+                  <link id=606 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+                <listitem id=608 level=1>
+                  <link id=609 focusable url="https://www.npmjs.com/search?q=keywords:openai">openai</link>
+                </listitem>
+                <listitem id=611 level=1>
+                  <link id=612 focusable url="https://www.npmjs.com/search?q=keywords:anthropic">anthropic</link>
+                </listitem>
+                <listitem id=614 level=1>
+                  <link id=615 focusable url="https://www.npmjs.com/search?q=keywords:gemini">gemini</link>
+                </listitem>
+                <listitem id=617 level=1>
+                  <link id=618 focusable url="https://www.npmjs.com/search?q=keywords:llm">llm</link>
+                </listitem>
+                <listitem id=620 level=1>
+                  <link id=621 focusable url="https://www.npmjs.com/search?q=keywords:observability">observability</link>
+                </listitem>
+                <listitem id=623 level=1>
+                  <link id=624 focusable url="https://www.npmjs.com/search?q=keywords:agents">agents</link>
+                </listitem>
+              </list>
+              <div id=626>
+                <link name="publisher" id=629 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=631>
+                  <div id=632>published version</div>
+                  <div id=633>8.6.6</div>
+                  <div id=634>,</div>
+                  <div id=635>11 hours ago</div>
+                  <div id=636>14</div>
+                  <div id=637>dependents</div>
+                  <div id=638>licensed under $</div>
+                  <div id=639>MIT</div>
+                </div>
+              </div>
+            </div>
+            <div id=640>
+              <image name="Download statistics" id=641 />
+              <div id=642>2,096,088</div>
+            </div>
+          </div>
+          <div id=644>
+            <div id=645>
+              <link id=647 focusable url="https://www.npmjs.com/package/@genkit-ai/ai">
+                <heading id=648 level=3>@genkit-ai/ai</heading>
+              </link>
+              <paragraph id=650>Genkit AI framework generative AI APIs.</paragraph>
+              <list id=652>
+                <listitem id=653 level=1>
+                  <link id=654 focusable url="https://www.npmjs.com/search?q=keywords:genkit">genkit</link>
+                </listitem>
+                <listitem id=656 level=1>
+                  <link id=657 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+                <listitem id=659 level=1>
+                  <link id=660 focusable url="https://www.npmjs.com/search?q=keywords:genai">genai</link>
+                </listitem>
+                <listitem id=662 level=1>
+                  <link id=663 focusable url="https://www.npmjs.com/search?q=keywords:generative-ai">generative-ai</link>
+                </listitem>
+              </list>
+              <div id=665>
+                <link name="publisher" id=668 focusable url="https://www.npmjs.com/~google-wombot">google-wombot</link>
+                <div id=670>
+                  <div id=671>published version</div>
+                  <div id=672>1.40.1</div>
+                  <div id=673>,</div>
+                  <div id=674>14 days ago</div>
+                  <div id=675>28</div>
+                  <div id=676>dependents</div>
+                  <div id=677>licensed under $</div>
+                  <div id=678>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=679>
+              <image name="Download statistics" id=680 />
+              <div id=681>1,014,611</div>
+            </div>
+          </div>
+          <div id=683>
+            <div id=684>
+              <link id=686 focusable url="https://www.npmjs.com/package/@ai-sdk/groq">
+                <heading id=687 level=3>@ai-sdk/groq</heading>
+              </link>
+              <paragraph id=689>The **[Groq provider](https://ai-sdk.dev/providers/ai-sdk-providers/groq)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the Groq chat and completion APIs, transcription support, and browser search tool.</paragraph>
+              <list id=691>
+                <listitem id=692 level=1>
+                  <link id=693 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=695>
+                <link name="publisher" id=698 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=700>
+                  <div id=701>published version</div>
+                  <div id=702>4.0.21</div>
+                  <div id=703>,</div>
+                  <div id=704>18 hours ago</div>
+                  <div id=705>307</div>
+                  <div id=706>dependents</div>
+                  <div id=707>licensed under $</div>
+                  <div id=708>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=709>
+              <image name="Download statistics" id=710 />
+              <div id=711>6,775,494</div>
+            </div>
+          </div>
+          <div id=713>
+            <div id=714>
+              <link id=716 focusable url="https://www.npmjs.com/package/@ai-sdk/cohere">
+                <heading id=717 level=3>@ai-sdk/cohere</heading>
+              </link>
+              <paragraph id=719>The **[Cohere provider](https://ai-sdk.dev/providers/ai-sdk-providers/cohere)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the Cohere API.</paragraph>
+              <list id=721>
+                <listitem id=722 level=1>
+                  <link id=723 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=725>
+                <link name="publisher" id=728 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=730>
+                  <div id=731>published version</div>
+                  <div id=732>4.0.21</div>
+                  <div id=733>,</div>
+                  <div id=734>2 minutes ago</div>
+                  <div id=735>137</div>
+                  <div id=736>dependents</div>
+                  <div id=737>licensed under $</div>
+                  <div id=738>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=739>
+              <image name="Download statistics" id=740 />
+              <div id=741>2,315,161</div>
+            </div>
+          </div>
+          <div id=743>
+            <div id=744>
+              <link id=746 focusable url="https://www.npmjs.com/package/@ai-sdk/amazon-bedrock">
+                <heading id=747 level=3>@ai-sdk/amazon-bedrock</heading>
+              </link>
+              <paragraph id=749>The **[Amazon Bedrock provider](https://ai-sdk.dev/providers/ai-sdk-providers/amazon-bedrock)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for the Amazon Bedrock [converse API](https://docs.aws.amazon.com/bedrock/latest/APIR</paragraph>
+              <list id=751>
+                <listitem id=752 level=1>
+                  <link id=753 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=755>
+                <link name="publisher" id=758 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=760>
+                  <div id=761>published version</div>
+                  <div id=762>5.0.42</div>
+                  <div id=763>,</div>
+                  <div id=764>18 hours ago</div>
+                  <div id=765>237</div>
+                  <div id=766>dependents</div>
+                  <div id=767>licensed under $</div>
+                  <div id=768>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=769>
+              <image name="Download statistics" id=770 />
+              <div id=771>11,075,274</div>
+            </div>
+          </div>
+          <div id=773>
+            <div id=774>
+              <link id=776 focusable url="https://www.npmjs.com/package/@ai-sdk/mistral">
+                <heading id=777 level=3>@ai-sdk/mistral</heading>
+              </link>
+              <paragraph id=779>The **[Mistral provider](https://ai-sdk.dev/providers/ai-sdk-providers/mistral)** for the [AI SDK](https://ai-sdk.dev/docs) contains language model, embedding model, and speech model support for Mistral APIs.</paragraph>
+              <list id=781>
+                <listitem id=782 level=1>
+                  <link id=783 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+              </list>
+              <div id=785>
+                <link name="publisher" id=788 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=790>
+                  <div id=791>published version</div>
+                  <div id=792>4.0.23</div>
+                  <div id=793>,</div>
+                  <div id=794>a minute ago</div>
+                  <div id=795>304</div>
+                  <div id=796>dependents</div>
+                  <div id=797>licensed under $</div>
+                  <div id=798>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=799>
+              <image name="Download statistics" id=800 />
+              <div id=801>6,107,819</div>
+            </div>
+          </div>
+          <div id=803>
+            <div id=804>
+              <link id=806 focusable url="https://www.npmjs.com/package/@ai-sdk/vue">
+                <heading id=807 level=3>@ai-sdk/vue</heading>
+              </link>
+              <paragraph id=809>[Vue.js](https://vuejs.org/) UI components for the [AI SDK](https://ai-sdk.dev/docs):</paragraph>
+              <list id=811>
+                <listitem id=812 level=1>
+                  <link id=813 focusable url="https://www.npmjs.com/search?q=keywords:ai">ai</link>
+                </listitem>
+                <listitem id=815 level=1>
+                  <link id=816 focusable url="https://www.npmjs.com/search?q=keywords:vue">vue</link>
+                </listitem>
+              </list>
+              <div id=818>
+                <link name="publisher" id=821 focusable url="https://gh.io/npm-docs-trusted-publishers">GitHub Actions</link>
+                <div id=823>
+                  <div id=824>published version</div>
+                  <div id=825>4.0.52</div>
+                  <div id=826>,</div>
+                  <div id=827>2 minutes ago</div>
+                  <div id=828>35</div>
+                  <div id=829>dependents</div>
+                  <div id=830>licensed under $</div>
+                  <div id=831>Apache-2.0</div>
+                </div>
+              </div>
+            </div>
+            <div id=832>
+              <image name="Download statistics" id=833 />
+              <div id=834>3,752,223</div>
+            </div>
+          </div>
+        </div>
+        <navigation name="Pagination Navigation" id=838>
+          <link name="Current page, page" id=840 focusable url="https://www.npmjs.com/search?q=ai&amp;page=0&amp;perPage=20">1</link>
+          <link name="Go to page" id=843 focusable url="https://www.npmjs.com/search?q=ai&amp;page=1&amp;perPage=20">2</link>
+          <link name="Go to page" id=846 focusable url="https://www.npmjs.com/search?q=ai&amp;page=2&amp;perPage=20">3</link>
+          …
+          <link name="Go to page" id=851 focusable url="https://www.npmjs.com/search?q=ai&amp;page=49&amp;perPage=20">50</link>
+          <link name="Next page" id=854 focusable url="https://www.npmjs.com/search?q=ai&amp;page=1&amp;perPage=20">»</link>
+        </navigation>
+      </div>
+    </main>
+    <contentinfo id=856>
+      <heading id=857 level=2>Footer</heading>
+      <div id=859>
+        <div id=860>
+          <link name="Visit npm GitHub page" id=862 focusable url="https://github.com/npm" />
+          <link name="GitHub" id=864 focusable url="https://github.com/" />
+        </div>
+        <div id=865>
+          <heading id=866 level=3>Support</heading>
+          <list name="Support" id=868>
+            <listitem id=869 level=1>
+              <link id=870 focusable url="https://docs.npmjs.com/">Help</link>
+            </listitem>
+            <listitem id=872 level=1>
+              <link id=873 focusable url="https://github.com/advisories">Advisories</link>
+            </listitem>
+            <listitem id=875 level=1>
+              <link id=876 focusable url="http://status.npmjs.org/">Status</link>
+            </listitem>
+            <listitem id=878 level=1>
+              <link id=879 focusable url="https://www.npmjs.com/support">Contact npm</link>
+            </listitem>
+          </list>
+        </div>
+        <div id=881>
+          <heading id=882 level=3>Company</heading>
+          <list name="Company" id=884>
+            <listitem id=885 level=1>
+              <link id=886 focusable url="https://www.npmjs.com/about">About</link>
+            </listitem>
+            <listitem id=888 level=1>
+              <link id=889 focusable url="https://github.blog/tag/npm/">Blog</link>
+            </listitem>
+            <listitem id=891 level=1>
+              <link id=892 focusable url="https://www.npmjs.com/press">Press</link>
+            </listitem>
+          </list>
+        </div>
+        <div id=894>
+          <heading id=895 level=3>Terms &amp; Policies</heading>
+          <list name="Terms &amp;" id=897>
+            <listitem id=898 level=1>
+              <link id=899 focusable url="https://www.npmjs.com/policies/">Policies</link>
+            </listitem>
+            <listitem id=901 level=1>
+              <link id=902 focusable url="https://www.npmjs.com/policies/terms">Terms of Use</link>
+            </listitem>
+            <listitem id=904 level=1>
+              <link id=905 focusable url="https://www.npmjs.com/policies/conduct">Code of Conduct</link>
+            </listitem>
+            <listitem id=907 level=1>
+              <link id=908 focusable url="https://www.npmjs.com/policies/privacy">Privacy</link>
+            </listitem>
+          </list>
+        </div>
+      </div>
+    </contentinfo>
+  </div>
+</RootWebArea>

@@ -1,3 +1,4 @@
+import cloudflare from "@astrojs/cloudflare";
 import sitemap from "@astrojs/sitemap";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
@@ -5,6 +6,7 @@ import { defineConfig, sharpImageService } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
+  adapter: cloudflare({ imageService: "compile" }),
   site: "https://alumnium.ai",
   image: {
     service: sharpImageService({ limitInputPixels: false }),
@@ -160,7 +162,8 @@ export default defineConfig({
       customCss: [
         "./src/styles/global.css",
         "@fontsource-variable/mona-sans",
-        "@fontsource/monaspace-neon",
+        "@fontsource-variable/jetbrains-mono",
+        "@fontsource-variable/hubot-sans",
       ],
       components: {
         Header: "./src/components/overrides/Header.astro",
@@ -168,12 +171,19 @@ export default defineConfig({
         ContentPanel: "./src/components/overrides/ContentPanel.astro",
         PageTitle: "./src/components/overrides/PageTitle.astro",
         SiteTitle: "./src/components/overrides/SiteTitle.astro",
+        Footer: "./src/components/overrides/Footer.astro",
       },
     }),
     sitemap({}),
   ],
 
-  vite: { plugins: [...tailwindcss()] },
+  vite: {
+    plugins: [...tailwindcss()],
+    build: {
+      // Prevent Vite from inlining assets, i.e. giving data URLs for small SVGs.
+      assetsInlineLimit: 0,
+    },
+  },
 
   redirects: {
     "/docs/getting-started/writing-first-test":
