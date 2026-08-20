@@ -38,7 +38,7 @@
                     <div id=98>
                       <LabelText id=99>Search</LabelText>
                       <div id=101>
-                        <combobox name="Search" id=105 focusable focused editable="plaintext" settable autocomplete="list" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results">
+                        <combobox name="Search" id=105 focusable focused editable="plaintext" settable autocomplete="list" expanded="true" describedby="validation-34ac918b-2693-4140-aedc-7b6771cb6c94" controls="query-builder-test-results">
                           <div id=106 editable="plaintext">alumnium</div>
                         </combobox>
                         <div id=108>
@@ -161,7 +161,7 @@
       <DescriptionList id=396>
         <div id=397>
           <term id=398>
-            <button id=399 focusable controls="_R_5p5__0">
+            <button id=399 focusable expanded="true" controls="_R_5p5__0">
               <heading id=401 level=3>Automate your path to production</heading>
             </button>
           </term>
@@ -286,7 +286,7 @@
       <DescriptionList id=598>
         <div id=599>
           <term id=600>
-            <button id=601 focusable controls="_R_5q5__0">
+            <button id=601 focusable expanded="true" controls="_R_5q5__0">
               <heading id=603 level=3>Keep track of your tasks</heading>
             </button>
           </term>

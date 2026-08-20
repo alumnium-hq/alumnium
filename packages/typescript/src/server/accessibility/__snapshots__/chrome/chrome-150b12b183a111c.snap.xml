@@ -179,7 +179,7 @@
             </div>
             <button id=293 focusable>Read 4 files, searched the codebase</button>
             <div id=297>
-              <button id=298 focusable>
+              <button id=298 focusable expanded="true">
                 <div id=299>
                   Edited
                   <strong id=301>ThemeProvider.tsx</strong>

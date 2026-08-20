@@ -1,0 +1,65 @@
+<RootWebArea name="Support Console" id=1 focusable url="https://support-staging.example.com">
+  <div id=342>
+    <button name="Status List Dropdown" id=343 focusable hasPopup="menu" expanded="true" controls="statusListDropdown"></button>
+    <div id=347 live="polite" atomic relevant="additions text">Current Status: Busy</div>
+    <list id=349>
+      <div id=352>
+        <div id=353>agent@example.com</div>
+        <button id=356 focusable>
+          <div id=358></div>
+          <div id=360>Select Phone</div>
+        </button>
+      </div>
+      <div id=368 focusable>
+        <listitem id=370 level=1>
+          <button id=371 focusable>On Queue</button>
+        </listitem>
+        <listitem id=378 level=1>
+          <button id=379 focusable>
+            Available
+            <div id=387></div>
+          </button>
+        </listitem>
+        <listitem id=389 level=1>
+          <button id=390 focusable focused pressed hasPopup="menu">
+            Busy
+            <div id=396></div>
+          </button>
+        </listitem>
+        <listitem id=399 level=1>
+          <button id=400 focusable hasPopup="menu">
+            Away
+            <div id=406></div>
+          </button>
+        </listitem>
+        <listitem id=409 level=1>
+          <button id=410 focusable>Break</button>
+        </listitem>
+        <listitem id=417 level=1>
+          <button id=418 focusable>Meal</button>
+        </listitem>
+        <listitem id=425 level=1>
+          <button id=426 focusable hasPopup="menu">
+            Meeting
+            <div id=432></div>
+          </button>
+        </listitem>
+        <listitem id=435 level=1>
+          <button id=436 focusable hasPopup="menu">
+            Training
+            <div id=442></div>
+          </button>
+        </listitem>
+        <listitem id=445 level=1>
+          <button id=446 focusable>Out of Office</button>
+        </listitem>
+      </div>
+      <listitem id=457 level=1>
+        <button id=458 focusable>
+          <div id=460></div>
+          <div id=462>Log Out</div>
+        </button>
+      </listitem>
+    </list>
+  </div>
+</RootWebArea>

@@ -23,8 +23,8 @@ class ToolToSchemaConverterTest {
         .containsEntry("name", "ClickTool")
         .containsEntry(
             "description",
-            "Click an element. NEVER use ClickTool on comboboxes, instead proceed to click"
-                + " the desired option directly. NEVER use ClickTool to upload files - use"
+            "Click an element. If the target element is a dropdown and is already expanded"
+                + " - you don't need to click it. NEVER use ClickTool to upload files - use"
                 + " UploadTool instead.");
 
     @SuppressWarnings("unchecked")

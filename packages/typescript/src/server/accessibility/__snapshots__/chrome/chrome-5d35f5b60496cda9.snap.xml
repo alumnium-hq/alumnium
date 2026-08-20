@@ -911,7 +911,7 @@
       </contentinfo>
     </div>
   </div>
-  <button id=1178 focusable hasPopup="listbox">
+  <button id=1178 focusable hasPopup="listbox" expanded="true">
     <banner id=1180>
       <LabelText id=1182>Search</LabelText>
       <searchbox name="Search" id=1187 focusable focused editable="plaintext" settable autocomplete="both" />

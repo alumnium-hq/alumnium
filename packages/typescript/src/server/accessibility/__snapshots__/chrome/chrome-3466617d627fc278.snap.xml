@@ -12,7 +12,7 @@
       <div id=37>
         <search id=38>
           <div id=41>
-            <combobox name="Search" id=43 focusable editable="plaintext" settable autocomplete="list">
+            <combobox name="Search" id=43 focusable editable="plaintext" settable autocomplete="list" expanded="true">
               <div id=45 editable="plaintext">lofi beats</div>
             </combobox>
             <button name="Clear search query" id=48 focusable />

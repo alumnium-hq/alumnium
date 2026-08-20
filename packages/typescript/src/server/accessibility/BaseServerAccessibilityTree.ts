@@ -187,6 +187,7 @@ export abstract class BaseServerAccessibilityTree {
         Array.from(this.genericRoles, (role) => [role, "div"]),
       ),
       preserveFalseAttrs: this.renderPreserveFalseAttrs,
+      explicitTrueAttrs: this.explicitTrueAttrs,
     });
   }
 
@@ -213,6 +214,8 @@ export abstract class BaseServerAccessibilityTree {
   protected get renderPreserveFalseAttrs(): ReadonlySet<string> {
     return this.preserveFalseAttrs;
   }
+
+  protected explicitTrueAttrs = new Set<string>();
 
   protected abstract textContentAttr(role: string): string | undefined;
 

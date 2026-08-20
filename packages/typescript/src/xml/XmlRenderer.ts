@@ -21,6 +21,7 @@ export namespace XmlRenderer {
     compactAttrs?: boolean;
     tagAliases?: Readonly<Record<string, string>>;
     preserveFalseAttrs?: ReadonlySet<string>;
+    explicitTrueAttrs?: ReadonlySet<string>;
   }
 }
 
@@ -189,7 +190,7 @@ export abstract class XmlRenderer {
         if (!stringValue) continue;
         if (stringValue === "false" && !options.preserveFalseAttrs?.has(key))
           continue;
-        if (stringValue === "true") {
+        if (stringValue === "true" && !options.explicitTrueAttrs?.has(key)) {
           result += ` ${key}`;
           continue;
         }
