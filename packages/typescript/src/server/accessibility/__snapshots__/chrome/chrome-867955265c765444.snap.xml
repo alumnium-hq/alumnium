@@ -24,7 +24,7 @@
                     <div id=64 editable="plaintext">Singapore</div>
                   </combobox>
                 </div>
-                <button id=67 focusable focused>
+                <button id=67 focusable focused expanded="true">
                   <div id=70>When</div>
                   <div id=73>Add dates</div>
                 </button>

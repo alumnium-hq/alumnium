@@ -52,9 +52,6 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     "nodeId",
     "raw_id",
     "mutable",
-    // Select comboboxes are forced to have the expanded=true.
-    // This prevents LLM from clicking to open it before selecting an option.
-    "expanded",
   ]);
 
   protected override skipXmlAttr(
@@ -123,6 +120,8 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
   protected override get renderPreserveFalseAttrs(): ReadonlySet<string> {
     return new Set([...this.preserveFalseAttrs, "selected"]);
   }
+
+  protected override explicitTrueAttrs = new Set(["expanded"]);
 
   protected override textContentAttr(_role: string): string | undefined {
     return undefined;

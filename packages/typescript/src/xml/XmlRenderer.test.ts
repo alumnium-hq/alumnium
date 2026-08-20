@@ -120,6 +120,18 @@ describe("XmlRenderer", () => {
     );
   });
 
+  it("renders explicit true attributes in full", () => {
+    const root = Xml.tag("root", {
+      expanded: "true",
+      focusable: "true",
+      collapsed: "false",
+    });
+
+    expect(
+      XmlRenderer.render([root], { explicitTrueAttrs: new Set(["expanded"]) }),
+    ).toMatchInlineSnapshot(`"<root expanded="true" focusable />"`);
+  });
+
   it("preserves content under xml:space preserve", () => {
     const elements = Xml.parseRootChildren(
       '<root xml:space="preserve"> before <child> inside </child> after </root>',

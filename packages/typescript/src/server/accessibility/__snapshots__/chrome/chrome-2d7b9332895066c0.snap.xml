@@ -28,7 +28,7 @@
                   <div id=69>When</div>
                   <div id=72>5 Aug</div>
                 </button>
-                <button id=75 focusable focused>
+                <button id=75 focusable focused expanded="true">
                   <div id=78>Who</div>
                   <div id=81>Add guests</div>
                 </button>

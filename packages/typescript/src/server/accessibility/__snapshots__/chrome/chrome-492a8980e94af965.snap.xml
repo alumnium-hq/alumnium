@@ -135,7 +135,7 @@
       <DescriptionList id=365>
         <div id=366>
           <term id=367>
-            <button id=368 focusable controls="_R_5p5__0">
+            <button id=368 focusable expanded="true" controls="_R_5p5__0">
               <heading id=370 level=3>Automate your path to production</heading>
             </button>
           </term>
@@ -260,7 +260,7 @@
       <DescriptionList id=567>
         <div id=568>
           <term id=569>
-            <button id=570 focusable controls="_R_5q5__0">
+            <button id=570 focusable expanded="true" controls="_R_5q5__0">
               <heading id=572 level=3>Keep track of your tasks</heading>
             </button>
           </term>

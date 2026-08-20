@@ -320,7 +320,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       const xml = tree.toXml();
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
-        "<combobox expanded>
+        "<combobox expanded="true">
           <option name="One" id=3 focusable selected="false" />
         </combobox>"
       `);
@@ -349,7 +349,7 @@ describe(ServerChromiumAccessibilityTree, () => {
       `);
 
       expect(tree.toXml()).toBe(lit`
-        <combobox value="Two" expanded>
+        <combobox value="Two" expanded="true">
           <option name="One" selected="false" />
           <option selected>Two</option>
           <option name="Three" selected="false" />

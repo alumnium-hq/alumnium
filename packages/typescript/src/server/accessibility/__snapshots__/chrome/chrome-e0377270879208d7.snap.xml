@@ -7,7 +7,7 @@
       </link>
     </div>
     <search id=28>
-      <combobox id=33 focusable editable="plaintext" settable autocomplete="list" />
+      <combobox id=33 focusable editable="plaintext" settable autocomplete="list" expanded="true" />
       <button name="Search" id=35 focusable />
     </search>
   </banner>

@@ -21,7 +21,7 @@
                 <div id=56>
                   <div id=58>
                     <div id=59>Where</div>
-                    <combobox name="Where" id=62 focusable focused editable="plaintext" settable autocomplete="list" controls="bigsearch-query-location-listbox">
+                    <combobox name="Where" id=62 focusable focused editable="plaintext" settable autocomplete="list" expanded="true" controls="bigsearch-query-location-listbox">
                       <div id=65 editable="plaintext">Singapore</div>
                     </combobox>
                   </div>

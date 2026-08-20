@@ -42,6 +42,7 @@ evalite<Input, ActorAgent.InvokeResult, ToolCall[]>("ActorAgent", {
   data: async () => {
     const selectOption =
       'change the "Send money to" combobox selection to "Seller"';
+    const selectStatus = 'select "Available" status';
 
     return [
       {
@@ -53,13 +54,22 @@ evalite<Input, ActorAgent.InvokeResult, ToolCall[]>("ActorAgent", {
         // Ensure we click on the correct option, not the combobox itself.
         expected: [{ name: "ClickTool", args: { id: 757 } }],
       },
+      {
+        input: {
+          goal: selectStatus,
+          step: selectStatus,
+          treeXml: await readTree("chrome/support-agent-status.xml"),
+        },
+        // Ensure we click on the status button directly since the dropdown is already expanded.
+        expected: [{ name: "ClickTool", args: { id: 379 } }],
+      },
     ];
   },
 
   scorers: [
     {
-      name: "Selects the correct option",
-      description: "Checks the expected option element is clicked.",
+      name: "Selects the correct element",
+      description: "Checks the expected element is clicked.",
       scorer: ({ output, expected }) => {
         const [, toolCalls] = output;
         const expectedCalls = new Set(formatToolCalls(expected));

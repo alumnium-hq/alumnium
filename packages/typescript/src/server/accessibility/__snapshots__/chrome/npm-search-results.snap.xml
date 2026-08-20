@@ -45,7 +45,7 @@
           <div id=58>
             <button id=59 focusable />
             <div id=60>
-              <combobox name="Search packages" id=62 focusable focused editable="plaintext" settable>
+              <combobox name="Search packages" id=62 focusable focused editable="plaintext" settable expanded="true">
                 <div id=65 editable="plaintext">ai</div>
               </combobox>
               <button name="Clear search" id=67 focusable>×</button>
