@@ -1075,7 +1075,11 @@ export abstract class Tracer {
       span.fail("Span not ended before flush");
     });
 
-    await provider.forceFlush();
+    await provider
+      .forceFlush()
+      // NOTE: Ignore errors so that the operation doesn't fail if the telemetry
+      // server is unreachable, i.e., when running tests.
+      .catch(() => {});
   }
 
   //#endregion
