@@ -1671,9 +1671,6 @@
                                                   {
                                                     "kind": "string",
                                                     "literal": false
-                                                  },
-                                                  {
-                                                    "kind": "null"
                                                   }
                                                 ]
                                               }
@@ -1741,24 +1738,6 @@
                                                   {
                                                     "kind": "string",
                                                     "literal": false
-                                                  }
-                                                ]
-                                              },
-                                              "caller": {
-                                                "kind": "field",
-                                                "optional": true,
-                                                "type": [
-                                                  {
-                                                    "kind": "null"
-                                                  }
-                                                ]
-                                              },
-                                              "namespace": {
-                                                "kind": "field",
-                                                "optional": true,
-                                                "type": [
-                                                  {
-                                                    "kind": "null"
                                                   }
                                                 ]
                                               }

@@ -1,11 +1,5 @@
 import { always, ensure } from "alwaysly";
-import type {
-  BrowserContext,
-  CDPSession,
-  Frame,
-  Locator,
-  Page,
-} from "playwright-core";
+import type { CDPSession, Frame, Locator, Page } from "playwright-core";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
@@ -27,7 +21,6 @@ import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { retry } from "../utils/retry.ts";
-import { sleep } from "../utils/timers.ts";
 import type { Driver } from "./Driver.ts";
 import {
   waiterScriptSource,
@@ -66,9 +59,6 @@ const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
 const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${waitForScriptSource /* await readScript("waitFor.js") */} })`;
 
-const NEW_TAB_DELAY = 50;
-const NEW_TAB_TIMEOUT = 10_000;
-
 const RETRY_OPTIONS: retry.Options = {
   maxAttempts: 2,
   backOff: 500,
@@ -78,13 +68,7 @@ const RETRY_OPTIONS: retry.Options = {
 export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
   page: Page;
-
-  private openedPages: Page[] = [];
-  private watchedContexts: Set<BrowserContext> = new Set();
-  private previousPage: Page | undefined;
-  private pendingWindowOpen = false;
-  private cdpSessionReady: Promise<void>;
-
+  private _pages: Page[] = [];
   // frameId → url for OOPIF frames tracked via Target.attachedToTarget events
   private oopifFrameIds: Map<string, string> = new Map();
   // Playwright Frame objects that correspond to OOPIFs (populated during getAccessibilityTree)
@@ -98,89 +82,46 @@ export class PlaywrightDriver extends BaseDriver {
     TypeTool,
     UploadTool,
   ]);
+  public newTabTimeout = Env.ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT;
   public autoswitchToNewTab = true;
   public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
 
   constructor(page: Page) {
     super();
     this.page = page;
-    this.watchContextOf(page);
-    this.cdpSessionReady = this.initCDPSession();
+    this.setupPageTracking(page);
+    void this.initCDPSession();
   }
 
-  private watchContextOf(page: Page): void {
-    const context = page.context();
-    if (this.watchedContexts.has(context)) return;
-
-    this.watchedContexts.add(context);
-    context.on("page", (opened) => this.onPageOpened(opened));
-    logger.debug("Watching browser context for new tabs");
+  private setupPageTracking(initialPage: Page): void {
+    this._pages = [initialPage];
+    this.attachPageListeners(initialPage);
   }
 
-  private onPageOpened(page: Page): void {
-    logger.debug(`New tab opened: ${page.url()}`);
-    this.pendingWindowOpen = false;
-    this.openedPages.push(page);
-    this.watchContextOf(page);
-    page.on("close", () => this.onPageClosed(page));
+  private attachPageListeners(page: Page): void {
+    page.on("popup", (popup) => this.onPopup(popup));
+    page.on("close", (popup) => this.onPageClose(popup));
   }
 
-  private onPageClosed(page: Page): void {
-    this.openedPages = this.openedPages.filter((opened) => opened !== page);
-    if (page !== this.page) return;
+  private onPopup(popup: Page) {
+    logger.debug(`New popup opened: ${popup.url()}`);
+    this._pages.push(popup);
+    this.attachPageListeners(popup); // Chain: new page also listens for popups
+  }
 
-    const previous = this.previousPage;
-    if (!previous || previous.isClosed()) {
-      logger.warn("Active tab was closed and the tab it came from is gone");
-      return;
+  private onPageClose(page: Page): void {
+    const index = this._pages.indexOf(page);
+    if (index !== -1) {
+      logger.debug(`Page closed: ${page.url()}`);
+      this._pages.splice(index, 1);
     }
-
-    logger.debug(`Active tab was closed, returning to ${previous.url()}`);
-    this.page = previous;
-    this.previousPage = undefined;
-    this.resetAccessibilityTree();
-
-    // The handler cannot await, so hand the new session to whoever needs it
-    // next. The extra catch only silences the unhandled rejection warning.
-    this.cdpSessionReady = this.initCDPSession();
-    this.cdpSessionReady.catch(() => {});
   }
 
   private async initCDPSession(): Promise<void> {
     this.oopifFrameIds.clear();
     this.oopifFrames.clear();
-
-    const previous = this.client as CDPSession | undefined;
-    if (previous) {
-      try {
-        await previous.detach();
-      } catch {
-        // The target may already be closed.
-      }
-    }
-
     this.client = await this.page.context().newCDPSession(this.page);
-    await this.enablePageEvents();
     await this.enableTargetAutoAttach();
-  }
-
-  private async enablePageEvents(): Promise<void> {
-    try {
-      await this.client.send("Page.enable");
-
-      // Playwright page event fires after navigation, so it can be very slow.
-      // Use CDP instead which fires when the browser is asked to open a window.
-      this.client.on("Page.windowOpen", (event: { url: string }) => {
-        logger.debug(`Window open requested: ${event.url || "(empty)"}`);
-        this.pendingWindowOpen = true;
-      });
-
-      logger.debug("Enabled Page events for new tab detection");
-    } catch (error) {
-      logger.debug(
-        `Could not enable Page events: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
   }
 
   private async enableTargetAutoAttach(): Promise<void> {
@@ -246,8 +187,6 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.get_accessibility_tree", spanAttrs)
   protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
-    await this.switchToNewTab();
-    await this.cdpSessionReady;
     await this.waitForPageToLoad();
 
     const frameTree = (await this.client.send(
@@ -605,32 +544,38 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.switch_to_next_tab", spanAttrs)
   async switchToNextTab(): Promise<void> {
-    const pages = await this.openTabs();
-    if (pages.length <= 1) {
+    // Brief wait to allow popup handlers to complete
+    await this.page.waitForTimeout(100);
+    if (this._pages.length <= 1) {
       return; // Only one tab, nothing to switch
     }
 
-    const currentIndex = pages.indexOf(this.page);
-    const nextIndex = (currentIndex + 1) % pages.length; // Wrap to first
+    const currentIndex = this._pages.indexOf(this.page);
+    const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
 
-    await this.switchToTab(pages[nextIndex]);
+    await this.switchToTab(nextIndex);
   }
 
   @span("driver.switch_to_previous_tab", spanAttrs)
   async switchToPreviousTab(): Promise<void> {
-    const pages = await this.openTabs();
-    if (pages.length <= 1) return; // Only one tab, nothing to switch
+    // Brief wait to allow popup handlers to complete
+    await this.page.waitForTimeout(100);
+    if (this._pages.length <= 1) {
+      return; // Only one tab, nothing to switch
+    }
 
-    const currentIndex = pages.indexOf(this.page);
-    const prevIndex = (currentIndex - 1 + pages.length) % pages.length; // Wrap to last
+    const currentIndex = this._pages.indexOf(this.page);
+    const prevIndex =
+      (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
 
-    await this.switchToTab(pages[prevIndex]);
+    await this.switchToTab(prevIndex);
   }
 
   @stateful("switchToTab")
-  private async switchToTab(page: Page | undefined): Promise<void> {
-    always(page);
-    await this.activatePage(page);
+  private async switchToTab(tabIndex: number): Promise<void> {
+    always(this._pages[tabIndex]);
+    this.page = this._pages[tabIndex];
+    await this.initCDPSession();
     await this.page.waitForLoadState();
   }
 
@@ -675,65 +620,24 @@ export class PlaywrightDriver extends BaseDriver {
   ): Promise<void> {
     if (!this.autoswitchToNewTab) {
       await action();
-      this.openedPages = [];
       return;
     }
 
-    await action();
-    await sleep(NEW_TAB_DELAY);
+    const [newPage] = await Promise.all([
+      this.page
+        .context()
+        .waitForEvent("page", { timeout: this.newTabTimeout })
+        .catch(() => null),
+      action(),
+    ]);
 
-    if (!this.openedPages.length && this.pendingWindowOpen) {
-      await this.waitForAnnouncedTab();
+    if (newPage) {
+      logger.debug(
+        `Auto-switching to new tab ${newPage.url()} (${await newPage.title()})`,
+      );
+      this.page = newPage;
+      await this.initCDPSession();
     }
-    await this.switchToNewTab();
-  }
-
-  private async waitForAnnouncedTab(): Promise<void> {
-    this.pendingWindowOpen = false;
-    logger.debug("A tab is opening, waiting for the browser to report it");
-    await this.page
-      .context()
-      .waitForEvent("page", { timeout: NEW_TAB_TIMEOUT })
-      .catch(() => logger.debug("  <- No tab was reported, continuing"));
-  }
-
-  @span("driver.internal.switch_to_new_tab")
-  private async switchToNewTab(): Promise<void> {
-    await this.flushEvents();
-
-    const opened = this.openedPages.filter((page) => !page.isClosed()).pop();
-
-    this.openedPages = [];
-    if (!opened) return;
-
-    logger.debug(`Auto-switching to new tab: ${opened.url()}`);
-    await opened.waitForLoadState();
-    await this.activatePage(opened);
-  }
-
-  private async activatePage(page: Page): Promise<void> {
-    // Let a session setup that is still in flight finish.
-    await this.cdpSessionReady.catch(() => {});
-
-    if (page !== this.page) this.previousPage = this.page;
-    this.page = page;
-    this.watchContextOf(page);
-    this.resetAccessibilityTree();
-    this.cdpSessionReady = this.initCDPSession();
-    await this.cdpSessionReady;
-  }
-
-  private async openTabs(): Promise<Page[]> {
-    this.openedPages = [];
-    await this.flushEvents();
-    return this.page
-      .context()
-      .pages()
-      .filter((page) => !page.isClosed());
-  }
-
-  private async flushEvents(): Promise<void> {
-    await this.page.context().cookies();
   }
 
   private getAllFrameIds(frameInfo: CDPFrameInfo): string[] {

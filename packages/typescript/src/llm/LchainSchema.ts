@@ -230,7 +230,7 @@ export abstract class LchainSchema {
     status: z.union([z.literal("completed"), z.string()]),
     content: z.array(this.MetadataOutput),
     role: z.union([z.literal("assistant"), z.string()]),
-    phase: z.union([z.string(), z.null()]).exactOptional(),
+    phase: z.string().exactOptional(),
   });
 
   static OutputFunctionCall = z.object({
@@ -240,8 +240,6 @@ export abstract class LchainSchema {
     arguments: z.string(),
     call_id: z.string(),
     name: z.string(),
-    caller: z.null().exactOptional(),
-    namespace: z.null().exactOptional(),
   });
 
   static ResponseMetadataOutputItem = z.discriminatedUnion("type", [

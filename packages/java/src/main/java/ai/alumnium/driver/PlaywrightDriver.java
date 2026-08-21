@@ -13,7 +13,6 @@ import ai.alumnium.tool.UploadTool;
 import ai.alumnium.util.Retry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.CDPSession;
@@ -46,15 +45,9 @@ public final class PlaywrightDriver extends BaseDriver {
       loadScript("/ai/alumnium/driver/scripts/waitFor.js");
   private static final String CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
-  private static final int NEW_TAB_DELAY = 50;
-  private static final int NEW_TAB_TIMEOUT = 10_000;
-
   private Page page;
   private CDPSession client;
-  private final List<Page> openedPages = new ArrayList<>();
-  private final Set<BrowserContext> watchedContexts = new HashSet<>();
-  private Page previousPage;
-  private boolean pendingWindowOpen = false;
+  private final List<Page> pages = new ArrayList<>();
   private final Set<Frame> oopifFrames = new HashSet<>();
   public boolean autoswitchToNewTab = true;
   public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
@@ -69,7 +62,7 @@ public final class PlaywrightDriver extends BaseDriver {
 
   public PlaywrightDriver(Page page) {
     this.page = page;
-    watchContextOf(page);
+    setupPageTracking(page);
     initCDPSession();
   }
 
@@ -85,7 +78,6 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   protected ChromiumAccessibilityTree fetchAccessibilityTree() {
-    switchToNewTab();
     waitForPageToLoad();
 
     Map<String, Object> frameTreeResp = sendCdp("Page.getFrameTree", null);
@@ -233,7 +225,7 @@ public final class PlaywrightDriver extends BaseDriver {
     }
 
     boolean isOopif = frame != page.mainFrame() && oopifFrames.contains(frame);
-    CDPSession session = isOopif ? page.context().newCDPSession(frame) : session();
+    CDPSession session = isOopif ? page.context().newCDPSession(frame) : client;
     try {
       sendCdpOn(session, "DOM.enable", null);
       sendCdpOn(session, "DOM.getFlattenedDocument", null);
@@ -266,19 +258,21 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void switchToNextTab() {
-    List<Page> tabs = openTabs();
-    if (tabs.size() <= 1) return; // Only one tab, nothing to switch
-    int idx = tabs.indexOf(page);
-    activatePage(tabs.get((idx + 1) % tabs.size()));
+    page.waitForTimeout(100);
+    if (pages.size() <= 1) return;
+    int idx = pages.indexOf(page);
+    this.page = pages.get((idx + 1) % pages.size());
+    initCDPSession();
     page.waitForLoadState();
   }
 
   @Override
   public void switchToPreviousTab() {
-    List<Page> tabs = openTabs();
-    if (tabs.size() <= 1) return; // Only one tab, nothing to switch
-    int idx = tabs.indexOf(page);
-    activatePage(tabs.get((idx - 1 + tabs.size()) % tabs.size()));
+    page.waitForTimeout(100);
+    if (pages.size() <= 1) return;
+    int idx = pages.indexOf(page);
+    this.page = pages.get((idx - 1 + pages.size()) % pages.size());
+    initCDPSession();
     page.waitForLoadState();
   }
 
@@ -292,39 +286,8 @@ public final class PlaywrightDriver extends BaseDriver {
 
   private void initCDPSession() {
     oopifFrames.clear();
-
-    if (client != null) {
-      try {
-        client.detach();
-      } catch (RuntimeException e) {
-        // The target may already be closed.
-      }
-    }
-
     this.client = page.context().newCDPSession(page);
-    enablePageEvents();
     enableTargetAutoAttach();
-  }
-
-  private void enablePageEvents() {
-    try {
-      client.send("Page.enable");
-
-      // Playwright page event fires after navigation, so it can be very slow.
-      // Use CDP instead which fires when the browser is asked to open a window.
-      client.on(
-          "Page.windowOpen",
-          event -> {
-            JsonElement url = event.get("url");
-            String opened = url == null || url.isJsonNull() ? "" : url.getAsString();
-            LOG.debug("Window open requested: {}", opened.isEmpty() ? "(empty)" : opened);
-            pendingWindowOpen = true;
-          });
-
-      LOG.debug("Enabled Page events for new tab detection");
-    } catch (RuntimeException e) {
-      LOG.debug("Could not enable Page events: {}", e.getMessage());
-    }
   }
 
   private void mergeFrameNodes(
@@ -372,12 +335,7 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   private Map<String, Object> sendCdp(String method, Map<String, Object> params) {
-    return sendCdpOn(session(), method, params);
-  }
-
-  private CDPSession session() {
-    if (client == null) initCDPSession();
-    return client;
+    return sendCdpOn(client, method, params);
   }
 
   private Map<String, Object> sendCdpOn(
@@ -438,109 +396,55 @@ public final class PlaywrightDriver extends BaseDriver {
         });
   }
 
-  private void flushEvents() {
-    page.context().cookies();
+  private void setupPageTracking(Page initialPage) {
+    pages.add(initialPage);
+    attachPageListeners(initialPage);
   }
 
-  private void watchContextOf(Page page) {
-    BrowserContext context = page.context();
-    if (!watchedContexts.add(context)) return;
-
-    context.onPage(this::onPageOpened);
-    LOG.debug("Watching browser context for new tabs");
+  private void attachPageListeners(Page page) {
+    page.onPopup(this::onPopup);
+    page.onClose(this::onPageClose);
   }
 
-  private void onPageOpened(Page opened) {
-    LOG.debug("New tab opened: {}", opened.url());
-    pendingWindowOpen = false;
-    openedPages.add(opened);
-    watchContextOf(opened);
-    opened.onClose(this::onPageClosed);
+  private void onPopup(Page popup) {
+    LOG.debug("New popup opened: {}", popup.url());
+    pages.add(popup);
+    attachPageListeners(popup);
   }
 
-  private void onPageClosed(Page closed) {
-    openedPages.remove(closed);
-    if (closed != page) return;
-
-    if (previousPage == null || previousPage.isClosed()) {
-      LOG.warn("Active tab was closed and the tab it came from is gone");
-      return;
+  private void onPageClose(Page closed) {
+    if (pages.remove(closed)) {
+      LOG.debug("Page closed: {}", closed.url());
     }
-
-    LOG.debug("Active tab was closed, returning to {}", previousPage.url());
-    this.page = previousPage;
-    this.previousPage = null;
-    resetAccessibilityTree();
-    // Opening a session here would run inside whatever call delivered this
-    // event, on a tab that may be gone as well. Let the next command open one.
-    this.client = null;
   }
 
   private void autoswitchToNewTabAction(Runnable action) {
     if (!autoswitchToNewTab) {
       action.run();
-      openedPages.clear();
       return;
     }
 
-    // Page.windowOpen is watched on the CDP session, so it has to be live
-    // before the action runs. The session is dropped when a tab closes.
-    session();
-
-    action.run();
-    page.waitForTimeout(NEW_TAB_DELAY);
-
-    if (openedPages.isEmpty() && pendingWindowOpen) {
-      waitForAnnouncedTab();
-    }
-    switchToNewTab();
-  }
-
-  private void waitForAnnouncedTab() {
-    pendingWindowOpen = false;
-    LOG.debug("A tab is opening, waiting for the browser to report it");
+    Page newPage;
     try {
-      page.context()
-          .waitForPage(
-              new BrowserContext.WaitForPageOptions().setTimeout(NEW_TAB_TIMEOUT), () -> {});
+      newPage =
+          page.context()
+              .waitForPage(
+                  new BrowserContext.WaitForPageOptions()
+                      .setTimeout(Config.PLAYWRIGHT_NEW_TAB_TIMEOUT),
+                  action);
     } catch (TimeoutError e) {
-      LOG.debug("  <- No tab was reported, continuing");
-    }
-  }
-
-  private void switchToNewTab() {
-    flushEvents();
-
-    Page opened = null;
-    for (Page candidate : openedPages) {
-      if (!candidate.isClosed()) opened = candidate;
+      return;
     }
 
-    openedPages.clear();
-    if (opened == null) return;
-
-    LOG.debug("Auto-switching to new tab: {}", opened.url());
-    opened.waitForLoadState();
-    activatePage(opened);
-  }
-
-  private void activatePage(Page target) {
-    if (target != page) this.previousPage = page;
-    this.page = target;
-    watchContextOf(target);
-    resetAccessibilityTree();
-    initCDPSession();
-  }
-
-  private List<Page> openTabs() {
-    openedPages.clear();
-    flushEvents();
-
-    List<Page> tabs = new ArrayList<>();
-    for (Page tab : page.context().pages()) {
-      if (!tab.isClosed()) tabs.add(tab);
+    if (newPage != null) {
+      LOG.debug("Auto-switching to new tab {} ({})", newPage.url(), newPage.title());
+      if (!pages.contains(newPage)) {
+        pages.add(newPage);
+        attachPageListeners(newPage);
+      }
+      this.page = newPage;
+      initCDPSession();
     }
-    return tabs;
   }
 
   private static String frameIdOf(Map<String, Object> frameInfo) {

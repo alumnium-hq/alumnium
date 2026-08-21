@@ -3,15 +3,7 @@ from base64 import b64encode
 from contextlib import asynccontextmanager
 from urllib.parse import urlparse
 
-from playwright.async_api import (
-    BrowserContext,
-    CDPSession,
-    Error,
-    Frame,
-    Locator,
-    Page,
-    TimeoutError,
-)
+from playwright.async_api import Error, Frame, Locator, Page, TimeoutError
 
 from .. import FULL_PAGE_SCREENSHOT
 from ..accessibility import ChromiumAccessibilityTree
@@ -45,12 +37,8 @@ class PlaywrightAsyncDriver(BaseDriver):
             UploadTool,
         }
         self.oopif_frames: set[Frame] = set()
-        self._opened_pages: list[Page] = []
-        self._watched_contexts: set[BrowserContext] = set()
-        self._previous_page: Page | None = None
-        self._pending_window_open = False
-        self._watch_context_of(page)
         self._run_async(self._init_cdp_session())
+        self._run_async(self._setup_page_tracking(page))
 
     @property
     def platform(self) -> str:
@@ -68,7 +56,6 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     @property
     async def _accessibility_tree(self) -> ChromiumAccessibilityTree:
-        await self._switch_to_new_tab()
         await self._wait_for_page_to_load()
 
         frame_tree = await self._send_cdp_command("Page.getFrameTree")
@@ -226,7 +213,9 @@ class PlaywrightAsyncDriver(BaseDriver):
         if is_oopif:
             session = await self.page.context.new_cdp_session(frame)
         else:
-            session = await self._cdp_session()
+            if self.client is None:
+                self.client = await self.page.context.new_cdp_session(self.page)
+            session = self.client
         try:
             # Beware!
             await session.send("DOM.enable")
@@ -284,96 +273,29 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _autoswitch_to_new_tab(self):
         if not self.autoswitch_to_new_tab:
             yield
-            self._opened_pages.clear()
             return
 
-        # Page.windowOpen is watched on the CDP session, so it has to be live
-        # before the action runs. The session is dropped when a tab closes.
-        await self._cdp_session()
-
-        yield
-
-        await self.page.wait_for_timeout(PlaywrightDriver.NEW_TAB_DELAY)
-
-        if not self._opened_pages and self._pending_window_open:
-            await self._wait_for_announced_tab()
-        await self._switch_to_new_tab()
-
-    async def _wait_for_announced_tab(self):
-        self._pending_window_open = False
-        logger.debug("A tab is opening, waiting for the browser to report it")
         try:
-            await self.page.context.wait_for_event("page", timeout=PlaywrightDriver.NEW_TAB_TIMEOUT)
+            async with self.page.context.expect_page(timeout=PlaywrightDriver.NEW_TAB_TIMEOUT) as new_page_info:
+                yield
         except TimeoutError:
-            logger.debug("  <- No tab was reported, continuing")
-
-    async def _switch_to_new_tab(self):
-        await self._flush_events()
-
-        opened = [page for page in self._opened_pages if not page.is_closed()]
-        self._opened_pages.clear()
-        if not opened:
             return
 
-        page = opened[-1]
-        logger.debug(f"Auto-switching to new tab: {page.url}")
-        await page.wait_for_load_state()
-        await self._activate_page(page)
-
-    async def _activate_page(self, page: Page):
-        if page is not self.page:
-            self._previous_page = self.page
+        page = await new_page_info.value
+        title = await page.title()
+        logger.debug(f"Auto-switching to new tab {title} ({page.url})")
         self.page = page
-        self._watch_context_of(page)
-        self.reset_accessibility_tree()
         await self._init_cdp_session()
 
-    async def _open_tabs(self) -> list[Page]:
-        self._opened_pages.clear()
-        await self._flush_events()
-        return [page for page in self.page.context.pages if not page.is_closed()]
-
-    async def _flush_events(self):
-        await self.page.context.cookies()
-
     async def _send_cdp_command(self, method: str, params: dict | None = None):
-        client = await self._cdp_session()
-        return await client.send(method, params or {})
+        if self.client is None:
+            self.client = await self.page.context.new_cdp_session(self.page)
+        return await self.client.send(method, params or {})
 
-    async def _cdp_session(self) -> CDPSession:
-        """The session of the active tab, opened on demand."""
-        return self.client or await self._init_cdp_session()
-
-    async def _init_cdp_session(self) -> CDPSession:
+    async def _init_cdp_session(self):
         self.oopif_frames.clear()
-
-        if self.client is not None:
-            try:
-                await self.client.detach()
-            except Exception:
-                pass  # The target may already be closed.
-
-        client = await self.page.context.new_cdp_session(self.page)
-        self.client = client
-        await self._enable_page_events(client)
+        self.client = await self.page.context.new_cdp_session(self.page)
         await self._enable_target_auto_attach()
-        return client
-
-    async def _enable_page_events(self, client: CDPSession):
-        try:
-            await client.send("Page.enable")
-
-            # Playwright page event fires after navigation, so it can be very slow.
-            # Use CDP instead which fires when the browser is asked to open a window.
-            client.on("Page.windowOpen", self._on_window_open)
-
-            logger.debug("Enabled Page events for new tab detection")
-        except Exception as e:
-            logger.debug(f"Could not enable Page events: {e}")
-
-    def _on_window_open(self, event: dict):
-        logger.debug(f"Window open requested: {event.get('url') or '(empty)'}")
-        self._pending_window_open = True
 
     async def _enable_target_auto_attach(self):
         try:
@@ -496,40 +418,23 @@ class PlaywrightAsyncDriver(BaseDriver):
                 node["_parent_iframe_backend_node_id"] = frame_to_iframe_map[frame_id]
             all_nodes.append(node)
 
-    def _watch_context_of(self, page: Page):
-        context = page.context
-        if context in self._watched_contexts:
-            return
+    async def _setup_page_tracking(self, initial_page: Page):
+        self._pages: list[Page] = [initial_page]
+        self._attach_page_listeners(initial_page)
 
-        self._watched_contexts.add(context)
-        context.on("page", self._on_page_opened)
-        logger.debug("Watching browser context for new tabs")
+    def _attach_page_listeners(self, page: Page):
+        page.on("popup", self._on_popup_sync)
+        page.on("close", self._on_page_close)
 
-    def _on_page_opened(self, page: Page):
-        logger.debug(f"New tab opened: {page.url}")
-        self._pending_window_open = False
-        self._opened_pages.append(page)
-        self._watch_context_of(page)
-        page.on("close", self._on_page_closed)
+    def _on_popup_sync(self, popup: Page):
+        logger.debug(f"New popup opened: {popup.url}")
+        self._pages.append(popup)
+        self._attach_page_listeners(popup)
 
-    def _on_page_closed(self, page: Page):
-        if page in self._opened_pages:
-            self._opened_pages.remove(page)
-        if page is not self.page:
-            return
-
-        previous = self._previous_page
-        if previous is None or previous.is_closed():
-            logger.warning("Active tab was closed and the tab it came from is gone")
-            return
-
-        logger.debug(f"Active tab was closed, returning to {previous.url}")
-        self.page = previous
-        self._previous_page = None
-        self.reset_accessibility_tree()
-        # Opening a session here would run inside whatever call delivered this
-        # event, on a tab that may be gone as well. Let the next command open one.
-        self.client = None
+    def _on_page_close(self, popup: Page):
+        if popup in self._pages:
+            logger.debug(f"Page closed: {popup.url}")
+            self._pages.remove(popup)
 
     def _get_all_frame_ids(self, frame_info: dict) -> list[str]:
         frame_ids = [frame_info["frame"]["id"]]
@@ -554,24 +459,26 @@ class PlaywrightAsyncDriver(BaseDriver):
         self._run_async(self._switch_to_next_tab())
 
     async def _switch_to_next_tab(self):
-        pages = await self._open_tabs()
-        if len(pages) <= 1:
-            return  # Only one tab, nothing to switch
+        await self.page.wait_for_timeout(100)
+        if len(self._pages) <= 1:
+            return
 
-        current_index = pages.index(self.page)
-        await self._activate_page(pages[(current_index + 1) % len(pages)])
+        current_index = self._pages.index(self.page)
+        self.page = self._pages[(current_index + 1) % len(self._pages)]
+        await self._init_cdp_session()
         await self.page.wait_for_load_state()
 
     def switch_to_previous_tab(self):
         self._run_async(self._switch_to_previous_tab())
 
     async def _switch_to_previous_tab(self):
-        pages = await self._open_tabs()
-        if len(pages) <= 1:
-            return  # Only one tab, nothing to switch
+        await self.page.wait_for_timeout(100)
+        if len(self._pages) <= 1:
+            return
 
-        current_index = pages.index(self.page)
-        await self._activate_page(pages[(current_index - 1) % len(pages)])
+        current_index = self._pages.index(self.page)
+        self.page = self._pages[(current_index - 1) % len(self._pages)]
+        await self._init_cdp_session()
         await self.page.wait_for_load_state()
 
     def _run_async(self, coro):
