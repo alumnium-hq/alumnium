@@ -10,8 +10,8 @@ run = "uv sync"
 depends = "//packages/typescript:build"
 
 [tasks."install/playwright"]
-run = "uv run playwright install chromium --with-deps"
-# NOTE: It prompts for sudo to install OS dependencies
+run = "uv run playwright install chromium $PLAYWRIGHT_INSTALL_DEPS_ARG"
+# NOTE: On Debian-compatible Linux, it prompts for sudo to install OS dependencies.
 raw = true
 
 [tasks.clean]

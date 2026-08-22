@@ -3,7 +3,7 @@ java = "21"
 
 [tasks."install/playwright"]
 run = "./gradlew installPlaywright"
-# NOTE: It prompts for sudo to install OS dependencies
+# NOTE: On Debian-compatible Linux, it prompts for sudo to install OS dependencies.
 raw = true
 
 [tasks.build]
