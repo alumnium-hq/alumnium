@@ -7,11 +7,16 @@ set -euo pipefail
 
 ALUMNIUM_MODEL="${ALUMNIUM_MODEL:-azure_openai}"
 ALUMNIUM_CACHE_PATH="${ALUMNIUM_CACHE_PATH:-}"
+ALUMNIUM_TEST_ARG="${ALUMNIUM_TEST_ARG:-}"
 ALUMNIUM_TEST_VITEST_ARGS="${ALUMNIUM_TEST_VITEST_ARGS:-}"
 ALUMNIUM_TEST_CACHE="${ALUMNIUM_TEST_CACHE:-}"
 ALUMNIUM_TEST_PASS_THRESHOLD_PCT="${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-100}"
 ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}"
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
+
+normalize_test_name() {
+	printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:lower:][:digit:]'
+}
 
 failed=0
 run_tests() {
@@ -24,6 +29,30 @@ run_tests() {
 }
 
 cd "$PKG_DIR"
+
+if [ -n "$ALUMNIUM_TEST_ARG" ]; then
+	test_arg_normalized="$(normalize_test_name "$ALUMNIUM_TEST_ARG")"
+	matched_test=""
+
+	for test_file in tests/system/*.test.ts; do
+		[ -f "$test_file" ] || continue
+		test_name="${test_file##*/}"
+		test_name="${test_name%.test.ts}"
+		if [ "$(normalize_test_name "$test_name")" = "$test_arg_normalized" ]; then
+			if [ -n "$matched_test" ]; then
+				echo "🔴 System test '$ALUMNIUM_TEST_ARG' matches both '$matched_test' and '$test_file'"
+				exit 1
+			fi
+			matched_test="$test_file"
+		fi
+	done
+
+	if [ -z "$matched_test" ]; then
+		echo "🔴 System test '$ALUMNIUM_TEST_ARG' not found"
+		exit 1
+	fi
+	ALUMNIUM_TEST_VITEST_ARGS="$matched_test"
+fi
 
 export ALUMNIUM_LOG_LEVEL=debug
 export ALUMNIUM_LOG_FILENAME="${ALUMNIUM_LOG_FILENAME_BASE}-{{VITEST_WORKER_ID}}.log"

@@ -6,6 +6,7 @@
 set -euo pipefail
 
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
+ALUMNIUM_TEST_ARG="${ALUMNIUM_TEST_ARG:-}"
 ALUMNIUM_TEST_PASS_THRESHOLD_PCT="${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-100}"
 ALUMNIUM_TEST_RETRY_COUNT="${ALUMNIUM_TEST_RETRY_COUNT:-0}"
 ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
@@ -13,6 +14,11 @@ ALUMNIUM_TEST_RETRY_DELAY_SECONDS="$(printf '%s.%03d' \
 	"$((ALUMNIUM_TEST_RETRY_DELAY / 1000))" \
 	"$((ALUMNIUM_TEST_RETRY_DELAY % 1000))")"
 ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}"
+TEST_ONLY=${TEST_ONLY:-behave,pytest}
+
+normalize_test_name() {
+	printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:lower:][:digit:]'
+}
 
 failed=0
 run_tests() {
@@ -25,6 +31,51 @@ run_tests() {
 }
 
 cd "$PKG_DIR"
+
+if [ -n "$ALUMNIUM_TEST_ARG" ]; then
+	test_arg_normalized="$(normalize_test_name "$ALUMNIUM_TEST_ARG")"
+	matched_test=""
+	matched_framework=""
+
+	for test_file in examples/behave/features/*.feature examples/pytest/*_test.py; do
+		[ -f "$test_file" ] || continue
+		test_name="${test_file##*/}"
+		case "$test_file" in
+			*.feature)
+				test_name="${test_name%.feature}"
+				test_framework="behave"
+				;;
+			*_test.py)
+				test_name="${test_name%_test.py}"
+				test_framework="pytest"
+				;;
+		esac
+
+		if [ "$(normalize_test_name "$test_name")" = "$test_arg_normalized" ]; then
+			if [ -n "$matched_test" ]; then
+				echo "🔴 System test '$ALUMNIUM_TEST_ARG' matches both '$matched_test' and '$test_file'"
+				exit 1
+			fi
+			matched_test="$test_file"
+			matched_framework="$test_framework"
+		fi
+	done
+
+	if [ -z "$matched_test" ]; then
+		echo "🔴 System test '$ALUMNIUM_TEST_ARG' not found"
+		exit 1
+	elif [ "$matched_framework" = "behave" ]; then
+		ALUMNIUM_TEST_BEHAVE_ARGS="$matched_test"
+		ALUMNIUM_TEST_PYTEST_ARGS=""
+		TEST_ONLY=behave
+	else
+		ALUMNIUM_TEST_BEHAVE_ARGS=""
+		ALUMNIUM_TEST_PYTEST_ARGS="$matched_test"
+		TEST_ONLY=pytest
+	fi
+else
+	ALUMNIUM_TEST_PYTEST_ARGS="${ALUMNIUM_TEST_PYTEST_ARGS:-} examples/pytest"
+fi
 
 echo "🔵 ALUMNIUM_TEST_PASS_THRESHOLD_PCT=$ALUMNIUM_TEST_PASS_THRESHOLD_PCT"
 echo "🔵 ALUMNIUM_TEST_RETRY_COUNT=$ALUMNIUM_TEST_RETRY_COUNT"
@@ -41,8 +92,6 @@ export ALUMNIUM_LOG_BUFFER_SIZE=0
 export ALUMNIUM_LOG_FLUSH_INTERVAL=0
 
 rm -f ".alumnium/logs/${ALUMNIUM_LOG_FILENAME_BASE}"*
-
-TEST_ONLY=${TEST_ONLY:-behave,pytest}
 
 # Check if TEST_ONLY includes "behave"
 if [[ "$TEST_ONLY" == *"behave"* ]]; then
@@ -62,7 +111,7 @@ if [[ "$TEST_ONLY" == *"pytest"* ]]; then
 			env ALUMNIUM_LOG_FILENAME="${ALUMNIUM_LOG_FILENAME_BASE}-pytest.log" \
 			uv run pytest --retries "$ALUMNIUM_TEST_RETRY_COUNT" \
 			--retry-delay "$ALUMNIUM_TEST_RETRY_DELAY_SECONDS" \
-			--html reports/pytest.html "${pytest_args[@]}" examples/pytest
+			--html reports/pytest.html "${pytest_args[@]}"
 	fi
 fi
 
