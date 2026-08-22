@@ -2,8 +2,8 @@
 run = []
 
 [tasks."install/playwright"]
-run = "bun run playwright install chromium --with-deps"
-# NOTE: It prompts for sudo to install OS dependencies
+run = "bun run playwright install chromium $PLAYWRIGHT_INSTALL_DEPS_ARG"
+# NOTE: On Debian-compatible Linux, it prompts for sudo to install OS dependencies.
 raw = true
 
 [tasks.clean]

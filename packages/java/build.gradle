@@ -275,11 +275,10 @@ publishing {
 tasks.register('installPlaywright', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.microsoft.playwright.CLI'
-    args = [
-        'install',
-        'chromium',
-        '--with-deps'
-    ]
+    args = ['install', 'chromium']
+    if (System.getProperty('os.name') == 'Linux' && file('/etc/debian_version').canRead()) {
+        args '--with-deps'
+    }
 }
 
 tasks.register('copyDriverScripts', Copy) {
