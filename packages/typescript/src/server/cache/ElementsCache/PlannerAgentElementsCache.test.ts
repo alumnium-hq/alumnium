@@ -64,6 +64,53 @@ describe("PlannerAgentElementsCache", () => {
     expect(plannerCache.getEntries()).toEqual([]);
   });
 
+  it("skips planner generation with no actions", async () => {
+    const { memoryKey, plannerCache } = setup.cur;
+
+    await plannerCache.update({
+      memoryKey,
+      cacheHash: "hash" as ElementsCache.CacheHash,
+      meta: {
+        kind: "planner",
+        goal: "click upload" as BaseAgent.Goal,
+        treeXml: "<button id='1'>Upload</button>",
+      },
+      generation: LchainFactory.storedGeneration({
+        text: '{"actions":[]}',
+        message: {
+          data: {
+            additional_kwargs: {
+              parsed: {
+                explanation: "No matching element",
+                actions: [],
+              },
+            },
+          },
+        },
+      }),
+    });
+
+    expect(plannerCache.getEntries()).toEqual([]);
+  });
+
+  it("allows element-free planner generation with actions", () => {
+    const generation = LchainFactory.storedGeneration({
+      text: '{"actions":["navigate"]}',
+      message: {
+        data: {
+          additional_kwargs: {
+            parsed: {
+              explanation: "Navigate directly",
+              actions: ['navigate to "https://example.com" URL'],
+            },
+          },
+        },
+      },
+    });
+
+    expect(PlannerAgentElementsCache.isCacheable(generation)).toBe(true);
+  });
+
   it("updates elements while deduplicating by non-index attrs", async () => {
     const { plannerCache, app } = setup.cur;
 
