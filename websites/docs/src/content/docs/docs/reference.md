@@ -167,7 +167,7 @@ Set to `false` to start Playwright in headed mode. Only used in the [MCP server]
 
 ### `ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT`
 
-Timeout in milliseconds when waiting for a new tab to open after interacting with elements using Playwright driver. Increase when Alumnium fails to detect a new tab. Default is 200.
+Maximum time in milliseconds to wait when Playwright announces a new tab that has not appeared yet. Ordinary interactions do not wait for this timeout. The TypeScript and Python default is 10000.
 
 ### `ANTHROPIC_API_KEY`
 

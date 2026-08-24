@@ -5,6 +5,51 @@ import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 import { SeleniumDriver } from "./SeleniumDriver.ts";
 
 describe("SeleniumDriver", () => {
+  describe("quit", () => {
+    it("waits for CDP initialization before quitting WebDriver", async () => {
+      let resolveCapabilities: (() => void) | undefined;
+      const getCapabilities = vi.fn(
+        () =>
+          new Promise<{ get: () => undefined }>((resolve) => {
+            resolveCapabilities = () => resolve({ get: () => undefined });
+          }),
+      );
+      const sendAndGetDevToolsCommand = vi.fn(async () => undefined);
+      const quit = vi.fn(async () => undefined);
+      const driver = new SeleniumDriver({
+        getCapabilities,
+        sendAndGetDevToolsCommand,
+        quit,
+      } as unknown as WebDriver);
+
+      const quitting = driver.quit();
+      await Promise.resolve();
+
+      expect(quit).not.toHaveBeenCalled();
+      resolveCapabilities?.();
+      await quitting;
+      expect(sendAndGetDevToolsCommand).toHaveBeenCalledWith(
+        "Page.addScriptToEvaluateOnNewDocument",
+        expect.objectContaining({ runImmediately: true }),
+      );
+      expect(quit).toHaveBeenCalledOnce();
+    });
+
+    it("still quits when CDP initialization and waiter fallback fail", async () => {
+      const quit = vi.fn(async () => undefined);
+      const driver = new SeleniumDriver({
+        getCapabilities: vi.fn(async () => ({ get: () => undefined })),
+        sendAndGetDevToolsCommand: vi.fn(async () => {
+          throw new Error("ChromeDriver unavailable");
+        }),
+        quit,
+      } as unknown as WebDriver);
+
+      await expect(driver.quit()).resolves.toBeUndefined();
+      expect(quit).toHaveBeenCalledOnce();
+    });
+  });
+
   it("serializes AX nodes without mutable metadata", async () => {
     const sendAndGetDevToolsCommand = vi.fn(async (command: string) => {
       if (command === "Page.getFrameTree") {
@@ -34,7 +79,12 @@ describe("SeleniumDriver", () => {
     });
     const webdriver = {
       switchTo: () => ({ defaultContent: vi.fn(async () => undefined) }),
-      executeScript: vi.fn(async () => undefined),
+      executeScript: vi.fn(async () => ({
+        lastMutationAt: 0,
+        now: performance.now(),
+        pendingTimeouts: 0,
+        readyState: "complete",
+      })),
       executeAsyncScript: vi.fn(async () => undefined),
       sendAndGetDevToolsCommand,
     };

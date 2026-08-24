@@ -1,5 +1,4 @@
 from base64 import b64decode
-from pathlib import Path
 from typing import Callable
 from urllib.parse import urlparse
 
@@ -22,17 +21,15 @@ from ..tools.press_key_tool import PressKeyTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
+from .cdp_network_monitor import CdpNetworkMonitor
 from .keys import Key
+from .selenium_cdp_connection import SeleniumCdpConnection
+from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
 logger = get_logger(__name__)
 
 
 class SeleniumDriver(BaseDriver):
-    with open(Path(__file__).parent / "scripts/waiter.js") as f:
-        WAITER_SCRIPT = f.read()
-    with open(Path(__file__).parent / "scripts/waitFor.js") as f:
-        WAIT_FOR_SCRIPT = f.read()
-
     def __init__(self, driver: WebDriver):
         self.driver = driver
         self.autoswitch_to_new_tab = True
@@ -48,6 +45,16 @@ class SeleniumDriver(BaseDriver):
         self._shadow_child_to_host_map: dict[int, int] = {}
         self._patch_driver(driver)
         self._enable_target_auto_attach()
+        self.network_monitor = CdpNetworkMonitor()
+        self.cdp_connection: SeleniumCdpConnection | None = None
+        try:
+            self.cdp_connection = SeleniumCdpConnection(driver.capabilities, WAITER_SCRIPT)
+        except Exception as error:
+            logger.debug(f"Could not subscribe to CDP network events: {error}")
+            self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
+                "Page.addScriptToEvaluateOnNewDocument",
+                {"source": WAITER_SCRIPT, "runImmediately": True},
+            )
 
     @property
     def platform(self) -> str:
@@ -170,6 +177,8 @@ class SeleniumDriver(BaseDriver):
         ActionChains(self.driver).send_keys(*keys).perform()
 
     def quit(self):
+        if self.cdp_connection:
+            self.cdp_connection.close()
         self.driver.quit()
 
     def back(self):
@@ -338,12 +347,25 @@ class SeleniumDriver(BaseDriver):
     @retry(JavascriptException, tries=2, delay=0.1, backoff=2)  # type: ignore[reportArgumentType]
     def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
-        self.driver.execute_script(self.WAITER_SCRIPT)
-        error = self.driver.execute_async_script(self.WAIT_FOR_SCRIPT)
-        if error is not None:
-            logger.debug(f"  <- Failed to wait for page to load: {error}")
+        network_monitor = self.network_monitor
+        if self.cdp_connection:
+            self.cdp_connection.activate(self.driver.current_window_handle)
+            network_monitor = self.cdp_connection.active_monitor
+        loaded, pending = wait_for_page_to_load(
+            network_monitor,
+            self._waiter_snapshot,
+        )
+        if not loaded:
+            logger.debug(f"  <- Timed out waiting for page to load; pending requests: {pending}")
         else:
             logger.debug("  <- Page finished loading")
+
+    def _waiter_snapshot(self) -> dict | None:
+        snapshot = self.driver.execute_script(f"return {WAITER_SNAPSHOT_SCRIPT}")
+        if snapshot is None:
+            self.driver.execute_script(WAITER_SCRIPT)
+            snapshot = self.driver.execute_script(f"return {WAITER_SNAPSHOT_SCRIPT}")
+        return snapshot
 
     def switch_to_next_tab(self):
         handles = self.driver.window_handles

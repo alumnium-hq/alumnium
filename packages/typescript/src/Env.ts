@@ -212,7 +212,7 @@ export const Env = {
   get ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT() {
     return envVar(
       "ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT",
-      z.coerce.number().default(200),
+      z.coerce.number().default(10_000),
     );
   },
 

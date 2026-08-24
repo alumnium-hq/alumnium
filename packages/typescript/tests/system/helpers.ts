@@ -10,6 +10,7 @@ import { inject, it as vitestIt } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
+import { SlowTabServer } from "../utils/SlowTabServer.ts";
 
 export namespace Setup {
   export interface Helpers {
@@ -17,6 +18,12 @@ export namespace Setup {
     navigate: (url: string) => Promise<void>;
     type: (element: Element | undefined, text: string) => Promise<void>;
     click: (element: Element | undefined) => Promise<void>;
+    serveSlowTabPage: () => Promise<Setup.SlowTabPage>;
+  }
+
+  export interface SlowTabPage {
+    url: string;
+    slowTabUrl: string;
   }
 }
 
@@ -49,7 +56,7 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   };
 
   const al = new Alumni(driver, options);
-  const $ = createHelpers(driverId, driver, al);
+  const $ = createHelpers(driverId, driver, al, onTestFinished);
 
   if (isAppiumDriver) {
     (al.driver as AppiumDriver).delay = 0.1;
@@ -124,6 +131,7 @@ function createHelpers(
   driverId: Driver.Id,
   driver: Alumni.Driver,
   al: Alumni,
+  onTestFinished: useSetup.Props["onTestFinished"],
 ): Setup.Helpers {
   const $: Setup.Helpers = {
     resolveUrl(url: string): string {
@@ -142,6 +150,17 @@ function createHelpers(
 
     async navigate(url: string) {
       await al.driver.visit($.resolveUrl(url));
+    },
+
+    async serveSlowTabPage() {
+      const server = new SlowTabServer();
+      await server.start();
+      onTestFinished(() => server.stop());
+
+      return {
+        url: server.url,
+        slowTabUrl: server.slowTabUrl,
+      };
     },
 
     async type(element: Element | undefined, text: string) {

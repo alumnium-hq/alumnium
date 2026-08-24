@@ -1,5 +1,11 @@
-import { always, ensure } from "alwaysly";
-import type { CDPSession, Frame, Locator, Page } from "playwright-core";
+import { ensure } from "alwaysly";
+import type {
+  BrowserContext,
+  CDPSession,
+  Frame,
+  Locator,
+  Page,
+} from "playwright-core";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { ChromiumAccessibilityTree } from "../accessibility/ChromiumAccessibilityTree.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
@@ -23,9 +29,11 @@ import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { retry } from "../utils/retry.ts";
 import type { Driver } from "./Driver.ts";
 import {
-  waiterScriptSource,
-  waitForScriptSource,
-} from "./scripts/bundledScripts.ts";
+  CdpNetworkMonitor,
+  WAITER_SNAPSHOT_SCRIPT,
+  waitForPageStability,
+} from "./CdpNetworkMonitor.ts";
+import { waiterScriptSource } from "./scripts/bundledScripts.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -54,10 +62,22 @@ interface CDPFrameTree {
   frameTree: CDPFrameInfo;
 }
 
+interface NewTabAction {
+  announced: boolean;
+  pages: Page[];
+}
+
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
+const NEW_TAB_DELAY = 200;
 
 const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
-const WAIT_FOR_SCRIPT = `(...scriptArgs) => new Promise((resolve) => { const arguments = [...scriptArgs, resolve]; ${waitForScriptSource /* await readScript("waitFor.js") */} })`;
+const NETWORK_EVENTS = [
+  "Network.requestWillBeSent",
+  "Network.responseReceived",
+  "Network.dataReceived",
+  "Network.loadingFinished",
+  "Network.loadingFailed",
+] as const;
 
 const RETRY_OPTIONS: retry.Options = {
   maxAttempts: 2,
@@ -67,8 +87,15 @@ const RETRY_OPTIONS: retry.Options = {
 
 export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
+  private cdpReady: Promise<void>;
+  private networkMonitor = new CdpNetworkMonitor();
+  private networkSessions = new Map<Frame, CDPSession>();
+  private networkFrameIds = new WeakMap<Frame, number>();
+  private nextNetworkFrameId = 1;
+  private cdpGeneration = 0;
   page: Page;
-  private _pages: Page[] = [];
+  private trackedPages = new Set<Page>();
+  private newTabAction: NewTabAction | undefined;
   // frameId → url for OOPIF frames tracked via Target.attachedToTarget events
   private oopifFrameIds: Map<string, string> = new Map();
   // Playwright Frame objects that correspond to OOPIFs (populated during getAccessibilityTree)
@@ -89,39 +116,119 @@ export class PlaywrightDriver extends BaseDriver {
   constructor(page: Page) {
     super();
     this.page = page;
-    this.setupPageTracking(page);
-    void this.initCDPSession();
+    this.cdpReady = Promise.resolve(
+      this.page.context().addInitScript({ content: WAITER_SCRIPT }),
+    ).then(() => this.initCDPSession());
+    this.page.context().on("page", (opened) => this.onPageOpened(opened));
+    this.trackPage(page);
   }
 
-  private setupPageTracking(initialPage: Page): void {
-    this._pages = [initialPage];
-    this.attachPageListeners(initialPage);
+  private trackPage(page: Page): void {
+    if (this.trackedPages.has(page)) return;
+    this.trackedPages.add(page);
+    page.on("frameattached", (frame) => void this.attachNetworkFrame(frame));
+    page.on("framenavigated", (frame) => void this.attachNetworkFrame(frame));
+    page.on("framedetached", (frame) => this.detachNetworkFrame(frame));
+    page.on("close", () => this.onPageClose(page));
   }
 
-  private attachPageListeners(page: Page): void {
-    page.on("popup", (popup) => this.onPopup(popup));
-    page.on("close", (popup) => this.onPageClose(popup));
-  }
-
-  private onPopup(popup: Page) {
-    logger.debug(`New popup opened: ${popup.url()}`);
-    this._pages.push(popup);
-    this.attachPageListeners(popup); // Chain: new page also listens for popups
+  private onPageOpened(page: Page): void {
+    logger.debug(`New tab opened: ${page.url()}`);
+    this.trackPage(page);
+    this.newTabAction?.pages.push(page);
   }
 
   private onPageClose(page: Page): void {
-    const index = this._pages.indexOf(page);
-    if (index !== -1) {
-      logger.debug(`Page closed: ${page.url()}`);
-      this._pages.splice(index, 1);
-    }
+    logger.debug(`Page closed: ${page.url()}`);
+    this.trackedPages.delete(page);
+    if (this.newTabAction)
+      this.newTabAction.pages = this.newTabAction.pages.filter(
+        (opened) => opened !== page,
+      );
   }
 
   private async initCDPSession(): Promise<void> {
+    const generation = ++this.cdpGeneration;
+    const page = this.page;
     this.oopifFrameIds.clear();
     this.oopifFrames.clear();
-    this.client = await this.page.context().newCDPSession(this.page);
+    for (const session of this.networkSessions.values()) {
+      await session.detach().catch(() => undefined);
+    }
+    this.networkSessions.clear();
+    this.networkMonitor.clear();
+    const client = await page.context().newCDPSession(page);
+    if (generation !== this.cdpGeneration || page !== this.page) {
+      await client.detach();
+      return;
+    }
+    this.client = client;
+    await this.configureNetworkSession(client);
     await this.enableTargetAutoAttach();
+    for (const frame of this.page.frames()) {
+      if (frame !== this.page.mainFrame()) await this.attachNetworkFrame(frame);
+    }
+  }
+
+  private async configureNetworkSession(
+    session: CDPSession,
+    sessionId = "",
+  ): Promise<void> {
+    await session.send("Page.enable");
+    await session.send("Network.enable");
+    await session.send("Page.addScriptToEvaluateOnNewDocument", {
+      source: WAITER_SCRIPT,
+      runImmediately: true,
+    });
+    for (const event of NETWORK_EVENTS) {
+      session.on(event, (params) =>
+        this.networkMonitor.process(event, params, sessionId),
+      );
+    }
+    session.on("Page.windowOpen", () => {
+      if (this.newTabAction) this.newTabAction.announced = true;
+    });
+  }
+
+  private async attachNetworkFrame(frame: Frame): Promise<void> {
+    if (frame.page() !== this.page || this.networkSessions.has(frame)) return;
+    try {
+      const frameTree = (await this.client.send(
+        "Page.getFrameTree",
+      )) as CDPFrameTree;
+      const session = await this.page.context().newCDPSession(frame);
+      const sessionFrameTree = (await session.send(
+        "Page.getFrameTree",
+      )) as CDPFrameTree;
+      const sameProcessFrameIds = new Set(
+        this.getAllFrameIds(frameTree.frameTree),
+      );
+      if (sameProcessFrameIds.has(sessionFrameTree.frameTree.frame.id)) {
+        await session.detach();
+        return;
+      }
+      await this.configureNetworkSession(session, this.networkFrameId(frame));
+      this.networkSessions.set(frame, session);
+    } catch {
+      // Same-process or destroyed frames are covered by the page session.
+    }
+  }
+
+  private detachNetworkFrame(frame: Frame): void {
+    const sessionId = this.networkFrameId(frame);
+    this.networkMonitor.clearSession(sessionId);
+    const session = this.networkSessions.get(frame);
+    if (session) void session.detach().catch(() => undefined);
+    this.networkSessions.delete(frame);
+  }
+
+  private networkFrameId(frame: Frame): string {
+    let id = this.networkFrameIds.get(frame);
+    if (!id) {
+      id = this.nextNetworkFrameId++;
+      this.networkFrameIds.set(frame, id);
+    }
+    return `frame:${id}`;
   }
 
   private async enableTargetAutoAttach(): Promise<void> {
@@ -187,6 +294,7 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.get_accessibility_tree", spanAttrs)
   protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
+    await this.cdpReady;
     await this.waitForPageToLoad();
 
     const frameTree = (await this.client.send(
@@ -297,7 +405,8 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.quit", spanAttrs)
   async quit(): Promise<void> {
-    return this.page.close();
+    await this.cdpReady;
+    await this.page.close();
   }
 
   @span("driver.back", spanAttrs)
@@ -544,39 +653,52 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.switch_to_next_tab", spanAttrs)
   async switchToNextTab(): Promise<void> {
-    // Brief wait to allow popup handlers to complete
-    await this.page.waitForTimeout(100);
-    if (this._pages.length <= 1) {
+    await this.page.waitForTimeout(100).catch(() => undefined);
+    const pages = this.openTabs();
+    if (pages.length <= 1) {
       return; // Only one tab, nothing to switch
     }
 
-    const currentIndex = this._pages.indexOf(this.page);
-    const nextIndex = (currentIndex + 1) % this._pages.length; // Wrap to first
+    const currentIndex = pages.indexOf(this.page);
+    const nextIndex = (currentIndex + 1) % pages.length; // Wrap to first
 
-    await this.switchToTab(nextIndex);
+    await this.switchToTab(pages[nextIndex]);
   }
 
   @span("driver.switch_to_previous_tab", spanAttrs)
   async switchToPreviousTab(): Promise<void> {
-    // Brief wait to allow popup handlers to complete
-    await this.page.waitForTimeout(100);
-    if (this._pages.length <= 1) {
+    await this.page.waitForTimeout(100).catch(() => undefined);
+    const pages = this.openTabs();
+    if (pages.length <= 1) {
       return; // Only one tab, nothing to switch
     }
 
-    const currentIndex = this._pages.indexOf(this.page);
-    const prevIndex =
-      (currentIndex - 1 + this._pages.length) % this._pages.length; // Wrap to last
+    const currentIndex = pages.indexOf(this.page);
+    const prevIndex = (currentIndex - 1 + pages.length) % pages.length; // Wrap to last
 
-    await this.switchToTab(prevIndex);
+    await this.switchToTab(pages[prevIndex]);
   }
 
   @stateful("switchToTab")
-  private async switchToTab(tabIndex: number): Promise<void> {
-    always(this._pages[tabIndex]);
-    this.page = this._pages[tabIndex];
-    await this.initCDPSession();
+  private async switchToTab(page: Page | undefined): Promise<void> {
+    if (!page) return;
+    await this.activatePage(page);
     await this.page.waitForLoadState();
+  }
+
+  private async activatePage(page: Page): Promise<void> {
+    this.page = page;
+    this.trackPage(page);
+    this.resetAccessibilityTree();
+    this.cdpReady = this.initCDPSession();
+    await this.cdpReady;
+  }
+
+  private openTabs(): Page[] {
+    return this.page
+      .context()
+      .pages()
+      .filter((page) => !page.isClosed());
   }
 
   @span("driver.wait", spanAttrs)
@@ -604,11 +726,15 @@ export class PlaywrightDriver extends BaseDriver {
   @span("driver.wait_for_page_to_load", spanAttrs)
   private async waitForPageToLoad(): Promise<void> {
     return retry(RETRY_OPTIONS, async () => {
+      await this.cdpReady;
       logger.debug("Waiting for page to finish loading:");
-      await this.page.evaluate(WAITER_SCRIPT);
-      const error: unknown = await this.page.evaluate(`(${WAIT_FOR_SCRIPT})()`);
-      if (error) {
-        logger.debug(`  <- Failed to wait for page to load: ${String(error)}`);
+      const result = await waitForPageStability(this.networkMonitor, () =>
+        this.page.evaluate(WAITER_SNAPSHOT_SCRIPT),
+      );
+      if (!result.loaded) {
+        logger.debug(
+          `  <- Timed out waiting for page to load; pending requests: ${result.pending.join(", ")}`,
+        );
       } else {
         logger.debug("  <- Page finished loading");
       }
@@ -623,20 +749,44 @@ export class PlaywrightDriver extends BaseDriver {
       return;
     }
 
-    const [newPage] = await Promise.all([
-      this.page
-        .context()
-        .waitForEvent("page", { timeout: this.newTabTimeout })
-        .catch(() => null),
-      action(),
-    ]);
+    await this.cdpReady;
+    const context = this.page.context();
+    const newTabAction: NewTabAction = { announced: false, pages: [] };
+    this.newTabAction = newTabAction;
+    try {
+      await action();
+      if (!newTabAction.pages.length)
+        await new Promise((resolve) => setTimeout(resolve, NEW_TAB_DELAY));
 
-    if (newPage) {
-      logger.debug(
-        `Auto-switching to new tab ${newPage.url()} (${await newPage.title()})`,
+      let newPage = newTabAction.pages.findLast((page) => !page.isClosed());
+      if (!newPage && newTabAction.announced) {
+        newPage = await this.waitForAnnouncedTab(context, newTabAction);
+      }
+      if (!newPage) return;
+
+      logger.debug(`Auto-switching to new tab: ${newPage.url()}`);
+      await this.activatePage(newPage);
+    } finally {
+      if (this.newTabAction === newTabAction) this.newTabAction = undefined;
+    }
+  }
+
+  private async waitForAnnouncedTab(
+    context: BrowserContext,
+    action: NewTabAction,
+  ): Promise<Page | undefined> {
+    const deadline = Date.now() + this.newTabTimeout;
+    while (Date.now() < deadline) {
+      const page = await context
+        .waitForEvent("page", {
+          timeout: Math.max(1, Math.min(100, deadline - Date.now())),
+        })
+        .catch(() => undefined);
+      if (page) return page;
+      const captured = action.pages.findLast(
+        (candidate) => !candidate.isClosed(),
       );
-      this.page = newPage;
-      await this.initCDPSession();
+      if (captured) return captured;
     }
   }
 

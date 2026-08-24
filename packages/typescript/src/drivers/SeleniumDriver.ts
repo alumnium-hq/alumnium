@@ -35,9 +35,12 @@ import type { Tracer } from "../telemetry/Tracer.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import type { Driver } from "./Driver.ts";
 import {
-  waiterScriptSource,
-  waitForScriptSource,
-} from "./scripts/bundledScripts.ts";
+  CdpNetworkMonitor,
+  WAITER_SNAPSHOT_SCRIPT,
+  waitForPageStability,
+} from "./CdpNetworkMonitor.ts";
+import { SeleniumCdpConnection } from "./SeleniumCdpConnection.ts";
+import { waiterScriptSource } from "./scripts/bundledScripts.ts";
 import type { ShadowRoot } from "selenium-webdriver/lib/webdriver.js";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -71,13 +74,15 @@ interface CDPFrameInfo {
 }
 
 const WAITER_SCRIPT = waiterScriptSource;
-const WAIT_FOR_SCRIPT = waitForScriptSource;
 
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
   public platform: Driver.Platform = "chromium";
   #autoswitchToNewTabEnabled = true;
   #shadowChildToHostMap: Partial<Record<number, number>> = {};
+  #networkMonitor = new CdpNetworkMonitor();
+  #cdpConnection: SeleniumCdpConnection | null = null;
+  #cdpReady: Promise<void>;
   public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
@@ -91,6 +96,7 @@ export class SeleniumDriver extends BaseDriver {
   constructor(driver: WebDriver) {
     super();
     this.driver = driver as ChromiumWebDriver;
+    this.#cdpReady = this.initCdpConnection();
   }
 
   @span("driver.get_accessibility_tree", spanAttrs)
@@ -253,6 +259,8 @@ export class SeleniumDriver extends BaseDriver {
 
   @span("driver.quit", spanAttrs)
   async quit(): Promise<void> {
+    await this.#cdpReady;
+    this.#cdpConnection?.close();
     try {
       await this.driver.quit();
     } catch (error) {
@@ -447,23 +455,26 @@ export class SeleniumDriver extends BaseDriver {
 
   @span("driver.internal.wait_for_page_load")
   private async waitForPageToLoad(): Promise<void> {
+    await this.#cdpReady;
+    await this.#cdpConnection?.activate(await this.driver.getWindowHandle());
+    const networkMonitor =
+      this.#cdpConnection?.activeMonitor ?? this.#networkMonitor;
     try {
-      await this.driver.executeScript(WAITER_SCRIPT);
-      const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
-      if (error) {
-        logger.warn(`Failed to wait for page to load: ${String(error)}`);
+      const result = await waitForPageStability(networkMonitor, () =>
+        this.waiterSnapshot(),
+      );
+      if (!result.loaded) {
+        logger.warn(
+          `Timed out waiting for page to load; pending requests: ${result.pending.join(", ")}`,
+        );
       }
-    } catch {
+    } catch (error) {
       // Retry once on failure
       try {
-        await this.driver.executeScript(WAITER_SCRIPT);
-        const error = await this.driver.executeAsyncScript(WAIT_FOR_SCRIPT);
-        if (error) {
-          logger.warn(`Failed to wait for page to load: ${String(error)}`);
-        }
+        await waitForPageStability(networkMonitor, () => this.waiterSnapshot());
       } catch (retryError) {
         logger.warn(
-          `Failed to wait for page to load after retry: ${String(retryError)}`,
+          `Failed to wait for page to load after retry (${String(error)}): ${String(retryError)}`,
         );
       }
     }
@@ -476,6 +487,53 @@ export class SeleniumDriver extends BaseDriver {
   ): Promise<void> {
     always(handles[tabIndex]);
     await this.driver.switchTo().window(handles[tabIndex]);
+  }
+
+  private async initCdpConnection(): Promise<void> {
+    try {
+      const capabilities = await this.driver.getCapabilities();
+      this.#cdpConnection = await SeleniumCdpConnection.connect(
+        capabilities,
+        WAITER_SCRIPT,
+      );
+    } catch (error) {
+      logger.debug(
+        `Could not subscribe to CDP network events: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      try {
+        await this.executeCdpCommand("Page.addScriptToEvaluateOnNewDocument", {
+          source: WAITER_SCRIPT,
+          runImmediately: true,
+        });
+      } catch (fallbackError) {
+        logger.debug(
+          `Could not install waiter script through Selenium: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`,
+        );
+      }
+    }
+  }
+
+  private async waiterSnapshot(): Promise<{
+    lastMutationAt: number;
+    now: number;
+    pendingTimeouts: number;
+    readyState: "loading" | "interactive" | "complete";
+  } | null> {
+    let snapshot = (await this.driver.executeScript(
+      `return ${WAITER_SNAPSHOT_SCRIPT}`,
+    )) as {
+      lastMutationAt: number;
+      now: number;
+      pendingTimeouts: number;
+      readyState: "loading" | "interactive" | "complete";
+    } | null;
+    if (!snapshot) {
+      await this.driver.executeScript(WAITER_SCRIPT);
+      snapshot = (await this.driver.executeScript(
+        `return ${WAITER_SNAPSHOT_SCRIPT}`,
+      )) as typeof snapshot;
+    }
+    return snapshot;
   }
 
   async #autoswitchToNewTab<Result>(

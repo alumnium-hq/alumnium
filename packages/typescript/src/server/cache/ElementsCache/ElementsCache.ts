@@ -156,6 +156,12 @@ export class ElementsCache extends ServerCache {
 
         const memoryEntry = this.#memoryRecord(memoryKey);
         if (memoryEntry) {
+          if (
+            agentMeta.kind === "planner" &&
+            !PlannerAgentElementsCache.isCacheable(memoryEntry.generation)
+          ) {
+            return null;
+          }
           const masksIdsMap = tree.resolveElements(memoryEntry.elements);
 
           if (masksIdsMap) {
@@ -198,6 +204,16 @@ export class ElementsCache extends ServerCache {
             "cache.lookup.miss.reason": "no_match",
           });
 
+          return null;
+        }
+
+        if (
+          agentMeta.kind === "planner" &&
+          !PlannerAgentElementsCache.isCacheable(maskedGeneration)
+        ) {
+          logger.debug(
+            `Elements cache miss (planner has no actions): "${cacheKey.slice(0, 50)}..."`,
+          );
           return null;
         }
 
