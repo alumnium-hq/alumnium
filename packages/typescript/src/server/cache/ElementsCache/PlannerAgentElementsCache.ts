@@ -1,11 +1,19 @@
 import { xxh64Str } from "@js-fns/xxhash/str";
+import type { LchainSchema } from "../../../llm/LchainSchema.ts";
 import { Logger } from "../../../telemetry/Logger.ts";
-import type { PlannerAgent } from "../../agents/PlannerAgent.ts";
+import { PlannerAgent } from "../../agents/PlannerAgent.ts";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
 
 const logger = Logger.get(import.meta.url);
 
 export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAgent.Meta> {
+  static isCacheable(generation: LchainSchema.StoredGeneration): boolean {
+    const parsed = PlannerAgent.Plan.safeParse(
+      generation.message?.data.additional_kwargs.parsed,
+    );
+    return !parsed.success || parsed.data.actions.some(Boolean);
+  }
+
   async update(
     props: BaseAgentElementsCache.UpdateProps<PlannerAgent.Meta>,
   ): Promise<void> {
@@ -15,6 +23,13 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
     if (!generation.message?.data.content) {
       logger.warn(
         `Skipping planner cache update: empty plan content for goal: ${goal.slice(0, 50)}...`,
+      );
+      return;
+    }
+
+    if (!PlannerAgentElementsCache.isCacheable(generation)) {
+      logger.debug(
+        `Skipping planner cache update: plan has no actions for goal: ${goal.slice(0, 50)}...`,
       );
       return;
     }
