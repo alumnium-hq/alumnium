@@ -98,10 +98,18 @@ usage = '''
 arg "[test]" help="System test to run" default=""
 '''
 run = [
-  { task = "test/system:selenium", args = ["{{usage.test}}"] },
-  { task = "test/system:playwright", args = ["{{usage.test}}"] },
-  { task = "test/system:appium-ios", args = ["{{usage.test}}"] },
-  { task = "test/system:appium-android", args = ["{{usage.test}}"] },
+  { task = "test/system:selenium", args = [
+    "{{usage.test}}",
+  ] },
+  { task = "test/system:playwright", args = [
+    "{{usage.test}}",
+  ] },
+  { task = "test/system:appium-ios", args = [
+    "{{usage.test}}",
+  ] },
+  { task = "test/system:appium-android", args = [
+    "{{usage.test}}",
+  ] },
 ]
 
 [tasks."test/system:selenium"]

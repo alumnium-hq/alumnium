@@ -649,7 +649,9 @@ export namespace Tracer {
 
   export interface Span<Name extends SpanName> {
     attr<
-      Attrs extends Spans[Name] extends { Attrs: infer Attrs } ? Attrs : never,
+      Attrs extends (Spans[Name] extends { Attrs: infer Attrs }
+        ? Attrs
+        : never),
       Attr extends keyof Attrs,
     >(
       key: Attr,
@@ -657,9 +659,9 @@ export namespace Tracer {
     ): void;
 
     event: <
-      Events extends Spans[Name] extends { Events: object }
+      Events extends (Spans[Name] extends { Events: object }
         ? Spans[Name]["Events"]
-        : never,
+        : never),
       EventName extends keyof Events,
     >(
       name: EventName,

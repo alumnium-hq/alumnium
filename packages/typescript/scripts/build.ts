@@ -831,7 +831,7 @@ function ruffFormat(dir: string) {
 }
 
 function oxfmtFormat(dir: string) {
-  return $`bun oxfmt .`.cwd(dir).quiet();
+  return $`bun oxfmt **/*`.cwd(dir).quiet();
 }
 
 function pyprojectsortFormat(dir: string) {
