@@ -29,6 +29,32 @@ describe(CdpNetworkMonitor, () => {
     expect(monitor.pending).toEqual(["https://example.com/1"]);
   });
 
+  test("finishes a request transferred to an OOPIF session", () => {
+    const monitor = new CdpNetworkMonitor();
+    monitor.process("Network.requestWillBeSent", request("document"), "parent");
+
+    monitor.process(
+      "Network.loadingFinished",
+      { requestId: "document" },
+      "oopif",
+    );
+
+    expect(monitor.pending).toEqual([]);
+  });
+
+  test("does not finish an ambiguous request ID from another session", () => {
+    const monitor = new CdpNetworkMonitor();
+    monitor.process("Network.requestWillBeSent", request("1"), "main");
+    monitor.process("Network.requestWillBeSent", request("1"), "iframe");
+
+    monitor.process("Network.loadingFinished", { requestId: "1" }, "other");
+
+    expect(monitor.pending).toEqual([
+      "https://example.com/1",
+      "https://example.com/1",
+    ]);
+  });
+
   test("ignores persistent transports", () => {
     const monitor = new CdpNetworkMonitor();
     monitor.process(
@@ -50,6 +76,40 @@ describe(CdpNetworkMonitor, () => {
       response: { mimeType: "text/event-stream", headers: {} },
     });
     expect(monitor.pending).toEqual([]);
+  });
+
+  test("finishes a finite response when all body data is received", () => {
+    const monitor = new CdpNetworkMonitor();
+    monitor.process("Network.requestWillBeSent", request("finite"));
+    monitor.process("Network.responseReceived", {
+      requestId: "finite",
+      response: { headers: { "Content-Length": "16" } },
+    });
+
+    monitor.process("Network.dataReceived", {
+      requestId: "finite",
+      dataLength: 16,
+      encodedDataLength: 16,
+    });
+
+    expect(monitor.pending).toEqual([]);
+  });
+
+  test("keeps a finite response pending until its full body is received", () => {
+    const monitor = new CdpNetworkMonitor();
+    monitor.process("Network.requestWillBeSent", request("partial"));
+    monitor.process("Network.responseReceived", {
+      requestId: "partial",
+      response: { headers: { "content-length": "16" } },
+    });
+
+    monitor.process("Network.dataReceived", {
+      requestId: "partial",
+      dataLength: 8,
+      encodedDataLength: 8,
+    });
+
+    expect(monitor.pending).toEqual(["https://example.com/partial"]);
   });
 
   test("rechecks network quiet after evaluating the snapshot", async () => {

@@ -26,6 +26,18 @@ interface ResponseEvent {
   };
 }
 
+interface DataEvent {
+  requestId?: string;
+  dataLength?: number;
+  encodedDataLength?: number;
+}
+
+interface PendingRequest {
+  url: string;
+  contentLength?: number;
+  received: number;
+}
+
 interface WaiterSnapshot {
   lastMutationAt: number;
   now: number;
@@ -37,7 +49,7 @@ export const WAITER_SNAPSHOT_SCRIPT =
   "window[Symbol.for('alumnium')]?.snapshot()";
 
 export class CdpNetworkMonitor {
-  #pending = new Map<string, string>();
+  #pending = new Map<string, PendingRequest>();
   #lastActivityAt = performance.now();
 
   process(method: string, params: object, sessionId = ""): void {
@@ -49,7 +61,10 @@ export class CdpNetworkMonitor {
         this.#pending.delete(key);
         return;
       }
-      this.#pending.set(key, event.request?.url ?? "");
+      this.#pending.set(key, {
+        url: event.request?.url ?? "",
+        received: 0,
+      });
       this.#lastActivityAt = performance.now();
     } else if (method === "Network.responseReceived") {
       const event = params as ResponseEvent;
@@ -65,6 +80,34 @@ export class CdpNetworkMonitor {
         .toLowerCase();
       if (contentType && STREAMING_CONTENT_TYPES.has(contentType)) {
         this.finish(event.requestId, sessionId);
+        return;
+      }
+
+      const contentLengthHeader = Object.entries(headers).find(
+        ([name]) => name.toLowerCase() === "content-length",
+      )?.[1];
+      const contentLength = Number(contentLengthHeader);
+      if (Number.isFinite(contentLength) && contentLength >= 0) {
+        const key = this.requestKey(event.requestId, sessionId);
+        if (key) {
+          const request = this.#pending.get(key);
+          if (!request) return;
+          request.contentLength = contentLength;
+          if (request.received >= contentLength) this.finishKey(key);
+        }
+      }
+    } else if (method === "Network.dataReceived") {
+      const event = params as DataEvent;
+      const key = this.requestKey(event.requestId, sessionId);
+      if (!key) return;
+      const request = this.#pending.get(key);
+      if (!request) return;
+      request.received += event.encodedDataLength || event.dataLength || 0;
+      if (
+        request.contentLength !== undefined &&
+        request.received >= request.contentLength
+      ) {
+        this.finishKey(key);
       }
     } else if (
       method === "Network.loadingFinished" ||
@@ -75,7 +118,7 @@ export class CdpNetworkMonitor {
   }
 
   get pending(): string[] {
-    return [...this.#pending.values()];
+    return [...this.#pending.values()].map((request) => request.url);
   }
 
   get idleFor(): number {
@@ -95,10 +138,26 @@ export class CdpNetworkMonitor {
   }
 
   private finish(requestId: string | undefined, sessionId: string): void {
+    const key = this.requestKey(requestId, sessionId);
+    if (key) this.finishKey(key);
+  }
+
+  private finishKey(key: string): void {
+    if (this.#pending.delete(key)) this.#lastActivityAt = performance.now();
+  }
+
+  private requestKey(
+    requestId: string | undefined,
+    sessionId: string,
+  ): string | undefined {
     if (!requestId) return;
-    if (this.#pending.delete(`${sessionId}:${requestId}`)) {
-      this.#lastActivityAt = performance.now();
-    }
+    const key = `${sessionId}:${requestId}`;
+    if (this.#pending.has(key)) return key;
+    const suffix = `:${requestId}`;
+    const transferred = [...this.#pending.keys()].filter((key) =>
+      key.endsWith(suffix),
+    );
+    if (transferred.length === 1) return transferred[0];
   }
 }
 

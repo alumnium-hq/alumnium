@@ -50,6 +50,7 @@ public final class PlaywrightDriver extends BaseDriver {
       List.of(
           "Network.requestWillBeSent",
           "Network.responseReceived",
+          "Network.dataReceived",
           "Network.loadingFinished",
           "Network.loadingFailed");
 

@@ -90,7 +90,7 @@ def test_staying_on_tab_when_autoswitch_is_off(al, navigate, slow_tab_page, wait
     assert al.driver.url == slow_tab_page[0]
 
 
-@mark.skipif(getenv("ALUMNIUM_DRIVER", "selenium") != "playwright", reason="Playwright-specific behavior")
+@mark.skipif("appium" in getenv("ALUMNIUM_DRIVER", "selenium"), reason="Appium doesn't support tabs")
 def test_switches_to_a_tab_that_opens_slowly(al_factory, navigate, slow_tab_page):
     al = al_factory()
     url, slow_tab_url = slow_tab_page

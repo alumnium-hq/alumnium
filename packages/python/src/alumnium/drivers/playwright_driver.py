@@ -53,6 +53,7 @@ class PlaywrightDriver(BaseDriver):
         self.network_sessions = []
         self.network_frames: set[Frame] = set()
         self._tracked_pages: set[Page] = set()
+        self._previous_page: Page | None = None
         self._new_tab_action: _NewTabAction | None = None
         self.page.context.add_init_script(script=WAITER_SCRIPT)
         self._init_cdp_session()
@@ -214,6 +215,8 @@ class PlaywrightDriver(BaseDriver):
         element.evaluate("el => el.scrollIntoView({block: 'center'})")
 
     def _wait_for_page_to_load(self):
+        if self.client is None:
+            self._init_cdp_session()
         logger.debug("Waiting for page to finish loading:")
         try:
             loaded, pending = wait_for_page_to_load(
@@ -233,6 +236,8 @@ class PlaywrightDriver(BaseDriver):
 
     @contextmanager
     def _autoswitch_to_new_tab(self):
+        if self.client is None:
+            self._init_cdp_session()
         if not self.autoswitch_to_new_tab:
             yield
             return
@@ -261,6 +266,8 @@ class PlaywrightDriver(BaseDriver):
                 self._new_tab_action = None
 
     def _send_cdp_command(self, method: str, params: dict | None = None):
+        if self.client is None:
+            self._init_cdp_session()
         return self.client.send(method, params or {})
 
     def _init_cdp_session(self):
@@ -481,6 +488,15 @@ class PlaywrightDriver(BaseDriver):
         self._tracked_pages.discard(page)
         if self._new_tab_action is not None:
             self._new_tab_action.pages = [opened for opened in self._new_tab_action.pages if opened != page]
+        if page is not self.page:
+            return
+        previous = self._previous_page
+        if previous is None or previous.is_closed():
+            return
+        self.page = previous
+        self._previous_page = None
+        self.reset_accessibility_tree()
+        self.client = None
 
     def _get_all_frame_ids(self, frame_info: dict) -> list[str]:
         frame_ids = [frame_info["frame"]["id"]]
@@ -529,6 +545,8 @@ class PlaywrightDriver(BaseDriver):
         self.page.wait_for_load_state()
 
     def _activate_page(self, page: Page):
+        if page is not self.page:
+            self._previous_page = self.page
         self.page = page
         self._track_page(page)
         self.reset_accessibility_tree()

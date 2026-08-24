@@ -46,6 +46,38 @@ class CdpNetworkMonitorTest {
   }
 
   @Test
+  void finishesAFiniteResponseWhenAllBodyDataIsReceived() {
+    CdpNetworkMonitor monitor = new CdpNetworkMonitor();
+    monitor.process("Network.requestWillBeSent", request("finite", "Fetch"));
+    monitor.process(
+        "Network.responseReceived",
+        Map.of(
+            "requestId", "finite", "response", Map.of("headers", Map.of("Content-Length", "16"))));
+
+    monitor.process(
+        "Network.dataReceived",
+        Map.of("requestId", "finite", "dataLength", 16, "encodedDataLength", 16));
+
+    assertThat(monitor.pending()).isEmpty();
+  }
+
+  @Test
+  void keepsAFiniteResponsePendingUntilItsFullBodyIsReceived() {
+    CdpNetworkMonitor monitor = new CdpNetworkMonitor();
+    monitor.process("Network.requestWillBeSent", request("partial", "Fetch"));
+    monitor.process(
+        "Network.responseReceived",
+        Map.of(
+            "requestId", "partial", "response", Map.of("headers", Map.of("content-length", "16"))));
+
+    monitor.process(
+        "Network.dataReceived",
+        Map.of("requestId", "partial", "dataLength", 8, "encodedDataLength", 8));
+
+    assertThat(monitor.pending()).containsExactly("https://example.com/partial");
+  }
+
+  @Test
   void finishesARequestTransferredToAnOopifSession() {
     CdpNetworkMonitor monitor = new CdpNetworkMonitor();
     monitor.process("Network.requestWillBeSent", request("document", "Document"), "parent");
@@ -53,6 +85,17 @@ class CdpNetworkMonitorTest {
     monitor.process("Network.loadingFinished", Map.of("requestId", "document"), "oopif");
 
     assertThat(monitor.pending()).isEmpty();
+  }
+
+  @Test
+  void doesNotFinishAnAmbiguousRequestIdFromAnotherSession() {
+    CdpNetworkMonitor monitor = new CdpNetworkMonitor();
+    monitor.process("Network.requestWillBeSent", request("1", "Fetch"), "main");
+    monitor.process("Network.requestWillBeSent", request("1", "Fetch"), "iframe");
+
+    monitor.process("Network.loadingFinished", Map.of("requestId", "1"), "other");
+
+    assertThat(monitor.pending()).containsExactly("https://example.com/1", "https://example.com/1");
   }
 
   @Test

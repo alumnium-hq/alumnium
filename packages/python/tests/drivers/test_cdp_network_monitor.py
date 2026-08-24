@@ -30,6 +30,25 @@ def test_namespaces_request_ids_by_session():
     assert monitor.pending() == ["https://example.com/1"]
 
 
+def test_finishes_request_transferred_to_oopif_session():
+    monitor = CdpNetworkMonitor()
+    monitor.process("Network.requestWillBeSent", request("document"), "parent")
+
+    monitor.process("Network.loadingFinished", {"requestId": "document"}, "oopif")
+
+    assert monitor.pending() == []
+
+
+def test_does_not_finish_ambiguous_request_id_from_another_session():
+    monitor = CdpNetworkMonitor()
+    monitor.process("Network.requestWillBeSent", request("1"), "main")
+    monitor.process("Network.requestWillBeSent", request("1"), "iframe")
+
+    monitor.process("Network.loadingFinished", {"requestId": "1"}, "other")
+
+    assert monitor.pending() == ["https://example.com/1", "https://example.com/1"]
+
+
 def test_ignores_persistent_transports():
     monitor = CdpNetworkMonitor()
 
@@ -52,6 +71,38 @@ def test_ignores_streaming_response():
     )
 
     assert monitor.pending() == []
+
+
+def test_finishes_finite_response_when_all_body_data_is_received():
+    monitor = CdpNetworkMonitor()
+    monitor.process("Network.requestWillBeSent", request("finite"))
+    monitor.process(
+        "Network.responseReceived",
+        {"requestId": "finite", "response": {"headers": {"Content-Length": "16"}}},
+    )
+
+    monitor.process(
+        "Network.dataReceived",
+        {"requestId": "finite", "dataLength": 16, "encodedDataLength": 16},
+    )
+
+    assert monitor.pending() == []
+
+
+def test_keeps_finite_response_pending_until_full_body_is_received():
+    monitor = CdpNetworkMonitor()
+    monitor.process("Network.requestWillBeSent", request("partial"))
+    monitor.process(
+        "Network.responseReceived",
+        {"requestId": "partial", "response": {"headers": {"content-length": "16"}}},
+    )
+
+    monitor.process(
+        "Network.dataReceived",
+        {"requestId": "partial", "dataLength": 8, "encodedDataLength": 8},
+    )
+
+    assert monitor.pending() == ["https://example.com/partial"]
 
 
 def test_waits_for_short_timeouts():

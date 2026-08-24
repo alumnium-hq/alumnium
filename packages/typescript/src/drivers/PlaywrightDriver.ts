@@ -82,6 +82,7 @@ const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
 const NETWORK_EVENTS = [
   "Network.requestWillBeSent",
   "Network.responseReceived",
+  "Network.dataReceived",
   "Network.loadingFinished",
   "Network.loadingFailed",
 ] as const;
@@ -102,6 +103,7 @@ export class PlaywrightDriver extends BaseDriver {
   private cdpGeneration = 0;
   page: Page;
   private trackedPages = new Set<Page>();
+  #previousPage: Page | undefined;
   private newTabAction: NewTabAction | undefined;
   // frameId → url for OOPIF frames tracked via Target.attachedToTarget events
   private oopifFrameIds: Map<string, string> = new Map();
@@ -152,6 +154,15 @@ export class PlaywrightDriver extends BaseDriver {
       this.newTabAction.pages = this.newTabAction.pages.filter(
         (opened) => opened !== page,
       );
+    if (page !== this.page) return;
+    const previous = this.#previousPage;
+    if (!previous || previous.isClosed()) return;
+    this.page = previous;
+    this.#previousPage = undefined;
+    this.resetAccessibilityTree();
+    this.cdpReady = this.initCDPSession().catch((error) => {
+      logger.info(`Failed to initialize CDP session: ${String(error)}`);
+    });
   }
 
   private async initCDPSession(): Promise<void> {
@@ -704,6 +715,8 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   private async activatePage(page: Page): Promise<void> {
+    await this.cdpReady;
+    if (page !== this.page) this.#previousPage = this.page;
     this.page = page;
     this.trackPage(page);
     this.resetAccessibilityTree();

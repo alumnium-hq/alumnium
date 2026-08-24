@@ -36,6 +36,7 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
       Set.of(
           "Network.requestWillBeSent",
           "Network.responseReceived",
+          "Network.dataReceived",
           "Network.loadingFinished",
           "Network.loadingFailed");
   private static final Map<String, Object> AUTO_ATTACH_PARAMS =
