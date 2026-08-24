@@ -48,7 +48,7 @@ class SeleniumDriver(BaseDriver):
         self.network_monitor = CdpNetworkMonitor()
         self.cdp_connection: SeleniumCdpConnection | None = None
         try:
-            self.cdp_connection = SeleniumCdpConnection(driver.capabilities, self.network_monitor, WAITER_SCRIPT)
+            self.cdp_connection = SeleniumCdpConnection(driver.capabilities, WAITER_SCRIPT)
         except Exception as error:
             logger.debug(f"Could not subscribe to CDP network events: {error}")
             self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
@@ -347,8 +347,12 @@ class SeleniumDriver(BaseDriver):
     @retry(JavascriptException, tries=2, delay=0.1, backoff=2)  # type: ignore[reportArgumentType]
     def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
+        network_monitor = self.network_monitor
+        if self.cdp_connection:
+            self.cdp_connection.activate(self.driver.current_window_handle)
+            network_monitor = self.cdp_connection.active_monitor
         loaded, pending = wait_for_page_to_load(
-            self.network_monitor,
+            network_monitor,
             self._waiter_snapshot,
         )
         if not loaded:
@@ -358,7 +362,7 @@ class SeleniumDriver(BaseDriver):
 
     def _waiter_snapshot(self) -> dict | None:
         snapshot = self.driver.execute_script(f"return {WAITER_SNAPSHOT_SCRIPT}")
-        if snapshot is None and self.cdp_connection is None:
+        if snapshot is None:
             self.driver.execute_script(WAITER_SCRIPT)
             snapshot = self.driver.execute_script(f"return {WAITER_SNAPSHOT_SCRIPT}")
         return snapshot

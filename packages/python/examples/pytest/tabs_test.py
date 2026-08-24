@@ -71,7 +71,7 @@ def test_switching_tabs(al_factory, navigate):
     assert al.get("current page URL") == "about:blank"
 
 
-@mark.skipif(getenv("ALUMNIUM_DRIVER", "selenium") != "playwright", reason="Playwright-specific behavior")
+@mark.skipif("appium" in getenv("ALUMNIUM_DRIVER", "selenium"), reason="Appium doesn't support tabs")
 def test_switches_to_a_tab_that_opens_slowly(al_factory, navigate, slow_tab_page):
     al = al_factory()
     url, slow_tab_url = slow_tab_page

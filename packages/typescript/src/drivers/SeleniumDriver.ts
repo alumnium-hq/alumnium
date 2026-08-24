@@ -259,6 +259,7 @@ export class SeleniumDriver extends BaseDriver {
 
   @span("driver.quit", spanAttrs)
   async quit(): Promise<void> {
+    await this.#cdpReady;
     this.#cdpConnection?.close();
     try {
       await this.driver.quit();
@@ -455,7 +456,7 @@ export class SeleniumDriver extends BaseDriver {
   @span("driver.internal.wait_for_page_load")
   private async waitForPageToLoad(): Promise<void> {
     await this.#cdpReady;
-    this.#cdpConnection?.activate(await this.driver.getWindowHandle());
+    await this.#cdpConnection?.activate(await this.driver.getWindowHandle());
     const networkMonitor =
       this.#cdpConnection?.activeMonitor ?? this.#networkMonitor;
     try {
@@ -499,10 +500,16 @@ export class SeleniumDriver extends BaseDriver {
       logger.debug(
         `Could not subscribe to CDP network events: ${error instanceof Error ? error.message : String(error)}`,
       );
-      await this.executeCdpCommand("Page.addScriptToEvaluateOnNewDocument", {
-        source: WAITER_SCRIPT,
-        runImmediately: true,
-      });
+      try {
+        await this.executeCdpCommand("Page.addScriptToEvaluateOnNewDocument", {
+          source: WAITER_SCRIPT,
+          runImmediately: true,
+        });
+      } catch (fallbackError) {
+        logger.debug(
+          `Could not install waiter script through Selenium: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`,
+        );
+      }
     }
   }
 
@@ -520,7 +527,7 @@ export class SeleniumDriver extends BaseDriver {
       pendingTimeouts: number;
       readyState: "loading" | "interactive" | "complete";
     } | null;
-    if (!snapshot && !this.#cdpConnection) {
+    if (!snapshot) {
       await this.driver.executeScript(WAITER_SCRIPT);
       snapshot = (await this.driver.executeScript(
         `return ${WAITER_SNAPSHOT_SCRIPT}`,

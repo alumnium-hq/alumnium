@@ -74,6 +74,7 @@ const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
 const NETWORK_EVENTS = [
   "Network.requestWillBeSent",
   "Network.responseReceived",
+  "Network.dataReceived",
   "Network.loadingFinished",
   "Network.loadingFailed",
 ] as const;

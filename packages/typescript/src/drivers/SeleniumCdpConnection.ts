@@ -3,9 +3,17 @@ import { CdpNetworkMonitor } from "./CdpNetworkMonitor.ts";
 const NETWORK_EVENTS = new Set([
   "Network.requestWillBeSent",
   "Network.responseReceived",
+  "Network.dataReceived",
   "Network.loadingFinished",
   "Network.loadingFailed",
 ]);
+
+const AUTO_ATTACH_PARAMS = {
+  autoAttach: true,
+  waitForDebuggerOnStart: true,
+  flatten: true,
+};
+const TIMEOUT_MS = 5000;
 
 interface CdpMessage {
   id?: number;
@@ -23,27 +31,23 @@ interface PendingCommand {
 }
 
 export class SeleniumCdpConnection {
-  private socket: WebSocket;
-  private waiterScript: string;
+  #socket: WebSocket;
+  #waiterScript: string;
   #nextId = 1;
   #pending = new Map<number, PendingCommand>();
   #targetSessions = new Map<string, string>();
   #sessionParents = new Map<string, string>();
+  #sessionConfigurations = new Map<string, Promise<void>>();
   #activeSession = "";
-  #attachingTargets = new Set<string>();
   #targetMonitors = new Map<string, CdpNetworkMonitor>();
+  #closed = false;
 
   private constructor(socket: WebSocket, waiterScript: string) {
-    this.socket = socket;
-    this.waiterScript = waiterScript;
-    socket.addEventListener("message", (event) => this.onMessage(event.data));
-    socket.addEventListener("close", () => {
-      for (const command of this.#pending.values()) {
-        clearTimeout(command.timeout);
-        command.reject(new Error("CDP connection closed"));
-      }
-      this.#pending.clear();
-    });
+    this.#socket = socket;
+    this.#waiterScript = waiterScript;
+    socket.addEventListener("message", (event) => this.#onMessage(event.data));
+    socket.addEventListener("close", () => this.#failConnection());
+    socket.addEventListener("error", () => this.#failConnection());
   }
 
   static async connect(
@@ -52,31 +56,44 @@ export class SeleniumCdpConnection {
   ): Promise<SeleniumCdpConnection> {
     const url = await websocketUrl(capabilities);
     const socket = new WebSocket(url);
-    await new Promise<void>((resolve, reject) => {
-      socket.addEventListener("open", () => resolve(), { once: true });
-      socket.addEventListener(
-        "error",
-        () => reject(new Error("Could not connect to Chrome CDP")),
-        {
-          once: true,
-        },
-      );
-    });
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(
+          () => reject(new Error("Timed out connecting to Chrome CDP")),
+          TIMEOUT_MS,
+        );
+        socket.addEventListener(
+          "open",
+          () => {
+            clearTimeout(timeout);
+            resolve();
+          },
+          { once: true },
+        );
+        socket.addEventListener(
+          "error",
+          () => {
+            clearTimeout(timeout);
+            reject(new Error("Could not connect to Chrome CDP"));
+          },
+          { once: true },
+        );
+      });
+    } catch (error) {
+      socket.close();
+      throw error;
+    }
     const connection = new SeleniumCdpConnection(socket, waiterScript);
     try {
-      await connection.send("Target.setAutoAttach", {
-        autoAttach: true,
-        waitForDebuggerOnStart: false,
-        flatten: true,
-      });
-      const targets = (await connection.send("Target.getTargets")) as {
+      await connection.#send("Target.setAutoAttach", AUTO_ATTACH_PARAMS);
+      await connection.#send("Target.setDiscoverTargets", { discover: true });
+      const targets = (await connection.#send("Target.getTargets")) as {
         targetInfos?: Array<{ targetId: string; type: string }>;
       };
       for (const target of targets.targetInfos ?? []) {
         if (target.type === "page")
-          await connection.attachTarget(target.targetId);
+          await connection.#awaitSession(target.targetId);
       }
-      await connection.send("Target.setDiscoverTargets", { discover: true });
       return connection;
     } catch (error) {
       connection.close();
@@ -84,44 +101,59 @@ export class SeleniumCdpConnection {
     }
   }
 
-  activate(windowHandle: string): void {
+  async activate(windowHandle: string): Promise<void> {
     const targetId = windowHandle.replace(/^CDwindow-/, "");
-    this.#activeSession = this.#targetSessions.get(targetId) ?? "";
+    this.#activeSession = await this.#awaitSession(targetId);
   }
 
   get activeMonitor(): CdpNetworkMonitor {
-    return this.monitorForSession(this.#activeSession);
+    return this.#monitorForSession(this.#activeSession);
   }
 
   close(): void {
-    this.socket.close();
+    if (this.#closed) return;
+    this.#closed = true;
+    this.#failPending(new Error("CDP connection closed"));
+    this.#socket.close();
+    this.#targetSessions.clear();
+    this.#sessionParents.clear();
+    this.#sessionConfigurations.clear();
+    this.#targetMonitors.clear();
+    this.#activeSession = "";
   }
 
-  private send(
+  #send(
     method: string,
     params: object = {},
     sessionId = "",
     wait = true,
   ): Promise<Record<string, unknown>> {
+    if (this.#closed) return Promise.reject(new Error("CDP connection closed"));
     const id = this.#nextId++;
     const message = { id, method, params, ...(sessionId ? { sessionId } : {}) };
     if (!wait) {
-      this.socket.send(JSON.stringify(message));
+      this.#socket.send(JSON.stringify(message));
       return Promise.resolve({});
     }
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         this.#pending.delete(id);
         reject(new Error(`Timed out sending CDP command ${method}`));
-      }, 5000);
+      }, TIMEOUT_MS);
       this.#pending.set(id, { resolve, reject, timeout });
-      this.socket.send(JSON.stringify(message));
+      try {
+        this.#socket.send(JSON.stringify(message));
+      } catch (error) {
+        clearTimeout(timeout);
+        this.#pending.delete(id);
+        reject(error instanceof Error ? error : new Error(String(error)));
+      }
     });
   }
 
-  private onMessage(data: string | ArrayBuffer | Blob): void {
+  #onMessage(data: string | ArrayBuffer | Blob): void {
     if (data instanceof Blob) {
-      void data.text().then((text) => this.onMessage(text));
+      void data.text().then((text) => this.#onMessage(text));
       return;
     }
     const text =
@@ -141,7 +173,7 @@ export class SeleniumCdpConnection {
     const params = message.params ?? {};
     if (NETWORK_EVENTS.has(method)) {
       const sessionId = message.sessionId ?? "";
-      this.monitorForSession(sessionId).process(method, params, sessionId);
+      this.#monitorForSession(sessionId).process(method, params, sessionId);
     } else if (method === "Target.attachedToTarget") {
       const targetInfo = params.targetInfo as
         | { targetId?: string; type?: string }
@@ -151,86 +183,115 @@ export class SeleniumCdpConnection {
         if (targetInfo.targetId)
           this.#targetSessions.set(targetInfo.targetId, sessionId);
         this.#sessionParents.set(sessionId, message.sessionId ?? "");
-        if (
-          !targetInfo.targetId ||
-          !this.#attachingTargets.has(targetInfo.targetId)
-        ) {
-          void this.configureSession(sessionId, false);
-        }
+        void this.#configureSession(sessionId).catch(() => undefined);
       }
     } else if (method === "Target.detachedFromTarget") {
-      const sessionId = String(params.sessionId ?? "");
-      this.monitorForSession(sessionId).clearSession(sessionId);
-      this.#sessionParents.delete(sessionId);
-    } else if (method === "Target.targetCreated") {
-      const targetInfo = params.targetInfo as
-        | { targetId?: string; type?: string }
-        | undefined;
-      if (targetInfo?.type === "page" && targetInfo.targetId) {
-        void this.attachTarget(targetInfo.targetId);
-      }
+      this.#detachSession(String(params.sessionId ?? ""));
     }
   }
 
-  private async configureSession(
-    sessionId: string,
-    wait = true,
-  ): Promise<void> {
-    await this.send(
-      "Target.setAutoAttach",
-      { autoAttach: true, waitForDebuggerOnStart: false, flatten: true },
-      sessionId,
-      wait,
-    );
-    await this.send("Page.enable", {}, sessionId, wait);
-    await this.send("Network.enable", {}, sessionId, wait);
-    await this.send(
+  #configureSession(sessionId: string): Promise<void> {
+    const existing = this.#sessionConfigurations.get(sessionId);
+    if (existing) return existing;
+    const configuration = this.#configureNewSession(sessionId);
+    this.#sessionConfigurations.set(sessionId, configuration);
+    return configuration;
+  }
+
+  async #configureNewSession(sessionId: string): Promise<void> {
+    await this.#send("Target.setAutoAttach", AUTO_ATTACH_PARAMS, sessionId);
+    await this.#send("Page.enable", {}, sessionId);
+    await this.#send("Network.enable", {}, sessionId);
+    await this.#send(
       "Page.addScriptToEvaluateOnNewDocument",
-      { source: this.waiterScript, runImmediately: true },
+      { source: this.#waiterScript, runImmediately: true },
       sessionId,
-      wait,
     );
+    await this.#send("Runtime.runIfWaitingForDebugger", {}, sessionId);
   }
 
-  private async attachTarget(targetId: string): Promise<void> {
-    if (
-      this.#targetSessions.has(targetId) ||
-      this.#attachingTargets.has(targetId)
-    )
-      return;
-    this.#attachingTargets.add(targetId);
-    try {
-      const result = await this.send("Target.attachToTarget", {
-        targetId,
-        flatten: true,
-      });
-      const sessionId = String(result.sessionId);
-      this.#targetSessions.set(targetId, sessionId);
-      this.#sessionParents.set(sessionId, "");
-      await this.configureSession(sessionId);
-    } finally {
-      this.#attachingTargets.delete(targetId);
+  async #awaitSession(targetId: string): Promise<string> {
+    const deadline = Date.now() + TIMEOUT_MS;
+    while (Date.now() < deadline) {
+      const sessionId = this.#targetSessions.get(targetId);
+      const configuration = sessionId
+        ? this.#sessionConfigurations.get(sessionId)
+        : undefined;
+      if (sessionId && configuration) {
+        await configuration;
+        return sessionId;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 10));
     }
+    return "";
   }
 
-  private rootSession(sessionId: string): string {
+  #detachSession(sessionId: string): void {
+    if (!sessionId) return;
+    const root = this.#rootSession(sessionId);
+    const detached = new Set([sessionId]);
+    for (const candidate of this.#sessionParents.keys()) {
+      if (this.#isDescendant(candidate, sessionId)) detached.add(candidate);
+    }
+    const monitor = this.#targetMonitors.get(root);
+    for (const detachedSession of detached) {
+      monitor?.clearSession(detachedSession);
+      this.#sessionParents.delete(detachedSession);
+      this.#sessionConfigurations.delete(detachedSession);
+    }
+    for (const [targetId, attachedSession] of this.#targetSessions) {
+      if (detached.has(attachedSession)) this.#targetSessions.delete(targetId);
+    }
+    if (sessionId === root) this.#targetMonitors.delete(root);
+    if (detached.has(this.#activeSession)) this.#activeSession = "";
+  }
+
+  #rootSession(sessionId: string): string {
     let current = sessionId;
-    let parent = this.#sessionParents.get(current);
-    while (parent) {
+    const visited = new Set<string>();
+    while (!visited.has(current)) {
+      visited.add(current);
+      const parent = this.#sessionParents.get(current);
+      if (!parent) break;
       current = parent;
-      parent = this.#sessionParents.get(current);
     }
     return current;
   }
 
-  private monitorForSession(sessionId: string): CdpNetworkMonitor {
-    const rootSession = this.rootSession(sessionId);
+  #isDescendant(sessionId: string, ancestor: string): boolean {
+    let current = sessionId;
+    const visited = new Set<string>();
+    while (!visited.has(current)) {
+      visited.add(current);
+      const parent = this.#sessionParents.get(current);
+      if (!parent) return false;
+      if (parent === ancestor) return true;
+      current = parent;
+    }
+    return false;
+  }
+
+  #monitorForSession(sessionId: string): CdpNetworkMonitor {
+    const rootSession = this.#rootSession(sessionId);
     let monitor = this.#targetMonitors.get(rootSession);
     if (!monitor) {
       monitor = new CdpNetworkMonitor();
       this.#targetMonitors.set(rootSession, monitor);
     }
     return monitor;
+  }
+
+  #failConnection(): void {
+    this.#closed = true;
+    this.#failPending(new Error("CDP connection closed"));
+  }
+
+  #failPending(error: Error): void {
+    for (const command of this.#pending.values()) {
+      clearTimeout(command.timeout);
+      command.reject(error);
+    }
+    this.#pending.clear();
   }
 }
 
@@ -249,6 +310,9 @@ async function websocketUrl(capabilities: {
   }
   const response = await fetch(
     `http://${options.debuggerAddress}/json/version`,
+    {
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    },
   );
   if (!response.ok) throw new Error(`CDP discovery failed: ${response.status}`);
   const version = (await response.json()) as { webSocketDebuggerUrl: string };
