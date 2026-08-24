@@ -13,6 +13,7 @@ import { attach, type Browser } from "webdriverio";
 import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
 import { sleep } from "../../src/utils/timers.ts";
+import { SlowTabServer } from "../utils/SlowTabServer.ts";
 
 const localTargetPage: RequestListener = (_request, response) => {
   response.writeHead(200, { "content-type": "text/html" });
@@ -207,26 +208,14 @@ function createHelpers(
     },
 
     async serveSlowTabPage() {
-      const { url } = await $.serve((request, response) => {
-        const isSlowTab = request.url === "/slow-tab";
-        const send = () => {
-          response.writeHead(200, {
-            "content-type": "text/html",
-            "cache-control": "no-store",
-          });
-          response.end(
-            isSlowTab
-              ? "<title>Slow Tab</title><h1>Slow Tab</h1>"
-              : `<title>Opener</title><h1>Opener</h1>
-                 <button onclick="window.open('/slow-tab', '_blank')">Open Slow Tab</button>`,
-          );
-        };
+      const server = new SlowTabServer();
+      await server.start();
+      onTestFinished(() => server.stop());
 
-        if (isSlowTab) setTimeout(send, 2_000);
-        else send();
-      });
-
-      return { url, slowTabUrl: `${url}slow-tab` };
+      return {
+        url: server.url,
+        slowTabUrl: server.slowTabUrl,
+      };
     },
 
     async waitForTabCount(count: number) {
