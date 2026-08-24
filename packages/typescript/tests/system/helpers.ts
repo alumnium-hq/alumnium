@@ -1,7 +1,5 @@
 import { Alumni, AppiumDriver, Model, type Element } from "alumnium";
 import { never } from "alwaysly";
-import { createServer } from "node:http";
-import type { AddressInfo } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -12,6 +10,7 @@ import { inject, it as vitestIt } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
+import { SlowTabServer } from "../utils/SlowTabServer.ts";
 
 export namespace Setup {
   export interface Helpers {
@@ -154,36 +153,13 @@ function createHelpers(
     },
 
     async serveSlowTabPage() {
-      const server = createServer((request, response) => {
-        const isSlowTab = request.url === "/slow-tab";
-        const send = () => {
-          response.writeHead(200, {
-            "content-type": "text/html",
-            "cache-control": "no-store",
-          });
-          response.end(
-            isSlowTab
-              ? "<title>Slow Tab</title><h1>Slow Tab</h1>"
-              : `<title>Opener</title><h1>Opener</h1>
-                 <button onclick="window.open('/slow-tab', '_blank')">Open Slow Tab</button>`,
-          );
-        };
+      const server = new SlowTabServer();
+      await server.start();
+      onTestFinished(() => server.stop());
 
-        if (isSlowTab) setTimeout(send, 2_000);
-        else send();
-      });
-
-      await new Promise<void>((resolve) =>
-        server.listen(0, "127.0.0.1", resolve),
-      );
-      onTestFinished(
-        () => new Promise<void>((resolve) => server.close(() => resolve())),
-      );
-
-      const { port } = server.address() as AddressInfo;
       return {
-        url: `http://127.0.0.1:${port}/`,
-        slowTabUrl: `http://127.0.0.1:${port}/slow-tab`,
+        url: server.url,
+        slowTabUrl: server.slowTabUrl,
       };
     },
 
