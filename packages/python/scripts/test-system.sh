@@ -5,6 +5,10 @@
 
 set -euo pipefail
 
+sanitize_filename() {
+  printf '%s' "$1" | sed 's/[^[:alnum:]._-][^[:alnum:]._-]*/_/g'
+}
+
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
 ALUMNIUM_TEST_ARG="${ALUMNIUM_TEST_ARG:-}"
 ALUMNIUM_TEST_PASS_THRESHOLD_PCT="${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-100}"
@@ -13,7 +17,7 @@ ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
 ALUMNIUM_TEST_RETRY_DELAY_SECONDS="$(printf '%s.%03d' \
 	"$((ALUMNIUM_TEST_RETRY_DELAY / 1000))" \
 	"$((ALUMNIUM_TEST_RETRY_DELAY % 1000))")"
-ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}"
+ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}-$(sanitize_filename "$ALUMNIUM_MODEL")"
 TEST_ONLY=${TEST_ONLY:-behave,pytest}
 
 normalize_test_name() {
