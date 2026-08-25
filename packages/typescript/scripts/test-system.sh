@@ -5,18 +5,23 @@
 
 set -euo pipefail
 
+normalize_test_name() {
+	printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:lower:][:digit:]'
+}
+
+sanitize_filename() {
+  printf '%s' "$1" | sed 's/[^[:alnum:]._-][^[:alnum:]._-]*/_/g'
+}
+
 ALUMNIUM_MODEL="${ALUMNIUM_MODEL:-azure_openai}"
 ALUMNIUM_CACHE_PATH="${ALUMNIUM_CACHE_PATH:-}"
 ALUMNIUM_TEST_ARG="${ALUMNIUM_TEST_ARG:-}"
 ALUMNIUM_TEST_VITEST_ARGS="${ALUMNIUM_TEST_VITEST_ARGS:-}"
 ALUMNIUM_TEST_CACHE="${ALUMNIUM_TEST_CACHE:-}"
 ALUMNIUM_TEST_PASS_THRESHOLD_PCT="${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-100}"
-ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}"
+ALUMNIUM_TEST_ALWAYS_EXIT_0="${ALUMNIUM_TEST_ALWAYS_EXIT_0:-false}"
+ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}-$(sanitize_filename "$ALUMNIUM_MODEL")"
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
-
-normalize_test_name() {
-	printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:lower:][:digit:]'
-}
 
 failed=0
 run_tests() {
@@ -75,6 +80,7 @@ echo_setup() {
 	echo "🔵 ALUMNIUM_TEST_CACHE=$test_cache"
 	echo "🔵 ALUMNIUM_TEST_VITEST_ARGS=\"$ALUMNIUM_TEST_VITEST_ARGS\""
 	echo "🔵 ALUMNIUM_TEST_PASS_THRESHOLD_PCT=$ALUMNIUM_TEST_PASS_THRESHOLD_PCT"
+	echo "🔵 ALUMNIUM_TEST_ALWAYS_EXIT_0=$ALUMNIUM_TEST_ALWAYS_EXIT_0"
 }
 
 echo "🚧 Running system tests using:"
@@ -105,7 +111,11 @@ if [ $failed -ne 0 ]; then
 	echo "🔴 Some tests failed using:"
 	echo
 	echo_setup
-	exit 1
+	if [[ "${ALUMNIUM_TEST_ALWAYS_EXIT_0:-}" == "true" ]]; then
+		echo "🟠 Ignoring errors, per ALUMNIUM_TEST_ALWAYS_EXIT_0"
+	else
+		exit 1
+	fi
 else
 	echo "🟢 All tests passed"
 fi
