@@ -90,51 +90,99 @@ arg "<driver>" help="Driver to use for system tests" {
   default "selenium"
 }
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" env="ALUMNIUM_MODEL"
 '''
-run = "ALUMNIUM_DRIVER={{usage.driver}} ALUMNIUM_TEST_ARG={{usage.test}} ./scripts/test-system.sh"
+run = '''
+#!/usr/bin/env bash
+ALUMNIUM_DRIVER={{usage.driver}} \
+  ALUMNIUM_MODEL={{usage.model}} \
+  ALUMNIUM_TEST_ARG={{usage.test}} \
+  ./scripts/test-system.sh
+'''
 
 [tasks."test/system:all"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" env="ALUMNIUM_MODEL"
 '''
 run = [
   { task = "test/system:selenium", args = [
     "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
   ] },
   { task = "test/system:playwright", args = [
     "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
   ] },
   { task = "test/system:appium-ios", args = [
     "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
   ] },
   { task = "test/system:appium-android", args = [
     "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
   ] },
 ]
 
 [tasks."test/system:selenium"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for selenium tests" env="ALUMNIUM_MODEL"
 '''
-run = [{ task = "test/system", args = ["selenium", "{{usage.test}}"] }]
+run = [
+  { task = "test/system", args = [
+    "selenium",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
 
 [tasks."test/system:playwright"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for playwright tests" env="ALUMNIUM_MODEL"
 '''
-run = [{ task = "test/system", args = ["playwright", "{{usage.test}}"] }]
+run = [
+  { task = "test/system", args = [
+    "playwright",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
 
 [tasks."test/system:appium-ios"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for appium-ios tests" env="ALUMNIUM_MODEL"
 '''
-run = [{ task = "test/system", args = ["appium-ios", "{{usage.test}}"] }]
+run = [
+  { task = "test/system", args = [
+    "appium-ios",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
 
 [tasks."test/system:appium-android"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for appium-android tests" env="ALUMNIUM_MODEL"
 '''
-run = [{ task = "test/system", args = ["appium-android", "{{usage.test}}"] }]
+run = [
+  { task = "test/system", args = [
+    "appium-android",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
 
 [tasks."test/waiter"]
 usage = '''
@@ -156,7 +204,7 @@ run = [{ task = "test/waiter selenium" }]
 run = [{ task = "test/waiter playwright" }]
 
 [tasks."test/cache"]
-description = "Run cache tests checking if Alumnium cache correctly generated for given model. It indirectly verified LangChain Zod schemas parsing."
+description = "Run cache tests checking if Alumnium cache is correctly generated for a given model."
 usage = '''
 arg "<model>" help="Model to use for cache tests" {
   default "azure_openai"
@@ -184,8 +232,8 @@ run = [
   # { task = "test/cache:github" }, # Not supported
   { task = "test/cache:google" },
   { task = "test/cache:mistralai" },
-  # { task = "test/cache:ollama" }, # Fails
-  # { task = "test/cache:openai" }, # Missing key
+  { task = "test/cache:ollama" },
+  { task = "test/cache:openai" },
   { task = "test/cache:xai" },
 ]
 
