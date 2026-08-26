@@ -56,6 +56,10 @@ class SeleniumDriver(BaseDriver):
     def _fetch_accessibility_tree(self) -> ChromiumAccessibilityTree:
         # Switch to default content to ensure we're at the top level for frame enumeration
         self.driver.switch_to.default_content()
+
+        # A new tab might take the foreground and leave the current one hidden.
+        self.driver.switch_to.window(self.driver.current_window_handle)
+
         self._wait_for_page_to_load()
 
         # Get frame tree to enumerate all frames

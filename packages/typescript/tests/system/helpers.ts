@@ -5,13 +5,14 @@ import type { AddressInfo } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
-import type { Locator } from "playwright-core";
-import { Builder, WebElement } from "selenium-webdriver";
+import type { Locator, Page } from "playwright-core";
+import { Builder, WebElement, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { inject, it as vitestIt } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
+import { sleep } from "../../src/utils/timers.ts";
 
 export namespace Setup {
   export interface Helpers {
@@ -20,6 +21,7 @@ export namespace Setup {
     type: (element: Element | undefined, text: string) => Promise<void>;
     click: (element: Element | undefined) => Promise<void>;
     serveSlowTabPage: () => Promise<Setup.SlowTabPage>;
+    waitForTabCount: (count: number) => Promise<void>;
   }
 
   export interface SlowTabPage {
@@ -134,6 +136,23 @@ function createHelpers(
   al: Alumni,
   onTestFinished: useSetup.Props["onTestFinished"],
 ): Setup.Helpers {
+  async function tabCount(): Promise<number> {
+    switch (driverId) {
+      case "selenium":
+        return (await (driver as WebDriver).getAllWindowHandles()).length;
+
+      case "playwright":
+        return (driver as Page).context().pages().length;
+
+      case "appium-ios":
+      case "appium-android":
+        throw new Error("Tabs are not implemented in Appium yet");
+
+      default:
+        never();
+    }
+  }
+
   const $: Setup.Helpers = {
     resolveUrl(url: string): string {
       if (url.startsWith("http")) {
@@ -176,15 +195,26 @@ function createHelpers(
       await new Promise<void>((resolve) =>
         server.listen(0, "127.0.0.1", resolve),
       );
-      onTestFinished(
-        () => new Promise<void>((resolve) => server.close(() => resolve())),
-      );
+      onTestFinished(() => {
+        server.closeAllConnections();
+        server.close();
+      });
 
       const { port } = server.address() as AddressInfo;
       return {
         url: `http://127.0.0.1:${port}/`,
         slowTabUrl: `http://127.0.0.1:${port}/slow-tab`,
       };
+    },
+
+    async waitForTabCount(count: number) {
+      const deadline = Date.now() + 10_000;
+      while ((await tabCount()) < count) {
+        if (Date.now() > deadline) {
+          throw new Error(`Timed out waiting for ${count} tabs to open`);
+        }
+        await sleep(50);
+      }
     },
 
     async type(element: Element | undefined, text: string) {

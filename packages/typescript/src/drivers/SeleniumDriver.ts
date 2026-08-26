@@ -76,7 +76,7 @@ const WAIT_FOR_SCRIPT = waitForScriptSource;
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
   public platform: Driver.Platform = "chromium";
-  #autoswitchToNewTabEnabled = true;
+  public autoswitchToNewTab = true;
   #shadowChildToHostMap: Partial<Record<number, number>> = {};
   public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
   public supportedTools: Set<ToolClass> = new Set([
@@ -97,6 +97,10 @@ export class SeleniumDriver extends BaseDriver {
   protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     // Switch to default content to ensure we're at the top level for frame enumeration
     await this.driver.switchTo().defaultContent();
+
+    // A new tab might take the foreground and leave the current one hidden.
+    await this.driver.switchTo().window(await this.driver.getWindowHandle());
+
     logger.debug("Waiting for page to load before getting accessibility tree");
     await this.waitForPageToLoad();
     logger.debug("Page loaded, retrieving accessibility tree");
@@ -190,7 +194,7 @@ export class SeleniumDriver extends BaseDriver {
   @span("driver.click", spanAttrs)
   @stateful
   async click(id: number): Promise<void> {
-    await this.#autoswitchToNewTab(async () => {
+    await this.#autoswitchToNewTabAction(async () => {
       const element = await this.findElement(id);
       try {
         const actions = this.driver.actions({ async: true });
@@ -238,7 +242,7 @@ export class SeleniumDriver extends BaseDriver {
   @span("driver.press_key", spanAttrs)
   @stateful
   pressKey(key: Keys.Key): Promise<void> {
-    return this.#autoswitchToNewTab(async () => {
+    return this.#autoswitchToNewTabAction(async () => {
       const keyMap: Record<Keys.Key, string> = {
         Backspace: SeleniumKey.BACK_SPACE,
         Enter: SeleniumKey.ENTER,
@@ -478,10 +482,10 @@ export class SeleniumDriver extends BaseDriver {
     await this.driver.switchTo().window(handles[tabIndex]);
   }
 
-  async #autoswitchToNewTab<Result>(
+  async #autoswitchToNewTabAction<Result>(
     fn: () => Promise<Result>,
   ): Promise<Result> {
-    if (!this.#autoswitchToNewTabEnabled) {
+    if (!this.autoswitchToNewTab) {
       return await fn();
     }
 

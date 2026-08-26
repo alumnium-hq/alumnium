@@ -284,7 +284,6 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _autoswitch_to_new_tab(self):
         if not self.autoswitch_to_new_tab:
             yield
-            self._opened_pages.clear()
             return
 
         # Page.windowOpen is watched on the CDP session, so it has to be live
@@ -308,6 +307,10 @@ class PlaywrightAsyncDriver(BaseDriver):
             logger.debug("  <- No tab was reported, continuing")
 
     async def _switch_to_new_tab(self):
+        if not self.autoswitch_to_new_tab:
+            self._opened_pages.clear()
+            return
+
         await self._flush_events()
 
         opened = [page for page in self._opened_pages if not page.is_closed()]
