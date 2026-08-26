@@ -1,137 +1,89 @@
-import { ensure } from "alwaysly";
-import type { LchainSchema } from "../../../llm/LchainSchema.ts";
+import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
+import { AiSdk } from "../../../llm/AiSdk.ts";
 import { Logger } from "../../../telemetry/Logger.ts";
 
 const logger = Logger.get(import.meta.url);
 
 export abstract class ElementsCacheMask {
   static ID_FIELDS = new Set(["id", "from_id", "to_id"]);
+  static #MASKED_RE = /^<MASKED_(\d+)>$/;
 
   static mask(
-    generation: LchainSchema.StoredGeneration,
+    result: LanguageModelV4GenerateResult,
     elementIds: number[],
-  ): LchainSchema.StoredGeneration {
-    const masked = structuredClone(generation);
-
-    if (!elementIds.length) return masked;
+  ): LanguageModelV4GenerateResult | null {
+    const masked = structuredClone(result);
 
     try {
       const idToMask = new Map(elementIds.map((id, index) => [id, index]));
-
-      if (Array.isArray(masked.message?.data.content)) {
-        masked.message?.data.content.forEach((content) => {
-          if (typeof content !== "object") return;
-
-          let args: Record<string, unknown> | undefined;
-          switch (content.type) {
-            case "functionCall":
-              args = content.functionCall.args;
-              break;
-            case "tool_use":
-              args = content.input;
-              break;
-          }
-          this.#maskArgs(args, idToMask);
-        });
+      for (const toolCall of AiSdk.toolCalls(masked)) {
+        const input = AiSdk.toolCallInput(toolCall);
+        if (input.kind === "malformed") return null;
+        if (input.kind === "object" && this.#maskInput(input.value, idToMask)) {
+          toolCall.input = JSON.stringify(input.value);
+        }
       }
-
-      for (const call of masked.message?.data.tool_calls || []) {
-        this.#maskArgs(call.args, idToMask);
-      }
-
-      return masked;
     } catch (error) {
       logger.debug(`Error masking response: ${error}`);
-      return masked;
+      return null;
     }
-  }
-
-  static #maskArgs(
-    args: Record<string, unknown> | undefined,
-    idToMask: Map<number, number>,
-  ) {
-    if (!args) return;
-    this.ID_FIELDS.forEach((field) => {
-      const value = args[field];
-      if (typeof value === "number" && idToMask.has(value)) {
-        const maskedId = idToMask.get(value);
-        ensure(maskedId);
-        args[field] = this.#maskValue(maskedId);
-      }
-    });
+    return masked;
   }
 
   static unmask(
-    generation: LchainSchema.StoredGeneration,
+    result: LanguageModelV4GenerateResult,
     maskToId: Record<number, number>,
-  ): LchainSchema.StoredGeneration {
-    const unmasked = structuredClone(generation);
-
-    if (!Object.keys(maskToId).length) return unmasked;
+  ): LanguageModelV4GenerateResult | null {
+    const unmasked = structuredClone(result);
 
     try {
-      for (const toolCall of unmasked.message?.data.tool_calls ?? []) {
-        this.#unmaskArgs(toolCall.args, maskToId);
-      }
-
-      if (Array.isArray(unmasked.message?.data.content)) {
-        unmasked.message?.data.content.forEach((content) => {
-          if (typeof content !== "object") return;
-          let args: Record<string, unknown> | undefined;
-          switch (content.type) {
-            case "functionCall":
-              args = content.functionCall.args;
-              break;
-            case "tool_use":
-              args = content.input;
-              break;
-          }
-          this.#unmaskArgs(args, maskToId);
-        });
-      }
-
-      return unmasked;
-    } catch (error) {
-      logger.debug(`Error unmasking response: ${error}`);
-      return generation;
-    }
-  }
-
-  static #unmaskArgs(
-    args: Record<string, unknown> | undefined,
-    maskToId: Record<number, number>,
-  ) {
-    if (!args) return;
-    ElementsCacheMask.ID_FIELDS.forEach((field) => {
-      if (field in args) {
-        args[field] = this.#unmaskValue(args[field], maskToId);
-      }
-    });
-  }
-
-  static #MASKED_RE = /^<MASKED_(\d+)>$/;
-
-  static #maskValue(maskedId: number): string {
-    return `<MASKED_${maskedId}>`;
-  }
-
-  static #unmaskValue(
-    value: unknown,
-    maskToId: Record<number, number>,
-  ): unknown {
-    if (
-      typeof value === "string" &&
-      value.startsWith("<MASKED_") &&
-      value.endsWith(">")
-    ) {
-      const captures = this.#MASKED_RE.exec(value);
-      if (captures) {
-        const maskedId = Number(captures[1]);
-        if (!Number.isNaN(maskedId) && maskedId in maskToId) {
-          return maskToId[maskedId];
+      for (const toolCall of AiSdk.toolCalls(unmasked)) {
+        const input = AiSdk.toolCallInput(toolCall);
+        if (input.kind === "malformed") return null;
+        if (input.kind === "object") {
+          const changed = this.#unmaskInput(input.value, maskToId);
+          if (changed === null) return null;
+          if (changed) toolCall.input = JSON.stringify(input.value);
         }
       }
+    } catch (error) {
+      logger.debug(`Error unmasking response: ${error}`);
+      return null;
     }
-    return value;
+    return unmasked;
+  }
+
+  static #maskInput(
+    input: Record<string, unknown>,
+    idToMask: Map<number, number>,
+  ): boolean {
+    let changed = false;
+    for (const field of this.ID_FIELDS) {
+      const value = input[field];
+      const mask = typeof value === "number" ? idToMask.get(value) : undefined;
+      if (mask !== undefined) {
+        input[field] = `<MASKED_${mask}>`;
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
+  static #unmaskInput(
+    input: Record<string, unknown>,
+    maskToId: Record<number, number>,
+  ): boolean | null {
+    let changed = false;
+    for (const field of this.ID_FIELDS) {
+      const value = input[field];
+      if (typeof value !== "string") continue;
+      const match = this.#MASKED_RE.exec(value);
+      if (!match) continue;
+      const mask = Number(match[1]);
+      if (!(mask in maskToId)) return null;
+      input[field] = maskToId[mask];
+      changed = true;
+    }
+    return changed;
   }
 }

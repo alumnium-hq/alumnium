@@ -9,7 +9,7 @@ import type { InlineConfig } from "vitest/node";
 const driverKind = Env.ALUMNIUM_DRIVER;
 const isAppium = Driver.isAppium(driverKind);
 
-await Logger.initEnv();
+await Logger.initEnv({ quiet: true });
 
 const reporters: InlineConfig["reporters"] & {} = ["default"];
 if (Env.ALUMNIUM_TEST_PASS_THRESHOLD_PCT < 100)

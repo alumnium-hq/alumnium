@@ -1,315 +1,212 @@
+import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
+import fs from "node:fs/promises";
+import { generateText, tool, wrapLanguageModel } from "ai";
+import { MockLanguageModelV4 } from "ai/test";
 import { describe, expect, it, vi } from "vitest";
-import {
-  createMockDir,
-  pushMock,
-  setupBeforeEach,
-} from "../../../../tests/unit/mocks.ts";
+import z from "zod";
+import { createMockDir, pushMock } from "../../../../tests/unit/mocks.ts";
 import { AppId } from "../../../AppId.ts";
-import { Env } from "../../../Env.ts";
 import { GlobalFileStorePaths } from "../../../FileStore/GlobalFileStorePaths.ts";
-import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
-import { Lchain } from "../../../llm/Lchain.ts";
+import { AiSdk } from "../../../llm/AiSdk.ts";
+import { AiSdkFactory } from "../../../llm/__factories__/AiSdkFactory.ts";
 import { Model } from "../../../Model.ts";
 import type { BaseAgent } from "../../agents/BaseAgent.ts";
-import { LlmContext } from "../../LlmContext.ts";
 import { SessionContext } from "../../session/SessionContext.ts";
 import { SessionId } from "../../session/SessionId.ts";
+import { createCacheMiddleware } from "../CacheMiddleware.ts";
 import { CacheStore } from "../CacheStore.ts";
+import type { ServerCache } from "../ServerCache.ts";
 import { ElementsCache } from "./ElementsCache.ts";
 
-describe("ElementsCache", () => {
-  const setup = setupBeforeEach(async () => {
-    const sessionContext = new SessionContext({
-      app: "test-app" as AppId,
-      sessionId: "test-session-id" as SessionId,
-    });
-
-    const cacheDir = await createMockDir({ prefix: "elements-cache" });
-
-    pushMock(
-      vi
-        .spyOn(GlobalFileStorePaths, "globalSubDir")
-        .mockReturnValue(cacheDir.path),
-    );
-
-    const model = Env.ALUMNIUM_MODEL;
-    const cacheStore = new CacheStore(sessionContext, model);
-
-    const llmContext = new LlmContext(model);
-
-    const cache = new ElementsCache(sessionContext, cacheStore, llmContext);
-
-    const prompt1 = "prompt 1" as LlmContext.Prompt;
-    const prompt2 = "prompt 2" as LlmContext.Prompt;
-    const llmKey = "test-llm" as LlmContext.LlmKey;
-
-    const treeXml = '<button id="1" name="Login" />';
-
-    return {
-      sessionContext,
-      cacheStore,
-      cacheDir,
-      llmContext,
-      cache,
-      prompt1,
-      prompt2,
-      llmKey,
-      treeXml,
-    };
-  });
-
+describe(ElementsCache, () => {
   describe("lookup", () => {
-    it("resolves null for prompts without assigned metadata", async () => {
-      const { cache, prompt1, llmKey } = setup.cur;
+    it("resolves null for requests without element metadata", async () => {
+      const { cache } = await setup();
 
-      expect(await cache.lookup(prompt1, llmKey)).toBeNull();
+      expect(
+        await cache.lookup(unsupportedRequest("changes-analyzer")),
+      ).toBeNull();
     });
 
-    it("resolves null when it for unsupported agent prompts", async () => {
-      const { llmContext, cache, prompt1, llmKey } = setup.cur;
-      llmContext.assignPromptsMeta([prompt1], {
-        kind: "locator",
-        description: "test",
-        treeXml: "<div />",
-      });
+    it("resolves null for unsupported agent requests", async () => {
+      const { cache } = await setup();
 
-      expect(await cache.lookup(prompt1, llmKey)).toBe(null);
+      expect(await cache.lookup(unsupportedRequest("locator"))).toBeNull();
     });
 
-    describe("planner agent", () => {
-      it("resolves cached response for exact match", async () => {
-        const { llmContext, cache, prompt1, llmKey, treeXml } = setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "planner",
-          goal: "click login" as BaseAgent.Goal,
-          treeXml: treeXml,
-        });
-        const generation = LchainFactory.generation({ text: "step1" });
+    it("resolves cached planner response for exact match", async () => {
+      const { cache } = await setup();
+      const request = plannerRequest('<button id="1" name="Login" />');
+      const result = AiSdkFactory.generateResult({ text: "step1" });
 
-        await cache.update(prompt1, llmKey, [generation]);
-        await cache.save();
+      await cache.update(request, result);
+      await cache.save();
 
-        const result = await cache.lookup(prompt1, llmKey);
-
-        expect(Lchain.toStored(result![0]!)).toEqual(
-          Lchain.toStored(generation),
-        );
-      });
-
-      it("resolves null if app does not match", async () => {
-        const { sessionContext, llmContext, cache, prompt1, llmKey, treeXml } =
-          setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "planner",
-          goal: "click login" as BaseAgent.Goal,
-          treeXml: treeXml,
-        });
-        const generation = LchainFactory.generation({ text: "step1" });
-
-        await cache.update(prompt1, llmKey, [generation]);
-        await cache.save();
-
-        sessionContext.update({ app: "different-app" as AppId });
-
-        const result = await cache.lookup(prompt1, llmKey);
-
-        expect(result).toBeNull();
-      });
-
-      it("ignores malformed accessibility tree", async () => {
-        const { llmContext, cache, prompt1, llmKey } = setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "planner",
-          goal: "click login" as BaseAgent.Goal,
-          treeXml: '<button id="1',
-        });
-
-        await cache.update(prompt1, llmKey, [
-          LchainFactory.generationWith({ text: "step1" }),
-        ]);
-        await cache.save();
-
-        const result = await cache.lookup(prompt1, llmKey);
-
-        expect(Lchain.toStored(result![0]!)).toEqual(
-          LchainFactory.storedGenerationWith({
-            text: "step1",
-          }),
-        );
-      });
+      expect(await cache.lookup(request)).toEqual(result);
     });
 
-    describe("actor agent", () => {
-      it("resolves cached response for exact match", async () => {
-        const { llmContext, cache, prompt1, llmKey, treeXml } = setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "actor",
-          step: 'Click "Login" button' as BaseAgent.Step,
-          goal: "login" as BaseAgent.Goal,
-          treeXml: treeXml,
-        });
-        const generation = LchainFactory.generationWith({
-          text: "step1",
-          toolCalls: [
-            LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
-          ],
-        });
+    it("resolves null for planner response if app does not match", async () => {
+      const { cache, context } = await setup();
+      const request = plannerRequest('<button id="1" name="Login" />');
 
-        await cache.update(prompt1, llmKey, [generation]);
-        await cache.save();
+      await cache.update(
+        request,
+        AiSdkFactory.generateResult({ text: "step1" }),
+      );
+      await cache.save();
+      context.update({ app: "different-app" as AppId });
 
-        const result = await cache.lookup(prompt1, llmKey);
+      expect(await cache.lookup(request)).toBeNull();
+    });
 
-        expect(Lchain.toStored(result![0]!)).toEqual(
-          LchainFactory.storedGenerationWith({
-            text: "step1",
-            toolCalls: [
-              expect.objectContaining({ name: "ClickTool", args: { id: 1 } }),
-            ],
-          }),
-        );
+    it("ignores malformed accessibility tree for planner response", async () => {
+      const { cache } = await setup();
+      const request = plannerRequest('<button id="1');
+      const result = AiSdkFactory.generateResult({ text: "step1" });
+
+      await cache.update(request, result);
+      await cache.save();
+
+      expect(await cache.lookup(request)).toEqual(result);
+    });
+
+    it("resolves cached actor response for exact match", async () => {
+      const { cache } = await setup();
+      const request = actorRequest('<button id="1" name="Login" />');
+      const result = actorResult(1, "step1");
+
+      await cache.update(request, result);
+      await cache.save();
+
+      expect(await cache.lookup(request)).toEqual(result);
+    });
+
+    it("resolves null for actor response if app does not match", async () => {
+      const { cache, context } = await setup();
+      const request = actorRequest('<button id="1" name="Login" />');
+
+      await cache.update(request, actorResult(1, "step1"));
+      await cache.save();
+      context.update({ app: "different-app" as AppId });
+
+      expect(await cache.lookup(request)).toBeNull();
+    });
+
+    it("resolves actor ids in similar trees with changed ids", async () => {
+      const { cache } = await setup();
+      const original = actorRequest('<button id="1" name="Login" />');
+      const changed = actorRequest(
+        '<div><button id="99" name="Login" /></div>',
+      );
+
+      await cache.update(original, actorResult(1));
+      await cache.save();
+
+      const originalHit = await cache.lookup(original);
+      expect(toolCallInputs(originalHit!)).toEqual([{ id: 1 }]);
+
+      const changedHit = await cache.lookup(changed);
+      expect(toolCallInputs(changedHit!)).toEqual([{ id: 99 }]);
+    });
+
+    it("resolves null when cached elements cannot be resolved", async () => {
+      const { cache } = await setup();
+
+      await cache.update(
+        actorRequest('<button id="1" name="Login" />'),
+        actorResult(1),
+      );
+      await cache.save();
+
+      expect(
+        await cache.lookup(actorRequest('<button id="9" name="Logout" />')),
+      ).toBeNull();
+    });
+
+    it("returns null for malformed actor accessibility tree", async () => {
+      const { cache } = await setup();
+      const request = actorRequest('<button id="1');
+
+      await cache.update(request, actorResult(1));
+      await cache.save();
+
+      expect(await cache.lookup(request)).toBeNull();
+    });
+
+    it("treats a malformed cached tool input as a miss", async () => {
+      const { cache, cacheDir } = await setup();
+      const request = actorRequest('<button id="1" name="Login" />');
+      await cache.update(request, actorResult(1));
+      await cache.save();
+
+      const malformed = AiSdkFactory.generateResult({
+        toolCalls: [
+          AiSdkFactory.toolCall({ args: { id: "<MASKED_0>" } }),
+          AiSdkFactory.toolCall({ input: "{" }),
+        ],
       });
+      const responsePath =
+        "test-app/openai/test/elements/actor/e1431b0101011f06/response.json";
+      await fs.writeFile(
+        `${cacheDir.path}/${responsePath}`,
+        JSON.stringify(malformed),
+      );
 
-      it("resolves null if app does not match", async () => {
-        const { sessionContext, llmContext, cache, prompt1, llmKey, treeXml } =
-          setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "actor",
-          step: 'Click "Login" button' as BaseAgent.Step,
-          goal: "login" as BaseAgent.Goal,
-          treeXml: treeXml,
-        });
-        const generation = LchainFactory.generationWith({
-          text: "step1",
-          toolCalls: [
-            LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
-          ],
-        });
+      expect(await cache.lookup(request)).toBeNull();
+    });
 
-        await cache.update(prompt1, llmKey, [generation]);
-        await cache.save();
-
-        sessionContext.update({ app: "different-app" as AppId });
-
-        const result = await cache.lookup(prompt1, llmKey);
-
-        expect(result).toBeNull();
+    it("replays remapped tool input through generateText", async () => {
+      const { cache } = await setup();
+      const baseModel = new MockLanguageModelV4({
+        provider: "openai",
+        modelId: "test",
+        doGenerate: actorResult(1),
       });
-
-      it("resolves actor ids in similar trees with changed ids", async () => {
-        const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "actor",
-          step: 'Click "Login" button' as BaseAgent.Step,
-          goal: "login" as BaseAgent.Goal,
-          treeXml: '<button id="1" name="Login" />',
-        });
-        llmContext.assignPromptsMeta([prompt2], {
-          kind: "actor",
-          step: 'Click "Login" button' as BaseAgent.Step,
-          goal: "login" as BaseAgent.Goal,
-          treeXml: '<div><button id="99" name="Login" /></div>',
-        });
-        const generation = LchainFactory.generationWith({
-          toolCalls: [
-            LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
-          ],
-        });
-
-        await cache.update(prompt1, llmKey, [generation]);
-        await cache.save();
-
-        const result1 = await cache.lookup(prompt1, llmKey);
-
-        expect(result1?.map(Lchain.toStored)).toEqual([
-          LchainFactory.storedGenerationWith({
-            toolCalls: [
-              expect.objectContaining({ name: "ClickTool", args: { id: 1 } }),
-            ],
-          }),
-        ]);
-
-        const result2 = await cache.lookup(prompt2, llmKey);
-
-        expect(result2?.map(Lchain.toStored)).toEqual([
-          LchainFactory.storedGenerationWith({
-            toolCalls: [
-              expect.objectContaining({ name: "ClickTool", args: { id: 99 } }),
-            ],
-          }),
-        ]);
+      const model = wrapLanguageModel({
+        model: baseModel,
+        middleware: createCacheMiddleware(cache),
       });
-
-      it("resolves null when cached elements cannot be resolved", async () => {
-        const { llmContext, cache, prompt1, prompt2, llmKey } = setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "actor",
-          step: "click login" as BaseAgent.Step,
-          goal: "login" as BaseAgent.Goal,
-          treeXml: '<button id="1" name="Login" />',
-        });
-        llmContext.assignPromptsMeta([prompt2], {
-          kind: "actor",
-          step: "click login" as BaseAgent.Step,
-          goal: "login" as BaseAgent.Goal,
-          treeXml: '<button id="9" name="Logout" />',
-        });
-
-        await cache.update(prompt1, llmKey, [
-          LchainFactory.generationWith({
-            toolCalls: [
-              LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
-            ],
-          }),
-        ]);
-        await cache.save();
-
-        expect(await cache.lookup(prompt2, llmKey)).toBeNull();
-      });
-
-      it("returns null on malformed accessibility tree", async () => {
-        const { llmContext, cache, prompt1, llmKey } = setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "actor",
-          step: "click login" as BaseAgent.Step,
-          goal: "login" as BaseAgent.Goal,
-          treeXml: '<button id="1',
+      const tools = {
+        ClickTool: tool({
+          inputSchema: z.object({ id: z.number() }),
+          execute: async () => "clicked",
+        }),
+      };
+      const run = (treeXml: string) =>
+        generateText({
+          model,
+          prompt: "click login",
+          tools,
+          providerOptions: {
+            alumnium: { meta: actorRequest(treeXml).meta },
+          },
         });
 
-        await cache.update(prompt1, llmKey, [
-          LchainFactory.generationWith({
-            toolCalls: [
-              LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
-            ],
-          }),
-        ]);
-        await cache.save();
-
-        expect(await cache.lookup(prompt1, llmKey)).toBeNull();
-      });
+      expect((await run('<button id="1" name="Login" />')).toolCalls).toEqual([
+        expect.objectContaining({ input: { id: 1 }, toolName: "ClickTool" }),
+      ]);
+      expect(
+        (await run('<div><button id="99" name="Login" /></div>')).toolCalls,
+      ).toEqual([
+        expect.objectContaining({ input: { id: 99 }, toolName: "ClickTool" }),
+      ]);
+      expect(baseModel.doGenerateCalls).toHaveLength(1);
     });
   });
 
   describe("update", () => {
     it("uses updated app context for path names", async () => {
-      const { sessionContext, llmContext, cache, prompt1, llmKey, cacheDir } =
-        setup.cur;
-      llmContext.assignPromptsMeta([prompt1], {
-        kind: "planner",
-        goal: "click login" as BaseAgent.Goal,
-        treeXml: '<button id="1" name="Login" />',
-      });
-
+      const { cache, cacheDir, context } = await setup();
       const app = "staging.airbnb.com" as AppId;
+      context.update({ app });
 
-      sessionContext.update({ app });
-      await cache.update(prompt1, llmKey, [
-        LchainFactory.generation({ text: "step1" }),
-      ]);
+      await cache.update(
+        plannerRequest('<button id="1" name="Login" />'),
+        AiSdkFactory.generateResult({ text: "step1" }),
+      );
       await cache.save();
 
-      const model = Model.toString(Env.ALUMNIUM_MODEL);
-      const baseDir = `${app}/${model}/elements/planner/ffa5f4be241f9c48`;
+      const baseDir = `${app}/openai/test/elements/planner/fda0aa9253105607`;
       expect(await cacheDir.flatTree()).toEqual([
         `${baseDir}/elements.json`,
         `${baseDir}/instruction.json`,
@@ -317,144 +214,76 @@ describe("ElementsCache", () => {
       ]);
     });
 
-    describe("planner agent", () => {
-      it("stores instruction, response, and empty elements", async () => {
-        const {
-          sessionContext,
-          cacheStore,
-          llmContext,
-          prompt1,
-          llmKey,
-          cacheDir,
-        } = setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "planner",
-          goal: "login to app" as BaseAgent.Goal,
-          treeXml: '<button id="1">Login</button>',
-        });
-        const generation = LchainFactory.generation({ text: "step1\nstep2" });
+    it("stores planner instruction, response, and empty elements", async () => {
+      const { cache, cacheDir } = await setup();
+      const result = AiSdkFactory.generateResult({ text: "step1\nstep2" });
 
-        const cache = new ElementsCache(sessionContext, cacheStore, llmContext);
-        await cache.update(prompt1, llmKey, [generation]);
-        await cache.save();
+      await cache.update(
+        plannerRequest('<button id="1">Login</button>', "login to app"),
+        result,
+      );
+      await cache.save();
 
-        const model = Model.toString(Env.ALUMNIUM_MODEL);
-        const baseDir = `test-app/${model}/elements/planner/b3806cd36b301287`;
-        const responsePath = `${baseDir}/response.json`;
-        const instructionPath = `${baseDir}/instruction.json`;
-        const elementsPath = `${baseDir}/elements.json`;
-        expect(await cacheDir.flatTree()).toEqual([
-          elementsPath,
-          instructionPath,
-          responsePath,
-        ]);
-
-        const [response, instruction, elements] = await Promise.all([
-          cacheDir.readJson(responsePath),
-          cacheDir.readJson(instructionPath),
-          cacheDir.readJson(elementsPath),
-        ]);
-
-        expect(response).toEqual(Lchain.toStored(generation));
-        expect(instruction).toEqual({
-          goal: "login to app",
-        });
-        expect(elements).toEqual([]);
+      const baseDir = "test-app/openai/test/elements/planner/dabae3acdc54c74d";
+      const responsePath = `${baseDir}/response.json`;
+      const instructionPath = `${baseDir}/instruction.json`;
+      const elementsPath = `${baseDir}/elements.json`;
+      expect(await cacheDir.flatTree()).toEqual([
+        elementsPath,
+        instructionPath,
+        responsePath,
+      ]);
+      expect(await cacheDir.readJson(responsePath)).toEqual(result);
+      expect(await cacheDir.readJson(instructionPath)).toEqual({
+        goal: "login to app",
       });
+      expect(await cacheDir.readJson(elementsPath)).toEqual([]);
     });
 
-    describe("actor agent", () => {
-      it("stores instruction and masked response and elements", async () => {
-        const {
-          sessionContext,
-          cacheStore,
-          llmContext,
-          prompt1,
-          llmKey,
-          cacheDir,
-        } = setup.cur;
-        llmContext.assignPromptsMeta([prompt1], {
-          kind: "actor",
-          step: 'Click "Login" button' as BaseAgent.Step,
-          goal: "login" as BaseAgent.Goal,
-          treeXml: '<button id="1" name="Login" />',
-        });
-        const text = "step1\nstep2";
-        const generation = LchainFactory.generationWith({
-          text,
-          toolCalls: [
-            LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
-          ],
-        });
+    it("stores actor instruction, masked response, and elements", async () => {
+      const { cache, cacheDir } = await setup();
+      const text = "step1\nstep2";
 
-        const cache = new ElementsCache(sessionContext, cacheStore, llmContext);
-        await cache.update(prompt1, llmKey, [generation]);
-        await cache.save();
+      await cache.update(
+        actorRequest('<button id="1" name="Login" />'),
+        actorResult(1, text),
+      );
+      await cache.save();
 
-        const model = Model.toString(Env.ALUMNIUM_MODEL);
-        const baseDir = `test-app/${model}/elements/actor/fb8d7f17ec7416d7`;
-        const responsePath = `${baseDir}/response.json`;
-        const instructionPath = `${baseDir}/instruction.json`;
-        const elementsPath = `${baseDir}/elements.json`;
-        expect(await cacheDir.flatTree()).toEqual([
-          elementsPath,
-          instructionPath,
-          responsePath,
-        ]);
-
-        const [response, instruction, elements] = await Promise.all([
-          cacheDir.readJson(responsePath),
-          cacheDir.readJson(instructionPath),
-          cacheDir.readJson(elementsPath),
-        ]);
-
-        expect(response).toEqual(
-          LchainFactory.storedGenerationWith({
-            text,
-            toolCalls: [
-              expect.objectContaining({
-                name: "ClickTool",
-                args: { id: "<MASKED_0>" },
-              }),
-            ],
-          }),
-        );
-        expect(instruction).toEqual({
-          step: 'Click "Login" button',
-          goal: "login",
-        });
-        expect(elements).toEqual([
-          {
-            role: "button",
-            index: 0,
-            name: "Login",
-          },
-        ]);
+      const baseDir = "test-app/openai/test/elements/actor/e1431b0101011f06";
+      const responsePath = `${baseDir}/response.json`;
+      const instructionPath = `${baseDir}/instruction.json`;
+      const elementsPath = `${baseDir}/elements.json`;
+      expect(await cacheDir.flatTree()).toEqual([
+        elementsPath,
+        instructionPath,
+        responsePath,
+      ]);
+      expect(await cacheDir.readJson(responsePath)).toEqual(
+        actorResult("<MASKED_0>", text),
+      );
+      expect(await cacheDir.readJson(instructionPath)).toEqual({
+        step: 'Click "Login" button',
+        goal: "login",
       });
+      expect(await cacheDir.readJson(elementsPath)).toEqual([
+        {
+          role: "button",
+          index: 0,
+          name: "Login",
+        },
+      ]);
     });
   });
 
   describe("discard", () => {
     it("discards memory cache", async () => {
-      const {
-        sessionContext,
-        cacheStore,
-        llmContext,
-        prompt1,
-        llmKey,
-        cacheDir,
-        treeXml,
-      } = setup.cur;
-      llmContext.assignPromptsMeta([prompt1], {
-        kind: "planner",
-        goal: "click login" as BaseAgent.Goal,
-        treeXml: treeXml,
-      });
+      const { cache, cacheDir } = await setup();
 
-      const cache = new ElementsCache(sessionContext, cacheStore, llmContext);
-      await cache.update(prompt1, llmKey, [
-        LchainFactory.generation({ text: "step1" }),
-      ]);
+      await cache.update(
+        plannerRequest('<button id="1" name="Login" />'),
+        AiSdkFactory.generateResult({ text: "step1" }),
+      );
       await cache.discard();
       await cache.save();
 
@@ -464,20 +293,14 @@ describe("ElementsCache", () => {
 
   describe("clear", () => {
     it("removes all cached files", async () => {
-      const { llmContext, cache, prompt1, llmKey, cacheDir, treeXml } =
-        setup.cur;
-      llmContext.assignPromptsMeta([prompt1], {
-        kind: "planner",
-        goal: "click login" as BaseAgent.Goal,
-        treeXml: treeXml,
-      });
+      const { cache, cacheDir } = await setup();
 
-      await cache.update(prompt1, llmKey, [
-        LchainFactory.generation({ text: "step1" }),
-      ]);
+      await cache.update(
+        plannerRequest('<button id="1" name="Login" />'),
+        AiSdkFactory.generateResult({ text: "step1" }),
+      );
       await cache.save();
-
-      expect((await cacheDir.flatTree()).length).toBe(3);
+      expect(await cacheDir.flatTree()).toHaveLength(3);
 
       await cache.clear();
 
@@ -487,13 +310,8 @@ describe("ElementsCache", () => {
 
   describe("usage", () => {
     it("tracks usage when lookup hits", async () => {
-      const { llmContext, cache, prompt1, llmKey } = setup.cur;
-      llmContext.assignPromptsMeta([prompt1], {
-        kind: "planner",
-        goal: "click login" as BaseAgent.Goal,
-        treeXml: '<button id="1" name="Login" />',
-      });
-
+      const { cache } = await setup();
+      const request = plannerRequest('<button id="1" name="Login" />');
       expect(cache.usage).toEqual({
         cache_creation: 0,
         cache_read: 0,
@@ -503,27 +321,19 @@ describe("ElementsCache", () => {
         total_tokens: 0,
       });
 
-      await cache.update(prompt1, llmKey, [
-        LchainFactory.generationWith({
+      await cache.update(
+        request,
+        AiSdkFactory.generateResult({
           text: "step1",
           usage: {
-            input_tokens: 5,
-            output_tokens: 10,
-            total_tokens: 15,
-            input_token_details: {
-              cache_creation: 20,
-              cache_read: 25,
-            },
-            output_token_details: {
-              reasoning: 30,
-            },
+            inputTokens: { total: 5, cacheRead: 25, cacheWrite: 20 },
+            outputTokens: { total: 10, reasoning: 30 },
           },
         }),
-      ]);
+      );
       await cache.save();
 
-      await cache.lookup(prompt1, llmKey);
-
+      await cache.lookup(request);
       expect(cache.usage).toEqual({
         input_tokens: 5,
         output_tokens: 10,
@@ -533,8 +343,7 @@ describe("ElementsCache", () => {
         reasoning: 30,
       });
 
-      await cache.lookup(prompt1, llmKey);
-
+      await cache.lookup(request);
       expect(cache.usage).toEqual({
         input_tokens: 10,
         output_tokens: 20,
@@ -546,3 +355,76 @@ describe("ElementsCache", () => {
     });
   });
 });
+
+async function setup() {
+  const cacheDir = await createMockDir({ prefix: "elements-cache" });
+  pushMock(
+    vi
+      .spyOn(GlobalFileStorePaths, "globalSubDir")
+      .mockReturnValue(cacheDir.path),
+  );
+  const context = new SessionContext({
+    app: "test-app" as AppId,
+    sessionId: "test-session-id" as SessionId,
+  });
+  const cacheStore = new CacheStore(context, Model.parse("openai/test"));
+  return {
+    cache: new ElementsCache(context, cacheStore),
+    cacheDir,
+    context,
+  };
+}
+
+function plannerRequest(
+  treeXml: string,
+  goal = "click login",
+): ServerCache.CacheRequest {
+  return request({
+    kind: "planner",
+    goal: goal as BaseAgent.Goal,
+    treeXml,
+  });
+}
+
+function actorRequest(treeXml: string): ServerCache.CacheRequest {
+  return request({
+    kind: "actor",
+    goal: "login" as BaseAgent.Goal,
+    step: 'Click "Login" button' as BaseAgent.Step,
+    treeXml,
+  });
+}
+
+function unsupportedRequest(
+  kind: "changes-analyzer" | "locator",
+): ServerCache.CacheRequest {
+  return kind === "changes-analyzer"
+    ? request({ kind })
+    : request({ kind, description: "test", treeXml: "<div />" });
+}
+
+function request(
+  meta: ServerCache.CacheRequest["meta"],
+): ServerCache.CacheRequest {
+  return {
+    key: "request" as ServerCache.CacheKey,
+    model: { provider: "openai", modelId: "test" },
+    params: { prompt: [] },
+    meta,
+  };
+}
+
+function actorResult(id: number | string, text?: string) {
+  return AiSdkFactory.generateResult({
+    ...(text === undefined ? {} : { text }),
+    toolCalls: [AiSdkFactory.toolCall({ args: { id } })],
+  });
+}
+
+function toolCallInputs(result: LanguageModelV4GenerateResult) {
+  return AiSdk.toolCalls(result).map((toolCall) => {
+    const input = AiSdk.toolCallInput(toolCall);
+    if (input.kind !== "object") throw new Error("Expected object tool input");
+    return input.value;
+  });
+}

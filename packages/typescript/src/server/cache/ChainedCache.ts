@@ -1,7 +1,6 @@
-import type { Generation } from "@langchain/core/outputs";
+import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { Tracer } from "../../telemetry/Tracer.ts";
-import { LlmContext } from "../LlmContext.ts";
 import { SessionContext } from "../session/SessionContext.ts";
 import { ServerCache } from "./ServerCache.ts";
 
@@ -18,11 +17,10 @@ export class ChainedCache extends ServerCache {
 
   @span("cache.lookup", spanAttrs)
   override async lookup(
-    prompt: LlmContext.Prompt,
-    llmString: LlmContext.LlmKey,
-  ): Promise<Generation[] | null> {
+    request: ServerCache.CacheRequest,
+  ): Promise<LanguageModelV4GenerateResult | null> {
     for (const [index, cache] of this.caches.entries()) {
-      const result = await cache.lookup(prompt, llmString);
+      const result = await cache.lookup(request);
       if (result !== null) {
         logger.debug(
           `Cache hit in ${cache.constructor.name} (position ${index})`,
@@ -40,12 +38,11 @@ export class ChainedCache extends ServerCache {
 
   @span("cache.update", spanAttrs)
   override async update(
-    prompt: LlmContext.Prompt,
-    llmString: LlmContext.LlmKey,
-    generations: Generation[],
+    request: ServerCache.CacheRequest,
+    result: LanguageModelV4GenerateResult,
   ): Promise<void> {
     await Promise.all(
-      this.caches.map((cache) => cache.update(prompt, llmString, generations)),
+      this.caches.map((cache) => cache.update(request, result)),
     );
   }
 

@@ -1,5 +1,4 @@
-import type { ToolDefinition } from "@langchain/core/language_models/base";
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import { wrapLanguageModel } from "ai";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Driver } from "../../drivers/Driver.ts";
@@ -8,8 +7,10 @@ import {
   LlmUsage,
   LlmUsageStats,
 } from "../../llm/llmSchema.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { Model } from "../../Model.ts";
 import { Logger } from "../../telemetry/Logger.ts";
+import type { ToolDefinition } from "../../tools/ToolDefinition.ts";
 import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.ts";
 import { TreeFactory } from "../../tree/TreeFactory.ts";
 import { ActorAgent } from "../agents/ActorAgent.ts";
@@ -19,8 +20,8 @@ import { LocatorAgent } from "../agents/LocatorAgent.ts";
 import { PlannerAgent } from "../agents/PlannerAgent.ts";
 import { RetrieverAgent } from "../agents/RetrieverAgent.ts";
 import { ServerCache } from "../cache/ServerCache.ts";
+import { createCacheMiddleware } from "../cache/CacheMiddleware.ts";
 import { CacheFactory } from "../CacheFactory.ts";
-import { LlmContext } from "../LlmContext.ts";
 import { LlmFactory } from "../LlmFactory.ts";
 import { SessionContext } from "./SessionContext.ts";
 import { SessionId } from "./SessionId.ts";
@@ -34,7 +35,7 @@ export namespace Session {
     model: Model;
     platform: Driver.Platform;
     tools: ToolDefinition[];
-    llm?: BaseChatModel | undefined;
+    llm?: LanguageModel | undefined;
     planner?: boolean | undefined;
     excludeAttributes?: Set<string> | undefined;
   }
@@ -52,8 +53,7 @@ export class Session {
   model: Model;
   platform: Driver.Platform;
   tools: ToolDefinition[];
-  #llm: BaseChatModel | undefined;
-  #llmContext: LlmContext;
+  #llm: LanguageModel | undefined;
   cache: ServerCache;
   planner: boolean;
   excludeAttributes: Set<string>;
@@ -75,33 +75,29 @@ export class Session {
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes ?? new Set();
     this.#context = new SessionContext({ app, sessionId });
-    this.#llmContext = new LlmContext(model);
-
-    this.cache = CacheFactory.createCache(
-      this.#context,
-      this.#llmContext,
-      model,
-    );
-
-    // TODO: When assigning cache via `props.llm.cache` it doesn't work properly
-    // find a way to make it work or expose option to create cache via `Alumni`.
+    this.cache = CacheFactory.createCache(this.#context, model);
     if (props.llm) {
-      props.llm.cache = this.cache;
+      this.#llm = wrapLanguageModel({
+        model: props.llm,
+        middleware: createCacheMiddleware(this.cache),
+      });
     }
-    this.#llm = props.llm;
 
     logger.info(
       `Created session ${sessionId} with model ${model.provider}/${model.name} and platform ${platform}`,
     );
   }
 
-  get llm(): BaseChatModel {
-    return (this.#llm ??= LlmFactory.createLlm(this.model, this.cache));
+  get llm(): LanguageModel {
+    return (this.#llm ??= wrapLanguageModel({
+      model: LlmFactory.createLlm(this.model),
+      middleware: createCacheMiddleware(this.cache),
+    }));
   }
 
   get actorAgent(): ActorAgent {
     return (this.#actorAgent ??= new ActorAgent(
-      this.#llmContext,
+      this.model,
       this.llm,
       this.tools,
     ));
@@ -109,33 +105,27 @@ export class Session {
 
   get plannerAgent(): PlannerAgent {
     return (this.#plannerAgent ??= new PlannerAgent(
-      this.#llmContext,
+      this.model,
       this.llm,
       this.tools.map((schema) => schema.function.name),
     ));
   }
 
   get retrieverAgent(): RetrieverAgent {
-    return (this.#retrieverAgent ??= new RetrieverAgent(
-      this.#llmContext,
-      this.llm,
-    ));
+    return (this.#retrieverAgent ??= new RetrieverAgent(this.model, this.llm));
   }
 
   get areaAgent(): AreaAgent {
-    return (this.#areaAgent ??= new AreaAgent(this.#llmContext, this.llm));
+    return (this.#areaAgent ??= new AreaAgent(this.model, this.llm));
   }
 
   get locatorAgent(): LocatorAgent {
-    return (this.#locatorAgent ??= new LocatorAgent(
-      this.#llmContext,
-      this.llm,
-    ));
+    return (this.#locatorAgent ??= new LocatorAgent(this.model, this.llm));
   }
 
   get changesAnalyzerAgent(): ChangesAnalyzerAgent {
     return (this.#changesAnalyzerAgent ??= new ChangesAnalyzerAgent(
-      this.#llmContext,
+      this.model,
       this.llm,
     ));
   }

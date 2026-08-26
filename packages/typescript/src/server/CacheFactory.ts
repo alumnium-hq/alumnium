@@ -7,7 +7,6 @@ import { ElementsCache } from "./cache/ElementsCache/ElementsCache.ts";
 import { NullCache } from "./cache/NullCache.ts";
 import { ResponseCache } from "./cache/ResponseCache.ts";
 import { ServerCache } from "./cache/ServerCache.ts";
-import { LlmContext } from "./LlmContext.ts";
 import { SessionContext } from "./session/SessionContext.ts";
 
 const logger = Logger.get(import.meta.url);
@@ -15,7 +14,6 @@ const logger = Logger.get(import.meta.url);
 export class CacheFactory {
   static createCache(
     sessionContext: SessionContext,
-    llmContext: LlmContext,
     model: Model,
   ): ServerCache {
     const cacheProvider = Env.ALUMNIUM_CACHE;
@@ -31,8 +29,8 @@ export class CacheFactory {
         logger.info("Using filesystem cache");
         const cacheStore = new CacheStore(sessionContext, model);
         return new ChainedCache(sessionContext, [
-          new ResponseCache(sessionContext, cacheStore, llmContext),
-          new ElementsCache(sessionContext, cacheStore, llmContext),
+          new ResponseCache(sessionContext, cacheStore),
+          new ElementsCache(sessionContext, cacheStore),
         ]);
       }
 

@@ -39,11 +39,16 @@ export abstract class LoggerSchema {
 
   static DebugExtra = z.enum([
     "all",
-    "langchain",
+    "ai-sdk",
     "tree",
     "reasoning",
     "http",
     "scenarios",
     "env",
+  ]);
+
+  static DebugExtraWithLegacy = z.enum([
+    ...this.DebugExtra.options,
+    "langchain",
   ]);
 }
