@@ -1,6 +1,6 @@
 import { cac } from "cac";
 import * as ansi from "picocolors";
-import { ALUMNIUM_VERSION } from "../package.ts";
+import { ALUMNIUM_BIN_VERSION } from "../package.ts";
 import { setupEmbeddedDependencies } from "../standalone/setupEmbeddedDependencies.ts";
 
 // NOTE: Don't use logger here, so it can be configured by commands before any
@@ -23,7 +23,7 @@ async function main() {
   COMMANDS.forEach((command) => command.register(cli));
 
   cli.help();
-  cli.version(ALUMNIUM_VERSION);
+  cli.version(ALUMNIUM_BIN_VERSION);
 
   cli.addEventListener("command:*", () => {
     const invalidCommand = cli.args[0];
