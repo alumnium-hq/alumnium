@@ -93,6 +93,8 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
           password_manager_leak_detection: false,
         },
       });
+      const browserVersion = Env.ALUMNIUM_SELENIUM_BROWSER_VERSION;
+      if (browserVersion) options.setBrowserVersion(browserVersion);
       return new Builder()
         .forBrowser("chrome")
         .setChromeOptions(options)

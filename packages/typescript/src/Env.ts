@@ -209,6 +209,13 @@ export const Env = {
     return envVar("ALUMNIUM_PLAYWRIGHT_HEADLESS", z.stringbool().default(true));
   },
 
+  get ALUMNIUM_SELENIUM_BROWSER_VERSION() {
+    return envVar(
+      "ALUMNIUM_SELENIUM_BROWSER_VERSION",
+      z.string().nonempty().optional(),
+    );
+  },
+
   get ALUMNIUM_TEST_MAX_CONCURRENCY() {
     const defaultValue = 4;
     const cpusCount = os.cpus().length;

@@ -25,6 +25,7 @@ load_dotenv()
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+selenium_browser_version = getenv("ALUMNIUM_SELENIUM_BROWSER_VERSION")
 model_label = getenv("ALUMNIUM_MODEL")
 run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
 test_results = {"passed": 0, "failed": 0, "errors": 0}
@@ -52,6 +53,8 @@ def driver():
                 "profile.password_manager_leak_detection": False,
             },
         )
+        if selenium_browser_version:
+            options.browser_version = selenium_browser_version
         driver = ChromeDriver(options=options)
         yield driver
     elif driver_type == "appium-ios":
