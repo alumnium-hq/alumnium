@@ -1,7 +1,5 @@
 import { evalite } from "evalite";
-import { nanoid } from "nanoid";
 import * as fs from "node:fs/promises";
-import type { AppId } from "../../AppId.ts";
 import { Env } from "../../Env.ts";
 import { Logger } from "../../telemetry/Logger.ts";
 import type { ToolCall } from "../../tools/BaseTool.ts";
@@ -12,10 +10,7 @@ import { PressKeyTool } from "../../tools/PressKeyTool.ts";
 import { TypeTool } from "../../tools/TypeTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
 import { convertToolsToSchemas } from "../../tools/toolToSchemaConverter.ts";
-import { NullCache } from "../cache/NullCache.ts";
-import { LlmContext } from "../LlmContext.ts";
 import { LlmFactory } from "../LlmFactory.ts";
-import { SessionContext } from "../session/SessionContext.ts";
 import { ActorAgent } from "./ActorAgent.ts";
 
 Logger.level = "warning";
@@ -95,14 +90,8 @@ evalite<Input, ActorAgent.InvokeResult, ToolCall[]>("ActorAgent", {
 
   task: async ({ goal, step, treeXml }) => {
     const model = Env.ALUMNIUM_MODEL;
-    const llmContext = new LlmContext(model);
-    const sessionContext = new SessionContext({
-      app: "eval" as AppId,
-      sessionId: nanoid(),
-    });
-    const cache = new NullCache(sessionContext);
-    const llm = LlmFactory.createLlm(model, cache);
-    const agent = new ActorAgent(llmContext, llm, toolSchemas);
+    const llm = LlmFactory.createLlm(model);
+    const agent = new ActorAgent(model, llm, toolSchemas);
 
     return agent.invoke(goal, step, treeXml);
   },

@@ -1,6 +1,5 @@
-import type { Generation } from "@langchain/core/outputs";
+import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { Tracer } from "../../telemetry/Tracer.ts";
-import { LlmContext } from "../LlmContext.ts";
 import { ServerCache } from "./ServerCache.ts";
 
 const tracer = Tracer.get(import.meta.url);
@@ -8,9 +7,8 @@ const { span } = tracer.dec();
 
 export class NullCache extends ServerCache {
   override async lookup(
-    _prompt: LlmContext.Prompt,
-    _llmKey: LlmContext.LlmKey,
-  ): Promise<Generation[] | null> {
+    _request: ServerCache.CacheRequest,
+  ): Promise<LanguageModelV4GenerateResult | null> {
     return tracer.span("cache.lookup", this.#spanAttrs(), (span) => {
       span.event("cache.lookup.miss", {
         ...this.#spanAttrs(),
@@ -21,9 +19,8 @@ export class NullCache extends ServerCache {
   }
 
   override async update(
-    _prompt: LlmContext.Prompt,
-    _llmKey: LlmContext.LlmKey,
-    _generations: Generation[],
+    _request: ServerCache.CacheRequest,
+    _result: LanguageModelV4GenerateResult,
   ): Promise<void> {
     return tracer.span("cache.update", this.#spanAttrs(), (span) => {
       span.event("cache.update.skip", {

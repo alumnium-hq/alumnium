@@ -1,22 +1,18 @@
-import { ChatCodex } from "@alumnium/langchain-codex";
-import { ChatAnthropic, type ChatAnthropicInput } from "@langchain/anthropic";
-import { ChatBedrockConverse } from "@langchain/aws";
-import type { BaseCache } from "@langchain/core/caches";
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { ChatDeepSeek } from "@langchain/deepseek";
-import { ChatGoogle } from "@langchain/google";
-import { ChatMistralAI } from "@langchain/mistralai";
-import { ChatOllama } from "@langchain/ollama";
-import {
-  AzureChatOpenAI,
-  type AzureChatOpenAIFields,
-  ChatOpenAI,
-  type ChatOpenAIFields,
-} from "@langchain/openai";
-import { ChatXAI } from "@langchain/xai";
-import type { DocumentType } from "@smithy/types";
-import { never } from "alwaysly";
+import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { createAzure } from "@ai-sdk/azure";
+import { createDeepSeek } from "@ai-sdk/deepseek";
+import { createGoogle } from "@ai-sdk/google";
+import { createMistral } from "@ai-sdk/mistral";
+import { createOpenAI } from "@ai-sdk/openai";
+import type {
+  LanguageModelV4,
+  LanguageModelV4CallOptions,
+} from "@ai-sdk/provider";
+import { createXai } from "@ai-sdk/xai";
+import { createOllama } from "ollama-ai-provider-v2";
 import { Env } from "../Env.ts";
+import { CodexLanguageModel } from "../llm/CodexLanguageModel.ts";
 import { Model } from "../Model.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { maskString } from "../utils/string.ts";
@@ -26,14 +22,9 @@ const logger = Logger.get(import.meta.url);
 export const MODEL_TIMEOUT_SEC = Env.ALUMNIUM_MODEL_TIMEOUT;
 export const MODEL_RETRIES = Env.ALUMNIUM_MODEL_RETRIES;
 
-/**
- * Factory for creating LLM instances based on model configuration.
- */
+/** Factory for creating AI SDK language models from Alumnium model settings. */
 export class LlmFactory {
-  /**
-   * Create an LLM instance based on the model configuration.
-   */
-  static createLlm(model: Model, cache: BaseCache): BaseChatModel {
+  static createLlm(model: Model): LanguageModelV4 {
     logger.info(
       `Creating LLM for model: ${model.provider}/${model.name} (timeout: ${MODEL_TIMEOUT_SEC}s, retries: ${MODEL_RETRIES})`,
     );
@@ -41,320 +32,327 @@ export class LlmFactory {
     switch (model.provider) {
       case "azure_foundry":
       case "azure_openai":
-        return LlmFactory.createAzureLlm(model, cache);
+        return LlmFactory.createAzureLlm(model);
       case "anthropic":
-        return LlmFactory.createAnthropicLlm(model, cache);
+        return LlmFactory.createAnthropicLlm(model);
       case "aws_anthropic":
       case "aws_meta":
-        return LlmFactory.createAwsLlm(model, cache);
+        return LlmFactory.createAwsLlm(model);
       case "codex":
-        return LlmFactory.createCodexLlm(model, cache);
+        return LlmFactory.createCodexLlm(model);
       case "deepseek":
-        return LlmFactory.createDeepSeekLlm(model, cache);
+        return LlmFactory.createDeepSeekLlm(model);
       case "google":
-        return LlmFactory.createGoogleLlm(model, cache);
-      case "github":
-        return LlmFactory.createGithubLlm(model, cache);
+        return LlmFactory.createGoogleLlm(model);
       case "mistralai":
-        return LlmFactory.createMistralAiLlm(model, cache);
+        return LlmFactory.createMistralAiLlm(model);
       case "ollama":
-        return LlmFactory.createOllamaLlm(model, cache);
+        return LlmFactory.createOllamaLlm(model);
       case "openai":
-        return LlmFactory.createOpenAiLlm(model, cache);
+        return LlmFactory.createOpenAiLlm(model);
       case "xai":
-        return LlmFactory.createXAiLlm(model, cache);
+        return LlmFactory.createXAiLlm(model);
     }
   }
 
-  static createAzureLlm(model: Model, cache: BaseCache): BaseChatModel {
+  static createAzureLlm(model: Model): LanguageModelV4 {
     const variant =
       model.provider === "azure_foundry" ? "Azure Foundry" : "Azure OpenAI";
     logger.debug(`Creating ${variant} LLM with model ${model.name}`);
 
-    const defaultFields: Partial<AzureChatOpenAIFields> = {
-      // TODO: See the OpenAI LLM function for more info about the issue.
-      // temperature: 0,
-      cache,
-    };
-    const fields =
+    const provider =
       model.provider === "azure_foundry"
-        ? LlmFactory.azureFoundryLlmFields(model, defaultFields)
-        : model.provider === "azure_openai"
-          ? LlmFactory.azureOpenAiLlmFields(model, defaultFields)
-          : never();
-
-    if (!model.name.includes("gpt-4o")) {
-      fields.reasoning = {
-        effort: "low",
-        summary: "auto",
-      };
-    }
-
-    return new AzureChatOpenAI(fields);
+        ? LlmFactory.createAzureFoundryProvider()
+        : LlmFactory.createAzureOpenAiProvider();
+    const defaults = model.name.includes("gpt-4o")
+      ? undefined
+      : {
+          reasoning: "low" as const,
+          providerOptions: { azure: { reasoningSummary: "auto" } },
+        };
+    return withCallDefaults(provider.chat(model.name), defaults);
   }
 
-  static azureFoundryLlmFields(
-    model: Model,
-    defaults: Partial<AzureChatOpenAIFields>,
-  ): AzureChatOpenAIFields {
-    const openAIApiVersion = Env.AZURE_FOUNDRY_API_VERSION;
-    if (!openAIApiVersion) {
+  static createAzureFoundryProvider(): ReturnType<typeof createAzure> {
+    const apiVersion = Env.AZURE_FOUNDRY_API_VERSION;
+    if (!apiVersion) {
       throw new Error(
         "AZURE_FOUNDRY_API_VERSION environment variable is required for Azure Foundry models",
       );
     }
 
-    return {
-      azureOpenAIApiDeploymentName: model.name,
-      openAIApiVersion,
-      ...defaults,
-    };
-  }
+    const targetURI = Env.AZURE_FOUNDRY_TARGET_URI;
+    const target = targetURI ? new URL(targetURI) : undefined;
+    const targetParams = target
+      ? new URLSearchParams(target.searchParams)
+      : undefined;
+    if (target) target.search = "";
 
-  static azureOpenAiLlmFields(
-    model: Model,
-    defaults: Partial<AzureChatOpenAIFields>,
-  ): AzureChatOpenAIFields {
-    const azureOpenAIApiKey = Env.AZURE_OPENAI_API_KEY;
-    if (!azureOpenAIApiKey) {
-      throw new Error(
-        "AZURE_OPENAI_API_KEY environment variable is required for Azure OpenAI models",
-      );
-    }
-    logMaskedSecret("Azure OpenAI API Key", azureOpenAIApiKey);
-
-    const azureOpenAIEndpoint = Env.AZURE_OPENAI_ENDPOINT;
-    if (!azureOpenAIEndpoint) {
-      throw new Error(
-        "AZURE_OPENAI_ENDPOINT environment variable is required for Azure OpenAI models",
-      );
-    }
-    logMaskedSecret("Azure OpenAI API Endpoint", azureOpenAIEndpoint);
-
-    const azureOpenAIApiVersion = Env.AZURE_OPENAI_API_VERSION;
-    if (!azureOpenAIApiVersion) {
-      throw new Error(
-        "AZURE_OPENAI_API_VERSION environment variable is required for Azure OpenAI models",
-      );
-    }
-    logMaskedSecret("Azure OpenAI API Version", azureOpenAIApiVersion);
-
-    const envHeaders = Env.AZURE_OPENAI_DEFAULT_HEADERS;
-    const defaultHeaders = new Headers(envHeaders);
-
-    return {
-      model: model.name,
-      azureOpenAIApiKey,
-      azureOpenAIApiVersion,
-      // TODO: These configuration fields rely on LangChain JS SDK bug that
-      // prevents endpoints without specifying instance and deployment names.
-      // It has to be fixed or better replaced with a sane AI API client.
-      // See: https://github.com/langchain-ai/langchainjs/blob/main/libs/providers/langchain-openai/src/utils/azure.ts#L38-L79
-      azureOpenAIBasePath: azureOpenAIEndpoint,
-      azureOpenAIApiDeploymentName: "openai",
-      configuration: {
-        defaultHeaders,
-      },
-      ...defaults,
-    };
-  }
-
-  static createAnthropicLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating Anthropic LLM with model ${model.name}`);
-
-    const fields: ChatAnthropicInput = {
-      model: model.name,
-      ...apiKeyField(Env.ANTHROPIC_API_KEY),
-      cache,
-    };
-
-    if (usesAdaptiveThinking(model.name)) {
-      fields.thinking = { type: "adaptive" };
-      fields.outputConfig = { effort: "low" };
-    } else {
-      fields.thinking = { type: "enabled", budget_tokens: 1024 };
-    }
-
-    return new ChatAnthropic(fields);
-  }
-
-  static createAwsLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating AWS LLM with model ${model.name}`);
-
-    const accessKeyId = Env.AWS_ACCESS_KEY || "";
-    const secretAccessKey = Env.AWS_SECRET_KEY || "";
-    const region = Env.AWS_REGION_NAME;
-    const additionalModelRequestFields: DocumentType = {};
-
-    if (model.provider === "aws_anthropic") {
-      if (usesAdaptiveThinking(model.name)) {
-        additionalModelRequestFields.thinking = { type: "adaptive" };
-        additionalModelRequestFields.output_config = { effort: "low" };
-      } else {
-        additionalModelRequestFields.thinking = {
-          type: "enabled",
-          budget_tokens: 1024, // Minimum budget for Anthropic thinking
-        };
-      }
-    }
-
-    return new ChatBedrockConverse({
-      model: model.name,
-      region,
-      credentials: { accessKeyId, secretAccessKey },
-      additionalModelRequestFields,
-      cache,
-    });
-  }
-
-  static createCodexLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating Codex LLM with model ${model.name}`);
-    return new ChatCodex({
-      model: model.name,
-      cache,
-    });
-  }
-
-  static createDeepSeekLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating DeepSeek LLM with model ${model.name}`);
-
-    const deepSeek = new ReasonableChatDeepSeek({
-      model: model.name,
-      ...apiKeyField(Env.DEEPSEEK_API_KEY),
-      temperature: 0,
-      cache,
-    });
-
-    return deepSeek;
-  }
-
-  static createGoogleLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating Google LLM with model ${model.name}`);
-
-    if (model.name.includes("gemini-2.0")) {
-      return new ChatGoogle({
-        model: model.name,
-        ...apiKeyField(Env.GOOGLE_API_KEY),
-        temperature: 0,
-        cache,
-      });
-    } else {
-      return new ChatGoogle({
-        model: model.name,
-        ...apiKeyField(Env.GOOGLE_API_KEY),
-        temperature: 0,
-        thinkingConfig: {
-          thinkingLevel: "LOW",
-          includeThoughts: true,
+    return createAzure({
+      apiVersion,
+      ...apiKeyField(Env.AZURE_FOUNDRY_API_KEY),
+      ...(target ? { baseURL: target.toString() } : {}),
+      fetch: Object.assign(
+        async (input: string | URL | Request, init?: RequestInit) => {
+          const url = new URL(
+            input instanceof Request ? input.url : input.toString(),
+          );
+          for (const [name, value] of targetParams ?? []) {
+            if (!url.searchParams.has(name))
+              url.searchParams.append(name, value);
+          }
+          if (!url.searchParams.has("api-version"))
+            url.searchParams.set("api-version", apiVersion);
+          return fetch(url, init);
         },
-        cache,
-      });
-    }
-  }
-
-  static createGithubLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating Github LLM with model ${model.name}`);
-
-    return new ChatOpenAI({
-      model: model.name,
-      ...apiKeyField(Env.OPENAI_API_KEY),
-      configuration: { baseURL: "https://models.github.ai/inference" },
-      temperature: 0,
-      cache,
+        { preconnect: fetch.preconnect },
+      ),
     });
   }
 
-  static createMistralAiLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating MistralAI LLM with model ${model.name}`);
+  static createAzureOpenAiProvider(): ReturnType<typeof createAzure> {
+    const apiKey = requiredEnv(
+      "AZURE_OPENAI_API_KEY",
+      Env.AZURE_OPENAI_API_KEY,
+      "Azure OpenAI",
+    );
+    const baseURL = requiredEnv(
+      "AZURE_OPENAI_ENDPOINT",
+      Env.AZURE_OPENAI_ENDPOINT,
+      "Azure OpenAI",
+    );
+    const apiVersion = requiredEnv(
+      "AZURE_OPENAI_API_VERSION",
+      Env.AZURE_OPENAI_API_VERSION,
+      "Azure OpenAI",
+    );
+    logMaskedSecret("Azure OpenAI API Key", apiKey);
+    logMaskedSecret("Azure OpenAI API Endpoint", baseURL);
+    logMaskedSecret("Azure OpenAI API Version", apiVersion);
 
-    return new ChatMistralAI({
-      model: model.name,
-      ...apiKeyField(Env.MISTRAL_API_KEY),
-      temperature: 0,
-      cache,
+    return createAzure({
+      apiKey,
+      baseURL: `${baseURL.replace(/\/$/, "")}/openai`,
+      apiVersion,
+      useDeploymentBasedUrls: true,
+      ...(Env.AZURE_OPENAI_DEFAULT_HEADERS
+        ? { headers: Env.AZURE_OPENAI_DEFAULT_HEADERS }
+        : {}),
     });
   }
 
-  static createOllamaLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating Ollama LLM with model ${model.name}`);
-
-    const baseUrl = Env.OLLAMA_HOST || Env.ALUMNIUM_OLLAMA_URL;
-    if (baseUrl) {
-      return new ChatOllama({
-        model: model.name,
-        baseUrl,
-        cache,
-      });
-    } else {
-      return new ChatOllama({
-        model: model.name,
-        cache,
-      });
-    }
-  }
-
-  static createOpenAiLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating OpenAI LLM with model ${model.name}`);
-
-    const fields: ChatOpenAIFields = {
-      model: model.name,
-      ...apiKeyField(Env.OPENAI_API_KEY),
-      configuration: {
-        baseURL: Env.OPENAI_CUSTOM_URL,
-        defaultHeaders: new Headers(Env.OPENAI_DEFAULT_HEADERS),
+  static createAnthropicLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating Anthropic LLM with model ${model.name}`);
+    const llm = createAnthropic(apiKeyField(Env.ANTHROPIC_API_KEY))(model.name);
+    return withCallDefaults(llm, {
+      providerOptions: {
+        anthropic: usesAdaptiveThinking(model.name)
+          ? {
+              thinking: { type: "adaptive", display: "summarized" },
+              effort: "low",
+            }
+          : {
+              thinking: { type: "enabled", budgetTokens: 1024 },
+              sendReasoning: true,
+            },
       },
-      // TODO: Apparently the latest OpenAI models (o1, o3, o4, gpt-5) don't
-      // accept temperature anymore, so we need to either conditionally include
-      // it or figure out the correct way to set it for the new models.
-      //
-      // The error:
-      //     > Unsupported parameter: 'temperature' is not supported with this model.
-      //
-      // See:
-      // - https://community.openai.com/t/gpt-5-models-temperature/1337957
-      // - https://community.openai.com/t/gpt-5-removed-parameters-logprob-top-p-temperature/1345768/2
-      //
-      // temperature: 0,
-      cache,
-    };
-
-    if (model.name.includes("gpt-4o")) {
-      if (!Env.OPENAI_CUSTOM_URL) {
-        // TODO: The seed parameter is deprecated and missing the LangChain
-        // types, so we need to figure out the correct way to move forward.
-        //
-        // See: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
-        //
-        // fields.seed = 1;
-      }
-    } else {
-      fields.reasoning = {
-        effort: "low",
-        summary: "auto",
-      };
-    }
-
-    return new ChatOpenAI(fields);
-  }
-
-  static createXAiLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating XAI LLM with model ${model.name}`);
-
-    return new ChatXAI({
-      model: model.name,
-      ...apiKeyField(Env.XAI_API_KEY),
-      temperature: 0,
-      cache,
     });
   }
+
+  static createAwsLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating AWS LLM with model ${model.name}`);
+    const accessKeyId = Env.AWS_ACCESS_KEY;
+    const secretAccessKey = Env.AWS_SECRET_KEY;
+    const provider = createAmazonBedrock({
+      region: Env.AWS_REGION_NAME,
+      ...(accessKeyId && secretAccessKey
+        ? { accessKeyId, secretAccessKey }
+        : {}),
+    });
+    const llm = provider(model.name);
+    if (model.provider !== "aws_anthropic") return llm;
+
+    const additionalModelRequestFields = usesAdaptiveThinking(model.name)
+      ? { thinking: { type: "adaptive" }, output_config: { effort: "low" } }
+      : { thinking: { type: "enabled", budget_tokens: 1024 } };
+    return withCallDefaults(llm, {
+      providerOptions: { bedrock: { additionalModelRequestFields } },
+    });
+  }
+
+  static createCodexLlm(model: Model): CodexLanguageModel {
+    logger.debug(`Creating Codex LLM with model ${model.name}`);
+    return new CodexLanguageModel({ modelId: model.name });
+  }
+
+  static createDeepSeekLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating DeepSeek LLM with model ${model.name}`);
+    const defaults: Partial<LanguageModelV4CallOptions> = { temperature: 0 };
+    return withCallDefaults(
+      createDeepSeek(apiKeyField(Env.DEEPSEEK_API_KEY))(model.name),
+      defaults,
+      model.name === "deepseek-reasoner" ? ["toolChoice"] : undefined,
+    );
+  }
+
+  static createGoogleLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating Google LLM with model ${model.name}`);
+    return withCallDefaults(
+      createGoogle(apiKeyField(Env.GOOGLE_API_KEY))(model.name),
+      model.name.includes("gemini-2.0")
+        ? { temperature: 0 }
+        : {
+            temperature: 0,
+            providerOptions: {
+              google: {
+                thinkingConfig: {
+                  thinkingLevel: "low",
+                  includeThoughts: true,
+                },
+              },
+            },
+          },
+    );
+  }
+
+  static createGithubLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating Github LLM with model ${model.name}`);
+    return withCallDefaults(
+      createOpenAI({
+        baseURL: "https://models.github.ai/inference",
+        ...apiKeyField(Env.OPENAI_API_KEY),
+        name: "github",
+      }).chat(model.name),
+      { temperature: 0 },
+    );
+  }
+
+  static createMistralAiLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating MistralAI LLM with model ${model.name}`);
+    return withCallDefaults(
+      createMistral(apiKeyField(Env.MISTRAL_API_KEY))(model.name),
+      { temperature: 0 },
+    );
+  }
+
+  static createOllamaLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating Ollama LLM with model ${model.name}`);
+    const baseURL = Env.OLLAMA_HOST || Env.ALUMNIUM_OLLAMA_URL;
+    const normalizedBaseURL = baseURL?.replace(/\/$/, "");
+    return createOllama(
+      normalizedBaseURL
+        ? {
+            baseURL: normalizedBaseURL.endsWith("/api")
+              ? normalizedBaseURL
+              : `${normalizedBaseURL}/api`,
+          }
+        : {},
+    )(model.name);
+  }
+
+  static createOpenAiLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating OpenAI LLM with model ${model.name}`);
+    const customURL = Env.OPENAI_CUSTOM_URL;
+    const provider = createOpenAI({
+      ...apiKeyField(Env.OPENAI_API_KEY),
+      ...(customURL ? { baseURL: customURL } : {}),
+      ...(Env.OPENAI_DEFAULT_HEADERS
+        ? { headers: Env.OPENAI_DEFAULT_HEADERS }
+        : {}),
+    });
+    const llm = customURL ? provider.chat(model.name) : provider(model.name);
+    return model.name.includes("gpt-4o")
+      ? llm
+      : withCallDefaults(llm, {
+          reasoning: "low",
+          providerOptions: { openai: { reasoningSummary: "auto" } },
+        });
+  }
+
+  static createXAiLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating XAI LLM with model ${model.name}`);
+    return withCallDefaults(
+      createXai(apiKeyField(Env.XAI_API_KEY))(model.name),
+      {
+        temperature: 0,
+        providerOptions: {
+          xai: { reasoningEffort: "low", reasoningSummary: "auto" },
+        },
+      },
+    );
+  }
+}
+
+function withCallDefaults(
+  model: LanguageModelV4,
+  defaults:
+    | Pick<
+        Partial<LanguageModelV4CallOptions>,
+        "temperature" | "reasoning" | "providerOptions"
+      >
+    | undefined,
+  omittedKeys: Array<keyof LanguageModelV4CallOptions> = [],
+): LanguageModelV4 {
+  if (!defaults && !omittedKeys.length) return model;
+
+  function optionsWithDefaults(
+    options: LanguageModelV4CallOptions,
+  ): LanguageModelV4CallOptions {
+    const merged = { ...options };
+    if (merged.temperature === undefined && defaults?.temperature !== undefined)
+      merged.temperature = defaults.temperature;
+    if (merged.reasoning === undefined && defaults?.reasoning !== undefined)
+      merged.reasoning = defaults.reasoning;
+    const providerOptions = mergeProviderOptions(
+      defaults?.providerOptions,
+      options.providerOptions,
+    );
+    if (providerOptions) merged.providerOptions = providerOptions;
+    for (const key of omittedKeys) delete merged[key];
+    return merged;
+  }
+
+  return {
+    specificationVersion: "v4",
+    provider: model.provider,
+    modelId: model.modelId,
+    supportedUrls: model.supportedUrls,
+    doGenerate: (options) => model.doGenerate(optionsWithDefaults(options)),
+    doStream: (options) => model.doStream(optionsWithDefaults(options)),
+  };
+}
+
+function mergeProviderOptions(
+  defaults: LanguageModelV4CallOptions["providerOptions"],
+  options: LanguageModelV4CallOptions["providerOptions"],
+): LanguageModelV4CallOptions["providerOptions"] {
+  if (!defaults) return options;
+  if (!options) return defaults;
+
+  const merged = { ...defaults };
+  for (const [provider, values] of Object.entries(options)) {
+    merged[provider] = { ...defaults[provider], ...values };
+  }
+  return merged;
 }
 
 function apiKeyField(apiKey: string | undefined): { apiKey: string } | object {
   return apiKey ? { apiKey } : {};
 }
 
-// Adaptive thinking (`thinking.type: "adaptive"` + `output_config.effort`) is
-// the default for Claude 4.6+.
+function requiredEnv(
+  name: string,
+  value: string | undefined,
+  provider: string,
+) {
+  if (!value) {
+    throw new Error(
+      `${name} environment variable is required for ${provider} models`,
+    );
+  }
+  return value;
+}
+
 function usesAdaptiveThinking(modelName: string): boolean {
   const match = modelName.match(/claude-[a-z]+-(\d+)(?:-(\d{1,2})(?!\d))?/);
   if (!match) return false;
@@ -366,16 +364,4 @@ function usesAdaptiveThinking(modelName: string): boolean {
 
 function logMaskedSecret(name: string, secret: string) {
   logger.debug(`${name} is set: ${maskString(secret)}`);
-}
-
-class ReasonableChatDeepSeek extends ChatDeepSeek {
-  override invocationParams(
-    ...args: Parameters<ChatDeepSeek["invocationParams"]>
-  ) {
-    const params = super.invocationParams(...args);
-    // NOTE: Workaround for "Error: 400 deepseek-reasoner does not support this tool_choice"
-    // LangChain Python supports disabled_params, but it's missing in the JS SDK.
-    delete params.tool_choice;
-    return params;
-  }
 }

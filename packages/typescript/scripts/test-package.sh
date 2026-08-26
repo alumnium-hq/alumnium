@@ -97,8 +97,7 @@ for module in "${MODULES[@]}"; do
 		exit 1
 	fi
 
-	SMOKE_PLAYWRIGHT_VERSION="$(pnpm exec playwright --version)"
-	SMOKE_PLAYWRIGHT_VERSION="${SMOKE_PLAYWRIGHT_VERSION#Version }"
+	SMOKE_PLAYWRIGHT_VERSION="$(pnpm exec playwright --version | sed -n 's/^Version //p' | tail -n 1)"
 	if [[ "$SMOKE_PLAYWRIGHT_VERSION" != "$PLAYWRIGHT_VERSION" ]]; then
 		echo "🔴 Playwright version mismatch: expected $PLAYWRIGHT_VERSION, got $SMOKE_PLAYWRIGHT_VERSION"
 		exit 1

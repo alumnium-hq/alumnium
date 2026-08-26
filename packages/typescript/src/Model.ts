@@ -19,7 +19,6 @@ const providers = [
   "aws_meta",
   "codex",
   "deepseek",
-  "github",
   "google",
   "mistralai",
   "ollama",
@@ -35,7 +34,6 @@ const defaultModels: Record<Model.Provider, string> = {
   aws_meta: "us.meta.llama4-maverick-17b-instruct-v1:0",
   codex: "gpt-5.4-mini",
   deepseek: "deepseek-reasoner",
-  github: "gpt-4o-mini",
   google: "gemini-3.1-flash-lite",
   mistralai: "mistral-medium-2505",
   ollama: "qwen3.6",
@@ -57,6 +55,8 @@ const devs = [
 ] as const;
 
 const ModelDev = z.enum(devs);
+
+export const defaultModelProvider: Model.Provider = "openai";
 
 export const Model = {
   Provider: ModelProvider,

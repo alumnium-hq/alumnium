@@ -1,0 +1,69 @@
+diff --git a/dist/index.js b/dist/index.js
+index 3234ee77f0f7dd398c8bff0869e9ff1ac21f0a64..16a437c2f5dc9ba9cd5974e5132d3c960a32b4db 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -139,6 +139,12 @@ function rejectsNewerSchemaFields(modelId) {
+     (model) => modelId.includes(model)
+   );
+ }
++function supportsRequiredToolChoice(modelId) {
++  return MODELS_REJECTING_REQUIRED_TOOL_CHOICE.every(
++    (model) => !model.test(modelId)
++  );
++}
++var MODELS_REJECTING_REQUIRED_TOOL_CHOICE = [/meta\./];
+ 
+ // src/amazon-bedrock-error.ts
+ import { z as z2 } from "zod/v4";
+@@ -1097,7 +1103,7 @@ var AmazonBedrockChatLanguageModel = class _AmazonBedrockChatLanguageModel {
+     } : void 0;
+     const { toolConfig, additionalTools, toolWarnings, betas } = await prepareTools({
+       tools: jsonResponseTool ? [...tools != null ? tools : [], jsonResponseTool] : tools,
+-      toolChoice: jsonResponseTool != null ? { type: "required" } : toolChoice,
++      toolChoice: jsonResponseTool != null ? supportsRequiredToolChoice(this.modelId) ? { type: "required" } : void 0 : toolChoice,
+       modelId: this.modelId
+     });
+     warnings.push(...toolWarnings);
+diff --git a/src/amazon-bedrock-anthropic-model-support.ts b/src/amazon-bedrock-anthropic-model-support.ts
+index 07e8eb4ebf241434076ad3a4d9ade4f74fe89a4e..ef7fe8382c372c65d1baebb4ef23fa39b8666de4 100644
+--- a/src/amazon-bedrock-anthropic-model-support.ts
++++ b/src/amazon-bedrock-anthropic-model-support.ts
+@@ -21,3 +21,13 @@ function rejectsNewerSchemaFields(modelId: string): boolean {
+     modelId.includes(model),
+   );
+ }
++
++export function supportsRequiredToolChoice(modelId: string): boolean {
++  return MODELS_REJECTING_REQUIRED_TOOL_CHOICE.every(
++    model => !model.test(modelId),
++  );
++}
++
++// Meta models support tool calling but reject Bedrock's `toolChoice.any`, so
++// the synthetic JSON response tool cannot be forced.
++const MODELS_REJECTING_REQUIRED_TOOL_CHOICE = [/meta\./];
+diff --git a/src/amazon-bedrock-chat-language-model.ts b/src/amazon-bedrock-chat-language-model.ts
+index 2bd4ba6787466cb8666d07818b41aa6cbfb8728d..534b6d5759145c0288c48fac4e0d304de547335c 100644
+--- a/src/amazon-bedrock-chat-language-model.ts
++++ b/src/amazon-bedrock-chat-language-model.ts
+@@ -48,6 +48,7 @@ import {
+ import {
+   supportsNativeStructuredOutput,
+   supportsStrictTools,
++  supportsRequiredToolChoice,
+ } from './amazon-bedrock-anthropic-model-support';
+ import { AmazonBedrockErrorSchema } from './amazon-bedrock-error';
+ import { createAmazonBedrockEventStreamResponseHandler } from './amazon-bedrock-event-stream-response-handler';
+@@ -229,7 +230,11 @@ export class AmazonBedrockChatLanguageModel implements LanguageModelV4 {
+       await prepareTools({
+         tools: jsonResponseTool ? [...(tools ?? []), jsonResponseTool] : tools,
+         toolChoice:
+-          jsonResponseTool != null ? { type: 'required' } : toolChoice,
++          jsonResponseTool != null
++            ? supportsRequiredToolChoice(this.modelId)
++              ? { type: 'required' }
++              : undefined
++            : toolChoice,
+         modelId: this.modelId,
+       });
+ 

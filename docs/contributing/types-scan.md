@@ -6,21 +6,18 @@ This document describes the `scanTypes` defined in [`packages/typescript/src/uti
 
 The idea of the types scan is to assist in adding type safety and provide an insight into the shape of weakly typed data structures. It is important given that Alumnium has to work with numerous ever-changing 3rd-party APIs. New models and project features require additional detail in the existing schemas, so it will be instrumental going forward.
 
-We initially built it to type LangChain generations but can use it out of the context of LLM APIs.
-
 To use it, set the `ALUMNIUM_DEV_DATA_TYPES_SCAN=true` env var (any non-empty value) and call the `scanTypes` function, passing the current module URL and ID, e.g.,:
 
 ```ts
-const stored = serializeGeneration(generation);
 scanTypes({
   url: import.meta.url,
-  id: "serialized",
-  value: stored,
+  id: "response",
+  value: response,
 });
 // ...
 ```
 
-Once the function is executed (e.g., when running system tests), it creates a JSON file next to the module with the data types information. For example, when called from `Lchain.ts` with the arguments above, it would create `Lchain.serialized.types-scan.json` with content looking like that:
+Once the function is executed, it creates a JSON file next to the module with the data types information. For example, the call above creates `<module>.response.types-scan.json` with content looking like this:
 
 ```json
 [
@@ -41,8 +38,6 @@ Once the function is executed (e.g., when running system tests), it creates a JS
   }
 ]
 ```
-
-See a types scan example: [`packages/typescript/src/llm/Lchain.serialized.types-scan.json`](../../packages/typescript/src/llm/Lchain.serialized.types-scan.json).
 
 Each `scanTypes` reads the existing schema and extends it with the passed data types. The more examples it sees, the more detailed the `types-scan.json` file becomes.
 
@@ -66,7 +61,7 @@ The output can be used to codegen a source file or to cherry-pick needed schemas
 Use the `//packages/typescript:generate/types-scan-schema` task to generate a module that exports Zod schemas and inferred types on the root level:
 
 ```sh
-mise //packages/typescript:generate/types-scan-schema ./src/llm/Lchain.serialized.types-scan.json
+mise //packages/typescript:generate/types-scan-schema ./path/to/data.types-scan.json
 ```
 
 It outputs such TypeScript code:
@@ -98,17 +93,17 @@ export type MessageText = z.infer<typeof MessageText>;
 Use the `//packages/typescript:generate/types-scan-schema:class` task to generate a module that exports Zod schemas and inferred types wrapped into `abstract class` along with a `namespace`.
 
 ```sh
-mise //packages/typescript:generate/types-scan-schema:class ./src/llm/Lchain.serialized.types-scan.json LchainSchema
+mise //packages/typescript:generate/types-scan-schema:class ./path/to/data.types-scan.json DataSchema
 ```
 
-> The second argument (`LchainSchema`) specifies the class name to use.
+> The second argument (`DataSchema`) specifies the class name to use.
 
 It outputs such TypeScript code:
 
 ```ts
 import z from "zod";
 
-export abstract class LchainScan {
+export abstract class DataSchema {
   static MessageThinking = z.object({
     type: z.literal("thinking"),
     thinking: z.string(),
@@ -127,13 +122,13 @@ export abstract class LchainScan {
   ]);
 }
 
-export namespace LchainScan {
-  export type MessageThinking = z.infer<typeof LchainScan.MessageThinking>;
+export namespace DataSchema {
+  export type MessageThinking = z.infer<typeof DataSchema.MessageThinking>;
 
-  export type MessageText = z.infer<typeof LchainScan.MessageText>;
+  export type MessageText = z.infer<typeof DataSchema.MessageText>;
 
   export type MessageDataContent = z.infer<
-    typeof LchainScan.MessageDataContent
+    typeof DataSchema.MessageDataContent
   >;
 }
 ```

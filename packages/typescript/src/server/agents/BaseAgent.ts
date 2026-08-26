@@ -1,21 +1,22 @@
-import { Runnable, type RunnableConfig } from "@langchain/core/runnables";
 import { always } from "alwaysly";
-import { Logger } from "../../telemetry/Logger.ts";
-// NOTE: While macros work well in Bun, it fails when using Alumnium client from
-// Node.js. A solution could be "node:sea" module, but current Bun version
-// doesn't support it. For now, we bundle assets with scripts/generate.ts.
-// import { loadAgentPrompts } from "./prompts/prompts.js" with { type: "macro" };
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import type { AIMessage } from "@langchain/core/messages";
+import { APICallError } from "@ai-sdk/provider";
+import {
+  generateText,
+  type LanguageModelUsage,
+  type ModelMessage,
+  Output,
+  type ToolSet,
+} from "ai";
 import z from "zod";
-import { Lchain } from "../../llm/Lchain.ts";
-import { LchainSchema } from "../../llm/LchainSchema.ts";
+import { Env } from "../../Env.ts";
+import type { Model } from "../../Model.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { createLlmUsage, LlmUsage } from "../../llm/llmSchema.ts";
+import { Logger } from "../../telemetry/Logger.ts";
 import type { LoggerSchema } from "../../telemetry/LoggerSchema.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { retry } from "../../utils/retry.ts";
-import { LlmContext } from "../LlmContext.ts";
-import { MODEL_RETRIES, MODEL_TIMEOUT_SEC } from "../LlmFactory.ts";
+import type { Agent } from "./Agent.ts";
 import { agentPrompts } from "./prompts/bundledPrompts.ts";
 import {
   agentClassNameToPromptsAgentKind,
@@ -24,14 +25,6 @@ import {
 } from "./prompts/prompts.ts";
 
 const { logger, tracer } = Telemetry.get(import.meta.url);
-
-const convertInputToPromptValue =
-  // @ts-expect-error -- It is marked as protected in BaseAgent, but we need to call it from
-  // invokeChain callbacks to provide meta data for caching.
-  BaseChatModel._convertInputToPromptValue.bind(BaseChatModel);
-
-// NOTE: See loadAgentPrompts import NOTE above.
-// const agentPrompts = await loadAgentPrompts();
 
 export class BaseAgentDebugLogDetail {
   payload: unknown;
@@ -50,13 +43,7 @@ export namespace BaseAgentResponse {
   }
 }
 
-/**
- * Common interface for LLM chain responses.
- *
- * Normalizes responses across providers (Anthropic, OpenAI, Google, etc.)
- * into a single structure with content, reasoning, structured output, and
- * tool calls.
- */
+/** Normalized response shared by all Alumnium agents. */
 export class BaseAgentResponse {
   content: string;
   reasoning: string | null;
@@ -81,6 +68,15 @@ export namespace BaseAgent {
   export type Goal = z.infer<typeof BaseAgent.Goal>;
 
   export type Step = z.infer<typeof BaseAgent.Step>;
+
+  export interface InvokeModelOptions {
+    instructions: string;
+    messages: ModelMessage[];
+    meta: Agent.Meta;
+    tools?: ToolSet;
+    output?: ReturnType<typeof Output.object>;
+    abortSignal?: AbortSignal;
+  }
 }
 
 export class BaseAgent {
@@ -88,14 +84,16 @@ export class BaseAgent {
 
   static Step = z.string().brand("BaseAgent.Step");
 
-  protected llmContext: LlmContext;
+  protected llm: LanguageModel;
+  protected model: Model;
   usage: LlmUsage = createLlmUsage();
   protected prompts: AgentPrompts.RolePrompts;
 
-  constructor(llmContext: LlmContext) {
-    this.llmContext = llmContext;
+  constructor(model: Model, llm: LanguageModel) {
+    this.model = model;
+    this.llm = llm;
 
-    const dev = PROVIDER_TO_PROMPTS_DEV[llmContext.model.provider];
+    const dev = PROVIDER_TO_PROMPTS_DEV[model.provider];
     const agentPromptsByDev =
       agentPrompts[agentClassNameToPromptsAgentKind(this.constructor.name)];
     const prompts = agentPromptsByDev[dev] ?? agentPromptsByDev.openai;
@@ -103,257 +101,127 @@ export class BaseAgent {
     this.prompts = prompts;
   }
 
-  protected static shouldRetry(this: void, error: unknown): boolean {
-    logger.debug("Got error from LLM chain: {error}", { error });
+  protected static shouldRetry(error: unknown): boolean {
+    if (!(error instanceof Error)) return false;
 
-    if (!(error instanceof Error)) {
-      logger.debug(
-        "  -> Error is not an instance of Error, re-raising without retrying.",
+    if (APICallError.isInstance(error)) {
+      return (
+        error.statusCode === 408 ||
+        error.statusCode === 429 ||
+        this.shouldRetry(error.cause)
       );
-      return false;
     }
 
-    // Common API rate limit errors
-    const isCommonRateLimitError =
-      error.name === "RateLimitError" ||
-      error.constructor.name === "RateLimitError";
-
-    // AWS Bedrock rate limit errors
-    const isAwsRateLimitError =
-      "response" in error &&
-      typeof error.response === "object" &&
-      error.response &&
-      "Error" in error.response &&
-      typeof error.response["Error"] === "object" &&
-      error.response["Error"] &&
-      "Code" in error.response["Error"] &&
-      error.response["Error"]["Code"] === "ThrottlingException";
-
-    // Google rate limit errors
-    const isGoogleRateLimitError = "code" in error && error.code === 429;
-
-    // MistralAI rate limit errors
-    const isMistralRateLimitError =
-      "response" in error &&
-      // @ts-expect-error -- TODO: Missing Python API
-      error.response.status_code === 429;
-
-    const isDeepSeekRateLimitError =
-      error.name === "InternalServerError" ||
-      error.constructor.name === "InternalServerError";
-
-    const isTimeoutError =
+    if (
       error.name === "TimeoutError" ||
-      error.constructor.name === "TimeoutError" ||
       error.name === "APIConnectionTimeoutError" ||
-      error.constructor.name === "APIConnectionTimeoutError";
-
-    const isRateLimitError =
-      isCommonRateLimitError ||
-      isAwsRateLimitError ||
-      isGoogleRateLimitError ||
-      isMistralRateLimitError ||
-      isDeepSeekRateLimitError;
-
-    const doRetry = isTimeoutError || isRateLimitError;
-    logger.debug(
-      "  -> Should wait and retry? {doRetry} (timeout: {isTimeoutError}, rate limit: {isRateLimitError})",
-      {
-        doRetry,
-        isTimeoutError,
-        isRateLimitError,
-      },
-    );
-
-    return doRetry;
-  }
-
-  // TODO: This function is infested with bad types, figure out a better way
-  // or simply replace LangChain with AI SDK or custom code.
-  protected async invokeChain<
-    RunInput = any,
-    RunOutput = any,
-    CallOptions extends RunnableConfig = RunnableConfig,
-  >(
-    chain: Runnable<RunInput, RunOutput, CallOptions>,
-    input: RunInput,
-    meta: LlmContext.Meta,
-    options?: Partial<CallOptions>,
-  ): Promise<BaseAgentResponse> {
-    return retry(
-      {
-        maxAttempts: 1 + MODEL_RETRIES,
-        backOff: 2000,
-        doRetry: (error) => BaseAgent.shouldRetry(error),
-      },
-      async () => {
-        const contextPrompts: string[] = [];
-
-        const agentKind = agentClassNameToPromptsAgentKind(
-          this.constructor.name,
-        );
-
-        logger.debug(`Invoking ${agentKind} agent chain input: {input}`, {
-          input: Logger.debugExtra("langchain", input),
-        });
-
-        const result = (await tracer.span(
-          "llm.request",
-          {
-            "llm.model.provider": this.llmContext.model.provider,
-            "llm.model.name": this.llmContext.model.name,
-          },
-          () =>
-            // @ts-expect-error
-            chain.invoke(input, {
-              ...options,
-              timeout: MODEL_TIMEOUT_SEC * 1000,
-              callbacks: [
-                {
-                  handleChatModelStart: (_llm, baseMessages, _, __, args) => {
-                    logger.debug(
-                      `Sending ${agentKind} agent chain request: {messages}`,
-                      {
-                        messages: Logger.debugExtra("langchain", baseMessages),
-                      },
-                    );
-                    logger.debug(`  -> Request args: {args}`, {
-                      args: Logger.debugExtra("langchain", args),
-                    });
-
-                    contextPrompts.push(
-                      ...baseMessages.map((baseMessage) =>
-                        convertInputToPromptValue
-                          .call(this, baseMessage)
-                          .toString(),
-                      ),
-                    );
-                    this.llmContext.assignPromptsMeta(contextPrompts, meta);
-                  },
-                },
-              ],
-            }),
-        )) as Lchain.InvokeResult;
-
-        logger.debug(`Got ${agentKind} agent chain result: {result}`, {
-          result: Logger.debugExtra("langchain", result),
-        });
-
-        this.llmContext.clearPromptsMeta(contextPrompts);
-
-        const [message, structured] = this.#extractMessageContent(result);
-
-        const reasoning = this.#extractReasoning(message);
-        if (reasoning) {
-          logger.info(this.formatLog("out", "Reasoning"), {
-            detail: Logger.debugExtra("reasoning", reasoning),
-          });
-        }
-
-        this.#applyUsage(message);
-
-        return new BaseAgentResponse({
-          content: this.#extractText(message.content),
-          reasoning,
-          structured,
-          toolCalls: message.tool_calls ?? [],
-          usage: this.usage,
-        });
-      },
-    );
-  }
-
-  #extractMessageContent(
-    result: Lchain.InvokeResult,
-  ): [AIMessage, Lchain.InvokeResultParsed | undefined] {
-    if ("raw" in result) {
-      return [result.raw, result.parsed];
-    } else {
-      return [result, undefined];
+      error.name === "RateLimitError" ||
+      error.name === "InternalServerError"
+    ) {
+      return true;
     }
-  }
 
-  #extractReasoning(message: AIMessage): string | null {
+    if ("code" in error && error.code === 429) return true;
+    if (!("response" in error) || !error.response) return false;
+    if (typeof error.response !== "object") return false;
+    if ("status_code" in error.response && error.response.status_code === 429) {
+      return true;
+    }
+    if (!("Error" in error.response)) return false;
+    const responseError = error.response.Error;
     return (
-      this.#extractReasoningFromContent(message.content) ||
-      this.#extractReasoningFromAdditional(message.additional_kwargs)
+      typeof responseError === "object" &&
+      responseError !== null &&
+      "Code" in responseError &&
+      responseError.Code === "ThrottlingException"
     );
   }
 
-  #extractReasoningFromContent(
-    contentArg: Lchain.MessageContent,
-  ): string | null {
-    if (!Array.isArray(contentArg) || !contentArg.length) {
-      return null;
-    }
+  protected async invokeModel(
+    options: BaseAgent.InvokeModelOptions,
+  ): Promise<BaseAgentResponse> {
+    const agentKind = agentClassNameToPromptsAgentKind(this.constructor.name);
 
-    // Collect all reasoning from content objects
-    const reasoningParts = contentArg.flatMap((lcContent) => {
-      const content = LchainSchema.MessageContent.parse(lcContent);
-      switch (content.type) {
-        case "reasoning":
-          return [content.reasoning];
-        case "thinking":
-          return [content.thinking];
-      }
-      return [];
+    logger.debug(`Sending ${agentKind} agent request: {messages}`, {
+      messages: Logger.debugExtra("ai-sdk", options.messages),
+    });
+    logger.debug(`  -> Request args: {args}`, {
+      args: Logger.debugExtra("ai-sdk", {
+        instructions: options.instructions,
+        tools: options.tools,
+        output: options.output?.name,
+      }),
     });
 
-    return reasoningParts.length ? reasoningParts.join(" ") : null;
-  }
-
-  #extractReasoningFromAdditional(
-    additional: Lchain.AdditionalKwargs,
-  ): string | null {
-    const kwargs = LchainSchema.MessageDataAdditionalKwargs.parse(additional);
-
-    let reasoningParts = [];
-    if (kwargs.reasoning && kwargs.reasoning.summary) {
-      for (const summary of kwargs.reasoning.summary) {
-        reasoningParts.push(summary.text);
-      }
-    }
-
-    if (kwargs.reasoning_content) {
-      reasoningParts.push(kwargs.reasoning_content);
-    }
-
-    return reasoningParts.length ? reasoningParts.join(" ") : null;
-  }
-
-  #extractText(contentArg: Lchain.MessageContent): string {
-    if (typeof contentArg === "string") {
-      return contentArg;
-    }
-
-    return contentArg
-      .flatMap((lcContent) => {
-        const content = LchainSchema.MessageContent.parse(lcContent);
-        if (content.type !== "text") return [];
-        return [content.text];
-      })
-      .join("");
-  }
-
-  #applyUsage(message: AIMessage): void {
-    // NOTE: LangChain is lying about `usage_metadata` being undefined
-    const result = LchainSchema.UsageMetadata.safeParse(
-      message.usage_metadata,
-      { reportInput: true },
+    const result = await retry(
+      {
+        maxAttempts: 1 + Env.ALUMNIUM_MODEL_RETRIES,
+        backOff: 2000,
+        doRetry: (error) =>
+          !options.abortSignal?.aborted && BaseAgent.shouldRetry(error),
+      },
+      () =>
+        tracer.span(
+          "llm.request",
+          {
+            "llm.model.provider": this.model.provider,
+            "llm.model.name": this.model.name,
+          },
+          () =>
+            generateText({
+              model: this.llm,
+              instructions: options.instructions,
+              messages: options.messages,
+              maxRetries: 0,
+              timeout: { totalMs: Env.ALUMNIUM_MODEL_TIMEOUT * 1000 },
+              ...(options.abortSignal
+                ? { abortSignal: options.abortSignal }
+                : {}),
+              providerOptions: {
+                alumnium: {
+                  meta: options.meta,
+                },
+              },
+              ...(options.tools ? { tools: options.tools } : {}),
+              ...(options.output ? { output: options.output } : {}),
+            }),
+        ),
     );
 
-    if (!result.success) {
-      logger.warn(
-        "Failed to parse usage metadata from LangChain response, skipping usage update. Metadata: {metadata}, error: {error}",
-        {
-          metadata: message.usage_metadata,
-          error: result.error,
-        },
-      );
-      return;
+    logger.debug(`Got ${agentKind} agent result: {result}`, {
+      result: Logger.debugExtra("ai-sdk", result),
+    });
+
+    const reasoning = result.reasoningText ?? null;
+    if (reasoning) {
+      logger.info(this.formatLog("out", "Reasoning"), {
+        detail: Logger.debugExtra("reasoning", reasoning),
+      });
     }
 
-    Lchain.applyUsage(this.usage, result.data);
+    this.#applyUsage(result.usage);
+
+    return new BaseAgentResponse({
+      content: result.text,
+      reasoning,
+      structured: options.output ? result.output : undefined,
+      toolCalls: result.toolCalls.map((toolCall) => ({
+        name: toolCall.toolName,
+        args: toolCall.input,
+      })),
+      usage: this.usage,
+    });
+  }
+
+  #applyUsage(usage: LanguageModelUsage): void {
+    const inputTokens = usage.inputTokens ?? 0;
+    const outputTokens = usage.outputTokens ?? 0;
+    this.usage.input_tokens += inputTokens;
+    this.usage.output_tokens += outputTokens;
+    this.usage.total_tokens += usage.totalTokens ?? inputTokens + outputTokens;
+    this.usage.cache_read += usage.inputTokenDetails.cacheReadTokens ?? 0;
+    this.usage.cache_creation += usage.inputTokenDetails.cacheWriteTokens ?? 0;
+    this.usage.reasoning += usage.outputTokenDetails.reasoningTokens ?? 0;
   }
 
   protected formatLog(dir: BaseAgent.LogDir, topic: string) {

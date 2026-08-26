@@ -1,7 +1,7 @@
-import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { always } from "alwaysly";
 import { AppId } from "../AppId.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
+import type { LanguageModel } from "../llm/LanguageModel.ts";
 import { Model } from "../Model.ts";
 import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.ts";
 import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.ts";
@@ -22,7 +22,7 @@ const { span } = tracer.dec();
 export namespace NativeClient {
   export interface Props extends Client.Props {
     model: Model;
-    llm?: BaseChatModel | undefined;
+    llm?: LanguageModel | undefined;
   }
 
   export interface RetrieveProps {

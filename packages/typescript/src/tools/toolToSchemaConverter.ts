@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { ToolDefinition } from "@langchain/core/language_models/base";
 import type { ToolClass } from "./BaseTool.ts";
 import type { ToolWithFields } from "./Field.ts";
+import type { ToolDefinition } from "./ToolDefinition.ts";
 
 export function convertToolsToSchemas(
   tools: Record<string, ToolClass>,
@@ -33,7 +33,7 @@ export function convertToolsToSchemas(
       };
 
       if (metadata.enum) {
-        properties[paramName].enum = metadata.enum;
+        properties[paramName].enum = [...metadata.enum];
       }
 
       if (metadata.items) {
