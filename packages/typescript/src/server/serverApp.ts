@@ -306,7 +306,10 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   accessibilityTree.toXml(session.excludeAttributes),
                 );
                 return {
-                  elements,
+                  elements: elements.map((element) => ({
+                    ...element,
+                    id: accessibilityTree.getRawId(element.id),
+                  })),
                 };
               },
               {
