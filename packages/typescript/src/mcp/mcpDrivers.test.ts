@@ -1,6 +1,7 @@
 import type { WebDriver } from "selenium-webdriver";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
 import { createPlaywrightDriver, createSeleniumDriver } from "./mcpDrivers.ts";
 
@@ -23,6 +24,11 @@ const mocks = vi.hoisted(() => {
 
     setBinaryPath(path: string) {
       this.binaryPath = path;
+      return this;
+    }
+
+    setBrowserVersion(version: string) {
+      this.capabilities.browserVersion = version;
       return this;
     }
 
@@ -268,6 +274,25 @@ describe("createSeleniumDriver", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    Env.reset();
+  });
+
+  it("reads browser version from ALUMNIUM_SELENIUM_BROWSER_VERSION", async () => {
+    vi.stubEnv("ALUMNIUM_SELENIUM_BROWSER_VERSION", "stable");
+    Env.reset();
+
+    await createSeleniumDriver({}, null, {});
+
+    expect(mocks.options[0]?.capabilities.browserVersion).toBe("stable");
+  });
+
+  it("gives an explicit browserVersion capability precedence over the env var", async () => {
+    vi.stubEnv("ALUMNIUM_SELENIUM_BROWSER_VERSION", "stable");
+    Env.reset();
+
+    await createSeleniumDriver({ browserVersion: "beta" }, null, {});
+
+    expect(mocks.options[0]?.capabilities.browserVersion).toBe("beta");
   });
 
   it("reads proxy from http_proxy env var automatically", async () => {

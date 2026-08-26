@@ -234,6 +234,12 @@ export async function createSeleniumDriver(
     chromeOptions.addArguments(`--user-agent=${userAgent}`);
   }
 
+  const browserVersion = Env.ALUMNIUM_SELENIUM_BROWSER_VERSION;
+  if (browserVersion) {
+    logger.debug(`Using Chrome version: ${browserVersion}`);
+    chromeOptions.setBrowserVersion(browserVersion);
+  }
+
   // Apply all capabilities to options.
   //
   // `goog:chromeOptions` is special-cased: setting it via `chromeOptions.set(...)`

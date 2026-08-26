@@ -10,6 +10,7 @@ from appium.webdriver.webdriver import WebDriver as Appium
 from behave import fixture, use_fixture
 from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from playwright.sync_api import Page, sync_playwright
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
 from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
@@ -19,6 +20,7 @@ from examples.test_threshold import get_pass_threshold, process_pass_threshold
 
 driver_name = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+selenium_browser_version = getenv("ALUMNIUM_SELENIUM_BROWSER_VERSION")
 model_label = getenv("ALUMNIUM_MODEL")
 run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
 get_pass_threshold()
@@ -36,7 +38,10 @@ def driver(context):
             yield context.driver
             browser_context.tracing.stop(path="reports/traces/behave.zip")
     elif driver_name == "selenium":
-        context.driver = ChromeDriver()
+        options = ChromeOptions()
+        if selenium_browser_version:
+            options.browser_version = selenium_browser_version
+        context.driver = ChromeDriver(options=options)
         yield context.driver
         context.driver.quit()
     elif driver_name == "appium-ios":

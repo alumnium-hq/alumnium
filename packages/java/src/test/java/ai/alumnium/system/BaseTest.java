@@ -25,6 +25,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 public class BaseTest {
 
@@ -38,6 +39,8 @@ public class BaseTest {
   private static final boolean IS_LAMBDA_TEST = LT_USERNAME != null && LT_ACCESS_KEY != null;
   private static final boolean PLAYWRIGHT_HEADLESS =
       !"false".equalsIgnoreCase(System.getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS"));
+  private static final String SELENIUM_BROWSER_VERSION =
+      System.getenv("ALUMNIUM_SELENIUM_BROWSER_VERSION");
 
   private static Playwright playwright;
   private static Browser browser;
@@ -66,6 +69,14 @@ public class BaseTest {
         "visual", true,
         "video", true,
         "w3c", true);
+  }
+
+  private static ChromeDriver buildChromeDriver() {
+    ChromeOptions options = new ChromeOptions();
+    if (SELENIUM_BROWSER_VERSION != null && !SELENIUM_BROWSER_VERSION.isBlank()) {
+      options.setBrowserVersion(SELENIUM_BROWSER_VERSION);
+    }
+    return new ChromeDriver(options);
   }
 
   // io.appium.java_client.AppiumDriver conflicts with ai.alumnium.driver.AppiumDriver
@@ -148,7 +159,7 @@ public class BaseTest {
         ((AppiumDriver) al.driver()).delay = 0.1;
       }
       default -> {
-        webDriver = new ChromeDriver();
+        webDriver = buildChromeDriver();
         al = new Alumni(webDriver, options);
       }
     }
