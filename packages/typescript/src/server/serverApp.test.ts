@@ -57,7 +57,7 @@ describe("serverApp", () => {
       vi
         .spyOn(LocatorAgent.prototype, "invoke")
         .mockResolvedValue([
-          { id: 16, explanation: "Found the checkbox element" },
+          { id: 4, explanation: "Found the checkbox element" },
         ]),
 
       vi
