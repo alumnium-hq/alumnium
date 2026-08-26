@@ -1,8 +1,8 @@
-import type { ToolDefinition } from "@langchain/core/language_models/base";
 import z from "zod";
 import { AppId } from "../AppId.ts";
 import { Driver } from "../drivers/Driver.ts";
 import { Model } from "../Model.ts";
+import type { ToolDefinition } from "../tools/ToolDefinition.ts";
 import { SessionId } from "./session/SessionId.ts";
 
 //#region Types

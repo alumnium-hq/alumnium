@@ -13,6 +13,7 @@ export * from "./ScrollTool.ts";
 export * from "./SwitchToNextTabTool.ts";
 export * from "./SwitchToPreviousTabTool.ts";
 export * from "./toolToSchemaConverter.ts";
+export type { ToolDefinition } from "./ToolDefinition.ts";
 export * from "./TypeTool.ts";
 export * from "./UploadTool.ts";
 export * from "./WaitForElementTool.ts";

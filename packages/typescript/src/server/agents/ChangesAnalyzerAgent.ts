@@ -1,8 +1,8 @@
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import z from "zod";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
+import type { Model } from "../../Model.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
-import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -18,11 +18,8 @@ export class ChangesAnalyzerAgent extends BaseAgent {
   });
 
   static readonly EXCLUDE_ATTRIBUTES = new Set(["id"]);
-  llm: BaseChatModel;
-
-  constructor(llmContext: LlmContext, llm: BaseChatModel) {
-    super(llmContext);
-    this.llm = llm;
+  constructor(model: Model, llm: LanguageModel) {
+    super(model, llm);
   }
 
   @span("agent.invoke", { "agent.kind": "changes-analyzer" })
@@ -34,14 +31,16 @@ export class ChangesAnalyzerAgent extends BaseAgent {
       kind: "changes-analyzer",
     };
 
-    const response = await this.invokeChain(
-      this.llm,
-      [
-        ["system", this.prompts.system],
-        ["human", pythonicFormat(this.prompts.user, { diff })],
+    const response = await this.invokeModel({
+      instructions: this.prompts.system,
+      messages: [
+        {
+          role: "user",
+          content: pythonicFormat(this.prompts.user, { diff }),
+        },
       ],
       meta,
-    );
+    });
 
     const content = response.content.replaceAll("\n\n", " ");
 

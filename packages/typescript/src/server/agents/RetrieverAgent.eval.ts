@@ -1,12 +1,7 @@
 import { evalite } from "evalite";
-import { nanoid } from "nanoid";
 import { lit } from "smollit";
-import type { AppId } from "../../AppId.ts";
 import { Logger } from "../../telemetry/Logger.ts";
-import { NullCache } from "../cache/NullCache.ts";
-import { LlmContext } from "../LlmContext.ts";
 import { LlmFactory } from "../LlmFactory.ts";
-import { SessionContext } from "../session/SessionContext.ts";
 import { RetrieverAgent } from "./RetrieverAgent.ts";
 import { Env } from "../../Env.ts";
 
@@ -140,14 +135,8 @@ evalite("RetrieverAgent", {
 
   task: async (input) => {
     const model = Env.ALUMNIUM_MODEL;
-    const llmContext = new LlmContext(model);
-    const sessionContext = new SessionContext({
-      app: "eval" as AppId,
-      sessionId: nanoid(),
-    });
-    const cache = new NullCache(sessionContext);
-    const llm = LlmFactory.createLlm(model, cache);
-    const agent = new RetrieverAgent(llmContext, llm);
+    const llm = LlmFactory.createLlm(model);
+    const agent = new RetrieverAgent(model, llm);
 
     return agent.invoke(input);
   },
