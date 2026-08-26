@@ -1,17 +1,13 @@
-import type { Generation } from "@langchain/core/outputs";
-import { always } from "alwaysly";
+import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { xxh64Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { AppId } from "../../../AppId.ts";
-import { Lchain } from "../../../llm/Lchain.ts";
-import { LchainSchema } from "../../../llm/LchainSchema.ts";
+import { AiSdk } from "../../../llm/AiSdk.ts";
 import { Telemetry } from "../../../telemetry/Telemetry.ts";
 import type { Tracer } from "../../../telemetry/Tracer.ts";
-import { stringExcerpt } from "../../../utils/string.ts";
 import { ActorAgent } from "../../agents/ActorAgent.ts";
 import type { BaseAgent } from "../../agents/BaseAgent.ts";
 import { PlannerAgent } from "../../agents/PlannerAgent.ts";
-import { LlmContext } from "../../LlmContext.ts";
 import { SessionContext } from "../../session/SessionContext.ts";
 import { CacheStore } from "../CacheStore.ts";
 import { ServerCache } from "../ServerCache.ts";
@@ -23,16 +19,14 @@ import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.ts";
 const { logger, tracer } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
 
-// NOTE: This is current empty to preserve compatibility with existing cache entries,
-// as the format didn't change.
-const CACHE_VERSION = "";
+const CACHE_VERSION = "ai-sdk-v1";
 
 export namespace ElementsCache {
   export type MemoryCache = Record<MemoryKey, MemoryRecord>;
 
   export interface MemoryRecord {
     cacheHash: CacheHash;
-    generation: LchainSchema.StoredGeneration;
+    generation: LanguageModelV4GenerateResult;
     elements: Elements;
     agentKind: EligibleAgentKind;
     app: AppId;
@@ -81,18 +75,12 @@ export class ElementsCache extends ServerCache {
   static MemoryKey = z.string().brand("ElementsCache.MemoryKey");
 
   readonly #cacheStore: CacheStore;
-  readonly #llmContext: LlmContext;
   #plannerCache: PlannerAgentElementsCache;
   #actorCache: ActorAgentElementsCache;
 
-  constructor(
-    sessionContext: SessionContext,
-    cacheStore: CacheStore,
-    llmContext: LlmContext,
-  ) {
+  constructor(sessionContext: SessionContext, cacheStore: CacheStore) {
     super(sessionContext);
     this.#cacheStore = cacheStore.subStore("elements");
-    this.#llmContext = llmContext;
     this.#plannerCache = new PlannerAgentElementsCache(sessionContext);
     this.#actorCache = new ActorAgentElementsCache({
       plannerCache: this.#plannerCache,
@@ -100,42 +88,15 @@ export class ElementsCache extends ServerCache {
     });
   }
 
-  /**
-   * Look up cached response if elements are still valid.
-   *
-   * Process:
-   * 1. Parse prompt to extract goal/step and accessibility_tree
-   * 2. Determine agent type (planner vs actor)
-   * 3. Hash goal/step to get cache key
-   * 4. Load elements.json
-   * 5. Resolve all elements to current IDs in tree
-   * 6. If valid, unmask and return cached response
-   *
-   * @param prompt Serialized prompt string (e.g. "System: You are a...")
-   * @param llmKey Serialized LLM configuration (e.g. "_model:\"base_chat_model\",_type:\"openai\"...")
-   * @returns Cached response if elements are valid, null otherwise.
-   */
   override async lookup(
-    prompt: LlmContext.Prompt,
-    llmKey: LlmContext.LlmKey,
-  ): Promise<Generation[] | null> {
+    request: ServerCache.CacheRequest,
+  ): Promise<LanguageModelV4GenerateResult | null> {
     return tracer.span("cache.lookup", this.#spanAttrs(), async (span) => {
-      const agentMeta = this.#llmContext.getPromptMeta(prompt);
-      if (!agentMeta) {
-        logger.warn(
-          `No metadata found, skipping elements cache lookup for prompt: "${stringExcerpt(prompt, 100)}"...`,
-        );
-        span.event("cache.lookup.miss", {
-          ...this.#spanAttrs(),
-          "cache.lookup.miss.reason": "no_meta",
-        });
-
-        return null;
-      }
+      const agentMeta = request.meta;
 
       if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") {
         logger.debug(
-          `Agent kind "${agentMeta.kind}" is not eligible for elements caching, skipping lookup for prompt: "${stringExcerpt(prompt, 100)}"...`,
+          `Agent kind "${agentMeta.kind}" is not eligible for elements caching`,
         );
         span.event("cache.lookup.miss", {
           ...this.#spanAttrs(),
@@ -148,7 +109,7 @@ export class ElementsCache extends ServerCache {
 
       const { cacheKey, cacheHash, memoryKey } = this.#initiate(
         agentMeta,
-        llmKey,
+        request,
       );
 
       try {
@@ -169,9 +130,8 @@ export class ElementsCache extends ServerCache {
               memoryEntry.generation,
               masksIdsMap,
             );
+            if (!unmaskedGeneration) return null;
             this.applyUsage(unmaskedGeneration);
-
-            const generation = Lchain.fromStored(unmaskedGeneration);
 
             logger.debug(
               `Elements cache hit (in-memory) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
@@ -183,7 +143,7 @@ export class ElementsCache extends ServerCache {
               "cache.lookup.hit.source": "memory",
             });
 
-            return [generation];
+            return unmaskedGeneration;
           }
         }
 
@@ -193,7 +153,7 @@ export class ElementsCache extends ServerCache {
 
         const [elements, maskedGeneration] = await Promise.all([
           cacheStore.readJson("elements.json", ElementsCache.Elements),
-          cacheStore.readJson("response.json", LchainSchema.StoredGeneration),
+          cacheStore.readJson("response.json"),
         ]);
 
         if (!elements || !maskedGeneration) {
@@ -207,9 +167,10 @@ export class ElementsCache extends ServerCache {
           return null;
         }
 
+        const hydratedGeneration = AiSdk.fromStored(maskedGeneration);
         if (
           agentMeta.kind === "planner" &&
-          !PlannerAgentElementsCache.isCacheable(maskedGeneration)
+          !PlannerAgentElementsCache.isCacheable(hydratedGeneration)
         ) {
           logger.debug(
             `Elements cache miss (planner has no actions): "${cacheKey.slice(0, 50)}..."`,
@@ -233,13 +194,12 @@ export class ElementsCache extends ServerCache {
         }
 
         const unmaskedGeneration = ElementsCacheMask.unmask(
-          maskedGeneration,
+          hydratedGeneration,
           masksIdsMap,
         );
+        if (!unmaskedGeneration) return null;
 
         this.applyUsage(unmaskedGeneration);
-
-        const generation = Lchain.fromStored(unmaskedGeneration);
 
         logger.debug(
           `Elements cache hit (file) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
@@ -251,7 +211,7 @@ export class ElementsCache extends ServerCache {
           "cache.lookup.hit.source": "store",
         });
 
-        return [generation];
+        return unmaskedGeneration;
       } catch (error) {
         logger.debug(`Error in elements cache lookup: ${error}`);
         span.event("cache.lookup.miss", {
@@ -267,28 +227,16 @@ export class ElementsCache extends ServerCache {
   }
 
   override async update(
-    prompt: LlmContext.Prompt,
-    llmKey: LlmContext.LlmKey,
-    generations: Generation[],
+    request: ServerCache.CacheRequest,
+    result: LanguageModelV4GenerateResult,
   ): Promise<void> {
     return tracer.span("cache.update", this.#spanAttrs(), async (span) => {
       try {
-        const agentMeta = this.#llmContext.getPromptMeta(prompt);
-        if (!agentMeta) {
-          logger.warn(
-            `No metadata found, skipping elements cache update for prompt: "${stringExcerpt(prompt, 100)}"...`,
-          );
-          span.event("cache.update.skip", {
-            ...this.#spanAttrs(),
-            "cache.update.skip.reason": "no_meta",
-          });
-
-          return;
-        }
+        const agentMeta = request.meta;
 
         if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") {
           logger.debug(
-            `Agent kind "${agentMeta.kind}" is not eligible for elements caching, skipping update for prompt: "${stringExcerpt(prompt, 100)}"...`,
+            `Agent kind "${agentMeta.kind}" is not eligible for elements caching`,
           );
           span.event("cache.update.skip", {
             ...this.#spanAttrs(),
@@ -299,11 +247,8 @@ export class ElementsCache extends ServerCache {
           return;
         }
 
-        const { cacheHash, memoryKey } = this.#initiate(agentMeta, llmKey);
-
-        const [firstGeneration] = generations;
-        always(firstGeneration);
-        const generation = Lchain.toStored(firstGeneration);
+        const { cacheHash, memoryKey } = this.#initiate(agentMeta, request);
+        const generation = AiSdk.toStored(result);
 
         switch (agentMeta.kind) {
           case "planner":
@@ -372,14 +317,14 @@ export class ElementsCache extends ServerCache {
 
   #initiate(
     agentMeta: ElementsCache.AgentMeta,
-    llmKey: LlmContext.LlmKey,
+    request: ServerCache.CacheRequest,
   ): ElementsCache.InitiatedData {
     const cacheKey = this.#cacheKey(agentMeta);
     const cacheHash: ElementsCache.CacheHash = xxh64Str(
       CACHE_VERSION + cacheKey,
     );
 
-    const memoryKey = this.#memoryKey(cacheHash, llmKey);
+    const memoryKey = this.#memoryKey(cacheHash, request);
 
     return {
       cacheKey,
@@ -394,9 +339,9 @@ export class ElementsCache extends ServerCache {
 
   #memoryKey(
     cacheHash: ElementsCache.CacheHash,
-    llmKey: LlmContext.LlmKey,
+    request: ServerCache.CacheRequest,
   ): ElementsCache.MemoryKey {
-    return `${cacheHash}|${llmKey}|${this.app}` as ElementsCache.MemoryKey;
+    return `${cacheHash}|${request.model.provider}/${request.model.modelId}|${this.app}` as ElementsCache.MemoryKey;
   }
 
   #memoryRecord(

@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
+import { AiSdkFactory } from "../../../llm/__factories__/AiSdkFactory.ts";
 import { ElementsCacheToolCalls } from "./ElementsCacheToolCalls.ts";
 
 describe("ElementsCacheToolCalls", () => {
   describe("extractElementIds", () => {
     it("extracts element ids in order from tool calls", () => {
-      const generation = LchainFactory.storedGenerationWith({
+      const generation = AiSdkFactory.generateResult({
         toolCalls: [
-          LchainFactory.toolCall({ name: "ClickTool", args: { id: 4 } }),
-          LchainFactory.toolCall({
+          AiSdkFactory.toolCall({ name: "ClickTool", args: { id: 4 } }),
+          AiSdkFactory.toolCall({
             name: "TypeTool",
             args: { id: 3, text: "hello" },
           }),
-          LchainFactory.toolCall({
+          AiSdkFactory.toolCall({
             name: "DragAndDropTool",
             args: { from_id: 1, to_id: 2 },
           }),
@@ -25,16 +25,31 @@ describe("ElementsCacheToolCalls", () => {
     });
 
     it("deduplicates extracted element ids preserving first appearance", () => {
-      const generation = LchainFactory.storedGenerationWith({
+      const generation = AiSdkFactory.generateResult({
         toolCalls: [
-          LchainFactory.toolCall({ name: "ClickTool", args: { id: 3 } }),
-          LchainFactory.toolCall({ name: "TypeTool", args: { id: 1 } }),
-          LchainFactory.toolCall({ name: "ClickTool", args: { id: 3 } }),
+          AiSdkFactory.toolCall({ name: "ClickTool", args: { id: 3 } }),
+          AiSdkFactory.toolCall({ name: "TypeTool", args: { id: 1 } }),
+          AiSdkFactory.toolCall({ name: "ClickTool", args: { id: 3 } }),
         ],
       });
 
       expect(ElementsCacheToolCalls.extractElementIds(generation)).toEqual([
         3, 1,
+      ]);
+    });
+
+    it("extracts each call independently around empty and malformed inputs", () => {
+      const generation = AiSdkFactory.generateResult({
+        toolCalls: [
+          AiSdkFactory.toolCall({ args: { id: 4 } }),
+          AiSdkFactory.toolCall({ input: "" }),
+          AiSdkFactory.toolCall({ input: "{" }),
+          AiSdkFactory.toolCall({ args: { from_id: 1, to_id: 2 } }),
+        ],
+      });
+
+      expect(ElementsCacheToolCalls.extractElementIds(generation)).toEqual([
+        4, 1, 2,
       ]);
     });
   });

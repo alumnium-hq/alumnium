@@ -1,171 +1,152 @@
-import type { Generation } from "@langchain/core/outputs";
+import type { LanguageModelV4CallOptions } from "@ai-sdk/provider";
 import { describe, expect, it, vi } from "vitest";
 import { createMockDir, pushMock } from "../../../tests/unit/mocks.ts";
 import { AppId } from "../../AppId.ts";
-import { Env } from "../../Env.ts";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";
-import { Lchain } from "../../llm/Lchain.ts";
+import { AiSdkFactory } from "../../llm/__factories__/AiSdkFactory.ts";
 import { Model } from "../../Model.ts";
 import type { RetrieverAgent } from "../agents/RetrieverAgent.ts";
-import { LlmContext } from "../LlmContext.ts";
 import { SessionContext } from "../session/SessionContext.ts";
 import { SessionId } from "../session/SessionId.ts";
 import { CacheStore } from "./CacheStore.ts";
 import { ResponseCache } from "./ResponseCache.ts";
+import type { ServerCache } from "./ServerCache.ts";
 
-describe("ResponseCache", () => {
+describe(ResponseCache, () => {
   it("saves and looks up cached response", async () => {
-    const {
-      sessionContext,
-      llmContext,
-      cacheStore,
-      cacheDir,
-      prompt1,
-      llmKey,
-    } = await setup();
-    const cache = new ResponseCache(sessionContext, cacheStore, llmContext);
+    const { cache, cacheDir, request1 } = await setup();
+    const result = AiSdkFactory.generateResult({ text: "Hi there" });
 
-    const generations = createGenerations("Hi there");
-    await cache.update(prompt1, llmKey, generations);
+    await cache.update(request1, result);
     await cache.save();
 
     const files = await cacheDir.flatTree();
-    expect(files).toMatchInlineSnapshot(`
-      [
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/request.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/response.json",
-      ]
-    `);
+    expect(files).toEqual([
+      "test-app/openai/test/responses/first/request.json",
+      "test-app/openai/test/responses/first/response.json",
+    ]);
 
-    const result = await cache.lookup(prompt1, llmKey);
-    expect(result).toEqual(generations);
-    expect(result).not.toBeNull();
+    const cached = await cache.lookup(request1);
+    expect(cached).toEqual(result);
+    expect(cached).not.toBeNull();
   });
 
   it("supports multiple cache instances saving concurrently", async () => {
-    const {
-      sessionContext,
-      llmContext,
-      cacheStore,
-      cacheDir,
-      prompt1,
-      prompt2,
-      llmKey,
-    } = await setup();
-    const cache1 = new ResponseCache(sessionContext, cacheStore, llmContext);
-    const cache2 = new ResponseCache(sessionContext, cacheStore, llmContext);
+    const { sessionContext, cacheStore, cacheDir, request1, request2 } =
+      await setup();
+    const cache1 = new ResponseCache(sessionContext, cacheStore);
+    const cache2 = new ResponseCache(sessionContext, cacheStore);
 
-    const generations1 = createGenerations("one");
-    const generations2 = createGenerations("two");
-    await cache1.update(prompt1, llmKey, generations1);
-    await cache2.update(prompt2, llmKey, generations2);
+    const result1 = AiSdkFactory.generateResult({ text: "one" });
+    const result2 = AiSdkFactory.generateResult({ text: "two" });
+    await cache1.update(request1, result1);
+    await cache2.update(request2, result2);
     await cache1.save();
     await cache2.save();
 
     const files = await cacheDir.flatTree();
-    expect(files).toMatchInlineSnapshot(`
-      [
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/request.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/response.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/90a8b9ed129be0b8/request.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/90a8b9ed129be0b8/response.json",
-      ]
-    `);
+    expect(files).toEqual([
+      "test-app/openai/test/responses/first/request.json",
+      "test-app/openai/test/responses/first/response.json",
+      "test-app/openai/test/responses/second/request.json",
+      "test-app/openai/test/responses/second/response.json",
+    ]);
 
-    const result1 = await cache1.lookup(prompt1, llmKey);
-    expect(result1).toEqual(generations1);
-    const result2 = await cache2.lookup(prompt2, llmKey);
-    expect(result2).toEqual(generations2);
+    expect(await cache1.lookup(request1)).toEqual(result1);
+    expect(await cache2.lookup(request2)).toEqual(result2);
   });
 
-  it("differentiates same prompts with different metadata", async () => {
-    const { sessionContext, llmContext, cacheStore, prompt1, llmKey } =
+  it("keeps entries with different cache keys isolated", async () => {
+    const { cache, request1, request2 } = await setup();
+    const result = AiSdkFactory.generateResult({ text: "one" });
+    await cache.update(request1, result);
+
+    const resultBefore = await cache.lookup(request1);
+    expect(resultBefore).toEqual(result);
+
+    const samePromptWithDifferentMeta: ServerCache.CacheRequest = {
+      ...request1,
+      key: request2.key,
+      meta: request2.meta,
+    };
+    expect(await cache.lookup(samePromptWithDifferentMeta)).toBeNull();
+  });
+
+  it("stages, saves, and hydrates complete results", async () => {
+    const { cache, cacheStore, request1, sessionContext } = await setup();
+    const timestamp = new Date("2026-01-02T03:04:05.000Z");
+    const result = {
+      ...AiSdkFactory.generateResult({
+        text: "Hi",
+        usage: {
+          inputTokens: { total: 5, cacheRead: 3, cacheWrite: 2 },
+          outputTokens: { total: 7, reasoning: 4 },
+        },
+      }),
+      response: { id: "response-id", timestamp },
+    };
+    await cache.update(request1, result);
+    await cache.save();
+
+    const fresh = new ResponseCache(sessionContext, cacheStore);
+    const hit = await fresh.lookup(request1);
+    expect(hit).toEqual(result);
+    expect(hit?.response?.timestamp).toBeInstanceOf(Date);
+    expect(fresh.usage).toEqual({
+      input_tokens: 5,
+      output_tokens: 7,
+      total_tokens: 12,
+      cache_read: 3,
+      cache_creation: 2,
+      reasoning: 4,
+    });
+  });
+
+  it("keeps concurrent staged saves independent", async () => {
+    const { cache, cacheStore, request1, request2, sessionContext } =
       await setup();
-    const cache = new ResponseCache(sessionContext, cacheStore, llmContext);
-
-    const generations = createGenerations("one");
-    await cache.update(prompt1, llmKey, generations);
-
-    const resultBefore = await cache.lookup(prompt1, llmKey);
-    expect(resultBefore).toEqual(generations);
-
-    llmContext.clearPromptsMeta([prompt1]);
-    const newMeta = createAgentMeta("screenshot");
-    llmContext.assignPromptsMeta([prompt1], newMeta);
-
-    const result = await cache.lookup(prompt1, llmKey);
-    expect(result).toBeNull();
+    const second = new ResponseCache(sessionContext, cacheStore);
+    await cache.update(request1, AiSdkFactory.generateResult({ text: "one" }));
+    await second.update(request2, AiSdkFactory.generateResult({ text: "two" }));
+    await Promise.all([cache.save(), second.save()]);
+    expect(await cache.lookup(request1)).not.toBeNull();
+    expect(await cache.lookup(request2)).not.toBeNull();
   });
 });
 
 async function setup() {
   const sessionContext = new SessionContext({
     app: "test-app" as AppId,
-    sessionId: "test-session-id" as SessionId,
+    sessionId: "session" as SessionId,
   });
-
   const cacheDir = await createMockDir({ prefix: "response-cache" });
-
-  const defaultModel = Model.parse("ollama");
-  const contextModel = Model.parse("openai/gpt-5-nano-2025-08-07");
-
   pushMock(
-    vi.spyOn(Env, "ALUMNIUM_MODEL", "get").mockReturnValue(defaultModel),
     vi
       .spyOn(GlobalFileStorePaths, "globalSubDir")
       .mockReturnValue(cacheDir.path),
   );
-
-  const llmContext = new LlmContext(contextModel);
-  const cacheStore = new CacheStore(sessionContext, llmContext.model);
-
-  const prompt1 = "prompt 1" as LlmContext.Prompt;
-  const prompt2 = "prompt 2" as LlmContext.Prompt;
-  const llmKey = "test-llm" as LlmContext.LlmKey;
-
-  const meta1 = createAgentMeta();
-  llmContext.assignPromptsMeta([prompt1], meta1);
-
-  const meta2 = createAgentMeta("screenshot");
-  llmContext.assignPromptsMeta([prompt2], meta2);
-
+  const cacheStore = new CacheStore(sessionContext, Model.parse("openai/test"));
+  const cache = new ResponseCache(sessionContext, cacheStore);
+  const params = { prompt: [] } satisfies LanguageModelV4CallOptions;
+  const request1: ServerCache.CacheRequest = {
+    key: "first" as ServerCache.CacheKey,
+    model: { provider: "openai", modelId: "test" },
+    params,
+    meta: createAgentMeta(),
+  };
+  const request2: ServerCache.CacheRequest = {
+    ...request1,
+    key: "second" as ServerCache.CacheKey,
+    meta: createAgentMeta("screenshot"),
+  };
   return {
-    sessionContext,
-    llmContext,
+    cache,
     cacheStore,
     cacheDir,
-    prompt1,
-    prompt2,
-    meta1,
-    meta2,
-    llmKey,
-    defaultModel,
-    contextModel,
+    request1,
+    request2,
+    sessionContext,
   };
-}
-
-function createGenerations(text: string): Generation[] {
-  return [
-    Lchain.fromStored({
-      text,
-      message: {
-        type: "ai",
-        data: {
-          id: "gen-id",
-          content: text,
-          tool_calls: [],
-          invalid_tool_calls: [],
-          usage_metadata: {
-            input_tokens: 1,
-            output_tokens: 2,
-            total_tokens: 3,
-          },
-          response_metadata: {},
-          additional_kwargs: {},
-        },
-      },
-    }),
-  ];
 }
 
 function createAgentMeta(

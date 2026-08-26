@@ -123,6 +123,10 @@ Select AI provider and model to use.
 | openai        | gpt-5-nano-2025-08-07                       | OpenAI API.                                                              |
 | xai           | grok-4-1-fast-reasoning                     | xAI API.                                                                 |
 
+:::caution[GitHub Models retired]
+The `github` provider is no longer supported because [GitHub Models][5] was fully retired on July 30, 2026.
+:::
+
 You can also override the LLM for each provider by passing it after `/`.
 
 ```sh title="Custom OpenAI model"
@@ -261,3 +265,4 @@ API key used when `ALUMNIUM_MODEL` is set to `xai`.
 [2]: https://github.com/alumnium-hq/alumnium/issues/112
 [3]: /docs/guides/mcp
 [4]: https://litterbox.catbox.moe
+[5]: https://docs.github.com/en/github-models

@@ -1,8 +1,9 @@
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import { Output } from "ai";
 import z from "zod";
+import type { Model } from "../../Model.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
-import type { LlmContext } from "../LlmContext.ts";
 import type { ElementRef } from "../serverSchema.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
@@ -39,11 +40,8 @@ export class LocatorAgent extends BaseAgent {
     treeXml: z.string(),
   });
 
-  chain;
-
-  constructor(llmContext: LlmContext, llm: BaseChatModel) {
-    super(llmContext);
-    this.chain = llm.withStructuredOutput(Locator, { includeRaw: true });
+  constructor(model: Model, llm: LanguageModel) {
+    super(model, llm);
   }
 
   @span("agent.invoke", { "agent.kind": "locator" })
@@ -63,20 +61,20 @@ export class LocatorAgent extends BaseAgent {
       treeXml,
     };
 
-    const response = await this.invokeChain(
-      this.chain,
-      [
-        ["system", this.prompts["system"]],
-        [
-          "human",
-          pythonicFormat(this.prompts.user, {
+    const response = await this.invokeModel({
+      instructions: this.prompts.system,
+      messages: [
+        {
+          role: "user",
+          content: pythonicFormat(this.prompts.user, {
             accessibility_tree: treeXml,
             description,
           }),
-        ],
+        },
       ],
+      output: Output.object({ schema: Locator }),
       meta,
-    );
+    });
 
     this.logData(logger, "out", {
       Result: response.structured,

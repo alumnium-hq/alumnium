@@ -1,5 +1,3 @@
-import type { ToolDefinition } from "@langchain/core/language_models/base";
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { AppId } from "../../AppId.ts";
 import type { Driver } from "../../drivers/Driver.ts";
 import { Env } from "../../Env.ts";
@@ -8,9 +6,11 @@ import {
   LlmUsage,
   LlmUsageStats,
 } from "../../llm/llmSchema.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { Model } from "../../Model.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { TypeUtils } from "../../typeUtils.ts";
+import type { ToolDefinition } from "../../tools/ToolDefinition.ts";
 import { Session } from "./Session.ts";
 import { SessionId } from "./SessionId.ts";
 
@@ -23,7 +23,7 @@ export namespace SessionManager {
     provider?: Model.Provider | undefined;
     name?: string | undefined;
     tools: ToolDefinition[];
-    llm?: BaseChatModel | undefined;
+    llm?: LanguageModel | undefined;
     planner?: boolean | undefined;
     excludeAttributes?: string[] | undefined;
     sessionId?: SessionId | undefined;

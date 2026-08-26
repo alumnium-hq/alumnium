@@ -58,6 +58,8 @@ const devs = [
 
 const ModelDev = z.enum(devs);
 
+export const defaultModelProvider: Model.Provider = "openai";
+
 export const Model = {
   Provider: ModelProvider,
 
