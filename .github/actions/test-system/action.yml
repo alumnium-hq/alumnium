@@ -43,7 +43,7 @@ runs:
       run: mise //packages/${{ inputs.package }}:test/system:${{ inputs.driver }}
       shell: bash
       env:
-        ALUMNIUM_TEST_PASS_THRESHOLD_PCT: 90
+        ALUMNIUM_TEST_PASS_THRESHOLD_PCT: 93
         ALUMNIUM_LOG_DEBUG_EXTRA: all
         ALUMNIUM_LOG_OBJECTS_DEPTH: false
         ALUMNIUM_LOG_MAX_STR_LENGTH: false
