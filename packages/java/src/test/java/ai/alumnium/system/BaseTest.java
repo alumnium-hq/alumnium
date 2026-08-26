@@ -6,6 +6,7 @@ import ai.alumnium.tool.BaseTool;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -39,6 +41,7 @@ public class BaseTest {
 
   private static Playwright playwright;
   private static Browser browser;
+  private static WebDriver webDriver;
 
   @RegisterExtension
   static final AlumniCacheExtension cacheAfterEach = new AlumniCacheExtension(() -> al);
@@ -144,7 +147,10 @@ public class BaseTest {
         al = new Alumni(buildAndroidDriver(), options);
         ((AppiumDriver) al.driver()).delay = 0.1;
       }
-      default -> al = new Alumni(new ChromeDriver(), options);
+      default -> {
+        webDriver = new ChromeDriver();
+        al = new Alumni(webDriver, options);
+      }
     }
   }
 
@@ -156,6 +162,55 @@ public class BaseTest {
 
   protected static void navigate(String url) {
     al.driver().visit(url);
+  }
+
+  protected static int tabCount() {
+    if (browser != null) {
+      return browser.contexts().get(0).pages().size();
+    } else if (webDriver != null) {
+      return webDriver.getWindowHandles().size();
+    } else {
+      throw new UnsupportedOperationException("Tabs are not implemented in Appium yet");
+    }
+  }
+
+  protected static void waitForTabCount(int count) {
+    long deadline = System.currentTimeMillis() + 10_000;
+    while (tabCount() < count) {
+      if (System.currentTimeMillis() > deadline) {
+        throw new AssertionError("Timed out waiting for " + count + " tabs to open");
+      }
+      pause();
+    }
+  }
+
+  protected static void closeExtraTabs() {
+    if (browser != null) {
+      List<Page> pages = browser.contexts().get(0).pages();
+      for (Page page : pages.subList(1, pages.size())) {
+        page.close();
+      }
+    } else if (webDriver != null) {
+      List<String> handles = List.copyOf(webDriver.getWindowHandles());
+      for (String handle : handles.subList(1, handles.size())) {
+        webDriver.switchTo().window(handle);
+        webDriver.close();
+      }
+      webDriver.switchTo().window(handles.get(0));
+    }
+  }
+
+  private static void pause() {
+    if (browser != null) {
+      browser.contexts().get(0).pages().get(0).waitForTimeout(50);
+    } else {
+      try {
+        Thread.sleep(50);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new IllegalStateException(e);
+      }
+    }
   }
 
   protected static void type(Object element, String text) {

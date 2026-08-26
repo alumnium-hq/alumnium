@@ -673,13 +673,9 @@ export class PlaywrightDriver extends BaseDriver {
   private async autoswitchToNewTabAction(
     action: () => Promise<void>,
   ): Promise<void> {
-    if (!this.autoswitchToNewTab) {
-      await action();
-      this.openedPages = [];
-      return;
-    }
-
     await action();
+    if (!this.autoswitchToNewTab) return;
+
     await sleep(NEW_TAB_DELAY);
 
     if (!this.openedPages.length && this.pendingWindowOpen) {
@@ -699,6 +695,11 @@ export class PlaywrightDriver extends BaseDriver {
 
   @span("driver.internal.switch_to_new_tab")
   private async switchToNewTab(): Promise<void> {
+    if (!this.autoswitchToNewTab) {
+      this.openedPages = [];
+      return;
+    }
+
     await this.flushEvents();
 
     const opened = this.openedPages.filter((page) => !page.isClosed()).pop();

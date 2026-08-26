@@ -479,7 +479,6 @@ public final class PlaywrightDriver extends BaseDriver {
   private void autoswitchToNewTabAction(Runnable action) {
     if (!autoswitchToNewTab) {
       action.run();
-      openedPages.clear();
       return;
     }
 
@@ -509,6 +508,11 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   private void switchToNewTab() {
+    if (!autoswitchToNewTab) {
+      openedPages.clear();
+      return;
+    }
+
     flushEvents();
 
     Page opened = null;

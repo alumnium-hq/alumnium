@@ -1,4 +1,9 @@
-import { SwitchToNextTabTool, SwitchToPreviousTabTool } from "alumnium";
+import {
+  type PlaywrightDriver,
+  type SeleniumDriver,
+  SwitchToNextTabTool,
+  SwitchToPreviousTabTool,
+} from "alumnium";
 import { describe } from "vitest";
 import { baseIt } from "./helpers.ts";
 
@@ -48,5 +53,25 @@ describe("Tabs", () => {
     // al.get() is too slow which gives tab enough time to arrive on its own
     expect(await al.driver.url()).toBe(slowTabUrl);
     expect(await al.get("header text")).toBe("Slow Tab");
+  });
+
+  it("stays on the current tab when autoswitch is off", async ({
+    expect,
+    setup,
+  }) => {
+    const { al, $ } = await setup();
+    const { url } = await $.serveSlowTabPage();
+    const driver = al.driver as PlaywrightDriver | SeleniumDriver;
+    driver.autoswitchToNewTab = false;
+
+    await $.navigate(url);
+    await al.do("click on 'Open Slow Tab' button");
+
+    // Only assert once the tab is really there, otherwise nothing can be
+    // picked up and the test passes even when the switch is ignored
+    await $.waitForTabCount(2);
+
+    expect(await al.get("header text")).toBe("Opener");
+    expect(await al.driver.url()).toBe(url);
   });
 });
