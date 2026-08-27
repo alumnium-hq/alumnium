@@ -10,6 +10,7 @@ import type {
   LanguageModelV4CallOptions,
 } from "@ai-sdk/provider";
 import { createXai } from "@ai-sdk/xai";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createOllama } from "ollama-ai-provider-v2";
 import { Env } from "../Env.ts";
 import { CodexLanguageModel } from "../llm/CodexLanguageModel.ts";
@@ -50,6 +51,8 @@ export class LlmFactory {
         return LlmFactory.createOllamaLlm(model);
       case "openai":
         return LlmFactory.createOpenAiLlm(model);
+      case "openrouter":
+        return LlmFactory.createOpenRouterLlm(model);
       case "xai":
         return LlmFactory.createXAiLlm(model);
     }
@@ -267,6 +270,15 @@ export class LlmFactory {
           reasoning: "low",
           providerOptions: { openai: { reasoningSummary: "auto" } },
         });
+  }
+
+  static createOpenRouterLlm(model: Model): LanguageModelV4 {
+    logger.debug(`Creating OpenRouter LLM with model ${model.name}`);
+    return createOpenRouter({
+      ...apiKeyField(Env.OPENROUTER_API_KEY),
+      appName: "Alumnium",
+      appUrl: "https://alumnium.ai",
+    })(model.name);
   }
 
   static createXAiLlm(model: Model): LanguageModelV4 {

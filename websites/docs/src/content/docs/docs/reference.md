@@ -120,6 +120,7 @@ Select AI provider and model to use.
 | mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
 | openai        | gpt-5-nano-2025-08-07                       | OpenAI API.                                                              |
+| openrouter    | openai/gpt-5-nano                           | Models routed through OpenRouter.                                        |
 | xai           | grok-4-1-fast-reasoning                     | xAI API.                                                                 |
 
 :::caution[GitHub Models retired]
@@ -251,6 +252,10 @@ JSON string of additional headers to send with OpenAI requests (e.g. `{"x-custom
 ### `XAI_API_KEY`
 
 API key used when `ALUMNIUM_MODEL` is set to `xai`.
+
+### `OPENROUTER_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `openrouter`.
 
 [1]: https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
 [2]: https://github.com/alumnium-hq/alumnium/issues/112

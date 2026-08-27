@@ -424,6 +424,10 @@ export const Env = {
     );
   },
 
+  get OPENROUTER_API_KEY() {
+    return secretEnvVar("OPENROUTER_API_KEY", z.string().optional());
+  },
+
   get XAI_API_KEY() {
     return secretEnvVar("XAI_API_KEY", z.string().optional());
   },
