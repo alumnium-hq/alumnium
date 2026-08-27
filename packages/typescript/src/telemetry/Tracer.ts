@@ -166,6 +166,13 @@ export namespace Tracer {
   export interface SpansDriver {
     "driver.get_accessibility_tree": {
       Attrs: SpansDriverAttrs;
+      Events: {
+        "driver.get_accessibility_tree.cache_hit": null;
+      };
+    };
+
+    "driver.fetch_accessibility_tree": {
+      Attrs: SpansDriverAttrs;
     };
 
     "driver.click": {

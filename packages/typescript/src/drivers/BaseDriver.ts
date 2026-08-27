@@ -10,11 +10,14 @@ import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import type { Driver } from "./Driver.ts";
 import type { Element } from "./index.ts";
 import type { Keys } from "./keys.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 
-const logger = Logger.get(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 
 export abstract class BaseDriver {
+  abstract kind: Driver.Kind;
   abstract platform: Driver.Platform;
+
   abstract supportedTools: Set<ToolClass>;
   protected abstract fetchAccessibilityTree(): Promise<BaseAccessibilityTree>;
 
@@ -22,9 +25,19 @@ export abstract class BaseDriver {
   #cachedAccessibilityTree: BaseAccessibilityTree | null = null;
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
-    await this.checkNavigationPolicy();
-    this.#cachedAccessibilityTree ??= await this.fetchAccessibilityTree();
-    return this.#cachedAccessibilityTree;
+    return tracer.span(
+      "driver.get_accessibility_tree",
+      BaseDriver.spanAttrs.apply(this),
+      async (span) => {
+        await this.checkNavigationPolicy();
+        if (this.#cachedAccessibilityTree) {
+          span.event("driver.get_accessibility_tree.cache_hit");
+        } else {
+          this.#cachedAccessibilityTree = await this.fetchAccessibilityTree();
+        }
+        return this.#cachedAccessibilityTree;
+      },
+    );
   }
 
   setAccessibilityTree(tree: BaseAccessibilityTree) {
@@ -56,6 +69,13 @@ export abstract class BaseDriver {
   abstract waitForSelector(selector: string, timeout?: number): Promise<void>;
   abstract printToPdf(filepath: string): Promise<void>;
   abstract checkNavigationPolicy(url?: string): void | Promise<void>;
+
+  static spanAttrs(this: BaseDriver) {
+    return {
+      "driver.platform": this.platform,
+      "driver.kind": this.kind,
+    };
+  }
 
   //#region Stateful
 
