@@ -10,6 +10,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | [Anthropic][1]          | Claude 4.5 Haiku        |
 | [Google][2]             | Gemini 3.1 Flash Lite   |
 | [OpenAI][3] _(default)_ | GPT-5 Nano              |
+| [OpenRouter][27]        | GPT-5 Nano              |
 | [Codex][22]             | GPT-5.6 Luna            |
 | [DeepSeek][12]          | DeepSeek R1             |
 | [Meta][8]               | Llama 4 Maverick 17B    |
@@ -181,6 +182,18 @@ export ALUMNIUM_MODEL="xai"
 export XAI_API_KEY="xai-..."
 ```
 
+## OpenRouter
+
+To access models through OpenRouter:
+
+1. Get an [OpenRouter API key][28].
+2. Export the provider and API key. Include the model author in custom model IDs:
+
+```bash
+export ALUMNIUM_MODEL="openrouter/z-ai/glm-5.3-flash"
+export OPENROUTER_API_KEY="sk-or-v1-..."
+```
+
 Read next to learn how to write tests!
 
 [1]: https://www.anthropic.com
@@ -208,3 +221,5 @@ Read next to learn how to write tests!
 [24]: https://cursor.com/docs/cloud-agent
 [25]: https://cursor.com/dashboard
 [26]: https://www.npmjs.com/package/langchain-cursor
+[27]: https://openrouter.ai
+[28]: https://openrouter.ai/settings/keys
