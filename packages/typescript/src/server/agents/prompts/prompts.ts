@@ -46,6 +46,7 @@ export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
   codex: "openai",
   cursor: "openai",
   openai: "openai",
+  openrouter: "openai",
 };
 
 //#endregion
