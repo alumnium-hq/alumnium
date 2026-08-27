@@ -7,7 +7,6 @@ import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2Acce
 import { XCUITestAccessibilityTree } from "../accessibility/XCUITestAccessibilityTree.ts";
 import { AppId } from "../AppId.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import type { Tracer } from "../telemetry/Tracer.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { ClickTool } from "../tools/ClickTool.ts";
@@ -30,7 +29,8 @@ export class AppiumDriver extends BaseDriver {
 
   static Platform = z.enum(AppiumDriver.platforms);
 
-  public platform: AppiumDriver.Platform;
+  kind = "appium" as const;
+  platform: AppiumDriver.Platform;
 
   private driver: Browser;
 
@@ -55,7 +55,7 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  @span("driver.get_accessibility_tree", spanAttrs)
+  @span("driver.fetch_accessibility_tree", BaseDriver.spanAttrs)
   protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.ensureNativeAppContext();
     if (this.delay > 0) {
@@ -75,7 +75,7 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  @span("driver.click", spanAttrs)
+  @span("driver.click", BaseDriver.spanAttrs)
   @stateful
   async click(id: number): Promise<void> {
     await this.ensureNativeAppContext();
@@ -84,12 +84,12 @@ export class AppiumDriver extends BaseDriver {
     await element.click();
   }
 
-  @span("driver.drag_slider", spanAttrs)
+  @span("driver.drag_slider", BaseDriver.spanAttrs)
   dragSlider(): void {
     throw new Error("Dragging slider is not supported for this driver");
   }
 
-  @span("driver.drag_and_drop", spanAttrs)
+  @span("driver.drag_and_drop", BaseDriver.spanAttrs)
   @stateful
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     await this.ensureNativeAppContext();
@@ -99,7 +99,7 @@ export class AppiumDriver extends BaseDriver {
     await fromElement.dragAndDrop(toElement);
   }
 
-  @span("driver.press_key", spanAttrs)
+  @span("driver.press_key", BaseDriver.spanAttrs)
   @stateful
   async pressKey(key: Keys.Key): Promise<void> {
     await this.ensureNativeAppContext();
@@ -123,38 +123,38 @@ export class AppiumDriver extends BaseDriver {
     ]);
   }
 
-  @span("driver.back", spanAttrs)
+  @span("driver.back", BaseDriver.spanAttrs)
   @stateful
   async back(): Promise<void> {
     await this.driver.back();
   }
 
-  @span("driver.visit", spanAttrs)
+  @span("driver.visit", BaseDriver.spanAttrs)
   @stateful
   async visit(url: string): Promise<void> {
     this.checkNavigationPolicy(url);
     await this.driver.url(url);
   }
 
-  @span("driver.scroll_to", spanAttrs)
+  @span("driver.scroll_to", BaseDriver.spanAttrs)
   @stateful
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await this.scrollIntoView(element);
   }
 
-  @span("driver.quit", spanAttrs)
+  @span("driver.quit", BaseDriver.spanAttrs)
   async quit(): Promise<void> {
     // WebdriverIO handles session termination automatically.
     return;
   }
 
-  @span("driver.screenshot", spanAttrs)
+  @span("driver.screenshot", BaseDriver.spanAttrs)
   async screenshot(): Promise<string> {
     return this.driver.takeScreenshot();
   }
 
-  @span("driver.title", spanAttrs)
+  @span("driver.title", BaseDriver.spanAttrs)
   async title(): Promise<string> {
     await this.ensureWebviewContext();
     try {
@@ -164,7 +164,7 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  @span("driver.type", spanAttrs)
+  @span("driver.type", BaseDriver.spanAttrs)
   @stateful
   async type(id: number, text: string): Promise<void> {
     await this.ensureNativeAppContext();
@@ -177,7 +177,7 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  @span("driver.url", spanAttrs)
+  @span("driver.url", BaseDriver.spanAttrs)
   async url(): Promise<string> {
     await this.ensureWebviewContext();
     try {
@@ -187,7 +187,7 @@ export class AppiumDriver extends BaseDriver {
     }
   }
 
-  @span("driver.app", spanAttrs)
+  @span("driver.app", BaseDriver.spanAttrs)
   async app(): Promise<AppId> {
     const caps = this.driver.capabilities as Record<string, unknown>;
     return AppId.parse(
@@ -198,7 +198,7 @@ export class AppiumDriver extends BaseDriver {
     );
   }
 
-  @span("driver.find_element", spanAttrs)
+  @span("driver.find_element", BaseDriver.spanAttrs)
   async findElement(id: number): Promise<WebdriverIO.Element> {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);
@@ -207,36 +207,36 @@ export class AppiumDriver extends BaseDriver {
     return this.driver.$(locator).getElement();
   }
 
-  @span("driver.execute_script", spanAttrs)
+  @span("driver.execute_script", BaseDriver.spanAttrs)
   @stateful
   async executeScript(script: string): Promise<void> {
     await this.ensureWebviewContext();
     await this.driver.execute(script);
   }
 
-  @span("driver.switch_to_next_tab", spanAttrs)
+  @span("driver.switch_to_next_tab", BaseDriver.spanAttrs)
   async switchToNextTab(): Promise<void> {
     throw new Error("Tab switching not supported for this driver");
   }
 
-  @span("driver.switch_to_previous_tab", spanAttrs)
+  @span("driver.switch_to_previous_tab", BaseDriver.spanAttrs)
   async switchToPreviousTab(): Promise<void> {
     throw new Error("Tab switching not supported for this driver");
   }
 
-  @span("driver.wait", spanAttrs)
+  @span("driver.wait", BaseDriver.spanAttrs)
   @stateful
   async wait(seconds: number): Promise<void> {
     const clampedSeconds = Math.max(1, Math.min(30, seconds));
     await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
   }
 
-  @span("driver.wait_for_selector", spanAttrs)
+  @span("driver.wait_for_selector", BaseDriver.spanAttrs)
   async waitForSelector(): Promise<void> {
     throw new Error("waitForSelector not supported for this driver");
   }
 
-  @span("driver.print_to_pdf", spanAttrs)
+  @span("driver.print_to_pdf", BaseDriver.spanAttrs)
   async printToPdf(): Promise<void> {
     throw new Error("Printing to PDF not supported for this driver");
   }
@@ -356,11 +356,4 @@ export class AppiumDriver extends BaseDriver {
   }
 
   //#endregion
-}
-
-function spanAttrs(this: AppiumDriver): Tracer.SpansDriverAttrs {
-  return {
-    "driver.kind": "appium",
-    "driver.platform": this.platform,
-  };
 }

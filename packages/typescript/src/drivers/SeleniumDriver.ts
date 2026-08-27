@@ -77,8 +77,9 @@ const WAITER_SCRIPT = waiterScriptSource;
 
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
-  public platform: Driver.Platform = "chromium";
-  public autoswitchToNewTab = true;
+  kind = "selenium" as const;
+  platform = "chromium" as const;
+  autoswitchToNewTab = true;
   #shadowChildToHostMap: Partial<Record<number, number>> = {};
   #networkMonitor = new CdpNetworkMonitor();
   #cdpConnection: SeleniumCdpConnection | null = null;
@@ -99,7 +100,7 @@ export class SeleniumDriver extends BaseDriver {
     this.#cdpReady = this.initCdpConnection();
   }
 
-  @span("driver.get_accessibility_tree", spanAttrs)
+  @span("driver.fetch_accessibility_tree", BaseDriver.spanAttrs)
   protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     // Switch to default content to ensure we're at the top level for frame enumeration
     await this.driver.switchTo().defaultContent();
@@ -197,7 +198,7 @@ export class SeleniumDriver extends BaseDriver {
     return new ChromiumAccessibilityTree({ nodes: allNodes });
   }
 
-  @span("driver.click", spanAttrs)
+  @span("driver.click", BaseDriver.spanAttrs)
   @stateful
   async click(id: number): Promise<void> {
     await this.#autoswitchToNewTabAction(async () => {
@@ -217,7 +218,7 @@ export class SeleniumDriver extends BaseDriver {
     });
   }
 
-  @span("driver.drag_slider", spanAttrs)
+  @span("driver.drag_slider", BaseDriver.spanAttrs)
   @stateful
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
@@ -231,7 +232,7 @@ export class SeleniumDriver extends BaseDriver {
     );
   }
 
-  @span("driver.drag_and_drop", spanAttrs)
+  @span("driver.drag_and_drop", BaseDriver.spanAttrs)
   @stateful
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const fromElement = await this.findElement(fromId);
@@ -241,7 +242,7 @@ export class SeleniumDriver extends BaseDriver {
     await actions.dragAndDrop(fromElement, toElement).perform();
   }
 
-  @span("driver.hover", spanAttrs)
+  @span("driver.hover", BaseDriver.spanAttrs)
   @stateful
   async hover(id: number): Promise<void> {
     const element = await this.findElement(id);
@@ -250,7 +251,7 @@ export class SeleniumDriver extends BaseDriver {
     await actions.move({ origin: element }).perform();
   }
 
-  @span("driver.press_key", spanAttrs)
+  @span("driver.press_key", BaseDriver.spanAttrs)
   @stateful
   pressKey(key: Keys.Key): Promise<void> {
     return this.#autoswitchToNewTabAction(async () => {
@@ -266,7 +267,7 @@ export class SeleniumDriver extends BaseDriver {
     });
   }
 
-  @span("driver.quit", spanAttrs)
+  @span("driver.quit", BaseDriver.spanAttrs)
   async quit(): Promise<void> {
     await this.#cdpReady;
     this.#cdpConnection?.close();
@@ -281,27 +282,27 @@ export class SeleniumDriver extends BaseDriver {
     }
   }
 
-  @span("driver.back", spanAttrs)
+  @span("driver.back", BaseDriver.spanAttrs)
   @stateful
   async back(): Promise<void> {
     await this.driver.navigate().back();
   }
 
-  @span("driver.visit", spanAttrs)
+  @span("driver.visit", BaseDriver.spanAttrs)
   @stateful
   async visit(url: string): Promise<void> {
     await this.checkNavigationPolicy(url);
     await this.driver.get(url);
   }
 
-  @span("driver.scroll_to", spanAttrs)
+  @span("driver.scroll_to", BaseDriver.spanAttrs)
   @stateful
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await this.#scrollElementIntoCenter(element);
   }
 
-  @span("driver.screenshot", spanAttrs)
+  @span("driver.screenshot", BaseDriver.spanAttrs)
   async screenshot(): Promise<string> {
     if (this.fullPageScreenshot) {
       const result = (await this.executeCdpCommand("Page.captureScreenshot", {
@@ -314,12 +315,12 @@ export class SeleniumDriver extends BaseDriver {
     }
   }
 
-  @span("driver.title", spanAttrs)
+  @span("driver.title", BaseDriver.spanAttrs)
   title(): Promise<string> {
     return this.driver.getTitle();
   }
 
-  @span("driver.type", spanAttrs)
+  @span("driver.type", BaseDriver.spanAttrs)
   @stateful
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
@@ -328,25 +329,25 @@ export class SeleniumDriver extends BaseDriver {
     await element.sendKeys(text);
   }
 
-  @span("driver.upload", spanAttrs)
+  @span("driver.upload", BaseDriver.spanAttrs)
   @stateful
   async upload(id: number, paths: string[]): Promise<void> {
     const element = await this.findElement(id);
     await element.sendKeys(paths.join("\n"));
   }
 
-  @span("driver.url", spanAttrs)
+  @span("driver.url", BaseDriver.spanAttrs)
   url(): Promise<string> {
     return this.driver.getCurrentUrl();
   }
 
-  @span("driver.app", spanAttrs)
+  @span("driver.app", BaseDriver.spanAttrs)
   async app(): Promise<AppId> {
     const currentUrl = await this.driver.getCurrentUrl();
     return AppId.parse(currentUrl);
   }
 
-  @span("driver.find_element", spanAttrs)
+  @span("driver.find_element", BaseDriver.spanAttrs)
   async findElement(id: number): Promise<WebElement> {
     const tree = await this.getAccessibilityTree();
     const accessibilityElement = tree.elementById(id);
@@ -397,13 +398,13 @@ export class SeleniumDriver extends BaseDriver {
     return element;
   }
 
-  @span("driver.execute_script", spanAttrs)
+  @span("driver.execute_script", BaseDriver.spanAttrs)
   @stateful
   async executeScript(script: string): Promise<void> {
     await this.driver.executeScript(script);
   }
 
-  @span("driver.print_to_pdf", spanAttrs)
+  @span("driver.print_to_pdf", BaseDriver.spanAttrs)
   async printToPdf(filepath: string): Promise<void> {
     const { data } = (await this.executeCdpCommand("Page.printToPDF", {})) as {
       data: string;
@@ -411,7 +412,7 @@ export class SeleniumDriver extends BaseDriver {
     await fs.writeFile(filepath, Buffer.from(data, "base64"));
   }
 
-  @span("driver.switch_to_next_tab", spanAttrs)
+  @span("driver.switch_to_next_tab", BaseDriver.spanAttrs)
   async switchToNextTab(): Promise<void> {
     const handles = await this.driver.getAllWindowHandles();
     if (handles.length <= 1) return;
@@ -427,7 +428,7 @@ export class SeleniumDriver extends BaseDriver {
     );
   }
 
-  @span("driver.switch_to_previous_tab", spanAttrs)
+  @span("driver.switch_to_previous_tab", BaseDriver.spanAttrs)
   async switchToPreviousTab(): Promise<void> {
     const handles = await this.driver.getAllWindowHandles();
     if (handles.length <= 1) return;
@@ -443,14 +444,14 @@ export class SeleniumDriver extends BaseDriver {
     );
   }
 
-  @span("driver.wait", spanAttrs)
+  @span("driver.wait", BaseDriver.spanAttrs)
   @stateful
   async wait(seconds: number): Promise<void> {
     const clampedSeconds = Math.max(1, Math.min(30, seconds));
     await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
   }
 
-  @span("driver.wait_for_selector", spanAttrs)
+  @span("driver.wait_for_selector", BaseDriver.spanAttrs)
   async waitForSelector(): Promise<void> {
     throw new Error("waitForSelector not supported for this driver");
   }
@@ -977,11 +978,4 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   //#endregion
-}
-
-function spanAttrs(this: SeleniumDriver): Tracer.SpansDriverAttrs {
-  return {
-    "driver.kind": "selenium",
-    "driver.platform": this.platform,
-  };
 }
